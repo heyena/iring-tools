@@ -1,0 +1,10 @@
+- iRingUserDocumentation, p. 22: There is no "DemoControlPaner" or "OntologyService" directory in the zip archive but there are other subdirectories which are not included in the description, e.g., MappingEditor.
+- How to get the connection string for ADO.NET? How to setup a database for iRing?
+- fullgeneration.cmd tries to call command edmgen.exe but the command does not exist.
+- There is a problem in InterfaceService\mod_joseki.bat. The variable %JOSEKIROOT% must be set in " because of the space within the JOSEKIROOT directory name.
+- The InterfaceService\setclasspath.bat contains some jar files which do not exist, e.g., QTJava.zip, antlr-2.7.5.jar, etc.. I assume additional software needs to be installed that is not mentioned in the prerequisites.
+- dbcreate.bat fails because jena/dbcreate cannot be found.
+- Microsoft Silverlight needs to be installed as well.
+- http://localhost/RDSWIPEditor/: The GUI appears but when searching for a termn an error occurs.
+- http://localhost/MappingEditor: Error in line 454, 17: Sys.InvalidOperationExceptionL InitializeError error #2104 in control 'Xaml1': 2104 An error has occured.
+- http://localhost/ReferenceDataService: Website does not appear.
