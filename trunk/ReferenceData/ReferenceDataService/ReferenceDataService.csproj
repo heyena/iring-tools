@@ -1,0 +1,152 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{9C43C2EB-DB4A-4BA0-B14F-24D0EA60D954}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ReferenceDataService</RootNamespace>
+    <AssemblyName>ReferenceDataService</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Runtime.Serialization">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.ServiceModel">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.ServiceModel.Web">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web.Mobile" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Service.svc" />
+    <Content Include="SPARQL\ClassRelations.txt" />
+    <Content Include="SPARQL\ContainsSearch.txt" />
+    <Content Include="SPARQL\ExactSearch.txt" />
+    <Content Include="SPARQL\GetClassification.txt" />
+    <Content Include="SPARQL\GetClassTemplates.txt" />
+    <Content Include="SPARQL\GetInstances.txt" />
+    <Content Include="SPARQL\GetLabel.txt" />
+    <Content Include="SPARQL\GetClass.txt" />
+    <Content Include="SPARQL\GetRangeRestriction.txt" />
+    <Content Include="SPARQL\GetReferenceRestriction.txt" />
+    <Content Include="SPARQL\GetRoleData.txt" />
+    <Content Include="SPARQL\GetRoles.txt" />
+    <Content Include="SPARQL\GetStatus.txt" />
+    <Content Include="SPARQL\GetSubClass.txt" />
+    <Content Include="SPARQL\GetSubClassSandbox.txt" />
+    <Content Include="SPARQL\GetSuperClass.txt" />
+    <Content Include="SPARQL\GetSuperClassSandbox.txt" />
+    <Content Include="SPARQL\GetTemplateQualification.txt" />
+    <Content Include="SPARQL\GetValueRestriction.txt" />
+    <Content Include="SPARQL\SandboxContainsSearch.txt" />
+    <Content Include="SPARQL\SandboxExactSearch.txt" />
+    <Content Include="SPARQL\SandboxTemplateContainsSearch.txt" />
+    <Content Include="SPARQL\SandboxTemplateExactSearch.txt" />
+    <Content Include="SPARQL\TemplateContainsSearch.txt" />
+    <Content Include="SPARQL\TemplateExactSearch.txt" />
+    <Content Include="SPARQL\TemplateGetProperties.txt" />
+    <Content Include="SPARQL\TemplateTypes.txt" />
+    <Content Include="Web.config" />
+    <Content Include="XML\Queries.xml" />
+    <Content Include="XML\Repositories.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Code\ReferenceDataService.cs" />
+    <Compile Include="App_Code\IReferenceDataService.cs">
+      <SubType>
+      </SubType>
+    </Compile>
+    <Compile Include="App_Code\ReferenceDataServiceProvider.cs" />
+    <Compile Include="App_Code\ConfigSettings.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\PrismContrib\Desktop\PrismContrib.Desktop.csproj">
+      <Project>{1A611244-54BE-4F12-AA34-12F54A2B07E6}</Project>
+      <Name>PrismContrib.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\UtilityLibrary\Desktop\UtilityLibrary.Desktop.csproj">
+      <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
+      <Name>UtilityLibrary.Desktop</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v9.0\WebApplications\Microsoft.WebApplication.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>62460</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost/RefDataService</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

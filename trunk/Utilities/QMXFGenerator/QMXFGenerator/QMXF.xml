@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<qmxf xmlns="http://ns.ids-adi.org/qxf/model#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <class-definition id="http://rdl.rdlfacade.org/data#R76409135608">
+    <entity-type reference="http://dm.rdlfacade.org/data#DocumentDefinition"/>
+    <specialization reference="http://rdl.rdlfacade.org/data#R32813486958" label="IDENTIFIER"/>
+    <designation/>
+    <name lang="EN-US">ELECTRIC CIRCUIT NAME</name>
+    <description lang="EN-US">A name of an electric circuit</description>
+  </class-definition>
+  <class-definition id="http://rdl.rdlfacade.org/data#R93654819275">
+    <entity-type reference="http://dm.rdlfacade.org/data#DocumentDefinition"/>
+    <specialization reference="http://rdl.rdlfacade.org/data#R32813486958" label="IDENTIFIER"/>
+    <designation/>
+    <name lang="EN-US">ELECTRIC CABLE NAME</name>
+    <description lang="EN-US">A name of an electric cable</description>
+  </class-definition>
+  <class-definition id="http://rdl.rdlfacade.org/data#R76528636237">
+    <entity-type reference="http://dm.rdlfacade.org/data#DocumentDefinition"/>
+    <specialization reference="http://rdl.rdlfacade.org/data#R32813486958" label="IDENTIFIER"/>
+    <designation/>
+    <name lang="EN-US">ELECTRICAL APPARATUS NAME</name>
+    <description lang="EN-US">A name of an electrical apparatus</description>
+  </class-definition>
+  <class-definition id="http://rdl.rdlfacade.org/data#R70500446613">
+    <entity-type reference="http://dm.rdlfacade.org/data#DocumentDefinition"/>
+    <specialization reference="http://rdl.rdlfacade.org/data#R56508447506" label="DESCRIPTION"/>
+    <designation/>
+    <name lang="EN-US">ELECTRIC CIRCUIT TYPE DESCRIPTION</name>
+    <description lang="EN-US">A description of an electric circuit type</description>
+  </class-definition>
+  <class-definition id="http://rdl.rdlfacade.org/data#R58409969762">
+    <entity-type/>
+    <designation/>
+    <name lang="EN-US">ELECTRIC CIRCUIT LENGTH ESTIMATED </name>
+  </class-definition>
+  <class-definition id="http://rdl.rdlfacade.org/data#R80591648147">
+    <entity-type/>
+    <designation/>
+    <name lang="EN-US">ELECTRIC CIRCUIT LENGTH ESTIMATED SCALE</name>
+  </class-definition>
+  <class-definition id="http://rdl.rdlfacade.org/data#R93712702957">
+    <entity-type reference="http://dm.rdlfacade.org/data#DocumentDefinition"/>
+    <specialization reference="http://rdl.rdlfacade.org/data#R56508447506" label="DESCRIPTION"/>
+    <designation/>
+    <name lang="EN-US">ELECTRIC CIRCUIT NOTES</name>
+    <description lang="EN-US">A description of a electric circuit notes</description>
+  </class-definition>
+  <class-definition id="http://rdl.rdlfacade.org/data#R18340849369">
+    <entity-type reference="http://dm.rdlfacade.org/data#DocumentDefinition"/>
+    <specialization reference="http://rdl.rdlfacade.org/data#R56508447506" label="DESCRIPTION"/>
+    <designation/>
+    <name lang="EN-US">ELECTRIC CIRCUIT ROUTE</name>
+    <description lang="EN-US">A description of electric circuit route</description>
+  </class-definition>
+  <class-definition id="http://rdl.rdlfacade.org/data#R28192323848">
+    <entity-type reference="http://dm.rdlfacade.org/data#DocumentDefinition"/>
+    <specialization reference="http://rdl.rdlfacade.org/data#R56508447506" label="DESCRIPTION"/>
+    <designation/>
+    <name lang="EN-US">ELECTRIC CABLE QUANTITY</name>
+    <description lang="EN-US">A description of electric cable quantity</description>
+  </class-definition>
+  <class-definition id="http://rdl.rdlfacade.org/data#R97023271392">
+    <entity-type reference="http://dm.rdlfacade.org/data#DocumentDefinition"/>
+    <specialization reference="http://rdl.rdlfacade.org/data#R56508447506" label="DESCRIPTION"/>
+    <designation/>
+    <name lang="EN-US">ELECTRIC CABLE SIZE DESCRIPTION</name>
+    <description lang="EN-US">A description of an electric cable size</description>
+  </class-definition>
+  <class-definition id="http://rdl.rdlfacade.org/data#R66973340834">
+    <entity-type reference="http://dm.rdlfacade.org/data#DocumentDefinition"/>
+    <specialization reference="http://rdl.rdlfacade.org/data#R56508447506" label="DESCRIPTION"/>
+    <designation/>
+    <name lang="EN-US">ELECTRIC CABLE TYPE DESCRIPTION</name>
+    <description lang="EN-US">A description of an electric cable type</description>
+  </class-definition>
+  <class-definition id="http://rdl.rdlfacade.org/data#R72681889919">
+    <entity-type reference="http://dm.rdlfacade.org/data#DocumentDefinition"/>
+    <specialization reference="http://rdl.rdlfacade.org/data#R56508447506" label="DESCRIPTION"/>
+    <designation/>
+    <name lang="EN-US">ELECTRIC CABLE NUMBER OF CONDUCTORS</name>
+    <description lang="EN-US">A description of electric cable number of conductors </description>
+  </class-definition>
+  <class-definition id="http://rdl.rdlfacade.org/data#R87490418283">
+    <entity-type reference="http://dm.rdlfacade.org/data#DocumentDefinition"/>
+    <specialization reference="http://rdl.rdlfacade.org/data#R56508447506" label="DESCRIPTION"/>
+    <designation/>
+    <name lang="EN-US">ELECTRIC CABLE CONFIGURATION DESCRIPTION</name>
+    <description lang="EN-US">A description of electric cable configuration</description>
+  </class-definition>
+</qmxf>
