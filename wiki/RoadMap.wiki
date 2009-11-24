@@ -1,0 +1,34 @@
+#labels Featured
+=iRINGTools Road Map (Draft)=
+
+==iRINGTools 1.00.00 - May 2009==
+
+  * Include Demo Functionality
+  * Remove Demo Control Panel
+  * Add Mapping Editor
+
+==iRINGTools 1.01.00 - Pending==
+
+  * Add Reference Data Editor
+  * Complete Installation Document
+  * Add SemWeb capability (not packaged)
+  * Package Joseki Deployment
+
+==iRINGTools 1.01.01 - December 2009==
+
+  * Bug Fixes
+  * Various UI Issues
+
+==iRINGTools 1.02.00 - Q1 2010==
+
+  * Base Template Support
+  * Package SemWeb Deployment
+  * Complete Reference Data Editor
+  * Part 8 Compliance
+  * Add NHibernate DataLayer
+    * Hierarchical Database Object Support
+
+==iRINGTools 1.03.00 - Q2 2010==
+
+  * Include Mono Deliverables for Linux hosting.
+  * Enhance iRING Mapping Editor with Database Object Selection
