@@ -5,7 +5,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdapterService", "AdapterSe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdapterService.Tests", "AdapterService.Tests\AdapterService.Tests.csproj", "{C0120CB3-63EB-4DB1-9D21-1F68FF99DDAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iRINGLibrary.Desktop", "..\..\Libraries\iRINGLibrary\iRINGLibrary.Desktop.csproj", "{46FB3942-D0A5-4BFF-97B0-739E56BFB111}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iRINGLibrary.Desktop", "..\..\Libraries\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj", "{46FB3942-D0A5-4BFF-97B0-739E56BFB111}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UtilityLibrary.Desktop", "..\..\Libraries\UtilityLibrary\Desktop\UtilityLibrary.Desktop.csproj", "{E937EE2D-064B-4EDA-9E81-7E7F509A784A}"
 EndProject
