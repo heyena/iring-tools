@@ -149,6 +149,10 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
+      <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
+      <Name>iRINGLibrary.Desktop</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Libraries\UtilityLibrary\Desktop\UtilityLibrary.Desktop.csproj">
       <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
       <Name>UtilityLibrary.Desktop</Name>

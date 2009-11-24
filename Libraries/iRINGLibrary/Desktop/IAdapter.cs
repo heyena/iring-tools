@@ -29,56 +29,75 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
+#if !SILVERLIGHT
 using System.ServiceModel.Web;
+#endif
 using System.Text;
 using org.ids_adi.qxf;
-using org.iringtools.adapter;
 
 namespace org.iringtools.library
 {
+#if !SILVERLIGHT
   [ServiceContract(Namespace = "http://ns.iringtools.org/protocol")]
+#endif
   public partial interface IAdapter
   {
+    
+#if !SILVERLIGHT
     [OperationContract]
     [WebGet(UriTemplate = "/datadictionary")]
+#endif
     DataDictionary GetDictionary();
 
+#if !SILVERLIGHT
     [OperationContract]
     [WebGet(UriTemplate = "/datadictionary/refresh")]
+#endif
     Response RefreshDictionary();
 
-    [XmlSerializerFormat]
+#if !SILVERLIGHT
     [OperationContract]
+    [XmlSerializerFormat]
     [WebGet(UriTemplate = "/mapping")]
+#endif
     Mapping GetMapping();
 
-    [XmlSerializerFormat]
+#if !SILVERLIGHT
     [OperationContract]
+    [XmlSerializerFormat]
     [WebInvoke(Method = "POST", UriTemplate = "/mapping")]
+#endif
     Response UpdateMapping(Mapping mapping);
 
+#if !SILVERLIGHT
     [OperationContract]
     [WebGet(UriTemplate = "/generate")]
+#endif
     Response Generate();
 
+    
+#if !SILVERLIGHT
     [OperationContract]
     [WebGet(UriTemplate = "/clear")]
+#endif
     Response ClearStore();
 
+#if !SILVERLIGHT
     [OperationContract]
     [WebGet(UriTemplate = "/{graphName}/refresh")]
+#endif
     Response RefreshGraph(string graphName);
 
+#if !SILVERLIGHT
     [OperationContract]
     [WebGet(UriTemplate = "/refresh")]
+#endif
     Response RefreshAll();
 
+#if !SILVERLIGHT
     [OperationContract]
     [WebInvoke(Method = "POST", UriTemplate = "/pull")]
+#endif
     Response Pull(Request request);
-
-    //[OperationContract]
-    //[WebInvoke(Method = "POST", UriTemplate = "/dbdictionary")]
-    //Response UpdateDatabaseDictionary(DatabaseDictionary databaseDictionary);
   } 
 }
