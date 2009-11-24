@@ -114,7 +114,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Libraries\iRINGLibrary\iRINGLibrary.Desktop.csproj">
+    <ProjectReference Include="..\..\..\Libraries\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
       <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
       <Name>iRINGLibrary.Desktop</Name>
     </ProjectReference>
