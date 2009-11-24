@@ -128,8 +128,8 @@
                ExternalBinaries\SemWeb\SemWeb.dll;
                ExternalBinaries\SemWeb\SemWeb.SQLServerStore.dll;
                ExternalBinaries\SemWeb\Mono.GetOptions.dll;
-               Libraries\iRINGLibrary\bin\Debug\iRINGLibrary.dll;
-               Libraries\iRINGLibrary\bin\Debug\UtilityLibrary.dll;
+               Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll;
+               Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;
                Utilities\EncryptCredentials\bin\Debug\EncryptCredentials.exe;
                Utilities\AdapterClient\bin\Debug\AdapterClient.exe;">
     </AdapterToolsDeployment>
@@ -139,8 +139,8 @@
                ExternalBinaries\SemWeb\SemWeb.dll;
                ExternalBinaries\SemWeb\SemWeb.SQLServerStore.dll;
                ExternalBinaries\SemWeb\Mono.GetOptions.dll;
-               Libraries\iRINGLibrary\bin\Debug\iRINGLibrary.dll;
-               Libraries\iRINGLibrary\bin\Debug\UtilityLibrary.dll;
+               Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll;
+               Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;
                Utilities\EncryptCredentials\bin\Debug\EncryptCredentials.exe;
                Utilities\QMXFGenerator\QMXFGenerator\bin\Debug\QMXFGenerator.exe;
                Utilities\QMXFGenerator\QMXFGenerator\bin\Debug\Microsoft.Office.Interop.Excel.dll;
