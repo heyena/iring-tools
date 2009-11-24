@@ -178,13 +178,13 @@
 
   <Target Name="SvnCleanUp">
     <Message Text="Performing SVN clean-up ..." />
-    <Exec Command="$(TortoiseSVNCmd) /notempfile /command:cleanup /path:C:\iring.svn.codeplex.com /closeonend:1"/>
+    <Exec Command="$(TortoiseSVNCmd) /notempfile /command:cleanup /path:C:\iring-tools /closeonend:1"/>
     <Message Text="Closing SVN clean-up diaglog ..." />
   </Target>
   
   <Target Name="SvnUpdate">
     <Message Text="Performing SVN update ..." />
-    <Exec Command="$(TortoiseSVNCmd) /notempfile /command:update /path:C:\iring.svn.codeplex.com /closeonend:1"/>
+    <Exec Command="$(TortoiseSVNCmd) /notempfile /command:update /path:C:\iring-tools /closeonend:1"/>
   </Target>
   
   <Target Name="CoreBuild">

@@ -110,43 +110,43 @@
     <Compile Include="..\..\..\Adapter\AdapterService\App_Code\DTOLayer.cs">
       <Link>Entities\DTOLayer.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\Libraries\iRINGLibrary\DataDictionary.cs">
+    <Compile Include="..\..\..\Libraries\iRINGLibrary\Desktop\DataDictionary.cs">
       <Link>Entities\DataDictionary.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\Libraries\iRINGLibrary\Mapping.cs">
+    <Compile Include="..\..\..\Libraries\iRINGLibrary\Desktop\Mapping.cs">
       <Link>Entities\Mapping.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\Libraries\iRINGLibrary\QMXF.cs">
+    <Compile Include="..\..\..\Libraries\iRINGLibrary\Desktop\QMXF.cs">
       <Link>Entities\QMXF.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\Libraries\iRINGLibrary\QXF.cs">
+    <Compile Include="..\..\..\Libraries\iRINGLibrary\Desktop\QXF.cs">
       <Link>Entities\QXF.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\Libraries\iRINGLibrary\Request.cs">
+    <Compile Include="..\..\..\Libraries\iRINGLibrary\Desktop\Request.cs">
       <Link>Entities\Request.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\Libraries\iRINGLibrary\Response.cs">
+    <Compile Include="..\..\..\Libraries\iRINGLibrary\Desktop\Response.cs">
       <Link>Entities\Response.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\Libraries\iRINGLibrary\SPARQLQuery.cs">
+    <Compile Include="..\..\..\Libraries\iRINGLibrary\Desktop\SPARQLQuery.cs">
       <Link>Entities\SPARQLQuery.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\Libraries\iRINGLibrary\SPARQLResults.cs">
+    <Compile Include="..\..\..\Libraries\iRINGLibrary\Desktop\SPARQLResults.cs">
       <Link>Entities\SPARQLResults.cs</Link>
     </Compile>
     <Compile Include="..\..\..\ReferenceData\ReferenceDataService\App_Code\IReferenceDataService.cs">
       <Link>Entities\IReferenceDataService.cs</Link>
     </Compile>
-    <Compile Include="..\..\iRINGLibrary\DatabaseDictionary.cs">
+    <Compile Include="..\..\..\Libraries\iRINGLibrary\Desktop\DatabaseDictionary.cs">
       <Link>Entities\DatabaseDictionary.cs</Link>
     </Compile>
-    <Compile Include="..\..\iRINGLibrary\IAdapter.cs">
+    <Compile Include="..\..\..\Libraries\iRINGLibrary\Desktop\IAdapter.cs">
       <Link>Entities\IAdapter.cs</Link>
     </Compile>
-    <Compile Include="..\..\iRINGLibrary\Query.cs">
+    <Compile Include="..\..\..\Libraries\iRINGLibrary\Desktop\Query.cs">
       <Link>LayerDAL\Query.cs</Link>
     </Compile>
-    <Compile Include="..\..\iRINGLibrary\RefDataEntities.cs">
+    <Compile Include="..\..\..\Libraries\iRINGLibrary\Desktop\RefDataEntities.cs">
       <Link>LayerDAL\RefDataEntities.cs</Link>
     </Compile>
     <Compile Include="..\Silverlight\Base\AppBase.cs">
