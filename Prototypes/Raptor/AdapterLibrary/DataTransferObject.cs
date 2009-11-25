@@ -93,15 +93,20 @@ namespace org.iringtools.adapter
     protected string _identifier;
     protected object _dataObject = null;
 
-    public DataTransferObject(string graphName)
+    public DataTransferObject(string classId, string graphName)
     {
       this._properties = new List<DTOProperty>();
       this.GraphName = graphName;
+      this.ClassId = classId;
     }
 
     [XmlIgnore]
     public string GraphName { get; set; }
-    
+
+    [DataMember(Name = "ClassId", EmitDefaultValue = false)]
+    [XmlAttribute(AttributeName = "classId")]
+    public string ClassId { get; set; }
+
     [DataMember(Name = "Identifier", EmitDefaultValue = false)]
     [XmlAttribute(AttributeName = "id")]
     public string Identifier

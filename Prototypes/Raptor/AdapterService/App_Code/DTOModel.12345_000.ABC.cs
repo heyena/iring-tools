@@ -200,8 +200,8 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
     public TemplatePlantAreaInlinePipingComponentAssembly tpl_PlantAreaInlinePipingComponentAssembly { get; set; }     
        
 
-		public Valves(string graphName, string identifier) 
-			: base(graphName)
+		public Valves(string classId, string graphName, string identifier) 
+			: base(classId, graphName)
 		{   
 			_properties.Add(new DTOProperty(@"tag", @"tpl_InlinePipingComponentName_identifier", null, typeof(String), true, true));
 			_properties.Add(new DTOProperty(@"componentType", @"tpl_InlinePipingComponentType_type", null, typeof(String), false, false));
@@ -214,13 +214,14 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 			_properties.Add(new DTOProperty(@"unit", @"tpl_PlantAreaName_identifier", null, typeof(String), false, false));
 
 			Identifier = identifier;
+      ClassId = classId;
 		}
 	
 		public Valves(org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent dataObject)
-			: this("Valves", null, dataObject) {}
+      : this("http://rdl.rdlfacade.org/data#R97295617945", "Valves", null, dataObject) { }
 			
-		public Valves(string graphName, string identifier, org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent dataObject) 
-			: this(graphName, identifier)
+		public Valves(string classId, string graphName, string identifier, org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent dataObject)
+      : this(classId, graphName, identifier)
 		{  
 			if (dataObject != null)
 			{
@@ -265,7 +266,7 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 		} 
 		
 		public Valves()
-			: this("Valves", null) {}			
+			: this("", "Valves", null) {}			
 
 		[DataMember(Name = "tpl_InlinePipingComponentName_identifier", EmitDefaultValue = false)]
 		[XmlIgnore]
@@ -549,8 +550,8 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
     public TemplatePandIDiagramPipingNetworkSegmentAssembly tpl_PandIDiagramPipingNetworkSegmentAssembly { get; set; }     
        
 
-		public Instruments(string graphName, string identifier) 
-			: base(graphName)
+		public Instruments(string classId, string graphName, string identifier) 
+			: base(classId, graphName)
 		{   
 			_properties.Add(new DTOProperty(@"tag", @"tpl_InlinePipingComponentName_identifier", null, typeof(String), true, true));
 			_properties.Add(new DTOProperty(@"componentType", @"tpl_InlinePipingComponentType_type", null, typeof(String), false, false));
@@ -559,13 +560,14 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 			_properties.Add(new DTOProperty(@"pid", @"tpl_DrawingName_identifier", null, typeof(String), false, false));
 
 			Identifier = identifier;
+      ClassId = classId;
 		}
 	
 		public Instruments(org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent dataObject)
-			: this("Instruments", null, dataObject) {}
+      : this("http://rdl.rdlfacade.org/data#R49707845396", "Instruments", null, dataObject) { }
 			
-		public Instruments(string graphName, string identifier, org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent dataObject) 
-			: this(graphName, identifier)
+		public Instruments(string classId, string graphName, string identifier, org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent dataObject) 
+			: this(classId, graphName, identifier)
 		{  
 			if (dataObject != null)
 			{
@@ -596,7 +598,7 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 		} 
 		
 		public Instruments()
-			: this("Instruments", null) {}			
+      : this("http://rdl.rdlfacade.org/data#R49707845396", "Instruments", null) { }			
 
 		[DataMember(Name = "tpl_InlinePipingComponentName_identifier", EmitDefaultValue = false)]
 		[XmlIgnore]
@@ -716,20 +718,21 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 	public class Vessels : DataTransferObject
 	{
 
-		public Vessels(string graphName, string identifier) 
-			: base(graphName)
+		public Vessels(string classId, string graphName, string identifier) 
+			: base(classId, graphName)
 		{   
 			_properties.Add(new DTOProperty(@"tag", @"tpl_FluidContainerName_identifier", null, typeof(String), true, true));
 			_properties.Add(new DTOProperty(@"description", @"tpl_FluidContainerDescription_description", null, typeof(String), false, false));
 
 			Identifier = identifier;
+      ClassId = classId;
 		}
 	
 		public Vessels(org.iringtools.adapter.proj_12345_000.ABC.KOPot dataObject)
-			: this("Vessels", null, dataObject) {}
+      : this("http://rdl.rdlfacade.org/data#R75598586594", "Vessels", null, dataObject) { }
 			
-		public Vessels(string graphName, string identifier, org.iringtools.adapter.proj_12345_000.ABC.KOPot dataObject) 
-			: this(graphName, identifier)
+		public Vessels(string classId, string graphName, string identifier, org.iringtools.adapter.proj_12345_000.ABC.KOPot dataObject) 
+			: this(classId, graphName, identifier)
 		{  
 			if (dataObject != null)
 			{
@@ -743,10 +746,10 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 		
 	
 		public Vessels(org.iringtools.adapter.proj_12345_000.ABC.VacuumTower dataObject)
-			: this("Vessels", null, dataObject) {}
+      : this("http://rdl.rdlfacade.org/data#R75598586594", "Vessels", null, dataObject) { }
 			
-		public Vessels(string graphName, string identifier, org.iringtools.adapter.proj_12345_000.ABC.VacuumTower dataObject) 
-			: this(graphName, identifier)
+		public Vessels(string classId, string graphName, string identifier, org.iringtools.adapter.proj_12345_000.ABC.VacuumTower dataObject) 
+			: this(classId, graphName, identifier)
 		{  
 			if (dataObject != null)
 			{
@@ -759,7 +762,7 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 		} 
 		
 		public Vessels()
-			: this("Vessels", null) {}			
+      : this("http://rdl.rdlfacade.org/data#R75598586594", "Vessels", null) { }			
 
 		[DataMember(Name = "tpl_FluidContainerName_identifier", EmitDefaultValue = false)]
 		[XmlIgnore]
@@ -873,20 +876,21 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
     public TemplateSystemPipingNetworkSystemAssembly tpl_SystemPipingNetworkSystemAssembly { get; set; }     
        
 
-		public Lines(string graphName, string identifier) 
-			: base(graphName)
+		public Lines(string classId, string graphName, string identifier) 
+			: base(classId, graphName)
 		{   
 			_properties.Add(new DTOProperty(@"tag", @"tpl_PipingNetworkSystemName_identifier", null, typeof(String), true, true));
 			_properties.Add(new DTOProperty(@"system", @"tpl_SystemName_identifier", null, typeof(String), false, false));
 
 			Identifier = identifier;
+      ClassId = classId;
 		}
 	
 		public Lines(org.iringtools.adapter.proj_12345_000.ABC.Line dataObject)
-			: this("Lines", null, dataObject) {}
+      : this("http://rdl.rdlfacade.org/data#R19192462550", "Lines", null, dataObject) { }
 			
-		public Lines(string graphName, string identifier, org.iringtools.adapter.proj_12345_000.ABC.Line dataObject) 
-			: this(graphName, identifier)
+		public Lines(string classId, string graphName, string identifier, org.iringtools.adapter.proj_12345_000.ABC.Line dataObject) 
+			: this(classId, graphName, identifier)
 		{  
 			if (dataObject != null)
 			{
@@ -903,7 +907,7 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 		} 
 		
 		public Lines()
-			: this("Lines", null) {}			
+			: this("http://rdl.rdlfacade.org/data#R19192462550", "Lines", null) {}			
 
 		[DataMember(Name = "tpl_PipingNetworkSystemName_identifier", EmitDefaultValue = false)]
 		[XmlIgnore]
