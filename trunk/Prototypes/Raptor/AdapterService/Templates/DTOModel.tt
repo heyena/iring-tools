@@ -26,16 +26,18 @@ namespace <#= modelNamespace #>
 foreach (GraphMap graphMap in mapping.graphMaps)
 {
 	graphMap.name = NameSafe(graphMap.name);
+	graphMap.classId = graphMap.classId.Replace("rdl:", "http://rdl.rdlfacade.org/data#");
 #>
 	[DataContract(Name = "<#= graphMap.name #>", Namespace = "<#= dtoNamespace #>" )]
+	[XmlRoot(Namespace = "<#= dtoNamespace #>")]
 	public class <#= graphMap.name #> : DataTransferObject
 	{
 <#
 	ProcessGraphMap(graphMap);
 #>
 
-		public <#= graphMap.name #>(string graphName, string identifier) 
-			: base(graphName)
+		public <#= graphMap.name #>(string classId, string graphName, string identifier) 
+			: base(classId, graphName)
 		{   
 <# 
 	foreach (ExtendedDataProperty extendedDataProperty in extendedDataProperties)
@@ -47,6 +49,7 @@ foreach (GraphMap graphMap in mapping.graphMaps)
 #>
 
 			Identifier = identifier;
+			ClassId = classId;
 		}
 <# 
 	foreach (DataObjectMap dataObjectMap in graphMap.dataObjectMaps)
@@ -54,10 +57,10 @@ foreach (GraphMap graphMap in mapping.graphMaps)
 		string qualifiedDataObjectName = GetQualifiedDataObjectName(dataObjectMap.name);
 #>	
 		public <#= graphMap.name + "(" + qualifiedDataObjectName #> dataObject)
-			: this("<#= graphMap.name #>", null, dataObject) {}
+			: this("<#= graphMap.classId #>", "<#= graphMap.name #>", null, dataObject) {}
 			
-		public <#= graphMap.name #>(string graphName, string identifier, <#= qualifiedDataObjectName #> dataObject) 
-			: this(graphName, identifier)
+		public <#= graphMap.name #>(string classId, string graphName, string identifier, <#= qualifiedDataObjectName #> dataObject) 
+			: this(classId, graphName, identifier)
 		{  
 			if (dataObject != null)
 			{
@@ -85,7 +88,7 @@ foreach (GraphMap graphMap in mapping.graphMaps)
 	}
 #>
 		public <#= graphMap.name #>()
-			: this("<#= graphMap.name #>", null) {}			
+			: this("<#= graphMap.classId #>", "<#= graphMap.name #>", null) {}			
 
 <#
 	

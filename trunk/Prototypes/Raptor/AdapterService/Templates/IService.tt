@@ -22,13 +22,13 @@ namespace <#= adapterNamespace #>
 		GetKnownTypes();
 #>
 		[WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}")]
-		DataTransferObject Get(string projectName, string applicationName, string graphName, string identifier);
+		Envelope Get(string projectName, string applicationName, string graphName, string identifier);
 		
 		[OperationContract]
 <# 
 		GetKnownTypes();
 #>
 		[WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}")]
-		List<DataTransferObject> GetList(string projectName, string applicationName, string graphName);
+		Envelope GetList(string projectName, string applicationName, string graphName);
 	}
 }

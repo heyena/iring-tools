@@ -80,9 +80,10 @@ foreach (GraphMap graphMap in mapping.graphMaps)
 <#
 foreach (GraphMap graphMap in mapping.graphMaps)
 {
+	graphMap.classId = graphMap.classId.Replace("rdl:", "http://rdl.rdlfacade.org/data#");
 #>
-			case "<#= graphMap.name #>":
-			  dto = new <#= graphMap.name #>(graphName, identifier);
+			case "<#= graphMap.name #>":				
+			  dto = new <#= graphMap.name #>("<#= graphMap.classId #>", graphName, identifier);
 			  break;
 			  
 <#
