@@ -266,7 +266,7 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 		} 
 		
 		public Valves()
-			: this("", "Valves", null) {}			
+      : this("http://rdl.rdlfacade.org/data#R97295617945", "Valves", null) { }			
 
 		[DataMember(Name = "tpl_InlinePipingComponentName_identifier", EmitDefaultValue = false)]
 		[XmlIgnore]
