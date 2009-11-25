@@ -72,7 +72,7 @@ namespace org.iringtools.adapter.proj_12345_000.DEF
 			switch (graphName)
 			{ 
 			case "Lines":
-			  dto = new Lines(graphName, identifier);
+          dto = new Lines("http://rdl.rdlfacade.org/data#R19192462550", graphName, identifier);
 			  break;
 			  
 			}

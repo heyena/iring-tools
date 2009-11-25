@@ -54,20 +54,21 @@ namespace org.iringtools.adapter.proj_12345_000.DEF
     public TemplateSystemPipingNetworkSystemAssembly tpl_SystemPipingNetworkSystemAssembly { get; set; }     
        
 
-		public Lines(string graphName, string identifier) 
-			: base(graphName)
+		public Lines(string classId, string graphName, string identifier) 
+			: base(classId, graphName)
 		{
       _properties.Add(new DTOProperty(@"tag", @"tpl_PipingNetworkSystemName_identifier", null, typeof(String), false, false));
       _properties.Add(new DTOProperty(@"system", @"tpl_SystemName_identifier", null, typeof(String), false, false));
 
 			Identifier = identifier;
+      ClassId = classId;
 		}
 	
 		public Lines(org.iringtools.adapter.proj_12345_000.DEF.Line dataObject)
-			: this("Lines", null, dataObject) {}
+      : this("http://rdl.rdlfacade.org/data#R19192462550", "Lines", null, dataObject) { }
 			
-		public Lines(string graphName, string identifier, org.iringtools.adapter.proj_12345_000.DEF.Line dataObject) 
-			: this(graphName, identifier)
+		public Lines(string classId, string graphName, string identifier, org.iringtools.adapter.proj_12345_000.DEF.Line dataObject) 
+			: this(classId, graphName, identifier)
 		{  
 			if (dataObject != null)
 			{
@@ -84,7 +85,7 @@ namespace org.iringtools.adapter.proj_12345_000.DEF
 		} 
 		
 		public Lines()
-			: this("Lines", null) {}			
+      : this("http://rdl.rdlfacade.org/data#R19192462550", "Lines", null) { }			
 
 		[DataMember(Name = "tpl_PipingNetworkSystemName_identifier", EmitDefaultValue = false)]
 		[XmlIgnore]

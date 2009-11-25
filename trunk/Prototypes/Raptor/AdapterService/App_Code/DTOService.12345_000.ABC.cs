@@ -105,19 +105,19 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 			switch (graphName)
 			{ 
 			case "Valves":
-			  dto = new Valves(graphName, identifier);
+			  dto = new Valves("http://rdl.rdlfacade.org/data#R97295617945", graphName, identifier);
 			  break;
 			  
 			case "Instruments":
-			  dto = new Instruments(graphName, identifier);
+			  dto = new Instruments("http://rdl.rdlfacade.org/data#R49707845396", graphName, identifier);
 			  break;
 			  
 			case "Vessels":
-			  dto = new Vessels(graphName, identifier);
+        dto = new Vessels("http://rdl.rdlfacade.org/data#R75598586594", graphName, identifier);
 			  break;
 			  
 			case "Lines":
-			  dto = new Lines(graphName, identifier);
+			  dto = new Lines("http://rdl.rdlfacade.org/data#R19192462550", graphName, identifier);
 			  break;
 			  
 			}
