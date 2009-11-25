@@ -249,7 +249,7 @@ namespace AdapterService.Tests
       //System.Type[] extraTypes = { typeof(org.iringtools.adapter.proj_12345_000.DEF.Lines) };
 
       //XmlSerializer serializer = new XmlSerializer(typeof(List<DataTransferObject>), extraTypes);
-      
+
       //List<DataTransferObject> dtoList = (List<DataTransferObject>)serializer.Deserialize(reader);
 
       //List<DataTransferObject> dtoList = Utility.Deserialize<List<org.iringtools.adapter.DataTransferObject>>(dtoListString, false);
@@ -263,22 +263,26 @@ namespace AdapterService.Tests
       XDocument xmlFile = XDocument.Load(System.Environment.CurrentDirectory + @"\XML\DTOString.xml");
       XNamespace ns = "http://def.bechtel.com/12345_000/data#";
       XNamespace propertyNS = "http://dto.iringtools.org";
-      var query = from c in xmlFile.Elements(ns + "Lines").
-                    Elements(propertyNS + "Properties").
-                    Elements(propertyNS + "Property")
-                  select c;
 
-      org.iringtools.adapter.proj_12345_000.ABC.Lines line = new org.iringtools.adapter.proj_12345_000.ABC.Lines();
-
-      foreach (var dtoProperty in query)
+      List<org.iringtools.adapter.proj_12345_000.ABC.Lines> lineList = new List<org.iringtools.adapter.proj_12345_000.ABC.Lines>();
+      var query1 = from c in xmlFile.Elements("Envelope").Elements("Payload").Elements("DataTransferObject")
+                   select c;
+      foreach (var dto in query1)
       {
-        if (dtoProperty.Attribute("name").Value == "tpl_PipingNetworkSystemName_identifier")
-        line.tpl_PipingNetworkSystemName_identifier = dtoProperty.Attribute("value").Value;
-        if (dtoProperty.Attribute("name").Value == "tpl_SystemName_identifier")
-          line.tpl_SystemName_identifier = dtoProperty.Attribute("value").Value;        
+        var query2 = from c in dto.Elements(propertyNS + "Properties").Elements(propertyNS + "Property")
+                     select c;
+
+        org.iringtools.adapter.proj_12345_000.ABC.Lines line = new org.iringtools.adapter.proj_12345_000.ABC.Lines();
+
+        foreach (var dtoProperty in query2)
+        {
+          if (dtoProperty.Attribute("name").Value == "tpl_PipingNetworkSystemName_identifier")
+            line.tpl_PipingNetworkSystemName_identifier = dtoProperty.Attribute("value").Value;
+          if (dtoProperty.Attribute("name").Value == "tpl_SystemName_identifier")
+            line.tpl_SystemName_identifier = dtoProperty.Attribute("value").Value;
+        }
+        lineList.Add(line);
       }
-      
-      
     }
     
     private TestContext testContextInstance;

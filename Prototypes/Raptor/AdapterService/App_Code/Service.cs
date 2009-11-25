@@ -143,9 +143,9 @@ namespace org.iringtools.adapter
     /// <param name="graphName">The name of graph for which data is to be fetched.</param>
     /// <param name="identifier">The unique identifier used as filter to return single row's data.</param>
     /// <returns>Returns the data in QXF format.</returns>
-    public DataTransferObject Get(string projectName, string applicationName, string graphName, string identifier)
+    public Envelope Get(string projectName, string applicationName, string graphName, string identifier)
     {
-      return _adapterServiceProvider.GetDTO(projectName, applicationName, graphName, identifier);
+      return _adapterServiceProvider.Get(projectName, applicationName, graphName, identifier);
     }
 
     /// <summary>
@@ -153,9 +153,9 @@ namespace org.iringtools.adapter
     /// </summary>
     /// <param name="graphName">The name of graph for which data is to be fetched.</param>
     /// <returns>Returns the data in QXF format.</returns>
-    public List<DataTransferObject> GetList(string projectName, string applicationName, string graphName)
+    public Envelope GetList(string projectName, string applicationName, string graphName)
     {
-      return _adapterServiceProvider.GetDTOList(projectName, applicationName, graphName);
+      return _adapterServiceProvider.GetList(projectName, applicationName, graphName);
     }
   }
 }
