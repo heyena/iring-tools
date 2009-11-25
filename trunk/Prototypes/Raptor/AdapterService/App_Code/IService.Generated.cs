@@ -27,7 +27,7 @@ namespace org.iringtools.adapter
     [ServiceKnownType(typeof(org.iringtools.adapter.proj_12345_000.ABC.Lines))]
     [ServiceKnownType(typeof(org.iringtools.adapter.proj_12345_000.DEF.Lines))]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}")]
-    DataTransferObject Get(string projectName, string applicationName, string graphName, string identifier);
+    Envelope Get(string projectName, string applicationName, string graphName, string identifier);
 
     [XmlSerializerFormat]
 		[OperationContract]
@@ -37,6 +37,6 @@ namespace org.iringtools.adapter
     [ServiceKnownType(typeof(org.iringtools.adapter.proj_12345_000.ABC.Lines))]
     [ServiceKnownType(typeof(org.iringtools.adapter.proj_12345_000.DEF.Lines))]	
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}")]
-		List<DataTransferObject> GetList(string projectName, string applicationName, string graphName);
+		Envelope GetList(string projectName, string applicationName, string graphName);
 	}
 }
