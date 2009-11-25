@@ -93,12 +93,12 @@ namespace QMXFGenerator
                     MessageBox(0, "Success!", "QMXFGenerator", 0);
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Utility.WriteString("\n" + e.ToString() + "\n", "error.log", true);
                 ExcelLibrary.CloseWorkbook(false, workbook);
                 workbook = null;
-                MessageBox(0, "Failed! See log file: error.log", "QMXFGenerator", 0);           
+                MessageBox(0, "Failed! See log file: error.log", "QMXFGenerator", 0);
             }
         }
 
@@ -151,7 +151,7 @@ namespace QMXFGenerator
             {
                 Utility.WriteString("\nError Initializing \n" + e.ToString() + "\n", "error.log", true);
                 throw e;
-            }      
+            }
         }
 
         private static List<ClassDefinition> ProcessClass(Worksheet classWorksheet, Worksheet classSpecializationWorksheet)
@@ -165,7 +165,7 @@ namespace QMXFGenerator
                 List<ArrayList> classList = MarshallToList(classRange);
 
                 List<ClassDefinition> classDefinitions = new List<ClassDefinition>();
-            
+
                 foreach (ArrayList row in classList)
                 {
                     object load = row[(int)ClassColumns.Load];
@@ -249,9 +249,9 @@ namespace QMXFGenerator
                 }
                 return classDefinitions;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                Utility.WriteString("\nError Processing Class \n Worksheet: " + classWorksheet.Name + 
+                Utility.WriteString("\nError Processing Class \n Worksheet: " + classWorksheet.Name +
                                     "\t Row: " + rowIndex + " \n" + e.ToString() + "\n", "error.log");
                 throw e;
             }
@@ -368,7 +368,7 @@ namespace QMXFGenerator
             }
             catch (Exception e)
             {
-                Utility.WriteString("\nError Processing Class Specialization \n" + 
+                Utility.WriteString("\nError Processing Class Specialization \n" +
                                     "Worksheet: " + classSpecializationWorksheet.Name + " \n" + e.ToString() + "\n", "error.log", true);
                 MessageBox(0, "Failed! See log file: error.log", "QMXFGenerator", 0);
                 throw e;
@@ -536,7 +536,7 @@ namespace QMXFGenerator
                               where Convert.ToString(@class[(int)ClassColumns.Label]) == type.ToString()
                               select @class;
 
-                            if (query.FirstOrDefault()[(int)ClassColumns.ID].ToString().Trim().Equals(roleDefinition.range))
+                            if (query.FirstOrDefault() != null && query.FirstOrDefault()[(int)ClassColumns.ID].ToString().Trim().Equals(type.ToString()))
                             {
                                 roleDefinition.range = query.FirstOrDefault()[(int)ClassColumns.ID].ToString().Trim();
                             }
@@ -644,11 +644,11 @@ namespace QMXFGenerator
                               select template;
 
                             ArrayList parentRow = query.FirstOrDefault();
-  
-                            if(parentRow.Count != 0)
+
+                            if (parentRow != null)
                             //if (parentRow[(int)TemplateColumns.ID].ToString().Trim().Equals(parentTemplate.ToString()))
                             {
-                                templateQualification.qualifies = parentRow[(int)TemplateColumns.ID+1].ToString().Trim();
+                                templateQualification.qualifies = parentRow[(int)TemplateColumns.ID + 1].ToString().Trim();
 
                                 templateQualification.roleQualification = ProcessRoleQualification(row, parentRow);
                             }
@@ -670,7 +670,7 @@ namespace QMXFGenerator
             }
             catch (Exception e)
             {
-                Utility.WriteString("\nError Processing Individual Template \n" + 
+                Utility.WriteString("\nError Processing Individual Template \n" +
                                     "Worksheet: " + worksheet.Name + "\tRow: " + rowIndex +
                                     " \n" + e.ToString() + "\n", "error.log", true);
                 throw e;
@@ -708,9 +708,9 @@ namespace QMXFGenerator
                         };
 
                         roleQualification.name = new List<QMXFName>
-          { 
-            englishUSName 
-          };
+                        { 
+                            englishUSName 
+                        };
 
                         if (description != null && description.ToString() != String.Empty)
                         {
@@ -721,9 +721,9 @@ namespace QMXFGenerator
                             };
 
                             roleQualification.description = new List<Description>
-            {
-              englishUSDescription
-            };
+                            {
+                                englishUSDescription
+                            };
                         }
 
                         roleQualification.qualifies = parentRole.ToString().Trim();
@@ -751,7 +751,7 @@ namespace QMXFGenerator
                         }
                         else if (value != null && value.ToString() != String.Empty)
                         {
-                            
+
                             var query =
                               from @class in classList
                               where Convert.ToString(@class[(int)ClassColumns.Label]) == value.ToString()
@@ -764,7 +764,7 @@ namespace QMXFGenerator
                                     reference = query.FirstOrDefault()[(int)ClassColumns.ID + 1].ToString().Trim(),
                                 };
                             }
-                            
+
                         }
 
                         roleQualifications.Add(roleQualification);
@@ -776,8 +776,8 @@ namespace QMXFGenerator
             }
             catch (Exception e)
             {
-                Utility.WriteString("\nError Processing Role Qualification \n" + 
-                                    "\nRow: " + roleIndex + " \n" + e.ToString() +"\n", "error.log", true);
+                Utility.WriteString("\nError Processing Role Qualification \n" +
+                                    "\nRow: " + roleIndex + " \n" + e.ToString() + "\n", "error.log", true);
                 throw e;
             }
         }
