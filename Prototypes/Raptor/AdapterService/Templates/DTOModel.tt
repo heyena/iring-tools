@@ -295,10 +295,12 @@ void ProcessTemplateMap(TemplateMap templateMap, List<DataObjectMap> dataObjectM
 				initStatements.Add(lastDataContractName + " = new " + lastClassName + "()");
 			}
 #>
-	[DataContract(Namespace = "http://rdl.rdlfacade.org/data#")]
+	[DataContract(Namespace = "<#= dtoNamespace #>" )]
+	[XmlRoot(Namespace = "<#= dtoNamespace #>")]
 	public class Template<#= templateMap.name #>
 	{
-		[DataContract(Namespace = "http://rdl.rdlfacade.org/data#")]
+		[DataContract(Namespace = "<#= dtoNamespace #>" )]
+		[XmlRoot(Namespace = "<#= dtoNamespace #>")]
 		public class Class<#= roleMap.classMap.name #>
 		{
 			[DataMember(EmitDefaultValue=false)]

@@ -261,15 +261,17 @@ namespace AdapterService.Tests
       #endregion
 
       XDocument xmlFile = XDocument.Load(System.Environment.CurrentDirectory + @"\XML\DTOString.xml");
-      XNamespace ns = "http://def.bechtel.com/12345_000/data#";
-      XNamespace propertyNS = "http://dto.iringtools.org";
+      XNamespace ns1 = "http://schemas.datacontract.org/2004/07/org.iringtools.adapter";
+      XNamespace ns2 = "http://dto.iringtools.org";
+      XNamespace ns3 = "http://DEF.bechtel.com/12345_000/data#";
+      
 
       List<org.iringtools.adapter.proj_12345_000.ABC.Lines> lineList = new List<org.iringtools.adapter.proj_12345_000.ABC.Lines>();
-      var query1 = from c in xmlFile.Elements("Envelope").Elements("Payload").Elements("DataTransferObject")
+      var query1 = from c in xmlFile.Elements(ns1 + "Envelope").Elements(ns2 + "Payload").Elements("DataTransferObject")
                    select c;
       foreach (var dto in query1)
       {
-        var query2 = from c in dto.Elements(propertyNS + "Properties").Elements(propertyNS + "Property")
+        var query2 = from c in dto.Elements("Properties").Elements("Property")
                      select c;
 
         org.iringtools.adapter.proj_12345_000.ABC.Lines line = new org.iringtools.adapter.proj_12345_000.ABC.Lines();
