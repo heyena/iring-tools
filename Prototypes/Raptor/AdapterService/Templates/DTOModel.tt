@@ -67,7 +67,9 @@ foreach (GraphMap graphMap in mapping.graphMaps)
 <# 
 		foreach (ExtendedDataProperty extendedDataProperty in extendedDataProperties)
 		{
-#>				tpl_<#= extendedDataProperty.templateName + "_" + extendedDataProperty.roleName #> = (<#= extendedDataProperty.dataType #>)dataObject.<#= extendedDataProperty.propertyName #>;
+#>
+		<#= lastDataContractNameForProperty + "_tpl_" + extendedDataProperty.templateName + "_" + extendedDataProperty.roleName #> = (<#= extendedDataProperty.dataType #>)dataObject.<#= extendedDataProperty.propertyName #>;
+				
 <#
 		}
 #>
@@ -109,21 +111,22 @@ foreach (GraphMap graphMap in mapping.graphMaps)
 		
 		if (extendedDataProperty.isDataMember)
 		{
-#>		[DataMember(Name = "<#= "tpl_" + extendedDataProperty.templateName + "_" + extendedDataProperty.roleName #>", EmitDefaultValue = false)]
+#>		[DataMember(Name = "<#= lastDataContractNameForProperty + "_tpl_" + extendedDataProperty.templateName + "_" + extendedDataProperty.roleName #>", EmitDefaultValue = false)]
 <#
 		}
 #>
+
 		[XmlIgnore]
-		public <#= nullableType + " tpl_" + extendedDataProperty.templateName + "_" + extendedDataProperty.roleName #>
+		public <#= nullableType + " " + lastDataContractNameForProperty + "_tpl_" + extendedDataProperty.templateName + "_" + extendedDataProperty.roleName #>
 		{
 			get
 			{
-				return (<#= extendedDataProperty.dataType #>)GetPropertyValue("<#= "tpl_" + extendedDataProperty.templateName + "_" + extendedDataProperty.roleName #>");
+				return (<#= extendedDataProperty.dataType #>)GetPropertyValue("<#= lastDataContractNameForProperty + "_tpl_" + extendedDataProperty.templateName + "_" + extendedDataProperty.roleName #>");
 			}
 
 			set
 			{
-				SetPropertyValue("<#= "tpl_" + extendedDataProperty.templateName + "_" + extendedDataProperty.roleName #>", value);
+				SetPropertyValue("<#= lastDataContractNameForProperty + "_tpl_" + extendedDataProperty.templateName + "_" + extendedDataProperty.roleName #>", value);
 			}
 		}
 		
@@ -180,7 +183,8 @@ foreach (GraphMap graphMap in mapping.graphMaps)
 				
 				if (!extendedDataProperty.isPropertyKey)
 				{
-#>				((<#= qualifiedDataObjectName #>)_dataObject).<#= extendedDataProperty.propertyName #> = (<#= extendedDataProperty.dataType #>)this.tpl_<#= extendedDataProperty.templateName + "_" + extendedDataProperty.roleName #>;
+				
+#>				((<#= qualifiedDataObjectName #>)_dataObject).<#= extendedDataProperty.propertyName #> = (<#= extendedDataProperty.dataType #>)this.<#= lastDataContractNameForProperty + "_tpl_" + extendedDataProperty.templateName + "_" + extendedDataProperty.roleName #>;
 <#				
 				}
 			}
@@ -230,6 +234,7 @@ foreach (GraphMap graphMap in mapping.graphMaps)
 <#+
 static string lastClassName = string.Empty;
 static string lastDataContractName = string.Empty;
+static string lastDataContractNameForProperty = string.Empty;
 static List<ExtendedDataProperty> extendedDataProperties = new List<ExtendedDataProperty>();
 static List<string> initStatements = new List<string>();
 
@@ -262,6 +267,7 @@ void ProcessGraphMap(GraphMap graphMap)
 	{
 		lastClassName = string.Empty;
 		lastDataContractName = string.Empty;
+		lastDataContractNameForProperty = string.Empty;
 		ProcessTemplateMap(templateMap, graphMap.dataObjectMaps, true);
 	}
 }
@@ -285,6 +291,7 @@ void ProcessTemplateMap(TemplateMap templateMap, List<DataObjectMap> dataObjectM
 			{
 				lastClassName = "Template" + templateMap.name;
 				lastDataContractName = "tpl_" + templateMap.name;
+				lastDataContractNameForProperty = "tpl_" + templateMap.name;
 				initStatements.Add(lastDataContractName + " = new " + lastClassName + "()");
 				
 			}
@@ -292,6 +299,7 @@ void ProcessTemplateMap(TemplateMap templateMap, List<DataObjectMap> dataObjectM
 			{
 				lastClassName += ".Template" + templateMap.name;	
 				lastDataContractName += ".tpl_" + templateMap.name;		
+				lastDataContractNameForProperty += "_tpl_" + templateMap.name;
 				initStatements.Add(lastDataContractName + " = new " + lastClassName + "()");
 			}
 #>
@@ -358,7 +366,7 @@ void ProcessRoleMap(String templateName, RoleMap roleMap, List<DataObjectMap> da
 					
 					if (!isDataMember)
 					{
-						initStatements.Add(lastDataContractName + ".tpl_" + templateName + "_" + roleMap.name + " = tpl_" + templateName + "_" + extendedDataProperty.roleName);
+						initStatements.Add(lastDataContractName + ".tpl_" + templateName + "_" + roleMap.name + " = " + lastDataContractNameForProperty + "_tpl_" + templateName + "_" + roleMap.name);
 #>
 			[DataMember(EmitDefaultValue = false)]
 			public <#= dataProperty.dataType + " tpl_" + templateName + "_" + roleMap.name #> { get; set; }
@@ -389,6 +397,7 @@ void ProcessClassMap(RoleMap roleMap, List<DataObjectMap> dataObjectMaps)
 {			
 	lastClassName += ".Class" + roleMap.classMap.name;
 	lastDataContractName += "." + roleMap.name + "_rdl_" + roleMap.classMap.name;		
+	lastDataContractNameForProperty += "_" + roleMap.name + "_rdl_" + roleMap.classMap.name;
 	initStatements.Add(lastDataContractName + " = new " + lastClassName + "()");
 	
 	string combinedClassId = String.Empty;
@@ -400,7 +409,7 @@ void ProcessClassMap(RoleMap roleMap, List<DataObjectMap> dataObjectMaps)
 			combinedClassId += " + ";
 		}
 		
-		combinedClassId += "((GetPropertyValue(\"" + classId.Trim() + "\") != null) ? GetPropertyValue(\"" + classId.Trim() + "\").ToString() : \"\")";
+		combinedClassId += "((GetPropertyValueByInternalName(\"" + classId.Trim() + "\") != null) ? GetPropertyValueByInternalName(\"" + classId.Trim() + "\").ToString() : \"\")";
 	}
 	
 	initStatements.Add(lastDataContractName + ".Identifier = " + combinedClassId);
