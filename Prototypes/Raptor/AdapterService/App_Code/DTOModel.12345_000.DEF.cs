@@ -56,9 +56,9 @@ namespace org.iringtools.adapter.proj_12345_000.DEF
 
 		public Lines(string classId, string graphName, string identifier) 
 			: base(classId, graphName)
-		{   
-			_properties.Add(new DTOProperty(@"tag", @"tpl_PipingNetworkSystemName_identifier", null, typeof(String), false, false));
-			_properties.Add(new DTOProperty(@"system", @"tpl_SystemName_identifier", null, typeof(String), false, false));
+		{
+      _properties.Add(new DTOProperty(@"tag", @"tpl_PipingNetworkSystemName_identifier", null, typeof(String), false, false));
+      _properties.Add(new DTOProperty(@"system", @"tpl_SystemPipingNetworkSystemAssembly_hasClassOfWhole_rdl_System_tpl_SystemName_identifier", null, typeof(String), false, false));
 
 			Identifier = identifier;
 			ClassId = classId;
@@ -73,13 +73,13 @@ namespace org.iringtools.adapter.proj_12345_000.DEF
 			if (dataObject != null)
 			{
 				tpl_PipingNetworkSystemName_identifier = (String)dataObject.tag;
-				tpl_SystemName_identifier = (String)dataObject.system;
+        tpl_SystemPipingNetworkSystemAssembly_hasClassOfWhole_rdl_System_tpl_SystemName_identifier = (String)dataObject.system;
 			}
 			
 			tpl_SystemPipingNetworkSystemAssembly = new TemplateSystemPipingNetworkSystemAssembly();
 			tpl_SystemPipingNetworkSystemAssembly.hasClassOfWhole_rdl_System = new TemplateSystemPipingNetworkSystemAssembly.ClassSystem();
-			tpl_SystemPipingNetworkSystemAssembly.hasClassOfWhole_rdl_System.Identifier = ((GetPropertyValue("system") != null) ? GetPropertyValue("system").ToString() : "");
-			tpl_SystemPipingNetworkSystemAssembly.hasClassOfWhole_rdl_System.tpl_SystemName_identifier = tpl_SystemName_identifier;
+      tpl_SystemPipingNetworkSystemAssembly.hasClassOfWhole_rdl_System.Identifier = ((GetPropertyValueByInternalName("tag") ?? "").ToString());
+      tpl_SystemPipingNetworkSystemAssembly.hasClassOfWhole_rdl_System.tpl_SystemName_identifier = tpl_SystemPipingNetworkSystemAssembly_hasClassOfWhole_rdl_System_tpl_SystemName_identifier;
 	      
 			_dataObject = dataObject;
 		} 
@@ -103,7 +103,7 @@ namespace org.iringtools.adapter.proj_12345_000.DEF
 		}
 		
 		[XmlIgnore]
-		public String tpl_SystemName_identifier
+    public String tpl_SystemPipingNetworkSystemAssembly_hasClassOfWhole_rdl_System_tpl_SystemName_identifier
 		{
 			get
 			{
@@ -124,7 +124,7 @@ namespace org.iringtools.adapter.proj_12345_000.DEF
 				}
 				
 				((org.iringtools.adapter.proj_12345_000.DEF.Line)_dataObject).tag = (String)this.tpl_PipingNetworkSystemName_identifier;
-				((org.iringtools.adapter.proj_12345_000.DEF.Line)_dataObject).system = (String)this.tpl_SystemName_identifier;
+        ((org.iringtools.adapter.proj_12345_000.DEF.Line)_dataObject).system = (String)this.tpl_SystemPipingNetworkSystemAssembly_hasClassOfWhole_rdl_System_tpl_SystemName_identifier;
 
 			return _dataObject;
 		}
