@@ -415,11 +415,13 @@ void ProcessClassMap(RoleMap roleMap, List<DataObjectMap> dataObjectMaps)
 	
 	string lastClassNameSave = lastClassName;
 	string lastDataContractNameSave = lastDataContractName;
+	string lastDataContractNameForPropertySave = lastDataContractNameForProperty;
 			
 	foreach (TemplateMap templateMap in roleMap.classMap.templateMaps)
 	{
 		lastClassName = lastClassNameSave;
 		lastDataContractName = lastDataContractNameSave;
+		lastDataContractNameForProperty = lastDataContractNameForPropertySave;
 		ProcessTemplateMap(templateMap, dataObjectMaps, false);
 	}
 }
