@@ -43,7 +43,7 @@ foreach (GraphMap graphMap in mapping.graphMaps)
 	foreach (ExtendedDataProperty extendedDataProperty in extendedDataProperties)
 	{
 
-#>			_properties.Add(new DTOProperty(@"<#= extendedDataProperty.propertyName #>", @"<#= "tpl_" + extendedDataProperty.templateName + "_" + extendedDataProperty.roleName #>", null, typeof(<#= extendedDataProperty.dataType #>), <#= Convert.ToString(extendedDataProperty.isPropertyKey).ToLower() #>, <#= Convert.ToString(extendedDataProperty.isRequired).ToLower() #>));
+#>			_properties.Add(new DTOProperty(@"<#= extendedDataProperty.propertyName #>", @"<#= lastDataContractNameForProperty + "_tpl_" + extendedDataProperty.templateName + "_" + extendedDataProperty.roleName #>", null, typeof(<#= extendedDataProperty.dataType #>), <#= Convert.ToString(extendedDataProperty.isPropertyKey).ToLower() #>, <#= Convert.ToString(extendedDataProperty.isRequired).ToLower() #>));
 <#
 	}
 #>
@@ -68,8 +68,7 @@ foreach (GraphMap graphMap in mapping.graphMaps)
 		foreach (ExtendedDataProperty extendedDataProperty in extendedDataProperties)
 		{
 #>
-		<#= lastDataContractNameForProperty + "_tpl_" + extendedDataProperty.templateName + "_" + extendedDataProperty.roleName #> = (<#= extendedDataProperty.dataType #>)dataObject.<#= extendedDataProperty.propertyName #>;
-				
+			<#= lastDataContractNameForProperty + "_tpl_" + extendedDataProperty.templateName + "_" + extendedDataProperty.roleName #> = (<#= extendedDataProperty.dataType #>)dataObject.<#= extendedDataProperty.propertyName #>;				
 <#
 		}
 #>
