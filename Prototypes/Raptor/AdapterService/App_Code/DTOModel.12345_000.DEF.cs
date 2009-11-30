@@ -23,16 +23,16 @@ using org.iringtools.utility;
 
 namespace org.iringtools.adapter.proj_12345_000.DEF 
 {
-	[DataContract(Name = "Lines", Namespace = "http://DEF.bechtel.com/12345_000/data#" )]
-	[XmlRoot(Namespace = "http://DEF.bechtel.com/12345_000/data#")]
+	[DataContract(Name = "Lines", Namespace = "http://def.bechtel.com/12345_000/data#")]
+  [XmlRoot(Namespace = "http://def.bechtel.com/12345_000/data#")]
 	public class Lines : DataTransferObject
 	{
-	[DataContract(Namespace = "http://DEF.bechtel.com/12345_000/data#" )]
-	[XmlRoot(Namespace = "http://DEF.bechtel.com/12345_000/data#")]
-	public class TemplateSystemPipingNetworkSystemAssembly
+    [DataContract(Namespace = "http://def.bechtel.com/12345_000/data#")]
+    [XmlRoot(Namespace = "http://def.bechtel.com/12345_000/data#")]
+	  public class TemplateSystemPipingNetworkSystemAssembly
 	{
-		[DataContract(Namespace = "http://DEF.bechtel.com/12345_000/data#" )]
-		[XmlRoot(Namespace = "http://DEF.bechtel.com/12345_000/data#")]
+    [DataContract(Namespace = "http://def.bechtel.com/12345_000/data#")]
+    [XmlRoot(Namespace = "http://def.bechtel.com/12345_000/data#")]
 		public class ClassSystem
 		{
 			[DataMember(EmitDefaultValue=false)]
@@ -56,16 +56,16 @@ namespace org.iringtools.adapter.proj_12345_000.DEF
 
 		public Lines(string classId, string graphName, string identifier) 
 			: base(classId, graphName)
-		{   
-			_properties.Add(new DTOProperty(@"tag", @"tpl_PipingNetworkSystemName_identifier", null, typeof(String), false, false));
-			_properties.Add(new DTOProperty(@"system", @"tpl_SystemName_identifier", null, typeof(String), false, false));
+		{
+      _properties.Add(new DTOProperty(@"tag", @"tpl_PipingNetworkSystemName_identifier", null, typeof(String), false, false));
+      _properties.Add(new DTOProperty(@"system", @"tpl_SystemName_identifier", null, typeof(String), false, false));
 
 			Identifier = identifier;
-			ClassId = classId;
+      ClassId = classId;
 		}
 	
 		public Lines(org.iringtools.adapter.proj_12345_000.DEF.Line dataObject)
-			: this("http://rdl.rdlfacade.org/data#R19192462550", "Lines", null, dataObject) {}
+      : this("http://rdl.rdlfacade.org/data#R19192462550", "Lines", null, dataObject) { }
 			
 		public Lines(string classId, string graphName, string identifier, org.iringtools.adapter.proj_12345_000.DEF.Line dataObject) 
 			: this(classId, graphName, identifier)
@@ -78,14 +78,14 @@ namespace org.iringtools.adapter.proj_12345_000.DEF
 			
 			tpl_SystemPipingNetworkSystemAssembly = new TemplateSystemPipingNetworkSystemAssembly();
 			tpl_SystemPipingNetworkSystemAssembly.hasClassOfWhole_rdl_System = new TemplateSystemPipingNetworkSystemAssembly.ClassSystem();
-			tpl_SystemPipingNetworkSystemAssembly.hasClassOfWhole_rdl_System.Identifier = ((GetPropertyValue("system") != null) ? GetPropertyValue("system").ToString() : "");
+      tpl_SystemPipingNetworkSystemAssembly.hasClassOfWhole_rdl_System.Identifier = ((GetPropertyValue("tpl_PipingNetworkSystemName_identifier") != null) ? GetPropertyValue("tpl_PipingNetworkSystemName_identifier").ToString() : "");
 			tpl_SystemPipingNetworkSystemAssembly.hasClassOfWhole_rdl_System.tpl_SystemName_identifier = tpl_SystemName_identifier;
 	      
 			_dataObject = dataObject;
 		} 
 		
 		public Lines()
-			: this("http://rdl.rdlfacade.org/data#R19192462550", "Lines", null) {}			
+      : this("http://rdl.rdlfacade.org/data#R19192462550", "Lines", null) { }			
 
 		[DataMember(Name = "tpl_PipingNetworkSystemName_identifier", EmitDefaultValue = false)]
 		[XmlIgnore]
@@ -93,12 +93,12 @@ namespace org.iringtools.adapter.proj_12345_000.DEF
 		{
 			get
 			{
-				return (String)GetPropertyValue("tag");
+        return (String)GetPropertyValue("tpl_PipingNetworkSystemName_identifier");
 			}
 
 			set
 			{
-				SetPropertyValue("tag", value);
+        SetPropertyValue("tpl_PipingNetworkSystemName_identifier", value);
 			}
 		}
 		
@@ -107,12 +107,12 @@ namespace org.iringtools.adapter.proj_12345_000.DEF
 		{
 			get
 			{
-				return (String)GetPropertyValue("system");
+        return (String)GetPropertyValue("tpl_SystemName_identifier");
 			}
 
 			set
 			{
-				SetPropertyValue("system", value);
+        SetPropertyValue("tpl_SystemName_identifier", value);
 			}
 		}
 		
@@ -122,8 +122,7 @@ namespace org.iringtools.adapter.proj_12345_000.DEF
 				{
 					_dataObject = new org.iringtools.adapter.proj_12345_000.DEF.Line();
 				}
-				
-				((org.iringtools.adapter.proj_12345_000.DEF.Line)_dataObject).tag = (String)this.tpl_PipingNetworkSystemName_identifier;
+        ((org.iringtools.adapter.proj_12345_000.DEF.Line)_dataObject).tag = (String)this.tpl_PipingNetworkSystemName_identifier;
 				((org.iringtools.adapter.proj_12345_000.DEF.Line)_dataObject).system = (String)this.tpl_SystemName_identifier;
 
 			return _dataObject;
