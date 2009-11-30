@@ -18,6 +18,7 @@ namespace <#= adapterNamespace #>
 	public partial interface IService
 	{    
 		[OperationContract]
+		[XmlSerializerFormat]
 <#
 		GetKnownTypes();
 #>
@@ -25,6 +26,7 @@ namespace <#= adapterNamespace #>
 		Envelope Get(string projectName, string applicationName, string graphName, string identifier);
 		
 		[OperationContract]
+		[XmlSerializerFormat]
 <# 
 		GetKnownTypes();
 #>

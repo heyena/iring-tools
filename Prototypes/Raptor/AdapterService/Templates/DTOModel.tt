@@ -118,12 +118,12 @@ foreach (GraphMap graphMap in mapping.graphMaps)
 		{
 			get
 			{
-				return (<#= extendedDataProperty.dataType #>)GetPropertyValue("<#= extendedDataProperty.propertyName #>");
+				return (<#= extendedDataProperty.dataType #>)GetPropertyValue("<#= "tpl_" + extendedDataProperty.templateName + "_" + extendedDataProperty.roleName #>");
 			}
 
 			set
 			{
-				SetPropertyValue("<#= extendedDataProperty.propertyName#>", value);
+				SetPropertyValue("<#= "tpl_" + extendedDataProperty.templateName + "_" + extendedDataProperty.roleName #>", value);
 			}
 		}
 		

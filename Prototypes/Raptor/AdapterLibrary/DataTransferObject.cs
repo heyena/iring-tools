@@ -33,7 +33,7 @@ using System.Linq;
 
 namespace org.iringtools.adapter
 {
-  [XmlRoot(ElementName = "Envelope")]
+  [XmlRoot(ElementName = "Envelope", Namespace = "http://dto.iringtools.org")]
   public class Envelope
   {
     [XmlArray]
