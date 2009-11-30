@@ -239,7 +239,7 @@ namespace AdapterService.Tests
       AdapterProxy target = new AdapterProxy();
       WebHttpClient httpClient = new WebHttpClient(@"http://localhost:52786/Service.svc");
       string dtoListString = httpClient.GetMessage(@"/12345_000/DEF/Lines/2-SC-L069");
-
+      File.WriteAllText(System.Environment.CurrentDirectory + @"\XML\DTOString.xml", dtoListString, System.Text.Encoding.UTF8);
       #region Deserialization code
       //StringReader input = new StringReader(dtoListString);
       //XmlReaderSettings settings = new XmlReaderSettings();
@@ -261,27 +261,26 @@ namespace AdapterService.Tests
       #endregion
 
       XDocument xmlFile = XDocument.Load(System.Environment.CurrentDirectory + @"\XML\DTOString.xml");
-      XNamespace ns1 = "http://schemas.datacontract.org/2004/07/org.iringtools.adapter";
-      XNamespace ns2 = "http://dto.iringtools.org";
-      XNamespace ns3 = "http://DEF.bechtel.com/12345_000/data#";
-      
+      XNamespace propertyNS = "http://dto.iringtools.org";
+      XNamespace projectNS = "http://DEF.bechtel.com/12345_000/data#";
 
       List<org.iringtools.adapter.proj_12345_000.ABC.Lines> lineList = new List<org.iringtools.adapter.proj_12345_000.ABC.Lines>();
-      var query1 = from c in xmlFile.Elements(ns1 + "Envelope").Elements(ns2 + "Payload").Elements("DataTransferObject")
+
+      var query1 = from c in xmlFile.Elements(propertyNS + "Envelope").Elements(propertyNS + "Payload").Elements(propertyNS + "DataTransferObject")
                    select c;
       foreach (var dto in query1)
       {
-        var query2 = from c in dto.Elements("Properties").Elements("Property")
+        var query2 = from c in dto.Elements(propertyNS + "Properties").Elements(propertyNS + "Property")
                      select c;
 
         org.iringtools.adapter.proj_12345_000.ABC.Lines line = new org.iringtools.adapter.proj_12345_000.ABC.Lines();
 
         foreach (var dtoProperty in query2)
         {
-          if (dtoProperty.Attribute("name").Value == "tpl_PipingNetworkSystemName_identifier")
-            line.tpl_PipingNetworkSystemName_identifier = dtoProperty.Attribute("value").Value;
-          if (dtoProperty.Attribute("name").Value == "tpl_SystemName_identifier")
-            line.tpl_SystemName_identifier = dtoProperty.Attribute("value").Value;
+          if (dtoProperty.Attribute("name").Value == "tpl_SystemPipingNetworkSystemAssembly_hasClassOfWhole_rdl_System_tpl_PipingNetworkSystemName_identifier")
+            line.tpl_PipingNetworkSystemName_identifier = dtoProperty.Attribute("value").Value.ToString();
+          if (dtoProperty.Attribute("name").Value == "tpl_SystemPipingNetworkSystemAssembly_hasClassOfWhole_rdl_System_tpl_SystemName_identifier")
+            line.tpl_SystemName_identifier = dtoProperty.Attribute("value").Value.ToString();
         }
         lineList.Add(line);
       }
