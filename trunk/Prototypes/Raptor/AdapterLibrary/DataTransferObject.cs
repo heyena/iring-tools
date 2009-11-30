@@ -147,8 +147,23 @@ namespace org.iringtools.adapter
     public object GetPropertyValue(string propertyName)
     {
       DTOProperty property = GetProperty(propertyName);
-      object value = null;
+      object value = ConvertToObject(property);
       
+      return value;
+    }
+
+    public object GetPropertyValueByInternalName(string propertyName)
+    {
+      DTOProperty property = GetPropertyByInternalName(propertyName);
+      object value = ConvertToObject(property);
+
+      return value;
+    }
+
+    private object ConvertToObject(DTOProperty property)
+    {
+      object value = null;
+
       if (property != null)
       {
         switch (property.Type.Name)
@@ -200,6 +215,16 @@ namespace org.iringtools.adapter
 					(from property in _properties
 					where property.OIMProperty == propertyName
 					select property).FirstOrDefault<DTOProperty>();   
+
+      return namedProperty;
+    }
+
+    protected DTOProperty GetPropertyByInternalName(string propertyName)
+    {
+      DTOProperty namedProperty =
+          (from property in _properties
+           where property.Name == propertyName
+           select property).FirstOrDefault<DTOProperty>();
 
       return namedProperty;
     }
