@@ -89,8 +89,8 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 	}
 	
 	[DataMember(EmitDefaultValue = false)]
-    [XmlIgnore]
-    public TemplatePlantSystemAssembly tpl_PlantSystemAssembly { get; set; }     
+	[XmlIgnore]
+	public TemplatePlantSystemAssembly tpl_PlantSystemAssembly { get; set; }     
        
 		}
 
@@ -100,8 +100,8 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 	}
 	
 	[DataMember(EmitDefaultValue = false)]
-    [XmlIgnore]
-    public TemplateSystemPipingNetworkSystemAssembly tpl_SystemPipingNetworkSystemAssembly { get; set; }     
+	[XmlIgnore]
+	public TemplateSystemPipingNetworkSystemAssembly tpl_SystemPipingNetworkSystemAssembly { get; set; }     
        
 		}
 
@@ -111,8 +111,8 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 	}
 	
 	[DataMember(EmitDefaultValue = false)]
-    [XmlIgnore]
-    public TemplatePipingNetworkSystemPipingNetworkSegmentAssembly tpl_PipingNetworkSystemPipingNetworkSegmentAssembly { get; set; }     
+	[XmlIgnore]
+	public TemplatePipingNetworkSystemPipingNetworkSegmentAssembly tpl_PipingNetworkSystemPipingNetworkSegmentAssembly { get; set; }     
        
 		}
 
@@ -122,8 +122,8 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 	}
 	
 	[DataMember(EmitDefaultValue = false)]
-    [XmlIgnore]
-    public TemplatePipingNetworkSegmentInlinePipingComponentConnection tpl_PipingNetworkSegmentInlinePipingComponentConnection { get; set; }     
+	[XmlIgnore]
+	public TemplatePipingNetworkSegmentInlinePipingComponentConnection tpl_PipingNetworkSegmentInlinePipingComponentConnection { get; set; }     
        
 	[DataContract(Namespace = "http://ABC.bechtel.com/12345_000/data#" )]
 	[XmlRoot(Namespace = "http://ABC.bechtel.com/12345_000/data#")]
@@ -172,8 +172,8 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 	}
 	
 	[DataMember(EmitDefaultValue = false)]
-    [XmlIgnore]
-    public TemplatePlantProjectAssembly tpl_PlantProjectAssembly { get; set; }     
+	[XmlIgnore]
+	public TemplatePlantProjectAssembly tpl_PlantProjectAssembly { get; set; }     
        
 		}
 
@@ -183,8 +183,8 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 	}
 	
 	[DataMember(EmitDefaultValue = false)]
-    [XmlIgnore]
-    public TemplatePlantPlantAreaAssembly tpl_PlantPlantAreaAssembly { get; set; }     
+	[XmlIgnore]
+	public TemplatePlantPlantAreaAssembly tpl_PlantPlantAreaAssembly { get; set; }     
        
 			[DataMember(EmitDefaultValue = false)]
 			public String tpl_PlantAreaName_identifier { get; set; }
@@ -197,8 +197,8 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 	}
 	
 	[DataMember(EmitDefaultValue = false)]
-    [XmlIgnore]
-    public TemplatePlantAreaInlinePipingComponentAssembly tpl_PlantAreaInlinePipingComponentAssembly { get; set; }     
+	[XmlIgnore]
+	public TemplatePlantAreaInlinePipingComponentAssembly tpl_PlantAreaInlinePipingComponentAssembly { get; set; }     
        
 
 		public Valves(string classId, string graphName, string identifier) 
@@ -499,8 +499,8 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 	}
 	
 	[DataMember(EmitDefaultValue = false)]
-    [XmlIgnore]
-    public TemplatePlantProjectAssembly tpl_PlantProjectAssembly { get; set; }     
+	[XmlIgnore]
+	public TemplatePlantProjectAssembly tpl_PlantProjectAssembly { get; set; }     
        
 		}
 
@@ -510,8 +510,8 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 	}
 	
 	[DataMember(EmitDefaultValue = false)]
-    [XmlIgnore]
-    public TemplatePlantPlantAreaAssembly tpl_PlantPlantAreaAssembly { get; set; }     
+	[XmlIgnore]
+	public TemplatePlantPlantAreaAssembly tpl_PlantPlantAreaAssembly { get; set; }     
        
 		}
 
@@ -521,8 +521,8 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 	}
 	
 	[DataMember(EmitDefaultValue = false)]
-    [XmlIgnore]
-    public TemplatePlantAreaInlinePipingComponentAssembly tpl_PlantAreaInlinePipingComponentAssembly { get; set; }     
+	[XmlIgnore]
+	public TemplatePlantAreaInlinePipingComponentAssembly tpl_PlantAreaInlinePipingComponentAssembly { get; set; }     
        
 	[DataContract(Namespace = "http://ABC.bechtel.com/12345_000/data#" )]
 	[XmlRoot(Namespace = "http://ABC.bechtel.com/12345_000/data#")]
@@ -547,8 +547,8 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 	}
 	
 	[DataMember(EmitDefaultValue = false)]
-    [XmlIgnore]
-    public TemplatePandIDiagramPipingNetworkSegmentAssembly tpl_PandIDiagramPipingNetworkSegmentAssembly { get; set; }     
+	[XmlIgnore]
+	public TemplatePandIDiagramPipingNetworkSegmentAssembly tpl_PandIDiagramPipingNetworkSegmentAssembly { get; set; }     
        
 
 		public Instruments(string classId, string graphName, string identifier) 
@@ -873,8 +873,8 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 	}
 	
 	[DataMember(EmitDefaultValue = false)]
-    [XmlIgnore]
-    public TemplateSystemPipingNetworkSystemAssembly tpl_SystemPipingNetworkSystemAssembly { get; set; }     
+	[XmlIgnore]
+	public TemplateSystemPipingNetworkSystemAssembly tpl_SystemPipingNetworkSystemAssembly { get; set; }     
        
 
 		public Lines(string classId, string graphName, string identifier) 

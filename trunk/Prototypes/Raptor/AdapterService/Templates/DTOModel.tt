@@ -322,8 +322,8 @@ void ProcessTemplateMap(TemplateMap templateMap, List<DataObjectMap> dataObjectM
 	}
 	
 	[DataMember(EmitDefaultValue = false)]
-    [XmlIgnore]
-    public Template<#= templateMap.name + " tpl_" + templateMap.name #> { get; set; }     
+	[XmlIgnore]
+	public Template<#= templateMap.name + " tpl_" + templateMap.name #> { get; set; }     
        
 <#+
 		}
