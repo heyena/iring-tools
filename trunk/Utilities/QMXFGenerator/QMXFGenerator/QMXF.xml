@@ -1,1696 +1,2003 @@
 <?xml version="1.0" encoding="utf-8"?>
 <qmxf xmlns="http://ns.ids-adi.org/qxf/model#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <class-definition id="http://rdl.rdlfacade.org/data#R79148372389">
+  <class-definition id="http://rdl.rdlfacade.org/data#R12994471270">
     <repository/>
     <name lang="EN-US">110 V 50 Hz AC</name>
     <description lang="EN-US">110 Volts AC Power Supply Voltage with a frequency of 50 Hertz</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R51482962857">
+  <class-definition id="http://rdl.rdlfacade.org/data#R11726775471">
     <repository/>
     <name lang="EN-US">110 V 60 Hz AC</name>
     <description lang="EN-US">110 Volts AC Power Supply Voltage with a frequency of 60 Hertz</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R70884331314">
+  <class-definition id="http://rdl.rdlfacade.org/data#R18172345501">
     <repository/>
     <name lang="EN-US">12 V DC</name>
     <description lang="EN-US">12 Volts DC Power Supply Voltage</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R18717498195">
+  <class-definition id="http://rdl.rdlfacade.org/data#R10311241342">
     <repository/>
     <name lang="EN-US">220 V 50 Hz AC</name>
     <description lang="EN-US">220 Volts AC Power Supply Voltage with a frequency of 50 Hertz</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R68145023879">
+  <class-definition id="http://rdl.rdlfacade.org/data#R29631532478">
     <repository/>
     <name lang="EN-US">220 V 60 Hz AC</name>
     <description lang="EN-US">220 Volts AC Power Supply Voltage with a frequency of 60 Hertz</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R50753443641">
+  <class-definition id="http://rdl.rdlfacade.org/data#R75205628286">
     <repository/>
     <name lang="EN-US">24 VDC</name>
     <description lang="EN-US">24 Volts DC Power Supply Voltage</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R77670200974">
+  <class-definition id="http://rdl.rdlfacade.org/data#R64876526707">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfIdentification"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfIdentification"/>
     <name lang="EN-US">3D APPLICATION-SPECIFIC IDENTIFIER</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R49566855043">
+  <class-definition id="http://rdl.rdlfacade.org/data#R62121319291">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfIdentification"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfIdentification"/>
     <name lang="EN-US">ALTERNATE TAG IDENTIFICATION CODE</name>
     <description lang="EN-US">An alternate identification code for a 'functional_physical_object'.</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R83711282127">
+  <class-definition id="http://rdl.rdlfacade.org/data#R46897302232">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfIdentification"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfIdentification"/>
     <name lang="EN-US">APPLICATION-SPECIFIC IDENTIFIER</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R17593388498">
+  <class-definition id="http://rdl.rdlfacade.org/data#R83229815025">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfIdentification"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfIdentification"/>
     <name lang="EN-US">CLIENT COMMODITY GROUP CODE</name>
     <description lang="EN-US">A code that identifies a type of commodity in a client's component numbering system</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R72240159721">
+  <class-definition id="http://rdl.rdlfacade.org/data#R98471429623">
     <repository/>
     <name lang="EN-US">CLIENT DRAWING IDENTIFICATION CODE</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R33526459560">
+  <class-definition id="http://rdl.rdlfacade.org/data#R86272344226">
     <repository/>
     <name lang="EN-US">CLIENT FUNCTIONAL UNIT</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R42134757297">
+  <class-definition id="http://rdl.rdlfacade.org/data#R50670708049">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfIdentification"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfIdentification"/>
     <name lang="EN-US">CLIENT FUNCTIONAL UNIT IDENTIFIER</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R43600385876">
+  <class-definition id="http://rdl.rdlfacade.org/data#R42075078494">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfIdentification"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfIdentification"/>
     <name lang="EN-US">CLIENT STOCK CODE</name>
     <description lang="EN-US">A code that identifies a type of object in a client's numbering system</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R89769895823">
+  <class-definition id="http://rdl.rdlfacade.org/data#R83261948867">
     <repository/>
     <name lang="EN-US">CLIENT SYSTEM</name>
     <description lang="EN-US"> A functional object which is an assembly of functional objects forming a network to provide a type of service or serving a common purpose</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R21402456839">
+  <class-definition id="http://rdl.rdlfacade.org/data#R19769740215">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfDescription"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfDescription"/>
     <name lang="EN-US">CLIENT TAG DESCRIPTION</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R15881052843">
+  <class-definition id="http://rdl.rdlfacade.org/data#R78442162582">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfIdentification"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfIdentification"/>
     <name lang="EN-US">COMMODITY CODE</name>
     <description lang="EN-US">A code that identifies a type of commodity</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R50164772781">
+  <class-definition id="http://rdl.rdlfacade.org/data#R47328875267">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfIdentification"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfIdentification"/>
     <name lang="EN-US">COMMODITY GROUP CODE</name>
     <description lang="EN-US">A code that identifies a type of commodity</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R60011278281">
+  <class-definition id="http://rdl.rdlfacade.org/data#R65538868823">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfIdentification"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfIdentification"/>
     <name lang="EN-US">COMMODITY GROUP SEQUENCE CODE</name>
     <description lang="EN-US">A sequence code that for a type of commodity</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R18581716027">
+  <class-definition id="http://rdl.rdlfacade.org/data#R48614862966">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfIdentification"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfIdentification"/>
     <name lang="EN-US">COMPONENT IDENTIFICATION NUMBER</name>
     <description lang="EN-US">An alternate identification code for a 'functional_physical_object'.</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R76850159378">
+  <class-definition id="http://rdl.rdlfacade.org/data#R85548584210">
     <repository/>
-    <entity-type reference="dm:ClassOfEvent"/>
-    <specialization reference="rdl:R72912758693" label="DELIVERY DATE"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfEvent"/>
+    <specialization reference="http://rdl.rdlfacade.org/data#R72912758693" label="DELIVERY DATE"/>
     <name lang="EN-US">CONTRACT DELIVERY DATE</name>
     <description lang="EN-US">A date for delivery that is specified in a contract</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R52847811001">
+  <class-definition id="http://rdl.rdlfacade.org/data#R49795289575">
     <repository/>
     <name lang="EN-US">CUT LENGTH</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R43257834292">
+  <class-definition id="http://rdl.rdlfacade.org/data#R28132645972">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfIdentification"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfIdentification"/>
     <name lang="EN-US">DOCUMENT TITLE</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R23811406577">
+  <class-definition id="http://rdl.rdlfacade.org/data#R69707104020">
     <repository/>
     <name lang="EN-US">ELECTROMAGNETIC FLOW METER SENSOR</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R10129164370">
+  <class-definition id="http://rdl.rdlfacade.org/data#R83192523772">
     <repository/>
     <name lang="EN-US">ENGINEERED LENGTH</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R99803125127">
+  <class-definition id="http://rdl.rdlfacade.org/data#R43671565934">
     <repository/>
-    <entity-type reference="dm:ClassOfEvent"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfEvent"/>
     <name lang="EN-US">ENGINEERING RELEASE DATE</name>
     <description lang="EN-US">A date that an object is released by an engineering group</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R98683850284">
+  <class-definition id="http://rdl.rdlfacade.org/data#R23782597969">
     <repository/>
+    <specialization reference="http://rdl.rdlfacade.org/data#R65486958478" label="TAGGED ITEM"/>
     <name lang="EN-US">ENTERPRISE</name>
     <description lang="EN-US">An enterprise is a collection of one or more sites.</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R19643766082">
+  <class-definition id="http://rdl.rdlfacade.org/data#R67266174704">
     <repository/>
     <name lang="EN-US">EQUIPMENT</name>
     <description lang="EN-US">An artifact or physical object used in an operation or activity.</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R33880774746">
+  <class-definition id="http://rdl.rdlfacade.org/data#R85207147008">
     <repository/>
-    <entity-type reference="dm:ClassOfEvent"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfEvent"/>
     <name lang="EN-US">FLUSH COMPLETION DATE</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R58597405133">
+  <class-definition id="http://rdl.rdlfacade.org/data#R94895602408">
     <repository/>
-    <entity-type reference="dm:ClassOfEvent"/>
-    <specialization reference="rdl:R72912758693" label="DELIVERY DATE"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfEvent"/>
+    <specialization reference="http://rdl.rdlfacade.org/data#R72912758693" label="DELIVERY DATE"/>
     <name lang="EN-US">FORECAST DELIVERY DATE</name>
     <description lang="EN-US">A date that delivery is forecast to take place</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R58851856066">
+  <class-definition id="http://rdl.rdlfacade.org/data#R86727593574">
     <repository/>
-    <entity-type reference="dm:ClassOfEvent"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfEvent"/>
     <name lang="EN-US">FORECAST VENDOR SHIP DATE</name>
     <description lang="EN-US">A date that a vendor is forecast to ship an object to a destination</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R19245294176">
+  <class-definition id="http://rdl.rdlfacade.org/data#R50506996451">
     <repository/>
     <name lang="EN-US">FUNCTIONAL UNIT</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R60196399643">
+  <class-definition id="http://rdl.rdlfacade.org/data#R63696552270">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfIdentification"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfIdentification"/>
     <name lang="EN-US">FUNCTIONAL UNIT NAME</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R16319326753">
+  <class-definition id="http://rdl.rdlfacade.org/data#R69834258420">
     <repository/>
     <name lang="EN-US">GROUNDING RINGS</name>
     <description lang="EN-US">Rings provided with an Electro Magnetic Flowmeter for grounding, to avoid stray currents.</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R97943779074">
+  <class-definition id="http://rdl.rdlfacade.org/data#R43096252790">
     <repository/>
-    <entity-type reference="dm:ClassOfEvent"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfEvent"/>
     <name lang="EN-US">HOLD DATE</name>
     <description lang="EN-US">A date that an object is placed on hold</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R43934639760">
+  <class-definition id="http://rdl.rdlfacade.org/data#R43985744507">
     <repository/>
-    <entity-type reference="dm:ClassOfEvent"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfEvent"/>
     <name lang="EN-US">HOLD RELEASE DATE</name>
     <description lang="EN-US">A date that a hold is removed from an object</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R37985927471">
+  <class-definition id="http://rdl.rdlfacade.org/data#R11926638339">
     <repository/>
-    <entity-type reference="dm:ClassOfEvent"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfEvent"/>
     <name lang="EN-US">HYDROSTATIC TESTING DATE</name>
     <description lang="EN-US">A date that an object or system undergoes hydrostatic testing</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R89546036588">
+  <class-definition id="http://rdl.rdlfacade.org/data#R88036918092">
     <repository/>
+    <specialization reference="http://rdl.rdlfacade.org/data#R65486958478" label="TAGGED ITEM"/>
     <name lang="EN-US">INSTRUMENT</name>
     <description lang="EN-US">A device used to measure and / or control magnitude of a quantity or condition and can perform one or more of the functions like sensing, transmitting, measurement, indication, recording and regulating.</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R84244995793">
+  <class-definition id="http://rdl.rdlfacade.org/data#R44958652119">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfIdentification"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfIdentification"/>
     <name lang="EN-US">INSTRUMENTATION APPLICATION-SPECIFIC IDENTIFIER</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R56473405797">
+  <class-definition id="http://rdl.rdlfacade.org/data#R15859258795">
     <repository/>
-    <entity-type reference="dm:Role"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#Role"/>
     <name lang="EN-US">INSULATION PURPOSE</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R10438543709">
+  <class-definition id="http://rdl.rdlfacade.org/data#R95242016402">
     <repository/>
-    <name lang="EN-US">LOCAL INDICATOR TYPE</name>
-    <description lang="EN-US">Analog or Digital Indicator provided as an option with a transmitter.</description>
-  </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R76238534176">
-    <repository/>
-    <entity-type reference="dm:ClassOfClassOfDescription"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfDescription"/>
     <name lang="EN-US">LONG DESCRIPTION</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R63046803893">
+  <class-definition id="http://rdl.rdlfacade.org/data#R42306472116">
     <repository/>
     <name lang="EN-US">MANUFACTURER SERIAL NUMBER</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R77837172122">
+  <class-definition id="http://rdl.rdlfacade.org/data#R33148391348">
     <repository/>
     <name lang="EN-US">MASS FLOW SENSOR</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R42643875220">
+  <class-definition id="http://rdl.rdlfacade.org/data#R77299799431">
     <repository/>
     <name lang="EN-US">MASS PER LENGTH SCALE</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R89535615536">
+  <class-definition id="http://rdl.rdlfacade.org/data#R65206154041">
     <repository/>
-    <entity-type reference="dm:ClassOfEvent"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfEvent"/>
     <name lang="EN-US">MATERIAL WITHDRAWAL REQUEST DATE</name>
     <description lang="EN-US">A date that material is requested to be withdrawn from inventory for construction</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R45815110932">
+  <class-definition id="http://rdl.rdlfacade.org/data#R42275948291">
     <repository/>
-    <entity-type reference="dm:ClassOfEvent"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfEvent"/>
     <name lang="EN-US">MATERIAL WITHDRAWAL REQUEST ISSUED DATE</name>
     <description lang="EN-US">A date that a request is issued to withdraw material from inventory for construction</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R65168266275">
+  <class-definition id="http://rdl.rdlfacade.org/data#R36048788019">
     <repository/>
-    <entity-type reference="dm:SinglePropertyDimension"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#SinglePropertyDimension"/>
     <name lang="EN-US">MEASURED LENGTH</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R13915925728">
+  <class-definition id="http://rdl.rdlfacade.org/data#R14155194621">
     <repository/>
     <name lang="EN-US">ORIFICE GASKET</name>
     <description lang="EN-US">Gasket used along with orifice plate.</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R27722315261">
+  <class-definition id="http://rdl.rdlfacade.org/data#R22396710443">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfIdentification"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfIdentification"/>
     <name lang="EN-US">P&amp;ID APPLICATION-SPECIFIC IDENTIFIER</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R74399407662">
+  <class-definition id="http://rdl.rdlfacade.org/data#R78821503837">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfIdentification"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfIdentification"/>
     <name lang="EN-US">PIECE MARK NUMBER</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R69091036724">
+  <class-definition id="http://rdl.rdlfacade.org/data#R53967542902">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfIdentification"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfIdentification"/>
     <name lang="EN-US">PLANT AREA IDENTIFIER</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R35152073067">
+  <class-definition id="http://rdl.rdlfacade.org/data#R87584561910">
     <repository/>
     <name lang="EN-US">PLANT DESIGN AREA</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R93527088081">
+  <class-definition id="http://rdl.rdlfacade.org/data#R46516547118">
     <repository/>
     <name lang="EN-US">PLANT DESIGN SUBAREA</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R17415541872">
+  <class-definition id="http://rdl.rdlfacade.org/data#R80951801614">
     <repository/>
     <name lang="EN-US">PLANT MAJOR DESIGN AREA</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R70784879870">
+  <class-definition id="http://rdl.rdlfacade.org/data#R23034910142">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfIdentification"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfIdentification"/>
     <name lang="EN-US">PLANT MODULE IDENTIFIER</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R15805342190">
+  <class-definition id="http://rdl.rdlfacade.org/data#R38947736051">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfIdentification"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfIdentification"/>
     <name lang="EN-US">PLANT MODULE NAME</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R93185894004">
+  <class-definition id="http://rdl.rdlfacade.org/data#R96077180272">
     <repository/>
     <name lang="EN-US">PLANT OBJECT HAS CLIENT FUNCTIONAL UNIT</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R56110992891">
+  <class-definition id="http://rdl.rdlfacade.org/data#R60603821406">
     <repository/>
     <name lang="EN-US">PLANT OBJECT HAS CLIENT SYSTEM</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R85126317261">
+  <class-definition id="http://rdl.rdlfacade.org/data#R79473726242">
     <repository/>
     <name lang="EN-US">PLANT OBJECT HAS FUNCTIONAL UNIT</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R51130574671">
+  <class-definition id="http://rdl.rdlfacade.org/data#R75763594642">
     <repository/>
     <name lang="EN-US">PLANT OBJECT HAS PLANT AREA</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R51420782434">
+  <class-definition id="http://rdl.rdlfacade.org/data#R31436285155">
     <repository/>
     <name lang="EN-US">PLANT OBJECT HAS PLANT DESIGN AREA</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R82889661393">
+  <class-definition id="http://rdl.rdlfacade.org/data#R41309964857">
     <repository/>
     <name lang="EN-US">PLANT OBJECT HAS PLANT DESIGN SUBAREA</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R26233954336">
+  <class-definition id="http://rdl.rdlfacade.org/data#R75315940299">
     <repository/>
     <name lang="EN-US">PLANT OBJECT HAS PLANT MAJOR DESIGN AREA</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R74135819912">
+  <class-definition id="http://rdl.rdlfacade.org/data#R45749223172">
     <repository/>
     <name lang="EN-US">PLANT OBJECT HAS PLANT MODULE</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R36596494898">
+  <class-definition id="http://rdl.rdlfacade.org/data#R78479977482">
     <repository/>
     <name lang="EN-US">PLANT OBJECT HAS PLANT PRIMARY DIVISION</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R37834019529">
+  <class-definition id="http://rdl.rdlfacade.org/data#R31296892470">
     <repository/>
     <name lang="EN-US">PLANT OBJECT HAS PLANT TRAIN</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R34174900515">
+  <class-definition id="http://rdl.rdlfacade.org/data#R91496604289">
     <repository/>
     <name lang="EN-US">PLANT OBJECT HAS PROJECT</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R90347640726">
+  <class-definition id="http://rdl.rdlfacade.org/data#R47113300800">
     <repository/>
     <name lang="EN-US">PLANT OBJECT HAS PURCHASE ORDER</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R33468327437">
+  <class-definition id="http://rdl.rdlfacade.org/data#R58205513041">
     <repository/>
     <name lang="EN-US">PLANT OBJECT HAS SUBPROJECT</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R82524285450">
+  <class-definition id="http://rdl.rdlfacade.org/data#R76706791625">
     <repository/>
     <name lang="EN-US">PLANT OBJECT HAS SYSTEM</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R92187484060">
+  <class-definition id="http://rdl.rdlfacade.org/data#R73669292146">
     <repository/>
-    <entity-type reference="dm:ClassOfContainmentOfIndividual"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfContainmentOfIndividual"/>
     <name lang="EN-US">PLANT OBJECT HAS THERMAL INSULATION</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R79751979113">
+  <class-definition id="http://rdl.rdlfacade.org/data#R87097138510">
     <repository/>
     <name lang="EN-US">PLANT PRIMARY DIVISION</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R15942978431">
+  <class-definition id="http://rdl.rdlfacade.org/data#R83594855391">
     <repository/>
     <name lang="EN-US">PLANT TRAIN</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R97050342188">
+  <class-definition id="http://rdl.rdlfacade.org/data#R40420187592">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfIdentification"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfIdentification"/>
     <name lang="EN-US">PREFIX</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R68060309749">
+  <class-definition id="http://rdl.rdlfacade.org/data#R42377824919">
     <repository/>
     <name lang="EN-US">PRELIMINARY LENGTH</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R46057224307">
+  <class-definition id="http://rdl.rdlfacade.org/data#R74506575427">
     <repository/>
+    <specialization reference="http://rdl.rdlfacade.org/data#R65486958478" label="TAGGED ITEM"/>
     <name lang="EN-US">PROCESS CELL</name>
     <description lang="EN-US"> A logical grouping of equipment that includes the equipment required for production of one or more batches.</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R49143501009">
+  <class-definition id="http://rdl.rdlfacade.org/data#R64145536430">
     <repository/>
+    <specialization reference="http://rdl.rdlfacade.org/data#R65486958478" label="TAGGED ITEM"/>
     <name lang="EN-US">PROCESS UNIT</name>
     <description lang="EN-US">Name of a major piece of equipment in a process cell that performs a specific task.</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R76680085149">
+  <class-definition id="http://rdl.rdlfacade.org/data#R77873416167">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfDescription"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfDescription"/>
     <name lang="EN-US">PURCHASE ORDER DESCRIPTION</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R51365714334">
+  <class-definition id="http://rdl.rdlfacade.org/data#R87296852011">
     <repository/>
-    <entity-type reference="dm:ClassOfEvent"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfEvent"/>
     <name lang="EN-US">RELEASE DATE</name>
     <description lang="EN-US">A date that an object is released by an engineering group</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R40456348732">
+  <class-definition id="http://rdl.rdlfacade.org/data#R59254276826">
     <repository/>
-    <entity-type reference="dm:ClassOfEvent"/>
-    <specialization reference="rdl:R72912758693" label="DELIVERY DATE"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfEvent"/>
+    <specialization reference="http://rdl.rdlfacade.org/data#R72912758693" label="DELIVERY DATE"/>
     <name lang="EN-US">REQUEST DELIVERY DATE</name>
     <description lang="EN-US">A date that delivery is requested to take place</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R28863645665">
+  <class-definition id="http://rdl.rdlfacade.org/data#R17973452467">
     <repository/>
     <name lang="EN-US">RESISTANCE UOM</name>
     <description lang="EN-US">The opposition offered by a substance to the flow of direct electric current.</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R58419646737">
+  <class-definition id="http://rdl.rdlfacade.org/data#R17862030100">
     <repository/>
-    <entity-type reference="dm:ClassOfEvent"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfEvent"/>
     <name lang="EN-US">REVISION DATE</name>
     <description lang="EN-US">A date that information about an object was revised</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R69197110423">
+  <class-definition id="http://rdl.rdlfacade.org/data#R98318192267">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfDescription"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfDescription"/>
     <name lang="EN-US">SECONDARY TAG DESCRIPTION</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R14292001619">
+  <class-definition id="http://rdl.rdlfacade.org/data#R38732356344">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfIdentification"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfIdentification"/>
     <name lang="EN-US">SEQUENCE CODE</name>
     <description lang="EN-US">An alternate identification code for a 'functional_physical_object'.</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R47929451401">
+  <class-definition id="http://rdl.rdlfacade.org/data#R38537088927">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfDescription"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfDescription"/>
     <name lang="EN-US">SHORT DESCRIPTION</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R17027856604">
+  <class-definition id="http://rdl.rdlfacade.org/data#R51543047177">
     <repository/>
+    <specialization reference="http://rdl.rdlfacade.org/data#R65486958478" label="TAGGED ITEM"/>
     <name lang="EN-US">SITE</name>
     <description lang="EN-US">A component of a  enterprise that is identified by physical, geographical,or logical segmentation within the enterprise</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R49150523244">
+  <class-definition id="http://rdl.rdlfacade.org/data#R81598601554">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfIdentification"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfIdentification"/>
     <name lang="EN-US">SIZE-INDEPENDENT STOCK CODE</name>
     <description lang="EN-US">A code that identifies a type of object where similar objects of different sizes share the same code</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R50701412611">
+  <class-definition id="http://rdl.rdlfacade.org/data#R58782843819">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfIdentification"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfIdentification"/>
     <name lang="EN-US">STOCK CODE</name>
     <description lang="EN-US">A code that identifies a type of object</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R45916831738">
+  <class-definition id="http://rdl.rdlfacade.org/data#R74640237978">
     <repository/>
+    <specialization reference="http://rdl.rdlfacade.org/data#R65486958478" label="TAGGED ITEM"/>
     <name lang="EN-US">SUB PROJECT</name>
     <description lang="EN-US">A part of business process consisting of a set of coherent activities intended for a specific purpose and managed as a whole</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R73424598432">
+  <class-definition id="http://rdl.rdlfacade.org/data#R28299343388">
     <repository/>
-    <entity-type reference="dm:ClassOfActivity"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfActivity"/>
     <name lang="EN-US">SUBPROJECT</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R70329287938">
+  <class-definition id="http://rdl.rdlfacade.org/data#R66498341280">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfIdentification"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfIdentification"/>
     <name lang="EN-US">SUBPROJECT CODE</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R75240223155">
+  <class-definition id="http://rdl.rdlfacade.org/data#R58846281580">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfIdentification"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfIdentification"/>
     <name lang="EN-US">SUFFIX</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R89727109468">
+  <class-definition id="http://rdl.rdlfacade.org/data#R29241491557">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfDescription"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfDescription"/>
     <name lang="EN-US">SYSTEM DESCRIPTION</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R64282378922">
+  <class-definition id="http://rdl.rdlfacade.org/data#R65486958478">
     <repository/>
     <name lang="EN-US">TAGGED ITEM</name>
     <description lang="EN-US">A functional physical object referred by a code</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R99452874909">
+  <class-definition id="http://rdl.rdlfacade.org/data#R24319188061">
     <repository/>
-    <entity-type reference="dm:SinglePropertyDimension"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#SinglePropertyDimension"/>
     <name lang="EN-US">TEST PRESSURE</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R23548711801">
+  <class-definition id="http://rdl.rdlfacade.org/data#R75611040763">
     <repository/>
     <name lang="EN-US">THERMAL ELEMENT INSULATOR</name>
     <description lang="EN-US">Insulation provided around the thermal element.</description>
   </class-definition>
-  <class-definition id="rdl:R75072922944">
+  <class-definition id="http://rdl.rdlfacade.org/data#R75072922944">
     <repository/>
     <name lang="EN-US">THERMAL INSULATION MATERIAL NAME</name>
     <description lang="EN-US">A name of a thermal insulation material</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R51688213720">
+  <class-definition id="http://rdl.rdlfacade.org/data#R67514009553">
     <repository/>
-    <entity-type reference="dm:SinglePropertyDimension"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#SinglePropertyDimension"/>
     <name lang="EN-US">TRACING TEMPERATURE</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R17206579353">
+  <class-definition id="http://rdl.rdlfacade.org/data#R96234019689">
     <repository/>
     <name lang="EN-US">TRANSMITTER DRAIN</name>
     <description lang="EN-US">A physical object that is used to remove liquid from a transmitter body.</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R55833737156">
+  <class-definition id="http://rdl.rdlfacade.org/data#R74125616346">
     <repository/>
     <name lang="EN-US">TRANSMITTER FLANGE</name>
     <description lang="EN-US">Flange used for process connection of transmitter.</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R26897023979">
+  <class-definition id="http://rdl.rdlfacade.org/data#R82415647612">
     <repository/>
     <name lang="EN-US">TRANSMITTER VENT </name>
     <description lang="EN-US">A physical object that is used to release gas or vapour from a transmitter body.</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R55080701023">
+  <class-definition id="http://rdl.rdlfacade.org/data#R52354878550">
     <repository/>
-    <entity-type reference="dm:ClassOfEvent"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfEvent"/>
     <name lang="EN-US">TURNOVER TO OWNER DATE</name>
     <description lang="EN-US">A date that an object is turned over to an owner</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R50257914622">
+  <class-definition id="http://rdl.rdlfacade.org/data#R67192956161">
     <repository/>
-    <entity-type reference="dm:ClassOfEvent"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfEvent"/>
     <name lang="EN-US">TURNOVER TO STARTUP DATE</name>
     <description lang="EN-US">A date that an object is turned over for starting up</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R44188263668">
+  <class-definition id="http://rdl.rdlfacade.org/data#R84125250525">
     <repository/>
-    <entity-type reference="dm:SinglePropertyDimension"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#SinglePropertyDimension"/>
     <name lang="EN-US">UPSET TEMPERATURE</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R85885217101">
+  <class-definition id="http://rdl.rdlfacade.org/data#R78637814778">
     <repository/>
-    <entity-type reference="dm:ClassOfEvent"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfEvent"/>
     <name lang="EN-US">VENDOR ENGINEERING RELEASE DATE</name>
     <description lang="EN-US">A date that an object is released by a vendor's engineering group</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R47398789221">
+  <class-definition id="http://rdl.rdlfacade.org/data#R53858636757">
     <repository/>
-    <entity-type reference="dm:ClassOfEvent"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfEvent"/>
     <name lang="EN-US">VENDOR FABRICATION COMPLETE DATE</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R38046458763">
+  <class-definition id="http://rdl.rdlfacade.org/data#R36144177950">
     <repository/>
-    <entity-type reference="dm:ClassOfEvent"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfEvent"/>
     <name lang="EN-US">VENDOR FABRICATION START DATE</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R66720580860">
+  <class-definition id="http://rdl.rdlfacade.org/data#R14363269509">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfIdentification"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfIdentification"/>
     <name lang="EN-US">VENDOR PIECE MARK NUMBER</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R24026457014">
+  <class-definition id="http://rdl.rdlfacade.org/data#R46042966034">
     <repository/>
-    <entity-type reference="dm:ClassOfEvent"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfEvent"/>
     <name lang="EN-US">VENDOR SHIP DATE</name>
     <description lang="EN-US">A date that a vendor ships an object to a destination</description>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R83515029979">
+  <class-definition id="http://rdl.rdlfacade.org/data#R14348255969">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfIdentification"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfIdentification"/>
     <name lang="EN-US">VENDOR TAG IDENTIFICATION CODE</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R52627637991">
+  <class-definition id="http://rdl.rdlfacade.org/data#R92035016312">
     <repository/>
-    <entity-type reference="dm:ClassOfClassOfIdentification"/>
+    <entity-type reference=" http://rdl.rdlfacade.org/data#ClassOfClassOfIdentification"/>
     <name lang="EN-US">VISIBLE LABEL</name>
   </class-definition>
-  <class-definition id="http://rdl.rdlfacade.org/data#R83170921501">
+  <class-definition id="http://rdl.rdlfacade.org/data#R53784321310">
     <repository/>
     <name lang="EN-US">VOLTAGE UOM</name>
     <description lang="EN-US">Unit used to measure electric voltage</description>
   </class-definition>
-  <template-definition id="http://tpl.rdlfacade.org/data#R28587910904">
+  <class-definition id="http://rdl.rdlfacade.org/data#R98082067751">
+    <repository/>
+    <name lang="EN-US">WORK PACKAGE</name>
+  </class-definition>
+  <template-definition id="http://tpl.rdlfacade.org/data#R86622690733">
     <repository/>
     <name lang="EN-US">AssemblyRelation</name>
-    <role-definition id="http://tpl.rdlfacade.org/data#R25388968128">
+    <role-definition id="http://tpl.rdlfacade.org/data#R60860375004">
       <name lang="EN-US">classOfPart</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R46161101639">
+    <role-definition id="http://tpl.rdlfacade.org/data#R57508721236" range="http://rdl.rdlfacade.org/data#R61124931526">
       <name lang="EN-US">classOfWhole</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R36074658819">
+    <role-definition id="http://tpl.rdlfacade.org/data#R15599585480" range="http://rdl.rdlfacade.org/data#R83568673244">
       <name lang="EN-US">assemblyType</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R56623441200">
+    <role-definition id="http://tpl.rdlfacade.org/data#R97182278799" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">minimumCardinalityPart</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R96685767083">
+    <role-definition id="http://tpl.rdlfacade.org/data#R87164695771" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">maximumCardinalityPart</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R50323541123">
+    <role-definition id="http://tpl.rdlfacade.org/data#R42487918317" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">minimumCardinalityWhole</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R53698988752">
+    <role-definition id="http://tpl.rdlfacade.org/data#R72328925179" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">maximumCardinalityWhole</name>
       <description/>
     </role-definition>
   </template-definition>
-  <template-definition id="http://tpl.rdlfacade.org/data#R63988651126">
+  <template-definition id="http://tpl.rdlfacade.org/data#R22826098903">
     <repository/>
     <name lang="EN-US">ClassifiedAssemblyOfIndividual</name>
-    <role-definition id="http://tpl.rdlfacade.org/data#R25614931854">
+    <role-definition id="http://tpl.rdlfacade.org/data#R17019474103" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">part</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R38690506556">
+    <role-definition id="http://tpl.rdlfacade.org/data#R92385180056" range="http://rdl.rdlfacade.org/data#R38015462320">
       <name lang="EN-US">whole</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R37148579121">
+    <role-definition id="http://tpl.rdlfacade.org/data#R52558827939" range="http://rdl.rdlfacade.org/data#R83568673244">
       <name lang="EN-US">assemblyType</name>
       <description/>
     </role-definition>
   </template-definition>
-  <template-definition id="http://tpl.rdlfacade.org/data#R51680752273">
+  <template-definition id="http://tpl.rdlfacade.org/data#R33996384502">
     <repository/>
     <name lang="EN-US">ArrangementRelation</name>
-    <role-definition id="http://tpl.rdlfacade.org/data#R91587626995">
+    <role-definition id="http://tpl.rdlfacade.org/data#R31316205265" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">hasClassOfPart</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R75840164538">
+    <role-definition id="http://tpl.rdlfacade.org/data#R99430722162" range="http://rdl.rdlfacade.org/data#R38015462320">
       <name lang="EN-US">hasClassOfWhole</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R11090825349">
+    <role-definition id="http://tpl.rdlfacade.org/data#R55263641359" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">minimumCardinalityPart</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R12100562261">
+    <role-definition id="http://tpl.rdlfacade.org/data#R91344669913" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">maximumCardinalityPart</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R71842827170">
+    <role-definition id="http://tpl.rdlfacade.org/data#R50454778906" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">minimumCardinalityWhole</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R15816631500">
+    <role-definition id="http://tpl.rdlfacade.org/data#R72485308303" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">maximumCardinalityWhole</name>
       <description/>
     </role-definition>
   </template-definition>
-  <template-definition id="http://tpl.rdlfacade.org/data#R11039063392">
+  <template-definition id="http://tpl.rdlfacade.org/data#R51559227407">
     <repository/>
     <name lang="EN-US">CompositionRelation</name>
-    <role-definition id="http://tpl.rdlfacade.org/data#R46534583448">
+    <role-definition id="http://tpl.rdlfacade.org/data#R78166975262" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">hasClassOfPart</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R88742819075">
+    <role-definition id="http://tpl.rdlfacade.org/data#R16594523595" range="http://rdl.rdlfacade.org/data#R38015462320">
       <name lang="EN-US">hasClassOfWhole</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R84336071748">
+    <role-definition id="http://tpl.rdlfacade.org/data#R71776728053" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">minimumCardinalityPart</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R32279215621">
+    <role-definition id="http://tpl.rdlfacade.org/data#R71725024520" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">maximumCardinalityPart</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R12824036733">
+    <role-definition id="http://tpl.rdlfacade.org/data#R57236104173" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">minimumCardinalityWhole</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R37074664921">
+    <role-definition id="http://tpl.rdlfacade.org/data#R39432098671" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">maximumCardinalityWhole</name>
       <description/>
     </role-definition>
   </template-definition>
-  <template-definition id="http://tpl.rdlfacade.org/data#R70838009772">
+  <template-definition id="http://tpl.rdlfacade.org/data#R49386992827">
     <repository/>
     <name lang="EN-US">ConnectionRelation</name>
-    <role-definition id="http://tpl.rdlfacade.org/data#R39268434634">
+    <role-definition id="http://tpl.rdlfacade.org/data#R75880647264" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">side1</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R32664254727">
+    <role-definition id="http://tpl.rdlfacade.org/data#R87505460551" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">side2</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R24317110637">
+    <role-definition id="http://tpl.rdlfacade.org/data#R66329025401" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">minimumCardinalityPart</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R96712044876">
+    <role-definition id="http://tpl.rdlfacade.org/data#R18716125021" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">maximumCardinalityPart</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R58074924551">
+    <role-definition id="http://tpl.rdlfacade.org/data#R69384331799" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">minimumCardinalityWhole</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R46852327768">
+    <role-definition id="http://tpl.rdlfacade.org/data#R32232465934" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">maximumCardinalityWhole</name>
       <description/>
     </role-definition>
   </template-definition>
-  <template-definition id="http://tpl.rdlfacade.org/data#R21820578936">
+  <template-definition id="http://tpl.rdlfacade.org/data#R76559080055">
     <repository/>
     <name lang="EN-US">ContainmentRelation</name>
-    <role-definition id="http://tpl.rdlfacade.org/data#R20368781917">
+    <role-definition id="http://tpl.rdlfacade.org/data#R64268427565" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">contained</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R54176083948">
+    <role-definition id="http://tpl.rdlfacade.org/data#R32285297139" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">container</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R12239267017">
+    <role-definition id="http://tpl.rdlfacade.org/data#R68553162095" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">maximumCardinalityLocator</name>
       <description/>
     </role-definition>
   </template-definition>
-  <template-definition id="http://tpl.rdlfacade.org/data#R89124898379">
+  <template-definition id="http://tpl.rdlfacade.org/data#R89785976159">
     <repository/>
     <name lang="EN-US">DirectConnectionRelation</name>
-    <role-definition id="http://tpl.rdlfacade.org/data#R42974677651">
+    <role-definition id="http://tpl.rdlfacade.org/data#R96742853811" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">side1</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R76245974250">
+    <role-definition id="http://tpl.rdlfacade.org/data#R93755718008" range="http://rdl.rdlfacade.org/data#R82407290725">
       <name lang="EN-US">side2</name>
       <description/>
     </role-definition>
   </template-definition>
-  <template-definition id="http://tpl.rdlfacade.org/data#R91080934063">
+  <template-definition id="http://tpl.rdlfacade.org/data#R49150081364">
     <repository/>
     <name lang="EN-US">FeatureRelation</name>
-    <role-definition id="http://tpl.rdlfacade.org/data#R35752659492">
+    <role-definition id="http://tpl.rdlfacade.org/data#R42103385518" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">hasClassOfPart</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R29429538635">
+    <role-definition id="http://tpl.rdlfacade.org/data#R93813801830" range="http://rdl.rdlfacade.org/data#R61124931526">
       <name lang="EN-US">hasClassOfWhole</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R71582890606">
+    <role-definition id="http://tpl.rdlfacade.org/data#R63074140564" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">minimumCardinalityPart</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R81292538617">
+    <role-definition id="http://tpl.rdlfacade.org/data#R29877175714" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">maximumCardinalityPart</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R90332738468">
+    <role-definition id="http://tpl.rdlfacade.org/data#R81176582188" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">minimumCardinalityWhole</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R42685641004">
+    <role-definition id="http://tpl.rdlfacade.org/data#R60256827538" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">maximumCardinalityWhole</name>
       <description/>
     </role-definition>
   </template-definition>
-  <template-definition id="http://tpl.rdlfacade.org/data#R65237291165">
+  <template-definition id="http://tpl.rdlfacade.org/data#R72381433698">
     <repository/>
     <name lang="EN-US">IndirectConnectionRelation</name>
-    <role-definition id="http://tpl.rdlfacade.org/data#R61100726851">
+    <role-definition id="http://tpl.rdlfacade.org/data#R92061972729" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">hasClassOfSide1</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R63597577682">
+    <role-definition id="http://tpl.rdlfacade.org/data#R69571631013" range="http://rdl.rdlfacade.org/data#R82407290725">
       <name lang="EN-US">hasClassOfSide2</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R28612544125">
+    <role-definition id="http://tpl.rdlfacade.org/data#R83530219831" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">minimumCardinalitySide1</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R80642248972">
+    <role-definition id="http://tpl.rdlfacade.org/data#R40715507238" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">maximumCardinalitySide1</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R67324433523">
+    <role-definition id="http://tpl.rdlfacade.org/data#R73061434881" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">minimumCardinalitySide2</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R39249562099">
+    <role-definition id="http://tpl.rdlfacade.org/data#R25318566546" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">maximumCardinalitySide2</name>
       <description/>
     </role-definition>
   </template-definition>
-  <template-definition id="http://tpl.rdlfacade.org/data#R73186677456">
+  <template-definition id="http://tpl.rdlfacade.org/data#R62251354186">
     <repository/>
     <name lang="EN-US">RelativeLocationRelation</name>
-    <role-definition id="http://tpl.rdlfacade.org/data#R64939575072">
+    <role-definition id="http://tpl.rdlfacade.org/data#R71421396841" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">hasClassOfLocated</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R35788928704">
+    <role-definition id="http://tpl.rdlfacade.org/data#R78287784990" range="http://rdl.rdlfacade.org/data#R82407290725">
       <name lang="EN-US">hasClassOfLocator</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R54363388371">
+    <role-definition id="http://tpl.rdlfacade.org/data#R15080137652" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">minimumCardinalityLocated</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R74506406104">
+    <role-definition id="http://tpl.rdlfacade.org/data#R46844127539" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">maximumCardinalityLocated</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R60829108891">
+    <role-definition id="http://tpl.rdlfacade.org/data#R21954544379" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">minimumCardinalityLocator</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R78593780372">
+    <role-definition id="http://tpl.rdlfacade.org/data#R73565747630" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">maximumCardinalityLocator</name>
       <description/>
     </role-definition>
   </template-definition>
-  <template-definition id="http://tpl.rdlfacade.org/data#R79904214121">
+  <template-definition id="http://tpl.rdlfacade.org/data#R40438312860">
     <repository/>
     <name lang="EN-US">TemporalSequenceRelation</name>
-    <role-definition id="http://tpl.rdlfacade.org/data#R92360550217">
+    <role-definition id="http://tpl.rdlfacade.org/data#R71215930104" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">hasClassOfPredecessor</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R48529003539">
+    <role-definition id="http://tpl.rdlfacade.org/data#R94492288217" range="http://rdl.rdlfacade.org/data#R82407290725">
       <name lang="EN-US">hasClassOfSuccessor</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R65785990748">
+    <role-definition id="http://tpl.rdlfacade.org/data#R12438894012" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">minimumCardinalityPredecessor</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R85902318761">
+    <role-definition id="http://tpl.rdlfacade.org/data#R59798856186" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">maximumCardinalityPredecessor</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R27613013513">
+    <role-definition id="http://tpl.rdlfacade.org/data#R76253650236" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">minimumCardinalitySuccessor</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R41358057706">
+    <role-definition id="http://tpl.rdlfacade.org/data#R22410070398" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">maximumCardinalitySuccessor</name>
       <description/>
     </role-definition>
   </template-definition>
-  <template-definition id="http://tpl.rdlfacade.org/data#R83954522730">
+  <template-definition id="http://tpl.rdlfacade.org/data#R22383425515">
     <repository/>
     <name lang="EN-US">TemporalWholePartRelation</name>
-    <role-definition id="http://tpl.rdlfacade.org/data#R48757512886">
+    <role-definition id="http://tpl.rdlfacade.org/data#R97004324380" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">hasClassOfPart</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R92354339869">
+    <role-definition id="http://tpl.rdlfacade.org/data#R82629405295" range="http://rdl.rdlfacade.org/data#R82407290725">
       <name lang="EN-US">hasClassOfWhole</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R59408831645">
+    <role-definition id="http://tpl.rdlfacade.org/data#R98074965218" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">minimumCardinalityPart</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R26092366552">
+    <role-definition id="http://tpl.rdlfacade.org/data#R91558539858" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">maximumCardinalityPart</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R44179091010">
+    <role-definition id="http://tpl.rdlfacade.org/data#R20597040340" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">minimumCardinalityWhole</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R55624071716">
+    <role-definition id="http://tpl.rdlfacade.org/data#R37878299141" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">maximumCardinalityWhole</name>
       <description/>
     </role-definition>
   </template-definition>
-  <template-definition id="http://tpl.rdlfacade.org/data#R46955912373">
+  <template-definition id="http://tpl.rdlfacade.org/data#R19701974660">
     <repository/>
     <name lang="EN-US">SpecificationRelation</name>
-    <role-definition id="http://tpl.rdlfacade.org/data#R63057710927">
+    <role-definition id="http://tpl.rdlfacade.org/data#R26544776232" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">hasClassOfSpecification</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R42240243782">
+    <role-definition id="http://tpl.rdlfacade.org/data#R34060783698" range="http://rdl.rdlfacade.org/data#R61124931526">
       <name lang="EN-US">hasClassOfSpecified</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R26376703740">
+    <role-definition id="http://tpl.rdlfacade.org/data#R34384599303" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">minimumCardinalitySpecification</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R63232214024">
+    <role-definition id="http://tpl.rdlfacade.org/data#R84470417229" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">maximumCardinalitySpecification</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R53753110121">
+    <role-definition id="http://tpl.rdlfacade.org/data#R51932717161" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">minimumCardinalitySpecified</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R86976907745">
+    <role-definition id="http://tpl.rdlfacade.org/data#R11436828276" range="http://www.w3.org/2001/XMLSchema#integer">
       <name lang="EN-US">maximumCardinalitySpecified</name>
       <description/>
     </role-definition>
   </template-definition>
-  <template-definition id="http://tpl.rdlfacade.org/data#R87847685576">
+  <template-definition id="http://tpl.rdlfacade.org/data#R81478898345">
     <repository/>
     <name lang="EN-US">DirectPropertyOfIndividual</name>
-    <role-definition id="http://tpl.rdlfacade.org/data#R98323759382">
+    <role-definition id="http://tpl.rdlfacade.org/data#R15651769483" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R24327587855">
+    <role-definition id="http://tpl.rdlfacade.org/data#R88407701501" range="http://www.w3.org/2001/XMLSchema#decimal">
       <name lang="EN-US">value</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R57994162078">
+    <role-definition id="http://tpl.rdlfacade.org/data#R65250849946" range="http://rdl.rdlfacade.org/data#R35622698489">
       <name lang="EN-US">scale</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R36169157373">
+    <role-definition id="http://tpl.rdlfacade.org/data#R96676692483" range="http://rdl.rdlfacade.org/data#R19441169180">
       <name lang="EN-US">propertyType</name>
       <description/>
     </role-definition>
   </template-definition>
-  <template-definition id="http://tpl.rdlfacade.org/data#R87433167447">
+  <template-definition id="http://tpl.rdlfacade.org/data#R18901071529">
     <repository/>
     <name lang="EN-US">IndirectPropertyOfIndividual</name>
-    <role-definition id="http://tpl.rdlfacade.org/data#R99539681175">
+    <role-definition id="http://tpl.rdlfacade.org/data#R41612712522" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R24684988776">
+    <role-definition id="http://tpl.rdlfacade.org/data#R11384759095" range="http://www.w3.org/2001/XMLSchema#decimal">
       <name lang="EN-US">value</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R75769681655">
+    <role-definition id="http://tpl.rdlfacade.org/data#R20158410457" range="http://rdl.rdlfacade.org/data#R35622698489">
       <name lang="EN-US">scale</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R10249775074">
+    <role-definition id="http://tpl.rdlfacade.org/data#R36762625757" range="http://rdl.rdlfacade.org/data#R91740875324">
       <name lang="EN-US">propertyType</name>
       <description/>
     </role-definition>
   </template-definition>
-  <template-definition id="http://tpl.rdlfacade.org/data#R35294535606">
+  <template-definition id="http://tpl.rdlfacade.org/data#R94364394084">
     <repository/>
     <name lang="EN-US">ClassifiedIdentification</name>
-    <role-definition id="http://tpl.rdlfacade.org/data#R71703002771">
+    <role-definition id="http://tpl.rdlfacade.org/data#R72505293165" range="http://rdl.rdlfacade.org/data#R95758656562">
       <name lang="EN-US">object</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R38165818437">
+    <role-definition id="http://tpl.rdlfacade.org/data#R33576121909" range="http://www.w3.org/2001/XMLSchema#string">
       <name lang="EN-US">identifier</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R61176299159">
+    <role-definition id="http://tpl.rdlfacade.org/data#R27301212156" range="http://rdl.rdlfacade.org/data#R43403669880">
       <name lang="EN-US">identificationType</name>
       <description/>
     </role-definition>
   </template-definition>
-  <template-definition id="http://tpl.rdlfacade.org/data#R32317198059">
+  <template-definition id="http://tpl.rdlfacade.org/data#R45866847930">
     <repository/>
     <name lang="EN-US">ClassifiedDescription</name>
-    <role-definition id="http://tpl.rdlfacade.org/data#R29248685384">
+    <role-definition id="http://tpl.rdlfacade.org/data#R26159238443" range="http://rdl.rdlfacade.org/data#R95758656562">
       <name lang="EN-US">object</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R30986609129">
+    <role-definition id="http://tpl.rdlfacade.org/data#R22562406100" range="http://www.w3.org/2001/XMLSchema#string">
       <name lang="EN-US">description</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R47096237166">
+    <role-definition id="http://tpl.rdlfacade.org/data#R93305739539" range="http://rdl.rdlfacade.org/data#R73206363769">
       <name lang="EN-US">descriptionType</name>
       <description/>
     </role-definition>
   </template-definition>
-  <template-definition id="http://tpl.rdlfacade.org/data#R57259661211">
+  <template-definition id="http://tpl.rdlfacade.org/data#R43608380986">
     <repository/>
     <name lang="EN-US">ClassifiedFeature</name>
-    <role-definition id="http://tpl.rdlfacade.org/data#R18870488365">
+    <role-definition id="http://tpl.rdlfacade.org/data#R16852771259" range="http://rdl.rdlfacade.org/data#R56824565547">
       <name lang="EN-US">feature</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R70772930916">
+    <role-definition id="http://tpl.rdlfacade.org/data#R50575429528" range="http://rdl.rdlfacade.org/data#R95758656562">
       <name lang="EN-US">whole</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R39004669123">
+    <role-definition id="http://tpl.rdlfacade.org/data#R21162906554" range="http://rdl.rdlfacade.org/data#R38055786472">
       <name lang="EN-US">context</name>
       <description/>
     </role-definition>
   </template-definition>
-  <template-definition id="http://tpl.rdlfacade.org/data#R39397759306">
+  <template-definition id="http://tpl.rdlfacade.org/data#R84745338519">
     <repository/>
     <name lang="EN-US">MaterialOfConstruction</name>
-    <role-definition id="http://tpl.rdlfacade.org/data#R75743583395">
+    <role-definition id="http://tpl.rdlfacade.org/data#R73926983533" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R81220479894">
+    <role-definition id="http://tpl.rdlfacade.org/data#R87876961827" range="http://rdl.rdlfacade.org/data#R97996431336">
       <name lang="EN-US">material</name>
       <description/>
     </role-definition>
   </template-definition>
-  <template-definition id="http://tpl.rdlfacade.org/data#R26911231846">
+  <template-definition id="http://tpl.rdlfacade.org/data#R80138873815">
     <repository/>
     <name lang="EN-US">RepresentationOfIndividual</name>
-    <role-definition id="http://tpl.rdlfacade.org/data#R74717303832">
+    <role-definition id="http://tpl.rdlfacade.org/data#R18459302987" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R39782674869">
+    <role-definition id="http://tpl.rdlfacade.org/data#R63553600230" range="http://rdl.rdlfacade.org/data#R93527542966">
       <name lang="EN-US">representation</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R58854724213">
+    <role-definition id="http://tpl.rdlfacade.org/data#R63166430381">
       <name lang="EN-US">representationType</name>
       <description/>
     </role-definition>
   </template-definition>
-  <template-definition id="http://tpl.rdlfacade.org/data#R87125988334">
+  <template-definition id="http://tpl.rdlfacade.org/data#R45621263282">
     <repository/>
     <name lang="EN-US">FabricationRelation</name>
-    <role-definition id="http://tpl.rdlfacade.org/data#R65646230717">
+    <role-definition id="http://tpl.rdlfacade.org/data#R62840652664" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R16964011899">
+    <role-definition id="http://tpl.rdlfacade.org/data#R19826897559" range="http://rdl.rdlfacade.org/data#R38748059342">
       <name lang="EN-US">fabrication</name>
       <description/>
     </role-definition>
   </template-definition>
-  <template-definition id="http://tpl.rdlfacade.org/data#R78154360692">
+  <template-definition id="http://tpl.rdlfacade.org/data#R31634133264">
     <repository/>
     <name lang="EN-US">SupplyProperty</name>
-    <role-definition id="http://tpl.rdlfacade.org/data#R43873304680">
+    <role-definition id="http://tpl.rdlfacade.org/data#R99129171007" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R78043192685">
+    <role-definition id="http://tpl.rdlfacade.org/data#R69522917988" range="http://rdl.rdlfacade.org/data#R19441169180">
       <name lang="EN-US">value</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R24095900704">
+    <role-definition id="http://tpl.rdlfacade.org/data#R24184871723" range="http://rdl.rdlfacade.org/data#R35622698489">
       <name lang="EN-US">scale</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R30414703575">
+    <role-definition id="http://tpl.rdlfacade.org/data#R28854255459" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">context</name>
       <description/>
     </role-definition>
   </template-definition>
-  <template-definition id="http://tpl.rdlfacade.org/data#R64944378436">
+  <template-definition id="http://tpl.rdlfacade.org/data#R27400607729">
     <repository/>
     <name lang="EN-US">RangeProperty</name>
-    <role-definition id="http://tpl.rdlfacade.org/data#R37425025765">
+    <role-definition id="http://tpl.rdlfacade.org/data#R26091234741" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R70483554340">
+    <role-definition id="http://tpl.rdlfacade.org/data#R30797540403" range="http://rdl.rdlfacade.org/data#R38374291836">
       <name lang="EN-US">propertyType</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R29813591505">
+    <role-definition id="http://tpl.rdlfacade.org/data#R50318648780" range="http://rdl.rdlfacade.org/data#R35622698489">
       <name lang="EN-US">scale</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R77026881440">
+    <role-definition id="http://tpl.rdlfacade.org/data#R83795792679" range="http://www.w3.org/2001/XMLSchema#decimal">
       <name lang="EN-US">Lowerbound </name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R95304897620">
+    <role-definition id="http://tpl.rdlfacade.org/data#R62071422158" range="http://www.w3.org/2001/XMLSchema#decimal">
       <name lang="EN-US">Upperbound</name>
       <description/>
     </role-definition>
   </template-definition>
-  <template-definition id="http://tpl.rdlfacade.org/data#R19650397068">
+  <template-definition id="http://tpl.rdlfacade.org/data#R49002389813">
     <repository/>
     <name lang="EN-US">ClassifiedSpatialPoint</name>
-    <role-definition id="http://tpl.rdlfacade.org/data#R93414395595">
+    <role-definition id="http://tpl.rdlfacade.org/data#R69896058604" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R76897914171">
+    <role-definition id="http://tpl.rdlfacade.org/data#R49170557967" range="http://rdl.rdlfacade.org/data#R12537410105">
       <name lang="EN-US">pointType</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R31197095794">
+    <role-definition id="http://tpl.rdlfacade.org/data#R65410233042" range="http://rdl.rdlfacade.org/data#R35622698489">
       <name lang="EN-US">scale</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R94481857431">
+    <role-definition id="http://tpl.rdlfacade.org/data#R74404423939" range="http://www.w3.org/2001/XMLSchema#decimal">
       <name lang="EN-US">XCoordinate</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R82786954200">
+    <role-definition id="http://tpl.rdlfacade.org/data#R53215817371" range="http://www.w3.org/2001/XMLSchema#decimal">
       <name lang="EN-US">YCoordinate</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R15967402262">
+    <role-definition id="http://tpl.rdlfacade.org/data#R36947612280" range="http://www.w3.org/2001/XMLSchema#decimal">
       <name lang="EN-US">ZCoordinate</name>
       <description/>
     </role-definition>
   </template-definition>
-  <template-definition id="http://tpl.rdlfacade.org/data#R29945086118">
+  <template-definition id="http://tpl.rdlfacade.org/data#R35118103164">
     <repository/>
     <name lang="EN-US">ClassifiedEventTime</name>
-    <role-definition id="http://tpl.rdlfacade.org/data#R13563828988">
+    <role-definition id="http://tpl.rdlfacade.org/data#R10950490859" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R77079229381">
+    <role-definition id="http://tpl.rdlfacade.org/data#R11218219725" range="http://www.w3.org/2001/XMLSchema#dateTime">
       <name lang="EN-US">value</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R70315728690">
+    <role-definition id="http://tpl.rdlfacade.org/data#R50313722055" range="http://rdl.rdlfacade.org/data#R31628214546">
       <name lang="EN-US">eventType</name>
       <description/>
     </role-definition>
   </template-definition>
-  <template-definition id="http://tpl.rdlfacade.org/data#R30695627874">
+  <template-definition id="http://tpl.rdlfacade.org/data#R28507664381">
     <repository/>
     <name lang="EN-US">ClassifiedContainmentOfIndividual</name>
-    <role-definition id="http://tpl.rdlfacade.org/data#R38405883604">
+    <role-definition id="http://tpl.rdlfacade.org/data#R73063624663" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">contained</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R67365917579">
+    <role-definition id="http://tpl.rdlfacade.org/data#R33854524745" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">container</name>
       <description/>
     </role-definition>
-    <role-definition id="http://tpl.rdlfacade.org/data#R82234939278">
+    <role-definition id="http://tpl.rdlfacade.org/data#R13651680275" range="http://rdl.rdlfacade.org/data#R37429615293">
       <name lang="EN-US">containmentType</name>
       <description/>
     </role-definition>
   </template-definition>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R76937956940" qualifies="ClassifiedAssemblyOfIndividual">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R86262068129" qualifies="ClassifiedAssemblyOfIndividual">
     <name lang="EN-US">ClientFunctionalUnitAssembly</name>
-    <role-qualification qualifies="part" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="part" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">part</name>
     </role-qualification>
-    <role-qualification qualifies="whole" range="CLIENT FUNCTIONAL UNIT">
+    <role-qualification qualifies="whole" range="http://rdl.rdlfacade.org/data#R86272344226">
       <name lang="EN-US">whole</name>
     </role-qualification>
     <role-qualification qualifies="assemblyType">
       <name lang="EN-US">assemblyType</name>
-      <value reference="PLANT OBJECT HAS CLIENT FUNCTIONAL UNIT"/>
+      <value reference="http://rdl.rdlfacade.org/data#R96077180272"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R56973871982" qualifies="ClassifiedAssemblyOfIndividual">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R68587114400" qualifies="ClassifiedAssemblyOfIndividual">
     <name lang="EN-US">ClientSystemAssembly</name>
-    <role-qualification qualifies="part" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="part" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">part</name>
     </role-qualification>
-    <role-qualification qualifies="whole" range="CLIENT SYSTEM">
+    <role-qualification qualifies="whole" range="http://rdl.rdlfacade.org/data#R83261948867">
       <name lang="EN-US">whole</name>
     </role-qualification>
     <role-qualification qualifies="assemblyType">
       <name lang="EN-US">assemblyType</name>
-      <value reference="PLANT OBJECT HAS CLIENT SYSTEM"/>
+      <value reference="http://rdl.rdlfacade.org/data#R60603821406"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R10153834801" qualifies="ClassifiedEventTime">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R19095527059" qualifies="ClassifiedEventTime">
     <name lang="EN-US">ContractDeliveryDate</name>
-    <role-qualification qualifies="object" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
     </role-qualification>
-    <role-qualification qualifies="value" range="dateTime">
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#dateTime">
       <name lang="EN-US">value</name>
     </role-qualification>
     <role-qualification qualifies="eventType">
       <name lang="EN-US">eventType</name>
-      <value reference="CONTRACT DELIVERY DATE"/>
+      <value reference="http://rdl.rdlfacade.org/data#R85548584210"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R79437238462">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R96857894125" qualifies="IndirectPropertyOfIndividual">
     <name lang="EN-US">CriticalPressure</name>
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
+      <name lang="EN-US">object</name>
+    </role-qualification>
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#decimal">
+      <name lang="EN-US">value</name>
+    </role-qualification>
+    <role-qualification qualifies="scale" range="http://rdl.rdlfacade.org/data#R84723580894">
+      <name lang="EN-US">scale</name>
+    </role-qualification>
+    <role-qualification qualifies="propertyType">
+      <name lang="EN-US">propertyType</name>
+      <value reference="http://rdl.rdlfacade.org/data#R93892759915"/>
+    </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R65214539600">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R22605633131" qualifies="DirectPropertyOfIndividual">
     <name lang="EN-US">Cross-SectionArea</name>
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
+      <name lang="EN-US">object</name>
+    </role-qualification>
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#decimal">
+      <name lang="EN-US">value</name>
+    </role-qualification>
+    <role-qualification qualifies="scale" range="http://rdl.rdlfacade.org/data#R17495274883">
+      <name lang="EN-US">scale</name>
+    </role-qualification>
+    <role-qualification qualifies="propertyType">
+      <name lang="EN-US">propertyType</name>
+      <value reference="http://rdl.rdlfacade.org/data#R85638373344"/>
+    </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R22580587154" qualifies="ClassifiedEventTime">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R51885347202" qualifies="ClassifiedEventTime">
     <name lang="EN-US">DeliveryDate</name>
-    <role-qualification qualifies="object" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
     </role-qualification>
-    <role-qualification qualifies="value" range="dateTime">
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#dateTime">
       <name lang="EN-US">value</name>
     </role-qualification>
     <role-qualification qualifies="eventType">
       <name lang="EN-US">eventType</name>
-      <value reference="DELIVERY DATE"/>
+      <value reference="http://rdl.rdlfacade.org/data#R72912758693"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R23614195426">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R18379353890" qualifies="DirectPropertyOfIndividual">
     <name lang="EN-US">Density</name>
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
+      <name lang="EN-US">object</name>
+    </role-qualification>
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#decimal">
+      <name lang="EN-US">value</name>
+    </role-qualification>
+    <role-qualification qualifies="scale" range="http://rdl.rdlfacade.org/data#R13609496414">
+      <name lang="EN-US">scale</name>
+    </role-qualification>
+    <role-qualification qualifies="propertyType">
+      <name lang="EN-US">propertyType</name>
+      <value reference="http://rdl.rdlfacade.org/data#R47399074196"/>
+    </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R34184560114">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R25752793643" qualifies="DirectPropertyOfIndividual">
     <name lang="EN-US">Depth</name>
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
+      <name lang="EN-US">object</name>
+    </role-qualification>
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#decimal">
+      <name lang="EN-US">value</name>
+    </role-qualification>
+    <role-qualification qualifies="scale" range="http://rdl.rdlfacade.org/data#R67037145498">
+      <name lang="EN-US">scale</name>
+    </role-qualification>
+    <role-qualification qualifies="propertyType">
+      <name lang="EN-US">propertyType</name>
+      <value reference="http://rdl.rdlfacade.org/data#R21231929231"/>
+    </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R50616419716">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R56788061548" qualifies="IndirectPropertyOfIndividual">
     <name lang="EN-US">DesignPressure</name>
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
+      <name lang="EN-US">object</name>
+    </role-qualification>
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#decimal">
+      <name lang="EN-US">value</name>
+    </role-qualification>
+    <role-qualification qualifies="scale" range="http://rdl.rdlfacade.org/data#R84723580894">
+      <name lang="EN-US">scale</name>
+    </role-qualification>
+    <role-qualification qualifies="propertyType">
+      <name lang="EN-US">propertyType</name>
+      <value reference="http://rdl.rdlfacade.org/data#R80639988658"/>
+    </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R80099177061">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R31315392522" qualifies="IndirectPropertyOfIndividual">
     <name lang="EN-US">DesignTemperature</name>
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
+      <name lang="EN-US">object</name>
+    </role-qualification>
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#decimal">
+      <name lang="EN-US">value</name>
+    </role-qualification>
+    <role-qualification qualifies="scale" range="http://rdl.rdlfacade.org/data#R59174773370">
+      <name lang="EN-US">scale</name>
+    </role-qualification>
+    <role-qualification qualifies="propertyType">
+      <name lang="EN-US">propertyType</name>
+      <value reference="http://rdl.rdlfacade.org/data#R10024753274"/>
+    </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R97870506574">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R85159533732" qualifies="DirectPropertyOfIndividual">
     <name lang="EN-US">Diameter</name>
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
+      <name lang="EN-US">object</name>
+    </role-qualification>
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#decimal">
+      <name lang="EN-US">value</name>
+    </role-qualification>
+    <role-qualification qualifies="scale" range="http://rdl.rdlfacade.org/data#R67037145498">
+      <name lang="EN-US">scale</name>
+    </role-qualification>
+    <role-qualification qualifies="propertyType">
+      <name lang="EN-US">propertyType</name>
+      <value reference="http://rdl.rdlfacade.org/data#R94482935208"/>
+    </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R91545090463">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R22994324148" qualifies="DirectPropertyOfIndividual">
     <name lang="EN-US">EngineeredLength</name>
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
+      <name lang="EN-US">object</name>
+    </role-qualification>
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#decimal">
+      <name lang="EN-US">value</name>
+    </role-qualification>
+    <role-qualification qualifies="scale" range="http://rdl.rdlfacade.org/data#R67037145498">
+      <name lang="EN-US">scale</name>
+    </role-qualification>
+    <role-qualification qualifies="propertyType">
+      <name lang="EN-US">propertyType</name>
+      <value reference="http://rdl.rdlfacade.org/data#R83192523772"/>
+    </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R97520064358" qualifies="ClassifiedEventTime">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R12406194004" qualifies="ClassifiedEventTime">
     <name lang="EN-US">EngineeringReleaseDate</name>
-    <role-qualification qualifies="object" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
     </role-qualification>
-    <role-qualification qualifies="value" range="dateTime">
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#dateTime">
       <name lang="EN-US">value</name>
     </role-qualification>
     <role-qualification qualifies="eventType">
       <name lang="EN-US">eventType</name>
-      <value reference="ENGINEERING RELEASE DATE"/>
+      <value reference="http://rdl.rdlfacade.org/data#R43671565934"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R54911349079" qualifies="ClassifiedEventTime">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R15637241966" qualifies="ClassifiedEventTime">
     <name lang="EN-US">FlushCompletionDate</name>
-    <role-qualification qualifies="object" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
     </role-qualification>
-    <role-qualification qualifies="value" range="dateTime">
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#dateTime">
       <name lang="EN-US">value</name>
     </role-qualification>
     <role-qualification qualifies="eventType">
       <name lang="EN-US">eventType</name>
-      <value reference="FLUSH COMPLETION DATE"/>
+      <value reference="http://rdl.rdlfacade.org/data#R85207147008"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R54937104622" qualifies="ClassifiedEventTime">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R78991103058" qualifies="ClassifiedEventTime">
     <name lang="EN-US">ForecastDeliveryDate</name>
-    <role-qualification qualifies="object" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
     </role-qualification>
-    <role-qualification qualifies="value" range="dateTime">
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#dateTime">
       <name lang="EN-US">value</name>
     </role-qualification>
     <role-qualification qualifies="eventType">
       <name lang="EN-US">eventType</name>
-      <value reference="FORECAST DELIVERY DATE"/>
+      <value reference="http://rdl.rdlfacade.org/data#R94895602408"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R36089721893" qualifies="ClassifiedEventTime">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R39343940762" qualifies="ClassifiedEventTime">
     <name lang="EN-US">ForecastVendorShipDate</name>
-    <role-qualification qualifies="object" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
     </role-qualification>
-    <role-qualification qualifies="value" range="dateTime">
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#dateTime">
       <name lang="EN-US">value</name>
     </role-qualification>
     <role-qualification qualifies="eventType">
       <name lang="EN-US">eventType</name>
-      <value reference="FORECAST VENDOR SHIP DATE"/>
+      <value reference="http://rdl.rdlfacade.org/data#R86727593574"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R91688996690" qualifies="ClassifiedAssemblyOfIndividual">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R34434708938" qualifies="ClassifiedAssemblyOfIndividual">
     <name lang="EN-US">FunctionalUnitAssembly</name>
-    <role-qualification qualifies="part" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="part" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">part</name>
     </role-qualification>
-    <role-qualification qualifies="whole" range="FUNCTIONAL UNIT">
+    <role-qualification qualifies="whole" range="http://rdl.rdlfacade.org/data#R50506996451">
       <name lang="EN-US">whole</name>
     </role-qualification>
     <role-qualification qualifies="assemblyType">
       <name lang="EN-US">assemblyType</name>
-      <value reference="PLANT OBJECT HAS FUNCTIONAL UNIT"/>
+      <value reference="http://rdl.rdlfacade.org/data#R79473726242"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R69060141370">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R37426602106" qualifies="DirectPropertyOfIndividual">
     <name lang="EN-US">Height</name>
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
+      <name lang="EN-US">object</name>
+    </role-qualification>
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#decimal">
+      <name lang="EN-US">value</name>
+    </role-qualification>
+    <role-qualification qualifies="scale" range="http://rdl.rdlfacade.org/data#R67037145498">
+      <name lang="EN-US">scale</name>
+    </role-qualification>
+    <role-qualification qualifies="propertyType">
+      <name lang="EN-US">propertyType</name>
+      <value reference="http://rdl.rdlfacade.org/data#R60163930504"/>
+    </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R18525797840" qualifies="ClassifiedEventTime">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R42932925621" qualifies="ClassifiedEventTime">
     <name lang="EN-US">HoldDate</name>
-    <role-qualification qualifies="object" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
     </role-qualification>
-    <role-qualification qualifies="value" range="dateTime">
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#dateTime">
       <name lang="EN-US">value</name>
     </role-qualification>
     <role-qualification qualifies="eventType">
       <name lang="EN-US">eventType</name>
-      <value reference="HOLD DATE"/>
+      <value reference="http://rdl.rdlfacade.org/data#R43096252790"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R66814772549" qualifies="ClassifiedEventTime">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R27713848260" qualifies="ClassifiedEventTime">
     <name lang="EN-US">HoldReleaseDate</name>
-    <role-qualification qualifies="object" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
     </role-qualification>
-    <role-qualification qualifies="value" range="dateTime">
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#dateTime">
       <name lang="EN-US">value</name>
     </role-qualification>
     <role-qualification qualifies="eventType">
       <name lang="EN-US">eventType</name>
-      <value reference="HOLD RELEASE DATE"/>
+      <value reference="http://rdl.rdlfacade.org/data#R43985744507"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R75123972822" qualifies="ClassifiedEventTime">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R33421271422" qualifies="ClassifiedEventTime">
     <name lang="EN-US">HydrostaticTestingDate</name>
-    <role-qualification qualifies="object" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
     </role-qualification>
-    <role-qualification qualifies="value" range="dateTime">
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#dateTime">
       <name lang="EN-US">value</name>
     </role-qualification>
     <role-qualification qualifies="eventType">
       <name lang="EN-US">eventType</name>
-      <value reference="HYDROSTATIC TESTING DATE"/>
+      <value reference="http://rdl.rdlfacade.org/data#R11926638339"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R33562663681" qualifies="ClassifiedEventTime">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R54076117482" qualifies="ClassifiedEventTime">
     <name lang="EN-US">InstallationDate</name>
-    <role-qualification qualifies="object" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
     </role-qualification>
-    <role-qualification qualifies="value" range="dateTime">
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#dateTime">
       <name lang="EN-US">value</name>
     </role-qualification>
     <role-qualification qualifies="eventType">
       <name lang="EN-US">eventType</name>
-      <value reference="INSTALLATION DATE"/>
+      <value reference="http://rdl.rdlfacade.org/data#R29940206475"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R48972486773" qualifies="RoleOfIndividual">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R76919543014" qualifies="RoleOfIndividual">
     <name lang="EN-US">InsulationRole</name>
-    <role-qualification qualifies="object" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
     </role-qualification>
-    <role-qualification qualifies="role" range="INSULATION PURPOSE">
+    <role-qualification qualifies="role" range="http://rdl.rdlfacade.org/data#R15859258795">
       <name lang="EN-US">role</name>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R50376190944" qualifies="RepresentationOfIndividual">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R61283389269" qualifies="RepresentationOfIndividual">
     <name lang="EN-US">IsoDrawingRepresentation</name>
-    <role-qualification qualifies="object" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
     </role-qualification>
-    <role-qualification qualifies="representation" range="PIPING ISOMETRIC DRAWING">
+    <role-qualification qualifies="representation" range="http://rdl.rdlfacade.org/data#R50734018068">
       <name lang="EN-US">representation</name>
     </role-qualification>
     <role-qualification qualifies="representationType">
       <name lang="EN-US">representationType</name>
-      <value reference="PIPING ISOMETRIC DRAWING"/>
+      <value reference="http://rdl.rdlfacade.org/data#R50734018068"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R10843960759">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R87906528107" qualifies="DirectPropertyOfIndividual">
     <name lang="EN-US">Length</name>
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
+      <name lang="EN-US">object</name>
+    </role-qualification>
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#decimal">
+      <name lang="EN-US">value</name>
+    </role-qualification>
+    <role-qualification qualifies="scale" range="http://rdl.rdlfacade.org/data#R67037145498">
+      <name lang="EN-US">scale</name>
+    </role-qualification>
+    <role-qualification qualifies="propertyType">
+      <name lang="EN-US">propertyType</name>
+      <value reference="http://rdl.rdlfacade.org/data#R32277183282"/>
+    </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R19987785415">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R69248227277" qualifies="DirectPropertyOfIndividual">
     <name lang="EN-US">Mass</name>
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
+      <name lang="EN-US">object</name>
+    </role-qualification>
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#decimal">
+      <name lang="EN-US">value</name>
+    </role-qualification>
+    <role-qualification qualifies="scale" range="http://rdl.rdlfacade.org/data#R18764011417">
+      <name lang="EN-US">scale</name>
+    </role-qualification>
+    <role-qualification qualifies="propertyType">
+      <name lang="EN-US">propertyType</name>
+      <value reference="http://rdl.rdlfacade.org/data#R53947127080"/>
+    </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R60400943107">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R93842776057" qualifies="DirectPropertyOfIndividual">
     <name lang="EN-US">MassFlow</name>
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
+      <name lang="EN-US">object</name>
+    </role-qualification>
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#decimal">
+      <name lang="EN-US">value</name>
+    </role-qualification>
+    <role-qualification qualifies="scale" range="http://rdl.rdlfacade.org/data#R24746283267">
+      <name lang="EN-US">scale</name>
+    </role-qualification>
+    <role-qualification qualifies="propertyType">
+      <name lang="EN-US">propertyType</name>
+      <value reference="http://rdl.rdlfacade.org/data#R50863962726"/>
+    </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R17194420908">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R88158703039" qualifies="DirectPropertyOfIndividual">
     <name lang="EN-US">MassPerLength</name>
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
+      <name lang="EN-US">object</name>
+    </role-qualification>
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#decimal">
+      <name lang="EN-US">value</name>
+    </role-qualification>
+    <role-qualification qualifies="scale" range="http://rdl.rdlfacade.org/data#R77299799431">
+      <name lang="EN-US">scale</name>
+    </role-qualification>
+    <role-qualification qualifies="propertyType">
+      <name lang="EN-US">propertyType</name>
+      <value reference="http://rdl.rdlfacade.org/data#R54486375649"/>
+    </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R71570919278" qualifies="ClassifiedEventTime">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R80547540074" qualifies="ClassifiedEventTime">
     <name lang="EN-US">MaterialWithdrawalRequestDate</name>
-    <role-qualification qualifies="object" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
     </role-qualification>
-    <role-qualification qualifies="value" range="dateTime">
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#dateTime">
       <name lang="EN-US">value</name>
     </role-qualification>
     <role-qualification qualifies="eventType">
       <name lang="EN-US">eventType</name>
-      <value reference="MATERIAL WITHDRAWAL REQUEST DATE"/>
+      <value reference="http://rdl.rdlfacade.org/data#R65206154041"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R63703940475" qualifies="ClassifiedEventTime">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R63978693261" qualifies="ClassifiedEventTime">
     <name lang="EN-US">MaterialWithdrawalRequestIssuedDate</name>
-    <role-qualification qualifies="object" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
     </role-qualification>
-    <role-qualification qualifies="value" range="dateTime">
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#dateTime">
       <name lang="EN-US">value</name>
     </role-qualification>
     <role-qualification qualifies="eventType">
       <name lang="EN-US">eventType</name>
-      <value reference="MATERIAL WITHDRAWAL REQUEST ISSUED DATE"/>
+      <value reference="http://rdl.rdlfacade.org/data#R42275948291"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R60029583032">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R82202195752" qualifies="DirectPropertyOfIndividual">
     <name lang="EN-US">NominalDiameter</name>
-  </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R80131371821">
-    <name lang="EN-US">NominalThickness</name>
-  </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R97538284760">
-    <name lang="EN-US">OperatingPressure</name>
-  </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R76526574772">
-    <name lang="EN-US">OperatingTemperature</name>
-  </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R35788934599" qualifies="RepresentationOfIndividual">
-    <name lang="EN-US">PAndIDRepresentation</name>
-    <role-qualification qualifies="object" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
     </role-qualification>
-    <role-qualification qualifies="representation" range="P AND I DIAGRAM">
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#decimal">
+      <name lang="EN-US">value</name>
+    </role-qualification>
+    <role-qualification qualifies="scale" range="http://rdl.rdlfacade.org/data#R67037145498">
+      <name lang="EN-US">scale</name>
+    </role-qualification>
+    <role-qualification qualifies="propertyType">
+      <name lang="EN-US">propertyType</name>
+      <value reference="http://rdl.rdlfacade.org/data#R17622148043"/>
+    </role-qualification>
+  </template-qualification>
+  <template-qualification id="http://tpl.rdlfacade.org/data#R90405107027" qualifies="DirectPropertyOfIndividual">
+    <name lang="EN-US">NominalThickness</name>
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
+      <name lang="EN-US">object</name>
+    </role-qualification>
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#decimal">
+      <name lang="EN-US">value</name>
+    </role-qualification>
+    <role-qualification qualifies="scale" range="http://rdl.rdlfacade.org/data#R67037145498">
+      <name lang="EN-US">scale</name>
+    </role-qualification>
+    <role-qualification qualifies="propertyType">
+      <name lang="EN-US">propertyType</name>
+      <value reference="http://rdl.rdlfacade.org/data#R75626151549"/>
+    </role-qualification>
+  </template-qualification>
+  <template-qualification id="http://tpl.rdlfacade.org/data#R86910459273" qualifies="IndirectPropertyOfIndividual">
+    <name lang="EN-US">OperatingPressure</name>
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
+      <name lang="EN-US">object</name>
+    </role-qualification>
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#decimal">
+      <name lang="EN-US">value</name>
+    </role-qualification>
+    <role-qualification qualifies="scale" range="http://rdl.rdlfacade.org/data#R84723580894">
+      <name lang="EN-US">scale</name>
+    </role-qualification>
+    <role-qualification qualifies="propertyType">
+      <name lang="EN-US">propertyType</name>
+      <value reference="http://rdl.rdlfacade.org/data#R98022303359"/>
+    </role-qualification>
+  </template-qualification>
+  <template-qualification id="http://tpl.rdlfacade.org/data#R50445288692" qualifies="IndirectPropertyOfIndividual">
+    <name lang="EN-US">OperatingTemperature</name>
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
+      <name lang="EN-US">object</name>
+    </role-qualification>
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#decimal">
+      <name lang="EN-US">value</name>
+    </role-qualification>
+    <role-qualification qualifies="scale" range="http://rdl.rdlfacade.org/data#R59174773370">
+      <name lang="EN-US">scale</name>
+    </role-qualification>
+    <role-qualification qualifies="propertyType">
+      <name lang="EN-US">propertyType</name>
+      <value reference="http://rdl.rdlfacade.org/data#R98733065502"/>
+    </role-qualification>
+  </template-qualification>
+  <template-qualification id="http://tpl.rdlfacade.org/data#R52573064645" qualifies="RepresentationOfIndividual">
+    <name lang="EN-US">PAndIDRepresentation</name>
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
+      <name lang="EN-US">object</name>
+    </role-qualification>
+    <role-qualification qualifies="representation" range="http://rdl.rdlfacade.org/data#R99486931975">
       <name lang="EN-US">representation</name>
     </role-qualification>
     <role-qualification qualifies="representationType">
       <name lang="EN-US">representationType</name>
-      <value reference="P AND I DIAGRAM"/>
+      <value reference="http://rdl.rdlfacade.org/data#R99486931975"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R87491632795" qualifies="ClassifiedAssemblyOfIndividual">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R84748749069" qualifies="ClassifiedAssemblyOfIndividual">
     <name lang="EN-US">PlantModuleAssembly</name>
-    <role-qualification qualifies="part" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="part" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">part</name>
     </role-qualification>
-    <role-qualification qualifies="whole" range="PLANT MODULE">
+    <role-qualification qualifies="whole" range="http://rdl.rdlfacade.org/data#R19704507670">
       <name lang="EN-US">whole</name>
     </role-qualification>
     <role-qualification qualifies="assemblyType">
       <name lang="EN-US">assemblyType</name>
-      <value reference="PLANT OBJECT HAS PLANT MODULE"/>
+      <value reference="http://rdl.rdlfacade.org/data#R45749223172"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R28801315701" qualifies="ClassifiedAssemblyOfIndividual">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R55618266318" qualifies="ClassifiedAssemblyOfIndividual">
     <name lang="EN-US">PlantAreaAssembly</name>
-    <role-qualification qualifies="part" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="part" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">part</name>
     </role-qualification>
-    <role-qualification qualifies="whole" range="PLANT AREA">
+    <role-qualification qualifies="whole" range="http://rdl.rdlfacade.org/data#R49658319833">
       <name lang="EN-US">whole</name>
     </role-qualification>
     <role-qualification qualifies="assemblyType">
       <name lang="EN-US">assemblyType</name>
-      <value reference="PLANT OBJECT HAS PLANT AREA"/>
+      <value reference="http://rdl.rdlfacade.org/data#R75763594642"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R82050813529" qualifies="ClassifiedAssemblyOfIndividual">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R94154642453" qualifies="ClassifiedAssemblyOfIndividual">
     <name lang="EN-US">PlantMajorDesignAreaAssembly</name>
-    <role-qualification qualifies="part" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="part" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">part</name>
     </role-qualification>
-    <role-qualification qualifies="whole" range="PLANT MAJOR DESIGN AREA">
+    <role-qualification qualifies="whole" range="http://rdl.rdlfacade.org/data#R80951801614">
       <name lang="EN-US">whole</name>
     </role-qualification>
     <role-qualification qualifies="assemblyType">
       <name lang="EN-US">assemblyType</name>
-      <value reference="PLANT OBJECT HAS PLANT MAJOR DESIGN AREA"/>
+      <value reference="http://rdl.rdlfacade.org/data#R75315940299"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R64873115898" qualifies="ClassifiedAssemblyOfIndividual">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R92979389556" qualifies="ClassifiedAssemblyOfIndividual">
     <name lang="EN-US">PlantDesignAreaAssembly</name>
-    <role-qualification qualifies="part" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="part" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">part</name>
     </role-qualification>
-    <role-qualification qualifies="whole" range="PLANT DESIGN AREA">
+    <role-qualification qualifies="whole" range="http://rdl.rdlfacade.org/data#R87584561910">
       <name lang="EN-US">whole</name>
     </role-qualification>
     <role-qualification qualifies="assemblyType">
       <name lang="EN-US">assemblyType</name>
-      <value reference="PLANT OBJECT HAS PLANT DESIGN AREA"/>
+      <value reference="http://rdl.rdlfacade.org/data#R31436285155"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R39857282686" qualifies="ClassifiedAssemblyOfIndividual">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R48207875513" qualifies="ClassifiedAssemblyOfIndividual">
     <name lang="EN-US">PlantDesignSubAreaAssembly</name>
-    <role-qualification qualifies="part" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="part" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">part</name>
     </role-qualification>
-    <role-qualification qualifies="whole" range="PLANT DESIGN SUBAREA">
+    <role-qualification qualifies="whole" range="http://rdl.rdlfacade.org/data#R46516547118">
       <name lang="EN-US">whole</name>
     </role-qualification>
     <role-qualification qualifies="assemblyType">
       <name lang="EN-US">assemblyType</name>
-      <value reference="PLANT OBJECT HAS PLANT DESIGN SUBAREA"/>
+      <value reference="http://rdl.rdlfacade.org/data#R41309964857"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R90655067149" qualifies="ClassifiedAssemblyOfIndividual">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R66727812509" qualifies="ClassifiedAssemblyOfIndividual">
     <name lang="EN-US">PlantPrimaryDivisionAssembly</name>
-    <role-qualification qualifies="part" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="part" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">part</name>
     </role-qualification>
-    <role-qualification qualifies="whole" range="PLANT PRIMARY DIVISION">
+    <role-qualification qualifies="whole" range="http://rdl.rdlfacade.org/data#R87097138510">
       <name lang="EN-US">whole</name>
     </role-qualification>
     <role-qualification qualifies="assemblyType">
       <name lang="EN-US">assemblyType</name>
-      <value reference="PLANT OBJECT HAS PLANT PRIMARY DIVISION"/>
+      <value reference="http://rdl.rdlfacade.org/data#R78479977482"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R48484927895" qualifies="ClassifiedAssemblyOfIndividual">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R70591693065" qualifies="ClassifiedAssemblyOfIndividual">
     <name lang="EN-US">PlantTrainAssembly</name>
-    <role-qualification qualifies="part" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="part" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">part</name>
     </role-qualification>
-    <role-qualification qualifies="whole" range="PLANT TRAIN">
+    <role-qualification qualifies="whole" range="http://rdl.rdlfacade.org/data#R83594855391">
       <name lang="EN-US">whole</name>
     </role-qualification>
     <role-qualification qualifies="assemblyType">
       <name lang="EN-US">assemblyType</name>
-      <value reference="PLANT OBJECT HAS PLANT TRAIN"/>
+      <value reference="http://rdl.rdlfacade.org/data#R31296892470"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R34549635715">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R14819899364" qualifies="DirectPropertyOfIndividual">
     <name lang="EN-US">PreliminaryLength</name>
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
+      <name lang="EN-US">object</name>
+    </role-qualification>
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#decimal">
+      <name lang="EN-US">value</name>
+    </role-qualification>
+    <role-qualification qualifies="scale" range="http://rdl.rdlfacade.org/data#R67037145498">
+      <name lang="EN-US">scale</name>
+    </role-qualification>
+    <role-qualification qualifies="propertyType">
+      <name lang="EN-US">propertyType</name>
+      <value reference="http://rdl.rdlfacade.org/data#R42377824919"/>
+    </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R48561783628" qualifies="ClassifiedAssemblyOfIndividual">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R86652395124" qualifies="ClassifiedAssemblyOfIndividual">
     <name lang="EN-US">ProjectAssembly</name>
-    <role-qualification qualifies="part" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="part" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">part</name>
     </role-qualification>
-    <role-qualification qualifies="whole" range="PROJECT">
+    <role-qualification qualifies="whole" range="http://rdl.rdlfacade.org/data#R51988624155">
       <name lang="EN-US">whole</name>
     </role-qualification>
     <role-qualification qualifies="assemblyType">
       <name lang="EN-US">assemblyType</name>
-      <value reference="PLANT OBJECT HAS PROJECT"/>
+      <value reference="http://rdl.rdlfacade.org/data#R91496604289"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R71238766807" qualifies="ClassifiedAssemblyOfIndividual">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R21680868729" qualifies="ClassifiedAssemblyOfIndividual">
     <name lang="EN-US">PurchaseOrderAssembly</name>
-    <role-qualification qualifies="part" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="part" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">part</name>
     </role-qualification>
-    <role-qualification qualifies="whole" range="PURCHASE ORDER">
+    <role-qualification qualifies="whole" range="http://rdl.rdlfacade.org/data#R80519303731">
       <name lang="EN-US">whole</name>
     </role-qualification>
     <role-qualification qualifies="assemblyType">
       <name lang="EN-US">assemblyType</name>
-      <value reference="PLANT OBJECT HAS PURCHASE ORDER"/>
+      <value reference="http://rdl.rdlfacade.org/data#R47113300800"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R36080139686" qualifies="ClassifiedEventTime">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R86513809420" qualifies="ClassifiedEventTime">
     <name lang="EN-US">ReleaseDate</name>
-    <role-qualification qualifies="object" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
     </role-qualification>
-    <role-qualification qualifies="value" range="dateTime">
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#dateTime">
       <name lang="EN-US">value</name>
     </role-qualification>
     <role-qualification qualifies="eventType">
       <name lang="EN-US">eventType</name>
-      <value reference="RELEASE DATE"/>
+      <value reference="http://rdl.rdlfacade.org/data#R87296852011"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R16534973679" qualifies="ClassifiedEventTime">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R16452077620" qualifies="ClassifiedEventTime">
     <name lang="EN-US">RequestDeliveryDate</name>
-    <role-qualification qualifies="object" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
     </role-qualification>
-    <role-qualification qualifies="value" range="dateTime">
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#dateTime">
       <name lang="EN-US">value</name>
     </role-qualification>
     <role-qualification qualifies="eventType">
       <name lang="EN-US">eventType</name>
-      <value reference="REQUEST DELIVERY DATE"/>
+      <value reference="http://rdl.rdlfacade.org/data#R59254276826"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R96154862461" qualifies="ClassifiedEventTime">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R87935961396" qualifies="ClassifiedEventTime">
     <name lang="EN-US">RevisionDate</name>
-    <role-qualification qualifies="object" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
     </role-qualification>
-    <role-qualification qualifies="value" range="dateTime">
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#dateTime">
       <name lang="EN-US">value</name>
     </role-qualification>
     <role-qualification qualifies="eventType">
       <name lang="EN-US">eventType</name>
-      <value reference="REVISION DATE"/>
+      <value reference="http://rdl.rdlfacade.org/data#R17862030100"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R88330927765" qualifies="ClassifiedAssemblyOfIndividual">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R62535871091" qualifies="ClassifiedAssemblyOfIndividual">
     <name lang="EN-US">SubProjectAssembly</name>
-    <role-qualification qualifies="part" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="part" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">part</name>
     </role-qualification>
-    <role-qualification qualifies="whole" range="SUBPROJECT">
+    <role-qualification qualifies="whole" range="http://rdl.rdlfacade.org/data#R28299343388">
       <name lang="EN-US">whole</name>
     </role-qualification>
     <role-qualification qualifies="assemblyType">
       <name lang="EN-US">assemblyType</name>
-      <value reference="PLANT OBJECT HAS SUBPROJECT"/>
+      <value reference="http://rdl.rdlfacade.org/data#R58205513041"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R53028726469" qualifies="ClassifiedAssemblyOfIndividual">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R41342600207" qualifies="ClassifiedAssemblyOfIndividual">
     <name lang="EN-US">SystemAssembly</name>
-    <role-qualification qualifies="part" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="part" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">part</name>
     </role-qualification>
-    <role-qualification qualifies="whole" range="SYSTEM">
+    <role-qualification qualifies="whole" range="http://rdl.rdlfacade.org/data#R16348302781">
       <name lang="EN-US">whole</name>
     </role-qualification>
     <role-qualification qualifies="assemblyType">
       <name lang="EN-US">assemblyType</name>
-      <value reference="PLANT OBJECT HAS SYSTEM"/>
+      <value reference="http://rdl.rdlfacade.org/data#R76706791625"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R74081576263" qualifies="ClassifiedContainmentOfIndividual">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R51194815501" qualifies="ClassifiedContainmentOfIndividual">
     <name lang="EN-US">ThermalInsulationContainment</name>
-    <role-qualification qualifies="contained" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="contained" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">contained</name>
     </role-qualification>
-    <role-qualification qualifies="container" range="THERMAL INSULATION MATERIAL">
+    <role-qualification qualifies="container" range="http://rdl.rdlfacade.org/data#R14036517578">
       <name lang="EN-US">container</name>
     </role-qualification>
     <role-qualification qualifies="containmentType">
       <name lang="EN-US">containmentType</name>
-      <value reference="PLANT OBJECT HAS THERMAL INSULATION"/>
+      <value reference="http://rdl.rdlfacade.org/data#R73669292146"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R50224750632">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R83767067011" qualifies="DirectPropertyOfIndividual">
     <name lang="EN-US">Thickness</name>
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
+      <name lang="EN-US">object</name>
+    </role-qualification>
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#decimal">
+      <name lang="EN-US">value</name>
+    </role-qualification>
+    <role-qualification qualifies="scale" range="http://rdl.rdlfacade.org/data#R67037145498">
+      <name lang="EN-US">scale</name>
+    </role-qualification>
+    <role-qualification qualifies="propertyType">
+      <name lang="EN-US">propertyType</name>
+      <value reference="http://rdl.rdlfacade.org/data#R66702046865"/>
+    </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R11081127885" qualifies="ClassifiedEventTime">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R49955240463" qualifies="ClassifiedEventTime">
     <name lang="EN-US">TurnoverToOwnerDate</name>
-    <role-qualification qualifies="object" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
     </role-qualification>
-    <role-qualification qualifies="value" range="dateTime">
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#dateTime">
       <name lang="EN-US">value</name>
     </role-qualification>
     <role-qualification qualifies="eventType">
       <name lang="EN-US">eventType</name>
-      <value reference="TURNOVER TO OWNER DATE"/>
+      <value reference="http://rdl.rdlfacade.org/data#R52354878550"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R48966823201" qualifies="ClassifiedEventTime">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R74813289918" qualifies="ClassifiedEventTime">
     <name lang="EN-US">TurnoverToStartupDate</name>
-    <role-qualification qualifies="object" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
     </role-qualification>
-    <role-qualification qualifies="value" range="dateTime">
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#dateTime">
       <name lang="EN-US">value</name>
     </role-qualification>
     <role-qualification qualifies="eventType">
       <name lang="EN-US">eventType</name>
-      <value reference="TURNOVER TO STARTUP DATE"/>
+      <value reference="http://rdl.rdlfacade.org/data#R67192956161"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R98490037016">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R71917605260" qualifies="IndirectPropertyOfIndividual">
     <name lang="EN-US">UpsetTemperature</name>
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
+      <name lang="EN-US">object</name>
+    </role-qualification>
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#decimal">
+      <name lang="EN-US">value</name>
+    </role-qualification>
+    <role-qualification qualifies="scale" range="http://rdl.rdlfacade.org/data#R59174773370">
+      <name lang="EN-US">scale</name>
+    </role-qualification>
+    <role-qualification qualifies="propertyType">
+      <name lang="EN-US">propertyType</name>
+      <value reference="http://rdl.rdlfacade.org/data#R84125250525"/>
+    </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R15685704143" qualifies="ClassifiedEventTime">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R53992268284" qualifies="ClassifiedEventTime">
     <name lang="EN-US">VendorFabricationCompleteDate</name>
-    <role-qualification qualifies="object" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
     </role-qualification>
-    <role-qualification qualifies="value" range="dateTime">
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#dateTime">
       <name lang="EN-US">value</name>
     </role-qualification>
     <role-qualification qualifies="eventType">
       <name lang="EN-US">eventType</name>
-      <value reference="VENDOR FABRICATION COMPLETE DATE"/>
+      <value reference="http://rdl.rdlfacade.org/data#R53858636757"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R44905242731" qualifies="ClassifiedEventTime">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R97238108083" qualifies="ClassifiedEventTime">
     <name lang="EN-US">VendorFabricationStartDate</name>
-    <role-qualification qualifies="object" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
     </role-qualification>
-    <role-qualification qualifies="value" range="dateTime">
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#dateTime">
       <name lang="EN-US">value</name>
     </role-qualification>
     <role-qualification qualifies="eventType">
       <name lang="EN-US">eventType</name>
-      <value reference="VENDOR FABRICATION START DATE"/>
+      <value reference="http://rdl.rdlfacade.org/data#R36144177950"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R72412897981" qualifies="ClassifiedEventTime">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R18807329009" qualifies="ClassifiedEventTime">
     <name lang="EN-US">VendorShipDate</name>
-    <role-qualification qualifies="object" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">object</name>
     </role-qualification>
-    <role-qualification qualifies="value" range="dateTime">
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#dateTime">
       <name lang="EN-US">value</name>
     </role-qualification>
     <role-qualification qualifies="eventType">
       <name lang="EN-US">eventType</name>
-      <value reference="VENDOR SHIP DATE"/>
+      <value reference="http://rdl.rdlfacade.org/data#R46042966034"/>
     </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R23785618122">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R74194717434" qualifies="DirectPropertyOfIndividual">
     <name lang="EN-US">Weight</name>
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
+      <name lang="EN-US">object</name>
+    </role-qualification>
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#decimal">
+      <name lang="EN-US">value</name>
+    </role-qualification>
+    <role-qualification qualifies="scale" range="http://rdl.rdlfacade.org/data#R90590112615">
+      <name lang="EN-US">scale</name>
+    </role-qualification>
+    <role-qualification qualifies="propertyType">
+      <name lang="EN-US">propertyType</name>
+      <value reference="http://rdl.rdlfacade.org/data#R41715988573"/>
+    </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R60945599218">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R64529070824" qualifies="DirectPropertyOfIndividual">
     <name lang="EN-US">Width</name>
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
+      <name lang="EN-US">object</name>
+    </role-qualification>
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#decimal">
+      <name lang="EN-US">value</name>
+    </role-qualification>
+    <role-qualification qualifies="scale" range="http://rdl.rdlfacade.org/data#R67037145498">
+      <name lang="EN-US">scale</name>
+    </role-qualification>
+    <role-qualification qualifies="propertyType">
+      <name lang="EN-US">propertyType</name>
+      <value reference="http://rdl.rdlfacade.org/data#R31927636762"/>
+    </role-qualification>
   </template-qualification>
-  <template-qualification id="http://tpl.rdlfacade.org/data#R14543646849" qualifies="ClassifiedAssemblyOfIndividual">
+  <template-qualification id="http://tpl.rdlfacade.org/data#R77138428873" qualifies="ClassifiedAssemblyOfIndividual">
     <name lang="EN-US">WorkPackageAssembly</name>
-    <role-qualification qualifies="part" range="ISO 15926-4 POSSIBLE INDIVIDUAL">
+    <role-qualification qualifies="part" range="http://rdl.rdlfacade.org/data#R99781532089">
       <name lang="EN-US">part</name>
     </role-qualification>
-    <role-qualification qualifies="whole">
+    <role-qualification qualifies="whole" range="http://rdl.rdlfacade.org/data#R98082067751">
       <name lang="EN-US">whole</name>
     </role-qualification>
     <role-qualification qualifies="assemblyType">
       <name lang="EN-US">assemblyType</name>
+    </role-qualification>
+  </template-qualification>
+  <template-qualification id="http://tpl.rdlfacade.org/data#R34046265588" qualifies="DirectPropertyOfIndividual">
+    <name lang="EN-US">CompressibilityFactor</name>
+    <role-qualification qualifies="object" range="http://rdl.rdlfacade.org/data#R99781532089">
+      <name lang="EN-US">object</name>
+    </role-qualification>
+    <role-qualification qualifies="value" range="http://www.w3.org/2001/XMLSchema#decimal">
+      <name lang="EN-US">value</name>
+    </role-qualification>
+    <role-qualification qualifies="scale">
+      <name lang="EN-US">scale</name>
+    </role-qualification>
+    <role-qualification qualifies="propertyType">
+      <name lang="EN-US">propertyType</name>
+      <value reference="http://rdl.rdlfacade.org/data#R31927636762"/>
     </role-qualification>
   </template-qualification>
 </qmxf>
