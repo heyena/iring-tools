@@ -277,7 +277,7 @@ namespace AdapterService.Tests
 
         foreach (var dtoProperty in query2)
         {
-          if (dtoProperty.Attribute("name").Value == "tpl_SystemPipingNetworkSystemAssembly_hasClassOfWhole_rdl_System_tpl_PipingNetworkSystemName_identifier")
+          if (dtoProperty.Attribute("name").Value == "tpl_PipingNetworkSystemName_identifier")
             line.tpl_PipingNetworkSystemName_identifier = dtoProperty.Attribute("value").Value.ToString();
           if (dtoProperty.Attribute("name").Value == "tpl_SystemPipingNetworkSystemAssembly_hasClassOfWhole_rdl_System_tpl_SystemName_identifier")
             line.tpl_SystemPipingNetworkSystemAssembly_hasClassOfWhole_rdl_System_tpl_SystemName_identifier = dtoProperty.Attribute("value").Value.ToString();
