@@ -110,11 +110,10 @@ foreach (GraphMap graphMap in mapping.graphMaps)
 		
 		if (extendedDataProperty.isDataMember)
 		{
-#>		[DataMember(Name = "<#= extendedDataProperty.propertyPath #>", EmitDefaultValue = false)]
+#>		[DataMember(Name = "<#= extendedDataProperty.propertyPath #>", EmitDefaultValue = false)] 
 <#
 		}
 #>
-
 		[XmlIgnore]
 		public <#= nullableType + " " + extendedDataProperty.propertyPath #>
 		{
