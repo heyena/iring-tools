@@ -59,6 +59,7 @@ namespace org.iringtools.adapter
         private string _iDataServicePath = String.Empty;
         private bool _trimData = false;
         private bool _useSemweb = false;
+        private string _transFormPath = string.Empty;
         private SPARQLEngine _sparqlEngine = null;
         private SemWebEngine _semwebEngine = null;
         private string _tripleStoreConnectionString = String.Empty;
@@ -87,9 +88,17 @@ namespace org.iringtools.adapter
               configSettings.XmlPath = _xmlPath;
             }
             _mappingPath = _xmlPath + MAPPING_FILENAME;
-            _dtoToQXFPath = _xmlPath + DTO_TO_QXF_FILENAME;
-            _qxfToRDFPath = _xmlPath + QXF_TO_RDF_FILENAME;
             _dataDictionaryPath = _xmlPath + DATA_DICTIONARY_FILENAME;
+
+            _transFormPath = configSettings.TransformPath;
+            if (string.IsNullOrEmpty(_transFormPath))
+            {
+                _transFormPath = ".\\Transforms\\";
+                configSettings.TransformPath = _transFormPath;
+            }
+            _dtoToQXFPath = _transFormPath + DTO_TO_QXF_FILENAME;
+            _qxfToRDFPath = _transFormPath + QXF_TO_RDF_FILENAME;
+           
 
             _modelDTOPath = configSettings.ModelDTOPath;
             if (string.IsNullOrEmpty(_modelDTOPath))
@@ -133,7 +142,7 @@ namespace org.iringtools.adapter
             
             int proxyPort = 0;
             Int32.TryParse(proxyPortString, out proxyPort);
-            if (encryptedProxyToken == String.Empty)
+            if (string.IsNullOrEmpty(encryptedProxyToken))
             {
                 _proxyCredentials = new WebProxyCredentials();
             }
