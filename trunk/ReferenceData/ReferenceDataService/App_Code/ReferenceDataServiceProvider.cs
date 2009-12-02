@@ -89,7 +89,13 @@ namespace org.ids_adi.iring.referenceData
             string proxyHost = configSettings.ProxyHost;
             string proxyPortString = configSettings.ProxyPort;
 
+
             if (encryptedRegistryToken == String.Empty)
+            {
+                _registryCredentials = new WebCredentials(encryptedRegistryToken);
+                _registryCredentials.Decrypt();
+            }
+            else
             {
                 _registryCredentials = new WebCredentials(encryptedRegistryToken);
                 _registryCredentials.Decrypt();
@@ -1756,7 +1762,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
-                throw new Exception("CreateIdsAdiId: " + e.ToString());
+                throw new Exception("CreateIdsAdiId: " + e.ToString() + " registrybase: " + RegistryBase);
             }
 
             return idsAdiId;
