@@ -328,6 +328,7 @@ namespace org.ids_adi.iring.referenceData
                 foreach (Repository repository in _repositories)
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
+                   
 
                     List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
                     
@@ -336,17 +337,21 @@ namespace org.ids_adi.iring.referenceData
                     {
 
                         Classification classification = new Classification();
-                        
+                        string uri = String.Empty;
+                        string label = String.Empty;
 
                         if (result.ContainsKey("uri"))
                         {
-                            classification.reference = result["uri"];
-                        }
-                        if (result.ContainsKey("label"))
-                        {
-                            classification.label = result["label"];
+                            uri = result["uri"];
+                            classification.reference = uri;
                         }
 
+                        if (result.ContainsKey("label"))
+                           label = result["label"];
+                        else
+                           label = GetLabel(uri);
+                        
+                        classification.label =  label;
                         classifications.Add(classification);
                     }
                     
@@ -381,11 +386,9 @@ namespace org.ids_adi.iring.referenceData
 
                     List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
                     
-
                     foreach (Dictionary<string, string> result in results)
                     {
                         Specialization specialization = new Specialization();
-                        
 
                         string uri = String.Empty;
                         string label = String.Empty;
@@ -402,11 +405,10 @@ namespace org.ids_adi.iring.referenceData
                         {
                             label = GetLabel(uri);
                         }
-                        specialization.label = label;
 
+                        specialization.label = label;
                         specializations.Add(specialization);
                     }
-                    
                 }
 
                 return specializations;
@@ -467,50 +469,37 @@ namespace org.ids_adi.iring.referenceData
                         status = new Status();
 
                         if (result.ContainsKey("label"))
-                        {
-                            name.value = result["label"];
-                        }
+                          name.value = result["label"];
+                        
                         if (result.ContainsKey("type"))
-                        {
-                            classDefinition.entityType = new EntityType
-                            {
-                                reference = result["type"],
-                            };
-                        }
+                          classDefinition.entityType = new EntityType { reference = result["type"] };
+                        
                         //legacy properties
                         if (result.ContainsKey("definition"))
-                        {
-                            description.value = result["definition"];
-                        }
+                          description.value = result["definition"];
+                        
                         if (result.ContainsKey("creator"))
-                        {
-                            status.authority = result["creator"];
-                        }
+                          status.authority = result["creator"];
+                        
                         if (result.ContainsKey("creationDate"))
-                        {
-                            status.from = result["creationDate"];
-                        }
+                          status.from = result["creationDate"];
+                        
                         if (result.ContainsKey("class"))
-                        {
-                            status.Class = result["class"];
-                        }
+                          status.Class = result["class"];
+                        
                         //camelot properties
                         if (result.ContainsKey("comment"))
-                        {
-                            description.value = result["comment"];
-                        }
+                          description.value = result["comment"];
+                        
                         if (result.ContainsKey("authority"))
-                        {
-                            status.authority = result["authority"];
-                        }
+                          status.authority = result["authority"];
+                        
                         if (result.ContainsKey("recorded"))
-                        {
-                            status.Class = result["recorded"];
-                        }
+                          status.Class = result["recorded"];
+                        
                         if (result.ContainsKey("from"))
-                        {
-                            status.from = result["from"];
-                        }
+                          status.from = result["from"];
+                      
                         classDefinition.name.Add(name);
                         classDefinition.description.Add(description);
                         classDefinition.status.Add(status);
@@ -547,10 +536,8 @@ namespace org.ids_adi.iring.referenceData
                     string label = specialization.label;
 
                     if (label == null)
-                    {
-                        label = GetLabel(uri);
-                    }
-
+                       label = GetLabel(uri);
+                    
                     Entity resultEntity = new Entity
                     {
                         uri = uri,
