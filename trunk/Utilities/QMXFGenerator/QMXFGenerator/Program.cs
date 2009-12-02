@@ -50,7 +50,7 @@ namespace QMXFGenerator
 
             Console.WriteLine("Processing Classes...");
             qmxf.classDefinitions = ProcessClass(_classWorksheet, _classSpecializationWorksheet);
-            Console.WriteLine("  processed " + _classes.Count + "classes.");
+            Console.WriteLine("  processed " + _classes.Count + " classes.");
 
             _baseTemplateWorksheet = ExcelLibrary.GetWorksheet(workbook, (int)InformationModelWorksheets.BaseTemplate);
 
@@ -620,7 +620,7 @@ namespace QMXFGenerator
 
               if (parentRow != null)
               {
-                templateQualification.qualifies = parentRow[(int)TemplateColumns.ID].ToString().Trim();
+                templateQualification.qualifies = (parentRow[(int)TemplateColumns.ID] ?? "").ToString().Trim();
 
                 templateQualification.roleQualification = ProcessRoleQualification(row, parentRow);
               }
