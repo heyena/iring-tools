@@ -1019,10 +1019,12 @@
       <name lang="EN-US">representation</name>
       <description/>
     </role-definition>
+    <!--
     <role-definition id="http://tpl.rdlfacade.org/data#R13037119338">
       <name lang="EN-US">representationType</name>
       <description/>
     </role-definition>
+    -->
   </template-definition>
   <template-definition id="http://tpl.rdlfacade.org/data#R55822995430">
     <repository/>
