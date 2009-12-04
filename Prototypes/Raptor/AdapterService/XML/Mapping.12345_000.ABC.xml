@@ -204,8 +204,8 @@
         </TemplateMap>
       </TemplateMaps>
       <DataObjectMaps>
-        <DataObjectMap name="KOPot" inFilter="tpl_FluidContainerDescription_description.ToUpper() == &quot;KNOCK OUT VESSEL&quot;" outFilter=""/>
-        <DataObjectMap name="VacuumTower" inFilter="tpl_FluidContainerDescription_description.ToUpper() == &quot;VACUUM VESSEL&quot;" outFilter=""/>
+        <DataObjectMap name="KOPot" inFilter="tpl_FluidContainerDescription_tpl_description.ToUpper() == &quot;KNOCK OUT VESSEL&quot;" outFilter=""/>
+        <DataObjectMap name="VacuumTower" inFilter="tpl_FluidContainerDescription_tpl_description.ToUpper() == &quot;VACUUM VESSEL&quot;" outFilter=""/>
       </DataObjectMaps>
     </GraphMap>
     <GraphMap name="Lines" classId="rdl:R19192462550" identifier="tag">
