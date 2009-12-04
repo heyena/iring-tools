@@ -98,14 +98,15 @@ namespace org.iringtools.adapter
     /// <returns>Returns mapping object.</returns>
     public Mapping GetMapping(string projectName, string applicationName)
     {
+      string path = _settings.XmlPath + "Mapping." + projectName + "." + applicationName + ".xml";
+
       try
       {
-        _settings.MappingPath = _settings.XmlPath + "Mapping."  + projectName + "." + applicationName + ".xml";
-        return Utility.Read<Mapping>(_settings.MappingPath, false);
+        return Utility.Read<Mapping>(path, false);
       }
       catch (Exception exception)
       {
-        throw new Exception("Error while getting Mapping from " + _settings.MappingPath + ". " + exception.ToString(), exception);
+        throw new Exception("Error while getting Mapping from " + path + ". " + exception.ToString(), exception);
       }
     }
 
@@ -140,11 +141,12 @@ namespace org.iringtools.adapter
     public Response UpdateMapping(string projectName, string applicationName, Mapping mapping)
     {
       Response response = new Response();
+      string path = _settings.XmlPath + "Mapping." + projectName + "." + applicationName + ".xml";
 
       try
       {
-        Utility.Write<Mapping>(mapping, _settings.MappingPath, false);
-        response.Add("Mapping file updated successfully");
+        Utility.Write<Mapping>(mapping, path, false);
+        response.Add("Mapping file updated successfully.");
       }
       catch (Exception exception)
       {
