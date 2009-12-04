@@ -43,7 +43,7 @@ foreach (GraphMap graphMap in mapping.graphMaps)
 	foreach (ExtendedDataProperty extendedDataProperty in extendedDataProperties)
 	{
 
-#>			_properties.Add(new DTOProperty(@"<#= extendedDataProperty.propertyName #>", @"<#= extendedDataProperty.propertyPath #>", null, typeof(<#= extendedDataProperty.dataType #>), <#= Convert.ToString(extendedDataProperty.isPropertyKey).ToLower() #>, <#= Convert.ToString(extendedDataProperty.isRequired).ToLower() #>));
+#>			_properties.Add(new DTOProperty(@"<#= extendedDataProperty.propertyName #>", @"<#= extendedDataProperty.dtoPropertyPath #>", null, typeof(<#= extendedDataProperty.dataType #>), <#= Convert.ToString(extendedDataProperty.isPropertyKey).ToLower() #>, <#= Convert.ToString(extendedDataProperty.isRequired).ToLower() #>));
 <#
 	}
 #>
@@ -119,12 +119,12 @@ foreach (GraphMap graphMap in mapping.graphMaps)
 		{
 			get
 			{
-				return (<#= extendedDataProperty.dataType #>)GetPropertyValue("<#= extendedDataProperty.propertyPath #>");
+				return (<#= extendedDataProperty.dataType #>)GetPropertyValue("<#= extendedDataProperty.dtoPropertyPath #>");
 			}
 
 			set
 			{
-				SetPropertyValue("<#= extendedDataProperty.propertyPath #>", value);
+				SetPropertyValue("<#= extendedDataProperty.dtoPropertyPath #>", value);
 			}
 		}
 		
@@ -230,15 +230,17 @@ foreach (GraphMap graphMap in mapping.graphMaps)
 }
 
 <#+
-static string classMapPath = string.Empty;
+static string classPath = string.Empty;
 static string dataContractPath = string.Empty;
-static string templateMapPath = string.Empty;
+static string templatePath = string.Empty;
+static string dtoTemplatePath = string.Empty;
 static List<ExtendedDataProperty> extendedDataProperties = new List<ExtendedDataProperty>();
 static List<string> initStatements = new List<string>();
 
 class ExtendedDataProperty : DataProperty 
 {
 	public string propertyPath;
+	public string dtoPropertyPath;
 	public bool isDataMember;
 }
 
@@ -262,9 +264,10 @@ void ProcessGraphMap(GraphMap graphMap)
 	
 	foreach (TemplateMap templateMap in graphMap.templateMaps)
 	{
-		classMapPath = string.Empty;
+		classPath = string.Empty;
 		dataContractPath = string.Empty;
-		templateMapPath = string.Empty;
+		templatePath = string.Empty;
+		dtoTemplatePath = string.Empty;
 		ProcessTemplateMap(templateMap, graphMap.dataObjectMaps, true);
 	}
 }
@@ -284,20 +287,22 @@ void ProcessTemplateMap(TemplateMap templateMap, List<DataObjectMap> dataObjectM
 		{
 		    roleMap.classMap.name = NameSafe(roleMap.classMap.name);
 		    
-			if (classMapPath == string.Empty)  // classMap is graphMap
+			if (classPath == string.Empty)  // classMap is graphMap
 			{
-				classMapPath = "Template" + templateMap.name;
+				classPath = "Template" + templateMap.name;
 				dataContractPath = "tpl_" + templateMap.name;
-				templateMapPath = "tpl_" + templateMap.name;
-				initStatements.Add(dataContractPath + " = new " + classMapPath + "()");
+				templatePath = "tpl_" + templateMap.name;
+				dtoTemplatePath = "tpl:" + templateMap.name;
+				initStatements.Add(dataContractPath + " = new " + classPath + "()");
 				
 			}
 			else 
 			{
-				classMapPath += ".Template" + templateMap.name;	
+				classPath += ".Template" + templateMap.name;	
 				dataContractPath += ".tpl_" + templateMap.name;		
-				templateMapPath += "_tpl_" + templateMap.name;
-				initStatements.Add(dataContractPath + " = new " + classMapPath + "()");
+				templatePath += "_tpl_" + templateMap.name;
+				dtoTemplatePath += ".tpl:" + templateMap.name;
+				initStatements.Add(dataContractPath + " = new " + classPath + "()");
 			}
 #>
 	[DataContract(Namespace = "<#= dtoNamespace #>" )]
@@ -316,9 +321,9 @@ void ProcessTemplateMap(TemplateMap templateMap, List<DataObjectMap> dataObjectM
 			ProcessClassMap(roleMap, dataObjectMaps);
 #>		}
 
-		[DataMember(Name = "<#= roleMap.name + "_rdl_" + roleMap.classMap.name #>", EmitDefaultValue = false)]
+		[DataMember(Name = "<#= "tpl_" + roleMap.name + "_rdl_" + roleMap.classMap.name #>", EmitDefaultValue = false)]
 		[XmlIgnore]
-		public Class<#= roleMap.classMap.name + " " + roleMap.name + "_rdl_" + roleMap.classMap.name #> { get; set; }
+		public Class<#= roleMap.classMap.name + " tpl_" + roleMap.name + "_rdl_" + roleMap.classMap.name #> { get; set; }
 	}
 	
 	[DataMember(EmitDefaultValue = false)]
@@ -351,18 +356,21 @@ void ProcessRoleMap(String templateName, RoleMap roleMap, List<DataObjectMap> da
 					extendedDataProperty.isPropertyKey = dataProperty.isPropertyKey;
 					extendedDataProperty.isRequired = dataProperty.isRequired;
 					
-					if (templateMapPath == String.Empty)
+					if (templatePath == String.Empty)
 					{
-					  extendedDataProperty.propertyPath = "tpl_" + templateName + "_" + roleMap.name;
+					  extendedDataProperty.propertyPath = "tpl_" + templateName + "_tpl_" + roleMap.name;
+					  extendedDataProperty.dtoPropertyPath = "tpl:" + templateName + ".tpl:" + roleMap.name;
 					}
 					else
 					{
-					  extendedDataProperty.propertyPath = templateMapPath + "_tpl_" + templateName + "_" + roleMap.name;
+					  extendedDataProperty.propertyPath = templatePath + "_tpl_" + templateName + "_tpl_" + roleMap.name;
+					  extendedDataProperty.dtoPropertyPath = dtoTemplatePath + ".tpl:" + templateName + ".tpl:" + roleMap.name;
 					}
 					
 					if (ContainsDataProperty(extendedDataProperty.propertyPath))
 					{
-					  extendedDataProperty.propertyPath += extendedDataProperties.Count;				
+					  extendedDataProperty.propertyPath += extendedDataProperties.Count;	
+					  extendedDataProperty.dtoPropertyPath += extendedDataProperties.Count;				
 					}
 					
 					extendedDataProperty.isDataMember = isDataMember;					
@@ -370,10 +378,10 @@ void ProcessRoleMap(String templateName, RoleMap roleMap, List<DataObjectMap> da
 					
 					if (!isDataMember)
 					{
-					    initStatements.Add(dataContractPath + ".tpl_" + templateName + "_" + roleMap.name + " = " + extendedDataProperty.propertyPath);
+					    initStatements.Add(dataContractPath + ".tpl_" + templateName + "_tpl_" + roleMap.name + " = " + extendedDataProperty.propertyPath);
 #>
 			[DataMember(EmitDefaultValue = false)]
-			public <#= dataProperty.dataType + " tpl_" + templateName + "_" + roleMap.name #> { get; set; }
+			public <#= dataProperty.dataType + " tpl_" + templateName + "_tpl_" + roleMap.name #> { get; set; }
 					
 <#+
 					}
@@ -399,10 +407,11 @@ void ProcessRoleMap(String templateName, RoleMap roleMap, List<DataObjectMap> da
 
 void ProcessClassMap(RoleMap roleMap, List<DataObjectMap> dataObjectMaps)
 {			
-	classMapPath += ".Class" + roleMap.classMap.name;
-	dataContractPath += "." + roleMap.name + "_rdl_" + roleMap.classMap.name;		
-	templateMapPath += "_" + roleMap.name + "_rdl_" + roleMap.classMap.name;
-	initStatements.Add(dataContractPath + " = new " + classMapPath + "()");
+	classPath += ".Class" + roleMap.classMap.name;
+	dataContractPath += ".tpl_" + roleMap.name + "_rdl_" + roleMap.classMap.name;		
+	templatePath += "_tpl_" + roleMap.name + "_rdl_" + roleMap.classMap.name;
+	dtoTemplatePath += ".tpl:" + roleMap.name + ".rdl:" + roleMap.classMap.name;
+	initStatements.Add(dataContractPath + " = new " + classPath + "()");
 	
 	string combinedClassId = String.Empty;
 	string[] classIds = roleMap.classMap.identifier.Split(new string[]{","}, StringSplitOptions.RemoveEmptyEntries);
@@ -419,15 +428,17 @@ void ProcessClassMap(RoleMap roleMap, List<DataObjectMap> dataObjectMaps)
 	
 	initStatements.Add(dataContractPath + ".Identifier = " + combinedClassId);
 	
-	string lastClassMapPath = classMapPath;
+	string lastClassMapPath = classPath;
 	string lastDataContractPath = dataContractPath;
-	string lastTemplateMapPath = templateMapPath;
+	string lastTemplateMapPath = templatePath;
+	string lastDtoTemplateMapPath = dtoTemplatePath;
 			
 	foreach (TemplateMap templateMap in roleMap.classMap.templateMaps)
 	{
-		classMapPath = lastClassMapPath;
+		classPath = lastClassMapPath;
 		dataContractPath = lastDataContractPath;
-		templateMapPath = lastTemplateMapPath;
+		templatePath = lastTemplateMapPath;
+		dtoTemplatePath = lastDtoTemplateMapPath;
 		ProcessTemplateMap(templateMap, dataObjectMaps, false);
 	}
 }
