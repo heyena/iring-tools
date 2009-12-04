@@ -36,7 +36,6 @@ namespace org.iringtools.adapter
       this.TransformPath = AppSettings["TransformPath"];
       this.DataLayerConfigPath = AppSettings["DataLayerConfigPath"];
       this.BaseDirectoryPath = AppSettings["BaseDirectoryPath"];
-      //this.MappingPath = AppSettings["MappingPath"];
 
       this.PrepareCredentials();
     }
@@ -44,18 +43,6 @@ namespace org.iringtools.adapter
     public WebCredentials TargetCredentials { get; set; }
 
     public Mapping Mapping { get; set; }
-
-    public string MappingPath
-    {
-      get
-      {
-        return _mappingPath;
-      }
-      set
-      {
-        _mappingPath = value;       
-      }
-    }
 
     public override void PrepareCredentials()
     {
