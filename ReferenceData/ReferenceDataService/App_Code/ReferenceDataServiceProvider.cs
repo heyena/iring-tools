@@ -890,7 +890,6 @@ namespace org.ids_adi.iring.referenceData
             }
         }
 
-        //HERE *************************************************************************
         public QMXF GetTemplate(string id)
         {
             QMXF qmxf = new QMXF();
@@ -909,7 +908,6 @@ namespace org.ids_adi.iring.referenceData
 
             return qmxf;
         }
-        //******************************************************************************
 
         private TemplateQualification GetTemplateQualification(string id)
         {
@@ -1458,12 +1456,25 @@ namespace org.ids_adi.iring.referenceData
 
         private int getIndexFromName(string name)
         {
+            int index = 0;
             foreach (Repository repository in _repositories)
             {
                 if (repository.name.Equals(name))
-                    return _repositories.IndexOf(repository);
+                {
+                    index = _repositories.IndexOf(repository);
+                    return index;
+                }
             }
-            return 0;
+            foreach (Repository repository in _repositories)
+            {
+                if (!repository.isReadOnly)
+                {
+                    index = _repositories.IndexOf(repository);
+                    return index;
+                }
+            }
+
+            return index;
         }
 
         public Response PostClass(QMXF qmxf)
@@ -1472,6 +1483,13 @@ namespace org.ids_adi.iring.referenceData
             {
                 Response response = null;
                 int count = 0;
+                /*SPARQL sparqlQuery = new SPARQL();
+
+                Clause insertClause = new Clause();
+                insertClause.SetSPARQLType(Clause.SPARQLType.Insert);
+
+                sparqlQuery.AddClause(insertClause);*/
+
                 string sparql = "PREFIX eg: <http://example.org/data#> "
                                 + "PREFIX rdl: <http://rdl.rdlfacade.org/data#> "
                                 + "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
@@ -1499,13 +1517,19 @@ namespace org.ids_adi.iring.referenceData
                     string className = string.Empty;
                     int repository = 0;
                     int classIndex = -1;
+                    Repository source = new Repository();
 
+                    
                     repository = getIndexFromName(Class.repositoryName);
-                    Repository source = _repositories[repository];
-                    ID = Class.identifier;
+                    source = _repositories[repository];
 
                     if (source.isReadOnly)
+                    {
+                        response.Add("Repository is Read Only");
                         return response;
+                    }
+
+                    ID = Class.identifier;                 
 
                     QMXF q = new QMXF();
                     if (ID != null)
@@ -1531,14 +1555,13 @@ namespace org.ids_adi.iring.referenceData
                         //add the class
                         foreach (QMXFName name in Class.name)
                         {
-
                             label = name.value;
                             count++;
                             Utility.WriteString("Inserting : " + label, "stats.log", true);
 
                             className = "Class definition " + label;
 
-                            generatedId = CreateIdsAdiId(_classRegistryBase/*_exampleRegistryBase*/, className);
+                            generatedId = CreateIdsAdiId(/*_classRegistryBase*/_exampleRegistryBase, className);
                             ID = "<" + generatedId + ">";
                             Utility.WriteString("\n" + ID + "\t" + label, "Class IDs.log", true);
                             //ID = Class.identifier.Remove(0, 1);
@@ -1590,6 +1613,10 @@ namespace org.ids_adi.iring.referenceData
 
                             //remove last semi-colon
                             sparql = sparql.Insert(sparql.LastIndexOf("."), "}").Remove(sparql.Length - 1);
+                            if (!label.Equals(String.Empty))
+                            {
+                                Reset(label);
+                            }
                             response = PostToRepository(source, sparql);
                         }
                     }
@@ -1685,7 +1712,6 @@ namespace org.ids_adi.iring.referenceData
                             }
                             foreach (Specialization spec in Class.specialization)
                             {
-
                                 specialization = spec.reference;
                                 if (oldSpec.Length > 0)
                                 {
@@ -1708,11 +1734,13 @@ namespace org.ids_adi.iring.referenceData
                                 }
                             }
                         }
-
+                        if (!label.Equals(String.Empty))
+                        {
+                            Reset(label);
+                        }
                         response = PostToRepository(source, nameSparql);
                         response = PostToRepository(source, classSparql);
                         response = PostToRepository(source, specSparql);
-
                     }
                 }
 
