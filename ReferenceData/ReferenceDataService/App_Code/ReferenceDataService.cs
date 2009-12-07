@@ -52,6 +52,7 @@ namespace org.ids_adi.iring.referenceData
           configSettings.ClassRegistryBase = System.Configuration.ConfigurationManager.AppSettings["ClassRegistryBase"];
           configSettings.TemplateRegistryBase = System.Configuration.ConfigurationManager.AppSettings["TemplateRegistryBase"];
           configSettings.ExampleRegistryBase = System.Configuration.ConfigurationManager.AppSettings["ExampleRegistryBase"];
+          configSettings.UseExampleRegistryBase = Convert.ToBoolean(System.Configuration.ConfigurationManager.AppSettings["UseExampleRegistryBase"]);
           configSettings.RegistryCredentialToken = System.Configuration.ConfigurationManager.AppSettings["RegistryCredentialToken"];
           configSettings.ProxyCredentialToken = System.Configuration.ConfigurationManager.AppSettings["ProxyCredentialToken"];
           configSettings.ProxyHost = System.Configuration.ConfigurationManager.AppSettings["ProxyHost"];
