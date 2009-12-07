@@ -15,6 +15,8 @@ namespace org.ids_adi.iring.referenceData
 
     public string ExampleRegistryBase { get; set; }
 
+    public bool UseExampleRegistryBase { get; set; }
+
     public string SPARQLPath { get; set; }
 
     public string XMLPath { get; set; }
