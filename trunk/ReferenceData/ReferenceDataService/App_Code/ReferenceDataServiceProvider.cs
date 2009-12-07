@@ -63,7 +63,7 @@ namespace org.ids_adi.iring.referenceData
         private string _classRegistryBase = String.Empty;
         private string _templateRegistryBase = String.Empty;
         private string _exampleRegistryBase = String.Empty;
-
+        private bool _useExampleRegistryBase = false;
         private WebCredentials _registryCredentials = null;
 
         private WebProxyCredentials _proxyCredentials = null;
@@ -84,6 +84,7 @@ namespace org.ids_adi.iring.referenceData
             _classRegistryBase = configSettings.ClassRegistryBase;
             _templateRegistryBase = configSettings.TemplateRegistryBase;
             _exampleRegistryBase = configSettings.ExampleRegistryBase;
+            _useExampleRegistryBase = configSettings.UseExampleRegistryBase;
             string encryptedRegistryToken = configSettings.RegistryCredentialToken;
             string encryptedProxyToken = configSettings.ProxyCredentialToken;
             string proxyHost = configSettings.ProxyHost;
@@ -1048,7 +1049,10 @@ namespace org.ids_adi.iring.referenceData
                             //ID generator
                             templateName = "Template definition " + label;
                             /// TODO: change to class registry base
-                            generatedTempId = CreateIdsAdiId(_templateRegistryBase/*_exampleRegistryBase*/, templateName);
+                            if(_useExampleRegistryBase)
+                              generatedTempId = CreateIdsAdiId(_exampleRegistryBase, templateName);
+                            else
+                              generatedTempId = CreateIdsAdiId(_templateRegistryBase, templateName);
                             ID = "<" + generatedTempId + ">";
                             Utility.WriteString("\n" + ID + "\t" + label, "TempDef IDs.log", true);
                             //append description to sparql query
@@ -1079,7 +1083,11 @@ namespace org.ids_adi.iring.referenceData
                                 //ID generator
                                 genName = "Role definition " + roleLabel;
                                 /// TODO: change to template registry base
-                                generatedId = CreateIdsAdiId(_templateRegistryBase/*_exampleRegistryBase*/, genName);
+                                if(_useExampleRegistryBase)
+                                  generatedId = CreateIdsAdiId(_exampleRegistryBase, genName);
+                                else
+                                  generatedId = CreateIdsAdiId(_templateRegistryBase, genName);
+
                                 roleID = "<" + generatedId + ">";
 
                                 //roleID = role.identifier;
@@ -1246,7 +1254,10 @@ namespace org.ids_adi.iring.referenceData
                                 //ID generator
                                 templateName = "Template qualification " + label;
                                 /// TODO: change to class registry base
-                                generatedTempId = CreateIdsAdiId(_templateRegistryBase/*_exampleRegistryBase*/, templateName);
+                                if(_useExampleRegistryBase)
+                                  generatedTempId = CreateIdsAdiId(_exampleRegistryBase, templateName);
+                                else
+                                  generatedTempId = CreateIdsAdiId(_templateRegistryBase, templateName);
                                 ID = "tpl:" + generatedTempId;
                                 Utility.WriteString("\n" + ID + "\t" + label, "TempQual IDs.log", true);
                                 specialization = template.qualifies;
@@ -1268,7 +1279,10 @@ namespace org.ids_adi.iring.referenceData
                                     //ID generator
                                     genName = "Role definition " + roleLabel;
                                     /// TODO: change to template registry base
-                                    generatedId = CreateIdsAdiId(_templateRegistryBase/*_exampleRegistryBase*/, genName);
+                                    if(_useExampleRegistryBase)
+                                      generatedId = CreateIdsAdiId(_exampleRegistryBase, genName);
+                                    else            
+                                      generatedId = CreateIdsAdiId(_templateRegistryBase, genName);
                                     roleID = "<" + generatedId + ">";
 
                                     //roleID = role.identifier;
@@ -1560,8 +1574,10 @@ namespace org.ids_adi.iring.referenceData
                             Utility.WriteString("Inserting : " + label, "stats.log", true);
 
                             className = "Class definition " + label;
-
-                            generatedId = CreateIdsAdiId(/*_classRegistryBase*/_exampleRegistryBase, className);
+                            if(_useExampleRegistryBase)
+                              generatedId = CreateIdsAdiId(_exampleRegistryBase, className);
+                            else
+                              generatedId = CreateIdsAdiId(_classRegistryBase, className);
                             ID = "<" + generatedId + ">";
                             Utility.WriteString("\n" + ID + "\t" + label, "Class IDs.log", true);
                             //ID = Class.identifier.Remove(0, 1);
