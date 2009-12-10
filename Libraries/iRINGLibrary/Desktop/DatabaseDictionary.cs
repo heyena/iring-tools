@@ -180,6 +180,8 @@ namespace org.iringtools.library
     [EnumMember]
     @Int64,
     [EnumMember]
+    @Object,
+    [EnumMember]
     @String,
     [EnumMember]
     @TimeSpan
