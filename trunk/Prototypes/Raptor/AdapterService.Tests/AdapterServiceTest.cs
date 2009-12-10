@@ -127,6 +127,25 @@ namespace AdapterService.Tests
     }
 
     [TestMethod()]
+    public void UpdateMapping_ABC()
+    {
+      AdapterProxy target = new AdapterProxy();
+      Mapping mapping = Utility.Read<Mapping>(System.Environment.CurrentDirectory + @"\XML\Mapping.xml", false);
+      Response actual = target.UpdateMapping("12345_000", "ABC", mapping);
+      bool isError = false;
+      for (int i = 0; i < actual.Count; i++)
+      {
+        if (actual[i].ToUpper().Contains("ERROR"))
+        {
+          isError = true;
+          break;
+        }
+      }
+      Assert.AreEqual(false, isError);
+        
+    }
+
+    [TestMethod()]
     public void UpdateDatabaseDictionaryTest_DEF()
     {
       AdapterProxy target = new AdapterProxy();
@@ -278,9 +297,9 @@ namespace AdapterService.Tests
         foreach (var dtoProperty in query2)
         {
           if (dtoProperty.Attribute("name").Value == "tpl_PipingNetworkSystemName_identifier")
-            line.tpl_PipingNetworkSystemName_identifier = dtoProperty.Attribute("value").Value.ToString();
+            line.tpl_PipingNetworkSystemName_tpl_identifier = dtoProperty.Attribute("value").Value.ToString();
           if (dtoProperty.Attribute("name").Value == "tpl_SystemPipingNetworkSystemAssembly_hasClassOfWhole_rdl_System_tpl_SystemName_identifier")
-            line.tpl_SystemPipingNetworkSystemAssembly_hasClassOfWhole_rdl_System_tpl_SystemName_identifier = dtoProperty.Attribute("value").Value.ToString();
+            line.tpl_SystemPipingNetworkSystemAssembly_tpl_hasClassOfWhole_rdl_System_tpl_SystemName_tpl_identifier = dtoProperty.Attribute("value").Value.ToString();
         }
         lineList.Add(line);
       }
