@@ -398,12 +398,12 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 				case "Vessels":
 					Vessels VesselsObj = (Vessels)dto;  
 					
-					if (VesselsObj.tpl_FluidContainerDescription_description.ToUpper() == "KNOCK OUT VESSEL") // inFilter
+					if (VesselsObj.tpl_FluidContainerDescription_tpl_description.ToUpper() == "KNOCK OUT VESSEL") // inFilter
 					{
 						org.iringtools.adapter.proj_12345_000.ABC.KOPot KOPotDO = (org.iringtools.adapter.proj_12345_000.ABC.KOPot)VesselsObj.GetDataObject();
 						response.Append(_dataLayer.Post<org.iringtools.adapter.proj_12345_000.ABC.KOPot>(KOPotDO));
 					}   
-					else if (VesselsObj.tpl_FluidContainerDescription_description.ToUpper() == "VACUUM VESSEL") // inFilter
+					else if (VesselsObj.tpl_FluidContainerDescription_tpl_description.ToUpper() == "VACUUM VESSEL") // inFilter
 					{
 						org.iringtools.adapter.proj_12345_000.ABC.VacuumTower VacuumTowerDO = (org.iringtools.adapter.proj_12345_000.ABC.VacuumTower)VesselsObj.GetDataObject();
 						response.Append(_dataLayer.Post<org.iringtools.adapter.proj_12345_000.ABC.VacuumTower>(VacuumTowerDO));
@@ -462,11 +462,11 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 				    
 					foreach (Vessels dto in dtoList)
 					{   
-						if (dto.tpl_FluidContainerDescription_description.ToUpper() == "KNOCK OUT VESSEL") // inFilter
+						if (dto.tpl_FluidContainerDescription_tpl_description.ToUpper() == "KNOCK OUT VESSEL") // inFilter
 						{
 							KOPotDOList.Add((org.iringtools.adapter.proj_12345_000.ABC.KOPot)dto.GetDataObject());
 						} 
-						else if (dto.tpl_FluidContainerDescription_description.ToUpper() == "VACUUM VESSEL") // inFilter
+						else if (dto.tpl_FluidContainerDescription_tpl_description.ToUpper() == "VACUUM VESSEL") // inFilter
 						{
 							VacuumTowerDOList.Add((org.iringtools.adapter.proj_12345_000.ABC.VacuumTower)dto.GetDataObject());
 						} 
