@@ -1,4 +1,3 @@
-#labels Featured
 =iRINGTools Road Map (Draft)=
 
 ==iRINGTools 1.00.00 - May 2009==
