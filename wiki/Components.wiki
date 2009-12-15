@@ -6,8 +6,8 @@
     * *Interface Service* - [http://www.joseki.org Joseki] SPARQL Protocol server packaged for use as ISO 15926 instance data endpoint.
     * *Mapping Editor* - Silverlight application for mapping legacy systems to ISO 15926.
     * *Tools*
-      *  *AdapterClient* - simple desktop client for making Pull requests.
-      *  *EncryptCredentials* - command line tool for encrypting credentials in web.configs
+      *  *!AdapterClient* - simple desktop client for making Pull requests.
+      *  *!EncryptCredentials* - command line tool for encrypting credentials in web.configs
   * *[http://code.google.com/p/iring-tools/downloads/detail?name=iRINGSandbox-111.zip iRINGTools Sandbox]*
     * *Reference Data Service* - WCF REST Service providing federated query across multiple ISO 15926 reference data endpoints.
     * *Sandbox Service* - [http://www.joseki.org Joseki] SPARQL Protocol server packaged for use as ISO 15926 reference data endpoint.
