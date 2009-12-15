@@ -153,25 +153,25 @@
     <DeploymentPackage Include="*" Exclude="">
       <Path>$(iRINGAdapter)</Path>
       <Options>-r</Options>
-      <ZIPFile>..\iRINGAdapter-110.zip</ZIPFile>
+      <ZIPFile>..\iRINGAdapter-111.zip</ZIPFile>
       <Source>*</Source>
     </DeploymentPackage>
     <DeploymentPackage Include="*" Exclude="">
       <Options>-r</Options>
       <Path>$(iRINGSandbox)</Path>
-      <ZIPFile>..\iRINGSandbox-110.zip</ZIPFile>
+      <ZIPFile>..\iRINGSandbox-111.zip</ZIPFile>
       <Source>*</Source>
     </DeploymentPackage>
     <DeploymentPackage Include="*" Exclude="">
       <Options>-r</Options>
       <Path>$(iRINGAdapter)</Path>
-      <ZIPFile>..\iRINGComponents-110.zip</ZIPFile>
+      <ZIPFile>..\iRINGComponents-111.zip</ZIPFile>
       <Source>*</Source>
     </DeploymentPackage>
     <DeploymentPackage Include="*" Exclude="">
       <Options>-r -u</Options>
       <Path>$(iRINGSandbox)</Path>
-      <ZIPFile>..\iRINGComponents-110.zip</ZIPFile>
+      <ZIPFile>..\iRINGComponents-111.zip</ZIPFile>
       <Source>*</Source>
     </DeploymentPackage>
   </ItemGroup>
