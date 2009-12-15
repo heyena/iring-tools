@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("iringug.org")]
 [assembly: AssemblyProduct("iRINGTools")]
-[assembly: AssemblyCopyright("Copyright (c) 2009, iringug.org")]
+[assembly: AssemblyCopyright("Copyright © 2009, iringug.org")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
