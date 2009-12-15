@@ -358,8 +358,10 @@ namespace org.iringtools.utility
       }
       finally
       {
-        writer.Close();
-        stream.Close();    
+        if (writer != null)
+          writer.Close();
+        if (stream != null)
+          stream.Close();    
       }
     }
 
