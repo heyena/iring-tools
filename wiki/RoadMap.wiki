@@ -6,7 +6,7 @@
   * Remove Demo Control Panel
   * Add Mapping Editor
 
-==iRINGTools 1.01.00 - Pending==
+==iRINGTools 1.01.00 - September 2009==
 
   * Add Reference Data Editor
   * Complete Installation Document
