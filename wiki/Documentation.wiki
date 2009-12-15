@@ -4,6 +4,6 @@
 
 ===Users Guilde _(Coming Soon)_===
 
-==SDK Guide _(Coming Soon)_===
+===SDK Guide _(Coming Soon)_===
 
 Other Pages: [Components] | [RoadMap] | [ISO15926] | [Contributors]
