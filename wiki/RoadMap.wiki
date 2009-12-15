@@ -10,7 +10,7 @@
 
   * Add Reference Data Editor
   * Complete Installation Document
-  * Add SemWeb capability (not packaged)
+  * Add !SemWeb capability (not packaged)
   * Package Joseki Deployment
 
 ==iRINGTools 1.01.01 - December 2009==
@@ -21,10 +21,10 @@
 ==iRINGTools 1.02.00 - February 2010==
 
   * Multi-Project/Application Support
-  * NHibernate DataLayer
+  * NHibernate !DataLayer
     * Hierarchical Database Object Support
   * Base Template Support
-  * Package SemWeb Deployment
+  * Package !SemWeb Deployment
 
 ==iRINGTools 1.03.00 - March 2010==
 
