@@ -5,9 +5,14 @@
     * *Adapter Service* - WCF REST Service for converting legacy systems to ISO 15026 and pulling data from ISO 15926 into legacy systems.
     * *Interface Service* - [http://www.joseki.org Joseki] SPARQL Protocol server packaged for use as ISO 15926 instance data endpoint.
     * *Mapping Editor* - Silverlight application for mapping legacy systems to ISO 15926.
+    * *Tools*
+      *  *AdapterClient* - simple desktop client for making Pull requests.
+      *  *EncryptCredentials* - command line tool for encrypting credentials in web.configs
   * *[http://code.google.com/p/iring-tools/downloads/detail?name=iRINGSandbox-111.zip iRINGTools Sandbox]*
     * *Reference Data Service* - WCF REST Service providing federated query across multiple ISO 15926 reference data endpoints.
     * *Sandbox Service* - [http://www.joseki.org Joseki] SPARQL Protocol server packaged for use as ISO 15926 reference data endpoint.
     * *Reference Data Editor* Silverlight application for browsing ISO 15926 reference data
+    * *Tools*
+      * *QMXFGenerator* - command line tool for generating QMXF from a spreadsheet.
 
 Other Pages: [RoadMap] | [ISO15926] | [Documentation] | [Contributors]
