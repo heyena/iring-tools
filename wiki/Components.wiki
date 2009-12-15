@@ -1,6 +1,6 @@
 = iRINGTools Components =
 
-iRINGTools is comprised of:
+[Downloads/detail?name=iRINGTools-111.zip iRINGTools] is comprised of:
   * *iRINGTools Adapter*
     * *Adapter Service* - WCF REST Service for converting legacy systems to ISO 15026 and pulling data from ISO 15926 into legacy systems.
     * *Interface Service* - [http://www.joseki.org Joseki] SPARQL Protocol server packaged for use as ISO 15926 instance data endpoint.
