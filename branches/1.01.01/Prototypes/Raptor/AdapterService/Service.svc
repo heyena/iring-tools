@@ -1,2 +1,0 @@
-﻿<%@ ServiceHost Language="C#" Debug="true" Service="org.iringtools.adapter.Service" CodeBehind="~/App_Code/Service.cs"%>
-//Factory="org.iringtools.adapter.AdapterServiceHostFactory"
