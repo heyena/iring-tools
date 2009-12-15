@@ -1,0 +1,73 @@
+﻿<#@ template language="C#"#>
+<#@ output extension=".cs" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ assembly name=".\bin\iRINGLibrary.dll" #>
+<#@ import namespace="org.iringtools.library" #>
+<#@ assembly name=".\bin\UtilityLibrary.dll" #>
+<#@ import namespace="org.iringtools.utility" #>
+<#@ import namespace="System.Text.RegularExpressions" #>
+
+<#+
+static string currentDirectory = Directory.GetCurrentDirectory();
+static string projectName = System.Environment.GetEnvironmentVariable("projectName");
+static string applicationName = System.Environment.GetEnvironmentVariable("applicationName");
+
+static string mappingPath = currentDirectory + "\\XML\\Mapping." + projectName + "." + applicationName + ".xml";
+Mapping mapping = Utility.Read<Mapping>(mappingPath, false);
+
+static string dataDictionaryPath = currentDirectory + "\\XML\\DataDictionary." + projectName + "." + applicationName + ".xml";
+DataDictionary dataDictionary = Utility.Read<DataDictionary>(dataDictionaryPath, true);
+
+static string iRINGLibraryNamespace = "org.iringtools.library";
+static string adapterNamespace = "org.iringtools.adapter";
+static string modelNamespace = adapterNamespace + ".proj_" + projectName + "." + applicationName;
+static string dtoNamespace = "http://" + applicationName + ".bechtel.com/" + projectName + "/data#";
+
+string NameSafe(string name)
+{
+  return Regex.Replace(name, @"^\d*|\W", "");
+}
+
+DataObject GetDataObject(string dataObjectMapName) 
+{
+	foreach (DataObject dataObject in dataDictionary.dataObjects)
+	{
+		if (dataObject.objectName == dataObjectMapName)
+		{
+			return dataObject;
+		}
+	}
+
+	return null;
+}
+
+string GetQualifiedDataObjectName(string dataObjectMapName)
+{
+	DataObject dataObject = GetDataObject(dataObjectMapName);
+	return (dataObject.objectNamespace != String.Empty) ? (dataObject.objectNamespace + "." + dataObject.objectName) : dataObject.objectName;
+}
+
+void GetKnownTypes()
+{
+	string[] mappingFiles = Directory.GetFiles(currentDirectory + "\\XML", "Mapping*.xml");
+	
+	foreach (string mappingFile in mappingFiles)
+	{
+		Mapping mappingObj = Utility.Read<Mapping>(mappingFile, false);
+		string[] mappingFileFields = mappingFile.Split('.');
+		string projName = mappingFileFields[mappingFileFields.Length - 3];
+		string appName = mappingFileFields[mappingFileFields.Length - 2];
+		string ns = adapterNamespace + ".proj_" + projName + "." + appName;
+		
+		foreach (GraphMap graphMap in mappingObj.graphMaps)
+		{
+			string graphName = NameSafe(graphMap.name);
+			string className = ns + "." + graphName;
+#>
+		[ServiceKnownType(typeof(<#= className #>))]		
+<#+
+		}
+	}
+}
+#>

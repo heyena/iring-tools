@@ -107,9 +107,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\Adapter\AdapterService\App_Code\DTOLayer.cs">
-      <Link>Entities\DTOLayer.cs</Link>
-    </Compile>
     <Compile Include="..\..\..\Libraries\iRINGLibrary\Desktop\DataDictionary.cs">
       <Link>Entities\DataDictionary.cs</Link>
     </Compile>
@@ -397,7 +394,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties ProjectLinkerExcludeFilter="\\?desktop(\\.*)?$;\\?silverlight(\\.*)?$;\.desktop;\.silverlight;\.xaml;^service references(\\.*)?$;\.clientconfig;^web references(\\.*)?$" ProjectLinkReference="edf3de51-8d39-4e53-9154-a18dda989da9" />
+      <UserProperties ProjectLinkReference="edf3de51-8d39-4e53-9154-a18dda989da9" ProjectLinkerExcludeFilter="\\?desktop(\\.*)?$;\\?silverlight(\\.*)?$;\.desktop;\.silverlight;\.xaml;^service references(\\.*)?$;\.clientconfig;^web references(\\.*)?$" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
