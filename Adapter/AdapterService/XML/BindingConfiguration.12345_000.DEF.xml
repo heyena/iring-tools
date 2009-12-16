@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BindingConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Bindings>
-    <Binding Name="DataLayer.12345_000.DEF" Interface="org.iringtools.library.IDataLayer, iRINGLibrary" Implementation="org.iringtools.adapter.dataLayer.DataLayer, DataLayer"/>
+    <Binding Name="DataLayer.12345_000.DEF" Interface="org.iringtools.library.IDataLayer, iRINGLibrary" Implementation="org.iringtools.adapter.dataLayer.NHibernateDataLayer, NHibernateDataLayer"/>
     <Binding Name="DTOService.12345_000.DEF" Interface="org.iringtools.adapter.IDTOService, AdapterLibrary" Implementation="org.iringtools.adapter.proj_12345_000.DEF.DTOService, AdapterService"/>
   </Bindings>
 </BindingConfiguration>
