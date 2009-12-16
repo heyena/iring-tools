@@ -41,27 +41,27 @@
     <Reference Include="Accessibility" />
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll</HintPath>
+      <HintPath>..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.TextTemplating, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\ExternalBinaries\TextTemplating\Microsoft.VisualStudio.TextTemplating.dll</HintPath>
+      <HintPath>..\..\ExternalBinaries\TextTemplating\Microsoft.VisualStudio.TextTemplating.dll</HintPath>
     </Reference>
     <Reference Include="Ninject, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\ExternalBinaries\Ninject2\Ninject.dll</HintPath>
+      <HintPath>..\..\ExternalBinaries\Ninject2\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="SemWeb, Version=1.0.6.4, Culture=neutral, PublicKeyToken=3e1051c7e190e42e">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Dlls\SemWeb.dll</HintPath>
+      <HintPath>..\..\ExternalBinaries\SemWeb\SemWeb.dll</HintPath>
     </Reference>
     <Reference Include="SemWeb.Sparql, Version=1.0.6.4, Culture=neutral, PublicKeyToken=3e1051c7e190e42e">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Dlls\SemWeb.Sparql.dll</HintPath>
+      <HintPath>..\..\ExternalBinaries\SemWeb\SemWeb.Sparql.dll</HintPath>
     </Reference>
     <Reference Include="SemWeb.SQLServerStore, Version=1.0.6.4, Culture=neutral, PublicKeyToken=3e1051c7e190e42e">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Dlls\SemWeb.SQLServerStore.dll</HintPath>
+      <HintPath>..\..\ExternalBinaries\SemWeb\SemWeb.SQLServerStore.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />

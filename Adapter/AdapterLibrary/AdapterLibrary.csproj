@@ -34,19 +34,19 @@
     <Reference Include="Microsoft.VisualStudio.TextTemplating, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Ninject, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\ExternalBinaries\Ninject2\Ninject.dll</HintPath>
+      <HintPath>..\..\ExternalBinaries\Ninject2\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="SemWeb, Version=1.0.6.4, Culture=neutral, PublicKeyToken=3e1051c7e190e42e">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\ExternalBinaries\SemWeb\SemWeb.dll</HintPath>
+      <HintPath>..\..\ExternalBinaries\SemWeb\SemWeb.dll</HintPath>
     </Reference>
     <Reference Include="SemWeb.Sparql, Version=1.0.6.4, Culture=neutral, PublicKeyToken=3e1051c7e190e42e">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\ExternalBinaries\SemWeb\SemWeb.Sparql.dll</HintPath>
+      <HintPath>..\..\ExternalBinaries\SemWeb\SemWeb.Sparql.dll</HintPath>
     </Reference>
     <Reference Include="SemWeb.SQLServerStore, Version=1.0.6.4, Culture=neutral, PublicKeyToken=3e1051c7e190e42e">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\ExternalBinaries\SemWeb\SemWeb.SQLServerStore.dll</HintPath>
+      <HintPath>..\..\ExternalBinaries\SemWeb\SemWeb.SQLServerStore.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
