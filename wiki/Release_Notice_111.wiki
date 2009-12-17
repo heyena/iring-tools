@@ -7,6 +7,9 @@ The first patch release for iRINGTools 1.1 that includes QMXF/QXF tools and bug 
   * QMXF Generator and empty !InformationModel spreadsheet
   * Julian Bourne's QXF Transforms included in Tools
 
+== Improved Features ==
+  * Fully revamped and significantly improved [http://iring-tools.googlecode.com/svn/wiki/iRINGTools_Installation_Guide_v1_1.pdf Installation Guide]
+
 == Bugs Fixed ==
   * In Reference Data Editor, when a template item is selected and 'Edit Template' is clicked then template details are not populated
   * In Reference Data Editor, QMXF for selected tree nodes are not cached
