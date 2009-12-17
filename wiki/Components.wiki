@@ -12,7 +12,9 @@
     * *Reference Data Service* - WCF REST Service providing federated query across multiple ISO 15926 reference data endpoints.
     * *Sandbox Service* - [http://www.joseki.org Joseki] SPARQL Protocol server packaged for use as ISO 15926 reference data endpoint.
     * *Reference Data Editor* Silverlight application for browsing ISO 15926 reference data
-    * *Tools*
-      * *QMXFGenerator* - command line tool for generating QMXF from a spreadsheet.
+    * *[http://ns.ids-adi.org/qxf/index.html QXF] Tools* (Temporary Solution)
+      * *!InformationModel Spreadsheet* - Excel spreadsheet for defining classes and templates.
+      * *QMXFGenerator* - command line tool for generating QMXF from a the !InformationModel spreadsheet.
+      * *Transformations* - DTD, XSD, XML and XSLT files for coverting QMXF to RDF.
 
 Other Pages: [RoadMap] | [ISO15926] | [Documentation] | [Contributors]
