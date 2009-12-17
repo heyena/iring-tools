@@ -1,6 +1,6 @@
 =iRINGTools Documentation=
 
-===[http://iring-tools.googlecode.com/svn/wiki/iRINGTools_Installation_Guide_v1_1.pdf Installation Guide]===
+===[http://iring-tools.googlecode.com/svn/wiki/iRINGTools_Installation_Guide_v1_1_1.pdf Installation Guide]===
 
 ===Users Guilde _(Coming Soon)_===
 
