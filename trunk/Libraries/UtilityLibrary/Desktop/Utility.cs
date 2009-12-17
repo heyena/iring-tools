@@ -34,6 +34,8 @@ using System.Xml.Xsl;
 using System.Xml.Serialization;
 //using System.Runtime.Serialization.Formatters.Binary;
 using System.Diagnostics;
+using System.Xml.Linq;
+using System.Linq;
 
 
 namespace org.iringtools.utility
@@ -747,6 +749,23 @@ namespace org.iringtools.utility
       }
 
       return output;
+    }
+
+    public static XDocument RemoveNamespace(XDocument xdoc)
+    {
+      foreach (XElement e in xdoc.Root.DescendantsAndSelf())
+      {
+        if (e.Name.Namespace != XNamespace.None)
+        {
+          e.Name = XNamespace.None.GetName(e.Name.LocalName);
+        }
+
+        if (e.Attributes().Where(a => a.IsNamespaceDeclaration || a.Name.Namespace != XNamespace.None).Any())
+        {
+          e.ReplaceAttributes(e.Attributes().Select(a => a.IsNamespaceDeclaration ? null : a.Name.Namespace != XNamespace.None ? new XAttribute(XNamespace.None.GetName(a.Name.LocalName), a.Value) : a));
+        }
+      }
+      return xdoc;
     }
   }
 }

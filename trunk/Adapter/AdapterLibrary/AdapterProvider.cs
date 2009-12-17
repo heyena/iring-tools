@@ -554,7 +554,8 @@ namespace org.iringtools.adapter
         {
           dtoListString = httpClient.GetMessage(@"/" + projectNameForPull + "/" + applicationNameForPull + "/" + graphName);
         }
-        List<DataTransferObject> dataTranferObjects = (List<DataTransferObject>)_dtoService.ConvertXmlToType(graphName, dtoListString);
+        List<DataTransferObject> dtoList = (List<DataTransferObject>)_dtoService.CreateList(graphName, dtoListString);
+        response.Append(_dtoService.PostList(graphName, dtoList));
         response.Add(String.Format("Pull is successful from " + targetUri + "for Graph " + graphName));
       }
       catch (Exception exception)

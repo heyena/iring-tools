@@ -226,7 +226,7 @@ namespace org.iringtools.adapter.proj_12345_000.DEF
 			return _dataLayer.RefreshDictionary();
 		}
 
-    public object ConvertXmlToType(string graphName, string dtoListString)
+    public object CreateList(string graphName, string dtoListString)
     {
       return null;
     }
