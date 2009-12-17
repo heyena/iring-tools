@@ -18,3 +18,5 @@ The first patch release for iRINGTools 1.1 that includes QMXF/QXF tools and bug 
   * In Mapping Editor, collapsing a node fires the definition fetch, unnecessarily.
   * In Mapping Editor, only certain tree nodes are cached.
   * In Mapping Editor, the !GraphMap details should include !DataObject name.
+
+Other Pages: [Components] | [RoadMap] | [ISO15926] | [Documentation] | [Contributors]
