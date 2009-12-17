@@ -1,7 +1,7 @@
 #labels Featured
 = *iRINGTools* 1.1.1 =
 
-The first patch release for iRINGTools 1.1 that includes QMXF/QXF tools and bug fixes in Reference Data Service, Reference Data Editor and Adapter Service.
+The first patch release for iRINGTools 1.1 that includes QMXF/QXF tools and bug fixes in Reference Data Service, Reference Data Editor and Adapter Service.  The downloads are available [http://code.google.com/p/iring-tools/downloads/list here]
 
 == New Features ==
   * QMXF Generator and empty !InformationModel spreadsheet
