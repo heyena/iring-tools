@@ -111,6 +111,17 @@ namespace org.iringtools.adapter
     }
 
     /// <summary>
+    /// Pulls the DTO.
+    /// </summary>
+    /// <param name="projectName"></param>
+    /// <param name="applicationName"></param>
+    /// <returns></returns>
+    public Response PullDTO(string projectName, string applicationName, Request request)
+    {
+      return _adapterServiceProvider.PullDTO(projectName, applicationName, request);
+    }
+
+    /// <summary>
     /// Generated the IAdapterService (partial) IDataService and ModelDTO using T4.
     /// </summary>
     /// <returns>Returns the response as success/failure.</returns>

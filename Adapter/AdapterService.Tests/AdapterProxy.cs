@@ -192,6 +192,20 @@ namespace AdapterService.Tests
       return response;
     }
 
+    public Response PullDTO(string projectName, string applicationName, Request request)
+    {
+      Response response = null;
+      try
+      {
+        response = _adapterServiceProvider.PullDTO(projectName, applicationName, request);
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
+      return response;
+    }
+
     public Response UpdateDatabaseDictionary(DatabaseDictionary databaseDictionary, string projectName, string applicationName)
     {
       Response response = null;

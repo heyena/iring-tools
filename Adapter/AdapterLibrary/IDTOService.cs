@@ -41,5 +41,6 @@ namespace org.iringtools.adapter
     Response PostList(string graphName, List<DataTransferObject> dtoList);
     DataDictionary GetDictionary();
     Response RefreshDictionary();
+    object ConvertXmlToType(string graphName, string dtoListString);
   }
 }
