@@ -79,6 +79,10 @@ namespace org.iringtools.adapter
     Response Pull(string projectName, string applicationName, Request request);
 
     [OperationContract]
+    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/pullDTO")]
+    Response PullDTO(string projectName, string applicationName, Request request);
+    
+    [OperationContract]
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/dbdictionary")]
     Response UpdateDatabaseDictionary(DatabaseDictionary databaseDictionary, string projectName, string applicationName);
 

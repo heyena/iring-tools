@@ -8,8 +8,8 @@
     <ProjectGuid>{A9DAEA2D-26AC-4FFE-A4B0-3DEF95DE4168}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DataLayer</RootNamespace>
-    <AssemblyName>DataLayer</AssemblyName>
+    <RootNamespace>NHibernateDataLayer</RootNamespace>
+    <AssemblyName>NHibernateDataLayer</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

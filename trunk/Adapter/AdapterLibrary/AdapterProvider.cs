@@ -469,7 +469,6 @@ namespace org.iringtools.adapter
     {
       string targetUri = String.Empty;
       string targetCredentialsXML = String.Empty;
-      string targetGraph = String.Empty;
       string graphName = String.Empty;
       string filter = String.Empty;
       Response response = new Response();
@@ -509,6 +508,54 @@ namespace org.iringtools.adapter
         e = DateTime.Now;
         d = e.Subtract(b);
         response.Add(String.Format("Pull[{0},{1}] Execution Time [{2}:{3}.{4}] Seconds ", targetUri, graphName, d.Minutes, d.Seconds, d.Milliseconds));
+      }
+      catch (Exception exception)
+      {
+        response.Add("Error while pulling " + graphName + " data from " + targetUri + " as " + targetUri + " data with filter " + filter + ".\r\n");
+        response.Add(exception.ToString());
+      }
+      finally
+      {
+        UninitializeApplication();
+      }
+      return response;
+    }
+
+    public Response PullDTO(string projectName, string applicationName, Request request)
+    {
+      String targetUri = String.Empty;
+      String targetCredentialsXML = String.Empty;
+      String graphName = String.Empty;
+      String filter = String.Empty;
+      String projectNameForPull = String.Empty;
+      String applicationNameForPull = String.Empty;
+      String dtoListString = String.Empty;
+      Response response = new Response();
+      try
+      {
+        InitializeApplication(projectName, applicationName);
+
+        targetUri = request["targetUri"];
+        targetCredentialsXML = request["targetCredentials"];
+        graphName = request["graphName"];
+        filter = request["filter"];
+        projectNameForPull = request["projectName"];
+        applicationNameForPull = request["applicationName"];
+
+        WebCredentials targetCredentials = Utility.Deserialize<WebCredentials>(targetCredentialsXML, true);
+        if (targetCredentials.isEncrypted) targetCredentials.Decrypt();
+
+        WebHttpClient httpClient = new WebHttpClient(targetUri);
+        if (filter != String.Empty)
+        {
+          dtoListString = httpClient.GetMessage(@"/" + projectNameForPull + "/" + applicationNameForPull + "/" + graphName + "/" + filter);
+        }
+        else
+        {
+          dtoListString = httpClient.GetMessage(@"/" + projectNameForPull + "/" + applicationNameForPull + "/" + graphName);
+        }
+        List<DataTransferObject> dataTranferObjects = (List<DataTransferObject>)_dtoService.ConvertXmlToType(graphName, dtoListString);
+        response.Add(String.Format("Pull is successful from " + targetUri + "for Graph " + graphName));
       }
       catch (Exception exception)
       {
