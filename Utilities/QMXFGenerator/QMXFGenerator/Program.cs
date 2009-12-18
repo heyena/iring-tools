@@ -672,6 +672,12 @@ namespace QMXFGenerator
           {
             string name = label.ToString();
 
+            if (parentRole == null)
+            {
+              Utility.WriteString("Error Processing Role Qualification: Row \"" + name + "\" at " + roleIndex + " not found.\n", "error.log", true);
+              continue;
+            }
+
             RoleQualification roleQualification = new RoleQualification();
 
             QMXFName englishUSName = new QMXFName
