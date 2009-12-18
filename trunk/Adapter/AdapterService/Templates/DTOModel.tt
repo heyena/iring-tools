@@ -67,9 +67,18 @@ foreach (GraphMap graphMap in mapping.graphMaps)
 <# 
 		foreach (ExtendedDataProperty extendedDataProperty in extendedDataProperties)
 		{
+			if (extendedDataProperty.isPropertyKey)
+			{
+#>
+				<#= extendedDataProperty.propertyPath #> = (<#= extendedDataProperty.dataType #>)dataObject.Id;
+<#
+			}			
+			else
+			{
 #>
 				<#= extendedDataProperty.propertyPath #> = (<#= extendedDataProperty.dataType #>)dataObject.<#= extendedDataProperty.propertyName #>;				
 <#
+      }
 		}
 #>
 			}
@@ -168,7 +177,7 @@ foreach (GraphMap graphMap in mapping.graphMaps)
 				
 				if (extendedDataProperty.isPropertyKey)
 				{
-#>					((<#= qualifiedDataObjectName #>)_dataObject).<#= extendedDataProperty.propertyName #> = (<#= extendedDataProperty.dataType #>)this._identifier;
+#>					((<#= qualifiedDataObjectName #>)_dataObject).Id = (<#= extendedDataProperty.dataType #>)this._identifier;
 <#				
 				}
 			}
@@ -391,10 +400,10 @@ void ProcessRoleMap(String templateName, RoleMap roleMap, List<DataObjectMap> da
 				}
 			}
 			
-			if (!foundDataProperty)
-			{
-				throw new Exception ("Property \"" + roleMap.propertyName + "\" does not exist in data object \"" + dataObject.objectName + "\" of data dictionary.");
-			}
+			//if (!foundDataProperty)
+			//{
+			//	throw new Exception ("Role Id: " + roleMap.roleId + " Property \"" + roleMap.propertyName + "\" does not exist in data object \"" + dataObject.objectName + "\" of data dictionary.");
+			//}
 			
 			break;
 		}

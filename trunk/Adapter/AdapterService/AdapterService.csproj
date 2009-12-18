@@ -105,28 +105,19 @@
     <Compile Include="App_Code\AdapterServiceHostFactory.cs" />
     <Compile Include="App_Code\DataService.cs" />
     <Compile Include="App_Code\DTOModel.12345_000.ABC.cs" />
-    <Compile Include="App_Code\DTOModel.12345_000.DEF.cs" />
     <Compile Include="App_Code\DTOService.12345_000.ABC.cs" />
-    <Compile Include="App_Code\DTOService.12345_000.DEF.cs" />
     <Compile Include="App_Code\IDataService.Generated.cs" />
+    <Compile Include="App_Code\IService.cs" />
     <Compile Include="App_Code\IService.Generated.cs" />
     <Compile Include="App_Code\Model.12345_000.ABC.cs" />
-    <Compile Include="App_Code\IService.cs" />
-    <Compile Include="App_Code\Model.12345_000.DEF.cs" />
     <Compile Include="App_Code\Service.cs" />
     <Content Include="DataService.svc" />
     <Content Include="XML\BindingConfiguration.12345_000.ABC.xml" />
-    <Content Include="XML\BindingConfiguration.12345_000.DEF.xml" />
     <Content Include="XML\DatabaseDictionary.12345_000.ABC.xml" />
     <Content Include="XML\DatabaseDictionary.12345_000.DEF.xml" />
     <Content Include="XML\DataDictionary.12345_000.ABC.xml" />
-    <Content Include="XML\DataDictionary.12345_000.DEF.xml" />
     <Content Include="XML\Mapping.12345_000.ABC.xml" />
-    <Content Include="XML\Mapping.12345_000.DEF.xml" />
-    <Content Include="XML\nh-configuration.12345_000.ABC.xml" />
-    <Content Include="XML\nh-configuration.12345_000.DEF.xml" />
     <Content Include="XML\nh-mapping.12345_000.ABC.xml" />
-    <Content Include="XML\nh-mapping.12345_000.DEF.xml" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

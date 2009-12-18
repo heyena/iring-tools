@@ -29,129 +29,85 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 	{
 	[DataContract(Namespace = "http://ABC.bechtel.com/12345_000/data#" )]
 	[XmlRoot(Namespace = "http://ABC.bechtel.com/12345_000/data#")]
-	public class TemplatePipingNetworkSegmentInlinePipingComponentConnection
+	public class TemplateClientSystemAssembly
 	{
 		[DataContract(Namespace = "http://ABC.bechtel.com/12345_000/data#" )]
 		[XmlRoot(Namespace = "http://ABC.bechtel.com/12345_000/data#")]
-		public class ClassPipingNetworkSegment
-		{
-			[DataMember(EmitDefaultValue=false)]
-			[XmlIgnore]
-			public string Identifier { get; set; }
-			
-	[DataContract(Namespace = "http://ABC.bechtel.com/12345_000/data#" )]
-	[XmlRoot(Namespace = "http://ABC.bechtel.com/12345_000/data#")]
-	public class TemplatePipingNetworkSystemPipingNetworkSegmentAssembly
-	{
-		[DataContract(Namespace = "http://ABC.bechtel.com/12345_000/data#" )]
-		[XmlRoot(Namespace = "http://ABC.bechtel.com/12345_000/data#")]
-		public class ClassPipingNetworkSystem
+		public class ClassCLIENT_SYSTEM
 		{
 			[DataMember(EmitDefaultValue=false)]
 			[XmlIgnore]
 			public string Identifier { get; set; }
 			
 			[DataMember(EmitDefaultValue = false)]
-			public String tpl_PipingNetworkSystemLineTag_tpl_identifier { get; set; }
+			public String tpl_ClassifiedIdentification_tpl_identifier { get; set; }
 					
+		}
+
+		[DataMember(Name = "tpl_whole_rdl_CLIENT_SYSTEM", EmitDefaultValue = false)]
+		[XmlIgnore]
+		public ClassCLIENT_SYSTEM tpl_whole_rdl_CLIENT_SYSTEM { get; set; }
+	}
+	
+	[DataMember(EmitDefaultValue = false)]
+	[XmlIgnore]
+	public TemplateClientSystemAssembly tpl_ClientSystemAssembly { get; set; }     
+       
 	[DataContract(Namespace = "http://ABC.bechtel.com/12345_000/data#" )]
 	[XmlRoot(Namespace = "http://ABC.bechtel.com/12345_000/data#")]
-	public class TemplateSystemPipingNetworkSystemAssembly
+	public class TemplateClientFunctionalUnitAssembly
 	{
 		[DataContract(Namespace = "http://ABC.bechtel.com/12345_000/data#" )]
 		[XmlRoot(Namespace = "http://ABC.bechtel.com/12345_000/data#")]
-		public class ClassSystem
+		public class ClassCLIENT_FUNCTIONAL_UNIT
 		{
 			[DataMember(EmitDefaultValue=false)]
 			[XmlIgnore]
 			public string Identifier { get; set; }
 			
 			[DataMember(EmitDefaultValue = false)]
-			public String tpl_SystemName_tpl_identifier { get; set; }
+			public String tpl_ClassifiedIdentification_tpl_identifier { get; set; }
 					
+		}
+
+		[DataMember(Name = "tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT", EmitDefaultValue = false)]
+		[XmlIgnore]
+		public ClassCLIENT_FUNCTIONAL_UNIT tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT { get; set; }
+	}
+	
+	[DataMember(EmitDefaultValue = false)]
+	[XmlIgnore]
+	public TemplateClientFunctionalUnitAssembly tpl_ClientFunctionalUnitAssembly { get; set; }     
+       
 	[DataContract(Namespace = "http://ABC.bechtel.com/12345_000/data#" )]
 	[XmlRoot(Namespace = "http://ABC.bechtel.com/12345_000/data#")]
-	public class TemplatePlantSystemAssembly
+	public class TemplatePAndIDRepresentation
 	{
 		[DataContract(Namespace = "http://ABC.bechtel.com/12345_000/data#" )]
 		[XmlRoot(Namespace = "http://ABC.bechtel.com/12345_000/data#")]
-		public class ClassPLANT
+		public class ClassP_AND_I_DIAGRAM
 		{
 			[DataMember(EmitDefaultValue=false)]
 			[XmlIgnore]
 			public string Identifier { get; set; }
 			
+			[DataMember(EmitDefaultValue = false)]
+			public String tpl_ClassifiedIdentification_tpl_identifier { get; set; }
+					
 		}
 
-		[DataMember(Name = "tpl_hasClassOfWhole_rdl_PLANT", EmitDefaultValue = false)]
+		[DataMember(Name = "tpl_representation_rdl_P_AND_I_DIAGRAM", EmitDefaultValue = false)]
 		[XmlIgnore]
-		public ClassPLANT tpl_hasClassOfWhole_rdl_PLANT { get; set; }
+		public ClassP_AND_I_DIAGRAM tpl_representation_rdl_P_AND_I_DIAGRAM { get; set; }
 	}
 	
 	[DataMember(EmitDefaultValue = false)]
 	[XmlIgnore]
-	public TemplatePlantSystemAssembly tpl_PlantSystemAssembly { get; set; }     
-       
-		}
-
-		[DataMember(Name = "tpl_hasClassOfWhole_rdl_System", EmitDefaultValue = false)]
-		[XmlIgnore]
-		public ClassSystem tpl_hasClassOfWhole_rdl_System { get; set; }
-	}
-	
-	[DataMember(EmitDefaultValue = false)]
-	[XmlIgnore]
-	public TemplateSystemPipingNetworkSystemAssembly tpl_SystemPipingNetworkSystemAssembly { get; set; }     
-       
-		}
-
-		[DataMember(Name = "tpl_hasClass_rdl_PipingNetworkSystem", EmitDefaultValue = false)]
-		[XmlIgnore]
-		public ClassPipingNetworkSystem tpl_hasClass_rdl_PipingNetworkSystem { get; set; }
-	}
-	
-	[DataMember(EmitDefaultValue = false)]
-	[XmlIgnore]
-	public TemplatePipingNetworkSystemPipingNetworkSegmentAssembly tpl_PipingNetworkSystemPipingNetworkSegmentAssembly { get; set; }     
-       
-		}
-
-		[DataMember(Name = "tpl_hasClass_rdl_PipingNetworkSegment", EmitDefaultValue = false)]
-		[XmlIgnore]
-		public ClassPipingNetworkSegment tpl_hasClass_rdl_PipingNetworkSegment { get; set; }
-	}
-	
-	[DataMember(EmitDefaultValue = false)]
-	[XmlIgnore]
-	public TemplatePipingNetworkSegmentInlinePipingComponentConnection tpl_PipingNetworkSegmentInlinePipingComponentConnection { get; set; }     
+	public TemplatePAndIDRepresentation tpl_PAndIDRepresentation { get; set; }     
        
 	[DataContract(Namespace = "http://ABC.bechtel.com/12345_000/data#" )]
 	[XmlRoot(Namespace = "http://ABC.bechtel.com/12345_000/data#")]
-	public class TemplatePlantAreaInlinePipingComponentAssembly
-	{
-		[DataContract(Namespace = "http://ABC.bechtel.com/12345_000/data#" )]
-		[XmlRoot(Namespace = "http://ABC.bechtel.com/12345_000/data#")]
-		public class ClassPLANTAREA
-		{
-			[DataMember(EmitDefaultValue=false)]
-			[XmlIgnore]
-			public string Identifier { get; set; }
-			
-	[DataContract(Namespace = "http://ABC.bechtel.com/12345_000/data#" )]
-	[XmlRoot(Namespace = "http://ABC.bechtel.com/12345_000/data#")]
-	public class TemplatePlantPlantAreaAssembly
-	{
-		[DataContract(Namespace = "http://ABC.bechtel.com/12345_000/data#" )]
-		[XmlRoot(Namespace = "http://ABC.bechtel.com/12345_000/data#")]
-		public class ClassPLANT
-		{
-			[DataMember(EmitDefaultValue=false)]
-			[XmlIgnore]
-			public string Identifier { get; set; }
-			
-	[DataContract(Namespace = "http://ABC.bechtel.com/12345_000/data#" )]
-	[XmlRoot(Namespace = "http://ABC.bechtel.com/12345_000/data#")]
-	public class TemplatePlantProjectAssembly
+	public class TemplateProjectAssembly
 	{
 		[DataContract(Namespace = "http://ABC.bechtel.com/12345_000/data#" )]
 		[XmlRoot(Namespace = "http://ABC.bechtel.com/12345_000/data#")]
@@ -162,57 +118,31 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 			public string Identifier { get; set; }
 			
 			[DataMember(EmitDefaultValue = false)]
-			public String tpl_ProjectName_tpl_identifier { get; set; }
+			public String tpl_ClassifiedIdentification_tpl_identifier { get; set; }
 					
 		}
 
-		[DataMember(Name = "tpl_hasClassOfPart_rdl_PROJECT", EmitDefaultValue = false)]
+		[DataMember(Name = "tpl_whole_rdl_PROJECT", EmitDefaultValue = false)]
 		[XmlIgnore]
-		public ClassPROJECT tpl_hasClassOfPart_rdl_PROJECT { get; set; }
+		public ClassPROJECT tpl_whole_rdl_PROJECT { get; set; }
 	}
 	
 	[DataMember(EmitDefaultValue = false)]
 	[XmlIgnore]
-	public TemplatePlantProjectAssembly tpl_PlantProjectAssembly { get; set; }     
-       
-		}
-
-		[DataMember(Name = "tpl_hasClassOfWhole_rdl_PLANT", EmitDefaultValue = false)]
-		[XmlIgnore]
-		public ClassPLANT tpl_hasClassOfWhole_rdl_PLANT { get; set; }
-	}
-	
-	[DataMember(EmitDefaultValue = false)]
-	[XmlIgnore]
-	public TemplatePlantPlantAreaAssembly tpl_PlantPlantAreaAssembly { get; set; }     
-       
-			[DataMember(EmitDefaultValue = false)]
-			public String tpl_PlantAreaName_tpl_identifier { get; set; }
-					
-		}
-
-		[DataMember(Name = "tpl_hasClassOfWhole_rdl_PLANTAREA", EmitDefaultValue = false)]
-		[XmlIgnore]
-		public ClassPLANTAREA tpl_hasClassOfWhole_rdl_PLANTAREA { get; set; }
-	}
-	
-	[DataMember(EmitDefaultValue = false)]
-	[XmlIgnore]
-	public TemplatePlantAreaInlinePipingComponentAssembly tpl_PlantAreaInlinePipingComponentAssembly { get; set; }     
+	public TemplateProjectAssembly tpl_ProjectAssembly { get; set; }     
        
 
 		public Valves(string classId, string graphName, string identifier) 
 			: base(classId, graphName)
 		{   
-			_properties.Add(new DTOProperty(@"tag", @"tpl:InlinePipingComponentName.tpl:identifier", null, typeof(String), true, true));
-			_properties.Add(new DTOProperty(@"componentType", @"tpl:InlinePipingComponentType.tpl:type", null, typeof(String), false, false));
-			_properties.Add(new DTOProperty(@"uomDiameter", @"tpl:InlinePipingComponentNominalDiameter.tpl:scale", null, typeof(String), false, false));
-			_properties.Add(new DTOProperty(@"diameter", @"tpl:InlinePipingComponentNominalDiameter.tpl:value", null, typeof(Double), false, false));
-			_properties.Add(new DTOProperty(@"rating", @"tpl:InlinePipingComponentRating.tpl:hasNominalProperty", null, typeof(String), false, false));
-			_properties.Add(new DTOProperty(@"lineTag", @"tpl:PipingNetworkSegmentInlinePipingComponentConnection.tpl:hasClass.rdl:PipingNetworkSegment.tpl:PipingNetworkSystemPipingNetworkSegmentAssembly.tpl:hasClass.rdl:PipingNetworkSystem.tpl:PipingNetworkSystemLineTag.tpl:identifier", null, typeof(String), false, false));
-			_properties.Add(new DTOProperty(@"system", @"tpl:PipingNetworkSegmentInlinePipingComponentConnection.tpl:hasClass.rdl:PipingNetworkSegment.tpl:PipingNetworkSystemPipingNetworkSegmentAssembly.tpl:hasClass.rdl:PipingNetworkSystem.tpl:SystemPipingNetworkSystemAssembly.tpl:hasClassOfWhole.rdl:System.tpl:SystemName.tpl:identifier", null, typeof(String), false, false));
-			_properties.Add(new DTOProperty(@"projectNumber", @"tpl:PlantAreaInlinePipingComponentAssembly.tpl:hasClassOfWhole.rdl:PLANTAREA.tpl:PlantPlantAreaAssembly.tpl:hasClassOfWhole.rdl:PLANT.tpl:PlantProjectAssembly.tpl:hasClassOfPart.rdl:PROJECT.tpl:ProjectName.tpl:identifier", null, typeof(String), false, false));
-			_properties.Add(new DTOProperty(@"unit", @"tpl:PlantAreaInlinePipingComponentAssembly.tpl:hasClassOfWhole.rdl:PLANTAREA.tpl:PlantAreaName.tpl:identifier", null, typeof(String), false, false));
+			_properties.Add(new DTOProperty(@"tag", @"tpl:ClassifiedIdentification.tpl:identifier", null, typeof(String), true, true));
+			_properties.Add(new DTOProperty(@"system", @"tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identifier", null, typeof(String), false, false));
+			_properties.Add(new DTOProperty(@"unit", @"tpl:ClientFunctionalUnitAssembly.tpl:whole.rdl:CLIENT_FUNCTIONAL_UNIT.tpl:ClassifiedIdentification.tpl:identifier", null, typeof(String), false, false));
+			_properties.Add(new DTOProperty(@"componentType", @"tpl:ClassifiedIdentification.tpl:identifier3", null, typeof(String), false, false));
+			_properties.Add(new DTOProperty(@"diameter", @"tpl:NominalDiameter.tpl:value", null, typeof(Double), false, false));
+			_properties.Add(new DTOProperty(@"uomDiameter", @"tpl:NominalDiameter.tpl:scale", null, typeof(String), false, false));
+			_properties.Add(new DTOProperty(@"pid", @"tpl:PAndIDRepresentation.tpl:representation.rdl:P_AND_I_DIAGRAM.tpl:ClassifiedIdentification.tpl:identifier", null, typeof(String), false, false));
+			_properties.Add(new DTOProperty(@"projectNumber", @"tpl:ProjectAssembly.tpl:whole.rdl:PROJECT.tpl:ClassifiedIdentification.tpl:identifier", null, typeof(String), false, false));
 
 			Identifier = identifier;
 			ClassId = classId;
@@ -226,42 +156,32 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 		{  
 			if (dataObject != null)
 			{
-				tpl_InlinePipingComponentName_tpl_identifier = (String)dataObject.tag;				
-				tpl_InlinePipingComponentType_tpl_type = (String)dataObject.componentType;				
-				tpl_InlinePipingComponentNominalDiameter_tpl_scale = (String)dataObject.uomDiameter;				
-				tpl_InlinePipingComponentNominalDiameter_tpl_value = (Double)dataObject.diameter;				
-				tpl_InlinePipingComponentRating_tpl_hasNominalProperty = (String)dataObject.rating;				
-				tpl_PipingNetworkSegmentInlinePipingComponentConnection_tpl_hasClass_rdl_PipingNetworkSegment_tpl_PipingNetworkSystemPipingNetworkSegmentAssembly_tpl_hasClass_rdl_PipingNetworkSystem_tpl_PipingNetworkSystemLineTag_tpl_identifier = (String)dataObject.lineTag;				
-				tpl_PipingNetworkSegmentInlinePipingComponentConnection_tpl_hasClass_rdl_PipingNetworkSegment_tpl_PipingNetworkSystemPipingNetworkSegmentAssembly_tpl_hasClass_rdl_PipingNetworkSystem_tpl_SystemPipingNetworkSystemAssembly_tpl_hasClassOfWhole_rdl_System_tpl_SystemName_tpl_identifier = (String)dataObject.system;				
-				tpl_PlantAreaInlinePipingComponentAssembly_tpl_hasClassOfWhole_rdl_PLANTAREA_tpl_PlantPlantAreaAssembly_tpl_hasClassOfWhole_rdl_PLANT_tpl_PlantProjectAssembly_tpl_hasClassOfPart_rdl_PROJECT_tpl_ProjectName_tpl_identifier = (String)dataObject.projectNumber;				
-				tpl_PlantAreaInlinePipingComponentAssembly_tpl_hasClassOfWhole_rdl_PLANTAREA_tpl_PlantAreaName_tpl_identifier = (String)dataObject.unit;				
+				tpl_ClassifiedIdentification_tpl_identifier = (String)dataObject.Id;
+				tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier = (String)dataObject.system;				
+				tpl_ClientFunctionalUnitAssembly_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification_tpl_identifier = (String)dataObject.unit;				
+				tpl_ClassifiedIdentification_tpl_identifier3 = (String)dataObject.componentType;				
+				tpl_NominalDiameter_tpl_value = (Double)dataObject.diameter;				
+				tpl_NominalDiameter_tpl_scale = (String)dataObject.uomDiameter;				
+				tpl_PAndIDRepresentation_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification_tpl_identifier = (String)dataObject.pid;				
+				tpl_ProjectAssembly_tpl_whole_rdl_PROJECT_tpl_ClassifiedIdentification_tpl_identifier = (String)dataObject.projectNumber;				
 			}
 			
-			tpl_PipingNetworkSegmentInlinePipingComponentConnection = new TemplatePipingNetworkSegmentInlinePipingComponentConnection();
-			tpl_PipingNetworkSegmentInlinePipingComponentConnection.tpl_hasClass_rdl_PipingNetworkSegment = new TemplatePipingNetworkSegmentInlinePipingComponentConnection.ClassPipingNetworkSegment();
-			tpl_PipingNetworkSegmentInlinePipingComponentConnection.tpl_hasClass_rdl_PipingNetworkSegment.Identifier = ((GetPropertyValueByInternalName("lineTag") != null) ? GetPropertyValueByInternalName("lineTag").ToString() : "");
-			tpl_PipingNetworkSegmentInlinePipingComponentConnection.tpl_hasClass_rdl_PipingNetworkSegment.tpl_PipingNetworkSystemPipingNetworkSegmentAssembly = new TemplatePipingNetworkSegmentInlinePipingComponentConnection.ClassPipingNetworkSegment.TemplatePipingNetworkSystemPipingNetworkSegmentAssembly();
-			tpl_PipingNetworkSegmentInlinePipingComponentConnection.tpl_hasClass_rdl_PipingNetworkSegment.tpl_PipingNetworkSystemPipingNetworkSegmentAssembly.tpl_hasClass_rdl_PipingNetworkSystem = new TemplatePipingNetworkSegmentInlinePipingComponentConnection.ClassPipingNetworkSegment.TemplatePipingNetworkSystemPipingNetworkSegmentAssembly.ClassPipingNetworkSystem();
-			tpl_PipingNetworkSegmentInlinePipingComponentConnection.tpl_hasClass_rdl_PipingNetworkSegment.tpl_PipingNetworkSystemPipingNetworkSegmentAssembly.tpl_hasClass_rdl_PipingNetworkSystem.Identifier = ((GetPropertyValueByInternalName("lineTag") != null) ? GetPropertyValueByInternalName("lineTag").ToString() : "");
-			tpl_PipingNetworkSegmentInlinePipingComponentConnection.tpl_hasClass_rdl_PipingNetworkSegment.tpl_PipingNetworkSystemPipingNetworkSegmentAssembly.tpl_hasClass_rdl_PipingNetworkSystem.tpl_PipingNetworkSystemLineTag_tpl_identifier = tpl_PipingNetworkSegmentInlinePipingComponentConnection_tpl_hasClass_rdl_PipingNetworkSegment_tpl_PipingNetworkSystemPipingNetworkSegmentAssembly_tpl_hasClass_rdl_PipingNetworkSystem_tpl_PipingNetworkSystemLineTag_tpl_identifier;
-			tpl_PipingNetworkSegmentInlinePipingComponentConnection.tpl_hasClass_rdl_PipingNetworkSegment.tpl_PipingNetworkSystemPipingNetworkSegmentAssembly.tpl_hasClass_rdl_PipingNetworkSystem.tpl_SystemPipingNetworkSystemAssembly = new TemplatePipingNetworkSegmentInlinePipingComponentConnection.ClassPipingNetworkSegment.TemplatePipingNetworkSystemPipingNetworkSegmentAssembly.ClassPipingNetworkSystem.TemplateSystemPipingNetworkSystemAssembly();
-			tpl_PipingNetworkSegmentInlinePipingComponentConnection.tpl_hasClass_rdl_PipingNetworkSegment.tpl_PipingNetworkSystemPipingNetworkSegmentAssembly.tpl_hasClass_rdl_PipingNetworkSystem.tpl_SystemPipingNetworkSystemAssembly.tpl_hasClassOfWhole_rdl_System = new TemplatePipingNetworkSegmentInlinePipingComponentConnection.ClassPipingNetworkSegment.TemplatePipingNetworkSystemPipingNetworkSegmentAssembly.ClassPipingNetworkSystem.TemplateSystemPipingNetworkSystemAssembly.ClassSystem();
-			tpl_PipingNetworkSegmentInlinePipingComponentConnection.tpl_hasClass_rdl_PipingNetworkSegment.tpl_PipingNetworkSystemPipingNetworkSegmentAssembly.tpl_hasClass_rdl_PipingNetworkSystem.tpl_SystemPipingNetworkSystemAssembly.tpl_hasClassOfWhole_rdl_System.Identifier = ((GetPropertyValueByInternalName("system") != null) ? GetPropertyValueByInternalName("system").ToString() : "");
-			tpl_PipingNetworkSegmentInlinePipingComponentConnection.tpl_hasClass_rdl_PipingNetworkSegment.tpl_PipingNetworkSystemPipingNetworkSegmentAssembly.tpl_hasClass_rdl_PipingNetworkSystem.tpl_SystemPipingNetworkSystemAssembly.tpl_hasClassOfWhole_rdl_System.tpl_SystemName_tpl_identifier = tpl_PipingNetworkSegmentInlinePipingComponentConnection_tpl_hasClass_rdl_PipingNetworkSegment_tpl_PipingNetworkSystemPipingNetworkSegmentAssembly_tpl_hasClass_rdl_PipingNetworkSystem_tpl_SystemPipingNetworkSystemAssembly_tpl_hasClassOfWhole_rdl_System_tpl_SystemName_tpl_identifier;
-			tpl_PipingNetworkSegmentInlinePipingComponentConnection.tpl_hasClass_rdl_PipingNetworkSegment.tpl_PipingNetworkSystemPipingNetworkSegmentAssembly.tpl_hasClass_rdl_PipingNetworkSystem.tpl_SystemPipingNetworkSystemAssembly.tpl_hasClassOfWhole_rdl_System.tpl_PlantSystemAssembly = new TemplatePipingNetworkSegmentInlinePipingComponentConnection.ClassPipingNetworkSegment.TemplatePipingNetworkSystemPipingNetworkSegmentAssembly.ClassPipingNetworkSystem.TemplateSystemPipingNetworkSystemAssembly.ClassSystem.TemplatePlantSystemAssembly();
-			tpl_PipingNetworkSegmentInlinePipingComponentConnection.tpl_hasClass_rdl_PipingNetworkSegment.tpl_PipingNetworkSystemPipingNetworkSegmentAssembly.tpl_hasClass_rdl_PipingNetworkSystem.tpl_SystemPipingNetworkSystemAssembly.tpl_hasClassOfWhole_rdl_System.tpl_PlantSystemAssembly.tpl_hasClassOfWhole_rdl_PLANT = new TemplatePipingNetworkSegmentInlinePipingComponentConnection.ClassPipingNetworkSegment.TemplatePipingNetworkSystemPipingNetworkSegmentAssembly.ClassPipingNetworkSystem.TemplateSystemPipingNetworkSystemAssembly.ClassSystem.TemplatePlantSystemAssembly.ClassPLANT();
-			tpl_PipingNetworkSegmentInlinePipingComponentConnection.tpl_hasClass_rdl_PipingNetworkSegment.tpl_PipingNetworkSystemPipingNetworkSegmentAssembly.tpl_hasClass_rdl_PipingNetworkSystem.tpl_SystemPipingNetworkSystemAssembly.tpl_hasClassOfWhole_rdl_System.tpl_PlantSystemAssembly.tpl_hasClassOfWhole_rdl_PLANT.Identifier = ((GetPropertyValueByInternalName("projectNumber") != null) ? GetPropertyValueByInternalName("projectNumber").ToString() : "");
-			tpl_PlantAreaInlinePipingComponentAssembly = new TemplatePlantAreaInlinePipingComponentAssembly();
-			tpl_PlantAreaInlinePipingComponentAssembly.tpl_hasClassOfWhole_rdl_PLANTAREA = new TemplatePlantAreaInlinePipingComponentAssembly.ClassPLANTAREA();
-			tpl_PlantAreaInlinePipingComponentAssembly.tpl_hasClassOfWhole_rdl_PLANTAREA.Identifier = ((GetPropertyValueByInternalName("unit") != null) ? GetPropertyValueByInternalName("unit").ToString() : "");
-			tpl_PlantAreaInlinePipingComponentAssembly.tpl_hasClassOfWhole_rdl_PLANTAREA.tpl_PlantPlantAreaAssembly = new TemplatePlantAreaInlinePipingComponentAssembly.ClassPLANTAREA.TemplatePlantPlantAreaAssembly();
-			tpl_PlantAreaInlinePipingComponentAssembly.tpl_hasClassOfWhole_rdl_PLANTAREA.tpl_PlantPlantAreaAssembly.tpl_hasClassOfWhole_rdl_PLANT = new TemplatePlantAreaInlinePipingComponentAssembly.ClassPLANTAREA.TemplatePlantPlantAreaAssembly.ClassPLANT();
-			tpl_PlantAreaInlinePipingComponentAssembly.tpl_hasClassOfWhole_rdl_PLANTAREA.tpl_PlantPlantAreaAssembly.tpl_hasClassOfWhole_rdl_PLANT.Identifier = ((GetPropertyValueByInternalName("projectNumber") != null) ? GetPropertyValueByInternalName("projectNumber").ToString() : "");
-			tpl_PlantAreaInlinePipingComponentAssembly.tpl_hasClassOfWhole_rdl_PLANTAREA.tpl_PlantPlantAreaAssembly.tpl_hasClassOfWhole_rdl_PLANT.tpl_PlantProjectAssembly = new TemplatePlantAreaInlinePipingComponentAssembly.ClassPLANTAREA.TemplatePlantPlantAreaAssembly.ClassPLANT.TemplatePlantProjectAssembly();
-			tpl_PlantAreaInlinePipingComponentAssembly.tpl_hasClassOfWhole_rdl_PLANTAREA.tpl_PlantPlantAreaAssembly.tpl_hasClassOfWhole_rdl_PLANT.tpl_PlantProjectAssembly.tpl_hasClassOfPart_rdl_PROJECT = new TemplatePlantAreaInlinePipingComponentAssembly.ClassPLANTAREA.TemplatePlantPlantAreaAssembly.ClassPLANT.TemplatePlantProjectAssembly.ClassPROJECT();
-			tpl_PlantAreaInlinePipingComponentAssembly.tpl_hasClassOfWhole_rdl_PLANTAREA.tpl_PlantPlantAreaAssembly.tpl_hasClassOfWhole_rdl_PLANT.tpl_PlantProjectAssembly.tpl_hasClassOfPart_rdl_PROJECT.Identifier = ((GetPropertyValueByInternalName("projectNumber") != null) ? GetPropertyValueByInternalName("projectNumber").ToString() : "");
-			tpl_PlantAreaInlinePipingComponentAssembly.tpl_hasClassOfWhole_rdl_PLANTAREA.tpl_PlantPlantAreaAssembly.tpl_hasClassOfWhole_rdl_PLANT.tpl_PlantProjectAssembly.tpl_hasClassOfPart_rdl_PROJECT.tpl_ProjectName_tpl_identifier = tpl_PlantAreaInlinePipingComponentAssembly_tpl_hasClassOfWhole_rdl_PLANTAREA_tpl_PlantPlantAreaAssembly_tpl_hasClassOfWhole_rdl_PLANT_tpl_PlantProjectAssembly_tpl_hasClassOfPart_rdl_PROJECT_tpl_ProjectName_tpl_identifier;
-			tpl_PlantAreaInlinePipingComponentAssembly.tpl_hasClassOfWhole_rdl_PLANTAREA.tpl_PlantAreaName_tpl_identifier = tpl_PlantAreaInlinePipingComponentAssembly_tpl_hasClassOfWhole_rdl_PLANTAREA_tpl_PlantAreaName_tpl_identifier;
+			tpl_ClientSystemAssembly = new TemplateClientSystemAssembly();
+			tpl_ClientSystemAssembly.tpl_whole_rdl_CLIENT_SYSTEM = new TemplateClientSystemAssembly.ClassCLIENT_SYSTEM();
+			tpl_ClientSystemAssembly.tpl_whole_rdl_CLIENT_SYSTEM.Identifier = ((GetPropertyValueByInternalName("system") != null) ? GetPropertyValueByInternalName("system").ToString() : "");
+			tpl_ClientSystemAssembly.tpl_whole_rdl_CLIENT_SYSTEM.tpl_ClassifiedIdentification_tpl_identifier = tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier;
+			tpl_ClientFunctionalUnitAssembly = new TemplateClientFunctionalUnitAssembly();
+			tpl_ClientFunctionalUnitAssembly.tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT = new TemplateClientFunctionalUnitAssembly.ClassCLIENT_FUNCTIONAL_UNIT();
+			tpl_ClientFunctionalUnitAssembly.tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT.Identifier = ((GetPropertyValueByInternalName("unit") != null) ? GetPropertyValueByInternalName("unit").ToString() : "");
+			tpl_ClientFunctionalUnitAssembly.tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT.tpl_ClassifiedIdentification_tpl_identifier = tpl_ClientFunctionalUnitAssembly_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification_tpl_identifier;
+			tpl_PAndIDRepresentation = new TemplatePAndIDRepresentation();
+			tpl_PAndIDRepresentation.tpl_representation_rdl_P_AND_I_DIAGRAM = new TemplatePAndIDRepresentation.ClassP_AND_I_DIAGRAM();
+			tpl_PAndIDRepresentation.tpl_representation_rdl_P_AND_I_DIAGRAM.Identifier = ((GetPropertyValueByInternalName("pid") != null) ? GetPropertyValueByInternalName("pid").ToString() : "");
+			tpl_PAndIDRepresentation.tpl_representation_rdl_P_AND_I_DIAGRAM.tpl_ClassifiedIdentification_tpl_identifier = tpl_PAndIDRepresentation_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification_tpl_identifier;
+			tpl_ProjectAssembly = new TemplateProjectAssembly();
+			tpl_ProjectAssembly.tpl_whole_rdl_PROJECT = new TemplateProjectAssembly.ClassPROJECT();
+			tpl_ProjectAssembly.tpl_whole_rdl_PROJECT.Identifier = ((GetPropertyValueByInternalName("projectNumber") != null) ? GetPropertyValueByInternalName("projectNumber").ToString() : "");
+			tpl_ProjectAssembly.tpl_whole_rdl_PROJECT.tpl_ClassifiedIdentification_tpl_identifier = tpl_ProjectAssembly_tpl_whole_rdl_PROJECT_tpl_ClassifiedIdentification_tpl_identifier;
 	      
 			_dataObject = dataObject;
 		} 
@@ -269,134 +189,119 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 		public Valves()
 			: this("http://rdl.rdlfacade.org/data#R97295617945", "Valves", null) {}			
 
-		[DataMember(Name = "tpl_InlinePipingComponentName_tpl_identifier", EmitDefaultValue = false)] 
+		[DataMember(Name = "tpl_ClassifiedIdentification_tpl_identifier", EmitDefaultValue = false)] 
 		[XmlIgnore]
-		public String tpl_InlinePipingComponentName_tpl_identifier
+		public String tpl_ClassifiedIdentification_tpl_identifier
 		{
 			get
 			{
-				return (String)GetPropertyValue("tpl:InlinePipingComponentName.tpl:identifier");
+				return (String)GetPropertyValue("tpl:ClassifiedIdentification.tpl:identifier");
 			}
 
 			set
 			{
-				SetPropertyValue("tpl:InlinePipingComponentName.tpl:identifier", value);
-			}
-		}
-		
-		[DataMember(Name = "tpl_InlinePipingComponentType_tpl_type", EmitDefaultValue = false)] 
-		[XmlIgnore]
-		public String tpl_InlinePipingComponentType_tpl_type
-		{
-			get
-			{
-				return (String)GetPropertyValue("tpl:InlinePipingComponentType.tpl:type");
-			}
-
-			set
-			{
-				SetPropertyValue("tpl:InlinePipingComponentType.tpl:type", value);
-			}
-		}
-		
-		[DataMember(Name = "tpl_InlinePipingComponentNominalDiameter_tpl_scale", EmitDefaultValue = false)] 
-		[XmlIgnore]
-		public String tpl_InlinePipingComponentNominalDiameter_tpl_scale
-		{
-			get
-			{
-				return (String)GetPropertyValue("tpl:InlinePipingComponentNominalDiameter.tpl:scale");
-			}
-
-			set
-			{
-				SetPropertyValue("tpl:InlinePipingComponentNominalDiameter.tpl:scale", value);
-			}
-		}
-		
-		[DataMember(Name = "tpl_InlinePipingComponentNominalDiameter_tpl_value", EmitDefaultValue = false)] 
-		[XmlIgnore]
-		public global::System.Nullable<Double> tpl_InlinePipingComponentNominalDiameter_tpl_value
-		{
-			get
-			{
-				return (Double)GetPropertyValue("tpl:InlinePipingComponentNominalDiameter.tpl:value");
-			}
-
-			set
-			{
-				SetPropertyValue("tpl:InlinePipingComponentNominalDiameter.tpl:value", value);
-			}
-		}
-		
-		[DataMember(Name = "tpl_InlinePipingComponentRating_tpl_hasNominalProperty", EmitDefaultValue = false)] 
-		[XmlIgnore]
-		public String tpl_InlinePipingComponentRating_tpl_hasNominalProperty
-		{
-			get
-			{
-				return (String)GetPropertyValue("tpl:InlinePipingComponentRating.tpl:hasNominalProperty");
-			}
-
-			set
-			{
-				SetPropertyValue("tpl:InlinePipingComponentRating.tpl:hasNominalProperty", value);
+				SetPropertyValue("tpl:ClassifiedIdentification.tpl:identifier", value);
 			}
 		}
 		
 		[XmlIgnore]
-		public String tpl_PipingNetworkSegmentInlinePipingComponentConnection_tpl_hasClass_rdl_PipingNetworkSegment_tpl_PipingNetworkSystemPipingNetworkSegmentAssembly_tpl_hasClass_rdl_PipingNetworkSystem_tpl_PipingNetworkSystemLineTag_tpl_identifier
+		public String tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier
 		{
 			get
 			{
-				return (String)GetPropertyValue("tpl:PipingNetworkSegmentInlinePipingComponentConnection.tpl:hasClass.rdl:PipingNetworkSegment.tpl:PipingNetworkSystemPipingNetworkSegmentAssembly.tpl:hasClass.rdl:PipingNetworkSystem.tpl:PipingNetworkSystemLineTag.tpl:identifier");
+				return (String)GetPropertyValue("tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identifier");
 			}
 
 			set
 			{
-				SetPropertyValue("tpl:PipingNetworkSegmentInlinePipingComponentConnection.tpl:hasClass.rdl:PipingNetworkSegment.tpl:PipingNetworkSystemPipingNetworkSegmentAssembly.tpl:hasClass.rdl:PipingNetworkSystem.tpl:PipingNetworkSystemLineTag.tpl:identifier", value);
+				SetPropertyValue("tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identifier", value);
 			}
 		}
 		
 		[XmlIgnore]
-		public String tpl_PipingNetworkSegmentInlinePipingComponentConnection_tpl_hasClass_rdl_PipingNetworkSegment_tpl_PipingNetworkSystemPipingNetworkSegmentAssembly_tpl_hasClass_rdl_PipingNetworkSystem_tpl_SystemPipingNetworkSystemAssembly_tpl_hasClassOfWhole_rdl_System_tpl_SystemName_tpl_identifier
+		public String tpl_ClientFunctionalUnitAssembly_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification_tpl_identifier
 		{
 			get
 			{
-				return (String)GetPropertyValue("tpl:PipingNetworkSegmentInlinePipingComponentConnection.tpl:hasClass.rdl:PipingNetworkSegment.tpl:PipingNetworkSystemPipingNetworkSegmentAssembly.tpl:hasClass.rdl:PipingNetworkSystem.tpl:SystemPipingNetworkSystemAssembly.tpl:hasClassOfWhole.rdl:System.tpl:SystemName.tpl:identifier");
+				return (String)GetPropertyValue("tpl:ClientFunctionalUnitAssembly.tpl:whole.rdl:CLIENT_FUNCTIONAL_UNIT.tpl:ClassifiedIdentification.tpl:identifier");
 			}
 
 			set
 			{
-				SetPropertyValue("tpl:PipingNetworkSegmentInlinePipingComponentConnection.tpl:hasClass.rdl:PipingNetworkSegment.tpl:PipingNetworkSystemPipingNetworkSegmentAssembly.tpl:hasClass.rdl:PipingNetworkSystem.tpl:SystemPipingNetworkSystemAssembly.tpl:hasClassOfWhole.rdl:System.tpl:SystemName.tpl:identifier", value);
+				SetPropertyValue("tpl:ClientFunctionalUnitAssembly.tpl:whole.rdl:CLIENT_FUNCTIONAL_UNIT.tpl:ClassifiedIdentification.tpl:identifier", value);
+			}
+		}
+		
+		[DataMember(Name = "tpl_ClassifiedIdentification_tpl_identifier3", EmitDefaultValue = false)] 
+		[XmlIgnore]
+		public String tpl_ClassifiedIdentification_tpl_identifier3
+		{
+			get
+			{
+				return (String)GetPropertyValue("tpl:ClassifiedIdentification.tpl:identifier3");
+			}
+
+			set
+			{
+				SetPropertyValue("tpl:ClassifiedIdentification.tpl:identifier3", value);
+			}
+		}
+		
+		[DataMember(Name = "tpl_NominalDiameter_tpl_value", EmitDefaultValue = false)] 
+		[XmlIgnore]
+		public global::System.Nullable<Double> tpl_NominalDiameter_tpl_value
+		{
+			get
+			{
+				return (Double)GetPropertyValue("tpl:NominalDiameter.tpl:value");
+			}
+
+			set
+			{
+				SetPropertyValue("tpl:NominalDiameter.tpl:value", value);
+			}
+		}
+		
+		[DataMember(Name = "tpl_NominalDiameter_tpl_scale", EmitDefaultValue = false)] 
+		[XmlIgnore]
+		public String tpl_NominalDiameter_tpl_scale
+		{
+			get
+			{
+				return (String)GetPropertyValue("tpl:NominalDiameter.tpl:scale");
+			}
+
+			set
+			{
+				SetPropertyValue("tpl:NominalDiameter.tpl:scale", value);
 			}
 		}
 		
 		[XmlIgnore]
-		public String tpl_PlantAreaInlinePipingComponentAssembly_tpl_hasClassOfWhole_rdl_PLANTAREA_tpl_PlantPlantAreaAssembly_tpl_hasClassOfWhole_rdl_PLANT_tpl_PlantProjectAssembly_tpl_hasClassOfPart_rdl_PROJECT_tpl_ProjectName_tpl_identifier
+		public String tpl_PAndIDRepresentation_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification_tpl_identifier
 		{
 			get
 			{
-				return (String)GetPropertyValue("tpl:PlantAreaInlinePipingComponentAssembly.tpl:hasClassOfWhole.rdl:PLANTAREA.tpl:PlantPlantAreaAssembly.tpl:hasClassOfWhole.rdl:PLANT.tpl:PlantProjectAssembly.tpl:hasClassOfPart.rdl:PROJECT.tpl:ProjectName.tpl:identifier");
+				return (String)GetPropertyValue("tpl:PAndIDRepresentation.tpl:representation.rdl:P_AND_I_DIAGRAM.tpl:ClassifiedIdentification.tpl:identifier");
 			}
 
 			set
 			{
-				SetPropertyValue("tpl:PlantAreaInlinePipingComponentAssembly.tpl:hasClassOfWhole.rdl:PLANTAREA.tpl:PlantPlantAreaAssembly.tpl:hasClassOfWhole.rdl:PLANT.tpl:PlantProjectAssembly.tpl:hasClassOfPart.rdl:PROJECT.tpl:ProjectName.tpl:identifier", value);
+				SetPropertyValue("tpl:PAndIDRepresentation.tpl:representation.rdl:P_AND_I_DIAGRAM.tpl:ClassifiedIdentification.tpl:identifier", value);
 			}
 		}
 		
 		[XmlIgnore]
-		public String tpl_PlantAreaInlinePipingComponentAssembly_tpl_hasClassOfWhole_rdl_PLANTAREA_tpl_PlantAreaName_tpl_identifier
+		public String tpl_ProjectAssembly_tpl_whole_rdl_PROJECT_tpl_ClassifiedIdentification_tpl_identifier
 		{
 			get
 			{
-				return (String)GetPropertyValue("tpl:PlantAreaInlinePipingComponentAssembly.tpl:hasClassOfWhole.rdl:PLANTAREA.tpl:PlantAreaName.tpl:identifier");
+				return (String)GetPropertyValue("tpl:ProjectAssembly.tpl:whole.rdl:PROJECT.tpl:ClassifiedIdentification.tpl:identifier");
 			}
 
 			set
 			{
-				SetPropertyValue("tpl:PlantAreaInlinePipingComponentAssembly.tpl:hasClassOfWhole.rdl:PLANTAREA.tpl:PlantAreaName.tpl:identifier", value);
+				SetPropertyValue("tpl:ProjectAssembly.tpl:whole.rdl:PROJECT.tpl:ClassifiedIdentification.tpl:identifier", value);
 			}
 		}
 		
@@ -405,17 +310,16 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 				if (_dataObject == null)
 				{
 					_dataObject = new org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent();
-					((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).tag = (String)this._identifier;
+					((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).Id = (String)this._identifier;
 				}
 				
-				((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).componentType = (String)this.tpl_InlinePipingComponentType_tpl_type;
-				((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).uomDiameter = (String)this.tpl_InlinePipingComponentNominalDiameter_tpl_scale;
-				((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).diameter = (Double)this.tpl_InlinePipingComponentNominalDiameter_tpl_value;
-				((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).rating = (String)this.tpl_InlinePipingComponentRating_tpl_hasNominalProperty;
-				((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).lineTag = (String)this.tpl_PipingNetworkSegmentInlinePipingComponentConnection_tpl_hasClass_rdl_PipingNetworkSegment_tpl_PipingNetworkSystemPipingNetworkSegmentAssembly_tpl_hasClass_rdl_PipingNetworkSystem_tpl_PipingNetworkSystemLineTag_tpl_identifier;
-				((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).system = (String)this.tpl_PipingNetworkSegmentInlinePipingComponentConnection_tpl_hasClass_rdl_PipingNetworkSegment_tpl_PipingNetworkSystemPipingNetworkSegmentAssembly_tpl_hasClass_rdl_PipingNetworkSystem_tpl_SystemPipingNetworkSystemAssembly_tpl_hasClassOfWhole_rdl_System_tpl_SystemName_tpl_identifier;
-				((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).projectNumber = (String)this.tpl_PlantAreaInlinePipingComponentAssembly_tpl_hasClassOfWhole_rdl_PLANTAREA_tpl_PlantPlantAreaAssembly_tpl_hasClassOfWhole_rdl_PLANT_tpl_PlantProjectAssembly_tpl_hasClassOfPart_rdl_PROJECT_tpl_ProjectName_tpl_identifier;
-				((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).unit = (String)this.tpl_PlantAreaInlinePipingComponentAssembly_tpl_hasClassOfWhole_rdl_PLANTAREA_tpl_PlantAreaName_tpl_identifier;
+				((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).system = (String)this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier;
+				((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).unit = (String)this.tpl_ClientFunctionalUnitAssembly_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification_tpl_identifier;
+				((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).componentType = (String)this.tpl_ClassifiedIdentification_tpl_identifier3;
+				((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).diameter = (Double)this.tpl_NominalDiameter_tpl_value;
+				((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).uomDiameter = (String)this.tpl_NominalDiameter_tpl_scale;
+				((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).pid = (String)this.tpl_PAndIDRepresentation_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification_tpl_identifier;
+				((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).projectNumber = (String)this.tpl_ProjectAssembly_tpl_whole_rdl_PROJECT_tpl_ClassifiedIdentification_tpl_identifier;
 
 			return _dataObject;
 		}
@@ -445,443 +349,44 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 		}		
 	}
 	
-	[DataContract(Name = "Instruments", Namespace = "http://ABC.bechtel.com/12345_000/data#" )]
-	[XmlRoot(Namespace = "http://ABC.bechtel.com/12345_000/data#")]
-	public class Instruments : DataTransferObject
-	{
-	[DataContract(Namespace = "http://ABC.bechtel.com/12345_000/data#" )]
-	[XmlRoot(Namespace = "http://ABC.bechtel.com/12345_000/data#")]
-	public class TemplatePlantAreaInlinePipingComponentAssembly
-	{
-		[DataContract(Namespace = "http://ABC.bechtel.com/12345_000/data#" )]
-		[XmlRoot(Namespace = "http://ABC.bechtel.com/12345_000/data#")]
-		public class ClassPlantArea
-		{
-			[DataMember(EmitDefaultValue=false)]
-			[XmlIgnore]
-			public string Identifier { get; set; }
-			
-			[DataMember(EmitDefaultValue = false)]
-			public String tpl_PlantAreaName_tpl_identifier { get; set; }
-					
-	[DataContract(Namespace = "http://ABC.bechtel.com/12345_000/data#" )]
-	[XmlRoot(Namespace = "http://ABC.bechtel.com/12345_000/data#")]
-	public class TemplatePlantPlantAreaAssembly
-	{
-		[DataContract(Namespace = "http://ABC.bechtel.com/12345_000/data#" )]
-		[XmlRoot(Namespace = "http://ABC.bechtel.com/12345_000/data#")]
-		public class ClassPlant
-		{
-			[DataMember(EmitDefaultValue=false)]
-			[XmlIgnore]
-			public string Identifier { get; set; }
-			
-	[DataContract(Namespace = "http://ABC.bechtel.com/12345_000/data#" )]
-	[XmlRoot(Namespace = "http://ABC.bechtel.com/12345_000/data#")]
-	public class TemplatePlantProjectAssembly
-	{
-		[DataContract(Namespace = "http://ABC.bechtel.com/12345_000/data#" )]
-		[XmlRoot(Namespace = "http://ABC.bechtel.com/12345_000/data#")]
-		public class ClassProject
-		{
-			[DataMember(EmitDefaultValue=false)]
-			[XmlIgnore]
-			public string Identifier { get; set; }
-			
-			[DataMember(EmitDefaultValue = false)]
-			public String tpl_ProjectName_tpl_identifier { get; set; }
-					
-		}
-
-		[DataMember(Name = "tpl_hasClassOfPart_rdl_Project", EmitDefaultValue = false)]
-		[XmlIgnore]
-		public ClassProject tpl_hasClassOfPart_rdl_Project { get; set; }
-	}
-	
-	[DataMember(EmitDefaultValue = false)]
-	[XmlIgnore]
-	public TemplatePlantProjectAssembly tpl_PlantProjectAssembly { get; set; }     
-       
-		}
-
-		[DataMember(Name = "tpl_hasClassOfWhole_rdl_Plant", EmitDefaultValue = false)]
-		[XmlIgnore]
-		public ClassPlant tpl_hasClassOfWhole_rdl_Plant { get; set; }
-	}
-	
-	[DataMember(EmitDefaultValue = false)]
-	[XmlIgnore]
-	public TemplatePlantPlantAreaAssembly tpl_PlantPlantAreaAssembly { get; set; }     
-       
-		}
-
-		[DataMember(Name = "tpl_hasClassOfWhole_rdl_PlantArea", EmitDefaultValue = false)]
-		[XmlIgnore]
-		public ClassPlantArea tpl_hasClassOfWhole_rdl_PlantArea { get; set; }
-	}
-	
-	[DataMember(EmitDefaultValue = false)]
-	[XmlIgnore]
-	public TemplatePlantAreaInlinePipingComponentAssembly tpl_PlantAreaInlinePipingComponentAssembly { get; set; }     
-       
-	[DataContract(Namespace = "http://ABC.bechtel.com/12345_000/data#" )]
-	[XmlRoot(Namespace = "http://ABC.bechtel.com/12345_000/data#")]
-	public class TemplatePandIDiagramPipingNetworkSegmentAssembly
-	{
-		[DataContract(Namespace = "http://ABC.bechtel.com/12345_000/data#" )]
-		[XmlRoot(Namespace = "http://ABC.bechtel.com/12345_000/data#")]
-		public class ClassPandIDiagram
-		{
-			[DataMember(EmitDefaultValue=false)]
-			[XmlIgnore]
-			public string Identifier { get; set; }
-			
-			[DataMember(EmitDefaultValue = false)]
-			public String tpl_DrawingName_tpl_identifier { get; set; }
-					
-		}
-
-		[DataMember(Name = "tpl_hasClassOfWhole_rdl_PandIDiagram", EmitDefaultValue = false)]
-		[XmlIgnore]
-		public ClassPandIDiagram tpl_hasClassOfWhole_rdl_PandIDiagram { get; set; }
-	}
-	
-	[DataMember(EmitDefaultValue = false)]
-	[XmlIgnore]
-	public TemplatePandIDiagramPipingNetworkSegmentAssembly tpl_PandIDiagramPipingNetworkSegmentAssembly { get; set; }     
-       
-
-		public Instruments(string classId, string graphName, string identifier) 
-			: base(classId, graphName)
-		{   
-			_properties.Add(new DTOProperty(@"tag", @"tpl:InlinePipingComponentName.tpl:identifier", null, typeof(String), true, true));
-			_properties.Add(new DTOProperty(@"componentType", @"tpl:InlinePipingComponentType.tpl:type", null, typeof(String), false, false));
-			_properties.Add(new DTOProperty(@"unit", @"tpl:PlantAreaInlinePipingComponentAssembly.tpl:hasClassOfWhole.rdl:PlantArea.tpl:PlantAreaName.tpl:identifier", null, typeof(String), false, false));
-			_properties.Add(new DTOProperty(@"projectNumber", @"tpl:PlantAreaInlinePipingComponentAssembly.tpl:hasClassOfWhole.rdl:PlantArea.tpl:PlantPlantAreaAssembly.tpl:hasClassOfWhole.rdl:Plant.tpl:PlantProjectAssembly.tpl:hasClassOfPart.rdl:Project.tpl:ProjectName.tpl:identifier", null, typeof(String), false, false));
-			_properties.Add(new DTOProperty(@"pid", @"tpl:PandIDiagramPipingNetworkSegmentAssembly.tpl:hasClassOfWhole.rdl:PandIDiagram.tpl:DrawingName.tpl:identifier", null, typeof(String), false, false));
-
-			Identifier = identifier;
-			ClassId = classId;
-		}
-	
-		public Instruments(org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent dataObject)
-			: this("http://rdl.rdlfacade.org/data#R49707845396", "Instruments", null, dataObject) {}
-			
-		public Instruments(string classId, string graphName, string identifier, org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent dataObject) 
-			: this(classId, graphName, identifier)
-		{  
-			if (dataObject != null)
-			{
-				tpl_InlinePipingComponentName_tpl_identifier = (String)dataObject.tag;				
-				tpl_InlinePipingComponentType_tpl_type = (String)dataObject.componentType;				
-				tpl_PlantAreaInlinePipingComponentAssembly_tpl_hasClassOfWhole_rdl_PlantArea_tpl_PlantAreaName_tpl_identifier = (String)dataObject.unit;				
-				tpl_PlantAreaInlinePipingComponentAssembly_tpl_hasClassOfWhole_rdl_PlantArea_tpl_PlantPlantAreaAssembly_tpl_hasClassOfWhole_rdl_Plant_tpl_PlantProjectAssembly_tpl_hasClassOfPart_rdl_Project_tpl_ProjectName_tpl_identifier = (String)dataObject.projectNumber;				
-				tpl_PandIDiagramPipingNetworkSegmentAssembly_tpl_hasClassOfWhole_rdl_PandIDiagram_tpl_DrawingName_tpl_identifier = (String)dataObject.pid;				
-			}
-			
-			tpl_PlantAreaInlinePipingComponentAssembly = new TemplatePlantAreaInlinePipingComponentAssembly();
-			tpl_PlantAreaInlinePipingComponentAssembly.tpl_hasClassOfWhole_rdl_PlantArea = new TemplatePlantAreaInlinePipingComponentAssembly.ClassPlantArea();
-			tpl_PlantAreaInlinePipingComponentAssembly.tpl_hasClassOfWhole_rdl_PlantArea.Identifier = ((GetPropertyValueByInternalName("unit") != null) ? GetPropertyValueByInternalName("unit").ToString() : "");
-			tpl_PlantAreaInlinePipingComponentAssembly.tpl_hasClassOfWhole_rdl_PlantArea.tpl_PlantAreaName_tpl_identifier = tpl_PlantAreaInlinePipingComponentAssembly_tpl_hasClassOfWhole_rdl_PlantArea_tpl_PlantAreaName_tpl_identifier;
-			tpl_PlantAreaInlinePipingComponentAssembly.tpl_hasClassOfWhole_rdl_PlantArea.tpl_PlantPlantAreaAssembly = new TemplatePlantAreaInlinePipingComponentAssembly.ClassPlantArea.TemplatePlantPlantAreaAssembly();
-			tpl_PlantAreaInlinePipingComponentAssembly.tpl_hasClassOfWhole_rdl_PlantArea.tpl_PlantPlantAreaAssembly.tpl_hasClassOfWhole_rdl_Plant = new TemplatePlantAreaInlinePipingComponentAssembly.ClassPlantArea.TemplatePlantPlantAreaAssembly.ClassPlant();
-			tpl_PlantAreaInlinePipingComponentAssembly.tpl_hasClassOfWhole_rdl_PlantArea.tpl_PlantPlantAreaAssembly.tpl_hasClassOfWhole_rdl_Plant.Identifier = ((GetPropertyValueByInternalName("componentType") != null) ? GetPropertyValueByInternalName("componentType").ToString() : "");
-			tpl_PlantAreaInlinePipingComponentAssembly.tpl_hasClassOfWhole_rdl_PlantArea.tpl_PlantPlantAreaAssembly.tpl_hasClassOfWhole_rdl_Plant.tpl_PlantProjectAssembly = new TemplatePlantAreaInlinePipingComponentAssembly.ClassPlantArea.TemplatePlantPlantAreaAssembly.ClassPlant.TemplatePlantProjectAssembly();
-			tpl_PlantAreaInlinePipingComponentAssembly.tpl_hasClassOfWhole_rdl_PlantArea.tpl_PlantPlantAreaAssembly.tpl_hasClassOfWhole_rdl_Plant.tpl_PlantProjectAssembly.tpl_hasClassOfPart_rdl_Project = new TemplatePlantAreaInlinePipingComponentAssembly.ClassPlantArea.TemplatePlantPlantAreaAssembly.ClassPlant.TemplatePlantProjectAssembly.ClassProject();
-			tpl_PlantAreaInlinePipingComponentAssembly.tpl_hasClassOfWhole_rdl_PlantArea.tpl_PlantPlantAreaAssembly.tpl_hasClassOfWhole_rdl_Plant.tpl_PlantProjectAssembly.tpl_hasClassOfPart_rdl_Project.Identifier = ((GetPropertyValueByInternalName("projectNumber") != null) ? GetPropertyValueByInternalName("projectNumber").ToString() : "");
-			tpl_PlantAreaInlinePipingComponentAssembly.tpl_hasClassOfWhole_rdl_PlantArea.tpl_PlantPlantAreaAssembly.tpl_hasClassOfWhole_rdl_Plant.tpl_PlantProjectAssembly.tpl_hasClassOfPart_rdl_Project.tpl_ProjectName_tpl_identifier = tpl_PlantAreaInlinePipingComponentAssembly_tpl_hasClassOfWhole_rdl_PlantArea_tpl_PlantPlantAreaAssembly_tpl_hasClassOfWhole_rdl_Plant_tpl_PlantProjectAssembly_tpl_hasClassOfPart_rdl_Project_tpl_ProjectName_tpl_identifier;
-			tpl_PandIDiagramPipingNetworkSegmentAssembly = new TemplatePandIDiagramPipingNetworkSegmentAssembly();
-			tpl_PandIDiagramPipingNetworkSegmentAssembly.tpl_hasClassOfWhole_rdl_PandIDiagram = new TemplatePandIDiagramPipingNetworkSegmentAssembly.ClassPandIDiagram();
-			tpl_PandIDiagramPipingNetworkSegmentAssembly.tpl_hasClassOfWhole_rdl_PandIDiagram.Identifier = ((GetPropertyValueByInternalName("pid") != null) ? GetPropertyValueByInternalName("pid").ToString() : "");
-			tpl_PandIDiagramPipingNetworkSegmentAssembly.tpl_hasClassOfWhole_rdl_PandIDiagram.tpl_DrawingName_tpl_identifier = tpl_PandIDiagramPipingNetworkSegmentAssembly_tpl_hasClassOfWhole_rdl_PandIDiagram_tpl_DrawingName_tpl_identifier;
-	      
-			_dataObject = dataObject;
-		} 
-		
-		public Instruments()
-			: this("http://rdl.rdlfacade.org/data#R49707845396", "Instruments", null) {}			
-
-		[DataMember(Name = "tpl_InlinePipingComponentName_tpl_identifier", EmitDefaultValue = false)] 
-		[XmlIgnore]
-		public String tpl_InlinePipingComponentName_tpl_identifier
-		{
-			get
-			{
-				return (String)GetPropertyValue("tpl:InlinePipingComponentName.tpl:identifier");
-			}
-
-			set
-			{
-				SetPropertyValue("tpl:InlinePipingComponentName.tpl:identifier", value);
-			}
-		}
-		
-		[DataMember(Name = "tpl_InlinePipingComponentType_tpl_type", EmitDefaultValue = false)] 
-		[XmlIgnore]
-		public String tpl_InlinePipingComponentType_tpl_type
-		{
-			get
-			{
-				return (String)GetPropertyValue("tpl:InlinePipingComponentType.tpl:type");
-			}
-
-			set
-			{
-				SetPropertyValue("tpl:InlinePipingComponentType.tpl:type", value);
-			}
-		}
-		
-		[XmlIgnore]
-		public String tpl_PlantAreaInlinePipingComponentAssembly_tpl_hasClassOfWhole_rdl_PlantArea_tpl_PlantAreaName_tpl_identifier
-		{
-			get
-			{
-				return (String)GetPropertyValue("tpl:PlantAreaInlinePipingComponentAssembly.tpl:hasClassOfWhole.rdl:PlantArea.tpl:PlantAreaName.tpl:identifier");
-			}
-
-			set
-			{
-				SetPropertyValue("tpl:PlantAreaInlinePipingComponentAssembly.tpl:hasClassOfWhole.rdl:PlantArea.tpl:PlantAreaName.tpl:identifier", value);
-			}
-		}
-		
-		[XmlIgnore]
-		public String tpl_PlantAreaInlinePipingComponentAssembly_tpl_hasClassOfWhole_rdl_PlantArea_tpl_PlantPlantAreaAssembly_tpl_hasClassOfWhole_rdl_Plant_tpl_PlantProjectAssembly_tpl_hasClassOfPart_rdl_Project_tpl_ProjectName_tpl_identifier
-		{
-			get
-			{
-				return (String)GetPropertyValue("tpl:PlantAreaInlinePipingComponentAssembly.tpl:hasClassOfWhole.rdl:PlantArea.tpl:PlantPlantAreaAssembly.tpl:hasClassOfWhole.rdl:Plant.tpl:PlantProjectAssembly.tpl:hasClassOfPart.rdl:Project.tpl:ProjectName.tpl:identifier");
-			}
-
-			set
-			{
-				SetPropertyValue("tpl:PlantAreaInlinePipingComponentAssembly.tpl:hasClassOfWhole.rdl:PlantArea.tpl:PlantPlantAreaAssembly.tpl:hasClassOfWhole.rdl:Plant.tpl:PlantProjectAssembly.tpl:hasClassOfPart.rdl:Project.tpl:ProjectName.tpl:identifier", value);
-			}
-		}
-		
-		[XmlIgnore]
-		public String tpl_PandIDiagramPipingNetworkSegmentAssembly_tpl_hasClassOfWhole_rdl_PandIDiagram_tpl_DrawingName_tpl_identifier
-		{
-			get
-			{
-				return (String)GetPropertyValue("tpl:PandIDiagramPipingNetworkSegmentAssembly.tpl:hasClassOfWhole.rdl:PandIDiagram.tpl:DrawingName.tpl:identifier");
-			}
-
-			set
-			{
-				SetPropertyValue("tpl:PandIDiagramPipingNetworkSegmentAssembly.tpl:hasClassOfWhole.rdl:PandIDiagram.tpl:DrawingName.tpl:identifier", value);
-			}
-		}
-		
-		public override object GetDataObject()
-		{
-				if (_dataObject == null)
-				{
-					_dataObject = new org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent();
-					((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).tag = (String)this._identifier;
-				}
-				
-				((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).componentType = (String)this.tpl_InlinePipingComponentType_tpl_type;
-				((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).unit = (String)this.tpl_PlantAreaInlinePipingComponentAssembly_tpl_hasClassOfWhole_rdl_PlantArea_tpl_PlantAreaName_tpl_identifier;
-				((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).projectNumber = (String)this.tpl_PlantAreaInlinePipingComponentAssembly_tpl_hasClassOfWhole_rdl_PlantArea_tpl_PlantPlantAreaAssembly_tpl_hasClassOfWhole_rdl_Plant_tpl_PlantProjectAssembly_tpl_hasClassOfPart_rdl_Project_tpl_ProjectName_tpl_identifier;
-				((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).pid = (String)this.tpl_PandIDiagramPipingNetworkSegmentAssembly_tpl_hasClassOfWhole_rdl_PandIDiagram_tpl_DrawingName_tpl_identifier;
-
-			return _dataObject;
-		}
-		
-		public override string Serialize()
-		{
-			return Utility.SerializeDataContract<Instruments>(this);
-		}
-
-		public override void Write(string path)
-		{
-			Utility.Write<Instruments>(this, path);
-		}
-	    
-		public override T Transform<T>(string xmlPath, string stylesheetUri, string mappingUri, bool useDataContractDeserializer)
-		{
-			string dtoPath = xmlPath + this.GraphName + ".xml";
-			Mapping mapping = Utility.Read<Mapping>(mappingUri, false);
-
-			List<Instruments> list = new List<Instruments> { this };
-			Utility.Write<List<Instruments>>(list, dtoPath);
-
-			XsltArgumentList xsltArgumentList = new XsltArgumentList();
-			xsltArgumentList.AddParam("dtoFilename", "", dtoPath);
-
-			return Utility.Transform<Mapping, T>(mapping, stylesheetUri, xsltArgumentList, false, useDataContractDeserializer);
-		}		
-	}
-	
-	[DataContract(Name = "Vessels", Namespace = "http://ABC.bechtel.com/12345_000/data#" )]
-	[XmlRoot(Namespace = "http://ABC.bechtel.com/12345_000/data#")]
-	public class Vessels : DataTransferObject
-	{
-
-		public Vessels(string classId, string graphName, string identifier) 
-			: base(classId, graphName)
-		{   
-			_properties.Add(new DTOProperty(@"tag", @"tpl:FluidContainerName.tpl:identifier", null, typeof(String), true, true));
-			_properties.Add(new DTOProperty(@"description", @"tpl:FluidContainerDescription.tpl:description", null, typeof(String), false, false));
-
-			Identifier = identifier;
-			ClassId = classId;
-		}
-	
-		public Vessels(org.iringtools.adapter.proj_12345_000.ABC.KOPot dataObject)
-			: this("http://rdl.rdlfacade.org/data#R75598586594", "Vessels", null, dataObject) {}
-			
-		public Vessels(string classId, string graphName, string identifier, org.iringtools.adapter.proj_12345_000.ABC.KOPot dataObject) 
-			: this(classId, graphName, identifier)
-		{  
-			if (dataObject != null)
-			{
-				tpl_FluidContainerName_tpl_identifier = (String)dataObject.tag;				
-				tpl_FluidContainerDescription_tpl_description = (String)dataObject.description;				
-			}
-			
-	      
-			_dataObject = dataObject;
-		} 
-		
-	
-		public Vessels(org.iringtools.adapter.proj_12345_000.ABC.VacuumTower dataObject)
-			: this("http://rdl.rdlfacade.org/data#R75598586594", "Vessels", null, dataObject) {}
-			
-		public Vessels(string classId, string graphName, string identifier, org.iringtools.adapter.proj_12345_000.ABC.VacuumTower dataObject) 
-			: this(classId, graphName, identifier)
-		{  
-			if (dataObject != null)
-			{
-				tpl_FluidContainerName_tpl_identifier = (String)dataObject.tag;				
-				tpl_FluidContainerDescription_tpl_description = (String)dataObject.description;				
-			}
-			
-	      
-			_dataObject = dataObject;
-		} 
-		
-		public Vessels()
-			: this("http://rdl.rdlfacade.org/data#R75598586594", "Vessels", null) {}			
-
-		[DataMember(Name = "tpl_FluidContainerName_tpl_identifier", EmitDefaultValue = false)] 
-		[XmlIgnore]
-		public String tpl_FluidContainerName_tpl_identifier
-		{
-			get
-			{
-				return (String)GetPropertyValue("tpl:FluidContainerName.tpl:identifier");
-			}
-
-			set
-			{
-				SetPropertyValue("tpl:FluidContainerName.tpl:identifier", value);
-			}
-		}
-		
-		[DataMember(Name = "tpl_FluidContainerDescription_tpl_description", EmitDefaultValue = false)] 
-		[XmlIgnore]
-		public String tpl_FluidContainerDescription_tpl_description
-		{
-			get
-			{
-				return (String)GetPropertyValue("tpl:FluidContainerDescription.tpl:description");
-			}
-
-			set
-			{
-				SetPropertyValue("tpl:FluidContainerDescription.tpl:description", value);
-			}
-		}
-		
-		public override object GetDataObject()
-		{
-			if (tpl_FluidContainerDescription_tpl_description.ToUpper() == "KNOCK OUT VESSEL") // inFilter
-			{
-				if (_dataObject == null)
-				{
-					_dataObject = new org.iringtools.adapter.proj_12345_000.ABC.KOPot();
-					((org.iringtools.adapter.proj_12345_000.ABC.KOPot)_dataObject).tag = (String)this._identifier;
-				}
-				
-				((org.iringtools.adapter.proj_12345_000.ABC.KOPot)_dataObject).description = (String)this.tpl_FluidContainerDescription_tpl_description;
-			}
-			else if (tpl_FluidContainerDescription_tpl_description.ToUpper() == "VACUUM VESSEL") // inFilter
-			{
-				if (_dataObject == null)
-				{
-					_dataObject = new org.iringtools.adapter.proj_12345_000.ABC.VacuumTower();
-					((org.iringtools.adapter.proj_12345_000.ABC.VacuumTower)_dataObject).tag = (String)this._identifier;
-				}
-				
-				((org.iringtools.adapter.proj_12345_000.ABC.VacuumTower)_dataObject).description = (String)this.tpl_FluidContainerDescription_tpl_description;
-			}
-
-			return _dataObject;
-		}
-		
-		public override string Serialize()
-		{
-			return Utility.SerializeDataContract<Vessels>(this);
-		}
-
-		public override void Write(string path)
-		{
-			Utility.Write<Vessels>(this, path);
-		}
-	    
-		public override T Transform<T>(string xmlPath, string stylesheetUri, string mappingUri, bool useDataContractDeserializer)
-		{
-			string dtoPath = xmlPath + this.GraphName + ".xml";
-			Mapping mapping = Utility.Read<Mapping>(mappingUri, false);
-
-			List<Vessels> list = new List<Vessels> { this };
-			Utility.Write<List<Vessels>>(list, dtoPath);
-
-			XsltArgumentList xsltArgumentList = new XsltArgumentList();
-			xsltArgumentList.AddParam("dtoFilename", "", dtoPath);
-
-			return Utility.Transform<Mapping, T>(mapping, stylesheetUri, xsltArgumentList, false, useDataContractDeserializer);
-		}		
-	}
-	
 	[DataContract(Name = "Lines", Namespace = "http://ABC.bechtel.com/12345_000/data#" )]
 	[XmlRoot(Namespace = "http://ABC.bechtel.com/12345_000/data#")]
 	public class Lines : DataTransferObject
 	{
 	[DataContract(Namespace = "http://ABC.bechtel.com/12345_000/data#" )]
 	[XmlRoot(Namespace = "http://ABC.bechtel.com/12345_000/data#")]
-	public class TemplateSystemPipingNetworkSystemAssembly
+	public class TemplateClientSystemAssembly
 	{
 		[DataContract(Namespace = "http://ABC.bechtel.com/12345_000/data#" )]
 		[XmlRoot(Namespace = "http://ABC.bechtel.com/12345_000/data#")]
-		public class ClassSystem
+		public class ClassCLIENT_SYSTEM
 		{
 			[DataMember(EmitDefaultValue=false)]
 			[XmlIgnore]
 			public string Identifier { get; set; }
 			
 			[DataMember(EmitDefaultValue = false)]
-			public String tpl_SystemName_tpl_identifier { get; set; }
+			public String tpl_ClassifiedIdentification_tpl_identifier { get; set; }
 					
 		}
 
-		[DataMember(Name = "tpl_hasClassOfWhole_rdl_System", EmitDefaultValue = false)]
+		[DataMember(Name = "tpl_whole_rdl_CLIENT_SYSTEM", EmitDefaultValue = false)]
 		[XmlIgnore]
-		public ClassSystem tpl_hasClassOfWhole_rdl_System { get; set; }
+		public ClassCLIENT_SYSTEM tpl_whole_rdl_CLIENT_SYSTEM { get; set; }
 	}
 	
 	[DataMember(EmitDefaultValue = false)]
 	[XmlIgnore]
-	public TemplateSystemPipingNetworkSystemAssembly tpl_SystemPipingNetworkSystemAssembly { get; set; }     
+	public TemplateClientSystemAssembly tpl_ClientSystemAssembly { get; set; }     
        
 
 		public Lines(string classId, string graphName, string identifier) 
 			: base(classId, graphName)
 		{   
-			_properties.Add(new DTOProperty(@"tag", @"tpl:PipingNetworkSystemName.tpl:identifier", null, typeof(String), true, true));
-			_properties.Add(new DTOProperty(@"system", @"tpl:SystemPipingNetworkSystemAssembly.tpl:hasClassOfWhole.rdl:System.tpl:SystemName.tpl:identifier", null, typeof(String), false, false));
+			_properties.Add(new DTOProperty(@"tag", @"tpl:ClassifiedIdentification.tpl:identifier", null, typeof(String), true, true));
+			_properties.Add(new DTOProperty(@"system", @"tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identifier", null, typeof(String), false, false));
+			_properties.Add(new DTOProperty(@"diameter", @"tpl:NominalDiameter.tpl:value", null, typeof(Double), false, false));
+			_properties.Add(new DTOProperty(@"uomDiameter", @"tpl:NominalDiameter.tpl:scale", null, typeof(String), false, false));
 
 			Identifier = identifier;
 			ClassId = classId;
@@ -895,14 +400,16 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 		{  
 			if (dataObject != null)
 			{
-				tpl_PipingNetworkSystemName_tpl_identifier = (String)dataObject.tag;				
-				tpl_SystemPipingNetworkSystemAssembly_tpl_hasClassOfWhole_rdl_System_tpl_SystemName_tpl_identifier = (String)dataObject.system;				
+				tpl_ClassifiedIdentification_tpl_identifier = (String)dataObject.Id;
+				tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier = (String)dataObject.system;				
+				tpl_NominalDiameter_tpl_value = (Double)dataObject.diameter;				
+				tpl_NominalDiameter_tpl_scale = (String)dataObject.uomDiameter;				
 			}
 			
-			tpl_SystemPipingNetworkSystemAssembly = new TemplateSystemPipingNetworkSystemAssembly();
-			tpl_SystemPipingNetworkSystemAssembly.tpl_hasClassOfWhole_rdl_System = new TemplateSystemPipingNetworkSystemAssembly.ClassSystem();
-			tpl_SystemPipingNetworkSystemAssembly.tpl_hasClassOfWhole_rdl_System.Identifier = ((GetPropertyValueByInternalName("system") != null) ? GetPropertyValueByInternalName("system").ToString() : "");
-			tpl_SystemPipingNetworkSystemAssembly.tpl_hasClassOfWhole_rdl_System.tpl_SystemName_tpl_identifier = tpl_SystemPipingNetworkSystemAssembly_tpl_hasClassOfWhole_rdl_System_tpl_SystemName_tpl_identifier;
+			tpl_ClientSystemAssembly = new TemplateClientSystemAssembly();
+			tpl_ClientSystemAssembly.tpl_whole_rdl_CLIENT_SYSTEM = new TemplateClientSystemAssembly.ClassCLIENT_SYSTEM();
+			tpl_ClientSystemAssembly.tpl_whole_rdl_CLIENT_SYSTEM.Identifier = ((GetPropertyValueByInternalName("system") != null) ? GetPropertyValueByInternalName("system").ToString() : "");
+			tpl_ClientSystemAssembly.tpl_whole_rdl_CLIENT_SYSTEM.tpl_ClassifiedIdentification_tpl_identifier = tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier;
 	      
 			_dataObject = dataObject;
 		} 
@@ -910,32 +417,62 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 		public Lines()
 			: this("http://rdl.rdlfacade.org/data#R19192462550", "Lines", null) {}			
 
-		[DataMember(Name = "tpl_PipingNetworkSystemName_tpl_identifier", EmitDefaultValue = false)] 
+		[DataMember(Name = "tpl_ClassifiedIdentification_tpl_identifier", EmitDefaultValue = false)] 
 		[XmlIgnore]
-		public String tpl_PipingNetworkSystemName_tpl_identifier
+		public String tpl_ClassifiedIdentification_tpl_identifier
 		{
 			get
 			{
-				return (String)GetPropertyValue("tpl:PipingNetworkSystemName.tpl:identifier");
+				return (String)GetPropertyValue("tpl:ClassifiedIdentification.tpl:identifier");
 			}
 
 			set
 			{
-				SetPropertyValue("tpl:PipingNetworkSystemName.tpl:identifier", value);
+				SetPropertyValue("tpl:ClassifiedIdentification.tpl:identifier", value);
 			}
 		}
 		
 		[XmlIgnore]
-		public String tpl_SystemPipingNetworkSystemAssembly_tpl_hasClassOfWhole_rdl_System_tpl_SystemName_tpl_identifier
+		public String tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier
 		{
 			get
 			{
-				return (String)GetPropertyValue("tpl:SystemPipingNetworkSystemAssembly.tpl:hasClassOfWhole.rdl:System.tpl:SystemName.tpl:identifier");
+				return (String)GetPropertyValue("tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identifier");
 			}
 
 			set
 			{
-				SetPropertyValue("tpl:SystemPipingNetworkSystemAssembly.tpl:hasClassOfWhole.rdl:System.tpl:SystemName.tpl:identifier", value);
+				SetPropertyValue("tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identifier", value);
+			}
+		}
+		
+		[DataMember(Name = "tpl_NominalDiameter_tpl_value", EmitDefaultValue = false)] 
+		[XmlIgnore]
+		public global::System.Nullable<Double> tpl_NominalDiameter_tpl_value
+		{
+			get
+			{
+				return (Double)GetPropertyValue("tpl:NominalDiameter.tpl:value");
+			}
+
+			set
+			{
+				SetPropertyValue("tpl:NominalDiameter.tpl:value", value);
+			}
+		}
+		
+		[DataMember(Name = "tpl_NominalDiameter_tpl_scale", EmitDefaultValue = false)] 
+		[XmlIgnore]
+		public String tpl_NominalDiameter_tpl_scale
+		{
+			get
+			{
+				return (String)GetPropertyValue("tpl:NominalDiameter.tpl:scale");
+			}
+
+			set
+			{
+				SetPropertyValue("tpl:NominalDiameter.tpl:scale", value);
 			}
 		}
 		
@@ -944,10 +481,12 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 				if (_dataObject == null)
 				{
 					_dataObject = new org.iringtools.adapter.proj_12345_000.ABC.Line();
-					((org.iringtools.adapter.proj_12345_000.ABC.Line)_dataObject).tag = (String)this._identifier;
+					((org.iringtools.adapter.proj_12345_000.ABC.Line)_dataObject).Id = (String)this._identifier;
 				}
 				
-				((org.iringtools.adapter.proj_12345_000.ABC.Line)_dataObject).system = (String)this.tpl_SystemPipingNetworkSystemAssembly_tpl_hasClassOfWhole_rdl_System_tpl_SystemName_tpl_identifier;
+				((org.iringtools.adapter.proj_12345_000.ABC.Line)_dataObject).system = (String)this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier;
+				((org.iringtools.adapter.proj_12345_000.ABC.Line)_dataObject).diameter = (Double)this.tpl_NominalDiameter_tpl_value;
+				((org.iringtools.adapter.proj_12345_000.ABC.Line)_dataObject).uomDiameter = (String)this.tpl_NominalDiameter_tpl_scale;
 
 			return _dataObject;
 		}
