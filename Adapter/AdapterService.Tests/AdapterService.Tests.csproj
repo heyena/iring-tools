@@ -110,7 +110,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdapterProxy.cs" />
-    <Compile Include="AdapterServiceTest.cs" />
+    <Compile Include="AdapterServiceTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

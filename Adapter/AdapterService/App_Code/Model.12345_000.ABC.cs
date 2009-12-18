@@ -6,7 +6,6 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
   public class Line
   {
     public virtual String Id { get; set; }
-    public virtual String tag { get; set; }
     public virtual Double diameter { get; set; }
     public virtual String uomDiameter { get; set; }
     public virtual String system { get; set; }
@@ -14,7 +13,6 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
   public class InLinePipingComponent
   {
     public virtual String Id { get; set; }
-    public virtual String tag { get; set; }
     public virtual String componentType { get; set; }
     public virtual Double diameter { get; set; }
     public virtual String uomDiameter { get; set; }
@@ -29,13 +27,11 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
   public class KOPot
   {
     public virtual String Id { get; set; }
-    public virtual String tag { get; set; }
     public virtual String description { get; set; }
   }
   public class VacuumTower
   {
     public virtual String Id { get; set; }
-    public virtual String tag { get; set; }
     public virtual String description { get; set; }
   }
 }

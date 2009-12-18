@@ -779,7 +779,7 @@ namespace org.iringtools.adapter
         {
           Name = dataLayerBindingName,
           Interface = "org.iringtools.library.IDataLayer, iRINGLibrary",
-          Implementation = "org.iringtools.adapter.dataLayer.DataLayer, DataLayer"
+          Implementation = "org.iringtools.adapter.dataLayer.NHibernateDataLayer, NHibernateDataLayer"
         };
 
         if (File.Exists(bindingConfigurationPath))
