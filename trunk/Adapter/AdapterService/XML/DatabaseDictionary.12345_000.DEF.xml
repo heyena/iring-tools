@@ -32,7 +32,7 @@
           <columnName>TAG</columnName>
           <columnType>String</columnType>
           <propertyName i:nil="true"/>
-          <keyType>identity</keyType>
+          <keyType>assigned</keyType>
         </Key>
       </keys>
       <lazyLoading>true</lazyLoading>
