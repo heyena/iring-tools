@@ -676,11 +676,7 @@ namespace org.ids_adi.iring.referenceData
                         }
                         if (result.ContainsKey("role"))
                         {
-                            roleDefinition.designation.value = result["role"];
-                        }
-                        if (result.ContainsKey("index"))
-                        {
-                            roleDefinition.identifier = result["index"];
+                            roleDefinition.identifier = result["role"];
                         }
                         if (result.ContainsKey("comment"))
                         {

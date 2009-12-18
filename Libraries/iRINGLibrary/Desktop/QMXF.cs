@@ -415,7 +415,7 @@ namespace org.ids_adi.qmxf
         {
           this.name = new List<QMXFName>();
           this.suggestedDesignation = new List<SuggestedDesignation>();
-          this.designation = new Designation();
+          //this.designation = new Designation();
           this.description = new Description();
           //this.range = "http://www.w3.org/2000/01/rdf-schema#Class";
           //this.minimum = "1";
