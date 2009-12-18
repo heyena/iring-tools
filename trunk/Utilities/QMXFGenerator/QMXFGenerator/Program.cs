@@ -622,7 +622,7 @@ namespace QMXFGenerator
               {
                 templateQualification.qualifies = (parentRow[(int)TemplateColumns.ID] ?? "").ToString().Trim();
 
-                templateQualification.roleQualification = ProcessRoleQualification(row, parentRow);
+                templateQualification.roleQualification = ProcessRoleQualification(name, row, parentRow);
               }
               else
               {
@@ -649,7 +649,7 @@ namespace QMXFGenerator
       }
     }
 
-    private static List<RoleQualification> ProcessRoleQualification(ArrayList row, ArrayList parentRow)
+    private static List<RoleQualification> ProcessRoleQualification(string templateName, ArrayList row, ArrayList parentRow)
     {
       int roleIndex = 0;
 
@@ -674,7 +674,7 @@ namespace QMXFGenerator
 
             if (parentRole == null)
             {
-              Utility.WriteString("Error Processing Role Qualification: Row \"" + name + "\" at " + roleIndex + " not found.\n", "error.log", true);
+              Utility.WriteString("Error Processing Role Qualification: Role \"" + name + "\" at " + roleIndex + " from template \"" + templateName + "\" not found.\n", "error.log", true);
               continue;
             }
 
