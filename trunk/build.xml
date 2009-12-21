@@ -7,7 +7,9 @@
     <AdapterServiceRoot>Adapter</AdapterServiceRoot>
     <AdapterServiceDir>$(AdapterServiceRoot)\AdapterService</AdapterServiceDir>
     <InterfaceServiceRoot>InterfaceService</InterfaceServiceRoot>
+    <SemWebInterfaceServiceRoot>InterfaceService.SemWeb</SemWebInterfaceServiceRoot>
 	  <SandboxServiceRoot>SandboxService</SandboxServiceRoot>
+	  <SemWebSandboxServiceRoot>SandboxService.SemWeb</SemWebSandboxServiceRoot>
     <MappingEditorRoot>MappingEditor</MappingEditorRoot>
     <MappingEditorDir>$(MappingEditorRoot)\$(MappingEditorRoot).Web</MappingEditorDir>
     <RefDataEditorRoot>RefDataEditor</RefDataEditorRoot>
@@ -16,11 +18,13 @@
     <RefDataServiceDir>$(RefDataServiceRoot)\ReferenceDataService</RefDataServiceDir>    
     <AdapterServiceDeploymentDir>$(iRINGAdapter)\AdapterService</AdapterServiceDeploymentDir>
     <InterfaceServiceDeploymentDir>$(iRINGAdapter)\InterfaceService</InterfaceServiceDeploymentDir>
+    <SemWebInterfaceServiceDeploymentDir>$(iRINGAdapter)\SemWebInterfaceService</SemWebInterfaceServiceDeploymentDir>
     <AdapterToolsDeploymentDir>$(iRINGAdapter)\Tools</AdapterToolsDeploymentDir>
     <MappingEditorDeploymentDir>$(iRINGAdapter)\MappingEditor</MappingEditorDeploymentDir>
     <RefDataEditorDeploymentDir>$(iRINGSandbox)\RefDataEditor</RefDataEditorDeploymentDir>
     <RefDataServiceDeploymentDir>$(iRINGSandbox)\RefDataService</RefDataServiceDeploymentDir>
     <SandboxServiceDeploymentDir>$(iRINGSandbox)\SandboxService</SandboxServiceDeploymentDir>
+    <SemWebSandboxServiceDeploymentDir>$(iRINGSandbox)\SemWebSandboxService</SemWebSandboxServiceDeploymentDir>
     <SandboxToolsDeploymentDir>$(iRINGSandbox)\Tools</SandboxToolsDeploymentDir>
     <TortoiseSVNCmd>"C:\Program Files\TortoiseSVN\bin\TortoiseProc.exe"</TortoiseSVNCmd>
     <MSTestCmd>"C:\Program Files\Microsoft Visual Studio 9.0\Common7\IDE\MSTest.exe"</MSTestCmd>
@@ -52,16 +56,7 @@
                $(AdapterServiceRoot)\*\*\*\.svn\**;">
     </AdapterServiceDeployment>
     
-    <!--
-    <SemWebInterfaceServiceDeployment
-      Include="$(InterfaceServiceRoot)\**"
-      Exclude="$(InterfaceServiceRoot)\web.config;
-               $(InterfaceServiceRoot)\.svn\**;
-               $(InterfaceServiceRoot)\*\.svn\**;">
-    </SemWebInterfaceServiceDeployment>
-    -->
-	
-	  <InterfaceServiceDeployment
+    <InterfaceServiceDeployment
       Include="$(InterfaceServiceRoot)\**"
       Exclude="$(InterfaceServiceRoot)\.svn\**;
                $(InterfaceServiceRoot)\*\.svn\**;
@@ -70,7 +65,14 @@
                $(InterfaceServiceRoot)\*.log;">
     </InterfaceServiceDeployment>
 	
-	  <SandboxServiceDeployment
+	  <SemWebInterfaceServiceDeployment
+      Include="$(SemWebInterfaceServiceRoot)\**"
+      Exclude="$(SemWebInterfaceServiceRoot)\web.config;
+               $(SemWebInterfaceServiceRoot)\.svn\**;
+               $(SemWebInterfaceServiceRoot)\*\.svn\**;">
+    </SemWebInterfaceServiceDeployment>
+	
+    <SandboxServiceDeployment
       Include="$(SandboxServiceRoot)\**"
       Exclude="$(SandboxServiceRoot)\.svn\**;
                $(SandboxServiceRoot)\*\.svn\**;
@@ -79,6 +81,13 @@
                $(SandboxServiceRoot)\*.log;">
     </SandboxServiceDeployment>
     
+    <SemWebSandboxServiceDeployment
+      Include="$(SemWebSandboxServiceRoot)\**"
+      Exclude="$(SemWebSandboxServiceRoot)\web.config;
+               $(SemWebSandboxServiceRoot)\.svn\**;
+               $(SemWebSandboxServiceRoot)\*\.svn\**;">
+    </SemWebSandboxServiceDeployment>
+	
     <MappingEditorDeployment
       Include="$(MappingEditorDir)\**"
       Exclude="$(MappingEditorDir)\bin\*.pdb;
@@ -153,25 +162,25 @@
     <DeploymentPackage Include="*" Exclude="">
       <Path>$(iRINGAdapter)</Path>
       <Options>-r</Options>
-      <ZIPFile>..\iRINGAdapter-111.zip</ZIPFile>
+      <ZIPFile>..\iRINGAdapter-120beta.zip</ZIPFile>
       <Source>*</Source>
     </DeploymentPackage>
     <DeploymentPackage Include="*" Exclude="">
       <Options>-r</Options>
       <Path>$(iRINGSandbox)</Path>
-      <ZIPFile>..\iRINGSandbox-111.zip</ZIPFile>
+      <ZIPFile>..\iRINGSandbox-120beta.zip</ZIPFile>
       <Source>*</Source>
     </DeploymentPackage>
     <DeploymentPackage Include="*" Exclude="">
       <Options>-r</Options>
       <Path>$(iRINGAdapter)</Path>
-      <ZIPFile>..\iRINGTools-111.zip</ZIPFile>
+      <ZIPFile>..\iRINGTools-120beta.zip</ZIPFile>
       <Source>*</Source>
     </DeploymentPackage>
     <DeploymentPackage Include="*" Exclude="">
       <Options>-r -u</Options>
       <Path>$(iRINGSandbox)</Path>
-      <ZIPFile>..\iRINGTools-111.zip</ZIPFile>
+      <ZIPFile>..\iRINGTools-120beta.zip</ZIPFile>
       <Source>*</Source>
     </DeploymentPackage>
   </ItemGroup>
@@ -214,17 +223,16 @@
           DestinationFiles="@(AdapterServiceDeployment->'$(AdapterServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Exec Command="Move /Y $(AdapterServiceDeploymentDir)\Web_Default.config $(AdapterServiceDeploymentDir)\Web.config" />
 
-    <!--
-    <Message Text="Creating SemWeb interface service deployment ..." />
-    <Copy SourceFiles="@(SemWebInterfaceServiceDeployment)"
-          DestinationFiles="@(SemWebInterfaceServiceDeployment->'$(SemWebInterfaceServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Exec Command="Move /Y $(SemWebInterfaceServiceDeploymentDir)\Web_Default.config $(SemWebInterfaceServiceDeploymentDir)\Web.config" />
-    -->
     <Message Text="Creating interface service deployment ..." />
     <Copy SourceFiles="@(InterfaceServiceDeployment)"
           DestinationFiles="@(InterfaceServiceDeployment->'$(InterfaceServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Exec Command="Move /Y $(InterfaceServiceDeploymentDir)\setup.default.conf $(InterfaceServiceDeploymentDir)\setup.conf" />
     <Exec Command="Move /Y $(InterfaceServiceDeploymentDir)\webapps\joseki\WEB-INF\web.default.xml $(InterfaceServiceDeploymentDir)\webapps\joseki\WEB-INF\web.xml" />
+    
+    <Message Text="Creating SemWeb interface service deployment ..." />
+    <Copy SourceFiles="@(SemWebInterfaceServiceDeployment)"
+          DestinationFiles="@(SemWebInterfaceServiceDeployment->'$(SemWebInterfaceServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(SemWebInterfaceServiceDeploymentDir)\Web_Default.config $(SemWebInterfaceServiceDeploymentDir)\Web.config" />
     
     <Message Text="Creating mapping editor deployment ..." />
     <Copy SourceFiles="@(MappingEditorDeployment)"
@@ -247,6 +255,11 @@
           DestinationFiles="@(SandboxServiceDeployment->'$(SandboxServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Exec Command="Move /Y $(SandboxServiceDeploymentDir)\setup.default.conf $(SandboxServiceDeploymentDir)\setup.conf" />
     <Exec Command="Move /Y $(SandboxServiceDeploymentDir)\webapps\joseki\WEB-INF\web.default.xml $(SandboxServiceDeploymentDir)\webapps\joseki\WEB-INF\web.xml" />
+    
+    <Message Text="Creating SemWeb sandbox service deployment ..." />
+    <Copy SourceFiles="@(SemWebSandboxServiceDeployment)"
+          DestinationFiles="@(SemWebSandboxServiceDeployment->'$(SemWebSandboxServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(SemWebSandboxServiceDeploymentDir)\Web_Default.config $(SemWebSandboxServiceDeploymentDir)\Web.config" />
     
     <Message Text="Creating adapter tools deployment ..." />
     <Copy SourceFiles="@(AdapterToolsDeployment)"
