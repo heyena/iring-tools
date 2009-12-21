@@ -21,6 +21,9 @@ using org.iringtools.adapter;
 using org.iringtools.adapter.dataLayer;
 using org.iringtools.library;
 using org.iringtools.utility;
+using System.Xml;
+using System.Xml.Linq;
+using System.IO;
 
 namespace <#= modelNamespace #>
 {
@@ -465,8 +468,58 @@ foreach (GraphMap graphMap in mapping.graphMaps)
 		
 		public object CreateList(string graphName, string dtoListString)
 		{
-			return null;
-		}
-		
+			List<DataTransferObject> dtoList = new List<DataTransferObject>();
+
+			if (dtoListString != null && dtoListString != String.Empty)
+			{
+				switch (graphName)
+				{ 
+<# 
+foreach (GraphMap graphMap in mapping.graphMaps)
+{
+#> 
+				case "<#= graphMap.name #>":
+					XmlReader <#= graphMap.name #>Reader = XmlReader.Create(new StringReader(dtoListString));
+          XDocument <#= graphMap.name #>File = XDocument.Load(<#= graphMap.name #>Reader);
+          <#= graphMap.name #>File = Utility.RemoveNamespace(<#= graphMap.name #>File);
+<# 
+	if (graphMap.dataObjectMaps.Count == 1)
+	{
+		DataObjectMap dataObjectMap = graphMap.dataObjectMaps[0];
+		string qualifiedDataObjectName = GetQualifiedDataObjectName(dataObjectMap.name);
+#>
+					List<<#= graphMap.name #>> <#= graphMap.name #>List = new List<<#= graphMap.name #>>();          
+          var <#= graphMap.name #>query1 = from c in <#= graphMap.name #>File.Elements("Envelope").Elements("Payload").Elements("DataTransferObject")
+          select c;
+          foreach (var dto in <#= graphMap.name #>query1)
+          {
+						var <#= graphMap.name #>query2 = from c in dto.Elements("Properties").Elements("Property")
+						select c;
+						<#= graphMap.name #> graphObject = new <#= graphMap.name #>();
+						 foreach (var dtoProperty in <#= graphMap.name #>query2)
+						 {
+						 	for (int i = 0; i < graphObject._properties.Count; i++)
+						 	{
+								if(dtoProperty.Attribute("name").Value == graphObject._properties[i].OIMProperty)
+									graphObject._properties[i].Value = dtoProperty.Attribute("value").Value.ToString();
+							}
+						}
+						<#= graphMap.name #>List.Add(graphObject);
+          }
+          foreach (<#= graphMap.name #> dto in <#= graphMap.name #>List)
+          {
+						dtoList.Add(dto);
+          }
+ <#
+ }
+ #>
+          break;
+ <#
+ }
+ #>
+        }        
+      }  
+      return dtoList;             
+		}		
 	}
 }

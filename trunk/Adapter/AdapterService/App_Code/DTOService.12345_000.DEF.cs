@@ -26,7 +26,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.IO;
 
-namespace org.iringtools.adapter.proj_12345_000.ABC
+namespace org.iringtools.adapter.proj_12345_000.DEF
 {
 	public class DTOService : IDTOService
 	{
@@ -49,17 +49,6 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 
 			switch (graphName)
 			{ 
-			case "Valves":
-				List<Valves> ValvesList = new List<Valves>();
-
-				foreach (DataTransferObject dto in dtoList)
-				{
-					ValvesList.Add((Valves)dto);
-				}
-
-				Utility.Write<List<Valves>>(ValvesList, dtoPath);
-				break;
-				
 			case "Lines":
 				List<Lines> LinesList = new List<Lines>();
 
@@ -85,10 +74,6 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 
 			switch (graphName)
 			{ 
-			case "Valves":				
-			  dto = new Valves("http://rdl.rdlfacade.org/data#R97295617945", graphName, identifier);
-			  break;
-			  
 			case "Lines":				
 			  dto = new Lines("http://rdl.rdlfacade.org/data#R19192462550", graphName, identifier);
 			  break;
@@ -116,28 +101,13 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 
 			switch (graphName)
 			{ 
-			case "Valves":
-				var InLinePipingComponentDO = 
-					(from InLinePipingComponentList in _dataLayer.GetList<org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent>()
-					where InLinePipingComponentList.Id == identifier
-					select InLinePipingComponentList).FirstOrDefault<org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent>();   
-	            
-				if (InLinePipingComponentDO != default(org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent))
-				{                        
-					dto = new Valves(InLinePipingComponentDO);
-					dto.Identifier = InLinePipingComponentDO.Id;
-					break; 
-				}
-								
-				break;
-
 			case "Lines":
 				var LineDO = 
-					(from LineList in _dataLayer.GetList<org.iringtools.adapter.proj_12345_000.ABC.Line>()
+					(from LineList in _dataLayer.GetList<org.iringtools.adapter.proj_12345_000.DEF.Line>()
 					where LineList.Id == identifier
-					select LineList).FirstOrDefault<org.iringtools.adapter.proj_12345_000.ABC.Line>();   
+					select LineList).FirstOrDefault<org.iringtools.adapter.proj_12345_000.DEF.Line>();   
 	            
-				if (LineDO != default(org.iringtools.adapter.proj_12345_000.ABC.Line))
+				if (LineDO != default(org.iringtools.adapter.proj_12345_000.DEF.Line))
 				{                        
 					dto = new Lines(LineDO);
 					dto.Identifier = LineDO.Id;
@@ -157,23 +127,9 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 
 			switch (graphName)
 			{ 
-			case "Valves":
-				var InLinePipingComponentDOList = 
-					from InLinePipingComponentList in _dataLayer.GetList<org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent>()
-					select InLinePipingComponentList;  
-			    
-				foreach (var InLinePipingComponentDO in InLinePipingComponentDOList)
-				{   					
-					Valves dto = new Valves(InLinePipingComponentDO);
-					dto.Identifier = InLinePipingComponentDO.Id;
-					dtoList.Add(dto);
-				}   
-         
-				break;
-				
 			case "Lines":
 				var LineDOList = 
-					from LineList in _dataLayer.GetList<org.iringtools.adapter.proj_12345_000.ABC.Line>()
+					from LineList in _dataLayer.GetList<org.iringtools.adapter.proj_12345_000.DEF.Line>()
 					select LineList;  
 			    
 				foreach (var LineDO in LineDOList)
@@ -198,22 +154,9 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 			
 			switch (graphName)
 			{ 
-			case "Valves":
-				var InLinePipingComponentDOList = 
-					from InLinePipingComponentList in _dataLayer.GetList<org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent>()
-					select InLinePipingComponentList;  
-
-				foreach (var InLinePipingComponentDO in InLinePipingComponentDOList)
-				{
-					string identifier = InLinePipingComponentDO.Id;
-					identifierUriPairs.Add(identifier, endpoint + "/" + graphName + "/" + identifier);  
-				}  
-
-				break;
-				
 			case "Lines":
 				var LineDOList = 
-					from LineList in _dataLayer.GetList<org.iringtools.adapter.proj_12345_000.ABC.Line>()
+					from LineList in _dataLayer.GetList<org.iringtools.adapter.proj_12345_000.DEF.Line>()
 					select LineList;  
 
 				foreach (var LineDO in LineDOList)
@@ -238,15 +181,9 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 				switch (graphName)
 				{ 
  
-				case "Valves":
-					org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent ValvesDO = (org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)dto.GetDataObject();
-					response.Append(_dataLayer.Post<org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent>(ValvesDO));
-
-					break;
- 
 				case "Lines":
-					org.iringtools.adapter.proj_12345_000.ABC.Line LinesDO = (org.iringtools.adapter.proj_12345_000.ABC.Line)dto.GetDataObject();
-					response.Append(_dataLayer.Post<org.iringtools.adapter.proj_12345_000.ABC.Line>(LinesDO));
+					org.iringtools.adapter.proj_12345_000.DEF.Line LinesDO = (org.iringtools.adapter.proj_12345_000.DEF.Line)dto.GetDataObject();
+					response.Append(_dataLayer.Post<org.iringtools.adapter.proj_12345_000.DEF.Line>(LinesDO));
 
 					break;
        
@@ -265,27 +202,15 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 				switch (graphName)
 				{ 
  
-				case "Valves":
-					List<org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent> ValvesDOList = new List<org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent>();
-
-					foreach (DataTransferObject dto in dtoList)
-					{
-						ValvesDOList.Add((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)dto.GetDataObject());
-					}
-
-					response.Append(_dataLayer.PostList<org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent>(ValvesDOList));
-
-					break;
- 
 				case "Lines":
-					List<org.iringtools.adapter.proj_12345_000.ABC.Line> LinesDOList = new List<org.iringtools.adapter.proj_12345_000.ABC.Line>();
+					List<org.iringtools.adapter.proj_12345_000.DEF.Line> LinesDOList = new List<org.iringtools.adapter.proj_12345_000.DEF.Line>();
 
 					foreach (DataTransferObject dto in dtoList)
 					{
-						LinesDOList.Add((org.iringtools.adapter.proj_12345_000.ABC.Line)dto.GetDataObject());
+						LinesDOList.Add((org.iringtools.adapter.proj_12345_000.DEF.Line)dto.GetDataObject());
 					}
 
-					response.Append(_dataLayer.PostList<org.iringtools.adapter.proj_12345_000.ABC.Line>(LinesDOList));
+					response.Append(_dataLayer.PostList<org.iringtools.adapter.proj_12345_000.DEF.Line>(LinesDOList));
 
 					break;
 				}
@@ -313,34 +238,6 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
 				switch (graphName)
 				{ 
  
-				case "Valves":
-					XmlReader ValvesReader = XmlReader.Create(new StringReader(dtoListString));
-          XDocument ValvesFile = XDocument.Load(ValvesReader);
-          ValvesFile = Utility.RemoveNamespace(ValvesFile);
-					List<Valves> ValvesList = new List<Valves>();          
-          var Valvesquery1 = from c in ValvesFile.Elements("Envelope").Elements("Payload").Elements("DataTransferObject")
-          select c;
-          foreach (var dto in Valvesquery1)
-          {
-						var Valvesquery2 = from c in dto.Elements("Properties").Elements("Property")
-						select c;
-						Valves graphObject = new Valves();
-						 foreach (var dtoProperty in Valvesquery2)
-						 {
-						 	for (int i = 0; i < graphObject._properties.Count; i++)
-						 	{
-								if(dtoProperty.Attribute("name").Value == graphObject._properties[i].OIMProperty)
-									graphObject._properties[i].Value = dtoProperty.Attribute("value").Value.ToString();
-							}
-						}
-						ValvesList.Add(graphObject);
-          }
-          foreach (Valves dto in ValvesList)
-          {
-						dtoList.Add(dto);
-          }
-           break;
-  
 				case "Lines":
 					XmlReader LinesReader = XmlReader.Create(new StringReader(dtoListString));
           XDocument LinesFile = XDocument.Load(LinesReader);

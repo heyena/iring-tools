@@ -145,137 +145,137 @@ namespace AdapterService.Tests
 
     }
 
-    //[TestMethod()]
-    //public void UpdateDatabaseDictionaryTest_DEF()
-    //{
-    //  AdapterProxy target = new AdapterProxy();
-    //  string dbDictionaryPath = System.Environment.CurrentDirectory + @"\XML\DatabaseDictionary.12345_000.DEF.xml";
-    //  DatabaseDictionary databaseDictionary = Utility.Read<DatabaseDictionary>(dbDictionaryPath);
-    //  Response actual = target.UpdateDatabaseDictionary(databaseDictionary, "12345_000", "DEF");
-    //  Assert.AreEqual("Entities generated successfully.", actual[0]);
-    //}
+    [TestMethod()]
+    public void UpdateDatabaseDictionaryTest_DEF()
+    {
+      AdapterProxy target = new AdapterProxy();
+      string dbDictionaryPath = System.Environment.CurrentDirectory + @"\XML\DatabaseDictionary.12345_000.DEF.xml";
+      DatabaseDictionary databaseDictionary = Utility.Read<DatabaseDictionary>(dbDictionaryPath);
+      Response actual = target.UpdateDatabaseDictionary(databaseDictionary, "12345_000", "DEF");
+      Assert.AreEqual("Entities generated successfully.", actual[0]);
+    }
 
-    //[TestMethod()]
-    //public void GenerateTest_DEF()
-    //{
-    //  AdapterProxy target = new AdapterProxy();
-    //  Response actual = target.Generate("12345_000", "DEF");
-    //  Assert.AreEqual("DTO Model generated successfully.", actual[0]);
-    //}
+    [TestMethod()]
+    public void GenerateTest_DEF()
+    {
+      AdapterProxy target = new AdapterProxy();
+      Response actual = target.Generate("12345_000", "DEF");
+      Assert.AreEqual("DTO Model generated successfully.", actual[0]);
+    }
 
-    //[TestMethod()]
-    //public void GetDictionaryTest_DEF()
-    //{
-    //  AdapterProxy target = new AdapterProxy();
-    //  DataDictionary actual = target.GetDictionary("12345_000", "DEF");
-    //  Assert.AreEqual(1, actual.dataObjects.Count);
-    //}
+    [TestMethod()]
+    public void GetDictionaryTest_DEF()
+    {
+      AdapterProxy target = new AdapterProxy();
+      DataDictionary actual = target.GetDictionary("12345_000", "DEF");
+      Assert.AreEqual(1, actual.dataObjects.Count);
+    }
 
-    //[TestMethod()]
-    //public void RefreshDictionaryTest_DEF()
-    //{
-    //  AdapterProxy target = new AdapterProxy();
-    //  Response actual = target.RefreshDictionary("12345_000", "DEF");
-    //  Assert.AreEqual("Error while refreshing Dictionary.", actual[0]);
-    //}
+    [TestMethod()]
+    public void RefreshDictionaryTest_DEF()
+    {
+      AdapterProxy target = new AdapterProxy();
+      Response actual = target.RefreshDictionary("12345_000", "DEF");
+      Assert.AreEqual("Error while refreshing Dictionary.", actual[0]);
+    }
 
-    //[TestMethod()]
-    //public void GetMappingTest_DEF()
-    //{
-    //  AdapterProxy target = new AdapterProxy();
-    //  Mapping actual = target.GetMapping("12345_000", "DEF");
-    //  Assert.AreEqual(1, actual.graphMaps.Count);
-    //}
+    [TestMethod()]
+    public void GetMappingTest_DEF()
+    {
+      AdapterProxy target = new AdapterProxy();
+      Mapping actual = target.GetMapping("12345_000", "DEF");
+      Assert.AreEqual(1, actual.graphMaps.Count);
+    }
 
-    //[TestMethod()]
-    //public void GetTest_DEF()
-    //{
-    //  AdapterProxy target = new AdapterProxy();
-    //  Envelope envelope = target.Get("12345_000", "DEF", "Lines", "1-AB-L126");
-    //  Assert.AreNotEqual(0, envelope.Payload.Count);
-    //}
+    [TestMethod()]
+    public void GetTest_DEF()
+    {
+      AdapterProxy target = new AdapterProxy();
+      Envelope envelope = target.Get("12345_000", "DEF", "Lines", "1-AB-L126");
+      Assert.AreNotEqual(0, envelope.Payload.Count);
+    }
 
-    //[TestMethod()]
-    //public void GetListTest_DEF()
-    //{
-    //  AdapterProxy target = new AdapterProxy();
-    //  Envelope envelope = target.GetList("12345_000", "DEF", "Lines");
-    //  Assert.AreNotEqual(0, envelope.Payload.Count);
-    //}
+    [TestMethod()]
+    public void GetListTest_DEF()
+    {
+      AdapterProxy target = new AdapterProxy();
+      Envelope envelope = target.GetList("12345_000", "DEF", "Lines");
+      Assert.AreNotEqual(0, envelope.Payload.Count);
+    }
 
-    //[TestMethod()]
-    //public void ClearStoreTest_DEF()
-    //{
-    //  AdapterProxy target = new AdapterProxy();
-    //  Response actual = target.ClearStore("12345_000", "DEF");
-    //  Assert.AreEqual("Store cleared successfully.", actual[0]);
-    //}
+    [TestMethod()]
+    public void ClearStoreTest_DEF()
+    {
+      AdapterProxy target = new AdapterProxy();
+      Response actual = target.ClearStore("12345_000", "DEF");
+      Assert.AreEqual("Store cleared successfully.", actual[0]);
+    }
 
-    //[TestMethod()]
-    //public void RefreshTest_DEF()
-    //{
-    //  AdapterProxy target = new AdapterProxy();
-    //  Response actual = target.RefreshGraph("12345_000", "DEF", "Lines");
-    //  Assert.AreEqual(false, actual[0].ToUpper().Contains("ERROR"));
-    //}
+    [TestMethod()]
+    public void RefreshTest_DEF()
+    {
+      AdapterProxy target = new AdapterProxy();
+      Response actual = target.RefreshGraph("12345_000", "DEF", "Lines");
+      Assert.AreEqual(false, actual[0].ToUpper().Contains("ERROR"));
+    }
 
-    //[TestMethod()]
-    //public void RefreshAllTest_DEF()
-    //{
-    //  AdapterProxy target = new AdapterProxy();
-    //  Response actual = target.RefreshAll("12345_000", "DEF");
-    //  Assert.AreEqual(false, actual[0].ToUpper().Contains("ERROR"));
-    //}
+    [TestMethod()]
+    public void RefreshAllTest_DEF()
+    {
+      AdapterProxy target = new AdapterProxy();
+      Response actual = target.RefreshAll("12345_000", "DEF");
+      Assert.AreEqual(false, actual[0].ToUpper().Contains("ERROR"));
+    }
 
-    //[TestMethod()]
-    //public void PullTest_DEF()
-    //{
-    //  AdapterProxy target = new AdapterProxy();
-    //  Request request = new Request();
-    //  WebCredentials targetCredentials = new WebCredentials();
-    //  string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
-    //  request.Add("targetUri", "http://localhost:2222/iring");
-    //  request.Add("targetCredentials", targetCredentialsXML);
-    //  request.Add("graphName", "Lines");
-    //  request.Add("filter", "");
-    //  Response actual = target.Pull("12345_000", "DEF", request);
-    //  bool isError = false;
-    //  for (int i = 0; i < actual.Count; i++)
-    //  {
-    //    if (actual[i].ToUpper().Contains("ERROR"))
-    //    {
-    //      isError = true;
-    //      break;
-    //    }
-    //  }
-    //  Assert.AreEqual(false, isError);
-    //}
+    [TestMethod()]
+    public void PullTest_DEF()
+    {
+      AdapterProxy target = new AdapterProxy();
+      Request request = new Request();
+      WebCredentials targetCredentials = new WebCredentials();
+      string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
+      request.Add("targetUri", "http://localhost:2222/iring");
+      request.Add("targetCredentials", targetCredentialsXML);
+      request.Add("graphName", "Lines");
+      request.Add("filter", "");
+      Response actual = target.Pull("12345_000", "DEF", request);
+      bool isError = false;
+      for (int i = 0; i < actual.Count; i++)
+      {
+        if (actual[i].ToUpper().Contains("ERROR"))
+        {
+          isError = true;
+          break;
+        }
+      }
+      Assert.AreEqual(false, isError);
+    }
 
-    //[TestMethod()]
-    //public void PullDTO()
-    //{
-    //  AdapterProxy target = new AdapterProxy();
-    //  Request request = new Request();
-    //  WebCredentials targetCredentials = new WebCredentials();
-    //  string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
-    //  request.Add("targetUri", "http://localhost:52786/Service.svc");
-    //  request.Add("targetCredentials", targetCredentialsXML);
-    //  request.Add("graphName", "Lines");
-    //  request.Add("filter", "");
-    //  request.Add("projectName", "12345_000");
-    //  request.Add("applicationName", "DEF");
-    //  Response actual = target.PullDTO("12345_000", "ABC", request);
-    //  bool isError = false;
-    //  for (int i = 0; i < actual.Count; i++)
-    //  {
-    //    if (actual[i].ToUpper().Contains("ERROR"))
-    //    {
-    //      isError = true;
-    //      break;
-    //    }
-    //  }
-    //  Assert.AreEqual(false, isError);
-    //}
+    [TestMethod()]
+    public void PullDTO()
+    {
+      AdapterProxy target = new AdapterProxy();
+      Request request = new Request();
+      WebCredentials targetCredentials = new WebCredentials();
+      string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
+      request.Add("targetUri", "http://localhost:52786/Service.svc");
+      request.Add("targetCredentials", targetCredentialsXML);
+      request.Add("graphName", "Lines");
+      request.Add("filter", "1-AB-L300");
+      request.Add("projectName", "12345_000");
+      request.Add("applicationName", "DEF");
+      Response actual = target.PullDTO("12345_000", "ABC", request);
+      bool isError = false;
+      for (int i = 0; i < actual.Count; i++)
+      {
+        if (actual[i].ToUpper().Contains("ERROR"))
+        {
+          isError = true;
+          break;
+        }
+      }
+      Assert.AreEqual(false, isError);
+    }
 
     //[TestMethod()]
     //public void PullDTOPrototype()
