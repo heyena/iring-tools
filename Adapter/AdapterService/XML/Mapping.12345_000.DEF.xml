@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Mapping xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <GraphMaps>
+    <GraphMap name="Lines" classId="rdl:R19192462550" identifier="tag">
+      <TemplateMaps>
+        <TemplateMap type="Property" templateId="tpl:R31178164691" name="ClassifiedIdentification" classRole="tpl:R47421421239">
+          <RoleMaps>
+            <RoleMap roleId="tpl:R17963188524" name="identifier" propertyName="tag"/>
+            <RoleMap roleId="tpl:R43718740838" name="identificationType" value="rdl:R92093626759" valueList=""/>
+          </RoleMaps>
+        </TemplateMap>
+        <TemplateMap type="Relationship" templateId="tpl:R71176773051" name="ClientSystemAssembly" classRole="tpl:R75634602440">
+          <RoleMaps>
+            <RoleMap roleId="tpl:R99059253864" name="whole">
+              <ClassMap name="CLIENT_SYSTEM" classId="rdl:R44063296490" identifier="system">
+                <TemplateMaps>
+                  <TemplateMap type="Property" templateId="tpl:R31178164691" name="ClassifiedIdentification" classRole="tpl:R47421421239">
+                    <RoleMaps>
+                      <RoleMap roleId="tpl:R17963188524" name="identifier" propertyName="system"/>
+                      <RoleMap roleId="tpl:R43718740838" name="identificationType" value="rdl:R50548021125" valueList=""/>
+                    </RoleMaps>
+                  </TemplateMap>
+                </TemplateMaps>
+              </ClassMap>
+            </RoleMap>
+          </RoleMaps>
+        </TemplateMap>
+        <TemplateMap type="Property" templateId="tpl:R57208341310" name="NominalDiameter" classRole="tpl:R23810118927">
+          <RoleMaps>
+            <RoleMap roleId="tpl:R13477943711" name="value" propertyName="diameter"/>
+            <RoleMap roleId="tpl:R92691343776" name="scale" propertyName="uomDiameter"/>
+          </RoleMaps>
+        </TemplateMap>
+      </TemplateMaps>
+      <DataObjectMaps>
+        <DataObjectMap name="Line"/>
+      </DataObjectMaps>
+    </GraphMap>
+  </GraphMaps>
+  <ValueMaps>
+    <ValueMap valueList="Length" internalValue="MILLIMETRE" modelURI="rdl:R52054275374"/>
+    <ValueMap valueList="Length" internalValue="METRE" modelURI="rdl:R36970488283"/>
+    <ValueMap valueList="Length" internalValue="KILOMETRE" modelURI="rdl:R28364552281"/>
+    <ValueMap valueList="Length" internalValue="INCH" modelURI="rdl:R34755432270"/>
+    <ValueMap valueList="Length" internalValue="FOOT" modelURI="rdl:R82749412674"/>
+    <ValueMap valueList="Length" internalValue="MILE" modelURI="rdl:R24581249510"/>
+    <ValueMap valueList="Pressure" internalValue="PASCAL" modelURI="rdl:R98787754267"/>
+    <ValueMap valueList="Pressure" internalValue="KILOPASCAL" modelURI="rdl:R63639099552"/>
+    <ValueMap valueList="Pressure" internalValue="POUND PER SQUARE INCH" modelURI="rdl:R14495957831"/>
+    <ValueMap valueList="Pressure" internalValue="POUND PER SQUARE INCH ABSOLUTE" modelURI="rdl:R71198757784"/>
+    <ValueMap valueList="Pressure" internalValue="POUND PER SQUARE INCH GAUGE" modelURI="rdl:R46601209521"/>
+    <ValueMap valueList="Pressure" internalValue="BAR" modelURI="rdl:R83490506551"/>
+    <ValueMap valueList="Temperature" internalValue="KELVIN" modelURI="rdl:R53109662405"/>
+    <ValueMap valueList="Temperature" internalValue="DEGREE CELSIUS" modelURI="rdl:R74877992703"/>
+    <ValueMap valueList="Temperature" internalValue="DEGREE FAHRENHEIT" modelURI="rdl:R45708437750"/>
+    <ValueMap valueList="FlowRate" internalValue="TONNE PER HOUR" modelURI="rdl:R97397194940"/>
+    <ValueMap valueList="FlowRate" internalValue="KILOGRAM PER HOUR" modelURI="rdl:R40880693827"/>
+    <ValueMap valueList="FlowRate" internalValue="KILOGRAM PER MINUTE" modelURI="rdl:R20832134706"/>
+    <ValueMap valueList="FlowRate" internalValue="LITRE PER HOUR" modelURI="rdl:R72748932327"/>
+    <ValueMap valueList="FlowRate" internalValue="LITRE PER MINUTE" modelURI="rdl:R23195462092"/>
+    <ValueMap valueList="FlowRate" internalValue="CUBIC METRE PER MINUTE" modelURI="rdl:R66068064293"/>
+    <ValueMap valueList="FlowRate" internalValue="CUBIC METRE PER SECOND" modelURI="rdl:R94408067034"/>
+    <ValueMap valueList="FlowRate" internalValue="UK TON PER HOUR" modelURI="rdl:R53352916327"/>
+    <ValueMap valueList="FlowRate" internalValue="US TON PER HOUR" modelURI="rdl:R14730334384"/>
+    <ValueMap valueList="FlowRate" internalValue="POUND MASS PER HOUR" modelURI="rdl:R51206962402"/>
+    <ValueMap valueList="FlowRate" internalValue="POUND MASS PER MINUTE" modelURI="rdl:R94787789208"/>
+    <ValueMap valueList="FlowRate" internalValue="UK GALLON PER HOUR" modelURI="rdl:R45867315335"/>
+    <ValueMap valueList="FlowRate" internalValue="US GALLON PER HOUR" modelURI="rdl:R57993485640"/>
+    <ValueMap valueList="FlowRate" internalValue="UK GALLON PER MINUTE" modelURI="rdl:R15856845349"/>
+    <ValueMap valueList="FlowRate" internalValue="US GALLON PER MINUTE" modelURI="rdl:R90193901690"/>
+    <ValueMap valueList="FlowRate" internalValue="CUBIC FOOT PER MINUTE" modelURI="rdl:R88625733841"/>
+    <ValueMap valueList="FlowRate" internalValue="CUBIC FOOT PER SECOND" modelURI="rdl:R68602189675"/>
+    <ValueMap valueList="DocumentFormat" internalValue="MIME TYPE APPLICATION/PDF" modelURI="rdl:R15309906377"/>
+  </ValueMaps>
+  <Version>1.00.00</Version>
+</Mapping>
