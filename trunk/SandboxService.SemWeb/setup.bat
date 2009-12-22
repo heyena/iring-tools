@@ -12,7 +12,7 @@ for /f "tokens=1,2,3 delims== " %%i in (setup.conf) do (
 if %dbUser% equ "" (
   if %dbPassword% equ "" (
     @echo Using Windows authentication ...
-    SQLCMD -S %dbServer% -i  .\Scripts\iRING.sql
+    SQLCMD -S %dbServer% -i  .\Scripts\sandbox.sql
     
     if %errorlevel% neq 0 (
       goto end

@@ -2,10 +2,11 @@ IF  EXISTS (SELECT name FROM sys.databases WHERE name = N'sandbox')
 DROP DATABASE sandbox
 GO
 
+IF EXISTS (SELECT * FROM sys.syslogins WHERE name = N'sandbox')
 DROP LOGIN sandbox
 GO
 
-CREATE DATABASE sandbox;
+CREATE DATABASE sandbox
 GO
 
 USE sandbox
@@ -18,4 +19,5 @@ CREATE USER sandbox FOR LOGIN sandbox
 GO
 
 EXEC sp_addrolemember db_owner, sandbox
+
 

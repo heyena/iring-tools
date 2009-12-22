@@ -2,10 +2,11 @@ IF  EXISTS (SELECT name FROM sys.databases WHERE name = N'iring')
 DROP DATABASE iring
 GO
 
+IF EXISTS (SELECT * FROM sys.syslogins WHERE name = N'iring')
 DROP LOGIN iring
 GO
 
-CREATE DATABASE iring ;
+CREATE DATABASE iring
 GO
 
 USE iring
