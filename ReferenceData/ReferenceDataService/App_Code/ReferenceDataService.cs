@@ -34,12 +34,14 @@ using org.ids_adi.qmxf;
 using org.w3.sparql_results;
 using org.ids_adi.iring.referenceData;
 using org.iringtools.library;
+using log4net;
 
 namespace org.ids_adi.iring.referenceData
 {
     // NOTE: If you change the class name "Service" here, you must also update the reference to "Service" in Web.config and in the associated .svc file.
     public class ReferenceDataService : IReferenceDataService
     {
+      private static readonly ILog log = LogManager.GetLogger(typeof(ReferenceDataService));
       private ReferenceDataServiceProvider _referenceDataServiceProvider = null;
        
         public ReferenceDataService()
