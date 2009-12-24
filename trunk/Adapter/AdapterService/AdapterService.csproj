@@ -98,7 +98,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Service.svc" />
-    <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ClientAccessPolicy.xml" />
@@ -115,6 +114,7 @@
     <Compile Include="App_Code\Model.12345_000.DEF.cs" />
     <Compile Include="App_Code\Service.cs" />
     <Content Include="DataService.svc" />
+    <Content Include="Web.config" />
     <Content Include="XML\BindingConfiguration.12345_000.ABC.xml" />
     <Content Include="XML\BindingConfiguration.12345_000.DEF.xml" />
     <Content Include="XML\DatabaseDictionary.12345_000.ABC.xml" />

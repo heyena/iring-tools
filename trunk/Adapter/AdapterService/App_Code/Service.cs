@@ -28,12 +28,13 @@ using System.Configuration;
 using System.IO;
 using org.iringtools.library;
 using System.Collections.Generic;
+using log4net;
 
 namespace org.iringtools.adapter
 {
-
   public class Service : IService
   {
+    private static readonly ILog log = LogManager.GetLogger(typeof(Service));
     private AdapterProvider _adapterServiceProvider = null;
 
     /// <summary>
@@ -59,6 +60,7 @@ namespace org.iringtools.adapter
     /// <returns>Returns Data Dictionary object.</returns>
     public DataDictionary GetDictionary(string projectName, string applicationName)
     {
+      log.Info("GetDictionary of \"" + projectName + "-" + applicationName + "\"");
       return _adapterServiceProvider.GetDictionary(projectName, applicationName);
     }
 
