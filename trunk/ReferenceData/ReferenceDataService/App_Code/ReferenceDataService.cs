@@ -41,7 +41,7 @@ namespace org.ids_adi.iring.referenceData
     // NOTE: If you change the class name "Service" here, you must also update the reference to "Service" in Web.config and in the associated .svc file.
     public class ReferenceDataService : IReferenceDataService
     {
-      private static readonly ILog log = LogManager.GetLogger(typeof(ReferenceDataService));
+      private static readonly log4net.ILog log = LogManager.GetLogger(typeof(ReferenceDataService));
       private ReferenceDataServiceProvider _referenceDataServiceProvider = null;
        
         public ReferenceDataService()
