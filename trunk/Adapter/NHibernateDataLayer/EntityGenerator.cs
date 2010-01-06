@@ -41,48 +41,45 @@ namespace org.iringtools.adapter.dataLayer
 {
   public class EntityGenerator
   {
+    private string COMPILER_VERSION = "v3.5";
+    private string ASSEMBLY = "AdapterService";
     private List<string> NHIBERNATE_ASSEMBLIES = new List<string>() 
     {
       "NHibernate.dll",     
       "NHibernate.ByteCode.Castle.dll",
       "Iesi.Collections.dll",
     };
-
-    private string COMPILER_VERSION = "v3.5";
-    private string ASSEMBLY = "AdapterService";
-
-    private StringBuilder _mappingBuilder;
-    private XmlTextWriter _mappingWriter;
-    private Dictionary<string, string> _entityNames;
-    private DataDictionary _dataDictionary;
-    private string _namespace;
-    private string _path;
-    private ILog _logger;
-    private IndentedTextWriter _entityWriter;
-    private StringBuilder _entityBuilder;
-
+    
+    private StringBuilder _mappingBuilder = null;
+    private XmlTextWriter _mappingWriter = null;
+    private Dictionary<string, string> _entityNames = null;
+    private DataDictionary _dataDictionary = null;
+    private IndentedTextWriter _entityWriter = null;
+    private StringBuilder _entityBuilder = null;
+    private ILog _logger = null;
+    
+    private string _namespace = String.Empty;
+    private string _xmlPath = String.Empty;
+    private string _currentDirectory = String.Empty;
+    
     public EntityGenerator()
     {
+      _currentDirectory = Directory.GetCurrentDirectory();
       _logger = LogManager.GetLogger(typeof(EntityGenerator));
     }
 
-    public Response Generate(DatabaseDictionary dbDictionary, string projectName, string applicationName, string baseDirectory)
+    public Response Generate(DatabaseDictionary dbDictionary, string projectName, string applicationName)
     {
       Response response = new Response();
 
       if (dbDictionary.tables != null)
       {
-        if (!baseDirectory.EndsWith(@"\"))
-        {
-          baseDirectory += @"\";
-        }
-
         _namespace = "org.iringtools.adapter.proj_" + projectName + "." + applicationName;
-        _path += baseDirectory + @"XML\";
+        _xmlPath += _currentDirectory + @"\XML\";
 
         try
         {
-          Directory.CreateDirectory(_path);
+          Directory.CreateDirectory(_xmlPath);
 
           _mappingBuilder = new StringBuilder();
           _mappingWriter = new XmlTextWriter(new StringWriter(_mappingBuilder));
@@ -105,11 +102,12 @@ namespace org.iringtools.adapter.dataLayer
           _entityBuilder = new StringBuilder();
           _entityWriter = new IndentedTextWriter(new StringWriter(_entityBuilder), "  ");
 
+          _entityWriter.WriteLine(Utility.GeneratedCodeProlog());
           _entityWriter.WriteLine("using System;");
           _entityWriter.WriteLine("using System.Collections.Generic;");
           _entityWriter.WriteLine();
           _entityWriter.WriteLine("namespace {0}", _namespace);
-          _entityWriter.WriteLine("{"); // begin namespace block
+          _entityWriter.Write("{"); // begin namespace block
           _entityWriter.Indent++;
 
           #region Create entities
@@ -201,20 +199,27 @@ namespace org.iringtools.adapter.dataLayer
           _mappingWriter.WriteEndElement(); // end hibernate-mapping element
           _mappingWriter.Close();
 
-          CompileEntities(baseDirectory);
+          string mappingXml = _mappingBuilder.ToString();
+          string entitiesSourceCode = _entityBuilder.ToString();
 
-          #region Writing buffered data to disk
-          // Write hibernate configuration to disk
+          #region Compile entities
+          Dictionary<string, string> compilerOptions = new Dictionary<string, string>();
+          compilerOptions.Add("CompilerVersion", COMPILER_VERSION);
+
+          CompilerParameters parameters = new CompilerParameters();
+          parameters.GenerateExecutable = false;
+          parameters.ReferencedAssemblies.Add(_currentDirectory + @"\bin\AdapterService.dll");
+          NHIBERNATE_ASSEMBLIES.ForEach(assembly => parameters.ReferencedAssemblies.Add(_currentDirectory + @"\bin\" + assembly));
+
+          Utility.Compile(compilerOptions, parameters, entitiesSourceCode);
+          #endregion Compile entities
+
+          #region Writing memory data to disk
           string hibernateConfig = CreateConfiguration(dbDictionary.provider, dbDictionary.connectionString);
-          Utility.WriteString(hibernateConfig, _path + "nh-configuration." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
-
-          // Write hibernate mapping to disk
-          Utility.WriteString(_mappingBuilder.ToString(), _path + "nh-mapping." + projectName + "." + applicationName + ".xml", Encoding.UTF8);    
-
-          Utility.WriteString(_entityBuilder.ToString(), baseDirectory + @"\App_Code\Model." + projectName + "." + applicationName + ".cs");
-
-          // Write data dictionary to disk
-          Utility.Write<DataDictionary>(_dataDictionary, _path + "DataDictionary." + projectName + "." + applicationName + ".xml");
+          Utility.WriteString(hibernateConfig, _xmlPath + "nh-configuration." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
+          Utility.WriteString(mappingXml, _xmlPath + "nh-mapping." + projectName + "." + applicationName + ".xml", Encoding.UTF8);    
+          Utility.WriteString(entitiesSourceCode, _currentDirectory + @"\App_Code\Model." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
+          Utility.Write<DataDictionary>(_dataDictionary, _xmlPath + "DataDictionary." + projectName + "." + applicationName + ".xml");
           #endregion
 
           response.Add("Entities generated successfully.");
@@ -229,7 +234,6 @@ namespace org.iringtools.adapter.dataLayer
       return response;
     }
 
-    // Create entity string and append the entity to the hibernate mapping xml
     private void CreateEntity(Table table)
     {
       string entityName = _entityNames[table.tableName];
@@ -334,6 +338,7 @@ namespace org.iringtools.adapter.dataLayer
       }
       #endregion
 
+      _entityWriter.WriteLine();
       _entityWriter.WriteLine("public class {0}", entityName);
       _entityWriter.WriteLine("{"); // begin class block
       _entityWriter.Indent++;
@@ -454,45 +459,6 @@ namespace org.iringtools.adapter.dataLayer
       _entityWriter.Indent--;
       _entityWriter.WriteLine("}"); // end class block
       _mappingWriter.WriteEndElement(); // end class element
-    }
-
-    private void CompileEntities(string baseDirectory)
-    {
-      string assembliesDirectory = baseDirectory.Replace("App_Code\\", "") + "bin\\";
-
-      Dictionary<string, string> compilerOptions = new Dictionary<string, string>();
-      compilerOptions.Add("CompilerVersion", COMPILER_VERSION);
-
-      CompilerParameters parameters = new CompilerParameters();
-      parameters.GenerateExecutable = false;
-
-      // Add executing assembly      
-      parameters.ReferencedAssemblies.Add(assembliesDirectory + Assembly.GetExecutingAssembly().ManifestModule.Name);
-
-      // Add NHibernate assemblies
-      NHIBERNATE_ASSEMBLIES.ForEach(assembly => parameters.ReferencedAssemblies.Add(assembliesDirectory + assembly));
-
-      try
-      {
-        CSharpCodeProvider codeProvider = new CSharpCodeProvider(compilerOptions);
-        CompilerResults results = codeProvider.CompileAssemblyFromSource(parameters,_entityBuilder.ToString());
-
-        if (results.Errors.Count > 0)
-        {
-          StringBuilder errors = new StringBuilder();
-
-          foreach (CompilerError error in results.Errors)
-          {
-            errors.AppendLine(error.ErrorNumber + ": " + error.ErrorText);
-          }
-
-          throw new Exception(errors.ToString());
-        }
-      }
-      catch (Exception ex)
-      {
-        throw ex;
-      }
     }
 
     private string CreateConfiguration(Provider provider, string connectionString)
