@@ -645,10 +645,81 @@ namespace org.iringtools.adapter
     }
 
     /// <summary>
-    /// Generated DTO Model and Service using T4.
+    /// Generated DTO Model and Service.
     /// </summary>
     /// <returns>Returns the response as success/failure.</returns>
     public Response Generate(string projectName, string applicationName)
+    {
+      Response response = new Response();
+
+      try
+      {
+        DTOGenerator dtoGenerator = new DTOGenerator();
+        dtoGenerator.Generate(projectName, applicationName);
+
+        UpdateBindingConfiguration(projectName, applicationName);
+
+        response.Add("DTO Model generated successfully.");
+      }
+      catch (Exception ex)
+      {
+        response.Add("Error generating DTO Model.");
+        response.Add(ex.ToString());
+      }
+
+      return response;
+    }
+
+    /// <summary>
+    /// Update NInject binding configuration file.
+    /// </summary>
+    /// <returns></returns>
+    private void UpdateBindingConfiguration(string projectName, string applicationName)
+    {
+      string bindingConfigurationPath = _settings.XmlPath + "BindingConfiguration." + projectName + "." + applicationName + ".xml";
+      string dtoServiceBindingName = "DTOService." + projectName + "." + applicationName;
+      Binding dtoServiceBinding = new Binding()
+      {
+        Name = dtoServiceBindingName,
+        Interface = "org.iringtools.adapter.IDTOService, AdapterLibrary",
+        Implementation = "org.iringtools.adapter.proj_" + projectName + "." + applicationName + ".DTOService, AdapterService"
+      };
+
+      if (File.Exists(bindingConfigurationPath))
+      {
+        BindingConfiguration bindingConfiguration = Utility.Read<BindingConfiguration>(bindingConfigurationPath, false);
+        bool bindingExists = false;
+
+        foreach (Binding binding in bindingConfiguration.Bindings)
+        {
+          if (binding.Name == dtoServiceBindingName)
+          {
+            bindingExists = true;
+            break;
+          }
+        }
+
+        // DTOService binding does not exist, add it to binding configuration
+        if (!bindingExists)
+        {
+          bindingConfiguration.Bindings.Add(dtoServiceBinding);
+          Utility.Write<BindingConfiguration>(bindingConfiguration, bindingConfigurationPath, false);
+        }
+      }
+      else
+      {
+        BindingConfiguration bindingConfiguration = new BindingConfiguration();
+        bindingConfiguration.Bindings = new List<Binding>();
+        bindingConfiguration.Bindings.Add(dtoServiceBinding);
+        Utility.Write<BindingConfiguration>(bindingConfiguration, bindingConfigurationPath, false);
+      }
+    }
+
+    /// <summary>
+    /// Generated DTO Model and Service using T4.
+    /// </summary>
+    /// <returns>Returns the response as success/failure.</returns>
+    public Response GenerateOLD(string projectName, string applicationName)
     {
       Response response = new Response();
 
@@ -697,46 +768,7 @@ namespace org.iringtools.adapter
         File.WriteAllText(iServiceFileName, iServiceContent);
         File.WriteAllText(iDataServiceFileName, iDataServiceContent);
 
-        #region Update binding configuration
-        string bindingConfigurationPath = _settings.XmlPath + "BindingConfiguration." + projectName + "." + applicationName + ".xml";
-        string dtoServiceBindingName = "DTOService." + projectName + "." + applicationName;
-        Binding dtoServiceBinding = new Binding()
-        {
-          Name = dtoServiceBindingName,
-          Interface = "org.iringtools.adapter.IDTOService, AdapterLibrary",
-          Implementation = "org.iringtools.adapter.proj_" + projectName + "." + applicationName + ".DTOService, AdapterService"
-        };
-                    
-        if (File.Exists(bindingConfigurationPath))
-        {
-          BindingConfiguration bindingConfiguration = Utility.Read<BindingConfiguration>(bindingConfigurationPath, false);
-          bool bindingExists = false;
-
-          foreach (Binding binding in bindingConfiguration.Bindings)
-          {
-            if (binding.Name == dtoServiceBindingName)
-            {
-              bindingExists = true;
-              break;
-            }
-          }
-
-          // DTOService binding does not exist, add it to binding configuration
-          if (!bindingExists)
-          {
-            bindingConfiguration.Bindings.Add(dtoServiceBinding);
-            Utility.Write<BindingConfiguration>(bindingConfiguration, bindingConfigurationPath, false);
-          }
-        }
-        else
-        {
-          BindingConfiguration bindingConfiguration = new BindingConfiguration();
-
-          bindingConfiguration.Bindings = new List<Binding>();
-          bindingConfiguration.Bindings.Add(dtoServiceBinding);
-          Utility.Write<BindingConfiguration>(bindingConfiguration, bindingConfigurationPath, false);
-        }
-        #endregion
+        UpdateBindingConfiguration(projectName, applicationName);
 
         response.Add("DTO Model generated successfully.");
       }
@@ -813,7 +845,7 @@ namespace org.iringtools.adapter
         }
         #endregion
 
-        response = generator.Generate(dbDictionary, projectName, applicationName, _settings.BaseDirectoryPath);
+        response = generator.Generate(dbDictionary, projectName, applicationName);
       }
 
       return response;
