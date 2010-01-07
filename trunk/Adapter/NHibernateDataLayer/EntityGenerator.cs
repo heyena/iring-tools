@@ -211,7 +211,7 @@ namespace org.iringtools.adapter.dataLayer
           parameters.ReferencedAssemblies.Add(_currentDirectory + @"\bin\AdapterService.dll");
           NHIBERNATE_ASSEMBLIES.ForEach(assembly => parameters.ReferencedAssemblies.Add(_currentDirectory + @"\bin\" + assembly));
 
-          Utility.Compile(compilerOptions, parameters, entitiesSourceCode);
+          Utility.Compile(compilerOptions, parameters, new string[] { entitiesSourceCode });
           #endregion Compile entities
 
           #region Writing memory data to disk
