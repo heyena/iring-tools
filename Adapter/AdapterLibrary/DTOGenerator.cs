@@ -98,19 +98,17 @@ namespace org.iringtools.adapter
         parameters.ReferencedAssemblies.Add(_currentDirectory + @"\bin\AdapterLibrary.dll");
         parameters.ReferencedAssemblies.Add(_currentDirectory + @"\bin\AdapterService.dll");
 
+        // Generate code
         string dtoModel = GenerateDTOModel(projectName, applicationName);
-        Utility.Compile(compilerOptions, parameters, dtoModel);
-
         string dtoService = GenerateDTOService();
-        Utility.Compile(compilerOptions, parameters, dtoService);
-
-        string serviceInterface = UpdateServiceInterface();
-        Utility.Compile(compilerOptions, parameters, serviceInterface);
-        
+        string serviceInterface = UpdateServiceInterface();        
         string dataServiceInterface = UpdateDataServiceInterface();
-        Utility.Compile(compilerOptions, parameters, dataServiceInterface);
+
+        // Compile generated code
+        string[] sources = new string[] { dtoModel, dtoService, serviceInterface, dataServiceInterface };
+        Utility.Compile(compilerOptions, parameters, sources);
         
-        // Write source code to disk
+        // Write generated code to disk
         Utility.WriteString(dtoModel, _currentDirectory + @"\App_Code\DTOModel." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
         Utility.WriteString(dtoService, _currentDirectory + @"\App_Code\DTOService." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
         Utility.WriteString(serviceInterface, _currentDirectory + @"\App_Code\IService.Generated.cs", Encoding.ASCII);

@@ -770,12 +770,12 @@ namespace org.iringtools.utility
       return xdoc;
     }
 
-    public static void Compile(Dictionary<string, string> compilerOptions, CompilerParameters compilerParameters, string sourceCode)
+    public static void Compile(Dictionary<string, string> compilerOptions, CompilerParameters compilerParameters, string[] sources)
     {
       try
       {
         CSharpCodeProvider codeProvider = new CSharpCodeProvider(compilerOptions);
-        CompilerResults results = codeProvider.CompileAssemblyFromSource(compilerParameters, sourceCode);
+        CompilerResults results = codeProvider.CompileAssemblyFromSource(compilerParameters, sources);
 
         if (results.Errors.Count > 0)
         {
