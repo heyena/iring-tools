@@ -1,0 +1,7 @@
+#summary Date: January 14th 2010   Time: 8:30AM EST
+#labels Meeting,Phase-Requirements
+
+== Agenda ==
+  * 1.2 Cleanup Tasks Review
+  * Task Estimation
+  * Task Board Setup
