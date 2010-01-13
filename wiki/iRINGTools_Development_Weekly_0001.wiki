@@ -1,7 +1,7 @@
-#summary Date: January 14th 2010   Time: 8:30AM EST
+#summary Date: January 19th 2010   Time: 8:30AM EST
 #labels Meeting
 
 == Agenda ==
-  * 1.2 Cleanup Tasks Review
-  * Task Estimation
-  * Task Board Setup
+  * Task Board Review
+  * Demonstrations
+  * Discussion
