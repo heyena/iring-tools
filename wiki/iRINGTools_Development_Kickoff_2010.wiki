@@ -1,4 +1,4 @@
-#summary Date: January 12th 2010   Time: 8:30AM EST
+#summary Date: 2010/01/12  Time: 08:30 EST
 #labels Meeting
 
 == Agenda ==
