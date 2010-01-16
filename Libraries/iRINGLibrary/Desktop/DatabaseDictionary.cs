@@ -155,8 +155,6 @@ namespace org.iringtools.library
     [EnumMember]
     identity,
     [EnumMember]
-    native,
-    [EnumMember]
     sequence
   }
 
