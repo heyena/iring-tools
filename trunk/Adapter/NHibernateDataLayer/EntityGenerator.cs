@@ -37,19 +37,19 @@ using log4net;
 using org.iringtools.library;
 using org.iringtools.utility;
 
-namespace org.iringtools.adapter.dataLayer
+namespace NHibernateTest
 {
-  public class EntityGenerator
+  class EntityGenerator
   {
     private string COMPILER_VERSION = "v3.5";
-    private string ASSEMBLY = "AdapterService";
+    private string ASSEMBLY_NAME = "AdapterService";
     private List<string> NHIBERNATE_ASSEMBLIES = new List<string>() 
     {
       "NHibernate.dll",     
       "NHibernate.ByteCode.Castle.dll",
       "Iesi.Collections.dll",
     };
-    
+
     private StringBuilder _mappingBuilder = null;
     private XmlTextWriter _mappingWriter = null;
     private Dictionary<string, string> _entityNames = null;
@@ -57,11 +57,11 @@ namespace org.iringtools.adapter.dataLayer
     private IndentedTextWriter _entityWriter = null;
     private StringBuilder _entityBuilder = null;
     private ILog _logger = null;
-    
+
     private string _namespace = String.Empty;
     private string _xmlPath = String.Empty;
     private string _currentDirectory = String.Empty;
-    
+
     public EntityGenerator()
     {
       _currentDirectory = Directory.GetCurrentDirectory();
@@ -105,6 +105,7 @@ namespace org.iringtools.adapter.dataLayer
           _entityWriter.WriteLine(Utility.GeneratedCodeProlog());
           _entityWriter.WriteLine("using System;");
           _entityWriter.WriteLine("using System.Collections.Generic;");
+          _entityWriter.WriteLine("using Iesi.Collections.Generic;");
           _entityWriter.WriteLine();
           _entityWriter.WriteLine("namespace {0}", _namespace);
           _entityWriter.Write("{"); // begin namespace block
@@ -112,7 +113,7 @@ namespace org.iringtools.adapter.dataLayer
 
           #region Create entities
           foreach (Table table in dbDictionary.tables)
-          {      
+          {
             CreateEntity(table);
 
             // Create data object for data dictionary
@@ -217,7 +218,7 @@ namespace org.iringtools.adapter.dataLayer
           #region Writing memory data to disk
           string hibernateConfig = CreateConfiguration(dbDictionary.provider, dbDictionary.connectionString);
           Utility.WriteString(hibernateConfig, _xmlPath + "nh-configuration." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
-          Utility.WriteString(mappingXml, _xmlPath + "nh-mapping." + projectName + "." + applicationName + ".xml", Encoding.UTF8);    
+          Utility.WriteString(mappingXml, _xmlPath + "nh-mapping." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
           Utility.WriteString(entitiesSourceCode, _currentDirectory + @"\App_Code\Model." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
           Utility.Write<DataDictionary>(_dataDictionary, _xmlPath + "DataDictionary." + projectName + "." + applicationName + ".xml");
           #endregion
@@ -238,22 +239,23 @@ namespace org.iringtools.adapter.dataLayer
     {
       string entityName = _entityNames[table.tableName];
       string keyClassName = entityName + "Id";
-             
+
       _mappingWriter.WriteStartElement("class");
-      _mappingWriter.WriteAttributeString("name", _namespace + "." + entityName + ", " + ASSEMBLY);
+      _mappingWriter.WriteAttributeString("name", _namespace + "." + entityName + ", " + ASSEMBLY_NAME);
       _mappingWriter.WriteAttributeString("table", table.tableName);
 
-      #region Process table
+      #region Create composite key
       if (table.keys.Count > 1)
       {
+        _entityWriter.WriteLine();
         _entityWriter.WriteLine("[Serializable]");
         _entityWriter.WriteLine("public class {0}", keyClassName);
-        _entityWriter.WriteLine("{"); // begin composite key class block
+        _entityWriter.WriteLine("{"); // begin composite key class
         _entityWriter.Indent++;
-          
+
         _mappingWriter.WriteStartElement("composite-id");
         _mappingWriter.WriteAttributeString("name", "Id");
-        _mappingWriter.WriteAttributeString("class", _namespace + "." + keyClassName + ", " + ASSEMBLY);
+        _mappingWriter.WriteAttributeString("class", _namespace + "." + keyClassName + ", " + ASSEMBLY_NAME);
 
         foreach (Key key in table.keys)
         {
@@ -295,7 +297,7 @@ namespace org.iringtools.adapter.dataLayer
         _entityWriter.WriteLine(");");
         _entityWriter.Indent--;
         _entityWriter.WriteLine("}");
-        _entityWriter.WriteLine("return equals;"); 
+        _entityWriter.WriteLine("return equals;");
         _entityWriter.Indent--;
         _entityWriter.WriteLine("}"); // end Equals method
 
@@ -324,7 +326,14 @@ namespace org.iringtools.adapter.dataLayer
         {
           string keyName = String.IsNullOrEmpty(table.keys[i].propertyName) ? table.keys[i].columnName : table.keys[i].propertyName;
 
-          _entityWriter.WriteLine("_idString += {0}.ToString();", keyName);
+          if (i == 0)
+          {
+            _entityWriter.WriteLine("_idString += {0}.ToString();", keyName);
+          }
+          else
+          {
+            _entityWriter.WriteLine("_idString += \"_\" + {0}.ToString();", keyName);
+          }
         }
 
         _entityWriter.WriteLine("return _idString;");
@@ -332,20 +341,44 @@ namespace org.iringtools.adapter.dataLayer
         _entityWriter.WriteLine("}"); // end ToString method
 
         _entityWriter.Indent--;
-        _entityWriter.WriteLine("}"); // end composite key class block
+        _entityWriter.WriteLine("}"); // end composite key class
 
         _mappingWriter.WriteEndElement(); // end composite-id class element
       }
-      #endregion
+      #endregion Create composite key
 
       _entityWriter.WriteLine();
       _entityWriter.WriteLine("public class {0}", entityName);
       _entityWriter.WriteLine("{"); // begin class block
       _entityWriter.Indent++;
-        
+
       if (table.keys.Count > 1)
       {
+        _entityWriter.WriteLine("public {0}()", entityName);
+        _entityWriter.WriteLine("{");
+        _entityWriter.Indent++;
+        _entityWriter.WriteLine("Id = new {0}Id();", entityName);
+        _entityWriter.Indent--;
+        _entityWriter.WriteLine("}");
         _entityWriter.WriteLine("public virtual {0} Id {{ get; set; }}", keyClassName);
+
+        foreach (Key key in table.keys)
+        {
+          _entityWriter.WriteLine("public virtual {0} {1}", key.columnType, key.propertyName);
+          _entityWriter.WriteLine("{");
+          _entityWriter.Indent++;
+          _entityWriter.WriteLine("get {{ return Id.{0}; }}", key.propertyName);
+          _entityWriter.WriteLine("set {{ Id.{0} = value; }}", key.propertyName);
+          _entityWriter.Indent--;
+          _entityWriter.WriteLine("}");
+
+          _mappingWriter.WriteStartElement("property");
+          _mappingWriter.WriteAttributeString("name", key.propertyName);
+          _mappingWriter.WriteAttributeString("column", key.columnName);
+          _mappingWriter.WriteAttributeString("update", "false");
+          _mappingWriter.WriteAttributeString("insert", "false");
+          _mappingWriter.WriteEndElement();
+        }
       }
       else if (table.keys[0].keyType != KeyType.foreign)
       {
@@ -358,9 +391,27 @@ namespace org.iringtools.adapter.dataLayer
         _mappingWriter.WriteAttributeString("class", table.keys[0].keyType.ToString());
         _mappingWriter.WriteEndElement(); // end generator element
         _mappingWriter.WriteEndElement(); // end id element
+
+        if (table.keys[0].keyType == KeyType.assigned)
+        {
+          _entityWriter.WriteLine("public virtual {0} {1}", table.keys[0].columnType, table.keys[0].propertyName);
+          _entityWriter.WriteLine("{");
+          _entityWriter.Indent++;
+          _entityWriter.WriteLine("get { return Id; }");
+          _entityWriter.WriteLine("set { Id = value; }");
+          _entityWriter.Indent--;
+          _entityWriter.WriteLine("}");
+
+          _mappingWriter.WriteStartElement("property");
+          _mappingWriter.WriteAttributeString("name", table.keys[0].propertyName);
+          _mappingWriter.WriteAttributeString("column", table.keys[0].columnName);
+          _mappingWriter.WriteAttributeString("update", "false");
+          _mappingWriter.WriteAttributeString("insert", "false");
+          _mappingWriter.WriteEndElement(); // end property element
+        }
       }
 
-      #region Process Associations
+      #region Process associations
       if (table.associations != null)
       {
         foreach (Association association in table.associations)
@@ -384,14 +435,14 @@ namespace org.iringtools.adapter.dataLayer
                 _mappingWriter.WriteStartElement("param");
                 _mappingWriter.WriteAttributeString("name", "property");
                 _mappingWriter.WriteString(associatedEntityName);
-                _mappingWriter.WriteEndElement(); // end parame element
+                _mappingWriter.WriteEndElement(); // end param element
                 _mappingWriter.WriteEndElement(); // end generator element
                 _mappingWriter.WriteEndElement(); // end id element
               }
 
               _mappingWriter.WriteStartElement("one-to-one");
               _mappingWriter.WriteAttributeString("name", associatedEntityName);
-              _mappingWriter.WriteAttributeString("class", _namespace + "." + associatedEntityName + ", " + ASSEMBLY);
+              _mappingWriter.WriteAttributeString("class", _namespace + "." + associatedEntityName + ", " + ASSEMBLY_NAME);
 
               if (oneToOneAssociation.constrained)
               {
@@ -419,7 +470,7 @@ namespace org.iringtools.adapter.dataLayer
               _mappingWriter.WriteAttributeString("column", oneToManyAssociation.associatedColumnName);
               _mappingWriter.WriteEndElement(); // end one-to-many
               _mappingWriter.WriteStartElement("one-to-many");
-              _mappingWriter.WriteAttributeString("class", _namespace + "." + associatedEntityName + ", " + ASSEMBLY);
+              _mappingWriter.WriteAttributeString("class", _namespace + "." + associatedEntityName + ", " + ASSEMBLY_NAME);
               _mappingWriter.WriteEndElement(); // end key element
               _mappingWriter.WriteEndElement(); // end set element
               break;
@@ -432,29 +483,39 @@ namespace org.iringtools.adapter.dataLayer
               _mappingWriter.WriteStartElement("many-to-one");
               _mappingWriter.WriteAttributeString("name", associatedEntityName);
               _mappingWriter.WriteAttributeString("column", manyToOneAssociation.columnName);
+
+              if (IsAssociationInKeys(table.keys, manyToOneAssociation))
+              {
+                _mappingWriter.WriteAttributeString("update", "false");
+                _mappingWriter.WriteAttributeString("insert", "false");
+              }
+
               _mappingWriter.WriteEndElement(); // end many-to-one element
               break;
           }
         }
       }
-      #endregion
+      #endregion Process associations
 
-      #region Process Columns
+      #region Process columns
       if (table.columns != null)
       {
         foreach (Column column in table.columns)
         {
-          string propertyName = String.IsNullOrEmpty(column.propertyName) ? column.columnName : column.propertyName;
+          if (!ContainsColumn(table.keys, column))
+          {
+            string propertyName = String.IsNullOrEmpty(column.propertyName) ? column.columnName : column.propertyName;
 
-          _entityWriter.WriteLine("public virtual {0} {1} {{ get; set; }}", column.columnType, propertyName);
+            _entityWriter.WriteLine("public virtual {0} {1} {{ get; set; }}", column.columnType, propertyName);
 
-          _mappingWriter.WriteStartElement("property");
-          _mappingWriter.WriteAttributeString("name", propertyName);
-          _mappingWriter.WriteAttributeString("column", column.columnName);
-          _mappingWriter.WriteEndElement(); // end property element
+            _mappingWriter.WriteStartElement("property");
+            _mappingWriter.WriteAttributeString("name", propertyName);
+            _mappingWriter.WriteAttributeString("column", column.columnName);
+            _mappingWriter.WriteEndElement(); // end property element
+          }
         }
       }
-      #endregion
+      #endregion Process columns
 
       _entityWriter.Indent--;
       _entityWriter.WriteLine("}"); // end class block
@@ -578,6 +639,30 @@ namespace org.iringtools.adapter.dataLayer
       {
         throw ex;
       }
+    }
+
+    private bool ContainsColumn(List<Key> keys, Column column)
+    {
+      foreach (Key key in keys)
+      {
+        if (key.columnName == column.columnName)
+          return true;
+      }
+
+      return false;
+    }
+
+    private bool IsAssociationInKeys(List<Key> keys, ManyToOneAssociation association)
+    {
+      foreach (Key key in keys)
+      {
+        if (association.columnName == key.columnName)
+        {
+          return true;
+        }
+      }
+
+      return false;
     }
   }
 }
