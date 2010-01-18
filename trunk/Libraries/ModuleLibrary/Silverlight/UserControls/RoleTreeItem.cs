@@ -116,7 +116,10 @@ namespace InformationModel.UserControls
         keyValuePair = new KeyValuePair<string, string>("Name", (roleDefinition.name.FirstOrDefault() != null ? roleDefinition.name.FirstOrDefault().value : string.Empty));
         PresentationModel.DetailProperties.Add(keyValuePair);
 
-        GetClassLabel("Identifier", roleDefinition.identifier);
+        //GetClassLabel("Identifier", roleDefinition.identifier);
+
+        keyValuePair = new KeyValuePair<string, string>("Identifier", (roleDefinition.identifier != null ? roleDefinition.identifier.ToString() : string.Empty));
+        PresentationModel.DetailProperties.Add(keyValuePair);
 
         keyValuePair = new KeyValuePair<string, string>("Description", roleDefinition.description.value);
         PresentationModel.DetailProperties.Add(keyValuePair);
