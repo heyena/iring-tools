@@ -37,9 +37,9 @@ using log4net;
 using org.iringtools.library;
 using org.iringtools.utility;
 
-namespace NHibernateTest
+namespace org.iringtools.adapter.dataLayer
 {
-  class EntityGenerator
+  public class EntityGenerator
   {
     private string COMPILER_VERSION = "v3.5";
     private string ASSEMBLY_NAME = "AdapterService";
