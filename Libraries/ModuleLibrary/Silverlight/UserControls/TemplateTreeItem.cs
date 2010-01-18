@@ -129,7 +129,10 @@ namespace InformationModel.UserControls
         list = new KeyValuePair<string, string>("Name", (templateDefinition.name.FirstOrDefault() != null ? templateDefinition.name.FirstOrDefault().value : string.Empty));
         PresentationModel.DetailProperties.Add(list);
 
-        GetClassLabel("Identifier", templateDefinition.identifier);
+        //GetClassLabel("Identifier", templateDefinition.identifier);
+
+        list = new KeyValuePair<string, string>("Identifier", (templateDefinition.identifier != null ? templateDefinition.identifier.ToString() : string.Empty));
+        PresentationModel.DetailProperties.Add(list);
 
         list = new KeyValuePair<string, string>("Description", (templateDefinition.description.FirstOrDefault() != null ? templateDefinition.description.FirstOrDefault().value : string.Empty));
         PresentationModel.DetailProperties.Add(list);
