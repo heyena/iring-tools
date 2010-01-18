@@ -88,7 +88,10 @@ namespace InformationModel.UserControls
             keyValuePair = new KeyValuePair<string, string>("Name", (classDefinition.name.FirstOrDefault() != null ? classDefinition.name.FirstOrDefault().value : string.Empty));
             PresentationModel.DetailProperties.Add(keyValuePair);
             
-            GetClassLabel("Identifier", classDefinition.identifier);
+            //GetClassLabel("Identifier", classDefinition.identifier);
+
+            keyValuePair = new KeyValuePair<string, string>("Identifier", (classDefinition.identifier != null ? classDefinition.identifier.ToString() : string.Empty));
+            PresentationModel.DetailProperties.Add(keyValuePair);
             
             keyValuePair = new KeyValuePair<string, string>("Entity Type", (classDefinition.entityType != null ? classDefinition.entityType.reference : string.Empty));
             PresentationModel.DetailProperties.Add(keyValuePair);
