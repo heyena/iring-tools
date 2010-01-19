@@ -1,6 +1,4 @@
-#summary One-sentence summary of this page.
-
-Please review the following proposed structure and comment below.
+#summary Please review the following proposed structure and comment below.
 
 =Proposed Structure=
  * Applications
