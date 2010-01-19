@@ -1,6 +1,6 @@
 #summary Please review the following proposed structure and comment below.
 
-=Proposed Structure=
+===Proposed Structure===
  * Applications
   * !MappingEditor.Silverlight
   * !RefDataEditor.Silverlight
