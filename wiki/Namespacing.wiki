@@ -68,8 +68,8 @@
  * org.iringtools.ontologyservice.interface.presentationmodels
  * org.iringtools.ontologyservice.interface.types	
  * NInjectContrib.Dynamic
- * PrismContrib.Base
- * PrismContrib.Errors
- * PrismContrib.Events
- * PrismContrib.Interfaces
- * PrismContrib.Loggers
+ * !PrismContrib.Base
+ * !PrismContrib.Errors
+ * !PrismContrib.Events
+ * !PrismContrib.Interfaces
+ * !PrismContrib.Loggers
