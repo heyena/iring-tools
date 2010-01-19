@@ -16,5 +16,6 @@ Mohamed
 
 ==Meeting Notes==
  * Rob Clarified the emphasis on Part8/9 and mentioned that it will be the focus of the demo.
- * Discussed [Restructuring], see detailed information [Restructuring here].
+ * Discussed Restructuring, see detailed information [Restructuring here].
+ * Discussed Namespacing inconsistencies, see detailed information [Namespacing here].
  * Review the prioritized issue list
