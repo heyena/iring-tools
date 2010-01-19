@@ -1,7 +1,20 @@
-#summary Date: 2010/01/14  Time: 08:30 EST
+#summary Date: 2010/01/19  Time: 08:30 EST
 #labels Meeting
 
 == Agenda ==
   * 1.2 Cleanup Tasks Review
-  * Task Estimation
   * Task Board Setup
+
+==Attendees==
+Hahn
+Koos
+Rob
+Pavan
+Jim
+Gert
+Mohamed
+
+==Meeting Notes==
+ * Rob Clarified the emphasis on Part8/9 and mentioned that it will be the focus of the demo.
+ * Discussed [Restructuring], see detailed information [Restructuring here].
+ * Review the prioritized issue list
