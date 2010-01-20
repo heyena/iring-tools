@@ -4,7 +4,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d" 
     xmlns:dataInput="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Data.Input" 
-    x:Name="ClassDefinitionEditorView1" x:Class="Modelling.ClassDefinition.ClassDefinitionEditor.ClassDefinitionEditorView" 
+    x:Name="ClassDefinitionEditorView1" x:Class="org.iringtools.modelling.classdefinition.classdefinitioneditor.ClassDefinitionEditorView" 
     HorizontalAlignment="Stretch" VerticalAlignment="Stretch" d:DesignWidth="989" d:DesignHeight="523"
     Visibility="Collapsed">    
 	<Grid x:Name="LayoutRoot" Background="#FFF0F0F0"

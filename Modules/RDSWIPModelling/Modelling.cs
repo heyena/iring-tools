@@ -6,19 +6,19 @@ using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Composite.Regions;
 using Microsoft.Practices.Unity;
 
-using ModuleLibrary.LayerBLL;
-using ModuleLibrary.LayerDAL;
+using org.iringtools.modulelibrary.layerbll;
+using org.iringtools.modulelibrary.layerdal;
 
-using Modelling.MainRegion.RefDataBrowser;
-using Modelling.ClassDefinition.ClassDefinitionEditor;
+using org.iringtools.modelling.mainregion.refdatabrowser;
+using org.iringtools.modelling.classdefinition.classdefinitioneditor;
 
-using Modules.Details.DetailsRegion;
-using Menu.Views.MenuRegion;
+using org.iringtools.modules.details.detailsregion;
+using org.iringtools.menu.views.menuregion;
 
-using OntologyService.Interface;
-using OntologyService.Interface.PresentationModels;
+using org.iringtools.ontologyservice.presentation;
+using org.iringtools.ontologyservice.presentation.presentationmodels;
 
-namespace Modelling
+namespace org.iringtools.modelling
 {    
     public class ModellingModule : ModuleBase
     {
@@ -48,9 +48,9 @@ namespace Modelling
         /// </summary>
         public override void RegisterTypesForPullBasedComposition()
         {
-            RegionManager.RegisterViewWithRegion("MainRegion", () => Container.Resolve<RefDataBrowserPresenter>().View);
-            RegionManager.RegisterViewWithRegion("MenuRegion", () => Container.Resolve<MenuPresenter>().View);
-            RegionManager.RegisterViewWithRegion("ClassEditorRegion", () => Container.Resolve<ClassDefinitionEditorPresenter>().View);
+            RegionManager.RegisterViewWithRegion("mainregion", () => Container.Resolve<RefDataBrowserPresenter>().View);
+            RegionManager.RegisterViewWithRegion("menuregion", () => Container.Resolve<MenuPresenter>().View);
+            RegionManager.RegisterViewWithRegion("classeditorregion", () => Container.Resolve<ClassDefinitionEditorPresenter>().View);
         }
     }
 }

@@ -2,7 +2,7 @@
 using System.Net;
 
 
-namespace  Library.Interface.Events
+namespace  org.iringtools.library.presentation.events
 {
     public enum ServiceProcessType { NotAssigned, Starting, Stopped };
 

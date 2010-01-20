@@ -1,8 +1,8 @@
 ﻿
-using OntologyService.Interface.Types;
+using org.iringtools.ontologyservice.presentation.types;
 using System;
 
-namespace OntologyService.Interface.Events
+namespace org.iringtools.ontologyservice.presentation.events
 {
     public class QueryEventArgs : EventArgs
     {

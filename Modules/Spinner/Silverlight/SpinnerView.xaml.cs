@@ -3,12 +3,12 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-using Library.Interface.Events;
+using org.iringtools.library.presentation.events;
 using Microsoft.Practices.Composite.Events;
 
 using PrismContrib.Base;
 
-namespace Modules.Spinner
+namespace org.iringtools.modules.spinner
 {
   /// <summary>
   /// TODO: Move code out of code-behind into Presenter

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System;
 
-namespace ModuleLibrary.Events
+namespace org.iringtools.modulelibrary.events
 {
     /// <summary>
     /// Generic Completed Event Args type

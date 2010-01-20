@@ -6,17 +6,17 @@ using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Composite.Regions;
 using Microsoft.Practices.Unity;
 
-using ModuleLibrary.LayerBLL;
-using ModuleLibrary.LayerDAL;
+using org.iringtools.modulelibrary.layerbll;
+using org.iringtools.modulelibrary.layerdal;
 
-using OntologyService.Interface;
-using OntologyService.Interface.PresentationModels;
+using org.iringtools.ontologyservice.presentation;
+using org.iringtools.ontologyservice.presentation.presentationmodels;
 
 using org.ids_adi.iring.referenceData;
 
-using Modules.Popup.PopupRegion;
+using org.iringtools.modules.popup.popupregion;
 
-namespace Modules.Popup
+namespace org.iringtools.modules.popup
 {
     public class PopupModule : ModuleBase
     {

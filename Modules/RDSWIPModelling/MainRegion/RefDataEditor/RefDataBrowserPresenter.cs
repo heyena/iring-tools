@@ -2,10 +2,10 @@
 
 using PrismContrib.Base;
 
-using OntologyService.Interface;
-using OntologyService.Interface.PresentationModels;
+using org.iringtools.ontologyservice.presentation;
+using org.iringtools.ontologyservice.presentation.presentationmodels;
 
-namespace Modelling.MainRegion.RefDataBrowser
+namespace org.iringtools.modelling.mainregion.refdatabrowser
 {
     /// <summary>
     /// Information Model View Presenter

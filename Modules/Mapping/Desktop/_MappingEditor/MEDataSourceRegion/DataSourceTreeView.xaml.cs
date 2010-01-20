@@ -14,7 +14,7 @@ using System.Windows.Shapes;
 using PrismContrib.Base;
 using Microsoft.Practices.Composite.Regions;
 
-namespace Modules.MappingEditor.MEDataSourceRegion
+namespace org.iringtools.modules.medatasourceregion
 {
   public partial class DataSourceTreeView : UserControl, IDataSourceTreeView
   {

@@ -1,6 +1,6 @@
 ﻿using PrismContrib.Base;
 
-namespace Modules.Status.StatusRegion
+namespace org.iringtools.modules.status.statusregion
 {
   public interface IStatusView : IViewBase
   {

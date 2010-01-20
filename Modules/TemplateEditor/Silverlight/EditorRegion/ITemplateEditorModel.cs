@@ -10,7 +10,7 @@ using System.Windows.Controls.Primitives;
 
 using org.ids_adi.qmxf;
 
-namespace Modules.TemplateEditor.EditorRegion
+namespace org.iringtools.modules.templateeditor.editorregion
 {
     public interface ITemplateEditorModel
     {

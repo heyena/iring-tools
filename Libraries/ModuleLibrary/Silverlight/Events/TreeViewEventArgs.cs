@@ -2,7 +2,7 @@
 using System;
 using System.Windows;
 
-namespace InformationModel.Events
+namespace org.iringtools.informationmodel.events
 {
   public class TreeViewEventArgs : EventArgs
   {

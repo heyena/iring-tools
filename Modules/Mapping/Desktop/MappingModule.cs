@@ -6,19 +6,19 @@ using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Composite.Regions;
 using Microsoft.Practices.Unity;
 
-using ModuleLibrary.LayerBLL;
-using ModuleLibrary.LayerDAL;
+using org.iringtools.modulelibrary.layerbll;
+using org.iringtools.modulelibrary.layerdal;
 
-using OntologyService.Interface;
-using OntologyService.Interface.PresentationModels;
+using org.iringtools.ontologyservice.presentation;
+using org.iringtools.ontologyservice.presentation.presentationmodels;
 
-using Modules.MappingEditor.MEDataSourceRegion;
-using Modules.MappingEditor.MEMappingRegion;
-using Modules.MappingEditor.MainRegion;
+using org.iringtools.modules.medatasourceregion;
+using org.iringtools.modules.memappingregion;
+using org.iringtools.modules.mainregion;
 
 using org.ids_adi.iring.referenceData;
 
-namespace Modules.MappingEditor
+namespace org.iringtools.modules
 {
   public class MappingModule : ModuleBase
   {

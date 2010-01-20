@@ -1,5 +1,5 @@
 ﻿
-namespace InformationModel.Types
+namespace org.iringtools.informationmodel.types
 {
   public enum CustomTabProcess
   {

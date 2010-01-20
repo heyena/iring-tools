@@ -1,5 +1,5 @@
 ﻿
-namespace InformationModel.Events
+namespace org.iringtools.informationmodel.events
 {
   public enum TreeViewEventType
   {

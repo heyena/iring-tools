@@ -1,10 +1,8 @@
 ﻿using System.Windows.Controls;
-
 using PrismContrib.Base;
-
 using Microsoft.Practices.Composite.Regions;
 
-namespace Modules.Search.SearchRegion
+namespace org.iringtools.modules.search.searchregion
 {
     public partial class SearchControl : UserControl, ISearchControl
     {

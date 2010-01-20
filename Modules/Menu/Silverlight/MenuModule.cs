@@ -1,17 +1,17 @@
 ﻿using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Composite.Regions;
 using Microsoft.Practices.Unity;
-using ModuleLibrary.LayerBLL;
-using ModuleLibrary.LayerDAL;
-using OntologyService.Interface;
-using OntologyService.Interface.PresentationModels;
+using org.iringtools.modulelibrary.layerbll;
+using org.iringtools.modulelibrary.layerdal;
+using org.iringtools.ontologyservice.presentation;
+using org.iringtools.ontologyservice.presentation.presentationmodels;
 using PrismContrib.Base;
 using PrismContrib.Loggers;
 using Microsoft.Practices.Composite.Modularity;
 using org.ids_adi.iring.referenceData;
-using Modules.Menu.MenuRegion;
+using org.iringtools.modules.menu.menuregion;
 
-namespace Modules.Menu
+namespace org.iringtools.modules.menu
 {
     public class MenuModule : ModuleBase
     {
@@ -34,7 +34,7 @@ namespace Modules.Menu
         /// </summary>
         public override void RegisterTypesForPullBasedComposition()
         {
-            RegionManager.RegisterViewWithRegion("MenuRegion",
+            RegionManager.RegisterViewWithRegion("menuregion",
                 () => Container.Resolve<MenuPresenter>().View);
         }
     }

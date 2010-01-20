@@ -1,7 +1,7 @@
 ﻿using Microsoft.Practices.Composite.Logging;
 using PrismContrib.Loggers;
 
-namespace OntologyService.Interface.Loggers
+namespace org.iringtools.ontologyservice.presentation.loggers
 {
     /// <summary>
     /// Ontology Default Logger

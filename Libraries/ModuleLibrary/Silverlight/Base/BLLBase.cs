@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ModuleLibrary.Base
+namespace org.iringtools.modulelibrary.baseclass
 {
   public class BLLBase
   {

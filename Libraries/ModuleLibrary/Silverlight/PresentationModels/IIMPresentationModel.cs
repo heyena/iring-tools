@@ -4,16 +4,16 @@ using PrismContrib.Base;
 using org.ids_adi.iring.referenceData;
 using org.ids_adi.iring;
 using System.Collections.ObjectModel;
-using ModuleLibrary.Types;
-using ModuleLibrary.Entities;
+using org.iringtools.modulelibrary.types;
+using org.iringtools.modulelibrary.entities;
 using org.ids_adi.qmxf;
 using System.Collections.Generic;
-using InformationModel.UserControls;
+using org.iringtools.informationmodel.usercontrols;
 using System.Windows.Controls;
-using ModuleLibrary.UserControls;
+using org.iringtools.modulelibrary.usercontrols;
 using org.iringtools.library;
 
-namespace OntologyService.Interface.PresentationModels
+namespace org.iringtools.ontologyservice.presentation.presentationmodels
 {
   public interface IIMPresentationModel : IPresentationModel
   {

@@ -7,12 +7,12 @@ using PrismContrib.Base;
 using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Composite.Events;
 
-using ModuleLibrary.Events;
-using ModuleLibrary.Types;
+using org.iringtools.modulelibrary.events;
+using org.iringtools.modulelibrary.types;
 
-using OntologyService.Interface.PresentationModels;
+using org.iringtools.ontologyservice.presentation.presentationmodels;
 
-namespace Modules.Menu.MenuRegionRight
+namespace org.iringtools.modules.menu.menuregionright
 {
   public class MenuRightPresenter : PresenterBase<IMenuRightView>
   {

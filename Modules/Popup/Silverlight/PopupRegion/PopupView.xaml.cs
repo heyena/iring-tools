@@ -2,11 +2,11 @@
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Practices.Composite.Events;
-using Library.Interface.Events;
+using org.iringtools.library.presentation.events;
 using PrismContrib.Base;
-using Modules.Popup;
+using org.iringtools.modules.popup;
 
-namespace Modules.Popup.PopupRegion
+namespace org.iringtools.modules.popup.popupregion
 {
     public partial class PopupView : UserControl, IPopupView
     {

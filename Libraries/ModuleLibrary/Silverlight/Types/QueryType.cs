@@ -1,5 +1,5 @@
 ﻿
-namespace OntologyService.Interface.Types
+namespace org.iringtools.ontologyservice.presentation.types
 {
     public enum QueryType
     {

@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
 using PrismContrib.Base;
 
-namespace Modules.Menu.MenuRegionRight
+namespace org.iringtools.modules.menu.menuregionright
 {
   public partial class LoginView : UserControl, ILoginView
   {

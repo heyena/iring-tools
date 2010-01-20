@@ -1,6 +1,6 @@
 ﻿using Microsoft.Practices.Composite.Presentation.Events;
 
-namespace ModuleLibrary.Events
+namespace org.iringtools.modulelibrary.events
 {
   public class MenuEvent : CompositePresentationEvent<MenuEventArgs>
   {

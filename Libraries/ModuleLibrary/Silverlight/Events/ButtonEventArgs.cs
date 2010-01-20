@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Controls;
 
-namespace ModuleLibrary.Events
+namespace org.iringtools.modulelibrary.events
 {
   /// <summary>
   /// Event Argument for Button Event

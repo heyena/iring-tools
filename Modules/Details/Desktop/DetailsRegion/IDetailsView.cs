@@ -1,6 +1,6 @@
 using PrismContrib.Base;
 
-namespace Modules.Details.DetailsRegion
+namespace org.iringtools.modules.details.detailsregion
 {
     public interface IDetailsView : IViewBase
     {

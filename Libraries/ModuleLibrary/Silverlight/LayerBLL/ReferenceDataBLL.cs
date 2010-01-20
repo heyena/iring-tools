@@ -1,21 +1,21 @@
 ﻿
-using ModuleLibrary.LayerDAL;
+using org.iringtools.modulelibrary.layerdal;
 using Microsoft.Practices.Unity;
-using ModuleLibrary.Events;
-using ModuleLibrary.Base;
-using ModuleLibrary.Types;
+using org.iringtools.modulelibrary.events;
+using org.iringtools.modulelibrary.baseclass;
+using org.iringtools.modulelibrary.types;
 using System;
 using System.Collections.Generic;
 using org.ids_adi.qmxf;
 using org.ids_adi.iring;
 using org.ids_adi.iring.referenceData;
 using Microsoft.Practices.Composite.Events;
-using Library.Interface.Events;
-using InformationModel.Events;
+using org.iringtools.library.presentation.events;
+using org.iringtools.informationmodel.events;
 using org.iringtools.library;
 
 
-namespace ModuleLibrary.LayerBLL
+namespace org.iringtools.modulelibrary.layerbll
 {
   public class ReferenceDataBLL : BLLBase, IReferenceData
   {

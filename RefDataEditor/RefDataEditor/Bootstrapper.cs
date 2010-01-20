@@ -13,17 +13,17 @@ using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Composite.Presentation.Regions;
 using Microsoft.Practices.Unity;
 
-using Modules.Spinner;
-using Modules.Search;
-using Modules.Details;
-using Modules.Status;
-//using Modules.Popup;
-using Modules.ContextMenu;
-using Modules.TemplateEditor;
-using Modelling;
+using org.iringtools.modules.spinner;
+using org.iringtools.modules.search;
+using org.iringtools.modules.details;
+using org.iringtools.modules.status;
+//using org.iringtools.modules.popup;
+using org.iringtools.modules.contextmenu;
+using org.iringtools.modules.templateeditor;
+using org.iringtools.modelling;
 
-using Library.Configuration;
-using Library.Interface.Configuration;
+using org.iringtools.library.configuration;
+using org.iringtools.library.presentation.configuration;
 
 namespace RefDataEditor
 {

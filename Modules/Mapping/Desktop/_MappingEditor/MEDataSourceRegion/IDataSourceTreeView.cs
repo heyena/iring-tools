@@ -1,6 +1,6 @@
 ﻿using PrismContrib.Base;
 
-namespace Modules.MappingEditor.MEDataSourceRegion
+namespace org.iringtools.modules.medatasourceregion
 {
   public interface IDataSourceTreeView : IViewBase
   {

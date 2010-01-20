@@ -1,6 +1,6 @@
 ﻿using PrismContrib.Base;
 
-namespace Modules.MappingEditor.MEMappingRegion
+namespace org.iringtools.modules.memappingregion
 {
   public interface IMappingView : IViewBase
   {

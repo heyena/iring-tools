@@ -23,18 +23,18 @@
 
     <ItemsControl Grid.Row="0" Grid.Column="1" Background="Wheat"  
                   VerticalAlignment="Bottom" HorizontalAlignment="Stretch" 
-			            Regions:RegionManager.RegionName="MenuRegion"/>
+			            Regions:RegionManager.RegionName="menuregion"/>
 
     <ItemsControl Name="MainItem" Grid.Row="1" Grid.Column="1" 
                   VerticalAlignment="Center" HorizontalAlignment="Stretch" 
-			            Regions:RegionManager.RegionName="MainRegion"  />
+			            Regions:RegionManager.RegionName="mainregion"  />
 
     <ItemsControl Grid.Row="2" Grid.Column="1"  Background="White"
                   VerticalAlignment="Top" HorizontalAlignment="Stretch" 
-			            Regions:RegionManager.RegionName="StatusRegion"  />
+			            Regions:RegionManager.RegionName="statusregion"  />
 
     <ItemsControl Grid.ColumnSpan="3" Grid.RowSpan="3"
                   VerticalAlignment="Center" HorizontalAlignment="Center" 
-			            Regions:RegionManager.RegionName="SpinnerRegion"  />
+			            Regions:RegionManager.RegionName="spinnerregion"  />
   </Grid>
 </UserControl>

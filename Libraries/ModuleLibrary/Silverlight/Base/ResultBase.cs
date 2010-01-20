@@ -1,5 +1,5 @@
 ﻿
-namespace OntologyService.Interface.Base
+namespace org.iringtools.ontologyservice.presentation.Base
 {
     public class ResultBase
     {

@@ -10,14 +10,14 @@ using PrismContrib.Errors;
 using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Composite.Events;
 
-using ModuleLibrary.Events;
-using ModuleLibrary.LayerDAL;
-using ModuleLibrary.Types;
-using ModuleLibrary.Extensions;
+using org.iringtools.modulelibrary.events;
+using org.iringtools.modulelibrary.layerdal;
+using org.iringtools.modulelibrary.types;
+using org.iringtools.modulelibrary.extensions;
 
-using InformationModel.Events;
-using InformationModel.Types;
-using InformationModel.UserControls;
+using org.iringtools.informationmodel.events;
+using org.iringtools.informationmodel.types;
+using org.iringtools.informationmodel.usercontrols;
 
 using org.ids_adi.iring.referenceData;
 using org.iringtools.utility;
@@ -32,7 +32,7 @@ using System.Windows.Interactivity;
 
 #endif
 
-namespace InformationModel.UserControls
+namespace org.iringtools.informationmodel.usercontrols
 {
     public abstract class CustomTabItem : TabItem, ICommand
     {

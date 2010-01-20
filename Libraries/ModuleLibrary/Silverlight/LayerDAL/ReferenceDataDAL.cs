@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Text;
 using System.Collections.Generic;
-using Library.Interface.Configuration;
-using ModuleLibrary.Base;
-using ModuleLibrary.Events;
-using ModuleLibrary.Types;
+using org.iringtools.library.presentation.configuration;
+using org.iringtools.modulelibrary.baseclass;
+using org.iringtools.modulelibrary.events;
+using org.iringtools.modulelibrary.types;
 using System.Linq;
 using System.Net;
 using org.ids_adi.iring.referenceData;
 using org.iringtools.utility;
 using org.ids_adi.qmxf;
-using ModuleLibrary.Extensions;
+using org.iringtools.modulelibrary.extensions;
 using System.ComponentModel;
-using Library.Interface.Events;
+using org.iringtools.library.presentation.events;
 using org.iringtools.library;
 
-namespace ModuleLibrary.LayerDAL
+namespace org.iringtools.modulelibrary.layerdal
 {
     /// <summary>
     /// DATA ACCESS LAYER FOR ModuleLibrary.Desktop: Service References\REferenceDataProxy

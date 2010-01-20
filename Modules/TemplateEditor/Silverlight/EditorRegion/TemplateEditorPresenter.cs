@@ -16,21 +16,21 @@ using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Composite.Regions;
 using Microsoft.Practices.Composite.Presentation.Regions.Behaviors;
 
-using Library.Interface.Events;
+using org.iringtools.library.presentation.events;
 
-using ModuleLibrary.Events;
-using ModuleLibrary.Types;
+using org.iringtools.modulelibrary.events;
+using org.iringtools.modulelibrary.types;
 
-//using Modules.Popup;
-using ModuleLibrary.LayerDAL;
-using ModuleLibrary.LayerBLL;
+//using org.iringtools.modules.popup;
+using org.iringtools.modulelibrary.layerdal;
+using org.iringtools.modulelibrary.layerbll;
 
-using OntologyService.Interface;
-using OntologyService.Interface.PresentationModels;
+using org.iringtools.ontologyservice.presentation;
+using org.iringtools.ontologyservice.presentation.presentationmodels;
 
 using org.ids_adi.qmxf;
 
-namespace Modules.TemplateEditor.EditorRegion
+namespace org.iringtools.modules.templateeditor.editorregion
 {
     public enum EditorMode
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ModuleLibrary.Events
+namespace org.iringtools.modulelibrary.events
 {
   public class MenuEventArgs : EventArgs
   {

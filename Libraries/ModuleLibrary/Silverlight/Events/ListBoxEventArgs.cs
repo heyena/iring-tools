@@ -9,7 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 
-namespace ModuleLibrary.Events
+namespace org.iringtools.modulelibrary.events
 {
   public class ListBoxEventArgs : EventArgs
   {
