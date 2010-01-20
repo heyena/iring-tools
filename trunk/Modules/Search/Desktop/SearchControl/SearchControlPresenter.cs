@@ -49,6 +49,11 @@ namespace Modules.Search.SearchRegion
 
         #region Controls (button and textbox references)
         /// <summary>
+        /// Gets a reference to the chkReset control on View
+        /// </summary>
+        CheckBox chkReset { get { return CheckBoxCtrl("chkReset"); } }
+        
+        /// <summary>
         /// Gets a reference to the btnSearch control on View
         /// </summary>
         /// <value>Sear</value>
@@ -112,6 +117,7 @@ namespace Modules.Search.SearchRegion
 
                 // By default the button is disabled
                 btnSearch.IsEnabled = false;
+                chkReset.IsEnabled = false;
 
                 #region TextChanged handler - enables/disables btnSearch
                 // Handle textchanged event within dynamic delegate.
@@ -119,6 +125,7 @@ namespace Modules.Search.SearchRegion
                 txtSearch.TextChanged += (object sender, TextChangedEventArgs e) =>
                 {
                     btnSearch.IsEnabled = ((TextBox)sender).Text.Length > 0;
+                    chkReset.IsEnabled = ((TextBox)sender).Text.Length > 0;
                 };
                 #endregion
 
@@ -262,7 +269,10 @@ namespace Modules.Search.SearchRegion
                 // Perform the search - async response handled by the
                 // OnDataArrivedHandler(); we'll send the current tab
                 // as UserState for the async call
-                referenceDataService.Search(searchString, tabItem);
+                if(chkReset.IsChecked == true)
+                    referenceDataService.SearchReset(searchString, tabItem);
+                else
+                    referenceDataService.Search(searchString, tabItem);
             }
             else if (e.GetUniqueName().Contains("btnPromoteItem"))
             {

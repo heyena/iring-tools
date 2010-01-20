@@ -205,7 +205,12 @@ namespace ModuleLibrary.LayerBLL
         StartService("Search");
         return dal.Search(query, userState);
     }
-   
+
+    public object SearchReset(string query, object userState)
+    {
+        StartService("Search");
+        return dal.SearchReset(query, userState);
+    }
     /// <summary>
     /// do a search
     /// </summary>

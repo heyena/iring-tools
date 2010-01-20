@@ -226,6 +226,16 @@ namespace PrismContrib.Base
     }
 
     /// <summary>
+    /// CheckBox the CTRL
+    /// </summary>
+    /// <param name="controlName">Name of the control.</param>
+    /// <returns></returns>
+    public CheckBox CheckBoxCtrl(string controlName)
+    {
+        return GetControl<CheckBox>(controlName);
+    }
+      
+    /// <summary>
     /// Buttons the CTRL.
     /// </summary>
     /// <param name="controlName">Name of the control.</param>

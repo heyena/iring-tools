@@ -21,9 +21,10 @@
     </Grid.RowDefinitions>
 
     <Grid x:Name="SearchEntry" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch">
-      <TextBox Margin="4,0,85,0" HorizontalAlignment="Stretch" Text="" TextWrapping="Wrap" x:Name="txtSearch" Height="22" VerticalAlignment="Center" BorderThickness="1"/>
+      <TextBox Margin="4,0,140,0" HorizontalAlignment="Stretch" Text="" TextWrapping="Wrap" x:Name="txtSearch" Height="22" VerticalAlignment="Center" BorderThickness="1"/>
       <Button Margin="0,0,4,0" Width="73" Height="21" HorizontalAlignment="Right" Content="Search" x:Name="btnSearch" VerticalAlignment="Center"/>
-    </Grid>
+            <CheckBox Margin="0,0,84,0" Width="53" Height="21" HorizontalAlignment="Right" Content="Reset" x:Name="chkReset" VerticalAlignment="Center"/>
+        </Grid>
     
     <Grid x:Name="Navigation" Grid.Row="2" Grid.Column="0" Height="Auto" Width="Auto"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#FFF0F0F0">
       
