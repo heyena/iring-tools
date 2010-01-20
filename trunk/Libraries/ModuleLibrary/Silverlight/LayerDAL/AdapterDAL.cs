@@ -1,12 +1,12 @@
 ﻿using System.Linq;
-using Library.Interface.Configuration;
-using ModuleLibrary.Base;
-using ModuleLibrary.Events; 
+using org.iringtools.library.presentation.configuration;
+using org.iringtools.modulelibrary.baseclass;
+using org.iringtools.modulelibrary.events; 
 using System.Collections.Generic;
 using System.Net;
-using ModuleLibrary.Types;
-using ModuleLibrary.Extensions;
-using OntologyService.Interface.Entities;
+using org.iringtools.modulelibrary.types;
+using org.iringtools.modulelibrary.extensions;
+using org.iringtools.ontologyservice.presentation.entities;
 using System;
 using System.Text;
 using org.ids_adi.iring;
@@ -16,7 +16,7 @@ using System.IO;
 using System.ComponentModel;
 using org.iringtools.library;
 
-namespace ModuleLibrary.LayerDAL
+namespace org.iringtools.modulelibrary.layerdal
 {
   /// <summary>
   /// DATA ACCESS LAYER FOR ModuleLibrary.Desktop: Service References\AdapterServiceProxy

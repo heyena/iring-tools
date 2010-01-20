@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Net;
 using PrismContrib.Base;
-using OntologyService.Interface.Entities;
+using org.iringtools.ontologyservice.presentation.entities;
 using System.Collections.Generic;
-using OntologyService.Interface.PresentationModels;
+using org.iringtools.ontologyservice.presentation.presentationmodels;
 using System.Windows.Controls;
 using System.Collections.ObjectModel;
 using org.ids_adi.iring.referenceData;
 using org.ids_adi.iring;
-using ModuleLibrary.Entities;
-using ModuleLibrary.Types;
+using org.iringtools.modulelibrary.entities;
+using org.iringtools.modulelibrary.types;
 using org.ids_adi.qmxf;
-using InformationModel.UserControls;
-using ModuleLibrary.UserControls;
+using org.iringtools.informationmodel.usercontrols;
+using org.iringtools.modulelibrary.usercontrols;
 using org.iringtools.library;
 
 
-namespace OntologyService.Interface
+namespace org.iringtools.ontologyservice.presentation
 {
   /// <summary>
   /// This presentation model has cross-cutting concerns and will be used

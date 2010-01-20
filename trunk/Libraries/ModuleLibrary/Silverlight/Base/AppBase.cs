@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Practices.Composite.Logging;
 using System.Diagnostics;
-using Library.Interface.Events;
+using org.iringtools.library.presentation.events;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Composite.Events;
-using Library.Interface.Loggers;
+using org.iringtools.library.presentation.loggers;
 using PrismContrib.Loggers;
 
-namespace Library.Interface
+namespace org.iringtools.library.presentation
 {
     public enum TraceTypes {None,Textfile, EventLog, Debug };
 

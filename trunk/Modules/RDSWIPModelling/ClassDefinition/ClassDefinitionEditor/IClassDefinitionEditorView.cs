@@ -1,6 +1,6 @@
 ﻿using PrismContrib.Base;
 
-namespace Modelling.ClassDefinition.ClassDefinitionEditor
+namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
 {
     public interface IClassDefinitionEditorView : IViewBase { }
 }

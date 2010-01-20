@@ -4,7 +4,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d" 
     xmlns:dataInput="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Data.Input"
-	  x:Class="Menu.Views.MenuRegion.MenuView"
+	  x:Class="org.iringtools.menu.views.menuregion.MenuView"
     Height="30" HorizontalAlignment="Stretch" d:DesignWidth="515"
 >
   <Grid x:Name="LayoutRoot">

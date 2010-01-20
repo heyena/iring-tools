@@ -2,11 +2,11 @@
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Practices.Composite.Events;
-using Library.Interface.Events;
+using org.iringtools.library.presentation.events;
 using PrismContrib.Base;
-using Modules.TemplateEditor;
+using org.iringtools.modules.templateeditor;
 
-namespace Modules.TemplateEditor.EditorRegion
+namespace org.iringtools.modules.templateeditor.editorregion
 {
     public partial class TemplateEditorView : UserControl, ITemplateEditorView
     {

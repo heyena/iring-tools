@@ -6,19 +6,19 @@ using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Composite.Regions;
 using Microsoft.Practices.Unity;
 
-using ModuleLibrary.LayerBLL;
-using ModuleLibrary.LayerDAL;
+using org.iringtools.modulelibrary.layerbll;
+using org.iringtools.modulelibrary.layerdal;
 
-using Modules.ContextMenu.ContextMenuRegion;
+using org.iringtools.modules.contextmenu.contextmenuregion;
 
-using OntologyService.Interface;
-using OntologyService.Interface.PresentationModels;
+using org.iringtools.ontologyservice.presentation;
+using org.iringtools.ontologyservice.presentation.presentationmodels;
 
 using org.ids_adi.iring.referenceData;
 
 
 
-namespace Modules.ContextMenu
+namespace org.iringtools.modules.contextmenu
 {
     public class ContextMenuModule : ModuleBase
     {
@@ -47,7 +47,7 @@ namespace Modules.ContextMenu
         /// </summary>
         public override void RegisterTypesForPullBasedComposition()
         {
-            RegionManager.RegisterViewWithRegion("ContextMenuRegion",
+            RegionManager.RegisterViewWithRegion("contextmenuregion",
                 () => Container.Resolve<ContextMenuPresenter>().View);
 
         }

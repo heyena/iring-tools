@@ -1,6 +1,6 @@
 ﻿using PrismContrib.Base;
 
-namespace Modules.Popup.PopupRegion
+namespace org.iringtools.modules.popup.popupregion
 {
     public interface IPopupView : IViewBase
     {

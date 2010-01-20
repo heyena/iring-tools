@@ -5,7 +5,7 @@ using org.ids_adi.qmxf;
 using org.ids_adi.iring;
 using org.iringtools.library;
 
-namespace ModuleLibrary.LayerDAL
+namespace org.iringtools.modulelibrary.layerdal
 {
     public interface IReferenceData //: IReferenceDataSilverlight
     {

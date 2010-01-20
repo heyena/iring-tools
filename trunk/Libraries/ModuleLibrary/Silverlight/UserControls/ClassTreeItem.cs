@@ -9,26 +9,26 @@ using PrismContrib.Errors;
 using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Composite.Events;
 
-using ModuleLibrary.Events;
-using ModuleLibrary.Types;
-using ModuleLibrary.Extensions;
-using ModuleLibrary.LayerDAL;
+using org.iringtools.modulelibrary.events;
+using org.iringtools.modulelibrary.types;
+using org.iringtools.modulelibrary.extensions;
+using org.iringtools.modulelibrary.layerdal;
 
-using InformationModel.Events;
-using InformationModel.Types;
+using org.iringtools.informationmodel.events;
+using org.iringtools.informationmodel.types;
 
 using org.ids_adi.iring.referenceData;
 using org.ids_adi.qmxf;
 using System.Linq;
 
-using OntologyService.Interface.PresentationModels;
+using org.iringtools.ontologyservice.presentation.presentationmodels;
 using org.iringtools.utility;
-using ModuleLibrary.UserControls;
+using org.iringtools.modulelibrary.usercontrols;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using org.iringtools.library;
 
-namespace InformationModel.UserControls
+namespace org.iringtools.informationmodel.usercontrols
 {
     public class ClassTreeItem : CustomTreeItem
     {

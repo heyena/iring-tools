@@ -9,18 +9,18 @@ using PrismContrib.Errors;
 using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Composite.Events;
 
-using ModuleLibrary.Events;
-using ModuleLibrary.Extensions;
-using ModuleLibrary.LayerDAL;
+using org.iringtools.modulelibrary.events;
+using org.iringtools.modulelibrary.extensions;
+using org.iringtools.modulelibrary.layerdal;
 
-using InformationModel.Events;
-using InformationModel.Types;
+using org.iringtools.informationmodel.events;
+using org.iringtools.informationmodel.types;
 
 using org.ids_adi.iring.referenceData;
 using org.iringtools.utility;
 using org.iringtools.library;
 
-namespace InformationModel.UserControls
+namespace org.iringtools.informationmodel.usercontrols
 {
   public class SearchTabItem : CustomTabItem
   {

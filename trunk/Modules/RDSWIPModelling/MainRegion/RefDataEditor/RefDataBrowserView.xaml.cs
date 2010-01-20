@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
 using PrismContrib.Base;
 
-namespace Modelling.MainRegion.RefDataBrowser
+namespace org.iringtools.modelling.mainregion.refdatabrowser
 {
     public partial class RefDataBrowserView : UserControl, IRefDataEditorView
     {

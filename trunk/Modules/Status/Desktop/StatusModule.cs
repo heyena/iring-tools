@@ -6,17 +6,17 @@ using Microsoft.Practices.Composite.Modularity;
 using Microsoft.Practices.Composite.Regions;
 using Microsoft.Practices.Unity;
 
-using ModuleLibrary.LayerBLL;
-using ModuleLibrary.LayerDAL;
+using org.iringtools.modulelibrary.layerbll;
+using org.iringtools.modulelibrary.layerdal;
 
-using Modules.Status.StatusRegion;
+using org.iringtools.modules.status.statusregion;
 
-using OntologyService.Interface;
-using OntologyService.Interface.PresentationModels;
+using org.iringtools.ontologyservice.presentation;
+using org.iringtools.ontologyservice.presentation.presentationmodels;
 
 using org.ids_adi.iring.referenceData;
 
-namespace Modules.Status
+namespace org.iringtools.modules.status
 {
     public class StatusModule : ModuleBase
     {
@@ -43,7 +43,7 @@ namespace Modules.Status
         /// </summary>
         public override void RegisterTypesForPullBasedComposition()
         {
-            RegionManager.RegisterViewWithRegion("StatusRegion", () => Container.Resolve<StatusPresenter>().View);
+            RegionManager.RegisterViewWithRegion("statusregion", () => Container.Resolve<StatusPresenter>().View);
         }
     }
 }

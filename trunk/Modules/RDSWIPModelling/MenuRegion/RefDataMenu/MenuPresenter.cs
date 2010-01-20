@@ -13,19 +13,19 @@ using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Composite.Regions;
 using Microsoft.Practices.Composite.Presentation.Regions.Behaviors;
 
-using Library.Interface.Events;
+using org.iringtools.library.presentation.events;
 
-using ModuleLibrary.Events;
-using ModuleLibrary.Types;
-using ModuleLibrary.LayerDAL;
+using org.iringtools.modulelibrary.events;
+using org.iringtools.modulelibrary.types;
+using org.iringtools.modulelibrary.layerdal;
 
-using OntologyService.Interface;
-using OntologyService.Interface.PresentationModels;
+using org.iringtools.ontologyservice.presentation;
+using org.iringtools.ontologyservice.presentation.presentationmodels;
 
 using org.ids_adi.qmxf;
 using org.iringtools.utility;
 
-namespace Menu.Views.MenuRegion
+namespace org.iringtools.menu.views.menuregion
 {
     public class MenuPresenter : PresenterBase<IMenuView>
     {

@@ -6,13 +6,13 @@ using System.Windows.Controls;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 
-using ModuleLibrary.Entities;
-using ModuleLibrary.Events;
-using ModuleLibrary.Extensions;
-using ModuleLibrary.Types;
+using org.iringtools.modulelibrary.entities;
+using org.iringtools.modulelibrary.events;
+using org.iringtools.modulelibrary.extensions;
+using org.iringtools.modulelibrary.types;
 
-using OntologyService.Interface.PresentationModels;
-
+using org.iringtools.ontologyservice.presentation.presentationmodels;
+using org.iringtools.informationmodel.events;
 using PrismContrib.Base;
 
 using InformationModel.Events;
@@ -25,7 +25,7 @@ using System.Windows.Interactivity;
 #endif
 
 
-namespace Modules.MappingEditor.MEMappingRegion
+namespace org.iringtools.modules.memappingregion
 {
   /// <summary>
   /// 
@@ -124,7 +124,7 @@ namespace Modules.MappingEditor.MEMappingRegion
     /// <summary>
     /// mapping handler.
     /// </summary>
-    /// <param name="e">The <see cref="ModuleLibrary.Events.CompletedEventArgs"/> instance containing the event data.</param>
+    /// <param name="e">The <see cref="org.iringtools.modulelibrary.events.CompletedEventArgs"/> instance containing the event data.</param>
     void GetMappingHandler(CompletedEventArgs e)
     {
       // Ensure we have a valid parameter

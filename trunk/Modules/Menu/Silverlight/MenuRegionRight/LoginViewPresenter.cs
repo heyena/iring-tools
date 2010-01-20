@@ -1,15 +1,15 @@
-﻿using OntologyService.Interface.PresentationModels;
+﻿using org.iringtools.ontologyservice.presentation.presentationmodels;
 using PrismContrib.Base;
 using System.Windows.Controls;
 using System.Windows;
 using Microsoft.Practices.Composite.Logging;
 using System.Windows.Browser;
 using Microsoft.Practices.Composite.Events;
-using ModuleLibrary.Events;
-using ModuleLibrary.Types;
-using InformationModel.UserControls;
+using org.iringtools.modulelibrary.events;
+using org.iringtools.modulelibrary.types;
+using org.iringtools.informationmodel.usercontrols;
 
-namespace Modules.Menu.MenuRegionRight
+namespace org.iringtools.modules.menu.menuregionright
 {
   public class LoginViewPresenter : PresenterBase<ILoginView>
   {

@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Practices.Unity;
 
-namespace Library.Interface.Configuration
+namespace org.iringtools.library.presentation.configuration
 {
     public interface IAppConfiguration
     {

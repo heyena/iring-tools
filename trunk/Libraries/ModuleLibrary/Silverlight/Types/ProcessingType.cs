@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Library.Interface.Types
+namespace org.iringtools.library.presentation.types
 {
     public enum ProcessingType
     {

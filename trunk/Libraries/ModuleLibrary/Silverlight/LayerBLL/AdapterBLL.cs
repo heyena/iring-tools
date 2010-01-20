@@ -1,18 +1,18 @@
 ﻿using System;
 using Microsoft.Practices.Unity;
-using ModuleLibrary.Types;
-using ModuleLibrary.Events;
+using org.iringtools.modulelibrary.types;
+using org.iringtools.modulelibrary.events;
 using System.Collections.ObjectModel;
 using org.ids_adi.iring;
 using org.ids_adi.qxf;
-using ModuleLibrary.Base;
+using org.iringtools.modulelibrary.baseclass;
 using Microsoft.Practices.Composite.Events;
-using Library.Interface.Events;
-using InformationModel.Events;
+using org.iringtools.library.presentation.events;
+using org.iringtools.informationmodel.events;
 using org.iringtools.library;
 
 
-namespace ModuleLibrary.LayerBLL
+namespace org.iringtools.modulelibrary.layerbll
 {
   public class AdapterBLL : BLLBase, IAdapter
   {

@@ -2,7 +2,7 @@
 
 using PrismContrib.Base;
 
-namespace Modules.MappingEditor.MainRegion
+namespace org.iringtools.modules.mainregion
 {
   public partial class MappingEditorView : UserControl, IMappingEditorView
   {

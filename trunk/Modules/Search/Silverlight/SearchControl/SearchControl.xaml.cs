@@ -2,12 +2,12 @@
 
 using PrismContrib.Base;
 
-using Library.Interface.Events;
+using org.iringtools.library.presentation.events;
 using Microsoft.Practices.Composite.Events;
 
 using Microsoft.Practices.Composite.Regions;
 
-namespace Modules.Search.SearchRegion
+namespace org.iringtools.modules.search.searchregion
 {
     public partial class SearchControl : UserControl, ISearchControl
     {

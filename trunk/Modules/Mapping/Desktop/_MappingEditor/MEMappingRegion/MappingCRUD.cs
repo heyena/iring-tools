@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-
+using org.iringtools.informationmodel.events;
 using PrismContrib.Errors;
 
 using Microsoft.Practices.Composite.Events;
@@ -12,24 +12,24 @@ using Microsoft.Practices.Unity;
 
 using InformationModel.Events;
 
-using ModuleLibrary.Events;
-using ModuleLibrary.Extensions;
-using ModuleLibrary.Entities;
-using ModuleLibrary.LayerDAL;
-using ModuleLibrary.Types;
+using org.iringtools.modulelibrary.events;
+using org.iringtools.modulelibrary.extensions;
+using org.iringtools.modulelibrary.entities;
+using org.iringtools.modulelibrary.layerdal;
+using org.iringtools.modulelibrary.types;
 
-using OntologyService.Interface;
-using OntologyService.Interface.PresentationModels;
+using org.iringtools.ontologyservice.presentation;
+using org.iringtools.ontologyservice.presentation.presentationmodels;
 
 using org.ids_adi.iring;
 using org.ids_adi.iring.referenceData;
 using org.ids_adi.qmxf;
 
 
-using InformationModel.UserControls;
+using org.iringtools.informationmodel.usercontrols;
 using org.iringtools.library;
 
-namespace Modules.MappingEditor.MEMappingRegion
+namespace org.iringtools.modules.memappingregion
 {
     public class MappingCRUD
     {

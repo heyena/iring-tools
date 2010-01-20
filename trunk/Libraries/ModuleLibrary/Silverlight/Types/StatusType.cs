@@ -1,5 +1,5 @@
 ﻿
-namespace ModuleLibrary.Types
+namespace org.iringtools.modulelibrary.types
 {
   public enum StatusType
   {

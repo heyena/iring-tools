@@ -1,13 +1,10 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-
 using PrismContrib.Base;
-
 using Microsoft.Practices.Composite.Regions;
+using org.iringtools.modelling.mainregion.refdatabrowser;
 
-using Modelling.MainRegion.RefDataBrowser;
-
-namespace Menu.Views.MenuRegion
+namespace org.iringtools.menu.views.menuregion
 {
   public partial class MenuView : UserControl, IMenuView
   {

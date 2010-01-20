@@ -8,13 +8,13 @@ using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Composite.Regions;
 
-using ModuleLibrary.Events;
-using ModuleLibrary.Types;
+using org.iringtools.modulelibrary.events;
+using org.iringtools.modulelibrary.types;
 
-using OntologyService.Interface;
-using OntologyService.Interface.PresentationModels;
+using org.iringtools.ontologyservice.presentation;
+using org.iringtools.ontologyservice.presentation.presentationmodels;
 
-namespace Modules.Menu.MenuRegion
+namespace org.iringtools.modules.menu.menuregion
 {
   public class MenuPresenter : PresenterBase<IMenuView>
   {

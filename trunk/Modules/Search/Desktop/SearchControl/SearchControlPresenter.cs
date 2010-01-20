@@ -3,7 +3,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-
+using org.iringtools.informationmodel.events;
 using PrismContrib.Base;
 
 using Microsoft.Practices.Composite.Events;
@@ -11,22 +11,22 @@ using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Composite.Regions;
 using Microsoft.Practices.Unity;
 
-using ModuleLibrary.Events;
-using ModuleLibrary.Extensions;
-using ModuleLibrary.LayerDAL;
-using ModuleLibrary.Types;
+using org.iringtools.modulelibrary.events;
+using org.iringtools.modulelibrary.extensions;
+using org.iringtools.modulelibrary.layerdal;
+using org.iringtools.modulelibrary.types;
 
-using InformationModel.Events;
-using InformationModel.UserControls;
+using org.iringtools.informationmodel.events;
+using org.iringtools.informationmodel.usercontrols;
 
-using OntologyService.Interface;
-using OntologyService.Interface.PresentationModels;
+using org.iringtools.ontologyservice.presentation;
+using org.iringtools.ontologyservice.presentation.presentationmodels;
 
 using org.ids_adi.iring;
 using System.Windows.Media.Imaging;
 using System.Windows.Resources;
 
-namespace Modules.Search.SearchRegion
+namespace org.iringtools.modules.search.searchregion
 {
     /// <summary>
     /// Information Model View Presenter
@@ -200,7 +200,7 @@ namespace Modules.Search.SearchRegion
         /// <summary>
         /// Button Click Handler
         /// </summary>
-        /// <param name="e">The <see cref="ModuleLibrary.Events.ButtonEventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="org.iringtools.modulelibrary.events.ButtonEventArgs"/> instance containing the event data.</param>
 
         public void ButtonClickHandler(ButtonEventArgs e)
         {

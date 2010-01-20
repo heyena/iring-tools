@@ -1,7 +1,7 @@
 ﻿<UserControl 
     x:Name="RefDataBrowserView1" 
     xmlns:basics="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls"          
-    x:Class="Modelling.MainRegion.RefDataBrowser.RefDataBrowserView"
+    x:Class="org.iringtools.modelling.mainregion.refdatabrowser.RefDataBrowserView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
     xmlns:Regions="clr-namespace:Microsoft.Practices.Composite.Presentation.Regions;assembly=Microsoft.Practices.Composite.Presentation"
@@ -29,7 +29,7 @@
       <RowDefinition Height="*"/>
     </Grid.RowDefinitions>
 
-    <ItemsControl Name="Search" Grid.RowSpan="2" Grid.Column="0" Regions:RegionManager.RegionName="SearchRegion"
+    <ItemsControl Name="Search" Grid.RowSpan="2" Grid.Column="0" Regions:RegionManager.RegionName="searchregion"
         		      VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
 
     <basics:GridSplitter Opacity="0" Grid.RowSpan="2" Grid.Column="0" Width="4"/>
@@ -37,7 +37,7 @@
     <ItemsControl Name="Details" Grid.Row="1" Grid.Column="1" Regions:RegionManager.RegionName="DetailRegion" 
 				          HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 
-    <ItemsControl Name="ContextMenu" Grid.Row="0" Grid.Column="1" Regions:RegionManager.RegionName="ContextMenuRegion"
+    <ItemsControl Name="ContextMenu" Grid.Row="0" Grid.Column="1" Regions:RegionManager.RegionName="Contextmenuregion"
         		      VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
 
     <ItemsControl Name="ClassEditor" Grid.Row="1" Grid.Column="1" Regions:RegionManager.RegionName="ClassEditorRegion" 

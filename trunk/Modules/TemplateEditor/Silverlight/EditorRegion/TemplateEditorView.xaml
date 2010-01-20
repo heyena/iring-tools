@@ -1,5 +1,5 @@
 ﻿<UserControl 
-    x:Class="Modules.TemplateEditor.EditorRegion.TemplateEditorView"
+    x:Class="org.iringtools.modules.templateeditor.editorregion.TemplateEditorView"
     xmlns:data="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Data"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"    

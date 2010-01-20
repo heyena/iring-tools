@@ -4,25 +4,25 @@ using System.Text;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-
+using org.iringtools.informationmodel.events;
 using PrismContrib.Base;
 
 using Microsoft.Practices.Composite.Events;
 
-using ModuleLibrary.Events;
+using org.iringtools.modulelibrary.events;
 
-using OntologyService.Interface;
-using OntologyService.Interface.PresentationModels;
+using org.iringtools.ontologyservice.presentation;
+using org.iringtools.ontologyservice.presentation.presentationmodels;
 
-using InformationModel.Events;
-using InformationModel.UserControls;
+using org.iringtools.informationmodel.events;
+using org.iringtools.informationmodel.usercontrols;
 
 using org.ids_adi.iring;
 using org.ids_adi.iring.referenceData;
 using org.ids_adi.qmxf;
 
 
-namespace Modules.ContextMenu.ContextMenuRegion
+namespace org.iringtools.modules.contextmenu.contextmenuregion
 {
     public class ContextMenuPresenter : PresenterBase<IContextMenuView>
     {

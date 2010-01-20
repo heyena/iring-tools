@@ -10,22 +10,22 @@ using PrismContrib.Errors;
 using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Composite.Events;
 
-using ModuleLibrary.Events;
-using ModuleLibrary.Extensions;
-using ModuleLibrary.LayerDAL;
-using ModuleLibrary.Types;
+using org.iringtools.modulelibrary.events;
+using org.iringtools.modulelibrary.extensions;
+using org.iringtools.modulelibrary.layerdal;
+using org.iringtools.modulelibrary.types;
 
-using InformationModel.Events;
-using InformationModel.Types;
+using org.iringtools.informationmodel.events;
+using org.iringtools.informationmodel.types;
 
 using org.ids_adi.iring.referenceData;
 using org.iringtools.utility;
 using org.ids_adi.qmxf;
 using org.iringtools.library;
 
-using OntologyService.Interface.PresentationModels;
+using org.iringtools.ontologyservice.presentation.presentationmodels;
 
-namespace InformationModel.UserControls
+namespace org.iringtools.informationmodel.usercontrols
 {
   public class RoleTreeItem : CustomTreeItem
   {

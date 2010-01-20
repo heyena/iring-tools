@@ -1,8 +1,8 @@
 ﻿using System;
-using ModuleLibrary.Events;
-using ModuleLibrary.Types;
+using org.iringtools.modulelibrary.events;
+using org.iringtools.modulelibrary.types;
 
-namespace ModuleLibrary.Extensions
+namespace org.iringtools.modulelibrary.extensions
 {
   public static class CompletedEventTypeExtension
   {

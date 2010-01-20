@@ -1,6 +1,6 @@
 ﻿<UserControl x:Name="MappingEditorView1"
     xmlns:data="clr-namespace:Microsoft.Windows.Controls;assembly=WpfToolkit"
-             x:Class="Modules.MappingEditor.MainRegion.MappingEditorView"
+             x:Class="org.iringtools.modules.mainregion.MappingEditorView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
     xmlns:Regions="clr-namespace:Microsoft.Practices.Composite.Presentation.Regions;assembly=Microsoft.Practices.Composite.Presentation"
@@ -27,7 +27,7 @@
     <ItemsControl Name="DataSource" Grid.Row="0" Grid.Column="0" Regions:RegionManager.RegionName="MEDataSourceRegion"
 						 VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  />
 
-    <ItemsControl Name="Search" Grid.Row="0" Grid.Column="1" Regions:RegionManager.RegionName="SearchRegion"
+    <ItemsControl Name="Search" Grid.Row="0" Grid.Column="1" Regions:RegionManager.RegionName="searchregion"
         		 VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
 
     <!--<ItemsControl Name="Navigation" Grid.Row="1" Grid.Column="1" Regions:RegionManager.RegionName="NavigationRegion"

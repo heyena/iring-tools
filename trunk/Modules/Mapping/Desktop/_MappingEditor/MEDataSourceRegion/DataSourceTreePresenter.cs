@@ -3,7 +3,7 @@ using System.Linq;
 using System.Windows;
 
 using System.Windows.Controls;
-
+using org.iringtools.informationmodel.events;
 using PrismContrib.Base;
 
 using InformationModel.Events;
@@ -11,12 +11,12 @@ using InformationModel.Events;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Composite.Logging;
 
-using ModuleLibrary.UserControls;
-using ModuleLibrary.Events;
-using ModuleLibrary.Extensions;
-using ModuleLibrary.Types;
+using org.iringtools.modulelibrary.usercontrols;
+using org.iringtools.modulelibrary.events;
+using org.iringtools.modulelibrary.extensions;
+using org.iringtools.modulelibrary.types;
 
-using OntologyService.Interface.PresentationModels;
+using org.iringtools.ontologyservice.presentation.presentationmodels;
 
 using org.iringtools.library;
 
@@ -27,7 +27,7 @@ using System.Windows.Interactivity;
 #endif
 
 
-namespace Modules.MappingEditor.MEDataSourceRegion
+namespace org.iringtools.modules.medatasourceregion
 {
     public class DataSourceTreePresenter : PresenterBase<IDataSourceTreeView>
     {

@@ -9,7 +9,7 @@ using Microsoft.Practices.Composite.Logging;
 using PrismContrib.Loggers;
 using PrismContrib.Errors;
 
-using ModuleLibrary.Events;
+using org.iringtools.modulelibrary.events;
 
 namespace PrismContrib.Base
 {

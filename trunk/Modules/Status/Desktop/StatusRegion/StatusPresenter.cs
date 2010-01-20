@@ -1,24 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using org.iringtools.informationmodel.events;
 using PrismContrib.Base;
 
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Composite.Logging;
 
-using ModuleLibrary.Events;
-using ModuleLibrary.Types;
-using ModuleLibrary.LayerDAL;
+using org.iringtools.modulelibrary.events;
+using org.iringtools.modulelibrary.types;
+using org.iringtools.modulelibrary.layerdal;
 using InformationModel.Events;
 
-using OntologyService.Interface.PresentationModels;
+using org.iringtools.ontologyservice.presentation.presentationmodels;
 
 using org.ids_adi.iring;
 using org.ids_adi.qmxf;
 using org.ids_adi.iring.referenceData;
 using org.iringtools.library;
 
-namespace Modules.Status.StatusRegion
+namespace org.iringtools.modules.status.statusregion
 {
   public class StatusPresenter : PresenterBase<IStatusView>
   {
@@ -61,7 +61,7 @@ namespace Modules.Status.StatusRegion
     /// <summary>
     /// Status event handler.
     /// </summary>
-    /// <param name="e">The <see cref="ModuleLibrary.Events.StatusEventArgs"/> 
+    /// <param name="e">The <see cref="org.iringtools.modulelibrary.events.StatusEventArgs"/> 
     /// instance containing the event data.</param>
     public void StatusEventHandler(StatusEventArgs e)
     {

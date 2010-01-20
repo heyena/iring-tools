@@ -1,17 +1,17 @@
 ﻿using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Composite.Regions;
 using Microsoft.Practices.Unity;
-using ModuleLibrary.LayerBLL;
-using ModuleLibrary.LayerDAL;
-using OntologyService.Interface;
-using OntologyService.Interface.PresentationModels;
+using org.iringtools.modulelibrary.layerbll;
+using org.iringtools.modulelibrary.layerdal;
+using org.iringtools.ontologyservice.presentation;
+using org.iringtools.ontologyservice.presentation.presentationmodels;
 using PrismContrib.Base;
 using PrismContrib.Loggers;
 using Microsoft.Practices.Composite.Modularity;
 using org.ids_adi.iring.referenceData;
-using Modules.Search.SearchRegion;
+using org.iringtools.modules.search.searchregion;
 
-namespace Modules.Search
+namespace org.iringtools.modules.search
 {
     public class SearchModule : ModuleBase
     {
@@ -39,7 +39,7 @@ namespace Modules.Search
         /// </summary>
         public override void RegisterTypesForPullBasedComposition()
         {
-            RegionManager.RegisterViewWithRegion("SearchRegion", () => Container.Resolve<SearchControlPresenter>().View);
+            RegionManager.RegisterViewWithRegion("searchregion", () => Container.Resolve<SearchControlPresenter>().View);
         }
     }
 }

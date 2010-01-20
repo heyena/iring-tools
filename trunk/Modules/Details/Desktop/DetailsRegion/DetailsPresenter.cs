@@ -3,23 +3,24 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows.Controls;
+using org.iringtools.informationmodel.events;
 using PrismContrib.Base;
 
 using Microsoft.Practices.Composite.Events;
 
 using InformationModel.Events;
 
-using ModuleLibrary.Events;
+using org.iringtools.modulelibrary.events;
 
-using OntologyService.Interface;
-using OntologyService.Interface.PresentationModels;
+using org.iringtools.ontologyservice.presentation;
+using org.iringtools.ontologyservice.presentation.presentationmodels;
 
 using org.ids_adi.iring;
 using org.ids_adi.iring.referenceData;
 using org.ids_adi.qmxf;
 
 
-namespace Modules.Details.DetailsRegion
+namespace org.iringtools.modules.details.detailsregion
 {
   public class DetailsPresenter : PresenterBase<IDetailsView>
   {

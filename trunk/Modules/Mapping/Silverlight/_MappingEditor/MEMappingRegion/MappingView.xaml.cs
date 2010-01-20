@@ -4,7 +4,7 @@ using PrismContrib.Base;
 
 using Microsoft.Practices.Composite.Regions;
 
-namespace Modules.MappingEditor.MEMappingRegion
+namespace org.iringtools.modules.memappingregion
 {
   public partial class MappingView : UserControl, IMappingView
   {

@@ -2,10 +2,10 @@
 
 using PrismContrib.Base;
 
-using OntologyService.Interface;
-using OntologyService.Interface.PresentationModels;
+using org.iringtools.ontologyservice.presentation;
+using org.iringtools.ontologyservice.presentation.presentationmodels;
 
-namespace Modules.MappingEditor.MainRegion
+namespace org.iringtools.modules.mainregion
 {
   /// <summary>
   /// Information Model View Presenter

@@ -13,7 +13,7 @@ using org.iringtools.utility;
 using System.Collections.Generic;
 using org.iringtools.library;
 
-namespace ModuleLibrary.Extensions
+namespace org.iringtools.modulelibrary.extensions
 {
   public static class SPARQLExtensions
   {

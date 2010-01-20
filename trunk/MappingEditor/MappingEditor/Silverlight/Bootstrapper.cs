@@ -3,15 +3,15 @@ using System.IO;
 using System.Windows;
 using System.Collections.Generic;
 
-using Modules.Spinner;
-using Modules.Search;
-using Modules.Status;
-using Modules.Details;
-using Modules.MappingEditor;
-using Modules.Menu;
+using org.iringtools.modules.spinner;
+using org.iringtools.modules.search;
+using org.iringtools.modules.status;
+using org.iringtools.modules.details;
+using org.iringtools.modules;
+using org.iringtools.modules.menu;
 
-using Library.Configuration;
-using Library.Interface.Configuration;
+using org.iringtools.library.configuration;
+using org.iringtools.library.presentation.configuration;
 
 using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Composite.Modularity;
