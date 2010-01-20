@@ -17,7 +17,7 @@
 
     <Image Height="26"
 			HorizontalAlignment="Left" VerticalAlignment="Center"
-			Source="iRING.RefDataEditor.Small.png"/>
+			Source="iRINGTools.ReferenceDataEditor.small.png"/>
 
   </Grid>
 </UserControl>

@@ -13,7 +13,7 @@
       </LinearGradientBrush>
     </Grid.Background>
 
-    <Image Height="26" HorizontalAlignment="Left" VerticalAlignment="Center" Width="295" Source="iRING.Small.png" Stretch="Fill"/>
+    <Image Height="26" HorizontalAlignment="Left" VerticalAlignment="Center" Width="295" Source="iRINGTools.MappingEditor.small.png" Stretch="Fill"/>
     <!--<Button HorizontalAlignment="Left" Margin="4" Width="160" Content="Mapping Editor" x:Name="btnMappingEditor1" Tag="MappingEditorView1"/>
     	<Button HorizontalAlignment="Left" Margin="166,4,0,4" Width="162" Content="RDS / WIP Editor" x:Name="btnRefDataEditor1" Tag="RDSWIPEditorView1"/>-->
     <ItemsControl Height="30"  Margin="383,0,2,0" 
