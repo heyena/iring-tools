@@ -117,7 +117,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="MenuRegion\iRING.Small.png" />
+    <Resource Include="MenuRegion\iRINGTools.MappingEditor.small.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\v3.0\Microsoft.Silverlight.CSharp.targets" Condition="" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
