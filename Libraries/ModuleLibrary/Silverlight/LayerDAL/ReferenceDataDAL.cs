@@ -43,6 +43,7 @@ namespace ModuleLibrary.LayerDAL
 
         
         private WebClient _searchClient;
+        private WebClient _searchResetClient;
         private WebClient _findClient;
         private WebClient _classClient;
         private WebClient _templateClient;
@@ -67,6 +68,7 @@ namespace ModuleLibrary.LayerDAL
               _referenceDataServiceUri = config.ReferenceDataServiceUri;
 
               _searchClient = new WebClient();
+              _searchResetClient = new WebClient();
               _findClient = new WebClient();
               _classClient = new WebClient();
               _templateClient = new WebClient();
@@ -78,6 +80,7 @@ namespace ModuleLibrary.LayerDAL
 
               #region // All Async data results will be handled by OnCompleteEventHandler
               _searchClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
+              _searchResetClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
               _findClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
               _classClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
               _templateClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
@@ -160,6 +163,44 @@ namespace ModuleLibrary.LayerDAL
                     {                        
                         CompletedType = CompletedEventType.Search,
                     };                    
+                    Error.SetError(ex);
+                }
+            }
+
+            #endregion
+
+            //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+            #region // Search Reset data arrived event handler
+            // SEARCH RESET
+            if (sender == _searchResetClient)
+            {
+                try
+                {
+                    // Cast e (AsyncCompletedEventArgs) to actual type so we can
+                    // retrieve the Result - assign to dictionary
+                    string result = ((DownloadStringCompletedEventArgs)e).Result;
+
+                    RefDataEntities entities = result.DeserializeDataContract<RefDataEntities>();
+
+                    // If the cast failed then return
+                    if (entities == null)
+                        return;
+
+                    // Configure event argument
+                    args = new CompletedEventArgs
+                    {
+                        UserState = ((DownloadStringCompletedEventArgs)e).UserState,
+                        CompletedType = CompletedEventType.Search,
+                        Data = entities
+                    };
+                }
+                catch (Exception ex)
+                {
+                    // filling args to stop spinner
+                    args = new CompletedEventArgs
+                    {
+                        CompletedType = CompletedEventType.Search,
+                    };
                     Error.SetError(ex);
                 }
             }
@@ -441,6 +482,11 @@ namespace ModuleLibrary.LayerDAL
             return userState;
         }
 
+        public object SearchReset(string query, object userState)
+        {
+            _searchResetClient.DownloadStringAsync(new Uri(_referenceDataServiceUri + "/search/" + query + "/reset"), userState);
+            return userState;
+        }
 
         public RefDataEntities SearchReset(string query)
         {

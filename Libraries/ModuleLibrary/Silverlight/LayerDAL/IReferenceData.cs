@@ -13,6 +13,8 @@ namespace ModuleLibrary.LayerDAL
 
         object Search(string query, object userState);
 
+        object SearchReset(string query, object userState);
+
         object Find(string query, object userState);
 
         QMXF GetClass(string id, object userState);
