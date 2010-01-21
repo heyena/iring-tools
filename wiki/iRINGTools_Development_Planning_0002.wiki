@@ -28,6 +28,9 @@
 || Issue 25 ||Logging and Silverlight Error Handling || Hanh || 12 ||
 || Issue 32 || Silverlight Applications: Header and footer layout || Hahn || 2 ||
 || Issue 34 || RefDataEditor: Detail pane should be visible when adding/editing a class/template || Koos || 16 ||
+|| Issue 35 || SRefDataService: Search result show duplicate roles when adding new role to template || Mohd || ?? ||
+|| Issue 36 || RefDataService: Classifications, Subclasses, Superclasses, Templates and Template Roles not sorted properly || Mohd || 6 ||
+|| Issue 38 || MappingEditor: Not all non-class roles are listed in the mapped template || Gert || ?? ||
 || Issue 39 || AdapterService: URI for getting Scope Configuration || Jim || 8 ||
 || Issue 41 || MappingEditor: BLL and DAL need to call !GetScopeConfiguration|| Pavan || 4 ||
 || Issue 42 || Namespacing || Rob || 2 ||
@@ -37,11 +40,8 @@
 || -- || Namespacing || Rob || 2 ||
 || -- || In MappingEditor not class roles are not identified if more that one level of superclassing is used || Gert || ?? ||
 || -- || In MappingEditor non-class roles should be editable depending on value(literal/reference)/range. || Gert || ?? ||
-|| Issue 36 || Reference Data Editor not sorting Classifications, Subclasses, Superclasses, Templates and Template Roles. || Mohd || 6 ||
 || -- || In MappingEditor class roles are not identified if more that one level of superclassing is used || Gert || ?? ||
-|| Issue 38 || In MappingEditor not all non-class roles are listed in the mapped template. || Gert || ?? ||
 || -- || In MappingEditor non-class roles should be editable depending on value(literal/reference)/range. || Gert || ?? ||
-|| Issue 35 || Search result shows duplicate roles for newly added templates. || Mohd || ?? ||
 
 
 ==Task Board==
