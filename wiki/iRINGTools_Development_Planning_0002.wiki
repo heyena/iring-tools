@@ -29,7 +29,7 @@
 || -- || BLL and DAL need to call !GetProjects and !GetApplications || Pavan || 4 ||
 || -- || Combobox to select Project / Link Combobox to PM || Pavan || 6 ||
 || -- || Combobox to select Application / Link Combobox to PM || Pavan || 6 ||
-|| -- || Each web service call from ME will need to use PM values || Koos || 8hr ||
+|| -- || Each web service call from ME will need to use PM values || Koos || 8 ||
 || -- || Namespacing || Rob || 2 ||
 || -- || In MappingEditor not class roles are not identified if more that one level of superclassing is used || Gert || ?? ||
 || -- || In MappingEditor non-class roles should be editable depending on value(literal/reference)/range. || Gert || ?? ||
@@ -43,7 +43,7 @@
 || Issue 25 ||Consistently Implement logging across silverlight and services. || Hanh || 12 ||
 
 ==Task Board==
-http://iring-tools.googlecode.com/svn/wiki/scrumy.png
+[http://www.scrumy.com/iring-tools http://iring-tools.googlecode.com/svn/wiki/scrumy.png]
 
 The Task board can be found [http://www.scrumy.com/iring-tools here].  It is hosted on [http://www.scrumy.com Scrumy]. If somebody wants to donate a year of Scrumy... feel free (It is $60).
 
