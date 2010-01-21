@@ -49,3 +49,4 @@ The Task board can be found [http://www.scrumy.com/iring-tools here].  It is hos
 ==Action Items==
  * Rob to add issues to the list from our meeting on tuesday.
  * Rob to contact Rohit Aurora (r.arora@tcs.com)
+ * Gert and Mohd to provide estimates for their issues.
