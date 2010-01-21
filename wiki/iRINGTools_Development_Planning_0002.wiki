@@ -25,23 +25,24 @@
 
 ==Sprint Issues==
 || *Issue #* || *Issue Description* || *Assigned* || *Estimate (Hrs)* ||
-|| Issue 42 || Namespacing || Rob || 2 ||
+|| Issue 25 ||Logging and Silverlight Error Handling || Hanh || 12 ||
+|| Issue 32 || Both Silverlight Apps: Header is too small compared to the footer.  Increase header and decrease footer. || Hahn || 2 ||
 || Issue 39 || AdapterService: URI for getting Scope Configuration || Jim || 8 ||
 || Issue 41 || MappingEditor: BLL and DAL need to call !GetScopeConfiguration|| Pavan || 4 ||
+|| Issue 42 || Namespacing || Rob || 2 ||
 || -- || Combobox to select Project / Link Combobox to PM || Pavan || 6 ||
 || -- || Combobox to select Application / Link Combobox to PM || Pavan || 6 ||
 || -- || Each web service call from ME will need to use PM values || Koos || 8 ||
 || -- || Namespacing || Rob || 2 ||
 || -- || In MappingEditor not class roles are not identified if more that one level of superclassing is used || Gert || ?? ||
 || -- || In MappingEditor non-class roles should be editable depending on value(literal/reference)/range. || Gert || ?? ||
-|| Issue 32 || Both Silverlight Apps: Header is too small compared to the footer.  Increase header and decrease footer. || Hahn || 2 ||
 || Issue 36 || Reference Data Editor not sorting Classifications, Subclasses, Superclasses, Templates and Template Roles. || Mohd || 6 ||
 || -- || In MappingEditor class roles are not identified if more that one level of superclassing is used || Gert || ?? ||
 || Issue 38 || In MappingEditor not all non-class roles are listed in the mapped template. || Gert || ?? ||
 || -- || In MappingEditor non-class roles should be editable depending on value(literal/reference)/range. || Gert || ?? ||
 || Issue 35 || Search result shows duplicate roles for newly added templates. || Mohd || ?? ||
 || Issue 34 || Detail pane should be visible when adding/editing a class/template || Koos || 16 ||
-|| Issue 25 ||Consistently Implement logging across silverlight and services. || Hanh || 12 ||
+
 
 ==Task Board==
 [http://www.scrumy.com/iring-tools http://iring-tools.googlecode.com/svn/wiki/scrumy.png]
