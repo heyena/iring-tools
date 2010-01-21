@@ -26,9 +26,9 @@
 || *Issue #* || *Issue Description* || *Assigned* || *Estimate (Hrs)* ||
 || -- || URI for getting Project List || Jim || 4 ||
 || -- || URI for getting Application List || Jim || 4 ||
-|| -- || BLL and DAL need to call GetProjects and GetApplications || Pavan || 4 ||
-|| -- || Combobox to select Project / Combobox <-> PM || Pavan || 6 ||
-|| -- || Combobox to select Application / Combobox <-> PM || Pavan || 6 ||
+|| -- || BLL and DAL need to call !GetProjects and !GetApplications || Pavan || 4 ||
+|| -- || Combobox to select Project / Link Combobox to PM || Pavan || 6 ||
+|| -- || Combobox to select Application / Link Combobox to PM || Pavan || 6 ||
 || -- || Each web service call from ME will need to use PM values || Koos || 8hr ||
 || -- || Namespacing || Rob || 2 ||
 || -- || In MappingEditor not class roles are not identified if more that one level of superclassing is used || Gert || ?? ||
