@@ -25,8 +25,7 @@
 
 ==Sprint Issues==
 || *Issue #* || *Issue Description* || *Assigned* || *Estimate (Hrs)* ||
-|| -- || URI for getting Project List || Jim || 4 ||
-|| -- || URI for getting Application List || Jim || 4 ||
+|| 39 || AdapterService: URI for getting Scope Configuration || Jim || 8 ||
 || -- || BLL and DAL need to call !GetProjects and !GetApplications || Pavan || 4 ||
 || -- || Combobox to select Project / Link Combobox to PM || Pavan || 6 ||
 || -- || Combobox to select Application / Link Combobox to PM || Pavan || 6 ||
