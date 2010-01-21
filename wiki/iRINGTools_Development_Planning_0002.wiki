@@ -1,4 +1,5 @@
 #summary Date: 2010/01/19  Time: 08:30 EST
+#labels Meeting
 
 ==Agenda== 
  * Status
