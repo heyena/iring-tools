@@ -33,14 +33,14 @@
 || -- || Namespacing || Rob || 2 ||
 || -- || In MappingEditor not class roles are not identified if more that one level of superclassing is used || Gert || ?? ||
 || -- || In MappingEditor non-class roles should be editable depending on value(literal/reference)/range. || Gert || ?? ||
-|| 32 || Both Silverlight Apps: Header is too small compared to the footer.  Increase header and decrease footer. || Hahn || 2 ||
-|| 36 || Reference Data Editor not sorting Classifications, Subclasses, Superclasses, Templates and Template Roles. || Mohd || 6 ||
+|| Issue 32 || Both Silverlight Apps: Header is too small compared to the footer.  Increase header and decrease footer. || Hahn || 2 ||
+|| Issue 36 || Reference Data Editor not sorting Classifications, Subclasses, Superclasses, Templates and Template Roles. || Mohd || 6 ||
 || -- || In MappingEditor class roles are not identified if more that one level of superclassing is used || Gert || ?? ||
-|| 38 || In MappingEditor not all non-class roles are listed in the mapped template. || Gert || ?? ||
+|| Issue 38 || In MappingEditor not all non-class roles are listed in the mapped template. || Gert || ?? ||
 || -- || In MappingEditor non-class roles should be editable depending on value(literal/reference)/range. || Gert || ?? ||
-|| 35 || Search result shows duplicate roles for newly added templates. || Mohd || ?? ||
-|| 34 || Detail pane should be visible when adding/editing a class/template || Koos || 16 ||
-|| 25 ||Consistently Implement logging across silverlight and services. || Hanh || 12 ||
+|| Issue 35 || Search result shows duplicate roles for newly added templates. || Mohd || ?? ||
+|| Issue 34 || Detail pane should be visible when adding/editing a class/template || Koos || 16 ||
+|| Issue 25 ||Consistently Implement logging across silverlight and services. || Hanh || 12 ||
 
 ==Action Items==
  * Rob to add issues to the list from our meeting on tuesday.
