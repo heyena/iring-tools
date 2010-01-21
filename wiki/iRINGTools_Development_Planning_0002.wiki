@@ -18,7 +18,7 @@
 
 ==Status==
  * Namespacing - Jim completed Silverlight changes
- * Logo - Jim completed
+ * Issue 40 - Jim completed
  * Issue 33 - Pavan completed
  * Issue 25 - Hanhs is working this and will demo/instruct next tuesday
  * Issue 34 - Gert is getting online and Koos is started on adding tabs.
