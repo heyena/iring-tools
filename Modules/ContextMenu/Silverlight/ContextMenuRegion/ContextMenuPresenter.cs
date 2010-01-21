@@ -14,7 +14,6 @@ using org.iringtools.modulelibrary.events;
 using org.iringtools.ontologyservice.presentation;
 using org.iringtools.ontologyservice.presentation.presentationmodels;
 
-using org.iringtools.informationmodel.events;
 using org.iringtools.informationmodel.usercontrols;
 
 using org.ids_adi.iring;
