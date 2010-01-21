@@ -26,7 +26,8 @@
 ==Sprint Issues==
 || *Issue #* || *Issue Description* || *Assigned* || *Estimate (Hrs)* ||
 || Issue 25 ||Logging and Silverlight Error Handling || Hanh || 12 ||
-|| Issue 32 || Both Silverlight Apps: Header is too small compared to the footer.  Increase header and decrease footer. || Hahn || 2 ||
+|| Issue 32 || Silverlight Applications: Header and footer layout || Hahn || 2 ||
+|| Issue 34 || RefDataEditor: Detail pane should be visible when adding/editing a class/template || Koos || 16 ||
 || Issue 39 || AdapterService: URI for getting Scope Configuration || Jim || 8 ||
 || Issue 41 || MappingEditor: BLL and DAL need to call !GetScopeConfiguration|| Pavan || 4 ||
 || Issue 42 || Namespacing || Rob || 2 ||
@@ -41,7 +42,6 @@
 || Issue 38 || In MappingEditor not all non-class roles are listed in the mapped template. || Gert || ?? ||
 || -- || In MappingEditor non-class roles should be editable depending on value(literal/reference)/range. || Gert || ?? ||
 || Issue 35 || Search result shows duplicate roles for newly added templates. || Mohd || ?? ||
-|| Issue 34 || Detail pane should be visible when adding/editing a class/template || Koos || 16 ||
 
 
 ==Task Board==
