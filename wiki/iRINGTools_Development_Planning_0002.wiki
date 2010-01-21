@@ -1,6 +1,7 @@
 #summary Date: 2010/01/19  Time: 08:30 EST
 
-==Agenda== * Status
+==Agenda== 
+ * Status
  * Review Sprint Issues
  * Estimation
  * Assemble the Task Board
@@ -21,7 +22,7 @@
  * Issue 25 - Hanhs is working this and will demo/instruct next tuesday
  * Issue 34 - Gert is getting online and Koos is started on adding tabs.
 
-==Spring Issues==
+==Sprint Issues==
 || *Issue #* || *Issue Description* || *Assigned* || *Estimate (Hrs)* ||
 || -- || URI for getting Project List || Jim || 4 ||
 || -- || URI for getting Application List || Jim || 4 ||
@@ -40,6 +41,11 @@
 || Issue 35 || Search result shows duplicate roles for newly added templates. || Mohd || ?? ||
 || Issue 34 || Detail pane should be visible when adding/editing a class/template || Koos || 16 ||
 || Issue 25 ||Consistently Implement logging across silverlight and services. || Hanh || 12 ||
+
+==Task Board==
+http://iring-tools.googlecode.com/svn/wiki/scrumy.png
+
+The Task board can be found [http://www.scrumy.com/iring-tools here].  It is hosted on [http://www.scrumy.com Scrumy]. If somebody wants to donate a year of Scrumy... feel free (It is $60).
 
 ==Action Items==
  * Rob to add issues to the list from our meeting on tuesday.
