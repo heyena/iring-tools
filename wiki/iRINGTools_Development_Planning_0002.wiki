@@ -17,7 +17,7 @@
  * Rob
 
 ==Status==
- * Namespacing - Jim completed Silverlight changes
+ * Issue 42 - Jim completed Silverlight changes
  * Issue 40 - Jim completed
  * Issue 33 - Pavan completed
  * Issue 25 - Hanhs is working this and will demo/instruct next tuesday
