@@ -39,7 +39,7 @@ namespace org.iringtools.modules.search
         /// </summary>
         public override void RegisterTypesForPullBasedComposition()
         {
-            RegionManager.RegisterViewWithRegion("searchregion", () => Container.Resolve<SearchControlPresenter>().View);
+            RegionManager.RegisterViewWithRegion("SearchRegion", () => Container.Resolve<SearchControlPresenter>().View);
         }
     }
 }

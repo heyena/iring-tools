@@ -177,10 +177,10 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
                     userControl.Visibility = Visibility.Visible;
                 }
             }
-            else if (e.ButtonClicked.Tag.Equals("EditClass1"))
-            {
+            //else if (e.ButtonClicked.Tag.Equals("EditClass1"))
+            //{
 
-            }
+            //}
         }
 
         public void buttonClickHandler(ButtonEventArgs e)

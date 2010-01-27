@@ -35,22 +35,34 @@ namespace org.iringtools.modules.contextmenu.contextmenuregion
         
         private Button btnAddClass
         {
-            get { return ButtonCtrl("btnAddClass1"); }
+            get 
+            { 
+                return ButtonCtrl("btnAddClass1"); 
+            }
         }
 
         private Button btnEditClass
         {
-            get { return ButtonCtrl("btnEditClass1"); }
+            get 
+            { 
+                return ButtonCtrl("btnEditClass1"); 
+            }
         }
 
         private Button btnEditTemplate
         {
-            get { return ButtonCtrl("btnEditTemplate1"); }
+            get 
+            { 
+                return ButtonCtrl("btnEditTemplate1"); 
+            }
         }
 
         private Button btnAddTemplate
         {
-            get { return ButtonCtrl("btnAddTemplate1"); }
+            get 
+            { 
+                return ButtonCtrl("btnAddTemplate1");
+            }
         }
 
         /// <summary>
@@ -98,7 +110,7 @@ namespace org.iringtools.modules.contextmenu.contextmenuregion
         }
 
         void buttonAddClassHandler(object sender, System.Windows.RoutedEventArgs e)
-        {            
+        {
             aggregator.GetEvent<ButtonEvent>().Publish(new ButtonEventArgs() { ButtonClicked = (Button)e.OriginalSource, Sender = sender });
         }
         

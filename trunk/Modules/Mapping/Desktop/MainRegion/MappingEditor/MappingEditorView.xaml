@@ -27,7 +27,7 @@
     <ItemsControl Name="DataSource" Grid.Row="0" Grid.Column="0" Regions:RegionManager.RegionName="MEDataSourceRegion"
 						 VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  />
 
-    <ItemsControl Name="Search" Grid.Row="0" Grid.Column="1" Regions:RegionManager.RegionName="searchregion"
+    <ItemsControl Name="Search" Grid.Row="0" Grid.Column="1" Regions:RegionManager.RegionName="SearchRegion"
         		 VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
 
     <!--<ItemsControl Name="Navigation" Grid.Row="1" Grid.Column="1" Regions:RegionManager.RegionName="NavigationRegion"
