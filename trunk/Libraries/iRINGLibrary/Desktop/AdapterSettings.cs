@@ -19,6 +19,7 @@ namespace org.iringtools.adapter
     private string _encryptedToken = String.Empty;
     private string _tripleStoreConnectionString = String.Empty;
     private string _interfaceServer = String.Empty;
+    private string _projectListSource = string.Empty;
 
     public AdapterSettings(NameValueCollection AppSettings)
     {     
@@ -36,6 +37,7 @@ namespace org.iringtools.adapter
       this.TransformPath = AppSettings["TransformPath"];
       this.DataLayerConfigPath = AppSettings["DataLayerConfigPath"];
       this.BaseDirectoryPath = AppSettings["BaseDirectoryPath"];
+      this.ProjectListSource = AppSettings["ProjectListSource"];
 
       this.PrepareCredentials();
     }
@@ -197,6 +199,25 @@ namespace org.iringtools.adapter
         }
       }
     }
+
+      public string ProjectListSource
+      {
+          get
+          {
+              return _projectListSource;
+          }
+          set
+          {
+              if (value==String.Empty || value==null)
+              {
+                  _projectListSource = "Project.xml";
+              }
+              else
+              {
+                  _projectListSource = value;
+              }
+          }
+      }
   }
 
   

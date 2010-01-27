@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<projects>
+  <project name="12345_000">
+    <application>ABC</application>
+    <application>DEF</application>
+  </project>
+  <project name="678910_000">
+    <application>GHI</application>
+    <application>DEF</application>
+  </project>
+</projects>

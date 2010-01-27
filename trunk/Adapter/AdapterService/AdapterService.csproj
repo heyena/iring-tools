@@ -130,6 +130,7 @@
     <Content Include="XML\nh-configuration.12345_000.DEF.xml" />
     <Content Include="XML\nh-mapping.12345_000.ABC.xml" />
     <Content Include="XML\nh-mapping.12345_000.DEF.xml" />
+    <Content Include="XML\Project.xml" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
