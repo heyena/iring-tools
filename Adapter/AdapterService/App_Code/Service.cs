@@ -55,6 +55,15 @@ namespace org.iringtools.adapter
     }
 
     /// <summary>
+    /// Gets the list of projects by reading Project.xml.
+    /// </summary>
+    /// <returns>Returns a strongly typed list of IntegrationProject objects.</returns>
+    public List<IntegrationProject> GeProjects()
+    {
+        return _adapterServiceProvider.GetProjects();
+    }
+
+    /// <summary>
     /// Gets the Data Dictionary by reading DataDictionary.xml
     /// </summary>
     /// <returns>Returns Data Dictionary object.</returns>

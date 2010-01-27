@@ -110,6 +110,25 @@ namespace org.iringtools.adapter
       }
     }
 
+    /// <summary>
+    /// Gets all of the projects and their corresponding applications.
+    /// </summary>
+    /// <returns>Returns a strongly typed list of projects, each project has an (Response) Applications property detailing
+    /// which applications are available</returns>
+    public List<IntegrationProject> GetProjects()
+    {
+        string path = _settings.XmlPath + _settings.ProjectListSource;
+
+        try
+        {
+            List<IntegrationProject> _projects = Utility.Read<List<IntegrationProject>>(path, false);
+            return _projects;
+        }
+        catch (Exception exception)
+        {
+            throw new Exception("Error while getting the list of projects/applications from " + path + "." + exception.ToString(), exception);
+        }
+    }
 
     /// <summary>
     /// Gets the Data Dictionary by reading DataDictionary.xml
