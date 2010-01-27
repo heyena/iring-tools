@@ -50,7 +50,7 @@ namespace org.iringtools.modelling
         {
             RegionManager.RegisterViewWithRegion("mainregion", () => Container.Resolve<RefDataBrowserPresenter>().View);
             RegionManager.RegisterViewWithRegion("menuregion", () => Container.Resolve<MenuPresenter>().View);
-            RegionManager.RegisterViewWithRegion("classeditorregion", () => Container.Resolve<ClassDefinitionEditorPresenter>().View);
+            RegionManager.RegisterViewWithRegion("ClassEditorRegion", () => Container.Resolve<ClassDefinitionEditorPresenter>().View);
         }
     }
 }

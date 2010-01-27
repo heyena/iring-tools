@@ -19,7 +19,7 @@ using InformationModel.Events;
 using org.iringtools.library;
 
 #if SILVERLIGHT
-using ModuleLibrary.Behaviors;
+using org.iringtools.modulelibrary.behaviors;
 using System.Windows.Interactivity;
 #else
 #endif

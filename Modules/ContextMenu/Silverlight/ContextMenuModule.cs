@@ -47,7 +47,7 @@ namespace org.iringtools.modules.contextmenu
         /// </summary>
         public override void RegisterTypesForPullBasedComposition()
         {
-            RegionManager.RegisterViewWithRegion("contextmenuregion",
+            RegionManager.RegisterViewWithRegion("ContextMenuRegion",
                 () => Container.Resolve<ContextMenuPresenter>().View);
 
         }
