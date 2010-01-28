@@ -57,10 +57,10 @@ namespace org.iringtools.adapter
     /// <summary>
     /// Gets the list of projects by reading Project.xml.
     /// </summary>
-    /// <returns>Returns a strongly typed list of IntegrationProject objects.</returns>
-    public List<IntegrationProject> GeProjects()
+    /// <returns>Returns a strongly typed list of ScopeProject objects.</returns>
+    public List<ScopeProject> GetScopes()
     {
-        return _adapterServiceProvider.GetProjects();
+        return _adapterServiceProvider.GetScopes();
     }
 
     /// <summary>
