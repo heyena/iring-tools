@@ -295,7 +295,7 @@ namespace org.iringtools.modulelibrary.layerdal
     #region GetDictionary() 
     public DataDictionary GetDictionary()
     {
-      _dictionaryClient.DownloadStringAsync(new Uri(_adapterServiceUri + "/dictionary"));
+      _dictionaryClient.DownloadStringAsync(new Uri(_adapterServiceUri + "/datadictionary"));
       return null;
     } 
     #endregion

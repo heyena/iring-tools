@@ -89,12 +89,10 @@ namespace org.ids_adi.iring.referenceData
             string encryptedProxyToken = configSettings.ProxyCredentialToken;
             string proxyHost = configSettings.ProxyHost;
             string proxyPortString = configSettings.ProxyPort;
-
-
+          
             if (encryptedRegistryToken == String.Empty)
             {
-                _registryCredentials = new WebCredentials(encryptedRegistryToken);
-                _registryCredentials.Decrypt();
+                _registryCredentials = new WebCredentials();
             }
             else
             {

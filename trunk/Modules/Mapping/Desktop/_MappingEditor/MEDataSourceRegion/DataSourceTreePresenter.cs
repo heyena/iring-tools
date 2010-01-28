@@ -187,23 +187,29 @@ namespace org.iringtools.modules.medatasourceregion
         bool PopulateDataObjectNode(DataObjectItem node, org.iringtools.library.DataObject dataObject)
         {
           DataObjectItem item = null;
-            if (dataObject.dataProperties.Count > 0)
-            {
-              item = new DataObjectItem();
-              item.SetTextBlockText("Stub");
-              item.Tag = dataObject.dataProperties;
-              item.SetTooltipText("Object : "+dataObject.dataProperties.ToString());
-              node.Items.Add(item);
-            }
-            if (dataObject.dataRelationships.Count > 0)
-            {
-              item = new DataObjectItem();
-              item.SetTextBlockText("Stub");
-              item.Tag = dataObject.dataRelationships;
-              item.SetTooltipText(dataObject.dataRelationships.ToString());
-              node.Items.Add(item);
-            }
-            return true;
+
+          if (dataObject == null)
+            return false;
+
+          if (dataObject.dataProperties != null && dataObject.dataProperties.Count > 0)
+          {
+            item = new DataObjectItem();
+            item.SetTextBlockText("Stub");
+            item.Tag = dataObject.dataProperties;
+            item.SetTooltipText("Object : "+dataObject.dataProperties.ToString());
+            node.Items.Add(item);
+          }
+
+          if (dataObject.dataRelationships != null && dataObject.dataRelationships.Count > 0)
+          {
+            item = new DataObjectItem();
+            item.SetTextBlockText("Stub");
+            item.Tag = dataObject.dataRelationships;
+            item.SetTooltipText(dataObject.dataRelationships.ToString());
+            node.Items.Add(item);
+          }
+          
+          return true;
         }
 
 
