@@ -48,6 +48,10 @@ namespace org.iringtools.adapter
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/datadictionary/refresh")]
     Response RefreshDictionary(string projectName, string applicationName);
 
+    [OperationContract]
+    [WebGet(UriTemplate = "/scopes")]
+    List<ScopeProject> GetScopes();
+
     [XmlSerializerFormat]
     [OperationContract]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/mapping")]

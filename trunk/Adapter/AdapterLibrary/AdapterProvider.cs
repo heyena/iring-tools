@@ -115,13 +115,13 @@ namespace org.iringtools.adapter
     /// </summary>
     /// <returns>Returns a strongly typed list of projects, each project has an (Response) Applications property detailing
     /// which applications are available</returns>
-    public List<IntegrationProject> GetProjects()
+    public List<ScopeProject> GetScopes()
     {
         string path = _settings.XmlPath + _settings.ProjectListSource;
 
         try
         {
-            List<IntegrationProject> _projects = Utility.Read<List<IntegrationProject>>(path, false);
+            List<ScopeProject> _projects = Utility.Read<List<ScopeProject>>(path, true);
             return _projects;
         }
         catch (Exception exception)
