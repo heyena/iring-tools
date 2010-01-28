@@ -10,41 +10,45 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     mc:Ignorable="d"
 >
-  <Grid ShowGridLines="False" x:Name="LayoutRoot" 
+    <Grid ShowGridLines="False" x:Name="LayoutRoot" 
         HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto">
-    <Grid.Background>
-      <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-        <GradientStop Color="#FFFFFFFF"/>
-        <GradientStop Color="#FF286700" Offset="1"/>
-      </LinearGradientBrush>
-    </Grid.Background>
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#FFFFFFFF"/>
+                <GradientStop Color="#FF286700" Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
 
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="*"  />
-      <ColumnDefinition Width="*"  />
-    </Grid.ColumnDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"  />
+            <ColumnDefinition Width="*"  />
+        </Grid.ColumnDefinitions>
 
-    <Grid.RowDefinitions>
-      <RowDefinition Height="30"/>
-      <RowDefinition Height="*"/>
-    </Grid.RowDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="180"/>
+        </Grid.RowDefinitions>
 
-    <ItemsControl Name="Search" Grid.RowSpan="2" Grid.Column="0" Regions:RegionManager.RegionName="searchregion"
+        <ItemsControl Name="Search" Grid.RowSpan="2" Grid.Column="0" Regions:RegionManager.RegionName="SearchRegion"
         		      VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
 
-    <basics:GridSplitter Opacity="0" Grid.RowSpan="2" Grid.Column="0" Width="4"/>
+        <basics:GridSplitter Opacity="0" Grid.RowSpan="2" Grid.Column="0" Grid.Row="1" Width="4"/>
 
-    <ItemsControl Name="Details" Grid.Row="1" Grid.Column="1" Regions:RegionManager.RegionName="DetailRegion" 
+        <ItemsControl Name="Edits" Grid.Row="1" Grid.Column="1" Regions:RegionManager.RegionName="EditsRegion" 
+                        HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" />
+
+        <ItemsControl Name="Details" Grid.Row="3" Grid.ColumnSpan="2" Regions:RegionManager.RegionName="DetailRegion" 
 				          HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 
-    <ItemsControl Name="ContextMenu" Grid.Row="0" Grid.Column="1" Regions:RegionManager.RegionName="Contextmenuregion"
+        <ItemsControl Name="ContextMenu" Grid.Row="0" Grid.Column="1" Regions:RegionManager.RegionName="ContextMenuRegion"
         		      VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
 
-    <ItemsControl Name="ClassEditor" Grid.Row="1" Grid.Column="1" Regions:RegionManager.RegionName="ClassEditorRegion" 
+        <ItemsControl Name="ClassEditor" Grid.Column="1" Grid.Row="1"  Regions:RegionManager.RegionName="ClassEditorRegion" 
 				          HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 
-    <ItemsControl Name="TemplateEditor" Grid.Row="1" Grid.Column="1" Regions:RegionManager.RegionName="TemplateEditorRegion" 
+        <ItemsControl Name="TemplateEditor" Grid.Row="1" Grid.Column="1" Regions:RegionManager.RegionName="TemplateEditorRegion" 
 				          HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 
-  </Grid>
+    </Grid>
 </UserControl>
