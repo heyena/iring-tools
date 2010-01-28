@@ -12,6 +12,8 @@ using org.iringtools.modules.spinner;
 using org.iringtools.modules.search;
 using org.iringtools.modules.details;
 using org.iringtools.modules.status;
+using org.iringtools.modules.edits;
+
 
 using org.iringtools.modules.contextmenu;
 using org.iringtools.modules.templateeditor;
@@ -35,13 +37,14 @@ namespace RefDataEditor
             catalog.AddModule(typeof(DetailsModule));
             catalog.AddModule(typeof(StatusModule));
             catalog.AddModule(typeof(ContextMenuModule));
+            catalog.AddModule(typeof(EditsModule));
             catalog.AddModule(typeof(TemplateEditorModule));
             
             //catalog.AddModule(typeof(PopupModule),
             //     new String[] { "SearchModule" });
             
             catalog.AddModule(typeof(ModellingModule),
-                 new String[] { "SpinnerModule", "StatusModule", "SearchModule", "DetailsModule", "ContextMenuModule", "TemplateEditorModule" });
+                 new String[] { "SpinnerModule", "StatusModule", "SearchModule", "DetailsModule", "ContextMenuModule", "TemplateEditorModule", "EditsModule" });
 
             return catalog;
         }

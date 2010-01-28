@@ -11,7 +11,8 @@ namespace org.iringtools.modelling.mainregion.refdatabrowser
 
           LayoutRoot.SizeChanged += new System.Windows.SizeChangedEventHandler(LayoutRoot_SizeChanged);
           Search.Loaded += new System.Windows.RoutedEventHandler(Search_SizeChanged);          
-          Details.Loaded += new System.Windows.RoutedEventHandler(Details_SizeChanged);          
+          Details.Loaded += new System.Windows.RoutedEventHandler(Details_SizeChanged);
+          Edits.Loaded += new System.Windows.RoutedEventHandler(Edits_SizeChanged);
           ClassEditor.Loaded += new System.Windows.RoutedEventHandler(ClassEditor_SizeChanged);
           TemplateEditor.Loaded += new System.Windows.RoutedEventHandler(TemplateEditor_SizeChanged);
         }
@@ -26,6 +27,14 @@ namespace org.iringtools.modelling.mainregion.refdatabrowser
           TemplateEditor_SizeChanged(sender, e);
         }
 
+        void Edits_SizeChanged(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (Edits.Items.Count > 0)
+            {
+            UserControl userControl = (UserControl)Edits.Items[0];
+                userControl.Height = LayoutRoot.RowDefinitions[1].ActualHeight;
+            }
+        }
         void Search_SizeChanged(object sender, System.Windows.RoutedEventArgs e)
         {
           if (Search.Items.Count > 0)
@@ -42,7 +51,7 @@ namespace org.iringtools.modelling.mainregion.refdatabrowser
           {
             UserControl userControl = (UserControl)Details.Items[0];
             //double rowSpanHeight = LayoutRoot.RowDefinitions[0].ActualHeight + LayoutRoot.RowDefinitions[1].ActualHeight;
-            userControl.Height = LayoutRoot.RowDefinitions[1].ActualHeight; //rowSpanHeight;
+            userControl.Height = LayoutRoot.RowDefinitions[2].ActualHeight; //rowSpanHeight;
             //userControl.Width = LayoutRoot.ColumnDefinitions[1].ActualWidth;
           }
         }
