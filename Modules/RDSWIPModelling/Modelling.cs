@@ -48,8 +48,8 @@ namespace org.iringtools.modelling
         /// </summary>
         public override void RegisterTypesForPullBasedComposition()
         {
-            RegionManager.RegisterViewWithRegion("mainregion", () => Container.Resolve<RefDataBrowserPresenter>().View);
-            RegionManager.RegisterViewWithRegion("menuregion", () => Container.Resolve<MenuPresenter>().View);
+            RegionManager.RegisterViewWithRegion("MainRegion", () => Container.Resolve<RefDataBrowserPresenter>().View);
+            RegionManager.RegisterViewWithRegion("MenuRegion", () => Container.Resolve<MenuPresenter>().View);
             RegionManager.RegisterViewWithRegion("ClassEditorRegion", () => Container.Resolve<ClassDefinitionEditorPresenter>().View);
         }
     }
