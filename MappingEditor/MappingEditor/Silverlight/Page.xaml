@@ -16,9 +16,9 @@
     </Grid.ColumnDefinitions>
 
     <Grid.RowDefinitions>
-      <RowDefinition Height="30"/>
+      <RowDefinition Height="50"/>
       <RowDefinition Height="*"/>
-      <RowDefinition Height="30"/>
+      <RowDefinition Height="10"/>
     </Grid.RowDefinitions>
 
     <ItemsControl Grid.Row="0" Grid.Column="1" Background="Wheat"  
