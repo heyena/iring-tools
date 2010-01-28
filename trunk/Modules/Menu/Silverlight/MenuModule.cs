@@ -34,7 +34,7 @@ namespace org.iringtools.modules.menu
         /// </summary>
         public override void RegisterTypesForPullBasedComposition()
         {
-            RegionManager.RegisterViewWithRegion("menuregion",
+            RegionManager.RegisterViewWithRegion("MenuRegion",
                 () => Container.Resolve<MenuPresenter>().View);
         }
     }

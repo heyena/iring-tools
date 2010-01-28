@@ -30,7 +30,7 @@ namespace org.iringtools.modules.spinner
 
         public override void RegisterTypesForPullBasedComposition()
         {
-            RegionManager.RegisterViewWithRegion("spinnerregion", () => Container.Resolve<WorkingSpinner>());
+            RegionManager.RegisterViewWithRegion("SpinnerRegion", () => Container.Resolve<WorkingSpinner>());
         }
     }
 }

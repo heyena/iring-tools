@@ -43,7 +43,7 @@ namespace org.iringtools.modules.status
         /// </summary>
         public override void RegisterTypesForPullBasedComposition()
         {
-            RegionManager.RegisterViewWithRegion("statusregion", () => Container.Resolve<StatusPresenter>().View);
+            RegionManager.RegisterViewWithRegion("StatusRegion", () => Container.Resolve<StatusPresenter>().View);
         }
     }
 }
