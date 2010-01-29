@@ -24,6 +24,7 @@ using org.iringtools.ontologyservice.presentation.presentationmodels;
 using org.ids_adi.iring;
 using System.Windows.Media.Imaging;
 using System.Windows.Resources;
+using System.Windows.Media;
 
 namespace org.iringtools.modules.search.searchregion
 {
@@ -91,12 +92,14 @@ namespace org.iringtools.modules.search.searchregion
                 this.container = container;
                 this.model = model;
 
-
                 aggregator.GetEvent<ButtonEvent>().Subscribe(ButtonClickHandler);
                 aggregator.GetEvent<SpinnerEvent>().Subscribe(SpinnerEventHandler);
+
                 // setup tab control - we want to be notified when tab
                 // selection changes occur
                 tabCtrl = new TabControl();
+                tabCtrl.BorderThickness = new Thickness(1);
+                tabCtrl.BorderBrush = new SolidColorBrush(Color.FromArgb(255, 143, 160, 174));
                 tabCtrl.SelectionChanged += tabSelectionChanged;
 
                 //tabCtrl.Width = itcModelBrowser.Width;
