@@ -5,7 +5,7 @@
     Height="auto" Width="auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
 >
   <Grid x:Name="LayoutRoot" Height="auto" Width="auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#FFF0F0F0">
-    <data:DataGrid x:Name="editdg" BorderBrush="#8FA0AE" BorderThickness="1" HorizontalContentAlignment="Stretch" Margin="4,4,4,4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CanUserSortColumns="True"/>
+    <data:DataGrid x:Name="editdg" BorderBrush="#8FA0AE" BorderThickness="1,0,1,1" HorizontalContentAlignment="Stretch" Margin="4,0,4,4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CanUserSortColumns="True"/>
     <TextBlock Height="29" Margin="0,0,28,28" VerticalAlignment="Bottom" Text="Edits" TextWrapping="Wrap" FontFamily="Portable User Interface" FontSize="20" FontStyle="Italic" FontWeight="Bold" Opacity="0.1" Width="84.068" HorizontalAlignment="Right"/>
   </Grid>
 </UserControl>
