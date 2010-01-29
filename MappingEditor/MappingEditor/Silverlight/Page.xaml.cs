@@ -16,7 +16,7 @@ namespace MappingEditor
         {
           Control c = (Control)MainItem.Items[0];
           c.Height = LayoutRoot.RowDefinitions[1].ActualHeight;
-          c.Width = LayoutRoot.ColumnDefinitions[1].ActualWidth;          
+          //c.Width = LayoutRoot.ColumnDefinitions[1].ActualWidth;          
         }
     }
 }

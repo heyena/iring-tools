@@ -177,9 +177,6 @@
   <ItemGroup>
     <Resource Include="Resources\graph.png" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\OutOfBrowserSettings.xml" />
-  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\v3.0\Microsoft.Silverlight.CSharp.targets" Condition="" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -9,31 +9,25 @@
       <SolidColorBrush Color="White"/>
     </Grid.Background>
 
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="0"  />
-      <ColumnDefinition Width="*"  />
-      <ColumnDefinition Width="0"  />
-    </Grid.ColumnDefinitions>
-
     <Grid.RowDefinitions>
-      <RowDefinition Height="50"/>
+      <RowDefinition Height="40"/>
       <RowDefinition Height="*"/>
-      <RowDefinition Height="10"/>
+      <RowDefinition Height="14"/>
     </Grid.RowDefinitions>
 
-    <ItemsControl Grid.Row="0" Grid.Column="1" Background="Wheat"  
+    <ItemsControl Grid.Row="0" Background="Wheat"  
                   VerticalAlignment="Bottom" HorizontalAlignment="Stretch" 
 			            Regions:RegionManager.RegionName="MenuRegion"/>
 
-    <ItemsControl Name="MainItem" Grid.Row="1" Grid.Column="1" 
+    <ItemsControl Name="MainItem" Grid.Row="1" 
                   VerticalAlignment="Center" HorizontalAlignment="Stretch" 
 			            Regions:RegionManager.RegionName="MainRegion"  />
 
-    <ItemsControl Grid.Row="2" Grid.Column="1"  Background="White"
+    <ItemsControl Grid.Row="2" Background="White"
                   VerticalAlignment="Top" HorizontalAlignment="Stretch" 
 			            Regions:RegionManager.RegionName="StatusRegion"  />
 
-    <ItemsControl Grid.ColumnSpan="3" Grid.RowSpan="3"
+    <ItemsControl Grid.RowSpan="3"
                   VerticalAlignment="Center" HorizontalAlignment="Center" 
 			            Regions:RegionManager.RegionName="SpinnerRegion"  />
   </Grid>
