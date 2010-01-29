@@ -16,7 +16,6 @@ namespace RefDataEditor
           foreach (UserControl userControl in MainItem.Items)
           {
             userControl.Height = PageGrid.RowDefinitions[1].ActualHeight;
-            //userControl.Width = PageGrid.ColumnDefinitions[1].ActualWidth;
           }
 
           foreach (UserControl userControl in OverlayItem.Items)
