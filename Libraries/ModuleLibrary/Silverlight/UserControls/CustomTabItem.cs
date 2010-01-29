@@ -82,9 +82,7 @@ namespace org.iringtools.informationmodel.usercontrols
             {
                 Content = "x" //buttonImage
             };
-
-
-
+          
             // Subscribe to click event and bubble to parent
             btnCtrl.Click += (object sender, RoutedEventArgs e) => { OnCloseClick(this, e); };
 
@@ -94,9 +92,10 @@ namespace org.iringtools.informationmodel.usercontrols
 
             txtCtrl.SetValue(Grid.ColumnProperty, 0);
             btnCtrl.SetValue(Grid.ColumnProperty, 2);
-
-
+          
             tvwCtrl = new TreeView();
+            tvwCtrl.BorderThickness = new Thickness(1);
+            tvwCtrl.BorderBrush = new SolidColorBrush(Colors.LightGray);                
 
 #if SILVERLIGHT
             MouseScrollBehavior mouseScrollBehavior = new MouseScrollBehavior();
