@@ -9,7 +9,7 @@ namespace org.iringtools.library
    public class ScopeProject
     {
         private string _name;
-        private List<ScopeApplication> _applications;
+        private List<ScopeApplication> _applications = new List<ScopeApplication>();
 
        /// <summary>
        /// Default constructor
