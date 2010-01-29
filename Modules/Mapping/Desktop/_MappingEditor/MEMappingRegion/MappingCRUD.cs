@@ -279,6 +279,20 @@ namespace org.iringtools.modules.memappingregion
 
                         currentTemplateMap.roleMaps.Add(roleMap);
                     }
+
+                    if (range == String.Empty && range != classId)
+                    {
+                        RoleMap roleMap = new RoleMap
+                        {
+                            name = roleDefinition.name.FirstOrDefault().value,
+                            dataType = range,
+                            propertyName = "",
+                            roleId = roleDefinition.identifier.GetIdWithAliasFromUri(),
+                            isMapped = false
+                        };
+
+                        currentTemplateMap.roleMaps.Add(roleMap);
+                    }
                 }
             }
             if (template is TemplateQualification)
@@ -290,6 +304,20 @@ namespace org.iringtools.modules.memappingregion
                 {
                     string range = roleQualification.range.GetIdWithAliasFromUri();
                     if (range != String.Empty && range != classId)
+                    {
+                        RoleMap roleMap = new RoleMap
+                        {
+                            name = roleQualification.name.FirstOrDefault().value,
+                            dataType = range,
+                            propertyName = "",
+                            roleId = roleQualification.qualifies.GetIdWithAliasFromUri(),
+                            isMapped = false
+                        };
+
+                        currentTemplateMap.roleMaps.Add(roleMap);
+                    }
+
+                    if (range == String.Empty && range != classId)
                     {
                         RoleMap roleMap = new RoleMap
                         {
