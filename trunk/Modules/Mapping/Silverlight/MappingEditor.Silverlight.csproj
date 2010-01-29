@@ -92,12 +92,15 @@
     </Compile>
     <Compile Include="..\Desktop\_MappingEditor\MEMappingRegion\IMappingView.cs">
       <Link>_MappingEditor\MEMappingRegion\IMappingView.cs</Link>
+      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\Desktop\_MappingEditor\MEMappingRegion\MappingCRUD.cs">
       <Link>_MappingEditor\MEMappingRegion\MappingCRUD.cs</Link>
+      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\Desktop\_MappingEditor\MEMappingRegion\MappingPresenter.cs">
       <Link>_MappingEditor\MEMappingRegion\MappingPresenter.cs</Link>
+      <SubType>Code</SubType>
     </Compile>
     <Compile Include="MainRegion\MappingEditor\MappingEditorView.xaml.cs">
       <DependentUpon>MappingEditorView.xaml</DependentUpon>
@@ -108,6 +111,7 @@
     </Compile>
     <Compile Include="_MappingEditor\MEMappingRegion\MappingView.xaml.cs">
       <DependentUpon>MappingView.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -138,8 +142,8 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="_MappingEditor\MEMappingRegion\MappingView.xaml">
-      <Generator>MSBuild:MarkupCompilePass1</Generator>
       <SubType>Designer</SubType>
+      <Generator>MSBuild:MarkupCompilePass1</Generator>
     </Page>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\v3.0\Microsoft.Silverlight.CSharp.targets" Condition="" />
@@ -155,7 +159,7 @@
       <FlavorProperties GUID="{A1591282-1198-4647-A2B1-27E5FF5F6F3B}">
         <SilverlightProjectProperties />
       </FlavorProperties>
-      <UserProperties ProjectLinkerExcludeFilter="\\?desktop(\\.*)?$;\\?silverlight(\\.*)?$;\.desktop;\.silverlight;\.xaml;^service references(\\.*)?$;\.clientconfig;^web references(\\.*)?$" ProjectLinkReference="0743a167-5c43-4d24-af1b-e659cc7a380f" />
+      <UserProperties ProjectLinkReference="0743a167-5c43-4d24-af1b-e659cc7a380f" ProjectLinkerExcludeFilter="\\?desktop(\\.*)?$;\\?silverlight(\\.*)?$;\.desktop;\.silverlight;\.xaml;^service references(\\.*)?$;\.clientconfig;^web references(\\.*)?$" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
