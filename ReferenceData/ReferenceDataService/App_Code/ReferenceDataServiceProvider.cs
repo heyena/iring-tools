@@ -680,6 +680,14 @@ namespace org.ids_adi.iring.referenceData
                         {
                             roleDefinition.description.value = result["comment"];
                         }
+                        if (result.ContainsKey("index"))
+                        {
+                            roleDefinition.description.value = result["index"].ToString();
+                        }
+                        if (result.ContainsKey("type"))
+                        {
+                            roleDefinition.range = result["type"];
+                        }
                         roleDefinition.name.Add(name);
                         roleDefinitions.Add(roleDefinition);
                     }
@@ -1015,7 +1023,7 @@ namespace org.ids_adi.iring.referenceData
                         if (!ID.StartsWith("tpl:"))
                         {
                             id = ID.Substring((ID.LastIndexOf("#") + 1), ID.Length - (ID.LastIndexOf("#") + 1));
-                            ID = "tpl:" + ID;
+                            //ID = "tpl:" + ID;
                         }
                         else
                         {
@@ -1127,10 +1135,11 @@ namespace org.ids_adi.iring.referenceData
                     {
                         TemplateDefinition td = q.templateDefinitions[templateIndex];
                         string rName = string.Empty;
-
+                        
                         sparql = sparql.Replace("INSERT DATA { ", "MODIFY DELETE { ");
                         foreach (QMXFName name in td.name)
                         {
+                            ID = td.identifier;
                             label = name.value;
                             nameSparql = sparql + ID + " rdfs:label \"" + label + "\"^^xsd:string ; ";
                             foreach (Description descr in td.description)
@@ -1142,11 +1151,10 @@ namespace org.ids_adi.iring.referenceData
                             index = 0;
                             foreach (RoleDefinition rd in td.roleDefinition)
                             {
-
                                 foreach (QMXFName rn in rd.name)
                                 {
                                     rName = rn.value;
-                                    nameSparql += "<" + rd.designation.value + "> rdfs:label \"" + rName + "\"@en ; ";
+                                    nameSparql += "<" + rd.identifier + "> rdfs:label \"" + rName + "\"@en ; ";
                                     nameSparql += "rdfs:comment \"" + rd.description.value + "\"@en ; ";
                                     if (rd.range.StartsWith("http://www.w3.org/2000/01/rdf-schema#")
                                       || rd.range.StartsWith("http://www.w3.org/2001/XMLSchema"))
@@ -1161,7 +1169,7 @@ namespace org.ids_adi.iring.referenceData
                                     nameSparql += "rdf:type tpl:R74478971040 ; "
                                           + " rdfs:domain " + ID + " ; "
                                           + " rdfs:range <" + rd.range + "> ; "
-                                          + " tpl:R97483568938 \"" + rd.identifier + "\"^^xsd:int . ";
+                                          + " tpl:R97483568938 \"" + rd.description.value + "\"^^xsd:int . ";
                                 }
                             }
                             nameSparql = nameSparql.Insert(nameSparql.LastIndexOf("."), "}").Remove(nameSparql.Length - 1);
@@ -1169,6 +1177,10 @@ namespace org.ids_adi.iring.referenceData
                         }
                         foreach (QMXFName name in template.name)
                         {
+                            string gen = String.Empty;
+                            string generatedId = string.Empty;
+                            string roleID = string.Empty;
+
                             label = name.value;
                             nameSparql += " INSERT { " + ID + " rdfs:label \"" + label + "\"^^xsd:string ; ";
                             foreach (Description descr in template.description)
@@ -1183,7 +1195,22 @@ namespace org.ids_adi.iring.referenceData
 
                                 foreach (QMXFName defName in def.name)
                                 {
-                                    nameSparql += "<" + def.designation.value + "> rdfs:label \"" + defName.value + "\"@en ; ";
+                                    if (def.identifier != null)
+                                    {
+                                        roleID = def.identifier;
+                                    }
+                                    else
+                                    {
+                                        gen = "Role definition " + label;
+                                        /// TODO: change to template registry base
+                                        if (_useExampleRegistryBase)
+                                            generatedId = CreateIdsAdiId(_exampleRegistryBase, gen);
+                                        else
+                                            generatedId = CreateIdsAdiId(_templateRegistryBase, gen);
+
+                                        roleID = generatedId;
+                                    }
+                                    nameSparql += "<" + roleID + "> rdfs:label \"" + defName.value + "\"@en ; ";
                                     nameSparql += "rdfs:comment \"" + def.description.value + "\"@en ; ";
 
                                     if (def.range.StartsWith("http://www.w3.org/2000/01/rdf-schema#")
@@ -1199,14 +1226,12 @@ namespace org.ids_adi.iring.referenceData
                                     nameSparql += "rdf:type tpl:R74478971040 ; "
                                             + " rdfs:domain " + ID + " ; "
                                             + " rdfs:range <" + def.range + "> ; "
-                                            + " tpl:R97483568938 \"" + def.identifier + "\"^^xsd:int . ";
+                                            + " tpl:R97483568938 \"" + ++index + "\"^^xsd:int . ";
                                 }
                             }
                             nameSparql = nameSparql.Insert(nameSparql.LastIndexOf("."), "}").Remove(nameSparql.Length - 1);
                         }
-                        //nameSparql = nameSparql.Insert(nameSparql.LastIndexOf("."), "}").Remove(nameSparql.Length - 1);
                         response = PostToRepository(_repositories[repository], nameSparql);
-                        //response = PostToRepository(_repositories[0], specSparql);
                     }
                 }
             }
@@ -1792,7 +1817,6 @@ namespace org.ids_adi.iring.referenceData
 
             return idsAdiId;
         }
-
 
         private List<Dictionary<string, string>> MergeLists(List<Dictionary<string, string>> a, List<Dictionary<string, string>> b)
         {
