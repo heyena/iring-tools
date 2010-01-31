@@ -6,4 +6,5 @@ WHERE {
 ?s dm:hasClassified rdl:param1  . 
 ?s dm:hasClassifier ?uri . 
 OPTIONAL { ?uri rdfs:label ?label } 
-}	
+}
+ORDER BY ASC(?label)

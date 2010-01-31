@@ -8,3 +8,4 @@ WHERE {	?role a tpl:R74478971040 .
 OPTIONAL  { ?role rdfs:comment ?comment }
         ?role rdfs:range  ?type .
       }
+ORDER BY ASC(?label)

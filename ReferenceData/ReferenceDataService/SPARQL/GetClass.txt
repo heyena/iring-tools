@@ -20,3 +20,4 @@ OPTIONAL { ?status          tpl:R56599656536    ?authority }
 OPTIONAL { ?status          tpl:R61794465713    ?recorded } 
 OPTIONAL { ?status          tpl:R42656850346    ?from } 
 }
+ORDER BY ASC(?label)
