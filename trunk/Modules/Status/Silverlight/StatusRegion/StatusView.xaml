@@ -31,8 +31,8 @@
         <RowDefinition/>
       </Grid.RowDefinitions>
 
-      <TextBlock Margin="5,0,5,0" x:Name="stsLeft1" Grid.Column="0" Text="LEFT" Foreground="#FF000000"/>
-      <TextBlock Margin="5,0,5,0"  x:Name="stsCenter1" Grid.Column="1" Text="CENTER" Foreground="#FF000000" FontFamily="Portable User Interface" />
-      <TextBlock Margin="5,0,5,0" x:Name="stsRight1" Grid.Column="2" Text="RIGHT" Foreground="#FF000000"/>
+      <TextBlock Margin="5,0,5,0" x:Name="stsLeft1" Grid.Column="0" HorizontalAlignment="Left"/>
+      <TextBlock Margin="5,0,5,0"  x:Name="stsCenter1" Grid.Column="1" HorizontalAlignment="Center" />
+      <TextBlock Margin="5,0,5,0" x:Name="stsRight1" Grid.Column="2" HorizontalAlignment="Right"/>
   </Grid>
 </UserControl>
