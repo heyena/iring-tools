@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
     xmlns:Regions="clr-namespace:Microsoft.Practices.Composite.Presentation.Regions;assembly=Microsoft.Practices.Composite.Presentation"
-    HorizontalAlignment="Stretch" Height="40"
+    HorizontalAlignment="Stretch" 
 >
   <Grid x:Name="LayoutRoot">
     <Grid.Background>
