@@ -14,8 +14,16 @@ namespace RefDataEditor
 
         void PageGrid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-          Control c = (Control)MainItem.Items[0];
-          c.Height = LayoutRoot.RowDefinitions[1].ActualHeight;     
+          Control c = null;
+
+          c = (Control)HeaderItem.Items[0];
+          c.Height = LayoutRoot.RowDefinitions[0].ActualHeight;
+
+          c = (Control)MainItem.Items[0];
+          c.Height = LayoutRoot.RowDefinitions[1].ActualHeight;
+
+          c = (Control)StatusItem.Items[0];
+          c.Height = LayoutRoot.RowDefinitions[2].ActualHeight;     
         }
     }
 }

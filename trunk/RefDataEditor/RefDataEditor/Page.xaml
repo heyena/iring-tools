@@ -15,7 +15,7 @@
       <RowDefinition Height="14"/>
     </Grid.RowDefinitions>
 
-    <ItemsControl Grid.Row="0" Background="Wheat"  
+    <ItemsControl Name="HeaderItem" Grid.Row="0" Background="Wheat"  
                   VerticalAlignment="Bottom" HorizontalAlignment="Stretch" 
 			            Regions:RegionManager.RegionName="MenuRegion"/>
 
@@ -23,7 +23,7 @@
                   VerticalAlignment="Center" HorizontalAlignment="Stretch" 
 			            Regions:RegionManager.RegionName="MainRegion"  />
 
-    <ItemsControl Grid.Row="2" 
+    <ItemsControl Name="StatusItem" Grid.Row="2" 
                   VerticalAlignment="Top" HorizontalAlignment="Stretch" 
 			            Regions:RegionManager.RegionName="StatusRegion"  />
 
