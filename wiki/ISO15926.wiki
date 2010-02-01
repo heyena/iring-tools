@@ -1,14 +1,10 @@
 =ISO 15926 Links=
 
-[https://www.posccaesar.org POSC Caesar]
+[http://www.iringtools.org iRINGTools Home]
 
-[http://www.openoandm.org OpenO&M]
+[http://www.iringug.org iRINGUserGroup]
 
-[http://fiatech.org/index.php FIATECH]
-
-[https://www.posccaesar.org/wiki/IdsAdiProject?redirectedfrom=IDSADIProject IDS-ADI]
-
-[https://www.posccaesar.org/wiki/IdsAdiAvalon IDS-ADI: Avalon Project]
+[http://www.iringsandbox.org iRINGSandbox]
 
 [http://secure.ids-adi.org/repository/org/ids-adi/camelot/index.html IDS-ADI: Camelot Project]  (Archive)
 
