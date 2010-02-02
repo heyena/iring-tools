@@ -153,9 +153,9 @@ namespace org.ids_adi.iring.referenceData
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    List<SortedList<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
 
-                    foreach (Dictionary<string, string> result in results)
+                    foreach (SortedList<string, string> result in results)
                     {
                         Entity resultEntity = new Entity
                         {
@@ -217,8 +217,8 @@ namespace org.ids_adi.iring.referenceData
                         {
                             SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-                            List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
-                            foreach (Dictionary<string, string> result in results)
+                            List<SortedList<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                            foreach (SortedList<string, string> result in results)
                             {
                                 Entity resultEntity = new Entity
                                 {
@@ -287,9 +287,9 @@ namespace org.ids_adi.iring.referenceData
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    List<SortedList<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
 
-                    foreach (Dictionary<string, string> result in results)
+                    foreach (SortedList<string, string> result in results)
                     {
                         if (result.ContainsKey("label"))
                         {
@@ -316,6 +316,7 @@ namespace org.ids_adi.iring.referenceData
                 string relativeUri = String.Empty;
 
                 List<Classification> classifications = new List<Classification>();
+                
 
                 Query queryContainsSearch = _queries["GetClassification"];
                 QueryBindings queryBindings = queryContainsSearch.bindings;
@@ -327,12 +328,12 @@ namespace org.ids_adi.iring.referenceData
                 foreach (Repository repository in _repositories)
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
-                   
 
-                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
-                    
 
-                    foreach (Dictionary<string, string> result in results)
+                    List<SortedList<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+
+
+                    foreach (SortedList<string, string> result in results)
                     {
 
                         Classification classification = new Classification();
@@ -383,9 +384,9 @@ namespace org.ids_adi.iring.referenceData
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
-                    
-                    foreach (Dictionary<string, string> result in results)
+                    List<SortedList<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+
+                    foreach (SortedList<string, string> result in results)
                     {
                         Specialization specialization = new Specialization();
 
@@ -452,11 +453,11 @@ namespace org.ids_adi.iring.referenceData
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    List<SortedList<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
                     classifications = new List<Classification>();
                     specializations = new List<Specialization>();
 
-                    foreach (Dictionary<string, string> result in results)
+                    foreach (SortedList<string, string> result in results)
                     {
                         classDefinition = new ClassDefinition();
                         
@@ -573,9 +574,9 @@ namespace org.ids_adi.iring.referenceData
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    List<SortedList<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
 
-                    foreach (Dictionary<string, string> result in results)
+                    foreach (SortedList<string, string> result in results)
                     {
                         Entity resultEntity = new Entity
                         {
@@ -613,9 +614,9 @@ namespace org.ids_adi.iring.referenceData
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    List<SortedList<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
 
-                    foreach (Dictionary<string, string> result in results)
+                    foreach (SortedList<string, string> result in results)
                     {
                         Entity resultEntity = new Entity
                         {
@@ -660,9 +661,9 @@ namespace org.ids_adi.iring.referenceData
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    List<SortedList<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
 
-                    foreach (Dictionary<string, string> result in results)
+                    foreach (SortedList<string, string> result in results)
                     {
 
                         RoleDefinition roleDefinition = new RoleDefinition();
@@ -749,13 +750,13 @@ namespace org.ids_adi.iring.referenceData
                     SPARQLResults sparqlResults1 = QueryFromRepository(repository, sparql1);
                     SPARQLResults sparqlResults2 = QueryFromRepository(repository, sparql2);
 
-                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
-                    List<Dictionary<string, string>> results1 = BindQueryResults(queryBindings1, sparqlResults1);
-                    List<Dictionary<string, string>> results2 = BindQueryResults(queryBindings2, sparqlResults2);
+                    List<SortedList<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    List<SortedList<string, string>> results1 = BindQueryResults(queryBindings1, sparqlResults1);
+                    List<SortedList<string, string>> results2 = BindQueryResults(queryBindings2, sparqlResults2);
 
-                    List<Dictionary<string, string>> combinedResults = MergeLists(MergeLists(results, results1), results2);
+                    List<SortedList<string, string>> combinedResults = MergeLists(MergeLists(results, results1), results2);
 
-                    foreach (Dictionary<string, string> result in combinedResults)
+                    foreach (SortedList<string, string> result in combinedResults)
                     {
 
                         RoleQualification roleQualification = new RoleQualification();
@@ -854,9 +855,9 @@ namespace org.ids_adi.iring.referenceData
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    List<SortedList<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
 
-                    foreach (Dictionary<string, string> result in results)
+                    foreach (SortedList<string, string> result in results)
                     {
                         templateDefinition = new TemplateDefinition();
                         QMXFName name = new QMXFName();
@@ -934,9 +935,9 @@ namespace org.ids_adi.iring.referenceData
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    List<SortedList<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
 
-                    foreach (Dictionary<string, string> result in results)
+                    foreach (SortedList<string, string> result in results)
                     {
                         templateQualification = new TemplateQualification();
                         Description description = new Description();
@@ -1818,9 +1819,9 @@ namespace org.ids_adi.iring.referenceData
             return idsAdiId;
         }
 
-        private List<Dictionary<string, string>> MergeLists(List<Dictionary<string, string>> a, List<Dictionary<string, string>> b)
+        private List<SortedList<string, string>> MergeLists(List<SortedList<string, string>> a, List<SortedList<string, string>> b)
         {
-            foreach (Dictionary<string, string> dictionary in b)
+            foreach (SortedList<string, string> dictionary in b)
             {
                 a.Add(dictionary);
             }
@@ -1877,13 +1878,13 @@ namespace org.ids_adi.iring.referenceData
             return response;
         }
 
-        private List<Dictionary<string, string>> BindQueryResults(QueryBindings queryBindings, SPARQLResults sparqlResults)
+        private List<SortedList<string, string>> BindQueryResults(QueryBindings queryBindings, SPARQLResults sparqlResults)
         {
-            List<Dictionary<string, string>> results = new List<Dictionary<string, string>>();
+            List<SortedList<string, string>> results = new List<SortedList<string, string>>();
 
             foreach (SPARQLResult sparqlResult in sparqlResults.resultsElement.results)
             {
-                Dictionary<string, string> result = new Dictionary<string, string>();
+                SortedList<string, string> result = new SortedList<string, string>();
 
                 foreach (SPARQLBinding sparqlBinding in sparqlResult.bindings)
                 {
@@ -1926,7 +1927,7 @@ namespace org.ids_adi.iring.referenceData
             return results;
         }
 
-        private string MakeUniqueKey(Dictionary<string, string> dictionary, string duplicateKey)
+        private string MakeUniqueKey(SortedList<string, string> dictionary, string duplicateKey)
         {
             string newKey = String.Empty;
 
