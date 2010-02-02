@@ -26,7 +26,7 @@
 
 using System;
 using System.Reflection;
-using System.Web.Compilation; 
+using System.Web.Compilation;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
@@ -36,7 +36,7 @@ using Ninject;
 using Ninject.Parameters;
 using Ninject.Contrib.Dynamic;
 using org.iringtools.adapter.rules;
-using org.iringtools.adapter.semantic;
+using org.iringtools.adapter.projection;
 using org.iringtools.library;
 using org.iringtools.utility;
 using System.Collections.Specialized;
@@ -47,7 +47,7 @@ namespace org.iringtools.adapter
 {
   public partial class AdapterProvider //: IAdapter
   {
-    private ISemanticEngine _semanticEngine = null;
+    private IProjectionEngine _projectionEngine = null;
     private IDTOService _dtoService = null;
     private IKernel _kernel = null;
     private AdapterSettings _settings = null;
@@ -73,17 +73,17 @@ namespace org.iringtools.adapter
 
       string bindingConfigurationPath = _settings.XmlPath + applicationSettings.BindingConfigurationPath;
       BindingConfiguration bindingConfiguration = Utility.Read<BindingConfiguration>(bindingConfigurationPath, false);
-      _kernel.Load(new DynamicModule(bindingConfiguration));      
+      _kernel.Load(new DynamicModule(bindingConfiguration));
       _settings.Mapping = GetMapping(projectName, applicationName);
       _dtoService = _kernel.Get<IDTOService>("DTOService." + projectName + "." + applicationName);
 
       if (_settings.UseSemweb)
       {
-        _semanticEngine = _kernel.Get<ISemanticEngine>("SemWeb");
+        _projectionEngine = _kernel.Get<IProjectionEngine>("SemWeb");
       }
       else
       {
-        _semanticEngine = _kernel.Get<ISemanticEngine>("Sparql");
+        _projectionEngine = _kernel.Get<IProjectionEngine>("Sparql");
       }
     }
 
@@ -117,17 +117,17 @@ namespace org.iringtools.adapter
     /// which applications are available</returns>
     public List<ScopeProject> GetScopes()
     {
-        string path = _settings.XmlPath + _settings.ProjectListSource;
+      string path = _settings.XmlPath + _settings.ProjectListSource;
 
-        try
-        {
-            List<ScopeProject> _projects = Utility.Read<List<ScopeProject>>(path, true);
-            return _projects;
-        }
-        catch (Exception exception)
-        {
-            throw new Exception("Error while getting the list of projects/applications from " + path + "." + exception.ToString(), exception);
-        }
+      try
+      {
+        List<ScopeProject> _projects = Utility.Read<List<ScopeProject>>(path, true);
+        return _projects;
+      }
+      catch (Exception exception)
+      {
+        throw new Exception("Error while getting the list of projects/applications from " + path + "." + exception.ToString(), exception);
+      }
     }
 
     /// <summary>
@@ -382,15 +382,15 @@ namespace org.iringtools.adapter
     {
       Response response = new Response();
       try
-      {       
-        if(!_isAppInitialized)
-        InitializeApplication(projectName, applicationName);
+      {
+        if (!_isAppInitialized)
+          InitializeApplication(projectName, applicationName);
 
         DateTime b = DateTime.Now;
 
-        List<DataTransferObject> commonDTOList = _dtoService.GetList(graphName);       
+        List<DataTransferObject> commonDTOList = _dtoService.GetList(graphName);
 
-        List<string> tripleStoreIdentifiers = _semanticEngine.GetIdentifiersFromTripleStore(graphName);
+        List<string> tripleStoreIdentifiers = _projectionEngine.GetIdentifiers(graphName);
         List<string> identifiersToBeDeleted = tripleStoreIdentifiers;
         foreach (DataTransferObject commonDTO in commonDTOList)
         {
@@ -401,7 +401,7 @@ namespace org.iringtools.adapter
         }
         foreach (String identifier in identifiersToBeDeleted)
         {
-          _semanticEngine.RefreshDelete(graphName, identifier);
+          _projectionEngine.Delete(graphName, identifier);
         }
 
         RuleEngine ruleEngine = new RuleEngine();
@@ -426,8 +426,8 @@ namespace org.iringtools.adapter
 
         response.Add(String.Format("RefreshGraph({0}) Execution Time [{1}:{2}.{3}] Seconds ", graphName, d.Minutes, d.Seconds, d.Milliseconds));
 
-        if (_settings.UseSemweb)
-          _semanticEngine.DumpStoreData(_settings.XmlPath);
+        //if (_settings.UseSemweb)
+        //  _projectionEngine.DumpStoreData(_settings.XmlPath);
       }
       catch (Exception exception)
       {
@@ -452,19 +452,10 @@ namespace org.iringtools.adapter
       try
       {
         DateTime b = DateTime.Now;
-
-        if (!_settings.UseSemweb)
-        {
-          _semanticEngine.RefreshQuery(dto);
-        }
-        else
-        {
-          _semanticEngine.RefreshQuery(dto);
-        }
-
         DateTime e = DateTime.Now;
         TimeSpan d = e.Subtract(b);
 
+        _projectionEngine.Post(dto);
         response.Add(String.Format("RefreshDTO({0},{1}) Execution Time [{2}:{3}.{4}] Seconds", dto.GraphName, dto.Identifier, d.Minutes, d.Seconds, d.Milliseconds));
       }
       catch (Exception exception)
@@ -491,6 +482,7 @@ namespace org.iringtools.adapter
       string graphName = String.Empty;
       string filter = String.Empty;
       Response response = new Response();
+
       try
       {
         InitializeApplication(projectName, applicationName);
@@ -503,13 +495,11 @@ namespace org.iringtools.adapter
         WebCredentials targetCredentials = Utility.Deserialize<WebCredentials>(targetCredentialsXML, true);
         if (targetCredentials.isEncrypted) targetCredentials.Decrypt();
 
-        //SPARQLEngine engine = new SPARQLEngine(_mapping, targetUri, targetCredentials, _proxyCredentials, _trimData);
-
         DateTime b = DateTime.Now;
         DateTime e;
         TimeSpan d;
-        SPARQLEngine sparqlEngine = (SPARQLEngine)_semanticEngine;
-        List<DataTransferObject> dtoList = sparqlEngine.PullQuery(graphName);
+
+        List<DataTransferObject> dtoList = _projectionEngine.GetList(graphName);
 
         RuleEngine ruleEngine = new RuleEngine();
         if (File.Exists(_settings.XmlPath + "Pull" + graphName + ".rules"))
@@ -596,16 +586,8 @@ namespace org.iringtools.adapter
       {
         InitializeApplication(projectName, applicationName);
 
-        if (_settings.UseSemweb)
-        {
-          _semanticEngine.ClearStore();
-          response.Add("Store cleared successfully.");
-        }
-        else
-        {
-          _semanticEngine.ClearStore();
-          response.Add("Store cleared successfully.");
-        }
+        _projectionEngine.DeleteAll();
+        response.Add("Store cleared successfully.");
       }
       catch (Exception exception)
       {
@@ -673,7 +655,7 @@ namespace org.iringtools.adapter
       DTOGenerator dtoGenerator = new DTOGenerator();
 
       try
-      {        
+      {
         dtoGenerator.Generate(projectName, applicationName);
         UpdateBindingConfiguration(projectName, applicationName);
         response.Add("DTO Model generated successfully.");

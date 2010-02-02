@@ -3,6 +3,7 @@
     <id name="Id" column="TAG">
       <generator class="assigned" />
     </id>
+    <property name="tag" column="TAG" update="false" insert="false" />
     <property name="diameter" column="DIAMETER" />
     <property name="uomDiameter" column="DIAMETER_UOM" />
     <property name="system" column="SYSTEM" />

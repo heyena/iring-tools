@@ -37,9 +37,9 @@ using SemWeb.Util;
 using SemWeb.Query;
 using Ninject;
 
-namespace org.iringtools.adapter.semantic
+namespace org.iringtools.adapter.projection
 {
-  public class SemWebEngine : ISemanticEngine
+  public class SemWebEngine : IProjectionEngine
   {
     private bool _trimData;
     private Store _store = null;
@@ -74,7 +74,7 @@ namespace org.iringtools.adapter.semantic
 
     }
 
-    public List<string> GetIdentifiersFromTripleStore(string graphName)
+    public List<string> GetIdentifiers(string graphName)
     {
       try
       {
@@ -141,7 +141,7 @@ namespace org.iringtools.adapter.semantic
           foreach (VariableBindings binding in resultBuffer.Bindings)
           {
             identifier = ((Literal)(binding[identifierRoleMap.propertyName])).Value;
-            identifiers.Add(identifier); 
+            identifiers.Add(identifier);
           }
           return identifiers;
         }
@@ -156,7 +156,23 @@ namespace org.iringtools.adapter.semantic
       }
     }
 
-    public void RefreshQuery(DataTransferObject dto)
+    public List<DataTransferObject> GetList(string graphName)
+    {
+      try
+      {
+        // forward request to sparql engine
+        IKernel kernel = new StandardKernel(new AdapterModule());
+        IProjectionEngine projectionEngine = kernel.Get<IProjectionEngine>("Sparql");
+
+        return projectionEngine.GetList(graphName);
+      }
+      catch (Exception exception)
+      {
+        throw new Exception(String.Format("GetList[{0}]", graphName), exception);
+      }
+    }
+    
+    public void Post(DataTransferObject dto)
     {
       try
       {
@@ -170,11 +186,32 @@ namespace org.iringtools.adapter.semantic
       }
       catch (Exception exception)
       {
-        throw new Exception(String.Format("RefreshQuery[{0}][{1}]", dto.GraphName, dto.Identifier), exception);
+        throw new Exception(String.Format("Post[{0}][{1}]", dto.GraphName, dto.Identifier), exception);
       }
     }
 
-    public void RefreshDelete(string graphName, string identifier)
+    public void PostList(List<DataTransferObject> dtos)
+    {
+      try
+      {
+        foreach (GraphMap graphMap in _mapping.graphMaps)
+        {
+          foreach (DataTransferObject dto in dtos)
+          {
+            if (graphMap.name == dto.GraphName)
+            {
+              RefreshGraphMap(graphMap, dto);
+            }
+          }
+        }
+      }
+      catch (Exception exception)
+      {
+        throw new Exception("PostList: " + exception);
+      }
+    }
+
+    public void Delete(string graphName, string identifier)
     {
       try
       {
@@ -188,162 +225,204 @@ namespace org.iringtools.adapter.semantic
       }
       catch (Exception exception)
       {
-        throw new Exception(String.Format("RefreshDelete[{0}][{1}]", graphName, identifier), exception);
+        throw new Exception(String.Format("Delete[{0}][{1}]", graphName, identifier), exception);
       }
     }
 
-    private void RefreshDeleteGraphMap(GraphMap graphMap, string identifier)
+    public void DeleteList(string graphName, List<string> identifiers)
+    {
+      try
+      {
+        foreach (GraphMap graphMap in _mapping.graphMaps)
         {
-          try
+          if (graphMap.name == graphName)
           {
-            identifier = "eg:id__" + identifier;
-
-            foreach (TemplateMap templateMap in graphMap.templateMaps)
+            foreach (string identifier in identifiers)
             {
-              RefreshDeleteTemplateMap(templateMap, (ClassMap)graphMap, identifier);
+              RefreshDeleteGraphMap(graphMap, identifier);
             }
-
-            GraphMatch query = new GraphMatch();
-
-            SemWeb.Variable subjectVariable = new SemWeb.Variable("subject");
-            SemWeb.Variable predicateVariable = new SemWeb.Variable("predicate");
-            SemWeb.Entity classIdEntity = graphMap.classId.Replace("rdl:", rdlPrefix);
-            SemWeb.Entity instanceValue = identifier.Replace("eg:", egPrefix);
-            SemWeb.Entity instanceTypeEntity = instanceType;
-            //LiteralFilter filter = LiteralFilter.Create(LiteralFilter.CompType.NE, instanceTypeEntity);
-
-            Statement statementA = new Statement(subjectVariable, predicateVariable, instanceValue);
-            query.AddGraphStatement(statementA);
-            
-            //query.AddLiteralFilter(predicateVariable, filter);
-            QueryResultBuffer resultBuffer = GetUnterminatedTemplates(query, subjectVariable);
-                        
-              var results = from VariableBindings b in resultBuffer.Bindings
-                            where (((SemWeb.Entity)(b["predicate"])).Uri == instanceType)
-                            select b;
-
-              int noOfInstancesRelated = resultBuffer.Bindings.Count - results.Count();            
-
-            if (noOfInstancesRelated == 0)
-            {
-              GraphMatch queryClass = new GraphMatch();                         
-              Variable classificationTemplateVariable = new Variable("c1");
-              Statement statementB = new Statement(classificationTemplateVariable, rdfType, classificationTemplateType);
-              Statement statementC = new Statement(classificationTemplateVariable, classType, classIdEntity);
-              Statement statementD = new Statement(classificationTemplateVariable, instanceType, instanceValue);
-
-              queryClass.AddGraphStatement(statementB);
-              queryClass.AddGraphStatement(statementC);
-              queryClass.AddGraphStatement(statementD);
-
-              QueryResultBuffer resultBufferUnterminatedClass = GetUnterminatedTemplates(queryClass, classificationTemplateVariable);
-              VariableBindings variableBindingsToBeTerminated = (VariableBindings)(resultBufferUnterminatedClass.Bindings[0]);
-              BNode bNodeToBeTerminated = (BNode)(variableBindingsToBeTerminated["c1"]);
-              Literal endTimeValue = GetPropertyValueType(DateTime.UtcNow.ToString(), "datetime");
-              Statement statement1 = new Statement(bNodeToBeTerminated, endDateTimeTemplate, endTimeValue);
-              _store.Add(statement1);
-            }
-          }
-          catch (Exception exception)
-          {
-            throw new Exception(String.Format("RefreshDeleteGraphMap[{0}][{1}]", graphMap.name, identifier), exception);
           }
         }
+      }
+      catch (Exception exception)
+      {
+        throw new Exception("DeleteList: " + exception);
+      }
+    }
+
+    public void DeleteAll()
+    {
+      try
+      {
+        _store.Clear();
+      }
+      catch (Exception exception)
+      {
+        throw new Exception("DeleteAll: " + exception);
+      }
+    }
+
+    //public void DumpStoreData(string xmlPath)
+    //{
+    //  using (RdfWriter writer = new RdfXmlWriter(xmlPath + "rdf.xml"))
+    //  {
+    //    writer.Write(_store);
+    //  }
+
+    //}
+
+    private void RefreshDeleteGraphMap(GraphMap graphMap, string identifier)
+    {
+      try
+      {
+        identifier = "eg:id__" + identifier;
+
+        foreach (TemplateMap templateMap in graphMap.templateMaps)
+        {
+          RefreshDeleteTemplateMap(templateMap, (ClassMap)graphMap, identifier);
+        }
+
+        GraphMatch query = new GraphMatch();
+
+        SemWeb.Variable subjectVariable = new SemWeb.Variable("subject");
+        SemWeb.Variable predicateVariable = new SemWeb.Variable("predicate");
+        SemWeb.Entity classIdEntity = graphMap.classId.Replace("rdl:", rdlPrefix);
+        SemWeb.Entity instanceValue = identifier.Replace("eg:", egPrefix);
+        SemWeb.Entity instanceTypeEntity = instanceType;
+        //LiteralFilter filter = LiteralFilter.Create(LiteralFilter.CompType.NE, instanceTypeEntity);
+
+        Statement statementA = new Statement(subjectVariable, predicateVariable, instanceValue);
+        query.AddGraphStatement(statementA);
+
+        //query.AddLiteralFilter(predicateVariable, filter);
+        QueryResultBuffer resultBuffer = GetUnterminatedTemplates(query, subjectVariable);
+
+        var results = from VariableBindings b in resultBuffer.Bindings
+                      where (((SemWeb.Entity)(b["predicate"])).Uri == instanceType)
+                      select b;
+
+        int noOfInstancesRelated = resultBuffer.Bindings.Count - results.Count();
+
+        if (noOfInstancesRelated == 0)
+        {
+          GraphMatch queryClass = new GraphMatch();
+          Variable classificationTemplateVariable = new Variable("c1");
+          Statement statementB = new Statement(classificationTemplateVariable, rdfType, classificationTemplateType);
+          Statement statementC = new Statement(classificationTemplateVariable, classType, classIdEntity);
+          Statement statementD = new Statement(classificationTemplateVariable, instanceType, instanceValue);
+
+          queryClass.AddGraphStatement(statementB);
+          queryClass.AddGraphStatement(statementC);
+          queryClass.AddGraphStatement(statementD);
+
+          QueryResultBuffer resultBufferUnterminatedClass = GetUnterminatedTemplates(queryClass, classificationTemplateVariable);
+          VariableBindings variableBindingsToBeTerminated = (VariableBindings)(resultBufferUnterminatedClass.Bindings[0]);
+          BNode bNodeToBeTerminated = (BNode)(variableBindingsToBeTerminated["c1"]);
+          Literal endTimeValue = GetPropertyValueType(DateTime.UtcNow.ToString(), "datetime");
+          Statement statement1 = new Statement(bNodeToBeTerminated, endDateTimeTemplate, endTimeValue);
+          _store.Add(statement1);
+        }
+      }
+      catch (Exception exception)
+      {
+        throw new Exception(String.Format("RefreshDeleteGraphMap[{0}][{1}]", graphMap.name, identifier), exception);
+      }
+    }
 
     private void RefreshDeleteTemplateMap(TemplateMap templateMap, ClassMap classMap, string parentIdentifierVariable)
+    {
+      try
+      {
+        if (templateMap.type == TemplateType.Property)
         {
-          try
+          QueryResultBuffer resultBuffer = GetTemplateValues(templateMap, parentIdentifierVariable);
+          BNode bNodeToBeTerminated = null;
+          foreach (VariableBindings variableBinding in resultBuffer.Bindings)
           {
-            if (templateMap.type == TemplateType.Property)
-            {
-              QueryResultBuffer resultBuffer = GetTemplateValues(templateMap, parentIdentifierVariable);
-              BNode bNodeToBeTerminated = null;
-              foreach (VariableBindings variableBinding in resultBuffer.Bindings)
-              {
-                bNodeToBeTerminated = ((BNode)variableBinding["t1"]);
-              }
-              Literal endTimeValue = GetPropertyValueType(DateTime.UtcNow.ToString(), "datetime");
-              Statement statement1 = new Statement(bNodeToBeTerminated, endDateTimeTemplate, endTimeValue);
-              _store.Add(statement1);
-            }
-            else
-            {
-              RoleMap roleMap = templateMap.roleMaps[0];
-              string instanceVariable = GetRelatedClassInstance(templateMap, roleMap, parentIdentifierVariable)[0];
-              
-              QueryResultBuffer resultBuffer = GetRelatedClass(templateMap, roleMap, parentIdentifierVariable);
-              BNode bNodeToBeTerminated = null;
-              foreach (VariableBindings variableBinding in resultBuffer.Bindings)
-              {
-                bNodeToBeTerminated = ((BNode)variableBinding["t1"]);                
-              }
-              Literal endTimeValue = GetPropertyValueType(DateTime.UtcNow.ToString(), "datetime");
-              Statement statement1 = new Statement(bNodeToBeTerminated, endDateTimeTemplate, endTimeValue);
-              _store.Add(statement1);
-              RefreshDeleteClassMap(roleMap.classMap, roleMap, instanceVariable);   
-            }
+            bNodeToBeTerminated = ((BNode)variableBinding["t1"]);
           }
-          catch (Exception exception)
-          {
-            throw new Exception(String.Format("RefreshDeleteGraphMap[{0}][{1}][{2}]", templateMap.name, classMap.name, parentIdentifierVariable), exception);
-          }
+          Literal endTimeValue = GetPropertyValueType(DateTime.UtcNow.ToString(), "datetime");
+          Statement statement1 = new Statement(bNodeToBeTerminated, endDateTimeTemplate, endTimeValue);
+          _store.Add(statement1);
         }
+        else
+        {
+          RoleMap roleMap = templateMap.roleMaps[0];
+          string instanceVariable = GetRelatedClassInstance(templateMap, roleMap, parentIdentifierVariable)[0];
+
+          QueryResultBuffer resultBuffer = GetRelatedClass(templateMap, roleMap, parentIdentifierVariable);
+          BNode bNodeToBeTerminated = null;
+          foreach (VariableBindings variableBinding in resultBuffer.Bindings)
+          {
+            bNodeToBeTerminated = ((BNode)variableBinding["t1"]);
+          }
+          Literal endTimeValue = GetPropertyValueType(DateTime.UtcNow.ToString(), "datetime");
+          Statement statement1 = new Statement(bNodeToBeTerminated, endDateTimeTemplate, endTimeValue);
+          _store.Add(statement1);
+          RefreshDeleteClassMap(roleMap.classMap, roleMap, instanceVariable);
+        }
+      }
+      catch (Exception exception)
+      {
+        throw new Exception(String.Format("RefreshDeleteGraphMap[{0}][{1}][{2}]", templateMap.name, classMap.name, parentIdentifierVariable), exception);
+      }
+    }
 
     private void RefreshDeleteClassMap(ClassMap classMap, RoleMap currentRoleMap, string parentIdentifierVariable)
+    {
+      try
+      {
+        GraphMatch query = new GraphMatch();
+        Variable subjectVariable = new Variable("subject");
+        Variable predicateVariable = new Variable("predicate");
+        SemWeb.Entity classIdEntity = classMap.classId.Replace("rdl:", rdlPrefix);
+        SemWeb.Entity instanceTypeEntity = instanceType;
+        SemWeb.Entity instanceValue = parentIdentifierVariable.Replace("eg:", egPrefix);
+        //LiteralFilter filter = LiteralFilter.Create(LiteralFilter.CompType.NE, instanceTypeEntity);
+
+        Statement statementA = new Statement(subjectVariable, predicateVariable, instanceValue);
+        query.AddGraphStatement(statementA);
+
+        //query.AddLiteralFilter(predicateVariable, filter);
+        QueryResultBuffer resultBuffer = GetUnterminatedTemplates(query, subjectVariable);
+
+        var results = from VariableBindings b in resultBuffer.Bindings
+                      where (((SemWeb.Entity)(b["predicate"])).Uri == instanceType)
+                      select b;
+
+        int noOfInstancesRelated = resultBuffer.Bindings.Count - results.Count();
+
+        if (noOfInstancesRelated == 1)
         {
-          try
+          GraphMatch queryClass = new GraphMatch();
+
+          SemWeb.Variable classificationTemplateVariable = new Variable("c1");
+
+          Statement statementB = new Statement(classificationTemplateVariable, rdfType, classificationTemplateType);
+          Statement statementC = new Statement(classificationTemplateVariable, classType, classIdEntity);
+          Statement statementD = new Statement(classificationTemplateVariable, instanceType, instanceValue);
+
+          queryClass.AddGraphStatement(statementB);
+          queryClass.AddGraphStatement(statementC);
+          queryClass.AddGraphStatement(statementD);
+
+          QueryResultBuffer resultBufferUnterminatedClass = GetUnterminatedTemplates(queryClass, classificationTemplateVariable);
+          VariableBindings variableBindingsToBeTerminated = (VariableBindings)(resultBufferUnterminatedClass.Bindings[0]);
+          BNode bNodeToBeTerminated = (BNode)(variableBindingsToBeTerminated["c1"]);
+          Literal endTimeValue = GetPropertyValueType(DateTime.UtcNow.ToString(), "datetime");
+          Statement statement1 = new Statement(bNodeToBeTerminated, endDateTimeTemplate, endTimeValue);
+          _store.Add(statement1);
+          foreach (TemplateMap templateMap in classMap.templateMaps)
           {
-            GraphMatch query = new GraphMatch();
-            Variable subjectVariable = new Variable("subject");
-            Variable predicateVariable = new Variable("predicate");
-            SemWeb.Entity classIdEntity = classMap.classId.Replace("rdl:", rdlPrefix);
-            SemWeb.Entity instanceTypeEntity = instanceType;
-            SemWeb.Entity instanceValue = parentIdentifierVariable.Replace("eg:", egPrefix);
-            //LiteralFilter filter = LiteralFilter.Create(LiteralFilter.CompType.NE, instanceTypeEntity);
-
-            Statement statementA = new Statement(subjectVariable, predicateVariable, instanceValue);
-            query.AddGraphStatement(statementA);
-            
-            //query.AddLiteralFilter(predicateVariable, filter);
-            QueryResultBuffer resultBuffer = GetUnterminatedTemplates(query, subjectVariable);
-            
-            var results = from VariableBindings b in resultBuffer.Bindings
-                          where (((SemWeb.Entity)(b["predicate"])).Uri == instanceType)
-                            select b;
-
-            int noOfInstancesRelated = resultBuffer.Bindings.Count - results.Count();
-            
-            if (noOfInstancesRelated == 1)
-            {
-              GraphMatch queryClass = new GraphMatch();
-
-              SemWeb.Variable classificationTemplateVariable = new Variable("c1");
-
-              Statement statementB = new Statement(classificationTemplateVariable, rdfType, classificationTemplateType);
-              Statement statementC = new Statement(classificationTemplateVariable, classType, classIdEntity);
-              Statement statementD = new Statement(classificationTemplateVariable, instanceType, instanceValue);
-
-              queryClass.AddGraphStatement(statementB);
-              queryClass.AddGraphStatement(statementC);
-              queryClass.AddGraphStatement(statementD);
-
-              QueryResultBuffer resultBufferUnterminatedClass = GetUnterminatedTemplates(queryClass, classificationTemplateVariable);
-              VariableBindings variableBindingsToBeTerminated = (VariableBindings)(resultBufferUnterminatedClass.Bindings[0]);
-              BNode bNodeToBeTerminated = (BNode)(variableBindingsToBeTerminated["c1"]);
-              Literal endTimeValue = GetPropertyValueType(DateTime.UtcNow.ToString(), "datetime");
-              Statement statement1 = new Statement(bNodeToBeTerminated, endDateTimeTemplate, endTimeValue);
-              _store.Add(statement1);
-              foreach (TemplateMap templateMap in classMap.templateMaps)
-              {
-                RefreshDeleteTemplateMap(templateMap, classMap, parentIdentifierVariable);
-              }
-            }            
-          }
-          catch (Exception exception)
-          {
-            throw new Exception(String.Format("RefreshDeleteClassMap[{0}][{1}][{2}]", classMap.name, currentRoleMap.name, parentIdentifierVariable), exception);
+            RefreshDeleteTemplateMap(templateMap, classMap, parentIdentifierVariable);
           }
         }
+      }
+      catch (Exception exception)
+      {
+        throw new Exception(String.Format("RefreshDeleteClassMap[{0}][{1}][{2}]", classMap.name, currentRoleMap.name, parentIdentifierVariable), exception);
+      }
+    }
 
     private void RefreshGraphMap(GraphMap graphMap, DataTransferObject dto)
     {
@@ -382,104 +461,20 @@ namespace org.iringtools.adapter.semantic
               #region Check if Current property Value differs from New Value
               foreach (Variable variable in binding.Variables)
               {
-                if(variable.LocalName != "t1")
+                if (variable.LocalName != null && variable.LocalName != "t1")
                 {
-                string propertyName = variable.LocalName;
-                string propertyValue = string.Empty;
-                string propertyType = string.Empty;
-                string dtoPropertyValue = string.Empty;
-                string curPropertyValue = string.Empty;
-
-                if ((binding[variable.LocalName] is Literal) && (((Literal)(binding[variable.LocalName])).Value != null))
-                {
-                  curPropertyValue = ((Literal)(binding[variable.LocalName])).Value;
-                  propertyType = "literal";
-                }
-                else if (binding[variable.LocalName].Uri != null)
-                {
-                  curPropertyValue = binding[variable.LocalName].Uri;
-                  propertyType = "uri";
-                }
-                else
-                {
-                  curPropertyValue = string.Empty;
-                  propertyType = "literal";
-                }
-
-                object obj = dto.GetPropertyValue(propertyName);
-                if (obj != null)
-                  if (_trimData)
-                    dtoPropertyValue = obj.ToString().Trim();
-                  else
-                    dtoPropertyValue = obj.ToString();
-                else
-                  dtoPropertyValue = "";
-
-                RoleMap roleMap = FindRoleMap(templateMap, propertyName);
-
-                if (roleMap.valueList == null || roleMap.valueList == string.Empty)
-                {
-                  propertyValue = dtoPropertyValue;
-                }
-                else
-                {
-                  Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);
-                  if (valueList.ContainsKey(dtoPropertyValue))
-                  {
-                    propertyValue = valueList[dtoPropertyValue].Replace("rdl:", rdlPrefix);
-                  }
-                  else
-                  {
-                    throw (new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue)));
-                  }
-                }
-
-                if (!curPropertyValue.Equals(propertyValue))
-                {
-                  isPropertyValueDifferent = true;
-                }
-              }
-
-              }
-              #endregion
-
-              if (isPropertyValueDifferent)
-              {
-                GraphMatch queryTemporal = new GraphMatch();
-                GraphMatch query = new GraphMatch();
-                Variable templateVariable = new Variable("t1");
-                BNode bNodeTemplate = new BNode("t1");
-                SemWeb.Entity templateTypeEntity = templateMap.templateId.Replace("tpl:", tplPrefix);
-                SemWeb.Entity parentIdentifierVariableEntity = parentIdentifierVariable.Replace("eg:", egPrefix);
-                string templateMapClassRole = templateMap.classRole.Replace("tpl:", tplPrefix);
-
-                Statement statementA = new Statement(templateVariable, rdfType, templateTypeEntity);
-                Statement statementB = new Statement(templateVariable, templateMapClassRole, parentIdentifierVariableEntity);
-                
-                queryTemporal.AddGraphStatement(statementA);
-                queryTemporal.AddGraphStatement(statementB);                
-
-                StatementList statementListToBeAddedToStore = new StatementList();
-                foreach (Variable variable in binding.Variables)
-                {
-                  if(variable.LocalName != "t1")
-                  {
                   string propertyName = variable.LocalName;
                   string propertyValue = string.Empty;
-                  string propertyType = string.Empty;
                   string dtoPropertyValue = string.Empty;
-               
+                  string curPropertyValue = string.Empty;
+
                   if ((binding[variable.LocalName] is Literal) && (((Literal)(binding[variable.LocalName])).Value != null))
-                  {                    
-                    propertyType = "literal";
+                  {
+                    curPropertyValue = ((Literal)(binding[variable.LocalName])).Value;
                   }
                   else if (binding[variable.LocalName].Uri != null)
-                  {                    
-                    propertyType = "uri";
-                  }
-                  else
                   {
-                    propertyType = "literal";
+                    curPropertyValue = binding[variable.LocalName].Uri;
                   }
 
                   object obj = dto.GetPropertyValue(propertyName);
@@ -509,25 +504,92 @@ namespace org.iringtools.adapter.semantic
                       throw (new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue)));
                     }
                   }
-                  string roleMapRoleId = roleMap.roleId.Replace("tpl:", tplPrefix);
-                  Variable propertyNameVariable = new Variable(roleMap.propertyName);
-                  Statement statementC = new Statement(templateVariable, roleMapRoleId, propertyNameVariable);
-                  queryTemporal.AddGraphStatement(statementC);
 
-                  if (propertyType == "literal")
+                  if (!curPropertyValue.Equals(propertyValue))
                   {
-                    Literal propertyValueLiteral = GetPropertyValueType(propertyValue, roleMap.dataType);
-                    Statement statement = new Statement(bNodeTemplate, roleMapRoleId, propertyValueLiteral);
-                    statementListToBeAddedToStore.Add(statement);
+                    isPropertyValueDifferent = true;
                   }
-                  else
-                  {
-                    SemWeb.Entity propertyValueEntity = propertyValue;
-                    Statement statement = new Statement(bNodeTemplate, roleMapRoleId, propertyValueEntity);
-                    statementListToBeAddedToStore.Add(statement);
-                  }                  
                 }
-                }               
+              }
+              #endregion
+
+              if (isPropertyValueDifferent)
+              {
+                GraphMatch queryTemporal = new GraphMatch();
+                GraphMatch query = new GraphMatch();
+                Variable templateVariable = new Variable("t1");
+                BNode bNodeTemplate = new BNode("t1");
+                SemWeb.Entity templateTypeEntity = templateMap.templateId.Replace("tpl:", tplPrefix);
+                SemWeb.Entity parentIdentifierVariableEntity = parentIdentifierVariable.Replace("eg:", egPrefix);
+                string templateMapClassRole = templateMap.classRole.Replace("tpl:", tplPrefix);
+
+                Statement statementA = new Statement(templateVariable, rdfType, templateTypeEntity);
+                Statement statementB = new Statement(templateVariable, templateMapClassRole, parentIdentifierVariableEntity);
+
+                queryTemporal.AddGraphStatement(statementA);
+                queryTemporal.AddGraphStatement(statementB);
+
+                StatementList statementListToBeAddedToStore = new StatementList();
+                foreach (Variable variable in binding.Variables)
+                {
+                  if (variable.LocalName != null && variable.LocalName != "t1")
+                  {
+                    string propertyName = variable.LocalName;
+                    string propertyValue = string.Empty;
+                    string propertyType = "literal";
+                    string dtoPropertyValue = string.Empty;
+
+                    if (binding[variable.LocalName].Uri != null)
+                    {
+                      propertyType = "uri";
+                    }
+
+                    object obj = dto.GetPropertyValue(propertyName);
+                    if (obj != null)
+                      if (_trimData)
+                        dtoPropertyValue = obj.ToString().Trim();
+                      else
+                        dtoPropertyValue = obj.ToString();
+                    else
+                      dtoPropertyValue = "";
+
+                    RoleMap roleMap = FindRoleMap(templateMap, propertyName);
+
+                    if (roleMap.valueList == null || roleMap.valueList == string.Empty)
+                    {
+                      propertyValue = dtoPropertyValue;
+                    }
+                    else
+                    {
+                      Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);
+                      if (valueList.ContainsKey(dtoPropertyValue))
+                      {
+                        propertyValue = valueList[dtoPropertyValue].Replace("rdl:", rdlPrefix);
+                      }
+                      else
+                      {
+                        throw (new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue)));
+                      }
+                    }
+                    string roleMapRoleId = roleMap.roleId.Replace("tpl:", tplPrefix);
+                    Variable propertyNameVariable = new Variable(roleMap.propertyName);
+                    Statement statementC = new Statement(templateVariable, roleMapRoleId, propertyNameVariable);
+                    queryTemporal.AddGraphStatement(statementC);
+
+                    if (propertyType == "literal")
+                    {
+                      Literal propertyValueLiteral = GetPropertyValueType(propertyValue, roleMap.dataType);
+                      Statement statement = new Statement(bNodeTemplate, roleMapRoleId, propertyValueLiteral);
+                      statementListToBeAddedToStore.Add(statement);
+                    }
+                    else
+                    {
+                      SemWeb.Entity propertyValueEntity = propertyValue;
+                      Statement statement = new Statement(bNodeTemplate, roleMapRoleId, propertyValueEntity);
+                      statementListToBeAddedToStore.Add(statement);
+                    }
+                  }
+                }
 
                 QueryResultBuffer resultBuffer = GetUnterminatedTemplates(queryTemporal, templateVariable);
 
@@ -553,7 +615,7 @@ namespace org.iringtools.adapter.semantic
                 Literal startTimeValue = GetPropertyValueType(DateTime.UtcNow.ToString(), "datetime");
                 Statement statement4 = new Statement(bNodeTemplate, startDateTimeTemplate, startTimeValue);
                 _store.Add(statement4);
-               }
+              }
             }
           }
           #endregion
@@ -564,7 +626,7 @@ namespace org.iringtools.adapter.semantic
             SemWeb.Entity templateTypeEntity = templateMap.templateId.Replace("tpl:", tplPrefix);
             SemWeb.Entity parentIdentifierVariableEntity = parentIdentifierVariable.Replace("eg:", egPrefix);
             string templateMapClassRole = templateMap.classRole.Replace("tpl:", tplPrefix);
-            
+
             Statement statement1 = new Statement(bNodeTemplate, rdfType, templateTypeEntity);
             Statement statement2 = new Statement(bNodeTemplate, templateMapClassRole, parentIdentifierVariableEntity);
 
@@ -578,7 +640,7 @@ namespace org.iringtools.adapter.semantic
               string dtoPropertyValue = string.Empty;
               string curPropertyValue = string.Empty;
 
-              object obj = dto.GetPropertyValue(roleMap.propertyName);
+              object obj = dto.GetPropertyValueByInternalName(roleMap.propertyName);
               if (obj != null)
                 if (_trimData)
                   dtoPropertyValue = obj.ToString().Trim();
@@ -617,7 +679,7 @@ namespace org.iringtools.adapter.semantic
                 SemWeb.Entity propertyValueEntity = propertyValue;
                 Statement statement3 = new Statement(bNodeTemplate, roleMapRoleId, propertyValueEntity);
                 _store.Add(statement3);
-              }                    
+              }
             }
             Literal startTimeValue = GetPropertyValueType(DateTime.UtcNow.ToString(), "datetime");
             Statement statement4 = new Statement(bNodeTemplate, startDateTimeTemplate, startTimeValue);
@@ -627,8 +689,8 @@ namespace org.iringtools.adapter.semantic
         }
         else
         {
-          RoleMap roleMap = templateMap.roleMaps[0];          
-          string instanceVariable = RefreshRelatedClass(templateMap, roleMap, roleMap.classMap, parentIdentifierVariable , dto);
+          RoleMap roleMap = templateMap.roleMaps[0];
+          string instanceVariable = RefreshRelatedClass(templateMap, roleMap, roleMap.classMap, parentIdentifierVariable, dto);
           RefreshClassMap(roleMap.classMap, roleMap, dto, instanceVariable);
         }
       }
@@ -740,11 +802,11 @@ namespace org.iringtools.adapter.semantic
           SemWeb.Entity identifierEntity = identifier.Replace("eg:", egPrefix);
           Literal startTimeValue = GetPropertyValueType(DateTime.UtcNow.ToString(), "datetime");
 
-          Statement statement1 = new Statement(bNodeTemplate, rdfType, templateTypeEntity);          
-          Statement statement2 = new Statement(bNodeTemplate, templateMapClassRole, classNameEntity);          
-          Statement statement3 = new Statement(bNodeTemplate, roleMapRoleId, identifierEntity);          
+          Statement statement1 = new Statement(bNodeTemplate, rdfType, templateTypeEntity);
+          Statement statement2 = new Statement(bNodeTemplate, templateMapClassRole, classNameEntity);
+          Statement statement3 = new Statement(bNodeTemplate, roleMapRoleId, identifierEntity);
           Statement statement4 = new Statement(bNodeTemplate, startDateTimeTemplate, startTimeValue);
-          
+
           _store.Add(statement1);
           _store.Add(statement2);
           _store.Add(statement3);
@@ -771,7 +833,7 @@ namespace org.iringtools.adapter.semantic
         SemWeb.Variable templateVariable = new SemWeb.Variable("t1");
         string templateMapClassRole = templateMap.classRole.Replace("tpl:", tplPrefix);
 
-        Statement statementA = new Statement(templateVariable, rdfType, templateIdEntity);        
+        Statement statementA = new Statement(templateVariable, rdfType, templateIdEntity);
         Statement statementB = new Statement(templateVariable, templateMapClassRole, parentIdentifierVariableEntity);
 
         query.AddGraphStatement(statementA);
@@ -784,7 +846,7 @@ namespace org.iringtools.adapter.semantic
           Statement statementC = new Statement(templateVariable, roleMapRoleId, propertyTemplate);
           query.AddGraphStatement(statementC);
         }
-       
+
         QueryResultBuffer resultBuffer = GetUnterminatedTemplates(query, templateVariable);
         return resultBuffer;
       }
@@ -803,15 +865,15 @@ namespace org.iringtools.adapter.semantic
         SemWeb.Entity classIdEntity = classId.Replace("rdl:", rdlPrefix);
         SemWeb.Entity instanceValue = identifier.Replace("eg:", egPrefix);
         SemWeb.Variable classificationTemplate = new SemWeb.Variable("c1");
-        
-        Statement statementA = new Statement(classificationTemplate, rdfType, classificationTemplateType);        
-        Statement statementB = new Statement(classificationTemplate, classType, classIdEntity);        
+
+        Statement statementA = new Statement(classificationTemplate, rdfType, classificationTemplateType);
+        Statement statementB = new Statement(classificationTemplate, classType, classIdEntity);
         Statement statementC = new Statement(classificationTemplate, instanceType, instanceValue);
 
         query.AddGraphStatement(statementA);
         query.AddGraphStatement(statementB);
         query.AddGraphStatement(statementC);
-        
+
         QueryResultBuffer resultBuffer = GetUnterminatedTemplates(query, classificationTemplate);
         if (resultBuffer.Bindings.Count <= 0)
         {
@@ -840,7 +902,7 @@ namespace org.iringtools.adapter.semantic
         foreach (VariableBindings variableBindings in resultBuffer.Bindings)
         {
           SemWeb.Entity entity = (SemWeb.Entity)variableBindings["i1"];
-          results.Add(entity.Uri.Replace(egPrefix, "eg:"));                        
+          results.Add(entity.Uri.Replace(egPrefix, "eg:"));
         }
         return results;
       }
@@ -925,21 +987,21 @@ namespace org.iringtools.adapter.semantic
       try
       {
         Literal literal;
-        if (type.Equals(string.Empty))
+        if (String.IsNullOrEmpty(type))
           type = "String";
 
         if (!type.Contains(':'))
           type = "http://www.w3.org/2001/XMLSchema#" + type;
 
         if (type.Contains("xsd:"))
-         type = type.Replace("xsd:", "http://www.w3.org/2001/XMLSchema#");
+          type = type.Replace("xsd:", "http://www.w3.org/2001/XMLSchema#");
 
         string str = string.Empty;
         if (value == null)
           str = "";
         else
           str = value.ToString();
-       return literal = new Literal(str, null, type);
+        return literal = new Literal(str, null, type);
         //return String.Format("\"{0}\"^^{1}", str, type);
       }
       catch (Exception exception)
@@ -1002,21 +1064,6 @@ namespace org.iringtools.adapter.semantic
       {
         throw new Exception(String.Format("GetUnterminatedTemplates"), exception);
       }
-    }
-
-    public void DumpStoreData(string xmlPath)
-    {
-      using (RdfWriter writer = new RdfXmlWriter(xmlPath + "rdf.xml"))
-      {
-        writer.Write(_store);
-      }
-
-    }
-
-    public void ClearStore()
-    {
-      _store.Clear();
-      
     }
   }
 }
