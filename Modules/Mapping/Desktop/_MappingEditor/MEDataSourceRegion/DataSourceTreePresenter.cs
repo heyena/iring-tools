@@ -58,20 +58,13 @@ namespace org.iringtools.modules.medatasourceregion
             this.aggregator = aggregator;
             this.model = model;
            
-            //itcSpinner.Items.Add(spinner);
-
-            adapterProxy.OnDataArrived += OnDataArrivedHandler;
-            
-            // Async call to get data dictionary
-            adapterProxy.GetDictionary("", "");
+            adapterProxy.OnDataArrived += OnDataArrivedHandler;    
             aggregator.GetEvent<SpinnerEvent>().Subscribe(SpinnerEventHandler);
 
 #if SILVERLIGHT
             MouseScrollBehavior mouseScrollBehavior = new MouseScrollBehavior();
             Interaction.GetBehaviors(tvwDataDictionary).Add(mouseScrollBehavior);
-#else
 #endif
-
         }
 
         public void SpinnerEventHandler(SpinnerEventArgs e)
