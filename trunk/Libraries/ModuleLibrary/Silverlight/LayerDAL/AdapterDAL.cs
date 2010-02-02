@@ -144,7 +144,7 @@ namespace org.iringtools.modulelibrary.layerdal
         args = new CompletedEventArgs
         {
             // Define your method in CompletedEventType and assign
-            CompletedType = CompletedEventType.GetScope,
+            CompletedType = CompletedEventType.GetScopes,
             Data = scopes,
         };
       }

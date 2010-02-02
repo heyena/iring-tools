@@ -89,13 +89,8 @@ namespace org.iringtools.modules.memappingregion
         this.aggregator = aggregator;
         this.model = model;
         this.model.MappingTree = tvwMapping;
-
-
-        // For class use
-        this.adapterProxy = adapterProxy;
+        
         adapterProxy.OnDataArrived += OnDataArrivedHandler;
-
-        //adapterProxy.GetMapping();
         aggregator.GetEvent<SpinnerEvent>().Subscribe(SpinnerEventHandler);
       }
       catch (Exception ex)
