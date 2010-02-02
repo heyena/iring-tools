@@ -132,16 +132,21 @@ namespace org.iringtools.modulelibrary.layerdal
       // <Method> data arrived event handler 
       if (sender == _scopeListClient)
       {
-          string result = ((DownloadStringCompletedEventArgs)e).Result;
+        string result = ((DownloadStringCompletedEventArgs)e).Result;
 
-          
-          // Configure event argument
-          args = new CompletedEventArgs
-          {
-              // Define your method in CompletedEventType and assign
-              CompletedType = CompletedEventType.GetScope,
-              Data = "Assign the expected result here"
-          };
+        List<ScopeProject> scopes = result.DeserializeDataContract<List<ScopeProject>>();
+
+        // If the cast failed then return
+        if (scopes == null)
+          return;
+
+        // Configure event argument
+        args = new CompletedEventArgs
+        {
+            // Define your method in CompletedEventType and assign
+            CompletedType = CompletedEventType.GetScope,
+            Data = scopes,
+        };
       }
       #endregion
       //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

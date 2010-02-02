@@ -117,11 +117,30 @@ namespace org.iringtools.adapter
     /// which applications are available</returns>
     public List<ScopeProject> GetScopes()
     {
+      //List<ScopeProject> scopes = new List<ScopeProject> {
+      //  new ScopeProject() { 
+      //    Name = "12345_000", 
+      //    Description = "Test Project",
+      //    Applications = new List<ScopeApplication> {
+      //      new ScopeApplication() {
+      //        Name="ABC",
+      //        Description="Application ABC"
+      //      },
+      //      new ScopeApplication() {
+      //        Name="DEF",
+      //        Description="Application DEF"
+      //      },
+      //    },
+      //  },
+      //};
+
       string path = _settings.XmlPath + _settings.ProjectListSource;
+
+      //Utility.Write<List<ScopeProject>>(scopes, path);
 
       try
       {
-        List<ScopeProject> _projects = Utility.Read<List<ScopeProject>>(path, true);
+        List<ScopeProject> _projects = Utility.Read<List<ScopeProject>>(path);
         return _projects;
       }
       catch (Exception exception)

@@ -118,10 +118,6 @@
       <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
       <Name>iRINGLibrary.Desktop</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Libraries\PrismContrib\Desktop\PrismContrib.Desktop.csproj">
-      <Project>{1A611244-54BE-4F12-AA34-12F54A2B07E6}</Project>
-      <Name>PrismContrib.Desktop</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Libraries\UtilityLibrary\Desktop\UtilityLibrary.Desktop.csproj">
       <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
       <Name>UtilityLibrary.Desktop</Name>
