@@ -7,4 +7,3 @@ WHERE {
 ?s dm:hasSuperclass ?uri . 
 OPTIONAL { ?uri rdfs:label ?label }
 } 
-ORDER BY ASC(?label)
