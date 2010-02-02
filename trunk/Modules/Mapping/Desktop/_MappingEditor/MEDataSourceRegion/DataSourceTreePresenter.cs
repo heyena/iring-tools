@@ -116,6 +116,8 @@ namespace org.iringtools.modules.medatasourceregion
             if (dictionary == null)
                 return;
 
+            tvwDataDictionary.Items.Clear();
+
             // Note that we only load first level nodes
             foreach (org.iringtools.library.DataObject dataObject in dictionary.dataObjects)
             {

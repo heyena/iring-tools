@@ -15,7 +15,7 @@
         </Grid.RowDefinitions>
         <TextBlock Text="Project"  Grid.Column="0" Margin="5,5,0,5" TextAlignment="Left" FontFamily="Portable User Interface" FontSize="12" FontStyle="Italic"/>
         <ComboBox Name="ProjectCombo" Grid.Column="1" Grid.Row="0" ItemsSource="{Binding ScopeList.Project}" Width="Auto"/>
-        <TextBlock Text="Application" Grid.Column="2" Grid.Row="0" Margin="5,5,0,5" TextAlignment="Left" FontFamily="Portable User Interface" FontSize="12" FontStyle="Italic"/>
+        <TextBlock Text="Application" Grid.Column="2" Grid.Row="0" Margin="10,5,0,5" TextAlignment="Left" FontFamily="Portable User Interface" FontSize="12" FontStyle="Italic"/>
         <ComboBox Name="AppCombo" Grid.Column="3" Grid.Row="0" Width="Auto" />
     </Grid>
 </UserControl>
