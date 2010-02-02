@@ -3,6 +3,7 @@
     <id name="Id" column="tag">
       <generator class="assigned" />
     </id>
+    <property name="tag" column="tag" update="false" insert="false" />
     <property name="diameter" column="diameter" />
     <property name="uomDiameter" column="uomDiameter" />
     <property name="system" column="system" />
@@ -11,6 +12,7 @@
     <id name="Id" column="tag">
       <generator class="assigned" />
     </id>
+    <property name="tag" column="tag" update="false" insert="false" />
     <property name="componentType" column="componentType" />
     <property name="diameter" column="diameter" />
     <property name="uomDiameter" column="uomDiameter" />
@@ -26,12 +28,14 @@
     <id name="Id" column="tag">
       <generator class="assigned" />
     </id>
+    <property name="tag" column="tag" update="false" insert="false" />
     <property name="description" column="description" />
   </class>
   <class name="org.iringtools.adapter.proj_12345_000.ABC.VacuumTower, AdapterService" table="VacuumTower">
     <id name="Id" column="tag">
       <generator class="assigned" />
     </id>
+    <property name="tag" column="tag" update="false" insert="false" />
     <property name="description" column="description" />
   </class>
 </hibernate-mapping>

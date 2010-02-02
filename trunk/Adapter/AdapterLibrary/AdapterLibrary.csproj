@@ -85,7 +85,7 @@
     <Compile Include="IDataTransferObject.cs" />
     <Compile Include="IDTOService.cs" />
     <Compile Include="DataTransferObject.cs" />
-    <Compile Include="ISemanticEngine.cs" />
+    <Compile Include="IProjectionEngine.cs" />
     <Compile Include="KnownTypeProvider.cs" />
     <Compile Include="RuleEngine.cs" />
     <Compile Include="SemWebEngine.cs" />

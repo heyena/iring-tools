@@ -84,7 +84,7 @@
               </ClassMap>
             </RoleMap>
           </RoleMaps>
-        </TemplateMap>       
+        </TemplateMap>
       </TemplateMaps>
       <DataObjectMaps>
         <DataObjectMap name="InLinePipingComponent"/>
@@ -113,13 +113,13 @@
               </ClassMap>
             </RoleMap>
           </RoleMaps>
-        </TemplateMap>      
+        </TemplateMap>
         <TemplateMap type="Property" templateId="tpl:R57208341310" name="NominalDiameter" classRole="tpl:R23810118927">
           <RoleMaps>
             <RoleMap roleId="tpl:R13477943711" name="value" propertyName="diameter"/>
             <RoleMap roleId="tpl:R92691343776" name="scale" propertyName="uomDiameter"/>
           </RoleMaps>
-        </TemplateMap>       
+        </TemplateMap>
       </TemplateMaps>
       <DataObjectMaps>
         <DataObjectMap name="Line"/>
