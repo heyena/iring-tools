@@ -8,4 +8,3 @@ OPTIONAL { tpl:param1 rdfs:comment ?definition }
 tpl:param1 rdfs:label ?label .
 OPTIONAL { tpl:param1 rdf:type  ?typeID } 
 OPTIONAL { tpl:param1 tpl:R42656850346 ?creationDate }  }
-ORDER BY ASC(?label)
