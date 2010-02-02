@@ -61,9 +61,9 @@ namespace org.iringtools.modules.medatasourceregion
             //itcSpinner.Items.Add(spinner);
 
             adapterProxy.OnDataArrived += OnDataArrivedHandler;
-
+            
             // Async call to get data dictionary
-            adapterProxy.GetDictionary();
+            adapterProxy.GetDictionary("", "");
             aggregator.GetEvent<SpinnerEvent>().Subscribe(SpinnerEventHandler);
 
 #if SILVERLIGHT

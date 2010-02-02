@@ -43,6 +43,7 @@ namespace org.iringtools.modulelibrary.layerdal
     /// <summary>
     /// Adapter WCF Service
     /// </summary>
+    private WebClient _scopeListClient;
     private WebClient _dictionaryClient;
     private WebClient _generateClient;
     private WebClient _mappingClient;
@@ -67,14 +68,16 @@ namespace org.iringtools.modulelibrary.layerdal
        
         // Instantiate Adapter Service using baseclass 
         // properties
-          _dictionaryClient = new WebClient();
-          _generateClient = new WebClient();
-          _mappingClient = new WebClient();
-          _refreshClient = new WebClient();
-          _testClient = new WebClient();
+        _scopeListClient = new WebClient();
+        _dictionaryClient = new WebClient();
+        _generateClient = new WebClient();
+        _mappingClient = new WebClient();
+        _refreshClient = new WebClient();
+        _testClient = new WebClient();
 
         #region Subscribe to client events
         // Async processing - specify event handlers
+        _scopeListClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
         _dictionaryClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
         _generateClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
         _mappingClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
@@ -125,7 +128,22 @@ namespace org.iringtools.modulelibrary.layerdal
         };
       }
       #endregion
+      #region // Get ScopeList
+      // <Method> data arrived event handler 
+      if (sender == _scopeListClient)
+      {
+          string result = ((DownloadStringCompletedEventArgs)e).Result;
 
+          
+          // Configure event argument
+          args = new CompletedEventArgs
+          {
+              // Define your method in CompletedEventType and assign
+              CompletedType = CompletedEventType.GetScope,
+              Data = "Assign the expected result here"
+          };
+      }
+      #endregion
       //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
       #region       // GetDataDictionary data arrived event handler
 
@@ -256,9 +274,16 @@ namespace org.iringtools.modulelibrary.layerdal
     /// Generates this instance.
     /// </summary>
     /// <returns></returns>
-    public Response Generate()
+    public Response Generate(string projectName, string applicationName)
     {
-        _generateClient.DownloadStringAsync(new Uri(_adapterServiceUri + "/generate"));
+        StringBuilder sb = new StringBuilder();
+        sb.Append(_adapterServiceUri);
+        sb.Append("/");
+        sb.Append(projectName);
+        sb.Append("/");
+        sb.Append(applicationName);
+        sb.Append("/generate");
+        _generateClient.DownloadStringAsync(new Uri(sb.ToString()));
         return null;
     }
 
@@ -286,29 +311,56 @@ namespace org.iringtools.modulelibrary.layerdal
     #endregion
     
     #region GetMapping() 
-    public Mapping GetMapping()
+    public Mapping GetMapping(string projectName, string applicationName)
     {
-      _mappingClient.DownloadStringAsync(new Uri(_adapterServiceUri + "/mapping"));
+        StringBuilder sb = new StringBuilder();
+        sb.Append(_adapterServiceUri);
+        sb.Append("/");
+        sb.Append(projectName);
+        sb.Append("/");
+        sb.Append(applicationName);
+        sb.Append("/mapping");
+      _mappingClient.DownloadStringAsync(new Uri(sb.ToString()));
       return null;
     } 
     #endregion
     #region GetDictionary() 
-    public DataDictionary GetDictionary()
+    public DataDictionary GetDictionary(string projectName, string applicationName)
     {
-      _dictionaryClient.DownloadStringAsync(new Uri(_adapterServiceUri + "/datadictionary"));
+        StringBuilder sb = new StringBuilder();
+        sb.Append(_adapterServiceUri);
+        sb.Append("/");
+        sb.Append(projectName);
+        sb.Append("/");
+        sb.Append(applicationName);
+        sb.Append("/datadictionary");
+      _dictionaryClient.DownloadStringAsync(new Uri(sb.ToString()));
       return null;
     } 
     #endregion
     #region UpdateMapping(mapping) 
-    public Response UpdateMapping(Mapping mapping)
+    public Response UpdateMapping(string projectName, string applicationName, Mapping mapping)
     {
       string message = Utility.SerializeXml<Mapping>(mapping);
 
+      StringBuilder sb = new StringBuilder();
+      sb.Append(_adapterServiceUri);
+      sb.Append("/");
+      sb.Append(projectName);
+      sb.Append("/");
+      sb.Append(applicationName);
+      sb.Append("/mapping"); 
+ 
       _mappingClient.Headers["Content-type"] = "application/xml";
       _mappingClient.Encoding = Encoding.UTF8;
-      _mappingClient.UploadStringAsync(new Uri(_adapterServiceUri + "/mapping"), "POST", message);
+      _mappingClient.UploadStringAsync(new Uri(sb.ToString()), "POST", message);
       
       return null;
+    }
+
+    public Response UpdateMapping(Mapping mapping)
+    {
+        throw new NotImplementedException();
     }
 
     #endregion
@@ -317,9 +369,16 @@ namespace org.iringtools.modulelibrary.layerdal
     /// Refreshes all.
     /// </summary>
     /// <returns></returns>
-    public Response RefreshAll()
+    public Response RefreshAll(string projectName, string applicationName)
     {
-      _refreshClient.DownloadStringAsync(new Uri(_adapterServiceUri + "/refresh"));
+        StringBuilder sb = new StringBuilder();
+        sb.Append(_adapterServiceUri);
+        sb.Append("/");
+        sb.Append(projectName);
+        sb.Append("/");
+        sb.Append(applicationName);
+        sb.Append("/refresh");
+      _refreshClient.DownloadStringAsync(new Uri(sb.ToString()));
       
       return null;
     }
@@ -337,6 +396,11 @@ namespace org.iringtools.modulelibrary.layerdal
     } 
     #endregion
 
+    public Response GetScope()
+    {
+        _scopeListClient.DownloadStringAsync(new Uri(_adapterServiceUri + "/scopes"));
+        return null;
+    }
     public void GetUnitTestString(string valueToReturn)
     {
       throw new NotImplementedException();
@@ -344,12 +408,12 @@ namespace org.iringtools.modulelibrary.layerdal
 
     #region IAdapterService Members
 
-    public Response RefreshDictionary()
+    public Response RefreshDictionary(string projectName, string applicationName)
     {
       throw new NotImplementedException();
     }
 
-    public Response RefreshGraph(string graphName)
+    public Response RefreshGraph(string projectName, string applicationName, string graphName)
     {
       throw new NotImplementedException();
     }
@@ -369,7 +433,7 @@ namespace org.iringtools.modulelibrary.layerdal
       throw new NotImplementedException();
     }
 
-    public Response ClearStore()
+    public Response ClearStore(string projectName, string applicationName)
     {
       throw new NotImplementedException();
     }

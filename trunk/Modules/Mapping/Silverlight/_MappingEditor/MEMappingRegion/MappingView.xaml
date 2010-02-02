@@ -8,11 +8,11 @@
     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"    
 >	
   <Grid x:Name="LayoutRoot" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#FFF0F0F0">    
-    <TextBox x:Name="txtLabel" BorderBrush="#8FA0AE" Width="Auto" HorizontalAlignment="Stretch" Height="25" Margin="4,4,476,4" VerticalAlignment="Top" Text="{Binding Path=SelectedIMLabel}" TextWrapping="Wrap"/>
-      <Button x:Name="btnAddGraph" Content="Add Graph" Height="25" Width="90" HorizontalAlignment="Right" Margin="0,4,382,4" VerticalAlignment="Top"  />      
-      <Button x:Name="btnAddTemplate" Content="Add Template" Height="25" Width="90" HorizontalAlignment="Right" Margin="0,4,288,4" VerticalAlignment="Top"  />
-      <Button x:Name="btnMap" Content="Add Map"	Height="25" Width="90" Margin="0,4,192,4" VerticalAlignment="Top" HorizontalAlignment="Right"  />        
-      <Button x:Name="btnDelete" Content="Delete" Height="25" Width="90" Margin="0,4,98,4" VerticalAlignment="Top" HorizontalAlignment="Right"/>    
+    <TextBox x:Name="txtLabel" BorderBrush="#8FA0AE" Width="Auto" HorizontalAlignment="Stretch" Height="25" Margin="4,4,416,4" VerticalAlignment="Top" Text="{Binding Path=SelectedIMLabel}" TextWrapping="Wrap" MinWidth="110"/>
+      <Button x:Name="btnAddGraph" Content="Add Graph" Height="25" Width="70" HorizontalAlignment="Right" Margin="0,4,342,4" VerticalAlignment="Top"  />      
+      <Button x:Name="btnAddTemplate" Content="Add Template" Height="25" Width="90" HorizontalAlignment="Right" Margin="0,4,248,4" VerticalAlignment="Top"  />
+      <Button x:Name="btnMap" Content="Add Map"	Height="25" Width="70" Margin="0,4,173,4" VerticalAlignment="Top" HorizontalAlignment="Right"  />        
+      <Button x:Name="btnDelete" Content="Delete" Height="25" Width="70" Margin="0,4,98,4" VerticalAlignment="Top" HorizontalAlignment="Right"/>    
       <Button x:Name="btnSave" Content="Save Mapping" Width="90" Height="25"  Margin="0,4,4,4" VerticalAlignment="Top" HorizontalAlignment="Right"  />    
       <Button x:Name="btnData" Content="Data Objects" Visibility="Collapsed"	Height="25" Width="90" Margin="0,4,4,4" VerticalAlignment="Top" HorizontalAlignment="Right"/>
       <controls:TreeView Margin="4,33,4,4" x:Name="tvwMapping" VerticalAlignment="Stretch" Height="Auto" BorderBrush="#8FA0AE" BorderThickness="1"/>
