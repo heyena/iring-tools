@@ -95,7 +95,7 @@ namespace org.iringtools.modules.memappingregion
         this.adapterProxy = adapterProxy;
         adapterProxy.OnDataArrived += OnDataArrivedHandler;
 
-        adapterProxy.GetMapping();
+        //adapterProxy.GetMapping();
         aggregator.GetEvent<SpinnerEvent>().Subscribe(SpinnerEventHandler);
       }
       catch (Exception ex)

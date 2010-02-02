@@ -189,10 +189,10 @@ namespace org.iringtools.modulelibrary.layerbll
     }
 
 
-    public Response GetScope()
+    public Response GetScopes()
     {
-        StartService("GetScope");
-        return dal.GetScope();
+        StartService("GetScopes");
+        return dal.GetScopes();
     }
     // THE FOLLOWING NOT IMPLEMENTED 
 
