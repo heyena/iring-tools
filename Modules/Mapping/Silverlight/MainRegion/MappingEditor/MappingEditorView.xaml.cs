@@ -14,12 +14,21 @@ namespace org.iringtools.modules.mainregion
       LayoutRoot.LayoutUpdated += new System.EventHandler(LayoutRoot_LayoutUpdated);
 
       LayoutRoot.SizeChanged += new System.Windows.SizeChangedEventHandler(LayoutRoot_SizeChanged);
-
+      ProjectApplication.Loaded += new System.Windows.RoutedEventHandler(ProjectApplication_SizeChanged);
       DataSource.Loaded += new System.Windows.RoutedEventHandler(DataSource_SizeChanged);
       Search.Loaded += new System.Windows.RoutedEventHandler(Search_SizeChanged);
       //Navigation.Loaded += new System.Windows.RoutedEventHandler(Navigation_SizeChanged);
       Details.Loaded += new System.Windows.RoutedEventHandler(Details_SizeChanged);
       Mapping.Loaded += new System.Windows.RoutedEventHandler(Mapping_SizeChanged);
+    }
+
+    void ProjectApplication_SizeChanged(object sender, System.Windows.RoutedEventArgs e)
+    {
+        if (ProjectApplication.Items.Count > 0)
+        {
+            UserControl userControl = (UserControl)ProjectApplication.Items[0];
+            userControl.Height = LayoutRoot.RowDefinitions[0].ActualHeight;
+        }
     }
 
     void LayoutRoot_LayoutUpdated(object sender, System.EventArgs e)
@@ -32,6 +41,7 @@ namespace org.iringtools.modules.mainregion
     {
       DataSource_SizeChanged(sender, e);
       Search_SizeChanged(sender, e);
+      ProjectApplication_SizeChanged(sender, e);
       //Navigation_SizeChanged(sender, e);
       Details_SizeChanged(sender, e);
       Mapping_SizeChanged(sender, e);
@@ -43,7 +53,7 @@ namespace org.iringtools.modules.mainregion
       {
         UserControl userControl = (UserControl)DataSource.Items[0];
         //double rowSpanHeight = LayoutRoot.RowDefinitions[0].ActualHeight + LayoutRoot.RowDefinitions[1].ActualHeight;
-        userControl.Height = LayoutRoot.RowDefinitions[0].ActualHeight; //rowSpanHeight;
+        userControl.Height = LayoutRoot.RowDefinitions[1].ActualHeight; //rowSpanHeight;
         //userControl.Width = LayoutRoot.ColumnDefinitions[0].ActualWidth;
       }
     }
@@ -53,7 +63,7 @@ namespace org.iringtools.modules.mainregion
       if (Search.Items.Count > 0)
       {
         UserControl userControl = (UserControl)Search.Items[0];
-        userControl.Height = LayoutRoot.RowDefinitions[0].ActualHeight;
+        userControl.Height = LayoutRoot.RowDefinitions[1].ActualHeight;
         //userControl.Width = LayoutRoot.ColumnDefinitions[1].ActualWidth;
       }
     }
@@ -73,7 +83,7 @@ namespace org.iringtools.modules.mainregion
       if (Details.Items.Count > 0)
       {
         UserControl userControl = (UserControl)Details.Items[0];
-        userControl.Height = LayoutRoot.RowDefinitions[1].ActualHeight;
+        userControl.Height = LayoutRoot.RowDefinitions[2].ActualHeight;
         //userControl.Width = LayoutRoot.ColumnDefinitions[0].ActualWidth;
       }
     }
@@ -83,7 +93,7 @@ namespace org.iringtools.modules.mainregion
       if (Mapping.Items.Count > 0)
       {
         UserControl userControl = (UserControl)Mapping.Items[0];
-        userControl.Height = LayoutRoot.RowDefinitions[1].ActualHeight;
+        userControl.Height = LayoutRoot.RowDefinitions[2].ActualHeight;
         //userControl.Width = LayoutRoot.ColumnDefinitions[1].ActualWidth;
       }
     }

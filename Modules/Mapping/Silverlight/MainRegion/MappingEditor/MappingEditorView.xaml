@@ -20,27 +20,30 @@
     </Grid.ColumnDefinitions>
 
     <Grid.RowDefinitions>
-      <RowDefinition x:Name="TopRow" Height="*"/>
+            <RowDefinition x:Name="ProjAppRow" Height="26"/>
+            <RowDefinition x:Name="TopRow" Height="*"/>
       <RowDefinition x:Name="BottomRow" Height="*"/>
     </Grid.RowDefinitions>
-
-    <ItemsControl Name="DataSource" Grid.Row="0" Grid.Column="0" Regions:RegionManager.RegionName="MEDataSourceRegion"
+        <ItemsControl Name="ProjectApplication" Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0"  Regions:RegionManager.RegionName="ProjAppRegion"
+                      VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+      
+        <ItemsControl Name="DataSource" Grid.Row="1" Grid.Column="0" Regions:RegionManager.RegionName="MEDataSourceRegion"
 						      VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  />
 
-    <ItemsControl Name="Search" Grid.Row="0" Grid.Column="1" Regions:RegionManager.RegionName="SearchRegion"
+    <ItemsControl Name="Search" Grid.Row="1" Grid.Column="1" Regions:RegionManager.RegionName="SearchRegion"
         		      VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
 
     <!--<ItemsControl Name="Navigation" Grid.Row="1" Grid.Column="1" Regions:RegionManager.RegionName="NavigationRegion"
 	  				  	VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>-->
 
-    <ItemsControl Name="Details" Grid.Row="1"  Grid.Column="0" Regions:RegionManager.RegionName="DetailRegion" 
+    <ItemsControl Name="Details" Grid.Row="2"  Grid.Column="0" Regions:RegionManager.RegionName="DetailRegion" 
 				          HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 
-    <ItemsControl Name="Mapping" Grid.Row="1" Grid.Column="1" Regions:RegionManager.RegionName="MEMappingRegion"
+    <ItemsControl Name="Mapping" Grid.Row="2" Grid.Column="1" Regions:RegionManager.RegionName="MEMappingRegion"
 				          VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  />
 
-    <basics:GridSplitter Name="HorizontalSplitter" Opacity="0" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Height="4" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="Fuchsia"/>
-    <basics:GridSplitter Opacity="0" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Width="4"/>
+    <basics:GridSplitter Name="HorizontalSplitter" Opacity="0" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Height="4" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="Fuchsia"/>
+    <basics:GridSplitter Opacity="0" Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" Width="4"/>
 
   </Grid>
 </UserControl>
