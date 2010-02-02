@@ -1,7 +1,5 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
-using org.iringtools.library;
 
 /// <summary>
 /// Adapter Service WCF Interface
@@ -18,14 +16,14 @@ public interface IAdapter : org.iringtools.library.IAdapter
   /// </summary>
   /// <param name="userState">State of the user.</param>
   /// <returns></returns>
-  Response RefreshAll(object userState);
+  org.iringtools.library.Response RefreshAll(object userState);
 
   /// <summary>
   /// Generates the specified user state.
   /// </summary>
   /// <param name="userState">State of the user.</param>
   /// <returns></returns>
-  Response Generate(object userState);
+  org.iringtools.library.Response Generate(object userState);
 
   /// <summary>
   /// Gets the unit test string.
@@ -33,6 +31,26 @@ public interface IAdapter : org.iringtools.library.IAdapter
   /// <param name="valueToReturn">The value to return.</param>
   void GetUnitTestString(string valueToReturn);
 
-  string GetAdapterServiceUri { get; }
+  /// <summary>
+  /// 
+  /// </summary>
+  /// <returns></returns>
+  org.iringtools.library.Response GetScopes();
 
+  /// <summary>
+  /// 
+  /// </summary>
+  /// <param name="projectName"></param>
+  /// <param name="applicationName"></param>
+  /// <returns></returns>
+  org.iringtools.library.Mapping GetMapping(string projectName, string applicationName);
+
+  /// <summary>
+  /// 
+  /// </summary>
+  /// <param name="mapping"></param>
+  /// <returns></returns>
+  org.iringtools.library.Response UpdateMapping(org.iringtools.library.Mapping mapping);
+
+  string GetAdapterServiceUri { get; }
 }

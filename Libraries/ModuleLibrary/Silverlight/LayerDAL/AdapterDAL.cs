@@ -396,7 +396,7 @@ namespace org.iringtools.modulelibrary.layerdal
     } 
     #endregion
 
-    public Response GetScope()
+    public Response GetScopes()
     {
         _scopeListClient.DownloadStringAsync(new Uri(_adapterServiceUri + "/scopes"));
         return null;
