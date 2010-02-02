@@ -126,7 +126,10 @@ namespace org.iringtools.modules.memappingregion
       Mapping mapping = e.Data as Mapping;
       if (mapping == null)
         return;
+
       mappingCRUD.mapping = mapping;
+      tvwMapping.Items.Clear();
+
       // Note that we only load first level nodes
       foreach (GraphMap graphMap in mapping.graphMaps)
       {
