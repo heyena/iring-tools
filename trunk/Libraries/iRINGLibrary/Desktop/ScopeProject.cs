@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace org.iringtools.library
 {
@@ -6,55 +7,29 @@ namespace org.iringtools.library
     /// This class represents a node in the Project.xml file with
     /// specific attention paid to the parent/child relationship between projects and applications
     /// </summary>
+   [DataContract]
    public class ScopeProject
     {
-        private string _name;
-        private List<ScopeApplication> _applications = new List<ScopeApplication>();
-
-       /// <summary>
-       /// Default constructor
-       /// </summary>
-        public ScopeProject()
-        {
-            _name = string.Empty;
-            List<ScopeApplication> _applications = new List<ScopeApplication>();
-        }
-
-       /// <summary>
-       /// Overloaded constructor allowing the project name to be set at instantitaion
-       /// </summary>
-       /// <param name="name">The name of the project</param>
-        public ScopeProject(string name)
-        {
-            _name = name;
-            List<ScopeApplication> _applications = new List<ScopeApplication>();
-        }
-
        /// <summary>
        /// The name of the project
        /// </summary>
        /// <returns>a string</returns>
-        public string Name()
-        {
-            return _name;
-        }
+       [DataMember(Order=0)]
+       public string Name { get; set; }
+
 
        /// <summary>
-       /// Public method to add a new application to the Applications collection
+       /// The description of the project
        /// </summary>
-       /// <param name="application">A populated ScopeApplication object</param>
-        public void AddApplication(ScopeApplication application)
-        {
-            _applications.Add(application);
-        }
+       /// <returns>a string</returns>
+       [DataMember(Order=1)]
+       public string Description { get; set; }
 
        /// <summary>
        /// The collection of associated ScopeApplications
        /// </summary>
        /// <returns>A strongly type List of ScopeApplication objects</returns>
-        public List<ScopeApplication> Applications()
-        {
-            return _applications;
-        }
+       [DataMember(Order = 2)]
+       public List<ScopeApplication> Applications { get; set; }
     }
 }

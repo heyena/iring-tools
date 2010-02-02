@@ -124,6 +124,12 @@
     <Compile Include="..\..\..\Libraries\iRINGLibrary\Desktop\RefDataEntities.cs">
       <Link>LayerDAL\RefDataEntities.cs</Link>
     </Compile>
+    <Compile Include="..\..\iRINGLibrary\Desktop\ScopeApplication.cs">
+      <Link>Entities\ScopeApplication.cs</Link>
+    </Compile>
+    <Compile Include="..\..\iRINGLibrary\Desktop\ScopeProject.cs">
+      <Link>Entities\ScopeProject.cs</Link>
+    </Compile>
     <Compile Include="Base\AppBase.cs" />
     <Compile Include="Base\BLLBase.cs" />
     <Compile Include="Base\DALBase.cs" />

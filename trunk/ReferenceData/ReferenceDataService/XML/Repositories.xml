@@ -1,9 +1,9 @@
 <ArrayOfRepository xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.library" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
- <!--<Repository>
+  <!--<Repository>
     <description>Development Sandbox</description>
     <isReadOnly>true</isReadOnly>
     <name>My Private Sandbox</name>
-    <uri>http://localhost/InterfaceServiceSemWeb/sparql</uri>
+    <uri>http://localhost/InterfaceService/sparql</uri>
   </Repository>-->
   <Repository>
     <description>Camelot Project Sandbox for iRING Demonstration.</description>
