@@ -11,7 +11,9 @@ using org.iringtools.modulelibrary.layerdal;
 
 using org.iringtools.ontologyservice.presentation;
 using org.iringtools.ontologyservice.presentation.presentationmodels;
-
+#if SILVERLIGHT
+using org.iringtools.modules.projectapplicationregion;
+#endif
 using org.iringtools.modules.medatasourceregion;
 using org.iringtools.modules.memappingregion;
 using org.iringtools.modules.mainregion;
@@ -34,6 +36,9 @@ namespace org.iringtools.modules
           .RegisterType<IAdapter, AdapterDAL>("AdapterProxyDAL", new ContainerControlledLifetimeManager()) // Singleton
           .RegisterType<IReferenceData, ReferenceDataBLL>(new ContainerControlledLifetimeManager()) // Singleton
           .RegisterType<IReferenceData, ReferenceDataDAL>("ReferenceDataDAL", new ContainerControlledLifetimeManager())  // Singleton
+#if SILVERLIGHT
+          .RegisterType<IProjectApplicationView, ProjectApplicationView>()
+#endif
           .RegisterType<IDataSourceTreeView, DataSourceTreeView>()
           .RegisterType<IMappingView, MappingView>()
           .RegisterType<IMappingEditorView, MappingEditorView>()
@@ -48,6 +53,9 @@ namespace org.iringtools.modules
     /// </summary>
     public override void RegisterTypesForPullBasedComposition()
     {
+#if SILVERLIGHT
+      RegionManager.RegisterViewWithRegion("ProjAppRegion", () => Container.Resolve<ProjectApplicationPresenter>().View);
+#endif
       RegionManager.RegisterViewWithRegion("MEDataSourceRegion", () => Container.Resolve<DataSourceTreePresenter>().View);
       RegionManager.RegisterViewWithRegion("MEMappingRegion", () => Container.Resolve<MappingPresenter>().View);
       RegionManager.RegisterViewWithRegion("MainRegion", () => Container.Resolve<MappingEditorPresenter>().View);
