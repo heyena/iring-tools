@@ -1,3 +1,6 @@
+#summary Date: 2010/03/05  Time: 08:30 EST
+#labels Meeting
+
 ==Agenda==
  * Taskboard Review
  * 1.2 Beta 2 Release Planning
