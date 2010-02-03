@@ -140,7 +140,9 @@
                Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll;
                Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;
                Utilities\EncryptCredentials\bin\Debug\EncryptCredentials.exe;
-               Utilities\AdapterClient\bin\Debug\AdapterClient.exe;">
+               Utilities\AdapterClient\bin\Debug\AdapterClient.exe;
+               Utilities\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\DBDictionaryUtil.exe;
+               Utilities\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\DBDictionaryUtil.vshost.exe.config;">
     </AdapterToolsDeployment>
     
     <SandboxToolsDeployment
@@ -162,25 +164,25 @@
     <DeploymentPackage Include="*" Exclude="">
       <Path>$(iRINGAdapter)</Path>
       <Options>-r</Options>
-      <ZIPFile>..\iRINGAdapter-120beta.zip</ZIPFile>
+      <ZIPFile>..\iRINGAdapter-120beta2.zip</ZIPFile>
       <Source>*</Source>
     </DeploymentPackage>
     <DeploymentPackage Include="*" Exclude="">
       <Options>-r</Options>
       <Path>$(iRINGSandbox)</Path>
-      <ZIPFile>..\iRINGSandbox-120beta.zip</ZIPFile>
+      <ZIPFile>..\iRINGSandbox-120beta2.zip</ZIPFile>
       <Source>*</Source>
     </DeploymentPackage>
     <DeploymentPackage Include="*" Exclude="">
       <Options>-r</Options>
       <Path>$(iRINGAdapter)</Path>
-      <ZIPFile>..\iRINGTools-120beta.zip</ZIPFile>
+      <ZIPFile>..\iRINGTools-120beta2.zip</ZIPFile>
       <Source>*</Source>
     </DeploymentPackage>
     <DeploymentPackage Include="*" Exclude="">
       <Options>-r -u</Options>
       <Path>$(iRINGSandbox)</Path>
-      <ZIPFile>..\iRINGTools-120beta.zip</ZIPFile>
+      <ZIPFile>..\iRINGTools-120beta2.zip</ZIPFile>
       <Source>*</Source>
     </DeploymentPackage>
   </ItemGroup>
