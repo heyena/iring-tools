@@ -75,7 +75,7 @@ namespace org.iringtools.adapter
       BindingConfiguration bindingConfiguration = Utility.Read<BindingConfiguration>(bindingConfigurationPath, false);
       _kernel.Load(new DynamicModule(bindingConfiguration));
       _settings.Mapping = GetMapping(projectName, applicationName);
-      _dtoService = _kernel.Get<IDTOService>("DTOService." + projectName + "." + applicationName);
+      _dtoService = _kernel.Get<IDTOService>("DTOService");
 
       if (_settings.UseSemweb)
       {
@@ -695,7 +695,7 @@ namespace org.iringtools.adapter
     private void UpdateBindingConfiguration(string projectName, string applicationName)
     {
       string bindingConfigurationPath = _settings.XmlPath + "BindingConfiguration." + projectName + "." + applicationName + ".xml";
-      string dtoServiceBindingName = "DTOService." + projectName + "." + applicationName;
+      string dtoServiceBindingName = "DTOService";
       Binding dtoServiceBinding = new Binding()
       {
         Name = dtoServiceBindingName,
@@ -824,7 +824,7 @@ namespace org.iringtools.adapter
 
         #region Update binding configuration
         string bindingConfigurationPath = _settings.XmlPath + "BindingConfiguration." + projectName + "." + applicationName + ".xml";
-        string dataLayerBindingName = "DataLayer." + projectName + "." + applicationName;
+        string dataLayerBindingName = "DataLayer";
         Binding dataLayerBinding = new Binding()
         {
           Name = dataLayerBindingName,

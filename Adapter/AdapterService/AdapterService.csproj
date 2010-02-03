@@ -127,6 +127,7 @@
     <Content Include="XML\DataDictionary.12345_000.DEF.xml" />
     <Content Include="XML\Mapping.12345_000.ABC.xml" />
     <Content Include="XML\Mapping.12345_000.DEF.xml" />
+    <Content Include="XML\nh-configuration.12345_000.ABC.xml" />
     <Content Include="XML\nh-configuration.12345_000.DEF.xml" />
     <Content Include="XML\nh-mapping.12345_000.ABC.xml" />
     <Content Include="XML\nh-mapping.12345_000.DEF.xml" />

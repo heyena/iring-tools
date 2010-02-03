@@ -42,6 +42,8 @@ namespace org.iringtools.adapter.projection
   public class SemWebEngine : IProjectionEngine
   {
     private bool _trimData;
+    private IDTOService _dtoService;
+    private AdapterSettings _settings;
     private Store _store = null;
     private Mapping _mapping = null;
     private Dictionary<string, Dictionary<string, string>> _refreshValueLists = null;
@@ -66,8 +68,10 @@ namespace org.iringtools.adapter.projection
     #endregion
 
     [Inject]
-    public SemWebEngine(AdapterSettings settings)
+    public SemWebEngine(AdapterSettings settings, IDTOService dtoService)
     {
+      _settings = settings;
+      _dtoService = dtoService;
       _mapping = settings.Mapping;
       _trimData = settings.TrimData;
       _store = Store.Create(settings.TripleStoreConnectionString);
@@ -161,10 +165,9 @@ namespace org.iringtools.adapter.projection
       try
       {
         // forward request to sparql engine
-        IKernel kernel = new StandardKernel(new AdapterModule());
-        IProjectionEngine projectionEngine = kernel.Get<IProjectionEngine>("Sparql");
+        SPARQLEngine sparqlEngine = new SPARQLEngine(_settings, _dtoService);
 
-        return projectionEngine.GetList(graphName);
+        return sparqlEngine.GetList(graphName);
       }
       catch (Exception exception)
       {
