@@ -1,0 +1,8 @@
+C:\iring-tools-1.2\Prototypes\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\DBDictionaryUtil.exe.config
+C:\iring-tools-1.2\Prototypes\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\DBDictionaryUtil.exe
+C:\iring-tools-1.2\Prototypes\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\DBDictionaryUtil.pdb
+C:\iring-tools-1.2\Prototypes\DBDictionaryUtil\DBDictionaryUtil\obj\Debug\ResolveAssemblyReference.cache
+C:\iring-tools-1.2\Prototypes\DBDictionaryUtil\DBDictionaryUtil\obj\Debug\DBDictionaryUtil.exe
+C:\iring-tools-1.2\Prototypes\DBDictionaryUtil\DBDictionaryUtil\obj\Debug\DBDictionaryUtil.pdb
+C:\iring-tools-1.2\Prototypes\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\iRINGLibrary.dll
+C:\iring-tools-1.2\Prototypes\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\UtilityLibrary.dll
