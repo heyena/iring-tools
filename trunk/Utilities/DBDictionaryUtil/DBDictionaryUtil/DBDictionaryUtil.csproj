@@ -31,10 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="iRINGLibrary, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib\iRINGLibrary.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core">
@@ -54,10 +50,6 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="UtilityLibrary, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib\UtilityLibrary.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
@@ -68,6 +60,16 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="DatabaseDictionary.99999.ABC.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Libraries\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
+      <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
+      <Name>iRINGLibrary.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Libraries\UtilityLibrary\Desktop\UtilityLibrary.Desktop.csproj">
+      <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
+      <Name>UtilityLibrary.Desktop</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
