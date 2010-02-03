@@ -67,7 +67,7 @@ namespace ReferenceDataService.Tests
     public void GetClassTest()
     {
       ReferenceDataProxy target = new ReferenceDataProxy();
-      QMXF actual = target.GetClass("R45162754880");
+      QMXF actual = target.GetClass("R71668234814");
       Assert.AreEqual(1, actual.classDefinitions.Count);
     }
 
@@ -75,7 +75,7 @@ namespace ReferenceDataService.Tests
     public void GetClassLabelTest()
     {
       ReferenceDataProxy target = new ReferenceDataProxy();
-      string actual = target.GetClassLabel("R45162754880");
+      string actual = target.GetClassLabel("R71668234814");
       Assert.AreNotEqual(string.Empty, actual);
     }
 
