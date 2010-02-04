@@ -3,7 +3,7 @@
 
 A beta release of iRINGTools 1.2 that includes NHibernate and Multi-Project/Application support in the Adapter and !SemWeb SPARQL endpoints for Interface and Sandbox.  The download is available [http://iring-tools.googlecode.com/files/iRINGTools-120beta2.zip here]
 
-[http://iring-tools.googlecode.com/svn/trunk/Documentation/iRINGTools_Installation_Guide_v1_2_0.Draft.pdf Installation Guide]
+[http://iring-tools.googlecode.com/files/iRINGTools_Installation_Guide_v1_2_0.Draft.pdf Installation Guide]
 
 == New Features ==
   * Multi-Project/Application Support in the Adapter Service.
