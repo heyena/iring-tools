@@ -210,7 +210,7 @@ namespace org.iringtools.adapter
           {
               if (value==String.Empty || value==null)
               {
-                  _projectListSource = "Project.xml";
+                  _projectListSource = "scopes.xml";
               }
               else
               {

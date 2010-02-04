@@ -34,7 +34,7 @@ namespace org.iringtools.adapter
 {
   public class Service : IService
   {
-    private static readonly ILog log = LogManager.GetLogger(typeof(Service));
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(Service));
     private AdapterProvider _adapterServiceProvider = null;
 
     /// <summary>
@@ -69,7 +69,7 @@ namespace org.iringtools.adapter
     /// <returns>Returns Data Dictionary object.</returns>
     public DataDictionary GetDictionary(string projectName, string applicationName)
     {
-      log.Info("GetDictionary of \"" + projectName + "-" + applicationName + "\"");
+      _logger.Info("GetDictionary of \"" + projectName + "-" + applicationName + "\"");
       return _adapterServiceProvider.GetDictionary(projectName, applicationName);
     }
 

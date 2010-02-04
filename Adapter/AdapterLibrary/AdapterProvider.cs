@@ -42,11 +42,13 @@ using org.iringtools.utility;
 using System.Collections.Specialized;
 using Ninject.Modules;
 using org.iringtools.adapter.dataLayer;
+using log4net;
 
 namespace org.iringtools.adapter
 {
   public partial class AdapterProvider //: IAdapter
   {
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterProvider));
     private IProjectionEngine _projectionEngine = null;
     private IDTOService _dtoService = null;
     private IKernel _kernel = null;
@@ -75,15 +77,18 @@ namespace org.iringtools.adapter
       BindingConfiguration bindingConfiguration = Utility.Read<BindingConfiguration>(bindingConfigurationPath, false);
       _kernel.Load(new DynamicModule(bindingConfiguration));
       _settings.Mapping = GetMapping(projectName, applicationName);
-      _dtoService = _kernel.Get<IDTOService>("DTOService");
+      _dtoService = _kernel.TryGet<IDTOService>("DTOService");
 
-      if (_settings.UseSemweb)
+      if (_dtoService != null)
       {
-        _projectionEngine = _kernel.Get<IProjectionEngine>("SemWeb");
-      }
-      else
-      {
-        _projectionEngine = _kernel.Get<IProjectionEngine>("Sparql");
+        if (_settings.UseSemweb)
+        {
+          _projectionEngine = _kernel.Get<IProjectionEngine>("SemWeb");
+        }
+        else
+        {
+          _projectionEngine = _kernel.Get<IProjectionEngine>("Sparql");
+        }
       }
     }
 
@@ -102,10 +107,18 @@ namespace org.iringtools.adapter
 
       try
       {
-        return Utility.Read<Mapping>(path, false);
+        Mapping mapping = null;
+
+        if (File.Exists(path))
+        {
+          mapping = Utility.Read<Mapping>(path, false);
+        }
+
+        return mapping;
       }
       catch (Exception exception)
       {
+        _logger.Error("Error in GetMapping: " + exception);
         throw new Exception("Error while getting Mapping from " + path + ". " + exception.ToString(), exception);
       }
     }
@@ -117,26 +130,7 @@ namespace org.iringtools.adapter
     /// which applications are available</returns>
     public List<ScopeProject> GetScopes()
     {
-      //List<ScopeProject> scopes = new List<ScopeProject> {
-      //  new ScopeProject() { 
-      //    Name = "12345_000", 
-      //    Description = "Test Project",
-      //    Applications = new List<ScopeApplication> {
-      //      new ScopeApplication() {
-      //        Name="ABC",
-      //        Description="Application ABC"
-      //      },
-      //      new ScopeApplication() {
-      //        Name="DEF",
-      //        Description="Application DEF"
-      //      },
-      //    },
-      //  },
-      //};
-
       string path = _settings.XmlPath + _settings.ProjectListSource;
-
-      //Utility.Write<List<ScopeProject>>(scopes, path);
 
       try
       {
@@ -145,7 +139,8 @@ namespace org.iringtools.adapter
       }
       catch (Exception exception)
       {
-        throw new Exception("Error while getting the list of projects/applications from " + path + "." + exception.ToString(), exception);
+        _logger.Error("Error in GetScopes: " + exception);
+        throw new Exception("Error while getting the list of projects/applications from " + path + "." + exception);
       }
     }
 
@@ -163,6 +158,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception exception)
       {
+        _logger.Error("Error in GetDictionary: " + exception);
         throw new Exception("Error while getting Dictionary. " + exception.ToString(), exception);
       }
       finally
@@ -172,7 +168,7 @@ namespace org.iringtools.adapter
     }
 
     /// <summary>
-    /// Updates mapping.
+    /// Update mapping file.
     /// </summary>
     /// <param name="mapping">The new mapping object with which the mapping file is to be updated.</param>
     /// <returns>Returns the response as success/failure.</returns>
@@ -188,17 +184,12 @@ namespace org.iringtools.adapter
       }
       catch (Exception exception)
       {
+        _logger.Error("Error in UpdateMapping: " + exception);
         response.Add("Error while updating Mapping.");
         response.Add(exception.ToString());
       }
-      finally
-      {
-        UninitializeApplication();
-      }
 
       return response;
-
-
     }
 
     /// <summary>
@@ -216,6 +207,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception exception)
       {
+        _logger.Error("Error in RefreshDictionary: " + exception);
         response.Add("Error while refreshing Dictionary.");
         response.Add(exception.ToString());
       }
@@ -244,6 +236,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception exception)
       {
+        _logger.Error("Error in GetDTO: " + exception);
         throw new Exception("Error while getting " + graphName + " data with identifier " + identifier + ". " + exception.ToString(), exception);
       }
       finally
@@ -274,6 +267,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception exception)
       {
+        _logger.Error("Error in Get: " + exception);
         throw new Exception("Error while getting " + graphName + " data with identifier " + identifier + ". " + exception.ToString(), exception);
       }
       finally
@@ -303,6 +297,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception exception)
       {
+        _logger.Error("Error in GetList: " + exception);
         throw new Exception("Error while getting " + graphName + " data. " + exception.ToString(), exception);
       }
       finally
@@ -328,6 +323,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception exception)
       {
+        _logger.Error("Error in GetDTOList: " + exception);
         throw new Exception("Error while getting " + graphName + " data. " + exception.ToString(), exception);
       }
       finally
@@ -353,6 +349,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception exception)
       {
+        _logger.Error("Error in GetDTOListREST: " + exception);
         throw new Exception("Error while getting " + graphName + " data. " + exception.ToString(), exception);
       }
       finally
@@ -386,6 +383,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception exception)
       {
+        _logger.Error("Error in RefreshAll: " + exception);
         response.Add("Error while Refreshing TripleStore.");
         response.Add(exception.ToString());
       }
@@ -450,6 +448,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception exception)
       {
+        _logger.Error("Error in RefreshGraph: " + exception);
         response.Add("Error while Refreshing TripleStore for GraphMap[" + graphName + "].");
         response.Add(exception.ToString());
       }
@@ -479,6 +478,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception exception)
       {
+        _logger.Error("Error in RefreshDTO: " + exception);
         response.Add("Error while RefreshDTO[" + dto.GraphName + "][" + dto.Identifier + "] data.");
         response.Add(exception.ToString());
       }
@@ -539,6 +539,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception exception)
       {
+        _logger.Error("Error in Pull: " + exception);
         response.Add("Error while pulling " + graphName + " data from " + targetUri + " as " + targetUri + " data with filter " + filter + ".\r\n");
         response.Add(exception.ToString());
       }
@@ -588,6 +589,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception exception)
       {
+        _logger.Error("Error in PullDTO: " + exception);
         response.Add("Error while pulling " + graphName + " data from " + targetUri + " as " + targetUri + " data with filter " + filter + ".\r\n");
         response.Add(exception.ToString());
       }
@@ -610,6 +612,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception exception)
       {
+        _logger.Error("Error in ClearStore: " + exception);
         response.Add("Error while clearing TripleStore.");
         response.Add(exception.ToString());
       }
@@ -618,50 +621,6 @@ namespace org.iringtools.adapter
         UninitializeApplication();
       }
       return response;
-    }
-
-    /// <summary>
-    /// Generating code to a temporary file. If successful, update old code with the new generated content.
-    /// </summary>
-    private string TransformText(string templateFileName, string outputFileName)
-    {
-      CustomTextTemplateHost host = null;
-      Engine engine = null;
-
-      try
-      {
-        host = new CustomTextTemplateHost();
-        engine = new Engine();
-
-        string input = File.ReadAllText(templateFileName);
-        host.TemplateFileValue = templateFileName;
-        string output = engine.ProcessTemplate(input, host);
-
-        File.WriteAllText(outputFileName, output, host.FileEncoding);
-
-        if (host.Errors.HasErrors)
-        {
-          string errors = string.Empty;
-
-          foreach (CompilerError error in host.Errors)
-          {
-            errors += error.ToString();
-          }
-
-          throw new Exception(errors);
-        }
-
-        return output;
-      }
-      catch (Exception ex)
-      {
-        throw ex;
-      }
-      finally
-      {
-        engine = null;
-        host = null;
-      }
     }
 
     /// <summary>
@@ -676,134 +635,164 @@ namespace org.iringtools.adapter
       try
       {
         dtoGenerator.Generate(projectName, applicationName);
-        UpdateBindingConfiguration(projectName, applicationName);
-        response.Add("DTO Model generated successfully.");
-      }
-      catch (Exception ex)
-      {
-        response.Add("Error generating DTO Model.");
-        response.Add(ex.ToString());
-      }
 
-      return response;
-    }
-
-    /// <summary>
-    /// Update NInject binding configuration file.
-    /// </summary>
-    /// <returns></returns>
-    private void UpdateBindingConfiguration(string projectName, string applicationName)
-    {
-      string bindingConfigurationPath = _settings.XmlPath + "BindingConfiguration." + projectName + "." + applicationName + ".xml";
-      string dtoServiceBindingName = "DTOService";
-      Binding dtoServiceBinding = new Binding()
-      {
-        Name = dtoServiceBindingName,
-        Interface = "org.iringtools.adapter.IDTOService, AdapterLibrary",
-        Implementation = "org.iringtools.adapter.proj_" + projectName + "." + applicationName + ".DTOService, AdapterService"
-      };
-
-      if (File.Exists(bindingConfigurationPath))
-      {
-        BindingConfiguration bindingConfiguration = Utility.Read<BindingConfiguration>(bindingConfigurationPath, false);
-        bool bindingExists = false;
-
-        foreach (Binding binding in bindingConfiguration.Bindings)
+        Binding dtoServiceBinding = new Binding()
         {
-          if (binding.Name == dtoServiceBindingName)
-          {
-            bindingExists = true;
-            break;
-          }
-        }
-
-        // DTOService binding does not exist, add it to binding configuration
-        if (!bindingExists)
-        {
-          bindingConfiguration.Bindings.Add(dtoServiceBinding);
-          Utility.Write<BindingConfiguration>(bindingConfiguration, bindingConfigurationPath, false);
-        }
-      }
-      else
-      {
-        BindingConfiguration bindingConfiguration = new BindingConfiguration();
-        bindingConfiguration.Bindings = new List<Binding>();
-        bindingConfiguration.Bindings.Add(dtoServiceBinding);
-        Utility.Write<BindingConfiguration>(bindingConfiguration, bindingConfigurationPath, false);
-      }
-    }
-
-    /// <summary>
-    /// Generated DTO Model and Service using T4.
-    /// </summary>
-    /// <returns>Returns the response as success/failure.</returns>
-    public Response GenerateOLD(string projectName, string applicationName)
-    {
-      Response response = new Response();
-
-      string currentDirectory = Directory.GetCurrentDirectory();
-      string appCodeDirectory = currentDirectory + "\\App_Code";
-      string suffix = "." + projectName + "." + applicationName;
-
-      string dtoModelName = "DTOModel" + suffix;
-      string dtoModelTemplateFileName = currentDirectory + "\\Templates\\DTOModel.tt";
-      string dtoModelFileNameTmp = appCodeDirectory + "\\" + dtoModelName + ".tmp";
-      string dtoModelFileName = appCodeDirectory + "\\" + dtoModelName + ".cs";
-
-      string dtoServiceName = "DTOService" + suffix;
-      string dtoServiceTemplateFileName = currentDirectory + "\\Templates\\DTOService.tt";
-      string dtoServiceFileNameTmp = appCodeDirectory + "\\" + dtoServiceName + ".tmp";
-      string dtoServiceFileName = appCodeDirectory + "\\" + dtoServiceName + ".cs";
-
-      string iServiceTemplateFileName = currentDirectory + "\\Templates\\IService.tt";
-      string iServiceFileNameTmp = appCodeDirectory + "\\IService.Generated.tmp";
-      string iServiceFileName = appCodeDirectory + "\\IService.Generated.cs";
-
-      string iDataServiceTemplateFileName = currentDirectory + "\\Templates\\IDataService.tt";
-      string iDataServiceFileNameTmp = appCodeDirectory + "\\IDataService.Generated.tmp";
-      string iDataServiceFileName = appCodeDirectory + "\\IDataService.Generated.cs";
-
-      System.Environment.SetEnvironmentVariable("projectName", projectName);
-      System.Environment.SetEnvironmentVariable("applicationName", applicationName);
-
-      try
-      {
-        // Generate DTOModel.cs
-        string dtoModelContent = TransformText(dtoModelTemplateFileName, dtoModelFileNameTmp);
-
-        // Generate DTOService.cs
-        string dtoServiceContent = TransformText(dtoServiceTemplateFileName, dtoServiceFileNameTmp);
-
-        // Refresh iService.cs
-        string iServiceContent = TransformText(iServiceTemplateFileName, iServiceFileNameTmp);
-
-        // Refresh iDataService.cs
-        string iDataServiceContent = TransformText(iDataServiceTemplateFileName, iDataServiceFileNameTmp);
-
-        // Write generated C# code to disk
-        File.WriteAllText(dtoModelFileName, dtoModelContent);
-        File.WriteAllText(dtoServiceFileName, dtoServiceContent);
-        File.WriteAllText(iServiceFileName, iServiceContent);
-        File.WriteAllText(iDataServiceFileName, iDataServiceContent);
-
-        UpdateBindingConfiguration(projectName, applicationName);
+          Name = "DTOService",
+          Interface = "org.iringtools.adapter.IDTOService, AdapterLibrary",
+          Implementation = "org.iringtools.adapter.proj_" + projectName + "." + applicationName + ".DTOService, AdapterService"
+        };
+        UpdateBindingConfiguration(projectName, applicationName, dtoServiceBinding);
 
         response.Add("DTO Model generated successfully.");
       }
       catch (Exception exception)
       {
+        _logger.Error("Error in Generate: " + exception);
         response.Add("Error generating DTO Model.");
         response.Add(exception.ToString());
       }
-      finally
-      {
-        File.Delete(dtoModelFileNameTmp);
-        File.Delete(dtoServiceFileNameTmp);
-        File.Delete(iServiceFileNameTmp);
-        File.Delete(iDataServiceFileNameTmp);
-      }
 
       return response;
+    }
+
+    /// <summary>
+    /// Update NInject binding config file.
+    /// </summary>
+    /// <param name="projectName"></param>
+    /// <param name="applicationName"></param>
+    /// <param name="binding"></param>
+    private void UpdateBindingConfiguration(string projectName, string applicationName, Binding binding)
+    {
+      try
+      {
+        string bindingConfigurationPath = _settings.XmlPath + "BindingConfiguration." + projectName + "." + applicationName + ".xml";
+
+        if (File.Exists(bindingConfigurationPath))
+        {
+          BindingConfiguration bindingConfiguration = Utility.Read<BindingConfiguration>(bindingConfigurationPath, false);
+          bool bindingExists = false;
+
+          // Update binding if exists
+          for (int i = 0; i < bindingConfiguration.Bindings.Count; i++)
+          {
+            if (bindingConfiguration.Bindings[i].Name.ToUpper() == binding.Name.ToUpper())
+            {
+              bindingConfiguration.Bindings[i] = binding;
+              bindingExists = true;
+              break;
+            }
+          }
+
+          // Add binding if not exist
+          if (!bindingExists)
+          {
+            bindingConfiguration.Bindings.Add(binding);
+          }
+
+          Utility.Write<BindingConfiguration>(bindingConfiguration, bindingConfigurationPath, false);
+        }
+        else
+        {
+          BindingConfiguration bindingConfiguration = new BindingConfiguration();
+          bindingConfiguration.Bindings = new List<Binding>();
+          bindingConfiguration.Bindings.Add(binding);
+          Utility.Write<BindingConfiguration>(bindingConfiguration, bindingConfigurationPath, false);
+        }
+      }
+      catch (Exception exception)
+      {
+        _logger.Error("Error in UpdateBindingConfiguration: " + exception);
+        throw exception;
+      }
+    }
+
+    /// <summary>
+    /// Update project and application scope in Scopes.xml
+    /// </summary>
+    /// <param name="projectName"></param>
+    /// <param name="applicationName"></param>
+    private void UpdateScopes(string projectName, string applicationName)
+    {
+      try
+      {
+        string scopesPath = _settings.XmlPath + "Scopes.xml";
+
+        if (File.Exists(scopesPath))
+        {
+          List<ScopeProject> projects = Utility.Read<List<ScopeProject>>(scopesPath);
+          bool projectExists = false;
+          
+          foreach (ScopeProject project in projects)
+          {
+            bool applicationExists = false;
+            
+            if (project.Name.ToUpper() == projectName.ToUpper())
+            {
+              foreach (ScopeApplication application in project.Applications)
+              {
+                if (application.Name.ToUpper() == applicationName.ToUpper())
+                {
+                  applicationExists = true;
+                  break;
+                }
+              }
+
+              if (!applicationExists)
+              {
+                project.Applications.Add(new ScopeApplication() { Name = applicationName });
+              }
+
+              projectExists = true;
+              break;
+            }
+          }
+
+          // project does not exist, add it
+          if (!projectExists)
+          {
+            ScopeProject project = new ScopeProject()
+            {
+               Name = projectName,
+               Applications = new List<ScopeApplication>()
+               {
+                 new ScopeApplication()
+                 {
+                   Name = applicationName
+                 }
+               }
+            };
+
+            projects.Add(project);
+          }
+
+          Utility.Write<List<ScopeProject>>(projects, scopesPath, true);
+        }
+        else
+        {
+          List<ScopeProject> projects = new List<ScopeProject>()
+          {
+            new ScopeProject()
+            {
+              Name = projectName,
+              Applications = new List<ScopeApplication>()
+               {
+                 new ScopeApplication()
+                 {
+                   Name = applicationName
+                 }
+               }
+            }
+          };
+
+          Utility.Write<List<ScopeProject>>(projects, scopesPath, true);
+        }
+      }
+      catch (Exception exception)
+      {
+        _logger.Error("Error in UpdateScopes: " + exception);
+        throw exception;
+      }
     }
 
     /// <summary>
@@ -814,56 +803,48 @@ namespace org.iringtools.adapter
     {
       Response response = new Response();
 
-      if (String.IsNullOrEmpty(projectName) || String.IsNullOrEmpty(applicationName))
+      try
       {
-        response.Add("Error project name and application name can not be null");
-      }
-      else
-      {
-        EntityGenerator generator = _kernel.Get<EntityGenerator>();
-
-        #region Update binding configuration
-        string bindingConfigurationPath = _settings.XmlPath + "BindingConfiguration." + projectName + "." + applicationName + ".xml";
-        string dataLayerBindingName = "DataLayer";
-        Binding dataLayerBinding = new Binding()
+        if (String.IsNullOrEmpty(projectName) || String.IsNullOrEmpty(applicationName))
         {
-          Name = dataLayerBindingName,
-          Interface = "org.iringtools.library.IDataLayer, iRINGLibrary",
-          Implementation = "org.iringtools.adapter.dataLayer.NHibernateDataLayer, NHibernateDataLayer"
-        };
-
-        if (File.Exists(bindingConfigurationPath))
-        {
-          BindingConfiguration bindingConfiguration = Utility.Read<BindingConfiguration>(bindingConfigurationPath, false);
-          bool bindingExists = false;
-
-          foreach (Binding binding in bindingConfiguration.Bindings)
-          {
-            if (binding.Name == dataLayerBindingName)
-            {
-              bindingExists = true;
-              break;
-            }
-          }
-
-          // DataLayer binding does not exist, add it to binding configuration
-          if (!bindingExists)
-          {
-            bindingConfiguration.Bindings.Add(dataLayerBinding);
-            Utility.Write<BindingConfiguration>(bindingConfiguration, bindingConfigurationPath, false);
-          }
+          response.Add("Error project name and application name can not be null");
         }
         else
         {
-          BindingConfiguration bindingConfiguration = new BindingConfiguration();
+          EntityGenerator generator = _kernel.Get<EntityGenerator>();
 
-          bindingConfiguration.Bindings = new List<Binding>();
-          bindingConfiguration.Bindings.Add(dataLayerBinding);
-          Utility.Write<BindingConfiguration>(bindingConfiguration, bindingConfigurationPath, false);
+          Binding dataLayerBinding = new Binding()
+          {
+            Name = "DataLayer",
+            Interface = "org.iringtools.library.IDataLayer, iRINGLibrary",
+            Implementation = "org.iringtools.adapter.dataLayer.NHibernateDataLayer, NHibernateDataLayer"
+          };
+          UpdateBindingConfiguration(projectName, applicationName, dataLayerBinding);
+
+          UpdateScopes(projectName, applicationName);
+
+          // Generate default mapping
+          string mappingPath = _settings.XmlPath + "Mapping." + projectName + "." + applicationName + ".xml";
+          if (!File.Exists(mappingPath))
+          {
+            Utility.Write<Mapping>(new Mapping(), mappingPath, false);
+          }
+
+          // Generate default DTOService
+          string dtoServicePath = _settings.BaseDirectoryPath + @"\App_Code\DTOService." + projectName + "." + applicationName + ".cs";
+          if (!File.Exists(dtoServicePath))
+          {
+            Generate(projectName, applicationName);
+          }
+
+          response = generator.Generate(dbDictionary, projectName, applicationName);
+          response.Add("Database dictionary updated successfully.");
         }
-        #endregion
-
-        response = generator.Generate(dbDictionary, projectName, applicationName);
+      }
+      catch (Exception exception)
+      {
+        _logger.Error("Error in UpdateDatabaseDictionary: " + exception);
+        response.Add("Error updating database dictionary: " + exception);
       }
 
       return response;
