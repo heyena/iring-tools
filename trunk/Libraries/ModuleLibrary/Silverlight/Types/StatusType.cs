@@ -5,7 +5,6 @@ namespace org.iringtools.modulelibrary.types
   {
     NotDefined,
     Left,
-    Middle,
     Right
   }
 }

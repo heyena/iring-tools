@@ -12,10 +12,6 @@ namespace org.iringtools.modules.status.statusregion
 
     public IPresentationModel Model { get; set; }
 
-
-    #region IStatusView Members
-
-    #region stsLeftMessage 
     public string stsLeftMessage
     {
       get
@@ -27,8 +23,7 @@ namespace org.iringtools.modules.status.statusregion
         stsLeft1.Text = value;
       }
     } 
-    #endregion
-    #region stsRightMessage 
+    
     public string stsRightMessage
     {
       get
@@ -40,22 +35,5 @@ namespace org.iringtools.modules.status.statusregion
         stsRight1.Text = value;
       }
     } 
-    #endregion
-    #region stsMiddleMessage 
-    public string stsMiddleMessage
-    {
-      get
-      {
-        return stsCenter1.Text;
-      }
-      set
-      {
-        stsCenter1.Text = value;
-      }
-    }
-    
-    #endregion
-
-    #endregion
   }
 }
