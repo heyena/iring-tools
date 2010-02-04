@@ -63,8 +63,6 @@ namespace org.iringtools.modules.memappingregion
     {
       try
       {
-
-
         // Create CRUD Class and configure as required
         mappingCRUD = container.Resolve<MappingCRUD>();
         mappingCRUD.Presenter = this;
@@ -89,6 +87,7 @@ namespace org.iringtools.modules.memappingregion
         this.aggregator = aggregator;
         this.model = model;
         this.model.MappingTree = tvwMapping;
+        this.adapterProxy = adapterProxy;
         
         adapterProxy.OnDataArrived += OnDataArrivedHandler;
         aggregator.GetEvent<SpinnerEvent>().Subscribe(SpinnerEventHandler);

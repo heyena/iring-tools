@@ -44,8 +44,9 @@ namespace org.iringtools.modules.projectapplicationregion
       IUnityContainer container) : base(view, model)
     {
       _model = model;
-      _container = container;
+      _aggregator = aggregator;
       _adapterProxy = adapterProxy;
+      _container = container;
 
       prjCB.SelectionChanged += new SelectionChangedEventHandler(prjCB_SelectionChanged);
       appCB.SelectionChanged += new SelectionChangedEventHandler(appCB_SelectionChanged);
