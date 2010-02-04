@@ -142,7 +142,7 @@
                Utilities\EncryptCredentials\bin\Debug\EncryptCredentials.exe;
                Utilities\AdapterClient\bin\Debug\AdapterClient.exe;
                Utilities\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\DBDictionaryUtil.exe;
-               Utilities\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\DBDictionaryUtil.vshost.exe.config;">
+               Utilities\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\DBDictionaryUtil.exe.Default.config;">
     </AdapterToolsDeployment>
     
     <SandboxToolsDeployment
@@ -154,6 +154,7 @@
                Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;
                Utilities\EncryptCredentials\bin\Debug\EncryptCredentials.exe;
                Utilities\QMXFGenerator\QMXFGenerator\bin\Debug\QMXFGenerator.exe;
+               Utilities\QMXFGenerator\QMXFGenerator\bin\Debug\QMXFGenerator.exe.Default.config;
                Utilities\QMXFGenerator\QMXFGenerator\bin\Debug\Microsoft.Office.Interop.Excel.dll;
                Utilities\QMXFGenerator\QMXFGenerator\bin\Debug\Microsoft.Vbe.Interop.dll;
                Utilities\QMXFGenerator\QMXFGenerator\bin\Debug\office.dll;">
@@ -266,10 +267,12 @@
     <Message Text="Creating adapter tools deployment ..." />
     <Copy SourceFiles="@(AdapterToolsDeployment)"
           DestinationFiles="@(AdapterToolsDeployment->'$(AdapterToolsDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
-
+    <Exec Command="Move /Y $(AdapterToolsDeploymentDir)\DBDictionaryUtil.exe.Default.config $(AdapterToolsDeploymentDir)\DBDictionaryUtil.exe.config" />
+       
     <Message Text="Creating sandbox tools deployment ..." />
     <Copy SourceFiles="@(SandboxToolsDeployment)"
           DestinationFiles="@(SandboxToolsDeployment->'$(SandboxToolsDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(SandboxToolsDeploymentDir)\QMXFGenerator.exe.Default.config $(SandboxToolsDeploymentDir)\QMXFGenerator.exe.config" />    
   </Target>
 
   <Target Name="CreatePackages" DependsOnTargets="CreateDeployment">

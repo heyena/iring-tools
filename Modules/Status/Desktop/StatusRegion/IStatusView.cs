@@ -6,6 +6,5 @@ namespace org.iringtools.modules.status.statusregion
   {
     string stsLeftMessage { get; set; }
     string stsRightMessage { get; set; }
-    string stsMiddleMessage { get; set; }
   }
 }
