@@ -1,0 +1,18 @@
+= *iRINGTools* 1.2.0 Beta 2 =
+
+A beta release of iRINGTools 1.2 that includes NHibernate and Multi-Project/Application support in the Adapter and !SemWeb SPARQL endpoints for Interface and Sandbox.  The download is available [http://iring-tools.googlecode.com/files/iRINGTools-120beta2.zip here]
+
+[http://iring-tools.googlecode.com/svn/trunk/Documentation/iRING%20Installation%20Guide%20-%201.2.Draft.pdf Installation Guide]
+
+== New Features ==
+  * Multi-Project/Application Support in the Adapter Service.
+  * PullDTO feature in the Adapter Service.
+  * NHibernate Datalayer to enable non-commercial Oracle support and above features.
+  * !SemWeb SPARQL Endpoint for Interface Service.
+  * !SemWeb SPARQL Endpoint for Sandbox Service.
+
+== Known Bugs ==
+  * TripleStore refresh is broken due to changes in Mapping.
+  * RefDataEditor is readonly.
+
+Other Pages: [Components] | [RoadMap] | [ISO15926] | [Documentation] | [Contributors]
