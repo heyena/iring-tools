@@ -13,6 +13,7 @@ A beta release of iRINGTools 1.2 that includes NHibernate and Multi-Project/Appl
   * !SemWeb SPARQL Endpoint for Sandbox Service.
 
 == Known Bugs ==
+  * PullDTO is not working.
   * TripleStore refesh is broken due changes in Mapping. 
   * SPARQL pull is broken due to changes in Mapping.
   * RefDataService cannot write to SemWeb SandboxService, but still works with Joseki SandboxService.
