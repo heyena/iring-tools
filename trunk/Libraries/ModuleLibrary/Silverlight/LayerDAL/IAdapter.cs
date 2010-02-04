@@ -40,14 +40,6 @@ public interface IAdapter : org.iringtools.library.IAdapter
   /// <summary>
   /// 
   /// </summary>
-  /// <param name="projectName"></param>
-  /// <param name="applicationName"></param>
-  /// <returns></returns>
-  org.iringtools.library.Mapping GetMapping(string projectName, string applicationName);
-
-  /// <summary>
-  /// 
-  /// </summary>
   /// <param name="mapping"></param>
   /// <returns></returns>
   org.iringtools.library.Response UpdateMapping(org.iringtools.library.Mapping mapping);
