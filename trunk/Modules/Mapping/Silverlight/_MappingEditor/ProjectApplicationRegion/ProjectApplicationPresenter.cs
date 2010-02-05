@@ -53,6 +53,7 @@ namespace org.iringtools.modules.projectapplicationregion
       _adapterProxy.OnDataArrived += new EventHandler<EventArgs>(adapterProxy_OnDataArrived);
 
       _adapterProxy.GetScopes();
+
     }
 
     void adapterProxy_OnDataArrived(object sender, EventArgs e)
@@ -84,6 +85,11 @@ namespace org.iringtools.modules.projectapplicationregion
         _adapterProxy.GetDictionary(projName, appName);
         _adapterProxy.GetMapping(projName, appName);
       }
+      _aggregator.GetEvent<SelectionEvent>().Publish(new SelectionEventArgs
+      {
+          SelectedProject = (string)prjCB.SelectedItem,
+          SelectedApplication = (string)appCB.SelectedItem
+      });
     }
 
     void prjCB_SelectionChanged(object sender, SelectionChangedEventArgs e)

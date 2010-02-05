@@ -156,6 +156,8 @@
     <Compile Include="Events\ProcessingEvent.cs" />
     <Compile Include="Events\ProcessingEventArgs.cs" />
     <Compile Include="Events\QueryEventArgs.cs" />
+    <Compile Include="Events\SelectionEvent.cs" />
+    <Compile Include="Events\SelectionEventArgs.cs" />
     <Compile Include="Events\ServiceEvent.cs" />
     <Compile Include="Events\ServiceEventArgs.cs" />
     <Compile Include="Events\SpinnerEvent.cs" />

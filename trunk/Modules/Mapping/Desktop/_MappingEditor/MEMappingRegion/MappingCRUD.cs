@@ -38,6 +38,9 @@ namespace org.iringtools.modules.memappingregion
         private IAdapter adapterProxy = null;
         private IReferenceData referenceProxy = null;
         private IEventAggregator aggregator = null;
+
+        private string projectName = null;
+        private string applicationName = null;
         public MappingPresenter Presenter { get; set; }
         public TreeView tvwMapping { get; set; }
 
@@ -60,6 +63,13 @@ namespace org.iringtools.modules.memappingregion
             this.referenceProxy = referenceProxy;
             this.aggregator = aggregator;
             aggregator.GetEvent<SpinnerEvent>().Subscribe(SpinnerEventHandler);
+            aggregator.GetEvent<SelectionEvent>().Subscribe(SelectionEventHandler);
+        }
+
+        public void SelectionEventHandler(SelectionEventArgs e)
+        {
+            this.projectName = e.SelectedProject;
+            this.applicationName = e.SelectedApplication;
         }
 
         public void SpinnerEventHandler(SpinnerEventArgs e)
@@ -433,7 +443,7 @@ namespace org.iringtools.modules.memappingregion
 
         public void btnSave_Click(object sender, RoutedEventArgs e)
         {
-            Response response = adapterProxy.UpdateMapping(mapping);
+            Response response = adapterProxy.UpdateMapping(projectName, applicationName, mapping);
         }
 
         public void btnDelete_Click(object sender, RoutedEventArgs e)
