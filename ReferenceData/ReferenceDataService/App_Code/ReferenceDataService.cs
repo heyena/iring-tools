@@ -107,6 +107,11 @@ namespace org.ids_adi.iring.referenceData
           return _referenceDataServiceProvider.GetSuperClasses(id);
         }
 
+        public List<Entity> GetAllSuperClasses(string id)
+        {
+            return _referenceDataServiceProvider.GetAllSuperClasses(id);
+        }
+
         public List<Entity> GetSubClasses(string id)
         {
           return _referenceDataServiceProvider.GetSubClasses(id);
