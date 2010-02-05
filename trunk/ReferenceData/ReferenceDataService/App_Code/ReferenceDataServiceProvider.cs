@@ -555,6 +555,38 @@ namespace org.ids_adi.iring.referenceData
             return queryResult;
         }
 
+        public List<Entity> GetAllSuperClasses(string id)
+        {
+            List<Entity> queryResult = new List<Entity>();
+
+            try
+            {
+                List<Specialization> specializations = GetSpecializations(id);
+
+                foreach (Specialization specialization in specializations)
+                {
+                    string uri = specialization.reference;
+                    string label = specialization.label;
+
+                    if (label == null)
+                        label = GetLabel(uri);
+
+                    Entity resultEntity = new Entity
+                    {
+                        uri = uri,
+                        label = label
+                    };
+
+                    queryResult.Add(resultEntity);
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error while Finding " + id + ".\n" + e.ToString(), e);
+            }
+            return queryResult;
+        }
+
         public List<Entity> GetSubClasses(string id)
         {
             List<Entity> queryResult = new List<Entity>();
