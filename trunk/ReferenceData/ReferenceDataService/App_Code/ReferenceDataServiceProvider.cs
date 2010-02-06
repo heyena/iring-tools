@@ -189,6 +189,7 @@ namespace org.ids_adi.iring.referenceData
             using (new LoggerHelper(this, "SearchPage", query + "," + page))
             {
                 RefDataEntities entities = null;
+                int counter = 0;
 
                 int pageNumber = Convert.ToInt32(page);
                 int pageSize = Convert.ToInt32(_pageSize);
@@ -233,7 +234,7 @@ namespace org.ids_adi.iring.referenceData
 
                                 if (resultEntities.ContainsKey(key))
                                 {
-                                    key += " (" + resultEntity.uri.Split('#')[1] + ")";
+                                    key += ++counter;
                                 }
 
                                 resultEntities.Add(key, resultEntity);
