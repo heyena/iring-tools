@@ -218,7 +218,8 @@ namespace org.ids_adi.iring.referenceData
                         {
                             SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-                            SortedList<string,Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                             
+                            SortedList<string, Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
                             foreach (Dictionary<string, string> result in results.Values)
                             {
                                 Entity resultEntity = new Entity
@@ -232,13 +233,14 @@ namespace org.ids_adi.iring.referenceData
 
                                 if (resultEntities.ContainsKey(key))
                                 {
-                                    key += " (" + repository.name + ")";
+                                    key += " (" + resultEntity.uri.Split('#')[1] + ")";
                                 }
 
                                 resultEntities.Add(key, resultEntity);
                             }
+                            results.Clear();
                         }
-
+                        
                         _searchHistory.Add(query, resultEntities);
                         pageTotal = resultEntities.Count;
                         entities = resultEntities;
@@ -1914,6 +1916,7 @@ namespace org.ids_adi.iring.referenceData
         private SortedList<string,Dictionary<string, string>> BindQueryResults(QueryBindings queryBindings, SPARQLResults sparqlResults)
         {
             SortedList<string,Dictionary<string, string>> results = new SortedList<string,Dictionary<string, string>>();
+            int i = 0;
 
             foreach (SPARQLResult sparqlResult in sparqlResults.resultsElement.results)
             {
@@ -1956,7 +1959,8 @@ namespace org.ids_adi.iring.referenceData
                         }
                     }
                 }
-
+                if (results.ContainsKey(sortKey))
+                    sortKey = sortKey + ++i; //item can exist multiple times depending in how many repositories it exists
                 results.Add(sortKey,result);
             }
 
