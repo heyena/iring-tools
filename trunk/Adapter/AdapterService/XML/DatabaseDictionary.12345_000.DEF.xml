@@ -1,5 +1,5 @@
 <DatabaseDictionary xmlns="http://ns.iringtools.org/library" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
-  <connectionString>Persist Security Info=True;Data Source=LABINTT1;User ID=EM;Password=em</connectionString>
+  <connectionString>Persist Security Info=True;Data Source=localdb;User ID=EM;Password=em</connectionString>
   <provider>Oracle10g</provider>
   <tables>
     <Table>
