@@ -109,7 +109,7 @@ namespace AdapterService.Tests
       Request request = new Request();
       WebCredentials targetCredentials = new WebCredentials();
       string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
-      request.Add("targetUri", "http://localhost:2222/iring");
+      request.Add("targetUri", "http://localhost/InterfaceService/sparql");
       request.Add("targetCredentials", targetCredentialsXML);
       request.Add("graphName", "Lines");
       request.Add("filter", "");

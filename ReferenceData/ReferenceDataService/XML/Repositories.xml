@@ -5,12 +5,12 @@
     <name>My Private Sandbox</name>
     <uri>http://localhost/SandboxService/sparql</uri>
   </Repository>
-  <Repository>
+  <!--<Repository>
     <description>iRING Sandbox</description>
     <isReadOnly>true</isReadOnly>
     <name>iRINGSandbox</name>
     <uri>http://iringsandbox.org/SandboxService/sparql</uri>
-  </Repository>
+  </Repository>-->
   <Repository>
     <description>RDS/WIP Part 4 Reference Data Library</description>
     <isReadOnly>true</isReadOnly>
