@@ -27,31 +27,37 @@
     <Grid.RowDefinitions>
       <RowDefinition Height="30"/>
       <RowDefinition Height="*"/>
-      <RowDefinition Height="180"/>
     </Grid.RowDefinitions>
 
-    <ItemsControl Name="Search" Grid.RowSpan="2" Grid.Column="0" Regions:RegionManager.RegionName="SearchRegion"
+    <ItemsControl Name="Search" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Regions:RegionManager.RegionName="SearchRegion"
         		      VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-
-    <ItemsControl Name="Edits" Grid.Row="1" Grid.Column="1" Regions:RegionManager.RegionName="EditsRegion" 
-                  HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" />
-
-    <ItemsControl Name="Details" Grid.Row="3" Grid.ColumnSpan="2" Regions:RegionManager.RegionName="DetailRegion" 
-				          HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 
     <ItemsControl Name="ContextMenu" Grid.Row="0" Grid.Column="1" Regions:RegionManager.RegionName="ContextMenuRegion"
         		      VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
 
-    <ItemsControl Name="ClassEditor" Grid.Column="1" Grid.Row="1"  Regions:RegionManager.RegionName="ClassEditorRegion" 
+    <Grid x:Name="LayoutEditor" Grid.Row="1" Grid.Column="1">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="180"/>
+      </Grid.RowDefinitions>
+      
+      <ItemsControl Name="ClassEditor" Grid.Row="0" Regions:RegionManager.RegionName="ClassEditorRegion" 
 				          HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 
-    <ItemsControl Name="TemplateEditor" Grid.Row="1" Grid.Column="1" Regions:RegionManager.RegionName="TemplateEditorRegion" 
+      <ItemsControl Name="TemplateEditor" Grid.Row="0" Regions:RegionManager.RegionName="TemplateEditorRegion" 
 				          HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 
-    <basics:GridSplitter Name="RefDataBrowserHorizontalSplitter" 
-                         Opacity="0" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Height="4" 
+      <ItemsControl Name="Edits" Grid.Row="0" Regions:RegionManager.RegionName="EditsRegion" 
+                  HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" />
+
+      <ItemsControl Name="Details" Grid.Row="1" Regions:RegionManager.RegionName="DetailRegion" 
+				          HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+
+      <basics:GridSplitter Opacity="0" Grid.Row="0" Height="4" 
                          HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="Fuchsia"/>
+    </Grid>
     
-    <basics:GridSplitter Opacity="0" Grid.RowSpan="2" Grid.Column="0" Grid.Row="1" Width="4"/>
+    <basics:GridSplitter Opacity="0" Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" Width="4"/>
+    
   </Grid>
 </UserControl>
