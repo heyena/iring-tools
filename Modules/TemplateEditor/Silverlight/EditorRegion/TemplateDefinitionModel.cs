@@ -400,12 +400,14 @@ namespace org.iringtools.modules.templateeditor.editorregion
 
         public override void ApplyRole(object objRole, string name, string description, string uri)
         {
-            RoleDefinition role = (RoleDefinition)objRole;
 
-            role.name.Clear();
-            role.name.Add(new QMXFName() { lang = null, value = name });
-            role.description = new Description() { contentType = null, lang = null, parseType = null, value = description };
-            role.range = uri;
+                KeyValuePair<string, object> _object = (KeyValuePair<string, object>)objRole;
+                RoleDefinition role = (RoleDefinition)_object.Value;
+
+                role.name.Clear();
+                role.name.Add(new QMXFName() { lang = null, value = name });
+                role.description = new Description() { contentType = null, lang = null, parseType = null, value = description };
+                role.range = uri;
         }
 
     }
