@@ -808,5 +808,28 @@ namespace org.iringtools.utility
 // </auto-generated>
 //------------------------------------------------------------------------------";
     }
+
+    public static string ToCSharpType(string xsdType)
+    {
+      string type = (xsdType.StartsWith("xsd:") || xsdType.StartsWith("XSD:")) ? xsdType.Substring(4) : xsdType;
+      
+      switch (type.ToLower())
+      {
+        case "boolean": return "Boolean";
+        case "byte": return "SByte";
+        case "date": return "DateTime";
+        case "datetime": return "DateTime";
+        case "decimal": return "Decimal";
+        case "double": return "Double";
+        case "float": return "Single";
+        case "int": return "Int32";
+        case "integer": return "Decimal";
+        case "long": return "Int64";
+        case "short": return "Int16";
+        case "string": return "String";
+        case "time": return "DateTime";
+        default: return xsdType;
+      }
+    }
   }
 }
