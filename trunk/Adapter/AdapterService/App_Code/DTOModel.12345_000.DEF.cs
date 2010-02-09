@@ -136,7 +136,7 @@ namespace org.iringtools.adapter.proj_12345_000.DEF
       if (_dataObject == null)
       {
         _dataObject = new org.iringtools.adapter.proj_12345_000.DEF.Line();
-        ((org.iringtools.adapter.proj_12345_000.DEF.Line)_dataObject).Id = (String)this._identifier;
+        ((org.iringtools.adapter.proj_12345_000.DEF.Line)_dataObject).Id = (String)this.Identifier;
       }
       ((org.iringtools.adapter.proj_12345_000.DEF.Line)_dataObject).system = (String)this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier;
       ((org.iringtools.adapter.proj_12345_000.DEF.Line)_dataObject).diameter = (Double)this.tpl_NominalDiameter_tpl_value;
