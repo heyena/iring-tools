@@ -5,7 +5,7 @@
 
  * Review Scrumy Task Board
  * Discuss Part8 and Mapping Terminology
- 
+ * Review Mapping Editor for new Issues 
 
 ==Attendees==
  * Koos
@@ -23,31 +23,31 @@
 
 ===Template statement===
 <pre>template
-     role    object
-     role    object
-     role    object</pre>
+	 role    object
+	 role    object
+	 role    object</pre>
 
 ===Purchase example===
 <pre>Purchase
-     seller  <#Steve>
-     buyer   <#Rob>
-     price   "499.00"^^xsd:float
-     item    <#iPad>
-     store   <#BethesdaAppleStore></pre>
+	 seller  <#Steve>
+	 buyer   <#Rob>
+	 price   "499.00"^^xsd:float
+	 item    <#iPad>
+	 store   <#BethesdaAppleStore></pre>
 
 ===Line Tag Template Definition===
 (not really how definitions are expressed)
 <pre><#LineTagTemplate>
-     object             <rdl:Line>
-     identifier         <xsd:String>
-     identificationType <rdl:LineTag></pre>
+	 object             <rdl:Line>
+	 identifier         <xsd:String>
+	 identificationType <rdl:LineTag></pre>
 
 ===Line Tag Template Instance===
 <pre><#T00001>
-     type	        <tpl:LineTagTemplate>
-     object             <#AB-0001>
-     identifier         "12345-AB-0001"^^xsd:String
-     identificationType <rdl:LineTag></pre>
+	 type	        <tpl:LineTagTemplate>
+	 object             <#AB-0001>
+	 identifier         "12345-AB-0001"^^xsd:String
+	 identificationType <rdl:LineTag></pre>
  * The result of the mapping is a Template Instance
  * *object* is the ClassRole because it points to the class the template is "on".
  * *identifier* is a PropertyRole because a property from the DataObject is mapped to it.
@@ -55,7 +55,7 @@
 
 another case would be in a specialized template...
 <pre>     cardinality        "1"^^xsd:Integer</pre>
-  * cardinality is also a "Fixed" role, but it is a ValueRole.
+  * *cardinality* is also a "Fixed" role, but it is a ValueRole.
 
 ==Issues==
 ===Bugs===
@@ -69,3 +69,6 @@ another case would be in a specialized template...
 ===Enhancement===
  * Class Role was not identified - supcherclass list should help - need to use it.
  * When mapping ranges that are not XmlSchema, the selection from the search needs to be used
+
+==Action Items==
+ * Rob to update IssuesList on GoogleCode
