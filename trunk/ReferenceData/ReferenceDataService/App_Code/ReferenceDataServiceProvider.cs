@@ -89,7 +89,7 @@ namespace org.ids_adi.iring.referenceData
             string encryptedProxyToken = configSettings.ProxyCredentialToken;
             string proxyHost = configSettings.ProxyHost;
             string proxyPortString = configSettings.ProxyPort;
-          
+
             if (encryptedRegistryToken == String.Empty)
             {
                 _registryCredentials = new WebCredentials();
@@ -153,9 +153,9 @@ namespace org.ids_adi.iring.referenceData
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-                    SortedList<string,Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    SortedList<string, Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
 
-    
+
                     foreach (Dictionary<string, string> result in results.Values)
                     {
                         Entity resultEntity = new Entity
@@ -219,7 +219,7 @@ namespace org.ids_adi.iring.referenceData
                         {
                             SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-                             
+
                             SortedList<string, Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
                             foreach (Dictionary<string, string> result in results.Values)
                             {
@@ -241,7 +241,7 @@ namespace org.ids_adi.iring.referenceData
                             }
                             results.Clear();
                         }
-                        
+
                         _searchHistory.Add(query, resultEntities);
                         pageTotal = resultEntities.Count;
                         entities = resultEntities;
@@ -291,7 +291,7 @@ namespace org.ids_adi.iring.referenceData
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-                    SortedList<string,Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    SortedList<string, Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
 
                     foreach (Dictionary<string, string> result in results.Values)
                     {
@@ -320,21 +320,21 @@ namespace org.ids_adi.iring.referenceData
                 string relativeUri = String.Empty;
 
                 List<Classification> classifications = new List<Classification>();
-                
+
 
                 Query queryContainsSearch = _queries["GetClassification"];
                 QueryBindings queryBindings = queryContainsSearch.bindings;
 
                 sparql = ReadSPARQL(queryContainsSearch.fileName);
                 sparql = sparql.Replace("param1", id);
-                
+
 
                 foreach (Repository repository in _repositories)
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
 
-                    SortedList<string,Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    SortedList<string, Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
 
 
                     foreach (Dictionary<string, string> result in results.Values)
@@ -351,14 +351,14 @@ namespace org.ids_adi.iring.referenceData
                         }
 
                         if (result.ContainsKey("label"))
-                           label = result["label"];
+                            label = result["label"];
                         else
-                           label = GetLabel(uri);
-                        
-                        classification.label =  label;
+                            label = GetLabel(uri);
+
+                        classification.label = label;
                         classifications.Add(classification);
                     }
-                    
+
                 }
 
                 return classifications;
@@ -388,7 +388,7 @@ namespace org.ids_adi.iring.referenceData
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-                    SortedList<string,Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    SortedList<string, Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
 
                     foreach (Dictionary<string, string> result in results.Values)
                     {
@@ -457,14 +457,14 @@ namespace org.ids_adi.iring.referenceData
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-                    SortedList<string,Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    SortedList<string, Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
                     classifications = new List<Classification>();
                     specializations = new List<Specialization>();
 
                     foreach (Dictionary<string, string> result in results.Values)
                     {
                         classDefinition = new ClassDefinition();
-                        
+
 
                         classDefinition.identifier = "http://rdl.rdlfacade.org/data#" + id;
                         classDefinition.repositoryName = repository.name;
@@ -473,37 +473,37 @@ namespace org.ids_adi.iring.referenceData
                         status = new Status();
 
                         if (result.ContainsKey("label"))
-                          name.value = result["label"];
-                        
+                            name.value = result["label"];
+
                         if (result.ContainsKey("type"))
-                          classDefinition.entityType = new EntityType { reference = result["type"] };
-                        
+                            classDefinition.entityType = new EntityType { reference = result["type"] };
+
                         //legacy properties
                         if (result.ContainsKey("definition"))
-                          description.value = result["definition"];
-                        
+                            description.value = result["definition"];
+
                         if (result.ContainsKey("creator"))
-                          status.authority = result["creator"];
-                        
+                            status.authority = result["creator"];
+
                         if (result.ContainsKey("creationDate"))
-                          status.from = result["creationDate"];
-                        
+                            status.from = result["creationDate"];
+
                         if (result.ContainsKey("class"))
-                          status.Class = result["class"];
-                        
+                            status.Class = result["class"];
+
                         //camelot properties
                         if (result.ContainsKey("comment"))
-                          description.value = result["comment"];
-                        
+                            description.value = result["comment"];
+
                         if (result.ContainsKey("authority"))
-                          status.authority = result["authority"];
-                        
+                            status.authority = result["authority"];
+
                         if (result.ContainsKey("recorded"))
-                          status.Class = result["recorded"];
-                        
+                            status.Class = result["recorded"];
+
                         if (result.ContainsKey("from"))
-                          status.from = result["from"];
-                      
+                            status.from = result["from"];
+
                         classDefinition.name.Add(name);
                         classDefinition.description.Add(description);
                         classDefinition.status.Add(status);
@@ -540,8 +540,8 @@ namespace org.ids_adi.iring.referenceData
                     string label = specialization.label;
 
                     if (label == null)
-                       label = GetLabel(uri);
-                    
+                        label = GetLabel(uri);
+
                     Entity resultEntity = new Entity
                     {
                         uri = uri,
@@ -563,19 +563,19 @@ namespace org.ids_adi.iring.referenceData
             List<Entity> list = new List<Entity>();
             return GetAllSuperClasses(id, list);
         }
-        
+
         public List<Entity> GetAllSuperClasses(string id, List<Entity> list)
         {
-            List<Entity> queryResult = new List<Entity>();
+            //List<Entity> queryResult = new List<Entity>();
 
             try
             {
-                
+
                 List<Specialization> specializations = GetSpecializations(id);
                 //base case
                 if (specializations.Count == 0)
                 {
-                    return queryResult;
+                    return list;
                 }
 
                 foreach (Specialization specialization in specializations)
@@ -592,18 +592,29 @@ namespace org.ids_adi.iring.referenceData
                         label = label
                     };
 
-                    if (!list.Contains(resultEntity))
+                    string trimmedUri = string.Empty;
+                    bool found = false;
+                    foreach (Entity entt in list)
                     {
-                        queryResult.Add(resultEntity);
+                        if (resultEntity.uri.Equals(entt.uri))
+                        {
+                            found = true;
+                        }
                     }
-                    GetAllSuperClasses(uri, queryResult);
+
+                    if (!found)
+                    {
+                        trimmedUri = uri.Remove(0, uri.LastIndexOf('#') + 1);
+                        list.Add(resultEntity);
+                        GetAllSuperClasses(trimmedUri, list);
+                    }
                 }
             }
             catch (Exception e)
             {
                 throw new Exception("Error while Finding " + id + ".\n" + e.ToString(), e);
             }
-            return queryResult;
+            return list;
         }
 
         public List<Entity> GetSubClasses(string id)
@@ -626,7 +637,7 @@ namespace org.ids_adi.iring.referenceData
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-                    SortedList<string,Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    SortedList<string, Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
 
                     foreach (Dictionary<string, string> result in results.Values)
                     {
@@ -666,7 +677,7 @@ namespace org.ids_adi.iring.referenceData
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-                    SortedList<string,Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    SortedList<string, Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
 
                     foreach (Dictionary<string, string> result in results.Values)
                     {
@@ -713,7 +724,7 @@ namespace org.ids_adi.iring.referenceData
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-                    SortedList<string,Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    SortedList<string, Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
 
                     foreach (Dictionary<string, string> result in results.Values)
                     {
@@ -802,11 +813,11 @@ namespace org.ids_adi.iring.referenceData
                     SPARQLResults sparqlResults1 = QueryFromRepository(repository, sparql1);
                     SPARQLResults sparqlResults2 = QueryFromRepository(repository, sparql2);
 
-                    SortedList<string,Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
-                    SortedList<string,Dictionary<string, string>> results1 = BindQueryResults(queryBindings1, sparqlResults1);
-                    SortedList<string,Dictionary<string, string>> results2 = BindQueryResults(queryBindings2, sparqlResults2);
+                    SortedList<string, Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    SortedList<string, Dictionary<string, string>> results1 = BindQueryResults(queryBindings1, sparqlResults1);
+                    SortedList<string, Dictionary<string, string>> results2 = BindQueryResults(queryBindings2, sparqlResults2);
 
-                    SortedList<string,Dictionary<string, string>> combinedResults = MergeLists(MergeLists(results, results1), results2);
+                    SortedList<string, Dictionary<string, string>> combinedResults = MergeLists(MergeLists(results, results1), results2);
 
                     foreach (Dictionary<string, string> result in combinedResults.Values)
                     {
@@ -907,7 +918,7 @@ namespace org.ids_adi.iring.referenceData
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-                    SortedList<string,Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    SortedList<string, Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
 
                     foreach (Dictionary<string, string> result in results.Values)
                     {
@@ -987,7 +998,7 @@ namespace org.ids_adi.iring.referenceData
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-                    SortedList<string,Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    SortedList<string, Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
 
                     foreach (Dictionary<string, string> result in results.Values)
                     {
@@ -1104,10 +1115,10 @@ namespace org.ids_adi.iring.referenceData
                             //ID generator
                             templateName = "Template definition " + label;
                             /// TODO: change to class registry base
-                            if(_useExampleRegistryBase)
-                              generatedTempId = CreateIdsAdiId(_exampleRegistryBase, templateName);
+                            if (_useExampleRegistryBase)
+                                generatedTempId = CreateIdsAdiId(_exampleRegistryBase, templateName);
                             else
-                              generatedTempId = CreateIdsAdiId(_templateRegistryBase, templateName);
+                                generatedTempId = CreateIdsAdiId(_templateRegistryBase, templateName);
                             ID = "<" + generatedTempId + ">";
                             Utility.WriteString("\n" + ID + "\t" + label, "TempDef IDs.log", true);
                             //append description to sparql query
@@ -1138,10 +1149,10 @@ namespace org.ids_adi.iring.referenceData
                                 //ID generator
                                 genName = "Role definition " + roleLabel;
                                 /// TODO: change to template registry base
-                                if(_useExampleRegistryBase)
-                                  generatedId = CreateIdsAdiId(_exampleRegistryBase, genName);
+                                if (_useExampleRegistryBase)
+                                    generatedId = CreateIdsAdiId(_exampleRegistryBase, genName);
                                 else
-                                  generatedId = CreateIdsAdiId(_templateRegistryBase, genName);
+                                    generatedId = CreateIdsAdiId(_templateRegistryBase, genName);
 
                                 roleID = "<" + generatedId + ">";
 
@@ -1188,7 +1199,7 @@ namespace org.ids_adi.iring.referenceData
                     {
                         TemplateDefinition td = q.templateDefinitions[templateIndex];
                         string rName = string.Empty;
-                        
+
                         sparql = sparql.Replace("INSERT DATA { ", "MODIFY DELETE { ");
                         foreach (QMXFName name in td.name)
                         {
@@ -1326,10 +1337,10 @@ namespace org.ids_adi.iring.referenceData
                                 //ID generator
                                 templateName = "Template qualification " + label;
                                 /// TODO: change to class registry base
-                                if(_useExampleRegistryBase)
-                                  generatedTempId = CreateIdsAdiId(_exampleRegistryBase, templateName);
+                                if (_useExampleRegistryBase)
+                                    generatedTempId = CreateIdsAdiId(_exampleRegistryBase, templateName);
                                 else
-                                  generatedTempId = CreateIdsAdiId(_templateRegistryBase, templateName);
+                                    generatedTempId = CreateIdsAdiId(_templateRegistryBase, templateName);
                                 ID = "tpl:" + generatedTempId;
                                 Utility.WriteString("\n" + ID + "\t" + label, "TempQual IDs.log", true);
                                 specialization = template.qualifies;
@@ -1351,10 +1362,10 @@ namespace org.ids_adi.iring.referenceData
                                     //ID generator
                                     genName = "Role definition " + roleLabel;
                                     /// TODO: change to template registry base
-                                    if(_useExampleRegistryBase)
-                                      generatedId = CreateIdsAdiId(_exampleRegistryBase, genName);
-                                    else            
-                                      generatedId = CreateIdsAdiId(_templateRegistryBase, genName);
+                                    if (_useExampleRegistryBase)
+                                        generatedId = CreateIdsAdiId(_exampleRegistryBase, genName);
+                                    else
+                                        generatedId = CreateIdsAdiId(_templateRegistryBase, genName);
                                     roleID = "<" + generatedId + ">";
 
                                     //roleID = role.identifier;
@@ -1591,7 +1602,7 @@ namespace org.ids_adi.iring.referenceData
                 Utility.WriteString("Number of classes to insert: " + qmxf.classDefinitions.Count.ToString(), "stats.log", true);
                 foreach (ClassDefinition Class in qmxf.classDefinitions)
                 {
-                    
+
                     string ID = string.Empty;
                     string id = string.Empty;
                     string label = string.Empty;
@@ -1605,7 +1616,7 @@ namespace org.ids_adi.iring.referenceData
                     int classIndex = -1;
                     Repository source = new Repository();
 
-                    
+
                     repository = getIndexFromName(Class.repositoryName);
                     source = _repositories[repository];
 
@@ -1615,7 +1626,7 @@ namespace org.ids_adi.iring.referenceData
                         return response;
                     }
 
-                    ID = Class.identifier;                 
+                    ID = Class.identifier;
 
                     QMXF q = new QMXF();
                     if (ID != null)
@@ -1646,10 +1657,10 @@ namespace org.ids_adi.iring.referenceData
                             Utility.WriteString("Inserting : " + label, "stats.log", true);
 
                             className = "Class definition " + label;
-                            if(_useExampleRegistryBase)
-                              generatedId = CreateIdsAdiId(_exampleRegistryBase, className);
+                            if (_useExampleRegistryBase)
+                                generatedId = CreateIdsAdiId(_exampleRegistryBase, className);
                             else
-                              generatedId = CreateIdsAdiId(_classRegistryBase, className);
+                                generatedId = CreateIdsAdiId(_classRegistryBase, className);
                             ID = "<" + generatedId + ">";
                             Utility.WriteString("\n" + ID + "\t" + label, "Class IDs.log", true);
                             //ID = Class.identifier.Remove(0, 1);
@@ -1871,11 +1882,11 @@ namespace org.ids_adi.iring.referenceData
             return idsAdiId;
         }
 
-        private SortedList<string,Dictionary<string, string>> MergeLists(SortedList<string,Dictionary<string, string>> a, SortedList<string,Dictionary<string, string>> b)
+        private SortedList<string, Dictionary<string, string>> MergeLists(SortedList<string, Dictionary<string, string>> a, SortedList<string, Dictionary<string, string>> b)
         {
             foreach (Dictionary<string, string> dictionary in b.Values)
             {
-                a.Add(dictionary["label"],dictionary);
+                a.Add(dictionary["label"], dictionary);
             }
             return a;
         }
@@ -1930,9 +1941,9 @@ namespace org.ids_adi.iring.referenceData
             return response;
         }
 
-        private SortedList<string,Dictionary<string, string>> BindQueryResults(QueryBindings queryBindings, SPARQLResults sparqlResults)
+        private SortedList<string, Dictionary<string, string>> BindQueryResults(QueryBindings queryBindings, SPARQLResults sparqlResults)
         {
-            SortedList<string,Dictionary<string, string>> results = new SortedList<string,Dictionary<string, string>>();
+            SortedList<string, Dictionary<string, string>> results = new SortedList<string, Dictionary<string, string>>();
             int i = 0;
 
             foreach (SPARQLResult sparqlResult in sparqlResults.resultsElement.results)
@@ -1978,7 +1989,7 @@ namespace org.ids_adi.iring.referenceData
                 }
                 if (results.ContainsKey(sortKey))
                     sortKey = sortKey + ++i; //item can exist multiple times depending in how many repositories it exists
-                results.Add(sortKey,result);
+                results.Add(sortKey, result);
             }
 
             return results;
