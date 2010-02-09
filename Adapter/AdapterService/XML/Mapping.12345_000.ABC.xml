@@ -6,7 +6,8 @@
         <TemplateMap type="Property" templateId="tpl:R31178164691" name="ClassifiedIdentification" classRole="tpl:R47421421239">
           <RoleMaps>
             <RoleMap roleId="tpl:R17963188524" name="identifier" propertyName="tag"/>
-            <RoleMap roleId="tpl:R43718740838" name="identificationType" value="rdl:R92093626759" valueList=""/>
+            <RoleMap roleId="tpl:R43718740838" name="identificationType" reference="rdl:R92093626759"/>
+            <RoleMap roleId="tpl:R43718740839" name="fixedName1" value="fixedValue1" dataType="xsd:Int"/>
           </RoleMaps>
         </TemplateMap>
         <TemplateMap type="Relationship" templateId="tpl:R71176773051" name="ClientSystemAssembly" classRole="tpl:R75634602440">
@@ -17,7 +18,7 @@
                   <TemplateMap type="Property" templateId="tpl:R31178164691" name="ClassifiedIdentification" classRole="tpl:R47421421239">
                     <RoleMaps>
                       <RoleMap roleId="tpl:R17963188524" name="identifier" propertyName="system"/>
-                      <RoleMap roleId="tpl:R43718740838" name="identificationType" value="rdl:R50548021125" valueList=""/>
+                      <RoleMap roleId="tpl:R43718740838" name="identificationType" reference="rdl:R50548021125" valueList=""/>
                     </RoleMaps>
                   </TemplateMap>
                 </TemplateMaps>
@@ -33,7 +34,7 @@
                   <TemplateMap type="Property" templateId="tpl:R31178164691" name="ClassifiedIdentification" classRole="tpl:R47421421239">
                     <RoleMaps>
                       <RoleMap roleId="tpl:R17963188524" name="identifier" propertyName="unit"/>
-                      <RoleMap roleId="tpl:R43718740838" name="identificationType" value="rdl:R82607969326" valueList=""/>
+                      <RoleMap roleId="tpl:R43718740838" name="identificationType" reference="rdl:R82607969326" valueList=""/>
                     </RoleMaps>
                   </TemplateMap>
                 </TemplateMaps>
@@ -44,7 +45,7 @@
         <TemplateMap type="Property" templateId="tpl:R31178164691" name="ClassifiedIdentification" classRole="tpl:R47421421239">
           <RoleMaps>
             <RoleMap roleId="tpl:R17963188524" name="identifier" propertyName="componentType"/>
-            <RoleMap roleId="tpl:R43718740838" name="identificationType" value="rdl:R99386812445" valueList=""/>
+            <RoleMap roleId="tpl:R43718740838" name="identificationType" reference="rdl:R99386812445" valueList=""/>
           </RoleMaps>
         </TemplateMap>
         <TemplateMap type="Property" templateId="tpl:R57208341310" name="NominalDiameter" classRole="tpl:R23810118927">
@@ -61,7 +62,7 @@
                   <TemplateMap type="Property" templateId="tpl:R31178164691" name="ClassifiedIdentification" classRole="tpl:R47421421239">
                     <RoleMaps>
                       <RoleMap roleId="tpl:R17963188524" name="identifier" propertyName="pid"/>
-                      <RoleMap roleId="tpl:R43718740838" name="identificationType" value="rdl:R16893283050" valueList=""/>
+                      <RoleMap roleId="tpl:R43718740838" name="identificationType" reference="rdl:R16893283050" valueList=""/>
                     </RoleMaps>
                   </TemplateMap>
                 </TemplateMaps>
@@ -77,7 +78,7 @@
                   <TemplateMap type="Property" templateId="tpl:R31178164691" name="ClassifiedIdentification" classRole="tpl:R47421421239">
                     <RoleMaps>
                       <RoleMap roleId="tpl:R17963188524" name="identifier" propertyName="projectNumber"/>
-                      <RoleMap roleId="tpl:R43718740838" name="identificationType" value="rdl:R72529367339" valueList=""/>
+                      <RoleMap roleId="tpl:R43718740838" name="identificationType" reference="rdl:R72529367339" valueList=""/>
                     </RoleMaps>
                   </TemplateMap>
                 </TemplateMaps>
@@ -95,7 +96,7 @@
         <TemplateMap type="Property" templateId="tpl:R31178164691" name="ClassifiedIdentification" classRole="tpl:R47421421239">
           <RoleMaps>
             <RoleMap roleId="tpl:R17963188524" name="identifier" propertyName="tag"/>
-            <RoleMap roleId="tpl:R43718740838" name="identificationType" value="rdl:R92093626759" valueList=""/>
+            <RoleMap roleId="tpl:R43718740838" name="identificationType" reference="rdl:R92093626759" valueList=""/>
           </RoleMaps>
         </TemplateMap>
         <TemplateMap type="Relationship" templateId="tpl:R71176773051" name="ClientSystemAssembly" classRole="tpl:R75634602440">
@@ -106,7 +107,7 @@
                   <TemplateMap type="Property" templateId="tpl:R31178164691" name="ClassifiedIdentification" classRole="tpl:R47421421239">
                     <RoleMaps>
                       <RoleMap roleId="tpl:R17963188524" name="identifier" propertyName="system"/>
-                      <RoleMap roleId="tpl:R43718740838" name="identificationType" value="rdl:R50548021125" valueList=""/>
+                      <RoleMap roleId="tpl:R43718740838" name="identificationType" reference="rdl:R50548021125" valueList=""/>
                     </RoleMaps>
                   </TemplateMap>
                 </TemplateMaps>

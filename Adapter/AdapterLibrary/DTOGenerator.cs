@@ -44,10 +44,12 @@ namespace org.iringtools.adapter
     private const string COMPILER_VERSION = "v3.5";
     private const string LIBRARY_NAMESPACE = "org.iringtools.library";
     private const string ADAPTER_NAMESPACE = "org.iringtools.adapter";
+    private const string RDL_NAMESPACE = "http://rdl.rdlfacade.org/data#";
+    private const string TPL_NAMESPACE = "http://tpl.rdlfacade.org/data#";
 
     private Mapping _mapping = null;
     private DataDictionary _dataDictionary = null;
-    private List<ExtendedDataProperty> _extendedDataProperties = null;
+    private List<MappingProperty> _extendedDataProperties = null;
     private List<string> _initStatements = null;
     private IndentedTextWriter _dtoModelWriter = null;
     private ILog _logger = null;
@@ -63,7 +65,7 @@ namespace org.iringtools.adapter
     public DTOGenerator()
     {
       _currentDirectory = Directory.GetCurrentDirectory();
-      _extendedDataProperties = new List<ExtendedDataProperty>();
+      _extendedDataProperties = new List<MappingProperty>();
       _initStatements = new List<string>();
       _logger = LogManager.GetLogger(typeof(DTOGenerator));
     }
@@ -145,7 +147,7 @@ namespace org.iringtools.adapter
         foreach (GraphMap graphMap in _mapping.graphMaps)
         {
           graphMap.name = NameSafe(graphMap.name);
-          graphMap.classId = graphMap.classId.Replace("rdl:", "http://rdl.rdlfacade.org/data#");
+          graphMap.classId = graphMap.classId.Replace("rdl:", RDL_NAMESPACE);
 
           _dtoModelWriter.WriteLine();
           _dtoModelWriter.WriteLine("[DataContract(Name = \"{0}\", Namespace = \"{1}\" )]", graphMap.name, _xmlNamespace);
@@ -161,12 +163,14 @@ namespace org.iringtools.adapter
           _dtoModelWriter.WriteLine("{");
           _dtoModelWriter.Indent++;
 
-          foreach (ExtendedDataProperty extendedDataProperty in _extendedDataProperties)
+          foreach (MappingProperty mappingProperty in _extendedDataProperties)
           {
-            _dtoModelWriter.WriteLine("_properties.Add(new DTOProperty(@\"{0}\", @\"{1}\", null, typeof({2}), {3}, {4}));",
-              extendedDataProperty.propertyName, extendedDataProperty.dtoPropertyPath, extendedDataProperty.dataType,
-              Convert.ToString(extendedDataProperty.isPropertyKey).ToLower(),
-              Convert.ToString(extendedDataProperty.isRequired).ToLower());
+            string value = (mappingProperty.value == null) ? "null" : "@\"" + mappingProperty.value + "\"";
+
+            _dtoModelWriter.WriteLine("_properties.Add(new DTOProperty(@\"{0}\", @\"{1}\", {2}, typeof({3}), {4}, {5}));",
+            mappingProperty.propertyName, mappingProperty.dtoPropertyPath, value, mappingProperty.mappingDataType,
+            Convert.ToString(mappingProperty.isPropertyKey).ToLower(),
+            Convert.ToString(mappingProperty.isRequired).ToLower());
           }
 
           _dtoModelWriter.WriteLine("Identifier = identifier;");
@@ -189,15 +193,18 @@ namespace org.iringtools.adapter
             _dtoModelWriter.WriteLine("{");
             _dtoModelWriter.Indent++;
 
-            foreach (ExtendedDataProperty extendedDataProperty in _extendedDataProperties)
+            foreach (MappingProperty mappingProperty in _extendedDataProperties)
             {
-              if (extendedDataProperty.isPropertyKey)
+              if (!String.IsNullOrEmpty(mappingProperty.propertyName))
               {
-                _dtoModelWriter.WriteLine("{0} = ({1})dataObject.Id;", extendedDataProperty.propertyPath, extendedDataProperty.dataType);
-              }
-              else
-              {
-                _dtoModelWriter.WriteLine("{0} = ({1})dataObject.{2};", extendedDataProperty.propertyPath, extendedDataProperty.dataType, extendedDataProperty.propertyName);
+                if (mappingProperty.isPropertyKey)
+                {
+                  _dtoModelWriter.WriteLine("{0} = ({1})dataObject.Id;", mappingProperty.propertyPath, mappingProperty.mappingDataType);
+                }
+                else
+                {
+                  _dtoModelWriter.WriteLine("{0} = ({1})dataObject.{2};", mappingProperty.propertyPath, mappingProperty.mappingDataType, mappingProperty.propertyName);
+                }
               }
             }
 
@@ -218,41 +225,37 @@ namespace org.iringtools.adapter
           _dtoModelWriter.WriteLine("public {0}() : this(\"{1}\", \"{0}\", null) {{}}", graphMap.name, graphMap.classId);
 
           // Generate data contract member methods
-          foreach (ExtendedDataProperty extendedDataProperty in _extendedDataProperties)
+          foreach (MappingProperty mappingProperty in _extendedDataProperties)
           {
-            String nullableType = extendedDataProperty.dataType;
+            String type = mappingProperty.mappingDataType;
 
             // Convert to nullable type for some data types
-            if (extendedDataProperty.dataType == "DateTime" ||
-              extendedDataProperty.dataType == "Double" ||
-              extendedDataProperty.dataType == "Float" ||
-              extendedDataProperty.dataType == "Decimal" ||
-              extendedDataProperty.dataType.StartsWith("Int"))
+            if (type == "DateTime" || type == "Decimal" || type == "Double" || type == "Single" || type.StartsWith("Int"))
             {
-              nullableType = "global::System.Nullable<" + extendedDataProperty.dataType + ">";
+              type = "global::System.Nullable<" + type + ">";
             }
 
             _dtoModelWriter.WriteLine();
 
-            if (extendedDataProperty.isDataMember)
+            if (mappingProperty.isDataMember)
             {
-              _dtoModelWriter.WriteLine("[DataMember(Name = \"{0}\", EmitDefaultValue = false)]", extendedDataProperty.propertyPath);
+              _dtoModelWriter.WriteLine("[DataMember(Name = \"{0}\", EmitDefaultValue = false)]", mappingProperty.propertyPath);
             }
 
             _dtoModelWriter.WriteLine("[XmlIgnore]");
-            _dtoModelWriter.WriteLine("public {0} {1}", nullableType, extendedDataProperty.propertyPath);
+            _dtoModelWriter.WriteLine("public {0} {1}", type, mappingProperty.propertyPath);
             _dtoModelWriter.WriteLine("{");
             _dtoModelWriter.Indent++;
             _dtoModelWriter.WriteLine("get");
             _dtoModelWriter.WriteLine("{");
             _dtoModelWriter.Indent++;
-            _dtoModelWriter.WriteLine("return ({0})GetPropertyValue(\"{1}\");", extendedDataProperty.dataType, extendedDataProperty.dtoPropertyPath);
+            _dtoModelWriter.WriteLine("return ({0})GetPropertyValue(\"{1}\");", type, mappingProperty.dtoPropertyPath);
             _dtoModelWriter.Indent--;
             _dtoModelWriter.WriteLine("}");
             _dtoModelWriter.WriteLine("set");
             _dtoModelWriter.WriteLine("{");
             _dtoModelWriter.Indent++;
-            _dtoModelWriter.WriteLine("SetPropertyValue(@\"{0}\", value);", extendedDataProperty.dtoPropertyPath);
+            _dtoModelWriter.WriteLine("SetPropertyValue(@\"{0}\", value);", mappingProperty.dtoPropertyPath);
             _dtoModelWriter.Indent--;
             _dtoModelWriter.WriteLine("}");
             _dtoModelWriter.Indent--;
@@ -292,23 +295,23 @@ namespace org.iringtools.adapter
             _dtoModelWriter.Indent++;
             _dtoModelWriter.WriteLine("_dataObject = new {0}();", qualifiedDataObjectName);
 
-            foreach (ExtendedDataProperty extendedDataProperty in _extendedDataProperties)
+            foreach (MappingProperty mappingProperty in _extendedDataProperties)
             {
-              if (extendedDataProperty.isPropertyKey)
+              if (mappingProperty.isPropertyKey)
               {
-                _dtoModelWriter.WriteLine("(({0})_dataObject).Id = ({1})this._identifier;", qualifiedDataObjectName, extendedDataProperty.dataType);
+                _dtoModelWriter.WriteLine("(({0})_dataObject).Id = ({1})this.Identifier;", qualifiedDataObjectName, mappingProperty.dataType);
               }
             }
 
             _dtoModelWriter.Indent--;
             _dtoModelWriter.WriteLine("}");
 
-            foreach (ExtendedDataProperty extendedDataProperty in _extendedDataProperties)
+            foreach (MappingProperty mappingProperty in _extendedDataProperties)
             {
-              if (!extendedDataProperty.isPropertyKey)
+              if (!mappingProperty.isPropertyKey && !String.IsNullOrEmpty(mappingProperty.propertyName))
               {
                 _dtoModelWriter.WriteLine("(({0})_dataObject).{1} = ({2})this.{3};",
-                  qualifiedDataObjectName, extendedDataProperty.propertyName, extendedDataProperty.dataType, extendedDataProperty.propertyPath);
+                  qualifiedDataObjectName, mappingProperty.propertyName, mappingProperty.dataType, mappingProperty.propertyPath);
               }
             }
 
@@ -1104,9 +1107,9 @@ namespace org.iringtools.adapter
 
     private bool ContainsDataProperty(string propertyPath)
     {
-      foreach (ExtendedDataProperty extendedDataProperty in _extendedDataProperties)
+      foreach (MappingProperty mappingProperty in _extendedDataProperties)
       {
-        if (extendedDataProperty.propertyPath == propertyPath)
+        if (mappingProperty.propertyPath == propertyPath)
         {
           return true;
         }
@@ -1209,41 +1212,69 @@ namespace org.iringtools.adapter
         {
           foreach (DataProperty dataProperty in dataObject.dataProperties)
           {
-            if (roleMap.propertyName == dataProperty.propertyName)
+            if ((!String.IsNullOrEmpty(roleMap.propertyName) && roleMap.propertyName.ToUpper() == dataProperty.propertyName.ToUpper()) || 
+                !String.IsNullOrEmpty(roleMap.reference) || !String.IsNullOrEmpty(roleMap.value))
             {
-              ExtendedDataProperty extendedDataProperty = new ExtendedDataProperty();
+              MappingProperty mappingProperty = new MappingProperty();
 
-              extendedDataProperty.propertyName = dataProperty.propertyName;
-              extendedDataProperty.dataType = dataProperty.dataType;
-              extendedDataProperty.isPropertyKey = dataProperty.isPropertyKey;
-              extendedDataProperty.isRequired = dataProperty.isRequired;
+              mappingProperty.value = null;            
+
+              if (!String.IsNullOrEmpty(roleMap.propertyName) && roleMap.propertyName.ToUpper() == dataProperty.propertyName.ToUpper())
+              {
+                mappingProperty.propertyName = dataProperty.propertyName;
+                mappingProperty.dataType = dataProperty.dataType;
+                mappingProperty.isPropertyKey = dataProperty.isPropertyKey;
+                mappingProperty.isRequired = dataProperty.isRequired;
+                mappingProperty.mappingDataType = String.IsNullOrEmpty(roleMap.dataType) ? dataProperty.dataType : Utility.ToCSharpType(roleMap.dataType);
+              }
+              else if (!String.IsNullOrEmpty(roleMap.reference))
+              {
+                string reference = roleMap.reference;
+
+                if (roleMap.reference.StartsWith("rdl:") || roleMap.reference.StartsWith("RDL:"))
+                {
+                  reference = RDL_NAMESPACE + roleMap.reference.Substring(4);
+                }
+                else if (roleMap.reference.StartsWith("tpl:") || roleMap.reference.StartsWith("TPL:"))
+                {
+                  reference = TPL_NAMESPACE + roleMap.reference.Substring(4);
+                }
+
+                mappingProperty.value = "<" + reference + ">";
+                mappingProperty.mappingDataType = String.IsNullOrEmpty(roleMap.dataType) ? "String" : Utility.ToCSharpType(roleMap.dataType);
+              }
+              else if (!String.IsNullOrEmpty(roleMap.value))
+              {
+                mappingProperty.value = roleMap.value;            
+                mappingProperty.mappingDataType = String.IsNullOrEmpty(roleMap.dataType) ? "String" : Utility.ToCSharpType(roleMap.dataType);
+              }
 
               if (_templatePath == String.Empty)
               {
-                extendedDataProperty.propertyPath = "tpl_" + templateName + "_tpl_" + roleMap.name;
-                extendedDataProperty.dtoPropertyPath = "tpl:" + templateName + ".tpl:" + roleMap.name;
+                mappingProperty.propertyPath = "tpl_" + templateName + "_tpl_" + roleMap.name;
+                mappingProperty.dtoPropertyPath = "tpl:" + templateName + ".tpl:" + roleMap.name;
               }
               else
               {
-                extendedDataProperty.propertyPath = _templatePath + "_tpl_" + templateName + "_tpl_" + roleMap.name;
-                extendedDataProperty.dtoPropertyPath = _dtoTemplatePath + ".tpl:" + templateName + ".tpl:" + roleMap.name;
+                mappingProperty.propertyPath = _templatePath + "_tpl_" + templateName + "_tpl_" + roleMap.name;
+                mappingProperty.dtoPropertyPath = _dtoTemplatePath + ".tpl:" + templateName + ".tpl:" + roleMap.name;
               }
 
-              if (ContainsDataProperty(extendedDataProperty.propertyPath))
+              if (ContainsDataProperty(mappingProperty.propertyPath))
               {
-                extendedDataProperty.propertyPath += _extendedDataProperties.Count;
-                extendedDataProperty.dtoPropertyPath += _extendedDataProperties.Count;
+                mappingProperty.propertyPath += _extendedDataProperties.Count;
+                mappingProperty.dtoPropertyPath += _extendedDataProperties.Count;
               }
 
-              extendedDataProperty.isDataMember = isDataMember;
-              _extendedDataProperties.Add(extendedDataProperty);
+              mappingProperty.isDataMember = isDataMember;
+              _extendedDataProperties.Add(mappingProperty);
 
               if (!isDataMember)
               {
-                _initStatements.Add(_dataContractPath + ".tpl_" + templateName + "_tpl_" + roleMap.name + " = " + extendedDataProperty.propertyPath + ";");
+                _initStatements.Add(_dataContractPath + ".tpl_" + templateName + "_tpl_" + roleMap.name + " = " + mappingProperty.propertyPath + ";");
                 _dtoModelWriter.WriteLine();
                 _dtoModelWriter.WriteLine("[DataMember(EmitDefaultValue = false)]");
-                _dtoModelWriter.WriteLine("public {0} tpl_{1}_tpl_{2} {{ get; set; }}", dataProperty.dataType, templateName, roleMap.name);
+                _dtoModelWriter.WriteLine("public {0} tpl_{1}_tpl_{2} {{ get; set; }}", mappingProperty.mappingDataType, templateName, roleMap.name);
               }
 
               break;
@@ -1298,10 +1329,12 @@ namespace org.iringtools.adapter
     }
   }
 
-  public class ExtendedDataProperty : DataProperty
+  public class MappingProperty : DataProperty
   {
     public string propertyPath { get; set; }
     public string dtoPropertyPath { get; set; }
     public bool isDataMember { get; set; }
+    public string value { get; set; }
+    public string mappingDataType { get; set; }
   }
 }

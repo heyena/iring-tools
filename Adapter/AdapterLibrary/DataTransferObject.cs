@@ -90,7 +90,7 @@ namespace org.iringtools.adapter
   [XmlRoot(Namespace="http://dto.iringtools.org")]
   public abstract class DataTransferObject : IDataTransferObject
   {
-    protected string _identifier;
+    private string _identifier = String.Empty;
     protected object _dataObject = null;
 
     public DataTransferObject(string classId, string graphName)
@@ -113,7 +113,7 @@ namespace org.iringtools.adapter
     {
       get
       {
-        if (_identifier == null)
+        if (String.IsNullOrEmpty(_identifier))
         {
           _identifier = String.Empty;
 
@@ -162,43 +162,25 @@ namespace org.iringtools.adapter
 
     private object ConvertToObject(DTOProperty property)
     {
-      object value = null;
-
       if (property != null)
       {
         switch (property.Type.Name)
         {
-          case "Boolean":
-            value = Convert.ToBoolean(property.Value);
-            break;
-
-          case "Int16":
-            value = Convert.ToInt16(property.Value);
-            break;
-
-          case "Int32":
-            value = Convert.ToInt32(property.Value);
-            break;
-
-          case "Int64":
-            value = Convert.ToInt64(property.Value);
-            break;
-
-          case "Double":
-            value = Convert.ToDouble(property.Value);
-            break;
-
-          case "DateTime":
-            value = Convert.ToDateTime(property.Value).ToUniversalTime();
-            break;
-
-          default:
-            value = (string)property.Value;
-            break;
+          case "Boolean": return Convert.ToBoolean(property.Value);
+          case "Byte": return Convert.ToByte(property.Value);
+          case "DateTime": return Convert.ToDateTime(property.Value).ToUniversalTime();
+          case "Decimal": return Convert.ToDecimal(property.Value);          
+          case "Double": return Convert.ToDouble(property.Value);
+          case "Int16": return Convert.ToInt16(property.Value);
+          case "Int32": return Convert.ToInt32(property.Value);
+          case "Int64": return Convert.ToInt64(property.Value);
+          case "SByte": return Convert.ToSByte(property.Value);
+          case "Single": return Convert.ToSingle(property.Value);
+          default: return (string)property.Value;
         }
       }
 
-      return value;
+      return null;
     }
 
     public void SetPropertyValue(string propertyName, object value) {
