@@ -1,6 +1,12 @@
 #summary Date: 2010/02/04  Time: 08:30 EST
 #labels Meeting
 
+==Agenda==
+
+ * Review Scrumy Task Board
+ * Discuss Part8 and Mapping Terminology
+ 
+
 ==Attendees==
  * Koos
  * Monika
@@ -42,6 +48,14 @@
      object             <#AB-0001>
      identifier         "12345-AB-0001"^^xsd:String
      identificationType <rdl:LineTag></pre>
+ * The result of the mapping is a Template Instance
+ * *object* is the ClassRole because it points to the class the template is "on".
+ * *identifier* is a PropertyRole because a property from the DataObject is mapped to it.
+ * *identificationType* is a "Fixed" role.  In this case it is a ReferenceRole.
+
+another case would be in a specialized template...
+<pre>     cardinality        "1"^^xsd:Integer</pre>
+  * cardinality is also a "Fixed" role, but it is a ValueRole.
 
 ==Issues==
 ===Bugs===
@@ -51,6 +65,7 @@
  * Key Values are wrong in properties for Mapping
   * Class Name -> Graph Name
   * Class Id   -> Class Name (label should be resolved - see above).
+
 ===Enhancement===
  * Class Role was not identified - supcherclass list should help - need to use it.
  * When mapping ranges that are not XmlSchema, the selection from the search needs to be used
