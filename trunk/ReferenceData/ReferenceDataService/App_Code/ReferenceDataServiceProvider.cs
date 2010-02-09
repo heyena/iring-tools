@@ -609,11 +609,14 @@ namespace org.ids_adi.iring.referenceData
                         GetAllSuperClasses(trimmedUri, list);
                     }
                 }
+
+                list.Sort(Entity.sortAscending());
             }
             catch (Exception e)
             {
                 throw new Exception("Error while Finding " + id + ".\n" + e.ToString(), e);
             }
+
             return list;
         }
 
