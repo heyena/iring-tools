@@ -53,7 +53,7 @@
  * *identifier* is a PropertyRole because a property from the DataObject is mapped to it.
  * *identificationType* is a "Fixed" role.  In this case it is a ReferenceRole.
 
-another case would be in a specialized template...
+another case would be in a specialized template where the Role has a ValueQualfication.
 <pre>     cardinality        "1"^^xsd:Integer</pre>
   * *cardinality* is also a "Fixed" role, but it is a ValueRole.
 
