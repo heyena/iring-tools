@@ -1,0 +1,56 @@
+#summary One-sentence summary of this page.
+#labels Meeting
+
+==Attendees==
+ * Koos
+ * Monika
+ * Pavan
+ * Jim
+ * Mohamed
+ * Hahn
+ * Rob
+
+==Part8 & Mapping==
+
+===Simple statement===
+<pre>subject predicate object</pre>
+
+===Template statement===
+<pre>template
+     role    object
+     role    object
+     role    object</pre>
+
+===Purchase example===
+<pre>Purchase
+     seller  <#Steve>
+     buyer   <#Rob>
+     price   "499.00"^^xsd:float
+     item    <#iPad>
+     store   <#BethesdaAppleStore></pre>
+
+===Line Tag Template Definition===
+(not really how definitions are expressed)
+<pre><#LineTagTemplate>
+     object             <rdl:Line>
+     identifier         <xsd:String>
+     identificationType <rdl:LineTag></pre>
+
+===Line Tag Template Instance===
+<pre><#T00001>
+     type	        <tpl:LineTagTemplate>
+     object             <#AB-0001>
+     identifier         "12345-AB-0001"^^xsd:String
+     identificationType <rdl:LineTag></pre>
+
+==Issues==
+===Bugs===
+ * In Search Results: TemplateDefinitions prevent further browsing
+  * guess:When you click on RoleDefinition it is looking for RoleQualifications
+ * When clicking on Mapping Labels are not resolved.
+ * Key Values are wrong in properties for Mapping
+  * Class Name -> Graph Name
+  * Class Id   -> Class Name (label should be resolved - see above).
+===Enhancement===
+ * Class Role was not identified - supcherclass list should help - need to use it.
+ * When mapping ranges that are not XmlSchema, the selection from the search needs to be used
