@@ -50,6 +50,7 @@
                $(AdapterServiceDir)\*.user;
                $(AdapterServiceDir)\*.vspscc;
                $(AdapterServiceDir)\web.config;
+               $(AdapterServiceDir)\Web_Development.config;
                $(AdapterServiceRoot)\.svn\**;
                $(AdapterServiceRoot)\*\.svn\**;
                $(AdapterServiceRoot)\*\*\.svn\**;
@@ -68,6 +69,7 @@
 	  <SemWebInterfaceServiceDeployment
       Include="$(SemWebInterfaceServiceRoot)\**"
       Exclude="$(SemWebInterfaceServiceRoot)\web.config;
+               $(SemWebInterfaceServiceRoot)\setup.conf;
                $(SemWebInterfaceServiceRoot)\.svn\**;
                $(SemWebInterfaceServiceRoot)\*\.svn\**;">
     </SemWebInterfaceServiceDeployment>
@@ -84,6 +86,7 @@
     <SemWebSandboxServiceDeployment
       Include="$(SemWebSandboxServiceRoot)\**"
       Exclude="$(SemWebSandboxServiceRoot)\web.config;
+               $(SemWebSandboxServiceRoot)\setup.conf;
                $(SemWebSandboxServiceRoot)\.svn\**;
                $(SemWebSandboxServiceRoot)\*\.svn\**;">
     </SemWebSandboxServiceDeployment>
@@ -123,10 +126,13 @@
                $(RefDataServiceDir)\bin\*.pdb;
                $(RefDataServiceDir)\obj\**;
                $(RefDataServiceDir)\Properties\**;
+               $(RefDataServiceDir)\XML\Repositories.xml;
+               $(RefDataServiceDir)\XML\Repositories_Development.xml;
                $(RefDataServiceDir)\*.csproj;
                $(RefDataServiceDir)\*.user;
                $(RefDataServiceDir)\*.vspscc;
                $(RefDataServiceDir)\web.config;
+               $(RefDataServiceDir)\Web_Development.config;
                $(RefDataServiceRoot)\.svn\**;
                $(RefDataServiceRoot)\*\.svn\**;
                $(RefDataServiceRoot)\*\*\.svn\**;">
@@ -142,7 +148,7 @@
                Utilities\EncryptCredentials\bin\Debug\EncryptCredentials.exe;
                Utilities\AdapterClient\bin\Debug\AdapterClient.exe;
                Utilities\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\DBDictionaryUtil.exe;
-               Utilities\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\DBDictionaryUtil.exe.Default.config;">
+               Utilities\DBDictionaryUtil\DBDictionaryUtil\App_Default.config;">
     </AdapterToolsDeployment>
     
     <SandboxToolsDeployment
@@ -154,7 +160,7 @@
                Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;
                Utilities\EncryptCredentials\bin\Debug\EncryptCredentials.exe;
                Utilities\QMXFGenerator\QMXFGenerator\bin\Debug\QMXFGenerator.exe;
-               Utilities\QMXFGenerator\QMXFGenerator\bin\Debug\QMXFGenerator.exe.Default.config;
+               Utilities\QMXFGenerator\QMXFGenerator\App_Default.config;
                Utilities\QMXFGenerator\QMXFGenerator\bin\Debug\Microsoft.Office.Interop.Excel.dll;
                Utilities\QMXFGenerator\QMXFGenerator\bin\Debug\Microsoft.Vbe.Interop.dll;
                Utilities\QMXFGenerator\QMXFGenerator\bin\Debug\office.dll;">
@@ -220,6 +226,8 @@
     <Message Text="Cleaning up old deployment folders..." />
     <Exec Command="RmDir /S /Q $(DeploymentDir)" />
     <MakeDir Directories="$(DeploymentDir)/iRINGAdapter; $(DeploymentDir)/iRINGSandbox"/>
+    <Exec Command="Copy .\ClientAccessPolicy.xml $(iRINGAdapter)\ClientAccessPolicy.xml" />
+    <Exec Command="Copy .\ClientAccessPolicy.xml $(iRINGSandbox)\ClientAccessPolicy.xml" />
 
     <Message Text="Creating adapter service deployment ..." />
     <Copy SourceFiles="@(AdapterServiceDeployment)"
@@ -236,6 +244,7 @@
     <Copy SourceFiles="@(SemWebInterfaceServiceDeployment)"
           DestinationFiles="@(SemWebInterfaceServiceDeployment->'$(SemWebInterfaceServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Exec Command="Move /Y $(SemWebInterfaceServiceDeploymentDir)\Web_Default.config $(SemWebInterfaceServiceDeploymentDir)\Web.config" />
+    <Exec Command="Move /Y $(SemWebInterfaceServiceDeploymentDir)\setup_default.conf $(SemWebInterfaceServiceDeploymentDir)\setup.conf" />
     
     <Message Text="Creating mapping editor deployment ..." />
     <Copy SourceFiles="@(MappingEditorDeployment)"
@@ -263,16 +272,17 @@
     <Copy SourceFiles="@(SemWebSandboxServiceDeployment)"
           DestinationFiles="@(SemWebSandboxServiceDeployment->'$(SemWebSandboxServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Exec Command="Move /Y $(SemWebSandboxServiceDeploymentDir)\Web_Default.config $(SemWebSandboxServiceDeploymentDir)\Web.config" />
+    <Exec Command="Move /Y $(SemWebSandboxServiceDeploymentDir)\setup_default.conf $(SemWebSandboxServiceDeploymentDir)\setup.conf" />
     
     <Message Text="Creating adapter tools deployment ..." />
     <Copy SourceFiles="@(AdapterToolsDeployment)"
           DestinationFiles="@(AdapterToolsDeployment->'$(AdapterToolsDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Exec Command="Move /Y $(AdapterToolsDeploymentDir)\DBDictionaryUtil.exe.Default.config $(AdapterToolsDeploymentDir)\DBDictionaryUtil.exe.config" />
+    <Exec Command="Move /Y $(AdapterToolsDeploymentDir)\App_Default.config $(AdapterToolsDeploymentDir)\DBDictionaryUtil.exe.config" />
        
     <Message Text="Creating sandbox tools deployment ..." />
     <Copy SourceFiles="@(SandboxToolsDeployment)"
           DestinationFiles="@(SandboxToolsDeployment->'$(SandboxToolsDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Exec Command="Move /Y $(SandboxToolsDeploymentDir)\QMXFGenerator.exe.Default.config $(SandboxToolsDeploymentDir)\QMXFGenerator.exe.config" />    
+    <Exec Command="Move /Y $(SandboxToolsDeploymentDir)\App_Default.config $(SandboxToolsDeploymentDir)\QMXFGenerator.exe.config" />    
   </Target>
 
   <Target Name="CreatePackages" DependsOnTargets="CreateDeployment">
