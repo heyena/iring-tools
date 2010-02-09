@@ -560,11 +560,23 @@ namespace org.ids_adi.iring.referenceData
 
         public List<Entity> GetAllSuperClasses(string id)
         {
+            List<Entity> list = new List<Entity>();
+            return GetAllSuperClasses(id, list);
+        }
+        
+        public List<Entity> GetAllSuperClasses(string id, List<Entity> list)
+        {
             List<Entity> queryResult = new List<Entity>();
 
             try
             {
+                
                 List<Specialization> specializations = GetSpecializations(id);
+                //base case
+                if (specializations.Count == 0)
+                {
+                    return queryResult;
+                }
 
                 foreach (Specialization specialization in specializations)
                 {
@@ -580,7 +592,11 @@ namespace org.ids_adi.iring.referenceData
                         label = label
                     };
 
-                    queryResult.Add(resultEntity);
+                    if (!list.Contains(resultEntity))
+                    {
+                        queryResult.Add(resultEntity);
+                    }
+                    GetAllSuperClasses(uri, queryResult);
                 }
             }
             catch (Exception e)
