@@ -6,10 +6,10 @@
     <iRINGSandbox>$(DeploymentDir)\iRINGSandbox</iRINGSandbox>
     <AdapterServiceRoot>Adapter</AdapterServiceRoot>
     <AdapterServiceDir>$(AdapterServiceRoot)\AdapterService</AdapterServiceDir>
-    <InterfaceServiceRoot>InterfaceService</InterfaceServiceRoot>
-    <SemWebInterfaceServiceRoot>InterfaceService.SemWeb</SemWebInterfaceServiceRoot>
-	  <SandboxServiceRoot>SandboxService</SandboxServiceRoot>
-	  <SemWebSandboxServiceRoot>SandboxService.SemWeb</SemWebSandboxServiceRoot>
+    <JosekiInterfaceServiceRoot>InterfaceService.Joseki</JosekiInterfaceServiceRoot>
+    <SemWebInterfaceServiceRoot>InterfaceService</SemWebInterfaceServiceRoot>
+	  <JosekiSandboxServiceRoot>SandboxService.Joseki</JosekiSandboxServiceRoot>
+	  <SemWebSandboxServiceRoot>SandboxService</SemWebSandboxServiceRoot>
     <MappingEditorRoot>MappingEditor</MappingEditorRoot>
     <MappingEditorDir>$(MappingEditorRoot)\$(MappingEditorRoot).Web</MappingEditorDir>
     <RefDataEditorRoot>RefDataEditor</RefDataEditorRoot>
@@ -17,14 +17,14 @@
     <RefDataServiceRoot>ReferenceData</RefDataServiceRoot>
     <RefDataServiceDir>$(RefDataServiceRoot)\ReferenceDataService</RefDataServiceDir>    
     <AdapterServiceDeploymentDir>$(iRINGAdapter)\AdapterService</AdapterServiceDeploymentDir>
-    <InterfaceServiceDeploymentDir>$(iRINGAdapter)\InterfaceService</InterfaceServiceDeploymentDir>
-    <SemWebInterfaceServiceDeploymentDir>$(iRINGAdapter)\SemWebInterfaceService</SemWebInterfaceServiceDeploymentDir>
+    <JosekiInterfaceServiceDeploymentDir>$(iRINGAdapter)\InterfaceService.Joseki</JosekiInterfaceServiceDeploymentDir>
+    <SemWebInterfaceServiceDeploymentDir>$(iRINGAdapter)\InterfaceService</SemWebInterfaceServiceDeploymentDir>
     <AdapterToolsDeploymentDir>$(iRINGAdapter)\Tools</AdapterToolsDeploymentDir>
     <MappingEditorDeploymentDir>$(iRINGAdapter)\MappingEditor</MappingEditorDeploymentDir>
     <RefDataEditorDeploymentDir>$(iRINGSandbox)\RefDataEditor</RefDataEditorDeploymentDir>
     <RefDataServiceDeploymentDir>$(iRINGSandbox)\RefDataService</RefDataServiceDeploymentDir>
-    <SandboxServiceDeploymentDir>$(iRINGSandbox)\SandboxService</SandboxServiceDeploymentDir>
-    <SemWebSandboxServiceDeploymentDir>$(iRINGSandbox)\SemWebSandboxService</SemWebSandboxServiceDeploymentDir>
+    <JosekiSandboxServiceDeploymentDir>$(iRINGSandbox)\SandboxService.Joseki</JosekiSandboxServiceDeploymentDir>
+    <SemWebSandboxServiceDeploymentDir>$(iRINGSandbox)\SandboxService</SemWebSandboxServiceDeploymentDir>
     <SandboxToolsDeploymentDir>$(iRINGSandbox)\Tools</SandboxToolsDeploymentDir>
     <TortoiseSVNCmd>"C:\Program Files\TortoiseSVN\bin\TortoiseProc.exe"</TortoiseSVNCmd>
     <MSTestCmd>"C:\Program Files\Microsoft Visual Studio 9.0\Common7\IDE\MSTest.exe"</MSTestCmd>
@@ -57,14 +57,14 @@
                $(AdapterServiceRoot)\*\*\*\.svn\**;">
     </AdapterServiceDeployment>
     
-    <InterfaceServiceDeployment
-      Include="$(InterfaceServiceRoot)\**"
-      Exclude="$(InterfaceServiceRoot)\.svn\**;
-               $(InterfaceServiceRoot)\*\.svn\**;
-               $(InterfaceServiceRoot)\*\*\.svn\**;
-               $(InterfaceServiceRoot)\*\*\*\.svn\**;
-               $(InterfaceServiceRoot)\*.log;">
-    </InterfaceServiceDeployment>
+    <JosekiInterfaceServiceDeployment
+      Include="$(JosekiInterfaceServiceRoot)\**"
+      Exclude="$(JosekiInterfaceServiceRoot)\.svn\**;
+               $(JosekiInterfaceServiceRoot)\*\.svn\**;
+               $(JosekiInterfaceServiceRoot)\*\*\.svn\**;
+               $(JosekiInterfaceServiceRoot)\*\*\*\.svn\**;
+               $(JosekiInterfaceServiceRoot)\*.log;">
+    </JosekiInterfaceServiceDeployment>
 	
 	  <SemWebInterfaceServiceDeployment
       Include="$(SemWebInterfaceServiceRoot)\**"
@@ -74,14 +74,14 @@
                $(SemWebInterfaceServiceRoot)\*\.svn\**;">
     </SemWebInterfaceServiceDeployment>
 	
-    <SandboxServiceDeployment
-      Include="$(SandboxServiceRoot)\**"
-      Exclude="$(SandboxServiceRoot)\.svn\**;
-               $(SandboxServiceRoot)\*\.svn\**;
-               $(SandboxServiceRoot)\*\*\.svn\**;
-               $(SandboxServiceRoot)\*\*\*\.svn\**;
-               $(SandboxServiceRoot)\*.log;">
-    </SandboxServiceDeployment>
+    <JosekiSandboxServiceDeployment
+      Include="$(JosekiSandboxServiceRoot)\**"
+      Exclude="$(JosekiSandboxServiceRoot)\.svn\**;
+               $(JosekiSandboxServiceRoot)\*\.svn\**;
+               $(JosekiSandboxServiceRoot)\*\*\.svn\**;
+               $(JosekiSandboxServiceRoot)\*\*\*\.svn\**;
+               $(JosekiSandboxServiceRoot)\*.log;">
+    </JosekiSandboxServiceDeployment>
     
     <SemWebSandboxServiceDeployment
       Include="$(SemWebSandboxServiceRoot)\**"
@@ -234,11 +234,11 @@
           DestinationFiles="@(AdapterServiceDeployment->'$(AdapterServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Exec Command="Move /Y $(AdapterServiceDeploymentDir)\Web_Default.config $(AdapterServiceDeploymentDir)\Web.config" />
 
-    <Message Text="Creating interface service deployment ..." />
-    <Copy SourceFiles="@(InterfaceServiceDeployment)"
-          DestinationFiles="@(InterfaceServiceDeployment->'$(InterfaceServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Exec Command="Move /Y $(InterfaceServiceDeploymentDir)\setup.default.conf $(InterfaceServiceDeploymentDir)\setup.conf" />
-    <Exec Command="Move /Y $(InterfaceServiceDeploymentDir)\webapps\joseki\WEB-INF\web.default.xml $(InterfaceServiceDeploymentDir)\webapps\joseki\WEB-INF\web.xml" />
+    <Message Text="Creating Joseki interface service deployment ..." />
+    <Copy SourceFiles="@(JosekiInterfaceServiceDeployment)"
+          DestinationFiles="@(JosekiInterfaceServiceDeployment->'$(JosekiInterfaceServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(JosekiInterfaceServiceDeploymentDir)\setup.default.conf $(JosekiInterfaceServiceDeploymentDir)\setup.conf" />
+    <Exec Command="Move /Y $(JosekiInterfaceServiceDeploymentDir)\webapps\joseki\WEB-INF\web.default.xml $(JosekiInterfaceServiceDeploymentDir)\webapps\joseki\WEB-INF\web.xml" />
     
     <Message Text="Creating SemWeb interface service deployment ..." />
     <Copy SourceFiles="@(SemWebInterfaceServiceDeployment)"
@@ -262,11 +262,11 @@
     <Exec Command="Move /Y $(RefDataServiceDeploymentDir)\Web_Default.config $(RefDataServiceDeploymentDir)\Web.config" />
     <Exec Command="Move /Y $(RefDataServiceDeploymentDir)\XML\Repositories_Default.xml $(RefDataServiceDeploymentDir)\XML\Repositories.xml" />
 
-    <Message Text="Creating sandbox service deployment ..." />
-    <Copy SourceFiles="@(SandboxServiceDeployment)"
-          DestinationFiles="@(SandboxServiceDeployment->'$(SandboxServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Exec Command="Move /Y $(SandboxServiceDeploymentDir)\setup.default.conf $(SandboxServiceDeploymentDir)\setup.conf" />
-    <Exec Command="Move /Y $(SandboxServiceDeploymentDir)\webapps\joseki\WEB-INF\web.default.xml $(SandboxServiceDeploymentDir)\webapps\joseki\WEB-INF\web.xml" />
+    <Message Text="Creating Joseki sandbox service deployment ..." />
+    <Copy SourceFiles="@(JosekiSandboxServiceDeployment)"
+          DestinationFiles="@(JosekiSandboxServiceDeployment->'$(JosekiSandboxServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(JosekiSandboxServiceDeploymentDir)\setup.default.conf $(JosekiSandboxServiceDeploymentDir)\setup.conf" />
+    <Exec Command="Move /Y $(JosekiSandboxServiceDeploymentDir)\webapps\joseki\WEB-INF\web.default.xml $(JosekiSandboxServiceDeploymentDir)\webapps\joseki\WEB-INF\web.xml" />
     
     <Message Text="Creating SemWeb sandbox service deployment ..." />
     <Copy SourceFiles="@(SemWebSandboxServiceDeployment)"
