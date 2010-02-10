@@ -36,8 +36,8 @@
 || Issue 42 || Namespacing || Rob || 2 ||
 || Issue 50 || Combobox to select Project / Link Combobox to PM || Pavan || 6 ||
 || Issue 51 || Each web service call from ME will need to use PM values || Koos || 8 ||
-|| Issue 52 || In MappingEditor class roles are not identified if more that one level of superclassing is used || Pavan || ?? ||
-|| Issue 53 || In MappingEditor non-class roles should be editable depending on value(literal/reference)/range. || Pavan || ?? ||
+|| Issue 52 || In MappingEditor class roles are not identified if more that one level of superclassing is used || Gert || ?? ||
+|| Issue 53 || In MappingEditor non-class roles should be editable depending on value(literal/reference)/range. || Gert || ?? ||
 
 
 ==Task Board==
