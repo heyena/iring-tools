@@ -133,6 +133,7 @@ namespace org.iringtools.adapter.projection
           Statement statementE = new Statement(templateVariable, templateMapClassRole, relatedClassificationTemplate);
           Statement statementF = new Statement(templateVariable, roleMapRoleId, propertyNameVariable);
 
+          //TODO : Monika - Add for other roles
           query.AddGraphStatement(statementA);
           query.AddGraphStatement(statementB);
           query.AddGraphStatement(statementC);
@@ -490,23 +491,49 @@ namespace org.iringtools.adapter.projection
                     dtoPropertyValue = "";
 
                   RoleMap roleMap = FindRoleMap(templateMap, propertyName);
-
-                  if (roleMap.valueList == null || roleMap.valueList == string.Empty)
+                  if (roleMap.reference != null && roleMap.reference != String.Empty)
                   {
-                    propertyValue = dtoPropertyValue;
-                  }
-                  else
-                  {
-                    Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);
-                    if (valueList.ContainsKey(dtoPropertyValue))
+                    if (roleMap.valueList != null && roleMap.valueList != String.Empty)
                     {
-                      propertyValue = valueList[dtoPropertyValue].Replace("rdl:", rdlPrefix);
+                      Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);
+                      if (valueList.ContainsKey(dtoPropertyValue))
+                      {
+                        propertyValue = valueList[dtoPropertyValue].Replace("rdl:", rdlPrefix);
+                      }
+                      else
+                      {
+                        throw (new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue)));
+                      }
                     }
                     else
                     {
-                      throw (new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue)));
+                      propertyValue = roleMap.reference;
                     }
                   }
+                  else if (roleMap.value != null && roleMap.value != String.Empty)
+                  {
+                    propertyValue = roleMap.value;
+                  }
+                  else
+                  {
+                    propertyValue = dtoPropertyValue;
+                  }
+                  //if (roleMap.valueList == null || roleMap.valueList == string.Empty)
+                  //{
+                  //  propertyValue = dtoPropertyValue;
+                  //}
+                  //else
+                  //{
+                  //  Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);
+                  //  if (valueList.ContainsKey(dtoPropertyValue))
+                  //  {
+                  //    propertyValue = valueList[dtoPropertyValue].Replace("rdl:", rdlPrefix);
+                  //  }
+                  //  else
+                  //  {
+                  //    throw (new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue)));
+                  //  }
+                  //}
 
                   if (!curPropertyValue.Equals(propertyValue))
                   {
@@ -557,23 +584,49 @@ namespace org.iringtools.adapter.projection
                       dtoPropertyValue = "";
 
                     RoleMap roleMap = FindRoleMap(templateMap, propertyName);
-
-                    if (roleMap.valueList == null || roleMap.valueList == string.Empty)
+                    if (roleMap.reference != null && roleMap.reference != String.Empty)
                     {
-                      propertyValue = dtoPropertyValue;
-                    }
-                    else
-                    {
-                      Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);
-                      if (valueList.ContainsKey(dtoPropertyValue))
+                      if (roleMap.valueList != null && roleMap.valueList != String.Empty)
                       {
-                        propertyValue = valueList[dtoPropertyValue].Replace("rdl:", rdlPrefix);
+                        Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);
+                        if (valueList.ContainsKey(dtoPropertyValue))
+                        {
+                          propertyValue = valueList[dtoPropertyValue].Replace("rdl:", rdlPrefix);                          
+                        }
+                        else
+                        {
+                          throw (new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue)));
+                        }
                       }
                       else
                       {
-                        throw (new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue)));
+                        propertyValue = roleMap.reference;                        
                       }
                     }
+                    else if (roleMap.value != null && roleMap.value != String.Empty)
+                    {
+                      propertyValue = roleMap.value;
+                    }
+                    else
+                    {
+                      propertyValue = dtoPropertyValue;
+                    }
+                    //if (roleMap.valueList == null || roleMap.valueList == string.Empty)
+                    //{
+                    //  propertyValue = dtoPropertyValue;
+                    //}
+                    //else
+                    //{
+                    //  Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);
+                    //  if (valueList.ContainsKey(dtoPropertyValue))
+                    //  {
+                    //    propertyValue = valueList[dtoPropertyValue].Replace("rdl:", rdlPrefix);
+                    //  }
+                    //  else
+                    //  {
+                    //    throw (new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue)));
+                    //  }
+                    //}
                     string roleMapRoleId = roleMap.roleId.Replace("tpl:", tplPrefix);
                     Variable propertyNameVariable = new Variable(roleMap.propertyName);
                     Statement statementC = new Statement(templateVariable, roleMapRoleId, propertyNameVariable);
@@ -652,24 +705,56 @@ namespace org.iringtools.adapter.projection
               else
                 dtoPropertyValue = string.Empty;
 
-              if (roleMap.valueList == null || roleMap.valueList == string.Empty)
+
+              if (roleMap.reference != null && roleMap.reference != String.Empty)
               {
-                propertyValue = dtoPropertyValue;
+                if (roleMap.valueList != null && roleMap.valueList != String.Empty)
+                {
+                  Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);
+                  if (valueList.ContainsKey(dtoPropertyValue))
+                  {
+                    propertyValue = valueList[dtoPropertyValue].Replace("rdl:", rdlPrefix);
+                    propertyType = "uri";
+                  }
+                  else
+                  {
+                    throw (new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue)));
+                  }
+                }
+                else
+                {
+                  propertyValue = roleMap.reference;
+                  propertyType = "uri";
+                }
+              }
+              else if (roleMap.value != null && roleMap.value != String.Empty)
+              {
+                propertyValue = roleMap.value;
                 propertyType = "literal";
               }
               else
               {
-                Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);
-                if (valueList.ContainsKey(dtoPropertyValue))
-                {
-                  propertyValue = valueList[dtoPropertyValue].Replace("rdl:", rdlPrefix);
-                  propertyType = "uri";
-                }
-                else
-                {
-                  throw (new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue)));
-                }
+                propertyValue = dtoPropertyValue;
+                propertyType = "literal";
               }
+              //if (roleMap.valueList == null || roleMap.valueList == string.Empty)
+              //{
+              //    propertyValue = dtoPropertyValue;
+              //    propertyType = "literal";
+              //}
+              //else
+              //{
+              //  Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);
+              //  if (valueList.ContainsKey(dtoPropertyValue))
+              //  {
+              //    propertyValue = valueList[dtoPropertyValue].Replace("rdl:", rdlPrefix);
+              //    propertyType = "uri";
+              //  }
+              //  else
+              //  {
+              //    throw (new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue)));
+              //  }
+              //}
               string roleMapRoleId = roleMap.roleId.Replace("tpl:", tplPrefix);
               if (propertyType == "literal")
               {
