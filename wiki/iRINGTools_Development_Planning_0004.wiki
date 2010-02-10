@@ -57,16 +57,16 @@ Purchase
   identifier         "12345-AB-0001"^^xsd:String
   identificationType <rdl:LineTag>
 }}}
- * The result of the mapping is a Template Instance
- * *object* is the ClassRole because it points to the class the template is "on".
- * *identifier* is a PropertyRole because a property from the DataObject is mapped to it.
- * *identificationType* is a "Fixed" role.  In this case it is a ReferenceRole.
+  * The result of the mapping is a Template Instance
+  * *object* is the ClassRole because it points to the class the template is "on".
+  * *identifier* is a PropertyRole because a property from the DataObject is mapped to it.
+  * *identificationType* is a "Fixed" role.  In this case it is a ReferenceRole.
 
 another case would be in a specialized template where the Role has a ValueQualfication.
 {{{
   cardinality        "1"^^xsd:Integer
 }}}
-  * *cardinality* is also a "Fixed" role, but it is a ValueRole.
+   * *cardinality* is also a "Fixed" role, but it is a ValueRole.
 
 ==Issues==
 
