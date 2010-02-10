@@ -70,7 +70,6 @@ Purchase
 
 ==Issues==
 
-==Sprint Issues==
 || *Issue #* || *Issue Description* || *Assigned* || *Estimate (Hrs)* ||
 || Issue 35 || RefDataService: Search result show duplicate roles when adding new role to template || Mohd || ?? ||
 || Issue 52 || In MappingEditor class roles are not identified if more that one level of superclassing is used || Pavan || ?? ||
