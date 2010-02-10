@@ -31,13 +31,15 @@ template
   role    object
 }}}
 
-===Purchase example===
-<pre>Purchase
-	 seller  <#Steve>
-	 buyer   <#Rob>
-	 price   "499.00"^^xsd:float
-	 item    <#iPad>
-	 store   <#BethesdaAppleStore></pre>
+ * Purchase example
+{{{
+Purchase
+  seller  <#Steve>
+  buyer   <#Rob>
+  price   "499.00"^^xsd:float
+  item    <#iPad>
+  store   <#BethesdaAppleStore>
+}}}
 
 ===Line Tag Template Definition===
 (not really how definitions are expressed)
