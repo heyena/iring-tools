@@ -41,8 +41,7 @@ Purchase
   store   <#BethesdaAppleStore>
 }}}
 
- * Line Tag Template Definition
-   (not really how definitions are expressed)
+ * Line Tag Template Definition (not really how definitions are expressed)
 {{{
 <#LineTagTemplate>
   object             <rdl:Line>
@@ -53,7 +52,7 @@ Purchase
  * Line Tag Template Instance
 {{{
 <#T00001>
-  type	        <tpl:LineTagTemplate>
+  type	             <tpl:LineTagTemplate>
   object             <#AB-0001>
   identifier         "12345-AB-0001"^^xsd:String
   identificationType <rdl:LineTag>
@@ -64,7 +63,9 @@ Purchase
  * *identificationType* is a "Fixed" role.  In this case it is a ReferenceRole.
 
 another case would be in a specialized template where the Role has a ValueQualfication.
-<pre>     cardinality        "1"^^xsd:Integer</pre>
+{{{
+  cardinality        "1"^^xsd:Integer
+}}}
   * *cardinality* is also a "Fixed" role, but it is a ValueRole.
 
 ==Issues==
