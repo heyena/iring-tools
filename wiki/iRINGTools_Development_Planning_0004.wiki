@@ -73,13 +73,13 @@ Purchase
 ==Sprint Issues==
 || *Issue #* || *Issue Description* || *Assigned* || *Estimate (Hrs)* ||
 || Issue 35 || RefDataService: Search result show duplicate roles when adding new role to template || Mohd || ?? ||
-|| Issue 52 || In MappingEditor class roles are not identified if more that one level of superclassing is used || Gert || ?? ||
-|| Issue 53 || In MappingEditor non-class roles should be editable depending on value(literal/reference)/range. || Gert || ?? ||
-|| -- || In Search Results: TemplateDefinitions prevent further browsing. guess:When you click on RoleDefinition it is looking for RoleQualifications || ?? || ?? ||
-|| -- || When clicking on Mapping Labels are not resolved. || ?? || ?? ||
-|| -- || Key Values are wrong in properties for Mapping, Class Name -> Graph Name, Class Id   -> Class Name (label should be resolved - see above). || ?? || ?? ||
-|| -- || Class Role was not identified - supcherclass list should help - need to use it. || ?? || ?? ||
-|| -- || When mapping ranges that are not XmlSchema, the selection from the search needs to be used. || ?? || ?? ||
+|| Issue 52 || In MappingEditor class roles are not identified if more that one level of superclassing is used || Pavan || ?? ||
+|| Issue 53 || In MappingEditor non-class roles should be editable depending on value(literal/reference)/range. || Pavan || ?? ||
+|| Issue 54 || Detail pane not get updated when re-select a node. || Hahn || ?? ||
+|| Issue 55 || RefDataEditor: TemplateDefinitions prevent further browsing. || ?? || ?? ||
+|| Issue 56 || When clicking on Mapping Labels are not resolved. || ?? || ?? ||
+|| Issue 57 || Key Values are wrong in properties for Mapping. || ?? || ?? ||
+|| Issue 58 || When mapping ReferenceRoles, PropertyMap being created. || ?? || ?? ||
 
 ==Action Items==
  * Rob to update IssuesList on GoogleCode
