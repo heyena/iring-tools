@@ -62,7 +62,7 @@ Purchase
   * *identifier* is a PropertyRole because a property from the DataObject is mapped to it.
   * *identificationType* is a "Fixed" role.  In this case it is a ReferenceRole.
 
-another case would be in a specialized template where the Role has a ValueQualfication.
+ * Another case would be in a specialized template where the Role has a ValueQualfication.
 {{{
   cardinality        "1"^^xsd:Integer
 }}}
