@@ -18,16 +18,18 @@
 
 ==Part8 & Mapping==
 
-===Simple statement===
+ * Simple statement
 {{{
 subject predicate object
 }}}
 
-===Template statement===
-<pre>template
-	 role    object
-	 role    object
-	 role    object</pre>
+ * Template statement
+{{{
+template
+  role    object
+  role    object
+  role    object
+}}}
 
 ===Purchase example===
 <pre>Purchase
