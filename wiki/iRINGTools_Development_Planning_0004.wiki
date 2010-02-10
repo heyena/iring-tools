@@ -19,7 +19,9 @@
 ==Part8 & Mapping==
 
 ===Simple statement===
-<pre>subject predicate object</pre>
+{{{
+subject predicate object
+}}}
 
 ===Template statement===
 <pre>template
