@@ -41,19 +41,23 @@ Purchase
   store   <#BethesdaAppleStore>
 }}}
 
-===Line Tag Template Definition===
-(not really how definitions are expressed)
-<pre><#LineTagTemplate>
-	 object             <rdl:Line>
-	 identifier         <xsd:String>
-	 identificationType <rdl:LineTag></pre>
+ * Line Tag Template Definition
+   (not really how definitions are expressed)
+{{{
+<#LineTagTemplate>
+  object             <rdl:Line>
+  identifier         <xsd:String>
+  identificationType <rdl:LineTag>
+}}}
 
-===Line Tag Template Instance===
-<pre><#T00001>
-	 type	        <tpl:LineTagTemplate>
-	 object             <#AB-0001>
-	 identifier         "12345-AB-0001"^^xsd:String
-	 identificationType <rdl:LineTag></pre>
+ * Line Tag Template Instance
+{{{
+<#T00001>
+  type	        <tpl:LineTagTemplate>
+  object             <#AB-0001>
+  identifier         "12345-AB-0001"^^xsd:String
+  identificationType <rdl:LineTag>
+}}}
  * The result of the mapping is a Template Instance
  * *object* is the ClassRole because it points to the class the template is "on".
  * *identifier* is a PropertyRole because a property from the DataObject is mapped to it.
