@@ -34,11 +34,10 @@
 || Issue 39 || AdapterService: URI for getting Scope Configuration || Jim || 8 ||
 || Issue 41 || MappingEditor: BLL and DAL need to call !GetScopeConfiguration|| Pavan || 4 ||
 || Issue 42 || Namespacing || Rob || 2 ||
-|| -- || Combobox to select Project / Link Combobox to PM || Pavan || 6 ||
-|| -- || Combobox to select Application / Link Combobox to PM || Pavan || 6 ||
-|| -- || Each web service call from ME will need to use PM values || Koos || 8 ||
-|| -- || In MappingEditor class roles are not identified if more that one level of superclassing is used || Gert || ?? ||
-|| -- || In MappingEditor non-class roles should be editable depending on value(literal/reference)/range. || Gert || ?? ||
+|| Issue 50 || Combobox to select Project / Link Combobox to PM || Pavan || 6 ||
+|| Issue 51 || Each web service call from ME will need to use PM values || Koos || 8 ||
+|| Issue 52 || In MappingEditor class roles are not identified if more that one level of superclassing is used || Pavan || ?? ||
+|| Issue 53 || In MappingEditor non-class roles should be editable depending on value(literal/reference)/range. || Pavan || ?? ||
 
 
 ==Task Board==
