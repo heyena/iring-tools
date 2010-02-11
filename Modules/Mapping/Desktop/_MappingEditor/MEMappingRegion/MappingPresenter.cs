@@ -169,9 +169,11 @@ namespace org.iringtools.modules.memappingregion
       {
         ClassMap classMap = (ClassMap)selectedNode.Tag;
 
-        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Class Name", classMap.name);
+        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Graph Name", classMap.name);
         model.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("Class Id", classMap.classId);
+        //keyValuePair = new KeyValuePair<string, string>("Class Id", classMap.classId);
+        //model.DetailProperties.Add(keyValuePair);
+        keyValuePair = new KeyValuePair<string, string>("Class Name", selectedNode.ClassMap.name);
         model.DetailProperties.Add(keyValuePair);
         keyValuePair = new KeyValuePair<string, string>("Identifier", classMap.identifier);
         model.DetailProperties.Add(keyValuePair);
@@ -196,7 +198,9 @@ namespace org.iringtools.modules.memappingregion
         TemplateMap templateMap = (TemplateMap)selectedNode.Tag;
         KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Template Name", templateMap.name);
         model.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("Template Id", templateMap.templateId);
+        //keyValuePair = new KeyValuePair<string, string>("Template Id", templateMap.templateId);
+        //model.DetailProperties.Add(keyValuePair);
+        keyValuePair = new KeyValuePair<string, string>("Class Name", selectedNode.ClassMap.name);
         model.DetailProperties.Add(keyValuePair);
         keyValuePair = new KeyValuePair<string, string>("Class Role", templateMap.classRole);
         model.DetailProperties.Add(keyValuePair);
@@ -208,7 +212,9 @@ namespace org.iringtools.modules.memappingregion
         RoleMap roleMap = (RoleMap)selectedNode.Tag;
         KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Role Name", roleMap.name);
         model.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("Role Id", roleMap.roleId);
+        //keyValuePair = new KeyValuePair<string, string>("Role Id", roleMap.roleId);
+        //model.DetailProperties.Add(keyValuePair);
+        keyValuePair = new KeyValuePair<string, string>("Class Name", selectedNode.ClassMap.name);
         model.DetailProperties.Add(keyValuePair);
         keyValuePair = new KeyValuePair<string, string>("Property Name", roleMap.propertyName);
         model.DetailProperties.Add(keyValuePair);
