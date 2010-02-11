@@ -719,12 +719,20 @@ namespace QMXFGenerator
             if (type != null && type.ToString() != String.Empty)
             {
               var query = from @class in _classes
-                          where Convert.ToString(@class[(int)ClassColumns.Label]) == type.ToString()
+                          where Convert.ToString(@class[(int)ClassColumns.Label]).Trim() == type.ToString().Trim()
                           select @class;
 
               if (query.FirstOrDefault() != null)
               {
-                roleQualification.range = query.FirstOrDefault()[(int)ClassColumns.ID].ToString().Trim();
+                object classId = query.FirstOrDefault()[(int)ClassColumns.ID];
+                if (classId != null)
+                {
+                  roleQualification.range = classId.ToString().Trim();
+                } 
+                else 
+                {
+                  Utility.WriteString("\n " + type.ToString() + " Does not have an id in Class List While Processing Role Qualification", "error.log", true);
+                }
               }
               else
               {
