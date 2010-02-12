@@ -330,8 +330,6 @@ namespace org.iringtools.modules.search.searchregion
             try
             {
                 CompletedEventArgs args = (CompletedEventArgs)e;
-
-                CompletedEventArgs args = (CompletedEventArgs)e;
                 if (args.CheckForType(CompletedEventType.GetClassLabel))
                 { }
                 else
