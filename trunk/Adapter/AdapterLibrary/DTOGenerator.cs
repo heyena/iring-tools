@@ -228,11 +228,11 @@ namespace org.iringtools.adapter
               {
                 if (mappingProperty.isPropertyKey)
                 {
-                  _dtoModelWriter.WriteLine("{0} = ({1})dataObject.Id;", mappingProperty.propertyPath, mappingProperty.mappingDataType);
+                  _dtoModelWriter.WriteLine("{0} = Convert.To{1}(dataObject.Id);", mappingProperty.propertyPath, mappingProperty.mappingDataType);
                 }
                 else
                 {
-                  _dtoModelWriter.WriteLine("{0} = ({1})dataObject.{2};", mappingProperty.propertyPath, mappingProperty.mappingDataType, mappingProperty.propertyName);
+                  _dtoModelWriter.WriteLine("{0} = Convert.To{1}(dataObject.{2});", mappingProperty.propertyPath, mappingProperty.mappingDataType, mappingProperty.propertyName);
                 }
               }
             }
@@ -328,7 +328,7 @@ namespace org.iringtools.adapter
             {
               if (mappingProperty.isPropertyKey)
               {
-                _dtoModelWriter.WriteLine("(({0})_dataObject).Id = ({1})this.Identifier;", qualifiedDataObjectName, mappingProperty.dataType);
+                _dtoModelWriter.WriteLine("(({0})_dataObject).Id = Convert.To{1}(this.Identifier);", qualifiedDataObjectName, mappingProperty.dataType);
               }
             }
 
@@ -339,7 +339,7 @@ namespace org.iringtools.adapter
             {
               if (!mappingProperty.isPropertyKey && !String.IsNullOrEmpty(mappingProperty.propertyName))
               {
-                _dtoModelWriter.WriteLine("(({0})_dataObject).{1} = ({2})this.{3};",
+                _dtoModelWriter.WriteLine("(({0})_dataObject).{1} = Convert.To{2}(this.{3});",
                   qualifiedDataObjectName, mappingProperty.propertyName, mappingProperty.dataType, mappingProperty.propertyPath);
               }
             }
