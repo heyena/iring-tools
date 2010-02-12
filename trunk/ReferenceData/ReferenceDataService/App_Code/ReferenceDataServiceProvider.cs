@@ -153,10 +153,10 @@ namespace org.ids_adi.iring.referenceData
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-                    SortedList<string, Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
 
 
-                    foreach (Dictionary<string, string> result in results.Values)
+                    foreach (Dictionary<string, string> result in results)
                     {
                         Entity resultEntity = new Entity
                         {
@@ -220,8 +220,8 @@ namespace org.ids_adi.iring.referenceData
                             SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
 
-                            SortedList<string, Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
-                            foreach (Dictionary<string, string> result in results.Values)
+                            List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                            foreach (Dictionary<string, string> result in results)
                             {
                                 Entity resultEntity = new Entity
                                 {
@@ -291,9 +291,9 @@ namespace org.ids_adi.iring.referenceData
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-                    SortedList<string, Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
 
-                    foreach (Dictionary<string, string> result in results.Values)
+                    foreach (Dictionary<string, string> result in results)
                     {
                         if (result.ContainsKey("label"))
                         {
@@ -333,11 +333,9 @@ namespace org.ids_adi.iring.referenceData
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
+                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
 
-                    SortedList<string, Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
-
-
-                    foreach (Dictionary<string, string> result in results.Values)
+                    foreach (Dictionary<string, string> result in results)
                     {
 
                         Classification classification = new Classification();
@@ -356,7 +354,8 @@ namespace org.ids_adi.iring.referenceData
                             label = GetLabel(uri);
 
                         classification.label = label;
-                        classifications.Add(classification);
+                        Utility.SearchAndInsert(classifications, classification, Classification.sortAscending());
+                        //classifications.Add(classification);
                     }
 
                 }
@@ -388,9 +387,9 @@ namespace org.ids_adi.iring.referenceData
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-                    SortedList<string, Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
 
-                    foreach (Dictionary<string, string> result in results.Values)
+                    foreach (Dictionary<string, string> result in results)
                     {
                         Specialization specialization = new Specialization();
 
@@ -411,7 +410,8 @@ namespace org.ids_adi.iring.referenceData
                         }
 
                         specialization.label = label;
-                        specializations.Add(specialization);
+                        Utility.SearchAndInsert(specializations, specialization, Specialization.sortAscending());
+                        //specializations.Add(specialization);
                     }
                 }
 
@@ -457,11 +457,11 @@ namespace org.ids_adi.iring.referenceData
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-                    SortedList<string, Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
                     classifications = new List<Classification>();
                     specializations = new List<Specialization>();
 
-                    foreach (Dictionary<string, string> result in results.Values)
+                    foreach (Dictionary<string, string> result in results)
                     {
                         classDefinition = new ClassDefinition();
 
@@ -547,8 +547,8 @@ namespace org.ids_adi.iring.referenceData
                         uri = uri,
                         label = label
                     };
-
-                    queryResult.Add(resultEntity);
+                    Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
+                    //queryResult.Add(resultEntity);
                 }
             }
             catch (Exception e)
@@ -605,12 +605,13 @@ namespace org.ids_adi.iring.referenceData
                     if (!found)
                     {
                         trimmedUri = uri.Remove(0, uri.LastIndexOf('#') + 1);
-                        list.Add(resultEntity);
+                        Utility.SearchAndInsert(list, resultEntity, Entity.sortAscending());
+                        //list.Add(resultEntity);
                         GetAllSuperClasses(trimmedUri, list);
                     }
                 }
 
-                list.Sort(Entity.sortAscending());
+                //list.Sort(Entity.sortAscending());
             }
             catch (Exception e)
             {
@@ -640,17 +641,17 @@ namespace org.ids_adi.iring.referenceData
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-                    SortedList<string, Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
 
-                    foreach (Dictionary<string, string> result in results.Values)
+                    foreach (Dictionary<string, string> result in results)
                     {
                         Entity resultEntity = new Entity
                         {
                             uri = result["uri"],
                             label = result["label"],
                         };
-
-                        queryResult.Add(resultEntity);
+                        Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
+                        //queryResult.Add(resultEntity);
                     }
                 }
             }
@@ -680,9 +681,9 @@ namespace org.ids_adi.iring.referenceData
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-                    SortedList<string, Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
 
-                    foreach (Dictionary<string, string> result in results.Values)
+                    foreach (Dictionary<string, string> result in results)
                     {
                         Entity resultEntity = new Entity
                         {
@@ -690,8 +691,8 @@ namespace org.ids_adi.iring.referenceData
                             label = result["label"],
                             repository = repository.name,
                         };
-
-                        queryResult.Add(resultEntity);
+                        Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
+                        //queryResult.Add(resultEntity);
                     }
                 }
             }
@@ -727,9 +728,9 @@ namespace org.ids_adi.iring.referenceData
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-                    SortedList<string, Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
 
-                    foreach (Dictionary<string, string> result in results.Values)
+                    foreach (Dictionary<string, string> result in results)
                     {
 
                         RoleDefinition roleDefinition = new RoleDefinition();
@@ -756,11 +757,11 @@ namespace org.ids_adi.iring.referenceData
                             roleDefinition.range = result["type"];
                         }
                         roleDefinition.name.Add(name);
-                        roleDefinitions.Add(roleDefinition);
+                        Utility.SearchAndInsert(roleDefinitions, roleDefinition, RoleDefinition.sortAscending());
+                        //roleDefinitions.Add(roleDefinition);
                     }
-
                 }
-
+                
                 return roleDefinitions;
             }
             catch (Exception e)
@@ -816,13 +817,13 @@ namespace org.ids_adi.iring.referenceData
                     SPARQLResults sparqlResults1 = QueryFromRepository(repository, sparql1);
                     SPARQLResults sparqlResults2 = QueryFromRepository(repository, sparql2);
 
-                    SortedList<string, Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
-                    SortedList<string, Dictionary<string, string>> results1 = BindQueryResults(queryBindings1, sparqlResults1);
-                    SortedList<string, Dictionary<string, string>> results2 = BindQueryResults(queryBindings2, sparqlResults2);
+                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    List<Dictionary<string, string>> results1 = BindQueryResults(queryBindings1, sparqlResults1);
+                    List<Dictionary<string, string>> results2 = BindQueryResults(queryBindings2, sparqlResults2);
 
-                    SortedList<string, Dictionary<string, string>> combinedResults = MergeLists(MergeLists(results, results1), results2);
+                    List<Dictionary<string, string>> combinedResults = MergeLists(MergeLists(results, results1), results2);
 
-                    foreach (Dictionary<string, string> result in combinedResults.Values)
+                    foreach (Dictionary<string, string> result in combinedResults)
                     {
 
                         RoleQualification roleQualification = new RoleQualification();
@@ -883,7 +884,8 @@ namespace org.ids_adi.iring.referenceData
 
                             roleQualification.value = value;
                         }
-                        roleQualifications.Add(roleQualification);
+                        Utility.SearchAndInsert(roleQualifications, roleQualification, RoleQualification.sortAscending());
+                        //roleQualifications.Add(roleQualification);
                     }
 
                 }
@@ -921,9 +923,9 @@ namespace org.ids_adi.iring.referenceData
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-                    SortedList<string, Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
 
-                    foreach (Dictionary<string, string> result in results.Values)
+                    foreach (Dictionary<string, string> result in results)
                     {
                         templateDefinition = new TemplateDefinition();
                         QMXFName name = new QMXFName();
@@ -949,7 +951,6 @@ namespace org.ids_adi.iring.referenceData
 
                         templateDefinition.roleDefinition = GetRoleDefintion(id);
                     }
-
                 }
 
                 return templateDefinition;
@@ -1001,9 +1002,9 @@ namespace org.ids_adi.iring.referenceData
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-                    SortedList<string, Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
 
-                    foreach (Dictionary<string, string> result in results.Values)
+                    foreach (Dictionary<string, string> result in results)
                     {
                         templateQualification = new TemplateQualification();
                         Description description = new Description();
@@ -1037,7 +1038,6 @@ namespace org.ids_adi.iring.referenceData
 
                         templateQualification.roleQualification = GetRoleQualification(id);
                     }
-
                 }
 
                 return templateQualification;
@@ -1885,11 +1885,11 @@ namespace org.ids_adi.iring.referenceData
             return idsAdiId;
         }
 
-        private SortedList<string, Dictionary<string, string>> MergeLists(SortedList<string, Dictionary<string, string>> a, SortedList<string, Dictionary<string, string>> b)
+        private List<Dictionary<string, string>> MergeLists(List<Dictionary<string, string>> a, List<Dictionary<string, string>> b)
         {
-            foreach (Dictionary<string, string> dictionary in b.Values)
+            foreach (Dictionary<string, string> dictionary in b)
             {
-                a.Add(dictionary["label"], dictionary);
+                a.Add(dictionary);
             }
             return a;
         }
@@ -1944,10 +1944,9 @@ namespace org.ids_adi.iring.referenceData
             return response;
         }
 
-        private SortedList<string, Dictionary<string, string>> BindQueryResults(QueryBindings queryBindings, SPARQLResults sparqlResults)
+        private List<Dictionary<string, string>> BindQueryResults(QueryBindings queryBindings, SPARQLResults sparqlResults)
         {
-            SortedList<string, Dictionary<string, string>> results = new SortedList<string, Dictionary<string, string>>();
-            int i = 0;
+            List<Dictionary<string, string>> results = new List<Dictionary<string, string>>();
 
             foreach (SPARQLResult sparqlResult in sparqlResults.resultsElement.results)
             {
@@ -1970,7 +1969,7 @@ namespace org.ids_adi.iring.referenceData
                                 value = sparqlBinding.uri;
                             }
                             else if (queryBinding.type == SPARQLBindingType.Literal)
-                            {
+                            {     
                                 value = sparqlBinding.literal.value;
                                 dataType = sparqlBinding.literal.dataType;
                                 sortKey = value;
@@ -1990,9 +1989,7 @@ namespace org.ids_adi.iring.referenceData
                         }
                     }
                 }
-                if (results.ContainsKey(sortKey))
-                    sortKey = sortKey + ++i; //item can exist multiple times depending in how many repositories it exists
-                results.Add(sortKey, result);
+                results.Add(result);
             }
 
             return results;

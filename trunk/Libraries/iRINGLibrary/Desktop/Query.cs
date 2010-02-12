@@ -52,7 +52,7 @@ namespace org.iringtools.library
   }
 
   [DataContract]
-  public class Entity : IComparable
+  public class Entity
   {
     [DataMember]
     public string uri { get; set; }
@@ -62,12 +62,6 @@ namespace org.iringtools.library
 
     [DataMember]
     public string repository { get; set; }
-
-    int IComparable.CompareTo(object obj)
-    {
-        Entity e = (Entity)obj;
-        return string.Compare(this.label, e.label);
-    }
 
     public static IComparer<Entity> sortAscending()
     {
@@ -81,7 +75,6 @@ namespace org.iringtools.library
             return string.Compare(e1.label, e2.label);
         }
     }
-
   }
 
 }

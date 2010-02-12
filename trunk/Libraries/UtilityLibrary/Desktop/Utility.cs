@@ -829,5 +829,17 @@ namespace org.iringtools.utility
         default: return xsdType;
       }
     }
+
+    public static void SearchAndInsert<O, T>(List<O> list, O element, T Comparer)
+    {
+        IComparer<O> Comp = (IComparer<O>)Comparer;
+        int index = list.BinarySearch(element, Comp);
+
+        if (index < 0)
+        {
+            list.Insert(~index, element);
+        }
+
+    }
   }
 }

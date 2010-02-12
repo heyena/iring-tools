@@ -76,7 +76,7 @@ namespace org.ids_adi.qmxf
     {
         public TemplateDefinition()
         {
-          this.name = new List<QMXFName>();
+            this.name = new List<QMXFName>();
             this.description = new List<Description>();
             this.suggestedDesignation = new List<SuggestedDesignation>();
             this.status = new List<Status>();
@@ -305,6 +305,19 @@ namespace org.ids_adi.qmxf
         [DataMember]
         [XmlAttribute]
         public string label { get; set; }
+
+        public static IComparer<Classification> sortAscending()
+        {
+            return (IComparer<Classification>)new sortAscendingHelper();
+        }
+
+        private class sortAscendingHelper : IComparer<Classification>
+        {
+            int IComparer<Classification>.Compare(Classification cd1, Classification cd2)
+            {
+                return string.Compare(cd1.label, cd2.label);
+            }
+        }
     }
 
     [DataContract]
@@ -317,6 +330,19 @@ namespace org.ids_adi.qmxf
         [DataMember]
         [XmlAttribute]
         public string label { get; set; }
+
+        public static IComparer<Specialization> sortAscending()
+        {
+            return (IComparer<Specialization>)new sortAscendingHelper();
+        }
+
+        private class sortAscendingHelper : IComparer<Specialization>
+        {
+            int IComparer<Specialization>.Compare(Specialization s1, Specialization s2)
+            {
+                return string.Compare(s1.label, s2.label);
+            }
+        }
     }
 
     [DataContract]
@@ -463,6 +489,19 @@ namespace org.ids_adi.qmxf
         [DataMember]
         [XmlAttribute(AttributeName = "inverse-maximum")]
         public string inverseMaximum { get; set; }
+
+        public static IComparer<RoleDefinition> sortAscending()
+        {
+            return (IComparer<RoleDefinition>)new sortAscendingHelper();
+        }
+
+        private class sortAscendingHelper : IComparer<RoleDefinition>
+        {
+            int IComparer<RoleDefinition>.Compare(RoleDefinition rd1, RoleDefinition rd2)
+            {
+                return string.Compare(rd1.name[0].value, rd2.name[0].value);
+            }
+        }
     }
 
     [DataContract]
@@ -534,6 +573,19 @@ namespace org.ids_adi.qmxf
         [DataMember]
         [XmlAttribute(AttributeName = "inverse-maximum")]
         public string inverseMaximum { get; set; }
+
+        public static IComparer<RoleQualification> sortAscending()
+        {
+            return (IComparer<RoleQualification>)new sortAscendingHelper();
+        }
+
+        private class sortAscendingHelper : IComparer<RoleQualification>
+        {
+            int IComparer<RoleQualification>.Compare(RoleQualification rq1, RoleQualification rq2)
+            {
+                return string.Compare(rq1.name[0].value, rq2.name[0].value);
+            }
+        }
     }
 
     [DataContract]
@@ -561,4 +613,5 @@ namespace org.ids_adi.qmxf
         [XmlAttribute(AttributeName = "to")]
         public string to { get; set; }
     }
+
 }
