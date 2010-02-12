@@ -78,7 +78,7 @@ namespace org.iringtools.informationmodel.usercontrols
       if (!_hasExecuted && RoleQualification != null)
       {
         if (RoleQualification.range != null &&
-            RoleQualification.range != String.Empty && 
+            RoleQualification.range != String.Empty &&
             !RoleQualification.range.IsMappable())
         {
           ReferenceDataService.GetClass(RoleQualification.range.GetIdFromUri(), this);
@@ -86,6 +86,22 @@ namespace org.iringtools.informationmodel.usercontrols
       }
 
       FillRoleDetailView();
+    }
+
+    public override void nodeMouseLeftButtonUpHandler(object sender, MouseButtonEventArgs e)
+    {
+      if (!_hasExecuted && RoleQualification != null)
+      {
+        if (RoleQualification.range != null &&
+            RoleQualification.range != String.Empty &&
+            !RoleQualification.range.IsMappable())
+        {
+          ReferenceDataService.GetClass(RoleQualification.range.GetIdFromUri(), this);
+        }
+
+        FillRoleDetailView();
+        e.Handled = true;
+      }
     }
 
     private void FillRoleDetailView()

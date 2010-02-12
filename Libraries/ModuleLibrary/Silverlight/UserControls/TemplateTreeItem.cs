@@ -79,16 +79,11 @@ namespace org.iringtools.informationmodel.usercontrols
       }
     }
 
-    /// <summary>
-    /// Handles the Selected event of the node control.
-    /// </summary>
-    /// <param name="sender">The source of the event.</param>
-    /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
-    public override void nodeSelectedHandler(object sender, RoutedEventArgs e)
+    public override void nodeMouseLeftButtonUpHandler(object sender, MouseButtonEventArgs e)
     {
       if (!isProcessed)
       {
-        id = Entity.uri.GetIdFromUri();        
+        id = Entity.uri.GetIdFromUri();
 
         ReferenceDataService.GetTemplate(id, this);
 
@@ -97,8 +92,8 @@ namespace org.iringtools.informationmodel.usercontrols
       }
 
       UpdateModel();
-
       FillTemplateDetailView();
+      e.Handled = true;
     }
 
     private void FillTemplateDetailView()
