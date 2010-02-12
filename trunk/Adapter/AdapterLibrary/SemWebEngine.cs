@@ -507,7 +507,7 @@ namespace org.iringtools.adapter.projection
                     }
                     else
                     {
-                      propertyValue = roleMap.reference;
+                      propertyValue = roleMap.reference.Replace("rdl:", rdlPrefix);
                     }
                   }
                   else if (roleMap.value != null && roleMap.value != String.Empty)
@@ -600,7 +600,7 @@ namespace org.iringtools.adapter.projection
                       }
                       else
                       {
-                        propertyValue = roleMap.reference;                        
+                        propertyValue = roleMap.reference.Replace("rdl:", rdlPrefix);                        
                       }
                     }
                     else if (roleMap.value != null && roleMap.value != String.Empty)
@@ -723,7 +723,7 @@ namespace org.iringtools.adapter.projection
                 }
                 else
                 {
-                  propertyValue = roleMap.reference;
+                  propertyValue = roleMap.reference.Replace("rdl:", rdlPrefix);
                   propertyType = "uri";
                 }
               }
@@ -929,10 +929,27 @@ namespace org.iringtools.adapter.projection
 
         foreach (RoleMap roleMap in templateMap.roleMaps)
         {
-          SemWeb.Variable propertyTemplate = new SemWeb.Variable(roleMap.propertyName);
-          string roleMapRoleId = roleMap.roleId.Replace("tpl:", tplPrefix);
-          Statement statementC = new Statement(templateVariable, roleMapRoleId, propertyTemplate);
-          query.AddGraphStatement(statementC);
+          if (roleMap.reference != null && roleMap.reference != String.Empty)
+          {
+            SemWeb.Entity roleMapReference = roleMap.reference.Replace("rdl:", rdlPrefix);
+            string roleMapRoleId = roleMap.roleId.Replace("tpl:", tplPrefix);
+            Statement statementC = new Statement(templateVariable, roleMapRoleId, roleMapReference);
+            query.AddGraphStatement(statementC);
+          }
+          else if (roleMap.value != null && roleMap.value != String.Empty)
+          {
+            Literal propertyValue = GetPropertyValueType(roleMap.value, roleMap.dataType);
+            string roleMapRoleId = roleMap.roleId.Replace("tpl:", tplPrefix);
+            Statement statementC = new Statement(templateVariable, roleMapRoleId, propertyValue);
+            query.AddGraphStatement(statementC);
+          }
+          else
+          {
+            SemWeb.Variable propertyTemplate = new SemWeb.Variable(roleMap.propertyName);
+            string roleMapRoleId = roleMap.roleId.Replace("tpl:", tplPrefix);
+            Statement statementC = new Statement(templateVariable, roleMapRoleId, propertyTemplate);
+            query.AddGraphStatement(statementC);
+          }
         }
 
         QueryResultBuffer resultBuffer = GetUnterminatedTemplates(query, templateVariable);

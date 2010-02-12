@@ -306,7 +306,19 @@ namespace org.iringtools.adapter.projection
                     foreach (RoleMap roleMap in templateMap.roleMaps)
                     {
                         query.addVariable("?" + roleMap.propertyName);
-                        query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, "?" + roleMap.propertyName);
+                        if (roleMap.reference != null)
+                        {
+                          query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, roleMap.reference);
+                        }
+                        else if (roleMap.value != null)
+                        {
+                          string value = query.getLITERAL_SPARQL(roleMap.value, roleMap.dataType);
+                          query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId,  value);
+                        }
+                        else
+                        {
+                          query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, "?" + roleMap.propertyName);
+                        }
                     }
                     query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, "tpl:endDateTime", "?endDateTime");
                     SPARQLResults sparqlResults = SPARQLClient.PostQuery(_targetUri, query.getSPARQL(), _targetCredentials, _proxyCredentials);
@@ -351,7 +363,19 @@ namespace org.iringtools.adapter.projection
 
                     string instanceVariable = "?i" + _instanceCounter.ToString();
 
-                    query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, instanceVariable);
+                    if (roleMap.reference != null)
+                    {
+                      query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, roleMap.reference);
+                    }
+                    else if (roleMap.value != null)
+                    {
+                      string value = query.getLITERAL_SPARQL(roleMap.value, roleMap.dataType);
+                      query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, value);
+                    }
+                    else
+                    {
+                      query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, instanceVariable);
+                    }
 
                     QueryClassMap(roleMap.classMap, roleMap, query, instanceVariable);
 
