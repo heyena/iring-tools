@@ -19,13 +19,11 @@ namespace org.iringtools.adapter
     [OperationContract]
     [ServiceKnownType(typeof(org.iringtools.adapter.proj_12345_000.ABC.Valves))]
     [ServiceKnownType(typeof(org.iringtools.adapter.proj_12345_000.ABC.Lines))]
-    [ServiceKnownType(typeof(org.iringtools.adapter.proj_12345_000.DEF.Lines))]
     DTOListResponse GetDataList(DTORequest request);
     
     [OperationContract]
     [ServiceKnownType(typeof(org.iringtools.adapter.proj_12345_000.ABC.Valves))]
     [ServiceKnownType(typeof(org.iringtools.adapter.proj_12345_000.ABC.Lines))]
-    [ServiceKnownType(typeof(org.iringtools.adapter.proj_12345_000.DEF.Lines))]
     DTOResponse GetData(DTORequest request);
   }
 }

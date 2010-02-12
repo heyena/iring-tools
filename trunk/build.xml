@@ -44,6 +44,9 @@
       Include="$(AdapterServiceDir)\**"
       Exclude="$(AdapterServiceDir).Tests\**;
                $(AdapterServiceDir)\bin\*.pdb;
+               $(AdapterServiceDir)\Logs\**;
+               $(AdapterServiceDir)\Templates\**;
+               $(AdapterServiceDir)\Transforms\**;
                $(AdapterServiceDir)\obj\**;
                $(AdapterServiceDir)\Properties\**;
                $(AdapterServiceDir)\*.csproj;
@@ -124,6 +127,7 @@
       Include="$(RefDataServiceDir)\**"
       Exclude="$(RefDataServiceDir).Tests\**;               
                $(RefDataServiceDir)\bin\*.pdb;
+               $(RefDataServiceDir)\Logs\**;
                $(RefDataServiceDir)\obj\**;
                $(RefDataServiceDir)\Properties\**;
                $(RefDataServiceDir)\XML\Repositories.xml;
@@ -161,9 +165,14 @@
                Utilities\EncryptCredentials\bin\Debug\EncryptCredentials.exe;
                Utilities\QMXFGenerator\QMXFGenerator\bin\Debug\QMXFGenerator.exe;
                Utilities\QMXFGenerator\QMXFGenerator\App_Default.config;
+               Utilities\QMXFGenerator\QMXFGenerator\InformationModel.xls;
+               Utilities\QMXFGenerator\QMXFGenerator\QMXF.xml;
                Utilities\QMXFGenerator\QMXFGenerator\bin\Debug\Microsoft.Office.Interop.Excel.dll;
                Utilities\QMXFGenerator\QMXFGenerator\bin\Debug\Microsoft.Vbe.Interop.dll;
-               Utilities\QMXFGenerator\QMXFGenerator\bin\Debug\office.dll;">
+               Utilities\QMXFGenerator\QMXFGenerator\bin\Debug\office.dll;
+               Utilities\QMXFTransforms\*.dtd;
+               Utilities\QMXFTransforms\*.xsd;
+               Utilities\QMXFTransforms\*.xsl;"
     </SandboxToolsDeployment>    
   </ItemGroup>
 
