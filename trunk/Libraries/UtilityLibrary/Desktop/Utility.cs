@@ -324,8 +324,6 @@ namespace org.iringtools.utility
         stylesheet.Close();
         reader.Close();
         writer.Close();
-        
-   
       }
     }
 
@@ -454,8 +452,8 @@ namespace org.iringtools.utility
       }
       finally
       {
-        //reader.Close();
-        //stream.Close();
+        if (reader != null) reader.Close();
+        if (stream != null) stream.Close();
       }
     }
 
@@ -475,7 +473,7 @@ namespace org.iringtools.utility
       }
       finally
       {
-        streamReader.Close();
+        if (streamReader != null) streamReader.Close();
       }
     }
 
@@ -643,7 +641,7 @@ namespace org.iringtools.utility
       }
       finally
       {
-        reader.Close();
+        if (reader != null) reader.Close();
       }
     }
 
