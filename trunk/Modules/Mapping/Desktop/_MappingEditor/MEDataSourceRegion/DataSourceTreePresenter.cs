@@ -23,8 +23,8 @@ using org.iringtools.library;
 #if SILVERLIGHT
 using org.iringtools.modulelibrary.behaviors;
 using System.Windows.Interactivity;
-using System.Windows.Threading;
 using System;
+using System.Windows.Input;
 #else
 #endif
 
@@ -35,7 +35,6 @@ namespace org.iringtools.modules.medatasourceregion
   {
     private IEventAggregator aggregator = null;
     private IIMPresentationModel model = null;
-    private DispatcherTimer _mouseLeftButtonUpTimer = null;
 
     //private ItemsControl itcSpinner { get { return GetControl<ItemsControl>("itcSpinner"); } }
 
@@ -67,10 +66,6 @@ namespace org.iringtools.modules.medatasourceregion
       MouseScrollBehavior mouseScrollBehavior = new MouseScrollBehavior();
       Interaction.GetBehaviors(tvwDataDictionary).Add(mouseScrollBehavior);
 #endif
-
-      _mouseLeftButtonUpTimer = new DispatcherTimer();
-      _mouseLeftButtonUpTimer.Interval = new TimeSpan(0, 0, 0, 0, 300);
-      _mouseLeftButtonUpTimer.Tick += new EventHandler(delegate(object o, EventArgs e) { _mouseLeftButtonUpTimer.Stop(); });
     }
 
     public void SpinnerEventHandler(SpinnerEventArgs e)
@@ -92,7 +87,7 @@ namespace org.iringtools.modules.medatasourceregion
         }
       }
     }
-    
+
     /// <summary>
     /// Called when [data arrived handler].
     /// </summary>
@@ -172,7 +167,7 @@ namespace org.iringtools.modules.medatasourceregion
       // Now populate it as applicable
       if (tag is org.iringtools.library.DataObject)
         isProcessed = PopulateDataObjectNode(node, (org.iringtools.library.DataObject)tag);
-      
+
       return node;
     }
 
@@ -249,54 +244,49 @@ namespace org.iringtools.modules.medatasourceregion
       return true;
     }
 
-    void nodeMouseLeftButtonUpHandler(object sender, RoutedEventArgs e)
+    void nodeMouseLeftButtonUpHandler(object sender, MouseButtonEventArgs e)
     {
       DataObjectItem selectedNode = sender as DataObjectItem;
 
       if (selectedNode == null)
         return;
 
-      // Using timer to control event from bubbling up to parent node, 
-      // which overwrites detail information intented to display in detail pane.
-      if (!_mouseLeftButtonUpTimer.IsEnabled)
+      model.DetailProperties.Clear();
+      model.SelectedDataSourcePropertyName = selectedNode.Header.ToString();
+      model.SelectedDataObject = selectedNode;
+
+      if (selectedNode.Tag is org.iringtools.library.DataObject)
       {
-        model.DetailProperties.Clear();
-        model.SelectedDataSourcePropertyName = selectedNode.Header.ToString();
-        model.SelectedDataObject = selectedNode;
-
-        if (selectedNode.Tag is org.iringtools.library.DataObject)
-        {
-          org.iringtools.library.DataObject dataObject = (org.iringtools.library.DataObject)selectedNode.Tag;
-          KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("DataObject Name", dataObject.objectName);
-          model.DetailProperties.Add(keyValuePair);
-        }
-
-        if (selectedNode.Tag is DataProperty)
-        {
-          DataProperty dataProperty = (DataProperty)selectedNode.Tag;
-          KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Property Name", dataProperty.propertyName);
-          model.DetailProperties.Add(keyValuePair);
-          keyValuePair = new KeyValuePair<string, string>("Datatype", dataProperty.dataType);
-          model.DetailProperties.Add(keyValuePair);
-          keyValuePair = new KeyValuePair<string, string>("Is Required", dataProperty.isRequired.ToString());
-          model.DetailProperties.Add(keyValuePair);
-          keyValuePair = new KeyValuePair<string, string>("Is Key", dataProperty.isPropertyKey.ToString());
-          model.DetailProperties.Add(keyValuePair);
-        }
-
-        if (selectedNode.Tag is DataRelationship)
-        {
-          DataRelationship dataRelationship = (DataRelationship)selectedNode.Tag;
-          KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Related Graph", dataRelationship.relatedObject);
-          model.DetailProperties.Add(keyValuePair);
-          keyValuePair = new KeyValuePair<string, string>("Graph Property", dataRelationship.graphProperty);
-          model.DetailProperties.Add(keyValuePair);
-          keyValuePair = new KeyValuePair<string, string>("Cardinality", dataRelationship.cardinality.ToString());
-          model.DetailProperties.Add(keyValuePair);
-        }
-
-        _mouseLeftButtonUpTimer.Start();
+        org.iringtools.library.DataObject dataObject = (org.iringtools.library.DataObject)selectedNode.Tag;
+        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("DataObject Name", dataObject.objectName);
+        model.DetailProperties.Add(keyValuePair);
       }
+
+      if (selectedNode.Tag is DataProperty)
+      {
+        DataProperty dataProperty = (DataProperty)selectedNode.Tag;
+        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Property Name", dataProperty.propertyName);
+        model.DetailProperties.Add(keyValuePair);
+        keyValuePair = new KeyValuePair<string, string>("Datatype", dataProperty.dataType);
+        model.DetailProperties.Add(keyValuePair);
+        keyValuePair = new KeyValuePair<string, string>("Is Required", dataProperty.isRequired.ToString());
+        model.DetailProperties.Add(keyValuePair);
+        keyValuePair = new KeyValuePair<string, string>("Is Key", dataProperty.isPropertyKey.ToString());
+        model.DetailProperties.Add(keyValuePair);
+      }
+
+      if (selectedNode.Tag is DataRelationship)
+      {
+        DataRelationship dataRelationship = (DataRelationship)selectedNode.Tag;
+        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Related Graph", dataRelationship.relatedObject);
+        model.DetailProperties.Add(keyValuePair);
+        keyValuePair = new KeyValuePair<string, string>("Graph Property", dataRelationship.graphProperty);
+        model.DetailProperties.Add(keyValuePair);
+        keyValuePair = new KeyValuePair<string, string>("Cardinality", dataRelationship.cardinality.ToString());
+        model.DetailProperties.Add(keyValuePair);
+      }
+
+      e.Handled = true;
     }
 
     /// <summary>
