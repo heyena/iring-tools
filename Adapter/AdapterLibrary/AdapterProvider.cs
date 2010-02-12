@@ -640,7 +640,7 @@ namespace org.iringtools.adapter
         {
           Name = "DTOService",
           Interface = "org.iringtools.adapter.IDTOService, AdapterLibrary",
-          Implementation = "org.iringtools.adapter.proj_" + projectName + "." + applicationName + ".DTOService, AdapterService"
+          Implementation = "org.iringtools.adapter.proj_" + projectName + "." + applicationName + ".DTOService, App_Code"
         };
         UpdateBindingConfiguration(projectName, applicationName, dtoServiceBinding);
 

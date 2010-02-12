@@ -160,14 +160,14 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
     {
       if (dataObject != null)
       {
-        tpl_ClassifiedIdentification_tpl_identifier = (String)dataObject.Id;
-        tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier = (String)dataObject.system;
-        tpl_ClientFunctionalUnitAssembly_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification_tpl_identifier = (String)dataObject.unit;
-        tpl_ClassifiedIdentification_tpl_identifier7 = (String)dataObject.componentType;
-        tpl_NominalDiameter_tpl_value = (Double)dataObject.diameter;
-        tpl_NominalDiameter_tpl_scale = (String)dataObject.uomDiameter;
-        tpl_PAndIDRepresentation_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification_tpl_identifier = (String)dataObject.pid;
-        tpl_ProjectAssembly_tpl_whole_rdl_PROJECT_tpl_ClassifiedIdentification_tpl_identifier = (String)dataObject.projectNumber;
+        tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.Id);
+        tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.system);
+        tpl_ClientFunctionalUnitAssembly_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.unit);
+        tpl_ClassifiedIdentification_tpl_identifier7 = Convert.ToString(dataObject.componentType);
+        tpl_NominalDiameter_tpl_value = Convert.ToDouble(dataObject.diameter);
+        tpl_NominalDiameter_tpl_scale = Convert.ToString(dataObject.uomDiameter);
+        tpl_PAndIDRepresentation_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.pid);
+        tpl_ProjectAssembly_tpl_whole_rdl_PROJECT_tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.projectNumber);
       }
       tpl_ClientSystemAssembly = new TemplateClientSystemAssembly();
       tpl_ClientSystemAssembly.tpl_whole_rdl_CLIENT_SYSTEM = new TemplateClientSystemAssembly.ClassCLIENT_SYSTEM();
@@ -401,15 +401,15 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
       if (_dataObject == null)
       {
         _dataObject = new org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent();
-        ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).Id = (String)this.Identifier;
+        ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).Id = Convert.ToString(this.Identifier);
       }
-      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).system = (String)this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier;
-      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).unit = (String)this.tpl_ClientFunctionalUnitAssembly_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification_tpl_identifier;
-      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).componentType = (String)this.tpl_ClassifiedIdentification_tpl_identifier7;
-      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).diameter = (Double)this.tpl_NominalDiameter_tpl_value;
-      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).uomDiameter = (String)this.tpl_NominalDiameter_tpl_scale;
-      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).pid = (String)this.tpl_PAndIDRepresentation_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification_tpl_identifier;
-      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).projectNumber = (String)this.tpl_ProjectAssembly_tpl_whole_rdl_PROJECT_tpl_ClassifiedIdentification_tpl_identifier;
+      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).system = Convert.ToString(this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier);
+      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).unit = Convert.ToString(this.tpl_ClientFunctionalUnitAssembly_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification_tpl_identifier);
+      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).componentType = Convert.ToString(this.tpl_ClassifiedIdentification_tpl_identifier7);
+      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).diameter = Convert.ToDouble(this.tpl_NominalDiameter_tpl_value);
+      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).uomDiameter = Convert.ToString(this.tpl_NominalDiameter_tpl_scale);
+      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).pid = Convert.ToString(this.tpl_PAndIDRepresentation_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification_tpl_identifier);
+      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).projectNumber = Convert.ToString(this.tpl_ProjectAssembly_tpl_whole_rdl_PROJECT_tpl_ClassifiedIdentification_tpl_identifier);
       return _dataObject;
     }
     
@@ -485,10 +485,10 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
     {
       if (dataObject != null)
       {
-        tpl_ClassifiedIdentification_tpl_identifier = (String)dataObject.Id;
-        tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier = (String)dataObject.system;
-        tpl_NominalDiameter_tpl_value = (Double)dataObject.diameter;
-        tpl_NominalDiameter_tpl_scale = (String)dataObject.uomDiameter;
+        tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.Id);
+        tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.system);
+        tpl_NominalDiameter_tpl_value = Convert.ToDouble(dataObject.diameter);
+        tpl_NominalDiameter_tpl_scale = Convert.ToString(dataObject.uomDiameter);
       }
       tpl_ClientSystemAssembly = new TemplateClientSystemAssembly();
       tpl_ClientSystemAssembly.tpl_whole_rdl_CLIENT_SYSTEM = new TemplateClientSystemAssembly.ClassCLIENT_SYSTEM();
@@ -587,11 +587,11 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
       if (_dataObject == null)
       {
         _dataObject = new org.iringtools.adapter.proj_12345_000.ABC.Line();
-        ((org.iringtools.adapter.proj_12345_000.ABC.Line)_dataObject).Id = (String)this.Identifier;
+        ((org.iringtools.adapter.proj_12345_000.ABC.Line)_dataObject).Id = Convert.ToString(this.Identifier);
       }
-      ((org.iringtools.adapter.proj_12345_000.ABC.Line)_dataObject).system = (String)this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier;
-      ((org.iringtools.adapter.proj_12345_000.ABC.Line)_dataObject).diameter = (Double)this.tpl_NominalDiameter_tpl_value;
-      ((org.iringtools.adapter.proj_12345_000.ABC.Line)_dataObject).uomDiameter = (String)this.tpl_NominalDiameter_tpl_scale;
+      ((org.iringtools.adapter.proj_12345_000.ABC.Line)_dataObject).system = Convert.ToString(this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier);
+      ((org.iringtools.adapter.proj_12345_000.ABC.Line)_dataObject).diameter = Convert.ToDouble(this.tpl_NominalDiameter_tpl_value);
+      ((org.iringtools.adapter.proj_12345_000.ABC.Line)_dataObject).uomDiameter = Convert.ToString(this.tpl_NominalDiameter_tpl_scale);
       return _dataObject;
     }
     
