@@ -331,16 +331,21 @@ namespace org.iringtools.modules.search.searchregion
             {
                 CompletedEventArgs args = (CompletedEventArgs)e;
 
-                ICommand command = args.GetUserState<ICommand>();
-                if (command.CanExecute(args))
-                {
-                    command.Execute(args);
-                }
+                CompletedEventArgs args = (CompletedEventArgs)e;
+                if (args.CheckForType(CompletedEventType.GetClassLabel))
+                { }
                 else
                 {
-                    Logger.Log("Could not execute concrete class for " + args.CompletedType.ToString(), Category.Warn, Priority.Medium);
+                    ICommand command = args.GetUserState<ICommand>();
+                    if (command.CanExecute(args))
+                    {
+                        command.Execute(args);
+                    }
+                    else
+                    {
+                        Logger.Log("Could not execute concrete class for " + args.CompletedType.ToString(), Category.Warn, Priority.Medium);
+                    }
                 }
-
                 /*
                 // :::::::::::::::::::::::::::::
                 // See code in Factories folder
