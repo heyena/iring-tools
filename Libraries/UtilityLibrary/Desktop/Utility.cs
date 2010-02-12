@@ -454,8 +454,8 @@ namespace org.iringtools.utility
       }
       finally
       {
-        reader.Close();
-        stream.Close();
+        //reader.Close();
+        //stream.Close();
       }
     }
 
