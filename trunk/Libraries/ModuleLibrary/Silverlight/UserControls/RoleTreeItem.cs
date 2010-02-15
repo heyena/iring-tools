@@ -180,10 +180,11 @@ namespace org.iringtools.informationmodel.usercontrols
           if (reference != null)
             value = roleQualification.value.reference;
         }
+        if(!string.IsNullOrEmpty(value)) //This is due to data error??
+          GetClassLabel("Value", value);
 
-        GetClassLabel("Value", value);
-
-        GetClassLabel("Range", roleQualification.range);
+        if (!string.IsNullOrEmpty(roleQualification.range))
+          GetClassLabel("Range", roleQualification.range);
 
         keyValuePair = new KeyValuePair<string, string>("Inverse Minimum", roleQualification.inverseMinimum);
         PresentationModel.DetailProperties.Add(keyValuePair);
@@ -195,7 +196,7 @@ namespace org.iringtools.informationmodel.usercontrols
         PresentationModel.DetailProperties.Add(keyValuePair);
 
         keyValuePair = new KeyValuePair<string, string>("Maximum", roleQualification.maximum);
-        PresentationModel.DetailProperties.Add(keyValuePair);        
+        PresentationModel.DetailProperties.Add(keyValuePair);
       }
     }
   }
