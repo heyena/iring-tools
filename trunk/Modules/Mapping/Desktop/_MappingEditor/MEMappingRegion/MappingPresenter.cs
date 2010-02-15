@@ -10,6 +10,7 @@ using org.iringtools.modulelibrary.entities;
 using org.iringtools.modulelibrary.events;
 using org.iringtools.modulelibrary.extensions;
 using org.iringtools.modulelibrary.types;
+using org.iringtools.modulelibrary.layerdal;
 
 using org.iringtools.ontologyservice.presentation.presentationmodels;
 using org.iringtools.informationmodel.events;
@@ -35,6 +36,7 @@ namespace org.iringtools.modules.memappingregion
   {
     private IEventAggregator aggregator = null;
     private IAdapter adapterProxy = null;
+    private IReferenceData referenceDataService = null;
     IIMPresentationModel model = null;
 
     private TreeView tvwMapping { get { return GetControl<TreeView>("tvwMapping"); } }
@@ -59,6 +61,7 @@ namespace org.iringtools.modules.memappingregion
     public MappingPresenter(IMappingView view, IIMPresentationModel model,
       IEventAggregator aggregator,
       IAdapter adapterProxy,
+      IReferenceData referenceDataService,
       IUnityContainer container)
       : base(view, model)
     {
@@ -89,8 +92,10 @@ namespace org.iringtools.modules.memappingregion
         this.model = model;
         this.model.MappingTree = tvwMapping;
         this.adapterProxy = adapterProxy;
+        this.referenceDataService = referenceDataService;
 
         adapterProxy.OnDataArrived += OnDataArrivedHandler;
+        referenceDataService.OnDataArrived += OnDataArrivedHandler;
         aggregator.GetEvent<SpinnerEvent>().Subscribe(SpinnerEventHandler);
       }
       catch (Exception ex)
@@ -113,8 +118,24 @@ namespace org.iringtools.modules.memappingregion
       // Handle the GetMapping() event 
       if (args.CheckForType(CompletedEventType.GetMapping))
         GetMappingHandler(args);
-
+      else if (args.CheckForType(CompletedEventType.GetClassLabel))
+      {
+          GetClassLabelHandler(args);
+      }
     }
+
+    /// <summary>
+    /// getclasslabel handler.
+    /// </summary>
+    /// <param name="e">The <see cref="org.iringtools.modulelibrary.events.CompletedEventArgs"/> instance containing the event data.</param>
+    void GetClassLabelHandler(CompletedEventArgs e)
+    {
+        string[] data = (string[])e.Data;
+
+        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Class Name", data[2]);
+        model.DetailProperties.Add(keyValuePair);
+    }
+
 
     /// <summary>
     /// mapping handler.
@@ -158,63 +179,62 @@ namespace org.iringtools.modules.memappingregion
       model.SelectedRoleMap = selectedNode.RoleMap;
       model.SelectedNodeType = selectedNode.NodeType;
 
-      if (selectedNode.Tag is ClassMap)
-      {
-        ClassMap classMap = (ClassMap)selectedNode.Tag;
-
-        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Graph Name", classMap.name);
-        model.DetailProperties.Add(keyValuePair);
-        //keyValuePair = new KeyValuePair<string, string>("Class Id", classMap.classId);
-        //model.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("Class Name", selectedNode.ClassMap.name);
-        model.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("Identifier", classMap.identifier);
-        model.DetailProperties.Add(keyValuePair);
-      }
-
       if (selectedNode.Tag is GraphMap)
       {
-        GraphMap graph = (GraphMap)selectedNode.Tag;
-        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Graph Name", graph.name);
-
-        for (int i = 0; i < graph.dataObjectMaps.Count; i++)
-        {
-          keyValuePair = new KeyValuePair<string, string>("DataObject Name", graph.dataObjectMaps[i].name);
+          GraphMap graph = (GraphMap)selectedNode.Tag;
+          KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Graph Name", graph.name);
           model.DetailProperties.Add(keyValuePair);
-        }
+
+          for (int i = 0; i < graph.dataObjectMaps.Count; i++)
+          {
+              keyValuePair = new KeyValuePair<string, string>("DataObject Name", graph.dataObjectMaps[i].name);
+              model.DetailProperties.Add(keyValuePair);
+          }
       }
+      if (selectedNode.Tag is ClassMap)
+      {
+          ClassMap classMap = (ClassMap)selectedNode.Tag;
+
+          KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>();//("Graph Name", classMap.name);
+          //model.DetailProperties.Add(keyValuePair);
+          string id = classMap.classId.Substring(classMap.classId.LastIndexOf(":") + 1);
+          referenceDataService.GetClassLabel(id, id, this);
+          keyValuePair = new KeyValuePair<string, string>("Class Id", classMap.classId);
+          model.DetailProperties.Add(keyValuePair);
+          keyValuePair = new KeyValuePair<string, string>("Class Name", selectedNode.ClassMap.name);
+          model.DetailProperties.Add(keyValuePair);
+          keyValuePair = new KeyValuePair<string, string>("Identifier", classMap.identifier);
+          model.DetailProperties.Add(keyValuePair);
+      }
+      
 
       if (selectedNode.Tag is TemplateMap)
       {
-        TemplateMap templateMap = (TemplateMap)selectedNode.Tag;
-        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Template Name", templateMap.name);
-        model.DetailProperties.Add(keyValuePair);
-        //keyValuePair = new KeyValuePair<string, string>("Template Id", templateMap.templateId);
-        //model.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("Class Name", selectedNode.ClassMap.name);
-        model.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("Class Role", templateMap.classRole);
-        model.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("Type", templateMap.type.ToString());
-        model.DetailProperties.Add(keyValuePair);
+          TemplateMap templateMap = (TemplateMap)selectedNode.Tag;
+          KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Template Name", templateMap.name);
+          model.DetailProperties.Add(keyValuePair);
+          keyValuePair = new KeyValuePair<string, string>("Template Id", templateMap.templateId);
+          model.DetailProperties.Add(keyValuePair);
+          keyValuePair = new KeyValuePair<string, string>("Class Role", templateMap.classRole);
+          model.DetailProperties.Add(keyValuePair);
+          keyValuePair = new KeyValuePair<string, string>("Type", templateMap.type.ToString());
+          model.DetailProperties.Add(keyValuePair);
       }
       if (selectedNode.Tag is RoleMap)
       {
-        RoleMap roleMap = (RoleMap)selectedNode.Tag;
-        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Role Name", roleMap.name);
-        model.DetailProperties.Add(keyValuePair);
-        //keyValuePair = new KeyValuePair<string, string>("Role Id", roleMap.roleId);
-        //model.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("Class Name", selectedNode.ClassMap.name);
-        model.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("Property Name", roleMap.propertyName);
-        model.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("Datatype", roleMap.dataType);
-        model.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("ValueList", roleMap.valueList);
-        model.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("Class", (roleMap.classMap != null ? roleMap.classMap.name : string.Empty));
-        model.DetailProperties.Add(keyValuePair);
+          RoleMap roleMap = (RoleMap)selectedNode.Tag;
+          KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Role Name", roleMap.name);
+          model.DetailProperties.Add(keyValuePair);
+          keyValuePair = new KeyValuePair<string, string>("Role Id", roleMap.roleId);
+          model.DetailProperties.Add(keyValuePair);
+          keyValuePair = new KeyValuePair<string, string>("Property Name", roleMap.propertyName);
+          model.DetailProperties.Add(keyValuePair);
+          keyValuePair = new KeyValuePair<string, string>("Datatype", roleMap.dataType);
+          model.DetailProperties.Add(keyValuePair);
+          keyValuePair = new KeyValuePair<string, string>("ValueList", roleMap.valueList);
+          model.DetailProperties.Add(keyValuePair);
+          keyValuePair = new KeyValuePair<string, string>("Class", (roleMap.classMap != null ? roleMap.classMap.name : string.Empty));
+          model.DetailProperties.Add(keyValuePair);
       }
 
       e.Handled = true;
