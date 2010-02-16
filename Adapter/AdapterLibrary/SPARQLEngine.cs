@@ -905,7 +905,7 @@ namespace org.iringtools.adapter.projection
                             string dtoPropertyValue = string.Empty;
                             string curPropertyValue = string.Empty;
 
-                            object obj = dto.GetPropertyValue(roleMap.propertyName);
+                            object obj = dto.GetPropertyValueByInternalName(roleMap.propertyName);
                             if (obj != null)
                               if (_trimData)
                                 dtoPropertyValue = obj.ToString().Trim();
@@ -1125,8 +1125,21 @@ namespace org.iringtools.adapter.projection
             SPARQLQuery query = new SPARQLQuery(SPARQLQueryType.SELECT);
             foreach (RoleMap roleMap in templateMap.roleMaps)
             {
-              query.addVariable("?" + roleMap.propertyName);
-              query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, "?" + roleMap.propertyName);
+
+              if (roleMap.reference != null && roleMap.reference != String.Empty)
+              {
+                query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, roleMap.reference);                
+              }
+              else if (roleMap.value != null && roleMap.value != String.Empty)
+              {
+                string value = query.getLITERAL_SPARQL(roleMap.value, roleMap.dataType);
+                query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, value);                
+              }
+              else
+              {
+                query.addVariable("?" + roleMap.propertyName);
+                query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, "?" + roleMap.propertyName);
+              }              
             }
             query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, "tpl:endDateTime", "?endDateTime");
 

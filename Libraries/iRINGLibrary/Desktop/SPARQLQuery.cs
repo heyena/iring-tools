@@ -239,8 +239,8 @@ namespace org.iringtools.library
 
     public String getLITERAL_SPARQL(Object value, String type)
     {
-      if (type.Equals(string.Empty))
-        return type = "String";
+     if(String.IsNullOrEmpty(type))
+        type = "String";
       
       if (!type.Contains(':'))
         type = "xsd:" + type;
