@@ -2,7 +2,13 @@
 <TestRunConfiguration name="AdapterService" id="85c2741e-1856-4005-ab6c-e890767cd1cf" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2006">
   <Description>This is a default test run configuration for a local test run.</Description>
   <Deployment>
+    <DeploymentItem filename="Adapter\AdapterService.Tests\bin\Debug\" />
+    <DeploymentItem filename="Adapter\AdapterService.Tests\App_Code\" />
+    <DeploymentItem filename="Adapter\AdapterService.Tests\XML\" />
     <DeploymentItem filename="ExternalBinaries\SemWeb\SemWeb.SQLServerStore.dll" />
   </Deployment>
+  <Hosts skipUnhostableTests="false">
+    <AspNet name="ASP.NET" executionType="WebDev" urlToTest="http://localhost" />
+  </Hosts>
   <TestTypeSpecific />
 </TestRunConfiguration>

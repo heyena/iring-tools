@@ -146,18 +146,21 @@ namespace ReferenceDataService.Tests
     [TestMethod()]
     public void GetClassTemplatesTest()
     {
-      //Transmitter - 6
+      //ISO 15926-4 POSSIBLE INDIVIDUAL - > 0
       ReferenceDataProxy target = new ReferenceDataProxy();
-      List<Entity> actual = target.GetClassTemplates("R19535665699");
-      Assert.AreEqual(10, actual.Count);
+      List<Entity> actual = target.GetClassTemplates("R99781532089");
+      Assert.IsTrue(actual.Count > 0);
     }
 
     [TestMethod()]
     public void GetTemplateTest()
     {
-      //IdentificationByTag
+      //ClassifiedIdentification & PipingNetworkSystemHasSegment
       ReferenceDataProxy target = new ReferenceDataProxy();
-      QMXF actual = target.GetTemplate("R34485686685");
+      QMXF actual = target.GetTemplate("R30193386273");
+      Assert.AreEqual(1, actual.templateDefinitions.Count);
+
+      actual = target.GetTemplate("R55260901367");
       Assert.AreEqual(1, actual.templateQualifications.Count);
     }
 
