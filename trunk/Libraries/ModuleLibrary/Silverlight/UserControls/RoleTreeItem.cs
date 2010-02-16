@@ -75,15 +75,24 @@ namespace org.iringtools.informationmodel.usercontrols
 
     public override void nodeMouseLeftButtonUpHandler(object sender, MouseButtonEventArgs e)
     {
-      if (!_hasExecuted && RoleQualification != null)
-      {
-        if (RoleQualification.range != null &&
-            RoleQualification.range != String.Empty &&
-            !RoleQualification.range.IsMappable())
+        if (!_hasExecuted && RoleQualification != null)
         {
-          ReferenceDataService.GetClass(RoleQualification.range.GetIdFromUri(), this);
+            if (RoleQualification.range != null &&
+                RoleQualification.range != String.Empty &&
+                !RoleQualification.range.IsMappable())
+            {
+                ReferenceDataService.GetClass(RoleQualification.range.GetIdFromUri(), this);
+            }
         }
-      }
+        else if (!_hasExecuted && RoleDefinition != null)
+        {
+            if (RoleDefinition.range != null &&
+                    RoleDefinition.range != string.Empty &&
+                    !RoleDefinition.range.IsMappable())
+            {
+                ReferenceDataService.GetClass(RoleDefinition.range.GetIdFromUri(), this);
+            }
+        }
 
       FillRoleDetailView();
       e.Handled = true;
