@@ -13,7 +13,7 @@ A beta release of iRINGTools 1.2 that includes NHibernate and Multi-Project/Appl
   * NHibernate Datalayer to enable non-commercial Oracle support and above features.
   * !SemWeb SPARQL Endpoint for Interface Service.
   * !SemWeb SPARQL Endpoint for Sandbox Service.
-  * DBDictionaryUtility for bootstrapping the AdapterService with your legacy application.
+  * DBDictionaryUtility for bootstrapping the !AdapterService with your legacy application.
 
 == Known Bugs ==
   * PullDTO is not working.
