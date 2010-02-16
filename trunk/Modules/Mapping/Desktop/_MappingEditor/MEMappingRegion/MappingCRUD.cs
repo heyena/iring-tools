@@ -399,12 +399,21 @@ namespace org.iringtools.modules.memappingregion
 
             MappingItem mappingItem = model.SelectedMappingItem;
 
-            if (mappingItem.TemplateMap.type == TemplateType.Property)
+            if (mappingItem.TemplateMap.type == TemplateType.Property && model.SelectedRoleMap.dataType.Contains("xsd:"))
             {
                 RoleMap roleMap = model.SelectedRoleMap;
                 roleMap.propertyName = model.SelectedDataObject.DataProperty.propertyName;
                 roleMap.isMapped = true;
                 model.SelectedMappingItem.itemTextBlock.Text = model.SelectedMappingItem.itemTextBlock.Text.Replace(" [UnMapped]", "");
+            }
+            else if (mappingItem.TemplateMap.type == TemplateType.Property && !model.SelectedRoleMap.dataType.Contains("xsd:"))
+            {
+                RoleMap roleMap = model.SelectedRoleMap;
+                roleMap.propertyName = string.Empty;
+                roleMap.isMapped = true;
+                roleMap.reference = model.SelectedClassMap.classId;
+                model.SelectedMappingItem.itemTextBlock.Text = model.SelectedMappingItem.itemTextBlock.Text.Replace(" [UnMapped]", "");
+
             }
             else
             {
@@ -480,6 +489,7 @@ namespace org.iringtools.modules.memappingregion
 
                         //clear the rolemap
                         mappingItem.RoleMap.propertyName = String.Empty;
+                        mappingItem.RoleMap.reference = string.Empty;
                         mappingItem.RoleMap.isMapped = false;
                         mappingItem.itemTextBlock.Text += " [UnMapped]";
                         break;
