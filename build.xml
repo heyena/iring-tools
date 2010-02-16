@@ -172,7 +172,7 @@
                Utilities\QMXFGenerator\QMXFGenerator\bin\Debug\office.dll;
                Utilities\QMXFTransforms\*.dtd;
                Utilities\QMXFTransforms\*.xsd;
-               Utilities\QMXFTransforms\*.xsl;"
+               Utilities\QMXFTransforms\*.xsl;">
     </SandboxToolsDeployment>    
   </ItemGroup>
 
