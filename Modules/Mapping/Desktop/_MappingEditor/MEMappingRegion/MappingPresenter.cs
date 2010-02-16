@@ -201,8 +201,8 @@ namespace org.iringtools.modules.memappingregion
           referenceDataService.GetClassLabel(id, id, this);
           keyValuePair = new KeyValuePair<string, string>("Class Id", classMap.classId);
           model.DetailProperties.Add(keyValuePair);
-          keyValuePair = new KeyValuePair<string, string>("Class Name", selectedNode.ClassMap.name);
-          model.DetailProperties.Add(keyValuePair);
+          //keyValuePair = new KeyValuePair<string, string>("Class Name", selectedNode.ClassMap.name);
+          //model.DetailProperties.Add(keyValuePair);
           keyValuePair = new KeyValuePair<string, string>("Identifier", classMap.identifier);
           model.DetailProperties.Add(keyValuePair);
       }
@@ -233,8 +233,11 @@ namespace org.iringtools.modules.memappingregion
           model.DetailProperties.Add(keyValuePair);
           keyValuePair = new KeyValuePair<string, string>("ValueList", roleMap.valueList);
           model.DetailProperties.Add(keyValuePair);
-          keyValuePair = new KeyValuePair<string, string>("Class", (roleMap.classMap != null ? roleMap.classMap.name : string.Empty));
-          model.DetailProperties.Add(keyValuePair);
+          if (!string.IsNullOrEmpty(roleMap.reference))
+          {
+              keyValuePair = new KeyValuePair<string, string>("Reference Id", (roleMap.reference != null ? roleMap.reference : string.Empty));
+              model.DetailProperties.Add(keyValuePair);
+          }
       }
 
       e.Handled = true;

@@ -295,7 +295,7 @@ namespace org.iringtools.modules.templateeditor.editorregion
             {
                 KeyValuePair<string, string> range = (KeyValuePair<string, string>)cmbRange.SelectedItem;
 
-                if (range.Value != null && range.Value.Equals("SelectClass"))
+                if (range.Value != null && range.Value.Equals("<Use Selected Item>"))
                 {
                     KeyValuePair<string, string> cmbItem = new KeyValuePair<string, string>(model.SelectedIMLabel, model.SelectedIMUri);
 
