@@ -811,17 +811,17 @@ namespace org.iringtools.adapter
         else
         {
           EntityGenerator generator = _kernel.Get<EntityGenerator>();
-
           Binding dataLayerBinding = new Binding()
           {
             Name = "DataLayer",
             Interface = "org.iringtools.library.IDataLayer, iRINGLibrary",
             Implementation = "org.iringtools.adapter.dataLayer.NHibernateDataLayer, NHibernateDataLayer"
           };
+
           UpdateBindingConfiguration(projectName, applicationName, dataLayerBinding);
-
           UpdateScopes(projectName, applicationName);
-
+          response = generator.Generate(dbDictionary, projectName, applicationName);
+          
           // Generate default mapping
           string mappingPath = _settings.XmlPath + "Mapping." + projectName + "." + applicationName + ".xml";
           if (!File.Exists(mappingPath))
@@ -830,18 +830,22 @@ namespace org.iringtools.adapter
           }
 
           // Generate default DTOService
-          string dtoServicePath = _settings.BaseDirectoryPath + @"\App_Code\DTOService." + projectName + "." + applicationName + ".cs";
+          string dtoServicePath = _settings.CodePath + "DTOService." + projectName + "." + applicationName + ".cs";
           if (!File.Exists(dtoServicePath))
           {
             Generate(projectName, applicationName);
           }
 
-          response = generator.Generate(dbDictionary, projectName, applicationName);
           response.Add("Database dictionary updated successfully.");
         }
       }
       catch (Exception exception)
       {
+        if (File.Exists(_settings.CodePath + "Model." + projectName + "." + applicationName + ".cs"))
+        {
+          File.Delete(_settings.CodePath + "Model." + projectName + "." + applicationName + ".cs");
+        }
+          
         _logger.Error("Error in UpdateDatabaseDictionary: " + exception);
         response.Add("Error updating database dictionary: " + exception);
       }

@@ -17,13 +17,9 @@ namespace org.iringtools.adapter
   public interface IDataService
   {
     [OperationContract]
-    [ServiceKnownType(typeof(org.iringtools.adapter.proj_12345_000.ABC.Valves))]
-    [ServiceKnownType(typeof(org.iringtools.adapter.proj_12345_000.ABC.Lines))]
     DTOListResponse GetDataList(DTORequest request);
     
     [OperationContract]
-    [ServiceKnownType(typeof(org.iringtools.adapter.proj_12345_000.ABC.Valves))]
-    [ServiceKnownType(typeof(org.iringtools.adapter.proj_12345_000.ABC.Lines))]
     DTOResponse GetData(DTORequest request);
   }
 }

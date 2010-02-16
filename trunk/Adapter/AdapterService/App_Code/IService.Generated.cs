@@ -17,15 +17,11 @@ namespace org.iringtools.adapter
   {
     [OperationContract]
     [XmlSerializerFormat]
-    [ServiceKnownType(typeof(org.iringtools.adapter.proj_12345_000.ABC.Valves))]
-    [ServiceKnownType(typeof(org.iringtools.adapter.proj_12345_000.ABC.Lines))]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}")]
     Envelope GetList(string projectName, string applicationName, string graphName);
     
     [OperationContract]
     [XmlSerializerFormat]
-    [ServiceKnownType(typeof(org.iringtools.adapter.proj_12345_000.ABC.Valves))]
-    [ServiceKnownType(typeof(org.iringtools.adapter.proj_12345_000.ABC.Lines))]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}")]
     Envelope Get(string projectName, string applicationName, string graphName, string identifier);
   }
