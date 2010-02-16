@@ -111,12 +111,6 @@
     <Compile Include="App_Code\Service.cs" />
     <Content Include="DataService.svc" />
     <Content Include="Web.config" />
-    <Content Include="XML\BindingConfiguration.12345_000.ABC.xml" />
-    <Content Include="XML\DatabaseDictionary.12345_000.ABC.xml" />
-    <Content Include="XML\DataDictionary.12345_000.ABC.xml" />
-    <Content Include="XML\Mapping.12345_000.ABC.xml" />
-    <Content Include="XML\nh-configuration.12345_000.ABC.xml" />
-    <Content Include="XML\nh-mapping.12345_000.ABC.xml" />
     <Content Include="XML\scopes.xml" />
     <Content Include="XML\Seed.DatabaseDictionary.xml" />
     <Content Include="XML\Seed.Mapping.xml" />
@@ -130,16 +124,6 @@
     <None Include="App_Data\Scripts\dbo.KOPot.Table.sql" />
     <None Include="App_Data\Scripts\dbo.Line.Table.sql" />
     <None Include="App_Data\Scripts\dbo.VacuumTower.Table.sql" />
-    <None Include="Templates\Common.tt">
-    </None>
-    <None Include="Templates\DTOService.tt">
-    </None>
-    <None Include="Templates\DTOModel.tt">
-    </None>
-    <None Include="Templates\IDataService.tt">
-    </None>
-    <None Include="Templates\IService.tt">
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
