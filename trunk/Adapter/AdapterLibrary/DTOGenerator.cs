@@ -47,6 +47,7 @@ namespace org.iringtools.adapter
     private const string RDL_NAMESPACE = "http://rdl.rdlfacade.org/data#";
     private const string TPL_NAMESPACE = "http://tpl.rdlfacade.org/data#";
 
+    private AdapterSettings _settings = null;
     private Mapping _mapping = null;
     private DataDictionary _dataDictionary = null;
     private List<MappingProperty> _extendedDataProperties = null;
@@ -58,7 +59,6 @@ namespace org.iringtools.adapter
     private StringBuilder _dataServiceBuilder = null;
     private ILog _logger = null;
 
-    private string _currentDirectory = String.Empty;
     private string _classNamespace = String.Empty;
     private string _xmlNamespace = String.Empty;
     private string _classPath = string.Empty;
@@ -66,9 +66,9 @@ namespace org.iringtools.adapter
     private string _templatePath = string.Empty;
     private string _dtoTemplatePath = string.Empty;
 
-    public DTOGenerator()
+    public DTOGenerator(AdapterSettings settings)
     {
-      _currentDirectory = Directory.GetCurrentDirectory();
+      _settings = settings;
       _extendedDataProperties = new List<MappingProperty>();
       _initStatements = new List<string>();
       _logger = LogManager.GetLogger(typeof(DTOGenerator));
@@ -78,14 +78,14 @@ namespace org.iringtools.adapter
     {
       try
       {
-        string mappingPath = _currentDirectory + "\\XML\\Mapping." + projectName + "." + applicationName + ".xml";
+        string mappingPath = _settings.XmlPath +  "Mapping." + projectName + "." + applicationName + ".xml";
         _mapping = Utility.Read<Mapping>(mappingPath, false);
 
-        string dataDictionaryPath = _currentDirectory + "\\XML\\DataDictionary." + projectName + "." + applicationName + ".xml";
+        string dataDictionaryPath = _settings.XmlPath + "DataDictionary." + projectName + "." + applicationName + ".xml";
         _dataDictionary = Utility.Read<DataDictionary>(dataDictionaryPath, true);
 
         _classNamespace = ADAPTER_NAMESPACE + ".proj_" + projectName + "." + applicationName;
-        _xmlNamespace = "http://" + applicationName + ".bechtel.com/" + projectName + "/data#";
+        _xmlNamespace = "http://" + applicationName + ".iringtools.org/" + projectName + "/data#";
 
         Dictionary<string, string> compilerOptions = new Dictionary<string, string>();
         compilerOptions.Add("CompilerVersion", COMPILER_VERSION);
@@ -98,11 +98,11 @@ namespace org.iringtools.adapter
         parameters.ReferencedAssemblies.Add("System.ServiceModel.Web.dll");
         parameters.ReferencedAssemblies.Add("System.Xml.dll");
         parameters.ReferencedAssemblies.Add("System.Xml.Linq.dll");
-        parameters.ReferencedAssemblies.Add(_currentDirectory + @"\bin\Ninject.dll");
-        parameters.ReferencedAssemblies.Add(_currentDirectory + @"\bin\iRINGLibrary.dll");
-        parameters.ReferencedAssemblies.Add(_currentDirectory + @"\bin\UtilityLibrary.dll");
-        parameters.ReferencedAssemblies.Add(_currentDirectory + @"\bin\AdapterLibrary.dll");
-        parameters.ReferencedAssemblies.Add(_currentDirectory + @"\bin\AdapterService.dll");
+        parameters.ReferencedAssemblies.Add(_settings.BinaryPath + "Ninject.dll");
+        parameters.ReferencedAssemblies.Add(_settings.BinaryPath + "iRINGLibrary.dll");
+        parameters.ReferencedAssemblies.Add(_settings.BinaryPath + "UtilityLibrary.dll");
+        parameters.ReferencedAssemblies.Add(_settings.BinaryPath + "AdapterLibrary.dll");
+        parameters.ReferencedAssemblies.Add(_settings.BinaryPath + "AdapterService.dll");
 
         // Generate code
         string dtoModel = GenerateDTOModel(projectName, applicationName);
@@ -115,10 +115,10 @@ namespace org.iringtools.adapter
         Utility.Compile(compilerOptions, parameters, sources);
 
         // Write generated code to disk
-        Utility.WriteString(dtoModel, _currentDirectory + @"\App_Code\DTOModel." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
-        Utility.WriteString(dtoService, _currentDirectory + @"\App_Code\DTOService." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
-        Utility.WriteString(serviceInterface, _currentDirectory + @"\App_Code\IService.Generated.cs", Encoding.ASCII);
-        Utility.WriteString(dataServiceInterface, _currentDirectory + @"\App_Code\IDataService.Generated.cs", Encoding.ASCII);
+        Utility.WriteString(dtoModel, _settings.CodePath + "DTOModel." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
+        Utility.WriteString(dtoService, _settings.CodePath + "DTOService." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
+        Utility.WriteString(serviceInterface, _settings.CodePath + "IService.Generated.cs", Encoding.ASCII);
+        Utility.WriteString(dataServiceInterface, _settings.CodePath + "IDataService.Generated.cs", Encoding.ASCII);
       }
       catch (Exception ex)
       {
@@ -1110,7 +1110,7 @@ namespace org.iringtools.adapter
     {
       try
       {
-        string[] mappingFiles = Directory.GetFiles(_currentDirectory + "\\XML", "Mapping*.xml");
+        string[] mappingFiles = Directory.GetFiles(_settings.XmlPath, "Mapping*.xml");
 
         foreach (string mappingFile in mappingFiles)
         {

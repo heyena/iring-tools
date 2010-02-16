@@ -53,7 +53,6 @@ namespace org.iringtools.adapter
     private IDTOService _dtoService = null;
     private IKernel _kernel = null;
     private AdapterSettings _settings = null;
-    private string _mappingPath = String.Empty;
     private bool _isAppInitialized = false;
 
     /// <summary>
@@ -130,7 +129,7 @@ namespace org.iringtools.adapter
     /// which applications are available</returns>
     public List<ScopeProject> GetScopes()
     {
-      string path = _settings.XmlPath + _settings.ProjectListSource;
+      string path = _settings.XmlPath + "Scopes.xml";
 
       try
       {
@@ -630,7 +629,7 @@ namespace org.iringtools.adapter
     public Response Generate(string projectName, string applicationName)
     {
       Response response = new Response();
-      DTOGenerator dtoGenerator = new DTOGenerator();
+      DTOGenerator dtoGenerator = new DTOGenerator(_settings);
 
       try
       {

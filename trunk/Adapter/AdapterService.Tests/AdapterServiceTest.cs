@@ -10,6 +10,7 @@ using System.Xml.Serialization;
 using System.Xml;
 using System.Linq;
 using System.Xml.Linq;
+using System;
 
 namespace AdapterService.Tests
 {
@@ -23,19 +24,31 @@ namespace AdapterService.Tests
     [TestMethod()]
     public void UpdateDatabaseDictionaryTest_ABC()
     {
+
+      string bindingConfigPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.xml";
+      string bindingConfigTestPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.Test.xml";
+
+      string dbDictionaryPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\DatabaseDictionary.12345_000.ABC.xml";
+
       AdapterProxy target = new AdapterProxy();
-      string dbDictionaryPath = System.Environment.CurrentDirectory + @"\XML\DatabaseDictionary.12345_000.ABC.xml";
       DatabaseDictionary databaseDictionary = Utility.Read<DatabaseDictionary>(dbDictionaryPath);
       Response actual = target.UpdateDatabaseDictionary(databaseDictionary, "12345_000", "ABC");
       Assert.AreEqual("Entities generated successfully.", actual[0]);
+
+      File.Copy(bindingConfigTestPath, bindingConfigPath, true);
     }
 
     [TestMethod()]
     public void GenerateTest_ABC()
     {
+      string bindingConfigPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.xml";
+      string bindingConfigTestPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.Test.xml";
+
       AdapterProxy target = new AdapterProxy();
       Response actual = target.Generate("12345_000", "ABC");
       Assert.AreEqual("DTO Model generated successfully.", actual[0]);
+
+      File.Copy(bindingConfigTestPath, bindingConfigPath, true);
     }
 
     [TestMethod()]
@@ -75,6 +88,11 @@ namespace AdapterService.Tests
     {
       AdapterProxy target = new AdapterProxy();
       Response actual = target.ClearStore("12345_000", "ABC");
+      if ("Store cleared successfully." != actual[0])
+      {
+        throw new AssertFailedException(Utility.SerializeDataContract<Response>(actual));
+      }
+
       Assert.AreEqual("Store cleared successfully.", actual[0]);
     }
 
@@ -122,7 +140,7 @@ namespace AdapterService.Tests
     public void UpdateMapping_ABC()
     {
       AdapterProxy target = new AdapterProxy();
-      Mapping mapping = Utility.Read<Mapping>(System.Environment.CurrentDirectory + @"\XML\Mapping.12345_000.ABC.xml", false);
+      Mapping mapping = Utility.Read<Mapping>(@"C:\iring-tools\Adapter\AdapterService.Tests\XML\Mapping.12345_000.ABC.xml", false);
       Response actual = target.UpdateMapping("12345_000", "ABC", mapping);
       bool isError = false;
       for (int i = 0; i < actual.Count; i++)

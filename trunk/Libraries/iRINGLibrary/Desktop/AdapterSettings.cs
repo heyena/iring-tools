@@ -11,34 +11,26 @@ namespace org.iringtools.adapter
 {
   public class AdapterSettings : ServiceSettings
   {
-    private string _modelDTOPath = String.Empty;
-    private string _idsPath = String.Empty;
-    private string _dataLayerConfigPath = String.Empty;
-    private string _transformPath = String.Empty;
-    private string _mappingPath = String.Empty;
     private string _encryptedToken = String.Empty;
     private string _tripleStoreConnectionString = String.Empty;
     private string _interfaceServer = String.Empty;
-    private string _projectListSource = string.Empty;
+    private string _binaryPath = string.Empty;
+    private string _codePath = string.Empty;
 
     public AdapterSettings(NameValueCollection AppSettings)
-    {     
+    {
+      this.BaseDirectoryPath = AppSettings["BaseDirectoryPath"];
       this.XmlPath = AppSettings["XmlPath"];
-      this.TripleStoreConnectionString = AppSettings["TripleStoreConnectionString"];
-      this.ModelDTOPath = AppSettings["ModelDTOPath"];
-      this.IdsPath = AppSettings["IDataServicePath"];
-      this.InterfaceServer = AppSettings["InterfaceService"];
-      this.TrimData = Convert.ToBoolean(AppSettings["TrimData"]);
-      this.UseSemweb = Convert.ToBoolean(AppSettings["UseSemweb"]);
-      this.EncryptedToken = AppSettings["TargetCredentialToken"];
       this.EncryptedProxyToken = AppSettings["ProxyCredentialToken"];
       this.ProxyHost = AppSettings["ProxyHost"];
       this.ProxyPort = AppSettings["ProxyPort"];
-      this.TransformPath = AppSettings["TransformPath"];
-      this.DataLayerConfigPath = AppSettings["DataLayerConfigPath"];
-      this.BaseDirectoryPath = AppSettings["BaseDirectoryPath"];
-      this.ProjectListSource = AppSettings["ProjectListSource"];
-
+      this.UseSemweb = Convert.ToBoolean(AppSettings["UseSemweb"]);
+      this.TripleStoreConnectionString = AppSettings["TripleStoreConnectionString"];
+      this.InterfaceServer = AppSettings["InterfaceService"];
+      this.EncryptedToken = AppSettings["TargetCredentialToken"];
+      this.TrimData = Convert.ToBoolean(AppSettings["TrimData"]);
+      this.BinaryPath = AppSettings["BinaryPath"];
+      this.CodePath = AppSettings["CodePath"];
       this.PrepareCredentials();
     }
 
@@ -80,44 +72,6 @@ namespace org.iringtools.adapter
       }
     }
 
-    public string ModelDTOPath
-    {
-      get
-      {
-        return _modelDTOPath;
-      }
-      set
-      {
-        if (value == String.Empty || value == null)
-        {
-          _modelDTOPath = @".\App_Code\ModelDTO.cs";
-        }
-        else
-        {
-          _modelDTOPath = value;
-        }
-      }
-    }
-
-    public string IdsPath
-    {
-      get
-      {
-        return _idsPath;
-      }
-      set
-      {
-        if (value == String.Empty || value == null)
-        {
-          _idsPath = @".\App_Code\IDataService.cs";
-        }
-        else
-        {
-          _idsPath = value;
-        }
-      }
-    }
-
     public string InterfaceServer 
     {
       get
@@ -128,7 +82,7 @@ namespace org.iringtools.adapter
       {
         if (value == String.Empty || value == null)
         {
-          _interfaceServer = @"http://localhost:2222/iring";
+          _interfaceServer = @"http://localhost/InterfaceService/sparql";
         }
         else
         {
@@ -162,62 +116,43 @@ namespace org.iringtools.adapter
       }
     }
 
-    public string TransformPath
+    public string BinaryPath
     {
       get
       {
-        return _transformPath;
+        return _binaryPath;
       }
       set
       {
         if (value == String.Empty || value == null)
         {
-          _transformPath = @".\Transforms\";
+          _binaryPath = @".\Bin\";
         }
         else
         {
-          _transformPath = value;
+          _binaryPath = value;
         }
       }
     }
 
-    public string DataLayerConfigPath
+    public string CodePath
     {
       get
       {
-        return _dataLayerConfigPath;
+        return _codePath;
       }
       set
       {
         if (value == String.Empty || value == null)
         {
-          _dataLayerConfigPath = @".\App_Data\Model.csdl";
+          _codePath = @".\App_Code\";
         }
         else
         {
-          _dataLayerConfigPath = value;
+          _codePath = value;
         }
       }
     }
-
-      public string ProjectListSource
-      {
-          get
-          {
-              return _projectListSource;
-          }
-          set
-          {
-              if (value==String.Empty || value==null)
-              {
-                  _projectListSource = "scopes.xml";
-              }
-              else
-              {
-                  _projectListSource = value;
-              }
-          }
-      }
   }
 
   

@@ -31,11 +31,11 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <UnitTest Include="RefDataServiceTests">
-      <TestContainer>/testcontainer:$(RefDataServiceRoot)\ReferenceDataService.Tests\bin\Debug\ReferenceDataService.Tests.dll</TestContainer>
-    </UnitTest>
     <UnitTest Include="AdapterServiceTests">
       <TestContainer>/testcontainer:$(AdapterServiceRoot)\AdapterService.Tests\bin\Debug\AdapterService.Tests.dll /runconfig:AdapterService.testrunconfig</TestContainer>
+    </UnitTest>
+    <UnitTest Include="RefDataServiceTests">
+      <TestContainer>/testcontainer:$(RefDataServiceRoot)\ReferenceDataService.Tests\bin\Debug\ReferenceDataService.Tests.dll</TestContainer>
     </UnitTest>
   </ItemGroup>
 
