@@ -73,7 +73,7 @@ namespace org.iringtools.informationmodel.usercontrols
       }
     }
 
-    public override void nodeSelectedHandler(object sender, RoutedEventArgs e)
+    public override void nodeMouseLeftButtonUpHandler(object sender, MouseButtonEventArgs e)
     {
       if (!_hasExecuted && RoleQualification != null)
       {
@@ -86,22 +86,7 @@ namespace org.iringtools.informationmodel.usercontrols
       }
 
       FillRoleDetailView();
-    }
-
-    public override void nodeMouseLeftButtonUpHandler(object sender, MouseButtonEventArgs e)
-    {
-      if (!_hasExecuted && RoleQualification != null)
-      {
-        if (RoleQualification.range != null &&
-            RoleQualification.range != String.Empty &&
-            !RoleQualification.range.IsMappable())
-        {
-          ReferenceDataService.GetClass(RoleQualification.range.GetIdFromUri(), this);
-        }
-
-        FillRoleDetailView();
-        e.Handled = true;
-      }
+      e.Handled = true;
     }
 
     private void FillRoleDetailView()
