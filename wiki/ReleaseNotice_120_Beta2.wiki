@@ -5,6 +5,8 @@ A beta release of iRINGTools 1.2 that includes NHibernate and Multi-Project/Appl
 
 [http://iring-tools.googlecode.com/files/iRINGTools_Installation_Guide_v1_2_0.Draft.pdf Installation Guide]
 
+[http://iring-tools.googlecode.com/files/iRINGTools_Migration_Guide_v1_2_0.Draft.pdf Migration Guide]
+
 == New Features ==
   * Multi-Project/Application Support in the Adapter Service.
   * PullDTO feature in the Adapter Service.
