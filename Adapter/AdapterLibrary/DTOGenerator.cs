@@ -92,17 +92,20 @@ namespace org.iringtools.adapter
 
         CompilerParameters parameters = new CompilerParameters();
         parameters.GenerateExecutable = false;
+        parameters.ReferencedAssemblies.Add("System.dll");
+        parameters.ReferencedAssemblies.Add("System.Configuration.dll");
         parameters.ReferencedAssemblies.Add("System.Core.dll");
         parameters.ReferencedAssemblies.Add("System.Runtime.Serialization.dll");
         parameters.ReferencedAssemblies.Add("System.ServiceModel.dll");
         parameters.ReferencedAssemblies.Add("System.ServiceModel.Web.dll");
         parameters.ReferencedAssemblies.Add("System.Xml.dll");
         parameters.ReferencedAssemblies.Add("System.Xml.Linq.dll");
+        parameters.ReferencedAssemblies.Add(_settings.BinaryPath + "Iesi.Collections.dll");
+        parameters.ReferencedAssemblies.Add(_settings.BinaryPath + "log4net.dll");
         parameters.ReferencedAssemblies.Add(_settings.BinaryPath + "Ninject.dll");
         parameters.ReferencedAssemblies.Add(_settings.BinaryPath + "iRINGLibrary.dll");
         parameters.ReferencedAssemblies.Add(_settings.BinaryPath + "UtilityLibrary.dll");
         parameters.ReferencedAssemblies.Add(_settings.BinaryPath + "AdapterLibrary.dll");
-        parameters.ReferencedAssemblies.Add(_settings.BinaryPath + "AdapterService.dll");
 
         // Generate code
         string dtoModel = GenerateDTOModel(projectName, applicationName);
@@ -110,8 +113,14 @@ namespace org.iringtools.adapter
         string serviceInterface = UpdateServiceInterface();
         string dataServiceInterface = UpdateDataServiceInterface();
 
-        // Compile generated code
-        string[] sources = new string[] { dtoModel, dtoService, serviceInterface, dataServiceInterface };
+        // Compile code
+        string[] sources = new string[] 
+        { dtoModel, dtoService, serviceInterface, dataServiceInterface,          
+          Utility.ReadString(_settings.CodePath + "Model." + projectName + "." + applicationName + ".cs"),
+          Utility.ReadString(_settings.CodePath + "DataService.cs"),
+          Utility.ReadString(_settings.CodePath + "IService.cs"),
+          Utility.ReadString(_settings.CodePath + "Service.cs"),
+        };
         Utility.Compile(compilerOptions, parameters, sources);
 
         // Write generated code to disk

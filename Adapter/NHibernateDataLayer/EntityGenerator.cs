@@ -207,7 +207,8 @@ namespace org.iringtools.adapter.dataLayer
 
           CompilerParameters parameters = new CompilerParameters();
           parameters.GenerateExecutable = false;
-          parameters.ReferencedAssemblies.Add(_settings.BinaryPath + "AdapterService.dll");
+          parameters.ReferencedAssemblies.Add("System.dll");
+          parameters.ReferencedAssemblies.Add(_settings.BinaryPath + "Iesi.Collections.dll");
           NHIBERNATE_ASSEMBLIES.ForEach(assembly => parameters.ReferencedAssemblies.Add(_settings.BinaryPath + assembly));
 
           Utility.Compile(compilerOptions, parameters, new string[] { entitiesSourceCode });

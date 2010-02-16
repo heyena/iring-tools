@@ -41,13 +41,13 @@ namespace Ninject.Contrib.Dynamic
 
     public override void Load()
     {
-      string implementatoinName = String.Empty;
+      string implementationName = String.Empty;
       try
       {
         foreach (Binding binding in _bindings)
         {
-          implementatoinName = binding.Implementation;
-          bool isToSelf = (implementatoinName.ToUpper() == Self.ToUpper());
+          implementationName = binding.Implementation;
+          bool isToSelf = (implementationName.ToUpper() == Self.ToUpper());
           bool isNamed = (binding.Name != String.Empty && binding.Name != null);
           Type interfaceType = Type.GetType(binding.Interface);
 
@@ -67,7 +67,7 @@ namespace Ninject.Contrib.Dynamic
           }
           else
           {
-            Type implementationType = Type.GetType(implementatoinName);
+            Type implementationType = Type.GetType(implementationName);
 
             if (isNamed)
             {
@@ -85,7 +85,7 @@ namespace Ninject.Contrib.Dynamic
       }
       catch (Exception ex)
       {
-        throw new Exception(ex.Message + " Implementation: " + implementatoinName);
+        throw new Exception(ex.Message + " Implementation: " + implementationName);
       }
     }
   }
