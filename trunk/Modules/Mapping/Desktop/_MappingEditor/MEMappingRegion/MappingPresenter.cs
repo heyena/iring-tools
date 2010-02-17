@@ -45,6 +45,7 @@ namespace org.iringtools.modules.memappingregion
     private Button btnAddTemplate { get { return ButtonCtrl("btnAddTemplate"); } }
     private Button btnAddGraph { get { return ButtonCtrl("btnAddGraph"); } }
     private Button btnMap { get { return ButtonCtrl("btnMap"); } }
+    private Button btnMakeClassRole { get { return ButtonCtrl("btnMakeClassRole"); } }
     private Button btnSave { get { return ButtonCtrl("btnSave"); } }
     private Button btnDelete { get { return ButtonCtrl("btnDelete"); } }
     private TextBox txtLabel { get { return TextCtrl("txtLabel"); } }
@@ -78,6 +79,7 @@ namespace org.iringtools.modules.memappingregion
         btnAddTemplate.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnAddTemplate_Click(txtLabel, e); };
         btnAddGraph.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnAddGraph_Click(txtLabel, e); };
         btnMap.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnMap_Click(txtLabel, e); };
+        btnMakeClassRole.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnMakeClassRole_Click(txtLabel, e); };
         btnSave.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnSave_Click(txtLabel, e); };
         btnDelete.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnDelete_Click(txtLabel, e); };
 
@@ -506,6 +508,7 @@ namespace org.iringtools.modules.memappingregion
           btnDelete.IsEnabled = false;
           btnMap.IsEnabled = false;
           btnSave.IsEnabled = false;
+          btnMakeClassRole.IsEnabled = false;
 
           break;
 
@@ -518,6 +521,7 @@ namespace org.iringtools.modules.memappingregion
           btnDelete.IsEnabled = true;
           btnMap.IsEnabled = true;
           btnSave.IsEnabled = true;
+          btnMakeClassRole.IsEnabled = true;
 
           break;
 

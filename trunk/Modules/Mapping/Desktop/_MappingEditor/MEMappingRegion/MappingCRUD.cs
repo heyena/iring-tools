@@ -385,69 +385,81 @@ namespace org.iringtools.modules.memappingregion
 
         public void btnMap_Click(object sender, RoutedEventArgs e)
         {
-            if (model.SelectedRoleMap == null)
+          if (model.SelectedRoleMap == null)
+          {
+            MessageBox.Show("Please select a role map", "MAP ROLE", MessageBoxButton.OK);
+            return;
+          }
+
+          if (model.SelectedDataObject == null || model.SelectedDataObject.DataProperty == null)
+          {
+            MessageBox.Show("Please select a property to map", "MAP ROLE", MessageBoxButton.OK);
+            return;
+          }
+
+          MappingItem mappingItem = model.SelectedMappingItem;
+
+          if (mappingItem.TemplateMap.type == TemplateType.Property && model.SelectedRoleMap.dataType.Contains("xsd:"))
+          {
+            RoleMap roleMap = model.SelectedRoleMap;
+            roleMap.propertyName = model.SelectedDataObject.DataProperty.propertyName;
+            roleMap.isMapped = true;
+            model.SelectedMappingItem.itemTextBlock.Text = model.SelectedMappingItem.itemTextBlock.Text.Replace(" [UnMapped]", "");
+          }
+          else if (mappingItem.TemplateMap.type == TemplateType.Property && !model.SelectedRoleMap.dataType.Contains("xsd:"))
+          {
+            RoleMap roleMap = model.SelectedRoleMap;
+            roleMap.propertyName = string.Empty;
+            roleMap.isMapped = true;
+            roleMap.reference = model.SelectedClassMap.classId;
+            model.SelectedMappingItem.itemTextBlock.Text = model.SelectedMappingItem.itemTextBlock.Text.Replace(" [UnMapped]", "");
+
+          }
+          else
+          {
+            if (model.SelectedTreeItem == null || !(model.SelectedTreeItem is ClassTreeItem))
             {
-                MessageBox.Show("Please select a role map", "MAP ROLE", MessageBoxButton.OK);
-                return;
+              MessageBox.Show("Please select a class to map", "MAP ROLE", MessageBoxButton.OK);
+              return;
             }
 
-            if (model.SelectedDataObject == null || model.SelectedDataObject.DataProperty == null)
+            ClassDefinition classDefinition = ((ClassTreeItem)model.SelectedTreeItem).ClassDefinition;
+
+            RoleMap roleMap = model.SelectedRoleMap;
+
+            TextBox txtLabel = sender as TextBox;
+            ClassMap classMap = new ClassMap
             {
-                MessageBox.Show("Please select a property to map", "MAP ROLE", MessageBoxButton.OK);
-                return;
-            }
+              name = txtLabel.Text,
+              classId = classDefinition.identifier.GetIdWithAliasFromUri(),
+              identifier = model.SelectedDataObject.DataProperty.propertyName,
+            };
 
-            MappingItem mappingItem = model.SelectedMappingItem;
+            roleMap.classMap = classMap;
+            roleMap.isMapped = true;
+            model.SelectedMappingItem.itemTextBlock.Text = model.SelectedMappingItem.itemTextBlock.Text.Replace(" [UnMapped]", "");
 
-            if (mappingItem.TemplateMap.type == TemplateType.Property && model.SelectedRoleMap.dataType.Contains("xsd:"))
-            {
-                RoleMap roleMap = model.SelectedRoleMap;
-                roleMap.propertyName = model.SelectedDataObject.DataProperty.propertyName;
-                roleMap.isMapped = true;
-                model.SelectedMappingItem.itemTextBlock.Text = model.SelectedMappingItem.itemTextBlock.Text.Replace(" [UnMapped]", "");
-            }
-            else if (mappingItem.TemplateMap.type == TemplateType.Property && !model.SelectedRoleMap.dataType.Contains("xsd:"))
-            {
-                RoleMap roleMap = model.SelectedRoleMap;
-                roleMap.propertyName = string.Empty;
-                roleMap.isMapped = true;
-                roleMap.reference = model.SelectedClassMap.classId;
-                model.SelectedMappingItem.itemTextBlock.Text = model.SelectedMappingItem.itemTextBlock.Text.Replace(" [UnMapped]", "");
+            Presenter.PopulateRoleNode(mappingItem, roleMap);
+          }
 
-            }
-            else
-            {
-                if (model.SelectedTreeItem == null || !(model.SelectedTreeItem is ClassTreeItem))
-                {
-                    MessageBox.Show("Please select a class to map", "MAP ROLE", MessageBoxButton.OK);
-                    return;
-                }
+          aggregator.GetEvent<NavigationEvent>().Publish(new NavigationEventArgs
+          {
+            DetailProcess = DetailType.Mapping,
+            SelectedNode = mappingItem,
+            Sender = this
+          });
+        }
+        public void btnMakeClassRole_Click(object sender, RoutedEventArgs e)
+        {
+          MappingItem mappingItem = model.SelectedMappingItem;
 
-                ClassDefinition classDefinition = ((ClassTreeItem)model.SelectedTreeItem).ClassDefinition;
+          if (mappingItem == null)
+            return;
 
-                RoleMap roleMap = model.SelectedRoleMap;
+          if (mappingItem.NodeType == NodeType.RoleMap)
+          {
 
-                TextBox txtLabel = sender as TextBox;
-                ClassMap classMap = new ClassMap
-                {
-                    name = txtLabel.Text,
-                    classId = classDefinition.identifier.GetIdWithAliasFromUri(),
-                    identifier = model.SelectedDataObject.DataProperty.propertyName,
-                };
-
-                roleMap.classMap = classMap;
-                roleMap.isMapped = true;
-                model.SelectedMappingItem.itemTextBlock.Text = model.SelectedMappingItem.itemTextBlock.Text.Replace(" [UnMapped]", "");
-
-                Presenter.PopulateRoleNode(mappingItem, roleMap);
-            }
-
-            aggregator.GetEvent<NavigationEvent>().Publish(new NavigationEventArgs
-            {
-                DetailProcess = DetailType.Mapping,
-                SelectedNode = mappingItem,
-                Sender = this
-            });
+          }
         }
 
         public void btnSave_Click(object sender, RoutedEventArgs e)
