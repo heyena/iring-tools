@@ -42,7 +42,7 @@ namespace org.iringtools.adapter.dataLayer
   public class EntityGenerator
   {
     private string COMPILER_VERSION = "v3.5";
-    private string ASSEMBLY_NAME = "AdapterService";
+    private string ASSEMBLY_NAME = "App_Code";
     private List<string> NHIBERNATE_ASSEMBLIES = new List<string>() 
     {
       "NHibernate.dll",     
