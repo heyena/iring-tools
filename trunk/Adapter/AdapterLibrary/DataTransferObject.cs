@@ -191,6 +191,16 @@ namespace org.iringtools.adapter
       }
     }
 
+    public void SetPropertyValueByInternalName(string propertyName, object value)
+    {
+      DTOProperty property = GetPropertyByInternalName(propertyName);
+
+      if (property != null)
+      {
+        property.Value = value;
+      }
+    }
+
     protected DTOProperty GetProperty(string propertyName)
     {
       DTOProperty namedProperty = 

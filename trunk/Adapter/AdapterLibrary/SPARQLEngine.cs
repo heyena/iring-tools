@@ -305,7 +305,7 @@ namespace org.iringtools.adapter.projection
                 {
                     foreach (RoleMap roleMap in templateMap.roleMaps)
                     {
-                        query.addVariable("?" + roleMap.propertyName);
+                        
                         if (roleMap.reference != null)
                         {
                           query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, roleMap.reference);
@@ -317,6 +317,7 @@ namespace org.iringtools.adapter.projection
                         }
                         else
                         {
+                          query.addVariable("?" + roleMap.propertyName);
                           query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, "?" + roleMap.propertyName);
                         }
                     }
@@ -341,7 +342,7 @@ namespace org.iringtools.adapter.projection
                                 if (binding.literal != null)
                                 {
                                     propertyValue = binding.literal.value;
-                                    dto.SetPropertyValue(propertyName, propertyValue);
+                                    dto.SetPropertyValueByInternalName(propertyName, propertyValue);
                                 }
                                 else if (roleMap != null && (roleMap.valueList != "" || roleMap.valueList != null))
                                 {
