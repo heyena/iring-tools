@@ -117,9 +117,12 @@
     <Compile Include="AdapterServiceTest.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="App_Code\DataService.cs" />
     <Compile Include="App_Code\DTOModel.12345_000.ABC.cs" />
     <Compile Include="App_Code\DTOService.12345_000.ABC.cs" />
+    <Compile Include="App_Code\IService.cs" />
     <Compile Include="App_Code\Model.12345_000.ABC.cs" />
+    <Compile Include="App_Code\Service.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -150,6 +153,9 @@
     <Content Include="XML\BindingConfiguration.12345_000.ABC.Test.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="XML\nh-mapping.12345_000.ABC.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="XML\DatabaseDictionary.12345_000.ABC.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -162,7 +168,7 @@
     <Content Include="XML\nh-configuration.12345_000.ABC.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="XML\nh-mapping.12345_000.ABC.xml">
+    <Content Include="XML\nh-mapping.12345_000.ABC.Test.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="XML\Scopes.xml">

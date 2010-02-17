@@ -2,6 +2,6 @@
 <BindingConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Bindings>
     <Binding Name="DataLayer" Interface="org.iringtools.library.IDataLayer, iRINGLibrary" Implementation="org.iringtools.adapter.dataLayer.NHibernateDataLayer, NHibernateDataLayer"/>
-    <Binding Name="DTOService" Interface="org.iringtools.adapter.IDTOService, AdapterLibrary" Implementation="org.iringtools.adapter.proj_12345_000.ABC.DTOService, AdapterService"/>
+    <Binding Name="DTOService" Interface="org.iringtools.adapter.IDTOService, AdapterLibrary" Implementation="org.iringtools.adapter.proj_12345_000.ABC.DTOService, AdapterService.Tests"/>
   </Bindings>
 </BindingConfiguration>
