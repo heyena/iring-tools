@@ -111,7 +111,6 @@
     <Compile Include="App_Code\Service.cs" />
     <Content Include="DataService.svc" />
     <Content Include="Web.config" />
-    <Content Include="XML\scopes.xml" />
     <Content Include="XML\Seed.DatabaseDictionary.xml" />
     <Content Include="XML\Seed.Mapping.xml" />
     <Compile Include="Properties\AssemblyInfo.cs" />

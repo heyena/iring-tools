@@ -16,8 +16,7 @@ namespace org.iringtools.library
        /// <returns>a string</returns>
        [DataMember(Order=0)]
        public string Name { get; set; }
-
-
+     
        /// <summary>
        /// The description of the project
        /// </summary>

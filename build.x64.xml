@@ -54,6 +54,7 @@
                $(AdapterServiceDir)\*.vspscc;
                $(AdapterServiceDir)\web.config;
                $(AdapterServiceDir)\Web_Development.config;
+               $(AdapterServiceDir)\XML\Scopes.xml;
                $(AdapterServiceRoot)\.svn\**;
                $(AdapterServiceRoot)\*\.svn\**;
                $(AdapterServiceRoot)\*\*\.svn\**;

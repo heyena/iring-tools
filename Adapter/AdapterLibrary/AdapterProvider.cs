@@ -133,8 +133,13 @@ namespace org.iringtools.adapter
 
       try
       {
-        List<ScopeProject> _projects = Utility.Read<List<ScopeProject>>(path);
-        return _projects;
+        if (File.Exists(path))
+        {
+          List<ScopeProject> _projects = Utility.Read<List<ScopeProject>>(path);
+          return _projects;
+        }
+
+        return new List<ScopeProject>();
       }
       catch (Exception exception)
       {
@@ -633,8 +638,10 @@ namespace org.iringtools.adapter
 
       try
       {
+        // Generate DTO code
         dtoGenerator.Generate(projectName, applicationName);
 
+        // Update NInject binding configuration
         Binding dtoServiceBinding = new Binding()
         {
           Name = "DTOService",
@@ -642,6 +649,9 @@ namespace org.iringtools.adapter
           Implementation = "org.iringtools.adapter.proj_" + projectName + "." + applicationName + ".DTOService, App_Code"
         };
         UpdateBindingConfiguration(projectName, applicationName, dtoServiceBinding);
+
+        // Set hasDTOLayer flag for the application to true
+        UpdateScopes(projectName, applicationName, true);
 
         response.Add("DTO Model generated successfully.");
       }
@@ -707,11 +717,11 @@ namespace org.iringtools.adapter
     }
 
     /// <summary>
-    /// Update project and application scope in Scopes.xml
+    /// Update Scopes.xml to add project/application if it has not been added
     /// </summary>
     /// <param name="projectName"></param>
     /// <param name="applicationName"></param>
-    private void UpdateScopes(string projectName, string applicationName)
+    private void UpdateScopes(string projectName, string applicationName, bool setHasDTOLayer)
     {
       try
       {
@@ -733,13 +743,19 @@ namespace org.iringtools.adapter
                 if (application.Name.ToUpper() == applicationName.ToUpper())
                 {
                   applicationExists = true;
+
+                  if (setHasDTOLayer)
+                  {
+                    application.hasDTOLayer = true;
+                  }
+
                   break;
                 }
               }
 
               if (!applicationExists)
               {
-                project.Applications.Add(new ScopeApplication() { Name = applicationName });
+                project.Applications.Add(new ScopeApplication() { Name = applicationName, hasDTOLayer = false });
               }
 
               projectExists = true;
@@ -757,7 +773,8 @@ namespace org.iringtools.adapter
                {
                  new ScopeApplication()
                  {
-                   Name = applicationName
+                   Name = applicationName,
+                   hasDTOLayer = false
                  }
                }
             };
@@ -778,7 +795,8 @@ namespace org.iringtools.adapter
                {
                  new ScopeApplication()
                  {
-                   Name = applicationName
+                   Name = applicationName,
+                   hasDTOLayer = false
                  }
                }
             }
@@ -811,16 +829,19 @@ namespace org.iringtools.adapter
         else
         {
           EntityGenerator generator = _kernel.Get<EntityGenerator>();
+          response = generator.Generate(dbDictionary, projectName, applicationName);
+          
+          // Update binding configuration
           Binding dataLayerBinding = new Binding()
           {
             Name = "DataLayer",
             Interface = "org.iringtools.library.IDataLayer, iRINGLibrary",
             Implementation = "org.iringtools.adapter.dataLayer.NHibernateDataLayer, NHibernateDataLayer"
           };
-
           UpdateBindingConfiguration(projectName, applicationName, dataLayerBinding);
-          UpdateScopes(projectName, applicationName);
-          response = generator.Generate(dbDictionary, projectName, applicationName);
+
+          // Update project/application scope to add application if it does not exist
+          UpdateScopes(projectName, applicationName, false);
           
           // Generate default mapping
           string mappingPath = _settings.XmlPath + "Mapping." + projectName + "." + applicationName + ".xml";

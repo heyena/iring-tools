@@ -113,15 +113,36 @@ namespace org.iringtools.adapter
         string serviceInterface = UpdateServiceInterface();
         string dataServiceInterface = UpdateDataServiceInterface();
 
-        // Compile code
-        string[] sources = new string[] 
-        { dtoModel, dtoService, serviceInterface, dataServiceInterface,          
-          Utility.ReadString(_settings.CodePath + "Model." + projectName + "." + applicationName + ".cs"),
-          Utility.ReadString(_settings.CodePath + "DataService.cs"),
-          Utility.ReadString(_settings.CodePath + "IService.cs"),
-          Utility.ReadString(_settings.CodePath + "Service.cs"),
-        };
-        Utility.Compile(compilerOptions, parameters, sources);
+        #region Compile code
+        List<string> sources = new List<string>();
+
+        // Add generated code
+        sources.Add(dtoModel);
+        sources.Add(dtoService);
+        sources.Add(serviceInterface);
+        sources.Add(dataServiceInterface);
+
+        // Add services code
+        sources.Add(Utility.ReadString(_settings.CodePath + "IService.cs"));
+        sources.Add(Utility.ReadString(_settings.CodePath + "Service.cs"));
+        sources.Add(Utility.ReadString(_settings.CodePath + "DataService.cs"));
+
+        // Add DTO models code
+        List<KeyValuePair<string, ScopeApplication>> scopeApps = GetScopeApplications();
+        foreach (KeyValuePair<string, ScopeApplication> scopeApp in scopeApps)
+        {
+          sources.Add(Utility.ReadString(_settings.CodePath + "Model." + scopeApp.Key + "." + scopeApp.Value.Name + ".cs"));
+          
+          if (scopeApp.Value.hasDTOLayer)
+          {
+            sources.Add(Utility.ReadString(_settings.CodePath + "DTOModel." + scopeApp.Key + "." + scopeApp.Value.Name + ".cs"));
+            sources.Add(Utility.ReadString(_settings.CodePath + "DTOService." + scopeApp.Key + "." + scopeApp.Value.Name + ".cs"));
+          }
+        }
+        
+        // Do compile
+        Utility.Compile(compilerOptions, parameters, sources.ToArray());
+        #endregion
 
         // Write generated code to disk
         Utility.WriteString(dtoModel, _settings.CodePath + "DTOModel." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
@@ -1119,21 +1140,18 @@ namespace org.iringtools.adapter
     {
       try
       {
-        string[] mappingFiles = Directory.GetFiles(_settings.XmlPath, "Mapping*.xml");
+        List<KeyValuePair<string, ScopeApplication>> scopeApps = GetScopeApplications();
 
-        foreach (string mappingFile in mappingFiles)
+        foreach (KeyValuePair<string, ScopeApplication> scopeApp in scopeApps)
         {
-          Mapping mappingObj = Utility.Read<Mapping>(mappingFile, false);
-          string[] mappingFileFields = mappingFile.Split('.');
-          string projName = mappingFileFields[mappingFileFields.Length - 3];
-          string appName = mappingFileFields[mappingFileFields.Length - 2];
-          string ns = ADAPTER_NAMESPACE + ".proj_" + projName + "." + appName;
-
-          foreach (GraphMap graphMap in mappingObj.graphMaps)
+          string mappingFile = _settings.XmlPath + "Mapping." + scopeApp.Key + "." + scopeApp.Value.Name + ".xml";
+          string ns = ADAPTER_NAMESPACE + ".proj_" + scopeApp.Key + "." + scopeApp.Value.Name;
+          Mapping mapping = Utility.Read<Mapping>(mappingFile, false);
+          
+          foreach (GraphMap graphMap in mapping.graphMaps)
           {
             string graphName = NameSafe(graphMap.name);
-            string className = ns + "." + graphName;
-            writer.WriteLine("[ServiceKnownType(typeof({0}))]", className);
+            writer.WriteLine("[ServiceKnownType(typeof({0}))]", ns + "." + graphName);
           }
         }
       }
@@ -1254,10 +1272,13 @@ namespace org.iringtools.adapter
                 !String.IsNullOrEmpty(roleMap.reference) || !String.IsNullOrEmpty(roleMap.value))
             {
               MappingProperty mappingProperty = new MappingProperty();
-
               mappingProperty.value = null;
 
-              if (!String.IsNullOrEmpty(roleMap.propertyName) && roleMap.propertyName.ToUpper() == dataProperty.propertyName.ToUpper())
+              if (!String.IsNullOrEmpty(roleMap.valueList))
+              {
+
+              }
+              else if (!String.IsNullOrEmpty(roleMap.propertyName) && roleMap.propertyName.ToUpper() == dataProperty.propertyName.ToUpper())
               {
                 mappingProperty.propertyName = dataProperty.propertyName;
                 mappingProperty.dataType = dataProperty.dataType;
@@ -1363,6 +1384,39 @@ namespace org.iringtools.adapter
         _templatePath = lastTemplateMapPath;
         _dtoTemplatePath = lastDtoTemplateMapPath;
         ProcessTemplateMap(templateMap, dataObjectMaps, false);
+      }
+    }
+
+    /// <summary>
+    /// Get list of applications whose dto code have been generated
+    /// </summary>
+    /// <returns></returns>
+    private List<KeyValuePair<string, ScopeApplication>> GetScopeApplications()
+    {
+      try
+      {
+        List<KeyValuePair<string, ScopeApplication>> scopeApps = new List<KeyValuePair<string, ScopeApplication>>();
+        string scopesPath = _settings.XmlPath + "Scopes.xml";
+
+        if (File.Exists(scopesPath))
+        {
+          List<ScopeProject> projects = Utility.Read<List<ScopeProject>>(scopesPath);
+          
+          foreach (ScopeProject project in projects)
+          {
+            foreach (ScopeApplication application in project.Applications)
+            {
+              scopeApps.Add(new KeyValuePair<string, ScopeApplication>(project.Name, application));              
+            }
+          }
+        }
+
+        return scopeApps;
+      }
+      catch (Exception exception)
+      {
+        _logger.Error("Error in GetGeneratedApplications: " + exception);
+        throw exception;
       }
     }
   }
