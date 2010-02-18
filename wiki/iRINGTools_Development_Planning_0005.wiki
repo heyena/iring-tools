@@ -27,6 +27,8 @@
 
 ==Issues Review==
 
+Please work off issues in order and keep the list statused.  Feel free to take items that are assigned to other off clock developers, if you can complete it immediately.  Be sure to coordinate with assigned developer.
+
 || *Priority* || *Issue #* || *Issue Description* || *Assigned* || 
 || 1 || Issue 60 || SPARQL generation does not handle mapping changes. || Monika ||
 || 1 || || TripleStore needs to be application specific, or maybe project specific || Rob ||
