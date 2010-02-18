@@ -37,9 +37,9 @@ Please work off issues in order and keep the list statused.  Feel free to take i
 
 || *Priority* || *Issue #* || *Issue Description* || *Assigned* ||
 || 2 || done || MakeClassRole Button || Hahn ||
-|| 3 || || Fixed Roles should be filled on Adding TemplateMap || Hahn ||
-|| 3 || || When a role is mapped, the details need to update || Hahn ||
-|| 3 || || Reference Roles - being mapped with the wrong classId || Koos ||
+|| 3 || done || Fixed Roles should be filled on Adding TemplateMap || Hahn ||
+|| 3 || done || When a role is mapped, the details need to update || Hahn ||
+|| 3 || done || Reference Roles - being mapped with the wrong classId || Koos ||
 || 3 || || Detail Pane Cleanup || Pavan ||
 || 5 || Issue 52 || In MappingEditor class roles are not identified if more that one level of superclassing is used || Hahn ||
 || 9 || || Second clicks on Nodes makes web service call, in Search and Mapping Trees. || Koos ||
