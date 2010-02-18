@@ -28,6 +28,7 @@ using System.Runtime.Serialization;
 using System.Collections.ObjectModel;
 using System.Xml.Serialization;
 using System.Collections.Generic;
+using System;
 
 namespace org.iringtools.library
 {
@@ -86,8 +87,6 @@ namespace org.iringtools.library
   [XmlRoot(ElementName = "RoleMap")]
   public class RoleMap
   {
-    bool roleMapIsMapped = true;
-
     [XmlAttribute]
     public string roleId { get; set; }
 
@@ -115,8 +114,10 @@ namespace org.iringtools.library
     [XmlIgnore]
     public bool isMapped 
     {
-      get { return roleMapIsMapped; }
-      set { roleMapIsMapped = value; }
+      get 
+      { 
+        return classMap != null || !String.IsNullOrEmpty(reference) || !String.IsNullOrEmpty(value) || !String.IsNullOrEmpty(propertyName); 
+      }
     }
   }
 
