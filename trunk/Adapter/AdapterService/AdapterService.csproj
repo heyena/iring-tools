@@ -105,9 +105,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Code\DataService.cs" />
-    <Compile Include="App_Code\IDataService.Generated.cs" />
+    <Compile Include="App_Code\IDataService.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="App_Code\IService.cs" />
-    <Compile Include="App_Code\IService.Generated.cs" />
     <Compile Include="App_Code\Service.cs" />
     <Content Include="DataService.svc" />
     <Content Include="Web.config" />
