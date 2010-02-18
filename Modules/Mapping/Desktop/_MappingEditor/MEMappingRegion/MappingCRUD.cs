@@ -33,8 +33,6 @@ namespace org.iringtools.modules.memappingregion
 {
   public class MappingCRUD
   {
-    private const string UNMAPPED_LABEL = " [UNMAPPED_LABEL]";
-
     private IIMPresentationModel model = null;
     private IMappingView view = null;
     private IAdapter adapterProxy = null;
@@ -136,13 +134,14 @@ namespace org.iringtools.modules.memappingregion
           SPARQLExtensions.GetObjectTypeFromUri(model.SelectedIMUri) != SPARQLPrefix.ObjectType.Template)
       {
         MessageBox.Show("Please select a valid template", "ADD TEMPLATE", MessageBoxButton.OK);
+        return;
       }
       else if (model.SelectedMappingItem == null || (
           model.SelectedMappingItem.NodeType != NodeType.GraphMap &&
-          model.SelectedMappingItem.NodeType != NodeType.ClassMap)
-        )
+          model.SelectedMappingItem.NodeType != NodeType.ClassMap))
       {
         MessageBox.Show("Please select a graph map or class map", "ADD TEMPLATE", MessageBoxButton.OK);
+        return;
       }
       else
       {
@@ -212,7 +211,6 @@ namespace org.iringtools.modules.memappingregion
         mappingItem.ClassMap.templateMaps.Add(templateMap);
 
         Presenter.PopulateTemplateMap(mappingItem, templateMap);
-        //Presenter.PopulateClassNode(mappingItem, mappingItem.GraphMap);
       }
     }
 
@@ -231,8 +229,8 @@ namespace org.iringtools.modules.memappingregion
       if (template is TemplateDefinition)
       {
         TemplateDefinition templateDefinition = (TemplateDefinition)template;
-
         List<RoleDefinition> roleDefinitions = templateDefinition.roleDefinition;
+
         foreach (RoleDefinition roleDefinition in roleDefinitions)
         {
           string range = roleDefinition.range.GetIdWithAliasFromUri();
@@ -248,8 +246,8 @@ namespace org.iringtools.modules.memappingregion
       if (template is TemplateQualification)
       {
         TemplateQualification templateQualification = (TemplateQualification)template;
-
         List<RoleQualification> roleQualifications = templateQualification.roleQualification;
+
         foreach (RoleQualification roleQualification in roleQualifications)
         {
           string range = roleQualification.range.GetIdWithAliasFromUri();
@@ -261,6 +259,7 @@ namespace org.iringtools.modules.memappingregion
           }
         }
       }
+
       return isClassRoleFound;
     }
 
@@ -272,11 +271,12 @@ namespace org.iringtools.modules.memappingregion
       if (template is TemplateDefinition)
       {
         TemplateDefinition templateDefinition = (TemplateDefinition)template;
-
         List<RoleDefinition> roleDefinitions = templateDefinition.roleDefinition;
+
         foreach (RoleDefinition roleDefinition in roleDefinitions)
         {
           string range = roleDefinition.range.GetIdWithAliasFromUri();
+
           if (range != String.Empty && range != classId)
           {
             RoleMap roleMap = new RoleMap
@@ -284,8 +284,7 @@ namespace org.iringtools.modules.memappingregion
               name = roleDefinition.name.FirstOrDefault().value,
               dataType = range,
               propertyName = "",
-              roleId = roleDefinition.identifier.GetIdWithAliasFromUri(),
-              isMapped = false
+              roleId = roleDefinition.identifier.GetIdWithAliasFromUri()
             };
 
             currentTemplateMap.roleMaps.Add(roleMap);
@@ -298,8 +297,7 @@ namespace org.iringtools.modules.memappingregion
               name = roleDefinition.name.FirstOrDefault().value,
               dataType = range,
               propertyName = "",
-              roleId = roleDefinition.identifier.GetIdWithAliasFromUri(),
-              isMapped = false
+              roleId = roleDefinition.identifier.GetIdWithAliasFromUri()
             };
 
             currentTemplateMap.roleMaps.Add(roleMap);
@@ -309,36 +307,34 @@ namespace org.iringtools.modules.memappingregion
       if (template is TemplateQualification)
       {
         TemplateQualification templateQualification = (TemplateQualification)template;
-
         List<RoleQualification> roleQualifications = templateQualification.roleQualification;
+
         foreach (RoleQualification roleQualification in roleQualifications)
         {
           string range = roleQualification.range.GetIdWithAliasFromUri();
-          if (range != String.Empty && range != classId)
-          {
-            RoleMap roleMap = new RoleMap
-            {
-              name = roleQualification.name.FirstOrDefault().value,
-              dataType = range,
-              propertyName = "",
-              roleId = roleQualification.qualifies.GetIdWithAliasFromUri(),
-              isMapped = false
-            };
+          RoleMap roleMap = new RoleMap();
 
+          roleMap.name = roleQualification.name.FirstOrDefault().value;
+          roleMap.roleId = roleQualification.qualifies.GetIdWithAliasFromUri();
+
+          if (roleQualification.value != null)  // fixed role
+          {
+            if (!String.IsNullOrEmpty(roleQualification.value.reference))  // fixed role is a reference
+            {
+              roleMap.reference = roleQualification.value.reference.GetIdWithAliasFromUri();
+            }
+            else if (!String.IsNullOrEmpty(roleQualification.value.text))  // fixed role is a literal
+            {
+              roleMap.value = roleQualification.value.text;
+              roleMap.dataType = roleQualification.value.As;
+            }
+              
             currentTemplateMap.roleMaps.Add(roleMap);
           }
-
-          if (range == String.Empty && range != classId)
+          else if (range != classId)  // property role
           {
-            RoleMap roleMap = new RoleMap
-            {
-              name = roleQualification.name.FirstOrDefault().value,
-              dataType = range,
-              propertyName = "",
-              roleId = roleQualification.qualifies.GetIdWithAliasFromUri(),
-              isMapped = false
-            };
-
+            roleMap.dataType = range;
+            roleMap.propertyName = String.Empty;
             currentTemplateMap.roleMaps.Add(roleMap);
           }
         }
@@ -389,29 +385,37 @@ namespace org.iringtools.modules.memappingregion
         return;
       }
 
-      if (model.SelectedDataObject == null || model.SelectedDataObject.DataProperty == null)
-      {
-        MessageBox.Show("Please select a property to map", "MAP ROLE", MessageBoxButton.OK);
-        return;
-      }
-
       MappingItem mappingItem = model.SelectedMappingItem;
 
-      if (mappingItem.TemplateMap.type == TemplateType.Property && model.SelectedRoleMap.dataType.Contains("xsd:"))
+      if (mappingItem.TemplateMap.type == TemplateType.Property)
       {
         RoleMap roleMap = model.SelectedRoleMap;
-        roleMap.propertyName = model.SelectedDataObject.DataProperty.propertyName;
-        roleMap.isMapped = true;
-        model.SelectedMappingItem.itemTextBlock.Text = model.SelectedMappingItem.itemTextBlock.Text.Replace(UNMAPPED_LABEL, "");
-      }
-      else if (mappingItem.TemplateMap.type == TemplateType.Property && !model.SelectedRoleMap.dataType.Contains("xsd:"))
-      {
-        RoleMap roleMap = model.SelectedRoleMap;
-        roleMap.propertyName = string.Empty;
-        roleMap.isMapped = true;
-        roleMap.reference = model.SelectedClassMap.classId;
-        model.SelectedMappingItem.itemTextBlock.Text = model.SelectedMappingItem.itemTextBlock.Text.Replace(UNMAPPED_LABEL, "");
 
+        if (model.SelectedRoleMap.dataType.StartsWith("xsd:"))
+        {
+          if (model.SelectedDataObject == null || model.SelectedDataObject.DataProperty == null)
+          {
+            MessageBox.Show("Please select a property to map", "MAP ROLE", MessageBoxButton.OK);
+            return;
+          }
+
+          roleMap.propertyName = model.SelectedDataObject.DataProperty.propertyName;
+          roleMap.dataType = model.SelectedRoleMap.dataType;
+        }
+        else
+        {
+          roleMap.reference = model.SelectedRoleMap.dataType;
+          roleMap.dataType = String.Empty;
+
+          //TODO: 
+          // - enable "Add ValueMap button", does not exist yet
+          // - require user to pick a data object property
+          // - user picks a value map from a pre-defined value list or enter a value (need a combo box)
+        }
+
+        model.SelectedMappingItem.itemTextBlock.Text = model.SelectedMappingItem.itemTextBlock.Text.Replace(Presenter.unmappedToken, "");
+        model.DetailProperties.Clear();
+        Presenter.RefreshRoleMap(roleMap);
       }
       else
       {
@@ -433,8 +437,7 @@ namespace org.iringtools.modules.memappingregion
         };
 
         roleMap.classMap = classMap;
-        roleMap.isMapped = true;
-        model.SelectedMappingItem.itemTextBlock.Text = model.SelectedMappingItem.itemTextBlock.Text.Replace(UNMAPPED_LABEL, "");
+        model.SelectedMappingItem.itemTextBlock.Text = model.SelectedMappingItem.itemTextBlock.Text.Replace(Presenter.unmappedToken, "");
 
         Presenter.PopulateRoleNode(mappingItem, roleMap);
       }
@@ -468,7 +471,9 @@ namespace org.iringtools.modules.memappingregion
         // Remove roleMap from treeview
         templateMapTreeItem.Items.Remove(mappingItem);
 
-        //TODO: make templateMap current selected node so detail pane and model info get updated
+        // Refresh templateMap in detail pane
+        model.DetailProperties.Clear();
+        Presenter.RefreshTemplateMap(templateMapTreeItem.TemplateMap);
       }
     }
 
@@ -511,12 +516,11 @@ namespace org.iringtools.modules.memappingregion
 
           //clear the rolemap
           mappingItem.RoleMap.propertyName = String.Empty;
-          mappingItem.RoleMap.reference = string.Empty;
-          mappingItem.RoleMap.isMapped = false;
+          mappingItem.RoleMap.reference = String.Empty;
 
-          if (!mappingItem.itemTextBlock.Text.EndsWith(UNMAPPED_LABEL))
+          if (!mappingItem.itemTextBlock.Text.EndsWith(Presenter.unmappedToken))
           {
-            mappingItem.itemTextBlock.Text += UNMAPPED_LABEL;
+            mappingItem.itemTextBlock.Text += Presenter.unmappedToken;
           }
 
           break;
@@ -532,11 +536,10 @@ namespace org.iringtools.modules.memappingregion
 
           // clear the parent rolemap
           mappingItem.RoleMap.propertyName = String.Empty;
-          mappingItem.RoleMap.isMapped = false;
 
-          if (!parent.itemTextBlock.Text.EndsWith(UNMAPPED_LABEL))
+          if (!parent.itemTextBlock.Text.EndsWith(Presenter.unmappedToken))
           {
-            parent.itemTextBlock.Text += UNMAPPED_LABEL;
+            parent.itemTextBlock.Text += Presenter.unmappedToken;
           }
 
           break;
