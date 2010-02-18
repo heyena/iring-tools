@@ -1068,7 +1068,6 @@ namespace org.ids_adi.iring.referenceData
                     string id = string.Empty;
                     string label = string.Empty;
                     string description = string.Empty;
-                    //ID = template.identifier.Remove(0, 1);
                     string generatedTempId = string.Empty;
                     string templateName = string.Empty;
                     string roleDefinition = string.Empty;
@@ -1089,12 +1088,12 @@ namespace org.ids_adi.iring.referenceData
                     {
                         if (!ID.StartsWith("tpl:"))
                         {
-                            id = ID.Substring((ID.LastIndexOf("#") + 1), ID.Length - (ID.LastIndexOf("#") + 1));
-                            //ID = "tpl:" + ID;
+                            id = ID.Substring((ID.LastIndexOf("#") + 1), ID.Length - (ID.LastIndexOf("#") + 1));                          
                         }
                         else
                         {
                             id = ID.Substring(4, (ID.Length - 4));
+                            ID = "http://tpl.rdlfacade.org/data#" + ID;
                         }
                         q = GetTemplate(id);
                         foreach (TemplateDefinition templateFound in q.templateDefinitions)
@@ -1344,7 +1343,7 @@ namespace org.ids_adi.iring.referenceData
                                     generatedTempId = CreateIdsAdiId(_exampleRegistryBase, templateName);
                                 else
                                     generatedTempId = CreateIdsAdiId(_templateRegistryBase, templateName);
-                                ID = "tpl:" + generatedTempId;
+                                ID = "<" + generatedTempId +">";
                                 Utility.WriteString("\n" + ID + "\t" + label, "TempQual IDs.log", true);
                                 specialization = template.qualifies;
                                 sparql += "_:spec rdf:type dm:Specialization ; "
@@ -1365,12 +1364,12 @@ namespace org.ids_adi.iring.referenceData
                                     //ID generator
                                     genName = "Role definition " + roleLabel;
                                     /// TODO: change to template registry base
-                                    if (_useExampleRegistryBase)
-                                        generatedId = CreateIdsAdiId(_exampleRegistryBase, genName);
-                                    else
-                                        generatedId = CreateIdsAdiId(_templateRegistryBase, genName);
+                                    //if (_useExampleRegistryBase)
+                                    //    generatedId = CreateIdsAdiId(_exampleRegistryBase, genName);
+                                    //else
+                                    //    generatedId = CreateIdsAdiId(_templateRegistryBase, genName);
                                     roleID = "<" + generatedId + ">";
-
+                                    
                                     //roleID = role.identifier;
                                     foreach (QMXFName roleName in role.name)
                                     {
