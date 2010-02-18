@@ -13,16 +13,6 @@ using System.ServiceModel.Web;
 
 namespace org.iringtools.adapter
 {
-  public partial interface IService
-  {
-    [OperationContract]
-    [XmlSerializerFormat]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}")]
-    Envelope GetList(string projectName, string applicationName, string graphName);
-    
-    [OperationContract]
-    [XmlSerializerFormat]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}")]
-    Envelope Get(string projectName, string applicationName, string graphName, string identifier);
-  }
+  public partial interface IDataService
+  {  }
 }
