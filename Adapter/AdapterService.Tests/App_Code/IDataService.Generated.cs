@@ -14,7 +14,7 @@ using System.ServiceModel.Web;
 namespace org.iringtools.adapter
 {
   [ServiceContract(Namespace = "http://ns.iringtools.org/protocol")]
-  public interface IDataService
+  public partial interface IDataService
   {
     [OperationContract]
     [ServiceKnownType(typeof(org.iringtools.adapter.proj_12345_000.ABC.Valves))]
