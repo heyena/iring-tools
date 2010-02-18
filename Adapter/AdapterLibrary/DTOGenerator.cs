@@ -1078,7 +1078,7 @@ namespace org.iringtools.adapter
         dataServiceWriter.Indent++;
 
         dataServiceWriter.WriteLine("[ServiceContract(Namespace = \"http://ns.iringtools.org/protocol\")]");
-        dataServiceWriter.WriteLine("public interface IDataService");
+        dataServiceWriter.WriteLine("public partial interface IDataService");
         dataServiceWriter.WriteLine("{");
         dataServiceWriter.Indent++;
 
