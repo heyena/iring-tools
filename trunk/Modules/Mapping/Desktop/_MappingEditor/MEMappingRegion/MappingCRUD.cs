@@ -402,15 +402,16 @@ namespace org.iringtools.modules.memappingregion
           roleMap.propertyName = model.SelectedDataObject.DataProperty.propertyName;
           roleMap.dataType = model.SelectedRoleMap.dataType;
         }
+        else if (model.SelectedTreeItem == null || !(model.SelectedTreeItem is ClassTreeItem))
+        {
+          MessageBox.Show("Please select a class to map", "MAP ROLE", MessageBoxButton.OK);
+          return;
+        }
         else
         {
-          roleMap.reference = model.SelectedRoleMap.dataType;
+          ClassDefinition selectedClass = ((ClassTreeItem)model.SelectedTreeItem).ClassDefinition;
+          roleMap.reference = selectedClass.identifier.GetIdWithAliasFromUri();
           roleMap.dataType = String.Empty;
-
-          //TODO: 
-          // - enable "Add ValueMap button", does not exist yet
-          // - require user to pick a data object property
-          // - user picks a value map from a pre-defined value list or enter a value (need a combo box)
         }
 
         model.SelectedMappingItem.itemTextBlock.Text = model.SelectedMappingItem.itemTextBlock.Text.Replace(Presenter.unmappedToken, "");
