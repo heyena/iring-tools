@@ -31,14 +31,14 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <UnitTest Include="AdapterServiceTests">
-      <TestContainer>/testcontainer:$(AdapterServiceRoot)\AdapterService.Tests\bin\Debug\AdapterService.Tests.dll /runconfig:AdapterService.testrunconfig</TestContainer>
-    </UnitTest>
     <UnitTest Include="RefDataServiceTests">
       <TestContainer>/testcontainer:$(RefDataServiceRoot)\ReferenceDataService.Tests\bin\Debug\ReferenceDataService.Tests.dll</TestContainer>
     </UnitTest>
+    <UnitTest Include="AdapterServiceTests">
+      <TestContainer>/testcontainer:$(AdapterServiceRoot)\AdapterService.Tests\bin\Debug\AdapterService.Tests.dll /runconfig:AdapterService.testrunconfig</TestContainer>
+    </UnitTest>
   </ItemGroup>
-
+  
   <ItemGroup>
     <AdapterServiceDeployment
       Include="$(AdapterServiceDir)\**"
@@ -57,6 +57,7 @@
                $(AdapterServiceDir)\App_Code\Model.*.cs;
                $(AdapterServiceDir)\App_Code\DTOModel.*.cs;
                $(AdapterServiceDir)\App_Code\DTOService.*.cs;
+               $(AdapterServiceDir)\App_Code\*.Generated.cs;
                $(AdapterServiceDir)\XML\BindingConfiguration.*.xml;
                $(AdapterServiceDir)\XML\DataDictionary.*.xml;
                $(AdapterServiceDir)\XML\Mapping.*.xml;
@@ -110,6 +111,7 @@
                $(MappingEditorDir)\Properties\**;
                $(MappingEditorDir)\*.html;
                $(MappingEditorDir)\*.csproj;
+               $(MappingEditorDir)\*.cs;
                $(MappingEditorDir)\*.user;
                $(MappingEditorDir)\*.vspscc;
                $(MappingEditorDir)\web.config;
