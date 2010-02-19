@@ -41,14 +41,17 @@ namespace org.iringtools.modules.memappingregion
 
     private TreeView tvwMapping { get { return GetControl<TreeView>("tvwMapping"); } }
 
-    private Button btnData { get { return ButtonCtrl("btnData"); } }
     private Button btnAddTemplate { get { return ButtonCtrl("btnAddTemplate"); } }
     private Button btnAddGraph { get { return ButtonCtrl("btnAddGraph"); } }
     private Button btnMap { get { return ButtonCtrl("btnMap"); } }
     private Button btnMakeClassRole { get { return ButtonCtrl("btnMakeClassRole"); } }
-    private Button btnSave { get { return ButtonCtrl("btnSave"); } }
+    private ComboBox cbValueList { get { return ComboBoxCtrl("cbValueList"); } }
+    private Button btnAddValueList { get { return ButtonCtrl("btnAddValueList"); } }
     private Button btnDelete { get { return ButtonCtrl("btnDelete"); } }
+    private Button btnSave { get { return ButtonCtrl("btnSave"); } }
     private TextBox txtLabel { get { return TextCtrl("txtLabel"); } }
+
+    public string selectedValueList { get { return ((ComboBoxItem)(cbValueList.SelectedItem)).Content.ToString(); } }
 
     // Create, Update, Delete code for Mapping Editor treeview
     private MappingCRUD mappingCRUD = null;
@@ -77,11 +80,11 @@ namespace org.iringtools.modules.memappingregion
 
         // Subcribe to button click events on mappingCRUD
         // note that we're sending in the txtLabel object as sender
-        btnData.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnData_Click(txtLabel, e); };
         btnAddTemplate.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnAddTemplate_Click(txtLabel, e); };
         btnAddGraph.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnAddGraph_Click(txtLabel, e); };
         btnMap.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnMap_Click(txtLabel, e); };
         btnMakeClassRole.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnMakeClassRole_Click(txtLabel, e); };
+        btnAddValueList.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnAddValueList(txtLabel, e); };
         btnSave.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnSave_Click(txtLabel, e); };
         btnDelete.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnDelete_Click(txtLabel, e); };
 
@@ -160,6 +163,29 @@ namespace org.iringtools.modules.memappingregion
       {
         tvwMapping.Items.Add(AddNode(graphMap.name, graphMap, null));
       }
+
+      // Add value maps to value list drop list
+      List<ValueMap> valueMaps = mapping.valueMaps;
+
+      if (valueMaps.Count > 0)
+      {
+        string prevValueList = String.Empty;
+
+        foreach (ValueMap valueMap in valueMaps)
+        {
+          string currValueList = valueMap.valueList;
+
+          if (currValueList != prevValueList)
+          {
+            ComboBoxItem cbItem = new ComboBoxItem();
+            cbItem.Content = currValueList;
+            cbValueList.Items.Add(cbItem);
+            prevValueList = currValueList;
+          }
+        }
+      }
+
+      ChangeControlsState(true);
     }
 
     /// <summary>
@@ -523,32 +549,42 @@ namespace org.iringtools.modules.memappingregion
       switch (e.Active)
       {
         case SpinnerEventType.Started:
-          this.tvwMapping.IsEnabled = false;
-          btnAddGraph.IsEnabled = false;
-          btnAddTemplate.IsEnabled = false;
-          btnData.IsEnabled = false;
-          btnDelete.IsEnabled = false;
-          btnMap.IsEnabled = false;
-          btnSave.IsEnabled = false;
-          btnMakeClassRole.IsEnabled = false;
-
+          ChangeControlsState(false);
           break;
 
         case SpinnerEventType.Stopped:
-          this.tvwMapping.IsEnabled = true;
-          this.tvwMapping.IsEnabled = true;
-          btnAddGraph.IsEnabled = true;
-          btnAddTemplate.IsEnabled = true;
-          btnData.IsEnabled = true;
-          btnDelete.IsEnabled = true;
-          btnMap.IsEnabled = true;
-          btnSave.IsEnabled = true;
-          btnMakeClassRole.IsEnabled = true;
-
+          ChangeControlsState(true);
           break;
 
         default:
           break;
+      }
+    }
+
+    private void ChangeControlsState(bool enabled)
+    {
+      if (mappingCRUD.mapping != null && mappingCRUD.mapping.graphMaps.Count > 0)
+      {
+        tvwMapping.IsEnabled = enabled;
+        txtLabel.IsEnabled = true;
+        btnAddGraph.IsEnabled = enabled;
+        btnAddTemplate.IsEnabled = enabled;
+        btnMap.IsEnabled = enabled;
+        btnMakeClassRole.IsEnabled = enabled;
+
+        if (enabled && cbValueList.Items.Count > 0)
+        {
+          cbValueList.IsEnabled = enabled;
+          btnAddValueList.IsEnabled = enabled;
+        }
+        else
+        {
+          cbValueList.IsEnabled = false;
+          btnAddValueList.IsEnabled = false;
+        }
+
+        btnDelete.IsEnabled = enabled;
+        btnSave.IsEnabled = enabled;
       }
     }
   }
