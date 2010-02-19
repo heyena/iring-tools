@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="Default" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="Default" %>
 
 <%@ Register Assembly="System.Web.Silverlight" Namespace="System.Web.UI.SilverlightControls"
     TagPrefix="asp" %>
