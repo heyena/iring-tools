@@ -7,6 +7,8 @@ A beta release of iRINGTools 1.2 that includes DBDictionaryUtil and "empty" depl
 
 [http://iring-tools.googlecode.com/files/iRINGTools_Migration_Guide_v1_2_0.Draft.pdf Migration Guide]
 
+[http://iring-tools.googlecode.com/files/iRINGTools_Upgrade_Guide_v1_2_0.Draft.pdf Upgrade Guide]
+
 == New Features ==
   * Multi-Project/Application Support in the Adapter Service.
   * PullDTO feature in the Adapter Service.
