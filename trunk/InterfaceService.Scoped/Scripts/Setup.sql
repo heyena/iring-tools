@@ -1,22 +1,8 @@
-IF  EXISTS (SELECT name FROM sys.databases WHERE name = N'<<TOKEN>>')
-DROP DATABASE [<<TOKEN>>]
+IF EXISTS (SELECT * FROM sys.syslogins WHERE name = N'iring')
+DROP LOGIN [iring]
 GO
 
-IF EXISTS (SELECT * FROM sys.syslogins WHERE name = N'<<TOKEN>>')
-DROP LOGIN [<<TOKEN>>]
+CREATE LOGIN [iring] WITH PASSWORD = 'iring', CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF
 GO
 
-CREATE DATABASE [<<TOKEN>>]
-GO
-
-USE [<<TOKEN>>]
-GO
-
-CREATE LOGIN [<<TOKEN>>] WITH PASSWORD = '<<TOKEN>>', CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF
-GO
-
-CREATE USER [<<TOKEN>>] FOR LOGIN [<<TOKEN>>]
-GO
-
-EXEC sp_addrolemember db_owner, [<<TOKEN>>]
-
+EXEC sp_addsrvrolemember [iring], db_creator

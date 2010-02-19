@@ -7,11 +7,19 @@ body {
   color: #30332D;
 }
 
+h1 {
+  font-size: 400%;
+}
+
 div.banner {
   position: absolute;
   left: 14px;
   top: 14px;
   width: 662px;
+}
+
+div.banner h1 img {
+  vertical-align: -55%;
 }
 
 div.main {
@@ -24,7 +32,7 @@ div.main {
 form {
   position: absolute;
   left: 10px;
-  top: 276px;
+  top: 236px;
   width: 662px;
   text-align: right;
 }
