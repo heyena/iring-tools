@@ -104,12 +104,12 @@ namespace org.iringtools.modules.memappingregion
       }
       else
       {
-
         TextBox txtLabel = sender as TextBox;
         GraphMap graphMap = new GraphMap();
         graphMap.name = txtLabel.Text;
         graphMap.classId = SPARQLExtensions.GetIdWithAliasFromUri(model.SelectedIMUri);
         graphMap.identifier = model.SelectedDataObject.DataProperty.propertyName;
+
         if (graphMap.dataObjectMaps == null)
           graphMap.dataObjectMaps = new List<DataObjectMap>();
 
@@ -120,10 +120,9 @@ namespace org.iringtools.modules.memappingregion
           outFilter = ""
 
         };
+
         graphMap.dataObjectMaps.Add(dataObjectMap);
-
         mapping.graphMaps.Add(graphMap);
-
         tvwMapping.Items.Add(Presenter.AddNode(graphMap.name, graphMap, null));
       }
     }
@@ -375,8 +374,6 @@ namespace org.iringtools.modules.memappingregion
         currentTemplateMap.type = TemplateType.Relationship;
     }
 
-    public void btnData_Click(object sender, RoutedEventArgs e) {}
-
     public void btnMap_Click(object sender, RoutedEventArgs e)
     {
       if (model.SelectedRoleMap == null)
@@ -399,8 +396,10 @@ namespace org.iringtools.modules.memappingregion
             return;
           }
 
-          roleMap.propertyName = model.SelectedDataObject.DataProperty.propertyName;
           roleMap.dataType = model.SelectedRoleMap.dataType;
+          roleMap.propertyName = model.SelectedDataObject.DataProperty.propertyName;
+          //roleMap.reference = String.Empty;
+          roleMap.valueList = String.Empty;
         }
         else if (model.SelectedTreeItem == null || !(model.SelectedTreeItem is ClassTreeItem))
         {
@@ -410,8 +409,10 @@ namespace org.iringtools.modules.memappingregion
         else
         {
           ClassDefinition selectedClass = ((ClassTreeItem)model.SelectedTreeItem).ClassDefinition;
-          roleMap.reference = selectedClass.identifier.GetIdWithAliasFromUri();
           roleMap.dataType = String.Empty;
+          roleMap.propertyName = String.Empty;
+          roleMap.reference = selectedClass.identifier.GetIdWithAliasFromUri();
+          roleMap.valueList = String.Empty;
         }
 
         model.SelectedMappingItem.itemTextBlock.Text = model.SelectedMappingItem.itemTextBlock.Text.Replace(Presenter.unmappedToken, "");
@@ -460,12 +461,12 @@ namespace org.iringtools.modules.memappingregion
 
       if (mappingItem.NodeType == NodeType.RoleMap)
       {
-        string classRoleId = mappingItem.RoleMap.roleId;        
+        string classRoleId = mappingItem.RoleMap.roleId;
         MappingItem templateMapTreeItem = (MappingItem)mappingItem.Parent;
 
         // Set classRole for templateMap
         templateMapTreeItem.TemplateMap.classRole = classRoleId;
-        
+
         // Remove roleMap from mapping
         templateMapTreeItem.TemplateMap.roleMaps.Remove(mappingItem.RoleMap);
 
@@ -476,16 +477,55 @@ namespace org.iringtools.modules.memappingregion
         model.DetailProperties.Clear();
         Presenter.RefreshTemplateMap(templateMapTreeItem.TemplateMap);
       }
+      else
+      {
+        MessageBox.Show("Please select a role", "MAP ROLE", MessageBoxButton.OK);
+      }
     }
 
-    public void btnSave_Click(object sender, RoutedEventArgs e)
+    public void btnAddValueList(object sender, RoutedEventArgs e)
     {
-      Response response = adapterProxy.UpdateMapping(projectName, applicationName, mapping);
+      MappingItem mappingItem = model.SelectedMappingItem;
+
+      if (mappingItem == null)
+        return;
+            
+      if (mappingItem.NodeType == NodeType.RoleMap)
+      {
+        if (model.SelectedDataObject == null || model.SelectedDataObject.DataProperty == null)
+        {
+          MessageBox.Show("Please select a property to map", "MAP ROLE", MessageBoxButton.OK);
+        }
+        else if (String.IsNullOrEmpty(Presenter.selectedValueList))
+        {
+          MessageBox.Show("Please select a value list", "MAP ROLE", MessageBoxButton.OK);
+        }
+        else if (mappingItem.TemplateMap.type == TemplateType.Property)
+        {
+          RoleMap roleMap = mappingItem.RoleMap;
+          roleMap.dataType = String.Empty;
+          roleMap.propertyName = model.SelectedDataObject.DataProperty.propertyName;
+          //roleMap.reference = String.Empty;
+          roleMap.valueList = Presenter.selectedValueList;
+          model.SelectedMappingItem.itemTextBlock.Text = model.SelectedMappingItem.itemTextBlock.Text.Replace(Presenter.unmappedToken, "");
+          
+          // Refresh roleMap in detail pane
+          model.DetailProperties.Clear();
+          Presenter.RefreshRoleMap(roleMap);
+        }
+      }
+      else
+      {
+        MessageBox.Show("Please select a role", "MAP ROLE", MessageBoxButton.OK);
+      }
     }
 
     public void btnDelete_Click(object sender, RoutedEventArgs e)
     {
       MappingItem mappingItem = model.SelectedMappingItem;
+
+      if (mappingItem == null)
+        return;
 
       switch (mappingItem.NodeType)
       {
@@ -510,15 +550,20 @@ namespace org.iringtools.modules.memappingregion
         }
         case NodeType.RoleMap:
         {
-          //clear any classmaps
+          RoleMap roleMap = mappingItem.RoleMap;
+          
+          // clear relationship to classmap
           mappingItem.Items.Clear();
           mappingItem.IsExpanded = false;
-          mappingItem.RoleMap.classMap = null;
+          roleMap.classMap = null;
 
-          //clear the rolemap
-          mappingItem.RoleMap.propertyName = String.Empty;
-          mappingItem.RoleMap.reference = String.Empty;
-
+          // clear the rolemap
+          roleMap.dataType = String.Empty;
+          roleMap.propertyName = String.Empty;
+          roleMap.value = String.Empty;
+          roleMap.reference = String.Empty;
+          roleMap.valueList = String.Empty;
+          
           if (!mappingItem.itemTextBlock.Text.EndsWith(Presenter.unmappedToken))
           {
             mappingItem.itemTextBlock.Text += Presenter.unmappedToken;
@@ -553,6 +598,11 @@ namespace org.iringtools.modules.memappingregion
         SelectedNode = mappingItem,
         Sender = this
       });
+    }
+
+    public void btnSave_Click(object sender, RoutedEventArgs e)
+    {
+      Response response = adapterProxy.UpdateMapping(projectName, applicationName, mapping);
     }
   }
 }
