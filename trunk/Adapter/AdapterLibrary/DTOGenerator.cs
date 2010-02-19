@@ -1268,12 +1268,7 @@ namespace org.iringtools.adapter
               MappingProperty mappingProperty = new MappingProperty();
               mappingProperty.value = null;
 
-              if (!String.IsNullOrEmpty(roleMap.valueList))
-              {
-                //TODO: to be handled later
-                continue;
-              }
-              else if (!String.IsNullOrEmpty(roleMap.propertyName) && roleMap.propertyName.ToUpper() == dataProperty.propertyName.ToUpper())
+              if (!String.IsNullOrEmpty(roleMap.propertyName) && roleMap.propertyName.ToUpper() == dataProperty.propertyName.ToUpper())
               {
                 mappingProperty.propertyName = dataProperty.propertyName;
                 mappingProperty.dataType = dataProperty.dataType;
