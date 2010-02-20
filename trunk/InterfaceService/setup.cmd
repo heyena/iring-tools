@@ -12,13 +12,13 @@ for /f "tokens=1,2 delims== " %%i in (setup.conf) do (
 rem Set up database
 @echo Setting up interface service database ...
 if %dbUser% equ "" if %dbPassword% equ "" (
-  SQLCMD -S %dbInstance% -i  .\Scripts\Setup_%token%.sql  
+  SQLCMD -S %dbInstance% -i  .\Scripts\Setup.sql  
   if %errorlevel% equ 0 (
     goto InitRDF
   )  
 )
 
-SQLCMD -U %dbUser% -P %dbPassword% -S %dbInstance% -i  .\Scripts\Setup_%token%.sql
+SQLCMD -U %dbUser% -P %dbPassword% -S %dbInstance% -i  .\Scripts\Setup.sql
 if %errorlevel% equ 0 (
   goto End
 ) 
