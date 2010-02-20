@@ -61,7 +61,12 @@ namespace org.iringtools.adapter.projection
           _trimData = settings.TrimData;  
           _dtoService = dtoService;
         }
-        
+
+        public void Initialize()
+        {
+          //nothing to do here.
+        }
+
         public List<string> GetIdentifiers(string graphName)
         {
             try
