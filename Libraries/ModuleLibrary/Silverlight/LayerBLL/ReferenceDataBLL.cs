@@ -83,11 +83,6 @@ namespace org.iringtools.modulelibrary.layerbll
         ServiceName = processType.ToString()
       });
 
-      aggregator.GetEvent<SpinnerEvent>().Publish(new SpinnerEventArgs
-      {
-        Active = SpinnerEventType.Stopped,
-        ActiveService = Enum.GetName(typeof(CompletedEventType),processType)
-      });
       // POST Processing (if applicable)
       switch (processType)
       {
@@ -139,6 +134,12 @@ namespace org.iringtools.modulelibrary.layerbll
       if (OnDataArrived != null)
           if (((CompletedEventArgs)e).Data!=null)
             OnDataArrived(sender, e);
+
+      aggregator.GetEvent<SpinnerEvent>().Publish(new SpinnerEventArgs
+      {
+          Active = SpinnerEventType.Stopped,
+          ActiveService = Enum.GetName(typeof(CompletedEventType), processType)
+      });
     } 
     #endregion
 

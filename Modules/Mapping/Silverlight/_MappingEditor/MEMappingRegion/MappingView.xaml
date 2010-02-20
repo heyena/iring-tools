@@ -15,16 +15,16 @@
 
     <Grid Grid.Row="0">
       <StackPanel Orientation="Horizontal" Margin="4,4,4,0">
-        <TextBox x:Name="txtLabel" BorderBrush="#8FA0AE" Width="Auto" MinWidth="150" Height="24" Text="{Binding Path=SelectedIMLabel}" IsEnabled="False"/>
-        <Button x:Name="btnAddGraph" Height="24" Width="40" Margin="5,0,0,0" Content="+G" IsEnabled="False"/>
-        <Button x:Name="btnAddTemplate" Height="24" Width="40" Margin="5,0,0,0" Content="+T" IsEnabled="False"/>
-        <Button x:Name="btnMap" Height="24" Width="40" Margin="5,0,0,0" Content="+M" IsEnabled="False"/>
-        <Button x:Name="btnMakeClassRole" Height="24" Width="40" Margin="5,0,0,0" Content="/CR" IsEnabled="False"/>
-        <ComboBox x:Name="cbValueList" MinWidth="120" Margin="5,0,0,0" Height="24" IsEnabled="False"/>
-        <Button x:Name="btnAddValueList" Height="24" Width="40" Margin="1,0,0,0" Content="+VL" IsEnabled="False"/>
-        <Button x:Name="btnDelete" Height="24" Width="40" Margin="5,0,0,0" Content="X" IsEnabled="False"/>
-        <Button x:Name="btnSave" Height="24" Width="40" Margin="5,0,0,0" Content="Save" IsEnabled="False"/>
-      </StackPanel>
+                <TextBox x:Name="txtLabel" BorderBrush="#8FA0AE" Width="Auto" MinWidth="150" Height="24" Text="{Binding Path=SelectedIMLabel}" IsEnabled="False"/>
+                <Button x:Name="btnAddGraph" Height="24" Width="40" Margin="5,0,0,0" Content="+G" ToolTipService.ToolTip="Add Graph" ToolTipService.Placement="Top" IsEnabled="False"/>
+                <Button x:Name="btnAddTemplate" Height="24" Width="40" Margin="5,0,0,0" Content="+T" ToolTipService.ToolTip="Add Template" ToolTipService.Placement="Top" IsEnabled="False"/>
+                <Button x:Name="btnMap" Height="24" Width="40" Margin="5,0,0,0" Content="+M" ToolTipService.ToolTip="Add Map" ToolTipService.Placement="Top" IsEnabled="False"/>
+                <Button x:Name="btnMakeClassRole" Height="24" Width="40" Margin="5,0,0,0" Content="+CR" ToolTipService.ToolTip="Make ClassRole" ToolTipService.Placement="Top" IsEnabled="False"/>
+                <ComboBox x:Name="cbValueList" MinWidth="120" Margin="5,0,0,0" Height="24" IsEnabled="False"/>
+                <Button x:Name="btnAddValueList" Height="24" Width="40" Margin="1,0,0,0" Content="+VL" ToolTipService.ToolTip="Add Value List" ToolTipService.Placement="Top" IsEnabled="False"/>
+                <Button x:Name="btnDelete" Height="24" Width="40" Margin="5,0,0,0" Content="X" ToolTipService.ToolTip="Delete" ToolTipService.Placement="Top" IsEnabled="False"/>
+                <Button x:Name="btnSave" Height="24" Width="40" Margin="5,0,0,0" Content="Save" ToolTipService.ToolTip="Save Mapping file" ToolTipService.Placement="Top" IsEnabled="False"/>
+            </StackPanel>
     </Grid>
     
     <Grid Grid.Row="1" Margin="4,4,4,4">
