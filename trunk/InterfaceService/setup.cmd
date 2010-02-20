@@ -14,7 +14,7 @@ rem Set up database
 if %dbUser% equ "" if %dbPassword% equ "" (
   SQLCMD -S %dbInstance% -i  .\Scripts\Setup.sql  
   if %errorlevel% equ 0 (
-    goto InitRDF
+    goto End
   )  
 )
 
