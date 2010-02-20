@@ -13,7 +13,6 @@ using System.ServiceModel.Web;
 
 namespace org.iringtools.adapter
 {
-  [ServiceContract(Namespace = "http://ns.iringtools.org/protocol")]
   public partial interface IDataService
   {
     [OperationContract]
