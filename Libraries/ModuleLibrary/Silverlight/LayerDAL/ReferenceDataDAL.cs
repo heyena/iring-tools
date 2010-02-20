@@ -440,18 +440,18 @@ namespace org.iringtools.modulelibrary.layerdal
             string result = ((DownloadStringCompletedEventArgs)e).Result;
 
             string baseAddress = classLabelClient.BaseAddress;
-            int keyIndex = baseAddress.LastIndexOf("?key=");
-            int uriIndex = baseAddress.LastIndexOf("&uri=");
+            int tagIndex = baseAddress.LastIndexOf("?tag=");
+            int idIndex = baseAddress.LastIndexOf("&id=");
 
-            string key = baseAddress.Substring(keyIndex + 5, uriIndex - keyIndex - 5);
-            string uri = baseAddress.Substring(uriIndex + 5);
+            string tag = baseAddress.Substring(tagIndex + 5, idIndex - tagIndex - 5);
+            string id = baseAddress.Substring(idIndex + 4);
             string label = result.DeserializeDataContract<string>();
 
             CompletedEventArgs args = new CompletedEventArgs
             {
               UserState = ((DownloadStringCompletedEventArgs)e).UserState,
               CompletedType = CompletedEventType.GetClassLabel,
-              Data = new string[] { key, uri, label }
+              Data = new string[] { tag, id, label }
             };
 
             OnDataArrived(this, args);
@@ -532,12 +532,22 @@ namespace org.iringtools.modulelibrary.layerdal
           return null;
         }
 
-        public void GetClassLabel(string key, string uri, object userState)
+        public void GetClassLabel(string tag, string id, object userState)
         {
-          WebClient classLabelClient = new WebClient();
-          string id = uri.Substring(uri.LastIndexOf("#") + 1);
+          if (String.IsNullOrEmpty(id)) return;
 
-          classLabelClient.BaseAddress += "?key=" + key + "&uri=" + uri;
+          // remove prefix in id if exists
+          if (id.Contains("#"))
+          {
+            id = id.Substring(id.LastIndexOf("#") + 1);
+          }
+          else if (id.Contains(":"))
+          {
+            id = id.Substring(id.LastIndexOf(":") + 1);
+          }
+
+          WebClient classLabelClient = new WebClient();          
+          classLabelClient.BaseAddress += "?tag=" + tag + "&id=" + id;
           classLabelClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(ClassLabelCompletedEvent);
           classLabelClient.DownloadStringAsync(new Uri(_referenceDataServiceUri + "/classes/" + id + "/label"), userState);
         }

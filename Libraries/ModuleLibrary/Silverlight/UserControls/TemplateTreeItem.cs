@@ -75,7 +75,7 @@ namespace org.iringtools.informationmodel.usercontrols
       }
       else if (CompletedEventArgs.CheckForType(CompletedEventType.GetClassLabel))
       {
-        ShowAndSaveLabel(CompletedEventArgs.Data);
+        DisplayAndSaveLabel(CompletedEventArgs.Data);
       }
     }
 
@@ -133,16 +133,17 @@ namespace org.iringtools.informationmodel.usercontrols
         PresentationModel.DetailProperties.Add(list);
 
         string statusClass = templateDefinition.status.FirstOrDefault() != null ? templateDefinition.status.FirstOrDefault().Class : string.Empty;
-        GetClassLabel("Status Class", statusClass);
+        PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>("Status Class", statusClass));
 
         string statusAuthority = templateDefinition.status.FirstOrDefault() != null ? templateDefinition.status.FirstOrDefault().authority : string.Empty;
-        GetClassLabel("Status Authority", statusAuthority);
+        PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>("Status Authority", statusAuthority));
 
         string statusFrom = templateDefinition.status.FirstOrDefault() != null ? templateDefinition.status.FirstOrDefault().from : string.Empty;
-        GetClassLabel("Status From", statusFrom);
+        PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>("Status From", statusFrom));
 
         string statusTo = templateDefinition.status.FirstOrDefault() != null ? templateDefinition.status.FirstOrDefault().to : string.Empty;
-        GetClassLabel("Status To", statusTo);
+        PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>("Status To", statusTo));
+
       }
       else if (Tag is TemplateQualification)
       {

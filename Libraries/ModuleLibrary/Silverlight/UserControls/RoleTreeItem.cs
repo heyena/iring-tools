@@ -69,7 +69,7 @@ namespace org.iringtools.informationmodel.usercontrols
       }
       else if (CompletedEventArgs.CheckForType(CompletedEventType.GetClassLabel))
       {
-        ShowAndSaveLabel(CompletedEventArgs.Data);
+        DisplayAndSaveLabel(CompletedEventArgs.Data);
       }
     }
 
@@ -125,8 +125,6 @@ namespace org.iringtools.informationmodel.usercontrols
 
         keyValuePair = new KeyValuePair<string, string>("Name", (roleDefinition.name.FirstOrDefault() != null ? roleDefinition.name.FirstOrDefault().value : string.Empty));
         PresentationModel.DetailProperties.Add(keyValuePair);
-
-        //GetClassLabel("Identifier", roleDefinition.identifier);
 
         keyValuePair = new KeyValuePair<string, string>("Identifier", (roleDefinition.identifier != null ? roleDefinition.identifier.ToString() : string.Empty));
         PresentationModel.DetailProperties.Add(keyValuePair);

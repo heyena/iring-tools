@@ -52,7 +52,7 @@ namespace org.iringtools.modules.memappingregion
     private TextBox txtLabel { get { return TextCtrl("txtLabel"); } }
 
     public string selectedValueList { get { return ((ComboBoxItem)(cbValueList.SelectedItem)).Content.ToString(); } }
-
+    
     // Create, Update, Delete code for Mapping Editor treeview
     private MappingCRUD mappingCRUD = null;
 
@@ -119,30 +119,19 @@ namespace org.iringtools.modules.memappingregion
     void OnDataArrivedHandler(object sender, System.EventArgs e)
     {
       CompletedEventArgs args = e as CompletedEventArgs;
+      
       if (args == null)
         return;
 
-      // Handle the GetMapping() event 
       if (args.CheckForType(CompletedEventType.GetMapping))
+      {
         GetMappingHandler(args);
+      }
       else if (args.CheckForType(CompletedEventType.GetClassLabel))
       {
         GetClassLabelHandler(args);
       }
     }
-
-    /// <summary>
-    /// getclasslabel handler.
-    /// </summary>
-    /// <param name="e">The <see cref="org.iringtools.modulelibrary.events.CompletedEventArgs"/> instance containing the event data.</param>
-    void GetClassLabelHandler(CompletedEventArgs e)
-    {
-      string[] data = (string[])e.Data;
-
-      KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Class Name", data[2]);
-      model.DetailProperties.Add(keyValuePair);
-    }
-
 
     /// <summary>
     /// mapping handler.
@@ -186,6 +175,22 @@ namespace org.iringtools.modules.memappingregion
       }
 
       ChangeControlsState(true);
+    }
+
+    /// <summary>
+    /// getclasslabel handler.
+    /// </summary>
+    /// <param name="e">The <see cref="org.iringtools.modulelibrary.events.CompletedEventArgs"/> instance containing the event data.</param>
+    void GetClassLabelHandler(CompletedEventArgs e)
+    {
+      string[] data = (string[])e.Data;
+      string tag = data[0];
+      string id = data[1];
+      string label = data[2];
+
+      KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>(tag, label);
+      model.DetailProperties.Add(keyValuePair);
+      model.IdLabelDictionary[id] = label;
     }
 
     /// <summary>
@@ -247,12 +252,27 @@ namespace org.iringtools.modules.memappingregion
       
       keyValuePair = new KeyValuePair<string, string>("Class Id", classMap.classId);
       model.DetailProperties.Add(keyValuePair);
-      keyValuePair = new KeyValuePair<string, string>("Class Name", classMap.name);
-      model.DetailProperties.Add(keyValuePair);
       keyValuePair = new KeyValuePair<string, string>("Identifier", classMap.identifier);
       model.DetailProperties.Add(keyValuePair);
-      //string id = classMap.classId.Substring(classMap.classId.LastIndexOf(":") + 1);
-      //referenceDataService.GetClassLabel(id, id, this);      
+
+      string id = classMap.classId;
+      if (id.Contains("#"))
+      {
+        id = id.Substring(id.LastIndexOf("#") + 1);
+      }
+      else if (id.Contains(":"))
+      {
+        id = id.Substring(id.LastIndexOf(":") + 1);
+      }
+
+      if (model.IdLabelDictionary.ContainsKey(id))
+      {
+        model.DetailProperties.Add(new KeyValuePair<string, string>("Class Name", model.IdLabelDictionary[id]));
+      }
+      else
+      {
+        referenceDataService.GetClassLabel("Class Name", classMap.classId, this);
+      }
     }
 
     public void RefreshTemplateMap(TemplateMap templateMap)

@@ -17,9 +17,7 @@ namespace org.iringtools.ontologyservice.presentation.presentationmodels
 {
   public interface IIMPresentationModel : IPresentationModel
   {
-
     TreeView MappingTree { get; set; }
-
     ObservableCollection<KeyValuePair<string, string>> DetailProperties { get; set; }
 
     DataProperty SelectedDataSource { get; set; }
@@ -27,8 +25,7 @@ namespace org.iringtools.ontologyservice.presentation.presentationmodels
     bool SelectedDataSourceIsPropertyKey { get; set; }
     bool SelectedDataSourceIsRequiredField { get; set; }
     string SelectedDataSourcePropertyName { get; set; }
-
-    
+        
     Entity SelectedInformationModelNode { get; set; }
     string SelectedIMLabel { get; set; }
     string SelectedIMRepository { get; set; }
@@ -48,6 +45,6 @@ namespace org.iringtools.ontologyservice.presentation.presentationmodels
     QMXF SelectedQMXF { get; set; }
     Dictionary<string, QMXF> ClassesHistory { get; set; }
     Dictionary<string, QMXF> TemplatesHistory { get; set; }
-
+    Dictionary<string, string> IdLabelDictionary { get; }
   }
 }
