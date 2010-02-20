@@ -110,21 +110,6 @@
     </Compile>
     <Compile Include="App_Code\IService.cs" />
     <Compile Include="App_Code\Service.cs" />
-    <Content Include="App_Code\DTOModel.12345_000.ABC.cs">
-      <SubType>Code</SubType>
-    </Content>
-    <Content Include="App_Code\DTOService.12345_000.ABC.cs">
-      <SubType>Code</SubType>
-    </Content>
-    <Content Include="App_Code\IDataService.Generated.cs">
-      <SubType>Code</SubType>
-    </Content>
-    <Content Include="App_Code\IService.Generated.cs">
-      <SubType>Code</SubType>
-    </Content>
-    <Content Include="App_Code\Model.12345_000.ABC.cs">
-      <SubType>Code</SubType>
-    </Content>
     <Content Include="DataService.svc" />
     <Content Include="Web.config" />
     <Content Include="XML\Seed.DatabaseDictionary.xml" />
