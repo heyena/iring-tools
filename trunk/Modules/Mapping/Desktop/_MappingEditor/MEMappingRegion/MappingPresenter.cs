@@ -606,6 +606,10 @@ namespace org.iringtools.modules.memappingregion
         btnDelete.IsEnabled = enabled;
         btnSave.IsEnabled = enabled;
       }
+      else if (mappingCRUD.mapping != null && mappingCRUD.mapping.graphMaps.Count == 0)
+      {
+          btnAddGraph.IsEnabled = enabled;
+      }
     }
   }
 }

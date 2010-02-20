@@ -106,15 +106,16 @@ namespace org.iringtools.modulelibrary.layerbll
           break;
       }
 
-      aggregator.GetEvent<SpinnerEvent>().Publish(new SpinnerEventArgs
-      {
-        Active = SpinnerEventType.Stopped,
-        ActiveService = processType.ToString()
-      });
 
       // Raise the event after processing (bubble to subscribers)     
       if (OnDataArrived != null)
         OnDataArrived(sender, e);
+
+      aggregator.GetEvent<SpinnerEvent>().Publish(new SpinnerEventArgs
+      {
+          Active = SpinnerEventType.Stopped,
+          ActiveService = processType.ToString()
+      });
     }
 
     #endregion

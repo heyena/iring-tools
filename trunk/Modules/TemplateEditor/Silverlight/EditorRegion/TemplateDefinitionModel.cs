@@ -52,8 +52,8 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 foreach (KeyValuePair<string, object> lstItm in _roles)
                 {
                     RoleDefinition role = (RoleDefinition)lstItm.Value;
-                    if (string.IsNullOrEmpty(role.identifier))
-                    role.identifier = (i++).ToString();
+                   // if (string.IsNullOrEmpty(role.identifier))
+                   // role.identifier = (i++).ToString();
                     _templateDefinition.roleDefinition.Add(role);
                 }
 
