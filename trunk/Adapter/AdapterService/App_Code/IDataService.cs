@@ -10,9 +10,14 @@
 using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Web;
+using org.iringtools.library;
 
 namespace org.iringtools.adapter
 {
+  [ServiceContract(Namespace = "http://ns.iringtools.org/protocol")]
   public partial interface IDataService
-  {  }
+  {
+    [OperationContract]
+    List<ScopeProject> GetScopes();
+  }
 }

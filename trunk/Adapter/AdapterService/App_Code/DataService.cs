@@ -44,6 +44,15 @@ namespace org.iringtools.adapter
       _adapterServiceProvider = new AdapterProvider(ConfigurationManager.AppSettings);
     }
 
+    /// <summary>
+    /// Gets the list of projects by reading Project.xml.
+    /// </summary>
+    /// <returns>Returns a strongly typed list of ScopeProject objects.</returns>
+    public List<ScopeProject> GetScopes()
+    {
+      return _adapterServiceProvider.GetScopes();
+    }
+
     public DTOResponse GetData(DTORequest request)
     {
       DTOResponse response = new DTOResponse();

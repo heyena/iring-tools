@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using org.iringtools.adapter;
@@ -41,9 +42,13 @@ namespace org.iringtools.adapter.projection
 {
   public class SemWebEngine : IProjectionEngine
   {
+    private string _scopeName = String.Empty;
+    private string _scopedConnectionString = String.Empty;
+
     private bool _trimData;
     private IDTOService _dtoService;
     private AdapterSettings _settings;
+    private ApplicationSettings _applicationSettings;
     private Store _store = null;
     private Mapping _mapping = null;
     private Dictionary<string, Dictionary<string, string>> _refreshValueLists = null;
@@ -59,6 +64,31 @@ namespace org.iringtools.adapter.projection
     public const string tplPrefix = "http://tpl.rdlfacade.org/data#";
     public const string egPrefix = "http://www.example.com/data#";
 
+    const string _prefixTriplestoreConnectString = @"sqlserver:rdf:Database=rdf;";
+    const string _credentialsTriplestoreMaster = @"Initial Catalog=master; User Id=iring; Password=iring;";
+    const string _credentialsTriplestoreTemplate = @"Initial Catalog={0}; User Id={0}; Password={0};";
+    
+    const string _sqlCheckDatabase =
+      @"SELECT name FROM sys.databases WHERE name = N'@token'";
+
+    const string _sqlDropDatabase =
+      @"DROP DATABASE [@token]";
+
+    const string _sqlCheckLogin =
+      @"SELECT * FROM sys.syslogins WHERE name = N'@token'";
+
+    const string _sqlDropLogin =
+      @"DROP LOGIN [@token]";
+
+    const string _sqlCreateDatabase =
+      @"CREATE DATABASE [@token]";
+
+    const string _sqlCreateLogin =
+      @"USE [@token]
+        CREATE LOGIN [@token] WITH PASSWORD = '@token', CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF
+        CREATE USER [@token] FOR LOGIN [@token]
+        EXEC sp_addrolemember db_owner, [@token]";
+
     public static string rdfType = rdfPrefix + "type";
     public static SemWeb.Entity classificationTemplateType = dmPrefix + "classification";
     public static string classType = dmPrefix + "class";
@@ -68,15 +98,155 @@ namespace org.iringtools.adapter.projection
     #endregion
 
     [Inject]
-    public SemWebEngine(AdapterSettings settings, IDTOService dtoService)
+    public SemWebEngine(AdapterSettings settings, ApplicationSettings applicationSettings, IDTOService dtoService)
     {
       _settings = settings;
+      _applicationSettings = applicationSettings;
       _dtoService = dtoService;
       _mapping = settings.Mapping;
       _trimData = settings.TrimData;
-      _store = Store.Create(settings.TripleStoreConnectionString);
 
+      _scopeName = _applicationSettings.ProjectName + "_" + _applicationSettings.ApplicationName;
+
+      _scopedConnectionString = ScopeConnectionString(settings.TripleStoreConnectionString, _scopeName);
     }
+
+    public void Initialize()
+    {
+      string rawConnectionString = _scopedConnectionString.Remove(0, _prefixTriplestoreConnectString.Length);
+
+      bool isVerified = VerifyConnectionString(rawConnectionString);
+
+      if (!isVerified)
+      {
+        int prefixLength = _prefixTriplestoreConnectString.Length;
+        string masterConnectionString = _settings.TripleStoreConnectionString.Remove(0, prefixLength);
+
+        DropDatabase(masterConnectionString);
+
+        CreateDatabase(masterConnectionString);
+      }
+
+      _store = Store.Create(_scopedConnectionString);
+    }
+
+    private void DropDatabase(string connectionString)
+    {
+      try
+      {
+        using (SqlConnection connection = new SqlConnection(connectionString))
+        {
+          string sqlCheckDatabase = _sqlCheckDatabase.Replace("@token", _scopeName);
+
+          connection.Open();
+
+          object databaseName = null;
+          using (SqlCommand command = new SqlCommand(sqlCheckDatabase, connection))
+          {
+            databaseName = command.ExecuteScalar();
+          }
+
+          if (databaseName != null)
+          {
+            string sqlDropDatabase = _sqlDropDatabase.Replace("@token", _scopeName);
+
+            using (SqlCommand command = new SqlCommand(sqlDropDatabase, connection))
+            {
+              command.ExecuteNonQuery();
+            }
+          }
+
+          string sqlCheckLogin = _sqlCheckLogin.Replace("@token", _scopeName);
+
+          object loginName = null;
+          using (SqlCommand command = new SqlCommand(sqlCheckLogin, connection))
+          {
+            loginName = command.ExecuteScalar();
+          }
+
+          if (loginName != null)
+          {
+            string sqlDropLogin = _sqlDropLogin.Replace("@token", _scopeName);
+
+            using (SqlCommand command = new SqlCommand(sqlDropLogin, connection))
+            {
+              command.ExecuteNonQuery();
+            }
+          }
+        }
+      }
+      catch (Exception exception)
+      {
+        throw new Exception("Error while dropping the triplestore database, " + _scopeName + ".", exception);
+      }
+    }
+
+    private void CreateDatabase(string connectionString)
+    {
+      try
+      {
+        using (SqlConnection connection = new SqlConnection(connectionString))
+        {
+          string sqlCreateDatabase = _sqlCreateDatabase.Replace("@token", _scopeName);
+
+          connection.Open();
+
+          using (SqlCommand command = new SqlCommand(sqlCreateDatabase, connection))
+          {
+            
+            command.ExecuteNonQuery();
+          }
+
+          string sqlCreateLogin = _sqlCreateLogin.Replace("@token", _scopeName);
+
+          using (SqlCommand command = new SqlCommand(sqlCreateLogin, connection))
+          {
+
+            command.ExecuteNonQuery();
+          }
+        }
+      }
+      catch (Exception exception)
+      {
+        throw new Exception("Error while creating the triplestore database, " + _scopeName + ".", exception);
+      }
+    }
+
+    private string ScopeConnectionString(string connectionString, string scopeName)
+    {
+      try
+      {
+        string scopedConnectionString = String.Empty;
+
+        string tripleStoreCredentials = String.Format(_credentialsTriplestoreTemplate, scopeName);
+
+        scopedConnectionString = connectionString.Replace(_credentialsTriplestoreMaster, tripleStoreCredentials);
+
+        return scopedConnectionString;
+      }
+      catch (Exception exception)
+      {
+        throw new Exception(String.Format("ScopeConnectionString[{0}]", connectionString), exception);
+      }
+    }
+
+    private bool VerifyConnectionString(string connectionString)
+    {
+      try
+      {
+        using (SqlConnection connection = new SqlConnection(connectionString))
+        {
+          connection.Open();
+        }
+
+        return true;
+      }
+      catch
+      {
+        return false;
+      }
+    }
+
 
     public List<string> GetIdentifiers(string graphName)
     {

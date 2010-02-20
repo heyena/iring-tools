@@ -15,6 +15,7 @@ namespace org.iringtools.adapter.projection
     void Delete(string graphName, string identifier);
     void DeleteList(string graphName, List<string> identifiers);
     void DeleteAll();
+    void Initialize();
     //RDF GetRDF();
   }
 }

@@ -67,27 +67,35 @@ namespace org.iringtools.adapter
 
     public void InitializeApplication(string projectName, string applicationName)
     {
-      ApplicationSettings applicationSettings = _kernel.Get<ApplicationSettings>(
-        new ConstructorArgument("projectName", projectName),
-        new ConstructorArgument("applicationName", applicationName)
-      );
-
-      string bindingConfigurationPath = _settings.XmlPath + applicationSettings.BindingConfigurationPath;
-      BindingConfiguration bindingConfiguration = Utility.Read<BindingConfiguration>(bindingConfigurationPath, false);
-      _kernel.Load(new DynamicModule(bindingConfiguration));
-      _settings.Mapping = GetMapping(projectName, applicationName);
-      _dtoService = _kernel.TryGet<IDTOService>("DTOService");
-
-      if (_dtoService != null)
+      try
       {
-        if (_settings.UseSemweb)
+        ApplicationSettings applicationSettings = _kernel.Get<ApplicationSettings>(
+          new ConstructorArgument("projectName", projectName),
+          new ConstructorArgument("applicationName", applicationName)
+        );
+
+        string bindingConfigurationPath = _settings.XmlPath + applicationSettings.BindingConfigurationPath;
+        BindingConfiguration bindingConfiguration = Utility.Read<BindingConfiguration>(bindingConfigurationPath, false);
+        _kernel.Load(new DynamicModule(bindingConfiguration));
+        _settings.Mapping = GetMapping(projectName, applicationName);
+        _dtoService = _kernel.TryGet<IDTOService>("DTOService");
+
+        if (_dtoService != null)
         {
-          _projectionEngine = _kernel.Get<IProjectionEngine>("SemWeb");
+          if (_settings.UseSemweb)
+          {
+            _projectionEngine = _kernel.Get<IProjectionEngine>("SemWeb");
+          }
+          else
+          {
+            _projectionEngine = _kernel.Get<IProjectionEngine>("Sparql");
+          }
         }
-        else
-        {
-          _projectionEngine = _kernel.Get<IProjectionEngine>("Sparql");
-        }
+      }
+      catch (Exception exception)
+      {
+        _logger.Error("Error in Initializing Application: " + exception);
+        throw new Exception("Error in Initializing Application: " + exception.ToString(), exception);
       }
     }
 
@@ -407,6 +415,8 @@ namespace org.iringtools.adapter
         if (!_isAppInitialized)
           InitializeApplication(projectName, applicationName);
 
+        _projectionEngine.Initialize();
+
         DateTime b = DateTime.Now;
 
         List<DataTransferObject> commonDTOList = _dtoService.GetList(graphName);
@@ -477,6 +487,9 @@ namespace org.iringtools.adapter
         DateTime e = DateTime.Now;
         TimeSpan d = e.Subtract(b);
 
+        //RefreshDTO is private, so no need.
+        //_projectionEngine.Initialize();
+
         _projectionEngine.Post(dto);
         response.Add(String.Format("RefreshDTO({0},{1}) Execution Time [{2}:{3}.{4}] Seconds", dto.GraphName, dto.Identifier, d.Minutes, d.Seconds, d.Milliseconds));
       }
@@ -521,6 +534,8 @@ namespace org.iringtools.adapter
         DateTime b = DateTime.Now;
         DateTime e;
         TimeSpan d;
+
+        _projectionEngine.Initialize();
 
         List<DataTransferObject> dtoList = _projectionEngine.GetList(graphName);
 
@@ -611,7 +626,10 @@ namespace org.iringtools.adapter
       {
         InitializeApplication(projectName, applicationName);
 
+        _projectionEngine.Initialize();
+
         _projectionEngine.DeleteAll();
+
         response.Add("Store cleared successfully.");
       }
       catch (Exception exception)
@@ -858,6 +876,13 @@ namespace org.iringtools.adapter
           }
 
           response.Add("Database dictionary updated successfully.");
+
+          InitializeApplication(projectName, applicationName);
+          _projectionEngine.Initialize();
+
+          //This cannot say this here, will not know it is a triplestore
+          //OK for now.
+          response.Add("Triplestore verified.");
         }
       }
       catch (Exception exception)

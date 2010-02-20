@@ -131,7 +131,17 @@ namespace org.iringtools.adapter
         List<KeyValuePair<string, string>> scopeApps = GetScopeApplications();
         foreach (KeyValuePair<string, string> scopeApp in scopeApps)
         {
-          sources.Add(Utility.ReadString(_settings.CodePath + "Model." + scopeApp.Key + "." + scopeApp.Value + ".cs"));
+          string modelPath = _settings.CodePath + "Model." + scopeApp.Key + "." + scopeApp.Value + ".cs";
+          if (File.Exists(modelPath))
+          {
+            sources.Add(Utility.ReadString(modelPath));
+          }
+
+          string dtoModelPath = _settings.CodePath + "DTOModel." + scopeApp.Key + "." + scopeApp.Value + ".cs";
+          if (File.Exists(dtoModelPath))
+          {
+            sources.Add(Utility.ReadString(dtoModelPath));
+          }
         }
         
         // Do compile
@@ -1077,7 +1087,6 @@ namespace org.iringtools.adapter
         dataServiceWriter.WriteLine("{");
         dataServiceWriter.Indent++;
 
-        dataServiceWriter.WriteLine("[ServiceContract(Namespace = \"http://ns.iringtools.org/protocol\")]");
         dataServiceWriter.WriteLine("public partial interface IDataService");
         dataServiceWriter.WriteLine("{");
         dataServiceWriter.Indent++;
