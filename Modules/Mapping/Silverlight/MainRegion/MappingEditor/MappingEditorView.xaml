@@ -20,21 +20,19 @@
     </Grid.ColumnDefinitions>
 
     <Grid.RowDefinitions>
-            <RowDefinition x:Name="ProjAppRow" Height="26"/>
-            <RowDefinition x:Name="TopRow" Height="*"/>
+      <RowDefinition x:Name="ProjAppRow" Height="26"/>
+      <RowDefinition x:Name="TopRow" Height="*"/>
       <RowDefinition x:Name="BottomRow" Height="*"/>
     </Grid.RowDefinitions>
-        <ItemsControl Name="ProjectApplication" Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0"  Regions:RegionManager.RegionName="ProjAppRegion"
-                      VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-      
-        <ItemsControl Name="DataSource" Grid.Row="1" Grid.Column="0" Regions:RegionManager.RegionName="MEDataSourceRegion"
+    
+    <ItemsControl Name="ProjectApplication" Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0"  Regions:RegionManager.RegionName="ProjAppRegion"
+                  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+
+    <ItemsControl Name="DataSource" Grid.Row="1" Grid.Column="0" Regions:RegionManager.RegionName="MEDataSourceRegion"
 						      VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  />
 
     <ItemsControl Name="Search" Grid.Row="1" Grid.Column="1" Regions:RegionManager.RegionName="SearchRegion"
         		      VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-
-    <!--<ItemsControl Name="Navigation" Grid.Row="1" Grid.Column="1" Regions:RegionManager.RegionName="NavigationRegion"
-	  				  	VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>-->
 
     <ItemsControl Name="Details" Grid.Row="2"  Grid.Column="0" Regions:RegionManager.RegionName="DetailRegion" 
 				          HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />

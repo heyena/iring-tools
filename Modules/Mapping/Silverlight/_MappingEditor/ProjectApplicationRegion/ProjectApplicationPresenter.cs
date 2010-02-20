@@ -35,6 +35,8 @@ namespace org.iringtools.modules.projectapplicationregion
 
     private ComboBox prjCB { get { return ComboBoxCtrl("ProjectCombo"); } }
     private ComboBox appCB { get { return ComboBoxCtrl("AppCombo"); } }
+    private Button btnGenerate { get { return ButtonCtrl("btnGenerate"); } }
+    private Button btnRefresh { get { return ButtonCtrl("btnRefresh"); } }
     
     public ProjectApplicationPresenter(
       IProjectApplicationView view, 
@@ -50,10 +52,21 @@ namespace org.iringtools.modules.projectapplicationregion
 
       prjCB.SelectionChanged += new SelectionChangedEventHandler(prjCB_SelectionChanged);
       appCB.SelectionChanged += new SelectionChangedEventHandler(appCB_SelectionChanged);
+      btnGenerate.Click += new RoutedEventHandler(btnGenerate_Click);
+      btnRefresh.Click += new RoutedEventHandler(btnRefresh_Click);
+
       _adapterProxy.OnDataArrived += new EventHandler<EventArgs>(adapterProxy_OnDataArrived);
-
       _adapterProxy.GetScopes();
+    }
 
+    void btnGenerate_Click(object sender, EventArgs e)
+    {
+      _adapterProxy.Generate((string)prjCB.SelectedItem, (string)appCB.SelectedItem);
+    }
+
+    void btnRefresh_Click(object sender, EventArgs e)
+    {
+      _adapterProxy.RefreshAll((string)prjCB.SelectedItem, (string)appCB.SelectedItem);
     }
 
     void adapterProxy_OnDataArrived(object sender, EventArgs e)
@@ -72,6 +85,14 @@ namespace org.iringtools.modules.projectapplicationregion
           prjCB.Items.Add(project.Name);
         }
       }
+      else if (args.CheckForType(CompletedEventType.Generate))
+      {
+        MessageBox.Show((string)args.Data);
+      }
+      else if (args.CheckForType(CompletedEventType.RefreshAll))
+      {
+        MessageBox.Show((string)args.Data);
+      }
     }
 
     void appCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -84,7 +105,16 @@ namespace org.iringtools.modules.projectapplicationregion
       {
         _adapterProxy.GetDictionary(projName, appName);
         _adapterProxy.GetMapping(projName, appName);
+
+        btnGenerate.IsEnabled = true;
+        btnRefresh.IsEnabled = true;
       }
+      else
+      {
+        btnGenerate.IsEnabled = false;
+        btnRefresh.IsEnabled = false;
+      }
+
       _aggregator.GetEvent<SelectionEvent>().Publish(new SelectionEventArgs
       {
           SelectedProject = (string)prjCB.SelectedItem,
@@ -101,6 +131,8 @@ namespace org.iringtools.modules.projectapplicationregion
         if (project.Name == (string)prjCB.SelectedItem)
         {
           appCB.Items.Clear();
+          btnGenerate.IsEnabled = false;
+          btnRefresh.IsEnabled = false;
 
           foreach (ScopeApplication app in project.Applications)
           {
