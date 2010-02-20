@@ -83,8 +83,6 @@ namespace org.iringtools.informationmodel.usercontrols
         keyValuePair = new KeyValuePair<string, string>("Name", (classDefinition.name.FirstOrDefault() != null ? classDefinition.name.FirstOrDefault().value : string.Empty));
         PresentationModel.DetailProperties.Add(keyValuePair);
 
-        //GetClassLabel("Identifier", classDefinition.identifier);
-
         keyValuePair = new KeyValuePair<string, string>("Identifier", (classDefinition.identifier != null ? classDefinition.identifier.ToString() : string.Empty));
         PresentationModel.DetailProperties.Add(keyValuePair);
 
@@ -95,16 +93,16 @@ namespace org.iringtools.informationmodel.usercontrols
         PresentationModel.DetailProperties.Add(keyValuePair);
 
         string statusClass = classDefinition.status.FirstOrDefault() != null ? classDefinition.status.FirstOrDefault().Class : string.Empty;
-        GetClassLabel("Status Class", statusClass);
+        PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>("Status Class", statusClass));
 
         string statusAuthority = classDefinition.status.FirstOrDefault() != null ? classDefinition.status.FirstOrDefault().authority : string.Empty;
-        GetClassLabel("Status Authority", statusAuthority);
+        PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>("Status Authority", statusAuthority));
 
         string statusFrom = classDefinition.status.FirstOrDefault() != null ? classDefinition.status.FirstOrDefault().from : string.Empty;
-        GetClassLabel("Status From", statusFrom);
+        PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>("Status From", statusFrom));
 
         string statusTo = classDefinition.status.FirstOrDefault() != null ? classDefinition.status.FirstOrDefault().to : string.Empty;
-        GetClassLabel("Status To", statusTo);
+        PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>("Status To", statusTo));
       }
     }
 
@@ -243,7 +241,7 @@ namespace org.iringtools.informationmodel.usercontrols
       }
       else if (CompletedEventArgs.CheckForType(CompletedEventType.GetClassLabel))
       {
-        ShowAndSaveLabel(CompletedEventArgs.Data);
+        DisplayAndSaveLabel(CompletedEventArgs.Data);
       }
     }
     #endregion

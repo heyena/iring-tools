@@ -324,5 +324,19 @@ namespace org.iringtools.ontologyservice.presentation
         OnPropertyChanged("DetailProperties");
       }
     }
+
+    private Dictionary<string, string> _idLabelDictionary;
+    public Dictionary<string, string> IdLabelDictionary
+    {
+      get
+      {
+        if (_idLabelDictionary == null)
+        {
+          _idLabelDictionary = new Dictionary<string, string>();
+        }
+
+        return _idLabelDictionary;
+      }
+    }
   }
 }

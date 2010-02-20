@@ -58,7 +58,6 @@ namespace org.iringtools.informationmodel.usercontrols
     public string id = String.Empty;
     public TextBlock tooltipText { get; set; }
     private QMXF _qmxf { get; set; }
-    protected Dictionary<string, string> uriLabels = new Dictionary<string, string>();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CustomTreeItem"/> class.
@@ -249,35 +248,42 @@ namespace org.iringtools.informationmodel.usercontrols
 
       return item;
     }
-
-    public void GetClassLabel(string key, string uri)
+    
+    public void GetClassLabel(string tag, string id)
     {
-      if (uri != null && Regex.Match(uri, @"^http[s]?://.*#R.*").Success)
+      if (String.IsNullOrEmpty(id) || String.IsNullOrEmpty(tag))
+        return;
+
+      // remove prefix in id if exists
+      if (id.Contains("#"))
       {
-        if (uriLabels.ContainsKey(uri))
-        {
-          PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>(key, uriLabels[uri]));
-        }
-        else
-        {
-          ReferenceDataService.GetClassLabel(key, uri, this);
-        }
+        id = id.Substring(id.LastIndexOf("#") + 1);
+      }
+      else if (id.Contains(":"))
+      {
+        id = id.Substring(id.LastIndexOf(":") + 1);
+      }
+
+      // check local cache see if the label has been resolved
+      if (PresentationModel.IdLabelDictionary.ContainsKey(id))
+      {
+        PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>(tag, PresentationModel.IdLabelDictionary[id]));
       }
       else
       {
-        PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>(key, uri));
+        ReferenceDataService.GetClassLabel(tag, id, this);
       }
     }
 
-    public void ShowAndSaveLabel(object completedEventArgsData)
+    public void DisplayAndSaveLabel(object completedEventArgsData)
     {
       string[] data = (string[])completedEventArgsData;
-      string key = data[0];
-      string uri = data[1];
+      string tag = data[0];
+      string id = data[1];
       string label = data[2];
 
-      PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>(key, label));
-      uriLabels.Add(uri, label);
+      PresentationModel.IdLabelDictionary[id] = label;
+      PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>(tag, label));
     }
 
     private BitmapImage GetImageSource(string iconName)
