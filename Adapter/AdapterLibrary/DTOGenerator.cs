@@ -127,7 +127,7 @@ namespace org.iringtools.adapter
         sources.Add(Utility.ReadString(_settings.CodePath + "Service.cs"));
         sources.Add(Utility.ReadString(_settings.CodePath + "DataService.cs"));
 
-        // Add DTO models code
+        // Add models and DTOmodels for other apps.
         List<KeyValuePair<string, string>> scopeApps = GetScopeApplications();
         foreach (KeyValuePair<string, string> scopeApp in scopeApps)
         {
@@ -137,10 +137,13 @@ namespace org.iringtools.adapter
             sources.Add(Utility.ReadString(modelPath));
           }
 
-          string dtoModelPath = _settings.CodePath + "DTOModel." + scopeApp.Key + "." + scopeApp.Value + ".cs";
-          if (File.Exists(dtoModelPath))
+          if (scopeApp.Key != projectName && scopeApp.Value != applicationName)
           {
-            sources.Add(Utility.ReadString(dtoModelPath));
+            string dtoModelPath = _settings.CodePath + "DTOModel." + scopeApp.Key + "." + scopeApp.Value + ".cs";
+            if (File.Exists(dtoModelPath))
+            {
+              sources.Add(Utility.ReadString(dtoModelPath));
+            }
           }
         }
         
