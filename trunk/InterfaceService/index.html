@@ -3,6 +3,80 @@
     <meta http-equiv="cache-control" content="no-cache">
     <link rel="stylesheet" type="text/css" href="interface.css">
     <title>iRING Interface</title>
+    <script type="text/javascript" src="./scripts/iRINGTools.js"></script>
+    <script type="text/javascript">
+      var projScopeList = new Array();
+            
+      function getScopes() {
+        document.getElementById('submitBtn').disabled = true;
+        
+        var url = document.getElementById('adapterServiceUri').value + '/scopes?sid=' + Math.random();
+        iRINGTools.sendHttpRequest('GET', url, true, populateScopes, null);
+      }
+      
+      function populateScopes(scopesXml) {
+        var scopes = iRINGTools.getXmlDOM(scopesXml);
+        
+        if (scopes != null) {
+          var projList = document.getElementById('projList');
+          projList.options.length = 0;          
+          
+          var appList = document.getElementById('appList');
+          appList.options.length = 0;
+          
+          var projects = scopes.getElementsByTagName('ScopeProject');
+          projScopeList.length = 0;
+          
+          for (var i = 0; i < projects.length; i++) {
+            var projName = projects[i].getElementsByTagName('Name')[0].text;
+            var applications = projects[i].getElementsByTagName('ScopeApplication');  
+            var appScopeList = new Array();            
+            
+            for (var j = 0; j < applications.length; j++) {
+              var appName = applications[j].getElementsByTagName('Name')[0].text;
+              appScopeList.push(appName);
+              
+              if (i == 0) {
+                appList.options[appList.options.length] = new Option(appName, appName);
+              }
+            }
+            
+            projList.options[projList.options.length] = new Option(projName, projName);
+            projScopeList[projName] = appScopeList;            
+          }
+          
+          if (appList.value.length > 0) {
+            document.getElementById('submitBtn').disabled = false;
+          }
+        }
+        else {
+          alert('Scopes not found!');
+        }
+      }
+      
+      function refreshAppList(projName) {
+        var appList = document.getElementById('appList');
+        appList.options.length = 0;
+        
+        var appScopeList = projScopeList[projName];
+        for (var i = 0; i < appScopeList.length; i++) {
+          var appName = appScopeList[i];
+          appList.options[appList.options.length] = new Option(appName, appName);
+        }
+        
+        if (appList.value.length > 0) {
+          document.getElementById('submitBtn').disabled = false;
+        }
+      }
+      
+      function updateEndpoint(form) {
+        var projList = document.getElementById('projList');
+        var appList = document.getElementById('appList');
+        
+        form.action = projList.value + '/' + appList.value + '/sparql';
+        return true;
+      }
+    </script>
   </head>
   <body>
     <div class="banner">
@@ -21,17 +95,29 @@
         The form below can be used to test <a href="http://www.w3.org/TR/rdf-sparql-query/">SPARQL queries</a> against the <a href="http://razor.occams.info/code/semweb/">SemWeb</a> triple store.
       <p>
     </div>
-    <form action="12345_000/ABC/sparql" method="post" enctype="application/x-www-form-urlencoded">
-      <input type="hidden" name="outputMimeType" value="text/html"/>
-      <input type="hidden" name="stylesheet" size="25" value="/xml-to-html.xsl">
-      <textarea name="query" rows="10" cols="80">
+    <form method="post" enctype="application/x-www-form-urlencoded" onsubmit="return updateEndpoint(this)">
+      <table cellspacing="2">
+        <tr>
+          <td colspan="2"><textarea name="query" rows="10" cols="80">
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 SELECT * WHERE {
   ?s ?p ?o .
 }
 LIMIT 10
-      </textarea>
-      <input class="button" type="submit" value="Execute Query"/>
+          </textarea></td>
+        </tr>
+        <tr align="right">
+          <td><span style="color:#ddd">Adapter Service URI: </span><input id="adapterServiceUri" style="width:260px;height:22px" type="text" value="http://localhost:52786/Service.svc"/>
+              <input type="button" style="height:24px" value="Get Scopes" onclick="getScopes()"/></td> 
+        </tr>
+        <tr align="right">        
+          <td><input type="hidden" name="outputMimeType" value="text/html"/>
+              <input type="hidden" name="stylesheet" value="/xml-to-html.xsl">
+              <span style="color:#ddd">Project: </span><select id="projList" style="width:120px;height:22px" onchange="refreshAppList(this.value)"></select>
+              <span style="color:#ddd">Application: </span><select id="appList" style="width:120px;height:22px"></select>
+              <input id="submitBtn" type="submit" style="height:24px" value="Execute Query" disabled/></td>
+        </tr>
+      </table>
     </form>
   </body>
 </html> 
