@@ -37,6 +37,11 @@ using SemWeb;
 using SemWeb.Util;
 using SemWeb.Query;
 using Ninject;
+using System.Xml;
+using System.Xml.Linq;
+using System.IO;
+using System.Web.Configuration;
+using System.Configuration;
 
 namespace org.iringtools.adapter.projection
 {
@@ -64,6 +69,7 @@ namespace org.iringtools.adapter.projection
     public const string tplPrefix = "http://tpl.rdlfacade.org/data#";
     public const string egPrefix = "http://www.example.com/data#";
 
+    const string _prefixSparqlConnectString = @"noreuse,rdfs+";
     const string _prefixTriplestoreConnectString = @"sqlserver:rdf:Database=rdf;";
     const string _credentialsTriplestoreMaster = @"Initial Catalog=master; User Id=iring; Password=iring;";
     const string _credentialsTriplestoreTemplate = @"Initial Catalog={0}; User Id={0}; Password={0};";
@@ -113,6 +119,81 @@ namespace org.iringtools.adapter.projection
 
     public void Initialize()
     {
+      EnsureWebConfig();
+
+      EnsureDatabaseExists();
+
+      _store = Store.Create(_scopedConnectionString);
+    }
+
+    private void EnsureWebConfig()
+    {
+      string webConfigPath = _settings.InterfaceServerPath + @"Web.config";
+
+      XDocument webConfig = XDocument.Load(webConfigPath);
+      
+      string myHandlerPath = 
+        @"InterfaceService/" + _applicationSettings.ProjectName + 
+        @"/" + _applicationSettings.ApplicationName + "/sparql";
+
+      string sparqlConnectionString = _prefixSparqlConnectString + _scopedConnectionString;
+
+      XElement httpHandlers = 
+        webConfig.Elements("configuration").Elements("system.web").Elements("httpHandlers").FirstOrDefault();
+
+      XElement myHttpHandler = (from httpHandler in httpHandlers.Elements("add")
+                                 where httpHandler.Attributes("path").FirstOrDefault().Value == myHandlerPath
+                                 select httpHandler).FirstOrDefault();
+
+      if (myHttpHandler == null)
+      {
+        myHttpHandler = new XElement("add");
+        myHttpHandler.Add(new XAttribute("verb", "*")); 
+        myHttpHandler.Add(new XAttribute("path", myHandlerPath));
+        myHttpHandler.Add(new XAttribute("type", "SemWeb.Query.SparqlProtocolServerHandler, SemWeb.Sparql"));
+
+        httpHandlers.Add(myHttpHandler);
+      }
+
+      XElement handlers = 
+        webConfig.Elements("configuration").Elements("system.webServer").Elements("handlers").FirstOrDefault();
+
+      XElement myHandler = (from handler in handlers.Elements("add")
+                             where handler.Attributes("name").FirstOrDefault().Value == _scopeName
+                             select handler).FirstOrDefault();
+
+      if (myHandler == null)
+      {
+        myHandler = new XElement("add");
+        myHandler.Add(new XAttribute("name", _scopeName));
+        myHandler.Add(new XAttribute("verb", "*"));
+        myHandler.Add(new XAttribute("path", myHandlerPath));
+        myHandler.Add(new XAttribute("type", "SemWeb.Query.SparqlProtocolServerHandler, SemWeb.Sparql"));
+
+        handlers.Add(myHandler);
+      }
+
+      XElement sparqlSources = 
+        webConfig.Elements("configuration").Elements("sparqlSources").FirstOrDefault();
+
+      XElement mySparqlSource = (from sparqlSource in sparqlSources.Elements("add")
+                                 where sparqlSource.Attributes("key").FirstOrDefault().Value == @"/" + myHandlerPath
+                                 select sparqlSource).FirstOrDefault();
+
+      if (mySparqlSource == null)
+      {
+        mySparqlSource = new XElement("add");
+        mySparqlSource.Add(new XAttribute("key", @"/" + myHandlerPath));
+        mySparqlSource.Add(new XAttribute("value", sparqlConnectionString));
+
+        sparqlSources.Add(mySparqlSource);
+      }
+
+      webConfig.Save(webConfigPath);      
+    }
+
+    private void EnsureDatabaseExists()
+    {
       string rawConnectionString = _scopedConnectionString.Remove(0, _prefixTriplestoreConnectString.Length);
 
       bool isVerified = VerifyConnectionString(rawConnectionString);
@@ -126,8 +207,6 @@ namespace org.iringtools.adapter.projection
 
         CreateDatabase(masterConnectionString);
       }
-
-      _store = Store.Create(_scopedConnectionString);
     }
 
     private void DropDatabase(string connectionString)
