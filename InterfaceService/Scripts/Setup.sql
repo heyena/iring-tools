@@ -6,3 +6,5 @@ CREATE LOGIN [iring] WITH PASSWORD = 'iring', CHECK_EXPIRATION=OFF, CHECK_POLICY
 GO
 
 EXEC sp_addsrvrolemember [iring], dbcreator
+
+EXEC sp_addsrvrolemember [iring], securityadmin
