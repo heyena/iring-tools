@@ -23,6 +23,6 @@ public class MapModule : IHttpModule
         app.Response.ContentType = "text/plain";
 
         if (app.Request.Path.EndsWith("sparql"))
-            app.Server.MapPath("InterfaceService/sparql");
+            app.Server.MapPath(app.Request.Path);
     }
 }
