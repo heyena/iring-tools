@@ -45,6 +45,11 @@ namespace org.iringtools.adapter
       _adapterServiceProvider = new AdapterProvider(ConfigurationManager.AppSettings);
     }
 
+    public Manifest GetManifest(string projectName, string applicationName)
+    {
+      return _adapterServiceProvider.GetManifest(projectName, applicationName);
+    }
+
     /// <summary>
     /// Gets the mapping by reading Mapping.xml.
     /// </summary>

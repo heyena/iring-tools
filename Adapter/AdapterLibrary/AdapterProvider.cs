@@ -156,6 +156,37 @@ namespace org.iringtools.adapter
       }
     }
 
+    public Manifest GetManifest(string projectName, string applicationName)
+    {
+      string path = _settings.XmlPath + "Mapping." + projectName + "." + applicationName + ".xml";
+
+      try
+      {
+        Manifest manifest = new Manifest();
+
+        manifest.Graphs = new List<ManifestGraph>();
+
+        if (File.Exists(path))
+        {
+          Mapping mapping = Utility.Read<Mapping>(path, false);
+
+          foreach (GraphMap graphMap in mapping.graphMaps)
+          {
+            ManifestGraph manifestGraph = new ManifestGraph { GraphName = graphMap.name };
+
+            manifest.Graphs.Add(manifestGraph);
+          }
+        }
+
+        return manifest;
+      }
+      catch (Exception exception)
+      {
+        _logger.Error("Error in GetManifest: " + exception);
+        throw new Exception("Error while getting the manifest from " + path + "." + exception);
+      }
+    }
+    
     /// <summary>
     /// Gets the Data Dictionary by reading DataDictionary.xml
     /// </summary>
