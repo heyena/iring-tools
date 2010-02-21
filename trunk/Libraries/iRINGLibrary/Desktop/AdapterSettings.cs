@@ -13,7 +13,8 @@ namespace org.iringtools.adapter
   {
     private string _encryptedToken = String.Empty;
     private string _tripleStoreConnectionString = String.Empty;
-    private string _interfaceServer = String.Empty;
+    private string _interfaceServerUri = String.Empty;
+    private string _interfaceServerPath = String.Empty;
     private string _binaryPath = string.Empty;
     private string _codePath = string.Empty;
 
@@ -27,6 +28,7 @@ namespace org.iringtools.adapter
       this.UseSemweb = Convert.ToBoolean(AppSettings["UseSemweb"]);
       this.TripleStoreConnectionString = AppSettings["TripleStoreConnectionString"];
       this.InterfaceServer = AppSettings["InterfaceService"];
+      this.InterfaceServerPath = AppSettings["InterfaceServicePath"];
       this.EncryptedToken = AppSettings["TargetCredentialToken"];
       this.TrimData = Convert.ToBoolean(AppSettings["TrimData"]);
       this.BinaryPath = AppSettings["BinaryPath"];
@@ -76,17 +78,17 @@ namespace org.iringtools.adapter
     {
       get
       {
-        return _interfaceServer;
+        return _interfaceServerUri;
       }
       set
       {
         if (value == String.Empty || value == null)
         {
-          _interfaceServer = @"http://localhost/InterfaceService/sparql";
+          _interfaceServerUri = @"http://localhost/InterfaceService/sparql";
         }
         else
         {
-          _interfaceServer = value;
+          _interfaceServerUri = value;
         }
       }
     }
@@ -150,6 +152,25 @@ namespace org.iringtools.adapter
         else
         {
           _codePath = value;
+        }
+      }
+    }
+
+    public string InterfaceServerPath
+    {
+      get
+      {
+        return _interfaceServerPath;
+      }
+      set
+      {
+        if (value == String.Empty || value == null)
+        {
+          _interfaceServerPath = @"..\InterfaceService\";
+        }
+        else
+        {
+          _interfaceServerPath = value;
         }
       }
     }
