@@ -118,7 +118,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="App_Code\DataService.cs" />
+    <Compile Include="App_Code\DTOModel.12345_000.ABC.cs" />
+    <Compile Include="App_Code\DTOService.12345_000.ABC.cs" />
+    <Compile Include="App_Code\IDataService.Generated.cs" />
     <Compile Include="App_Code\IService.cs" />
+    <Compile Include="App_Code\IService.Generated.cs" />
+    <Compile Include="App_Code\Model.12345_000.ABC.cs" />
     <Compile Include="App_Code\Service.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
