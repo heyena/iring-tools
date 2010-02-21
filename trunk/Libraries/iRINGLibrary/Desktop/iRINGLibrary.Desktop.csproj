@@ -74,6 +74,7 @@
     <Compile Include="DataDictionary.cs" />
     <Compile Include="IAdapter.cs" />
     <Compile Include="IData.cs" />
+    <Compile Include="Manifest.cs" />
     <Compile Include="ScopeApplication.cs" />
     <Compile Include="Mapping.cs" />
     <Compile Include="IDataLayer.cs">

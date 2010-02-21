@@ -52,6 +52,10 @@ namespace org.iringtools.adapter
     [WebGet(UriTemplate = "/scopes")]
     List<ScopeProject> GetScopes();
 
+    [OperationContract]
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/manifest")]
+    Manifest GetManifest(string projectName, string applicationName);
+
     [XmlSerializerFormat]
     [OperationContract]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/mapping")]
