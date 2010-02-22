@@ -583,32 +583,32 @@ namespace org.iringtools.modules.memappingregion
 
     private void ChangeControlsState(bool enabled)
     {
-      if (mappingCRUD.mapping != null && mappingCRUD.mapping.graphMaps.Count > 0)
-      {
-        tvwMapping.IsEnabled = enabled;
-        txtLabel.IsEnabled = true;
+      if (mappingCRUD.mapping != null)
+      { 
+        txtLabel.IsEnabled = enabled;
         btnAddGraph.IsEnabled = enabled;
-        btnAddTemplate.IsEnabled = enabled;
-        btnMap.IsEnabled = enabled;
-        btnMakeClassRole.IsEnabled = enabled;
 
-        if (enabled && cbValueList.Items.Count > 0)
+        if (mappingCRUD.mapping.graphMaps.Count > 0)
         {
-          cbValueList.IsEnabled = enabled;
-          btnAddValueList.IsEnabled = enabled;
-        }
-        else
-        {
-          cbValueList.IsEnabled = false;
-          btnAddValueList.IsEnabled = false;
-        }
+          tvwMapping.IsEnabled = enabled;
+          btnAddTemplate.IsEnabled = enabled;
+          btnMap.IsEnabled = enabled;
+          btnMakeClassRole.IsEnabled = enabled;
 
-        btnDelete.IsEnabled = enabled;
-        btnSave.IsEnabled = enabled;
-      }
-      else if (mappingCRUD.mapping != null && mappingCRUD.mapping.graphMaps.Count == 0)
-      {
-          btnAddGraph.IsEnabled = enabled;
+          if (enabled && cbValueList.Items.Count > 0)
+          {
+            cbValueList.IsEnabled = enabled;
+            btnAddValueList.IsEnabled = enabled;
+          }
+          else
+          {
+            cbValueList.IsEnabled = false;
+            btnAddValueList.IsEnabled = false;
+          }
+
+          btnDelete.IsEnabled = enabled;
+          btnSave.IsEnabled = enabled;
+        }      
       }
     }
   }
