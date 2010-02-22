@@ -68,6 +68,8 @@ namespace org.iringtools.adapter.projection
     public const string rdlPrefix = "http://rdl.rdlfacade.org/data#";
     public const string tplPrefix = "http://tpl.rdlfacade.org/data#";
     public const string egPrefix = "http://www.example.com/data#";
+    public const string owlPrefix = "http://www.w3.org/2002/07/owl#";
+    public const string p7tplPrefix = "http://tpl.rdswip.org/2009/04/ISO-15926-7_2009_WD#";
 
     const string _prefixSparqlConnectString = @"noreuse,rdfs+";
     const string _prefixTriplestoreConnectString = @"sqlserver:rdf:Database=rdf;";
@@ -96,9 +98,10 @@ namespace org.iringtools.adapter.projection
         EXEC sp_addrolemember db_owner, [@token]";
 
     public static string rdfType = rdfPrefix + "type";
-    public static SemWeb.Entity classificationTemplateType = dmPrefix + "classification";
-    public static string classType = dmPrefix + "class";
-    public static string instanceType = dmPrefix + "instance";
+    public static SemWeb.Entity owlThingEntity = owlPrefix + "Thing";
+    public static SemWeb.Entity classificationTemplateType = p7tplPrefix + "ClassificationOfIndividual";
+    public static string classType = p7tplPrefix + "hasClass";
+    public static string instanceType = p7tplPrefix + "hasIndividual";
     public static SemWeb.Entity startDateTimeTemplate = tplPrefix + "startDateTime";
     public static string endDateTimeTemplate = tplPrefix + "endDateTime";
     #endregion
@@ -375,20 +378,23 @@ namespace org.iringtools.adapter.projection
           SemWeb.Variable templateVariable = new SemWeb.Variable("t1");
           SemWeb.Variable propertyNameVariable = new SemWeb.Variable(identifierRoleMap.propertyName);
 
-          Statement statementA = new Statement(classificationVariable, rdfType, classificationTemplateType);
-          Statement statementB = new Statement(classificationVariable, classType, classIdEntity);
-          Statement statementC = new Statement(classificationVariable, instanceType, relatedClassificationTemplate);
-          Statement statementD = new Statement(templateVariable, rdfType, templateIdEntity);
-          Statement statementE = new Statement(templateVariable, templateMapClassRole, relatedClassificationTemplate);
-          Statement statementF = new Statement(templateVariable, roleMapRoleId, propertyNameVariable);
+          Statement statementA = new Statement(classificationVariable, rdfType, owlThingEntity);
+          Statement statementB = new Statement(classificationVariable, rdfType, classificationTemplateType);
+          Statement statementC = new Statement(classificationVariable, classType, classIdEntity);
+          Statement statementD = new Statement(classificationVariable, instanceType, relatedClassificationTemplate);
+          Statement statementE = new Statement(templateVariable, rdfType, owlThingEntity);
+          Statement statementF = new Statement(templateVariable, rdfType, templateIdEntity);
+          Statement statementG = new Statement(templateVariable, templateMapClassRole, relatedClassificationTemplate);
+          Statement statementH = new Statement(templateVariable, roleMapRoleId, propertyNameVariable);
 
-          //TODO : Monika - Add for other roles
           query.AddGraphStatement(statementA);
           query.AddGraphStatement(statementB);
           query.AddGraphStatement(statementC);
           query.AddGraphStatement(statementD);
           query.AddGraphStatement(statementE);
           query.AddGraphStatement(statementF);
+          query.AddGraphStatement(statementG);
+          query.AddGraphStatement(statementH);
 
           QueryResultBuffer resultBuffer = GetUnterminatedTemplates(query, templateVariable);
 
@@ -560,13 +566,15 @@ namespace org.iringtools.adapter.projection
         {
           GraphMatch queryClass = new GraphMatch();
           Variable classificationTemplateVariable = new Variable("c1");
-          Statement statementB = new Statement(classificationTemplateVariable, rdfType, classificationTemplateType);
-          Statement statementC = new Statement(classificationTemplateVariable, classType, classIdEntity);
-          Statement statementD = new Statement(classificationTemplateVariable, instanceType, instanceValue);
+          Statement statementB = new Statement(classificationTemplateVariable, rdfType, owlThingEntity);
+          Statement statementC = new Statement(classificationTemplateVariable, rdfType, classificationTemplateType);
+          Statement statementD = new Statement(classificationTemplateVariable, classType, classIdEntity);
+          Statement statementE = new Statement(classificationTemplateVariable, instanceType, instanceValue);
 
           queryClass.AddGraphStatement(statementB);
           queryClass.AddGraphStatement(statementC);
           queryClass.AddGraphStatement(statementD);
+          queryClass.AddGraphStatement(statementE);
 
           QueryResultBuffer resultBufferUnterminatedClass = GetUnterminatedTemplates(queryClass, classificationTemplateVariable);
           VariableBindings variableBindingsToBeTerminated = (VariableBindings)(resultBufferUnterminatedClass.Bindings[0]);
@@ -651,13 +659,15 @@ namespace org.iringtools.adapter.projection
 
           SemWeb.Variable classificationTemplateVariable = new Variable("c1");
 
-          Statement statementB = new Statement(classificationTemplateVariable, rdfType, classificationTemplateType);
-          Statement statementC = new Statement(classificationTemplateVariable, classType, classIdEntity);
-          Statement statementD = new Statement(classificationTemplateVariable, instanceType, instanceValue);
+          Statement statementB = new Statement(classificationTemplateVariable, rdfType, owlThingEntity);
+          Statement statementC = new Statement(classificationTemplateVariable, rdfType, classificationTemplateType);
+          Statement statementD = new Statement(classificationTemplateVariable, classType, classIdEntity);
+          Statement statementE = new Statement(classificationTemplateVariable, instanceType, instanceValue);
 
           queryClass.AddGraphStatement(statementB);
           queryClass.AddGraphStatement(statementC);
           queryClass.AddGraphStatement(statementD);
+          queryClass.AddGraphStatement(statementE);
 
           QueryResultBuffer resultBufferUnterminatedClass = GetUnterminatedTemplates(queryClass, classificationTemplateVariable);
           VariableBindings variableBindingsToBeTerminated = (VariableBindings)(resultBufferUnterminatedClass.Bindings[0]);
@@ -802,11 +812,13 @@ namespace org.iringtools.adapter.projection
                 SemWeb.Entity parentIdentifierVariableEntity = parentIdentifierVariable.Replace("eg:", egPrefix);
                 string templateMapClassRole = templateMap.classRole.Replace("tpl:", tplPrefix);
 
-                Statement statementA = new Statement(templateVariable, rdfType, templateTypeEntity);
-                Statement statementB = new Statement(templateVariable, templateMapClassRole, parentIdentifierVariableEntity);
+                Statement statementA = new Statement(templateVariable, rdfType, owlThingEntity);
+                Statement statementB = new Statement(templateVariable, rdfType, templateTypeEntity);
+                Statement statementC = new Statement(templateVariable, templateMapClassRole, parentIdentifierVariableEntity);
 
                 queryTemporal.AddGraphStatement(statementA);
                 queryTemporal.AddGraphStatement(statementB);
+                queryTemporal.AddGraphStatement(statementC);
 
                 StatementList statementListToBeAddedToStore = new StatementList();
                 foreach (Variable variable in binding.Variables)
@@ -878,8 +890,8 @@ namespace org.iringtools.adapter.projection
                     //}
                     string roleMapRoleId = roleMap.roleId.Replace("tpl:", tplPrefix);
                     Variable propertyNameVariable = new Variable(roleMap.propertyName);
-                    Statement statementC = new Statement(templateVariable, roleMapRoleId, propertyNameVariable);
-                    queryTemporal.AddGraphStatement(statementC);
+                    Statement statementD = new Statement(templateVariable, roleMapRoleId, propertyNameVariable);
+                    queryTemporal.AddGraphStatement(statementD);
 
                     if (propertyType == "literal")
                     {
@@ -907,10 +919,12 @@ namespace org.iringtools.adapter.projection
                 Statement statement1 = new Statement(bNodeToBeTerminated, endDateTimeTemplate, endTimeValue);
                 _store.Add(statement1);
 
-                Statement statement2 = new Statement(bNodeTemplate, rdfType, templateTypeEntity);
-                Statement statement3 = new Statement(bNodeTemplate, templateMapClassRole, parentIdentifierVariableEntity);
+                Statement statement2 = new Statement(bNodeTemplate, rdfType, owlThingEntity);
+                Statement statement3 = new Statement(bNodeTemplate, rdfType, templateTypeEntity);
+                Statement statement4 = new Statement(bNodeTemplate, templateMapClassRole, parentIdentifierVariableEntity);
                 _store.Add(statement2);
                 _store.Add(statement3);
+                _store.Add(statement4);
 
                 foreach (Statement statement in statementListToBeAddedToStore)
                 {
@@ -918,8 +932,8 @@ namespace org.iringtools.adapter.projection
                 }
 
                 Literal startTimeValue = GetPropertyValueType(DateTime.UtcNow.ToString(), "datetime");
-                Statement statement4 = new Statement(bNodeTemplate, startDateTimeTemplate, startTimeValue);
-                _store.Add(statement4);
+                Statement statement5 = new Statement(bNodeTemplate, startDateTimeTemplate, startTimeValue);
+                _store.Add(statement5);
               }
             }
           }
@@ -932,11 +946,13 @@ namespace org.iringtools.adapter.projection
             SemWeb.Entity parentIdentifierVariableEntity = parentIdentifierVariable.Replace("eg:", egPrefix);
             string templateMapClassRole = templateMap.classRole.Replace("tpl:", tplPrefix);
 
-            Statement statement1 = new Statement(bNodeTemplate, rdfType, templateTypeEntity);
-            Statement statement2 = new Statement(bNodeTemplate, templateMapClassRole, parentIdentifierVariableEntity);
+            Statement statement1 = new Statement(bNodeTemplate, rdfType, owlThingEntity);
+            Statement statement2 = new Statement(bNodeTemplate, rdfType, templateTypeEntity);
+            Statement statement3 = new Statement(bNodeTemplate, templateMapClassRole, parentIdentifierVariableEntity);
 
             _store.Add(statement1);
             _store.Add(statement2);
+            _store.Add(statement3);
 
             foreach (RoleMap roleMap in templateMap.roleMaps)
             {
@@ -1008,19 +1024,19 @@ namespace org.iringtools.adapter.projection
               if (propertyType == "literal")
               {
                 Literal propertyValueLiteral = GetPropertyValueType(propertyValue, roleMap.dataType);
-                Statement statement3 = new Statement(bNodeTemplate, roleMapRoleId, propertyValueLiteral);
-                _store.Add(statement3);
+                Statement statement4 = new Statement(bNodeTemplate, roleMapRoleId, propertyValueLiteral);
+                _store.Add(statement4);
               }
               else
               {
                 SemWeb.Entity propertyValueEntity = propertyValue;
-                Statement statement3 = new Statement(bNodeTemplate, roleMapRoleId, propertyValueEntity);
-                _store.Add(statement3);
+                Statement statement4 = new Statement(bNodeTemplate, roleMapRoleId, propertyValueEntity);
+                _store.Add(statement4);
               }
             }
             Literal startTimeValue = GetPropertyValueType(DateTime.UtcNow.ToString(), "datetime");
-            Statement statement4 = new Statement(bNodeTemplate, startDateTimeTemplate, startTimeValue);
-            _store.Add(statement4);
+            Statement statement5 = new Statement(bNodeTemplate, startDateTimeTemplate, startTimeValue);
+            _store.Add(statement5);
           }
           #endregion
         }
@@ -1063,15 +1079,17 @@ namespace org.iringtools.adapter.projection
           Literal startTimeValue = GetPropertyValueType(DateTime.UtcNow.ToString(), "datetime");
 
           BNode bNodeClassificationTemplate = new BNode("c1");
-          Statement statement1 = new Statement(bNodeClassificationTemplate, rdfType, classificationTemplateType);
-          Statement statement2 = new Statement(bNodeClassificationTemplate, classType, classIdEntity);
-          Statement statement3 = new Statement(bNodeClassificationTemplate, instanceType, instanceValue);
-          Statement statement4 = new Statement(bNodeClassificationTemplate, startDateTimeTemplate, startTimeValue);
+          Statement statement1 = new Statement(bNodeClassificationTemplate, rdfType, owlThingEntity);
+          Statement statement2 = new Statement(bNodeClassificationTemplate, rdfType, classificationTemplateType);
+          Statement statement3 = new Statement(bNodeClassificationTemplate, classType, classIdEntity);
+          Statement statement4 = new Statement(bNodeClassificationTemplate, instanceType, instanceValue);
+          Statement statement5 = new Statement(bNodeClassificationTemplate, startDateTimeTemplate, startTimeValue);
 
           _store.Add(statement1);
           _store.Add(statement2);
           _store.Add(statement3);
           _store.Add(statement4);
+          _store.Add(statement5);
 
         }
       }
@@ -1139,15 +1157,17 @@ namespace org.iringtools.adapter.projection
           SemWeb.Entity identifierEntity = identifier.Replace("eg:", egPrefix);
           Literal startTimeValue = GetPropertyValueType(DateTime.UtcNow.ToString(), "datetime");
 
-          Statement statement1 = new Statement(bNodeTemplate, rdfType, templateTypeEntity);
-          Statement statement2 = new Statement(bNodeTemplate, templateMapClassRole, classNameEntity);
-          Statement statement3 = new Statement(bNodeTemplate, roleMapRoleId, identifierEntity);
-          Statement statement4 = new Statement(bNodeTemplate, startDateTimeTemplate, startTimeValue);
+          Statement statement1 = new Statement(bNodeTemplate, rdfType, owlThingEntity);
+          Statement statement2 = new Statement(bNodeTemplate, rdfType, templateTypeEntity);
+          Statement statement3 = new Statement(bNodeTemplate, templateMapClassRole, classNameEntity);
+          Statement statement4 = new Statement(bNodeTemplate, roleMapRoleId, identifierEntity);
+          Statement statement5 = new Statement(bNodeTemplate, startDateTimeTemplate, startTimeValue);
 
           _store.Add(statement1);
           _store.Add(statement2);
           _store.Add(statement3);
           _store.Add(statement4);
+          _store.Add(statement5);
           relatedClassName = identifier;
         }
         return relatedClassName;
@@ -1170,11 +1190,13 @@ namespace org.iringtools.adapter.projection
         SemWeb.Variable templateVariable = new SemWeb.Variable("t1");
         string templateMapClassRole = templateMap.classRole.Replace("tpl:", tplPrefix);
 
-        Statement statementA = new Statement(templateVariable, rdfType, templateIdEntity);
-        Statement statementB = new Statement(templateVariable, templateMapClassRole, parentIdentifierVariableEntity);
+        Statement statementA = new Statement(templateVariable, rdfType, owlThingEntity);
+        Statement statementB = new Statement(templateVariable, rdfType, templateIdEntity);
+        Statement statementC = new Statement(templateVariable, templateMapClassRole, parentIdentifierVariableEntity);
 
         query.AddGraphStatement(statementA);
         query.AddGraphStatement(statementB);
+        query.AddGraphStatement(statementC);
 
         foreach (RoleMap roleMap in templateMap.roleMaps)
         {
@@ -1182,22 +1204,22 @@ namespace org.iringtools.adapter.projection
           {
             SemWeb.Entity roleMapReference = roleMap.reference.Replace("rdl:", rdlPrefix);
             string roleMapRoleId = roleMap.roleId.Replace("tpl:", tplPrefix);
-            Statement statementC = new Statement(templateVariable, roleMapRoleId, roleMapReference);
-            query.AddGraphStatement(statementC);
+            Statement statementD = new Statement(templateVariable, roleMapRoleId, roleMapReference);
+            query.AddGraphStatement(statementD);
           }
           else if (roleMap.value != null && roleMap.value != String.Empty)
           {
             Literal propertyValue = GetPropertyValueType(roleMap.value, roleMap.dataType);
             string roleMapRoleId = roleMap.roleId.Replace("tpl:", tplPrefix);
-            Statement statementC = new Statement(templateVariable, roleMapRoleId, propertyValue);
-            query.AddGraphStatement(statementC);
+            Statement statementD = new Statement(templateVariable, roleMapRoleId, propertyValue);
+            query.AddGraphStatement(statementD);
           }
           else
           {
             SemWeb.Variable propertyTemplate = new SemWeb.Variable(roleMap.propertyName);
             string roleMapRoleId = roleMap.roleId.Replace("tpl:", tplPrefix);
-            Statement statementC = new Statement(templateVariable, roleMapRoleId, propertyTemplate);
-            query.AddGraphStatement(statementC);
+            Statement statementD = new Statement(templateVariable, roleMapRoleId, propertyTemplate);
+            query.AddGraphStatement(statementD);
           }
         }
 
@@ -1220,13 +1242,15 @@ namespace org.iringtools.adapter.projection
         SemWeb.Entity instanceValue = identifier.Replace("eg:", egPrefix);
         SemWeb.Variable classificationTemplate = new SemWeb.Variable("c1");
 
-        Statement statementA = new Statement(classificationTemplate, rdfType, classificationTemplateType);
-        Statement statementB = new Statement(classificationTemplate, classType, classIdEntity);
-        Statement statementC = new Statement(classificationTemplate, instanceType, instanceValue);
+        Statement statementA = new Statement(classificationTemplate, rdfType, owlThingEntity);
+        Statement statementB = new Statement(classificationTemplate, rdfType, classificationTemplateType);
+        Statement statementC = new Statement(classificationTemplate, classType, classIdEntity);
+        Statement statementD = new Statement(classificationTemplate, instanceType, instanceValue);
 
         query.AddGraphStatement(statementA);
         query.AddGraphStatement(statementB);
         query.AddGraphStatement(statementC);
+        query.AddGraphStatement(statementD);
 
         QueryResultBuffer resultBuffer = GetUnterminatedTemplates(query, classificationTemplate);
         if (resultBuffer.Bindings.Count <= 0)
@@ -1279,13 +1303,15 @@ namespace org.iringtools.adapter.projection
         SemWeb.Variable relatedClassificationTemplate = new SemWeb.Variable("i1");
         SemWeb.Variable templateVariable = new SemWeb.Variable("t1");
 
-        Statement statementD = new Statement(templateVariable, rdfType, templateIdEntity);
-        Statement statementE = new Statement(templateVariable, templateMapClassRole, classNameEntity);
-        Statement statementF = new Statement(templateVariable, roleMapRoleId, relatedClassificationTemplate);
+        Statement statementD = new Statement(templateVariable, rdfType, owlThingEntity);
+        Statement statementE = new Statement(templateVariable, rdfType, templateIdEntity);
+        Statement statementF = new Statement(templateVariable, templateMapClassRole, classNameEntity);
+        Statement statementG = new Statement(templateVariable, roleMapRoleId, relatedClassificationTemplate);
 
         query.AddGraphStatement(statementD);
         query.AddGraphStatement(statementE);
         query.AddGraphStatement(statementF);
+        query.AddGraphStatement(statementG);
 
         QueryResultBuffer resultBuffer = GetUnterminatedTemplates(query, templateVariable);
         return resultBuffer;
