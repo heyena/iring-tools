@@ -28,6 +28,7 @@ using org.ids_adi.qmxf;
 
 using org.iringtools.informationmodel.usercontrols;
 using org.iringtools.library;
+using System.Text.RegularExpressions;
 
 namespace org.iringtools.modules.memappingregion
 {
@@ -93,7 +94,14 @@ namespace org.iringtools.modules.memappingregion
 
     public void btnAddGraph_Click(object sender, RoutedEventArgs e)
     {
-      if (model.SelectedIMUri == null ||
+      TextBox txtLabel = sender as TextBox;
+      string graphName = txtLabel.Text;
+
+      if (!Regex.IsMatch(graphName, @"^[A-Za-z_]+\w*$"))
+      {
+        MessageBox.Show("Graph name is invalid", "ADD GRAPH", MessageBoxButton.OK);
+      }
+      else if (model.SelectedIMUri == null ||
           SPARQLExtensions.GetObjectTypeFromUri(model.SelectedIMUri) != SPARQLPrefix.ObjectType.Class)
       {
         MessageBox.Show("Please select a valid class", "ADD GRAPH", MessageBoxButton.OK);
@@ -103,10 +111,9 @@ namespace org.iringtools.modules.memappingregion
         MessageBox.Show("Please select an identifier", "ADD GRAPH", MessageBoxButton.OK);
       }
       else
-      {
-        TextBox txtLabel = sender as TextBox;
+      {        
         GraphMap graphMap = new GraphMap();
-        graphMap.name = txtLabel.Text;
+        graphMap.name = graphName;
         graphMap.classId = SPARQLExtensions.GetIdWithAliasFromUri(model.SelectedIMUri);
         graphMap.identifier = model.SelectedDataObject.DataProperty.propertyName;
 
@@ -123,7 +130,7 @@ namespace org.iringtools.modules.memappingregion
 
         graphMap.dataObjectMaps.Add(dataObjectMap);
         mapping.graphMaps.Add(graphMap);
-        tvwMapping.Items.Add(Presenter.AddNode(graphMap.name, graphMap, null));
+        tvwMapping.Items.Add(Presenter.AddNode(graphMap.name, graphMap, null));        
       }
     }
 

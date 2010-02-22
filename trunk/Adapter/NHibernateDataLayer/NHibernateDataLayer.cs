@@ -11,11 +11,13 @@ using org.iringtools.utility;
 using org.iringtools.adapter;
 using System.Text;
 using Ninject;
+using log4net;
 
 namespace org.iringtools.adapter.dataLayer
 {
   public class NHibernateDataLayer : IDataLayer
   {
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(NHibernateDataLayer));
     private AdapterSettings _settings = null;
     private ApplicationSettings _appSettings = null;
     private string _dataDictionaryPath = String.Empty;
@@ -36,15 +38,23 @@ namespace org.iringtools.adapter.dataLayer
 
     private ISession OpenSession<T>()
     {
-      string hibernateConfigPath = _settings.XmlPath + "nh-configuration." + _appSettings.ProjectName + "." + _appSettings.ApplicationName + ".xml";
-      string hibernateMappingPath = _settings.XmlPath + "nh-mapping." + _appSettings.ProjectName + "." + _appSettings.ApplicationName + ".xml";
+      try
+      {
+        string hibernateConfigPath = _settings.XmlPath + "nh-configuration." + _appSettings.ProjectName + "." + _appSettings.ApplicationName + ".xml";
+        string hibernateMappingPath = _settings.XmlPath + "nh-mapping." + _appSettings.ProjectName + "." + _appSettings.ApplicationName + ".xml";
 
-      factory = new Configuration()
-        .Configure(hibernateConfigPath)
-        .AddFile(hibernateMappingPath)
-        .BuildSessionFactory();
-    
-      return factory.OpenSession();      
+        factory = new Configuration()
+          .Configure(hibernateConfigPath)
+          .AddFile(hibernateMappingPath)
+          .BuildSessionFactory();
+
+        return factory.OpenSession();
+      }
+      catch (Exception exception)
+      {
+        _logger.Error("Error in OpenSession: project \"" + _appSettings.ProjectName + "\" application \"" + _appSettings.ApplicationName + "\"" + exception);
+        throw new Exception("Error while openning session " + exception);
+      }
     }
 
     public T Get<T>(Dictionary<string, object> queryProperties)
@@ -72,6 +82,7 @@ namespace org.iringtools.adapter.dataLayer
       }
       catch (Exception exception)
       {
+        _logger.Error("Error in Get<T>: " + exception);
         throw new Exception("Error while getting data of type " + typeof(T).Name + ".", exception);
       }
     }
@@ -105,6 +116,7 @@ namespace org.iringtools.adapter.dataLayer
       }
       catch (Exception exception)
       {
+        _logger.Error("Error in GetList<T>: " + exception);
         throw new Exception("Error while getting data of type " + typeof(T).Name + ".", exception);
       }
     }
@@ -136,6 +148,7 @@ namespace org.iringtools.adapter.dataLayer
       }
       catch (Exception exception)
       {
+        _logger.Error("Error in Post<T>: " + exception);
         throw new Exception("Error while posting data of type " + typeof(T).Name + ".", exception);
       }
     }
@@ -162,6 +175,7 @@ namespace org.iringtools.adapter.dataLayer
       }
       catch (Exception exception)
       {
+        _logger.Error("Error in PostList<T>: " + exception);
         throw new Exception("Error while posting data of type " + typeof(T).Name + ".", exception);
       }
     }
@@ -186,6 +200,7 @@ namespace org.iringtools.adapter.dataLayer
       }
       catch (Exception exception)
       {
+        _logger.Error("Error in Add<T>: " + exception);
         throw new Exception("Error while posting data of type " + typeof(T).Name + ".", exception);
       }
     }
@@ -210,6 +225,7 @@ namespace org.iringtools.adapter.dataLayer
       }
       catch (Exception exception)
       {
+        _logger.Error("Error in Update<T>: " + exception);
         throw new Exception("Error while updating data of type " + typeof(T).Name + ".", exception);
       }
     }
@@ -234,6 +250,7 @@ namespace org.iringtools.adapter.dataLayer
       }
       catch (Exception exception)
       {
+        _logger.Error("Error in Delete<T>: " + exception);
         throw new Exception("Error while deleting data of type " + typeof(T).Name + ".", exception);
       }
     }
