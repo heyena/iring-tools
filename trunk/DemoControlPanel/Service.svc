@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="org.ids_adi.camelot.demo.DemoService" CodeBehind="~/App_Code/DemoService.cs" %>

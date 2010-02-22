@@ -1,0 +1,171 @@
+<Config xmlns="http://schemas.datacontract.org/2004/07/org.ids_adi.camelot.demo" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <adapterEndpoints>
+    <iRINGEndpoint>
+      <credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.ids_adi.iring"/>
+      <id>1</id>
+      <name>My Adapter Service</name>
+      <serviceUri>http://localhost/AdapterService/Service.svc</serviceUri>
+    </iRINGEndpoint>
+    <iRINGEndpoint>
+      <credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.ids_adi.iring">
+        <a:encryptedToken>IKmr723/1qmzmrRzIhJWZezzpAU0XoV6QkXRoKOBRQhMFt7iNAShgc/tGU0Lypt3TTdBG5MHCTxEjb3btLriN9ZVVXRHzDQPqmoyGLq/xvY=</a:encryptedToken>
+        <a:isEncrypted>true</a:isEncrypted>
+      </credentials>
+      <id>2</id>
+      <name>Bechtel Adapter Service</name>
+      <serviceUri>https://iring.becpsn.com/AdapterService/Service.svc</serviceUri>
+    </iRINGEndpoint>
+    <iRINGEndpoint>
+      <credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.ids_adi.iring">
+        <a:encryptedToken>+T/qQZUmsevltWckaEcRRJ/VBNruLK/PEnLUenyrFDEEtqKCL/Jfbc/3gWu4bgDOp341gs5OJU5AMjNZoi9q3w==</a:encryptedToken>
+        <a:isEncrypted>true</a:isEncrypted>
+      </credentials>
+      <id>3</id>
+      <name>CCC Adapter Service</name>
+      <serviceUri>http://iring.ccc.gr/AdapterService/Service.svc</serviceUri>
+    </iRINGEndpoint>
+    <iRINGEndpoint>
+      <credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.ids_adi.iring">
+        <a:encryptedToken>zlNbMav8dBXUREoOR6ctMZ8aRcOiKmUtgU9mmyhyNqxJ0EAePsEoRq5C71fEde6GtBAGg/JcGoE3bucNdqLZDg==</a:encryptedToken>
+        <a:isEncrypted>true</a:isEncrypted>
+      </credentials>
+      <id>4</id>
+      <name>Hatch Adapter Service</name>
+      <serviceUri>http://iring.hatch.com.au/AdapterService/Service.svc</serviceUri>
+    </iRINGEndpoint>
+    <iRINGEndpoint>
+      <credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.ids_adi.iring">
+        <a:isEncrypted>false</a:isEncrypted>
+      </credentials>
+      <id>0</id>
+      <name>My Adapter Service (Debug)</name>
+      <serviceUri>http://localhost:33386/AdapterService/Service.svc</serviceUri>
+    </iRINGEndpoint>
+  </adapterEndpoints>
+  <interfaceEndpoints>
+    <iRINGEndpoint>
+      <credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.ids_adi.iring">
+        <a:isEncrypted>false</a:isEncrypted>
+      </credentials>
+      <id>1</id>
+      <name>My Interface Service</name>
+      <serviceUri>http://localhost:2020</serviceUri>
+    </iRINGEndpoint>
+    <iRINGEndpoint>
+      <credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.ids_adi.iring">
+        <a:encryptedToken>IKmr723/1qmzmrRzIhJWZezzpAU0XoV6QkXRoKOBRQhMFt7iNAShgc/tGU0Lypt3TTdBG5MHCTxEjb3btLriN9ZVVXRHzDQPqmoyGLq/xvY=</a:encryptedToken>
+        <a:isEncrypted>true</a:isEncrypted>
+      </credentials>
+      <id>2</id>
+      <name>Bechtel Interface Service</name>
+      <serviceUri>https://iring.becpsn.com/InterfaceService</serviceUri>
+    </iRINGEndpoint>
+    <iRINGEndpoint>
+      <credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.ids_adi.iring">
+        <a:isEncrypted>false</a:isEncrypted>
+      </credentials>
+      <id>3</id>
+      <name>CCC Interface Service</name>
+      <serviceUri/>
+    </iRINGEndpoint>
+    <iRINGEndpoint>
+      <credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.ids_adi.iring">
+        <a:encryptedToken>zlNbMav8dBXUREoOR6ctMZ8aRcOiKmUtgU9mmyhyNqxJ0EAePsEoRq5C71fEde6GtBAGg/JcGoE3bucNdqLZDg==</a:encryptedToken>
+        <a:isEncrypted>true</a:isEncrypted>
+      </credentials>
+      <id>4</id>
+      <name>Hatch Interface Service</name>
+      <serviceUri>http://iring.hatch.com.au/InterfaceService</serviceUri>
+    </iRINGEndpoint>
+  </interfaceEndpoints>
+  <scenarios>
+    <Scenario>
+      <interfaceServiceId>4</interfaceServiceId>
+      <receiver>Dow</receiver>
+      <receiverAdapterServiceId>1</receiverAdapterServiceId>
+      <scenarioName>Data Flow 1A: Hatch -> Dow</scenarioName>
+      <sender>Hatch</sender>
+      <senderAdapterServiceId>4</senderAdapterServiceId>
+    </Scenario>
+    <Scenario>
+      <interfaceServiceId>2</interfaceServiceId>
+      <receiver>Dow</receiver>
+      <receiverAdapterServiceId>1</receiverAdapterServiceId>
+      <scenarioName>Data Flow 1B: Bechtel -> Dow</scenarioName>
+      <sender>Bechtel</sender>
+      <senderAdapterServiceId>2</senderAdapterServiceId>
+    </Scenario>
+    <Scenario>
+      <interfaceServiceId>4</interfaceServiceId>
+      <receiver>Intergraph</receiver>
+      <receiverAdapterServiceId>1</receiverAdapterServiceId>
+      <scenarioName>Data Flow 2A: Hatch -> Intergraph</scenarioName>
+      <sender>Hatch</sender>
+      <senderAdapterServiceId>4</senderAdapterServiceId>
+    </Scenario>
+    <Scenario>
+      <interfaceServiceId>2</interfaceServiceId>
+      <receiver>Intergraph</receiver>
+      <receiverAdapterServiceId>1</receiverAdapterServiceId>
+      <scenarioName>Data Flow 2B: Bechtel -> Intergraph</scenarioName>
+      <sender>Bechtel</sender>
+      <senderAdapterServiceId>2</senderAdapterServiceId>
+    </Scenario>
+    <!--<Scenario>
+      <interfaceServiceId>1</interfaceServiceId>
+      <receiver>Intergraph</receiver>
+      <receiverAdapterServiceId>1</receiverAdapterServiceId>
+      <scenarioName>Data Flow 2C: Dow -> Intergraph</scenarioName>
+      <sender>Dow</sender>
+      <senderAdapterServiceId>1</senderAdapterServiceId>
+    </Scenario>-->
+    <Scenario>
+      <interfaceServiceId>4</interfaceServiceId>
+      <receiver>CCC</receiver>
+      <receiverAdapterServiceId>3</receiverAdapterServiceId>
+      <scenarioName>Data Flow 3A: Hatch -> CCC</scenarioName>
+      <sender>Hatch</sender>
+      <senderAdapterServiceId>4</senderAdapterServiceId>
+    </Scenario>
+    <Scenario>
+      <interfaceServiceId>2</interfaceServiceId>
+      <receiver>CCC</receiver>
+      <receiverAdapterServiceId>4</receiverAdapterServiceId>
+      <scenarioName>Data Flow 3B: Bechtel -> CCC</scenarioName>
+      <sender>Bechtel</sender>
+      <senderAdapterServiceId>2</senderAdapterServiceId>
+    </Scenario>
+    <Scenario>
+      <interfaceServiceId>4</interfaceServiceId>
+      <receiver>Emerson</receiver>
+      <receiverAdapterServiceId>1</receiverAdapterServiceId>
+      <scenarioName>Data Flow 4A: Hatch -> Emerson</scenarioName>
+      <sender>Hatch</sender>
+      <senderAdapterServiceId>4</senderAdapterServiceId>
+    </Scenario>
+    <Scenario>
+      <interfaceServiceId>2</interfaceServiceId>
+      <receiver>Emerson</receiver>
+      <receiverAdapterServiceId>1</receiverAdapterServiceId>
+      <scenarioName>Data Flow 4B: Bechtel -> Emerson</scenarioName>
+      <sender>Bechtel</sender>
+      <senderAdapterServiceId>2</senderAdapterServiceId>
+    </Scenario>
+    <Scenario>
+      <interfaceServiceId>1</interfaceServiceId>
+      <receiver>Bechtel</receiver>
+      <receiverAdapterServiceId>2</receiverAdapterServiceId>
+      <scenarioName>Data Flow 5A: DuPont -> Bechtel</scenarioName>
+      <sender>DuPont</sender>
+      <senderAdapterServiceId>1</senderAdapterServiceId>
+    </Scenario>
+    <Scenario>
+      <interfaceServiceId>1</interfaceServiceId>
+      <receiver>Me</receiver>
+      <receiverAdapterServiceId>1</receiverAdapterServiceId>
+      <scenarioName>Test Data Flow: Me -> Me</scenarioName>
+      <sender>Me</sender>
+      <senderAdapterServiceId>1</senderAdapterServiceId>
+    </Scenario>
+  </scenarios>
+</Config>

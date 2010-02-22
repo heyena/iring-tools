@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:tns="http://tempuri.org/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" name="DemoService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://localhost:59572/ControlPanel.Web/Service.svc?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://localhost:59572/ControlPanel.Web/Service.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://localhost:59572/ControlPanel.Web/Service.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/org.ids_adi.camelot.demo" />
+      <xsd:import schemaLocation="http://localhost:59572/ControlPanel.Web/Service.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/org.ids_adi.iring" />
+      <xsd:import schemaLocation="http://localhost:59572/ControlPanel.Web/Service.svc?xsd=xsd4" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+      <xsd:import schemaLocation="http://localhost:59572/ControlPanel.Web/Service.svc?xsd=xsd5" namespace="http://schemas.datacontract.org/2004/07/org.w3.sparql_results" />
+      <xsd:import schemaLocation="http://localhost:59572/ControlPanel.Web/Service.svc?xsd=xsd6" namespace="http://schemas.microsoft.com/Message" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IDemoService_Refresh_InputMessage">
+    <wsdl:part name="parameters" element="tns:Refresh" />
+  </wsdl:message>
+  <wsdl:message name="IDemoService_Refresh_OutputMessage">
+    <wsdl:part name="parameters" element="tns:RefreshResponse" />
+  </wsdl:message>
+  <wsdl:message name="IDemoService_Pull_InputMessage">
+    <wsdl:part name="parameters" element="tns:Pull" />
+  </wsdl:message>
+  <wsdl:message name="IDemoService_Pull_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PullResponse" />
+  </wsdl:message>
+  <wsdl:message name="IDemoService_Query_InputMessage">
+    <wsdl:part name="parameters" element="tns:Query" />
+  </wsdl:message>
+  <wsdl:message name="IDemoService_Query_OutputMessage">
+    <wsdl:part name="parameters" element="tns:QueryResponse" />
+  </wsdl:message>
+  <wsdl:message name="IDemoService_Update_InputMessage">
+    <wsdl:part name="parameters" element="tns:Update" />
+  </wsdl:message>
+  <wsdl:message name="IDemoService_Update_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateResponse" />
+  </wsdl:message>
+  <wsdl:message name="IDemoService_GetQXF_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetQXF" />
+  </wsdl:message>
+  <wsdl:message name="IDemoService_GetQXF_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetQXFResponse" />
+  </wsdl:message>
+  <wsdl:message name="IDemoService_Export_InputMessage">
+    <wsdl:part name="parameters" element="tns:Export" />
+  </wsdl:message>
+  <wsdl:message name="IDemoService_Export_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ExportResponse" />
+  </wsdl:message>
+  <wsdl:message name="IDemoService_Import_InputMessage">
+    <wsdl:part name="parameters" element="tns:Import" />
+  </wsdl:message>
+  <wsdl:message name="IDemoService_Import_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ImportResponse" />
+  </wsdl:message>
+  <wsdl:message name="IDemoService_Reset_InputMessage">
+    <wsdl:part name="parameters" element="tns:Reset" />
+  </wsdl:message>
+  <wsdl:message name="IDemoService_Reset_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ResetResponse" />
+  </wsdl:message>
+  <wsdl:message name="IDemoService_Generate_InputMessage">
+    <wsdl:part name="parameters" element="tns:Generate" />
+  </wsdl:message>
+  <wsdl:message name="IDemoService_Generate_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GenerateResponse" />
+  </wsdl:message>
+  <wsdl:message name="IDemoService_GetConfig_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetConfig" />
+  </wsdl:message>
+  <wsdl:message name="IDemoService_GetConfig_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetConfigResponse" />
+  </wsdl:message>
+  <wsdl:message name="IDemoService_GetDictionary_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetDictionary" />
+  </wsdl:message>
+  <wsdl:message name="IDemoService_GetDictionary_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetDictionaryResponse" />
+  </wsdl:message>
+  <wsdl:message name="IDemoService_GetSenderDictionary_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetSenderDictionary" />
+  </wsdl:message>
+  <wsdl:message name="IDemoService_GetSenderDictionary_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetSenderDictionaryResponse" />
+  </wsdl:message>
+  <wsdl:message name="IDemoService_GetReceiverDictionary_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetReceiverDictionary" />
+  </wsdl:message>
+  <wsdl:message name="IDemoService_GetReceiverDictionary_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetReceiverDictionaryResponse" />
+  </wsdl:message>
+  <wsdl:portType name="IDemoService">
+    <wsdl:operation name="Refresh">
+      <wsdl:input wsaw:Action="http://tempuri.org/IDemoService/Refresh" message="tns:IDemoService_Refresh_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IDemoService/RefreshResponse" message="tns:IDemoService_Refresh_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Pull">
+      <wsdl:input wsaw:Action="http://tempuri.org/IDemoService/Pull" message="tns:IDemoService_Pull_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IDemoService/PullResponse" message="tns:IDemoService_Pull_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Query">
+      <wsdl:input wsaw:Action="http://tempuri.org/IDemoService/Query" message="tns:IDemoService_Query_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IDemoService/QueryResponse" message="tns:IDemoService_Query_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Update">
+      <wsdl:input wsaw:Action="http://tempuri.org/IDemoService/Update" message="tns:IDemoService_Update_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IDemoService/UpdateResponse" message="tns:IDemoService_Update_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetQXF">
+      <wsdl:input wsaw:Action="http://tempuri.org/IDemoService/GetQXF" message="tns:IDemoService_GetQXF_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IDemoService/GetQXFResponse" message="tns:IDemoService_GetQXF_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Export">
+      <wsdl:input wsaw:Action="http://tempuri.org/IDemoService/Export" message="tns:IDemoService_Export_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IDemoService/ExportResponse" message="tns:IDemoService_Export_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Import">
+      <wsdl:input wsaw:Action="http://tempuri.org/IDemoService/Import" message="tns:IDemoService_Import_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IDemoService/ImportResponse" message="tns:IDemoService_Import_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Reset">
+      <wsdl:input wsaw:Action="http://tempuri.org/IDemoService/Reset" message="tns:IDemoService_Reset_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IDemoService/ResetResponse" message="tns:IDemoService_Reset_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Generate">
+      <wsdl:input wsaw:Action="http://tempuri.org/IDemoService/Generate" message="tns:IDemoService_Generate_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IDemoService/GenerateResponse" message="tns:IDemoService_Generate_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetConfig">
+      <wsdl:input wsaw:Action="http://tempuri.org/IDemoService/GetConfig" message="tns:IDemoService_GetConfig_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IDemoService/GetConfigResponse" message="tns:IDemoService_GetConfig_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDictionary">
+      <wsdl:input wsaw:Action="http://tempuri.org/IDemoService/GetDictionary" message="tns:IDemoService_GetDictionary_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IDemoService/GetDictionaryResponse" message="tns:IDemoService_GetDictionary_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSenderDictionary">
+      <wsdl:input wsaw:Action="http://tempuri.org/IDemoService/GetSenderDictionary" message="tns:IDemoService_GetSenderDictionary_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IDemoService/GetSenderDictionaryResponse" message="tns:IDemoService_GetSenderDictionary_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetReceiverDictionary">
+      <wsdl:input wsaw:Action="http://tempuri.org/IDemoService/GetReceiverDictionary" message="tns:IDemoService_GetReceiverDictionary_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IDemoService/GetReceiverDictionaryResponse" message="tns:IDemoService_GetReceiverDictionary_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_IDemoService" type="tns:IDemoService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="Refresh">
+      <soap:operation soapAction="http://tempuri.org/IDemoService/Refresh" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Pull">
+      <soap:operation soapAction="http://tempuri.org/IDemoService/Pull" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Query">
+      <soap:operation soapAction="http://tempuri.org/IDemoService/Query" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Update">
+      <soap:operation soapAction="http://tempuri.org/IDemoService/Update" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetQXF">
+      <soap:operation soapAction="http://tempuri.org/IDemoService/GetQXF" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Export">
+      <soap:operation soapAction="http://tempuri.org/IDemoService/Export" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Import">
+      <soap:operation soapAction="http://tempuri.org/IDemoService/Import" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Reset">
+      <soap:operation soapAction="http://tempuri.org/IDemoService/Reset" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Generate">
+      <soap:operation soapAction="http://tempuri.org/IDemoService/Generate" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetConfig">
+      <soap:operation soapAction="http://tempuri.org/IDemoService/GetConfig" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDictionary">
+      <soap:operation soapAction="http://tempuri.org/IDemoService/GetDictionary" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSenderDictionary">
+      <soap:operation soapAction="http://tempuri.org/IDemoService/GetSenderDictionary" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetReceiverDictionary">
+      <soap:operation soapAction="http://tempuri.org/IDemoService/GetReceiverDictionary" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="DemoService">
+    <wsdl:port name="BasicHttpBinding_IDemoService" binding="tns:BasicHttpBinding_IDemoService">
+      <soap:address location="http://localhost:59572/ControlPanel.Web/Service.svc" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
