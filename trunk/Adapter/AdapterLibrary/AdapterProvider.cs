@@ -43,6 +43,7 @@ using System.Collections.Specialized;
 using Ninject.Modules;
 using org.iringtools.adapter.dataLayer;
 using log4net;
+using System.ServiceModel;
 
 namespace org.iringtools.adapter
 {
@@ -668,6 +669,7 @@ namespace org.iringtools.adapter
         _logger.Error("Error in ClearStore: " + exception);
         response.Add("Error while clearing TripleStore.");
         response.Add(exception.ToString());
+        response.Level = StatusLevel.Error;
       }
       finally
       {
@@ -908,8 +910,16 @@ namespace org.iringtools.adapter
 
           response.Add("Database dictionary updated successfully.");
 
-          InitializeApplication(projectName, applicationName);
-          _projectionEngine.Initialize();
+          string localAddress = OperationContext.Current.Channel.LocalAddress.Uri.AbsoluteUri;
+
+          WebHttpClient client = new WebHttpClient(localAddress);
+          Response localResponse = client.Get<Response>("/" + projectName + "/" + applicationName + "/clear");
+
+          response.Append(localResponse);
+          if (localResponse.Level == StatusLevel.Error)
+          {
+            throw new Exception("Error While Initializing the Triplestore.");
+          }
 
           //This cannot say this here, will not know it is a triplestore
           //OK for now.
