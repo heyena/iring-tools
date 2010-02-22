@@ -206,15 +206,14 @@ namespace org.iringtools.modulelibrary.layerdal
       if (sender == _refreshClient)
       {
         string result = ((DownloadStringCompletedEventArgs)e).Result;
-
-        Response response = result.DeserializeXml<Response>();
+        Response response = result.DeserializeDataContract<Response>();
 
         // Configure event argument
         args = new CompletedEventArgs
         {
           // Define your method in CompletedEventType and assign
           CompletedType = CompletedEventType.RefreshAll,
-          Data = response.FirstOrDefault<string>()
+          Data = response
         };
       }
       #endregion
@@ -224,17 +223,15 @@ namespace org.iringtools.modulelibrary.layerdal
       // <Method> data arrived event handler 
       if (sender == _generateClient)
       {
-        var result = ((DownloadStringCompletedEventArgs)e).Result;
-
-        Response response = result.DeserializeXml<Response>();
+        string result = ((DownloadStringCompletedEventArgs)e).Result;
+        Response response = result.DeserializeDataContract<Response>();
 
         // Configure event argument
         args = new CompletedEventArgs
         {
           // Define your method in CompletedEventType and assign
           CompletedType = CompletedEventType.Generate,
-          Data = response.FirstOrDefault<string>()
-
+          Data = response
         };
       }
       #endregion
@@ -245,7 +242,6 @@ namespace org.iringtools.modulelibrary.layerdal
       if (sender == _mappingClient && CheckClassTypeFor<UploadStringCompletedEventArgs>(e))
       {
         var result = ((UploadStringCompletedEventArgs)e).Result;
-
         Response response = result.DeserializeXml<Response>();
 
         // Configure event argument
