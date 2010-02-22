@@ -6,13 +6,9 @@
   </head>
   <body>
     <div class="banner">
-      <img src="iRING.png"/>
-    </div>
+      <h1><img src="iRINGTools_logo.png"/> Sandbox Service</h1>
+    </div>    
     <div class="main">
-      <h1>
-        Sandbox Service
-      </h1>
-      <br>
       <p>
         This service provides <a href="http://www.w3.org/TR/rdf-sparql-protocol/">SPARQL Protocol</a> access to a triple store containing <a href="https://www.posccaesar.org/wiki/ISO15926">ISO 15926</a> reference data.
       <p>
@@ -27,7 +23,7 @@
     </div>
     <form action="sparql" method="post" enctype="application/x-www-form-urlencoded">
       <input type="hidden" name="outputMimeType" value="text/html"/>
-      <textarea name="query" rows="10" cols="80">
+      <textarea name="query" rows="10" cols="80" style="margin-top:10px">
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 SELECT * WHERE {
   ?s ?p ?o .
