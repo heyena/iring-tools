@@ -32,15 +32,15 @@ using log4net;
 
 namespace org.iringtools.adapter
 {
-  public class Service : IService
+  public class AdapterService : IService
   {
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(Service));
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterService));
     private AdapterProvider _adapterServiceProvider = null;
 
     /// <summary>
     /// Adapter Service Constructor
     /// </summary>
-    public Service()
+    public AdapterService()
     {
       _adapterServiceProvider = new AdapterProvider(ConfigurationManager.AppSettings);
     }
