@@ -84,14 +84,33 @@ namespace org.iringtools.modules.projectapplicationregion
         {
           prjCB.Items.Add(project.Name);
         }
+
+        prjCB.IsEnabled = true;
+        appCB.IsEnabled = true;
       }
       else if (args.CheckForType(CompletedEventType.Generate))
       {
-        MessageBox.Show((string)args.Data);
+        Response response = (Response)args.Data;
+        string messages = String.Empty;
+
+        foreach (string message in response)
+        {
+          messages += message + "\n";
+        }
+
+        MessageBox.Show(messages, "Generate DTO", MessageBoxButton.OK);
       }
       else if (args.CheckForType(CompletedEventType.RefreshAll))
       {
-        MessageBox.Show((string)args.Data);
+        Response response = (Response)args.Data;
+        string messages = String.Empty;
+
+        foreach (string message in response)
+        {
+          messages += message + "\n";
+        }
+
+        MessageBox.Show(messages, "Refresh Facade", MessageBoxButton.OK);
       }
     }
 
