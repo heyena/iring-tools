@@ -229,6 +229,8 @@ namespace org.iringtools.adapter
       catch (Exception exception)
       {
         _logger.Error("Error in UpdateMapping: " + exception);
+
+        response.Level = StatusLevel.Error;
         response.Add("Error while updating Mapping.");
         response.Add(exception.ToString());
       }
@@ -252,6 +254,8 @@ namespace org.iringtools.adapter
       catch (Exception exception)
       {
         _logger.Error("Error in RefreshDictionary: " + exception);
+
+        response.Level = StatusLevel.Error;
         response.Add("Error while refreshing Dictionary.");
         response.Add(exception.ToString());
       }
@@ -428,6 +432,8 @@ namespace org.iringtools.adapter
       catch (Exception exception)
       {
         _logger.Error("Error in RefreshAll: " + exception);
+
+        response.Level = StatusLevel.Error;
         response.Add("Error while Refreshing TripleStore.");
         response.Add(exception.ToString());
       }
@@ -495,6 +501,8 @@ namespace org.iringtools.adapter
       catch (Exception exception)
       {
         _logger.Error("Error in RefreshGraph: " + exception);
+
+        response.Level = StatusLevel.Error;
         response.Add("Error while Refreshing TripleStore for GraphMap[" + graphName + "].");
         response.Add(exception.ToString());
       }
@@ -528,6 +536,8 @@ namespace org.iringtools.adapter
       catch (Exception exception)
       {
         _logger.Error("Error in RefreshDTO: " + exception);
+
+        response.Level = StatusLevel.Error;
         response.Add("Error while RefreshDTO[" + dto.GraphName + "][" + dto.Identifier + "] data.");
         response.Add(exception.ToString());
       }
@@ -591,6 +601,8 @@ namespace org.iringtools.adapter
       catch (Exception exception)
       {
         _logger.Error("Error in Pull: " + exception);
+
+        response.Level = StatusLevel.Error;
         response.Add("Error while pulling " + graphName + " data from " + targetUri + " as " + targetUri + " data with filter " + filter + ".\r\n");
         response.Add(exception.ToString());
       }
@@ -641,6 +653,8 @@ namespace org.iringtools.adapter
       catch (Exception exception)
       {
         _logger.Error("Error in PullDTO: " + exception);
+
+        response.Level = StatusLevel.Error;
         response.Add("Error while pulling " + graphName + " data from " + targetUri + " as " + targetUri + " data with filter " + filter + ".\r\n");
         response.Add(exception.ToString());
       }
@@ -667,6 +681,8 @@ namespace org.iringtools.adapter
       catch (Exception exception)
       {
         _logger.Error("Error in ClearStore: " + exception);
+
+        response.Level = StatusLevel.Error;
         response.Add("Error while clearing TripleStore.");
         response.Add(exception.ToString());
         response.Level = StatusLevel.Error;
@@ -709,6 +725,8 @@ namespace org.iringtools.adapter
       catch (Exception exception)
       {
         _logger.Error("Error in Generate: " + exception);
+
+        response.Level = StatusLevel.Error;
         response.Add("Error generating DTO Model.");
         response.Add(exception.ToString());
       }
@@ -932,8 +950,10 @@ namespace org.iringtools.adapter
         {
           File.Delete(_settings.CodePath + "Model." + projectName + "." + applicationName + ".cs");
         }
-          
+
         _logger.Error("Error in UpdateDatabaseDictionary: " + exception);
+
+        response.Level = StatusLevel.Error;
         response.Add("Error updating database dictionary: " + exception);
       }
 
