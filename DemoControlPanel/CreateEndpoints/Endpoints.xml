@@ -1,0 +1,28 @@
+<iRINGEndpoints xmlns="http://schemas.datacontract.org/2004/07/org.ids_adi.camelot.demo" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <iRINGEndpoint>
+    <adapterServiceUri>http://localhost/AdapterService/Service.svc</adapterServiceUri>
+    <credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.ids_adi.iring">
+      <a:isEncrypted>false</a:isEncrypted>
+    </credentials>
+    <interfaceServiceUri>http://localhost:2020</interfaceServiceUri>
+    <name>My iRING Interface</name>
+  </iRINGEndpoint>
+  <iRINGEndpoint>
+    <adapterServiceUri>https://iring.becpsn.com/AdapterService/Service.svc</adapterServiceUri>
+    <credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.ids_adi.iring">
+      <a:encryptedToken>zlNbMav8dBXUREoOR6ctMVChhWpblUDh5Do7TgluQwntK9E4Y/PZTIHsPPArbKXE</a:encryptedToken>
+      <a:isEncrypted>true</a:isEncrypted>
+    </credentials>
+    <interfaceServiceUri>https://iring.becpsn.com/InterfaceService</interfaceServiceUri>
+    <name>Bechtel iRING Interface (KArthur)</name>
+  </iRINGEndpoint>
+  <iRINGEndpoint>
+    <adapterServiceUri>https://iring.becpsn.com/AdapterService/Service.svc</adapterServiceUri>
+    <credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.ids_adi.iring">
+      <a:encryptedToken>AOX20uTB4w6ZmxbU3qfIu0PTtkz5hJMLULB63TzgS84rVqnILSnoZ7IutTMpvK87</a:encryptedToken>
+      <a:isEncrypted>true</a:isEncrypted>
+    </credentials>
+    <interfaceServiceUri>https://iring.becpsn.com/InterfaceService</interfaceServiceUri>
+    <name>Bechtel iRING Interface (robben@robenj.com)</name>
+  </iRINGEndpoint>
+</iRINGEndpoints>
