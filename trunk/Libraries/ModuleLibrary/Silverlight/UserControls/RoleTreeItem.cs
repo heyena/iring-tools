@@ -157,10 +157,13 @@ namespace org.iringtools.informationmodel.usercontrols
         keyValuePair = new KeyValuePair<string, string>("Name", (roleQualification.name.FirstOrDefault() != null ? roleQualification.name.FirstOrDefault().value : string.Empty));
         PresentationModel.DetailProperties.Add(keyValuePair);
 
-        keyValuePair = new KeyValuePair<string, string>("Description", (roleQualification.description.FirstOrDefault() != null ? roleQualification.description.FirstOrDefault().value : string.Empty));
+        keyValuePair = new KeyValuePair<string, string>("Identifier", roleQualification.qualifies);
         PresentationModel.DetailProperties.Add(keyValuePair);
 
         GetClassLabel("Qualifies", roleQualification.qualifies);
+
+        keyValuePair = new KeyValuePair<string, string>("Description", (roleQualification.description.FirstOrDefault() != null ? roleQualification.description.FirstOrDefault().value : string.Empty));
+        PresentationModel.DetailProperties.Add(keyValuePair);
 
         string value = String.Empty;
         if (roleQualification.value != null)
