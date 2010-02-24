@@ -71,6 +71,10 @@ namespace org.iringtools.adapter
     Response Generate(string projectName, string applicationName);
 
     [OperationContract]
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/delete")]
+    Response Delete(string projectName, string applicationName);
+
+    [OperationContract]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/clear")]
     Response ClearStore(string projectName, string applicationName);
 

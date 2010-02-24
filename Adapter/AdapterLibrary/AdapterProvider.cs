@@ -735,6 +735,48 @@ namespace org.iringtools.adapter
     }
 
     /// <summary>
+    /// Delete and application by removing it from scopes.xml and its generated code/xml
+    /// </summary>
+    /// <param name="projectName"></param>
+    /// <param name="applicationName"></param>
+    /// <returns></returns>
+    public Response Delete(string projectName, string applicationName)
+    {
+      Response response = new Response();
+      
+      try
+      {
+        // UpdateScopes(projectName, applicationName, false);
+        // Update IDataService.Generated.cs
+        // Update IService.Generated.cs
+        // Delete its database
+
+        File.Delete(_settings.CodePath + "DTOService." + projectName + "." + applicationName + ".cs");
+        File.Delete(_settings.CodePath + "DTOModel." + projectName + "." + applicationName + ".cs");
+        File.Delete(_settings.CodePath + "Model." + projectName + "." + applicationName + ".cs");
+
+        File.Delete(_settings.XmlPath + "BindingConfiguration." + projectName + "." + applicationName + ".xml");
+        File.Delete(_settings.XmlPath + "DataDictionary." + projectName + "." + applicationName + ".xml");
+        File.Delete(_settings.XmlPath + "Mapping." + projectName + "." + applicationName + ".xml");
+        File.Delete(_settings.XmlPath + "nh-configuration." + projectName + "." + applicationName + ".xml");
+        File.Delete(_settings.XmlPath + "nh-mapping." + projectName + "." + applicationName + ".xml");
+
+        response.Level = StatusLevel.Success;
+        response.Add("Application deleted successfully.");
+      }
+      catch (Exception exception)
+      {
+        _logger.Error("Error in Delete: " + exception);
+
+        response.Level = StatusLevel.Error;
+        response.Add("Error deleting application.");
+        response.Add(exception.ToString());
+      }
+
+      return response;
+    }
+
+    /// <summary>
     /// Update NInject binding config file.
     /// </summary>
     /// <param name="projectName"></param>

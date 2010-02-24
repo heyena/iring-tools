@@ -138,12 +138,23 @@ namespace org.iringtools.adapter
     }
 
     /// <summary>
-    /// Generated the IAdapterService (partial) IDataService and ModelDTO using T4.
+    /// Generates DTO Layer for an application
     /// </summary>
     /// <returns>Returns the response as success/failure.</returns>
     public Response Generate(string projectName, string applicationName)
     {
       return _adapterServiceProvider.Generate(projectName, applicationName);
+    }
+
+    /// <summary>
+    /// Deletes an application
+    /// </summary>
+    /// <param name="projectName"></param>
+    /// <param name="applicationName"></param>
+    /// <returns>Returns the response as success/failure.</returns>
+    public Response Delete(string projectName, string applicationName)
+    {
+      return _adapterServiceProvider.Delete(projectName, applicationName);
     }
 
     /// <summary>
