@@ -69,7 +69,7 @@ namespace org.iringtools.adapter.projection
     public const string tplPrefix = "http://tpl.rdlfacade.org/data#";
     public const string egPrefix = "http://www.example.com/data#";
     public const string owlPrefix = "http://www.w3.org/2002/07/owl#";
-    public const string p7tplPrefix = "http://tpl.rdswip.org/2009/04/ISO-15926-7_2009_WD#";
+    public const string p7tplPrefix = "http://tpl.rdlfacade.org/data#";
 
     const string _prefixSparqlConnectString = @"noreuse,rdfs+";
     const string _prefixTriplestoreConnectString = @"sqlserver:rdf:Database=rdf;";
@@ -99,9 +99,9 @@ namespace org.iringtools.adapter.projection
 
     public static string rdfType = rdfPrefix + "type";
     public static SemWeb.Entity owlThingEntity = owlPrefix + "Thing";
-    public static SemWeb.Entity classificationTemplateType = p7tplPrefix + "ClassificationOfIndividual";
-    public static string classType = p7tplPrefix + "hasClass";
-    public static string instanceType = p7tplPrefix + "hasIndividual";
+    public static SemWeb.Entity classificationTemplateType = p7tplPrefix + "R63638239485";
+    public static string classType = p7tplPrefix + "R55055340393";
+    public static string instanceType = p7tplPrefix + "R99011248051";
     public static SemWeb.Entity startDateTimeTemplate = tplPrefix + "startDateTime";
     public static string endDateTimeTemplate = tplPrefix + "endDateTime";
     #endregion
