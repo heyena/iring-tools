@@ -927,21 +927,6 @@ namespace org.iringtools.adapter
           }
 
           response.Add("Database dictionary updated successfully.");
-
-          string localAddress = OperationContext.Current.Channel.LocalAddress.Uri.AbsoluteUri;
-
-          WebHttpClient client = new WebHttpClient(localAddress);
-          Response localResponse = client.Get<Response>("/" + projectName + "/" + applicationName + "/clear");
-
-          response.Append(localResponse);
-          if (localResponse.Level == StatusLevel.Error)
-          {
-            throw new Exception("Error While Initializing the Triplestore.");
-          }
-
-          //This cannot say this here, will not know it is a triplestore
-          //OK for now.
-          response.Add("Triplestore verified.");
         }
       }
       catch (Exception exception)
