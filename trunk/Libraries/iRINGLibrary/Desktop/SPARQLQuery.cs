@@ -148,7 +148,7 @@ namespace org.iringtools.library
     {
         StringBuilder sparql = new StringBuilder();
         sparql.AppendLine(String.Format("?subject ?predicate {0} ." , this.Roles[0].Id ));
-        sparql.AppendLine("FILTER (?predicate != p7tpl:hasIndividual)");        
+        sparql.AppendLine("FILTER (?predicate != p7tpl:R99011248051)");        
         sparql.AppendLine("OPTIONAL { ?subject tpl:endDateTime ?endDateTime }");
         sparql.AppendLine("FILTER (!bound(?endDateTime))");
         return sparql.ToString();
@@ -163,9 +163,9 @@ namespace org.iringtools.library
       this.Prefix = "c";
       this.Idx = 0;
 
-      this.TemplateName = "p7tpl:ClassificationOfIndividual";
+      this.TemplateName = "p7tpl:R63638239485";
 
-      this.ClassRole = "p7tpl:hasClass";
+      this.ClassRole = "p7tpl:R55055340393";
       this.ClassId = String.Empty;                 
                
     }
@@ -216,7 +216,7 @@ namespace org.iringtools.library
       this.Prefixes.Add(new SPARQLPrefix() { Label = @"xsd", Uri = @"http://www.w3.org/2001/XMLSchema#" , isMappable=true, objectType= SPARQLPrefix.ObjectType.Unknown });
       this.Prefixes.Add(new SPARQLPrefix() { Label = @"eg", Uri = @"http://www.example.com/data#", isMappable = false, objectType = SPARQLPrefix.ObjectType.Unknown });
       this.Prefixes.Add(new SPARQLPrefix() { Label = @"owl", Uri = @"http://www.w3.org/2002/07/owl#", isMappable = false, objectType = SPARQLPrefix.ObjectType.Unknown });
-      this.Prefixes.Add(new SPARQLPrefix() { Label = @"p7tpl", Uri = @"http://tpl.rdswip.org/2009/04/ISO-15926-7_2009_WD#", isMappable = false, objectType = SPARQLPrefix.ObjectType.Unknown });      
+      this.Prefixes.Add(new SPARQLPrefix() { Label = @"p7tpl", Uri = @"http://tpl.rdlfacade.org/data#", isMappable = false, objectType = SPARQLPrefix.ObjectType.Unknown });      
     }
 
     public SPARQLQuery(SPARQLQueryType type) 
@@ -363,7 +363,7 @@ namespace org.iringtools.library
     {
       SPARQLClassification classification = new SPARQLClassification();      
       classification.ClassId = classId;
-      classification.addRole("p7tpl:hasIndividual", id);            
+      classification.addRole("p7tpl:R99011248051", id);            
 
       this.addTemplate(classification);
 
