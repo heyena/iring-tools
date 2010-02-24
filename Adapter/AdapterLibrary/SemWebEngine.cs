@@ -740,7 +740,7 @@ namespace org.iringtools.adapter.projection
                     curPropertyValue = binding[variable.LocalName].Uri;
                   }
 
-                  object obj = dto.GetPropertyValue(propertyName);
+                  object obj = dto.GetPropertyValueByInternalName(propertyName);
                   if (obj != null)
                     if (_trimData)
                       dtoPropertyValue = obj.ToString().Trim();
@@ -835,7 +835,7 @@ namespace org.iringtools.adapter.projection
                       propertyType = "uri";
                     }
 
-                    object obj = dto.GetPropertyValue(propertyName);
+                    object obj = dto.GetPropertyValueByInternalName(propertyName);
                     if (obj != null)
                       if (_trimData)
                         dtoPropertyValue = obj.ToString().Trim();
@@ -1113,7 +1113,7 @@ namespace org.iringtools.adapter.projection
 
           foreach (string identifierPart in identifiers)
           {
-            object identifierPartValue = dto.GetPropertyValue(identifierPart.Trim());
+            object identifierPartValue = dto.GetPropertyValueByInternalName(identifierPart.Trim());
 
             if (identifierPartValue != null)
             {
