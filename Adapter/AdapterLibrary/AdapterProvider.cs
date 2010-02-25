@@ -746,7 +746,8 @@ namespace org.iringtools.adapter
       
       try
       {
-        // UpdateScopes(projectName, applicationName, false);
+        DeleteApplicationScope(projectName, applicationName);
+        // Delete entry in interface server web.config
         // Update IDataService.Generated.cs
         // Update IService.Generated.cs
         // Delete its database
@@ -832,7 +833,7 @@ namespace org.iringtools.adapter
     /// </summary>
     /// <param name="projectName"></param>
     /// <param name="applicationName"></param>
-    private void UpdateScopes(string projectName, string applicationName, bool setHasDTOLayer)
+    private void UpdateScopes(string projectName, string applicationName, bool hasDTOLayer)
     {
       try
       {
@@ -855,7 +856,7 @@ namespace org.iringtools.adapter
                 {
                   applicationExists = true;
 
-                  if (setHasDTOLayer)
+                  if (hasDTOLayer)
                   {
                     application.hasDTOLayer = true;
                   }
@@ -923,6 +924,48 @@ namespace org.iringtools.adapter
       }
     }
 
+    /// <summary>
+    /// Removes an application scope
+    /// </summary>
+    /// <param name="projectName"></param>
+    /// <param name="applicationName"></param>
+    /// <param name="hasDTOLayer"></param>
+    private void DeleteApplicationScope(string projectName, string applicationName)
+    {
+      try
+      {
+        string scopesPath = _settings.XmlPath + "Scopes.xml";
+
+        if (File.Exists(scopesPath))
+        {
+          List<ScopeProject> projects = Utility.Read<List<ScopeProject>>(scopesPath);
+
+          foreach (ScopeProject project in projects)
+          {
+            if (project.Name.ToUpper() == projectName.ToUpper())
+            {
+              foreach (ScopeApplication application in project.Applications)
+              {
+                if (application.Name.ToUpper() == applicationName.ToUpper())
+                {
+                  project.Applications.Remove(application);
+                  break;
+                }
+              }
+
+              break;
+            }
+          }
+
+          Utility.Write<List<ScopeProject>>(projects, scopesPath, true);
+        }
+      }
+      catch (Exception exception)
+      {
+        _logger.Error("Error in DeleteApplicationScope: " + exception);
+        throw exception;
+      }
+    }
     /// <summary>
     /// Generate entities, hibernate-mapping, hibernate-configuration, and data dictionary for the application
     /// </summary>

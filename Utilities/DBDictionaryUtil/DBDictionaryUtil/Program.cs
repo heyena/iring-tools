@@ -131,13 +131,13 @@ namespace DBDictionaryUtil
         Console.WriteLine("*** ERROR ***\n " + ex);
       }
 
-      Console.WriteLine("\nPress any key to continue ...");
+      Console.WriteLine("\nPress any key to continue...");
       Console.ReadKey();
     }
 
     static void DoCreate(string connStr, string dbProvider, string dbDictionaryFilePath)
     {
-      Console.WriteLine("Creating database dictionary from connection string...");
+      Console.WriteLine("Creating database dictionary...");
 
       DatabaseDictionary dbDictionary = new DatabaseDictionary();
       dbDictionary.connectionString = connStr;
@@ -321,6 +321,8 @@ namespace DBDictionaryUtil
           return ColumnType.Byte;
         case "CHAR":
           return ColumnType.String;
+        case "CHARACTER":
+          return ColumnType.String;
         case "VARCHAR":
           return ColumnType.String;
         case "VARCHAR2":
@@ -345,6 +347,8 @@ namespace DBDictionaryUtil
           return ColumnType.DateTime;
         case "TIMESTAMP":
           return ColumnType.DateTime;
+        case "DEC":
+          return ColumnType.Double;
         case "DECIMAL":
           return ColumnType.Double;
         case "MONEY":
@@ -359,7 +363,7 @@ namespace DBDictionaryUtil
           return ColumnType.Double;
         case "INT":
           return ColumnType.Int32;
-        case "NUMBER":
+        case "INTEGER":
           return ColumnType.Int32;
         case "BIGINT":
           return ColumnType.Int64;
@@ -367,6 +371,10 @@ namespace DBDictionaryUtil
           return ColumnType.Int16;
         case "TINYINT":
           return ColumnType.Int16;
+        case "NUMBER":
+          return ColumnType.Int32;
+        case "LONG":
+          return ColumnType.Int64;
         default:
           throw new Exception("Column data type not supported.");
       }
