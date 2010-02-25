@@ -30,6 +30,12 @@ namespace DemoControlPanel.Web
         [DataMember]
         public WebCredentials credentials { get; set; }
 
+        [DataMember]
+        public bool importEnabled { get; set; }
+
+        [DataMember]
+        public bool exportEnabled { get; set; }
+
     }
 }
 
