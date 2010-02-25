@@ -3,21 +3,25 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-    mc:Ignorable="d" d:DesignWidth="640" d:DesignHeight="480">
+    mc:Ignorable="d" d:DesignWidth="640" d:DesignHeight="500">
     <Grid x:Name="LayoutRoot">
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="White" Offset="1"/>
+                <GradientStop Color="Brown"/>
+            </LinearGradientBrush>
+        </Grid.Background>        
         <Grid.RowDefinitions>
             <RowDefinition Height="80"/>
             <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="8,8,8,8">
-            <Image Height="64" HorizontalAlignment="Left" VerticalAlignment="Center" Width="64" Source="Logo-128x128.PNG" Stretch="Fill"/>
-            <Image HorizontalAlignment="Left" VerticalAlignment="Center" Margin="8" Source="iRING.PNG" Stretch="Fill"/>
-            <TextBlock TextAlignment="Center" VerticalAlignment="Bottom" Margin="8" TextWrapping="Wrap" FontSize="26">Demo Control Panel</TextBlock>
-        </StackPanel>
-        <basics:TabControl Grid.Row="1" Margin="8,8,8,8" Width="640" Height="416" x:Name="tabFunctions" SelectedIndex="0">
+        </Grid.RowDefinitions>        
+        <Image Source="iRINGTools.DemoControlPanel.png" Stretch="None" Margin="2,2,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>        
+        <basics:TabControl Grid.Row="1" Margin="8,8,8,8" Width="640" Height="496" x:Name="tabFunctions" SelectedIndex="0">
             <basics:TabItem  Header="Demo">
                 <Grid x:Name="Demo" ShowGridLines="False">
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="40"/>
                         <RowDefinition Height="40"/>
                         <RowDefinition Height="40"/>
                         <RowDefinition Height="62"/>
@@ -36,31 +40,47 @@
                         <TextBlock Margin="4" Width="80" HorizontalAlignment="Left" VerticalAlignment="Center">Scenario:</TextBlock>
                         <ComboBox x:Name="cbxDemoScenarios" Width="520" HorizontalAlignment="Right" />
                     </StackPanel>
-                    <Border Margin="8,8,8,8" Grid.Row="1" BorderBrush="Gray" BorderThickness="1" CornerRadius="3" Grid.RowSpan="5" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Left"  >
+                    <Border Margin="8,8,8,8" Grid.Row="1" BorderBrush="Gray" BorderThickness="1" CornerRadius="3" Grid.RowSpan="7" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Left"  >
                         <StackPanel x:Name="Sender" Orientation="Vertical"  >
                             <StackPanel Orientation="Horizontal" Grid.Column="1" >
                                 <TextBlock Margin="8"  HorizontalAlignment="Left" VerticalAlignment="Center">Sender:</TextBlock>
                                 <TextBlock x:Name="tbSender" Margin="8" Width="216" HorizontalAlignment="Right" VerticalAlignment="Center"></TextBlock>
                             </StackPanel>
+                            <StackPanel Orientation="Horizontal" Grid.Column="1" >
+                                <TextBlock Margin="8"  HorizontalAlignment="Left" VerticalAlignment="Center">Project:</TextBlock>
+                                <TextBlock x:Name="tbSenderProjectName" Width="264" Height="24" Margin="8"/>
+                            </StackPanel>                            
+                            <StackPanel Orientation="Horizontal" Grid.Column="1" >
+                                <TextBlock Margin="8"  HorizontalAlignment="Left" VerticalAlignment="Center">Application:</TextBlock>
+                                <TextBlock x:Name="tbSenderAppName" Width="264" Height="24" Margin="8"/>
+                            </StackPanel>                            
                             <ComboBox x:Name="cbxSenderGraphName" Width="264" Height="24" Margin="8"/>
-                            <Button x:Name="btnSenderRefresh" Content="Refresh" Height="48" Width="264" Margin="8" />
-                            <Button x:Name="btnSenderImport" Content="Export" Height="48" Width="264" Margin="8" IsEnabled="False" />
-                            <Button x:Name="btnSenderReset" Content="Reset" Height="48" Width="264" Margin="8" />
+                            <Button x:Name="btnSenderRefresh" Content="Refresh" Height="48" Width="264" Margin="8" Click="btnSenderRefresh_Click"/>
+                            <Button x:Name="btnSenderImport" Content="Export" Height="48" Width="264" Margin="8" IsEnabled="False" Click="btnSenderImport_Click"/>
+                            <Button x:Name="btnSenderReset" Content="Reset" Height="48" Width="264" Margin="8" Click="btnSenderReset_Click"/>
                         </StackPanel>
                     </Border>
-                    <Border Margin="8,8,8,8" Grid.Row="1" BorderBrush="Gray" BorderThickness="1" CornerRadius="3" Grid.RowSpan="5" Grid.Column="2" Grid.ColumnSpan="2"  HorizontalAlignment="Right" >
+                    <Border Margin="8,8,8,8" Grid.Row="1" BorderBrush="Gray" BorderThickness="1" CornerRadius="3" Grid.RowSpan="7" Grid.Column="2" Grid.ColumnSpan="2"  HorizontalAlignment="Right" >
                         <StackPanel x:Name="Receiver" Orientation="Vertical">
                             <StackPanel Orientation="Horizontal" Grid.Column="1" >
                                 <TextBlock Margin="8"  HorizontalAlignment="Left" VerticalAlignment="Center">Receiver:</TextBlock>
                                 <TextBlock x:Name="tbReceiver" Margin="8" Width="216" HorizontalAlignment="Right" VerticalAlignment="Center"></TextBlock>
                             </StackPanel>
+                            <StackPanel Orientation="Horizontal" Grid.Column="1" >
+                                <TextBlock Margin="8"  HorizontalAlignment="Left" VerticalAlignment="Center">Project:</TextBlock>
+                                <TextBlock x:Name="tbReceiverProjectName" Width="264" Height="24" Margin="8"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Grid.Column="1" >
+                                <TextBlock Margin="8"  HorizontalAlignment="Left" VerticalAlignment="Center">Application:</TextBlock>
+                                <TextBlock x:Name="tbReceiverAppName" Width="264" Height="24" Margin="8"/>
+                            </StackPanel>
                             <ComboBox x:Name="cbxReceiverGraphName" Width="264" Height="24" Margin="8"/>
-                            <Button x:Name="btnReceiverPull" Content="Pull" Height="48" Width="264" Margin="8" />
-                            <Button x:Name="btnReceiverExport" Content="Import" Height="48" Width="264" Margin="8" IsEnabled="False"/>
-                            <Button x:Name="btnReceiverReset" Content="Reset" Height="48" Width="264" Margin="8" />
+                            <Button x:Name="btnReceiverPull" Content="Pull" Height="48" Width="264" Margin="8" Click="btnReceiverPull_Click"/>
+                            <Button x:Name="btnReceiverExport" Content="Import" Height="48" Width="264" Margin="8" IsEnabled="False" Click="btnReceiverExport_Click"/>
+                            <Button x:Name="btnReceiverReset" Content="Reset" Height="48" Width="264" Margin="8" Click="btnReceiverReset_Click"/>
                         </StackPanel>
                     </Border>
-                    <StackPanel x:Name="Uris" Orientation="Vertical" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="7" Margin="8,8,8,8">
+                    <StackPanel x:Name="Uris" Orientation="Vertical" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="8" Margin="8,8,8,8">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center">Sender Uri:</TextBlock>
                             <TextBlock x:Name="tbSenderUri" HorizontalAlignment="Right" TextAlignment="Right" VerticalAlignment="Center"></TextBlock>
@@ -91,8 +111,8 @@
           FontFamily="Courier New" 
           Text="PREFIX dm: &lt;http://dm.rdswip.org/data#&gt;&#xa;SELECT ?c ?i &#xa;WHERE &#xa;{&#xa; ?c a              dm:classification .&#xa; ?c dm:instance    ?i                .&#xa;}"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="4,4,4,4" Grid.Column="0" Grid.Row="2">
-                        <Button x:Name="btnQuery" Content="Query" Height="24" Width="128" Margin="4" />
-                        <Button x:Name="btnUpdate" Content="Update" Height="24" Width="128" Margin="4" />
+                        <Button x:Name="btnQuery" Content="Query" Height="24" Width="128" Margin="4" Click="btnQuery_Click"/>
+                        <Button x:Name="btnUpdate" Content="Update" Height="24" Width="128" Margin="4" Click="btnUpdate_Click"/>
                     </StackPanel>
                 </Grid>
             </basics:TabItem>

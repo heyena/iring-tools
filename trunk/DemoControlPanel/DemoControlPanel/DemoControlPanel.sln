@@ -2,12 +2,17 @@
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoControlPanel", "DemoControlPanel.csproj", "{024DAA92-F1B1-4D6B-986B-A23152579BAF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{05FA215E-5641-467B-9B95-870B8BBE0361} = {05FA215E-5641-467B-9B95-870B8BBE0361}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoControlPanel.Web", "..\DemoControlPanel.Web\DemoControlPanel.Web.csproj", "{05FA215E-5641-467B-9B95-870B8BBE0361}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UtilityLibrary.Silverlight", "..\..\Libraries\UtilityLibrary\Silverlight\UtilityLibrary.Silverlight.csproj", "{EA853599-4781-4BD2-8EC7-61E893520A23}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UtilityLibrary.Desktop", "..\..\Libraries\UtilityLibrary\Desktop\UtilityLibrary.Desktop.csproj", "{E937EE2D-064B-4EDA-9E81-7E7F509A784A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreateEndpoints", "..\CreateEndpoints\CreateEndpoints.csproj", "{6AEFEBD1-E1C7-442F-81AD-BAA48560777C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iRINGLibrary.Desktop", "..\..\Libraries\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj", "{46FB3942-D0A5-4BFF-97B0-739E56BFB111}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,14 +28,18 @@ Global
 		{05FA215E-5641-467B-9B95-870B8BBE0361}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05FA215E-5641-467B-9B95-870B8BBE0361}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05FA215E-5641-467B-9B95-870B8BBE0361}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EA853599-4781-4BD2-8EC7-61E893520A23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EA853599-4781-4BD2-8EC7-61E893520A23}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EA853599-4781-4BD2-8EC7-61E893520A23}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EA853599-4781-4BD2-8EC7-61E893520A23}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E937EE2D-064B-4EDA-9E81-7E7F509A784A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E937EE2D-064B-4EDA-9E81-7E7F509A784A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E937EE2D-064B-4EDA-9E81-7E7F509A784A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E937EE2D-064B-4EDA-9E81-7E7F509A784A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6AEFEBD1-E1C7-442F-81AD-BAA48560777C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AEFEBD1-E1C7-442F-81AD-BAA48560777C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6AEFEBD1-E1C7-442F-81AD-BAA48560777C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AEFEBD1-E1C7-442F-81AD-BAA48560777C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46FB3942-D0A5-4BFF-97B0-739E56BFB111}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46FB3942-D0A5-4BFF-97B0-739E56BFB111}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46FB3942-D0A5-4BFF-97B0-739E56BFB111}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46FB3942-D0A5-4BFF-97B0-739E56BFB111}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

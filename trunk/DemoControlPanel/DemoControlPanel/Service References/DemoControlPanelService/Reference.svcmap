@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="71c4cbc5-d291-4d86-908d-416b770353a5" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>true</GenerateAsynchronousMethods>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings>
+      <CollectionMapping TypeName="System.Collections.ObjectModel.ObservableCollection`1" Category="List" />
+    </CollectionMappings>
+    <GenerateSerializableTypes>false</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://localhost:2513/DemoControlPanelService.svc?wsdl" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="DemoControlPanelService4.xsd" MetadataType="Schema" ID="d192a986-acae-465d-98f7-4871e25dbd56" SourceId="1" SourceUrl="http://localhost:2513/DemoControlPanelService.svc?xsd=xsd0" />
+    <MetadataFile FileName="DemoControlPanelService.xsd" MetadataType="Schema" ID="b76b3f0c-6f4b-4d18-a884-c9dcb2fdc6be" SourceId="1" SourceUrl="http://localhost:2513/DemoControlPanelService.svc?xsd=xsd3" />
+    <MetadataFile FileName="DemoControlPanelService5.xsd" MetadataType="Schema" ID="f4027ee2-6eb9-4fd3-8fd1-f1d001297d3c" SourceId="1" SourceUrl="http://localhost:2513/DemoControlPanelService.svc?xsd=xsd6" />
+    <MetadataFile FileName="DemoControlPanelService3.xsd" MetadataType="Schema" ID="c4367d3f-62af-4003-b8c7-dc7cdf4f3ca2" SourceId="1" SourceUrl="http://localhost:2513/DemoControlPanelService.svc?xsd=xsd1" />
+    <MetadataFile FileName="DemoControlPanelService2.xsd" MetadataType="Schema" ID="58fdbfe8-1337-44a3-9563-03c85a0203b2" SourceId="1" SourceUrl="http://localhost:2513/DemoControlPanelService.svc?xsd=xsd4" />
+    <MetadataFile FileName="DemoControlPanelService.wsdl" MetadataType="Wsdl" ID="432c32df-49a7-44be-8498-a7ba170a412d" SourceId="1" SourceUrl="http://localhost:2513/DemoControlPanelService.svc?wsdl" />
+    <MetadataFile FileName="DemoControlPanelService1.xsd" MetadataType="Schema" ID="a97bc0cc-d4d3-4934-a0f4-afbe56331d44" SourceId="1" SourceUrl="http://localhost:2513/DemoControlPanelService.svc?xsd=xsd2" />
+    <MetadataFile FileName="DemoControlPanelService51.xsd" MetadataType="Schema" ID="8d430977-59c8-41bb-9c91-d7dfad9e5eca" SourceId="1" SourceUrl="http://localhost:2513/DemoControlPanelService.svc?xsd=xsd5" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>
