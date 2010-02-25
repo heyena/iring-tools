@@ -3,7 +3,7 @@
 namespace DemoControlPanel.Web
 {
     [DataContract]
-    public class Config
+    public class ConfiguredEndpoints
     {
         [DataMember]
         public Scenarios scenarios { get; set; }

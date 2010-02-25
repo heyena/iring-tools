@@ -60,7 +60,6 @@
     <Reference Include="System.Web.Mobile" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ClientBin\DemoControlPanel.xap" />
     <Content Include="Default.aspx" />
     <Content Include="DemoControlPanelTestPage.aspx" />
     <Content Include="DemoControlPanelTestPage.html" />
@@ -68,9 +67,11 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ClientBin\DemoControlPanel.xap" />
     <Content Include="DemoControlPanelService.svc" />
-    <Content Include="XML\config.xml" />
-    <Compile Include="Config.cs" />
+    <Content Include="ConfiguredEndpoints.xml" />
+    <Content Include="iRINGTools_logo.png" />
+    <Compile Include="ConfiguredEndpoints.cs" />
     <Compile Include="Scenarios.cs" />
     <Compile Include="iRINGEndpoints.cs" />
     <Compile Include="Default.aspx.cs">
@@ -87,6 +88,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
+      <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
+      <Name>iRINGLibrary.Desktop</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Libraries\UtilityLibrary\Desktop\UtilityLibrary.Desktop.csproj">
       <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
       <Name>UtilityLibrary.Desktop</Name>
