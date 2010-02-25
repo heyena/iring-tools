@@ -800,7 +800,7 @@ namespace org.iringtools.adapter
           }
           else
           {
-            dtoServiceWriter.WriteLine(@"<#= graphMap.name #> <#= graphMap.name #>Obj = (<#= graphMap.name #>)dto;");
+            dtoServiceWriter.WriteLine(@"{0} {0}Obj = ({0})dto;", graphMap.name);
             int dataObjectMapCount = 0;
 
             foreach (DataObjectMap dataObjectMap in graphMap.dataObjectMaps)
