@@ -226,8 +226,7 @@ namespace org.iringtools.adapter.dataLayer
         }
         catch (Exception ex)
         {
-          response.Add("Error generating application entities.");
-          response.Add(ex.ToString());
+          throw new Exception("Error generating application entities " + ex);
         }
       }
 
@@ -379,7 +378,7 @@ namespace org.iringtools.adapter.dataLayer
           _mappingWriter.WriteEndElement();
         }
       }
-      else if (table.keys[0].keyType != KeyType.foreign)
+      else if (table.keys.Count == 1 && table.keys[0].keyType != KeyType.foreign)
       {
         _entityWriter.WriteLine("public virtual {0} Id {{ get; set; }}", table.keys[0].columnType);
 
