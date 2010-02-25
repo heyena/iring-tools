@@ -752,7 +752,7 @@ namespace org.iringtools.adapter
         //string prefixTriplestoreConnectString = @"sqlserver:rdf:Database=rdf;";
         //int prefixLength = prefixTriplestoreConnectString.Length;        
         //string masterConnectionString = _settings.TripleStoreConnectionString.Remove(0, prefixLength);
-        //SemWebEngine semwebEngine = new SemWebEngine(_settings);
+        //SemWebEngine semwebEngine = new SemWebEngine(_settings, app);
         //DropDatabase(masterConnectionString);
 
         // Delete entry in interface server web.config
