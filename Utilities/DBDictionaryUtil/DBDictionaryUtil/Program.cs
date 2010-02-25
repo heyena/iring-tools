@@ -138,9 +138,12 @@ namespace DBDictionaryUtil
     static void DoCreate(string connStr, string dbProvider, string dbDictionaryFilePath)
     {
       Console.WriteLine("Creating database dictionary...");
+      
+      dbProvider = dbProvider.ToUpper(); 
+      string parsedConnStr = ParseConnectionString(connStr, dbProvider);
 
       DatabaseDictionary dbDictionary = new DatabaseDictionary();
-      dbDictionary.connectionString = connStr;
+      dbDictionary.connectionString = parsedConnStr;
       dbDictionary.tables = new List<Table>();
 
       string metadataQuery = String.Empty;
@@ -148,9 +151,8 @@ namespace DBDictionaryUtil
 
       properties.Add("connection.provider", "NHibernate.Connection.DriverConnectionProvider");
       properties.Add("proxyfactory.factory_class", "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle");
-      properties.Add("connection.connection_string", connStr);
+      properties.Add("connection.connection_string", parsedConnStr);
 
-      dbProvider = dbProvider.ToUpper();
       if (dbProvider.Contains("MSSQL"))
       {
         metadataQuery =
@@ -309,6 +311,37 @@ namespace DBDictionaryUtil
       {
         Console.WriteLine(line);
       }
+    }
+
+    static string ParseConnectionString(string connStr, string dbProvider)
+    {
+      string parsedConnStr = String.Empty;
+      string[] connStrKeyValuePairs = connStr.Split(';');
+
+      foreach (string connStrKeyValuePair in connStrKeyValuePairs)
+      {
+        string[] connStrKeyValuePairTemp = connStrKeyValuePair.Split('=');
+        string connStrKey = connStrKeyValuePairTemp[0].Trim();
+        string connStrValue = connStrKeyValuePairTemp[1].Trim();
+
+        if (connStrKey.ToUpper() == "DATA SOURCE" || 
+            connStrKey.ToUpper() == "USER ID" || 
+            connStrKey.ToUpper() == "PASSWORD")
+        {
+          parsedConnStr += connStrKey + "=" + connStrValue + ";";
+        }
+
+        if (dbProvider.ToUpper().Contains("MSSQL"))
+        {
+          if (connStrKey.ToUpper() == "INITIAL CATALOG" || 
+              connStrKey.ToUpper() == "INTEGRATED SECURITY")
+          {
+            parsedConnStr += connStrKey + "=" + connStrValue + ";";
+          }
+        }
+      }
+
+      return parsedConnStr;
     }
 
     static ColumnType SqlTypeToCSharpType(string columnDataType)
