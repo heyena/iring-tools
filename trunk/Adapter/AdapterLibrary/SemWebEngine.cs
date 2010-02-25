@@ -102,8 +102,8 @@ namespace org.iringtools.adapter.projection
     public static SemWeb.Entity classificationTemplateType = p7tplPrefix + "R63638239485";
     public static string classType = p7tplPrefix + "R55055340393";
     public static string instanceType = p7tplPrefix + "R99011248051";
-    public static SemWeb.Entity startDateTimeTemplate = tplPrefix + "startDateTime";
-    public static string endDateTimeTemplate = tplPrefix + "endDateTime";
+    public static SemWeb.Entity startDateTimeTemplate = p7tplPrefix + "valStartTime";
+    public static string endDateTimeTemplate = p7tplPrefix + "valEndTime";
     #endregion
 
     [Inject]

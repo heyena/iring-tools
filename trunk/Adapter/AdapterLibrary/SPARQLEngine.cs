@@ -111,7 +111,7 @@ namespace org.iringtools.adapter.projection
 
                     SPARQLClassification classification = identifierQuery.addClassification(graphMap.classId, "?i");
                     identifierQuery.addTemplate(identifierTemplateMap.templateId, identifierTemplateMap.classRole, "?i", identifierRoleMap.roleId, "?" + identifierRoleMap.propertyName);
-                    identifierQuery.addTemplate(identifierTemplateMap.templateId, identifierTemplateMap.classRole, "?i", "tpl:endDateTime", "?endDateTime");
+                    identifierQuery.addTemplate(identifierTemplateMap.templateId, identifierTemplateMap.classRole, "?i", "p7tpl:valEndTime", "?endDateTime");
                     SPARQLResults sparqlResults = SPARQLClient.PostQuery(_targetUri, identifierQuery.getSPARQL(), _targetCredentials, _proxyCredentials);
 
                     foreach (SPARQLResult result in sparqlResults.resultsElement.results)
@@ -275,7 +275,7 @@ namespace org.iringtools.adapter.projection
                 identifierQuery.addVariable("?i");
 
                 SPARQLClassification classification = identifierQuery.addClassification(graphMap.classId, "?i");
-                identifierQuery.addTemplate(classification.TemplateName, classification.ClassRole, classification.ClassId, "tpl:endDateTime", "?endDateTime");
+                identifierQuery.addTemplate(classification.TemplateName, classification.ClassRole, classification.ClassId, "p7tpl:valEndTime", "?endDateTime");
                 identifierQuery.addTemplate(identifierTemplateMap.templateId, identifierTemplateMap.classRole, "?i", identifierRoleMap.roleId, "?" + identifierRoleMap.propertyName);
 
                 foreach (String identifier in identifiers)
@@ -326,7 +326,7 @@ namespace org.iringtools.adapter.projection
                           query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, "?" + roleMap.propertyName);
                         }
                     }
-                    query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, "tpl:endDateTime", "?endDateTime");
+                    query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, "p7tpl:valEndTime", "?endDateTime");
                     SPARQLResults sparqlResults = SPARQLClient.PostQuery(_targetUri, query.getSPARQL(), _targetCredentials, _proxyCredentials);
 
                     foreach (SPARQLResult result in sparqlResults.resultsElement.results)
@@ -403,7 +403,7 @@ namespace org.iringtools.adapter.projection
 
                 query.addVariable(instanceVariable);
                 SPARQLClassification classification = query.addClassification(classMap.classId, instanceVariable);
-                query.addTemplate(classification.TemplateName, classification.ClassRole, classification.ClassId, "tpl:endDateTime", "?endDateTime");
+                query.addTemplate(classification.TemplateName, classification.ClassRole, classification.ClassId, "p7tpl:valEndTime", "?endDateTime");
                 foreach (TemplateMap templateMap in classMap.templateMaps)
                 {
                     QueryTemplateMap(templateMap, classMap, query);
@@ -566,7 +566,7 @@ namespace org.iringtools.adapter.projection
             //{
             // ?s ?p eg:R99486931975__1-M6-AB-001 . 
             // FILTER (?p != dm:instance)
-            // OPTIONAL { ?s tpl:endDateTime ?endDateTime }
+            // OPTIONAL { ?s p7tpl:valEndTime ?endDateTime }
             // FILTER (!bound(?endDateTime))
             //}
 
@@ -592,7 +592,7 @@ namespace org.iringtools.adapter.projection
               SPARQLQuery insertTemporalQuery = new SPARQLQuery(SPARQLQueryType.INSERTTEMPORAL);
               SPARQLClassification classification = insertTemporalQuery.addClassification(graphMap.classId, query.getPREFIX_URI(identifier));
               string endTimeValue = query.getLITERAL_SPARQL(DateTime.UtcNow.ToString(), "datetime");
-              insertTemporalQuery.addTemplate(classification.TemplateName, classification.ClassRole, identifier, "tpl:endDateTime", "?endDateTime", endTimeValue);
+              insertTemporalQuery.addTemplate(classification.TemplateName, classification.ClassRole, identifier, "p7tpl:valEndTime", "?endDateTime", endTimeValue);
               SPARQLBuilder.ExecuteUpdateQuery(_targetUri, _targetCredentials, _proxyCredentials, insertTemporalQuery.getSPARQL());
 
             }
@@ -616,7 +616,7 @@ namespace org.iringtools.adapter.projection
                 query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, "?" + roleMap.propertyName);
               }
               string endTimeValue = query.getLITERAL_SPARQL(DateTime.UtcNow.ToString(), "datetime");
-              query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, "tpl:endDateTime", "?endDateTime", endTimeValue);
+              query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, "p7tpl:valEndTime", "?endDateTime", endTimeValue);
               SPARQLBuilder.ExecuteUpdateQuery(_targetUri, _targetCredentials, _proxyCredentials, query.getSPARQL());
             }
             else
@@ -630,7 +630,7 @@ namespace org.iringtools.adapter.projection
               SPARQLClassification classification = query.addClassification(classMap.classId, query.getPREFIX_URI(parentIdentifierVariable));
               string endTimeValue = query.getLITERAL_SPARQL(DateTime.UtcNow.ToString(), "datetime");
               query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, query.getPREFIX_URI(instanceVariable));
-              query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, "tpl:endDateTime", "?endDateTime", endTimeValue);
+              query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, "p7tpl:valEndTime", "?endDateTime", endTimeValue);
               SPARQLBuilder.ExecuteUpdateQuery(_targetUri, _targetCredentials, _proxyCredentials, query.getSPARQL());
 
               RefreshDeleteClassMap(roleMap.classMap, roleMap, instanceVariable);              
@@ -660,7 +660,7 @@ namespace org.iringtools.adapter.projection
               SPARQLQuery insertTemporalQuery = new SPARQLQuery(SPARQLQueryType.INSERTTEMPORAL);
               SPARQLClassification classification = insertTemporalQuery.addClassification(classMap.classId, query.getPREFIX_URI(parentIdentifierVariable));
               string endTimeValue = query.getLITERAL_SPARQL(DateTime.UtcNow.ToString(), "datetime");
-              insertTemporalQuery.addTemplate(classification.TemplateName, classification.ClassRole, parentIdentifierVariable, "tpl:endDateTime", "?endDateTime", endTimeValue);
+              insertTemporalQuery.addTemplate(classification.TemplateName, classification.ClassRole, parentIdentifierVariable, "p7tpl:valEndTime", "?endDateTime", endTimeValue);
               SPARQLBuilder.ExecuteUpdateQuery(_targetUri, _targetCredentials, _proxyCredentials, insertTemporalQuery.getSPARQL());
 
               foreach (TemplateMap templateMap in classMap.templateMaps)
@@ -887,11 +887,11 @@ namespace org.iringtools.adapter.projection
                                     insertQuery.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, "?" + roleMap.propertyName, propertyValue);
                                 }
                                 string endTimeValue = insertTemporalQuery.getLITERAL_SPARQL(DateTime.UtcNow.ToString(), "datetime");
-                                insertTemporalQuery.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, "tpl:endDateTime", "?endDateTime", endTimeValue);
+                                insertTemporalQuery.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, "p7tpl:valEndTime", "?endDateTime", endTimeValue);
                                 SPARQLBuilder.ExecuteUpdateQuery(_targetUri, _targetCredentials, _proxyCredentials, insertTemporalQuery.getSPARQL());
 
                                 string startTimeValue = insertQuery.getLITERAL_SPARQL(DateTime.UtcNow.ToString(), "datetime");
-                                insertQuery.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, "tpl:startDateTime", "?startDateTime", startTimeValue);
+                                insertQuery.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, "p7tpl:valStartTime", "?startDateTime", startTimeValue);
                                 SPARQLBuilder.ExecuteUpdateQuery(_targetUri, _targetCredentials, _proxyCredentials, insertQuery.getSPARQL());
                             }
 
@@ -979,7 +979,7 @@ namespace org.iringtools.adapter.projection
 
                         }
                         string startTimeValue = insertQuery.getLITERAL_SPARQL(DateTime.UtcNow.ToString(), "datetime");
-                        insertQuery.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, "tpl:startDateTime", "?startDateTime", startTimeValue);
+                        insertQuery.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, "p7tpl:valStartTime", "?startDateTime", startTimeValue);
 
                         SPARQLBuilder.ExecuteUpdateQuery(_targetUri, _targetCredentials, _proxyCredentials, insertQuery.getSPARQL());
                     }
@@ -1032,7 +1032,7 @@ namespace org.iringtools.adapter.projection
                     SPARQLQuery query = new SPARQLQuery(SPARQLQueryType.INSERT);
                     SPARQLClassification classification = query.addClassification(classId, identifier);
                     string startTimeValue = query.getLITERAL_SPARQL(DateTime.UtcNow.ToString(), "datetime");
-                    query.addTemplate(classification.TemplateName, classification.ClassRole, classification.ClassId, "tpl:startDateTime", startTimeValue);
+                    query.addTemplate(classification.TemplateName, classification.ClassRole, classification.ClassId, "p7tpl:valStartTime", startTimeValue);
 
                     ExecuteUpdateQuery(uri, targetCredentials, proxyCredentials, query.getSPARQL());
                 }
@@ -1080,7 +1080,7 @@ namespace org.iringtools.adapter.projection
                     SPARQLQuery query = new SPARQLQuery(SPARQLQueryType.INSERT);
                     query.addTemplate(templateMap.templateId, templateMap.classRole, className, roleMap.roleId, identifier);
                     string startTimeValue = query.getLITERAL_SPARQL(DateTime.UtcNow.ToString(), "datetime");
-                    query.addTemplate(templateMap.templateId, templateMap.classRole, className, "tpl:startDateTime", "?startDateTime", startTimeValue);
+                    query.addTemplate(templateMap.templateId, templateMap.classRole, className, "p7tpl:valStartTime", "?startDateTime", startTimeValue);
                     /*
                     string query = prefixes + insertQuery + @"
                               {
@@ -1113,7 +1113,7 @@ namespace org.iringtools.adapter.projection
 
                 SPARQLClassification classification = query.addClassification(classId, identifier);
                 query.addVariable(classification.getNode());
-                query.addTemplate(classification.TemplateName, classification.ClassRole, classification.ClassId, "tpl:endDateTime", "?endDateTime");
+                query.addTemplate(classification.TemplateName, classification.ClassRole, classification.ClassId, "p7tpl:valEndTime", "?endDateTime");
 
                 string blankNodeID = ExecuteScalarSelectQuery(uri, targetCredentials, proxyCredentials, query.getSPARQL(), relationshipType);
                 return blankNodeID != String.Empty;
@@ -1147,7 +1147,7 @@ namespace org.iringtools.adapter.projection
                 query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, "?" + roleMap.propertyName);
               }              
             }
-            query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, "tpl:endDateTime", "?endDateTime");
+            query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, "p7tpl:valEndTime", "?endDateTime");
 
             SPARQLResults sparqlResults = SPARQLClient.PostQuery(uri, query.getSPARQL(), targetCredentials, proxyCredentials);
             return sparqlResults;
@@ -1169,7 +1169,7 @@ namespace org.iringtools.adapter.projection
                 query.addVariable("?i2");
                 SPARQLClassification classification = query.addClassification(roleMap.classMap.classId, "?i2");
                 query.addTemplate(templateMap.templateId, templateMap.classRole, className, roleMap.roleId, "?i2");
-                query.addTemplate(templateMap.templateId, templateMap.classRole, className, "tpl:endDateTime", "?endDateTime");
+                query.addTemplate(templateMap.templateId, templateMap.classRole, className, "p7tpl:valEndTime", "?endDateTime");
 
                 /*       
                 string relatedQueryClass = prefixes + selectQuery + @"

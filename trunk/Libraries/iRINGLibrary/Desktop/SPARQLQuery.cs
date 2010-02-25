@@ -90,7 +90,7 @@ namespace org.iringtools.library
 
         foreach (SPARQLRole role in this.Roles)
         {
-            if (role.Role == "tpl:endDateTime")
+            if (role.Role == "p7tpl:valEndTime")
             {
                 sparql.AppendLine(String.Format("{0} {1} {2} .", this.getNode(), role.Role, role.newId));
             }           
@@ -125,7 +125,7 @@ namespace org.iringtools.library
 
       foreach (SPARQLRole role in this.Roles)
       {
-          if (role.Role != "tpl:endDateTime")
+          if (role.Role != "p7tpl:valEndTime")
           {
             sparql.AppendLine(String.Format("{0} {1} {2} .", this.getNode(), role.Role, role.Id));
           }
@@ -149,7 +149,7 @@ namespace org.iringtools.library
         StringBuilder sparql = new StringBuilder();
         sparql.AppendLine(String.Format("?subject ?predicate {0} ." , this.Roles[0].Id ));
         sparql.AppendLine("FILTER (?predicate != p7tpl:R99011248051)");        
-        sparql.AppendLine("OPTIONAL { ?subject tpl:endDateTime ?endDateTime }");
+        sparql.AppendLine("OPTIONAL { ?subject p7tpl:valEndTime ?endDateTime }");
         sparql.AppendLine("FILTER (!bound(?endDateTime))");
         return sparql.ToString();
     }    
