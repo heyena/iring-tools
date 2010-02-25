@@ -747,10 +747,17 @@ namespace org.iringtools.adapter
       try
       {
         DeleteApplicationScope(projectName, applicationName);
+
+        // Delete its database
+        //string prefixTriplestoreConnectString = @"sqlserver:rdf:Database=rdf;";
+        //int prefixLength = prefixTriplestoreConnectString.Length;        
+        //string masterConnectionString = _settings.TripleStoreConnectionString.Remove(0, prefixLength);
+        //SemWebEngine semwebEngine = new SemWebEngine(_settings);
+        //DropDatabase(masterConnectionString);
+
         // Delete entry in interface server web.config
         // Update IDataService.Generated.cs
         // Update IService.Generated.cs
-        // Delete its database
 
         File.Delete(_settings.CodePath + "DTOService." + projectName + "." + applicationName + ".cs");
         File.Delete(_settings.CodePath + "DTOModel." + projectName + "." + applicationName + ".cs");

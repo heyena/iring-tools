@@ -108,10 +108,11 @@ namespace org.iringtools.adapter
         parameters.ReferencedAssemblies.Add(_settings.BinaryPath + "AdapterLibrary.dll");
 
         // Generate code
+        List<string> serviceKnownTypes = GetServiceKnownTypes(projectName, applicationName);
         string dtoModel = GenerateDTOModel(projectName, applicationName);
         string dtoService = GenerateDTOService();
-        string serviceInterface = UpdateServiceInterface();
-        string dataServiceInterface = UpdateDataServiceInterface();
+        string iService = GenerateIService(projectName, applicationName, serviceKnownTypes);
+        string iDataService = GenerateIDataService(projectName, applicationName, serviceKnownTypes);
 
         #region Compile code
         List<string> sources = new List<string>();
@@ -145,8 +146,8 @@ namespace org.iringtools.adapter
         // Add generated code
         sources.Add(dtoModel);
         sources.Add(dtoService);
-        sources.Add(serviceInterface);
-        sources.Add(dataServiceInterface);
+        sources.Add(iService);
+        sources.Add(iDataService);
         
         // Do compile
         Utility.Compile(compilerOptions, parameters, sources.ToArray());
@@ -155,8 +156,8 @@ namespace org.iringtools.adapter
         // Write generated code to disk
         Utility.WriteString(dtoModel, _settings.CodePath + "DTOModel." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
         Utility.WriteString(dtoService, _settings.CodePath + "DTOService." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
-        Utility.WriteString(serviceInterface, _settings.CodePath + "IService.Generated.cs", Encoding.ASCII);
-        Utility.WriteString(dataServiceInterface, _settings.CodePath + "IDataService.Generated.cs", Encoding.ASCII);
+        Utility.WriteString(iService, _settings.CodePath + "IService.Generated.cs", Encoding.ASCII);
+        Utility.WriteString(iDataService, _settings.CodePath + "IDataService.Generated.cs", Encoding.ASCII);
       }
       catch (Exception ex)
       {
@@ -197,7 +198,7 @@ namespace org.iringtools.adapter
         _dtoModelBuilder = new StringBuilder();
         _dtoModelWriter = new IndentedTextWriter(new StringWriter(_dtoModelBuilder), INDENTATION);
 
-        _dtoModelWriter.WriteLine(Utility.GeneratedCodeProlog());
+        _dtoModelWriter.WriteLine(Utility.GeneratedCodeProlog);
         _dtoModelWriter.WriteLine("using System;");
         _dtoModelWriter.WriteLine("using System.Collections.Generic;");
         _dtoModelWriter.WriteLine("using System.Runtime.Serialization;");
@@ -445,7 +446,7 @@ namespace org.iringtools.adapter
         _dtoServiceBuilder = new StringBuilder();
         IndentedTextWriter dtoServiceWriter = new IndentedTextWriter(new StringWriter(_dtoServiceBuilder), INDENTATION);
 
-        dtoServiceWriter.WriteLine(Utility.GeneratedCodeProlog());
+        dtoServiceWriter.WriteLine(Utility.GeneratedCodeProlog);
         dtoServiceWriter.WriteLine("using System;");
         dtoServiceWriter.WriteLine("using System.Collections.Generic;");
         dtoServiceWriter.WriteLine("using System.IO;");
@@ -1027,47 +1028,79 @@ namespace org.iringtools.adapter
       }
     }
 
-    private string UpdateServiceInterface()
+    private string GenerateIService(string projectName, string applicationName, List<string> serviceKnownTypes)
     {
+      StringBuilder builder = new StringBuilder();
+      IndentedTextWriter writer = new IndentedTextWriter(new StringWriter(builder), INDENTATION);
+
       try
       {
-        _serviceBuilder = new StringBuilder();
-        IndentedTextWriter serviceWriter = new IndentedTextWriter(new StringWriter(_serviceBuilder), INDENTATION);
+        string path = _settings.CodePath + "IService.Generated.cs";
 
-        serviceWriter.WriteLine(Utility.GeneratedCodeProlog());
-        serviceWriter.WriteLine("using System.Collections.Generic;");
-        serviceWriter.WriteLine("using System.ServiceModel;");
-        serviceWriter.WriteLine("using System.ServiceModel.Web;");
-        serviceWriter.WriteLine();
-        serviceWriter.WriteLine("namespace {0}", ADAPTER_NAMESPACE);
-        serviceWriter.WriteLine("{");
-        serviceWriter.Indent++;
+        if (!File.Exists(path))
+        {
+          writer.WriteLine(Utility.GeneratedCodeProlog);
+          writer.WriteLine("using System.Collections.Generic;");
+          writer.WriteLine("using System.ServiceModel;");
+          writer.WriteLine("using System.ServiceModel.Web;");
+          writer.WriteLine();
+          writer.WriteLine("namespace {0}", ADAPTER_NAMESPACE);
+          writer.WriteLine("{");
+          writer.Indent++;
 
-        serviceWriter.WriteLine("public partial interface IService");
-        serviceWriter.WriteLine("{");
-        serviceWriter.Indent++;
+          writer.WriteLine("public partial interface IService");
+          writer.WriteLine("{");
+          writer.Indent++;
 
-        serviceWriter.WriteLine("[OperationContract]");
-        serviceWriter.WriteLine("[XmlSerializerFormat]");
-        WriteKnownTypes(serviceWriter);
-        serviceWriter.WriteLine("[WebGet(UriTemplate = \"/{projectName}/{applicationName}/{graphName}\")]");
-        serviceWriter.WriteLine("Envelope GetList(string projectName, string applicationName, string graphName);");
+          writer.WriteLine("[OperationContract]");
+          writer.WriteLine("[XmlSerializerFormat]");
+          writer.WriteLine("[WebGet(UriTemplate = \"/{projectName}/{applicationName}/{graphName}\")]");
+          writer.WriteLine("Envelope GetList(string projectName, string applicationName, string graphName);");
 
-        serviceWriter.WriteLine();
-        serviceWriter.WriteLine("[OperationContract]");
-        serviceWriter.WriteLine("[XmlSerializerFormat]");
-        WriteKnownTypes(serviceWriter);
-        serviceWriter.WriteLine("[WebGet(UriTemplate = \"/{projectName}/{applicationName}/{graphName}/{identifier}\")]");
-        serviceWriter.WriteLine("Envelope Get(string projectName, string applicationName, string graphName, string identifier);");
+          writer.WriteLine();
+          writer.WriteLine("[OperationContract]");
+          writer.WriteLine("[XmlSerializerFormat]");
+          writer.WriteLine("[WebGet(UriTemplate = \"/{projectName}/{applicationName}/{graphName}/{identifier}\")]");
+          writer.WriteLine("Envelope Get(string projectName, string applicationName, string graphName, string identifier);");
 
-        serviceWriter.Indent--;
-        serviceWriter.WriteLine("}");
+          writer.Indent--;
+          writer.WriteLine("}");
 
-        serviceWriter.Indent--;
-        serviceWriter.WriteLine("}");
-        serviceWriter.Close();
+          writer.Indent--;
+          writer.WriteLine("}");
 
-        return _serviceBuilder.ToString();
+          Utility.WriteString(builder.ToString(), path);
+          writer.Close();
+        }
+
+        StreamReader reader = new StreamReader(path);
+        string line = String.Empty;
+        builder = new StringBuilder();
+        writer = new IndentedTextWriter(new StringWriter(builder), INDENTATION);
+
+        while ((line = reader.ReadLine()) != null)
+        {
+          if (!line.Contains(projectName + "." + applicationName))
+          {
+            if (line.Contains("[WebGet"))
+            {
+              writer.Indent += 2;
+
+              foreach (string serviceKnownType in serviceKnownTypes)
+              {
+                writer.WriteLine(serviceKnownType);
+              }
+
+              writer.Indent -= 2;
+            }
+
+            writer.WriteLine(line);
+          }
+        }
+
+        reader.Close();
+
+        return builder.ToString();
       }
       catch (Exception ex)
       {
@@ -1075,43 +1108,75 @@ namespace org.iringtools.adapter
       }
     }
 
-    private string UpdateDataServiceInterface()
+    private string GenerateIDataService(string projectName, string applicationName, List<string> serviceKnownTypes)
     {
+      StringBuilder builder = new StringBuilder();
+      IndentedTextWriter writer = new IndentedTextWriter(new StringWriter(builder), INDENTATION);
+
       try
       {
-        _dataServiceBuilder = new StringBuilder();
-        IndentedTextWriter dataServiceWriter = new IndentedTextWriter(new StringWriter(_dataServiceBuilder), INDENTATION);
+        string path = _settings.CodePath + "IDataService.Generated.cs";
 
-        dataServiceWriter.WriteLine(Utility.GeneratedCodeProlog());
-        dataServiceWriter.WriteLine("using System.Collections.Generic;");
-        dataServiceWriter.WriteLine("using System.ServiceModel;");
-        dataServiceWriter.WriteLine("using System.ServiceModel.Web;");
-        dataServiceWriter.WriteLine();
-        dataServiceWriter.WriteLine("namespace {0}", ADAPTER_NAMESPACE);
-        dataServiceWriter.WriteLine("{");
-        dataServiceWriter.Indent++;
+        if (!File.Exists(path))
+        {
+          writer.WriteLine(Utility.GeneratedCodeProlog);
+          writer.WriteLine("using System.Collections.Generic;");
+          writer.WriteLine("using System.ServiceModel;");
+          writer.WriteLine("using System.ServiceModel.Web;");
+          writer.WriteLine();
+          writer.WriteLine("namespace {0}", ADAPTER_NAMESPACE);
+          writer.WriteLine("{");
+          writer.Indent++;
 
-        dataServiceWriter.WriteLine("public partial interface IDataService");
-        dataServiceWriter.WriteLine("{");
-        dataServiceWriter.Indent++;
+          writer.WriteLine("public partial interface IDataService");
+          writer.WriteLine("{");
+          writer.Indent++;
 
-        dataServiceWriter.WriteLine("[OperationContract]");
-        WriteKnownTypes(dataServiceWriter);
-        dataServiceWriter.WriteLine("DTOListResponse GetDataList(DTORequest request);");
+          writer.WriteLine("[OperationContract]");
+          writer.WriteLine("DTOListResponse GetDataList(DTORequest request);");
 
-        dataServiceWriter.WriteLine();
-        dataServiceWriter.WriteLine("[OperationContract]");
-        WriteKnownTypes(dataServiceWriter);
-        dataServiceWriter.WriteLine("DTOResponse GetData(DTORequest request);");
+          writer.WriteLine();
+          writer.WriteLine("[OperationContract]");
+          writer.WriteLine("DTOResponse GetData(DTORequest request);");
 
-        dataServiceWriter.Indent--;
-        dataServiceWriter.WriteLine("}");
+          writer.Indent--;
+          writer.WriteLine("}");
 
-        dataServiceWriter.Indent--;
-        dataServiceWriter.WriteLine("}");
-        dataServiceWriter.Close();
+          writer.Indent--;
+          writer.WriteLine("}");
 
-        return _dataServiceBuilder.ToString();
+          Utility.WriteString(builder.ToString(), path);
+          writer.Close();
+        }
+
+        StreamReader reader = new StreamReader(path);
+        string line = String.Empty;
+        builder = new StringBuilder();
+        writer = new IndentedTextWriter(new StringWriter(builder), INDENTATION);
+
+        while ((line = reader.ReadLine()) != null)
+        {
+          if (!line.Contains(projectName + "." + applicationName))
+          {
+            if (line.Contains("DTOListResponse") || line.Contains("DTOResponse"))
+            {
+              writer.Indent += 2;
+
+              foreach (string serviceKnownType in serviceKnownTypes)
+              {
+                writer.WriteLine(serviceKnownType);
+              }
+
+              writer.Indent -= 2;
+            }
+
+            writer.WriteLine(line);
+          }
+        }
+
+        reader.Close();
+
+        return builder.ToString();
       }
       catch (Exception ex)
       {
@@ -1143,27 +1208,22 @@ namespace org.iringtools.adapter
       return (dataObject.objectNamespace != String.Empty) ? (dataObject.objectNamespace + "." + dataObject.objectName) : dataObject.objectName;
     }
 
-    private void WriteKnownTypes(IndentedTextWriter writer)
+    private List<string> GetServiceKnownTypes(string projectName, string applicationName)
     {
       try
       {
-        List<KeyValuePair<string, ScopeApplication>> scopeApps = GetScopeApplications();
+        List<string> knownTypes = new List<string>();
+        string ns = ADAPTER_NAMESPACE + ".proj_" + projectName + "." + applicationName;
+        
+        string mappingFile = _settings.XmlPath + "Mapping." + projectName + "." + applicationName + ".xml";
+        Mapping mapping = Utility.Read<Mapping>(mappingFile, false);
 
-        foreach (KeyValuePair<string, ScopeApplication> scopeApp in scopeApps)
+        foreach (GraphMap graphMap in mapping.graphMaps)
         {
-          if (scopeApp.Value.hasDTOLayer)
-          {
-            string mappingFile = _settings.XmlPath + "Mapping." + scopeApp.Key + "." + scopeApp.Value.Name + ".xml";
-            string ns = ADAPTER_NAMESPACE + ".proj_" + scopeApp.Key + "." + scopeApp.Value.Name;
-            Mapping mapping = Utility.Read<Mapping>(mappingFile, false);
-
-            foreach (GraphMap graphMap in mapping.graphMaps)
-            {
-              string graphName = NameSafe(graphMap.name);
-              writer.WriteLine("[ServiceKnownType(typeof({0}))]", ns + "." + graphName);
-            }
-          }
+          knownTypes.Add("[ServiceKnownType(typeof(" + ns + "." + graphMap.name + "))]");
         }
+
+        return knownTypes;
       }
       catch (Exception ex)
       {

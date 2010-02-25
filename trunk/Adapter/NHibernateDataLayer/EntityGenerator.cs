@@ -100,7 +100,7 @@ namespace org.iringtools.adapter.dataLayer
           _entityBuilder = new StringBuilder();
           _entityWriter = new IndentedTextWriter(new StringWriter(_entityBuilder), "  ");
 
-          _entityWriter.WriteLine(Utility.GeneratedCodeProlog());
+          _entityWriter.WriteLine(Utility.GeneratedCodeProlog);
           _entityWriter.WriteLine("using System;");
           _entityWriter.WriteLine("using System.Collections.Generic;");
           _entityWriter.WriteLine("using Iesi.Collections.Generic;");
