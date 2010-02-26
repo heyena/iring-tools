@@ -1,3 +1,4 @@
+#labels Featured
 = *iRINGTools* 1.2.0 =
 
 A final release of iRINGTools 1.2 that includes DBDictionaryUtil and "empty" deployment, and many MappingEditor improvements.  The download is available [http://iring-tools.googlecode.com/files/iRINGTools-120.zip here]
