@@ -754,7 +754,7 @@ namespace org.iringtools.adapter
           string line = String.Empty;
           while ((line = reader.ReadLine()) != null)
           {
-            if (!line.Contains("InterfaceService/" + projectName + "/" + applicationName))
+            if (!line.ToUpper().Contains(projectName.ToUpper() + "/" + applicationName.ToUpper()))
             {
               builder.Append(line + System.Environment.NewLine);
             }
@@ -798,7 +798,7 @@ namespace org.iringtools.adapter
           string line = String.Empty;
           while ((line = reader.ReadLine()) != null)
           {
-            if (!line.Contains(projectName + "." + applicationName))
+            if (!line.ToUpper().Contains(projectName.ToUpper() + "." + applicationName.ToUpper()))
             {
               builder.Append(line + System.Environment.NewLine);
             }
@@ -842,7 +842,7 @@ namespace org.iringtools.adapter
           string line = String.Empty;
           while ((line = reader.ReadLine()) != null)
           {
-            if (!line.Contains(projectName + "." + applicationName))
+            if (!line.ToUpper().Contains(projectName.ToUpper() + "." + applicationName.ToUpper()))
             {
               builder.Append(line + System.Environment.NewLine);
             }
