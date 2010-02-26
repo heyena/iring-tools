@@ -4,6 +4,7 @@
     <DeploymentDir>Deployment</DeploymentDir>
     <iRINGAdapter>$(DeploymentDir)\iRINGAdapter</iRINGAdapter>
     <iRINGSandbox>$(DeploymentDir)\iRINGSandbox</iRINGSandbox>
+    <LandingPageDir>LandingPage</LandingPageDir>
     <AdapterServiceRoot>Adapter</AdapterServiceRoot>
     <AdapterServiceDir>$(AdapterServiceRoot)\AdapterService</AdapterServiceDir>
     <JosekiInterfaceServiceRoot>InterfaceService.Joseki</JosekiInterfaceServiceRoot>
@@ -15,6 +16,7 @@
     <RefDataEditorRoot>RefDataEditor</RefDataEditorRoot>
     <RefDataEditorDir>$(RefDataEditorRoot)\$(RefDataEditorRoot).Web</RefDataEditorDir>
     <RefDataServiceRoot>ReferenceData</RefDataServiceRoot>
+    <LandingPageDeploymentDir>$(DeploymentDir)\LandingPage</LandingPageDeploymentDir>
     <RefDataServiceDir>$(RefDataServiceRoot)\ReferenceDataService</RefDataServiceDir>    
     <AdapterServiceDeploymentDir>$(iRINGAdapter)\AdapterService</AdapterServiceDeploymentDir>
     <JosekiInterfaceServiceDeploymentDir>$(iRINGAdapter)\InterfaceService.Joseki</JosekiInterfaceServiceDeploymentDir>
@@ -118,6 +120,12 @@
                $(MappingEditorDir)\.svn\**;
                $(MappingEditorDir)\*\.svn\**">
     </MappingEditorDeployment>
+
+    <LandingPageDeployment
+      Include="$(LandingPageDir)\**"
+      Exclude="$(LandingPageDir)\.svn\**;
+               $(LandingPageDir)\*\.svn\**;">
+    </LandingPageDeployment>
     
     <RefDataEditorDeployment
       Include="$(RefDataEditorDir)\**"
@@ -191,25 +199,31 @@
     <DeploymentPackage Include="*" Exclude="">
       <Path>$(iRINGAdapter)</Path>
       <Options>-r</Options>
-      <ZIPFile>..\iRINGAdapter-120beta3.zip</ZIPFile>
+      <ZIPFile>..\iRINGAdapter-120.zip</ZIPFile>
       <Source>*</Source>
     </DeploymentPackage>
     <DeploymentPackage Include="*" Exclude="">
       <Options>-r</Options>
       <Path>$(iRINGSandbox)</Path>
-      <ZIPFile>..\iRINGSandbox-120beta3.zip</ZIPFile>
+      <ZIPFile>..\iRINGSandbox-120.zip</ZIPFile>
       <Source>*</Source>
     </DeploymentPackage>
     <DeploymentPackage Include="*" Exclude="">
       <Options>-r</Options>
       <Path>$(iRINGAdapter)</Path>
-      <ZIPFile>..\iRINGTools-120beta3.zip</ZIPFile>
+      <ZIPFile>..\iRINGTools-120.zip</ZIPFile>
       <Source>*</Source>
     </DeploymentPackage>
     <DeploymentPackage Include="*" Exclude="">
       <Options>-r -u</Options>
       <Path>$(iRINGSandbox)</Path>
-      <ZIPFile>..\iRINGTools-120beta3.zip</ZIPFile>
+      <ZIPFile>..\iRINGTools-120.zip</ZIPFile>
+      <Source>*</Source>
+    </DeploymentPackage>
+    <DeploymentPackage Include="*" Exclude="">
+      <Options>-r -u</Options>
+      <Path>$(LandingPageDeploymentDir)</Path>
+      <ZIPFile>..\iRINGTools-120.zip</ZIPFile>
       <Source>*</Source>
     </DeploymentPackage>
   </ItemGroup>
@@ -255,11 +269,11 @@
     <Exec Command="Move /Y $(AdapterServiceDeploymentDir)\Web_Default.config $(AdapterServiceDeploymentDir)\Web.config" />
     <Exec Command="Mkdir $(AdapterServiceDeploymentDir)\Logs" />
 
-    <Message Text="Creating Joseki interface service deployment ..." />
+    <!--<Message Text="Creating Joseki interface service deployment ..." />
     <Copy SourceFiles="@(JosekiInterfaceServiceDeployment)"
           DestinationFiles="@(JosekiInterfaceServiceDeployment->'$(JosekiInterfaceServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Exec Command="Move /Y $(JosekiInterfaceServiceDeploymentDir)\setup.default.conf $(JosekiInterfaceServiceDeploymentDir)\setup.conf" />
-    <Exec Command="Move /Y $(JosekiInterfaceServiceDeploymentDir)\webapps\joseki\WEB-INF\web.default.xml $(JosekiInterfaceServiceDeploymentDir)\webapps\joseki\WEB-INF\web.xml" />
+    <Exec Command="Move /Y $(JosekiInterfaceServiceDeploymentDir)\webapps\joseki\WEB-INF\web.default.xml $(JosekiInterfaceServiceDeploymentDir)\webapps\joseki\WEB-INF\web.xml" />-->
     
     <Message Text="Creating SemWeb interface service deployment ..." />
     <Copy SourceFiles="@(SemWebInterfaceServiceDeployment)"
@@ -304,7 +318,11 @@
     <Message Text="Creating sandbox tools deployment ..." />
     <Copy SourceFiles="@(SandboxToolsDeployment)"
           DestinationFiles="@(SandboxToolsDeployment->'$(SandboxToolsDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Exec Command="Move /Y $(SandboxToolsDeploymentDir)\App_Default.config $(SandboxToolsDeploymentDir)\QMXFGenerator.exe.config" />    
+    <Exec Command="Move /Y $(SandboxToolsDeploymentDir)\App_Default.config $(SandboxToolsDeploymentDir)\QMXFGenerator.exe.config" />
+
+    <Message Text="Creating landing page deployment ..." />
+    <Copy SourceFiles="@(LandingPageDeployment)"
+          DestinationFiles="@(LandingPageDeployment->'$(LandingPageDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
   </Target>
 
   <Target Name="CreatePackages" DependsOnTargets="CreateDeployment">
