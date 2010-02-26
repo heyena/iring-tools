@@ -44,6 +44,7 @@ using Ninject.Modules;
 using org.iringtools.adapter.dataLayer;
 using log4net;
 using System.ServiceModel;
+using System.Data.SqlClient;
 
 namespace org.iringtools.adapter
 {
@@ -735,6 +736,195 @@ namespace org.iringtools.adapter
     }
 
     /// <summary>
+    /// Deletes application references from the interface service web config
+    /// </summary>
+    /// <param name="projectName"></param>
+    /// <param name="applicationName"></param>
+    private void UpdateInterfaceServiceWebConfig(string projectName, string applicationName)
+    {
+      try
+      {
+        string path = _settings.InterfaceServerPath + "Web.config";
+        if (File.Exists(path))
+        {
+          StreamReader reader = new StreamReader(path);
+          StringBuilder builder = new StringBuilder();
+
+          #region Read and buffer all lines that does not contain the application name
+          string line = String.Empty;
+          while ((line = reader.ReadLine()) != null)
+          {
+            if (!line.Contains("InterfaceService/" + projectName + "/" + applicationName))
+            {
+              builder.Append(line + System.Environment.NewLine);
+            }
+          }
+
+          reader.Close();
+          #endregion
+
+          // Write buffer back to file
+          StreamWriter writer = new StreamWriter(path);
+          writer.WriteLine(builder.ToString());
+          writer.Close();
+        }
+        else
+        {
+          throw new Exception("Interface Service Path not found.");
+        }
+      }
+      catch (Exception ex)
+      {
+        throw ex;
+      }
+    }
+
+    /// <summary>
+    /// Deletes application service known types from IService.Generated.cs
+    /// </summary>
+    /// <param name="projectName"></param>
+    /// <param name="applicationName"></param>
+    private void UpdateIService(string projectName, string applicationName)
+    {
+      try
+      {
+        string path = _settings.CodePath + "IService.Generated.cs";
+        if (File.Exists(path))
+        {
+          StreamReader reader = new StreamReader(path);
+          StringBuilder builder = new StringBuilder();
+
+          #region Read and buffer all lines that does not contain the application name
+          string line = String.Empty;
+          while ((line = reader.ReadLine()) != null)
+          {
+            if (!line.Contains(projectName + "." + applicationName))
+            {
+              builder.Append(line + System.Environment.NewLine);
+            }
+          }
+
+          reader.Close();
+          #endregion
+
+          // Write buffer back to file
+          StreamWriter writer = new StreamWriter(path);
+          writer.WriteLine(builder.ToString());
+          writer.Close();
+        }
+        else
+        {
+          throw new Exception("File IService.Generated.cs not found.");
+        }
+      }
+      catch (Exception ex)
+      {
+        throw ex;
+      }
+    }
+
+    /// <summary>
+    /// Deletes application service known types from IDataService.Generated.cs
+    /// </summary>
+    /// <param name="projectName"></param>
+    /// <param name="applicationName"></param>
+    private void UpdateIDataService(string projectName, string applicationName)
+    {
+      try
+      {
+        string path = _settings.CodePath + "IDataService.Generated.cs";
+        if (File.Exists(path))
+        {
+          StreamReader reader = new StreamReader(path);
+          StringBuilder builder = new StringBuilder();
+
+          #region Read and buffer all lines that does not contain the application name
+          string line = String.Empty;
+          while ((line = reader.ReadLine()) != null)
+          {
+            if (!line.Contains(projectName + "." + applicationName))
+            {
+              builder.Append(line + System.Environment.NewLine);
+            }
+          }
+
+          reader.Close();
+          #endregion
+
+          // Write buffer back to file
+          StreamWriter writer = new StreamWriter(path);
+          writer.WriteLine(builder.ToString());
+          writer.Close();
+        }
+        else
+        {
+          throw new Exception("File IDataService.Generated.cs not found.");
+        }
+      }
+      catch (Exception ex)
+      {
+        throw ex;
+      }
+    }
+
+    private void DropDatabase(string projectName, string applicationName, string connectionString)
+    {
+      try
+      {
+        string _sqlCheckDatabase = @"SELECT name FROM sys.databases WHERE name = N'@token'";
+        string _sqlDropDatabase = @"DROP DATABASE [@token]";
+        string _sqlCheckLogin = @"SELECT * FROM sys.syslogins WHERE name = N'@token'";
+        string _sqlDropLogin = @"DROP LOGIN [@token]";
+        string _scopeName = projectName + "_" + applicationName;
+
+        using (SqlConnection connection = new SqlConnection(connectionString))
+        {
+          string sqlCheckDatabase = _sqlCheckDatabase.Replace("@token", _scopeName);
+
+          connection.Open();
+
+          object databaseName = null;
+          using (SqlCommand command = new SqlCommand(sqlCheckDatabase, connection))
+          {
+            databaseName = command.ExecuteScalar();
+          }
+
+          if (databaseName != null)
+          {
+            string sqlDropDatabase = _sqlDropDatabase.Replace("@token", _scopeName);
+
+            using (SqlCommand command = new SqlCommand(sqlDropDatabase, connection))
+            {
+              command.ExecuteNonQuery();
+            }
+          }
+
+          string sqlCheckLogin = _sqlCheckLogin.Replace("@token", _scopeName);
+
+          object loginName = null;
+          using (SqlCommand command = new SqlCommand(sqlCheckLogin, connection))
+          {
+            loginName = command.ExecuteScalar();
+          }
+
+          if (loginName != null)
+          {
+            string sqlDropLogin = _sqlDropLogin.Replace("@token", _scopeName);
+
+            using (SqlCommand command = new SqlCommand(sqlDropLogin, connection))
+            {
+              command.ExecuteNonQuery();
+            }
+          }
+        }
+      }
+      catch (Exception exception)
+      {
+        throw new Exception("Error while dropping the triplestore database ", exception);
+      }
+    }
+
+    /// <summary>
     /// Delete and application by removing it from scopes.xml and its generated code/xml
     /// </summary>
     /// <param name="projectName"></param>
@@ -747,17 +937,10 @@ namespace org.iringtools.adapter
       try
       {
         DeleteApplicationScope(projectName, applicationName);
-
-        // Delete its database
-        //string prefixTriplestoreConnectString = @"sqlserver:rdf:Database=rdf;";
-        //int prefixLength = prefixTriplestoreConnectString.Length;        
-        //string masterConnectionString = _settings.TripleStoreConnectionString.Remove(0, prefixLength);
-        //SemWebEngine semwebEngine = new SemWebEngine(_settings, app);
-        //DropDatabase(masterConnectionString);
-
-        // Delete entry in interface server web.config
-        // Update IDataService.Generated.cs
-        // Update IService.Generated.cs
+        
+        UpdateInterfaceServiceWebConfig(projectName, applicationName);
+        UpdateIService(projectName, applicationName);
+        UpdateIDataService(projectName, applicationName);
 
         File.Delete(_settings.CodePath + "DTOService." + projectName + "." + applicationName + ".cs");
         File.Delete(_settings.CodePath + "DTOModel." + projectName + "." + applicationName + ".cs");
@@ -768,6 +951,21 @@ namespace org.iringtools.adapter
         File.Delete(_settings.XmlPath + "Mapping." + projectName + "." + applicationName + ".xml");
         File.Delete(_settings.XmlPath + "nh-configuration." + projectName + "." + applicationName + ".xml");
         File.Delete(_settings.XmlPath + "nh-mapping." + projectName + "." + applicationName + ".xml");
+
+        #region Delete application database
+        try
+        {
+          string triplestoreConnStrPrefix = @"sqlserver:rdf:Database=rdf;";
+          string masterConnStr = _settings.TripleStoreConnectionString.Remove(0, triplestoreConnStrPrefix.Length);
+          DropDatabase(projectName, applicationName, masterConnStr);   
+        }
+        catch (Exception ex)
+        {
+          response.Level = StatusLevel.Warning;
+          response.Add("WARNING: Delete application database failed");
+          response.Add(ex.ToString());
+        }
+        #endregion
 
         response.Level = StatusLevel.Success;
         response.Add("Application deleted successfully.");
@@ -939,6 +1137,7 @@ namespace org.iringtools.adapter
     /// <param name="hasDTOLayer"></param>
     private void DeleteApplicationScope(string projectName, string applicationName)
     {
+      bool isDeleted = false;
       try
       {
         string scopesPath = _settings.XmlPath + "Scopes.xml";
@@ -956,6 +1155,7 @@ namespace org.iringtools.adapter
                 if (application.Name.ToUpper() == applicationName.ToUpper())
                 {
                   project.Applications.Remove(application);
+                  isDeleted = true;
                   break;
                 }
               }
@@ -964,7 +1164,14 @@ namespace org.iringtools.adapter
             }
           }
 
-          Utility.Write<List<ScopeProject>>(projects, scopesPath, true);
+          if (isDeleted)
+          {
+            Utility.Write<List<ScopeProject>>(projects, scopesPath, true);
+          }
+          else
+          {
+            throw new Exception("Scope Application not found.");
+          }
         }
       }
       catch (Exception exception)
