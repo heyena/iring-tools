@@ -247,5 +247,24 @@ namespace org.iringtools.utility
         writer.Close();
       }
     }
+
+    public static string GetIdFromURI(string uri)
+    {
+      string id = String.Empty;
+
+      if (!String.IsNullOrEmpty(uri))
+      {
+        if (id.Contains("#"))
+        {
+          id = id.Substring(id.LastIndexOf("#") + 1);
+        }
+        else if (id.Contains(":"))
+        {
+          id = id.Substring(id.LastIndexOf(":") + 1);
+        }
+      }
+
+      return id;
+    }
   }
 }

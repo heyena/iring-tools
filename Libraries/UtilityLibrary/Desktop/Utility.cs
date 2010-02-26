@@ -824,7 +824,7 @@ namespace org.iringtools.utility
         case "double": return "Double";
         case "float": return "Single";
         case "int": return "Int32";
-        case "integer": return "Decimal";
+        case "integer": return "Int32";
         case "long": return "Int64";
         case "short": return "Int16";
         case "string": return "String";
@@ -843,6 +843,25 @@ namespace org.iringtools.utility
             list.Insert(~index, element);
         }
 
+    }
+
+    public static string GetIdFromURI(string uri)
+    {
+      string id = String.Empty;
+
+      if (!String.IsNullOrEmpty(uri))
+      {
+        if (id.Contains("#"))
+        {
+          id = id.Substring(id.LastIndexOf("#") + 1);
+        }
+        else if (id.Contains(":"))
+        {
+          id = id.Substring(id.LastIndexOf(":") + 1);
+        }
+      }
+
+      return id;
     }
   }
 }

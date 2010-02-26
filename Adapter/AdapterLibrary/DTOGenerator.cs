@@ -1249,6 +1249,7 @@ namespace org.iringtools.adapter
       _extendedDataProperties.Clear();
       _initStatements.Clear();
 
+      List<string> templateMapNames = new List<string>();
       foreach (TemplateMap templateMap in graphMap.templateMaps)
       {
         _classPath = string.Empty;
@@ -1256,7 +1257,13 @@ namespace org.iringtools.adapter
         _templatePath = string.Empty;
         _dtoTemplatePath = string.Empty;
 
+        if (templateMapNames.Contains(templateMap.name))
+        {
+          templateMap.name += templateMapNames.Count + 2;
+        }
+
         ProcessTemplateMap(templateMap, graphMap.dataObjectMaps, true);
+        templateMapNames.Add(templateMap.name);        
       }
     }
 
@@ -1273,57 +1280,64 @@ namespace org.iringtools.adapter
         }
         else if (templateMap.type == TemplateType.Relationship)
         {
-          roleMap.classMap.name = NameSafe(roleMap.classMap.name);
-
-          if (_classPath == string.Empty)  // classMap is graphMap
+          if (roleMap.classMap == null)
           {
-            _classPath = "Template" + templateMap.name;
-            _dataContractPath = "tpl_" + templateMap.name;
-            _templatePath = "tpl_" + templateMap.name;
-            _dtoTemplatePath = "tpl:" + templateMap.name;
-            _initStatements.Add(_dataContractPath + " = new " + _classPath + "();");
+            ProcessRoleMap(templateMap.name, roleMap, dataObjectMaps, isDataMember);
           }
           else
           {
-            _classPath += ".Template" + templateMap.name;
-            _dataContractPath += ".tpl_" + templateMap.name;
-            _templatePath += "_tpl_" + templateMap.name;
-            _dtoTemplatePath += ".tpl:" + templateMap.name;
-            _initStatements.Add(_dataContractPath + " = new " + _classPath + "();");
+            roleMap.classMap.name = NameSafe(roleMap.classMap.name);
+
+            if (_classPath == string.Empty)  // classMap is graphMap
+            {
+              _classPath = "Template" + templateMap.name;
+              _dataContractPath = "tpl_" + templateMap.name;
+              _templatePath = "tpl_" + templateMap.name;
+              _dtoTemplatePath = "tpl:" + templateMap.name;
+              _initStatements.Add(_dataContractPath + " = new " + _classPath + "();");
+            }
+            else
+            {
+              _classPath += ".Template" + templateMap.name;
+              _dataContractPath += ".tpl_" + templateMap.name;
+              _templatePath += "_tpl_" + templateMap.name;
+              _dtoTemplatePath += ".tpl:" + templateMap.name;
+              _initStatements.Add(_dataContractPath + " = new " + _classPath + "();");
+            }
+
+            _dtoModelWriter.WriteLine();
+            _dtoModelWriter.WriteLine("[DataContract(Namespace = \"{0}\")]", _xmlNamespace);
+            _dtoModelWriter.WriteLine("[XmlRoot(Namespace = \"{0}\")]", _xmlNamespace);
+            _dtoModelWriter.WriteLine("public class Template{0}", templateMap.name);
+            _dtoModelWriter.Write("{");
+            _dtoModelWriter.Indent++;
+            _dtoModelWriter.WriteLine();
+            _dtoModelWriter.WriteLine("[DataContract(Namespace = \"{0}\")]", _xmlNamespace);
+            _dtoModelWriter.WriteLine("[XmlRoot(Namespace = \"{0}\")]", _xmlNamespace);
+            _dtoModelWriter.WriteLine("public class Class{0}", roleMap.classMap.name);
+            _dtoModelWriter.Write("{");
+            _dtoModelWriter.Indent++;
+            _dtoModelWriter.WriteLine();
+            _dtoModelWriter.WriteLine("[DataMember(EmitDefaultValue=false)]");
+            _dtoModelWriter.WriteLine("[XmlIgnore]");
+            _dtoModelWriter.WriteLine("public string Identifier { get; set; }");
+
+            ProcessClassMap(roleMap, dataObjectMaps);
+
+            _dtoModelWriter.Indent--;
+            _dtoModelWriter.WriteLine("}");
+            _dtoModelWriter.WriteLine();
+            _dtoModelWriter.WriteLine("[DataMember(Name = \"tpl_{0}_rdl_{1}\", EmitDefaultValue = false)]", roleMap.name, roleMap.classMap.name);
+            _dtoModelWriter.WriteLine("[XmlIgnore]");
+            _dtoModelWriter.WriteLine("public Class{1} tpl_{0}_rdl_{1} {{ get; set; }}", roleMap.name, roleMap.classMap.name);
+            _dtoModelWriter.Indent--;
+            _dtoModelWriter.WriteLine("}");
+
+            _dtoModelWriter.WriteLine();
+            _dtoModelWriter.WriteLine("[DataMember(EmitDefaultValue = false)]");
+            _dtoModelWriter.WriteLine("[XmlIgnore]");
+            _dtoModelWriter.WriteLine("public Template{0} tpl_{0} {{ get; set; }}", templateMap.name);
           }
-
-          _dtoModelWriter.WriteLine();
-          _dtoModelWriter.WriteLine("[DataContract(Namespace = \"{0}\")]", _xmlNamespace);
-          _dtoModelWriter.WriteLine("[XmlRoot(Namespace = \"{0}\")]", _xmlNamespace);
-          _dtoModelWriter.WriteLine("public class Template{0}", templateMap.name);
-          _dtoModelWriter.Write("{");
-          _dtoModelWriter.Indent++;
-          _dtoModelWriter.WriteLine();
-          _dtoModelWriter.WriteLine("[DataContract(Namespace = \"{0}\")]", _xmlNamespace);
-          _dtoModelWriter.WriteLine("[XmlRoot(Namespace = \"{0}\")]", _xmlNamespace);
-          _dtoModelWriter.WriteLine("public class Class{0}", roleMap.classMap.name);
-          _dtoModelWriter.Write("{");
-          _dtoModelWriter.Indent++;
-          _dtoModelWriter.WriteLine();
-          _dtoModelWriter.WriteLine("[DataMember(EmitDefaultValue=false)]");
-          _dtoModelWriter.WriteLine("[XmlIgnore]");
-          _dtoModelWriter.WriteLine("public string Identifier { get; set; }");
-
-          ProcessClassMap(roleMap, dataObjectMaps);
-
-          _dtoModelWriter.Indent--;
-          _dtoModelWriter.WriteLine("}");
-          _dtoModelWriter.WriteLine();
-          _dtoModelWriter.WriteLine("[DataMember(Name = \"tpl_{0}_rdl_{1}\", EmitDefaultValue = false)]", roleMap.name, roleMap.classMap.name);
-          _dtoModelWriter.WriteLine("[XmlIgnore]");
-          _dtoModelWriter.WriteLine("public Class{1} tpl_{0}_rdl_{1} {{ get; set; }}", roleMap.name, roleMap.classMap.name);
-          _dtoModelWriter.Indent--;
-          _dtoModelWriter.WriteLine("}");
-
-          _dtoModelWriter.WriteLine();
-          _dtoModelWriter.WriteLine("[DataMember(EmitDefaultValue = false)]");
-          _dtoModelWriter.WriteLine("[XmlIgnore]");
-          _dtoModelWriter.WriteLine("public Template{0} tpl_{0} {{ get; set; }}", templateMap.name);
         }
       }
     }
@@ -1396,7 +1410,15 @@ namespace org.iringtools.adapter
 
               if (!isDataMember)
               {
-                _initStatements.Add(_dataContractPath + ".tpl_" + templateName + "_tpl_" + roleMap.name + " = " + mappingProperty.propertyPath + ";");
+                if (String.IsNullOrEmpty(mappingProperty.mappingDataType))
+                {
+                  _initStatements.Add(_dataContractPath + ".tpl_" + templateName + "_tpl_" + roleMap.name + " = " + mappingProperty.propertyPath + ";");
+                }
+                else
+                {
+                  _initStatements.Add(_dataContractPath + ".tpl_" + templateName + "_tpl_" + roleMap.name + " = Convert.To" + Utility.ToCSharpType(mappingProperty.mappingDataType) + "(" + mappingProperty.propertyPath + ");");
+                }
+
                 _dtoModelWriter.WriteLine();
                 _dtoModelWriter.WriteLine("[DataMember(EmitDefaultValue = false)]");
                 _dtoModelWriter.WriteLine("public {0} tpl_{1}_tpl_{2} {{ get; set; }}", mappingProperty.mappingDataType, templateName, roleMap.name);
@@ -1442,6 +1464,7 @@ namespace org.iringtools.adapter
       string lastDataContractPath = _dataContractPath;
       string lastTemplateMapPath = _templatePath;
       string lastDtoTemplateMapPath = _dtoTemplatePath;
+      List<string> templateMapNames = new List<string>();
 
       foreach (TemplateMap templateMap in roleMap.classMap.templateMaps)
       {
@@ -1449,7 +1472,14 @@ namespace org.iringtools.adapter
         _dataContractPath = lastDataContractPath;
         _templatePath = lastTemplateMapPath;
         _dtoTemplatePath = lastDtoTemplateMapPath;
+
+        if (templateMapNames.Contains(templateMap.name))
+        {
+          templateMap.name += templateMapNames.Count + 2;
+        }
+
         ProcessTemplateMap(templateMap, dataObjectMaps, false);
+        templateMapNames.Add(templateMap.name);
       }
     }
 
