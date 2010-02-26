@@ -948,7 +948,6 @@ namespace org.iringtools.adapter
 
         File.Delete(_settings.XmlPath + "BindingConfiguration." + projectName + "." + applicationName + ".xml");
         File.Delete(_settings.XmlPath + "DataDictionary." + projectName + "." + applicationName + ".xml");
-        File.Delete(_settings.XmlPath + "Mapping." + projectName + "." + applicationName + ".xml");
         File.Delete(_settings.XmlPath + "nh-configuration." + projectName + "." + applicationName + ".xml");
         File.Delete(_settings.XmlPath + "nh-mapping." + projectName + "." + applicationName + ".xml");
 
