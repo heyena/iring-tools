@@ -1,4 +1,4 @@
-#labels Featured
+#labels Deprecated
 = *iRINGTools* 1.2.0 Beta 3 =
 
 A beta release of iRINGTools 1.2 that includes DBDictionaryUtil and "empty" deployment, and many MappingEditor improvements.  The download is available [http://iring-tools.googlecode.com/files/iRINGTools-120beta3.zip here]
