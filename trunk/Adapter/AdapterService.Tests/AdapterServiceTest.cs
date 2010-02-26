@@ -104,6 +104,12 @@ namespace AdapterService.Tests
     {
       AdapterProxy target = new AdapterProxy();
       Response actual = target.RefreshGraph("12345_000", "ABC", "Lines");
+
+      if (actual[0].ToUpper().Contains("ERROR"))
+      {
+        throw new AssertFailedException(Utility.SerializeDataContract<Response>(actual));
+      }
+
       Assert.AreEqual(false, actual[0].ToUpper().Contains("ERROR"));
     }
 
@@ -112,6 +118,12 @@ namespace AdapterService.Tests
     {
       AdapterProxy target = new AdapterProxy();
       Response actual = target.RefreshAll("12345_000", "ABC");
+
+      if (actual[0].ToUpper().Contains("ERROR"))
+      {
+        throw new AssertFailedException(Utility.SerializeDataContract<Response>(actual));
+      }
+
       Assert.AreEqual(false, actual[0].ToUpper().Contains("ERROR"));
     }
 

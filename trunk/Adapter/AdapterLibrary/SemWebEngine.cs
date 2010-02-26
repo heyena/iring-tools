@@ -387,6 +387,25 @@ namespace org.iringtools.adapter.projection
           Statement statementG = new Statement(templateVariable, templateMapClassRole, relatedClassificationTemplate);
           Statement statementH = new Statement(templateVariable, roleMapRoleId, propertyNameVariable);
 
+          foreach (RoleMap roleMap in identifierTemplateMap.roleMaps)
+          {
+            if (roleMap != identifierRoleMap)
+            {
+              string roleId = roleMap.roleId.Replace("tpl:", tplPrefix);
+              
+              if (roleMap.reference != String.Empty && roleMap.reference != null)
+              {
+                SemWeb.Entity referenceEntity = roleMap.reference.Replace("rdl:", rdlPrefix);
+                query.AddGraphStatement(new Statement(templateVariable, roleId, referenceEntity));
+              }
+              //else if (roleMap.value != String.Empty && roleMap.value != null)
+              //{
+              //  SemWeb.Literal valueLiteral = new Literal(roleMap.value, null, roleMap.dataType);
+              //  query.AddGraphStatement(new Statement(templateVariable, roleId, valueLiteral));
+              //}
+            }
+          }
+
           query.AddGraphStatement(statementA);
           query.AddGraphStatement(statementB);
           query.AddGraphStatement(statementC);
