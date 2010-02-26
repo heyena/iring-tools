@@ -396,13 +396,9 @@ namespace org.iringtools.adapter.projection
               if (roleMap.reference != String.Empty && roleMap.reference != null)
               {
                 SemWeb.Entity referenceEntity = roleMap.reference.Replace("rdl:", rdlPrefix);
-                query.AddGraphStatement(new Statement(templateVariable, roleId, referenceEntity));
+                Statement statementI = new Statement(templateVariable, roleId, referenceEntity); 
+                query.AddGraphStatement(statementI);
               }
-              //else if (roleMap.value != String.Empty && roleMap.value != null)
-              //{
-              //  SemWeb.Literal valueLiteral = new Literal(roleMap.value, null, roleMap.dataType);
-              //  query.AddGraphStatement(new Statement(templateVariable, roleId, valueLiteral));
-              //}
             }
           }
 
@@ -567,12 +563,10 @@ namespace org.iringtools.adapter.projection
         SemWeb.Entity classIdEntity = graphMap.classId.Replace("rdl:", rdlPrefix);
         SemWeb.Entity instanceValue = identifier.Replace("eg:", egPrefix);
         SemWeb.Entity instanceTypeEntity = instanceType;
-        //LiteralFilter filter = LiteralFilter.Create(LiteralFilter.CompType.NE, instanceTypeEntity);
 
         Statement statementA = new Statement(subjectVariable, predicateVariable, instanceValue);
         query.AddGraphStatement(statementA);
 
-        //query.AddLiteralFilter(predicateVariable, filter);
         QueryResultBuffer resultBuffer = GetUnterminatedTemplates(query, subjectVariable);
 
         var results = from VariableBindings b in resultBuffer.Bindings
@@ -658,12 +652,10 @@ namespace org.iringtools.adapter.projection
         SemWeb.Entity classIdEntity = classMap.classId.Replace("rdl:", rdlPrefix);
         SemWeb.Entity instanceTypeEntity = instanceType;
         SemWeb.Entity instanceValue = parentIdentifierVariable.Replace("eg:", egPrefix);
-        //LiteralFilter filter = LiteralFilter.Create(LiteralFilter.CompType.NE, instanceTypeEntity);
 
         Statement statementA = new Statement(subjectVariable, predicateVariable, instanceValue);
         query.AddGraphStatement(statementA);
 
-        //query.AddLiteralFilter(predicateVariable, filter);
         QueryResultBuffer resultBuffer = GetUnterminatedTemplates(query, subjectVariable);
 
         var results = from VariableBindings b in resultBuffer.Bindings
@@ -796,23 +788,7 @@ namespace org.iringtools.adapter.projection
                   {
                     propertyValue = dtoPropertyValue;
                   }
-                  //if (roleMap.valueList == null || roleMap.valueList == string.Empty)
-                  //{
-                  //  propertyValue = dtoPropertyValue;
-                  //}
-                  //else
-                  //{
-                  //  Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);
-                  //  if (valueList.ContainsKey(dtoPropertyValue))
-                  //  {
-                  //    propertyValue = valueList[dtoPropertyValue].Replace("rdl:", rdlPrefix);
-                  //  }
-                  //  else
-                  //  {
-                  //    throw (new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue)));
-                  //  }
-                  //}
-
+                  
                   if (!curPropertyValue.Equals(propertyValue))
                   {
                     isPropertyValueDifferent = true;
@@ -891,22 +867,7 @@ namespace org.iringtools.adapter.projection
                     {
                       propertyValue = dtoPropertyValue;
                     }
-                    //if (roleMap.valueList == null || roleMap.valueList == string.Empty)
-                    //{
-                    //  propertyValue = dtoPropertyValue;
-                    //}
-                    //else
-                    //{
-                    //  Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);
-                    //  if (valueList.ContainsKey(dtoPropertyValue))
-                    //  {
-                    //    propertyValue = valueList[dtoPropertyValue].Replace("rdl:", rdlPrefix);
-                    //  }
-                    //  else
-                    //  {
-                    //    throw (new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue)));
-                    //  }
-                    //}
+                   
                     string roleMapRoleId = roleMap.roleId.Replace("tpl:", tplPrefix);
                     Variable propertyNameVariable = new Variable(roleMap.propertyName);
                     Statement statementD = new Statement(templateVariable, roleMapRoleId, propertyNameVariable);
@@ -1021,24 +982,7 @@ namespace org.iringtools.adapter.projection
                 propertyValue = dtoPropertyValue;
                 propertyType = "literal";
               }
-              //if (roleMap.valueList == null || roleMap.valueList == string.Empty)
-              //{
-              //    propertyValue = dtoPropertyValue;
-              //    propertyType = "literal";
-              //}
-              //else
-              //{
-              //  Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);
-              //  if (valueList.ContainsKey(dtoPropertyValue))
-              //  {
-              //    propertyValue = valueList[dtoPropertyValue].Replace("rdl:", rdlPrefix);
-              //    propertyType = "uri";
-              //  }
-              //  else
-              //  {
-              //    throw (new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue)));
-              //  }
-              //}
+            
               string roleMapRoleId = roleMap.roleId.Replace("tpl:", tplPrefix);
               if (propertyType == "literal")
               {
