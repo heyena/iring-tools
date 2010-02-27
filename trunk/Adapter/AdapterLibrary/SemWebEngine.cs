@@ -42,11 +42,14 @@ using System.Xml.Linq;
 using System.IO;
 using System.Web.Configuration;
 using System.Configuration;
+using log4net;
 
 namespace org.iringtools.adapter.projection
 {
   public class SemWebEngine : IProjectionEngine
   {
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(SemWebEngine));
+
     private string _scopeName = String.Empty;
     private string _scopedConnectionString = String.Empty;
 
@@ -114,9 +117,7 @@ namespace org.iringtools.adapter.projection
       _dtoService = dtoService;
       _mapping = settings.Mapping;
       _trimData = settings.TrimData;
-
       _scopeName = _applicationSettings.ProjectName + "_" + _applicationSettings.ApplicationName;
-
       _scopedConnectionString = ScopeConnectionString(settings.TripleStoreConnectionString, _scopeName);
     }
 
@@ -334,11 +335,12 @@ namespace org.iringtools.adapter.projection
     {
       try
       {
-        GraphMap graphMap = new GraphMap();
         List<string> identifiers = new List<string>();
+        GraphMap graphMap = new GraphMap();
         bool isIdentifierMapped = false;
         TemplateMap identifierTemplateMap = null;
         RoleMap identifierRoleMap = null;
+
         foreach (GraphMap mappingGraphMap in _mapping.graphMaps)
         {
           if (mappingGraphMap.name == graphName)
@@ -418,12 +420,13 @@ namespace org.iringtools.adapter.projection
             identifier = ((Literal)(binding[identifierRoleMap.propertyName])).Value;
             identifiers.Add(identifier);
           }
-          return identifiers;
         }
         else
         {
           throw new Exception(String.Format("Identifier is not mapped for graph {0}", graphMap.name));
         }
+
+        return identifiers;
       }
       catch (Exception exception)
       {
@@ -621,19 +624,28 @@ namespace org.iringtools.adapter.projection
         }
         else
         {
-          RoleMap roleMap = templateMap.roleMaps[0];
-          string instanceVariable = GetRelatedClassInstance(templateMap, roleMap, parentIdentifierVariable)[0];
-
-          QueryResultBuffer resultBuffer = GetRelatedClass(templateMap, roleMap, parentIdentifierVariable);
-          BNode bNodeToBeTerminated = null;
-          foreach (VariableBindings variableBinding in resultBuffer.Bindings)
+          foreach (RoleMap roleMap in templateMap.roleMaps)
           {
-            bNodeToBeTerminated = ((BNode)variableBinding["t1"]);
-          }
-          Literal endTimeValue = GetPropertyValueType(DateTime.UtcNow.ToString(), "datetime");
-          Statement statement1 = new Statement(bNodeToBeTerminated, endDateTimeTemplate, endTimeValue);
-          _store.Add(statement1);
-          RefreshDeleteClassMap(roleMap.classMap, roleMap, instanceVariable);
+            if (roleMap.classMap != null)
+            {
+              string instanceVariable = GetRelatedClassInstance(templateMap, roleMap, parentIdentifierVariable)[0];
+              QueryResultBuffer resultBuffer = GetRelatedClass(templateMap, roleMap, parentIdentifierVariable);
+              BNode bNodeToBeTerminated = null;
+
+              foreach (VariableBindings variableBinding in resultBuffer.Bindings)
+              {
+                bNodeToBeTerminated = ((BNode)variableBinding["t1"]);
+              }
+
+              Literal endTimeValue = GetPropertyValueType(DateTime.UtcNow.ToString(), "datetime");
+              Statement statement1 = new Statement(bNodeToBeTerminated, endDateTimeTemplate, endTimeValue);
+
+              _store.Add(statement1);
+              RefreshDeleteClassMap(roleMap.classMap, roleMap, instanceVariable);
+
+              break;
+            }
+          }          
         }
       }
       catch (Exception exception)

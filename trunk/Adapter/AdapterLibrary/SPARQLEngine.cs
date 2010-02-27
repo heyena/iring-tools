@@ -623,20 +623,24 @@ namespace org.iringtools.adapter.projection
             }
             else
             {
-              RoleMap roleMap = templateMap.roleMaps[0];
-              //Get the instance variable    
+              foreach (RoleMap roleMap in templateMap.roleMaps)
+              {
+                if (roleMap.classMap != null)
+                {
+                  string instanceVariable = SPARQLBuilder.GetRelatedClassInstance(_targetUri, _targetCredentials, _proxyCredentials, templateMap, roleMap, parentIdentifierVariable)[0];
+                  SPARQLQuery query = new SPARQLQuery(SPARQLQueryType.INSERTTEMPORAL);
+                  SPARQLClassification classification = query.addClassification(classMap.classId, query.getPREFIX_URI(parentIdentifierVariable));
+                  string endTimeValue = query.getLITERAL_SPARQL(DateTime.UtcNow.ToString(), "datetime");
 
-              string instanceVariable = SPARQLBuilder.GetRelatedClassInstance(_targetUri, _targetCredentials, _proxyCredentials, templateMap, roleMap, parentIdentifierVariable)[0];
+                  query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, query.getPREFIX_URI(instanceVariable));
+                  query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, "p7tpl:valEndTime", "?endDateTime", endTimeValue);
 
-              SPARQLQuery query = new SPARQLQuery(SPARQLQueryType.INSERTTEMPORAL);
-              SPARQLClassification classification = query.addClassification(classMap.classId, query.getPREFIX_URI(parentIdentifierVariable));
-              string endTimeValue = query.getLITERAL_SPARQL(DateTime.UtcNow.ToString(), "datetime");
-              query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, query.getPREFIX_URI(instanceVariable));
-              query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, "p7tpl:valEndTime", "?endDateTime", endTimeValue);
-              SPARQLBuilder.ExecuteUpdateQuery(_targetUri, _targetCredentials, _proxyCredentials, query.getSPARQL());
+                  SPARQLBuilder.ExecuteUpdateQuery(_targetUri, _targetCredentials, _proxyCredentials, query.getSPARQL());
+                  RefreshDeleteClassMap(roleMap.classMap, roleMap, instanceVariable);
 
-              RefreshDeleteClassMap(roleMap.classMap, roleMap, instanceVariable);              
-
+                  break;
+                }
+              }
             }
           }
           catch (Exception exception)
