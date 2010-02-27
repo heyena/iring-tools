@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
+//using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 using System.Windows;
@@ -62,6 +63,7 @@ namespace DemoControlPanel
             _client.QueryCompleted += new EventHandler<QueryCompletedEventArgs>(client_QueryCompleted);
             _client.ResetCompleted += new EventHandler<ResetCompletedEventArgs>(client_ResetCompleted);
             _client.UpdateCompleted += new EventHandler<UpdateCompletedEventArgs>(client_UpdateCompleted);
+            _client.GetScopesCompleted += new EventHandler<GetScopesCompletedEventArgs>(client_GetScopesCompleted);
 
             _client.GetConfiguredEndpointsAsync();
         }
@@ -115,15 +117,8 @@ namespace DemoControlPanel
                 cbxAdapterServices.IsEnabled = false;
                 iRINGEndpoint adapterEndpoint = (iRINGEndpoint)cbxAdapterServices.SelectedItem;
 
-                cbxProjects.Items.Clear();
-                cbxProjects.Items.Add(adapterEndpoint.projectName);
-                cbxProjects.SelectedIndex = 0;
-
-                cbxApplication.Items.Clear();
-                cbxApplication.Items.Add(adapterEndpoint.applicationName);
-                cbxApplication.SelectedIndex = 0;
-
-                _client.GetManifestAsync(adapterEndpoint);
+                _client.GetScopesAsync(adapterEndpoint);
+                
             }
             catch (Exception ex)
             {
@@ -185,20 +180,20 @@ namespace DemoControlPanel
 
                 if ( senderEndpoint != null && receiverEndpoint != null ) {
 
-                    tbReceiverProjectName.Text = receiverEndpoint.projectName;
-                    tbReceiverAppName.Text = receiverEndpoint.applicationName;
+                    tbReceiverProjectName.Text = scenario.receiverProjectName;
+                    tbReceiverAppName.Text = scenario.receiverApplicationName;
 
-                    tbSenderProjectName.Text = senderEndpoint.projectName;
-                    tbSenderAppName.Text = senderEndpoint.applicationName;
+                    tbSenderProjectName.Text = scenario.senderProjectName;
+                    tbSenderAppName.Text = scenario.senderApplicationName;
                     
                     tbSenderUri.Text = receiverEndpoint.serviceUri;
                     tbReceiverUri.Text = senderEndpoint.serviceUri;
 
-                    btnReceiverExport.IsEnabled = receiverEndpoint.exportEnabled;
-                    btnSenderImport.IsEnabled = senderEndpoint.importEnabled;
+                    btnReceiverExport.IsEnabled = scenario.exportEnabled;
+                    btnSenderImport.IsEnabled = scenario.importEnabled;
 
-                    _client.GetReceiverManifestAsync(receiverEndpoint);
-                    _client.GetSenderManifestAsync(senderEndpoint);
+                    _client.GetReceiverManifestAsync(receiverEndpoint, scenario.receiverProjectName, scenario.receiverApplicationName);
+                    _client.GetSenderManifestAsync(senderEndpoint, scenario.senderProjectName, scenario.senderApplicationName);
                 }
                 
             }
@@ -235,6 +230,9 @@ namespace DemoControlPanel
             finally
             {
                 this.Cursor = Cursors.Arrow;
+                cbxAdapterServices.IsEnabled = true;
+                cbxProjects.IsEnabled = true;
+                cbxApplication.IsEnabled = true;
                 cbxGraphs.IsEnabled = true;
             }
         }
@@ -245,10 +243,22 @@ namespace DemoControlPanel
             {
                 this.Cursor = Cursors.Wait;                
                 cbxReceiverGraphName.IsEnabled = false;
+                Scenario scenario = (Scenario)cbxDemoScenarios.SelectedItem;
                                                                 
                 foreach (string graphName in eventArgs.Result)
                 {
                     cbxReceiverGraphName.Items.Add(graphName);
+                }
+
+                int idx = cbxReceiverGraphName.Items.IndexOf(scenario.senderGraphName);
+
+                if (idx > -1)
+                {
+                    cbxReceiverGraphName.SelectedIndex = idx;
+                }
+                else
+                {
+                    cbxReceiverGraphName.SelectedIndex = 0;
                 }
 
                 cbxReceiverGraphName.SelectedIndex = 0;                
@@ -270,13 +280,25 @@ namespace DemoControlPanel
             {
                 this.Cursor = Cursors.Wait; 
                 cbxSenderGraphName.IsEnabled = false;
-                
+                Scenario scenario = (Scenario)cbxDemoScenarios.SelectedItem;
+                               
                 foreach (string graphName in eventArgs.Result)
                 {
                     cbxSenderGraphName.Items.Add(graphName);
+                    
                 }
 
-                cbxSenderGraphName.SelectedIndex = 0;
+                int idx = cbxSenderGraphName.Items.IndexOf(scenario.senderGraphName);
+
+                if (idx > -1)
+                {
+                    cbxSenderGraphName.SelectedIndex = idx;
+                }
+                else
+                {
+                    cbxSenderGraphName.SelectedIndex = 0;
+                }
+
             }
             catch (Exception ex)
             {
@@ -357,11 +379,13 @@ namespace DemoControlPanel
         {
             try
             {
+                
+
                 Results _rPopUp = new Results();
-                List<List<SPARQLBinding>> sparqlResults;
+                ObservableCollection<ObservableCollection<SPARQLBinding>> sparqlResults;
 
                 sparqlResults = e.Result;
-                foreach (List<SPARQLBinding> bindings in sparqlResults)
+                foreach (ObservableCollection<SPARQLBinding> bindings in sparqlResults)
                 {
                     foreach (SPARQLBinding binding in bindings)
                     {
@@ -456,6 +480,64 @@ namespace DemoControlPanel
                 cbxInterfaceServices.IsEnabled = true;
             }
         }
+
+        private void client_GetScopesCompleted(object sender, GetScopesCompletedEventArgs e)
+        {
+            try
+            {
+                this.Cursor = Cursors.Wait;
+                cbxProjects.IsEnabled = false;
+                cbxApplication.IsEnabled = false;
+
+                ObservableCollection<ScopeProject> scopes = e.Result;
+                                                
+                cbxProjects.Items.Clear();
+                cbxProjects.DisplayMemberPath = "Name";
+                cbxProjects.ItemsSource = scopes;
+                cbxProjects.SelectionChanged += new SelectionChangedEventHandler(cbxProjects_SelectionChanged);
+                cbxProjects.SelectedIndex = 0;
+                
+                                
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Browser.HtmlPage.Window.Alert(ex.Message);
+            }
+            finally
+            {
+                this.Cursor = Cursors.Arrow;                
+                cbxProjects.IsEnabled = true;
+                cbxApplication.IsEnabled = true;
+            }
+        }
+
+        private void cbxProjects_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            ScopeProject project = (ScopeProject)cbxProjects.SelectedItem;
+                        
+            cbxApplication.Items.Clear();
+            cbxApplication.DisplayMemberPath = "Name";
+            cbxApplication.ItemsSource = project.Applications;
+            cbxApplication.SelectionChanged += new SelectionChangedEventHandler(cbxApplication_SelectionChanged);
+            cbxApplication.SelectedIndex = 0;
+
+        }
+
+        private void cbxApplication_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            this.Cursor = Cursors.Wait;
+
+            cbxAdapterServices.IsEnabled = false;
+            cbxProjects.IsEnabled = false;
+            cbxApplication.IsEnabled = false;
+
+            iRINGEndpoint adapterEndPoint = (iRINGEndpoint)cbxAdapterServices.SelectedItem;
+            ScopeProject project = (ScopeProject)cbxProjects.SelectedItem;
+            ScopeApplication application = (ScopeApplication)cbxApplication.SelectedItem;
+
+            _client.GetManifestAsync(adapterEndPoint, project.Name, application.Name);
+
+        }
                 
         private void btnSenderRefresh_Click(object sender, RoutedEventArgs e)
         {
@@ -476,7 +558,7 @@ namespace DemoControlPanel
                 }
 
                 string graphName = (string)cbxSenderGraphName.SelectedItem;
-                _client.RefreshAsync(adapterEndpoint, graphName, "");
+                _client.RefreshAsync(adapterEndpoint, scenario.senderProjectName, scenario.senderApplicationName, graphName, "");
             }
             catch (Exception ex)
             {
@@ -501,7 +583,7 @@ namespace DemoControlPanel
                     }
                 }
                 string graphName = (string)cbxSenderGraphName.SelectedItem;
-                _client.ExportAsync(adapterEndpoint, graphName);
+                _client.ExportAsync(adapterEndpoint, scenario.senderProjectName, scenario.senderApplicationName, graphName);
             }
             catch (Exception ex)
             {
@@ -527,7 +609,7 @@ namespace DemoControlPanel
                             break;
                         }
                     }
-                    _client.ResetAsync(adapterEndpoint);
+                    _client.ResetAsync(adapterEndpoint, scenario.senderProjectName, scenario.senderApplicationName);
                 }
             }
             catch (Exception ex)
@@ -562,7 +644,7 @@ namespace DemoControlPanel
                     }
                 }
                 string graphName = (string)cbxReceiverGraphName.SelectedItem;
-                _client.PullAsync(adapterEndpoint, interfaceEndpoint, graphName);
+                _client.PullAsync(adapterEndpoint, interfaceEndpoint, scenario.receiverProjectName, scenario.receiverApplicationName, graphName);
             }
             catch (Exception ex)
             {
@@ -586,7 +668,7 @@ namespace DemoControlPanel
                         break;
                     }
                 }
-                _client.ImportAsync(adapterEndpoint);
+                _client.ImportAsync(adapterEndpoint, scenario.receiverProjectName, scenario.receiverApplicationName);
             }
             catch (Exception ex)
             {
@@ -612,7 +694,7 @@ namespace DemoControlPanel
                             break;
                         }
                     }
-                    _client.ResetAsync(adapterEndpoint);
+                    _client.ResetAsync(adapterEndpoint, scenario.receiverProjectName, scenario.receiverApplicationName);
                 }
             }
             catch (Exception ex)
@@ -625,12 +707,13 @@ namespace DemoControlPanel
         {
             try
             {
+                Scenario scenario = (Scenario)cbxDemoScenarios.SelectedItem;
                 this.Cursor = Cursors.Wait;
                 btnQuery.IsEnabled = false;
                 cbxInterfaceServices.IsEnabled = false;
                 string query = tbxQuery.Text;
                 iRINGEndpoint interfaceEndpoint = (iRINGEndpoint)cbxInterfaceServices.SelectedItem;
-                _client.QueryAsync(interfaceEndpoint, query);
+                _client.QueryAsync(interfaceEndpoint, scenario.receiverProjectName, scenario.receiverApplicationName, query);
 
             }
             catch (Exception ex)
@@ -643,12 +726,13 @@ namespace DemoControlPanel
         {
             try
             {
+                Scenario scenario = (Scenario)cbxDemoScenarios.SelectedItem;                
                 this.Cursor = Cursors.Wait;
                 btnUpdate.IsEnabled = false;
                 cbxInterfaceServices.IsEnabled = false;
                 string query = tbxQuery.Text;
                 iRINGEndpoint interfaceEndpoint = (iRINGEndpoint)cbxInterfaceServices.SelectedItem;
-                _client.UpdateAsync(interfaceEndpoint, query);
+                _client.UpdateAsync(interfaceEndpoint, scenario.receiverProjectName, scenario.receiverApplicationName, query);
 
             }
             catch (Exception ex)
