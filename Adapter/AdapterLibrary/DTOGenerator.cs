@@ -47,6 +47,8 @@ namespace org.iringtools.adapter
     private const string RDL_NAMESPACE = "http://rdl.rdlfacade.org/data#";
     private const string TPL_NAMESPACE = "http://tpl.rdlfacade.org/data#";
 
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(DTOGenerator));
+
     private AdapterSettings _settings = null;
     private Mapping _mapping = null;
     private DataDictionary _dataDictionary = null;
@@ -58,7 +60,6 @@ namespace org.iringtools.adapter
     private StringBuilder _dtoServiceBuilder = null;
     private StringBuilder _serviceBuilder = null;
     private StringBuilder _dataServiceBuilder = null;
-    private ILog _logger = null;
 
     private string _classNamespace = String.Empty;
     private string _xmlNamespace = String.Empty;
@@ -72,7 +73,6 @@ namespace org.iringtools.adapter
       _settings = settings;
       _extendedDataProperties = new List<MappingProperty>();
       _initStatements = new List<string>();
-      _logger = LogManager.GetLogger(typeof(DTOGenerator));
     }
 
     public void Generate(string projectName, string applicationName)
