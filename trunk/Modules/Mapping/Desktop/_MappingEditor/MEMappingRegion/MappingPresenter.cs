@@ -23,6 +23,7 @@ using org.iringtools.library;
 using org.iringtools.modulelibrary.behaviors;
 using System.Windows.Interactivity;
 using System.Windows.Input;
+using org.iringtools.utility;
 #else
 #endif
 
@@ -255,23 +256,14 @@ namespace org.iringtools.modules.memappingregion
       keyValuePair = new KeyValuePair<string, string>("Identifier", classMap.identifier);
       model.DetailProperties.Add(keyValuePair);
 
-      string id = classMap.classId;
-      if (id.Contains("#"))
-      {
-        id = id.Substring(id.LastIndexOf("#") + 1);
-      }
-      else if (id.Contains(":"))
-      {
-        id = id.Substring(id.LastIndexOf(":") + 1);
-      }
-
+      string id = Utility.GetIdFromURI(classMap.classId);      
       if (model.IdLabelDictionary.ContainsKey(id))
       {
         model.DetailProperties.Add(new KeyValuePair<string, string>("Class Name", model.IdLabelDictionary[id]));
       }
-      else
+      else if (!String.IsNullOrEmpty(id))
       {
-        referenceDataService.GetClassLabel("Class Name", classMap.classId, this);
+        referenceDataService.GetClassLabel("Class Name", id, this);
       }
     }
 
@@ -287,6 +279,16 @@ namespace org.iringtools.modules.memappingregion
       model.DetailProperties.Add(keyValuePair);
       keyValuePair = new KeyValuePair<string, string>("Type", templateMap.type.ToString());
       model.DetailProperties.Add(keyValuePair);
+
+      //string id = Utility.GetIdFromURI(templateMap.classRole);
+      //if (model.IdLabelDictionary.ContainsKey(id))
+      //{
+      //  model.DetailProperties.Add(new KeyValuePair<string, string>("Class Name", model.IdLabelDictionary[id]));
+      //}
+      //else if (!String.IsNullOrEmpty(id))
+      //{
+      //  referenceDataService.GetTemplateLabel("Class Name", id, this);
+      //}
     }
 
     public void RefreshRoleMap(RoleMap roleMap)
@@ -306,8 +308,19 @@ namespace org.iringtools.modules.memappingregion
 
       if (!string.IsNullOrEmpty(roleMap.reference))
       {
-        keyValuePair = new KeyValuePair<string, string>("Reference Id", (roleMap.reference != null ? roleMap.reference : string.Empty));
+        string referenceId = (roleMap.reference != null ? roleMap.reference : string.Empty);
+        keyValuePair = new KeyValuePair<string, string>("Reference Id", referenceId);
         model.DetailProperties.Add(keyValuePair);
+
+        string id = Utility.GetIdFromURI(referenceId);
+        if (model.IdLabelDictionary.ContainsKey(id))
+        {
+          model.DetailProperties.Add(new KeyValuePair<string, string>("Reference Class", model.IdLabelDictionary[id]));
+        }
+        else if (!String.IsNullOrEmpty(id))
+        {
+          referenceDataService.GetClassLabel("Reference Name", id, this);
+        }
       }
     }
 
