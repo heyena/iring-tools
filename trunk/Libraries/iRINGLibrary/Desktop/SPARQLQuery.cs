@@ -318,22 +318,22 @@ namespace org.iringtools.library
     }
 
     public SPARQLTemplate addTemplate(SPARQLTemplate template)
-    {      
-      var items = from query in this.Templates
-                  where query.TemplateName == template.TemplateName
-                  select query;
+    {
+      //var items = from query in this.Templates
+      //            where query.TemplateName == template.TemplateName
+      //            select query;
 
-      if (items.Count<SPARQLTemplate>() == 0)
-      {
+      //if (items.Count<SPARQLTemplate>() == 0)
+      //{
         int idx = this.Templates.Count<SPARQLTemplate>();
         template.Idx = ++idx;
         this.Templates.Add(template);
         return template;
-      }
-      else
-      {
-        return items.First<SPARQLTemplate>();
-      }      
+      //}
+      //else
+      //{
+      //  return items.First<SPARQLTemplate>();
+      //}      
     }
                 
     public SPARQLTemplate addTemplate(String templateName, String classRole, String classId, String role, String id)

@@ -8,11 +8,11 @@
         <Grid.Background>
             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                 <GradientStop Color="White" Offset="1"/>
-                <GradientStop Color="Brown"/>
+                <GradientStop Color="#716558"/>
             </LinearGradientBrush>
         </Grid.Background>        
         <Grid.RowDefinitions>
-            <RowDefinition Height="80"/>
+            <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>        
         <Image Source="iRINGTools.DemoControlPanel.png" Stretch="None" Margin="2,2,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>        
@@ -140,7 +140,7 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="8,8,8,8" Grid.ColumnSpan="2" Grid.Row="1">
                         <TextBlock Margin="4" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center">Project Name:</TextBlock>
-                        <ComboBox x:Name="cbxProjects" Width="500" HorizontalAlignment="Right" />
+                        <ComboBox x:Name="cbxProjects" Width="500" HorizontalAlignment="Right"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="8,8,8,8" Grid.ColumnSpan="2" Grid.Row="2">
                         <TextBlock Margin="4" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center">Application Name:</TextBlock>

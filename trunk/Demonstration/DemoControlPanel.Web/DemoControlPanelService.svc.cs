@@ -100,6 +100,7 @@ namespace DemoControlPanel.Web
                 string adapterServiceUri = endpoint.serviceUri;
 
                 WebCredentials credentials = endpoint.credentials;
+                if (credentials == null) credentials = new WebCredentials();
                 if (credentials.isEncrypted) credentials.Decrypt();
 
                 WebHttpClient webHttpClient = new WebHttpClient(adapterServiceUri, credentials.GetNetworkCredential(), _proxyCredentials.GetWebProxy());
@@ -358,6 +359,7 @@ namespace DemoControlPanel.Web
             string adapterServiceUri = endpoint.serviceUri;
 
             WebCredentials credentials = endpoint.credentials;
+            if (credentials == null) credentials = new WebCredentials();
             if (credentials.isEncrypted) credentials.Decrypt();
 
             try
