@@ -718,239 +718,120 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    private void RefreshTemplateMap(TemplateMap templateMap, ClassMap classMap, DataTransferObject dto, string parentIdentifierVariable)
+    private void RefreshPropertyRoleMap(TemplateMap templateMap, DataTransferObject dto, string parentIdentifierVariable, QueryResultBuffer resultBufferTemplateValues)
     {
-      try
+      foreach (VariableBindings binding in resultBufferTemplateValues.Bindings)
       {
-        if (templateMap.type == TemplateType.Property)
+        bool isPropertyValueDifferent = false;
+
+        #region Check if Current property Value differs from New Value
+        foreach (Variable variable in binding.Variables)
         {
-          QueryResultBuffer resultBufferTemplateValues = GetTemplateValues(templateMap, parentIdentifierVariable);
-          #region If property exists already
-          if (resultBufferTemplateValues.Bindings.Count > 0)
+          if (variable.LocalName != null && variable.LocalName != "t1")
           {
-            foreach (VariableBindings binding in resultBufferTemplateValues.Bindings)
+            string propertyName = variable.LocalName;
+            string propertyValue = string.Empty;
+            string dtoPropertyValue = string.Empty;
+            string curPropertyValue = string.Empty;
+
+            if ((binding[variable.LocalName] is Literal) && (((Literal)(binding[variable.LocalName])).Value != null))
             {
-              bool isPropertyValueDifferent = false;
+              curPropertyValue = ((Literal)(binding[variable.LocalName])).Value;
+            }
+            else if (binding[variable.LocalName].Uri != null)
+            {
+              curPropertyValue = binding[variable.LocalName].Uri;
+            }
 
-              #region Check if Current property Value differs from New Value
-              foreach (Variable variable in binding.Variables)
+            object obj = dto.GetPropertyValueByInternalName(propertyName);
+            if (obj != null)
+              if (_trimData)
+                dtoPropertyValue = obj.ToString().Trim();
+              else
+                dtoPropertyValue = obj.ToString();
+            else
+              dtoPropertyValue = "";
+
+            RoleMap roleMap = FindRoleMap(templateMap, propertyName);
+            if (roleMap.reference != null && roleMap.reference != String.Empty)
+            {
+              if (roleMap.valueList != null && roleMap.valueList != String.Empty)
               {
-                if (variable.LocalName != null && variable.LocalName != "t1")
+                Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);
+                if (valueList.ContainsKey(dtoPropertyValue))
                 {
-                  string propertyName = variable.LocalName;
-                  string propertyValue = string.Empty;
-                  string dtoPropertyValue = string.Empty;
-                  string curPropertyValue = string.Empty;
-
-                  if ((binding[variable.LocalName] is Literal) && (((Literal)(binding[variable.LocalName])).Value != null))
-                  {
-                    curPropertyValue = ((Literal)(binding[variable.LocalName])).Value;
-                  }
-                  else if (binding[variable.LocalName].Uri != null)
-                  {
-                    curPropertyValue = binding[variable.LocalName].Uri;
-                  }
-
-                  object obj = dto.GetPropertyValueByInternalName(propertyName);
-                  if (obj != null)
-                    if (_trimData)
-                      dtoPropertyValue = obj.ToString().Trim();
-                    else
-                      dtoPropertyValue = obj.ToString();
-                  else
-                    dtoPropertyValue = "";
-
-                  RoleMap roleMap = FindRoleMap(templateMap, propertyName);
-                  if (roleMap.reference != null && roleMap.reference != String.Empty)
-                  {
-                    if (roleMap.valueList != null && roleMap.valueList != String.Empty)
-                    {
-                      Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);
-                      if (valueList.ContainsKey(dtoPropertyValue))
-                      {
-                        propertyValue = valueList[dtoPropertyValue].Replace("rdl:", rdlPrefix);
-                      }
-                      else
-                      {
-                        throw (new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue)));
-                      }
-                    }
-                    else
-                    {
-                      propertyValue = roleMap.reference.Replace("rdl:", rdlPrefix);
-                    }
-                  }
-                  else if (roleMap.value != null && roleMap.value != String.Empty)
-                  {
-                    propertyValue = roleMap.value;
-                  }
-                  else
-                  {
-                    propertyValue = dtoPropertyValue;
-                  }
-                  
-                  if (!curPropertyValue.Equals(propertyValue))
-                  {
-                    isPropertyValueDifferent = true;
-                  }
+                  propertyValue = valueList[dtoPropertyValue].Replace("rdl:", rdlPrefix);
+                }
+                else
+                {
+                  throw (new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue)));
                 }
               }
-              #endregion
-
-              if (isPropertyValueDifferent)
+              else
               {
-                GraphMatch queryTemporal = new GraphMatch();
-                GraphMatch query = new GraphMatch();
-                Variable templateVariable = new Variable("t1");
-                BNode bNodeTemplate = new BNode("t1");
-                SemWeb.Entity templateTypeEntity = templateMap.templateId.Replace("tpl:", tplPrefix);
-                SemWeb.Entity parentIdentifierVariableEntity = parentIdentifierVariable.Replace("eg:", egPrefix);
-                string templateMapClassRole = templateMap.classRole.Replace("tpl:", tplPrefix);
-
-                Statement statementA = new Statement(templateVariable, rdfType, owlThingEntity);
-                Statement statementB = new Statement(templateVariable, rdfType, templateTypeEntity);
-                Statement statementC = new Statement(templateVariable, templateMapClassRole, parentIdentifierVariableEntity);
-
-                queryTemporal.AddGraphStatement(statementA);
-                queryTemporal.AddGraphStatement(statementB);
-                queryTemporal.AddGraphStatement(statementC);
-
-                StatementList statementListToBeAddedToStore = new StatementList();
-                foreach (Variable variable in binding.Variables)
-                {
-                  if (variable.LocalName != null && variable.LocalName != "t1")
-                  {
-                    string propertyName = variable.LocalName;
-                    string propertyValue = string.Empty;
-                    string propertyType = "literal";
-                    string dtoPropertyValue = string.Empty;
-
-                    if (binding[variable.LocalName].Uri != null)
-                    {
-                      propertyType = "uri";
-                    }
-
-                    object obj = dto.GetPropertyValueByInternalName(propertyName);
-                    if (obj != null)
-                      if (_trimData)
-                        dtoPropertyValue = obj.ToString().Trim();
-                      else
-                        dtoPropertyValue = obj.ToString();
-                    else
-                      dtoPropertyValue = "";
-
-                    RoleMap roleMap = FindRoleMap(templateMap, propertyName);
-                    if (roleMap.reference != null && roleMap.reference != String.Empty)
-                    {
-                      if (roleMap.valueList != null && roleMap.valueList != String.Empty)
-                      {
-                        Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);
-                        if (valueList.ContainsKey(dtoPropertyValue))
-                        {
-                          propertyValue = valueList[dtoPropertyValue].Replace("rdl:", rdlPrefix);                          
-                        }
-                        else
-                        {
-                          throw (new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue)));
-                        }
-                      }
-                      else
-                      {
-                        propertyValue = roleMap.reference.Replace("rdl:", rdlPrefix);                        
-                      }
-                    }
-                    else if (roleMap.value != null && roleMap.value != String.Empty)
-                    {
-                      propertyValue = roleMap.value;
-                    }
-                    else
-                    {
-                      propertyValue = dtoPropertyValue;
-                    }
-                   
-                    string roleMapRoleId = roleMap.roleId.Replace("tpl:", tplPrefix);
-                    Variable propertyNameVariable = new Variable(roleMap.propertyName);
-                    Statement statementD = new Statement(templateVariable, roleMapRoleId, propertyNameVariable);
-                    queryTemporal.AddGraphStatement(statementD);
-
-                    if (propertyType == "literal")
-                    {
-                      Literal propertyValueLiteral = GetPropertyValueType(propertyValue, roleMap.dataType);
-                      Statement statement = new Statement(bNodeTemplate, roleMapRoleId, propertyValueLiteral);
-                      statementListToBeAddedToStore.Add(statement);
-                    }
-                    else
-                    {
-                      SemWeb.Entity propertyValueEntity = propertyValue;
-                      Statement statement = new Statement(bNodeTemplate, roleMapRoleId, propertyValueEntity);
-                      statementListToBeAddedToStore.Add(statement);
-                    }
-                  }
-                }
-
-                QueryResultBuffer resultBuffer = GetUnterminatedTemplates(queryTemporal, templateVariable);
-
-                BNode bNodeToBeTerminated = null;
-                foreach (VariableBindings variableBinding in resultBuffer.Bindings)
-                {
-                  bNodeToBeTerminated = ((BNode)variableBinding["t1"]);
-                }
-                Literal endTimeValue = GetPropertyValueType(DateTime.UtcNow.ToString(), "datetime");
-                Statement statement1 = new Statement(bNodeToBeTerminated, endDateTimeTemplate, endTimeValue);
-                _store.Add(statement1);
-
-                Statement statement2 = new Statement(bNodeTemplate, rdfType, owlThingEntity);
-                Statement statement3 = new Statement(bNodeTemplate, rdfType, templateTypeEntity);
-                Statement statement4 = new Statement(bNodeTemplate, templateMapClassRole, parentIdentifierVariableEntity);
-                _store.Add(statement2);
-                _store.Add(statement3);
-                _store.Add(statement4);
-
-                foreach (Statement statement in statementListToBeAddedToStore)
-                {
-                  _store.Add(statement);
-                }
-
-                Literal startTimeValue = GetPropertyValueType(DateTime.UtcNow.ToString(), "datetime");
-                Statement statement5 = new Statement(bNodeTemplate, startDateTimeTemplate, startTimeValue);
-                _store.Add(statement5);
+                propertyValue = roleMap.reference.Replace("rdl:", rdlPrefix);
               }
             }
-          }
-          #endregion
-          #region Else if property doesn't exist
-          else
-          {
-            BNode bNodeTemplate = new BNode("t1");
-            SemWeb.Entity templateTypeEntity = templateMap.templateId.Replace("tpl:", tplPrefix);
-            SemWeb.Entity parentIdentifierVariableEntity = parentIdentifierVariable.Replace("eg:", egPrefix);
-            string templateMapClassRole = templateMap.classRole.Replace("tpl:", tplPrefix);
-
-            Statement statement1 = new Statement(bNodeTemplate, rdfType, owlThingEntity);
-            Statement statement2 = new Statement(bNodeTemplate, rdfType, templateTypeEntity);
-            Statement statement3 = new Statement(bNodeTemplate, templateMapClassRole, parentIdentifierVariableEntity);
-
-            _store.Add(statement1);
-            _store.Add(statement2);
-            _store.Add(statement3);
-
-            foreach (RoleMap roleMap in templateMap.roleMaps)
+            else if (roleMap.value != null && roleMap.value != String.Empty)
             {
+              propertyValue = roleMap.value;
+            }
+            else
+            {
+              propertyValue = dtoPropertyValue;
+            }
+
+            if (!curPropertyValue.Equals(propertyValue))
+            {
+              isPropertyValueDifferent = true;
+            }
+          }
+        }
+        #endregion
+
+        if (isPropertyValueDifferent)
+        {
+          GraphMatch queryTemporal = new GraphMatch();
+          GraphMatch query = new GraphMatch();
+          Variable templateVariable = new Variable("t1");
+          BNode bNodeTemplate = new BNode("t1");
+          SemWeb.Entity templateTypeEntity = templateMap.templateId.Replace("tpl:", tplPrefix);
+          SemWeb.Entity parentIdentifierVariableEntity = parentIdentifierVariable.Replace("eg:", egPrefix);
+          string templateMapClassRole = templateMap.classRole.Replace("tpl:", tplPrefix);
+
+          Statement statementA = new Statement(templateVariable, rdfType, owlThingEntity);
+          Statement statementB = new Statement(templateVariable, rdfType, templateTypeEntity);
+          Statement statementC = new Statement(templateVariable, templateMapClassRole, parentIdentifierVariableEntity);
+
+          queryTemporal.AddGraphStatement(statementA);
+          queryTemporal.AddGraphStatement(statementB);
+          queryTemporal.AddGraphStatement(statementC);
+
+          StatementList statementListToBeAddedToStore = new StatementList();
+          foreach (Variable variable in binding.Variables)
+          {
+            if (variable.LocalName != null && variable.LocalName != "t1")
+            {
+              string propertyName = variable.LocalName;
               string propertyValue = string.Empty;
               string propertyType = "literal";
               string dtoPropertyValue = string.Empty;
-              string curPropertyValue = string.Empty;
 
-              object obj = dto.GetPropertyValueByInternalName(roleMap.propertyName);
+              if (binding[variable.LocalName].Uri != null)
+              {
+                propertyType = "uri";
+              }
+
+              object obj = dto.GetPropertyValueByInternalName(propertyName);
               if (obj != null)
                 if (_trimData)
                   dtoPropertyValue = obj.ToString().Trim();
                 else
                   dtoPropertyValue = obj.ToString();
               else
-                dtoPropertyValue = string.Empty;
+                dtoPropertyValue = "";
 
-
+              RoleMap roleMap = FindRoleMap(templateMap, propertyName);
               if (roleMap.reference != null && roleMap.reference != String.Empty)
               {
                 if (roleMap.valueList != null && roleMap.valueList != String.Empty)
@@ -959,7 +840,6 @@ namespace org.iringtools.adapter.projection
                   if (valueList.ContainsKey(dtoPropertyValue))
                   {
                     propertyValue = valueList[dtoPropertyValue].Replace("rdl:", rdlPrefix);
-                    propertyType = "uri";
                   }
                   else
                   {
@@ -969,45 +849,204 @@ namespace org.iringtools.adapter.projection
                 else
                 {
                   propertyValue = roleMap.reference.Replace("rdl:", rdlPrefix);
-                  propertyType = "uri";
                 }
               }
               else if (roleMap.value != null && roleMap.value != String.Empty)
               {
                 propertyValue = roleMap.value;
-                propertyType = "literal";
               }
               else
               {
                 propertyValue = dtoPropertyValue;
-                propertyType = "literal";
               }
-            
+
               string roleMapRoleId = roleMap.roleId.Replace("tpl:", tplPrefix);
+              Variable propertyNameVariable = new Variable(roleMap.propertyName);
+              Statement statementD = new Statement(templateVariable, roleMapRoleId, propertyNameVariable);
+              queryTemporal.AddGraphStatement(statementD);
+
               if (propertyType == "literal")
               {
                 Literal propertyValueLiteral = GetPropertyValueType(propertyValue, roleMap.dataType);
-                Statement statement4 = new Statement(bNodeTemplate, roleMapRoleId, propertyValueLiteral);
-                _store.Add(statement4);
+                Statement statement = new Statement(bNodeTemplate, roleMapRoleId, propertyValueLiteral);
+                statementListToBeAddedToStore.Add(statement);
               }
               else
               {
                 SemWeb.Entity propertyValueEntity = propertyValue;
-                Statement statement4 = new Statement(bNodeTemplate, roleMapRoleId, propertyValueEntity);
-                _store.Add(statement4);
+                Statement statement = new Statement(bNodeTemplate, roleMapRoleId, propertyValueEntity);
+                statementListToBeAddedToStore.Add(statement);
               }
             }
-            Literal startTimeValue = GetPropertyValueType(DateTime.UtcNow.ToString(), "datetime");
-            Statement statement5 = new Statement(bNodeTemplate, startDateTimeTemplate, startTimeValue);
-            _store.Add(statement5);
           }
-          #endregion
+
+          QueryResultBuffer resultBuffer = GetUnterminatedTemplates(queryTemporal, templateVariable);
+
+          BNode bNodeToBeTerminated = null;
+          foreach (VariableBindings variableBinding in resultBuffer.Bindings)
+          {
+            bNodeToBeTerminated = ((BNode)variableBinding["t1"]);
+          }
+          Literal endTimeValue = GetPropertyValueType(DateTime.UtcNow.ToString(), "datetime");
+          Statement statement1 = new Statement(bNodeToBeTerminated, endDateTimeTemplate, endTimeValue);
+          _store.Add(statement1);
+
+          Statement statement2 = new Statement(bNodeTemplate, rdfType, owlThingEntity);
+          Statement statement3 = new Statement(bNodeTemplate, rdfType, templateTypeEntity);
+          Statement statement4 = new Statement(bNodeTemplate, templateMapClassRole, parentIdentifierVariableEntity);
+          _store.Add(statement2);
+          _store.Add(statement3);
+          _store.Add(statement4);
+
+          foreach (Statement statement in statementListToBeAddedToStore)
+          {
+            _store.Add(statement);
+          }
+
+          Literal startTimeValue = GetPropertyValueType(DateTime.UtcNow.ToString(), "datetime");
+          Statement statement5 = new Statement(bNodeTemplate, startDateTimeTemplate, startTimeValue);
+          _store.Add(statement5);
+        }
+      }
+    }
+
+    private void RefreshReferenceRoleMap(BNode bNodeTemplate, RoleMap roleMap, DataTransferObject dto, string parentIdentifierVariable)
+    {      
+      string propertyValue = string.Empty;
+      string propertyType = "literal";
+      string dtoPropertyValue = string.Empty;
+      string curPropertyValue = string.Empty;
+
+      object obj = dto.GetPropertyValueByInternalName(roleMap.propertyName);
+      if (obj != null)
+        if (_trimData)
+          dtoPropertyValue = obj.ToString().Trim();
+        else
+          dtoPropertyValue = obj.ToString();
+      else
+        dtoPropertyValue = string.Empty;
+
+
+      if (roleMap.reference != null && roleMap.reference != String.Empty)
+      {
+        if (roleMap.valueList != null && roleMap.valueList != String.Empty)
+        {
+          Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);
+          if (valueList.ContainsKey(dtoPropertyValue))
+          {
+            propertyValue = valueList[dtoPropertyValue].Replace("rdl:", rdlPrefix);
+            propertyType = "uri";
+          }
+          else
+          {
+            throw (new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue)));
+          }
         }
         else
         {
-          RoleMap roleMap = templateMap.roleMaps[0];
-          string instanceVariable = RefreshRelatedClass(templateMap, roleMap, roleMap.classMap, parentIdentifierVariable, dto);
-          RefreshClassMap(roleMap.classMap, roleMap, dto, instanceVariable);
+          propertyValue = roleMap.reference.Replace("rdl:", rdlPrefix);
+          propertyType = "uri";
+        }
+      }
+      else if (roleMap.value != null && roleMap.value != String.Empty)
+      {
+        propertyValue = roleMap.value;
+        propertyType = "literal";
+      }
+      else
+      {
+        propertyValue = dtoPropertyValue;
+        propertyType = "literal";
+      }
+
+      string roleMapRoleId = roleMap.roleId.Replace("tpl:", tplPrefix);
+      if (propertyType == "literal")
+      {
+        Literal propertyValueLiteral = GetPropertyValueType(propertyValue, roleMap.dataType);
+        Statement statement4 = new Statement(bNodeTemplate, roleMapRoleId, propertyValueLiteral);
+        _store.Add(statement4);
+      }
+      else
+      {
+        SemWeb.Entity propertyValueEntity = propertyValue;
+        Statement statement4 = new Statement(bNodeTemplate, roleMapRoleId, propertyValueEntity);
+        _store.Add(statement4);
+      }
+    }
+
+    private void RefreshRoleMap(TemplateMap templateMap, DataTransferObject dto, string parentIdentifierVariable)
+    {
+      QueryResultBuffer resultBufferTemplateValues = GetTemplateValues(templateMap, parentIdentifierVariable);
+
+      if (resultBufferTemplateValues.Bindings.Count > 0)
+      {
+        RefreshPropertyRoleMap(templateMap, dto, parentIdentifierVariable, resultBufferTemplateValues);
+      }
+      else
+      {
+        BNode bNodeTemplate = new BNode("t1");
+        SemWeb.Entity templateTypeEntity = templateMap.templateId.Replace("tpl:", tplPrefix);
+        SemWeb.Entity parentIdentifierVariableEntity = parentIdentifierVariable.Replace("eg:", egPrefix);
+        string templateMapClassRole = templateMap.classRole.Replace("tpl:", tplPrefix);
+
+        Statement statement1 = new Statement(bNodeTemplate, rdfType, owlThingEntity);
+        Statement statement2 = new Statement(bNodeTemplate, rdfType, templateTypeEntity);
+        Statement statement3 = new Statement(bNodeTemplate, templateMapClassRole, parentIdentifierVariableEntity);
+
+        _store.Add(statement1);
+        _store.Add(statement2);
+        _store.Add(statement3);
+
+        foreach (RoleMap roleMap in templateMap.roleMaps)
+        {
+          RefreshReferenceRoleMap(bNodeTemplate, roleMap, dto, parentIdentifierVariable);
+        }
+
+        Literal startTimeValue = GetPropertyValueType(DateTime.UtcNow.ToString(), "datetime");
+        Statement statement5 = new Statement(bNodeTemplate, startDateTimeTemplate, startTimeValue);
+        _store.Add(statement5);
+      }
+    }
+
+    private void RefreshTemplateMap(TemplateMap templateMap, ClassMap classMap, DataTransferObject dto, string parentIdentifierVariable)
+    {
+      try
+      {
+        if (templateMap.type == TemplateType.Property)
+        {
+          RefreshRoleMap(templateMap, dto, parentIdentifierVariable);
+        }
+        else
+        {
+          foreach (RoleMap roleMap in templateMap.roleMaps)
+          {
+            if (roleMap.classMap == null)
+            {
+              BNode bNodeTemplate = new BNode("t1");
+              SemWeb.Entity templateTypeEntity = templateMap.templateId.Replace("tpl:", tplPrefix);
+              SemWeb.Entity parentIdentifierVariableEntity = parentIdentifierVariable.Replace("eg:", egPrefix);
+              string templateMapClassRole = templateMap.classRole.Replace("tpl:", tplPrefix);
+
+              Statement statement1 = new Statement(bNodeTemplate, rdfType, owlThingEntity);
+              Statement statement2 = new Statement(bNodeTemplate, rdfType, templateTypeEntity);
+              Statement statement3 = new Statement(bNodeTemplate, templateMapClassRole, parentIdentifierVariableEntity);
+
+              _store.Add(statement1);
+              _store.Add(statement2);
+              _store.Add(statement3);
+
+              RefreshReferenceRoleMap(bNodeTemplate, roleMap, dto, parentIdentifierVariable);
+
+              Literal startTimeValue = GetPropertyValueType(DateTime.UtcNow.ToString(), "datetime");
+              Statement statement5 = new Statement(bNodeTemplate, startDateTimeTemplate, startTimeValue);
+              _store.Add(statement5);
+            }
+            else if (roleMap.classMap.templateMaps != null && roleMap.classMap.templateMaps.Count > 0)
+            {
+              string instanceVariable = RefreshRelatedClass(templateMap, roleMap, roleMap.classMap, parentIdentifierVariable, dto);
+              RefreshClassMap(roleMap.classMap, roleMap, dto, instanceVariable);
+            }
+          }
         }
       }
       catch (Exception exception)

@@ -1282,7 +1282,7 @@ namespace org.iringtools.adapter
           {
             ProcessRoleMap(templateMap.name, roleMap, dataObjectMaps, isDataMember);
           }
-          else if (roleMap.classMap.templateMaps.Count > 0)
+          else if (roleMap.classMap.templateMaps != null && roleMap.classMap.templateMaps.Count > 0)
           {
             roleMap.classMap.name = NameSafe(roleMap.classMap.name);
 
