@@ -490,8 +490,8 @@ namespace DemoControlPanel
                 cbxApplication.IsEnabled = false;
 
                 ObservableCollection<ScopeProject> scopes = e.Result;
-                                                
-                cbxProjects.Items.Clear();
+
+                if (cbxProjects.ItemsSource != null) cbxProjects.ItemsSource = null;
                 cbxProjects.DisplayMemberPath = "Name";
                 cbxProjects.ItemsSource = scopes;
                 cbxProjects.SelectionChanged += new SelectionChangedEventHandler(cbxProjects_SelectionChanged);
@@ -513,9 +513,11 @@ namespace DemoControlPanel
 
         private void cbxProjects_SelectionChanged(object sender, RoutedEventArgs e)
         {
+          if (cbxProjects.SelectedIndex == -1) return;
+
             ScopeProject project = (ScopeProject)cbxProjects.SelectedItem;
-                        
-            cbxApplication.Items.Clear();
+
+            if (cbxApplication.ItemsSource != null) cbxApplication.ItemsSource = null;
             cbxApplication.DisplayMemberPath = "Name";
             cbxApplication.ItemsSource = project.Applications;
             cbxApplication.SelectionChanged += new SelectionChangedEventHandler(cbxApplication_SelectionChanged);
@@ -525,6 +527,8 @@ namespace DemoControlPanel
 
         private void cbxApplication_SelectionChanged(object sender, RoutedEventArgs e)
         {
+          if (cbxApplication.SelectedIndex == -1) return;
+
             this.Cursor = Cursors.Wait;
 
             cbxAdapterServices.IsEnabled = false;

@@ -11,62 +11,56 @@ namespace Endpoints
     {
         static void Main(string[] args)
         {
+          iRINGEndpoints adapterEndPoints = new iRINGEndpoints
+        {
+            new iRINGEndpoint{id="1", name = "iRINGSandbox AdapterService", serviceUri = "http://www.iringsandbox.org/AdapterService/Service.svc"},
+            new iRINGEndpoint{id="2", name = "Bechtel AdapterService", serviceUri = "https://facade.becpsn.com/AdapterService/Service.svc", 
+              credentials = new WebCredentials("8stUFBRIGcYR0Nl8v25rm5+qecZZD6i6itQUBD8zM0bODWZk1TysqXLBvMkc4GVUSCGqS4I9G99Wcynf7Qdqssj5NgAqU7m16EguxwWAScfq8olyMFfjd271RNc35Nv9")},
+            new iRINGEndpoint{id="3", name = "CCC AdapterService", serviceUri = "http://c3d.ccc.gr/AdapterService/Service.svc"},
+            new iRINGEndpoint{id="4", name = "Hatch AdapterService", serviceUri = "http://iring.hatch.com.au/AdapterService/Service.svc", 
+              credentials = new WebCredentials("zlNbMav8dBXUREoOR6ctMZ8aRcOiKmUtgU9mmyhyNqxJ0EAePsEoRq5C71fEde6GtBAGg/JcGoE3bucNdqLZDg==") },
+            new iRINGEndpoint{id="5", name = "Dow AdapterService", serviceUri = "http://usmdlsdoww915/AdapterService/Service.svc"},
+            new iRINGEndpoint{id="12", name = "Bechtel iLab AdapterService", serviceUri = "http://labs98142/AdapterService/Service.svc"},
+        };
+
+          iRINGEndpoints interfaceEndPoints = new iRINGEndpoints
+        {
+            new iRINGEndpoint{id="1", name = "iRINGSandbox InterfaceService", serviceUri = "http://www.iringsandbox.org/InterfaceService"},
+            new iRINGEndpoint{id="2", name = "Bechtel InterfaceService", serviceUri = "https://facade.becpsn.com/InterfaceService", 
+              credentials = new WebCredentials("8stUFBRIGcYR0Nl8v25rm5+qecZZD6i6itQUBD8zM0bODWZk1TysqXLBvMkc4GVUSCGqS4I9G99Wcynf7Qdqssj5NgAqU7m16EguxwWAScfq8olyMFfjd271RNc35Nv9")},
+            new iRINGEndpoint{id="3", name = "CCC InterfaceService", serviceUri = "http://c3d.ccc.gr/InterfaceService"},
+            new iRINGEndpoint{id="4", name = "Hatch InterfaceService", serviceUri = "http://iring.hatch.com.au/InterfaceService", 
+              credentials = new WebCredentials("zlNbMav8dBXUREoOR6ctMZ8aRcOiKmUtgU9mmyhyNqxJ0EAePsEoRq5C71fEde6GtBAGg/JcGoE3bucNdqLZDg==") },
+            new iRINGEndpoint{id="5", name = "Dow InterfaceService", serviceUri = "http://usmdlsdoww915/InterfaceService"},
+            new iRINGEndpoint{id="6", name = "Bentley InterfaceService", serviceUri = "http://www.iringsandbox.org/InterfaceService/bentley2/sparql"},
+            new iRINGEndpoint{id="12", name = "Bechtel iLab InterfaceService", serviceUri = "http://labs98142/InterfaceService"},
+        };
+
             ConfiguredEndpoints config = new ConfiguredEndpoints();
             Scenarios scenarios = new Scenarios
             { 
-                new Scenario{
-                    scenarioName = "Test", 
-                    sender="BechtelSender", 
-                    receiver="BechtelReceiver", 
-                    senderAdapterServiceId = "1", 
-                    receiverAdapterServiceId = "1", 
-                    interfaceServiceId = "1",
-                    senderProjectName="12345_000",
-                    senderApplicationName="ABC",
-                    senderGraphName="Lines",
-                    receiverProjectName="12345_000",
-                    receiverApplicationName="ABC",
-                    receiverGraphName="Lines",
-                    exportEnabled=false,
-                    importEnabled=false
-                },
-                new Scenario{scenarioName = "Data flow 1A – Hatch to Dow", sender="Hatch", receiver="Dow", senderAdapterServiceId = "5", receiverAdapterServiceId = "7", interfaceServiceId = "5"},
-                new Scenario{scenarioName = "Data Flow 1B – Bechtel to Dow", sender="Bechtel", receiver="Dow", senderAdapterServiceId = "1", receiverAdapterServiceId = "7", interfaceServiceId = "1"},
-                new Scenario{scenarioName = "Data flow 2A – Hatch to Intergraph", sender="Hatch", receiver="Intergraph", senderAdapterServiceId = "5", receiverAdapterServiceId = "8", interfaceServiceId = "5"},
-                new Scenario{scenarioName = "Data Flow 2B – Bechtel to Intergraph", sender="Bechtel", receiver="Intergraph", senderAdapterServiceId = "1", receiverAdapterServiceId = "8", interfaceServiceId = "1"},
-                new Scenario{scenarioName = "Data Flow 2C – Dow to Intergraph", sender="Dow", receiver="Intergraph", senderAdapterServiceId = "", receiverAdapterServiceId = "", interfaceServiceId = ""},
-                new Scenario{scenarioName = "Data flow 3A – Hatch to CCC", sender="Hatch", receiver="CCC", senderAdapterServiceId = "5", receiverAdapterServiceId = "3", interfaceServiceId = "5"},
-                new Scenario{scenarioName = "Data Flow 3B – Bechtel to CCC", sender="Bechtel", receiver="CCC", senderAdapterServiceId = "1", receiverAdapterServiceId = "3", interfaceServiceId = "1"},
-                new Scenario{scenarioName = "Data flow 4A – Hatch to Emerson", sender="Hatch", receiver="Emerson", senderAdapterServiceId = "5", receiverAdapterServiceId = "9", interfaceServiceId = "5"},
-                new Scenario{scenarioName = "Data Flow 4B – Bechtel to Emerson", sender="Bechtel", receiver="Emerson", senderAdapterServiceId = "1", receiverAdapterServiceId = "9", interfaceServiceId = "1"},
-                new Scenario{scenarioName = "Data Flow 5A – DuPont to Bechtel", sender="Dupont", receiver="Bechtel", senderAdapterServiceId = "10", receiverAdapterServiceId = "1", interfaceServiceId = "7"}
+                new Scenario{scenarioName = "iRINGSandbox Test", sender="iRINGSandbox", receiver="iRINGSandbox", 
+                    senderAdapterServiceId = "1", receiverAdapterServiceId = "1", interfaceServiceId = "1",
+                    senderProjectName="12345_000", senderApplicationName="ABC", senderGraphName="Lines",
+                    receiverProjectName="12345_000", receiverApplicationName="ABC", receiverGraphName="Lines",
+                    exportEnabled=false, importEnabled=false},
+                new Scenario{scenarioName = "Bechtel Test", sender="Bechtel", receiver="Bechtel", 
+                    senderAdapterServiceId = "2", receiverAdapterServiceId = "2", interfaceServiceId = "2",
+                    senderProjectName="12345_000", senderApplicationName="ABC", senderGraphName="Lines",
+                    receiverProjectName="12345_000", receiverApplicationName="ABC", receiverGraphName="Lines",
+                    exportEnabled=false, importEnabled=false},
+                new Scenario{scenarioName = "Bechtel Test", sender="Bechtel", receiver="Bechtel", 
+                    senderAdapterServiceId = "2", receiverAdapterServiceId = "2", interfaceServiceId = "2",
+                    senderProjectName="12345_000", senderApplicationName="ABC", senderGraphName="Lines",
+                    receiverProjectName="12345_000", receiverApplicationName="ABC", receiverGraphName="Lines",
+                    exportEnabled=false, importEnabled=false},
+                new Scenario{scenarioName = "Bechtel iLab Test", sender="Bechtel", receiver="Bechtel", 
+                    senderAdapterServiceId = "12", receiverAdapterServiceId = "12", interfaceServiceId = "12",
+                    senderProjectName="12345_000", senderApplicationName="Inpsec", senderGraphName="LineList",
+                    receiverProjectName="12345_000", receiverApplicationName="Inpsec", receiverGraphName="LineList",
+                    exportEnabled=false, importEnabled=false},
             };
-            iRINGEndpoints adapterEndPoints = new iRINGEndpoints
-        {
-            new iRINGEndpoint{id="1", name = "My Adapter Service", serviceUri = "http://iring.hatch.com.au/AdapterService/Service.svc", credentials = new WebCredentials()},
-            new iRINGEndpoint{id="2", name = "Bechtel (karthur) Adapter Service", serviceUri = "https://iring.becpsn.com/AdapterService/Service.svc", credentials = new WebCredentials("IKmr723/1qmzmrRzIhJWZezzpAU0XoV6QkXRoKOBRQhMFt7iNAShgc/tGU0Lypt3TTdBG5MHCTxEjb3btLriN9ZVVXRHzDQPqmoyGLq/xvY=")},
-            new iRINGEndpoint{id="3", name = "Bechtel (local) Adapter Service", serviceUri = "http://localhost/AdapterService/Service.svc", credentials = new WebCredentials()},
-            new iRINGEndpoint{id="4", name = "CCC (karthur) Adapter Service", serviceUri = "", credentials = new WebCredentials()},
-            new iRINGEndpoint{id="5", name = "CCC (local) Adapter Service", serviceUri = "http://localhost/AdapterService/Service.svc", credentials = new WebCredentials()},
-            new iRINGEndpoint{id="6", name = "Hatch (karthur) Adapter Service", serviceUri = "http://iring.hatch.com.au/AdapterService/Service.svc", credentials = new WebCredentials("zlNbMav8dBXUREoOR6ctMZ8aRcOiKmUtgU9mmyhyNqxJ0EAePsEoRq5C71fEde6GtBAGg/JcGoE3bucNdqLZDg==")},
-            new iRINGEndpoint{id="7", name = "Hatch (local) Adapter Service", serviceUri = "http://localhost/AdapterService/Service.svc", credentials = new WebCredentials()},
-            new iRINGEndpoint{id="8", name = "Dow (local) Adapter Service", serviceUri = "http://localhost/AdapterService/Service.svc", credentials = new WebCredentials()},
-            new iRINGEndpoint{id="9", name = "Intergraph (local) Adapter Service", serviceUri = "http://localhost/AdapterService/Service.svc", credentials = new WebCredentials()},
-            new iRINGEndpoint{id="10", name = "Emerson (local) Adapter Service", serviceUri = "http://localhost/AdapterService/Service.svc", credentials = new WebCredentials()},
-            new iRINGEndpoint{id="11", name = "Dupont (local) Adapter Service", serviceUri = "http://localhost/AdapterService/Service.svc", credentials = new WebCredentials()}
-        };
-
-            iRINGEndpoints interfaceEndPoints = new iRINGEndpoints
-        {
-            new iRINGEndpoint{id="1", name = "My Interface Service", serviceUri = "http://localhost:2020", credentials = new WebCredentials()},
-            new iRINGEndpoint{id="2", name = "Bechtel (karthur) Interface Service", serviceUri = "https://iring.becpsn.com/InterfaceService", credentials = new WebCredentials("IKmr723/1qmzmrRzIhJWZezzpAU0XoV6QkXRoKOBRQhMFt7iNAShgc/tGU0Lypt3TTdBG5MHCTxEjb3btLriN9ZVVXRHzDQPqmoyGLq/xvY=")},
-            new iRINGEndpoint{id="3", name = "Bechtel (local) Interface Service", serviceUri = "http://localhost:2020", credentials = new WebCredentials()},
-            new iRINGEndpoint{id="4", name = "CCC (karthur) Interface Service", serviceUri = "", credentials = new WebCredentials()},
-            new iRINGEndpoint{id="5", name = "CCC (local) Interface Service", serviceUri = "http://localhost:2020", credentials = new WebCredentials()},
-            new iRINGEndpoint{id="6", name = "Hatch (karthur) Interface Service", serviceUri = "http://iring.hatch.com.au/InterfaceService", credentials = new WebCredentials("zlNbMav8dBXUREoOR6ctMZ8aRcOiKmUtgU9mmyhyNqxJ0EAePsEoRq5C71fEde6GtBAGg/JcGoE3bucNdqLZDg==")},
-            new iRINGEndpoint{id="7", name = "Hatch (local) Interface Service", serviceUri = "http://localhost:2020", credentials = new WebCredentials()},
-            new iRINGEndpoint{id="8", name = "Dupont (local Interface Service", serviceUri = "http://localhost:2020", credentials = new WebCredentials()}            
-        };
+            
             config.scenarios = scenarios;
             config.adapterEndpoints = adapterEndPoints;
             config.interfaceEndpoints = interfaceEndPoints;

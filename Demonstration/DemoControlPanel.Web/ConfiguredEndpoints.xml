@@ -1,1 +1,162 @@
-<ConfiguredEndpoints xmlns="http://schemas.datacontract.org/2004/07/DemoControlPanel.Web" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><adapterEndpoints><iRINGEndpoint><credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/><id>1</id><name>My Adapter Service</name><serviceUri>http://iring.hatch.com.au/AdapterService/Service.svc</serviceUri></iRINGEndpoint><iRINGEndpoint><credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"><a:encryptedToken>IKmr723/1qmzmrRzIhJWZezzpAU0XoV6QkXRoKOBRQhMFt7iNAShgc/tGU0Lypt3TTdBG5MHCTxEjb3btLriN9ZVVXRHzDQPqmoyGLq/xvY=</a:encryptedToken><a:isEncrypted>true</a:isEncrypted></credentials><id>2</id><name>Bechtel (karthur) Adapter Service</name><serviceUri>https://iring.becpsn.com/AdapterService/Service.svc</serviceUri></iRINGEndpoint><iRINGEndpoint><credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/><id>3</id><name>Bechtel (local) Adapter Service</name><serviceUri>http://localhost/AdapterService/Service.svc</serviceUri></iRINGEndpoint><iRINGEndpoint><credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/><id>4</id><name>CCC (karthur) Adapter Service</name><serviceUri/></iRINGEndpoint><iRINGEndpoint><credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/><id>5</id><name>CCC (local) Adapter Service</name><serviceUri>http://localhost/AdapterService/Service.svc</serviceUri></iRINGEndpoint><iRINGEndpoint><credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"><a:encryptedToken>zlNbMav8dBXUREoOR6ctMZ8aRcOiKmUtgU9mmyhyNqxJ0EAePsEoRq5C71fEde6GtBAGg/JcGoE3bucNdqLZDg==</a:encryptedToken><a:isEncrypted>true</a:isEncrypted></credentials><id>6</id><name>Hatch (karthur) Adapter Service</name><serviceUri>http://iring.hatch.com.au/AdapterService/Service.svc</serviceUri></iRINGEndpoint><iRINGEndpoint><credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/><id>7</id><name>Hatch (local) Adapter Service</name><serviceUri>http://localhost/AdapterService/Service.svc</serviceUri></iRINGEndpoint><iRINGEndpoint><credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/><id>8</id><name>Dow (local) Adapter Service</name><serviceUri>http://localhost/AdapterService/Service.svc</serviceUri></iRINGEndpoint><iRINGEndpoint><credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/><id>9</id><name>Intergraph (local) Adapter Service</name><serviceUri>http://localhost/AdapterService/Service.svc</serviceUri></iRINGEndpoint><iRINGEndpoint><credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/><id>10</id><name>Emerson (local) Adapter Service</name><serviceUri>http://localhost/AdapterService/Service.svc</serviceUri></iRINGEndpoint><iRINGEndpoint><credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/><id>11</id><name>Dupont (local) Adapter Service</name><serviceUri>http://localhost/AdapterService/Service.svc</serviceUri></iRINGEndpoint></adapterEndpoints><interfaceEndpoints><iRINGEndpoint><credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/><id>1</id><name>My Interface Service</name><serviceUri>http://localhost:2020</serviceUri></iRINGEndpoint><iRINGEndpoint><credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"><a:encryptedToken>IKmr723/1qmzmrRzIhJWZezzpAU0XoV6QkXRoKOBRQhMFt7iNAShgc/tGU0Lypt3TTdBG5MHCTxEjb3btLriN9ZVVXRHzDQPqmoyGLq/xvY=</a:encryptedToken><a:isEncrypted>true</a:isEncrypted></credentials><id>2</id><name>Bechtel (karthur) Interface Service</name><serviceUri>https://iring.becpsn.com/InterfaceService</serviceUri></iRINGEndpoint><iRINGEndpoint><credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/><id>3</id><name>Bechtel (local) Interface Service</name><serviceUri>http://localhost:2020</serviceUri></iRINGEndpoint><iRINGEndpoint><credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/><id>4</id><name>CCC (karthur) Interface Service</name><serviceUri/></iRINGEndpoint><iRINGEndpoint><credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/><id>5</id><name>CCC (local) Interface Service</name><serviceUri>http://localhost:2020</serviceUri></iRINGEndpoint><iRINGEndpoint><credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"><a:encryptedToken>zlNbMav8dBXUREoOR6ctMZ8aRcOiKmUtgU9mmyhyNqxJ0EAePsEoRq5C71fEde6GtBAGg/JcGoE3bucNdqLZDg==</a:encryptedToken><a:isEncrypted>true</a:isEncrypted></credentials><id>6</id><name>Hatch (karthur) Interface Service</name><serviceUri>http://iring.hatch.com.au/InterfaceService</serviceUri></iRINGEndpoint><iRINGEndpoint><credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/><id>7</id><name>Hatch (local) Interface Service</name><serviceUri>http://localhost:2020</serviceUri></iRINGEndpoint><iRINGEndpoint><credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/><id>8</id><name>Dupont (local Interface Service</name><serviceUri>http://localhost:2020</serviceUri></iRINGEndpoint></interfaceEndpoints><scenarios><Scenario><exportEnabled>false</exportEnabled><importEnabled>false</importEnabled><interfaceServiceId>1</interfaceServiceId><receiver>BechtelReceiver</receiver><receiverAdapterServiceId>1</receiverAdapterServiceId><receiverApplicationName>ABC</receiverApplicationName><receiverGraphName>Lines</receiverGraphName><receiverProjectName>12345_000</receiverProjectName><scenarioName>Test</scenarioName><sender>BechtelSender</sender><senderAdapterServiceId>1</senderAdapterServiceId><senderApplicationName>ABC</senderApplicationName><senderGraphName>Lines</senderGraphName><senderProjectName>12345_000</senderProjectName></Scenario><Scenario><exportEnabled>false</exportEnabled><importEnabled>false</importEnabled><interfaceServiceId>5</interfaceServiceId><receiver>Dow</receiver><receiverAdapterServiceId>7</receiverAdapterServiceId><receiverApplicationName i:nil="true"/><receiverGraphName i:nil="true"/><receiverProjectName i:nil="true"/><scenarioName>Data flow 1A – Hatch to Dow</scenarioName><sender>Hatch</sender><senderAdapterServiceId>5</senderAdapterServiceId><senderApplicationName i:nil="true"/><senderGraphName i:nil="true"/><senderProjectName i:nil="true"/></Scenario><Scenario><exportEnabled>false</exportEnabled><importEnabled>false</importEnabled><interfaceServiceId>1</interfaceServiceId><receiver>Dow</receiver><receiverAdapterServiceId>7</receiverAdapterServiceId><receiverApplicationName i:nil="true"/><receiverGraphName i:nil="true"/><receiverProjectName i:nil="true"/><scenarioName>Data Flow 1B – Bechtel to Dow</scenarioName><sender>Bechtel</sender><senderAdapterServiceId>1</senderAdapterServiceId><senderApplicationName i:nil="true"/><senderGraphName i:nil="true"/><senderProjectName i:nil="true"/></Scenario><Scenario><exportEnabled>false</exportEnabled><importEnabled>false</importEnabled><interfaceServiceId>5</interfaceServiceId><receiver>Intergraph</receiver><receiverAdapterServiceId>8</receiverAdapterServiceId><receiverApplicationName i:nil="true"/><receiverGraphName i:nil="true"/><receiverProjectName i:nil="true"/><scenarioName>Data flow 2A – Hatch to Intergraph</scenarioName><sender>Hatch</sender><senderAdapterServiceId>5</senderAdapterServiceId><senderApplicationName i:nil="true"/><senderGraphName i:nil="true"/><senderProjectName i:nil="true"/></Scenario><Scenario><exportEnabled>false</exportEnabled><importEnabled>false</importEnabled><interfaceServiceId>1</interfaceServiceId><receiver>Intergraph</receiver><receiverAdapterServiceId>8</receiverAdapterServiceId><receiverApplicationName i:nil="true"/><receiverGraphName i:nil="true"/><receiverProjectName i:nil="true"/><scenarioName>Data Flow 2B – Bechtel to Intergraph</scenarioName><sender>Bechtel</sender><senderAdapterServiceId>1</senderAdapterServiceId><senderApplicationName i:nil="true"/><senderGraphName i:nil="true"/><senderProjectName i:nil="true"/></Scenario><Scenario><exportEnabled>false</exportEnabled><importEnabled>false</importEnabled><interfaceServiceId/><receiver>Intergraph</receiver><receiverAdapterServiceId/><receiverApplicationName i:nil="true"/><receiverGraphName i:nil="true"/><receiverProjectName i:nil="true"/><scenarioName>Data Flow 2C – Dow to Intergraph</scenarioName><sender>Dow</sender><senderAdapterServiceId/><senderApplicationName i:nil="true"/><senderGraphName i:nil="true"/><senderProjectName i:nil="true"/></Scenario><Scenario><exportEnabled>false</exportEnabled><importEnabled>false</importEnabled><interfaceServiceId>5</interfaceServiceId><receiver>CCC</receiver><receiverAdapterServiceId>3</receiverAdapterServiceId><receiverApplicationName i:nil="true"/><receiverGraphName i:nil="true"/><receiverProjectName i:nil="true"/><scenarioName>Data flow 3A – Hatch to CCC</scenarioName><sender>Hatch</sender><senderAdapterServiceId>5</senderAdapterServiceId><senderApplicationName i:nil="true"/><senderGraphName i:nil="true"/><senderProjectName i:nil="true"/></Scenario><Scenario><exportEnabled>false</exportEnabled><importEnabled>false</importEnabled><interfaceServiceId>1</interfaceServiceId><receiver>CCC</receiver><receiverAdapterServiceId>3</receiverAdapterServiceId><receiverApplicationName i:nil="true"/><receiverGraphName i:nil="true"/><receiverProjectName i:nil="true"/><scenarioName>Data Flow 3B – Bechtel to CCC</scenarioName><sender>Bechtel</sender><senderAdapterServiceId>1</senderAdapterServiceId><senderApplicationName i:nil="true"/><senderGraphName i:nil="true"/><senderProjectName i:nil="true"/></Scenario><Scenario><exportEnabled>false</exportEnabled><importEnabled>false</importEnabled><interfaceServiceId>5</interfaceServiceId><receiver>Emerson</receiver><receiverAdapterServiceId>9</receiverAdapterServiceId><receiverApplicationName i:nil="true"/><receiverGraphName i:nil="true"/><receiverProjectName i:nil="true"/><scenarioName>Data flow 4A – Hatch to Emerson</scenarioName><sender>Hatch</sender><senderAdapterServiceId>5</senderAdapterServiceId><senderApplicationName i:nil="true"/><senderGraphName i:nil="true"/><senderProjectName i:nil="true"/></Scenario><Scenario><exportEnabled>false</exportEnabled><importEnabled>false</importEnabled><interfaceServiceId>1</interfaceServiceId><receiver>Emerson</receiver><receiverAdapterServiceId>9</receiverAdapterServiceId><receiverApplicationName i:nil="true"/><receiverGraphName i:nil="true"/><receiverProjectName i:nil="true"/><scenarioName>Data Flow 4B – Bechtel to Emerson</scenarioName><sender>Bechtel</sender><senderAdapterServiceId>1</senderAdapterServiceId><senderApplicationName i:nil="true"/><senderGraphName i:nil="true"/><senderProjectName i:nil="true"/></Scenario><Scenario><exportEnabled>false</exportEnabled><importEnabled>false</importEnabled><interfaceServiceId>7</interfaceServiceId><receiver>Bechtel</receiver><receiverAdapterServiceId>1</receiverAdapterServiceId><receiverApplicationName i:nil="true"/><receiverGraphName i:nil="true"/><receiverProjectName i:nil="true"/><scenarioName>Data Flow 5A – DuPont to Bechtel</scenarioName><sender>Dupont</sender><senderAdapterServiceId>10</senderAdapterServiceId><senderApplicationName i:nil="true"/><senderGraphName i:nil="true"/><senderProjectName i:nil="true"/></Scenario></scenarios></ConfiguredEndpoints>
+<ConfiguredEndpoints xmlns="http://schemas.datacontract.org/2004/07/DemoControlPanel.Web" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <adapterEndpoints>
+    <iRINGEndpoint>
+      <credentials i:nil="true" xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/>
+      <id>1</id>
+      <name>iRINGSandbox AdapterService</name>
+      <serviceUri>http://www.iringsandbox.org/AdapterService/Service.svc</serviceUri>
+    </iRINGEndpoint>
+    <iRINGEndpoint>
+      <credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility">
+        <a:encryptedToken>8stUFBRIGcYR0Nl8v25rm5+qecZZD6i6itQUBD8zM0bODWZk1TysqXLBvMkc4GVUSCGqS4I9G99Wcynf7Qdqssj5NgAqU7m16EguxwWAScfq8olyMFfjd271RNc35Nv9</a:encryptedToken>
+        <a:isEncrypted>true</a:isEncrypted>
+      </credentials>
+      <id>2</id>
+      <name>Bechtel AdapterService</name>
+      <serviceUri>https://facade.becpsn.com/AdapterService/Service.svc</serviceUri>
+    </iRINGEndpoint>
+    <iRINGEndpoint>
+      <credentials i:nil="true" xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/>
+      <id>3</id>
+      <name>CCC AdapterService</name>
+      <serviceUri>http://c3d.ccc.gr/AdapterService/Service.svc</serviceUri>
+    </iRINGEndpoint>
+    <iRINGEndpoint>
+      <credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility">
+        <a:encryptedToken>zlNbMav8dBXUREoOR6ctMZ8aRcOiKmUtgU9mmyhyNqxJ0EAePsEoRq5C71fEde6GtBAGg/JcGoE3bucNdqLZDg==</a:encryptedToken>
+        <a:isEncrypted>true</a:isEncrypted>
+      </credentials>
+      <id>4</id>
+      <name>Hatch AdapterService</name>
+      <serviceUri>http://iring.hatch.com.au/AdapterService/Service.svc</serviceUri>
+    </iRINGEndpoint>
+    <iRINGEndpoint>
+      <credentials i:nil="true" xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/>
+      <id>5</id>
+      <name>Dow AdapterService</name>
+      <serviceUri>http://usmdlsdoww915/AdapterService/Service.svc</serviceUri>
+    </iRINGEndpoint>
+    <iRINGEndpoint>
+      <credentials i:nil="true" xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/>
+      <id>12</id>
+      <name>Bechtel iLab AdapterService</name>
+      <serviceUri>http://labs98142/AdapterService/Service.svc</serviceUri>
+    </iRINGEndpoint>
+  </adapterEndpoints>
+  <interfaceEndpoints>
+    <iRINGEndpoint>
+      <credentials i:nil="true" xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/>
+      <id>1</id>
+      <name>iRINGSandbox InterfaceService</name>
+      <serviceUri>http://www.iringsandbox.org/InterfaceService</serviceUri>
+    </iRINGEndpoint>
+    <iRINGEndpoint>
+      <credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility">
+        <a:encryptedToken>8stUFBRIGcYR0Nl8v25rm5+qecZZD6i6itQUBD8zM0bODWZk1TysqXLBvMkc4GVUSCGqS4I9G99Wcynf7Qdqssj5NgAqU7m16EguxwWAScfq8olyMFfjd271RNc35Nv9</a:encryptedToken>
+        <a:isEncrypted>true</a:isEncrypted>
+      </credentials>
+      <id>2</id>
+      <name>Bechtel InterfaceService</name>
+      <serviceUri>https://facade.becpsn.com/InterfaceService</serviceUri>
+    </iRINGEndpoint>
+    <iRINGEndpoint>
+      <credentials i:nil="true" xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/>
+      <id>3</id>
+      <name>CCC InterfaceService</name>
+      <serviceUri>http://c3d.ccc.gr/InterfaceService</serviceUri>
+    </iRINGEndpoint>
+    <iRINGEndpoint>
+      <credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility">
+        <a:encryptedToken>zlNbMav8dBXUREoOR6ctMZ8aRcOiKmUtgU9mmyhyNqxJ0EAePsEoRq5C71fEde6GtBAGg/JcGoE3bucNdqLZDg==</a:encryptedToken>
+        <a:isEncrypted>true</a:isEncrypted>
+      </credentials>
+      <id>4</id>
+      <name>Hatch InterfaceService</name>
+      <serviceUri>http://iring.hatch.com.au/InterfaceService</serviceUri>
+    </iRINGEndpoint>
+    <iRINGEndpoint>
+      <credentials i:nil="true" xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/>
+      <id>5</id>
+      <name>Dow InterfaceService</name>
+      <serviceUri>http://usmdlsdoww915/InterfaceService</serviceUri>
+    </iRINGEndpoint>
+    <iRINGEndpoint>
+      <credentials i:nil="true" xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/>
+      <id>6</id>
+      <name>Bentley InterfaceService</name>
+      <serviceUri>http://www.iringsandbox.org/InterfaceService/bentley2/sparql</serviceUri>
+    </iRINGEndpoint>
+    <iRINGEndpoint>
+      <credentials i:nil="true" xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/>
+      <id>12</id>
+      <name>Bechtel iLab InterfaceService</name>
+      <serviceUri>http://labs98142/InterfaceService</serviceUri>
+    </iRINGEndpoint>
+  </interfaceEndpoints>
+  <scenarios>
+    <Scenario>
+      <exportEnabled>false</exportEnabled>
+      <importEnabled>false</importEnabled>
+      <interfaceServiceId>1</interfaceServiceId>
+      <receiver>iRINGSandbox</receiver>
+      <receiverAdapterServiceId>1</receiverAdapterServiceId>
+      <receiverApplicationName>ABC</receiverApplicationName>
+      <receiverGraphName>Lines</receiverGraphName>
+      <receiverProjectName>12345_000</receiverProjectName>
+      <scenarioName>iRINGSandbox Test</scenarioName>
+      <sender>iRINGSandbox</sender>
+      <senderAdapterServiceId>1</senderAdapterServiceId>
+      <senderApplicationName>ABC</senderApplicationName>
+      <senderGraphName>Lines</senderGraphName>
+      <senderProjectName>12345_000</senderProjectName>
+    </Scenario>
+    <Scenario>
+      <exportEnabled>false</exportEnabled>
+      <importEnabled>false</importEnabled>
+      <interfaceServiceId>2</interfaceServiceId>
+      <receiver>Bechtel</receiver>
+      <receiverAdapterServiceId>2</receiverAdapterServiceId>
+      <receiverApplicationName>ABC</receiverApplicationName>
+      <receiverGraphName>Lines</receiverGraphName>
+      <receiverProjectName>12345_000</receiverProjectName>
+      <scenarioName>Bechtel Test</scenarioName>
+      <sender>Bechtel</sender>
+      <senderAdapterServiceId>2</senderAdapterServiceId>
+      <senderApplicationName>ABC</senderApplicationName>
+      <senderGraphName>Lines</senderGraphName>
+      <senderProjectName>12345_000</senderProjectName>
+    </Scenario>
+    <Scenario>
+      <exportEnabled>false</exportEnabled>
+      <importEnabled>false</importEnabled>
+      <interfaceServiceId>2</interfaceServiceId>
+      <receiver>Bechtel</receiver>
+      <receiverAdapterServiceId>2</receiverAdapterServiceId>
+      <receiverApplicationName>ABC</receiverApplicationName>
+      <receiverGraphName>Lines</receiverGraphName>
+      <receiverProjectName>12345_000</receiverProjectName>
+      <scenarioName>Bechtel Test</scenarioName>
+      <sender>Bechtel</sender>
+      <senderAdapterServiceId>2</senderAdapterServiceId>
+      <senderApplicationName>ABC</senderApplicationName>
+      <senderGraphName>Lines</senderGraphName>
+      <senderProjectName>12345_000</senderProjectName>
+    </Scenario>
+    <Scenario>
+      <exportEnabled>false</exportEnabled>
+      <importEnabled>false</importEnabled>
+      <interfaceServiceId>12</interfaceServiceId>
+      <receiver>Bechtel</receiver>
+      <receiverAdapterServiceId>12</receiverAdapterServiceId>
+      <receiverApplicationName>Inpsec</receiverApplicationName>
+      <receiverGraphName>LineList</receiverGraphName>
+      <receiverProjectName>12345_000</receiverProjectName>
+      <scenarioName>Bechtel iLab Test</scenarioName>
+      <sender>Bechtel</sender>
+      <senderAdapterServiceId>12</senderAdapterServiceId>
+      <senderApplicationName>Inpsec</senderApplicationName>
+      <senderGraphName>LineList</senderGraphName>
+      <senderProjectName>12345_000</senderProjectName>
+    </Scenario>
+  </scenarios>
+</ConfiguredEndpoints>
