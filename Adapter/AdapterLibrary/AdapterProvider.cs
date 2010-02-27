@@ -566,13 +566,15 @@ namespace org.iringtools.adapter
       {
         InitializeApplication(projectName, applicationName);
 
-        targetUri = request["targetUri"];
+        _settings.InterfaceServer = request["targetUri"];
         targetCredentialsXML = request["targetCredentials"];
         graphName = request["graphName"];
         filter = request["filter"];
 
         WebCredentials targetCredentials = Utility.Deserialize<WebCredentials>(targetCredentialsXML, true);
         if (targetCredentials.isEncrypted) targetCredentials.Decrypt();
+
+        _settings.TargetCredentials = targetCredentials;
 
         DateTime b = DateTime.Now;
         DateTime e;
