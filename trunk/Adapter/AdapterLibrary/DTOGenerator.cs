@@ -52,6 +52,7 @@ namespace org.iringtools.adapter
     private DataDictionary _dataDictionary = null;
     private List<MappingProperty> _extendedDataProperties = null;
     private List<string> _initStatements = null;
+    List<string> templateMapNames = new List<string>();
     private StringBuilder _dtoModelBuilder = null;
     private IndentedTextWriter _dtoModelWriter = null;
     private StringBuilder _dtoServiceBuilder = null;
@@ -1249,7 +1250,6 @@ namespace org.iringtools.adapter
       _extendedDataProperties.Clear();
       _initStatements.Clear();
 
-      List<string> templateMapNames = new List<string>();
       foreach (TemplateMap templateMap in graphMap.templateMaps)
       {
         _classPath = string.Empty;
@@ -1257,21 +1257,19 @@ namespace org.iringtools.adapter
         _templatePath = string.Empty;
         _dtoTemplatePath = string.Empty;
 
-        if (templateMapNames.Contains(templateMap.name))
-        {
-          templateMap.name += templateMapNames.Count + 2;
-        }
-
         ProcessTemplateMap(templateMap, graphMap.dataObjectMaps, true);
-        templateMapNames.Add(templateMap.name);        
       }
     }
 
     private void ProcessTemplateMap(TemplateMap templateMap, List<DataObjectMap> dataObjectMaps, bool isDataMember)
     {
+      List<string> templateClassPropertyList = new List<string>();
+
+      templateMap.name = NameSafe(templateMap.name) + templateMapNames.Count;
+      templateMapNames.Add(templateMap.name);
+        
       foreach (RoleMap roleMap in templateMap.roleMaps)
       {
-        templateMap.name = NameSafe(templateMap.name);
         roleMap.name = NameSafe(roleMap.name);
 
         if (templateMap.type == TemplateType.Property)
@@ -1284,7 +1282,7 @@ namespace org.iringtools.adapter
           {
             ProcessRoleMap(templateMap.name, roleMap, dataObjectMaps, isDataMember);
           }
-          else
+          else if (roleMap.classMap.templateMaps.Count > 0)
           {
             roleMap.classMap.name = NameSafe(roleMap.classMap.name);
 
@@ -1333,10 +1331,15 @@ namespace org.iringtools.adapter
             _dtoModelWriter.Indent--;
             _dtoModelWriter.WriteLine("}");
 
-            _dtoModelWriter.WriteLine();
-            _dtoModelWriter.WriteLine("[DataMember(EmitDefaultValue = false)]");
-            _dtoModelWriter.WriteLine("[XmlIgnore]");
-            _dtoModelWriter.WriteLine("public Template{0} tpl_{0} {{ get; set; }}", templateMap.name);
+            if (!templateClassPropertyList.Contains(templateMap.name))
+            {
+              _dtoModelWriter.WriteLine();
+              _dtoModelWriter.WriteLine("[DataMember(EmitDefaultValue = false)]");
+              _dtoModelWriter.WriteLine("[XmlIgnore]");
+              _dtoModelWriter.WriteLine("public Template{0} tpl_{0} {{ get; set; }}", templateMap.name);
+
+              templateClassPropertyList.Add(templateMap.name);
+            }
           }
         }
       }
@@ -1464,7 +1467,6 @@ namespace org.iringtools.adapter
       string lastDataContractPath = _dataContractPath;
       string lastTemplateMapPath = _templatePath;
       string lastDtoTemplateMapPath = _dtoTemplatePath;
-      List<string> templateMapNames = new List<string>();
 
       foreach (TemplateMap templateMap in roleMap.classMap.templateMaps)
       {
@@ -1473,13 +1475,7 @@ namespace org.iringtools.adapter
         _templatePath = lastTemplateMapPath;
         _dtoTemplatePath = lastDtoTemplateMapPath;
 
-        if (templateMapNames.Contains(templateMap.name))
-        {
-          templateMap.name += templateMapNames.Count + 2;
-        }
-
         ProcessTemplateMap(templateMap, dataObjectMaps, false);
-        templateMapNames.Add(templateMap.name);
       }
     }
 
