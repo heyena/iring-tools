@@ -112,21 +112,25 @@
     <None Include="Service References\DemoControlPanelService\DemoControlPanel.DemoControlPanelService.Response.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
+    <None Include="Service References\DemoControlPanelService\DemoControlPanel.DemoControlPanelService.ScopeProject.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Service References\DemoControlPanelService\DemoControlPanelService.wsdl" />
     <None Include="Service References\DemoControlPanelService\DemoControlPanelService.xsd" />
     <None Include="Service References\DemoControlPanelService\DemoControlPanelService1.xsd" />
     <None Include="Service References\DemoControlPanelService\DemoControlPanelService2.xsd" />
+    <Resource Include="iRINGTools.DemoControlPanel.png" />
+    <None Include="Service References\DemoControlPanelService\DemoControlPanelService.disco" />
     <None Include="Service References\DemoControlPanelService\DemoControlPanelService3.xsd" />
     <None Include="Service References\DemoControlPanelService\DemoControlPanelService4.xsd" />
+    <None Include="Service References\DemoControlPanelService\DemoControlPanelService5.xsd" />
+    <None Include="Service References\DemoControlPanelService\DemoControlPanelService6.xsd" />
     <None Include="Service References\DemoControlPanelService\configuration91.svcinfo" />
     <None Include="Service References\DemoControlPanelService\configuration.svcinfo" />
-    <None Include="Service References\DemoControlPanelService\DemoControlPanelService5.xsd" />
-    <None Include="Service References\DemoControlPanelService\DemoControlPanelService51.xsd" />
     <None Include="Service References\DemoControlPanelService\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <Resource Include="iRINGTools.DemoControlPanel.png" />
     <Content Include="ServiceReferences.ClientConfig" />
   </ItemGroup>
   <ItemGroup>
