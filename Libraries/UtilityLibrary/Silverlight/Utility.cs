@@ -250,7 +250,7 @@ namespace org.iringtools.utility
 
     public static string GetIdFromURI(string uri)
     {
-      string id = String.Empty;
+      string id = uri;
 
       if (!String.IsNullOrEmpty(uri))
       {
@@ -263,6 +263,8 @@ namespace org.iringtools.utility
           id = id.Substring(id.LastIndexOf(":") + 1);
         }
       }
+
+      if (id == null) id = String.Empty;
 
       return id;
     }
