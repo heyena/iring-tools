@@ -37,7 +37,7 @@
                         <ColumnDefinition Width="156" />
                     </Grid.ColumnDefinitions>
                     <StackPanel Orientation="Horizontal" Margin="8,8,8,8" Grid.ColumnSpan="4" Grid.Row="0">
-                        <TextBlock Margin="4" Width="80" HorizontalAlignment="Left" VerticalAlignment="Center">Scenario:</TextBlock>
+                        <TextBlock Margin="4" Width="50" HorizontalAlignment="Left" VerticalAlignment="Center">Scenario:</TextBlock>
                         <ComboBox x:Name="cbxDemoScenarios" Width="520" HorizontalAlignment="Right" />
                     </StackPanel>
                     <Border Margin="8,8,8,8" Grid.Row="1" BorderBrush="Gray" BorderThickness="1" CornerRadius="3" Grid.RowSpan="7" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Left"  >
