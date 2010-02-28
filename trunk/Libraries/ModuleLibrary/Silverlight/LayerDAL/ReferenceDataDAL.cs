@@ -481,11 +481,19 @@ namespace org.iringtools.modulelibrary.layerdal
 
             if (qmxf.templateDefinitions != null && qmxf.templateDefinitions.Count > 0)
             {
-              label = qmxf.templateDefinitions.FirstOrDefault().name.FirstOrDefault().value;
+              if (qmxf.templateDefinitions.FirstOrDefault().name != null &&
+                  qmxf.templateDefinitions.FirstOrDefault().name.Count > 0)
+              {
+                label = qmxf.templateDefinitions.FirstOrDefault().name.FirstOrDefault().value;
+              }
             }
             else if (qmxf.templateQualifications != null && qmxf.templateQualifications.Count > 0)
             {
-              label = qmxf.templateQualifications.FirstOrDefault().qualifies;
+              if (qmxf.templateQualifications.FirstOrDefault().name != null &&
+                  qmxf.templateQualifications.FirstOrDefault().name.Count > 0)
+              {
+                label = qmxf.templateQualifications.FirstOrDefault().name.FirstOrDefault().value;
+              }
             }
             
             CompletedEventArgs args = new CompletedEventArgs
