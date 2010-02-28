@@ -170,6 +170,9 @@
                Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;
                Utilities\EncryptCredentials\bin\Debug\EncryptCredentials.exe;
                Utilities\AdapterClient\bin\Debug\AdapterClient.exe;
+               Utilities\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\NHibernate.dll;
+               Utilities\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\NHibernate.ByteCode.Castle.dll;
+               Utilities\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\Iesi.Collections.dll;
                Utilities\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\DBDictionaryUtil.exe;
                Utilities\DBDictionaryUtil\DBDictionaryUtil\App_Default.config;">
     </AdapterToolsDeployment>

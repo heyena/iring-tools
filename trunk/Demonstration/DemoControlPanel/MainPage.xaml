@@ -43,16 +43,16 @@
                     <Border Margin="8,8,8,8" Grid.Row="1" BorderBrush="Gray" BorderThickness="1" CornerRadius="3" Grid.RowSpan="7" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Left"  >
                         <StackPanel x:Name="Sender" Orientation="Vertical"  >
                             <StackPanel Orientation="Horizontal" Grid.Column="1" >
-                                <TextBlock Margin="8"  HorizontalAlignment="Left" VerticalAlignment="Center">Sender:</TextBlock>
-                                <TextBlock x:Name="tbSender" Margin="8" Width="216" HorizontalAlignment="Right" VerticalAlignment="Center"></TextBlock>
+                                <TextBlock Margin="10 8 8 8" Width="64">Sender:</TextBlock>
+                                <TextBlock x:Name="tbSender" Margin="8"></TextBlock>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Grid.Column="1" >
-                                <TextBlock Margin="8"  HorizontalAlignment="Left" VerticalAlignment="Center">Project:</TextBlock>
-                                <TextBlock x:Name="tbSenderProjectName" Width="264" Height="24" Margin="8"/>
+                                <TextBlock Margin="10 8 8 8" Width="64">Project:</TextBlock>
+                                <TextBlock x:Name="tbSenderProjectName" Margin="8"/>
                             </StackPanel>                            
                             <StackPanel Orientation="Horizontal" Grid.Column="1" >
-                                <TextBlock Margin="8"  HorizontalAlignment="Left" VerticalAlignment="Center">Application:</TextBlock>
-                                <TextBlock x:Name="tbSenderAppName" Width="264" Height="24" Margin="8"/>
+                                <TextBlock Margin="10 8 8 8" Width="64">Application:</TextBlock>
+                                <TextBlock x:Name="tbSenderAppName" Margin="8"/>
                             </StackPanel>                            
                             <ComboBox x:Name="cbxSenderGraphName" Width="264" Height="24" Margin="8"/>
                             <Button x:Name="btnSenderRefresh" Content="Refresh" Height="48" Width="264" Margin="8" Click="btnSenderRefresh_Click"/>
@@ -63,16 +63,16 @@
                     <Border Margin="8,8,8,8" Grid.Row="1" BorderBrush="Gray" BorderThickness="1" CornerRadius="3" Grid.RowSpan="7" Grid.Column="2" Grid.ColumnSpan="2"  HorizontalAlignment="Right" >
                         <StackPanel x:Name="Receiver" Orientation="Vertical">
                             <StackPanel Orientation="Horizontal" Grid.Column="1" >
-                                <TextBlock Margin="8"  HorizontalAlignment="Left" VerticalAlignment="Center">Receiver:</TextBlock>
-                                <TextBlock x:Name="tbReceiver" Margin="8" Width="216" HorizontalAlignment="Right" VerticalAlignment="Center"></TextBlock>
+                                <TextBlock Margin="10 8 8 8" Width="64">Receiver:</TextBlock>
+                                <TextBlock x:Name="tbReceiver" Margin="8"></TextBlock>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Grid.Column="1" >
-                                <TextBlock Margin="8"  HorizontalAlignment="Left" VerticalAlignment="Center">Project:</TextBlock>
-                                <TextBlock x:Name="tbReceiverProjectName" Width="264" Height="24" Margin="8"/>
+                                <TextBlock Margin="10 8 8 8" Width="64">Project:</TextBlock>
+                                <TextBlock x:Name="tbReceiverProjectName" Margin="8"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Grid.Column="1" >
-                                <TextBlock Margin="8"  HorizontalAlignment="Left" VerticalAlignment="Center">Application:</TextBlock>
-                                <TextBlock x:Name="tbReceiverAppName" Width="264" Height="24" Margin="8"/>
+                                <TextBlock Margin="10 8 8 8" Width="64">Application:</TextBlock>
+                                <TextBlock x:Name="tbReceiverAppName" Margin="8"/>
                             </StackPanel>
                             <ComboBox x:Name="cbxReceiverGraphName" Width="264" Height="24" Margin="8"/>
                             <Button x:Name="btnReceiverPull" Content="Pull" Height="48" Width="264" Margin="8" Click="btnReceiverPull_Click"/>
