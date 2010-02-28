@@ -251,18 +251,10 @@ namespace org.iringtools.informationmodel.usercontrols
     
     public void GetClassLabel(string tag, string id)
     {
+      id = Utility.GetIdFromURI(id);
+
       if (String.IsNullOrEmpty(id) || String.IsNullOrEmpty(tag))
         return;
-
-      // remove prefix in id if exists
-      if (id.Contains("#"))
-      {
-        id = id.Substring(id.LastIndexOf("#") + 1);
-      }
-      else if (id.Contains(":"))
-      {
-        id = id.Substring(id.LastIndexOf(":") + 1);
-      }
 
       // check local cache see if the label has been resolved
       if (PresentationModel.IdLabelDictionary.ContainsKey(id))

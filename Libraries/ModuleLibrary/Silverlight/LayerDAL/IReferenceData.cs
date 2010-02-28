@@ -27,6 +27,8 @@ namespace org.iringtools.modulelibrary.layerdal
 
         void GetClassLabel(string key, string uri, object userState);
 
+        void GetTemplateLabel(string key, string uri, object userState);
+
         QMXF GetTemplate(string id, object userState);
 
         Response PostTemplate(QMXF template);
