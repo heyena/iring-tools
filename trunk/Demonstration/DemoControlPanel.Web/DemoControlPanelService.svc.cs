@@ -199,6 +199,8 @@ namespace DemoControlPanel.Web
                 if (credentials.isEncrypted) credentials.Decrypt();
 
                 WebCredentials targetCredentials = targetEnpoint.credentials;
+                if (targetCredentials == null) targetCredentials = new WebCredentials();
+                if (targetCredentials.isEncrypted) targetCredentials.Decrypt();
                 string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
                 //endpoint is adapter service uri
                 WebHttpClient client = new WebHttpClient(endpoint.serviceUri, credentials.GetNetworkCredential(), _proxyCredentials.GetWebProxy());
