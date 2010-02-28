@@ -202,8 +202,8 @@ namespace DemoControlPanel
           tbSenderProjectName.Text = scenario.senderProjectName;
           tbSenderAppName.Text = scenario.senderApplicationName;
 
-          tbSenderUri.Text = receiverEndpoint.serviceUri;
-          tbReceiverUri.Text = senderEndpoint.serviceUri;
+          tbSenderUri.Text = senderEndpoint.serviceUri;
+          tbReceiverUri.Text = receiverEndpoint.serviceUri; 
 
           btnReceiverExport.IsEnabled = scenario.exportEnabled;
           btnSenderImport.IsEnabled = scenario.importEnabled;
@@ -505,6 +505,9 @@ namespace DemoControlPanel
     {
       try
       {
+        cbxProjects.IsEnabled = false;
+        cbxApplication.IsEnabled = false;
+
         ObservableCollection<ScopeProject> scopes = e.Result;
 
         if (scopes != null && scopes.Count > 0)

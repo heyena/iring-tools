@@ -136,6 +136,7 @@ namespace DemoControlPanel.Web
             string adapterServiceUri = endpoint.serviceUri;
 
             WebCredentials credentials = endpoint.credentials;
+            if (credentials == null) credentials = new WebCredentials();
             if (credentials.isEncrypted) credentials.Decrypt();
                         
             if (graphName != "All" && identifier.Length == 0)
@@ -172,6 +173,7 @@ namespace DemoControlPanel.Web
             string adapterServiceUri = endpoint.serviceUri;
 
             WebCredentials credentials = endpoint.credentials;
+            if (credentials == null) credentials = new WebCredentials();
             if (credentials.isEncrypted) credentials.Decrypt();
                         
             try
@@ -188,7 +190,7 @@ namespace DemoControlPanel.Web
 
         public Response Pull(iRINGEndpoint endpoint, iRINGEndpoint targetEnpoint, string projectName, string applicationName, string graphName)
         {
-            string relativeUri = String.Format("/{0}/{1}/pull", projectName, applicationName);
+            string relativeUri = "/pull";
             Response response = new Response();
             try
             {
@@ -204,6 +206,8 @@ namespace DemoControlPanel.Web
                 //This is interface service uri
                 request.Add("targetUri", targetEnpoint.serviceUri);
                 request.Add("targetCredentials", targetCredentialsXML);
+                request.Add("projectName", projectName);
+                request.Add("applicationName", applicationName);
                 request.Add("graphName", graphName);
                 request.Add("filter", "");
                 response = client.Post<Request, Response>(relativeUri, request, true);
@@ -225,6 +229,7 @@ namespace DemoControlPanel.Web
             string adapterServiceUri = endpoint.serviceUri;
 
             WebCredentials credentials = endpoint.credentials;
+            if (credentials == null) credentials = new WebCredentials();
             if (credentials.isEncrypted) credentials.Decrypt();
 
             relativeUri += "/" + graphName;
@@ -249,6 +254,7 @@ namespace DemoControlPanel.Web
             string adapterServiceUri = endpoint.serviceUri;
 
             WebCredentials credentials = endpoint.credentials;
+            if (credentials == null) credentials = new WebCredentials();
             if (credentials.isEncrypted) credentials.Decrypt();
 
             relativeUri = "/import";
@@ -274,6 +280,7 @@ namespace DemoControlPanel.Web
             string interfaceServiceUri = endpoint.serviceUri;
 
             WebCredentials credentials = endpoint.credentials;
+            if (credentials == null) credentials = new WebCredentials();
             if (credentials.isEncrypted) credentials.Decrypt();
 
             WebHttpClient webHttpClient = new WebHttpClient(interfaceServiceUri, credentials.GetNetworkCredential(), _proxyCredentials.GetWebProxy());
@@ -306,6 +313,7 @@ namespace DemoControlPanel.Web
                 string interfaceServiceUri = endpoint.serviceUri;
 
                 WebCredentials credentials = endpoint.credentials;
+                if (credentials == null) credentials = new WebCredentials();
                 if (credentials.isEncrypted) credentials.Decrypt();
 
                 MultiPartMessage requestMessage = new MultiPartMessage
