@@ -61,8 +61,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Default.aspx" />
-    <Content Include="DemoControlPanelTestPage.aspx" />
-    <Content Include="DemoControlPanelTestPage.html" />
     <Content Include="Silverlight.js" />
     <Content Include="Web.config" />
   </ItemGroup>
