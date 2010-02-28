@@ -321,7 +321,7 @@ namespace org.iringtools.adapter.projection
 
                 foreach (String identifier in identifiers)
                 {
-                    DataTransferObject dto = null;// _dtoService.GetDTO(graphMap.name, identifier);
+                    DataTransferObject dto = _dtoService.GetDTO(graphMap.name, identifier);
                     if (dto == null) dto = _dtoService.Create(graphMap.name, identifier);
                     _dtoList.Add(identifier, dto);
                 }
