@@ -462,6 +462,47 @@ namespace org.iringtools.modulelibrary.layerdal
           }
         }
 
+        void TemplateLabelCompletedEvent(object sender, AsyncCompletedEventArgs e)
+        {
+          try
+          {
+            WebClient classLabelClient = (WebClient)sender;
+            string result = ((DownloadStringCompletedEventArgs)e).Result;
+
+            string baseAddress = classLabelClient.BaseAddress;
+            int tagIndex = baseAddress.LastIndexOf("?tag=");
+            int idIndex = baseAddress.LastIndexOf("&id=");
+
+            string tag = baseAddress.Substring(tagIndex + 5, idIndex - tagIndex - 5);
+            string id = baseAddress.Substring(idIndex + 4);
+
+            string label = String.Empty;
+            QMXF qmxf = result.DeserializeXml<QMXF>();
+
+            if (qmxf.templateDefinitions != null && qmxf.templateDefinitions.Count > 0)
+            {
+              label = qmxf.templateDefinitions.FirstOrDefault().name.FirstOrDefault().value;
+            }
+            else if (qmxf.templateQualifications != null && qmxf.templateQualifications.Count > 0)
+            {
+              label = qmxf.templateQualifications.FirstOrDefault().qualifies;
+            }
+            
+            CompletedEventArgs args = new CompletedEventArgs
+            {
+              UserState = ((DownloadStringCompletedEventArgs)e).UserState,
+              CompletedType = CompletedEventType.GetClassLabel,
+              Data = new string[] { tag, id, label }
+            };
+
+            OnDataArrived(this, args);
+          }
+          catch (Exception ex)
+          {
+            throw ex;
+          }
+        }
+
         //:::::[  ASYNC METHOD CALLS ]::::::::::::::::::::::::::::::::::::::
         #region IReferenceDataService Members
 
@@ -534,22 +575,28 @@ namespace org.iringtools.modulelibrary.layerdal
 
         public void GetClassLabel(string tag, string id, object userState)
         {
-          if (String.IsNullOrEmpty(id)) return;
+          id = Utility.GetIdFromURI(id);
 
-          // remove prefix in id if exists
-          if (id.Contains("#"))
+          if (!String.IsNullOrEmpty(id))
           {
-            id = id.Substring(id.LastIndexOf("#") + 1);
+            WebClient classLabelClient = new WebClient();
+            classLabelClient.BaseAddress += "?tag=" + tag + "&id=" + id;
+            classLabelClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(ClassLabelCompletedEvent);
+            classLabelClient.DownloadStringAsync(new Uri(_referenceDataServiceUri + "/classes/" + id + "/label"), userState);
           }
-          else if (id.Contains(":"))
-          {
-            id = id.Substring(id.LastIndexOf(":") + 1);
-          }
+        }
 
-          WebClient classLabelClient = new WebClient();          
-          classLabelClient.BaseAddress += "?tag=" + tag + "&id=" + id;
-          classLabelClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(ClassLabelCompletedEvent);
-          classLabelClient.DownloadStringAsync(new Uri(_referenceDataServiceUri + "/classes/" + id + "/label"), userState);
+        public void GetTemplateLabel(string tag, string id, object userState)
+        {
+          id = Utility.GetIdFromURI(id);
+
+          if (!String.IsNullOrEmpty(id))
+          {
+            WebClient classLabelClient = new WebClient();
+            classLabelClient.BaseAddress += "?tag=" + tag + "&id=" + id;
+            classLabelClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(TemplateLabelCompletedEvent);
+            classLabelClient.DownloadStringAsync(new Uri(_referenceDataServiceUri + "/templates/" + id), userState);
+          }
         }
 
         public List<Entity> GetSubClasses(string id)

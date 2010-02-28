@@ -320,7 +320,7 @@ namespace org.iringtools.modulelibrary.layerbll
     //}
 
     /// <summary>
-    /// Gets the class label of an uri.
+    /// Resolves class uri id to label.
     /// </summary>
     /// <param name="key">The key.</param>
     /// <param name="uri">The uri.</param>
@@ -329,6 +329,18 @@ namespace org.iringtools.modulelibrary.layerbll
     {
       StartService("GetClassLabel");
       dal.GetClassLabel(key, uri, userState);
+    }
+    
+    /// <summary>
+    /// Resolves template uri id to label.
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="uri"></param>
+    /// <param name="userState"></param>
+    public void GetTemplateLabel(string key, string uri, object userState)
+    {
+      StartService("GetTemplateLabel");
+      dal.GetTemplateLabel(key, uri, userState);
     }
 
     //// <summary>
