@@ -115,7 +115,7 @@ namespace Endpoints
       config.adapterEndpoints = adapterEndPoints;
       config.interfaceEndpoints = interfaceEndPoints;
 
-      Utility.Write<ConfiguredEndpoints>(config, @"..\..\ConfiguredEndpoints.xml", true);
+      Utility.Write<ConfiguredEndpoints>(config, @"..\..\HERE.xml", true);
     }
   }
 }
