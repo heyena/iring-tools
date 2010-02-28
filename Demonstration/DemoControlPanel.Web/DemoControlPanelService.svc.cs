@@ -193,6 +193,7 @@ namespace DemoControlPanel.Web
             try
             {
                 WebCredentials credentials = endpoint.credentials;
+                if (credentials == null) credentials = new WebCredentials();
                 if (credentials.isEncrypted) credentials.Decrypt();
 
                 WebCredentials targetCredentials = targetEnpoint.credentials;

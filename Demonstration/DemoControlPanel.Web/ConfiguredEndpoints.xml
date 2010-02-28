@@ -57,13 +57,13 @@
       </credentials>
       <id>2</id>
       <name>Bechtel InterfaceService</name>
-      <serviceUri>https://facade.becpsn.com/InterfaceService</serviceUri>
+      <serviceUri>https://facade.becpsn.com/InterfaceService/12345_000/Inspec/sparql</serviceUri>
     </iRINGEndpoint>
     <iRINGEndpoint>
       <credentials i:nil="true" xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/>
       <id>3</id>
       <name>CCC InterfaceService</name>
-      <serviceUri>http://c3d.ccc.gr/InterfaceService</serviceUri>
+      <serviceUri>http://c3d.ccc.gr/InterfaceService/CCC/C3D/sparql</serviceUri>
     </iRINGEndpoint>
     <iRINGEndpoint>
       <credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility">
@@ -72,7 +72,7 @@
       </credentials>
       <id>4</id>
       <name>Hatch InterfaceService</name>
-      <serviceUri>http://iring.hatch.com.au/InterfaceService</serviceUri>
+      <serviceUri>http://iring.hatch.com.au/InterfaceService/12345_000/PSPID/sparql</serviceUri>
     </iRINGEndpoint>
     <iRINGEndpoint>
       <credentials i:nil="true" xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/>
@@ -97,6 +97,198 @@
     <Scenario>
       <exportEnabled>false</exportEnabled>
       <importEnabled>false</importEnabled>
+      <interfaceServiceId>2</interfaceServiceId>
+      <receiver>Hatch</receiver>
+      <receiverAdapterServiceId>4</receiverAdapterServiceId>
+      <receiverApplicationName>PSPID</receiverApplicationName>
+      <receiverGraphName>Lines</receiverGraphName>
+      <receiverProjectName>12345_000</receiverProjectName>
+      <scenarioName>Lines Bechtel (Inspec) -&gt; Hatch (PlantSpace P&amp;ID)</scenarioName>
+      <sender>Bechtel</sender>
+      <senderAdapterServiceId>2</senderAdapterServiceId>
+      <senderApplicationName>Inspec</senderApplicationName>
+      <senderGraphName>LineList</senderGraphName>
+      <senderProjectName>12345_000</senderProjectName>
+    </Scenario>
+    <Scenario>
+      <exportEnabled>false</exportEnabled>
+      <importEnabled>false</importEnabled>
+      <interfaceServiceId>4</interfaceServiceId>
+      <receiver>Hatch</receiver>
+      <receiverAdapterServiceId>4</receiverAdapterServiceId>
+      <receiverApplicationName>PSPID</receiverApplicationName>
+      <receiverGraphName>Lines</receiverGraphName>
+      <receiverProjectName>12345_000</receiverProjectName>
+      <scenarioName>Lines Bechtel (OpenPlant PowerPID) -&gt; Hatch (PlantSpace P&amp;ID)</scenarioName>
+      <sender>Bechtel</sender>
+      <senderAdapterServiceId>2</senderAdapterServiceId>
+      <senderApplicationName>InspecPID</senderApplicationName>
+      <senderGraphName>LineList</senderGraphName>
+      <senderProjectName>12345_000</senderProjectName>
+    </Scenario>
+    <Scenario>
+      <exportEnabled>false</exportEnabled>
+      <importEnabled>false</importEnabled>
+      <interfaceServiceId>4</interfaceServiceId>
+      <receiver>Bechtel</receiver>
+      <receiverAdapterServiceId>2</receiverAdapterServiceId>
+      <receiverApplicationName>Inspec</receiverApplicationName>
+      <receiverGraphName>LineList</receiverGraphName>
+      <receiverProjectName>12345_000</receiverProjectName>
+      <scenarioName>Lines Hatch (PlantSpace P&amp;ID) -&gt; Bechtel (Inspec)</scenarioName>
+      <sender>Hatch</sender>
+      <senderAdapterServiceId>4</senderAdapterServiceId>
+      <senderApplicationName>PSPID</senderApplicationName>
+      <senderGraphName>Lines</senderGraphName>
+      <senderProjectName>12345_000</senderProjectName>
+    </Scenario>
+    <Scenario>
+      <exportEnabled>false</exportEnabled>
+      <importEnabled>false</importEnabled>
+      <interfaceServiceId>2</interfaceServiceId>
+      <receiver>Bechtel</receiver>
+      <receiverAdapterServiceId>2</receiverAdapterServiceId>
+      <receiverApplicationName>InspecPID</receiverApplicationName>
+      <receiverGraphName>LineList</receiverGraphName>
+      <receiverProjectName>12345_000</receiverProjectName>
+      <scenarioName>Lines Hatch (PlantSpace P&amp;ID) -&gt; Bechtel (OpenPlant PowerPID)</scenarioName>
+      <sender>Hatch</sender>
+      <senderAdapterServiceId>4</senderAdapterServiceId>
+      <senderApplicationName>PSPID</senderApplicationName>
+      <senderGraphName>Lines</senderGraphName>
+      <senderProjectName>12345_000</senderProjectName>
+    </Scenario>
+    <Scenario>
+      <exportEnabled>false</exportEnabled>
+      <importEnabled>false</importEnabled>
+      <interfaceServiceId>3</interfaceServiceId>
+      <receiver>Hatch</receiver>
+      <receiverAdapterServiceId>4</receiverAdapterServiceId>
+      <receiverApplicationName>PSPID</receiverApplicationName>
+      <receiverGraphName>Lines</receiverGraphName>
+      <receiverProjectName>12345_000</receiverProjectName>
+      <scenarioName>Lines CCC -&gt; Hatch</scenarioName>
+      <sender>CCC</sender>
+      <senderAdapterServiceId>3</senderAdapterServiceId>
+      <senderApplicationName>C3D</senderApplicationName>
+      <senderGraphName>Lines</senderGraphName>
+      <senderProjectName>CCC</senderProjectName>
+    </Scenario>
+    <Scenario>
+      <exportEnabled>false</exportEnabled>
+      <importEnabled>false</importEnabled>
+      <interfaceServiceId>4</interfaceServiceId>
+      <receiver>CCC</receiver>
+      <receiverAdapterServiceId>3</receiverAdapterServiceId>
+      <receiverApplicationName>C3D</receiverApplicationName>
+      <receiverGraphName>Lines</receiverGraphName>
+      <receiverProjectName>CCC</receiverProjectName>
+      <scenarioName>Lines Hatch -&gt; CCC</scenarioName>
+      <sender>Hatch</sender>
+      <senderAdapterServiceId>4</senderAdapterServiceId>
+      <senderApplicationName>PSPID</senderApplicationName>
+      <senderGraphName>Lines</senderGraphName>
+      <senderProjectName>12345_000</senderProjectName>
+    </Scenario>
+    <Scenario>
+      <exportEnabled>false</exportEnabled>
+      <importEnabled>false</importEnabled>
+      <interfaceServiceId>2</interfaceServiceId>
+      <receiver>Bechtel</receiver>
+      <receiverAdapterServiceId>2</receiverAdapterServiceId>
+      <receiverApplicationName>ABC</receiverApplicationName>
+      <receiverGraphName>Lines</receiverGraphName>
+      <receiverProjectName>12345_000</receiverProjectName>
+      <scenarioName>Bechtel Lines Test</scenarioName>
+      <sender>Bechtel</sender>
+      <senderAdapterServiceId>2</senderAdapterServiceId>
+      <senderApplicationName>ABC</senderApplicationName>
+      <senderGraphName>Lines</senderGraphName>
+      <senderProjectName>12345_000</senderProjectName>
+    </Scenario>
+    <Scenario>
+      <exportEnabled>false</exportEnabled>
+      <importEnabled>false</importEnabled>
+      <interfaceServiceId>3</interfaceServiceId>
+      <receiver>CCC</receiver>
+      <receiverAdapterServiceId>3</receiverAdapterServiceId>
+      <receiverApplicationName>C3D</receiverApplicationName>
+      <receiverGraphName>Lines</receiverGraphName>
+      <receiverProjectName>CCC</receiverProjectName>
+      <scenarioName>CCC Lines Test</scenarioName>
+      <sender>CCC</sender>
+      <senderAdapterServiceId>3</senderAdapterServiceId>
+      <senderApplicationName>C3D</senderApplicationName>
+      <senderGraphName>Lines</senderGraphName>
+      <senderProjectName>CCC</senderProjectName>
+    </Scenario>
+    <Scenario>
+      <exportEnabled>false</exportEnabled>
+      <importEnabled>false</importEnabled>
+      <interfaceServiceId>4</interfaceServiceId>
+      <receiver>Hatch</receiver>
+      <receiverAdapterServiceId>4</receiverAdapterServiceId>
+      <receiverApplicationName>PSPID</receiverApplicationName>
+      <receiverGraphName>Lines</receiverGraphName>
+      <receiverProjectName>12345_000</receiverProjectName>
+      <scenarioName>Hatch Lines Test</scenarioName>
+      <sender>Hatch</sender>
+      <senderAdapterServiceId>4</senderAdapterServiceId>
+      <senderApplicationName>PSPID</senderApplicationName>
+      <senderGraphName>Lines</senderGraphName>
+      <senderProjectName>12345_000</senderProjectName>
+    </Scenario>
+    <Scenario>
+      <exportEnabled>false</exportEnabled>
+      <importEnabled>false</importEnabled>
+      <interfaceServiceId>4</interfaceServiceId>
+      <receiver>Hatch</receiver>
+      <receiverAdapterServiceId>4</receiverAdapterServiceId>
+      <receiverApplicationName>PSPID</receiverApplicationName>
+      <receiverGraphName>Equipment</receiverGraphName>
+      <receiverProjectName>12345_000</receiverProjectName>
+      <scenarioName>Hatch Equipment Test</scenarioName>
+      <sender>Hatch</sender>
+      <senderAdapterServiceId>4</senderAdapterServiceId>
+      <senderApplicationName>PSPID</senderApplicationName>
+      <senderGraphName>Equipment</senderGraphName>
+      <senderProjectName>12345_000</senderProjectName>
+    </Scenario>
+    <Scenario>
+      <exportEnabled>false</exportEnabled>
+      <importEnabled>false</importEnabled>
+      <interfaceServiceId>4</interfaceServiceId>
+      <receiver>Hatch</receiver>
+      <receiverAdapterServiceId>4</receiverAdapterServiceId>
+      <receiverApplicationName>PSPID</receiverApplicationName>
+      <receiverGraphName>Instruments</receiverGraphName>
+      <receiverProjectName>12345_000</receiverProjectName>
+      <scenarioName>Hatch Instruments Test</scenarioName>
+      <sender>Hatch</sender>
+      <senderAdapterServiceId>4</senderAdapterServiceId>
+      <senderApplicationName>PSPID</senderApplicationName>
+      <senderGraphName>Instruments</senderGraphName>
+      <senderProjectName>12345_000</senderProjectName>
+    </Scenario>
+    <Scenario>
+      <exportEnabled>false</exportEnabled>
+      <importEnabled>false</importEnabled>
+      <interfaceServiceId>5</interfaceServiceId>
+      <receiver>Emerson</receiver>
+      <receiverAdapterServiceId>5</receiverAdapterServiceId>
+      <receiverApplicationName>EIO</receiverApplicationName>
+      <receiverGraphName>Instruments</receiverGraphName>
+      <receiverProjectName>12345_000</receiverProjectName>
+      <scenarioName>Emerson Instruments Test</scenarioName>
+      <sender>Emerson</sender>
+      <senderAdapterServiceId>5</senderAdapterServiceId>
+      <senderApplicationName>EIO</senderApplicationName>
+      <senderGraphName>Instruments</senderGraphName>
+      <senderProjectName>12345_000</senderProjectName>
+    </Scenario>
+    <Scenario>
+      <exportEnabled>false</exportEnabled>
+      <importEnabled>false</importEnabled>
       <interfaceServiceId>1</interfaceServiceId>
       <receiver>iRINGSandbox</receiver>
       <receiverAdapterServiceId>1</receiverAdapterServiceId>
@@ -108,54 +300,6 @@
       <senderAdapterServiceId>1</senderAdapterServiceId>
       <senderApplicationName>ABC</senderApplicationName>
       <senderGraphName>Lines</senderGraphName>
-      <senderProjectName>12345_000</senderProjectName>
-    </Scenario>
-    <Scenario>
-      <exportEnabled>false</exportEnabled>
-      <importEnabled>false</importEnabled>
-      <interfaceServiceId>2</interfaceServiceId>
-      <receiver>Bechtel</receiver>
-      <receiverAdapterServiceId>2</receiverAdapterServiceId>
-      <receiverApplicationName>ABC</receiverApplicationName>
-      <receiverGraphName>Lines</receiverGraphName>
-      <receiverProjectName>12345_000</receiverProjectName>
-      <scenarioName>Bechtel Test</scenarioName>
-      <sender>Bechtel</sender>
-      <senderAdapterServiceId>2</senderAdapterServiceId>
-      <senderApplicationName>ABC</senderApplicationName>
-      <senderGraphName>Lines</senderGraphName>
-      <senderProjectName>12345_000</senderProjectName>
-    </Scenario>
-    <Scenario>
-      <exportEnabled>false</exportEnabled>
-      <importEnabled>false</importEnabled>
-      <interfaceServiceId>2</interfaceServiceId>
-      <receiver>Bechtel</receiver>
-      <receiverAdapterServiceId>2</receiverAdapterServiceId>
-      <receiverApplicationName>ABC</receiverApplicationName>
-      <receiverGraphName>Lines</receiverGraphName>
-      <receiverProjectName>12345_000</receiverProjectName>
-      <scenarioName>Bechtel Test</scenarioName>
-      <sender>Bechtel</sender>
-      <senderAdapterServiceId>2</senderAdapterServiceId>
-      <senderApplicationName>ABC</senderApplicationName>
-      <senderGraphName>Lines</senderGraphName>
-      <senderProjectName>12345_000</senderProjectName>
-    </Scenario>
-    <Scenario>
-      <exportEnabled>false</exportEnabled>
-      <importEnabled>false</importEnabled>
-      <interfaceServiceId>12</interfaceServiceId>
-      <receiver>Bechtel</receiver>
-      <receiverAdapterServiceId>12</receiverAdapterServiceId>
-      <receiverApplicationName>Inpsec</receiverApplicationName>
-      <receiverGraphName>LineList</receiverGraphName>
-      <receiverProjectName>12345_000</receiverProjectName>
-      <scenarioName>Bechtel iLab Test</scenarioName>
-      <sender>Bechtel</sender>
-      <senderAdapterServiceId>12</senderAdapterServiceId>
-      <senderApplicationName>Inpsec</senderApplicationName>
-      <senderGraphName>LineList</senderGraphName>
       <senderProjectName>12345_000</senderProjectName>
     </Scenario>
   </scenarios>
