@@ -765,32 +765,34 @@ namespace org.iringtools.adapter.projection
               dtoPropertyValue = "";
 
             RoleMap roleMap = FindRoleMap(templateMap, propertyName);
-            if (roleMap.reference != null && roleMap.reference != String.Empty)
+            
+            if (!String.IsNullOrEmpty(roleMap.propertyName))
             {
-              if (roleMap.valueList != null && roleMap.valueList != String.Empty)
+              if (!String.IsNullOrEmpty(roleMap.valueList))
               {
                 Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);
+
                 if (valueList.ContainsKey(dtoPropertyValue))
                 {
                   propertyValue = valueList[dtoPropertyValue].Replace("rdl:", rdlPrefix);
                 }
-                else
+                else 
                 {
-                  throw (new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue)));
+                  throw new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue));
                 }
               }
               else
               {
-                propertyValue = roleMap.reference.Replace("rdl:", rdlPrefix);
+                propertyValue = dtoPropertyValue;
               }
             }
-            else if (roleMap.value != null && roleMap.value != String.Empty)
+            else if (!String.IsNullOrEmpty(roleMap.reference))
+            {
+              propertyValue = roleMap.reference.Replace("rdl:", rdlPrefix);
+            }
+            else if (!String.IsNullOrEmpty(roleMap.value))
             {
               propertyValue = roleMap.value;
-            }
-            else
-            {
-              propertyValue = dtoPropertyValue;
             }
 
             if (!curPropertyValue.Equals(propertyValue))
@@ -992,7 +994,14 @@ namespace org.iringtools.adapter.projection
 
       if (resultBufferTemplateValues.Bindings.Count > 0)
       {
-        RefreshPropertyRoleMap(templateMap, dto, parentIdentifierVariable, resultBufferTemplateValues);
+        try
+        {
+          RefreshPropertyRoleMap(templateMap, dto, parentIdentifierVariable, resultBufferTemplateValues);
+        }
+        catch (Exception ex)
+        {
+          _logger.Error("Error with RefreshPropertyRoleMap: " + ex);
+        }
       }
       else
       {
