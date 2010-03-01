@@ -191,7 +191,7 @@ namespace DemoControlPanel.Web
         public Response Pull(iRINGEndpoint endpoint, iRINGEndpoint targetEnpoint, string projectName, string applicationName, string graphName)
         {
             string relativeUri = String.Format("/{0}/{1}/pull", projectName, applicationName);
-            targetEnpoint.serviceUri += "/sparql";
+            
             Response response = new Response();
             try
             {

@@ -42,6 +42,12 @@
       <name>Bechtel iLab AdapterService</name>
       <serviceUri>http://labs98142/AdapterService/Service.svc</serviceUri>
     </iRINGEndpoint>
+    <iRINGEndpoint>
+      <credentials i:nil="true" xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/>
+      <id>13</id>
+      <name>Local AdapterService</name>
+      <serviceUri>http://localhost:52768/Service.svc</serviceUri>
+    </iRINGEndpoint>
   </adapterEndpoints>
   <interfaceEndpoints>
     <iRINGEndpoint>
@@ -57,13 +63,13 @@
       </credentials>
       <id>2</id>
       <name>Bechtel InterfaceService</name>
-      <serviceUri>https://facade.becpsn.com/InterfaceService/12345_000/Inspec</serviceUri>
+      <serviceUri>https://facade.becpsn.com/InterfaceService</serviceUri>
     </iRINGEndpoint>
     <iRINGEndpoint>
       <credentials i:nil="true" xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/>
       <id>3</id>
       <name>CCC InterfaceService</name>
-      <serviceUri>http://c3d.ccc.gr/InterfaceService/CCC/C3D</serviceUri>
+      <serviceUri>http://c3d.ccc.gr/InterfaceService</serviceUri>
     </iRINGEndpoint>
     <iRINGEndpoint>
       <credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility">
@@ -72,7 +78,7 @@
       </credentials>
       <id>4</id>
       <name>Hatch InterfaceService</name>
-      <serviceUri>http://iring.hatch.com.au/InterfaceService/12345_000/PSPID</serviceUri>
+      <serviceUri>http://iring.hatch.com.au/InterfaceService</serviceUri>
     </iRINGEndpoint>
     <iRINGEndpoint>
       <credentials i:nil="true" xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/>
@@ -92,6 +98,12 @@
       <name>Bechtel iLab InterfaceService</name>
       <serviceUri>http://labs98142/InterfaceService</serviceUri>
     </iRINGEndpoint>
+    <iRINGEndpoint>
+      <credentials i:nil="true" xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/>
+      <id>12</id>
+      <name>Local InterfaceService</name>
+      <serviceUri>http://localhost/InterfaceService</serviceUri>
+    </iRINGEndpoint>
   </interfaceEndpoints>
   <scenarios>
     <Scenario>
@@ -104,6 +116,22 @@
       <receiverGraphName>Lines</receiverGraphName>
       <receiverProjectName>12345_000</receiverProjectName>
       <scenarioName>Lines Bechtel (Inspec) -&gt; Hatch (PlantSpace P&amp;ID)</scenarioName>
+      <sender>Bechtel</sender>
+      <senderAdapterServiceId>2</senderAdapterServiceId>
+      <senderApplicationName>Inspec</senderApplicationName>
+      <senderGraphName>LineList</senderGraphName>
+      <senderProjectName>12345_000</senderProjectName>
+    </Scenario>
+    <Scenario>
+      <exportEnabled>false</exportEnabled>
+      <importEnabled>false</importEnabled>
+      <interfaceServiceId>2</interfaceServiceId>
+      <receiver>Local</receiver>
+      <receiverAdapterServiceId>13</receiverAdapterServiceId>
+      <receiverApplicationName>PSPID</receiverApplicationName>
+      <receiverGraphName>Lines</receiverGraphName>
+      <receiverProjectName>12345_000</receiverProjectName>
+      <scenarioName>Lines Bechtel (Inspec) -&gt; Local (PlantSpace P&amp;ID)</scenarioName>
       <sender>Bechtel</sender>
       <senderAdapterServiceId>2</senderAdapterServiceId>
       <senderApplicationName>Inspec</senderApplicationName>
