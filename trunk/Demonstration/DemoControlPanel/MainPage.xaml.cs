@@ -65,6 +65,7 @@ namespace DemoControlPanel
       _client.ResetCompleted += new EventHandler<ResetCompletedEventArgs>(client_ResetCompleted);
       _client.UpdateCompleted += new EventHandler<UpdateCompletedEventArgs>(client_UpdateCompleted);
       _client.GetScopesCompleted += new EventHandler<GetScopesCompletedEventArgs>(client_GetScopesCompleted);
+      //_client.GetInterfaceScopesCompleted += new EventHandler<GetInterfaceScopesCompletedEventArgs>(client_GetInterfaceScopesCompleted);
 
       _client.GetConfiguredEndpointsAsync();
     }
@@ -94,7 +95,7 @@ namespace DemoControlPanel
         cbxInterfaceServices.DisplayMemberPath = "name";
         cbxInterfaceServices.IsEnabled = false;
         cbxInterfaceServices.ItemsSource = _configEndpoints.interfaceEndpoints;
-        cbxInterfaceServices.SelectionChanged += new SelectionChangedEventHandler(cbxInterface_SelectionChanged);
+        //cbxInterfaceServices.SelectionChanged += new SelectionChangedEventHandler(cbxInterfaceServices_SelectionChanged);
         cbxInterfaceServices.SelectedIndex = 0;
         cbxInterfaceServices.IsEnabled = true;
 
@@ -143,19 +144,7 @@ namespace DemoControlPanel
         cbxAdapterServices.IsEnabled = true;
       }
     }
-
-    private void cbxInterface_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-      try
-      {
-
-      }
-      catch (Exception ex)
-      {
-        System.Windows.Browser.HtmlPage.Window.Alert(ex.Message);
-      }
-    }
-
+          
     private void cbxDemoScenarios_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
       try
@@ -530,6 +519,35 @@ namespace DemoControlPanel
       }
     }
 
+    //private void client_GetInterfaceScopesCompleted(object sender, GetInterfaceScopesCompletedEventArgs e)
+    //{
+    //    try
+    //    {
+    //        cbxInterfaceProjects.IsEnabled = false;
+    //        cbxInterfaceApplication.IsEnabled = false;
+
+    //        ObservableCollection<ScopeProject> scopes = e.Result;
+
+    //        if (scopes != null && scopes.Count > 0)
+    //        {
+    //            cbxInterfaceProjects.DisplayMemberPath = "Name";
+    //            cbxInterfaceProjects.ItemsSource = scopes;
+    //            cbxInterfaceProjects.SelectionChanged += new SelectionChangedEventHandler(cbxInterfaceProjects_SelectionChanged);
+    //            cbxInterfaceProjects.SelectedIndex = 0;
+    //        }
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        System.Windows.Browser.HtmlPage.Window.Alert(ex.Message);
+    //    }
+    //    finally
+    //    {
+    //        this.Cursor = Cursors.Arrow;
+    //        cbxInterfaceProjects.IsEnabled = true;
+    //        cbxInterfaceApplication.IsEnabled = true;
+    //    }
+    //}
+
     private void cbxProjects_SelectionChanged(object sender, RoutedEventArgs e)
     {
       clearComboBox(cbxApplication);
@@ -544,6 +562,19 @@ namespace DemoControlPanel
         cbxApplication.SelectedIndex = 0;
       }
     }
+
+    //private void cbxInterfaceProjects_SelectionChanged(object sender, RoutedEventArgs e)
+    //{
+    //    clearComboBox(cbxInterfaceApplication);        
+
+    //    if (cbxProjects.SelectedIndex != -1)
+    //    {
+    //        ScopeProject project = (ScopeProject)cbxInterfaceProjects.SelectedItem;
+    //        cbxInterfaceApplication.DisplayMemberPath = "Name";
+    //        cbxInterfaceApplication.ItemsSource = project.Applications;            
+    //        cbxInterfaceApplication.SelectedIndex = 0;
+    //    }
+    //}
 
     private void cbxApplication_SelectionChanged(object sender, RoutedEventArgs e)
     {
@@ -734,7 +765,7 @@ namespace DemoControlPanel
         cbxInterfaceServices.IsEnabled = false;
         string query = tbxQuery.Text;
         iRINGEndpoint interfaceEndpoint = (iRINGEndpoint)cbxInterfaceServices.SelectedItem;
-        _client.QueryAsync(interfaceEndpoint, scenario.receiverProjectName, scenario.receiverApplicationName, query);
+        _client.QueryAsync(interfaceEndpoint, "", "", query);
 
       }
       catch (Exception ex)
@@ -761,5 +792,29 @@ namespace DemoControlPanel
         System.Windows.Browser.HtmlPage.Window.Alert(ex.Message);
       }
     }
+
+    //private void cbxInterfaceServices_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    //{
+    //    try
+    //    {
+    //        this.Cursor = Cursors.Wait;
+    //        clearComboBox(cbxInterfaceProjects);
+    //        clearComboBox(cbxInterfaceApplication);            
+
+    //        iRINGEndpoint interfaceEndpoint = (iRINGEndpoint)cbxInterfaceServices.SelectedItem;
+
+    //        _client.GetInterfaceScopesAsync(interfaceEndpoint);
+
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        System.Windows.Browser.HtmlPage.Window.Alert(ex.Message);
+    //    }
+    //    finally
+    //    {
+    //        this.Cursor = Cursors.Arrow;
+    //        cbxInterfaceServices.IsEnabled = true;
+    //    }
+    //}
   }
 }
