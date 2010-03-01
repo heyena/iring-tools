@@ -89,6 +89,12 @@
   <wsdl:message name="IDemoControlPanelService_GetScopes_OutputMessage">
     <wsdl:part name="parameters" element="tns:GetScopesResponse" />
   </wsdl:message>
+  <wsdl:message name="IDemoControlPanelService_GetInterfaceScopes_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetInterfaceScopes" />
+  </wsdl:message>
+  <wsdl:message name="IDemoControlPanelService_GetInterfaceScopes_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetInterfaceScopesResponse" />
+  </wsdl:message>
   <wsdl:portType name="IDemoControlPanelService">
     <wsdl:operation name="GetConfiguredEndpoints">
       <wsdl:input wsaw:Action="http://tempuri.org/IDemoControlPanelService/GetConfiguredEndpoints" message="tns:IDemoControlPanelService_GetConfiguredEndpoints_InputMessage" />
@@ -141,6 +147,10 @@
     <wsdl:operation name="GetScopes">
       <wsdl:input wsaw:Action="http://tempuri.org/IDemoControlPanelService/GetScopes" message="tns:IDemoControlPanelService_GetScopes_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IDemoControlPanelService/GetScopesResponse" message="tns:IDemoControlPanelService_GetScopes_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetInterfaceScopes">
+      <wsdl:input wsaw:Action="http://tempuri.org/IDemoControlPanelService/GetInterfaceScopes" message="tns:IDemoControlPanelService_GetInterfaceScopes_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IDemoControlPanelService/GetInterfaceScopesResponse" message="tns:IDemoControlPanelService_GetInterfaceScopes_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="BasicHttpBinding_IDemoControlPanelService" type="tns:IDemoControlPanelService">
@@ -255,6 +265,15 @@
     </wsdl:operation>
     <wsdl:operation name="GetScopes">
       <soap:operation soapAction="http://tempuri.org/IDemoControlPanelService/GetScopes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetInterfaceScopes">
+      <soap:operation soapAction="http://tempuri.org/IDemoControlPanelService/GetInterfaceScopes" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>

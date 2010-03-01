@@ -211,4 +211,18 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+  <xs:element name="GetInterfaceScopes">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q27="http://schemas.datacontract.org/2004/07/DemoControlPanel.Web" minOccurs="0" name="endpoint" nillable="true" type="q27:iRINGEndpoint" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetInterfaceScopesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q28="http://schemas.datacontract.org/2004/07/org.iringtools.library" minOccurs="0" name="GetInterfaceScopesResult" nillable="true" type="q28:ArrayOfScopeProject" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
 </xs:schema>
