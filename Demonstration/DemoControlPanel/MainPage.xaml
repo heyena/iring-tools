@@ -96,6 +96,10 @@
                 <Grid x:Name="InterfaceService" ShowGridLines="False">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="40"/>
+                        <!--
+                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="40"/>
+                        -->
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="40"/>
                     </Grid.RowDefinitions>
@@ -106,6 +110,16 @@
                         <TextBlock Margin="4" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center">Interface Service:</TextBlock>
                         <ComboBox x:Name="cbxInterfaceServices" Width="500" HorizontalAlignment="Right" />
                     </StackPanel>
+                    <!--
+                    <StackPanel Orientation="Horizontal" Margin="8,8,8,8" Grid.ColumnSpan="2" Grid.Row="1">
+                        <TextBlock Margin="4" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center">Project Name:</TextBlock>
+                        <ComboBox x:Name="cbxInterfaceProjects" Width="500" HorizontalAlignment="Right"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="8,8,8,8" Grid.ColumnSpan="2" Grid.Row="2">
+                        <TextBlock Margin="4" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center">Application Name:</TextBlock>
+                        <ComboBox x:Name="cbxInterfaceApplication" Width="500" HorizontalAlignment="Right" />
+                    </StackPanel>
+                    -->
                     <TextBox x:Name="tbxQuery" Margin="8,8,8,8" Grid.Column="0" Grid.Row="1" VerticalAlignment="Stretch"
           TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Visible"
           FontFamily="Courier New" 
