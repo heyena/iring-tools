@@ -671,6 +671,11 @@ namespace DemoControlPanel.DemoControlPanelService {
         System.IAsyncResult BeginGetScopes(DemoControlPanel.DemoControlPanelService.iRINGEndpoint endpoint, System.AsyncCallback callback, object asyncState);
         
         System.Collections.ObjectModel.ObservableCollection<DemoControlPanel.DemoControlPanelService.ScopeProject> EndGetScopes(System.IAsyncResult result);
+        
+        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://tempuri.org/IDemoControlPanelService/GetInterfaceScopes", ReplyAction="http://tempuri.org/IDemoControlPanelService/GetInterfaceScopesResponse")]
+        System.IAsyncResult BeginGetInterfaceScopes(DemoControlPanel.DemoControlPanelService.iRINGEndpoint endpoint, System.AsyncCallback callback, object asyncState);
+        
+        System.Collections.ObjectModel.ObservableCollection<DemoControlPanel.DemoControlPanelService.ScopeProject> EndGetInterfaceScopes(System.IAsyncResult result);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "3.0.0.0")]
@@ -926,6 +931,25 @@ namespace DemoControlPanel.DemoControlPanelService {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "3.0.0.0")]
+    public partial class GetInterfaceScopesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        public GetInterfaceScopesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        public System.Collections.ObjectModel.ObservableCollection<DemoControlPanel.DemoControlPanelService.ScopeProject> Result {
+            get {
+                base.RaiseExceptionIfNecessary();
+                return ((System.Collections.ObjectModel.ObservableCollection<DemoControlPanel.DemoControlPanelService.ScopeProject>)(this.results[0]));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "3.0.0.0")]
     public partial class DemoControlPanelServiceClient : System.ServiceModel.ClientBase<DemoControlPanel.DemoControlPanelService.IDemoControlPanelService>, DemoControlPanel.DemoControlPanelService.IDemoControlPanelService {
         
         private BeginOperationDelegate onBeginGetConfiguredEndpointsDelegate;
@@ -1006,6 +1030,12 @@ namespace DemoControlPanel.DemoControlPanelService {
         
         private System.Threading.SendOrPostCallback onGetScopesCompletedDelegate;
         
+        private BeginOperationDelegate onBeginGetInterfaceScopesDelegate;
+        
+        private EndOperationDelegate onEndGetInterfaceScopesDelegate;
+        
+        private System.Threading.SendOrPostCallback onGetInterfaceScopesCompletedDelegate;
+        
         private BeginOperationDelegate onBeginOpenDelegate;
         
         private EndOperationDelegate onEndOpenDelegate;
@@ -1084,6 +1114,8 @@ namespace DemoControlPanel.DemoControlPanelService {
         public event System.EventHandler<GetQXFCompletedEventArgs> GetQXFCompleted;
         
         public event System.EventHandler<GetScopesCompletedEventArgs> GetScopesCompleted;
+        
+        public event System.EventHandler<GetInterfaceScopesCompletedEventArgs> GetInterfaceScopesCompleted;
         
         public event System.EventHandler<System.ComponentModel.AsyncCompletedEventArgs> OpenCompleted;
         
@@ -1739,6 +1771,52 @@ namespace DemoControlPanel.DemoControlPanelService {
                         endpoint}, this.onEndGetScopesDelegate, this.onGetScopesCompletedDelegate, userState);
         }
         
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.IAsyncResult DemoControlPanel.DemoControlPanelService.IDemoControlPanelService.BeginGetInterfaceScopes(DemoControlPanel.DemoControlPanelService.iRINGEndpoint endpoint, System.AsyncCallback callback, object asyncState) {
+            return base.Channel.BeginGetInterfaceScopes(endpoint, callback, asyncState);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.Collections.ObjectModel.ObservableCollection<DemoControlPanel.DemoControlPanelService.ScopeProject> DemoControlPanel.DemoControlPanelService.IDemoControlPanelService.EndGetInterfaceScopes(System.IAsyncResult result) {
+            return base.Channel.EndGetInterfaceScopes(result);
+        }
+        
+        private System.IAsyncResult OnBeginGetInterfaceScopes(object[] inValues, System.AsyncCallback callback, object asyncState) {
+            DemoControlPanel.DemoControlPanelService.iRINGEndpoint endpoint = ((DemoControlPanel.DemoControlPanelService.iRINGEndpoint)(inValues[0]));
+            return ((DemoControlPanel.DemoControlPanelService.IDemoControlPanelService)(this)).BeginGetInterfaceScopes(endpoint, callback, asyncState);
+        }
+        
+        private object[] OnEndGetInterfaceScopes(System.IAsyncResult result) {
+            System.Collections.ObjectModel.ObservableCollection<DemoControlPanel.DemoControlPanelService.ScopeProject> retVal = ((DemoControlPanel.DemoControlPanelService.IDemoControlPanelService)(this)).EndGetInterfaceScopes(result);
+            return new object[] {
+                    retVal};
+        }
+        
+        private void OnGetInterfaceScopesCompleted(object state) {
+            if ((this.GetInterfaceScopesCompleted != null)) {
+                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
+                this.GetInterfaceScopesCompleted(this, new GetInterfaceScopesCompletedEventArgs(e.Results, e.Error, e.Cancelled, e.UserState));
+            }
+        }
+        
+        public void GetInterfaceScopesAsync(DemoControlPanel.DemoControlPanelService.iRINGEndpoint endpoint) {
+            this.GetInterfaceScopesAsync(endpoint, null);
+        }
+        
+        public void GetInterfaceScopesAsync(DemoControlPanel.DemoControlPanelService.iRINGEndpoint endpoint, object userState) {
+            if ((this.onBeginGetInterfaceScopesDelegate == null)) {
+                this.onBeginGetInterfaceScopesDelegate = new BeginOperationDelegate(this.OnBeginGetInterfaceScopes);
+            }
+            if ((this.onEndGetInterfaceScopesDelegate == null)) {
+                this.onEndGetInterfaceScopesDelegate = new EndOperationDelegate(this.OnEndGetInterfaceScopes);
+            }
+            if ((this.onGetInterfaceScopesCompletedDelegate == null)) {
+                this.onGetInterfaceScopesCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnGetInterfaceScopesCompleted);
+            }
+            base.InvokeAsync(this.onBeginGetInterfaceScopesDelegate, new object[] {
+                        endpoint}, this.onEndGetInterfaceScopesDelegate, this.onGetInterfaceScopesCompletedDelegate, userState);
+        }
+        
         private System.IAsyncResult OnBeginOpen(object[] inValues, System.AsyncCallback callback, object asyncState) {
             return ((System.ServiceModel.ICommunicationObject)(this)).BeginOpen(callback, asyncState);
         }
@@ -2007,6 +2085,19 @@ namespace DemoControlPanel.DemoControlPanelService {
             public System.Collections.ObjectModel.ObservableCollection<DemoControlPanel.DemoControlPanelService.ScopeProject> EndGetScopes(System.IAsyncResult result) {
                 object[] _args = new object[0];
                 System.Collections.ObjectModel.ObservableCollection<DemoControlPanel.DemoControlPanelService.ScopeProject> _result = ((System.Collections.ObjectModel.ObservableCollection<DemoControlPanel.DemoControlPanelService.ScopeProject>)(base.EndInvoke("GetScopes", _args, result)));
+                return _result;
+            }
+            
+            public System.IAsyncResult BeginGetInterfaceScopes(DemoControlPanel.DemoControlPanelService.iRINGEndpoint endpoint, System.AsyncCallback callback, object asyncState) {
+                object[] _args = new object[1];
+                _args[0] = endpoint;
+                System.IAsyncResult _result = base.BeginInvoke("GetInterfaceScopes", _args, callback, asyncState);
+                return _result;
+            }
+            
+            public System.Collections.ObjectModel.ObservableCollection<DemoControlPanel.DemoControlPanelService.ScopeProject> EndGetInterfaceScopes(System.IAsyncResult result) {
+                object[] _args = new object[0];
+                System.Collections.ObjectModel.ObservableCollection<DemoControlPanel.DemoControlPanelService.ScopeProject> _result = ((System.Collections.ObjectModel.ObservableCollection<DemoControlPanel.DemoControlPanelService.ScopeProject>)(base.EndInvoke("GetInterfaceScopes", _args, result)));
                 return _result;
             }
         }
