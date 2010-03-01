@@ -126,7 +126,7 @@
           Text="PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;&#xa;SELECT ?s ?p ?o &#xa;WHERE &#xa;{ ?s ?p ?o } &#xa;LIMIT 10&#xa;"/>                
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="4,4,4,4" Grid.Column="0" Grid.Row="2">
                         <Button x:Name="btnQuery" Content="Query" Height="24" Width="128" Margin="4" Click="btnQuery_Click"/>
-                        <Button x:Name="btnUpdate" Content="Update" Height="24" Width="128" Margin="4" Click="btnUpdate_Click"/>
+                        <Button x:Name="btnUpdate" IsEnabled="False" Content="Update" Height="24" Width="128" Margin="4" Click="btnUpdate_Click"/>
                     </StackPanel>
                 </Grid>
             </basics:TabItem>
