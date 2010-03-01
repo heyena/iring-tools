@@ -766,7 +766,6 @@ namespace DemoControlPanel
         string query = tbxQuery.Text;
         iRINGEndpoint interfaceEndpoint = (iRINGEndpoint)cbxInterfaceServices.SelectedItem;
         _client.QueryAsync(interfaceEndpoint, "", "", query);
-
       }
       catch (Exception ex)
       {
