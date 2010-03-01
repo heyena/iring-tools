@@ -599,30 +599,30 @@ namespace org.iringtools.adapter
               //}
 
               dtoServiceWriter.WriteLine(
-          @"var {0}DO = 
+          @"var {0}{1}DO = 
             (from {1}List in _dataLayer.GetList<{2}>()
              where {3} == identifier && {1}List.{4}  // outFilter
              select {1}List).FirstOrDefault<{2}>();
 
-          if ({0}DO != default({2}))
+          if ({0}{1}DO != default({2}))
           {{
-            dto = new {0}({0}DO);
-            dto.Identifier = {0}DO.Id;
+            dto = new {0}({0}{1}DO);
+            dto.Identifier = {0}{1}DO.Id;
           }}", graphMap.name, dataObjectMap.name, qualifiedDataObjectName, identifiers, outFilter);
 
             }
             else
             {
               dtoServiceWriter.WriteLine(
-          @"var {0}DO = 
+          @"var {0}{1}DO = 
             (from {0}List in _dataLayer.GetList<{2}>()
              where {0}List.Id == identifier
              select {0}List).FirstOrDefault<{2}>();   
         
-          if ({0}DO != default({2}))
+          if ({0}{1}DO != default({2}))
           {{                        
-            dto = new {1}({0}DO);
-            dto.Identifier = {0}DO.Id;
+            dto = new {1}({0}{1}DO);
+            dto.Identifier = {0}{1}DO.Id;
             break; 
           }}", dataObjectMap.name, graphMap.name, qualifiedDataObjectName);
             }
@@ -665,12 +665,12 @@ namespace org.iringtools.adapter
               String outFilter = dataObjectMap.outFilter.Substring(dataObjectMap.outFilter.IndexOf("_") + 1);
 
               dtoServiceWriter.WriteLine(
-          @"var {0}DOList = 
+          @"var {0}{1}DOList = 
             from {1}List in _dataLayer.GetList<{2}>()
             where {1}List.{3}  // outFilter
             select {1}List;
 
-          foreach (var {0}DO in {0}DOList)
+          foreach (var {0}DO in {0}{1}DOList)
           {{   					
             {0} dto = new {0}({0}DO);
             dto.Identifier = {0}DO.Id;
@@ -680,16 +680,16 @@ namespace org.iringtools.adapter
             else
             {
               dtoServiceWriter.WriteLine(
-          @"var {0}DOList = 
-            from {0}List in _dataLayer.GetList<{1}>()
-            select {0}List;  
+          @"var {0}{1}DOList = 
+            from {1}List in _dataLayer.GetList<{2}>()
+            select {1}List;  
     
-          foreach (var {0}DO in {0}DOList)
+          foreach (var {1}DO in {0}{1}DOList)
           {{   					
-            {2} dto = new {2}({0}DO);
-            dto.Identifier = {0}DO.Id;
+            {3} dto = new {3}({1}DO);
+            dto.Identifier = {1}DO.Id;
             dtoList.Add(dto);
-          }}", dataObjectMap.name, qualifiedDataObjectName, graphMap.name);
+          }}", graphMap.name, dataObjectMap.name, qualifiedDataObjectName, graphMap.name);
             }
           }
 
@@ -731,12 +731,12 @@ namespace org.iringtools.adapter
               String outFilter = dataObjectMap.outFilter.Substring(dataObjectMap.outFilter.IndexOf("_") + 1);
 
               dtoServiceWriter.WriteLine(
-          @"var {0}DOList = 
+          @"var {0}{1}DOList = 
             from {1}List in _dataLayer.GetList<{2}>()
             where {1}List.{3}  // outFilter
             select {1}List;
     
-          foreach (var {0}DO in {0}DOList)
+          foreach (var {0}DO in {0}{1}DOList)
           {{   
             string identifier = {0}DO.Id;
             identifierUriPairs.Add(identifier, endpoint + ""/"" + graphName + ""/"" + identifier);            
@@ -746,16 +746,16 @@ namespace org.iringtools.adapter
             else
             {
               dtoServiceWriter.WriteLine(
-          @"var {0}DOList = 
-            from {0}List in _dataLayer.GetList<{1}>()
-            select {0}List;  
+          @"var {0}{1}DOList = 
+            from {1}List in _dataLayer.GetList<{2}>()
+            select {1}List;  
 
-          foreach (var {0}DO in {0}DOList)
+          foreach (var {1}DO in {0}{1}DOList)
           {{
-            string identifier = {0}DO.Id;
+            string identifier = {1}DO.Id;
             identifierUriPairs.Add(identifier, endpoint + ""/"" + graphName + ""/"" + identifier);  
           }}",
-          dataObjectMap.name, qualifiedDataObjectName);
+          graphMap.name, dataObjectMap.name, qualifiedDataObjectName);
             }
           }
 
