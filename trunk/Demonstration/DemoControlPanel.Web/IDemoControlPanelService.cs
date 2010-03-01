@@ -53,5 +53,8 @@ namespace DemoControlPanel.Web
 
         [OperationContract]
         Collection<ScopeProject> GetScopes(iRINGEndpoint endpoint);
+
+        [OperationContract]
+        Collection<ScopeProject> GetInterfaceScopes(iRINGEndpoint endpoint);
     }
 }
