@@ -274,7 +274,7 @@ namespace DemoControlPanel.Web
         {
             Collection<Collection<SPARQLBinding>> list = new Collection<Collection<SPARQLBinding>>();
 
-            string relativeUri = String.Format("/sparql", projectName, applicationName);
+            string relativeUri = "";
 
             //this is interface service uri
             string interfaceServiceUri = endpoint.serviceUri;
