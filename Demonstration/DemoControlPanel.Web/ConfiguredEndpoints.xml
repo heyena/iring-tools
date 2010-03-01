@@ -57,13 +57,13 @@
       </credentials>
       <id>2</id>
       <name>Bechtel InterfaceService</name>
-      <serviceUri>https://facade.becpsn.com/InterfaceService/12345_000/Inspec/sparql</serviceUri>
+      <serviceUri>https://facade.becpsn.com/InterfaceService/12345_000/Inspec</serviceUri>
     </iRINGEndpoint>
     <iRINGEndpoint>
       <credentials i:nil="true" xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/>
       <id>3</id>
       <name>CCC InterfaceService</name>
-      <serviceUri>http://c3d.ccc.gr/InterfaceService/CCC/C3D/sparql</serviceUri>
+      <serviceUri>http://c3d.ccc.gr/InterfaceService/CCC/C3D</serviceUri>
     </iRINGEndpoint>
     <iRINGEndpoint>
       <credentials xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility">
@@ -72,7 +72,7 @@
       </credentials>
       <id>4</id>
       <name>Hatch InterfaceService</name>
-      <serviceUri>http://iring.hatch.com.au/InterfaceService/12345_000/PSPID/sparql</serviceUri>
+      <serviceUri>http://iring.hatch.com.au/InterfaceService/12345_000/PSPID</serviceUri>
     </iRINGEndpoint>
     <iRINGEndpoint>
       <credentials i:nil="true" xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/>
@@ -84,7 +84,7 @@
       <credentials i:nil="true" xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/>
       <id>6</id>
       <name>Bentley InterfaceService</name>
-      <serviceUri>http://www.iringsandbox.org/InterfaceService/bentley2/sparql</serviceUri>
+      <serviceUri>http://www.iringsandbox.org/InterfaceService/bentley2</serviceUri>
     </iRINGEndpoint>
     <iRINGEndpoint>
       <credentials i:nil="true" xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/>
