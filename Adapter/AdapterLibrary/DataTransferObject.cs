@@ -205,8 +205,8 @@ namespace org.iringtools.adapter
     {
       DTOProperty namedProperty = 
 					(from property in _properties
-					where property.OIMProperty == propertyName
-					select property).FirstOrDefault<DTOProperty>();   
+           where property.OIMProperty.ToUpper() == ((propertyName != null) ? propertyName.ToUpper() : string.Empty)
+					 select property).FirstOrDefault<DTOProperty>();   
 
       return namedProperty;
     }
@@ -215,7 +215,7 @@ namespace org.iringtools.adapter
     {
       DTOProperty namedProperty =
           (from property in _properties
-           where property.Name == propertyName
+           where property.Name.ToUpper() == ((propertyName != null) ? propertyName.ToUpper() : string.Empty)
            select property).FirstOrDefault<DTOProperty>();
 
       return namedProperty;
