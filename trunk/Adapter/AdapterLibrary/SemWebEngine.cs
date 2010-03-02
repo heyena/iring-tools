@@ -932,11 +932,43 @@ namespace org.iringtools.adapter.projection
         dtoPropertyValue = string.Empty;
 
 
+      //if (!String.IsNullOrEmpty(roleMap.propertyName))
+      //{
+      //  if (!String.IsNullOrEmpty(roleMap.valueList))
+      //  {
+      //    Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);          
+      //    if (valueList.ContainsKey(dtoPropertyValue))
+      //    {
+      //      propertyValue = valueList[dtoPropertyValue].Replace("rdl:", rdlPrefix);
+      //      propertyType = "uri";
+      //    }
+      //    else
+      //    {
+      //      throw (new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue)));
+      //    }
+      //  }
+      //  else
+      //  {
+      //    propertyValue = roleMap.reference.Replace("rdl:", rdlPrefix);
+      //    propertyType = "uri";
+      //  }
+      //}
+      //else if (!String.IsNullOrEmpty(roleMap.value))
+      //{
+      //  propertyValue = roleMap.value;
+      //  propertyType = "literal";
+      //}
+      //else
+      //{
+      //  propertyValue = dtoPropertyValue;
+      //  propertyType = "literal";
+      //}
       if (!String.IsNullOrEmpty(roleMap.propertyName))
       {
-          if (!String.IsNullOrEmpty(roleMap.valueList))
+        if (!String.IsNullOrEmpty(roleMap.valueList))
         {
-          Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);          
+          Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);
+
           if (valueList.ContainsKey(dtoPropertyValue))
           {
             propertyValue = valueList[dtoPropertyValue].Replace("rdl:", rdlPrefix);
@@ -944,23 +976,23 @@ namespace org.iringtools.adapter.projection
           }
           else
           {
-            throw (new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue)));
+            throw new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue));
           }
         }
         else
         {
-          propertyValue = roleMap.reference.Replace("rdl:", rdlPrefix);
-          propertyType = "uri";
+          propertyValue = dtoPropertyValue;
+          propertyType = "literal";
         }
+      }
+      else if (!String.IsNullOrEmpty(roleMap.reference))
+      {
+        propertyValue = roleMap.reference.Replace("rdl:", rdlPrefix);
+        propertyType = "uri";
       }
       else if (!String.IsNullOrEmpty(roleMap.value))
       {
         propertyValue = roleMap.value;
-        propertyType = "literal";
-      }
-      else
-      {
-        propertyValue = dtoPropertyValue;
         propertyType = "literal";
       }
 
