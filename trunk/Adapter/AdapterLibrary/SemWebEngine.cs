@@ -712,24 +712,67 @@ namespace org.iringtools.adapter.projection
 
     private void RefreshGraphMap(GraphMap graphMap, DataTransferObject dto)
     {
-      try
-      {
-        string identifier = dto.Identifier;
-
-        identifier = "eg:id__" + identifier;
-        RefreshGraphClassName(graphMap.classId, identifier);
-
-        foreach (TemplateMap templateMap in graphMap.templateMaps)
+        try
         {
-          RefreshTemplateMap(templateMap, (ClassMap)graphMap, dto, identifier);
+            string identifier = dto.Identifier;
+
+            identifier = "eg:id__" + identifier;
+            RefreshGraphClassName(graphMap.classId, identifier);
+
+            foreach (TemplateMap templateMap in graphMap.templateMaps)
+            {
+                try
+                {
+                    RefreshTemplateMap(templateMap, (ClassMap)graphMap, dto, identifier);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Warn("Warning with RefreshTemplateMap: " + ex);
+                }
+            }
         }
-      }
-      catch (Exception exception)
-      {
-        throw new Exception(String.Format("RefreshGraphMap[{0}][{1}]", graphMap.name, dto.Identifier), exception);
-      }
+        catch (Exception exception)
+        {
+            throw new Exception(String.Format("RefreshGraphMap[{0}][{1}]", graphMap.name, dto.Identifier), exception);
+        }
     }
 
+    private string GetPropertyValue(RoleMap roleMap, string dtoPropertyValue)
+    {
+        string propertyValue = string.Empty;        
+
+        if (!String.IsNullOrEmpty(roleMap.propertyName))
+        {
+            if (!String.IsNullOrEmpty(roleMap.valueList))
+            {
+                Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);
+
+                if (valueList.ContainsKey(dtoPropertyValue))
+                {
+                    propertyValue = valueList[dtoPropertyValue].Replace("rdl:", rdlPrefix);
+                }
+                else
+                {
+                    throw new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue));
+                }
+            }
+            else
+            {
+                propertyValue = dtoPropertyValue;
+            }
+        }
+        else if (!String.IsNullOrEmpty(roleMap.reference))
+        {
+            propertyValue = roleMap.reference.Replace("rdl:", rdlPrefix);
+        }
+        else if (!String.IsNullOrEmpty(roleMap.value))
+        {
+            propertyValue = roleMap.value;
+        }
+
+        return propertyValue;
+    }
+          
     private void RefreshPropertyRoleMap(TemplateMap templateMap, DataTransferObject dto, string parentIdentifierVariable, QueryResultBuffer resultBufferTemplateValues)
     {
       foreach (VariableBindings binding in resultBufferTemplateValues.Bindings)
@@ -765,41 +808,14 @@ namespace org.iringtools.adapter.projection
               dtoPropertyValue = "";
 
             RoleMap roleMap = FindRoleMap(templateMap, propertyName);
-            
-            if (!String.IsNullOrEmpty(roleMap.propertyName))
-            {
-              if (!String.IsNullOrEmpty(roleMap.valueList))
-              {
-                Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);
 
-                if (valueList.ContainsKey(dtoPropertyValue))
-                {
-                  propertyValue = valueList[dtoPropertyValue].Replace("rdl:", rdlPrefix);
-                }
-                else 
-                {
-                  throw new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue));
-                }
-              }
-              else
-              {
-                propertyValue = dtoPropertyValue;
-              }
-            }
-            else if (!String.IsNullOrEmpty(roleMap.reference))
-            {
-              propertyValue = roleMap.reference.Replace("rdl:", rdlPrefix);
-            }
-            else if (!String.IsNullOrEmpty(roleMap.value))
-            {
-              propertyValue = roleMap.value;
-            }
+            propertyValue = GetPropertyValue(roleMap, dtoPropertyValue);
 
             if (!curPropertyValue.Equals(propertyValue))
             {
               isPropertyValueDifferent = true;
             }
-          }
+          } 
         }
         #endregion
 
@@ -846,33 +862,8 @@ namespace org.iringtools.adapter.projection
                 dtoPropertyValue = "";
 
               RoleMap roleMap = FindRoleMap(templateMap, propertyName);
-              if (roleMap.reference != null && roleMap.reference != String.Empty)
-              {
-                if (roleMap.valueList != null && roleMap.valueList != String.Empty)
-                {
-                  Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);
-                  if (valueList.ContainsKey(dtoPropertyValue))
-                  {
-                    propertyValue = valueList[dtoPropertyValue].Replace("rdl:", rdlPrefix);
-                  }
-                  else
-                  {
-                    throw (new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue)));
-                  }
-                }
-                else
-                {
-                  propertyValue = roleMap.reference.Replace("rdl:", rdlPrefix);
-                }
-              }
-              else if (roleMap.value != null && roleMap.value != String.Empty)
-              {
-                propertyValue = roleMap.value;
-              }
-              else
-              {
-                propertyValue = dtoPropertyValue;
-              }
+
+              propertyValue = GetPropertyValue(roleMap, dtoPropertyValue);              
 
               string roleMapRoleId = roleMap.roleId.Replace("tpl:", tplPrefix);
               Variable propertyNameVariable = new Variable(roleMap.propertyName);
@@ -941,11 +932,11 @@ namespace org.iringtools.adapter.projection
         dtoPropertyValue = string.Empty;
 
 
-      if (roleMap.reference != null && roleMap.reference != String.Empty)
+      if (!String.IsNullOrEmpty(roleMap.propertyName))
       {
-        if (roleMap.valueList != null && roleMap.valueList != String.Empty)
+          if (!String.IsNullOrEmpty(roleMap.valueList))
         {
-          Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);
+          Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);          
           if (valueList.ContainsKey(dtoPropertyValue))
           {
             propertyValue = valueList[dtoPropertyValue].Replace("rdl:", rdlPrefix);
@@ -962,7 +953,7 @@ namespace org.iringtools.adapter.projection
           propertyType = "uri";
         }
       }
-      else if (roleMap.value != null && roleMap.value != String.Empty)
+      else if (!String.IsNullOrEmpty(roleMap.value))
       {
         propertyValue = roleMap.value;
         propertyType = "literal";
@@ -994,14 +985,14 @@ namespace org.iringtools.adapter.projection
 
       if (resultBufferTemplateValues.Bindings.Count > 0)
       {
-        try
-        {
+        //try
+        //{
           RefreshPropertyRoleMap(templateMap, dto, parentIdentifierVariable, resultBufferTemplateValues);
-        }
-        catch (Exception ex)
-        {
-          _logger.Error("Error with RefreshPropertyRoleMap: " + ex);
-        }
+        //}
+        //catch (Exception ex)
+        //{
+        //  _logger.Error("Error with RefreshPropertyRoleMap: " + ex);
+        //}
       }
       else
       {
@@ -1081,8 +1072,15 @@ namespace org.iringtools.adapter.projection
       try
       {
         foreach (TemplateMap templateMap in classMap.templateMaps)
-        {
-          RefreshTemplateMap(templateMap, classMap, dto, parentIdentifierVariable);
+        {          
+          try
+          {
+              RefreshTemplateMap(templateMap, classMap, dto, parentIdentifierVariable);
+          }
+          catch (Exception ex)
+          {
+              _logger.Warn("Warning with RefreshTemplateMap: " + ex);
+          }
         }
       }
       catch (Exception exception)
@@ -1353,7 +1351,7 @@ namespace org.iringtools.adapter.projection
 
         if (_refreshValueLists == null)
         {
-          _refreshValueLists = new Dictionary<string, Dictionary<string, string>>();
+          _refreshValueLists = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
         }
 
         if (_refreshValueLists.ContainsKey(valueListName))
@@ -1362,7 +1360,7 @@ namespace org.iringtools.adapter.projection
         }
         else
         {
-          valueList = new Dictionary<string, string>();
+          valueList = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
           foreach (ValueMap valueMap in _mapping.valueMaps)
           {
             if (valueMap.valueList == valueListName)
