@@ -46,7 +46,7 @@
       <credentials i:nil="true" xmlns:a="http://schemas.datacontract.org/2004/07/org.iringtools.utility"/>
       <id>13</id>
       <name>Local AdapterService</name>
-      <serviceUri>http://localhost:52768/Service.svc</serviceUri>
+      <serviceUri>http://localhost:52786/Service.svc</serviceUri>
     </iRINGEndpoint>
   </adapterEndpoints>
   <interfaceEndpoints>
@@ -201,6 +201,22 @@
       <senderApplicationName>C3D</senderApplicationName>
       <senderGraphName>Lines</senderGraphName>
       <senderProjectName>CCC</senderProjectName>
+    </Scenario>
+    <Scenario>
+      <exportEnabled>false</exportEnabled>
+      <importEnabled>false</importEnabled>
+      <interfaceServiceId>4</interfaceServiceId>
+      <receiver>Local</receiver>
+      <receiverAdapterServiceId>13</receiverAdapterServiceId>
+      <receiverApplicationName>PSPID</receiverApplicationName>
+      <receiverGraphName>Lines</receiverGraphName>
+      <receiverProjectName>12345_000</receiverProjectName>
+      <scenarioName>Lines Hatch -&gt; Local</scenarioName>
+      <sender>Hatch</sender>
+      <senderAdapterServiceId>4</senderAdapterServiceId>
+      <senderApplicationName>PSPID</senderApplicationName>
+      <senderGraphName>Lines</senderGraphName>
+      <senderProjectName>12345_000</senderProjectName>
     </Scenario>
     <Scenario>
       <exportEnabled>false</exportEnabled>
