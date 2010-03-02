@@ -584,6 +584,7 @@ namespace org.iringtools.adapter
 
         List<DataTransferObject> dtoList = _projectionEngine.GetList(graphName);
 
+        
         RuleEngine ruleEngine = new RuleEngine();
         if (File.Exists(_settings.XmlPath + "Pull" + graphName + ".rules"))
         {

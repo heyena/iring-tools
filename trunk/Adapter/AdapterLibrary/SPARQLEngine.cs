@@ -427,7 +427,7 @@ namespace org.iringtools.adapter.projection
 
                                     string propertyUri = query.getPREFIX_URI(binding.uri);
                                     propertyValue = valueList[propertyUri];
-                                    dto.SetPropertyValue(propertyName, propertyValue);
+                                    dto.SetPropertyValueByInternalName(propertyName, propertyValue);
                                 }
                             }
                         }
