@@ -92,6 +92,10 @@ namespace DemoControlPanel.DemoControlPanelService {
     [System.Runtime.Serialization.DataContractAttribute(Name="iRINGEndpoint", Namespace="http://schemas.datacontract.org/2004/07/DemoControlPanel.Web")]
     public partial class iRINGEndpoint : object, System.ComponentModel.INotifyPropertyChanged {
         
+        private string ApplicationNameField;
+        
+        private string ProjectNameField;
+        
         private DemoControlPanel.DemoControlPanelService.WebCredentials credentialsField;
         
         private string idField;
@@ -99,6 +103,32 @@ namespace DemoControlPanel.DemoControlPanelService {
         private string nameField;
         
         private string serviceUriField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ApplicationName {
+            get {
+                return this.ApplicationNameField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.ApplicationNameField, value) != true)) {
+                    this.ApplicationNameField = value;
+                    this.RaisePropertyChanged("ApplicationName");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string ProjectName {
+            get {
+                return this.ProjectNameField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.ProjectNameField, value) != true)) {
+                    this.ProjectNameField = value;
+                    this.RaisePropertyChanged("ProjectName");
+                }
+            }
+        }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
         public DemoControlPanel.DemoControlPanelService.WebCredentials credentials {
