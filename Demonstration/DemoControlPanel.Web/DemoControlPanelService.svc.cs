@@ -207,7 +207,7 @@ namespace DemoControlPanel.Web
                 WebHttpClient client = new WebHttpClient(endpoint.serviceUri, credentials.GetNetworkCredential(), _proxyCredentials.GetWebProxy());
                 Request request = new Request();
                 //This is interface service uri
-                request.Add("targetUri", targetEnpoint.serviceUri);
+                request.Add("targetUri", String.Format(targetEnpoint.serviceUri + "/{0}/{1}/sparql",targetEnpoint.ProjectName,targetEnpoint.ApplicationName));
                 request.Add("targetCredentials", targetCredentialsXML);                
                 request.Add("graphName", graphName);
                 request.Add("filter", "");
