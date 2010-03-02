@@ -695,8 +695,9 @@ namespace DemoControlPanel
             break;
           }
         }
-
-        interfaceEndpoint.serviceUri += String.Format("/{0}/{1}/sparql", scenario.senderProjectName, scenario.senderApplicationName);
+                  
+        interfaceEndpoint.ProjectName = scenario.senderProjectName;
+        interfaceEndpoint.ApplicationName = scenario.senderApplicationName;
         string graphName = (string)cbxReceiverGraphName.SelectedItem;
         _client.PullAsync(adapterEndpoint, interfaceEndpoint, scenario.receiverProjectName, scenario.receiverApplicationName, graphName);
       }
