@@ -57,7 +57,6 @@
   <ItemGroup>
     <Content Include="BindingConfiguration.12345_000.API.xml" />
     <Content Include="DataDictionary.12345_000.API.xml" />
-    <Content Include="Options.12345_000.API.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

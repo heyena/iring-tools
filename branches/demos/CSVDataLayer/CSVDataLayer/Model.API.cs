@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Xml.Linq;
 
-namespace Bechtel.IntergraphDataLayer
+namespace Bechtel.CSVDataLayer
 {
-  public abstract class IntergraphObject
+  public abstract class CSVObject
   {
     public string CommodityName { get; set; }
 
@@ -22,9 +22,9 @@ namespace Bechtel.IntergraphDataLayer
   }
 }
 
-namespace Bechtel.IntergraphDataLayer.SPPID
-{  
-  public class Equipment : IntergraphObject
+namespace Bechtel.CSVDataLayer.API
+{
+  public class Equipment : CSVObject
   {
     public Equipment()
     {

@@ -10,7 +10,7 @@ using org.iringtools.adapter;
 using org.iringtools.utility;
 using System.Xml.Linq;
 
-namespace Bechtel.IntergraphDataLayer
+namespace Bechtel.CSVDataLayer
 {
   /// <remarks>
   /// The DataLayer class implements Get, Post, Update and Delete methods.
@@ -29,7 +29,6 @@ namespace Bechtel.IntergraphDataLayer
     public DataLayer(AdapterSettings settings, ApplicationSettings appSettings)
     {
       _dataDictionaryPath = settings.XmlPath + "DataDictionary." + appSettings.ApplicationName + ".xml";
-      _optionsXmlPath = settings.XmlPath + "Options." + appSettings.ProjectName + "." + appSettings.ApplicationName + ".xml";
       _settings = settings;
       _appSettings = appSettings;
     }
@@ -77,7 +76,9 @@ namespace Bechtel.IntergraphDataLayer
       {
         response = new Response();
 
-        int numberOfRecords = IntergraphPost(graph);
+        CSVObject csvObject = (CSVObject)(object)graph;
+
+        
 
         response.Add("Records of type " + typeof(T).Name + " have been updated successfully");
       
@@ -87,35 +88,6 @@ namespace Bechtel.IntergraphDataLayer
       {
         _logger.Error("Error in Post<T>: " + exception);
         throw new Exception("Error while posting data of type " + typeof(T).Name + ".", exception);
-      }
-    }
-
-    public int IntergraphPost(object graph)
-    {
-      try
-      {
-        IntergraphObject obj = (IntergraphObject)graph;
-        string commodityName = obj.CommodityName;
-        string updatesXml = obj.GetUpdatesXml();
-        string keysXml = obj.GetKeysXml();
-
-        int errorCode = 0;
-        string errorMsg = string.Empty;
-        XmlDocument doc = new XmlDocument();
-        doc.Load(_optionsXmlPath);
-        string optionsXml = doc.InnerXml;
-        BechSPPIDBridge.Bridge bridgeClass = new BechSPPIDBridge.Bridge();
-        bridgeClass.init(optionsXml, ref errorCode, ref errorMsg);
-        int recordsUpdated = bridgeClass.updateAttributes(commodityName, keysXml, updatesXml, ref errorCode, ref errorMsg);
-        return recordsUpdated;
-      }
-      catch (Exception ex)
-      {
-        StreamWriter streamWriter = new StreamWriter(_settings.XmlPath + "Error.xml");
-        streamWriter.Write(ex.Message);
-        streamWriter.Flush();
-        streamWriter.Close();
-        throw ex;
       }
     }
 
