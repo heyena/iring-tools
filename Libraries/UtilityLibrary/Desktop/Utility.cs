@@ -38,6 +38,7 @@ using System.Linq;
 using Microsoft.CSharp;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 
 namespace org.iringtools.utility
@@ -810,14 +811,16 @@ namespace org.iringtools.utility
       }
     }
 
-    public static string ToCSharpType(string xsdType)
+    public static string XsdTypeToCSharpType(string xsdType)
     {
       string type = (xsdType.StartsWith("xsd:") || xsdType.StartsWith("XSD:")) ? xsdType.Substring(4) : xsdType;
-      
+
       switch (type.ToLower())
       {
         case "boolean": return "Boolean";
-        case "byte": return "SByte";
+        case "byte": return "Byte";
+        case "char": return "Char";
+        case "character": return "Char";
         case "date": return "DateTime";
         case "datetime": return "DateTime";
         case "decimal": return "Decimal";
@@ -829,9 +832,52 @@ namespace org.iringtools.utility
         case "short": return "Int16";
         case "string": return "String";
         case "time": return "DateTime";
-        default: return xsdType;
+        default: throw new Exception("XSD type \"" + xsdType + "\" not currently supported.");
       }
     }
+
+    public static string SqlTypeToCSharpType(string sqlType)
+    {
+      switch (sqlType.ToLower())
+      {
+        case "bit": return "Boolean";
+        case "byte": return "Byte";
+        case "char": return "Char";
+        case "character": return "Char";
+        case "varchar": return "String";
+        case "varchar2": return "String";
+        case "nvarchar":return "String";
+        case "nvarchar2": return "String";
+        case "text": return "String";
+        case "ntext": return "String";
+        case "xml": return "String";
+        case "date": return "DateTime";
+        case "datetime": return "DateTime";
+        case "smalldatetime": return "DateTime";
+        case "time": return "DateTime";
+        case "timestamp": return "DateTime";
+        case "dec": return "Double";
+        case "decimal": return "Decimal";
+        case "money": return "Double";
+        case "smallmoney": return "Double";
+        case "numeric": return "Double";
+        case "float": return "Single";
+        case "real": return "Double";
+        case "int": return "Int32";
+        case "integer": return "Int32";
+        case "bigint": return "Int64";
+        case "smallint": return "Int16";
+        case "tinyint": return "Int16";
+        case "number": return "Int32";
+        case "long": return "Int64";
+        default: throw new Exception("SQL type \"" + sqlType + "\" not currently supported.");
+      }
+    }
+
+    public static string NameSafe(string name)
+    {
+      return Regex.Replace(name, @"^\d*|\W", "");
+    }    
 
     public static void SearchAndInsert<O, T>(List<O> list, O element, T Comparer)
     {

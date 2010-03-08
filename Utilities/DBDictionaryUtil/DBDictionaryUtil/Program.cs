@@ -156,7 +156,8 @@ namespace DBDictionaryUtil
       if (dbProvider.Contains("MSSQL"))
       {
         metadataQuery =
-            "select t1.table_name, t1.column_name, t1.data_type, t5.constraint_type, t2.is_identity from information_schema.columns t1 " +
+            "select t1.table_name, t1.column_name, t1.data_type, t2.max_length, t2.is_identity, t2.is_nullable, t5.constraint_type " +
+            "from information_schema.columns t1 " +
             "inner join sys.columns t2 on t2.name = t1.column_name " +
             "inner join sys.tables t3 on t3.name = t1.table_name and t3.object_id = t2.object_id " +
             "left join information_schema.key_column_usage t4 on t4.table_name = t1.table_name and t4.column_name = t1.column_name " +
@@ -188,7 +189,8 @@ namespace DBDictionaryUtil
       else if (dbProvider.Contains("ORACLE"))
       {
         metadataQuery =
-          "select t1.object_name, t2.column_name, t2.data_type, t4.constraint_type, 0 as is_sequence from user_objects t1 " +
+          "select t1.object_name, t2.column_name, t2.data_type, t2.data_length, 0 as is_sequence, t2.nullable, t4.constraint_type " +
+          "from user_objects t1 " +
           "inner join all_tab_cols t2 on t2.table_name = t1.object_name " +
           "left join all_cons_columns t3 on t3.table_name = t2.table_name and t3.column_name = t2.column_name " +
           "left join all_constraints t4 on t4.constraint_name = t3.constraint_name and (t4.constraint_type = 'P' or t4.constraint_type = 'R') " +
@@ -238,9 +240,12 @@ namespace DBDictionaryUtil
       {
         string tableName = Convert.ToString(metadata[0]);
         string columnName = Convert.ToString(metadata[1]);
-        string dataType = Convert.ToString(metadata[2]);
-        string constraint = Convert.ToString(metadata[3]);
+        string dataType = Utility.SqlTypeToCSharpType(Convert.ToString(metadata[2]));
+        int dataLength = Convert.ToInt32(metadata[3]);
         bool isIdentity = Convert.ToBoolean(metadata[4]);
+        string nullable = Convert.ToString(metadata[5]).ToUpper();
+        bool isNullable = (nullable == "Y" || nullable == "TRUE");
+        string constraint = Convert.ToString(metadata[6]);
 
         if (tableName != prevTableName)
         {
@@ -250,7 +255,7 @@ namespace DBDictionaryUtil
             columns = new List<Column>(),
             keys = new List<Key>(),
             associations = new List<Association>(), // to be supported in the future
-            entityName = NameSafe(tableName)
+            entityName = Utility.NameSafe(tableName)
           };
 
           dbDictionary.tables.Add(table);
@@ -262,8 +267,10 @@ namespace DBDictionaryUtil
           Column column = new Column()
           {
             columnName = columnName,
-            columnType = SqlTypeToCSharpType(dataType),
-            propertyName = NameSafe(columnName)
+            dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
+            dataLength = dataLength,
+            isNullable = isNullable,
+            propertyName = Utility.NameSafe(columnName)
           };
 
           table.columns.Add(column);
@@ -284,9 +291,11 @@ namespace DBDictionaryUtil
           Key key = new Key()
           {
             columnName = columnName,
-            columnType = SqlTypeToCSharpType(dataType),
+            dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
+            dataLength = dataLength,
+            isNullable = isNullable,
             keyType = keyType,
-            propertyName = NameSafe(columnName),
+            propertyName = Utility.NameSafe(columnName),
           };
 
           table.keys.Add(key);
@@ -344,85 +353,11 @@ namespace DBDictionaryUtil
       return parsedConnStr;
     }
 
-    static ColumnType SqlTypeToCSharpType(string columnDataType)
-    {
-      switch (columnDataType.ToUpper())
-      {
-        case "BIT":
-          return ColumnType.Boolean;
-        case "BYTE":
-          return ColumnType.Byte;
-        case "CHAR":
-          return ColumnType.String;
-        case "CHARACTER":
-          return ColumnType.String;
-        case "VARCHAR":
-          return ColumnType.String;
-        case "VARCHAR2":
-          return ColumnType.String;
-        case "NVARCHAR":
-          return ColumnType.String;
-        case "NVARCHAR2":
-          return ColumnType.String;
-        case "TEXT":
-          return ColumnType.String;
-        case "NTEXT":
-          return ColumnType.String;
-        case "XML":
-          return ColumnType.String;
-        case "DATE":
-          return ColumnType.DateTime;
-        case "DATETIME":
-          return ColumnType.DateTime;
-        case "SMALLDATETIME":
-          return ColumnType.DateTime;
-        case "TIME":
-          return ColumnType.DateTime;
-        case "TIMESTAMP":
-          return ColumnType.DateTime;
-        case "DEC":
-          return ColumnType.Double;
-        case "DECIMAL":
-          return ColumnType.Double;
-        case "MONEY":
-          return ColumnType.Double;
-        case "SMALLMONEY":
-          return ColumnType.Double;
-        case "NUMERIC":
-          return ColumnType.Double;
-        case "FLOAT":
-          return ColumnType.Double;
-        case "REAL":
-          return ColumnType.Double;
-        case "INT":
-          return ColumnType.Int32;
-        case "INTEGER":
-          return ColumnType.Int32;
-        case "BIGINT":
-          return ColumnType.Int64;
-        case "SMALLINT":
-          return ColumnType.Int16;
-        case "TINYINT":
-          return ColumnType.Int16;
-        case "NUMBER":
-          return ColumnType.Int32;
-        case "LONG":
-          return ColumnType.Int64;
-        default:
-          throw new Exception("Column data type not supported.");
-      }
-    }
-
-    static string NameSafe(string name)
-    {
-      return Regex.Replace(name, @"^\d*|\W", "");
-    }
-
     static void PrintUsage()
     {
       Console.WriteLine("Usage:");
-      Console.WriteLine("\n\tDBDictionaryUtil.exe CREATE ConnectionString DatabaseDictionaryFilePath");
-      Console.WriteLine("\n\tDBDictionaryUtil.exe POST AdapterServiceUri ProjectName ApplicationName DatabaseDictionaryFilePath\n");
+      Console.WriteLine("\n\tDBDictionaryUtil.exe CREATE ConnectionString DBProvider DatabaseDictionaryInFilePath");
+      Console.WriteLine("\n\tDBDictionaryUtil.exe POST AdapterServiceUri ProjectName ApplicationName DatabaseDictionaryOutFilePath\n");
     }
   }
 }

@@ -127,9 +127,10 @@ namespace org.iringtools.adapter.dataLayer
               DataProperty dataProperty = new DataProperty()
               {
                 propertyName = String.IsNullOrEmpty(key.propertyName) ? key.columnName : key.propertyName,
-                dataType = key.columnType.ToString(),
+                dataType = key.dataType.ToString(),
+                dataLength = Convert.ToString(key.dataLength),
                 isPropertyKey = true,
-                isRequired = true,
+                isRequired = !(key.isNullable),
               };
 
               dataObject.dataProperties.Add(dataProperty);
@@ -142,7 +143,9 @@ namespace org.iringtools.adapter.dataLayer
               DataProperty dataProperty = new DataProperty()
               {
                 propertyName = String.IsNullOrEmpty(column.propertyName) ? column.columnName : column.propertyName,
-                dataType = column.columnType.ToString()
+                dataType = column.dataType.ToString(),
+                dataLength = Convert.ToString(column.dataLength),
+                isRequired = !(column.isNullable),
               };
 
               try
@@ -233,6 +236,49 @@ namespace org.iringtools.adapter.dataLayer
       return response;
     }
 
+    private void RemoveDups(Table table)
+    {
+      for (int i = 0; i < table.keys.Count; i++)
+      {
+        for (int j = 0; j < table.columns.Count; j++)
+        {
+          // remove columns that are already in keys
+          if (table.columns[j].columnName.ToLower() == table.keys[i].columnName.ToLower())
+          {
+            table.columns.Remove(table.columns[j--]);
+            continue;
+          }
+
+          // remove duplicate columns
+          for (int jj = j + 1; jj < table.columns.Count; jj++)
+          {
+            if (table.columns[jj].columnName.ToLower() == table.columns[j].columnName.ToLower())
+            {
+              table.columns.Remove(table.columns[jj--]);
+            }
+          }
+        }
+
+        // remove duplicate keys (in order of foreign - assigned - identity/sequence)
+        for (int ii = i + 1; ii < table.keys.Count; ii++)
+        {
+          if (table.keys[ii].columnName.ToLower() == table.keys[i].columnName.ToLower())
+          {
+            if (table.keys[ii].keyType != KeyType.foreign)
+            {
+              if (((table.keys[ii].keyType == KeyType.identity || table.keys[ii].keyType == KeyType.sequence) && table.keys[i].keyType == KeyType.assigned) ||
+                    table.keys[ii].keyType == KeyType.assigned && table.keys[i].keyType == KeyType.foreign)
+              {
+                table.keys[i].keyType = table.keys[ii].keyType;
+              }
+            }
+
+            table.keys.Remove(table.keys[ii--]);
+          }
+        }
+      }
+    }
+
     private void CreateEntity(Table table)
     {
       string entityName = _entityNames[table.tableName];
@@ -241,6 +287,8 @@ namespace org.iringtools.adapter.dataLayer
       _mappingWriter.WriteStartElement("class");
       _mappingWriter.WriteAttributeString("name", _namespace + "." + entityName + ", " + ASSEMBLY_NAME);
       _mappingWriter.WriteAttributeString("table", table.tableName);
+
+      RemoveDups(table);
 
       #region Create composite key
       if (table.keys.Count > 1)
@@ -258,8 +306,9 @@ namespace org.iringtools.adapter.dataLayer
         foreach (Key key in table.keys)
         {
           string keyName = String.IsNullOrEmpty(key.propertyName) ? key.columnName : key.propertyName;
+          string dataType = (key.dataType != DataType.String && key.isNullable) ? (key.dataType.ToString() + "?") : (key.dataType.ToString());
 
-          _entityWriter.WriteLine("public {0} {1} {{ get; set; }}", key.columnType, keyName);
+          _entityWriter.WriteLine("public {0} {1} {{ get; set; }}", dataType, keyName);
 
           _mappingWriter.WriteStartElement("key-property");
           _mappingWriter.WriteAttributeString("name", keyName);
@@ -362,7 +411,9 @@ namespace org.iringtools.adapter.dataLayer
 
         foreach (Key key in table.keys)
         {
-          _entityWriter.WriteLine("public virtual {0} {1}", key.columnType, key.propertyName);
+          string dataType = (key.dataType != DataType.String && key.isNullable) ? (key.dataType.ToString() + "?") : (key.dataType.ToString());
+
+          _entityWriter.WriteLine("public virtual {0} {1}", dataType, key.propertyName);
           _entityWriter.WriteLine("{");
           _entityWriter.Indent++;
           _entityWriter.WriteLine("get {{ return Id.{0}; }}", key.propertyName);
@@ -380,7 +431,9 @@ namespace org.iringtools.adapter.dataLayer
       }
       else if (table.keys.Count == 1 && table.keys[0].keyType != KeyType.foreign)
       {
-        _entityWriter.WriteLine("public virtual {0} Id {{ get; set; }}", table.keys[0].columnType);
+        string dataType = (table.keys[0].dataType != DataType.String && table.keys[0].isNullable) ? (table.keys[0].dataType.ToString() + "?") : (table.keys[0].dataType.ToString());
+
+        _entityWriter.WriteLine("public virtual {0} Id {{ get; set; }}", dataType);
 
         _mappingWriter.WriteStartElement("id");
         _mappingWriter.WriteAttributeString("name", "Id");
@@ -392,7 +445,7 @@ namespace org.iringtools.adapter.dataLayer
 
         if (table.keys[0].keyType == KeyType.assigned)
         {
-          _entityWriter.WriteLine("public virtual {0} {1}", table.keys[0].columnType, table.keys[0].propertyName);
+          _entityWriter.WriteLine("public virtual {0} {1}", dataType, table.keys[0].propertyName);
           _entityWriter.WriteLine("{");
           _entityWriter.Indent++;
           _entityWriter.WriteLine("get { return Id; }");
@@ -423,7 +476,9 @@ namespace org.iringtools.adapter.dataLayer
 
               if (table.keys[0].keyType == KeyType.foreign)
               {
-                _entityWriter.WriteLine("public virtual {0} Id {{ get; set; }}", table.keys[0].columnType);
+                string dataType = (table.keys[0].dataType != DataType.String && table.keys[0].isNullable) ? (table.keys[0].dataType.ToString() + "?") : (table.keys[0].dataType.ToString());
+
+                _entityWriter.WriteLine("public virtual {0} Id {{ get; set; }}", dataType);
 
                 _mappingWriter.WriteStartElement("id");
                 _mappingWriter.WriteAttributeString("name", "Id");
@@ -500,17 +555,15 @@ namespace org.iringtools.adapter.dataLayer
       {
         foreach (Column column in table.columns)
         {
-          if (!ContainsColumn(table.keys, column))
-          {
-            string propertyName = String.IsNullOrEmpty(column.propertyName) ? column.columnName : column.propertyName;
+          string propertyName = String.IsNullOrEmpty(column.propertyName) ? column.columnName : column.propertyName;
+          string dataType = (column.dataType != DataType.String && column.isNullable) ? (column.dataType.ToString() + "?") : (column.dataType.ToString());
 
-            _entityWriter.WriteLine("public virtual {0} {1} {{ get; set; }}", column.columnType, propertyName);
+          _entityWriter.WriteLine("public virtual {0} {1} {{ get; set; }}", dataType, propertyName);
 
-            _mappingWriter.WriteStartElement("property");
-            _mappingWriter.WriteAttributeString("name", propertyName);
-            _mappingWriter.WriteAttributeString("column", column.columnName);
-            _mappingWriter.WriteEndElement(); // end property element
-          }
+          _mappingWriter.WriteStartElement("property");
+          _mappingWriter.WriteAttributeString("name", propertyName);
+          _mappingWriter.WriteAttributeString("column", column.columnName);
+          _mappingWriter.WriteEndElement(); // end property element
         }
       }
       #endregion Process columns
@@ -637,17 +690,6 @@ namespace org.iringtools.adapter.dataLayer
       {
         throw ex;
       }
-    }
-
-    private bool ContainsColumn(List<Key> keys, Column column)
-    {
-      foreach (Key key in keys)
-      {
-        if (key.columnName == column.columnName)
-          return true;
-      }
-
-      return false;
     }
 
     private bool IsAssociationInKeys(List<Key> keys, ManyToOneAssociation association)

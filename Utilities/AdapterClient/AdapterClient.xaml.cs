@@ -71,6 +71,11 @@ namespace IDS_ADI.iRING.Adapter
       client.DownloadStringAsync(clearURI);
     }
 
+    private void buttonClearLog_Click(object sender, RoutedEventArgs e)
+    {
+      _messages.Clear();
+    }
+
     private void buttonRefresh_Click(object sender, RoutedEventArgs e)
     {
       WebClient client = new WebClient();
@@ -114,73 +119,73 @@ namespace IDS_ADI.iRING.Adapter
       listBoxResults.ScrollIntoView(listBoxResults.Items[listBoxResults.Items.Count - 1]);
     }
 
-    private void buttonDictionaryGenerate_Click(object sender, RoutedEventArgs e)
-    {
-      try
-      {
-        _messages.Add(new StatusMessage { Message = "Posting Generate Dictionary Request...", ImageName = "info_22.png" });
+    //private void buttonDictionaryGenerate_Click(object sender, RoutedEventArgs e)
+    //{
+    //  try
+    //  {
+    //    _messages.Add(new StatusMessage { Message = "Posting Generate Dictionary Request...", ImageName = "info_22.png" });
 
-        WebClient client = new WebClient();
-        client.UploadStringCompleted += new UploadStringCompletedEventHandler(client_UploadStringCompleted);
-        client.Headers["Content-type"] = "application/xml";
-        client.Encoding = Encoding.UTF8;
+    //    WebClient client = new WebClient();
+    //    client.UploadStringCompleted += new UploadStringCompletedEventHandler(client_UploadStringCompleted);
+    //    client.Headers["Content-type"] = "application/xml";
+    //    client.Encoding = Encoding.UTF8;
 
-        Uri dictionaryGenerateURI = new Uri(textBoxAdapterURL.Text + "/dictionary/generate");
+    //    Uri dictionaryGenerateURI = new Uri(textBoxAdapterURL.Text + "/dictionary/generate");
 
-        #region make it
-        //DatabaseDictionary myDatabaseDictionary = new DatabaseDictionary();
+    //    #region make it
+    //    //DatabaseDictionary myDatabaseDictionary = new DatabaseDictionary();
 
-        //myDatabaseDictionary.providerName = "CrazyProvider";
-        //myDatabaseDictionary.dataObjects = new List<DatabaseObject>
-        //{
-        //  new DatabaseObject 
-        //  {
-        //    dataProperties = new List<DatabaseProperty>
-        //    {
-        //      new DatabaseProperty
-        //      {
-        //        dataLength = "32",
-        //        dataType = "string",
-        //        isPropertyKey = true,
-        //        isRequired = true,
-        //        propertyName = "szTag",
-        //      },
-        //    },
-        //    objectName = "I_Line",
-        //    objectNamespace = "Crazy",
-        //  },
-        //  new DatabaseObject 
-        //  {
-        //    dataProperties = new List<DatabaseProperty>
-        //    {
-        //      new DatabaseProperty
-        //      {
-        //        dataLength = "32",
-        //        dataType = "string",
-        //        isPropertyKey = true,
-        //        isRequired = true,
-        //        propertyName = "szTag",
-        //      },
-        //    },
-        //    objectName = "I_Valve",
-        //    objectNamespace = "Crazy",
-        //  },
-        //};
-        #endregion
+    //    //myDatabaseDictionary.providerName = "CrazyProvider";
+    //    //myDatabaseDictionary.dataObjects = new List<DatabaseObject>
+    //    //{
+    //    //  new DatabaseObject 
+    //    //  {
+    //    //    dataProperties = new List<DatabaseProperty>
+    //    //    {
+    //    //      new DatabaseProperty
+    //    //      {
+    //    //        dataLength = "32",
+    //    //        dataType = "string",
+    //    //        isPropertyKey = true,
+    //    //        isRequired = true,
+    //    //        propertyName = "szTag",
+    //    //      },
+    //    //    },
+    //    //    objectName = "I_Line",
+    //    //    objectNamespace = "Crazy",
+    //    //  },
+    //    //  new DatabaseObject 
+    //    //  {
+    //    //    dataProperties = new List<DatabaseProperty>
+    //    //    {
+    //    //      new DatabaseProperty
+    //    //      {
+    //    //        dataLength = "32",
+    //    //        dataType = "string",
+    //    //        isPropertyKey = true,
+    //    //        isRequired = true,
+    //    //        propertyName = "szTag",
+    //    //      },
+    //    //    },
+    //    //    objectName = "I_Valve",
+    //    //    objectNamespace = "Crazy",
+    //    //  },
+    //    //};
+    //    #endregion
 
-        //Utility.Write<DatabaseDictionary>(myDatabaseDictionary, "MyDatabasedictioanry.xml", true);
+    //    //Utility.Write<DatabaseDictionary>(myDatabaseDictionary, "MyDatabasedictioanry.xml", true);
 
-        DatabaseDictionary databaseDictionary = Utility.Read<DatabaseDictionary>("databaseDictionary.xml", true);
+    //    DatabaseDictionary databaseDictionary = Utility.Read<DatabaseDictionary>("databaseDictionary.xml", true);
 
-        string message = Utility.Serialize<DatabaseDictionary>(databaseDictionary, true);
+    //    string message = Utility.Serialize<DatabaseDictionary>(databaseDictionary, true);
 
-        client.UploadStringAsync(dictionaryGenerateURI, message);
-      }
-      catch (Exception ex)
-      {
-        _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "error_22.png" });
-      }
-    }
+    //    client.UploadStringAsync(dictionaryGenerateURI, message);
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "error_22.png" });
+    //  }
+    //}
   }
 
   public class StatusMessage
