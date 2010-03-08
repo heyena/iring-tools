@@ -25,15 +25,16 @@
         </ListBox.ItemTemplate>
       </ListBox>
     </Border>
-    <Button Height="28" Margin="0,44,12,0" Name="buttonPull" VerticalAlignment="Top" HorizontalAlignment="Right" Width="100" Click="buttonPull_Click" IsDefault="True" Grid.ColumnSpan="2">Pull</Button>
-    <Button Height="28" Margin="0,78,11,0" Name="buttonDictionaryGenerate" VerticalAlignment="Top" HorizontalAlignment="Right" Width="100" Click="buttonDictionaryGenerate_Click" IsDefault="True" Grid.ColumnSpan="2">Generate Dictionary</Button>
-    <TextBox Margin="98,10,25,0" Name="textBoxAdapterURL" Height="28" VerticalAlignment="Top" VerticalContentAlignment="Center">http://localhost/AdapterService/Service.svc</TextBox>
     <Label Height="28" Margin="12,8,0,0" Name="labelAdapterURL" VerticalAlignment="Top" HorizontalContentAlignment="Right" HorizontalAlignment="Left" Width="80" VerticalContentAlignment="Center">Adapter URL:</Label>
-    <Label Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Margin="12,79,0,0" Name="labelGraphName" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="80">Graph Name:</Label>
+    <TextBox Margin="98,10,25,0" Name="textBoxAdapterURL" Height="28" VerticalAlignment="Top" VerticalContentAlignment="Center">http://localhost/AdapterService/Service.svc</TextBox>
     <Button Height="28" HorizontalAlignment="Right" Margin="0,10,11,0" Name="buttonRefresh" VerticalAlignment="Top" Width="100" Click="buttonRefresh_Click" IsEnabled="False" Grid.ColumnSpan="2">Refresh</Button>
-    <TextBox Height="28" Margin="98,44,26,0" Name="textBoxTargetURL" VerticalAlignment="Top" VerticalContentAlignment="Center">http://localhost:2222/iring</TextBox>
     <Label Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Margin="12,45,0,0" Name="labelTargetURL" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="80">Target URL:</Label>
-    <Button HorizontalAlignment="Right" Margin="0,78,26,0" Name="buttonClear" Width="100" Height="28" VerticalAlignment="Top" Click="buttonClear_Click">Clear</Button>
+    <TextBox Height="28" Margin="98,44,26,0" Name="textBoxTargetURL" VerticalAlignment="Top" VerticalContentAlignment="Center">http://localhost/InterfaceService/</TextBox>
+    <Button Height="28" Margin="0,44,12,0" Name="buttonPull" VerticalAlignment="Top" HorizontalAlignment="Right" Width="100" Click="buttonPull_Click" IsDefault="True" Grid.ColumnSpan="2">Pull</Button>
+    <Label Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Margin="12,79,0,0" Name="labelGraphName" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="80">Graph Name:</Label>
     <TextBox Height="28" Margin="98,78,132,0" Name="textBoxGraphName" VerticalAlignment="Top" VerticalContentAlignment="Center">Equipment</TextBox>
+    <!--<Button Height="28" Margin="0,78,11,0" Name="buttonDictionaryGenerate" VerticalAlignment="Top" HorizontalAlignment="Right" Width="100" Click="buttonDictionaryGenerate_Click" IsDefault="True" Grid.ColumnSpan="2">Generate Dictionary</Button>-->
+    <Button HorizontalAlignment="Right" Margin="0,78,26,0" Name="buttonClear" Width="100" Height="28" VerticalAlignment="Top" Click="buttonClear_Click">Clear Triplestore</Button>
+    <Button HorizontalAlignment="Right" Margin="0,78,-80,0" Name="buttonClearLog" Width="100" Height="28" VerticalAlignment="Top" Click="buttonClearLog_Click">Clear Logs</Button>
   </Grid>
 </Window>

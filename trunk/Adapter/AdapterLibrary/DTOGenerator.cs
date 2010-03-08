@@ -35,6 +35,7 @@ using System.Reflection;
 using org.iringtools.library;
 using org.iringtools.utility;
 using log4net;
+using Ninject.Contrib.Dynamic;
 
 namespace org.iringtools.adapter
 {
@@ -52,7 +53,7 @@ namespace org.iringtools.adapter
     private AdapterSettings _settings = null;
     private Mapping _mapping = null;
     private DataDictionary _dataDictionary = null;
-    private List<MappingProperty> _extendedDataProperties = null;
+    private List<MappingProperty> _mappingProperties = null;
     private List<string> _initStatements = null;
     List<string> templateMapNames = new List<string>();
     private StringBuilder _dtoModelBuilder = null;
@@ -71,8 +72,36 @@ namespace org.iringtools.adapter
     public DTOGenerator(AdapterSettings settings)
     {
       _settings = settings;
-      _extendedDataProperties = new List<MappingProperty>();
+      _mappingProperties = new List<MappingProperty>();
       _initStatements = new List<string>();
+    }
+
+    private void AddCustomDataLayerAssembly(string projectName, string applicationName, CompilerParameters parameters)
+    {
+      string bindingConfigurationPath = _settings.XmlPath + "BindingConfiguration." + projectName + "." + applicationName + ".xml";
+
+      if (File.Exists(bindingConfigurationPath))
+      {
+        BindingConfiguration bindingConfiguration = Utility.Read<BindingConfiguration>(bindingConfigurationPath, false);
+
+        foreach (Binding binding in bindingConfiguration.Bindings)
+        {
+          if (binding.Name.ToUpper() == "DATALAYER" && !binding.Implementation.ToUpper().Contains("NHIBERNATEDATALAYER"))
+          {
+            string[] bindingImpl = binding.Implementation.Split(',');
+            string bindingAssembly = bindingImpl[1].Trim() + ".dll";
+            parameters.ReferencedAssemblies.Add(_settings.BinaryPath + bindingAssembly);
+            break;
+          }
+        }
+      }
+      else
+      {
+        string errorMessage = "Binding configuration file " + bindingConfigurationPath + " not found.";
+
+        _logger.Error(errorMessage);
+        throw new Exception(errorMessage);
+      }
     }
 
     public void Generate(string projectName, string applicationName)
@@ -108,6 +137,8 @@ namespace org.iringtools.adapter
         parameters.ReferencedAssemblies.Add(_settings.BinaryPath + "UtilityLibrary.dll");
         parameters.ReferencedAssemblies.Add(_settings.BinaryPath + "AdapterLibrary.dll");
 
+        AddCustomDataLayerAssembly(projectName, applicationName, parameters);                
+
         // Generate code
         List<string> serviceKnownTypes = GetServiceKnownTypes(projectName, applicationName);
         string dtoModel = GenerateDTOModel(projectName, applicationName);
@@ -141,6 +172,8 @@ namespace org.iringtools.adapter
             {
               sources.Add(Utility.ReadString(dtoModelPath));
             }
+
+            AddCustomDataLayerAssembly(scopeApp.Key, scopeApp.Value.Name, parameters);
           }
         }
 
@@ -205,6 +238,7 @@ namespace org.iringtools.adapter
         _dtoModelWriter.WriteLine("using System.Runtime.Serialization;");
         _dtoModelWriter.WriteLine("using System.Xml.Serialization;");
         _dtoModelWriter.WriteLine("using System.Xml.Xsl;");
+        _dtoModelWriter.WriteLine("using log4net;");
         _dtoModelWriter.WriteLine("using org.iringtools.library;");
         _dtoModelWriter.WriteLine("using org.iringtools.utility;");
 
@@ -215,7 +249,7 @@ namespace org.iringtools.adapter
 
         foreach (GraphMap graphMap in _mapping.graphMaps)
         {
-          graphMap.name = NameSafe(graphMap.name);
+          graphMap.name = Utility.NameSafe(graphMap.name);
           graphMap.classId = graphMap.classId.Replace("rdl:", RDL_NAMESPACE);
 
           _dtoModelWriter.WriteLine();
@@ -224,6 +258,8 @@ namespace org.iringtools.adapter
           _dtoModelWriter.WriteLine("public class {0} : DataTransferObject", graphMap.name);
           _dtoModelWriter.Write("{");
           _dtoModelWriter.Indent++;
+          _dtoModelWriter.WriteLine();
+          _dtoModelWriter.WriteLine("private static readonly ILog _logger = LogManager.GetLogger(typeof({0}));", graphMap.name);
 
           ProcessGraphMap(graphMap);
 
@@ -232,7 +268,7 @@ namespace org.iringtools.adapter
           _dtoModelWriter.WriteLine("{");
           _dtoModelWriter.Indent++;
 
-          foreach (MappingProperty mappingProperty in _extendedDataProperties)
+          foreach (MappingProperty mappingProperty in _mappingProperties)
           {
             string value = (mappingProperty.value == null) ? "null" : "@\"" + mappingProperty.value + "\"";
 
@@ -262,13 +298,14 @@ namespace org.iringtools.adapter
             _dtoModelWriter.WriteLine("{");
             _dtoModelWriter.Indent++;
 
-            foreach (MappingProperty mappingProperty in _extendedDataProperties)
+            foreach (MappingProperty mappingProperty in _mappingProperties)
             {
               if (!String.IsNullOrEmpty(mappingProperty.propertyName))
               {
+                //TODO: handle multi-column key
                 if (mappingProperty.isPropertyKey)
                 {
-                  _dtoModelWriter.WriteLine("{0} = Convert.To{1}(dataObject.Id);", mappingProperty.propertyPath, mappingProperty.mappingDataType);
+                  _dtoModelWriter.WriteLine("{0} = Convert.To{1}(dataObject." + mappingProperty.propertyName + ");", mappingProperty.propertyPath, mappingProperty.mappingDataType);
                 }
                 else
                 {
@@ -294,10 +331,10 @@ namespace org.iringtools.adapter
           _dtoModelWriter.WriteLine("public {0}() : this(\"{1}\", \"{0}\", null) {{}}", graphMap.name, graphMap.classId);
 
           // Generate data contract member methods
-          foreach (MappingProperty mappingProperty in _extendedDataProperties)
+          foreach (MappingProperty mappingProperty in _mappingProperties)
           {
             String type = mappingProperty.mappingDataType;
-
+            
             // Convert to nullable type for some data types
             if (type == "DateTime" || type == "Decimal" || type == "Double" || type == "Single" || type.StartsWith("Int"))
             {
@@ -363,22 +400,51 @@ namespace org.iringtools.adapter
             _dtoModelWriter.WriteLine("{");
             _dtoModelWriter.Indent++;
             _dtoModelWriter.WriteLine("_dataObject = new {0}();", qualifiedDataObjectName);
-
-            foreach (MappingProperty mappingProperty in _extendedDataProperties)
+            
+            foreach (MappingProperty mappingProperty in _mappingProperties)
             {
+              //TODO: handle muli-column key
               if (mappingProperty.isPropertyKey)
               {
-                _dtoModelWriter.WriteLine("(({0})_dataObject).Id = Convert.To{1}(this.Identifier);", qualifiedDataObjectName, mappingProperty.dataType);
+                if (mappingProperty.dataType.ToLower() == "string" && !String.IsNullOrEmpty(mappingProperty.dataLength))
+                {
+                  _dtoModelWriter.WriteLine();
+                  _dtoModelWriter.WriteLine("if (this.Identifier.Length > {0})", mappingProperty.dataLength);
+                  _dtoModelWriter.WriteLine("{");
+                  _dtoModelWriter.Indent++;
+                  _dtoModelWriter.WriteLine("_logger.Warn(\"Truncate {0} value from ---\" + this.Identifier + \"--- to {1} characters.\");", 
+                    mappingProperty.propertyName, mappingProperty.dataLength);
+                  _dtoModelWriter.WriteLine("this.Identifier = this.Identifier.Substring(0, {0});", mappingProperty.dataLength);
+                  _dtoModelWriter.Indent--;
+                  _dtoModelWriter.WriteLine("}");                  
+                  _dtoModelWriter.WriteLine();
+                }
+
+                _dtoModelWriter.WriteLine("(({0})_dataObject).{1} = Convert.To{2}(this.Identifier);", qualifiedDataObjectName, mappingProperty.propertyName, mappingProperty.dataType);
               }
             }
 
             _dtoModelWriter.Indent--;
             _dtoModelWriter.WriteLine("}");
 
-            foreach (MappingProperty mappingProperty in _extendedDataProperties)
+            foreach (MappingProperty mappingProperty in _mappingProperties)
             {
               if (!mappingProperty.isPropertyKey && !String.IsNullOrEmpty(mappingProperty.propertyName))
               {
+                if (mappingProperty.dataType.ToLower() == "string" && !String.IsNullOrEmpty(mappingProperty.dataLength))
+                {
+                  _dtoModelWriter.WriteLine();
+                  _dtoModelWriter.WriteLine("if (this.{0}.Length > {1})", mappingProperty.propertyPath, mappingProperty.dataLength);
+                  _dtoModelWriter.WriteLine("{");
+                  _dtoModelWriter.Indent++;
+                  _dtoModelWriter.WriteLine("_logger.Warn(\"Truncate {0} value from ---\" + this.{1} + \"--- to {2} characters.\");",
+                    mappingProperty.propertyName, mappingProperty.propertyPath, mappingProperty.dataLength);
+                  _dtoModelWriter.WriteLine("this.{0} = this.{0}.Substring(0, {1});", mappingProperty.propertyPath, mappingProperty.dataLength);
+                  _dtoModelWriter.Indent--;
+                  _dtoModelWriter.WriteLine("}");
+                  _dtoModelWriter.WriteLine();
+                }
+
                 _dtoModelWriter.WriteLine("(({0})_dataObject).{1} = Convert.To{2}(this.{3});",
                   qualifiedDataObjectName, mappingProperty.propertyName, mappingProperty.dataType, mappingProperty.propertyPath);
               }
@@ -582,49 +648,44 @@ namespace org.iringtools.adapter
           {
             string qualifiedDataObjectName = GetQualifiedDataObjectName(dataObjectMap.name);
 
-            if (!String.IsNullOrEmpty(dataObjectMap.outFilter))
+            //TODO: handle multi-column key
+            List<string> keys = GetKeys(dataObjectMap.name);
+            if (keys.Count > 0)
             {
-              string outFilter = dataObjectMap.outFilter.Substring(dataObjectMap.outFilter.IndexOf("_") + 1);
-              string[] idList = graphMap.identifier.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-              string identifiers = dataObjectMap.name + "List.Id";
+              string identifier = keys[0];
 
-              //string identifiers = String.Empty;			
-              //foreach (string id in idList)
-              //{
-              //	if (identifiers != String.Empty)
-              //	{
-              //		identifiers += " + ";
-              //	}				
-              //	identifiers += dataObjectMap.name + "List." + id.Trim();
-              //}
+              if (!String.IsNullOrEmpty(dataObjectMap.outFilter))
+              {
+                string outFilter = dataObjectMap.outFilter.Substring(dataObjectMap.outFilter.IndexOf("_") + 1);
 
-              dtoServiceWriter.WriteLine(
-          @"var {0}{1}DO = 
+                dtoServiceWriter.WriteLine(
+            @"var {0}{1}DO = 
             (from {1}List in _dataLayer.GetList<{2}>()
-             where {3} == identifier && {1}List.{4}  // outFilter
+             where {1}.{3} == identifier && {1}List.{4}  // outFilter
              select {1}List).FirstOrDefault<{2}>();
 
           if ({0}{1}DO != default({2}))
           {{
             dto = new {0}({0}{1}DO);
-            dto.Identifier = {0}{1}DO.Id;
-          }}", graphMap.name, dataObjectMap.name, qualifiedDataObjectName, identifiers, outFilter);
+            dto.Identifier = {0}{1}DO.{3};
+          }}", graphMap.name, dataObjectMap.name, qualifiedDataObjectName, identifier, outFilter);
 
-            }
-            else
-            {
-              dtoServiceWriter.WriteLine(
-          @"var {0}{1}DO = 
+              }
+              else
+              {
+                dtoServiceWriter.WriteLine(
+            @"var {0}{1}DO = 
             (from {0}List in _dataLayer.GetList<{2}>()
-             where {0}List.Id == identifier
+             where {0}List.{3} == identifier
              select {0}List).FirstOrDefault<{2}>();   
         
           if ({0}{1}DO != default({2}))
           {{                        
             dto = new {1}({0}{1}DO);
-            dto.Identifier = {0}{1}DO.Id;
+            dto.Identifier = {0}{1}DO.{3};
             break; 
-          }}", dataObjectMap.name, graphMap.name, qualifiedDataObjectName);
+          }}", dataObjectMap.name, graphMap.name, qualifiedDataObjectName, identifier);
+              }
             }
           }
 
@@ -660,12 +721,18 @@ namespace org.iringtools.adapter
           {
             string qualifiedDataObjectName = GetQualifiedDataObjectName(dataObjectMap.name);
 
-            if (!String.IsNullOrEmpty(dataObjectMap.outFilter))
+            //TODO: handle muti-column key
+            List<string> keys = GetKeys(dataObjectMap.name);
+            if (keys.Count > 0)
             {
-              String outFilter = dataObjectMap.outFilter.Substring(dataObjectMap.outFilter.IndexOf("_") + 1);
+              string identifier = keys[0];
 
-              dtoServiceWriter.WriteLine(
-          @"var {0}{1}DOList = 
+              if (!String.IsNullOrEmpty(dataObjectMap.outFilter))
+              {
+                String outFilter = dataObjectMap.outFilter.Substring(dataObjectMap.outFilter.IndexOf("_") + 1);
+
+                dtoServiceWriter.WriteLine(
+            @"var {0}{1}DOList = 
             from {1}List in _dataLayer.GetList<{2}>()
             where {1}List.{3}  // outFilter
             select {1}List;
@@ -673,23 +740,24 @@ namespace org.iringtools.adapter
           foreach (var {0}DO in {0}{1}DOList)
           {{   					
             {0} dto = new {0}({0}DO);
-            dto.Identifier = {0}DO.Id;
+            dto.Identifier = {0}DO.{4};
             dtoList.Add(dto);
-          }}", graphMap.name, dataObjectMap.name, qualifiedDataObjectName, outFilter);
-            }
-            else
-            {
-              dtoServiceWriter.WriteLine(
-          @"var {0}{1}DOList = 
+          }}", graphMap.name, dataObjectMap.name, qualifiedDataObjectName, outFilter, identifier);
+              }
+              else
+              {
+                dtoServiceWriter.WriteLine(
+            @"var {0}{1}DOList = 
             from {1}List in _dataLayer.GetList<{2}>()
             select {1}List;  
     
           foreach (var {1}DO in {0}{1}DOList)
           {{   					
             {3} dto = new {3}({1}DO);
-            dto.Identifier = {1}DO.Id;
+            dto.Identifier = {1}DO.{4};
             dtoList.Add(dto);
-          }}", graphMap.name, dataObjectMap.name, qualifiedDataObjectName, graphMap.name);
+          }}", graphMap.name, dataObjectMap.name, qualifiedDataObjectName, graphMap.name, identifier);
+              }
             }
           }
 
@@ -726,36 +794,43 @@ namespace org.iringtools.adapter
           {
             string qualifiedDataObjectName = GetQualifiedDataObjectName(dataObjectMap.name);
 
-            if (!String.IsNullOrEmpty(dataObjectMap.outFilter))
+            //TODO: handle muti-column key
+            List<string> keys = GetKeys(dataObjectMap.name);
+            if (keys.Count > 0)
             {
-              String outFilter = dataObjectMap.outFilter.Substring(dataObjectMap.outFilter.IndexOf("_") + 1);
+              string identifier = keys[0];
 
-              dtoServiceWriter.WriteLine(
-          @"var {0}{1}DOList = 
+              if (!String.IsNullOrEmpty(dataObjectMap.outFilter))
+              {
+                String outFilter = dataObjectMap.outFilter.Substring(dataObjectMap.outFilter.IndexOf("_") + 1);
+
+                dtoServiceWriter.WriteLine(
+            @"var {0}{1}DOList = 
             from {1}List in _dataLayer.GetList<{2}>()
             where {1}List.{3}  // outFilter
             select {1}List;
     
           foreach (var {0}DO in {0}{1}DOList)
           {{   
-            string identifier = {0}DO.Id;
+            string identifier = {0}DO.{4};
             identifierUriPairs.Add(identifier, endpoint + ""/"" + graphName + ""/"" + identifier);            
           }}",
-          graphMap.name, dataObjectMap.name, qualifiedDataObjectName, outFilter);
-            }
-            else
-            {
-              dtoServiceWriter.WriteLine(
-          @"var {0}{1}DOList = 
+            graphMap.name, dataObjectMap.name, qualifiedDataObjectName, outFilter, identifier);
+              }
+              else
+              {
+                dtoServiceWriter.WriteLine(
+            @"var {0}{1}DOList = 
             from {1}List in _dataLayer.GetList<{2}>()
             select {1}List;  
 
           foreach (var {1}DO in {0}{1}DOList)
           {{
-            string identifier = {1}DO.Id;
+            string identifier = {1}DO.{3};
             identifierUriPairs.Add(identifier, endpoint + ""/"" + graphName + ""/"" + identifier);  
           }}",
-          graphMap.name, dataObjectMap.name, qualifiedDataObjectName);
+            graphMap.name, dataObjectMap.name, qualifiedDataObjectName, identifier);
+              }
             }
           }
 
@@ -1185,9 +1260,27 @@ namespace org.iringtools.adapter
       }
     }
 
-    private string NameSafe(string name)
+    private List<string> GetKeys(string dataObjectName)
     {
-      return Regex.Replace(name, @"^\d*|\W", "");
+      List<string> keys = new List<string>();
+
+      foreach (DataObject dataObject in _dataDictionary.dataObjects)
+      {
+        if (dataObject.objectName.ToUpper() == dataObjectName.ToUpper())
+        {
+          foreach (DataProperty dataProperty in dataObject.dataProperties)
+          {
+            if (dataProperty.isPropertyKey)
+            {
+              keys.Add(dataProperty.propertyName);
+            }
+          }
+
+          break;
+        }
+      }
+
+      return keys;
     }
 
     private DataObject GetDataObject(string dataObjectMapName)
@@ -1234,7 +1327,7 @@ namespace org.iringtools.adapter
 
     private bool ContainsDataProperty(string propertyPath)
     {
-      foreach (MappingProperty mappingProperty in _extendedDataProperties)
+      foreach (MappingProperty mappingProperty in _mappingProperties)
       {
         if (mappingProperty.propertyPath == propertyPath)
         {
@@ -1247,7 +1340,7 @@ namespace org.iringtools.adapter
 
     private void ProcessGraphMap(GraphMap graphMap)
     {
-      _extendedDataProperties.Clear();
+      _mappingProperties.Clear();
       _initStatements.Clear();
 
       foreach (TemplateMap templateMap in graphMap.templateMaps)
@@ -1265,12 +1358,12 @@ namespace org.iringtools.adapter
     {
       List<string> templateClassPropertyList = new List<string>();
 
-      templateMap.name = NameSafe(templateMap.name) + templateMapNames.Count;
+      templateMap.name = Utility.NameSafe(templateMap.name) + templateMapNames.Count;
       templateMapNames.Add(templateMap.name);
         
       foreach (RoleMap roleMap in templateMap.roleMaps)
       {
-        roleMap.name = NameSafe(roleMap.name);
+        roleMap.name = Utility.NameSafe(roleMap.name);
 
         if (templateMap.type == TemplateType.Property)
         {
@@ -1284,7 +1377,7 @@ namespace org.iringtools.adapter
           }
           else if (roleMap.classMap.templateMaps != null && roleMap.classMap.templateMaps.Count > 0)
           {
-            roleMap.classMap.name = NameSafe(roleMap.classMap.name);
+            roleMap.classMap.name = Utility.NameSafe(roleMap.classMap.name);
 
             if (_classPath == string.Empty)  // classMap is graphMap
             {
@@ -1365,9 +1458,10 @@ namespace org.iringtools.adapter
               {
                 mappingProperty.propertyName = dataProperty.propertyName;
                 mappingProperty.dataType = dataProperty.dataType;
+                mappingProperty.dataLength = dataProperty.dataLength;
                 mappingProperty.isPropertyKey = dataProperty.isPropertyKey;
                 mappingProperty.isRequired = dataProperty.isRequired;
-                mappingProperty.mappingDataType = String.IsNullOrEmpty(roleMap.dataType) ? dataProperty.dataType : Utility.ToCSharpType(roleMap.dataType);
+                mappingProperty.mappingDataType = String.IsNullOrEmpty(roleMap.dataType) ? dataProperty.dataType : Utility.XsdTypeToCSharpType(roleMap.dataType);
               }
               else if (!String.IsNullOrEmpty(roleMap.reference))
               {
@@ -1383,12 +1477,12 @@ namespace org.iringtools.adapter
                 }
 
                 mappingProperty.value = "<" + reference + ">";
-                mappingProperty.mappingDataType = String.IsNullOrEmpty(roleMap.dataType) ? "String" : Utility.ToCSharpType(roleMap.dataType);
+                mappingProperty.mappingDataType = String.IsNullOrEmpty(roleMap.dataType) ? "String" : Utility.XsdTypeToCSharpType(roleMap.dataType);
               }
               else if (!String.IsNullOrEmpty(roleMap.value))
               {
                 mappingProperty.value = roleMap.value;
-                mappingProperty.mappingDataType = String.IsNullOrEmpty(roleMap.dataType) ? "String" : Utility.ToCSharpType(roleMap.dataType);
+                mappingProperty.mappingDataType = String.IsNullOrEmpty(roleMap.dataType) ? "String" : Utility.XsdTypeToCSharpType(roleMap.dataType);
               }
 
               if (_templatePath == String.Empty)
@@ -1404,12 +1498,12 @@ namespace org.iringtools.adapter
 
               if (ContainsDataProperty(mappingProperty.propertyPath))
               {
-                mappingProperty.propertyPath += _extendedDataProperties.Count;
-                mappingProperty.dtoPropertyPath += _extendedDataProperties.Count;
+                mappingProperty.propertyPath += _mappingProperties.Count;
+                mappingProperty.dtoPropertyPath += _mappingProperties.Count;
               }
 
               mappingProperty.isDataMember = isDataMember;
-              _extendedDataProperties.Add(mappingProperty);
+              _mappingProperties.Add(mappingProperty);
 
               if (!isDataMember)
               {
@@ -1419,7 +1513,7 @@ namespace org.iringtools.adapter
                 }
                 else
                 {
-                  _initStatements.Add(_dataContractPath + ".tpl_" + templateName + "_tpl_" + roleMap.name + " = Convert.To" + Utility.ToCSharpType(mappingProperty.mappingDataType) + "(" + mappingProperty.propertyPath + ");");
+                  _initStatements.Add(_dataContractPath + ".tpl_" + templateName + "_tpl_" + roleMap.name + " = Convert.To" + Utility.XsdTypeToCSharpType(mappingProperty.mappingDataType) + "(" + mappingProperty.propertyPath + ");");
                 }
 
                 _dtoModelWriter.WriteLine();

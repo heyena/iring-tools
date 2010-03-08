@@ -45,6 +45,7 @@ using org.iringtools.adapter.dataLayer;
 using log4net;
 using System.ServiceModel;
 using System.Data.SqlClient;
+using NHibernate;
 
 namespace org.iringtools.adapter
 {
@@ -1182,6 +1183,58 @@ namespace org.iringtools.adapter
         throw exception;
       }
     }
+
+    private bool Validate(DatabaseDictionary dbDictionary)
+    {
+      ISession session = null;
+
+      try
+      {
+        // Validate connection string
+        string connectionString = dbDictionary.connectionString;
+        NHibernate.Cfg.Configuration config = new NHibernate.Cfg.Configuration();
+        Dictionary<string, string> properties = new Dictionary<string, string>();
+
+        properties.Add("connection.provider", "NHibernate.Connection.DriverConnectionProvider");
+        properties.Add("connection.connection_string", dbDictionary.connectionString);
+        properties.Add("proxyfactory.factory_class", "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle");
+        properties.Add("dialect", "NHibernate.Dialect." + dbDictionary.provider + "Dialect");
+
+        if (dbDictionary.connectionString.ToUpper().Contains("ORACLE"))
+        {
+          properties.Add("connection.driver_class", "NHibernate.Driver.OracleClientDriver");
+        }
+        else if (dbDictionary.connectionString.ToUpper().Contains("MSSQL"))
+        {
+          properties.Add("connection.driver_class", "NHibernate.Driver.SqlClientDriver");
+        }
+
+        config.AddProperties(properties);
+        ISessionFactory factory = config.BuildSessionFactory();
+
+        session = factory.OpenSession();
+      }
+      catch (Exception ex)
+      {
+        throw new Exception("Invalid connection string: " + ex.Message);
+      }
+      finally
+      {
+        if (session != null) session.Close();
+      }
+
+      // Validate table key
+      foreach (Table table in dbDictionary.tables)
+      {
+        if (table.keys == null || table.keys.Count == 0)
+        {
+          throw new Exception("Table \"" + table.tableName + "\" has no key.");
+        }
+      }
+
+      return true;
+    }
+
     /// <summary>
     /// Generate entities, hibernate-mapping, hibernate-configuration, and data dictionary for the application
     /// </summary>
@@ -1196,7 +1249,7 @@ namespace org.iringtools.adapter
         {
           response.Add("Error project name and application name can not be null");
         }
-        else
+        else if (Validate(dbDictionary))
         {
           EntityGenerator generator = _kernel.Get<EntityGenerator>();
           response = generator.Generate(dbDictionary, projectName, applicationName);

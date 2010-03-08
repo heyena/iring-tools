@@ -33,46 +33,52 @@ namespace org.iringtools.library
   [DataContract(Namespace = "http://ns.iringtools.org/library")]
   public class DatabaseDictionary
   {
-    [DataMember(IsRequired = true)]
-    public Provider provider { get; set; }
-
-    [DataMember(IsRequired = true)]
+    [DataMember(IsRequired = true, Order = 1)]
     public string connectionString { get; set; }
 
-    [DataMember]
+    [DataMember(IsRequired = true, Order = 2)]
+    public Provider provider { get; set; }
+
+    [DataMember(Order = 3)]
     public List<Table> tables { get; set; }
   }
 
   [DataContract(Namespace = "http://ns.iringtools.org/library")]
   public class Table
   {
-    [DataMember(IsRequired = true)]
+    [DataMember(IsRequired = true, Order = 1)]
     public string tableName { get; set; }
 
-    [DataMember]
+    [DataMember(Order = 2)]
     public string entityName { get; set; }
 
-    [DataMember(IsRequired = true)]
+    [DataMember(IsRequired = true, Order = 3)]
     public List<Key> keys { get; set; }
 
-    [DataMember]
+    [DataMember(Order = 4)]
     public List<Column> columns { get; set; }
 
-    [DataMember]
+    [DataMember(Order = 5)]
     public List<Association> associations { get; set; }
   }
 
   [DataContract(Namespace = "http://ns.iringtools.org/library")]
   public class Column
   {
-    [DataMember(IsRequired = true)]
+    [DataMember(IsRequired = true, Order = 1)]
     public string columnName { get; set; }
 
-    [DataMember]
+    [DataMember(Order = 2)]
     public string propertyName { get; set; }
 
-    [DataMember(IsRequired = true)]
-    public ColumnType columnType { get; set; }
+    [DataMember(IsRequired = true, Order = 3)]
+    public DataType dataType { get; set; }
+
+    [DataMember(IsRequired = true, Order = 4)]
+    public int dataLength { get; set; }
+    
+    [DataMember(IsRequired = true, Order = 5)]
+    public bool isNullable { get; set; }
   }
 
   [DataContract(Namespace = "http://ns.iringtools.org/library")]
@@ -159,7 +165,7 @@ namespace org.iringtools.library
   }
 
   [DataContract(Namespace = "http://ns.iringtools.org/library")]
-  public enum ColumnType
+  public enum DataType
   {
     [EnumMember]
     @Boolean,
@@ -170,6 +176,8 @@ namespace org.iringtools.library
     [EnumMember]
     @DateTime,
     [EnumMember]
+    @Decimal,
+    [EnumMember]
     @Double,
     [EnumMember]
     @Int16,
@@ -178,10 +186,8 @@ namespace org.iringtools.library
     [EnumMember]
     @Int64,
     [EnumMember]
-    @Object,
+    @Single,
     [EnumMember]
     @String,
-    [EnumMember]
-    @TimeSpan
   }
 }
