@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ContextProfile JobNumber="12345" SubJobNumber="000" DataSource="darius" UserID="SPPIDADAP_12345" Password="ENCRYPTED=101v1I1s1w1C110a1Z1q0z1j1t1F17" ApplicationCodeName="SPPID" Application="SPPID" AppDisplayName="SmartPlant P&amp;ID Adapter" GatewayProgID="SPPID_DBKR.Gateway" RecvProgID="SPPIDRecvSrvr.Recv" BridgeProgID="BechSPPIDBridge.Bridge" DateFormat="MM/DD/YYYY HH12:MI:SS AM" SPDateFormat="MM/DD/YYYY HH12:MI:SS AM">
+  <Send DataPath="C:\PROGRA~1\Bechtel\12345\SPPIDA~1\Send" LogPath="C:\PROGRA~1\Bechtel\12345\SPPIDA~1\LogFiles" ProgPath="C:\PROGRA~1\Bechtel\12345\SPPIDA~1\Send" RulesPath="C:\PROGRA~1\Bechtel\12345\SPPIDA~1\Send" PollInterval="0.5" DebugMessages="no">
+    <UserDefined>
+      <EMPTY />
+    </UserDefined>
+  </Send>
+  <AdapConfig ArchiveTablePrefix="ARC_" ArchiveLimit="5" />
+  <QueueMgr HistoryLimitDays="7" PartitionValueTag="DrawingNumber" />
+  <SPPID SPProjectNumber="DKPlant" SPSiteNode="\\frel18090\SPPIDSites\Plant1\smartplantv4.ini" DebugMessages="1" DebugFile="c:\SPPIDAdap\debug.txt" AdapterDrawing="zzAdapter" SkipEquipComponents="yes" SkipHiddenAttributes="none" CodelistAttrLength="80" UpdateOpenDrawings="no">
+    <ExposeStockpile Equipment="None" Instrument="None" PipeRun="None" PipingComp="None" />
+    <FromTo IncludeNozzleID="no" OverrideAttributeFrom="b_TagFrom" OverrideAttributeTo="b_TagTo" ProgID="BechSPPIDBridge.FromTo" ListDelimiter="|" />
+    <MaxDuplicates Equipment="1" Instrument="1" PipeRun="50" PipingComp="1" />
+    <UseCaseAttributes Equipment="yes" Instrument="yes" PipeRun="yes" PipingComp="yes" Associated_PipeRun="no" />
+  </SPPID>
+</ContextProfile>
