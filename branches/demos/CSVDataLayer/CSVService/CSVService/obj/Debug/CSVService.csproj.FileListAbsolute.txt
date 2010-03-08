@@ -1,0 +1,6 @@
+C:\iring-tools-1.2\Utilities\CSVService\CSVService\bin\CSVService.dll
+C:\iring-tools-1.2\Utilities\CSVService\CSVService\bin\CSVService.pdb
+C:\iring-tools-1.2\Utilities\CSVService\CSVService\obj\Debug\ResolveAssemblyReference.cache
+C:\iring-tools-1.2\Utilities\CSVService\CSVService\obj\Debug\CSVService.dll
+C:\iring-tools-1.2\Utilities\CSVService\CSVService\obj\Debug\CSVService.pdb
+C:\iring-tools-1.2\Utilities\CSVService\CSVService\bin\UtilityLibrary.dll
