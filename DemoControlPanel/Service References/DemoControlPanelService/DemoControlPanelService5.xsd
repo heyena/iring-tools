@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/DemoControlPanel.Web" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/DemoControlPanel.Web" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://localhost:2513/DemoControlPanelService.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/org.iringtools.utility" />
+  <xs:complexType name="ConfiguredEndpoints">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="adapterEndpoints" nillable="true" type="tns:iRINGEndpoints" />
+      <xs:element minOccurs="0" name="interfaceEndpoints" nillable="true" type="tns:iRINGEndpoints" />
+      <xs:element minOccurs="0" name="scenarios" nillable="true" type="tns:Scenarios" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ConfiguredEndpoints" nillable="true" type="tns:ConfiguredEndpoints" />
+  <xs:complexType name="iRINGEndpoints">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="iRINGEndpoint" nillable="true" type="tns:iRINGEndpoint" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="iRINGEndpoints" nillable="true" type="tns:iRINGEndpoints" />
+  <xs:complexType name="iRINGEndpoint">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ApplicationName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ProjectName" nillable="true" type="xs:string" />
+      <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/org.iringtools.utility" minOccurs="0" name="credentials" nillable="true" type="q1:WebCredentials" />
+      <xs:element minOccurs="0" name="id" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="serviceUri" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="iRINGEndpoint" nillable="true" type="tns:iRINGEndpoint" />
+  <xs:complexType name="Scenarios">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Scenario" nillable="true" type="tns:Scenario" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Scenarios" nillable="true" type="tns:Scenarios" />
+  <xs:complexType name="Scenario">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="exportEnabled" type="xs:boolean" />
+      <xs:element minOccurs="0" name="importEnabled" type="xs:boolean" />
+      <xs:element minOccurs="0" name="interfaceServiceId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="receiver" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="receiverAdapterServiceId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="receiverApplicationName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="receiverGraphName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="receiverProjectName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="scenarioName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="sender" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="senderAdapterServiceId" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="senderApplicationName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="senderGraphName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="senderProjectName" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Scenario" nillable="true" type="tns:Scenario" />
+</xs:schema>
