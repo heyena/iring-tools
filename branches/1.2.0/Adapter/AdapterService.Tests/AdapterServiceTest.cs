@@ -25,12 +25,12 @@ namespace AdapterService.Tests
     public void UpdateDatabaseDictionaryTest_ABC()
     {
 
-      string bindingConfigPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.xml";
-      string bindingConfigTestPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.Test.xml";
-      string nhMappingPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\nh-mapping.12345_000.ABC.xml";
-      string nhMappingTestPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\nh-mapping.12345_000.ABC.Test.xml";
+      string bindingConfigPath = @"C:\iring-tools-120\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.xml";
+      string bindingConfigTestPath = @"C:\iring-tools-120\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.Test.xml";
+      string nhMappingPath = @"C:\iring-tools-120\Adapter\AdapterService.Tests\XML\nh-mapping.12345_000.ABC.xml";
+      string nhMappingTestPath = @"C:\iring-tools-120\Adapter\AdapterService.Tests\XML\nh-mapping.12345_000.ABC.Test.xml";
 
-      string dbDictionaryPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\DatabaseDictionary.12345_000.ABC.xml";
+      string dbDictionaryPath = @"C:\iring-tools-120\Adapter\AdapterService.Tests\XML\DatabaseDictionary.12345_000.ABC.xml";
 
       AdapterProxy target = new AdapterProxy();
       DatabaseDictionary databaseDictionary = Utility.Read<DatabaseDictionary>(dbDictionaryPath);
@@ -44,8 +44,8 @@ namespace AdapterService.Tests
     [TestMethod()]
     public void GenerateTest_ABC()
     {
-      string bindingConfigPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.xml";
-      string bindingConfigTestPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.Test.xml";
+      string bindingConfigPath = @"C:\iring-tools-120\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.xml";
+      string bindingConfigTestPath = @"C:\iring-tools-120\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.Test.xml";
 
       AdapterProxy target = new AdapterProxy();
       Response actual = target.Generate("12345_000", "ABC");
