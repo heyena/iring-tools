@@ -6,6 +6,7 @@ using System.ServiceModel;
 using System.Text;
 using System.Configuration;
 using org.iringtools.utility;
+using System.ServiceModel.Web;
 
 namespace CSVService
 {
@@ -18,6 +19,7 @@ namespace CSVService
         string path = ConfigurationManager.AppSettings["targetLocation"];
         Utility.WriteString(content, path + fileName);
 
+        WebOperationContext.Current.OutgoingResponse.ContentType = "text/html";
         return "File \"" + path + fileName + "\" has been saved successfully.";
       }
       catch (Exception ex)
