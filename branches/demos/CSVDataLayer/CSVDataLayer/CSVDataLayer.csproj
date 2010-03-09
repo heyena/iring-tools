@@ -68,17 +68,17 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="BindingConfiguration.12345_000.API.xml" />
-    <Content Include="Commodities\Equipment.xml" />
-    <Content Include="Commodities\Instrument.xml" />
-    <Content Include="Commodities\PipeRun.xml" />
-    <Content Include="Commodities\PipingCompDTO.xml" />
+    <Content Include="Commodities\Equipment.12345_000.API.xml" />
+    <Content Include="Commodities\Instrument.12345_000.API.xml" />
+    <Content Include="Commodities\PipeRun.12345_000.API.xml" />
+    <Content Include="Commodities\PipingComp.12345_000.API.xml" />
     <Content Include="DataDictionary.12345_000.API.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Commodities\Equipment\" />
     <Folder Include="Commodities\Instrument\" />
     <Folder Include="Commodities\PipeRun\" />
-    <Folder Include="Commodities\PipingCompDTO\" />
+    <Folder Include="Commodities\PipingComp\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
