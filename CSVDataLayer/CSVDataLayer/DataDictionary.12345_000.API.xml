@@ -1,4 +1,4 @@
-<DataDictionary xmlns="http://ns.iringtools.org/library" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+<DataDictionary xmlns="http://ns.iringtools.org/library" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">  
   <dataObjects>
     <DataObject>
       <dataProperties>
@@ -7,40 +7,61 @@
           <dataType>String</dataType>
           <isPropertyKey>true</isPropertyKey>
           <isRequired>true</isRequired>
-          <propertyName>ItemTag</propertyName>
+          <propertyName>Tag</propertyName>
         </DataProperty>
         <DataProperty>
           <dataLength i:nil="true"/>
           <dataType>String</dataType>
           <isPropertyKey>false</isPropertyKey>
           <isRequired>false</isRequired>
-          <propertyName>Description</propertyName>
+          <propertyName>PumpType</propertyName>
         </DataProperty>
         <DataProperty>
           <dataLength i:nil="true"/>
           <dataType>String</dataType>
           <isPropertyKey>false</isPropertyKey>
           <isRequired>false</isRequired>
-          <propertyName>InsulType</propertyName>
+          <propertyName>PumpDriverType</propertyName>
         </DataProperty>
         <DataProperty>
           <dataLength i:nil="true"/>
-          <dataType>String</dataType>
+          <dataType>Double</dataType>
           <isPropertyKey>false</isPropertyKey>
           <isRequired>false</isRequired>
-          <propertyName>InsulPurpose</propertyName>
+          <propertyName>DesignTemp</propertyName>
         </DataProperty>
         <DataProperty>
           <dataLength i:nil="true"/>
-          <dataType>String</dataType>
+          <dataType>Double</dataType>
           <isPropertyKey>false</isPropertyKey>
           <isRequired>false</isRequired>
-          <propertyName>InsulThick</propertyName>
+          <propertyName>DesignPressure</propertyName>
+        </DataProperty>
+        <DataProperty>
+          <dataLength i:nil="true"/>
+          <dataType>Double</dataType>
+          <isPropertyKey>false</isPropertyKey>
+          <isRequired>false</isRequired>
+          <propertyName>Capacity</propertyName>
+        </DataProperty>
+        <DataProperty>
+          <dataLength i:nil="true"/>
+          <dataType>Double</dataType>
+          <isPropertyKey>false</isPropertyKey>
+          <isRequired>false</isRequired>
+          <propertyName>SpecificGravity</propertyName>
+        </DataProperty>
+        <DataProperty>
+          <dataLength i:nil="true"/>
+          <dataType>Double</dataType>
+          <isPropertyKey>false</isPropertyKey>
+          <isRequired>false</isRequired>
+          <propertyName>DifferentialPressure</propertyName>
         </DataProperty>
       </dataProperties>
       <dataRelationships i:nil="true"/>
       <objectName>Equipment</objectName>
-      <objectNamespace>Bechtel.IntergraphDataLayer.SPPID</objectNamespace>
+      <objectNamespace>Bechtel.CSVDataLayer.API</objectNamespace>
     </DataObject>
     <DataObject>
       <dataProperties>
@@ -49,11 +70,11 @@
           <dataType>String</dataType>
           <isPropertyKey>true</isPropertyKey>
           <isRequired>true</isRequired>
-          <propertyName>ItemTag</propertyName>
+          <propertyName>Tag</propertyName>
         </DataProperty>
         <DataProperty>
           <dataLength i:nil="true"/>
-          <dataType>String</dataType>
+          <dataType>Double</dataType>
           <isPropertyKey>false</isPropertyKey>
           <isRequired>false</isRequired>
           <propertyName>NominalDiameter</propertyName>
@@ -89,7 +110,7 @@
       </dataProperties>
       <dataRelationships i:nil="true"/>
       <objectName>Instrument</objectName>
-      <objectNamespace>Bechtel.IntergraphDataLayer.SPPID</objectNamespace>
+      <objectNamespace>Bechtel.CSVDataLayer.API</objectNamespace>
     </DataObject>
     <DataObject>
       <dataProperties>
@@ -98,14 +119,21 @@
           <dataType>String</dataType>
           <isPropertyKey>true</isPropertyKey>
           <isRequired>true</isRequired>
-          <propertyName>ItemTag</propertyName>
+          <propertyName>Tag</propertyName>
+        </DataProperty>
+        <DataProperty>
+          <dataLength i:nil="true"/>
+          <dataType>Double</dataType>
+          <isPropertyKey>false</isPropertyKey>
+          <isRequired>false</isRequired>
+          <propertyName>NominalDiameter</propertyName>
         </DataProperty>
         <DataProperty>
           <dataLength i:nil="true"/>
           <dataType>String</dataType>
           <isPropertyKey>false</isPropertyKey>
           <isRequired>false</isRequired>
-          <propertyName>NominalDiameter</propertyName>
+          <propertyName>Description</propertyName>
         </DataProperty>
         <DataProperty>
           <dataLength i:nil="true"/>
@@ -145,7 +173,7 @@
       </dataProperties>
       <dataRelationships i:nil="true"/>
       <objectName>PipeRun</objectName>
-      <objectNamespace>Bechtel.IntergraphDataLayer.SPPID</objectNamespace>
+      <objectNamespace>Bechtel.CSVDataLayer.API</objectNamespace>
     </DataObject>
     <DataObject>
       <dataProperties>
@@ -154,11 +182,11 @@
           <dataType>String</dataType>
           <isPropertyKey>true</isPropertyKey>
           <isRequired>true</isRequired>
-          <propertyName>ItemTag</propertyName>
+          <propertyName>Tag</propertyName>
         </DataProperty>
         <DataProperty>
           <dataLength i:nil="true"/>
-          <dataType>String</dataType>
+          <dataType>Double</dataType>
           <isPropertyKey>false</isPropertyKey>
           <isRequired>false</isRequired>
           <propertyName>NominalDiameter</propertyName>
@@ -194,7 +222,7 @@
       </dataProperties>
       <dataRelationships i:nil="true"/>
       <objectName>PipingComp</objectName>
-      <objectNamespace>Bechtel.IntergraphDataLayer.SPPID</objectNamespace>
+      <objectNamespace>Bechtel.CSVDataLayer.API</objectNamespace>
     </DataObject>
   </dataObjects>
 </DataDictionary>
