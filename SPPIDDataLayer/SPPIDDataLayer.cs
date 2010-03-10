@@ -83,7 +83,7 @@ namespace Bechtel.SPPIDDataLayer
           numberOfRecords += IntergraphPost(graph);
         }
 
-        response.Add(numberOfRecords + "records of type " + typeof(T).Name + " have been updated successfully");
+        response.Add(numberOfRecords + " records of type " + typeof(T).Name + " have been updated successfully");
 
         return response;
       }
@@ -116,12 +116,15 @@ namespace Bechtel.SPPIDDataLayer
 
     private int IntergraphPost(object graph)
     {
+      string updatesXml = String.Empty;
+      string keysXml = String.Empty;
+
       try
       {
         SPPIDObject obj = (SPPIDObject)graph;
         string commodityName = obj.CommodityName;
-        string updatesXml = obj.GetUpdatesXml();
-        string keysXml = obj.GetKeysXml();
+        updatesXml = obj.GetUpdatesXml();
+        keysXml = obj.GetKeysXml();
 
         int errorCode = 0;
         string errorMsg = string.Empty;
@@ -130,15 +133,24 @@ namespace Bechtel.SPPIDDataLayer
         string optionsXml = doc.InnerXml;
         BechSPPIDBridge.Bridge bridgeClass = new BechSPPIDBridge.Bridge();
         bridgeClass.init(optionsXml, ref errorCode, ref errorMsg);
-        int recordsUpdated = bridgeClass.updateAttributes(commodityName, keysXml, updatesXml, ref errorCode, ref errorMsg);
+
+        _logger.Info(String.Format("Init - errorCode:{0} errorMsg:{1}", errorCode, errorMsg));
+
+        int recordsUpdated = 0;
+        if (errorCode == 0)
+        {
+          recordsUpdated = bridgeClass.updateAttributes(commodityName, keysXml, updatesXml, ref errorCode, ref errorMsg);
+
+          _logger.Info(String.Format("UpdateAttributes - errorCode:{0} errorMsg:{1}", errorCode, errorMsg));
+        }
+
         return recordsUpdated;
       }
       catch (Exception ex)
       {
-        StreamWriter streamWriter = new StreamWriter(_settings.XmlPath + "Error.xml");
-        streamWriter.Write(ex.Message);
-        streamWriter.Flush();
-        streamWriter.Close();
+        if (keysXml != String.Empty) Utility.WriteString(keysXml, _settings.XmlPath + "Keys.xml");
+        if (updatesXml != String.Empty) Utility.WriteString(updatesXml, _settings.XmlPath + "Updates.xml");
+        _logger.Error(ex);
         throw ex;
       }
     }
