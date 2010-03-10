@@ -112,6 +112,8 @@ namespace DemoControlPanel
 
     private void clearComboBox(ComboBox combox)
     {
+      combox.IsEnabled = true;
+
       if (combox.ItemsSource != null)
       {
         combox.ItemsSource = null;
@@ -149,6 +151,9 @@ namespace DemoControlPanel
     {
       try
       {
+        cbxReceiverGraphName.Items.Clear();
+        cbxSenderGraphName.Items.Clear();
+
         this.Cursor = Cursors.Wait;
         cbxDemoScenarios.IsEnabled = false;
         cbxSenderGraphName.IsEnabled = false;
@@ -192,10 +197,10 @@ namespace DemoControlPanel
           tbSenderAppName.Text = scenario.senderApplicationName;
 
           tbSenderUri.Text = senderEndpoint.serviceUri;
-          tbReceiverUri.Text = receiverEndpoint.serviceUri; 
-
-          btnReceiverExport.IsEnabled = scenario.exportEnabled;
-          btnSenderImport.IsEnabled = scenario.importEnabled;
+          tbReceiverUri.Text = receiverEndpoint.serviceUri;
+          
+          //btnReceiverExport.IsEnabled = scenario.exportEnabled;
+          //btnSenderImport.IsEnabled = scenario.importEnabled;
 
           _client.GetReceiverManifestAsync(receiverEndpoint, scenario.receiverProjectName, scenario.receiverApplicationName);
           _client.GetSenderManifestAsync(senderEndpoint, scenario.senderProjectName, scenario.senderApplicationName);
@@ -267,10 +272,15 @@ namespace DemoControlPanel
         }
         else
         {
-          cbxReceiverGraphName.SelectedIndex = 0;
+          cbxReceiverGraphName.IsEnabled = false;
         }
 
-        cbxReceiverGraphName.SelectedIndex = 0;
+        if (cbxReceiverGraphName.Items.Contains(scenario.receiverGraphName))
+        {
+          cbxReceiverGraphName.SelectedItem = scenario.receiverGraphName;
+        }
+
+        //cbxReceiverGraphName.SelectedIndex = 0;
       }
       catch (Exception ex)
       {
@@ -307,7 +317,12 @@ namespace DemoControlPanel
         }
         else
         {
-          cbxSenderGraphName.SelectedIndex = 0;
+          cbxSenderGraphName.IsEnabled = false;
+        }
+
+        if (cbxSenderGraphName.Items.Contains(scenario.senderGraphName))
+        {
+          cbxSenderGraphName.SelectedItem = scenario.senderGraphName;
         }
 
       }
@@ -347,10 +362,10 @@ namespace DemoControlPanel
       finally
       {
         this.Cursor = Cursors.Arrow;
-        btnPull.IsEnabled = true;
+        //btnPull.IsEnabled = true;
         cbxAdapterServices.IsEnabled = true;
         cbxGraphs.IsEnabled = true;
-        cbInterfaceServices.IsEnabled = true;
+        //cbInterfaceServices.IsEnabled = true;
         btnReceiverPull.IsEnabled = true;
       }
     }
@@ -455,9 +470,9 @@ namespace DemoControlPanel
       finally
       {
         this.Cursor = Cursors.Arrow;
-        btnReset.IsEnabled = true;
-        btnSenderReset.IsEnabled = true;
-        btnReceiverReset.IsEnabled = true;
+        //btnReset.IsEnabled = true;
+        //btnSenderReset.IsEnabled = true;
+        //btnReceiverReset.IsEnabled = true;
       }
     }
 
@@ -623,7 +638,7 @@ namespace DemoControlPanel
       try
       {
         this.Cursor = Cursors.Wait;
-        btnSenderImport.IsEnabled = false;
+        //btnSenderImport.IsEnabled = false;
         iRINGEndpoint adapterEndpoint = null;
         Scenario scenario = (Scenario)cbxDemoScenarios.SelectedItem;
         foreach (iRINGEndpoint endpoint in _configEndpoints.adapterEndpoints)
@@ -650,7 +665,7 @@ namespace DemoControlPanel
         if (System.Windows.Browser.HtmlPage.Window.Confirm("Are you sure you want to reset data at sender's endpoint?"))
         {
           this.Cursor = Cursors.Wait;
-          btnSenderReset.IsEnabled = false;
+          //btnSenderReset.IsEnabled = false;
           iRINGEndpoint adapterEndpoint = null;
           Scenario scenario = (Scenario)cbxDemoScenarios.SelectedItem;
           foreach (iRINGEndpoint endpoint in _configEndpoints.adapterEndpoints)
@@ -696,10 +711,10 @@ namespace DemoControlPanel
           }
         }
                   
-        interfaceEndpoint.ProjectName = scenario.senderProjectName;
-        interfaceEndpoint.ApplicationName = scenario.senderApplicationName;
+        //interfaceEndpoint.ProjectName = scenario.senderProjectName;
+        //interfaceEndpoint.ApplicationName = scenario.senderApplicationName;
         string graphName = (string)cbxReceiverGraphName.SelectedItem;
-        _client.PullAsync(adapterEndpoint, interfaceEndpoint, scenario.receiverProjectName, scenario.receiverApplicationName, graphName);
+        _client.PullAsync(scenario, adapterEndpoint, interfaceEndpoint, graphName);
       }
       catch (Exception ex)
       {
@@ -712,7 +727,7 @@ namespace DemoControlPanel
       try
       {
         this.Cursor = Cursors.Wait;
-        btnReceiverExport.IsEnabled = false;
+        //btnReceiverExport.IsEnabled = false;
         iRINGEndpoint adapterEndpoint = null;
         Scenario scenario = (Scenario)cbxDemoScenarios.SelectedItem;
         foreach (iRINGEndpoint endpoint in _configEndpoints.adapterEndpoints)
@@ -738,7 +753,7 @@ namespace DemoControlPanel
         if (System.Windows.Browser.HtmlPage.Window.Confirm("Are you sure you want to reset data at sender's endpoint?"))
         {
           this.Cursor = Cursors.Wait;
-          btnReceiverReset.IsEnabled = false;
+          //btnReceiverReset.IsEnabled = false;
           iRINGEndpoint adapterEndpoint = null;
           Scenario scenario = (Scenario)cbxDemoScenarios.SelectedItem;
           foreach (iRINGEndpoint endpoint in _configEndpoints.adapterEndpoints)

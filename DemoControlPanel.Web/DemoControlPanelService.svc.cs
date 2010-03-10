@@ -109,7 +109,7 @@ namespace DemoControlPanel.Web
                 {
                     response.Add(manifestGraph.GraphName);
                 }
-                response.Add("All");
+                //response.Add("All");
             }
             catch (Exception ex)
             {
@@ -167,7 +167,7 @@ namespace DemoControlPanel.Web
 
         public Response Reset(iRINGEndpoint endpoint, string projectName, string applicationName)
         {
-            string relativeUri = String.Format("/{0}/{1}/reset", projectName, applicationName);
+            string relativeUri = String.Format("/{0}/{1}/clear", projectName, applicationName);
             Response response = new Response();
 
             string adapterServiceUri = endpoint.serviceUri;
@@ -188,9 +188,9 @@ namespace DemoControlPanel.Web
             return response;
         }
 
-        public Response Pull(iRINGEndpoint endpoint, iRINGEndpoint targetEnpoint, string projectName, string applicationName, string graphName)
+        public Response Pull(Scenario scenario, iRINGEndpoint endpoint, iRINGEndpoint targetEndpoint, string graphName)
         {
-            string relativeUri = String.Format("/{0}/{1}/pull", projectName, applicationName);
+            string relativeUri = String.Format("/{0}/{1}/pull", scenario.receiverProjectName, scenario.receiverApplicationName);
             
             Response response = new Response();
             try
@@ -199,7 +199,7 @@ namespace DemoControlPanel.Web
                 if (credentials == null) credentials = new WebCredentials();
                 if (credentials.isEncrypted) credentials.Decrypt();
 
-                WebCredentials targetCredentials = targetEnpoint.credentials;
+                WebCredentials targetCredentials = targetEndpoint.credentials;
                 if (targetCredentials == null) targetCredentials = new WebCredentials();
                 if (targetCredentials.isEncrypted) targetCredentials.Decrypt();
                 string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
@@ -207,7 +207,7 @@ namespace DemoControlPanel.Web
                 WebHttpClient client = new WebHttpClient(endpoint.serviceUri, credentials.GetNetworkCredential(), _proxyCredentials.GetWebProxy());
                 Request request = new Request();
                 //This is interface service uri
-                //request.Add("targetUri", String.Format(targetEnpoint.serviceUri + "/{0}/{1}/sparql", targetEnpoint.ProjectName, targetEnpoint.ApplicationName));
+                request.Add("targetUri", String.Format(targetEndpoint.serviceUri + "/{0}/{1}/sparql", scenario.senderProjectName, scenario.senderApplicationName));
                 request.Add("targetCredentials", targetCredentialsXML);                
                 request.Add("graphName", graphName);
                 request.Add("filter", "");

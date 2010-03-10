@@ -34,7 +34,7 @@ namespace DemoControlPanel.Web
         Response Reset(iRINGEndpoint endpoint, string projectName, string applicationName);
 
         [OperationContract]
-        Response Pull(iRINGEndpoint endpoint, iRINGEndpoint targetEnpoint, string projectName, string applicationName, string graphName);
+        Response Pull(Scenario scenario, iRINGEndpoint endpoint, iRINGEndpoint targetEnpoint, string graphName);
 
         [OperationContract]
         Response Export(iRINGEndpoint endpoint, string projectName, string applicationName, string graphName);
