@@ -108,30 +108,30 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
       switch (graphName)
       {
         case "Valves":
-          var InLinePipingComponentDO = 
+          var InLinePipingComponentValvesDO = 
             (from InLinePipingComponentList in _dataLayer.GetList<org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent>()
              where InLinePipingComponentList.Id == identifier
              select InLinePipingComponentList).FirstOrDefault<org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent>();   
         
-          if (InLinePipingComponentDO != default(org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent))
+          if (InLinePipingComponentValvesDO != default(org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent))
           {                        
-            dto = new Valves(InLinePipingComponentDO);
-            dto.Identifier = InLinePipingComponentDO.Id;
+            dto = new Valves(InLinePipingComponentValvesDO);
+            dto.Identifier = InLinePipingComponentValvesDO.Id;
             break; 
           }
           
           break;
         
         case "Lines":
-          var LineDO = 
+          var LineLinesDO = 
             (from LineList in _dataLayer.GetList<org.iringtools.adapter.proj_12345_000.ABC.Line>()
              where LineList.Id == identifier
              select LineList).FirstOrDefault<org.iringtools.adapter.proj_12345_000.ABC.Line>();   
         
-          if (LineDO != default(org.iringtools.adapter.proj_12345_000.ABC.Line))
+          if (LineLinesDO != default(org.iringtools.adapter.proj_12345_000.ABC.Line))
           {                        
-            dto = new Lines(LineDO);
-            dto.Identifier = LineDO.Id;
+            dto = new Lines(LineLinesDO);
+            dto.Identifier = LineLinesDO.Id;
             break; 
           }
           
@@ -148,11 +148,11 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
       switch (graphName)
       {
         case "Valves":
-          var InLinePipingComponentDOList = 
+          var ValvesInLinePipingComponentDOList = 
             from InLinePipingComponentList in _dataLayer.GetList<org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent>()
             select InLinePipingComponentList;  
     
-          foreach (var InLinePipingComponentDO in InLinePipingComponentDOList)
+          foreach (var InLinePipingComponentDO in ValvesInLinePipingComponentDOList)
           {   					
             Valves dto = new Valves(InLinePipingComponentDO);
             dto.Identifier = InLinePipingComponentDO.Id;
@@ -162,11 +162,11 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
           break;
         
         case "Lines":
-          var LineDOList = 
+          var LinesLineDOList = 
             from LineList in _dataLayer.GetList<org.iringtools.adapter.proj_12345_000.ABC.Line>()
             select LineList;  
     
-          foreach (var LineDO in LineDOList)
+          foreach (var LineDO in LinesLineDOList)
           {   					
             Lines dto = new Lines(LineDO);
             dto.Identifier = LineDO.Id;
@@ -187,11 +187,11 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
       switch (graphName)
       {
         case "Valves":
-          var InLinePipingComponentDOList = 
+          var ValvesInLinePipingComponentDOList = 
             from InLinePipingComponentList in _dataLayer.GetList<org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent>()
             select InLinePipingComponentList;  
 
-          foreach (var InLinePipingComponentDO in InLinePipingComponentDOList)
+          foreach (var InLinePipingComponentDO in ValvesInLinePipingComponentDOList)
           {
             string identifier = InLinePipingComponentDO.Id;
             identifierUriPairs.Add(identifier, endpoint + "/" + graphName + "/" + identifier);  
@@ -200,11 +200,11 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
           break;
         
         case "Lines":
-          var LineDOList = 
+          var LinesLineDOList = 
             from LineList in _dataLayer.GetList<org.iringtools.adapter.proj_12345_000.ABC.Line>()
             select LineList;  
 
-          foreach (var LineDO in LineDOList)
+          foreach (var LineDO in LinesLineDOList)
           {
             string identifier = LineDO.Id;
             identifierUriPairs.Add(identifier, endpoint + "/" + graphName + "/" + identifier);  
