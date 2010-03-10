@@ -23,7 +23,7 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
   {
     [DataContract(Namespace = "http://ABC.iringtools.org/12345_000/data#")]
     [XmlRoot(Namespace = "http://ABC.iringtools.org/12345_000/data#")]
-    public class TemplateClientSystemAssembly
+    public class TemplateClientSystemAssembly1
     {
       [DataContract(Namespace = "http://ABC.iringtools.org/12345_000/data#")]
       [XmlRoot(Namespace = "http://ABC.iringtools.org/12345_000/data#")]
@@ -34,10 +34,10 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
         public string Identifier { get; set; }
         
         [DataMember(EmitDefaultValue = false)]
-        public String tpl_ClassifiedIdentification_tpl_identifier { get; set; }
+        public String tpl_ClassifiedIdentification2_tpl_identifier { get; set; }
         
         [DataMember(EmitDefaultValue = false)]
-        public String tpl_ClassifiedIdentification_tpl_identificationType { get; set; }
+        public String tpl_ClassifiedIdentification2_tpl_identificationType { get; set; }
       }
       
       [DataMember(Name = "tpl_whole_rdl_CLIENT_SYSTEM", EmitDefaultValue = false)]
@@ -47,11 +47,11 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
     
     [DataMember(EmitDefaultValue = false)]
     [XmlIgnore]
-    public TemplateClientSystemAssembly tpl_ClientSystemAssembly { get; set; }
+    public TemplateClientSystemAssembly1 tpl_ClientSystemAssembly1 { get; set; }
     
     [DataContract(Namespace = "http://ABC.iringtools.org/12345_000/data#")]
     [XmlRoot(Namespace = "http://ABC.iringtools.org/12345_000/data#")]
-    public class TemplateClientFunctionalUnitAssembly
+    public class TemplateClientFunctionalUnitAssembly3
     {
       [DataContract(Namespace = "http://ABC.iringtools.org/12345_000/data#")]
       [XmlRoot(Namespace = "http://ABC.iringtools.org/12345_000/data#")]
@@ -62,10 +62,10 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
         public string Identifier { get; set; }
         
         [DataMember(EmitDefaultValue = false)]
-        public String tpl_ClassifiedIdentification_tpl_identifier { get; set; }
+        public String tpl_ClassifiedIdentification4_tpl_identifier { get; set; }
         
         [DataMember(EmitDefaultValue = false)]
-        public String tpl_ClassifiedIdentification_tpl_identificationType { get; set; }
+        public String tpl_ClassifiedIdentification4_tpl_identificationType { get; set; }
       }
       
       [DataMember(Name = "tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT", EmitDefaultValue = false)]
@@ -75,11 +75,11 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
     
     [DataMember(EmitDefaultValue = false)]
     [XmlIgnore]
-    public TemplateClientFunctionalUnitAssembly tpl_ClientFunctionalUnitAssembly { get; set; }
+    public TemplateClientFunctionalUnitAssembly3 tpl_ClientFunctionalUnitAssembly3 { get; set; }
     
     [DataContract(Namespace = "http://ABC.iringtools.org/12345_000/data#")]
     [XmlRoot(Namespace = "http://ABC.iringtools.org/12345_000/data#")]
-    public class TemplatePAndIDRepresentation
+    public class TemplatePAndIDRepresentation7
     {
       [DataContract(Namespace = "http://ABC.iringtools.org/12345_000/data#")]
       [XmlRoot(Namespace = "http://ABC.iringtools.org/12345_000/data#")]
@@ -90,10 +90,10 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
         public string Identifier { get; set; }
         
         [DataMember(EmitDefaultValue = false)]
-        public String tpl_ClassifiedIdentification_tpl_identifier { get; set; }
+        public String tpl_ClassifiedIdentification8_tpl_identifier { get; set; }
         
         [DataMember(EmitDefaultValue = false)]
-        public String tpl_ClassifiedIdentification_tpl_identificationType { get; set; }
+        public String tpl_ClassifiedIdentification8_tpl_identificationType { get; set; }
       }
       
       [DataMember(Name = "tpl_representation_rdl_P_AND_I_DIAGRAM", EmitDefaultValue = false)]
@@ -103,11 +103,11 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
     
     [DataMember(EmitDefaultValue = false)]
     [XmlIgnore]
-    public TemplatePAndIDRepresentation tpl_PAndIDRepresentation { get; set; }
+    public TemplatePAndIDRepresentation7 tpl_PAndIDRepresentation7 { get; set; }
     
     [DataContract(Namespace = "http://ABC.iringtools.org/12345_000/data#")]
     [XmlRoot(Namespace = "http://ABC.iringtools.org/12345_000/data#")]
-    public class TemplateProjectAssembly
+    public class TemplateProjectAssembly9
     {
       [DataContract(Namespace = "http://ABC.iringtools.org/12345_000/data#")]
       [XmlRoot(Namespace = "http://ABC.iringtools.org/12345_000/data#")]
@@ -118,10 +118,10 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
         public string Identifier { get; set; }
         
         [DataMember(EmitDefaultValue = false)]
-        public String tpl_ClassifiedIdentification_tpl_identifier { get; set; }
+        public String tpl_ClassifiedIdentification10_tpl_identifier { get; set; }
         
         [DataMember(EmitDefaultValue = false)]
-        public String tpl_ClassifiedIdentification_tpl_identificationType { get; set; }
+        public String tpl_ClassifiedIdentification10_tpl_identificationType { get; set; }
       }
       
       [DataMember(Name = "tpl_whole_rdl_PROJECT", EmitDefaultValue = false)]
@@ -131,25 +131,25 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
     
     [DataMember(EmitDefaultValue = false)]
     [XmlIgnore]
-    public TemplateProjectAssembly tpl_ProjectAssembly { get; set; }
+    public TemplateProjectAssembly9 tpl_ProjectAssembly9 { get; set; }
     
     public Valves(string classId, string graphName, string identifier) : base(classId, graphName)
     {
-      _properties.Add(new DTOProperty(@"tag", @"tpl:ClassifiedIdentification.tpl:identifier", null, typeof(String), true, true));
-      _properties.Add(new DTOProperty(@"", @"tpl:ClassifiedIdentification.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R92093626759>", typeof(String), false, false));
-      _properties.Add(new DTOProperty(@"", @"tpl:ClassifiedIdentification.tpl:fixedName1", @"fixedValue1", typeof(Int32), false, false));
-      _properties.Add(new DTOProperty(@"system", @"tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identifier", null, typeof(String), false, false));
-      _properties.Add(new DTOProperty(@"", @"tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R50548021125>", typeof(String), false, false));
-      _properties.Add(new DTOProperty(@"unit", @"tpl:ClientFunctionalUnitAssembly.tpl:whole.rdl:CLIENT_FUNCTIONAL_UNIT.tpl:ClassifiedIdentification.tpl:identifier", null, typeof(String), false, false));
-      _properties.Add(new DTOProperty(@"", @"tpl:ClientFunctionalUnitAssembly.tpl:whole.rdl:CLIENT_FUNCTIONAL_UNIT.tpl:ClassifiedIdentification.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R82607969326>", typeof(String), false, false));
-      _properties.Add(new DTOProperty(@"componentType", @"tpl:ClassifiedIdentification.tpl:identifier7", null, typeof(String), false, false));
-      _properties.Add(new DTOProperty(@"", @"tpl:ClassifiedIdentification.tpl:identificationType8", @"<http://rdl.rdlfacade.org/data#R99386812445>", typeof(String), false, false));
-      _properties.Add(new DTOProperty(@"diameter", @"tpl:NominalDiameter.tpl:value", null, typeof(Double), false, false));
-      _properties.Add(new DTOProperty(@"uomDiameter", @"tpl:NominalDiameter.tpl:scale", null, typeof(String), false, false));
-      _properties.Add(new DTOProperty(@"pid", @"tpl:PAndIDRepresentation.tpl:representation.rdl:P_AND_I_DIAGRAM.tpl:ClassifiedIdentification.tpl:identifier", null, typeof(String), false, false));
-      _properties.Add(new DTOProperty(@"", @"tpl:PAndIDRepresentation.tpl:representation.rdl:P_AND_I_DIAGRAM.tpl:ClassifiedIdentification.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R16893283050>", typeof(String), false, false));
-      _properties.Add(new DTOProperty(@"projectNumber", @"tpl:ProjectAssembly.tpl:whole.rdl:PROJECT.tpl:ClassifiedIdentification.tpl:identifier", null, typeof(String), false, false));
-      _properties.Add(new DTOProperty(@"", @"tpl:ProjectAssembly.tpl:whole.rdl:PROJECT.tpl:ClassifiedIdentification.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R72529367339>", typeof(String), false, false));
+      _properties.Add(new DTOProperty(@"tag", @"tpl:ClassifiedIdentification0.tpl:identifier", null, typeof(String), true, true));
+      _properties.Add(new DTOProperty(@"", @"tpl:ClassifiedIdentification0.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R92093626759>", typeof(String), false, false));
+      _properties.Add(new DTOProperty(@"", @"tpl:ClassifiedIdentification0.tpl:fixedName1", @"fixedValue1", typeof(Int32), false, false));
+      _properties.Add(new DTOProperty(@"system", @"tpl:ClientSystemAssembly1.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification2.tpl:identifier", null, typeof(String), false, false));
+      _properties.Add(new DTOProperty(@"", @"tpl:ClientSystemAssembly1.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification2.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R50548021125>", typeof(String), false, false));
+      _properties.Add(new DTOProperty(@"unit", @"tpl:ClientFunctionalUnitAssembly3.tpl:whole.rdl:CLIENT_FUNCTIONAL_UNIT.tpl:ClassifiedIdentification4.tpl:identifier", null, typeof(String), false, false));
+      _properties.Add(new DTOProperty(@"", @"tpl:ClientFunctionalUnitAssembly3.tpl:whole.rdl:CLIENT_FUNCTIONAL_UNIT.tpl:ClassifiedIdentification4.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R82607969326>", typeof(String), false, false));
+      _properties.Add(new DTOProperty(@"componentType", @"tpl:ClassifiedIdentification5.tpl:identifier", null, typeof(String), false, false));
+      _properties.Add(new DTOProperty(@"", @"tpl:ClassifiedIdentification5.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R99386812445>", typeof(String), false, false));
+      _properties.Add(new DTOProperty(@"diameter", @"tpl:NominalDiameter6.tpl:value", null, typeof(Double), false, false));
+      _properties.Add(new DTOProperty(@"uomDiameter", @"tpl:NominalDiameter6.tpl:scale", null, typeof(String), false, false));
+      _properties.Add(new DTOProperty(@"pid", @"tpl:PAndIDRepresentation7.tpl:representation.rdl:P_AND_I_DIAGRAM.tpl:ClassifiedIdentification8.tpl:identifier", null, typeof(String), false, false));
+      _properties.Add(new DTOProperty(@"", @"tpl:PAndIDRepresentation7.tpl:representation.rdl:P_AND_I_DIAGRAM.tpl:ClassifiedIdentification8.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R16893283050>", typeof(String), false, false));
+      _properties.Add(new DTOProperty(@"projectNumber", @"tpl:ProjectAssembly9.tpl:whole.rdl:PROJECT.tpl:ClassifiedIdentification10.tpl:identifier", null, typeof(String), false, false));
+      _properties.Add(new DTOProperty(@"", @"tpl:ProjectAssembly9.tpl:whole.rdl:PROJECT.tpl:ClassifiedIdentification10.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R72529367339>", typeof(String), false, false));
       Identifier = identifier;
       ClassId = classId;
     }
@@ -160,239 +160,239 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
     {
       if (dataObject != null)
       {
-        tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.Id);
-        tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.system);
-        tpl_ClientFunctionalUnitAssembly_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.unit);
-        tpl_ClassifiedIdentification_tpl_identifier7 = Convert.ToString(dataObject.componentType);
-        tpl_NominalDiameter_tpl_value = Convert.ToDouble(dataObject.diameter);
-        tpl_NominalDiameter_tpl_scale = Convert.ToString(dataObject.uomDiameter);
-        tpl_PAndIDRepresentation_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.pid);
-        tpl_ProjectAssembly_tpl_whole_rdl_PROJECT_tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.projectNumber);
+        tpl_ClassifiedIdentification0_tpl_identifier = Convert.ToString(dataObject.Id);
+        tpl_ClientSystemAssembly1_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identifier = Convert.ToString(dataObject.system);
+        tpl_ClientFunctionalUnitAssembly3_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification4_tpl_identifier = Convert.ToString(dataObject.unit);
+        tpl_ClassifiedIdentification5_tpl_identifier = Convert.ToString(dataObject.componentType);
+        tpl_NominalDiameter6_tpl_value = Convert.ToDouble(dataObject.diameter);
+        tpl_NominalDiameter6_tpl_scale = Convert.ToString(dataObject.uomDiameter);
+        tpl_PAndIDRepresentation7_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification8_tpl_identifier = Convert.ToString(dataObject.pid);
+        tpl_ProjectAssembly9_tpl_whole_rdl_PROJECT_tpl_ClassifiedIdentification10_tpl_identifier = Convert.ToString(dataObject.projectNumber);
       }
-      tpl_ClientSystemAssembly = new TemplateClientSystemAssembly();
-      tpl_ClientSystemAssembly.tpl_whole_rdl_CLIENT_SYSTEM = new TemplateClientSystemAssembly.ClassCLIENT_SYSTEM();
-      tpl_ClientSystemAssembly.tpl_whole_rdl_CLIENT_SYSTEM.Identifier = ((GetPropertyValueByInternalName("system") != null) ? GetPropertyValueByInternalName("system").ToString() : "");
-      tpl_ClientSystemAssembly.tpl_whole_rdl_CLIENT_SYSTEM.tpl_ClassifiedIdentification_tpl_identifier = tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier;
-      tpl_ClientSystemAssembly.tpl_whole_rdl_CLIENT_SYSTEM.tpl_ClassifiedIdentification_tpl_identificationType = tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identificationType;
-      tpl_ClientFunctionalUnitAssembly = new TemplateClientFunctionalUnitAssembly();
-      tpl_ClientFunctionalUnitAssembly.tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT = new TemplateClientFunctionalUnitAssembly.ClassCLIENT_FUNCTIONAL_UNIT();
-      tpl_ClientFunctionalUnitAssembly.tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT.Identifier = ((GetPropertyValueByInternalName("unit") != null) ? GetPropertyValueByInternalName("unit").ToString() : "");
-      tpl_ClientFunctionalUnitAssembly.tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT.tpl_ClassifiedIdentification_tpl_identifier = tpl_ClientFunctionalUnitAssembly_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification_tpl_identifier;
-      tpl_ClientFunctionalUnitAssembly.tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT.tpl_ClassifiedIdentification_tpl_identificationType = tpl_ClientFunctionalUnitAssembly_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification_tpl_identificationType;
-      tpl_PAndIDRepresentation = new TemplatePAndIDRepresentation();
-      tpl_PAndIDRepresentation.tpl_representation_rdl_P_AND_I_DIAGRAM = new TemplatePAndIDRepresentation.ClassP_AND_I_DIAGRAM();
-      tpl_PAndIDRepresentation.tpl_representation_rdl_P_AND_I_DIAGRAM.Identifier = ((GetPropertyValueByInternalName("pid") != null) ? GetPropertyValueByInternalName("pid").ToString() : "");
-      tpl_PAndIDRepresentation.tpl_representation_rdl_P_AND_I_DIAGRAM.tpl_ClassifiedIdentification_tpl_identifier = tpl_PAndIDRepresentation_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification_tpl_identifier;
-      tpl_PAndIDRepresentation.tpl_representation_rdl_P_AND_I_DIAGRAM.tpl_ClassifiedIdentification_tpl_identificationType = tpl_PAndIDRepresentation_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification_tpl_identificationType;
-      tpl_ProjectAssembly = new TemplateProjectAssembly();
-      tpl_ProjectAssembly.tpl_whole_rdl_PROJECT = new TemplateProjectAssembly.ClassPROJECT();
-      tpl_ProjectAssembly.tpl_whole_rdl_PROJECT.Identifier = ((GetPropertyValueByInternalName("projectNumber") != null) ? GetPropertyValueByInternalName("projectNumber").ToString() : "");
-      tpl_ProjectAssembly.tpl_whole_rdl_PROJECT.tpl_ClassifiedIdentification_tpl_identifier = tpl_ProjectAssembly_tpl_whole_rdl_PROJECT_tpl_ClassifiedIdentification_tpl_identifier;
-      tpl_ProjectAssembly.tpl_whole_rdl_PROJECT.tpl_ClassifiedIdentification_tpl_identificationType = tpl_ProjectAssembly_tpl_whole_rdl_PROJECT_tpl_ClassifiedIdentification_tpl_identificationType;
+      tpl_ClientSystemAssembly1 = new TemplateClientSystemAssembly1();
+      tpl_ClientSystemAssembly1.tpl_whole_rdl_CLIENT_SYSTEM = new TemplateClientSystemAssembly1.ClassCLIENT_SYSTEM();
+      tpl_ClientSystemAssembly1.tpl_whole_rdl_CLIENT_SYSTEM.Identifier = ((GetPropertyValueByInternalName("system") != null) ? GetPropertyValueByInternalName("system").ToString() : "");
+      tpl_ClientSystemAssembly1.tpl_whole_rdl_CLIENT_SYSTEM.tpl_ClassifiedIdentification2_tpl_identifier = Convert.ToString(tpl_ClientSystemAssembly1_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identifier);
+      tpl_ClientSystemAssembly1.tpl_whole_rdl_CLIENT_SYSTEM.tpl_ClassifiedIdentification2_tpl_identificationType = Convert.ToString(tpl_ClientSystemAssembly1_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identificationType);
+      tpl_ClientFunctionalUnitAssembly3 = new TemplateClientFunctionalUnitAssembly3();
+      tpl_ClientFunctionalUnitAssembly3.tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT = new TemplateClientFunctionalUnitAssembly3.ClassCLIENT_FUNCTIONAL_UNIT();
+      tpl_ClientFunctionalUnitAssembly3.tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT.Identifier = ((GetPropertyValueByInternalName("unit") != null) ? GetPropertyValueByInternalName("unit").ToString() : "");
+      tpl_ClientFunctionalUnitAssembly3.tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT.tpl_ClassifiedIdentification4_tpl_identifier = Convert.ToString(tpl_ClientFunctionalUnitAssembly3_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification4_tpl_identifier);
+      tpl_ClientFunctionalUnitAssembly3.tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT.tpl_ClassifiedIdentification4_tpl_identificationType = Convert.ToString(tpl_ClientFunctionalUnitAssembly3_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification4_tpl_identificationType);
+      tpl_PAndIDRepresentation7 = new TemplatePAndIDRepresentation7();
+      tpl_PAndIDRepresentation7.tpl_representation_rdl_P_AND_I_DIAGRAM = new TemplatePAndIDRepresentation7.ClassP_AND_I_DIAGRAM();
+      tpl_PAndIDRepresentation7.tpl_representation_rdl_P_AND_I_DIAGRAM.Identifier = ((GetPropertyValueByInternalName("pid") != null) ? GetPropertyValueByInternalName("pid").ToString() : "");
+      tpl_PAndIDRepresentation7.tpl_representation_rdl_P_AND_I_DIAGRAM.tpl_ClassifiedIdentification8_tpl_identifier = Convert.ToString(tpl_PAndIDRepresentation7_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification8_tpl_identifier);
+      tpl_PAndIDRepresentation7.tpl_representation_rdl_P_AND_I_DIAGRAM.tpl_ClassifiedIdentification8_tpl_identificationType = Convert.ToString(tpl_PAndIDRepresentation7_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification8_tpl_identificationType);
+      tpl_ProjectAssembly9 = new TemplateProjectAssembly9();
+      tpl_ProjectAssembly9.tpl_whole_rdl_PROJECT = new TemplateProjectAssembly9.ClassPROJECT();
+      tpl_ProjectAssembly9.tpl_whole_rdl_PROJECT.Identifier = ((GetPropertyValueByInternalName("projectNumber") != null) ? GetPropertyValueByInternalName("projectNumber").ToString() : "");
+      tpl_ProjectAssembly9.tpl_whole_rdl_PROJECT.tpl_ClassifiedIdentification10_tpl_identifier = Convert.ToString(tpl_ProjectAssembly9_tpl_whole_rdl_PROJECT_tpl_ClassifiedIdentification10_tpl_identifier);
+      tpl_ProjectAssembly9.tpl_whole_rdl_PROJECT.tpl_ClassifiedIdentification10_tpl_identificationType = Convert.ToString(tpl_ProjectAssembly9_tpl_whole_rdl_PROJECT_tpl_ClassifiedIdentification10_tpl_identificationType);
       _dataObject = dataObject;
     }
     
     public Valves() : this("http://rdl.rdlfacade.org/data#R97295617945", "Valves", null) {}
     
-    [DataMember(Name = "tpl_ClassifiedIdentification_tpl_identifier", EmitDefaultValue = false)]
+    [DataMember(Name = "tpl_ClassifiedIdentification0_tpl_identifier", EmitDefaultValue = false)]
     [XmlIgnore]
-    public String tpl_ClassifiedIdentification_tpl_identifier
+    public String tpl_ClassifiedIdentification0_tpl_identifier
     {
       get
       {
-        return (String)GetPropertyValue("tpl:ClassifiedIdentification.tpl:identifier");
+        return (String)GetPropertyValue("tpl:ClassifiedIdentification0.tpl:identifier");
       }
       set
       {
-        SetPropertyValue(@"tpl:ClassifiedIdentification.tpl:identifier", value);
+        SetPropertyValue(@"tpl:ClassifiedIdentification0.tpl:identifier", value);
       }
     }
     
-    [DataMember(Name = "tpl_ClassifiedIdentification_tpl_identificationType", EmitDefaultValue = false)]
+    [DataMember(Name = "tpl_ClassifiedIdentification0_tpl_identificationType", EmitDefaultValue = false)]
     [XmlIgnore]
-    public String tpl_ClassifiedIdentification_tpl_identificationType
+    public String tpl_ClassifiedIdentification0_tpl_identificationType
     {
       get
       {
-        return (String)GetPropertyValue("tpl:ClassifiedIdentification.tpl:identificationType");
+        return (String)GetPropertyValue("tpl:ClassifiedIdentification0.tpl:identificationType");
       }
       set
       {
-        SetPropertyValue(@"tpl:ClassifiedIdentification.tpl:identificationType", value);
+        SetPropertyValue(@"tpl:ClassifiedIdentification0.tpl:identificationType", value);
       }
     }
     
-    [DataMember(Name = "tpl_ClassifiedIdentification_tpl_fixedName1", EmitDefaultValue = false)]
+    [DataMember(Name = "tpl_ClassifiedIdentification0_tpl_fixedName1", EmitDefaultValue = false)]
     [XmlIgnore]
-    public global::System.Nullable<Int32> tpl_ClassifiedIdentification_tpl_fixedName1
+    public global::System.Nullable<Int32> tpl_ClassifiedIdentification0_tpl_fixedName1
     {
       get
       {
-        return (global::System.Nullable<Int32>)GetPropertyValue("tpl:ClassifiedIdentification.tpl:fixedName1");
+        return (global::System.Nullable<Int32>)GetPropertyValue("tpl:ClassifiedIdentification0.tpl:fixedName1");
       }
       set
       {
-        SetPropertyValue(@"tpl:ClassifiedIdentification.tpl:fixedName1", value);
-      }
-    }
-    
-    [XmlIgnore]
-    public String tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier
-    {
-      get
-      {
-        return (String)GetPropertyValue("tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identifier");
-      }
-      set
-      {
-        SetPropertyValue(@"tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identifier", value);
+        SetPropertyValue(@"tpl:ClassifiedIdentification0.tpl:fixedName1", value);
       }
     }
     
     [XmlIgnore]
-    public String tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identificationType
+    public String tpl_ClientSystemAssembly1_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identifier
     {
       get
       {
-        return (String)GetPropertyValue("tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identificationType");
+        return (String)GetPropertyValue("tpl:ClientSystemAssembly1.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification2.tpl:identifier");
       }
       set
       {
-        SetPropertyValue(@"tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identificationType", value);
+        SetPropertyValue(@"tpl:ClientSystemAssembly1.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification2.tpl:identifier", value);
       }
     }
     
     [XmlIgnore]
-    public String tpl_ClientFunctionalUnitAssembly_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification_tpl_identifier
+    public String tpl_ClientSystemAssembly1_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identificationType
     {
       get
       {
-        return (String)GetPropertyValue("tpl:ClientFunctionalUnitAssembly.tpl:whole.rdl:CLIENT_FUNCTIONAL_UNIT.tpl:ClassifiedIdentification.tpl:identifier");
+        return (String)GetPropertyValue("tpl:ClientSystemAssembly1.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification2.tpl:identificationType");
       }
       set
       {
-        SetPropertyValue(@"tpl:ClientFunctionalUnitAssembly.tpl:whole.rdl:CLIENT_FUNCTIONAL_UNIT.tpl:ClassifiedIdentification.tpl:identifier", value);
+        SetPropertyValue(@"tpl:ClientSystemAssembly1.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification2.tpl:identificationType", value);
       }
     }
     
     [XmlIgnore]
-    public String tpl_ClientFunctionalUnitAssembly_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification_tpl_identificationType
+    public String tpl_ClientFunctionalUnitAssembly3_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification4_tpl_identifier
     {
       get
       {
-        return (String)GetPropertyValue("tpl:ClientFunctionalUnitAssembly.tpl:whole.rdl:CLIENT_FUNCTIONAL_UNIT.tpl:ClassifiedIdentification.tpl:identificationType");
+        return (String)GetPropertyValue("tpl:ClientFunctionalUnitAssembly3.tpl:whole.rdl:CLIENT_FUNCTIONAL_UNIT.tpl:ClassifiedIdentification4.tpl:identifier");
       }
       set
       {
-        SetPropertyValue(@"tpl:ClientFunctionalUnitAssembly.tpl:whole.rdl:CLIENT_FUNCTIONAL_UNIT.tpl:ClassifiedIdentification.tpl:identificationType", value);
-      }
-    }
-    
-    [DataMember(Name = "tpl_ClassifiedIdentification_tpl_identifier7", EmitDefaultValue = false)]
-    [XmlIgnore]
-    public String tpl_ClassifiedIdentification_tpl_identifier7
-    {
-      get
-      {
-        return (String)GetPropertyValue("tpl:ClassifiedIdentification.tpl:identifier7");
-      }
-      set
-      {
-        SetPropertyValue(@"tpl:ClassifiedIdentification.tpl:identifier7", value);
-      }
-    }
-    
-    [DataMember(Name = "tpl_ClassifiedIdentification_tpl_identificationType8", EmitDefaultValue = false)]
-    [XmlIgnore]
-    public String tpl_ClassifiedIdentification_tpl_identificationType8
-    {
-      get
-      {
-        return (String)GetPropertyValue("tpl:ClassifiedIdentification.tpl:identificationType8");
-      }
-      set
-      {
-        SetPropertyValue(@"tpl:ClassifiedIdentification.tpl:identificationType8", value);
-      }
-    }
-    
-    [DataMember(Name = "tpl_NominalDiameter_tpl_value", EmitDefaultValue = false)]
-    [XmlIgnore]
-    public global::System.Nullable<Double> tpl_NominalDiameter_tpl_value
-    {
-      get
-      {
-        return (global::System.Nullable<Double>)GetPropertyValue("tpl:NominalDiameter.tpl:value");
-      }
-      set
-      {
-        SetPropertyValue(@"tpl:NominalDiameter.tpl:value", value);
-      }
-    }
-    
-    [DataMember(Name = "tpl_NominalDiameter_tpl_scale", EmitDefaultValue = false)]
-    [XmlIgnore]
-    public String tpl_NominalDiameter_tpl_scale
-    {
-      get
-      {
-        return (String)GetPropertyValue("tpl:NominalDiameter.tpl:scale");
-      }
-      set
-      {
-        SetPropertyValue(@"tpl:NominalDiameter.tpl:scale", value);
+        SetPropertyValue(@"tpl:ClientFunctionalUnitAssembly3.tpl:whole.rdl:CLIENT_FUNCTIONAL_UNIT.tpl:ClassifiedIdentification4.tpl:identifier", value);
       }
     }
     
     [XmlIgnore]
-    public String tpl_PAndIDRepresentation_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification_tpl_identifier
+    public String tpl_ClientFunctionalUnitAssembly3_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification4_tpl_identificationType
     {
       get
       {
-        return (String)GetPropertyValue("tpl:PAndIDRepresentation.tpl:representation.rdl:P_AND_I_DIAGRAM.tpl:ClassifiedIdentification.tpl:identifier");
+        return (String)GetPropertyValue("tpl:ClientFunctionalUnitAssembly3.tpl:whole.rdl:CLIENT_FUNCTIONAL_UNIT.tpl:ClassifiedIdentification4.tpl:identificationType");
       }
       set
       {
-        SetPropertyValue(@"tpl:PAndIDRepresentation.tpl:representation.rdl:P_AND_I_DIAGRAM.tpl:ClassifiedIdentification.tpl:identifier", value);
+        SetPropertyValue(@"tpl:ClientFunctionalUnitAssembly3.tpl:whole.rdl:CLIENT_FUNCTIONAL_UNIT.tpl:ClassifiedIdentification4.tpl:identificationType", value);
+      }
+    }
+    
+    [DataMember(Name = "tpl_ClassifiedIdentification5_tpl_identifier", EmitDefaultValue = false)]
+    [XmlIgnore]
+    public String tpl_ClassifiedIdentification5_tpl_identifier
+    {
+      get
+      {
+        return (String)GetPropertyValue("tpl:ClassifiedIdentification5.tpl:identifier");
+      }
+      set
+      {
+        SetPropertyValue(@"tpl:ClassifiedIdentification5.tpl:identifier", value);
+      }
+    }
+    
+    [DataMember(Name = "tpl_ClassifiedIdentification5_tpl_identificationType", EmitDefaultValue = false)]
+    [XmlIgnore]
+    public String tpl_ClassifiedIdentification5_tpl_identificationType
+    {
+      get
+      {
+        return (String)GetPropertyValue("tpl:ClassifiedIdentification5.tpl:identificationType");
+      }
+      set
+      {
+        SetPropertyValue(@"tpl:ClassifiedIdentification5.tpl:identificationType", value);
+      }
+    }
+    
+    [DataMember(Name = "tpl_NominalDiameter6_tpl_value", EmitDefaultValue = false)]
+    [XmlIgnore]
+    public global::System.Nullable<Double> tpl_NominalDiameter6_tpl_value
+    {
+      get
+      {
+        return (global::System.Nullable<Double>)GetPropertyValue("tpl:NominalDiameter6.tpl:value");
+      }
+      set
+      {
+        SetPropertyValue(@"tpl:NominalDiameter6.tpl:value", value);
+      }
+    }
+    
+    [DataMember(Name = "tpl_NominalDiameter6_tpl_scale", EmitDefaultValue = false)]
+    [XmlIgnore]
+    public String tpl_NominalDiameter6_tpl_scale
+    {
+      get
+      {
+        return (String)GetPropertyValue("tpl:NominalDiameter6.tpl:scale");
+      }
+      set
+      {
+        SetPropertyValue(@"tpl:NominalDiameter6.tpl:scale", value);
       }
     }
     
     [XmlIgnore]
-    public String tpl_PAndIDRepresentation_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification_tpl_identificationType
+    public String tpl_PAndIDRepresentation7_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification8_tpl_identifier
     {
       get
       {
-        return (String)GetPropertyValue("tpl:PAndIDRepresentation.tpl:representation.rdl:P_AND_I_DIAGRAM.tpl:ClassifiedIdentification.tpl:identificationType");
+        return (String)GetPropertyValue("tpl:PAndIDRepresentation7.tpl:representation.rdl:P_AND_I_DIAGRAM.tpl:ClassifiedIdentification8.tpl:identifier");
       }
       set
       {
-        SetPropertyValue(@"tpl:PAndIDRepresentation.tpl:representation.rdl:P_AND_I_DIAGRAM.tpl:ClassifiedIdentification.tpl:identificationType", value);
+        SetPropertyValue(@"tpl:PAndIDRepresentation7.tpl:representation.rdl:P_AND_I_DIAGRAM.tpl:ClassifiedIdentification8.tpl:identifier", value);
       }
     }
     
     [XmlIgnore]
-    public String tpl_ProjectAssembly_tpl_whole_rdl_PROJECT_tpl_ClassifiedIdentification_tpl_identifier
+    public String tpl_PAndIDRepresentation7_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification8_tpl_identificationType
     {
       get
       {
-        return (String)GetPropertyValue("tpl:ProjectAssembly.tpl:whole.rdl:PROJECT.tpl:ClassifiedIdentification.tpl:identifier");
+        return (String)GetPropertyValue("tpl:PAndIDRepresentation7.tpl:representation.rdl:P_AND_I_DIAGRAM.tpl:ClassifiedIdentification8.tpl:identificationType");
       }
       set
       {
-        SetPropertyValue(@"tpl:ProjectAssembly.tpl:whole.rdl:PROJECT.tpl:ClassifiedIdentification.tpl:identifier", value);
+        SetPropertyValue(@"tpl:PAndIDRepresentation7.tpl:representation.rdl:P_AND_I_DIAGRAM.tpl:ClassifiedIdentification8.tpl:identificationType", value);
       }
     }
     
     [XmlIgnore]
-    public String tpl_ProjectAssembly_tpl_whole_rdl_PROJECT_tpl_ClassifiedIdentification_tpl_identificationType
+    public String tpl_ProjectAssembly9_tpl_whole_rdl_PROJECT_tpl_ClassifiedIdentification10_tpl_identifier
     {
       get
       {
-        return (String)GetPropertyValue("tpl:ProjectAssembly.tpl:whole.rdl:PROJECT.tpl:ClassifiedIdentification.tpl:identificationType");
+        return (String)GetPropertyValue("tpl:ProjectAssembly9.tpl:whole.rdl:PROJECT.tpl:ClassifiedIdentification10.tpl:identifier");
       }
       set
       {
-        SetPropertyValue(@"tpl:ProjectAssembly.tpl:whole.rdl:PROJECT.tpl:ClassifiedIdentification.tpl:identificationType", value);
+        SetPropertyValue(@"tpl:ProjectAssembly9.tpl:whole.rdl:PROJECT.tpl:ClassifiedIdentification10.tpl:identifier", value);
+      }
+    }
+    
+    [XmlIgnore]
+    public String tpl_ProjectAssembly9_tpl_whole_rdl_PROJECT_tpl_ClassifiedIdentification10_tpl_identificationType
+    {
+      get
+      {
+        return (String)GetPropertyValue("tpl:ProjectAssembly9.tpl:whole.rdl:PROJECT.tpl:ClassifiedIdentification10.tpl:identificationType");
+      }
+      set
+      {
+        SetPropertyValue(@"tpl:ProjectAssembly9.tpl:whole.rdl:PROJECT.tpl:ClassifiedIdentification10.tpl:identificationType", value);
       }
     }
     
@@ -403,13 +403,13 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
         _dataObject = new org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent();
         ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).Id = Convert.ToString(this.Identifier);
       }
-      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).system = Convert.ToString(this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier);
-      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).unit = Convert.ToString(this.tpl_ClientFunctionalUnitAssembly_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification_tpl_identifier);
-      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).componentType = Convert.ToString(this.tpl_ClassifiedIdentification_tpl_identifier7);
-      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).diameter = Convert.ToDouble(this.tpl_NominalDiameter_tpl_value);
-      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).uomDiameter = Convert.ToString(this.tpl_NominalDiameter_tpl_scale);
-      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).pid = Convert.ToString(this.tpl_PAndIDRepresentation_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification_tpl_identifier);
-      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).projectNumber = Convert.ToString(this.tpl_ProjectAssembly_tpl_whole_rdl_PROJECT_tpl_ClassifiedIdentification_tpl_identifier);
+      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).system = Convert.ToString(this.tpl_ClientSystemAssembly1_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identifier);
+      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).unit = Convert.ToString(this.tpl_ClientFunctionalUnitAssembly3_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification4_tpl_identifier);
+      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).componentType = Convert.ToString(this.tpl_ClassifiedIdentification5_tpl_identifier);
+      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).diameter = Convert.ToDouble(this.tpl_NominalDiameter6_tpl_value);
+      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).uomDiameter = Convert.ToString(this.tpl_NominalDiameter6_tpl_scale);
+      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).pid = Convert.ToString(this.tpl_PAndIDRepresentation7_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification8_tpl_identifier);
+      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).projectNumber = Convert.ToString(this.tpl_ProjectAssembly9_tpl_whole_rdl_PROJECT_tpl_ClassifiedIdentification10_tpl_identifier);
       return _dataObject;
     }
     
@@ -441,7 +441,7 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
   {
     [DataContract(Namespace = "http://ABC.iringtools.org/12345_000/data#")]
     [XmlRoot(Namespace = "http://ABC.iringtools.org/12345_000/data#")]
-    public class TemplateClientSystemAssembly
+    public class TemplateClientSystemAssembly12
     {
       [DataContract(Namespace = "http://ABC.iringtools.org/12345_000/data#")]
       [XmlRoot(Namespace = "http://ABC.iringtools.org/12345_000/data#")]
@@ -452,10 +452,10 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
         public string Identifier { get; set; }
         
         [DataMember(EmitDefaultValue = false)]
-        public String tpl_ClassifiedIdentification_tpl_identifier { get; set; }
+        public String tpl_ClassifiedIdentification13_tpl_identifier { get; set; }
         
         [DataMember(EmitDefaultValue = false)]
-        public String tpl_ClassifiedIdentification_tpl_identificationType { get; set; }
+        public String tpl_ClassifiedIdentification13_tpl_identificationType { get; set; }
       }
       
       [DataMember(Name = "tpl_whole_rdl_CLIENT_SYSTEM", EmitDefaultValue = false)]
@@ -465,16 +465,16 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
     
     [DataMember(EmitDefaultValue = false)]
     [XmlIgnore]
-    public TemplateClientSystemAssembly tpl_ClientSystemAssembly { get; set; }
+    public TemplateClientSystemAssembly12 tpl_ClientSystemAssembly12 { get; set; }
     
     public Lines(string classId, string graphName, string identifier) : base(classId, graphName)
     {
-      _properties.Add(new DTOProperty(@"tag", @"tpl:ClassifiedIdentification.tpl:identifier", null, typeof(String), true, true));
-      _properties.Add(new DTOProperty(@"", @"tpl:ClassifiedIdentification.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R92093626759>", typeof(String), false, false));
-      _properties.Add(new DTOProperty(@"system", @"tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identifier", null, typeof(String), false, false));
-      _properties.Add(new DTOProperty(@"", @"tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R50548021125>", typeof(String), false, false));
-      _properties.Add(new DTOProperty(@"diameter", @"tpl:NominalDiameter.tpl:value", null, typeof(Double), false, false));
-      _properties.Add(new DTOProperty(@"uomDiameter", @"tpl:NominalDiameter.tpl:scale", null, typeof(String), false, false));
+      _properties.Add(new DTOProperty(@"tag", @"tpl:ClassifiedIdentification11.tpl:identifier", null, typeof(String), true, true));
+      _properties.Add(new DTOProperty(@"", @"tpl:ClassifiedIdentification11.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R92093626759>", typeof(String), false, false));
+      _properties.Add(new DTOProperty(@"system", @"tpl:ClientSystemAssembly12.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification13.tpl:identifier", null, typeof(String), false, false));
+      _properties.Add(new DTOProperty(@"", @"tpl:ClientSystemAssembly12.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification13.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R50548021125>", typeof(String), false, false));
+      _properties.Add(new DTOProperty(@"diameter", @"tpl:NominalDiameter14.tpl:value", null, typeof(Double), false, false));
+      _properties.Add(new DTOProperty(@"uomDiameter", @"tpl:NominalDiameter14.tpl:scale", null, typeof(String), false, false));
       Identifier = identifier;
       ClassId = classId;
     }
@@ -485,100 +485,100 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
     {
       if (dataObject != null)
       {
-        tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.Id);
-        tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.system);
-        tpl_NominalDiameter_tpl_value = Convert.ToDouble(dataObject.diameter);
-        tpl_NominalDiameter_tpl_scale = Convert.ToString(dataObject.uomDiameter);
+        tpl_ClassifiedIdentification11_tpl_identifier = Convert.ToString(dataObject.Id);
+        tpl_ClientSystemAssembly12_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification13_tpl_identifier = Convert.ToString(dataObject.system);
+        tpl_NominalDiameter14_tpl_value = Convert.ToDouble(dataObject.diameter);
+        tpl_NominalDiameter14_tpl_scale = Convert.ToString(dataObject.uomDiameter);
       }
-      tpl_ClientSystemAssembly = new TemplateClientSystemAssembly();
-      tpl_ClientSystemAssembly.tpl_whole_rdl_CLIENT_SYSTEM = new TemplateClientSystemAssembly.ClassCLIENT_SYSTEM();
-      tpl_ClientSystemAssembly.tpl_whole_rdl_CLIENT_SYSTEM.Identifier = ((GetPropertyValueByInternalName("system") != null) ? GetPropertyValueByInternalName("system").ToString() : "");
-      tpl_ClientSystemAssembly.tpl_whole_rdl_CLIENT_SYSTEM.tpl_ClassifiedIdentification_tpl_identifier = tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier;
-      tpl_ClientSystemAssembly.tpl_whole_rdl_CLIENT_SYSTEM.tpl_ClassifiedIdentification_tpl_identificationType = tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identificationType;
+      tpl_ClientSystemAssembly12 = new TemplateClientSystemAssembly12();
+      tpl_ClientSystemAssembly12.tpl_whole_rdl_CLIENT_SYSTEM = new TemplateClientSystemAssembly12.ClassCLIENT_SYSTEM();
+      tpl_ClientSystemAssembly12.tpl_whole_rdl_CLIENT_SYSTEM.Identifier = ((GetPropertyValueByInternalName("system") != null) ? GetPropertyValueByInternalName("system").ToString() : "");
+      tpl_ClientSystemAssembly12.tpl_whole_rdl_CLIENT_SYSTEM.tpl_ClassifiedIdentification13_tpl_identifier = Convert.ToString(tpl_ClientSystemAssembly12_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification13_tpl_identifier);
+      tpl_ClientSystemAssembly12.tpl_whole_rdl_CLIENT_SYSTEM.tpl_ClassifiedIdentification13_tpl_identificationType = Convert.ToString(tpl_ClientSystemAssembly12_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification13_tpl_identificationType);
       _dataObject = dataObject;
     }
     
     public Lines() : this("http://rdl.rdlfacade.org/data#R19192462550", "Lines", null) {}
     
-    [DataMember(Name = "tpl_ClassifiedIdentification_tpl_identifier", EmitDefaultValue = false)]
+    [DataMember(Name = "tpl_ClassifiedIdentification11_tpl_identifier", EmitDefaultValue = false)]
     [XmlIgnore]
-    public String tpl_ClassifiedIdentification_tpl_identifier
+    public String tpl_ClassifiedIdentification11_tpl_identifier
     {
       get
       {
-        return (String)GetPropertyValue("tpl:ClassifiedIdentification.tpl:identifier");
+        return (String)GetPropertyValue("tpl:ClassifiedIdentification11.tpl:identifier");
       }
       set
       {
-        SetPropertyValue(@"tpl:ClassifiedIdentification.tpl:identifier", value);
+        SetPropertyValue(@"tpl:ClassifiedIdentification11.tpl:identifier", value);
       }
     }
     
-    [DataMember(Name = "tpl_ClassifiedIdentification_tpl_identificationType", EmitDefaultValue = false)]
+    [DataMember(Name = "tpl_ClassifiedIdentification11_tpl_identificationType", EmitDefaultValue = false)]
     [XmlIgnore]
-    public String tpl_ClassifiedIdentification_tpl_identificationType
+    public String tpl_ClassifiedIdentification11_tpl_identificationType
     {
       get
       {
-        return (String)GetPropertyValue("tpl:ClassifiedIdentification.tpl:identificationType");
+        return (String)GetPropertyValue("tpl:ClassifiedIdentification11.tpl:identificationType");
       }
       set
       {
-        SetPropertyValue(@"tpl:ClassifiedIdentification.tpl:identificationType", value);
-      }
-    }
-    
-    [XmlIgnore]
-    public String tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier
-    {
-      get
-      {
-        return (String)GetPropertyValue("tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identifier");
-      }
-      set
-      {
-        SetPropertyValue(@"tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identifier", value);
+        SetPropertyValue(@"tpl:ClassifiedIdentification11.tpl:identificationType", value);
       }
     }
     
     [XmlIgnore]
-    public String tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identificationType
+    public String tpl_ClientSystemAssembly12_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification13_tpl_identifier
     {
       get
       {
-        return (String)GetPropertyValue("tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identificationType");
+        return (String)GetPropertyValue("tpl:ClientSystemAssembly12.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification13.tpl:identifier");
       }
       set
       {
-        SetPropertyValue(@"tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identificationType", value);
+        SetPropertyValue(@"tpl:ClientSystemAssembly12.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification13.tpl:identifier", value);
       }
     }
     
-    [DataMember(Name = "tpl_NominalDiameter_tpl_value", EmitDefaultValue = false)]
     [XmlIgnore]
-    public global::System.Nullable<Double> tpl_NominalDiameter_tpl_value
+    public String tpl_ClientSystemAssembly12_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification13_tpl_identificationType
     {
       get
       {
-        return (global::System.Nullable<Double>)GetPropertyValue("tpl:NominalDiameter.tpl:value");
+        return (String)GetPropertyValue("tpl:ClientSystemAssembly12.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification13.tpl:identificationType");
       }
       set
       {
-        SetPropertyValue(@"tpl:NominalDiameter.tpl:value", value);
+        SetPropertyValue(@"tpl:ClientSystemAssembly12.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification13.tpl:identificationType", value);
       }
     }
     
-    [DataMember(Name = "tpl_NominalDiameter_tpl_scale", EmitDefaultValue = false)]
+    [DataMember(Name = "tpl_NominalDiameter14_tpl_value", EmitDefaultValue = false)]
     [XmlIgnore]
-    public String tpl_NominalDiameter_tpl_scale
+    public global::System.Nullable<Double> tpl_NominalDiameter14_tpl_value
     {
       get
       {
-        return (String)GetPropertyValue("tpl:NominalDiameter.tpl:scale");
+        return (global::System.Nullable<Double>)GetPropertyValue("tpl:NominalDiameter14.tpl:value");
       }
       set
       {
-        SetPropertyValue(@"tpl:NominalDiameter.tpl:scale", value);
+        SetPropertyValue(@"tpl:NominalDiameter14.tpl:value", value);
+      }
+    }
+    
+    [DataMember(Name = "tpl_NominalDiameter14_tpl_scale", EmitDefaultValue = false)]
+    [XmlIgnore]
+    public String tpl_NominalDiameter14_tpl_scale
+    {
+      get
+      {
+        return (String)GetPropertyValue("tpl:NominalDiameter14.tpl:scale");
+      }
+      set
+      {
+        SetPropertyValue(@"tpl:NominalDiameter14.tpl:scale", value);
       }
     }
     
@@ -589,9 +589,9 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
         _dataObject = new org.iringtools.adapter.proj_12345_000.ABC.Line();
         ((org.iringtools.adapter.proj_12345_000.ABC.Line)_dataObject).Id = Convert.ToString(this.Identifier);
       }
-      ((org.iringtools.adapter.proj_12345_000.ABC.Line)_dataObject).system = Convert.ToString(this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier);
-      ((org.iringtools.adapter.proj_12345_000.ABC.Line)_dataObject).diameter = Convert.ToDouble(this.tpl_NominalDiameter_tpl_value);
-      ((org.iringtools.adapter.proj_12345_000.ABC.Line)_dataObject).uomDiameter = Convert.ToString(this.tpl_NominalDiameter_tpl_scale);
+      ((org.iringtools.adapter.proj_12345_000.ABC.Line)_dataObject).system = Convert.ToString(this.tpl_ClientSystemAssembly12_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification13_tpl_identifier);
+      ((org.iringtools.adapter.proj_12345_000.ABC.Line)_dataObject).diameter = Convert.ToDouble(this.tpl_NominalDiameter14_tpl_value);
+      ((org.iringtools.adapter.proj_12345_000.ABC.Line)_dataObject).uomDiameter = Convert.ToString(this.tpl_NominalDiameter14_tpl_scale);
       return _dataObject;
     }
     
