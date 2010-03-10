@@ -67,7 +67,27 @@ namespace Bechtel.IntergraphDataLayer
 
     public Response PostList<T>(System.Collections.Generic.List<T> graphList)
     {
-      throw new NotImplementedException();
+      Response response;
+      try
+      {
+        response = new Response();
+
+        int numberOfRecords = 0;
+
+        foreach (T graph in graphList)
+        {
+          numberOfRecords += IntergraphPost(graph);
+        }
+
+        response.Add(numberOfRecords + "records of type " + typeof(T).Name + " have been updated successfully");
+
+        return response;
+      }
+      catch (Exception exception)
+      {
+        _logger.Error("Error in Post<T>: " + exception);
+        throw new Exception("Error while posting data of type " + typeof(T).Name + ".", exception);
+      }
     }
 
     public Response Post<T>(T graph)

@@ -1,0 +1,207 @@
+<DataDictionary xmlns="http://ns.iringtools.org/library" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <dataObjects>
+    <DataObject>
+      <dataProperties>
+        <DataProperty>
+          <dataLength i:nil="true"/>
+          <dataType>String</dataType>
+          <isPropertyKey>true</isPropertyKey>
+          <isRequired>true</isRequired>
+          <propertyName>ItemTag</propertyName>
+        </DataProperty>
+        <DataProperty>
+          <dataLength i:nil="true"/>
+          <dataType>String</dataType>
+          <isPropertyKey>false</isPropertyKey>
+          <isRequired>false</isRequired>
+          <propertyName>Description</propertyName>
+        </DataProperty>
+        <DataProperty>
+          <dataLength i:nil="true"/>
+          <dataType>String</dataType>
+          <isPropertyKey>false</isPropertyKey>
+          <isRequired>false</isRequired>
+          <propertyName>InsulType</propertyName>
+        </DataProperty>
+        <DataProperty>
+          <dataLength i:nil="true"/>
+          <dataType>String</dataType>
+          <isPropertyKey>false</isPropertyKey>
+          <isRequired>false</isRequired>
+          <propertyName>InsulPurpose</propertyName>
+        </DataProperty>
+        <DataProperty>
+          <dataLength i:nil="true"/>
+          <dataType>String</dataType>
+          <isPropertyKey>false</isPropertyKey>
+          <isRequired>false</isRequired>
+          <propertyName>InsulThick</propertyName>
+        </DataProperty>
+      </dataProperties>
+      <dataRelationships i:nil="true"/>
+      <objectName>Equipment</objectName>
+      <objectNamespace>Bechtel.IntergraphDataLayer.SPPID</objectNamespace>
+    </DataObject>
+    <DataObject>
+      <dataProperties>
+        <DataProperty>
+          <dataLength i:nil="true"/>
+          <dataType>String</dataType>
+          <isPropertyKey>true</isPropertyKey>
+          <isRequired>true</isRequired>
+          <propertyName>ItemTag</propertyName>
+        </DataProperty>
+        <DataProperty>
+          <dataLength i:nil="true"/>
+          <dataType>String</dataType>
+          <isPropertyKey>false</isPropertyKey>
+          <isRequired>false</isRequired>
+          <propertyName>NominalDiameter</propertyName>
+        </DataProperty>
+        <DataProperty>
+          <dataLength i:nil="true"/>
+          <dataType>String</dataType>
+          <isPropertyKey>false</isPropertyKey>
+          <isRequired>false</isRequired>
+          <propertyName>Description</propertyName>
+        </DataProperty>
+        <DataProperty>
+          <dataLength i:nil="true"/>
+          <dataType>String</dataType>
+          <isPropertyKey>false</isPropertyKey>
+          <isRequired>false</isRequired>
+          <propertyName>InsulType</propertyName>
+        </DataProperty>
+        <DataProperty>
+          <dataLength i:nil="true"/>
+          <dataType>String</dataType>
+          <isPropertyKey>false</isPropertyKey>
+          <isRequired>false</isRequired>
+          <propertyName>InsulPurpose</propertyName>
+        </DataProperty>
+        <DataProperty>
+          <dataLength i:nil="true"/>
+          <dataType>String</dataType>
+          <isPropertyKey>false</isPropertyKey>
+          <isRequired>false</isRequired>
+          <propertyName>InsulThick</propertyName>
+        </DataProperty>
+      </dataProperties>
+      <dataRelationships i:nil="true"/>
+      <objectName>Instrument</objectName>
+      <objectNamespace>Bechtel.IntergraphDataLayer.SPPID</objectNamespace>
+    </DataObject>
+    <DataObject>
+      <dataProperties>
+        <DataProperty>
+          <dataLength i:nil="true"/>
+          <dataType>String</dataType>
+          <isPropertyKey>true</isPropertyKey>
+          <isRequired>true</isRequired>
+          <propertyName>ItemTag</propertyName>
+        </DataProperty>
+        <DataProperty>
+          <dataLength i:nil="true"/>
+          <dataType>String</dataType>
+          <isPropertyKey>false</isPropertyKey>
+          <isRequired>false</isRequired>
+          <propertyName>Description</propertyName>
+        </DataProperty>
+        <DataProperty>
+          <dataLength i:nil="true"/>
+          <dataType>String</dataType>
+          <isPropertyKey>false</isPropertyKey>
+          <isRequired>false</isRequired>
+          <propertyName>NominalDiameter</propertyName>
+        </DataProperty>
+        <DataProperty>
+          <dataLength i:nil="true"/>
+          <dataType>String</dataType>
+          <isPropertyKey>false</isPropertyKey>
+          <isRequired>false</isRequired>
+          <propertyName>InsulType</propertyName>
+        </DataProperty>
+        <DataProperty>
+          <dataLength i:nil="true"/>
+          <dataType>String</dataType>
+          <isPropertyKey>false</isPropertyKey>
+          <isRequired>false</isRequired>
+          <propertyName>InsulPurpose</propertyName>
+        </DataProperty>
+        <DataProperty>
+          <dataLength i:nil="true"/>
+          <dataType>String</dataType>
+          <isPropertyKey>false</isPropertyKey>
+          <isRequired>false</isRequired>
+          <propertyName>InsulThick</propertyName>
+        </DataProperty>
+        <DataProperty>
+          <dataLength i:nil="true"/>
+          <dataType>String</dataType>
+          <isPropertyKey>false</isPropertyKey>
+          <isRequired>false</isRequired>
+          <propertyName>OperFluidCode</propertyName>
+        </DataProperty>
+        <DataProperty>
+          <dataLength i:nil="true"/>
+          <dataType>String</dataType>
+          <isPropertyKey>false</isPropertyKey>
+          <isRequired>false</isRequired>
+          <propertyName>PipingMaterialsClass</propertyName>
+        </DataProperty>
+      </dataProperties>
+      <dataRelationships i:nil="true"/>
+      <objectName>PipeRun</objectName>
+      <objectNamespace>Bechtel.IntergraphDataLayer.SPPID</objectNamespace>
+    </DataObject>
+    <DataObject>
+      <dataProperties>
+        <DataProperty>
+          <dataLength i:nil="true"/>
+          <dataType>String</dataType>
+          <isPropertyKey>true</isPropertyKey>
+          <isRequired>true</isRequired>
+          <propertyName>ItemTag</propertyName>
+        </DataProperty>
+        <DataProperty>
+          <dataLength i:nil="true"/>
+          <dataType>String</dataType>
+          <isPropertyKey>false</isPropertyKey>
+          <isRequired>false</isRequired>
+          <propertyName>NominalDiameter</propertyName>
+        </DataProperty>
+        <DataProperty>
+          <dataLength i:nil="true"/>
+          <dataType>String</dataType>
+          <isPropertyKey>false</isPropertyKey>
+          <isRequired>false</isRequired>
+          <propertyName>Description</propertyName>
+        </DataProperty>
+        <DataProperty>
+          <dataLength i:nil="true"/>
+          <dataType>String</dataType>
+          <isPropertyKey>false</isPropertyKey>
+          <isRequired>false</isRequired>
+          <propertyName>InsulType</propertyName>
+        </DataProperty>
+        <DataProperty>
+          <dataLength i:nil="true"/>
+          <dataType>String</dataType>
+          <isPropertyKey>false</isPropertyKey>
+          <isRequired>false</isRequired>
+          <propertyName>InsulPurpose</propertyName>
+        </DataProperty>
+        <DataProperty>
+          <dataLength i:nil="true"/>
+          <dataType>String</dataType>
+          <isPropertyKey>false</isPropertyKey>
+          <isRequired>false</isRequired>
+          <propertyName>InsulThick</propertyName>
+        </DataProperty>
+      </dataProperties>
+      <dataRelationships i:nil="true"/>
+      <objectName>PipingComp</objectName>
+      <objectNamespace>Bechtel.IntergraphDataLayer.SPPID</objectNamespace>
+    </DataObject>
+  </dataObjects>
+</DataDictionary>
