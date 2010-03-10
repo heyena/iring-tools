@@ -187,23 +187,27 @@ namespace DemoControlPanel
           }
         }
 
-        if (senderEndpoint != null && receiverEndpoint != null)
+        tbReceiverProjectName.Text = scenario.receiverProjectName;
+        tbReceiverAppName.Text = scenario.receiverApplicationName;
+
+        tbSenderProjectName.Text = scenario.senderProjectName;
+        tbSenderAppName.Text = scenario.senderApplicationName;
+
+        if (interfaceEndpoint != null)
         {
+          tbSenderUri.Text = interfaceEndpoint.serviceUri;
+        }
 
-          tbReceiverProjectName.Text = scenario.receiverProjectName;
-          tbReceiverAppName.Text = scenario.receiverApplicationName;
+        if (senderEndpoint != null)
+        {
+          _client.GetSenderManifestAsync(senderEndpoint, scenario.senderProjectName, scenario.senderApplicationName);
+        }
 
-          tbSenderProjectName.Text = scenario.senderProjectName;
-          tbSenderAppName.Text = scenario.senderApplicationName;
-
-          tbSenderUri.Text = senderEndpoint.serviceUri;
+        if (receiverEndpoint != null)
+        {
           tbReceiverUri.Text = receiverEndpoint.serviceUri;
-          
-          //btnReceiverExport.IsEnabled = scenario.exportEnabled;
-          //btnSenderImport.IsEnabled = scenario.importEnabled;
 
           _client.GetReceiverManifestAsync(receiverEndpoint, scenario.receiverProjectName, scenario.receiverApplicationName);
-          _client.GetSenderManifestAsync(senderEndpoint, scenario.senderProjectName, scenario.senderApplicationName);
         }
 
       }

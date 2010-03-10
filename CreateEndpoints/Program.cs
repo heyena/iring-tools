@@ -37,11 +37,11 @@ namespace Endpoints
         new iRINGEndpoint{id="4", name = "Hatch InterfaceService", serviceUri = "http://iring.hatch.com.au/InterfaceService", 
           credentials = new WebCredentials("zlNbMav8dBXUREoOR6ctMZ8aRcOiKmUtgU9mmyhyNqxJ0EAePsEoRq5C71fEde6GtBAGg/JcGoE3bucNdqLZDg==") },
         new iRINGEndpoint{id="5", name = "Emerson InterfaceService", serviceUri = "http://122.248.16.198/InterfaceService"},
-        new iRINGEndpoint{id="6", name = "Bentley InterfaceService", serviceUri = "http://www.iringsandbox.org/InterfaceService/Bentley"},
+        //new iRINGEndpoint{id="6", name = "Bentley InterfaceService", serviceUri = "http://www.iringsandbox.org/InterfaceService/Bentley"},
         new iRINGEndpoint{id="12", name = "Bechtel Staging InterfaceService", serviceUri = "https://façade.staging.becpsn.com/InterfaceService", 
           credentials = new WebCredentials("8stUFBRIGcYR0Nl8v25rm5+qecZZD6i6itQUBD8zM0bODWZk1TysqXLBvMkc4GVUSCGqS4I9G99Wcynf7Qdqssj5NgAqU7m16EguxwWAScfq8olyMFfjd271RNc35Nv9")},
         new iRINGEndpoint{id="22", name = "Bechtel iLab InterfaceService", serviceUri = "http://labs98142/InterfaceService"},
-        new iRINGEndpoint{id="27", name = "Dow InterfaceService", serviceUri = "http://usmdlsdoww915/InterfaceService"},        
+        //new iRINGEndpoint{id="27", name = "Dow InterfaceService", serviceUri = "http://usmdlsdoww915/InterfaceService"},        
         new iRINGEndpoint{id="80", name = "Local InterfaceService", serviceUri = "http://localhost/InterfaceService"},
       };
 
@@ -54,7 +54,7 @@ namespace Endpoints
           receiverProjectName="12345_000", receiverApplicationName="Inspec", receiverGraphName="InstrumentList",
           exportEnabled=false, importEnabled=false},
         new Scenario{scenarioName = "Bentley (PDx) -> Bechtel (Inspec) [Lines]", sender="Bentley", receiver="Bechtel", 
-          senderAdapterServiceId = "N/A", receiverAdapterServiceId = "2", interfaceServiceId = "6",
+          senderAdapterServiceId = "N/A", receiverAdapterServiceId = "2", interfaceServiceId = "1",
           senderProjectName="12345_000", senderApplicationName="PDx", senderGraphName="",
           receiverProjectName="12345_000", receiverApplicationName="Inspec", receiverGraphName="LineList",
           exportEnabled=false, importEnabled=false},
