@@ -129,6 +129,8 @@ namespace Bechtel.IntergraphDataLayer.SPPID
 
     public override string ItemTag { get; set; }
 
+    public string Description { get; set; }
+
     public string NominalDiameter { get; set; }
 
     public string InsulType { get; set; }
@@ -143,45 +145,77 @@ namespace Bechtel.IntergraphDataLayer.SPPID
 
     public override string GetUpdatesXml()
     {
-      XElement updatesXml = new XElement("root");
+      String xml = String.Empty;
 
-      updatesXml.Add(new XElement("attr",
-        new XAttribute("name", "ItemTag"),
-          new XAttribute("value", this.ItemTag)));
+      if (this.ItemTag != null)
+      {
+        XElement updatesXml = new XElement("root");
 
-      updatesXml.Add(new XElement("attr",
-        new XAttribute("name", "NominalDiameter"),
-          new XAttribute("value", this.NominalDiameter)));
+        updatesXml.Add(new XElement("attr",
+          new XAttribute("name", "ItemTag"),
+            new XAttribute("value", this.ItemTag)));
 
-      updatesXml.Add(new XElement("attr",
-        new XAttribute("name", "InsulType"),
-          new XAttribute("value", this.InsulType)));
+        if (this.Description != null)
+        {
+          updatesXml.Add(new XElement("attr",
+            new XAttribute("name", "Description"),
+              new XAttribute("value", (this.Description))));
+        }
 
-      updatesXml.Add(new XElement("attr",
-        new XAttribute("name", "InsulPurpose"),
-          new XAttribute("value", this.InsulPurpose)));
+        if (this.NominalDiameter != null)
+        {
+          updatesXml.Add(new XElement("attr",
+            new XAttribute("name", "NominalDiameter"),
+              new XAttribute("value", this.NominalDiameter)));
+        }
 
-      updatesXml.Add(new XElement("attr",
-        new XAttribute("name", "InsulThick"),
-          new XAttribute("value", this.InsulThick)));
+        if (this.InsulType != null)
+        {
+          updatesXml.Add(new XElement("attr",
+            new XAttribute("name", "InsulType"),
+              new XAttribute("value", (this.InsulType))));
+        }
 
-      updatesXml.Add(new XElement("attr",
-        new XAttribute("name", "OperFluidCode"),
-          new XAttribute("value", this.OperFluidCode)));
+        if (this.InsulPurpose != null)
+        {
+          updatesXml.Add(new XElement("attr",
+            new XAttribute("name", "InsulPurpose"),
+              new XAttribute("value", this.InsulPurpose)));
+        }
 
-      updatesXml.Add(new XElement("attr",
-        new XAttribute("name", "PipingMaterialsClass"),
-          new XAttribute("value", this.PipingMaterialsClass)));
+        if (this.InsulThick != null)
+        {
+          updatesXml.Add(new XElement("attr",
+            new XAttribute("name", "InsulThick"),
+              new XAttribute("value", this.InsulThick)));
+        }
 
-      return updatesXml.ToString();
+        if (this.OperFluidCode != null)
+        {
+          updatesXml.Add(new XElement("attr",
+            new XAttribute("name", "OperFluidCode"),
+              new XAttribute("value", this.OperFluidCode)));
+        }
+
+        if (this.PipingMaterialsClass != null)
+        {
+          updatesXml.Add(new XElement("attr",
+            new XAttribute("name", "PipingMaterialsClass"),
+              new XAttribute("value", this.PipingMaterialsClass)));
+        }
+
+        xml = updatesXml.ToString();
+      }
+
+      return xml;
     }
   }
 
-  public class PipingCompDTO : IntergraphObject
+  public class PipingComp : IntergraphObject
   {
-    public PipingCompDTO()
+    public PipingComp()
     {
-      CommodityName = "PipingCompDTO";
+      CommodityName = "PipingComp";
     }
 
     public override string ItemTag { get; set; }

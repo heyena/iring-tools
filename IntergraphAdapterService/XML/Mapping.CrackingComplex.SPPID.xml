@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Mapping xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<GraphMaps>
+		<GraphMap name="EQUIPMENT" classId="rdl:R20981279868" identifier="ItemTag">
+			<TemplateMaps>
+				<TemplateMap type="Property" templateId="tpl:R66921101783" name="IdentificationByTag" classRole="tpl:R44537504070">
+					<RoleMaps>
+						<RoleMap roleId="tpl:R30790108016" name="hasIdentificationType" reference="rdl:R40471041754"/>
+						<RoleMap roleId="tpl:R22674749688" name="valIdentifier" dataType="xsd:string" propertyName="ItemTag" valueList=""/>
+					</RoleMaps>
+				</TemplateMap>
+				<TemplateMap type="Property" templateId="tpl:R31727644307" name="ClassifiedDescription" classRole="tpl:R32187253595">
+					<RoleMaps>
+						<RoleMap roleId="tpl:R99694822937" name="description" dataType="xsd:string" propertyName="Description" valueList=""/>
+						<RoleMap roleId="tpl:R23617130273" name="descriptionType" dataType="" propertyName="" reference="rdl:R11498442042" valueList=""/>
+					</RoleMaps>
+				</TemplateMap>
+				<TemplateMap type="Relationship" templateId="tpl:R77237600446" name="ThermalInsulationContainment" classRole="tpl:R38033821577">
+					<RoleMaps>
+						<RoleMap roleId="tpl:R22381561900" name="container" dataType="rdl:R14036517578" propertyName="">
+							<ClassMap name="THERMAL INSULATION MATERIAL" classId="rdl:R14036517578" identifier="ItemTag">
+								<TemplateMaps>
+									<TemplateMap type="Property" templateId="tpl:R66049683567" name="NominalThickness" classRole="tpl:R16314127825">
+										<RoleMaps>
+											<RoleMap roleId="tpl:R93884193692" name="hasScale" dataType="" propertyName="" reference="rdl:R34755432270" valueList=""/>
+											<RoleMap roleId="tpl:R59896853239" name="hasType" dataType="" propertyName="" reference="rdl:R75626151549" valueList=""/>
+											<RoleMap roleId="tpl:R90688063648" name="valValue" dataType="xsd:double" propertyName="InsulThick" valueList=""/>
+										</RoleMaps>
+									</TemplateMap>
+								</TemplateMaps>
+							</ClassMap>
+						</RoleMap>
+						<RoleMap roleId="tpl:R35530988154" name="containmentType" reference="rdl:R12086239421"/>
+					</RoleMaps>
+				</TemplateMap>
+			</TemplateMaps>
+			<DataObjectMaps>
+				<DataObjectMap name="Equipment" inFilter="" outFilter=""/>
+			</DataObjectMaps>
+		</GraphMap>
+		<GraphMap name="INSTRUMENT" classId="rdl:R98505918404" identifier="ItemTag">
+			<TemplateMaps>
+				<TemplateMap type="Property" templateId="tpl:R66921101783" name="IdentificationByTag" classRole="tpl:R44537504070">
+					<RoleMaps>
+						<RoleMap roleId="tpl:R30790108016" name="hasIdentificationType" reference="rdl:R40471041754"/>
+						<RoleMap roleId="tpl:R22674749688" name="valIdentifier" dataType="xsd:string" propertyName="ItemTag" valueList=""/>
+					</RoleMaps>
+				</TemplateMap>
+				<TemplateMap type="Property" templateId="tpl:R31727644307" name="ClassifiedDescription" classRole="tpl:R32187253595">
+					<RoleMaps>
+						<RoleMap roleId="tpl:R99694822937" name="description" dataType="xsd:string" propertyName="Description" valueList=""/>
+						<RoleMap roleId="tpl:R23617130273" name="descriptionType" dataType="" propertyName="" reference="rdl:R11498442042" valueList=""/>
+					</RoleMaps>
+				</TemplateMap>
+				<TemplateMap type="Relationship" templateId="tpl:R77237600446" name="ThermalInsulationContainment" classRole="tpl:R38033821577">
+					<RoleMaps>
+						<RoleMap roleId="tpl:R22381561900" name="container" dataType="rdl:R14036517578" propertyName="">
+							<ClassMap name="THERMAL INSULATION MATERIAL" classId="rdl:R14036517578" identifier="ItemTag">
+								<TemplateMaps>
+									<TemplateMap type="Property" templateId="tpl:R66049683567" name="NominalThickness" classRole="tpl:R16314127825">
+										<RoleMaps>
+											<RoleMap roleId="tpl:R93884193692" name="hasScale" dataType="" propertyName="" reference="rdl:R34755432270" valueList=""/>
+											<RoleMap roleId="tpl:R59896853239" name="hasType" dataType="" propertyName="" reference="rdl:R75626151549" valueList=""/>
+											<RoleMap roleId="tpl:R90688063648" name="valValue" dataType="xsd:double" propertyName="InsulThick" valueList=""/>
+										</RoleMaps>
+									</TemplateMap>
+								</TemplateMaps>
+							</ClassMap>
+						</RoleMap>
+						<RoleMap roleId="tpl:R35530988154" name="containmentType" reference="rdl:R12086239421"/>
+					</RoleMaps>
+				</TemplateMap>
+				<TemplateMap type="Property" templateId="tpl:R77443358818" name="NominalDiameter" classRole="tpl:R16314127825">
+					<RoleMaps>
+						<RoleMap roleId="tpl:R93884193692" name="hasScale" dataType="" propertyName="" reference="rdl:R34755432270" valueList=""/>
+						<RoleMap roleId="tpl:R59896853239" name="hasType" dataType="" propertyName="" reference="rdl:R17622148043" valueList=""/>
+						<RoleMap roleId="tpl:R90688063648" name="valValue" dataType="xsd:double" propertyName="NominalDiameter" valueList=""/>
+					</RoleMaps>
+				</TemplateMap>
+			</TemplateMaps>
+			<DataObjectMaps>
+				<DataObjectMap name="Instrument" inFilter="" outFilter=""/>
+			</DataObjectMaps>
+		</GraphMap>
+		<GraphMap name="LINE" classId="rdl:R19192462550" identifier="ItemTag">
+			<TemplateMaps>
+				<TemplateMap type="Property" templateId="tpl:R66921101783" name="IdentificationByTag" classRole="tpl:R44537504070">
+					<RoleMaps>
+						<RoleMap roleId="tpl:R30790108016" name="hasIdentificationType" reference="rdl:R40471041754"/>
+						<RoleMap roleId="tpl:R22674749688" name="valIdentifier" dataType="xsd:string" propertyName="ItemTag" valueList=""/>
+					</RoleMaps>
+				</TemplateMap>
+				<TemplateMap type="Property" templateId="tpl:R31727644307" name="ClassifiedDescription" classRole="tpl:R32187253595">
+					<RoleMaps>
+						<RoleMap roleId="tpl:R99694822937" name="description" dataType="xsd:string" propertyName="Description" valueList=""/>
+						<RoleMap roleId="tpl:R23617130273" name="descriptionType" dataType="" propertyName="" reference="rdl:R11498442042" valueList=""/>
+					</RoleMaps>
+				</TemplateMap>
+				<TemplateMap type="Relationship" templateId="tpl:R77237600446" name="ThermalInsulationContainment" classRole="tpl:R38033821577">
+					<RoleMaps>
+						<RoleMap roleId="tpl:R22381561900" name="container" dataType="rdl:R14036517578" propertyName="">
+							<ClassMap name="THERMAL INSULATION MATERIAL" classId="rdl:R14036517578" identifier="ItemTag">
+								<TemplateMaps>
+									<TemplateMap type="Property" templateId="tpl:R66049683567" name="NominalThickness" classRole="tpl:R16314127825">
+										<RoleMaps>
+											<RoleMap roleId="tpl:R93884193692" name="hasScale" dataType="" propertyName="" reference="rdl:R34755432270" valueList=""/>
+											<RoleMap roleId="tpl:R59896853239" name="hasType" dataType="" propertyName="" reference="rdl:R75626151549" valueList=""/>
+											<RoleMap roleId="tpl:R90688063648" name="valValue" dataType="xsd:double" propertyName="InsulThick" valueList=""/>
+										</RoleMaps>
+									</TemplateMap>
+								</TemplateMaps>
+							</ClassMap>
+						</RoleMap>
+						<RoleMap roleId="tpl:R35530988154" name="containmentType" reference="rdl:R12086239421"/>
+					</RoleMaps>
+				</TemplateMap>
+				<TemplateMap type="Property" templateId="tpl:R77443358818" name="NominalDiameter" classRole="tpl:R16314127825">
+					<RoleMaps>
+						<RoleMap roleId="tpl:R93884193692" name="hasScale" dataType="" propertyName="" reference="rdl:R34755432270" valueList=""/>
+						<RoleMap roleId="tpl:R59896853239" name="hasType" dataType="" propertyName="" reference="rdl:R17622148043" valueList=""/>
+						<RoleMap roleId="tpl:R90688063648" name="valValue" dataType="xsd:double" propertyName="NominalDiameter" valueList=""/>
+					</RoleMaps>
+				</TemplateMap>
+			</TemplateMaps>
+			<DataObjectMaps>
+				<DataObjectMap name="PipeRun" inFilter="" outFilter=""/>
+			</DataObjectMaps>
+		</GraphMap>
+		<GraphMap name="PipingComp" classId="rdl:R65135201747" identifier="ItemTag">
+			<TemplateMaps>
+				<TemplateMap type="Property" templateId="tpl:R66921101783" name="IdentificationByTag" classRole="tpl:R44537504070">
+					<RoleMaps>
+						<RoleMap roleId="tpl:R30790108016" name="hasIdentificationType" reference="rdl:R40471041754"/>
+						<RoleMap roleId="tpl:R22674749688" name="valIdentifier" dataType="xsd:string" propertyName="ItemTag" valueList=""/>
+					</RoleMaps>
+				</TemplateMap>
+				<TemplateMap type="Property" templateId="tpl:R31727644307" name="ClassifiedDescription" classRole="tpl:R32187253595">
+					<RoleMaps>
+						<RoleMap roleId="tpl:R99694822937" name="description" dataType="xsd:string" propertyName="Description" valueList=""/>
+						<RoleMap roleId="tpl:R23617130273" name="descriptionType" dataType="" propertyName="" reference="rdl:R11498442042" valueList=""/>
+					</RoleMaps>
+				</TemplateMap>
+				<TemplateMap type="Property" templateId="tpl:R77443358818" name="NominalDiameter" classRole="tpl:R16314127825">
+					<RoleMaps>
+						<RoleMap roleId="tpl:R93884193692" name="hasScale" dataType="" propertyName="" reference="rdl:R34755432270" valueList=""/>
+						<RoleMap roleId="tpl:R59896853239" name="hasType" dataType="" propertyName="" reference="rdl:R17622148043" valueList=""/>
+						<RoleMap roleId="tpl:R90688063648" name="valValue" dataType="xsd:double" propertyName="NominalDiameter" valueList=""/>
+					</RoleMaps>
+				</TemplateMap>
+			</TemplateMaps>
+			<DataObjectMaps>
+				<DataObjectMap name="PipingComp" inFilter="" outFilter=""/>
+			</DataObjectMaps>
+		</GraphMap>
+	</GraphMaps>
+	<ValueMaps>
+		<ValueMap valueList="Length" internalValue="MILLIMETRE" modelURI="rdl:R52054275374"/>
+		<ValueMap valueList="Length" internalValue="METRE" modelURI="rdl:R36970488283"/>
+		<ValueMap valueList="Length" internalValue="KILOMETRE" modelURI="rdl:R28364552281"/>
+		<ValueMap valueList="Length" internalValue="INCH" modelURI="rdl:R34755432270"/>
+		<ValueMap valueList="Length" internalValue="FOOT" modelURI="rdl:R82749412674"/>
+		<ValueMap valueList="Length" internalValue="MILE" modelURI="rdl:R24581249510"/>
+		<ValueMap valueList="Pressure" internalValue="PASCAL" modelURI="rdl:R98787754267"/>
+		<ValueMap valueList="Pressure" internalValue="KILOPASCAL" modelURI="rdl:R63639099552"/>
+		<ValueMap valueList="Pressure" internalValue="POUND PER SQUARE INCH" modelURI="rdl:R14495957831"/>
+		<ValueMap valueList="Pressure" internalValue="POUND PER SQUARE INCH ABSOLUTE" modelURI="rdl:R71198757784"/>
+		<ValueMap valueList="Pressure" internalValue="POUND PER SQUARE INCH GAUGE" modelURI="rdl:R46601209521"/>
+		<ValueMap valueList="Pressure" internalValue="BAR" modelURI="rdl:R83490506551"/>
+		<ValueMap valueList="Temperature" internalValue="KELVIN" modelURI="rdl:R53109662405"/>
+		<ValueMap valueList="Temperature" internalValue="DEGREE CELSIUS" modelURI="rdl:R74877992703"/>
+		<ValueMap valueList="Temperature" internalValue="DEGREE FAHRENHEIT" modelURI="rdl:R45708437750"/>
+		<ValueMap valueList="FlowRate" internalValue="TONNE PER HOUR" modelURI="rdl:R97397194940"/>
+		<ValueMap valueList="FlowRate" internalValue="KILOGRAM PER HOUR" modelURI="rdl:R40880693827"/>
+		<ValueMap valueList="FlowRate" internalValue="KILOGRAM PER MINUTE" modelURI="rdl:R20832134706"/>
+		<ValueMap valueList="FlowRate" internalValue="LITRE PER HOUR" modelURI="rdl:R72748932327"/>
+		<ValueMap valueList="FlowRate" internalValue="LITRE PER MINUTE" modelURI="rdl:R23195462092"/>
+		<ValueMap valueList="FlowRate" internalValue="CUBIC METRE PER MINUTE" modelURI="rdl:R66068064293"/>
+		<ValueMap valueList="FlowRate" internalValue="CUBIC METRE PER SECOND" modelURI="rdl:R94408067034"/>
+		<ValueMap valueList="FlowRate" internalValue="UK TON PER HOUR" modelURI="rdl:R53352916327"/>
+		<ValueMap valueList="FlowRate" internalValue="US TON PER HOUR" modelURI="rdl:R14730334384"/>
+		<ValueMap valueList="FlowRate" internalValue="POUND MASS PER HOUR" modelURI="rdl:R51206962402"/>
+		<ValueMap valueList="FlowRate" internalValue="POUND MASS PER MINUTE" modelURI="rdl:R94787789208"/>
+		<ValueMap valueList="FlowRate" internalValue="UK GALLON PER HOUR" modelURI="rdl:R45867315335"/>
+		<ValueMap valueList="FlowRate" internalValue="US GALLON PER HOUR" modelURI="rdl:R57993485640"/>
+		<ValueMap valueList="FlowRate" internalValue="UK GALLON PER MINUTE" modelURI="rdl:R15856845349"/>
+		<ValueMap valueList="FlowRate" internalValue="US GALLON PER MINUTE" modelURI="rdl:R90193901690"/>
+		<ValueMap valueList="FlowRate" internalValue="CUBIC FOOT PER MINUTE" modelURI="rdl:R88625733841"/>
+		<ValueMap valueList="FlowRate" internalValue="CUBIC FOOT PER SECOND" modelURI="rdl:R68602189675"/>
+		<ValueMap valueList="DocumentFormat" internalValue="MIME TYPE APPLICATION/PDF" modelURI="rdl:R15309906377"/>
+		<ValueMap valueList="Fluids" internalValue="W" modelURI="rdl:R65239689812"/>
+	</ValueMaps>
+	<Version>1.00.00</Version>
+</Mapping>
