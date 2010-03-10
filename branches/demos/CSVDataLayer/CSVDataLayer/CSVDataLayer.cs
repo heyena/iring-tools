@@ -24,11 +24,10 @@ namespace Bechtel.CSVDataLayer
     [Inject]
     public DataLayer(AdapterSettings settings, ApplicationSettings appSettings)
     {
-      _dataDictionaryPath = settings.XmlPath + "DataDictionary." + _appSettings.ProjectName + "." + appSettings.ApplicationName + ".xml";
       _settings = settings;
       _appSettings = appSettings;
+      _dataDictionaryPath = settings.XmlPath + "DataDictionary." + _appSettings.ProjectName + "." + _appSettings.ApplicationName + ".xml";      
     }
-
 
     public T Get<T>(Dictionary<string, object> queryProperties)
     {
