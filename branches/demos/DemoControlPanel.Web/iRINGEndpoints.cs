@@ -24,11 +24,11 @@ namespace DemoControlPanel.Web
         [DataMember]
         public WebCredentials credentials { get; set; }
 
-        [DataMember]
-        public string ProjectName { get; set; }
+        //[DataMember]
+        //public string ProjectName { get; set; }
 
-        [DataMember]
-        public string ApplicationName { get; set; }
+        //[DataMember]
+        //public string ApplicationName { get; set; }
 
     }
 }
