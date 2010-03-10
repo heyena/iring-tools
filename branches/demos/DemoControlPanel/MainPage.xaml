@@ -56,8 +56,8 @@
                             </StackPanel>                            
                             <ComboBox x:Name="cbxSenderGraphName" Width="264" Height="24" Margin="8"/>
                             <Button x:Name="btnSenderRefresh" Content="Refresh" Height="48" Width="264" Margin="8" Click="btnSenderRefresh_Click"/>
-                            <Button x:Name="btnSenderImport" Content="Export" Height="48" Width="264" Margin="8" IsEnabled="False" Click="btnSenderImport_Click"/>
-                            <Button x:Name="btnSenderReset" Content="Reset" Height="48" Width="264" Margin="8" Click="btnSenderReset_Click"/>
+                            <!--<Button x:Name="btnSenderImport" Content="Export" Height="48" Width="264" Margin="8" IsEnabled="False" Click="btnSenderImport_Click"/>
+                            <Button IsEnabled="False" x:Name="btnSenderReset" Content="Reset" Height="48" Width="264" Margin="8" Click="btnSenderReset_Click"/>-->
                         </StackPanel>
                     </Border>
                     <Border Margin="8,8,8,8" Grid.Row="1" BorderBrush="Gray" BorderThickness="1" CornerRadius="3" Grid.RowSpan="7" Grid.Column="2" Grid.ColumnSpan="2"  HorizontalAlignment="Right" >
@@ -76,8 +76,8 @@
                             </StackPanel>
                             <ComboBox x:Name="cbxReceiverGraphName" Width="264" Height="24" Margin="8"/>
                             <Button x:Name="btnReceiverPull" Content="Pull" Height="48" Width="264" Margin="8" Click="btnReceiverPull_Click"/>
-                            <Button x:Name="btnReceiverExport" Content="Import" Height="48" Width="264" Margin="8" IsEnabled="False" Click="btnReceiverExport_Click"/>
-                            <Button x:Name="btnReceiverReset" Content="Reset" Height="48" Width="264" Margin="8" Click="btnReceiverReset_Click"/>
+                            <!--<Button x:Name="btnReceiverExport" Content="Import" Height="48" Width="264" Margin="8" IsEnabled="False" Click="btnReceiverExport_Click"/>
+                            <Button  IsEnabled="False" x:Name="btnReceiverReset" Content="Reset" Height="48" Width="264" Margin="8" Click="btnReceiverReset_Click"/>-->
                         </StackPanel>
                     </Border>
                     <StackPanel x:Name="Uris" Orientation="Vertical" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="8" Margin="8,8,8,8">
@@ -92,7 +92,7 @@
                     </StackPanel>
                 </Grid>
             </basics:TabItem>
-            <basics:TabItem  Header="Interface Service">
+            <basics:TabItem  Header="Interface Service" Visibility="Collapsed">
                 <Grid x:Name="InterfaceService" ShowGridLines="False">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="40"/>
@@ -171,7 +171,7 @@
                             <Button x:Name="btnRefresh" Height="24" Width="128" Margin="8" Content="Refresh" HorizontalAlignment="Right" />
                         </StackPanel>
                     </Border>
-                    <Border Margin="8,8,8,8" Grid.Row="5" BorderBrush="Gray" BorderThickness="1" CornerRadius="3" Grid.Column="0" Grid.ColumnSpan="2"   >
+                    <!--<Border Margin="8,8,8,8" Grid.Row="5" BorderBrush="Gray" BorderThickness="1" CornerRadius="3" Grid.Column="0" Grid.ColumnSpan="2"   >
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Margin="8" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center">Interface Service:</TextBlock>
                             <ComboBox x:Name="cbInterfaceServices" Height="24" Margin="8" Width="328" HorizontalAlignment="Left" />
@@ -183,7 +183,7 @@
                             <Button x:Name="btnReset" Height="24" Width="128" Margin="8" Content="Reset" HorizontalAlignment="Right" />
                             <Button x:Name="btnGenerate" Height="24" Width="128" Margin="8" Content="Generate" HorizontalAlignment="Right" />
                         </StackPanel>
-                    </Border>
+                    </Border>-->
                     <Border  Margin="8,8,8,8"  BorderBrush="Gray" BorderThickness="1" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="7" Grid.RowSpan="2" CornerRadius="3" Visibility="Collapsed">
                         <Grid x:Name="RDF" ShowGridLines="False" Margin="8,8,8,8" >
                             <Grid.RowDefinitions>
