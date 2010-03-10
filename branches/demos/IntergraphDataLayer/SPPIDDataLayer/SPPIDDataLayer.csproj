@@ -75,7 +75,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="DataDictionary.CrackingComplex.SPPID.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Options.CrackingComplex.SPPID.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

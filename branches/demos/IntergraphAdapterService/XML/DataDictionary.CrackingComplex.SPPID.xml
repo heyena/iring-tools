@@ -40,7 +40,7 @@
       </dataProperties>
       <dataRelationships i:nil="true"/>
       <objectName>Equipment</objectName>
-      <objectNamespace>Bechtel.IntergraphDataLayer.SPPID</objectNamespace>
+      <objectNamespace>Bechtel.SPPIDDataLayer.Model</objectNamespace>
     </DataObject>
     <DataObject>
       <dataProperties>
@@ -89,7 +89,7 @@
       </dataProperties>
       <dataRelationships i:nil="true"/>
       <objectName>Instrument</objectName>
-      <objectNamespace>Bechtel.IntergraphDataLayer.SPPID</objectNamespace>
+      <objectNamespace>Bechtel.SPPIDDataLayer.Model</objectNamespace>
     </DataObject>
     <DataObject>
       <dataProperties>
@@ -152,7 +152,7 @@
       </dataProperties>
       <dataRelationships i:nil="true"/>
       <objectName>PipeRun</objectName>
-      <objectNamespace>Bechtel.IntergraphDataLayer.SPPID</objectNamespace>
+      <objectNamespace>Bechtel.SPPIDDataLayer.Model</objectNamespace>
     </DataObject>
     <DataObject>
       <dataProperties>
@@ -201,7 +201,7 @@
       </dataProperties>
       <dataRelationships i:nil="true"/>
       <objectName>PipingComp</objectName>
-      <objectNamespace>Bechtel.IntergraphDataLayer.SPPID</objectNamespace>
+      <objectNamespace>Bechtel.SPPIDDataLayer.Model</objectNamespace>
     </DataObject>
   </dataObjects>
 </DataDictionary>
