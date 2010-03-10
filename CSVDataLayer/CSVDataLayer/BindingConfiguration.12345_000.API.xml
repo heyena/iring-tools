@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BindingConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Bindings>
-    <Binding Name="DataLayer" Interface="org.iringtools.library.IDataLayer, iRINGLibrary" Implementation="Bechtel.CSVDataLayer.CSVDataLayer, Bechtel.CSVDataLayer"/>
-    <!--<Binding Name="DTOService" Interface="org.iringtools.adapter.IDTOService, AdapterLibrary" Implementation="org.iringtools.adapter.proj_12345_000.API.DTOService, App_Code"/>-->
+    <Binding Name="DataLayer" Interface="org.iringtools.library.IDataLayer, iRINGLibrary" Implementation="Bechtel.CSVDataLayer.DataLayer, Bechtel.CSVDataLayer"/>
+    <Binding Name="DTOService" Interface="org.iringtools.adapter.IDTOService, AdapterLibrary" Implementation="org.iringtools.adapter.proj_12345_000.API.DTOService, App_Code"/>
   </Bindings>
 </BindingConfiguration>
