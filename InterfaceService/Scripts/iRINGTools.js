@@ -1,6 +1,9 @@
 var iRINGTools = {
   transId: 0,
   transList: [],  
+  isIE: navigator.userAgent.toLowerCase().indexOf('msie') != -1,
+  isChrome: navigator.userAgent.toLowerCase().indexOf('chrome') != -1,
+  isFirefox: navigator.userAgent.toLowerCase().indexOf('firefox') != -1,
   
   getHttpConnection: function() {
     var conn = null;

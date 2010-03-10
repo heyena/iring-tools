@@ -29,12 +29,19 @@
           projScopeList.length = 0;
           
           for (var i = 0; i < projects.length; i++) {
-            var projName = projects[i].getElementsByTagName('Name')[0].text;
+            var projName = projects[i].getElementsByTagName('Name')[0].textContent;
+            if (iRINGTools.isIE) {
+              projName = projects[i].getElementsByTagName('Name')[0].text;
+            }
+            
             var applications = projects[i].getElementsByTagName('ScopeApplication');  
             var appScopeList = new Array();            
             
             for (var j = 0; j < applications.length; j++) {
-              var appName = applications[j].getElementsByTagName('Name')[0].text;
+              var appName = applications[j].getElementsByTagName('Name')[0].textContent;
+              if (iRINGTools.isIE) {
+                appName = applications[j].getElementsByTagName('Name')[0].text;
+              }
               appScopeList.push(appName);
               
               if (i == 0) {
