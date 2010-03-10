@@ -1200,13 +1200,13 @@ namespace org.iringtools.adapter
         properties.Add("proxyfactory.factory_class", "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle");
         properties.Add("dialect", "NHibernate.Dialect." + dbDictionary.provider + "Dialect");
 
-        if (dbDictionary.connectionString.ToUpper().Contains("ORACLE"))
-        {
-          properties.Add("connection.driver_class", "NHibernate.Driver.OracleClientDriver");
-        }
-        else if (dbDictionary.connectionString.ToUpper().Contains("MSSQL"))
+        if (dbDictionary.connectionString.ToUpper().Contains("MSSQL"))
         {
           properties.Add("connection.driver_class", "NHibernate.Driver.SqlClientDriver");
+        }
+        else
+        {
+          properties.Add("connection.driver_class", "NHibernate.Driver.OracleClientDriver");
         }
 
         config.AddProperties(properties);
