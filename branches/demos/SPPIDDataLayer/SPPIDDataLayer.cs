@@ -76,14 +76,12 @@ namespace Bechtel.SPPIDDataLayer
       {
         response = new Response();
 
-        int numberOfRecords = 0;
-
         foreach (T graph in graphList)
         {
-          numberOfRecords += IntergraphPost(graph);
+           IntergraphPost(graph);
         }
 
-        response.Add(numberOfRecords + " records of type " + typeof(T).Name + " have been updated successfully");
+        response.Add("Records of type " + typeof(T).Name + " have been updated successfully");
 
         return response;
       }
@@ -101,7 +99,7 @@ namespace Bechtel.SPPIDDataLayer
       {
         response = new Response();
 
-        int numberOfRecords = IntergraphPost(graph);
+        IntergraphPost(graph);
 
         response.Add("Records of type " + typeof(T).Name + " have been updated successfully");
       
@@ -114,7 +112,7 @@ namespace Bechtel.SPPIDDataLayer
       }
     }
 
-    private int IntergraphPost(object graph)
+    private void IntergraphPost(object graph)
     {
       string updatesXml = String.Empty;
       string keysXml = String.Empty;
@@ -132,24 +130,38 @@ namespace Bechtel.SPPIDDataLayer
         doc.Load(_optionsXmlPath);
         string optionsXml = doc.InnerXml;
         BechSPPIDBridge.Bridge bridgeClass = new BechSPPIDBridge.Bridge();
-        bridgeClass.init(optionsXml, ref errorCode, ref errorMsg);
 
-        _logger.Info(String.Format("Init - errorCode:{0} errorMsg:{1}", errorCode, errorMsg));
+        bridgeClass.init(optionsXml, ref errorCode, ref errorMsg);
 
         int recordsUpdated = 0;
         if (errorCode == 0)
         {
           recordsUpdated = bridgeClass.updateAttributes(commodityName, keysXml, updatesXml, ref errorCode, ref errorMsg);
 
-          _logger.Info(String.Format("UpdateAttributes - errorCode:{0} errorMsg:{1}", errorCode, errorMsg));
+          if (errorCode != 0)
+          {
+            if (keysXml != String.Empty) Utility.WriteString(keysXml, _settings.XmlPath + "Keys.xml");
+            if (updatesXml != String.Empty) Utility.WriteString(updatesXml, _settings.XmlPath + "Updates.xml");
+
+            _logger.ErrorFormat("UpdateAttributes - errorCode:{0} errorMsg:{1}", errorCode, errorMsg);
+          }
+        }
+        else
+        {
+          Utility.WriteString(String.Format("Init - errorCode:{0} errorMsg:{1}", errorCode, errorMsg), "./Logs/Error.log");
+
+          _logger.ErrorFormat("Init - errorCode:{0} errorMsg:{1}", errorCode, errorMsg);
         }
 
-        return recordsUpdated;
+        bridgeClass.disconnect(ref errorCode, ref errorMsg);
+
+        if (errorCode != 0)
+        {
+          _logger.ErrorFormat("Disconnect - errorCode:{0} errorMsg:{1}", errorCode, errorMsg);
+        }
       }
       catch (Exception ex)
       {
-        if (keysXml != String.Empty) Utility.WriteString(keysXml, _settings.XmlPath + "Keys.xml");
-        if (updatesXml != String.Empty) Utility.WriteString(updatesXml, _settings.XmlPath + "Updates.xml");
         _logger.Error(ex);
         throw ex;
       }

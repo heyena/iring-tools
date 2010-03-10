@@ -7,8 +7,8 @@
     <Grid x:Name="LayoutRoot">
         <Grid.Background>
             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                <GradientStop Color="White" Offset="1"/>
-                <GradientStop Color="#716558"/>
+              <GradientStop Color="#716558" Offset="1"/>  
+              <GradientStop Color="White"/>
             </LinearGradientBrush>
         </Grid.Background>        
         <Grid.RowDefinitions>
