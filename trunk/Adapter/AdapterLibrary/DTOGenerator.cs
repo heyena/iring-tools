@@ -142,7 +142,7 @@ namespace org.iringtools.adapter
         // Generate code
         List<string> serviceKnownTypes = GetServiceKnownTypes(projectName, applicationName);
         string dtoModel = GenerateDTOModel(projectName, applicationName);
-        string dtoService = GenerateDTOService();
+        string dtoService = GenerateDTOService(projectName, applicationName);
         string iService = GenerateIService(projectName, applicationName, serviceKnownTypes);
         string iDataService = GenerateIDataService(projectName, applicationName, serviceKnownTypes);
 
@@ -334,11 +334,26 @@ namespace org.iringtools.adapter
           foreach (MappingProperty mappingProperty in _mappingProperties)
           {
             String type = mappingProperty.mappingDataType;
-            
+
             // Convert to nullable type for some data types
-            if (type == "DateTime" || type == "Decimal" || type == "Double" || type == "Single" || type.StartsWith("Int"))
+            //if (type == "DateTime" || type == "Decimal" || type == "Double" || type == "Single" || type.StartsWith("Int"))
+            //{
+            //  type = "global::System.Nullable<" + type + ">";
+            //}
+
+            if (type.ToLower() != "string")
             {
-              type = "global::System.Nullable<" + type + ">";
+              if (!String.IsNullOrEmpty(mappingProperty.propertyName))
+              {
+                if (!mappingProperty.isRequired)
+                {
+                  type = type + "?";
+                }
+              }
+              else
+              {
+                type = type + "?";
+              }
             }
 
             _dtoModelWriter.WriteLine();
@@ -406,7 +421,9 @@ namespace org.iringtools.adapter
               //TODO: handle muli-column key
               if (mappingProperty.isPropertyKey)
               {
-                if (mappingProperty.dataType.ToLower() == "string" && !String.IsNullOrEmpty(mappingProperty.dataLength))
+                if (mappingProperty.dataType.ToLower() == "string" &&
+                    mappingProperty.mappingDataType.ToLower() == "string" &&
+                    !String.IsNullOrEmpty(mappingProperty.dataLength))
                 {
                   _dtoModelWriter.WriteLine();
                   _dtoModelWriter.WriteLine("if (this.Identifier.Length > {0})", mappingProperty.dataLength);
@@ -431,7 +448,9 @@ namespace org.iringtools.adapter
             {
               if (!mappingProperty.isPropertyKey && !String.IsNullOrEmpty(mappingProperty.propertyName))
               {
-                if (mappingProperty.dataType.ToLower() == "string" && !String.IsNullOrEmpty(mappingProperty.dataLength))
+                if (mappingProperty.dataType.ToLower() == "string" &&
+                    mappingProperty.mappingDataType.ToLower() == "string" &&
+                    !String.IsNullOrEmpty(mappingProperty.dataLength))
                 {
                   _dtoModelWriter.WriteLine();
                   _dtoModelWriter.WriteLine("if (this.{0}.Length > {1})", mappingProperty.propertyPath, mappingProperty.dataLength);
@@ -506,8 +525,10 @@ namespace org.iringtools.adapter
       }
     }
 
-    private string GenerateDTOService()
+    private string GenerateDTOService(string projectName, string applicationName)
     {
+      string namespacePrefix = ADAPTER_NAMESPACE + ".proj_" + projectName + "." + applicationName;
+
       try
       {
         _dtoServiceBuilder = new StringBuilder();
@@ -551,7 +572,7 @@ namespace org.iringtools.adapter
         dtoServiceWriter.WriteLine("public T TransformList<T>(string graphName, List<DataTransferObject> dtoList, string xmlPath, string stylesheetUri, string mappingUri, bool useDataContractDeserializer)");
         dtoServiceWriter.WriteLine("{");
         dtoServiceWriter.Indent++;
-        dtoServiceWriter.WriteLine("string dtoPath = xmlPath + graphName + \"DTO.xml\";");
+        dtoServiceWriter.WriteLine("string dtoPath = xmlPath + \"Mapping.{0}.{1}.DTO.xml\";", projectName, applicationName);
         dtoServiceWriter.WriteLine("Mapping mapping = Utility.Read<Mapping>(mappingUri, false);");
         dtoServiceWriter.WriteLine();
         dtoServiceWriter.WriteLine("switch (graphName)");
@@ -560,21 +581,25 @@ namespace org.iringtools.adapter
 
         foreach (GraphMap graphMap in _mapping.graphMaps)
         {
+          string qualifiedGraphName = namespacePrefix + "." + graphMap.name;
+
           dtoServiceWriter.WriteLine();
           dtoServiceWriter.WriteLine("case \"{0}\":", graphMap.name);
+          dtoServiceWriter.WriteLine("{");
           dtoServiceWriter.Indent++;
-          dtoServiceWriter.WriteLine("List<{0}> {0}List = new List<{0}>();", graphMap.name);
+          dtoServiceWriter.WriteLine("List<{0}> doList = new List<{0}>();", qualifiedGraphName);
           dtoServiceWriter.WriteLine();
           dtoServiceWriter.WriteLine("foreach (DataTransferObject dto in dtoList)");
           dtoServiceWriter.WriteLine("{");
           dtoServiceWriter.Indent++;
-          dtoServiceWriter.WriteLine("{0}List.Add(({0})dto);", graphMap.name);
+          dtoServiceWriter.WriteLine("doList.Add(({0})dto);", qualifiedGraphName);
           dtoServiceWriter.Indent--;
           dtoServiceWriter.WriteLine("}");
           dtoServiceWriter.WriteLine();
-          dtoServiceWriter.WriteLine("Utility.Write<List<{0}>>({0}List, dtoPath);", graphMap.name);
+          dtoServiceWriter.WriteLine("Utility.Write<List<{0}>>(doList, dtoPath);", qualifiedGraphName);
           dtoServiceWriter.WriteLine("break;");
           dtoServiceWriter.Indent--;
+          dtoServiceWriter.WriteLine("}");
         }
 
         dtoServiceWriter.Indent--;
@@ -599,11 +624,13 @@ namespace org.iringtools.adapter
 
         foreach (GraphMap graphMap in _mapping.graphMaps)
         {
+          string qualifiedGraphName = namespacePrefix + "." + graphMap.name;
+
           graphMap.classId = graphMap.classId.Replace("rdl:", "http://rdl.rdlfacade.org/data#");
           dtoServiceWriter.WriteLine();
           dtoServiceWriter.WriteLine("case \"{0}\":", graphMap.name);
           dtoServiceWriter.Indent++;
-          dtoServiceWriter.WriteLine("dto = new {0}(\"{1}\", graphName, identifier);", graphMap.name, graphMap.classId);
+          dtoServiceWriter.WriteLine("dto = new {0}(\"{1}\", graphName, identifier);", qualifiedGraphName, graphMap.classId);
           dtoServiceWriter.WriteLine("break;");
           dtoServiceWriter.Indent--;
         }
@@ -640,8 +667,11 @@ namespace org.iringtools.adapter
 
         foreach (GraphMap graphMap in _mapping.graphMaps)
         {
+          string qualifiedGraphName = namespacePrefix + "." + graphMap.name;
+
           dtoServiceWriter.WriteLine();
           dtoServiceWriter.WriteLine("case \"{0}\":", graphMap.name);
+          dtoServiceWriter.WriteLine("{");
           dtoServiceWriter.Indent++;
 
           foreach (DataObjectMap dataObjectMap in graphMap.dataObjectMaps)
@@ -659,32 +689,32 @@ namespace org.iringtools.adapter
                 string outFilter = dataObjectMap.outFilter.Substring(dataObjectMap.outFilter.IndexOf("_") + 1);
 
                 dtoServiceWriter.WriteLine(
-            @"var {0}{1}DO = 
-            (from {1}List in _dataLayer.GetList<{2}>()
-             where {1}.{3} == identifier && {1}List.{4}  // outFilter
-             select {1}List).FirstOrDefault<{2}>();
+            @"var dataObject = 
+            (from dataObjectList in _dataLayer.GetList<{1}>()
+             where dataObjectList.{2} == identifier && {1}.{3}  // outFilter
+             select dataObjectList).FirstOrDefault<{1}>();
 
-          if ({0}{1}DO != default({2}))
+          if (dataObject != default({1}))
           {{
-            dto = new {0}({0}{1}DO);
-            dto.Identifier = {0}{1}DO.{3};
-          }}", graphMap.name, dataObjectMap.name, qualifiedDataObjectName, identifier, outFilter);
+            dto = new {0}(dataObject);
+            dto.Identifier = dataObject.{2};
+          }}", qualifiedGraphName, qualifiedDataObjectName, identifier, outFilter);
 
               }
               else
               {
                 dtoServiceWriter.WriteLine(
-            @"var {0}{1}DO = 
-            (from {0}List in _dataLayer.GetList<{2}>()
-             where {0}List.{3} == identifier
-             select {0}List).FirstOrDefault<{2}>();   
+            @"var dataObject = 
+            (from dataObjectList in _dataLayer.GetList<{1}>()
+             where dataObjectList.{2} == identifier
+             select dataObjectList).FirstOrDefault<{1}>();   
         
-          if ({0}{1}DO != default({2}))
+          if (dataObject != default({1}))
           {{                        
-            dto = new {1}({0}{1}DO);
-            dto.Identifier = {0}{1}DO.{3};
+            dto = new {0}(dataObject);
+            dto.Identifier = dataObject.{2};
             break; 
-          }}", dataObjectMap.name, graphMap.name, qualifiedDataObjectName, identifier);
+          }}", qualifiedGraphName, qualifiedDataObjectName, identifier);
               }
             }
           }
@@ -692,6 +722,7 @@ namespace org.iringtools.adapter
           dtoServiceWriter.WriteLine();
           dtoServiceWriter.WriteLine("break;");
           dtoServiceWriter.Indent--;
+          dtoServiceWriter.WriteLine("}");
         }
 
         dtoServiceWriter.Indent--;
@@ -713,8 +744,11 @@ namespace org.iringtools.adapter
 
         foreach (GraphMap graphMap in _mapping.graphMaps)
         {
+          string qualifiedGraphName = namespacePrefix + "." + graphMap.name;
+
           dtoServiceWriter.WriteLine();
           dtoServiceWriter.WriteLine("case \"{0}\":", graphMap.name);
+          dtoServiceWriter.WriteLine("{");
           dtoServiceWriter.Indent++;
 
           foreach (DataObjectMap dataObjectMap in graphMap.dataObjectMaps)
@@ -732,31 +766,31 @@ namespace org.iringtools.adapter
                 String outFilter = dataObjectMap.outFilter.Substring(dataObjectMap.outFilter.IndexOf("_") + 1);
 
                 dtoServiceWriter.WriteLine(
-            @"var {0}{1}DOList = 
-            from {1}List in _dataLayer.GetList<{2}>()
-            where {1}List.{3}  // outFilter
-            select {1}List;
+            @"var dataObjectList = 
+            from _dataObjectList in _dataLayer.GetList<{1}>()
+            where {1}.{2}  // outFilter
+            select _dataObjectList;
 
-          foreach (var {0}DO in {0}{1}DOList)
+          foreach (var dataObject in dataObjectList)
           {{   					
-            {0} dto = new {0}({0}DO);
-            dto.Identifier = {0}DO.{4};
+            {0} dto = new {0}(dataObject);
+            dto.Identifier = dataObject.{3};
             dtoList.Add(dto);
-          }}", graphMap.name, dataObjectMap.name, qualifiedDataObjectName, outFilter, identifier);
+          }}", qualifiedGraphName, qualifiedDataObjectName, outFilter, identifier);
               }
               else
               {
                 dtoServiceWriter.WriteLine(
-            @"var {0}{1}DOList = 
-            from {1}List in _dataLayer.GetList<{2}>()
-            select {1}List;  
+            @"var dataObjectList = 
+            from _dataObjectList in _dataLayer.GetList<{1}>()
+            select _dataObjectList;  
     
-          foreach (var {1}DO in {0}{1}DOList)
+          foreach (var dataObject in dataObjectList)
           {{   					
-            {3} dto = new {3}({1}DO);
-            dto.Identifier = {1}DO.{4};
+            {0} dto = new {0}(dataObject);
+            dto.Identifier = dataObject.{2};
             dtoList.Add(dto);
-          }}", graphMap.name, dataObjectMap.name, qualifiedDataObjectName, graphMap.name, identifier);
+          }}", qualifiedGraphName, qualifiedDataObjectName, identifier);
               }
             }
           }
@@ -764,6 +798,7 @@ namespace org.iringtools.adapter
           dtoServiceWriter.WriteLine();
           dtoServiceWriter.WriteLine("break;");
           dtoServiceWriter.Indent--;
+          dtoServiceWriter.WriteLine("}");
         }
 
         dtoServiceWriter.Indent--;
@@ -786,8 +821,11 @@ namespace org.iringtools.adapter
 
         foreach (GraphMap graphMap in _mapping.graphMaps)
         {
+          string qualifiedGraphName = namespacePrefix + "." + graphMap.name;
+
           dtoServiceWriter.WriteLine();
           dtoServiceWriter.WriteLine("case \"{0}\":", graphMap.name);
+          dtoServiceWriter.WriteLine("{");
           dtoServiceWriter.Indent++;
 
           foreach (DataObjectMap dataObjectMap in graphMap.dataObjectMaps)
@@ -805,31 +843,29 @@ namespace org.iringtools.adapter
                 String outFilter = dataObjectMap.outFilter.Substring(dataObjectMap.outFilter.IndexOf("_") + 1);
 
                 dtoServiceWriter.WriteLine(
-            @"var {0}{1}DOList = 
-            from {1}List in _dataLayer.GetList<{2}>()
-            where {1}List.{3}  // outFilter
-            select {1}List;
+            @"var dataObjectList = 
+            from _dataObjectList in _dataLayer.GetList<{0}>()
+            where {0}.{1}  // outFilter
+            select _dataObjectList;
     
-          foreach (var {0}DO in {0}{1}DOList)
+          foreach (var dataObject in dataObjectList)
           {{   
-            string identifier = {0}DO.{4};
+            string identifier = dataObject.{2};
             identifierUriPairs.Add(identifier, endpoint + ""/"" + graphName + ""/"" + identifier);            
-          }}",
-            graphMap.name, dataObjectMap.name, qualifiedDataObjectName, outFilter, identifier);
+          }}", qualifiedDataObjectName, outFilter, identifier);
               }
               else
               {
                 dtoServiceWriter.WriteLine(
-            @"var {0}{1}DOList = 
-            from {1}List in _dataLayer.GetList<{2}>()
-            select {1}List;  
+            @"var dataObjectList = 
+            from _dataObjectList in _dataLayer.GetList<{0}>()
+            select _dataObjectList;  
 
-          foreach (var {1}DO in {0}{1}DOList)
+          foreach (var dataObject in dataObjectList)
           {{
-            string identifier = {1}DO.{3};
+            string identifier = dataObject.{1};
             identifierUriPairs.Add(identifier, endpoint + ""/"" + graphName + ""/"" + identifier);  
-          }}",
-            graphMap.name, dataObjectMap.name, qualifiedDataObjectName, identifier);
+          }}", qualifiedDataObjectName, identifier);
               }
             }
           }
@@ -837,6 +873,7 @@ namespace org.iringtools.adapter
           dtoServiceWriter.WriteLine();
           dtoServiceWriter.WriteLine("break;");
           dtoServiceWriter.Indent--;
+          dtoServiceWriter.WriteLine("}");
         }
 
         dtoServiceWriter.Indent--;
@@ -861,8 +898,11 @@ namespace org.iringtools.adapter
 
         foreach (GraphMap graphMap in _mapping.graphMaps)
         {
+          string qualifiedGraphName = namespacePrefix + "." + graphMap.name;
+
           dtoServiceWriter.WriteLine();
           dtoServiceWriter.Write("case \"{0}\":", graphMap.name);
+          dtoServiceWriter.Write("{");
           dtoServiceWriter.Indent++;
 
           if (graphMap.dataObjectMaps.Count == 1)
@@ -871,13 +911,13 @@ namespace org.iringtools.adapter
             string qualifiedDataObjectName = GetQualifiedDataObjectName(dataObjectMap.name);
 
             dtoServiceWriter.WriteLine(@"
-            {0} {1}DO = ({0})dto.GetDataObject();
-            response.Append(_dataLayer.Post<{0}>({1}DO));",
+            {0} dataObject = ({0})dto.GetDataObject();
+            response.Append(_dataLayer.Post<{0}>(dataObject));",
             qualifiedDataObjectName, graphMap.name);
           }
           else
           {
-            dtoServiceWriter.WriteLine(@"{0} {0}Obj = ({0})dto;", graphMap.name);
+            dtoServiceWriter.WriteLine(@"{0} dataTransferObj = ({0})dto;", qualifiedGraphName);
             int dataObjectMapCount = 0;
 
             foreach (DataObjectMap dataObjectMap in graphMap.dataObjectMaps)
@@ -886,18 +926,18 @@ namespace org.iringtools.adapter
 
               if (++dataObjectMapCount == 1)
               {
-                dtoServiceWriter.WriteLine("if ({0}Obj.{1}) // inFilter", graphMap.name, dataObjectMap.inFilter);
+                dtoServiceWriter.WriteLine("if (dataTransferObj.{0}) // inFilter", dataObjectMap.inFilter);
               }
               else
               {
-                dtoServiceWriter.WriteLine("else if ({0}Obj.{1}) // inFilter", graphMap.name, dataObjectMap.inFilter);
+                dtoServiceWriter.WriteLine("else if (dataTransferObj.{1}) // inFilter", dataObjectMap.inFilter);
               }
 
               dtoServiceWriter.WriteLine("{");
               dtoServiceWriter.Indent++;
               dtoServiceWriter.WriteLine(@"
-                {0} {1}DO = ({0}){2}Obj.GetDataObject();
-                response.Append(_dataLayer.Post<{0}>({1}DO));", qualifiedDataObjectName, dataObjectMap.name, graphMap.name);
+                {0} dataObject = ({0})dataTransferObj.GetDataObject();
+                response.Append(_dataLayer.Post<{0}>(dataObject));", qualifiedDataObjectName);
               dtoServiceWriter.Indent--;
               dtoServiceWriter.WriteLine("}");
             }
@@ -905,6 +945,7 @@ namespace org.iringtools.adapter
 
           dtoServiceWriter.WriteLine("break;");
           dtoServiceWriter.Indent--;
+          dtoServiceWriter.Write("}");
         }
 
         dtoServiceWriter.Indent--;
@@ -931,35 +972,37 @@ namespace org.iringtools.adapter
 
         foreach (GraphMap graphMap in _mapping.graphMaps)
         {
+          string qualifiedGraphName = namespacePrefix + "." + graphMap.name;
+
           dtoServiceWriter.WriteLine();
           dtoServiceWriter.WriteLine("case \"{0}\":", graphMap.name);
+          dtoServiceWriter.WriteLine("{");
           dtoServiceWriter.Indent++;
 
           if (graphMap.dataObjectMaps.Count == 1)
           {
             DataObjectMap dataObjectMap = graphMap.dataObjectMaps[0];
             string qualifiedDataObjectName = GetQualifiedDataObjectName(dataObjectMap.name);
-
+            
             dtoServiceWriter.WriteLine(
-        @"List<{0}> {1}DOList = new List<{0}>();
+        @"List<{0}> doList = new List<{0}>();
 
             foreach (DataTransferObject dto in dtoList)
             {{
-              {1}DOList.Add(({0})dto.GetDataObject());
+              doList.Add(({0})dto.GetDataObject());
             }}
 
-            response.Append(_dataLayer.PostList<{0}>({1}DOList));",
-        qualifiedDataObjectName, graphMap.name);
+            response.Append(_dataLayer.PostList<{0}>(doList));", qualifiedDataObjectName);
           }
           else
           {
             foreach (DataObjectMap dataObjectMap in graphMap.dataObjectMaps)
             {
               string qualifiedDataObjectName = GetQualifiedDataObjectName(dataObjectMap.name);
-              dtoServiceWriter.WriteLine(@"List<{0}> {1}DOList = new List<{0}>();", qualifiedDataObjectName, dataObjectMap.name);
+              dtoServiceWriter.WriteLine(@"List<{0}> doList = new List<{0}>();", qualifiedDataObjectName, dataObjectMap.name);
             }
 
-            dtoServiceWriter.WriteLine("foreach ({0} dto in dtoList)", graphMap.name);
+            dtoServiceWriter.WriteLine("foreach ({0} dto in dtoList)", qualifiedGraphName);
             dtoServiceWriter.WriteLine("{");
             dtoServiceWriter.Indent++;
 
@@ -980,8 +1023,8 @@ namespace org.iringtools.adapter
 
               dtoServiceWriter.WriteLine(@"
               {
-                {0}DOList.Add(({1})dto.GetDataObject());
-              }", dataObjectMap.name, qualifiedDataObjectName);
+                doList.Add(({0})dto.GetDataObject());
+              }", qualifiedDataObjectName);
             }
 
             dtoServiceWriter.Indent--;
@@ -990,12 +1033,13 @@ namespace org.iringtools.adapter
             foreach (DataObjectMap dataObjectMap in graphMap.dataObjectMaps)
             {
               string qualifiedDataObjectName = GetQualifiedDataObjectName(dataObjectMap.name);
-              dtoServiceWriter.WriteLine("response.Append(_dataLayer.PostList<{0}>({1}DOList));", qualifiedDataObjectName, dataObjectMap.name);
+              dtoServiceWriter.WriteLine("response.Append(_dataLayer.PostList<{0}>(doList));", qualifiedDataObjectName);
             }
           }
 
           dtoServiceWriter.WriteLine("break;");
           dtoServiceWriter.Indent--;
+          dtoServiceWriter.WriteLine("}");
         }
 
         dtoServiceWriter.Indent--;
@@ -1022,12 +1066,15 @@ namespace org.iringtools.adapter
 
         foreach (GraphMap graphMap in _mapping.graphMaps)
         {
+          string qualifiedGraphName = namespacePrefix + "." + graphMap.name;
+
           dtoServiceWriter.WriteLine();
           dtoServiceWriter.WriteLine(
         @"case ""{0}"":
-            XmlReader {0}Reader = XmlReader.Create(new StringReader(dtoListString));
-            XDocument {0}File = XDocument.Load({0}Reader);
-            {0}File = Utility.RemoveNamespace({0}File);", graphMap.name);
+          {{
+            XmlReader reader = XmlReader.Create(new StringReader(dtoListString));
+            XDocument file = XDocument.Load(reader);
+            file = Utility.RemoveNamespace(file);", graphMap.name);
           dtoServiceWriter.Indent++;
 
           if (graphMap.dataObjectMaps.Count == 1)
@@ -1036,37 +1083,38 @@ namespace org.iringtools.adapter
             string qualifiedDataObjectName = GetQualifiedDataObjectName(dataObjectMap.name);
 
             dtoServiceWriter.WriteLine(
-            @"List<{0}> {0}List = new List<{0}>(); 
-            var {0}Query = from c in {0}File.Elements(""Envelope"").Elements(""Payload"").Elements(""DataTransferObject"") select c;
+            @"List<{0}> _dtoList = new List<{0}>(); 
+            var dtoResults = from c in file.Elements(""Envelope"").Elements(""Payload"").Elements(""DataTransferObject"") select c;
 
-            foreach (var dto in {0}Query)
+            foreach (var dtoResult in dtoResults)
             {{
-              var propertyQuery = from c in dto.Elements(""Properties"").Elements(""Property"") select c;
-              {0} graphObject = new {0}();
+              var dtoProperties = from c in dtoResult.Elements(""Properties"").Elements(""Property"") select c;
+              {0} dto = new {0}();
 
-              foreach (var dtoProperty in propertyQuery)
+              foreach (var dtoProperty in dtoProperties)
               {{
-                for (int i = 0; i < graphObject._properties.Count; i++)
+                for (int i = 0; i < dto._properties.Count; i++)
                 {{
-                  if (dtoProperty.Attribute(""name"").Value == graphObject._properties[i].OIMProperty)
+                  if (dtoProperty.Attribute(""name"").Value == dto._properties[i].OIMProperty)
                   {{
-                    graphObject._properties[i].Value = dtoProperty.Attribute(""value"").Value.ToString();
+                    dto._properties[i].Value = dtoProperty.Attribute(""value"").Value.ToString();
                   }}
                 }}
               }}
 
-              {0}List.Add(graphObject);
+              _dtoList.Add(dto);
             }}
 
-            foreach ({0} dto in {0}List)
+            foreach ({0} dto in _dtoList)
             {{
               dtoList.Add(dto);
-            }}", graphMap.name);
+            }}", qualifiedGraphName);
           }
 
           dtoServiceWriter.WriteLine();
           dtoServiceWriter.WriteLine("break;");
           dtoServiceWriter.Indent--;
+          dtoServiceWriter.WriteLine("}");
         }
 
         dtoServiceWriter.Indent--;

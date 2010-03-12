@@ -1137,7 +1137,6 @@ namespace org.iringtools.adapter
     /// </summary>
     /// <param name="projectName"></param>
     /// <param name="applicationName"></param>
-    /// <param name="hasDTOLayer"></param>
     private void DeleteApplicationScope(string projectName, string applicationName)
     {
       bool isDeleted = false;
@@ -1200,13 +1199,17 @@ namespace org.iringtools.adapter
         properties.Add("proxyfactory.factory_class", "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle");
         properties.Add("dialect", "NHibernate.Dialect." + dbDictionary.provider + "Dialect");
 
-        if (dbDictionary.connectionString.ToUpper().Contains("MSSQL"))
+        if (dbDictionary.provider.ToString().ToUpper().Contains("MSSQL"))
         {
           properties.Add("connection.driver_class", "NHibernate.Driver.SqlClientDriver");
         }
-        else
+        else if (dbDictionary.provider.ToString().ToUpper().Contains("ORACLE"))
         {
           properties.Add("connection.driver_class", "NHibernate.Driver.OracleClientDriver");
+        }
+        else
+        {
+          throw new Exception("Database not supported.");
         }
 
         config.AddProperties(properties);
@@ -1273,9 +1276,9 @@ namespace org.iringtools.adapter
             Utility.Write<Mapping>(new Mapping(), mappingPath, false);
           }
 
-          // Generate default DTOService
-          string dtoServicePath = _settings.CodePath + "DTOService." + projectName + "." + applicationName + ".cs";
-          if (!File.Exists(dtoServicePath))
+          // Generate DTO layer if it does not exist
+          string dtoModelPath = _settings.CodePath + "DTOModel." + projectName + "." + applicationName + ".cs";
+          if (!File.Exists(dtoModelPath))
           {
             Generate(projectName, applicationName);
           }
