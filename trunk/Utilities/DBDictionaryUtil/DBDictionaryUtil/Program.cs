@@ -325,7 +325,8 @@ namespace DBDictionaryUtil
     static string ParseConnectionString(string connStr, string dbProvider)
     {
       string parsedConnStr = String.Empty;
-      string[] connStrKeyValuePairs = connStr.Split(';');
+      char[] ch = {';'};
+      string[] connStrKeyValuePairs = connStr.Split(ch,StringSplitOptions.RemoveEmptyEntries);
 
       foreach (string connStrKeyValuePair in connStrKeyValuePairs)
       {
