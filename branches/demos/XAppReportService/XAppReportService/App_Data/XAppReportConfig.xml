@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<XAppReport xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <reports>
+    <Report name="LineList">
+      <companies>
+        <Company>
+          <name>Bechtel</name>
+          <dtoUrl>https://facade.becpsn.com/adapterservice/service.svc/12345_000/Inspec/LineList</dtoUrl>
+          <dtoProperties>
+            <DTOProperty name="TAG_NO"/>
+            <DTOProperty name="DESCRIPTION"/>
+            <DTOProperty name="PID"/>
+            <DTOProperty name="SYSTEM"/>
+            <DTOProperty name="DESIGN_PRESSURE"/>
+            <DTOProperty name="DESIGN_TEMPERATURE"/>
+          </dtoProperties>
+        </Company>
+        <Company>
+          <name>ExxonMobil</name>
+          <dtoUrl>http://iringsandbox.org/adapterservice/service.svc/12345_000/API/Equipment</dtoUrl>
+          <dtoProperties>
+            <DTOProperty name="Tag"/>
+            <DTOProperty name="DesignTemp"/>
+            <DTOProperty name="DesignTemp"/>
+            <DTOProperty name="DesignPressure"/>
+          </dtoProperties>
+        </Company>
+      </companies>
+    </Report>
+    <Report name="EquipmentList">
+      <companies>
+        <Company>
+          <name>Bechtel</name>
+          <dtoUrl>https://facade.becpsn.com/adapterservice/service.svc/12345_000/Inspec/LineList</dtoUrl>
+          <dtoProperties>
+            <DTOProperty name="TAG_NO"/>
+            <DTOProperty name="DESCRIPTION"/>
+            <DTOProperty name="DESIGN_PRESSURE"/>
+            <DTOProperty name="DESIGN_TEMPERATURE"/>
+          </dtoProperties>
+        </Company>
+        <Company>
+          <name>ExxonMobil</name>
+          <dtoUrl>http://iringsandbox.org/adapterservice/service.svc/12345_000/API/Equipment</dtoUrl>
+          <dtoProperties>
+            <DTOProperty name="Tag"/>
+            <DTOProperty name="DesignTemp"/>
+            <DTOProperty name="DesignTemp"/>
+            <DTOProperty name="DesignPressure"/>
+          </dtoProperties>
+        </Company>
+      </companies>
+    </Report>
+  </reports>
+</XAppReport>
