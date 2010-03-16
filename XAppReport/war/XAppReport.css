@@ -1,0 +1,110 @@
+.appPanel {
+	width: 100%;
+	height: 100%;
+}
+
+.appTitle {
+  margin: 0 10px 0 10px;
+  color: #00b;
+  font-size: xx-large;
+  font-weight: bold;
+  white-space: nowrap;  
+}
+
+.topPanel {	
+  background: #93c2f1 url(dtoreport/gwt/chrome/images/hborder.png) repeat-x 0px -1463px;
+}
+
+.mainScrollPanel {
+	margin: 10px;	
+}
+
+.waitPanel {
+	width: 100%;
+	height: 100%;
+	background-color: #fff;
+	filter: alpha(opacity=50); /* internet explorer */
+  -khtml-opacity: 0.5;      /* khtml, old safari */
+  -moz-opacity: 0.5;       /* mozilla, netscape */
+  opacity: 0.5;           /* fx, safari, opera */
+}
+
+.promptPanel {
+  margin: 12px 10px 0 100px;
+  padding: 4px 2px 4px 2px;
+  border: 1px solid #666;
+}
+
+.promptLabel {
+	margin-top: 2px;
+  white-space: nowrap; 
+}
+
+.reportNamesListBox {
+	width: 180px;
+	background-color: #eee;
+}
+
+.goBtn {
+	width: 50px;
+}
+
+.firstCompanyLabel {
+  height: 22px;
+	padding: 2px 0 0 2px;
+  background-color: #e6deff;
+  border-left: 1px solid #88b;
+  border-top: 1px solid #88b;
+  border-right: 1px solid #88b;
+  font-weight: bold;
+  color: #444;
+}
+
+.nextOddCompanyLabel {
+  height: 22px;
+  padding: 2px 0 0 2px;
+  background-color: #dbf0f7;
+  border-top: 1px solid #88b;
+  border-right: 1px solid #88b;
+  font-weight: bold;
+  color: #444;
+}
+
+.nextEvenCompanyLabel {
+	height: 22px;
+  padding: 2px 0 0 2px;
+  background-color: #e6deff;
+  border-top: 1px solid #88b;
+  border-right: 1px solid #88b;
+  font-weight: bold;
+  color: #444;
+}
+
+.firstDtoTable {
+  background-color: #88b;
+  border-spacing: 1px; 
+}
+
+.nextDtoTable {
+	margin-left: -1px;
+  background-color: #88b;
+  border-spacing: 1px; 
+}
+
+.dtoTableHeader {
+  background: #93c2f1 url(dtoreport/gwt/chrome/images/hborder.png) repeat-x 0px -1463px;
+  padding: 2px;
+}
+
+.dtoTableOddRow {
+  background-color: #eef;
+}
+
+.dtoTableEvenRow {
+  background-color: #f7f5fe;
+}
+
+.dtoTableCell {
+  white-space: nowrap;
+  padding: 2px;
+}
