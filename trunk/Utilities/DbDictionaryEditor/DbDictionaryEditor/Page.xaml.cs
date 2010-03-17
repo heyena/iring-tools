@@ -226,19 +226,15 @@ namespace DbDictionaryEditor
         void proxy_GetExistingDbDictionaryFilesCompleted(object sender, GetExistingDbDictionaryFilesCompletedEventArgs e)
         {
             dbDictionaries = e.Result;
-            cbDictionary.IsEnabled = false;
-           
-            cbDictionary.Items.Clear();
             
-            string project = string.Empty;
-            string application = string.Empty;
+            List<string> dbDict = dbDictionaries.ToList<string>();
+            dbDict.Sort();
 
-            foreach (string file in dbDictionaries)
-            {
-                cbDictionary.Items.Add(file);
-            }
+            cbDictionary.IsEnabled = false;
+            cbDictionary.ItemsSource = dbDict;
+
             if (!cbDictionary.Items.Count.Equals(0))
-              cbDictionary.SelectedIndex = 0;
+                cbDictionary.SelectedIndex = 0;
             cbDictionary.IsEnabled = true;
             biBusyWindow.IsBusy = false;
         }
@@ -521,10 +517,10 @@ namespace DbDictionaryEditor
             dict.connectionString = tvwItemDestinationRoot.Tag.ToString().Split('~')[0];
             string prov = tvwItemDestinationRoot.Tag.ToString().Split('~')[1];
             dict.provider = (Provider)Enum.Parse(typeof(Provider), prov, true);
-            foreach (TreeViewItem itm in tvwItemDestinationRoot.Items)
+            foreach (TreeViewItem titm in tvwItemDestinationRoot.Items)
             {
                 tab = new Table();
-                currentObject = itm.Tag;
+                currentObject = titm.Tag;
                 if (currentObject is Table)
                 {
                     tab.entityName = ((Table)currentObject).entityName;
@@ -533,7 +529,7 @@ namespace DbDictionaryEditor
                     tab.associations = new List<Association>();
                     tab.columns = new List<Column>();
                 }
-                foreach (TreeViewItem citm in itm.Items)
+                foreach (TreeViewItem citm in titm.Items)
                 {
                     currentObject = citm.Tag;
                     if (currentObject is org.iringtools.library.Key)
