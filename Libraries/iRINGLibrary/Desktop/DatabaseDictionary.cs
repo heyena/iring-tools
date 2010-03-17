@@ -46,19 +46,19 @@ namespace org.iringtools.library
   [DataContract(Namespace = "http://ns.iringtools.org/library")]
   public class Table
   {
-    [DataMember(IsRequired = true, Order = 1)]
+    [DataMember(IsRequired = true, Order = 5)]
     public string tableName { get; set; }
 
-    [DataMember(Order = 2)]
+    [DataMember(Order = 3)]
     public string entityName { get; set; }
 
-    [DataMember(IsRequired = true, Order = 3)]
+    [DataMember(IsRequired = true, Order = 4)]
     public List<Key> keys { get; set; }
 
-    [DataMember(Order = 4)]
+    [DataMember(Order = 2)]
     public List<Column> columns { get; set; }
 
-    [DataMember(Order = 5)]
+    [DataMember(Order = 1)]
     public List<Association> associations { get; set; }
   }
 
@@ -68,16 +68,16 @@ namespace org.iringtools.library
     [DataMember(IsRequired = true, Order = 1)]
     public string columnName { get; set; }
 
-    [DataMember(Order = 2)]
+    [DataMember(Order = 5)]
     public string propertyName { get; set; }
 
     [DataMember(IsRequired = true, Order = 3)]
     public DataType dataType { get; set; }
 
-    [DataMember(IsRequired = true, Order = 4)]
+    [DataMember(IsRequired = true, Order = 2)]
     public int dataLength { get; set; }
     
-    [DataMember(IsRequired = true, Order = 5)]
+    [DataMember(IsRequired = true, Order = 4)]
     public bool isNullable { get; set; }
   }
 
