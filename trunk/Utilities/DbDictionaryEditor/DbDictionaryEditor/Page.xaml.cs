@@ -167,7 +167,7 @@ namespace DbDictionaryEditor
         {
             resultsList.lbResult.Items.Clear();
             ServiceRef.Response resp = e.Result;
-            string dictionaries = (String)cbDictionary.SelectedItem;
+            string dictionaries = cbDictionary.SelectedItem.ToString();
             string project = dictionaries.Split('.')[1];
             string application = dictionaries.Split('.')[2];
 
@@ -206,7 +206,7 @@ namespace DbDictionaryEditor
         {
             resultsList.lbResult.Items.Clear();
             ServiceRef.Response resp = e.Result;
-            string dictionary = (String)cbDictionary.SelectedItem;
+            string dictionary = cbDictionary.SelectedItem.ToString();
             string project = dictionary.Split('.')[1];
             string application = dictionary.Split('.')[2];
             ListBoxItem lbi;
@@ -326,8 +326,8 @@ namespace DbDictionaryEditor
 
         void proxy_SaveDabaseDictionaryCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
-            string proj = ((String)cbDictionary.SelectedItem).Split('.')[1];
-            string app = ((String)cbDictionary.SelectedItem).Split('.')[2];
+            string proj = cbDictionary.SelectedItem.ToString().Split('.')[1];
+            string app = cbDictionary.SelectedItem.ToString().Split('.')[2];
            
             tvwItemDestinationRoot.Items.Clear();
             proxy.GetDbDictionaryAsync(proj, app);
@@ -511,8 +511,8 @@ namespace DbDictionaryEditor
         private void btnSaveDbDictionary_Click(object sender, RoutedEventArgs e)
         {
             biBusyWindow.IsBusy = true;
-            string proj = ((String)cbDictionary.SelectedItem).Split('.')[1];
-            string app = ((String)cbDictionary.SelectedItem).Split('.')[2];
+            string proj = cbDictionary.SelectedItem.ToString().Split('.')[1];
+            string app = cbDictionary.SelectedItem.ToString().Split('.')[2];
             
             DatabaseDictionary dict = new DatabaseDictionary();
             object currentObject = null;
@@ -568,8 +568,8 @@ namespace DbDictionaryEditor
         private void btnPostDictionary_Click(object sender, RoutedEventArgs e)
         {
             biBusyWindow.IsBusy = true;
-            string project = ((String)cbDictionary.SelectedItem).Split('.')[1];
-            string application = ((String)cbDictionary.SelectedItem).Split('.')[2];
+            string project = cbDictionary.SelectedItem.ToString().Split('.')[1];
+            string application = cbDictionary.SelectedItem.ToString().Split('.')[2];
             proxy.DeleteAppAsync(project, application);
         }
 
@@ -590,8 +590,8 @@ namespace DbDictionaryEditor
             if (cbDictionary.SelectedIndex != -1)
             {
                 tvwItemDestinationRoot.Items.Clear();
-                string proj = ((String)cbDictionary.SelectedItem).Split('.')[1];
-                string app = ((String)cbDictionary.SelectedItem).Split('.')[2];
+                string proj = cbDictionary.SelectedItem.ToString().Split('.')[1];
+                string app = cbDictionary.SelectedItem.ToString().Split('.')[2];
                 proxy.GetDbDictionaryAsync(proj, app);
             }
         }
