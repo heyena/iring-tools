@@ -3,7 +3,7 @@
   <reports>
     <Report name="InstrumentList">
       <companies>
-        <!--<Company>
+        <Company>
           <name>Bechtel</name>
           <dtoUrl>https://facade.becpsn.com/adapterservice/service.svc/12345_000/Inspec/InstrumentList</dtoUrl>
           <dtoProperties>
@@ -16,7 +16,7 @@
             <DTOProperty label="Operating Temperature" xpath="tpl:OperatingTemperature.tpl:valValue"/>
             <DTOProperty label="Temperature UOM" xpath="tpl:OperatingTemperature.tpl:hasScale"/>
           </dtoProperties>
-        </Company>-->
+        </Company>
         <Company>
           <name>Emerson</name>
           <dtoUrl>http://122.248.16.198/AdapterService/Service.svc/12345_000/EIO/INSTRUMENTS</dtoUrl>
@@ -30,7 +30,7 @@
         </Company>
       </companies>
     </Report>
-    <!--<Report name="EquipmentList">
+    <Report name="EquipmentList">
       <companies>
         <Company>
           <name>Bechtel</name>
@@ -45,10 +45,10 @@
           <name>DOW</name>
           <dtoUrl>http://usmdlsdoww915/AdapterService/Service.svc/12345_000/API/Equipment</dtoUrl>
           <dtoProperties>
-            <DTOProperty label="Capacity" xpath=""/>
-            <DTOProperty label="Design Temperature" xpath=""/>
-            <DTOProperty label="Design Pressure" xpath=""/>
-            <DTOProperty label="Differential Pressure" xpath=""/>
+            <DTOProperty label="Capacity" xpath="tpl:VolumeFlowRate.tpl:valValue"/>
+            <DTOProperty label="Design Temperature" xpath="tpl:DesignTemperature.tpl:valValue"/>
+            <DTOProperty label="Design Pressure" xpath="tpl:DesignPressure.tpl:valValue"/>
+            <DTOProperty label="Differential Pressure" xpath="tpl:DifferentialPressure.tpl:valValue"/>
           </dtoProperties>
         </Company>
       </companies>
@@ -61,8 +61,8 @@
           <dtoProperties>
             <DTOProperty label="Tag Number" xpath="tpl:IdentificationByTag.tpl:valIdentifier"/>
             <DTOProperty label="Plant Area" xpath="tpl:PlantAreaHasPlantObject.tpl:whole.rdl:PLANTAREA.tpl:IdentificationByTag.tpl:valIdentifier"/>
-            <DTOProperty label="System" xpath="tpl:SystemHasPlanObject.tpl:whole.rdl:SYSTEM.tpl:ClassifiedIdentification.tpl:valIdentifier"/>
-            <DTOProperty label="Description" xpath="tpl:ClassifiedDescription.tpl:description"/>
+            <DTOProperty label="System" xpath="tpl:SystemHasPlantObject.tpl:whole.rdl:SYSTEM.tpl:ClassifiedIdentification.tpl:valIdentifier"/>
+            <DTOProperty label="Description" xpath="tpl:ClassifiedDescription19.tpl:description"/>
             <DTOProperty label="PID" xpath="tpl:PAndIDRepresentation.tpl:representation.rdl:PANDIDIAGRAM.tpl:ClassifiedIdentification.tpl:valIdentifier"/>
             <DTOProperty label="Diameter" xpath="tpl:NominalDiameter.tpl:valValue"/>
             <DTOProperty label="Diameter UOM" xpath="tpl:NominalDiameter.tpl:hasScale"/>
@@ -72,15 +72,13 @@
           <name>CCC</name>
           <dtoUrl>http://c3d.ccc.gr/AdapterService/Service.svc/CCC/C3D/Lines</dtoUrl>
           <dtoProperties>
-            <DTOProperty label="line_number" xpath=""/>
-            <DTOProperty label="area" xpath=""/>
-            <DTOProperty label="design_pressure" xpath=""/>
-            <DTOProperty label="design_temperature" xpath=""/>
-            <DTOProperty label="line_testing_status" xpath=""/>
-            <DTOProperty label="test_pressure" xpath=""/>
+            <DTOProperty label="Line Number" xpath="tpl:IdentificationByTag.tpl:valIdentifier"/>
+            <DTOProperty label="Area" xpath="tpl:PlantAreaHasPlantObject.tpl:whole.rdl:PLANTAREA.tpl:IdentificationByTag.tpl:valIdentifier"/>
+            <DTOProperty label="Design Pressure" xpath="tpl:DesignPressure.tpl:valValue"/>
+            <DTOProperty label="Design Temperature" xpath="tpl:DesignTemperature.tpl:valValue"/>
           </dtoProperties>
         </Company>
       </companies>
-    </Report>-->
+    </Report>
   </reports>
 </XAppReport>

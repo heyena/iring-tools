@@ -33,7 +33,7 @@ namespace XAppReportService
       string configXml = Utility.ReadString(_dataPath + "ConfiguredEndpoints.xml");
       configXml = Utility.Transform(configXml, _dataPath + "RemoveNamespace.xsl", null);
       _encryptedTokens = new Dictionary<string, string>();
-      
+
       XDocument document = XDocument.Parse(configXml);
       IEnumerable<XElement> iRINGEndpoints =
         document.Element("ConfiguredEndpoints").Element("adapterEndpoints").Elements("iRINGEndpoint");
@@ -51,7 +51,8 @@ namespace XAppReportService
 
     public List<string> GetReportNames()
     {
-      try {
+      try
+      {
         List<string> reportNames = new List<string>();
 
         foreach (Report report in _reportConfig.reports)
@@ -107,7 +108,7 @@ namespace XAppReportService
       {
         credentialToken = _encryptedTokens[adapterUri.ToLower()];
       }
-            
+
       // Get dto properties values
       Dictionary<string, List<string>> xPathValuesPairs = GetXPathValuesPairs(dtoUrl, credentialToken);
 
@@ -115,51 +116,64 @@ namespace XAppReportService
       {
         if (!String.IsNullOrEmpty(dtoProperty.xPath))
         {
-          string xpath = dtoProperty.xPath.Replace(".tpl", @"\d+\.tpl");
+          string xpath = dtoProperty.xPath.Replace(".tpl", @"\d*\.tpl");
           foreach (var pair in xPathValuesPairs)
           {
             if (Regex.IsMatch(pair.Key, @xpath, RegexOptions.IgnoreCase))
             {
               dtoProperty.values = pair.Value;
+              break;
             }
           }
         }
-      } 
+      }
     }
 
     private Dictionary<string, List<string>> GetXPathValuesPairs(string dtoUrl, string credentialToken)
     {
       Dictionary<string, List<string>> xPathValuesPairs = new Dictionary<string, List<string>>();
-      string dtoListXml = sendHttpRequest(dtoUrl, credentialToken);
-      dtoListXml = Utility.Transform(dtoListXml, _dataPath + "RemoveNamespace.xsl", null);
-      XDocument document = XDocument.Parse(dtoListXml);
-      XElement payload = document.Element("Envelope").Element("Payload");
 
-      XElement dto = (XElement)payload.FirstNode;
-      while (dto != null)
+      try
       {
-        XElement properties = dto.Element("Properties");
-        XElement property = (XElement)properties.FirstNode;
-
-        while (property != null)
+        string dtoListXml = sendHttpRequest(dtoUrl, credentialToken);
+        if (!String.IsNullOrEmpty(dtoListXml))
         {
-          string xPath = property.Attribute("name").Value;
-          string propertyValue = property.Attribute("value").Value;
+          dtoListXml = Utility.Transform(dtoListXml, _dataPath + "RemoveNamespace.xsl", null);
 
-          if (xPathValuesPairs.ContainsKey(xPath))
-          {
-            xPathValuesPairs[xPath].Add(propertyValue);
-          }
-          else
-          {
-            List<string> values = new List<string>() { propertyValue };
-            xPathValuesPairs.Add(xPath, values);
-          }
+          XDocument document = XDocument.Parse(dtoListXml);
+          XElement payload = document.Element("Envelope").Element("Payload");
 
-          property = (XElement)property.NextNode;
+          XElement dto = (XElement)payload.FirstNode;
+          while (dto != null)
+          {
+            XElement properties = dto.Element("Properties");
+            XElement property = (XElement)properties.FirstNode;
+
+            while (property != null)
+            {
+              string xPath = property.Attribute("name").Value;
+              string propertyValue = property.Attribute("value").Value;
+
+              if (xPathValuesPairs.ContainsKey(xPath))
+              {
+                xPathValuesPairs[xPath].Add(propertyValue);
+              }
+              else
+              {
+                List<string> values = new List<string>() { propertyValue };
+                xPathValuesPairs.Add(xPath, values);
+              }
+
+              property = (XElement)property.NextNode;
+            }
+
+            dto = (XElement)dto.NextNode;
+          }
         }
-
-        dto = (XElement)dto.NextNode;
+      }
+      catch (Exception ex)
+      {
+        Utility.WriteString("[" + DateTime.Now + "] " + ex.ToString(), _dataPath + "logs.txt");
       }
 
       return xPathValuesPairs;

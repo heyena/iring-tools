@@ -1,6 +1,7 @@
 package org.iringtools.client;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.Unit;
@@ -30,14 +31,24 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class XAppReport implements EntryPoint {
-  //private String serviceUri = "http://127.0.0.1:56813/Service.svc/";
-  private String serviceUri = "http://www.iringsandbox.org/XAppReportService/Service.svc/";
+  private String serviceUri = null;
   private HorizontalPanel mainContentPanel = new HorizontalPanel();
   private ListBox reportNamesListBox = new ListBox();
   private Button goBtn = new Button("Go");
   private SimplePanel waitPanel = new SimplePanel();
   
   public void onModuleLoad() {
+    // Initialize serviceUri for local and remote server
+    String baseURL = GWT.getHostPageBaseURL().toLowerCase();
+    if (baseURL.contains("127.0.0.1")) {
+      serviceUri = "http://127.0.0.1:56813/Service.svc/";
+    } else if (baseURL.contains("localhost")) {
+      serviceUri = "http://localhost:56813/Service.svc/";
+    } else {
+      String reportService = "XAppReportService/Service.svc/";
+      serviceUri = baseURL.replace(GWT.getModuleName() + "/", "") + reportService;
+    }
+    
     LayoutPanel topPanel = new LayoutPanel();
     topPanel.setStyleName("topPanel");
     HorizontalPanel topContentPanel = new HorizontalPanel();
