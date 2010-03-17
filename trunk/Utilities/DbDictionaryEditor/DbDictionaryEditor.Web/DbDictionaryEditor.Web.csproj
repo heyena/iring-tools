@@ -33,15 +33,15 @@
   <ItemGroup>
     <Reference Include="iRINGLibrary, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\iring\Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll</HintPath>
+      <HintPath>..\..\..\Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll</HintPath>
     </Reference>
     <Reference Include="NHibernate, Version=2.1.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\iring\ExternalBinaries\NHibernate 2.0\bin\net-2.0\NHibernate.dll</HintPath>
+      <HintPath>..\..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="NHibernate.ByteCode.Castle, Version=2.1.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\iring\ExternalBinaries\NHibernate 2.0\bin\net-2.0\NHibernate.ByteCode.Castle.dll</HintPath>
+      <HintPath>..\..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\NHibernate.ByteCode.Castle.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -60,10 +60,9 @@
     <Reference Include="System.Web.Extensions">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Web.Silverlight, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Windows.Controls, Version=2.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files\Microsoft SDKs\Silverlight\v3.0\Libraries\Client\System.Windows.Controls.dll</HintPath>
+      <HintPath>..\..\..\ExternalBinaries\Silverlight-Toolkit\System.Windows.Controls.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -77,26 +76,19 @@
     <Reference Include="System.Web.Mobile" />
     <Reference Include="UtilityLibrary, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\iring\Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll</HintPath>
+      <HintPath>..\..\..\Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="ClientBin\DbDictionaryEditor.xap" />
-    <Content Include="DbDictionaryService.svc" />
     <Content Include="Default.aspx" />
+    <Content Include="DbDictionaryService.svc" />
     <Content Include="Silverlight.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DbDictionaryService.svc.cs">
       <DependentUpon>DbDictionaryService.svc</DependentUpon>
-    </Compile>
-    <Compile Include="Default.aspx.cs">
-      <SubType>ASPXCodeBehind</SubType>
-      <DependentUpon>Default.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Default.aspx.designer.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="IDbDictionaryService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
