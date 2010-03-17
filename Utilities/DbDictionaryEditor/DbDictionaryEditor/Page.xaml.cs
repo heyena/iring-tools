@@ -85,7 +85,7 @@ namespace DbDictionaryEditor
             Interaction.GetBehaviors(tvwSource).Add(mouseScrollBehaviorSource);
             
             MouseScrollBehavior mouseScrollBehaviorDest = new MouseScrollBehavior();
-            Interaction.GetBehaviors(tvwSource).Add(mouseScrollBehaviorDest);
+            Interaction.GetBehaviors(tvwDestination).Add(mouseScrollBehaviorDest);
             
         }
 
@@ -236,8 +236,9 @@ namespace DbDictionaryEditor
             foreach (string file in dbDictionaries)
             {
                 cbDictionary.Items.Add(file);
-             }
-            cbDictionary.SelectedIndex = 0;
+            }
+            if (!cbDictionary.Items.Count.Equals(0))
+              cbDictionary.SelectedIndex = 0;
             cbDictionary.IsEnabled = true;
             biBusyWindow.IsBusy = false;
         }
@@ -327,12 +328,7 @@ namespace DbDictionaryEditor
         {
             string proj = ((String)cbDictionary.SelectedItem).Split('.')[1];
             string app = ((String)cbDictionary.SelectedItem).Split('.')[2];
-            if (proj == null && newProject != null)
-                proj = newProject;
-            newProject = null;
-            if (app == null && newApplication != null)
-                app = newApplication;
-            newApplication = null;
+           
             tvwItemDestinationRoot.Items.Clear();
             proxy.GetDbDictionaryAsync(proj, app);
         }
@@ -341,7 +337,7 @@ namespace DbDictionaryEditor
         {
             TreeViewItem stab;
             TreeViewItem dtab;
-           // TreeViewItem col;
+      
             tvwItemSourceRoot.Items.Clear();
             DatabaseDictionary dict = e.Result;
             ConstructTreeView(dict, tvwItemSourceRoot);
@@ -452,17 +448,12 @@ namespace DbDictionaryEditor
 
         void itm_Checked(object sender, RoutedEventArgs e)
         {
-            CheckBox cb = (CheckBox)sender;
+            
 
         }
         void itm_Expanded(object sender, RoutedEventArgs e)
         {
-            try
-            {
-            }
-            catch (Exception ex)
-            {
-            }//throw new NotImplementedException();
+
         }
 
 
@@ -701,7 +692,7 @@ namespace DbDictionaryEditor
                 if (selectedItem.Tag is Table)
                 {
                     sp = new StackPanel() { Orientation = Orientation.Horizontal };
-                    tblk = CreateTextBlock("  --==  Edit Table  ==--");
+                    tblk = CreateTextBlock("      --==  Edit Table  ==--    ");
                     tblk.FontSize = 14;
                     sp.Children.Add(tblk);
                     editTreeNode.spContainer.Children.Add(sp);
@@ -723,7 +714,7 @@ namespace DbDictionaryEditor
                 else if (selectedItem.Tag is Column)
                 {
                      sp = new StackPanel() { Orientation = Orientation.Horizontal };
-                     tblk = CreateTextBlock("  --==  Edit Column  ==--");
+                     tblk = CreateTextBlock("      --==  Edit Column  ==--    ");
                      tblk.FontSize = 14;
                      sp.Children.Add(tblk);
                      editTreeNode.spContainer.Children.Add(sp);
