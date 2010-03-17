@@ -38,9 +38,7 @@
           <dtoProperties>
             <DTOProperty label="Tag Number" xpath="tpl:IdentificationByTag.tpl:valIdentifier"/>
             <DTOProperty label="Description" xpath="tpl:InstrumentServiceDescription.tpl:description"/>
-            <DTOProperty label="PID" xpath="tpl:PAndIDRepresentation.tpl:representation.rdl:PANDIDIAGRAM.tpl:ClassifiedIdentification.tpl:valIdentifier"/>
-            <DTOProperty label="TYPE" xpath=""/>
-            <DTOProperty label="DRIVER_TYPE" xpath=""/>
+            <DTOProperty label="Driver Type" xpath="tpl:ClassifiedDescription.tpl:description"/>
           </dtoProperties>
         </Company>
         <Company>
@@ -61,13 +59,13 @@
           <name>Bechtel</name>
           <dtoUrl>https://facade.becpsn.com/adapterservice/service.svc/12345_000/Inspec/LineList</dtoUrl>
           <dtoProperties>
-            <DTOProperty label="TAG_NO" xpath=""/>
-            <DTOProperty label="PLANT_AREA" xpath=""/>
-            <DTOProperty label="SYSTEM" xpath=""/>
-            <DTOProperty label="DESCRIPTION" xpath=""/>
-            <DTOProperty label="PID" xpath=""/>
-            <DTOProperty label="DIAMETER" xpath=""/>
-            <DTOProperty label="DIAMETER_UOM" xpath=""/>
+            <DTOProperty label="Tag Number" xpath="tpl:IdentificationByTag.tpl:valIdentifier"/>
+            <DTOProperty label="Plant Area" xpath="tpl:PlantAreaHasPlantObject.tpl:whole.rdl:PLANTAREA.tpl:IdentificationByTag.tpl:valIdentifier"/>
+            <DTOProperty label="System" xpath="tpl:SystemHasPlanObject.tpl:whole.rdl:SYSTEM.tpl:ClassifiedIdentification.tpl:valIdentifier"/>
+            <DTOProperty label="Description" xpath="tpl:ClassifiedDescription.tpl:description"/>
+            <DTOProperty label="PID" xpath="tpl:PAndIDRepresentation.tpl:representation.rdl:PANDIDIAGRAM.tpl:ClassifiedIdentification.tpl:valIdentifier"/>
+            <DTOProperty label="Diameter" xpath="tpl:NominalDiameter.tpl:valValue"/>
+            <DTOProperty label="Diameter UOM" xpath="tpl:NominalDiameter.tpl:hasScale"/>
           </dtoProperties>
         </Company>
         <Company>
