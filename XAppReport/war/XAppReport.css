@@ -12,7 +12,7 @@
 }
 
 .topPanel {	
-  background: #93c2f1 url(dtoreport/gwt/chrome/images/hborder.png) repeat-x 0px -1463px;
+  background: #93c2f1 url(xappreport/gwt/chrome/images/hborder.png) repeat-x 0px -1463px;
 }
 
 .mainScrollPanel {
@@ -92,7 +92,7 @@
 }
 
 .dtoTableHeader {
-  background: #93c2f1 url(dtoreport/gwt/chrome/images/hborder.png) repeat-x 0px -1463px;
+  background: #93c2f1 url(xappreport/gwt/chrome/images/hborder.png) repeat-x 0px -1463px;
   padding: 2px;
 }
 

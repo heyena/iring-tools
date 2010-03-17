@@ -40,10 +40,10 @@ namespace XAppReportService
   public class DTOProperty
   {
     [XmlAttribute]
-    public string name { get; set; }
+    public string label { get; set; }
 
-    //[XmlAttribute]
-    //public string oimPath { get; set; }
+    [XmlAttribute(AttributeName="xpath")]
+    public string xPath { get; set; }
 
     [XmlArray]
     public List<string> values { get; set; }

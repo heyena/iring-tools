@@ -1,55 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
 <XAppReport xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <reports>
+    <Report name="InstrumentList">
+      <companies>
+        <!--<Company>
+          <name>Bechtel</name>
+          <dtoUrl>https://facade.becpsn.com/adapterservice/service.svc/12345_000/Inspec/InstrumentList</dtoUrl>
+          <dtoProperties>
+            <DTOProperty label="Tag Number" xpath="tpl:IdentificationByTag.tpl:valIdentifier"/>
+            <DTOProperty label="Instrument Type" xpath="tpl:ClassifiedDescription.tpl:description"/>
+            <DTOProperty label="Description" xpath="tpl:InstrumentServiceDescription.tpl:description"/>
+            <DTOProperty label="PID" xpath="tpl:PAndIDRepresentation.tpl:representation.rdl:PANDIDIAGRAM.tpl:ClassifiedIdentification.tpl:valIdentifier"/>
+            <DTOProperty label="Operating Pressure" xpath="tpl:OperatingPressure.tpl:valValue"/>
+            <DTOProperty label="Pressure UOM" xpath="tpl:OperatingPressure.tpl:hasScale"/>
+            <DTOProperty label="Operating Temperature" xpath="tpl:OperatingTemperature.tpl:valValue"/>
+            <DTOProperty label="Temperature UOM" xpath="tpl:OperatingTemperature.tpl:hasScale"/>
+          </dtoProperties>
+        </Company>-->
+        <Company>
+          <name>Emerson</name>
+          <dtoUrl>http://122.248.16.198/AdapterService/Service.svc/12345_000/EIO/INSTRUMENTS</dtoUrl>
+          <dtoProperties>
+            <DTOProperty label="Manufacturer" xpath="tpl:InstrumentManufacturerRelationship.tpl:fabrication.rdl:MANUFACTURER.tpl:InstrumentManufacturerName.tpl:valIdentifier"/>
+            <DTOProperty label="Model Number" xpath="tpl:InstrumentModelNumber.tpl:valIdentifier"/>
+            <DTOProperty label="Minimum Measurement Span" xpath="tpl:TransmitterMeasurementRange.tpl:Lowerbound"/>
+            <DTOProperty label="Maximum Measurement Span" xpath="tpl:TransmitterMeasurementRange.tpl:Upperbound"/>
+            <DTOProperty label="Measurement Span Unit" xpath="tpl:TransmitterMeasurementRange.tpl:scale"/>
+          </dtoProperties>
+        </Company>
+      </companies>
+    </Report>
+    <!--<Report name="EquipmentList">
+      <companies>
+        <Company>
+          <name>Bechtel</name>
+          <dtoUrl>https://facade.becpsn.com/adapterservice/service.svc/12345_000/Inspec/EquipmentList</dtoUrl>
+          <dtoProperties>
+            <DTOProperty label="Tag Number" xpath="tpl:IdentificationByTag.tpl:valIdentifier"/>
+            <DTOProperty label="Description" xpath="tpl:InstrumentServiceDescription.tpl:description"/>
+            <DTOProperty label="PID" xpath="tpl:PAndIDRepresentation.tpl:representation.rdl:PANDIDIAGRAM.tpl:ClassifiedIdentification.tpl:valIdentifier"/>
+            <DTOProperty label="TYPE" xpath=""/>
+            <DTOProperty label="DRIVER_TYPE" xpath=""/>
+          </dtoProperties>
+        </Company>
+        <Company>
+          <name>DOW</name>
+          <dtoUrl>http://usmdlsdoww915/AdapterService/Service.svc/12345_000/API/Equipment</dtoUrl>
+          <dtoProperties>
+            <DTOProperty label="Capacity" xpath=""/>
+            <DTOProperty label="Design Temperature" xpath=""/>
+            <DTOProperty label="Design Pressure" xpath=""/>
+            <DTOProperty label="Differential Pressure" xpath=""/>
+          </dtoProperties>
+        </Company>
+      </companies>
+    </Report>
     <Report name="LineList">
       <companies>
         <Company>
           <name>Bechtel</name>
           <dtoUrl>https://facade.becpsn.com/adapterservice/service.svc/12345_000/Inspec/LineList</dtoUrl>
           <dtoProperties>
-            <DTOProperty name="TAG_NO"/>
-            <DTOProperty name="DESCRIPTION"/>
-            <DTOProperty name="PID"/>
-            <DTOProperty name="SYSTEM"/>
-            <DTOProperty name="DESIGN_PRESSURE"/>
-            <DTOProperty name="DESIGN_TEMPERATURE"/>
+            <DTOProperty label="TAG_NO" xpath=""/>
+            <DTOProperty label="PLANT_AREA" xpath=""/>
+            <DTOProperty label="SYSTEM" xpath=""/>
+            <DTOProperty label="DESCRIPTION" xpath=""/>
+            <DTOProperty label="PID" xpath=""/>
+            <DTOProperty label="DIAMETER" xpath=""/>
+            <DTOProperty label="DIAMETER_UOM" xpath=""/>
           </dtoProperties>
         </Company>
         <Company>
-          <name>ExxonMobil</name>
-          <dtoUrl>http://iringsandbox.org/adapterservice/service.svc/12345_000/API/Equipment</dtoUrl>
+          <name>CCC</name>
+          <dtoUrl>http://c3d.ccc.gr/AdapterService/Service.svc/CCC/C3D/Lines</dtoUrl>
           <dtoProperties>
-            <DTOProperty name="Tag"/>
-            <DTOProperty name="DesignTemp"/>
-            <DTOProperty name="DesignTemp"/>
-            <DTOProperty name="DesignPressure"/>
+            <DTOProperty label="line_number" xpath=""/>
+            <DTOProperty label="area" xpath=""/>
+            <DTOProperty label="design_pressure" xpath=""/>
+            <DTOProperty label="design_temperature" xpath=""/>
+            <DTOProperty label="line_testing_status" xpath=""/>
+            <DTOProperty label="test_pressure" xpath=""/>
           </dtoProperties>
         </Company>
       </companies>
-    </Report>
-    <Report name="EquipmentList">
-      <companies>
-        <Company>
-          <name>Bechtel</name>
-          <dtoUrl>https://facade.becpsn.com/adapterservice/service.svc/12345_000/Inspec/LineList</dtoUrl>
-          <dtoProperties>
-            <DTOProperty name="TAG_NO"/>
-            <DTOProperty name="DESCRIPTION"/>
-            <DTOProperty name="DESIGN_PRESSURE"/>
-            <DTOProperty name="DESIGN_TEMPERATURE"/>
-          </dtoProperties>
-        </Company>
-        <Company>
-          <name>ExxonMobil</name>
-          <dtoUrl>http://iringsandbox.org/adapterservice/service.svc/12345_000/API/Equipment</dtoUrl>
-          <dtoProperties>
-            <DTOProperty name="Tag"/>
-            <DTOProperty name="DesignTemp"/>
-            <DTOProperty name="DesignTemp"/>
-            <DTOProperty name="DesignPressure"/>
-          </dtoProperties>
-        </Company>
-      </companies>
-    </Report>
+    </Report>-->
   </reports>
 </XAppReport>
