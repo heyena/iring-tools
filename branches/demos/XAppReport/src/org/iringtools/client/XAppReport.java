@@ -30,7 +30,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class XAppReport implements EntryPoint {
-  //TEST: private String serviceUri = "http://127.0.0.1:56813/Service.svc/";
+  //private String serviceUri = "http://127.0.0.1:56813/Service.svc/";
   private String serviceUri = "http://www.iringsandbox.org/XAppReportService/Service.svc/";
   private HorizontalPanel mainContentPanel = new HorizontalPanel();
   private ListBox reportNamesListBox = new ListBox();
@@ -216,7 +216,7 @@ public class XAppReport implements EntryPoint {
       
       for (int j = 0; j < properties.size(); j++) {
         JSONObject property = properties.get(j).isObject();
-        String propertyName = property.get("name").isString().stringValue();        
+        String propertyName = property.get("label").isString().stringValue();        
         JSONArray values = property.get("values").isArray();  
         
         table.setText(0, j, propertyName);
