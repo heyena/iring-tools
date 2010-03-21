@@ -14,14 +14,26 @@ namespace DbDictionaryEditor.Web
     {
         WebProxyCredentials _proxyCredentials = null;
         string adapterServiceUri = string.Empty;
-        string xmlPath = string.Empty;
+        string dbDictionaryFullFilePath = string.Empty;
+        string proxyPort = string.Empty;
+        string proxyHost = string.Empty;
+        string proxyCredentialToken = string.Empty;
 
         public DbDictionaryService()
         {
             Directory.SetCurrentDirectory(System.AppDomain.CurrentDomain.BaseDirectory);
             _proxyCredentials = new WebProxyCredentials();
             adapterServiceUri = WebConfigurationManager.AppSettings["AdapterServiceUri"];
-            xmlPath = WebConfigurationManager.AppSettings["XmlPath"];
+            dbDictionaryFullFilePath = WebConfigurationManager.AppSettings["DbDictionaryFullFilePath"];
+            proxyCredentialToken = WebConfigurationManager.AppSettings["ProxyCredentialToken"];
+            proxyPort = WebConfigurationManager.AppSettings["ProxyPort"];
+            proxyHost = WebConfigurationManager.AppSettings["ProxyHost"];
+            if(!string.IsNullOrEmpty(proxyHost) || (!string.IsNullOrEmpty(proxyPort)))
+            {
+                _proxyCredentials.proxyHost = proxyHost;
+                _proxyCredentials.proxyPort = Convert.ToInt32(proxyPort);
+            }
+
         }
 
         public Collection<ScopeProject> GetScopes()
@@ -46,7 +58,7 @@ namespace DbDictionaryEditor.Web
             StringBuilder sb = new StringBuilder();
             try
             {
-                sb.Append(xmlPath);
+                sb.Append(dbDictionaryFullFilePath);
                 sb.Append("DatabaseDictionary.");
                 sb.Append(project);
                 sb.Append(".");
@@ -65,7 +77,7 @@ namespace DbDictionaryEditor.Web
             StringBuilder sb = new StringBuilder();
             try
             {
-                sb.Append(xmlPath);
+                sb.Append(dbDictionaryFullFilePath);
                 sb.Append("DatabaseDictionary.");
                 sb.Append(project);
                 sb.Append(".");
@@ -353,7 +365,7 @@ namespace DbDictionaryEditor.Web
             relativeUri.Append("/");
             relativeUri.Append(applicationName);
             relativeUri.Append("/clear");
-            WebHttpClient httpClient = new WebHttpClient(adapterServiceUri, null);
+            WebHttpClient httpClient = new WebHttpClient(adapterServiceUri,null);
             Response response = httpClient.Get<Response>(relativeUri.ToString());
             return response;
         }

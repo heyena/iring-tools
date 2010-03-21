@@ -116,9 +116,6 @@
     <Compile Include="EditTreeNode.xaml.cs">
       <DependentUpon>EditTreeNode.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MouseScrollBehavior.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="NewDbDictionary.xaml.cs">
       <DependentUpon>NewDbDictionary.xaml</DependentUpon>
     </Compile>
@@ -221,6 +218,12 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadataStorage Include="Service References\ServiceRef\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Behaviors\Behaviors.csproj">
+      <Project>{2E2D6E2D-99B2-438F-B44B-1F292817E623}</Project>
+      <Name>Behaviors</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight\v3.0\Microsoft.Silverlight.CSharp.targets" Condition="" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

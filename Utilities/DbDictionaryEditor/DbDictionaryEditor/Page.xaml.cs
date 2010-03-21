@@ -74,14 +74,6 @@ namespace DbDictionaryEditor
             proxy.DeleteAppCompleted += new EventHandler<DeleteAppCompletedEventArgs>(proxy_DeleteAppCompleted);
 
             LayoutRoot.SizeChanged += new SizeChangedEventHandler(LayoutRoot_SizeChanged);
-
-            //tried to use standard Silverlight mouse behavior-----limited success, not happy
-            //will revisit
-            MouseScrollBehavior mouseScrollBehaviorSource = new MouseScrollBehavior();
-            Interaction.GetBehaviors(tvwSource).Add(mouseScrollBehaviorSource);
-            
-            MouseScrollBehavior mouseScrollBehaviorDest = new MouseScrollBehavior();
-            Interaction.GetBehaviors(tvwDestination).Add(mouseScrollBehaviorDest);
             
         }
 

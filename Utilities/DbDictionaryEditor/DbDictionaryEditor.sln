@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbDictionaryEditor", "DbDic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbDictionaryEditor.Web", "DbDictionaryEditor.Web\DbDictionaryEditor.Web.csproj", "{88377877-6FA3-4570-B4AC-14F9D0A7BBEC}"
 EndProject
+Project("{00000000-0000-0000-0000-000000000000}") = "Behaviors", "Behaviors\Behaviors.csproj", "{2E2D6E2D-99B2-438F-B44B-1F292817E623}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,6 +24,10 @@ Global
 		{88377877-6FA3-4570-B4AC-14F9D0A7BBEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88377877-6FA3-4570-B4AC-14F9D0A7BBEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88377877-6FA3-4570-B4AC-14F9D0A7BBEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E2D6E2D-99B2-438F-B44B-1F292817E623}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E2D6E2D-99B2-438F-B44B-1F292817E623}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E2D6E2D-99B2-438F-B44B-1F292817E623}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E2D6E2D-99B2-438F-B44B-1F292817E623}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
