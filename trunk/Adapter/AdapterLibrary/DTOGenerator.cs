@@ -55,7 +55,6 @@ namespace org.iringtools.adapter
     private DataDictionary _dataDictionary = null;
     private List<MappingProperty> _mappingProperties = null;
     private List<string> _initStatements = null;
-    List<string> templateMapNames = new List<string>();
     private StringBuilder _dtoModelBuilder = null;
     private IndentedTextWriter _dtoModelWriter = null;
     private StringBuilder _dtoServiceBuilder = null;
@@ -1390,6 +1389,7 @@ namespace org.iringtools.adapter
     {
       _mappingProperties.Clear();
       _initStatements.Clear();
+      Dictionary<string, int> templateMapNameCountDictionary = new Dictionary<string, int>();
 
       foreach (TemplateMap templateMap in graphMap.templateMaps)
       {
@@ -1397,6 +1397,18 @@ namespace org.iringtools.adapter
         _dataContractPath = string.Empty;
         _templatePath = string.Empty;
         _dtoTemplatePath = string.Empty;
+
+        templateMap.name = Utility.NameSafe(templateMap.name);
+        if (!templateMapNameCountDictionary.ContainsKey(templateMap.name))
+        {
+          templateMapNameCountDictionary.Add(templateMap.name, 1);
+        }
+        else
+        {
+          int currentCount = templateMapNameCountDictionary[templateMap.name];
+          templateMap.name += currentCount;
+          templateMapNameCountDictionary[templateMap.name] = currentCount + 1;
+        }
 
         ProcessTemplateMap(templateMap, graphMap.dataObjectMaps, true);
       }
@@ -1406,9 +1418,6 @@ namespace org.iringtools.adapter
     {
       List<string> templateClassPropertyList = new List<string>();
 
-      templateMap.name = Utility.NameSafe(templateMap.name) + templateMapNames.Count;
-      templateMapNames.Add(templateMap.name);
-        
       foreach (RoleMap roleMap in templateMap.roleMaps)
       {
         roleMap.name = Utility.NameSafe(roleMap.name);
@@ -1609,6 +1618,7 @@ namespace org.iringtools.adapter
       string lastDataContractPath = _dataContractPath;
       string lastTemplateMapPath = _templatePath;
       string lastDtoTemplateMapPath = _dtoTemplatePath;
+      Dictionary<string, int> templateMapNameCountDictionary = new Dictionary<string, int>();
 
       foreach (TemplateMap templateMap in roleMap.classMap.templateMaps)
       {
@@ -1616,6 +1626,18 @@ namespace org.iringtools.adapter
         _dataContractPath = lastDataContractPath;
         _templatePath = lastTemplateMapPath;
         _dtoTemplatePath = lastDtoTemplateMapPath;
+
+        templateMap.name = Utility.NameSafe(templateMap.name);
+        if (!templateMapNameCountDictionary.ContainsKey(templateMap.name))
+        {
+          templateMapNameCountDictionary.Add(templateMap.name, 1);
+        }
+        else
+        {
+          int currentCount = templateMapNameCountDictionary[templateMap.name];
+          templateMap.name += currentCount;
+          templateMapNameCountDictionary[templateMap.name] = currentCount + 1;
+        }
 
         ProcessTemplateMap(templateMap, dataObjectMaps, false);
       }
