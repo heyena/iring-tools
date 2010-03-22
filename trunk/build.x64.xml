@@ -46,6 +46,7 @@
       Include="$(AdapterServiceDir)\**"
       Exclude="$(AdapterServiceDir).Tests\**;
                $(AdapterServiceDir)\bin\*.pdb;
+               $(AdapterServiceDir)\bin\AdapterService.dll;
                $(AdapterServiceDir)\Logs\**;
                $(AdapterServiceDir)\Templates\**;
                $(AdapterServiceDir)\Transforms\**;
