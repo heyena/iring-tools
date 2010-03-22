@@ -1372,19 +1372,6 @@ namespace org.iringtools.adapter
       }
     }
 
-    private bool ContainsDataProperty(string propertyPath)
-    {
-      foreach (MappingProperty mappingProperty in _mappingProperties)
-      {
-        if (mappingProperty.propertyPath == propertyPath)
-        {
-          return true;
-        }
-      }
-
-      return false;
-    }
-
     private void ProcessGraphMap(GraphMap graphMap)
     {
       _mappingProperties.Clear();
@@ -1406,8 +1393,8 @@ namespace org.iringtools.adapter
         else
         {
           int currentCount = templateMapNameCountDictionary[templateMap.name];
-          templateMap.name += currentCount;
           templateMapNameCountDictionary[templateMap.name] = currentCount + 1;
+          templateMap.name += currentCount;
         }
 
         ProcessTemplateMap(templateMap, graphMap.dataObjectMaps, true);
@@ -1551,12 +1538,6 @@ namespace org.iringtools.adapter
               {
                 mappingProperty.propertyPath = _templatePath + "_tpl_" + templateName + "_tpl_" + roleMap.name;
                 mappingProperty.dtoPropertyPath = _dtoTemplatePath + ".tpl:" + templateName + ".tpl:" + roleMap.name;
-              }
-
-              if (ContainsDataProperty(mappingProperty.propertyPath))
-              {
-                mappingProperty.propertyPath += _mappingProperties.Count;
-                mappingProperty.dtoPropertyPath += _mappingProperties.Count;
               }
 
               mappingProperty.isDataMember = isDataMember;
