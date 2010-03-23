@@ -2,12 +2,12 @@
 #labels Meeting
 
 =Attendees=
-Koos
-Mohd
-Monika
-Hahn
-Pavan
-Robertson
+ * Koos
+ * Mohd
+ * Monika
+ * Hahn
+ * Pavan
+ * Robertson
 
 =Agenda=
  * Where are we?
