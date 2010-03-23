@@ -26,8 +26,8 @@ Robertson
    * 3rd Party Proprietary Triple Store (Intellidimensions)
   * Usability and Feature Set of UIs
   * Security / Part 9
-  * Need for Middleware services:
+ * Need for Middleware services:
    (perhaps a new project)
-   * Differencing
-   * Transformation
-   * Exchange Discovery (manifest).
+  * Differencing
+  * Transformation
+  * Exchange Discovery (manifest).
