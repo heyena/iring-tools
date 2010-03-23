@@ -113,16 +113,14 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
       {
         case "Valves":
         {
-          var dataObject = 
-            (from dataObjectList in _dataLayer.GetList<org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent>()
-             where dataObjectList.tag == identifier
-             select dataObjectList).FirstOrDefault<org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent>();   
-        
+          Dictionary<string, object> queryProperties = new Dictionary<string, object>();
+          queryProperties.Add("tag", identifier);
+          org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent dataObject = _dataLayer.Get<org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent>(queryProperties);
+
           if (dataObject != default(org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent))
           {                        
             dto = new org.iringtools.adapter.proj_12345_000.ABC.Valves(dataObject);
             dto.Identifier = dataObject.tag;
-            break; 
           }
           
           break;
@@ -130,16 +128,14 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
         
         case "Lines":
         {
-          var dataObject = 
-            (from dataObjectList in _dataLayer.GetList<org.iringtools.adapter.proj_12345_000.ABC.Line>()
-             where dataObjectList.tag == identifier
-             select dataObjectList).FirstOrDefault<org.iringtools.adapter.proj_12345_000.ABC.Line>();   
-        
+          Dictionary<string, object> queryProperties = new Dictionary<string, object>();
+          queryProperties.Add("tag", identifier);
+          org.iringtools.adapter.proj_12345_000.ABC.Line dataObject = _dataLayer.Get<org.iringtools.adapter.proj_12345_000.ABC.Line>(queryProperties);
+
           if (dataObject != default(org.iringtools.adapter.proj_12345_000.ABC.Line))
           {                        
             dto = new org.iringtools.adapter.proj_12345_000.ABC.Lines(dataObject);
             dto.Identifier = dataObject.tag;
-            break; 
           }
           
           break;
@@ -240,16 +236,20 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
       {
         switch (graphName)
         {
-          case "Valves":{
+          case "Valves":
+          {
             org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent dataObject = (org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)dto.GetDataObject();
             response.Append(_dataLayer.Post<org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent>(dataObject));
             break;
           }
-          case "Lines":{
+          
+          case "Lines":
+          {
             org.iringtools.adapter.proj_12345_000.ABC.Line dataObject = (org.iringtools.adapter.proj_12345_000.ABC.Line)dto.GetDataObject();
             response.Append(_dataLayer.Post<org.iringtools.adapter.proj_12345_000.ABC.Line>(dataObject));
             break;
-          }}
+          }
+        }
       }
       
       return response;

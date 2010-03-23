@@ -1,112 +1,109 @@
 <DatabaseDictionary xmlns="http://ns.iringtools.org/library" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
-  <connectionString>Data Source=.\SQLEXPRESS;Initial Catalog=Camelot_test;User Id=camelot;Password=camelot</connectionString>
+  <connectionString>Data Source=.\SQLEXPRESS;Initial Catalog=Camelot_Test;User Id=camelot;Password=camelot;</connectionString>
   <provider>MsSql2008</provider>
   <tables>
     <Table>
-      <associations i:nil="true"/>
-      <columns>        
-        <Column>
-          <columnName>diameter</columnName>
-          <columnType>Double</columnType>
-          <propertyName>diameter</propertyName>
-        </Column>
-        <Column>
-          <columnName>uomDiameter</columnName>
-          <columnType>String</columnType>
-          <propertyName>uomDiameter</propertyName>
-        </Column>
-        <Column>
-          <columnName>system</columnName>
-          <columnType>String</columnType>
-          <propertyName>system</propertyName>
-        </Column>        
-      </columns>
-      <entityName>Line</entityName>
-      <keys>
-        <Key>
-          <columnName>tag</columnName>
-          <columnType>String</columnType>
-          <propertyName>tag</propertyName>
-          <keyType>assigned</keyType>
-        </Key>
-      </keys>
-      <lazyLoading>true</lazyLoading>
-      <tableName>Line</tableName>
-    </Table>
-    
-    <Table>
-      <associations i:nil="true"/>
-      <columns>        
+      <associations/>
+      <columns>
         <Column>
           <columnName>componentType</columnName>
-          <columnType>String</columnType>
+          <dataLength>255</dataLength>
+          <dataType>String</dataType>
+          <isNullable>false</isNullable>
           <propertyName>componentType</propertyName>
         </Column>
         <Column>
           <columnName>diameter</columnName>
-          <columnType>Double</columnType>
+          <dataLength>8</dataLength>
+          <dataType>Single</dataType>
+          <isNullable>true</isNullable>
           <propertyName>diameter</propertyName>
         </Column>
         <Column>
-          <columnName>uomDiameter</columnName>
-          <columnType>String</columnType>
-          <propertyName>uomDiameter</propertyName>
+          <columnName>isCloned</columnName>
+          <dataLength>1</dataLength>
+          <dataType>Boolean</dataType>
+          <isNullable>true</isNullable>
+          <propertyName>isCloned</propertyName>
+        </Column>
+        <Column>
+          <columnName>lineTag</columnName>
+          <dataLength>255</dataLength>
+          <dataType>String</dataType>
+          <isNullable>true</isNullable>
+          <propertyName>lineTag</propertyName>
+        </Column>
+        <Column>
+          <columnName>pid</columnName>
+          <dataLength>255</dataLength>
+          <dataType>String</dataType>
+          <isNullable>true</isNullable>
+          <propertyName>pid</propertyName>
+        </Column>
+        <Column>
+          <columnName>projectNumber</columnName>
+          <dataLength>255</dataLength>
+          <dataType>String</dataType>
+          <isNullable>true</isNullable>
+          <propertyName>projectNumber</propertyName>
+        </Column>
+        <Column>
+          <columnName>quantity</columnName>
+          <dataLength>4</dataLength>
+          <dataType>Int32</dataType>
+          <isNullable>true</isNullable>
+          <propertyName>quantity</propertyName>
         </Column>
         <Column>
           <columnName>rating</columnName>
-          <columnType>String</columnType>
+          <dataLength>255</dataLength>
+          <dataType>String</dataType>
+          <isNullable>true</isNullable>
           <propertyName>rating</propertyName>
         </Column>
         <Column>
           <columnName>system</columnName>
-          <columnType>String</columnType>
+          <dataLength>255</dataLength>
+          <dataType>String</dataType>
+          <isNullable>true</isNullable>
           <propertyName>system</propertyName>
         </Column>
         <Column>
           <columnName>unit</columnName>
-          <columnType>String</columnType>
+          <dataLength>255</dataLength>
+          <dataType>String</dataType>
+          <isNullable>true</isNullable>
           <propertyName>unit</propertyName>
         </Column>
         <Column>
-          <columnName>projectNumber</columnName>
-          <columnType>String</columnType>
-          <propertyName>projectNumber</propertyName>
-        </Column>
-        <Column>
-          <columnName>pid</columnName>
-          <columnType>String</columnType>
-          <propertyName>pid</propertyName>
-        </Column>
-        <Column>
-          <columnName>lineTag</columnName>
-          <columnType>String</columnType>
-          <propertyName>lineTag</propertyName>
-        </Column>
-        <Column>
-          <columnName>quantity</columnName>
-          <columnType>Int32</columnType>
-          <propertyName>quantity</propertyName>
+          <columnName>uomDiameter</columnName>
+          <dataLength>255</dataLength>
+          <dataType>String</dataType>
+          <isNullable>true</isNullable>
+          <propertyName>uomDiameter</propertyName>
         </Column>
       </columns>
       <entityName>InLinePipingComponent</entityName>
       <keys>
         <Key>
           <columnName>tag</columnName>
-          <columnType>String</columnType>
+          <dataLength>255</dataLength>
+          <dataType>String</dataType>
+          <isNullable>false</isNullable>
           <propertyName>tag</propertyName>
           <keyType>assigned</keyType>
         </Key>
       </keys>
-      <lazyLoading>true</lazyLoading>
       <tableName>InLinePipingComponent</tableName>
     </Table>
-    
     <Table>
-      <associations i:nil="true"/>
-      <columns>        
+      <associations/>
+      <columns>
         <Column>
           <columnName>description</columnName>
-          <columnType>String</columnType>
+          <dataLength>255</dataLength>
+          <dataType>String</dataType>
+          <isNullable>true</isNullable>
           <propertyName>description</propertyName>
         </Column>
       </columns>
@@ -114,21 +111,61 @@
       <keys>
         <Key>
           <columnName>tag</columnName>
-          <columnType>String</columnType>
+          <dataLength>255</dataLength>
+          <dataType>String</dataType>
+          <isNullable>false</isNullable>
           <propertyName>tag</propertyName>
           <keyType>assigned</keyType>
         </Key>
       </keys>
-      <lazyLoading>true</lazyLoading>
       <tableName>KOPot</tableName>
     </Table>
-    
     <Table>
-      <associations i:nil="true"/>
-      <columns>        
+      <associations/>
+      <columns>
+        <Column>
+          <columnName>diameter</columnName>
+          <dataLength>8</dataLength>
+          <dataType>Single</dataType>
+          <isNullable>true</isNullable>
+          <propertyName>diameter</propertyName>
+        </Column>
+        <Column>
+          <columnName>system</columnName>
+          <dataLength>255</dataLength>
+          <dataType>String</dataType>
+          <isNullable>true</isNullable>
+          <propertyName>system</propertyName>
+        </Column>
+        <Column>
+          <columnName>uomDiameter</columnName>
+          <dataLength>255</dataLength>
+          <dataType>String</dataType>
+          <isNullable>true</isNullable>
+          <propertyName>uomDiameter</propertyName>
+        </Column>
+      </columns>
+      <entityName>Line</entityName>
+      <keys>
+        <Key>
+          <columnName>tag</columnName>
+          <dataLength>255</dataLength>
+          <dataType>String</dataType>
+          <isNullable>false</isNullable>
+          <propertyName>tag</propertyName>
+          <keyType>assigned</keyType>
+        </Key>
+      </keys>
+      <tableName>Line</tableName>
+    </Table>
+    <Table>
+      <associations/>
+      <columns>
         <Column>
           <columnName>description</columnName>
-          <columnType>String</columnType>
+          <dataLength>255</dataLength>
+          <dataType>String</dataType>
+          <isNullable>true</isNullable>
           <propertyName>description</propertyName>
         </Column>
       </columns>
@@ -136,12 +173,13 @@
       <keys>
         <Key>
           <columnName>tag</columnName>
-          <columnType>String</columnType>
+          <dataLength>255</dataLength>
+          <dataType>String</dataType>
+          <isNullable>false</isNullable>
           <propertyName>tag</propertyName>
           <keyType>assigned</keyType>
-        </Key>        
+        </Key>
       </keys>
-      <lazyLoading>true</lazyLoading>
       <tableName>VacuumTower</tableName>
     </Table>
   </tables>
