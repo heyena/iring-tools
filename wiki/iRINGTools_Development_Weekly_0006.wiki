@@ -19,7 +19,7 @@
 =Where are we?=
  * Big Issues
   * Performance of Semantic Web implementation
-   * GRDDL
+   * GRDDL (pronounced Griddle)
    * Mapping / QXF
    * RDF -> SemWeb
    * SPARQL -> SQL
