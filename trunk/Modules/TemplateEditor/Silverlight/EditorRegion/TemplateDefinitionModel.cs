@@ -46,9 +46,9 @@ namespace org.iringtools.modules.templateeditor.editorregion
         {
             get
             {
-                int i = 1;
-                
+                //int i = 1;                
                 _templateDefinition.roleDefinition.Clear();
+
                 foreach (KeyValuePair<string, object> lstItm in _roles)
                 {
                     RoleDefinition role = (RoleDefinition)lstItm.Value;

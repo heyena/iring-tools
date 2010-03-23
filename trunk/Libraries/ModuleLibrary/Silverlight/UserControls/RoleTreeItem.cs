@@ -108,90 +108,93 @@ namespace org.iringtools.informationmodel.usercontrols
 
       if (Tag is Entity)
       {
-        Entity entity = (Entity)Tag;
-        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Label", entity.label);
-        PresentationModel.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("Uri", entity.uri);
-        PresentationModel.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("Repository", entity.repository);
-        PresentationModel.DetailProperties.Add(keyValuePair);
+        Entity = (Entity)Tag;
       }
-      else if (Tag is RoleDefinition)
+      else
       {
-        RoleDefinition roleDefinition = (RoleDefinition)Tag;
-
-        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("QMXF Type", "Role Definition");
+        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Repository", Entity.repository);
         PresentationModel.DetailProperties.Add(keyValuePair);
 
-        keyValuePair = new KeyValuePair<string, string>("Name", (roleDefinition.name.FirstOrDefault() != null ? roleDefinition.name.FirstOrDefault().value : string.Empty));
+        keyValuePair = new KeyValuePair<string, string>("URI", Entity.uri);
         PresentationModel.DetailProperties.Add(keyValuePair);
 
-        keyValuePair = new KeyValuePair<string, string>("Identifier", (roleDefinition.identifier != null ? roleDefinition.identifier.ToString() : string.Empty));
-        PresentationModel.DetailProperties.Add(keyValuePair);
-
-        keyValuePair = new KeyValuePair<string, string>("Description", roleDefinition.description.value);
-        PresentationModel.DetailProperties.Add(keyValuePair);
-
-        GetClassLabel("Range", roleDefinition.range);
-
-        keyValuePair = new KeyValuePair<string, string>("Inverse Minimum", roleDefinition.inverseMinimum);
-        PresentationModel.DetailProperties.Add(keyValuePair);
-
-        keyValuePair = new KeyValuePair<string, string>("Inverse Maximum", roleDefinition.inverseMaximum);
-        PresentationModel.DetailProperties.Add(keyValuePair);
-
-        keyValuePair = new KeyValuePair<string, string>("Minimum", roleDefinition.minimum);
-        PresentationModel.DetailProperties.Add(keyValuePair);
-
-        keyValuePair = new KeyValuePair<string, string>("Maximum", roleDefinition.inverseMaximum);
-        PresentationModel.DetailProperties.Add(keyValuePair);
-        
-      }
-      else if (Tag is RoleQualification)
-      {
-        RoleQualification roleQualification = (RoleQualification)Tag;
-
-        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("QMXF Type", "Role Qualification");
-        PresentationModel.DetailProperties.Add(keyValuePair);
-
-        keyValuePair = new KeyValuePair<string, string>("Name", (roleQualification.name.FirstOrDefault() != null ? roleQualification.name.FirstOrDefault().value : string.Empty));
-        PresentationModel.DetailProperties.Add(keyValuePair);
-
-        keyValuePair = new KeyValuePair<string, string>("Identifier", roleQualification.qualifies);
-        PresentationModel.DetailProperties.Add(keyValuePair);
-
-        GetClassLabel("Qualifies", roleQualification.qualifies);
-
-        keyValuePair = new KeyValuePair<string, string>("Description", (roleQualification.description.FirstOrDefault() != null ? roleQualification.description.FirstOrDefault().value : string.Empty));
-        PresentationModel.DetailProperties.Add(keyValuePair);
-
-        string value = String.Empty;
-        if (roleQualification.value != null)
+        if (Tag is RoleDefinition)
         {
-          string text = roleQualification.value.text;
-          string reference = roleQualification.value.reference;
-          if (text != null)
-            value = roleQualification.value.text;
-          if (reference != null)
-            value = roleQualification.value.reference;
+          RoleDefinition roleDefinition = (RoleDefinition)Tag;
+
+          keyValuePair = new KeyValuePair<string, string>("QMXF Type", "Role Definition");
+          PresentationModel.DetailProperties.Add(keyValuePair);
+
+          keyValuePair = new KeyValuePair<string, string>("Name", (roleDefinition.name.FirstOrDefault() != null ? roleDefinition.name.FirstOrDefault().value : string.Empty));
+          PresentationModel.DetailProperties.Add(keyValuePair);
+
+          keyValuePair = new KeyValuePair<string, string>("Identifier", (roleDefinition.identifier != null ? roleDefinition.identifier.ToString() : string.Empty));
+          PresentationModel.DetailProperties.Add(keyValuePair);
+
+          keyValuePair = new KeyValuePair<string, string>("Description", roleDefinition.description.value);
+          PresentationModel.DetailProperties.Add(keyValuePair);
+
+          GetClassLabel("Range", roleDefinition.range);
+
+          keyValuePair = new KeyValuePair<string, string>("Inverse Minimum", roleDefinition.inverseMinimum);
+          PresentationModel.DetailProperties.Add(keyValuePair);
+
+          keyValuePair = new KeyValuePair<string, string>("Inverse Maximum", roleDefinition.inverseMaximum);
+          PresentationModel.DetailProperties.Add(keyValuePair);
+
+          keyValuePair = new KeyValuePair<string, string>("Minimum", roleDefinition.minimum);
+          PresentationModel.DetailProperties.Add(keyValuePair);
+
+          keyValuePair = new KeyValuePair<string, string>("Maximum", roleDefinition.inverseMaximum);
+          PresentationModel.DetailProperties.Add(keyValuePair);
+
         }
-        if(!string.IsNullOrEmpty(value)) //This is due to data error??
-          GetClassLabel("Value", value);
+        else if (Tag is RoleQualification)
+        {
+          RoleQualification roleQualification = (RoleQualification)Tag;
 
-        if (!string.IsNullOrEmpty(roleQualification.range))
-          GetClassLabel("Range", roleQualification.range);
+          keyValuePair = new KeyValuePair<string, string>("QMXF Type", "Role Qualification");
+          PresentationModel.DetailProperties.Add(keyValuePair);
 
-        keyValuePair = new KeyValuePair<string, string>("Inverse Minimum", roleQualification.inverseMinimum);
-        PresentationModel.DetailProperties.Add(keyValuePair);
+          keyValuePair = new KeyValuePair<string, string>("Name", (roleQualification.name.FirstOrDefault() != null ? roleQualification.name.FirstOrDefault().value : string.Empty));
+          PresentationModel.DetailProperties.Add(keyValuePair);
 
-        keyValuePair = new KeyValuePair<string, string>("Inverse Maximum", roleQualification.inverseMaximum);
-        PresentationModel.DetailProperties.Add(keyValuePair);
+          keyValuePair = new KeyValuePair<string, string>("Identifier", roleQualification.qualifies);
+          PresentationModel.DetailProperties.Add(keyValuePair);
 
-        keyValuePair = new KeyValuePair<string, string>("Minimum", roleQualification.minimum);
-        PresentationModel.DetailProperties.Add(keyValuePair);
+          GetClassLabel("Qualifies", roleQualification.qualifies);
 
-        keyValuePair = new KeyValuePair<string, string>("Maximum", roleQualification.maximum);
-        PresentationModel.DetailProperties.Add(keyValuePair);
+          keyValuePair = new KeyValuePair<string, string>("Description", (roleQualification.description.FirstOrDefault() != null ? roleQualification.description.FirstOrDefault().value : string.Empty));
+          PresentationModel.DetailProperties.Add(keyValuePair);
+
+          string value = String.Empty;
+          if (roleQualification.value != null)
+          {
+            string text = roleQualification.value.text;
+            string reference = roleQualification.value.reference;
+            if (text != null)
+              value = roleQualification.value.text;
+            if (reference != null)
+              value = roleQualification.value.reference;
+          }
+          if (!string.IsNullOrEmpty(value)) //This is due to data error??
+            GetClassLabel("Value", value);
+
+          if (!string.IsNullOrEmpty(roleQualification.range))
+            GetClassLabel("Range", roleQualification.range);
+
+          keyValuePair = new KeyValuePair<string, string>("Inverse Minimum", roleQualification.inverseMinimum);
+          PresentationModel.DetailProperties.Add(keyValuePair);
+
+          keyValuePair = new KeyValuePair<string, string>("Inverse Maximum", roleQualification.inverseMaximum);
+          PresentationModel.DetailProperties.Add(keyValuePair);
+
+          keyValuePair = new KeyValuePair<string, string>("Minimum", roleQualification.minimum);
+          PresentationModel.DetailProperties.Add(keyValuePair);
+
+          keyValuePair = new KeyValuePair<string, string>("Maximum", roleQualification.maximum);
+          PresentationModel.DetailProperties.Add(keyValuePair);
+        }
       }
     }
   }

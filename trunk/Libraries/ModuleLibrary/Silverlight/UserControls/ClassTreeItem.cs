@@ -65,19 +65,19 @@ namespace org.iringtools.informationmodel.usercontrols
 
       if (Tag is Entity)
       {
-        Entity entity = (Entity)Tag;
-        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Label", entity.label);
-        PresentationModel.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("Uri", entity.uri);
-        PresentationModel.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("Repository", entity.repository);
-        PresentationModel.DetailProperties.Add(keyValuePair);
+        Entity = (Entity)Tag;
       }
       else if (Tag is ClassDefinition)
       {
         ClassDefinition classDefinition = (ClassDefinition)Tag;
 
-        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("QMXF Type", "Class Definition");
+        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Repository", Entity.repository);
+        PresentationModel.DetailProperties.Add(keyValuePair);
+
+        keyValuePair = new KeyValuePair<string, string>("URI", Entity.uri);
+        PresentationModel.DetailProperties.Add(keyValuePair);
+
+        keyValuePair = new KeyValuePair<string, string>("QMXF Type", "Class Definition");
         PresentationModel.DetailProperties.Add(keyValuePair);
 
         keyValuePair = new KeyValuePair<string, string>("Name", (classDefinition.name.FirstOrDefault() != null ? classDefinition.name.FirstOrDefault().value : string.Empty));
