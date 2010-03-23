@@ -334,12 +334,6 @@ namespace org.iringtools.adapter
           {
             String type = mappingProperty.mappingDataType;
 
-            // Convert to nullable type for some data types
-            //if (type == "DateTime" || type == "Decimal" || type == "Double" || type == "Single" || type.StartsWith("Int"))
-            //{
-            //  type = "global::System.Nullable<" + type + ">";
-            //}
-
             if (type.ToLower() != "string")
             {
               if (!String.IsNullOrEmpty(mappingProperty.propertyName))
@@ -417,7 +411,7 @@ namespace org.iringtools.adapter
             
             foreach (MappingProperty mappingProperty in _mappingProperties)
             {
-              //TODO: handle muli-column key
+              //TODO: handle multi-column key
               if (mappingProperty.isPropertyKey)
               {
                 if (mappingProperty.dataType.ToLower() == "string" &&
@@ -686,12 +680,16 @@ namespace org.iringtools.adapter
               if (!String.IsNullOrEmpty(dataObjectMap.outFilter))
               {
                 string outFilter = dataObjectMap.outFilter.Substring(dataObjectMap.outFilter.IndexOf("_") + 1);
-
+                
                 dtoServiceWriter.WriteLine(
-            @"var dataObject = 
-            (from dataObjectList in _dataLayer.GetList<{1}>()
-             where dataObjectList.{2} == identifier && {1}.{3}  // outFilter
-             select dataObjectList).FirstOrDefault<{1}>();
+//            @"var dataObject = 
+//            (from dataObjectList in _dataLayer.GetList<{1}>()
+//             where dataObjectList.{2} == identifier && {1}.{3}  // outFilter
+//             select dataObjectList).FirstOrDefault<{1}>();
+
+          @"Dictionary<string, object> queryProperties = new Dictionary<string, object>();
+          queryProperties.Add(""{3}"", identifier);
+          {1} dataObject = _dataLayer.Get<{1}>(queryProperties);
 
           if (dataObject != default({1}))
           {{
@@ -703,18 +701,23 @@ namespace org.iringtools.adapter
               else
               {
                 dtoServiceWriter.WriteLine(
-            @"var dataObject = 
-            (from dataObjectList in _dataLayer.GetList<{1}>()
-             where dataObjectList.{2} == identifier
-             select dataObjectList).FirstOrDefault<{1}>();   
-        
+//            @"var dataObject = 
+//            (from dataObjectList in _dataLayer.GetList<{1}>()
+//             where dataObjectList.{2} == identifier
+//             select dataObjectList).FirstOrDefault<{1}>();   
+
+          @"Dictionary<string, object> queryProperties = new Dictionary<string, object>();
+          queryProperties.Add(""{2}"", identifier);
+          {1} dataObject = _dataLayer.Get<{1}>(queryProperties);
+
           if (dataObject != default({1}))
           {{                        
             dto = new {0}(dataObject);
             dto.Identifier = dataObject.{2};
-            break; 
           }}", qualifiedGraphName, qualifiedDataObjectName, identifier);
               }
+
+              break;
             }
           }
 
@@ -754,7 +757,7 @@ namespace org.iringtools.adapter
           {
             string qualifiedDataObjectName = GetQualifiedDataObjectName(dataObjectMap.name);
 
-            //TODO: handle muti-column key
+            //TODO: handle multi-column key
             List<string> keys = GetKeys(dataObjectMap.name);
             if (keys.Count > 0)
             {
@@ -831,7 +834,7 @@ namespace org.iringtools.adapter
           {
             string qualifiedDataObjectName = GetQualifiedDataObjectName(dataObjectMap.name);
 
-            //TODO: handle muti-column key
+            //TODO: handle multi-column key
             List<string> keys = GetKeys(dataObjectMap.name);
             if (keys.Count > 0)
             {
@@ -900,7 +903,7 @@ namespace org.iringtools.adapter
           string qualifiedGraphName = namespacePrefix + "." + graphMap.name;
 
           dtoServiceWriter.WriteLine();
-          dtoServiceWriter.Write("case \"{0}\":", graphMap.name);
+          dtoServiceWriter.WriteLine("case \"{0}\":", graphMap.name);
           dtoServiceWriter.Write("{");
           dtoServiceWriter.Indent++;
 
@@ -944,7 +947,7 @@ namespace org.iringtools.adapter
 
           dtoServiceWriter.WriteLine("break;");
           dtoServiceWriter.Indent--;
-          dtoServiceWriter.Write("}");
+          dtoServiceWriter.WriteLine("}");
         }
 
         dtoServiceWriter.Indent--;
