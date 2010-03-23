@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using System.Xml.Xsl;
+using log4net;
 using org.iringtools.library;
 using org.iringtools.utility;
 
@@ -21,6 +22,8 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
   [XmlRoot(Namespace = "http://ABC.iringtools.org/12345_000/data#")]
   public class Valves : DataTransferObject
   {
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(Valves));
+    
     [DataContract(Namespace = "http://ABC.iringtools.org/12345_000/data#")]
     [XmlRoot(Namespace = "http://ABC.iringtools.org/12345_000/data#")]
     public class TemplateClientSystemAssembly1
@@ -160,7 +163,7 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
     {
       if (dataObject != null)
       {
-        tpl_ClassifiedIdentification0_tpl_identifier = Convert.ToString(dataObject.Id);
+        tpl_ClassifiedIdentification0_tpl_identifier = Convert.ToString(dataObject.tag);
         tpl_ClientSystemAssembly1_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identifier = Convert.ToString(dataObject.system);
         tpl_ClientFunctionalUnitAssembly3_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification4_tpl_identifier = Convert.ToString(dataObject.unit);
         tpl_ClassifiedIdentification5_tpl_identifier = Convert.ToString(dataObject.componentType);
@@ -224,11 +227,11 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
     
     [DataMember(Name = "tpl_ClassifiedIdentification0_tpl_fixedName1", EmitDefaultValue = false)]
     [XmlIgnore]
-    public global::System.Nullable<Int32> tpl_ClassifiedIdentification0_tpl_fixedName1
+    public Int32? tpl_ClassifiedIdentification0_tpl_fixedName1
     {
       get
       {
-        return (global::System.Nullable<Int32>)GetPropertyValue("tpl:ClassifiedIdentification0.tpl:fixedName1");
+        return (Int32?)GetPropertyValue("tpl:ClassifiedIdentification0.tpl:fixedName1");
       }
       set
       {
@@ -318,11 +321,11 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
     
     [DataMember(Name = "tpl_NominalDiameter6_tpl_value", EmitDefaultValue = false)]
     [XmlIgnore]
-    public global::System.Nullable<Double> tpl_NominalDiameter6_tpl_value
+    public Double? tpl_NominalDiameter6_tpl_value
     {
       get
       {
-        return (global::System.Nullable<Double>)GetPropertyValue("tpl:NominalDiameter6.tpl:value");
+        return (Double?)GetPropertyValue("tpl:NominalDiameter6.tpl:value");
       }
       set
       {
@@ -401,7 +404,7 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
       if (_dataObject == null)
       {
         _dataObject = new org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent();
-        ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).Id = Convert.ToString(this.Identifier);
+        ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).tag = Convert.ToString(this.Identifier);
       }
       ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).system = Convert.ToString(this.tpl_ClientSystemAssembly1_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identifier);
       ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).unit = Convert.ToString(this.tpl_ClientFunctionalUnitAssembly3_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification4_tpl_identifier);
@@ -439,6 +442,8 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
   [XmlRoot(Namespace = "http://ABC.iringtools.org/12345_000/data#")]
   public class Lines : DataTransferObject
   {
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(Lines));
+    
     [DataContract(Namespace = "http://ABC.iringtools.org/12345_000/data#")]
     [XmlRoot(Namespace = "http://ABC.iringtools.org/12345_000/data#")]
     public class TemplateClientSystemAssembly12
@@ -485,7 +490,7 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
     {
       if (dataObject != null)
       {
-        tpl_ClassifiedIdentification11_tpl_identifier = Convert.ToString(dataObject.Id);
+        tpl_ClassifiedIdentification11_tpl_identifier = Convert.ToString(dataObject.tag);
         tpl_ClientSystemAssembly12_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification13_tpl_identifier = Convert.ToString(dataObject.system);
         tpl_NominalDiameter14_tpl_value = Convert.ToDouble(dataObject.diameter);
         tpl_NominalDiameter14_tpl_scale = Convert.ToString(dataObject.uomDiameter);
@@ -556,11 +561,11 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
     
     [DataMember(Name = "tpl_NominalDiameter14_tpl_value", EmitDefaultValue = false)]
     [XmlIgnore]
-    public global::System.Nullable<Double> tpl_NominalDiameter14_tpl_value
+    public Double? tpl_NominalDiameter14_tpl_value
     {
       get
       {
-        return (global::System.Nullable<Double>)GetPropertyValue("tpl:NominalDiameter14.tpl:value");
+        return (Double?)GetPropertyValue("tpl:NominalDiameter14.tpl:value");
       }
       set
       {
@@ -587,7 +592,7 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
       if (_dataObject == null)
       {
         _dataObject = new org.iringtools.adapter.proj_12345_000.ABC.Line();
-        ((org.iringtools.adapter.proj_12345_000.ABC.Line)_dataObject).Id = Convert.ToString(this.Identifier);
+        ((org.iringtools.adapter.proj_12345_000.ABC.Line)_dataObject).tag = Convert.ToString(this.Identifier);
       }
       ((org.iringtools.adapter.proj_12345_000.ABC.Line)_dataObject).system = Convert.ToString(this.tpl_ClientSystemAssembly12_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification13_tpl_identifier);
       ((org.iringtools.adapter.proj_12345_000.ABC.Line)_dataObject).diameter = Convert.ToDouble(this.tpl_NominalDiameter14_tpl_value);
