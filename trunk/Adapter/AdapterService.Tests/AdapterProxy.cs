@@ -233,5 +233,34 @@ namespace AdapterService.Tests
       }
       return dtoList;
     }
+
+     public List<ScopeProject> GetScopes()
+    {
+      List<ScopeProject> scopes = null;
+      try
+      {
+        scopes = _adapterServiceProvider.GetScopes();
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
+      return scopes;
+    }
+
+    public Manifest GetManifest(string projectName, string applicationName)
+    {
+      Manifest manifest = null;
+      try
+      {
+        manifest = _adapterServiceProvider.GetManifest(projectName, applicationName);
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
+      return manifest;
+    }
+
   }
 }

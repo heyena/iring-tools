@@ -127,29 +127,29 @@ namespace AdapterService.Tests
       Assert.AreEqual(false, actual[0].ToUpper().Contains("ERROR"));
     }
 
-    //[TestMethod()]
-    //public void PullTest_ABC()
-    //{
-    //  AdapterProxy target = new AdapterProxy();
-    //  Request request = new Request();
-    //  WebCredentials targetCredentials = new WebCredentials();
-    //  string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
-    //  request.Add("targetUri", "http://localhost/InterfaceService/sparql");
-    //  request.Add("targetCredentials", targetCredentialsXML);
-    //  request.Add("graphName", "Lines");
-    //  request.Add("filter", "");
-    //  Response actual = target.Pull("12345_000", "ABC", request);
-    //  bool isError = false;
-    //  for (int i = 0; i < actual.Count; i++)
-    //  {
-    //    if (actual[i].ToUpper().Contains("ERROR"))
-    //    {
-    //      isError = true;
-    //      break;
-    //    }
-    //  }
-    //  Assert.AreEqual(false, isError);
-    //}
+    [TestMethod()]
+    public void PullTest_ABC()
+    {
+      AdapterProxy target = new AdapterProxy();
+      Request request = new Request();
+      WebCredentials targetCredentials = new WebCredentials();
+      string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
+      request.Add("targetUri", "http://localhost/InterfaceService/12345_000/ABC/sparql");
+      request.Add("targetCredentials", targetCredentialsXML);
+      request.Add("graphName", "Lines");
+      request.Add("filter", "");
+      Response actual = target.Pull("12345_000", "ABC", request);
+      bool isError = false;
+      for (int i = 0; i < actual.Count; i++)
+      {
+        if (actual[i].ToUpper().Contains("ERROR"))
+        {
+          isError = true;
+          break;
+        }
+      }
+      Assert.AreEqual(false, isError);
+    }
 
     [TestMethod()]
     public void UpdateMapping_ABC()
@@ -167,7 +167,22 @@ namespace AdapterService.Tests
         }
       }
       Assert.AreEqual(false, isError);
+    }
 
+    [TestMethod()]
+    public void GetScopes()
+    {
+      AdapterProxy target = new AdapterProxy();
+      List<ScopeProject> scopes = target.GetScopes();
+      Assert.AreNotEqual(0, scopes.Count);
+    }
+
+    [TestMethod()]
+    public void GetManifest()
+    {
+      AdapterProxy target = new AdapterProxy();
+      Manifest manifest = target.GetManifest("12345_000", "ABC");
+      Assert.AreNotEqual(0, manifest.Graphs.Count);
     }
 
     //[TestMethod()]
