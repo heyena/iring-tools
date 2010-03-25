@@ -127,10 +127,12 @@ namespace org.iringtools.adapter.dataLayer
               DataProperty dataProperty = new DataProperty()
               {
                 propertyName = String.IsNullOrEmpty(key.propertyName) ? key.columnName : key.propertyName,
-                dataType = key.dataType.ToString(),
-                dataLength = Convert.ToString(key.dataLength),
+                dataType = key.columnType.ToString(),
+                // for backward compatibility
+                dataLength = (key.dataLength == null) ? "255" : Convert.ToString(key.dataLength),
+                //dataLength = Convert.ToString(key.dataLength),
                 isPropertyKey = true,
-                isRequired = !(key.isNullable),
+                isRequired = !(key.isNullable == null || key.isNullable == true),
               };
 
               dataObject.dataProperties.Add(dataProperty);
@@ -143,9 +145,11 @@ namespace org.iringtools.adapter.dataLayer
               DataProperty dataProperty = new DataProperty()
               {
                 propertyName = String.IsNullOrEmpty(column.propertyName) ? column.columnName : column.propertyName,
-                dataType = column.dataType.ToString(),
-                dataLength = Convert.ToString(column.dataLength),
-                isRequired = !(column.isNullable),
+                dataType = column.columnType.ToString(),
+                // for backward compatibility, default data length to 255
+                dataLength = (column.dataLength == null) ? "255" : Convert.ToString(column.dataLength),
+                //dataLength = Convert.ToString(column.dataLength),
+                isRequired = !(column.isNullable == null || column.isNullable == true),
               };
 
               try
@@ -305,9 +309,11 @@ namespace org.iringtools.adapter.dataLayer
 
         foreach (Key key in table.keys)
         {
+          // for backward compatibility
+          bool isKeyNullable = (key.isNullable == null || key.isNullable == true);          
+          string dataType = (key.columnType != ColumnType.String && isKeyNullable) ? (key.columnType.ToString() + "?") : (key.columnType.ToString());
           string keyName = String.IsNullOrEmpty(key.propertyName) ? key.columnName : key.propertyName;
-          string dataType = (key.dataType != DataType.String && key.isNullable) ? (key.dataType.ToString() + "?") : (key.dataType.ToString());
-
+          
           _entityWriter.WriteLine("public {0} {1} {{ get; set; }}", dataType, keyName);
 
           _mappingWriter.WriteStartElement("key-property");
@@ -411,7 +417,9 @@ namespace org.iringtools.adapter.dataLayer
 
         foreach (Key key in table.keys)
         {
-          string dataType = (key.dataType != DataType.String && key.isNullable) ? (key.dataType.ToString() + "?") : (key.dataType.ToString());
+          // for backward compatibility
+          bool isKeyNullable = (key.isNullable == null || key.isNullable == true);
+          string dataType = (key.columnType != ColumnType.String && isKeyNullable) ? (key.columnType.ToString() + "?") : (key.columnType.ToString());
 
           _entityWriter.WriteLine("public virtual {0} {1}", dataType, key.propertyName);
           _entityWriter.WriteLine("{");
@@ -431,7 +439,9 @@ namespace org.iringtools.adapter.dataLayer
       }
       else if (table.keys.Count == 1 && table.keys[0].keyType != KeyType.foreign)
       {
-        string dataType = (table.keys[0].dataType != DataType.String && table.keys[0].isNullable) ? (table.keys[0].dataType.ToString() + "?") : (table.keys[0].dataType.ToString());
+        // for backward compatibility
+        bool isKeyNullable = (table.keys[0].isNullable == null || table.keys[0].isNullable == true);
+        string dataType = (table.keys[0].columnType != ColumnType.String && isKeyNullable) ? (table.keys[0].columnType.ToString() + "?") : (table.keys[0].columnType.ToString());
 
         _entityWriter.WriteLine("public virtual {0} Id {{ get; set; }}", dataType);
 
@@ -476,7 +486,9 @@ namespace org.iringtools.adapter.dataLayer
 
               if (table.keys[0].keyType == KeyType.foreign)
               {
-                string dataType = (table.keys[0].dataType != DataType.String && table.keys[0].isNullable) ? (table.keys[0].dataType.ToString() + "?") : (table.keys[0].dataType.ToString());
+                // for backward compatibility
+                bool isKeyNullable = (table.keys[0].isNullable == null || table.keys[0].isNullable == true);          
+                string dataType = (table.keys[0].columnType != ColumnType.String && isKeyNullable) ? (table.keys[0].columnType.ToString() + "?") : (table.keys[0].columnType.ToString());
 
                 _entityWriter.WriteLine("public virtual {0} Id {{ get; set; }}", dataType);
 
@@ -555,9 +567,11 @@ namespace org.iringtools.adapter.dataLayer
       {
         foreach (Column column in table.columns)
         {
+          // for backward compatibility
+          bool isColumnNullable = (column.isNullable == null || column.isNullable == true);
+          string dataType = (column.columnType != ColumnType.String && isColumnNullable) ? (column.columnType.ToString() + "?") : (column.columnType.ToString());
           string propertyName = String.IsNullOrEmpty(column.propertyName) ? column.columnName : column.propertyName;
-          string dataType = (column.dataType != DataType.String && column.isNullable) ? (column.dataType.ToString() + "?") : (column.dataType.ToString());
-
+          
           _entityWriter.WriteLine("public virtual {0} {1} {{ get; set; }}", dataType, propertyName);
 
           _mappingWriter.WriteStartElement("property");

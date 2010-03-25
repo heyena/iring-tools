@@ -267,7 +267,7 @@ namespace DBDictionaryUtil
           Column column = new Column()
           {
             columnName = columnName,
-            dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
+            columnType = (ColumnType)Enum.Parse(typeof(ColumnType), dataType),
             dataLength = dataLength,
             isNullable = isNullable,
             propertyName = Utility.NameSafe(columnName)
@@ -291,7 +291,7 @@ namespace DBDictionaryUtil
           Key key = new Key()
           {
             columnName = columnName,
-            dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
+            columnType = (ColumnType)Enum.Parse(typeof(ColumnType), dataType),
             dataLength = dataLength,
             isNullable = isNullable,
             keyType = keyType,

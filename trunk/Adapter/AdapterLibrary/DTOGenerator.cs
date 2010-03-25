@@ -419,15 +419,14 @@ namespace org.iringtools.adapter
                     !String.IsNullOrEmpty(mappingProperty.dataLength))
                 {
                   _dtoModelWriter.WriteLine();
-                  _dtoModelWriter.WriteLine("if (this.Identifier.Length > {0})", mappingProperty.dataLength);
+                  _dtoModelWriter.WriteLine("if (!String.IsNullOrEmpty(this.Identifier) && this.Identifier.Length > {0})", mappingProperty.dataLength);
                   _dtoModelWriter.WriteLine("{");
                   _dtoModelWriter.Indent++;
                   _dtoModelWriter.WriteLine("_logger.Warn(\"Truncate {0} value from ---\" + this.Identifier + \"--- to {1} characters.\");", 
                     mappingProperty.propertyName, mappingProperty.dataLength);
                   _dtoModelWriter.WriteLine("this.Identifier = this.Identifier.Substring(0, {0});", mappingProperty.dataLength);
                   _dtoModelWriter.Indent--;
-                  _dtoModelWriter.WriteLine("}");                  
-                  _dtoModelWriter.WriteLine();
+                  _dtoModelWriter.WriteLine("}");
                 }
 
                 _dtoModelWriter.WriteLine("(({0})_dataObject).{1} = Convert.To{2}(this.Identifier);", qualifiedDataObjectName, mappingProperty.propertyName, mappingProperty.dataType);
@@ -446,7 +445,7 @@ namespace org.iringtools.adapter
                     !String.IsNullOrEmpty(mappingProperty.dataLength))
                 {
                   _dtoModelWriter.WriteLine();
-                  _dtoModelWriter.WriteLine("if (this.{0}.Length > {1})", mappingProperty.propertyPath, mappingProperty.dataLength);
+                  _dtoModelWriter.WriteLine("if (!String.IsNullOrEmpty(this.{0}) && this.{0}.Length > {1})", mappingProperty.propertyPath, mappingProperty.dataLength);
                   _dtoModelWriter.WriteLine("{");
                   _dtoModelWriter.Indent++;
                   _dtoModelWriter.WriteLine("_logger.Warn(\"Truncate {0} value from ---\" + this.{1} + \"--- to {2} characters.\");",
@@ -454,7 +453,6 @@ namespace org.iringtools.adapter
                   _dtoModelWriter.WriteLine("this.{0} = this.{0}.Substring(0, {1});", mappingProperty.propertyPath, mappingProperty.dataLength);
                   _dtoModelWriter.Indent--;
                   _dtoModelWriter.WriteLine("}");
-                  _dtoModelWriter.WriteLine();
                 }
 
                 _dtoModelWriter.WriteLine("(({0})_dataObject).{1} = Convert.To{2}(this.{3});",
