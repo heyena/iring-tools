@@ -27,6 +27,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.ComponentModel;
 
 namespace org.iringtools.library
 {
@@ -68,17 +69,28 @@ namespace org.iringtools.library
     [DataMember(IsRequired = true, Order = 1)]
     public string columnName { get; set; }
 
-    [DataMember(Order = 5)]
+    [DataMember(Order = 3)]
     public string propertyName { get; set; }
 
-    [DataMember(IsRequired = true, Order = 3)]
-    public DataType dataType { get; set; }
+    //TODO: for v1.3 going forward
+    //[DataMember(IsRequired = true, Order = 2)]
+    //public DataType dataType { get; set; }
 
+    //[DataMember(IsRequired = true, Order = 4)]
+    //public int dataLength { get; set; }
+
+    //[DataMember(IsRequired = true, Order = 5)]
+    //public bool isNullable { get; set; }
+
+    // for backward compatibility
     [DataMember(IsRequired = true, Order = 2)]
-    public int dataLength { get; set; }
-    
-    [DataMember(IsRequired = true, Order = 4)]
-    public bool isNullable { get; set; }
+    public ColumnType columnType { get; set; }
+
+    [DataMember(IsRequired = false, Order = 4, EmitDefaultValue = false)]
+    public int? dataLength { get; set; }
+
+    [DataMember(IsRequired = false, Order = 5, EmitDefaultValue = false)]
+    public bool? isNullable { get; set; }
   }
 
   [DataContract(Namespace = "http://ns.iringtools.org/library")]
@@ -165,7 +177,7 @@ namespace org.iringtools.library
   }
 
   [DataContract(Namespace = "http://ns.iringtools.org/library")]
-  public enum DataType
+  public enum ColumnType
   {
     [EnumMember]
     @Boolean,
