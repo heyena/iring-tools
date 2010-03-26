@@ -692,7 +692,7 @@ namespace org.iringtools.adapter
           if (dataObject != default({1}))
           {{
             dto = new {0}(dataObject);
-            dto.Identifier = dataObject.{2};
+            dto.Identifier = Convert.ToString(dataObject.{2});
           }}", qualifiedGraphName, qualifiedDataObjectName, identifier, outFilter);
 
               }
@@ -711,7 +711,7 @@ namespace org.iringtools.adapter
           if (dataObject != default({1}))
           {{                        
             dto = new {0}(dataObject);
-            dto.Identifier = dataObject.{2};
+            dto.Identifier = Convert.ToString(dataObject.{2});
           }}", qualifiedGraphName, qualifiedDataObjectName, identifier);
               }
 
@@ -774,7 +774,7 @@ namespace org.iringtools.adapter
           foreach (var dataObject in dataObjectList)
           {{   					
             {0} dto = new {0}(dataObject);
-            dto.Identifier = dataObject.{3};
+            dto.Identifier = Convert.ToString(dataObject.{3});
             dtoList.Add(dto);
           }}", qualifiedGraphName, qualifiedDataObjectName, outFilter, identifier);
               }
@@ -788,7 +788,7 @@ namespace org.iringtools.adapter
           foreach (var dataObject in dataObjectList)
           {{   					
             {0} dto = new {0}(dataObject);
-            dto.Identifier = dataObject.{2};
+            dto.Identifier = Convert.ToString(dataObject.{2});
             dtoList.Add(dto);
           }}", qualifiedGraphName, qualifiedDataObjectName, identifier);
               }
@@ -850,7 +850,7 @@ namespace org.iringtools.adapter
     
           foreach (var dataObject in dataObjectList)
           {{   
-            string identifier = dataObject.{2};
+            string identifier = Convert.ToString(dataObject.{2});
             identifierUriPairs.Add(identifier, endpoint + ""/"" + graphName + ""/"" + identifier);            
           }}", qualifiedDataObjectName, outFilter, identifier);
               }
@@ -863,7 +863,7 @@ namespace org.iringtools.adapter
 
           foreach (var dataObject in dataObjectList)
           {{
-            string identifier = dataObject.{1};
+            string identifier = Convert.ToString(dataObject.{1});
             identifierUriPairs.Add(identifier, endpoint + ""/"" + graphName + ""/"" + identifier);  
           }}", qualifiedDataObjectName, identifier);
               }
