@@ -327,6 +327,7 @@ namespace org.iringtools.adapter.projection
                     }
                   }
                 }
+                identifierTemplate.addRole("p7tpl:valEndTime", "?endDateTime");
                 identifierQuery.addTemplate(identifierTemplate);
 
                 foreach (String identifier in identifiers)
@@ -457,7 +458,7 @@ namespace org.iringtools.adapter.projection
                     {
                       sparqlTemplate.addRole(classRoleMap.roleId, instanceVariable);
                     }
-
+                    sparqlTemplate.addRole("p7tpl:valEndTime", "?endDateTime");
                     query.addTemplate(sparqlTemplate);
 
                     QueryClassMap(classRoleMap.classMap, classRoleMap, query, instanceVariable);
