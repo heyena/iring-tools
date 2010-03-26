@@ -186,6 +186,7 @@
     <Compile Include="Types\QueryType.cs" />
     <Compile Include="Types\SearchType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\..\AssemblyInfo.cs" />  
     <Compile Include="Types\StatusType.cs" />
     <Compile Include="LayerBLL\ClassDefinitionBLL.cs" />
     <Compile Include="UserControls\ClassTreeItem.cs" />

@@ -80,6 +80,7 @@
       <DependentUpon>PopupView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\..\AssemblyInfo.cs" />  
   </ItemGroup>
   <ItemGroup>
     <Page Include="PopupRegion\PopupView.xaml">

@@ -128,6 +128,7 @@
     <Content Include="XML\nh-mapping.12345_000.ABC.xml" />
     <Content Include="XML\nh-mapping.12345_000.DEF.xml" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\..\AssemblyInfo.cs" />  
   </ItemGroup>
   <ItemGroup>
     <None Include="App_Data\load.sql" />

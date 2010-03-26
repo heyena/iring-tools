@@ -1,7 +1,9 @@
-<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">  
+<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />  
+
   <PropertyGroup>
     <SolutionFile>iring-tools.sln</SolutionFile>
-    <DeploymentDir>Deployment</DeploymentDir>
+    <DeploymentDir>$(MSBuildProjectDirectory)\Deployment</DeploymentDir>
     <iRINGAdapter>$(DeploymentDir)\iRINGAdapter</iRINGAdapter>
     <iRINGSandbox>$(DeploymentDir)\iRINGSandbox</iRINGSandbox>
     <LandingPageDir>LandingPage</LandingPageDir>
@@ -29,7 +31,15 @@
     <SemWebSandboxServiceDeploymentDir>$(iRINGSandbox)\SandboxService</SemWebSandboxServiceDeploymentDir>
     <SandboxToolsDeploymentDir>$(iRINGSandbox)\Tools</SandboxToolsDeploymentDir>
     <TortoiseSVNCmd>"C:\Program Files\TortoiseSVN\bin\TortoiseProc.exe"</TortoiseSVNCmd>
-    <MSTestCmd>"C:\Program Files\Microsoft Visual Studio 9.0\Common7\IDE\MSTest.exe"</MSTestCmd>
+    <MSTestCmd>"$(VSINSTALLDIR)\Common7\IDE\MSTest.exe"</MSTestCmd>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <AssemblyInfoFile>$(MSBuildProjectDirectory)\AssemblyInfo.cs</AssemblyInfoFile>
+    <Major>1</Major>
+    <Minor>2</Minor>
+    <Build>1</Build>
+    <Revision>0</Revision>
   </PropertyGroup>
   
   <ItemGroup>
@@ -174,6 +184,7 @@
                Utilities\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\NHibernate.dll;
                Utilities\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\NHibernate.ByteCode.Castle.dll;
                Utilities\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\Iesi.Collections.dll;
+               Utilities\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\log4net.dll;
                Utilities\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\DBDictionaryUtil.exe;
                Utilities\DBDictionaryUtil\DBDictionaryUtil\App_Default.config;">
     </AdapterToolsDeployment>
@@ -232,6 +243,19 @@
     </DeploymentPackage>
   </ItemGroup>
 
+  <Target Name="Version">
+    <Message Text="Updating assembly info ..." />
+    
+    <SvnVersion LocalPath="$(MSBuildProjectDirectory)">  
+      <Output TaskParameter="Revision" PropertyName="Revision" />  
+    </SvnVersion>  
+    
+    <FileUpdate  
+      Files="$(AssemblyInfoFile)" 
+      Regex="(\d+)\.(\d+)\.(\d+)(\.(\d+))*" 
+      ReplacementText="$(Major).$(Minor).$(Build).$(Revision)"/>
+  </Target>
+  
   <Target Name="SvnCleanUp">
     <Message Text="Performing SVN clean-up ..." />
     <!--<Exec Command="$(TortoiseSVNCmd) /notempfile /command:cleanup /path:C:\iring-tools /closeonend:1"/>
@@ -245,7 +269,7 @@
     <Exec Command="svn update"/>
   </Target>
   
-  <Target Name="CoreBuild">
+  <Target Name="CoreBuild" DependsOnTargets="Version">
     <Message Text="Performing MSBuild ..." />
     <MSBuild Projects="$(SolutionFile)" Targets="Build"/>
   </Target>

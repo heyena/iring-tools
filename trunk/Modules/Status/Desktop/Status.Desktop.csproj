@@ -103,6 +103,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\..\AssemblyInfo.cs" />  
     <Compile Include="StatusModule.cs" />
     <Compile Include="StatusRegion\IStatusView.cs" />
     <Compile Include="StatusRegion\StatusPresenter.cs" />

@@ -108,6 +108,7 @@
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\AssemblyInfo.cs" />  
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Code\" />
