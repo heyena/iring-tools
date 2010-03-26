@@ -242,7 +242,8 @@ namespace DbDictionaryEditor.Web
                     Column column = new Column()
                     {
                         columnName = columnName,
-                        dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
+                        columnType = (ColumnType)Enum.Parse(typeof(ColumnType),dataType),
+                       // dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
                         dataLength = dataLength,
                         isNullable = isNullable,
                         propertyName = Utility.NameSafe(columnName)
@@ -266,7 +267,8 @@ namespace DbDictionaryEditor.Web
                     Key key = new Key()
                     {
                         columnName = columnName,
-                        dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
+                        columnType = (ColumnType)Enum.Parse(typeof(ColumnType), dataType),
+                        //   dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
                         dataLength = dataLength,
                         isNullable = isNullable,
                         keyType = keyType,
