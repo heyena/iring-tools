@@ -314,6 +314,7 @@
       <Link>UserControls\TemplateTreeItem.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\..\AssemblyInfo.cs" />  
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\PrismContrib\Desktop\PrismContrib.Desktop.csproj">

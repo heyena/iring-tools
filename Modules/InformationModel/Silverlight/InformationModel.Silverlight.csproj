@@ -84,6 +84,7 @@
   <ItemGroup>
     <Compile Include="InformationModelModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\..\AssemblyInfo.cs" />  
     <Compile Include="UserControls\Spinner\IWorkingSpinner.cs" />
     <Compile Include="UserControls\Spinner\WorkingSpinner.xaml.cs">
       <DependentUpon>WorkingSpinner.xaml</DependentUpon>

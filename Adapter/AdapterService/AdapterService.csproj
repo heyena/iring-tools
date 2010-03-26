@@ -111,6 +111,7 @@
     <Content Include="XML\Seed.DatabaseDictionary.xml" />
     <Content Include="XML\Seed.Mapping.xml" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App_Data\Scripts\Camelot_Test.sql" />

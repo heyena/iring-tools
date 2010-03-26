@@ -8,11 +8,6 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Mapping Editor Tests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("iringug.org")]
-[assembly: AssemblyProduct("iRINGTools")]
-[assembly: AssemblyCopyright("Copyright © 2009, iringug.org")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM componenets.  If you need to access a type in this assembly from 
@@ -21,15 +16,3 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("657b9081-524c-434a-b276-32320f8b6ac7")]
-
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-[assembly: AssemblyVersion("1.1.1")]
-[assembly: AssemblyFileVersion("1.1.1")]
