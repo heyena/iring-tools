@@ -694,14 +694,14 @@ namespace org.iringtools.adapter
 //             select dataObjectList).FirstOrDefault<{1}>();
 
           @"Dictionary<string, object> queryProperties = new Dictionary<string, object>();
-          queryProperties.Add(""{4}"", identifier);
+          queryProperties.Add(""{2}"", identifier);
           {1} dataObject = _dataLayer.Get<{1}>(queryProperties);
 
           if (dataObject != default({1}))
           {{
             dto = new {0}(dataObject);
             dto.Identifier = Convert.ToString(dataObject.{2});
-          }}", qualifiedGraphName, qualifiedDataObjectName, identifier, outFilter, graphMap.identifier);
+          }}", qualifiedGraphName, qualifiedDataObjectName, graphMap.identifier, outFilter);
 
               }
               else
@@ -713,14 +713,14 @@ namespace org.iringtools.adapter
 //             select dataObjectList).FirstOrDefault<{1}>();   
 
           @"Dictionary<string, object> queryProperties = new Dictionary<string, object>();
-          queryProperties.Add(""{3}"", identifier);
+          queryProperties.Add(""{2}"", identifier);
           {1} dataObject = _dataLayer.Get<{1}>(queryProperties);
 
           if (dataObject != default({1}))
           {{                        
             dto = new {0}(dataObject);
             dto.Identifier = Convert.ToString(dataObject.{2});
-          }}", qualifiedGraphName, qualifiedDataObjectName, identifier, graphMap.identifier);
+          }}", qualifiedGraphName, qualifiedDataObjectName, graphMap.identifier);
               }
 
               break;
@@ -784,7 +784,7 @@ namespace org.iringtools.adapter
             {0} dto = new {0}(dataObject);
             dto.Identifier = Convert.ToString(dataObject.{3});
             dtoList.Add(dto);
-          }}", qualifiedGraphName, qualifiedDataObjectName, outFilter, identifier);
+          }}", qualifiedGraphName, qualifiedDataObjectName, outFilter, graphMap.identifier);
               }
               else
               {
@@ -798,7 +798,7 @@ namespace org.iringtools.adapter
             {0} dto = new {0}(dataObject);
             dto.Identifier = Convert.ToString(dataObject.{2});
             dtoList.Add(dto);
-          }}", qualifiedGraphName, qualifiedDataObjectName, identifier);
+          }}", qualifiedGraphName, qualifiedDataObjectName, graphMap.identifier);
               }
             }
           }
@@ -860,7 +860,7 @@ namespace org.iringtools.adapter
           {{   
             string identifier = Convert.ToString(dataObject.{2});
             identifierUriPairs.Add(identifier, endpoint + ""/"" + graphName + ""/"" + identifier);            
-          }}", qualifiedDataObjectName, outFilter, identifier);
+          }}", qualifiedDataObjectName, outFilter, graphMap.identifier);
               }
               else
               {
@@ -873,7 +873,7 @@ namespace org.iringtools.adapter
           {{
             string identifier = Convert.ToString(dataObject.{1});
             identifierUriPairs.Add(identifier, endpoint + ""/"" + graphName + ""/"" + identifier);  
-          }}", qualifiedDataObjectName, identifier);
+          }}", qualifiedDataObjectName, graphMap.identifier);
               }
             }
           }
