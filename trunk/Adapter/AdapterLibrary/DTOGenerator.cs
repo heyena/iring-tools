@@ -271,7 +271,7 @@ namespace org.iringtools.adapter
           {
             string value = (mappingProperty.value == null) ? "null" : "@\"" + mappingProperty.value + "\"";
 
-            if (graphMap.identifier.ToLower() == mappingProperty.propertyName.ToLower())
+            if (!String.IsNullOrEmpty(mappingProperty.propertyName) && graphMap.identifier.ToLower() == mappingProperty.propertyName.ToLower())
             {
               _dtoModelWriter.WriteLine("_properties.Add(new DTOProperty(@\"{0}\", @\"{1}\", {2}, typeof({3}), {4}, {5}));",
               mappingProperty.propertyName, mappingProperty.dtoPropertyPath, "identifier", mappingProperty.mappingDataType,
