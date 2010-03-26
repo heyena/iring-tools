@@ -37,7 +37,7 @@ using log4net;
 using org.iringtools.library;
 using org.iringtools.utility;
 
-namespace org.iringtools.adapter.dataLayer
+namespace org.iringtools.adapter.datalayer
 {
   public class EntityGenerator
   {
@@ -73,7 +73,7 @@ namespace org.iringtools.adapter.dataLayer
 
       if (dbDictionary.tables != null)
       {
-        _namespace = "org.iringtools.adapter.proj_" + projectName + "." + applicationName;
+        _namespace = "org.iringtools.adapter.datalayer.proj_" + projectName + "." + applicationName;
 
         try
         {

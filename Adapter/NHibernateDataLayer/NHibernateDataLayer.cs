@@ -13,7 +13,7 @@ using System.Text;
 using Ninject;
 using log4net;
 
-namespace org.iringtools.adapter.dataLayer
+namespace org.iringtools.adapter.datalayer
 {
   public class NHibernateDataLayer : IDataLayer
   {
