@@ -271,10 +271,18 @@ namespace org.iringtools.adapter
           {
             string value = (mappingProperty.value == null) ? "null" : "@\"" + mappingProperty.value + "\"";
 
-            _dtoModelWriter.WriteLine("_properties.Add(new DTOProperty(@\"{0}\", @\"{1}\", {2}, typeof({3}), {4}, {5}));",
-            mappingProperty.propertyName, mappingProperty.dtoPropertyPath, value, mappingProperty.mappingDataType,
-            Convert.ToString(mappingProperty.isPropertyKey).ToLower(),
-            Convert.ToString(mappingProperty.isRequired).ToLower());
+            if (graphMap.identifier.ToLower() == mappingProperty.propertyName.ToLower())
+            {
+              _dtoModelWriter.WriteLine("_properties.Add(new DTOProperty(@\"{0}\", @\"{1}\", {2}, typeof({3}), {4}, {5}));",
+              mappingProperty.propertyName, mappingProperty.dtoPropertyPath, "identifier", mappingProperty.mappingDataType,
+              "true", Convert.ToString(mappingProperty.isRequired).ToLower());
+            }
+            else
+            {
+              _dtoModelWriter.WriteLine("_properties.Add(new DTOProperty(@\"{0}\", @\"{1}\", {2}, typeof({3}), {4}, {5}));",
+              mappingProperty.propertyName, mappingProperty.dtoPropertyPath, value, mappingProperty.mappingDataType,
+              "false", Convert.ToString(mappingProperty.isRequired).ToLower());
+            }
           }
 
           _dtoModelWriter.WriteLine("Identifier = identifier;");
