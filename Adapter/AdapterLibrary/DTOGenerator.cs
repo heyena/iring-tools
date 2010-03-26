@@ -694,14 +694,14 @@ namespace org.iringtools.adapter
 //             select dataObjectList).FirstOrDefault<{1}>();
 
           @"Dictionary<string, object> queryProperties = new Dictionary<string, object>();
-          queryProperties.Add(""{3}"", identifier);
+          queryProperties.Add(""{4}"", identifier);
           {1} dataObject = _dataLayer.Get<{1}>(queryProperties);
 
           if (dataObject != default({1}))
           {{
             dto = new {0}(dataObject);
             dto.Identifier = Convert.ToString(dataObject.{2});
-          }}", qualifiedGraphName, qualifiedDataObjectName, identifier, outFilter);
+          }}", qualifiedGraphName, qualifiedDataObjectName, identifier, outFilter, graphMap.identifier);
 
               }
               else
@@ -713,14 +713,14 @@ namespace org.iringtools.adapter
 //             select dataObjectList).FirstOrDefault<{1}>();   
 
           @"Dictionary<string, object> queryProperties = new Dictionary<string, object>();
-          queryProperties.Add(""{2}"", identifier);
+          queryProperties.Add(""{3}"", identifier);
           {1} dataObject = _dataLayer.Get<{1}>(queryProperties);
 
           if (dataObject != default({1}))
           {{                        
             dto = new {0}(dataObject);
             dto.Identifier = Convert.ToString(dataObject.{2});
-          }}", qualifiedGraphName, qualifiedDataObjectName, identifier);
+          }}", qualifiedGraphName, qualifiedDataObjectName, identifier, graphMap.identifier);
               }
 
               break;
