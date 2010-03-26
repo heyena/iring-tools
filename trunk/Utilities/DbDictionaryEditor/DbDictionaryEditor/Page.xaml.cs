@@ -29,6 +29,8 @@ namespace DbDictionaryEditor
         public string newDatabaseName;
         public string newDatabaseUserName;
         public string newDatabaseUserPassword;
+        public StringBuilder newDictionary;
+        public string selectedCBItem = string.Empty;
 
         public Page()
         {
@@ -74,8 +76,10 @@ namespace DbDictionaryEditor
             proxy.DeleteAppCompleted += new EventHandler<DeleteAppCompletedEventArgs>(proxy_DeleteAppCompleted);
 
             LayoutRoot.SizeChanged += new SizeChangedEventHandler(LayoutRoot_SizeChanged);
-            
+            proxy.GetExistingDbDictionaryFilesAsync();
         }
+
+       
 
         void editTreeNode_Closed(object sender, EventArgs e)
         {
@@ -202,16 +206,34 @@ namespace DbDictionaryEditor
         void proxy_GetExistingDbDictionaryFilesCompleted(object sender, GetExistingDbDictionaryFilesCompletedEventArgs e)
         {
             dbDictionaries = e.Result;
-            
+            cbDictionary.IsEnabled = true;
+           
             List<string> dbDict = dbDictionaries.ToList<string>();
             dbDict.Sort();
 
-            cbDictionary.IsEnabled = false;
+            
             cbDictionary.ItemsSource = dbDict;
+            if (cbDictionary.Items.Count > 0)
+            {
+                if (newDictionary != null)
+                {
+                    if (cbDictionary.Items.Contains(newDictionary.ToString()))
+                        cbDictionary.SelectedIndex = cbDictionary.Items.IndexOf(newDictionary.ToString());
 
-            if (!cbDictionary.Items.Count.Equals(0))
-                cbDictionary.SelectedIndex = 0;
-            cbDictionary.IsEnabled = true;
+                    proxy.GetDbDictionaryAsync(newDictionary.ToString().Split('.')[1], newDictionary.ToString().Split('.')[2]);
+                    newDictionary = null;
+                }
+                else
+                {
+                    if (string.IsNullOrEmpty(selectedCBItem))
+                    {
+                        cbDictionary.SelectedIndex = 0;
+                        selectedCBItem = cbDictionary.SelectedItem.ToString();
+                    }
+                    cbDictionary.SelectedIndex = cbDictionary.Items.IndexOf(selectedCBItem);
+                }
+                proxy.GetDbDictionaryAsync(selectedCBItem.Split('.')[1], selectedCBItem.Split('.')[2]);
+            }
             biBusyWindow.IsBusy = false;
         }
 
@@ -227,8 +249,7 @@ namespace DbDictionaryEditor
                 newDatabaseUserName = newDbDictionary.tbUserID.Text;
                 newDatabaseUserPassword = newDbDictionary.tbPassword.Text;
                 BuildNewDbDictionary(newProvider, newProject, newApplication, 
-                    newDataSourceName, newDatabaseName, newDatabaseUserName, newDatabaseUserPassword);  
-
+                    newDataSourceName, newDatabaseName, newDatabaseUserName, newDatabaseUserPassword);
             }
             else if ((bool)newDbDictionary.DialogResult && newDbDictionary.btnCancle.IsPressed)
             { }
@@ -240,7 +261,7 @@ namespace DbDictionaryEditor
 
         private void BuildNewDbDictionary(string newProvider, string newProject, string newApplication, string newDataSourceName, string newDatabaseName, string newDatabaseUserName, string newDatabaseUserPassword)
         {
-            StringBuilder newDictionary = new StringBuilder();
+            newDictionary = new StringBuilder();
             newDictionary.Append("DatabaseDictionary.");
             newDictionary.Append(newProject);
             newDictionary.Append(".");
@@ -255,9 +276,6 @@ namespace DbDictionaryEditor
                 provider = (Provider)Enum.Parse(typeof(Provider), newProvider, true),
                 tables = new List<Table>()
             };
-            if (!cbDictionary.Items.Contains(newDictionary))
-                cbDictionary.Items.Add(newDictionary);
-            cbDictionary.SelectedItem = cbDictionary.Items.IndexOf(newDictionary.ToString());
             proxy.SaveDabaseDictionaryAsync(dict, newProject, newApplication);
         }
 
@@ -298,11 +316,8 @@ namespace DbDictionaryEditor
 
         void proxy_SaveDabaseDictionaryCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
-            string proj = cbDictionary.SelectedItem.ToString().Split('.')[1];
-            string app = cbDictionary.SelectedItem.ToString().Split('.')[2];
-           
-            tvwItemDestinationRoot.Items.Clear();
-            proxy.GetDbDictionaryAsync(proj, app);
+            proxy.GetExistingDbDictionaryFilesAsync();
+            //tvwItemDestinationRoot.Items.Clear();
         }
 
         void proxy_GetDatabaseSchemaCompleted(object sender, GetDatabaseSchemaCompletedEventArgs e)
@@ -332,6 +347,7 @@ namespace DbDictionaryEditor
                     }
                 }
             }
+
             biBusyWindow.IsBusy = false;
         }
 
@@ -354,6 +370,8 @@ namespace DbDictionaryEditor
             try
             {
                 root.Tag = dict.connectionString + "~" + dict.provider;
+                if (dict.tables == null)
+                    dict.tables = new List<Table>();
                 foreach (Table table in dict.tables)
                 {
                     tableTreeViewItem = new TreeViewItem() { Header = table.tableName };
@@ -366,7 +384,8 @@ namespace DbDictionaryEditor
                         columnTreeViewItem.Tag = key;
                         AddTreeItem(tableTreeViewItem, columnTreeViewItem, key.columnName, "Magenta", false);
                         AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Data Length = " + key.dataLength.ToString(), null, false);
-                        AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Data Type = " + key.dataType.ToString(), null, false);
+                        AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Column Type = " + key.columnType.ToString(), null, false);
+                      //  AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Data Type = " + key.dataType.ToString(), null, false);
                         AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Is Nullable = " + key.isNullable, null, false);
                         AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Key Type = " + key.keyType, null, false);
                         AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Property Name = " + key.propertyName, null, false);
@@ -377,7 +396,8 @@ namespace DbDictionaryEditor
                         columnTreeViewItem.Tag = column;
                         AddTreeItem(tableTreeViewItem, columnTreeViewItem, column.columnName, null, enableCheckBox);
                         AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Data Length = " + column.dataLength.ToString(), null, false);
-                        AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Data Type = " + column.dataType.ToString(), null, false);
+                        AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Column Type = " + column.columnType.ToString(), null, false);
+                     //   AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Data Type = " + column.dataType.ToString(), null, false);
                         AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Is Nullable = " + column.isNullable, null, false);
                         AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Property Name = " + column.propertyName, null, false);
                     }
@@ -454,16 +474,6 @@ namespace DbDictionaryEditor
             newDbDictionary.Show();  
         }
 
-        private void btnGetScopes_Click(object sender, RoutedEventArgs e)
-        {
-            biBusyWindow.IsBusy = true;
-            tvwItemSourceRoot.Items.Clear();
-            tvwItemSourceRoot.Visibility = Visibility.Collapsed;
-            tvwItemDestinationRoot.Items.Clear();
-            tvwItemDestinationRoot.Visibility = Visibility.Collapsed;
-            proxy.GetExistingDbDictionaryFilesAsync();
-        }
-
 
         private void cbProject_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -473,6 +483,9 @@ namespace DbDictionaryEditor
                 tvwItemSourceRoot.Visibility = Visibility.Collapsed;
                 tvwItemDestinationRoot.Items.Clear();
                 tvwItemDestinationRoot.Visibility = Visibility.Collapsed;
+
+                selectedCBItem = cbDictionary.SelectedItem.ToString();
+                proxy.GetDbDictionaryAsync(selectedCBItem.Split('.')[1], selectedCBItem.Split('.')[2]); 
             }
         }
 
@@ -480,6 +493,7 @@ namespace DbDictionaryEditor
         private void btnSaveDbDictionary_Click(object sender, RoutedEventArgs e)
         {
             biBusyWindow.IsBusy = true;
+            selectedCBItem = cbDictionary.SelectedItem.ToString();
             string projectName = cbDictionary.SelectedItem.ToString().Split('.')[1];
             string applicationName = cbDictionary.SelectedItem.ToString().Split('.')[2];
             
@@ -507,22 +521,22 @@ namespace DbDictionaryEditor
                     currentObject = columnTreeViewItem.Tag;
                     if (currentObject is org.iringtools.library.Key)
                     { 
-                        DataType dataType =  (DataType)Enum.Parse(typeof(DataType),((org.iringtools.library.Key)currentObject).dataType.ToString(),true);
+                    //    DataType dataType =  (DataType)Enum.Parse(typeof(DataType),((org.iringtools.library.Key)currentObject).dataType.ToString(),true);
                         org.iringtools.library.Key key = new org.iringtools.library.Key();
                         key.columnName = ((org.iringtools.library.Key)currentObject).columnName;
                         key.dataLength = ((org.iringtools.library.Key)currentObject).dataLength;
-                        key.dataType = dataType;
+                    //    key.dataType = dataType;
                         key.isNullable = ((org.iringtools.library.Key)currentObject).isNullable;
                         key.propertyName = ((org.iringtools.library.Key)currentObject).propertyName;
                         table.keys.Add(key);        
                     }
                     else
                     {
-                        DataType dataType = (DataType)Enum.Parse(typeof(DataType), ((Column)currentObject).dataType.ToString(), true);
+                    //    DataType dataType = (DataType)Enum.Parse(typeof(DataType), ((Column)currentObject).dataType.ToString(), true);
                         Column column = new Column();
                         column.columnName = ((Column)currentObject).columnName;
                         column.dataLength = ((Column)currentObject).dataLength;
-                        column.dataType = dataType;
+                   //     column.dataType = dataType;
                         column.isNullable = ((Column)currentObject).isNullable;
                         column.propertyName = ((Column)currentObject).propertyName;
                         table.columns.Add(column); 
@@ -553,17 +567,6 @@ namespace DbDictionaryEditor
 
         }
 
-        private void btnLoadDictionary_Click(object sender, RoutedEventArgs e)
-        {
-            biBusyWindow.IsBusy = true;
-            if (cbDictionary.SelectedIndex != -1)
-            {
-                tvwItemDestinationRoot.Items.Clear();
-                string projectName = cbDictionary.SelectedItem.ToString().Split('.')[1];
-                string applicationName = cbDictionary.SelectedItem.ToString().Split('.')[2];
-                proxy.GetDbDictionaryAsync(projectName, applicationName);
-            }
-        }
 
         private void btnAddColumnToDict_Click(object sender, RoutedEventArgs e)
         {
@@ -698,8 +701,10 @@ namespace DbDictionaryEditor
                       editTreeNode.spContainer.Children.Add(stackPanel);
                             
                       stackPanel = new StackPanel() { Orientation = Orientation.Horizontal };
-                      textBlock = CreateTextBlock("      Data Type: ");
-                      textBox = CreateTextBox(Enum.GetName(typeof(DataType), ((Column)selectedItem.Tag).dataType),"dataType");
+                      textBlock = CreateTextBlock("      Column Type: ");
+                      textBox = CreateTextBox(Enum.GetName(typeof(ColumnType), ((Column)selectedItem.Tag).columnType),"ColumnType");
+                   //   textBlock = CreateTextBlock("      Data Type: ");
+                   //   textBox = CreateTextBox(Enum.GetName(typeof(DataType), ((Column)selectedItem.Tag).dataType),"dataType");
                       stackPanel.Children.Add(textBlock);
                       stackPanel.Children.Add(textBox);
                       editTreeNode.spContainer.Children.Add(stackPanel);

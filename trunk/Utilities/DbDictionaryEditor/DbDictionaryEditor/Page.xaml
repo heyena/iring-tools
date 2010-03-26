@@ -35,10 +35,11 @@
         <Border Grid.Row="1" Margin="2" BorderBrush="Gray" BorderThickness="1" CornerRadius="3" Grid.Column="0" Grid.ColumnSpan="4" >
             <StackPanel Orientation="Horizontal" Visibility="Visible" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4">
                 <Button Margin="5,0,5,0" x:Name="btnNewDictionary" Content="New DbDictionary" Height="24" Width="105" Click="btnNewDictionary_Click"/>
-                <Button Margin="5,0,5,0" x:Name="btnGetScopes" Content="List existing DbDictionaries" Height="24" Width="170" Click="btnGetScopes_Click"/>
+                <TextBlock Margin="5,10,5,0" Text="Selected DbDictionary File:"/>
+              <!--  <Button Margin="5,0,5,0" x:Name="btnGetScopes" Content="List existing DbDictionaries" Height="24" Width="170" Click="btnGetScopes_Click"/>-->
                 
                 <ComboBox Margin="5,0,5,0" x:Name="cbDictionary" Width="300" Height="24" SelectionChanged="cbProject_SelectionChanged"/>
-                <Button Margin="5,0,5,0" x:Name="btnLoadDictionary" Width="120" Height="24" Content="Load DbDictionary" Click="btnLoadDictionary_Click" />
+              <!--  <Button Margin="5,0,5,0" x:Name="btnLoadDictionary" Width="120" Height="24" Content="Load DbDictionary" Click="btnLoadDictionary_Click" />-->
                 <Button Margin="5,0,5,0" x:Name="btnSaveDbDictionary" Width="120" Height="24" Content="Save DbDictionary" Click="btnSaveDbDictionary_Click" />
                 <Button Margin="5,0,5,0" x:Name="btnPostDictionary" Width="145" Height="24" Content="Post Updates to Adapter" Click="btnPostDictionary_Click"/>
             </StackPanel>
