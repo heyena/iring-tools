@@ -31,7 +31,6 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Microsoft.VisualStudio.TextTemplating;
 using Ninject;
 using Ninject.Parameters;
 using Ninject.Contrib.Dynamic;
@@ -41,7 +40,7 @@ using org.iringtools.library;
 using org.iringtools.utility;
 using System.Collections.Specialized;
 using Ninject.Modules;
-using org.iringtools.adapter.dataLayer;
+using org.iringtools.adapter.datalayer;
 using log4net;
 using System.ServiceModel;
 using System.Data.SqlClient;
@@ -1262,7 +1261,7 @@ namespace org.iringtools.adapter
           {
             Name = "DataLayer",
             Interface = "org.iringtools.library.IDataLayer, iRINGLibrary",
-            Implementation = "org.iringtools.adapter.dataLayer.NHibernateDataLayer, NHibernateDataLayer"
+            Implementation = "org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateDataLayer"
           };
           UpdateBindingConfiguration(projectName, applicationName, dataLayerBinding);
 
