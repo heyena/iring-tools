@@ -18,7 +18,7 @@
   * Bug Fixes
   * Various UI Issues
 
-==iRINGTools 1.02.00 - February 2010==
+==iRINGTools 1.02.00 - March 2010==
 
   * Multi-Project/Application Support
   * NHibernate !DataLayer
@@ -28,7 +28,7 @@
   * Adapter Part 8 Compliance
   * Complete Mapping Editor
 
-==iRINGTools 1.03.00 - March 2010==
+==iRINGTools 1.03.00 - May 2010==
 
   * Complete Reference Data Editor
   * Sandbox Part 8 Compliance
