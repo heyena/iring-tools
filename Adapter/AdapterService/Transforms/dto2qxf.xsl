@@ -41,7 +41,7 @@
     <xsl:choose>
       <!-- process property template -->
       <xsl:when test="@type='Property'">
-        <c1>
+        
           <xsl:element name="relationship">
             <xsl:attribute name="instance-of">
               <xsl:value-of select="concat('http://tpl.rdswip.org/data#', substring-after(@templateId, 'tpl:'))"/>
@@ -58,11 +58,11 @@
               </xsl:attribute>
             </xsl:element>
           </xsl:element>
-        </c1>
+        
       </xsl:when>
       <!-- process relationship template -->
       <xsl:otherwise>
-        <c2>
+        
           <xsl:element name="relationship">
             <xsl:attribute name="instance-of">
               <xsl:value-of select="concat('http://tpl.rdswip.org/data#', substring-after(@templateId, 'tpl:'))"/>
@@ -110,7 +110,7 @@
               </xsl:apply-templates>
             </xsl:if>
           </xsl:for-each>
-        </c2>
+        
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
