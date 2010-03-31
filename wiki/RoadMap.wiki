@@ -25,11 +25,15 @@
     * Hierarchical Database Object Support
   * Base Template Support
   * Package !SemWeb Deployment
+  * Adapter Part 8 Compliance
+  * Complete Mapping Editor
 
 ==iRINGTools 1.03.00 - March 2010==
 
-  * Part 8 Compliance
   * Complete Reference Data Editor
-  * Complete Mapping Editor
+  * Sandbox Part 8 Compliance
+  * QMXF improvements
+  * Hierarchical Object Mapping
+  * Gerneric Object Mapping
 
 Other pages: [Components] | [ISO15926] | [Documentation] | [Contributors]
