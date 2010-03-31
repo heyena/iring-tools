@@ -37,7 +37,12 @@ namespace IDS_ADI.iRING.Adapter
 
       listBoxResults.ItemsSource = _messages;
 
-      
+      WebClient client = new WebClient();
+      client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(client_DownloadScopesCompleted);
+
+      Uri scopesURI = new Uri(textBoxAdapterURL.Text + "/scopes");
+
+      client.DownloadStringAsync(scopesURI); 
     }
 
     private void buttonPull_Click(object sender, RoutedEventArgs e)
