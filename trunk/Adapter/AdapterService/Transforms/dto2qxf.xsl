@@ -28,7 +28,7 @@
 
   <xsl:template match="TemplateMaps/TemplateMap">
     <xsl:param name="xPath"/>
-    <xsl:variable name="templateMapXPath">
+    <xsl:variable name="templateXPath">
       <xsl:choose>
         <xsl:when test="$xPath=''">
           <xsl:value-of select="concat('tpl:', @name)"/>
@@ -41,155 +41,119 @@
     <xsl:choose>
       <!-- process property template -->
       <xsl:when test="@type='Property'">
-        
-          <xsl:element name="relationship">
-            <xsl:attribute name="instance-of">
-              <xsl:value-of select="concat('http://tpl.rdswip.org/data#', substring-after(@templateId, 'tpl:'))"/>
-            </xsl:attribute>
-            <xsl:apply-templates select="RoleMaps/RoleMap">
-              <xsl:with-param name="xPath" select="$templateMapXPath"/>
-            </xsl:apply-templates>
-            <xsl:element name="property">
-              <xsl:attribute name="instance-of">
-                <xsl:value-of select="concat('http://tpl.rdswip.org/data#', substring-after(@classRole, 'tpl:'))"/>
-              </xsl:attribute>
-              <xsl:attribute name="reference">
-                <xsl:value-of select="concat('http://www.example.com/data#', 'graphIdentifierValue')"/>
-              </xsl:attribute>
-            </xsl:element>
-          </xsl:element>
-        
-      </xsl:when>
-      <!-- process relationship template -->
-      <xsl:otherwise>
-        
-          <xsl:element name="relationship">
-            <xsl:attribute name="instance-of">
-              <xsl:value-of select="concat('http://tpl.rdswip.org/data#', substring-after(@templateId, 'tpl:'))"/>
-            </xsl:attribute>
-            <!-- process reference roles that have no class map -->
-            <xsl:for-each select="RoleMaps/RoleMap">
-              <xsl:choose>
-                <xsl:when test="child::node()">
-                  <xsl:element name="property">
-                    <xsl:attribute name="instance-of">
-                      <xsl:value-of select="concat('http://tpl.rdswip.org/data#', substring-after(@roleId, 'tpl:'))"/>
-                    </xsl:attribute>
-                    <xsl:attribute name="reference">
-                      <xsl:value-of select="concat('http://rdl.rdswip.org/data#', substring-after(ClassMap/@classId, 'rdl:'))"/>
-                    </xsl:attribute>
-                  </xsl:element>
-                </xsl:when>
-                <xsl:otherwise>
-                  <xsl:element name="property">
-                    <xsl:attribute name="instance-of">
-                      <xsl:value-of select="concat('http://tpl.rdswip.org/data#', substring-after(@roleId, 'tpl:'))"/>
-                    </xsl:attribute>
-                    <xsl:attribute name="reference">
-                      <xsl:value-of select="concat('http://rdl.rdswip.org/data#', substring-after(@reference, 'rdl:'))"/>
-                    </xsl:attribute>
-                  </xsl:element>
-                </xsl:otherwise>
-              </xsl:choose>
-            </xsl:for-each>
-            <!-- process template class role -->
-            <xsl:element name="property">
-              <xsl:attribute name="instance-of">
-                <xsl:value-of select="concat('http://tpl.rdswip.org/data#', substring-after(@classRole, 'tpl:'))"/>
-              </xsl:attribute>
-              <xsl:attribute name="reference">
-                <xsl:value-of select="concat('http://www.example.com/data#', 'graphIdentifierValue')"/>
-              </xsl:attribute>
-            </xsl:element>
-          </xsl:element>
-          <!-- process reference roles that have class map -->
+        <!-- process reference role maps -->
+        <xsl:variable name="referenceRoles">
           <xsl:for-each select="RoleMaps/RoleMap">
-            <xsl:if test="child::node()">
-              <xsl:apply-templates select="ClassMap">
-                <xsl:with-param name="xPath" select="concat($xPath, '.rdl:', @name)"/>
-              </xsl:apply-templates>
-            </xsl:if>
-          </xsl:for-each>
-        
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-
-  <!-- process property mapped roles only -->
-  <xsl:template match="RoleMaps/RoleMap">
-    <xsl:param name="xPath"/>
-    <xsl:variable name="roleMapXPath" select="concat($xPath, '.tpl:', @name)"/>
-    <xsl:choose>
-      <xsl:when test="@propertyName!=''">
-        <xsl:variable name="roleId" select="@roleId"/>
-        <xsl:variable name="dataType" select="@dataType"/>
-        <xsl:for-each select="$dtoList">
-          <xsl:for-each select="Properties/Property">
-            <xsl:if test="@name=$roleMapXPath">
+            <xsl:if test="@reference!=''">
               <xsl:element name="property">
                 <xsl:attribute name="instance-of">
-                  <xsl:value-of select="concat('http://tpl.rdswip.org/data#', substring-after($roleId, 'tpl:'))"/>
+                  <xsl:value-of select="concat('http://tpl.rdswip.org/data#', substring-after(@roleId, 'tpl:'))"/>
                 </xsl:attribute>
-                <xsl:attribute name="as">
-                  <xsl:value-of select="concat('http://www.w3.org/2001/XMLSchema##', substring-after($dataType, 'xsd:'))"/>
+                <xsl:attribute name="reference">
+                  <xsl:value-of select="concat('http://rdl.rdswip.org/data#', substring-after(@reference, 'rdl:'))"/>
                 </xsl:attribute>
-                <xsl:value-of select="@value"/>
               </xsl:element>
             </xsl:if>
           </xsl:for-each>
-        </xsl:for-each>
-      </xsl:when>
-      <xsl:when test="@reference!=''">
-        <xsl:element name="property">
-          <xsl:attribute name="instance-of">
-            <xsl:value-of select="concat('http://tpl.rdswip.org/data#', substring-after(@roleId, 'tpl:'))"/>
-          </xsl:attribute>
-          <xsl:attribute name="reference">
-            <xsl:value-of select="concat('http://rdl.rdswip.org/data#', substring-after(@reference, 'rdl:'))"/>
-          </xsl:attribute>
-        </xsl:element>
-      </xsl:when>
-    </xsl:choose>
-    <!--<xsl:choose>
-      <xsl:when test="child::node()">
-        <xsl:apply-templates select="ClassMap">
-          <xsl:with-param name="xPath" select="$roleMapXPath"/>
-        </xsl:apply-templates>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:choose>
-          <xsl:when test="@propertyName!=''">
+        </xsl:variable>
+        
+        <!-- process property role maps -->
+        <xsl:for-each select="RoleMaps/RoleMap">
+          <xsl:if test="@propertyName!=''">
+            <xsl:variable name="templateId" select="../../@templateId"/>
+            <xsl:variable name="classRole" select="../../@classRole"/>
+            <xsl:variable name="roleXPath" select="concat($templateXPath, '.tpl:', @name)"/>
             <xsl:variable name="roleId" select="@roleId"/>
             <xsl:variable name="dataType" select="@dataType"/>
+            <xsl:variable name="identifier" select="../../../../@identifier"/>
+            <!-- TODO: handle multipart identifier -->
+            <xsl:if test="@propertyName=$identifier">
+
+            </xsl:if>
             <xsl:for-each select="$dtoList">
               <xsl:for-each select="Properties/Property">
-                <xsl:if test="@name=$roleMapXPath">
-                  <xsl:element name="property">
+                <xsl:if test="@name=$roleXPath">
+                  <xsl:element name="relationship">
                     <xsl:attribute name="instance-of">
-                      <xsl:value-of select="concat('http://tpl.rdswip.org/data#', substring-after($roleId, 'tpl:'))"/>
+                      <xsl:value-of select="concat('http://tpl.rdswip.org/data#', substring-after($templateId, 'tpl:'))"/>
                     </xsl:attribute>
-                    <xsl:attribute name="as">
-                      <xsl:value-of select="concat('http://www.w3.org/2001/XMLSchema##', substring-after($dataType, 'xsd:'))"/>
-                    </xsl:attribute>
-                    <xsl:value-of select="@value"/>
+                    <xsl:copy-of select="$referenceRoles" />
+                    <xsl:element name="property">
+                      <xsl:attribute name="instance-of">
+                        <xsl:value-of select="concat('http://tpl.rdswip.org/data#', substring-after($roleId, 'tpl:'))"/>
+                      </xsl:attribute>
+                      <xsl:attribute name="as">
+                        <xsl:value-of select="concat('http://www.w3.org/2001/XMLSchema##', substring-after($dataType, 'xsd:'))"/>
+                      </xsl:attribute>
+                      <xsl:value-of select="@value"/>
+                    </xsl:element>
+                    <!-- process template class role -->
+                    <xsl:element name="property">
+                      <xsl:attribute name="instance-of">
+                        <xsl:value-of select="concat('http://tpl.rdswip.org/data#', substring-after($classRole, 'tpl:'))"/>
+                      </xsl:attribute>
+                      <xsl:attribute name="reference">
+                        <xsl:value-of select="concat('http://www.example.com/data#', 'id1__', $identifier)"/>
+                      </xsl:attribute>
+                    </xsl:element>
                   </xsl:element>
                 </xsl:if>
               </xsl:for-each>
             </xsl:for-each>
-          </xsl:when>
-          <xsl:when test="@reference!=''">
-            <xsl:element name="property">
-              <xsl:attribute name="instance-of">
-                <xsl:value-of select="concat('http://tpl.rdswip.org/data#', substring-after(@roleId, 'tpl:'))"/>
-              </xsl:attribute>
-              <xsl:attribute name="reference">
-                <xsl:value-of select="concat('http://rdl.rdswip.org/data#', substring-after(@reference, 'rdl:'))"/>
-              </xsl:attribute>
-            </xsl:element>
-          </xsl:when>
-        </xsl:choose>
+          </xsl:if>
+        </xsl:for-each>
+      </xsl:when>
+      <!-- process relationship template -->
+      <xsl:otherwise>
+        <xsl:element name="relationship">
+          <xsl:attribute name="instance-of">
+            <xsl:value-of select="concat('http://tpl.rdswip.org/data#', substring-after(@templateId, 'tpl:'))"/>
+          </xsl:attribute>
+          <!-- process reference roles that have no class map -->
+          <xsl:for-each select="RoleMaps/RoleMap">
+            <xsl:choose>
+              <xsl:when test="child::node()">
+                <xsl:element name="property">
+                  <xsl:attribute name="instance-of">
+                    <xsl:value-of select="concat('http://tpl.rdswip.org/data#', substring-after(@roleId, 'tpl:'))"/>
+                  </xsl:attribute>
+                  <xsl:attribute name="reference">
+                    <xsl:value-of select="concat('http://rdl.rdswip.org/data#', substring-after(ClassMap/@classId, 'rdl:'))"/>
+                  </xsl:attribute>
+                </xsl:element>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:element name="property">
+                  <xsl:attribute name="instance-of">
+                    <xsl:value-of select="concat('http://tpl.rdswip.org/data#', substring-after(@roleId, 'tpl:'))"/>
+                  </xsl:attribute>
+                  <xsl:attribute name="reference">
+                    <xsl:value-of select="concat('http://rdl.rdswip.org/data#', substring-after(@reference, 'rdl:'))"/>
+                  </xsl:attribute>
+                </xsl:element>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:for-each>
+          <!-- process template class role -->
+          <xsl:element name="property">
+            <xsl:attribute name="instance-of">
+              <xsl:value-of select="concat('http://tpl.rdswip.org/data#', substring-after(@classRole, 'tpl:'))"/>
+            </xsl:attribute>
+            <xsl:attribute name="reference">
+              <xsl:value-of select="concat('http://www.example.com/data#', 'id__', ../../@identifier)"/>
+            </xsl:attribute>
+          </xsl:element>
+        </xsl:element>
+        <!-- process reference roles that have class map -->
+        <xsl:for-each select="RoleMaps/RoleMap">
+          <xsl:if test="child::node()">
+            <xsl:apply-templates select="ClassMap">
+              <xsl:with-param name="xPath" select="concat($templateXPath, '.tpl:', @name)"/>
+            </xsl:apply-templates>
+          </xsl:if>
+        </xsl:for-each>
       </xsl:otherwise>
-    </xsl:choose>-->
+    </xsl:choose>
   </xsl:template>
 
   <xsl:template match="ClassMap">
