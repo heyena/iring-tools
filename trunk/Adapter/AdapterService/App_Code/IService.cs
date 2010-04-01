@@ -87,6 +87,14 @@ namespace org.iringtools.adapter
     Response RefreshAll(string projectName, string applicationName);
 
     [OperationContract]
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/rdf")]
+    Response CreateGraphRDF(string projectName, string applicationName, string graphName);
+
+    [OperationContract]
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}/rdf")]
+    Response CreateIdentifierRDF(string projectName, string applicationName, string graphName, string identifier);
+
+    [OperationContract]
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/pull")]
     Response Pull(string projectName, string applicationName, Request request);
 

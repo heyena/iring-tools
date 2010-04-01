@@ -31,7 +31,7 @@ namespace org.iringtools.adapter
 {
   public interface IDTOService
   {
-    T TransformList<T>(string graphName, List<DataTransferObject> dtoList, string xmlPath, string stylesheetUri, string mappingUri, bool useDataContractDeserializer);
+    Response CreateRDF(string graphName, List<DataTransferObject> dtoList);
     DataTransferObject Create(string graphName, string identifier);
     List<DataTransferObject> CreateList(string graphName, List<string> identifiers);
     DataTransferObject GetDTO(string graphName, string identifier);

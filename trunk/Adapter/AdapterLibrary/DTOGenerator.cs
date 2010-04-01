@@ -545,6 +545,7 @@ namespace org.iringtools.adapter
         dtoServiceWriter.WriteLine("using Ninject;");
         dtoServiceWriter.WriteLine("using org.iringtools.library;");
         dtoServiceWriter.WriteLine("using org.iringtools.utility;");
+        dtoServiceWriter.WriteLine("using org.ids_adi.qxf;");
         dtoServiceWriter.WriteLine();
         dtoServiceWriter.WriteLine("namespace {0}", _classNamespace);
         dtoServiceWriter.WriteLine("{");
@@ -554,25 +555,42 @@ namespace org.iringtools.adapter
         dtoServiceWriter.Indent++;
         dtoServiceWriter.WriteLine("IKernel _kernel = null;");
         dtoServiceWriter.WriteLine("IDataLayer _dataLayer = null;");
-        dtoServiceWriter.WriteLine("AdapterSettings _settings = null;");
+        dtoServiceWriter.WriteLine("AdapterSettings _adapterSettings = null;");
+        dtoServiceWriter.WriteLine("ApplicationSettings _applicationSettings = null;");
 
         dtoServiceWriter.WriteLine();
         dtoServiceWriter.WriteLine("[Inject]");
-        dtoServiceWriter.WriteLine("public DTOService(IKernel kernel, IDataLayer dataLayer, AdapterSettings settings)");
+        dtoServiceWriter.WriteLine("public DTOService(IKernel kernel, IDataLayer dataLayer, AdapterSettings adapterSettings, ApplicationSettings applicationSettings)");
         dtoServiceWriter.WriteLine("{");
         dtoServiceWriter.Indent++;
         dtoServiceWriter.WriteLine("_kernel = kernel;");
         dtoServiceWriter.WriteLine("_dataLayer = dataLayer;");
-        dtoServiceWriter.WriteLine("_settings = settings;");
+        dtoServiceWriter.WriteLine("_adapterSettings = adapterSettings;");
+        dtoServiceWriter.WriteLine("_applicationSettings = applicationSettings;");
         dtoServiceWriter.Indent--;
         dtoServiceWriter.WriteLine("}");
 
         dtoServiceWriter.WriteLine();
-        dtoServiceWriter.WriteLine("public T TransformList<T>(string graphName, List<DataTransferObject> dtoList, string xmlPath, string stylesheetUri, string mappingUri, bool useDataContractDeserializer)");
+        dtoServiceWriter.WriteLine("public Response CreateRDF(string graphName, List<DataTransferObject> dtoList)");
         dtoServiceWriter.WriteLine("{");
         dtoServiceWriter.Indent++;
-        dtoServiceWriter.WriteLine("string dtoPath = xmlPath + \"Mapping.{0}.{1}.DTO.xml\";", projectName, applicationName);
-        dtoServiceWriter.WriteLine("Mapping mapping = Utility.Read<Mapping>(mappingUri, false);");
+        dtoServiceWriter.WriteLine("Response response = new Response();");
+        dtoServiceWriter.WriteLine("try");
+        dtoServiceWriter.Write("{");
+        dtoServiceWriter.Indent++;
+        dtoServiceWriter.WriteLine(@"
+        string mappingPath = _adapterSettings.XmlPath + ""Mapping."" + _applicationSettings.ProjectName + ""."" + _applicationSettings.ApplicationName + "".xml"";
+        string dto2qxfPath = _adapterSettings.BaseDirectoryPath + @""Transforms\dto2qxf.xsl"";
+        string qxf2rdfPath = _adapterSettings.BaseDirectoryPath + @""Transforms\qxf2rdf.xsl"";
+
+        string dtoFilePath = _adapterSettings.XmlPath + ""DTO."" + _applicationSettings.ProjectName + ""."" + _applicationSettings.ApplicationName + ""."" + graphName + "".xml"";
+        string qxfPath = _adapterSettings.XmlPath + ""QXF."" + _applicationSettings.ProjectName + ""."" + _applicationSettings.ApplicationName + ""."" + graphName + "".xml"";
+        string rdfFileName = ""RDF."" + _applicationSettings.ProjectName + ""."" + _applicationSettings.ApplicationName + ""."" + graphName + "".xml"";
+        string rdfPath = _adapterSettings.XmlPath + rdfFileName;
+
+        Mapping mapping = Utility.Read<Mapping>(mappingPath, false);"
+        );
+
         dtoServiceWriter.WriteLine();
         dtoServiceWriter.WriteLine("switch (graphName)");
         dtoServiceWriter.Write("{");
@@ -586,16 +604,16 @@ namespace org.iringtools.adapter
           dtoServiceWriter.WriteLine("case \"{0}\":", graphMap.name);
           dtoServiceWriter.WriteLine("{");
           dtoServiceWriter.Indent++;
-          dtoServiceWriter.WriteLine("List<{0}> doList = new List<{0}>();", qualifiedGraphName);
+          dtoServiceWriter.WriteLine("List<{0}> theDTOList = new List<{0}>();", qualifiedGraphName);
           dtoServiceWriter.WriteLine();
           dtoServiceWriter.WriteLine("foreach (DataTransferObject dto in dtoList)");
           dtoServiceWriter.WriteLine("{");
           dtoServiceWriter.Indent++;
-          dtoServiceWriter.WriteLine("doList.Add(({0})dto);", qualifiedGraphName);
+          dtoServiceWriter.WriteLine("theDTOList.Add(({0})dto);", qualifiedGraphName);
           dtoServiceWriter.Indent--;
           dtoServiceWriter.WriteLine("}");
           dtoServiceWriter.WriteLine();
-          dtoServiceWriter.WriteLine("Utility.Write<List<{0}>>(doList, dtoPath);", qualifiedGraphName);
+          dtoServiceWriter.WriteLine("Utility.Write<List<{0}>>(theDTOList, dtoFilePath, false);", qualifiedGraphName);
           dtoServiceWriter.WriteLine("break;");
           dtoServiceWriter.Indent--;
           dtoServiceWriter.WriteLine("}");
@@ -603,11 +621,39 @@ namespace org.iringtools.adapter
 
         dtoServiceWriter.Indent--;
         dtoServiceWriter.WriteLine("}");
-        dtoServiceWriter.WriteLine();
-        dtoServiceWriter.WriteLine("XsltArgumentList xsltArgumentList = new XsltArgumentList();");
-        dtoServiceWriter.WriteLine("xsltArgumentList.AddParam(\"dtoFilename\", String.Empty, dtoPath);");
-        dtoServiceWriter.WriteLine();
-        dtoServiceWriter.WriteLine("return Utility.Transform<Mapping, T>(mapping, stylesheetUri, xsltArgumentList, false, useDataContractDeserializer);");
+        
+        dtoServiceWriter.WriteLine(@"
+        XsltArgumentList xsltArgumentList = new XsltArgumentList();
+        xsltArgumentList.AddParam(""dtoFilePath"", String.Empty, dtoFilePath);
+        xsltArgumentList.AddParam(""graphName"", String.Empty, graphName);
+
+        // Transform mapping + dto to qxf
+        QXF qxf = Utility.Transform<Mapping, QXF>(mapping, dto2qxfPath, xsltArgumentList, false);
+        response.Add(""Transform DTOList to QXF successfully."");
+
+        // Write qxf to file
+        Utility.Write<QXF>(qxf, qxfPath, false);
+
+        // Transform qxf to rdf
+        Stream rdf = Utility.Transform<QXF>(qxf, qxf2rdfPath, false);
+        response.Add(""Transform QXF to RDF successfully."");
+
+        // Write rdf to file
+        Utility.WriteStream(rdf, rdfPath);
+        response.Add(""RDF file ["" + rdfFileName + ""] created successfully."");
+
+        response.Level = StatusLevel.Success;
+        return response;"
+        );
+
+        dtoServiceWriter.Indent--;
+        dtoServiceWriter.WriteLine("}");
+        dtoServiceWriter.WriteLine("catch (Exception ex)");
+        dtoServiceWriter.WriteLine("{");
+        dtoServiceWriter.Indent++;
+        dtoServiceWriter.WriteLine("throw ex;");
+        dtoServiceWriter.Indent--;
+        dtoServiceWriter.WriteLine("}");
         dtoServiceWriter.Indent--;
         dtoServiceWriter.WriteLine("}");
 

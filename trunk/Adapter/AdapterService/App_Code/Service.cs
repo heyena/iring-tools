@@ -117,6 +117,31 @@ namespace org.iringtools.adapter
     }
 
     /// <summary>
+    /// Calls adapter service provider to create RDF for a graph
+    /// </summary>
+    /// <param name="projectName"></param>
+    /// <param name="applicationName"></param>
+    /// <param name="graphName"></param>
+    /// <returns>success/failed</returns>
+    public Response CreateGraphRDF(string projectName, string applicationName, string graphName)
+    {
+      return _adapterServiceProvider.CreateGraphRDF(projectName, applicationName, graphName);
+    }
+
+    /// <summary>
+    /// Calls adapter service provider to create RDF for a specific identifier of a graph
+    /// </summary>
+    /// <param name="projectName"></param>
+    /// <param name="applicationName"></param>
+    /// <param name="graphName"></param>
+    /// <param name="identifier"></param>
+    /// <returns>success/failed</returns>
+    public Response CreateIdentifierRDF(string projectName, string applicationName, string graphName, string identifier)
+    {
+      return _adapterServiceProvider.CreateIdentifierRDF(projectName, applicationName, graphName, identifier);
+    }
+
+    /// <summary>
     /// Pulls the data from a triple store into the database.
     /// </summary>
     /// <param name="request">The request parameter containing targetUri, targetCredentials, graphName, filter will be passed.</param>

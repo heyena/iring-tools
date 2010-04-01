@@ -45,6 +45,10 @@ using log4net;
 using System.ServiceModel;
 using System.Data.SqlClient;
 using NHibernate;
+using org.ids_adi.qxf;
+using System.Xml.Xsl;
+using System.Xml.Serialization;
+using System.Xml;
 
 namespace org.iringtools.adapter
 {
@@ -511,6 +515,63 @@ namespace org.iringtools.adapter
       {
         UninitializeApplication();
       }
+      return response;
+    }
+
+    /// <summary>
+    /// Creates RDF for a graph
+    /// </summary>
+    /// <param name="projectName"></param>
+    /// <param name="applicationName"></param>
+    /// <param name="graphName"></param>
+    /// <returns>success/failed</returns>
+    public Response CreateGraphRDF(string projectName, string applicationName, string graphName)
+    {
+      Response response = new Response();
+
+      try
+      {
+        List<DataTransferObject> dtoList = GetDTOList(projectName, applicationName, graphName);
+        response = _dtoService.CreateRDF(graphName, dtoList);        
+      }
+      catch (Exception exception)
+      {
+        _logger.Error("Error in GetGraphRDF: " + exception);
+
+        response.Level = StatusLevel.Error;
+        response.Add("Error while creating RDF for graph [" + graphName + "].");
+        response.Add(exception.ToString());
+      }
+
+      return response;
+    }
+
+    /// <summary>
+    /// Creates RDF for a specific identifier of a graph
+    /// </summary>
+    /// <param name="projectName"></param>
+    /// <param name="applicationName"></param>
+    /// <param name="graphName"></param>
+    /// <param name="identifier"></param>
+    /// <returns>success/failed</returns>
+    public Response CreateIdentifierRDF(string projectName, string applicationName, string graphName, string identifier)
+    {
+      Response response = new Response();
+
+      try
+      {
+        DataTransferObject dto = GetDTO(projectName, applicationName, graphName, identifier);
+        response = _dtoService.CreateRDF(graphName, new List<DataTransferObject>(){ dto });        
+      }
+      catch (Exception exception)
+      {
+        _logger.Error("Error in GetGraphRDF: " + exception);
+
+        response.Level = StatusLevel.Error;
+        response.Add("Error while creating RDF for identifier [" + identifier + "] from graph [" + graphName + "].");
+        response.Add(exception.ToString());
+      }
+
       return response;
     }
 
