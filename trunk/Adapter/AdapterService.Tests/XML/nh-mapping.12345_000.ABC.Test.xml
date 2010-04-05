@@ -1,5 +1,5 @@
 ﻿<hibernate-mapping default-lazy="true" xmlns="urn:nhibernate-mapping-2.2">
-  <class name="org.iringtools.adapter.proj_12345_000.ABC.Line, AdapterService.Tests" table="Line">
+  <class name="org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line, AdapterService.Tests" table="Line">
     <id name="Id" column="tag">
       <generator class="assigned" />
     </id>
@@ -8,7 +8,7 @@
     <property name="uomDiameter" column="uomDiameter" />
     <property name="system" column="system" />
   </class>
-  <class name="org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent, AdapterService.Tests" table="InLinePipingComponent">
+  <class name="org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent, AdapterService.Tests" table="InLinePipingComponent">
     <id name="Id" column="tag">
       <generator class="assigned" />
     </id>
@@ -24,14 +24,14 @@
     <property name="lineTag" column="lineTag" />
     <property name="quantity" column="quantity" />
   </class>
-  <class name="org.iringtools.adapter.proj_12345_000.ABC.KOPot, AdapterService.Tests" table="KOPot">
+  <class name="org.iringtools.adapter.datalayer.proj_12345_000.ABC.KOPot, AdapterService.Tests" table="KOPot">
     <id name="Id" column="tag">
       <generator class="assigned" />
     </id>
     <property name="tag" column="tag" update="false" insert="false" />
     <property name="description" column="description" />
   </class>
-  <class name="org.iringtools.adapter.proj_12345_000.ABC.VacuumTower, AdapterService.Tests" table="VacuumTower">
+  <class name="org.iringtools.adapter.datalayer.proj_12345_000.ABC.VacuumTower, AdapterService.Tests" table="VacuumTower">
     <id name="Id" column="tag">
       <generator class="assigned" />
     </id>
