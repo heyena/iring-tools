@@ -43,6 +43,7 @@ using System.IO;
 using System.Web.Configuration;
 using System.Configuration;
 using log4net;
+using System.Text;
 
 namespace org.iringtools.adapter.projection
 {
@@ -537,6 +538,30 @@ namespace org.iringtools.adapter.projection
       {
         throw new Exception("DeleteAll: " + exception);
       }
+    }
+
+    public void PersistGraphToStore(string graphName)
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.Append(_settings.BaseDirectoryPath);
+        sb.Append(_settings.XmlPath);
+        sb.Append("RDF.");
+        sb.Append(_applicationSettings.ProjectName);
+        sb.Append(".");
+        sb.Append(_applicationSettings.ApplicationName);
+        sb.Append(".");
+        sb.Append(graphName);
+        sb.Append(".xml");
+        try
+        {
+            _store = Store.Create(_scopedConnectionString);
+            _store.Import(new RdfXmlReader(sb.ToString()));
+            
+        }
+        catch (Exception exception)
+        {
+            throw new Exception("PersistGraphToStore:-", exception);
+        }
     }
 
     //public void DumpStoreData(string xmlPath)

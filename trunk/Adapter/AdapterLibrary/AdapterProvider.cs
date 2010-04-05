@@ -532,7 +532,10 @@ namespace org.iringtools.adapter
       try
       {
         List<DataTransferObject> dtoList = GetDTOList(projectName, applicationName, graphName);
-        response = _dtoService.CreateRDF(graphName, dtoList);        
+        response = _dtoService.CreateRDF(graphName, dtoList);
+          // Persist RDF to SqlServerStore
+        _projectionEngine.PersistGraphToStore(graphName);
+        response.Add("Graph " + graphName + " added/updated to triple store");
       }
       catch (Exception exception)
       {
