@@ -37,7 +37,7 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
       _adapterSettings = adapterSettings;
       _applicationSettings = applicationSettings;
     }
-
+    
     public Response CreateRDF(string graphName, List<DataTransferObject> dtoList)
     {
       Response response = new Response();
@@ -53,23 +53,36 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
         string rdfPath = _adapterSettings.XmlPath + rdfFileName;
 
         Mapping mapping = Utility.Read<Mapping>(mappingPath, false);
-
+        
         switch (graphName)
         {
           case "Valves":
+          {
+            List<org.iringtools.adapter.proj_12345_000.ABC.Valves> theDTOList = new List<org.iringtools.adapter.proj_12345_000.ABC.Valves>();
+            
+            foreach (DataTransferObject dto in dtoList)
             {
-              List<org.iringtools.adapter.proj_12345_000.ABC.Valves> theDTOList = new List<org.iringtools.adapter.proj_12345_000.ABC.Valves>();
-
-              foreach (DataTransferObject dto in dtoList)
-              {
-                theDTOList.Add((org.iringtools.adapter.proj_12345_000.ABC.Valves)dto);
-              }
-
-              Utility.Write<List<org.iringtools.adapter.proj_12345_000.ABC.Valves>>(theDTOList, dtoFilePath, false);
-              break;
+              theDTOList.Add((org.iringtools.adapter.proj_12345_000.ABC.Valves)dto);
             }
+            
+            Utility.Write<List<org.iringtools.adapter.proj_12345_000.ABC.Valves>>(theDTOList, dtoFilePath, false);
+            break;
+          }
+          
+          case "Lines":
+          {
+            List<org.iringtools.adapter.proj_12345_000.ABC.Lines> theDTOList = new List<org.iringtools.adapter.proj_12345_000.ABC.Lines>();
+            
+            foreach (DataTransferObject dto in dtoList)
+            {
+              theDTOList.Add((org.iringtools.adapter.proj_12345_000.ABC.Lines)dto);
+            }
+            
+            Utility.Write<List<org.iringtools.adapter.proj_12345_000.ABC.Lines>>(theDTOList, dtoFilePath, false);
+            break;
+          }
         }
-
+        
         XsltArgumentList xsltArgumentList = new XsltArgumentList();
         xsltArgumentList.AddParam("dtoFilePath", String.Empty, dtoFilePath);
         xsltArgumentList.AddParam("graphName", String.Empty, graphName);
@@ -138,12 +151,12 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
         {
           Dictionary<string, object> queryProperties = new Dictionary<string, object>();
           queryProperties.Add("tag", identifier);
-          org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent dataObject = _dataLayer.Get<org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent>(queryProperties);
+          org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent dataObject = _dataLayer.Get<org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent>(queryProperties);
 
-          if (dataObject != default(org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent))
+          if (dataObject != default(org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent))
           {                        
             dto = new org.iringtools.adapter.proj_12345_000.ABC.Valves(dataObject);
-            dto.Identifier = dataObject.tag;
+            dto.Identifier = Convert.ToString(dataObject.tag);
           }
           
           break;
@@ -153,12 +166,12 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
         {
           Dictionary<string, object> queryProperties = new Dictionary<string, object>();
           queryProperties.Add("tag", identifier);
-          org.iringtools.adapter.proj_12345_000.ABC.Line dataObject = _dataLayer.Get<org.iringtools.adapter.proj_12345_000.ABC.Line>(queryProperties);
+          org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line dataObject = _dataLayer.Get<org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line>(queryProperties);
 
-          if (dataObject != default(org.iringtools.adapter.proj_12345_000.ABC.Line))
+          if (dataObject != default(org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line))
           {                        
             dto = new org.iringtools.adapter.proj_12345_000.ABC.Lines(dataObject);
-            dto.Identifier = dataObject.tag;
+            dto.Identifier = Convert.ToString(dataObject.tag);
           }
           
           break;
@@ -177,13 +190,13 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
         case "Valves":
         {
           var dataObjectList = 
-            from _dataObjectList in _dataLayer.GetList<org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent>()
+            from _dataObjectList in _dataLayer.GetList<org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent>()
             select _dataObjectList;  
     
           foreach (var dataObject in dataObjectList)
           {   					
             org.iringtools.adapter.proj_12345_000.ABC.Valves dto = new org.iringtools.adapter.proj_12345_000.ABC.Valves(dataObject);
-            dto.Identifier = dataObject.tag;
+            dto.Identifier = Convert.ToString(dataObject.tag);
             dtoList.Add(dto);
           }
           
@@ -193,13 +206,13 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
         case "Lines":
         {
           var dataObjectList = 
-            from _dataObjectList in _dataLayer.GetList<org.iringtools.adapter.proj_12345_000.ABC.Line>()
+            from _dataObjectList in _dataLayer.GetList<org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line>()
             select _dataObjectList;  
     
           foreach (var dataObject in dataObjectList)
           {   					
             org.iringtools.adapter.proj_12345_000.ABC.Lines dto = new org.iringtools.adapter.proj_12345_000.ABC.Lines(dataObject);
-            dto.Identifier = dataObject.tag;
+            dto.Identifier = Convert.ToString(dataObject.tag);
             dtoList.Add(dto);
           }
           
@@ -220,12 +233,12 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
         case "Valves":
         {
           var dataObjectList = 
-            from _dataObjectList in _dataLayer.GetList<org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent>()
+            from _dataObjectList in _dataLayer.GetList<org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent>()
             select _dataObjectList;  
 
           foreach (var dataObject in dataObjectList)
           {
-            string identifier = dataObject.tag;
+            string identifier = Convert.ToString(dataObject.tag);
             identifierUriPairs.Add(identifier, endpoint + "/" + graphName + "/" + identifier);  
           }
           
@@ -235,12 +248,12 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
         case "Lines":
         {
           var dataObjectList = 
-            from _dataObjectList in _dataLayer.GetList<org.iringtools.adapter.proj_12345_000.ABC.Line>()
+            from _dataObjectList in _dataLayer.GetList<org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line>()
             select _dataObjectList;  
 
           foreach (var dataObject in dataObjectList)
           {
-            string identifier = dataObject.tag;
+            string identifier = Convert.ToString(dataObject.tag);
             identifierUriPairs.Add(identifier, endpoint + "/" + graphName + "/" + identifier);  
           }
           
@@ -261,15 +274,15 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
         {
           case "Valves":
           {
-            org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent dataObject = (org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)dto.GetDataObject();
-            response.Append(_dataLayer.Post<org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent>(dataObject));
+            org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent dataObject = (org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent)dto.GetDataObject();
+            response.Append(_dataLayer.Post<org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent>(dataObject));
             break;
           }
           
           case "Lines":
           {
-            org.iringtools.adapter.proj_12345_000.ABC.Line dataObject = (org.iringtools.adapter.proj_12345_000.ABC.Line)dto.GetDataObject();
-            response.Append(_dataLayer.Post<org.iringtools.adapter.proj_12345_000.ABC.Line>(dataObject));
+            org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line dataObject = (org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line)dto.GetDataObject();
+            response.Append(_dataLayer.Post<org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line>(dataObject));
             break;
           }
         }
@@ -288,27 +301,27 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
         {
           case "Valves":
           {
-            List<org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent> doList = new List<org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent>();
+            List<org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent> doList = new List<org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent>();
 
             foreach (DataTransferObject dto in dtoList)
             {
-              doList.Add((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)dto.GetDataObject());
+              doList.Add((org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent)dto.GetDataObject());
             }
 
-            response.Append(_dataLayer.PostList<org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent>(doList));
+            response.Append(_dataLayer.PostList<org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent>(doList));
             break;
           }
           
           case "Lines":
           {
-            List<org.iringtools.adapter.proj_12345_000.ABC.Line> doList = new List<org.iringtools.adapter.proj_12345_000.ABC.Line>();
+            List<org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line> doList = new List<org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line>();
 
             foreach (DataTransferObject dto in dtoList)
             {
-              doList.Add((org.iringtools.adapter.proj_12345_000.ABC.Line)dto.GetDataObject());
+              doList.Add((org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line)dto.GetDataObject());
             }
 
-            response.Append(_dataLayer.PostList<org.iringtools.adapter.proj_12345_000.ABC.Line>(doList));
+            response.Append(_dataLayer.PostList<org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line>(doList));
             break;
           }
         }
