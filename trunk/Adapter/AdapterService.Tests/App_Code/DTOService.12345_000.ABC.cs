@@ -18,6 +18,7 @@ using System.Xml.Xsl;
 using Ninject;
 using org.iringtools.library;
 using org.iringtools.utility;
+using org.ids_adi.qxf;
 
 namespace org.iringtools.adapter.proj_12345_000.ABC
 {
@@ -25,54 +26,76 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
   {
     IKernel _kernel = null;
     IDataLayer _dataLayer = null;
-    AdapterSettings _settings = null;
+    AdapterSettings _adapterSettings = null;
+    ApplicationSettings _applicationSettings = null;
     
     [Inject]
-    public DTOService(IKernel kernel, IDataLayer dataLayer, AdapterSettings settings)
+    public DTOService(IKernel kernel, IDataLayer dataLayer, AdapterSettings adapterSettings, ApplicationSettings applicationSettings)
     {
       _kernel = kernel;
       _dataLayer = dataLayer;
-      _settings = settings;
+      _adapterSettings = adapterSettings;
+      _applicationSettings = applicationSettings;
     }
-    
-    public T TransformList<T>(string graphName, List<DataTransferObject> dtoList, string xmlPath, string stylesheetUri, string mappingUri, bool useDataContractDeserializer)
+
+    public Response CreateRDF(string graphName, List<DataTransferObject> dtoList)
     {
-      string dtoPath = xmlPath + "Mapping.12345_000.ABC.DTO.xml";
-      Mapping mapping = Utility.Read<Mapping>(mappingUri, false);
-      
-      switch (graphName)
+      Response response = new Response();
+      try
       {
-        case "Valves":
+        string mappingPath = _adapterSettings.XmlPath + "Mapping." + _applicationSettings.ProjectName + "." + _applicationSettings.ApplicationName + ".xml";
+        string dto2qxfPath = _adapterSettings.BaseDirectoryPath + @"Transforms\dto2qxf.xsl";
+        string qxf2rdfPath = _adapterSettings.BaseDirectoryPath + @"Transforms\qxf2rdf.xsl";
+
+        string dtoFilePath = _adapterSettings.XmlPath + "DTO." + _applicationSettings.ProjectName + "." + _applicationSettings.ApplicationName + "." + graphName + ".xml";
+        string qxfPath = _adapterSettings.XmlPath + "QXF." + _applicationSettings.ProjectName + "." + _applicationSettings.ApplicationName + "." + graphName + ".xml";
+        string rdfFileName = "RDF." + _applicationSettings.ProjectName + "." + _applicationSettings.ApplicationName + "." + graphName + ".xml";
+        string rdfPath = _adapterSettings.XmlPath + rdfFileName;
+
+        Mapping mapping = Utility.Read<Mapping>(mappingPath, false);
+
+        switch (graphName)
         {
-          List<org.iringtools.adapter.proj_12345_000.ABC.Valves> doList = new List<org.iringtools.adapter.proj_12345_000.ABC.Valves>();
-          
-          foreach (DataTransferObject dto in dtoList)
-          {
-            doList.Add((org.iringtools.adapter.proj_12345_000.ABC.Valves)dto);
-          }
-          
-          Utility.Write<List<org.iringtools.adapter.proj_12345_000.ABC.Valves>>(doList, dtoPath);
-          break;
+          case "Valves":
+            {
+              List<org.iringtools.adapter.proj_12345_000.ABC.Valves> theDTOList = new List<org.iringtools.adapter.proj_12345_000.ABC.Valves>();
+
+              foreach (DataTransferObject dto in dtoList)
+              {
+                theDTOList.Add((org.iringtools.adapter.proj_12345_000.ABC.Valves)dto);
+              }
+
+              Utility.Write<List<org.iringtools.adapter.proj_12345_000.ABC.Valves>>(theDTOList, dtoFilePath, false);
+              break;
+            }
         }
-        
-        case "Lines":
-        {
-          List<org.iringtools.adapter.proj_12345_000.ABC.Lines> doList = new List<org.iringtools.adapter.proj_12345_000.ABC.Lines>();
-          
-          foreach (DataTransferObject dto in dtoList)
-          {
-            doList.Add((org.iringtools.adapter.proj_12345_000.ABC.Lines)dto);
-          }
-          
-          Utility.Write<List<org.iringtools.adapter.proj_12345_000.ABC.Lines>>(doList, dtoPath);
-          break;
-        }
+
+        XsltArgumentList xsltArgumentList = new XsltArgumentList();
+        xsltArgumentList.AddParam("dtoFilePath", String.Empty, dtoFilePath);
+        xsltArgumentList.AddParam("graphName", String.Empty, graphName);
+
+        // Transform mapping + dto to qxf
+        QXF qxf = Utility.Transform<Mapping, QXF>(mapping, dto2qxfPath, xsltArgumentList, false);
+        response.Add("Transform DTOList to QXF successfully.");
+
+        // Write qxf to file
+        Utility.Write<QXF>(qxf, qxfPath, false);
+
+        // Transform qxf to rdf
+        Stream rdf = Utility.Transform<QXF>(qxf, qxf2rdfPath, false);
+        response.Add("Transform QXF to RDF successfully.");
+
+        // Write rdf to file
+        Utility.WriteStream(rdf, rdfPath);
+        response.Add("RDF file [" + rdfFileName + "] created successfully.");
+
+        response.Level = StatusLevel.Success;
+        return response;
       }
-      
-      XsltArgumentList xsltArgumentList = new XsltArgumentList();
-      xsltArgumentList.AddParam("dtoFilename", String.Empty, dtoPath);
-      
-      return Utility.Transform<Mapping, T>(mapping, stylesheetUri, xsltArgumentList, false, useDataContractDeserializer);
+      catch (Exception ex)
+      {
+        throw ex;
+      }
     }
     
     public DataTransferObject Create(string graphName, string identifier)
