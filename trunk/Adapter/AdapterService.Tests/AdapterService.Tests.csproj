@@ -119,7 +119,7 @@
     <Compile Include="App_Code\IService.Generated.cs" />
     <Compile Include="App_Code\Model.12345_000.ABC.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\..\AssemblyInfo.cs" />  
+    <Compile Include="..\..\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
@@ -141,6 +141,10 @@
     <ProjectReference Include="..\AdapterService\AdapterService.csproj">
       <Project>{6865624F-EEC7-4F4F-B7FF-4483F8D0B22D}</Project>
       <Name>AdapterService</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NHibernateDataLayer\NHibernateDataLayer.csproj">
+      <Project>{A9DAEA2D-26AC-4FFE-A4B0-3DEF95DE4168}</Project>
+      <Name>NHibernateDataLayer</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

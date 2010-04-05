@@ -138,7 +138,7 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
     
     public Valves(string classId, string graphName, string identifier) : base(classId, graphName)
     {
-      _properties.Add(new DTOProperty(@"tag", @"tpl:ClassifiedIdentification.tpl:identifier", null, typeof(String), true, true));
+      _properties.Add(new DTOProperty(@"tag", @"tpl:ClassifiedIdentification.tpl:identifier", identifier, typeof(String), true, true));
       _properties.Add(new DTOProperty(@"", @"tpl:ClassifiedIdentification.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R92093626759>", typeof(String), false, false));
       _properties.Add(new DTOProperty(@"", @"tpl:ClassifiedIdentification.tpl:fixedName1", @"fixedValue1", typeof(Int32), false, false));
       _properties.Add(new DTOProperty(@"system", @"tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identifier", null, typeof(String), false, false));
@@ -157,9 +157,9 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
       ClassId = classId;
     }
     
-    public Valves(org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent dataObject) : this("http://rdl.rdlfacade.org/data#R97295617945", "Valves", null, dataObject) {}
+    public Valves(org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent dataObject) : this("http://rdl.rdlfacade.org/data#R97295617945", "Valves", null, dataObject) {}
     
-    public Valves(string classId, string graphName, string identifier, org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent dataObject) : this(classId, graphName, identifier)
+    public Valves(string classId, string graphName, string identifier, org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent dataObject) : this(classId, graphName, identifier)
     {
       if (dataObject != null)
       {
@@ -403,65 +403,58 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
     {
       if (_dataObject == null)
       {
-        _dataObject = new org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent();
+        _dataObject = new org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent();
         
-        if (this.Identifier.Length > 255)
+        if (!String.IsNullOrEmpty(this.Identifier) && this.Identifier.Length > 255)
         {
           _logger.Warn("Truncate tag value from ---" + this.Identifier + "--- to 255 characters.");
           this.Identifier = this.Identifier.Substring(0, 255);
         }
-        
-        ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).tag = Convert.ToString(this.Identifier);
+        ((org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent)_dataObject).tag = Convert.ToString(this.Identifier);
       }
       
-      if (this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier.Length > 255)
+      if (!String.IsNullOrEmpty(this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier) && this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier.Length > 255)
       {
         _logger.Warn("Truncate system value from ---" + this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier + "--- to 255 characters.");
         this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier = this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier.Substring(0, 255);
       }
+      ((org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent)_dataObject).system = Convert.ToString(this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier);
       
-      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).system = Convert.ToString(this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier);
-      
-      if (this.tpl_ClientFunctionalUnitAssembly_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification_tpl_identifier.Length > 255)
+      if (!String.IsNullOrEmpty(this.tpl_ClientFunctionalUnitAssembly_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification_tpl_identifier) && this.tpl_ClientFunctionalUnitAssembly_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification_tpl_identifier.Length > 255)
       {
         _logger.Warn("Truncate unit value from ---" + this.tpl_ClientFunctionalUnitAssembly_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification_tpl_identifier + "--- to 255 characters.");
         this.tpl_ClientFunctionalUnitAssembly_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification_tpl_identifier = this.tpl_ClientFunctionalUnitAssembly_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification_tpl_identifier.Substring(0, 255);
       }
+      ((org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent)_dataObject).unit = Convert.ToString(this.tpl_ClientFunctionalUnitAssembly_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification_tpl_identifier);
       
-      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).unit = Convert.ToString(this.tpl_ClientFunctionalUnitAssembly_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification_tpl_identifier);
-      
-      if (this.tpl_ClassifiedIdentification1_tpl_identifier.Length > 255)
+      if (!String.IsNullOrEmpty(this.tpl_ClassifiedIdentification1_tpl_identifier) && this.tpl_ClassifiedIdentification1_tpl_identifier.Length > 255)
       {
         _logger.Warn("Truncate componentType value from ---" + this.tpl_ClassifiedIdentification1_tpl_identifier + "--- to 255 characters.");
         this.tpl_ClassifiedIdentification1_tpl_identifier = this.tpl_ClassifiedIdentification1_tpl_identifier.Substring(0, 255);
       }
+      ((org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent)_dataObject).componentType = Convert.ToString(this.tpl_ClassifiedIdentification1_tpl_identifier);
+      ((org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent)_dataObject).diameter = Convert.ToSingle(this.tpl_NominalDiameter_tpl_value);
       
-      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).componentType = Convert.ToString(this.tpl_ClassifiedIdentification1_tpl_identifier);
-      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).diameter = Convert.ToSingle(this.tpl_NominalDiameter_tpl_value);
-      
-      if (this.tpl_NominalDiameter_tpl_scale.Length > 255)
+      if (!String.IsNullOrEmpty(this.tpl_NominalDiameter_tpl_scale) && this.tpl_NominalDiameter_tpl_scale.Length > 255)
       {
         _logger.Warn("Truncate uomDiameter value from ---" + this.tpl_NominalDiameter_tpl_scale + "--- to 255 characters.");
         this.tpl_NominalDiameter_tpl_scale = this.tpl_NominalDiameter_tpl_scale.Substring(0, 255);
       }
+      ((org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent)_dataObject).uomDiameter = Convert.ToString(this.tpl_NominalDiameter_tpl_scale);
       
-      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).uomDiameter = Convert.ToString(this.tpl_NominalDiameter_tpl_scale);
-      
-      if (this.tpl_PAndIDRepresentation_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification_tpl_identifier.Length > 255)
+      if (!String.IsNullOrEmpty(this.tpl_PAndIDRepresentation_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification_tpl_identifier) && this.tpl_PAndIDRepresentation_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification_tpl_identifier.Length > 255)
       {
         _logger.Warn("Truncate pid value from ---" + this.tpl_PAndIDRepresentation_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification_tpl_identifier + "--- to 255 characters.");
         this.tpl_PAndIDRepresentation_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification_tpl_identifier = this.tpl_PAndIDRepresentation_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification_tpl_identifier.Substring(0, 255);
       }
+      ((org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent)_dataObject).pid = Convert.ToString(this.tpl_PAndIDRepresentation_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification_tpl_identifier);
       
-      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).pid = Convert.ToString(this.tpl_PAndIDRepresentation_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification_tpl_identifier);
-      
-      if (this.tpl_ProjectAssembly_tpl_whole_rdl_PROJECT_tpl_ClassifiedIdentification_tpl_identifier.Length > 255)
+      if (!String.IsNullOrEmpty(this.tpl_ProjectAssembly_tpl_whole_rdl_PROJECT_tpl_ClassifiedIdentification_tpl_identifier) && this.tpl_ProjectAssembly_tpl_whole_rdl_PROJECT_tpl_ClassifiedIdentification_tpl_identifier.Length > 255)
       {
         _logger.Warn("Truncate projectNumber value from ---" + this.tpl_ProjectAssembly_tpl_whole_rdl_PROJECT_tpl_ClassifiedIdentification_tpl_identifier + "--- to 255 characters.");
         this.tpl_ProjectAssembly_tpl_whole_rdl_PROJECT_tpl_ClassifiedIdentification_tpl_identifier = this.tpl_ProjectAssembly_tpl_whole_rdl_PROJECT_tpl_ClassifiedIdentification_tpl_identifier.Substring(0, 255);
       }
-      
-      ((org.iringtools.adapter.proj_12345_000.ABC.InLinePipingComponent)_dataObject).projectNumber = Convert.ToString(this.tpl_ProjectAssembly_tpl_whole_rdl_PROJECT_tpl_ClassifiedIdentification_tpl_identifier);
+      ((org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent)_dataObject).projectNumber = Convert.ToString(this.tpl_ProjectAssembly_tpl_whole_rdl_PROJECT_tpl_ClassifiedIdentification_tpl_identifier);
       return _dataObject;
     }
     
@@ -523,7 +516,7 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
     
     public Lines(string classId, string graphName, string identifier) : base(classId, graphName)
     {
-      _properties.Add(new DTOProperty(@"tag", @"tpl:ClassifiedIdentification.tpl:identifier", null, typeof(String), true, true));
+      _properties.Add(new DTOProperty(@"tag", @"tpl:ClassifiedIdentification.tpl:identifier", identifier, typeof(String), true, true));
       _properties.Add(new DTOProperty(@"", @"tpl:ClassifiedIdentification.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R92093626759>", typeof(String), false, false));
       _properties.Add(new DTOProperty(@"system", @"tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identifier", null, typeof(String), false, false));
       _properties.Add(new DTOProperty(@"", @"tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R50548021125>", typeof(String), false, false));
@@ -533,9 +526,9 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
       ClassId = classId;
     }
     
-    public Lines(org.iringtools.adapter.proj_12345_000.ABC.Line dataObject) : this("http://rdl.rdlfacade.org/data#R19192462550", "Lines", null, dataObject) {}
+    public Lines(org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line dataObject) : this("http://rdl.rdlfacade.org/data#R19192462550", "Lines", null, dataObject) {}
     
-    public Lines(string classId, string graphName, string identifier, org.iringtools.adapter.proj_12345_000.ABC.Line dataObject) : this(classId, graphName, identifier)
+    public Lines(string classId, string graphName, string identifier, org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line dataObject) : this(classId, graphName, identifier)
     {
       if (dataObject != null)
       {
@@ -640,33 +633,30 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
     {
       if (_dataObject == null)
       {
-        _dataObject = new org.iringtools.adapter.proj_12345_000.ABC.Line();
+        _dataObject = new org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line();
         
-        if (this.Identifier.Length > 255)
+        if (!String.IsNullOrEmpty(this.Identifier) && this.Identifier.Length > 255)
         {
           _logger.Warn("Truncate tag value from ---" + this.Identifier + "--- to 255 characters.");
           this.Identifier = this.Identifier.Substring(0, 255);
         }
-        
-        ((org.iringtools.adapter.proj_12345_000.ABC.Line)_dataObject).tag = Convert.ToString(this.Identifier);
+        ((org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line)_dataObject).tag = Convert.ToString(this.Identifier);
       }
       
-      if (this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier.Length > 255)
+      if (!String.IsNullOrEmpty(this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier) && this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier.Length > 255)
       {
         _logger.Warn("Truncate system value from ---" + this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier + "--- to 255 characters.");
         this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier = this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier.Substring(0, 255);
       }
+      ((org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line)_dataObject).system = Convert.ToString(this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier);
+      ((org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line)_dataObject).diameter = Convert.ToSingle(this.tpl_NominalDiameter_tpl_value);
       
-      ((org.iringtools.adapter.proj_12345_000.ABC.Line)_dataObject).system = Convert.ToString(this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier);
-      ((org.iringtools.adapter.proj_12345_000.ABC.Line)_dataObject).diameter = Convert.ToSingle(this.tpl_NominalDiameter_tpl_value);
-      
-      if (this.tpl_NominalDiameter_tpl_scale.Length > 255)
+      if (!String.IsNullOrEmpty(this.tpl_NominalDiameter_tpl_scale) && this.tpl_NominalDiameter_tpl_scale.Length > 255)
       {
         _logger.Warn("Truncate uomDiameter value from ---" + this.tpl_NominalDiameter_tpl_scale + "--- to 255 characters.");
         this.tpl_NominalDiameter_tpl_scale = this.tpl_NominalDiameter_tpl_scale.Substring(0, 255);
       }
-      
-      ((org.iringtools.adapter.proj_12345_000.ABC.Line)_dataObject).uomDiameter = Convert.ToString(this.tpl_NominalDiameter_tpl_scale);
+      ((org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line)_dataObject).uomDiameter = Convert.ToString(this.tpl_NominalDiameter_tpl_scale);
       return _dataObject;
     }
     

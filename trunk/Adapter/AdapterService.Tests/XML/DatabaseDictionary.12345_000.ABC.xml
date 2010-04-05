@@ -7,90 +7,90 @@
       <columns>
         <Column>
           <columnName>componentType</columnName>
-          <dataLength>255</dataLength>
-          <dataType>String</dataType>
-          <isNullable>false</isNullable>
+          <columnType>String</columnType>
           <propertyName>componentType</propertyName>
+          <dataLength>255</dataLength>
+          <isNullable>false</isNullable>
         </Column>
         <Column>
           <columnName>diameter</columnName>
-          <dataLength>8</dataLength>
-          <dataType>Single</dataType>
-          <isNullable>true</isNullable>
+          <columnType>Single</columnType>
           <propertyName>diameter</propertyName>
+          <dataLength>8</dataLength>
+          <isNullable>true</isNullable>
         </Column>
         <Column>
           <columnName>isCloned</columnName>
-          <dataLength>1</dataLength>
-          <dataType>Boolean</dataType>
-          <isNullable>true</isNullable>
+          <columnType>Boolean</columnType>
           <propertyName>isCloned</propertyName>
+          <dataLength>1</dataLength>
+          <isNullable>true</isNullable>
         </Column>
         <Column>
           <columnName>lineTag</columnName>
-          <dataLength>255</dataLength>
-          <dataType>String</dataType>
-          <isNullable>true</isNullable>
+          <columnType>String</columnType>
           <propertyName>lineTag</propertyName>
+          <dataLength>255</dataLength>
+          <isNullable>true</isNullable>
         </Column>
         <Column>
           <columnName>pid</columnName>
-          <dataLength>255</dataLength>
-          <dataType>String</dataType>
-          <isNullable>true</isNullable>
+          <columnType>String</columnType>
           <propertyName>pid</propertyName>
+          <dataLength>255</dataLength>
+          <isNullable>true</isNullable>
         </Column>
         <Column>
           <columnName>projectNumber</columnName>
-          <dataLength>255</dataLength>
-          <dataType>String</dataType>
-          <isNullable>true</isNullable>
+          <columnType>String</columnType>
           <propertyName>projectNumber</propertyName>
+          <dataLength>255</dataLength>
+          <isNullable>true</isNullable>
         </Column>
         <Column>
           <columnName>quantity</columnName>
-          <dataLength>4</dataLength>
-          <dataType>Int32</dataType>
-          <isNullable>true</isNullable>
+          <columnType>Int32</columnType>
           <propertyName>quantity</propertyName>
+          <dataLength>4</dataLength>
+          <isNullable>true</isNullable>
         </Column>
         <Column>
           <columnName>rating</columnName>
-          <dataLength>255</dataLength>
-          <dataType>String</dataType>
-          <isNullable>true</isNullable>
+          <columnType>String</columnType>
           <propertyName>rating</propertyName>
+          <dataLength>255</dataLength>
+          <isNullable>true</isNullable>
         </Column>
         <Column>
           <columnName>system</columnName>
-          <dataLength>255</dataLength>
-          <dataType>String</dataType>
-          <isNullable>true</isNullable>
+          <columnType>String</columnType>
           <propertyName>system</propertyName>
+          <dataLength>255</dataLength>
+          <isNullable>true</isNullable>
         </Column>
         <Column>
           <columnName>unit</columnName>
-          <dataLength>255</dataLength>
-          <dataType>String</dataType>
-          <isNullable>true</isNullable>
+          <columnType>String</columnType>
           <propertyName>unit</propertyName>
+          <dataLength>255</dataLength>
+          <isNullable>true</isNullable>
         </Column>
         <Column>
           <columnName>uomDiameter</columnName>
-          <dataLength>255</dataLength>
-          <dataType>String</dataType>
-          <isNullable>true</isNullable>
+          <columnType>String</columnType>
           <propertyName>uomDiameter</propertyName>
+          <dataLength>255</dataLength>
+          <isNullable>true</isNullable>
         </Column>
       </columns>
       <entityName>InLinePipingComponent</entityName>
       <keys>
         <Key>
           <columnName>tag</columnName>
-          <dataLength>255</dataLength>
-          <dataType>String</dataType>
-          <isNullable>false</isNullable>
+          <columnType>String</columnType>
           <propertyName>tag</propertyName>
+          <dataLength>255</dataLength>
+          <isNullable>false</isNullable>
           <keyType>assigned</keyType>
         </Key>
       </keys>
@@ -101,20 +101,20 @@
       <columns>
         <Column>
           <columnName>description</columnName>
-          <dataLength>255</dataLength>
-          <dataType>String</dataType>
-          <isNullable>true</isNullable>
+          <columnType>String</columnType>
           <propertyName>description</propertyName>
+          <dataLength>255</dataLength>
+          <isNullable>true</isNullable>
         </Column>
       </columns>
       <entityName>KOPot</entityName>
       <keys>
         <Key>
           <columnName>tag</columnName>
-          <dataLength>255</dataLength>
-          <dataType>String</dataType>
-          <isNullable>false</isNullable>
+          <columnType>String</columnType>
           <propertyName>tag</propertyName>
+          <dataLength>255</dataLength>
+          <isNullable>false</isNullable>
           <keyType>assigned</keyType>
         </Key>
       </keys>
@@ -125,34 +125,34 @@
       <columns>
         <Column>
           <columnName>diameter</columnName>
-          <dataLength>8</dataLength>
-          <dataType>Single</dataType>
-          <isNullable>true</isNullable>
+          <columnType>Single</columnType>
           <propertyName>diameter</propertyName>
+          <dataLength>8</dataLength>
+          <isNullable>true</isNullable>
         </Column>
         <Column>
           <columnName>system</columnName>
-          <dataLength>255</dataLength>
-          <dataType>String</dataType>
-          <isNullable>true</isNullable>
+          <columnType>String</columnType>
           <propertyName>system</propertyName>
+          <dataLength>255</dataLength>
+          <isNullable>true</isNullable>
         </Column>
         <Column>
           <columnName>uomDiameter</columnName>
-          <dataLength>255</dataLength>
-          <dataType>String</dataType>
-          <isNullable>true</isNullable>
+          <columnType>String</columnType>
           <propertyName>uomDiameter</propertyName>
+          <dataLength>255</dataLength>
+          <isNullable>true</isNullable>
         </Column>
       </columns>
       <entityName>Line</entityName>
       <keys>
         <Key>
           <columnName>tag</columnName>
-          <dataLength>255</dataLength>
-          <dataType>String</dataType>
-          <isNullable>false</isNullable>
+          <columnType>String</columnType>
           <propertyName>tag</propertyName>
+          <dataLength>255</dataLength>
+          <isNullable>false</isNullable>
           <keyType>assigned</keyType>
         </Key>
       </keys>
@@ -163,20 +163,20 @@
       <columns>
         <Column>
           <columnName>description</columnName>
-          <dataLength>255</dataLength>
-          <dataType>String</dataType>
-          <isNullable>true</isNullable>
+          <columnType>String</columnType>
           <propertyName>description</propertyName>
+          <dataLength>255</dataLength>
+          <isNullable>true</isNullable>
         </Column>
       </columns>
       <entityName>VacuumTower</entityName>
       <keys>
         <Key>
           <columnName>tag</columnName>
-          <dataLength>255</dataLength>
-          <dataType>String</dataType>
-          <isNullable>false</isNullable>
+          <columnType>String</columnType>
           <propertyName>tag</propertyName>
+          <dataLength>255</dataLength>
+          <isNullable>false</isNullable>
           <keyType>assigned</keyType>
         </Key>
       </keys>

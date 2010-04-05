@@ -11,7 +11,7 @@ using System;
 using System.Collections.Generic;
 using Iesi.Collections.Generic;
 
-namespace org.iringtools.adapter.proj_12345_000.ABC
+namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
 {
   public class InLinePipingComponent
   {
