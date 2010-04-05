@@ -7,11 +7,11 @@
   <xsl:output method="xml" encoding="utf-8" indent="yes"/>
 
   <xsl:param name="dtoFilePath"/>
-  <!--DEBUG: <xsl:variable name="dtoFilePath" select="'C:\iring-tools-1.2\Adapter\AdapterService\XML\DTO.12345_000.T1.Valves.xml'"/>-->
+  <!--<xsl:variable name="dtoFilePath" select="'C:\iring-tools-1.2\Adapter\AdapterService\Transforms\DTO.12345_000.Inspec.LineList.xml'"/>-->
   <xsl:variable name="dtoList" select="document($dtoFilePath)/*/*"/>
 
   <xsl:param name="graphName"/>
-  <!--DEBUG: <xsl:variable name="graphName" select="'Valves'"/>-->
+  <!--<xsl:variable name="graphName" select="'LineList'"/>-->
 
   <xsl:template match="/Mapping">
     <xsl:element name="qxf">
@@ -21,6 +21,30 @@
 
   <xsl:template match="GraphMaps/GraphMap">
     <xsl:if test="@name=$graphName">
+      <xsl:variable name="classId" select="@classId"/>
+      <xsl:for-each select="$dtoList">
+        <xsl:element name="relationship">
+          <xsl:attribute name="instance-of">
+            <xsl:value-of select="'http://dm.rdswip.org/data#classification'"/>
+          </xsl:attribute>
+          <xsl:element name="property">
+            <xsl:attribute name="instance-of">
+              <xsl:value-of select="'http://dm.rdswip.org/data#class'"/>
+            </xsl:attribute>
+            <xsl:attribute name="reference">
+              <xsl:value-of select="concat('http://rdl.rdswip.org/data#', substring-after($classId, 'rdl:'))"/>
+            </xsl:attribute>
+          </xsl:element>
+          <xsl:element name="property">
+            <xsl:attribute name="instance-of">
+              <xsl:value-of select="'http://dm.rdswip.org/data#instance'"/>
+            </xsl:attribute>
+            <xsl:attribute name="reference">
+              <xsl:value-of select="concat('http://www.example.com/data#', @id)"/>
+            </xsl:attribute>
+          </xsl:element>
+        </xsl:element>
+      </xsl:for-each>
       <xsl:apply-templates select="TemplateMaps/TemplateMap">
         <xsl:with-param name="xPath" select="''"/>
       </xsl:apply-templates>
