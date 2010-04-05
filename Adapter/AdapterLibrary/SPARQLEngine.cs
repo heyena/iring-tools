@@ -264,6 +264,11 @@ namespace org.iringtools.adapter.projection
           }
         }
 
+        public void PersistGraphToStore(string graphName)
+        {
+            //Nothing todo here?
+        }
+
         public void DeleteAll()
         {
           try
@@ -348,6 +353,8 @@ namespace org.iringtools.adapter.projection
             }
         }
 
+
+         
         private void QueryTemplateMap(TemplateMap templateMap, ClassMap classMap, SPARQLQuery previousQuery)
         {
             try
