@@ -23,30 +23,14 @@
     <xsl:if test="@name=$graphName">
       <xsl:variable name="classId" select="@classId"/>
       <xsl:for-each select="$dtoList">
-        <xsl:element name="relationship">
-          <xsl:attribute name="instance-of">
-            <xsl:value-of select="'http://dm.rdlfacade.org/data#classification'"/>
-          </xsl:attribute>
-          <xsl:element name="property">
-            <xsl:attribute name="instance-of">
-              <xsl:value-of select="'http://dm.rdlfacade.org/data#class'"/>
-            </xsl:attribute>
-            <xsl:attribute name="reference">
-              <xsl:value-of select="concat('http://rdl.rdlfacade.org/data#', substring-after($classId, 'rdl:'))"/>
-            </xsl:attribute>
-          </xsl:element>
-          <xsl:element name="property">
-            <xsl:attribute name="instance-of">
-              <xsl:value-of select="'http://dm.rdlfacade.org/data#instance'"/>
-            </xsl:attribute>
-            <xsl:attribute name="reference">
-              <xsl:value-of select="concat('http://www.example.com/data#', @id)"/>
-            </xsl:attribute>
-          </xsl:element>
-        </xsl:element>
+        <xsl:call-template name="Classification">
+          <xsl:with-param name="classId" select="$classId"/>
+          <xsl:with-param name="classInstance" select="concat('http://www.example.com/data#', 'id__', @id)"/>          
+        </xsl:call-template>
       </xsl:for-each>
       <xsl:apply-templates select="TemplateMaps/TemplateMap">
         <xsl:with-param name="xPath" select="''"/>
+        <xsl:with-param name="classId" select="$classId"/>
       </xsl:apply-templates>
     </xsl:if>
   </xsl:template>
@@ -109,8 +93,16 @@
                 <xsl:if test="@name=$roleXPath">
                   <xsl:element name="relationship">
                     <xsl:attribute name="instance-of">
-                      <xsl:value-of select="concat('http://tpl.rdlfacade.org/data#', substring-after($templateId, 'tpl:'))"/>
+                      <xsl:value-of select="'http://www.w3.org/2002/07/owl#Thing'"/>
                     </xsl:attribute>
+                    <xsl:element name="property">
+                    <xsl:attribute name="instance-of">
+                      <xsl:value-of select="'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'"/>
+                    </xsl:attribute>
+                    <xsl:attribute name="reference">
+                        <xsl:value-of select="concat('http://tpl.rdlfacade.org/data#', substring-after($templateId, 'tpl:'))"/>
+                      </xsl:attribute>
+                    </xsl:element>
                     <xsl:copy-of select="$referenceRoles" />
                     <xsl:element name="property">
                       <xsl:attribute name="instance-of">
@@ -160,8 +152,16 @@
           <xsl:variable name="identifier" select="@id"/>
           <xsl:element name="relationship">
             <xsl:attribute name="instance-of">
-              <xsl:value-of select="concat('http://tpl.rdlfacade.org/data#', substring-after($templateId, 'tpl:'))"/>
+              <xsl:value-of select="'http://www.w3.org/2002/07/owl#Thing'"/>
             </xsl:attribute>
+            <xsl:element name="property">
+              <xsl:attribute name="instance-of">
+                <xsl:value-of select="'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'"/>
+              </xsl:attribute>
+              <xsl:attribute name="reference">
+                <xsl:value-of select="concat('http://tpl.rdlfacade.org/data#', substring-after($templateId, 'tpl:'))"/>
+              </xsl:attribute>
+            </xsl:element>
             <!-- process reference and fixed roles that have no class map -->
             <xsl:for-each select="$roleMaps/RoleMap">
               <xsl:choose>
@@ -228,19 +228,57 @@
   <xsl:template match="ClassMap">
     <xsl:param name="xPath"/>
     <xsl:variable name="className">
-      <xsl:call-template name="string-replace-all">
+      <xsl:call-template name="ReplaceAll">
         <xsl:with-param name="text" select="@name" />
         <xsl:with-param name="replace" select="' '" />
         <xsl:with-param name="by" select="''" />
       </xsl:call-template>
     </xsl:variable>
     <xsl:variable name="classMapXPath" select="concat($xPath, '.rdl:', $className)"/>
+    <xsl:call-template name="Classification">
+      <xsl:with-param name="classId" select="@classId"/>
+      <xsl:with-param name="classInstance" select="concat('http://www.example.com/data#', substring-after(@classId, 'rdl:'))"/>
+    </xsl:call-template>
     <xsl:apply-templates select="TemplateMaps/TemplateMap">
       <xsl:with-param name="xPath" select="$classMapXPath"/>
     </xsl:apply-templates>
   </xsl:template>
 
-  <xsl:template name="string-replace-all">
+  <xsl:template name="Classification">
+    <xsl:param name="classId"/>
+    <xsl:param name="classInstance"/>
+    <xsl:element name="relationship">
+      <xsl:attribute name="instance-of">
+        <xsl:value-of select="'http://www.w3.org/2002/07/owl#Thing'"/>
+      </xsl:attribute>
+      <xsl:element name="property">
+        <xsl:attribute name="instance-of">
+          <xsl:value-of select="'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'"/>
+        </xsl:attribute>
+        <xsl:attribute name="reference">
+          <xsl:value-of select="'http://tpl.rdlfacade.org/data#R63638239485'"/>
+        </xsl:attribute>
+      </xsl:element>
+      <xsl:element name="property">
+        <xsl:attribute name="instance-of">
+          <xsl:value-of select="'http://tpl.rdlfacade.org/data#R55055340393'"/>
+        </xsl:attribute>
+        <xsl:attribute name="reference">
+          <xsl:value-of select="concat('http://rdl.rdlfacade.org/data#', substring-after($classId, 'rdl:'))"/>
+        </xsl:attribute>
+      </xsl:element>
+      <xsl:element name="property">
+        <xsl:attribute name="instance-of">
+          <xsl:value-of select="'http://tpl.rdlfacade.org/data#R99011248051'"/>
+        </xsl:attribute>
+        <xsl:attribute name="reference">
+          <xsl:value-of select="$classInstance"/>
+        </xsl:attribute>
+      </xsl:element>
+    </xsl:element>
+  </xsl:template>
+
+  <xsl:template name="ReplaceAll">
     <xsl:param name="text" />
     <xsl:param name="replace" />
     <xsl:param name="by" />
@@ -248,7 +286,7 @@
       <xsl:when test="contains($text, $replace)">
         <xsl:value-of select="substring-before($text,$replace)" />
         <xsl:value-of select="$by" />
-        <xsl:call-template name="string-replace-all">
+        <xsl:call-template name="ReplaceAll">
           <xsl:with-param name="text"
           select="substring-after($text,$replace)" />
           <xsl:with-param name="replace" select="$replace" />
