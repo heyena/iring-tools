@@ -7,11 +7,11 @@
   <xsl:output method="xml" encoding="utf-8" indent="yes"/>
 
   <xsl:param name="dtoFilePath"/>
-  <!--<xsl:variable name="dtoFilePath" select="'C:\iring-tools-1.2\Adapter\AdapterService\Transforms\DTO.12345_000.Inspec.LineList.xml'"/>-->
+  <!--<xsl:variable name="dtoFilePath" select="'C:\iring-tools-1.2\Adapter\AdapterService\Transforms\DTO.12345_000.ABC.Valves.xml'"/>-->
   <xsl:variable name="dtoList" select="document($dtoFilePath)/*/*"/>
 
   <xsl:param name="graphName"/>
-  <!--<xsl:variable name="graphName" select="'LineList'"/>-->
+  <!--<xsl:variable name="graphName" select="'Valves'"/>-->
 
   <xsl:template match="/Mapping">
     <xsl:element name="qxf">
@@ -22,21 +22,23 @@
   <xsl:template match="GraphMaps/GraphMap">
     <xsl:if test="@name=$graphName">
       <xsl:variable name="classId" select="@classId"/>
+      <xsl:variable name="classInstance" select="concat(substring-after($classId, 'rdl:'), '__', generate-id(@classId))"/>
       <xsl:for-each select="$dtoList">
         <xsl:call-template name="Classification">
           <xsl:with-param name="classId" select="$classId"/>
-          <xsl:with-param name="classInstance" select="concat('http://www.example.com/data#', 'id__', @id)"/>          
+          <xsl:with-param name="classInstance" select="$classInstance"/>          
         </xsl:call-template>
       </xsl:for-each>
       <xsl:apply-templates select="TemplateMaps/TemplateMap">
         <xsl:with-param name="xPath" select="''"/>
-        <xsl:with-param name="classId" select="$classId"/>
+        <xsl:with-param name="classInstance" select="$classInstance"/>
       </xsl:apply-templates>
     </xsl:if>
   </xsl:template>
 
   <xsl:template match="TemplateMaps/TemplateMap">
     <xsl:param name="xPath"/>
+    <xsl:param name="classInstance"/>
     <xsl:variable name="templateXPath">
       <xsl:choose>
         <xsl:when test="$xPath=''">
@@ -133,7 +135,7 @@
                         <xsl:value-of select="concat('http://tpl.rdlfacade.org/data#', substring-after($classRole, 'tpl:'))"/>
                       </xsl:attribute>
                       <xsl:attribute name="reference">
-                        <xsl:value-of select="concat('http://www.example.com/data#', 'id__', ../../@id)"/>
+                        <xsl:value-of select="concat('http://www.example.com/data#', $classInstance)"/>
                       </xsl:attribute>
                     </xsl:element>
                   </xsl:element>
@@ -148,8 +150,8 @@
         <xsl:variable name="templateId" select="@templateId"/>
         <xsl:variable name="classRole" select="@classRole"/>
         <xsl:variable name="roleMaps" select="RoleMaps"/>
+        <xsl:variable name="guid" select="concat('__', generate-id(@templateId))"/>
         <xsl:for-each select="$dtoList">
-          <xsl:variable name="identifier" select="@id"/>
           <xsl:element name="relationship">
             <xsl:attribute name="instance-of">
               <xsl:value-of select="'http://www.w3.org/2002/07/owl#Thing'"/>
@@ -171,7 +173,7 @@
                       <xsl:value-of select="concat('http://tpl.rdlfacade.org/data#', substring-after(@roleId, 'tpl:'))"/>
                     </xsl:attribute>
                     <xsl:attribute name="reference">
-                      <xsl:value-of select="concat('http://rdl.rdlfacade.org/data#', substring-after(ClassMap/@classId, 'rdl:'))"/>
+                      <xsl:value-of select="concat('http://www.example.com/data#', substring-after(ClassMap/@classId, 'rdl:'), $guid)"/>
                     </xsl:attribute>
                   </xsl:element>
                 </xsl:when>
@@ -208,7 +210,7 @@
                 <xsl:value-of select="concat('http://tpl.rdlfacade.org/data#', substring-after($classRole, 'tpl:'))"/>
               </xsl:attribute>
               <xsl:attribute name="reference">
-                <xsl:value-of select="concat('http://www.example.com/data#', 'id__', $identifier)"/>
+                <xsl:value-of select="concat('http://www.example.com/data#', $classInstance)"/>
               </xsl:attribute>
             </xsl:element>
           </xsl:element>
@@ -218,6 +220,7 @@
           <xsl:if test="child::node()">
             <xsl:apply-templates select="ClassMap">
               <xsl:with-param name="xPath" select="concat($templateXPath, '.tpl:', @name)"/>
+              <xsl:with-param name="guid" select="$guid"/>
             </xsl:apply-templates>
           </xsl:if>
         </xsl:for-each>
@@ -227,6 +230,7 @@
 
   <xsl:template match="ClassMap">
     <xsl:param name="xPath"/>
+    <xsl:param name="guid"/>
     <xsl:variable name="className">
       <xsl:call-template name="ReplaceAll">
         <xsl:with-param name="text" select="@name" />
@@ -235,12 +239,14 @@
       </xsl:call-template>
     </xsl:variable>
     <xsl:variable name="classMapXPath" select="concat($xPath, '.rdl:', $className)"/>
+    <xsl:variable name="classInstance" select="concat(substring-after(@classId, 'rdl:'), $guid)"/>
     <xsl:call-template name="Classification">
       <xsl:with-param name="classId" select="@classId"/>
-      <xsl:with-param name="classInstance" select="concat('http://www.example.com/data#', substring-after(@classId, 'rdl:'))"/>
+      <xsl:with-param name="classInstance" select="$classInstance"/>
     </xsl:call-template>
     <xsl:apply-templates select="TemplateMaps/TemplateMap">
       <xsl:with-param name="xPath" select="$classMapXPath"/>
+      <xsl:with-param name="classInstance" select="$classInstance"/>
     </xsl:apply-templates>
   </xsl:template>
 
@@ -272,7 +278,7 @@
           <xsl:value-of select="'http://tpl.rdlfacade.org/data#R99011248051'"/>
         </xsl:attribute>
         <xsl:attribute name="reference">
-          <xsl:value-of select="$classInstance"/>
+          <xsl:value-of select="concat('http://www.example.com/data#', $classInstance)"/>
         </xsl:attribute>
       </xsl:element>
     </xsl:element>
