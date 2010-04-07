@@ -68,7 +68,7 @@ namespace AdapterPrototype
     public IList<object> GetList(string dataObjectName, string filter)
     {
       ISession session = OpenSession();
-      IQuery query = session.CreateQuery("from " + dataObjectName);
+      IQuery query = session.CreateQuery("from " + dataObjectName + ((filter != null) ? "" : filter));
       return query.List<object>();
     }
 
