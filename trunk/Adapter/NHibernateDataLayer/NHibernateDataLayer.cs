@@ -130,19 +130,11 @@ namespace org.iringtools.adapter.datalayer
         using (ISession session = OpenSession<T>())
         {
           using (ITransaction transaction = session.BeginTransaction())
-          { 
-            try
-            {
-              response = Update<T>(graph);
-              response.Add("Records of type " + typeof(T).Name + " have been updated successfully");
-            }
-            catch (Exception)
-            {
-              response = Add<T>(graph);
-              response.Add("Records of type " + typeof(T).Name + " have been added successfully");
-            }
+          {             
+            session.SaveOrUpdate(graph);
+            transaction.Commit();
+            response.Add("Records (" + typeof(T).Name + ") have been updated succesfully");         
           }
-
         }
         return response;
       }
@@ -161,15 +153,8 @@ namespace org.iringtools.adapter.datalayer
         response = new Response();
         foreach (T graph in graphList)
         {
-          try
-          {
-            Response responseGraph = Post<T>(graph);
-            response.Append(responseGraph);
-          }
-          catch (Exception exception)
-          {
-            response.Add(exception.ToString());
-          }
+          Response responseGraph = Post<T>(graph);
+          response.Append(responseGraph);
         }
         return response;
       }
@@ -177,56 +162,6 @@ namespace org.iringtools.adapter.datalayer
       {
         _logger.Error("Error in PostList<T>: " + exception);
         throw new Exception("Error while posting data of type " + typeof(T).Name + ".", exception);
-      }
-    }
-
-    public Response Add<T>(T graph)
-    {
-      Response response;
-      try
-      {
-        response = new Response();
-        using (ISession session = OpenSession<T>())
-        {
-          using (ITransaction transaction = session.BeginTransaction())
-          {
-            session.Save(graph);
-            transaction.Commit();
-          }
-          response.Add("Records (" + typeof(T).Name + ") have been added succesfully");
-
-        }
-        return response;
-      }
-      catch (Exception exception)
-      {
-        _logger.Error("Error in Add<T>: " + exception);
-        throw new Exception("Error while posting data of type " + typeof(T).Name + ".", exception);
-      }
-    }
-
-    public Response Update<T>(T graph)
-    {
-      Response response;
-      try
-      {
-        response = new Response();
-        using (ISession session = OpenSession<T>())
-        {
-          using (ITransaction transaction = session.BeginTransaction())
-          {
-            session.Update(graph);
-            transaction.Commit();
-          }
-          response.Add("Records (" + typeof(T).Name + ") have been updated succesfully");
-
-        }
-        return response;
-      }
-      catch (Exception exception)
-      {
-        _logger.Error("Error in Update<T>: " + exception);
-        throw new Exception("Error while updating data of type " + typeof(T).Name + ".", exception);
       }
     }
 
