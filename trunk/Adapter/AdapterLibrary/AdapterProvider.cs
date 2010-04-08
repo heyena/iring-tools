@@ -531,11 +531,17 @@ namespace org.iringtools.adapter
       DateTime b = DateTime.Now;
       try
       {
+        DateTime startTime = DateTime.Now;
+
         List<DataTransferObject> dtoList = GetDTOList(projectName, applicationName, graphName);
         response = _dtoService.CreateRDF(graphName, dtoList);
-          // Persist RDF to SqlServerStore
+        // Persist RDF to SqlServerStore
         _projectionEngine.PersistGraphToStore(graphName);
-        response.Add("Graph " + graphName + " added/updated to triple store");
+        response.Add("Graph [" + graphName + "] added/updated to triple store.");
+
+        DateTime endTime = DateTime.Now;
+        TimeSpan executionTime = endTime.Subtract(startTime);
+        response.Add(String.Format("Execution time [{0}:{1}.{2}] seconds.", executionTime.Minutes, executionTime.Seconds, executionTime.Milliseconds));
         DateTime e = DateTime.Now;
         TimeSpan d = e.Subtract(b);
 
