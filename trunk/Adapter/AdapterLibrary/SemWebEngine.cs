@@ -34,6 +34,7 @@ using org.iringtools.adapter;
 using org.iringtools.utility;
 using org.iringtools.library;
 using SemWeb;
+using SemWeb.Stores;
 using SemWeb.Util;
 using SemWeb.Query;
 using Ninject;
@@ -554,9 +555,53 @@ namespace org.iringtools.adapter.projection
         sb.Append(".xml");
         try
         {
-            _store = Store.Create(_scopedConnectionString);
-            _store.Import(new RdfXmlReader(sb.ToString()));
-            
+            using (_store = Store.Create(_scopedConnectionString))
+            {
+                using (SemWeb.Store tempStore = new MemoryStore(new RdfXmlReader(sb.ToString())))
+                {
+                    GraphMatch query = new GraphMatch();
+                    BNode sourceBNode = new BNode();
+                    BNode targetBNode = new BNode();
+                    SemWeb.Variable subj = new Variable("s");
+                    List<Statement> statementSet = new List<Statement>();
+                    QueryResultBuffer statementSink = null;
+                    
+                    foreach (Statement sourceStatement in tempStore.Select(new Statement()))
+                    {
+                        if (sourceStatement.Subject != sourceBNode)
+                        {
+                            if (statementSink != null)
+                            {
+                                query.Run(_store, statementSink);
+                                if (statementSink.Bindings.Count == 0)
+                                {
+                                    targetBNode = new BNode();
+                                    foreach (Statement statement in statementSet)
+                                        _store.Add(new Statement(targetBNode, statement.Predicate, statement.Object));
+                                }
+                                else
+                                {
+                                    foreach (VariableBindings variableBinding in statementSink.Bindings)
+                                    {
+                                        targetBNode = ((BNode)variableBinding["s"]);
+                                    }
+                                    if (targetBNode != null)
+                                        _store.Remove(new Statement(targetBNode, null, null));
+                                    foreach (Statement statemment in statementSet)
+                                        _store.Add(new Statement(targetBNode, statemment.Predicate, statemment.Object));
+                                }
+                            }
+                            sourceBNode = (BNode)sourceStatement.Subject;
+                            statementSet.Clear();
+                            query = new GraphMatch();
+                            statementSink = new QueryResultBuffer();
+                        }
+                        statementSet.Add(sourceStatement);
+                        query.AddGraphStatement(new Statement(subj, sourceStatement.Predicate, sourceStatement.Object));
+                      
+                    }
+                }
+            }
         }
         catch (Exception exception)
         {
@@ -1491,5 +1536,20 @@ namespace org.iringtools.adapter.projection
         throw new Exception(String.Format("GetUnterminatedTemplates"), exception);
       }
     }
+  }
+
+
+  public class IringSink : StatementSink
+  {
+
+      #region StatementSink Members
+
+      bool StatementSink.Add(Statement statement)
+      {
+          return true;
+      }
+
+
+      #endregion
   }
 }
