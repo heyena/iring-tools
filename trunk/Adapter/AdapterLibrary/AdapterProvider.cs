@@ -528,7 +528,7 @@ namespace org.iringtools.adapter
     public Response CreateGraphRDF(string projectName, string applicationName, string graphName)
     {
       Response response = new Response();
-      DateTime b = DateTime.Now;
+
       try
       {
         DateTime startTime = DateTime.Now;
@@ -542,10 +542,7 @@ namespace org.iringtools.adapter
         DateTime endTime = DateTime.Now;
         TimeSpan executionTime = endTime.Subtract(startTime);
         response.Add(String.Format("Execution time [{0}:{1}.{2}] seconds.", executionTime.Minutes, executionTime.Seconds, executionTime.Milliseconds));
-        DateTime e = DateTime.Now;
-        TimeSpan d = e.Subtract(b);
 
-        response.Add(String.Format("CreateRdf & persist to Store Execution Time [{0}:{1}.{2}] Seconds ", d.Minutes, d.Seconds, d.Milliseconds));
       }
       catch (Exception exception)
       {
