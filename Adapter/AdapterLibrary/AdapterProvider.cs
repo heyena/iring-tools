@@ -528,7 +528,7 @@ namespace org.iringtools.adapter
     public Response CreateGraphRDF(string projectName, string applicationName, string graphName)
     {
       Response response = new Response();
-
+      DateTime b = DateTime.Now;
       try
       {
         List<DataTransferObject> dtoList = GetDTOList(projectName, applicationName, graphName);
@@ -536,6 +536,10 @@ namespace org.iringtools.adapter
           // Persist RDF to SqlServerStore
         _projectionEngine.PersistGraphToStore(graphName);
         response.Add("Graph " + graphName + " added/updated to triple store");
+        DateTime e = DateTime.Now;
+        TimeSpan d = e.Subtract(b);
+
+        response.Add(String.Format("CreateRdf & persist to Store Execution Time [{0}:{1}.{2}] Seconds ", d.Minutes, d.Seconds, d.Milliseconds));
       }
       catch (Exception exception)
       {
