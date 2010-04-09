@@ -1431,7 +1431,6 @@ namespace org.iringtools.adapter
     {
       _mappingProperties.Clear();
       _initStatements.Clear();
-      Dictionary<string, int> templateMapNameCountDictionary = new Dictionary<string, int>();
 
       foreach (TemplateMap templateMap in graphMap.templateMaps)
       {
@@ -1439,18 +1438,6 @@ namespace org.iringtools.adapter
         _dataContractPath = string.Empty;
         _templatePath = string.Empty;
         _dtoTemplatePath = string.Empty;
-
-        templateMap.name = Utility.NameSafe(templateMap.name);
-        if (!templateMapNameCountDictionary.ContainsKey(templateMap.name))
-        {
-          templateMapNameCountDictionary.Add(templateMap.name, 1);
-        }
-        else
-        {
-          int currentCount = templateMapNameCountDictionary[templateMap.name];
-          templateMapNameCountDictionary[templateMap.name] = currentCount + 1;
-          templateMap.name += currentCount;
-        }
 
         ProcessTemplateMap(templateMap, graphMap.dataObjectMaps, true);
       }
@@ -1654,7 +1641,6 @@ namespace org.iringtools.adapter
       string lastDataContractPath = _dataContractPath;
       string lastTemplateMapPath = _templatePath;
       string lastDtoTemplateMapPath = _dtoTemplatePath;
-      Dictionary<string, int> templateMapNameCountDictionary = new Dictionary<string, int>();
 
       foreach (TemplateMap templateMap in roleMap.classMap.templateMaps)
       {
@@ -1662,18 +1648,6 @@ namespace org.iringtools.adapter
         _dataContractPath = lastDataContractPath;
         _templatePath = lastTemplateMapPath;
         _dtoTemplatePath = lastDtoTemplateMapPath;
-
-        templateMap.name = Utility.NameSafe(templateMap.name);
-        if (!templateMapNameCountDictionary.ContainsKey(templateMap.name))
-        {
-          templateMapNameCountDictionary.Add(templateMap.name, 1);
-        }
-        else
-        {
-          int currentCount = templateMapNameCountDictionary[templateMap.name];
-          templateMap.name += currentCount;
-          templateMapNameCountDictionary[templateMap.name] = currentCount + 1;
-        }
 
         ProcessTemplateMap(templateMap, dataObjectMaps, false);
       }

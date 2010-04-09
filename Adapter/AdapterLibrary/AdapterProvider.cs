@@ -432,7 +432,7 @@ namespace org.iringtools.adapter
         DateTime e = DateTime.Now;
         TimeSpan d = e.Subtract(b);
 
-        response.Add(String.Format("RefreshAll() Execution Time [{0}:{1}.{2}] Seconds ", d.Minutes, d.Seconds, d.Milliseconds));
+        response.Add(String.Format("RefreshAll() Execution Time [{0}:{1}.{2}] minutes.", d.Minutes, d.Seconds, d.Milliseconds));
       }
       catch (Exception exception)
       {
@@ -498,7 +498,7 @@ namespace org.iringtools.adapter
         DateTime e = DateTime.Now;
         TimeSpan d = e.Subtract(b);
 
-        response.Add(String.Format("RefreshGraph({0}) Execution Time [{1}:{2}.{3}] Seconds ", graphName, d.Minutes, d.Seconds, d.Milliseconds));
+        response.Add(String.Format("RefreshGraph({0}) Execution Time [{1}:{2}.{3}] minutes.", graphName, d.Minutes, d.Seconds, d.Milliseconds));
 
         //if (_settings.UseSemweb)
         //  _projectionEngine.DumpStoreData(_settings.XmlPath);
@@ -528,7 +528,7 @@ namespace org.iringtools.adapter
     public Response CreateGraphRDF(string projectName, string applicationName, string graphName)
     {
       Response response = new Response();
-
+      DateTime b = DateTime.Now;
       try
       {
         DateTime startTime = DateTime.Now;
@@ -541,8 +541,7 @@ namespace org.iringtools.adapter
 
         DateTime endTime = DateTime.Now;
         TimeSpan executionTime = endTime.Subtract(startTime);
-        response.Add(String.Format("Execution time [{0}:{1}.{2}] seconds.", executionTime.Minutes, executionTime.Seconds, executionTime.Milliseconds));
-
+        response.Add(String.Format("Execution time [{0}:{1}.{2}] minutes.", executionTime.Minutes, executionTime.Seconds, executionTime.Milliseconds));
       }
       catch (Exception exception)
       {
@@ -664,14 +663,14 @@ namespace org.iringtools.adapter
 
         e = DateTime.Now;
         d = e.Subtract(b);
-        response.Add(String.Format("PullQuery[{0}] Execution Time [{1}:{2}.{3}] Seconds ", graphName, d.Minutes, d.Seconds, d.Milliseconds));
+        response.Add(String.Format("PullQuery[{0}] Execution Time [{1}:{2}.{3}] minutes.", graphName, d.Minutes, d.Seconds, d.Milliseconds));
         b = e;
 
         response.Append(_dtoService.PostList(graphName, dtoList));
 
         e = DateTime.Now;
         d = e.Subtract(b);
-        response.Add(String.Format("Pull[{0},{1}] Execution Time [{2}:{3}.{4}] Seconds ", targetUri, graphName, d.Minutes, d.Seconds, d.Milliseconds));
+        response.Add(String.Format("Pull[{0},{1}] Execution Time [{2}:{3}.{4}] minutes.", targetUri, graphName, d.Minutes, d.Seconds, d.Milliseconds));
       }
       catch (Exception exception)
       {
