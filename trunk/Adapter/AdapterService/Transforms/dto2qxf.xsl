@@ -32,7 +32,7 @@
       <xsl:variable name="templateMaps" select="TemplateMaps"/>
 
       <xsl:for-each select="$dtoList">
-        <xsl:call-template name="classification">
+        <xsl:call-template name="Classification">
           <xsl:with-param name="classId" select="$classId"/>
           <xsl:with-param name="classInstance" select="@id"/>
         </xsl:call-template>
@@ -210,17 +210,10 @@
     <xsl:param name="xPath2"/>
     <xsl:param name="classInstance"/>
     <xsl:param name="dto"/>
-    <xsl:variable name="className">
-      <xsl:call-template name="string-replace-all">
-        <xsl:with-param name="text" select="@name" />
-        <xsl:with-param name="replace" select="' '" />
-        <xsl:with-param name="by" select="''" />
-      </xsl:call-template>
-    </xsl:variable>
-    <xsl:variable name="classXPath" select="concat($xPath, '.rdl:', $className)"/>
+    <xsl:variable name="classXPath" select="concat($xPath, '.rdl:', @name)"/>
     <xsl:variable name="classXPath2" select="concat($xPath2, '_', substring-after(@classId, 'rdl:'))"/>
     
-    <xsl:call-template name="classification">
+    <xsl:call-template name="Classification">
       <xsl:with-param name="classId" select="@classId"/>
       <xsl:with-param name="classInstance" select="concat($classXPath2, '_', $classInstance)"/>
     </xsl:call-template>
@@ -234,7 +227,7 @@
     </xsl:apply-templates>
   </xsl:template>
 
-  <xsl:template name="classification">
+  <xsl:template name="Classification">
     <xsl:param name="classId"/>
     <xsl:param name="classInstance"/>
     <xsl:element name="relationship">
@@ -266,26 +259,5 @@
         </xsl:attribute>
       </xsl:element>
     </xsl:element>
-  </xsl:template>
-
-  <xsl:template name="string-replace-all">
-    <xsl:param name="text" />
-    <xsl:param name="replace" />
-    <xsl:param name="by" />
-    <xsl:choose>
-      <xsl:when test="contains($text, $replace)">
-        <xsl:value-of select="substring-before($text,$replace)" />
-        <xsl:value-of select="$by" />
-        <xsl:call-template name="string-replace-all">
-          <xsl:with-param name="text"
-          select="substring-after($text,$replace)" />
-          <xsl:with-param name="replace" select="$replace" />
-          <xsl:with-param name="by" select="$by" />
-        </xsl:call-template>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:value-of select="$text" />
-      </xsl:otherwise>
-    </xsl:choose>
   </xsl:template>
 </xsl:stylesheet>

@@ -134,6 +134,42 @@ namespace org.iringtools.modules.memappingregion
       }
     }
 
+    private string AdjustTemplateName(MappingItem mappingItem, string templateName)
+    {
+      string tplName = utility.Utility.NameSafe(templateName);
+      
+      if (mappingItem.ClassMap != null && mappingItem.ClassMap.templateMaps != null)
+      {
+        int lastSeqNum = 0;
+        
+        // find last sequence number of template names that match the new template name
+        foreach (TemplateMap templateMap in mappingItem.ClassMap.templateMaps)
+        {
+          if (templateMap.name.StartsWith(tplName))
+          {
+            if (templateMap.name.Length == tplName.Length)
+            {
+              lastSeqNum = 1;
+            }
+            else
+            {
+              int seqNum;
+              if (int.TryParse(templateMap.name.Substring(tplName.Length), out seqNum))
+              {
+                if (seqNum >= lastSeqNum)
+                  lastSeqNum = seqNum + 1;
+              }
+            }
+          }
+        }        
+
+        if (lastSeqNum != 0) 
+          tplName += lastSeqNum;
+      }
+
+      return tplName;
+    }
+
     public void btnAddTemplate_Click(object sender, RoutedEventArgs e)
     {
       if (model.SelectedIMUri == null ||
@@ -156,7 +192,7 @@ namespace org.iringtools.modules.memappingregion
         TextBox txtLabel = sender as TextBox;
         TemplateMap templateMap = new TemplateMap();
 
-        templateMap.name = HandleSpecialCharacters(model.SelectedIMLabel);
+        templateMap.name = AdjustTemplateName(mappingItem, model.SelectedIMLabel);
         templateMap.templateId = SPARQLExtensions.GetIdWithAliasFromUri(model.SelectedIMUri);
 
         string classId = mappingItem.ClassMap.classId;
@@ -287,7 +323,7 @@ namespace org.iringtools.modules.memappingregion
           {
             RoleMap roleMap = new RoleMap
             {
-              name = roleDefinition.name.FirstOrDefault().value,
+              name = utility.Utility.NameSafe(roleDefinition.name.FirstOrDefault().value),
               dataType = range,
               propertyName = "",
               roleId = roleDefinition.identifier.GetIdWithAliasFromUri()
@@ -300,7 +336,7 @@ namespace org.iringtools.modules.memappingregion
           {
             RoleMap roleMap = new RoleMap
             {
-              name = roleDefinition.name.FirstOrDefault().value,
+              name = utility.Utility.NameSafe(roleDefinition.name.FirstOrDefault().value),
               dataType = range,
               propertyName = "",
               roleId = roleDefinition.identifier.GetIdWithAliasFromUri()
@@ -320,7 +356,7 @@ namespace org.iringtools.modules.memappingregion
           string range = roleQualification.range.GetIdWithAliasFromUri();
           RoleMap roleMap = new RoleMap();
 
-          roleMap.name = roleQualification.name.FirstOrDefault().value;
+          roleMap.name = utility.Utility.NameSafe(roleQualification.name.FirstOrDefault().value);
           roleMap.roleId = roleQualification.qualifies.GetIdWithAliasFromUri();
 
           if (roleQualification.value != null)  // fixed role
@@ -395,7 +431,7 @@ namespace org.iringtools.modules.memappingregion
       {
         RoleMap roleMap = model.SelectedRoleMap;
 
-        if (model.SelectedRoleMap.dataType.StartsWith("xsd:"))
+        if (model.SelectedRoleMap.dataType != null && model.SelectedRoleMap.dataType.StartsWith("xsd:"))
         {
           if (model.SelectedDataObject == null || model.SelectedDataObject.DataProperty == null)
           {
@@ -440,7 +476,7 @@ namespace org.iringtools.modules.memappingregion
 
         ClassMap classMap = new ClassMap
         {
-          name = txtLabel.Text,
+          name = utility.Utility.NameSafe(txtLabel.Text),
           classId = classDefinition.identifier.GetIdWithAliasFromUri(),
           identifier = model.SelectedDataObject.DataProperty.propertyName,
         };
