@@ -528,7 +528,7 @@ namespace org.iringtools.adapter
     public Response CreateGraphRDF(string projectName, string applicationName, string graphName)
     {
       Response response = new Response();
-      DateTime b = DateTime.Now;
+      
       try
       {
         DateTime startTime = DateTime.Now;
@@ -545,7 +545,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception exception)
       {
-        _logger.Error("Error in GetGraphRDF: " + exception);
+        _logger.Error("Error in CreateGraphRDF: " + exception);
 
         response.Level = StatusLevel.Error;
         response.Add("Error while creating RDF for graph [" + graphName + "].");
@@ -574,10 +574,10 @@ namespace org.iringtools.adapter
       }
       catch (Exception exception)
       {
-        _logger.Error("Error in GetGraphRDF: " + exception);
+        _logger.Error("Error in CreateIdentifierRDF:" + exception);
 
         response.Level = StatusLevel.Error;
-        response.Add("Error while creating RDF for identifier [" + identifier + "] from graph [" + graphName + "].");
+        response.Add("Error while creating RDF for [" + graphName + "." + identifier + "].");
         response.Add(exception.ToString());
       }
 
