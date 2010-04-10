@@ -8,7 +8,7 @@
 
   <xsl:param name="dtoFilePath"/>
   <xsl:param name="graphName"/>
-  <!--<xsl:variable name="dtoFilePath" select="'C:\iring-tools-1.2\Adapter\AdapterService\XML\DTO.12345_000.ABC.Lines.xml'"/>
+  <!--<xsl:variable name="dtoFilePath" select="'C:\iring\Adapter\AdapterService\XML\DTO.12345_000.PSPID.Lines.xml'"/>
   <xsl:variable name="graphName" select="'Lines'"/>-->
   
   <xsl:variable name="dtoList" select="document($dtoFilePath)/*/*"/>
@@ -18,7 +18,8 @@
   <xsl:variable name="owl" select="'http://www.w3.org/2002/07/owl#'"/>
   <xsl:variable name="eg"  select="'http://www.example.com/data#'"/>
   <xsl:variable name="rdf" select="'http://www.w3.org/1999/02/22-rdf-syntax-ns#'"/>
-
+  <xsl:variable name="valueMapsNode" select="//ValueMaps"/>
+  
   <xsl:template match="/Mapping">
     <xsl:element name="qxf">
       <!-- process graphMaps -->
@@ -171,7 +172,7 @@
               <xsl:choose>
                 <xsl:when test="$valueList!=''">
                   <xsl:variable name="value" select="@value"/>
-                  <xsl:variable name="valueMaps" select="/Mapping/ValueMaps/ValueMap[@valueList=$valueList]"/>
+                  <xsl:variable name="valueMaps" select="$valueMapsNode/ValueMap[@valueList=$valueList]"/>
                   <xsl:variable name="valueMap" select="$valueMaps[@internalValue=$value]"/>
                   <xsl:variable name="modelURI" select="$valueMap/@modelURI"/>
                   <xsl:attribute name="as">
@@ -217,7 +218,9 @@
       <xsl:with-param name="classId" select="@classId"/>
       <xsl:with-param name="classInstance" select="concat($classXPath2, '_', $classInstance)"/>
     </xsl:call-template>
+    
 
+    
     <!-- process templateMaps -->
     <xsl:apply-templates select="TemplateMaps/TemplateMap">
       <xsl:with-param name="xPath" select="$classXPath"/>
@@ -227,6 +230,15 @@
     </xsl:apply-templates>
   </xsl:template>
 
+  <xsl:template match="ValueMap">
+    <xsl:param name="valueList"/>
+    <xsl:param name="internalValue"/>
+    <xsl:apply-templates select="Mapping/ValueMaps/ValueMap">
+      <xsl:with-param name="valueList" select="$valueList" />
+      <xsl:with-param name="internalValue" select="$internalValue"/>
+    </xsl:apply-templates>
+  </xsl:template>
+  
   <xsl:template name="Classification">
     <xsl:param name="classId"/>
     <xsl:param name="classInstance"/>
