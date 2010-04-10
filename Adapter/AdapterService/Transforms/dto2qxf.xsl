@@ -229,15 +229,6 @@
       <xsl:with-param name="dto" select="$dto"/>
     </xsl:apply-templates>
   </xsl:template>
-
-  <xsl:template match="ValueMap">
-    <xsl:param name="valueList"/>
-    <xsl:param name="internalValue"/>
-    <xsl:apply-templates select="Mapping/ValueMaps/ValueMap">
-      <xsl:with-param name="valueList" select="$valueList" />
-      <xsl:with-param name="internalValue" select="$internalValue"/>
-    </xsl:apply-templates>
-  </xsl:template>
   
   <xsl:template name="Classification">
     <xsl:param name="classId"/>
