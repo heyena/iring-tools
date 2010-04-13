@@ -145,8 +145,8 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
       _properties.Add(new DTOProperty(@"", @"tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R50548021125>", typeof(String), false, false));
       _properties.Add(new DTOProperty(@"unit", @"tpl:ClientFunctionalUnitAssembly.tpl:whole.rdl:CLIENT_FUNCTIONAL_UNIT.tpl:ClassifiedIdentification.tpl:identifier", null, typeof(String), false, false));
       _properties.Add(new DTOProperty(@"", @"tpl:ClientFunctionalUnitAssembly.tpl:whole.rdl:CLIENT_FUNCTIONAL_UNIT.tpl:ClassifiedIdentification.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R82607969326>", typeof(String), false, false));
-      _properties.Add(new DTOProperty(@"componentType", @"tpl:ClassifiedIdentification1.tpl:identifier", null, typeof(String), false, true));
-      _properties.Add(new DTOProperty(@"", @"tpl:ClassifiedIdentification1.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R99386812445>", typeof(String), false, false));
+      _properties.Add(new DTOProperty(@"componentType", @"tpl:ClassifiedIdentification2.tpl:identifier", null, typeof(String), false, true));
+      _properties.Add(new DTOProperty(@"", @"tpl:ClassifiedIdentification2.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R99386812445>", typeof(String), false, false));
       _properties.Add(new DTOProperty(@"diameter", @"tpl:NominalDiameter.tpl:value", null, typeof(Single), false, false));
       _properties.Add(new DTOProperty(@"uomDiameter", @"tpl:NominalDiameter.tpl:scale", null, typeof(String), false, false));
       _properties.Add(new DTOProperty(@"pid", @"tpl:PAndIDRepresentation.tpl:representation.rdl:P_AND_I_DIAGRAM.tpl:ClassifiedIdentification.tpl:identifier", null, typeof(String), false, false));
@@ -166,7 +166,7 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
         tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.tag);
         tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.system);
         tpl_ClientFunctionalUnitAssembly_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.unit);
-        tpl_ClassifiedIdentification1_tpl_identifier = Convert.ToString(dataObject.componentType);
+        tpl_ClassifiedIdentification2_tpl_identifier = Convert.ToString(dataObject.componentType);
         tpl_NominalDiameter_tpl_value = Convert.ToSingle(dataObject.diameter);
         tpl_NominalDiameter_tpl_scale = Convert.ToString(dataObject.uomDiameter);
         tpl_PAndIDRepresentation_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.pid);
@@ -291,31 +291,31 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
       }
     }
     
-    [DataMember(Name = "tpl_ClassifiedIdentification1_tpl_identifier", EmitDefaultValue = false)]
+    [DataMember(Name = "tpl_ClassifiedIdentification2_tpl_identifier", EmitDefaultValue = false)]
     [XmlIgnore]
-    public String tpl_ClassifiedIdentification1_tpl_identifier
+    public String tpl_ClassifiedIdentification2_tpl_identifier
     {
       get
       {
-        return (String)GetPropertyValue("tpl:ClassifiedIdentification1.tpl:identifier");
+        return (String)GetPropertyValue("tpl:ClassifiedIdentification2.tpl:identifier");
       }
       set
       {
-        SetPropertyValue(@"tpl:ClassifiedIdentification1.tpl:identifier", value);
+        SetPropertyValue(@"tpl:ClassifiedIdentification2.tpl:identifier", value);
       }
     }
     
-    [DataMember(Name = "tpl_ClassifiedIdentification1_tpl_identificationType", EmitDefaultValue = false)]
+    [DataMember(Name = "tpl_ClassifiedIdentification2_tpl_identificationType", EmitDefaultValue = false)]
     [XmlIgnore]
-    public String tpl_ClassifiedIdentification1_tpl_identificationType
+    public String tpl_ClassifiedIdentification2_tpl_identificationType
     {
       get
       {
-        return (String)GetPropertyValue("tpl:ClassifiedIdentification1.tpl:identificationType");
+        return (String)GetPropertyValue("tpl:ClassifiedIdentification2.tpl:identificationType");
       }
       set
       {
-        SetPropertyValue(@"tpl:ClassifiedIdentification1.tpl:identificationType", value);
+        SetPropertyValue(@"tpl:ClassifiedIdentification2.tpl:identificationType", value);
       }
     }
     
@@ -427,12 +427,12 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
       }
       ((org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent)_dataObject).unit = Convert.ToString(this.tpl_ClientFunctionalUnitAssembly_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification_tpl_identifier);
       
-      if (!String.IsNullOrEmpty(this.tpl_ClassifiedIdentification1_tpl_identifier) && this.tpl_ClassifiedIdentification1_tpl_identifier.Length > 255)
+      if (!String.IsNullOrEmpty(this.tpl_ClassifiedIdentification2_tpl_identifier) && this.tpl_ClassifiedIdentification2_tpl_identifier.Length > 255)
       {
-        _logger.Warn("Truncate componentType value from ---" + this.tpl_ClassifiedIdentification1_tpl_identifier + "--- to 255 characters.");
-        this.tpl_ClassifiedIdentification1_tpl_identifier = this.tpl_ClassifiedIdentification1_tpl_identifier.Substring(0, 255);
+        _logger.Warn("Truncate componentType value from ---" + this.tpl_ClassifiedIdentification2_tpl_identifier + "--- to 255 characters.");
+        this.tpl_ClassifiedIdentification2_tpl_identifier = this.tpl_ClassifiedIdentification2_tpl_identifier.Substring(0, 255);
       }
-      ((org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent)_dataObject).componentType = Convert.ToString(this.tpl_ClassifiedIdentification1_tpl_identifier);
+      ((org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent)_dataObject).componentType = Convert.ToString(this.tpl_ClassifiedIdentification2_tpl_identifier);
       ((org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent)_dataObject).diameter = Convert.ToSingle(this.tpl_NominalDiameter_tpl_value);
       
       if (!String.IsNullOrEmpty(this.tpl_NominalDiameter_tpl_scale) && this.tpl_NominalDiameter_tpl_scale.Length > 255)
@@ -499,10 +499,10 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
         public string Identifier { get; set; }
         
         [DataMember(EmitDefaultValue = false)]
-        public String tpl_ClassifiedIdentification_tpl_identifier { get; set; }
+        public String tpl_ClassifiedIdentification2_tpl_identifier { get; set; }
         
         [DataMember(EmitDefaultValue = false)]
-        public String tpl_ClassifiedIdentification_tpl_identificationType { get; set; }
+        public String tpl_ClassifiedIdentification2_tpl_identificationType { get; set; }
       }
       
       [DataMember(Name = "tpl_whole_rdl_CLIENT_SYSTEM", EmitDefaultValue = false)]
@@ -518,8 +518,8 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
     {
       _properties.Add(new DTOProperty(@"tag", @"tpl:ClassifiedIdentification.tpl:identifier", identifier, typeof(String), true, true));
       _properties.Add(new DTOProperty(@"", @"tpl:ClassifiedIdentification.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R92093626759>", typeof(String), false, false));
-      _properties.Add(new DTOProperty(@"system", @"tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identifier", null, typeof(String), false, false));
-      _properties.Add(new DTOProperty(@"", @"tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R50548021125>", typeof(String), false, false));
+      _properties.Add(new DTOProperty(@"system", @"tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification2.tpl:identifier", null, typeof(String), false, false));
+      _properties.Add(new DTOProperty(@"", @"tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification2.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R50548021125>", typeof(String), false, false));
       _properties.Add(new DTOProperty(@"diameter", @"tpl:NominalDiameter.tpl:value", null, typeof(Single), false, false));
       _properties.Add(new DTOProperty(@"uomDiameter", @"tpl:NominalDiameter.tpl:scale", null, typeof(String), false, false));
       Identifier = identifier;
@@ -533,15 +533,15 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
       if (dataObject != null)
       {
         tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.tag);
-        tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.system);
+        tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identifier = Convert.ToString(dataObject.system);
         tpl_NominalDiameter_tpl_value = Convert.ToSingle(dataObject.diameter);
         tpl_NominalDiameter_tpl_scale = Convert.ToString(dataObject.uomDiameter);
       }
       tpl_ClientSystemAssembly = new TemplateClientSystemAssembly();
       tpl_ClientSystemAssembly.tpl_whole_rdl_CLIENT_SYSTEM = new TemplateClientSystemAssembly.ClassCLIENT_SYSTEM();
       tpl_ClientSystemAssembly.tpl_whole_rdl_CLIENT_SYSTEM.Identifier = ((GetPropertyValueByInternalName("system") != null) ? GetPropertyValueByInternalName("system").ToString() : "");
-      tpl_ClientSystemAssembly.tpl_whole_rdl_CLIENT_SYSTEM.tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier);
-      tpl_ClientSystemAssembly.tpl_whole_rdl_CLIENT_SYSTEM.tpl_ClassifiedIdentification_tpl_identificationType = Convert.ToString(tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identificationType);
+      tpl_ClientSystemAssembly.tpl_whole_rdl_CLIENT_SYSTEM.tpl_ClassifiedIdentification2_tpl_identifier = Convert.ToString(tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identifier);
+      tpl_ClientSystemAssembly.tpl_whole_rdl_CLIENT_SYSTEM.tpl_ClassifiedIdentification2_tpl_identificationType = Convert.ToString(tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identificationType);
       _dataObject = dataObject;
     }
     
@@ -576,28 +576,28 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
     }
     
     [XmlIgnore]
-    public String tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier
+    public String tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identifier
     {
       get
       {
-        return (String)GetPropertyValue("tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identifier");
+        return (String)GetPropertyValue("tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification2.tpl:identifier");
       }
       set
       {
-        SetPropertyValue(@"tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identifier", value);
+        SetPropertyValue(@"tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification2.tpl:identifier", value);
       }
     }
     
     [XmlIgnore]
-    public String tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identificationType
+    public String tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identificationType
     {
       get
       {
-        return (String)GetPropertyValue("tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identificationType");
+        return (String)GetPropertyValue("tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification2.tpl:identificationType");
       }
       set
       {
-        SetPropertyValue(@"tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identificationType", value);
+        SetPropertyValue(@"tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification2.tpl:identificationType", value);
       }
     }
     
@@ -643,12 +643,12 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
         ((org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line)_dataObject).tag = Convert.ToString(this.Identifier);
       }
       
-      if (!String.IsNullOrEmpty(this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier) && this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier.Length > 255)
+      if (!String.IsNullOrEmpty(this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identifier) && this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identifier.Length > 255)
       {
-        _logger.Warn("Truncate system value from ---" + this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier + "--- to 255 characters.");
-        this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier = this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier.Substring(0, 255);
+        _logger.Warn("Truncate system value from ---" + this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identifier + "--- to 255 characters.");
+        this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identifier = this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identifier.Substring(0, 255);
       }
-      ((org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line)_dataObject).system = Convert.ToString(this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier);
+      ((org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line)_dataObject).system = Convert.ToString(this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identifier);
       ((org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line)_dataObject).diameter = Convert.ToSingle(this.tpl_NominalDiameter_tpl_value);
       
       if (!String.IsNullOrEmpty(this.tpl_NominalDiameter_tpl_scale) && this.tpl_NominalDiameter_tpl_scale.Length > 255)
