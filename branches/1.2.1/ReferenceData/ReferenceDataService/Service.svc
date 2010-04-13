@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="org.ids_adi.iring.referenceData.ReferenceDataService" CodeBehind="~/App_Code/ReferenceDataService.cs" %>
