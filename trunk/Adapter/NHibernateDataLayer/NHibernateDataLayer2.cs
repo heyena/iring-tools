@@ -19,6 +19,8 @@ namespace org.iringtools.adapter.datalayer
   public class NHibernateDataLayer2 : IDataLayer2
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(NHibernateDataLayer2));
+    private static string NAMESPACE = "org.iringtools.adapter.datalayer";
+
     private AdapterSettings _settings = null;
     private ApplicationSettings _appSettings = null;
     private string _dataDictionaryPath = String.Empty;
@@ -62,7 +64,7 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public object Create(string objectType, string identifier)
+    public IDataObject Create(string objectType, string identifier)
     {
       try
       {
@@ -75,18 +77,18 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public IList<object> CreateList(string objectType, List<string> identifiers)
+    public IList<IDataObject> CreateList(string objectType, List<string> identifiers)
     {
       try
       {
-        IList<object> dataObjects = new List<object>();
+        IList<IDataObject> dataObjects = new List<IDataObject>();
 
         foreach (string identifier in identifiers)
         {
-          Type type = Type.GetType(objectType);
-          object dataObject = Activator.CreateInstance(type);
+          Type type = Type.GetType(NAMESPACE + ".proj_" + _appSettings.ProjectName + "." + _appSettings.ApplicationName + "." + objectType);
+          IDataObject dataObject = (IDataObject)Activator.CreateInstance(type);
 
-          ((IDataObject)dataObject).SetPropertyValue("Id", identifier);
+          dataObject.SetPropertyValue("Id", identifier);
           dataObjects.Add(dataObject);
         }
 
@@ -99,7 +101,7 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public object Get(string objectType, string identifier)
+    public IDataObject Get(string objectType, string identifier)
     {
       try
       {
@@ -109,7 +111,7 @@ namespace org.iringtools.adapter.datalayer
           queryString.Append(" from " + objectType + " where Id = '" + identifier + "'");
 
           IQuery query = session.CreateQuery(queryString.ToString());
-          return query.List<object>().FirstOrDefault();
+          return query.List<IDataObject>().FirstOrDefault();
         } 
       }
       catch (Exception exception)
@@ -119,7 +121,54 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public IList<object> GetList(string objectType, DataFilter filter, int pageSize, int pageNumber)
+    public IList<string> GetIdentifiers(string objectType, DataFilter filter)
+    {
+      try
+      {
+        StringBuilder queryString = new StringBuilder();
+        using (ISession session = OpenSession())
+        {
+          queryString.Append("select Id from " + objectType);
+
+          if (filter.Expressions.Count > 0)
+          {
+            string nhWhereClause = GenerateNHWhereClause(objectType, filter);
+            queryString.Append(nhWhereClause);
+          }
+
+          IQuery query = session.CreateQuery(queryString.ToString());
+          return query.List<string>();
+        }
+      }
+      catch (Exception exception)
+      {
+        _logger.Error("Error in GetIdentifiers: " + exception);
+        throw new Exception("Error while getting a list of identifiers of type " + objectType + ".", exception);
+      }
+    }
+
+    public IList<IDataObject> GetList(string objectType, List<string> identifiers)
+    {
+      try
+      {
+        IList<IDataObject> dataObjects = new List<IDataObject>();
+
+        foreach (string identifier in identifiers)
+        {
+          dataObjects.Add(Get(objectType, identifier));
+        }
+
+        return dataObjects;
+      }
+      catch (Exception exception)
+      {
+        _logger.Error("Error in GetList: " + exception);
+        throw new Exception("Error while getting a list of data of type " + objectType + ".", exception);
+      }
+    }
+
+    //TODO: need to handle paging
+    public IList<IDataObject> GetList(string objectType, DataFilter filter, int pageSize, int pageNumber)
     {
       try
       {
@@ -135,7 +184,7 @@ namespace org.iringtools.adapter.datalayer
           }
 
           IQuery query = session.CreateQuery(queryString.ToString());
-          return query.List<object>();
+          return query.List<IDataObject>();
         }
       }
       catch (Exception exception)
@@ -299,7 +348,7 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public Response Post(object dataObject)
+    public Response Post(IDataObject dataObject)
     {
       Response response;
       try
@@ -320,14 +369,14 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public Response PostList(List<object> dataObjects)
+    public Response PostList(List<IDataObject> dataObjects)
     {
       Response response;
       
       try
       {
         response = new Response();
-        foreach (object dataObject in dataObjects)
+        foreach (IDataObject dataObject in dataObjects)
         {
           try
           {
@@ -410,11 +459,6 @@ namespace org.iringtools.adapter.datalayer
     public DataDictionary GetDictionary()
     {
       return Utility.Read<DataDictionary>(_dataDictionaryPath);
-    }
-
-    public Response RefreshDictionary()
-    {
-      throw new NotImplementedException();
     }
   }
 }
