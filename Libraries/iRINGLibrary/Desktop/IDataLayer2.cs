@@ -42,17 +42,21 @@ namespace org.iringtools.library
 
   public interface IDataLayer2
   {
-    object Create(string objectType, string identifier);
+    IDataObject Create(string objectType, string identifier);
 
-    IList<object> CreateList(string objectType, List<string> identifiers);
+    IList<IDataObject> CreateList(string objectType, List<string> identifiers);
 
-    object Get(string objectType, string identifier);
+    IDataObject Get(string objectType, string identifier);
 
-    IList<object> GetList(string objectType, DataFilter filter, int pageSize, int pageNumber);
+    IList<string> GetIdentifiers(string objectType, DataFilter filter);
 
-    Response Post(object dataObject);
+    IList<IDataObject> GetList(string objectType, List<string> identifiers);
 
-    Response PostList(List<object> dataObjects);
+    IList<IDataObject> GetList(string objectType, DataFilter filter, int pageSize, int pageNumber);
+
+    Response Post(IDataObject dataObject);
+
+    Response PostList(List<IDataObject> dataObjects);
 
     Response Delete(string objectType, string identifier);
 
@@ -60,45 +64,4 @@ namespace org.iringtools.library
 
     DataDictionary GetDictionary();
   }
-}
-
-public class ValveDO : Valve, org.iringtools.library.IDataObject
-{
-  public object GetPropertyValue(string propertyName)
-  {
-    switch (propertyName)
-    {
-      case "Tag":
-        return this.Tag;
-      
-      case "LineTag":
-        return this.LineTag;
-        
-      default:
-        throw new Exception("Property " + propertyName + " does not exist in the DataObject.");
-    }
-  }
-
-  public void SetPropertyValue(string propertyName, object value)
-  {
-    switch (propertyName)
-    {
-      case "Tag":
-        this.Tag = value.ToString();
-        break;
-
-      case "LineTag":
-        this.LineTag = value.ToString();
-        break;
-
-      default:
-        throw new Exception("Property " + propertyName + " does not exist in the DataObject.");
-    }
-  }
-}
-
-public class Valve
-{
-  public string Tag { get; set; }
-  public string LineTag { get; set; }
 }
