@@ -105,6 +105,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PrismContrib", "PrismContri
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrismContrib.Desktop", "Libraries\PrismContrib\Desktop\PrismContrib.Desktop.csproj", "{1A611244-54BE-4F12-AA34-12F54A2B07E6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSVDataLayer", "Adapter\CSVDataLayer\CSVDataLayer.csproj", "{4F181541-AFF4-4AE6-9FEE-A7A07E1ACB26}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = iring-tools.vsmdi
@@ -388,6 +390,14 @@ Global
 		{1A611244-54BE-4F12-AA34-12F54A2B07E6}.MobileDev|Any CPU.Build.0 = MobileDev|Any CPU
 		{1A611244-54BE-4F12-AA34-12F54A2B07E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A611244-54BE-4F12-AA34-12F54A2B07E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F181541-AFF4-4AE6-9FEE-A7A07E1ACB26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F181541-AFF4-4AE6-9FEE-A7A07E1ACB26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F181541-AFF4-4AE6-9FEE-A7A07E1ACB26}.Demo|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F181541-AFF4-4AE6-9FEE-A7A07E1ACB26}.Demo|Any CPU.Build.0 = Debug|Any CPU
+		{4F181541-AFF4-4AE6-9FEE-A7A07E1ACB26}.MobileDev|Any CPU.ActiveCfg = Release|Any CPU
+		{4F181541-AFF4-4AE6-9FEE-A7A07E1ACB26}.MobileDev|Any CPU.Build.0 = Release|Any CPU
+		{4F181541-AFF4-4AE6-9FEE-A7A07E1ACB26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F181541-AFF4-4AE6-9FEE-A7A07E1ACB26}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -428,5 +438,6 @@ Global
 		{748B993D-4F65-4A39-B865-6A7D5412C4BA} = {270F5203-FE58-480F-AF4B-C38D4461FEEC}
 		{6AFEF057-8D02-4F3C-AC41-6815E9CFD15A} = {4DBA978E-FCE5-4FF2-A22D-E4506C4E6DEA}
 		{A9DAEA2D-26AC-4FFE-A4B0-3DEF95DE4168} = {4DBA978E-FCE5-4FF2-A22D-E4506C4E6DEA}
+		{4F181541-AFF4-4AE6-9FEE-A7A07E1ACB26} = {4DBA978E-FCE5-4FF2-A22D-E4506C4E6DEA}
 	EndGlobalSection
 EndGlobal
