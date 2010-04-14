@@ -4,24 +4,25 @@ using System.Text;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using org.iringtools.informationmodel.events;
+
 using PrismContrib.Base;
 
 using Microsoft.Practices.Composite.Events;
 
-using org.iringtools.modulelibrary.events;
+using ModuleLibrary.Events;
 
-using org.iringtools.ontologyservice.presentation;
-using org.iringtools.ontologyservice.presentation.presentationmodels;
+using OntologyService.Interface;
+using OntologyService.Interface.PresentationModels;
 
-using org.iringtools.informationmodel.usercontrols;
+using InformationModel.Events;
+using InformationModel.UserControls;
 
 using org.ids_adi.iring;
 using org.ids_adi.iring.referenceData;
 using org.ids_adi.qmxf;
 
 
-namespace org.iringtools.modules.contextmenu.contextmenuregion
+namespace Modules.ContextMenu.ContextMenuRegion
 {
     public class ContextMenuPresenter : PresenterBase<IContextMenuView>
     {
@@ -35,34 +36,22 @@ namespace org.iringtools.modules.contextmenu.contextmenuregion
         
         private Button btnAddClass
         {
-            get 
-            { 
-                return ButtonCtrl("btnAddClass1"); 
-            }
+            get { return ButtonCtrl("btnAddClass1"); }
         }
 
         private Button btnEditClass
         {
-            get 
-            { 
-                return ButtonCtrl("btnEditClass1"); 
-            }
+            get { return ButtonCtrl("btnEditClass1"); }
         }
 
         private Button btnEditTemplate
         {
-            get 
-            { 
-                return ButtonCtrl("btnEditTemplate1"); 
-            }
+            get { return ButtonCtrl("btnEditTemplate1"); }
         }
 
         private Button btnAddTemplate
         {
-            get 
-            { 
-                return ButtonCtrl("btnAddTemplate1");
-            }
+            get { return ButtonCtrl("btnAddTemplate1"); }
         }
 
         /// <summary>
@@ -110,7 +99,7 @@ namespace org.iringtools.modules.contextmenu.contextmenuregion
         }
 
         void buttonAddClassHandler(object sender, System.Windows.RoutedEventArgs e)
-        {
+        {            
             aggregator.GetEvent<ButtonEvent>().Publish(new ButtonEventArgs() { ButtonClicked = (Button)e.OriginalSource, Sender = sender });
         }
         

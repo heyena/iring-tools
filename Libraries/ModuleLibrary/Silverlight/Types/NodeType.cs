@@ -1,5 +1,5 @@
 ﻿
-namespace org.iringtools.modulelibrary.types
+namespace ModuleLibrary.Types
 {
 
     public enum NodeType

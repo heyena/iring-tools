@@ -5,15 +5,13 @@ using org.ids_adi.qmxf;
 using org.ids_adi.iring;
 using org.iringtools.library;
 
-namespace org.iringtools.modulelibrary.layerdal
+namespace ModuleLibrary.LayerDAL
 {
     public interface IReferenceData //: IReferenceDataSilverlight
     {
         event EventHandler<EventArgs> OnDataArrived;
 
         object Search(string query, object userState);
-
-        object SearchReset(string query, object userState);
 
         object Find(string query, object userState);
 
@@ -26,8 +24,6 @@ namespace org.iringtools.modulelibrary.layerdal
         List<Entity> GetClassTemplates(string id, object userState);
 
         void GetClassLabel(string key, string uri, object userState);
-
-        void GetTemplateLabel(string key, string uri, object userState);
 
         QMXF GetTemplate(string id, object userState);
 

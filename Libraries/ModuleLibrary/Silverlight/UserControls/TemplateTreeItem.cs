@@ -9,23 +9,23 @@ using PrismContrib.Errors;
 using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Composite.Events;
 
-using org.iringtools.modulelibrary.events;
-using org.iringtools.modulelibrary.types;
-using org.iringtools.modulelibrary.extensions;
-using org.iringtools.modulelibrary.layerdal;
+using ModuleLibrary.Events;
+using ModuleLibrary.Types;
+using ModuleLibrary.Extensions;
+using ModuleLibrary.LayerDAL;
 
-using org.iringtools.informationmodel.events;
-using org.iringtools.informationmodel.types;
+using InformationModel.Events;
+using InformationModel.Types;
 
 using org.ids_adi.iring.referenceData;
 using org.iringtools.utility;
 using org.ids_adi.qmxf;
 using System.Linq;
 
-using org.iringtools.ontologyservice.presentation.presentationmodels;
+using OntologyService.Interface.PresentationModels;
 using org.iringtools.library;
 
-namespace org.iringtools.informationmodel.usercontrols
+namespace InformationModel.UserControls
 {
   public class TemplateTreeItem : CustomTreeItem
   {
@@ -75,15 +75,20 @@ namespace org.iringtools.informationmodel.usercontrols
       }
       else if (CompletedEventArgs.CheckForType(CompletedEventType.GetClassLabel))
       {
-        DisplayAndSaveLabel(CompletedEventArgs.Data);
+        ShowAndSaveLabel(CompletedEventArgs.Data);
       }
     }
 
-    public override void nodeMouseLeftButtonUpHandler(object sender, MouseButtonEventArgs e)
+    /// <summary>
+    /// Handles the Selected event of the node control.
+    /// </summary>
+    /// <param name="sender">The source of the event.</param>
+    /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
+    public override void nodeSelectedHandler(object sender, RoutedEventArgs e)
     {
       if (!isProcessed)
       {
-        id = Entity.uri.GetIdFromUri();
+        id = Entity.uri.GetIdFromUri();        
 
         ReferenceDataService.GetTemplate(id, this);
 
@@ -92,90 +97,83 @@ namespace org.iringtools.informationmodel.usercontrols
       }
 
       UpdateModel();
+
       FillTemplateDetailView();
-      e.Handled = true;
     }
 
     private void FillTemplateDetailView()
     {
-      PresentationModel.SelectedTreeItem = this;
-      PresentationModel.DetailProperties.Clear();
+        PresentationModel.SelectedTreeItem = this;
+        PresentationModel.DetailProperties.Clear();
 
       if (Tag == null)
         return;
 
       if (Tag is Entity)
       {
-        Entity = (Entity)Tag;
+        Entity entity = (Entity)Tag;
+        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Label", entity.label);
+        PresentationModel.DetailProperties.Add(keyValuePair);
+        keyValuePair = new KeyValuePair<string, string>("Uri", entity.uri);
+        PresentationModel.DetailProperties.Add(keyValuePair);
+        keyValuePair = new KeyValuePair<string, string>("Repository", entity.repository);
+        PresentationModel.DetailProperties.Add(keyValuePair);
       }
-      else
+      else if (Tag is TemplateDefinition)
       {
-        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Repository", Entity.repository);
+        TemplateDefinition templateDefinition = (TemplateDefinition)Tag;
+
+        KeyValuePair<string, string> list = new KeyValuePair<string, string>("QMXF Type", "Template Definition");
+        PresentationModel.DetailProperties.Add(list);
+
+        list = new KeyValuePair<string, string>("Name", (templateDefinition.name.FirstOrDefault() != null ? templateDefinition.name.FirstOrDefault().value : string.Empty));
+        PresentationModel.DetailProperties.Add(list);
+
+        GetClassLabel("Identifier", templateDefinition.identifier);
+
+        list = new KeyValuePair<string, string>("Description", (templateDefinition.description.FirstOrDefault() != null ? templateDefinition.description.FirstOrDefault().value : string.Empty));
+        PresentationModel.DetailProperties.Add(list);
+
+        string statusClass = templateDefinition.status.FirstOrDefault() != null ? templateDefinition.status.FirstOrDefault().Class : string.Empty;
+        GetClassLabel("Status Class", statusClass);
+
+        string statusAuthority = templateDefinition.status.FirstOrDefault() != null ? templateDefinition.status.FirstOrDefault().authority : string.Empty;
+        GetClassLabel("Status Authority", statusAuthority);
+
+        string statusFrom = templateDefinition.status.FirstOrDefault() != null ? templateDefinition.status.FirstOrDefault().from : string.Empty;
+        GetClassLabel("Status From", statusFrom);
+
+        string statusTo = templateDefinition.status.FirstOrDefault() != null ? templateDefinition.status.FirstOrDefault().to : string.Empty;
+        GetClassLabel("Status To", statusTo);
+      }
+      else if (Tag is TemplateQualification)
+      {
+        TemplateQualification templateQualification = (TemplateQualification)Tag;
+
+        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("QMXF Type", "Template Qualification");
         PresentationModel.DetailProperties.Add(keyValuePair);
 
-        keyValuePair = new KeyValuePair<string, string>("URI", Entity.uri);
+        keyValuePair = new KeyValuePair<string, string>("Name", (templateQualification.name.FirstOrDefault() != null ? templateQualification.name.FirstOrDefault().value : string.Empty));
         PresentationModel.DetailProperties.Add(keyValuePair);
 
-        if (Tag is TemplateDefinition)
-        {
-          TemplateDefinition templateDefinition = (TemplateDefinition)Tag;
+        GetClassLabel("Identifier", templateQualification.identifier);
 
-          keyValuePair = new KeyValuePair<string, string>("QMXF Type", "Template Definition");
-          PresentationModel.DetailProperties.Add(keyValuePair);
+        keyValuePair = new KeyValuePair<string, string>("Description", (templateQualification.description.FirstOrDefault() != null ? templateQualification.description.FirstOrDefault().value : string.Empty));
+        PresentationModel.DetailProperties.Add(keyValuePair);
 
-          keyValuePair = new KeyValuePair<string, string>("Name", (templateDefinition.name.FirstOrDefault() != null ? templateDefinition.name.FirstOrDefault().value : string.Empty));
-          PresentationModel.DetailProperties.Add(keyValuePair);
+        GetClassLabel("Qualifies", templateQualification.qualifies);
 
-          //GetClassLabel("Identifier", templateDefinition.identifier);
+        string statusClass = templateQualification.status.FirstOrDefault() != null ? templateQualification.status.FirstOrDefault().Class : string.Empty;
+        GetClassLabel("Status Class", statusClass);
 
-          keyValuePair = new KeyValuePair<string, string>("Identifier", (templateDefinition.identifier != null ? templateDefinition.identifier.ToString() : string.Empty));
-          PresentationModel.DetailProperties.Add(keyValuePair);
+        string statusAuthority = templateQualification.status.FirstOrDefault() != null ? templateQualification.status.FirstOrDefault().authority : string.Empty;
+        GetClassLabel("Status Authority", statusAuthority);
 
-          keyValuePair = new KeyValuePair<string, string>("Description", (templateDefinition.description.FirstOrDefault() != null ? templateDefinition.description.FirstOrDefault().value : string.Empty));
-          PresentationModel.DetailProperties.Add(keyValuePair);
+        string statusFrom = templateQualification.status.FirstOrDefault() != null ? templateQualification.status.FirstOrDefault().from : string.Empty;
+        GetClassLabel("Status From", statusFrom);
 
-          string statusClass = templateDefinition.status.FirstOrDefault() != null ? templateDefinition.status.FirstOrDefault().Class : string.Empty;
-          PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>("Status Class", statusClass));
-
-          string statusAuthority = templateDefinition.status.FirstOrDefault() != null ? templateDefinition.status.FirstOrDefault().authority : string.Empty;
-          PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>("Status Authority", statusAuthority));
-
-          string statusFrom = templateDefinition.status.FirstOrDefault() != null ? templateDefinition.status.FirstOrDefault().from : string.Empty;
-          PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>("Status From", statusFrom));
-
-          string statusTo = templateDefinition.status.FirstOrDefault() != null ? templateDefinition.status.FirstOrDefault().to : string.Empty;
-          PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>("Status To", statusTo));
-
-        }
-        else if (Tag is TemplateQualification)
-        {
-          TemplateQualification templateQualification = (TemplateQualification)Tag;
-
-          keyValuePair = new KeyValuePair<string, string>("QMXF Type", "Template Qualification");
-          PresentationModel.DetailProperties.Add(keyValuePair);
-
-          keyValuePair = new KeyValuePair<string, string>("Name", (templateQualification.name.FirstOrDefault() != null ? templateQualification.name.FirstOrDefault().value : string.Empty));
-          PresentationModel.DetailProperties.Add(keyValuePair);
-
-          GetClassLabel("Identifier", templateQualification.identifier);
-
-          keyValuePair = new KeyValuePair<string, string>("Description", (templateQualification.description.FirstOrDefault() != null ? templateQualification.description.FirstOrDefault().value : string.Empty));
-          PresentationModel.DetailProperties.Add(keyValuePair);
-
-          GetClassLabel("Qualifies", templateQualification.qualifies);
-
-          string statusClass = templateQualification.status.FirstOrDefault() != null ? templateQualification.status.FirstOrDefault().Class : string.Empty;
-          GetClassLabel("Status Class", statusClass);
-
-          string statusAuthority = templateQualification.status.FirstOrDefault() != null ? templateQualification.status.FirstOrDefault().authority : string.Empty;
-          GetClassLabel("Status Authority", statusAuthority);
-
-          string statusFrom = templateQualification.status.FirstOrDefault() != null ? templateQualification.status.FirstOrDefault().from : string.Empty;
-          GetClassLabel("Status From", statusFrom);
-
-          string statusTo = templateQualification.status.FirstOrDefault() != null ? templateQualification.status.FirstOrDefault().to : string.Empty;
-          GetClassLabel("Status To", statusTo);
-        }
+        string statusTo = templateQualification.status.FirstOrDefault() != null ? templateQualification.status.FirstOrDefault().to : string.Empty;
+        GetClassLabel("Status To", statusTo);
       }
     }
 
@@ -193,7 +191,14 @@ namespace org.iringtools.informationmodel.usercontrols
         // Add first level Search result nodes
         foreach (RoleDefinition roleDefinitions in roles)
         {
-          templateNode.Items.Add(AddRoleTreeItem(roleDefinitions.name[0].value ?? "[null]", Entity, roleDefinitions));
+          Entity entity = new Entity
+          {
+            label = roleDefinitions.name[0].value ?? "[null]",
+            repository = "UnKnown",
+            uri = ""//roleDefinitions.qualifies
+          };
+
+          templateNode.Items.Add(AddRoleTreeItem(entity.label, entity, roleDefinitions));
         }
       }
       catch (Exception ex)
@@ -215,7 +220,14 @@ namespace org.iringtools.informationmodel.usercontrols
         // Add first level Search result nodes
         foreach (RoleQualification roleQualification in roles)
         {
-          templateNode.Items.Add(AddRoleTreeItem(roleQualification.name[0].value ?? "[null]", Entity, roleQualification));          
+          Entity entity = new Entity
+          {
+            label = roleQualification.name[0].value ?? "[null]",
+            repository = "UnKnown",
+            uri = ""//roleQualification.qualifies
+          };
+
+          templateNode.Items.Add(AddRoleTreeItem(entity.label, entity, roleQualification));          
         }
       }
       catch (Exception ex)

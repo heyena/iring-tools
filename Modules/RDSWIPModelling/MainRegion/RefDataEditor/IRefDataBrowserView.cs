@@ -1,6 +1,6 @@
 ﻿using PrismContrib.Base;
 
-namespace org.iringtools.modelling.mainregion.refdatabrowser
+namespace Modelling.MainRegion.RefDataBrowser
 {
     public interface IRefDataEditorView : IViewBase { }
 }

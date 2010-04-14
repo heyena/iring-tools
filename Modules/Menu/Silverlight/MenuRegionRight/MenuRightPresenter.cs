@@ -7,12 +7,12 @@ using PrismContrib.Base;
 using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Composite.Events;
 
-using org.iringtools.modulelibrary.events;
-using org.iringtools.modulelibrary.types;
+using ModuleLibrary.Events;
+using ModuleLibrary.Types;
 
-using org.iringtools.ontologyservice.presentation.presentationmodels;
+using OntologyService.Interface.PresentationModels;
 
-namespace org.iringtools.modules.menu.menuregionright
+namespace Modules.Menu.MenuRegionRight
 {
   public class MenuRightPresenter : PresenterBase<IMenuRightView>
   {
@@ -88,16 +88,18 @@ namespace org.iringtools.modules.menu.menuregionright
           rdLogin.Height = new GridLength(isValid ? 1 : 20);
           rdLogout.Height = new GridLength(isValid ? 22 : 0);
 
-          //if (!isValid)
-          //  aggregator.GetEvent<StatusEvent>().Publish(new StatusEventArgs
-          //  {
-          //    Message = "Password is iring ",
-          //  });
-          //else
-          //  aggregator.GetEvent<StatusEvent>().Publish(new StatusEventArgs
-          //  {
-          //    Message = "logged in as " + TextCtrl("txtLogin").Text,
-          //  });
+          if (!isValid)
+            aggregator.GetEvent<StatusEvent>().Publish(new StatusEventArgs
+            {
+              Message = "Password is iring ",
+              StatusPanel = StatusType.Middle,
+            });
+          else
+            aggregator.GetEvent<StatusEvent>().Publish(new StatusEventArgs
+            {
+              Message = "logged in as " + TextCtrl("txtLogin").Text,
+              StatusPanel = StatusType.Middle
+            });
           break;
 
         case "btnLogout":

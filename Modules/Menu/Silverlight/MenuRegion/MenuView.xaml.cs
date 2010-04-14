@@ -2,7 +2,7 @@
 
 using PrismContrib.Base;
 
-namespace org.iringtools.modules.menu.menuregion
+namespace Modules.Menu.MenuRegion
 {
   public partial class MenuView : UserControl, IMenuView
   {

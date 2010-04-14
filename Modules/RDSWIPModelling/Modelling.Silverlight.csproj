@@ -101,7 +101,6 @@
     </Compile>
     <Compile Include="Modelling.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\..\AssemblyInfo.cs" />  
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\ModuleLibrary\Silverlight\ModuleLibrary.Silverlight.csproj">
@@ -148,7 +147,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="MenuRegion\RefDataMenu\iRINGTools.ReferenceDataEditor.png" />
+    <Resource Include="MenuRegion\RefDataMenu\iRING.RefDataEditor.Small.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\v3.0\Microsoft.Silverlight.CSharp.targets" Condition="" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

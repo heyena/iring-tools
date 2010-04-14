@@ -1,9 +1,9 @@
 <ArrayOfRepository xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.library" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
   <Repository>
-    <description>Development Sandbox</description>
+    <description>iRING Sandbox</description>
     <isReadOnly>false</isReadOnly>
-    <name>My Private Sandbox</name>
-    <uri>http://localhost/SandboxService/sparql</uri>
+    <name>iRING Sandbox</name>
+    <uri>http://localhost:2020/sandbox</uri>
   </Repository>
   <Repository>
     <description>RDS/WIP Part 4 Reference Data Library</description>

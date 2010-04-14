@@ -1,10 +1,11 @@
 ﻿
-namespace org.iringtools.modulelibrary.types
+namespace ModuleLibrary.Types
 {
   public enum StatusType
   {
     NotDefined,
     Left,
+    Middle,
     Right
   }
 }

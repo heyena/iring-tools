@@ -1,9 +1,16 @@
 <ArrayOfRepository xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.library" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
-  <Repository>
-    <description>iRING Sandbox</description>
+ <Repository>
+    <description>Development Sandbox</description>
     <isReadOnly>true</isReadOnly>
-    <name>iRINGSandbox</name>
-    <uri>http://www.iringsandbox.org/SandboxService/sparql</uri>
+    <name>My Private Sandbox</name>
+    <uri>http://localhost:2020/sandbox</uri>
+  </Repository>
+  <Repository>
+    <description>Camelot Project Sandbox for iRING Demonstration.</description>
+    <encryptedCredentials>kI1z4/wHRw8iDyhLZIXDcAx2Yy4zT06E44f//ZkcyBSm5yV8aI/HO7t6u7O6oOaI7FiIanj4FJaQp4wCQn/azQ==</encryptedCredentials>
+    <isReadOnly>false</isReadOnly>
+    <name>CamelotSandbox</name>
+    <uri>https://secure.ids-adi.org/sandbox/camelot</uri>
   </Repository>
   <Repository>
     <description>RDS/WIP Part 4 Reference Data Library</description>

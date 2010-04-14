@@ -12,7 +12,7 @@ using System.Reflection;
 
 using org.ids_adi.qmxf;
 
-namespace org.iringtools.modules.templateeditor.editorregion
+namespace Modules.TemplateEditor.EditorRegion
 {
     public abstract class TemplateModel : ITemplateEditorModel, INotifyPropertyChanged
     {

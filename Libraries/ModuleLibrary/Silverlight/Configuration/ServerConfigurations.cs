@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using org.iringtools.library.presentation;
-using org.iringtools.library.presentation.configuration;
+using Library.Interface;
+using Library.Interface.Configuration;
 using Microsoft.Practices.Unity;
 
-namespace org.iringtools.library.configuration
+namespace Library.Configuration
 {
     /// <summary>
     /// Server configuration - values are set in Web.Config 

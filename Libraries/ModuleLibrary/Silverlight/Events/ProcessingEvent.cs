@@ -1,6 +1,6 @@
 ﻿
 using Microsoft.Practices.Composite.Presentation.Events;
-namespace org.iringtools.library.events
+namespace Library.Events
 {
     public class ProcessingEvent :  CompositePresentationEvent<ProcessingEventArgs>
     {

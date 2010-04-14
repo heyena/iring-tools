@@ -10,14 +10,14 @@ using PrismContrib.Errors;
 using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Composite.Events;
 
-using org.iringtools.modulelibrary.events;
-using org.iringtools.modulelibrary.layerdal;
-using org.iringtools.modulelibrary.types;
-using org.iringtools.modulelibrary.extensions;
+using ModuleLibrary.Events;
+using ModuleLibrary.LayerDAL;
+using ModuleLibrary.Types;
+using ModuleLibrary.Extensions;
 
-using org.iringtools.informationmodel.events;
-using org.iringtools.informationmodel.types;
-using org.iringtools.informationmodel.usercontrols;
+using InformationModel.Events;
+using InformationModel.Types;
+using InformationModel.UserControls;
 
 using org.ids_adi.iring.referenceData;
 using org.iringtools.utility;
@@ -26,13 +26,13 @@ using System.Windows.Resources;
 using org.iringtools.library;
 
 #if SILVERLIGHT
-using org.iringtools.modulelibrary.behaviors;
+using ModuleLibrary.Behaviors;
 using System.Windows.Interactivity;
 #else
 
 #endif
 
-namespace org.iringtools.informationmodel.usercontrols
+namespace InformationModel.UserControls
 {
     public abstract class CustomTabItem : TabItem, ICommand
     {
@@ -82,7 +82,9 @@ namespace org.iringtools.informationmodel.usercontrols
             {
                 Content = "x" //buttonImage
             };
-          
+
+
+
             // Subscribe to click event and bubble to parent
             btnCtrl.Click += (object sender, RoutedEventArgs e) => { OnCloseClick(this, e); };
 
@@ -92,10 +94,9 @@ namespace org.iringtools.informationmodel.usercontrols
 
             txtCtrl.SetValue(Grid.ColumnProperty, 0);
             btnCtrl.SetValue(Grid.ColumnProperty, 2);
-          
+
+
             tvwCtrl = new TreeView();
-            tvwCtrl.BorderThickness = new Thickness(1);
-            tvwCtrl.BorderBrush = new SolidColorBrush(Colors.LightGray);                
 
 #if SILVERLIGHT
             MouseScrollBehavior mouseScrollBehavior = new MouseScrollBehavior();

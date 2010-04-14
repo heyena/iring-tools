@@ -1,7 +1,7 @@
 ﻿using System;
-using org.iringtools.modulelibrary.types;
+using ModuleLibrary.Types;
 
-namespace org.iringtools.modulelibrary.events
+namespace ModuleLibrary.Events
 {
   public class StatusEventArgs : EventArgs
   {

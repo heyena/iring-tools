@@ -1,21 +1,21 @@
 ﻿
-using org.iringtools.modulelibrary.layerdal;
+using ModuleLibrary.LayerDAL;
 using Microsoft.Practices.Unity;
-using org.iringtools.modulelibrary.events;
-using org.iringtools.modulelibrary.baseclass;
-using org.iringtools.modulelibrary.types;
+using ModuleLibrary.Events;
+using ModuleLibrary.Base;
+using ModuleLibrary.Types;
 using System;
 using System.Collections.Generic;
 using org.ids_adi.qmxf;
 using org.ids_adi.iring;
 using org.ids_adi.iring.referenceData;
 using Microsoft.Practices.Composite.Events;
-using org.iringtools.library.presentation.events;
-using org.iringtools.informationmodel.events;
+using Library.Interface.Events;
+using InformationModel.Events;
 using org.iringtools.library;
 
 
-namespace org.iringtools.modulelibrary.layerbll
+namespace ModuleLibrary.LayerBLL
 {
   public class ReferenceDataBLL : BLLBase, IReferenceData
   {
@@ -83,6 +83,11 @@ namespace org.iringtools.modulelibrary.layerbll
         ServiceName = processType.ToString()
       });
 
+      aggregator.GetEvent<SpinnerEvent>().Publish(new SpinnerEventArgs
+      {
+        Active = SpinnerEventType.Stopped,
+        ActiveService = Enum.GetName(typeof(CompletedEventType),processType)
+      });
       // POST Processing (if applicable)
       switch (processType)
       {
@@ -134,12 +139,6 @@ namespace org.iringtools.modulelibrary.layerbll
       if (OnDataArrived != null)
           if (((CompletedEventArgs)e).Data!=null)
             OnDataArrived(sender, e);
-
-      aggregator.GetEvent<SpinnerEvent>().Publish(new SpinnerEventArgs
-      {
-          Active = SpinnerEventType.Stopped,
-          ActiveService = Enum.GetName(typeof(CompletedEventType), processType)
-      });
     } 
     #endregion
 
@@ -206,12 +205,7 @@ namespace org.iringtools.modulelibrary.layerbll
         StartService("Search");
         return dal.Search(query, userState);
     }
-
-    public object SearchReset(string query, object userState)
-    {
-        StartService("Search");
-        return dal.SearchReset(query, userState);
-    }
+   
     /// <summary>
     /// do a search
     /// </summary>
@@ -320,7 +314,7 @@ namespace org.iringtools.modulelibrary.layerbll
     //}
 
     /// <summary>
-    /// Resolves class uri id to label.
+    /// Gets the class label of an uri.
     /// </summary>
     /// <param name="key">The key.</param>
     /// <param name="uri">The uri.</param>
@@ -329,18 +323,6 @@ namespace org.iringtools.modulelibrary.layerbll
     {
       StartService("GetClassLabel");
       dal.GetClassLabel(key, uri, userState);
-    }
-    
-    /// <summary>
-    /// Resolves template uri id to label.
-    /// </summary>
-    /// <param name="key"></param>
-    /// <param name="uri"></param>
-    /// <param name="userState"></param>
-    public void GetTemplateLabel(string key, string uri, object userState)
-    {
-      StartService("GetTemplateLabel");
-      dal.GetTemplateLabel(key, uri, userState);
     }
 
     //// <summary>

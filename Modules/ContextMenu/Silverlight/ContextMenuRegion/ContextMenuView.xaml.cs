@@ -2,12 +2,12 @@
 
 using PrismContrib.Base;
 
-using org.iringtools.library.presentation.events;
+using Library.Interface.Events;
 using Microsoft.Practices.Composite.Events;
 
 using Microsoft.Practices.Composite.Regions;
 
-namespace org.iringtools.modules.contextmenu.contextmenuregion
+namespace Modules.ContextMenu.ContextMenuRegion
 {
     public partial class ContextMenuView : UserControl, IContextMenuView
     {

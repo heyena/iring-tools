@@ -9,7 +9,7 @@ using Microsoft.Practices.Composite.Logging;
 using PrismContrib.Loggers;
 using PrismContrib.Errors;
 
-using org.iringtools.modulelibrary.events;
+using ModuleLibrary.Events;
 
 namespace PrismContrib.Base
 {
@@ -225,16 +225,6 @@ namespace PrismContrib.Base
       return GetControl<Grid>(gridName);
     }
 
-    /// <summary>
-    /// CheckBox the CTRL
-    /// </summary>
-    /// <param name="controlName">Name of the control.</param>
-    /// <returns></returns>
-    public CheckBox CheckBoxCtrl(string controlName)
-    {
-        return GetControl<CheckBox>(controlName);
-    }
-      
     /// <summary>
     /// Buttons the CTRL.
     /// </summary>

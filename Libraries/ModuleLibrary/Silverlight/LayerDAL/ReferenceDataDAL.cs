@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Text;
 using System.Collections.Generic;
-using org.iringtools.library.presentation.configuration;
-using org.iringtools.modulelibrary.baseclass;
-using org.iringtools.modulelibrary.events;
-using org.iringtools.modulelibrary.types;
+using Library.Interface.Configuration;
+using ModuleLibrary.Base;
+using ModuleLibrary.Events;
+using ModuleLibrary.Types;
 using System.Linq;
 using System.Net;
 using org.ids_adi.iring.referenceData;
 using org.iringtools.utility;
 using org.ids_adi.qmxf;
-using org.iringtools.modulelibrary.extensions;
+using ModuleLibrary.Extensions;
 using System.ComponentModel;
-using org.iringtools.library.presentation.events;
+using Library.Interface.Events;
 using org.iringtools.library;
 
-namespace org.iringtools.modulelibrary.layerdal
+namespace ModuleLibrary.LayerDAL
 {
     /// <summary>
     /// DATA ACCESS LAYER FOR ModuleLibrary.Desktop: Service References\REferenceDataProxy
@@ -43,7 +43,6 @@ namespace org.iringtools.modulelibrary.layerdal
 
         
         private WebClient _searchClient;
-        private WebClient _searchResetClient;
         private WebClient _findClient;
         private WebClient _classClient;
         private WebClient _templateClient;
@@ -68,7 +67,6 @@ namespace org.iringtools.modulelibrary.layerdal
               _referenceDataServiceUri = config.ReferenceDataServiceUri;
 
               _searchClient = new WebClient();
-              _searchResetClient = new WebClient();
               _findClient = new WebClient();
               _classClient = new WebClient();
               _templateClient = new WebClient();
@@ -80,7 +78,6 @@ namespace org.iringtools.modulelibrary.layerdal
 
               #region // All Async data results will be handled by OnCompleteEventHandler
               _searchClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
-              _searchResetClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
               _findClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
               _classClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
               _templateClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
@@ -163,44 +160,6 @@ namespace org.iringtools.modulelibrary.layerdal
                     {                        
                         CompletedType = CompletedEventType.Search,
                     };                    
-                    Error.SetError(ex);
-                }
-            }
-
-            #endregion
-
-            //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-            #region // Search Reset data arrived event handler
-            // SEARCH RESET
-            if (sender == _searchResetClient)
-            {
-                try
-                {
-                    // Cast e (AsyncCompletedEventArgs) to actual type so we can
-                    // retrieve the Result - assign to dictionary
-                    string result = ((DownloadStringCompletedEventArgs)e).Result;
-
-                    RefDataEntities entities = result.DeserializeDataContract<RefDataEntities>();
-
-                    // If the cast failed then return
-                    if (entities == null)
-                        return;
-
-                    // Configure event argument
-                    args = new CompletedEventArgs
-                    {
-                        UserState = ((DownloadStringCompletedEventArgs)e).UserState,
-                        CompletedType = CompletedEventType.Search,
-                        Data = entities
-                    };
-                }
-                catch (Exception ex)
-                {
-                    // filling args to stop spinner
-                    args = new CompletedEventArgs
-                    {
-                        CompletedType = CompletedEventType.Search,
-                    };
                     Error.SetError(ex);
                 }
             }
@@ -440,67 +399,18 @@ namespace org.iringtools.modulelibrary.layerdal
             string result = ((DownloadStringCompletedEventArgs)e).Result;
 
             string baseAddress = classLabelClient.BaseAddress;
-            int tagIndex = baseAddress.LastIndexOf("?tag=");
-            int idIndex = baseAddress.LastIndexOf("&id=");
+            int keyIndex = baseAddress.LastIndexOf("?key=");
+            int uriIndex = baseAddress.LastIndexOf("&uri=");
 
-            string tag = baseAddress.Substring(tagIndex + 5, idIndex - tagIndex - 5);
-            string id = baseAddress.Substring(idIndex + 4);
+            string key = baseAddress.Substring(keyIndex + 5, uriIndex - keyIndex - 5);
+            string uri = baseAddress.Substring(uriIndex + 5);
             string label = result.DeserializeDataContract<string>();
 
             CompletedEventArgs args = new CompletedEventArgs
             {
               UserState = ((DownloadStringCompletedEventArgs)e).UserState,
               CompletedType = CompletedEventType.GetClassLabel,
-              Data = new string[] { tag, id, label }
-            };
-
-            OnDataArrived(this, args);
-          }
-          catch (Exception ex)
-          {
-            throw ex;
-          }
-        }
-
-        void TemplateLabelCompletedEvent(object sender, AsyncCompletedEventArgs e)
-        {
-          try
-          {
-            WebClient classLabelClient = (WebClient)sender;
-            string result = ((DownloadStringCompletedEventArgs)e).Result;
-
-            string baseAddress = classLabelClient.BaseAddress;
-            int tagIndex = baseAddress.LastIndexOf("?tag=");
-            int idIndex = baseAddress.LastIndexOf("&id=");
-
-            string tag = baseAddress.Substring(tagIndex + 5, idIndex - tagIndex - 5);
-            string id = baseAddress.Substring(idIndex + 4);
-
-            string label = String.Empty;
-            QMXF qmxf = result.DeserializeXml<QMXF>();
-
-            if (qmxf.templateDefinitions != null && qmxf.templateDefinitions.Count > 0)
-            {
-              if (qmxf.templateDefinitions.FirstOrDefault().name != null &&
-                  qmxf.templateDefinitions.FirstOrDefault().name.Count > 0)
-              {
-                label = qmxf.templateDefinitions.FirstOrDefault().name.FirstOrDefault().value;
-              }
-            }
-            else if (qmxf.templateQualifications != null && qmxf.templateQualifications.Count > 0)
-            {
-              if (qmxf.templateQualifications.FirstOrDefault().name != null &&
-                  qmxf.templateQualifications.FirstOrDefault().name.Count > 0)
-              {
-                label = qmxf.templateQualifications.FirstOrDefault().name.FirstOrDefault().value;
-              }
-            }
-            
-            CompletedEventArgs args = new CompletedEventArgs
-            {
-              UserState = ((DownloadStringCompletedEventArgs)e).UserState,
-              CompletedType = CompletedEventType.GetClassLabel,
-              Data = new string[] { tag, id, label }
+              Data = new string[] { key, uri, label }
             };
 
             OnDataArrived(this, args);
@@ -531,11 +441,6 @@ namespace org.iringtools.modulelibrary.layerdal
             return userState;
         }
 
-        public object SearchReset(string query, object userState)
-        {
-            _searchResetClient.DownloadStringAsync(new Uri(_referenceDataServiceUri + "/search/" + query + "/reset"), userState);
-            return userState;
-        }
 
         public RefDataEntities SearchReset(string query)
         {
@@ -581,30 +486,14 @@ namespace org.iringtools.modulelibrary.layerdal
           return null;
         }
 
-        public void GetClassLabel(string tag, string id, object userState)
+        public void GetClassLabel(string key, string uri, object userState)
         {
-          id = Utility.GetIdFromURI(id);
+          WebClient classLabelClient = new WebClient();
+          string id = uri.Substring(uri.LastIndexOf("#") + 1);
 
-          if (!String.IsNullOrEmpty(id))
-          {
-            WebClient classLabelClient = new WebClient();
-            classLabelClient.BaseAddress += "?tag=" + tag + "&id=" + id;
-            classLabelClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(ClassLabelCompletedEvent);
-            classLabelClient.DownloadStringAsync(new Uri(_referenceDataServiceUri + "/classes/" + id + "/label"), userState);
-          }
-        }
-
-        public void GetTemplateLabel(string tag, string id, object userState)
-        {
-          id = Utility.GetIdFromURI(id);
-
-          if (!String.IsNullOrEmpty(id))
-          {
-            WebClient classLabelClient = new WebClient();
-            classLabelClient.BaseAddress += "?tag=" + tag + "&id=" + id;
-            classLabelClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(TemplateLabelCompletedEvent);
-            classLabelClient.DownloadStringAsync(new Uri(_referenceDataServiceUri + "/templates/" + id), userState);
-          }
+          classLabelClient.BaseAddress += "?key=" + key + "&uri=" + uri;
+          classLabelClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(ClassLabelCompletedEvent);
+          classLabelClient.DownloadStringAsync(new Uri(_referenceDataServiceUri + "/classes/" + id + "/label"), userState);
         }
 
         public List<Entity> GetSubClasses(string id)

@@ -1,6 +1,6 @@
 ﻿using PrismContrib.Base;
 
-namespace org.iringtools.modules.spinner
+namespace Modules.Spinner
 {
     public interface IWorkingSpinner : IViewBase
     {

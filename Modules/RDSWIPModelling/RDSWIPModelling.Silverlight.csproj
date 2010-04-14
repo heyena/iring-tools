@@ -91,7 +91,6 @@
     </Compile>
     <Compile Include="RDSWIPModellingModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\..\AssemblyInfo.cs" />  
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\ModuleLibrary\Silverlight\ModuleLibrary.Silverlight.csproj">

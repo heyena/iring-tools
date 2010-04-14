@@ -1,12 +1,12 @@
 ﻿using System.Linq;
-using org.iringtools.library.presentation.configuration;
-using org.iringtools.modulelibrary.baseclass;
-using org.iringtools.modulelibrary.events;
+using Library.Interface.Configuration;
+using ModuleLibrary.Base;
+using ModuleLibrary.Events; 
 using System.Collections.Generic;
 using System.Net;
-using org.iringtools.modulelibrary.types;
-using org.iringtools.modulelibrary.extensions;
-using org.iringtools.ontologyservice.presentation.entities;
+using ModuleLibrary.Types;
+using ModuleLibrary.Extensions;
+using OntologyService.Interface.Entities;
 using System;
 using System.Text;
 using org.ids_adi.iring;
@@ -16,7 +16,7 @@ using System.IO;
 using System.ComponentModel;
 using org.iringtools.library;
 
-namespace org.iringtools.modulelibrary.layerdal
+namespace ModuleLibrary.LayerDAL
 {
   /// <summary>
   /// DATA ACCESS LAYER FOR ModuleLibrary.Desktop: Service References\AdapterServiceProxy
@@ -43,7 +43,6 @@ namespace org.iringtools.modulelibrary.layerdal
     /// <summary>
     /// Adapter WCF Service
     /// </summary>
-    private WebClient _scopeListClient;
     private WebClient _dictionaryClient;
     private WebClient _generateClient;
     private WebClient _mappingClient;
@@ -51,7 +50,7 @@ namespace org.iringtools.modulelibrary.layerdal
     private WebClient _testClient;
 
     private string _adapterServiceUri;
-
+    
 
     #region Configure WebClient (client)
     /// <summary>
@@ -65,19 +64,17 @@ namespace org.iringtools.modulelibrary.layerdal
       {
 
         _adapterServiceUri = config.AdapterServiceUri;
-
+       
         // Instantiate Adapter Service using baseclass 
         // properties
-        _scopeListClient = new WebClient();
-        _dictionaryClient = new WebClient();
-        _generateClient = new WebClient();
-        _mappingClient = new WebClient();
-        _refreshClient = new WebClient();
-        _testClient = new WebClient();
+          _dictionaryClient = new WebClient();
+          _generateClient = new WebClient();
+          _mappingClient = new WebClient();
+          _refreshClient = new WebClient();
+          _testClient = new WebClient();
 
         #region Subscribe to client events
         // Async processing - specify event handlers
-        _scopeListClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
         _dictionaryClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
         _generateClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
         _mappingClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
@@ -112,7 +109,7 @@ namespace org.iringtools.modulelibrary.layerdal
         return;
 
       // Our event argument
-      CompletedEventArgs args = null;
+      CompletedEventArgs args = null;      
 
       //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
       #region // Your Handler HERE (template to copy/paste)
@@ -128,27 +125,7 @@ namespace org.iringtools.modulelibrary.layerdal
         };
       }
       #endregion
-      #region // Get ScopeList
-      // <Method> data arrived event handler 
-      if (sender == _scopeListClient)
-      {
-        string result = ((DownloadStringCompletedEventArgs)e).Result;
 
-        List<ScopeProject> scopes = result.DeserializeDataContract<List<ScopeProject>>();
-
-        // If the cast failed then return
-        if (scopes == null)
-          return;
-
-        // Configure event argument
-        args = new CompletedEventArgs
-        {
-          // Define your method in CompletedEventType and assign
-          CompletedType = CompletedEventType.GetScopes,
-          Data = scopes,
-        };
-      }
-      #endregion
       //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
       #region       // GetDataDictionary data arrived event handler
 
@@ -205,33 +182,37 @@ namespace org.iringtools.modulelibrary.layerdal
       // <Method> data arrived event handler 
       if (sender == _refreshClient)
       {
-        string result = ((DownloadStringCompletedEventArgs)e).Result;
-        Response response = result.DeserializeDataContract<Response>();
+        string result = ((UploadStringCompletedEventArgs)e).Result;
+
+        Response response = result.DeserializeXml<Response>();
 
         // Configure event argument
         args = new CompletedEventArgs
         {
           // Define your method in CompletedEventType and assign
           CompletedType = CompletedEventType.RefreshAll,
-          Data = response
+          Data = response.FirstOrDefault<string>()
         };
       }
       #endregion
 
       //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-      #region // Generate data arrived event handler
+      #region // Generate data arrived event handler 
       // <Method> data arrived event handler 
       if (sender == _generateClient)
       {
-        string result = ((DownloadStringCompletedEventArgs)e).Result;
-        Response response = result.DeserializeDataContract<Response>();
+
+        var result = ((UploadStringCompletedEventArgs)e).Result;
+
+        Response response = result.DeserializeXml<Response>();
 
         // Configure event argument
         args = new CompletedEventArgs
         {
           // Define your method in CompletedEventType and assign
           CompletedType = CompletedEventType.Generate,
-          Data = response
+          Data = response.FirstOrDefault<string>()
+
         };
       }
       #endregion
@@ -241,16 +222,17 @@ namespace org.iringtools.modulelibrary.layerdal
       // <Method> data arrived event handler 
       if (sender == _mappingClient && CheckClassTypeFor<UploadStringCompletedEventArgs>(e))
       {
-        var result = ((UploadStringCompletedEventArgs)e).Result;
-        Response response = result.DeserializeXml<Response>();
+      var result = ((UploadStringCompletedEventArgs)e).Result;
 
-        // Configure event argument
-        args = new CompletedEventArgs
-        {
-          // Define your method in CompletedEventType and assign
-          CompletedType = CompletedEventType.UpdateMapping,
-          Data = response.FirstOrDefault<string>()
-        };
+      Response response = result.DeserializeXml<Response>();
+
+      // Configure event argument
+      args = new CompletedEventArgs
+      {
+        // Define your method in CompletedEventType and assign
+        CompletedType = CompletedEventType.UpdateMapping,
+        Data = response.FirstOrDefault<string>()
+      };
       }
       #endregion
 
@@ -269,97 +251,91 @@ namespace org.iringtools.modulelibrary.layerdal
     //       result where we are making an Async call here so no values
     //       will be returned (we'll default to null so we can compile)
 
-    public Mapping GetMapping(string projectName, string applicationName)
+    #region Generate( overloaded ) 
+    /// <summary>
+    /// Generates this instance.
+    /// </summary>
+    /// <returns></returns>
+    public Response Generate()
     {
-      StringBuilder sb = new StringBuilder();
-      sb.Append(_adapterServiceUri);
-      sb.Append("/");
-      sb.Append(projectName);
-      sb.Append("/");
-      sb.Append(applicationName);
-      sb.Append("/mapping");
-      _mappingClient.DownloadStringAsync(new Uri(sb.ToString()));
-      return null;
+        _generateClient.DownloadStringAsync(new Uri(_adapterServiceUri + "/generate"));
+        return null;
     }
 
-    public DataDictionary GetDictionary(string projectName, string applicationName)
-    {
-      StringBuilder sb = new StringBuilder();
-      sb.Append(_adapterServiceUri);
-      sb.Append("/");
-      sb.Append(projectName);
-      sb.Append("/");
-      sb.Append(applicationName);
-      sb.Append("/datadictionary");
-      _dictionaryClient.DownloadStringAsync(new Uri(sb.ToString()));
-      return null;
-    }
 
-    public Response UpdateMapping(string projectName, string applicationName, Mapping mapping)
+    /// <summary>
+    /// Generates this instance.
+    /// </summary>
+    /// <returns></returns>
+    //public Response GenerateEDMX(DatabaseDictionary databaseDictionary)
+    //{
+    //  _generateClient.DownloadStringAsync(new Uri(_adapterServiceUri + "/dictionary/generate"));
+    //  return null;
+    //}
+
+    /// <summary>
+    /// Generates the specified user state.
+    /// </summary>
+    /// <param name="userState">State of the user.</param>
+    /// <returns></returns>
+    public Response Generate(object userState)
+    {
+      _generateClient.DownloadStringAsync(new Uri(_adapterServiceUri + "/generate"), userState);
+      return null;
+    }  
+    #endregion
+    
+    #region GetMapping() 
+    public Mapping GetMapping()
+    {
+      _mappingClient.DownloadStringAsync(new Uri(_adapterServiceUri + "/mapping"));
+      return null;
+    } 
+    #endregion
+    #region GetDictionary() 
+    public DataDictionary GetDictionary()
+    {
+      _dictionaryClient.DownloadStringAsync(new Uri(_adapterServiceUri + "/dictionary"));
+      return null;
+    } 
+    #endregion
+    #region UpdateMapping(mapping) 
+    public Response UpdateMapping(Mapping mapping)
     {
       string message = Utility.SerializeXml<Mapping>(mapping);
 
-      StringBuilder sb = new StringBuilder();
-      sb.Append(_adapterServiceUri);
-      sb.Append("/");
-      sb.Append(projectName);
-      sb.Append("/");
-      sb.Append(applicationName);
-      sb.Append("/mapping");
-
       _mappingClient.Headers["Content-type"] = "application/xml";
       _mappingClient.Encoding = Encoding.UTF8;
-      _mappingClient.UploadStringAsync(new Uri(sb.ToString()), "POST", message);
-
+      _mappingClient.UploadStringAsync(new Uri(_adapterServiceUri + "/mapping"), "POST", message);
+      
       return null;
     }
 
-    public Response GetScopes()
+    #endregion
+    #region RefreshAll( overloaded ) 
+    /// <summary>
+    /// Refreshes all.
+    /// </summary>
+    /// <returns></returns>
+    public Response RefreshAll()
     {
-      _scopeListClient.DownloadStringAsync(new Uri(_adapterServiceUri + "/scopes"));
+      _refreshClient.DownloadStringAsync(new Uri(_adapterServiceUri + "/refresh"));
+      
       return null;
     }
 
-    public Response Generate(string projectName, string applicationName)
-    {
-      StringBuilder sb = new StringBuilder();
-      sb.Append(_adapterServiceUri);
-      sb.Append("/");
-      sb.Append(projectName);
-      sb.Append("/");
-      sb.Append(applicationName);
-      sb.Append("/generate");
-      _generateClient.DownloadStringAsync(new Uri(sb.ToString()));
-      return null;
-    }
-
-    public Response RefreshAll(string projectName, string applicationName)
-    {
-      StringBuilder sb = new StringBuilder();
-      sb.Append(_adapterServiceUri);
-      sb.Append("/");
-      sb.Append(projectName);
-      sb.Append("/");
-      sb.Append(applicationName);
-      sb.Append("/refresh");
-      _refreshClient.DownloadStringAsync(new Uri(sb.ToString()));
-      return null;
-    }
-
+    /// <summary>
+    /// Refreshes all.
+    /// </summary>
+    /// <param name="userState">State of the user.</param>
+    /// <returns></returns>
     public Response RefreshAll(object userState)
     {
-      throw new NotImplementedException();
-    }
-
-    public Response Generate(object userState)
-    {
-      throw new NotImplementedException();
-    }
-
-    public Response UpdateMapping(Mapping mapping)
-    {
-      throw new NotImplementedException();
-    }
+      _refreshClient.DownloadStringAsync(new Uri(_adapterServiceUri + "/refresh"), userState);
+      
+      return null;
+    } 
+    #endregion
 
     public void GetUnitTestString(string valueToReturn)
     {
@@ -368,12 +344,12 @@ namespace org.iringtools.modulelibrary.layerdal
 
     #region IAdapterService Members
 
-    public Response RefreshDictionary(string projectName, string applicationName)
+    public Response RefreshDictionary()
     {
       throw new NotImplementedException();
     }
 
-    public Response RefreshGraph(string projectName, string applicationName, string graphName)
+    public Response RefreshGraph(string graphName)
     {
       throw new NotImplementedException();
     }
@@ -393,7 +369,7 @@ namespace org.iringtools.modulelibrary.layerdal
       throw new NotImplementedException();
     }
 
-    public Response ClearStore(string projectName, string applicationName)
+    public Response ClearStore()
     {
       throw new NotImplementedException();
     }

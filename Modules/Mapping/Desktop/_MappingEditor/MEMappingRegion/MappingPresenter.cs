@@ -6,29 +6,26 @@ using System.Windows.Controls;
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Unity;
 
-using org.iringtools.modulelibrary.entities;
-using org.iringtools.modulelibrary.events;
-using org.iringtools.modulelibrary.extensions;
-using org.iringtools.modulelibrary.types;
-using org.iringtools.modulelibrary.layerdal;
+using ModuleLibrary.Entities;
+using ModuleLibrary.Events;
+using ModuleLibrary.Extensions;
+using ModuleLibrary.Types;
 
-using org.iringtools.ontologyservice.presentation.presentationmodels;
-using org.iringtools.informationmodel.events;
+using OntologyService.Interface.PresentationModels;
+
 using PrismContrib.Base;
 
 using InformationModel.Events;
 using org.iringtools.library;
 
 #if SILVERLIGHT
-using org.iringtools.modulelibrary.behaviors;
+using ModuleLibrary.Behaviors;
 using System.Windows.Interactivity;
-using System.Windows.Input;
-using org.iringtools.utility;
 #else
 #endif
 
 
-namespace org.iringtools.modules.memappingregion
+namespace Modules.MappingEditor.MEMappingRegion
 {
   /// <summary>
   /// 
@@ -37,28 +34,21 @@ namespace org.iringtools.modules.memappingregion
   {
     private IEventAggregator aggregator = null;
     private IAdapter adapterProxy = null;
-    private IReferenceData referenceDataService = null;
     IIMPresentationModel model = null;
 
     private TreeView tvwMapping { get { return GetControl<TreeView>("tvwMapping"); } }
 
+    private Button btnData { get { return ButtonCtrl("btnData"); } }
     private Button btnAddTemplate { get { return ButtonCtrl("btnAddTemplate"); } }
     private Button btnAddGraph { get { return ButtonCtrl("btnAddGraph"); } }
     private Button btnMap { get { return ButtonCtrl("btnMap"); } }
-    private Button btnMakeClassRole { get { return ButtonCtrl("btnMakeClassRole"); } }
-    private ComboBox cbValueList { get { return ComboBoxCtrl("cbValueList"); } }
-    private Button btnAddValueList { get { return ButtonCtrl("btnAddValueList"); } }
-    private Button btnDelete { get { return ButtonCtrl("btnDelete"); } }
     private Button btnSave { get { return ButtonCtrl("btnSave"); } }
+    private Button btnDelete { get { return ButtonCtrl("btnDelete"); } }
     private TextBox txtLabel { get { return TextCtrl("txtLabel"); } }
 
-    public string selectedValueList { get { return ((ComboBoxItem)(cbValueList.SelectedItem)).Content.ToString(); } }
-    
     // Create, Update, Delete code for Mapping Editor treeview
     private MappingCRUD mappingCRUD = null;
 
-    public string unmappedToken { get { return " [UnMapped]"; }}
-  
     /// <summary>
     /// Initializes a new instance of the <see cref="MappingPresenter"/> class.
     /// </summary>
@@ -68,12 +58,13 @@ namespace org.iringtools.modules.memappingregion
     public MappingPresenter(IMappingView view, IIMPresentationModel model,
       IEventAggregator aggregator,
       IAdapter adapterProxy,
-      IReferenceData referenceDataService,
       IUnityContainer container)
       : base(view, model)
     {
       try
       {
+
+
         // Create CRUD Class and configure as required
         mappingCRUD = container.Resolve<MappingCRUD>();
         mappingCRUD.Presenter = this;
@@ -81,11 +72,10 @@ namespace org.iringtools.modules.memappingregion
 
         // Subcribe to button click events on mappingCRUD
         // note that we're sending in the txtLabel object as sender
+        btnData.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnData_Click(txtLabel, e); };
         btnAddTemplate.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnAddTemplate_Click(txtLabel, e); };
         btnAddGraph.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnAddGraph_Click(txtLabel, e); };
         btnMap.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnMap_Click(txtLabel, e); };
-        btnMakeClassRole.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnMakeClassRole_Click(txtLabel, e); };
-        btnAddValueList.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnAddValueList(txtLabel, e); };
         btnSave.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnSave_Click(txtLabel, e); };
         btnDelete.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnDelete_Click(txtLabel, e); };
 
@@ -99,11 +89,13 @@ namespace org.iringtools.modules.memappingregion
         this.aggregator = aggregator;
         this.model = model;
         this.model.MappingTree = tvwMapping;
-        this.adapterProxy = adapterProxy;
-        this.referenceDataService = referenceDataService;
 
+
+        // For class use
+        this.adapterProxy = adapterProxy;
         adapterProxy.OnDataArrived += OnDataArrivedHandler;
-        referenceDataService.OnDataArrived += OnDataArrivedHandler;
+
+        adapterProxy.GetMapping();
         aggregator.GetEvent<SpinnerEvent>().Subscribe(SpinnerEventHandler);
       }
       catch (Exception ex)
@@ -120,106 +112,80 @@ namespace org.iringtools.modules.memappingregion
     void OnDataArrivedHandler(object sender, System.EventArgs e)
     {
       CompletedEventArgs args = e as CompletedEventArgs;
-      
       if (args == null)
         return;
 
+      // Handle the GetMapping() event 
       if (args.CheckForType(CompletedEventType.GetMapping))
-      {
         GetMappingHandler(args);
-      }
-      else if (args.CheckForType(CompletedEventType.GetClassLabel))
-      {
-        GetClassLabelHandler(args);
-      }
+
     }
 
     /// <summary>
     /// mapping handler.
     /// </summary>
-    /// <param name="e">The <see cref="org.iringtools.modulelibrary.events.CompletedEventArgs"/> instance containing the event data.</param>
+    /// <param name="e">The <see cref="ModuleLibrary.Events.CompletedEventArgs"/> instance containing the event data.</param>
     void GetMappingHandler(CompletedEventArgs e)
     {
       // Ensure we have a valid parameter
       Mapping mapping = e.Data as Mapping;
       if (mapping == null)
         return;
-
       mappingCRUD.mapping = mapping;
-      tvwMapping.Items.Clear();
-
       // Note that we only load first level nodes
       foreach (GraphMap graphMap in mapping.graphMaps)
       {
         tvwMapping.Items.Add(AddNode(graphMap.name, graphMap, null));
       }
-
-      // Add value maps to value list drop list
-      List<ValueMap> valueMaps = mapping.valueMaps;
-
-      if (valueMaps.Count > 0)
-      {
-        string prevValueList = String.Empty;
-
-        foreach (ValueMap valueMap in valueMaps)
-        {
-          string currValueList = valueMap.valueList;
-
-          if (currValueList != prevValueList)
-          {
-            ComboBoxItem cbItem = new ComboBoxItem();
-            cbItem.Content = currValueList;
-            cbValueList.Items.Add(cbItem);
-            prevValueList = currValueList;
-          }
-        }
-      }
-
-      ChangeControlsState(true);
     }
 
     /// <summary>
-    /// getclasslabel handler.
+    /// Nodes the selected handler.
     /// </summary>
-    /// <param name="e">The <see cref="org.iringtools.modulelibrary.events.CompletedEventArgs"/> instance containing the event data.</param>
-    void GetClassLabelHandler(CompletedEventArgs e)
-    {
-      string[] data = (string[])e.Data;
-      string tag = data[0];
-      string id = data[1];
-      string label = data[2];
-
-      KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>(tag, label);
-      model.DetailProperties.Add(keyValuePair);
-      model.IdLabelDictionary[id] = label;
-    }
-
-    /// <summary>
-    /// Handles MouseLeftButtonUp Event
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    void nodeMouseLeftButtonUpHandler(object sender, MouseButtonEventArgs e)
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
+    void nodeSelectedHandler(object sender, System.Windows.RoutedEventArgs e)
     {
       MappingItem selectedNode = sender as MappingItem;
-
       if (selectedNode == null)
         return;
 
+      model.DetailProperties.Clear();
       model.SelectedMappingItem = selectedNode;
+
       model.SelectedGraphMap = selectedNode.GraphMap;
       model.SelectedClassMap = selectedNode.ClassMap;
       model.SelectedTemplateMap = selectedNode.TemplateMap;
       model.SelectedRoleMap = selectedNode.RoleMap;
       model.SelectedNodeType = selectedNode.NodeType;
 
-      model.DetailProperties.Clear();
+      aggregator.GetEvent<NavigationEvent>().Publish(new NavigationEventArgs
+      {
+        DetailProcess = DetailType.Mapping,
+        SelectedNode = selectedNode,
+        Sender = this
+      });
+
+
+
+      if (selectedNode.Tag is ClassMap)
+      {
+        ClassMap classMap = (ClassMap)selectedNode.Tag;
+
+        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Class Name", classMap.name);
+        model.DetailProperties.Add(keyValuePair);
+        keyValuePair = new KeyValuePair<string, string>("Class Id", classMap.classId);
+        model.DetailProperties.Add(keyValuePair);
+        keyValuePair = new KeyValuePair<string, string>("Identifier", classMap.identifier);
+        model.DetailProperties.Add(keyValuePair);
+
+        
+      }
 
       if (selectedNode.Tag is GraphMap)
       {
         GraphMap graph = (GraphMap)selectedNode.Tag;
         KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Graph Name", graph.name);
-        model.DetailProperties.Add(keyValuePair);
 
         for (int i = 0; i < graph.dataObjectMaps.Count; i++)
         {
@@ -228,101 +194,37 @@ namespace org.iringtools.modules.memappingregion
         }
       }
 
-      if (selectedNode.Tag is ClassMap)
-      {
-        ClassMap classMap = (ClassMap)selectedNode.Tag;
-        RefreshClassMap(classMap);
-      }
-      else if (selectedNode.Tag is TemplateMap)
+      if (selectedNode.Tag is TemplateMap)
       {
         TemplateMap templateMap = (TemplateMap)selectedNode.Tag;
-        RefreshTemplateMap(templateMap);
+        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Template Name", templateMap.name);
+        model.DetailProperties.Add(keyValuePair);
+        keyValuePair = new KeyValuePair<string, string>("Template Id", templateMap.templateId);
+        model.DetailProperties.Add(keyValuePair);
+        keyValuePair = new KeyValuePair<string, string>("Class Role", templateMap.classRole);
+        model.DetailProperties.Add(keyValuePair);
+        keyValuePair = new KeyValuePair<string, string>("Type", templateMap.type.ToString());
+        model.DetailProperties.Add(keyValuePair);
       }
-      else if (selectedNode.Tag is RoleMap)
+      if (selectedNode.Tag is RoleMap)
       {
         RoleMap roleMap = (RoleMap)selectedNode.Tag;
-        RefreshRoleMap(roleMap);
-      }
-
-      e.Handled = true;
-    }
-
-    public void RefreshClassMap(ClassMap classMap)
-    {
-      KeyValuePair<string, string> keyValuePair;
-      
-      keyValuePair = new KeyValuePair<string, string>("Class Id", classMap.classId);
-      model.DetailProperties.Add(keyValuePair);
-      keyValuePair = new KeyValuePair<string, string>("Identifier", classMap.identifier);
-      model.DetailProperties.Add(keyValuePair);
-
-      string id = Utility.GetIdFromURI(classMap.classId);      
-      if (model.IdLabelDictionary.ContainsKey(id))
-      {
-        model.DetailProperties.Add(new KeyValuePair<string, string>("Class Name", model.IdLabelDictionary[id]));
-      }
-      else if (!String.IsNullOrEmpty(id))
-      {
-        referenceDataService.GetClassLabel("Class Name", id, this);
-      }
-    }
-
-    public void RefreshTemplateMap(TemplateMap templateMap)
-    {
-      KeyValuePair<string, string> keyValuePair;
-      
-      keyValuePair = new KeyValuePair<string, string>("Template Name", templateMap.name);
-      model.DetailProperties.Add(keyValuePair);
-      keyValuePair = new KeyValuePair<string, string>("Template Id", templateMap.templateId);
-      model.DetailProperties.Add(keyValuePair);
-      keyValuePair = new KeyValuePair<string, string>("Class Role Id", templateMap.classRole);
-      model.DetailProperties.Add(keyValuePair);
-      keyValuePair = new KeyValuePair<string, string>("Type", templateMap.type.ToString());
-      model.DetailProperties.Add(keyValuePair);
-
-      string id = Utility.GetIdFromURI(templateMap.classRole);
-      if (model.IdLabelDictionary.ContainsKey(id))
-      {
-        model.DetailProperties.Add(new KeyValuePair<string, string>("Class Role Name", model.IdLabelDictionary[id]));
-      }
-      else if (!String.IsNullOrEmpty(id))
-      {
-        referenceDataService.GetTemplateLabel("Class Role Name", id, this);
-      }
-    }
-
-    public void RefreshRoleMap(RoleMap roleMap)
-    {
-      KeyValuePair<string, string> keyValuePair;
-      
-      keyValuePair = new KeyValuePair<string, string>("Role Name", roleMap.name);
-      model.DetailProperties.Add(keyValuePair);
-      keyValuePair = new KeyValuePair<string, string>("Role Id", roleMap.roleId);
-      model.DetailProperties.Add(keyValuePair);
-      keyValuePair = new KeyValuePair<string, string>("Property Name", roleMap.propertyName);
-      model.DetailProperties.Add(keyValuePair);
-      keyValuePair = new KeyValuePair<string, string>("Datatype", roleMap.dataType);
-      model.DetailProperties.Add(keyValuePair);
-      keyValuePair = new KeyValuePair<string, string>("ValueList", roleMap.valueList);
-      model.DetailProperties.Add(keyValuePair);
-
-      if (!string.IsNullOrEmpty(roleMap.reference))
-      {
-        string referenceId = (roleMap.reference != null ? roleMap.reference : string.Empty);
-        keyValuePair = new KeyValuePair<string, string>("Reference Id", referenceId);
+        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Role Name", roleMap.name);
         model.DetailProperties.Add(keyValuePair);
-
-        string id = Utility.GetIdFromURI(referenceId);
-        if (model.IdLabelDictionary.ContainsKey(id))
-        {
-          model.DetailProperties.Add(new KeyValuePair<string, string>("Reference Class", model.IdLabelDictionary[id]));
-        }
-        else if (!String.IsNullOrEmpty(id))
-        {
-          referenceDataService.GetClassLabel("Reference Name", id, this);
-        }
+        keyValuePair = new KeyValuePair<string, string>("Role Id", roleMap.roleId);
+        model.DetailProperties.Add(keyValuePair);
+        keyValuePair = new KeyValuePair<string, string>("Property Name", roleMap.propertyName);
+        model.DetailProperties.Add(keyValuePair);
+        keyValuePair = new KeyValuePair<string, string>("Datatype", roleMap.dataType);
+        model.DetailProperties.Add(keyValuePair);
+        keyValuePair = new KeyValuePair<string, string>("ValueList", roleMap.valueList);
+        model.DetailProperties.Add(keyValuePair);
+        keyValuePair = new KeyValuePair<string, string>("Class", (roleMap.classMap != null ? roleMap.classMap.name : string.Empty));
+        model.DetailProperties.Add(keyValuePair);
       }
     }
+
+
 
     // INFORMATION MODEL TREEVIEW CODE FOLLOWS
 
@@ -336,13 +238,12 @@ namespace org.iringtools.modules.memappingregion
     public MappingItem AddNode(string header, object tag, MappingItem parent)
     {
       // First let's create a node reference
-      MappingItem node = new MappingItem();
+      MappingItem node = new MappingItem ();
       node.itemTextBlock.Text = header;
       node.Tag = tag;
 
       // Subscribe to it's events
-      //node.Selected += nodeSelectedHandler;
-      node.MouseLeftButtonUp += nodeMouseLeftButtonUpHandler;
+      node.Selected += nodeSelectedHandler;
       node.Expanded += nodeExpandedHandler;
 
       bool isProcessed = false;
@@ -373,7 +274,7 @@ namespace org.iringtools.modules.memappingregion
         }
         node.TemplateMap = (TemplateMap)tag;
         node.SetImageSource("template.png");
-        node.SetTooltipText("Template : " + node.TemplateMap.name);
+        node.SetTooltipText("Template : "+ node.TemplateMap.name);
         isProcessed = PopulateTemplateNode(node, (TemplateMap)tag);
       }
       if (tag is RoleMap)
@@ -417,7 +318,7 @@ namespace org.iringtools.modules.memappingregion
     {
       // If the sender is not a valid node return
       MappingItem selectedNode = sender as MappingItem;
-      if (selectedNode == null || selectedNode.Items.Count == 0)
+      if (selectedNode == null)
         return;
 
       MappingItem childNode = selectedNode.Items[0] as MappingItem;
@@ -425,7 +326,7 @@ namespace org.iringtools.modules.memappingregion
       // If expanded then the tree has nodes so we'll grab the
       // first node and see if it is a stub.  If it isn't then
       // we have nothing to do
-      // if (childNode.Header.ToString() != "Stub")
+     // if (childNode.Header.ToString() != "Stub")
       if (childNode.itemTextBlock.Text != "Stub")
         return;
 
@@ -484,7 +385,7 @@ namespace org.iringtools.modules.memappingregion
         map.SetTextBlockText("Stub");
         node.Items.Add(map);
       }
-      //node.Items.Add(new MappingItem { Header = "Stub", Tag = templateMap.roleMaps });
+        //node.Items.Add(new MappingItem { Header = "Stub", Tag = templateMap.roleMaps });
       return true;
     }
 
@@ -503,7 +404,7 @@ namespace org.iringtools.modules.memappingregion
         map.SetTextBlockText("Stub");
         node.Items.Add(map);
       }
-      // node.Items.Add(new MappingItem { Header = "Stub", Tag = roleMap.classMap });
+       // node.Items.Add(new MappingItem { Header = "Stub", Tag = roleMap.classMap });
       return true;
     }
 
@@ -523,11 +424,13 @@ namespace org.iringtools.modules.memappingregion
         map.SetTextBlockText("Stub");
         node.Items.Add(map);
       }
-      //        node.Items.Add(new MappingItem { Header = "Stub", Tag = classMap.templateMaps });
+//        node.Items.Add(new MappingItem { Header = "Stub", Tag = classMap.templateMaps });
       //else
       //  PopulateTemplateMap(node, classMap.templateMaps[0]);
       return true;
     }
+
+
 
     /// <summary>
     /// Populates the template map.
@@ -535,7 +438,7 @@ namespace org.iringtools.modules.memappingregion
     /// <param name="node">The node.</param>
     /// <param name="templateMap">The template map.</param>
     /// <returns></returns>
-    public bool PopulateTemplateMap(MappingItem node, TemplateMap templateMap)
+   public  bool PopulateTemplateMap(MappingItem node, TemplateMap templateMap)
     {
       MappingItem newNode = AddNode(templateMap.name, templateMap, node);
       node.Items.Add(newNode);
@@ -550,16 +453,13 @@ namespace org.iringtools.modules.memappingregion
     /// <returns></returns>
     bool PopulateRoleMap(MappingItem node, RoleMap roleMap)
     {
-      string roleName = roleMap.name;
-      
+      string isMapped = string.Empty;
       if (!roleMap.isMapped)
       {
-        roleName += unmappedToken;
+        isMapped = " [UnMapped]";
       }
-
-      MappingItem newNode = AddNode(roleName, roleMap, node);
+      MappingItem newNode = AddNode(roleMap.name + isMapped, roleMap, node);
       node.Items.Add(newNode);
-
       return true;
     }
 
@@ -576,52 +476,37 @@ namespace org.iringtools.modules.memappingregion
       return true;
     }
 
+
     #endregion
     public void SpinnerEventHandler(SpinnerEventArgs e)
     {
       switch (e.Active)
       {
         case SpinnerEventType.Started:
-          ChangeControlsState(false);
+          this.tvwMapping.IsEnabled = false;
+          btnAddGraph.IsEnabled = false;
+          btnAddTemplate.IsEnabled = false;
+          btnData.IsEnabled = false;
+          btnDelete.IsEnabled = false;
+          btnMap.IsEnabled = false;
+          btnSave.IsEnabled = false;
+            
           break;
 
         case SpinnerEventType.Stopped:
-          ChangeControlsState(true);
-          break;
+          this.tvwMapping.IsEnabled = true;
+          this.tvwMapping.IsEnabled = true;
+          btnAddGraph.IsEnabled = true;
+          btnAddTemplate.IsEnabled = true;
+          btnData.IsEnabled = true;
+          btnDelete.IsEnabled = true;
+          btnMap.IsEnabled = true;
+          btnSave.IsEnabled = true;
+
+           break;
 
         default:
           break;
-      }
-    }
-
-    private void ChangeControlsState(bool enabled)
-    {
-      if (mappingCRUD.mapping != null)
-      { 
-        txtLabel.IsEnabled = enabled;
-        btnAddGraph.IsEnabled = enabled;
-
-        if (mappingCRUD.mapping.graphMaps.Count > 0)
-        {
-          tvwMapping.IsEnabled = enabled;
-          btnAddTemplate.IsEnabled = enabled;
-          btnMap.IsEnabled = enabled;
-          btnMakeClassRole.IsEnabled = enabled;
-
-          if (enabled && cbValueList.Items.Count > 0)
-          {
-            cbValueList.IsEnabled = enabled;
-            btnAddValueList.IsEnabled = enabled;
-          }
-          else
-          {
-            cbValueList.IsEnabled = false;
-            btnAddValueList.IsEnabled = false;
-          }
-
-          btnDelete.IsEnabled = enabled;
-          btnSave.IsEnabled = enabled;
-        }      
       }
     }
   }

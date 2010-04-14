@@ -4,20 +4,22 @@ using PrismContrib.Base;
 using org.ids_adi.iring.referenceData;
 using org.ids_adi.iring;
 using System.Collections.ObjectModel;
-using org.iringtools.modulelibrary.types;
-using org.iringtools.modulelibrary.entities;
+using ModuleLibrary.Types;
+using ModuleLibrary.Entities;
 using org.ids_adi.qmxf;
 using System.Collections.Generic;
-using org.iringtools.informationmodel.usercontrols;
+using InformationModel.UserControls;
 using System.Windows.Controls;
-using org.iringtools.modulelibrary.usercontrols;
+using ModuleLibrary.UserControls;
 using org.iringtools.library;
 
-namespace org.iringtools.ontologyservice.presentation.presentationmodels
+namespace OntologyService.Interface.PresentationModels
 {
   public interface IIMPresentationModel : IPresentationModel
   {
+
     TreeView MappingTree { get; set; }
+
     ObservableCollection<KeyValuePair<string, string>> DetailProperties { get; set; }
 
     DataProperty SelectedDataSource { get; set; }
@@ -25,7 +27,8 @@ namespace org.iringtools.ontologyservice.presentation.presentationmodels
     bool SelectedDataSourceIsPropertyKey { get; set; }
     bool SelectedDataSourceIsRequiredField { get; set; }
     string SelectedDataSourcePropertyName { get; set; }
-        
+
+    
     Entity SelectedInformationModelNode { get; set; }
     string SelectedIMLabel { get; set; }
     string SelectedIMRepository { get; set; }
@@ -45,6 +48,6 @@ namespace org.iringtools.ontologyservice.presentation.presentationmodels
     QMXF SelectedQMXF { get; set; }
     Dictionary<string, QMXF> ClassesHistory { get; set; }
     Dictionary<string, QMXF> TemplatesHistory { get; set; }
-    Dictionary<string, string> IdLabelDictionary { get; }
+
   }
 }

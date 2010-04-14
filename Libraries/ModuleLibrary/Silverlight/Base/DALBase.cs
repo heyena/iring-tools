@@ -1,13 +1,13 @@
 ﻿
 using Microsoft.Practices.Unity;
-using org.iringtools.library.presentation.configuration;
+using Library.Interface.Configuration;
 using System;
 using System.ServiceModel;
 using System.Windows;
 using PrismContrib.Errors;
-using org.iringtools.modulelibrary.events;
+using ModuleLibrary.Events;
 
-namespace org.iringtools.modulelibrary.baseclass
+namespace ModuleLibrary.Base
 {
     public class DALBase
     {

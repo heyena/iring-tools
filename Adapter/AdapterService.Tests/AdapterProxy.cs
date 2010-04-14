@@ -1,21 +1,18 @@
 ﻿using System;
 using org.iringtools.adapter;
 using org.iringtools.utility;
-using org.iringtools.library;
 using PrismContrib.Errors;
 using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Unity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Configuration;
-using System.IO;
-using System.Collections.Generic;
+using org.iringtools.library;
 
 namespace AdapterService.Tests
 {
   [TestClass]
   public class AdapterProxy
   {
-    private AdapterProvider _adapterServiceProvider = null;   
+    private AdapterServiceProvider _adapterServiceProvider = null;   
 
     /// <summary>
     /// Gets or sets the error.
@@ -33,15 +30,30 @@ namespace AdapterService.Tests
     /// <param name="container">The container.</param>
     public AdapterProxy()
     {
-      _adapterServiceProvider = new AdapterProvider(ConfigurationManager.AppSettings);
+      ConfigSettings configSettings = new ConfigSettings();
+      configSettings.BaseDirectoryPath = System.Configuration.ConfigurationManager.AppSettings["BasePath"];
+      configSettings.XmlPath = System.Configuration.ConfigurationManager.AppSettings["XmlPath"];
+      configSettings.TripleStoreConnectionString = System.Configuration.ConfigurationManager.AppSettings["TripleStoreConnectionString"];
+      configSettings.ModelDTOPath = System.Configuration.ConfigurationManager.AppSettings["ModelDTOPath"];
+      configSettings.IDataServicePath = System.Configuration.ConfigurationManager.AppSettings["IDataServicePath"];
+      configSettings.InterfaceServer = System.Configuration.ConfigurationManager.AppSettings["InterfaceService"];
+      configSettings.TrimData = Convert.ToBoolean(System.Configuration.ConfigurationManager.AppSettings["TrimData"]);
+      configSettings.UseSemweb = Convert.ToBoolean(System.Configuration.ConfigurationManager.AppSettings["UseSemweb"]);
+      configSettings.EncryptedToken = System.Configuration.ConfigurationManager.AppSettings["TargetCredentialToken"];
+      configSettings.EncryptedProxyToken = System.Configuration.ConfigurationManager.AppSettings["ProxyCredentialToken"];
+      configSettings.ProxyHost = System.Configuration.ConfigurationManager.AppSettings["ProxyHost"];
+      configSettings.ProxyPort = System.Configuration.ConfigurationManager.AppSettings["ProxyPort"];
+      configSettings.TransformPath = System.Configuration.ConfigurationManager.AppSettings["TransformPath"];
+      configSettings.DataLayerConfigPath = System.Configuration.ConfigurationManager.AppSettings["DataLayerConfigPath"];
+      _adapterServiceProvider = new AdapterServiceProvider(configSettings);
     }
 
-    public Response Generate(string projectName, string applicationName)
+    public Response Generate()
     {
       Response response = null;
       try
       {
-        response = _adapterServiceProvider.Generate(projectName, applicationName);
+        response = _adapterServiceProvider.Generate();
       }
       catch (Exception ex)
       {
@@ -50,12 +62,12 @@ namespace AdapterService.Tests
       return response;
     }
 
-    public Response RefreshDictionary(string projectName, string applicationName)
+    public Response RefreshDictionary()
     {
       Response response = null;
       try
       {
-        response = _adapterServiceProvider.RefreshDictionary(projectName, applicationName);
+        response = _adapterServiceProvider.RefreshDictionary();
       }
       catch (Exception ex)
       {
@@ -64,13 +76,13 @@ namespace AdapterService.Tests
       return response;
     }
 
-    public Mapping GetMapping(string projectName, string applicationName)
+    public Mapping GetMapping()
     {
       Mapping mapping = null;
 
       try
       {
-        mapping = _adapterServiceProvider.GetMapping(projectName, applicationName);
+        mapping = _adapterServiceProvider.GetMapping();
       }
       catch (Exception ex)
       {
@@ -80,12 +92,12 @@ namespace AdapterService.Tests
       return mapping;
     }
 
-    public DataDictionary GetDictionary(string projectName, string applicationName)
+    public DataDictionary GetDictionary()
     {
       DataDictionary data = null;
       try
       {
-        data = _adapterServiceProvider.GetDictionary(projectName, applicationName);
+        data = _adapterServiceProvider.GetDictionary();
       }
       catch (Exception ex)
       {
@@ -94,12 +106,12 @@ namespace AdapterService.Tests
       return data;
     }
 
-    public Response UpdateMapping(string projectName, string applicationName, Mapping mapping)
+    public Response UpdateMapping(Mapping mapping)
     {
       Response response = null;
       try
       {
-        response = _adapterServiceProvider.UpdateMapping(projectName, applicationName, mapping);
+        response = _adapterServiceProvider.UpdateMapping(mapping);
       }
       catch (Exception ex)
       {
@@ -108,12 +120,12 @@ namespace AdapterService.Tests
       return response;
     }
 
-    public Envelope Get(string projectName, string applicationName, string graphName, string identifier)
+    public Envelope Get(string graphName, string identifier)
     {
       Envelope envelope = null;
       try
       {
-        envelope = _adapterServiceProvider.Get(projectName, applicationName, graphName, identifier);
+        envelope = _adapterServiceProvider.Get(graphName, identifier);
       }
       catch (Exception ex)
       {
@@ -122,12 +134,12 @@ namespace AdapterService.Tests
       return envelope;
     }
 
-    public Envelope GetList(string projectName, string applicationName, string graphName)
+    public Envelope GetList(string graphName)
     {
       Envelope envelope = null;
       try
       {
-        envelope = _adapterServiceProvider.GetList(projectName, applicationName, graphName);
+        envelope = _adapterServiceProvider.GetList(graphName);
       }
       catch (Exception ex)
       {
@@ -136,12 +148,12 @@ namespace AdapterService.Tests
       return envelope;
     }
 
-    public Response ClearStore(string projectName, string applicationName)
+    public Response ClearStore()
     {
       Response response = null;
       try
       {
-        response = _adapterServiceProvider.ClearStore(projectName, applicationName);
+        response = _adapterServiceProvider.ClearStore();
       }
       catch (Exception ex)
       {
@@ -150,12 +162,12 @@ namespace AdapterService.Tests
       return response;
     }
 
-    public Response RefreshGraph(string projectName, string applicationName, string graphName)
+    public Response RefreshGraph(string graphName)
     {
       Response response = null;
       try
       {
-        response = _adapterServiceProvider.RefreshGraph(projectName, applicationName, graphName);
+        response = _adapterServiceProvider.RefreshGraph(graphName);
       }
       catch (Exception ex)
       {
@@ -164,103 +176,32 @@ namespace AdapterService.Tests
       return response;
     }
 
-    public Response RefreshAll(string projectName, string applicationName)
+    public Response RefreshAll()
     {
       Response response = null;
       try
       {
-        response = _adapterServiceProvider.RefreshAll(projectName, applicationName);
+        response = _adapterServiceProvider.RefreshAll();
       }
       catch (Exception ex)
       {
         Error.SetError(ex);
       }
       return response;
-    }
+    }   
 
-    public Response Pull(string projectName, string applicationName, Request request)
+    public Response Pull(Request request)
     {
-      Response response = null;
-      try
-      {
-        response = _adapterServiceProvider.Pull(projectName, applicationName, request);
-      }
-      catch (Exception ex)
-      {
-        Error.SetError(ex);
-      }
-      return response;
+       Response response = null;
+       try
+       {         
+         response = _adapterServiceProvider.Pull(request);
+       }
+       catch (Exception ex)
+       {
+         Error.SetError(ex);
+       }
+       return response;
     }
-
-    public Response PullDTO(string projectName, string applicationName, Request request)
-    {
-      Response response = null;
-      try
-      {
-        response = _adapterServiceProvider.PullDTO(projectName, applicationName, request);
-      }
-      catch (Exception ex)
-      {
-        Error.SetError(ex);
-      }
-      return response;
-    }
-
-    public Response UpdateDatabaseDictionary(DatabaseDictionary databaseDictionary, string projectName, string applicationName)
-    {
-      Response response = null;
-      try
-      {
-        response = _adapterServiceProvider.UpdateDatabaseDictionary(databaseDictionary, projectName, applicationName);
-      }
-      catch (Exception ex)
-      {
-        Error.SetError(ex);
-      }
-      return response;
-    }
-
-    public List<DataTransferObject> GetDTOList(string projectName, string applicationName, string graphName)
-    {
-      List<DataTransferObject> dtoList = null;
-      try
-      {
-        dtoList = _adapterServiceProvider.GetDTOList(projectName, applicationName, graphName);
-      }
-      catch (Exception ex)
-      {
-        Error.SetError(ex);
-      }
-      return dtoList;
-    }
-
-     public List<ScopeProject> GetScopes()
-    {
-      List<ScopeProject> scopes = null;
-      try
-      {
-        scopes = _adapterServiceProvider.GetScopes();
-      }
-      catch (Exception ex)
-      {
-        Error.SetError(ex);
-      }
-      return scopes;
-    }
-
-    public Manifest GetManifest(string projectName, string applicationName)
-    {
-      Manifest manifest = null;
-      try
-      {
-        manifest = _adapterServiceProvider.GetManifest(projectName, applicationName);
-      }
-      catch (Exception ex)
-      {
-        Error.SetError(ex);
-      }
-      return manifest;
-    }
-
   }
 }

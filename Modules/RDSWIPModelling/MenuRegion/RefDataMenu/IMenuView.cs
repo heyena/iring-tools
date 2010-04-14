@@ -1,6 +1,6 @@
 ﻿using PrismContrib.Base;
 
-namespace org.iringtools.menu.views.menuregion
+namespace Menu.Views.MenuRegion
 {
   public interface IMenuView : IViewBase
   {

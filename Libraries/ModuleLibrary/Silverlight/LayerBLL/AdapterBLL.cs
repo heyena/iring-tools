@@ -1,18 +1,18 @@
 ﻿using System;
 using Microsoft.Practices.Unity;
-using org.iringtools.modulelibrary.types;
-using org.iringtools.modulelibrary.events;
+using ModuleLibrary.Types;
+using ModuleLibrary.Events;
 using System.Collections.ObjectModel;
 using org.ids_adi.iring;
 using org.ids_adi.qxf;
-using org.iringtools.modulelibrary.baseclass;
+using ModuleLibrary.Base;
 using Microsoft.Practices.Composite.Events;
-using org.iringtools.library.presentation.events;
-using org.iringtools.informationmodel.events;
+using Library.Interface.Events;
+using InformationModel.Events;
 using org.iringtools.library;
 
 
-namespace org.iringtools.modulelibrary.layerbll
+namespace ModuleLibrary.LayerBLL
 {
   public class AdapterBLL : BLLBase, IAdapter
   {
@@ -106,16 +106,15 @@ namespace org.iringtools.modulelibrary.layerbll
           break;
       }
 
+      aggregator.GetEvent<SpinnerEvent>().Publish(new SpinnerEventArgs
+      {
+        Active = SpinnerEventType.Stopped,
+        ActiveService = processType.ToString()
+      });
 
       // Raise the event after processing (bubble to subscribers)     
       if (OnDataArrived != null)
         OnDataArrived(sender, e);
-
-      aggregator.GetEvent<SpinnerEvent>().Publish(new SpinnerEventArgs
-      {
-          Active = SpinnerEventType.Stopped,
-          ActiveService = processType.ToString()
-      });
     }
 
     #endregion
@@ -168,33 +167,28 @@ namespace org.iringtools.modulelibrary.layerbll
       dal.GetUnitTestString(valueToReturn);
     }
 
-    
 
     /// <summary>
     /// Gets the mapping.
     /// </summary>
-    public Mapping GetMapping(string projectName, string applicationName)
+    public Mapping GetMapping()
     {
       StartService("GetMapping");
-      return dal.GetMapping(projectName, applicationName);
+      return dal.GetMapping();
     }
 
     /// <summary>
     /// Gets the data dictionary.
     /// </summary>
     /// <returns></returns>
-    public DataDictionary GetDictionary(string projectName, string applicationName)
+    public DataDictionary GetDictionary()
     {
       StartService("GetDictionary");
-      return dal.GetDictionary(projectName,applicationName);
+      return dal.GetDictionary();
     }
 
 
-    public Response GetScopes()
-    {
-        StartService("GetScopes");
-        return dal.GetScopes();
-    }
+
     // THE FOLLOWING NOT IMPLEMENTED 
 
 
@@ -204,22 +198,17 @@ namespace org.iringtools.modulelibrary.layerbll
     /// </summary>
     /// <param name="mapping">The mapping.</param>
     /// <returns></returns>
-    public Response UpdateMapping(string projectName, string applicationName, Mapping mapping)
-    {
-      StartService("UpdateMapping");
-      return dal.UpdateMapping(projectName, applicationName, mapping);
-    }
-
     public Response UpdateMapping(Mapping mapping)
     {
-        StartService("UpdateMapping");
-        return dal.UpdateMapping( mapping);
+      StartService("UpdateMapping");
+      return dal.UpdateMapping(mapping);
     }
 
-    public Response RefreshAll(string projectName, string applicationName)
+
+    public Response RefreshAll()
     {
       StartService("RefreshAll");
-      return dal.RefreshAll(projectName, applicationName);
+      return dal.RefreshAll();
     }
     public Response RefreshAll(object userState)
     {
@@ -236,17 +225,16 @@ namespace org.iringtools.modulelibrary.layerbll
 
 
 
-    public Response RefreshDictionary(string projectName, string applicationName)
+    public Response RefreshDictionary()
     {
       StartService("RefreshDictionary");
       throw new NotImplementedException();
     }
 
-    
-    public Response Generate(string projectName, string applicationName)
+    public Response Generate()
     {
       StartService("Generate");
-      return dal.Generate(projectName, applicationName);
+      return dal.Generate();
     }
 
     public Response Generate(object userState)
@@ -256,7 +244,7 @@ namespace org.iringtools.modulelibrary.layerbll
     }
 
 
-    public Response RefreshGraph(string projectName, string applicationName,string graphName)
+    public Response RefreshGraph(string graphName)
     {
       StartService("RefreshGraph");
       throw new NotImplementedException();
@@ -268,7 +256,7 @@ namespace org.iringtools.modulelibrary.layerbll
       throw new NotImplementedException();
     }
 
-    public Response ClearStore(string projectName, string applicationName)
+    public Response ClearStore()
     {
       StartService("ClearStore");
       throw new NotImplementedException();

@@ -16,21 +16,21 @@ using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Composite.Regions;
 using Microsoft.Practices.Composite.Presentation.Regions.Behaviors;
 
-using org.iringtools.library.presentation.events;
+using Library.Interface.Events;
 
-using org.iringtools.modulelibrary.events;
-using org.iringtools.modulelibrary.types;
+using ModuleLibrary.Events;
+using ModuleLibrary.Types;
 
-//using org.iringtools.modules.popup;
-using org.iringtools.modulelibrary.layerdal;
-using org.iringtools.modulelibrary.layerbll;
+//using Modules.Popup;
+using ModuleLibrary.LayerDAL;
+using ModuleLibrary.LayerBLL;
 
-using org.iringtools.ontologyservice.presentation;
-using org.iringtools.ontologyservice.presentation.presentationmodels;
+using OntologyService.Interface;
+using OntologyService.Interface.PresentationModels;
 
 using org.ids_adi.qmxf;
 
-namespace org.iringtools.modules.templateeditor.editorregion
+namespace Modules.TemplateEditor.EditorRegion
 {
     public enum EditorMode
     {
@@ -295,7 +295,7 @@ namespace org.iringtools.modules.templateeditor.editorregion
             {
                 KeyValuePair<string, string> range = (KeyValuePair<string, string>)cmbRange.SelectedItem;
 
-                if (range.Value != null && range.Value.Equals("<Use Selected Item>"))
+                if (range.Value != null && range.Value.Equals("SelectClass"))
                 {
                     KeyValuePair<string, string> cmbItem = new KeyValuePair<string, string>(model.SelectedIMLabel, model.SelectedIMUri);
 

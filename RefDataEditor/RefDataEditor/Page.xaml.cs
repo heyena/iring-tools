@@ -9,21 +9,26 @@ namespace RefDataEditor
         public Page()
         {
             InitializeComponent();
-            LayoutRoot.SizeChanged += new SizeChangedEventHandler(PageGrid_SizeChanged);
+            PageGrid.SizeChanged += new SizeChangedEventHandler(PageGrid_SizeChanged);
         }
-
         void PageGrid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-          Control c = null;
+          foreach (UserControl userControl in MainItem.Items)
+          {
+            userControl.Height = PageGrid.RowDefinitions[1].ActualHeight;
+            //userControl.Width = PageGrid.ColumnDefinitions[1].ActualWidth;
+          }
 
-          c = (Control)HeaderItem.Items[0];
-          c.Height = LayoutRoot.RowDefinitions[0].ActualHeight;
+          foreach (UserControl userControl in OverlayItem.Items)
+          {
+            double d = 0;
+              foreach (RowDefinition rowDef in PageGrid.RowDefinitions)
+              {
+                  d += rowDef.ActualHeight;
+              }
 
-          c = (Control)MainItem.Items[0];
-          c.Height = LayoutRoot.RowDefinitions[1].ActualHeight;
-
-          c = (Control)StatusItem.Items[0];
-          c.Height = LayoutRoot.RowDefinitions[2].ActualHeight;     
+              userControl.Height = d;
+          }
         }
     }
 }

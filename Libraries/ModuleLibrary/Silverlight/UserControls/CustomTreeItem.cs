@@ -11,24 +11,24 @@ using PrismContrib.Errors;
 using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Composite.Events;
 
-using org.iringtools.modulelibrary.events;
-using org.iringtools.modulelibrary.layerdal;
-using org.iringtools.modulelibrary.extensions;
+using ModuleLibrary.Events;
+using ModuleLibrary.LayerDAL;
+using ModuleLibrary.Extensions;
 
-using org.iringtools.informationmodel.events;
+using InformationModel.Events;
 
 using org.ids_adi.iring.referenceData;
 using org.iringtools.utility;
 using org.ids_adi.qmxf;
-using org.iringtools.ontologyservice.presentation;
-using org.iringtools.ontologyservice.presentation.presentationmodels;
+using OntologyService.Interface;
+using OntologyService.Interface.PresentationModels;
 using System.Text.RegularExpressions;
 using System.Windows.Media.Imaging;
 using System.Windows.Data;
 using System.Windows.Resources;
 using org.iringtools.library;
 
-namespace org.iringtools.informationmodel.usercontrols
+namespace InformationModel.UserControls
 {
   public class CustomTreeItem : TreeViewItem, ICommand
   {
@@ -53,11 +53,19 @@ namespace org.iringtools.informationmodel.usercontrols
     public IError Error { get; set; }
 
     private StackPanel itemStackPanel = null;
+
     public TextBlock itemTextBlock { get; set; }
+
     public Image itemImage { get; set; }
+
     public string id = String.Empty;
+
     public TextBlock tooltipText { get; set; }
+
     private QMXF _qmxf { get; set; }
+
+
+    protected Dictionary<string, string> uriLabels = new Dictionary<string, string>();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CustomTreeItem"/> class.
@@ -69,8 +77,8 @@ namespace org.iringtools.informationmodel.usercontrols
       itemStackPanel.Orientation = Orientation.Horizontal;
       itemTextBlock = new TextBlock();
       tooltipText = new TextBlock();
-      _qmxf = new QMXF();
-      ToolTipService.SetToolTip(this, tooltipText);
+      _qmxf = new QMXF(); 
+      ToolTipService.SetToolTip(this, tooltipText );
       itemImage = new Image()
       {
         Height = 16,
@@ -83,8 +91,7 @@ namespace org.iringtools.informationmodel.usercontrols
       itemStackPanel.Children.Add(new TextBlock() { Text = " " });
       itemStackPanel.Children.Add(itemTextBlock);
       Header = itemStackPanel;
-      //Selected += nodeSelectedHandler;
-      MouseLeftButtonUp += nodeMouseLeftButtonUpHandler;
+      Selected += nodeSelectedHandler;
       Expanded += nodeExpandedHandler;
       Collapsed += nodeCollapsedHandler;
       isProcessed = false;
@@ -94,12 +101,13 @@ namespace org.iringtools.informationmodel.usercontrols
         CanExecuteChanged(this, new EventArgs());
       }
     }
-
+    
     public Entity Entity { get; set; }
 
     public bool isProcessed { get; set; }
 
     public CompletedEventArgs CompletedEventArgs { get; set; }
+
 
     public virtual bool CanExecute(object parameter)
     {
@@ -121,14 +129,14 @@ namespace org.iringtools.informationmodel.usercontrols
 
       if (qmxf != null)
       {
-        PresentationModel.SelectedQMXF = qmxf;
-        this._qmxf = qmxf;
+          PresentationModel.SelectedQMXF = qmxf;
+          this._qmxf = qmxf;
       }
       else
       {
-        PresentationModel.SelectedQMXF = this._qmxf;
+          PresentationModel.SelectedQMXF = this._qmxf;
       }
-
+    
       Aggregator.GetEvent<NavigationEvent>().Publish(new NavigationEventArgs
       {
         SelectedNode = this,
@@ -139,24 +147,29 @@ namespace org.iringtools.informationmodel.usercontrols
 
     public virtual void nodeCollapsedHandler(object sender, System.Windows.RoutedEventArgs e)
     {
+
       if (IsExpanded.Equals(false) &
           itemTextBlock.Text.Contains("Classifications") ||
           itemTextBlock.Text.Contains("Super Classes") ||
           itemTextBlock.Text.Contains("Sub Classes") ||
           itemTextBlock.Text.Contains("Templates"))
       {
+
         SetImageSource("folder.png");
       }
     }
 
     public virtual void nodeExpandedHandler(object sender, System.Windows.RoutedEventArgs e)
     {
+
       if (itemTextBlock.Text.Contains("Classifications") ||
           itemTextBlock.Text.Contains("Super Classes") ||
           itemTextBlock.Text.Contains("Sub Classes") ||
           itemTextBlock.Text.Contains("Templates"))
       {
+
         SetImageSource("folder-open.png");
+
       }
     }
 
@@ -165,13 +178,12 @@ namespace org.iringtools.informationmodel.usercontrols
     /// </summary>
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
-    public virtual void nodeSelectedHandler(object sender, RoutedEventArgs e)
+    public virtual void nodeSelectedHandler(object sender, System.Windows.RoutedEventArgs e)
     {
       Logger.Log(string.Format("node_Selected in {0} : CustomTreeItem (baseclass)", sender.GetType().FullName),
         Category.Debug, Priority.None);
     }
 
-    public virtual void nodeMouseLeftButtonUpHandler(object sender, MouseButtonEventArgs e) { }
 
     void img_ImageFailed(object sender, ExceptionRoutedEventArgs e)
     {
@@ -184,19 +196,20 @@ namespace org.iringtools.informationmodel.usercontrols
 
       RoleTreeItem item = Container.Resolve<RoleTreeItem>();
       item.SetImageSource("role.png");
-      item.SetTooltipText("Role : " + entity.label);
+      item.SetTooltipText("Role : "+entity.label); 
       item.SetTextBlockText(entity.label);
       item.Entity = entity;
       item.RoleDefinition = roleDefinition;
       item.Tag = roleDefinition;
       return item;
+
     }
 
     public RoleTreeItem AddRoleTreeItem(string header, Entity entity, RoleQualification roleQualification)
     {
       RoleTreeItem item = Container.Resolve<RoleTreeItem>();
       item.SetImageSource("role.png");
-      item.SetTooltipText("Role : " + entity.label);
+      item.SetTooltipText("Role : " + entity.label); 
       item.SetTextBlockText(entity.label);
       item.Entity = entity;
       item.SetTextBlockText(entity.label);
@@ -204,6 +217,7 @@ namespace org.iringtools.informationmodel.usercontrols
       item.RoleQualification = roleQualification;
       item.Tag = roleQualification;
       return item;
+
     }
 
     public CustomTreeItem AddTreeItem(string header, Entity entity)
@@ -217,7 +231,7 @@ namespace org.iringtools.informationmodel.usercontrols
           item = Container.Resolve<ClassTreeItem>();
 
           item.SetImageSource("class.png");
-          item.SetTooltipText("Class : " + entity.label);
+          item.SetTooltipText("Class : "+entity.label);
           item.SetTextBlockText(entity.label);
           item.Entity = entity;
           item.Tag = entity;
@@ -228,7 +242,7 @@ namespace org.iringtools.informationmodel.usercontrols
         case SPARQLPrefix.ObjectType.Template:
           item = Container.Resolve<TemplateTreeItem>();
           item.SetImageSource("template.png");
-          item.SetTooltipText("Template : " + entity.label);
+          item.SetTooltipText("Template : " +entity.label);
           item.SetTextBlockText(entity.label);
           item.Entity = entity;
           item.Tag = entity;
@@ -238,7 +252,7 @@ namespace org.iringtools.informationmodel.usercontrols
         default:
           item = Container.Resolve<CustomTreeItem>();
           item.SetImageSource("default.png");
-          item.SetTooltipText("Unknown : " + entity.label);
+          item.SetTooltipText("Unknown : "+entity.label);
           item.SetTextBlockText(entity.label);
           item.Entity = entity;
           item.Tag = entity;
@@ -248,49 +262,50 @@ namespace org.iringtools.informationmodel.usercontrols
 
       return item;
     }
-    
-    public void GetClassLabel(string tag, string id)
+
+    public void GetClassLabel(string key, string uri)
     {
-      id = Utility.GetIdFromURI(id);
-
-      if (String.IsNullOrEmpty(id) || String.IsNullOrEmpty(tag))
-        return;
-
-      // check local cache see if the label has been resolved
-      if (PresentationModel.IdLabelDictionary.ContainsKey(id))
+      if (uri != null && Regex.Match(uri, @"^http[s]?://.*#R.*").Success)
       {
-        PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>(tag, PresentationModel.IdLabelDictionary[id]));
+        if (uriLabels.ContainsKey(uri))
+        {
+          PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>(key, uriLabels[uri]));
+        }
+        else
+        {
+          ReferenceDataService.GetClassLabel(key, uri, this);
+        }
       }
       else
       {
-        ReferenceDataService.GetClassLabel(tag, id, this);
+        PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>(key, uri));
       }
-    }
+    }    
 
-    public void DisplayAndSaveLabel(object completedEventArgsData)
+    public void ShowAndSaveLabel(object completedEventArgsData)
     {
       string[] data = (string[])completedEventArgsData;
-      string tag = data[0];
-      string id = data[1];
+      string key = data[0];
+      string uri = data[1];
       string label = data[2];
 
-      PresentationModel.IdLabelDictionary[id] = label;
-      PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>(tag, label));
+      PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>(key, label));
+      uriLabels.Add(uri, label);
     }
 
     private BitmapImage GetImageSource(string iconName)
     {
       BitmapImage bitmapImage = new BitmapImage();
-
+      
       try
       {
-#if SILVERLIGHT
+#if SILVERLIGHT  
         String currentContext = Application.Current.RootVisual.ToString().Split('.')[0];
         Uri imageUri = new Uri(currentContext + ";component/Resources/" + iconName, UriKind.Relative);
         StreamResourceInfo streamResource = System.Windows.Application.GetResourceStream(imageUri);
         bitmapImage.SetSource(streamResource.Stream);
 
-        return (BitmapImage)bitmapImage;
+        return (BitmapImage)bitmapImage;      
 #else
         bitmapImage.BeginInit();
         bitmapImage.UriSource = new Uri("pack://application:,,,/Resources/" + iconName);
@@ -305,7 +320,7 @@ namespace org.iringtools.informationmodel.usercontrols
       }
     }
 
-    public void SetImageSource(string iconName)
+    public void SetImageSource(string iconName) 
     {
       itemImage.Source = new BitmapImage();
       itemImage.Source = GetImageSource(iconName);
@@ -318,7 +333,7 @@ namespace org.iringtools.informationmodel.usercontrols
 
     public void SetTooltipText(string text)
     {
-      tooltipText.Text = text;
+        tooltipText.Text = text;
     }
   }
 }

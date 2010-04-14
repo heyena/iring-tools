@@ -92,32 +92,22 @@
     </Compile>
     <Compile Include="..\Desktop\_MappingEditor\MEMappingRegion\IMappingView.cs">
       <Link>_MappingEditor\MEMappingRegion\IMappingView.cs</Link>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\Desktop\_MappingEditor\MEMappingRegion\MappingCRUD.cs">
       <Link>_MappingEditor\MEMappingRegion\MappingCRUD.cs</Link>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="..\Desktop\_MappingEditor\MEMappingRegion\MappingPresenter.cs">
       <Link>_MappingEditor\MEMappingRegion\MappingPresenter.cs</Link>
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="MainRegion\MappingEditor\MappingEditorView.xaml.cs">
       <DependentUpon>MappingEditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\..\..\AssemblyInfo.cs" />  
-    <Compile Include="_MappingEditor\ProjectApplicationRegion\IProjectApplicationView.cs" />
     <Compile Include="_MappingEditor\MEDataSourceRegion\DataSourceTreeView.xaml.cs">
       <DependentUpon>DataSourceTreeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="_MappingEditor\MEMappingRegion\MappingView.xaml.cs">
       <DependentUpon>MappingView.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="_MappingEditor\ProjectApplicationRegion\ProjectApplicationPresenter.cs" />
-    <Compile Include="_MappingEditor\ProjectApplicationRegion\ProjectApplicationView.xaml.cs">
-      <DependentUpon>ProjectApplicationView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -128,10 +118,6 @@
     <ProjectReference Include="..\..\..\Libraries\PrismContrib\Silverlight\PrismContrib.Silverlight.csproj">
       <Project>{04C08B97-3D9E-4BB4-B0EC-6AE035105BF8}</Project>
       <Name>PrismContrib.Silverlight</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Libraries\UtilityLibrary\Silverlight\UtilityLibrary.Silverlight.csproj">
-      <Project>{EA853599-4781-4BD2-8EC7-61E893520A23}</Project>
-      <Name>UtilityLibrary.Silverlight</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Spinner\Silverlight\Spinner.Silverlight.csproj">
       <Project>{E257A89A-0F74-4DC9-94FB-8AE38D5C46FB}</Project>
@@ -152,10 +138,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="_MappingEditor\MEMappingRegion\MappingView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:MarkupCompilePass1</Generator>
-    </Page>
-    <Page Include="_MappingEditor\ProjectApplicationRegion\ProjectApplicationView.xaml">
       <Generator>MSBuild:MarkupCompilePass1</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -173,7 +155,7 @@
       <FlavorProperties GUID="{A1591282-1198-4647-A2B1-27E5FF5F6F3B}">
         <SilverlightProjectProperties />
       </FlavorProperties>
-      <UserProperties ProjectLinkReference="0743a167-5c43-4d24-af1b-e659cc7a380f" ProjectLinkerExcludeFilter="\\?desktop(\\.*)?$;\\?silverlight(\\.*)?$;\.desktop;\.silverlight;\.xaml;^service references(\\.*)?$;\.clientconfig;^web references(\\.*)?$" />
+      <UserProperties ProjectLinkerExcludeFilter="\\?desktop(\\.*)?$;\\?silverlight(\\.*)?$;\.desktop;\.silverlight;\.xaml;^service references(\\.*)?$;\.clientconfig;^web references(\\.*)?$" ProjectLinkReference="0743a167-5c43-4d24-af1b-e659cc7a380f" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

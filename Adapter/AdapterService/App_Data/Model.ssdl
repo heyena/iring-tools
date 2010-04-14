@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="org.ids_adi.iring.adapter.dataLayer.Model.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2006/04/edm/ssdl">
+  <EntityContainer Name="orgids_adiiringadapterdataLayerModelStoreContainer">
+    <EntitySet Name="InLinePipingComponent" EntityType="org.ids_adi.iring.adapter.dataLayer.Model.Store.InLinePipingComponent" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="KOPot" EntityType="org.ids_adi.iring.adapter.dataLayer.Model.Store.KOPot" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Line" EntityType="org.ids_adi.iring.adapter.dataLayer.Model.Store.Line" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="VacuumTower" EntityType="org.ids_adi.iring.adapter.dataLayer.Model.Store.VacuumTower" store:Type="Tables" Schema="dbo" />
+  </EntityContainer>
+  <EntityType Name="InLinePipingComponent">
+    <Key>
+      <PropertyRef Name="tag" />
+    </Key>
+    <Property Name="tag" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="componentType" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="diameter" Type="float" />
+    <Property Name="uomDiameter" Type="varchar" MaxLength="255" />
+    <Property Name="rating" Type="varchar" MaxLength="255" />
+    <Property Name="system" Type="varchar" MaxLength="255" />
+    <Property Name="unit" Type="varchar" MaxLength="255" />
+    <Property Name="projectNumber" Type="varchar" MaxLength="255" />
+    <Property Name="pid" Type="varchar" MaxLength="255" />
+    <Property Name="lineTag" Type="varchar" MaxLength="255" />
+    <Property Name="quantity" Type="int" />
+    <Property Name="isCloned" Type="bit" />
+  </EntityType>
+  <EntityType Name="KOPot">
+    <Key>
+      <PropertyRef Name="tag" />
+    </Key>
+    <Property Name="tag" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="description" Type="varchar" MaxLength="255" />
+  </EntityType>
+  <EntityType Name="Line">
+    <Key>
+      <PropertyRef Name="tag" />
+    </Key>
+    <Property Name="tag" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="diameter" Type="float" />
+    <Property Name="uomDiameter" Type="varchar" MaxLength="255" />
+    <Property Name="system" Type="varchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="VacuumTower">
+    <Key>
+      <PropertyRef Name="tag" />
+    </Key>
+    <Property Name="tag" Type="varchar" Nullable="false" MaxLength="255" />
+    <Property Name="description" Type="varchar" MaxLength="255" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6013: The table/view 'Camelot_Test.dbo.Circuit' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity you will need to review your schema, add the correct keys and uncomment it.
+
+<EntityType Name="Circuit">
+  <Property Name="Equip_From_ID" Type="nvarchar" MaxLength="255" />
+  <Property Name="Equip_To_ID" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_Number" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_Rev" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_Drawing_Ref" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_Type" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_Status" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_From" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_To" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_Length_Estimated" Type="nvarchar" MaxLength="50" />
+  <Property Name="Circ_Length_Adjusted" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_Primary_Cable_Qty" Type="nvarchar" MaxLength="50" />
+  <Property Name="Circ_Primary_Cable_Size" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_Primary_Cable_Type" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_Primary_Cable_NCD" Type="nvarchar" MaxLength="50" />
+  <Property Name="Circ_Primary_Cable_Configuration" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_Secondary_Cable_Qty" Type="nvarchar" MaxLength="50" />
+  <Property Name="Circ_Secondary_Cable_Size" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_Secondary_Cable_Type" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_Secondary_Cable_NCD" Type="nvarchar" MaxLength="50" />
+  <Property Name="Circ_Secondary_Cable_Configuration" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_Notes" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_Race" Type="nvarchar" MaxLength="255" />
+  <Property Name="ProjectID" Type="nvarchar" MaxLength="255" />
+  <Property Name="ProjectCircuit" Type="nvarchar" MaxLength="255" />
+</EntityType>
+Errors Found During Generation:
+warning 6013: The table/view 'Camelot_Test.dbo.Circuit_25' does not have a primary key defined and no valid primary key could be inferred. This table/view has been excluded. To use the entity you will need to review your schema, add the correct keys and uncomment it.
+
+<EntityType Name="Circuit_25">
+  <Property Name="Equip_From_ID" Type="nvarchar" MaxLength="255" />
+  <Property Name="Equip_To_ID" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_Number" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_Rev" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_Drawing_Ref" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_Type" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_Status" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_From" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_To" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_Length_Estimated" Type="nvarchar" MaxLength="50" />
+  <Property Name="Circ_Length_Adjusted" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_Primary_Cable_Qty" Type="nvarchar" MaxLength="50" />
+  <Property Name="Circ_Primary_Cable_Size" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_Primary_Cable_Type" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_Primary_Cable_NCD" Type="nvarchar" MaxLength="50" />
+  <Property Name="Circ_Primary_Cable_Configuration" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_Secondary_Cable_Qty" Type="nvarchar" MaxLength="50" />
+  <Property Name="Circ_Secondary_Cable_Size" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_Secondary_Cable_Type" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_Secondary_Cable_NCD" Type="nvarchar" MaxLength="50" />
+  <Property Name="Circ_Secondary_Cable_Configuration" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_Notes" Type="nvarchar" MaxLength="255" />
+  <Property Name="Circ_Race" Type="nvarchar" MaxLength="255" />
+  <Property Name="ProjectID" Type="nvarchar" MaxLength="255" />
+  <Property Name="ProjectCircuit" Type="nvarchar" MaxLength="255" />
+</EntityType>-->
+</Schema>

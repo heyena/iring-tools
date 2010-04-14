@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="org.iringtools.modules.menu.menuregionright.LoginView"
+﻿<UserControl x:Class="Modules.Menu.MenuRegionRight.LoginView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
     xmlns:Regions="clr-namespace:Microsoft.Practices.Composite.Presentation.Regions;assembly=Microsoft.Practices.Composite.Presentation"

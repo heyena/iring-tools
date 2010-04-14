@@ -1,8 +1,8 @@
 ﻿using System;
-using org.iringtools.informationmodel.usercontrols;
-using org.iringtools.informationmodel.types;
+using InformationModel.UserControls;
+using InformationModel.Types;
 
-namespace org.iringtools.informationmodel.events
+namespace InformationModel.Events
 {
   public class CustomTabEventArgs : EventArgs
   {

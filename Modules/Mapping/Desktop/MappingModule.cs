@@ -6,21 +6,19 @@ using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Composite.Regions;
 using Microsoft.Practices.Unity;
 
-using org.iringtools.modulelibrary.layerbll;
-using org.iringtools.modulelibrary.layerdal;
+using ModuleLibrary.LayerBLL;
+using ModuleLibrary.LayerDAL;
 
-using org.iringtools.ontologyservice.presentation;
-using org.iringtools.ontologyservice.presentation.presentationmodels;
-#if SILVERLIGHT
-using org.iringtools.modules.projectapplicationregion;
-#endif
-using org.iringtools.modules.medatasourceregion;
-using org.iringtools.modules.memappingregion;
-using org.iringtools.modules.mainregion;
+using OntologyService.Interface;
+using OntologyService.Interface.PresentationModels;
+
+using Modules.MappingEditor.MEDataSourceRegion;
+using Modules.MappingEditor.MEMappingRegion;
+using Modules.MappingEditor.MainRegion;
 
 using org.ids_adi.iring.referenceData;
 
-namespace org.iringtools.modules
+namespace Modules.MappingEditor
 {
   public class MappingModule : ModuleBase
   {
@@ -36,9 +34,6 @@ namespace org.iringtools.modules
           .RegisterType<IAdapter, AdapterDAL>("AdapterProxyDAL", new ContainerControlledLifetimeManager()) // Singleton
           .RegisterType<IReferenceData, ReferenceDataBLL>(new ContainerControlledLifetimeManager()) // Singleton
           .RegisterType<IReferenceData, ReferenceDataDAL>("ReferenceDataDAL", new ContainerControlledLifetimeManager())  // Singleton
-#if SILVERLIGHT
-          .RegisterType<IProjectApplicationView, ProjectApplicationView>()
-#endif
           .RegisterType<IDataSourceTreeView, DataSourceTreeView>()
           .RegisterType<IMappingView, MappingView>()
           .RegisterType<IMappingEditorView, MappingEditorView>()
@@ -53,9 +48,6 @@ namespace org.iringtools.modules
     /// </summary>
     public override void RegisterTypesForPullBasedComposition()
     {
-#if SILVERLIGHT
-      RegionManager.RegisterViewWithRegion("ProjAppRegion", () => Container.Resolve<ProjectApplicationPresenter>().View);
-#endif
       RegionManager.RegisterViewWithRegion("MEDataSourceRegion", () => Container.Resolve<DataSourceTreePresenter>().View);
       RegionManager.RegisterViewWithRegion("MEMappingRegion", () => Container.Resolve<MappingPresenter>().View);
       RegionManager.RegisterViewWithRegion("MainRegion", () => Container.Resolve<MappingEditorPresenter>().View);

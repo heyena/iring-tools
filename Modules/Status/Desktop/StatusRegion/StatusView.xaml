@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="org.iringtools.modules.status.statusregion.StatusView"
+﻿<UserControl x:Class="Modules.Status.StatusRegion.StatusView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
     Width="auto" Height="25" HorizontalAlignment="Stretch">

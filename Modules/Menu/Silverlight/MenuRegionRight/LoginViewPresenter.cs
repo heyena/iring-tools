@@ -1,15 +1,15 @@
-﻿using org.iringtools.ontologyservice.presentation.presentationmodels;
+﻿using OntologyService.Interface.PresentationModels;
 using PrismContrib.Base;
 using System.Windows.Controls;
 using System.Windows;
 using Microsoft.Practices.Composite.Logging;
 using System.Windows.Browser;
 using Microsoft.Practices.Composite.Events;
-using org.iringtools.modulelibrary.events;
-using org.iringtools.modulelibrary.types;
-using org.iringtools.informationmodel.usercontrols;
+using ModuleLibrary.Events;
+using ModuleLibrary.Types;
+using InformationModel.UserControls;
 
-namespace org.iringtools.modules.menu.menuregionright
+namespace Modules.Menu.MenuRegionRight
 {
   public class LoginViewPresenter : PresenterBase<ILoginView>
   {
@@ -88,17 +88,18 @@ namespace org.iringtools.modules.menu.menuregionright
           rdLogout.Height = new GridLength(isValid ? 22 : 0);
 
 
-          //if (!isValid)
-          //  aggregator.GetEvent<StatusEvent>().Publish(new StatusEventArgs
-          //  {
-          //    Message = "Password is iring ",
-          //  });
-          //else
-          //  aggregator.GetEvent<StatusEvent>().Publish(new StatusEventArgs
-          //  {
-          //    Message = "logged in as " + TextCtrl("txtLogin").Text,
-          //    StatusPanel = StatusType.Right
-          //  });
+          if (!isValid)
+            aggregator.GetEvent<StatusEvent>().Publish(new StatusEventArgs
+            {
+              Message = "Password is iring ",
+              StatusPanel = StatusType.Middle
+            });
+          else
+            aggregator.GetEvent<StatusEvent>().Publish(new StatusEventArgs
+            {
+              Message = "logged in as " + TextCtrl("txtLogin").Text,
+              StatusPanel = StatusType.Right
+            });
           break;
 
         case "btnLogout":

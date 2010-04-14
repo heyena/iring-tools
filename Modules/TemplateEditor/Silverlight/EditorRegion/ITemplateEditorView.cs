@@ -1,6 +1,6 @@
 ﻿using PrismContrib.Base;
 
-namespace org.iringtools.modules.templateeditor.editorregion
+namespace Modules.TemplateEditor.EditorRegion
 {
     public interface ITemplateEditorView : IViewBase
     {

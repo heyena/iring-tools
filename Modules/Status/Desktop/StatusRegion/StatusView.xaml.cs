@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
 using PrismContrib.Base;
 
-namespace org.iringtools.modules.status.statusregion
+namespace Modules.Status.StatusRegion
 {
   public partial class StatusView : UserControl, IStatusView
   {

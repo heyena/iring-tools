@@ -8,6 +8,11 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Utility Library")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("iringug.org")]
+[assembly: AssemblyProduct("iRINGTools")]
+[assembly: AssemblyCopyright("Copyright © 2009, iringug.org")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -16,3 +21,13 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("8e3a4a42-6d0a-4170-b111-42f3c414a979")]
+
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+[assembly: AssemblyVersion("1.1.1")]
+[assembly: AssemblyFileVersion("1.1.1")]

@@ -27,70 +27,52 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.ComponentModel;
 
 namespace org.iringtools.library
 {
   [DataContract(Namespace = "http://ns.iringtools.org/library")]
   public class DatabaseDictionary
   {
-    [DataMember(IsRequired = true, Order = 1)]
-    public string connectionString { get; set; }
-
-    [DataMember(IsRequired = true, Order = 2)]
+    [DataMember(IsRequired = true)]
     public Provider provider { get; set; }
 
-    [DataMember(Order = 3)]
+    [DataMember(IsRequired = true)]
+    public string connectionString { get; set; }
+
+    [DataMember]
     public List<Table> tables { get; set; }
   }
 
   [DataContract(Namespace = "http://ns.iringtools.org/library")]
   public class Table
   {
-    [DataMember(IsRequired = true, Order = 5)]
+    [DataMember(IsRequired = true)]
     public string tableName { get; set; }
 
-    [DataMember(Order = 3)]
+    [DataMember]
     public string entityName { get; set; }
 
-    [DataMember(IsRequired = true, Order = 4)]
+    [DataMember(IsRequired = true)]
     public List<Key> keys { get; set; }
 
-    [DataMember(Order = 2)]
+    [DataMember]
     public List<Column> columns { get; set; }
 
-    [DataMember(Order = 1)]
+    [DataMember]
     public List<Association> associations { get; set; }
   }
 
   [DataContract(Namespace = "http://ns.iringtools.org/library")]
   public class Column
   {
-    [DataMember(IsRequired = true, Order = 1)]
+    [DataMember(IsRequired = true)]
     public string columnName { get; set; }
 
-    [DataMember(Order = 3)]
+    [DataMember]
     public string propertyName { get; set; }
 
-    //TODO: for v1.3 going forward
-    //[DataMember(IsRequired = true, Order = 2)]
-    //public DataType dataType { get; set; }
-
-    //[DataMember(IsRequired = true, Order = 4)]
-    //public int dataLength { get; set; }
-
-    //[DataMember(IsRequired = true, Order = 5)]
-    //public bool isNullable { get; set; }
-
-    // for backward compatibility
-    [DataMember(IsRequired = true, Order = 2)]
+    [DataMember(IsRequired = true)]
     public ColumnType columnType { get; set; }
-
-    [DataMember(IsRequired = false, Order = 4, EmitDefaultValue = false)]
-    public int? dataLength { get; set; }
-
-    [DataMember(IsRequired = false, Order = 5, EmitDefaultValue = false)]
-    public bool? isNullable { get; set; }
   }
 
   [DataContract(Namespace = "http://ns.iringtools.org/library")]
@@ -173,6 +155,8 @@ namespace org.iringtools.library
     [EnumMember]
     identity,
     [EnumMember]
+    native,
+    [EnumMember]
     sequence
   }
 
@@ -188,8 +172,6 @@ namespace org.iringtools.library
     [EnumMember]
     @DateTime,
     [EnumMember]
-    @Decimal,
-    [EnumMember]
     @Double,
     [EnumMember]
     @Int16,
@@ -198,8 +180,10 @@ namespace org.iringtools.library
     [EnumMember]
     @Int64,
     [EnumMember]
-    @Single,
+    @Object,
     [EnumMember]
     @String,
+    [EnumMember]
+    @TimeSpan
   }
 }

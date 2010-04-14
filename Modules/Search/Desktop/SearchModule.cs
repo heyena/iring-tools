@@ -1,17 +1,17 @@
 ﻿using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Composite.Regions;
 using Microsoft.Practices.Unity;
-using org.iringtools.modulelibrary.layerbll;
-using org.iringtools.modulelibrary.layerdal;
-using org.iringtools.ontologyservice.presentation;
-using org.iringtools.ontologyservice.presentation.presentationmodels;
+using ModuleLibrary.LayerBLL;
+using ModuleLibrary.LayerDAL;
+using OntologyService.Interface;
+using OntologyService.Interface.PresentationModels;
 using PrismContrib.Base;
 using PrismContrib.Loggers;
 using Microsoft.Practices.Composite.Modularity;
 using org.ids_adi.iring.referenceData;
-using org.iringtools.modules.search.searchregion;
+using Modules.Search.SearchRegion;
 
-namespace org.iringtools.modules.search
+namespace Modules.Search
 {
     public class SearchModule : ModuleBase
     {

@@ -6,11 +6,11 @@ using PrismContrib.Base;
 
 using Microsoft.Practices.Composite.Events;
 
-using org.iringtools.library.presentation.events;
+using Library.Interface.Events;
 
-using org.iringtools.modulelibrary.events;
+using ModuleLibrary.Events;
 
-namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
+namespace Modelling.ClassDefinition.ClassDefinitionEditor
 {
     public partial class ClassDefinitionEditorView : UserControl, IClassDefinitionEditorView
     {

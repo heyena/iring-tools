@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Net;
 using PrismContrib.Base;
-using org.iringtools.ontologyservice.presentation.entities;
+using OntologyService.Interface.Entities;
 using System.Collections.Generic;
-using org.iringtools.ontologyservice.presentation.presentationmodels;
+using OntologyService.Interface.PresentationModels;
 using System.Windows.Controls;
 using System.Collections.ObjectModel;
 using org.ids_adi.iring.referenceData;
 using org.ids_adi.iring;
-using org.iringtools.modulelibrary.entities;
-using org.iringtools.modulelibrary.types;
+using ModuleLibrary.Entities;
+using ModuleLibrary.Types;
 using org.ids_adi.qmxf;
-using org.iringtools.informationmodel.usercontrols;
-using org.iringtools.modulelibrary.usercontrols;
+using InformationModel.UserControls;
+using ModuleLibrary.UserControls;
 using org.iringtools.library;
 
 
-namespace org.iringtools.ontologyservice.presentation
+namespace OntologyService.Interface
 {
   /// <summary>
   /// This presentation model has cross-cutting concerns and will be used
@@ -322,20 +322,6 @@ namespace org.iringtools.ontologyservice.presentation
       {
         _detailProperties = value;
         OnPropertyChanged("DetailProperties");
-      }
-    }
-
-    private Dictionary<string, string> _idLabelDictionary;
-    public Dictionary<string, string> IdLabelDictionary
-    {
-      get
-      {
-        if (_idLabelDictionary == null)
-        {
-          _idLabelDictionary = new Dictionary<string, string>();
-        }
-
-        return _idLabelDictionary;
       }
     }
   }

@@ -11,17 +11,17 @@ using Microsoft.Practices.Composite.Modularity;
 using Microsoft.Practices.Composite.Regions;
 using Microsoft.Practices.Unity;
 
-using org.iringtools.modulelibrary.layerbll;
-using org.iringtools.modulelibrary.layerdal;
+using ModuleLibrary.LayerBLL;
+using ModuleLibrary.LayerDAL;
 
-using org.iringtools.modules.templateeditor.editorregion;
+using Modules.TemplateEditor.EditorRegion;
 
-using org.iringtools.ontologyservice.presentation;
-using org.iringtools.ontologyservice.presentation.presentationmodels;
+using OntologyService.Interface;
+using OntologyService.Interface.PresentationModels;
 
 using org.ids_adi.iring.referenceData;
 
-namespace org.iringtools.modules.templateeditor
+namespace Modules.TemplateEditor
 {
     public class TemplateEditorModule : ModuleBase
     {

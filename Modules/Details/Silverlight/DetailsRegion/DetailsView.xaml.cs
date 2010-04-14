@@ -4,7 +4,7 @@ using PrismContrib.Base;
 
 using Microsoft.Practices.Composite.Regions;
 
-namespace org.iringtools.modules.details.detailsregion
+namespace Modules.Details.DetailsRegion
 {
     public partial class DetailsView : UserControl, IDetailsView
     {

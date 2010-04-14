@@ -38,10 +38,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core">
@@ -112,12 +108,15 @@
     <Compile Include="App_Code\ReferenceDataServiceProvider.cs" />
     <Compile Include="App_Code\ConfigSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\..\AssemblyInfo.cs" />  
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
       <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
       <Name>iRINGLibrary.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\PrismContrib\Desktop\PrismContrib.Desktop.csproj">
+      <Project>{1A611244-54BE-4F12-AA34-12F54A2B07E6}</Project>
+      <Name>PrismContrib.Desktop</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Libraries\UtilityLibrary\Desktop\UtilityLibrary.Desktop.csproj">
       <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>

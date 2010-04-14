@@ -90,7 +90,7 @@ namespace org.iringtools.library
 
         foreach (SPARQLRole role in this.Roles)
         {
-            if (role.Role == "p7tpl:valEndTime")
+            if (role.Role == "tpl:endDateTime")
             {
                 sparql.AppendLine(String.Format("{0} {1} {2} .", this.getNode(), role.Role, role.newId));
             }           
@@ -102,8 +102,7 @@ namespace org.iringtools.library
     public string getINSERT_SPARQL()
     {
       StringBuilder sparql = new StringBuilder();
-
-      sparql.AppendLine(String.Format("{0} a {1} .", this.getNode(true), "owl:Thing"));
+      
       sparql.AppendLine(String.Format("{0} a {1} .", this.getNode(true), TemplateName));
       sparql.AppendLine(String.Format("{0} {1} {2} .", this.getNode(true), ClassRole, ClassId));
 
@@ -119,13 +118,12 @@ namespace org.iringtools.library
     {
       StringBuilder sparql = new StringBuilder();
 
-      sparql.AppendLine(String.Format("{0} a {1} .", this.getNode(), "owl:Thing"));
       sparql.AppendLine(String.Format("{0} a {1} .", this.getNode(), TemplateName));
       sparql.AppendLine(String.Format("{0} {1} {2} .", this.getNode(), ClassRole, ClassId));
 
       foreach (SPARQLRole role in this.Roles)
       {
-          if (role.Role != "p7tpl:valEndTime")
+          if (role.Role != "tpl:endDateTime")
           {
             sparql.AppendLine(String.Format("{0} {1} {2} .", this.getNode(), role.Role, role.Id));
           }
@@ -148,8 +146,8 @@ namespace org.iringtools.library
     {
         StringBuilder sparql = new StringBuilder();
         sparql.AppendLine(String.Format("?subject ?predicate {0} ." , this.Roles[0].Id ));
-        sparql.AppendLine("FILTER (?predicate != p7tpl:R99011248051)");        
-        sparql.AppendLine("OPTIONAL { ?subject p7tpl:valEndTime ?endDateTime }");
+        sparql.AppendLine("FILTER (?predicate != dm:instance)");        
+        sparql.AppendLine("OPTIONAL { ?subject tpl:endDateTime ?endDateTime }");
         sparql.AppendLine("FILTER (!bound(?endDateTime))");
         return sparql.ToString();
     }    
@@ -163,9 +161,9 @@ namespace org.iringtools.library
       this.Prefix = "c";
       this.Idx = 0;
 
-      this.TemplateName = "p7tpl:R63638239485";
-
-      this.ClassRole = "p7tpl:R55055340393";
+      this.TemplateName = "dm:classification";
+      
+      this.ClassRole = "dm:class";
       this.ClassId = String.Empty;                 
                
     }
@@ -215,8 +213,7 @@ namespace org.iringtools.library
       this.Prefixes.Add(new SPARQLPrefix() { Label = @"tpl", Uri = @"http://tpl.rdlfacade.org/data#", isMappable=false, objectType= SPARQLPrefix.ObjectType.Template  });
       this.Prefixes.Add(new SPARQLPrefix() { Label = @"xsd", Uri = @"http://www.w3.org/2001/XMLSchema#" , isMappable=true, objectType= SPARQLPrefix.ObjectType.Unknown });
       this.Prefixes.Add(new SPARQLPrefix() { Label = @"eg", Uri = @"http://www.example.com/data#", isMappable = false, objectType = SPARQLPrefix.ObjectType.Unknown });
-      this.Prefixes.Add(new SPARQLPrefix() { Label = @"owl", Uri = @"http://www.w3.org/2002/07/owl#", isMappable = false, objectType = SPARQLPrefix.ObjectType.Unknown });
-      this.Prefixes.Add(new SPARQLPrefix() { Label = @"p7tpl", Uri = @"http://tpl.rdlfacade.org/data#", isMappable = false, objectType = SPARQLPrefix.ObjectType.Unknown });      
+      
     }
 
     public SPARQLQuery(SPARQLQueryType type) 
@@ -242,8 +239,8 @@ namespace org.iringtools.library
 
     public String getLITERAL_SPARQL(Object value, String type)
     {
-     if(String.IsNullOrEmpty(type))
-        type = "String";
+      if (type.Equals(string.Empty))
+        return type = "String";
       
       if (!type.Contains(':'))
         type = "xsd:" + type;
@@ -318,22 +315,22 @@ namespace org.iringtools.library
     }
 
     public SPARQLTemplate addTemplate(SPARQLTemplate template)
-    {
-      //var items = from query in this.Templates
-      //            where query.TemplateName == template.TemplateName
-      //            select query;
+    {      
+      var items = from query in this.Templates
+                  where query.TemplateName == template.TemplateName
+                  select query;
 
-      //if (items.Count<SPARQLTemplate>() == 0)
-      //{
+      if (items.Count<SPARQLTemplate>() == 0)
+      {
         int idx = this.Templates.Count<SPARQLTemplate>();
         template.Idx = ++idx;
         this.Templates.Add(template);
         return template;
-      //}
-      //else
-      //{
-      //  return items.First<SPARQLTemplate>();
-      //}      
+      }
+      else
+      {
+        return items.First<SPARQLTemplate>();
+      }      
     }
                 
     public SPARQLTemplate addTemplate(String templateName, String classRole, String classId, String role, String id)
@@ -363,7 +360,7 @@ namespace org.iringtools.library
     {
       SPARQLClassification classification = new SPARQLClassification();      
       classification.ClassId = classId;
-      classification.addRole("p7tpl:R99011248051", id);            
+      classification.addRole("dm:instance", id);            
 
       this.addTemplate(classification);
 

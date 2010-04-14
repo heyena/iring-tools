@@ -8,13 +8,13 @@ using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Composite.Regions;
 
-using org.iringtools.modulelibrary.events;
-using org.iringtools.modulelibrary.types;
+using ModuleLibrary.Events;
+using ModuleLibrary.Types;
 
-using org.iringtools.ontologyservice.presentation;
-using org.iringtools.ontologyservice.presentation.presentationmodels;
+using OntologyService.Interface;
+using OntologyService.Interface.PresentationModels;
 
-namespace org.iringtools.modules.menu.menuregion
+namespace Modules.Menu.MenuRegion
 {
   public class MenuPresenter : PresenterBase<IMenuView>
   {
@@ -86,11 +86,11 @@ namespace org.iringtools.modules.menu.menuregion
       Logger.Log(string.Format("Button Click: {0} for View: {1}",
         button.Name,button.Tag), Category.Debug, Priority.None);
 
-      //aggregator.GetEvent<StatusEvent>().Publish(new StatusEventArgs
-      //{
-      //  Message = string.Format("View {0} selected", button.Tag),
-      //  StatusPanel = StatusType.Left  // Left status bar
-      //});
+      aggregator.GetEvent<StatusEvent>().Publish(new StatusEventArgs
+      {
+        Message = string.Format("View {0} selected", button.Tag),
+        StatusPanel = StatusType.Left  // Left status bar
+      });
 
       // Disable the button just clicked
       button.IsEnabled = false;

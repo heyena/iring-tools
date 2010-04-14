@@ -8,6 +8,11 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Menu Module for Silverlight")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("iringug.org")]
+[assembly: AssemblyProduct("iRINGTools")]
+[assembly: AssemblyCopyright("Copyright © 2009, iringug.org")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -16,3 +21,15 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("fa938d2c-e83a-4b3e-bafb-67982fc84931")]
+
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+// You can specify all the values or you can default the Revision and Build Numbers 
+// by using the '*' as shown below:
+[assembly: AssemblyVersion("1.1.1")]
+[assembly: AssemblyFileVersion("1.1.1")]

@@ -4,7 +4,7 @@
 using System.Windows.Controls;
 #endif
 
-namespace org.iringtools.informationmodel.events
+namespace InformationModel.Events
 {
   public class TreeViewEvent : CompositePresentationEvent<TreeViewEventArgs>
   {

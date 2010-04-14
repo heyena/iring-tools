@@ -11,21 +11,21 @@ using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Composite.Regions;
 using Microsoft.Practices.Composite.Presentation.Regions.Behaviors;
 
-using org.iringtools.library.presentation.events;
+using Library.Interface.Events;
 
-using org.iringtools.modulelibrary.events;
-using org.iringtools.modulelibrary.types;
+using ModuleLibrary.Events;
+using ModuleLibrary.Types;
 
-using org.iringtools.modules.popup;
-using org.iringtools.modulelibrary.layerdal;
-using org.iringtools.modulelibrary.layerbll;
+using Modules.Popup;
+using ModuleLibrary.LayerDAL;
+using ModuleLibrary.LayerBLL;
 
-using org.iringtools.ontologyservice.presentation;
-using org.iringtools.ontologyservice.presentation.presentationmodels;
+using OntologyService.Interface;
+using OntologyService.Interface.PresentationModels;
 
 using org.ids_adi.qmxf;
 
-namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
+namespace Modelling.ClassDefinition.ClassDefinitionEditor
 {
     public enum EditorMode
     {
@@ -177,10 +177,10 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
                     userControl.Visibility = Visibility.Visible;
                 }
             }
-            //else if (e.ButtonClicked.Tag.Equals("EditClass1"))
-            //{
+            else if (e.ButtonClicked.Tag.Equals("EditClass1"))
+            {
 
-            //}
+            }
         }
 
         public void buttonClickHandler(ButtonEventArgs e)

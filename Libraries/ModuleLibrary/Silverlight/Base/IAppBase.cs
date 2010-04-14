@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.Practices.Composite.Logging;
-namespace org.iringtools.library.presentation.loggers
+namespace Library.Interface.Loggers
 {
     public interface IAppBase
     {

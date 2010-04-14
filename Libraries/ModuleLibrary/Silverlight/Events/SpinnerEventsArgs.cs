@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Net;
-using org.iringtools.modulelibrary.types;
+using ModuleLibrary.Types;
 
 
-namespace org.iringtools.informationmodel.events
+namespace InformationModel.Events
 {
   public enum SpinnerEventType { Started, Stopped };
 

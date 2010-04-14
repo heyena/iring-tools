@@ -45,66 +45,59 @@ namespace org.iringtools.library
     
 #if !SILVERLIGHT
     [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/datadictionary")]
+    [WebGet(UriTemplate = "/datadictionary")]
 #endif
-    DataDictionary GetDictionary(string projectName, string applicationName);
+    DataDictionary GetDictionary();
 
 #if !SILVERLIGHT
     [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/datadictionary/refresh")]
+    [WebGet(UriTemplate = "/datadictionary/refresh")]
 #endif
-    Response RefreshDictionary(string projectName, string applicationName);
-
-#if !SILVERLIGHT
-    [OperationContract]
-    [XmlSerializerFormat]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/mapping")]
-#endif
-    Mapping GetMapping(string projectName, string applicationName);
+    Response RefreshDictionary();
 
 #if !SILVERLIGHT
     [OperationContract]
     [XmlSerializerFormat]
-    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/mapping")]
+    [WebGet(UriTemplate = "/mapping")]
 #endif
-    Response UpdateMapping(string projectName, string applicationName, Mapping mapping);
+    Mapping GetMapping();
 
 #if !SILVERLIGHT
     [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/generate")]
+    [XmlSerializerFormat]
+    [WebInvoke(Method = "POST", UriTemplate = "/mapping")]
 #endif
-    Response Generate(string projectName, string applicationName);
+    Response UpdateMapping(Mapping mapping);
+
+#if !SILVERLIGHT
+    [OperationContract]
+    [WebGet(UriTemplate = "/generate")]
+#endif
+    Response Generate();
 
     
 #if !SILVERLIGHT
     [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/clear")]
+    [WebGet(UriTemplate = "/clear")]
 #endif
-    Response ClearStore(string projectName, string applicationName);
+    Response ClearStore();
 
 #if !SILVERLIGHT
     [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/refresh")]
+    [WebGet(UriTemplate = "/{graphName}/refresh")]
 #endif
-    Response RefreshGraph(string projectName, string applicationName, string graphName);
+    Response RefreshGraph(string graphName);
 
 #if !SILVERLIGHT
     [OperationContract]
-    [WebGet(UriTemplate = "/scopes")]
-    Response GetScope();
+    [WebGet(UriTemplate = "/refresh")]
 #endif
-
-#if !SILVERLIGHT
-    [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/refresh")]
-#endif
-    Response RefreshAll(string projectName, string applicationName);
+    Response RefreshAll();
 
 #if !SILVERLIGHT
     [OperationContract]
     [WebInvoke(Method = "POST", UriTemplate = "/pull")]
 #endif
     Response Pull(Request request);
-
   } 
 }

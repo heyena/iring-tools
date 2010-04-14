@@ -1,5 +1,23 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <TestLists xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2006">
+  <TestList name="AdapterService" id="187461ed-36c8-45b9-a0d8-14b3dc4ba97c" parentListId="8c43106b-9dc1-4907-a29f-aa66a61bf5b6">
+    <TestLinks>
+      <TestLink id="5f116d24-6535-2bfa-b21c-2a1f77a34325" name="GetMappingTest" storage="adapter\adapterservice.tests\bin\debug\adapterservice.tests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="7a6a492c-a6a0-63ff-f3b2-e27373dadcdc" name="GenerateTest" storage="adapter\adapterservice.tests\bin\debug\adapterservice.tests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="fdf70702-6845-a08e-daf5-899634152d1a" name="RefreshTest" storage="adapter\adapterservice.tests\bin\debug\adapterservice.tests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="5561ddae-95b4-1f1b-a3f9-1970d2906cc8" name="RefreshDictionaryTest" storage="adapter\adapterservice.tests\bin\debug\adapterservice.tests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="192da9fd-7be1-d827-d99b-5d08a875389e" name="GetTest" storage="adapter\adapterservice.tests\bin\debug\adapterservice.tests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="31391d76-feb0-a0a4-5e8f-d4be9078eb8c" name="ClearStoreTest" storage="adapter\adapterservice.tests\bin\debug\adapterservice.tests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="09be8da6-2bcd-0511-d4d1-a16c50ff5e66" name="RefreshAllTest" storage="adapter\adapterservice.tests\bin\debug\adapterservice.tests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="604c6612-16cf-8717-aaa1-63ba1f81228b" name="GetDictionaryTest" storage="adapter\adapterservice.tests\bin\debug\adapterservice.tests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="c40687f8-0e5f-d680-5780-05a6eedfff43" name="GetListTest" storage="adapter\adapterservice.tests\bin\debug\adapterservice.tests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+    </TestLinks>
+  </TestList>
+  <TestList name="IOHN" id="72c6de8c-fc17-44ce-8bcb-08f3a9dfb9a9" parentListId="8c43106b-9dc1-4907-a29f-aa66a61bf5b6">
+    <TestLinks>
+      <TestLink id="c503a5ea-b064-f2bc-72ee-2766d6d35ad5" name="PullTest" storage="adapter\adapterservice.tests\bin\debug\adapterservice.tests.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+    </TestLinks>
+  </TestList>
   <TestList name="Lists of Tests" id="8c43106b-9dc1-4907-a29f-aa66a61bf5b6">
     <RunConfiguration id="85c2741e-1856-4005-ab6c-e890767cd1cf" name="AdapterService" storage="adapterservice.testrunconfig" type="Microsoft.VisualStudio.TestTools.Common.TestRunConfiguration, Microsoft.VisualStudio.QualityTools.Common,   PublicKeyToken=b03f5f7f11d50a3a" />
   </TestList>

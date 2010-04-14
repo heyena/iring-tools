@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="Default" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="Default" %>
 
 <%@ Register Assembly="System.Web.Silverlight" Namespace="System.Web.UI.SilverlightControls"
     TagPrefix="asp" %>
@@ -7,7 +7,6 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" style="height:100%;">
 <head id="Head1" runat="server">
-    <meta http-equiv="cache-control" content="no-cache">
     <title>MappingEditor</title>
 </head>
 <body style="height:100%;margin:0;">

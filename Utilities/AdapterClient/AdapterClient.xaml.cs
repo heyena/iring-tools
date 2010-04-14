@@ -28,21 +28,11 @@ namespace IDS_ADI.iRING.Adapter
       //new StatusMessage { Message = "iRING Adapter Client 1.01.00", ImageName = "iring_22.png" },
     };
 
-    ScopeProject _project = null;
-    ScopeApplication _application = null;
-
     public AdapterClient()
     {
       InitializeComponent();
 
       listBoxResults.ItemsSource = _messages;
-
-      WebClient client = new WebClient();
-      client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(client_DownloadScopesCompleted);
-
-      Uri scopesURI = new Uri(textBoxAdapterURL.Text + "/scopes");
-
-      client.DownloadStringAsync(scopesURI); 
     }
 
     private void buttonPull_Click(object sender, RoutedEventArgs e)
@@ -53,13 +43,13 @@ namespace IDS_ADI.iRING.Adapter
       client.UploadStringCompleted += new UploadStringCompletedEventHandler(client_UploadStringCompleted);
       client.Headers["Content-type"] = "application/xml";
       client.Encoding = Encoding.UTF8;
-      
-      Uri pullURI = new Uri(textBoxAdapterURL.Text + "/" + _project.Name + "/" + _application.Name + "/pull");
+
+      Uri pullURI = new Uri(textBoxAdapterURL.Text + "/pull");
 
       Request request = new Request();
       WebCredentials targetCredentials = new WebCredentials();
       string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
-      request.Add("targetUri", textBoxTargetURL.Text + "/" + _project.Name + "/" + _application.Name + "/sparql");
+      request.Add("targetUri", textBoxTargetURL.Text);
       request.Add("targetCredentials", targetCredentialsXML);
       request.Add("graphName", textBoxGraphName.Text);
       request.Add("filter", "");
@@ -76,14 +66,9 @@ namespace IDS_ADI.iRING.Adapter
       WebClient client = new WebClient();
       client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(client_DownloadStringCompleted);
 
-      Uri clearURI = new Uri(textBoxAdapterURL.Text + "/" + _project.Name + "/" + _application.Name + "/clear");
+      Uri clearURI = new Uri(textBoxAdapterURL.Text + "/clear");
 
       client.DownloadStringAsync(clearURI);
-    }
-
-    private void buttonClearLog_Click(object sender, RoutedEventArgs e)
-    {
-      _messages.Clear();
     }
 
     private void buttonRefresh_Click(object sender, RoutedEventArgs e)
@@ -91,7 +76,7 @@ namespace IDS_ADI.iRING.Adapter
       WebClient client = new WebClient();
       client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(client_DownloadStringCompleted);
 
-      Uri refreshURI = new Uri(textBoxAdapterURL.Text + "/" + _project.Name + "/" + _application.Name + "/" + textBoxGraphName.Text + "/refresh");
+      Uri refreshURI = new Uri(textBoxAdapterURL.Text + "/" + textBoxGraphName.Text + "/refresh");
 
       client.DownloadStringAsync(refreshURI);
     }
@@ -129,115 +114,73 @@ namespace IDS_ADI.iRING.Adapter
       listBoxResults.ScrollIntoView(listBoxResults.Items[listBoxResults.Items.Count - 1]);
     }
 
-    private void buttonGetScopes_Click(object sender, RoutedEventArgs e)
+    private void buttonDictionaryGenerate_Click(object sender, RoutedEventArgs e)
     {
-      WebClient client = new WebClient();
-      client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(client_DownloadScopesCompleted);
-
-      Uri scopesURI = new Uri(textBoxAdapterURL.Text + "/scopes");
-
-      client.DownloadStringAsync(scopesURI);      
-      
-    }
-
-    private void client_DownloadScopesCompleted(object sender, DownloadStringCompletedEventArgs e)
-    {
-      ObservableCollection<ScopeProject> scopes = e.Result.DeserializeDataContract<ObservableCollection<ScopeProject>>();
-
-      if (scopes != null && scopes.Count > 0)
+      try
       {
-        comboBoxProjectName.DisplayMemberPath = "Name";
-        comboBoxProjectName.ItemsSource = scopes;
-        comboBoxProjectName.SelectionChanged += new SelectionChangedEventHandler(comboBoxProjectName_SelectionChanged);
-        comboBoxProjectName.SelectedIndex = 0;
+        _messages.Add(new StatusMessage { Message = "Posting Generate Dictionary Request...", ImageName = "info_22.png" });
+
+        WebClient client = new WebClient();
+        client.UploadStringCompleted += new UploadStringCompletedEventHandler(client_UploadStringCompleted);
+        client.Headers["Content-type"] = "application/xml";
+        client.Encoding = Encoding.UTF8;
+
+        Uri dictionaryGenerateURI = new Uri(textBoxAdapterURL.Text + "/dictionary/generate");
+
+        #region make it
+        //DatabaseDictionary myDatabaseDictionary = new DatabaseDictionary();
+
+        //myDatabaseDictionary.providerName = "CrazyProvider";
+        //myDatabaseDictionary.dataObjects = new List<DatabaseObject>
+        //{
+        //  new DatabaseObject 
+        //  {
+        //    dataProperties = new List<DatabaseProperty>
+        //    {
+        //      new DatabaseProperty
+        //      {
+        //        dataLength = "32",
+        //        dataType = "string",
+        //        isPropertyKey = true,
+        //        isRequired = true,
+        //        propertyName = "szTag",
+        //      },
+        //    },
+        //    objectName = "I_Line",
+        //    objectNamespace = "Crazy",
+        //  },
+        //  new DatabaseObject 
+        //  {
+        //    dataProperties = new List<DatabaseProperty>
+        //    {
+        //      new DatabaseProperty
+        //      {
+        //        dataLength = "32",
+        //        dataType = "string",
+        //        isPropertyKey = true,
+        //        isRequired = true,
+        //        propertyName = "szTag",
+        //      },
+        //    },
+        //    objectName = "I_Valve",
+        //    objectNamespace = "Crazy",
+        //  },
+        //};
+        #endregion
+
+        //Utility.Write<DatabaseDictionary>(myDatabaseDictionary, "MyDatabasedictioanry.xml", true);
+
+        DatabaseDictionary databaseDictionary = Utility.Read<DatabaseDictionary>("databaseDictionary.xml", true);
+
+        string message = Utility.Serialize<DatabaseDictionary>(databaseDictionary, true);
+
+        client.UploadStringAsync(dictionaryGenerateURI, message);
+      }
+      catch (Exception ex)
+      {
+        _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "error_22.png" });
       }
     }
-
-    private void comboBoxProjectName_SelectionChanged(object sender, RoutedEventArgs e)
-    {
-      if (comboBoxProjectName.SelectedIndex != -1)
-      {
-        _project = (ScopeProject)comboBoxProjectName.SelectedItem;
-        comboBoxAppName.DisplayMemberPath = "Name";
-        comboBoxAppName.ItemsSource = _project.Applications;
-        comboBoxAppName.SelectionChanged += new SelectionChangedEventHandler(comboBoxAppName_SelectionChanged);
-        comboBoxAppName.SelectedIndex = 0;
-      }
-    }
-
-    private void comboBoxAppName_SelectionChanged(object sender, RoutedEventArgs e)
-    {
-      _application = (ScopeApplication)comboBoxAppName.SelectedItem;
-    }
-
-
-    //private void buttonDictionaryGenerate_Click(object sender, RoutedEventArgs e)
-    //{
-    //  try
-    //  {
-    //    _messages.Add(new StatusMessage { Message = "Posting Generate Dictionary Request...", ImageName = "info_22.png" });
-
-    //    WebClient client = new WebClient();
-    //    client.UploadStringCompleted += new UploadStringCompletedEventHandler(client_UploadStringCompleted);
-    //    client.Headers["Content-type"] = "application/xml";
-    //    client.Encoding = Encoding.UTF8;
-
-    //    Uri dictionaryGenerateURI = new Uri(textBoxAdapterURL.Text + "/dictionary/generate");
-
-    //    #region make it
-    //    //DatabaseDictionary myDatabaseDictionary = new DatabaseDictionary();
-
-    //    //myDatabaseDictionary.providerName = "CrazyProvider";
-    //    //myDatabaseDictionary.dataObjects = new List<DatabaseObject>
-    //    //{
-    //    //  new DatabaseObject 
-    //    //  {
-    //    //    dataProperties = new List<DatabaseProperty>
-    //    //    {
-    //    //      new DatabaseProperty
-    //    //      {
-    //    //        dataLength = "32",
-    //    //        dataType = "string",
-    //    //        isPropertyKey = true,
-    //    //        isRequired = true,
-    //    //        propertyName = "szTag",
-    //    //      },
-    //    //    },
-    //    //    objectName = "I_Line",
-    //    //    objectNamespace = "Crazy",
-    //    //  },
-    //    //  new DatabaseObject 
-    //    //  {
-    //    //    dataProperties = new List<DatabaseProperty>
-    //    //    {
-    //    //      new DatabaseProperty
-    //    //      {
-    //    //        dataLength = "32",
-    //    //        dataType = "string",
-    //    //        isPropertyKey = true,
-    //    //        isRequired = true,
-    //    //        propertyName = "szTag",
-    //    //      },
-    //    //    },
-    //    //    objectName = "I_Valve",
-    //    //    objectNamespace = "Crazy",
-    //    //  },
-    //    //};
-    //    #endregion
-
-    //    //Utility.Write<DatabaseDictionary>(myDatabaseDictionary, "MyDatabasedictioanry.xml", true);
-
-    //    DatabaseDictionary databaseDictionary = Utility.Read<DatabaseDictionary>("databaseDictionary.xml", true);
-
-    //    string message = Utility.Serialize<DatabaseDictionary>(databaseDictionary, true);
-
-    //    client.UploadStringAsync(dictionaryGenerateURI, message);
-    //  }
-    //  catch (Exception ex)
-    //  {
-    //    _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "error_22.png" });
-    //  }
-    //}
   }
 
   public class StatusMessage

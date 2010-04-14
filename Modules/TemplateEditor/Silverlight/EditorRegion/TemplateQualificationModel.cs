@@ -11,7 +11,7 @@ using System.Xml.Schema;
 using System.Reflection;
 using org.ids_adi.qmxf;
 
-namespace org.iringtools.modules.templateeditor.editorregion
+namespace Modules.TemplateEditor.EditorRegion
 {
     public class TemplateQualificationModel : TemplateModel, ITemplateEditorModel, INotifyPropertyChanged
     {

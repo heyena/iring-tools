@@ -96,7 +96,6 @@
       <DependentUpon>Page.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\..\AssemblyInfo.cs" />  
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -127,10 +126,6 @@
     <ProjectReference Include="..\..\Modules\Details\Silverlight\Details.Silverlight.csproj">
       <Project>{E27058A1-26FF-49A7-AF8B-408B9F18ED16}</Project>
       <Name>Details.Silverlight</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Modules\Edits\Silverlight\Edits.Silverlight\Edits.Silverlight.csproj">
-      <Project>{48C20C15-3E83-47C8-87F3-C5EA0D389528}</Project>
-      <Name>Edits.Silverlight</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Modules\Menu\Silverlight\Menu.Silverlight.csproj">
       <Project>{021999F9-1E99-401B-9C7C-21C331434F02}</Project>

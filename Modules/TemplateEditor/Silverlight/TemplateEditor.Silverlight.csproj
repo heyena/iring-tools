@@ -80,7 +80,6 @@
     <Compile Include="EditorRegion\TemplateModel.cs" />
     <Compile Include="EditorRegion\TemplateQualificationModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\..\..\AssemblyInfo.cs" />  
     <Compile Include="TemplateEditorModule.cs" />
   </ItemGroup>
   <ItemGroup>

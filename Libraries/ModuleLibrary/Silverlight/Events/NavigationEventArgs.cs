@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Windows.Controls;
 
-using org.iringtools.informationmodel.usercontrols;
+using InformationModel.UserControls;
 
-namespace org.iringtools.informationmodel.events
+namespace InformationModel.Events
 {
     public enum DetailType
     {

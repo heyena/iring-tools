@@ -10,7 +10,7 @@ using System.Windows.Controls.Primitives;
 
 using org.ids_adi.qmxf;
 
-namespace org.iringtools.modulelibrary.layerbll
+namespace ModuleLibrary.LayerBLL
 {
     public class ClassDefinitionBLL : INotifyPropertyChanged
     {

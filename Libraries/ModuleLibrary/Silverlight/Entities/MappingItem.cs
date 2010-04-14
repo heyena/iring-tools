@@ -1,10 +1,10 @@
 ﻿using System.Windows.Controls;
 using System.Windows;
-using org.iringtools.informationmodel.usercontrols;
-using org.iringtools.modulelibrary.types;
+using InformationModel.UserControls;
+using ModuleLibrary.Types;
 using org.iringtools.library;
 
-namespace org.iringtools.modulelibrary.entities
+namespace ModuleLibrary.Entities
 {
   public class MappingItem : CustomTreeItem
   {

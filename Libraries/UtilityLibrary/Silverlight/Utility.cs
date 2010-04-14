@@ -31,7 +31,6 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
 
 
 namespace org.iringtools.utility
@@ -247,32 +246,6 @@ namespace org.iringtools.utility
       {
         writer.Close();
       }
-    }
-
-    public static string NameSafe(string name)
-    {
-      return Regex.Replace(name, @"^\d*|\W", "");
-    }
-
-    public static string GetIdFromURI(string uri)
-    {
-      string id = uri;
-
-      if (!String.IsNullOrEmpty(uri))
-      {
-        if (id.Contains("#"))
-        {
-          id = id.Substring(id.LastIndexOf("#") + 1);
-        }
-        else if (id.Contains(":"))
-        {
-          id = id.Substring(id.LastIndexOf(":") + 1);
-        }
-      }
-
-      if (id == null) id = String.Empty;
-
-      return id;
     }
   }
 }

@@ -13,7 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using PrismContrib.Base;
 
-namespace org.iringtools.modules.mainregion
+namespace Modules.MappingEditor.MainRegion
 {
   /// <summary>
   /// Interaction logic for MappingEditorView.xaml

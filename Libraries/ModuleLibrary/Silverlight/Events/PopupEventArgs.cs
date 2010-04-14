@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace org.iringtools.library.presentation.events
+namespace Library.Interface.Events
 {
     public enum PopupProcessType { Show, Close };
     

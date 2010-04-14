@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interactivity;
 
-namespace org.iringtools.modulelibrary.behaviors
+namespace ModuleLibrary.Behaviors
 {
 	/// <summary>
 	/// Adds mouse wheel scroll to scrollable controls

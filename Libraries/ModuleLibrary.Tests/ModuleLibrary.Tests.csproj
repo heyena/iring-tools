@@ -118,7 +118,6 @@
     <Compile Include="Mocks\MockInformationModule.cs" />
     <Compile Include="Mocks\MockPage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\..\AssemblyInfo.cs" />  
     <Compile Include="AdapterServiceFixture.cs" />
     <Compile Include="ReferenceDataServiceFixture.cs" />
   </ItemGroup>

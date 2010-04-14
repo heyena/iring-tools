@@ -1,6 +1,6 @@
 ﻿<UserControl x:Name="MappingEditorView1"
     xmlns:data="clr-namespace:Microsoft.Windows.Controls;assembly=WpfToolkit"
-             x:Class="org.iringtools.modules.mainregion.MappingEditorView"
+             x:Class="Modules.MappingEditor.MainRegion.MappingEditorView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
     xmlns:Regions="clr-namespace:Microsoft.Practices.Composite.Presentation.Regions;assembly=Microsoft.Practices.Composite.Presentation"

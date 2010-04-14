@@ -2,12 +2,12 @@
 using Microsoft.Practices.Composite.Logging;
 using System.Windows;
 using System.Windows.Controls;
-using org.iringtools.informationmodel.usercontrols;
+using InformationModel.UserControls;
 using System;
 using org.iringtools.library;
 
 
-namespace org.iringtools.modulelibrary.usercontrols
+namespace ModuleLibrary.UserControls
 {
   public class DataObjectItem : CustomTreeItem
   {

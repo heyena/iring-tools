@@ -116,7 +116,6 @@
     </Compile>
     <Compile Include="AdapterServiceFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\..\AssemblyInfo.cs" />  
     <Compile Include="ReferenceDataFixture.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using org.iringtools.ontologyservice.presentation.types;
+using OntologyService.Interface.Types;
 
-namespace org.iringtools.ontologyservice.presentation.entities
+namespace OntologyService.Interface.Entities
 {
     /// <summary>
     /// Returns information about the specified entity

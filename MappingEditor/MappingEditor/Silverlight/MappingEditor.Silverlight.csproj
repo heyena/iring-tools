@@ -36,8 +36,6 @@
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <EnableOutOfBrowser>false</EnableOutOfBrowser>
-    <OutOfBrowserSettingsFile>Properties\OutOfBrowserSettings.xml</OutOfBrowserSettingsFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -99,7 +97,6 @@
       <DependentUpon>Page.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\..\..\AssemblyInfo.cs" />  
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -129,7 +126,7 @@
     </ProjectReference>
     <ProjectReference Include="..\..\..\Modules\Mapping\Silverlight\MappingEditor.Silverlight.csproj">
       <Project>{ABD639A6-E306-4C15-BB2E-CDA458AA7761}</Project>
-      <Name>MappingEditor.Silverlight %28Modules\MappingEditor.Silverlight%29</Name>
+      <Name>MappingEditor.Silverlight %28Modules\Silverlight\MappingEditor.Silverlight%29</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Modules\Menu\Silverlight\Menu.Silverlight.csproj">
       <Project>{021999F9-1E99-401B-9C7C-21C331434F02}</Project>

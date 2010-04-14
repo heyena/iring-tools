@@ -1,7 +1,7 @@
 ﻿
 using System;
-using org.iringtools.library.presentation.types;
-namespace org.iringtools.library.events
+using Library.Interface.Types;
+namespace Library.Events
 {
     public class ProcessingEventArgs : EventArgs
     {

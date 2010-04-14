@@ -1,5 +1,5 @@
 ﻿
-namespace org.iringtools.modulelibrary.types
+namespace ModuleLibrary.Types
 {
   public enum CompletedEventType
   {
@@ -7,7 +7,6 @@ namespace org.iringtools.modulelibrary.types
     GetClass,
     GetClassLabel,
     GetTemplate,
-    GetScopes,
     GetSubClasses,
     GetUnitTestString,
     GetDataDictionary,

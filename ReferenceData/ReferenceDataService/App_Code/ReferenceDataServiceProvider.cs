@@ -90,9 +90,11 @@ namespace org.ids_adi.iring.referenceData
             string proxyHost = configSettings.ProxyHost;
             string proxyPortString = configSettings.ProxyPort;
 
+
             if (encryptedRegistryToken == String.Empty)
             {
-                _registryCredentials = new WebCredentials();
+                _registryCredentials = new WebCredentials(encryptedRegistryToken);
+                _registryCredentials.Decrypt();
             }
             else
             {
@@ -155,7 +157,6 @@ namespace org.ids_adi.iring.referenceData
 
                     List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
 
-
                     foreach (Dictionary<string, string> result in results)
                     {
                         Entity resultEntity = new Entity
@@ -189,7 +190,6 @@ namespace org.ids_adi.iring.referenceData
             using (new LoggerHelper(this, "SearchPage", query + "," + page))
             {
                 RefDataEntities entities = null;
-                int counter = 0;
 
                 int pageNumber = Convert.ToInt32(page);
                 int pageSize = Convert.ToInt32(_pageSize);
@@ -219,7 +219,6 @@ namespace org.ids_adi.iring.referenceData
                         {
                             SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-
                             List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
                             foreach (Dictionary<string, string> result in results)
                             {
@@ -234,12 +233,11 @@ namespace org.ids_adi.iring.referenceData
 
                                 if (resultEntities.ContainsKey(key))
                                 {
-                                    key += ++counter;
+                                    key += " (" + repository.name + ")";
                                 }
 
                                 resultEntities.Add(key, resultEntity);
                             }
-                            results.Clear();
                         }
 
                         _searchHistory.Add(query, resultEntities);
@@ -321,19 +319,20 @@ namespace org.ids_adi.iring.referenceData
 
                 List<Classification> classifications = new List<Classification>();
 
-
                 Query queryContainsSearch = _queries["GetClassification"];
                 QueryBindings queryBindings = queryContainsSearch.bindings;
 
                 sparql = ReadSPARQL(queryContainsSearch.fileName);
                 sparql = sparql.Replace("param1", id);
-
+                
 
                 foreach (Repository repository in _repositories)
                 {
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
+                   
 
                     List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                    
 
                     foreach (Dictionary<string, string> result in results)
                     {
@@ -349,15 +348,14 @@ namespace org.ids_adi.iring.referenceData
                         }
 
                         if (result.ContainsKey("label"))
-                            label = result["label"];
+                           label = result["label"];
                         else
-                            label = GetLabel(uri);
-
-                        classification.label = label;
-                        Utility.SearchAndInsert(classifications, classification, Classification.sortAscending());
-                        //classifications.Add(classification);
+                           label = GetLabel(uri);
+                        
+                        classification.label =  label;
+                        classifications.Add(classification);
                     }
-
+                    
                 }
 
                 return classifications;
@@ -388,7 +386,7 @@ namespace org.ids_adi.iring.referenceData
                     SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
                     List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
-
+                    
                     foreach (Dictionary<string, string> result in results)
                     {
                         Specialization specialization = new Specialization();
@@ -410,8 +408,7 @@ namespace org.ids_adi.iring.referenceData
                         }
 
                         specialization.label = label;
-                        Utility.SearchAndInsert(specializations, specialization, Specialization.sortAscending());
-                        //specializations.Add(specialization);
+                        specializations.Add(specialization);
                     }
                 }
 
@@ -464,7 +461,7 @@ namespace org.ids_adi.iring.referenceData
                     foreach (Dictionary<string, string> result in results)
                     {
                         classDefinition = new ClassDefinition();
-
+                        
 
                         classDefinition.identifier = "http://rdl.rdlfacade.org/data#" + id;
                         classDefinition.repositoryName = repository.name;
@@ -473,37 +470,37 @@ namespace org.ids_adi.iring.referenceData
                         status = new Status();
 
                         if (result.ContainsKey("label"))
-                            name.value = result["label"];
-
+                          name.value = result["label"];
+                        
                         if (result.ContainsKey("type"))
-                            classDefinition.entityType = new EntityType { reference = result["type"] };
-
+                          classDefinition.entityType = new EntityType { reference = result["type"] };
+                        
                         //legacy properties
                         if (result.ContainsKey("definition"))
-                            description.value = result["definition"];
-
+                          description.value = result["definition"];
+                        
                         if (result.ContainsKey("creator"))
-                            status.authority = result["creator"];
-
+                          status.authority = result["creator"];
+                        
                         if (result.ContainsKey("creationDate"))
-                            status.from = result["creationDate"];
-
+                          status.from = result["creationDate"];
+                        
                         if (result.ContainsKey("class"))
-                            status.Class = result["class"];
-
+                          status.Class = result["class"];
+                        
                         //camelot properties
                         if (result.ContainsKey("comment"))
-                            description.value = result["comment"];
-
+                          description.value = result["comment"];
+                        
                         if (result.ContainsKey("authority"))
-                            status.authority = result["authority"];
-
+                          status.authority = result["authority"];
+                        
                         if (result.ContainsKey("recorded"))
-                            status.Class = result["recorded"];
-
+                          status.Class = result["recorded"];
+                        
                         if (result.ContainsKey("from"))
-                            status.from = result["from"];
-
+                          status.from = result["from"];
+                      
                         classDefinition.name.Add(name);
                         classDefinition.description.Add(description);
                         classDefinition.status.Add(status);
@@ -540,15 +537,15 @@ namespace org.ids_adi.iring.referenceData
                     string label = specialization.label;
 
                     if (label == null)
-                        label = GetLabel(uri);
-
+                       label = GetLabel(uri);
+                    
                     Entity resultEntity = new Entity
                     {
                         uri = uri,
                         label = label
                     };
-                    Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
-                    //queryResult.Add(resultEntity);
+
+                    queryResult.Add(resultEntity);
                 }
             }
             catch (Exception e)
@@ -556,69 +553,6 @@ namespace org.ids_adi.iring.referenceData
                 throw new Exception("Error while Finding " + id + ".\n" + e.ToString(), e);
             }
             return queryResult;
-        }
-
-        public List<Entity> GetAllSuperClasses(string id)
-        {
-            List<Entity> list = new List<Entity>();
-            return GetAllSuperClasses(id, list);
-        }
-
-        public List<Entity> GetAllSuperClasses(string id, List<Entity> list)
-        {
-            //List<Entity> queryResult = new List<Entity>();
-
-            try
-            {
-
-                List<Specialization> specializations = GetSpecializations(id);
-                //base case
-                if (specializations.Count == 0)
-                {
-                    return list;
-                }
-
-                foreach (Specialization specialization in specializations)
-                {
-                    string uri = specialization.reference;
-                    string label = specialization.label;
-
-                    if (label == null)
-                        label = GetLabel(uri);
-
-                    Entity resultEntity = new Entity
-                    {
-                        uri = uri,
-                        label = label
-                    };
-
-                    string trimmedUri = string.Empty;
-                    bool found = false;
-                    foreach (Entity entt in list)
-                    {
-                        if (resultEntity.uri.Equals(entt.uri))
-                        {
-                            found = true;
-                        }
-                    }
-
-                    if (!found)
-                    {
-                        trimmedUri = uri.Remove(0, uri.LastIndexOf('#') + 1);
-                        Utility.SearchAndInsert(list, resultEntity, Entity.sortAscending());
-                        //list.Add(resultEntity);
-                        GetAllSuperClasses(trimmedUri, list);
-                    }
-                }
-
-                //list.Sort(Entity.sortAscending());
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Error while Finding " + id + ".\n" + e.ToString(), e);
-            }
-
-            return list;
         }
 
         public List<Entity> GetSubClasses(string id)
@@ -650,8 +584,8 @@ namespace org.ids_adi.iring.referenceData
                             uri = result["uri"],
                             label = result["label"],
                         };
-                        Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
-                        //queryResult.Add(resultEntity);
+
+                        queryResult.Add(resultEntity);
                     }
                 }
             }
@@ -691,8 +625,8 @@ namespace org.ids_adi.iring.referenceData
                             label = result["label"],
                             repository = repository.name,
                         };
-                        Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
-                        //queryResult.Add(resultEntity);
+
+                        queryResult.Add(resultEntity);
                     }
                 }
             }
@@ -742,26 +676,22 @@ namespace org.ids_adi.iring.referenceData
                         }
                         if (result.ContainsKey("role"))
                         {
-                            roleDefinition.identifier = result["role"];
+                            roleDefinition.designation.value = result["role"];
+                        }
+                        if (result.ContainsKey("index"))
+                        {
+                            roleDefinition.identifier = result["index"];
                         }
                         if (result.ContainsKey("comment"))
                         {
                             roleDefinition.description.value = result["comment"];
                         }
-                        if (result.ContainsKey("index"))
-                        {
-                            roleDefinition.description.value = result["index"].ToString();
-                        }
-                        if (result.ContainsKey("type"))
-                        {
-                            roleDefinition.range = result["type"];
-                        }
                         roleDefinition.name.Add(name);
-                        Utility.SearchAndInsert(roleDefinitions, roleDefinition, RoleDefinition.sortAscending());
-                        //roleDefinitions.Add(roleDefinition);
+                        roleDefinitions.Add(roleDefinition);
                     }
+
                 }
-                
+
                 return roleDefinitions;
             }
             catch (Exception e)
@@ -884,8 +814,7 @@ namespace org.ids_adi.iring.referenceData
 
                             roleQualification.value = value;
                         }
-                        Utility.SearchAndInsert(roleQualifications, roleQualification, RoleQualification.sortAscending());
-                        //roleQualifications.Add(roleQualification);
+                        roleQualifications.Add(roleQualification);
                     }
 
                 }
@@ -951,6 +880,7 @@ namespace org.ids_adi.iring.referenceData
 
                         templateDefinition.roleDefinition = GetRoleDefintion(id);
                     }
+
                 }
 
                 return templateDefinition;
@@ -1038,6 +968,7 @@ namespace org.ids_adi.iring.referenceData
 
                         templateQualification.roleQualification = GetRoleQualification(id);
                     }
+
                 }
 
                 return templateQualification;
@@ -1068,6 +999,7 @@ namespace org.ids_adi.iring.referenceData
                     string id = string.Empty;
                     string label = string.Empty;
                     string description = string.Empty;
+                    //ID = template.identifier.Remove(0, 1);
                     string generatedTempId = string.Empty;
                     string templateName = string.Empty;
                     string roleDefinition = string.Empty;
@@ -1088,12 +1020,12 @@ namespace org.ids_adi.iring.referenceData
                     {
                         if (!ID.StartsWith("tpl:"))
                         {
-                            id = ID.Substring((ID.LastIndexOf("#") + 1), ID.Length - (ID.LastIndexOf("#") + 1));                          
+                            id = ID.Substring((ID.LastIndexOf("#") + 1), ID.Length - (ID.LastIndexOf("#") + 1));
+                            ID = "tpl:" + ID;
                         }
                         else
                         {
                             id = ID.Substring(4, (ID.Length - 4));
-                            ID = "http://tpl.rdlfacade.org/data#" + ID;
                         }
                         q = GetTemplate(id);
                         foreach (TemplateDefinition templateFound in q.templateDefinitions)
@@ -1117,10 +1049,10 @@ namespace org.ids_adi.iring.referenceData
                             //ID generator
                             templateName = "Template definition " + label;
                             /// TODO: change to class registry base
-                            if (_useExampleRegistryBase)
-                                generatedTempId = CreateIdsAdiId(_exampleRegistryBase, templateName);
+                            if(_useExampleRegistryBase)
+                              generatedTempId = CreateIdsAdiId(_exampleRegistryBase, templateName);
                             else
-                                generatedTempId = CreateIdsAdiId(_templateRegistryBase, templateName);
+                              generatedTempId = CreateIdsAdiId(_templateRegistryBase, templateName);
                             ID = "<" + generatedTempId + ">";
                             Utility.WriteString("\n" + ID + "\t" + label, "TempDef IDs.log", true);
                             //append description to sparql query
@@ -1151,10 +1083,10 @@ namespace org.ids_adi.iring.referenceData
                                 //ID generator
                                 genName = "Role definition " + roleLabel;
                                 /// TODO: change to template registry base
-                                if (_useExampleRegistryBase)
-                                    generatedId = CreateIdsAdiId(_exampleRegistryBase, genName);
+                                if(_useExampleRegistryBase)
+                                  generatedId = CreateIdsAdiId(_exampleRegistryBase, genName);
                                 else
-                                    generatedId = CreateIdsAdiId(_templateRegistryBase, genName);
+                                  generatedId = CreateIdsAdiId(_templateRegistryBase, genName);
 
                                 roleID = "<" + generatedId + ">";
 
@@ -1205,7 +1137,6 @@ namespace org.ids_adi.iring.referenceData
                         sparql = sparql.Replace("INSERT DATA { ", "MODIFY DELETE { ");
                         foreach (QMXFName name in td.name)
                         {
-                            ID = td.identifier;
                             label = name.value;
                             nameSparql = sparql + ID + " rdfs:label \"" + label + "\"^^xsd:string ; ";
                             foreach (Description descr in td.description)
@@ -1217,10 +1148,11 @@ namespace org.ids_adi.iring.referenceData
                             index = 0;
                             foreach (RoleDefinition rd in td.roleDefinition)
                             {
+
                                 foreach (QMXFName rn in rd.name)
                                 {
                                     rName = rn.value;
-                                    nameSparql += "<" + rd.identifier + "> rdfs:label \"" + rName + "\"@en ; ";
+                                    nameSparql += "<" + rd.designation.value + "> rdfs:label \"" + rName + "\"@en ; ";
                                     nameSparql += "rdfs:comment \"" + rd.description.value + "\"@en ; ";
                                     if (rd.range.StartsWith("http://www.w3.org/2000/01/rdf-schema#")
                                       || rd.range.StartsWith("http://www.w3.org/2001/XMLSchema"))
@@ -1235,7 +1167,7 @@ namespace org.ids_adi.iring.referenceData
                                     nameSparql += "rdf:type tpl:R74478971040 ; "
                                           + " rdfs:domain " + ID + " ; "
                                           + " rdfs:range <" + rd.range + "> ; "
-                                          + " tpl:R97483568938 \"" + rd.description.value + "\"^^xsd:int . ";
+                                          + " tpl:R97483568938 \"" + rd.identifier + "\"^^xsd:int . ";
                                 }
                             }
                             nameSparql = nameSparql.Insert(nameSparql.LastIndexOf("."), "}").Remove(nameSparql.Length - 1);
@@ -1243,10 +1175,6 @@ namespace org.ids_adi.iring.referenceData
                         }
                         foreach (QMXFName name in template.name)
                         {
-                            string gen = String.Empty;
-                            string generatedId = string.Empty;
-                            string roleID = string.Empty;
-
                             label = name.value;
                             nameSparql += " INSERT { " + ID + " rdfs:label \"" + label + "\"^^xsd:string ; ";
                             foreach (Description descr in template.description)
@@ -1261,22 +1189,7 @@ namespace org.ids_adi.iring.referenceData
 
                                 foreach (QMXFName defName in def.name)
                                 {
-                                    if (def.identifier != null)
-                                    {
-                                        roleID = def.identifier;
-                                    }
-                                    else
-                                    {
-                                        gen = "Role definition " + label;
-                                        /// TODO: change to template registry base
-                                        if (_useExampleRegistryBase)
-                                            generatedId = CreateIdsAdiId(_exampleRegistryBase, gen);
-                                        else
-                                            generatedId = CreateIdsAdiId(_templateRegistryBase, gen);
-
-                                        roleID = generatedId;
-                                    }
-                                    nameSparql += "<" + roleID + "> rdfs:label \"" + defName.value + "\"@en ; ";
+                                    nameSparql += "<" + def.designation.value + "> rdfs:label \"" + defName.value + "\"@en ; ";
                                     nameSparql += "rdfs:comment \"" + def.description.value + "\"@en ; ";
 
                                     if (def.range.StartsWith("http://www.w3.org/2000/01/rdf-schema#")
@@ -1292,12 +1205,14 @@ namespace org.ids_adi.iring.referenceData
                                     nameSparql += "rdf:type tpl:R74478971040 ; "
                                             + " rdfs:domain " + ID + " ; "
                                             + " rdfs:range <" + def.range + "> ; "
-                                            + " tpl:R97483568938 \"" + ++index + "\"^^xsd:int . ";
+                                            + " tpl:R97483568938 \"" + def.identifier + "\"^^xsd:int . ";
                                 }
                             }
                             nameSparql = nameSparql.Insert(nameSparql.LastIndexOf("."), "}").Remove(nameSparql.Length - 1);
                         }
+                        //nameSparql = nameSparql.Insert(nameSparql.LastIndexOf("."), "}").Remove(nameSparql.Length - 1);
                         response = PostToRepository(_repositories[repository], nameSparql);
+                        //response = PostToRepository(_repositories[0], specSparql);
                     }
                 }
             }
@@ -1339,11 +1254,11 @@ namespace org.ids_adi.iring.referenceData
                                 //ID generator
                                 templateName = "Template qualification " + label;
                                 /// TODO: change to class registry base
-                                if (_useExampleRegistryBase)
-                                    generatedTempId = CreateIdsAdiId(_exampleRegistryBase, templateName);
+                                if(_useExampleRegistryBase)
+                                  generatedTempId = CreateIdsAdiId(_exampleRegistryBase, templateName);
                                 else
-                                    generatedTempId = CreateIdsAdiId(_templateRegistryBase, templateName);
-                                ID = "<" + generatedTempId +">";
+                                  generatedTempId = CreateIdsAdiId(_templateRegistryBase, templateName);
+                                ID = "tpl:" + generatedTempId;
                                 Utility.WriteString("\n" + ID + "\t" + label, "TempQual IDs.log", true);
                                 specialization = template.qualifies;
                                 sparql += "_:spec rdf:type dm:Specialization ; "
@@ -1364,12 +1279,12 @@ namespace org.ids_adi.iring.referenceData
                                     //ID generator
                                     genName = "Role definition " + roleLabel;
                                     /// TODO: change to template registry base
-                                    //if (_useExampleRegistryBase)
-                                    //    generatedId = CreateIdsAdiId(_exampleRegistryBase, genName);
-                                    //else
-                                    //    generatedId = CreateIdsAdiId(_templateRegistryBase, genName);
+                                    if(_useExampleRegistryBase)
+                                      generatedId = CreateIdsAdiId(_exampleRegistryBase, genName);
+                                    else            
+                                      generatedId = CreateIdsAdiId(_templateRegistryBase, genName);
                                     roleID = "<" + generatedId + ">";
-                                    
+
                                     //roleID = role.identifier;
                                     foreach (QMXFName roleName in role.name)
                                     {
@@ -1604,7 +1519,7 @@ namespace org.ids_adi.iring.referenceData
                 Utility.WriteString("Number of classes to insert: " + qmxf.classDefinitions.Count.ToString(), "stats.log", true);
                 foreach (ClassDefinition Class in qmxf.classDefinitions)
                 {
-
+                    
                     string ID = string.Empty;
                     string id = string.Empty;
                     string label = string.Empty;
@@ -1618,7 +1533,7 @@ namespace org.ids_adi.iring.referenceData
                     int classIndex = -1;
                     Repository source = new Repository();
 
-
+                    
                     repository = getIndexFromName(Class.repositoryName);
                     source = _repositories[repository];
 
@@ -1628,7 +1543,7 @@ namespace org.ids_adi.iring.referenceData
                         return response;
                     }
 
-                    ID = Class.identifier;
+                    ID = Class.identifier;                 
 
                     QMXF q = new QMXF();
                     if (ID != null)
@@ -1659,10 +1574,10 @@ namespace org.ids_adi.iring.referenceData
                             Utility.WriteString("Inserting : " + label, "stats.log", true);
 
                             className = "Class definition " + label;
-                            if (_useExampleRegistryBase)
-                                generatedId = CreateIdsAdiId(_exampleRegistryBase, className);
+                            if(_useExampleRegistryBase)
+                              generatedId = CreateIdsAdiId(_exampleRegistryBase, className);
                             else
-                                generatedId = CreateIdsAdiId(_classRegistryBase, className);
+                              generatedId = CreateIdsAdiId(_classRegistryBase, className);
                             ID = "<" + generatedId + ">";
                             Utility.WriteString("\n" + ID + "\t" + label, "Class IDs.log", true);
                             //ID = Class.identifier.Remove(0, 1);
@@ -1884,6 +1799,7 @@ namespace org.ids_adi.iring.referenceData
             return idsAdiId;
         }
 
+
         private List<Dictionary<string, string>> MergeLists(List<Dictionary<string, string>> a, List<Dictionary<string, string>> b)
         {
             foreach (Dictionary<string, string> dictionary in b)
@@ -1951,8 +1867,6 @@ namespace org.ids_adi.iring.referenceData
             {
                 Dictionary<string, string> result = new Dictionary<string, string>();
 
-                string sortKey = string.Empty;
-
                 foreach (SPARQLBinding sparqlBinding in sparqlResult.bindings)
                 {
                     foreach (QueryBinding queryBinding in queryBindings)
@@ -1968,10 +1882,9 @@ namespace org.ids_adi.iring.referenceData
                                 value = sparqlBinding.uri;
                             }
                             else if (queryBinding.type == SPARQLBindingType.Literal)
-                            {     
+                            {
                                 value = sparqlBinding.literal.value;
                                 dataType = sparqlBinding.literal.dataType;
-                                sortKey = value;
                             }
 
                             if (result.ContainsKey(key))
@@ -1981,13 +1894,14 @@ namespace org.ids_adi.iring.referenceData
 
                             result.Add(key, value);
 
-                            if (dataType != String.Empty && dataType != null)
+                            if (dataType != String.Empty)
                             {
                                 result.Add(key + "_dataType", dataType);
                             }
                         }
                     }
                 }
+
                 results.Add(result);
             }
 

@@ -107,13 +107,6 @@ namespace org.ids_adi.iring.referenceData
     /////return class details
     ///// </summary>
     [OperationContract]
-    [WebGet(UriTemplate = "classes/{id}/allsuperclasses")]
-    List<Entity> GetAllSuperClasses(string id);
-
-    ///// <summary>
-    /////return class details
-    ///// </summary>
-    [OperationContract]
     [WebGet(UriTemplate = "classes/{id}/subclasses")]
     List<Entity> GetSubClasses(string id);
 

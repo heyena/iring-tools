@@ -6,19 +6,19 @@ using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Composite.Regions;
 using Microsoft.Practices.Unity;
 
-using org.iringtools.modulelibrary.layerbll;
-using org.iringtools.modulelibrary.layerdal;
+using ModuleLibrary.LayerBLL;
+using ModuleLibrary.LayerDAL;
 
-using org.iringtools.modelling.mainregion.refdatabrowser;
-using org.iringtools.modelling.classdefinition.classdefinitioneditor;
+using Modelling.MainRegion.RefDataBrowser;
+using Modelling.ClassDefinition.ClassDefinitionEditor;
 
-using org.iringtools.modules.details.detailsregion;
-using org.iringtools.menu.views.menuregion;
+using Modules.Details.DetailsRegion;
+using Menu.Views.MenuRegion;
 
-using org.iringtools.ontologyservice.presentation;
-using org.iringtools.ontologyservice.presentation.presentationmodels;
+using OntologyService.Interface;
+using OntologyService.Interface.PresentationModels;
 
-namespace org.iringtools.modelling
+namespace Modelling
 {    
     public class ModellingModule : ModuleBase
     {

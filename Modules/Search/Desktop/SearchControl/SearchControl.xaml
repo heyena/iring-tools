@@ -1,5 +1,6 @@
-﻿<UserControl x:Name="SearchControl1"          
-    x:Class="org.iringtools.modules.search.searchregion.SearchControl"
+﻿<UserControl x:Name="SearchControl1" 
+    xmlns:basics="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls"          
+    x:Class="Modules.Search.SearchRegion.SearchControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
     xmlns:Regions="clr-namespace:Microsoft.Practices.Composite.Presentation.Regions;assembly=Microsoft.Practices.Composite.Presentation"

@@ -1,6 +1,6 @@
 ﻿using PrismContrib.Base;
 
-namespace org.iringtools.modules.contextmenu.contextmenuregion
+namespace Modules.ContextMenu.ContextMenuRegion
 {
     public interface IContextMenuView : IViewBase
     {

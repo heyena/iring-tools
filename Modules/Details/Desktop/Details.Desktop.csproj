@@ -114,7 +114,6 @@
     </Compile>
     <Compile Include="DetailsRegion\IDetailsView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\..\..\AssemblyInfo.cs" />  
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Libraries\ModuleLibrary\Desktop\ModuleLibrary.Desktop.csproj">

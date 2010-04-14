@@ -1,5 +1,5 @@
 ﻿
-namespace org.iringtools.ontologyservice.presentation.types
+namespace OntologyService.Interface.Types
 {
     /// <summary>
     /// Entity type

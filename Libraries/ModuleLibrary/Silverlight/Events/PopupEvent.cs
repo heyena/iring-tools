@@ -2,7 +2,7 @@
 using System.Net;
 using Microsoft.Practices.Composite.Presentation.Events;
 
-namespace org.iringtools.library.presentation.events
+namespace Library.Interface.Events
 {
     public class PopupEvent : CompositePresentationEvent<PopupEventArgs>
     {

@@ -1,5 +1,5 @@
 ﻿
-namespace org.iringtools.informationmodel.types
+namespace InformationModel.Types
 {
   public enum ListEventType
   {

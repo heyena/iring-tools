@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 using org.w3.sparql_results;
-using System;
 
 namespace org.iringtools.library
 {
@@ -62,19 +61,6 @@ namespace org.iringtools.library
 
     [DataMember]
     public string repository { get; set; }
-
-    public static IComparer<Entity> sortAscending()
-    {
-        return (IComparer<Entity>)new sortAscendingHelper();
-    }
-
-    private class sortAscendingHelper : IComparer<Entity>
-    {
-        int IComparer<Entity>.Compare(Entity e1, Entity e2)
-        {
-            return string.Compare(e1.label, e2.label);
-        }
-    }
   }
 
 }

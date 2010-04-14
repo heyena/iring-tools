@@ -9,16 +9,16 @@ using PrismContrib.Base;
 using Microsoft.Practices.Composite.Events;
 
 using InformationModel.Events;
-using org.iringtools.modulelibrary.events;
+using ModuleLibrary.Events;
 
-using org.iringtools.ontologyservice.presentation.presentationmodels;
-using org.iringtools.ontologyservice.presentation;
+using OntologyService.Interface.PresentationModels;
+using OntologyService.Interface;
 
 using org.ids_adi.iring;
 using org.ids_adi.iring.referenceData;
 using org.ids_adi.qmxf;
 
-namespace org.iringtools.modules.popup.popupregion
+namespace Modules.Popup.PopupRegion
 {
     public class PopupPresenter : PresenterBase<IPopupView>
     {

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using org.iringtools.informationmodel.events;
+
 using PrismContrib.Base;
 
 using Microsoft.Practices.Composite.Events;
@@ -11,26 +11,26 @@ using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Composite.Regions;
 using Microsoft.Practices.Unity;
 
-using org.iringtools.modulelibrary.events;
-using org.iringtools.modulelibrary.extensions;
-using org.iringtools.modulelibrary.layerdal;
-using org.iringtools.modulelibrary.types;
+using ModuleLibrary.Events;
+using ModuleLibrary.Extensions;
+using ModuleLibrary.LayerDAL;
+using ModuleLibrary.Types;
 
-using org.iringtools.informationmodel.usercontrols;
+using InformationModel.Events;
+using InformationModel.UserControls;
 
-using org.iringtools.ontologyservice.presentation;
-using org.iringtools.ontologyservice.presentation.presentationmodels;
+using OntologyService.Interface;
+using OntologyService.Interface.PresentationModels;
 
 using org.ids_adi.iring;
 using System.Windows.Media.Imaging;
 using System.Windows.Resources;
-using System.Windows.Media;
 
-namespace org.iringtools.modules.search.searchregion
+namespace Modules.Search.SearchRegion
 {
     /// <summary>
     /// Information Model View Presenter
-    /// </summary>robdeca
+    /// </summary>
     public class SearchControlPresenter : PresenterBase<ISearchControl>
     {
         // Fields for class
@@ -48,11 +48,6 @@ namespace org.iringtools.modules.search.searchregion
         #endregion
 
         #region Controls (button and textbox references)
-        /// <summary>
-        /// Gets a reference to the chkReset control on View
-        /// </summary>
-        CheckBox chkReset { get { return CheckBoxCtrl("chkReset"); } }
-        
         /// <summary>
         /// Gets a reference to the btnSearch control on View
         /// </summary>
@@ -92,14 +87,12 @@ namespace org.iringtools.modules.search.searchregion
                 this.container = container;
                 this.model = model;
 
+
                 aggregator.GetEvent<ButtonEvent>().Subscribe(ButtonClickHandler);
                 aggregator.GetEvent<SpinnerEvent>().Subscribe(SpinnerEventHandler);
-
                 // setup tab control - we want to be notified when tab
                 // selection changes occur
                 tabCtrl = new TabControl();
-                tabCtrl.BorderThickness = new Thickness(1);
-                tabCtrl.BorderBrush = new SolidColorBrush(Color.FromArgb(255, 143, 160, 174));
                 tabCtrl.SelectionChanged += tabSelectionChanged;
 
                 //tabCtrl.Width = itcModelBrowser.Width;
@@ -119,7 +112,6 @@ namespace org.iringtools.modules.search.searchregion
 
                 // By default the button is disabled
                 btnSearch.IsEnabled = false;
-                chkReset.IsEnabled = false;
 
                 #region TextChanged handler - enables/disables btnSearch
                 // Handle textchanged event within dynamic delegate.
@@ -127,7 +119,6 @@ namespace org.iringtools.modules.search.searchregion
                 txtSearch.TextChanged += (object sender, TextChangedEventArgs e) =>
                 {
                     btnSearch.IsEnabled = ((TextBox)sender).Text.Length > 0;
-                    chkReset.IsEnabled = ((TextBox)sender).Text.Length > 0;
                 };
                 #endregion
 
@@ -202,7 +193,7 @@ namespace org.iringtools.modules.search.searchregion
         /// <summary>
         /// Button Click Handler
         /// </summary>
-        /// <param name="e">The <see cref="org.iringtools.modulelibrary.events.ButtonEventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="ModuleLibrary.Events.ButtonEventArgs"/> instance containing the event data.</param>
 
         public void ButtonClickHandler(ButtonEventArgs e)
         {
@@ -271,10 +262,7 @@ namespace org.iringtools.modules.search.searchregion
                 // Perform the search - async response handled by the
                 // OnDataArrivedHandler(); we'll send the current tab
                 // as UserState for the async call
-                if(chkReset.IsChecked == true)
-                    referenceDataService.SearchReset(searchString, tabItem);
-                else
-                    referenceDataService.Search(searchString, tabItem);
+                referenceDataService.Search(searchString, tabItem);
             }
             else if (e.GetUniqueName().Contains("btnPromoteItem"))
             {
@@ -330,20 +318,17 @@ namespace org.iringtools.modules.search.searchregion
             try
             {
                 CompletedEventArgs args = (CompletedEventArgs)e;
-                if (args.CheckForType(CompletedEventType.GetClassLabel))
-                { }
+
+                ICommand command = args.GetUserState<ICommand>();
+                if (command.CanExecute(args))
+                {
+                    command.Execute(args);
+                }
                 else
                 {
-                    ICommand command = args.GetUserState<ICommand>();
-                    if (command.CanExecute(args))
-                    {
-                        command.Execute(args);
-                    }
-                    else
-                    {
-                        Logger.Log("Could not execute concrete class for " + args.CompletedType.ToString(), Category.Warn, Priority.Medium);
-                    }
+                    Logger.Log("Could not execute concrete class for " + args.CompletedType.ToString(), Category.Warn, Priority.Medium);
                 }
+
                 /*
                 // :::::::::::::::::::::::::::::
                 // See code in Factories folder

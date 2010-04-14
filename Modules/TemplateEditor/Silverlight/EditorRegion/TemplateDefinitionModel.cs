@@ -11,7 +11,7 @@ using System.Xml.Schema;
 using System.Reflection;
 using org.ids_adi.qmxf;
 
-namespace org.iringtools.modules.templateeditor.editorregion
+namespace Modules.TemplateEditor.EditorRegion
 {
     public class TemplateDefinitionModel : TemplateModel, ITemplateEditorModel
     {
@@ -46,14 +46,13 @@ namespace org.iringtools.modules.templateeditor.editorregion
         {
             get
             {
-                //int i = 1;                
+                int i = 1;
+                
                 _templateDefinition.roleDefinition.Clear();
-
                 foreach (KeyValuePair<string, object> lstItm in _roles)
                 {
                     RoleDefinition role = (RoleDefinition)lstItm.Value;
-                   // if (string.IsNullOrEmpty(role.identifier))
-                   // role.identifier = (i++).ToString();
+                    role.identifier = (i++).ToString();
                     _templateDefinition.roleDefinition.Add(role);
                 }
 
@@ -401,14 +400,12 @@ namespace org.iringtools.modules.templateeditor.editorregion
 
         public override void ApplyRole(object objRole, string name, string description, string uri)
         {
+            RoleDefinition role = (RoleDefinition)objRole;
 
-                KeyValuePair<string, object> _object = (KeyValuePair<string, object>)objRole;
-                RoleDefinition role = (RoleDefinition)_object.Value;
-
-                role.name.Clear();
-                role.name.Add(new QMXFName() { lang = null, value = name });
-                role.description = new Description() { contentType = null, lang = null, parseType = null, value = description };
-                role.range = uri;
+            role.name.Clear();
+            role.name.Add(new QMXFName() { lang = null, value = name });
+            role.description = new Description() { contentType = null, lang = null, parseType = null, value = description };
+            role.range = uri;
         }
 
     }

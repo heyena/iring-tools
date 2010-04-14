@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.Practices.Unity;
-namespace org.iringtools.library.presentation.configuration
+namespace Library.Interface.Configuration
 {
     public interface IServerConfiguration : IAppConfiguration
     {

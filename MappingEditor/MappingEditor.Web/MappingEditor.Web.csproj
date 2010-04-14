@@ -108,7 +108,12 @@
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\..\AssemblyInfo.cs" />  
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\PrismContrib\Desktop\PrismContrib.Desktop.csproj">
+      <Project>{1A611244-54BE-4F12-AA34-12F54A2B07E6}</Project>
+      <Name>PrismContrib.Desktop</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Code\" />

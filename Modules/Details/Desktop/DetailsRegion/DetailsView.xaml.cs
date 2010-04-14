@@ -13,7 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Practices.Composite.Regions;
 using PrismContrib.Base;
-namespace org.iringtools.modules.details.detailsregion
+namespace Modules.Details.DetailsRegion
 {
   /// <summary>
   /// Interaction logic for DetailsView.xaml

@@ -6,15 +6,15 @@ using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Composite.Regions;
 using Microsoft.Practices.Unity;
 
-using org.iringtools.modulelibrary.layerbll;
-using org.iringtools.modulelibrary.layerdal;
+using ModuleLibrary.LayerBLL;
+using ModuleLibrary.LayerDAL;
 
-using org.iringtools.ontologyservice.presentation;
-using org.iringtools.ontologyservice.presentation.presentationmodels;
+using OntologyService.Interface;
+using OntologyService.Interface.PresentationModels;
 
 using org.ids_adi.iring.referenceData;
 
-namespace org.iringtools.modules.spinner
+namespace Modules.Spinner
 {
     public class SpinnerModule : ModuleBase
     {

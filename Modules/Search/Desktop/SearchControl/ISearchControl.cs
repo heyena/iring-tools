@@ -1,6 +1,6 @@
 ﻿using PrismContrib.Base;
 
-namespace org.iringtools.modules.search.searchregion
+namespace Modules.Search.SearchRegion
 {
   public interface ISearchControl : IViewBase { }
 }
