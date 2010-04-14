@@ -68,7 +68,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Equipment.xml" />
+    <Content Include="Equipment.12345_000.API.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Equipment\" />

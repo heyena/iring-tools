@@ -14,6 +14,7 @@ namespace org.iringtools.adapter.datalayer
   public class CSVDataLayer : IDataLayer2 
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(CSVDataLayer));
+    private static string NAMESPACE = "org.iringtools.adapter.datalayer";
     private AdapterSettings _settings = null;
     private ApplicationSettings _appSettings = null;
     private string _dataDictionaryPath = String.Empty;
@@ -26,7 +27,7 @@ namespace org.iringtools.adapter.datalayer
       _appSettings = appSettings;
     }
 
-    public object Create(string objectType, string identifier)
+    public IDataObject Create(string objectType, string identifier)
     {
       try
       {
@@ -39,20 +40,19 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public IList<object> CreateList(string objectType, List<string> identifiers)
+    public IList<IDataObject> CreateList(string objectType, List<string> identifiers)
     {
       try
       {
-        IList<object> dataObjects = new List<object>();
+        IList<IDataObject> dataObjects = new List<IDataObject>();
 
         foreach (string identifier in identifiers)
         {
-          Type type = Type.GetType(objectType);
-          object dataObject = Activator.CreateInstance(type);
+          Type type = Type.GetType(NAMESPACE + ".proj_" + _appSettings.ProjectName + "." + _appSettings.ApplicationName + "." + objectType + "DataObject");
+          IDataObject dataObject = (IDataObject)Activator.CreateInstance(type);
 
-          ((IDataObject)dataObject).SetPropertyValue("Id", identifier);
-          dataObjects.Add(dataObject);
-
+          // TODO: find property that is key in data dictionary
+          dataObject.SetPropertyValue("Tag", identifier);
           dataObjects.Add(dataObject);
         }
 
@@ -65,7 +65,7 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public object Get(string objectType, string identifier)
+    public IDataObject Get(string objectType, string identifier)
     {
       try
       {
@@ -78,11 +78,44 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public IList<object> GetList(string objectType, DataFilter filter, int pageSize, int pageNumber)
+    public IList<string> GetIdentifiers(string objectType, DataFilter filter)
     {
       try
       {
-        List<object> list = new List<object>();
+        return null;
+      }
+      catch (Exception exception)
+      {
+        _logger.Error("Error in GetIdentifiers: " + exception);
+        throw new Exception("Error while getting a list of identifiers of type " + objectType + ".", exception);
+      }
+    }
+
+    public IList<IDataObject> GetList(string objectType, List<string> identifiers)
+    {
+      try
+      {
+        IList<IDataObject> dataObjects = new List<IDataObject>();
+
+        foreach (string identifier in identifiers)
+        {
+          dataObjects.Add(Get(objectType, identifier));
+        }
+
+        return dataObjects;
+      }
+      catch (Exception exception)
+      {
+        _logger.Error("Error in GetList: " + exception);
+        throw new Exception("Error while getting a list of data of type " + objectType + ".", exception);
+      }
+    }
+
+    public IList<IDataObject> GetList(string objectType, DataFilter filter, int pageSize, int pageNumber)
+    {
+      try
+      {
+        List<IDataObject> list = new List<IDataObject>();
 
         // Load config xml 
         string configFile = _settings.XmlPath + objectType + "." + _appSettings.ProjectName + "." + _appSettings.ApplicationName + ".xml";
@@ -108,11 +141,13 @@ namespace org.iringtools.adapter.datalayer
 
           if (!String.IsNullOrEmpty(csvRow))
           {
+            // Create an instance of IDataObject
+            Type type = Type.GetType(NAMESPACE + ".proj_" + _appSettings.ProjectName + "." + _appSettings.ApplicationName + "." + objectType + "DataObject");
+            IDataObject dataObject = (IDataObject)Activator.CreateInstance(type);
+            
+            IEnumerable<XElement> attrs = commodity.Element("attributesSequence").Elements("attribute");
             string[] csvValues = csvRow.Split(',');
             int index = 0;
-
-            XElement item = new XElement(objectType);
-            IEnumerable<XElement> attrs = commodity.Element("attributesSequence").Elements("attribute");
 
             foreach (var attr in attrs)
             {
@@ -140,10 +175,11 @@ namespace org.iringtools.adapter.datalayer
                 csvValue = "0";
               }
 
-              item.Add(new XElement(attrName, csvValue));
+              // Set value for each property of the data object
+              dataObject.SetPropertyValue(attrName, csvValue);
             }
 
-            list.Add(Utility.Deserialize<IDataObject>(item.ToString(), false));
+            list.Add(dataObject);
           }
         }
 
@@ -156,7 +192,7 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public Response Post(object dataObject)
+    public Response Post(IDataObject dataObject)
     {
       Response response = new Response();
       
@@ -171,13 +207,13 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public Response PostList(List<object> dataObjects)
+    public Response PostList(List<IDataObject> dataObjects)
     {
       Response response = new Response();
       
       try
       {
-        foreach (object dataObject in dataObjects)
+        foreach (IDataObject dataObject in dataObjects)
         {
           try
           {
@@ -237,11 +273,5 @@ namespace org.iringtools.adapter.datalayer
     {
       return Utility.Read<DataDictionary>(_dataDictionaryPath);
     }
-
-    public Response RefreshDictionary()
-    {
-      throw new NotImplementedException();
-    }
-
   }
 }
