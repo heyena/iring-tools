@@ -25,10 +25,10 @@ namespace AdapterService.Tests
     public void UpdateDatabaseDictionaryTest_ABC()
     {
 
-      string bindingConfigPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.xml";
-      string bindingConfigTestPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.Test.xml";
-      string nhMappingPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\nh-mapping.12345_000.ABC.xml";
-      string nhMappingTestPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\nh-mapping.12345_000.ABC.Test.xml";
+      string bindingConfigPath = @"C:\iring-tools-12x\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.xml";
+      string bindingConfigTestPath = @"C:\iring-tools-12x\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.Test.xml";
+      string nhMappingPath = @"C:\iring-tools-12x\Adapter\AdapterService.Tests\XML\nh-mapping.12345_000.ABC.xml";
+      string nhMappingTestPath = @"C:\iring-tools-12x\Adapter\AdapterService.Tests\XML\nh-mapping.12345_000.ABC.Test.xml";
 
       string dbDictionaryPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\DatabaseDictionary.12345_000.ABC.xml";
 
@@ -44,8 +44,8 @@ namespace AdapterService.Tests
     [TestMethod()]
     public void GenerateTest_ABC()
     {
-      string bindingConfigPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.xml";
-      string bindingConfigTestPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.Test.xml";
+      string bindingConfigPath = @"C:\iring-tools-12x\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.xml";
+      string bindingConfigTestPath = @"C:\iring-tools-12x\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.Test.xml";
 
       AdapterProxy target = new AdapterProxy();
       Response actual = target.Generate("12345_000", "ABC");
@@ -155,7 +155,7 @@ namespace AdapterService.Tests
     public void UpdateMapping_ABC()
     {
       AdapterProxy target = new AdapterProxy();
-      Mapping mapping = Utility.Read<Mapping>(@"C:\iring-tools\Adapter\AdapterService.Tests\XML\Mapping.12345_000.ABC.xml", false);
+      Mapping mapping = Utility.Read<Mapping>(@"C:\iring-tools-12x\Adapter\AdapterService.Tests\XML\Mapping.12345_000.ABC.xml", false);
       Response actual = target.UpdateMapping("12345_000", "ABC", mapping);
       bool isError = false;
       for (int i = 0; i < actual.Count; i++)
