@@ -68,6 +68,8 @@ namespace org.iringtools.library
   public enum LogicalOperator
   {
     [EnumMember]
+    None,
+    [EnumMember]
     And,
     [EnumMember]
     Or,

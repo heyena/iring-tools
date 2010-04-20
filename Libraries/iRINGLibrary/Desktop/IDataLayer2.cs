@@ -42,17 +42,17 @@ namespace org.iringtools.library
 
   public interface IDataLayer2
   {
-    IList<IDataObject> Create(string objectType, List<string> identifiers);
+    IList<IDataObject> Create(string objectType, IList<string> identifiers);
 
     IList<string> GetIdentifiers(string objectType, DataFilter filter);
 
-    IList<IDataObject> Get(string objectType, List<string> identifiers);
+    IList<IDataObject> Get(string objectType, IList<string> identifiers);
 
     IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int pageNumber);
 
-    Response Post(List<IDataObject> dataObjects);
+    Response Post(IList<IDataObject> dataObjects);
 
-    Response Delete(string objectType, List<string> identifiers);
+    Response Delete(string objectType, IList<string> identifiers);
 
     Response Delete(string objectType, DataFilter filter);
 
