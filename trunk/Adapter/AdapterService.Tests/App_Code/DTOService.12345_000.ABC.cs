@@ -19,10 +19,11 @@ using Ninject;
 using org.iringtools.library;
 using org.iringtools.utility;
 using org.ids_adi.qxf;
+using Microsoft.ServiceModel.Web;
 
 namespace org.iringtools.adapter.proj_12345_000.ABC
 {
-  public class DTOService : IDTOService
+  public class DTOService : IDTOLayer
   {
     IKernel _kernel = null;
     IDataLayer _dataLayer = null;
@@ -223,6 +224,35 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
       return dtoList;
     }
     
+     public XElement SerializeDTO(string graphName, List<DataTransferObject> dtoList)
+    {
+      XElement element = null;
+      try
+      {
+        switch (graphName)
+        {
+          case "Valves":
+            {
+              List<org.iringtools.adapter.proj_12345_000.ABC.Valves> theDTOList = new List<org.iringtools.adapter.proj_12345_000.ABC.Valves>();
+
+              foreach (DataTransferObject dto in dtoList)
+              {
+                theDTOList.Add((org.iringtools.adapter.proj_12345_000.ABC.Valves)dto);
+              }
+
+              element = SerializationExtensions.ToXml<List<org.iringtools.adapter.proj_12345_000.ABC.Valves>>(theDTOList);
+              break;
+            }
+        }
+
+        return element;
+      }
+      catch (Exception ex)
+      {
+        throw new Exception("Error while serializing a DTO", ex);
+      }
+    }
+
     public Dictionary<string, string> GetListREST(string graphName)
     {
       Dictionary<string, string> identifierUriPairs = new Dictionary<string, string>();
