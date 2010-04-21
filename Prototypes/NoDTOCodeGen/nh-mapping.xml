@@ -1,4 +1,21 @@
 ﻿<hibernate-mapping default-lazy="true" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="AdapterPrototype.Valve, AdapterPrototype" table="InLinePipingComponent">
+    <id name="Id" column="tag">
+      <generator class="assigned" />
+    </id>
+    <property name="tag" column="tag" update="false" insert="false" />
+    <property name="componentType" column="componentType" />
+    <property name="diameter" column="diameter" />
+    <property name="isCloned" column="isCloned" />
+    <property name="lineTag" column="lineTag" />
+    <property name="pid" column="pid" />
+    <property name="projectNumber" column="projectNumber" />
+    <property name="quantity" column="quantity" />
+    <property name="rating" column="rating" />
+    <property name="system" column="system" />
+    <property name="unit" column="unit" />
+    <property name="uomDiameter" column="uomDiameter" />
+  </class>
   <class name="AdapterPrototype.Line, AdapterPrototype" table="Line">
     <id name="Id" column="tag">
       <generator class="assigned" />
@@ -6,13 +23,6 @@
     <property name="tag" column="tag" update="false" insert="false" />
     <property name="diameter" column="diameter" />
     <property name="system" column="system" />
-  </class>
-  <class name="AdapterPrototype.Valve, AdapterPrototype" table="InLinePipingComponent">
-    <id name="Id" column="tag">
-      <generator class="assigned" />
-    </id>
-    <property name="tag" column="tag" update="false" insert="false" />
-    <property name="diameter" column="diameter" />
-    <property name="system" column="system" />
+    <property name="uomDiameter" column="uomDiameter" />
   </class>
 </hibernate-mapping>

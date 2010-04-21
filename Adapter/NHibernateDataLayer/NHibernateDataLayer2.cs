@@ -26,7 +26,7 @@ namespace org.iringtools.adapter.datalayer
 
     private readonly List<RelationalOperator> LikeOperators = new List<RelationalOperator>
     {
-      RelationalOperator.BeginsWith, 
+      RelationalOperator.StartsWith, 
       RelationalOperator.Contains,
       RelationalOperator.EndsWith,
     };
@@ -385,7 +385,7 @@ namespace org.iringtools.adapter.datalayer
 
       switch (relationalOperator)
       {
-        case RelationalOperator.BeginsWith:
+        case RelationalOperator.StartsWith:
           nhRelationalOperator = "LIKE";
           break;
 
