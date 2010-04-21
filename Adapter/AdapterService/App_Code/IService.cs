@@ -34,6 +34,8 @@ using System.Text;
 using org.ids_adi.qxf;
 using org.iringtools.adapter;
 using org.iringtools.library;
+using System.ServiceModel.Channels;
+using System.Xml.Linq;
 
 namespace org.iringtools.adapter
 {
@@ -87,8 +89,8 @@ namespace org.iringtools.adapter
     Response RefreshAll(string projectName, string applicationName);
 
     [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/rdf")]
-    Response CreateGraphRDF(string projectName, string applicationName, string graphName);
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}")]
+    XElement GetTransformedDTO(string projectName, string applicationName, string graphName, string format);
 
     [OperationContract]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}/rdf")]

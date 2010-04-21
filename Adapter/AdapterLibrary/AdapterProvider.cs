@@ -35,7 +35,7 @@ using Ninject;
 using Ninject.Parameters;
 using Ninject.Contrib.Dynamic;
 using org.iringtools.adapter.rules;
-using org.iringtools.adapter.projection;
+using org.iringtools.adapter.semantic;
 using org.iringtools.library;
 using org.iringtools.utility;
 using System.Collections.Specialized;
@@ -49,14 +49,15 @@ using org.ids_adi.qxf;
 using System.Xml.Xsl;
 using System.Xml.Serialization;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace org.iringtools.adapter
 {
   public partial class AdapterProvider //: IAdapter
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterProvider));
-    private IProjectionEngine _projectionEngine = null;
-    private IDTOService _dtoService = null;
+    private ISemanticLayer _semanticEngine = null;
+    private IDTOLayer _dtoService = null;
     private IKernel _kernel = null;
     private AdapterSettings _settings = null;
     private bool _isAppInitialized = false;
@@ -75,27 +76,25 @@ namespace org.iringtools.adapter
     {
       try
       {
-        ApplicationSettings applicationSettings = _kernel.Get<ApplicationSettings>(
-          new ConstructorArgument("projectName", projectName),
-          new ConstructorArgument("applicationName", applicationName)
-        );
-
-        string bindingConfigurationPath = _settings.XmlPath + applicationSettings.BindingConfigurationPath;
-        BindingConfiguration bindingConfiguration = Utility.Read<BindingConfiguration>(bindingConfigurationPath, false);
-        _kernel.Load(new DynamicModule(bindingConfiguration));
-        _settings.Mapping = GetMapping(projectName, applicationName);
-        _dtoService = _kernel.TryGet<IDTOService>("DTOService");
-
-        if (_dtoService != null)
+        if (!_isAppInitialized)
         {
-          if (_settings.UseSemweb)
+          ApplicationSettings applicationSettings = _kernel.Get<ApplicationSettings>(
+            new ConstructorArgument("projectName", projectName),
+            new ConstructorArgument("applicationName", applicationName)
+          );
+
+          string bindingConfigurationPath = _settings.XmlPath + applicationSettings.BindingConfigurationPath;
+          BindingConfiguration bindingConfiguration = Utility.Read<BindingConfiguration>(bindingConfigurationPath, false);
+          _kernel.Load(new DynamicModule(bindingConfiguration));
+          _settings.Mapping = GetMapping(projectName, applicationName);
+          _dtoService = _kernel.TryGet<IDTOLayer>("DTOLayer");
+
+          if (_dtoService != null)
           {
-            _projectionEngine = _kernel.Get<IProjectionEngine>("SemWeb");
+            _semanticEngine = _kernel.Get<ISemanticLayer>("SemanticLayer");
           }
-          else
-          {
-            _projectionEngine = _kernel.Get<IProjectionEngine>("Sparql");
-          }
+
+          _isAppInitialized = true;
         }
       }
       catch (Exception exception)
@@ -421,7 +420,7 @@ namespace org.iringtools.adapter
       try
       {
         InitializeApplication(projectName, applicationName);
-        _isAppInitialized = true;
+
         DateTime b = DateTime.Now;
 
         foreach (GraphMap graphMap in _settings.Mapping.graphMaps)
@@ -455,16 +454,15 @@ namespace org.iringtools.adapter
       Response response = new Response();
       try
       {
-        if (!_isAppInitialized)
-          InitializeApplication(projectName, applicationName);
+        InitializeApplication(projectName, applicationName);
 
-        _projectionEngine.Initialize();
+        _semanticEngine.Initialize();
 
         DateTime b = DateTime.Now;
 
         List<DataTransferObject> commonDTOList = _dtoService.GetList(graphName);
 
-        List<string> tripleStoreIdentifiers = _projectionEngine.GetIdentifiers(graphName);
+        List<string> tripleStoreIdentifiers = _semanticEngine.GetIdentifiers(graphName);
         List<string> identifiersToBeDeleted = tripleStoreIdentifiers;
         foreach (DataTransferObject commonDTO in commonDTOList)
         {
@@ -473,28 +471,17 @@ namespace org.iringtools.adapter
             identifiersToBeDeleted.Remove(commonDTO.Identifier);
           }
         }
-        foreach (String identifier in identifiersToBeDeleted)
-        {
-          _projectionEngine.Delete(graphName, identifier);
-        }
+
+        response.Append(_semanticEngine.Delete(graphName, identifiersToBeDeleted));
 
         RuleEngine ruleEngine = new RuleEngine();
         if (File.Exists(_settings.XmlPath + "Refresh" + graphName + ".rules"))
         {
           commonDTOList = ruleEngine.RuleSetForCollection(commonDTOList, _settings.XmlPath + "Refresh" + graphName + ".rules");
         }
-        foreach (DataTransferObject commonDTO in commonDTOList)
-        {
-          try
-          {
-            response.Append(RefreshDTO(commonDTO));
-          }
-          catch (Exception exception)
-          {
-            response.Add(exception.ToString());
-          }
-        }
 
+        response.Append(_semanticEngine.Post(commonDTOList));
+        
         DateTime e = DateTime.Now;
         TimeSpan d = e.Subtract(b);
 
@@ -535,8 +522,9 @@ namespace org.iringtools.adapter
 
         List<DataTransferObject> dtoList = GetDTOList(projectName, applicationName, graphName);
         response = _dtoService.CreateRDF(graphName, dtoList);
+        string rdf = String.Empty;
         // Persist RDF to SqlServerStore
-        _projectionEngine.PersistGraphToStore(graphName);
+        _semanticEngine.Post(rdf);
         response.Add("Graph [" + graphName + "] added/updated to triple store.");
 
         DateTime endTime = DateTime.Now;
@@ -553,6 +541,34 @@ namespace org.iringtools.adapter
       }
 
       return response;
+    }
+
+    /// <summary>
+    /// Creates RDF for a graph
+    /// </summary>
+    /// <param name="projectName"></param>
+    /// <param name="applicationName"></param>
+    /// <param name="graphName"></param>
+    /// <returns>success/failed</returns>
+    public XElement GetTransformedDTO(string projectName, string applicationName, string graphName, string format)
+    {
+      XElement rdfGraph = null;
+      try
+      {
+        InitializeApplication(projectName, applicationName);
+
+        ITransformationLayer transformEngine = _kernel.Get<ITransformationLayer>(format);
+
+        List<DataTransferObject> dtoList = GetDTOList(projectName, applicationName, graphName);
+        XElement graph = _dtoService.SerializeDTO(graphName, dtoList);
+        rdfGraph = transformEngine.Transform(graphName, graph);
+      }
+      catch (Exception exception)
+      {
+        throw new Exception("Error in CreateGraphRDF: " + exception);
+      }
+
+      return rdfGraph;
     }
 
     /// <summary>
@@ -581,41 +597,6 @@ namespace org.iringtools.adapter
         response.Add(exception.ToString());
       }
 
-      return response;
-    }
-
-    /// <summary>
-    /// This is the private method for refreshing the triple store for this dto.
-    /// </summary>
-    /// <param name="dto">The triple store will be refreshed with this dto passes.</param>
-    /// <returns>Returns the response as success/failure.</returns>
-    private Response RefreshDTO(DataTransferObject dto)
-    {
-      Response response = new Response();
-      try
-      {
-        DateTime b = DateTime.Now;
-        DateTime e = DateTime.Now;
-        TimeSpan d = e.Subtract(b);
-
-        //RefreshDTO is private, so no need.
-        //_projectionEngine.Initialize();
-
-        _projectionEngine.Post(dto);
-        response.Add(String.Format("RefreshDTO({0},{1}) Execution Time [{2}:{3}.{4}] Seconds", dto.GraphName, dto.Identifier, d.Minutes, d.Seconds, d.Milliseconds));
-      }
-      catch (Exception exception)
-      {
-        _logger.Error("Error in RefreshDTO: " + exception);
-
-        response.Level = StatusLevel.Error;
-        response.Add("Error while RefreshDTO[" + dto.GraphName + "][" + dto.Identifier + "] data.");
-        response.Add(exception.ToString());
-      }
-      finally
-      {
-        UninitializeApplication();
-      }
       return response;
     }
 
@@ -650,9 +631,9 @@ namespace org.iringtools.adapter
         DateTime e;
         TimeSpan d;
 
-        _projectionEngine.Initialize();
+        _semanticEngine.Initialize();
 
-        List<DataTransferObject> dtoList = _projectionEngine.GetList(graphName);
+        List<DataTransferObject> dtoList = _semanticEngine.Get(graphName);
 
         
         RuleEngine ruleEngine = new RuleEngine();
@@ -746,9 +727,9 @@ namespace org.iringtools.adapter
       {
         InitializeApplication(projectName, applicationName);
 
-        _projectionEngine.Initialize();
+        _semanticEngine.Initialize();
 
-        _projectionEngine.DeleteAll();
+        _semanticEngine.Clear();
 
         response.Add("Store cleared successfully.");
       }

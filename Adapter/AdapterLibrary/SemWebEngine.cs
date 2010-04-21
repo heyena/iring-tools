@@ -46,9 +46,9 @@ using System.Configuration;
 using log4net;
 using System.Text;
 
-namespace org.iringtools.adapter.projection
+namespace org.iringtools.adapter.semantic
 {
-  public class SemWebEngine : IProjectionEngine
+  public class SemWebEngine : ISemanticLayer
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(SemWebEngine));
 
@@ -56,7 +56,7 @@ namespace org.iringtools.adapter.projection
     private string _scopedConnectionString = String.Empty;
 
     private bool _trimData;
-    private IDTOService _dtoService;
+    private IDTOLayer _dtoService;
     private AdapterSettings _settings;
     private ApplicationSettings _applicationSettings;
     private Store _store = null;
@@ -112,7 +112,7 @@ namespace org.iringtools.adapter.projection
     #endregion
 
     [Inject]
-    public SemWebEngine(AdapterSettings settings, ApplicationSettings applicationSettings, IDTOService dtoService)
+    public SemWebEngine(AdapterSettings settings, ApplicationSettings applicationSettings, IDTOLayer dtoService)
     {
       _settings = settings;
       _applicationSettings = applicationSettings;
@@ -436,187 +436,191 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    public List<DataTransferObject> GetList(string graphName)
+    public List<DataTransferObject> Get(string graphName)
     {
       try
       {
         // forward request to sparql engine
         SPARQLEngine sparqlEngine = new SPARQLEngine(_settings, _dtoService);
 
-        return sparqlEngine.GetList(graphName);
+        return sparqlEngine.Get(graphName);
       }
       catch (Exception exception)
       {
         throw new Exception(String.Format("GetList[{0}]", graphName), exception);
       }
     }
-    
-    public void Post(DataTransferObject dto)
+
+    public Response Post(List<DataTransferObject> dtoList)
     {
+      string graphName = String.Empty;
+      string identifier = String.Empty;
+      Response response = new Response();
+
       try
       {
-        foreach (GraphMap graphMap in _mapping.graphMaps)
+        var graphMaps = from map in _mapping.graphMaps
+                        where map.name == graphName
+                        select map;
+
+        foreach (GraphMap graphMap in graphMaps)
         {
-          if (graphMap.name == dto.GraphName)
+          foreach (DataTransferObject dto in dtoList)
           {
+            graphName = dto.GraphName;
+            identifier = dto.Identifier;
+
+            DateTime b = DateTime.Now;
+
             RefreshGraphMap(graphMap, dto);
+
+            DateTime e = DateTime.Now;
+            TimeSpan d = e.Subtract(b);
+
+            response.Add(String.Format("Post({0},{1}) Execution Time [{2}:{3}.{4}] Minutes", graphName, identifier, d.Minutes, d.Seconds, d.Milliseconds));
           }
         }
       }
       catch (Exception exception)
       {
-        throw new Exception(String.Format("Post[{0}][{1}]", dto.GraphName, dto.Identifier), exception);
+        response.Level = StatusLevel.Error;
+        response.Add("Error in Post[" + graphName + "][" + identifier + "].");
+        response.Add(exception.ToString());
       }
+
+      return response;
     }
 
-    public void PostList(List<DataTransferObject> dtos)
+    public Response Post(string graph)
     {
+      Response response = new Response();
+
       try
       {
-        foreach (GraphMap graphMap in _mapping.graphMaps)
+        DateTime b = DateTime.Now;
+
+        using (_store = Store.Create(_scopedConnectionString))
         {
-          foreach (DataTransferObject dto in dtos)
+          using (SemWeb.Store tempStore = new MemoryStore(new RdfXmlReader(graph)))
           {
-            if (graphMap.name == dto.GraphName)
+            GraphMatch query = new GraphMatch();
+            BNode sourceBNode = new BNode();
+            BNode targetBNode = new BNode();
+            SemWeb.Variable subj = new Variable("s");
+            List<Statement> statementSet = new List<Statement>();
+            QueryResultBuffer statementSink = null;
+
+            foreach (Statement sourceStatement in tempStore.Select(new Statement()))
             {
-              RefreshGraphMap(graphMap, dto);
+              if (sourceStatement.Subject != sourceBNode)
+              {
+                if (statementSink != null)
+                {
+                  query.Run(_store, statementSink);
+                  if (statementSink.Bindings.Count == 0)
+                  {
+                    targetBNode = new BNode();
+                    foreach (Statement statement in statementSet)
+                      _store.Add(new Statement(targetBNode, statement.Predicate, statement.Object));
+                  }
+                  else
+                  {
+                    foreach (VariableBindings variableBinding in statementSink.Bindings)
+                    {
+                      targetBNode = ((BNode)variableBinding["s"]);
+                    }
+                    if (targetBNode != null)
+                      _store.Remove(new Statement(targetBNode, null, null));
+                    foreach (Statement statemment in statementSet)
+                      _store.Add(new Statement(targetBNode, statemment.Predicate, statemment.Object));
+                  }
+                }
+                sourceBNode = (BNode)sourceStatement.Subject;
+                statementSet.Clear();
+                query = new GraphMatch();
+                statementSink = new QueryResultBuffer();
+              }
+              statementSet.Add(sourceStatement);
+              query.AddGraphStatement(new Statement(subj, sourceStatement.Predicate, sourceStatement.Object));
+
             }
           }
         }
+
+        DateTime e = DateTime.Now;
+        TimeSpan d = e.Subtract(b);
+
+        response.Add(String.Format("Post() Execution Time [{0}:{1}.{2}] Minutes", d.Minutes, d.Seconds, d.Milliseconds));
       }
       catch (Exception exception)
       {
-        throw new Exception("PostList: " + exception);
+        response.Level = StatusLevel.Error;
+        response.Add("Error in Post[].");
+        response.Add(exception.ToString());
       }
+
+      return response;
     }
 
-    public void Delete(string graphName, string identifier)
+    public Response Delete(string graphName, List<string> identifiers)
     {
+      Response response = new Response();
+
       try
-      {
-        foreach (GraphMap graphMap in _mapping.graphMaps)
+      {        
+        var graphMaps = from map in _mapping.graphMaps
+                        where map.name == graphName
+                        select map;
+
+        foreach (GraphMap graphMap in graphMaps)
         {
-          if (graphMap.name == graphName)
+          DateTime b = DateTime.Now;
+
+          foreach (string identifier in identifiers)
           {
             RefreshDeleteGraphMap(graphMap, identifier);
           }
+
+          DateTime e = DateTime.Now;
+          TimeSpan d = e.Subtract(b);
+
+          response.Add(String.Format("Delete({0}) Execution Time [{1}:{2}.{3}] Minutes", graphName, d.Minutes, d.Seconds, d.Milliseconds));
         }
       }
       catch (Exception exception)
       {
-        throw new Exception(String.Format("Delete[{0}][{1}]", graphName, identifier), exception);
+        response.Level = StatusLevel.Error;
+        response.Add("Error in Delete[" + graphName + "].");
+        response.Add(exception.ToString());
       }
+
+      return response;
     }
 
-    public void DeleteList(string graphName, List<string> identifiers)
+    public Response Clear()
     {
-      try
-      {
-        foreach (GraphMap graphMap in _mapping.graphMaps)
-        {
-          if (graphMap.name == graphName)
-          {
-            foreach (string identifier in identifiers)
-            {
-              RefreshDeleteGraphMap(graphMap, identifier);
-            }
-          }
-        }
-      }
-      catch (Exception exception)
-      {
-        throw new Exception("DeleteList: " + exception);
-      }
-    }
+      Response response = new Response();
 
-    public void DeleteAll()
-    {
       try
       {
+        DateTime b = DateTime.Now;
+
         _store.Clear();
+
+        DateTime e = DateTime.Now;
+        TimeSpan d = e.Subtract(b);
+
+        response.Add(String.Format("Clear() Execution Time [{0}:{1}.{2}] Minutes", d.Minutes, d.Seconds, d.Milliseconds));
       }
       catch (Exception exception)
       {
-        throw new Exception("DeleteAll: " + exception);
+        response.Level = StatusLevel.Error;
+        response.Add("Error in Clear[].");
+        response.Add(exception.ToString());
       }
+
+      return response;
     }
-
-    public void PersistGraphToStore(string graphName)
-    {
-        StringBuilder sb = new StringBuilder();
-        sb.Append(_settings.BaseDirectoryPath);
-        sb.Append(_settings.XmlPath);
-        sb.Append("RDF.");
-        sb.Append(_applicationSettings.ProjectName);
-        sb.Append(".");
-        sb.Append(_applicationSettings.ApplicationName);
-        sb.Append(".");
-        sb.Append(graphName);
-        sb.Append(".xml");
-        try
-        {
-            using (_store = Store.Create(_scopedConnectionString))
-            {
-                using (SemWeb.Store tempStore = new MemoryStore(new RdfXmlReader(sb.ToString())))
-                {
-                    GraphMatch query = new GraphMatch();
-                    BNode sourceBNode = new BNode();
-                    BNode targetBNode = new BNode();
-                    SemWeb.Variable subj = new Variable("s");
-                    List<Statement> statementSet = new List<Statement>();
-                    QueryResultBuffer statementSink = null;
-                    
-                    foreach (Statement sourceStatement in tempStore.Select(new Statement()))
-                    {
-                        if (sourceStatement.Subject != sourceBNode)
-                        {
-                            if (statementSink != null)
-                            {
-                                query.Run(_store, statementSink);
-                                if (statementSink.Bindings.Count == 0)
-                                {
-                                    targetBNode = new BNode();
-                                    foreach (Statement statement in statementSet)
-                                        _store.Add(new Statement(targetBNode, statement.Predicate, statement.Object));
-                                }
-                                else
-                                {
-                                    foreach (VariableBindings variableBinding in statementSink.Bindings)
-                                    {
-                                        targetBNode = ((BNode)variableBinding["s"]);
-                                    }
-                                    if (targetBNode != null)
-                                        _store.Remove(new Statement(targetBNode, null, null));
-                                    foreach (Statement statemment in statementSet)
-                                        _store.Add(new Statement(targetBNode, statemment.Predicate, statemment.Object));
-                                }
-                            }
-                            sourceBNode = (BNode)sourceStatement.Subject;
-                            statementSet.Clear();
-                            query = new GraphMatch();
-                            statementSink = new QueryResultBuffer();
-                        }
-                        statementSet.Add(sourceStatement);
-                        query.AddGraphStatement(new Statement(subj, sourceStatement.Predicate, sourceStatement.Object));
-                      
-                    }
-                }
-            }
-        }
-        catch (Exception exception)
-        {
-            throw new Exception("PersistGraphToStore:-", exception);
-        }
-    }
-
-    //public void DumpStoreData(string xmlPath)
-    //{
-    //  using (RdfWriter writer = new RdfXmlWriter(xmlPath + "rdf.xml"))
-    //  {
-    //    writer.Write(_store);
-    //  }
-
-    //}
 
     private void RefreshDeleteGraphMap(GraphMap graphMap, string identifier)
     {

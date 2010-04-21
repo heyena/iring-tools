@@ -25,22 +25,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using System.Collections.Generic;
-using org.iringtools.library;
+using System.Xml.Linq;
 
 namespace org.iringtools.adapter
 {
-  public interface IDTOService
+  public interface ITransformationLayer
   {
-    Response CreateRDF(string graphName, List<DataTransferObject> dtoList);
-    DataTransferObject Create(string graphName, string identifier);
-    List<DataTransferObject> CreateList(string graphName, List<string> identifiers);
-    DataTransferObject GetDTO(string graphName, string identifier);
-    List<DataTransferObject> GetList(string graphName);
-    Dictionary<string, string> GetListREST(string graphName);
-    Response Post(string graphName, DataTransferObject dto);
-    Response PostList(string graphName, List<DataTransferObject> dtoList);
-    DataDictionary GetDictionary();
-    Response RefreshDictionary();
-    object CreateList(string graphName, string dtoListString);
+    XElement Transform(string graphName, XElement source);
   }
 }

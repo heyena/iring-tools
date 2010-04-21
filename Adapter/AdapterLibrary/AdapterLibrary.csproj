@@ -91,10 +91,12 @@
     <Compile Include="DTOGenerator.cs" />
     <Compile Include="IAdapter.cs" />
     <Compile Include="IDataTransferObject.cs" />
-    <Compile Include="IDTOService.cs" />
     <Compile Include="DataTransferObject.cs" />
-    <Compile Include="IProjectionEngine.cs" />
+    <Compile Include="IDTOLayer.cs" />
+    <Compile Include="ISemanticLayer.cs" />
+    <Compile Include="ITransformationLayer.cs" />
     <Compile Include="KnownTypeProvider.cs" />
+    <Compile Include="RDFTransform.cs" />
     <Compile Include="RuleEngine.cs" />
     <Compile Include="SemWebEngine.cs" />
     <Compile Include="AdapterProvider.cs" />

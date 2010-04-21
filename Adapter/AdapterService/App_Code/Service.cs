@@ -29,6 +29,11 @@ using System.IO;
 using org.iringtools.library;
 using System.Collections.Generic;
 using log4net;
+using System.ServiceModel.Channels;
+using System;
+using System.ServiceModel;
+using System.Net;
+using System.Xml.Linq;
 
 namespace org.iringtools.adapter
 {
@@ -126,6 +131,18 @@ namespace org.iringtools.adapter
     public Response CreateGraphRDF(string projectName, string applicationName, string graphName)
     {
       return _adapterServiceProvider.CreateGraphRDF(projectName, applicationName, graphName);
+    }
+
+    /// <summary>
+    /// Calls adapter service provider to create RDF for a graph
+    /// </summary>
+    /// <param name="projectName"></param>
+    /// <param name="applicationName"></param>
+    /// <param name="graphName"></param>
+    /// <returns>success/failed</returns>
+    public XElement GetTransformedDTO(string projectName, string applicationName, string graphName, string format)
+    {
+      return _adapterServiceProvider.GetTransformedDTO(projectName, applicationName, graphName, format);
     }
 
     /// <summary>
