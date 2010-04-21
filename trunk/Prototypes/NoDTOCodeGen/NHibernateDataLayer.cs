@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NHibernate;
-using System.Reflection;
+//using System.Reflection;
 using NHibernate.Cfg;
 using System.Collections;
+using System.Reflection;
 
 namespace AdapterPrototype
 {
@@ -29,7 +30,7 @@ namespace AdapterPrototype
       try
       {
         Type type = Type.GetType(dataObjectName);
-        return Activator.CreateInstance(type);
+        return (object)Activator.CreateInstance(type);
       }
       catch (Exception ex)
       {
@@ -37,19 +38,27 @@ namespace AdapterPrototype
       }
     }
 
-    public T GetPropertyValue<T>(object dataObject, string propertyName)
+    public IList<object> CreateList(string dataObjectName, int count)
+    {
+      ISession session = OpenSession();
+      ICriteria criteria = session.CreateCriteria(dataObjectName);
+      criteria.SetMaxResults(count);
+      return criteria.List<object>();
+    }
+
+    public object GetPropertyValue(object dataObject, string propertyName)
     {
       PropertyInfo propInfo = dataObject.GetType().GetProperty(propertyName);
 
       if (propInfo != null)
       {
-        return (T)propInfo.GetValue(dataObject, null);
+        return propInfo.GetValue(dataObject, null);
       }
 
-      return default(T);
+      return null;
     }
 
-    public void SetPropertyValue<T>(object dataObject, string propertyName, T value)
+    public void SetPropertyValue(object dataObject, string propertyName, object value)
     {
       PropertyInfo propInfo = dataObject.GetType().GetProperty(propertyName);
 
@@ -77,9 +86,13 @@ namespace AdapterPrototype
       try
       {
         ISession session = OpenSession();
-        ITransaction transaction = session.BeginTransaction();
         session.SaveOrUpdate(dataObject);
-        transaction.Commit();
+        session.Flush();
+
+        //ISession session = OpenSession();
+        //ITransaction transaction = session.BeginTransaction();
+        //session.SaveOrUpdate(dataObject);
+        //transaction.Commit();
       }
       catch (Exception ex)
       {
@@ -89,16 +102,31 @@ namespace AdapterPrototype
 
     public void PostList(List<object> dataObjects)
     {
-      try
+      //try
+      //{
+      //  ISession session = OpenSession();
+      //  ITransaction transaction = session.BeginTransaction();
+      //  foreach (object dataObject in dataObjects)
+      //  {
+      //    session.SaveOrUpdate(dataObject);
+      //  }
+      //  transaction.Commit();        
+      //}
+      //catch (Exception ex)
+      //{
+      //  throw ex;
+      //}
+
+      foreach (object dataObject in dataObjects)
       {
-        foreach (object dataObject in dataObjects)
+        try
         {
           Post(dataObject);
         }
-      }
-      catch (Exception ex)
-      {
-        throw ex;
+        catch (Exception ex)
+        {
+          throw ex; // add to response
+        }
       }
     }
   }

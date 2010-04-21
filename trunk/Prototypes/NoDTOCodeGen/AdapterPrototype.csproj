@@ -55,6 +55,9 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Runtime.Serialization">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -72,7 +75,11 @@
     <Compile Include="DataObjects.cs" />
     <Compile Include="Graph.cs" />
     <Compile Include="IDataLayer.cs" />
+    <Compile Include="IDataLayer2.cs" />
+    <Compile Include="IDataLayer3.cs" />
     <Compile Include="NHibernateDataLayer.cs" />
+    <Compile Include="NHibernateDataLayer2.cs" />
+    <Compile Include="NHibernateDataLayer3.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -89,7 +89,7 @@ namespace org.iringtools.library
     [EnumMember]
     NotEqualTo,
     [EnumMember]
-    BeginsWith,
+    StartsWith,
     [EnumMember]
     EndsWith,
     [EnumMember]
