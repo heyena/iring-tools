@@ -550,25 +550,80 @@ namespace org.iringtools.adapter
     /// <param name="applicationName"></param>
     /// <param name="graphName"></param>
     /// <returns>success/failed</returns>
-    public XElement GetTransformedDTO(string projectName, string applicationName, string graphName, string format)
+    public XElement GetTransformedDTO(string projectName, string applicationName, string graphName, string identifier, string format)
     {
-      XElement rdfGraph = null;
+      XElement result = null;
       try
       {
         InitializeApplication(projectName, applicationName);
 
-        ITransformationLayer transformEngine = _kernel.Get<ITransformationLayer>(format);
+        List<DataTransferObject> dtoList = new List<DataTransferObject>();
 
-        List<DataTransferObject> dtoList = GetDTOList(projectName, applicationName, graphName);
+        dtoList.Add(GetDTO(projectName, applicationName, graphName, identifier));
+
         XElement graph = _dtoService.SerializeDTO(graphName, dtoList);
-        rdfGraph = transformEngine.Transform(graphName, graph);
+
+        if (format != null)
+        {
+          ITransformationLayer transformEngine = _kernel.Get<ITransformationLayer>(format);
+          result = transformEngine.Transform(graphName, graph);
+        }
+        else
+        {
+          result = graph;
+        }
+        
       }
       catch (Exception exception)
       {
         throw new Exception("Error in CreateGraphRDF: " + exception);
       }
 
-      return rdfGraph;
+      return result;
+    }
+
+    /// <summary>
+    /// Creates RDF for a graph
+    /// </summary>
+    /// <param name="projectName"></param>
+    /// <param name="applicationName"></param>
+    /// <param name="graphName"></param>
+    /// <returns>success/failed</returns>
+    public XElement GetTransformedDTOList(string projectName, string applicationName, string graphName, string format)
+    {
+        XElement result = null;
+        try
+        {
+            InitializeApplication(projectName, applicationName);
+
+            List<DataTransferObject> dtoList = GetDTOList(projectName, applicationName, graphName);
+
+            XElement graph = null;
+            if (format == "xml")
+            {
+              graph = _dtoService.SerializeXML(graphName, dtoList);
+            }
+            else
+            {
+              graph = _dtoService.SerializeDTO(graphName, dtoList);
+            }
+
+            if (format != null && format != "xml")
+            {
+                ITransformationLayer transformEngine = _kernel.Get<ITransformationLayer>(format);
+                result = transformEngine.Transform(graphName, graph);
+            }
+            else
+            {
+                result = graph;
+            }
+        }
+        catch (Exception exception)
+        {
+            throw new Exception("Error in CreateGraphRDF: " + exception);
+        }
+
+        return result;
     }
 
     /// <summary>

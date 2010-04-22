@@ -140,9 +140,21 @@ namespace org.iringtools.adapter
     /// <param name="applicationName"></param>
     /// <param name="graphName"></param>
     /// <returns>success/failed</returns>
-    public XElement GetTransformedDTO(string projectName, string applicationName, string graphName, string format)
+    public XElement GetTransformedDTO(string projectName, string applicationName, string graphName, string identifier, string format)
     {
-      return _adapterServiceProvider.GetTransformedDTO(projectName, applicationName, graphName, format);
+      return _adapterServiceProvider.GetTransformedDTO(projectName, applicationName, graphName, identifier, format);
+    }
+
+    /// <summary>
+    /// Calls adapter service provider to create RDF for a graph
+    /// </summary>
+    /// <param name="projectName"></param>
+    /// <param name="applicationName"></param>
+    /// <param name="graphName"></param>
+    /// <returns>success/failed</returns>
+    public XElement GetTransformedDTOList(string projectName, string applicationName, string graphName, string format)
+    {
+        return _adapterServiceProvider.GetTransformedDTOList(projectName, applicationName, graphName, format);
     }
 
     /// <summary>

@@ -24,7 +24,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\</OutputPath>
+    <OutputPath>..\..\..\bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -108,7 +108,9 @@
     <Compile Include="App_Code\IDataService.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="App_Code\IService.cs" />
+    <Compile Include="App_Code\IService.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="App_Code\Service.cs" />
     <Content Include="DataService.svc" />
     <Content Include="Web.config" />
