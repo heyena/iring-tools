@@ -39,7 +39,7 @@ using Ninject.Contrib.Dynamic;
 
 namespace org.iringtools.adapter
 {
-  public class DTOGenerator
+  public class DTOGenerator2
   {
     private const string INDENTATION = "  ";
     private const string COMPILER_VERSION = "v3.5";
@@ -48,7 +48,7 @@ namespace org.iringtools.adapter
     private const string RDL_NAMESPACE = "http://rdl.rdlfacade.org/data#";
     private const string TPL_NAMESPACE = "http://tpl.rdlfacade.org/data#";
 
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(DTOGenerator));
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(DTOGenerator2));
 
     private AdapterSettings _settings = null;
     private Mapping _mapping = null;
@@ -68,46 +68,18 @@ namespace org.iringtools.adapter
     private string _templatePath = string.Empty;
     private string _dtoTemplatePath = string.Empty;
 
-    public DTOGenerator(AdapterSettings settings)
+    public DTOGenerator2(AdapterSettings settings)
     {
       _settings = settings;
       _mappingProperties = new List<MappingProperty>();
       _initStatements = new List<string>();
     }
 
-    private void AddCustomDataLayerAssembly(string projectName, string applicationName, CompilerParameters parameters)
-    {
-      string bindingConfigurationPath = _settings.XmlPath + "BindingConfiguration." + projectName + "." + applicationName + ".xml";
-
-      if (File.Exists(bindingConfigurationPath))
-      {
-        BindingConfiguration bindingConfiguration = Utility.Read<BindingConfiguration>(bindingConfigurationPath, false);
-
-        foreach (Binding binding in bindingConfiguration.Bindings)
-        {
-          if (binding.Name.ToUpper() == "DATALAYER" && !binding.Implementation.ToUpper().Contains("NHIBERNATEDATALAYER"))
-          {
-            string[] bindingImpl = binding.Implementation.Split(',');
-            string bindingAssembly = bindingImpl[1].Trim() + ".dll";
-            parameters.ReferencedAssemblies.Add(_settings.BinaryPath + bindingAssembly);
-            break;
-          }
-        }
-      }
-      else
-      {
-        string errorMessage = "Binding configuration file " + bindingConfigurationPath + " not found.";
-
-        _logger.Error(errorMessage);
-        throw new Exception(errorMessage);
-      }
-    }
-
     public void Generate(string projectName, string applicationName)
     {
       try
       {
-        string mappingPath = _settings.XmlPath +  "Mapping." + projectName + "." + applicationName + ".xml";
+        string mappingPath = _settings.XmlPath + "Mapping." + projectName + "." + applicationName + ".xml";
         _mapping = Utility.Read<Mapping>(mappingPath, false);
 
         string dataDictionaryPath = _settings.XmlPath + "DataDictionary." + projectName + "." + applicationName + ".xml";
@@ -137,7 +109,7 @@ namespace org.iringtools.adapter
         parameters.ReferencedAssemblies.Add(_settings.BinaryPath + "UtilityLibrary.dll");
         parameters.ReferencedAssemblies.Add(_settings.BinaryPath + "AdapterLibrary.dll");
 
-        AddCustomDataLayerAssembly(projectName, applicationName, parameters);                
+        AddCustomDataLayerAssembly(projectName, applicationName, parameters);
 
         // Generate code
         List<string> serviceKnownTypes = GetServiceKnownTypes(projectName, applicationName);
@@ -182,7 +154,7 @@ namespace org.iringtools.adapter
         sources.Add(dtoService);
         sources.Add(iService);
         sources.Add(iDataService);
-        
+
         // Do compile
         Utility.Compile(compilerOptions, parameters, sources.ToArray());
         #endregion
@@ -417,7 +389,7 @@ namespace org.iringtools.adapter
             _dtoModelWriter.WriteLine("{");
             _dtoModelWriter.Indent++;
             _dtoModelWriter.WriteLine("_dataObject = new {0}();", qualifiedDataObjectName);
-            
+
             foreach (MappingProperty mappingProperty in _mappingProperties)
             {
               //TODO: handle multi-column key
@@ -431,7 +403,7 @@ namespace org.iringtools.adapter
                   _dtoModelWriter.WriteLine("if (!String.IsNullOrEmpty(this.Identifier) && this.Identifier.Length > {0})", mappingProperty.dataLength);
                   _dtoModelWriter.WriteLine("{");
                   _dtoModelWriter.Indent++;
-                  _dtoModelWriter.WriteLine("_logger.Warn(\"Truncate {0} value from ---\" + this.Identifier + \"--- to {1} characters.\");", 
+                  _dtoModelWriter.WriteLine("_logger.Warn(\"Truncate {0} value from ---\" + this.Identifier + \"--- to {1} characters.\");",
                     mappingProperty.propertyName, mappingProperty.dataLength);
                   _dtoModelWriter.WriteLine("this.Identifier = this.Identifier.Substring(0, {0});", mappingProperty.dataLength);
                   _dtoModelWriter.Indent--;
@@ -624,7 +596,7 @@ namespace org.iringtools.adapter
 
         dtoServiceWriter.Indent--;
         dtoServiceWriter.WriteLine("}");
-        
+
         dtoServiceWriter.WriteLine(@"
         XsltArgumentList xsltArgumentList = new XsltArgumentList();
         xsltArgumentList.AddParam(""dtoFilePath"", String.Empty, dtoFilePath);
@@ -832,12 +804,12 @@ namespace org.iringtools.adapter
               if (!String.IsNullOrEmpty(dataObjectMap.outFilter))
               {
                 string outFilter = dataObjectMap.outFilter.Substring(dataObjectMap.outFilter.IndexOf("_") + 1);
-                
+
                 dtoServiceWriter.WriteLine(
-//            @"var dataObject = 
-//            (from dataObjectList in _dataLayer.GetList<{1}>()
-//             where dataObjectList.{2} == identifier && {1}.{3}  // outFilter
-//             select dataObjectList).FirstOrDefault<{1}>();
+                  //            @"var dataObject = 
+                  //            (from dataObjectList in _dataLayer.GetList<{1}>()
+                  //             where dataObjectList.{2} == identifier && {1}.{3}  // outFilter
+                  //             select dataObjectList).FirstOrDefault<{1}>();
 
           @"Dictionary<string, object> queryProperties = new Dictionary<string, object>();
           queryProperties.Add(""{2}"", identifier);
@@ -853,10 +825,10 @@ namespace org.iringtools.adapter
               else
               {
                 dtoServiceWriter.WriteLine(
-//            @"var dataObject = 
-//            (from dataObjectList in _dataLayer.GetList<{1}>()
-//             where dataObjectList.{2} == identifier
-//             select dataObjectList).FirstOrDefault<{1}>();   
+                  //            @"var dataObject = 
+                  //            (from dataObjectList in _dataLayer.GetList<{1}>()
+                  //             where dataObjectList.{2} == identifier
+                  //             select dataObjectList).FirstOrDefault<{1}>();   
 
           @"Dictionary<string, object> queryProperties = new Dictionary<string, object>();
           queryProperties.Add(""{2}"", identifier);
@@ -1137,7 +1109,7 @@ namespace org.iringtools.adapter
           {
             DataObjectMap dataObjectMap = graphMap.dataObjectMaps[0];
             string qualifiedDataObjectName = GetQualifiedDataObjectName(dataObjectMap.name);
-            
+
             dtoServiceWriter.WriteLine(
         @"List<{0}> doList = new List<{0}>();
 
@@ -1284,10 +1256,6 @@ namespace org.iringtools.adapter
     public DataDictionary GetDictionary()
     {
       return _dataLayer.GetDictionary();
-    }
-    public Response RefreshDictionary()
-    {
-      return _dataLayer.RefreshDictionary();
     }");
 
         dtoServiceWriter.Indent--;
@@ -1509,7 +1477,7 @@ namespace org.iringtools.adapter
       {
         List<string> knownTypes = new List<string>();
         string ns = ADAPTER_NAMESPACE + ".proj_" + projectName + "." + applicationName;
-        
+
         string mappingFile = _settings.XmlPath + "Mapping." + projectName + "." + applicationName + ".xml";
         Mapping mapping = Utility.Read<Mapping>(mappingFile, false);
 
@@ -1752,10 +1720,34 @@ namespace org.iringtools.adapter
       }
     }
 
-    /// <summary>
-    /// Get list of applications whose dto code have been generated
-    /// </summary>
-    /// <returns></returns>
+    private void AddCustomDataLayerAssembly(string projectName, string applicationName, CompilerParameters parameters)
+    {
+      string bindingConfigurationPath = _settings.XmlPath + "BindingConfiguration." + projectName + "." + applicationName + ".xml";
+
+      if (File.Exists(bindingConfigurationPath))
+      {
+        BindingConfiguration bindingConfiguration = Utility.Read<BindingConfiguration>(bindingConfigurationPath, false);
+
+        foreach (Binding binding in bindingConfiguration.Bindings)
+        {
+          if (binding.Name.ToUpper() == "DATALAYER" && !binding.Implementation.ToUpper().Contains("NHIBERNATEDATALAYER"))
+          {
+            string[] bindingImpl = binding.Implementation.Split(',');
+            string bindingAssembly = bindingImpl[1].Trim() + ".dll";
+            parameters.ReferencedAssemblies.Add(_settings.BinaryPath + bindingAssembly);
+            break;
+          }
+        }
+      }
+      else
+      {
+        string errorMessage = "Binding configuration file " + bindingConfigurationPath + " not found.";
+
+        _logger.Error(errorMessage);
+        throw new Exception(errorMessage);
+      }
+    }
+
     private List<KeyValuePair<string, ScopeApplication>> GetScopeApplications()
     {
       try
@@ -1766,12 +1758,12 @@ namespace org.iringtools.adapter
         if (File.Exists(scopesPath))
         {
           List<ScopeProject> projects = Utility.Read<List<ScopeProject>>(scopesPath);
-          
+
           foreach (ScopeProject project in projects)
           {
             foreach (ScopeApplication application in project.Applications)
             {
-              scopeApps.Add(new KeyValuePair<string, ScopeApplication>(project.Name, application));              
+              scopeApps.Add(new KeyValuePair<string, ScopeApplication>(project.Name, application));
             }
           }
         }
@@ -1784,5 +1776,14 @@ namespace org.iringtools.adapter
         throw exception;
       }
     }
+  }
+
+  public class MappingProperty : DataProperty
+  {
+    public string propertyPath { get; set; }
+    public string dtoPropertyPath { get; set; }
+    public bool isDataMember { get; set; }
+    public string value { get; set; }
+    public string mappingDataType { get; set; }
   }
 }

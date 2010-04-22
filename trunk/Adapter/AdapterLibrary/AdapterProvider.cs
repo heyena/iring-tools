@@ -104,11 +104,6 @@ namespace org.iringtools.adapter
       }
     }
 
-    public void UninitializeApplication()
-    {
-      //_kernel.Unload("Ninject.Contrib.Dynamic.DynamicModule, Ninject.Contrib.Dynamic");
-    }
-
     /// <summary>
     /// Gets the mapping by reading Mapping.xml.
     /// </summary>
@@ -209,10 +204,6 @@ namespace org.iringtools.adapter
         _logger.Error("Error in GetDictionary: " + exception);
         throw new Exception("Error while getting Dictionary. " + exception.ToString(), exception);
       }
-      finally
-      {
-        UninitializeApplication();
-      }
     }
 
     /// <summary>
@@ -263,10 +254,7 @@ namespace org.iringtools.adapter
         response.Add("Error while refreshing Dictionary.");
         response.Add(exception.ToString());
       }
-      finally
-      {
-        UninitializeApplication();
-      }
+
       return response;
     }
 
@@ -290,10 +278,6 @@ namespace org.iringtools.adapter
       {
         _logger.Error("Error in GetDTO: " + exception);
         throw new Exception("Error while getting " + graphName + " data with identifier " + identifier + ". " + exception.ToString(), exception);
-      }
-      finally
-      {
-        UninitializeApplication();
       }
     }
 
@@ -322,10 +306,6 @@ namespace org.iringtools.adapter
         _logger.Error("Error in Get: " + exception);
         throw new Exception("Error while getting " + graphName + " data with identifier " + identifier + ". " + exception.ToString(), exception);
       }
-      finally
-      {
-        UninitializeApplication();
-      }
     }
 
     /// <summary>
@@ -352,10 +332,6 @@ namespace org.iringtools.adapter
         _logger.Error("Error in GetList: " + exception);
         throw new Exception("Error while getting " + graphName + " data. " + exception.ToString(), exception);
       }
-      finally
-      {
-        UninitializeApplication();
-      }
     }
 
     /// <summary>
@@ -378,10 +354,6 @@ namespace org.iringtools.adapter
         _logger.Error("Error in GetDTOList: " + exception);
         throw new Exception("Error while getting " + graphName + " data. " + exception.ToString(), exception);
       }
-      finally
-      {
-        UninitializeApplication();
-      }
     }
 
     /// <summary>
@@ -403,10 +375,6 @@ namespace org.iringtools.adapter
       {
         _logger.Error("Error in GetDTOListREST: " + exception);
         throw new Exception("Error while getting " + graphName + " data. " + exception.ToString(), exception);
-      }
-      finally
-      {
-        UninitializeApplication();
       }
     }
 
@@ -498,10 +466,7 @@ namespace org.iringtools.adapter
         response.Add("Error while Refreshing TripleStore for GraphMap[" + graphName + "].");
         response.Add(exception.ToString());
       }
-      finally
-      {
-        UninitializeApplication();
-      }
+
       return response;
     }
 
@@ -716,10 +681,7 @@ namespace org.iringtools.adapter
         response.Add("Error while pulling " + graphName + " data from " + targetUri + " as " + targetUri + " data with filter " + filter + ".\r\n");
         response.Add(exception.ToString());
       }
-      finally
-      {
-        UninitializeApplication();
-      }
+
       return response;
     }
 
@@ -768,10 +730,7 @@ namespace org.iringtools.adapter
         response.Add("Error while pulling " + graphName + " data from " + targetUri + " as " + targetUri + " data with filter " + filter + ".\r\n");
         response.Add(exception.ToString());
       }
-      finally
-      {
-        UninitializeApplication();
-      }
+
       return response;
     }
 
@@ -797,10 +756,7 @@ namespace org.iringtools.adapter
         response.Add(exception.ToString());
         response.Level = StatusLevel.Error;
       }
-      finally
-      {
-        UninitializeApplication();
-      }
+
       return response;
     }
 
@@ -1359,7 +1315,7 @@ namespace org.iringtools.adapter
         }
         else if (Validate(dbDictionary))
         {
-          EntityGenerator generator = _kernel.Get<EntityGenerator>();
+          EntityGenerator2 generator = _kernel.Get<EntityGenerator2>();
           response = generator.Generate(dbDictionary, projectName, applicationName);
           
           // Update binding configuration
