@@ -90,11 +90,11 @@ namespace org.iringtools.adapter
 
     [OperationContract]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}")]
-    XElement GetTransformedDTO(string projectName, string applicationName, string graphName, string format);
+    XElement GetTransformedDTOList(string projectName, string applicationName, string graphName, string format);
 
     [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}/rdf")]
-    Response CreateIdentifierRDF(string projectName, string applicationName, string graphName, string identifier);
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}?format={format}")]
+    XElement GetTransformedDTO(string projectName, string applicationName, string graphName, string identifier, string format);
 
     [OperationContract]
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/pull")]
