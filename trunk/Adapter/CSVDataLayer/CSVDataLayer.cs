@@ -121,7 +121,7 @@ namespace org.iringtools.adapter.datalayer
               string attrDataType = attr.Attribute("dataType").Value.ToLower();
               string csvValue = csvValues[index++].Trim();
 
-              // if data type is not nullable, set default value for it
+              // if data type is not nullable, make sure it has a value
               if (!(attrDataType.EndsWith("?") && csvValue == String.Empty))
               {
                 if (attrDataType.Contains("bool"))
@@ -157,7 +157,7 @@ namespace org.iringtools.adapter.datalayer
         if (filter != null && filter.Expressions.Count > 0)
         {
           var predicate = GenerateWherePredicate(qualifiedObjectType, filter);
-          dataObjects = dataObjects.Where(predicate).ToList();          
+          dataObjects = dataObjects.Where<IDataObject>(predicate).ToList();
         }
 
         // Apply paging
@@ -174,7 +174,7 @@ namespace org.iringtools.adapter.datalayer
         throw new Exception("Error while getting a list of data objects of type [" + objectType + "].", ex);
       }
     }
-
+    
     public IList<IDataObject> Get(string objectType, IList<string> identifiers)
     {
       try
@@ -221,7 +221,7 @@ namespace org.iringtools.adapter.datalayer
               string attrDataType = attr.Attribute("dataType").Value.ToLower();
               string csvValue = csvValues[index++].Trim();
 
-              // if data type is not nullable, make sure it has a value 
+              // if data type is not nullable, make sure it has a value
               if (!(attrDataType.EndsWith("?") && csvValue == String.Empty))
               {
                 if (attrDataType.Contains("bool"))
@@ -244,10 +244,12 @@ namespace org.iringtools.adapter.datalayer
                 {
                   csvValue = "0";
                 }
-
-                dataObject.SetPropertyValue(attrName, csvValue);
               }
+
+              dataObject.SetPropertyValue(attrName, csvValue);
             }
+
+            dataObjects.Add(dataObject);
           }
         }
 
