@@ -66,6 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EntityGenerator.cs" />
+    <Compile Include="EntityGenerator2.cs" />
     <Compile Include="NHibernateDataLayer.cs" />
     <Compile Include="NHibernateDataLayer2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
