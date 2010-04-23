@@ -1211,6 +1211,14 @@ namespace org.iringtools.adapter
           response = generator.Generate(dbDictionary, projectName, applicationName);
           
           // Update binding configuration
+          Binding semanticLayerBinding = new Binding()
+          {
+            Name = "SemanticLayer",
+            Interface = "org.iringtools.adapter.ISemanticLayer, AdapterLibrary",
+            Implementation = "org.iringtools.adapter.semantic.SemWebRDFEngine, AdapterLibrary"
+          };
+          UpdateBindingConfiguration(projectName, applicationName, semanticLayerBinding);
+
           Binding dataLayerBinding = new Binding()
           {
             Name = "DataLayer",

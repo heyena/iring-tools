@@ -583,7 +583,7 @@ namespace org.iringtools.adapter.datalayer
         }
 
         // implements GetPropertyValue from IDataObject
-        _entityWriter.WriteLine("public object GetPropertyValue(string propertyName)");
+        _entityWriter.WriteLine("public virtual object GetPropertyValue(string propertyName)");
         _entityWriter.WriteLine("{");
         _entityWriter.Indent++; _entityWriter.WriteLine("switch (propertyName)");
         _entityWriter.WriteLine("{");
@@ -602,7 +602,7 @@ namespace org.iringtools.adapter.datalayer
 
 
         // implements SetPropertyValue from IDataObject
-        _entityWriter.WriteLine("public void SetPropertyValue(string propertyName, object value)");
+        _entityWriter.WriteLine("public virtual void SetPropertyValue(string propertyName, object value)");
         _entityWriter.WriteLine("{");
         _entityWriter.Indent++;
         _entityWriter.WriteLine("switch (propertyName)");
