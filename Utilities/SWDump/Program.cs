@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using SemWeb;
 using System.IO;
+using System.Configuration;
 
 namespace SWDump
 {
@@ -19,7 +20,7 @@ namespace SWDump
           string applicationName = args[1];
           string filePath = args[2];
 
-          string tripleStoreconnectionString = @"sqlserver:rdf:Database=rdf;data source=.\SQLEXPRESS; Initial Catalog=master; User Id=iring; Password=iring;";
+          string tripleStoreconnectionString = ConfigurationManager.AppSettings["TripleStoreConnectionString"];
           string scopeName = projectName + "_" + applicationName;
           string scopedConnectionString = ScopeConnectionString(tripleStoreconnectionString, scopeName);
 
