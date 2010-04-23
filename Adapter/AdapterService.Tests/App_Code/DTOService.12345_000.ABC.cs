@@ -15,11 +15,12 @@ using System.ServiceModel;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Xsl;
+using System.Xml.Serialization;
 using Ninject;
 using org.iringtools.library;
 using org.iringtools.utility;
-using org.ids_adi.qxf;
 using Microsoft.ServiceModel.Web;
+using org.ids_adi.qxf;
 
 namespace org.iringtools.adapter.proj_12345_000.ABC
 {
@@ -109,6 +110,88 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
       catch (Exception ex)
       {
         throw ex;
+      }
+    }
+    
+    public XElement SerializeDTO(string graphName, List<DataTransferObject> dtoList)
+    {
+      XElement element = null;
+      try
+      {
+        switch (graphName)
+        {
+          case "Valves":
+          {
+            List<org.iringtools.adapter.proj_12345_000.ABC.Valves> theDTOList = new List<org.iringtools.adapter.proj_12345_000.ABC.Valves>();
+            
+            foreach (DataTransferObject dto in dtoList)
+            {
+              theDTOList.Add((org.iringtools.adapter.proj_12345_000.ABC.Valves)dto);
+            }
+            
+            XmlSerializer serializer = new XmlSerializer(typeof(List<org.iringtools.adapter.proj_12345_000.ABC.Valves>));
+            element = SerializationExtensions.ToXml<List<org.iringtools.adapter.proj_12345_000.ABC.Valves>>(theDTOList, serializer);
+            break;
+          }
+          case "Lines":
+          {
+            List<org.iringtools.adapter.proj_12345_000.ABC.Lines> theDTOList = new List<org.iringtools.adapter.proj_12345_000.ABC.Lines>();
+            
+            foreach (DataTransferObject dto in dtoList)
+            {
+              theDTOList.Add((org.iringtools.adapter.proj_12345_000.ABC.Lines)dto);
+            }
+            
+            XmlSerializer serializer = new XmlSerializer(typeof(List<org.iringtools.adapter.proj_12345_000.ABC.Lines>));
+            element = SerializationExtensions.ToXml<List<org.iringtools.adapter.proj_12345_000.ABC.Lines>>(theDTOList, serializer);
+            break;
+          }
+        }
+        return element;
+      }
+      catch (Exception ex)
+      {
+        throw new Exception("Error while serializing DTO.", ex);
+      }
+    }
+    
+    public XElement SerializeXML(string graphName, List<DataTransferObject> dtoList)
+    {
+      XElement element = null;
+      try
+      {
+        switch (graphName)
+        {
+          case "Valves":
+          {
+            List<org.iringtools.adapter.proj_12345_000.ABC.Valves> theDTOList = new List<org.iringtools.adapter.proj_12345_000.ABC.Valves>();
+            
+            foreach (DataTransferObject dto in dtoList)
+            {
+              theDTOList.Add((org.iringtools.adapter.proj_12345_000.ABC.Valves)dto);
+            }
+            
+            element = SerializationExtensions.ToXml<List<org.iringtools.adapter.proj_12345_000.ABC.Valves>>(theDTOList);
+            break;
+          }
+          case "Lines":
+          {
+            List<org.iringtools.adapter.proj_12345_000.ABC.Lines> theDTOList = new List<org.iringtools.adapter.proj_12345_000.ABC.Lines>();
+            
+            foreach (DataTransferObject dto in dtoList)
+            {
+              theDTOList.Add((org.iringtools.adapter.proj_12345_000.ABC.Lines)dto);
+            }
+            
+            element = SerializationExtensions.ToXml<List<org.iringtools.adapter.proj_12345_000.ABC.Lines>>(theDTOList);
+            break;
+          }
+        }
+        return element;
+      }
+      catch (Exception ex)
+      {
+        throw new Exception("Error while serializing DTOList.", ex);
       }
     }
     
@@ -224,64 +307,6 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
       return dtoList;
     }
     
-     public XElement SerializeDTO(string graphName, List<DataTransferObject> dtoList)
-    {
-      XElement element = null;
-      try
-      {
-        switch (graphName)
-        {
-          case "Valves":
-            {
-              List<org.iringtools.adapter.proj_12345_000.ABC.Valves> theDTOList = new List<org.iringtools.adapter.proj_12345_000.ABC.Valves>();
-
-              foreach (DataTransferObject dto in dtoList)
-              {
-                theDTOList.Add((org.iringtools.adapter.proj_12345_000.ABC.Valves)dto);
-              }
-
-              element = SerializationExtensions.ToXml<List<org.iringtools.adapter.proj_12345_000.ABC.Valves>>(theDTOList);
-              break;
-            }
-        }
-
-        return element;
-      }
-      catch (Exception ex)
-      {
-        throw new Exception("Error while serializing a DTO", ex);
-      }
-    }
-
-     public XElement SerializeXML(string graphName, List<DataTransferObject> dtoList)
-     {
-         XElement element = null;
-         try
-         {
-             switch (graphName)
-             {
-                 case "Valves":
-                     {
-                         List<org.iringtools.adapter.proj_12345_000.ABC.Valves> theDTOList = new List<org.iringtools.adapter.proj_12345_000.ABC.Valves>();
-
-                         foreach (DataTransferObject dto in dtoList)
-                         {
-                             theDTOList.Add((org.iringtools.adapter.proj_12345_000.ABC.Valves)dto);
-                         }
-
-                         element = SerializationExtensions.ToXml<List<org.iringtools.adapter.proj_12345_000.ABC.Valves>>(theDTOList);
-                         break;
-                     }
-             }
-
-             return element;
-         }
-         catch (Exception ex)
-         {
-             throw new Exception("Error while serializing a DTO", ex);
-         }
-     }
-
     public Dictionary<string, string> GetListREST(string graphName)
     {
       Dictionary<string, string> identifierUriPairs = new Dictionary<string, string>();
@@ -476,7 +501,6 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
     {
       return _dataLayer.GetDictionary();
     }
-
     public Response RefreshDictionary()
     {
       return _dataLayer.RefreshDictionary();

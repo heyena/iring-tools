@@ -10,10 +10,11 @@
 using System;
 using System.Collections.Generic;
 using Iesi.Collections.Generic;
+using org.iringtools.library;
 
 namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
 {
-  public class InLinePipingComponent
+  public class InLinePipingComponent : IDataObject
   {
     public virtual String Id { get; set; }
     public virtual String tag
@@ -32,40 +33,164 @@ namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
     public virtual String system { get; set; }
     public virtual String unit { get; set; }
     public virtual String uomDiameter { get; set; }
-  }
-  
-  public class KOPot
-  {
-    public virtual String Id { get; set; }
-    public virtual String tag
+    public object GetPropertyValue(string propertyName)
     {
-      get { return Id; }
-      set { Id = value; }
+      switch (propertyName)
+      {
+        case "componentType": return componentType;
+        case "diameter": return diameter;
+        case "isCloned": return isCloned;
+        case "lineTag": return lineTag;
+        case "pid": return pid;
+        case "projectNumber": return projectNumber;
+        case "quantity": return quantity;
+        case "rating": return rating;
+        case "system": return system;
+        case "unit": return unit;
+        case "uomDiameter": return uomDiameter;
+        default: throw new Exception("Property [" + propertyName + "] does not exist.");
+      }
     }
-    public virtual String description { get; set; }
-  }
-  
-  public class Line
-  {
-    public virtual String Id { get; set; }
-    public virtual String tag
+    public void SetPropertyValue(string propertyName, object value)
     {
-      get { return Id; }
-      set { Id = value; }
+      switch (propertyName)
+      {
+        case "componentType":
+          componentType = Convert.ToString(value);
+          break;
+        case "diameter":
+          diameter = Convert.ToSingle(value);
+          break;
+        case "isCloned":
+          isCloned = Convert.ToBoolean(value);
+          break;
+        case "lineTag":
+          lineTag = Convert.ToString(value);
+          break;
+        case "pid":
+          pid = Convert.ToString(value);
+          break;
+        case "projectNumber":
+          projectNumber = Convert.ToString(value);
+          break;
+        case "quantity":
+          quantity = Convert.ToInt32(value);
+          break;
+        case "rating":
+          rating = Convert.ToString(value);
+          break;
+        case "system":
+          system = Convert.ToString(value);
+          break;
+        case "unit":
+          unit = Convert.ToString(value);
+          break;
+        case "uomDiameter":
+          uomDiameter = Convert.ToString(value);
+          break;
+        default:
+          throw new Exception("Property [" + propertyName + "] does not exist.");
+        }
+      }
     }
-    public virtual Single? diameter { get; set; }
-    public virtual String system { get; set; }
-    public virtual String uomDiameter { get; set; }
-  }
-  
-  public class VacuumTower
-  {
-    public virtual String Id { get; set; }
-    public virtual String tag
+    
+    public class KOPot : IDataObject
     {
-      get { return Id; }
-      set { Id = value; }
-    }
-    public virtual String description { get; set; }
-  }
-}
+      public virtual String Id { get; set; }
+      public virtual String tag
+      {
+        get { return Id; }
+        set { Id = value; }
+      }
+      public virtual String description { get; set; }
+      public object GetPropertyValue(string propertyName)
+      {
+        switch (propertyName)
+        {
+          case "description": return description;
+          default: throw new Exception("Property [" + propertyName + "] does not exist.");
+        }
+      }
+      public void SetPropertyValue(string propertyName, object value)
+      {
+        switch (propertyName)
+        {
+          case "description":
+            description = Convert.ToString(value);
+            break;
+          default:
+            throw new Exception("Property [" + propertyName + "] does not exist.");
+          }
+        }
+      }
+      
+      public class Line : IDataObject
+      {
+        public virtual String Id { get; set; }
+        public virtual String tag
+        {
+          get { return Id; }
+          set { Id = value; }
+        }
+        public virtual Single? diameter { get; set; }
+        public virtual String system { get; set; }
+        public virtual String uomDiameter { get; set; }
+        public object GetPropertyValue(string propertyName)
+        {
+          switch (propertyName)
+          {
+            case "diameter": return diameter;
+            case "system": return system;
+            case "uomDiameter": return uomDiameter;
+            default: throw new Exception("Property [" + propertyName + "] does not exist.");
+          }
+        }
+        public void SetPropertyValue(string propertyName, object value)
+        {
+          switch (propertyName)
+          {
+            case "diameter":
+              diameter = Convert.ToSingle(value);
+              break;
+            case "system":
+              system = Convert.ToString(value);
+              break;
+            case "uomDiameter":
+              uomDiameter = Convert.ToString(value);
+              break;
+            default:
+              throw new Exception("Property [" + propertyName + "] does not exist.");
+            }
+          }
+        }
+        
+        public class VacuumTower : IDataObject
+        {
+          public virtual String Id { get; set; }
+          public virtual String tag
+          {
+            get { return Id; }
+            set { Id = value; }
+          }
+          public virtual String description { get; set; }
+          public object GetPropertyValue(string propertyName)
+          {
+            switch (propertyName)
+            {
+              case "description": return description;
+              default: throw new Exception("Property [" + propertyName + "] does not exist.");
+            }
+          }
+          public void SetPropertyValue(string propertyName, object value)
+          {
+            switch (propertyName)
+            {
+              case "description":
+                description = Convert.ToString(value);
+                break;
+              default:
+                throw new Exception("Property [" + propertyName + "] does not exist.");
+              }
+            }
+          }
+        }

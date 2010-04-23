@@ -15,6 +15,7 @@ namespace org.iringtools.adapter
     {
       Bind<AdapterSettings>().ToSelf().InSingletonScope();
       Bind<ApplicationSettings>().ToSelf().InThreadScope();
+      Bind<ITransformationLayer>().To<RDFTransform>().Named("rdf");
     }
   }
 }

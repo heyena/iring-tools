@@ -43,20 +43,16 @@ namespace org.iringtools.adapter
   public partial interface IService
   {
     [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/datadictionary")]
-    DataDictionary GetDictionary(string projectName, string applicationName);
-
-    [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/datadictionary/refresh")]
-    Response RefreshDictionary(string projectName, string applicationName);
-
-    [OperationContract]
     [WebGet(UriTemplate = "/scopes")]
     List<ScopeProject> GetScopes();
 
     [OperationContract]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/manifest")]
     Manifest GetManifest(string projectName, string applicationName);
+
+    [OperationContract]
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/datadictionary")]
+    DataDictionary GetDictionary(string projectName, string applicationName);
 
     [XmlSerializerFormat]
     [OperationContract]
@@ -77,45 +73,39 @@ namespace org.iringtools.adapter
     Response Delete(string projectName, string applicationName);
 
     [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/clear")]
-    Response ClearStore(string projectName, string applicationName);
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}?format={format}")]
+    XElement Get(string projectName, string applicationName, string graphName, string identifier, string format);
 
     [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/refresh")]
-    Response RefreshGraph(string projectName, string applicationName, string graphName);
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}")]
+    XElement GetList(string projectName, string applicationName, string graphName, string format);
+
+    [OperationContract]
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/clear")]
+    Response ClearAll(string projectName, string applicationName);
+
+    [OperationContract]
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/clear")]
+    Response ClearGraph(string projectName, string applicationName, string graphName);
 
     [OperationContract]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/refresh")]
     Response RefreshAll(string projectName, string applicationName);
 
     [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}")]
-    XElement GetTransformedDTOList(string projectName, string applicationName, string graphName, string format);
-
-    [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}?format={format}")]
-    XElement GetTransformedDTO(string projectName, string applicationName, string graphName, string identifier, string format);
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/refresh")]
+    Response RefreshGraph(string projectName, string applicationName, string graphName);
 
     [OperationContract]
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/pull")]
     Response Pull(string projectName, string applicationName, Request request);
 
     [OperationContract]
-    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/pullDTO")]
-    Response PullDTO(string projectName, string applicationName, Request request);
-    
+    [WebGet(UriTemplate = "/version")]
+    string GetVersion();
+
     [OperationContract]
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/dbdictionary")]
     Response UpdateDatabaseDictionary(DatabaseDictionary databaseDictionary, string projectName, string applicationName);
-
-    //[OperationContract]
-    //[ServiceKnownType("GetKnownTypes", typeof(KnownTypeProvider))]
-    //[WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}")]
-    //DataTransferObject Get(string projectName, string applicationName, string graphName, string identifier);
-
-    //[OperationContract]
-    //[ServiceKnownType("GetKnownTypes", typeof(KnownTypeProvider))]
-    //[WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}")]
-    //List<DataTransferObject> GetList(string projectName, string applicationName, string graphName);
-  } 
+  }
 }

@@ -143,7 +143,7 @@ namespace org.iringtools.adapter
         List<string> serviceKnownTypes = GetServiceKnownTypes(projectName, applicationName);
         string dtoModel = GenerateDTOModel(projectName, applicationName);
         string dtoService = GenerateDTOService(projectName, applicationName);
-        string iService = GenerateIService(projectName, applicationName, serviceKnownTypes);
+        //string iService = GenerateIService(projectName, applicationName, serviceKnownTypes);
         string iDataService = GenerateIDataService(projectName, applicationName, serviceKnownTypes);
 
         #region Compile code
@@ -180,7 +180,7 @@ namespace org.iringtools.adapter
         // Add generated code
         sources.Add(dtoModel);
         sources.Add(dtoService);
-        sources.Add(iService);
+        //sources.Add(iService);
         sources.Add(iDataService);
         
         // Do compile
@@ -190,7 +190,7 @@ namespace org.iringtools.adapter
         // Write generated code to disk
         Utility.WriteString(dtoModel, _settings.CodePath + "DTOModel." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
         Utility.WriteString(dtoService, _settings.CodePath + "DTOService." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
-        Utility.WriteString(iService, _settings.CodePath + "IService.Generated.cs", Encoding.ASCII);
+        //Utility.WriteString(iService, _settings.CodePath + "IService.Generated.cs", Encoding.ASCII);
         Utility.WriteString(iDataService, _settings.CodePath + "IDataService.Generated.cs", Encoding.ASCII);
       }
       catch (Exception ex)

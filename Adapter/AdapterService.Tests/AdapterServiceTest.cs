@@ -74,29 +74,29 @@ namespace AdapterService.Tests
     public void GetTest_ABC()
     {
       AdapterProxy target = new AdapterProxy();
-      Envelope envelope = target.Get("12345_000", "ABC", "Lines", "1-AB-L-001");
-      Assert.AreNotEqual(0, envelope.Payload.Count);
+      XElement xml = target.Get("12345_000", "ABC", "Lines", "1-AB-L-001");
+      Assert.AreNotEqual(0, xml.Elements().Count());
     }
 
     [TestMethod()]
     public void GetListTest_ABC()
     {
       AdapterProxy target = new AdapterProxy();
-      Envelope envelope = target.GetList("12345_000", "ABC", "Lines");
-      Assert.AreNotEqual(0, envelope.Payload.Count);
+      XElement xml = target.GetList("12345_000", "ABC", "Lines");
+      Assert.AreNotEqual(0, xml.Elements().Count());
     }
 
     [TestMethod()]
     public void ClearStoreTest_ABC()
     {
       AdapterProxy target = new AdapterProxy();
-      Response actual = target.ClearStore("12345_000", "ABC");
-      if ("Store cleared successfully." != actual[0])
+      Response actual = target.ClearAll("12345_000", "ABC");
+      if ("Valves graph cleared successfully." != actual[0])
       {
         throw new AssertFailedException(Utility.SerializeDataContract<Response>(actual));
       }
 
-      Assert.AreEqual("Store cleared successfully.", actual[0]);
+      Assert.AreEqual("Valves graph cleared successfully.", actual[0].ToString());
     }
 
     [TestMethod()]

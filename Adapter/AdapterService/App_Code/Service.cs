@@ -34,6 +34,7 @@ using System;
 using System.ServiceModel;
 using System.Net;
 using System.Xml.Linq;
+using System.Reflection;
 
 namespace org.iringtools.adapter
 {
@@ -84,6 +85,15 @@ namespace org.iringtools.adapter
     }
 
     /// <summary>
+    /// Gets the VersionInfo from the AssembyInfo
+    /// </summary>
+    /// <returns>Returns Data Dictionary object.</returns>
+    public string GetVersion()
+    {
+      return _adapterServiceProvider.GetType().Assembly.GetName().Version.ToString();
+    }
+
+    /// <summary>
     /// Updates mapping.
     /// </summary>
     /// <param name="mapping">The new mapping object with which the mapping file is to be updated.</param>
@@ -128,9 +138,9 @@ namespace org.iringtools.adapter
     /// <param name="applicationName"></param>
     /// <param name="graphName"></param>
     /// <returns>success/failed</returns>
-    public Response CreateGraphRDF(string projectName, string applicationName, string graphName)
+    public XElement Get(string projectName, string applicationName, string graphName, string identifier, string format)
     {
-      return _adapterServiceProvider.CreateGraphRDF(projectName, applicationName, graphName);
+      return _adapterServiceProvider.Get(projectName, applicationName, graphName, identifier, format);
     }
 
     /// <summary>
@@ -140,34 +150,9 @@ namespace org.iringtools.adapter
     /// <param name="applicationName"></param>
     /// <param name="graphName"></param>
     /// <returns>success/failed</returns>
-    public XElement GetTransformedDTO(string projectName, string applicationName, string graphName, string identifier, string format)
+    public XElement GetList(string projectName, string applicationName, string graphName, string format)
     {
-      return _adapterServiceProvider.GetTransformedDTO(projectName, applicationName, graphName, identifier, format);
-    }
-
-    /// <summary>
-    /// Calls adapter service provider to create RDF for a graph
-    /// </summary>
-    /// <param name="projectName"></param>
-    /// <param name="applicationName"></param>
-    /// <param name="graphName"></param>
-    /// <returns>success/failed</returns>
-    public XElement GetTransformedDTOList(string projectName, string applicationName, string graphName, string format)
-    {
-        return _adapterServiceProvider.GetTransformedDTOList(projectName, applicationName, graphName, format);
-    }
-
-    /// <summary>
-    /// Calls adapter service provider to create RDF for a specific identifier of a graph
-    /// </summary>
-    /// <param name="projectName"></param>
-    /// <param name="applicationName"></param>
-    /// <param name="graphName"></param>
-    /// <param name="identifier"></param>
-    /// <returns>success/failed</returns>
-    public Response CreateIdentifierRDF(string projectName, string applicationName, string graphName, string identifier)
-    {
-      return _adapterServiceProvider.CreateIdentifierRDF(projectName, applicationName, graphName, identifier);
+        return _adapterServiceProvider.GetList(projectName, applicationName, graphName, format);
     }
 
     /// <summary>
@@ -215,9 +200,18 @@ namespace org.iringtools.adapter
     /// Clears the triple store.
     /// </summary>
     /// <returns>Returns the response as success/failure.</returns>
-    public Response ClearStore(string projectName, string applicationName)
+    public Response ClearAll(string projectName, string applicationName)
     {
-      return _adapterServiceProvider.ClearStore(projectName, applicationName);
+      return _adapterServiceProvider.ClearAll(projectName, applicationName);
+    }
+
+    /// <summary>
+    /// Clears a triple store graph.
+    /// </summary>
+    /// <returns>Returns the response as success/failure.</returns>
+    public Response ClearGraph(string projectName, string applicationName, string graphName)
+    {
+      return _adapterServiceProvider.ClearGraph(projectName, applicationName, graphName);
     }
 
     /// <summary>
@@ -227,27 +221,6 @@ namespace org.iringtools.adapter
     public Response UpdateDatabaseDictionary(DatabaseDictionary dbDictionary, string projectName, string applicationName)
     {
       return _adapterServiceProvider.UpdateDatabaseDictionary(dbDictionary, projectName, applicationName);
-    }
-
-    /// <summary>
-    /// Gets the data for a graphname and identifier in a QXF format.
-    /// </summary>
-    /// <param name="graphName">The name of graph for which data is to be fetched.</param>
-    /// <param name="identifier">The unique identifier used as filter to return single row's data.</param>
-    /// <returns>Returns the data in QXF format.</returns>
-    public Envelope Get(string projectName, string applicationName, string graphName, string identifier)
-    {
-      return _adapterServiceProvider.Get(projectName, applicationName, graphName, identifier);
-    }
-
-    /// <summary>
-    /// Gets all the data for the graphname.
-    /// </summary>
-    /// <param name="graphName">The name of graph for which data is to be fetched.</param>
-    /// <returns>Returns the data in QXF format.</returns>
-    public Envelope GetList(string projectName, string applicationName, string graphName)
-    {
-      return _adapterServiceProvider.GetList(projectName, applicationName, graphName);
     }
   }
 }
