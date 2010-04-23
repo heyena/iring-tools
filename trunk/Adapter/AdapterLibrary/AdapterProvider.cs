@@ -282,59 +282,6 @@ namespace org.iringtools.adapter
     }
 
     /// <summary>
-    /// Gets the data for a graphname and identifier in a QXF format.
-    /// </summary>
-    /// <param name="graphName">The name of graph for which data is to be fetched.</param>
-    /// <param name="identifier">The unique identifier used as filter to return single row's data.</param>
-    /// <returns>Returns the data in QXF format.</returns>
-    public Envelope Get(string projectName, string applicationName, string graphName, string identifier)
-    {
-      try
-      {
-        InitializeApplication(projectName, applicationName);
-
-        Envelope envelope = new Envelope();
-
-        DataTransferObject dto = _dtoService.GetDTO(graphName, identifier);
-
-        envelope.Payload.Add(dto);
-
-        return envelope;
-      }
-      catch (Exception exception)
-      {
-        _logger.Error("Error in Get: " + exception);
-        throw new Exception("Error while getting " + graphName + " data with identifier " + identifier + ". " + exception.ToString(), exception);
-      }
-    }
-
-    /// <summary>
-    /// Gets all the data for the graphname.
-    /// </summary>
-    /// <param name="graphName">The name of graph for which data is to be fetched.</param>
-    /// <returns>Returns the data in QXF format.</returns>
-    public Envelope GetList(string projectName, string applicationName, string graphName)
-    {
-      try
-      {
-        InitializeApplication(projectName, applicationName);
-
-        Envelope envelope = new Envelope();
-
-        List<DataTransferObject> dtoList = _dtoService.GetList(graphName);
-
-        envelope.Payload = dtoList;
-
-        return envelope;
-      }
-      catch (Exception exception)
-      {
-        _logger.Error("Error in GetList: " + exception);
-        throw new Exception("Error while getting " + graphName + " data. " + exception.ToString(), exception);
-      }
-    }
-
-    /// <summary>
     /// Gets all the data for the graphname.
     /// </summary>
     /// <param name="graphName">The name of graph for which data is to be fetched.</param>
@@ -357,28 +304,6 @@ namespace org.iringtools.adapter
     }
 
     /// <summary>
-    /// Gets all the data for the graphname.
-    /// </summary>
-    /// <param name="graphName">The name of graph for which data is to be fetched.</param>
-    /// <returns>Returns the data in QXF format.</returns>
-    public Dictionary<string, string> GetDTOListREST(string projectName, string applicationName, string graphName)
-    {
-      try
-      {
-        InitializeApplication(projectName, applicationName);
-
-        Dictionary<string, string> dtoList = _dtoService.GetListREST(graphName);
-
-        return dtoList;
-      }
-      catch (Exception exception)
-      {
-        _logger.Error("Error in GetDTOListREST: " + exception);
-        throw new Exception("Error while getting " + graphName + " data. " + exception.ToString(), exception);
-      }
-    }
-
-    /// <summary>
     /// Refreshes the triple store for all the graphmaps.
     /// </summary>
     /// <returns>Returns the response as success/failure.</returns>
@@ -389,17 +314,18 @@ namespace org.iringtools.adapter
       {
         InitializeApplication(projectName, applicationName);
 
-        DateTime b = DateTime.Now;
+        DateTime start = DateTime.Now;
 
         foreach (GraphMap graphMap in _settings.Mapping.graphMaps)
         {
           response.Append(RefreshGraph(projectName, applicationName, graphMap.name));
         }
 
-        DateTime e = DateTime.Now;
-        TimeSpan d = e.Subtract(b);
+        DateTime end = DateTime.Now;
+        TimeSpan duration = end.Subtract(start);
 
-        response.Add(String.Format("RefreshAll() Execution Time [{0}:{1}.{2}] minutes.", d.Minutes, d.Seconds, d.Milliseconds));
+        response.Add(String.Format("RefreshAll() Execution Time [{0}:{1}.{2}] minutes.", 
+          duration.Minutes, duration.Seconds, duration.Milliseconds));
       }
       catch (Exception exception)
       {
@@ -426,13 +352,13 @@ namespace org.iringtools.adapter
 
         _semanticEngine.Initialize();
 
-        DateTime b = DateTime.Now;
+        DateTime start = DateTime.Now;
 
-        List<DataTransferObject> commonDTOList = _dtoService.GetList(graphName);
+        List<DataTransferObject> dtoList = _dtoService.GetList(graphName);
 
         List<string> tripleStoreIdentifiers = _semanticEngine.GetIdentifiers(graphName);
         List<string> identifiersToBeDeleted = tripleStoreIdentifiers;
-        foreach (DataTransferObject commonDTO in commonDTOList)
+        foreach (DataTransferObject commonDTO in dtoList)
         {
           if (tripleStoreIdentifiers.Contains(commonDTO.Identifier))
           {
@@ -445,18 +371,16 @@ namespace org.iringtools.adapter
         RuleEngine ruleEngine = new RuleEngine();
         if (File.Exists(_settings.XmlPath + "Refresh" + graphName + ".rules"))
         {
-          commonDTOList = ruleEngine.RuleSetForCollection(commonDTOList, _settings.XmlPath + "Refresh" + graphName + ".rules");
+          dtoList = ruleEngine.RuleSetForCollection(dtoList, _settings.XmlPath + "Refresh" + graphName + ".rules");
         }
 
-        response.Append(_semanticEngine.Post(commonDTOList));
+        response.Append(_semanticEngine.Post(graphName, dtoList));
         
-        DateTime e = DateTime.Now;
-        TimeSpan d = e.Subtract(b);
+        DateTime end = DateTime.Now;
+        TimeSpan duration = end.Subtract(start);
 
-        response.Add(String.Format("RefreshGraph({0}) Execution Time [{1}:{2}.{3}] minutes.", graphName, d.Minutes, d.Seconds, d.Milliseconds));
-
-        //if (_settings.UseSemweb)
-        //  _projectionEngine.DumpStoreData(_settings.XmlPath);
+        response.Add(String.Format("RefreshGraph({0}) Execution Time [{1}:{2}.{3}] minutes.", 
+          graphName, duration.Minutes, duration.Seconds, duration.Milliseconds));
       }
       catch (Exception exception)
       {
@@ -477,45 +401,7 @@ namespace org.iringtools.adapter
     /// <param name="applicationName"></param>
     /// <param name="graphName"></param>
     /// <returns>success/failed</returns>
-    public Response CreateGraphRDF(string projectName, string applicationName, string graphName)
-    {
-      Response response = new Response();
-      
-      try
-      {
-        DateTime startTime = DateTime.Now;
-
-        List<DataTransferObject> dtoList = GetDTOList(projectName, applicationName, graphName);
-        response = _dtoService.CreateRDF(graphName, dtoList);
-        string rdf = String.Empty;
-        // Persist RDF to SqlServerStore
-        _semanticEngine.Post(rdf);
-        response.Add("Graph [" + graphName + "] added/updated to triple store.");
-
-        DateTime endTime = DateTime.Now;
-        TimeSpan executionTime = endTime.Subtract(startTime);
-        response.Add(String.Format("Execution time [{0}:{1}.{2}] minutes.", executionTime.Minutes, executionTime.Seconds, executionTime.Milliseconds));
-      }
-      catch (Exception exception)
-      {
-        _logger.Error("Error in CreateGraphRDF: " + exception);
-
-        response.Level = StatusLevel.Error;
-        response.Add("Error while creating RDF for graph [" + graphName + "].");
-        response.Add(exception.ToString());
-      }
-
-      return response;
-    }
-
-    /// <summary>
-    /// Creates RDF for a graph
-    /// </summary>
-    /// <param name="projectName"></param>
-    /// <param name="applicationName"></param>
-    /// <param name="graphName"></param>
-    /// <returns>success/failed</returns>
-    public XElement GetTransformedDTO(string projectName, string applicationName, string graphName, string identifier, string format)
+    public XElement Get(string projectName, string applicationName, string graphName, string identifier, string format)
     {
       XElement result = null;
       try
@@ -524,7 +410,7 @@ namespace org.iringtools.adapter
 
         List<DataTransferObject> dtoList = new List<DataTransferObject>();
 
-        dtoList.Add(GetDTO(projectName, applicationName, graphName, identifier));
+        dtoList.Add(_dtoService.GetDTO(graphName, identifier));
 
         XElement graph = _dtoService.SerializeDTO(graphName, dtoList);
 
@@ -554,14 +440,14 @@ namespace org.iringtools.adapter
     /// <param name="applicationName"></param>
     /// <param name="graphName"></param>
     /// <returns>success/failed</returns>
-    public XElement GetTransformedDTOList(string projectName, string applicationName, string graphName, string format)
+    public XElement GetList(string projectName, string applicationName, string graphName, string format)
     {
         XElement result = null;
         try
         {
             InitializeApplication(projectName, applicationName);
 
-            List<DataTransferObject> dtoList = GetDTOList(projectName, applicationName, graphName);
+            List<DataTransferObject> dtoList = _dtoService.GetList(graphName);
 
             XElement graph = null;
             if (format == "xml")
@@ -589,35 +475,6 @@ namespace org.iringtools.adapter
         }
 
         return result;
-    }
-
-    /// <summary>
-    /// Creates RDF for a specific identifier of a graph
-    /// </summary>
-    /// <param name="projectName"></param>
-    /// <param name="applicationName"></param>
-    /// <param name="graphName"></param>
-    /// <param name="identifier"></param>
-    /// <returns>success/failed</returns>
-    public Response CreateIdentifierRDF(string projectName, string applicationName, string graphName, string identifier)
-    {
-      Response response = new Response();
-
-      try
-      {
-        DataTransferObject dto = GetDTO(projectName, applicationName, graphName, identifier);
-        response = _dtoService.CreateRDF(graphName, new List<DataTransferObject>(){ dto });        
-      }
-      catch (Exception exception)
-      {
-        _logger.Error("Error in CreateIdentifierRDF:" + exception);
-
-        response.Level = StatusLevel.Error;
-        response.Add("Error while creating RDF for [" + graphName + "." + identifier + "].");
-        response.Add(exception.ToString());
-      }
-
-      return response;
     }
 
     /// <summary>
@@ -734,7 +591,42 @@ namespace org.iringtools.adapter
       return response;
     }
 
-    public Response ClearStore(string projectName, string applicationName)
+    /// <summary>
+    /// Refreshes the triple store for all the graphmaps.
+    /// </summary>
+    /// <returns>Returns the response as success/failure.</returns>
+    public Response ClearAll(string projectName, string applicationName)
+    {
+      Response response = new Response();
+      try
+      {
+        InitializeApplication(projectName, applicationName);
+
+        DateTime start = DateTime.Now;
+
+        foreach (GraphMap graphMap in _settings.Mapping.graphMaps)
+        {
+          response.Append(ClearGraph(projectName, applicationName, graphMap.name));
+        }
+
+        DateTime end = DateTime.Now;
+        TimeSpan duration = end.Subtract(start);
+
+        response.Add(String.Format("ClearAll() Execution Time [{0}:{1}.{2}] minutes.",
+          duration.Minutes, duration.Seconds, duration.Milliseconds));
+      }
+      catch (Exception exception)
+      {
+        _logger.Error("Error in ClearAll: " + exception);
+
+        response.Level = StatusLevel.Error;
+        response.Add("Error while clearing TripleStore.");
+        response.Add(exception.ToString());
+      }
+      return response;
+    }
+
+    public Response ClearGraph(string projectName, string applicationName, string graphName)
     {
       Response response = new Response();
       try
@@ -743,16 +635,16 @@ namespace org.iringtools.adapter
 
         _semanticEngine.Initialize();
 
-        _semanticEngine.Clear();
+        _semanticEngine.Clear(graphName);
 
-        response.Add("Store cleared successfully.");
+        response.Add(graphName + " graph cleared successfully.");
       }
       catch (Exception exception)
       {
-        _logger.Error("Error in ClearStore: " + exception);
+        _logger.Error("Error in Clear: " + exception);
 
         response.Level = StatusLevel.Error;
-        response.Add("Error while clearing TripleStore.");
+        response.Add("Error while clearing TripleStore graph.");
         response.Add(exception.ToString());
         response.Level = StatusLevel.Error;
       }

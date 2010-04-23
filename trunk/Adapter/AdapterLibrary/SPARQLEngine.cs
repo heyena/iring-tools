@@ -186,9 +186,8 @@ namespace org.iringtools.adapter.semantic
           }
         }
 
-        public Response Post(List<DataTransferObject> dtoList)
+        public Response Post(string graphName, List<DataTransferObject> dtoList)
         {
-          string graphName = String.Empty;
           string identifier = String.Empty;
           Response response = new Response();
 
@@ -270,7 +269,7 @@ namespace org.iringtools.adapter.semantic
           return response;
         }
 
-        public Response Clear()
+        public Response Clear(string graphName)
         {
           Response response = new Response();
 

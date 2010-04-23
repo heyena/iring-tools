@@ -37,12 +37,10 @@ namespace org.iringtools.adapter
 
     List<DataTransferObject> Get(string graphName);
 
-    Response Post(List<DataTransferObject> dtoList);
-
-    Response Post(string graph);
+    Response Post(string graphName, List<DataTransferObject> dtoList);
 
     Response Delete(string graphName, List<string> identifiers);
 
-    Response Clear();
+    Response Clear(string graphName);
   }
 }
