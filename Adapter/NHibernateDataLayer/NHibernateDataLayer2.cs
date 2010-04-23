@@ -65,7 +65,7 @@ namespace org.iringtools.adapter.datalayer
       try
       {
         IList<IDataObject> dataObjects = new List<IDataObject>();
-        Type type = Type.GetType(GetQualifiedObjectType(objectType));
+        Type type = Type.GetType(objectType);
 
         if (identifiers != null && identifiers.Count > 0)
         {
@@ -96,7 +96,7 @@ namespace org.iringtools.adapter.datalayer
       try
       {
         StringBuilder queryString = new StringBuilder();
-        queryString.Append("select Id from " + GetQualifiedObjectType(objectType));
+        queryString.Append("select Id from " + objectType);
 
         if (filter != null && filter.Expressions.Count > 0)
         {
@@ -122,7 +122,7 @@ namespace org.iringtools.adapter.datalayer
       try
       {
         StringBuilder queryString = new StringBuilder();
-        queryString.Append("from " + GetQualifiedObjectType(objectType));
+        queryString.Append("from " + objectType);
 
         if (identifiers != null && identifiers.Count > 0)
         {
@@ -147,7 +147,7 @@ namespace org.iringtools.adapter.datalayer
       try
       {
         StringBuilder queryString = new StringBuilder();
-        queryString.Append("from " + GetQualifiedObjectType(objectType));
+        queryString.Append("from " + objectType);
 
         if (filter != null && filter.Expressions.Count > 0)
         {
@@ -275,12 +275,6 @@ namespace org.iringtools.adapter.datalayer
     public DataDictionary GetDictionary()
     {
       return Utility.Read<DataDictionary>(_dataDictionaryPath);
-    }
-
-    private string GetQualifiedObjectType(string objectType)
-    {
-      string dataLayerNamespace = "org.iringtools.adapter.datalayer";
-      return dataLayerNamespace + ".proj_" + _appSettings.ProjectName + "." + _appSettings.ApplicationName + "." + objectType;
     }
 
     private string GenerateNHWhereClause(string objectType, DataFilter filter)
