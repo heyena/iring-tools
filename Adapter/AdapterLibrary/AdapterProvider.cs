@@ -669,8 +669,8 @@ namespace org.iringtools.adapter
         // Update NInject binding configuration
         Binding dtoServiceBinding = new Binding()
         {
-          Name = "DTOService",
-          Interface = "org.iringtools.adapter.IDTOService, AdapterLibrary",
+          Name = "DTOLayer",
+          Interface = "org.iringtools.adapter.IDTOLayer, AdapterLibrary",
           Implementation = "org.iringtools.adapter.proj_" + projectName + "." + applicationName + ".DTOService, App_Code"
         };
         UpdateBindingConfiguration(projectName, applicationName, dtoServiceBinding);
@@ -1214,8 +1214,8 @@ namespace org.iringtools.adapter
           Binding dataLayerBinding = new Binding()
           {
             Name = "DataLayer",
-            Interface = "org.iringtools.library.IDataLayer, iRINGLibrary",
-            Implementation = "org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateDataLayer"
+            Interface = "org.iringtools.library.IDataLayer2, iRINGLibrary",
+            Implementation = "org.iringtools.adapter.datalayer.NHibernateDataLayer2, NHibernateDataLayer"
           };
           UpdateBindingConfiguration(projectName, applicationName, dataLayerBinding);
 
