@@ -142,7 +142,6 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    //TODO: handle paging
     public IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int pageNumber)
     {
       try
@@ -159,7 +158,14 @@ namespace org.iringtools.adapter.datalayer
         using (ISession session = OpenSession())
         {
           IQuery query = session.CreateQuery(queryString.ToString());
-          return query.List<IDataObject>();
+          IList<IDataObject> dataObjects = query.List<IDataObject>();
+          
+          if (pageSize > 0 && pageNumber > 0 && dataObjects.Count > (pageSize * (pageNumber - 1) + pageSize))
+          {
+            dataObjects = dataObjects.ToList().GetRange(pageSize * (pageNumber - 1), pageSize);
+          }
+
+          return dataObjects;
         }
       }
       catch (Exception ex)

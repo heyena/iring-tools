@@ -659,7 +659,7 @@ namespace org.iringtools.adapter
     public Response Generate(string projectName, string applicationName)
     {
       Response response = new Response();
-      DTOGenerator dtoGenerator = new DTOGenerator(_settings);
+      DTOGenerator2 dtoGenerator = new DTOGenerator2(_settings);
 
       try
       {
