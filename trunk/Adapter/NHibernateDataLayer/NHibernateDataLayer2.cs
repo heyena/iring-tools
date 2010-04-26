@@ -24,13 +24,6 @@ namespace org.iringtools.adapter.datalayer
     private string _dataDictionaryPath = String.Empty;
     private ISessionFactory factory;
 
-    private readonly List<RelationalOperator> LikeOperators = new List<RelationalOperator>
-    {
-      RelationalOperator.StartsWith, 
-      RelationalOperator.Contains,
-      RelationalOperator.EndsWith,
-    };
-
     [Inject]
     public NHibernateDataLayer2(AdapterSettings settings, ApplicationSettings appSettings) //, EntityGenerator generator)
     {
@@ -100,8 +93,8 @@ namespace org.iringtools.adapter.datalayer
 
         if (filter != null && filter.Expressions.Count > 0)
         {
-          string nhWhereClause = GenerateNHWhereClause(objectType, filter);
-          queryString.Append(nhWhereClause);
+          string whereClause = filter.ToSqlWhereClause(objectType, null);
+          queryString.Append(whereClause);
         }
 
         using (ISession session = OpenSession())
@@ -151,18 +144,29 @@ namespace org.iringtools.adapter.datalayer
 
         if (filter != null && filter.Expressions.Count > 0)
         {
-          string nhWhereClause = GenerateNHWhereClause(objectType, filter);
-          queryString.Append(nhWhereClause);
+          string whereClause = filter.ToSqlWhereClause(objectType, null);
+          queryString.Append(whereClause);
         }
 
         using (ISession session = OpenSession())
         {
           IQuery query = session.CreateQuery(queryString.ToString());
           IList<IDataObject> dataObjects = query.List<IDataObject>();
-          
-          if (pageSize > 0 && pageNumber > 0 && dataObjects.Count > (pageSize * (pageNumber - 1) + pageSize))
+
+          if (pageSize > 0 && pageNumber > 0)
           {
-            dataObjects = dataObjects.ToList().GetRange(pageSize * (pageNumber - 1), pageSize);
+            if (dataObjects.Count > (pageSize * (pageNumber - 1) + pageSize))
+            {
+              dataObjects = dataObjects.ToList().GetRange(pageSize * (pageNumber - 1), pageSize);
+            }
+            else if (pageSize * (pageNumber - 1) > dataObjects.Count)
+            {
+              dataObjects = dataObjects.ToList().GetRange(pageSize * (pageNumber - 1), dataObjects.Count);
+            }
+            else
+            {
+              return null;
+            }
           }
 
           return dataObjects;
@@ -178,7 +182,7 @@ namespace org.iringtools.adapter.datalayer
     public Response Post(IList<IDataObject> dataObjects)
     {
       Response response = new Response();
-      
+
       try
       {
         if (dataObjects != null && dataObjects.Count > 0)
@@ -253,8 +257,8 @@ namespace org.iringtools.adapter.datalayer
 
         if (filter.Expressions.Count > 0)
         {
-          string nhWhereClause = GenerateNHWhereClause(objectType, filter);
-          queryString.Append(nhWhereClause);
+          string whereClause = filter.ToSqlWhereClause(objectType, null);
+          queryString.Append(whereClause);
         }
 
         using (ISession session = OpenSession())
@@ -275,188 +279,6 @@ namespace org.iringtools.adapter.datalayer
     public DataDictionary GetDictionary()
     {
       return Utility.Read<DataDictionary>(_dataDictionaryPath);
-    }
-
-    private string GenerateNHWhereClause(string objectType, DataFilter filter)
-    {
-      if (filter == null || filter.Expressions.Count == 0)
-      {
-        return String.Empty;
-      }
-
-      try
-      {
-        StringBuilder whereClause = new StringBuilder();
-        whereClause.Append(" WHERE");
-
-        foreach (Expression expression in filter.Expressions)
-        {
-          if (expression.LogicalOperator != LogicalOperator.None)
-          {
-            whereClause.Append(" " + ResolveNHLogicalOperator(expression.LogicalOperator));
-          }
-
-          for (int i = 0; i < expression.OpenGroupCount; i++)
-          {
-            whereClause.Append("(");
-          }
-
-          string propertyName = expression.PropertyName;
-          whereClause.Append(" " + propertyName);
-
-          string relationalOperator = ResolveNHRelationalOperator(expression.RelationalOperator);
-          whereClause.Append(" " + relationalOperator);
-
-          Type propertyType = Type.GetType(objectType).GetProperty(propertyName).PropertyType;
-          bool isString = propertyType == typeof(string);
-
-          if (expression.RelationalOperator == RelationalOperator.In)
-          {
-            whereClause.Append("(");
-
-            foreach (string value in expression.Values)
-            {
-              if (whereClause.ToString() != "(")
-              {
-                whereClause.Append(", ");
-              }
-
-              if (isString)
-              {
-                whereClause.Append("'" + value + "'");
-              }
-              else
-              {
-                whereClause.Append(value);
-              }
-            }
-
-            whereClause.Append(")");
-          }
-          else
-          {
-            string value = String.Empty;
-
-            if (LikeOperators.Contains(expression.RelationalOperator))
-            {
-              if (isString)
-              {
-                value = "\"(" + expression.Values.FirstOrDefault() + "\")";
-              }
-              else
-              {
-                _logger.Error("Error in GenerateNHFilter: like operator used with non-string property");
-                throw new Exception("Error while generating an NHibernate filter. Like operator used with non-string property");
-              }
-            }
-            else
-            {
-              if (isString)
-              {
-                value = "'" + expression.Values.FirstOrDefault() + "'";
-              }
-              else
-              {
-                value = expression.Values.FirstOrDefault();
-              }
-            }
-
-            whereClause.Append(value);
-          }
-
-          for (int i = 0; i < expression.CloseGroupCount; i++)
-          {
-            whereClause.Append(")");
-          }
-        }
-
-        return whereClause.ToString();
-      }
-      catch (Exception ex)
-      {
-        _logger.Error("Error in GenerateNHFilter: " + ex);
-        throw new Exception("Error while generating an NHibernate filter.", ex);
-      }
-    }
-
-    private string ResolveNHRelationalOperator(RelationalOperator relationalOperator)
-    {
-      string nhRelationalOperator = String.Empty;
-
-      switch (relationalOperator)
-      {
-        case RelationalOperator.StartsWith:
-          nhRelationalOperator = "LIKE";
-          break;
-
-        case RelationalOperator.Contains:
-          nhRelationalOperator = "LIKE";
-          break;
-
-        case RelationalOperator.EndsWith:
-          nhRelationalOperator = "LIKE";
-          break;
-
-        case RelationalOperator.EqualTo:
-          nhRelationalOperator = "=";
-          break;
-
-        case RelationalOperator.GreaterThan:
-          nhRelationalOperator = ">";
-          break;
-
-        case RelationalOperator.GreaterThanOrEqual:
-          nhRelationalOperator = ">=";
-          break;
-
-        case RelationalOperator.In:
-          nhRelationalOperator = "IN";
-          break;
-
-        case RelationalOperator.LesserThan:
-          nhRelationalOperator = "<";
-          break;
-
-        case RelationalOperator.LesserThanOrEqual:
-          nhRelationalOperator = "<=";
-          break;
-
-        case RelationalOperator.NotEqualTo:
-          nhRelationalOperator = "<>";
-          break;
-      }
-
-      return nhRelationalOperator;
-    }
-
-    private string ResolveNHLogicalOperator(LogicalOperator logicalOperator)
-    {
-      string nhLogicalOperator = String.Empty;
-
-      switch (logicalOperator)
-      {
-        case LogicalOperator.And:
-          nhLogicalOperator = "AND";
-          break;
-
-        case LogicalOperator.AndNot:
-          nhLogicalOperator = "AND NOT";
-          break;
-
-        case LogicalOperator.Not:
-          nhLogicalOperator = "NOT";
-          break;
-
-        case LogicalOperator.Or:
-          nhLogicalOperator = "OR";
-          break;
-
-        case LogicalOperator.OrNot:
-          nhLogicalOperator = "OR NOT";
-          break;
-      }
-
-      return nhLogicalOperator;
     }
   }
 }

@@ -8,7 +8,7 @@ using Ninject;
 using org.iringtools.utility;
 using System.Xml.Linq;
 using System.IO;
-using LinqKit;
+using Ciloci.Flee;
 
 namespace org.iringtools.adapter.datalayer
 {
@@ -33,7 +33,7 @@ namespace org.iringtools.adapter.datalayer
       try
       {
         IList<IDataObject> dataObjects = new List<IDataObject>();
-        Type type = Type.GetType(GetQualifiedObjectType(objectType) + "DataObject");
+        Type type = Type.GetType(objectType + "DataObject");
 
         if (identifiers != null && identifiers.Count > 0)
         {
@@ -85,8 +85,8 @@ namespace org.iringtools.adapter.datalayer
       try
       {
         List<IDataObject> dataObjects = new List<IDataObject>();
-        string qualifiedObjectType = GetQualifiedObjectType(objectType) + "DataObject";
-        Type type = Type.GetType(qualifiedObjectType);
+        string dataObjectType = objectType + "DataObject";
+        Type type = Type.GetType(dataObjectType);
 
         // Load config xml 
         string configFile = _settings.XmlPath + objectType + "." + _appSettings.ProjectName + "." + _appSettings.ApplicationName + ".xml";
@@ -156,14 +156,43 @@ namespace org.iringtools.adapter.datalayer
         // Apply filter
         if (filter != null && filter.Expressions.Count > 0)
         {
-          var predicate = GenerateWherePredicate(qualifiedObjectType, filter);
-          dataObjects = dataObjects.Where<IDataObject>(predicate).ToList();
+          //var predicate = GenerateWherePredicate(dataObjectType, filter);
+          //dataObjects = dataObjects.Where<IDataObject>(predicate).ToList();
+          string variable = "dataObject";
+          string linqExpression = filter.ToLinqExpression(objectType, variable);
+
+          if (linqExpression != String.Empty)
+          {
+            ExpressionContext context = new ExpressionContext();
+            context.Variables.DefineVariable(variable, type);
+
+            for (int i = 0; i < dataObjects.Count; i++)
+            {
+              context.Variables[variable] = dataObjects[i];
+              var expression = context.CompileGeneric<bool>(linqExpression);
+              if (!expression.Evaluate())
+              {
+                dataObjects.RemoveAt(i--);
+              }
+            }
+          }
         }
 
         // Apply paging
-        if (pageSize > 0 && pageNumber > 0 && dataObjects.Count > (pageSize * (pageNumber - 1) + pageSize))
+        if (pageSize > 0 && pageNumber > 0)
         {
-          dataObjects = dataObjects.GetRange(pageSize * (pageNumber - 1), pageSize);
+          if (dataObjects.Count > (pageSize * (pageNumber - 1) + pageSize))
+          {
+            dataObjects = dataObjects.GetRange(pageSize * (pageNumber - 1), pageSize);
+          }
+          else if (pageSize * (pageNumber - 1) > dataObjects.Count)
+          {
+            dataObjects = dataObjects.GetRange(pageSize * (pageNumber - 1), dataObjects.Count);
+          }
+          else
+          {
+            return null;
+          }
         }
 
         return dataObjects;
@@ -189,8 +218,8 @@ namespace org.iringtools.adapter.datalayer
         //return dataObjects;
 
         List<IDataObject> dataObjects = new List<IDataObject>();
-        string qualifiedObjectType = GetQualifiedObjectType(objectType) + "DataObject";
-        Type type = Type.GetType(qualifiedObjectType);
+        string dataObjectType = objectType + "DataObject";
+        Type type = Type.GetType(dataObjectType);
 
         // Load config xml 
         string configFile = _settings.XmlPath + objectType + "." + _appSettings.ProjectName + "." + _appSettings.ApplicationName + ".xml";
@@ -384,7 +413,7 @@ namespace org.iringtools.adapter.datalayer
       return Utility.Read<DataDictionary>(_dataDictionaryPath);
     }
 
-    private string GetQualifiedObjectType(string objectType)
+    private string GetdataObjectType(string objectType)
     {
       string dataLayerNamespace = "org.iringtools.adapter.datalayer";
       return dataLayerNamespace + ".proj_" + _appSettings.ProjectName + "." + _appSettings.ApplicationName + "." + objectType;
@@ -405,251 +434,6 @@ namespace org.iringtools.adapter.datalayer
       }
 
       return dataObjectPath;
-    }
-
-    //NOTE: this method currently does not support the following:
-    //        - grouping
-    //        - logical operator: OrNot, AndNot 
-    //        - property data types that are not string and numeric
-    private Func<IDataObject, bool> GenerateWherePredicate(string objectType, DataFilter filter)
-    {
-      var predicate = PredicateBuilder.True<IDataObject>();
-
-      try
-      {
-        foreach (Expression expression in filter.Expressions)
-        {
-          string propertyType = Type.GetType(objectType).GetProperty(expression.PropertyName).PropertyType.Name.ToLower();
-
-          if (expression.LogicalOperator == LogicalOperator.Or)
-          {
-            switch (expression.RelationalOperator)
-            {
-              case RelationalOperator.StartsWith:
-                if (propertyType == "string")
-                {
-                  predicate = predicate.Or<IDataObject>(dataObject => (Convert.ToString(dataObject.GetPropertyValue(expression.PropertyName)).StartsWith(expression.Values.FirstOrDefault())));
-                }
-                else
-                {
-                  string error = "Error in GenerateWhereClause: BeginsWith operator used with non-string property";
-                  _logger.Error(error);
-                  throw new Exception(error);
-                }
-                break;
-
-              case RelationalOperator.EndsWith:
-                if (propertyType == "string")
-                {
-                  predicate = predicate.Or<IDataObject>(dataObject => ((Convert.ToString(dataObject.GetPropertyValue(expression.PropertyName)).EndsWith(expression.Values.FirstOrDefault()))));
-                }
-                else
-                {
-                  string error = "Error in GenerateWhereClause: EndsWith operator used with non-string property";
-                  _logger.Error(error);
-                  throw new Exception(error);
-                }
-                break;
-
-              case RelationalOperator.Contains:
-                if (propertyType == "string")
-                {
-                  predicate = predicate.Or<IDataObject>(dataObject => (Convert.ToString(dataObject.GetPropertyValue(expression.PropertyName)).Contains(expression.Values.FirstOrDefault())));
-                }
-                else
-                {
-                  string error = "Error in GenerateWhereClause: Contains operator used with non-string property";
-                  _logger.Error(error);
-                  throw new Exception(error);
-                }
-                break;
-
-              case RelationalOperator.In:
-                predicate = predicate.Or<IDataObject>(dataObject => expression.Values.Contains((Convert.ToString(dataObject.GetPropertyValue(expression.PropertyName)))));
-                break;
-
-              case RelationalOperator.EqualTo:
-                if (propertyType == "string")
-                {
-                  predicate = predicate.Or<IDataObject>(dataObject => (Convert.ToString(dataObject.GetPropertyValue(expression.PropertyName)).CompareTo(expression.Values.FirstOrDefault()) == 0));
-                }
-                else if (propertyType.StartsWith("int") || propertyType == "single" || propertyType == "double" || propertyType == "decimal")
-                {
-                  predicate = predicate.Or<IDataObject>(dataObject => Convert.ToDecimal(dataObject.GetPropertyValue(expression.PropertyName)) == Convert.ToDecimal(expression.Values.FirstOrDefault()));
-                }
-                break;
-
-              case RelationalOperator.NotEqualTo:
-                if (propertyType == "string")
-                {
-                  predicate = predicate.Or<IDataObject>(dataObject => (Convert.ToString(dataObject.GetPropertyValue(expression.PropertyName)).CompareTo(expression.Values.FirstOrDefault()) != 0));
-                }
-                break;
-
-              case RelationalOperator.GreaterThan:
-                if (propertyType == "string")
-                {
-                  predicate = predicate.Or<IDataObject>(dataObject => (Convert.ToString(dataObject.GetPropertyValue(expression.PropertyName)).CompareTo(expression.Values.FirstOrDefault()) > 0));
-                }
-                else if (propertyType.StartsWith("int") || propertyType == "single" || propertyType == "double" || propertyType == "decimal")
-                {
-                  predicate = predicate.Or<IDataObject>(dataObject => (Convert.ToDecimal(dataObject.GetPropertyValue(expression.PropertyName)) > (Convert.ToDecimal(expression.Values.FirstOrDefault()))));
-                }
-                break;
-
-              case RelationalOperator.GreaterThanOrEqual:
-                if (propertyType == "string")
-                {
-                  predicate = predicate.Or<IDataObject>(dataObject => (Convert.ToString(dataObject.GetPropertyValue(expression.PropertyName)).CompareTo(expression.Values.FirstOrDefault()) >= 0));
-                }
-                else if (propertyType.StartsWith("int") || propertyType == "single" || propertyType == "double" || propertyType == "decimal")
-                {
-                  predicate = predicate.Or<IDataObject>(dataObject => Convert.ToDecimal(dataObject.GetPropertyValue(expression.PropertyName)) >= Convert.ToDecimal(expression.Values.FirstOrDefault()));
-                }
-                break;
-
-              case RelationalOperator.LesserThan:
-                if (propertyType == "string")
-                {
-                  predicate = predicate.Or<IDataObject>(dataObject => (Convert.ToString(dataObject.GetPropertyValue(expression.PropertyName)).CompareTo(expression.Values.FirstOrDefault()) < 0));
-                }
-                else if (propertyType.StartsWith("int") || propertyType == "single" || propertyType == "double" || propertyType == "decimal")
-                {
-                  predicate = predicate.Or<IDataObject>(dataObject => Convert.ToDecimal(dataObject.GetPropertyValue(expression.PropertyName)) < Convert.ToDecimal(expression.Values.FirstOrDefault()));
-                }
-                break;
-
-              case RelationalOperator.LesserThanOrEqual:
-                if (propertyType == "string")
-                {
-                  predicate = predicate.Or<IDataObject>(dataObject => (Convert.ToString(dataObject.GetPropertyValue(expression.PropertyName)).CompareTo(expression.Values.FirstOrDefault()) <= 0));
-                }
-                else if (propertyType.StartsWith("int") || propertyType == "single" || propertyType == "double" || propertyType == "decimal")
-                {
-                  predicate = predicate.Or<IDataObject>(dataObject => Convert.ToDecimal(dataObject.GetPropertyValue(expression.PropertyName)) <= Convert.ToDecimal(expression.Values.FirstOrDefault()));
-                }
-                break;
-            }
-          }
-          else if (expression.LogicalOperator == LogicalOperator.None || expression.LogicalOperator == LogicalOperator.And)
-          {
-            switch (expression.RelationalOperator)
-            {
-              case RelationalOperator.StartsWith:
-                if (propertyType == "string")
-                {
-                  predicate = predicate.And<IDataObject>(dataObject => (Convert.ToString(dataObject.GetPropertyValue(expression.PropertyName)).StartsWith(expression.Values.FirstOrDefault())));
-                }
-                else
-                {
-                  string error = "Error in GenerateWhereClause: BeginsWith operator used with non-string property";
-                  _logger.Error(error);
-                  throw new Exception(error);
-                }
-                break;
-
-              case RelationalOperator.EndsWith:
-                if (propertyType == "string")
-                {
-                  predicate = predicate.And<IDataObject>(dataObject => ((Convert.ToString(dataObject.GetPropertyValue(expression.PropertyName)).EndsWith(expression.Values.FirstOrDefault()))));
-                }
-                else
-                {
-                  string error = "Error in GenerateWhereClause: EndsWith operator used with non-string property";
-                  _logger.Error(error);
-                  throw new Exception(error);
-                }
-                break;
-
-              case RelationalOperator.Contains:
-                if (propertyType == "string")
-                {
-                  predicate = predicate.And<IDataObject>(dataObject => (Convert.ToString(dataObject.GetPropertyValue(expression.PropertyName)).Contains(expression.Values.FirstOrDefault())));
-                }
-                else
-                {
-                  string error = "Error in GenerateWhereClause: Contains operator used with non-string property";
-                  _logger.Error(error);
-                  throw new Exception(error);
-                }
-                break;
-
-              case RelationalOperator.In:
-                predicate = predicate.And<IDataObject>(dataObject => expression.Values.Contains((Convert.ToString(dataObject.GetPropertyValue(expression.PropertyName)))));
-                break;
-
-              case RelationalOperator.EqualTo:
-                if (propertyType == "string")
-                {
-                  predicate = predicate.And<IDataObject>(dataObject => (Convert.ToString(dataObject.GetPropertyValue(expression.PropertyName)).CompareTo(expression.Values.FirstOrDefault()) == 0));
-                }
-                else if (propertyType.StartsWith("int") || propertyType == "single" || propertyType == "double" || propertyType == "decimal")
-                {
-                  predicate = predicate.And<IDataObject>(dataObject => Convert.ToDecimal(dataObject.GetPropertyValue(expression.PropertyName)) == Convert.ToDecimal(expression.Values.FirstOrDefault()));
-                }
-                break;
-
-              case RelationalOperator.NotEqualTo:
-                if (propertyType == "string")
-                {
-                  predicate = predicate.And<IDataObject>(dataObject => (Convert.ToString(dataObject.GetPropertyValue(expression.PropertyName)).CompareTo(expression.Values.FirstOrDefault()) != 0));
-                }
-                break;
-
-              case RelationalOperator.GreaterThan:
-                if (propertyType == "string")
-                {
-                  predicate = predicate.And<IDataObject>(dataObject => (Convert.ToString(dataObject.GetPropertyValue(expression.PropertyName)).CompareTo(expression.Values.FirstOrDefault()) > 0));
-                }
-                else if (propertyType.StartsWith("int") || propertyType == "single" || propertyType == "double" || propertyType == "decimal")
-                {
-                  predicate = predicate.And<IDataObject>(dataObject => (Convert.ToDecimal(dataObject.GetPropertyValue(expression.PropertyName)) > (Convert.ToDecimal(expression.Values.FirstOrDefault()))));
-                }
-                break;
-
-              case RelationalOperator.GreaterThanOrEqual:
-                if (propertyType == "string")
-                {
-                  predicate = predicate.And<IDataObject>(dataObject => (Convert.ToString(dataObject.GetPropertyValue(expression.PropertyName)).CompareTo(expression.Values.FirstOrDefault()) >= 0));
-                }
-                else if (propertyType.StartsWith("int") || propertyType == "single" || propertyType == "double" || propertyType == "decimal")
-                {
-                  predicate = predicate.And<IDataObject>(dataObject => Convert.ToDecimal(dataObject.GetPropertyValue(expression.PropertyName)) >= Convert.ToDecimal(expression.Values.FirstOrDefault()));
-                }
-                break;
-
-              case RelationalOperator.LesserThan:
-                if (propertyType == "string")
-                {
-                  predicate = predicate.And<IDataObject>(dataObject => (Convert.ToString(dataObject.GetPropertyValue(expression.PropertyName)).CompareTo(expression.Values.FirstOrDefault()) < 0));
-                }
-                else if (propertyType.StartsWith("int") || propertyType == "single" || propertyType == "double" || propertyType == "decimal")
-                {
-                  predicate = predicate.And<IDataObject>(dataObject => Convert.ToDecimal(dataObject.GetPropertyValue(expression.PropertyName)) < Convert.ToDecimal(expression.Values.FirstOrDefault()));
-                }
-                break;
-
-              case RelationalOperator.LesserThanOrEqual:
-                if (propertyType == "string")
-                {
-                  predicate = predicate.And<IDataObject>(dataObject => (Convert.ToString(dataObject.GetPropertyValue(expression.PropertyName)).CompareTo(expression.Values.FirstOrDefault()) <= 0));
-                }
-                else if (propertyType.StartsWith("int") || propertyType == "single" || propertyType == "double" || propertyType == "decimal")
-                {
-                  predicate = predicate.And<IDataObject>(dataObject => Convert.ToDecimal(dataObject.GetPropertyValue(expression.PropertyName)) <= Convert.ToDecimal(expression.Values.FirstOrDefault()));
-                }
-                break;
-            }
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        _logger.Error("Error in GenerateWherePredicate: " + ex);
-        throw new Exception("Error while generating filter", ex);
-      }
-
-      return predicate.Compile();
     }
   }
 }
