@@ -589,14 +589,14 @@ namespace org.iringtools.adapter.datalayer
         _entityWriter.WriteLine("{");
         _entityWriter.Indent++;
 
-        foreach (Column column in table.columns)
-        {
-          _entityWriter.WriteLine("case \"{0}\": return {0};", column.propertyName);
-        }
-
         foreach (Key key in table.keys)
         {
           _entityWriter.WriteLine("case \"{0}\": return {0};", key.propertyName);
+        }
+
+        foreach (Column column in table.columns)
+        {
+          _entityWriter.WriteLine("case \"{0}\": return {0};", column.propertyName);
         }
 
         _entityWriter.WriteLine("default: throw new Exception(\"Property [\" + propertyName + \"] does not exist.\");");
@@ -614,24 +614,6 @@ namespace org.iringtools.adapter.datalayer
         _entityWriter.WriteLine("{");
         _entityWriter.Indent++;
 
-        foreach (Column column in table.columns)
-        {
-          _entityWriter.WriteLine("case \"{0}\":", column.propertyName);
-          _entityWriter.Indent++;
-
-          bool isColumnNullable = (column.isNullable == null || column.columnType == ColumnType.String || column.isNullable == true);
-          if (isColumnNullable)
-          {
-            _entityWriter.WriteLine("if (value != null) {0} = Convert.To{1}(value);", column.propertyName, column.columnType);
-          }
-          else
-          {
-            _entityWriter.WriteLine("{0} = (value != null) ? Convert.To{1}(value) : default({1});", column.propertyName, column.columnType);
-          }
-          _entityWriter.WriteLine("break;");
-          _entityWriter.Indent--;
-        }
-        
         foreach (Key key in table.keys)
         {
           _entityWriter.WriteLine("case \"{0}\":", key.propertyName);
@@ -645,6 +627,24 @@ namespace org.iringtools.adapter.datalayer
           else
           {
             _entityWriter.WriteLine("{0} = (value != null) ? Convert.To{1}(value) : default({1});", key.propertyName, key.columnType);
+          }
+          _entityWriter.WriteLine("break;");
+          _entityWriter.Indent--;
+        }
+
+        foreach (Column column in table.columns)
+        {
+          _entityWriter.WriteLine("case \"{0}\":", column.propertyName);
+          _entityWriter.Indent++;
+
+          bool isColumnNullable = (column.isNullable == null || column.columnType == ColumnType.String || column.isNullable == true);
+          if (isColumnNullable)
+          {
+            _entityWriter.WriteLine("if (value != null) {0} = Convert.To{1}(value);", column.propertyName, column.columnType);
+          }
+          else
+          {
+            _entityWriter.WriteLine("{0} = (value != null) ? Convert.To{1}(value) : default({1});", column.propertyName, column.columnType);
           }
           _entityWriter.WriteLine("break;");
           _entityWriter.Indent--;
