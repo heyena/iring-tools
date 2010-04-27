@@ -466,12 +466,14 @@ namespace org.iringtools.adapter.semantic
 
           ITransformationLayer transformEngine = _kernel.Get<ITransformationLayer>("rdf");
           XElement rdf = transformEngine.Transform(graphName, dtoListXml);
-
-          DateTime b = DateTime.Now;
+         
+          XmlDocument xdoc = new XmlDocument();
+          xdoc.LoadXml(rdf.ToString());
+            DateTime b = DateTime.Now;
 
           using (_store = Store.Create(_scopedConnectionString))
           {
-            using (SemWeb.Store tempStore = new MemoryStore(new RdfXmlReader((XmlDocument)rdf.GetXmlNode())))
+            using (SemWeb.Store tempStore = new MemoryStore(new RdfXmlReader(xdoc)))
             {
               GraphMatch query = new GraphMatch();
               BNode sourceBNode = new BNode();
