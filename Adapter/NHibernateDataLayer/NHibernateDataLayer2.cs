@@ -119,7 +119,7 @@ namespace org.iringtools.adapter.datalayer
 
         if (identifiers != null && identifiers.Count > 0)
         {
-          queryString.Append(" where Id in " + String.Join(",", identifiers.ToArray()));
+          queryString.Append(" where Id in ('" + String.Join("','", identifiers.ToArray())+ "')");
         }
 
         using (ISession session = OpenSession())
