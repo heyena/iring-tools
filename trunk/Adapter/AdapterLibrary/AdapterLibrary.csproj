@@ -31,7 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="dotNetRDF, Version=0.3.0.24346, Culture=neutral, PublicKeyToken=d6907caf9fc97226, processorArchitecture=MSIL">
+    <Reference Include="dotNetRDF, Version=0.3.0.15619, Culture=neutral, PublicKeyToken=d6907caf9fc97226, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ExternalBinaries\dotnetRDF\dotNetRDF.dll</HintPath>
     </Reference>
@@ -96,7 +96,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdapterModule.cs" />
-    <Compile Include="dotNETRdfEngine.cs" />
+    <Compile Include="dotNETRdfEngine.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DTOGenerator.cs" />
     <Compile Include="DTOGenerator2.cs" />
     <Compile Include="IAdapter.cs" />
@@ -132,9 +134,6 @@
       <Project>{A9DAEA2D-26AC-4FFE-A4B0-3DEF95DE4168}</Project>
       <Name>NHibernateDataLayer</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
