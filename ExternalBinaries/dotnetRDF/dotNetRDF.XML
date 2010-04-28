@@ -989,22 +989,29 @@
             Event which is raised when the parser detects issues with the input which are non-fatal
             </summary>
         </member>
+        <member name="T:VDS.RDF.Parsing.IPreProcessingEventGenerator">
+            <summary>
+            Interface for event generators which generate all events in one go prior to parsing taking place
+            </summary>
+        </member>
         <member name="T:VDS.RDF.Parsing.IEventGenerator">
             <summary>
-            Class for Event Generators
+            Interface for Event Generators
             </summary>
             <remarks>
+            <para>
             An Event Generator is a class which takes an input stream which contains XML and generates a series of events from it
+            </para>
+            <para>
+            This interface is a marker interface which indicates that the class is an event generator, implementations should implement one of the concrete derived interfaces as appropriate to their mode of operation.
+            </para>
             </remarks>
         </member>
-        <member name="M:VDS.RDF.Parsing.IEventGenerator.GetNextEvent">
+        <member name="M:VDS.RDF.Parsing.IPreProcessingEventGenerator.GetAllEvents(VDS.RDF.Parsing.IEventQueue)">
             <summary>
-            Causes the Event Generator to attempt to retrieve the next Event
+            Gets all the Events
             </summary>
-            <returns></returns>
-            <exception cref="T:VDS.RDF.Parsing.RdfParseException">Thrown if a valid event cannot be generated</exception>
-            <exception cref="T:System.IO.IOException">Thrown if there is a problem reading the input</exception>
-            <exception cref="T:System.Xml.XmlException">Thrown if there is a problem with the XML being read</exception>
+            <param name="eventQueue">Event Queue to fill with events</param>
         </member>
         <member name="T:VDS.RDF.Parsing.Contexts.JsonParserContext">
             <summary>
@@ -3845,7 +3852,7 @@
             <param name="endpointUri">Endpoint URI</param>
             <param name="mode">Load Method to use</param>
         </member>
-        <member name="M:VDS.RDF.Storage.SparqlConnector.Query(System.String,System.Net.NetworkCredential)">
+        <member name="M:VDS.RDF.Storage.SparqlConnector.Query(System.String)">
             <summary>
             Makes a Query against the SPARQL Endpoint
             </summary>
@@ -11036,8 +11043,8 @@
             Reads XML/RDF syntax from some File into the given Graph
             </summary>
             <param name="g">Graph to create Triples in</param>
-            <param name="document">Document of XmlDocement containg XML/RDF</param>
-            <remarks>Simply opens a XmlDocument then calls the other version of Load to do the actual parsing</remarks>
+            <param name="document">XmlDocument containg XML/RDF</param>
+            <remarks>Simply opens a Stream for the File then calls the other version of Load to do the actual parsing</remarks>
         </member>
         <member name="M:VDS.RDF.Parsing.RdfXmlParser.Parse(VDS.RDF.Parsing.Contexts.RdfXmlParserContext)">
             <summary>
@@ -22226,6 +22233,20 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:VDS.RDF.Parsing.IJitEventGenerator">
+            <summary>
+            Interface for event generators which generate events as required during the parsing process
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.IJitEventGenerator.GetNextEvent">
+            <summary>
+            Causes the Event Generator to attempt to retrieve the next Event
+            </summary>
+            <returns></returns>
+            <exception cref="T:VDS.RDF.Parsing.RdfParseException">Thrown if a valid event cannot be generated</exception>
+            <exception cref="T:System.IO.IOException">Thrown if there is a problem reading the input</exception>
+            <exception cref="T:System.Xml.XmlException">Thrown if there is a problem with the XML being read</exception>
+        </member>
         <member name="T:VDS.RDF.Ontology.Individual">
             <summary>
             Represents an Individual i.e. an instance of some class in an ontology
@@ -25619,38 +25640,12 @@
             <param name="defaultGraphUris">Default Graph URIs to use when Querying the Endpoint</param>
             <param name="namedGraphUris">Named Graph URIs to use when Querying the Endpoint</param>
         </member>
-        <member name="M:VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(System.String,System.Net.NetworkCredential)">
-            <summary>
-            Makes a Query where the expected Result is a SparqlResultSet ie. SELECT and ASK Queries
-            </summary>
-            <param name="sparqlQuery">Sparql Query String</param>
-            <param name="cred">Credentials for the connection</param>
-            <returns>A Sparql Result Set</returns>
-        </member>
         <member name="M:VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultSet(System.String)">
             <summary>
             Makes a Query where the expected Result is a SparqlResultSet ie. SELECT and ASK Queries
             </summary>
             <param name="sparqlQuery">Sparql Query String</param>
             <returns>A Sparql Result Set</returns>
-        </member>
-        <member name="M:VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultGraph(System.String,System.Net.NetworkCredential,System.Net.IWebProxy,System.Net.NetworkCredential)">
-            <summary>
-            Makes a Query where the expected Result is an RDF Graph ie. CONSTRUCT and DESCRIBE Queries
-            </summary>
-            <param name="sparqlQuery">Sparql Query String</param>
-            <param name="credential">Credentials to make connection</param>
-            <param name="proxy"></param>
-            <param name="proxyCredential"></param>
-            <returns>RDF Graph</returns>
-        </member>
-        <member name="M:VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultGraph(System.String,System.Net.NetworkCredential)">
-            <summary>
-            Makes a Query where the expected Result is an RDF Graph ie. CONSTRUCT and DESCRIBE Queries
-            </summary>
-            <param name="sparqlQuery">Sparql Query String</param>
-            <param name="cred">Credentials to make connection</param>
-            <returns>RDF Graph</returns>
         </member>
         <member name="M:VDS.RDF.Query.SparqlRemoteEndpoint.QueryWithResultGraph(System.String)">
             <summary>
@@ -25665,9 +25660,6 @@
             </summary>
             <param name="sparqlQuery">Sparql Query String</param>
             <param name="ctype">Content Type of the Response contained in the returned Stream</param>
-            <param name="credential"></param>
-            <param name="proxy"></param>
-            <param name="proxyCredential"></param>
             <returns></returns>
         </member>
         <member name="M:VDS.RDF.Query.SparqlRemoteEndpoint.QueryRaw(System.String)">
@@ -25675,26 +25667,6 @@
             Makes a Query to a Sparql Endpoint and returns the raw Response
             </summary>
             <param name="sparqlQuery">Sparql Query String</param>
-            <returns></returns>
-        </member>
-        <member name="M:VDS.RDF.Query.SparqlRemoteEndpoint.QueryInternal(System.String,System.String,System.Net.NetworkCredential)">
-            <summary>
-            Internal method which builds the Query Uri and executes it via GET/POST as appropriate
-            </summary>
-            <param name="sparqlQuery">Sparql Query</param>
-            <param name="acceptHeader">Accept Header to use for the request</param>
-            <param name="credential"></param>
-            <returns></returns>
-        </member>
-        <member name="M:VDS.RDF.Query.SparqlRemoteEndpoint.QueryInternal(System.String,System.String,System.Net.NetworkCredential,System.Net.IWebProxy,System.Net.NetworkCredential)">
-            <summary>
-            Internal method which builds the Query Uri and executes it via GET/POST as appropriate
-            </summary>
-            <param name="sparqlQuery">Sparql Query</param>
-            <param name="acceptHeader">Accept Header to use for the request</param>
-            <param name="credential"></param>
-            <param name="proxy"></param>
-            <param name="proxyCredential"></param>
             <returns></returns>
         </member>
         <member name="M:VDS.RDF.Query.SparqlRemoteEndpoint.QueryInternal(System.String,System.String)">
@@ -25712,28 +25684,6 @@
             <param name="target">Uri to make Request to</param>
             <param name="postData">Data that is to be POSTed to the Endpoint in <strong>application/x-www-form-urlencoded</strong> format</param>
             <param name="accept">The Accept Header that should be used</param>
-            <returns>HTTP Response</returns>
-        </member>
-        <member name="M:VDS.RDF.Query.SparqlRemoteEndpoint.ExecuteQuery(System.Uri,System.String,System.String,System.Net.NetworkCredential)">
-            <summary>
-            Internal Helper Method which executes the HTTP Requests against the Sparql Endpoint
-            </summary>
-            <param name="target">Uri to make Request to</param>
-            <param name="postData">Data that is to be POSTed to the Endpoint in <strong>application/x-www-form-urlencoded</strong> format</param>
-            <param name="accept">The Accept Header that should be used</param>
-            <param name="credential">Credentials to access remote endpoint</param>
-            <returns>HTTP Response</returns>
-        </member>
-        <member name="M:VDS.RDF.Query.SparqlRemoteEndpoint.ExecuteQuery(System.Uri,System.String,System.String,System.Net.NetworkCredential,System.Net.IWebProxy,System.Net.NetworkCredential)">
-            <summary>
-            Internal Helper Method which executes the HTTP Requests against the Sparql Endpoint
-            </summary>
-            <param name="target">Uri to make Request to</param>
-            <param name="postData">Data that is to be POSTed to the Endpoint in <strong>application/x-www-form-urlencoded</strong> format</param>
-            <param name="accept">The Accept Header that should be used</param>
-            <param name="credential">Credentials to access remote endpoint</param>
-            <param name="proxy">Proxy server details</param>
-            <param name="proxyCredential">Credentials for proxy server</param>
             <returns>HTTP Response</returns>
         </member>
         <member name="P:VDS.RDF.Query.SparqlRemoteEndpoint.DefaultGraph">
