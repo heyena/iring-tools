@@ -3,7 +3,7 @@
 
 A Library for RDF manipulation and parsing in .Net using C# 3.0
 
-Version 0.2.1 Alpha
+Version 0.2.2 Alpha
 
 Robert Vesse 2009-10
 rvesse@vdesign-studios.com
@@ -13,7 +13,10 @@ License
 
 dotNetRDF is licensed under the GNU GPL Version 3
 
-For alternative licensing terms please contact us
+Alternatively you may use it under the GNU Lesser GPL Version 3 or under the MIT license
+
+If none of these licenses are suitable for your intended use please contact us to discuss
+alternative terms
 
 Usage
 -----
@@ -85,16 +88,36 @@ Storage
  Change History
  --------------
  
+ 0.2.2 Re-release
+  - Bug Fixes
+   - CDATA nodes in RDF/XML handled properly
+ 
  0.2.2
   - Bug Fixes
    - Language Specifier handling for TriG and NTriples
    - RDFa parsing of documents without a DOCTYPE
+   - Invalid QNames were output in some scenarios
+   - SparqlParameterizedString inserts variables in a more accurate way
+  - General Improvements
+   - Sub-graph matching
+   - Union collections for Triples and Nodes
   - Query Improvements
+   - DISTINCT modifier for all aggregates
+   - xsd:float calculations for numeric aggregates
    - Full property path support
    - IN and NOT IN operator support
+   - New COALESCE, IRI, STRDT and STRLANG functions supported
+   - Limited IF ELSE support
    - Major optimisations for much more scalable query on large datasets using Leviathan
+   - Initial API outline for OWL support (no implementation yet)
   - Parsing Improvements
    - Caching of Graphs by URI Loader for more efficient data retrieval
+   - Support for @prefix attribute in RDFa 1.1 (based on current working group drafts)
+   - Support for loading from data: URIs
+  - Ontology API
+   - New API for working with RDF data in terms of ontologies, resources, classes, properties and individuals
+   - ReasonerGraph class provides for having a Graph which wraps an existing Graph and materialises the triples
+     inferred by a reasoner in itself without altering the wrapped Graph
  
  0.2.1
   - Bug Fixes
@@ -293,7 +316,9 @@ Storage
  
  3/2/2010 - Release of Version 0.2.0 Alpha (Build 0.2.0.27063)
  
- ?/3/2010 - Release of Version 0.2.1 Alpha (Build 0.2.1.?)
+ 11/3/2010 - Release of Version 0.2.1 Alpha (Build 0.2.1.24471)
+ 
+ 16/4/2010 - Relase of Version 0.2.2 Alpha (Build 0.2.2.24625)
  
 Acknowledgements
 ----------------
@@ -317,5 +342,6 @@ improvements in the code:
  a Mono build of dotNetRDF
 -Andy Seaborne for excellent answers to various SPARQL and ARQ function library related questions which
  have contributed to the new Leviathan engine and the ARQ function library support
+-The SPARQL Working Group for useful feedback and responses to my comments
 -Alexander Sidorov for various suggestions and bug reports
 -Aleksandr Zapirov for various bug reports and patch suggestions
