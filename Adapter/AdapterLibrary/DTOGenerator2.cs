@@ -987,6 +987,7 @@ namespace org.iringtools.adapter
             {
               dataObjects.Add((IDataObject)(dto.GetDataObject()));
             }
+            response.Append(_dataLayer.Post(dataObjects));
             break;");
 
           dtoServiceWriter.Indent--;
