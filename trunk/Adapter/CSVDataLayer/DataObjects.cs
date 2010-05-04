@@ -5,7 +5,7 @@ using System.Text;
 using org.iringtools.library;
 using System.Xml.Serialization;
 
-namespace org.iringtools.adapter.datalayer.proj_12345_000.API
+namespace org.iringtools.adapter.datalayer.proj_12345_000.CSV
 {
   public class Equipment
   {
