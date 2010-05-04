@@ -9,6 +9,7 @@ using org.iringtools.utility;
 using System.Xml.Linq;
 using System.IO;
 using Ciloci.Flee;
+using org.iringtools.adapter.datalayer.proj_12345_000.CSV;
 
 namespace org.iringtools.adapter.datalayer
 {
@@ -156,10 +157,18 @@ namespace org.iringtools.adapter.datalayer
         // Apply filter
         if (filter != null && filter.Expressions.Count > 0)
         {
-          //var predicate = GenerateWherePredicate(dataObjectType, filter);
-          //dataObjects = dataObjects.Where<IDataObject>(predicate).ToList();
           string variable = "dataObject";
-          string linqExpression = filter.ToLinqExpression(objectType, variable);
+          string linqExpression = string.Empty;
+          switch (objectType)
+            {
+            case "Equipment":
+                linqExpression = filter.ToLinqExpression<Equipment>(variable);
+                break;
+              default:
+                linqExpression = string.Empty;
+                break;
+            }
+
 
           if (linqExpression != String.Empty)
           {
@@ -208,15 +217,6 @@ namespace org.iringtools.adapter.datalayer
     {
       try
       {
-        //IList<IDataObject> allDataObjects = Get(objectType, null, 0, 0);
-
-        //var dataObjects =
-        //  (from dataObject in allDataObjects 
-        //   where identifiers.Contains((string)dataObject.GetPropertyValue("Tag"))
-        //   select dataObject).ToList<IDataObject>();
-
-        //return dataObjects;
-
         List<IDataObject> dataObjects = new List<IDataObject>();
         string dataObjectType = objectType + "DataObject";
         Type type = Type.GetType(dataObjectType);
@@ -303,7 +303,7 @@ namespace org.iringtools.adapter.datalayer
       try
       {
         // Load config xml
-        string dataObjectType = dataObjects.FirstOrDefault().GetType().Name;
+        string dataObjectType = dataObjects.FirstOrDefault().GetType().FullName;
         string objectType = dataObjectType.Substring(0, dataObjectType.Length - "DataObject".Length);
         string configFile = _settings.XmlPath + objectType + "." + _appSettings.ProjectName + "." + _appSettings.ApplicationName + ".xml";
         XDocument configDoc = XDocument.Load(configFile);

@@ -39,157 +39,178 @@ namespace org.iringtools.library
     [DataMember]
     public List<Expression> Expressions { get; set; }
 
+    public string ToSqlWhereClause(Type type, string objectAlias)
+    {
+        if (this == null || this.Expressions.Count == 0)
+            return String.Empty;
+
+        if (!String.IsNullOrEmpty(objectAlias)) objectAlias += ".";
+        else objectAlias = String.Empty;
+
+        try
+        {
+            StringBuilder whereClause = new StringBuilder();
+            whereClause.Append(" WHERE ");
+
+            foreach (Expression expression in this.Expressions)
+            {
+
+                string sqlExpression = ResolveSqlExpression(type, expression, objectAlias);
+                whereClause.Append(sqlExpression);
+            }
+
+            return whereClause.ToString();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error while generating SQLWhereClause.", ex);
+        }
+    }
+
+    public string ToSqlWhereClause<T>(string objectAlias)
+    {
+        return ToSqlWhereClause(typeof(T), objectAlias);
+    }
+
     public string ToSqlWhereClause(string objectType, string objectAlias)
     {
-      if (this == null || this.Expressions.Count == 0)
-        return String.Empty;
+        return ToSqlWhereClause(Type.GetType(objectType), objectAlias);
+    }
 
-      if (!String.IsNullOrEmpty(objectAlias)) objectAlias += ".";
-      else objectAlias = String.Empty;
+    public string ToLinqExpression(Type type, string objectVariable)
+    {
+        if (this == null || this.Expressions.Count == 0)
+            return String.Empty;
 
-      try
-      {
-        StringBuilder whereClause = new StringBuilder();
-        whereClause.Append(" WHERE ");
+        if (!String.IsNullOrEmpty(objectVariable)) objectVariable += ".";
+        else throw new Exception("Object variable can not be null or empty.");
 
-        foreach (Expression expression in this.Expressions)
+        try
         {
-          string sqlExpression = ResolveSqlExpression(expression, objectType, objectAlias);
-          whereClause.Append(sqlExpression);
-        }
+            StringBuilder linqExpression = new StringBuilder();
 
-        return whereClause.ToString();
-      }
-      catch (Exception ex)
-      {
-        throw new Exception("Error while generating SQLWhereClause.", ex);
-      }
+            foreach (Expression expression in this.Expressions)
+            {
+                string exp = ResolveLinqExpression(type, expression, objectVariable);
+                linqExpression.Append(exp);
+            }
+
+            return linqExpression.ToString();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error while generating LINQ expression.", ex);
+        }
+    }
+
+    public string ToLinqExpression<T>(string objectVariable)
+    {
+        return ToLinqExpression(typeof(T), objectVariable);
     }
 
     public string ToLinqExpression(string objectType, string objectVariable)
     {
-      if (this == null || this.Expressions.Count == 0)
-        return String.Empty;
+        return ToLinqExpression(Type.GetType(objectType), objectVariable);
+    }
 
-      if (!String.IsNullOrEmpty(objectVariable)) objectVariable += ".";
-      else throw new Exception("Object variable can not be null or empty.");
+    private string ResolveSqlExpression(Type type, Expression expression, string objectAlias)
+    {
+        string propertyName = expression.PropertyName;
+        string qualifiedPropertyName = objectAlias + propertyName;
+        Type propertyType = type.GetProperty(propertyName).PropertyType;
+        bool isString = propertyType == typeof(string);
+        StringBuilder sqlExpression = new StringBuilder();
 
-      try
-      {
-        StringBuilder linqExpression = new StringBuilder();
-
-        foreach (Expression expression in this.Expressions)
+        if (expression.LogicalOperator != LogicalOperator.None)
         {
-          string exp = ResolveLinqExpression(expression, objectType, objectVariable);
-          linqExpression.Append(exp);
+            string logicalOperator = ResolveLogicalOperator(expression.LogicalOperator);
+            sqlExpression.Append(" " + logicalOperator + " ");
         }
 
-        return linqExpression.ToString();
-      }
-      catch (Exception ex)
-      {
-        throw new Exception("Error while generating LINQ expression.", ex);
-      }
+        for (int i = 0; i < expression.OpenGroupCount; i++)
+            sqlExpression.Append("(");
+
+        switch (expression.RelationalOperator)
+        {
+            case RelationalOperator.StartsWith:
+                if (!isString) throw new Exception("StartsWith operator used with non-string property");
+                sqlExpression.Append(qualifiedPropertyName + " LIKE '" + expression.Values.FirstOrDefault() + "%'");
+                break;
+
+            case RelationalOperator.Contains:
+                if (!isString) throw new Exception("Contains operator used with non-string property");
+                sqlExpression.Append(qualifiedPropertyName + " LIKE '%" + expression.Values.FirstOrDefault() + "%'");
+                break;
+
+            case RelationalOperator.EndsWith:
+                if (!isString) throw new Exception("EndsWith operator used with non-string property");
+                sqlExpression.Append(qualifiedPropertyName + " LIKE '%" + expression.Values.FirstOrDefault() + "'");
+                break;
+
+            case RelationalOperator.In:
+                if (isString)
+                    sqlExpression.Append(qualifiedPropertyName + " IN ('" + String.Join("','", expression.Values.ToArray()) + "')");
+                else
+                    sqlExpression.Append(qualifiedPropertyName + " IN (" + String.Join(",", expression.Values.ToArray()) + ")");
+                break;
+
+            case RelationalOperator.EqualTo:
+                if (isString)
+                    sqlExpression.Append(qualifiedPropertyName + "='" + expression.Values.FirstOrDefault() + "'");
+                else
+                    sqlExpression.Append(qualifiedPropertyName + "=" + expression.Values.FirstOrDefault() + "");
+                break;
+
+            case RelationalOperator.NotEqualTo:
+                if (isString)
+                    sqlExpression.Append(qualifiedPropertyName + "<>'" + expression.Values.FirstOrDefault() + "'");
+                else
+                    sqlExpression.Append(qualifiedPropertyName + "<>" + expression.Values.FirstOrDefault() + "");
+                break;
+
+            case RelationalOperator.GreaterThan:
+                if (isString)
+                    sqlExpression.Append(qualifiedPropertyName + ">'" + expression.Values.FirstOrDefault() + "'");
+                else
+                    sqlExpression.Append(qualifiedPropertyName + ">" + expression.Values.FirstOrDefault());
+                break;
+
+            case RelationalOperator.GreaterThanOrEqual:
+                if (isString)
+                    sqlExpression.Append(qualifiedPropertyName + ">='" + expression.Values.FirstOrDefault() + "'");
+                else
+                    sqlExpression.Append(qualifiedPropertyName + ">=" + expression.Values.FirstOrDefault());
+                break;
+
+            case RelationalOperator.LesserThan:
+                if (isString)
+                    sqlExpression.Append(qualifiedPropertyName + "<'" + expression.Values.FirstOrDefault() + "'");
+                else
+                    sqlExpression.Append(qualifiedPropertyName + "<" + expression.Values.FirstOrDefault());
+                break;
+
+            case RelationalOperator.LesserThanOrEqual:
+                if (isString)
+                    sqlExpression.Append(qualifiedPropertyName + "<='" + expression.Values.FirstOrDefault() + "'");
+                else
+                    sqlExpression.Append(qualifiedPropertyName + "<=" + expression.Values.FirstOrDefault());
+                break;
+
+            default:
+                throw new Exception("Relational operator does not exist.");
+        }
+
+        for (int i = 0; i < expression.CloseGroupCount; i++)
+            sqlExpression.Append(")");
+
+        return sqlExpression.ToString();
     }
-
-    private string ResolveSqlExpression(Expression expression, string objectType, string objectAlias)
-    {
-      string propertyName = expression.PropertyName;
-      string qualifiedPropertyName = objectAlias + propertyName;
-      Type propertyType = Type.GetType(objectType).GetProperty(propertyName).PropertyType;
-      bool isString = propertyType == typeof(string);
-      StringBuilder sqlExpression = new StringBuilder();
-
-      if (expression.LogicalOperator != LogicalOperator.None)
-      {
-        string logicalOperator = ResolveLogicalOperator(expression.LogicalOperator);
-        sqlExpression.Append(" " + logicalOperator + " ");
-      }
-
-      for (int i = 0; i < expression.OpenGroupCount; i++)
-        sqlExpression.Append("(");
-
-      switch (expression.RelationalOperator)
-      {
-        case RelationalOperator.StartsWith:
-          if (!isString) throw new Exception("StartsWith operator used with non-string property");
-          sqlExpression.Append(qualifiedPropertyName + " LIKE '" + expression.Values.FirstOrDefault() + "%'");
-          break;
-
-        case RelationalOperator.Contains:
-          if (!isString) throw new Exception("Contains operator used with non-string property");
-          sqlExpression.Append(qualifiedPropertyName + " LIKE '%" + expression.Values.FirstOrDefault() + "%'");
-          break;
-
-        case RelationalOperator.EndsWith:
-          if (!isString) throw new Exception("EndsWith operator used with non-string property");
-          sqlExpression.Append(qualifiedPropertyName + " LIKE '%" + expression.Values.FirstOrDefault() + "'");
-          break;
-
-        case RelationalOperator.In:
-          if (isString)
-            sqlExpression.Append(qualifiedPropertyName + " IN ('" + String.Join("','", expression.Values.ToArray()) + "')");
-          else
-            sqlExpression.Append(qualifiedPropertyName + " IN (" + String.Join(",", expression.Values.ToArray()) + ")");
-          break;
-
-        case RelationalOperator.EqualTo:
-          if (isString)
-            sqlExpression.Append(qualifiedPropertyName + "='" + expression.Values.FirstOrDefault() + "'");
-          else
-            sqlExpression.Append(qualifiedPropertyName + "=" + expression.Values.FirstOrDefault() + "");
-          break;
-
-        case RelationalOperator.NotEqualTo:
-          if (isString)
-            sqlExpression.Append(qualifiedPropertyName + "<>'" + expression.Values.FirstOrDefault() + "'");
-          else
-            sqlExpression.Append(qualifiedPropertyName + "<>" + expression.Values.FirstOrDefault() + "");
-          break;
-
-        case RelationalOperator.GreaterThan:
-          if (isString)
-            sqlExpression.Append(qualifiedPropertyName + ">'" + expression.Values.FirstOrDefault() + "'");
-          else
-            sqlExpression.Append(qualifiedPropertyName + ">" + expression.Values.FirstOrDefault());
-          break;
-
-        case RelationalOperator.GreaterThanOrEqual:
-          if (isString)
-            sqlExpression.Append(qualifiedPropertyName + ">='" + expression.Values.FirstOrDefault() + "'");
-          else
-            sqlExpression.Append(qualifiedPropertyName + ">=" + expression.Values.FirstOrDefault());
-          break;
-
-        case RelationalOperator.LesserThan:
-          if (isString)
-            sqlExpression.Append(qualifiedPropertyName + "<'" + expression.Values.FirstOrDefault() + "'");
-          else
-            sqlExpression.Append(qualifiedPropertyName + "<" + expression.Values.FirstOrDefault());
-          break;
-
-        case RelationalOperator.LesserThanOrEqual:
-          if (isString)
-            sqlExpression.Append(qualifiedPropertyName + "<='" + expression.Values.FirstOrDefault() + "'");
-          else
-            sqlExpression.Append(qualifiedPropertyName + "<=" + expression.Values.FirstOrDefault());
-          break;
-
-        default:
-          throw new Exception("Relational operator does not exist.");
-      }
-
-      for (int i = 0; i < expression.CloseGroupCount; i++)
-        sqlExpression.Append(")");
-
-      return sqlExpression.ToString();
-    }
-
-    private string ResolveLinqExpression(Expression expression, string objectType, string objectVariable)
+          
+    private string ResolveLinqExpression(Type type, Expression expression, string objectVariable)
     {
       string propertyName = expression.PropertyName;
       string qualifiedPropertyName = objectVariable + propertyName;
-      Type propertyType = Type.GetType(objectType).GetProperty(propertyName).PropertyType;
+      Type propertyType = type.GetProperty(propertyName).PropertyType;
       bool isString = (propertyType == typeof(string));
       StringBuilder linqExpression = new StringBuilder();
 
