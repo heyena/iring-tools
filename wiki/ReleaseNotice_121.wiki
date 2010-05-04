@@ -1,0 +1,18 @@
+#labels Featured
+= *iRINGTools* 1.2.1.807 =
+
+A bug fix release of iRINGTools 1.2 that also includes RDF output and speed improvements.  The download is available [http://iring-tools.googlecode.com/files/iRINGTools-121.zip here]
+
+[http://iring-tools.googlecode.com/files/iRINGTools_Installation_Guide_v1.2.0.pdf Installation Guide]
+
+== New Features ==
+  * XSLT-based RDF generation
+  * RDF output via .../rdf
+  * Version resource (/version)
+  * Many bug fixes
+
+== Known Bugs ==
+  * PullDTO is not working.
+  * RefDataService cannot write to SemWeb SandboxService, but still works with Joseki SandboxService.
+
+Other Pages: [Components] | [RoadMap] | [ISO15926] | [Documentation] | [Contributors]
