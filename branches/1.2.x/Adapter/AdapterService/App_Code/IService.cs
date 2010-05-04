@@ -114,5 +114,9 @@ namespace org.iringtools.adapter
     [OperationContract]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}/rdf")]
     XElement GetRDF(string projectName, string applicationName, string graphName, string identifier);
+
+    [OperationContract]
+    [WebGet(UriTemplate = "/version")]
+    string GetVersion();
   } 
 }
