@@ -645,7 +645,7 @@ namespace org.iringtools.adapter.projection
         {
           try
           {
-            identifier = "eg:id__" + identifier;
+            identifier = "eg:" + identifier;
 
             foreach (TemplateMap templateMap in graphMap.templateMaps)
             {
@@ -760,7 +760,7 @@ namespace org.iringtools.adapter.projection
           {
             string identifier = dto.Identifier;
 
-            identifier = "eg:id__" + identifier;
+            identifier = "eg:" + identifier;
             SPARQLBuilder.RefreshGraphClassName(_targetUri, _targetCredentials, _proxyCredentials, graphMap.classId, identifier);
 
             foreach (TemplateMap templateMap in graphMap.templateMaps)

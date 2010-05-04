@@ -29,6 +29,7 @@ using System.IO;
 using org.iringtools.library;
 using System.Collections.Generic;
 using log4net;
+using System.Xml.Linq;
 
 namespace org.iringtools.adapter
 {
@@ -107,6 +108,15 @@ namespace org.iringtools.adapter
     }
 
     /// <summary>
+    /// Refreshes the triple store for all the graphmaps.
+    /// </summary>
+    /// <returns>Returns the response as success/failure.</returns>
+    public Response RefreshAllRDF(string projectName, string applicationName)
+    {
+      return _adapterServiceProvider.RefreshAllRDF(projectName, applicationName);
+    }
+
+    /// <summary>
     /// Refreshes the triple store for the graphmap passed.
     /// </summary>
     /// <param name="graphName">The name of graph for which triple store will be refreshed.</param>
@@ -126,19 +136,6 @@ namespace org.iringtools.adapter
     public Response CreateGraphRDF(string projectName, string applicationName, string graphName)
     {
       return _adapterServiceProvider.CreateGraphRDF(projectName, applicationName, graphName);
-    }
-
-    /// <summary>
-    /// Calls adapter service provider to create RDF for a specific identifier of a graph
-    /// </summary>
-    /// <param name="projectName"></param>
-    /// <param name="applicationName"></param>
-    /// <param name="graphName"></param>
-    /// <param name="identifier"></param>
-    /// <returns>success/failed</returns>
-    public Response CreateIdentifierRDF(string projectName, string applicationName, string graphName, string identifier)
-    {
-      return _adapterServiceProvider.CreateIdentifierRDF(projectName, applicationName, graphName, identifier);
     }
 
     /// <summary>
@@ -219,6 +216,27 @@ namespace org.iringtools.adapter
     public Envelope GetList(string projectName, string applicationName, string graphName)
     {
       return _adapterServiceProvider.GetList(projectName, applicationName, graphName);
+    }
+
+    /// <summary>
+    /// Gets the data for a graphname and identifier in a QXF format.
+    /// </summary>
+    /// <param name="graphName">The name of graph for which data is to be fetched.</param>
+    /// <param name="identifier">The unique identifier used as filter to return single row's data.</param>
+    /// <returns>Returns the data in QXF format.</returns>
+    public XElement GetRDF(string projectName, string applicationName, string graphName, string identifier)
+    {
+      return _adapterServiceProvider.GetRDF(projectName, applicationName, graphName, identifier);
+    }
+
+    /// <summary>
+    /// Gets all the data for the graphname.
+    /// </summary>
+    /// <param name="graphName">The name of graph for which data is to be fetched.</param>
+    /// <returns>Returns the data in QXF format.</returns>
+    public XElement GetListRDF(string projectName, string applicationName, string graphName)
+    {
+      return _adapterServiceProvider.GetListRDF(projectName, applicationName, graphName);
     }
   }
 }
