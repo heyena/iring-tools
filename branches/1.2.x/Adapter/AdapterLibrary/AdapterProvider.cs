@@ -49,6 +49,7 @@ using org.ids_adi.qxf;
 using System.Xml.Xsl;
 using System.Xml.Serialization;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace org.iringtools.adapter
 {
@@ -75,27 +76,31 @@ namespace org.iringtools.adapter
     {
       try
       {
-        ApplicationSettings applicationSettings = _kernel.Get<ApplicationSettings>(
-          new ConstructorArgument("projectName", projectName),
-          new ConstructorArgument("applicationName", applicationName)
-        );
-
-        string bindingConfigurationPath = _settings.XmlPath + applicationSettings.BindingConfigurationPath;
-        BindingConfiguration bindingConfiguration = Utility.Read<BindingConfiguration>(bindingConfigurationPath, false);
-        _kernel.Load(new DynamicModule(bindingConfiguration));
-        _settings.Mapping = GetMapping(projectName, applicationName);
-        _dtoService = _kernel.TryGet<IDTOService>("DTOService");
-
-        if (_dtoService != null)
+        if (!_isAppInitialized)
         {
-          if (_settings.UseSemweb)
+          ApplicationSettings applicationSettings = _kernel.Get<ApplicationSettings>(
+            new ConstructorArgument("projectName", projectName),
+            new ConstructorArgument("applicationName", applicationName)
+          );
+
+          string bindingConfigurationPath = _settings.XmlPath + applicationSettings.BindingConfigurationPath;
+          BindingConfiguration bindingConfiguration = Utility.Read<BindingConfiguration>(bindingConfigurationPath, false);
+          _kernel.Load(new DynamicModule(bindingConfiguration));
+          _settings.Mapping = GetMapping(projectName, applicationName);
+          _dtoService = _kernel.TryGet<IDTOService>("DTOService");
+
+          if (_dtoService != null)
           {
-            _projectionEngine = _kernel.Get<IProjectionEngine>("SemWeb");
+            if (_settings.UseSemweb)
+            {
+              _projectionEngine = _kernel.Get<IProjectionEngine>("SemWeb");
+            }
+            else
+            {
+              _projectionEngine = _kernel.Get<IProjectionEngine>("Sparql");
+            }
           }
-          else
-          {
-            _projectionEngine = _kernel.Get<IProjectionEngine>("Sparql");
-          }
+          _isAppInitialized = true;
         }
       }
       catch (Exception exception)
@@ -103,11 +108,6 @@ namespace org.iringtools.adapter
         _logger.Error("Error in Initializing Application: " + exception);
         throw new Exception("Error in Initializing Application: " + exception.ToString(), exception);
       }
-    }
-
-    public void UninitializeApplication()
-    {
-      //_kernel.Unload("Ninject.Contrib.Dynamic.DynamicModule, Ninject.Contrib.Dynamic");
     }
 
     /// <summary>
@@ -210,10 +210,6 @@ namespace org.iringtools.adapter
         _logger.Error("Error in GetDictionary: " + exception);
         throw new Exception("Error while getting Dictionary. " + exception.ToString(), exception);
       }
-      finally
-      {
-        UninitializeApplication();
-      }
     }
 
     /// <summary>
@@ -264,10 +260,6 @@ namespace org.iringtools.adapter
         response.Add("Error while refreshing Dictionary.");
         response.Add(exception.ToString());
       }
-      finally
-      {
-        UninitializeApplication();
-      }
       return response;
     }
 
@@ -291,10 +283,6 @@ namespace org.iringtools.adapter
       {
         _logger.Error("Error in GetDTO: " + exception);
         throw new Exception("Error while getting " + graphName + " data with identifier " + identifier + ". " + exception.ToString(), exception);
-      }
-      finally
-      {
-        UninitializeApplication();
       }
     }
 
@@ -323,9 +311,61 @@ namespace org.iringtools.adapter
         _logger.Error("Error in Get: " + exception);
         throw new Exception("Error while getting " + graphName + " data with identifier " + identifier + ". " + exception.ToString(), exception);
       }
-      finally
+    }
+
+    /// <summary>
+    /// Gets the data for a graphname and identifier in a QXF format.
+    /// </summary>
+    /// <param name="graphName">The name of graph for which data is to be fetched.</param>
+    /// <param name="identifier">The unique identifier used as filter to return single row's data.</param>
+    /// <returns>Returns the data in QXF format.</returns>
+    public XElement GetRDF(string projectName, string applicationName, string graphName, string identifier)
+    {
+      try
       {
-        UninitializeApplication();
+        CreateIdentifierRDF(projectName, applicationName, graphName, identifier);
+
+        StringBuilder rdfPath = new StringBuilder();
+        rdfPath.Append(_settings.BaseDirectoryPath).Append(_settings.XmlPath)
+          .Append("RDF.").Append(projectName).Append(".").Append(applicationName)
+          .Append(".").Append(graphName).Append(".xml");
+
+        XElement rdf = XElement.Load(rdfPath.ToString());
+
+        return rdf;
+      }
+      catch (Exception exception)
+      {
+        _logger.Error("Error in GetRDf: " + exception);
+        throw new Exception("Error while getting rdf of " + graphName + " data with identifier " + identifier + ". " + exception.ToString(), exception);
+      }
+    }
+
+    /// <summary>
+    /// Gets all the data for the graphname.
+    /// </summary>
+    /// <param name="graphName">The name of graph for which data is to be fetched.</param>
+    /// <returns>Returns the data in QXF format.</returns>
+    public XElement GetListRDF(string projectName, string applicationName, string graphName)
+    {
+      try
+      {
+        List<DataTransferObject> dtoList = GetDTOList(projectName, applicationName, graphName);
+        _dtoService.CreateRDF(graphName, dtoList);
+
+        StringBuilder rdfPath = new StringBuilder();
+        rdfPath.Append(_settings.BaseDirectoryPath).Append(_settings.XmlPath)
+          .Append("RDF.").Append(projectName).Append(".").Append(applicationName)
+          .Append(".").Append(graphName).Append(".xml");
+
+        XElement rdf = XElement.Load(rdfPath.ToString());
+
+        return rdf;
+      }
+      catch (Exception exception)
+      {
+        _logger.Error("Error in GetList: " + exception);
+        throw new Exception("Error while getting " + graphName + " data. " + exception.ToString(), exception);
       }
     }
 
@@ -353,10 +393,6 @@ namespace org.iringtools.adapter
         _logger.Error("Error in GetList: " + exception);
         throw new Exception("Error while getting " + graphName + " data. " + exception.ToString(), exception);
       }
-      finally
-      {
-        UninitializeApplication();
-      }
     }
 
     /// <summary>
@@ -378,10 +414,6 @@ namespace org.iringtools.adapter
       {
         _logger.Error("Error in GetDTOList: " + exception);
         throw new Exception("Error while getting " + graphName + " data. " + exception.ToString(), exception);
-      }
-      finally
-      {
-        UninitializeApplication();
       }
     }
 
@@ -405,10 +437,6 @@ namespace org.iringtools.adapter
         _logger.Error("Error in GetDTOListREST: " + exception);
         throw new Exception("Error while getting " + graphName + " data. " + exception.ToString(), exception);
       }
-      finally
-      {
-        UninitializeApplication();
-      }
     }
 
     /// <summary>
@@ -427,6 +455,40 @@ namespace org.iringtools.adapter
         foreach (GraphMap graphMap in _settings.Mapping.graphMaps)
         {
           response.Append(RefreshGraph(projectName, applicationName, graphMap.name));
+        }
+
+        DateTime e = DateTime.Now;
+        TimeSpan d = e.Subtract(b);
+
+        response.Add(String.Format("RefreshAll() Execution Time [{0}:{1}.{2}] minutes.", d.Minutes, d.Seconds, d.Milliseconds));
+      }
+      catch (Exception exception)
+      {
+        _logger.Error("Error in RefreshAll: " + exception);
+
+        response.Level = StatusLevel.Error;
+        response.Add("Error while Refreshing TripleStore.");
+        response.Add(exception.ToString());
+      }
+      return response;
+    }
+
+    /// <summary>
+    /// Refreshes the triple store for all the graphmaps.
+    /// </summary>
+    /// <returns>Returns the response as success/failure.</returns>
+    public Response RefreshAllRDF(string projectName, string applicationName)
+    {
+      Response response = new Response();
+      try
+      {
+        InitializeApplication(projectName, applicationName);
+        _isAppInitialized = true;
+        DateTime b = DateTime.Now;
+
+        foreach (GraphMap graphMap in _settings.Mapping.graphMaps)
+        {
+          response.Append(CreateGraphRDF(projectName, applicationName, graphMap.name));
         }
 
         DateTime e = DateTime.Now;
@@ -511,10 +573,6 @@ namespace org.iringtools.adapter
         response.Add("Error while Refreshing TripleStore for GraphMap[" + graphName + "].");
         response.Add(exception.ToString());
       }
-      finally
-      {
-        UninitializeApplication();
-      }
       return response;
     }
 
@@ -563,7 +621,7 @@ namespace org.iringtools.adapter
     /// <param name="graphName"></param>
     /// <param name="identifier"></param>
     /// <returns>success/failed</returns>
-    public Response CreateIdentifierRDF(string projectName, string applicationName, string graphName, string identifier)
+    private Response CreateIdentifierRDF(string projectName, string applicationName, string graphName, string identifier)
     {
       Response response = new Response();
 
@@ -611,10 +669,6 @@ namespace org.iringtools.adapter
         response.Level = StatusLevel.Error;
         response.Add("Error while RefreshDTO[" + dto.GraphName + "][" + dto.Identifier + "] data.");
         response.Add(exception.ToString());
-      }
-      finally
-      {
-        UninitializeApplication();
       }
       return response;
     }
@@ -680,10 +734,6 @@ namespace org.iringtools.adapter
         response.Add("Error while pulling " + graphName + " data from " + targetUri + " as " + targetUri + " data with filter " + filter + ".\r\n");
         response.Add(exception.ToString());
       }
-      finally
-      {
-        UninitializeApplication();
-      }
       return response;
     }
 
@@ -732,10 +782,6 @@ namespace org.iringtools.adapter
         response.Add("Error while pulling " + graphName + " data from " + targetUri + " as " + targetUri + " data with filter " + filter + ".\r\n");
         response.Add(exception.ToString());
       }
-      finally
-      {
-        UninitializeApplication();
-      }
       return response;
     }
 
@@ -760,10 +806,6 @@ namespace org.iringtools.adapter
         response.Add("Error while clearing TripleStore.");
         response.Add(exception.ToString());
         response.Level = StatusLevel.Error;
-      }
-      finally
-      {
-        UninitializeApplication();
       }
       return response;
     }

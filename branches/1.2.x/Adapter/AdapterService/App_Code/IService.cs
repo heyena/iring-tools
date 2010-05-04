@@ -34,6 +34,7 @@ using System.Text;
 using org.ids_adi.qxf;
 using org.iringtools.adapter;
 using org.iringtools.library;
+using System.Xml.Linq;
 
 namespace org.iringtools.adapter
 {
@@ -87,12 +88,12 @@ namespace org.iringtools.adapter
     Response RefreshAll(string projectName, string applicationName);
 
     [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/rdf")]
-    Response CreateGraphRDF(string projectName, string applicationName, string graphName);
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/refresh/rdf")]
+    Response RefreshAllRDF(string projectName, string applicationName);
 
     [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}/rdf")]
-    Response CreateIdentifierRDF(string projectName, string applicationName, string graphName, string identifier);
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/refresh/rdf")]
+    Response CreateGraphRDF(string projectName, string applicationName, string graphName);
 
     [OperationContract]
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/pull")]
@@ -106,14 +107,12 @@ namespace org.iringtools.adapter
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/dbdictionary")]
     Response UpdateDatabaseDictionary(DatabaseDictionary databaseDictionary, string projectName, string applicationName);
 
-    //[OperationContract]
-    //[ServiceKnownType("GetKnownTypes", typeof(KnownTypeProvider))]
-    //[WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}")]
-    //DataTransferObject Get(string projectName, string applicationName, string graphName, string identifier);
+    [OperationContract]
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/rdf")]
+    XElement GetListRDF(string projectName, string applicationName, string graphName);
 
-    //[OperationContract]
-    //[ServiceKnownType("GetKnownTypes", typeof(KnownTypeProvider))]
-    //[WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}")]
-    //List<DataTransferObject> GetList(string projectName, string applicationName, string graphName);
+    [OperationContract]
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}/rdf")]
+    XElement GetRDF(string projectName, string applicationName, string graphName, string identifier);
   } 
 }
