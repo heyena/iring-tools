@@ -70,6 +70,15 @@ namespace org.iringtools.adapter
     }
 
     /// <summary>
+    /// Gets the VersionInfo from the AssembyInfo
+    /// </summary>
+    /// <returns>Returns Data Dictionary object.</returns>
+    public string GetVersion()
+    {
+      return _adapterServiceProvider.GetType().Assembly.GetName().Version.ToString();
+    }
+
+    /// <summary>
     /// Gets the Data Dictionary by reading DataDictionary.xml
     /// </summary>
     /// <returns>Returns Data Dictionary object.</returns>
