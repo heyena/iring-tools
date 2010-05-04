@@ -589,6 +589,8 @@ namespace org.iringtools.adapter.datalayer
         _entityWriter.WriteLine("{");
         _entityWriter.Indent++;
 
+        _entityWriter.WriteLine("case \"Id\": return Id;");
+
         foreach (Key key in table.keys)
         {
           _entityWriter.WriteLine("case \"{0}\": return {0};", key.propertyName);
@@ -611,8 +613,14 @@ namespace org.iringtools.adapter.datalayer
         _entityWriter.WriteLine("{");
         _entityWriter.Indent++;
         _entityWriter.WriteLine("switch (propertyName)");
-        _entityWriter.WriteLine("{");
+        _entityWriter.Write("{");
         _entityWriter.Indent++;
+
+        _entityWriter.WriteLine(@"
+        case ""Id"":
+          Id = Convert.ToString(value);
+          if (Id == String.Empty) throw new Exception(""Id can not be null or empty."");
+          break;");
 
         foreach (Key key in table.keys)
         {
