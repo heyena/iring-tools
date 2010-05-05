@@ -1,0 +1,367 @@
+<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />  
+
+  <PropertyGroup>
+    <SolutionFile>iring-tools.sln</SolutionFile>
+    <DeploymentDir>$(MSBuildProjectDirectory)\Deployment</DeploymentDir>
+    <iRINGAdapter>$(DeploymentDir)\iRINGAdapter</iRINGAdapter>
+    <iRINGSandbox>$(DeploymentDir)\iRINGSandbox</iRINGSandbox>
+    <LandingPageDir>LandingPage</LandingPageDir>
+    <AdapterServiceRoot>Adapter</AdapterServiceRoot>
+    <AdapterServiceDir>$(AdapterServiceRoot)\AdapterService</AdapterServiceDir>
+    <JosekiInterfaceServiceRoot>InterfaceService.Joseki</JosekiInterfaceServiceRoot>
+    <SemWebInterfaceServiceRoot>InterfaceService</SemWebInterfaceServiceRoot>
+	  <JosekiSandboxServiceRoot>SandboxService.Joseki</JosekiSandboxServiceRoot>
+	  <SemWebSandboxServiceRoot>SandboxService</SemWebSandboxServiceRoot>
+    <MappingEditorRoot>MappingEditor</MappingEditorRoot>
+    <MappingEditorDir>$(MappingEditorRoot)\$(MappingEditorRoot).Web</MappingEditorDir>
+    <RefDataEditorRoot>RefDataEditor</RefDataEditorRoot>
+    <RefDataEditorDir>$(RefDataEditorRoot)\$(RefDataEditorRoot).Web</RefDataEditorDir>
+    <RefDataServiceRoot>ReferenceData</RefDataServiceRoot>
+    <LandingPageDeploymentDir>$(DeploymentDir)\LandingPage</LandingPageDeploymentDir>
+    <RefDataServiceDir>$(RefDataServiceRoot)\ReferenceDataService</RefDataServiceDir>    
+    <AdapterServiceDeploymentDir>$(iRINGAdapter)\AdapterService</AdapterServiceDeploymentDir>
+    <JosekiInterfaceServiceDeploymentDir>$(iRINGAdapter)\InterfaceService.Joseki</JosekiInterfaceServiceDeploymentDir>
+    <SemWebInterfaceServiceDeploymentDir>$(iRINGAdapter)\InterfaceService</SemWebInterfaceServiceDeploymentDir>
+    <AdapterToolsDeploymentDir>$(iRINGAdapter)\Tools</AdapterToolsDeploymentDir>
+    <MappingEditorDeploymentDir>$(iRINGAdapter)\MappingEditor</MappingEditorDeploymentDir>
+    <RefDataEditorDeploymentDir>$(iRINGSandbox)\RefDataEditor</RefDataEditorDeploymentDir>
+    <RefDataServiceDeploymentDir>$(iRINGSandbox)\RefDataService</RefDataServiceDeploymentDir>
+    <JosekiSandboxServiceDeploymentDir>$(iRINGSandbox)\SandboxService.Joseki</JosekiSandboxServiceDeploymentDir>
+    <SemWebSandboxServiceDeploymentDir>$(iRINGSandbox)\SandboxService</SemWebSandboxServiceDeploymentDir>
+    <SandboxToolsDeploymentDir>$(iRINGSandbox)\Tools</SandboxToolsDeploymentDir>
+    <TortoiseSVNCmd>"C:\Program Files\TortoiseSVN\bin\TortoiseProc.exe"</TortoiseSVNCmd>
+    <MSTestCmd>"$(VSINSTALLDIR)\Common7\IDE\MSTest.exe"</MSTestCmd>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <AssemblyInfoFile>$(MSBuildProjectDirectory)\AssemblyInfo.cs</AssemblyInfoFile>
+    <Major>1</Major>
+    <Minor>2</Minor>
+    <Build>1</Build>
+    <Revision>0</Revision>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <UnitTest Include="RefDataServiceTests">
+      <TestContainer>/testcontainer:$(RefDataServiceRoot)\ReferenceDataService.Tests\bin\Debug\ReferenceDataService.Tests.dll</TestContainer>
+    </UnitTest>
+    <UnitTest Include="AdapterServiceTests">
+      <TestContainer>/testcontainer:$(AdapterServiceRoot)\AdapterService.Tests\bin\Debug\AdapterService.Tests.dll /runconfig:AdapterService.testrunconfig</TestContainer>
+    </UnitTest>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <AdapterServiceDeployment
+      Include="$(AdapterServiceDir)\**"
+      Exclude="$(AdapterServiceDir).Tests\**;
+               $(AdapterServiceDir)\bin\*.pdb;
+               $(AdapterServiceDir)\bin\AdapterService.dll;
+               $(AdapterServiceDir)\Logs\**;
+               $(AdapterServiceDir)\Templates\**;
+               $(AdapterServiceDir)\Transforms\**;
+               $(AdapterServiceDir)\obj\**;
+               $(AdapterServiceDir)\Properties\**;
+               $(AdapterServiceDir)\*.csproj;
+               $(AdapterServiceDir)\*.user;
+               $(AdapterServiceDir)\*.vspscc;
+               $(AdapterServiceDir)\web.config;
+               $(AdapterServiceDir)\Web_Development.config;
+               $(AdapterServiceDir)\App_Code\Model.*.cs;
+               $(AdapterServiceDir)\App_Code\DTOModel.*.cs;
+               $(AdapterServiceDir)\App_Code\DTOService.*.cs;
+               $(AdapterServiceDir)\App_Code\*.Generated.cs;
+               $(AdapterServiceDir)\XML\BindingConfiguration.*.xml;
+               $(AdapterServiceDir)\XML\DataDictionary.*.xml;
+               $(AdapterServiceDir)\XML\Mapping.*.xml;
+               $(AdapterServiceDir)\XML\nh-configuration.*.xml;
+               $(AdapterServiceDir)\XML\nh-mapping.*.xml;
+               $(AdapterServiceDir)\XML\Scopes.xml;
+               $(AdapterServiceRoot)\.svn\**;
+               $(AdapterServiceRoot)\*\.svn\**;
+               $(AdapterServiceRoot)\*\*\.svn\**;
+               $(AdapterServiceRoot)\*\*\*\.svn\**;">
+    </AdapterServiceDeployment>
+    
+    <JosekiInterfaceServiceDeployment
+      Include="$(JosekiInterfaceServiceRoot)\**"
+      Exclude="$(JosekiInterfaceServiceRoot)\.svn\**;
+               $(JosekiInterfaceServiceRoot)\*\.svn\**;
+               $(JosekiInterfaceServiceRoot)\*\*\.svn\**;
+               $(JosekiInterfaceServiceRoot)\*\*\*\.svn\**;
+               $(JosekiInterfaceServiceRoot)\*.log;">
+    </JosekiInterfaceServiceDeployment>
+	
+	  <SemWebInterfaceServiceDeployment
+      Include="$(SemWebInterfaceServiceRoot)\**"
+      Exclude="$(SemWebInterfaceServiceRoot)\web.config;
+               $(SemWebInterfaceServiceRoot)\setup.conf;
+               $(SemWebInterfaceServiceRoot)\.svn\**;
+               $(SemWebInterfaceServiceRoot)\*\.svn\**;">
+    </SemWebInterfaceServiceDeployment>
+	
+    <JosekiSandboxServiceDeployment
+      Include="$(JosekiSandboxServiceRoot)\**"
+      Exclude="$(JosekiSandboxServiceRoot)\.svn\**;
+               $(JosekiSandboxServiceRoot)\*\.svn\**;
+               $(JosekiSandboxServiceRoot)\*\*\.svn\**;
+               $(JosekiSandboxServiceRoot)\*\*\*\.svn\**;
+               $(JosekiSandboxServiceRoot)\*.log;">
+    </JosekiSandboxServiceDeployment>
+    
+    <SemWebSandboxServiceDeployment
+      Include="$(SemWebSandboxServiceRoot)\**"
+      Exclude="$(SemWebSandboxServiceRoot)\web.config;
+               $(SemWebSandboxServiceRoot)\setup.conf;
+               $(SemWebSandboxServiceRoot)\.svn\**;
+               $(SemWebSandboxServiceRoot)\*\.svn\**;">
+    </SemWebSandboxServiceDeployment>
+	
+    <MappingEditorDeployment
+      Include="$(MappingEditorDir)\**"
+      Exclude="$(MappingEditorDir)\bin\*.pdb;
+               $(MappingEditorDir)\obj\**;
+               $(MappingEditorDir)\Properties\**;
+               $(MappingEditorDir)\*.html;
+               $(MappingEditorDir)\*.csproj;
+               $(MappingEditorDir)\*.cs;
+               $(MappingEditorDir)\*.user;
+               $(MappingEditorDir)\*.vspscc;
+               $(MappingEditorDir)\web.config;
+               $(MappingEditorDir)\.svn\**;
+               $(MappingEditorDir)\*\.svn\**">
+    </MappingEditorDeployment>
+
+    <LandingPageDeployment
+      Include="$(LandingPageDir)\**"
+      Exclude="$(LandingPageDir)\.svn\**;
+               $(LandingPageDir)\*\.svn\**;">
+    </LandingPageDeployment>
+    
+    <RefDataEditorDeployment
+      Include="$(RefDataEditorDir)\**"
+      Exclude="$(RefDataEditorDir)\bin\*.pdb;
+               $(RefDataEditorDir)\obj\**;
+               $(RefDataEditorDir)\Properties\**;
+               $(RefDataEditorDir)\*.cs;
+               $(RefDataEditorDir)\*.html;
+               $(RefDataEditorDir)\*.csproj;
+               $(RefDataEditorDir)\*.user;
+               $(RefDataEditorDir)\*.vspscc;
+               $(RefDataEditorDir)\web.config;
+               $(RefDataEditorDir)\.svn\**;
+               $(RefDataEditorDir)\*\.svn\**">
+    </RefDataEditorDeployment>
+    
+    <RefDataServiceDeployment
+      Include="$(RefDataServiceDir)\**"
+      Exclude="$(RefDataServiceDir).Tests\**;               
+               $(RefDataServiceDir)\bin\*.pdb;
+               $(RefDataServiceDir)\Logs\**;
+               $(RefDataServiceDir)\obj\**;
+               $(RefDataServiceDir)\Properties\**;
+               $(RefDataServiceDir)\XML\Repositories.xml;
+               $(RefDataServiceDir)\XML\Repositories_Development.xml;
+               $(RefDataServiceDir)\*.csproj;
+               $(RefDataServiceDir)\*.user;
+               $(RefDataServiceDir)\*.vspscc;
+               $(RefDataServiceDir)\web.config;
+               $(RefDataServiceDir)\Web_Development.config;
+               $(RefDataServiceRoot)\.svn\**;
+               $(RefDataServiceRoot)\*\.svn\**;
+               $(RefDataServiceRoot)\*\*\.svn\**;">
+    </RefDataServiceDeployment>
+    
+    <AdapterToolsDeployment
+      Include="ExternalBinaries\SemWeb\rdfstorage.exe;
+               ExternalBinaries\SemWeb\SemWeb.dll;
+               ExternalBinaries\SemWeb\SemWeb.SQLServerStore.dll;
+               ExternalBinaries\SemWeb\Mono.GetOptions.dll;
+               Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll;
+               Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;
+               Utilities\EncryptCredentials\bin\Debug\EncryptCredentials.exe;
+               Utilities\AdapterClient\bin\Debug\AdapterClient.exe;
+               Utilities\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\NHibernate.dll;
+               Utilities\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\NHibernate.ByteCode.Castle.dll;
+               Utilities\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\Iesi.Collections.dll;
+               Utilities\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\log4net.dll;
+               Utilities\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\DBDictionaryUtil.exe;
+               Utilities\DBDictionaryUtil\DBDictionaryUtil\App_Default.config;">
+    </AdapterToolsDeployment>
+    
+    <SandboxToolsDeployment
+      Include="ExternalBinaries\SemWeb\rdfstorage.exe;
+               ExternalBinaries\SemWeb\SemWeb.dll;
+               ExternalBinaries\SemWeb\SemWeb.SQLServerStore.dll;
+               ExternalBinaries\SemWeb\Mono.GetOptions.dll;
+               Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll;
+               Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;
+               Utilities\EncryptCredentials\bin\Debug\EncryptCredentials.exe;
+               Utilities\QMXFGenerator\QMXFGenerator\bin\Debug\QMXFGenerator.exe;
+               Utilities\QMXFGenerator\QMXFGenerator\App_Default.config;
+               Utilities\QMXFGenerator\QMXFGenerator\InformationModel.xls;
+               Utilities\QMXFGenerator\QMXFGenerator\QMXF.xml;
+               Utilities\QMXFGenerator\QMXFGenerator\bin\Debug\Microsoft.Office.Interop.Excel.dll;
+               Utilities\QMXFGenerator\QMXFGenerator\bin\Debug\Microsoft.Vbe.Interop.dll;
+               Utilities\QMXFGenerator\QMXFGenerator\bin\Debug\office.dll;
+               Utilities\QMXFTransforms\*.dtd;
+               Utilities\QMXFTransforms\*.xsd;
+               Utilities\QMXFTransforms\*.xsl;">
+    </SandboxToolsDeployment>    
+  </ItemGroup>
+
+  <ItemGroup>
+    <DeploymentPackage Include="*" Exclude="">
+      <Path>$(iRINGAdapter)</Path>
+      <Options>-r</Options>
+      <ZIPFile>..\iRINGAdapter-121.zip</ZIPFile>
+      <Source>*</Source>
+    </DeploymentPackage>
+    <DeploymentPackage Include="*" Exclude="">
+      <Options>-r</Options>
+      <Path>$(iRINGSandbox)</Path>
+      <ZIPFile>..\iRINGSandbox-121.zip</ZIPFile>
+      <Source>*</Source>
+    </DeploymentPackage>
+    <DeploymentPackage Include="*" Exclude="">
+      <Options>-r</Options>
+      <Path>$(iRINGAdapter)</Path>
+      <ZIPFile>..\iRINGTools-121.zip</ZIPFile>
+      <Source>*</Source>
+    </DeploymentPackage>
+    <DeploymentPackage Include="*" Exclude="">
+      <Options>-r -u</Options>
+      <Path>$(iRINGSandbox)</Path>
+      <ZIPFile>..\iRINGTools-121.zip</ZIPFile>
+      <Source>*</Source>
+    </DeploymentPackage>
+    <DeploymentPackage Include="*" Exclude="">
+      <Options>-r -u</Options>
+      <Path>$(LandingPageDeploymentDir)</Path>
+      <ZIPFile>..\iRINGTools-121.zip</ZIPFile>
+      <Source>*</Source>
+    </DeploymentPackage>
+  </ItemGroup>
+
+  <Target Name="Version">
+    <Message Text="Updating assembly info ..." />
+    
+    <SvnVersion LocalPath="$(MSBuildProjectDirectory)">  
+      <Output TaskParameter="Revision" PropertyName="Revision" />  
+    </SvnVersion>  
+    
+    <FileUpdate  
+      Files="$(AssemblyInfoFile)" 
+      Regex="(\d+)\.(\d+)\.(\d+)(\.(\d+))*" 
+      ReplacementText="$(Major).$(Minor).$(Build).$(Revision)"/>
+  </Target>
+  
+  <Target Name="SvnCleanUp">
+    <Message Text="Performing SVN clean-up ..." />
+    <!--<Exec Command="$(TortoiseSVNCmd) /notempfile /command:cleanup /path:C:\iring-tools /closeonend:1"/>
+    <Message Text="Closing SVN clean-up diaglog ..." />-->
+    <Exec Command="svn cleanup"/>
+  </Target>
+  
+  <Target Name="SvnUpdate">
+    <Message Text="Performing SVN update ..." />
+    <!--<Exec Command="$(TortoiseSVNCmd) /notempfile /command:update /path:C:\iring-tools /closeonend:1"/>-->
+    <Exec Command="svn update"/>
+  </Target>
+  
+  <Target Name="CoreBuild" DependsOnTargets="Version">
+    <Message Text="Performing MSBuild ..." />
+    <MSBuild Projects="$(SolutionFile)" Targets="Build"/>
+  </Target>
+  
+  <Target Name="CleanBuild">
+    <Message Text="Performing MSBuild clean-up ..." />
+    <MSBuild Projects="$(SolutionFile)" Targets="Clean"/>
+  </Target>
+  
+  <Target Name="Test">
+    <Message Text="Cleaning old test results ..." />
+    <Exec Command="RmDir /S /Q TestResults" />   
+    <Message Text="Executing unit tests..." />
+    <Exec Command="$(MSTestCmd) %(UnitTest.TestContainer)" />
+  </Target>
+
+  <Target Name="CreateDeployment">
+    <Message Text="Cleaning up old deployment folders..." />
+    <Exec Command="RmDir /S /Q $(DeploymentDir)" />
+    <MakeDir Directories="$(DeploymentDir)/iRINGAdapter; $(DeploymentDir)/iRINGSandbox"/>
+    <Exec Command="Copy .\ClientAccessPolicy.xml $(iRINGAdapter)\ClientAccessPolicy.xml" />
+    <Exec Command="Copy .\ClientAccessPolicy.xml $(iRINGSandbox)\ClientAccessPolicy.xml" />
+
+    <Message Text="Creating adapter service deployment ..." />
+    <Copy SourceFiles="@(AdapterServiceDeployment)"
+          DestinationFiles="@(AdapterServiceDeployment->'$(AdapterServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(AdapterServiceDeploymentDir)\Web_Default.config $(AdapterServiceDeploymentDir)\Web.config" />
+    <Exec Command="Mkdir $(AdapterServiceDeploymentDir)\Logs" />
+
+    <!--<Message Text="Creating Joseki interface service deployment ..." />
+    <Copy SourceFiles="@(JosekiInterfaceServiceDeployment)"
+          DestinationFiles="@(JosekiInterfaceServiceDeployment->'$(JosekiInterfaceServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(JosekiInterfaceServiceDeploymentDir)\setup.default.conf $(JosekiInterfaceServiceDeploymentDir)\setup.conf" />
+    <Exec Command="Move /Y $(JosekiInterfaceServiceDeploymentDir)\webapps\joseki\WEB-INF\web.default.xml $(JosekiInterfaceServiceDeploymentDir)\webapps\joseki\WEB-INF\web.xml" />-->
+    
+    <Message Text="Creating SemWeb interface service deployment ..." />
+    <Copy SourceFiles="@(SemWebInterfaceServiceDeployment)"
+          DestinationFiles="@(SemWebInterfaceServiceDeployment->'$(SemWebInterfaceServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(SemWebInterfaceServiceDeploymentDir)\Web_Default.config $(SemWebInterfaceServiceDeploymentDir)\Web.config" />
+    <Exec Command="Move /Y $(SemWebInterfaceServiceDeploymentDir)\setup_default.conf $(SemWebInterfaceServiceDeploymentDir)\setup.conf" />
+    
+    <Message Text="Creating mapping editor deployment ..." />
+    <Copy SourceFiles="@(MappingEditorDeployment)"
+          DestinationFiles="@(MappingEditorDeployment->'$(MappingEditorDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(MappingEditorDeploymentDir)\Web_Default.config $(MappingEditorDeploymentDir)\Web.config" />
+
+    <Message Text="Creating reference data editor deployment ..." />
+    <Copy SourceFiles="@(RefDataEditorDeployment)"
+          DestinationFiles="@(RefDataEditorDeployment->'$(RefDataEditorDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(RefDataEditorDeploymentDir)\Web_Default.config $(RefDataEditorDeploymentDir)\Web.config" />
+
+    <Message Text="Creating reference data service deployment ..." />
+    <Copy SourceFiles="@(RefDataServiceDeployment)"
+          DestinationFiles="@(RefDataServiceDeployment->'$(RefDataServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(RefDataServiceDeploymentDir)\Web_Default.config $(RefDataServiceDeploymentDir)\Web.config" />
+    <Exec Command="Move /Y $(RefDataServiceDeploymentDir)\XML\Repositories_Default.xml $(RefDataServiceDeploymentDir)\XML\Repositories.xml" />
+    <Exec Command="Mkdir $(RefDataServiceDeploymentDir)\Logs" />
+
+    <Message Text="Creating Joseki sandbox service deployment ..." />
+    <Copy SourceFiles="@(JosekiSandboxServiceDeployment)"
+          DestinationFiles="@(JosekiSandboxServiceDeployment->'$(JosekiSandboxServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(JosekiSandboxServiceDeploymentDir)\setup.default.conf $(JosekiSandboxServiceDeploymentDir)\setup.conf" />
+    <Exec Command="Move /Y $(JosekiSandboxServiceDeploymentDir)\webapps\joseki\WEB-INF\web.default.xml $(JosekiSandboxServiceDeploymentDir)\webapps\joseki\WEB-INF\web.xml" />
+    
+    <Message Text="Creating SemWeb sandbox service deployment ..." />
+    <Copy SourceFiles="@(SemWebSandboxServiceDeployment)"
+          DestinationFiles="@(SemWebSandboxServiceDeployment->'$(SemWebSandboxServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(SemWebSandboxServiceDeploymentDir)\Web_Default.config $(SemWebSandboxServiceDeploymentDir)\Web.config" />
+    <Exec Command="Move /Y $(SemWebSandboxServiceDeploymentDir)\setup_default.conf $(SemWebSandboxServiceDeploymentDir)\setup.conf" />
+    
+    <Message Text="Creating adapter tools deployment ..." />
+    <Copy SourceFiles="@(AdapterToolsDeployment)"
+          DestinationFiles="@(AdapterToolsDeployment->'$(AdapterToolsDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(AdapterToolsDeploymentDir)\App_Default.config $(AdapterToolsDeploymentDir)\DBDictionaryUtil.exe.config" />
+       
+    <Message Text="Creating sandbox tools deployment ..." />
+    <Copy SourceFiles="@(SandboxToolsDeployment)"
+          DestinationFiles="@(SandboxToolsDeployment->'$(SandboxToolsDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(SandboxToolsDeploymentDir)\App_Default.config $(SandboxToolsDeploymentDir)\QMXFGenerator.exe.config" />
+
+    <Message Text="Creating landing page deployment ..." />
+    <Copy SourceFiles="@(LandingPageDeployment)"
+          DestinationFiles="@(LandingPageDeployment->'$(LandingPageDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+
+  <Target Name="CreatePackages" DependsOnTargets="CreateDeployment">
+    <Exec Command="cd %(DeploymentPackage.Path) &amp;&amp; zip %(DeploymentPackage.Options) %(DeploymentPackage.ZIPFile) %(DeploymentPackage.Source)" />
+  </Target>
+  
+  <Target Name="Build" DependsOnTargets="SvnUpdate; CoreBuild"/>
+  
+  <Target Name="Rebuild" DependsOnTargets="SvnUpdate; CleanBuild; CoreBuild"/>
+  
+  <Target Name="All" DependsOnTargets="Rebuild; Test; CreatePackages"/>
+</Project>
