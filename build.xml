@@ -74,6 +74,9 @@
                $(AdapterServiceDir)\XML\BindingConfiguration.*.xml;
                $(AdapterServiceDir)\XML\DataDictionary.*.xml;
                $(AdapterServiceDir)\XML\Mapping.*.xml;
+               $(AdapterServiceDir)\XML\QXF.*.xml;
+               $(AdapterServiceDir)\XML\RDF.*.xml;
+               $(AdapterServiceDir)\XML\DTO.*.xml;
                $(AdapterServiceDir)\XML\nh-configuration.*.xml;
                $(AdapterServiceDir)\XML\nh-mapping.*.xml;
                $(AdapterServiceDir)\XML\Scopes.xml;
