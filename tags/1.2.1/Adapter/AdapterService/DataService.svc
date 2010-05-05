@@ -1,1 +1,0 @@
-﻿<%@ ServiceHost Language="C#" Debug="true" Service="org.iringtools.adapter.DataService" CodeBehind="~/App_Code/DataService.cs"%>
