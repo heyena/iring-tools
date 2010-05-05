@@ -24,7 +24,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\bin\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -46,10 +46,6 @@
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.ServiceModel.Web, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ExternalBinaries\WCFRESTStarterKit\Microsoft.ServiceModel.Web.dll</HintPath>
     </Reference>
     <Reference Include="Ninject, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -108,14 +104,10 @@
     <Compile Include="App_Code\IDataService.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="App_Code\IService.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="App_Code\IService.cs" />
     <Compile Include="App_Code\Service.cs" />
     <Content Include="DataService.svc" />
     <Content Include="Web.config" />
-    <Content Include="XML\ABC.DatabaseDictionary.xml" />
-    <Content Include="XML\Mapping.12345_000.ABC.xml" />
     <Content Include="XML\Seed.DatabaseDictionary.xml" />
     <Content Include="XML\Seed.Mapping.xml" />
     <Compile Include="Properties\AssemblyInfo.cs" />

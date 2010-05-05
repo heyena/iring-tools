@@ -40,6 +40,7 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
+
 namespace org.iringtools.utility
 {
   public class StringEncoder : StringWriter
@@ -273,20 +274,6 @@ namespace org.iringtools.utility
       }
     }
 
-    public static XElement Transform(XElement xml, string stylesheetUri, XsltArgumentList arguments)
-    {
-      FileStream stream;
-      try
-      {
-        stream = new FileStream(stylesheetUri, FileMode.Open);
-      }
-      catch (Exception exception)
-      {
-        throw new Exception("Error while loading stylesheet " + stylesheetUri + ".", exception);
-      }
-      return Transform(xml, stream, arguments);
-    }
-
     public static string Transform(string xml, string stylesheetUri, XsltArgumentList arguments)
     {
       FileStream stream;
@@ -338,38 +325,6 @@ namespace org.iringtools.utility
         stylesheet.Close();
         reader.Close();
         writer.Close();
-      }
-    }
-
-    private static XElement Transform(XElement sourceXml, Stream stylesheet, XsltArgumentList arguments)
-    {
-      XDocument resultXml = new XDocument();
-      
-      try
-      {
-        XslCompiledTransform xslCompiledTransform = new XslCompiledTransform();
-        XsltSettings xsltSettings = new XsltSettings();
-        xsltSettings.EnableDocumentFunction = true;
-
-        XmlUrlResolver stylesheetResolver = new XmlUrlResolver();
-
-        XmlReader stylesheetReader = XmlReader.Create(stylesheet);
-        xslCompiledTransform.Load(stylesheetReader, xsltSettings, stylesheetResolver);
-        Encoding encoding = xslCompiledTransform.OutputSettings.Encoding;
-
-        using (XmlWriter writer = resultXml.CreateWriter())
-        {
-          xslCompiledTransform.Transform(sourceXml.CreateReader(), arguments, writer);
-        }
-        return resultXml.Element(resultXml.Root.Name);
-      }
-      catch (Exception exception)
-      {
-        throw new Exception("Error while transforming. " + exception);
-      }
-      finally
-      {
-        stylesheet.Close();
       }
     }
 
@@ -520,19 +475,6 @@ namespace org.iringtools.utility
       finally
       {
         if (streamReader != null) streamReader.Close();
-      }
-    }
-
-    public static XElement ReadXml(string path)
-    {
-      try
-      {
-        XDocument document = XDocument.Load(path);
-        return document.Element(document.Root.Name);
-      }
-      catch (Exception exception)
-      {
-        throw new Exception("Error while reading Xml from " + path + ".", exception);
       }
     }
 
@@ -968,24 +910,6 @@ namespace org.iringtools.utility
       if (id == null) id = String.Empty;
 
       return id;
-    }
-
-    public static XElement GetXElement(this XmlNode node)
-    {
-      XDocument xDoc = new XDocument();
-      XmlWriter xmlWriter = xDoc.CreateWriter();
-      node.WriteTo(xmlWriter);
-      return xDoc.Root;
-    }
-
-    public static XmlNode GetXmlNode(this XElement element)
-    {
-      using (XmlReader xmlReader = element.CreateReader())
-      {
-        XmlDocument xmlDoc = new XmlDocument();
-        xmlDoc.Load(xmlReader);
-        return xmlDoc;
-      }
     }
   }
 }

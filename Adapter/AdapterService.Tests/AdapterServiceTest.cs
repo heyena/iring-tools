@@ -25,10 +25,10 @@ namespace AdapterService.Tests
     public void UpdateDatabaseDictionaryTest_ABC()
     {
 
-      string bindingConfigPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.xml";
-      string bindingConfigTestPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.Test.xml";
-      string nhMappingPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\nh-mapping.12345_000.ABC.xml";
-      string nhMappingTestPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\nh-mapping.12345_000.ABC.Test.xml";
+      string bindingConfigPath = @"C:\iring-tools-12x\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.xml";
+      string bindingConfigTestPath = @"C:\iring-tools-12x\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.Test.xml";
+      string nhMappingPath = @"C:\iring-tools-12x\Adapter\AdapterService.Tests\XML\nh-mapping.12345_000.ABC.xml";
+      string nhMappingTestPath = @"C:\iring-tools-12x\Adapter\AdapterService.Tests\XML\nh-mapping.12345_000.ABC.Test.xml";
 
       string dbDictionaryPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\DatabaseDictionary.12345_000.ABC.xml";
 
@@ -44,8 +44,8 @@ namespace AdapterService.Tests
     [TestMethod()]
     public void GenerateTest_ABC()
     {
-      string bindingConfigPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.xml";
-      string bindingConfigTestPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.Test.xml";
+      string bindingConfigPath = @"C:\iring-tools-12x\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.xml";
+      string bindingConfigTestPath = @"C:\iring-tools-12x\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.Test.xml";
 
       AdapterProxy target = new AdapterProxy();
       Response actual = target.Generate("12345_000", "ABC");
@@ -74,29 +74,29 @@ namespace AdapterService.Tests
     public void GetTest_ABC()
     {
       AdapterProxy target = new AdapterProxy();
-      XElement xml = target.Get("12345_000", "ABC", "Lines", "1-AB-L-001");
-      Assert.AreNotEqual(0, xml.Elements().Count());
+      Envelope envelope = target.Get("12345_000", "ABC", "Lines", "1-AB-L-001");
+      Assert.AreNotEqual(0, envelope.Payload.Count);
     }
 
     [TestMethod()]
     public void GetListTest_ABC()
     {
       AdapterProxy target = new AdapterProxy();
-      XElement xml = target.GetList("12345_000", "ABC", "Lines");
-      Assert.AreNotEqual(0, xml.Elements().Count());
+      Envelope envelope = target.GetList("12345_000", "ABC", "Lines");
+      Assert.AreNotEqual(0, envelope.Payload.Count);
     }
 
     [TestMethod()]
     public void ClearStoreTest_ABC()
     {
       AdapterProxy target = new AdapterProxy();
-      Response actual = target.ClearAll("12345_000", "ABC");
-      if ("Valves graph cleared successfully." != actual[0])
+      Response actual = target.ClearStore("12345_000", "ABC");
+      if ("Store cleared successfully." != actual[0])
       {
         throw new AssertFailedException(Utility.SerializeDataContract<Response>(actual));
       }
 
-      Assert.AreEqual("Valves graph cleared successfully.", actual[0].ToString());
+      Assert.AreEqual("Store cleared successfully.", actual[0]);
     }
 
     [TestMethod()]
@@ -155,7 +155,7 @@ namespace AdapterService.Tests
     public void UpdateMapping_ABC()
     {
       AdapterProxy target = new AdapterProxy();
-      Mapping mapping = Utility.Read<Mapping>(@"C:\iring-tools\Adapter\AdapterService.Tests\XML\Mapping.12345_000.ABC.xml", false);
+      Mapping mapping = Utility.Read<Mapping>(@"C:\iring-tools-12x\Adapter\AdapterService.Tests\XML\Mapping.12345_000.ABC.xml", false);
       Response actual = target.UpdateMapping("12345_000", "ABC", mapping);
       bool isError = false;
       for (int i = 0; i < actual.Count; i++)

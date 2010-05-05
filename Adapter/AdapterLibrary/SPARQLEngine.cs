@@ -34,15 +34,15 @@ using Ninject;
 using org.iringtools.library;
 
 
-namespace org.iringtools.adapter.semantic
+namespace org.iringtools.adapter.projection
 {
-  public class SPARQLEngine : ISemanticLayer
+  public class SPARQLEngine : IProjectionEngine
     {
         private WebProxyCredentials _proxyCredentials = null;
         private WebCredentials _targetCredentials = null;
         private string _targetUri = String.Empty;
         private Mapping _mapping = null;
-        private IDTOLayer _dtoService = null;
+        private IDTOService _dtoService = null;
         private bool _trimData;
         
         private string _identifierClassName = string.Empty;
@@ -52,7 +52,7 @@ namespace org.iringtools.adapter.semantic
         private int _instanceCounter = 0;
         
         [Inject]
-        public SPARQLEngine(AdapterSettings settings, IDTOLayer dtoService)
+        public SPARQLEngine(AdapterSettings settings, IDTOService dtoService)
         {
           _mapping = settings.Mapping;
           _proxyCredentials = settings.ProxyCredentials;
@@ -166,7 +166,7 @@ namespace org.iringtools.adapter.semantic
             }
         }
 
-        public List<DataTransferObject> Get(string graphName)
+        public List<DataTransferObject> GetList(string graphName)
         {
           try
           {
@@ -186,112 +186,99 @@ namespace org.iringtools.adapter.semantic
           }
         }
 
-        public Response Post(string graphName, List<DataTransferObject> dtoList)
+        public void Post(DataTransferObject dto)
         {
-          string identifier = String.Empty;
-          Response response = new Response();
-
           try
           {
-            var graphMaps = from map in _mapping.graphMaps
-                            where map.name == graphName
-                            select map;
-
-            foreach (GraphMap graphMap in graphMaps)
+            foreach (GraphMap graphMap in _mapping.graphMaps)
             {
-              foreach (DataTransferObject dto in dtoList)
+              if (graphMap.name == dto.GraphName)
               {
-                graphName = dto.GraphName;
-                identifier = dto.Identifier;
-
-                DateTime b = DateTime.Now;
-
                 RefreshGraphMap(graphMap, dto);
-
-                DateTime e = DateTime.Now;
-                TimeSpan d = e.Subtract(b);
-
-                response.Add(String.Format("Post({0},{1}) Execution Time [{2}:{3}.{4}] Minutes", graphName, identifier, d.Minutes, d.Seconds, d.Milliseconds));
               }
             }
           }
           catch (Exception exception)
           {
-            response.Level = StatusLevel.Error;
-            response.Add("Error in Post[" + graphName + "][" + identifier + "].");
-            response.Add(exception.ToString());
+            throw new Exception(String.Format("Post[{0}][{1}]", dto.GraphName, dto.Identifier), exception);
           }
-
-          return response;
         }
 
-        public Response Delete(string graphName, List<string> identifiers)
+        public void PostList(List<DataTransferObject> dtos)
         {
-          Response response = new Response();
-
           try
           {
-            var graphMaps = from map in _mapping.graphMaps
-                            where map.name == graphName
-                            select map;
-
-            foreach (GraphMap graphMap in graphMaps)
+            foreach (GraphMap graphMap in _mapping.graphMaps)
             {
-              DateTime b = DateTime.Now;
+              foreach (DataTransferObject dto in dtos)
+              {
+                if (graphMap.name == dto.GraphName)
+                {
+                  RefreshGraphMap(graphMap, dto);
+                }
+              }
+            }
+          }
+          catch (Exception exception)
+          {
+            throw new Exception("PostList: " + exception);
+          }
+        }
 
-              foreach (string identifier in identifiers)
+        public void Delete(string graphName, string identifier)
+        {
+          try
+          {
+            foreach (GraphMap graphMap in _mapping.graphMaps)
+            {
+              if (graphMap.name == graphName)
               {
                 RefreshDeleteGraphMap(graphMap, identifier);
               }
-
-              DateTime e = DateTime.Now;
-              TimeSpan d = e.Subtract(b);
-
-              response.Add(String.Format("Delete({0}) Execution Time [{1}:{2}.{3}] Minutes", graphName, d.Minutes, d.Seconds, d.Milliseconds));
             }
           }
           catch (Exception exception)
           {
-            response.Level = StatusLevel.Error;
-            response.Add("Error in Delete[" + graphName + "].");
-            response.Add(exception.ToString());
+            throw new Exception("Delete: " + exception);
           }
-
-          return response;
         }
 
-        public Response Post(string graph)
+        public void DeleteList(string graphName, List<string> identifiers)
         {
-          Response response = new Response();  
-          
-          //Nothing todo here?
-
-          return response;
-        }
-
-        public Response Clear(string graphName)
-        {
-          Response response = new Response();
-
           try
           {
-            DateTime b = DateTime.Now;
-
-            SPARQLClient.PostQueryAsMultipartMessage(_targetUri, "CLEAR", _targetCredentials, _proxyCredentials);
-
-            DateTime e = DateTime.Now;
-            TimeSpan d = e.Subtract(b);
-
-            response.Add(String.Format("Clear() Execution Time [{0}:{1}.{2}] Minutes", d.Minutes, d.Seconds, d.Milliseconds));
+            foreach (GraphMap graphMap in _mapping.graphMaps)
+            {
+              if (graphMap.name == graphName)
+              {
+                foreach (string identifier in identifiers)
+                {
+                  RefreshDeleteGraphMap(graphMap, identifier);
+                }
+              }
+            }
           }
           catch (Exception exception)
           {
-            response.Level = StatusLevel.Error;
-            response.Add("Error in Clear[].");
-            response.Add(exception.ToString());
+            throw new Exception("DeleteList: " + exception);
           }
+        }
 
-          return response;
+        public void PersistGraphToStore(string graphName)
+        {
+            //Nothing todo here?
+        }
+
+        public void DeleteAll()
+        {
+          try
+          {
+            SPARQLClient.PostQueryAsMultipartMessage(_targetUri, "CLEAR", _targetCredentials, _proxyCredentials);
+          }
+          catch (Exception exception)
+          {
+            throw new Exception("DeleteAll: " + exception);
+          }
         }
 
         private void QueryGraphMap(GraphMap graphMap)
@@ -658,7 +645,7 @@ namespace org.iringtools.adapter.semantic
         {
           try
           {
-            identifier = "eg:id__" + identifier;
+            identifier = "eg:" + identifier;
 
             foreach (TemplateMap templateMap in graphMap.templateMaps)
             {
@@ -773,7 +760,7 @@ namespace org.iringtools.adapter.semantic
           {
             string identifier = dto.Identifier;
 
-            identifier = "eg:id__" + identifier;
+            identifier = "eg:" + identifier;
             SPARQLBuilder.RefreshGraphClassName(_targetUri, _targetCredentials, _proxyCredentials, graphMap.classId, identifier);
 
             foreach (TemplateMap templateMap in graphMap.templateMaps)

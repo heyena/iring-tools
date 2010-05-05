@@ -34,7 +34,6 @@ using System.Text;
 using org.ids_adi.qxf;
 using org.iringtools.adapter;
 using org.iringtools.library;
-using System.ServiceModel.Channels;
 using System.Xml.Linq;
 
 namespace org.iringtools.adapter
@@ -43,16 +42,20 @@ namespace org.iringtools.adapter
   public partial interface IService
   {
     [OperationContract]
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/datadictionary")]
+    DataDictionary GetDictionary(string projectName, string applicationName);
+
+    [OperationContract]
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/datadictionary/refresh")]
+    Response RefreshDictionary(string projectName, string applicationName);
+
+    [OperationContract]
     [WebGet(UriTemplate = "/scopes")]
     List<ScopeProject> GetScopes();
 
     [OperationContract]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/manifest")]
     Manifest GetManifest(string projectName, string applicationName);
-
-    [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/datadictionary")]
-    DataDictionary GetDictionary(string projectName, string applicationName);
 
     [XmlSerializerFormat]
     [OperationContract]
@@ -73,39 +76,47 @@ namespace org.iringtools.adapter
     Response Delete(string projectName, string applicationName);
 
     [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}?format={format}")]
-    XElement Get(string projectName, string applicationName, string graphName, string identifier, string format);
-
-    [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}")]
-    XElement GetList(string projectName, string applicationName, string graphName, string format);
-
-    [OperationContract]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/clear")]
-    Response ClearAll(string projectName, string applicationName);
-
-    [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/clear")]
-    Response ClearGraph(string projectName, string applicationName, string graphName);
-
-    [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/refresh")]
-    Response RefreshAll(string projectName, string applicationName);
+    Response ClearStore(string projectName, string applicationName);
 
     [OperationContract]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/refresh")]
     Response RefreshGraph(string projectName, string applicationName, string graphName);
 
     [OperationContract]
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/refresh")]
+    Response RefreshAll(string projectName, string applicationName);
+
+    [OperationContract]
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/refresh/rdf")]
+    Response RefreshAllRDF(string projectName, string applicationName);
+
+    [OperationContract]
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/refresh/rdf")]
+    Response CreateGraphRDF(string projectName, string applicationName, string graphName);
+
+    [OperationContract]
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/pull")]
     Response Pull(string projectName, string applicationName, Request request);
 
     [OperationContract]
-    [WebGet(UriTemplate = "/version")]
-    string GetVersion();
-
+    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/pullDTO")]
+    Response PullDTO(string projectName, string applicationName, Request request);
+    
     [OperationContract]
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/dbdictionary")]
     Response UpdateDatabaseDictionary(DatabaseDictionary databaseDictionary, string projectName, string applicationName);
-  }
+
+    [OperationContract]
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/rdf")]
+    XElement GetListRDF(string projectName, string applicationName, string graphName);
+
+    [OperationContract]
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}/rdf")]
+    XElement GetRDF(string projectName, string applicationName, string graphName, string identifier);
+
+    [OperationContract]
+    [WebGet(UriTemplate = "/version")]
+    string GetVersion();
+  } 
 }

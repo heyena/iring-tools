@@ -53,9 +53,6 @@
     <Compile Include="..\Desktop\DataDictionary.cs">
       <Link>DataDictionary.cs</Link>
     </Compile>
-    <Compile Include="..\Desktop\DataFilter.cs">
-      <Link>DataFilter.cs</Link>
-    </Compile>
     <Compile Include="..\Desktop\IAdapter.cs">
       <Link>IAdapter.cs</Link>
     </Compile>
@@ -90,7 +87,7 @@
       <Link>SPARQLResults.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\..\..\AssemblyInfo.cs" />
+    <Compile Include="..\..\..\AssemblyInfo.cs" />  
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\UtilityLibrary\Silverlight\UtilityLibrary.Silverlight.csproj">

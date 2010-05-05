@@ -29,12 +29,6 @@ using System.IO;
 using org.iringtools.library;
 using System.Collections.Generic;
 using log4net;
-using System.ServiceModel.Channels;
-using System;
-using System.ServiceModel;
-using System.Net;
-using System.Xml.Linq;
-using System.Reflection;
 
 namespace org.iringtools.adapter
 {
@@ -49,11 +43,6 @@ namespace org.iringtools.adapter
     public AdapterService()
     {
       _adapterServiceProvider = new AdapterProvider(ConfigurationManager.AppSettings);
-    }
-
-    public Manifest GetManifest(string projectName, string applicationName)
-    {
-      return _adapterServiceProvider.GetManifest(projectName, applicationName);
     }
 
     /// <summary>
@@ -82,15 +71,6 @@ namespace org.iringtools.adapter
     {
       _logger.Info("GetDictionary of \"" + projectName + "-" + applicationName + "\"");
       return _adapterServiceProvider.GetDictionary(projectName, applicationName);
-    }
-
-    /// <summary>
-    /// Gets the VersionInfo from the AssembyInfo
-    /// </summary>
-    /// <returns>Returns Data Dictionary object.</returns>
-    public string GetVersion()
-    {
-      return _adapterServiceProvider.GetType().Assembly.GetName().Version.ToString();
     }
 
     /// <summary>
@@ -132,30 +112,6 @@ namespace org.iringtools.adapter
     }
 
     /// <summary>
-    /// Calls adapter service provider to create RDF for a graph
-    /// </summary>
-    /// <param name="projectName"></param>
-    /// <param name="applicationName"></param>
-    /// <param name="graphName"></param>
-    /// <returns>success/failed</returns>
-    public XElement Get(string projectName, string applicationName, string graphName, string identifier, string format)
-    {
-      return _adapterServiceProvider.Get(projectName, applicationName, graphName, identifier, format);
-    }
-
-    /// <summary>
-    /// Calls adapter service provider to create RDF for a graph
-    /// </summary>
-    /// <param name="projectName"></param>
-    /// <param name="applicationName"></param>
-    /// <param name="graphName"></param>
-    /// <returns>success/failed</returns>
-    public XElement GetList(string projectName, string applicationName, string graphName, string format)
-    {
-        return _adapterServiceProvider.GetList(projectName, applicationName, graphName, format);
-    }
-
-    /// <summary>
     /// Pulls the data from a triple store into the database.
     /// </summary>
     /// <param name="request">The request parameter containing targetUri, targetCredentials, graphName, filter will be passed.</param>
@@ -177,7 +133,7 @@ namespace org.iringtools.adapter
     }
 
     /// <summary>
-    /// Generates DTO Layer for an application
+    /// Generated the IAdapterService (partial) IDataService and ModelDTO using T4.
     /// </summary>
     /// <returns>Returns the response as success/failure.</returns>
     public Response Generate(string projectName, string applicationName)
@@ -186,32 +142,12 @@ namespace org.iringtools.adapter
     }
 
     /// <summary>
-    /// Deletes an application
-    /// </summary>
-    /// <param name="projectName"></param>
-    /// <param name="applicationName"></param>
-    /// <returns>Returns the response as success/failure.</returns>
-    public Response Delete(string projectName, string applicationName)
-    {
-      return _adapterServiceProvider.Delete(projectName, applicationName);
-    }
-
-    /// <summary>
     /// Clears the triple store.
     /// </summary>
     /// <returns>Returns the response as success/failure.</returns>
-    public Response ClearAll(string projectName, string applicationName)
+    public Response ClearStore(string projectName, string applicationName)
     {
-      return _adapterServiceProvider.ClearAll(projectName, applicationName);
-    }
-
-    /// <summary>
-    /// Clears a triple store graph.
-    /// </summary>
-    /// <returns>Returns the response as success/failure.</returns>
-    public Response ClearGraph(string projectName, string applicationName, string graphName)
-    {
-      return _adapterServiceProvider.ClearGraph(projectName, applicationName, graphName);
+      return _adapterServiceProvider.ClearStore(projectName, applicationName);
     }
 
     /// <summary>
@@ -221,6 +157,27 @@ namespace org.iringtools.adapter
     public Response UpdateDatabaseDictionary(DatabaseDictionary dbDictionary, string projectName, string applicationName)
     {
       return _adapterServiceProvider.UpdateDatabaseDictionary(dbDictionary, projectName, applicationName);
+    }
+
+    /// <summary>
+    /// Gets the data for a graphname and identifier in a QXF format.
+    /// </summary>
+    /// <param name="graphName">The name of graph for which data is to be fetched.</param>
+    /// <param name="identifier">The unique identifier used as filter to return single row's data.</param>
+    /// <returns>Returns the data in QXF format.</returns>
+    public Envelope Get(string projectName, string applicationName, string graphName, string identifier)
+    {
+      return _adapterServiceProvider.Get(projectName, applicationName, graphName, identifier);
+    }
+
+    /// <summary>
+    /// Gets all the data for the graphname.
+    /// </summary>
+    /// <param name="graphName">The name of graph for which data is to be fetched.</param>
+    /// <returns>Returns the data in QXF format.</returns>
+    public Envelope GetList(string projectName, string applicationName, string graphName)
+    {
+      return _adapterServiceProvider.GetList(projectName, applicationName, graphName);
     }
   }
 }

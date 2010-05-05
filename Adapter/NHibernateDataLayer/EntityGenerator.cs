@@ -60,7 +60,7 @@ namespace org.iringtools.adapter.datalayer
     private ILog _logger = null;
 
     private string _namespace = String.Empty;
-
+    
     public EntityGenerator(AdapterSettings settings)
     {
       _settings = settings;
@@ -104,7 +104,6 @@ namespace org.iringtools.adapter.datalayer
           _entityWriter.WriteLine("using System;");
           _entityWriter.WriteLine("using System.Collections.Generic;");
           _entityWriter.WriteLine("using Iesi.Collections.Generic;");
-          _entityWriter.WriteLine("using org.iringtools.library;");
           _entityWriter.WriteLine();
           _entityWriter.WriteLine("namespace {0}", _namespace);
           _entityWriter.Write("{"); // begin namespace block
@@ -217,7 +216,6 @@ namespace org.iringtools.adapter.datalayer
           parameters.GenerateExecutable = false;
           parameters.ReferencedAssemblies.Add("System.dll");
           parameters.ReferencedAssemblies.Add(_settings.BinaryPath + "Iesi.Collections.dll");
-          parameters.ReferencedAssemblies.Add(_settings.BinaryPath + "iRINGLibrary.dll");
           NHIBERNATE_ASSEMBLIES.ForEach(assembly => parameters.ReferencedAssemblies.Add(_settings.BinaryPath + assembly));
 
           Utility.Compile(compilerOptions, parameters, new string[] { entitiesSourceCode });
@@ -312,10 +310,10 @@ namespace org.iringtools.adapter.datalayer
         foreach (Key key in table.keys)
         {
           // for backward compatibility
-          bool isKeyNullable = (key.isNullable == null || key.isNullable == true);
+          bool isKeyNullable = (key.isNullable == null || key.isNullable == true);          
           string dataType = (key.columnType != ColumnType.String && isKeyNullable) ? (key.columnType.ToString() + "?") : (key.columnType.ToString());
           string keyName = String.IsNullOrEmpty(key.propertyName) ? key.columnName : key.propertyName;
-
+          
           _entityWriter.WriteLine("public {0} {1} {{ get; set; }}", dataType, keyName);
 
           _mappingWriter.WriteStartElement("key-property");
@@ -403,7 +401,7 @@ namespace org.iringtools.adapter.datalayer
       #endregion Create composite key
 
       _entityWriter.WriteLine();
-      _entityWriter.WriteLine("public class {0} : IDataObject", entityName);
+      _entityWriter.WriteLine("public class {0}", entityName);
       _entityWriter.WriteLine("{"); // begin class block
       _entityWriter.Indent++;
 
@@ -489,7 +487,7 @@ namespace org.iringtools.adapter.datalayer
               if (table.keys[0].keyType == KeyType.foreign)
               {
                 // for backward compatibility
-                bool isKeyNullable = (table.keys[0].isNullable == null || table.keys[0].isNullable == true);
+                bool isKeyNullable = (table.keys[0].isNullable == null || table.keys[0].isNullable == true);          
                 string dataType = (table.keys[0].columnType != ColumnType.String && isKeyNullable) ? (table.keys[0].columnType.ToString() + "?") : (table.keys[0].columnType.ToString());
 
                 _entityWriter.WriteLine("public virtual {0} Id {{ get; set; }}", dataType);
@@ -573,7 +571,7 @@ namespace org.iringtools.adapter.datalayer
           bool isColumnNullable = (column.isNullable == null || column.isNullable == true);
           string dataType = (column.columnType != ColumnType.String && isColumnNullable) ? (column.columnType.ToString() + "?") : (column.columnType.ToString());
           string propertyName = String.IsNullOrEmpty(column.propertyName) ? column.columnName : column.propertyName;
-
+          
           _entityWriter.WriteLine("public virtual {0} {1} {{ get; set; }}", dataType, propertyName);
 
           _mappingWriter.WriteStartElement("property");
@@ -581,96 +579,12 @@ namespace org.iringtools.adapter.datalayer
           _mappingWriter.WriteAttributeString("column", column.columnName);
           _mappingWriter.WriteEndElement(); // end property element
         }
-
-        // implements GetPropertyValue from IDataObject
-        _entityWriter.WriteLine("public virtual object GetPropertyValue(string propertyName)");
-        _entityWriter.WriteLine("{");
-        _entityWriter.Indent++; _entityWriter.WriteLine("switch (propertyName)");
-        _entityWriter.WriteLine("{");
-        _entityWriter.Indent++;
-
-        _entityWriter.WriteLine("case \"Id\": return Id;");
-
-        foreach (Key key in table.keys)
-        {
-          _entityWriter.WriteLine("case \"{0}\": return {0};", key.propertyName);
-        }
-
-        foreach (Column column in table.columns)
-        {
-          _entityWriter.WriteLine("case \"{0}\": return {0};", column.propertyName);
-        }
-
-        _entityWriter.WriteLine("default: throw new Exception(\"Property [\" + propertyName + \"] does not exist.\");");
-        _entityWriter.Indent--;
-        _entityWriter.WriteLine("}");
-        _entityWriter.Indent--;
-        _entityWriter.WriteLine("}");
-
-
-        // implements SetPropertyValue from IDataObject
-        _entityWriter.WriteLine("public virtual void SetPropertyValue(string propertyName, object value)");
-        _entityWriter.WriteLine("{");
-        _entityWriter.Indent++;
-        _entityWriter.WriteLine("switch (propertyName)");
-        _entityWriter.Write("{");
-        _entityWriter.Indent++;
-
-        _entityWriter.WriteLine(@"
-        case ""Id"":
-          Id = Convert.ToString(value);
-          if (Id == String.Empty) throw new Exception(""Id can not be null or empty."");
-          break;");
-
-        foreach (Key key in table.keys)
-        {
-          _entityWriter.WriteLine("case \"{0}\":", key.propertyName);
-          _entityWriter.Indent++;
-
-          bool isColumnNullable = (key.isNullable == null || key.columnType == ColumnType.String || key.isNullable == true);
-          if (isColumnNullable)
-          {
-            _entityWriter.WriteLine("if (value != null) {0} = Convert.To{1}(value);", key.propertyName, key.columnType);
-          }
-          else
-          {
-            _entityWriter.WriteLine("{0} = (value != null) ? Convert.To{1}(value) : default({1});", key.propertyName, key.columnType);
-          }
-          _entityWriter.WriteLine("break;");
-          _entityWriter.Indent--;
-        }
-
-        foreach (Column column in table.columns)
-        {
-          _entityWriter.WriteLine("case \"{0}\":", column.propertyName);
-          _entityWriter.Indent++;
-
-          bool isColumnNullable = (column.isNullable == null || column.columnType == ColumnType.String || column.isNullable == true);
-          if (isColumnNullable)
-          {
-            _entityWriter.WriteLine("if (value != null) {0} = Convert.To{1}(value);", column.propertyName, column.columnType);
-          }
-          else
-          {
-            _entityWriter.WriteLine("{0} = (value != null) ? Convert.To{1}(value) : default({1});", column.propertyName, column.columnType);
-          }
-          _entityWriter.WriteLine("break;");
-          _entityWriter.Indent--;
-        }
-
-        _entityWriter.WriteLine("default:");
-        _entityWriter.Indent++;
-        _entityWriter.WriteLine("throw new Exception(\"Property [\" + propertyName + \"] does not exist.\");");
-        _entityWriter.Indent--;
-        _entityWriter.WriteLine("}");
-        _entityWriter.Indent--;
-        _entityWriter.WriteLine("}");
+      }
       #endregion Process columns
 
-        _entityWriter.Indent--;
-        _entityWriter.WriteLine("}"); // end class block
-        _mappingWriter.WriteEndElement(); // end class element
-      }
+      _entityWriter.Indent--;
+      _entityWriter.WriteLine("}"); // end class block
+      _mappingWriter.WriteEndElement(); // end class element
     }
 
     private string CreateConfiguration(Provider provider, string connectionString)

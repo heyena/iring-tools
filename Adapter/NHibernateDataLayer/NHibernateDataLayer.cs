@@ -12,7 +12,6 @@ using org.iringtools.adapter;
 using System.Text;
 using Ninject;
 using log4net;
-using System.Reflection;
 
 namespace org.iringtools.adapter.datalayer
 {
@@ -23,16 +22,21 @@ namespace org.iringtools.adapter.datalayer
     private ApplicationSettings _appSettings = null;
     private string _dataDictionaryPath = String.Empty;
     private ISessionFactory factory;
+    private EntityGenerator _generator = null;
+
+    #region Constants
+    #endregion
 
     [Inject]
-    public NHibernateDataLayer(AdapterSettings settings, ApplicationSettings appSettings) //, EntityGenerator generator)
+    public NHibernateDataLayer(AdapterSettings settings, ApplicationSettings appSettings, EntityGenerator generator) 
     {
       _dataDictionaryPath = settings.XmlPath + "DataDictionary." + appSettings.ProjectName + "." + appSettings.ApplicationName + ".xml";
       _settings = settings;
+      _generator = generator;
       _appSettings = appSettings;
     }
 
-    private ISession OpenSession()
+    private ISession OpenSession<T>()
     {
       try
       {
@@ -46,239 +50,154 @@ namespace org.iringtools.adapter.datalayer
 
         return factory.OpenSession();
       }
-      catch (Exception ex)
+      catch (Exception exception)
       {
-        _logger.Error("Error in OpenSession: project \"" + _appSettings.ProjectName + "\" application \"" + _appSettings.ApplicationName + "\"" + ex);
-        throw new Exception("Error while openning nhibernate session " + ex);
+        _logger.Error("Error in OpenSession: project \"" + _appSettings.ProjectName + "\" application \"" + _appSettings.ApplicationName + "\"" + exception);
+        throw new Exception("Error while openning session " + exception);
       }
     }
 
-    public IList<IDataObject> Create(string objectType, IList<string> identifiers)
+    public T Get<T>(Dictionary<string, object> queryProperties)
     {
       try
       {
-        IList<IDataObject> dataObjects = new List<IDataObject>();
-        Type type = Type.GetType(objectType);
-
-        if (identifiers != null && identifiers.Count > 0)
+        StringBuilder queryString = new StringBuilder();
+        using (ISession session = OpenSession<T>())
         {
-          foreach (string identifier in identifiers)
+          queryString.Append(" from " + typeof(T).Name + " as " + typeof(T).Name);
+          if (queryProperties != null && queryProperties.Count > 0)
           {
-            IDataObject dataObject = (IDataObject)Activator.CreateInstance(type);
-
-            if (!String.IsNullOrEmpty(identifier))
+            queryString.Append(" where ");
+            foreach (KeyValuePair<string, object> keyValuePair in queryProperties)
             {
-              dataObject.SetPropertyValue("Id", identifier);
+              queryString.Append(typeof(T).Name + "." + keyValuePair.Key + "='" + keyValuePair.Value + "'");
+              queryString.Append(" and ");
             }
-
-            dataObjects.Add(dataObject);
-          }
-        }
-
-        return dataObjects;
-      }
-      catch (Exception ex)
-      {
-        _logger.Error("Error in CreateList: " + ex);
-        throw new Exception("Error while creating a list of data objects of type [" + objectType + "].", ex);
-      }
-    }
-
-    public IList<string> GetIdentifiers(string objectType, DataFilter filter)
-    {
-      try
-      {
-        StringBuilder queryString = new StringBuilder();
-        queryString.Append("select Id from " + objectType);
-
-        if (filter != null && filter.Expressions.Count > 0)
-        {
-          string whereClause = filter.ToSqlWhereClause(objectType, null);
-          queryString.Append(whereClause);
-        }
-
-        using (ISession session = OpenSession())
-        {
-          IQuery query = session.CreateQuery(queryString.ToString());
-          return query.List<string>();
-        }
-      }
-      catch (Exception ex)
-      {
-        _logger.Error("Error in GetIdentifiers: " + ex);
-        throw new Exception("Error while getting a list of identifiers of type [" + objectType + "].", ex);
-      }
-    }
-
-    public IList<IDataObject> Get(string objectType, IList<string> identifiers)
-    {
-      try
-      {
-        StringBuilder queryString = new StringBuilder();
-        queryString.Append("from " + objectType);
-
-        if (identifiers != null && identifiers.Count > 0)
-        {
-          queryString.Append(" where Id in ('" + String.Join("','", identifiers.ToArray())+ "')");
-        }
-
-        using (ISession session = OpenSession())
-        {
-          IQuery query = session.CreateQuery(queryString.ToString());
-          return query.List<IDataObject>();
-        }
-      }
-      catch (Exception ex)
-      {
-        _logger.Error("Error in Get: " + ex);
-        throw new Exception("Error while getting a list of data objects of type [" + objectType + "].", ex);
-      }
-    }
-
-    public IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int pageNumber)
-    {
-      try
-      {
-        StringBuilder queryString = new StringBuilder();
-        queryString.Append("from " + objectType);
-
-        if (filter != null && filter.Expressions.Count > 0)
-        {
-          string whereClause = filter.ToSqlWhereClause(objectType, null);
-          queryString.Append(whereClause);
-        }
-
-        using (ISession session = OpenSession())
-        {
-          IQuery query = session.CreateQuery(queryString.ToString());
-          IList<IDataObject> dataObjects = query.List<IDataObject>();
-
-          if (pageSize > 0 && pageNumber > 0)
-          {
-            if (dataObjects.Count > (pageSize * (pageNumber - 1) + pageSize))
-            {
-              dataObjects = dataObjects.ToList().GetRange(pageSize * (pageNumber - 1), pageSize);
-            }
-            else if (pageSize * (pageNumber - 1) > dataObjects.Count)
-            {
-              dataObjects = dataObjects.ToList().GetRange(pageSize * (pageNumber - 1), dataObjects.Count);
-            }
-            else
-            {
-              return null;
-            }
+            queryString.Replace(" and ", "", queryString.Length - 5, 5);
           }
 
-          return dataObjects;
+          IQuery query = session.CreateQuery(queryString.ToString());
+          return query.List<T>().FirstOrDefault<T>();
         }
       }
-      catch (Exception ex)
+      catch (Exception exception)
       {
-        _logger.Error("Error in Get: " + ex);
-        throw new Exception("Error while getting a list of data objects of type [" + objectType + "].", ex);
+        _logger.Error("Error in Get<T>: " + exception);
+        throw new Exception("Error while getting data of type " + typeof(T).Name + ".", exception);
       }
     }
 
-    public Response Post(IList<IDataObject> dataObjects)
+    public IList<T> GetList<T>()
     {
-      Response response = new Response();
+      return GetList<T>(null);
+    }
 
+    public IList<T> GetList<T>(Dictionary<string, object> queryProperties)
+    {
       try
       {
-        if (dataObjects != null && dataObjects.Count > 0)
+        StringBuilder queryString = new StringBuilder();
+        using (ISession session = OpenSession<T>())
         {
-          using (ISession session = OpenSession())
+          queryString.Append(" from " + typeof(T).Name + " as " + typeof(T).Name);
+          if (queryProperties != null && queryProperties.Count > 0)
           {
-            foreach (IDataObject dataObject in dataObjects)
+            queryString.Append(" where ");
+            foreach (KeyValuePair<string, object> keyValuePair in queryProperties)
             {
-              try
-              {
-                session.SaveOrUpdate(dataObject);
-                session.Flush();
-                response.Add("Record [" + dataObject.GetPropertyValue("Id") + "] have been saved successfully");
-              }
-              catch (Exception ex)
-              {
-                response.Add("Error while posting record [" + dataObject.GetPropertyValue("Id") + "]." + ex);
-              }
+              queryString.Append(typeof(T).Name + "." + keyValuePair.Key + "='" + keyValuePair.Value + "'");
+              queryString.Append(" and ");
             }
+            queryString.Replace(" and ", "", queryString.Length - 5, 5);
+          }
+          IQuery query = session.CreateQuery(queryString.ToString());
+          return query.List<T>();
+        }
+      }
+      catch (Exception exception)
+      {
+        _logger.Error("Error in GetList<T>: " + exception);
+        throw new Exception("Error while getting data of type " + typeof(T).Name + ".", exception);
+      }
+    }
+
+    public Response Post<T>(T graph)
+    {
+      Response response;
+      try
+      {
+        response = new Response();
+        using (ISession session = OpenSession<T>())
+        {
+          using (ITransaction transaction = session.BeginTransaction())
+          {             
+            session.SaveOrUpdate(graph);
+            transaction.Commit();
+            response.Add("Records (" + typeof(T).Name + ") have been updated succesfully");         
           }
         }
-
         return response;
       }
-      catch (Exception ex)
+      catch (Exception exception)
       {
-        _logger.Error("Error in Post: " + ex);
-
-        object sample = dataObjects.FirstOrDefault();
-        string objectType = (sample != null) ? sample.GetType().Name : String.Empty;
-        throw new Exception("Error while posting data objects of type [" + objectType + "].", ex);
+        _logger.Error("Error in Post<T>: " + exception);
+        throw new Exception("Error while posting data of type " + typeof(T).Name + ".", exception);
       }
     }
 
-    public Response Delete(string objectType, IList<string> identifiers)
+    public Response PostList<T>(List<T> graphList)
     {
-      Response response = new Response();
-
+      Response response;
       try
       {
-        StringBuilder queryString = new StringBuilder();
-        queryString.Append("from " + objectType);
-
-        if (identifiers != null && identifiers.Count > 0)
+        response = new Response();
+        foreach (T graph in graphList)
         {
-          queryString.Append(" where Id in " + String.Join(",", identifiers.ToArray()));
+          Response responseGraph = Post<T>(graph);
+          response.Append(responseGraph);
         }
-
-        using (ISession session = OpenSession())
-        {
-          session.Delete(queryString.ToString());
-          response.Add("Records of type [" + objectType + "] has been deleted succesfully.");
-        }
-
         return response;
       }
-      catch (Exception ex)
+      catch (Exception exception)
       {
-        _logger.Error("Error in Delete: " + ex);
-        throw new Exception("Error while deleting data objects of type [" + objectType + "].", ex);
+        _logger.Error("Error in PostList<T>: " + exception);
+        throw new Exception("Error while posting data of type " + typeof(T).Name + ".", exception);
       }
     }
 
-    public Response Delete(string objectType, DataFilter filter)
+    public Response Delete<T>(T graph)
     {
-      Response response = new Response();
-
+      Response response;
       try
       {
-        StringBuilder queryString = new StringBuilder();
-        queryString.Append("from " + objectType);
-
-        if (filter.Expressions.Count > 0)
+        response = new Response();
+        using (ISession session = OpenSession<T>())
         {
-          string whereClause = filter.ToSqlWhereClause(objectType, null);
-          queryString.Append(whereClause);
-        }
+          using (ITransaction transaction = session.BeginTransaction())
+          {
+            session.Delete(graph);
+            transaction.Commit();
+          }
+          response.Add("Records (" + typeof(T).Name + ") have been deleted succesfully");
 
-        using (ISession session = OpenSession())
-        {
-          session.Delete(queryString.ToString());
-          response.Add("Records of type [" + objectType + "] has been deleted succesfully.");
         }
-
         return response;
       }
-      catch (Exception ex)
+      catch (Exception exception)
       {
-        _logger.Error("Error in Delete: " + ex);
-        throw new Exception("Error while deleting data objects of type [" + objectType + "].", ex);
+        _logger.Error("Error in Delete<T>: " + exception);
+        throw new Exception("Error while deleting data of type " + typeof(T).Name + ".", exception);
       }
     }
 
     public DataDictionary GetDictionary()
     {
       return Utility.Read<DataDictionary>(_dataDictionaryPath);
+    }
+
+    public Response RefreshDictionary()
+    {
+      throw new NotImplementedException();
     }
   }
 }

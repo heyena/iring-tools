@@ -9,7 +9,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Configuration;
 using System.IO;
 using System.Collections.Generic;
-using System.Xml.Linq;
 
 namespace AdapterService.Tests
 {
@@ -109,26 +108,12 @@ namespace AdapterService.Tests
       return response;
     }
 
-    public XElement Get(string projectName, string applicationName, string graphName, string identifier)
+    public Envelope Get(string projectName, string applicationName, string graphName, string identifier)
     {
-      XElement xml = null;
+      Envelope envelope = null;
       try
       {
-        xml = _adapterServiceProvider.Get(projectName, applicationName, graphName, identifier, null);
-      }
-      catch (Exception ex)
-      {
-        Error.SetError(ex);
-      }
-      return xml;
-    }
-
-    public XElement GetList(string projectName, string applicationName, string graphName)
-    {
-      XElement envelope = null;
-      try
-      {
-        envelope = _adapterServiceProvider.GetList(projectName, applicationName, graphName, null);
+        envelope = _adapterServiceProvider.Get(projectName, applicationName, graphName, identifier);
       }
       catch (Exception ex)
       {
@@ -137,12 +122,26 @@ namespace AdapterService.Tests
       return envelope;
     }
 
-    public Response ClearAll(string projectName, string applicationName)
+    public Envelope GetList(string projectName, string applicationName, string graphName)
+    {
+      Envelope envelope = null;
+      try
+      {
+        envelope = _adapterServiceProvider.GetList(projectName, applicationName, graphName);
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
+      return envelope;
+    }
+
+    public Response ClearStore(string projectName, string applicationName)
     {
       Response response = null;
       try
       {
-        response = _adapterServiceProvider.ClearAll(projectName, applicationName);
+        response = _adapterServiceProvider.ClearStore(projectName, applicationName);
       }
       catch (Exception ex)
       {

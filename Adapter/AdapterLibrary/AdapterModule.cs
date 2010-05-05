@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Ninject.Modules;
 using org.iringtools.adapter.rules;
-using org.iringtools.adapter.semantic;
+using org.iringtools.adapter.projection;
 using org.iringtools.library;
 
 namespace org.iringtools.adapter
@@ -15,7 +15,8 @@ namespace org.iringtools.adapter
     {
       Bind<AdapterSettings>().ToSelf().InSingletonScope();
       Bind<ApplicationSettings>().ToSelf().InThreadScope();
-      Bind<ITransformationLayer>().To<RDFTransform>().Named("rdf");
+      Bind<IProjectionEngine>().To<SemWebEngine>().InThreadScope().Named("SemWeb");
+      Bind<IProjectionEngine>().To<SPARQLEngine>().InThreadScope().Named("Sparql");
     }
   }
 }

@@ -8,10 +8,9 @@
 
   <xsl:param name="dtoFilePath"/>
   <xsl:param name="graphName"/>
-  <!-- <xsl:variable name="dtoFilePath" select="'C:\iring\Adapter\AdapterService\XML\DTO.12345_000.PSPID.Lines.xml'"/>
+  <!--<xsl:variable name="dtoFilePath" select="'C:\iring\Adapter\AdapterService\XML\DTO.12345_000.PSPID.Lines.xml'"/>
   <xsl:variable name="graphName" select="'Lines'"/>-->
-  <xsl:variable name="lowercase" select="'abcdefghijklmnopqrstuvwxyz'" />
-  <xsl:variable name="uppercase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'" />
+  
   <xsl:variable name="dtoList" select="document($dtoFilePath)/*/*"/>
   <xsl:variable name="xsd" select="'http://www.w3.org/2001/XMLSchema#'"/>
   <xsl:variable name="rdl" select="'http://rdl.rdlfacade.org/data#'"/>
@@ -172,14 +171,14 @@
               </xsl:attribute>
               <xsl:choose>
                 <xsl:when test="$valueList!=''">
-                  <xsl:variable name="value" select="translate(@value,$lowercase, $uppercase)"/>
+                  <xsl:variable name="value" select="@value"/>
                   <xsl:variable name="valueMaps" select="$valueMapsNode/ValueMap[@valueList=$valueList]"/>
                   <xsl:variable name="valueMap" select="$valueMaps[@internalValue=$value]"/>
                   <xsl:variable name="modelURI" select="$valueMap/@modelURI"/>
                   <xsl:attribute name="as">
                     <xsl:value-of select="concat($rdl, substring-after($modelURI, 'rdl:'))"/>
                   </xsl:attribute>
-                  <xsl:value-of select="@value"/>
+                  <xsl:value-of select="$value"/>
                 </xsl:when>
                 <xsl:otherwise>
                   <xsl:attribute name="as">
