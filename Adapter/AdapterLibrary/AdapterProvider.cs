@@ -659,7 +659,7 @@ namespace org.iringtools.adapter
     public Response Generate(string projectName, string applicationName)
     {
       Response response = new Response();
-      DTOGenerator2 dtoGenerator = new DTOGenerator2(_settings);
+      DTOGenerator dtoGenerator = new DTOGenerator(_settings);
 
       try
       {
@@ -1207,7 +1207,7 @@ namespace org.iringtools.adapter
         }
         else if (Validate(dbDictionary))
         {
-          EntityGenerator2 generator = _kernel.Get<EntityGenerator2>();
+          EntityGenerator generator = _kernel.Get<EntityGenerator>();
           response = generator.Generate(dbDictionary, projectName, applicationName);
           
           // Update binding configuration

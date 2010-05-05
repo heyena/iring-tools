@@ -33,10 +33,12 @@ namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
     public virtual String system { get; set; }
     public virtual String unit { get; set; }
     public virtual String uomDiameter { get; set; }
-    public object GetPropertyValue(string propertyName)
+    public virtual object GetPropertyValue(string propertyName)
     {
       switch (propertyName)
       {
+        case "Id": return Id;
+        case "tag": return tag;
         case "componentType": return componentType;
         case "diameter": return diameter;
         case "isCloned": return isCloned;
@@ -51,42 +53,49 @@ namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
         default: throw new Exception("Property [" + propertyName + "] does not exist.");
       }
     }
-    public void SetPropertyValue(string propertyName, object value)
+    public virtual void SetPropertyValue(string propertyName, object value)
     {
       switch (propertyName)
       {
+        case "Id":
+          Id = Convert.ToString(value);
+          if (Id == String.Empty) throw new Exception("Id can not be null or empty.");
+          break;
+        case "tag":
+          if (value != null) tag = Convert.ToString(value);
+          break;
         case "componentType":
-          componentType = Convert.ToString(value);
+          if (value != null) componentType = Convert.ToString(value);
           break;
         case "diameter":
-          diameter = Convert.ToSingle(value);
+          if (value != null) diameter = Convert.ToSingle(value);
           break;
         case "isCloned":
-          isCloned = Convert.ToBoolean(value);
+          if (value != null) isCloned = Convert.ToBoolean(value);
           break;
         case "lineTag":
-          lineTag = Convert.ToString(value);
+          if (value != null) lineTag = Convert.ToString(value);
           break;
         case "pid":
-          pid = Convert.ToString(value);
+          if (value != null) pid = Convert.ToString(value);
           break;
         case "projectNumber":
-          projectNumber = Convert.ToString(value);
+          if (value != null) projectNumber = Convert.ToString(value);
           break;
         case "quantity":
-          quantity = Convert.ToInt32(value);
+          if (value != null) quantity = Convert.ToInt32(value);
           break;
         case "rating":
-          rating = Convert.ToString(value);
+          if (value != null) rating = Convert.ToString(value);
           break;
         case "system":
-          system = Convert.ToString(value);
+          if (value != null) system = Convert.ToString(value);
           break;
         case "unit":
-          unit = Convert.ToString(value);
+          if (value != null) unit = Convert.ToString(value);
           break;
         case "uomDiameter":
-          uomDiameter = Convert.ToString(value);
+          if (value != null) uomDiameter = Convert.ToString(value);
           break;
         default:
           throw new Exception("Property [" + propertyName + "] does not exist.");
@@ -103,20 +112,29 @@ namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
         set { Id = value; }
       }
       public virtual String description { get; set; }
-      public object GetPropertyValue(string propertyName)
+      public virtual object GetPropertyValue(string propertyName)
       {
         switch (propertyName)
         {
+          case "Id": return Id;
+          case "tag": return tag;
           case "description": return description;
           default: throw new Exception("Property [" + propertyName + "] does not exist.");
         }
       }
-      public void SetPropertyValue(string propertyName, object value)
+      public virtual void SetPropertyValue(string propertyName, object value)
       {
         switch (propertyName)
         {
+        case "Id":
+          Id = Convert.ToString(value);
+          if (Id == String.Empty) throw new Exception("Id can not be null or empty.");
+          break;
+          case "tag":
+            if (value != null) tag = Convert.ToString(value);
+            break;
           case "description":
-            description = Convert.ToString(value);
+            if (value != null) description = Convert.ToString(value);
             break;
           default:
             throw new Exception("Property [" + propertyName + "] does not exist.");
@@ -135,28 +153,37 @@ namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
         public virtual Single? diameter { get; set; }
         public virtual String system { get; set; }
         public virtual String uomDiameter { get; set; }
-        public object GetPropertyValue(string propertyName)
+        public virtual object GetPropertyValue(string propertyName)
         {
           switch (propertyName)
           {
+            case "Id": return Id;
+            case "tag": return tag;
             case "diameter": return diameter;
             case "system": return system;
             case "uomDiameter": return uomDiameter;
             default: throw new Exception("Property [" + propertyName + "] does not exist.");
           }
         }
-        public void SetPropertyValue(string propertyName, object value)
+        public virtual void SetPropertyValue(string propertyName, object value)
         {
           switch (propertyName)
           {
+        case "Id":
+          Id = Convert.ToString(value);
+          if (Id == String.Empty) throw new Exception("Id can not be null or empty.");
+          break;
+            case "tag":
+              if (value != null) tag = Convert.ToString(value);
+              break;
             case "diameter":
-              diameter = Convert.ToSingle(value);
+              if (value != null) diameter = Convert.ToSingle(value);
               break;
             case "system":
-              system = Convert.ToString(value);
+              if (value != null) system = Convert.ToString(value);
               break;
             case "uomDiameter":
-              uomDiameter = Convert.ToString(value);
+              if (value != null) uomDiameter = Convert.ToString(value);
               break;
             default:
               throw new Exception("Property [" + propertyName + "] does not exist.");
@@ -173,20 +200,29 @@ namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
             set { Id = value; }
           }
           public virtual String description { get; set; }
-          public object GetPropertyValue(string propertyName)
+          public virtual object GetPropertyValue(string propertyName)
           {
             switch (propertyName)
             {
+              case "Id": return Id;
+              case "tag": return tag;
               case "description": return description;
               default: throw new Exception("Property [" + propertyName + "] does not exist.");
             }
           }
-          public void SetPropertyValue(string propertyName, object value)
+          public virtual void SetPropertyValue(string propertyName, object value)
           {
             switch (propertyName)
             {
+        case "Id":
+          Id = Convert.ToString(value);
+          if (Id == String.Empty) throw new Exception("Id can not be null or empty.");
+          break;
+              case "tag":
+                if (value != null) tag = Convert.ToString(value);
+                break;
               case "description":
-                description = Convert.ToString(value);
+                if (value != null) description = Convert.ToString(value);
                 break;
               default:
                 throw new Exception("Property [" + propertyName + "] does not exist.");
