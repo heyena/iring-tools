@@ -33,20 +33,29 @@ using org.w3.sparql_results;
 
 namespace org.iringtools.library
 {
+  public interface IDataObject
+  {
+    object GetPropertyValue(string propertyName);
+
+    void SetPropertyValue(string propertyName, object value);
+  }
+
   public interface IDataLayer
   {
-      T Get<T>(Dictionary<string, object> queryProperties);
+    IList<IDataObject> Create(string objectType, IList<string> identifiers);
 
-      IList<T> GetList<T>(Dictionary<string, object> queryProperties);
+    IList<string> GetIdentifiers(string objectType, DataFilter filter);
 
-      IList<T> GetList<T>();
+    IList<IDataObject> Get(string objectType, IList<string> identifiers);
 
-      Response Post<T>(T graph);
+    IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int pageNumber);
 
-      Response PostList<T>(List<T> graphList);
+    Response Post(IList<IDataObject> dataObjects);
 
-      DataDictionary GetDictionary();
+    Response Delete(string objectType, IList<string> identifiers);
 
-      Response RefreshDictionary();
+    Response Delete(string objectType, DataFilter filter);
+
+    DataDictionary GetDictionary();
   }
 }

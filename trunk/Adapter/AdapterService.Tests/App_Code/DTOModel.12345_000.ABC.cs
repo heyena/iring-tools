@@ -157,20 +157,20 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
       ClassId = classId;
     }
     
-    public Valves(org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent dataObject) : this("http://rdl.rdlfacade.org/data#R97295617945", "Valves", null, dataObject) {}
+    public Valves(IDataObject dataObject) : this("http://rdl.rdlfacade.org/data#R97295617945", "Valves", null, dataObject) {}
     
-    public Valves(string classId, string graphName, string identifier, org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent dataObject) : this(classId, graphName, identifier)
+    public Valves(string classId, string graphName, string identifier, IDataObject dataObject) : this(classId, graphName, identifier)
     {
       if (dataObject != null)
       {
-        tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.tag);
-        tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.system);
-        tpl_ClientFunctionalUnitAssembly_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.unit);
-        tpl_ClassifiedIdentification2_tpl_identifier = Convert.ToString(dataObject.componentType);
-        tpl_NominalDiameter_tpl_value = Convert.ToSingle(dataObject.diameter);
-        tpl_NominalDiameter_tpl_scale = Convert.ToString(dataObject.uomDiameter);
-        tpl_PAndIDRepresentation_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.pid);
-        tpl_ProjectAssembly_tpl_whole_rdl_PROJECT_tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.projectNumber);
+        tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.GetPropertyValue("tag"));
+        tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.GetPropertyValue("system"));
+        tpl_ClientFunctionalUnitAssembly_tpl_whole_rdl_CLIENT_FUNCTIONAL_UNIT_tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.GetPropertyValue("unit"));
+        tpl_ClassifiedIdentification2_tpl_identifier = Convert.ToString(dataObject.GetPropertyValue("componentType"));
+        tpl_NominalDiameter_tpl_value = Convert.ToSingle(dataObject.GetPropertyValue("diameter"));
+        tpl_NominalDiameter_tpl_scale = Convert.ToString(dataObject.GetPropertyValue("uomDiameter"));
+        tpl_PAndIDRepresentation_tpl_representation_rdl_P_AND_I_DIAGRAM_tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.GetPropertyValue("pid"));
+        tpl_ProjectAssembly_tpl_whole_rdl_PROJECT_tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.GetPropertyValue("projectNumber"));
       }
       tpl_ClientSystemAssembly = new TemplateClientSystemAssembly();
       tpl_ClientSystemAssembly.tpl_whole_rdl_CLIENT_SYSTEM = new TemplateClientSystemAssembly.ClassCLIENT_SYSTEM();
@@ -526,16 +526,16 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
       ClassId = classId;
     }
     
-    public Lines(org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line dataObject) : this("http://rdl.rdlfacade.org/data#R19192462550", "Lines", null, dataObject) {}
+    public Lines(IDataObject dataObject) : this("http://rdl.rdlfacade.org/data#R19192462550", "Lines", null, dataObject) {}
     
-    public Lines(string classId, string graphName, string identifier, org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line dataObject) : this(classId, graphName, identifier)
+    public Lines(string classId, string graphName, string identifier, IDataObject dataObject) : this(classId, graphName, identifier)
     {
       if (dataObject != null)
       {
-        tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.tag);
-        tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identifier = Convert.ToString(dataObject.system);
-        tpl_NominalDiameter_tpl_value = Convert.ToSingle(dataObject.diameter);
-        tpl_NominalDiameter_tpl_scale = Convert.ToString(dataObject.uomDiameter);
+        tpl_ClassifiedIdentification_tpl_identifier = Convert.ToString(dataObject.GetPropertyValue("tag"));
+        tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identifier = Convert.ToString(dataObject.GetPropertyValue("system"));
+        tpl_NominalDiameter_tpl_value = Convert.ToSingle(dataObject.GetPropertyValue("diameter"));
+        tpl_NominalDiameter_tpl_scale = Convert.ToString(dataObject.GetPropertyValue("uomDiameter"));
       }
       tpl_ClientSystemAssembly = new TemplateClientSystemAssembly();
       tpl_ClientSystemAssembly.tpl_whole_rdl_CLIENT_SYSTEM = new TemplateClientSystemAssembly.ClassCLIENT_SYSTEM();

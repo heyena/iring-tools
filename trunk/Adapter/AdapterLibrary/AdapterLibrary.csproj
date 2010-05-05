@@ -97,7 +97,6 @@
   <ItemGroup>
     <Compile Include="AdapterModule.cs" />
     <Compile Include="DTOGenerator.cs" />
-    <Compile Include="DTOGenerator2.cs" />
     <Compile Include="IAdapter.cs" />
     <Compile Include="IDataTransferObject.cs" />
     <Compile Include="DataTransferObject.cs" />

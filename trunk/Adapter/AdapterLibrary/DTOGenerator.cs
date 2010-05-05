@@ -58,8 +58,6 @@ namespace org.iringtools.adapter
     private StringBuilder _dtoModelBuilder = null;
     private IndentedTextWriter _dtoModelWriter = null;
     private StringBuilder _dtoServiceBuilder = null;
-    private StringBuilder _serviceBuilder = null;
-    private StringBuilder _dataServiceBuilder = null;
 
     private string _classNamespace = String.Empty;
     private string _xmlNamespace = String.Empty;
@@ -75,45 +73,18 @@ namespace org.iringtools.adapter
       _initStatements = new List<string>();
     }
 
-    private void AddCustomDataLayerAssembly(string projectName, string applicationName, CompilerParameters parameters)
-    {
-      string bindingConfigurationPath = _settings.XmlPath + "BindingConfiguration." + projectName + "." + applicationName + ".xml";
-
-      if (File.Exists(bindingConfigurationPath))
-      {
-        BindingConfiguration bindingConfiguration = Utility.Read<BindingConfiguration>(bindingConfigurationPath, false);
-
-        foreach (Binding binding in bindingConfiguration.Bindings)
-        {
-          if (binding.Name.ToUpper() == "DATALAYER" && !binding.Implementation.ToUpper().Contains("NHIBERNATEDATALAYER"))
-          {
-            string[] bindingImpl = binding.Implementation.Split(',');
-            string bindingAssembly = bindingImpl[1].Trim() + ".dll";
-            parameters.ReferencedAssemblies.Add(_settings.BinaryPath + bindingAssembly);
-            break;
-          }
-        }
-      }
-      else
-      {
-        string errorMessage = "Binding configuration file " + bindingConfigurationPath + " not found.";
-
-        _logger.Error(errorMessage);
-        throw new Exception(errorMessage);
-      }
-    }
-
     public void Generate(string projectName, string applicationName)
     {
       try
       {
-        string mappingPath = _settings.XmlPath +  "Mapping." + projectName + "." + applicationName + ".xml";
+        string scope = projectName + "." + applicationName;
+        string mappingPath = _settings.XmlPath + "Mapping." + scope + ".xml";
         _mapping = Utility.Read<Mapping>(mappingPath, false);
 
-        string dataDictionaryPath = _settings.XmlPath + "DataDictionary." + projectName + "." + applicationName + ".xml";
+        string dataDictionaryPath = _settings.XmlPath + "DataDictionary." + scope + ".xml";
         _dataDictionary = Utility.Read<DataDictionary>(dataDictionaryPath, true);
 
-        _classNamespace = ADAPTER_NAMESPACE + ".proj_" + projectName + "." + applicationName;
+        _classNamespace = ADAPTER_NAMESPACE + ".proj_" + scope;
         _xmlNamespace = "http://" + applicationName + ".iringtools.org/" + projectName + "/data#";
 
         Dictionary<string, string> compilerOptions = new Dictionary<string, string>();
@@ -137,14 +108,12 @@ namespace org.iringtools.adapter
         parameters.ReferencedAssemblies.Add(_settings.BinaryPath + "UtilityLibrary.dll");
         parameters.ReferencedAssemblies.Add(_settings.BinaryPath + "AdapterLibrary.dll");
 
-        AddCustomDataLayerAssembly(projectName, applicationName, parameters);                
+        AddCustomDataLayerAssembly(projectName, applicationName, parameters);
 
         // Generate code
-        List<string> serviceKnownTypes = GetServiceKnownTypes(projectName, applicationName);
+        //List<string> serviceKnownTypes = GetServiceKnownTypes(projectName, applicationName);
         string dtoModel = GenerateDTOModel(projectName, applicationName);
         string dtoService = GenerateDTOService(projectName, applicationName);
-        //string iService = GenerateIService(projectName, applicationName, serviceKnownTypes);
-        string iDataService = GenerateIDataService(projectName, applicationName, serviceKnownTypes);
 
         #region Compile code
         List<string> sources = new List<string>();
@@ -180,18 +149,14 @@ namespace org.iringtools.adapter
         // Add generated code
         sources.Add(dtoModel);
         sources.Add(dtoService);
-        //sources.Add(iService);
-        sources.Add(iDataService);
-        
+
         // Do compile
         Utility.Compile(compilerOptions, parameters, sources.ToArray());
         #endregion
 
         // Write generated code to disk
-        Utility.WriteString(dtoModel, _settings.CodePath + "DTOModel." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
-        Utility.WriteString(dtoService, _settings.CodePath + "DTOService." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
-        //Utility.WriteString(iService, _settings.CodePath + "IService.Generated.cs", Encoding.ASCII);
-        Utility.WriteString(iDataService, _settings.CodePath + "IDataService.Generated.cs", Encoding.ASCII);
+        Utility.WriteString(dtoModel, _settings.CodePath + "DTOModel." + scope + ".cs", Encoding.ASCII);
+        Utility.WriteString(dtoService, _settings.CodePath + "DTOService." + scope + ".cs", Encoding.ASCII);
       }
       catch (Exception ex)
       {
@@ -207,18 +172,6 @@ namespace org.iringtools.adapter
         {
           _logger.Error("DTOService.cs:");
           _logger.Error(_dtoServiceBuilder.ToString());
-        }
-
-        if (_serviceBuilder != null)
-        {
-          _logger.Error("IService.Generated.cs:");
-          _logger.Error(_serviceBuilder.ToString());
-        }
-
-        if (_dataServiceBuilder != null)
-        {
-          _logger.Error("IDataService.Generated.cs:");
-          _logger.Error(_dataServiceBuilder.ToString());
         }
 
         throw ex;
@@ -296,10 +249,10 @@ namespace org.iringtools.adapter
             string qualifiedDataObjectName = GetQualifiedDataObjectName(dataObjectMap.name);
 
             _dtoModelWriter.WriteLine();
-            _dtoModelWriter.WriteLine("public {0}({1} dataObject) : this(\"{2}\", \"{0}\", null, dataObject) {{}}", graphMap.name, qualifiedDataObjectName, graphMap.classId, graphMap.name);
+            _dtoModelWriter.WriteLine("public {0}(IDataObject dataObject) : this(\"{1}\", \"{0}\", null, dataObject) {{}}", graphMap.name, graphMap.classId);
 
             _dtoModelWriter.WriteLine();
-            _dtoModelWriter.WriteLine("public {0}(string classId, string graphName, string identifier, {1} dataObject) : this(classId, graphName, identifier)", graphMap.name, qualifiedDataObjectName);
+            _dtoModelWriter.WriteLine("public {0}(string classId, string graphName, string identifier, IDataObject dataObject) : this(classId, graphName, identifier)", graphMap.name);
             _dtoModelWriter.WriteLine("{");
             _dtoModelWriter.Indent++;
             _dtoModelWriter.WriteLine("if (dataObject != null)");
@@ -311,14 +264,7 @@ namespace org.iringtools.adapter
               if (!String.IsNullOrEmpty(mappingProperty.propertyName))
               {
                 //TODO: handle multi-column key
-                if (mappingProperty.isPropertyKey)
-                {
-                  _dtoModelWriter.WriteLine("{0} = Convert.To{1}(dataObject." + mappingProperty.propertyName + ");", mappingProperty.propertyPath, mappingProperty.mappingDataType);
-                }
-                else
-                {
-                  _dtoModelWriter.WriteLine("{0} = Convert.To{1}(dataObject.{2});", mappingProperty.propertyPath, mappingProperty.mappingDataType, mappingProperty.propertyName);
-                }
+                _dtoModelWriter.WriteLine("{0} = Convert.To{1}(dataObject.GetPropertyValue(\"{2}\"));", mappingProperty.propertyPath, mappingProperty.mappingDataType, mappingProperty.propertyName);
               }
             }
 
@@ -417,7 +363,7 @@ namespace org.iringtools.adapter
             _dtoModelWriter.WriteLine("{");
             _dtoModelWriter.Indent++;
             _dtoModelWriter.WriteLine("_dataObject = new {0}();", qualifiedDataObjectName);
-            
+
             foreach (MappingProperty mappingProperty in _mappingProperties)
             {
               //TODO: handle multi-column key
@@ -431,7 +377,7 @@ namespace org.iringtools.adapter
                   _dtoModelWriter.WriteLine("if (!String.IsNullOrEmpty(this.Identifier) && this.Identifier.Length > {0})", mappingProperty.dataLength);
                   _dtoModelWriter.WriteLine("{");
                   _dtoModelWriter.Indent++;
-                  _dtoModelWriter.WriteLine("_logger.Warn(\"Truncate {0} value from ---\" + this.Identifier + \"--- to {1} characters.\");", 
+                  _dtoModelWriter.WriteLine("_logger.Warn(\"Truncate {0} value from ---\" + this.Identifier + \"--- to {1} characters.\");",
                     mappingProperty.propertyName, mappingProperty.dataLength);
                   _dtoModelWriter.WriteLine("this.Identifier = this.Identifier.Substring(0, {0});", mappingProperty.dataLength);
                   _dtoModelWriter.Indent--;
@@ -582,13 +528,14 @@ namespace org.iringtools.adapter
         dtoServiceWriter.Write("{");
         dtoServiceWriter.Indent++;
         dtoServiceWriter.WriteLine(@"
-        string mappingPath = _adapterSettings.XmlPath + ""Mapping."" + _applicationSettings.ProjectName + ""."" + _applicationSettings.ApplicationName + "".xml"";
+        string scope = _applicationSettings.ProjectName + ""."" + _applicationSettings.ApplicationName;
+        string mappingPath = _adapterSettings.XmlPath + ""Mapping."" + scope + "".xml"";
         string dto2qxfPath = _adapterSettings.BaseDirectoryPath + @""Transforms\dto2qxf.xsl"";
         string qxf2rdfPath = _adapterSettings.BaseDirectoryPath + @""Transforms\qxf2rdf.xsl"";
 
-        string dtoFilePath = _adapterSettings.XmlPath + ""DTO."" + _applicationSettings.ProjectName + ""."" + _applicationSettings.ApplicationName + ""."" + graphName + "".xml"";
-        string qxfPath = _adapterSettings.XmlPath + ""QXF."" + _applicationSettings.ProjectName + ""."" + _applicationSettings.ApplicationName + ""."" + graphName + "".xml"";
-        string rdfFileName = ""RDF."" + _applicationSettings.ProjectName + ""."" + _applicationSettings.ApplicationName + ""."" + graphName + "".xml"";
+        string dtoFilePath = _adapterSettings.XmlPath + ""DTO."" + scope + ""."" + graphName + "".xml"";
+        string qxfPath = _adapterSettings.XmlPath + ""QXF."" + scope + ""."" + graphName + "".xml"";
+        string rdfFileName = ""RDF."" + scope + ""."" + graphName + "".xml"";
         string rdfPath = _adapterSettings.XmlPath + rdfFileName;
 
         Mapping mapping = Utility.Read<Mapping>(mappingPath, false);"
@@ -624,7 +571,7 @@ namespace org.iringtools.adapter
 
         dtoServiceWriter.Indent--;
         dtoServiceWriter.WriteLine("}");
-        
+
         dtoServiceWriter.WriteLine(@"
         XsltArgumentList xsltArgumentList = new XsltArgumentList();
         xsltArgumentList.AddParam(""dtoFilePath"", String.Empty, dtoFilePath);
@@ -816,61 +763,21 @@ namespace org.iringtools.adapter
 
           dtoServiceWriter.WriteLine();
           dtoServiceWriter.WriteLine("case \"{0}\":", graphMap.name);
-          dtoServiceWriter.WriteLine("{");
+          dtoServiceWriter.Write("{");
           dtoServiceWriter.Indent++;
 
           foreach (DataObjectMap dataObjectMap in graphMap.dataObjectMaps)
           {
             string qualifiedDataObjectName = GetQualifiedDataObjectName(dataObjectMap.name);
 
-            //TODO: handle multi-column key
-            List<string> keys = GetKeys(dataObjectMap.name);
-            if (keys.Count > 0)
-            {
-              string identifier = keys[0];
-
-              if (!String.IsNullOrEmpty(dataObjectMap.outFilter))
-              {
-                string outFilter = dataObjectMap.outFilter.Substring(dataObjectMap.outFilter.IndexOf("_") + 1);
-                
-                dtoServiceWriter.WriteLine(
-//            @"var dataObject = 
-//            (from dataObjectList in _dataLayer.GetList<{1}>()
-//             where dataObjectList.{2} == identifier && {1}.{3}  // outFilter
-//             select dataObjectList).FirstOrDefault<{1}>();
-
-          @"Dictionary<string, object> queryProperties = new Dictionary<string, object>();
-          queryProperties.Add(""{2}"", identifier);
-          {1} dataObject = _dataLayer.Get<{1}>(queryProperties);
-
-          if (dataObject != default({1}))
+            //TODO: handle multi-column key and outFilter
+            dtoServiceWriter.WriteLine(@"
+          IDataObject dataObject = _dataLayer.Get(""{0}"", new List<string> {{ identifier }}).FirstOrDefault<IDataObject>();
+          if (dataObject != null)
           {{
-            dto = new {0}(dataObject);
-            dto.Identifier = Convert.ToString(dataObject.{2});
-          }}", qualifiedGraphName, qualifiedDataObjectName, graphMap.identifier, outFilter);
-
-              }
-              else
-              {
-                dtoServiceWriter.WriteLine(
-//            @"var dataObject = 
-//            (from dataObjectList in _dataLayer.GetList<{1}>()
-//             where dataObjectList.{2} == identifier
-//             select dataObjectList).FirstOrDefault<{1}>();   
-
-          @"Dictionary<string, object> queryProperties = new Dictionary<string, object>();
-          queryProperties.Add(""{2}"", identifier);
-          {1} dataObject = _dataLayer.Get<{1}>(queryProperties);
-
-          if (dataObject != default({1}))
-          {{                        
-            dto = new {0}(dataObject);
-            dto.Identifier = Convert.ToString(dataObject.{2});
-          }}", qualifiedGraphName, qualifiedDataObjectName, graphMap.identifier);
-              }
-
-              break;
-            }
+            dto = new {1}(dataObject);
+            dto.Identifier = Convert.ToString(dataObject.GetPropertyValue(""{2}""));
+          }}", qualifiedDataObjectName, qualifiedGraphName, graphMap.identifier);
           }
 
           dtoServiceWriter.WriteLine();
@@ -902,7 +809,7 @@ namespace org.iringtools.adapter
 
           dtoServiceWriter.WriteLine();
           dtoServiceWriter.WriteLine("case \"{0}\":", graphMap.name);
-          dtoServiceWriter.WriteLine("{");
+          dtoServiceWriter.Write("{");
           dtoServiceWriter.Indent++;
 
           foreach (DataObjectMap dataObjectMap in graphMap.dataObjectMaps)
@@ -910,46 +817,33 @@ namespace org.iringtools.adapter
             string qualifiedDataObjectName = GetQualifiedDataObjectName(dataObjectMap.name);
 
             //TODO: handle multi-column key
-            List<string> keys = GetKeys(dataObjectMap.name);
-            if (keys.Count > 0)
+            if (!String.IsNullOrEmpty(dataObjectMap.outFilter))
             {
-              string identifier = keys[0];
+              //TODO: apploy outFilter (must be DataFilter)
+              string outFilter = dataObjectMap.outFilter.Substring(dataObjectMap.outFilter.IndexOf("_") + 1);
 
-              if (!String.IsNullOrEmpty(dataObjectMap.outFilter))
-              {
-                String outFilter = dataObjectMap.outFilter.Substring(dataObjectMap.outFilter.IndexOf("_") + 1);
-
-                dtoServiceWriter.WriteLine(
-            @"var dataObjectList = 
-            from _dataObjectList in _dataLayer.GetList<{1}>()
-            where {1}.{2}  // outFilter
-            select _dataObjectList;
-
-          foreach (var dataObject in dataObjectList)
-          {{   					
-            {0} dto = new {0}(dataObject);
-            dto.Identifier = Convert.ToString(dataObject.{3});
+              dtoServiceWriter.WriteLine(@"
+          IList<IDataObject> dataObjects = _dataLayer.Get(""{0}"", {1}, 0, 0);          
+          foreach (IDataObject dataObject in dataObjects)
+          {{
+            {2} dto = new {2}(dataObject);
+            dto.Identifier = Convert.ToString(dataObject.GetPropertyValue(""{3}""));
             dtoList.Add(dto);
-          }}", qualifiedGraphName, qualifiedDataObjectName, outFilter, graphMap.identifier);
-              }
-              else
-              {
-                dtoServiceWriter.WriteLine(
-            @"var dataObjectList = 
-            from _dataObjectList in _dataLayer.GetList<{1}>()
-            select _dataObjectList;  
-    
-          foreach (var dataObject in dataObjectList)
-          {{   					
-            {0} dto = new {0}(dataObject);
-            dto.Identifier = Convert.ToString(dataObject.{2});
+          }}", qualifiedDataObjectName, outFilter, qualifiedGraphName, graphMap.identifier);
+            }
+            else
+            {
+              dtoServiceWriter.WriteLine(@"
+          IList<IDataObject> dataObjects = _dataLayer.Get(""{0}"", null, 0, 0);          
+          foreach (IDataObject dataObject in dataObjects)
+          {{
+            {1} dto = new {1}(dataObject);
+            dto.Identifier = Convert.ToString(dataObject.GetPropertyValue(""{2}""));
             dtoList.Add(dto);
-          }}", qualifiedGraphName, qualifiedDataObjectName, graphMap.identifier);
-              }
+          }}", qualifiedDataObjectName, qualifiedGraphName, graphMap.identifier);
             }
           }
 
-          dtoServiceWriter.WriteLine();
           dtoServiceWriter.WriteLine("break;");
           dtoServiceWriter.Indent--;
           dtoServiceWriter.WriteLine("}");
@@ -966,7 +860,7 @@ namespace org.iringtools.adapter
         dtoServiceWriter.WriteLine("public Dictionary<string, string> GetListREST(string graphName)");
         dtoServiceWriter.WriteLine("{");
         dtoServiceWriter.Indent++;
-        dtoServiceWriter.WriteLine("Dictionary<string, string> identifierUriPairs = new Dictionary<string, string>();");
+        dtoServiceWriter.WriteLine("Dictionary<string, string> dtoDictionary = new Dictionary<string, string>();");
         dtoServiceWriter.WriteLine("String endpoint = OperationContext.Current.Channel.LocalAddress.ToString();");
         dtoServiceWriter.WriteLine();
         dtoServiceWriter.WriteLine("switch (graphName)");
@@ -979,7 +873,7 @@ namespace org.iringtools.adapter
 
           dtoServiceWriter.WriteLine();
           dtoServiceWriter.WriteLine("case \"{0}\":", graphMap.name);
-          dtoServiceWriter.WriteLine("{");
+          dtoServiceWriter.Write("{");
           dtoServiceWriter.Indent++;
 
           foreach (DataObjectMap dataObjectMap in graphMap.dataObjectMaps)
@@ -987,40 +881,26 @@ namespace org.iringtools.adapter
             string qualifiedDataObjectName = GetQualifiedDataObjectName(dataObjectMap.name);
 
             //TODO: handle multi-column key
-            List<string> keys = GetKeys(dataObjectMap.name);
-            if (keys.Count > 0)
+            if (!String.IsNullOrEmpty(dataObjectMap.outFilter))
             {
-              string identifier = keys[0];
+              //TODO: apply outFilter (must be DataFilter)
+              String outFilter = dataObjectMap.outFilter.Substring(dataObjectMap.outFilter.IndexOf("_") + 1);
 
-              if (!String.IsNullOrEmpty(dataObjectMap.outFilter))
-              {
-                String outFilter = dataObjectMap.outFilter.Substring(dataObjectMap.outFilter.IndexOf("_") + 1);
-
-                dtoServiceWriter.WriteLine(
-            @"var dataObjectList = 
-            from _dataObjectList in _dataLayer.GetList<{0}>()
-            where {0}.{1}  // outFilter
-            select _dataObjectList;
-    
-          foreach (var dataObject in dataObjectList)
-          {{   
-            string identifier = Convert.ToString(dataObject.{2});
-            identifierUriPairs.Add(identifier, endpoint + ""/"" + graphName + ""/"" + identifier);            
-          }}", qualifiedDataObjectName, outFilter, graphMap.identifier);
-              }
-              else
-              {
-                dtoServiceWriter.WriteLine(
-            @"var dataObjectList = 
-            from _dataObjectList in _dataLayer.GetList<{0}>()
-            select _dataObjectList;  
-
-          foreach (var dataObject in dataObjectList)
+              dtoServiceWriter.WriteLine(@"
+          IList<string> identifiers = _dataLayer.GetIdentifiers(""{0}"", {1});
+          foreach (string identifier in identifiers)
           {{
-            string identifier = Convert.ToString(dataObject.{1});
-            identifierUriPairs.Add(identifier, endpoint + ""/"" + graphName + ""/"" + identifier);  
-          }}", qualifiedDataObjectName, graphMap.identifier);
-              }
+            dtoDictionary.Add(identifier, endpoint + ""/"" + graphName + ""/"" + identifier);
+          }}", qualifiedDataObjectName, outFilter);
+            }
+            else
+            {
+              dtoServiceWriter.WriteLine(@"
+          IList<string> identifiers = _dataLayer.GetIdentifiers(""{0}"", null);
+          foreach (string identifier in identifiers)
+          {{
+            dtoDictionary.Add(identifier, endpoint + ""/"" + graphName + ""/"" + identifier);
+          }}", qualifiedDataObjectName);
             }
           }
 
@@ -1033,7 +913,7 @@ namespace org.iringtools.adapter
         dtoServiceWriter.Indent--;
         dtoServiceWriter.WriteLine("}");
         dtoServiceWriter.WriteLine();
-        dtoServiceWriter.WriteLine("return identifierUriPairs;");
+        dtoServiceWriter.WriteLine("return dtoDictionary;");
         dtoServiceWriter.Indent--;
         dtoServiceWriter.WriteLine("}");
 
@@ -1058,46 +938,13 @@ namespace org.iringtools.adapter
           dtoServiceWriter.WriteLine("case \"{0}\":", graphMap.name);
           dtoServiceWriter.Write("{");
           dtoServiceWriter.Indent++;
+          
+          //TODO: apply inFilter (must be DataFilter)
+          dtoServiceWriter.WriteLine(@"
+            IDataObject dataObject = (IDataObject)dto.GetDataObject();
+            response.Append(_dataLayer.Post(new List<IDataObject>{dataObject}));
+            break;");
 
-          if (graphMap.dataObjectMaps.Count == 1)
-          {
-            DataObjectMap dataObjectMap = graphMap.dataObjectMaps[0];
-            string qualifiedDataObjectName = GetQualifiedDataObjectName(dataObjectMap.name);
-
-            dtoServiceWriter.WriteLine(@"
-            {0} dataObject = ({0})dto.GetDataObject();
-            response.Append(_dataLayer.Post<{0}>(dataObject));",
-            qualifiedDataObjectName, graphMap.name);
-          }
-          else
-          {
-            dtoServiceWriter.WriteLine(@"{0} dataTransferObj = ({0})dto;", qualifiedGraphName);
-            int dataObjectMapCount = 0;
-
-            foreach (DataObjectMap dataObjectMap in graphMap.dataObjectMaps)
-            {
-              string qualifiedDataObjectName = GetQualifiedDataObjectName(dataObjectMap.name);
-
-              if (++dataObjectMapCount == 1)
-              {
-                dtoServiceWriter.WriteLine("if (dataTransferObj.{0}) // inFilter", dataObjectMap.inFilter);
-              }
-              else
-              {
-                dtoServiceWriter.WriteLine("else if (dataTransferObj.{1}) // inFilter", dataObjectMap.inFilter);
-              }
-
-              dtoServiceWriter.WriteLine("{");
-              dtoServiceWriter.Indent++;
-              dtoServiceWriter.WriteLine(@"
-                {0} dataObject = ({0})dataTransferObj.GetDataObject();
-                response.Append(_dataLayer.Post<{0}>(dataObject));", qualifiedDataObjectName);
-              dtoServiceWriter.Indent--;
-              dtoServiceWriter.WriteLine("}");
-            }
-          }
-
-          dtoServiceWriter.WriteLine("break;");
           dtoServiceWriter.Indent--;
           dtoServiceWriter.WriteLine("}");
         }
@@ -1130,68 +977,19 @@ namespace org.iringtools.adapter
 
           dtoServiceWriter.WriteLine();
           dtoServiceWriter.WriteLine("case \"{0}\":", graphMap.name);
-          dtoServiceWriter.WriteLine("{");
+          dtoServiceWriter.Write("{");
           dtoServiceWriter.Indent++;
 
-          if (graphMap.dataObjectMaps.Count == 1)
-          {
-            DataObjectMap dataObjectMap = graphMap.dataObjectMaps[0];
-            string qualifiedDataObjectName = GetQualifiedDataObjectName(dataObjectMap.name);
-            
-            dtoServiceWriter.WriteLine(
-        @"List<{0}> doList = new List<{0}>();
-
+          //TODO: apply inFilter (must be DataFilter)
+          dtoServiceWriter.WriteLine(@"
+            IList<IDataObject> dataObjects = new List<IDataObject>();
             foreach (DataTransferObject dto in dtoList)
-            {{
-              doList.Add(({0})dto.GetDataObject());
-            }}
-
-            response.Append(_dataLayer.PostList<{0}>(doList));", qualifiedDataObjectName);
-          }
-          else
-          {
-            foreach (DataObjectMap dataObjectMap in graphMap.dataObjectMaps)
             {
-              string qualifiedDataObjectName = GetQualifiedDataObjectName(dataObjectMap.name);
-              dtoServiceWriter.WriteLine(@"List<{0}> doList = new List<{0}>();", qualifiedDataObjectName, dataObjectMap.name);
+              dataObjects.Add((IDataObject)(dto.GetDataObject()));
             }
+            response.Append(_dataLayer.Post(dataObjects));
+            break;");
 
-            dtoServiceWriter.WriteLine("foreach ({0} dto in dtoList)", qualifiedGraphName);
-            dtoServiceWriter.WriteLine("{");
-            dtoServiceWriter.Indent++;
-
-            int dataObjectMapCount = 0;
-
-            foreach (DataObjectMap dataObjectMap in graphMap.dataObjectMaps)
-            {
-              string qualifiedDataObjectName = GetQualifiedDataObjectName(dataObjectMap.name);
-
-              if (++dataObjectMapCount == 1)
-              {
-                dtoServiceWriter.WriteLine("if (dto.{0}) // inFilter", dataObjectMap.inFilter);
-              }
-              else
-              {
-                dtoServiceWriter.WriteLine("else if (dto.{0}) // inFilter", dataObjectMap.inFilter);
-              }
-
-              dtoServiceWriter.WriteLine(@"
-              {
-                doList.Add(({0})dto.GetDataObject());
-              }", qualifiedDataObjectName);
-            }
-
-            dtoServiceWriter.Indent--;
-            dtoServiceWriter.WriteLine("}");
-
-            foreach (DataObjectMap dataObjectMap in graphMap.dataObjectMaps)
-            {
-              string qualifiedDataObjectName = GetQualifiedDataObjectName(dataObjectMap.name);
-              dtoServiceWriter.WriteLine("response.Append(_dataLayer.PostList<{0}>(doList));", qualifiedDataObjectName);
-            }
-          }
-
-          dtoServiceWriter.WriteLine("break;");
           dtoServiceWriter.Indent--;
           dtoServiceWriter.WriteLine("}");
         }
@@ -1285,9 +1083,10 @@ namespace org.iringtools.adapter
     {
       return _dataLayer.GetDictionary();
     }
+
     public Response RefreshDictionary()
     {
-      return _dataLayer.RefreshDictionary();
+      throw new NotImplementedException();
     }");
 
         dtoServiceWriter.Indent--;
@@ -1303,185 +1102,6 @@ namespace org.iringtools.adapter
         _logger.Error(ex.ToString());
         throw ex;
       }
-    }
-
-    private string GenerateIService(string projectName, string applicationName, List<string> serviceKnownTypes)
-    {
-      StringBuilder builder = new StringBuilder();
-      IndentedTextWriter writer = new IndentedTextWriter(new StringWriter(builder), INDENTATION);
-
-      try
-      {
-        string path = _settings.CodePath + "IService.Generated.cs";
-
-        if (!File.Exists(path))
-        {
-          writer.WriteLine(Utility.GeneratedCodeProlog);
-          writer.WriteLine("using System.Collections.Generic;");
-          writer.WriteLine("using System.ServiceModel;");
-          writer.WriteLine("using System.ServiceModel.Web;");
-          writer.WriteLine();
-          writer.WriteLine("namespace {0}", ADAPTER_NAMESPACE);
-          writer.WriteLine("{");
-          writer.Indent++;
-
-          writer.WriteLine("public partial interface IService");
-          writer.WriteLine("{");
-          writer.Indent++;
-
-          writer.WriteLine("[OperationContract]");
-          writer.WriteLine("[XmlSerializerFormat]");
-          writer.WriteLine("[WebGet(UriTemplate = \"/{projectName}/{applicationName}/{graphName}\")]");
-          writer.WriteLine("Envelope GetList(string projectName, string applicationName, string graphName);");
-
-          writer.WriteLine();
-          writer.WriteLine("[OperationContract]");
-          writer.WriteLine("[XmlSerializerFormat]");
-          writer.WriteLine("[WebGet(UriTemplate = \"/{projectName}/{applicationName}/{graphName}/{identifier}\")]");
-          writer.WriteLine("Envelope Get(string projectName, string applicationName, string graphName, string identifier);");
-
-          writer.Indent--;
-          writer.WriteLine("}");
-
-          writer.Indent--;
-          writer.WriteLine("}");
-
-          Utility.WriteString(builder.ToString(), path);
-          writer.Close();
-        }
-
-        StreamReader reader = new StreamReader(path);
-        string line = String.Empty;
-        builder = new StringBuilder();
-        writer = new IndentedTextWriter(new StringWriter(builder), INDENTATION);
-
-        while ((line = reader.ReadLine()) != null)
-        {
-          if (!line.Contains(projectName + "." + applicationName))
-          {
-            if (line.Contains("[WebGet"))
-            {
-              writer.Indent += 2;
-
-              foreach (string serviceKnownType in serviceKnownTypes)
-              {
-                writer.WriteLine(serviceKnownType);
-              }
-
-              writer.Indent -= 2;
-            }
-
-            writer.WriteLine(line);
-          }
-        }
-
-        reader.Close();
-
-        return builder.ToString();
-      }
-      catch (Exception ex)
-      {
-        throw ex;
-      }
-    }
-
-    private string GenerateIDataService(string projectName, string applicationName, List<string> serviceKnownTypes)
-    {
-      StringBuilder builder = new StringBuilder();
-      IndentedTextWriter writer = new IndentedTextWriter(new StringWriter(builder), INDENTATION);
-
-      try
-      {
-        string path = _settings.CodePath + "IDataService.Generated.cs";
-
-        if (!File.Exists(path))
-        {
-          writer.WriteLine(Utility.GeneratedCodeProlog);
-          writer.WriteLine("using System.Collections.Generic;");
-          writer.WriteLine("using System.ServiceModel;");
-          writer.WriteLine("using System.ServiceModel.Web;");
-          writer.WriteLine();
-          writer.WriteLine("namespace {0}", ADAPTER_NAMESPACE);
-          writer.WriteLine("{");
-          writer.Indent++;
-
-          writer.WriteLine("public partial interface IDataService");
-          writer.WriteLine("{");
-          writer.Indent++;
-
-          writer.WriteLine("[OperationContract]");
-          writer.WriteLine("DTOListResponse GetDataList(DTORequest request);");
-
-          writer.WriteLine();
-          writer.WriteLine("[OperationContract]");
-          writer.WriteLine("DTOResponse GetData(DTORequest request);");
-
-          writer.Indent--;
-          writer.WriteLine("}");
-
-          writer.Indent--;
-          writer.WriteLine("}");
-
-          Utility.WriteString(builder.ToString(), path);
-          writer.Close();
-        }
-
-        StreamReader reader = new StreamReader(path);
-        string line = String.Empty;
-        builder = new StringBuilder();
-        writer = new IndentedTextWriter(new StringWriter(builder), INDENTATION);
-
-        while ((line = reader.ReadLine()) != null)
-        {
-          if (!line.Contains(projectName + "." + applicationName))
-          {
-            if (line.Contains("DTOListResponse") || line.Contains("DTOResponse"))
-            {
-              writer.Indent += 2;
-
-              foreach (string serviceKnownType in serviceKnownTypes)
-              {
-                writer.WriteLine(serviceKnownType);
-              }
-
-              writer.Indent -= 2;
-            }
-
-            writer.WriteLine(line);
-          }
-        }
-
-        reader.Close();
-
-        return builder.ToString();
-      }
-      catch (Exception ex)
-      {
-        throw ex;
-      }
-    }
-
-    private List<string> GetKeys(string dataObjectName)
-    {
-      List<string> keys = new List<string>();
-
-      foreach (DataObject dataObject in _dataDictionary.dataObjects)
-      {
-        if (dataObject.objectName.ToUpper() == dataObjectName.ToUpper())
-        {
-          foreach (DataProperty dataProperty in dataObject.dataProperties)
-          {
-            if (dataProperty.isPropertyKey)
-            {
-              keys.Add(dataProperty.propertyName);
-            }
-          }
-
-          break;
-        }
-      }
-
-      return keys;
     }
 
     private DataObject GetDataObject(string dataObjectMapName)
@@ -1503,28 +1123,28 @@ namespace org.iringtools.adapter
       return (dataObject.objectNamespace != String.Empty) ? (dataObject.objectNamespace + "." + dataObject.objectName) : dataObject.objectName;
     }
 
-    private List<string> GetServiceKnownTypes(string projectName, string applicationName)
-    {
-      try
-      {
-        List<string> knownTypes = new List<string>();
-        string ns = ADAPTER_NAMESPACE + ".proj_" + projectName + "." + applicationName;
-        
-        string mappingFile = _settings.XmlPath + "Mapping." + projectName + "." + applicationName + ".xml";
-        Mapping mapping = Utility.Read<Mapping>(mappingFile, false);
+    //private List<string> GetServiceKnownTypes(string projectName, string applicationName)
+    //{
+    //  try
+    //  {
+    //    List<string> knownTypes = new List<string>();
+    //    string ns = ADAPTER_NAMESPACE + ".proj_" + projectName + "." + applicationName;
 
-        foreach (GraphMap graphMap in mapping.graphMaps)
-        {
-          knownTypes.Add("[ServiceKnownType(typeof(" + ns + "." + graphMap.name + "))]");
-        }
+    //    string mappingFile = _settings.XmlPath + "Mapping." + projectName + "." + applicationName + ".xml";
+    //    Mapping mapping = Utility.Read<Mapping>(mappingFile, false);
 
-        return knownTypes;
-      }
-      catch (Exception ex)
-      {
-        throw ex;
-      }
-    }
+    //    foreach (GraphMap graphMap in mapping.graphMaps)
+    //    {
+    //      knownTypes.Add("[ServiceKnownType(typeof(" + ns + "." + graphMap.name + "))]");
+    //    }
+
+    //    return knownTypes;
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    throw ex;
+    //  }
+    //}
 
     private void ProcessGraphMap(GraphMap graphMap)
     {
@@ -1752,10 +1372,34 @@ namespace org.iringtools.adapter
       }
     }
 
-    /// <summary>
-    /// Get list of applications whose dto code have been generated
-    /// </summary>
-    /// <returns></returns>
+    private void AddCustomDataLayerAssembly(string projectName, string applicationName, CompilerParameters parameters)
+    {
+      string bindingConfigurationPath = _settings.XmlPath + "BindingConfiguration." + projectName + "." + applicationName + ".xml";
+
+      if (File.Exists(bindingConfigurationPath))
+      {
+        BindingConfiguration bindingConfiguration = Utility.Read<BindingConfiguration>(bindingConfigurationPath, false);
+
+        foreach (Binding binding in bindingConfiguration.Bindings)
+        {
+          if (binding.Name.ToUpper() == "DATALAYER" && !binding.Implementation.ToUpper().Contains("NHIBERNATEDATALAYER"))
+          {
+            string[] bindingImpl = binding.Implementation.Split(',');
+            string bindingAssembly = bindingImpl[1].Trim() + ".dll";
+            parameters.ReferencedAssemblies.Add(_settings.BinaryPath + bindingAssembly);
+            break;
+          }
+        }
+      }
+      else
+      {
+        string errorMessage = "Binding configuration file " + bindingConfigurationPath + " not found.";
+
+        _logger.Error(errorMessage);
+        throw new Exception(errorMessage);
+      }
+    }
+
     private List<KeyValuePair<string, ScopeApplication>> GetScopeApplications()
     {
       try
@@ -1766,12 +1410,12 @@ namespace org.iringtools.adapter
         if (File.Exists(scopesPath))
         {
           List<ScopeProject> projects = Utility.Read<List<ScopeProject>>(scopesPath);
-          
+
           foreach (ScopeProject project in projects)
           {
             foreach (ScopeApplication application in project.Applications)
             {
-              scopeApps.Add(new KeyValuePair<string, ScopeApplication>(project.Name, application));              
+              scopeApps.Add(new KeyValuePair<string, ScopeApplication>(project.Name, application));
             }
           }
         }
@@ -1784,5 +1428,14 @@ namespace org.iringtools.adapter
         throw exception;
       }
     }
+  }
+
+  public class MappingProperty : DataProperty
+  {
+    public string propertyPath { get; set; }
+    public string dtoPropertyPath { get; set; }
+    public bool isDataMember { get; set; }
+    public string value { get; set; }
+    public string mappingDataType { get; set; }
   }
 }

@@ -14,7 +14,7 @@ using org.iringtools.adapter.datalayer.proj_12345_000.CSV;
 namespace org.iringtools.adapter.datalayer
 {
   //NOTE: This CSVDataLayer assumes that property "Tag" is identifier of data objects
-  public class CSVDataLayer : IDataLayer2
+  public class CSVDataLayer : IDataLayer
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(CSVDataLayer));
     private AdapterSettings _settings = null;
