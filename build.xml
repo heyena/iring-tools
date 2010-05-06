@@ -281,6 +281,18 @@
     <Message Text="Performing MSBuild clean-up ..." />
     <MSBuild Projects="$(SolutionFile)" Targets="Clean"/>
   </Target>
+
+  <Target Name="PrepareBuild">
+    <Message Text="Preparing build ..." />
+    <Exec Command="Copy $(AdapterServiceDir)\Web_Default.config $(AdapterServiceDir)\Web.config" />
+    <Exec Command="Copy $(RefDataServiceDir)\Web_Default.config $(RefDataServiceDir)\Web.config" />
+    <Exec Command="Copy $(MappingEditorDir)\Web_Default.config $(MappingEditorDir)\Web.config" />
+    <Exec Command="Copy $(SemWebInterfaceServiceRoot)\Web_Default.config $(SemWebInterfaceServiceRoot)\Web.config" />
+    <Exec Command="Copy $(RefDataEditorDir)\Web_Default.config $(RefDataEditorDir)\Web.config" />
+    <Exec Command="Copy $(SemWebSandboxServiceRoot)\Web_Default.config $(SemWebSandboxServiceRoot)\Web.config" />
+    <Exec Command="Copy Utilities\DBDictionaryUtil\DBDictionaryUtil\App_Default.config Utilities\DBDictionaryUtil\DBDictionaryUtil\App.config" />
+    <Exec Command="Copy Utilities\QMXFGenerator\QMXFGenerator\App_Default.config Utilities\QMXFGenerator\QMXFGenerator\App.config" />
+  </Target>
   
   <Target Name="Test">
     <Message Text="Cleaning old test results ..." />
@@ -364,7 +376,7 @@
   
   <Target Name="Build" DependsOnTargets="SvnUpdate; CoreBuild"/>
   
-  <Target Name="Rebuild" DependsOnTargets="SvnUpdate; CleanBuild; CoreBuild"/>
+  <Target Name="Rebuild" DependsOnTargets="SvnUpdate; CleanBuild; PrepareBuild; CoreBuild"/>
   
   <Target Name="All" DependsOnTargets="Rebuild; Test; CreatePackages"/>
 </Project>
