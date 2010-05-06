@@ -215,18 +215,6 @@
 
   <ItemGroup>
     <DeploymentPackage Include="*" Exclude="">
-      <Path>$(iRINGAdapter)</Path>
-      <Options>-r</Options>
-      <ZIPFile>..\iRINGAdapter-120.zip</ZIPFile>
-      <Source>*</Source>
-    </DeploymentPackage>
-    <DeploymentPackage Include="*" Exclude="">
-      <Options>-r</Options>
-      <Path>$(iRINGSandbox)</Path>
-      <ZIPFile>..\iRINGSandbox-120.zip</ZIPFile>
-      <Source>*</Source>
-    </DeploymentPackage>
-    <DeploymentPackage Include="*" Exclude="">
       <Options>-r</Options>
       <Path>$(iRINGAdapter)</Path>
       <ZIPFile>..\iRINGTools-120.zip</ZIPFile>
