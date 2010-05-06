@@ -213,19 +213,7 @@
     </SandboxToolsDeployment>    
   </ItemGroup>
 
-  <ItemGroup>
-    <DeploymentPackage Include="*" Exclude="">
-      <Path>$(iRINGAdapter)</Path>
-      <Options>-r</Options>
-      <ZIPFile>..\iRINGAdapter-121.zip</ZIPFile>
-      <Source>*</Source>
-    </DeploymentPackage>
-    <DeploymentPackage Include="*" Exclude="">
-      <Options>-r</Options>
-      <Path>$(iRINGSandbox)</Path>
-      <ZIPFile>..\iRINGSandbox-121.zip</ZIPFile>
-      <Source>*</Source>
-    </DeploymentPackage>
+  <ItemGroup>   
     <DeploymentPackage Include="*" Exclude="">
       <Options>-r</Options>
       <Path>$(iRINGAdapter)</Path>
