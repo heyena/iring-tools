@@ -66,13 +66,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="iRINGLibrary.Silverlight, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="iRINGLibrary.Silverlight, Version=1.2.1.701, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\iring\Libraries\iRINGLibrary\Silverlight\Bin\Debug\iRINGLibrary.Silverlight.dll</HintPath>
+      <HintPath>..\..\..\Libraries\iRINGLibrary\Silverlight\Bin\Debug\iRINGLibrary.Silverlight.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Expression.Interactions, Version=2.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\iring\ExternalBinaries\ExpressionBlend3Library\Silverlight\Microsoft.Expression.Interactions.dll</HintPath>
+      <HintPath>..\..\..\..\..\Iring_March_2010\18\ExternalBinaries\ExpressionBlend3Library\Silverlight\Microsoft.Expression.Interactions.dll</HintPath>
+    </Reference>
+    <Reference Include="PrismContrib, Version=1.2.1.701, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Libraries\PrismContrib\Silverlight\Bin\Debug\PrismContrib.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
@@ -91,28 +95,30 @@
     </Reference>
     <Reference Include="System.Windows.Controls.Data.Toolkit, Version=2.0.5.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Silverlight-toolkit\Release\Silverlight3\Source\Binaries\System.Windows.Controls.Data.Toolkit.dll</HintPath>
+      <HintPath>..\..\..\..\..\Iring_March_2010\18\ExternalBinaries\Silverlight-Toolkit\System.Windows.Controls.Data.Toolkit.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Controls.Toolkit, Version=2.0.5.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Silverlight-toolkit\Release\Silverlight3\Source\Binaries\System.Windows.Controls.Toolkit.dll</HintPath>
+      <HintPath>..\..\..\ExternalBinaries\Silverlight-Toolkit\System.Windows.Controls.Toolkit.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Interactivity, Version=2.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\iring\ExternalBinaries\ExpressionBlend3Library\Silverlight\System.Windows.Interactivity.dll</HintPath>
+      <HintPath>..\..\..\..\..\Iring_March_2010\18\ExternalBinaries\ExpressionBlend3Library\Silverlight\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Windows.Browser" />
     <Reference Include="System.Xml.Serialization, Version=2.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
-    <Reference Include="UtilityLibrary.Silverlight, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="UtilityLibrary.Silverlight, Version=1.2.1.701, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\iring\Libraries\iRINGLibrary\Silverlight\Bin\Debug\UtilityLibrary.Silverlight.dll</HintPath>
+      <HintPath>..\..\..\Libraries\UtilityLibrary\Silverlight\Bin\Debug\UtilityLibrary.Silverlight.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CompletedEventType.cs" />
+    <Compile Include="DBDictionaryEditorDAL.cs" />
     <Compile Include="EditTreeNode.xaml.cs">
       <DependentUpon>EditTreeNode.xaml</DependentUpon>
     </Compile>
@@ -126,11 +132,6 @@
     <Compile Include="..\..\..\AssemblyInfo.cs" />
     <Compile Include="ResultsList.xaml.cs">
       <DependentUpon>ResultsList.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Service References\ServiceRef\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -157,15 +158,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\AppManifest.xml" />
-    <None Include="Service References\ServiceRef\DbDictionaryService.disco" />
-    <None Include="Service References\ServiceRef\configuration91.svcinfo" />
-    <None Include="Service References\ServiceRef\configuration.svcinfo" />
-    <None Include="Service References\ServiceRef\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
     <Resource Include="iRINGTools_logo.png" />
-    <Content Include="ServiceReferences.ClientConfig" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -200,25 +193,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Properties\DataSources\org.iringtools.library.DatabaseDictionary.datasource" />
-    <None Include="Service References\ServiceRef\DbDictionaryEditor.ServiceRef.Response.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\ServiceRef\DbDictionaryEditor.ServiceRef.ScopeProject.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\ServiceRef\DbDictionaryService.wsdl" />
-    <None Include="Service References\ServiceRef\DbDictionaryService.xsd" />
-    <None Include="Service References\ServiceRef\DbDictionaryService1.xsd" />
-    <None Include="Service References\ServiceRef\DbDictionaryService2.xsd" />
-    <None Include="Service References\ServiceRef\DbDictionaryService3.xsd" />
-    <None Include="Service References\ServiceRef\DbDictionaryService4.xsd" />
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadataStorage Include="Service References\ServiceRef\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Behaviors\Behaviors.csproj">

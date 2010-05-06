@@ -26,6 +26,10 @@ namespace DbDictionaryEditor
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            foreach (string key in e.InitParams.Keys)
+            {
+                this.Resources.Add(key, e.InitParams[key]);
+            }
             this.RootVisual = new Page();
         }
 
