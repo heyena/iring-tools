@@ -26,6 +26,7 @@ namespace DbDictionaryEditor
         private WebClient _testClient;
 
         private string _dbDictionaryServiceUri;
+        private string _adapterServiceUri;
 
         public DBDictionaryEditorDAL() 
         {
@@ -44,8 +45,8 @@ namespace DbDictionaryEditor
 
             _scopesClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
             _dbDictionaryClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
-            _dbschemaClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
-            _savedbdictionaryClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
+            _dbschemaClient.UploadStringCompleted += new UploadStringCompletedEventHandler(OnCompletedEvent);
+            _savedbdictionaryClient.UploadStringCompleted += new UploadStringCompletedEventHandler(OnCompletedEvent);
             _dbdictionariesClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
             _providersClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
             _clearClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
@@ -53,12 +54,13 @@ namespace DbDictionaryEditor
             _deleteClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
 
             _dbDictionaryServiceUri = App.Current.Resources["DBDictionaryServiceURI"].ToString();
+            _adapterServiceUri = App.Current.Resources["AdapterServiceUri"].ToString();
         }
 
         //public Collection<ScopeProject> GetScopes()
         //{
         //    StringBuilder sb = new StringBuilder();
-        //    sb.Append(_dbDictionaryServiceUri);
+        //    sb.Append(_adapterServiceUri);
         //    sb.Append("/scopes");
         //    _scopesClient.DownloadStringAsync(new Uri(sb.ToString()));
         //    return null;
@@ -79,7 +81,7 @@ namespace DbDictionaryEditor
 
         public Response SaveDatabaseDictionary(DatabaseDictionary dict, string project, string application)
         {
-            string message = Utility.SerializeXml<DatabaseDictionary>(dict);
+            string message = Utility.SerializeDataContract<DatabaseDictionary>(dict);
 
             StringBuilder sb = new StringBuilder();
             sb.Append(_dbDictionaryServiceUri);
@@ -98,14 +100,19 @@ namespace DbDictionaryEditor
 
         public DatabaseDictionary GetDatabaseSchema(string connString, string dbProvider)
         {
+            Request request = new Request();
+            request.Add("connectionString", connString);
+            request.Add("dbProvider", dbProvider);
+            string message = Utility.SerializeDataContract<Request>(request);
+
             StringBuilder sb = new StringBuilder();
             sb.Append(_dbDictionaryServiceUri);
-            sb.Append("/");
-            sb.Append(connString);
-            sb.Append("/");
-            sb.Append(dbProvider);
             sb.Append("/dbschema");
-            _dbschemaClient.DownloadStringAsync(new Uri(sb.ToString()));
+
+            _dbschemaClient.Headers["Content-type"] = "application/xml";
+            _dbschemaClient.Encoding = Encoding.UTF8;
+            _dbschemaClient.UploadStringAsync(new Uri(sb.ToString()), "POST", message);
+
             return null;            
         }
 
@@ -143,7 +150,7 @@ namespace DbDictionaryEditor
         public Response ClearTripleStore(string projectName, string applicationName)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append(_dbDictionaryServiceUri);
+            sb.Append(_adapterServiceUri);
             sb.Append("/");
             sb.Append(projectName);
             sb.Append("/");
@@ -156,7 +163,7 @@ namespace DbDictionaryEditor
         public Response DeleteApp(string projectName, string applicationName)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append(_dbDictionaryServiceUri);
+            sb.Append(_adapterServiceUri);
             sb.Append("/");
             sb.Append(projectName);
             sb.Append("/");
@@ -229,7 +236,7 @@ namespace DbDictionaryEditor
 
             if (sender == _dbschemaClient)
             {
-                string result = ((DownloadStringCompletedEventArgs)e).Result;
+                string result = ((UploadStringCompletedEventArgs)e).Result;
 
                 DatabaseDictionary dbSchema = result.DeserializeDataContract<DatabaseDictionary>();
 
@@ -248,7 +255,7 @@ namespace DbDictionaryEditor
 
             if (sender == _savedbdictionaryClient)
             {
-                string result = ((DownloadStringCompletedEventArgs)e).Result;
+                string result = ((UploadStringCompletedEventArgs)e).Result;
 
                 Response response = result.DeserializeDataContract<Response>();
 

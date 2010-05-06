@@ -22,8 +22,12 @@ namespace DbDictionaryService
         DatabaseDictionary GetDbDictionary(string project, string application);
 
         [OperationContract]
-        [WebGet(UriTemplate = "/{connString}/{dbProvider}/dbschema")]
-        DatabaseDictionary GetDatabaseSchema(string connString, string dbProvider);
+        [WebInvoke(Method = "POST", UriTemplate = "/dbschema")]
+        DatabaseDictionary GetDatabaseSchema(Request request);
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", UriTemplate = "/{project}/{application}/dbschema")]
+        DatabaseDictionary GetDatabaseSchema2(string project, string application);
 
         [OperationContract]
         [WebInvoke(Method = "POST", UriTemplate = "/{project}/{application}/savedbdictionary")]
