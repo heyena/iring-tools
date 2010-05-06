@@ -27,12 +27,12 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
   public class DTOService : IDTOLayer
   {
     IKernel _kernel = null;
-    IDataLayer2 _dataLayer = null;
+    IDataLayer _dataLayer = null;
     AdapterSettings _adapterSettings = null;
     ApplicationSettings _applicationSettings = null;
     
     [Inject]
-    public DTOService(IKernel kernel, IDataLayer2 dataLayer, AdapterSettings adapterSettings, ApplicationSettings applicationSettings)
+    public DTOService(IKernel kernel, IDataLayer dataLayer, AdapterSettings adapterSettings, ApplicationSettings applicationSettings)
     {
       _kernel = kernel;
       _dataLayer = dataLayer;

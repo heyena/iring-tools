@@ -37,8 +37,8 @@
   <PropertyGroup>
     <AssemblyInfoFile>$(MSBuildProjectDirectory)\AssemblyInfo.cs</AssemblyInfoFile>
     <Major>1</Major>
-    <Minor>2</Minor>
-    <Build>1</Build>
+    <Minor>3</Minor>
+    <Build>0</Build>
     <Revision>0</Revision>
   </PropertyGroup>
   
@@ -74,6 +74,9 @@
                $(AdapterServiceDir)\XML\BindingConfiguration.*.xml;
                $(AdapterServiceDir)\XML\DataDictionary.*.xml;
                $(AdapterServiceDir)\XML\Mapping.*.xml;
+               $(AdapterServiceDir)\XML\DTO.*.xml;
+               $(AdapterServiceDir)\XML\QXF.*.xml;
+               $(AdapterServiceDir)\XML\RDF.*.xml;
                $(AdapterServiceDir)\XML\nh-configuration.*.xml;
                $(AdapterServiceDir)\XML\nh-mapping.*.xml;
                $(AdapterServiceDir)\XML\Scopes.xml;
