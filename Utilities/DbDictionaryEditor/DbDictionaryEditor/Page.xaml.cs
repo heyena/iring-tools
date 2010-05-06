@@ -8,20 +8,21 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.ServiceModel;
 using org.iringtools.library;
-using DbDictionaryEditor.ServiceRef;
 using System.Windows.Interactivity;
 using System.Text;
+using System.Net;
+using org.iringtools.utility;
+using org.iringtools.modulelibrary.events;
 
 
 namespace DbDictionaryEditor
 {
     public partial class Page : UserControl
     {
-        DbDictionaryServiceClient proxy = null;
         private NewDbDictionary newDbDictionary;
         private ResultsList resultsList;
         private EditTreeNode editTreeNode;
-        ObservableCollection<string> dbDictionaries;
+        List<string> dbDictionaries;
         public string newProvider;
         public string newProject;
         public string newApplication;
@@ -32,9 +33,14 @@ namespace DbDictionaryEditor
         public StringBuilder newDictionary;
         public string selectedCBItem = string.Empty;
 
+        private DBDictionaryEditorDAL _dal;
+
+        public event System.EventHandler<System.EventArgs> OnDataArrived;
+
         public Page()
         {
             InitializeComponent();
+
             string uriScheme = Application.Current.Host.Source.Scheme;
             bool usingTransportSecurity = uriScheme.Equals("https", StringComparison.InvariantCultureIgnoreCase);
             //initialize child windows
@@ -45,41 +51,89 @@ namespace DbDictionaryEditor
             editTreeNode = new EditTreeNode();
             editTreeNode.Closed += new EventHandler(editTreeNode_Closed);
 
-            BasicHttpSecurityMode secirityMode;
+            //BasicHttpSecurityMode secirityMode;
 
-            if (usingTransportSecurity)
-                secirityMode = BasicHttpSecurityMode.Transport;
-            else
-                secirityMode = BasicHttpSecurityMode.None;
+            //if (usingTransportSecurity)
+            //    secirityMode = BasicHttpSecurityMode.Transport;
+            //else
+            //    secirityMode = BasicHttpSecurityMode.None;
 
-            BasicHttpBinding binding = new BasicHttpBinding(secirityMode);
-            binding.MaxReceivedMessageSize = int.MaxValue;
-            binding.MaxBufferSize = int.MaxValue;
-            TimeSpan timeout;
-            TimeSpan.TryParse("00:10:00", out timeout);
-            binding.OpenTimeout = timeout;
-            binding.CloseTimeout = timeout;
-            binding.ReceiveTimeout = timeout;
-            binding.SendTimeout = timeout;
+            //BasicHttpBinding binding = new BasicHttpBinding(secirityMode);
+            //binding.MaxReceivedMessageSize = int.MaxValue;
+            //binding.MaxBufferSize = int.MaxValue;
+            //TimeSpan timeout;
+            //TimeSpan.TryParse("00:10:00", out timeout);
+            //binding.OpenTimeout = timeout;
+            //binding.CloseTimeout = timeout;
+            //binding.ReceiveTimeout = timeout;
+            //binding.SendTimeout = timeout;
 
-            Uri uri = new Uri(Application.Current.Host.Source, "../DbDictionaryService.svc");
+            _dal = new DBDictionaryEditorDAL();
 
-            proxy = new DbDictionaryServiceClient(binding, new EndpointAddress(uri));
-            proxy.GetScopesCompleted += new EventHandler<GetScopesCompletedEventArgs>(proxy_GetScopesCompleted);
-            proxy.GetDbDictionaryCompleted += new EventHandler<GetDbDictionaryCompletedEventArgs>(proxy_GetDbDictionaryCompleted);
-            proxy.GetDatabaseSchemaCompleted += new EventHandler<GetDatabaseSchemaCompletedEventArgs>(proxy_GetDatabaseSchemaCompleted);
-            proxy.SaveDabaseDictionaryCompleted += new EventHandler<AsyncCompletedEventArgs>(proxy_SaveDabaseDictionaryCompleted);
-            proxy.GetExistingDbDictionaryFilesCompleted += new EventHandler<GetExistingDbDictionaryFilesCompletedEventArgs>(proxy_GetExistingDbDictionaryFilesCompleted);
-            proxy.GetProvidersCompleted += new EventHandler<GetProvidersCompletedEventArgs>(proxy_GetProvidersCompleted);
-            proxy.ClearTripleStoreCompleted += new EventHandler<ClearTripleStoreCompletedEventArgs>(proxy_ClearTripleStoreCompleted);
-            proxy.PostDictionaryToAdapterServiceCompleted += new EventHandler<PostDictionaryToAdapterServiceCompletedEventArgs>(proxy_PostDictionaryToAdapterServiceCompleted);
-            proxy.DeleteAppCompleted += new EventHandler<DeleteAppCompletedEventArgs>(proxy_DeleteAppCompleted);
+            _dal.OnDataArrived += dal_OnDataArrived;
 
             LayoutRoot.SizeChanged += new SizeChangedEventHandler(LayoutRoot_SizeChanged);
-            proxy.GetExistingDbDictionaryFilesAsync();
+            
+            _dal.GetExistingDbDictionaryFiles();
         }
 
-       
+        void dal_OnDataArrived(object sender, System.EventArgs e)
+        {
+            // Only handle properly populated event arguments
+            CompletedEventArgs args = e as CompletedEventArgs;
+            if (args == null)
+                return;
+
+            // CompletedEventArgs is a generic class that handles multiple
+            // services.  We have to cast the CompletedType for our service.
+            CompletedEventType processType = (CompletedEventType)
+              Enum.Parse(typeof(CompletedEventType), args.CompletedType.ToString(), false);
+
+            switch (processType)
+            {
+                case CompletedEventType.NotDefined:
+                    break;
+
+                case CompletedEventType.ClearTripleStore:
+                    clearTripleStoreComplete(args);
+                    break;
+
+                case CompletedEventType.DeleteApp:
+                    deleteComplete(args);
+                    break;
+
+                case CompletedEventType.GetDatabaseSchema:
+                    getdbschemaComplete(args);
+                    break;
+
+                case CompletedEventType.GetDbDictionary:
+                    getdbDictionaryComplete(args);
+                    break;
+
+                case CompletedEventType.GetExistingDbDictionaryFiles:
+                    getdbdictionariesComplete(args);
+                    break;
+
+                case CompletedEventType.GetProviders:
+                    getProvidersComplete(args);
+                    break;
+
+                case CompletedEventType.GetScopes:
+                    getScopesComplete(args);
+                    break;
+
+                case CompletedEventType.PostDictionaryToAdapterService:
+                    postdbdictionaryComplete(args);
+                    break;
+
+                case CompletedEventType.SaveDatabaseDictionary:
+                    savedbdictionaryComplete(args);
+                    break;
+
+                default:
+                    break;
+            }
+        }
 
         void editTreeNode_Closed(object sender, EventArgs e)
         {
@@ -152,9 +206,9 @@ namespace DbDictionaryEditor
             return treeViewItem;
         }
 
-        void proxy_DeleteAppCompleted(object sender, DeleteAppCompletedEventArgs e)
+        void deleteComplete(CompletedEventArgs args)
         {
-            ServiceRef.Response response = e.Result;
+            Response response = (Response)args.Data;
          
             string dictionaries = cbDictionary.SelectedItem.ToString();
             string project = dictionaries.Split('.')[1];
@@ -162,7 +216,7 @@ namespace DbDictionaryEditor
 
             resultsList.lbResult.ItemsSource = response;
 
-            proxy.PostDictionaryToAdapterServiceAsync(project, application);
+            _dal.PostDictionaryToAdapterService(project, application);
         }
 
         void results_Closed(object sender, EventArgs e)
@@ -173,9 +227,9 @@ namespace DbDictionaryEditor
             }
         }
 
-        void proxy_PostDictionaryToAdapterServiceCompleted(object sender, PostDictionaryToAdapterServiceCompletedEventArgs e)
+        void postdbdictionaryComplete(CompletedEventArgs args)
         {
-            ServiceRef.Response response = e.Result;
+            Response response = (Response)args.Data;
             
             resultsList.lbResult.ItemsSource = response;
             
@@ -183,11 +237,10 @@ namespace DbDictionaryEditor
             resultsList.Show();
         }
 
-        void proxy_ClearTripleStoreCompleted(object sender, ClearTripleStoreCompletedEventArgs e)
+        void clearTripleStoreComplete(CompletedEventArgs args)
         {
-            
-            ServiceRef.Response resp = e.Result;
-            
+            Response resp = (Response)args.Data;
+
             string dictionary = cbDictionary.SelectedItem.ToString();
             
             string project = dictionary.Split('.')[1];
@@ -195,17 +248,17 @@ namespace DbDictionaryEditor
            
             resultsList.lbResult.ItemsSource = resp;
 
-            proxy.PostDictionaryToAdapterServiceAsync(project, application);
+            _dal.PostDictionaryToAdapterService(project, application);
         }
 
-        void proxy_GetProvidersCompleted(object sender, GetProvidersCompletedEventArgs e)
+        void getProvidersComplete(CompletedEventArgs args)
         {
-            newDbDictionary.cbProvider.ItemsSource = e.Result;
+            newDbDictionary.cbProvider.ItemsSource = (string[])args.Data;
         }
 
-        void proxy_GetExistingDbDictionaryFilesCompleted(object sender, GetExistingDbDictionaryFilesCompletedEventArgs e)
+        void getdbdictionariesComplete(CompletedEventArgs args)
         {
-            dbDictionaries = e.Result;
+            dbDictionaries = (List<string>)args.Data;
             cbDictionary.IsEnabled = true;
            
             List<string> dbDict = dbDictionaries.ToList<string>();
@@ -220,7 +273,7 @@ namespace DbDictionaryEditor
                     if (cbDictionary.Items.Contains(newDictionary.ToString()))
                         cbDictionary.SelectedIndex = cbDictionary.Items.IndexOf(newDictionary.ToString());
 
-                    proxy.GetDbDictionaryAsync(newDictionary.ToString().Split('.')[1], newDictionary.ToString().Split('.')[2]);
+                    _dal.GetDbDictionary(newDictionary.ToString().Split('.')[1], newDictionary.ToString().Split('.')[2]);
                     newDictionary = null;
                 }
                 else
@@ -232,7 +285,8 @@ namespace DbDictionaryEditor
                     }
                     cbDictionary.SelectedIndex = cbDictionary.Items.IndexOf(selectedCBItem);
                 }
-                proxy.GetDbDictionaryAsync(selectedCBItem.Split('.')[1], selectedCBItem.Split('.')[2]);
+                
+                _dal.GetDbDictionary(selectedCBItem.Split('.')[1], selectedCBItem.Split('.')[2]);
             }
             biBusyWindow.IsBusy = false;
         }
@@ -258,7 +312,6 @@ namespace DbDictionaryEditor
 
         }
 
-
         private void BuildNewDbDictionary(string newProvider, string newProject, string newApplication, string newDataSourceName, string newDatabaseName, string newDatabaseUserName, string newDatabaseUserPassword)
         {
             newDictionary = new StringBuilder();
@@ -276,7 +329,8 @@ namespace DbDictionaryEditor
                 provider = (Provider)Enum.Parse(typeof(Provider), newProvider, true),
                 tables = new List<Table>()
             };
-            proxy.SaveDabaseDictionaryAsync(dict, newProject, newApplication);
+            
+            _dal.SaveDatabaseDictionary(dict, newProject, newApplication);
         }
 
         private string BuildConnectionString(string newProvider, string newDataSourceName, string newDatabaseName, string newDatabaseUserName, string newDatabaseUserPassword)
@@ -314,19 +368,19 @@ namespace DbDictionaryEditor
             return connString;
         }
 
-        void proxy_SaveDabaseDictionaryCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
+        void savedbdictionaryComplete(CompletedEventArgs args)
         {
-            proxy.GetExistingDbDictionaryFilesAsync();
+            _dal.GetExistingDbDictionaryFiles();
             //tvwItemDestinationRoot.Items.Clear();
         }
 
-        void proxy_GetDatabaseSchemaCompleted(object sender, GetDatabaseSchemaCompletedEventArgs e)
+        void getdbschemaComplete(CompletedEventArgs args)
         {
             TreeViewItem sourceTable;
             TreeViewItem destinationTable;
       
             tvwItemSourceRoot.Items.Clear();
-            DatabaseDictionary databaseDictionary = e.Result;
+            DatabaseDictionary databaseDictionary = (DatabaseDictionary)args.Data;
             ConstructTreeView(databaseDictionary, tvwItemSourceRoot);
             for (int sourceTables = 0; sourceTables < tvwItemSourceRoot.Items.Count; sourceTables++)
             {
@@ -351,12 +405,13 @@ namespace DbDictionaryEditor
             biBusyWindow.IsBusy = false;
         }
 
-        void proxy_GetDbDictionaryCompleted(object sender, GetDbDictionaryCompletedEventArgs e)
+        void getdbDictionaryComplete(CompletedEventArgs args)
         {
             
             tvwItemDestinationRoot.Items.Clear();
-            DatabaseDictionary dict = e.Result;
-            proxy.GetDatabaseSchemaAsync(dict.connectionString, dict.provider.ToString());
+            DatabaseDictionary dict = (DatabaseDictionary)args.Data;
+            
+            _dal.GetDatabaseSchema(dict.connectionString, dict.provider.ToString());
             ConstructTreeView(dict, tvwItemDestinationRoot);
         }
         
@@ -441,12 +496,12 @@ namespace DbDictionaryEditor
         void itm_Checked(object sender, RoutedEventArgs e)
         {
         }
+        
         void itm_Expanded(object sender, RoutedEventArgs e)
         {
         }
 
-
-        void proxy_GetScopesCompleted(object sender, GetScopesCompletedEventArgs e)
+        void getScopesComplete(CompletedEventArgs args)
         {
             try
             {
@@ -469,11 +524,10 @@ namespace DbDictionaryEditor
 
         private void btnNewDictionary_Click(object sender, RoutedEventArgs e)
         {
-            proxy.GetProvidersAsync();
+            _dal.GetProviders();
             newDbDictionary.tbMessages.Text = string.Empty;
             newDbDictionary.Show();  
         }
-
 
         private void cbProject_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -485,10 +539,10 @@ namespace DbDictionaryEditor
                 tvwItemDestinationRoot.Visibility = Visibility.Collapsed;
 
                 selectedCBItem = cbDictionary.SelectedItem.ToString();
-                proxy.GetDbDictionaryAsync(selectedCBItem.Split('.')[1], selectedCBItem.Split('.')[2]); 
+                
+                _dal.GetDbDictionary(selectedCBItem.Split('.')[1], selectedCBItem.Split('.')[2]); 
             }
         }
-
 
         private void btnSaveDbDictionary_Click(object sender, RoutedEventArgs e)
         {
@@ -545,7 +599,8 @@ namespace DbDictionaryEditor
                 }
                 databaseDictionary.tables.Add(table);
             }
-            proxy.SaveDabaseDictionaryAsync(databaseDictionary, projectName, applicationName);
+            
+            _dal.SaveDatabaseDictionary(databaseDictionary, projectName, applicationName);
         }
 
         private void btnPostDictionary_Click(object sender, RoutedEventArgs e)
@@ -553,7 +608,9 @@ namespace DbDictionaryEditor
             biBusyWindow.IsBusy = true;
             string project = cbDictionary.SelectedItem.ToString().Split('.')[1];
             string application = cbDictionary.SelectedItem.ToString().Split('.')[2];
-            proxy.DeleteAppAsync(project, application);
+            
+            _dal.DeleteApp(project, application);
+
         }
 
         private void clearComboBox(ComboBox combox)
@@ -566,7 +623,6 @@ namespace DbDictionaryEditor
             combox.IsEnabled = false;
 
         }
-
 
         private void btnAddColumnToDict_Click(object sender, RoutedEventArgs e)
         {
