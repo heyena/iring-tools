@@ -300,6 +300,7 @@
     <Copy SourceFiles="@(AdapterServiceDeployment)"
           DestinationFiles="@(AdapterServiceDeployment->'$(AdapterServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Exec Command="Move /Y $(AdapterServiceDeploymentDir)\Web_Default.config $(AdapterServiceDeploymentDir)\Web.config" />
+    <Exec Command="Move /Y $(AdapterServiceDeploymentDir)\XML\ABC.Mapping.xml $(AdapterServiceDeploymentDir)\XML\Mapping.12345_000.ABC.xml" />
     <Exec Command="Mkdir $(AdapterServiceDeploymentDir)\Logs" />
 
     <!--<Message Text="Creating Joseki interface service deployment ..." />
@@ -347,7 +348,7 @@
     <Copy SourceFiles="@(AdapterToolsDeployment)"
           DestinationFiles="@(AdapterToolsDeployment->'$(AdapterToolsDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Exec Command="Move /Y $(AdapterToolsDeploymentDir)\App_Default.config $(AdapterToolsDeploymentDir)\DBDictionaryUtil.exe.config" />
-       
+           
     <Message Text="Creating sandbox tools deployment ..." />
     <Copy SourceFiles="@(SandboxToolsDeployment)"
           DestinationFiles="@(SandboxToolsDeployment->'$(SandboxToolsDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
