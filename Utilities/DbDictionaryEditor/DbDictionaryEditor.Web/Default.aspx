@@ -62,7 +62,17 @@
     public string InitialParams { get; set; }
     protected void Page_Load(object sender, EventArgs e)
     {
-        this.InitialParams = "DBDictionaryServiceURI=" + System.Configuration.ConfigurationManager.AppSettings["DBDictionaryServiceURI"];
+        foreach (string key in ConfigurationManager.AppSettings.Keys)
+        {
+            if (InitialParams != String.Empty)
+            {
+                InitialParams += ",";
+            }
+
+            InitialParams += key + "=" + ConfigurationManager.AppSettings[key];
+        }
+        //this.InitialParams = "DBDictionaryServiceURI=" + System.Configuration.ConfigurationManager.AppSettings["DBDictionaryServiceURI"];
+        //this.InitialParams += "AdapterServiceUri=" + System.Configuration.ConfigurationManager.AppSettings["AdapterServiceUri"];
         
     }
     </script>

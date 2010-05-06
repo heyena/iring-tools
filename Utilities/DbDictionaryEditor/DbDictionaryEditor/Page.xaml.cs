@@ -412,7 +412,7 @@ namespace DbDictionaryEditor
             DatabaseDictionary dict = (DatabaseDictionary)args.Data;
             
             _dal.GetDatabaseSchema(dict.connectionString, dict.provider.ToString());
-            ConstructTreeView(dict, tvwItemDestinationRoot);
+            //ConstructTreeView(dict, tvwItemDestinationRoot);
         }
         
         void ConstructTreeView(DatabaseDictionary dict, TreeViewItem root)
