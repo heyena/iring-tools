@@ -2,11 +2,10 @@
 using System.Net;
 using org.iringtools.library;
 using System.Text;
-using org.iringtools.utility;
 using System.Collections.Generic;
 using System.ComponentModel;
 using org.iringtools.modulelibrary.events;
-using System.Collections.ObjectModel;
+using org.iringtools.utility;
 
 namespace DbDictionaryEditor
 {
@@ -50,7 +49,7 @@ namespace DbDictionaryEditor
             _dbdictionariesClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
             _providersClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
             _clearClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
-            _postdbdictionaryClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
+            _postdbdictionaryClient.UploadStringCompleted += new UploadStringCompletedEventHandler(OnCompletedEvent);
             _deleteClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
 
             _dbDictionaryServiceUri = App.Current.Resources["DBDictionaryServiceURI"].ToString();
@@ -68,14 +67,17 @@ namespace DbDictionaryEditor
 
         public DatabaseDictionary GetDbDictionary(string project, string application)
         {
-            StringBuilder sb = new StringBuilder();
-            sb.Append(_dbDictionaryServiceUri);
-            sb.Append("/");
-            sb.Append(project);
-            sb.Append("/");
-            sb.Append(application);
-            sb.Append("/dbdictionary");
-            _dbDictionaryClient.DownloadStringAsync(new Uri(sb.ToString()));
+            if (!_dbDictionaryClient.IsBusy)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(_dbDictionaryServiceUri);
+                sb.Append("/");
+                sb.Append(project);
+                sb.Append("/");
+                sb.Append(application);
+                sb.Append("/dbdictionary");
+                _dbDictionaryClient.DownloadStringAsync(new Uri(sb.ToString()));
+            }
             return null;
         }
 
@@ -134,16 +136,22 @@ namespace DbDictionaryEditor
             return null;              
         }
 
-        public Response PostDictionaryToAdapterService(string projectName, string applicationName)
+        public Response PostDictionaryToAdapterService(string projectName, string applicationName, DatabaseDictionary dictionary)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append(_dbDictionaryServiceUri);
+            sb.Append(_adapterServiceUri);
             sb.Append("/");
             sb.Append(projectName);
             sb.Append("/");
             sb.Append(applicationName);
-            sb.Append("/postdbdictionary");
-            _postdbdictionaryClient.DownloadStringAsync(new Uri(sb.ToString()));
+            sb.Append("/dbdictionary");
+
+            string message = Utility.SerializeDataContract<DatabaseDictionary>(dictionary);
+
+            _postdbdictionaryClient.Headers["Content-type"] = "application/xml";
+            _postdbdictionaryClient.Encoding = Encoding.UTF8;
+            _postdbdictionaryClient.UploadStringAsync(new Uri(sb.ToString()), "POST", message);
+
             return null;  
         }
 
@@ -308,7 +316,7 @@ namespace DbDictionaryEditor
 
             if (sender == _postdbdictionaryClient)
             {
-                string result = ((DownloadStringCompletedEventArgs)e).Result;
+                string result = ((UploadStringCompletedEventArgs)e).Result;
 
                 Response response = result.DeserializeDataContract<Response>();
 
