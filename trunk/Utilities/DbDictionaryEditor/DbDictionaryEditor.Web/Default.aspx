@@ -70,10 +70,7 @@
             }
 
             InitialParams += key + "=" + ConfigurationManager.AppSettings[key];
-        }
-        //this.InitialParams = "DBDictionaryServiceURI=" + System.Configuration.ConfigurationManager.AppSettings["DBDictionaryServiceURI"];
-        //this.InitialParams += "AdapterServiceUri=" + System.Configuration.ConfigurationManager.AppSettings["AdapterServiceUri"];
-        
+        }        
     }
     </script>
 

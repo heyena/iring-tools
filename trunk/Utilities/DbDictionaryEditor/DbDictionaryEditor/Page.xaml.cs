@@ -33,6 +33,8 @@ namespace DbDictionaryEditor
         public StringBuilder newDictionary;
         public string selectedCBItem = string.Empty;
 
+        private bool isPosting;
+
         private DBDictionaryEditorDAL _dal;
 
         public event System.EventHandler<System.EventArgs> OnDataArrived;
@@ -51,23 +53,6 @@ namespace DbDictionaryEditor
             editTreeNode = new EditTreeNode();
             editTreeNode.Closed += new EventHandler(editTreeNode_Closed);
 
-            //BasicHttpSecurityMode secirityMode;
-
-            //if (usingTransportSecurity)
-            //    secirityMode = BasicHttpSecurityMode.Transport;
-            //else
-            //    secirityMode = BasicHttpSecurityMode.None;
-
-            //BasicHttpBinding binding = new BasicHttpBinding(secirityMode);
-            //binding.MaxReceivedMessageSize = int.MaxValue;
-            //binding.MaxBufferSize = int.MaxValue;
-            //TimeSpan timeout;
-            //TimeSpan.TryParse("00:10:00", out timeout);
-            //binding.OpenTimeout = timeout;
-            //binding.CloseTimeout = timeout;
-            //binding.ReceiveTimeout = timeout;
-            //binding.SendTimeout = timeout;
-
             _dal = new DBDictionaryEditorDAL();
 
             _dal.OnDataArrived += dal_OnDataArrived;
@@ -75,6 +60,8 @@ namespace DbDictionaryEditor
             LayoutRoot.SizeChanged += new SizeChangedEventHandler(LayoutRoot_SizeChanged);
             
             _dal.GetExistingDbDictionaryFiles();
+
+            isPosting = false;
         }
 
         void dal_OnDataArrived(object sender, System.EventArgs e)
@@ -216,7 +203,7 @@ namespace DbDictionaryEditor
 
             resultsList.lbResult.ItemsSource = response;
 
-            _dal.PostDictionaryToAdapterService(project, application);
+            _dal.GetDbDictionary(project, application);            
         }
 
         void results_Closed(object sender, EventArgs e)
@@ -234,6 +221,7 @@ namespace DbDictionaryEditor
             resultsList.lbResult.ItemsSource = response;
             
             biBusyWindow.IsBusy = false;
+            isPosting = false;
             resultsList.Show();
         }
 
@@ -248,7 +236,7 @@ namespace DbDictionaryEditor
            
             resultsList.lbResult.ItemsSource = resp;
 
-            _dal.PostDictionaryToAdapterService(project, application);
+            //_dal.PostDictionaryToAdapterService(project, application);
         }
 
         void getProvidersComplete(CompletedEventArgs args)
@@ -407,12 +395,20 @@ namespace DbDictionaryEditor
 
         void getdbDictionaryComplete(CompletedEventArgs args)
         {
-            
-            tvwItemDestinationRoot.Items.Clear();
             DatabaseDictionary dict = (DatabaseDictionary)args.Data;
-            
-            _dal.GetDatabaseSchema(dict.connectionString, dict.provider.ToString());
-            //ConstructTreeView(dict, tvwItemDestinationRoot);
+            if (isPosting)
+            {
+                 string project = cbDictionary.SelectedItem.ToString().Split('.')[1];
+                 string application = cbDictionary.SelectedItem.ToString().Split('.')[2];
+                 _dal.PostDictionaryToAdapterService(project, application, dict);                
+            }
+            else
+            {
+                tvwItemDestinationRoot.Items.Clear();                
+
+                _dal.GetDatabaseSchema(dict.connectionString, dict.provider.ToString());
+                ConstructTreeView(dict, tvwItemDestinationRoot);            
+            }
         }
         
         void ConstructTreeView(DatabaseDictionary dict, TreeViewItem root)
@@ -606,11 +602,12 @@ namespace DbDictionaryEditor
         private void btnPostDictionary_Click(object sender, RoutedEventArgs e)
         {
             biBusyWindow.IsBusy = true;
+            isPosting = true;
+
             string project = cbDictionary.SelectedItem.ToString().Split('.')[1];
             string application = cbDictionary.SelectedItem.ToString().Split('.')[2];
             
             _dal.DeleteApp(project, application);
-
         }
 
         private void clearComboBox(ComboBox combox)
