@@ -80,6 +80,8 @@
                $(AdapterServiceDir)\XML\nh-configuration.*.xml;
                $(AdapterServiceDir)\XML\nh-mapping.*.xml;
                $(AdapterServiceDir)\XML\Scopes.xml;
+               $(AdapterServiceDir)\Transforms\dto2qxf.xsl;
+               $(AdapterServiceDir)\Transforms\qxf2rdf.xsl;
                $(AdapterServiceRoot)\.svn\**;
                $(AdapterServiceRoot)\*\.svn\**;
                $(AdapterServiceRoot)\*\*\.svn\**;
