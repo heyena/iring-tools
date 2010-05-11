@@ -57,6 +57,17 @@ namespace org.iringtools.library
 
     [DataMember]
     public List<DataRelationship> dataRelationships { get; set; }
+
+    public bool isKeyProperty(string propertyName)
+    {
+      foreach (KeyProperty keyProperty in keyProperties)
+      {
+        if (keyProperty.propertyName.ToLower() == propertyName.ToLower())
+          return true;
+      }
+
+      return false;
+    }
   }
 
   [DataContract(Namespace = "http://ns.iringtools.org/library")]

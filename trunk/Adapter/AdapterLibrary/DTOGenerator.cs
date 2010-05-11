@@ -227,15 +227,13 @@ namespace org.iringtools.adapter
 
             if (!String.IsNullOrEmpty(mappingProperty.propertyName) && graphMap.identifier.ToLower() == mappingProperty.propertyName.ToLower())
             {
-              _dtoModelWriter.WriteLine("_properties.Add(new DTOProperty(@\"{0}\", @\"{1}\", {2}, typeof({3}), {4}, {5}));",
-              mappingProperty.propertyName, mappingProperty.dtoPropertyPath, "identifier", mappingProperty.mappingDataType,
-              "true", Convert.ToString(mappingProperty.isRequired).ToLower());
+              _dtoModelWriter.WriteLine("_properties.Add(new DTOProperty(@\"{0}\", @\"{1}\", {2}, typeof({3}), {4}));",
+              mappingProperty.propertyName, mappingProperty.dtoPropertyPath, "identifier", mappingProperty.mappingDataType, "true");
             }
             else
             {
-              _dtoModelWriter.WriteLine("_properties.Add(new DTOProperty(@\"{0}\", @\"{1}\", {2}, typeof({3}), {4}, {5}));",
-              mappingProperty.propertyName, mappingProperty.dtoPropertyPath, value, mappingProperty.mappingDataType,
-              "false", Convert.ToString(mappingProperty.isRequired).ToLower());
+              _dtoModelWriter.WriteLine("_properties.Add(new DTOProperty(@\"{0}\", @\"{1}\", {2}, typeof({3}), {4}));",
+              mappingProperty.propertyName, mappingProperty.dtoPropertyPath, value, mappingProperty.mappingDataType, "false");
             }
           }
 
@@ -293,7 +291,7 @@ namespace org.iringtools.adapter
             {
               if (!String.IsNullOrEmpty(mappingProperty.propertyName))
               {
-                if (!mappingProperty.isRequired)
+                if (mappingProperty.isNullable)
                 {
                   type = type + "?";
                 }
@@ -367,11 +365,11 @@ namespace org.iringtools.adapter
             foreach (MappingProperty mappingProperty in _mappingProperties)
             {
               //TODO: handle multi-column key
-              if (mappingProperty.isPropertyKey)
+              if (mappingProperty.isKeyProperty)
               {
-                if (mappingProperty.dataType.ToLower() == "string" &&
+                if (mappingProperty.dataType == DataType.String &&
                     mappingProperty.mappingDataType.ToLower() == "string" &&
-                    !String.IsNullOrEmpty(mappingProperty.dataLength))
+                    mappingProperty.dataLength > 0)
                 {
                   _dtoModelWriter.WriteLine();
                   _dtoModelWriter.WriteLine("if (!String.IsNullOrEmpty(this.Identifier) && this.Identifier.Length > {0})", mappingProperty.dataLength);
@@ -393,11 +391,11 @@ namespace org.iringtools.adapter
 
             foreach (MappingProperty mappingProperty in _mappingProperties)
             {
-              if (!mappingProperty.isPropertyKey && !String.IsNullOrEmpty(mappingProperty.propertyName))
+              if (!mappingProperty.isKeyProperty && !String.IsNullOrEmpty(mappingProperty.propertyName))
               {
-                if (mappingProperty.dataType.ToLower() == "string" &&
+                if (mappingProperty.dataType == DataType.String &&
                     mappingProperty.mappingDataType.ToLower() == "string" &&
-                    !String.IsNullOrEmpty(mappingProperty.dataLength))
+                    mappingProperty.dataLength > 0)
                 {
                   _dtoModelWriter.WriteLine();
                   _dtoModelWriter.WriteLine("if (!String.IsNullOrEmpty(this.{0}) && this.{0}.Length > {1})", mappingProperty.propertyPath, mappingProperty.dataLength);
@@ -819,7 +817,7 @@ namespace org.iringtools.adapter
             //TODO: handle multi-column key
             if (!String.IsNullOrEmpty(dataObjectMap.outFilter))
             {
-              //TODO: apploy outFilter (must be DataFilter)
+              //TODO: apply outFilter (must be DataFilter)
               string outFilter = dataObjectMap.outFilter.Substring(dataObjectMap.outFilter.IndexOf("_") + 1);
 
               dtoServiceWriter.WriteLine(@"
@@ -1264,9 +1262,8 @@ namespace org.iringtools.adapter
                 mappingProperty.propertyName = dataProperty.propertyName;
                 mappingProperty.dataType = dataProperty.dataType;
                 mappingProperty.dataLength = dataProperty.dataLength;
-                mappingProperty.isPropertyKey = dataProperty.isPropertyKey;
-                mappingProperty.isRequired = dataProperty.isRequired;
-                mappingProperty.mappingDataType = String.IsNullOrEmpty(roleMap.dataType) ? dataProperty.dataType : Utility.XsdTypeToCSharpType(roleMap.dataType);
+                mappingProperty.isKeyProperty = dataObject.isKeyProperty(dataProperty.propertyName);
+                mappingProperty.mappingDataType = String.IsNullOrEmpty(roleMap.dataType) ? dataProperty.dataType.ToString() : Utility.XsdTypeToCSharpType(roleMap.dataType);
               }
               else if (!String.IsNullOrEmpty(roleMap.reference))
               {
@@ -1435,6 +1432,7 @@ namespace org.iringtools.adapter
     public string propertyPath { get; set; }
     public string dtoPropertyPath { get; set; }
     public bool isDataMember { get; set; }
+    public bool isKeyProperty { get; set; }
     public string value { get; set; }
     public string mappingDataType { get; set; }
   }

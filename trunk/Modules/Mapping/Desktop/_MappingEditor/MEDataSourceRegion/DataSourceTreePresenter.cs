@@ -239,7 +239,7 @@ namespace org.iringtools.modules.medatasourceregion
     /// <returns></returns>
     bool PopulateDataRelationship(DataObjectItem node, DataRelationship dataRelationship)
     {
-      DataObjectItem newNode = AddNode(dataRelationship.graphProperty, dataRelationship, node);
+      DataObjectItem newNode = AddNode(dataRelationship.relatedTableName, dataRelationship, node);
       node.Items.Add(newNode);
       return true;
     }
@@ -267,22 +267,14 @@ namespace org.iringtools.modules.medatasourceregion
         DataProperty dataProperty = (DataProperty)selectedNode.Tag;
         KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Property Name", dataProperty.propertyName);
         model.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("Datatype", dataProperty.dataType);
-        model.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("Is Required", dataProperty.isRequired.ToString());
-        model.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("Is Key", dataProperty.isPropertyKey.ToString());
+        keyValuePair = new KeyValuePair<string, string>("Datatype", dataProperty.dataType.ToString());
         model.DetailProperties.Add(keyValuePair);
       }
 
       if (selectedNode.Tag is DataRelationship)
       {
         DataRelationship dataRelationship = (DataRelationship)selectedNode.Tag;
-        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Related Graph", dataRelationship.relatedObject);
-        model.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("Graph Property", dataRelationship.graphProperty);
-        model.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("Cardinality", dataRelationship.cardinality.ToString());
+        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Related Object", dataRelationship.relatedTableName);
         model.DetailProperties.Add(keyValuePair);
       }
 
