@@ -96,7 +96,7 @@ namespace org.iringtools.library
     public KeyType keyType { get; set; }
   }
 
-  [DataContract(Namespace = "http://ns.iringtools.org/library")]
+  [CollectionDataContract(Namespace = "http://ns.iringtools.org/library")]
   public class KeyProperties : List<KeyProperty>
   {
     [DataMember(IsRequired = true)]
