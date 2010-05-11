@@ -55,9 +55,9 @@ namespace org.iringtools.ontologyservice.presentation
         _selectedDataSource = value;
         OnPropertyChanged("SelectedDataSource");
 
-        SelectedDataSourceDataTypeField = value.dataType;
-        SelectedDataSourceIsPropertyKey = value.isPropertyKey;
-        SelectedDataSourceIsRequiredField = value.isRequired;
+        //SelectedDataSourceDataTypeField = value.dataType;
+        //SelectedDataSourceIsPropertyKey = value.isPropertyKey;
+        //SelectedDataSourceIsRequiredField = value.isRequired;
         SelectedDataSourcePropertyName = value.propertyName;
       }
     }
