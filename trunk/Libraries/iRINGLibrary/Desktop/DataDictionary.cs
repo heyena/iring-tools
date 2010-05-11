@@ -68,6 +68,22 @@ namespace org.iringtools.library
 
       return false;
     }
+
+    public List<DataProperty> properties
+    {
+      get
+      {
+        List<DataProperty> properties = new List<DataProperty>();
+
+        foreach (KeyProperty keyProperty in keyProperties)
+          properties.Add((DataProperty)keyProperty);
+
+        foreach (DataProperty dataProperty in dataProperties)
+          properties.Add(dataProperty);
+
+        return properties;
+      }
+    }
   }
 
   [DataContract(Namespace = "http://ns.iringtools.org/library")]

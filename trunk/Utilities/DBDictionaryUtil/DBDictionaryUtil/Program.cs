@@ -264,7 +264,7 @@ namespace DBDictionaryUtil
 
         if (String.IsNullOrEmpty(constraint)) // process columns
         {
-          DataProperty column = new DataProperty()
+          DataProperty dataProperty = new DataProperty()
           {
             columnName = columnName,
             propertyName = Utility.NameSafe(columnName),
@@ -273,7 +273,7 @@ namespace DBDictionaryUtil
             isNullable = isNullable,
           };
 
-          dataObject.dataProperties.Add(column);
+          dataObject.dataProperties.Add(dataProperty);
         }
         else // process keys
         {
