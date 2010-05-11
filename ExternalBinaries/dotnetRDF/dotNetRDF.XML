@@ -337,16 +337,6 @@
             Interface for Triple Patterns
             </summary>
         </member>
-        <member name="M:VDS.RDF.Query.Patterns.ITriplePattern.Execute(VDS.RDF.Query.SparqlEvaluationContext,System.Boolean)">
-            <summary>
-            Executes the Triple Pattern against the given Store using the given Result Binder
-            </summary>
-            <param name="context">Evaluation Context</param>
-            <param name="optional">Whether the Pattern occurrs in the context of an OPTIONAL clause</param>
-            <remarks>
-            The OPTIONAL parameter primarily is used for when Filters are placed in between Triple Patterns
-            </remarks>
-        </member>
         <member name="M:VDS.RDF.Query.Patterns.ITriplePattern.Evaluate(VDS.RDF.Query.SparqlEvaluationContext)">
             <summary>
             Evaluates the Triple Pattern in the given Evaluation Context
@@ -380,13 +370,6 @@
             <summary>
             Stores the list of variables that are used in the Pattern
             </summary>
-        </member>
-        <member name="M:VDS.RDF.Query.Patterns.BaseTriplePattern.Execute(VDS.RDF.Query.SparqlEvaluationContext,System.Boolean)">
-            <summary>
-            Executes the Triple Pattern against the given Store using the given Result Binder
-            </summary>
-            <param name="context">Evaluation Context</param>
-            <param name="optional">Whether the Pattern occurrs in the context of an OPTIONAL clause</param>
         </member>
         <member name="M:VDS.RDF.Query.Patterns.BaseTriplePattern.Evaluate(VDS.RDF.Query.SparqlEvaluationContext)">
             <summary>
@@ -444,13 +427,6 @@
             </summary>
             <param name="subquery">Sub-query</param>
         </member>
-        <member name="M:VDS.RDF.Query.Patterns.SubQueryPattern.Execute(VDS.RDF.Query.SparqlEvaluationContext,System.Boolean)">
-            <summary>
-            Executes the sub-query and then projects it's variables into the parent queries bindings
-            </summary>
-            <param name="context">Evaluation Context</param>
-            <param name="optional">Whether the pattern occurs in the context of an OPTIONAL clause</param>
-        </member>
         <member name="M:VDS.RDF.Query.Patterns.SubQueryPattern.Evaluate(VDS.RDF.Query.SparqlEvaluationContext)">
             <summary>
             Evaluates a Sub-query in the given Evaluation Context
@@ -473,18 +449,19 @@
             Interface for Triple Patterns that can be used in a CONSTRUCT pattern
             </summary>
         </member>
-        <member name="M:VDS.RDF.Query.Patterns.IConstructTriplePattern.Construct(VDS.RDF.Query.BindingSolution)">
-            <summary>
-            Constructs a Triple from a Binding Solution based on this Triple Pattern
-            </summary>
-            <param name="solution">Binding Solution</param>
-            <returns></returns>
-        </member>
         <member name="M:VDS.RDF.Query.Patterns.IConstructTriplePattern.Construct(VDS.RDF.Query.Algebra.Set)">
             <summary>
             Constructs a Triple from a Set based on this Triple Pattern
             </summary>
             <param name="s">Set</param>
+            <returns></returns>
+        </member>
+        <member name="M:VDS.RDF.Query.Patterns.IConstructTriplePattern.Construct(VDS.RDF.Query.Algebra.Set,System.Boolean)">
+            <summary>
+            Constructs a Triple from a Set based on this Triple Pattern
+            </summary>
+            <param name="s">Set</param>
+            <param name="preserveBNodes">Whether Blank Nodes should be preserved as-is (default behaviour is to re-write them)</param>
             <returns></returns>
         </member>
         <member name="T:VDS.RDF.Query.Paths.BaseUnaryPath">
@@ -1865,6 +1842,56 @@
             </summary>
         </member>
         <member name="F:VDS.RDF.Parsing.Tokens.Token.LENGTH">
+            <summary>
+            Constants defining Token Types
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.Tokens.Token.INSERT">
+            <summary>
+            Constants defining Token Types
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.Tokens.Token.DELETE">
+            <summary>
+            Constants defining Token Types
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.Tokens.Token.DATA">
+            <summary>
+            Constants defining Token Types
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.Tokens.Token.LOAD">
+            <summary>
+            Constants defining Token Types
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.Tokens.Token.CLEAR">
+            <summary>
+            Constants defining Token Types
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.Tokens.Token.CREATE">
+            <summary>
+            Constants defining Token Types
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.Tokens.Token.DROP">
+            <summary>
+            Constants defining Token Types
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.Tokens.Token.SILENT">
+            <summary>
+            Constants defining Token Types
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.Tokens.Token.INTO">
+            <summary>
+            Constants defining Token Types
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.Tokens.Token.WITH">
             <summary>
             Constants defining Token Types
             </summary>
@@ -3626,13 +3653,6 @@
             <summary>
             Gets the Last Child Graph Pattern of this Pattern and removes it from this Pattern
             </summary>
-        </member>
-        <member name="M:VDS.RDF.Query.Patterns.GraphPattern.Execute(VDS.RDF.Query.SparqlEvaluationContext,System.Boolean)">
-            <summary>
-            Executes this Graph Pattern against a Triple Store
-            </summary>
-            <param name="context">Evaluation Context</param>
-            <param name="parentOptional">Indicates whether the Parent Graph Pattern is an OPTIONAL clause or nested within an OPTIONAL clause</param>
         </member>
         <member name="M:VDS.RDF.Query.Patterns.GraphPattern.Optimise(System.Collections.Generic.IEnumerable{System.String})">
             <summary>
@@ -7329,6 +7349,11 @@
             Gets the enumeration of Commands in the set
             </summary>
         </member>
+        <member name="P:VDS.RDF.Update.SparqlUpdateCommandSet.NamespaceMap">
+            <summary>
+            Gets the Namespace Map for the Command Set
+            </summary>
+        </member>
         <member name="T:VDS.RDF.Query.Patterns.FilterPattern">
             <summary>
             Class for representing Filter Patterns in SPARQL Queries
@@ -7342,13 +7367,6 @@
             Creates a new Filter Pattern with the given Filter
             </summary>
             <param name="filter">Filter</param>
-        </member>
-        <member name="M:VDS.RDF.Query.Patterns.FilterPattern.Execute(VDS.RDF.Query.SparqlEvaluationContext,System.Boolean)">
-            <summary>
-            Executes the Pattern by applying the Filter in pre-commit mode
-            </summary>
-            <param name="context">Evaluation Context</param>
-            <param name="optional">Whether the Pattern occurs in the context of an OPTIONAL clause</param>
         </member>
         <member name="M:VDS.RDF.Query.Patterns.FilterPattern.Evaluate(VDS.RDF.Query.SparqlEvaluationContext)">
             <summary>
@@ -8608,19 +8626,6 @@
             <param name="data">Triple Store</param>
             <returns>Either a <see cref="T:VDS.RDF.Query.SparqlResultSet">SparqlResultSet</see> or a <see cref="T:VDS.RDF.Graph">Graph</see> depending on the type of query executed</returns>
         </member>
-        <member name="M:VDS.RDF.Query.SparqlQuery.ExecuteInternal(VDS.RDF.IInMemoryQueryableStore,VDS.RDF.Query.SparqlResultBinder)">
-            <summary>
-            Executes the SPARQL Query against the given Triple Store
-            </summary>
-            <param name="data">Triple Store</param>
-            <param name="binder">Results Binder to use</param>
-            <returns>
-            Either a <see cref="T:VDS.RDF.Query.SparqlResultSet">SparqlResultSet</see> or a <see cref="T:VDS.RDF.Graph">Graph</see> depending on the type of query executed
-            </returns>
-            <remarks>
-            This method uses the Labyrinth engine to execute queries
-            </remarks>
-        </member>
         <member name="M:VDS.RDF.Query.SparqlQuery.Evaluate(VDS.RDF.IInMemoryQueryableStore)">
             <summary>
             Evaluates the SPARQL Query against the given Triple Store
@@ -8747,11 +8752,21 @@
             <summary>
             Gets/Sets the Query Execution Timeout in Milliseconds
             </summary>
+            <remarks>
+            <para>
+            This Timeout (typically) only applies when executing the Query in memory.  If you have an instance of this class and pass its string representation (using <see cref="M:VDS.RDF.Query.SparqlQuery.ToString">ToString()</see>) you will lose the timeout information as this is not serialisable in SPARQL syntax.
+            </para>
+            </remarks>
         </member>
         <member name="P:VDS.RDF.Query.SparqlQuery.PartialResultsOnTimeout">
             <summary>
             Gets/Sets whether Partial Results should be returned in the event of Query Timeout
             </summary>
+            <remarks>
+            <para>
+            Partial Results (typically) only applies when executing the Query in memory.  If you have an instance of this class and pass its string representation (using <see cref="M:VDS.RDF.Query.SparqlQuery.ToString">ToString()</see>) you will lose the partial results information as this is not serialisable in SPARQL syntax.
+            </para>
+            </remarks>
         </member>
         <member name="P:VDS.RDF.Query.SparqlQuery.QueryTime">
             <summary>
@@ -9220,7 +9235,7 @@
         </member>
         <member name="T:VDS.RDF.Storage.IQueryableGenericIOManager">
             <summary>
-            Interface for classes which provide Query functionality to some arbitrary Store in addition to Read/Write functionality
+            Interface for classes which provide SPARQL Query functionality to some arbitrary Store in addition to Read/Write functionality
             </summary>
             <remarks>
             Designed to allow for arbitrary Triple Stores to be plugged into the library as required by the end user
@@ -9340,9 +9355,9 @@
         </member>
         <member name="M:VDS.RDF.Storage.IQueryableGenericIOManager.Query(System.String)">
             <summary>
-            Makes a Sparql Query against the underlying store
+            Makes a SPARQL Query against the underlying store
             </summary>
-            <param name="sparqlQuery">Sparql Query</param>
+            <param name="sparqlQuery">SPARQL Query</param>
             <returns><see cref="!:SparqlResultSet">SparqlResultSet</see> or a <see cref="T:VDS.RDF.Graph">Graph</see> depending on the Sparql Query</returns>
         </member>
         <member name="M:VDS.RDF.Storage.FourStoreConnector.#ctor(System.String)">
@@ -10688,14 +10703,6 @@
             </summary>
             <param name="result"></param>
         </member>
-        <member name="M:VDS.RDF.Query.SparqlResultSet.#ctor(VDS.RDF.Query.SparqlQuery,VDS.RDF.Query.SparqlResultBinder,VDS.RDF.Query.SparqlEvaluationContext)">
-            <summary>
-            Creates a Sparql Result Set for the Results of a SELECT Query
-            </summary>
-            <param name="query">The Sparql Query which this result set will represent the results of</param>
-            <param name="binder">Results Binder which contains the Solutions produced by executing the Query</param>
-            <param name="context">Evaluation Context</param>
-        </member>
         <member name="M:VDS.RDF.Query.SparqlResultSet.#ctor(VDS.RDF.Query.SparqlEvaluationContext)">
             <summary>
             Creates a SPARQL Result Set for the Results of a Query with the Leviathan Engine
@@ -11253,14 +11260,6 @@
             Helper Class used in the execution of Sparql Queries
             </summary>
             <remarks>
-            <para>
-            The purpose of the Result Binder is to store intermediate results generated during the query execution process and to match
-            up bindings of variables into possible solutions
-            </para>
-            <para>
-            At some point I will try and write up a complete explanation of how the Sparql Query execution works but this will take quite a bit
-            of time which I don't have at the moment.
-            </para>
             </remarks>
         </member>
         <member name="M:VDS.RDF.Query.SparqlResultBinder.#ctor">
@@ -11273,27 +11272,6 @@
             Creates a new Results Binder
             </summary>
             <param name="query">Query this provides Result Binding to</param>
-        </member>
-        <member name="M:VDS.RDF.Query.SparqlResultBinder.#ctor(VDS.RDF.Query.SparqlResultBinder)">
-            <summary>
-            Creates a new Results Binder deep copied from an existing Results Binder
-            </summary>
-            <param name="binder">Results Binder to clone</param>
-        </member>
-        <member name="M:VDS.RDF.Query.SparqlResultBinder.HasVariableBindings(System.String)">
-            <summary>
-            Gets whether a given Variable has existing Bindings (i.e. values already bound to it)
-            </summary>
-            <param name="name">Variable Name</param>
-            <returns></returns>
-        </member>
-        <member name="M:VDS.RDF.Query.SparqlResultBinder.IsBound(System.String,VDS.RDF.INode)">
-            <summary>
-            Gets whether a given Node is bound to a given Variable
-            </summary>
-            <param name="name">Variable Name</param>
-            <param name="value">Node</param>
-            <returns></returns>
         </member>
         <member name="M:VDS.RDF.Query.SparqlResultBinder.Value(System.String,System.Int32)">
             <summary>
@@ -11317,171 +11295,15 @@
             <param name="groupID">Group ID</param>
             <returns></returns>
         </member>
-        <member name="M:VDS.RDF.Query.SparqlResultBinder.CreatePatternID">
-            <summary>
-            Creates a new Pattern ID
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:VDS.RDF.Query.SparqlResultBinder.StartExecution">
-            <summary>
-            Called at the start of Query Execution to prepare the Result Binder
-            </summary>
-        </member>
-        <member name="M:VDS.RDF.Query.SparqlResultBinder.EndExecution(VDS.RDF.Query.SparqlEvaluationContext)">
-            <summary>
-            Called at the end of Query Execution to convert the Bindings into Solutions
-            </summary>
-        </member>
-        <member name="M:VDS.RDF.Query.SparqlResultBinder.StartBindTransaction(VDS.RDF.Query.Patterns.ITriplePattern)">
-            <summary>
-            Starts a new Bind Transaction for the given Triple Pattern
-            </summary>
-            <param name="pattern">Triple Pattern</param>
-        </member>
-        <member name="M:VDS.RDF.Query.SparqlResultBinder.EndBindTransaction">
-            <summary>
-            Ends the current Bind Transaction
-            </summary>
-        </member>
-        <member name="M:VDS.RDF.Query.SparqlResultBinder.Bind(VDS.RDF.Triple,VDS.RDF.Query.Patterns.TriplePattern)">
-            <summary>
-            Binds values from  Triple based on the given Triple Pattern
-            </summary>
-            <param name="t">Triple to bind values from</param>
-            <param name="pattern">Triple Pattern to bind based upon</param>
-        </member>
-        <member name="M:VDS.RDF.Query.SparqlResultBinder.GetBindingID(System.String,System.String,System.String)">
-            <summary>
-            Gets a Binding ID for a new Binding
-            </summary>
-            <param name="s">Variable Name for the Subject Variable (if any)</param>
-            <param name="p">Variable Name for the Predicate Variable (if any)</param>
-            <param name="o">Variable Name for the Object Variable (if any)</param>
-            <returns></returns>
-            <remarks>If there are no Variable Names (all are nulls) in the three parameters a -1 will be returned which indicates that no Binding need take place</remarks>
-        </member>
-        <member name="M:VDS.RDF.Query.SparqlResultBinder.CommitBinds(System.Boolean)">
-            <summary>
-            Commits binds created during a Graph Pattern execution as Valid Binds
-            </summary>
-            <param name="optional">Indicates whether the commit is in the context of an OPTIONAL clause</param>
-        </member>
-        <member name="M:VDS.RDF.Query.SparqlResultBinder.BindGraph(System.String)">
-            <summary>
-            Used to bind the Graph Uri of each result from a GRAPH Clause to the Graph variable
-            </summary>
-            <param name="var">Graph variable</param>
-        </member>
-        <member name="M:VDS.RDF.Query.SparqlResultBinder.UnionBind(VDS.RDF.Query.SparqlResultBinder,System.Int32)">
-            <summary>
-            UNIONs a result from a sub-binder object that has been created to execute a UNION clause into the main Binder results
-            </summary>
-            <param name="binder">Sub-binder object</param>
-            <param name="id">Binding ID</param>
-        </member>
-        <member name="M:VDS.RDF.Query.SparqlResultBinder.Commit(System.Boolean,System.Boolean)">
-            <summary>
-            Commits the results of executing a Graph Pattern
-            </summary>
-            <param name="parentOptional">Indicates whether we are currently in the scope of an OPTIONAL clause</param>
-            <param name="discardBindings">Indicates whether bindings generated for variables introdcued by this Graph Pattern should be discarded</param>
-            <remarks>
-            The <paramref name="discardBindings">discardBindings</paramref> parameter is used to indicate that bindings for variables introduced in this Graph Pattern should be discarded, this is needed for EXISTS and NOT EXISTS clauses
-            </remarks>
-        </member>
-        <member name="M:VDS.RDF.Query.SparqlResultBinder.FilterBinds(VDS.RDF.Query.Patterns.TriplePattern)">
-            <summary>
-            Filters binds created by a Triple Pattern execution to discard previous Binds that are invalidated by the latest Binds
-            </summary>
-            <param name="pattern"></param>
-            <remarks>
-            The purpose of this function is to Filter previous Bindings.  If this Pattern uses a Variable that already has stuff bound to it 
-            from a previous Pattern execution then it is necessary to ensure that the Values produced by those Bindings are limited to the
-            Values produced by these Bindings.
-            </remarks>
-        </member>
-        <member name="M:VDS.RDF.Query.SparqlResultBinder.PairBindings(System.Int32,System.Int32)">
-            <summary>
-            Pairs two Bindings into one Binding
-            </summary>
-            <param name="i">First Binding</param>
-            <param name="j">Second Binding</param>
-        </member>
-        <member name="M:VDS.RDF.Query.SparqlResultBinder.BindProjection(System.String,VDS.RDF.INode,System.Int32)">
-            <summary>
-            Binds a Projected Value to a Variable
-            </summary>
-            <param name="var">Variable</param>
-            <param name="value">Projected Value</param>
-            <param name="bindingID">Binding ID</param>
-        </member>
-        <member name="M:VDS.RDF.Query.SparqlResultBinder.BindEmpty(System.Collections.Generic.IEnumerable{VDS.RDF.Query.SparqlVariable})">
-            <summary>
-            Creates an single empty Binding of null to each variable
-            </summary>
-            <param name="vars"></param>
-        </member>
-        <member name="M:VDS.RDF.Query.SparqlResultBinder.BindAll(System.Collections.Generic.IEnumerable{VDS.RDF.Query.SparqlVariable},VDS.RDF.Query.Patterns.TriplePattern,VDS.RDF.IInMemoryQueryableStore)">
-            <summary>
-            Binding method for Optimising SELECT * {?s ?p ?o} type queries
-            </summary>
-            <param name="vars">Variables being bound to</param>
-            <param name="p">Triple Pattern</param>
-            <param name="store">Store being queried over</param>
-        </member>
-        <member name="M:VDS.RDF.Query.SparqlResultBinder.BindAssignment(System.String,VDS.RDF.INode,System.Int32)">
-            <summary>
-            Binding method for binding the results of LET assignments into a Query
-            </summary>
-            <param name="var">Variable being bound to</param>
-            <param name="value">Value to bind</param>
-            <param name="bindingID">Binding ID</param>
-        </member>
-        <member name="M:VDS.RDF.Query.SparqlResultBinder.Unbind(System.Int32)">
-            <summary>
-            Removes an invalid Binding
-            </summary>
-            <param name="id">Binding ID</param>
-        </member>
-        <member name="M:VDS.RDF.Query.SparqlResultBinder.PartialUnbind(System.Int32)">
-            <summary>
-            Removes a partial invalid Binding (used for filtering Optional Graph Pattern bindings)
-            </summary>
-            <param name="id">Binding ID</param>
-        </member>
-        <member name="M:VDS.RDF.Query.SparqlResultBinder.CheckTimeout">
-            <summary>
-            Internal Helper function which checks whether the Execution Timeout has been execeeded
-            </summary>
-        </member>
         <member name="M:VDS.RDF.Query.SparqlResultBinder.SetGroupContext(System.Boolean)">
             <summary>
             Sets the Group Context for the Binder
             </summary>
             <param name="accessContents">Whether you want to access the Group Contents or the Groups themselves</param>
         </member>
-        <member name="M:VDS.RDF.Query.SparqlResultBinder.Sort(VDS.RDF.Query.Ordering.ISparqlOrderBy)">
-            <summary>
-            Sorts the Solutions using the given Ordering
-            </summary>
-            <param name="orderBy">An Ordering on Solutions</param>
-        </member>
-        <member name="M:VDS.RDF.Query.SparqlResultBinder.Slice(System.Int32,System.Int32)">
-            <summary>
-            Applies Limit and Offset to the Solutions
-            </summary>
-            <param name="limit">Solution Limit</param>
-            <param name="offset">Solution Offset</param>
-        </member>
         <member name="M:VDS.RDF.Query.SparqlResultBinder.Dispose">
             <summary>
             Disposes of a Result Binder
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Query.SparqlResultBinder.HasBindings">
-            <summary>
-            Gets whether there any Result Bindings
             </summary>
         </member>
         <member name="P:VDS.RDF.Query.SparqlResultBinder.Variables">
@@ -11494,49 +11316,9 @@
             Gets the enumeration of valid Binding IDs
             </summary>
         </member>
-        <member name="P:VDS.RDF.Query.SparqlResultBinder.Solutions">
-            <summary>
-            Gets the set of Solutions that result from the Query this Binder provides Binding to
-            </summary>
-        </member>
         <member name="P:VDS.RDF.Query.SparqlResultBinder.Groups">
             <summary>
             Gets the set of Groups that result from the Query this Binder provides Binding to
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Query.SparqlResultBinder.QueryTimeout">
-            <summary>
-            Gets/Sets the Execution Timeout in Milliseconds
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Query.SparqlResultBinder.QueryTime">
-            <summary>
-            Gets the amount of Time taken to execute the Query in Milliseconds
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Query.SparqlResultBinder.QueryTimeTicks">
-            <summary>
-            Gets the amount of Time taken to execute the Query in Ticks
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Query.SparqlResultBinder.PatternID">
-            <summary>
-            Gets/Sets the current Pattern ID
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Query.SparqlResultBinder.TriplePatternID">
-            <summary>
-            Gets/Sets the current Triple Pattern ID
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Query.SparqlResultBinder.MaxTriplePatternID">
-            <summary>
-            Gets/Sets the current Max Triple Pattern ID
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Query.SparqlResultBinder.TemporaryBindingIDs">
-            <summary>
-            Gets the enumeration of Binding IDs that have not yet been committed
             </summary>
         </member>
         <member name="T:VDS.RDF.Query.LeviathanResultBinder">
@@ -16393,14 +16175,6 @@
             <param name="sparqlQuery">Sparql Query String</param>
             <returns>RDF Graph</returns>
         </member>
-        <member name="M:VDS.RDF.Query.SparqlRemoteEndpoint.QueryRaw(System.String,System.String@)">
-            <summary>
-            Makes a Query to a Sparql Endpoint and returns the raw Response Stream
-            </summary>
-            <param name="sparqlQuery">Sparql Query String</param>
-            <param name="ctype">Content Type of the Response contained in the returned Stream</param>
-            <returns></returns>
-        </member>
         <member name="M:VDS.RDF.Query.SparqlRemoteEndpoint.QueryRaw(System.String)">
             <summary>
             Makes a Query to a Sparql Endpoint and returns the raw Response
@@ -16440,6 +16214,9 @@
             <summary>
             Gets/Sets the HTTP Timeouts used for Queries
             </summary>
+            <remarks>
+            Defaults to 30 Seconds
+            </remarks>
         </member>
         <member name="P:VDS.RDF.Query.SparqlRemoteEndpoint.NamedGraphs">
             <summary>
@@ -17513,6 +17290,126 @@
             <summary>
             Gets the Variables used in all the argument expressions of this function
             </summary>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Tokens.ClearKeywordToken">
+            <summary>
+            Token which represents the SPARQL Update CLEAR Keyword
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Tokens.ClearKeywordToken.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Creates a new CLEAR Keyword Token
+            </summary>
+            <param name="line">Line the Keyword occurs on</param>
+            <param name="pos">Position the Keyword occurs at</param>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Tokens.CreateKeywordToken">
+            <summary>
+            Token which represents the SPARQL Update CREATE Keyword
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Tokens.CreateKeywordToken.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Creates a new CREATE Keyword Token
+            </summary>
+            <param name="line">Line the Keyword occurs on</param>
+            <param name="pos">Position the Keyword occurs at</param>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Tokens.DataKeywordToken">
+            <summary>
+            Token which represents the SPARQL Update DATA Keyword
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Tokens.DataKeywordToken.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Creates a new DATA Keyword Token
+            </summary>
+            <param name="line">Line the Keyword occurs on</param>
+            <param name="pos">Position the Keyword occurs at</param>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Tokens.DeleteKeywordToken">
+            <summary>
+            Token which represents the SPARQL Update DELETE Keyword
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Tokens.DeleteKeywordToken.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Creates a new DELETE Keyword Token
+            </summary>
+            <param name="line">Line the Keyword occurs on</param>
+            <param name="pos">Position the Keyword occurs at</param>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Tokens.DropKeywordToken">
+            <summary>
+            Token which represents the SPARQL Update DROP Keyword
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Tokens.DropKeywordToken.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Creates a new DROP Keyword Token
+            </summary>
+            <param name="line">Line the Keyword occurs on</param>
+            <param name="pos">Position the Keyword occurs at</param>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Tokens.InsertKeywordToken">
+            <summary>
+            Token which represents the SPARQL Update INSERT Keyword
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Tokens.InsertKeywordToken.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Creates a new INSERT Keyword Token
+            </summary>
+            <param name="line">Line the Keyword occurs on</param>
+            <param name="pos">Position the Keyword occurs at</param>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Tokens.IntoKeywordToken">
+            <summary>
+            Token which represents the SPARQL Update INTO Keyword
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Tokens.IntoKeywordToken.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Creates a new INTO Keyword Token
+            </summary>
+            <param name="line">Line the Keyword occurs on</param>
+            <param name="pos">Position the Keyword occurs at</param>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Tokens.LoadKeywordToken">
+            <summary>
+            Token which represents the SPARQL Update LOAD Keyword
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Tokens.LoadKeywordToken.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Creates a new LOAD Keyword Token
+            </summary>
+            <param name="line">Line the Keyword occurs on</param>
+            <param name="pos">Position the Keyword occurs at</param>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Tokens.SilentKeywordToken">
+            <summary>
+            Token which represents the SPARQL Update SILENT Keyword
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Tokens.SilentKeywordToken.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Creates a new SILENT Keyword Token
+            </summary>
+            <param name="line">Line the Keyword occurs on</param>
+            <param name="pos">Position the Keyword occurs at</param>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Tokens.WithKeywordToken">
+            <summary>
+            Token which represents the SPARQL Update WITH Keyword
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Tokens.WithKeywordToken.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Creates a new WITH Keyword Token
+            </summary>
+            <param name="line">Line the Keyword occurs on</param>
+            <param name="pos">Position the Keyword occurs at</param>
         </member>
         <member name="T:VDS.RDF.Parsing.Events.IPreProcessingEventGenerator">
             <summary>
@@ -18759,13 +18656,6 @@
             Binding Context for Pattern Item
             </summary>
         </member>
-        <member name="M:VDS.RDF.Query.Patterns.PatternItem.Accepts(VDS.RDF.INode)">
-            <summary>
-            Checks whether the Pattern Item accepts the given Node
-            </summary>
-            <param name="obj">Node to test</param>
-            <returns></returns>
-        </member>
         <member name="M:VDS.RDF.Query.Patterns.PatternItem.Accepts(VDS.RDF.Query.SparqlEvaluationContext,VDS.RDF.INode)">
             <summary>
             Checks whether the Pattern Item accepts the given Node in the given Context
@@ -18774,14 +18664,7 @@
             <param name="obj">Node to test</param>
             <returns></returns>
         </member>
-        <member name="M:VDS.RDF.Query.Patterns.PatternItem.Construct(VDS.RDF.Query.BindingSolution)">
-            <summary>
-            Constructs a Node based on this Pattern for the given Binding Solution
-            </summary>
-            <param name="solution">Binding Solution</param>
-            <returns></returns>
-        </member>
-        <member name="M:VDS.RDF.Query.Patterns.PatternItem.Construct(VDS.RDF.Query.Algebra.Set)">
+        <member name="M:VDS.RDF.Query.Patterns.PatternItem.Construct(VDS.RDF.Query.Algebra.Set,System.Boolean)">
             <summary>
             Constructs a Node based on this Pattern for the given Set
             </summary>
@@ -18820,13 +18703,6 @@
             </summary>
             <param name="name">Variable name including the leading ?/$</param>
         </member>
-        <member name="M:VDS.RDF.Query.Patterns.VariablePattern.Accepts(VDS.RDF.INode)">
-            <summary>
-            Checks whether the given Node is a valid value for the Variable in the current Binding Context
-            </summary>
-            <param name="obj">Node to test</param>
-            <returns></returns>
-        </member>
         <member name="M:VDS.RDF.Query.Patterns.VariablePattern.Accepts(VDS.RDF.Query.SparqlEvaluationContext,VDS.RDF.INode)">
             <summary>
             Checks whether the given Node is a valid value for the Variable in the current Binding Context
@@ -18835,21 +18711,14 @@
             <param name="obj">Node to test</param>
             <returns></returns>
         </member>
-        <member name="M:VDS.RDF.Query.Patterns.VariablePattern.Construct(VDS.RDF.Query.BindingSolution)">
-            <summary>
-            Constructs a Node based on the given Binding Solution
-            </summary>
-            <param name="solution">Binding Solution</param>
-            <returns>The Node which is bound to this Variable in this Solution</returns>
-        </member>
-        <member name="M:VDS.RDF.Query.Patterns.VariablePattern.Construct(VDS.RDF.Query.Algebra.Set)">
+        <member name="M:VDS.RDF.Query.Patterns.VariablePattern.Construct(VDS.RDF.Query.Algebra.Set,System.Boolean)">
             <summary>
             Constructs a Node based on the given Set
             </summary>
             <param name="s">Set</param>
             <returns>The Node which is bound to this Variable in this Solution</returns>
         </member>
-        <member name="M:VDS.RDF.Query.Patterns.VariablePattern.ConstructInternal(VDS.RDF.INode)">
+        <member name="M:VDS.RDF.Query.Patterns.VariablePattern.ConstructInternal(VDS.RDF.INode,System.Boolean)">
             <summary>
             Constructs a Node based on the given Node
             </summary>
@@ -18881,13 +18750,6 @@
             </summary>
             <param name="n">Exact Node to match</param>
         </member>
-        <member name="M:VDS.RDF.Query.Patterns.NodeMatchPattern.Accepts(VDS.RDF.INode)">
-            <summary>
-            Checks whether the given Node matches the Node this pattern was instantiated with
-            </summary>
-            <param name="obj">Node to test</param>
-            <returns></returns>
-        </member>
         <member name="M:VDS.RDF.Query.Patterns.NodeMatchPattern.Accepts(VDS.RDF.Query.SparqlEvaluationContext,VDS.RDF.INode)">
             <summary>
             Checks whether the given Node matches the Node this pattern was instantiated with
@@ -18896,14 +18758,7 @@
             <param name="obj">Node to test</param>
             <returns></returns>
         </member>
-        <member name="M:VDS.RDF.Query.Patterns.NodeMatchPattern.Construct(VDS.RDF.Query.BindingSolution)">
-            <summary>
-            Constructs a Node based on the given Binding Solution
-            </summary>
-            <param name="solution">Binding Solution</param>
-            <returns>The Node this pattern matches on</returns>
-        </member>
-        <member name="M:VDS.RDF.Query.Patterns.NodeMatchPattern.Construct(VDS.RDF.Query.Algebra.Set)">
+        <member name="M:VDS.RDF.Query.Patterns.NodeMatchPattern.Construct(VDS.RDF.Query.Algebra.Set,System.Boolean)">
             <summary>
             Constructs a Node based on the given Set
             </summary>
@@ -18932,13 +18787,6 @@
             </summary>
             <param name="name">Blank Node ID</param>
         </member>
-        <member name="M:VDS.RDF.Query.Patterns.BlankNodePattern.Accepts(VDS.RDF.INode)">
-            <summary>
-            Checks whether the given Node is a valid value for the Temporary Variable
-            </summary>
-            <param name="obj">Node to test</param>
-            <returns></returns>
-        </member>
         <member name="M:VDS.RDF.Query.Patterns.BlankNodePattern.Accepts(VDS.RDF.Query.SparqlEvaluationContext,VDS.RDF.INode)">
             <summary>
             Checks whether the given Node is a valid value for the Temporary Variable
@@ -18947,14 +18795,7 @@
             <param name="obj">Node to test</param>
             <returns></returns>
         </member>
-        <member name="M:VDS.RDF.Query.Patterns.BlankNodePattern.Construct(VDS.RDF.Query.BindingSolution)">
-            <summary>
-            Constructs a Node based on the given Binding Solution
-            </summary>
-            <param name="solution">Binding Solution</param>
-            <returns>A Blank Node whose ID is based on the ID of the Blank Node in the pattern and the Binding ID of the Solution</returns>
-        </member>
-        <member name="M:VDS.RDF.Query.Patterns.BlankNodePattern.Construct(VDS.RDF.Query.Algebra.Set)">
+        <member name="M:VDS.RDF.Query.Patterns.BlankNodePattern.Construct(VDS.RDF.Query.Algebra.Set,System.Boolean)">
             <summary>
             Constructs a Node based on the given Set
             </summary>
@@ -18998,14 +18839,6 @@
             </summary>
             <remarks>Implementations derived from this class should multiply their comparison results by the modifier to automatically provide Ascending/Descending order</remarks>
         </member>
-        <member name="M:VDS.RDF.Query.Ordering.BaseOrderBy.Compare(VDS.RDF.Query.BindingSolution,VDS.RDF.Query.BindingSolution)">
-            <summary>
-            Abstract Compare method which derived classes should implement their ordering in
-            </summary>
-            <param name="x">A Solution</param>
-            <param name="y">A Solution</param>
-            <returns></returns>
-        </member>
         <member name="M:VDS.RDF.Query.Ordering.BaseOrderBy.Compare(VDS.RDF.Query.Algebra.Set,VDS.RDF.Query.Algebra.Set)">
             <summary>
             Abstract Compare method which derived classes should implement their ordering in
@@ -19046,14 +18879,6 @@
             </summary>
             <param name="name">Variable to order upon</param>
         </member>
-        <member name="M:VDS.RDF.Query.Ordering.OrderByVariable.Compare(VDS.RDF.Query.BindingSolution,VDS.RDF.Query.BindingSolution)">
-            <summary>
-            Compares Solutions on the basis of their values for the Variable the class was instaniated with
-            </summary>
-            <param name="x">A Solution</param>
-            <param name="y">A Solution</param>
-            <returns></returns>
-        </member>
         <member name="M:VDS.RDF.Query.Ordering.OrderByVariable.Compare(VDS.RDF.Query.Algebra.Set,VDS.RDF.Query.Algebra.Set)">
             <summary>
             Compares Sets on the basis of their values for the Variable the class was instaniated with
@@ -19079,14 +18904,6 @@
             </summary>
             <param name="expr">Expression to order by</param>
         </member>
-        <member name="M:VDS.RDF.Query.Ordering.OrderByExpression.Compare(VDS.RDF.Query.BindingSolution,VDS.RDF.Query.BindingSolution)">
-            <summary>
-            Orders the solutions based on the values resulting from evaluating the expression for both solutions
-            </summary>
-            <param name="x">A Solution</param>
-            <param name="y">A Solution</param>
-            <returns></returns>
-        </member>
         <member name="M:VDS.RDF.Query.Ordering.OrderByExpression.Compare(VDS.RDF.Query.Algebra.Set,VDS.RDF.Query.Algebra.Set)">
             <summary>
             Orders the sets based on the values resulting from evaluating the expression for both solutions
@@ -19110,24 +18927,6 @@
             <summary>
             Interface for Classes which implement SPARQL Filter Functions
             </summary>
-        </member>
-        <member name="M:VDS.RDF.Query.Filters.ISparqlFilter.Apply(VDS.RDF.Query.SparqlEvaluationContext,System.Boolean)">
-            <summary>
-            Applies a Filter to the intermediate Results stored in the Results Binder
-            </summary>
-            <param name="context">Evaluation Context</param>
-            <param name="optional">Whether the Filter is applied inside an OPTIONAL Clause</param>
-            <remarks>
-            Assumes that the Filter is applied after Bindings are commited
-            </remarks>
-        </member>
-        <member name="M:VDS.RDF.Query.Filters.ISparqlFilter.Apply(VDS.RDF.Query.SparqlEvaluationContext,System.Boolean,VDS.RDF.Query.Filters.FilterApplicationMode)">
-            <summary>
-            Applies a Filter to the intermediate Results stored in the Results Binder
-            </summary>
-            <param name="context">Evaluation Context</param>
-            <param name="optional">Whether the Filter is applied inside an OPTIONAL Clause</param>
-            <param name="mode">Indicates how the Filter should be applied</param>
         </member>
         <member name="M:VDS.RDF.Query.Filters.ISparqlFilter.Evaluate(VDS.RDF.Query.SparqlEvaluationContext)">
             <summary>
@@ -19155,21 +18954,6 @@
             Creates a new Base Unary Filter
             </summary>
             <param name="arg">Argument to the Filter</param>
-        </member>
-        <member name="M:VDS.RDF.Query.Filters.BaseUnaryFilter.Apply(VDS.RDF.Query.SparqlEvaluationContext,System.Boolean)">
-            <summary>
-            Applies a Filter expression to the intermediate Results stored in the Results Binder
-            </summary>
-            <param name="context">Evaluation Context</param>
-            <param name="optional">Whether the Filter is applied inside an OPTIONAL Clause</param>
-        </member>
-        <member name="M:VDS.RDF.Query.Filters.BaseUnaryFilter.Apply(VDS.RDF.Query.SparqlEvaluationContext,System.Boolean,VDS.RDF.Query.Filters.FilterApplicationMode)">
-            <summary>
-            Applies a Filter expression to the intermediate Results stored in the Results Binder
-            </summary>
-            <param name="context">Evaluation Context</param>
-            <param name="optional">Whether the Filter is applied inside an OPTIONAL Clause</param>
-            <param name="mode">Indicates how the Filter should be applied</param>
         </member>
         <member name="M:VDS.RDF.Query.Filters.BaseUnaryFilter.Evaluate(VDS.RDF.Query.SparqlEvaluationContext)">
             <summary>
@@ -19204,14 +18988,6 @@
             </summary>
             <param name="varTerm">Variable Expression</param>
         </member>
-        <member name="M:VDS.RDF.Query.Filters.BoundFilter.Apply(VDS.RDF.Query.SparqlEvaluationContext,System.Boolean,VDS.RDF.Query.Filters.FilterApplicationMode)">
-            <summary>
-            Applies a Bound Filter to the intermediate Results stored in the Results Binder
-            </summary>
-            <param name="context">Evaluation Context</param>
-            <param name="optional">Whether the Filter is applied inside an OPTIONAL Clause</param>
-            <param name="mode">Indicates how the Filter should be applied</param>
-        </member>
         <member name="M:VDS.RDF.Query.Filters.BoundFilter.Evaluate(VDS.RDF.Query.SparqlEvaluationContext)">
             <summary>
             Evaluates a filter in the given Evaluation Context
@@ -19234,14 +19010,6 @@
             Creates a new Unary Expression Filter which filters on the basis of a single sub-expression
             </summary>
             <param name="expr">Expression to filter with</param>
-        </member>
-        <member name="M:VDS.RDF.Query.Filters.UnaryExpressionFilter.Apply(VDS.RDF.Query.SparqlEvaluationContext,System.Boolean,VDS.RDF.Query.Filters.FilterApplicationMode)">
-            <summary>
-            Applies a Filter Expression to the intermediate Results stored in the Results Binder
-            </summary>
-            <param name="context">Evaluation Context</param>
-            <param name="optional">Whether the Filter is applied inside an OPTIONAL Clause</param>
-            <param name="mode">Indicates how the Filter should be applied</param>
         </member>
         <member name="M:VDS.RDF.Query.Filters.UnaryExpressionFilter.Evaluate(VDS.RDF.Query.SparqlEvaluationContext)">
             <summary>
@@ -19266,21 +19034,6 @@
             </summary>
             <param name="first">First Filter</param>
             <param name="second">Second Filter</param>
-        </member>
-        <member name="M:VDS.RDF.Query.Filters.ChainFilter.Apply(VDS.RDF.Query.SparqlEvaluationContext,System.Boolean)">
-            <summary>
-            Applies the Filter Chain to the Result Bindings
-            </summary>
-            <param name="context">Evaluation Context</param>
-            <param name="optional">Is the Filter applied in the scope of an OPTIONAL clause?</param>
-        </member>
-        <member name="M:VDS.RDF.Query.Filters.ChainFilter.Apply(VDS.RDF.Query.SparqlEvaluationContext,System.Boolean,VDS.RDF.Query.Filters.FilterApplicationMode)">
-            <summary>
-            Applies the Filter Chain to the Result Bindings
-            </summary>
-            <param name="context">Evaluation Context</param>
-            <param name="optional">Is the Filter applied in the scope of an OPTIONAL clause?</param>
-            <param name="mode">Indicates how the Filter should be applied</param>
         </member>
         <member name="M:VDS.RDF.Query.Filters.ChainFilter.Evaluate(VDS.RDF.Query.SparqlEvaluationContext)">
             <summary>
@@ -19327,17 +19080,6 @@
             </summary>
             <param name="expr">Expression to filter with</param>
         </member>
-        <member name="M:VDS.RDF.Query.Filters.HavingClauseFilter.Apply(VDS.RDF.Query.SparqlEvaluationContext,System.Boolean,VDS.RDF.Query.Filters.FilterApplicationMode)">
-            <summary>
-            Applies the Filter over all Binding IDs which refer to Groups
-            </summary>
-            <param name="context">Evaluation Context</param>
-            <param name="optional">Optional flag - ignored by this Filter</param>
-            <param name="mode">Indicates how the Filter should be applied</param>
-            <remarks>
-            For HAVING clause FILTERS these are always post-commit so the <paramref name="mode">mode</paramref> is ignored
-            </remarks>
-        </member>
         <member name="M:VDS.RDF.Query.Filters.HavingClauseFilter.Evaluate(VDS.RDF.Query.SparqlEvaluationContext)">
             <summary>
             Evaluates a filter in the given Evaluation Context
@@ -19349,58 +19091,6 @@
             Gets the String representation of the Having Clause Filter
             </summary>
             <returns></returns>
-        </member>
-        <member name="T:VDS.RDF.Query.Filters.ExistsClauseFilter">
-            <summary>
-            Special Filter class used for EXISTS clauses by the Labyrinth Engine
-            </summary>
-        </member>
-        <member name="M:VDS.RDF.Query.Filters.ExistsClauseFilter.#ctor(System.Collections.Generic.List{System.String})">
-            <summary>
-            Creates a new NOT EXISTS Clause filter
-            </summary>
-            <param name="vars">List of Variables which must not be bound</param>
-        </member>
-        <member name="M:VDS.RDF.Query.Filters.ExistsClauseFilter.Apply(VDS.RDF.Query.SparqlEvaluationContext,System.Boolean,VDS.RDF.Query.Filters.FilterApplicationMode)">
-            <summary>
-            Applies the Filter in the given Evaluation Context
-            </summary>
-            <param name="context">Evaluation Context</param>
-            <param name="optional">Whether the Filter applies in the context of an OPTIONAL</param>
-            <param name="mode">What mode the Filter is applied in</param>
-        </member>
-        <member name="M:VDS.RDF.Query.Filters.ExistsClauseFilter.ToString">
-            <summary>
-            Gets the String representation of the FILTER
-            </summary>
-            <returns>An empty String</returns>
-            <remarks>This Filter is represented as an empty string since it is actually just a special filter added to the Query to handle NOT EXISTS clauses correctly</remarks>
-        </member>
-        <member name="T:VDS.RDF.Query.Filters.NotExistsClauseFilter">
-            <summary>
-            Special Filter class used for NOT EXISTS clauses by the Labyrinth engine
-            </summary>
-        </member>
-        <member name="M:VDS.RDF.Query.Filters.NotExistsClauseFilter.#ctor(System.Collections.Generic.List{System.String})">
-            <summary>
-            Creates a new NOT EXISTS Clause filter
-            </summary>
-            <param name="vars">List of Variables which must not be bound</param>
-        </member>
-        <member name="M:VDS.RDF.Query.Filters.NotExistsClauseFilter.Apply(VDS.RDF.Query.SparqlEvaluationContext,System.Boolean,VDS.RDF.Query.Filters.FilterApplicationMode)">
-            <summary>
-            Applies the Filter in the given Evaluation Context
-            </summary>
-            <param name="context">Evaluation Context</param>
-            <param name="optional">Whether the Filter applies in the context of an OPTIONAL</param>
-            <param name="mode">What mode the Filter is applied in</param>
-        </member>
-        <member name="M:VDS.RDF.Query.Filters.NotExistsClauseFilter.ToString">
-            <summary>
-            Gets the String representation of the FILTER
-            </summary>
-            <returns>An empty String</returns>
-            <remarks>This Filter is represented as an empty string since it is actually just a special filter added to the Query to handle NOT EXISTS clauses correctly</remarks>
         </member>
         <member name="T:VDS.RDF.Query.Expressions.OrExpression">
             <summary>
@@ -20254,17 +19944,6 @@
             <param name="path">Property Path</param>
             <param name="obj">Object</param>
         </member>
-        <member name="M:VDS.RDF.Query.Patterns.PropertyPathPattern.Execute(VDS.RDF.Query.SparqlEvaluationContext,System.Boolean)">
-            <summary>
-            Executes a property path pattern
-            </summary>
-            <param name="context">Evaluation Context</param>
-            <param name="optional">Whether this occurs in the context of an OPTIONAL clause</param>
-            <exception cref="T:VDS.RDF.Query.RdfQueryException">Thrown since the Labyrinth engine doesn't support property paths</exception>
-            <remarks>
-            A <see cref="T:VDS.RDF.Query.RdfQueryException">RdfQueryException</see> is always thrown since property paths are not supported in Labyrinth
-            </remarks>
-        </member>
         <member name="M:VDS.RDF.Query.Patterns.PropertyPathPattern.Evaluate(VDS.RDF.Query.SparqlEvaluationContext)">
             <summary>
             Evaluates a property path pattern
@@ -20280,6 +19959,35 @@
         <member name="P:VDS.RDF.Query.Patterns.PropertyPathPattern.IsAcceptAll">
             <summary>
             Gets whether the Pattern accepts all Triple Patterns
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Contexts.SparqlUpdateParserContext.#ctor(VDS.RDF.Parsing.Tokens.ITokeniser,VDS.RDF.Parsing.Tokens.TokenQueueMode)">
+            <summary>
+            Creates a new SPARQL Update Parser Context with custom settings
+            </summary>
+            <param name="tokeniser">Tokeniser to use</param>
+            <param name="queueMode">Tokeniser Queue Mode</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Contexts.SparqlUpdateParserContext.#ctor(VDS.RDF.Parsing.Tokens.ITokeniser,System.Boolean,System.Boolean)">
+            <summary>
+            Creates a new SPARQL Update Parser Context with custom settings
+            </summary>
+            <param name="tokeniser">Tokeniser to use</param>
+            <param name="traceParsing">Whether to trace parsing</param>
+            <param name="traceTokeniser">Whether to trace tokenisation</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Contexts.SparqlUpdateParserContext.#ctor(VDS.RDF.Parsing.Tokens.ITokeniser,VDS.RDF.Parsing.Tokens.TokenQueueMode,System.Boolean,System.Boolean)">
+            <summary>
+            Creates a new SPARQL Update Parser Context with custom settings
+            </summary>
+            <param name="tokeniser">Tokeniser to use</param>
+            <param name="queueMode">Tokeniser Queue Mode</param>
+            <param name="traceParsing">Whether to trace parsing</param>
+            <param name="traceTokeniser">Whether to trace tokenisation</param>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Contexts.SparqlUpdateParserContext.CommandSet">
+            <summary>
+            Gets the Update Command Set that is being populated
             </summary>
         </member>
         <member name="T:VDS.RDF.Writing.TriGWriter">
@@ -23016,13 +22724,6 @@
             <param name="pred">Predicate Pattern</param>
             <param name="obj">Object Pattern</param>
         </member>
-        <member name="M:VDS.RDF.Query.Patterns.TriplePattern.Accepts(VDS.RDF.Triple)">
-            <summary>
-            Checks whether the Pattern accepts the given Triple
-            </summary>
-            <param name="obj">Triple to test</param>
-            <returns></returns>
-        </member>
         <member name="M:VDS.RDF.Query.Patterns.TriplePattern.Accepts(VDS.RDF.Query.SparqlEvaluationContext,VDS.RDF.Triple)">
             <summary>
             Gets whether a given Triple is accepted by this Pattern in the given Context
@@ -23030,13 +22731,6 @@
             <param name="context">Evaluation Context</param>
             <param name="obj">Triple to test</param>
             <returns></returns>
-        </member>
-        <member name="M:VDS.RDF.Query.Patterns.TriplePattern.Execute(VDS.RDF.Query.SparqlEvaluationContext,System.Boolean)">
-            <summary>
-            Executes a Triple Pattern against a Triple Store
-            </summary>
-            <param name="context">Evaluation Context</param>
-            <param name="optional">Whether the Pattern occurs in the context of an OPTIONAL clause</param>
         </member>
         <member name="M:VDS.RDF.Query.Patterns.TriplePattern.Evaluate(VDS.RDF.Query.SparqlEvaluationContext)">
             <summary>
@@ -23058,11 +22752,12 @@
             <param name="t">Triple</param>
             <returns></returns>
         </member>
-        <member name="M:VDS.RDF.Query.Patterns.TriplePattern.Construct(VDS.RDF.Query.BindingSolution)">
+        <member name="M:VDS.RDF.Query.Patterns.TriplePattern.Construct(VDS.RDF.Query.Algebra.Set,System.Boolean)">
             <summary>
-            Constructs a Triple from a Binding Solution based on this Triple Pattern
+            Constructs a Triple from a Set based on this Triple Pattern
             </summary>
-            <param name="solution">Binding Solution</param>
+            <param name="s">Set</param>
+            <param name="preserveBNodes">Whether Blank Nodes should be preserved as-is or remapped (remapped is the default)</param>
             <returns></returns>
         </member>
         <member name="M:VDS.RDF.Query.Patterns.TriplePattern.Construct(VDS.RDF.Query.Algebra.Set)">
@@ -23270,6 +22965,22 @@
             <summary>
             Class for connecting to any SPARQL Endpoint as a read-only Store
             </summary>
+            <remarks>
+            This class is effectively a read-only wrapper around a <see cref="T:VDS.RDF.Query.SparqlRemoteEndpoint">SparqlRemoteEndpoint</see> using it with it's default settings, if you only need to query an endpoint and require more control over the settings used to access the endpoint you should use that class directly or use the constructors which allow you to provide your own pre-configure <see cref="T:VDS.RDF.Query.SparqlRemoteEndpoint">SparqlRemoteEndpoint</see> instance
+            </remarks>
+        </member>
+        <member name="M:VDS.RDF.Storage.SparqlConnector.#ctor(VDS.RDF.Query.SparqlRemoteEndpoint)">
+            <summary>
+            Creates a new SPARQL Connector which uses the given SPARQL Endpoint
+            </summary>
+            <param name="endpoint">Endpoint</param>
+        </member>
+        <member name="M:VDS.RDF.Storage.SparqlConnector.#ctor(VDS.RDF.Query.SparqlRemoteEndpoint,VDS.RDF.Storage.SparqlConnectorLoadMethod)">
+            <summary>
+            Creates a new SPARQL Connector which uses the given SPARQL Endpoint
+            </summary>
+            <param name="endpoint">Endpoint</param>
+            <param name="mode">Load Method to use</param>
         </member>
         <member name="M:VDS.RDF.Storage.SparqlConnector.#ctor(System.Uri)">
             <summary>
@@ -23288,7 +22999,7 @@
             <summary>
             Makes a Query against the SPARQL Endpoint
             </summary>
-            <param name="sparqlQuery">SPARQL QUery</param>
+            <param name="sparqlQuery">SPARQL Query</param>
             <returns></returns>
         </member>
         <member name="M:VDS.RDF.Storage.SparqlConnector.LoadGraph(VDS.RDF.IGraph,System.Uri)">
@@ -23338,8 +23049,18 @@
             Controls whether the Query will be parsed locally to accurately determine its Query Type for processing the response
             </summary>
             <remarks>
-            If the endpoint you are connecting to provides extensions to SPARQL syntax which are not permitted by the libraries parser then you may wish to enable this option.
+            If the endpoint you are connecting to provides extensions to SPARQL syntax which are not permitted by the libraries parser then you may wish to enable this option as otherwise you will not be able to execute such queries
             </remarks>
+        </member>
+        <member name="P:VDS.RDF.Storage.SparqlConnector.Timeout">
+            <summary>
+            Gets/Sets the HTTP Timeout used for communicating with the SPARQL Endpoint
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Storage.SparqlConnector.Endpoint">
+            <summary>
+            Gets the underlying <see cref="T:VDS.RDF.Query.SparqlRemoteEndpoint">SparqlRemoteEndpoint</see> which this class is a wrapper around
+            </summary>
         </member>
         <member name="P:VDS.RDF.Storage.SparqlConnector.UpdateSupported">
             <summary>
@@ -24269,19 +23990,74 @@
             Keywords in Sparql
             </summary>
         </member>
+        <member name="F:VDS.RDF.Query.SparqlSpecsHelper.SparqlKeywordInsert">
+            <summary>
+            Keywords in Sparql
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Query.SparqlSpecsHelper.SparqlKeywordDelete">
+            <summary>
+            Keywords in Sparql
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Query.SparqlSpecsHelper.SparqlKeywordClear">
+            <summary>
+            Keywords in Sparql
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Query.SparqlSpecsHelper.SparqlKeywordLoad">
+            <summary>
+            Keywords in Sparql
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Query.SparqlSpecsHelper.SparqlKeywordData">
+            <summary>
+            Keywords in Sparql
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Query.SparqlSpecsHelper.SparqlKeywordInto">
+            <summary>
+            Keywords in Sparql
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Query.SparqlSpecsHelper.SparqlKeywordSilent">
+            <summary>
+            Keywords in Sparql
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Query.SparqlSpecsHelper.SparqlKeywordCreate">
+            <summary>
+            Keywords in Sparql
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Query.SparqlSpecsHelper.SparqlKeywordDrop">
+            <summary>
+            Keywords in Sparql
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Query.SparqlSpecsHelper.SparqlKeywordWith">
+            <summary>
+            Keywords in Sparql
+            </summary>
+        </member>
         <member name="F:VDS.RDF.Query.SparqlSpecsHelper.NonQueryKeywords">
             <summary>
-            Set of Sparql Keywords that are Non-Query Keywords
+            Set of SPARQL Keywords that are Non-Query Keywords
             </summary>
         </member>
         <member name="F:VDS.RDF.Query.SparqlSpecsHelper.FunctionKeywords">
             <summary>
-            Set of Sparql Keywords that are Function Keywords
+            Set of SPARQL Keywords that are Function Keywords
             </summary>
         </member>
         <member name="F:VDS.RDF.Query.SparqlSpecsHelper.AggregateKeywords">
             <summary>
-            Set of Sparql Keywords that are Aggregate Keywords
+            Set of SPARQL Keywords that are Aggregate Keywords
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Query.SparqlSpecsHelper.UpdateKeywords">
+            <summary>
+            Set of SPARQL Keywords that are Update Keywords
             </summary>
         </member>
         <member name="F:VDS.RDF.Query.SparqlSpecsHelper.IntegerDataTypes">
@@ -24311,30 +24087,37 @@
         </member>
         <member name="M:VDS.RDF.Query.SparqlSpecsHelper.IsQueryKeyword(System.String)">
             <summary>
-            Checks whether a given Keyword is a Sparql Query Keyword
+            Checks whether a given Keyword is a SPARQL Query Keyword
             </summary>
             <param name="keyword">Keyword to check</param>
             <returns></returns>
         </member>
         <member name="M:VDS.RDF.Query.SparqlSpecsHelper.IsNonQueryKeyword(System.String)">
             <summary>
-            Checks whether a given Keyword is a Sparql Non-Query Keyword
+            Checks whether a given Keyword is a SPARQL Non-Query Keyword
             </summary>
             <param name="keyword">Keyword to check</param>
             <returns></returns>
         </member>
         <member name="M:VDS.RDF.Query.SparqlSpecsHelper.IsFunctionKeyword(System.String)">
             <summary>
-            Checks whether a given Keyword is a Sparql Function Verb
+            Checks whether a given Keyword is a SPARQL Function Verb
             </summary>
             <param name="keyword">Keyword to check</param>
             <returns></returns>
         </member>
         <member name="M:VDS.RDF.Query.SparqlSpecsHelper.IsAggregateKeyword(System.String)">
             <summary>
-            Checks whether a given Keyword is a Sparql Aggregate Keyword
+            Checks whether a given Keyword is a SPARQL Aggregate Keyword
             </summary>
             <param name="keyword">Keyword to check</param>
+            <returns></returns>
+        </member>
+        <member name="M:VDS.RDF.Query.SparqlSpecsHelper.IsUpdateKeyword(System.String)">
+            <summary>
+            Checks whether a given Keyword is a SPARQL Update Keyword
+            </summary>
+            <param name="keyword"></param>
             <returns></returns>
         </member>
         <member name="M:VDS.RDF.Query.SparqlSpecsHelper.IsValidQName(System.String)">
@@ -25337,81 +25120,6 @@
             <param name="text">String to escape</param>
             <returns>Escaped String</returns>
         </member>
-        <member name="T:VDS.RDF.Query.Binding">
-            <summary>
-            Internal Class for representing Bindings of Values to Variables
-            </summary>
-        </member>
-        <member name="M:VDS.RDF.Query.Binding.#ctor(VDS.RDF.INode,System.Int32,System.Int32,System.Int32)">
-            <summary>
-            Creates a new Binding
-            </summary>
-            <param name="n">Node Value</param>
-            <param name="bindingID">Binding ID</param>
-            <param name="triplePatternID">Triple Pattern ID</param>
-            <param name="patternID">Graph Pattern ID</param>
-        </member>
-        <member name="P:VDS.RDF.Query.Binding.Node">
-            <summary>
-            Gets the Node Value that is Bound
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Query.Binding.BindingID">
-            <summary>
-            Gets the Binding ID
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Query.Binding.PatternID">
-            <summary>
-            Gets the Graph Pattern ID
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Query.Binding.TriplePatternID">
-            <summary>
-            Gets the Triple Pattern ID
-            </summary>
-        </member>
-        <member name="T:VDS.RDF.Query.BindingSolution">
-            <summary>
-            Represents a Solution to a Sparql Query which is a set of Bindings of Values to Variables
-            </summary>
-        </member>
-        <member name="M:VDS.RDF.Query.BindingSolution.#ctor(VDS.RDF.Query.SparqlEvaluationContext,System.Int32)">
-            <summary>
-            Internal Constructor for Binding Solutions
-            </summary>
-            <param name="context">Evaluation Context</param>
-            <param name="bindingID">Binding ID that is the source for this Solution</param>
-        </member>
-        <member name="M:VDS.RDF.Query.BindingSolution.#ctor(VDS.RDF.Query.SparqlResultBinder,System.Int32)">
-            <summary>
-            Internal Constructor for Binding Solutions
-            </summary>
-            <param name="binder">Binder that contains the Bindings</param>
-            <param name="bindingID">Binding ID that is the source for this Solution</param>
-        </member>
-        <member name="M:VDS.RDF.Query.BindingSolution.Equals(System.Object)">
-            <summary>
-            Calculates whether one Binding Solution is equal to another
-            </summary>
-            <param name="obj">Object to compare with</param>
-            <returns></returns>
-            <remarks>
-            Implemented to support doing Distinct() over Solutions as part of Aggregate evaluation
-            </remarks>
-        </member>
-        <member name="P:VDS.RDF.Query.BindingSolution.Item(System.String)">
-            <summary>
-            Gets the Value bound to a given Variable
-            </summary>
-            <param name="name">Variable Name</param>
-            <returns>Node that was bound to the Variable or Null if unbound</returns>
-        </member>
-        <member name="P:VDS.RDF.Query.BindingSolution.BindingID">
-            <summary>
-            Gets the Binding ID of this Solution
-            </summary>
-        </member>
         <member name="T:VDS.RDF.Query.BindingGroup">
             <summary>
             Represents an Group of Bindings which is used when executing Queries with GROUP BY clauses
@@ -25642,6 +25350,14 @@
             <param name="index">Set ID</param>
             <returns></returns>
             <exception cref="T:VDS.RDF.Query.RdfQueryException">Thrown since the Identity Multiset contains no Sets</exception>
+        </member>
+        <member name="M:VDS.RDF.Parsing.SparqlUpdateParser.Error(System.String,VDS.RDF.Parsing.Tokens.IToken)">
+            <summary>
+            Helper method for raising informative standardised Parser Errors
+            </summary>
+            <param name="msg">The Error Message</param>
+            <param name="t">The Token that is the cause of the Error</param>
+            <returns></returns>
         </member>
         <member name="T:VDS.RDF.WebDemandTripleStore">
             <summary>
@@ -26344,7 +26060,12 @@
             Gets/Sets the engine used for processing SPARQL queries
             </summary>
             <remarks>
+            <para>
             The default engine is the <see cref="F:VDS.RDF.Query.SparqlEngine.Leviathan">Leviathan</see> engine
+            </para>
+            <para>
+            As of the 0.3.0 release there will once again be only one SPARQL engine present in the library since the obsolete Labyrinth engine has been removed
+            </para>
             </remarks>
         </member>
         <member name="P:VDS.RDF.Options.QueryAllowUnknownFunctions">
@@ -28667,11 +28388,6 @@
             <param name="groups">Groups</param>
             <returns></returns>
         </member>
-        <member name="P:VDS.RDF.Query.Grouping.ISparqlGroupBy.Having">
-            <summary>
-            Gets/Sets the Having Clause Filter that applies to Groups
-            </summary>
-        </member>
         <member name="P:VDS.RDF.Query.Grouping.ISparqlGroupBy.Child">
             <summary>
             Gets/Sets the child GROUP BY Clause
@@ -28947,13 +28663,6 @@
             </summary>
             <param name="var">Variable to assign to</param>
             <param name="expr">Expression which generates a value which will be assigned to the variable</param>
-        </member>
-        <member name="M:VDS.RDF.Query.Patterns.LetPattern.Execute(VDS.RDF.Query.SparqlEvaluationContext,System.Boolean)">
-            <summary>
-            Executes the Pattern by making the LET assignments
-            </summary>
-            <param name="context">Evaluation Context</param>
-            <param name="optional">Whether the Pattern occurs in the context of an OPTIONAL clause</param>
         </member>
         <member name="M:VDS.RDF.Query.Patterns.LetPattern.Evaluate(VDS.RDF.Query.SparqlEvaluationContext)">
             <summary>
@@ -30172,11 +29881,6 @@
             <param name="groups">Groups to subdivide</param>
             <returns></returns>
         </member>
-        <member name="P:VDS.RDF.Query.Grouping.BaseGroupBy.Having">
-            <summary>
-            Gets/Sets the HAVING Clause filter that applies to Groups
-            </summary>
-        </member>
         <member name="P:VDS.RDF.Query.Grouping.BaseGroupBy.Child">
             <summary>
             Gets/Sets the Child GROUP BY Clause
@@ -31356,6 +31060,20 @@
             Loads the Configuration for the Handler
             </summary>
             <param name="context">Context of the HTTP Request</param>
+        </member>
+        <member name="T:VDS.RDF.Storage.IUpdateableGenericIOManager">
+            <summary>
+            Interface for classes which provide SPARQL Update functionality to some arbitrary Store in addition to Read/Write functionality
+            </summary>
+            <remarks>
+            Designed to allow for arbitrary Triple Stores to be plugged into the library as required by the end user
+            </remarks>
+        </member>
+        <member name="M:VDS.RDF.Storage.IUpdateableGenericIOManager.Update(System.String)">
+            <summary>
+            Processes a SPARQL Update command against the underlying Store
+            </summary>
+            <param name="sparqlUpdate">SPARQL Update</param>
         </member>
         <member name="T:VDS.RDF.Parsing.SparqlXmlParser">
             <summary>
