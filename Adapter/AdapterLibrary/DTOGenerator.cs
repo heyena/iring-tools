@@ -1249,7 +1249,7 @@ namespace org.iringtools.adapter
 
         if (dataObject != null)
         {
-          foreach (DataProperty dataProperty in dataObject.dataProperties)
+          foreach (DataProperty dataProperty in dataObject.properties)
           {
             if ((!String.IsNullOrEmpty(roleMap.propertyName) && roleMap.propertyName.ToUpper() == dataProperty.propertyName.ToUpper()) ||
                 !String.IsNullOrEmpty(roleMap.reference) || !String.IsNullOrEmpty(roleMap.value))
