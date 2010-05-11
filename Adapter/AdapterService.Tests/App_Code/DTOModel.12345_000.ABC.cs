@@ -138,21 +138,21 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
     
     public Valves(string classId, string graphName, string identifier) : base(classId, graphName)
     {
-      _properties.Add(new DTOProperty(@"tag", @"tpl:ClassifiedIdentification.tpl:identifier", identifier, typeof(String), true, true));
-      _properties.Add(new DTOProperty(@"", @"tpl:ClassifiedIdentification.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R92093626759>", typeof(String), false, false));
-      _properties.Add(new DTOProperty(@"", @"tpl:ClassifiedIdentification.tpl:fixedName1", @"fixedValue1", typeof(Int32), false, false));
-      _properties.Add(new DTOProperty(@"system", @"tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identifier", null, typeof(String), false, false));
-      _properties.Add(new DTOProperty(@"", @"tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R50548021125>", typeof(String), false, false));
-      _properties.Add(new DTOProperty(@"unit", @"tpl:ClientFunctionalUnitAssembly.tpl:whole.rdl:CLIENT_FUNCTIONAL_UNIT.tpl:ClassifiedIdentification.tpl:identifier", null, typeof(String), false, false));
-      _properties.Add(new DTOProperty(@"", @"tpl:ClientFunctionalUnitAssembly.tpl:whole.rdl:CLIENT_FUNCTIONAL_UNIT.tpl:ClassifiedIdentification.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R82607969326>", typeof(String), false, false));
-      _properties.Add(new DTOProperty(@"componentType", @"tpl:ClassifiedIdentification2.tpl:identifier", null, typeof(String), false, true));
-      _properties.Add(new DTOProperty(@"", @"tpl:ClassifiedIdentification2.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R99386812445>", typeof(String), false, false));
-      _properties.Add(new DTOProperty(@"diameter", @"tpl:NominalDiameter.tpl:value", null, typeof(Single), false, false));
-      _properties.Add(new DTOProperty(@"uomDiameter", @"tpl:NominalDiameter.tpl:scale", null, typeof(String), false, false));
-      _properties.Add(new DTOProperty(@"pid", @"tpl:PAndIDRepresentation.tpl:representation.rdl:P_AND_I_DIAGRAM.tpl:ClassifiedIdentification.tpl:identifier", null, typeof(String), false, false));
-      _properties.Add(new DTOProperty(@"", @"tpl:PAndIDRepresentation.tpl:representation.rdl:P_AND_I_DIAGRAM.tpl:ClassifiedIdentification.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R16893283050>", typeof(String), false, false));
-      _properties.Add(new DTOProperty(@"projectNumber", @"tpl:ProjectAssembly.tpl:whole.rdl:PROJECT.tpl:ClassifiedIdentification.tpl:identifier", null, typeof(String), false, false));
-      _properties.Add(new DTOProperty(@"", @"tpl:ProjectAssembly.tpl:whole.rdl:PROJECT.tpl:ClassifiedIdentification.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R72529367339>", typeof(String), false, false));
+      _properties.Add(new DTOProperty(@"tag", @"tpl:ClassifiedIdentification.tpl:identifier", identifier, typeof(String), true));
+      _properties.Add(new DTOProperty(@"", @"tpl:ClassifiedIdentification.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R92093626759>", typeof(String), false));
+      _properties.Add(new DTOProperty(@"", @"tpl:ClassifiedIdentification.tpl:fixedName1", @"fixedValue1", typeof(Int32), false));
+      _properties.Add(new DTOProperty(@"system", @"tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identifier", null, typeof(String), false));
+      _properties.Add(new DTOProperty(@"", @"tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R50548021125>", typeof(String), false));
+      _properties.Add(new DTOProperty(@"unit", @"tpl:ClientFunctionalUnitAssembly.tpl:whole.rdl:CLIENT_FUNCTIONAL_UNIT.tpl:ClassifiedIdentification.tpl:identifier", null, typeof(String), false));
+      _properties.Add(new DTOProperty(@"", @"tpl:ClientFunctionalUnitAssembly.tpl:whole.rdl:CLIENT_FUNCTIONAL_UNIT.tpl:ClassifiedIdentification.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R82607969326>", typeof(String), false));
+      _properties.Add(new DTOProperty(@"componentType", @"tpl:ClassifiedIdentification2.tpl:identifier", null, typeof(String), false));
+      _properties.Add(new DTOProperty(@"", @"tpl:ClassifiedIdentification2.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R99386812445>", typeof(String), false));
+      _properties.Add(new DTOProperty(@"diameter", @"tpl:NominalDiameter.tpl:value", null, typeof(Single), false));
+      _properties.Add(new DTOProperty(@"uomDiameter", @"tpl:NominalDiameter.tpl:scale", null, typeof(String), false));
+      _properties.Add(new DTOProperty(@"pid", @"tpl:PAndIDRepresentation.tpl:representation.rdl:P_AND_I_DIAGRAM.tpl:ClassifiedIdentification.tpl:identifier", null, typeof(String), false));
+      _properties.Add(new DTOProperty(@"", @"tpl:PAndIDRepresentation.tpl:representation.rdl:P_AND_I_DIAGRAM.tpl:ClassifiedIdentification.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R16893283050>", typeof(String), false));
+      _properties.Add(new DTOProperty(@"projectNumber", @"tpl:ProjectAssembly.tpl:whole.rdl:PROJECT.tpl:ClassifiedIdentification.tpl:identifier", null, typeof(String), false));
+      _properties.Add(new DTOProperty(@"", @"tpl:ProjectAssembly.tpl:whole.rdl:PROJECT.tpl:ClassifiedIdentification.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R72529367339>", typeof(String), false));
       Identifier = identifier;
       ClassId = classId;
     }
@@ -516,12 +516,12 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
     
     public Lines(string classId, string graphName, string identifier) : base(classId, graphName)
     {
-      _properties.Add(new DTOProperty(@"tag", @"tpl:ClassifiedIdentification.tpl:identifier", identifier, typeof(String), true, true));
-      _properties.Add(new DTOProperty(@"", @"tpl:ClassifiedIdentification.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R92093626759>", typeof(String), false, false));
-      _properties.Add(new DTOProperty(@"system", @"tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification2.tpl:identifier", null, typeof(String), false, false));
-      _properties.Add(new DTOProperty(@"", @"tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification2.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R50548021125>", typeof(String), false, false));
-      _properties.Add(new DTOProperty(@"diameter", @"tpl:NominalDiameter.tpl:value", null, typeof(Single), false, false));
-      _properties.Add(new DTOProperty(@"uomDiameter", @"tpl:NominalDiameter.tpl:scale", null, typeof(String), false, false));
+      _properties.Add(new DTOProperty(@"tag", @"tpl:ClassifiedIdentification.tpl:identifier", identifier, typeof(String), true));
+      _properties.Add(new DTOProperty(@"", @"tpl:ClassifiedIdentification.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R92093626759>", typeof(String), false));
+      _properties.Add(new DTOProperty(@"system", @"tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification2.tpl:identifier", null, typeof(String), false));
+      _properties.Add(new DTOProperty(@"", @"tpl:ClientSystemAssembly.tpl:whole.rdl:CLIENT_SYSTEM.tpl:ClassifiedIdentification2.tpl:identificationType", @"<http://rdl.rdlfacade.org/data#R50548021125>", typeof(String), false));
+      _properties.Add(new DTOProperty(@"diameter", @"tpl:NominalDiameter.tpl:value", null, typeof(Single), false));
+      _properties.Add(new DTOProperty(@"uomDiameter", @"tpl:NominalDiameter.tpl:scale", null, typeof(String), false));
       Identifier = identifier;
       ClassId = classId;
     }

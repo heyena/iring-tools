@@ -53,7 +53,7 @@ namespace org.iringtools.adapter.datalayer
     private AdapterSettings _settings = null;
     private StringBuilder _mappingBuilder = null;
     private XmlTextWriter _mappingWriter = null;
-    //private Dictionary<string, string> _objectNames = null;
+    private Dictionary<string, string> _objectNames = null;
     //private DataDictionary _dataDictionary = null;
     private IndentedTextWriter _dataObjectWriter = null;
     private StringBuilder _dataObjectBuilder = null;
@@ -89,12 +89,11 @@ namespace org.iringtools.adapter.datalayer
           //_dataDictionary = new DataDictionary();
           //_dataDictionary.dataObjects = new List<DataObject>();
 
-          //_objectNames = new Dictionary<string, string>();
-          //foreach (DataObject dataObject in dbDictionary.dataObjects)
-          //{
-          //  string objectName = String.IsNullOrEmpty(dataObject.objectName) ? dataObject.tableName : dataObject.objectName;
-          //  _objectNames.Add(dataObject.tableName, objectName);
-          //}
+          _objectNames = new Dictionary<string, string>();
+          foreach (DataObject dataObject in dbDictionary.dataObjects)
+          {
+            _objectNames.Add(dataObject.tableName, dataObject.objectName);
+          }
 
           _dataObjectBuilder = new StringBuilder();
           _dataObjectWriter = new IndentedTextWriter(new StringWriter(_dataObjectBuilder), "  ");
@@ -313,7 +312,7 @@ namespace org.iringtools.adapter.datalayer
 
           _mappingWriter.WriteStartElement("key-property");
           _mappingWriter.WriteAttributeString("name", keyProperty.propertyName);
-          _mappingWriter.WriteAttributeString("column", keyProperty.columnName);
+          _mappingWriter.WriteAttributeString("column", "[" + keyProperty.columnName + "]");
           _mappingWriter.WriteEndElement(); // end key-property
         }
 
@@ -426,7 +425,7 @@ namespace org.iringtools.adapter.datalayer
 
           _mappingWriter.WriteStartElement("property");
           _mappingWriter.WriteAttributeString("name", keyProperty.propertyName);
-          _mappingWriter.WriteAttributeString("column", keyProperty.columnName);
+          _mappingWriter.WriteAttributeString("column", "[" + keyProperty.columnName + "]");
           _mappingWriter.WriteAttributeString("update", "false");
           _mappingWriter.WriteAttributeString("insert", "false");
           _mappingWriter.WriteEndElement();
@@ -442,7 +441,7 @@ namespace org.iringtools.adapter.datalayer
 
         _mappingWriter.WriteStartElement("id");
         _mappingWriter.WriteAttributeString("name", "Id");
-        _mappingWriter.WriteAttributeString("column", dataObject.keyProperties.First().columnName);
+        _mappingWriter.WriteAttributeString("column", "[" + dataObject.keyProperties.First().columnName + "]");
         _mappingWriter.WriteStartElement("generator");
         _mappingWriter.WriteAttributeString("class", dataObject.keyProperties.First().keyType.ToString());
         _mappingWriter.WriteEndElement(); // end generator element
@@ -460,7 +459,7 @@ namespace org.iringtools.adapter.datalayer
 
           _mappingWriter.WriteStartElement("property");
           _mappingWriter.WriteAttributeString("name", dataObject.keyProperties.First().propertyName);
-          _mappingWriter.WriteAttributeString("column", dataObject.keyProperties.First().columnName);
+          _mappingWriter.WriteAttributeString("column", "[" + dataObject.keyProperties.First().columnName + "]");
           _mappingWriter.WriteAttributeString("update", "false");
           _mappingWriter.WriteAttributeString("insert", "false");
           _mappingWriter.WriteEndElement(); // end property element
@@ -473,7 +472,7 @@ namespace org.iringtools.adapter.datalayer
         foreach (DataRelationship dataRelationship in dataObject.dataRelationships)
         {
           //string associatedEntityName = _objectNames[dataRelationship.relatedObjectName];
-          //string relatedObjectName = dataRelationship.relatedTableName;
+          string relatedObjectName = _objectNames[dataRelationship.relatedTableName];
 
           switch (dataRelationship.GetType().Name)
           {
@@ -490,12 +489,12 @@ namespace org.iringtools.adapter.datalayer
 
                 _mappingWriter.WriteStartElement("id");
                 _mappingWriter.WriteAttributeString("name", "Id");
-                _mappingWriter.WriteAttributeString("column", dataObject.keyProperties.First().columnName);
+                _mappingWriter.WriteAttributeString("column", "[" + dataObject.keyProperties.First().columnName + "]");
                 _mappingWriter.WriteStartElement("generator");
                 _mappingWriter.WriteAttributeString("class", dataObject.keyProperties.First().keyType.ToString());
                 _mappingWriter.WriteStartElement("param");
                 _mappingWriter.WriteAttributeString("name", "property");
-                _mappingWriter.WriteString(dataRelationship.relatedTableName);
+                _mappingWriter.WriteString(relatedObjectName);
                 _mappingWriter.WriteEndElement(); // end param element
                 _mappingWriter.WriteEndElement(); // end generator element
                 _mappingWriter.WriteEndElement(); // end id element
@@ -503,7 +502,7 @@ namespace org.iringtools.adapter.datalayer
 
               _mappingWriter.WriteStartElement("one-to-one");
               _mappingWriter.WriteAttributeString("name", dataRelationship.relatedTableName);
-              _mappingWriter.WriteAttributeString("class", _namespace + "." + dataRelationship.relatedTableName + ", " + ASSEMBLY_NAME);
+              _mappingWriter.WriteAttributeString("class", _namespace + "." + relatedObjectName + ", " + ASSEMBLY_NAME);
 
               if (oneToOneRelationship.isKeyConstrained)
               {
@@ -514,24 +513,24 @@ namespace org.iringtools.adapter.datalayer
                 _mappingWriter.WriteAttributeString("cascade", "save-update");
               }
 
-              _dataObjectWriter.WriteLine("public virtual {0} {0} {{ get; set; }}", dataRelationship.relatedTableName);
+              _dataObjectWriter.WriteLine("public virtual {0} {0} {{ get; set; }}", relatedObjectName);
               _mappingWriter.WriteEndElement(); // end one-to-one element
               break;
 
             case "OneToManyRelationship":
               OneToManyRelationship oneToManyRelationship = (OneToManyRelationship)dataRelationship;
 
-              _dataObjectWriter.WriteLine("public virtual ISet<{0}> {0}List {{ get; set; }}", dataRelationship.relatedTableName);
+              _dataObjectWriter.WriteLine("public virtual ISet<{0}> {0}List {{ get; set; }}", relatedObjectName);
 
               _mappingWriter.WriteStartElement("set");
               _mappingWriter.WriteAttributeString("name", dataRelationship.relatedTableName + "List");
               _mappingWriter.WriteAttributeString("inverse", "true");
               _mappingWriter.WriteAttributeString("cascade", "all-delete-orphan");
               _mappingWriter.WriteStartElement("key");
-              _mappingWriter.WriteAttributeString("column", oneToManyRelationship.relatedColumnName);
+              _mappingWriter.WriteAttributeString("column", "[" + oneToManyRelationship.relatedColumnName + "]");
               _mappingWriter.WriteEndElement(); // end one-to-many
               _mappingWriter.WriteStartElement("one-to-many");
-              _mappingWriter.WriteAttributeString("class", _namespace + "." + dataRelationship.relatedTableName + ", " + ASSEMBLY_NAME);
+              _mappingWriter.WriteAttributeString("class", _namespace + "." + relatedObjectName + ", " + ASSEMBLY_NAME);
               _mappingWriter.WriteEndElement(); // end key element
               _mappingWriter.WriteEndElement(); // end set element
               break;
@@ -542,8 +541,8 @@ namespace org.iringtools.adapter.datalayer
               _dataObjectWriter.WriteLine("public virtual {0} {0} {{ get; set; }}", dataRelationship.relatedTableName);
 
               _mappingWriter.WriteStartElement("many-to-one");
-              _mappingWriter.WriteAttributeString("name", dataRelationship.relatedTableName);
-              _mappingWriter.WriteAttributeString("column", manyToOneRelationship.columnName);
+              _mappingWriter.WriteAttributeString("name", relatedObjectName);
+              _mappingWriter.WriteAttributeString("column", "[" + manyToOneRelationship.columnName + "]");
 
               if (containsRelationship(dataObject.keyProperties, manyToOneRelationship))
               {
@@ -572,7 +571,7 @@ namespace org.iringtools.adapter.datalayer
 
           _mappingWriter.WriteStartElement("property");
           _mappingWriter.WriteAttributeString("name", dataProperty.propertyName);
-          _mappingWriter.WriteAttributeString("column", dataProperty.columnName);
+          _mappingWriter.WriteAttributeString("column", "[" + dataProperty.columnName + "]");
           _mappingWriter.WriteEndElement(); // end property element
         }
 

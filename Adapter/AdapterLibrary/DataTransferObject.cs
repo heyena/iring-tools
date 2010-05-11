@@ -45,13 +45,12 @@ namespace org.iringtools.adapter
   public class DTOProperty {
     public DTOProperty() { }
 
-    public DTOProperty(string name, string oimProperty, object value, Type type, bool isIdentifier, bool isNullable) {      
+    public DTOProperty(string name, string oimProperty, object value, Type type, bool isIdentifier) {      
       this.Name = name;
       this.OIMProperty = oimProperty;
       this.Value = value;
       this.Type = type;
       this.isIdentifier = isIdentifier;
-      this.isNullable = isNullable;
     }
 
     [XmlIgnore]
@@ -81,9 +80,6 @@ namespace org.iringtools.adapter
 
     [XmlIgnore]
     public bool isIdentifier { get; set; }
-
-    [XmlIgnore]
-    public bool isNullable { get; set; }
   }
 
   [DataContract(Namespace = "http://dto.iringtools.org")]
