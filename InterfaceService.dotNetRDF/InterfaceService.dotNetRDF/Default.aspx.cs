@@ -5,14 +5,15 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace SPARQLEndpointDemo
+namespace dotnetRDFInterfaceService
 {
     public partial class _Default : System.Web.UI.Page
     {
 
         protected void btnQuery_Click(object sender, EventArgs e)
         {
-            String query = "~/sparql/" + "?query=" + Uri.EscapeDataString(this.txtQuery.Text) + 
+//            String query = this.rbSparql.SelectedValue + "?query=" + Uri.EscapeDataString(this.txtQuery.Text) + 
+             String query = "~/sparql/?query=" + Uri.EscapeDataString(this.txtQuery.Text) + 
                 "&default-graph-uri=" + Uri.EscapeDataString(this.txtDefaultGraph.Text) + "&timeout=" + 
                 Uri.EscapeDataString(this.txtTimeout.Text) + "&partialResults=" + 
                 Uri.EscapeDataString(this.chkPartialResults.Checked.ToString());
