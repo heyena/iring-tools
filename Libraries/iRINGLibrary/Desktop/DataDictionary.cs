@@ -110,28 +110,28 @@ namespace org.iringtools.library
   public abstract class DataRelationship
   {
     [DataMember(IsRequired = true)]
-    public string relatedTableName { get; set; }
+    public string relatedObjectName { get; set; }
   }
 
   [DataContract(Namespace = "http://ns.iringtools.org/library")]
   public class OneToOneRelationship : DataRelationship
   {
     [DataMember(IsRequired = true)]
-    public bool isKeyConstrained { get; set; }
+    public bool isKeySource { get; set; }
   }
 
   [DataContract(Namespace = "http://ns.iringtools.org/library")]
   public class OneToManyRelationship : DataRelationship
   {
     [DataMember(IsRequired = true)]
-    public string relatedColumnName { get; set; }
+    public string relatedPropertyName { get; set; }
   }
 
   [DataContract(Namespace = "http://ns.iringtools.org/library")]
   public class ManyToOneRelationship : DataRelationship
   {
     [DataMember(IsRequired = true)]
-    public string columnName { get; set; }
+    public string objectPropertyName { get; set; }
   }
 
   [DataContract(Namespace = "http://ns.iringtools.org/library")]

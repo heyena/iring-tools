@@ -1207,6 +1207,11 @@ namespace org.iringtools.adapter
         }
         else if (Validate(dbDictionary))
         {
+          foreach (DataObject dataObject in dbDictionary.dataObjects)
+          {
+            RemoveDups(dataObject);
+          }
+
           EntityGenerator generator = _kernel.Get<EntityGenerator>();
           response = generator.Generate(dbDictionary, projectName, applicationName);
           
@@ -1261,6 +1266,53 @@ namespace org.iringtools.adapter
       }
 
       return response;
+    }
+
+    /// <summary>
+    /// Removes duplicate data properties.
+    /// </summary>
+    /// <param name="dataObject"></param>
+    private void RemoveDups(DataObject dataObject)
+    {
+      for (int i = 0; i < dataObject.keyProperties.Count; i++)
+      {
+        for (int j = 0; j < dataObject.dataProperties.Count; j++)
+        {
+          // remove columns that are already in keys
+          if (dataObject.dataProperties[j].propertyName.ToLower() == dataObject.keyProperties[i].propertyName.ToLower())
+          {
+            dataObject.dataProperties.Remove(dataObject.dataProperties[j--]);
+            continue;
+          }
+
+          // remove duplicate columns
+          for (int jj = j + 1; jj < dataObject.dataProperties.Count; jj++)
+          {
+            if (dataObject.dataProperties[jj].propertyName.ToLower() == dataObject.dataProperties[j].propertyName.ToLower())
+            {
+              dataObject.dataProperties.Remove(dataObject.dataProperties[jj--]);
+            }
+          }
+        }
+
+        // remove duplicate keys (in order of foreign - assigned - iddataObject/sequence)
+        for (int ii = i + 1; ii < dataObject.keyProperties.Count; ii++)
+        {
+          if (dataObject.keyProperties[ii].columnName.ToLower() == dataObject.keyProperties[i].columnName.ToLower())
+          {
+            if (dataObject.keyProperties[ii].keyType != KeyType.foreign)
+            {
+              if (((dataObject.keyProperties[ii].keyType == KeyType.identity || dataObject.keyProperties[ii].keyType == KeyType.sequence) && dataObject.keyProperties[i].keyType == KeyType.assigned) ||
+                    dataObject.keyProperties[ii].keyType == KeyType.assigned && dataObject.keyProperties[i].keyType == KeyType.foreign)
+              {
+                dataObject.keyProperties[i].keyType = dataObject.keyProperties[ii].keyType;
+              }
+            }
+
+            dataObject.keyProperties.Remove(dataObject.keyProperties[ii--]);
+          }
+        }
+      }
     }
   }
 }

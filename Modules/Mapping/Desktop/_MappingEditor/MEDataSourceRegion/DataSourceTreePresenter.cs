@@ -239,7 +239,7 @@ namespace org.iringtools.modules.medatasourceregion
     /// <returns></returns>
     bool PopulateDataRelationship(DataObjectItem node, DataRelationship dataRelationship)
     {
-      DataObjectItem newNode = AddNode(dataRelationship.relatedTableName, dataRelationship, node);
+      DataObjectItem newNode = AddNode(dataRelationship.relatedObjectName, dataRelationship, node);
       node.Items.Add(newNode);
       return true;
     }
@@ -274,7 +274,7 @@ namespace org.iringtools.modules.medatasourceregion
       if (selectedNode.Tag is DataRelationship)
       {
         DataRelationship dataRelationship = (DataRelationship)selectedNode.Tag;
-        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Related Object", dataRelationship.relatedTableName);
+        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Related Object", dataRelationship.relatedObjectName);
         model.DetailProperties.Add(keyValuePair);
       }
 
