@@ -169,7 +169,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>52786</DevelopmentServerPort>
+          <DevelopmentServerPort>28074</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost/AdapterService.Debug</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>

@@ -39,6 +39,7 @@ namespace org.iringtools.modulelibrary.layerdal
     /// Occurs when [on data arrived].
     /// </summary>
     public event EventHandler<EventArgs> OnDataArrived;
+    public event EventHandler<EventArgs> OnError;
 
     /// <summary>
     /// Adapter WCF Service
@@ -110,7 +111,7 @@ namespace org.iringtools.modulelibrary.layerdal
     {
       if (OnDataArrived == null)
         return;
-
+      
       // Our event argument
       CompletedEventArgs args = null;
 
@@ -132,21 +133,35 @@ namespace org.iringtools.modulelibrary.layerdal
       // <Method> data arrived event handler 
       if (sender == _scopeListClient)
       {
-        string result = ((DownloadStringCompletedEventArgs)e).Result;
-
-        List<ScopeProject> scopes = result.DeserializeDataContract<List<ScopeProject>>();
-
-        // If the cast failed then return
-        if (scopes == null)
-          return;
-
-        // Configure event argument
-        args = new CompletedEventArgs
+        try
         {
-          // Define your method in CompletedEventType and assign
-          CompletedType = CompletedEventType.GetScopes,
-          Data = scopes,
-        };
+          string result = ((DownloadStringCompletedEventArgs)e).Result;
+
+          List<ScopeProject> scopes = result.DeserializeDataContract<List<ScopeProject>>();
+
+          // If the cast failed then return
+          if (scopes == null)
+            return;
+
+          // Configure event argument
+          args = new CompletedEventArgs
+          {
+            // Define your method in CompletedEventType and assign
+            CompletedType = CompletedEventType.GetScopes,
+            Data = scopes,
+          };
+        }
+        catch (Exception ex)
+        {
+          // Configure event argument
+            args = new CompletedEventArgs
+            {
+              // Define your method in CompletedEventType and assign
+              CompletedType = CompletedEventType.GetScopes,
+              Error = ex,
+              FriendlyErrorMessage = "Error Getting Scope List from Adapter Service.",
+            };
+        }
       }
       #endregion
       //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -253,12 +268,11 @@ namespace org.iringtools.modulelibrary.layerdal
         };
       }
       #endregion
-
+      
       //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
       // Raise the data event
       if (args != null)
         OnDataArrived(sender, args);
-
     }
     #endregion
 
