@@ -78,6 +78,12 @@ namespace org.iringtools.modules.projectapplicationregion
 
       if (args.CheckForType(CompletedEventType.GetScopes))
       {
+        if (args.Error != null)
+        {
+          MessageBox.Show(args.FriendlyErrorMessage, "Get Scopes Error", MessageBoxButton.OK);
+          return;
+        }
+
         _projects = (List<ScopeProject>)args.Data;
 
         foreach (ScopeProject project in _projects)

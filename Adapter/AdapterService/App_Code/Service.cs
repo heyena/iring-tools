@@ -71,7 +71,7 @@ namespace org.iringtools.adapter
     /// <returns>Returns a strongly typed list of ScopeProject objects.</returns>
     public List<ScopeProject> GetScopes()
     {
-        return _adapterServiceProvider.GetScopes();
+      return _adapterServiceProvider.GetScopes();
     }
 
     /// <summary>
