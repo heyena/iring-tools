@@ -141,25 +141,25 @@ namespace DbDictionaryEditor
                             if (uiElement2 is TextBox)
                             {
                                 TextBox tbox = (TextBox)uiElement2 as TextBox;
-                                if (selectedItem.Tag is Table)
+                                if (selectedItem.Tag is DataObject)
                                 {
                                     if (tbox.Tag == "entityName")
                                     {
-                                        ((Table)selectedItem.Tag).entityName = tbox.Text;
+                                      ((DataObject)selectedItem.Tag).objectName = tbox.Text;
                                         textBlock.Text = tbox.Text;
                                     }
                                     else if (tbox.Tag == "tableName")
-                                      ((Table)selectedItem.Tag).tableName = tbox.Text;
+                                      ((DataObject)selectedItem.Tag).tableName = tbox.Text;
                                 }
-                                else if (selectedItem.Tag is Column)
+                                else if (selectedItem.Tag is DataProperty)
                                 {
                                     if (tbox.Tag == "columnName")
                                     {
-                                        ((Column)selectedItem.Tag).columnName = tbox.Text;
+                                        ((DataProperty)selectedItem.Tag).columnName = tbox.Text;
                                         textBlock.Text = tbox.Text;
                                     }
                                     else if (tbox.Tag == "propertyName")
-                                        ((Column)selectedItem.Tag).propertyName = tbox.Text;
+                                      ((DataProperty)selectedItem.Tag).propertyName = tbox.Text;
                                 }
                             }
                         }
@@ -310,12 +310,12 @@ namespace DbDictionaryEditor
             newDictionary.Append(".xml");
 
            string connectionstring = BuildConnectionString(newProvider, newDataSourceName, newDatabaseName, newDatabaseUserName, newDatabaseUserPassword);
-            Table table = new Table();
+           DataObject table = new DataObject();
             DatabaseDictionary dict = new DatabaseDictionary()
             {
                 connectionString = connectionstring,
                 provider = (Provider)Enum.Parse(typeof(Provider), newProvider, true),
-                tables = new List<Table>()
+                dataObjects = new List<DataObject>()
             };
             
             _dal.SaveDatabaseDictionary(dict, newProject, newApplication);
@@ -421,33 +421,33 @@ namespace DbDictionaryEditor
             try
             {
                 root.Tag = dict.connectionString + "~" + dict.provider;
-                if (dict.tables == null)
-                    dict.tables = new List<Table>();
-                foreach (Table table in dict.tables)
+                if (dict.dataObjects == null)
+                  dict.dataObjects = new List<DataObject>();
+                foreach (DataObject table in dict.dataObjects)
                 {
                     tableTreeViewItem = new TreeViewItem() { Header = table.tableName };
                     tableTreeViewItem.Tag = table;
                     root.IsExpanded = true;
 
-                    foreach (org.iringtools.library.Key key in table.keys)
+                    foreach (org.iringtools.library.KeyProperty key in table.keyProperties)
                     {
                         columnTreeViewItem = new TreeViewItem();
                         columnTreeViewItem.Tag = key;
                         AddTreeItem(tableTreeViewItem, columnTreeViewItem, key.columnName, "Magenta", false);
                         AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Data Length = " + key.dataLength.ToString(), null, false);
-                        AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Column Type = " + key.columnType.ToString(), null, false);
+                        AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Column Type = " + key.dataType.ToString(), null, false);
                       //  AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Data Type = " + key.dataType.ToString(), null, false);
                         AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Is Nullable = " + key.isNullable, null, false);
                         AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Key Type = " + key.keyType, null, false);
                         AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Property Name = " + key.propertyName, null, false);
                     }
-                    foreach (Column column in table.columns)
+                    foreach (DataProperty column in table.dataProperties)
                     {
                         columnTreeViewItem = new TreeViewItem();
                         columnTreeViewItem.Tag = column;
                         AddTreeItem(tableTreeViewItem, columnTreeViewItem, column.columnName, null, enableCheckBox);
                         AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Data Length = " + column.dataLength.ToString(), null, false);
-                        AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Column Type = " + column.columnType.ToString(), null, false);
+                        AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Column Type = " + column.dataType.ToString(), null, false);
                      //   AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Data Type = " + column.dataType.ToString(), null, false);
                         AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Is Nullable = " + column.isNullable, null, false);
                         AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Property Name = " + column.propertyName, null, false);
@@ -478,7 +478,7 @@ namespace DbDictionaryEditor
                 checkbox.IsEnabled = true;
             else
                 checkbox.IsEnabled = false;
-            if (child.Tag is Table && !checkBox)
+            if (child.Tag is DataObject && !checkBox)
                 checkbox.IsEnabled = true;
             stackpanel.Children.Add(checkbox);
             stackpanel.Children.Add(textblock);
@@ -549,51 +549,51 @@ namespace DbDictionaryEditor
             
             DatabaseDictionary databaseDictionary = new DatabaseDictionary();
             object currentObject = null;
-            Table table;
-            databaseDictionary.tables = new List<Table>();
+            DataObject table;
+            databaseDictionary.dataObjects = new List<DataObject>();
             databaseDictionary.connectionString = tvwItemDestinationRoot.Tag.ToString().Split('~')[0];
             string provider = tvwItemDestinationRoot.Tag.ToString().Split('~')[1];
             databaseDictionary.provider = (Provider)Enum.Parse(typeof(Provider), provider, true);
             foreach (TreeViewItem tableTreeViewItem in tvwItemDestinationRoot.Items)
             {
-                table = new Table();
+              table = new DataObject();
                 currentObject = tableTreeViewItem.Tag;
-                if (currentObject is Table)
+                if (currentObject is DataObject)
                 {
-                    table.entityName = ((Table)currentObject).entityName;
-                    table.tableName = ((Table)currentObject).tableName;
-                    table.keys = new List<org.iringtools.library.Key>();
-                    table.associations = new List<Association>();
-                    table.columns = new List<Column>();
+                  table.objectName = ((DataObject)currentObject).objectName;
+                  table.tableName = ((DataObject)currentObject).tableName;
+                    table.keyProperties = new KeyProperties();
+                    table.dataRelationships = new List<DataRelationship>();
+                    table.dataProperties = new List<DataProperty>();
                 }
                 foreach (TreeViewItem columnTreeViewItem in tableTreeViewItem.Items)
                 {
                     currentObject = columnTreeViewItem.Tag;
-                    if (currentObject is org.iringtools.library.Key)
+                    if (currentObject is org.iringtools.library.KeyProperty)
                     { 
-                    //    DataType dataType =  (DataType)Enum.Parse(typeof(DataType),((org.iringtools.library.Key)currentObject).dataType.ToString(),true);
-                        org.iringtools.library.Key key = new org.iringtools.library.Key();
-                        key.columnName = ((org.iringtools.library.Key)currentObject).columnName;
-                        key.dataLength = ((org.iringtools.library.Key)currentObject).dataLength;
+                    //    DataType dataType =  (DataType)Enum.Parse(typeof(DataType),((org.iringtools.library.KeyProperty)currentObject).dataType.ToString(),true);
+                        org.iringtools.library.KeyProperty key = new org.iringtools.library.KeyProperty();
+                        key.columnName = ((org.iringtools.library.KeyProperty)currentObject).columnName;
+                        key.dataLength = ((org.iringtools.library.KeyProperty)currentObject).dataLength;
                     //    key.dataType = dataType;
-                        key.isNullable = ((org.iringtools.library.Key)currentObject).isNullable;
-                        key.propertyName = ((org.iringtools.library.Key)currentObject).propertyName;
-                        table.keys.Add(key);        
+                        key.isNullable = ((org.iringtools.library.KeyProperty)currentObject).isNullable;
+                        key.propertyName = ((org.iringtools.library.KeyProperty)currentObject).propertyName;
+                        table.keyProperties.Add(key);        
                     }
                     else
                     {
-                    //    DataType dataType = (DataType)Enum.Parse(typeof(DataType), ((Column)currentObject).dataType.ToString(), true);
-                        Column column = new Column();
-                        column.columnName = ((Column)currentObject).columnName;
-                        column.dataLength = ((Column)currentObject).dataLength;
-                   //     column.dataType = dataType;
-                        column.isNullable = ((Column)currentObject).isNullable;
-                        column.propertyName = ((Column)currentObject).propertyName;
-                        table.columns.Add(column); 
+                      //    DataType dataType = (DataType)Enum.Parse(typeof(DataType), ((Column)currentObject).dataType.ToString(), true);
+                      DataProperty column = new DataProperty();
+                      column.columnName = ((DataProperty)currentObject).columnName;
+                      column.dataLength = ((DataProperty)currentObject).dataLength;
+                      //     column.dataType = dataType;
+                      column.isNullable = ((DataProperty)currentObject).isNullable;
+                      column.propertyName = ((DataProperty)currentObject).propertyName;
+                      table.dataProperties.Add(column); 
                     }
 
                 }
-                databaseDictionary.tables.Add(table);
+                databaseDictionary.dataObjects.Add(table);
             }
             
             _dal.SaveDatabaseDictionary(databaseDictionary, projectName, applicationName);
@@ -710,7 +710,7 @@ namespace DbDictionaryEditor
              
          
                 TreeViewItem treeViewItem = (TreeViewItem)selectedItem;
-                if (selectedItem.Tag is Table)
+                if (selectedItem.Tag is DataObject)
                 {
                     stackPanel = new StackPanel() { Orientation = Orientation.Horizontal };
                     textBlock = CreateTextBlock("      --==  Edit Table  ==--    ");
@@ -720,19 +720,19 @@ namespace DbDictionaryEditor
 
                     stackPanel = new StackPanel() { Orientation = Orientation.Horizontal };
                     textBlock = CreateTextBlock("Entity Name: ");
-                    textBox = CreateTextBox(((Table)selectedItem.Tag).entityName, "entityName");
+                    textBox = CreateTextBox(((DataObject)selectedItem.Tag).objectName, "entityName");
                     stackPanel.Children.Add(textBlock);
                     stackPanel.Children.Add(textBox);
                     editTreeNode.spContainer.Children.Add(stackPanel);
                     stackPanel = new StackPanel() { Orientation = Orientation.Horizontal };
                     textBlock = CreateTextBlock("Table Name: ");
-                    textBox = CreateTextBox(((Table)selectedItem.Tag).tableName,"tableName");
+                    textBox = CreateTextBox(((DataObject)selectedItem.Tag).tableName, "tableName");
                     stackPanel.Children.Add(textBlock);
                     stackPanel.Children.Add(textBox);
                     editTreeNode.spContainer.Children.Add(stackPanel);
                     editTreeNode.Show();
                 } 
-                else if (selectedItem.Tag is Column)
+                else if (selectedItem.Tag is DataProperty)
                 {
                      stackPanel = new StackPanel() { Orientation = Orientation.Horizontal };
                      textBlock = CreateTextBlock("      --==  Edit Column  ==--    ");
@@ -741,21 +741,21 @@ namespace DbDictionaryEditor
                      editTreeNode.spContainer.Children.Add(stackPanel);
                      stackPanel = new StackPanel() { Orientation = Orientation.Horizontal };
                      textBlock = CreateTextBlock("Column Name: ");
-                     textBox = CreateTextBox(((Column)selectedItem.Tag).columnName,"columnName");
+                     textBox = CreateTextBox(((DataProperty)selectedItem.Tag).columnName, "columnName");
                       stackPanel.Children.Add(textBlock);
                       stackPanel.Children.Add(textBox);
                       editTreeNode.spContainer.Children.Add(stackPanel);
 
                       stackPanel = new StackPanel() { Orientation = Orientation.Horizontal };
                       textBlock = CreateTextBlock("   Data Length: ");
-                      textBox = CreateTextBox(((Column)selectedItem.Tag).dataLength.ToString(),"dataLength");
+                      textBox = CreateTextBox(((DataProperty)selectedItem.Tag).dataLength.ToString(), "dataLength");
                       stackPanel.Children.Add(textBlock);
                       stackPanel.Children.Add(textBox);
                       editTreeNode.spContainer.Children.Add(stackPanel);
                             
                       stackPanel = new StackPanel() { Orientation = Orientation.Horizontal };
                       textBlock = CreateTextBlock("      Column Type: ");
-                      textBox = CreateTextBox(Enum.GetName(typeof(ColumnType), ((Column)selectedItem.Tag).columnType),"ColumnType");
+                      textBox = CreateTextBox(Enum.GetName(typeof(DataType), ((DataProperty)selectedItem.Tag).dataType), "ColumnType");
                    //   textBlock = CreateTextBlock("      Data Type: ");
                    //   textBox = CreateTextBox(Enum.GetName(typeof(DataType), ((Column)selectedItem.Tag).dataType),"dataType");
                       stackPanel.Children.Add(textBlock);
@@ -764,14 +764,14 @@ namespace DbDictionaryEditor
 
                       stackPanel = new StackPanel() { Orientation = Orientation.Horizontal };
                       textBlock = CreateTextBlock("       IsNullable: ");
-                      textBox = CreateTextBox(((Column)selectedItem.Tag).isNullable.ToString(), "isNullable");
+                      textBox = CreateTextBox(((DataProperty)selectedItem.Tag).isNullable.ToString(), "isNullable");
                       stackPanel.Children.Add(textBlock);
                       stackPanel.Children.Add(textBox);
                       editTreeNode.spContainer.Children.Add(stackPanel);
 
                       stackPanel = new StackPanel() { Orientation = Orientation.Horizontal };
                       textBlock = CreateTextBlock("Property Name :");
-                      textBox = CreateTextBox(((Column)selectedItem.Tag).propertyName, "propertyName");
+                      textBox = CreateTextBox(((DataProperty)selectedItem.Tag).propertyName, "propertyName");
                       stackPanel.Children.Add(textBlock);
                       stackPanel.Children.Add(textBox);
                       editTreeNode.spContainer.Children.Add(stackPanel);
