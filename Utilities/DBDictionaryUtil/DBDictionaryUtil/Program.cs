@@ -88,8 +88,8 @@ namespace DBDictionaryUtil
 
           if (method.ToUpper() == "CREATE")
           {
-            connStr = ConfigurationManager.AppSettings["ConnectionString"];
             dbProvider = ConfigurationManager.AppSettings["DBProvider"];
+            connStr = ConfigurationManager.AppSettings["ConnectionString"];
             dbDictionaryFilePath = ConfigurationManager.AppSettings["DBDictionaryOutFilePath"];
 
             if (String.IsNullOrEmpty(connStr) || String.IsNullOrEmpty(dbDictionaryFilePath))
@@ -144,7 +144,7 @@ namespace DBDictionaryUtil
 
       DatabaseDictionary dbDictionary = new DatabaseDictionary();
       dbDictionary.connectionString = parsedConnStr;
-      dbDictionary.tables = new List<Table>();
+      dbDictionary.dataObjects = new List<DataObject>();
 
       string metadataQuery = String.Empty;
       Dictionary<string, string> properties = new Dictionary<string, string>();
@@ -234,7 +234,7 @@ namespace DBDictionaryUtil
       IList<object[]> metadataList = query.List<object[]>();
       session.Close();
 
-      Table table = null;
+      DataObject dataObject = null;
       string prevTableName = String.Empty;
       foreach (object[] metadata in metadataList)
       {
@@ -249,31 +249,31 @@ namespace DBDictionaryUtil
 
         if (tableName != prevTableName)
         {
-          table = new Table()
+          dataObject = new DataObject()
           {
             tableName = tableName,
-            columns = new List<Column>(),
-            keys = new List<Key>(),
-            associations = new List<Association>(), // to be supported in the future
-            entityName = Utility.NameSafe(tableName)
+            objectName = Utility.NameSafe(tableName),
+            keyProperties = new KeyProperties(),
+            dataProperties = new List<DataProperty>(),
+            dataRelationships = new List<DataRelationship>(),
           };
 
-          dbDictionary.tables.Add(table);
+          dbDictionary.dataObjects.Add(dataObject);
           prevTableName = tableName;
         }
 
         if (String.IsNullOrEmpty(constraint)) // process columns
         {
-          Column column = new Column()
+          DataProperty column = new DataProperty()
           {
             columnName = columnName,
-            columnType = (ColumnType)Enum.Parse(typeof(ColumnType), dataType),
+            propertyName = Utility.NameSafe(columnName),
+            dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
             dataLength = dataLength,
             isNullable = isNullable,
-            propertyName = Utility.NameSafe(columnName)
           };
 
-          table.columns.Add(column);
+          dataObject.dataProperties.Add(column);
         }
         else // process keys
         {
@@ -288,17 +288,16 @@ namespace DBDictionaryUtil
             keyType = KeyType.foreign;
           }
 
-          Key key = new Key()
-          {
-            columnName = columnName,
-            columnType = (ColumnType)Enum.Parse(typeof(ColumnType), dataType),
+          KeyProperty keyProperty = new KeyProperty()
+          {            
+            propertyName = Utility.NameSafe(columnName),
+            dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
             dataLength = dataLength,
             isNullable = isNullable,
             keyType = keyType,
-            propertyName = Utility.NameSafe(columnName),
           };
 
-          table.keys.Add(key);
+          dataObject.keyProperties.Add(keyProperty);
         }
       }
 

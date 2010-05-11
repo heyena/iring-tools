@@ -41,60 +41,127 @@ namespace org.iringtools.library
   public class DataObject
   {
     [DataMember]
-    public List<DataProperty> dataProperties { get; set; }
+    public string tableName { get; set; }
 
-    [DataMember]
-    public List<DataRelationship> dataRelationships { get; set; }
+    [DataMember(IsRequired = false)]
+    public string objectNamespace { get; set; }
 
     [DataMember]
     public string objectName { get; set; }
 
     [DataMember]
-    public string objectNamespace { get; set; }
+    public KeyProperties keyProperties { get; set; }
+
+    [DataMember]
+    public List<DataProperty> dataProperties { get; set; }
+
+    [DataMember]
+    public List<DataRelationship> dataRelationships { get; set; }
   }
 
   [DataContract(Namespace = "http://ns.iringtools.org/library")]
   public class DataProperty
   {
     [DataMember]
+    public string columnName { get; set; }
+
+    [DataMember]
     public string propertyName { get; set; }
 
     [DataMember]
-    public bool isPropertyKey { get; set; }
+    public DataType dataType { get; set; }
 
     [DataMember]
-    public bool isRequired { get; set; }
+    public int dataLength { get; set; }
 
     [DataMember]
-    public string dataType { get; set; }
-
-    [DataMember]
-    public string dataLength { get; set; }
+    public bool isNullable { get; set; }
   }
 
   [DataContract(Namespace = "http://ns.iringtools.org/library")]
-  public class DataRelationship
+  public class KeyProperty : DataProperty
   {
-    [DataMember]
-    public string relatedObject { get; set; }
-
-    [DataMember]
-    public string graphProperty { get; set; }
-
-    [DataMember]
-    public Cardinality cardinality { get; set; }
+    [DataMember(IsRequired = true)]
+    public KeyType keyType { get; set; }
   }
 
   [DataContract(Namespace = "http://ns.iringtools.org/library")]
-  public enum Cardinality
+  public class KeyProperties : List<KeyProperty>
+  {
+    [DataMember(IsRequired = true)]
+    public string keyDelimeter { get; set; }
+  }
+
+  [DataContract(Namespace = "http://ns.iringtools.org/library")]
+  [KnownType(typeof(OneToOneRelationship))]
+  [KnownType(typeof(OneToManyRelationship))]
+  [KnownType(typeof(ManyToOneRelationship))]
+  public abstract class DataRelationship
+  {
+    [DataMember(IsRequired = true)]
+    public string relatedTableName { get; set; }
+  }
+
+  [DataContract(Namespace = "http://ns.iringtools.org/library")]
+  public class OneToOneRelationship : DataRelationship
+  {
+    [DataMember(IsRequired = true)]
+    public bool isKeyConstrained { get; set; }
+  }
+
+  [DataContract(Namespace = "http://ns.iringtools.org/library")]
+  public class OneToManyRelationship : DataRelationship
+  {
+    [DataMember(IsRequired = true)]
+    public string relatedColumnName { get; set; }
+  }
+
+  [DataContract(Namespace = "http://ns.iringtools.org/library")]
+  public class ManyToOneRelationship : DataRelationship
+  {
+    [DataMember(IsRequired = true)]
+    public string columnName { get; set; }
+  }
+
+  [DataContract(Namespace = "http://ns.iringtools.org/library")]
+  public enum KeyType
   {
     [EnumMember]
-    OneToMany,
+    assigned,
     [EnumMember]
-    ManyToOne,
+    foreign,
     [EnumMember]
-    OneToOne,
+    identity,
     [EnumMember]
-    ManyToMany
+    sequence
+  }
+
+  [DataContract(Namespace = "http://ns.iringtools.org/library")]
+  public enum DataType
+  {
+    [EnumMember]
+    @Boolean,
+    [EnumMember]
+    @Byte,
+    [EnumMember]
+    @Char,
+    [EnumMember]
+    @DateTime,
+    [EnumMember]
+    @Decimal,
+    [EnumMember]
+    @Double,
+    [EnumMember]
+    @Int16,
+    [EnumMember]
+    @Int32,
+    [EnumMember]
+    @Int64,
+    [EnumMember]
+    @Single,
+    [EnumMember]
+    @String,
+    [EnumMember]
+    @TimeSpan,
   }
 }

@@ -1180,11 +1180,11 @@ namespace org.iringtools.adapter
       }
 
       // Validate table key
-      foreach (Table table in dbDictionary.tables)
+      foreach (DataObject dataObject in dbDictionary.dataObjects)
       {
-        if (table.keys == null || table.keys.Count == 0)
+        if (dataObject.keyProperties == null || dataObject.keyProperties.Count == 0)
         {
-          throw new Exception("Table \"" + table.tableName + "\" has no key.");
+          throw new Exception("Table \"" + dataObject.tableName + "\" has no key.");
         }
       }
 

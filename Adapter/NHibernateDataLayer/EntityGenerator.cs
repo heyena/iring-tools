@@ -53,10 +53,10 @@ namespace org.iringtools.adapter.datalayer
     private AdapterSettings _settings = null;
     private StringBuilder _mappingBuilder = null;
     private XmlTextWriter _mappingWriter = null;
-    private Dictionary<string, string> _entityNames = null;
-    private DataDictionary _dataDictionary = null;
-    private IndentedTextWriter _entityWriter = null;
-    private StringBuilder _entityBuilder = null;
+    //private Dictionary<string, string> _objectNames = null;
+    //private DataDictionary _dataDictionary = null;
+    private IndentedTextWriter _dataObjectWriter = null;
+    private StringBuilder _dataObjectBuilder = null;
     private ILog _logger = null;
 
     private string _namespace = String.Empty;
@@ -71,7 +71,7 @@ namespace org.iringtools.adapter.datalayer
     {
       Response response = new Response();
 
-      if (dbDictionary.tables != null)
+      if (dbDictionary.dataObjects != null)
       {
         _namespace = "org.iringtools.adapter.datalayer.proj_" + projectName + "." + applicationName;
 
@@ -86,128 +86,121 @@ namespace org.iringtools.adapter.datalayer
           _mappingWriter.WriteStartElement("hibernate-mapping", "urn:nhibernate-mapping-2.2");
           _mappingWriter.WriteAttributeString("default-lazy", "true");
 
-          _entityNames = new Dictionary<string, string>();
-          _dataDictionary = new DataDictionary();
-          _dataDictionary.dataObjects = new List<DataObject>();
+          //_dataDictionary = new DataDictionary();
+          //_dataDictionary.dataObjects = new List<DataObject>();
 
-          foreach (Table table in dbDictionary.tables)
+          //_objectNames = new Dictionary<string, string>();
+          //foreach (DataObject dataObject in dbDictionary.dataObjects)
+          //{
+          //  string objectName = String.IsNullOrEmpty(dataObject.objectName) ? dataObject.tableName : dataObject.objectName;
+          //  _objectNames.Add(dataObject.tableName, objectName);
+          //}
+
+          _dataObjectBuilder = new StringBuilder();
+          _dataObjectWriter = new IndentedTextWriter(new StringWriter(_dataObjectBuilder), "  ");
+
+          _dataObjectWriter.WriteLine(Utility.GeneratedCodeProlog);
+          _dataObjectWriter.WriteLine("using System;");
+          _dataObjectWriter.WriteLine("using System.Collections.Generic;");
+          _dataObjectWriter.WriteLine("using Iesi.Collections.Generic;");
+          _dataObjectWriter.WriteLine("using org.iringtools.library;");
+          _dataObjectWriter.WriteLine();
+          _dataObjectWriter.WriteLine("namespace {0}", _namespace);
+          _dataObjectWriter.Write("{"); // begin namespace block
+          _dataObjectWriter.Indent++;
+
+          //#region Create entities
+          foreach (DataObject dataObject in dbDictionary.dataObjects)
           {
-            string entityName = String.IsNullOrEmpty(table.entityName) ? table.tableName : table.entityName;
-
-            _entityNames.Add(table.tableName, entityName);
-          }
-
-          _entityBuilder = new StringBuilder();
-          _entityWriter = new IndentedTextWriter(new StringWriter(_entityBuilder), "  ");
-
-          _entityWriter.WriteLine(Utility.GeneratedCodeProlog);
-          _entityWriter.WriteLine("using System;");
-          _entityWriter.WriteLine("using System.Collections.Generic;");
-          _entityWriter.WriteLine("using Iesi.Collections.Generic;");
-          _entityWriter.WriteLine("using org.iringtools.library;");
-          _entityWriter.WriteLine();
-          _entityWriter.WriteLine("namespace {0}", _namespace);
-          _entityWriter.Write("{"); // begin namespace block
-          _entityWriter.Indent++;
-
-          #region Create entities
-          foreach (Table table in dbDictionary.tables)
-          {
-            CreateEntity(table);
+            CreateDataObject(dataObject);
 
             // Create data object for data dictionary
-            DataObject dataObject = new DataObject();
+            //DataObject dataObject = new DataObject();
 
-            dataObject.objectName = _entityNames[table.tableName];
-            dataObject.objectNamespace = _namespace;
-            dataObject.dataProperties = new List<DataProperty>();
+            //dataObject.objectName = _objectNames[dataObject.dataObjectName];
+            //dataObject.objectNamespace = _namespace;
+            //dataObject.dataProperties = new List<DataProperty>();
 
-            #region Add key properties to data property
-            foreach (Key key in table.keys)
-            {
-              DataProperty dataProperty = new DataProperty()
-              {
-                propertyName = String.IsNullOrEmpty(key.propertyName) ? key.columnName : key.propertyName,
-                dataType = key.columnType.ToString(),
-                // for backward compatibility
-                dataLength = (key.dataLength == null) ? "255" : Convert.ToString(key.dataLength),
-                //dataLength = Convert.ToString(key.dataLength),
-                isPropertyKey = true,
-                isRequired = !(key.isNullable == null || key.isNullable == true),
-              };
+            //  #region Add key properties
+            //  foreach (KeyProperty keyProperty in dataObject.keyProperties)
+            //  {
+            //    dataObject.keyProperties.Add(new KeyProperty
+            //    {
+            //      propertyName = keyProperty.propertyName,
+            //      dataType = keyProperty.dataType,
+            //      dataLength = keyProperty.dataLength,
+            //      isNullable = keyProperty.isNullable,
+            //      keyType = keyProperty.keyType
+            //    });
+            //  }
+            //  #endregion
 
-              dataObject.dataProperties.Add(dataProperty);
-            }
-            #endregion
+            //  #region Add data properties 
+            //  foreach (Column column in dataObject.dataProperties)
+            //  {
+            //    DataProperty dataProperty = new DataProperty()
+            //    {
+            //      propertyName = column.propertyName,
+            //      dataLength = column.dataLength,
+            //      dataType = column.dataType,
+            //      isNullable = column.isNullable
+            //    };
 
-            #region Add column properties to data property
-            foreach (Column column in table.columns)
-            {
-              DataProperty dataProperty = new DataProperty()
-              {
-                propertyName = String.IsNullOrEmpty(column.propertyName) ? column.columnName : column.propertyName,
-                dataType = column.columnType.ToString(),
-                // for backward compatibility, default data length to 255
-                dataLength = (column.dataLength == null) ? "255" : Convert.ToString(column.dataLength),
-                //dataLength = Convert.ToString(column.dataLength),
-                isRequired = !(column.isNullable == null || column.isNullable == true),
-              };
+            //    try
+            //    {
+            //      dataObject.dataProperties.Add(dataProperty);
+            //    }
+            //    catch (Exception duplicatePropertyException)
+            //    {
+            //      _logger.Warn(duplicatePropertyException.ToString());
+            //    }
+            //  }
+            //  #endregion
 
-              try
-              {
-                dataObject.dataProperties.Add(dataProperty);
-              }
-              catch (Exception duplicatePropertyException)
-              {
-                _logger.Warn(duplicatePropertyException.ToString());
-              }
-            }
-            #endregion
+            //  #region Process relationships
+            //  if (dataObject.dataRelationships != null)
+            //  {
+            //    dataObject.dataRelationships = new List<DataRelationship>();
 
-            #region Process associations
-            if (table.associations != null)
-            {
-              dataObject.dataRelationships = new List<DataRelationship>();
+            //    foreach (Relationship relationship in dataObject.dataRelationships)
+            //    {
+            //      DataRelationship dataRelationship = new DataRelationship();
+            //      string associatedEntityName = _objectNames[relationship.associatedDataObjectName];
 
-              foreach (Association association in table.associations)
-              {
-                DataRelationship dataRelationship = new DataRelationship();
-                string associatedEntityName = _entityNames[association.associatedTableName];
+            //      dataRelationship.relatedObject = associatedEntityName;
 
-                dataRelationship.relatedObject = associatedEntityName;
+            //      switch (relationship.GetType().Name)
+            //      {
+            //        case "OneToOneRelationship":
+            //          dataRelationship.cardinality = Cardinality.OneToOne;
+            //          break;
 
-                switch (association.GetType().Name)
-                {
-                  case "OneToOneAssociation":
-                    dataRelationship.cardinality = Cardinality.OneToOne;
-                    break;
+            //        case "OneToManyRelationship":
+            //          dataRelationship.cardinality = Cardinality.OneToMany;
+            //          break;
 
-                  case "OneToManyAssociation":
-                    dataRelationship.cardinality = Cardinality.OneToMany;
-                    break;
+            //        case "ManyToOneRelationship":
+            //          dataRelationship.cardinality = Cardinality.ManyToOne;
+            //          break;
+            //      }
 
-                  case "ManyToOneAssociation":
-                    dataRelationship.cardinality = Cardinality.ManyToOne;
-                    break;
-                }
+            //      dataObject.dataRelationships.Add(dataRelationship);
+            //    }
+            //  }
+            //  #endregion
 
-                dataObject.dataRelationships.Add(dataRelationship);
-              }
-            }
-            #endregion
-
-            _dataDictionary.dataObjects.Add(dataObject);
+            //  _dataDictionary.dataObjects.Add(dataObject);
           }
-          #endregion
+          //#endregion
 
-          _entityWriter.Indent--;
-          _entityWriter.WriteLine("}"); // end namespace block                
+          _dataObjectWriter.Indent--;
+          _dataObjectWriter.WriteLine("}"); // end namespace block                
 
           _mappingWriter.WriteEndElement(); // end hibernate-mapping element
           _mappingWriter.Close();
 
           string mappingXml = _mappingBuilder.ToString();
-          string entitiesSourceCode = _entityBuilder.ToString();
+          string sourceCode = _dataObjectBuilder.ToString();
 
           #region Compile entities
           Dictionary<string, string> compilerOptions = new Dictionary<string, string>();
@@ -220,15 +213,17 @@ namespace org.iringtools.adapter.datalayer
           parameters.ReferencedAssemblies.Add(_settings.BinaryPath + "iRINGLibrary.dll");
           NHIBERNATE_ASSEMBLIES.ForEach(assembly => parameters.ReferencedAssemblies.Add(_settings.BinaryPath + assembly));
 
-          Utility.Compile(compilerOptions, parameters, new string[] { entitiesSourceCode });
+          Utility.Compile(compilerOptions, parameters, new string[] { sourceCode });
           #endregion Compile entities
 
           #region Writing memory data to disk
           string hibernateConfig = CreateConfiguration(dbDictionary.provider, dbDictionary.connectionString);
           Utility.WriteString(hibernateConfig, _settings.XmlPath + "nh-configuration." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
           Utility.WriteString(mappingXml, _settings.XmlPath + "nh-mapping." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
-          Utility.WriteString(entitiesSourceCode, _settings.CodePath + "Model." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
-          Utility.Write<DataDictionary>(_dataDictionary, _settings.XmlPath + "DataDictionary." + projectName + "." + applicationName + ".xml");
+          Utility.WriteString(sourceCode, _settings.CodePath + "Model." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
+
+          DataDictionary dataDictionary = new DataDictionary { dataObjects = dbDictionary.dataObjects };
+          Utility.Write<DataDictionary>(dataDictionary, _settings.XmlPath + "DataDictionary." + projectName + "." + applicationName + ".xml");
           #endregion
 
           response.Add("Entities generated successfully.");
@@ -242,276 +237,275 @@ namespace org.iringtools.adapter.datalayer
       return response;
     }
 
-    private void RemoveDups(Table table)
+    private void RemoveDups(DataObject dataObject)
     {
-      for (int i = 0; i < table.keys.Count; i++)
+      for (int i = 0; i < dataObject.keyProperties.Count; i++)
       {
-        for (int j = 0; j < table.columns.Count; j++)
+        for (int j = 0; j < dataObject.dataProperties.Count; j++)
         {
           // remove columns that are already in keys
-          if (table.columns[j].columnName.ToLower() == table.keys[i].columnName.ToLower())
+          if (dataObject.dataProperties[j].propertyName.ToLower() == dataObject.keyProperties[i].propertyName.ToLower())
           {
-            table.columns.Remove(table.columns[j--]);
+            dataObject.dataProperties.Remove(dataObject.dataProperties[j--]);
             continue;
           }
 
           // remove duplicate columns
-          for (int jj = j + 1; jj < table.columns.Count; jj++)
+          for (int jj = j + 1; jj < dataObject.dataProperties.Count; jj++)
           {
-            if (table.columns[jj].columnName.ToLower() == table.columns[j].columnName.ToLower())
+            if (dataObject.dataProperties[jj].propertyName.ToLower() == dataObject.dataProperties[j].propertyName.ToLower())
             {
-              table.columns.Remove(table.columns[jj--]);
+              dataObject.dataProperties.Remove(dataObject.dataProperties[jj--]);
             }
           }
         }
 
-        // remove duplicate keys (in order of foreign - assigned - identity/sequence)
-        for (int ii = i + 1; ii < table.keys.Count; ii++)
+        // remove duplicate keys (in order of foreign - assigned - iddataObject/sequence)
+        for (int ii = i + 1; ii < dataObject.keyProperties.Count; ii++)
         {
-          if (table.keys[ii].columnName.ToLower() == table.keys[i].columnName.ToLower())
+          if (dataObject.keyProperties[ii].columnName.ToLower() == dataObject.keyProperties[i].columnName.ToLower())
           {
-            if (table.keys[ii].keyType != KeyType.foreign)
+            if (dataObject.keyProperties[ii].keyType != KeyType.foreign)
             {
-              if (((table.keys[ii].keyType == KeyType.identity || table.keys[ii].keyType == KeyType.sequence) && table.keys[i].keyType == KeyType.assigned) ||
-                    table.keys[ii].keyType == KeyType.assigned && table.keys[i].keyType == KeyType.foreign)
+              if (((dataObject.keyProperties[ii].keyType == KeyType.identity || dataObject.keyProperties[ii].keyType == KeyType.sequence) && dataObject.keyProperties[i].keyType == KeyType.assigned) ||
+                    dataObject.keyProperties[ii].keyType == KeyType.assigned && dataObject.keyProperties[i].keyType == KeyType.foreign)
               {
-                table.keys[i].keyType = table.keys[ii].keyType;
+                dataObject.keyProperties[i].keyType = dataObject.keyProperties[ii].keyType;
               }
             }
 
-            table.keys.Remove(table.keys[ii--]);
+            dataObject.keyProperties.Remove(dataObject.keyProperties[ii--]);
           }
         }
       }
     }
 
-    private void CreateEntity(Table table)
+    private void CreateDataObject(DataObject dataObject)
     {
-      string entityName = _entityNames[table.tableName];
-      string keyClassName = entityName + "Id";
-
+      string keyClassName = dataObject.objectName + "Id";
       _mappingWriter.WriteStartElement("class");
-      _mappingWriter.WriteAttributeString("name", _namespace + "." + entityName + ", " + ASSEMBLY_NAME);
-      _mappingWriter.WriteAttributeString("table", table.tableName);
+      _mappingWriter.WriteAttributeString("name", _namespace + "." + dataObject.objectName + ", " + ASSEMBLY_NAME);
+      _mappingWriter.WriteAttributeString("table", "[" + dataObject.tableName + "]");
 
-      RemoveDups(table);
+      RemoveDups(dataObject);
 
       #region Create composite key
-      if (table.keys.Count > 1)
+      if (dataObject.keyProperties.Count > 1)
       {
-        _entityWriter.WriteLine();
-        _entityWriter.WriteLine("[Serializable]");
-        _entityWriter.WriteLine("public class {0}", keyClassName);
-        _entityWriter.WriteLine("{"); // begin composite key class
-        _entityWriter.Indent++;
+        _dataObjectWriter.WriteLine();
+        _dataObjectWriter.WriteLine("[Serializable]");
+        _dataObjectWriter.WriteLine("public class {0}", keyClassName);
+        _dataObjectWriter.WriteLine("{"); // begin composite key class
+        _dataObjectWriter.Indent++;
 
         _mappingWriter.WriteStartElement("composite-id");
         _mappingWriter.WriteAttributeString("name", "Id");
         _mappingWriter.WriteAttributeString("class", _namespace + "." + keyClassName + ", " + ASSEMBLY_NAME);
 
-        foreach (Key key in table.keys)
+        foreach (KeyProperty keyProperty in dataObject.keyProperties)
         {
           // for backward compatibility
-          bool isKeyNullable = (key.isNullable == null || key.isNullable == true);
-          string dataType = (key.columnType != ColumnType.String && isKeyNullable) ? (key.columnType.ToString() + "?") : (key.columnType.ToString());
-          string keyName = String.IsNullOrEmpty(key.propertyName) ? key.columnName : key.propertyName;
+          //bool isKeyNullable = (keyProperty.isNullable == null || keyProperty.isNullable == true);
+          //string dataType = (keyProperty.dataType != DataType.String && isKeyNullable) ? (keyProperty.dataType.ToString() + "?") : (keyProperty.dataType.ToString());
+          //string keyName = String.IsNullOrEmpty(keyProperty.propertyName) ? keyProperty.columnName : keyProperty.propertyName;
 
-          _entityWriter.WriteLine("public {0} {1} {{ get; set; }}", dataType, keyName);
+          _dataObjectWriter.WriteLine("public {0} {1} {{ get; set; }}", keyProperty.dataType, keyProperty.propertyName);
 
           _mappingWriter.WriteStartElement("key-property");
-          _mappingWriter.WriteAttributeString("name", keyName);
-          _mappingWriter.WriteAttributeString("column", key.columnName);
+          _mappingWriter.WriteAttributeString("name", keyProperty.propertyName);
+          _mappingWriter.WriteAttributeString("column", keyProperty.columnName);
           _mappingWriter.WriteEndElement(); // end key-property
         }
 
-        _entityWriter.WriteLine("public override bool Equals(object obj)"); // start Equals method
-        _entityWriter.WriteLine("{");
+        _dataObjectWriter.WriteLine("public override bool Equals(object obj)"); // start Equals method
+        _dataObjectWriter.WriteLine("{");
 
-        _entityWriter.Indent++;
-        _entityWriter.WriteLine("bool equals = false;");
-        _entityWriter.WriteLine("if (obj != null)");
-        _entityWriter.WriteLine("{");
+        _dataObjectWriter.Indent++;
+        _dataObjectWriter.WriteLine("bool equals = false;");
+        _dataObjectWriter.WriteLine("if (obj != null)");
+        _dataObjectWriter.WriteLine("{");
 
-        for (int i = 0; i < table.keys.Count; i++)
+        for (int i = 0; i < dataObject.keyProperties.Count; i++)
         {
-          string keyName = String.IsNullOrEmpty(table.keys[i].propertyName) ? table.keys[i].columnName : table.keys[i].propertyName;
+          string keyName = String.IsNullOrEmpty(dataObject.keyProperties[i].propertyName) ? dataObject.keyProperties[i].columnName : dataObject.keyProperties[i].propertyName;
 
           if (i == 0)
           {
-            _entityWriter.Indent++;
-            _entityWriter.Write("equals = (");
+            _dataObjectWriter.Indent++;
+            _dataObjectWriter.Write("equals = (");
           }
           else
           {
-            _entityWriter.Write(" && ");
+            _dataObjectWriter.Write(" && ");
           }
 
-          _entityWriter.Write("this.{0} == (({1})obj).{0}", keyName, keyClassName);
+          _dataObjectWriter.Write("this.{0} == (({1})obj).{0}", keyName, keyClassName);
         }
 
-        _entityWriter.WriteLine(");");
-        _entityWriter.Indent--;
-        _entityWriter.WriteLine("}");
-        _entityWriter.WriteLine("return equals;");
-        _entityWriter.Indent--;
-        _entityWriter.WriteLine("}"); // end Equals method
+        _dataObjectWriter.WriteLine(");");
+        _dataObjectWriter.Indent--;
+        _dataObjectWriter.WriteLine("}");
+        _dataObjectWriter.WriteLine("return equals;");
+        _dataObjectWriter.Indent--;
+        _dataObjectWriter.WriteLine("}"); // end Equals method
 
-        _entityWriter.WriteLine("public override int GetHashCode()"); // start GetHashCode method
-        _entityWriter.WriteLine("{");
-        _entityWriter.Indent++;
-        _entityWriter.WriteLine("int _hashCode = 0;");
+        _dataObjectWriter.WriteLine("public override int GetHashCode()"); // start GetHashCode method
+        _dataObjectWriter.WriteLine("{");
+        _dataObjectWriter.Indent++;
+        _dataObjectWriter.WriteLine("int _hashCode = 0;");
 
-        for (int i = 0; i < table.keys.Count; i++)
+        for (int i = 0; i < dataObject.keyProperties.Count; i++)
         {
-          string keyName = String.IsNullOrEmpty(table.keys[i].propertyName) ? table.keys[i].columnName : table.keys[i].propertyName;
+          string keyName = String.IsNullOrEmpty(dataObject.keyProperties[i].propertyName) ? dataObject.keyProperties[i].columnName : dataObject.keyProperties[i].propertyName;
 
-          _entityWriter.WriteLine("_hashCode += {0}.GetHashCode();", keyName);
+          _dataObjectWriter.WriteLine("_hashCode += {0}.GetHashCode();", keyName);
         }
 
-        _entityWriter.WriteLine("return _hashCode;");
-        _entityWriter.Indent--;
-        _entityWriter.WriteLine("}"); // end GetHashCode method
+        _dataObjectWriter.WriteLine("return _hashCode;");
+        _dataObjectWriter.Indent--;
+        _dataObjectWriter.WriteLine("}"); // end GetHashCode method
 
-        _entityWriter.WriteLine("public override string ToString()"); // start ToString method
-        _entityWriter.WriteLine("{");
-        _entityWriter.Indent++;
-        _entityWriter.WriteLine("string _idString = String.Empty;");
+        _dataObjectWriter.WriteLine("public override string ToString()"); // start ToString method
+        _dataObjectWriter.WriteLine("{");
+        _dataObjectWriter.Indent++;
+        _dataObjectWriter.WriteLine("string _idString = String.Empty;");
 
-        for (int i = 0; i < table.keys.Count; i++)
+        for (int i = 0; i < dataObject.keyProperties.Count; i++)
         {
-          string keyName = String.IsNullOrEmpty(table.keys[i].propertyName) ? table.keys[i].columnName : table.keys[i].propertyName;
+          string keyName = String.IsNullOrEmpty(dataObject.keyProperties[i].propertyName) ? dataObject.keyProperties[i].columnName : dataObject.keyProperties[i].propertyName;
 
           if (i == 0)
           {
-            _entityWriter.WriteLine("_idString += {0}.ToString();", keyName);
+            _dataObjectWriter.WriteLine("_idString += {0}.ToString();", keyName);
           }
           else
           {
-            _entityWriter.WriteLine("_idString += \"_\" + {0}.ToString();", keyName);
+            _dataObjectWriter.WriteLine("_idString += \"_\" + {0}.ToString();", keyName);
           }
         }
 
-        _entityWriter.WriteLine("return _idString;");
-        _entityWriter.Indent--;
-        _entityWriter.WriteLine("}"); // end ToString method
+        _dataObjectWriter.WriteLine("return _idString;");
+        _dataObjectWriter.Indent--;
+        _dataObjectWriter.WriteLine("}"); // end ToString method
 
-        _entityWriter.Indent--;
-        _entityWriter.WriteLine("}"); // end composite key class
+        _dataObjectWriter.Indent--;
+        _dataObjectWriter.WriteLine("}"); // end composite key class
 
         _mappingWriter.WriteEndElement(); // end composite-id class element
       }
       #endregion Create composite key
 
-      _entityWriter.WriteLine();
-      _entityWriter.WriteLine("public class {0} : IDataObject", entityName);
-      _entityWriter.WriteLine("{"); // begin class block
-      _entityWriter.Indent++;
+      _dataObjectWriter.WriteLine();
+      _dataObjectWriter.WriteLine("public class {0} : IDataObject", dataObject.objectName);
+      _dataObjectWriter.WriteLine("{"); // begin class block
+      _dataObjectWriter.Indent++;
 
-      if (table.keys.Count > 1)
+      if (dataObject.keyProperties.Count > 1)
       {
-        _entityWriter.WriteLine("public {0}()", entityName);
-        _entityWriter.WriteLine("{");
-        _entityWriter.Indent++;
-        _entityWriter.WriteLine("Id = new {0}Id();", entityName);
-        _entityWriter.Indent--;
-        _entityWriter.WriteLine("}");
-        _entityWriter.WriteLine("public virtual {0} Id {{ get; set; }}", keyClassName);
+        _dataObjectWriter.WriteLine("public {0}()", dataObject.objectName);
+        _dataObjectWriter.WriteLine("{");
+        _dataObjectWriter.Indent++;
+        _dataObjectWriter.WriteLine("Id = new {0}Id();", dataObject.objectName);
+        _dataObjectWriter.Indent--;
+        _dataObjectWriter.WriteLine("}");
+        _dataObjectWriter.WriteLine("public virtual {0} Id {{ get; set; }}", keyClassName);
 
-        foreach (Key key in table.keys)
+        foreach (KeyProperty keyProperty in dataObject.keyProperties)
         {
           // for backward compatibility
-          bool isKeyNullable = (key.isNullable == null || key.isNullable == true);
-          string dataType = (key.columnType != ColumnType.String && isKeyNullable) ? (key.columnType.ToString() + "?") : (key.columnType.ToString());
+          //bool isKeyNullable = (keyProperty.isNullable == null || keyProperty.isNullable == true);
+          //string dataType = (keyProperty.dataType != DataType.String && isKeyNullable) ? (keyProperty.dataType.ToString() + "?") : (keyProperty.dataType.ToString());
 
-          _entityWriter.WriteLine("public virtual {0} {1}", dataType, key.propertyName);
-          _entityWriter.WriteLine("{");
-          _entityWriter.Indent++;
-          _entityWriter.WriteLine("get {{ return Id.{0}; }}", key.propertyName);
-          _entityWriter.WriteLine("set {{ Id.{0} = value; }}", key.propertyName);
-          _entityWriter.Indent--;
-          _entityWriter.WriteLine("}");
+          _dataObjectWriter.WriteLine("public virtual {0} {1}", keyProperty.dataType, keyProperty.propertyName);
+          _dataObjectWriter.WriteLine("{");
+          _dataObjectWriter.Indent++;
+          _dataObjectWriter.WriteLine("get {{ return Id.{0}; }}", keyProperty.propertyName);
+          _dataObjectWriter.WriteLine("set {{ Id.{0} = value; }}", keyProperty.propertyName);
+          _dataObjectWriter.Indent--;
+          _dataObjectWriter.WriteLine("}");
 
           _mappingWriter.WriteStartElement("property");
-          _mappingWriter.WriteAttributeString("name", key.propertyName);
-          _mappingWriter.WriteAttributeString("column", key.columnName);
+          _mappingWriter.WriteAttributeString("name", keyProperty.propertyName);
+          _mappingWriter.WriteAttributeString("column", keyProperty.columnName);
           _mappingWriter.WriteAttributeString("update", "false");
           _mappingWriter.WriteAttributeString("insert", "false");
           _mappingWriter.WriteEndElement();
         }
       }
-      else if (table.keys.Count == 1 && table.keys[0].keyType != KeyType.foreign)
+      else if (dataObject.keyProperties.Count == 1 && dataObject.keyProperties.First().keyType != KeyType.foreign)
       {
         // for backward compatibility
-        bool isKeyNullable = (table.keys[0].isNullable == null || table.keys[0].isNullable == true);
-        string dataType = (table.keys[0].columnType != ColumnType.String && isKeyNullable) ? (table.keys[0].columnType.ToString() + "?") : (table.keys[0].columnType.ToString());
+        //bool isKeyNullable = (dataObject.keyProperties.First().isNullable == null || dataObject.keyProperties.First().isNullable == true);
+        //string dataType = (dataObject.keyProperties.First().dataType != DataType.String && isKeyNullable) ? (dataObject.keyProperties.First().dataType.ToString() + "?") : (dataObject.keyProperties.First().dataType.ToString());
 
-        _entityWriter.WriteLine("public virtual {0} Id {{ get; set; }}", dataType);
+        _dataObjectWriter.WriteLine("public virtual {0} Id {{ get; set; }}", dataObject.keyProperties.First().dataType);
 
         _mappingWriter.WriteStartElement("id");
         _mappingWriter.WriteAttributeString("name", "Id");
-        _mappingWriter.WriteAttributeString("column", table.keys[0].columnName);
+        _mappingWriter.WriteAttributeString("column", dataObject.keyProperties.First().columnName);
         _mappingWriter.WriteStartElement("generator");
-        _mappingWriter.WriteAttributeString("class", table.keys[0].keyType.ToString());
+        _mappingWriter.WriteAttributeString("class", dataObject.keyProperties.First().keyType.ToString());
         _mappingWriter.WriteEndElement(); // end generator element
         _mappingWriter.WriteEndElement(); // end id element
 
-        if (table.keys[0].keyType == KeyType.assigned)
+        if (dataObject.keyProperties.First().keyType == KeyType.assigned)
         {
-          _entityWriter.WriteLine("public virtual {0} {1}", dataType, table.keys[0].propertyName);
-          _entityWriter.WriteLine("{");
-          _entityWriter.Indent++;
-          _entityWriter.WriteLine("get { return Id; }");
-          _entityWriter.WriteLine("set { Id = value; }");
-          _entityWriter.Indent--;
-          _entityWriter.WriteLine("}");
+          _dataObjectWriter.WriteLine("public virtual {0} {1}", dataObject.keyProperties.First().dataType, dataObject.keyProperties.First().propertyName);
+          _dataObjectWriter.WriteLine("{");
+          _dataObjectWriter.Indent++;
+          _dataObjectWriter.WriteLine("get { return Id; }");
+          _dataObjectWriter.WriteLine("set { Id = value; }");
+          _dataObjectWriter.Indent--;
+          _dataObjectWriter.WriteLine("}");
 
           _mappingWriter.WriteStartElement("property");
-          _mappingWriter.WriteAttributeString("name", table.keys[0].propertyName);
-          _mappingWriter.WriteAttributeString("column", table.keys[0].columnName);
+          _mappingWriter.WriteAttributeString("name", dataObject.keyProperties.First().propertyName);
+          _mappingWriter.WriteAttributeString("column", dataObject.keyProperties.First().columnName);
           _mappingWriter.WriteAttributeString("update", "false");
           _mappingWriter.WriteAttributeString("insert", "false");
           _mappingWriter.WriteEndElement(); // end property element
         }
       }
 
-      #region Process associations
-      if (table.associations != null)
+      #region Process relationships
+      if (dataObject.dataRelationships != null)
       {
-        foreach (Association association in table.associations)
+        foreach (DataRelationship dataRelationship in dataObject.dataRelationships)
         {
-          string associatedEntityName = _entityNames[association.associatedTableName];
+          //string associatedEntityName = _objectNames[dataRelationship.relatedObjectName];
+          //string relatedObjectName = dataRelationship.relatedTableName;
 
-          switch (association.GetType().Name)
+          switch (dataRelationship.GetType().Name)
           {
-            case "OneToOneAssociation":
-              OneToOneAssociation oneToOneAssociation = (OneToOneAssociation)association;
+            case "OneToOneRelationship":
+              OneToOneRelationship oneToOneRelationship = (OneToOneRelationship)dataRelationship;
 
-              if (table.keys[0].keyType == KeyType.foreign)
+              if (dataObject.keyProperties.First().keyType == KeyType.foreign)
               {
                 // for backward compatibility
-                bool isKeyNullable = (table.keys[0].isNullable == null || table.keys[0].isNullable == true);
-                string dataType = (table.keys[0].columnType != ColumnType.String && isKeyNullable) ? (table.keys[0].columnType.ToString() + "?") : (table.keys[0].columnType.ToString());
+                //bool isKeyNullable = (dataObject.keyProperties.First().isNullable == null || dataObject.keyProperties.First().isNullable == true);
+                //string dataType = (dataObject.keyProperties.First().dataType != DataType.String && isKeyNullable) ? (dataObject.keyProperties.First().dataType.ToString() + "?") : (dataObject.keyProperties.First().dataType.ToString());
 
-                _entityWriter.WriteLine("public virtual {0} Id {{ get; set; }}", dataType);
+                _dataObjectWriter.WriteLine("public virtual {0} Id {{ get; set; }}", dataObject.keyProperties.First().dataType);
 
                 _mappingWriter.WriteStartElement("id");
                 _mappingWriter.WriteAttributeString("name", "Id");
-                _mappingWriter.WriteAttributeString("column", table.keys[0].columnName);
+                _mappingWriter.WriteAttributeString("column", dataObject.keyProperties.First().columnName);
                 _mappingWriter.WriteStartElement("generator");
-                _mappingWriter.WriteAttributeString("class", table.keys[0].keyType.ToString());
+                _mappingWriter.WriteAttributeString("class", dataObject.keyProperties.First().keyType.ToString());
                 _mappingWriter.WriteStartElement("param");
                 _mappingWriter.WriteAttributeString("name", "property");
-                _mappingWriter.WriteString(associatedEntityName);
+                _mappingWriter.WriteString(dataRelationship.relatedTableName);
                 _mappingWriter.WriteEndElement(); // end param element
                 _mappingWriter.WriteEndElement(); // end generator element
                 _mappingWriter.WriteEndElement(); // end id element
               }
 
               _mappingWriter.WriteStartElement("one-to-one");
-              _mappingWriter.WriteAttributeString("name", associatedEntityName);
-              _mappingWriter.WriteAttributeString("class", _namespace + "." + associatedEntityName + ", " + ASSEMBLY_NAME);
+              _mappingWriter.WriteAttributeString("name", dataRelationship.relatedTableName);
+              _mappingWriter.WriteAttributeString("class", _namespace + "." + dataRelationship.relatedTableName + ", " + ASSEMBLY_NAME);
 
-              if (oneToOneAssociation.constrained)
+              if (oneToOneRelationship.isKeyConstrained)
               {
                 _mappingWriter.WriteAttributeString("constrained", "true");
               }
@@ -520,38 +514,38 @@ namespace org.iringtools.adapter.datalayer
                 _mappingWriter.WriteAttributeString("cascade", "save-update");
               }
 
-              _entityWriter.WriteLine("public virtual {0} {0} {{ get; set; }}", associatedEntityName);
+              _dataObjectWriter.WriteLine("public virtual {0} {0} {{ get; set; }}", dataRelationship.relatedTableName);
               _mappingWriter.WriteEndElement(); // end one-to-one element
               break;
 
-            case "OneToManyAssociation":
-              OneToManyAssociation oneToManyAssociation = (OneToManyAssociation)association;
+            case "OneToManyRelationship":
+              OneToManyRelationship oneToManyRelationship = (OneToManyRelationship)dataRelationship;
 
-              _entityWriter.WriteLine("public virtual ISet<{0}> {0}List {{ get; set; }}", associatedEntityName);
+              _dataObjectWriter.WriteLine("public virtual ISet<{0}> {0}List {{ get; set; }}", dataRelationship.relatedTableName);
 
               _mappingWriter.WriteStartElement("set");
-              _mappingWriter.WriteAttributeString("name", associatedEntityName + "List");
+              _mappingWriter.WriteAttributeString("name", dataRelationship.relatedTableName + "List");
               _mappingWriter.WriteAttributeString("inverse", "true");
               _mappingWriter.WriteAttributeString("cascade", "all-delete-orphan");
               _mappingWriter.WriteStartElement("key");
-              _mappingWriter.WriteAttributeString("column", oneToManyAssociation.associatedColumnName);
+              _mappingWriter.WriteAttributeString("column", oneToManyRelationship.relatedColumnName);
               _mappingWriter.WriteEndElement(); // end one-to-many
               _mappingWriter.WriteStartElement("one-to-many");
-              _mappingWriter.WriteAttributeString("class", _namespace + "." + associatedEntityName + ", " + ASSEMBLY_NAME);
+              _mappingWriter.WriteAttributeString("class", _namespace + "." + dataRelationship.relatedTableName + ", " + ASSEMBLY_NAME);
               _mappingWriter.WriteEndElement(); // end key element
               _mappingWriter.WriteEndElement(); // end set element
               break;
 
-            case "ManyToOneAssociation":
-              ManyToOneAssociation manyToOneAssociation = (ManyToOneAssociation)association;
+            case "ManyToOneRelationship":
+              ManyToOneRelationship manyToOneRelationship = (ManyToOneRelationship)dataRelationship;
 
-              _entityWriter.WriteLine("public virtual {0} {0} {{ get; set; }}", associatedEntityName);
+              _dataObjectWriter.WriteLine("public virtual {0} {0} {{ get; set; }}", dataRelationship.relatedTableName);
 
               _mappingWriter.WriteStartElement("many-to-one");
-              _mappingWriter.WriteAttributeString("name", associatedEntityName);
-              _mappingWriter.WriteAttributeString("column", manyToOneAssociation.columnName);
+              _mappingWriter.WriteAttributeString("name", dataRelationship.relatedTableName);
+              _mappingWriter.WriteAttributeString("column", manyToOneRelationship.columnName);
 
-              if (IsAssociationInKeys(table.keys, manyToOneAssociation))
+              if (containsRelationship(dataObject.keyProperties, manyToOneRelationship))
               {
                 _mappingWriter.WriteAttributeString("update", "false");
                 _mappingWriter.WriteAttributeString("insert", "false");
@@ -562,113 +556,113 @@ namespace org.iringtools.adapter.datalayer
           }
         }
       }
-      #endregion Process associations
+      #endregion Process relationships
 
       #region Process columns
-      if (table.columns != null)
+      if (dataObject.dataProperties != null)
       {
-        foreach (Column column in table.columns)
+        foreach (DataProperty dataProperty in dataObject.dataProperties)
         {
           // for backward compatibility
-          bool isColumnNullable = (column.isNullable == null || column.isNullable == true);
-          string dataType = (column.columnType != ColumnType.String && isColumnNullable) ? (column.columnType.ToString() + "?") : (column.columnType.ToString());
-          string propertyName = String.IsNullOrEmpty(column.propertyName) ? column.columnName : column.propertyName;
+          //bool isColumnNullable = (dataProperty.isNullable == null || dataProperty.isNullable == true);
+          //string dataType = (dataProperty.dataType != DataType.String && isColumnNullable) ? (dataProperty.dataType.ToString() + "?") : (dataProperty.dataType.ToString());
+          //string propertyName = String.IsNullOrEmpty(dataProperty.propertyName) ? dataProperty.columnName : dataProperty.propertyName;
 
-          _entityWriter.WriteLine("public virtual {0} {1} {{ get; set; }}", dataType, propertyName);
+          _dataObjectWriter.WriteLine("public virtual {0} {1} {{ get; set; }}", dataProperty.dataType, dataProperty.propertyName);
 
           _mappingWriter.WriteStartElement("property");
-          _mappingWriter.WriteAttributeString("name", propertyName);
-          _mappingWriter.WriteAttributeString("column", column.columnName);
+          _mappingWriter.WriteAttributeString("name", dataProperty.propertyName);
+          _mappingWriter.WriteAttributeString("column", dataProperty.columnName);
           _mappingWriter.WriteEndElement(); // end property element
         }
 
         // implements GetPropertyValue from IDataObject
-        _entityWriter.WriteLine("public virtual object GetPropertyValue(string propertyName)");
-        _entityWriter.WriteLine("{");
-        _entityWriter.Indent++; _entityWriter.WriteLine("switch (propertyName)");
-        _entityWriter.WriteLine("{");
-        _entityWriter.Indent++;
+        _dataObjectWriter.WriteLine("public virtual object GetPropertyValue(string propertyName)");
+        _dataObjectWriter.WriteLine("{");
+        _dataObjectWriter.Indent++; _dataObjectWriter.WriteLine("switch (propertyName)");
+        _dataObjectWriter.WriteLine("{");
+        _dataObjectWriter.Indent++;
 
-        _entityWriter.WriteLine("case \"Id\": return Id;");
+        _dataObjectWriter.WriteLine("case \"Id\": return Id;");
 
-        foreach (Key key in table.keys)
+        foreach (KeyProperty keyProperty in dataObject.keyProperties)
         {
-          _entityWriter.WriteLine("case \"{0}\": return {0};", key.propertyName);
+          _dataObjectWriter.WriteLine("case \"{0}\": return {0};", keyProperty.propertyName);
         }
 
-        foreach (Column column in table.columns)
+        foreach (DataProperty dataProperty in dataObject.dataProperties)
         {
-          _entityWriter.WriteLine("case \"{0}\": return {0};", column.propertyName);
+          _dataObjectWriter.WriteLine("case \"{0}\": return {0};", dataProperty.propertyName);
         }
 
-        _entityWriter.WriteLine("default: throw new Exception(\"Property [\" + propertyName + \"] does not exist.\");");
-        _entityWriter.Indent--;
-        _entityWriter.WriteLine("}");
-        _entityWriter.Indent--;
-        _entityWriter.WriteLine("}");
+        _dataObjectWriter.WriteLine("default: throw new Exception(\"Property [\" + propertyName + \"] does not exist.\");");
+        _dataObjectWriter.Indent--;
+        _dataObjectWriter.WriteLine("}");
+        _dataObjectWriter.Indent--;
+        _dataObjectWriter.WriteLine("}");
 
 
         // implements SetPropertyValue from IDataObject
-        _entityWriter.WriteLine("public virtual void SetPropertyValue(string propertyName, object value)");
-        _entityWriter.WriteLine("{");
-        _entityWriter.Indent++;
-        _entityWriter.WriteLine("switch (propertyName)");
-        _entityWriter.Write("{");
-        _entityWriter.Indent++;
+        _dataObjectWriter.WriteLine("public virtual void SetPropertyValue(string propertyName, object value)");
+        _dataObjectWriter.WriteLine("{");
+        _dataObjectWriter.Indent++;
+        _dataObjectWriter.WriteLine("switch (propertyName)");
+        _dataObjectWriter.Write("{");
+        _dataObjectWriter.Indent++;
 
-        _entityWriter.WriteLine(@"
+        _dataObjectWriter.WriteLine(@"
         case ""Id"":
           Id = Convert.ToString(value);
           if (Id == String.Empty) throw new Exception(""Id can not be null or empty."");
           break;");
 
-        foreach (Key key in table.keys)
+        foreach (KeyProperty keyProperty in dataObject.keyProperties)
         {
-          _entityWriter.WriteLine("case \"{0}\":", key.propertyName);
-          _entityWriter.Indent++;
+          _dataObjectWriter.WriteLine("case \"{0}\":", keyProperty.propertyName);
+          _dataObjectWriter.Indent++;
 
-          bool isColumnNullable = (key.isNullable == null || key.columnType == ColumnType.String || key.isNullable == true);
+          bool isColumnNullable = (keyProperty.dataType == DataType.String || keyProperty.isNullable == true);
           if (isColumnNullable)
           {
-            _entityWriter.WriteLine("if (value != null) {0} = Convert.To{1}(value);", key.propertyName, key.columnType);
+            _dataObjectWriter.WriteLine("if (value != null) {0} = Convert.To{1}(value);", keyProperty.propertyName, keyProperty.dataType);
           }
           else
           {
-            _entityWriter.WriteLine("{0} = (value != null) ? Convert.To{1}(value) : default({1});", key.propertyName, key.columnType);
+            _dataObjectWriter.WriteLine("{0} = (value != null) ? Convert.To{1}(value) : default({1});", keyProperty.propertyName, keyProperty.dataType);
           }
-          _entityWriter.WriteLine("break;");
-          _entityWriter.Indent--;
+          _dataObjectWriter.WriteLine("break;");
+          _dataObjectWriter.Indent--;
         }
 
-        foreach (Column column in table.columns)
+        foreach (DataProperty dataProperty in dataObject.dataProperties)
         {
-          _entityWriter.WriteLine("case \"{0}\":", column.propertyName);
-          _entityWriter.Indent++;
+          _dataObjectWriter.WriteLine("case \"{0}\":", dataProperty.propertyName);
+          _dataObjectWriter.Indent++;
 
-          bool isColumnNullable = (column.isNullable == null || column.columnType == ColumnType.String || column.isNullable == true);
+          bool isColumnNullable = (dataProperty.dataType == DataType.String || dataProperty.isNullable == true);
           if (isColumnNullable)
           {
-            _entityWriter.WriteLine("if (value != null) {0} = Convert.To{1}(value);", column.propertyName, column.columnType);
+            _dataObjectWriter.WriteLine("if (value != null) {0} = Convert.To{1}(value);", dataProperty.propertyName, dataProperty.dataType);
           }
           else
           {
-            _entityWriter.WriteLine("{0} = (value != null) ? Convert.To{1}(value) : default({1});", column.propertyName, column.columnType);
+            _dataObjectWriter.WriteLine("{0} = (value != null) ? Convert.To{1}(value) : default({1});", dataProperty.propertyName, dataProperty.dataType);
           }
-          _entityWriter.WriteLine("break;");
-          _entityWriter.Indent--;
+          _dataObjectWriter.WriteLine("break;");
+          _dataObjectWriter.Indent--;
         }
 
-        _entityWriter.WriteLine("default:");
-        _entityWriter.Indent++;
-        _entityWriter.WriteLine("throw new Exception(\"Property [\" + propertyName + \"] does not exist.\");");
-        _entityWriter.Indent--;
-        _entityWriter.WriteLine("}");
-        _entityWriter.Indent--;
-        _entityWriter.WriteLine("}");
-      #endregion Process columns
+        _dataObjectWriter.WriteLine("default:");
+        _dataObjectWriter.Indent++;
+        _dataObjectWriter.WriteLine("throw new Exception(\"Property [\" + propertyName + \"] does not exist.\");");
+        _dataObjectWriter.Indent--;
+        _dataObjectWriter.WriteLine("}");
+        _dataObjectWriter.Indent--;
+        _dataObjectWriter.WriteLine("}");
+        #endregion Process columns
 
-        _entityWriter.Indent--;
-        _entityWriter.WriteLine("}"); // end class block
+        _dataObjectWriter.Indent--;
+        _dataObjectWriter.WriteLine("}"); // end class block
         _mappingWriter.WriteEndElement(); // end class element
       }
     }
@@ -792,11 +786,11 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    private bool IsAssociationInKeys(List<Key> keys, ManyToOneAssociation association)
+    private bool containsRelationship(List<KeyProperty> keyProperties, ManyToOneRelationship relationship)
     {
-      foreach (Key key in keys)
+      foreach (KeyProperty keyProperty in keyProperties)
       {
-        if (association.columnName == key.columnName)
+        if (relationship.columnName == keyProperty.columnName)
         {
           return true;
         }
