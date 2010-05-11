@@ -38,19 +38,20 @@ namespace org.iringtools.adapter.semantic
 {
   public class SPARQLEngine : ISemanticLayer
     {
-        private WebProxyCredentials _proxyCredentials = null;
-        private WebCredentials _targetCredentials = null;
-        private string _targetUri = String.Empty;
-        private Mapping _mapping = null;
-        private IDTOLayer _dtoService = null;
-        private bool _trimData;
+        protected WebProxyCredentials _proxyCredentials = null;
+        protected WebCredentials _targetCredentials = null;
+        protected string _targetUri = String.Empty;
+        protected Mapping _mapping = null;
+        protected IDTOLayer _dtoService = null;
+        protected bool _trimData;
+        protected string _graphName = string.Empty;
+        protected string _identifierClassName = string.Empty;
+        protected Dictionary<string, DataTransferObject> _dtoList = null;
+        protected Dictionary<string, Dictionary<string, string>> _pullValueLists = null;
+        protected Dictionary<string, Dictionary<string, string>> _refreshValueLists = null;
+        protected int _instanceCounter = 0;
         
-        private string _identifierClassName = string.Empty;
-        private Dictionary<string, DataTransferObject> _dtoList = null;
-        private Dictionary<string, Dictionary<string, string>> _pullValueLists = null;
-        private Dictionary<string, Dictionary<string, string>> _refreshValueLists = null;
-        private int _instanceCounter = 0;
-        
+
         [Inject]
         public SPARQLEngine(AdapterSettings settings, IDTOLayer dtoService)
         {
@@ -60,17 +61,19 @@ namespace org.iringtools.adapter.semantic
           _targetUri = settings.InterfaceServer;
           _trimData = settings.TrimData;  
           _dtoService = dtoService;
+
         }
 
-        public void Initialize()
+        public virtual void Initialize()
         {
           //nothing to do here.
         }
 
-        public List<string> GetIdentifiers(string graphName)
+        public virtual List<string> GetIdentifiers(string graphName)
         {
             try
             {
+                this._graphName = graphName;
                 GraphMap graphMap = new GraphMap();
                 List<string> identifiers = new List<string>();
                 bool isIdentifierMapped = false;
@@ -105,10 +108,10 @@ namespace org.iringtools.adapter.semantic
                     string identifierUri = String.Empty;
                     string identifierVariable = String.Empty;
 
-                    SPARQLQuery identifierQuery = new SPARQLQuery(SPARQLQueryType.SELECT);
+                    SPARQLQuery identifierQuery = new SPARQLQuery(SPARQLQueryType.SELECTDISTINCT);
 
                     identifierQuery.addVariable("?" + identifierRoleMap.propertyName);
-                    identifierQuery.addVariable("?i");
+                    //identifierQuery.addVariable("?i");
 
                     SPARQLClassification classification = identifierQuery.addClassification(graphMap.classId, "?i");
                     //identifierQuery.addTemplate(identifierTemplateMap.templateId, identifierTemplateMap.classRole, "?i", identifierRoleMap.roleId, "?" + identifierRoleMap.propertyName);
@@ -166,10 +169,11 @@ namespace org.iringtools.adapter.semantic
             }
         }
 
-        public List<DataTransferObject> Get(string graphName)
+        public virtual List<DataTransferObject> Get(string graphName)
         {
           try
           {
+              this._graphName = graphName;
             _dtoList = new Dictionary<string, DataTransferObject>();
             foreach (GraphMap graphMap in _mapping.graphMaps)
             {
@@ -186,7 +190,7 @@ namespace org.iringtools.adapter.semantic
           }
         }
 
-        public Response Post(string graphName, List<DataTransferObject> dtoList)
+        public virtual Response Post(string graphName, List<DataTransferObject> dtoList)
         {
           string identifier = String.Empty;
           Response response = new Response();
@@ -225,7 +229,7 @@ namespace org.iringtools.adapter.semantic
           return response;
         }
 
-        public Response Delete(string graphName, List<string> identifiers)
+        public virtual Response Delete(string graphName, List<string> identifiers)
         {
           Response response = new Response();
 
@@ -260,7 +264,7 @@ namespace org.iringtools.adapter.semantic
           return response;
         }
 
-        public Response Post(string graph)
+        public virtual Response Post(string graph)
         {
           Response response = new Response();  
           
@@ -269,7 +273,7 @@ namespace org.iringtools.adapter.semantic
           return response;
         }
 
-        public Response Clear(string graphName)
+        public virtual Response Clear(string graphName)
         {
           Response response = new Response();
 
@@ -315,14 +319,15 @@ namespace org.iringtools.adapter.semantic
 
                 }
 
-                SPARQLQuery identifierQuery = new SPARQLQuery(SPARQLQueryType.SELECT);
+                SPARQLQuery identifierQuery = new SPARQLQuery(SPARQLQueryType.SELECTDISTINCT);
 
                 identifierQuery.addVariable("?" + identifierRoleMap.propertyName);
                 identifierQuery.addVariable("?i");
 
                 //SPARQLClassification classification = identifierQuery.addClassification(graphMap.classId, "?i");
                 //identifierQuery.addTemplate(classification.TemplateName, classification.ClassRole, classification.ClassId, "p7tpl:valEndTime", "?endDateTime");
-                
+               
+
                 SPARQLClassification classification = new SPARQLClassification();
                 classification.ClassId = graphMap.classId;
                 classification.addRole("p7tpl:R99011248051", "?i");
@@ -367,12 +372,12 @@ namespace org.iringtools.adapter.semantic
         }
 
 
-         
-        private void QueryTemplateMap(TemplateMap templateMap, ClassMap classMap, SPARQLQuery previousQuery)
+
+        protected virtual void QueryTemplateMap(TemplateMap templateMap, ClassMap classMap, SPARQLQuery previousQuery)
         {
             try
             {
-                SPARQLQuery query = new SPARQLQuery(SPARQLQueryType.SELECT);
+                SPARQLQuery query = new SPARQLQuery(SPARQLQueryType.SELECTDISTINCT);
                 query.Merge(previousQuery);
 
                 string graphIdentifierVariable = query.Variables.First<string>();
@@ -492,11 +497,11 @@ namespace org.iringtools.adapter.semantic
             }
         }
 
-        private void QueryClassMap(ClassMap classMap, RoleMap roleMap, SPARQLQuery previousQuery, string instanceVariable)
+        internal void QueryClassMap(ClassMap classMap, RoleMap roleMap, SPARQLQuery previousQuery, string instanceVariable)
         {
             try
             {
-                SPARQLQuery query = new SPARQLQuery(SPARQLQueryType.SELECT);
+                SPARQLQuery query = new SPARQLQuery(SPARQLQueryType.SELECTDISTINCT);
                 query.Merge(previousQuery);
 
                 query.addVariable(instanceVariable);
@@ -520,7 +525,7 @@ namespace org.iringtools.adapter.semantic
             }
         }
 
-        private Dictionary<string, string> GetPullValueMap(string valueListName)
+        internal Dictionary<string, string> GetPullValueMap(string valueListName)
         {
             try
             {
@@ -631,7 +636,7 @@ namespace org.iringtools.adapter.semantic
           }
         }
 
-        private RoleMap FindRoleMap(TemplateMap templateMap, string propertyName)
+        internal RoleMap FindRoleMap(TemplateMap templateMap, string propertyName)
         {
           try
           {
@@ -1026,10 +1031,14 @@ namespace org.iringtools.adapter.semantic
                 }
                 else
                 {
-                    RoleMap roleMap = templateMap.roleMaps[0];
-
-                    string instanceVariable = SPARQLBuilder.RefreshRelatedClass(_targetUri, _targetCredentials, _proxyCredentials, templateMap, roleMap, roleMap.classMap, parentIdentifierVariable, dto);
-                    RefreshClassMap(roleMap.classMap, roleMap, dto, instanceVariable);
+                    foreach (RoleMap roleMap in templateMap.roleMaps)
+                    {
+                        if (roleMap.classMap != null)
+                        {
+                            string instanceVariable = SPARQLBuilder.RefreshRelatedClass(_targetUri, _targetCredentials, _proxyCredentials, templateMap, roleMap, roleMap.classMap, parentIdentifierVariable, dto);
+                            RefreshClassMap(roleMap.classMap, roleMap, dto, instanceVariable);
+                        }
+                    }
                 }
             }
             catch (Exception exception)
@@ -1136,7 +1145,7 @@ namespace org.iringtools.adapter.semantic
         {
             try
             {
-                SPARQLQuery query = new SPARQLQuery(SPARQLQueryType.SELECT);
+                SPARQLQuery query = new SPARQLQuery(SPARQLQueryType.SELECTDISTINCT);
 
                 SPARQLClassification classification = query.addClassification(classId, identifier);
                 query.addVariable(classification.getNode());
@@ -1155,7 +1164,7 @@ namespace org.iringtools.adapter.semantic
         {
           try
           {
-            SPARQLQuery query = new SPARQLQuery(SPARQLQueryType.SELECT);
+            SPARQLQuery query = new SPARQLQuery(SPARQLQueryType.SELECTDISTINCT);
             foreach (RoleMap roleMap in templateMap.roleMaps)
             {
 
@@ -1191,7 +1200,7 @@ namespace org.iringtools.adapter.semantic
             try
             {
                 results = new List<string>();
-                SPARQLQuery query = new SPARQLQuery(SPARQLQueryType.SELECT);
+                SPARQLQuery query = new SPARQLQuery(SPARQLQueryType.SELECTDISTINCT);
 
                 query.addVariable("?i2");
                 SPARQLClassification classification = query.addClassification(roleMap.classMap.classId, "?i2");
@@ -1212,7 +1221,7 @@ namespace org.iringtools.adapter.semantic
         {
             try
             {
-                SPARQLQuery query = new SPARQLQuery(SPARQLQueryType.SELECT);
+                SPARQLQuery query = new SPARQLQuery(SPARQLQueryType.SELECTDISTINCT);
 
                 query.addVariable("?" + roleMap.propertyName);
                 query.addTemplate(templateMap.templateId, templateMap.classRole, className, roleMap.roleId, "?" + roleMap.propertyName);
