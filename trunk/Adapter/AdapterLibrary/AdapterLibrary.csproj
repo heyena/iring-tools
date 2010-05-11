@@ -31,7 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="dotNetRDF, Version=0.3.0.15619, Culture=neutral, PublicKeyToken=d6907caf9fc97226, processorArchitecture=MSIL">
+    <Reference Include="dotNetRDF, Version=0.3.0.18547, Culture=neutral, PublicKeyToken=d6907caf9fc97226, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ExternalBinaries\dotnetRDF\dotNetRDF.dll</HintPath>
     </Reference>
@@ -96,6 +96,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdapterModule.cs" />
+    <Compile Include="dotNETRdfEngine.cs" />
+    <Compile Include="SemWebRDFEngine.cs" />
     <Compile Include="DTOGenerator.cs" />
     <Compile Include="IAdapter.cs" />
     <Compile Include="IDataTransferObject.cs" />
@@ -110,7 +112,6 @@
     <Compile Include="AdapterProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\..\AssemblyInfo.cs" />
-    <Compile Include="SemWebRDFEngine.cs" />
     <Compile Include="SPARQLEngine.cs" />
   </ItemGroup>
   <ItemGroup>

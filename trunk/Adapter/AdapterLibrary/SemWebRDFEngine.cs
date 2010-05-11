@@ -49,7 +49,7 @@ using Microsoft.ServiceModel.Web;
 
 namespace org.iringtools.adapter.semantic
 {
-  public class SemWebRDFEngine : ISemanticLayer
+  public class SemWebRDFEngine :  ISemanticLayer
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(SemWebEngine));
 
@@ -471,7 +471,7 @@ namespace org.iringtools.adapter.semantic
           xdoc.LoadXml(rdf.ToString());
             DateTime b = DateTime.Now;
 
-          using (_store = Store.Create(_scopedConnectionString))
+          using (_store)// = Store.Create(_scopedConnectionString))
           {
             using (SemWeb.Store tempStore = new MemoryStore(new RdfXmlReader(xdoc)))
             {
