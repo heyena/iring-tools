@@ -1,11 +1,11 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="SPARQLEndpointDemo._Default" ValidateRequest="false" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="dotnetRDFInterfaceService._Default" ValidateRequest="false" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head runat="server">
-    <meta http-equiv="cache-control" content="no-cache">
-    <link rel="stylesheet" type="text/css" href="interface.css">
+    <meta http-equiv="cache-control" content="no-cache"/>
+    <link rel="stylesheet" type="text/css" href="interface.css"/>
     <title>iRING Interface</title>
 </head>
 <body>
@@ -13,7 +13,7 @@
       <h1><img src="iRINGTools_logo.png" alt="iRING Logo"/> Interface Service</h1>
     </div>
     <form id="form1" runat="server">
-    <div style="width: 734px; height: 423px">
+    <div style="width: 734px; height: 516px">
         <asp:TextBox ID="txtQuery" runat="server" Rows="15" Columns="100" 
             TextMode="MultiLine" Height="257px" Width="688px">PREFIX rdl: &lt;http://rdl.rdlfacade.org/data#&gt;
 PREFIX tpl: &lt;http://tpl.rdlfacade.org/data#&gt;
@@ -28,13 +28,29 @@ WHERE
  {?s ?p ?o}
         </asp:TextBox>
         <br />
-        Default Graph URI: <asp:TextBox ID="txtDefaultGraph" 
-            Text="http://iring.hatch.com.au/12345_000/PSPID/Lines" Columns="100" 
-            runat="server" />
+        <asp:Label ID="Label2" runat="server" Font-Names="Arial Black" 
+            Font-Size="Small" Text="Default Graph URI:"></asp:Label>
+&nbsp;<asp:TextBox ID="txtDefaultGraph" Columns="100" 
+            runat="server" Width="534px" />
         <br />
-        Timeout: <asp:TextBox ID="txtTimeout" Text="5000" runat="server" /> Milliseconds
         <br />
-        <asp:CheckBox ID="chkPartialResults" Checked="true" runat="server" Text="Partial Results on Timeout?" />
+        <asp:Label ID="Label1" runat="server" Font-Names="Arial Black" 
+            Font-Size="Small" Text="Timeout"></asp:Label>
+&nbsp; <asp:TextBox ID="txtTimeout" Text="5000" runat="server" /> 
+        <asp:Label ID="Label4" runat="server" Font-Names="Arial Black" 
+            Font-Size="Small" Text="Milliseconds"></asp:Label>
+        <br />
+        <br />
+        <!--<asp:Label ID="Label3" runat="server" Font-Names="Arial Black" 
+            Font-Size="Small" Text="Stores :"></asp:Label>
+        <asp:RadioButtonList ID="rbSparql" runat="server" CellPadding="2" 
+            CellSpacing="2" Font-Names="Arial Black" Font-Size="Small">
+            <asp:ListItem Selected="True" Value="~/sparql/">Microsoft SQL Store</asp:ListItem>
+            <asp:ListItem Value="~/virtuoso/" Enabled="False">Virtuoso Store</asp:ListItem>
+        </asp:RadioButtonList>
+        <br />-->
+        <asp:CheckBox ID="chkPartialResults" Checked="true" runat="server" 
+            Text="Partial Results on Timeout?" Font-Names="Arial Black" Font-Size="Small" />
         <br />
         <br />
         <asp:Button ID="btnQuery" Text="Execute Query" runat="server" 
