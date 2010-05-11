@@ -53,8 +53,7 @@ namespace org.iringtools.adapter.datalayer
     private AdapterSettings _settings = null;
     private StringBuilder _mappingBuilder = null;
     private XmlTextWriter _mappingWriter = null;
-    private Dictionary<string, string> _objectNames = null;
-    //private DataDictionary _dataDictionary = null;
+    private List<DataObject> _dataObjects = null;
     private IndentedTextWriter _dataObjectWriter = null;
     private StringBuilder _dataObjectBuilder = null;
     private ILog _logger = null;
@@ -74,6 +73,7 @@ namespace org.iringtools.adapter.datalayer
       if (dbDictionary.dataObjects != null)
       {
         _namespace = "org.iringtools.adapter.datalayer.proj_" + projectName + "." + applicationName;
+        _dataObjects = dbDictionary.dataObjects;
 
         try
         {
@@ -85,15 +85,6 @@ namespace org.iringtools.adapter.datalayer
 
           _mappingWriter.WriteStartElement("hibernate-mapping", "urn:nhibernate-mapping-2.2");
           _mappingWriter.WriteAttributeString("default-lazy", "true");
-
-          //_dataDictionary = new DataDictionary();
-          //_dataDictionary.dataObjects = new List<DataObject>();
-
-          _objectNames = new Dictionary<string, string>();
-          foreach (DataObject dataObject in dbDictionary.dataObjects)
-          {
-            _objectNames.Add(dataObject.tableName, dataObject.objectName);
-          }
 
           _dataObjectBuilder = new StringBuilder();
           _dataObjectWriter = new IndentedTextWriter(new StringWriter(_dataObjectBuilder), "  ");
@@ -108,89 +99,10 @@ namespace org.iringtools.adapter.datalayer
           _dataObjectWriter.Write("{"); // begin namespace block
           _dataObjectWriter.Indent++;
 
-          //#region Create entities
           foreach (DataObject dataObject in dbDictionary.dataObjects)
           {
-            CreateDataObject(dataObject);
-
-            // Create data object for data dictionary
-            //DataObject dataObject = new DataObject();
-
-            //dataObject.objectName = _objectNames[dataObject.dataObjectName];
-            //dataObject.objectNamespace = _namespace;
-            //dataObject.dataProperties = new List<DataProperty>();
-
-            //  #region Add key properties
-            //  foreach (KeyProperty keyProperty in dataObject.keyProperties)
-            //  {
-            //    dataObject.keyProperties.Add(new KeyProperty
-            //    {
-            //      propertyName = keyProperty.propertyName,
-            //      dataType = keyProperty.dataType,
-            //      dataLength = keyProperty.dataLength,
-            //      isNullable = keyProperty.isNullable,
-            //      keyType = keyProperty.keyType
-            //    });
-            //  }
-            //  #endregion
-
-            //  #region Add data properties 
-            //  foreach (Column column in dataObject.dataProperties)
-            //  {
-            //    DataProperty dataProperty = new DataProperty()
-            //    {
-            //      propertyName = column.propertyName,
-            //      dataLength = column.dataLength,
-            //      dataType = column.dataType,
-            //      isNullable = column.isNullable
-            //    };
-
-            //    try
-            //    {
-            //      dataObject.dataProperties.Add(dataProperty);
-            //    }
-            //    catch (Exception duplicatePropertyException)
-            //    {
-            //      _logger.Warn(duplicatePropertyException.ToString());
-            //    }
-            //  }
-            //  #endregion
-
-            //  #region Process relationships
-            //  if (dataObject.dataRelationships != null)
-            //  {
-            //    dataObject.dataRelationships = new List<DataRelationship>();
-
-            //    foreach (Relationship relationship in dataObject.dataRelationships)
-            //    {
-            //      DataRelationship dataRelationship = new DataRelationship();
-            //      string associatedEntityName = _objectNames[relationship.associatedDataObjectName];
-
-            //      dataRelationship.relatedObject = associatedEntityName;
-
-            //      switch (relationship.GetType().Name)
-            //      {
-            //        case "OneToOneRelationship":
-            //          dataRelationship.cardinality = Cardinality.OneToOne;
-            //          break;
-
-            //        case "OneToManyRelationship":
-            //          dataRelationship.cardinality = Cardinality.OneToMany;
-            //          break;
-
-            //        case "ManyToOneRelationship":
-            //          dataRelationship.cardinality = Cardinality.ManyToOne;
-            //          break;
-            //      }
-
-            //      dataObject.dataRelationships.Add(dataRelationship);
-            //    }
-            //  }
-            //  #endregion
-
-            //  _dataDictionary.dataObjects.Add(dataObject);
+            CreateNHibernateObjectMap(dataObject);
           }
-          //#endregion
 
           _dataObjectWriter.Indent--;
           _dataObjectWriter.WriteLine("}"); // end namespace block                
@@ -236,57 +148,12 @@ namespace org.iringtools.adapter.datalayer
       return response;
     }
 
-    private void RemoveDups(DataObject dataObject)
-    {
-      for (int i = 0; i < dataObject.keyProperties.Count; i++)
-      {
-        for (int j = 0; j < dataObject.dataProperties.Count; j++)
-        {
-          // remove columns that are already in keys
-          if (dataObject.dataProperties[j].propertyName.ToLower() == dataObject.keyProperties[i].propertyName.ToLower())
-          {
-            dataObject.dataProperties.Remove(dataObject.dataProperties[j--]);
-            continue;
-          }
-
-          // remove duplicate columns
-          for (int jj = j + 1; jj < dataObject.dataProperties.Count; jj++)
-          {
-            if (dataObject.dataProperties[jj].propertyName.ToLower() == dataObject.dataProperties[j].propertyName.ToLower())
-            {
-              dataObject.dataProperties.Remove(dataObject.dataProperties[jj--]);
-            }
-          }
-        }
-
-        // remove duplicate keys (in order of foreign - assigned - iddataObject/sequence)
-        for (int ii = i + 1; ii < dataObject.keyProperties.Count; ii++)
-        {
-          if (dataObject.keyProperties[ii].columnName.ToLower() == dataObject.keyProperties[i].columnName.ToLower())
-          {
-            if (dataObject.keyProperties[ii].keyType != KeyType.foreign)
-            {
-              if (((dataObject.keyProperties[ii].keyType == KeyType.identity || dataObject.keyProperties[ii].keyType == KeyType.sequence) && dataObject.keyProperties[i].keyType == KeyType.assigned) ||
-                    dataObject.keyProperties[ii].keyType == KeyType.assigned && dataObject.keyProperties[i].keyType == KeyType.foreign)
-              {
-                dataObject.keyProperties[i].keyType = dataObject.keyProperties[ii].keyType;
-              }
-            }
-
-            dataObject.keyProperties.Remove(dataObject.keyProperties[ii--]);
-          }
-        }
-      }
-    }
-
-    private void CreateDataObject(DataObject dataObject)
+    private void CreateNHibernateObjectMap(DataObject dataObject)
     {
       string keyClassName = dataObject.objectName + "Id";
       _mappingWriter.WriteStartElement("class");
       _mappingWriter.WriteAttributeString("name", _namespace + "." + dataObject.objectName + ", " + ASSEMBLY_NAME);
       _mappingWriter.WriteAttributeString("table", "[" + dataObject.tableName + "]");
-
-      RemoveDups(dataObject);
 
       #region Create composite key
       if (dataObject.keyProperties.Count > 1)
@@ -303,11 +170,6 @@ namespace org.iringtools.adapter.datalayer
 
         foreach (KeyProperty keyProperty in dataObject.keyProperties)
         {
-          // for backward compatibility
-          //bool isKeyNullable = (keyProperty.isNullable == null || keyProperty.isNullable == true);
-          //string dataType = (keyProperty.dataType != DataType.String && isKeyNullable) ? (keyProperty.dataType.ToString() + "?") : (keyProperty.dataType.ToString());
-          //string keyName = String.IsNullOrEmpty(keyProperty.propertyName) ? keyProperty.columnName : keyProperty.propertyName;
-
           _dataObjectWriter.WriteLine("public {0} {1} {{ get; set; }}", keyProperty.dataType, keyProperty.propertyName);
 
           _mappingWriter.WriteStartElement("key-property");
@@ -411,10 +273,6 @@ namespace org.iringtools.adapter.datalayer
 
         foreach (KeyProperty keyProperty in dataObject.keyProperties)
         {
-          // for backward compatibility
-          //bool isKeyNullable = (keyProperty.isNullable == null || keyProperty.isNullable == true);
-          //string dataType = (keyProperty.dataType != DataType.String && isKeyNullable) ? (keyProperty.dataType.ToString() + "?") : (keyProperty.dataType.ToString());
-
           _dataObjectWriter.WriteLine("public virtual {0} {1}", keyProperty.dataType, keyProperty.propertyName);
           _dataObjectWriter.WriteLine("{");
           _dataObjectWriter.Indent++;
@@ -433,10 +291,6 @@ namespace org.iringtools.adapter.datalayer
       }
       else if (dataObject.keyProperties.Count == 1 && dataObject.keyProperties.First().keyType != KeyType.foreign)
       {
-        // for backward compatibility
-        //bool isKeyNullable = (dataObject.keyProperties.First().isNullable == null || dataObject.keyProperties.First().isNullable == true);
-        //string dataType = (dataObject.keyProperties.First().dataType != DataType.String && isKeyNullable) ? (dataObject.keyProperties.First().dataType.ToString() + "?") : (dataObject.keyProperties.First().dataType.ToString());
-
         _dataObjectWriter.WriteLine("public virtual {0} Id {{ get; set; }}", dataObject.keyProperties.First().dataType);
 
         _mappingWriter.WriteStartElement("id");
@@ -471,8 +325,7 @@ namespace org.iringtools.adapter.datalayer
       {
         foreach (DataRelationship dataRelationship in dataObject.dataRelationships)
         {
-          //string associatedEntityName = _objectNames[dataRelationship.relatedObjectName];
-          string relatedObjectName = _objectNames[dataRelationship.relatedTableName];
+          DataObject relatedDataObject = GetDataObject(dataRelationship.relatedObjectName);
 
           switch (dataRelationship.GetType().Name)
           {
@@ -481,10 +334,6 @@ namespace org.iringtools.adapter.datalayer
 
               if (dataObject.keyProperties.First().keyType == KeyType.foreign)
               {
-                // for backward compatibility
-                //bool isKeyNullable = (dataObject.keyProperties.First().isNullable == null || dataObject.keyProperties.First().isNullable == true);
-                //string dataType = (dataObject.keyProperties.First().dataType != DataType.String && isKeyNullable) ? (dataObject.keyProperties.First().dataType.ToString() + "?") : (dataObject.keyProperties.First().dataType.ToString());
-
                 _dataObjectWriter.WriteLine("public virtual {0} Id {{ get; set; }}", dataObject.keyProperties.First().dataType);
 
                 _mappingWriter.WriteStartElement("id");
@@ -494,57 +343,53 @@ namespace org.iringtools.adapter.datalayer
                 _mappingWriter.WriteAttributeString("class", dataObject.keyProperties.First().keyType.ToString());
                 _mappingWriter.WriteStartElement("param");
                 _mappingWriter.WriteAttributeString("name", "property");
-                _mappingWriter.WriteString(relatedObjectName);
+                _mappingWriter.WriteString(dataRelationship.relatedObjectName);
                 _mappingWriter.WriteEndElement(); // end param element
                 _mappingWriter.WriteEndElement(); // end generator element
                 _mappingWriter.WriteEndElement(); // end id element
               }
 
               _mappingWriter.WriteStartElement("one-to-one");
-              _mappingWriter.WriteAttributeString("name", dataRelationship.relatedTableName);
-              _mappingWriter.WriteAttributeString("class", _namespace + "." + relatedObjectName + ", " + ASSEMBLY_NAME);
+              _mappingWriter.WriteAttributeString("name", relatedDataObject.tableName);
+              _mappingWriter.WriteAttributeString("class", _namespace + "." + dataRelationship.relatedObjectName + ", " + ASSEMBLY_NAME);
 
-              if (oneToOneRelationship.isKeyConstrained)
-              {
-                _mappingWriter.WriteAttributeString("constrained", "true");
-              }
-              else
+              if (oneToOneRelationship.isKeySource)
               {
                 _mappingWriter.WriteAttributeString("cascade", "save-update");
               }
+              else
+              {
+                _mappingWriter.WriteAttributeString("constrained", "true");
+              }
 
-              _dataObjectWriter.WriteLine("public virtual {0} {0} {{ get; set; }}", relatedObjectName);
+              _dataObjectWriter.WriteLine("public virtual {0} {0} {{ get; set; }}", dataRelationship.relatedObjectName);
               _mappingWriter.WriteEndElement(); // end one-to-one element
               break;
 
             case "OneToManyRelationship":
               OneToManyRelationship oneToManyRelationship = (OneToManyRelationship)dataRelationship;
-
-              _dataObjectWriter.WriteLine("public virtual ISet<{0}> {0}List {{ get; set; }}", relatedObjectName);
-
+              _dataObjectWriter.WriteLine("public virtual ISet<{0}> {0}List {{ get; set; }}", dataRelationship.relatedObjectName);
               _mappingWriter.WriteStartElement("set");
-              _mappingWriter.WriteAttributeString("name", dataRelationship.relatedTableName + "List");
+              _mappingWriter.WriteAttributeString("name", relatedDataObject.tableName + "List");
               _mappingWriter.WriteAttributeString("inverse", "true");
               _mappingWriter.WriteAttributeString("cascade", "all-delete-orphan");
               _mappingWriter.WriteStartElement("key");
-              _mappingWriter.WriteAttributeString("column", "[" + oneToManyRelationship.relatedColumnName + "]");
+              _mappingWriter.WriteAttributeString("column", "[" + GetColumnName(relatedDataObject, oneToManyRelationship.relatedPropertyName) + "]");
               _mappingWriter.WriteEndElement(); // end one-to-many
               _mappingWriter.WriteStartElement("one-to-many");
-              _mappingWriter.WriteAttributeString("class", _namespace + "." + relatedObjectName + ", " + ASSEMBLY_NAME);
+              _mappingWriter.WriteAttributeString("class", _namespace + "." + dataRelationship.relatedObjectName + ", " + ASSEMBLY_NAME);
               _mappingWriter.WriteEndElement(); // end key element
               _mappingWriter.WriteEndElement(); // end set element
               break;
 
             case "ManyToOneRelationship":
               ManyToOneRelationship manyToOneRelationship = (ManyToOneRelationship)dataRelationship;
-
-              _dataObjectWriter.WriteLine("public virtual {0} {0} {{ get; set; }}", dataRelationship.relatedTableName);
-
+              _dataObjectWriter.WriteLine("public virtual {0} {0} {{ get; set; }}", relatedDataObject.tableName);
               _mappingWriter.WriteStartElement("many-to-one");
-              _mappingWriter.WriteAttributeString("name", relatedObjectName);
-              _mappingWriter.WriteAttributeString("column", "[" + manyToOneRelationship.columnName + "]");
+              _mappingWriter.WriteAttributeString("name", dataRelationship.relatedObjectName);
+              _mappingWriter.WriteAttributeString("column", "[" + GetColumnName(relatedDataObject, manyToOneRelationship.objectPropertyName) + "]");
 
-              if (containsRelationship(dataObject.keyProperties, manyToOneRelationship))
+              if (ContainsRelationship(dataObject.keyProperties, manyToOneRelationship))
               {
                 _mappingWriter.WriteAttributeString("update", "false");
                 _mappingWriter.WriteAttributeString("insert", "false");
@@ -562,26 +407,19 @@ namespace org.iringtools.adapter.datalayer
       {
         foreach (DataProperty dataProperty in dataObject.dataProperties)
         {
-          // for backward compatibility
-          //bool isColumnNullable = (dataProperty.isNullable == null || dataProperty.isNullable == true);
-          //string dataType = (dataProperty.dataType != DataType.String && isColumnNullable) ? (dataProperty.dataType.ToString() + "?") : (dataProperty.dataType.ToString());
-          //string propertyName = String.IsNullOrEmpty(dataProperty.propertyName) ? dataProperty.columnName : dataProperty.propertyName;
-
           _dataObjectWriter.WriteLine("public virtual {0} {1} {{ get; set; }}", dataProperty.dataType, dataProperty.propertyName);
-
           _mappingWriter.WriteStartElement("property");
           _mappingWriter.WriteAttributeString("name", dataProperty.propertyName);
           _mappingWriter.WriteAttributeString("column", "[" + dataProperty.columnName + "]");
           _mappingWriter.WriteEndElement(); // end property element
         }
 
-        // implements GetPropertyValue from IDataObject
+        // Implements GetPropertyValue from IDataObject
         _dataObjectWriter.WriteLine("public virtual object GetPropertyValue(string propertyName)");
         _dataObjectWriter.WriteLine("{");
         _dataObjectWriter.Indent++; _dataObjectWriter.WriteLine("switch (propertyName)");
         _dataObjectWriter.WriteLine("{");
         _dataObjectWriter.Indent++;
-
         _dataObjectWriter.WriteLine("case \"Id\": return Id;");
 
         foreach (KeyProperty keyProperty in dataObject.keyProperties)
@@ -600,8 +438,7 @@ namespace org.iringtools.adapter.datalayer
         _dataObjectWriter.Indent--;
         _dataObjectWriter.WriteLine("}");
 
-
-        // implements SetPropertyValue from IDataObject
+        // Implements SetPropertyValue from IDataObject
         _dataObjectWriter.WriteLine("public virtual void SetPropertyValue(string propertyName, object value)");
         _dataObjectWriter.WriteLine("{");
         _dataObjectWriter.Indent++;
@@ -785,11 +622,33 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    private bool containsRelationship(List<KeyProperty> keyProperties, ManyToOneRelationship relationship)
+    private DataObject GetDataObject(string dataObjectName)
+    {
+      foreach (DataObject dataObject in _dataObjects)
+      {
+        if (dataObject.objectName.ToLower() == dataObjectName.ToLower())
+          return dataObject;
+      }
+
+      return null;
+    }
+
+    private string GetColumnName(DataObject dataObject, string propertyName)
+    {
+      foreach (DataProperty dataProperty in dataObject.dataProperties)
+      {
+        if (dataProperty.propertyName.ToLower() == propertyName.ToLower())
+          return dataProperty.columnName;
+      }
+
+      return String.Empty;
+    }
+
+    private bool ContainsRelationship(List<KeyProperty> keyProperties, ManyToOneRelationship relationship)
     {
       foreach (KeyProperty keyProperty in keyProperties)
       {
-        if (relationship.columnName == keyProperty.columnName)
+        if (relationship.objectPropertyName.ToLower() == keyProperty.propertyName.ToLower())
         {
           return true;
         }
