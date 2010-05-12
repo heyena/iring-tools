@@ -228,7 +228,7 @@ namespace org.iringtools.adapter.semantic
                     DateTime e = DateTime.Now;
                     TimeSpan d = e.Subtract(b);
 
-                    response.Add(String.Format("Clear([{3}]) Execution time [{0}:{1}.{2}] minutes.", d.Minutes, d.Seconds, d.Milliseconds, graphName));
+
                     return response;
                 }
                 catch (Exception exception)
@@ -248,7 +248,7 @@ namespace org.iringtools.adapter.semantic
         public override Response Post(string graphName, List<DataTransferObject> dtoList)
         {
             Response response = new Response();
-            DateTime b = DateTime.Now;
+           // DateTime b = DateTime.Now;
             try
             {
                 using (_msStore)
@@ -290,9 +290,9 @@ namespace org.iringtools.adapter.semantic
                 response.Add("Error in Post[].");
                 response.Add(exception.ToString());
             }
-            DateTime e = DateTime.Now;
-            TimeSpan d = e.Subtract(b);
-            response.Add(String.Format("Post([{3}]) Execution time [{0}:{1}.{2}] minutes.", d.Minutes, d.Seconds, d.Milliseconds, graphName));
+           // DateTime e = DateTime.Now;
+            //TimeSpan d = e.Subtract(b);
+           // response.Add(String.Format("Post([{3}]) Execution time [{0}:{1}.{2}] minutes.", d.Minutes, d.Seconds, d.Milliseconds, graphName));
             return response;
         }
 
