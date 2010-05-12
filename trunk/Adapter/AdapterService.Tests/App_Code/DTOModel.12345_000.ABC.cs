@@ -321,11 +321,11 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
     
     [DataMember(Name = "tpl_NominalDiameter_tpl_value", EmitDefaultValue = false)]
     [XmlIgnore]
-    public Single? tpl_NominalDiameter_tpl_value
+    public Single tpl_NominalDiameter_tpl_value
     {
       get
       {
-        return (Single?)GetPropertyValue("tpl:NominalDiameter.tpl:value");
+        return (Single)GetPropertyValue("tpl:NominalDiameter.tpl:value");
       }
       set
       {
@@ -603,11 +603,11 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
     
     [DataMember(Name = "tpl_NominalDiameter_tpl_value", EmitDefaultValue = false)]
     [XmlIgnore]
-    public Single? tpl_NominalDiameter_tpl_value
+    public Single tpl_NominalDiameter_tpl_value
     {
       get
       {
-        return (Single?)GetPropertyValue("tpl:NominalDiameter.tpl:value");
+        return (Single)GetPropertyValue("tpl:NominalDiameter.tpl:value");
       }
       set
       {
@@ -643,10 +643,10 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
         ((org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line)_dataObject).tag = Convert.ToString(this.Identifier);
       }
       
-      if (!String.IsNullOrEmpty(this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identifier) && this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identifier.Length > 255)
+      if (!String.IsNullOrEmpty(this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identifier) && this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identifier.Length > 50)
       {
-        _logger.Warn("Truncate system value from ---" + this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identifier + "--- to 255 characters.");
-        this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identifier = this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identifier.Substring(0, 255);
+        _logger.Warn("Truncate system value from ---" + this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identifier + "--- to 50 characters.");
+        this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identifier = this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identifier.Substring(0, 50);
       }
       ((org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line)_dataObject).system = Convert.ToString(this.tpl_ClientSystemAssembly_tpl_whole_rdl_CLIENT_SYSTEM_tpl_ClassifiedIdentification2_tpl_identifier);
       ((org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line)_dataObject).diameter = Convert.ToSingle(this.tpl_NominalDiameter_tpl_value);

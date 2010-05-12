@@ -119,8 +119,6 @@
     </Compile>
     <Compile Include="App_Code\DTOModel.12345_000.ABC.cs" />
     <Compile Include="App_Code\DTOService.12345_000.ABC.cs" />
-    <Compile Include="App_Code\IDataService.Generated.cs" />
-    <Compile Include="App_Code\IService.Generated.cs" />
     <Compile Include="App_Code\Model.12345_000.ABC.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\..\AssemblyInfo.cs" />
