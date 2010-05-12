@@ -1,186 +1,138 @@
 <DatabaseDictionary xmlns="http://ns.iringtools.org/library" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
-  <connectionString>Data Source=.\SQLEXPRESS;Initial Catalog=Camelot_Test;User Id=camelot;Password=camelot;</connectionString>
-  <provider>MsSql2008</provider>
-  <tables>
-    <Table>
-      <associations/>
-      <columns>
-        <Column>
-          <columnName>componentType</columnName>
-          <columnType>String</columnType>
-          <propertyName>componentType</propertyName>
+  <dataObjects>
+    <DataObject>
+      <tableName>InLinePipingComponent</tableName>
+      <objectName>InLinePipingComponent</objectName>
+      <keyProperties>
+        <KeyProperty>
+          <columnName>tag</columnName>
+          <propertyName>tag</propertyName>
+          <dataType>String</dataType>
           <dataLength>255</dataLength>
           <isNullable>false</isNullable>
-        </Column>
-        <Column>
+          <keyType>assigned</keyType>
+        </KeyProperty>
+      </keyProperties>
+      <dataProperties>
+        <DataProperty>
+          <columnName>componentType</columnName>
+          <propertyName>componentType</propertyName>
+          <dataType>String</dataType>
+          <dataLength>255</dataLength>
+          <isNullable>false</isNullable>
+        </DataProperty>
+        <DataProperty>
           <columnName>diameter</columnName>
-          <columnType>Single</columnType>
           <propertyName>diameter</propertyName>
+          <dataType>Single</dataType>
           <dataLength>8</dataLength>
           <isNullable>true</isNullable>
-        </Column>
-        <Column>
+        </DataProperty>
+        <DataProperty>
           <columnName>isCloned</columnName>
-          <columnType>Boolean</columnType>
           <propertyName>isCloned</propertyName>
+          <dataType>Boolean</dataType>
           <dataLength>1</dataLength>
           <isNullable>true</isNullable>
-        </Column>
-        <Column>
+        </DataProperty>
+        <DataProperty>
           <columnName>lineTag</columnName>
-          <columnType>String</columnType>
           <propertyName>lineTag</propertyName>
+          <dataType>String</dataType>
           <dataLength>255</dataLength>
           <isNullable>true</isNullable>
-        </Column>
-        <Column>
+        </DataProperty>
+        <DataProperty>
           <columnName>pid</columnName>
-          <columnType>String</columnType>
           <propertyName>pid</propertyName>
+          <dataType>String</dataType>
           <dataLength>255</dataLength>
           <isNullable>true</isNullable>
-        </Column>
-        <Column>
+        </DataProperty>
+        <DataProperty>
           <columnName>projectNumber</columnName>
-          <columnType>String</columnType>
           <propertyName>projectNumber</propertyName>
+          <dataType>String</dataType>
           <dataLength>255</dataLength>
           <isNullable>true</isNullable>
-        </Column>
-        <Column>
+        </DataProperty>
+        <DataProperty>
           <columnName>quantity</columnName>
-          <columnType>Int32</columnType>
           <propertyName>quantity</propertyName>
+          <dataType>Int32</dataType>
           <dataLength>4</dataLength>
           <isNullable>true</isNullable>
-        </Column>
-        <Column>
+        </DataProperty>
+        <DataProperty>
           <columnName>rating</columnName>
-          <columnType>String</columnType>
           <propertyName>rating</propertyName>
+          <dataType>String</dataType>
           <dataLength>255</dataLength>
           <isNullable>true</isNullable>
-        </Column>
-        <Column>
+        </DataProperty>
+        <DataProperty>
           <columnName>system</columnName>
-          <columnType>String</columnType>
           <propertyName>system</propertyName>
+          <dataType>String</dataType>
           <dataLength>255</dataLength>
           <isNullable>true</isNullable>
-        </Column>
-        <Column>
+        </DataProperty>
+        <DataProperty>
           <columnName>unit</columnName>
-          <columnType>String</columnType>
           <propertyName>unit</propertyName>
+          <dataType>String</dataType>
           <dataLength>255</dataLength>
           <isNullable>true</isNullable>
-        </Column>
-        <Column>
+        </DataProperty>
+        <DataProperty>
           <columnName>uomDiameter</columnName>
-          <columnType>String</columnType>
           <propertyName>uomDiameter</propertyName>
+          <dataType>String</dataType>
           <dataLength>255</dataLength>
           <isNullable>true</isNullable>
-        </Column>
-      </columns>
-      <entityName>InLinePipingComponent</entityName>
-      <keys>
-        <Key>
+        </DataProperty>
+      </dataProperties>
+      <dataRelationships/>
+    </DataObject>
+    <DataObject>
+      <tableName>Line</tableName>
+      <objectName>Line</objectName>
+      <keyProperties>
+        <KeyProperty>
           <columnName>tag</columnName>
-          <columnType>String</columnType>
           <propertyName>tag</propertyName>
+          <dataType>String</dataType>
           <dataLength>255</dataLength>
           <isNullable>false</isNullable>
           <keyType>assigned</keyType>
-        </Key>
-      </keys>
-      <tableName>InLinePipingComponent</tableName>
-    </Table>
-    <Table>
-      <associations/>
-      <columns>
-        <Column>
-          <columnName>description</columnName>
-          <columnType>String</columnType>
-          <propertyName>description</propertyName>
-          <dataLength>255</dataLength>
-          <isNullable>true</isNullable>
-        </Column>
-      </columns>
-      <entityName>KOPot</entityName>
-      <keys>
-        <Key>
-          <columnName>tag</columnName>
-          <columnType>String</columnType>
-          <propertyName>tag</propertyName>
-          <dataLength>255</dataLength>
-          <isNullable>false</isNullable>
-          <keyType>assigned</keyType>
-        </Key>
-      </keys>
-      <tableName>KOPot</tableName>
-    </Table>
-    <Table>
-      <associations/>
-      <columns>
-        <Column>
+        </KeyProperty>
+      </keyProperties>
+      <dataProperties>
+        <DataProperty>
           <columnName>diameter</columnName>
-          <columnType>Single</columnType>
           <propertyName>diameter</propertyName>
+          <dataType>Single</dataType>
           <dataLength>8</dataLength>
           <isNullable>true</isNullable>
-        </Column>
-        <Column>
+        </DataProperty>
+        <DataProperty>
           <columnName>system</columnName>
-          <columnType>String</columnType>
           <propertyName>system</propertyName>
-          <dataLength>255</dataLength>
+          <dataType>String</dataType>
+          <dataLength>50</dataLength>
           <isNullable>true</isNullable>
-        </Column>
-        <Column>
+        </DataProperty>
+        <DataProperty>
           <columnName>uomDiameter</columnName>
-          <columnType>String</columnType>
           <propertyName>uomDiameter</propertyName>
+          <dataType>String</dataType>
           <dataLength>255</dataLength>
           <isNullable>true</isNullable>
-        </Column>
-      </columns>
-      <entityName>Line</entityName>
-      <keys>
-        <Key>
-          <columnName>tag</columnName>
-          <columnType>String</columnType>
-          <propertyName>tag</propertyName>
-          <dataLength>255</dataLength>
-          <isNullable>false</isNullable>
-          <keyType>assigned</keyType>
-        </Key>
-      </keys>
-      <tableName>Line</tableName>
-    </Table>
-    <Table>
-      <associations/>
-      <columns>
-        <Column>
-          <columnName>description</columnName>
-          <columnType>String</columnType>
-          <propertyName>description</propertyName>
-          <dataLength>255</dataLength>
-          <isNullable>true</isNullable>
-        </Column>
-      </columns>
-      <entityName>VacuumTower</entityName>
-      <keys>
-        <Key>
-          <columnName>tag</columnName>
-          <columnType>String</columnType>
-          <propertyName>tag</propertyName>
-          <dataLength>255</dataLength>
-          <isNullable>false</isNullable>
-          <keyType>assigned</keyType>
-        </Key>
-      </keys>
-      <tableName>VacuumTower</tableName>
-    </Table>
-  </tables>
+        </DataProperty>
+      </dataProperties>
+      <dataRelationships/>
+    </DataObject>
+  </dataObjects>
+  <provider>MsSql2008</provider>
+  <connectionString>Data Source=.\SQLEXPRESS;Initial Catalog=Camelot_Test;User Id=camelot;Password=camelot;</connectionString>
 </DatabaseDictionary>

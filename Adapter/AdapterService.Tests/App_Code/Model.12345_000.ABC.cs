@@ -23,12 +23,12 @@ namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
       set { Id = value; }
     }
     public virtual String componentType { get; set; }
-    public virtual Single? diameter { get; set; }
-    public virtual Boolean? isCloned { get; set; }
+    public virtual Single diameter { get; set; }
+    public virtual Boolean isCloned { get; set; }
     public virtual String lineTag { get; set; }
     public virtual String pid { get; set; }
     public virtual String projectNumber { get; set; }
-    public virtual Int32? quantity { get; set; }
+    public virtual Int32 quantity { get; set; }
     public virtual String rating { get; set; }
     public virtual String system { get; set; }
     public virtual String unit { get; set; }
@@ -103,7 +103,7 @@ namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
       }
     }
     
-    public class KOPot : IDataObject
+    public class Line : IDataObject
     {
       public virtual String Id { get; set; }
       public virtual String tag
@@ -111,14 +111,18 @@ namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
         get { return Id; }
         set { Id = value; }
       }
-      public virtual String description { get; set; }
+      public virtual Single diameter { get; set; }
+      public virtual String system { get; set; }
+      public virtual String uomDiameter { get; set; }
       public virtual object GetPropertyValue(string propertyName)
       {
         switch (propertyName)
         {
           case "Id": return Id;
           case "tag": return tag;
-          case "description": return description;
+          case "diameter": return diameter;
+          case "system": return system;
+          case "uomDiameter": return uomDiameter;
           default: throw new Exception("Property [" + propertyName + "] does not exist.");
         }
       }
@@ -133,100 +137,18 @@ namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
           case "tag":
             if (value != null) tag = Convert.ToString(value);
             break;
-          case "description":
-            if (value != null) description = Convert.ToString(value);
+          case "diameter":
+            if (value != null) diameter = Convert.ToSingle(value);
+            break;
+          case "system":
+            if (value != null) system = Convert.ToString(value);
+            break;
+          case "uomDiameter":
+            if (value != null) uomDiameter = Convert.ToString(value);
             break;
           default:
             throw new Exception("Property [" + propertyName + "] does not exist.");
           }
         }
       }
-      
-      public class Line : IDataObject
-      {
-        public virtual String Id { get; set; }
-        public virtual String tag
-        {
-          get { return Id; }
-          set { Id = value; }
-        }
-        public virtual Single? diameter { get; set; }
-        public virtual String system { get; set; }
-        public virtual String uomDiameter { get; set; }
-        public virtual object GetPropertyValue(string propertyName)
-        {
-          switch (propertyName)
-          {
-            case "Id": return Id;
-            case "tag": return tag;
-            case "diameter": return diameter;
-            case "system": return system;
-            case "uomDiameter": return uomDiameter;
-            default: throw new Exception("Property [" + propertyName + "] does not exist.");
-          }
-        }
-        public virtual void SetPropertyValue(string propertyName, object value)
-        {
-          switch (propertyName)
-          {
-        case "Id":
-          Id = Convert.ToString(value);
-          if (Id == String.Empty) throw new Exception("Id can not be null or empty.");
-          break;
-            case "tag":
-              if (value != null) tag = Convert.ToString(value);
-              break;
-            case "diameter":
-              if (value != null) diameter = Convert.ToSingle(value);
-              break;
-            case "system":
-              if (value != null) system = Convert.ToString(value);
-              break;
-            case "uomDiameter":
-              if (value != null) uomDiameter = Convert.ToString(value);
-              break;
-            default:
-              throw new Exception("Property [" + propertyName + "] does not exist.");
-            }
-          }
-        }
-        
-        public class VacuumTower : IDataObject
-        {
-          public virtual String Id { get; set; }
-          public virtual String tag
-          {
-            get { return Id; }
-            set { Id = value; }
-          }
-          public virtual String description { get; set; }
-          public virtual object GetPropertyValue(string propertyName)
-          {
-            switch (propertyName)
-            {
-              case "Id": return Id;
-              case "tag": return tag;
-              case "description": return description;
-              default: throw new Exception("Property [" + propertyName + "] does not exist.");
-            }
-          }
-          public virtual void SetPropertyValue(string propertyName, object value)
-          {
-            switch (propertyName)
-            {
-        case "Id":
-          Id = Convert.ToString(value);
-          if (Id == String.Empty) throw new Exception("Id can not be null or empty.");
-          break;
-              case "tag":
-                if (value != null) tag = Convert.ToString(value);
-                break;
-              case "description":
-                if (value != null) description = Convert.ToString(value);
-                break;
-              default:
-                throw new Exception("Property [" + propertyName + "] does not exist.");
-              }
-            }
-          }
-        }
+    }

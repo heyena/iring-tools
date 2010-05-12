@@ -104,15 +104,6 @@ namespace org.iringtools.adapter
     }
 
     /// <summary>
-    /// Refreshes Data Dictionary by generating a new DataDictionary.xml from csdl.
-    /// </summary>
-    /// <returns>Returns the response as success/failure.</returns>
-    public Response RefreshDictionary(string projectName, string applicationName)
-    {
-      return _adapterServiceProvider.RefreshDictionary(projectName, applicationName);
-    }
-
-    /// <summary>
     /// Refreshes the triple store for all the graphmaps.
     /// </summary>
     /// <returns>Returns the response as success/failure.</returns>
