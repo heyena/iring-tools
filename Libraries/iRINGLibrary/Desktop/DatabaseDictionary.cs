@@ -34,10 +34,10 @@ namespace org.iringtools.library
   [DataContract(Namespace = "http://ns.iringtools.org/library")]
   public class DatabaseDictionary : DataDictionary
   {
-    [DataMember(IsRequired = true)]
+    [DataMember(IsRequired = true, Order = 0)]
     public Provider provider { get; set; }
 
-    [DataMember(IsRequired = true)]
+    [DataMember(IsRequired = true, Order = 1)]
     public string connectionString { get; set; }
   }
 

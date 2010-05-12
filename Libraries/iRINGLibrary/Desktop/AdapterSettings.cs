@@ -79,7 +79,7 @@ namespace org.iringtools.adapter
     {
       base.PrepareCredentials();
 
-      if (EncryptedToken == String.Empty)
+      if (String.IsNullOrEmpty(EncryptedToken))
       {
         this.TargetCredentials = new WebCredentials();
       }
@@ -88,7 +88,7 @@ namespace org.iringtools.adapter
         this.TargetCredentials = new WebCredentials(EncryptedToken);
         this.TargetCredentials.Decrypt();
       }
-      if (InterfaceCredentialToken == String.Empty)
+      if (String.IsNullOrEmpty(InterfaceCredentialToken))
       {
           this.InterfaceCredentials = new WebCredentials();
       }

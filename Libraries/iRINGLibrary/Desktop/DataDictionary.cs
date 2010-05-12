@@ -40,22 +40,22 @@ namespace org.iringtools.library
   [DataContract(Namespace = "http://ns.iringtools.org/library")]
   public class DataObject
   {
-    [DataMember]
+    [DataMember(IsRequired = true, Order = 0)]
     public string tableName { get; set; }
 
-    [DataMember(IsRequired = false)]
+    [DataMember(IsRequired = false, Order = 1, EmitDefaultValue = false)]
     public string objectNamespace { get; set; }
 
-    [DataMember]
+    [DataMember(IsRequired = true, Order = 2)]
     public string objectName { get; set; }
 
-    [DataMember]
+    [DataMember(IsRequired = true, Order = 3)]
     public KeyProperties keyProperties { get; set; }
 
-    [DataMember]
+    [DataMember(IsRequired = true, Order = 4)]
     public List<DataProperty> dataProperties { get; set; }
 
-    [DataMember]
+    [DataMember(IsRequired = true, Order = 5)]
     public List<DataRelationship> dataRelationships { get; set; }
 
     public bool isKeyProperty(string propertyName)
@@ -89,19 +89,19 @@ namespace org.iringtools.library
   [DataContract(Namespace = "http://ns.iringtools.org/library")]
   public class DataProperty
   {
-    [DataMember]
+    [DataMember(IsRequired = true, Order = 0)]
     public string columnName { get; set; }
 
-    [DataMember]
+    [DataMember(IsRequired = true, Order = 1)]
     public string propertyName { get; set; }
 
-    [DataMember]
+    [DataMember(IsRequired = true, Order = 2)]
     public DataType dataType { get; set; }
 
-    [DataMember]
+    [DataMember(IsRequired = true, Order = 3)]
     public int dataLength { get; set; }
 
-    [DataMember]
+    [DataMember(IsRequired = true, Order = 4)]
     public bool isNullable { get; set; }
   }
 
@@ -115,7 +115,7 @@ namespace org.iringtools.library
   [CollectionDataContract(Namespace = "http://ns.iringtools.org/library")]
   public class KeyProperties : List<KeyProperty>
   {
-    [DataMember(IsRequired = true)]
+    [DataMember(IsRequired = false)]
     public string keyDelimeter { get; set; }
   }
 

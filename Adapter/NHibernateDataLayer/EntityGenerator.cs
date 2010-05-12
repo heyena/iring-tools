@@ -101,7 +101,7 @@ namespace org.iringtools.adapter.datalayer
 
           foreach (DataObject dataObject in dbDictionary.dataObjects)
           {
-            CreateNHibernateObjectMap(dataObject);
+            CreateNHibernateDataObjectMap(dataObject);
           }
 
           _dataObjectWriter.Indent--;
@@ -148,7 +148,7 @@ namespace org.iringtools.adapter.datalayer
       return response;
     }
 
-    private void CreateNHibernateObjectMap(DataObject dataObject)
+    private void CreateNHibernateDataObjectMap(DataObject dataObject)
     {
       string keyClassName = dataObject.objectName + "Id";
       _mappingWriter.WriteStartElement("class");

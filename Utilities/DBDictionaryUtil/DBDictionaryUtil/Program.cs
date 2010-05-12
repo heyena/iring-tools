@@ -290,6 +290,7 @@ namespace DBDictionaryUtil
 
           KeyProperty keyProperty = new KeyProperty()
           {            
+            columnName = columnName,
             propertyName = Utility.NameSafe(columnName),
             dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
             dataLength = dataLength,
