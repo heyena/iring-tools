@@ -41,6 +41,7 @@ namespace org.iringtools.adapter.datalayer
 {
   public class EntityGenerator
   {
+    private string NAMESPACE_PREFIX = "org.iringtools.adapter.datalayer.proj_";
     private string COMPILER_VERSION = "v3.5";
     private string ASSEMBLY_NAME = "App_Code";
     private List<string> NHIBERNATE_ASSEMBLIES = new List<string>() 
@@ -50,6 +51,7 @@ namespace org.iringtools.adapter.datalayer
       "Iesi.Collections.dll",
     };
 
+    private string _namespace = String.Empty; 
     private AdapterSettings _settings = null;
     private StringBuilder _mappingBuilder = null;
     private XmlTextWriter _mappingWriter = null;
@@ -57,8 +59,6 @@ namespace org.iringtools.adapter.datalayer
     private IndentedTextWriter _dataObjectWriter = null;
     private StringBuilder _dataObjectBuilder = null;
     private ILog _logger = null;
-
-    private string _namespace = String.Empty;
 
     public EntityGenerator(AdapterSettings settings)
     {
@@ -72,7 +72,7 @@ namespace org.iringtools.adapter.datalayer
 
       if (dbDictionary.dataObjects != null)
       {
-        _namespace = "org.iringtools.adapter.datalayer.proj_" + projectName + "." + applicationName;
+        _namespace = NAMESPACE_PREFIX + projectName + "." + applicationName;
         _dataObjects = dbDictionary.dataObjects;
 
         try
@@ -101,6 +101,9 @@ namespace org.iringtools.adapter.datalayer
 
           foreach (DataObject dataObject in dbDictionary.dataObjects)
           {
+            // create namespace for dataObject
+            dataObject.objectNamespace = _namespace;
+
             CreateNHibernateDataObjectMap(dataObject);
           }
 
@@ -151,6 +154,7 @@ namespace org.iringtools.adapter.datalayer
     private void CreateNHibernateDataObjectMap(DataObject dataObject)
     {
       string keyClassName = dataObject.objectName + "Id";
+
       _mappingWriter.WriteStartElement("class");
       _mappingWriter.WriteAttributeString("name", _namespace + "." + dataObject.objectName + ", " + ASSEMBLY_NAME);
       _mappingWriter.WriteAttributeString("table", "[" + dataObject.tableName + "]");

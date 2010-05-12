@@ -24,7 +24,7 @@ using org.ids_adi.qxf;
 
 namespace org.iringtools.adapter.proj_12345_000.ABC
 {
-  public class DTOService : IDTOLayer
+  public class DTOLayer : IDTOLayer
   {
     IKernel _kernel = null;
     IDataLayer _dataLayer = null;
@@ -32,7 +32,7 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
     ApplicationSettings _applicationSettings = null;
     
     [Inject]
-    public DTOService(IKernel kernel, IDataLayer dataLayer, AdapterSettings adapterSettings, ApplicationSettings applicationSettings)
+    public DTOLayer(IKernel kernel, IDataLayer dataLayer, AdapterSettings adapterSettings, ApplicationSettings applicationSettings)
     {
       _kernel = kernel;
       _dataLayer = dataLayer;
@@ -475,11 +475,6 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
     public DataDictionary GetDictionary()
     {
       return _dataLayer.GetDictionary();
-    }
-
-    public Response RefreshDictionary()
-    {
-      throw new NotImplementedException();
     }
   }
 }

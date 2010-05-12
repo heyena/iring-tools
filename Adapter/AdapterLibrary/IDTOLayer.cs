@@ -43,7 +43,6 @@ namespace org.iringtools.adapter
     Response Post(string graphName, DataTransferObject dto);
     Response PostList(string graphName, List<DataTransferObject> dtoList);
     DataDictionary GetDictionary();
-    Response RefreshDictionary();
     object CreateList(string graphName, string dtoListString);
   }
 }

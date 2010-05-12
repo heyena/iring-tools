@@ -51,12 +51,6 @@ namespace org.iringtools.library
 
 #if !SILVERLIGHT
     [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/datadictionary/refresh")]
-#endif
-    Response RefreshDictionary(string projectName, string applicationName);
-
-#if !SILVERLIGHT
-    [OperationContract]
     [XmlSerializerFormat]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/mapping")]
 #endif

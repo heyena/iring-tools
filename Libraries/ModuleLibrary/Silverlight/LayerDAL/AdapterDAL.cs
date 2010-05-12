@@ -382,11 +382,6 @@ namespace org.iringtools.modulelibrary.layerdal
 
     #region IAdapterService Members
 
-    public Response RefreshDictionary(string projectName, string applicationName)
-    {
-      throw new NotImplementedException();
-    }
-
     public Response RefreshGraph(string projectName, string applicationName, string graphName)
     {
       throw new NotImplementedException();

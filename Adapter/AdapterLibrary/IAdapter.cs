@@ -37,8 +37,6 @@ namespace org.iringtools.library
   //{
   //  DataDictionary GetDictionary();
 
-  //  Response RefreshDictionary();
-
   //  Mapping GetMapping();
 
   //  Response UpdateMapping(Mapping mapping);

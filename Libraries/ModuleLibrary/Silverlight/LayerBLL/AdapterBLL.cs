@@ -227,21 +227,6 @@ namespace org.iringtools.modulelibrary.layerbll
       return dal.RefreshAll(userState);
     }
 
-    //public Response GenerateEDMX(DatabaseDictionary databaseDictionary)
-    //{
-    //  StartService("GenerateEDMX");
-    //  return dal.GenerateEDMX(databaseDictionary);
-    //}
-
-
-
-
-    public Response RefreshDictionary(string projectName, string applicationName)
-    {
-      StartService("RefreshDictionary");
-      throw new NotImplementedException();
-    }
-
     
     public Response Generate(string projectName, string applicationName)
     {

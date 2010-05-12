@@ -156,7 +156,7 @@ namespace org.iringtools.adapter
 
         // Write generated code to disk
         Utility.WriteString(dtoModel, _settings.CodePath + "DTOModel." + scope + ".cs", Encoding.ASCII);
-        Utility.WriteString(dtoService, _settings.CodePath + "DTOService." + scope + ".cs", Encoding.ASCII);
+        Utility.WriteString(dtoService, _settings.CodePath + "DTOLayer." + scope + ".cs", Encoding.ASCII);
       }
       catch (Exception ex)
       {
@@ -170,7 +170,7 @@ namespace org.iringtools.adapter
 
         if (_dtoServiceBuilder != null)
         {
-          _logger.Error("DTOService.cs:");
+          _logger.Error("DTOLayer.cs:");
           _logger.Error(_dtoServiceBuilder.ToString());
         }
 
@@ -497,7 +497,7 @@ namespace org.iringtools.adapter
         dtoServiceWriter.WriteLine("namespace {0}", _classNamespace);
         dtoServiceWriter.WriteLine("{");
         dtoServiceWriter.Indent++;
-        dtoServiceWriter.WriteLine("public class DTOService : IDTOLayer");
+        dtoServiceWriter.WriteLine("public class DTOLayer : IDTOLayer");
         dtoServiceWriter.WriteLine("{");
         dtoServiceWriter.Indent++;
         dtoServiceWriter.WriteLine("IKernel _kernel = null;");
@@ -507,7 +507,7 @@ namespace org.iringtools.adapter
 
         dtoServiceWriter.WriteLine();
         dtoServiceWriter.WriteLine("[Inject]");
-        dtoServiceWriter.WriteLine("public DTOService(IKernel kernel, IDataLayer dataLayer, AdapterSettings adapterSettings, ApplicationSettings applicationSettings)");
+        dtoServiceWriter.WriteLine("public DTOLayer(IKernel kernel, IDataLayer dataLayer, AdapterSettings adapterSettings, ApplicationSettings applicationSettings)");
         dtoServiceWriter.WriteLine("{");
         dtoServiceWriter.Indent++;
         dtoServiceWriter.WriteLine("_kernel = kernel;");
@@ -1080,11 +1080,6 @@ namespace org.iringtools.adapter
     public DataDictionary GetDictionary()
     {
       return _dataLayer.GetDictionary();
-    }
-
-    public Response RefreshDictionary()
-    {
-      throw new NotImplementedException();
     }");
 
         dtoServiceWriter.Indent--;
@@ -1118,7 +1113,7 @@ namespace org.iringtools.adapter
     private string GetQualifiedDataObjectName(string dataObjectMapName)
     {
       DataObject dataObject = GetDataObject(dataObjectMapName);
-      return (dataObject.objectNamespace != String.Empty) ? (dataObject.objectNamespace + "." + dataObject.objectName) : dataObject.objectName;
+      return String.IsNullOrEmpty(dataObject.objectNamespace) ? dataObject.objectName : dataObject.objectNamespace + "." + dataObject.objectName;
     }
 
     //private List<string> GetServiceKnownTypes(string projectName, string applicationName)
