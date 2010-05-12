@@ -462,6 +462,19 @@ namespace org.iringtools.adapter.semantic
       {
         if (dtoList.FirstOrDefault() != null)
         {
+
+            List<string> tripleStoreIdentifiers = this.GetIdentifiers(graphName);
+            List<string> identifiersToBeDeleted = tripleStoreIdentifiers;
+            foreach (DataTransferObject commonDTO in dtoList)
+            {
+                if (tripleStoreIdentifiers.Contains(commonDTO.Identifier))
+                {
+                    identifiersToBeDeleted.Remove(commonDTO.Identifier);
+                }
+            }
+            if (identifiersToBeDeleted.Count > 0)
+                response.Append(this.Delete(graphName, identifiersToBeDeleted));
+
           XElement dtoListXml = _dtoService.SerializeDTO(graphName, dtoList);
 
           ITransformationLayer transformEngine = _kernel.Get<ITransformationLayer>("rdf");
