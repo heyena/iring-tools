@@ -331,17 +331,17 @@ namespace org.iringtools.adapter
 
         List<DataTransferObject> dtoList = _dtoService.GetList(graphName);
 
-        List<string> tripleStoreIdentifiers = _semanticEngine.GetIdentifiers(graphName);
-        List<string> identifiersToBeDeleted = tripleStoreIdentifiers;
-        foreach (DataTransferObject commonDTO in dtoList)
-        {
-          if (tripleStoreIdentifiers.Contains(commonDTO.Identifier))
-          {
-            identifiersToBeDeleted.Remove(commonDTO.Identifier);
-          }
-        }
+        //List<string> tripleStoreIdentifiers = _semanticEngine.GetIdentifiers(graphName);
+        //List<string> identifiersToBeDeleted = tripleStoreIdentifiers;
+        //foreach (DataTransferObject commonDTO in dtoList)
+        //{
+        //  if (tripleStoreIdentifiers.Contains(commonDTO.Identifier))
+        //  {
+        //    identifiersToBeDeleted.Remove(commonDTO.Identifier);
+        //  }
+        //}
 
-        response.Append(_semanticEngine.Delete(graphName, identifiersToBeDeleted));
+        //response.Append(_semanticEngine.Delete(graphName, identifiersToBeDeleted));
 
         RuleEngine ruleEngine = new RuleEngine();
         if (File.Exists(_settings.XmlPath + "Refresh" + graphName + ".rules"))
@@ -612,7 +612,7 @@ namespace org.iringtools.adapter
 
         _semanticEngine.Clear(graphName);
 
-        response.Add(graphName + " graph cleared successfully.");
+        response.Add(string.Format("Graph[{0}] cleared successfully.",graphName));
       }
       catch (Exception exception)
       {
@@ -1195,7 +1195,7 @@ namespace org.iringtools.adapter
           {
             Name = "SemanticLayer",
             Interface = "org.iringtools.adapter.ISemanticLayer, AdapterLibrary",
-            Implementation = "org.iringtools.adapter.semantic.SemWebRDFEngine, AdapterLibrary"
+            Implementation = "org.iringtools.adapter.semantic.dotNETRdfEngine, AdapterLibrary"
           };
           UpdateBindingConfiguration(projectName, applicationName, semanticLayerBinding);
 
