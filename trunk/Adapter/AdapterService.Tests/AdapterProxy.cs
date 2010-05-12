@@ -51,20 +51,6 @@ namespace AdapterService.Tests
       return response;
     }
 
-    public Response RefreshDictionary(string projectName, string applicationName)
-    {
-      Response response = null;
-      try
-      {
-        response = _adapterServiceProvider.RefreshDictionary(projectName, applicationName);
-      }
-      catch (Exception ex)
-      {
-        Error.SetError(ex);
-      }
-      return response;
-    }
-
     public Mapping GetMapping(string projectName, string applicationName)
     {
       Mapping mapping = null;

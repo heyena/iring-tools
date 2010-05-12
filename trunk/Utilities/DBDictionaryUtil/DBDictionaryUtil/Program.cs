@@ -13,6 +13,9 @@ namespace DBDictionaryUtil
 {
   class Program
   {
+    static string projectName = String.Empty;
+    static string applicationName = String.Empty;
+    
     static void Main(string[] args)
     {
       try
@@ -21,8 +24,6 @@ namespace DBDictionaryUtil
         string connStr = String.Empty;
         string dbProvider = String.Empty;
         string adapterServiceUri = String.Empty;
-        string projectName = String.Empty;
-        string applicationName = String.Empty;
         string dbDictionaryFilePath = String.Empty;
 
         if (args.Length >= 1)

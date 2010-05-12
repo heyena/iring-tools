@@ -234,31 +234,6 @@ namespace org.iringtools.adapter
     }
 
     /// <summary>
-    /// Refreshes Data Dictionary by generating a new DataDictionary.xml from csdl.
-    /// </summary>
-    /// <returns>Returns the response as success/failure.</returns>
-    public Response RefreshDictionary(string projectName, string applicationName)
-    {
-      Response response = new Response();
-      try
-      {
-        InitializeApplication(projectName, applicationName);
-
-        response = _dtoService.RefreshDictionary();
-      }
-      catch (Exception exception)
-      {
-        _logger.Error("Error in RefreshDictionary: " + exception);
-
-        response.Level = StatusLevel.Error;
-        response.Add("Error while refreshing Dictionary.");
-        response.Add(exception.ToString());
-      }
-
-      return response;
-    }
-
-    /// <summary>
     /// Gets the data for a graphname and identifier in a QXF format.
     /// </summary>
     /// <param name="graphName">The name of graph for which data is to be fetched.</param>
@@ -324,7 +299,7 @@ namespace org.iringtools.adapter
         DateTime end = DateTime.Now;
         TimeSpan duration = end.Subtract(start);
 
-        response.Add(String.Format("RefreshAll() Execution Time [{0}:{1}.{2}] minutes.", 
+        response.Add(String.Format("RefreshAll() Execution time [{0}:{1}.{2}] minutes.", 
           duration.Minutes, duration.Seconds, duration.Milliseconds));
       }
       catch (Exception exception)
@@ -379,7 +354,7 @@ namespace org.iringtools.adapter
         DateTime end = DateTime.Now;
         TimeSpan duration = end.Subtract(start);
 
-        response.Add(String.Format("RefreshGraph({0}) Execution Time [{1}:{2}.{3}] minutes.", 
+        response.Add(String.Format("RefreshGraph({0}) Execution time [{1}:{2}.{3}] minutes.", 
           graphName, duration.Minutes, duration.Seconds, duration.Milliseconds));
       }
       catch (Exception exception)
@@ -521,14 +496,14 @@ namespace org.iringtools.adapter
 
         e = DateTime.Now;
         d = e.Subtract(b);
-        response.Add(String.Format("PullQuery[{0}] Execution Time [{1}:{2}.{3}] minutes.", graphName, d.Minutes, d.Seconds, d.Milliseconds));
+        response.Add(String.Format("PullQuery[{0}] Execution time [{1}:{2}.{3}] minutes.", graphName, d.Minutes, d.Seconds, d.Milliseconds));
         b = e;
 
         response.Append(_dtoService.PostList(graphName, dtoList));
 
         e = DateTime.Now;
         d = e.Subtract(b);
-        response.Add(String.Format("Pull[{0},{1}] Execution Time [{2}:{3}.{4}] minutes.", targetUri, graphName, d.Minutes, d.Seconds, d.Milliseconds));
+        response.Add(String.Format("Pull[{0},{1}] Execution time [{2}:{3}.{4}] minutes.", targetUri, graphName, d.Minutes, d.Seconds, d.Milliseconds));
       }
       catch (Exception exception)
       {
@@ -612,7 +587,7 @@ namespace org.iringtools.adapter
         DateTime end = DateTime.Now;
         TimeSpan duration = end.Subtract(start);
 
-        response.Add(String.Format("ClearAll() Execution Time [{0}:{1}.{2}] minutes.",
+        response.Add(String.Format("ClearAll() Execution time [{0}:{1}.{2}] minutes.",
           duration.Minutes, duration.Seconds, duration.Milliseconds));
       }
       catch (Exception exception)
@@ -671,7 +646,7 @@ namespace org.iringtools.adapter
         {
           Name = "DTOLayer",
           Interface = "org.iringtools.adapter.IDTOLayer, AdapterLibrary",
-          Implementation = "org.iringtools.adapter.proj_" + projectName + "." + applicationName + ".DTOService, App_Code"
+          Implementation = "org.iringtools.adapter.proj_" + projectName + "." + applicationName + ".DTOLayer, App_Code"
         };
         UpdateBindingConfiguration(projectName, applicationName, dtoServiceBinding);
 
@@ -899,7 +874,7 @@ namespace org.iringtools.adapter
         UpdateIService(projectName, applicationName);
         UpdateIDataService(projectName, applicationName);
 
-        File.Delete(_settings.CodePath + "DTOService." + projectName + "." + applicationName + ".cs");
+        File.Delete(_settings.CodePath + "DTOLayer." + projectName + "." + applicationName + ".cs");
         File.Delete(_settings.CodePath + "DTOModel." + projectName + "." + applicationName + ".cs");
         File.Delete(_settings.CodePath + "Model." + projectName + "." + applicationName + ".cs");
 
@@ -1227,8 +1202,8 @@ namespace org.iringtools.adapter
           Binding dataLayerBinding = new Binding()
           {
             Name = "DataLayer",
-            Interface = "org.iringtools.library.IDataLayer2, iRINGLibrary",
-            Implementation = "org.iringtools.adapter.datalayer.NHibernateDataLayer2, NHibernateDataLayer"
+            Interface = "org.iringtools.library.IDataLayer, iRINGLibrary",
+            Implementation = "org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateDataLayer"
           };
           UpdateBindingConfiguration(projectName, applicationName, dataLayerBinding);
 

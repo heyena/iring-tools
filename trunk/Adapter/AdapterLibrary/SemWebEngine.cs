@@ -488,7 +488,7 @@ namespace org.iringtools.adapter.semantic
             DateTime e = DateTime.Now;
             TimeSpan d = e.Subtract(b);
 
-            response.Add(String.Format("Post({0},{1}) Execution Time [{2}:{3}.{4}] Minutes", graphName, identifier, d.Minutes, d.Seconds, d.Milliseconds));
+            response.Add(String.Format("Post({0},{1}) Execution time [{2}:{3}.{4}] minutes.", graphName, identifier, d.Minutes, d.Seconds, d.Milliseconds));
           }
         }
       }
@@ -561,7 +561,7 @@ namespace org.iringtools.adapter.semantic
         DateTime e = DateTime.Now;
         TimeSpan d = e.Subtract(b);
 
-        response.Add(String.Format("Post() Execution Time [{0}:{1}.{2}] Minutes", d.Minutes, d.Seconds, d.Milliseconds));
+        response.Add(String.Format("Post() Execution time [{0}:{1}.{2}] minutes.", d.Minutes, d.Seconds, d.Milliseconds));
       }
       catch (Exception exception)
       {
@@ -595,7 +595,7 @@ namespace org.iringtools.adapter.semantic
           DateTime e = DateTime.Now;
           TimeSpan d = e.Subtract(b);
 
-          response.Add(String.Format("Delete({0}) Execution Time [{1}:{2}.{3}] Minutes", graphName, d.Minutes, d.Seconds, d.Milliseconds));
+          response.Add(String.Format("Delete({0}) Execution time [{1}:{2}.{3}] minutes.", graphName, d.Minutes, d.Seconds, d.Milliseconds));
         }
       }
       catch (Exception exception)
@@ -621,7 +621,7 @@ namespace org.iringtools.adapter.semantic
         DateTime e = DateTime.Now;
         TimeSpan d = e.Subtract(b);
 
-        response.Add(String.Format("Clear() Execution Time [{0}:{1}.{2}] Minutes", d.Minutes, d.Seconds, d.Milliseconds));
+        response.Add(String.Format("Clear() Execution time [{0}:{1}.{2}] minutes.", d.Minutes, d.Seconds, d.Milliseconds));
       }
       catch (Exception exception)
       {
