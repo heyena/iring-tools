@@ -34,7 +34,7 @@
   * Change DTO
   * Change Mapping
  * Enhance Mapping Editor
-  * Issue 87 - Handle Related Items - blocked on Issue 88 - Darius/Adrian
+  * Issue 87 - Handle Related Items - blocked on Issue 98 - Darius/Adrian
   * Issue 92 - Conditional Mapping - blocked on Issue 98 - Darius
   * Issue 80 - Value Lists - Darius
   * Issue 81 - Changes Warning - Lee
