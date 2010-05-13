@@ -1,14 +1,27 @@
+#labels Featured
 = *iRINGTools* 1.2.1.807 =
 
 A bug fix release of iRINGTools 1.2 that also includes RDF output and speed improvements.  The download is available [http://iring-tools.googlecode.com/files/iRINGTools-121.zip here]
 
 [http://iring-tools.googlecode.com/files/iRINGTools_Installation_Guide_v1.2.0.pdf Installation Guide]
 
+== Bugs Fixed ==
+ * Issue 52	In MappingEditor class roles are not identified if more than one level of superclassing is used
+ * Issue 2	Only certain tree nodes are cached
+ * Issue 75	Error on Pull when identifier has null value
+ * Issue 26	Mapping Editor to handle variable safe names
+ * Issue 45	Repository Information not displayed on detail pane
+ * Issue 29	Entity type of a class needs to be resolved into label
+ * Issue 19	NHibernate works with generator class as assigned.
+ * Issue 17	PostList doesn't work because of problem in GetDataObject.
+ * Issue 60	SPARQL generation does not handle mapping changes.
+
+
 == New Features ==
+ * Issue 22	Improve refreshing triple store performance
   * XSLT-based RDF generation
   * RDF output via .../rdf
-  * Version resource (/version)
-  * Many bug fixes
+ * Version resource (/version)
 
 == Known Bugs ==
   * PullDTO is not working.
