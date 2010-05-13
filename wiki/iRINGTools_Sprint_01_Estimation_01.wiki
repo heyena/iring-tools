@@ -31,8 +31,8 @@
 
 ==Review Issue List==
  * Issue 98 - Remove Code Gen - Lee
-  a Change DTO
-  b Change Mapping
+  * Change DTO
+  * Change Mapping
  * Enhance Mapping Editor
   * Issue 87 - Handle Related Items - depends on Issue 88 - Darius/Adrian
   * Issue 92 - Conditional Mapping - needs 1 - Darius
