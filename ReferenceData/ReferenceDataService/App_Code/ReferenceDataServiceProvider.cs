@@ -35,6 +35,11 @@ using org.w3.sparql_results;
 using org.ids_adi.iring.referenceData;
 using org.iringtools.library;
 
+using Ninject;
+using Ninject.Parameters;
+using Ninject.Contrib.Dynamic;
+using Ninject.Modules;
+
 namespace org.ids_adi.iring.referenceData
 {
     // NOTE: If you change the class name "Service" here, you must also update the reference to "Service" in Web.config and in the associated .svc file.
@@ -54,6 +59,8 @@ namespace org.ids_adi.iring.referenceData
         }
 
         #endregion
+
+        
         private const string REPOSITORIES_FILE_NAME = "Repositories.xml";
         private const string QUERIES_FILE_NAME = "Queries.xml";
 
@@ -73,6 +80,18 @@ namespace org.ids_adi.iring.referenceData
         private Queries _queries = null;
 
         private static Dictionary<string, RefDataEntities> _searchHistory = new Dictionary<string, RefDataEntities>();
+        
+        /*
+         * private IKernel _kernel = null;
+         * private ReferenceDataSettings _settings = null;
+        
+        public ReferenceDataServiceProvider(NameValueCollection settings)
+         * {
+         *      _kernel = new StandardKernel(new ReferenceDataModule());
+         *      _settings = _kernel.Get<ReferenceDataSettings>(new ConstructorArgument("AppSettings", settings));
+         *      Directory.SetCurrentDirectory(_settings.BaseDirectoryPath);
+         * }
+        */
 
         public ReferenceDataServiceProvider(ConfigSettings configSettings)
         {
