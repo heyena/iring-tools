@@ -72,7 +72,7 @@
     </Reference>
     <Reference Include="Microsoft.Expression.Interactions, Version=2.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Iring_March_2010\18\ExternalBinaries\ExpressionBlend3Library\Silverlight\Microsoft.Expression.Interactions.dll</HintPath>
+      <HintPath>..\..\..\ExternalBinaries\ExpressionBlend3Library\Silverlight\Microsoft.Expression.Interactions.dll</HintPath>
     </Reference>
     <Reference Include="PrismContrib, Version=1.2.1.701, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -95,7 +95,7 @@
     </Reference>
     <Reference Include="System.Windows.Controls.Data.Toolkit, Version=2.0.5.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Iring_March_2010\18\ExternalBinaries\Silverlight-Toolkit\System.Windows.Controls.Data.Toolkit.dll</HintPath>
+      <HintPath>..\..\..\ExternalBinaries\Silverlight-Toolkit\System.Windows.Controls.Data.Toolkit.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Controls.Toolkit, Version=2.0.5.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -103,7 +103,7 @@
     </Reference>
     <Reference Include="System.Windows.Interactivity, Version=2.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Iring_March_2010\18\ExternalBinaries\ExpressionBlend3Library\Silverlight\System.Windows.Interactivity.dll</HintPath>
+      <HintPath>..\..\..\ExternalBinaries\ExpressionBlend3Library\Silverlight\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Windows.Browser" />

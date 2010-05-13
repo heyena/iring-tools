@@ -195,6 +195,12 @@ namespace DbDictionaryEditor
 
         void deleteComplete(CompletedEventArgs args)
         {
+            if (args.Error != null)
+            {
+                MessageBox.Show(args.FriendlyErrorMessage, "Delete Application Error", MessageBoxButton.OK);
+                return;
+            }
+
             Response response = (Response)args.Data;
          
             string dictionaries = cbDictionary.SelectedItem.ToString();
@@ -216,6 +222,12 @@ namespace DbDictionaryEditor
 
         void postdbdictionaryComplete(CompletedEventArgs args)
         {
+            if (args.Error != null)
+            {
+                MessageBox.Show(args.FriendlyErrorMessage, "Post Database Dictionary Error", MessageBoxButton.OK);
+                return;
+            }
+
             Response response = (Response)args.Data;
             
             resultsList.lbResult.ItemsSource = response;
@@ -227,6 +239,11 @@ namespace DbDictionaryEditor
 
         void clearTripleStoreComplete(CompletedEventArgs args)
         {
+            if (args.Error != null)
+            { 
+            MessageBox.Show(args.FriendlyErrorMessage, "Post Database Dictionary Error", MessageBoxButton.OK);   
+            return; 
+            }
             Response resp = (Response)args.Data;
 
             string dictionary = cbDictionary.SelectedItem.ToString();
@@ -241,11 +258,22 @@ namespace DbDictionaryEditor
 
         void getProvidersComplete(CompletedEventArgs args)
         {
+            if (args.Error != null)
+            {
+                MessageBox.Show(args.FriendlyErrorMessage, "Get Providers Error", MessageBoxButton.OK);
+                return;
+            }
             newDbDictionary.cbProvider.ItemsSource = (string[])args.Data;
         }
 
         void getdbdictionariesComplete(CompletedEventArgs args)
         {
+            if (args.Error != null)
+            {
+                MessageBox.Show(args.FriendlyErrorMessage, "Get Existing Database Dictionaries Error", MessageBoxButton.OK);
+                return;
+            }
+
             dbDictionaries = (List<string>)args.Data;
             cbDictionary.IsEnabled = true;
            
@@ -358,12 +386,24 @@ namespace DbDictionaryEditor
 
         void savedbdictionaryComplete(CompletedEventArgs args)
         {
+            if (args.Error != null)
+            {
+                MessageBox.Show(args.FriendlyErrorMessage, "Save Database Dictionary Error", MessageBoxButton.OK);
+                return;
+            }
+
             _dal.GetExistingDbDictionaryFiles();
             //tvwItemDestinationRoot.Items.Clear();
         }
 
         void getdbschemaComplete(CompletedEventArgs args)
         {
+            if (args.Error != null)
+            {
+                MessageBox.Show(args.FriendlyErrorMessage, "Get Database Schema Error", MessageBoxButton.OK);
+                return;
+            }
+
             TreeViewItem sourceTable;
             TreeViewItem destinationTable;
       
@@ -395,6 +435,12 @@ namespace DbDictionaryEditor
 
         void getdbDictionaryComplete(CompletedEventArgs args)
         {
+            if (args.Error != null)
+            {
+                MessageBox.Show(args.FriendlyErrorMessage, "Get Database Dictionary Error", MessageBoxButton.OK);
+                return;
+            }
+
             DatabaseDictionary dict = (DatabaseDictionary)args.Data;
             if (isPosting)
             {

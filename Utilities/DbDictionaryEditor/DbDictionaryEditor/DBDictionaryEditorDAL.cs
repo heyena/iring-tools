@@ -12,6 +12,7 @@ namespace DbDictionaryEditor
     public class DBDictionaryEditorDAL
     {
         public event EventHandler<EventArgs> OnDataArrived;
+        public event EventHandler<EventArgs> OnError;
 
         private WebClient _scopesClient;
         private WebClient _dbDictionaryClient;
@@ -225,138 +226,250 @@ namespace DbDictionaryEditor
 
             if (sender == _dbDictionaryClient)
             {
-                string result = ((DownloadStringCompletedEventArgs)e).Result;
-
-                DatabaseDictionary dbDictionary = result.DeserializeDataContract<DatabaseDictionary>();
-
-                // If the cast failed then return
-                if (dbDictionary == null)
-                    return;
-
-                // Configure event argument
-                args = new CompletedEventArgs
+                try
                 {
-                    // Define your method in CompletedEventType and assign
-                    CompletedType = CompletedEventType.GetDbDictionary,
-                    Data = dbDictionary,
-                };
+                    string result = ((DownloadStringCompletedEventArgs)e).Result;
+
+                    DatabaseDictionary dbDictionary = result.DeserializeDataContract<DatabaseDictionary>();
+
+                    // If the cast failed then return
+                    if (dbDictionary == null)
+                        return;
+
+                    // Configure event argument
+                    args = new CompletedEventArgs
+                    {
+                        // Define your method in CompletedEventType and assign
+                        CompletedType = CompletedEventType.GetDbDictionary,
+                        Data = dbDictionary,
+                    };
+                }
+                catch (Exception ex)
+                {
+                    // Configure event argument
+                    args = new CompletedEventArgs
+                    {
+                        // Define your method in CompletedEventType and assign
+                        CompletedType = CompletedEventType.GetDbDictionary,
+                        Error = ex,
+                        FriendlyErrorMessage = "Error Getting Database Dictionary from DBDictionaryService.",
+                    };
+                }
             }
 
             if (sender == _dbschemaClient)
             {
-                string result = ((UploadStringCompletedEventArgs)e).Result;
-
-                DatabaseDictionary dbSchema = result.DeserializeDataContract<DatabaseDictionary>();
-
-                // If the cast failed then return
-                if (dbSchema == null)
-                    return;
-
-                // Configure event argument
-                args = new CompletedEventArgs
+                try
                 {
-                    // Define your method in CompletedEventType and assign
-                    CompletedType = CompletedEventType.GetDatabaseSchema,
-                    Data = dbSchema,
-                };
+                    string result = ((UploadStringCompletedEventArgs)e).Result;
+
+                    DatabaseDictionary dbSchema = result.DeserializeDataContract<DatabaseDictionary>();
+
+                    // If the cast failed then return
+                    if (dbSchema == null)
+                        return;
+
+                    // Configure event argument
+                    args = new CompletedEventArgs
+                    {
+                        // Define your method in CompletedEventType and assign
+                        CompletedType = CompletedEventType.GetDatabaseSchema,
+                        Data = dbSchema,
+                    };
+                }
+                catch (Exception ex)
+                {
+                    // Configure event argument
+                    args = new CompletedEventArgs
+                    {
+                        // Define your method in CompletedEventType and assign
+                        CompletedType = CompletedEventType.GetDbDictionary,
+                        Error = ex,
+                        FriendlyErrorMessage = "Error Getting Database Schema from DBDictionaryService.",
+                    };
+                }
             }
 
             if (sender == _savedbdictionaryClient)
             {
-                string result = ((UploadStringCompletedEventArgs)e).Result;
-
-                Response response = result.DeserializeDataContract<Response>();
-
-                // Configure event argument
-                args = new CompletedEventArgs
+                try
                 {
-                    // Define your method in CompletedEventType and assign
-                    CompletedType = CompletedEventType.SaveDatabaseDictionary,
-                    Data = response,
-                };
+                    string result = ((UploadStringCompletedEventArgs)e).Result;
+
+                    Response response = result.DeserializeDataContract<Response>();
+
+                    // Configure event argument
+                    args = new CompletedEventArgs
+                    {
+                        // Define your method in CompletedEventType and assign
+                        CompletedType = CompletedEventType.SaveDatabaseDictionary,
+                        Data = response,
+                    };
+                }
+                catch (Exception ex)
+                {
+                    // Configure event argument
+                    args = new CompletedEventArgs
+                    {
+                        // Define your method in CompletedEventType and assign
+                        CompletedType = CompletedEventType.GetDbDictionary,
+                        Error = ex,
+                        FriendlyErrorMessage = "Error while saving Database Dictionary through DBDictionaryService.",
+                    };
+                }
             }
 
             if (sender == _dbdictionariesClient)
             {
-                string result = ((DownloadStringCompletedEventArgs)e).Result;
-
-                List<string> dbDictionaries = result.DeserializeDataContract<List<string>>();
-
-                // If the cast failed then return
-                if (dbDictionaries == null)
-                    return;
-
-                // Configure event argument
-                args = new CompletedEventArgs
+                try
                 {
-                    // Define your method in CompletedEventType and assign
-                    CompletedType = CompletedEventType.GetExistingDbDictionaryFiles,
-                    Data = dbDictionaries,
-                };
+                    string result = ((DownloadStringCompletedEventArgs)e).Result;
+
+                    List<string> dbDictionaries = result.DeserializeDataContract<List<string>>();
+
+                    // If the cast failed then return
+                    if (dbDictionaries == null)
+                        return;
+
+                    // Configure event argument
+                    args = new CompletedEventArgs
+                    {
+                        // Define your method in CompletedEventType and assign
+                        CompletedType = CompletedEventType.GetExistingDbDictionaryFiles,
+                        Data = dbDictionaries,
+                    };
+                }
+                catch (Exception ex)
+                {
+                    // Configure event argument
+                    args = new CompletedEventArgs
+                    {
+                        // Define your method in CompletedEventType and assign
+                        CompletedType = CompletedEventType.GetDbDictionary,
+                        Error = ex,
+                        FriendlyErrorMessage = "Error Getting existing Database Dictionary Files from DBDictionaryService.",
+                    };
+                }
             }
 
             if (sender == _providersClient)
             {
-                string result = ((DownloadStringCompletedEventArgs)e).Result;
-
-                string[] providers = result.DeserializeDataContract<string[]>();
-
-                // If the cast failed then return
-                if (providers == null)
-                    return;
-
-                // Configure event argument
-                args = new CompletedEventArgs
+                try
                 {
-                    // Define your method in CompletedEventType and assign
-                    CompletedType = CompletedEventType.GetProviders,
-                    Data = providers,
-                };
+                    string result = ((DownloadStringCompletedEventArgs)e).Result;
+
+                    string[] providers = result.DeserializeDataContract<string[]>();
+
+                    // If the cast failed then return
+                    if (providers == null)
+                        return;
+
+                    // Configure event argument
+                    args = new CompletedEventArgs
+                    {
+                        // Define your method in CompletedEventType and assign
+                        CompletedType = CompletedEventType.GetProviders,
+                        Data = providers,
+                    };
+                }
+                catch (Exception ex)
+                {
+                    // Configure event argument
+                    args = new CompletedEventArgs
+                    {
+                        // Define your method in CompletedEventType and assign
+                        CompletedType = CompletedEventType.GetDbDictionary,
+                        Error = ex,
+                        FriendlyErrorMessage = "Error Getting Provider Names from DBDictionaryService.",
+                    };
+                }
             }
 
             if (sender == _postdbdictionaryClient)
             {
-                string result = ((UploadStringCompletedEventArgs)e).Result;
-
-                Response response = result.DeserializeDataContract<Response>();
-
-                // Configure event argument
-                args = new CompletedEventArgs
+                try
                 {
-                    // Define your method in CompletedEventType and assign
-                    CompletedType = CompletedEventType.PostDictionaryToAdapterService,
-                    Data = response,
-                };
+                    string result = ((UploadStringCompletedEventArgs)e).Result;
+
+                    Response response = result.DeserializeDataContract<Response>();
+
+                    // Configure event argument
+                    args = new CompletedEventArgs
+                    {
+                        // Define your method in CompletedEventType and assign
+                        CompletedType = CompletedEventType.PostDictionaryToAdapterService,
+                        Data = response,
+                    };
+                }
+                catch (Exception ex)
+                {
+                    // Configure event argument
+                    args = new CompletedEventArgs
+                    {
+                        // Define your method in CompletedEventType and assign
+                        CompletedType = CompletedEventType.GetDbDictionary,
+                        Error = ex,
+                        FriendlyErrorMessage = "Error while posting Database Dictionary to the AdapterService.",
+                    };
+                }
             }
 
             if (sender == _clearClient)
             {
-                string result = ((DownloadStringCompletedEventArgs)e).Result;
-
-                Response response = result.DeserializeDataContract<Response>();
-
-                // Configure event argument
-                args = new CompletedEventArgs
+                try
                 {
-                    // Define your method in CompletedEventType and assign
-                    CompletedType = CompletedEventType.ClearTripleStore,
-                    Data = response,
-                };
+                    string result = ((DownloadStringCompletedEventArgs)e).Result;
+
+                    Response response = result.DeserializeDataContract<Response>();
+
+                    // Configure event argument
+                    args = new CompletedEventArgs
+                    {
+                        // Define your method in CompletedEventType and assign
+                        CompletedType = CompletedEventType.ClearTripleStore,
+                        Data = response,
+                    };
+                }
+                catch (Exception ex)
+                {
+                    // Configure event argument
+                    args = new CompletedEventArgs
+                    {
+                        // Define your method in CompletedEventType and assign
+                        CompletedType = CompletedEventType.GetDbDictionary,
+                        Error = ex,
+                        FriendlyErrorMessage = "Error while clearing triple store through the AdapterService.",
+                    };
+                }
             }
 
             if (sender == _deleteClient)
             {
-                string result = ((DownloadStringCompletedEventArgs)e).Result;
-
-                Response response = result.DeserializeDataContract<Response>();
-
-                // Configure event argument
-                args = new CompletedEventArgs
+                try
                 {
-                    // Define your method in CompletedEventType and assign
-                    CompletedType = CompletedEventType.DeleteApp,
-                    Data = response,
-                };
+                    string result = ((DownloadStringCompletedEventArgs)e).Result;
+
+                    Response response = result.DeserializeDataContract<Response>();
+
+                    // Configure event argument
+                    args = new CompletedEventArgs
+                    {
+                        // Define your method in CompletedEventType and assign
+                        CompletedType = CompletedEventType.DeleteApp,
+                        Data = response,
+                    };
+                }
+                catch (Exception ex)
+                {
+                    // Configure event argument
+                    args = new CompletedEventArgs
+                    {
+                        // Define your method in CompletedEventType and assign
+                        CompletedType = CompletedEventType.GetDbDictionary,
+                        Error = ex,
+                        FriendlyErrorMessage = "Error while deleting the app from AdapterService.",
+                    };
+                }
             }
 
             if (args != null)
