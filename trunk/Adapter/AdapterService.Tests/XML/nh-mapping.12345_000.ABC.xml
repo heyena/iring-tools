@@ -1,28 +1,28 @@
 ﻿<hibernate-mapping default-lazy="true" xmlns="urn:nhibernate-mapping-2.2">
-  <class name="org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent, AdapterService.Tests" table="[InLinePipingComponent]">
-    <id name="Id" column="[tag]">
+  <class name="org.iringtools.adapter.datalayer.proj_12345_000.ABC.InLinePipingComponent, AdapterService.Tests" table="&quot;InLinePipingComponent&quot;">
+    <id name="Id" column="&quot;tag&quot;">
       <generator class="assigned" />
     </id>
-    <property name="tag" column="[tag]" update="false" insert="false" />
-    <property name="componentType" column="[componentType]" />
-    <property name="diameter" column="[diameter]" />
-    <property name="isCloned" column="[isCloned]" />
-    <property name="lineTag" column="[lineTag]" />
-    <property name="pid" column="[pid]" />
-    <property name="projectNumber" column="[projectNumber]" />
-    <property name="quantity" column="[quantity]" />
-    <property name="rating" column="[rating]" />
-    <property name="system" column="[system]" />
-    <property name="unit" column="[unit]" />
-    <property name="uomDiameter" column="[uomDiameter]" />
+    <property name="tag" column="&quot;tag&quot;" update="false" insert="false" />
+    <property name="componentType" column="&quot;componentType&quot;" />
+    <property name="diameter" column="&quot;diameter&quot;" />
+    <property name="isCloned" column="&quot;isCloned&quot;" />
+    <property name="lineTag" column="&quot;lineTag&quot;" />
+    <property name="pid" column="&quot;pid&quot;" />
+    <property name="projectNumber" column="&quot;projectNumber&quot;" />
+    <property name="quantity" column="&quot;quantity&quot;" />
+    <property name="rating" column="&quot;rating&quot;" />
+    <property name="system" column="&quot;system&quot;" />
+    <property name="unit" column="&quot;unit&quot;" />
+    <property name="uomDiameter" column="&quot;uomDiameter&quot;" />
   </class>
-  <class name="org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line, AdapterService.Tests" table="[Line]">
-    <id name="Id" column="[tag]">
+  <class name="org.iringtools.adapter.datalayer.proj_12345_000.ABC.Line, AdapterService.Tests" table="&quot;Line&quot;">
+    <id name="Id" column="&quot;tag&quot;">
       <generator class="assigned" />
     </id>
-    <property name="tag" column="[tag]" update="false" insert="false" />
-    <property name="diameter" column="[diameter]" />
-    <property name="system" column="[system]" />
-    <property name="uomDiameter" column="[uomDiameter]" />
+    <property name="tag" column="&quot;tag&quot;" update="false" insert="false" />
+    <property name="diameter" column="&quot;diameter&quot;" />
+    <property name="system" column="&quot;system&quot;" />
+    <property name="uomDiameter" column="&quot;uomDiameter&quot;" />
   </class>
 </hibernate-mapping>

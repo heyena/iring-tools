@@ -94,5 +94,10 @@ namespace org.iringtools.adapter.datalayer.proj_12345_000.CSV
           throw new Exception("Property [" + propertyName + "] does not exist.");
       }
     }
+
+    public IList<IDataObject> GetRelatedObjects(string relatedObjectType)
+    {
+      throw new NotImplementedException();
+    }
   }
 }

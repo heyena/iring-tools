@@ -25,7 +25,7 @@ namespace org.iringtools.adapter.datalayer
     private ISessionFactory factory;
 
     [Inject]
-    public NHibernateDataLayer(AdapterSettings settings, ApplicationSettings appSettings) //, EntityGenerator generator)
+    public NHibernateDataLayer(AdapterSettings settings, ApplicationSettings appSettings)
     {
       _dataDictionaryPath = settings.XmlPath + "DataDictionary." + appSettings.ProjectName + "." + appSettings.ApplicationName + ".xml";
       _settings = settings;
