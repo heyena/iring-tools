@@ -34,15 +34,15 @@
   * Change DTO
   * Change Mapping
  * Enhance Mapping Editor
-  * Issue 87 - Handle Related Items - depends on Issue 88 - Darius/Adrian
-  * Issue 92 - Conditional Mapping - needs 1 - Darius
+  * Issue 87 - Handle Related Items - blocked on Issue 88 - Darius/Adrian
+  * Issue 92 - Conditional Mapping - blocked on Issue 98 - Darius
   * Issue 80 - Value Lists - Darius
   * Issue 81 - Changes Warning - Lee
   * Issue 88 - Property/Relationship Templates - Darius/Slava
  * Issue 25 - Error Handling - Lee
- * Issue 109 - Part 8 Compliance - requires 5a - Robin/Manoj
+ * Issue 109 - Part 8 Compliance - Robin/Manoj
  * Enhance RefDataEditor
-  * Handle QMXF Changes - see above
+  * Handle QMXF Changes - blocked on Issue 109
   * Issue 94 - Format Duplicate Results - Darius
   * Issue 105 - Selectable Target Repository - Darius
   * Issue 110 - Role Flexibility - Darius
