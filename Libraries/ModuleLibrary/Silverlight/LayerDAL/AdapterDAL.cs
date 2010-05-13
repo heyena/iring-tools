@@ -39,7 +39,7 @@ namespace org.iringtools.modulelibrary.layerdal
     /// Occurs when [on data arrived].
     /// </summary>
     public event EventHandler<EventArgs> OnDataArrived;
-    public event EventHandler<EventArgs> OnError;
+    //public event EventHandler<EventArgs> OnError;
 
     /// <summary>
     /// Adapter WCF Service

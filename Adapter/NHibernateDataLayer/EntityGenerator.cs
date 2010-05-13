@@ -135,8 +135,7 @@ namespace org.iringtools.adapter.datalayer
           Utility.WriteString(hibernateConfig, _settings.XmlPath + "nh-configuration." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
           Utility.WriteString(mappingXml, _settings.XmlPath + "nh-mapping." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
           Utility.WriteString(sourceCode, _settings.CodePath + "Model." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
-
-          DataDictionary dataDictionary = new DataDictionary { dataObjects = dbDictionary.dataObjects };
+          DataDictionary dataDictionary = CreateDataDictionary(dbDictionary.dataObjects);
           Utility.Write<DataDictionary>(dataDictionary, _settings.XmlPath + "DataDictionary." + projectName + "." + applicationName + ".xml");
           #endregion
 
@@ -149,6 +148,23 @@ namespace org.iringtools.adapter.datalayer
       }
 
       return response;
+    }
+
+    // Remove table names and column names from database dictionary
+    private DataDictionary CreateDataDictionary(List<DataObject> dataObjects)
+    {
+      foreach (DataObject dataObject in dataObjects)
+      {        
+        dataObject.tableName = null;
+
+        foreach (DataProperty dataProperty in dataObject.keyProperties)
+          dataProperty.columnName = null;
+
+        foreach (DataProperty dataProperty in dataObject.keyProperties)
+          dataProperty.columnName = null;
+      }
+
+      return new DataDictionary { dataObjects = dataObjects };
     }
 
     private void CreateNHibernateDataObjectMap(DataObject dataObject)
@@ -418,7 +434,8 @@ namespace org.iringtools.adapter.datalayer
           _mappingWriter.WriteEndElement(); // end property element
         }
 
-        // Implements GetPropertyValue from IDataObject
+        // Implements GetPropertyValue of IDataObject
+        _dataObjectWriter.WriteLine();
         _dataObjectWriter.WriteLine("public virtual object GetPropertyValue(string propertyName)");
         _dataObjectWriter.WriteLine("{");
         _dataObjectWriter.Indent++; _dataObjectWriter.WriteLine("switch (propertyName)");
@@ -442,7 +459,8 @@ namespace org.iringtools.adapter.datalayer
         _dataObjectWriter.Indent--;
         _dataObjectWriter.WriteLine("}");
 
-        // Implements SetPropertyValue from IDataObject
+        // Implements SetPropertyValue of IDataObject
+        _dataObjectWriter.WriteLine();
         _dataObjectWriter.WriteLine("public virtual void SetPropertyValue(string propertyName, object value)");
         _dataObjectWriter.WriteLine("{");
         _dataObjectWriter.Indent++;
@@ -496,10 +514,18 @@ namespace org.iringtools.adapter.datalayer
         _dataObjectWriter.Indent++;
         _dataObjectWriter.WriteLine("throw new Exception(\"Property [\" + propertyName + \"] does not exist.\");");
         _dataObjectWriter.Indent--;
+        _dataObjectWriter.Indent--;
         _dataObjectWriter.WriteLine("}");
         _dataObjectWriter.Indent--;
         _dataObjectWriter.WriteLine("}");
         #endregion Process columns
+
+        // Implements GetRelatedObjects of IDataObject
+        _dataObjectWriter.WriteLine(@"
+    public virtual IList<IDataObject> GetRelatedObjects(string relatedObjectType)
+    {
+      throw new NotImplementedException();
+    }");
 
         _dataObjectWriter.Indent--;
         _dataObjectWriter.WriteLine("}"); // end class block

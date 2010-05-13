@@ -33,6 +33,7 @@ namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
     public virtual String system { get; set; }
     public virtual String unit { get; set; }
     public virtual String uomDiameter { get; set; }
+    
     public virtual object GetPropertyValue(string propertyName)
     {
       switch (propertyName)
@@ -53,6 +54,7 @@ namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
         default: throw new Exception("Property [" + propertyName + "] does not exist.");
       }
     }
+    
     public virtual void SetPropertyValue(string propertyName, object value)
     {
       switch (propertyName)
@@ -99,56 +101,68 @@ namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
           break;
         default:
           throw new Exception("Property [" + propertyName + "] does not exist.");
-        }
       }
     }
     
-    public class Line : IDataObject
+    public virtual IList<IDataObject> GetRelatedObjects(string relatedObjectType)
     {
-      public virtual String Id { get; set; }
-      public virtual String tag
+      throw new NotImplementedException();
+    }
+  }
+  
+  public class Line : IDataObject
+  {
+    public virtual String Id { get; set; }
+    public virtual String tag
+    {
+      get { return Id; }
+      set { Id = value; }
+    }
+    public virtual Single diameter { get; set; }
+    public virtual String system { get; set; }
+    public virtual String uomDiameter { get; set; }
+    
+    public virtual object GetPropertyValue(string propertyName)
+    {
+      switch (propertyName)
       {
-        get { return Id; }
-        set { Id = value; }
+        case "Id": return Id;
+        case "tag": return tag;
+        case "diameter": return diameter;
+        case "system": return system;
+        case "uomDiameter": return uomDiameter;
+        default: throw new Exception("Property [" + propertyName + "] does not exist.");
       }
-      public virtual Single diameter { get; set; }
-      public virtual String system { get; set; }
-      public virtual String uomDiameter { get; set; }
-      public virtual object GetPropertyValue(string propertyName)
+    }
+    
+    public virtual void SetPropertyValue(string propertyName, object value)
+    {
+      switch (propertyName)
       {
-        switch (propertyName)
-        {
-          case "Id": return Id;
-          case "tag": return tag;
-          case "diameter": return diameter;
-          case "system": return system;
-          case "uomDiameter": return uomDiameter;
-          default: throw new Exception("Property [" + propertyName + "] does not exist.");
-        }
-      }
-      public virtual void SetPropertyValue(string propertyName, object value)
-      {
-        switch (propertyName)
-        {
         case "Id":
           Id = Convert.ToString(value);
           if (Id == String.Empty) throw new Exception("Id can not be null or empty.");
           break;
-          case "tag":
-            if (value != null) tag = Convert.ToString(value);
-            break;
-          case "diameter":
-            if (value != null) diameter = Convert.ToSingle(value);
-            break;
-          case "system":
-            if (value != null) system = Convert.ToString(value);
-            break;
-          case "uomDiameter":
-            if (value != null) uomDiameter = Convert.ToString(value);
-            break;
-          default:
-            throw new Exception("Property [" + propertyName + "] does not exist.");
-          }
-        }
+        case "tag":
+          if (value != null) tag = Convert.ToString(value);
+          break;
+        case "diameter":
+          if (value != null) diameter = Convert.ToSingle(value);
+          break;
+        case "system":
+          if (value != null) system = Convert.ToString(value);
+          break;
+        case "uomDiameter":
+          if (value != null) uomDiameter = Convert.ToString(value);
+          break;
+        default:
+          throw new Exception("Property [" + propertyName + "] does not exist.");
       }
     }
+    
+    public virtual IList<IDataObject> GetRelatedObjects(string relatedObjectType)
+    {
+      throw new NotImplementedException();
+    }
+  }
+}
