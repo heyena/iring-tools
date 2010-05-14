@@ -142,19 +142,37 @@ namespace org.iringtools.modules.medatasourceregion
         node.SetImageSource("object.png");
         node.SetTextBlockText(header);
         node.SetTooltipText("Object : " + header);
+      //}
+      //else if (tag is org.iringtools.library.KeyProperty)
+      //{
+      //    node = new DataObjectItem
+      //    {
+      //        Parent = parent,
+      //        DataObject = ((DataObjectItem)parent).DataObject,
+      //        KeyProperty = (KeyProperty)tag,
+      //        Tag = tag
+      //    };
       }
       else if (tag is DataProperty)
       {
-        node = new DataObjectItem
-        {
-          Parent = parent,
-          DataObject = ((DataObjectItem)parent).DataObject,
-          DataProperty = (DataProperty)tag,
-          Tag = tag,
-        };
-        node.SetImageSource("property.png");
-        node.SetTextBlockText(header);
-        node.SetTooltipText("Property : " + header);
+          node = new DataObjectItem
+          {
+              Parent = parent,
+              DataObject = ((DataObjectItem)parent).DataObject,
+              DataProperty = (DataProperty)tag,
+              Tag = tag,
+          };
+          if (tag is KeyProperty)
+          {
+              node.SetImageSource("key.png");
+              node.SetTooltipText("Key Property : " + header);
+          }
+          else
+          {
+              node.SetImageSource("property.png");
+              node.SetTooltipText("Property : " + header);
+          }
+          node.SetTextBlockText(header);
       }
 
       // Subscribe to it's events
@@ -183,6 +201,14 @@ namespace org.iringtools.modules.medatasourceregion
 
       if (dataObject == null)
         return false;
+        if (dataObject.keyProperties != null && dataObject.keyProperties.Count > 0)
+        {
+            item = new DataObjectItem();
+            item.SetTextBlockText("Stub");
+            item.Tag = dataObject.keyProperties;
+            item.SetTooltipText("Keys : " + dataObject.keyProperties.ToString());
+            node.Items.Add(item);
+        }
 
       if (dataObject.dataProperties != null && dataObject.dataProperties.Count > 0)
       {
@@ -205,6 +231,31 @@ namespace org.iringtools.modules.medatasourceregion
       return true;
     }
 
+    /// <summary>
+    /// Populates the template map.
+    /// </summary>
+    /// <param name="node">The node.</param>
+    /// <param name="keyProperty">Key property</param>
+    /// <returns></returns>
+    private bool PopulateDataKeyProperty(DataObjectItem node, KeyProperty keyProperty)
+    {
+        DataObjectItem newNode = AddNode(keyProperty.propertyName, keyProperty, node);
+        node.Items.Add(newNode);
+        return true;
+    }
+      
+      /// <summary>
+    /// Populates the template map.
+    /// </summary>
+    /// <param name="node">The node.</param>
+    /// <param name="templateMap">The template map.</param>
+    /// <returns></returns>
+    bool PopulateDataKeyProperties(DataObjectItem node, org.iringtools.library.KeyProperties keyProperties)
+    {
+        DataObjectItem newNode = AddNode(keyProperties.keyDelimeter, keyProperties, node);
+        node.Items.Add(newNode);
+        return true;
+    }
     /// <summary>
     /// Populates the template map.
     /// </summary>
@@ -293,18 +344,23 @@ namespace org.iringtools.modules.medatasourceregion
       DataObjectItem selectedNode = sender as DataObjectItem;
       if (selectedNode == null)
         return;
-      DataObjectItem childNode = null;
+      DataObjectItem dataPropertyNode = null;
+      DataObjectItem keyPropertyNode = null;
 
       if (selectedNode.Items.Count > 0)
-        childNode = selectedNode.Items[0] as DataObjectItem;
+      {
+          keyPropertyNode = selectedNode.Items[0] as DataObjectItem;
+          dataPropertyNode = selectedNode.Items[1] as DataObjectItem;
+      }
+//          childNode = selectedNode.Items[0] as DataObjectItem;
 
-      if (childNode == null)
+      if (dataPropertyNode == null)
         return;
 
       // If expanded then the tree has nodes so we'll grab the
       // first node and see if it is a stub.  If it isn't then
       // we have nothing to do
-      if (childNode.itemTextBlock.Text != "Stub")
+      if (dataPropertyNode.itemTextBlock.Text != "Stub")
         return;
 
       // Remove the stub
@@ -312,17 +368,26 @@ namespace org.iringtools.modules.medatasourceregion
 
       bool isProcessed = false;
 
-      // Add the child nodes
-      if (childNode.Tag is org.iringtools.library.DataObject)
-        isProcessed = PopulateDataObject(selectedNode, (org.iringtools.library.DataObject)childNode.Tag);
+      // Add the key nodes
 
-      if (childNode.Tag is List<DataProperty>)
-        foreach (DataProperty dataProperty in ((List<DataProperty>)childNode.Tag))
+      if (keyPropertyNode.Tag is List<KeyProperty>)
+          foreach (KeyProperty keyProperty in ((List<KeyProperty>)keyPropertyNode.Tag))
+              isProcessed = PopulateDataKeyProperty(selectedNode, keyProperty);
+
+       
+      if (dataPropertyNode.Tag is org.iringtools.library.DataObject)
+        isProcessed = PopulateDataObject(selectedNode, (org.iringtools.library.DataObject)dataPropertyNode.Tag);
+
+
+      //add property nodes
+      if (dataPropertyNode.Tag is List<DataProperty>)
+        foreach (DataProperty dataProperty in ((List<DataProperty>)dataPropertyNode.Tag))
           isProcessed = PopulateDataProperty(selectedNode, dataProperty);
 
-      if (childNode.Tag is List<DataRelationship>)
-        foreach (DataRelationship dataRelationship in ((List<DataRelationship>)childNode.Tag))
+      if (dataPropertyNode.Tag is List<DataRelationship>)
+        foreach (DataRelationship dataRelationship in ((List<DataRelationship>)dataPropertyNode.Tag))
           isProcessed = PopulateDataRelationship(selectedNode, dataRelationship);
     }
+
   }
 }
