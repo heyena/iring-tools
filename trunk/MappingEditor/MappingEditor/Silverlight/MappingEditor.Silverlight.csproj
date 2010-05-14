@@ -99,7 +99,7 @@
       <DependentUpon>Page.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\..\..\AssemblyInfo.cs" />  
+    <Compile Include="..\..\..\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -177,6 +177,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\graph.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\key.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\v3.0\Microsoft.Silverlight.CSharp.targets" Condition="" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
