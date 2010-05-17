@@ -217,19 +217,19 @@
     <DeploymentPackage Include="*" Exclude="">
       <Options>-r</Options>
       <Path>$(iRINGAdapter)</Path>
-      <ZIPFile>..\iRINGTools-120.zip</ZIPFile>
+      <ZIPFile>..\iRINGTools-130.zip</ZIPFile>
       <Source>*</Source>
     </DeploymentPackage>
     <DeploymentPackage Include="*" Exclude="">
       <Options>-r -u</Options>
       <Path>$(iRINGSandbox)</Path>
-      <ZIPFile>..\iRINGTools-120.zip</ZIPFile>
+      <ZIPFile>..\iRINGTools-130.zip</ZIPFile>
       <Source>*</Source>
     </DeploymentPackage>
     <DeploymentPackage Include="*" Exclude="">
       <Options>-r -u</Options>
       <Path>$(LandingPageDeploymentDir)</Path>
-      <ZIPFile>..\iRINGTools-120.zip</ZIPFile>
+      <ZIPFile>..\iRINGTools-130.zip</ZIPFile>
       <Source>*</Source>
     </DeploymentPackage>
   </ItemGroup>
