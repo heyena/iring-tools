@@ -437,8 +437,8 @@ namespace org.iringtools.adapter.proj_12345_000.ABC
             XmlReader reader = XmlReader.Create(new StringReader(dtoListString));
             XDocument file = XDocument.Load(reader);
             file = Utility.RemoveNamespace(file);
-            List<org.iringtools.adapter.proj_12345_000.ABC.Lines> _dtoList = new List<org.iringtools.adapter.proj_12345_000.ABC.Lines>(); 
-            var dtoResults = from c in file.Elements("Envelope").Elements("Payload").Elements("DataTransferObject") select c;
+            List<org.iringtools.adapter.proj_12345_000.ABC.Lines> _dtoList = new List<org.iringtools.adapter.proj_12345_000.ABC.Lines>();
+            var dtoResults = from c in file.Elements("ArrayOfLines").Elements("Lines") select c;
 
             foreach (var dtoResult in dtoResults)
             {
