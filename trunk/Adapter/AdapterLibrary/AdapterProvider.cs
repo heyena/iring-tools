@@ -548,7 +548,7 @@ namespace org.iringtools.adapter
         }
         else
         {
-          dtoListString = httpClient.GetMessage(@"/" + projectNameForPull + "/" + applicationNameForPull + "/" + graphName);
+            dtoListString = httpClient.GetMessage(@"/" + projectNameForPull + "/" + applicationNameForPull + "/" + graphName);
         }
         List<DataTransferObject> dtoList = (List<DataTransferObject>)_dtoService.CreateList(graphName, dtoListString);
         response.Append(_dtoService.PostList(graphName, dtoList));

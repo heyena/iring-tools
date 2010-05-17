@@ -283,31 +283,31 @@ namespace AdapterService.Tests
     //  Assert.AreEqual(false, isError);
     //}
 
-    //[TestMethod()]
-    //public void PullDTO()
-    //{
-    //  AdapterProxy target = new AdapterProxy();
-    //  Request request = new Request();
-    //  WebCredentials targetCredentials = new WebCredentials();
-    //  string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
-    //  request.Add("targetUri", "http://localhost:52786/Service.svc");
-    //  request.Add("targetCredentials", targetCredentialsXML);
-    //  request.Add("graphName", "Lines");
-    //  request.Add("filter", "1-AB-L300");
-    //  request.Add("projectName", "12345_000");
-    //  request.Add("applicationName", "DEF");
-    //  Response actual = target.PullDTO("12345_000", "ABC", request);
-    //  bool isError = false;
-    //  for (int i = 0; i < actual.Count; i++)
-    //  {
-    //    if (actual[i].ToUpper().Contains("ERROR"))
-    //    {
-    //      isError = true;
-    //      break;
-    //    }
-    //  }
-    //  Assert.AreEqual(false, isError);
-    //}
+    [TestMethod()]
+    public void PullDTO()
+    {
+        AdapterProxy target = new AdapterProxy();
+        Request request = new Request();
+        WebCredentials targetCredentials = new WebCredentials();
+        string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
+        request.Add("targetUri", "http://localhost/AdapterService/Service.svc");
+        request.Add("targetCredentials", targetCredentialsXML);
+        request.Add("graphName", "Lines");
+        //request.Add("filter", "1-AB-L300");
+        request.Add("projectName", "12345_000");
+        request.Add("applicationName", "ABC");
+        Response actual = target.PullDTO("12345_000", "ABC", request);
+        bool isError = false;
+        for (int i = 0; i < actual.Count; i++)
+        {
+            if (actual[i].ToUpper().Contains("ERROR"))
+            {
+                isError = true;
+                break;
+            }
+        }
+        Assert.AreEqual(false, isError);
+    }
 
     //[TestMethod()]
     //public void PullDTOPrototype()
