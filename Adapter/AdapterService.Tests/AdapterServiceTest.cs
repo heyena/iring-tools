@@ -91,12 +91,12 @@ namespace AdapterService.Tests
     {
       AdapterProxy target = new AdapterProxy();
       Response actual = target.ClearAll("12345_000", "ABC");
-      if ("Valves graph cleared successfully." != actual[0])
+      if ("Graph[Valves] cleared successfully." != actual[0])
       {
         throw new AssertFailedException(Utility.SerializeDataContract<Response>(actual));
       }
 
-      Assert.AreEqual("Valves graph cleared successfully.", actual[0].ToString());
+      Assert.AreEqual("Graph[Valves] cleared successfully.", actual[0].ToString());
     }
 
     [TestMethod()]
