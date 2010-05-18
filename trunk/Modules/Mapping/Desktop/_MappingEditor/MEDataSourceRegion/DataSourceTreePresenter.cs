@@ -235,38 +235,26 @@ namespace org.iringtools.modules.medatasourceregion
     /// Populates the template map.
     /// </summary>
     /// <param name="node">The node.</param>
-    /// <param name="keyProperty">Key property</param>
-    /// <returns></returns>
-    private bool PopulateDataKeyProperty(DataObjectItem node, KeyProperty keyProperty)
-    {
-        DataObjectItem newNode = AddNode(keyProperty.propertyName, keyProperty, node);
-        node.Items.Add(newNode);
-        return true;
-    }
-      
-      /// <summary>
-    /// Populates the template map.
-    /// </summary>
-    /// <param name="node">The node.</param>
-    /// <param name="templateMap">The template map.</param>
-    /// <returns></returns>
-    bool PopulateDataKeyProperties(DataObjectItem node, org.iringtools.library.KeyProperties keyProperties)
-    {
-        DataObjectItem newNode = AddNode(keyProperties.keyDelimeter, keyProperties, node);
-        node.Items.Add(newNode);
-        return true;
-    }
-    /// <summary>
-    /// Populates the template map.
-    /// </summary>
-    /// <param name="node">The node.</param>
     /// <param name="templateMap">The template map.</param>
     /// <returns></returns>
     bool PopulateDataObject(DataObjectItem node, org.iringtools.library.DataObject dataObject)
     {
-      DataObjectItem newNode = AddNode(dataObject.objectName, dataObject, node);
-      node.Items.Add(newNode);
-      return true;
+        DataObjectItem newNode = AddNode(dataObject.objectName, dataObject, node);
+        node.Items.Add(newNode);
+        return true;
+    }
+
+    /// <summary>
+    /// Populates the template map.
+    /// </summary>
+    /// <param name="node">The node.</param>
+    /// <param name="keyProperty">Key property</param>
+    /// <returns></returns>
+    private bool PopulateKeyProperty(DataObjectItem node, KeyProperty keyProperty)
+    {
+        DataObjectItem newNode = AddNode(keyProperty.propertyName, keyProperty, node);
+        node.Items.Add(newNode);
+        return true;
     }
 
     /// <summary>
@@ -372,7 +360,7 @@ namespace org.iringtools.modules.medatasourceregion
 
       if (keyPropertyNode.Tag is List<KeyProperty>)
           foreach (KeyProperty keyProperty in ((List<KeyProperty>)keyPropertyNode.Tag))
-              isProcessed = PopulateDataKeyProperty(selectedNode, keyProperty);
+              isProcessed = PopulateKeyProperty(selectedNode, keyProperty);
 
        
       if (dataPropertyNode.Tag is org.iringtools.library.DataObject)

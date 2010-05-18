@@ -254,7 +254,7 @@ namespace DBDictionaryUtil
           {
             tableName = tableName,
             objectName = Utility.NameSafe(tableName),
-            keyProperties = new KeyProperties(),
+            keyProperties = new List<KeyProperty>(),
             dataProperties = new List<DataProperty>(),
             dataRelationships = new List<DataRelationship>(),
           };
