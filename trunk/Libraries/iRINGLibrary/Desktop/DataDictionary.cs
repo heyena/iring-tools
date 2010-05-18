@@ -49,13 +49,16 @@ namespace org.iringtools.library
     [DataMember(IsRequired = true, Order = 2)]
     public string objectName { get; set; }
 
-    [DataMember(IsRequired = true, Order = 3)]
-    public KeyProperties keyProperties { get; set; }
+    [DataMember(IsRequired = false, Order = 3)]
+    public string keyDelimeter { get; set; }
 
     [DataMember(IsRequired = true, Order = 4)]
-    public List<DataProperty> dataProperties { get; set; }
+    public List<KeyProperty> keyProperties { get; set; }
 
     [DataMember(IsRequired = true, Order = 5)]
+    public List<DataProperty> dataProperties { get; set; }
+
+    [DataMember(IsRequired = false, Order = 6, EmitDefaultValue=false)]
     public List<DataRelationship> dataRelationships { get; set; }
 
     public bool isKeyProperty(string propertyName)
@@ -110,13 +113,6 @@ namespace org.iringtools.library
   {
     [DataMember(IsRequired = true)]
     public KeyType keyType { get; set; }
-  }
-
-  [CollectionDataContract(Namespace = "http://ns.iringtools.org/library")]
-  public class KeyProperties : List<KeyProperty>
-  {
-    [DataMember(IsRequired = false)]
-    public string keyDelimeter { get; set; }
   }
 
   [DataContract(Namespace = "http://ns.iringtools.org/library")]
