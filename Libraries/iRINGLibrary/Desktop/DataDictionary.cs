@@ -49,7 +49,7 @@ namespace org.iringtools.library
     [DataMember(IsRequired = true, Order = 2)]
     public string objectName { get; set; }
 
-    [DataMember(IsRequired = false, Order = 3)]
+    [DataMember(IsRequired = false, Order = 3, EmitDefaultValue = false)]
     public string keyDelimeter { get; set; }
 
     [DataMember(IsRequired = true, Order = 4)]
@@ -58,7 +58,7 @@ namespace org.iringtools.library
     [DataMember(IsRequired = true, Order = 5)]
     public List<DataProperty> dataProperties { get; set; }
 
-    [DataMember(IsRequired = false, Order = 6, EmitDefaultValue=false)]
+    [DataMember(IsRequired = false, Order = 6, EmitDefaultValue = false)]
     public List<DataRelationship> dataRelationships { get; set; }
 
     public bool isKeyProperty(string propertyName)
