@@ -53,15 +53,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Adapter\AdapterLibrary\AdapterLibrary.csproj">
-      <Project>{6AFEF057-8D02-4F3C-AC41-6815E9CFD15A}</Project>
-      <Name>AdapterLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Adapter\CSVDataLayer\CSVDataLayer.csproj">
+    <ProjectReference Include="..\..\Adapter\CSVDataLayer\CSVDataLayer.csproj">
       <Project>{4F181541-AFF4-4AE6-9FEE-A7A07E1ACB26}</Project>
       <Name>CSVDataLayer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Libraries\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
+    <ProjectReference Include="..\..\Libraries\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
       <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
       <Name>iRINGLibrary.Desktop</Name>
     </ProjectReference>
