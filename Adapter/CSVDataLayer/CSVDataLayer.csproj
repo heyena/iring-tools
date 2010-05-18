@@ -72,7 +72,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="org.iringtools.adapter.datalayer.proj_12345_000.CSV.Equipment.12345_000.API.xml" />
+    <Content Include="Equipment.12345_000.API.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Equipment.12345_000.API\" />

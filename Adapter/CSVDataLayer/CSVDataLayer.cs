@@ -9,9 +9,9 @@ using org.iringtools.utility;
 using System.Xml.Linq;
 using System.IO;
 using Ciloci.Flee;
-using org.iringtools.adapter.datalayer.proj_12345_000.CSV;
+using org.iringtools.adapter;
 
-namespace org.iringtools.adapter.datalayer
+namespace Bechtel.CSVDataLayer.API
 {
   //NOTE: This CSVDataLayer assumes that property "Tag" is identifier of data objects
   public class CSVDataLayer : IDataLayer
@@ -34,7 +34,9 @@ namespace org.iringtools.adapter.datalayer
       try
       {
         IList<IDataObject> dataObjects = new List<IDataObject>();
-        Type type = Type.GetType(objectType + "DataObject");
+        Type type = Type.GetType("Bechtel.CSVDataLayer.API." + objectType + "DataObject");
+
+        objectType = objectType.Substring(objectType.LastIndexOf('.') + 1);
 
         if (identifiers != null && identifiers.Count > 0)
         {
@@ -218,6 +220,7 @@ namespace org.iringtools.adapter.datalayer
       try
       {
         List<IDataObject> dataObjects = new List<IDataObject>();
+        objectType = objectType.Substring(objectType.LastIndexOf('.') + 1);
         string dataObjectType = objectType + "DataObject";
         Type type = Type.GetType(dataObjectType);
 
@@ -304,7 +307,10 @@ namespace org.iringtools.adapter.datalayer
       {
         // Load config xml
         string dataObjectType = dataObjects.FirstOrDefault().GetType().FullName;
+        
         string objectType = dataObjectType.Substring(0, dataObjectType.Length - "DataObject".Length);
+        objectType = objectType.Substring(objectType.LastIndexOf('.') + 1);
+        
         string configFile = _settings.XmlPath + objectType + "." + _appSettings.ProjectName + "." + _appSettings.ApplicationName + ".xml";
         XDocument configDoc = XDocument.Load(configFile);
         XElement configRootElement = configDoc.Element("commodity");
@@ -410,7 +416,84 @@ namespace org.iringtools.adapter.datalayer
 
     public DataDictionary GetDictionary()
     {
-      return Utility.Read<DataDictionary>(_dataDictionaryPath);
+
+      // Create a DataDictionary instance
+      DataDictionary dataDictionary = new DataDictionary()
+      {
+        dataObjects = new List<DataObject>()
+        {
+          new DataObject()
+          {
+            keyDelimeter = "",
+            keyProperties = new List<KeyProperty>()
+            {
+              new KeyProperty()
+              {
+                dataLength = 50,
+                dataType = DataType.String,
+                propertyName = "Tag",
+                isNullable = false,
+                keyType = KeyType.assigned,
+              },
+            },
+            dataProperties = new List<DataProperty>()
+            {
+              new DataProperty()
+              {
+                dataLength = 255,
+                dataType = DataType.String,
+                propertyName = "PumpType",
+                isNullable = true,
+              },
+              new DataProperty()
+              {
+                dataLength = 255,
+                dataType = DataType.String,
+                propertyName = "PumpDriverType",
+                isNullable = true,
+              },
+              new DataProperty()
+              {
+                dataLength = 16,
+                dataType = DataType.Double,
+                propertyName = "DesignTemp",
+                isNullable = true,
+              },
+              new DataProperty()
+              {
+                dataLength = 16,
+                dataType = DataType.Double,
+                propertyName = "DesignPressure",
+                isNullable = true,
+              },
+              new DataProperty()
+              {
+                dataLength = 16,
+                dataType = DataType.Double,
+                propertyName = "Capacity",
+                isNullable = true,
+              },
+              new DataProperty()
+              {
+                dataLength = 16,
+                dataType = DataType.Double,
+                propertyName = "SpecificGravity",
+                isNullable = true,
+              },
+              new DataProperty()
+              {
+                dataLength = 16,
+                dataType = DataType.Double,
+                propertyName = "DifferentialPressure",
+                isNullable = true,
+              },
+            },
+          objectName = "Equipment",
+          }
+        }
+      };
+
+      return dataDictionary;
     }
 
     private string GetdataObjectType(string objectType)
