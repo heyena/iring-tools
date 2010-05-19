@@ -50,7 +50,7 @@ UI clarifications for the following Issues.
   tag
   type
 }}}
-  * Koos and Darius pointed out that sometimes Valve should appear seperately and sometimes not.
+  * Koos and Darius pointed out that sometimes Valve should appear separately and sometimes not.
   * Hahn noted that we need to handle both cases.
   * Agreed to add a property to the DataDictionary to control whether object is visible
  * Issue 92
