@@ -1,6 +1,6 @@
 #summary Date: 2010/05/18  Time: 08:30 EST
 #labels Meeting
-=Sprint 1 BuyIn Meeting=
+=Sprint 1 Buy-In Meeting=
 
 ==Agenda==
  * Review the Estimates
@@ -19,8 +19,8 @@
 
 ==Estimation Process==
  * Development team had 2 meetings...
-  * iRINGTools_Sprint_01_Estimation_01
-  * iRINGTools_Sprint_01_Estimation_02
+  * [iRINGTools_Sprint_01_Estimation_01]
+  * [iRINGTools_Sprint_01_Estimation_02]
  * Rob did a Effort vs. Work analysis and created a Task Board.
  * The estimates worked out that there was just enough effort to complete all of the items.
  * Koos pointed out that there are some interdependencies.
