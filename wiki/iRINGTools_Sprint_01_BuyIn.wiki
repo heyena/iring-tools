@@ -102,5 +102,5 @@ TAG NAME (My Private Sandbox) [Duplicate 2]
       * Disable Value selection field
 
 ==ActionItems==
-Team to document UI changes for each Issue above with PowerPoint Slides.
-Team to send slides to Darius.
+ * Team to document UI changes for each Issue above with PowerPoint Slides.
+ * Team to send slides to Darius.
