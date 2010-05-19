@@ -88,6 +88,7 @@ namespace org.iringtools.modules.memappingregion
         btnAddValueList.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnAddValueList(txtLabel, e); };
         btnSave.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnSave_Click(txtLabel, e); };
         btnDelete.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnDelete_Click(txtLabel, e); };
+        cbValueList.SelectionChanged += new SelectionChangedEventHandler(cbValueList_SelectionChanged);
 
 #if SILVERLIGHT
         MouseScrollBehavior mouseScrollBehavior = new MouseScrollBehavior();
@@ -110,6 +111,11 @@ namespace org.iringtools.modules.memappingregion
       {
         Error.SetError(ex);
       }
+    }
+
+    void cbValueList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        btnAddValueList.IsEnabled = true;
     }
 
     /// <summary>
@@ -154,7 +160,11 @@ namespace org.iringtools.modules.memappingregion
         tvwMapping.Items.Add(AddNode(graphMap.name, graphMap, null));
       }
 
+      //Add an empty value list item so we can use that value to clear erroneous entries
+      cbValueList.Items.Add(new ComboBoxItem { Content = "<No ValueList>", IsSelected = true});
+     
       // Add value maps to value list drop list
+      
       List<ValueMap> valueMaps = mapping.valueMaps;
 
       if (valueMaps.Count > 0)
@@ -174,6 +184,11 @@ namespace org.iringtools.modules.memappingregion
           }
         }
       }
+
+      //if (cbValueList.SelectedItem == null)
+      //    btnAddValueList.IsEnabled = false;
+      //else
+      //    btnAddValueList.IsEnabled = true;
 
       ChangeControlsState(true);
     }
@@ -608,15 +623,20 @@ namespace org.iringtools.modules.memappingregion
           btnMap.IsEnabled = enabled;
           btnMakeClassRole.IsEnabled = enabled;
 
-          if (enabled && cbValueList.Items.Count > 0)
+          if (enabled && cbValueList.Items.Count > 0 )
           {
             cbValueList.IsEnabled = enabled;
             btnAddValueList.IsEnabled = enabled;
           }
+          else if (enabled && cbValueList.SelectedItem != null)
+          {
+              cbValueList.IsEnabled = false;
+              btnAddValueList.IsEnabled = false;
+          }
           else
           {
-            cbValueList.IsEnabled = false;
-            btnAddValueList.IsEnabled = false;
+              cbValueList.IsEnabled = false;
+              btnAddValueList.IsEnabled = false;
           }
 
           btnDelete.IsEnabled = enabled;
