@@ -84,22 +84,22 @@ TAG NAME (My Private Sandbox) [Duplicate 2]
      * list additional information (repository, read/write access)
      * "Add" and "Remove" buttons
      * Combo box to select writable repository used to Add.
-    * Template UI would get new Parent Template selection field.
-    * Templates UI would get a radio button for
-     * Base Template
-      * Disable Parent Template selection field
-     * Specialized Template
-      * Enable Parent Template Selection
-       * OnSelect - populate roles from parent
-       * Role Name and Description are not editable.
-    * Template UI - Roles Block would get new Value selection field.
-    * Templates UI - Roles Block would get new radio button for
-     * Value
-      * Disable Range selection field
-      * Enable Value selection field
-     * Range
-      * Enable Range selection field
-      * Disable Value selection field
+   * Template UI would get new Parent Template selection field.
+   * Templates UI would get a radio button for
+    * Base Template
+     * Disable Parent Template selection field
+    * Specialized Template
+     * Enable Parent Template Selection
+      * OnSelect - populate roles from parent
+      * Role Name and Description are not editable.
+   * Template UI - Roles Block would get new Value selection field.
+   * Templates UI - Roles Block would get new radio button for
+    * Value
+     * Disable Range selection field
+     * Enable Value selection field
+    * Range
+     * Enable Range selection field
+     * Disable Value selection field
 
 ==ActionItems==
  * Team to document UI changes for each Issue above with PowerPoint Slides.
