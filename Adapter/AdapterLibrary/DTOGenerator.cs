@@ -1034,7 +1034,7 @@ namespace org.iringtools.adapter
 
             dtoServiceWriter.WriteLine(
             @"List<{0}> _dtoList = new List<{0}>(); 
-            var dtoResults = from c in file.Elements(""Envelope"").Elements(""Payload"").Elements(""DataTransferObject"") select c;
+            var dtoResults = from c in file.Elements(""{1}"").Elements(""{2}"") select c;
 
             foreach (var dtoResult in dtoResults)
             {{
@@ -1058,7 +1058,7 @@ namespace org.iringtools.adapter
             foreach ({0} dto in _dtoList)
             {{
               dtoList.Add(dto);
-            }}", qualifiedGraphName);
+            }}", qualifiedGraphName, "ArrayOf" + graphMap.name, graphMap.name);
           }
 
           dtoServiceWriter.WriteLine();
