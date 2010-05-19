@@ -21,7 +21,7 @@
  * Development team had 2 meetings...
   * [iRINGTools_Sprint_01_Estimation_01]
   * [iRINGTools_Sprint_01_Estimation_02]
- * Rob did a Effort vs. Work analysis and created a Task Board.
+ * Rob did a Effort vs. Work analysis and created a Task Board (http://scrumy.com/iring-tools)
  * The estimates worked out that there was just enough effort to complete all of the items.
  * Koos pointed out that there are some interdependencies.
   * Rob agreed, and noted that no Gant chart was done.
