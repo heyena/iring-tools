@@ -529,6 +529,9 @@ namespace org.iringtools.modules.memappingregion
     public void btnAddValueList(object sender, RoutedEventArgs e)
     {
       MappingItem mappingItem = model.SelectedMappingItem;
+      string valuelist = Presenter.selectedValueList;
+      if (valuelist == "<No ValueList>")
+          valuelist = "";  
 
       if (mappingItem == null)
         return;
@@ -539,22 +542,33 @@ namespace org.iringtools.modules.memappingregion
         {
           MessageBox.Show("Please select a property to map", "MAP ROLE", MessageBoxButton.OK);
         }
-        else if (String.IsNullOrEmpty(Presenter.selectedValueList))
+        else if (Presenter.selectedValueList == null)
         {
           MessageBox.Show("Please select a value list", "MAP ROLE", MessageBoxButton.OK);
         }
-        else if (mappingItem.TemplateMap.type == TemplateType.Property)
-        {
+        else if (mappingItem.TemplateMap.type == TemplateType.Property )
+        {   
           RoleMap roleMap = mappingItem.RoleMap;
-          roleMap.dataType = String.Empty;
-          roleMap.propertyName = model.SelectedDataObject.DataProperty.propertyName;
-          //roleMap.reference = String.Empty;
-          roleMap.valueList = Presenter.selectedValueList;
+
+          if (roleMap.dataType != null || roleMap.dataType != "")
+             roleMap.valueList = valuelist;
+
+            if (roleMap.reference == null || roleMap.reference == "")
+              roleMap.propertyName = model.SelectedDataObject.DataProperty.propertyName;
+          
           model.SelectedMappingItem.itemTextBlock.Text = model.SelectedMappingItem.itemTextBlock.Text.Replace(Presenter.unmappedToken, "");
           
           // Refresh roleMap in detail pane
           model.DetailProperties.Clear();
           Presenter.RefreshRoleMap(roleMap);
+        }
+        else if (mappingItem.TemplateMap.type == TemplateType.Relationship)
+        {
+            RoleMap roleMap = mappingItem.RoleMap;
+            roleMap.valueList = valuelist;
+            roleMap.propertyName = string.Empty;// model.SelectedMappingItem.itemTextBlock.Text.Replace(Presenter.unmappedToken, "");
+            model.DetailProperties.Clear();
+            Presenter.RefreshRoleMap(roleMap);
         }
       }
       else
