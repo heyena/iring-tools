@@ -226,7 +226,7 @@ namespace DbDictionaryService
                         {
                             tableName = tableName,
                             dataProperties = new List<DataProperty>(),
-                            keyProperties = new KeyProperties(),
+                            keyProperties = new List<KeyProperty>(),
                             dataRelationships = new List<DataRelationship>(), // to be supported in the future
                             objectName = Utility.NameSafe(tableName)
                         };
