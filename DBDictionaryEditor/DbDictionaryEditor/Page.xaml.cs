@@ -363,7 +363,10 @@ namespace DbDictionaryEditor
             } 
             else if (newProvider.Contains("ORACLE"))
             {
-                connString = "";// TODO
+                connString = string.Format("Data Source={0};User ID={1};Password={2};",
+                    newDataSourceName,
+                    newDatabaseUserName,
+                    newDatabaseUserPassword);
             } 
             else if (newProvider.Contains("MYSQL"))//using default port
             {

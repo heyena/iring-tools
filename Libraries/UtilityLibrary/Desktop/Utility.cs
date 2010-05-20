@@ -928,6 +928,8 @@ namespace org.iringtools.utility
         case "tinyint": return "Int16";
         case "number": return "Int32";
         case "long": return "Int64";
+        case "clob": return "String";
+        case "blob": return "String";
         default: throw new Exception("SQL type \"" + sqlType + "\" not currently supported.");
       }
     }
