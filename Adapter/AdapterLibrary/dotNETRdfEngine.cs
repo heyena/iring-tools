@@ -242,7 +242,6 @@ namespace org.iringtools.adapter.semantic
         public override void Initialize()
         {
             _msStore = new MicrosoftSqlStoreManager(_settings.DBServer, _settings.DBname, _settings.DBUser, _settings.DBPassword);
-            _msStore.Open(true);
         }
 
         public override Response Post(string graphName, List<DataTransferObject> dtoList)
@@ -253,6 +252,7 @@ namespace org.iringtools.adapter.semantic
             {
                 using (_msStore)
                 {
+                    _msStore.Open(false);
 
                     if (dtoList.FirstOrDefault() != null)
                     {
