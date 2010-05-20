@@ -179,12 +179,20 @@
                   <xsl:attribute name="as">
                     <xsl:value-of select="concat($rdl, substring-after($modelURI, 'rdl:'))"/>
                   </xsl:attribute>
-                  <xsl:value-of select="@value"/>
                 </xsl:when>
                 <xsl:otherwise>
                   <xsl:attribute name="as">
                     <xsl:value-of select="concat($xsd, substring-after($dataType, 'xsd:'))"/>
                   </xsl:attribute>
+                </xsl:otherwise>
+              </xsl:choose>
+              <xsl:choose>
+                <xsl:when test="string-length(@value)=0">
+                  <xsl:attribute name="reference">
+                    <xsl:value-of select="concat($rdf, 'nil')"/>
+                  </xsl:attribute>
+                </xsl:when>
+                <xsl:otherwise>
                   <xsl:value-of select="@value"/>
                 </xsl:otherwise>
               </xsl:choose>
@@ -219,9 +227,7 @@
       <xsl:with-param name="classId" select="@classId"/>
       <xsl:with-param name="classInstance" select="concat($classXPath2, '_', $classInstance)"/>
     </xsl:call-template>
-    
-
-    
+        
     <!-- process templateMaps -->
     <xsl:apply-templates select="TemplateMaps/TemplateMap">
       <xsl:with-param name="xPath" select="$classXPath"/>

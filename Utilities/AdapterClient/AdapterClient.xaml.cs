@@ -42,31 +42,32 @@ namespace IDS_ADI.iRING.Adapter
 
       Uri scopesURI = new Uri(textBoxAdapterURL.Text + "/scopes");
 
-      client.DownloadStringAsync(scopesURI); 
+      client.DownloadStringAsync(scopesURI);
     }
 
     private void buttonPull_Click(object sender, RoutedEventArgs e)
     {
-      _messages.Add(new StatusMessage { Message = "Posting Pull Request...", ImageName = "info_22.png" });
+        _messages.Add(new StatusMessage { Message = "Posting Pull Request...", ImageName = "info_22.png" });
 
-      WebClient client = new WebClient();
-      client.UploadStringCompleted += new UploadStringCompletedEventHandler(client_UploadStringCompleted);
-      client.Headers["Content-type"] = "application/xml";
-      client.Encoding = Encoding.UTF8;
-      
-      Uri pullURI = new Uri(textBoxAdapterURL.Text + "/" + _project.Name + "/" + _application.Name + "/pull");
+        WebClient client = new WebClient();
+        client.UploadStringCompleted += new UploadStringCompletedEventHandler(client_UploadStringCompleted);
+        client.Headers["Content-type"] = "application/xml";
+        client.Encoding = Encoding.UTF8;
 
-      Request request = new Request();
-      WebCredentials targetCredentials = new WebCredentials();
-      string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
-      request.Add("targetUri", textBoxTargetURL.Text + "/" + _project.Name + "/" + _application.Name + "/sparql");
-      request.Add("targetCredentials", targetCredentialsXML);
-      request.Add("graphName", textBoxGraphName.Text);
-      request.Add("filter", "");
+        Uri pullURI = new Uri(textBoxAdapterURL.Text + "/" + _project.Name + "/" + _application.Name + "/pull");
 
-      string message = Utility.SerializeDataContract<Request>(request);
+        Request request = new Request();
+        WebCredentials targetCredentials = new WebCredentials();
+        string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
+        //request.Add("targetUri", textBoxTargetURL.Text + "/" + _project.Name + "/" + _application.Name + "/sparql");
+        request.Add("targetUri", textBoxTargetURL.Text + "/sparql/");
+        request.Add("targetCredentials", targetCredentialsXML);
+        request.Add("graphName", textBoxGraphName.Text);
+        request.Add("filter", "");
 
-      client.UploadStringAsync(pullURI, message);
+        string message = Utility.SerializeDataContract<Request>(request);
+
+        client.UploadStringAsync(pullURI, message);
     }
 
     private void buttonClear_Click(object sender, RoutedEventArgs e)
