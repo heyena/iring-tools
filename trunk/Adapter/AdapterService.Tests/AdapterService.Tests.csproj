@@ -153,6 +153,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Transforms\dto2qxf.xsl" />
+    <Content Include="Transforms\qxf2rdf.xsl" />
     <Content Include="XML\BindingConfiguration.12345_000.ABC.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
