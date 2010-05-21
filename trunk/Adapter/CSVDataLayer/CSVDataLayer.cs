@@ -433,7 +433,6 @@ namespace Bechtel.CSVDataLayer.API
                 dataType = DataType.String,
                 propertyName = "Tag",
                 isNullable = false,
-                keyType = KeyType.assigned,
               },
             },
             dataProperties = new List<DataProperty>()
