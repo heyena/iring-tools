@@ -44,6 +44,12 @@ namespace org.iringtools.informationmodel.usercontrols
 
       if (CompletedEventArgs.CheckForType(CompletedEventType.GetClass))
       {
+        if (CompletedEventArgs.Error != null)
+        {
+            MessageBox.Show(CompletedEventArgs.FriendlyErrorMessage, "Get Class Error", MessageBoxButton.OK);
+            return;
+        }
+
         QMXF qmxf = (QMXF)CompletedEventArgs.Data;
         ClassDefinition classDefinition = qmxf.classDefinitions.FirstOrDefault();
 
@@ -69,6 +75,12 @@ namespace org.iringtools.informationmodel.usercontrols
       }
       else if (CompletedEventArgs.CheckForType(CompletedEventType.GetClassLabel))
       {
+        if (CompletedEventArgs.Error != null)
+        {
+            MessageBox.Show(CompletedEventArgs.FriendlyErrorMessage, "Get Class Label", MessageBoxButton.OK);
+            return;
+        }
+
         DisplayAndSaveLabel(CompletedEventArgs.Data);
       }
     }

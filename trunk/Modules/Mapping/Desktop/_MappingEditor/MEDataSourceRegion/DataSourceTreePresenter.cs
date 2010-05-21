@@ -101,8 +101,15 @@ namespace org.iringtools.modules.medatasourceregion
 
       // handle the GetDataDictionary event 
       if (args.CheckForType(CompletedEventType.GetDataDictionary))
-        GetDictionaryHandler(args);
+      {
+          if (args.Error != null)
+          {
+              MessageBox.Show(args.FriendlyErrorMessage, "Get Data Dictionary Error", MessageBoxButton.OK);
+              return;
+          }
 
+          GetDictionaryHandler(args);
+      }
     }
 
     /// <summary>

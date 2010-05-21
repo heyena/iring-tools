@@ -162,6 +162,8 @@ namespace org.iringtools.modulelibrary.layerdal
                     args = new CompletedEventArgs
                     {                        
                         CompletedType = CompletedEventType.Search,
+                        Error = ex,
+                        FriendlyErrorMessage = "Reference Data Service returned an error while performing search.",
                     };                    
                     Error.SetError(ex);
                 }
@@ -200,6 +202,8 @@ namespace org.iringtools.modulelibrary.layerdal
                     args = new CompletedEventArgs
                     {
                         CompletedType = CompletedEventType.Search,
+                        Error = ex,
+                        FriendlyErrorMessage = "Reference Data Service returned an error while performing search.",
                     };
                     Error.SetError(ex);
                 }
@@ -238,6 +242,8 @@ namespace org.iringtools.modulelibrary.layerdal
                     args = new CompletedEventArgs
                     {
                         CompletedType = CompletedEventType.Find,
+                        Error = ex,
+                        FriendlyErrorMessage = "Reference Data Service returned an error while performing \"Find\".",
                     };
                     Error.SetError(ex);
                 }
@@ -280,11 +286,15 @@ namespace org.iringtools.modulelibrary.layerdal
                         args = new CompletedEventArgs
                         {
                             CompletedType = CompletedEventType.GetClass,
+                            Error = ex,
+                            FriendlyErrorMessage = "Reference Data Service returned an error while performing GetClass.",
                         };      
                     else if (sender == _templateClient)
                         args = new CompletedEventArgs
                         {
                             CompletedType = CompletedEventType.GetTemplate,
+                            Error = ex,
+                            FriendlyErrorMessage = "Reference Data Service returned an error while performing GetTemplate.",
                         };
                     Error.SetError(ex);
                 }
@@ -320,6 +330,8 @@ namespace org.iringtools.modulelibrary.layerdal
                     args = new CompletedEventArgs
                     {
                         CompletedType = CompletedEventType.GetSubClasses,
+                        Error = ex,
+                        FriendlyErrorMessage = "Reference Data Service returned an error while performing GetSubClasses.",
                     };
                     Error.SetError(ex);
                 }              
@@ -353,6 +365,8 @@ namespace org.iringtools.modulelibrary.layerdal
                     args = new CompletedEventArgs
                     {
                         CompletedType = CompletedEventType.GetClassTemplates,
+                        Error = ex,
+                        FriendlyErrorMessage = "Reference Data Service returned an error while performing GetClassTemplates.",
                     };
                   Error.SetError(ex);
               }            
@@ -386,6 +400,8 @@ namespace org.iringtools.modulelibrary.layerdal
                   args = new CompletedEventArgs
                   {
                       CompletedType = CompletedEventType.PostClass,
+                      Error = ex,
+                      FriendlyErrorMessage = "Reference Data Service returned an error while posting the class.",
                   };
                   Error.SetError(ex);
               }              
@@ -419,6 +435,8 @@ namespace org.iringtools.modulelibrary.layerdal
                   args = new CompletedEventArgs
                   {
                       CompletedType = CompletedEventType.PostTemplate,
+                      Error = ex,
+                      FriendlyErrorMessage = "Reference Data Service returned an error while posting the template.",
                   };
                   Error.SetError(ex);
               }              
