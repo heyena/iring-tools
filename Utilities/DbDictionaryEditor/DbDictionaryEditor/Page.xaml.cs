@@ -588,72 +588,88 @@ namespace DbDictionaryEditor
 
         private void btnSaveDbDictionary_Click(object sender, RoutedEventArgs e)
         {
-            biBusyWindow.IsBusy = true;
-            selectedCBItem = cbDictionary.SelectedItem.ToString();
-            string projectName = cbDictionary.SelectedItem.ToString().Split('.')[1];
-            string applicationName = cbDictionary.SelectedItem.ToString().Split('.')[2];
-            
-            DatabaseDictionary databaseDictionary = new DatabaseDictionary();
-            object currentObject = null;
-            DataObject table;
-            databaseDictionary.dataObjects = new List<DataObject>();
-            databaseDictionary.connectionString = tvwItemDestinationRoot.Tag.ToString().Split('~')[0];
-            string provider = tvwItemDestinationRoot.Tag.ToString().Split('~')[1];
-            databaseDictionary.provider = (Provider)Enum.Parse(typeof(Provider), provider, true);
-            foreach (TreeViewItem tableTreeViewItem in tvwItemDestinationRoot.Items)
+            try
             {
-              table = new DataObject();
-                currentObject = tableTreeViewItem.Tag;
-                if (currentObject is DataObject)
-                {
-                  table.objectName = ((DataObject)currentObject).objectName;
-                  table.tableName = ((DataObject)currentObject).tableName;
-                    table.keyProperties = new KeyProperties();
-                    table.dataRelationships = new List<DataRelationship>();
-                    table.dataProperties = new List<DataProperty>();
-                }
-                foreach (TreeViewItem columnTreeViewItem in tableTreeViewItem.Items)
-                {
-                    currentObject = columnTreeViewItem.Tag;
-                    if (currentObject is org.iringtools.library.KeyProperty)
-                    { 
-                    //    DataType dataType =  (DataType)Enum.Parse(typeof(DataType),((org.iringtools.library.KeyProperty)currentObject).dataType.ToString(),true);
-                        org.iringtools.library.KeyProperty key = new org.iringtools.library.KeyProperty();
-                        key.columnName = ((org.iringtools.library.KeyProperty)currentObject).columnName;
-                        key.dataLength = ((org.iringtools.library.KeyProperty)currentObject).dataLength;
-                    //    key.dataType = dataType;
-                        key.isNullable = ((org.iringtools.library.KeyProperty)currentObject).isNullable;
-                        key.propertyName = ((org.iringtools.library.KeyProperty)currentObject).propertyName;
-                        table.keyProperties.Add(key);        
-                    }
-                    else
-                    {
-                      //    DataType dataType = (DataType)Enum.Parse(typeof(DataType), ((Column)currentObject).dataType.ToString(), true);
-                      DataProperty column = new DataProperty();
-                      column.columnName = ((DataProperty)currentObject).columnName;
-                      column.dataLength = ((DataProperty)currentObject).dataLength;
-                      //     column.dataType = dataType;
-                      column.isNullable = ((DataProperty)currentObject).isNullable;
-                      column.propertyName = ((DataProperty)currentObject).propertyName;
-                      table.dataProperties.Add(column); 
-                    }
+                biBusyWindow.IsBusy = true;
+                selectedCBItem = cbDictionary.SelectedItem.ToString();
+                string projectName = cbDictionary.SelectedItem.ToString().Split('.')[1];
+                string applicationName = cbDictionary.SelectedItem.ToString().Split('.')[2];
 
+                DatabaseDictionary databaseDictionary = new DatabaseDictionary();
+                object currentObject = null;
+                DataObject table;
+                databaseDictionary.dataObjects = new List<DataObject>();
+                databaseDictionary.connectionString = tvwItemDestinationRoot.Tag.ToString().Split('~')[0];
+                string provider = tvwItemDestinationRoot.Tag.ToString().Split('~')[1];
+                databaseDictionary.provider = (Provider)Enum.Parse(typeof(Provider), provider, true);
+                foreach (TreeViewItem tableTreeViewItem in tvwItemDestinationRoot.Items)
+                {
+                    table = new DataObject();
+                    currentObject = tableTreeViewItem.Tag;
+                    if (currentObject is DataObject)
+                    {
+                        table.objectName = ((DataObject)currentObject).objectName;
+                        table.tableName = ((DataObject)currentObject).tableName;
+                        table.keyProperties = new KeyProperties();
+                        table.dataRelationships = new List<DataRelationship>();
+                        table.dataProperties = new List<DataProperty>();
+                    }
+                    foreach (TreeViewItem columnTreeViewItem in tableTreeViewItem.Items)
+                    {
+                        currentObject = columnTreeViewItem.Tag;
+                        if (currentObject is org.iringtools.library.KeyProperty)
+                        {
+                            //    DataType dataType =  (DataType)Enum.Parse(typeof(DataType),((org.iringtools.library.KeyProperty)currentObject).dataType.ToString(),true);
+                            org.iringtools.library.KeyProperty key = new org.iringtools.library.KeyProperty();
+                            key.columnName = ((org.iringtools.library.KeyProperty)currentObject).columnName;
+                            key.dataLength = ((org.iringtools.library.KeyProperty)currentObject).dataLength;
+                            //    key.dataType = dataType;
+                            key.isNullable = ((org.iringtools.library.KeyProperty)currentObject).isNullable;
+                            key.propertyName = ((org.iringtools.library.KeyProperty)currentObject).propertyName;
+                            table.keyProperties.Add(key);
+                        }
+                        else
+                        {
+                            //    DataType dataType = (DataType)Enum.Parse(typeof(DataType), ((Column)currentObject).dataType.ToString(), true);
+                            DataProperty column = new DataProperty();
+                            column.columnName = ((DataProperty)currentObject).columnName;
+                            column.dataLength = ((DataProperty)currentObject).dataLength;
+                            //     column.dataType = dataType;
+                            column.isNullable = ((DataProperty)currentObject).isNullable;
+                            column.propertyName = ((DataProperty)currentObject).propertyName;
+                            table.dataProperties.Add(column);
+                        }
+
+                    }
+                    databaseDictionary.dataObjects.Add(table);
                 }
-                databaseDictionary.dataObjects.Add(table);
+
+                _dal.SaveDatabaseDictionary(databaseDictionary, projectName, applicationName);
             }
-            
-            _dal.SaveDatabaseDictionary(databaseDictionary, projectName, applicationName);
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error occured. Please retry.", "Save Database Dictionary Error", MessageBoxButton.OK);
+                biBusyWindow.IsBusy = false;
+            }
         }
 
         private void btnPostDictionary_Click(object sender, RoutedEventArgs e)
         {
-            biBusyWindow.IsBusy = true;
-            isPosting = true;
+            try
+            {
+                biBusyWindow.IsBusy = true;
+                isPosting = true;
 
-            string project = cbDictionary.SelectedItem.ToString().Split('.')[1];
-            string application = cbDictionary.SelectedItem.ToString().Split('.')[2];
-            
-            _dal.DeleteApp(project, application);
+                string project = cbDictionary.SelectedItem.ToString().Split('.')[1];
+                string application = cbDictionary.SelectedItem.ToString().Split('.')[2];
+
+                _dal.DeleteApp(project, application);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Error occured. Please retry.", "Post Database Dictionary Error", MessageBoxButton.OK);
+                biBusyWindow.IsBusy = false;
+            }
         }
 
         private void clearComboBox(ComboBox combox)

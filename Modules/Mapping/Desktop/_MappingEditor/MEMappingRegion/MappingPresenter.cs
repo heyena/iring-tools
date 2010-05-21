@@ -132,10 +132,20 @@ namespace org.iringtools.modules.memappingregion
 
       if (args.CheckForType(CompletedEventType.GetMapping))
       {
+        if (args.Error != null)
+        {
+            MessageBox.Show(args.FriendlyErrorMessage, "Get Data Dictionary Error", MessageBoxButton.OK);
+            return;
+        }
         GetMappingHandler(args);
       }
       else if (args.CheckForType(CompletedEventType.GetClassLabel))
       {
+        if (args.Error != null)
+        {
+            MessageBox.Show(args.FriendlyErrorMessage, "Get Class Label Error", MessageBoxButton.OK);
+            return;
+        }
         GetClassLabelHandler(args);
       }
     }

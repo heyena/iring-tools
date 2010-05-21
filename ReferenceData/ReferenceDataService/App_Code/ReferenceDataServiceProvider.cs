@@ -1069,309 +1069,98 @@ namespace org.ids_adi.iring.referenceData
 
         public Response PostTemplate(QMXF qmxf)
         {
-            Response response = null;
-            string sparql = "PREFIX eg: <http://example.org/data#> "
-                            + "PREFIX rdl: <http://rdl.rdlfacade.org/data#> "
-                            + "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
-                            + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
-                            + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "
-                            + "PREFIX dm: <http://dm.rdlfacade.org/data#> "
-                            + "PREFIX tpl: <http://tpl.rdlfacade.org/data#> "
-                            + "PREFIX owl: <http://www.w3.org/2002/07/owl#> "
-                            + "INSERT DATA { ";
-            if (qmxf.templateDefinitions.Count > 0)
+            try
             {
-                foreach (TemplateDefinition template in qmxf.templateDefinitions)
+                Response response = null;
+                string sparql = "PREFIX eg: <http://example.org/data#> "
+                                + "PREFIX rdl: <http://rdl.rdlfacade.org/data#> "
+                                + "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
+                                + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
+                                + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "
+                                + "PREFIX dm: <http://dm.rdlfacade.org/data#> "
+                                + "PREFIX tpl: <http://tpl.rdlfacade.org/data#> "
+                                + "PREFIX owl: <http://www.w3.org/2002/07/owl#> "
+                                + "INSERT DATA { ";
+                if (qmxf.templateDefinitions.Count > 0)
                 {
-                    string ID = string.Empty;
-                    string id = string.Empty;
-                    string label = string.Empty;
-                    string description = string.Empty;
-                    string generatedTempId = string.Empty;
-                    string templateName = string.Empty;
-                    string roleDefinition = string.Empty;
-                    int index = 1;
-                    string nameSparql = string.Empty;
-                    string specSparql = string.Empty;
-                    string classSparql = string.Empty;
-                    int repository = 0;
-                    int templateIndex = -1;
-
-                    repository = getIndexFromName(template.repositoryName);
-                    Repository source = _repositories[repository];
-
-                    ID = template.identifier;
-
-                    QMXF q = new QMXF();
-                    if (ID != null)
-                    {
-                        if (!ID.StartsWith("tpl:"))
-                        {
-                            id = ID.Substring((ID.LastIndexOf("#") + 1), ID.Length - (ID.LastIndexOf("#") + 1));                          
-                        }
-                        else
-                        {
-                            id = ID.Substring(4, (ID.Length - 4));
-                            ID = "http://tpl.rdlfacade.org/data#" + ID;
-                        }
-                        q = GetTemplate(id);
-                        foreach (TemplateDefinition templateFound in q.templateDefinitions)
-                        {
-                            templateIndex++;
-                            if (templateFound.repositoryName.Equals(_repositories[repository]))
-                            {
-                                ID = "<" + ID + ">";
-                                Utility.WriteString("Template found: " + q.templateDefinitions[templateIndex].name[0].value, "stats.log", true);
-                                break;
-                            }
-                        }
-                    }
-
-                    if (q.templateDefinitions.Count == 0)
-                    {
-                        foreach (QMXFName name in template.name)
-                        {
-                            label = name.value;
-
-                            //ID generator
-                            templateName = "Template definition " + label;
-                            /// TODO: change to class registry base
-                            if (_useExampleRegistryBase)
-                                generatedTempId = CreateIdsAdiId(_exampleRegistryBase, templateName);
-                            else
-                                generatedTempId = CreateIdsAdiId(_templateRegistryBase, templateName);
-                            ID = "<" + generatedTempId + ">";
-                            Utility.WriteString("\n" + ID + "\t" + label, "TempDef IDs.log", true);
-                            //append description to sparql query
-                            if (template.description.Count == 0)
-                            {
-                                sparql += ID + " rdfs:label \"" + label + "\"^^xsd:string . ";
-                            }
-                            else
-                            {
-                                sparql += ID + " rdfs:label \"" + label + "\"^^xsd:string ; ";
-                            }
-                            foreach (Description descr in template.description)
-                            {
-                                description = descr.value;
-                                sparql += " rdfs:comment \"" + description + "\"^^xsd:string ; "
-                                        + " tpl:R35529169909 \"" + template.roleDefinition.Count + "\"^^xsd:int . ";
-                            }
-
-                            foreach (RoleDefinition role in template.roleDefinition)
-                            {
-
-                                string roleID = string.Empty;
-                                string roleLabel = string.Empty;
-                                string roleDescription = string.Empty;
-                                string generatedId = string.Empty;
-                                string genName = string.Empty;
-
-                                //ID generator
-                                genName = "Role definition " + roleLabel;
-                                /// TODO: change to template registry base
-                                if (_useExampleRegistryBase)
-                                    generatedId = CreateIdsAdiId(_exampleRegistryBase, genName);
-                                else
-                                    generatedId = CreateIdsAdiId(_templateRegistryBase, genName);
-
-                                roleID = "<" + generatedId + ">";
-
-                                //roleID = role.identifier;
-                                foreach (QMXFName roleName in role.name)
-                                {
-                                    roleLabel = roleName.value;
-                                    roleDescription = role.description.value;
-                                    Utility.WriteString("\n" + roleID + "\t" + roleLabel, "RoleDef IDs.log", true);
-                                }
-                                //append role to sparql query
-                                sparql += roleID + " rdf:type tpl:R74478971040 ; ";
-
-                                if (role.range.StartsWith("http://www.w3.org/2000/01/rdf-schema#")
-                                    || role.range.StartsWith("http://www.w3.org/2001/XMLSchema"))
-                                {
-                                    sparql += " rdf:type owl:DataTypeProperty ; ";
-                                }
-                                else
-                                {
-                                    sparql += " rdf:type owl:ObjectProperty ; "
-                                            + " rdf:type owl:FunctionalProperty ; ";
-                                }
-
-                                sparql += " rdfs:domain " + ID + " ; "
-                                        + " rdfs:range <" + role.range + "> ; "
-                                        + " tpl:R97483568938 \"" + index + "\"^^xsd:int ; "
-                                        + " rdfs:label \"" + roleLabel + "\"@en ; "
-                                        + " rdfs:comment \"" + roleDescription + "\"@en . ";
-
-                                index++;
-                            }
-                            //status
-                            sparql += "_:status rdf:type tpl:R20247551573 ; "
-                                      + "tpl:R64574858717 " + ID + " ; "
-                                      + "tpl:R56599656536 rdl:R6569332477 ; "
-                                      + "tpl:R61794465713 rdl:R3732211754 . ";
-
-                            sparql = sparql.Insert(sparql.LastIndexOf("."), "}").Remove(sparql.Length - 1);
-                            response = PostToRepository(source, sparql);
-                        }
-                    }
-                    else
-                    {
-                        TemplateDefinition td = q.templateDefinitions[templateIndex];
-                        string rName = string.Empty;
-
-                        sparql = sparql.Replace("INSERT DATA { ", "MODIFY DELETE { ");
-                        foreach (QMXFName name in td.name)
-                        {
-                            ID = td.identifier;
-                            label = name.value;
-                            nameSparql = sparql + ID + " rdfs:label \"" + label + "\"^^xsd:string ; ";
-                            foreach (Description descr in td.description)
-                            {
-                                description = descr.value;
-                                nameSparql += "rdfs:comment \"" + description + "\"^^xsd:string ; "
-                                            + "tpl:R35529169909 \"" + td.roleDefinition.Count + "\"^^xsd:int . ";
-                            }
-                            index = 0;
-                            foreach (RoleDefinition rd in td.roleDefinition)
-                            {
-                                foreach (QMXFName rn in rd.name)
-                                {
-                                    rName = rn.value;
-                                    nameSparql += "<" + rd.identifier + "> rdfs:label \"" + rName + "\"@en ; ";
-                                    nameSparql += "rdfs:comment \"" + rd.description.value + "\"@en ; ";
-                                    if (rd.range.StartsWith("http://www.w3.org/2000/01/rdf-schema#")
-                                      || rd.range.StartsWith("http://www.w3.org/2001/XMLSchema"))
-                                    {
-                                        nameSparql += " rdf:type owl:DataTypeProperty ; ";
-                                    }
-                                    else
-                                    {
-                                        nameSparql += " rdf:type owl:ObjectProperty ; "
-                                                + " rdf:type owl:FunctionalProperty ; ";
-                                    }
-                                    nameSparql += "rdf:type tpl:R74478971040 ; "
-                                          + " rdfs:domain " + ID + " ; "
-                                          + " rdfs:range <" + rd.range + "> ; "
-                                          + " tpl:R97483568938 \"" + rd.description.value + "\"^^xsd:int . ";
-                                }
-                            }
-                            nameSparql = nameSparql.Insert(nameSparql.LastIndexOf("."), "}").Remove(nameSparql.Length - 1);
-                            //}
-                        }
-                        foreach (QMXFName name in template.name)
-                        {
-                            string gen = String.Empty;
-                            string generatedId = string.Empty;
-                            string roleID = string.Empty;
-
-                            label = name.value;
-                            nameSparql += " INSERT { " + ID + " rdfs:label \"" + label + "\"^^xsd:string ; ";
-                            foreach (Description descr in template.description)
-                            {
-                                description = descr.value;
-                                nameSparql += "rdfs:comment \"" + description + "\"^^xsd:string ; "
-                                           + "tpl:R35529169909 \"" + template.roleDefinition.Count + "\"^^xsd:int . ";
-                            }
-                            index = 0;
-                            foreach (RoleDefinition def in template.roleDefinition)
-                            {
-
-                                foreach (QMXFName defName in def.name)
-                                {
-                                    if (def.identifier != null)
-                                    {
-                                        roleID = def.identifier;
-                                    }
-                                    else
-                                    {
-                                        gen = "Role definition " + label;
-                                        /// TODO: change to template registry base
-                                        if (_useExampleRegistryBase)
-                                            generatedId = CreateIdsAdiId(_exampleRegistryBase, gen);
-                                        else
-                                            generatedId = CreateIdsAdiId(_templateRegistryBase, gen);
-
-                                        roleID = generatedId;
-                                    }
-                                    nameSparql += "<" + roleID + "> rdfs:label \"" + defName.value + "\"@en ; ";
-                                    nameSparql += "rdfs:comment \"" + def.description.value + "\"@en ; ";
-
-                                    if (def.range.StartsWith("http://www.w3.org/2000/01/rdf-schema#")
-                                    || def.range.StartsWith("http://www.w3.org/2001/XMLSchema"))
-                                    {
-                                        nameSparql += " rdf:type owl:DataTypeProperty ; ";
-                                    }
-                                    else
-                                    {
-                                        nameSparql += " rdf:type owl:ObjectProperty ; "
-                                                + " rdf:type owl:FunctionalProperty ; ";
-                                    }
-                                    nameSparql += "rdf:type tpl:R74478971040 ; "
-                                            + " rdfs:domain " + ID + " ; "
-                                            + " rdfs:range <" + def.range + "> ; "
-                                            + " tpl:R97483568938 \"" + ++index + "\"^^xsd:int . ";
-                                }
-                            }
-                            nameSparql = nameSparql.Insert(nameSparql.LastIndexOf("."), "}").Remove(nameSparql.Length - 1);
-                        }
-                        response = PostToRepository(_repositories[repository], nameSparql);
-                    }
-                }
-            }
-            else//template qualification
-            {
-                if (qmxf.templateQualifications.Count > 0)
-                {
-                    foreach (TemplateQualification template in qmxf.templateQualifications)
+                    foreach (TemplateDefinition template in qmxf.templateDefinitions)
                     {
                         string ID = string.Empty;
                         string id = string.Empty;
                         string label = string.Empty;
                         string description = string.Empty;
-                        //ID = template.identifier.Remove(0, 1);
                         string generatedTempId = string.Empty;
                         string templateName = string.Empty;
                         string roleDefinition = string.Empty;
-                        string specialization = string.Empty;
+                        int index = 1;
                         string nameSparql = string.Empty;
                         string specSparql = string.Empty;
                         string classSparql = string.Empty;
+                        int repository = 0;
+                        int templateIndex = -1;
+
+                        repository = getIndexFromName(template.repositoryName);
+                        Repository source = _repositories[repository];
 
                         ID = template.identifier;
 
                         QMXF q = new QMXF();
                         if (ID != null)
                         {
-                            id = ID.Substring((ID.LastIndexOf("#") + 1), ID.Length - (ID.LastIndexOf("#") + 1));
+                            if (!ID.StartsWith("tpl:"))
+                            {
+                                id = ID.Substring((ID.LastIndexOf("#") + 1), ID.Length - (ID.LastIndexOf("#") + 1));
+                            }
+                            else
+                            {
+                                id = ID.Substring(4, (ID.Length - 4));
+                                ID = "http://tpl.rdlfacade.org/data#" + ID;
+                            }
                             q = GetTemplate(id);
-                            ID = "tpl:" + template.identifier;
+                            foreach (TemplateDefinition templateFound in q.templateDefinitions)
+                            {
+                                templateIndex++;
+                                if (templateFound.repositoryName.Equals(_repositories[repository]))
+                                {
+                                    ID = "<" + ID + ">";
+                                    Utility.WriteString("Template found: " + q.templateDefinitions[templateIndex].name[0].value, "stats.log", true);
+                                    break;
+                                }
+                            }
                         }
 
-                        if (q.templateQualifications.Count == 0)
+                        if (q.templateDefinitions.Count == 0)
                         {
                             foreach (QMXFName name in template.name)
                             {
                                 label = name.value;
 
                                 //ID generator
-                                templateName = "Template qualification " + label;
+                                templateName = "Template definition " + label;
                                 /// TODO: change to class registry base
                                 if (_useExampleRegistryBase)
                                     generatedTempId = CreateIdsAdiId(_exampleRegistryBase, templateName);
                                 else
                                     generatedTempId = CreateIdsAdiId(_templateRegistryBase, templateName);
-                                ID = "<" + generatedTempId +">";
-                                Utility.WriteString("\n" + ID + "\t" + label, "TempQual IDs.log", true);
-                                specialization = template.qualifies;
-                                sparql += "_:spec rdf:type dm:Specialization ; "
-                                        + "dm:hasSuperclass <" + specialization + "> ; "
-                                        + "dm:hasSubclass " + ID + " . ";
+                                ID = "<" + generatedTempId + ">";
+                                Utility.WriteString("\n" + ID + "\t" + label, "TempDef IDs.log", true);
+                                //append description to sparql query
+                                if (template.description.Count == 0)
+                                {
+                                    sparql += ID + " rdfs:label \"" + label + "\"^^xsd:string . ";
+                                }
+                                else
+                                {
+                                    sparql += ID + " rdfs:label \"" + label + "\"^^xsd:string ; ";
+                                }
+                                foreach (Description descr in template.description)
+                                {
+                                    description = descr.value;
+                                    sparql += " rdfs:comment \"" + description + "\"^^xsd:string ; "
+                                            + " tpl:R35529169909 \"" + template.roleDefinition.Count + "\"^^xsd:int . ";
+                                }
 
-                                sparql += ID + " rdfs:label \"" + label + "\"^^xsd:string . ";
-
-                                foreach (RoleQualification role in template.roleQualification)
+                                foreach (RoleDefinition role in template.roleDefinition)
                                 {
 
                                     string roleID = string.Empty;
@@ -1383,53 +1172,41 @@ namespace org.ids_adi.iring.referenceData
                                     //ID generator
                                     genName = "Role definition " + roleLabel;
                                     /// TODO: change to template registry base
-                                    //if (_useExampleRegistryBase)
-                                    //    generatedId = CreateIdsAdiId(_exampleRegistryBase, genName);
-                                    //else
-                                    //    generatedId = CreateIdsAdiId(_templateRegistryBase, genName);
+                                    if (_useExampleRegistryBase)
+                                        generatedId = CreateIdsAdiId(_exampleRegistryBase, genName);
+                                    else
+                                        generatedId = CreateIdsAdiId(_templateRegistryBase, genName);
+
                                     roleID = "<" + generatedId + ">";
-                                    
+
                                     //roleID = role.identifier;
                                     foreach (QMXFName roleName in role.name)
                                     {
                                         roleLabel = roleName.value;
-                                        Utility.WriteString("\n" + roleID + "\t" + roleLabel, "RoleQual IDs.log", true);
-                                        foreach (Description desc in role.description)
-                                        {
-                                            roleDescription = desc.value;
-                                        }
+                                        roleDescription = role.description.value;
+                                        Utility.WriteString("\n" + roleID + "\t" + roleLabel, "RoleDef IDs.log", true);
                                     }
                                     //append role to sparql query
-                                    //value restriction
-                                    if (role.value.As != null)
+                                    sparql += roleID + " rdf:type tpl:R74478971040 ; ";
+
+                                    if (role.range.StartsWith("http://www.w3.org/2000/01/rdf-schema#")
+                                        || role.range.StartsWith("http://www.w3.org/2001/XMLSchema"))
                                     {
-                                        sparql += role.qualifies + " rdf:type tpl:R67036823327 ; "
-                                              + " tpl:R56456315674 " + ID + " ; "
-                                              + " tpl:R89867215482 " + role.qualifies + " ; "
-                                              + " R29577887690 " + role.value.As + "^^xsd:int . ";
+                                        sparql += " rdf:type owl:DataTypeProperty ; ";
                                     }
                                     else
                                     {
-                                        //reference restriction
-                                        if (role.value.reference != null)
-                                        {
-                                            sparql += role.qualifies + " rdf:type tpl:R40103148466 ; "
-                                                  + " tpl:R49267603385 " + ID + " ; "
-                                                  + " tpl:R30741601855 " + role.qualifies + " ; "
-                                                  + " tpl:R21129944603 " + role.value.reference + " . ";
-                                        }
-                                        else
-                                        {
-                                            if (role.range != null)
-                                            {
-                                                //range restriction
-                                                sparql += role.qualifies + " rdf:type tpl:R76288246068 ; "
-                                                        + " tpl:R99672026745 " + ID + " ; "
-                                                        + " tpl:R91125890543 " + role.qualifies + " ; "
-                                                        + " tpl:R98983340497 " + role.range + " . ";
-                                            }
-                                        }
+                                        sparql += " rdf:type owl:ObjectProperty ; "
+                                                + " rdf:type owl:FunctionalProperty ; ";
                                     }
+
+                                    sparql += " rdfs:domain " + ID + " ; "
+                                            + " rdfs:range <" + role.range + "> ; "
+                                            + " tpl:R97483568938 \"" + index + "\"^^xsd:int ; "
+                                            + " rdfs:label \"" + roleLabel + "\"@en ; "
+                                            + " rdfs:comment \"" + roleDescription + "\"@en . ";
+
+                                    index++;
                                 }
                                 //status
                                 sparql += "_:status rdf:type tpl:R20247551573 ; "
@@ -1438,138 +1215,368 @@ namespace org.ids_adi.iring.referenceData
                                           + "tpl:R61794465713 rdl:R3732211754 . ";
 
                                 sparql = sparql.Insert(sparql.LastIndexOf("."), "}").Remove(sparql.Length - 1);
-                                response = PostToRepository(_repositories[0], sparql);
+                                response = PostToRepository(source, sparql);
                             }
                         }
                         else
                         {
-                            string roleID = string.Empty;
-                            string roleLabel = string.Empty;
-                            string roleDescription = string.Empty;
-                            string generatedId = string.Empty;
-                            string genName = string.Empty;
-
-                            TemplateQualification td = q.templateQualifications[0];
+                            TemplateDefinition td = q.templateDefinitions[templateIndex];
                             string rName = string.Empty;
 
                             sparql = sparql.Replace("INSERT DATA { ", "MODIFY DELETE { ");
                             foreach (QMXFName name in td.name)
                             {
-                                specialization = td.qualifies;
-                                nameSparql = sparql + "?a rdf:type dm:Specialization . "
-                                      + " ?b dm:hasSuperclass <" + specialization + "> . "
-                                      + " ?c dm:hasSubclass " + ID + " . ";
-
+                                ID = td.identifier;
                                 label = name.value;
-                                nameSparql = sparql + ID + " rdfs:label \"" + label + "\"^^xsd:string . ";
-
-                                foreach (RoleQualification rd in td.roleQualification)
+                                nameSparql = sparql + ID + " rdfs:label \"" + label + "\"^^xsd:string ; ";
+                                foreach (Description descr in td.description)
                                 {
-
-                                    foreach (QMXFName roleName in rd.name)
+                                    description = descr.value;
+                                    nameSparql += "rdfs:comment \"" + description + "\"^^xsd:string ; "
+                                                + "tpl:R35529169909 \"" + td.roleDefinition.Count + "\"^^xsd:int . ";
+                                }
+                                index = 0;
+                                foreach (RoleDefinition rd in td.roleDefinition)
+                                {
+                                    foreach (QMXFName rn in rd.name)
                                     {
-                                        roleLabel = roleName.value;
-                                        foreach (Description desc in rd.description)
+                                        rName = rn.value;
+                                        nameSparql += "<" + rd.identifier + "> rdfs:label \"" + rName + "\"@en ; ";
+                                        nameSparql += "rdfs:comment \"" + rd.description.value + "\"@en ; ";
+                                        if (rd.range.StartsWith("http://www.w3.org/2000/01/rdf-schema#")
+                                          || rd.range.StartsWith("http://www.w3.org/2001/XMLSchema"))
                                         {
-                                            roleDescription = desc.value;
-                                        }
-                                    }
-                                    //append role to sparql query
-                                    //value restriction
-                                    if (rd.value.As != null)
-                                    {
-                                        sparql += rd.qualifies + " rdf:type tpl:R67036823327 ; "
-                                              + " tpl:R56456315674 " + ID + " ; "
-                                              + " tpl:R89867215482 " + rd.qualifies + " ; "
-                                              + " R29577887690 " + rd.value.As + "^^xsd:int . ";
-                                    }
-                                    else
-                                    {
-                                        //reference restriction
-                                        if (rd.value.reference != null)
-                                        {
-                                            sparql += rd.qualifies + " rdf:type tpl:R40103148466 ; "
-                                                  + " tpl:R49267603385 " + ID + " ; "
-                                                  + " tpl:R30741601855 " + rd.qualifies + " ; "
-                                                  + " tpl:R21129944603 " + rd.value.reference + " . ";
+                                            nameSparql += " rdf:type owl:DataTypeProperty ; ";
                                         }
                                         else
                                         {
-                                            if (rd.range != null)
-                                            {
-                                                //range restriction
-                                                sparql += rd.qualifies + " rdf:type tpl:R76288246068 ; "
-                                                        + " tpl:R99672026745 " + ID + " ; "
-                                                        + " tpl:R91125890543 " + rd.qualifies + " ; "
-                                                        + " tpl:R98983340497 " + rd.range + " . ";
-                                            }
+                                            nameSparql += " rdf:type owl:ObjectProperty ; "
+                                                    + " rdf:type owl:FunctionalProperty ; ";
                                         }
+                                        nameSparql += "rdf:type tpl:R74478971040 ; "
+                                              + " rdfs:domain " + ID + " ; "
+                                              + " rdfs:range <" + rd.range + "> ; "
+                                              + " tpl:R97483568938 \"" + rd.description.value + "\"^^xsd:int . ";
                                     }
                                 }
                                 nameSparql = nameSparql.Insert(nameSparql.LastIndexOf("."), "}").Remove(nameSparql.Length - 1);
+                                //}
                             }
                             foreach (QMXFName name in template.name)
                             {
-                                specialization = template.qualifies;
-                                nameSparql = sparql + " INSERT { _:spec rdf:type dm:Specialization ; "
-                                      + " dm:hasSuperclass <" + specialization + "> ; "
-                                      + " dm:hasSubclass " + ID + " . ";
+                                string gen = String.Empty;
+                                string generatedId = string.Empty;
+                                string roleID = string.Empty;
 
                                 label = name.value;
-                                nameSparql = sparql + ID + " rdfs:label \"" + label + "\"^^xsd:string . ";
-
-                                foreach (RoleQualification rd in template.roleQualification)
+                                nameSparql += " INSERT { " + ID + " rdfs:label \"" + label + "\"^^xsd:string ; ";
+                                foreach (Description descr in template.description)
+                                {
+                                    description = descr.value;
+                                    nameSparql += "rdfs:comment \"" + description + "\"^^xsd:string ; "
+                                               + "tpl:R35529169909 \"" + template.roleDefinition.Count + "\"^^xsd:int . ";
+                                }
+                                index = 0;
+                                foreach (RoleDefinition def in template.roleDefinition)
                                 {
 
-                                    foreach (QMXFName roleName in rd.name)
+                                    foreach (QMXFName defName in def.name)
                                     {
-                                        roleLabel = roleName.value;
-                                        foreach (Description desc in rd.description)
+                                        if (def.identifier != null)
                                         {
-                                            roleDescription = desc.value;
-                                        }
-                                    }
-                                    //append role to sparql query
-                                    //value restriction
-                                    if (rd.value.As != null)
-                                    {
-                                        sparql += rd.qualifies + " rdf:type tpl:R67036823327 ; "
-                                              + " tpl:R56456315674 " + ID + " ; "
-                                              + " tpl:R89867215482 " + rd.qualifies + " ; "
-                                              + " R29577887690 " + rd.value.As + "^^xsd:int . ";
-                                    }
-                                    else
-                                    {
-                                        //reference restriction
-                                        if (rd.value.reference != null)
-                                        {
-                                            sparql += rd.qualifies + " rdf:type tpl:R40103148466 ; "
-                                                  + " tpl:R49267603385 " + ID + " ; "
-                                                  + " tpl:R30741601855 " + rd.qualifies + " ; "
-                                                  + " tpl:R21129944603 " + rd.value.reference + " . ";
+                                            roleID = def.identifier;
                                         }
                                         else
                                         {
-                                            if (rd.range != null)
-                                            {
-                                                //range restriction
-                                                sparql += rd.qualifies + " rdf:type tpl:R76288246068 ; "
-                                                        + " tpl:R99672026745 " + ID + " ; "
-                                                        + " tpl:R91125890543 " + rd.qualifies + " ; "
-                                                        + " tpl:R98983340497 " + rd.range + " . ";
-                                            }
+                                            gen = "Role definition " + label;
+                                            /// TODO: change to template registry base
+                                            if (_useExampleRegistryBase)
+                                                generatedId = CreateIdsAdiId(_exampleRegistryBase, gen);
+                                            else
+                                                generatedId = CreateIdsAdiId(_templateRegistryBase, gen);
+
+                                            roleID = generatedId;
                                         }
+                                        nameSparql += "<" + roleID + "> rdfs:label \"" + defName.value + "\"@en ; ";
+                                        nameSparql += "rdfs:comment \"" + def.description.value + "\"@en ; ";
+
+                                        if (def.range.StartsWith("http://www.w3.org/2000/01/rdf-schema#")
+                                        || def.range.StartsWith("http://www.w3.org/2001/XMLSchema"))
+                                        {
+                                            nameSparql += " rdf:type owl:DataTypeProperty ; ";
+                                        }
+                                        else
+                                        {
+                                            nameSparql += " rdf:type owl:ObjectProperty ; "
+                                                    + " rdf:type owl:FunctionalProperty ; ";
+                                        }
+                                        nameSparql += "rdf:type tpl:R74478971040 ; "
+                                                + " rdfs:domain " + ID + " ; "
+                                                + " rdfs:range <" + def.range + "> ; "
+                                                + " tpl:R97483568938 \"" + ++index + "\"^^xsd:int . ";
                                     }
                                 }
                                 nameSparql = nameSparql.Insert(nameSparql.LastIndexOf("."), "}").Remove(nameSparql.Length - 1);
                             }
-
-                            response = PostToRepository(_repositories[0], nameSparql);
+                            response = PostToRepository(_repositories[repository], nameSparql);
                         }
                     }
                 }
+                else//template qualification
+                {
+                    if (qmxf.templateQualifications.Count > 0)
+                    {
+                        foreach (TemplateQualification template in qmxf.templateQualifications)
+                        {
+                            string ID = string.Empty;
+                            string id = string.Empty;
+                            string label = string.Empty;
+                            string description = string.Empty;
+                            //ID = template.identifier.Remove(0, 1);
+                            string generatedTempId = string.Empty;
+                            string templateName = string.Empty;
+                            string roleDefinition = string.Empty;
+                            string specialization = string.Empty;
+                            string nameSparql = string.Empty;
+                            string specSparql = string.Empty;
+                            string classSparql = string.Empty;
+
+                            ID = template.identifier;
+
+                            QMXF q = new QMXF();
+                            if (ID != null)
+                            {
+                                id = ID.Substring((ID.LastIndexOf("#") + 1), ID.Length - (ID.LastIndexOf("#") + 1));
+                                q = GetTemplate(id);
+                                ID = "tpl:" + template.identifier;
+                            }
+
+                            if (q.templateQualifications.Count == 0)
+                            {
+                                foreach (QMXFName name in template.name)
+                                {
+                                    label = name.value;
+
+                                    //ID generator
+                                    templateName = "Template qualification " + label;
+                                    /// TODO: change to class registry base
+                                    if (_useExampleRegistryBase)
+                                        generatedTempId = CreateIdsAdiId(_exampleRegistryBase, templateName);
+                                    else
+                                        generatedTempId = CreateIdsAdiId(_templateRegistryBase, templateName);
+                                    ID = "<" + generatedTempId + ">";
+                                    Utility.WriteString("\n" + ID + "\t" + label, "TempQual IDs.log", true);
+                                    specialization = template.qualifies;
+                                    sparql += "_:spec rdf:type dm:Specialization ; "
+                                            + "dm:hasSuperclass <" + specialization + "> ; "
+                                            + "dm:hasSubclass " + ID + " . ";
+
+                                    sparql += ID + " rdfs:label \"" + label + "\"^^xsd:string . ";
+
+                                    foreach (RoleQualification role in template.roleQualification)
+                                    {
+
+                                        string roleID = string.Empty;
+                                        string roleLabel = string.Empty;
+                                        string roleDescription = string.Empty;
+                                        string generatedId = string.Empty;
+                                        string genName = string.Empty;
+
+                                        //ID generator
+                                        genName = "Role definition " + roleLabel;
+                                        /// TODO: change to template registry base
+                                        //if (_useExampleRegistryBase)
+                                        //    generatedId = CreateIdsAdiId(_exampleRegistryBase, genName);
+                                        //else
+                                        //    generatedId = CreateIdsAdiId(_templateRegistryBase, genName);
+                                        roleID = "<" + generatedId + ">";
+
+                                        //roleID = role.identifier;
+                                        foreach (QMXFName roleName in role.name)
+                                        {
+                                            roleLabel = roleName.value;
+                                            Utility.WriteString("\n" + roleID + "\t" + roleLabel, "RoleQual IDs.log", true);
+                                            foreach (Description desc in role.description)
+                                            {
+                                                roleDescription = desc.value;
+                                            }
+                                        }
+                                        //append role to sparql query
+                                        //value restriction
+                                        if (role.value.As != null)
+                                        {
+                                            sparql += role.qualifies + " rdf:type tpl:R67036823327 ; "
+                                                  + " tpl:R56456315674 " + ID + " ; "
+                                                  + " tpl:R89867215482 " + role.qualifies + " ; "
+                                                  + " R29577887690 " + role.value.As + "^^xsd:int . ";
+                                        }
+                                        else
+                                        {
+                                            //reference restriction
+                                            if (role.value.reference != null)
+                                            {
+                                                sparql += role.qualifies + " rdf:type tpl:R40103148466 ; "
+                                                      + " tpl:R49267603385 " + ID + " ; "
+                                                      + " tpl:R30741601855 " + role.qualifies + " ; "
+                                                      + " tpl:R21129944603 " + role.value.reference + " . ";
+                                            }
+                                            else
+                                            {
+                                                if (role.range != null)
+                                                {
+                                                    //range restriction
+                                                    sparql += role.qualifies + " rdf:type tpl:R76288246068 ; "
+                                                            + " tpl:R99672026745 " + ID + " ; "
+                                                            + " tpl:R91125890543 " + role.qualifies + " ; "
+                                                            + " tpl:R98983340497 " + role.range + " . ";
+                                                }
+                                            }
+                                        }
+                                    }
+                                    //status
+                                    sparql += "_:status rdf:type tpl:R20247551573 ; "
+                                              + "tpl:R64574858717 " + ID + " ; "
+                                              + "tpl:R56599656536 rdl:R6569332477 ; "
+                                              + "tpl:R61794465713 rdl:R3732211754 . ";
+
+                                    sparql = sparql.Insert(sparql.LastIndexOf("."), "}").Remove(sparql.Length - 1);
+                                    response = PostToRepository(_repositories[0], sparql);
+                                }
+                            }
+                            else
+                            {
+                                string roleID = string.Empty;
+                                string roleLabel = string.Empty;
+                                string roleDescription = string.Empty;
+                                string generatedId = string.Empty;
+                                string genName = string.Empty;
+
+                                TemplateQualification td = q.templateQualifications[0];
+                                string rName = string.Empty;
+
+                                sparql = sparql.Replace("INSERT DATA { ", "MODIFY DELETE { ");
+                                foreach (QMXFName name in td.name)
+                                {
+                                    specialization = td.qualifies;
+                                    nameSparql = sparql + "?a rdf:type dm:Specialization . "
+                                          + " ?b dm:hasSuperclass <" + specialization + "> . "
+                                          + " ?c dm:hasSubclass " + ID + " . ";
+
+                                    label = name.value;
+                                    nameSparql = sparql + ID + " rdfs:label \"" + label + "\"^^xsd:string . ";
+
+                                    foreach (RoleQualification rd in td.roleQualification)
+                                    {
+
+                                        foreach (QMXFName roleName in rd.name)
+                                        {
+                                            roleLabel = roleName.value;
+                                            foreach (Description desc in rd.description)
+                                            {
+                                                roleDescription = desc.value;
+                                            }
+                                        }
+                                        //append role to sparql query
+                                        //value restriction
+                                        if (rd.value.As != null)
+                                        {
+                                            sparql += rd.qualifies + " rdf:type tpl:R67036823327 ; "
+                                                  + " tpl:R56456315674 " + ID + " ; "
+                                                  + " tpl:R89867215482 " + rd.qualifies + " ; "
+                                                  + " R29577887690 " + rd.value.As + "^^xsd:int . ";
+                                        }
+                                        else
+                                        {
+                                            //reference restriction
+                                            if (rd.value.reference != null)
+                                            {
+                                                sparql += rd.qualifies + " rdf:type tpl:R40103148466 ; "
+                                                      + " tpl:R49267603385 " + ID + " ; "
+                                                      + " tpl:R30741601855 " + rd.qualifies + " ; "
+                                                      + " tpl:R21129944603 " + rd.value.reference + " . ";
+                                            }
+                                            else
+                                            {
+                                                if (rd.range != null)
+                                                {
+                                                    //range restriction
+                                                    sparql += rd.qualifies + " rdf:type tpl:R76288246068 ; "
+                                                            + " tpl:R99672026745 " + ID + " ; "
+                                                            + " tpl:R91125890543 " + rd.qualifies + " ; "
+                                                            + " tpl:R98983340497 " + rd.range + " . ";
+                                                }
+                                            }
+                                        }
+                                    }
+                                    nameSparql = nameSparql.Insert(nameSparql.LastIndexOf("."), "}").Remove(nameSparql.Length - 1);
+                                }
+                                foreach (QMXFName name in template.name)
+                                {
+                                    specialization = template.qualifies;
+                                    nameSparql = sparql + " INSERT { _:spec rdf:type dm:Specialization ; "
+                                          + " dm:hasSuperclass <" + specialization + "> ; "
+                                          + " dm:hasSubclass " + ID + " . ";
+
+                                    label = name.value;
+                                    nameSparql = sparql + ID + " rdfs:label \"" + label + "\"^^xsd:string . ";
+
+                                    foreach (RoleQualification rd in template.roleQualification)
+                                    {
+
+                                        foreach (QMXFName roleName in rd.name)
+                                        {
+                                            roleLabel = roleName.value;
+                                            foreach (Description desc in rd.description)
+                                            {
+                                                roleDescription = desc.value;
+                                            }
+                                        }
+                                        //append role to sparql query
+                                        //value restriction
+                                        if (rd.value.As != null)
+                                        {
+                                            sparql += rd.qualifies + " rdf:type tpl:R67036823327 ; "
+                                                  + " tpl:R56456315674 " + ID + " ; "
+                                                  + " tpl:R89867215482 " + rd.qualifies + " ; "
+                                                  + " R29577887690 " + rd.value.As + "^^xsd:int . ";
+                                        }
+                                        else
+                                        {
+                                            //reference restriction
+                                            if (rd.value.reference != null)
+                                            {
+                                                sparql += rd.qualifies + " rdf:type tpl:R40103148466 ; "
+                                                      + " tpl:R49267603385 " + ID + " ; "
+                                                      + " tpl:R30741601855 " + rd.qualifies + " ; "
+                                                      + " tpl:R21129944603 " + rd.value.reference + " . ";
+                                            }
+                                            else
+                                            {
+                                                if (rd.range != null)
+                                                {
+                                                    //range restriction
+                                                    sparql += rd.qualifies + " rdf:type tpl:R76288246068 ; "
+                                                            + " tpl:R99672026745 " + ID + " ; "
+                                                            + " tpl:R91125890543 " + rd.qualifies + " ; "
+                                                            + " tpl:R98983340497 " + rd.range + " . ";
+                                                }
+                                            }
+                                        }
+                                    }
+                                    nameSparql = nameSparql.Insert(nameSparql.LastIndexOf("."), "}").Remove(nameSparql.Length - 1);
+                                }
+
+                                response = PostToRepository(_repositories[0], nameSparql);
+                            }
+                        }
+                    }
+                }
+                return response;
             }
-            return response;
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         private int getIndexFromName(string name)
@@ -1950,16 +1957,24 @@ namespace org.ids_adi.iring.referenceData
 
         private Response PostToRepository(Repository repository, string sparql)
         {
-            Response response = null;
+            try
+            {
+                Response response = null;
 
-            string encryptedCredentials = repository.encryptedCredentials;
+                string encryptedCredentials = repository.encryptedCredentials;
 
-            WebCredentials credentials = new WebCredentials(encryptedCredentials);
-            if (credentials.isEncrypted) credentials.Decrypt();
+                WebCredentials credentials = new WebCredentials(encryptedCredentials);
+                if (credentials.isEncrypted) credentials.Decrypt();
 
-            SPARQLClient.PostQueryAsMultipartMessage(repository.uri, sparql, credentials, _proxyCredentials);
+                SPARQLClient.PostQueryAsMultipartMessage(repository.uri, sparql, credentials, _proxyCredentials);
 
-            return response;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                
+                throw ex;
+            }
         }
 
         private List<Dictionary<string, string>> BindQueryResults(QueryBindings queryBindings, SPARQLResults sparqlResults)

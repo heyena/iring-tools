@@ -96,6 +96,12 @@ namespace org.iringtools.modules.projectapplicationregion
       }
       else if (args.CheckForType(CompletedEventType.Generate))
       {
+        if (args.Error != null)
+        {
+            MessageBox.Show(args.FriendlyErrorMessage, "Generate DTO Error", MessageBoxButton.OK);
+            return;
+        }
+
         Response response = (Response)args.Data;
         string messages = String.Empty;
 
@@ -108,6 +114,12 @@ namespace org.iringtools.modules.projectapplicationregion
       }
       else if (args.CheckForType(CompletedEventType.RefreshAll))
       {
+        if (args.Error != null)
+        {
+            MessageBox.Show(args.FriendlyErrorMessage, "Refresh Facade Error", MessageBoxButton.OK);
+            return;
+        }
+
         Response response = (Response)args.Data;
         string messages = String.Empty;
 
