@@ -68,7 +68,7 @@ TAG NAME (My Private Sandbox)
 TAG NAME (My Private Sandbox) [Duplicate]
 TAG NAME (My Private Sandbox) [Duplicate 2]
 }}}
- * Darius added Issue 88
+ * Darius added Issue 89
   * Rob mentioned that entity type was excluded for a reason, but would get back to the team.
   * Upon further analysis, it was decided to add and see how it goes.
   * Rob agreed that this item was very small, and easy to add.
