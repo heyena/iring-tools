@@ -541,6 +541,7 @@ namespace org.iringtools.adapter
         WebCredentials targetCredentials = Utility.Deserialize<WebCredentials>(targetCredentialsXML, true);
         if (targetCredentials.isEncrypted) targetCredentials.Decrypt();
 
+        //TODO : A remote DTOProvider needs to be created to abstract the code below. 
         WebHttpClient httpClient = new WebHttpClient(targetUri);
         if (filter != String.Empty)
         {
