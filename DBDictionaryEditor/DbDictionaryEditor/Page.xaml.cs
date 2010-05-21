@@ -620,22 +620,20 @@ namespace DbDictionaryEditor
                     currentObject = columnTreeViewItem.Tag;
                     if (currentObject is org.iringtools.library.KeyProperty)
                     { 
-                    //    DataType dataType =  (DataType)Enum.Parse(typeof(DataType),((org.iringtools.library.KeyProperty)currentObject).dataType.ToString(),true);
                         org.iringtools.library.KeyProperty key = new org.iringtools.library.KeyProperty();
                         key.columnName = ((org.iringtools.library.KeyProperty)currentObject).columnName;
                         key.dataLength = ((org.iringtools.library.KeyProperty)currentObject).dataLength;
-                    //    key.dataType = dataType;
+                        key.dataType = ((org.iringtools.library.KeyProperty)currentObject).dataType;
                         key.isNullable = ((org.iringtools.library.KeyProperty)currentObject).isNullable;
                         key.propertyName = ((org.iringtools.library.KeyProperty)currentObject).propertyName;
                         table.keyProperties.Add(key);        
                     }
                     else
                     {
-                      //    DataType dataType = (DataType)Enum.Parse(typeof(DataType), ((Column)currentObject).dataType.ToString(), true);
                       DataProperty column = new DataProperty();
                       column.columnName = ((DataProperty)currentObject).columnName;
                       column.dataLength = ((DataProperty)currentObject).dataLength;
-                      //     column.dataType = dataType;
+                      column.dataType = ((DataProperty)currentObject).dataType;
                       column.isNullable = ((DataProperty)currentObject).isNullable;
                       column.propertyName = ((DataProperty)currentObject).propertyName;
                       table.dataProperties.Add(column); 
