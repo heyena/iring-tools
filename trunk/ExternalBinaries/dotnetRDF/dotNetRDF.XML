@@ -18557,6 +18557,11 @@
             Gets the Load Mode that controls how the Handler loads the Store into memory
             </summary>
         </member>
+        <member name="P:VDS.RDF.Web.SparqlHandlerConfiguration.Manager">
+            <summary>
+            Gets the Manager used for the Database
+            </summary>
+        </member>
         <member name="T:VDS.RDF.Storage.Params.ISQLIOParams">
             <summary>
             Interface for Store Parameters where the Parameter is a <see cref="T:VDS.RDF.Storage.ISqlIOManager">ISqlIOManager</see>
