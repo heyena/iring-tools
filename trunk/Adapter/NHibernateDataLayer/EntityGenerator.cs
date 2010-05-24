@@ -470,18 +470,17 @@ namespace org.iringtools.adapter.datalayer
 
         if (dataObject.keyProperties.Count == 1)
         {
+          DataType keyDataType = dataObject.keyProperties.First().dataType; 
           _dataObjectWriter.WriteLine(@"
         case ""Id"":
-          Id = Convert.ToString(value);
-          if (Id == String.Empty) throw new Exception(""Id can not be null or empty."");
-          break;");
+          Id = Convert.To{0}(value);
+          break;", keyDataType);
         }
         else if (dataObject.keyProperties.Count > 1)
         {
           _dataObjectWriter.WriteLine(@"
         case ""Id"":
           Id = ({0}Id)value;
-          if (Id == null) throw new Exception(""Id can not be null or empty."");
           break;", dataObject.objectName);
         }
 
