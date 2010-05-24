@@ -468,11 +468,22 @@ namespace org.iringtools.adapter.datalayer
         _dataObjectWriter.Write("{");
         _dataObjectWriter.Indent++;
 
-        _dataObjectWriter.WriteLine(@"
+        if (dataObject.keyProperties.Count == 1)
+        {
+          _dataObjectWriter.WriteLine(@"
         case ""Id"":
           Id = Convert.ToString(value);
           if (Id == String.Empty) throw new Exception(""Id can not be null or empty."");
           break;");
+        }
+        else if (dataObject.keyProperties.Count > 1)
+        {
+          _dataObjectWriter.WriteLine(@"
+        case ""Id"":
+          Id = ({0}Id)value;
+          if (Id == null) throw new Exception(""Id can not be null or empty."");
+          break;", dataObject.objectName);
+        }
 
         foreach (KeyProperty keyProperty in dataObject.keyProperties)
         {
@@ -488,6 +499,7 @@ namespace org.iringtools.adapter.datalayer
           {
             _dataObjectWriter.WriteLine("{0} = (value != null) ? Convert.To{1}(value) : default({1});", keyProperty.propertyName, keyProperty.dataType);
           }
+
           _dataObjectWriter.WriteLine("break;");
           _dataObjectWriter.Indent--;
         }
@@ -506,6 +518,7 @@ namespace org.iringtools.adapter.datalayer
           {
             _dataObjectWriter.WriteLine("{0} = (value != null) ? Convert.To{1}(value) : default({1});", dataProperty.propertyName, dataProperty.dataType);
           }
+
           _dataObjectWriter.WriteLine("break;");
           _dataObjectWriter.Indent--;
         }
