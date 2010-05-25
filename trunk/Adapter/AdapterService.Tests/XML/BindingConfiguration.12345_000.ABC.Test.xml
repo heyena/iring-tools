@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <BindingConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Bindings>
-    <Binding Name="SemanticLayer" Interface="org.iringtools.adapter.ISemanticLayer, AdapterLibrary" Implementation="org.iringtools.adapter.semantic.SemWebRDFEngine, AdapterLibrary"/>
+    <Binding Name="SemanticLayer" Interface="org.iringtools.adapter.ISemanticLayer, AdapterLibrary" Implementation="org.iringtools.adapter.semantic.dotNETRdfEngine, AdapterLibrary"/>
     <Binding Name="DataLayer" Interface="org.iringtools.library.IDataLayer, iRINGLibrary" Implementation="org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateDataLayer"/>
     <Binding Name="DTOLayer" Interface="org.iringtools.adapter.IDTOLayer, AdapterLibrary" Implementation="org.iringtools.adapter.proj_12345_000.ABC.DTOLayer, AdapterService.Tests"/>
   </Bindings>
