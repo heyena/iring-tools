@@ -1,5 +1,0 @@
-C:\Development\VS08 Projects\SilverlightFaultsTest\SilverlightFaultsTest.Web\bin\SilverlightFaultsTest.Web.dll
-C:\Development\VS08 Projects\SilverlightFaultsTest\SilverlightFaultsTest.Web\bin\SilverlightFaultsTest.Web.pdb
-C:\Development\VS08 Projects\SilverlightFaultsTest\SilverlightFaultsTest.Web\obj\Debug\ResolveAssemblyReference.cache
-C:\Development\VS08 Projects\SilverlightFaultsTest\SilverlightFaultsTest.Web\obj\Debug\SilverlightFaultsTest.Web.dll
-C:\Development\VS08 Projects\SilverlightFaultsTest\SilverlightFaultsTest.Web\obj\Debug\SilverlightFaultsTest.Web.pdb
