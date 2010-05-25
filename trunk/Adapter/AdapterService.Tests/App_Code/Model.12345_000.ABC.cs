@@ -61,7 +61,6 @@ namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
       {
         case "Id":
           Id = Convert.ToString(value);
-          if (Id == String.Empty) throw new Exception("Id can not be null or empty.");
           break;
         case "tag":
           if (value != null) tag = Convert.ToString(value);
@@ -141,7 +140,6 @@ namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
       {
         case "Id":
           Id = Convert.ToString(value);
-          if (Id == String.Empty) throw new Exception("Id can not be null or empty.");
           break;
         case "tag":
           if (value != null) tag = Convert.ToString(value);
