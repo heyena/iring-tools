@@ -89,7 +89,7 @@ namespace Bechtel.CSVDataLayer.API
       {
         List<IDataObject> dataObjects = new List<IDataObject>();
         string dataObjectType = objectType + "DataObject";
-        Type type = Type.GetType(dataObjectType);
+        Type type = Type.GetType("Bechtel.CSVDataLayer.API." + objectType + "DataObject");
 
         // Load config xml 
         string configFile = _settings.XmlPath + objectType + "." + _appSettings.ProjectName + "." + _appSettings.ApplicationName + ".xml";
@@ -222,7 +222,7 @@ namespace Bechtel.CSVDataLayer.API
         List<IDataObject> dataObjects = new List<IDataObject>();
         objectType = objectType.Substring(objectType.LastIndexOf('.') + 1);
         string dataObjectType = objectType + "DataObject";
-        Type type = Type.GetType(dataObjectType);
+        Type type = Type.GetType("Bechtel.CSVDataLayer.API." + objectType + "DataObject");
 
         // Load config xml 
         string configFile = _settings.XmlPath + objectType + "." + _appSettings.ProjectName + "." + _appSettings.ApplicationName + ".xml";
