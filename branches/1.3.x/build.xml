@@ -16,15 +16,21 @@
     <MappingEditorRoot>MappingEditor</MappingEditorRoot>
     <MappingEditorDir>$(MappingEditorRoot)\$(MappingEditorRoot).Web</MappingEditorDir>
     <RefDataEditorRoot>RefDataEditor</RefDataEditorRoot>
+    <DBDictionaryEditorRoot>DBDictionaryEditor</DBDictionaryEditorRoot>
     <RefDataEditorDir>$(RefDataEditorRoot)\$(RefDataEditorRoot).Web</RefDataEditorDir>
+    <DBDictionaryEditorDir>$(DBDictionaryEditorRoot)\$(DBDictionaryEditorRoot).Web</DBDictionaryEditorDir>
     <RefDataServiceRoot>ReferenceData</RefDataServiceRoot>
+    <DBDictionaryServiceRoot>DBDictionary</DBDictionaryServiceRoot>
     <LandingPageDeploymentDir>$(DeploymentDir)\LandingPage</LandingPageDeploymentDir>
-    <RefDataServiceDir>$(RefDataServiceRoot)\ReferenceDataService</RefDataServiceDir>    
+    <RefDataServiceDir>$(RefDataServiceRoot)\ReferenceDataService</RefDataServiceDir>
+    <DbDictionaryServiceDir>$(DBDictionaryServiceRoot)\DbDictionaryService</DbDictionaryServiceDir>
     <AdapterServiceDeploymentDir>$(iRINGAdapter)\AdapterService</AdapterServiceDeploymentDir>
+    <DbDictionaryServiceDeploymentDir>$(iRINGAdapter)\DbDictionaryService</DbDictionaryServiceDeploymentDir>
     <JosekiInterfaceServiceDeploymentDir>$(iRINGAdapter)\InterfaceService.Joseki</JosekiInterfaceServiceDeploymentDir>
     <SemWebInterfaceServiceDeploymentDir>$(iRINGAdapter)\InterfaceService</SemWebInterfaceServiceDeploymentDir>
     <AdapterToolsDeploymentDir>$(iRINGAdapter)\Tools</AdapterToolsDeploymentDir>
     <MappingEditorDeploymentDir>$(iRINGAdapter)\MappingEditor</MappingEditorDeploymentDir>
+    <DbDictionaryEditorDeploymentDir>$(iRINGAdapter)\DbDictionaryEditor</DbDictionaryEditorDeploymentDir>
     <RefDataEditorDeploymentDir>$(iRINGSandbox)\RefDataEditor</RefDataEditorDeploymentDir>
     <RefDataServiceDeploymentDir>$(iRINGSandbox)\RefDataService</RefDataServiceDeploymentDir>
     <JosekiSandboxServiceDeploymentDir>$(iRINGSandbox)\SandboxService.Joseki</JosekiSandboxServiceDeploymentDir>
@@ -155,6 +161,21 @@
                $(RefDataEditorDir)\.svn\**;
                $(RefDataEditorDir)\*\.svn\**">
     </RefDataEditorDeployment>
+
+    <DBDictionaryEditorDeployment
+     Include="$(DBDictionaryEditorDir)\**"
+     Exclude="$(DBDictionaryEditorDir)\bin\*.pdb;
+               $(DBDictionaryEditorDir)\obj\**;
+               $(DBDictionaryEditorDir)\Properties\**;
+               $(DBDictionaryEditorDir)\*.cs;
+               $(DBDictionaryEditorDir)\*.html;
+               $(DBDictionaryEditorDir)\*.csproj;
+               $(DBDictionaryEditorDir)\*.user;
+               $(DBDictionaryEditorDir)\*.vspscc;
+               $(DBDictionaryEditorDir)\web.config;
+               $(DBDictionaryEditorDir)\.svn\**;
+               $(DBDictionaryEditorDir)\*\.svn\**">
+    </DBDictionaryEditorDeployment>
     
     <RefDataServiceDeployment
       Include="$(RefDataServiceDir)\**"
@@ -174,6 +195,21 @@
                $(RefDataServiceRoot)\*\.svn\**;
                $(RefDataServiceRoot)\*\*\.svn\**;">
     </RefDataServiceDeployment>
+
+    <DBDictionaryServiceDeployment
+      Include="$(DBDictionaryServiceDir)\**"
+      Exclude="$(DBDictionaryServiceDir)\bin\*.pdb;
+               $(DBDictionaryServiceDir)\Logs\**;
+               $(DBDictionaryServiceDir)\obj\**;
+               $(DBDictionaryServiceDir)\Properties\**;
+               $(DBDictionaryServiceDir)\*.csproj;
+               $(DBDictionaryServiceDir)\*.user;
+               $(DBDictionaryServiceDir)\*.vspscc;
+               $(DBDictionaryServiceDir)\web.config;
+               $(DBDictionaryServiceDir)\Web_Development.config;
+               $(DBDictionaryServiceRoot)\.svn\**;
+               $(DBDictionaryServiceRoot)\*\.svn\**;">
+    </DBDictionaryServiceDeployment>
     
     <AdapterToolsDeployment
       Include="ExternalBinaries\SemWeb\rdfstorage.exe;
@@ -189,7 +225,15 @@
                Utilities\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\Iesi.Collections.dll;
                Utilities\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\log4net.dll;
                Utilities\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\DBDictionaryUtil.exe;
-               Utilities\DBDictionaryUtil\DBDictionaryUtil\App_Default.config;">
+               Utilities\DBDictionaryUtil\DBDictionaryUtil\App_Default.config;
+               Utilities\SWDump\bin\Debug\IKVM.GNU.Classpath.dll;
+               Utilities\SWDump\bin\Debug\IKVM.Runtime.dll;
+               Utilities\SWDump\bin\Debug\SemWeb.dll;
+               Utilities\SWDump\bin\Debug\SemWeb.Sparql.dll;
+               Utilities\SWDump\bin\Debug\SemWeb.SQLServerStore.dll;
+               Utilities\SWDump\bin\Debug\sparql-core.dll;
+               Utilities\SWDump\bin\Debug\swdump.exe;
+               Utilities\SWDump\App.Default.config;">
     </AdapterToolsDeployment>
     
     <SandboxToolsDeployment
@@ -273,12 +317,15 @@
   <Target Name="PrepareBuild">
     <Message Text="Preparing build ..." />
     <Exec Command="Copy $(AdapterServiceDir)\Web_Default.config $(AdapterServiceDir)\Web.config" />
+    <Exec Command="Copy $(DBDictionaryServiceDir)\Web_Default.config $(DBDictionaryServiceDir)\Web.config" />
     <Exec Command="Copy $(RefDataServiceDir)\Web_Default.config $(RefDataServiceDir)\Web.config" />
     <Exec Command="Copy $(MappingEditorDir)\Web_Default.config $(MappingEditorDir)\Web.config" />
+    <Exec Command="Copy $(DBDictionaryEditorDir)\Web_Default.config $(DBDictionaryEditorDir)\Web.config" />
     <Exec Command="Copy $(SemWebInterfaceServiceRoot)\Web_Default.config $(SemWebInterfaceServiceRoot)\Web.config" />
     <Exec Command="Copy $(RefDataEditorDir)\Web_Default.config $(RefDataEditorDir)\Web.config" />
     <Exec Command="Copy $(SemWebSandboxServiceRoot)\Web_Default.config $(SemWebSandboxServiceRoot)\Web.config" />
     <Exec Command="Copy Utilities\DBDictionaryUtil\DBDictionaryUtil\App_Default.config Utilities\DBDictionaryUtil\DBDictionaryUtil\App.config" />
+    <Exec Command="Copy Utilities\SWDump\App.Default.config Utilities\SWDump\App.config" />
     <Exec Command="Copy Utilities\QMXFGenerator\QMXFGenerator\App_Default.config Utilities\QMXFGenerator\QMXFGenerator\App.config" />
   </Target>
   
@@ -302,6 +349,11 @@
     <Exec Command="Move /Y $(AdapterServiceDeploymentDir)\Web_Default.config $(AdapterServiceDeploymentDir)\Web.config" />
     <Exec Command="Mkdir $(AdapterServiceDeploymentDir)\Logs" />
 
+    <Message Text="Creating dbdictionary service deployment ..." />
+    <Copy SourceFiles="@(DBDictionaryServiceDeployment)"
+          DestinationFiles="@(DBDictionaryServiceDeployment->'$(DBDictionaryServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(DBDictionaryServiceDeploymentDir)\Web_Default.config $(DBDictionaryServiceDeploymentDir)\Web.config" />
+    <Exec Command="Mkdir $(DBDictionaryServiceDeploymentDir)\Logs" />
     <!--<Message Text="Creating Joseki interface service deployment ..." />
     <Copy SourceFiles="@(JosekiInterfaceServiceDeployment)"
           DestinationFiles="@(JosekiInterfaceServiceDeployment->'$(JosekiInterfaceServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
@@ -318,6 +370,11 @@
     <Copy SourceFiles="@(MappingEditorDeployment)"
           DestinationFiles="@(MappingEditorDeployment->'$(MappingEditorDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Exec Command="Move /Y $(MappingEditorDeploymentDir)\Web_Default.config $(MappingEditorDeploymentDir)\Web.config" />
+
+    <Message Text="Creating dbdictionary editor deployment ..." />
+    <Copy SourceFiles="@(DBDictionaryEditorDeployment)"
+          DestinationFiles="@(DBDictionaryEditorDeployment->'$(DBDictionaryEditorDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(DBDictionaryEditorDeploymentDir)\Web_Default.config $(DBDictionaryEditorDeploymentDir)\Web.config" />
 
     <Message Text="Creating reference data editor deployment ..." />
     <Copy SourceFiles="@(RefDataEditorDeployment)"
