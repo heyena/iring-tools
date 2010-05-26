@@ -26,12 +26,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using org.iringtools.library;
-using org.iringtools.adapter.datalayer;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Xml.Linq;
+using org.iringtools.adapter;
+using org.iringtools.adapter.datalayer;
+using org.iringtools.library;
 
 namespace org.iringtools.adapter
 {
@@ -56,9 +56,11 @@ namespace org.iringtools.adapter
     private static string RDL_PREFIX = "rdl:";
     private static string TPL_PREFIX = "tpl:";
 
-    private Mapping _mapping = null;
     private NHibernateDataLayer _dataLayer = null;
     private Dictionary<string, IList<IDataObject>> _dataObjects = null;
+    private Mapping _mapping = null;
+    private Graph _graph = null;
+    private List<Dictionary<string, string>> _dtoList = null;
 
     public DTOLayer(Mapping mapping)
     {
@@ -97,14 +99,21 @@ namespace org.iringtools.adapter
     }
 
     #region public methods
-    public List<DataTransferObject> GetDTOList(string graphName)
+    public List<Dictionary<string, string>> GetDTOList(string graphName)
     {
       foreach (Graph graph in _mapping.graphs)
       {
         if (graph.name.ToLower() == graphName.ToLower())
         {
-          LoadDataObjects(graph);
-          return GetDTOList(graph);
+          _graph = graph;
+          LoadDataObjects();
+
+          _dtoList = new List<Dictionary<string, string>>();
+          for (int i = 0; i < MaxDataObjectsCount(); i++)
+            _dtoList.Add(new Dictionary<string, string>());
+
+          ClassMap classMap = _graph.graphMaps.First().Key;
+          FillDTOList(classMap.classId, "rdl:" + classMap.name);
         }
       }
 
@@ -117,8 +126,9 @@ namespace org.iringtools.adapter
       {
         if (graph.name.ToLower() == graphName.ToLower())
         {
-          LoadDataObjects(graph);
-          return GetGraphRdf(graph);
+          _graph = graph;
+          LoadDataObjects();
+          return GetGraphRdf();
         }
       }
 
@@ -127,11 +137,11 @@ namespace org.iringtools.adapter
     #endregion
 
     #region private methods
-    private void LoadDataObjects(Graph graph)
+    private void LoadDataObjects()
     {
       _dataObjects = new Dictionary<string, IList<IDataObject>>();
 
-      foreach (DataObjectMap dataObjectMap in graph.dataObjectMaps)
+      foreach (DataObjectMap dataObjectMap in _graph.dataObjectMaps)
       {
         _dataObjects.Add(dataObjectMap.name, _dataLayer.Get(dataObjectMap.name, null));
       }
@@ -153,7 +163,23 @@ namespace org.iringtools.adapter
       return RDF_NIL;
     }
 
-    private XElement GetGraphRdf(Graph graph)
+    // maximum number of rows in database
+    private int MaxDataObjectsCount()
+    {
+      int maxCount = 0;
+
+      foreach (var pair in _dataObjects)
+      {
+        if (pair.Value.Count > maxCount)
+        {
+          maxCount = pair.Value.Count;
+        }
+      }
+
+      return maxCount;
+    }
+
+    private XElement GetGraphRdf()
     {
       XElement graphElement = new XElement(RDF_NS + "RDF",
         new XAttribute(XNamespace.Xmlns + "rdf", RDF_NS),
@@ -162,7 +188,7 @@ namespace org.iringtools.adapter
         new XAttribute(XNamespace.Xmlns + "xsd", XSD_NS),
         new XAttribute(XNamespace.Xmlns + "tpl", TPL_NS));
 
-      foreach (var pair in graph.graphMaps)
+      foreach (var pair in _graph.graphMaps)
       {
         ClassMap classMap = pair.Key;
         List<string> identifierValues = new List<string>();
@@ -194,7 +220,8 @@ namespace org.iringtools.adapter
           }
         }
 
-        for (int i = 0; i < identifierValues.Count; i++)
+        int maxDataObjectsCount = MaxDataObjectsCount();
+        for (int i = 0; i < maxDataObjectsCount; i++)
         {
           string classId = classMap.classId.Substring(classMap.classId.IndexOf(":") + 1);
           string classInstance = DOMAIN_NS + identifierValues[i];
@@ -324,45 +351,71 @@ namespace org.iringtools.adapter
       doc.Save(fileName);
     }
 
-    private List<DataTransferObject> GetDTOList(Graph graph)
+    private List<TemplateMap> GetTemplateMaps(string classId)
     {
-      List<DataTransferObject> dtoList = new List<DataTransferObject>();
+      List<TemplateMap> templateMaps = null;
 
-      foreach (var pair in graph.graphMaps)
+      foreach (var pair in _graph.graphMaps)
       {
-        ClassMap classMap = pair.Key;
-        foreach (TemplateMap templateMap in pair.Value)
+        if (pair.Key.classId == classId)
+          return pair.Value;
+      }
+
+      return templateMaps;
+    }
+
+    private void FillDTOList(string classId, string propertyPath)
+    {
+      List<TemplateMap> templateMaps = GetTemplateMaps(classId);
+      foreach (TemplateMap templateMap in templateMaps)
+      {
+        propertyPath += "/tpl:" + templateMap.name;
+        string tempPropertyPath = propertyPath;
+
+        foreach (RoleMap roleMap in templateMap.roleMaps)
         {
-          foreach (RoleMap roleMap in templateMap.roleMaps)
+          //todo: handle reference roles
+          if (roleMap.type == RoleType.Property || roleMap.type == RoleType.FixedValue)
           {
-            // only interested in property mapped roles
-            if (roleMap.type == RoleType.Property)
+            propertyPath += "/tpl:" + roleMap.name;
+
+            string[] propertyMap = roleMap.propertyName.Split('.');
+            string objectName = propertyMap[0].Trim();
+            string propertyName = propertyMap[1].Trim();
+            string value = String.Empty;
+
+            IList<IDataObject> dataObjects = _dataObjects[objectName];
+            for (int i = 0; i < dataObjects.Count; i++)
             {
-              string[] propertyMap = roleMap.propertyName.Split('.');
-              string objectName = propertyMap[0].Trim();
-              string propertyName = propertyMap[1].Trim();
-
-              IList<IDataObject> dataObjects = _dataObjects[objectName];
-              foreach (IDataObject dataObject in dataObjects)
+              if (roleMap.type == RoleType.Property)
               {
-                // need to convert value to property roleMap xsd type?
-                object value = dataObject.GetPropertyValue(propertyName);
-                roleMap.value = Convert.ToString(value);
+                value = Convert.ToString(dataObjects[i].GetPropertyValue(propertyName));
 
-                // if value is a valueList, get modelURI
+                if (!String.IsNullOrEmpty(roleMap.valueList))
+                {
+                  value = ResolveValueList(roleMap.valueList, value);
+                }
               }
+              else
+              {
+                value = roleMap.value;
+              }
+
+              Dictionary<string, string> propertyValuePair = _dtoList[i];
+              propertyValuePair[propertyPath] = value;
             }
+
+            propertyPath = tempPropertyPath;
+          }
+
+          if (roleMap.classMap != null)
+          {
+            FillDTOList(roleMap.classMap.classId, propertyPath + "/rdl:" + roleMap.classMap.name);
           }
         }
       }
-
-      return dtoList;
-    }
-
-    public void PostDTO()
-    {
-
     }
     #endregion
   }
 }
+
