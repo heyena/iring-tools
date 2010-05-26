@@ -52,7 +52,7 @@ namespace org.iringtools.modulelibrary.layerdal
         private WebClient _testClient;
         private WebClient _postClassClient;
         private WebClient _postTemplateClient;
-
+        private WebClient _getRepositoriesClient;
         private string _referenceDataServiceUri;
 
         /// <summary>
@@ -77,6 +77,7 @@ namespace org.iringtools.modulelibrary.layerdal
               _testClient = new WebClient();
               _postClassClient = new WebClient();
               _postTemplateClient = new WebClient();
+              _getRepositoriesClient = new WebClient();
 
               #region // All Async data results will be handled by OnCompleteEventHandler
               _searchClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
@@ -88,6 +89,7 @@ namespace org.iringtools.modulelibrary.layerdal
               _classTemplatesClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
               _testClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
               _postClassClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
+              _getRepositoriesClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
               #endregion
 
             }
@@ -131,7 +133,38 @@ namespace org.iringtools.modulelibrary.layerdal
           }
           #endregion
 
-            //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+          #region // GetRepositories
+          // <Method> data arrived event handler 
+          if (sender == _getRepositoriesClient)
+          {
+              try
+              {
+                  string result = ((DownloadStringCompletedEventArgs)e).Result;
+                  List<Repository> repositories = result.DeserializeDataContract<List<Repository>>();
+
+                  if (repositories == null)
+                      return;
+
+                  args = new CompletedEventArgs
+                  {
+                      // Define your method in CompletedEventType and assign
+                      CompletedType = CompletedEventType.GetRepositories,
+                      Data = repositories
+                  };
+              }
+              catch (Exception ex)
+              {
+                  args = new CompletedEventArgs
+                  {
+                      CompletedType = CompletedEventType.GetRepositories,
+                      Error = ex,
+                      FriendlyErrorMessage = "Reference Data Service returned an error while getting repositories.",
+                  };
+                  Error.SetError(ex);
+              }
+          }
+          #endregion
+          //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
             #region // Search data arrived event handler
             // SEARCH
             if (sender == _searchClient)
@@ -140,7 +173,7 @@ namespace org.iringtools.modulelibrary.layerdal
                 {
                   // Cast e (AsyncCompletedEventArgs) to actual type so we can
                   // retrieve the Result - assign to dictionary
-                  string result = ((DownloadStringCompletedEventArgs)e).Result;
+                    string result = ((DownloadStringCompletedEventArgs)e).Result;
 
                   RefDataEntities entities = result.DeserializeDataContract<RefDataEntities>();
 
@@ -442,7 +475,7 @@ namespace org.iringtools.modulelibrary.layerdal
               }              
           }
           #endregion
-                   
+
             //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
             // Raise the event with the args
             if (OnDataArrived != null)
@@ -534,7 +567,8 @@ namespace org.iringtools.modulelibrary.layerdal
 
         public List<Repository> GetRepositories()
         {
-            throw new System.NotImplementedException();
+            _getRepositoriesClient.DownloadStringAsync(new Uri(_referenceDataServiceUri + "/repositories"));
+            return null;
         }
 
         public RefDataEntities Search(string query)
@@ -686,7 +720,7 @@ namespace org.iringtools.modulelibrary.layerdal
 
             _postTemplateClient.Headers["Content-type"] = "application/xml";
             _postTemplateClient.Encoding = Encoding.UTF8;
-            _postTemplateClient.UploadStringAsync(new Uri(_referenceDataServiceUri + "/templates"), "POST", message);
+            _postTemplateClient.UploadStringAsync(new Uri(template.targetRepository + "/templates"), "POST", message);
 
             return null;
         }
@@ -694,10 +728,10 @@ namespace org.iringtools.modulelibrary.layerdal
         public org.iringtools.library.Response PostClass(QMXF @class)
         {
             string message = Utility.SerializeXml<QMXF>(@class);
-
+           
             _postClassClient.Headers["Content-type"] = "application/xml";
             _postClassClient.Encoding = Encoding.UTF8;
-            _postClassClient.UploadStringAsync(new Uri(_referenceDataServiceUri + "/classes"), "POST", message);
+            _postClassClient.UploadStringAsync(new Uri(@class.targetRepository + "/classes"), "POST", message);
 
             return null;
         }

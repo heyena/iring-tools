@@ -35,6 +35,8 @@ namespace org.iringtools.modulelibrary.layerdal
 
         Response PostClass(QMXF @class);
 
+        List<Repository> GetRepositories();
+
         string GetReferenceDataServiceUri { get; }
 
     }

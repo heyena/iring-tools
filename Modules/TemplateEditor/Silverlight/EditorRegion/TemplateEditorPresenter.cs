@@ -29,6 +29,8 @@ using org.iringtools.ontologyservice.presentation;
 using org.iringtools.ontologyservice.presentation.presentationmodels;
 
 using org.ids_adi.qmxf;
+using org.ids_adi.iring.referenceData;
+using org.iringtools.library;
 
 namespace org.iringtools.modules.templateeditor.editorregion
 {
@@ -61,6 +63,7 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 
         private ITemplateEditorModel _templateModel = null;
         private EditorMode _editorMode = EditorMode.Add;
+
 
         private Button btnOK
         {
@@ -101,6 +104,11 @@ namespace org.iringtools.modules.templateeditor.editorregion
         {
             get { return ComboBoxCtrl("roleRange"); }
         }
+
+        private ComboBox cmbRepositories
+        {
+            get { return ComboBoxCtrl("cmbRepositories"); }
+        }
     
         /// <summary>
         /// Initializes a new instance of the <see cref="PopupPresenter"/> class.
@@ -117,6 +125,11 @@ namespace org.iringtools.modules.templateeditor.editorregion
             this.model = model;
             this.regionManager = regionManager;            
             this.referenceDataService = referenceDataService;
+            
+            //foreach (Repository rep in referenceDataService.GetRepositories())
+            //{
+            // cmbRepositories.Items.Add(new ComboBoxItem{ Content = rep.name +  " ReadOnly = " + rep.isReadOnly.ToString(), Tag = rep });
+            //}
 
             lstRoles.SelectionChanged += (object sender, SelectionChangedEventArgs e) =>
             {
@@ -127,6 +140,9 @@ namespace org.iringtools.modules.templateeditor.editorregion
             {
                 rangeSelectionChanged(sender, e);
             };
+
+            cmbRepositories.SelectionChanged += (object sender, SelectionChangedEventArgs e) =>
+                repositorySelectionChanged(sender, e);
 
             btnOK.Click += (object sender, RoutedEventArgs e) =>
             {
@@ -158,8 +174,60 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 buttonClickHandler(new ButtonEventArgs(this, btnApplyRole));
             };
 
+            referenceDataService.OnDataArrived += OnDataArrivedHandler;
+
             aggregator.GetEvent<ButtonEvent>().Subscribe(showEditorHandler);
 
+        }
+
+        private void repositorySelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBox cb = sender as ComboBox;
+            ComboBoxItem cbi = cb.SelectedItem as ComboBoxItem;
+
+
+            if (model.SelectedQMXF == null)
+                model.SelectedQMXF = new QMXF();
+            Repository rep = cbi.Tag as Repository;
+            if(rep.isReadOnly == true)
+            {
+                btnOK.IsEnabled = false;
+                btnApply.IsEnabled = false;
+            }
+            else
+            {
+                btnOK.IsEnabled = true;
+                btnApply.IsEnabled = true;
+            }
+            model.SelectedQMXF.targetRepository = rep.uri;
+        }
+
+        void OnDataArrivedHandler(object sender, System.EventArgs e)
+        {
+            try
+            {
+                CompletedEventArgs args = (CompletedEventArgs)e;
+                if (args.CompletedType.Equals(CompletedEventType.GetRepositories))
+                {
+                    object obj = args.Data;
+                    foreach (Repository repository in (List<Repository>)obj)
+                    {
+                        ComboBoxItem item = new ComboBoxItem
+                        {
+                            Content = repository.name + "<>IsReadOnly= " + repository.isReadOnly.ToString(),
+                            Tag = repository,
+                            Height = 20,
+                            FontSize = 10
+                        };
+
+                        cmbRepositories.Items.Add(item);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Error.SetError(ex);
+            }
         }
 
         public void InitializeEditorForAdd()

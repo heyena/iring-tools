@@ -11,6 +11,7 @@ namespace org.iringtools.modulelibrary.types
     GetSubClasses,
     GetUnitTestString,
     GetDataDictionary,
+    GetRepositories,
     GetMapping,
     Search,
     Find,

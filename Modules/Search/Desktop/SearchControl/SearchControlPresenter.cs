@@ -330,7 +330,7 @@ namespace org.iringtools.modules.search.searchregion
             try
             {
                 CompletedEventArgs args = (CompletedEventArgs)e;
-                if (args.CheckForType(CompletedEventType.GetClassLabel))
+                if (args.CheckForType(CompletedEventType.GetClassLabel) || args.CheckForType(CompletedEventType.GetRepositories))
                 { }
                 else
                 {
@@ -365,7 +365,7 @@ namespace org.iringtools.modules.search.searchregion
             }
             catch (Exception ex)
             {
-                Error.SetError(ex);
+                Error.SetError(ex, ex.Message);
             }
         }
         #endregion

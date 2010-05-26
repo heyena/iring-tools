@@ -110,18 +110,7 @@ namespace org.iringtools.modulelibrary.layerbll
                 {
                     return "";
                 }
-            }
-
-            /*
-            set
-            {
-                _classDefinition.entityType = value;
-                if (PropertyChanged != null)
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs("EntityType"));
-                }
-            }
-            */            
+            }           
         }
 
         public string Description
@@ -200,15 +189,6 @@ namespace org.iringtools.modulelibrary.layerbll
                     return "";
                 }
             }
-            /*
-            set
-            {
-                _classDefinition.status.FirstOrDefault().authority = value;             
-                if ( PropertyChanged != null ) {
-                    PropertyChanged(this, new PropertyChangedEventArgs("StatusAuthority"));             
-                }
-            }
-            */ 
         }
 
         public string StatusClass
@@ -224,15 +204,6 @@ namespace org.iringtools.modulelibrary.layerbll
                     return "";
                 }
             }
-            /*
-            set
-            {
-                _classDefinition.status.FirstOrDefault().Class = value;             
-                if ( PropertyChanged != null ) {
-                    PropertyChanged(this, new PropertyChangedEventArgs("StatusClass"));             
-                }
-            }
-            */ 
         }
 
         public string StatusFrom
@@ -248,15 +219,6 @@ namespace org.iringtools.modulelibrary.layerbll
                     return "";
                 }
             }
-            /*
-            set
-            {
-                _classDefinition.status.FirstOrDefault().from = value;             
-                if ( PropertyChanged != null ) {
-                    PropertyChanged(this, new PropertyChangedEventArgs("StatusFrom"));             
-                }
-            }
-            */ 
         }
 
         public string StatusTo
@@ -271,21 +233,10 @@ namespace org.iringtools.modulelibrary.layerbll
                 {
                     return "";
                 }
-            }
-            /*
-            set
-            {
-                _classDefinition.status.FirstOrDefault().to = value;             
-                if ( PropertyChanged != null ) {
-                    PropertyChanged(this, new PropertyChangedEventArgs("StatusTo"));             
-                }
-            }
-            */             
+            }            
 
         }
 
-        //suggestedDesignation
-        //textualDefinition
 
         public ObservableCollection<ListBoxItem> Classification
         {
