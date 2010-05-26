@@ -129,7 +129,7 @@ namespace org.ids_adi.iring.referenceData
        
         public Response PostTemplate(QMXF qmxf)
         {
-          return _referenceDataServiceProvider.PostTemplate(qmxf);
+          return _referenceDataServiceProvider.PostTemplate(qmxf);                
         }
 
         public Response PostClass(QMXF qmxf)

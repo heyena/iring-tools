@@ -1959,7 +1959,7 @@ namespace org.ids_adi.iring.referenceData
         {
             try
             {
-                Response response = null;
+                Response response = new Response();
 
                 string encryptedCredentials = repository.encryptedCredentials;
 

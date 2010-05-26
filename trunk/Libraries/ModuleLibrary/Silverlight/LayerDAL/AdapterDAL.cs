@@ -171,22 +171,36 @@ namespace org.iringtools.modulelibrary.layerdal
       if (sender == _dictionaryClient)
       {
 
-        // Cast e (AsyncCompletedEventArgs) to actual type so we can
-        // retrieve the Result - assign to dictionary
-        string result = ((DownloadStringCompletedEventArgs)e).Result;
+          try
+          {
+              // Cast e (AsyncCompletedEventArgs) to actual type so we can
+              // retrieve the Result - assign to dictionary
+              string result = ((DownloadStringCompletedEventArgs)e).Result;
 
-        DataDictionary dictionary = result.DeserializeDataContract<DataDictionary>();
+              DataDictionary dictionary = result.DeserializeDataContract<DataDictionary>();
 
-        // If the cast failed then return
-        if (dictionary == null)
-          return;
+              // If the cast failed then return
+              if (dictionary == null)
+                  return;
 
-        // Populate our event argument 
-        args = new CompletedEventArgs
-        {
-          CompletedType = CompletedEventType.GetDataDictionary,
-          Data = dictionary,
-        };
+              // Populate our event argument 
+              args = new CompletedEventArgs
+              {
+                  CompletedType = CompletedEventType.GetDataDictionary,
+                  Data = dictionary,
+              };
+          }
+          catch (Exception ex)
+          {
+              // Configure event argument
+            args = new CompletedEventArgs
+            {
+              // Define your method in CompletedEventType and assign
+              CompletedType = CompletedEventType.GetDataDictionary,
+              Error = ex,
+              FriendlyErrorMessage = "Error Getting DataDictionary from Adapter Service.",
+            };
+          }
       }
       #endregion
 
@@ -196,22 +210,36 @@ namespace org.iringtools.modulelibrary.layerdal
       // Only handle GetMappingCompletedEventArgs 
       if (sender == _mappingClient && CheckClassTypeFor<DownloadStringCompletedEventArgs>(e))
       {
-        // Cast e (AsyncCompletedEventArgs) to actual type so we can
-        // retrieve the Result - assign to mappingResult
-        string result = ((DownloadStringCompletedEventArgs)e).Result;
+          try
+          {
+              // Cast e (AsyncCompletedEventArgs) to actual type so we can
+              // retrieve the Result - assign to mappingResult
+              string result = ((DownloadStringCompletedEventArgs)e).Result;
 
-        Mapping mapping = result.DeserializeXml<Mapping>();
+              Mapping mapping = result.DeserializeXml<Mapping>();
 
-        // If the cast failed then return
-        if (mapping == null)
-          return;
+              // If the cast failed then return
+              if (mapping == null)
+                  return;
 
-        // Populate event argument data object
-        args = new CompletedEventArgs
-        {
-          CompletedType = CompletedEventType.GetMapping,
-          Data = mapping,
-        };
+              // Populate event argument data object
+              args = new CompletedEventArgs
+              {
+                  CompletedType = CompletedEventType.GetMapping,
+                  Data = mapping,
+              };
+          }
+          catch (Exception ex)
+          {
+            // Configure event argument
+            args = new CompletedEventArgs
+            {
+              // Define your method in CompletedEventType and assign
+              CompletedType = CompletedEventType.GetMapping,
+              Error = ex,
+              FriendlyErrorMessage = "Error getting Mapping from Adapter Service.",
+            };
+          }
       }
       #endregion
 
@@ -220,16 +248,30 @@ namespace org.iringtools.modulelibrary.layerdal
       // <Method> data arrived event handler 
       if (sender == _refreshClient)
       {
-        string result = ((DownloadStringCompletedEventArgs)e).Result;
-        Response response = result.DeserializeDataContract<Response>();
+          try
+          {
+              string result = ((DownloadStringCompletedEventArgs)e).Result;
+              Response response = result.DeserializeDataContract<Response>();
 
-        // Configure event argument
-        args = new CompletedEventArgs
-        {
-          // Define your method in CompletedEventType and assign
-          CompletedType = CompletedEventType.RefreshAll,
-          Data = response
-        };
+              // Configure event argument
+              args = new CompletedEventArgs
+              {
+                  // Define your method in CompletedEventType and assign
+                  CompletedType = CompletedEventType.RefreshAll,
+                  Data = response
+              };
+          }
+          catch (Exception ex)
+          {
+            // Configure event argument
+            args = new CompletedEventArgs
+            {
+              // Define your method in CompletedEventType and assign
+              CompletedType = CompletedEventType.RefreshAll,
+              Error = ex,
+              FriendlyErrorMessage = "Adapter Service returned an error while refreshing the facade.",
+            };
+          }
       }
       #endregion
 
@@ -238,16 +280,30 @@ namespace org.iringtools.modulelibrary.layerdal
       // <Method> data arrived event handler 
       if (sender == _generateClient)
       {
-        string result = ((DownloadStringCompletedEventArgs)e).Result;
-        Response response = result.DeserializeDataContract<Response>();
+          try
+          {
+              string result = ((DownloadStringCompletedEventArgs)e).Result;
+              Response response = result.DeserializeDataContract<Response>();
 
-        // Configure event argument
-        args = new CompletedEventArgs
-        {
-          // Define your method in CompletedEventType and assign
-          CompletedType = CompletedEventType.Generate,
-          Data = response
-        };
+              // Configure event argument
+              args = new CompletedEventArgs
+              {
+                  // Define your method in CompletedEventType and assign
+                  CompletedType = CompletedEventType.Generate,
+                  Data = response
+              };
+          }
+          catch (Exception ex)
+          {
+            // Configure event argument
+            args = new CompletedEventArgs
+            {
+              // Define your method in CompletedEventType and assign
+              CompletedType = CompletedEventType.Generate,
+              Error = ex,
+              FriendlyErrorMessage = "Adapter Service returned an error while generating DTO.",
+            };
+          }
       }
       #endregion
 
@@ -256,16 +312,30 @@ namespace org.iringtools.modulelibrary.layerdal
       // <Method> data arrived event handler 
       if (sender == _mappingClient && CheckClassTypeFor<UploadStringCompletedEventArgs>(e))
       {
-        var result = ((UploadStringCompletedEventArgs)e).Result;
-        Response response = result.DeserializeXml<Response>();
+          try
+          {
+              var result = ((UploadStringCompletedEventArgs)e).Result;
+              Response response = result.DeserializeXml<Response>();
 
-        // Configure event argument
-        args = new CompletedEventArgs
-        {
-          // Define your method in CompletedEventType and assign
-          CompletedType = CompletedEventType.UpdateMapping,
-          Data = response.FirstOrDefault<string>()
-        };
+              // Configure event argument
+              args = new CompletedEventArgs
+              {
+                  // Define your method in CompletedEventType and assign
+                  CompletedType = CompletedEventType.UpdateMapping,
+                  Data = response.FirstOrDefault<string>()
+              };
+          }
+          catch (Exception ex)
+          {
+            // Configure event argument
+            args = new CompletedEventArgs
+            {
+              // Define your method in CompletedEventType and assign
+              CompletedType = CompletedEventType.UpdateMapping,
+              Error = ex,
+              FriendlyErrorMessage = "Adapter Service returned an error while updating the mapping.",
+            };
+          }
       }
       #endregion
       

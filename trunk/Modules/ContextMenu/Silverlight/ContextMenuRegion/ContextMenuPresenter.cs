@@ -99,7 +99,7 @@ namespace org.iringtools.modules.contextmenu.contextmenuregion
             aggregator.GetEvent<SpinnerEvent>().Subscribe(SpinnerEventHandler);
 
         }
-        CustomTreeItem tvwItem;
+        CustomTreeItem tvwItem = new CustomTreeItem();
         public void NavigationEventHandler(NavigationEventArgs e)
         {
             tvwItem = e.SelectedNode;  
