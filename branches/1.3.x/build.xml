@@ -233,7 +233,17 @@
                Utilities\SWDump\bin\Debug\SemWeb.SQLServerStore.dll;
                Utilities\SWDump\bin\Debug\sparql-core.dll;
                Utilities\SWDump\bin\Debug\swdump.exe;
-               Utilities\SWDump\App.Default.config;">
+               Utilities\SWDump\App.Default.config;
+               Utilities\RdfImportExport\RdfImportExport\bin\Debug\dotNetRDF.dll;
+               Utilities\RdfImportExport\RdfImportExport\bin\Debug\dotNetRDF.xml;
+               Utilities\RdfImportExport\RdfImportExport\bin\Debug\HtmlAgilityPack.dll;
+               Utilities\RdfImportExport\RdfImportExport\bin\Debug\HtmlAgilityPack.xml;
+               Utilities\RdfImportExport\RdfImportExport\bin\Debug\MySql.Data.dll;
+               Utilities\RdfImportExport\RdfImportExport\bin\Debug\Newtonsoft.Json.dll;
+               Utilities\RdfImportExport\RdfImportExport\bin\Debug\Newtonsoft.Json.xml;
+               Utilities\RdfImportExport\RdfImportExport\bin\Debug\virtado3.dll;
+               Utilities\RdfImportExport\RdfImportExport\bin\Debug\RdfImportExport.exe;
+               Utilities\RdfImportExport\RdfImportExport\Developer_App.config;">
     </AdapterToolsDeployment>
     
     <SandboxToolsDeployment
@@ -327,6 +337,7 @@
     <Exec Command="Copy Utilities\DBDictionaryUtil\DBDictionaryUtil\App_Default.config Utilities\DBDictionaryUtil\DBDictionaryUtil\App.config" />
     <Exec Command="Copy Utilities\SWDump\App.Default.config Utilities\SWDump\App.config" />
     <Exec Command="Copy Utilities\QMXFGenerator\QMXFGenerator\App_Default.config Utilities\QMXFGenerator\QMXFGenerator\App.config" />
+    <Exec Command="Copy Utilities\RdfImportExport\RdfImportExport\Developer_App.config Utilities\RdfImportExport\RdfImportExport\App.config" />
   </Target>
   
   <Target Name="Test">
