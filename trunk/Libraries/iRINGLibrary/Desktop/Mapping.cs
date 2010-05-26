@@ -24,139 +24,276 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ////////////////////////////////////////////////////////////////////////////////
 
-using System.Runtime.Serialization;
-using System.Collections.ObjectModel;
-using System.Xml.Serialization;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Xml.Serialization;
+using System.IO;
+using System.Runtime.Serialization;
 
 namespace org.iringtools.library
 {
-  [XmlRoot(ElementName = "Mapping")]
+  [DataContract]
   public class Mapping
   {
-    [XmlArray(ElementName="GraphMaps")]
-    public List<GraphMap> graphMaps { get; set; }
+    public Mapping()
+    {
+      graphs = new List<Graph>();
+      valueMaps = new List<ValueMap>();
+    }
 
-    [XmlArray(ElementName="ValueMaps")]
+    [DataMember(EmitDefaultValue = false, Order = 0)]
+    public List<Graph> graphs { get; set; }
+
+    [DataMember(EmitDefaultValue = false, Order = 1)]
     public List<ValueMap> valueMaps { get; set; }
 
-    [XmlElement(ElementName="Version")]
+    [DataMember(EmitDefaultValue = false, Order = 2)]
     public string version { get; set; }
   }
 
-  [XmlRoot(ElementName = "GraphMap")]
-  public class GraphMap : ClassMap
+  [DataContract]
+  public class Graph
   {
-    [XmlArray(ElementName = "DataObjectMaps")]
-    public List<DataObjectMap> dataObjectMaps { get; set; }
+    public Graph()
+    {
+      graphMaps = new Dictionary<ClassMap, List<TemplateMap>>();
+      dataObjectMaps = new List<DataObjectMap>();
+    }
+
+    [DataMember(EmitDefaultValue = false, Order = 0)]
+    public string name { get; set; }
+
+    [DataMember(EmitDefaultValue = false, Order = 1)]
+    public string uri { get; set; }
+
+    [DataMember(EmitDefaultValue = false, Order = 2)]
+    public Dictionary<ClassMap, List<TemplateMap>> graphMaps { get; set; }
+
+    [DataMember(EmitDefaultValue = false, Order = 3)]
+    public List<DataObjectMap> dataObjectMaps { get; set; } // only top level data objects
+
+    public void AddClassMap(ClassMap classMap, RoleMap roleMap)
+    {
+      if (!graphMaps.ContainsKey(classMap))
+      {
+        List<TemplateMap> templateMaps = new List<TemplateMap>();
+        graphMaps.Add(classMap, templateMaps);
+
+        if (roleMap != null)
+        {
+          roleMap.classMap = classMap;
+        }
+      }
+    }
+
+    public void AddTemplateMap(ClassMap classMap, TemplateMap templateMap)
+    {
+      AddClassMap(classMap, null);
+      List<TemplateMap> templateMaps = graphMaps[classMap];
+      templateMaps.Add(templateMap);
+    }
+
+    public void DeleteClassMap(string classId)
+    {
+      throw new NotImplementedException();
+    }
+
+    public void DeleteTemplateMap(ClassMap classMap, string templateId, int position)
+    {
+      throw new NotImplementedException();
+    }
   }
 
-  [XmlRoot(ElementName = "ValueMap")]
-  public class ValueMap
+  [DataContract]
+  public class ClassMap
   {
-    [XmlAttribute]
-    public string valueList { get; set; }
 
-    [XmlAttribute]
-    public string internalValue { get; set; }
+    public ClassMap()
+    {
+      identifiers = new List<string>();
+    }
 
-    [XmlAttribute]
-    public string modelURI { get; set; }
+    public ClassMap(ClassMap classMap)
+      : this()
+    {
+      classId = classMap.classId;
+      name = classMap.name;
+      identifierDelimeter = String.Empty;
+
+      foreach (string identifier in classMap.identifiers)
+      {
+        identifiers.Add(identifier);
+      }
+    }
+
+    [DataMember(EmitDefaultValue = false, Order = 0)]
+    public string classId { get; set; }
+
+    [DataMember(EmitDefaultValue = false, Order = 1)]
+    public string name { get; set; }
+
+    [DataMember(EmitDefaultValue = false, Order = 2)]
+    public string identifierDelimeter { get; set; }
+
+    [DataMember(EmitDefaultValue = false, Order = 3)]
+    public List<string> identifiers { get; set; }
+
+    [DataMember(EmitDefaultValue = false, Order = 4)]
+    public string identifierValue { get; set; }
   }
 
-  [XmlRoot(ElementName = "TemplateMap")]
+  [DataContract]
   public class TemplateMap
   {
-    [XmlAttribute]
-    public TemplateType type { get; set; }
+    public TemplateMap()
+    {
+      roleMaps = new List<RoleMap>();
+    }
 
-    [XmlAttribute]
+    public TemplateMap(TemplateMap templateMap)
+      : this()
+    {
+      templateId = templateMap.templateId;
+      name = templateMap.name;
+
+      foreach (RoleMap roleMap in templateMap.roleMaps)
+      {
+        roleMaps.Add(new RoleMap(roleMap));
+      }
+    }
+
+    public TemplateMap(TemplateMap templateMap, RoleMap roleMap)
+      : this(templateMap)
+    {
+      AddRoleMap(roleMap);
+    }
+
+    [DataMember(EmitDefaultValue = false, Order = 0)]
     public string templateId { get; set; }
 
-    [XmlAttribute]
+    [DataMember(EmitDefaultValue = false, Order = 1)]
     public string name { get; set; }
 
-    [XmlAttribute]
-    public string classRole { get; set; }
-
-    [XmlArray(ElementName="RoleMaps")]
+    [DataMember(EmitDefaultValue = false, Order = 2)]
     public List<RoleMap> roleMaps { get; set; }
+
+    public void AddRoleMap(RoleMap roleMap)
+    {
+      bool found = false;
+
+      for (int i = 0; i < roleMaps.Count; i++)
+      {
+        if (roleMaps[i].roleId == roleMap.roleId)
+        {
+          roleMaps[i] = roleMap;
+          found = true;
+          break;
+        }
+      }
+
+      if (!found)
+      {
+        roleMaps.Add(roleMap);
+      }
+    }
+
+    public void DeleteRoleMap(string roleId)
+    {
+      throw new NotImplementedException();
+    }
   }
 
-  [XmlRoot(ElementName = "RoleMap")]
+  [DataContract]
   public class RoleMap
   {
-    [XmlAttribute]
+    public RoleMap() { }
+
+    public RoleMap(RoleMap roleMap)
+    {
+      type = roleMap.type;
+      roleId = roleMap.roleId;
+      name = roleMap.name;
+      dataType = roleMap.dataType;
+      propertyName = roleMap.propertyName;
+      value = roleMap.value;
+      valueList = roleMap.valueList;
+      classMap = roleMap.classMap;
+    }
+
+    [DataMember(Order = 0)]
+    public RoleType type { get; set; }
+
+    [DataMember(EmitDefaultValue = false, Order = 1)]
     public string roleId { get; set; }
 
-    [XmlAttribute]
+    [DataMember(EmitDefaultValue = false, Order = 2)]
     public string name { get; set; }
 
-    [XmlAttribute]
+    [DataMember(EmitDefaultValue = false, Order = 3)]
     public string dataType { get; set; }
 
-    [XmlAttribute]
+    [DataMember(EmitDefaultValue = false, Order = 4)]
     public string propertyName { get; set; }
 
-    [XmlAttribute]
+    [DataMember(EmitDefaultValue = false, Order = 5)]
     public string value { get; set; }
 
-    [XmlAttribute]
-    public string reference { get; set; }
-
-    [XmlAttribute]
+    [DataMember(EmitDefaultValue = false, Order = 6)]
     public string valueList { get; set; }
 
-    [XmlElement(ElementName="ClassMap")]
+    [DataMember(EmitDefaultValue = false, Order = 7)]
     public ClassMap classMap { get; set; }
 
-    [XmlIgnore]
-    public bool isMapped 
+    public bool isMapped
     {
-      get 
-      { 
-        return classMap != null || !String.IsNullOrEmpty(reference) || !String.IsNullOrEmpty(value) || !String.IsNullOrEmpty(propertyName); 
+      get
+      {
+        return classMap != null || !String.IsNullOrEmpty(propertyName) || !String.IsNullOrEmpty(value);
       }
     }
   }
 
-  [XmlRoot(ElementName = "ClassMap")]
-  public class ClassMap
+  [DataContract]
+  public enum RoleType
   {
-    [XmlAttribute]
-    public string name { get; set; }
-
-    [XmlAttribute]
-    public string classId { get; set; }
-
-    [XmlAttribute]
-    public string identifier { get; set; }
-
-    [XmlArray(ElementName = "TemplateMaps")]
-    public List<TemplateMap> templateMaps { get; set; }
-  }
-
-  public enum TemplateType
-  {
-    [XmlEnum]
+    [EnumMember]
     Property,
 
-    [XmlEnum]
-    Relationship,
+    [EnumMember]
+    Reference,
+
+    [EnumMember]
+    ClassRole,
+
+    [EnumMember]
+    FixedValue,
   }
 
-  [XmlRoot(ElementName = "DataObjectMap")]
+  [DataContract]
+  public class ValueMap
+  {
+    [DataMember(EmitDefaultValue = false, Order = 0)]
+    public string valueList { get; set; }
+
+    [DataMember(EmitDefaultValue = false, Order = 1)]
+    public string internalValue { get; set; }
+
+    [DataMember(EmitDefaultValue = false, Order = 2)]
+    public string uri { get; set; }
+  }
+
+  [DataContract]
   public class DataObjectMap
   {
-    [XmlAttribute]
+    [DataMember(EmitDefaultValue = false, Order = 0)]
     public string name { get; set; }
 
-    [XmlAttribute]
+    [DataMember(EmitDefaultValue = false, Order = 1)]
     public string inFilter { get; set; }
 
-    [XmlAttribute]
+    [DataMember(EmitDefaultValue = false, Order = 2)]
     public string outFilter { get; set; }
   }
 }
-
