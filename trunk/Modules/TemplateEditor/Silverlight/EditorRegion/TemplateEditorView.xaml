@@ -229,7 +229,8 @@
         <dataInput:Label x:Name="heading" Grid.Column="1" Grid.Row="1" Background="#FFF0F0F0"
 				Margin="16,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"
 				Content="{Binding Heading, Mode=OneWay}"/>
-
+        <dataInput:Label Content="Target Repository : " Height="20" HorizontalAlignment="Left" Grid.Column="0" Grid.Row="3" />
+        <ComboBox x:Name="cmbRepositories" Grid.Row="3" Margin="0,0,250,0" Grid.Column="0" Grid.ColumnSpan="2" Height="21" FontSize="10" Width="255" HorizontalAlignment="Right"/>
         <Button x:Name="btnApply1" 
 			Grid.Column="1" Grid.Row="3" Height="21" Width="73"
 			Margin="0,0,8,0" VerticalAlignment="Center" HorizontalAlignment="Right"  

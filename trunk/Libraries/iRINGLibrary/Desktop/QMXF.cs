@@ -30,6 +30,7 @@ using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using System.Text;
+using org.iringtools.library;
 
 namespace org.ids_adi.qmxf
 {
@@ -68,6 +69,11 @@ namespace org.ids_adi.qmxf
         [DataMember]
         [XmlAttribute(AttributeName = "license-ref")]
         public string licenseRef { get; set; }
+
+        [DataMember]
+        [XmlAttribute(AttributeName = "targetRepository")]
+        public string targetRepository { get; set; }
+
 
     }
 

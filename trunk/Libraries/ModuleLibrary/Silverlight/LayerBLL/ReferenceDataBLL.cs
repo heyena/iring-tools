@@ -184,11 +184,11 @@ namespace org.iringtools.modulelibrary.layerbll
     /// get configured repositories
     /// </summary>
     /// <returns></returns>
-    //public List<Repository> GetRepositories()
-    //{
-    //  StartService("GetRepositories");
-    //  return dal.GetRepositories();
-    //}
+    public List<Repository> GetRepositories()
+    {        
+       StartService("GetRepositories");
+       return dal.GetRepositories();
+    }
 
     /// <summary>
     /// do a search
