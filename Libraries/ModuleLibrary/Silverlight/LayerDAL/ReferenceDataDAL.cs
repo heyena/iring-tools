@@ -88,7 +88,8 @@ namespace org.iringtools.modulelibrary.layerdal
               _subClassClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
               _classTemplatesClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
               _testClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
-              _postClassClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
+              _postClassClient.UploadStringCompleted += new UploadStringCompletedEventHandler(OnCompletedEvent);
+              _postTemplateClient.UploadStringCompleted += new UploadStringCompletedEventHandler(OnCompletedEvent);
               _getRepositoriesClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
               #endregion
 
@@ -198,7 +199,7 @@ namespace org.iringtools.modulelibrary.layerdal
                         Error = ex,
                         FriendlyErrorMessage = "Reference Data Service returned an error while performing search.",
                     };                    
-                    Error.SetError(ex);
+                    //Error.SetError(ex);
                 }
             }
 
@@ -238,7 +239,7 @@ namespace org.iringtools.modulelibrary.layerdal
                         Error = ex,
                         FriendlyErrorMessage = "Reference Data Service returned an error while performing search.",
                     };
-                    Error.SetError(ex);
+                    //Error.SetError(ex);
                 }
             }
 
@@ -278,7 +279,7 @@ namespace org.iringtools.modulelibrary.layerdal
                         Error = ex,
                         FriendlyErrorMessage = "Reference Data Service returned an error while performing \"Find\".",
                     };
-                    Error.SetError(ex);
+                    //Error.SetError(ex);
                 }
             }
 
@@ -329,7 +330,7 @@ namespace org.iringtools.modulelibrary.layerdal
                             Error = ex,
                             FriendlyErrorMessage = "Reference Data Service returned an error while performing GetTemplate.",
                         };
-                    Error.SetError(ex);
+                    //Error.SetError(ex);
                 }
             }
             #endregion
@@ -366,7 +367,7 @@ namespace org.iringtools.modulelibrary.layerdal
                         Error = ex,
                         FriendlyErrorMessage = "Reference Data Service returned an error while performing GetSubClasses.",
                     };
-                    Error.SetError(ex);
+                    //Error.SetError(ex);
                 }              
             }
             #endregion
@@ -401,7 +402,7 @@ namespace org.iringtools.modulelibrary.layerdal
                         Error = ex,
                         FriendlyErrorMessage = "Reference Data Service returned an error while performing GetClassTemplates.",
                     };
-                  Error.SetError(ex);
+                  //Error.SetError(ex);
               }            
           }
             #endregion
@@ -412,19 +413,15 @@ namespace org.iringtools.modulelibrary.layerdal
           {
               try
               {
-                  //string result = ((DownloadStringCompletedEventArgs)e).Result;
+                  string result = ((DownloadStringCompletedEventArgs)e).Result;
 
-                  //List<Entity> entities = result.DeserializeDataContract<List<Entity>>();
-
-                  // If the cast failed then return
-                  //if (entities == null)
-                  //    return;
+                  Response response = result.DeserializeDataContract<Response>();
 
                   args = new CompletedEventArgs
                   {
-                      UserState = ((DownloadStringCompletedEventArgs)e).UserState,
+                      UserState = ((UploadStringCompletedEventArgs)e).UserState,
                       CompletedType = CompletedEventType.PostClass,
-                      Data = null//entities
+                      Data = response
                   };
               }
               catch (Exception ex)
@@ -436,30 +433,26 @@ namespace org.iringtools.modulelibrary.layerdal
                       Error = ex,
                       FriendlyErrorMessage = "Reference Data Service returned an error while posting the class.",
                   };
-                  Error.SetError(ex);
+                  //Error.SetError(ex);
               }              
           }
             #endregion
 
             ////:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
             #region // Post Template data arrived event handler
-          if (sender == _postClassClient)
+          if (sender == _postTemplateClient)
           {
               try
               {
                   string result = ((DownloadStringCompletedEventArgs)e).Result;
 
-                  List<Entity> entities = result.DeserializeDataContract<List<Entity>>();
-
-                  // If the cast failed then return
-                  if (entities == null)
-                      return;
+                  Response response = result.DeserializeDataContract<Response>();
 
                   args = new CompletedEventArgs
                   {
-                      UserState = ((DownloadStringCompletedEventArgs)e).UserState,
+                      UserState = ((UploadStringCompletedEventArgs)e).UserState,
                       CompletedType = CompletedEventType.PostTemplate,
-                      Data = entities
+                      Data = response
                   };
               }
               catch (Exception ex)
@@ -471,7 +464,7 @@ namespace org.iringtools.modulelibrary.layerdal
                       Error = ex,
                       FriendlyErrorMessage = "Reference Data Service returned an error while posting the template.",
                   };
-                  Error.SetError(ex);
+                  //Error.SetError(ex);
               }              
           }
           #endregion
