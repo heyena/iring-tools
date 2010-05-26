@@ -74,9 +74,21 @@ namespace org.iringtools.library
     [DataMember(EmitDefaultValue = false, Order = 3)]
     public List<DataObjectMap> dataObjectMaps { get; set; } // only top level data objects
 
+    // roleMap is not required for root node
     public void AddClassMap(ClassMap classMap, RoleMap roleMap)
     {
-      if (!graphMaps.ContainsKey(classMap))
+      bool found = false;
+
+      foreach (var pair in graphMaps)
+      {
+        if (pair.Key.classId == classMap.classId)
+        {
+          found = true;
+          break;
+        }
+      }
+
+      if (!found)        
       {
         List<TemplateMap> templateMaps = new List<TemplateMap>();
         graphMaps.Add(classMap, templateMaps);
@@ -88,6 +100,7 @@ namespace org.iringtools.library
       }
     }
 
+    // classMap can have more than one templateMaps of the same templateIds
     public void AddTemplateMap(ClassMap classMap, TemplateMap templateMap)
     {
       AddClassMap(classMap, null);
@@ -95,21 +108,72 @@ namespace org.iringtools.library
       templateMaps.Add(templateMap);
     }
 
-    public void DeleteClassMap(string classId)
+    public void DeleteClassMap(ClassMap classMap)
     {
-      throw new NotImplementedException();
+      if (graphMaps.ContainsKey(classMap))
+      {
+        List<TemplateMap> templateMaps = graphMaps[classMap];
+
+        foreach (TemplateMap templateMap in templateMaps)
+        {
+          foreach (RoleMap roleMap in templateMap.roleMaps)
+          {
+            if (roleMap.classMap != null)
+            {
+              DeleteClassMap(roleMap.classMap);
+            }
+
+            templateMap.roleMaps.Remove(roleMap);
+          }
+
+          templateMaps.Remove(templateMap);
+        }
+
+        graphMaps.Remove(classMap);
+      }
     }
 
-    public void DeleteTemplateMap(ClassMap classMap, string templateId, int position)
+    public void DeleteTemplateMap(ClassMap classMap, TemplateMap templateMap)
     {
-      throw new NotImplementedException();
+      if (graphMaps.ContainsKey(classMap))
+      {
+        List<TemplateMap> templateMaps = graphMaps[classMap];
+
+        if (templateMaps.Contains(templateMap))
+        {
+          foreach (RoleMap roleMap in templateMap.roleMaps)
+          {
+            if (roleMap.classMap != null)
+            {
+              DeleteClassMap(roleMap.classMap);
+            }
+
+            templateMap.roleMaps.Remove(roleMap);
+          }
+
+          templateMaps.Remove(templateMap);
+        }
+
+        graphMaps.Remove(classMap);
+      }
+    }
+
+    public void DeleteRoleMap(TemplateMap templateMap, RoleMap roleMap)
+    {
+      if (templateMap.roleMaps.Contains(roleMap))
+      {
+        if (roleMap.classMap != null)
+        {
+          DeleteClassMap(roleMap.classMap);
+          templateMap.roleMaps.Remove(roleMap);
+        }
+      }
     }
   }
 
   [DataContract]
   public class ClassMap
   {
-
     public ClassMap()
     {
       identifiers = new List<string>();
@@ -178,16 +242,16 @@ namespace org.iringtools.library
 
     [DataMember(EmitDefaultValue = false, Order = 2)]
     public List<RoleMap> roleMaps { get; set; }
-
+    
+    // roleMap.roleId must be unique within templateMap scope
     public void AddRoleMap(RoleMap roleMap)
     {
       bool found = false;
 
-      for (int i = 0; i < roleMaps.Count; i++)
+      foreach (RoleMap role in roleMaps)
       {
-        if (roleMaps[i].roleId == roleMap.roleId)
+        if (role.roleId == roleMap.roleId)
         {
-          roleMaps[i] = roleMap;
           found = true;
           break;
         }
@@ -197,11 +261,6 @@ namespace org.iringtools.library
       {
         roleMaps.Add(roleMap);
       }
-    }
-
-    public void DeleteRoleMap(string roleId)
-    {
-      throw new NotImplementedException();
     }
   }
 
