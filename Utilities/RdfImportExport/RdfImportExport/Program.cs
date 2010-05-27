@@ -82,7 +82,11 @@ namespace RdfConverter
              dbName = ConfigurationManager.AppSettings["DBName"];
              dbUser = ConfigurationManager.AppSettings["DBUser"];
              dbPassword = ConfigurationManager.AppSettings["DBPassword"];
-             rdfFullFilename = ConfigurationManager.AppSettings["RdfImportFullFilename"];
+
+             if(method.ToUpper() == "IMPORT")
+                 rdfFullFilename = ConfigurationManager.AppSettings["RdfImportFullFilename"];
+             else
+                 rdfFullFilename = ConfigurationManager.AppSettings["RdfExportFullFilename"];
              graphUri = ConfigurationManager.AppSettings["GraphUri"];
         }
 
@@ -99,6 +103,7 @@ namespace RdfConverter
             msStore.Dispose();
 
             Console.WriteLine("Graph[" + graphUri + "] written to " + rdfFullFilename);
+            Console.WriteLine("Press any key to continue....");
             Console.ReadKey();
 
         }
