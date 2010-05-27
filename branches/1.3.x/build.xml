@@ -10,6 +10,8 @@
     <AdapterServiceRoot>Adapter</AdapterServiceRoot>
     <AdapterServiceDir>$(AdapterServiceRoot)\AdapterService</AdapterServiceDir>
     <JosekiInterfaceServiceRoot>InterfaceService.Joseki</JosekiInterfaceServiceRoot>
+    <dotNetRdfInterfaceServiceRoot>InterfaceService.dotNetRdf</dotNetRdfInterfaceServiceRoot>
+    <dotNetRdfInterfaceServiceDir>$(dotNetRdfInterfaceServiceRoot)\InterfaceService.dotNetRdf</dotNetRdfInterfaceServiceDir>
     <SemWebInterfaceServiceRoot>InterfaceService</SemWebInterfaceServiceRoot>
 	  <JosekiSandboxServiceRoot>SandboxService.Joseki</JosekiSandboxServiceRoot>
 	  <SemWebSandboxServiceRoot>SandboxService</SemWebSandboxServiceRoot>
@@ -27,6 +29,7 @@
     <AdapterServiceDeploymentDir>$(iRINGAdapter)\AdapterService</AdapterServiceDeploymentDir>
     <DbDictionaryServiceDeploymentDir>$(iRINGAdapter)\DbDictionaryService</DbDictionaryServiceDeploymentDir>
     <JosekiInterfaceServiceDeploymentDir>$(iRINGAdapter)\InterfaceService.Joseki</JosekiInterfaceServiceDeploymentDir>
+    <dotNetRdfInterfaceServiceDeploymentDir>$(iRINGAdapter)\InterfaceService.dotNetRdf</dotNetRdfInterfaceServiceDeploymentDir>
     <SemWebInterfaceServiceDeploymentDir>$(iRINGAdapter)\InterfaceService</SemWebInterfaceServiceDeploymentDir>
     <AdapterToolsDeploymentDir>$(iRINGAdapter)\Tools</AdapterToolsDeploymentDir>
     <MappingEditorDeploymentDir>$(iRINGAdapter)\MappingEditor</MappingEditorDeploymentDir>
@@ -100,6 +103,27 @@
                $(JosekiInterfaceServiceRoot)\*\*\*\.svn\**;
                $(JosekiInterfaceServiceRoot)\*.log;">
     </JosekiInterfaceServiceDeployment>
+
+    <dotNetRdfInterfaceServiceDeployment
+      Include="$(dotNetRdfInterfaceServiceDir)\**"
+      Exclude="$(dotNetRdfInterfaceServiceDir)\App_Code;
+               $(dotNetRdfInterfaceServiceDir)\App_Data;
+               $(dotNetRdfInterfaceServiceDir)\bin\*.pdb;
+               $(dotNetRdfInterfaceServiceDir)\bin\InterfaceService.dotNetRDF.dll;
+               $(dotNetRdfInterfaceServiceDir)\obj\**;
+               $(dotNetRdfInterfaceServiceDir)\Properties\**;
+               $(dotNetRdfInterfaceServiceDir)\*.cs;
+               $(dotNetRdfInterfaceServiceDir)\*.csproj;
+               $(dotNetRdfInterfaceServiceDir)\*.user;
+               $(dotNetRdfInterfaceServiceDir)\*.vspscc;
+               $(dotNetRdfInterfaceServiceDir)\Web.config;
+               $(dotNetRdfInterfaceServiceDir)\Web_Development.config;
+               $(dotNetRdfInterfaceServiceRoot)\.svn\**;
+               $(dotNetRdfInterfaceServiceRoot)\*\.svn\**;
+               $(dotNetRdfInterfaceServiceRoot)\*\*\.svn\**;
+               $(dotNetRdfInterfaceServiceRoot)\*\*\*\.svn\**;
+               $(dotNetRdfInterfaceServiceRoot)\*.log;">
+    </dotNetRdfInterfaceServiceDeployment>
 	
 	  <SemWebInterfaceServiceDeployment
       Include="$(SemWebInterfaceServiceRoot)\**"
@@ -208,7 +232,9 @@
                $(DBDictionaryServiceDir)\web.config;
                $(DBDictionaryServiceDir)\Web_Development.config;
                $(DBDictionaryServiceRoot)\.svn\**;
-               $(DBDictionaryServiceRoot)\*\.svn\**;">
+               $(DBDictionaryServiceRoot)\*\.svn\**;
+               $(DBDictionaryServiceRoot)\*\*\.svn\**;
+               $(DBDictionaryServiceRoot)\*.Logs;">
     </DBDictionaryServiceDeployment>
     
     <AdapterToolsDeployment
@@ -327,6 +353,7 @@
   <Target Name="PrepareBuild">
     <Message Text="Preparing build ..." />
     <Exec Command="Copy $(AdapterServiceDir)\Web_Default.config $(AdapterServiceDir)\Web.config" />
+    <Exec Command="Copy $(dotNetRdfInterfaceServiceDir)\Developer_Web.config $(dotNetRdfInterfaceServiceDir)\Web.config" />
     <Exec Command="Copy $(DBDictionaryServiceDir)\Web_Default.config $(DBDictionaryServiceDir)\Web.config" />
     <Exec Command="Copy $(RefDataServiceDir)\Web_Default.config $(RefDataServiceDir)\Web.config" />
     <Exec Command="Copy $(MappingEditorDir)\Web_Default.config $(MappingEditorDir)\Web.config" />
@@ -376,6 +403,11 @@
           DestinationFiles="@(SemWebInterfaceServiceDeployment->'$(SemWebInterfaceServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Exec Command="Move /Y $(SemWebInterfaceServiceDeploymentDir)\Web_Default.config $(SemWebInterfaceServiceDeploymentDir)\Web.config" />
     <Exec Command="Move /Y $(SemWebInterfaceServiceDeploymentDir)\setup_default.conf $(SemWebInterfaceServiceDeploymentDir)\setup.conf" />
+
+    <Message Text="Creating dotNetRdf interface service deployment ..." />
+    <Copy SourceFiles="@(dotNetRdfInterfaceServiceDeployment)"
+          DestinationFiles="@(dotNetRdfInterfaceServiceDeployment->'$(dotNetRdfInterfaceServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(dotNetRdfInterfaceServiceDeploymentDir)\Developer_Web.config $(dotNetRdfInterfaceServiceDeploymentDir)\Web.config" />
     
     <Message Text="Creating mapping editor deployment ..." />
     <Copy SourceFiles="@(MappingEditorDeployment)"
