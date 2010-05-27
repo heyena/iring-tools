@@ -32,6 +32,7 @@ using System.Xml.Linq;
 using org.iringtools.adapter;
 using org.iringtools.adapter.datalayer;
 using org.iringtools.library;
+using System.Text.RegularExpressions;
 
 namespace org.iringtools.adapter
 {
@@ -58,6 +59,7 @@ namespace org.iringtools.adapter
 
     private NHibernateDataLayer _dataLayer = null;
     private Dictionary<string, IList<IDataObject>> _dataObjects = null;
+    private Dictionary<string, List<string>> _classIdentifiers = null;
     private Mapping _mapping = null;
     private Graph _graph = null;
     private List<Dictionary<string, string>> _dtoList = null;
@@ -109,11 +111,43 @@ namespace org.iringtools.adapter
           LoadDataObjects();
 
           _dtoList = new List<Dictionary<string, string>>();
-          for (int i = 0; i < MaxDataObjectsCount(); i++)
+          int maxDataObjectsCount = MaxDataObjectsCount();
+          for (int i = 0; i < maxDataObjectsCount; i++)
+          {
             _dtoList.Add(new Dictionary<string, string>());
-
+          }
           ClassMap classMap = _graph.graphMaps.First().Key;
           FillDTOList(classMap.classId, "rdl:" + classMap.name);
+
+          return _dtoList;
+        }
+      }
+
+      throw new Exception("Graph " + graphName + " does not exist.");
+    }
+
+    public XElement GetHierarchicalDTOList(string graphName)
+    {
+      foreach (Graph graph in _mapping.graphs)
+      {
+        if (graph.name.ToLower() == graphName.ToLower())
+        {
+          _graph = graph;
+          LoadDataObjects();
+
+          //todo: add namespace (http://localhost/12345_000/ABC) for graph
+          XElement graphElement = new XElement(graphName);
+          ClassMap classMap = _graph.graphMaps.First().Key;
+
+          int maxDataObjectsCount = MaxDataObjectsCount();
+          for (int i = 0; i < maxDataObjectsCount; i++)
+          {
+            XElement classElement = new XElement(TitleCase(classMap.name));
+            graphElement.Add(classElement);
+            FillHierarchicalDTOList(classElement, classMap.classId, i);
+          }
+
+          return graphElement;
         }
       }
 
@@ -136,6 +170,31 @@ namespace org.iringtools.adapter
     }
     #endregion
 
+    #region utility methods
+    private string TitleCase(string value)
+    {
+      string returnValue = String.Empty;
+      string[] words = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+      foreach (string word in words)
+      {
+        string lowerCaseWord = word.ToLower();
+        returnValue += lowerCaseWord[0].ToString().ToUpper();
+
+        if (lowerCaseWord.Length > 1)
+          returnValue += lowerCaseWord.Substring(1);
+      }
+
+      return returnValue;
+    }
+
+    public void SaveRdf(XElement rdf, string fileName)
+    {
+      XDocument doc = new XDocument(rdf);
+      doc.Save(fileName);
+    }
+    #endregion
+
     #region private methods
     private void LoadDataObjects()
     {
@@ -145,6 +204,8 @@ namespace org.iringtools.adapter
       {
         _dataObjects.Add(dataObjectMap.name, _dataLayer.Get(dataObjectMap.name, null));
       }
+
+      PopulateClassIdentifiers();
     }
 
     private string ResolveValueList(string valueList, string value)
@@ -163,7 +224,44 @@ namespace org.iringtools.adapter
       return RDF_NIL;
     }
 
-    // maximum number of rows in database
+    private void PopulateClassIdentifiers()
+    {
+      _classIdentifiers = new Dictionary<string, List<string>>();
+
+      foreach (ClassMap classMap in _graph.graphMaps.Keys)
+      {
+        List<string> classIdentifiers = new List<string>();
+
+        foreach (string identifier in classMap.identifiers)
+        {
+          string[] propertyMap = identifier.Split('.');
+          string objectName = propertyMap[0].Trim();
+          string propertyName = propertyMap[1].Trim();
+
+          IList<IDataObject> dataObjects = _dataObjects[objectName];
+          if (dataObjects != null)
+          {
+            for (int i = 0; i < dataObjects.Count; i++)
+            {
+              string value = Convert.ToString(dataObjects[i].GetPropertyValue(propertyName));
+
+              if (classIdentifiers.Count == i)
+              {
+                classIdentifiers.Add(value);
+              }
+              else
+              {
+                classIdentifiers[i] += classMap.identifierDelimeter + value;
+              }
+            }
+          }
+        }
+
+        _classIdentifiers[classMap.classId] = classIdentifiers;
+      }
+    }
+
+    // maximum number of data records from all data objects
     private int MaxDataObjectsCount()
     {
       int maxCount = 0;
@@ -191,40 +289,12 @@ namespace org.iringtools.adapter
       foreach (var pair in _graph.graphMaps)
       {
         ClassMap classMap = pair.Key;
-        List<string> identifierValues = new List<string>();
-        IList<IDataObject> dataObjects = null;
-
-        foreach (string identifier in classMap.identifiers)
-        {
-          string[] propertyMap = identifier.Split('.');
-          string objectName = propertyMap[0].Trim();
-          string propertyName = propertyMap[1].Trim();
-
-          dataObjects = _dataObjects[objectName];
-
-          if (dataObjects != null)
-          {
-            for (int i = 0; i < dataObjects.Count; i++)
-            {
-              string value = Convert.ToString(dataObjects[i].GetPropertyValue(propertyName));
-
-              if (identifierValues.Count == i)
-              {
-                identifierValues.Add(value);
-              }
-              else
-              {
-                identifierValues[i] += classMap.identifierDelimeter + value;
-              }
-            }
-          }
-        }
 
         int maxDataObjectsCount = MaxDataObjectsCount();
         for (int i = 0; i < maxDataObjectsCount; i++)
         {
           string classId = classMap.classId.Substring(classMap.classId.IndexOf(":") + 1);
-          string classInstance = DOMAIN_NS + identifierValues[i];
+          string classInstance = DOMAIN_NS + _classIdentifiers[classMap.classId][i];
 
           graphElement.Add(CreateRdfClassElement(classId, classInstance));
 
@@ -345,39 +415,21 @@ namespace org.iringtools.adapter
       return templateElement;
     }
 
-    private void SaveRdf(string fileName, XElement rdf)
+    private void FillDTOList(string classId, string xPath)
     {
-      XDocument doc = new XDocument(rdf);
-      doc.Save(fileName);
-    }
+      KeyValuePair<ClassMap, List<TemplateMap>> graphMap = _graph.GetGraphMap(classId);
+      string classPath = xPath;
 
-    private List<TemplateMap> GetTemplateMaps(string classId)
-    {
-      List<TemplateMap> templateMaps = null;
-
-      foreach (var pair in _graph.graphMaps)
+      foreach (TemplateMap templateMap in graphMap.Value)
       {
-        if (pair.Key.classId == classId)
-          return pair.Value;
-      }
-
-      return templateMaps;
-    }
-
-    private void FillDTOList(string classId, string propertyPath)
-    {
-      List<TemplateMap> templateMaps = GetTemplateMaps(classId);
-      foreach (TemplateMap templateMap in templateMaps)
-      {
-        propertyPath += "/tpl:" + templateMap.name;
-        string tempPropertyPath = propertyPath;
+        xPath = classPath + "/tpl:" + templateMap.name;
+        string templatePath = xPath;
 
         foreach (RoleMap roleMap in templateMap.roleMaps)
         {
-          //todo: handle reference roles
           if (roleMap.type == RoleType.Property || roleMap.type == RoleType.FixedValue)
           {
-            propertyPath += "/tpl:" + roleMap.name;
+            xPath += "/tpl:" + roleMap.name;
 
             string[] propertyMap = roleMap.propertyName.Split('.');
             string objectName = propertyMap[0].Trim();
@@ -402,15 +454,86 @@ namespace org.iringtools.adapter
               }
 
               Dictionary<string, string> propertyValuePair = _dtoList[i];
-              propertyValuePair[propertyPath] = value;
+              propertyValuePair[xPath] = value;
             }
 
-            propertyPath = tempPropertyPath;
+            xPath = templatePath;
           }
 
           if (roleMap.classMap != null)
           {
-            FillDTOList(roleMap.classMap.classId, propertyPath + "/rdl:" + roleMap.classMap.name);
+            FillDTOList(roleMap.classMap.classId, xPath + "/rdl:" + roleMap.classMap.name);
+          }
+        }
+      }
+    }
+
+    //todo: use reference if element already created in the doc
+    private void FillHierarchicalDTOList(XElement classElement, string classId, int dataObjectIndex)
+    {
+      KeyValuePair<ClassMap, List<TemplateMap>> graphMap = _graph.GetGraphMap(classId);
+      ClassMap classMap = graphMap.Key;
+      List<TemplateMap> templateMaps = graphMap.Value;
+
+      classElement.Add(new XAttribute("rdluri", classMap.classId));
+      classElement.Add(new XAttribute("id", _classIdentifiers[classMap.classId][dataObjectIndex]));
+
+      foreach (TemplateMap templateMap in templateMaps)
+      {
+        XElement templateElement = new XElement(templateMap.name);
+        templateElement.Add(new XAttribute("rdluri", templateMap.templateId));
+        classElement.Add(templateElement);
+
+        foreach (RoleMap roleMap in templateMap.roleMaps)
+        {
+          XElement roleElement = new XElement(roleMap.name);
+
+          switch (roleMap.type)
+          {
+            case RoleType.ClassRole:
+              templateElement.Add(new XAttribute("classRole", roleMap.roleId));
+              break;
+
+            case RoleType.Reference:
+              roleElement.Add(new XAttribute("rdluri", roleMap.roleId));
+              roleElement.Add(new XAttribute("reference", roleMap.value));
+              templateElement.Add(roleElement);
+
+              if (roleMap.classMap != null)
+              {
+                XElement element = new XElement(TitleCase(roleMap.classMap.name));
+                roleElement.Add(element);
+                FillHierarchicalDTOList(element, roleMap.classMap.classId, dataObjectIndex);
+              }
+
+              break;
+
+            case RoleType.FixedValue:
+              roleElement.Add(new XAttribute("rdluri", roleMap.roleId));
+              roleElement.Add(new XText(roleMap.value));
+              templateElement.Add(roleElement);
+              break;
+
+            case RoleType.Property:
+              string[] propertyMap = roleMap.propertyName.Split('.');
+              string objectName = propertyMap[0].Trim();
+              string propertyName = propertyMap[1].Trim();
+              IDataObject dataObject = _dataObjects[objectName][dataObjectIndex];
+              roleElement.Add(new XAttribute("rdluri", roleMap.roleId));
+
+              string value = Convert.ToString(dataObject.GetPropertyValue(propertyName));
+              if (!String.IsNullOrEmpty(roleMap.valueList))
+              {
+                value = ResolveValueList(roleMap.valueList, value);
+                roleElement.Add(new XAttribute("reference", value));
+              }
+              else
+              {
+                roleElement.Add(new XText(value));
+              }
+
+              templateElement.Add(roleElement);
+              break;
           }
         }
       }
@@ -418,4 +541,5 @@ namespace org.iringtools.adapter
     #endregion
   }
 }
+
 
