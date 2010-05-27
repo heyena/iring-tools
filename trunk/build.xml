@@ -10,21 +10,30 @@
     <AdapterServiceRoot>Adapter</AdapterServiceRoot>
     <AdapterServiceDir>$(AdapterServiceRoot)\AdapterService</AdapterServiceDir>
     <JosekiInterfaceServiceRoot>InterfaceService.Joseki</JosekiInterfaceServiceRoot>
+    <dotNetRdfInterfaceServiceRoot>InterfaceService.dotNetRdf</dotNetRdfInterfaceServiceRoot>
+    <dotNetRdfInterfaceServiceDir>$(dotNetRdfInterfaceServiceRoot)\InterfaceService.dotNetRdf</dotNetRdfInterfaceServiceDir>
     <SemWebInterfaceServiceRoot>InterfaceService</SemWebInterfaceServiceRoot>
 	  <JosekiSandboxServiceRoot>SandboxService.Joseki</JosekiSandboxServiceRoot>
 	  <SemWebSandboxServiceRoot>SandboxService</SemWebSandboxServiceRoot>
     <MappingEditorRoot>MappingEditor</MappingEditorRoot>
     <MappingEditorDir>$(MappingEditorRoot)\$(MappingEditorRoot).Web</MappingEditorDir>
     <RefDataEditorRoot>RefDataEditor</RefDataEditorRoot>
+    <DBDictionaryEditorRoot>DBDictionaryEditor</DBDictionaryEditorRoot>
     <RefDataEditorDir>$(RefDataEditorRoot)\$(RefDataEditorRoot).Web</RefDataEditorDir>
+    <DBDictionaryEditorDir>$(DBDictionaryEditorRoot)\$(DBDictionaryEditorRoot).Web</DBDictionaryEditorDir>
     <RefDataServiceRoot>ReferenceData</RefDataServiceRoot>
+    <DBDictionaryServiceRoot>DBDictionary</DBDictionaryServiceRoot>
     <LandingPageDeploymentDir>$(DeploymentDir)\LandingPage</LandingPageDeploymentDir>
-    <RefDataServiceDir>$(RefDataServiceRoot)\ReferenceDataService</RefDataServiceDir>    
+    <RefDataServiceDir>$(RefDataServiceRoot)\ReferenceDataService</RefDataServiceDir>
+    <DbDictionaryServiceDir>$(DBDictionaryServiceRoot)\DbDictionaryService</DbDictionaryServiceDir>
     <AdapterServiceDeploymentDir>$(iRINGAdapter)\AdapterService</AdapterServiceDeploymentDir>
+    <DbDictionaryServiceDeploymentDir>$(iRINGAdapter)\DbDictionaryService</DbDictionaryServiceDeploymentDir>
     <JosekiInterfaceServiceDeploymentDir>$(iRINGAdapter)\InterfaceService.Joseki</JosekiInterfaceServiceDeploymentDir>
+    <dotNetRdfInterfaceServiceDeploymentDir>$(iRINGAdapter)\InterfaceService.dotNetRdf</dotNetRdfInterfaceServiceDeploymentDir>
     <SemWebInterfaceServiceDeploymentDir>$(iRINGAdapter)\InterfaceService</SemWebInterfaceServiceDeploymentDir>
     <AdapterToolsDeploymentDir>$(iRINGAdapter)\Tools</AdapterToolsDeploymentDir>
     <MappingEditorDeploymentDir>$(iRINGAdapter)\MappingEditor</MappingEditorDeploymentDir>
+    <DbDictionaryEditorDeploymentDir>$(iRINGAdapter)\DbDictionaryEditor</DbDictionaryEditorDeploymentDir>
     <RefDataEditorDeploymentDir>$(iRINGSandbox)\RefDataEditor</RefDataEditorDeploymentDir>
     <RefDataServiceDeploymentDir>$(iRINGSandbox)\RefDataService</RefDataServiceDeploymentDir>
     <JosekiSandboxServiceDeploymentDir>$(iRINGSandbox)\SandboxService.Joseki</JosekiSandboxServiceDeploymentDir>
@@ -36,8 +45,8 @@
   
   <PropertyGroup>
     <AssemblyInfoFile>$(MSBuildProjectDirectory)\AssemblyInfo.cs</AssemblyInfoFile>
-    <Major>2</Major>
-    <Minor>0</Minor>
+    <Major>1</Major>
+    <Minor>3</Minor>
     <Build>0</Build>
     <Revision>0</Revision>
   </PropertyGroup>
@@ -94,6 +103,27 @@
                $(JosekiInterfaceServiceRoot)\*\*\*\.svn\**;
                $(JosekiInterfaceServiceRoot)\*.log;">
     </JosekiInterfaceServiceDeployment>
+
+    <dotNetRdfInterfaceServiceDeployment
+      Include="$(dotNetRdfInterfaceServiceDir)\**"
+      Exclude="$(dotNetRdfInterfaceServiceDir)\App_Code;
+               $(dotNetRdfInterfaceServiceDir)\App_Data;
+               $(dotNetRdfInterfaceServiceDir)\bin\*.pdb;
+               $(dotNetRdfInterfaceServiceDir)\bin\InterfaceService.dotNetRDF.dll;
+               $(dotNetRdfInterfaceServiceDir)\obj\**;
+               $(dotNetRdfInterfaceServiceDir)\Properties\**;
+               $(dotNetRdfInterfaceServiceDir)\*.cs;
+               $(dotNetRdfInterfaceServiceDir)\*.csproj;
+               $(dotNetRdfInterfaceServiceDir)\*.user;
+               $(dotNetRdfInterfaceServiceDir)\*.vspscc;
+               $(dotNetRdfInterfaceServiceDir)\Web.config;
+               $(dotNetRdfInterfaceServiceDir)\Web_Development.config;
+               $(dotNetRdfInterfaceServiceRoot)\.svn\**;
+               $(dotNetRdfInterfaceServiceRoot)\*\.svn\**;
+               $(dotNetRdfInterfaceServiceRoot)\*\*\.svn\**;
+               $(dotNetRdfInterfaceServiceRoot)\*\*\*\.svn\**;
+               $(dotNetRdfInterfaceServiceRoot)\*.log;">
+    </dotNetRdfInterfaceServiceDeployment>
 	
 	  <SemWebInterfaceServiceDeployment
       Include="$(SemWebInterfaceServiceRoot)\**"
@@ -155,6 +185,21 @@
                $(RefDataEditorDir)\.svn\**;
                $(RefDataEditorDir)\*\.svn\**">
     </RefDataEditorDeployment>
+
+    <DBDictionaryEditorDeployment
+     Include="$(DBDictionaryEditorDir)\**"
+     Exclude="$(DBDictionaryEditorDir)\bin\*.pdb;
+               $(DBDictionaryEditorDir)\obj\**;
+               $(DBDictionaryEditorDir)\Properties\**;
+               $(DBDictionaryEditorDir)\*.cs;
+               $(DBDictionaryEditorDir)\*.html;
+               $(DBDictionaryEditorDir)\*.csproj;
+               $(DBDictionaryEditorDir)\*.user;
+               $(DBDictionaryEditorDir)\*.vspscc;
+               $(DBDictionaryEditorDir)\web.config;
+               $(DBDictionaryEditorDir)\.svn\**;
+               $(DBDictionaryEditorDir)\*\.svn\**">
+    </DBDictionaryEditorDeployment>
     
     <RefDataServiceDeployment
       Include="$(RefDataServiceDir)\**"
@@ -174,6 +219,23 @@
                $(RefDataServiceRoot)\*\.svn\**;
                $(RefDataServiceRoot)\*\*\.svn\**;">
     </RefDataServiceDeployment>
+
+    <DBDictionaryServiceDeployment
+      Include="$(DBDictionaryServiceDir)\**"
+      Exclude="$(DBDictionaryServiceDir)\bin\*.pdb;
+               $(DBDictionaryServiceDir)\Logs\**;
+               $(DBDictionaryServiceDir)\obj\**;
+               $(DBDictionaryServiceDir)\Properties\**;
+               $(DBDictionaryServiceDir)\*.csproj;
+               $(DBDictionaryServiceDir)\*.user;
+               $(DBDictionaryServiceDir)\*.vspscc;
+               $(DBDictionaryServiceDir)\web.config;
+               $(DBDictionaryServiceDir)\Web_Development.config;
+               $(DBDictionaryServiceRoot)\.svn\**;
+               $(DBDictionaryServiceRoot)\*\.svn\**;
+               $(DBDictionaryServiceRoot)\*\*\.svn\**;
+               $(DBDictionaryServiceRoot)\*.Logs;">
+    </DBDictionaryServiceDeployment>
     
     <AdapterToolsDeployment
       Include="ExternalBinaries\SemWeb\rdfstorage.exe;
@@ -189,7 +251,25 @@
                Utilities\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\Iesi.Collections.dll;
                Utilities\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\log4net.dll;
                Utilities\DBDictionaryUtil\DBDictionaryUtil\bin\Debug\DBDictionaryUtil.exe;
-               Utilities\DBDictionaryUtil\DBDictionaryUtil\App_Default.config;">
+               Utilities\DBDictionaryUtil\DBDictionaryUtil\App_Default.config;
+               Utilities\SWDump\bin\Debug\IKVM.GNU.Classpath.dll;
+               Utilities\SWDump\bin\Debug\IKVM.Runtime.dll;
+               Utilities\SWDump\bin\Debug\SemWeb.dll;
+               Utilities\SWDump\bin\Debug\SemWeb.Sparql.dll;
+               Utilities\SWDump\bin\Debug\SemWeb.SQLServerStore.dll;
+               Utilities\SWDump\bin\Debug\sparql-core.dll;
+               Utilities\SWDump\bin\Debug\swdump.exe;
+               Utilities\SWDump\App.Default.config;
+               Utilities\RdfImportExport\RdfImportExport\bin\Debug\dotNetRDF.dll;
+               Utilities\RdfImportExport\RdfImportExport\bin\Debug\dotNetRDF.xml;
+               Utilities\RdfImportExport\RdfImportExport\bin\Debug\HtmlAgilityPack.dll;
+               Utilities\RdfImportExport\RdfImportExport\bin\Debug\HtmlAgilityPack.xml;
+               Utilities\RdfImportExport\RdfImportExport\bin\Debug\MySql.Data.dll;
+               Utilities\RdfImportExport\RdfImportExport\bin\Debug\Newtonsoft.Json.dll;
+               Utilities\RdfImportExport\RdfImportExport\bin\Debug\Newtonsoft.Json.xml;
+               Utilities\RdfImportExport\RdfImportExport\bin\Debug\virtado3.dll;
+               Utilities\RdfImportExport\RdfImportExport\bin\Debug\RdfImportExport.exe;
+               Utilities\RdfImportExport\RdfImportExport\Developer_App.config;">
     </AdapterToolsDeployment>
     
     <SandboxToolsDeployment
@@ -217,19 +297,19 @@
     <DeploymentPackage Include="*" Exclude="">
       <Options>-r</Options>
       <Path>$(iRINGAdapter)</Path>
-      <ZIPFile>..\iRINGTools-200.zip</ZIPFile>
+      <ZIPFile>..\iRINGTools-130.zip</ZIPFile>
       <Source>*</Source>
     </DeploymentPackage>
     <DeploymentPackage Include="*" Exclude="">
       <Options>-r -u</Options>
       <Path>$(iRINGSandbox)</Path>
-      <ZIPFile>..\iRINGTools-200.zip</ZIPFile>
+      <ZIPFile>..\iRINGTools-130.zip</ZIPFile>
       <Source>*</Source>
     </DeploymentPackage>
     <DeploymentPackage Include="*" Exclude="">
       <Options>-r -u</Options>
       <Path>$(LandingPageDeploymentDir)</Path>
-      <ZIPFile>..\iRINGTools-200.zip</ZIPFile>
+      <ZIPFile>..\iRINGTools-130.zip</ZIPFile>
       <Source>*</Source>
     </DeploymentPackage>
   </ItemGroup>
@@ -273,13 +353,18 @@
   <Target Name="PrepareBuild">
     <Message Text="Preparing build ..." />
     <Exec Command="Copy $(AdapterServiceDir)\Web_Default.config $(AdapterServiceDir)\Web.config" />
+    <Exec Command="Copy $(dotNetRdfInterfaceServiceDir)\Developer_Web.config $(dotNetRdfInterfaceServiceDir)\Web.config" />
+    <Exec Command="Copy $(DBDictionaryServiceDir)\Web_Default.config $(DBDictionaryServiceDir)\Web.config" />
     <Exec Command="Copy $(RefDataServiceDir)\Web_Default.config $(RefDataServiceDir)\Web.config" />
     <Exec Command="Copy $(MappingEditorDir)\Web_Default.config $(MappingEditorDir)\Web.config" />
+    <Exec Command="Copy $(DBDictionaryEditorDir)\Web_Default.config $(DBDictionaryEditorDir)\Web.config" />
     <Exec Command="Copy $(SemWebInterfaceServiceRoot)\Web_Default.config $(SemWebInterfaceServiceRoot)\Web.config" />
     <Exec Command="Copy $(RefDataEditorDir)\Web_Default.config $(RefDataEditorDir)\Web.config" />
     <Exec Command="Copy $(SemWebSandboxServiceRoot)\Web_Default.config $(SemWebSandboxServiceRoot)\Web.config" />
     <Exec Command="Copy Utilities\DBDictionaryUtil\DBDictionaryUtil\App_Default.config Utilities\DBDictionaryUtil\DBDictionaryUtil\App.config" />
+    <Exec Command="Copy Utilities\SWDump\App.Default.config Utilities\SWDump\App.config" />
     <Exec Command="Copy Utilities\QMXFGenerator\QMXFGenerator\App_Default.config Utilities\QMXFGenerator\QMXFGenerator\App.config" />
+    <Exec Command="Copy Utilities\RdfImportExport\RdfImportExport\Developer_App.config Utilities\RdfImportExport\RdfImportExport\App.config" />
   </Target>
   
   <Target Name="Test">
@@ -302,6 +387,11 @@
     <Exec Command="Move /Y $(AdapterServiceDeploymentDir)\Web_Default.config $(AdapterServiceDeploymentDir)\Web.config" />
     <Exec Command="Mkdir $(AdapterServiceDeploymentDir)\Logs" />
 
+    <Message Text="Creating dbdictionary service deployment ..." />
+    <Copy SourceFiles="@(DBDictionaryServiceDeployment)"
+          DestinationFiles="@(DBDictionaryServiceDeployment->'$(DBDictionaryServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(DBDictionaryServiceDeploymentDir)\Web_Default.config $(DBDictionaryServiceDeploymentDir)\Web.config" />
+    <Exec Command="Mkdir $(DBDictionaryServiceDeploymentDir)\Logs" />
     <!--<Message Text="Creating Joseki interface service deployment ..." />
     <Copy SourceFiles="@(JosekiInterfaceServiceDeployment)"
           DestinationFiles="@(JosekiInterfaceServiceDeployment->'$(JosekiInterfaceServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
@@ -313,11 +403,21 @@
           DestinationFiles="@(SemWebInterfaceServiceDeployment->'$(SemWebInterfaceServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Exec Command="Move /Y $(SemWebInterfaceServiceDeploymentDir)\Web_Default.config $(SemWebInterfaceServiceDeploymentDir)\Web.config" />
     <Exec Command="Move /Y $(SemWebInterfaceServiceDeploymentDir)\setup_default.conf $(SemWebInterfaceServiceDeploymentDir)\setup.conf" />
+
+    <Message Text="Creating dotNetRdf interface service deployment ..." />
+    <Copy SourceFiles="@(dotNetRdfInterfaceServiceDeployment)"
+          DestinationFiles="@(dotNetRdfInterfaceServiceDeployment->'$(dotNetRdfInterfaceServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(dotNetRdfInterfaceServiceDeploymentDir)\Developer_Web.config $(dotNetRdfInterfaceServiceDeploymentDir)\Web.config" />
     
     <Message Text="Creating mapping editor deployment ..." />
     <Copy SourceFiles="@(MappingEditorDeployment)"
           DestinationFiles="@(MappingEditorDeployment->'$(MappingEditorDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Exec Command="Move /Y $(MappingEditorDeploymentDir)\Web_Default.config $(MappingEditorDeploymentDir)\Web.config" />
+
+    <Message Text="Creating dbdictionary editor deployment ..." />
+    <Copy SourceFiles="@(DBDictionaryEditorDeployment)"
+          DestinationFiles="@(DBDictionaryEditorDeployment->'$(DBDictionaryEditorDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(DBDictionaryEditorDeploymentDir)\Web_Default.config $(DBDictionaryEditorDeploymentDir)\Web.config" />
 
     <Message Text="Creating reference data editor deployment ..." />
     <Copy SourceFiles="@(RefDataEditorDeployment)"
