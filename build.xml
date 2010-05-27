@@ -45,8 +45,8 @@
   
   <PropertyGroup>
     <AssemblyInfoFile>$(MSBuildProjectDirectory)\AssemblyInfo.cs</AssemblyInfoFile>
-    <Major>1</Major>
-    <Minor>3</Minor>
+    <Major>2</Major>
+    <Minor>0</Minor>
     <Build>0</Build>
     <Revision>0</Revision>
   </PropertyGroup>
@@ -109,7 +109,6 @@
       Exclude="$(dotNetRdfInterfaceServiceDir)\App_Code;
                $(dotNetRdfInterfaceServiceDir)\App_Data;
                $(dotNetRdfInterfaceServiceDir)\bin\*.pdb;
-               $(dotNetRdfInterfaceServiceDir)\bin\InterfaceService.dotNetRDF.dll;
                $(dotNetRdfInterfaceServiceDir)\obj\**;
                $(dotNetRdfInterfaceServiceDir)\Properties\**;
                $(dotNetRdfInterfaceServiceDir)\*.cs;
@@ -192,6 +191,7 @@
                $(DBDictionaryEditorDir)\obj\**;
                $(DBDictionaryEditorDir)\Properties\**;
                $(DBDictionaryEditorDir)\*.cs;
+               $(DBDictionaryEditorDir)\*.svc;
                $(DBDictionaryEditorDir)\*.html;
                $(DBDictionaryEditorDir)\*.csproj;
                $(DBDictionaryEditorDir)\*.user;
@@ -233,8 +233,7 @@
                $(DBDictionaryServiceDir)\Web_Development.config;
                $(DBDictionaryServiceRoot)\.svn\**;
                $(DBDictionaryServiceRoot)\*\.svn\**;
-               $(DBDictionaryServiceRoot)\*\*\.svn\**;
-               $(DBDictionaryServiceRoot)\*.Logs;">
+               $(DBDictionaryServiceRoot)\*\*\.svn\**;">
     </DBDictionaryServiceDeployment>
     
     <AdapterToolsDeployment
@@ -297,19 +296,19 @@
     <DeploymentPackage Include="*" Exclude="">
       <Options>-r</Options>
       <Path>$(iRINGAdapter)</Path>
-      <ZIPFile>..\iRINGTools-130.zip</ZIPFile>
+      <ZIPFile>..\iRINGTools-200.zip</ZIPFile>
       <Source>*</Source>
     </DeploymentPackage>
     <DeploymentPackage Include="*" Exclude="">
       <Options>-r -u</Options>
       <Path>$(iRINGSandbox)</Path>
-      <ZIPFile>..\iRINGTools-130.zip</ZIPFile>
+      <ZIPFile>..\iRINGTools-200.zip</ZIPFile>
       <Source>*</Source>
     </DeploymentPackage>
     <DeploymentPackage Include="*" Exclude="">
       <Options>-r -u</Options>
       <Path>$(LandingPageDeploymentDir)</Path>
-      <ZIPFile>..\iRINGTools-130.zip</ZIPFile>
+      <ZIPFile>..\iRINGTools-200.zip</ZIPFile>
       <Source>*</Source>
     </DeploymentPackage>
   </ItemGroup>
