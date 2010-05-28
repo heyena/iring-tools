@@ -161,7 +161,7 @@ namespace org.iringtools.modulelibrary.layerdal
                       Error = ex,
                       FriendlyErrorMessage = "Reference Data Service returned an error while getting repositories.",
                   };
-                  Error.SetError(ex);
+                  //Error.SetError(ex);
               }
           }
           #endregion
@@ -413,7 +413,7 @@ namespace org.iringtools.modulelibrary.layerdal
           {
               try
               {
-                  string result = ((DownloadStringCompletedEventArgs)e).Result;
+                  string result = ((UploadStringCompletedEventArgs)e).Result;
 
                   Response response = result.DeserializeDataContract<Response>();
 
@@ -444,7 +444,7 @@ namespace org.iringtools.modulelibrary.layerdal
           {
               try
               {
-                  string result = ((DownloadStringCompletedEventArgs)e).Result;
+                  string result = ((UploadStringCompletedEventArgs)e).Result;
 
                   Response response = result.DeserializeDataContract<Response>();
 
@@ -478,40 +478,67 @@ namespace org.iringtools.modulelibrary.layerdal
 
         void ClassLabelCompletedEvent(object sender, AsyncCompletedEventArgs e)
         {
+          CompletedEventArgs args = null;
           try
           {
             WebClient classLabelClient = (WebClient)sender;
-            string result = ((DownloadStringCompletedEventArgs)e).Result;
+            string result = string.Empty;
+            string label = string.Empty;
+
+            try
+            {
+                result = ((DownloadStringCompletedEventArgs)e).Result;
+                label = result.DeserializeDataContract<string>();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Reference Data Service returned an error while getting Class Label", ex);
+            }
 
             string baseAddress = classLabelClient.BaseAddress;
             int tagIndex = baseAddress.LastIndexOf("?tag=");
             int idIndex = baseAddress.LastIndexOf("&id=");
 
             string tag = baseAddress.Substring(tagIndex + 5, idIndex - tagIndex - 5);
-            string id = baseAddress.Substring(idIndex + 4);
-            string label = result.DeserializeDataContract<string>();
+            string id = baseAddress.Substring(idIndex + 4);            
 
-            CompletedEventArgs args = new CompletedEventArgs
+            args = new CompletedEventArgs
             {
               UserState = ((DownloadStringCompletedEventArgs)e).UserState,
               CompletedType = CompletedEventType.GetClassLabel,
               Data = new string[] { tag, id, label }
-            };
-
-            OnDataArrived(this, args);
+            };            
           }
           catch (Exception ex)
           {
-            throw ex;
+            args = new CompletedEventArgs
+            {
+                CompletedType = CompletedEventType.GetClassLabel,
+                Error = ex,
+                FriendlyErrorMessage = "Error occured while getting Class Label.",
+            };
           }
+          OnDataArrived(this, args);
         }
 
         void TemplateLabelCompletedEvent(object sender, AsyncCompletedEventArgs e)
         {
+          CompletedEventArgs args = null;
           try
           {
             WebClient classLabelClient = (WebClient)sender;
-            string result = ((DownloadStringCompletedEventArgs)e).Result;
+            QMXF qmxf = null;
+
+            string result = string.Empty;
+            try
+            {
+                result = ((DownloadStringCompletedEventArgs)e).Result;
+                qmxf = result.DeserializeXml<QMXF>();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Reference Data Service returned an error while getting Template Label", ex);
+            }
 
             string baseAddress = classLabelClient.BaseAddress;
             int tagIndex = baseAddress.LastIndexOf("?tag=");
@@ -520,8 +547,7 @@ namespace org.iringtools.modulelibrary.layerdal
             string tag = baseAddress.Substring(tagIndex + 5, idIndex - tagIndex - 5);
             string id = baseAddress.Substring(idIndex + 4);
 
-            string label = String.Empty;
-            QMXF qmxf = result.DeserializeXml<QMXF>();
+            string label = String.Empty;            
 
             if (qmxf.templateDefinitions != null && qmxf.templateDefinitions.Count > 0)
             {
@@ -540,19 +566,23 @@ namespace org.iringtools.modulelibrary.layerdal
               }
             }
             
-            CompletedEventArgs args = new CompletedEventArgs
+            args = new CompletedEventArgs
             {
               UserState = ((DownloadStringCompletedEventArgs)e).UserState,
               CompletedType = CompletedEventType.GetClassLabel,
               Data = new string[] { tag, id, label }
-            };
-
-            OnDataArrived(this, args);
+            };            
           }
           catch (Exception ex)
           {
-            throw ex;
+              args = new CompletedEventArgs
+              {
+                  CompletedType = CompletedEventType.GetClassLabel,
+                  Error = ex,
+                  FriendlyErrorMessage = "Error occured while getting Template Label.",
+              };
           }
+          OnDataArrived(this, args);
         }
 
         //:::::[  ASYNC METHOD CALLS ]::::::::::::::::::::::::::::::::::::::
@@ -709,23 +739,37 @@ namespace org.iringtools.modulelibrary.layerdal
 
         public org.iringtools.library.Response PostTemplate(QMXF template)
         {
-            string message = Utility.SerializeXml<QMXF>(template);
+            try
+            {
+                string message = Utility.SerializeXml<QMXF>(template);
 
-            _postTemplateClient.Headers["Content-type"] = "application/xml";
-            _postTemplateClient.Encoding = Encoding.UTF8;
-            _postTemplateClient.UploadStringAsync(new Uri(template.targetRepository + "/templates"), "POST", message);
-
+                _postTemplateClient.Headers["Content-type"] = "application/xml";
+                _postTemplateClient.Encoding = Encoding.UTF8;
+                _postTemplateClient.UploadStringAsync(new Uri(template.targetRepository + "/templates"), "POST", message);
+            }
+            catch (Exception ex)
+            {
+                //Error.SetError(ex, "Error occurred while trying to post the template.", Category.Exception, Priority.High);
+                throw ex;
+            }
             return null;
         }
 
         public org.iringtools.library.Response PostClass(QMXF @class)
         {
-            string message = Utility.SerializeXml<QMXF>(@class);
-           
-            _postClassClient.Headers["Content-type"] = "application/xml";
-            _postClassClient.Encoding = Encoding.UTF8;
-            _postClassClient.UploadStringAsync(new Uri(@class.targetRepository + "/classes"), "POST", message);
+            try
+            {
+                string message = Utility.SerializeXml<QMXF>(@class);
 
+                _postClassClient.Headers["Content-type"] = "application/xml";
+                _postClassClient.Encoding = Encoding.UTF8;
+                _postClassClient.UploadStringAsync(new Uri(@class.targetRepository + "/classes"), "POST", message);                
+            }
+            catch (Exception ex)
+            {
+                //Error.SetError(ex, "Error occurred while trying to post the class.", Category.Exception, Priority.High);
+                throw ex;
+            }
             return null;
         }
 
