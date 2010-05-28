@@ -134,7 +134,7 @@ namespace org.iringtools.modules.memappingregion
       {
         if (args.Error != null)
         {
-            MessageBox.Show(args.FriendlyErrorMessage, "Get Data Dictionary Error", MessageBoxButton.OK);
+            MessageBox.Show(args.FriendlyErrorMessage, "Get Mapping Error", MessageBoxButton.OK);
             return;
         }
         GetMappingHandler(args);

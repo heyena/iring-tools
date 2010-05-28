@@ -15,6 +15,7 @@ using org.iringtools.library.presentation.events;
 
 using org.iringtools.modulelibrary.events;
 using org.iringtools.modulelibrary.types;
+using org.iringtools.modulelibrary.extensions;
 
 using org.iringtools.modules.popup;
 using org.iringtools.modulelibrary.layerdal;
@@ -147,8 +148,13 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
             try
             {
                 CompletedEventArgs args = (CompletedEventArgs)e;
-                if (args.CompletedType.Equals(CompletedEventType.GetRepositories))
+                if (args.CheckForType(CompletedEventType.GetRepositories))
                 {
+                   if (args.Error != null)
+                   {
+                       MessageBox.Show(args.FriendlyErrorMessage, "Generate Repositories Error", MessageBoxButton.OK);
+                       return;
+                   }
                    object obj = args.Data;
                    foreach (Repository repository in (List<Repository>)obj)
                    {
@@ -163,10 +169,22 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
                        cmbRepositories.Items.Add(item);
                    }
                 }
+
+                if (args.CheckForType(CompletedEventType.PostClass))
+                {
+                    if (args.Error != null)
+                    {
+                        MessageBox.Show(args.FriendlyErrorMessage, "Post Class Error", MessageBoxButton.OK);
+                        return;
+                    }
+                    MessageBox.Show("Class posted successfully", "Post Class", MessageBoxButton.OK);
+                    return;
+                }
             }
             catch (Exception ex)
             {
-                Error.SetError(ex);
+                Error.SetError(ex, "Error occurred... \r\n" + ex.Message + ex.StackTrace, 
+                    Category.Exception, Priority.High);
             }
         }
 
@@ -189,7 +207,7 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
                 btnOK.IsEnabled = true;
                 btnApply.IsEnabled = true;
             }
-
+            
             model.SelectedQMXF.targetRepository = rep.uri;
         }
 
@@ -247,34 +265,42 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
 
         public void buttonClickHandler(ButtonEventArgs e)
         {
-            if (e.Name.ToString() == "btnOK1")
+            try
             {
-                QMXF @qmxf = _classBLL.QMXF;
-                referenceDataService.PostClass(@qmxf);
-
-                IRegion region = regionManager.Regions["ClassEditorRegion"];
-                foreach (UserControl userControl in region.Views)
+                if (e.Name.ToString() == "btnOK1")
                 {
-                    userControl.Visibility = Visibility.Collapsed;
+                    QMXF @qmxf = _classBLL.QMXF;
+                    referenceDataService.PostClass(@qmxf);
+
+                    IRegion region = regionManager.Regions["ClassEditorRegion"];
+                    foreach (UserControl userControl in region.Views)
+                    {
+                        userControl.Visibility = Visibility.Collapsed;
+                    }
+                }
+                else if (e.Name.ToString() == "btnCancel1")
+                {
+                    _classBLL = null;
+
+                    IRegion region = regionManager.Regions["ClassEditorRegion"];
+                    foreach (UserControl userControl in region.Views)
+                    {
+                        userControl.Visibility = Visibility.Collapsed;
+                    }
+                }
+                else if (e.Name.ToString() == "btnApply1")
+                {
+                    QMXF @qmxf = _classBLL.QMXF;
+                    referenceDataService.PostClass(@qmxf);
+
+                    InitializeEditor(EditorMode.Edit, @qmxf);
+
                 }
             }
-            else if (e.Name.ToString() == "btnCancel1")
+            catch (Exception ex)
             {
-                _classBLL = null;
-
-                IRegion region = regionManager.Regions["ClassEditorRegion"];
-                foreach (UserControl userControl in region.Views)
-                {
-                    userControl.Visibility = Visibility.Collapsed;
-                }
-            }
-            else if (e.Name.ToString() == "btnApply1")
-            {
-                QMXF @qmxf = _classBLL.QMXF;
-                referenceDataService.PostClass(@qmxf);
-
-                InitializeEditor(EditorMode.Edit, @qmxf);
-
+                Error.SetError(ex, "Error occurred while trying to post the class. \r\n" + ex.Message + ex.StackTrace, 
+                    Category.Exception, Priority.High);
             }
         }
 

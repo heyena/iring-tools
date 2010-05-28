@@ -20,6 +20,7 @@ using org.iringtools.library.presentation.events;
 
 using org.iringtools.modulelibrary.events;
 using org.iringtools.modulelibrary.types;
+using org.iringtools.modulelibrary.extensions;
 
 //using org.iringtools.modules.popup;
 using org.iringtools.modulelibrary.layerdal;
@@ -199,7 +200,7 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 btnOK.IsEnabled = true;
                 btnApply.IsEnabled = true;
             }
-            model.SelectedQMXF.targetRepository = rep.uri;
+            model.SelectedQMXF.targetRepository = rep.uri;            
         }
 
         void OnDataArrivedHandler(object sender, System.EventArgs e)
@@ -207,8 +208,13 @@ namespace org.iringtools.modules.templateeditor.editorregion
             try
             {
                 CompletedEventArgs args = (CompletedEventArgs)e;
-                if (args.CompletedType.Equals(CompletedEventType.GetRepositories))
+                if (args.CheckForType(CompletedEventType.GetRepositories))
                 {
+                    if (args.Error != null)
+                    {
+                        MessageBox.Show(args.FriendlyErrorMessage, "Generate Repositories Error", MessageBoxButton.OK);
+                        return;
+                    }
                     object obj = args.Data;
                     foreach (Repository repository in (List<Repository>)obj)
                     {
@@ -223,10 +229,22 @@ namespace org.iringtools.modules.templateeditor.editorregion
                         cmbRepositories.Items.Add(item);
                     }
                 }
+
+                if (args.CheckForType(CompletedEventType.PostTemplate))
+                {
+                    if (args.Error != null)
+                    {
+                        MessageBox.Show(args.FriendlyErrorMessage, "Post Templates Error", MessageBoxButton.OK);
+                        return;
+                    }
+                    MessageBox.Show("Template posted successfully", "Post Template", MessageBoxButton.OK);
+                    return;
+                }
             }
             catch (Exception ex)
             {
-                Error.SetError(ex);
+                Error.SetError(ex, "Error occurred... \r\n" + ex.Message + ex.StackTrace,
+                    Category.Exception, Priority.High);
             }
         }
 
@@ -282,67 +300,75 @@ namespace org.iringtools.modules.templateeditor.editorregion
 
         public void buttonClickHandler(ButtonEventArgs e)
         {
-            if (e.Name.ToString() == "btnOK1")
+            try
             {
-                if (!_templateModel.IsReadOnly)
+                if (e.Name.ToString() == "btnOK1")
                 {
-                    QMXF @qmxf = _templateModel.QMXF;
-                    referenceDataService.PostTemplate(@qmxf);
-                }
+                    if (!_templateModel.IsReadOnly)
+                    {
+                        QMXF @qmxf = _templateModel.QMXF;
+                        referenceDataService.PostTemplate(@qmxf);
+                    }
 
-                IRegion region = regionManager.Regions["TemplateEditorRegion"];
-                foreach (UserControl userControl in region.Views)
-                {
-                    userControl.Visibility = Visibility.Collapsed;
+                    IRegion region = regionManager.Regions["TemplateEditorRegion"];
+                    foreach (UserControl userControl in region.Views)
+                    {
+                        userControl.Visibility = Visibility.Collapsed;
+                    }
                 }
-            }
-            else if (e.Name.ToString() == "btnCancel1")
-            {
-                _templateModel = null;
+                else if (e.Name.ToString() == "btnCancel1")
+                {
+                    _templateModel = null;
 
-                IRegion region = regionManager.Regions["TemplateEditorRegion"];
-                foreach (UserControl userControl in region.Views)
-                {
-                    userControl.Visibility = Visibility.Collapsed;
+                    IRegion region = regionManager.Regions["TemplateEditorRegion"];
+                    foreach (UserControl userControl in region.Views)
+                    {
+                        userControl.Visibility = Visibility.Collapsed;
+                    }
                 }
-            }
-            else if (e.Name.ToString() == "btnApply1")
-            {
-                if (!_templateModel.IsReadOnly)
+                else if (e.Name.ToString() == "btnApply1")
                 {
-                    QMXF @qmxf = _templateModel.QMXF;
-                    referenceDataService.PostTemplate(@qmxf);
+                    if (!_templateModel.IsReadOnly)
+                    {
+                        QMXF @qmxf = _templateModel.QMXF;
+                        referenceDataService.PostTemplate(@qmxf);
 
-                    InitializeEditor(EditorMode.Edit, @qmxf);
+                        InitializeEditor(EditorMode.Edit, @qmxf);
+                    }
                 }
-            }
-            else if (e.Name.ToString() == "addRole1")
-            {
-                if (cmbRange.SelectedItem != null)
+                else if (e.Name.ToString() == "addRole1")
+                {
+                    if (cmbRange.SelectedItem != null)
+                    {
+                        TextBox txtName = TextCtrl("roleName");
+                        TextBox txtDesc = TextCtrl("roleDescription");
+
+                        _templateModel.AddRole(txtName.Text, txtDesc.Text, ((KeyValuePair<string, string>)cmbRange.SelectedItem).Value);
+                    }
+                }
+                else if (e.Name.ToString() == "removeRole1")
+                {
+                    if (lstRoles.SelectedItem != null)
+                    {
+                        KeyValuePair<string, object> lstItem = (KeyValuePair<string, object>)lstRoles.SelectedItem;
+                        _templateModel.Roles.Remove(lstItem);
+                    }
+                }
+                else if (e.Name.ToString() == "applyRole1")
                 {
                     TextBox txtName = TextCtrl("roleName");
                     TextBox txtDesc = TextCtrl("roleDescription");
-                
-                    _templateModel.AddRole(txtName.Text, txtDesc.Text, ((KeyValuePair<string, string>)cmbRange.SelectedItem).Value);
-                }
-            }
-            else if (e.Name.ToString() == "removeRole1")
-            {
-                if (lstRoles.SelectedItem != null)
-                {
-                    KeyValuePair<string, object> lstItem = (KeyValuePair<string, object>)lstRoles.SelectedItem;
-                    _templateModel.Roles.Remove(lstItem);
-                }                
-            }
-            else if (e.Name.ToString() == "applyRole1")
-            {
-                TextBox txtName = TextCtrl("roleName");
-                TextBox txtDesc = TextCtrl("roleDescription");
 
-                if (lstRoles.SelectedItem != null && cmbRange.SelectedItem != null)
-                {
-                    _templateModel.ApplyRole((KeyValuePair<string, object>)lstRoles.SelectedItem, txtName.Text, txtDesc.Text, ((KeyValuePair<string, string>)cmbRange.SelectedItem).Key);
+                    if (lstRoles.SelectedItem != null && cmbRange.SelectedItem != null)
+                    {
+                        _templateModel.ApplyRole((KeyValuePair<string, object>)lstRoles.SelectedItem, txtName.Text, txtDesc.Text, ((KeyValuePair<string, string>)cmbRange.SelectedItem).Key);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Error.SetError(ex, "Error occurred while trying to post the class. \r\n" + ex.Message + ex.StackTrace,
+                    Category.Exception, Priority.High);
             }
         }
 

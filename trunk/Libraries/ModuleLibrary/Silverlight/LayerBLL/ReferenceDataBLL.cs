@@ -132,7 +132,7 @@ namespace org.iringtools.modulelibrary.layerbll
 
       // Raise event with updates 
       if (OnDataArrived != null)
-          if (((CompletedEventArgs)e).Data!=null)
+          //if (((CompletedEventArgs)e).Data!=null)
             OnDataArrived(sender, e);
 
       aggregator.GetEvent<SpinnerEvent>().Publish(new SpinnerEventArgs
@@ -401,7 +401,7 @@ namespace org.iringtools.modulelibrary.layerbll
     /// <returns></returns>
     public Response PostTemplate(QMXF template)
     {
-      //StartService("PostTemplate");
+      StartService("PostTemplate");
       return dal.PostTemplate(template);
     }
 
@@ -412,7 +412,7 @@ namespace org.iringtools.modulelibrary.layerbll
     /// <returns></returns>
     public Response PostClass(QMXF @class)
     {
-      //StartService("PostClass");
+      StartService("PostClass");
       return dal.PostClass(@class);
     }
 
