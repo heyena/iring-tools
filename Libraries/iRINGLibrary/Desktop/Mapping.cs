@@ -39,12 +39,12 @@ namespace org.iringtools.library
   {
     public Mapping()
     {
-      graphs = new List<Graph>();
+      graphMaps = new List<GraphMap>();
       valueMaps = new List<ValueMap>();
     }
 
     [DataMember(EmitDefaultValue = false, Order = 0)]
-    public List<Graph> graphs { get; set; }
+    public List<GraphMap> graphMaps { get; set; }
 
     [DataMember(EmitDefaultValue = false, Order = 1)]
     public List<ValueMap> valueMaps { get; set; }
@@ -54,11 +54,11 @@ namespace org.iringtools.library
   }
 
   [DataContract]
-  public class Graph
+  public class GraphMap
   {
-    public Graph()
+    public GraphMap()
     {
-      graphMaps = new Dictionary<ClassMap, List<TemplateMap>>();
+      classTemplateListMaps = new Dictionary<ClassMap, List<TemplateMap>>();
       dataObjectMaps = new List<DataObjectMap>();
     }
 
@@ -69,14 +69,14 @@ namespace org.iringtools.library
     public string uri { get; set; }
 
     [DataMember(EmitDefaultValue = false, Order = 2)]
-    public Dictionary<ClassMap, List<TemplateMap>> graphMaps { get; set; }
+    public Dictionary<ClassMap, List<TemplateMap>> classTemplateListMaps { get; set; }
 
     [DataMember(EmitDefaultValue = false, Order = 3)]
     public List<DataObjectMap> dataObjectMaps { get; set; } // only top level data objects
 
-    public KeyValuePair<ClassMap, List<TemplateMap>> GetGraphMap(string classId)
+    public KeyValuePair<ClassMap, List<TemplateMap>> GetClassTemplateListMap(string classId)
     {
-      foreach (var pair in graphMaps)
+      foreach (var pair in classTemplateListMaps)
       {
         if (pair.Key.classId == classId)
           return pair;
@@ -88,11 +88,11 @@ namespace org.iringtools.library
     // roleMap is not required for root node
     public void AddClassMap(RoleMap roleMap, ClassMap classMap)
     {
-      KeyValuePair<ClassMap, List<TemplateMap>> graphMap = GetGraphMap(classMap.classId);
+      KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = GetClassTemplateListMap(classMap.classId);
 
-      if (graphMap.Key == null)        
+      if (classTemplateListMap.Key == null)        
       {
-        graphMaps.Add(classMap, new List<TemplateMap>());
+        classTemplateListMaps.Add(classMap, new List<TemplateMap>());
 
         if (roleMap != null)
           roleMap.classMap = classMap;
@@ -103,17 +103,17 @@ namespace org.iringtools.library
     public void AddTemplateMap(ClassMap classMap, TemplateMap templateMap)
     {
       AddClassMap(null, classMap);
-      List<TemplateMap> templateMaps = graphMaps[classMap];
+      List<TemplateMap> templateMaps = classTemplateListMaps[classMap];
       templateMaps.Add(templateMap);
     }
 
     public void DeleteClassMap(string classId)
     {
-      KeyValuePair<ClassMap, List<TemplateMap>> graphMap = GetGraphMap(classId);
+      KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = GetClassTemplateListMap(classId);
 
-      if (graphMap.Key == null)        
+      if (classTemplateListMap.Key == null)        
       {
-        List<TemplateMap> templateMaps = graphMap.Value;
+        List<TemplateMap> templateMaps = classTemplateListMap.Value;
 
         foreach (TemplateMap templateMap in templateMaps)
         {
@@ -130,16 +130,16 @@ namespace org.iringtools.library
           templateMaps.Remove(templateMap);
         }
 
-        graphMaps.Remove(graphMap.Key);        
+        classTemplateListMaps.Remove(classTemplateListMap.Key);        
       }
     }
 
     public void DeleteTemplateMap(string classId, string templateId)
     {
-      KeyValuePair<ClassMap, List<TemplateMap>> graphMap = GetGraphMap(classId);
-      if (graphMap.Key != null)
+      KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = GetClassTemplateListMap(classId);
+      if (classTemplateListMap.Key != null)
       {
-        List<TemplateMap> templateMaps = graphMap.Value;
+        List<TemplateMap> templateMaps = classTemplateListMap.Value;
         foreach (TemplateMap templateMap in templateMaps)
         {
           if (templateMap.templateId == templateId)
