@@ -45,6 +45,7 @@ namespace org.iringtools.adapter
     private static XNamespace TPL_NS = "http://tpl.rdlfacade.org/data";
 
     private static XName OWL_THING = OWL_NS + "Thing";
+    private static XName RDF_ABOUT = RDF_NS + "about";
     private static XName RDF_TYPE = RDF_NS + "type";
     private static XName RDF_RESOURCE = RDF_NS + "resource";
     private static XName RDF_DATATYPE = RDF_NS + "datatype";
@@ -61,7 +62,7 @@ namespace org.iringtools.adapter
     private Dictionary<string, IList<IDataObject>> _dataObjects = null;
     private Dictionary<string, List<string>> _classIdentifiers = null;
     private Mapping _mapping = null;
-    private Graph _graph = null;
+    private GraphMap _graphMap = null;
     private List<Dictionary<string, string>> _dtoList = null;
 
     public DTOLayer(Mapping mapping)
@@ -103,11 +104,11 @@ namespace org.iringtools.adapter
     #region public methods
     public List<Dictionary<string, string>> GetDTOList(string graphName)
     {
-      foreach (Graph graph in _mapping.graphs)
+      foreach (GraphMap graphMap in _mapping.graphMaps)
       {
-        if (graph.name.ToLower() == graphName.ToLower())
+        if (graphMap.name.ToLower() == graphName.ToLower())
         {
-          _graph = graph;
+          _graphMap = graphMap;
           LoadDataObjects();
 
           _dtoList = new List<Dictionary<string, string>>();
@@ -116,7 +117,7 @@ namespace org.iringtools.adapter
           {
             _dtoList.Add(new Dictionary<string, string>());
           }
-          ClassMap classMap = _graph.graphMaps.First().Key;
+          ClassMap classMap = _graphMap.classTemplateListMaps.First().Key;
           FillDTOList(classMap.classId, "rdl:" + classMap.name);
 
           return _dtoList;
@@ -128,16 +129,16 @@ namespace org.iringtools.adapter
 
     public XElement GetHierarchicalDTOList(string graphName)
     {
-      foreach (Graph graph in _mapping.graphs)
+      foreach (GraphMap graphMap in _mapping.graphMaps)
       {
-        if (graph.name.ToLower() == graphName.ToLower())
+        if (graphMap.name.ToLower() == graphName.ToLower())
         {
-          _graph = graph;
+          _graphMap = graphMap;
           LoadDataObjects();
 
           //todo: add namespace (http://localhost/12345_000/ABC) for graph
           XElement graphElement = new XElement(graphName);
-          ClassMap classMap = _graph.graphMaps.First().Key;
+          ClassMap classMap = _graphMap.classTemplateListMaps.First().Key;
 
           int maxDataObjectsCount = MaxDataObjectsCount();
           for (int i = 0; i < maxDataObjectsCount; i++)
@@ -156,11 +157,11 @@ namespace org.iringtools.adapter
 
     public XElement GetGraphRdf(string graphName)
     {
-      foreach (Graph graph in _mapping.graphs)
+      foreach (GraphMap graphMap in _mapping.graphMaps)
       {
-        if (graph.name.ToLower() == graphName.ToLower())
+        if (graphMap.name.ToLower() == graphName.ToLower())
         {
-          _graph = graph;
+          _graphMap = graphMap;
           LoadDataObjects();
           return GetGraphRdf();
         }
@@ -178,11 +179,10 @@ namespace org.iringtools.adapter
 
       foreach (string word in words)
       {
-        string lowerCaseWord = word.ToLower();
-        returnValue += lowerCaseWord[0].ToString().ToUpper();
+        returnValue += word.Substring(0, 1).ToUpper();
 
-        if (lowerCaseWord.Length > 1)
-          returnValue += lowerCaseWord.Substring(1);
+        if (word.Length > 1)
+          returnValue += word.Substring(1).ToLower();
       }
 
       return returnValue;
@@ -200,7 +200,7 @@ namespace org.iringtools.adapter
     {
       _dataObjects = new Dictionary<string, IList<IDataObject>>();
 
-      foreach (DataObjectMap dataObjectMap in _graph.dataObjectMaps)
+      foreach (DataObjectMap dataObjectMap in _graphMap.dataObjectMaps)
       {
         _dataObjects.Add(dataObjectMap.name, _dataLayer.Get(dataObjectMap.name, null));
       }
@@ -228,7 +228,7 @@ namespace org.iringtools.adapter
     {
       _classIdentifiers = new Dictionary<string, List<string>>();
 
-      foreach (ClassMap classMap in _graph.graphMaps.Keys)
+      foreach (ClassMap classMap in _graphMap.classTemplateListMaps.Keys)
       {
         List<string> classIdentifiers = new List<string>();
 
@@ -286,7 +286,7 @@ namespace org.iringtools.adapter
         new XAttribute(XNamespace.Xmlns + "xsd", XSD_NS),
         new XAttribute(XNamespace.Xmlns + "tpl", TPL_NS));
 
-      foreach (var pair in _graph.graphMaps)
+      foreach (var pair in _graphMap.classTemplateListMaps)
       {
         ClassMap classMap = pair.Key;
 
@@ -310,10 +310,8 @@ namespace org.iringtools.adapter
 
     private XElement CreateRdfClassElement(string classId, string classInstance)
     {
-      return new XElement(OWL_THING,
-        new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, TPL_NS.NamespaceName + "#R63638239485")),
-        new XElement(TPL_NS + "R55055340393", new XAttribute(RDF_RESOURCE, RDL_NS + classId)),
-        new XElement(TPL_NS + "R99011248051", new XAttribute(RDF_RESOURCE, classInstance))
+      return new XElement(OWL_THING, new XAttribute(RDF_ABOUT, classInstance),
+        new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, RDL_NS + classId))
       );
     }
 
@@ -417,10 +415,10 @@ namespace org.iringtools.adapter
 
     private void FillDTOList(string classId, string xPath)
     {
-      KeyValuePair<ClassMap, List<TemplateMap>> graphMap = _graph.GetGraphMap(classId);
+      KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = _graphMap.GetClassTemplateListMap(classId);
       string classPath = xPath;
 
-      foreach (TemplateMap templateMap in graphMap.Value)
+      foreach (TemplateMap templateMap in classTemplateListMap.Value)
       {
         xPath = classPath + "/tpl:" + templateMap.name;
         string templatePath = xPath;
@@ -471,9 +469,9 @@ namespace org.iringtools.adapter
     //todo: use reference if element already created in the doc
     private void FillHierarchicalDTOList(XElement classElement, string classId, int dataObjectIndex)
     {
-      KeyValuePair<ClassMap, List<TemplateMap>> graphMap = _graph.GetGraphMap(classId);
-      ClassMap classMap = graphMap.Key;
-      List<TemplateMap> templateMaps = graphMap.Value;
+      KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = _graphMap.GetClassTemplateListMap(classId);
+      ClassMap classMap = classTemplateListMap.Key;
+      List<TemplateMap> templateMaps = classTemplateListMap.Value;
 
       classElement.Add(new XAttribute("rdluri", classMap.classId));
       classElement.Add(new XAttribute("id", _classIdentifiers[classMap.classId][dataObjectIndex]));
