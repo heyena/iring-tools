@@ -66,7 +66,7 @@ namespace org.iringtools.library
     public string name { get; set; }
 
     [DataMember(EmitDefaultValue = false, Order = 1)]
-    public string uri { get; set; }
+    public string baseUri { get; set; }
 
     [DataMember(EmitDefaultValue = false, Order = 2)]
     public Dictionary<ClassMap, List<TemplateMap>> classTemplateListMaps { get; set; }
