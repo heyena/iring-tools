@@ -39,11 +39,12 @@ using Ninject;
 using Ninject.Parameters;
 using Ninject.Contrib.Dynamic;
 using Ninject.Modules;
+using log4net;
 
 namespace org.ids_adi.iring.referenceData
 {
     // NOTE: If you change the class name "Service" here, you must also update the reference to "Service" in Web.config and in the associated .svc file.
-    public class ReferenceDataServiceProvider : ILog
+    public class ReferenceDataServiceProvider : org.iringtools.utility.Loggers.ILog
     {
         #region Logger
         private ILogger _logger;
@@ -60,7 +61,7 @@ namespace org.ids_adi.iring.referenceData
 
         #endregion
 
-        
+        private static readonly log4net.ILog _log4netLogger = LogManager.GetLogger(typeof(ReferenceDataServiceProvider));
         private const string REPOSITORIES_FILE_NAME = "Repositories.xml";
         private const string QUERIES_FILE_NAME = "Queries.xml";
 
@@ -95,62 +96,77 @@ namespace org.ids_adi.iring.referenceData
 
         public ReferenceDataServiceProvider(ConfigSettings configSettings)
         {
-            Directory.SetCurrentDirectory(configSettings.BaseDirectoryPath);
-
-            _sparqlPath = configSettings.SPARQLPath;
-            _xmlPath = configSettings.XMLPath;
-            _pageSize = configSettings.PageSize;
-            _classRegistryBase = configSettings.ClassRegistryBase;
-            _templateRegistryBase = configSettings.TemplateRegistryBase;
-            _exampleRegistryBase = configSettings.ExampleRegistryBase;
-            _useExampleRegistryBase = configSettings.UseExampleRegistryBase;
-            string encryptedRegistryToken = configSettings.RegistryCredentialToken;
-            string encryptedProxyToken = configSettings.ProxyCredentialToken;
-            string proxyHost = configSettings.ProxyHost;
-            string proxyPortString = configSettings.ProxyPort;
-
-            if (encryptedRegistryToken == String.Empty)
+            try
             {
-                _registryCredentials = new WebCredentials();
-            }
-            else
-            {
-                _registryCredentials = new WebCredentials(encryptedRegistryToken);
-                _registryCredentials.Decrypt();
-            }
+                Directory.SetCurrentDirectory(configSettings.BaseDirectoryPath);
 
-            int proxyPort = 0;
-            Int32.TryParse(proxyPortString, out proxyPort);
-            if (encryptedProxyToken == String.Empty)
-            {
-                _proxyCredentials = new WebProxyCredentials();
-            }
-            else
-            {
-                _proxyCredentials = new WebProxyCredentials(encryptedProxyToken, proxyHost, proxyPort);
-                _proxyCredentials.Decrypt();
-            }
+                _sparqlPath = configSettings.SPARQLPath;
+                _xmlPath = configSettings.XMLPath;
+                _pageSize = configSettings.PageSize;
+                _classRegistryBase = configSettings.ClassRegistryBase;
+                _templateRegistryBase = configSettings.TemplateRegistryBase;
+                _exampleRegistryBase = configSettings.ExampleRegistryBase;
+                _useExampleRegistryBase = configSettings.UseExampleRegistryBase;
+                string encryptedRegistryToken = configSettings.RegistryCredentialToken;
+                string encryptedProxyToken = configSettings.ProxyCredentialToken;
+                string proxyHost = configSettings.ProxyHost;
+                string proxyPortString = configSettings.ProxyPort;
 
-            string repositoriesPath = _xmlPath + REPOSITORIES_FILE_NAME;
-            _repositories = Utility.Read<List<Repository>>(repositoriesPath);
+                if (encryptedRegistryToken == String.Empty)
+                {
+                    _registryCredentials = new WebCredentials();
+                }
+                else
+                {
+                    _registryCredentials = new WebCredentials(encryptedRegistryToken);
+                    _registryCredentials.Decrypt();
+                }
 
-            string queriesPath = _xmlPath + QUERIES_FILE_NAME;
-            _queries = Utility.Read<Queries>(queriesPath);
+                int proxyPort = 0;
+                Int32.TryParse(proxyPortString, out proxyPort);
+                if (encryptedProxyToken == String.Empty)
+                {
+                    _proxyCredentials = new WebProxyCredentials();
+                }
+                else
+                {
+                    _proxyCredentials = new WebProxyCredentials(encryptedProxyToken, proxyHost, proxyPort);
+                    _proxyCredentials.Decrypt();
+                }
+
+                string repositoriesPath = _xmlPath + REPOSITORIES_FILE_NAME;
+                _repositories = Utility.Read<List<Repository>>(repositoriesPath);
+
+                string queriesPath = _xmlPath + QUERIES_FILE_NAME;
+                _queries = Utility.Read<Queries>(queriesPath);
+            }
+            catch (Exception ex)
+            {
+                _log4netLogger.Error("Error in initializing ReferenceDataServiceProvider: " + ex);
+            }
         }
 
         public List<Repository> GetRepositories()
         {
-            List<Repository> repositories;
-
-            repositories = _repositories;
-
-            //Don't Expose Tokens
-            foreach (Repository repository in repositories)
+            try
             {
-                repository.encryptedCredentials = null;
-            }
+                List<Repository> repositories;
 
-            return repositories;
+                repositories = _repositories;
+
+                //Don't Expose Tokens
+                foreach (Repository repository in repositories)
+                {
+                    repository.encryptedCredentials = null;
+                }
+
+                return repositories;
+            }
+            catch (Exception ex)
+            {
+                _log4netLogger.Error("Error in GetRepositories: " + ex);
+                return null;
+            }
         }
 
         public List<Entity> Find(string query)
@@ -190,16 +206,25 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
-                throw new Exception("Error while Finding " + query + ".\n" + e.ToString(), e);
+                _log4netLogger.Error("Error in Find: " + e);
+                throw new Exception("Error while Finding " + query + ".\n" + e.ToString(), e);                
             }
             return queryResult;
         }
 
         public RefDataEntities Search(string query)
         {
-            using (new LoggerHelper(this, "Search", query))
+            try
             {
-                return SearchPage(query, "0");
+                using (new LoggerHelper(this, "Search", query))
+                {
+                    return SearchPage(query, "0");
+                }
+            }
+            catch (Exception ex)
+            {
+                _log4netLogger.Error("Error in Search: " + ex);
+                return null;
             }
         }
 
@@ -273,6 +298,7 @@ namespace org.ids_adi.iring.referenceData
                 }
                 catch (Exception e)
                 {
+                    _log4netLogger.Error("Error in SearchPage: " + e);
                     throw new Exception("Error while Finding " + query + ".\n" + e.ToString(), e);
                 }
             }
@@ -325,6 +351,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
+                _log4netLogger.Error("Error in GetLabel: " + e);
                 throw new Exception("Error while Getting Label for " + uri + ".\n" + e.ToString(), e);
             }
         }
@@ -383,6 +410,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
+                _log4netLogger.Error("Error in GetClassifications: " + e);
                 throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
             }
         }
@@ -438,6 +466,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
+                _log4netLogger.Error("Error in GetSpecializations: " + e);
                 throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
             }
         }
@@ -541,6 +570,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
+                _log4netLogger.Error("Error in GetClass: " + e);
                 throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
             }
         }
@@ -572,6 +602,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
+                _log4netLogger.Error("Error in GetSuperClasses: " + e);
                 throw new Exception("Error while Finding " + id + ".\n" + e.ToString(), e);
             }
             return queryResult;
@@ -634,6 +665,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
+                _log4netLogger.Error("Error in GetAllSuperClasses: " + e);
                 throw new Exception("Error while Finding " + id + ".\n" + e.ToString(), e);
             }
 
@@ -676,6 +708,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
+                _log4netLogger.Error("Error in GetSubClasses: " + e);
                 throw new Exception("Error while Finding " + id + ".\n" + e.ToString(), e);
             }
             return queryResult;
@@ -717,6 +750,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
+                _log4netLogger.Error("Error in GetClassTemplates: " + e);
                 throw new Exception("Error while Finding " + id + ".\n" + e.ToString(), e);
             }
             return queryResult;
@@ -785,6 +819,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
+                _log4netLogger.Error("Error in GetRoleDefinition: " + e);
                 throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
             }
         }
@@ -913,6 +948,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
+                _log4netLogger.Error("Error in GetRoleQualification: " + e);
                 throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
             }
         }
@@ -976,6 +1012,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
+                _log4netLogger.Error("Error in GetTemplateDefinition: " + e);
                 throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
             }
         }
@@ -984,16 +1021,23 @@ namespace org.ids_adi.iring.referenceData
         {
             QMXF qmxf = new QMXF();
 
-            TemplateQualification templateQualification = GetTemplateQualification(id);
+            try
+            {
+                TemplateQualification templateQualification = GetTemplateQualification(id);
 
-            if (templateQualification != null)
-            {
-                qmxf.templateQualifications.Add(templateQualification);
+                if (templateQualification != null)
+                {
+                    qmxf.templateQualifications.Add(templateQualification);
+                }
+                else
+                {
+                    TemplateDefinition templateDefinition = GetTemplateDefinition(id);
+                    qmxf.templateDefinitions.Add(templateDefinition);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                TemplateDefinition templateDefinition = GetTemplateDefinition(id);
-                qmxf.templateDefinitions.Add(templateDefinition);
+                _log4netLogger.Error("Error in GetTemplate: " + ex);
             }
 
             return qmxf;
@@ -1063,6 +1107,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
+                _log4netLogger.Error("Error in GetTemplateQualification: " + e);
                 throw new Exception("Error while Getting Template: " + id + ".\n" + e.ToString(), e);
             }
         }
@@ -1575,31 +1620,39 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception ex)
             {
+                _log4netLogger.Error("Error in PostTemplate: " + ex);
                 throw ex;
             }
         }
 
         private int getIndexFromName(string name)
         {
-            int index = 0;
-            foreach (Repository repository in _repositories)
+            try
             {
-                if (repository.name.Equals(name))
+                int index = 0;
+                foreach (Repository repository in _repositories)
                 {
-                    index = _repositories.IndexOf(repository);
-                    return index;
+                    if (repository.name.Equals(name))
+                    {
+                        index = _repositories.IndexOf(repository);
+                        return index;
+                    }
                 }
-            }
-            foreach (Repository repository in _repositories)
-            {
-                if (!repository.isReadOnly)
+                foreach (Repository repository in _repositories)
                 {
-                    index = _repositories.IndexOf(repository);
-                    return index;
+                    if (!repository.isReadOnly)
+                    {
+                        index = _repositories.IndexOf(repository);
+                        return index;
+                    }
                 }
-            }
 
-            return index;
+                return index;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public Response PostClass(QMXF qmxf)
@@ -1880,6 +1933,7 @@ namespace org.ids_adi.iring.referenceData
             catch (Exception e)
             {
                 Utility.WriteString(e.ToString(), "error.log");
+                _log4netLogger.Error("Error in PostClass: " + e);
                 throw e;
             }
         }
@@ -1904,6 +1958,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
+                _log4netLogger.Error("Error in CreateIdsAdiId: " + e);
                 throw new Exception("CreateIdsAdiId: " + e.ToString() + " registrybase: " + RegistryBase);
             }
 
@@ -1912,11 +1967,18 @@ namespace org.ids_adi.iring.referenceData
 
         private List<Dictionary<string, string>> MergeLists(List<Dictionary<string, string>> a, List<Dictionary<string, string>> b)
         {
-            foreach (Dictionary<string, string> dictionary in b)
+            try
             {
-                a.Add(dictionary);
+                foreach (Dictionary<string, string> dictionary in b)
+                {
+                    a.Add(dictionary);
+                }
+                return a;
             }
-            return a;
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         /// <summary>
@@ -1924,35 +1986,56 @@ namespace org.ids_adi.iring.referenceData
         /// </summary>
         private string ReadSPARQL(string queryName)
         {
-            string query;
+            try
+            {
+                string query;
 
-            query = Utility.ReadString(_sparqlPath + queryName);
+                query = Utility.ReadString(_sparqlPath + queryName);
 
-            return query;
+                return query;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         private SPARQLResults QueryFromRepository(Repository repository, string sparql)
         {
-            SPARQLResults sparqlResults;
+            try
+            {
+                SPARQLResults sparqlResults;
 
-            string encryptedCredentials = repository.encryptedCredentials;
+                string encryptedCredentials = repository.encryptedCredentials;
 
-            WebCredentials credentials = new WebCredentials(encryptedCredentials);
-            if (credentials.isEncrypted) credentials.Decrypt();
+                WebCredentials credentials = new WebCredentials(encryptedCredentials);
+                if (credentials.isEncrypted) credentials.Decrypt();
 
-            sparqlResults = SPARQLClient.PostQuery(repository.uri, sparql, credentials, _proxyCredentials);
+                sparqlResults = SPARQLClient.PostQuery(repository.uri, sparql, credentials, _proxyCredentials);
 
-            return sparqlResults;
+                return sparqlResults;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         private string QueryIdGenerator(string serviceUrl)
         {
-            string result;
+            try
+            {
+                string result;
 
-            WebHttpClient webClient = new WebHttpClient(serviceUrl, _registryCredentials.GetNetworkCredential(), _proxyCredentials.GetWebProxy());
-            result = webClient.GetMessage(serviceUrl);
+                WebHttpClient webClient = new WebHttpClient(serviceUrl, _registryCredentials.GetNetworkCredential(), _proxyCredentials.GetWebProxy());
+                result = webClient.GetMessage(serviceUrl);
 
-            return result;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         private Response PostToRepository(Repository repository, string sparql)
@@ -1972,114 +2055,141 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception ex)
             {
-                
                 throw ex;
             }
         }
 
         private List<Dictionary<string, string>> BindQueryResults(QueryBindings queryBindings, SPARQLResults sparqlResults)
         {
-            List<Dictionary<string, string>> results = new List<Dictionary<string, string>>();
-
-            foreach (SPARQLResult sparqlResult in sparqlResults.resultsElement.results)
+            try
             {
-                Dictionary<string, string> result = new Dictionary<string, string>();
+                List<Dictionary<string, string>> results = new List<Dictionary<string, string>>();
 
-                string sortKey = string.Empty;
-
-                foreach (SPARQLBinding sparqlBinding in sparqlResult.bindings)
+                foreach (SPARQLResult sparqlResult in sparqlResults.resultsElement.results)
                 {
-                    foreach (QueryBinding queryBinding in queryBindings)
+                    Dictionary<string, string> result = new Dictionary<string, string>();
+
+                    string sortKey = string.Empty;
+
+                    foreach (SPARQLBinding sparqlBinding in sparqlResult.bindings)
                     {
-                        if (queryBinding.name == sparqlBinding.name)
+                        foreach (QueryBinding queryBinding in queryBindings)
                         {
-                            string key = queryBinding.name;
-
-                            string value = String.Empty;
-                            string dataType = String.Empty;
-                            if (queryBinding.type == SPARQLBindingType.Uri)
+                            if (queryBinding.name == sparqlBinding.name)
                             {
-                                value = sparqlBinding.uri;
-                            }
-                            else if (queryBinding.type == SPARQLBindingType.Literal)
-                            {     
-                                value = sparqlBinding.literal.value;
-                                dataType = sparqlBinding.literal.dataType;
-                                sortKey = value;
-                            }
+                                string key = queryBinding.name;
 
-                            if (result.ContainsKey(key))
-                            {
-                                key = MakeUniqueKey(result, key);
-                            }
+                                string value = String.Empty;
+                                string dataType = String.Empty;
+                                if (queryBinding.type == SPARQLBindingType.Uri)
+                                {
+                                    value = sparqlBinding.uri;
+                                }
+                                else if (queryBinding.type == SPARQLBindingType.Literal)
+                                {
+                                    value = sparqlBinding.literal.value;
+                                    dataType = sparqlBinding.literal.dataType;
+                                    sortKey = value;
+                                }
 
-                            result.Add(key, value);
+                                if (result.ContainsKey(key))
+                                {
+                                    key = MakeUniqueKey(result, key);
+                                }
 
-                            if (dataType != String.Empty && dataType != null)
-                            {
-                                result.Add(key + "_dataType", dataType);
+                                result.Add(key, value);
+
+                                if (dataType != String.Empty && dataType != null)
+                                {
+                                    result.Add(key + "_dataType", dataType);
+                                }
                             }
                         }
                     }
+                    results.Add(result);
                 }
-                results.Add(result);
-            }
 
-            return results;
+                return results;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         private string MakeUniqueKey(Dictionary<string, string> dictionary, string duplicateKey)
         {
-            string newKey = String.Empty;
-
-            for (int i = 2; i < Int32.MaxValue; i++)
+            try
             {
-                string postfix = " (" + i.ToString() + ")";
-                if (!dictionary.ContainsKey(duplicateKey + postfix))
-                {
-                    newKey += postfix;
-                    break;
-                }
-            }
+                string newKey = String.Empty;
 
-            return newKey;
+                for (int i = 2; i < Int32.MaxValue; i++)
+                {
+                    string postfix = " (" + i.ToString() + ")";
+                    if (!dictionary.ContainsKey(duplicateKey + postfix))
+                    {
+                        newKey += postfix;
+                        break;
+                    }
+                }
+
+                return newKey;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         private RefDataEntities GetRequestedPage(RefDataEntities entities, int pageNumber, int pageSize)
         {
-            RefDataEntities page = new RefDataEntities();
-
-            int startIndex = 0;
-            if (pageNumber > 1) startIndex = ((pageNumber - 1) * pageSize) + 1;
-
-            if (entities.Count > startIndex)
+            try
             {
-                for (int i = startIndex; i < startIndex + pageSize; i++)
+                RefDataEntities page = new RefDataEntities();
+
+                int startIndex = 0;
+                if (pageNumber > 1) startIndex = ((pageNumber - 1) * pageSize) + 1;
+
+                if (entities.Count > startIndex)
                 {
-                    if (entities.Count == i) break;
+                    for (int i = startIndex; i < startIndex + pageSize; i++)
+                    {
+                        if (entities.Count == i) break;
 
-                    string key = entities.Keys[i];
-                    Entity entity = entities[key];
-                    page.Add(key, entity);
+                        string key = entities.Keys[i];
+                        Entity entity = entities[key];
+                        page.Add(key, entity);
+                    }
                 }
-            }
 
-            if (page.Count == 0)
+                if (page.Count == 0)
+                {
+                    int lastPage = entities.Count / pageSize;
+                    int remainder = entities.Count % pageSize;
+                    if (remainder > 0) lastPage++;
+                    page.Add("Warning: Page " + lastPage + " is the last page.", null);
+                }
+
+                return page;
+            }
+            catch (Exception ex)
             {
-                int lastPage = entities.Count / pageSize;
-                int remainder = entities.Count % pageSize;
-                if (remainder > 0) lastPage++;
-                page.Add("Warning: Page " + lastPage + " is the last page.", null);
+               throw ex;
             }
-
-            return page;
         }
 
         private void Reset(string query)
         {
-            if (_searchHistory.ContainsKey(query))
+            try
             {
-                _searchHistory.Remove(query);
+                if (_searchHistory.ContainsKey(query))
+                {
+                    _searchHistory.Remove(query);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
 
