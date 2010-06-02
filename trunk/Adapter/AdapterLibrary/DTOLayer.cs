@@ -26,21 +26,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
-using System.Xml.Linq;
-using org.iringtools.adapter;
-using org.iringtools.adapter.datalayer;
-using org.iringtools.library;
 using System.Text.RegularExpressions;
 using System.Xml;
-using VDS.RDF.Parsing;
-using VDS.RDF;
-using VDS.RDF.Storage;
-using VDS.RDF.Query;
-using System.Text;
+using System.Xml.Linq;
 using Ninject;
+using org.iringtools.adapter.datalayer;
+using org.iringtools.library;
 using org.iringtools.utility;
+using VDS.RDF;
+using VDS.RDF.Parsing;
+using VDS.RDF.Query;
+using VDS.RDF.Storage;
 
 namespace org.iringtools.adapter
 {
@@ -48,10 +45,10 @@ namespace org.iringtools.adapter
   {
     private static readonly string DATALAYER_NS = "org.iringtools.adapter.datalayer";
 
-    //private static XNamespace RDFS_NS = "http://www.w3.org/2000/01/rdf-schema#";
     private static readonly XNamespace RDF_NS = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
     private static readonly XNamespace OWL_NS = "http://www.w3.org/2002/07/owl#";
     private static readonly XNamespace XSD_NS = "http://www.w3.org/2001/XMLSchema#";
+    private static readonly XNamespace XSI_NS = "http://www.w3.org/2001/XMLSchema-instance#";
     private static readonly XNamespace TPL_NS = "http://tpl.rdlfacade.org/data#";
     private static readonly XNamespace RDL_NS = "http://rdl.rdlfacade.org/data#";
 
@@ -61,45 +58,37 @@ namespace org.iringtools.adapter
     private static readonly XName RDF_RESOURCE = RDF_NS + "resource";
     private static readonly XName RDF_DATATYPE = RDF_NS + "datatype";
 
-    private static readonly string RDF_NIL = RDF_NS.NamespaceName + "nil";
     private static readonly string XSD_PREFIX = "xsd:";
+    private static readonly string RDF_PREFIX = "rdf:";
     private static readonly string RDL_PREFIX = "rdl:";
     private static readonly string TPL_PREFIX = "tpl:";
+    
+    private static readonly string RDF_NIL = RDF_PREFIX + "nil";
 
-    //private static readonly string IDENTIFIER_QUERY = @"
-    //  PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-	  //  SELECT ?x 
-	  //  WHERE {{ ?x rdf:type {0} . }}";
-
-    private static readonly string LITERAL_QUERY = @"
-	    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-	    PREFIX rdl: <http://rdl.rdlfacade.org/data#> 
-	    PREFIX tpl: <http://tpl.rdlfacade.org/data#> 
-	    SELECT ?z 
-	    WHERE {{
-		    ?x rdf:type {0} .
-		    ?y {1} ?x .
-		    ?y rdf:type {2} . 
-		    ?y {3} ?z .
-	      }}";
-    // where
-    //  {0}: class id
-    //  {1}: class-role id
-    //  {2}: template id
-    //  {3}: property-role id    
+    private static readonly string SPARQL_QUERY_TEMPLATE = String.Format(@"
+      PREFIX rdf: <{0}>
+      PREFIX rdl: <{1}> 
+      PREFIX tpl: <{2}> 
+      SELECT ?_values 
+      WHERE {{{{
+	      ?_instance rdf:type {{0}} . 
+	      ?_bnode {{1}} ?_instance . 
+	      ?_bnode rdf:type {{2}} . 
+	      ?_bnode {{3}} ?_values 
+      }}}}", RDF_NS.NamespaceName, RDL_NS.NamespaceName, TPL_NS.NamespaceName);
 
     private NHibernateDataLayer _dataLayer = null;
-    private Dictionary<string, IList<IDataObject>> _dataObjects = null; // dictionary of object names and list of data records
-    private Dictionary<string, List<string>> _classIdentifiers = null; // dictionary of class ids and list of identifiers
     private Mapping _mapping = null;
     private GraphMap _graphMap = null;
-    private List<Dictionary<string, string>> _dtoList = null;  // dictionary of property and value pairs
+    private Dictionary<string, IList<IDataObject>> _dataObjectSet = null; // dictionary of object names and list of data objects
+    private Dictionary<string, List<string>> _classIdentifiers = null; // dictionary of class ids and list of identifiers
+    private List<Dictionary<string, string>> _dtoList = null;  // dictionary of property xpath and value pairs
+    private MicrosoftSqlStoreManager _tripleStore = null;
+    private TripleStore _memoryStore = null;    
+    private XNamespace _graphNs = String.Empty;
+    private string _dataLayerAssemblyName = String.Empty;
+    private string _dataObjectNs = String.Empty;
 
-    private string _domainUri = String.Empty;
-    private string _dataObjectNamespace = String.Empty;
-    private string _dataObjectAssemblyName = String.Empty;
-
-    // todo: load triple store 
     [Inject]
     public DTOLayer(AdapterSettings adapterSettings, ApplicationSettings appSettings)
     {
@@ -107,11 +96,11 @@ namespace org.iringtools.adapter
 
       _dataLayer = new NHibernateDataLayer(adapterSettings, appSettings);
       _mapping = Utility.Read<Mapping>(adapterSettings.XmlPath + "Mapping." + scope + ".xml");
-      //todo: create DomainUri (or replace GraphBaseUri) in adapterSettings (and always end it with /")
-      _domainUri = adapterSettings.GraphBaseUri + appSettings.ProjectName + "/" + appSettings.ApplicationName;
-       _dataObjectNamespace = DATALAYER_NS + ".proj_" + scope;
-      //todo: get dataObjectAssembly from binding configuration
-       _dataObjectAssemblyName = "MappingTest";
+      _graphNs = adapterSettings.GraphBaseUri + appSettings.ProjectName + "/" + appSettings.ApplicationName + "#";
+      _dataObjectNs = DATALAYER_NS + ".proj_" + scope;
+      //todo: get dataObjectAssembly from datalayer binding configuration
+      _dataLayerAssemblyName = "MappingTest";
+      _tripleStore = new MicrosoftSqlStoreManager(adapterSettings.DBServer, adapterSettings.DBname, adapterSettings.DBUser, adapterSettings.DBPassword);
     }
 
     #region public methods
@@ -124,10 +113,12 @@ namespace org.iringtools.adapter
 
         _dtoList = new List<Dictionary<string, string>>();
         int maxDataObjectsCount = MaxDataObjectsCount();
+
         for (int i = 0; i < maxDataObjectsCount; i++)
         {
           _dtoList.Add(new Dictionary<string, string>());
         }
+
         ClassMap classMap = _graphMap.classTemplateListMaps.First().Key;
         FillDTOList(classMap.classId, "rdl:" + classMap.name);
 
@@ -146,14 +137,13 @@ namespace org.iringtools.adapter
         FindGraphMap(graphName);
         LoadDataObjects();
 
-        //todo: include namespace (in format of http://localhost/12345_000/ABC) in graph
-        XElement graphElement = new XElement(graphName);
+        XElement graphElement = new XElement(_graphNs + graphName, new XAttribute(XNamespace.Xmlns + "i", XSI_NS));
         ClassMap classMap = _graphMap.classTemplateListMaps.First().Key;
 
         int maxDataObjectsCount = MaxDataObjectsCount();
         for (int i = 0; i < maxDataObjectsCount; i++)
         {
-          XElement classElement = new XElement(TitleCase(classMap.name));
+          XElement classElement = new XElement(_graphNs + TitleCase(classMap.name));
           graphElement.Add(classElement);
           FillHierarchicalDTOList(classElement, classMap.classId, i);
         }
@@ -180,39 +170,66 @@ namespace org.iringtools.adapter
       }      
     }
 
-    public Response PostRdf(XElement rdf)
+    public Response DeleteGraph(string graphName)
+    {
+      Response response = new Response();
+
+      try
+      {
+        FindGraphMap(graphName);
+        DeleteGraph(new Uri(_graphMap.baseUri));
+
+        response.Level = StatusLevel.Success;
+        response.Add("Graph [" + graphName + "] has been deleted successfully.");
+      }
+      catch (Exception ex)
+      {
+        response.Level = StatusLevel.Error;
+        response.Add("Error while deleting graph [" + graphName + "]. " + ex);
+      }
+
+      return response;
+    }
+
+    public Response Refresh(string graphName)
     {
       Response response = new Response();
       
       try
       {
+        DateTime startTime = DateTime.Now;
+
+        // create RDF from graphName
+        XElement rdf = GetGraphRdf(graphName);
+
+        #region load RDF to graph then save it to triple store
         Uri graphUri = new Uri(_graphMap.baseUri);
-        MicrosoftSqlStoreManager _msStore = new MicrosoftSqlStoreManager(@".\SQLEXPRESS", "dotNetRdf", "dotNetRdf", "dotNetRdf");
-
-        // remove old graph in triple store if exists
-        string graphId = _msStore.GetGraphID(graphUri);
-        if (!String.IsNullOrEmpty(graphId))
-        {
-          _msStore.ClearGraph(graphId);
-        }
-
-        // load rdf to graph and save graph to triple store
         XmlDocument xdoc = new XmlDocument();
         RdfXmlParser parser = new RdfXmlParser();
         Graph graph = new Graph();
+
         graph.BaseUri = graphUri;
         xdoc.LoadXml(rdf.ToString());
         parser.Load(graph, xdoc);
-        _msStore.SaveGraph(graph);
+        DeleteGraph(graphUri);
+        _tripleStore.SaveGraph(graph);
+        #endregion
 
-        // create a response and return it
+        #region report status
+        DateTime endTime = DateTime.Now;
+        TimeSpan duration = endTime.Subtract(startTime);
+
         response.Level = StatusLevel.Success;
-        response.Add("Graph [" + graph.BaseUri.ToString() + "] has been posted successfully");
+        response.Add("Graph [" + graphName + "] has been refreshed in triple store successfully.");
+
+        response.Add(String.Format("Execution time [{0}:{1}.{2}] minutes.",
+          duration.Minutes, duration.Seconds, duration.Milliseconds));
+        #endregion
       }
       catch (Exception ex)
       {
         response.Level = StatusLevel.Error;
-        response.Add("Error posting RDF: " + ex);
+        response.Add("Error while refreshing graph [" + graphName + "]. " + ex);
       }
 
       return response;
@@ -221,39 +238,38 @@ namespace org.iringtools.adapter
     public Response Pull(string graphName)
     {
       Response response = new Response();
-      MicrosoftSqlStoreManager _msStore = new MicrosoftSqlStoreManager(@".\SQLEXPRESS", "dotNetRdf", "dotNetRdf", "dotNetRdf");
 
       try
       {
+        DateTime startTime = DateTime.Now;
         FindGraphMap(graphName);
 
         #region load graph from triple store
         Graph graph = new Graph();
         graph.BaseUri = new Uri(_graphMap.baseUri);
-        _msStore.LoadGraph(graph, _graphMap.baseUri);
+        _tripleStore.LoadGraph(graph, _graphMap.baseUri);
         #endregion
 
         #region create in-memory store
-        TripleStore store = new TripleStore();
-        store.Add(graph);
+        _memoryStore = new TripleStore();
+        _memoryStore.Add(graph);
         graph.Dispose();
         #endregion
 
         #region query in-memory store and build data objects from query results
-        _dataObjects = new Dictionary<string, IList<IDataObject>>(); 
-        
+        _dataObjectSet = new Dictionary<string, IList<IDataObject>>();
+
         foreach (var pair in _graphMap.classTemplateListMaps)
         {
           ClassMap classMap = pair.Key;
           List<TemplateMap> templateMaps = pair.Value;
-          string query = String.Empty;
-          object results = null;
-          
+
           foreach (TemplateMap templateMap in templateMaps)
           {
+            List<RoleMap> propertyMapRoles = new List<RoleMap>();
             string classRoleId = String.Empty;
-            RoleMap propertyRoleMap = null;
 
+            #region find propertyMapRoles and classRoleId
             foreach (RoleMap roleMap in templateMap.roleMaps)
             {
               if (roleMap.type == RoleType.ClassRole)
@@ -261,66 +277,91 @@ namespace org.iringtools.adapter
                 classRoleId = roleMap.roleId;
               }
               else if (roleMap.type == RoleType.Property)
-              {                
-                propertyRoleMap = roleMap;
-              }
-            }
-  
-            query = String.Format(LITERAL_QUERY, classMap.classId, classRoleId, templateMap.templateId, propertyRoleMap.roleId);
-            results = store.ExecuteQuery(query);
-
-            if (results is SparqlResultSet)
-            {
-              string[] propertyMap = propertyRoleMap.propertyName.Split('.');
-              string objectName = propertyMap[0].Trim();
-              string propertyName = propertyMap[1].Trim();
-
-              if (!_dataObjects.ContainsKey(objectName))
               {
-                _dataObjects.Add(objectName, new List<IDataObject>());
-              }
-
-              IList<IDataObject> dataObjects = _dataObjects[objectName];
-              SparqlResultSet resultSet = (SparqlResultSet)results;
-              
-              if (dataObjects.Count == 0)
-              {
-                string objectType = _dataObjectNamespace + "." + objectName + "," + _dataObjectAssemblyName;
-                dataObjects = _dataLayer.Create(objectType, new string[resultSet.Count]);
-              }
-              
-              for (int i = 0; i < resultSet.Count; i++)
-              { 
-                //todo: need to resolve valueList
-                string literal = resultSet[i].ToString();
-                int valueStartPos = literal.LastIndexOf("= ");
-                string value = literal.Substring(valueStartPos + 1, literal.IndexOf("^^") - valueStartPos - 1);
-
-                dataObjects[i].SetPropertyValue(propertyName, value);
+                propertyMapRoles.Add(roleMap);
               }
             }
-            else
+            #endregion
+
+            #region query for property values and save them into dataObjects
+            foreach (RoleMap roleMap in propertyMapRoles)
             {
-              throw new Exception("Error querying in-memory triple store.");
+              string query = String.Format(SPARQL_QUERY_TEMPLATE, classMap.classId, classRoleId, templateMap.templateId, roleMap.roleId);
+              object results = _memoryStore.ExecuteQuery(query);
+
+              if (results is SparqlResultSet)
+              {
+                string[] property = roleMap.propertyName.Split('.');
+                string objectName = property[0].Trim();
+                string propertyName = property[1].Trim();
+
+                if (!_dataObjectSet.ContainsKey(objectName))
+                {
+                  _dataObjectSet.Add(objectName, new List<IDataObject>());
+                }
+
+                IList<IDataObject> dataObjects = _dataObjectSet[objectName];
+                SparqlResultSet resultSet = (SparqlResultSet)results;
+
+                if (dataObjects.Count == 0)
+                {
+                  string objectType = _dataObjectNs + "." + objectName + "," + _dataLayerAssemblyName;
+                  dataObjects = _dataLayer.Create(objectType, new string[resultSet.Count]);
+                }
+
+                for (int i = 0; i < resultSet.Count; i++)
+                {
+                  string value = Regex.Replace(resultSet[i].ToString(), @".*= ", String.Empty);
+
+                  if (value == RDF_NIL)
+                  {
+                    value = String.Empty;
+                  }
+                  else if (value.Contains("^^"))
+                  {
+                    value = value.Substring(0, value.IndexOf("^^"));
+                  }
+                  else if (!String.IsNullOrEmpty(roleMap.valueList))
+                  {
+                    value = ResolveValueMap(roleMap.valueList, value);
+                  }
+                  
+                  dataObjects[i].SetPropertyValue(propertyName, value);
+                }
+
+                _dataObjectSet[objectName] = dataObjects;
+              }
+              else
+              {
+                throw new Exception("Error while querying in-memory triple store.");
+              }
             }
+            #endregion
           }
+          #endregion
         }
-        #endregion
 
-        #region post data objects to legacy database
-        foreach (var pair in _dataObjects)
+        // post data objects to data layer
+        foreach (var pair in _dataObjectSet)
         {
           response.Append(_dataLayer.Post(pair.Value));
         }
-        #endregion
 
+        #region report status
+        DateTime endTime = DateTime.Now;
+        TimeSpan duration = endTime.Subtract(startTime);
+        
         response.Level = StatusLevel.Success;
-        response.Add("Pull graph [" + graphName + "] successfully.");
+        response.Add("Graph [" + graphName + "] has been posted to legacy system successfully.");
+
+        response.Add(String.Format("Execution time [{0}:{1}.{2}] minutes.",
+          duration.Minutes, duration.Seconds, duration.Milliseconds));
+        #endregion
       }
       catch (Exception ex)
       {
         response.Level = StatusLevel.Error;
-        response.Add("Error pulling graph [" + graphName + "]: " + ex);
+        response.Add("Error while pulling graph [" + graphName + "]. " + ex);
       }
 
       return response;
@@ -328,6 +369,14 @@ namespace org.iringtools.adapter
     #endregion
 
     #region utility methods
+    private string ExtractId(string qualifiedId)
+    {
+      if (String.IsNullOrEmpty(qualifiedId) || !qualifiedId.Contains(":"))
+        return qualifiedId;
+
+      return qualifiedId.Substring(qualifiedId.IndexOf(":") + 1);
+    }
+
     private string TitleCase(string value)
     {
       string returnValue = String.Empty;
@@ -359,6 +408,10 @@ namespace org.iringtools.adapter
         if (graphMap.name.ToLower() == graphName.ToLower())
         {
           _graphMap = graphMap;
+
+          if (_graphMap.classTemplateListMaps.Count == 0)
+            throw new Exception("Graph [" + graphName + "] is empty.");
+
           return;
         }
       }
@@ -368,11 +421,11 @@ namespace org.iringtools.adapter
 
     private void LoadDataObjects()
     {
-      _dataObjects = new Dictionary<string, IList<IDataObject>>();
+      _dataObjectSet = new Dictionary<string, IList<IDataObject>>();
 
       foreach (DataObjectMap dataObjectMap in _graphMap.dataObjectMaps)
       {
-        _dataObjects.Add(dataObjectMap.name, _dataLayer.Get(dataObjectMap.name, null));
+        _dataObjectSet.Add(dataObjectMap.name, _dataLayer.Get(dataObjectMap.name, null));
       }
 
       PopulateClassIdentifiers();
@@ -394,6 +447,22 @@ namespace org.iringtools.adapter
       return RDF_NIL;
     }
 
+    private string ResolveValueMap(string valueList, string uri)
+    {
+      if (_mapping != null && _mapping.valueMaps.Count > 0)
+      {
+        foreach (ValueMap valueMap in _mapping.valueMaps)
+        {
+          if (valueMap.valueList == valueList && valueMap.uri == uri)
+          {
+            return valueMap.internalValue;
+          }
+        }
+      }
+
+      return String.Empty;
+    }
+
     private void PopulateClassIdentifiers()
     {
       _classIdentifiers = new Dictionary<string, List<string>>();
@@ -404,11 +473,11 @@ namespace org.iringtools.adapter
 
         foreach (string identifier in classMap.identifiers)
         {
-          string[] propertyMap = identifier.Split('.');
-          string objectName = propertyMap[0].Trim();
-          string propertyName = propertyMap[1].Trim();
+          string[] property = identifier.Split('.');
+          string objectName = property[0].Trim();
+          string propertyName = property[1].Trim();
 
-          IList<IDataObject> dataObjects = _dataObjects[objectName];
+          IList<IDataObject> dataObjects = _dataObjectSet[objectName];
           if (dataObjects != null)
           {
             for (int i = 0; i < dataObjects.Count; i++)
@@ -431,12 +500,12 @@ namespace org.iringtools.adapter
       }
     }
 
-    // maximum number of data records from all data objects
+    // get max # of data records from all data objects
     private int MaxDataObjectsCount()
     {
       int maxCount = 0;
 
-      foreach (var pair in _dataObjects)
+      foreach (var pair in _dataObjectSet)
       {
         if (pair.Value.Count > maxCount)
         {
@@ -463,7 +532,7 @@ namespace org.iringtools.adapter
         for (int i = 0; i < maxDataObjectsCount; i++)
         {
           string classId = classMap.classId.Substring(classMap.classId.IndexOf(":") + 1);
-          string classInstance = _domainUri + "#" + _classIdentifiers[classMap.classId][i];
+          string classInstance = _graphNs.NamespaceName + _classIdentifiers[classMap.classId][i];
 
           graphElement.Add(CreateRdfClassElement(classId, classInstance));
 
@@ -500,80 +569,80 @@ namespace org.iringtools.adapter
         switch (roleMap.type)
         {
           case RoleType.ClassRole:
-            {
-              roleElement.Add(new XAttribute(RDF_RESOURCE, classInstance));
-              break;
-            }
+          {
+            roleElement.Add(new XAttribute(RDF_RESOURCE, classInstance));
+            break;
+          }
           case RoleType.Reference:
+          {
+            if (roleMap.classMap != null)
             {
-              if (roleMap.classMap != null)
+              string identifierValue = String.Empty;
+
+              foreach (string identifier in roleMap.classMap.identifiers)
               {
-                string identifierValue = String.Empty;
+                string[] property = identifier.Split('.');
+                string objectName = property[0].Trim();
+                string propertyName = property[1].Trim();
 
-                foreach (string identifier in roleMap.classMap.identifiers)
+                IDataObject dataObject = _dataObjectSet[objectName].ElementAt(dataObjectIndex);
+
+                if (dataObject != null)
                 {
-                  string[] propertyMap = identifier.Split('.');
-                  string objectName = propertyMap[0].Trim();
-                  string propertyName = propertyMap[1].Trim();
+                  string value = Convert.ToString(dataObject.GetPropertyValue(propertyName));
 
-                  IDataObject dataObject = _dataObjects[objectName].ElementAt(dataObjectIndex);
+                  if (identifierValue != String.Empty)
+                    identifierValue += roleMap.classMap.identifierDelimeter;
 
-                  if (dataObject != null)
-                  {
-                    string value = Convert.ToString(dataObject.GetPropertyValue(propertyName));
-
-                    if (identifierValue != String.Empty)
-                      identifierValue += roleMap.classMap.identifierDelimeter;
-
-                    identifierValue += value;
-                  }
+                  identifierValue += value;
                 }
+              }
 
-                roleElement.Add(new XAttribute(RDF_RESOURCE, _domainUri + "#" + identifierValue));
+              roleElement.Add(new XAttribute(RDF_RESOURCE, _graphNs.NamespaceName + identifierValue));
+            }
+            else
+            {
+              roleElement.Add(new XAttribute(RDF_RESOURCE, roleMap.value.Replace(RDL_PREFIX, RDL_NS.NamespaceName)));
+            }
+            break;
+          }
+          case RoleType.FixedValue:
+          {
+            dataType = roleMap.dataType.Replace(XSD_PREFIX, XSD_NS.NamespaceName);
+            roleElement.Add(new XAttribute(RDF_DATATYPE, dataType));
+            roleElement.Add(new XText(roleMap.value));
+            break;
+          }
+          case RoleType.Property:
+          {
+            string[] property = roleMap.propertyName.Split('.');
+            string objectName = property[0].Trim();
+            string propertyName = property[1].Trim();
+
+            IDataObject dataObject = _dataObjectSet[objectName].ElementAt(dataObjectIndex);
+            string value = Convert.ToString(dataObject.GetPropertyValue(propertyName));
+
+            if (String.IsNullOrEmpty(roleMap.valueList))
+            {
+              if (String.IsNullOrEmpty(value))
+              {
+                roleElement.Add(new XAttribute(RDF_RESOURCE, RDF_NIL));
               }
               else
               {
-                roleElement.Add(new XAttribute(RDF_RESOURCE, roleMap.value.Replace(RDL_PREFIX, RDL_NS.NamespaceName)));
+                dataType = roleMap.dataType.Replace(XSD_PREFIX, XSD_NS.NamespaceName);
+                roleElement.Add(new XAttribute(RDF_DATATYPE, dataType));
+                roleElement.Add(new XText(value));
               }
-              break;
             }
-          case RoleType.FixedValue:
+            else // resolve value list to uri
             {
-              dataType = roleMap.dataType.Replace(XSD_PREFIX, XSD_NS.NamespaceName);
-              roleElement.Add(new XAttribute(RDF_DATATYPE, dataType));
-              roleElement.Add(new XText(roleMap.value));
-              break;
+              string valueListUri = ResolveValueList(roleMap.valueList, value);
+              roleElement.Add(new XAttribute(RDF_RESOURCE, valueListUri));
             }
-          case RoleType.Property:
-            {
-              string[] propertyMap = roleMap.propertyName.Split('.');
-              string objectName = propertyMap[0].Trim();
-              string propertyName = propertyMap[1].Trim();
 
-              IDataObject dataObject = _dataObjects[objectName].ElementAt(dataObjectIndex);
-              string value = Convert.ToString(dataObject.GetPropertyValue(propertyName));
-
-              if (String.IsNullOrEmpty(roleMap.valueList))
-              {
-                if (String.IsNullOrEmpty(value))
-                {
-                  roleElement.Add(new XAttribute(RDF_RESOURCE, RDF_NIL));
-                }
-                else
-                {
-                  dataType = roleMap.dataType.Replace(XSD_PREFIX, XSD_NS.NamespaceName);
-                  roleElement.Add(new XAttribute(RDF_DATATYPE, dataType));
-                  roleElement.Add(new XText(value));
-                }
-              }
-              else // resolve value list to uri
-              {
-                string valueListUri = ResolveValueList(roleMap.valueList, value);
-                roleElement.Add(new XAttribute(RDF_RESOURCE, valueListUri));
-              }
-
-              break;
-            }
+            break;
+          }
         }
 
         templateElement.Add(roleElement);
@@ -598,12 +667,12 @@ namespace org.iringtools.adapter
           {
             xPath += "/tpl:" + roleMap.name;
 
-            string[] propertyMap = roleMap.propertyName.Split('.');
-            string objectName = propertyMap[0].Trim();
-            string propertyName = propertyMap[1].Trim();
+            string[] property = roleMap.propertyName.Split('.');
+            string objectName = property[0].Trim();
+            string propertyName = property[1].Trim();
             string value = String.Empty;
 
-            IList<IDataObject> dataObjects = _dataObjects[objectName];
+            IList<IDataObject> dataObjects = _dataObjectSet[objectName];
             for (int i = 0; i < dataObjects.Count; i++)
             {
               if (roleMap.type == RoleType.Property)
@@ -635,7 +704,7 @@ namespace org.iringtools.adapter
       }
     }
 
-    //todo: use reference if element already created in the doc
+    //todo: use reference if element already created somewhere in the doc
     private void FillHierarchicalDTOList(XElement classElement, string classId, int dataObjectIndex)
     {
       KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = _graphMap.GetClassTemplateListMap(classId);
@@ -647,13 +716,13 @@ namespace org.iringtools.adapter
 
       foreach (TemplateMap templateMap in templateMaps)
       {
-        XElement templateElement = new XElement(templateMap.name);
+        XElement templateElement = new XElement(_graphNs + templateMap.name);
         templateElement.Add(new XAttribute("rdluri", templateMap.templateId));
         classElement.Add(templateElement);
 
         foreach (RoleMap roleMap in templateMap.roleMaps)
         {
-          XElement roleElement = new XElement(roleMap.name);
+          XElement roleElement = new XElement(_graphNs + roleMap.name);
 
           switch (roleMap.type)
           {
@@ -668,7 +737,7 @@ namespace org.iringtools.adapter
 
               if (roleMap.classMap != null)
               {
-                XElement element = new XElement(TitleCase(roleMap.classMap.name));
+                XElement element = new XElement(_graphNs + TitleCase(roleMap.classMap.name));
                 roleElement.Add(element);
                 FillHierarchicalDTOList(element, roleMap.classMap.classId, dataObjectIndex);
               }
@@ -682,10 +751,10 @@ namespace org.iringtools.adapter
               break;
 
             case RoleType.Property:
-              string[] propertyMap = roleMap.propertyName.Split('.');
-              string objectName = propertyMap[0].Trim();
-              string propertyName = propertyMap[1].Trim();
-              IDataObject dataObject = _dataObjects[objectName][dataObjectIndex];
+              string[] property = roleMap.propertyName.Split('.');
+              string objectName = property[0].Trim();
+              string propertyName = property[1].Trim();
+              IDataObject dataObject = _dataObjectSet[objectName][dataObjectIndex];
               roleElement.Add(new XAttribute("rdluri", roleMap.roleId));
 
               string value = Convert.ToString(dataObject.GetPropertyValue(propertyName));
@@ -705,8 +774,16 @@ namespace org.iringtools.adapter
         }
       }
     }
+
+    private void DeleteGraph(Uri graphUri)
+    {
+      string graphId = _tripleStore.GetGraphID(graphUri);
+
+      if (!String.IsNullOrEmpty(graphId))
+      {
+        _tripleStore.RemoveGraph(graphId);
+      }
+    }
     #endregion
   }
 }
-
-

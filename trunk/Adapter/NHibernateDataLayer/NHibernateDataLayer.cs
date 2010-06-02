@@ -195,7 +195,7 @@ namespace org.iringtools.adapter.datalayer
               {
                 session.SaveOrUpdate(dataObject);
                 session.Flush();
-                response.Add("Record [" + dataObject.GetPropertyValue("Id") + "] have been saved successfully");
+                response.Add("Record [" + dataObject.GetPropertyValue("Id") + "] have been saved successfully.");
               }
               catch (Exception ex)
               {
