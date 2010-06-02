@@ -283,7 +283,7 @@ namespace DbDictionaryEditor
                     args = new CompletedEventArgs
                     {
                         // Define your method in CompletedEventType and assign
-                        CompletedType = CompletedEventType.GetDbDictionary,
+                        CompletedType = CompletedEventType.GetDatabaseSchema,
                         Error = ex,
                         FriendlyErrorMessage = "Error Getting Database Schema from DBDictionaryService.",
                     };
@@ -312,7 +312,7 @@ namespace DbDictionaryEditor
                     args = new CompletedEventArgs
                     {
                         // Define your method in CompletedEventType and assign
-                        CompletedType = CompletedEventType.GetDbDictionary,
+                        CompletedType = CompletedEventType.SaveDatabaseDictionary,
                         Error = ex,
                         FriendlyErrorMessage = "Error while saving Database Dictionary through DBDictionaryService.",
                     };
@@ -345,7 +345,7 @@ namespace DbDictionaryEditor
                     args = new CompletedEventArgs
                     {
                         // Define your method in CompletedEventType and assign
-                        CompletedType = CompletedEventType.GetDbDictionary,
+                        CompletedType = CompletedEventType.GetExistingDbDictionaryFiles,
                         Error = ex,
                         FriendlyErrorMessage = "Error Getting existing Database Dictionary Files from DBDictionaryService.",
                     };
@@ -378,7 +378,7 @@ namespace DbDictionaryEditor
                     args = new CompletedEventArgs
                     {
                         // Define your method in CompletedEventType and assign
-                        CompletedType = CompletedEventType.GetDbDictionary,
+                        CompletedType = CompletedEventType.GetProviders,
                         Error = ex,
                         FriendlyErrorMessage = "Error Getting Provider Names from DBDictionaryService.",
                     };
@@ -407,7 +407,7 @@ namespace DbDictionaryEditor
                     args = new CompletedEventArgs
                     {
                         // Define your method in CompletedEventType and assign
-                        CompletedType = CompletedEventType.GetDbDictionary,
+                        CompletedType = CompletedEventType.PostDictionaryToAdapterService,
                         Error = ex,
                         FriendlyErrorMessage = "Error while posting Database Dictionary to the AdapterService.",
                     };
@@ -436,7 +436,7 @@ namespace DbDictionaryEditor
                     args = new CompletedEventArgs
                     {
                         // Define your method in CompletedEventType and assign
-                        CompletedType = CompletedEventType.GetDbDictionary,
+                        CompletedType = CompletedEventType.ClearTripleStore,
                         Error = ex,
                         FriendlyErrorMessage = "Error while clearing triple store through the AdapterService.",
                     };
@@ -465,7 +465,7 @@ namespace DbDictionaryEditor
                     args = new CompletedEventArgs
                     {
                         // Define your method in CompletedEventType and assign
-                        CompletedType = CompletedEventType.GetDbDictionary,
+                        CompletedType = CompletedEventType.DeleteApp,
                         Error = ex,
                         FriendlyErrorMessage = "Error while deleting the app from AdapterService.",
                     };
