@@ -342,6 +342,7 @@ namespace org.iringtools.adapter.semantic
         bool isIdentifierMapped = false;
         TemplateMap identifierTemplateMap = null;
         RoleMap identifierRoleMap = null;
+        string classIdentifier = string.Empty;
 
         foreach (GraphMap mappingGraphMap in _mapping.graphMaps)
         {
@@ -350,20 +351,23 @@ namespace org.iringtools.adapter.semantic
             graphMap = mappingGraphMap;
           }
         }
-
-        foreach (TemplateMap templateMap in graphMap.templateMaps)
+        foreach (var keyValuePair in graphMap.classTemplateListMaps)
         {
-          foreach (RoleMap roleMap in templateMap.roleMaps)
-          {
-            if (roleMap.propertyName == graphMap.identifier)
+            foreach (TemplateMap templateMap in keyValuePair.Value)
             {
-              identifierTemplateMap = templateMap;
-              identifierRoleMap = roleMap;
-              isIdentifierMapped = true;
-              break;
+                foreach (RoleMap roleMap in templateMap.roleMaps)
+                {
+                    if (keyValuePair.Key.identifiers.Contains(roleMap.propertyName))
+                    {
+                        classIdentifier = keyValuePair.Key.classId;
+                        identifierTemplateMap = templateMap;
+                        identifierRoleMap = roleMap;
+                        isIdentifierMapped = true;
+                        break;
+                    }
+                }
+                if (isIdentifierMapped) break;
             }
-          }
-          if (isIdentifierMapped) break;
         }
 
         if (isIdentifierMapped)
@@ -373,9 +377,9 @@ namespace org.iringtools.adapter.semantic
 
           GraphMatch query = new GraphMatch();
 
-          SemWeb.Entity classIdEntity = graphMap.classId.Replace("rdl:", rdlPrefix);
+          SemWeb.Entity classIdEntity = classIdentifier.Replace("rdl:", rdlPrefix);
           SemWeb.Entity templateIdEntity = identifierTemplateMap.templateId.Replace("tpl:", tplPrefix);
-          string templateMapClassRole = identifierTemplateMap.classRole.Replace("tpl:", tplPrefix);
+          string templateMapClassRole = identifierTemplateMap.roleMaps.Select(c=> c.type == RoleType.ClassRole).ToString().Replace("tpl:", tplPrefix);
           string roleMapRoleId = identifierRoleMap.roleId.Replace("tpl:", tplPrefix);
           SemWeb.Variable relatedClassificationTemplate = new SemWeb.Variable("i1");
           SemWeb.Variable classificationVariable = new SemWeb.Variable("c1");
@@ -397,9 +401,9 @@ namespace org.iringtools.adapter.semantic
             {
               string roleId = roleMap.roleId.Replace("tpl:", tplPrefix);
               
-              if (roleMap.reference != String.Empty && roleMap.reference != null)
+              if (roleMap.type == RoleType.Reference)
               {
-                SemWeb.Entity referenceEntity = roleMap.reference.Replace("rdl:", rdlPrefix);
+                SemWeb.Entity referenceEntity = roleMap.dataType.Replace("rdl:", rdlPrefix);
                 Statement statementI = new Statement(templateVariable, roleId, referenceEntity); 
                 query.AddGraphStatement(statementI);
               }
@@ -638,17 +642,20 @@ namespace org.iringtools.adapter.semantic
       try
       {
         identifier = "eg:id__" + identifier;
-
-        foreach (TemplateMap templateMap in graphMap.templateMaps)
+        ClassMap classMap = new ClassMap();
+        foreach (var keyValuePair in graphMap.classTemplateListMaps)
         {
-          RefreshDeleteTemplateMap(templateMap, (ClassMap)graphMap, identifier);
+            classMap = keyValuePair.Key;
+            foreach (TemplateMap templateMap in keyValuePair.Value)
+            {
+                RefreshDeleteTemplateMap(templateMap, keyValuePair.Key, identifier);
+            }
         }
-
         GraphMatch query = new GraphMatch();
 
         SemWeb.Variable subjectVariable = new SemWeb.Variable("subject");
         SemWeb.Variable predicateVariable = new SemWeb.Variable("predicate");
-        SemWeb.Entity classIdEntity = graphMap.classId.Replace("rdl:", rdlPrefix);
+        SemWeb.Entity classIdEntity = classMap.classId.Replace("rdl:", rdlPrefix);
         SemWeb.Entity instanceValue = identifier.Replace("eg:", egPrefix);
         SemWeb.Entity instanceTypeEntity = instanceType;
 
@@ -695,20 +702,20 @@ namespace org.iringtools.adapter.semantic
     {
       try
       {
-        if (templateMap.type == TemplateType.Property)
-        {
-          QueryResultBuffer resultBuffer = GetTemplateValues(templateMap, parentIdentifierVariable);
-          BNode bNodeToBeTerminated = null;
-          foreach (VariableBindings variableBinding in resultBuffer.Bindings)
-          {
-            bNodeToBeTerminated = ((BNode)variableBinding["t1"]);
-          }
-          Literal endTimeValue = GetPropertyValueType(DateTime.UtcNow.ToString(), "datetime");
-          Statement statement1 = new Statement(bNodeToBeTerminated, endDateTimeTemplate, endTimeValue);
-          _store.Add(statement1);
-        }
-        else
-        {
+        //if (templateMap.type == TemplateType.Property)
+        //{
+        //  QueryResultBuffer resultBuffer = GetTemplateValues(templateMap, parentIdentifierVariable);
+        //  BNode bNodeToBeTerminated = null;
+        //  foreach (VariableBindings variableBinding in resultBuffer.Bindings)
+        //  {
+        //    bNodeToBeTerminated = ((BNode)variableBinding["t1"]);
+        //  }
+        //  Literal endTimeValue = GetPropertyValueType(DateTime.UtcNow.ToString(), "datetime");
+        //  Statement statement1 = new Statement(bNodeToBeTerminated, endDateTimeTemplate, endTimeValue);
+        //  _store.Add(statement1);
+        //}
+        //else
+        //{
           foreach (RoleMap roleMap in templateMap.roleMaps)
           {
             if (roleMap.classMap != null)
@@ -731,7 +738,7 @@ namespace org.iringtools.adapter.semantic
               break;
             }
           }          
-        }
+        //}
       }
       catch (Exception exception)
       {
@@ -783,10 +790,10 @@ namespace org.iringtools.adapter.semantic
           Literal endTimeValue = GetPropertyValueType(DateTime.UtcNow.ToString(), "datetime");
           Statement statement1 = new Statement(bNodeToBeTerminated, endDateTimeTemplate, endTimeValue);
           _store.Add(statement1);
-          foreach (TemplateMap templateMap in classMap.templateMaps)
-          {
-            RefreshDeleteTemplateMap(templateMap, classMap, parentIdentifierVariable);
-          }
+          //foreach (TemplateMap templateMap in classMap.templateMaps)
+          //{
+          //  RefreshDeleteTemplateMap(templateMap, classMap, parentIdentifierVariable);
+         // }
         }
       }
       catch (Exception exception)
@@ -800,19 +807,22 @@ namespace org.iringtools.adapter.semantic
         try
         {
             string identifier = dto.Identifier;
-
+            ClassMap classMap = new ClassMap();
             identifier = "eg:id__" + identifier;
-            RefreshGraphClassName(graphMap.classId, identifier);
-
-            foreach (TemplateMap templateMap in graphMap.templateMaps)
+            //RefreshGraphClassName(graphMap.classId, identifier);
+            foreach (var keyValuePair in graphMap.classTemplateListMaps)
             {
-                try
+                classMap = keyValuePair.Key;
+                foreach (TemplateMap templateMap in keyValuePair.Value)
                 {
-                    RefreshTemplateMap(templateMap, (ClassMap)graphMap, dto, identifier);
-                }
-                catch (Exception ex)
-                {
-                    _logger.Warn("Warning with RefreshTemplateMap: " + ex);
+                    try
+                    {
+                        RefreshTemplateMap(templateMap,classMap, dto, identifier);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Warn("Warning with RefreshTemplateMap: " + ex);
+                    }
                 }
             }
         }
@@ -846,9 +856,9 @@ namespace org.iringtools.adapter.semantic
                 propertyValue = dtoPropertyValue;
             }
         }
-        else if (!String.IsNullOrEmpty(roleMap.reference))
+        else if (roleMap.type == RoleType.Reference)
         {
-            propertyValue = roleMap.reference.Replace("rdl:", rdlPrefix);
+            propertyValue = roleMap.dataType.Replace("rdl:", rdlPrefix);
         }
         else if (!String.IsNullOrEmpty(roleMap.value))
         {
@@ -912,7 +922,7 @@ namespace org.iringtools.adapter.semantic
           BNode bNodeTemplate = new BNode("t1");
           SemWeb.Entity templateTypeEntity = templateMap.templateId.Replace("tpl:", tplPrefix);
           SemWeb.Entity parentIdentifierVariableEntity = parentIdentifierVariable.Replace("eg:", egPrefix);
-          string templateMapClassRole = templateMap.classRole.Replace("tpl:", tplPrefix);
+          string templateMapClassRole = templateMap.roleMaps.Select(c => c.type == RoleType.ClassRole).ToString().Replace("tpl:", tplPrefix);
 
           Statement statementA = new Statement(templateVariable, rdfType, owlThingEntity);
           Statement statementB = new Statement(templateVariable, rdfType, templateTypeEntity);
@@ -1038,9 +1048,9 @@ namespace org.iringtools.adapter.semantic
           propertyType = "literal";
         }
       }
-      else if (!String.IsNullOrEmpty(roleMap.reference))
+      else if (roleMap.type == RoleType.Reference)
       {
-        propertyValue = roleMap.reference.Replace("rdl:", rdlPrefix);
+        propertyValue = roleMap.dataType.Replace("rdl:", rdlPrefix);
         propertyType = "uri";
       }
       else if (!String.IsNullOrEmpty(roleMap.value))
@@ -1084,7 +1094,7 @@ namespace org.iringtools.adapter.semantic
         BNode bNodeTemplate = new BNode("t1");
         SemWeb.Entity templateTypeEntity = templateMap.templateId.Replace("tpl:", tplPrefix);
         SemWeb.Entity parentIdentifierVariableEntity = parentIdentifierVariable.Replace("eg:", egPrefix);
-        string templateMapClassRole = templateMap.classRole.Replace("tpl:", tplPrefix);
+        string templateMapClassRole = templateMap.roleMaps.Select(c => c.type == RoleType.ClassRole).ToString().Replace("tpl:", tplPrefix);
 
         Statement statement1 = new Statement(bNodeTemplate, rdfType, owlThingEntity);
         Statement statement2 = new Statement(bNodeTemplate, rdfType, templateTypeEntity);
@@ -1109,12 +1119,12 @@ namespace org.iringtools.adapter.semantic
     {
       try
       {
-        if (templateMap.type == TemplateType.Property)
-        {
-          RefreshRoleMap(templateMap, dto, parentIdentifierVariable);
-        }
-        else
-        {
+        //if (templateMap.type == TemplateType.Property)
+        //{
+        //  RefreshRoleMap(templateMap, dto, parentIdentifierVariable);
+        //}
+        //else
+        //{
           foreach (RoleMap roleMap in templateMap.roleMaps)
           {
             if (roleMap.classMap == null)
@@ -1122,7 +1132,7 @@ namespace org.iringtools.adapter.semantic
               BNode bNodeTemplate = new BNode("t1");
               SemWeb.Entity templateTypeEntity = templateMap.templateId.Replace("tpl:", tplPrefix);
               SemWeb.Entity parentIdentifierVariableEntity = parentIdentifierVariable.Replace("eg:", egPrefix);
-              string templateMapClassRole = templateMap.classRole.Replace("tpl:", tplPrefix);
+              string templateMapClassRole = templateMap.roleMaps.Select(c => c.type == RoleType.ClassRole).ToString().Replace("tpl:", tplPrefix);
 
               Statement statement1 = new Statement(bNodeTemplate, rdfType, owlThingEntity);
               Statement statement2 = new Statement(bNodeTemplate, rdfType, templateTypeEntity);
@@ -1138,14 +1148,14 @@ namespace org.iringtools.adapter.semantic
               Statement statement5 = new Statement(bNodeTemplate, startDateTimeTemplate, startTimeValue);
               _store.Add(statement5);
             }
-            else if (roleMap.classMap.templateMaps != null && roleMap.classMap.templateMaps.Count > 0)
-            {
-              string instanceVariable = RefreshRelatedClass(templateMap, roleMap, roleMap.classMap, parentIdentifierVariable, dto);
-              RefreshClassMap(roleMap.classMap, roleMap, dto, instanceVariable);
-            }
+            //else if (roleMap.classMap.templateMaps != null && roleMap.classMap.templateMaps.Count > 0)
+            //{
+            //  string instanceVariable = RefreshRelatedClass(templateMap, roleMap, roleMap.classMap, parentIdentifierVariable, dto);
+            //  RefreshClassMap(roleMap.classMap, roleMap, dto, instanceVariable);
+            //}
           }
         }
-      }
+      //}
       catch (Exception exception)
       {
         throw new Exception(String.Format("RefreshTemplateMap[{0}][{1}][{2}]", templateMap.name, classMap.name, parentIdentifierVariable), exception);
@@ -1156,17 +1166,17 @@ namespace org.iringtools.adapter.semantic
     {
       try
       {
-        foreach (TemplateMap templateMap in classMap.templateMaps)
-        {          
-          try
-          {
-              RefreshTemplateMap(templateMap, classMap, dto, parentIdentifierVariable);
-          }
-          catch (Exception ex)
-          {
-              _logger.Warn("Warning with RefreshTemplateMap: " + ex);
-          }
-        }
+        //foreach (TemplateMap templateMap in classMap.templateMaps)
+        //{          
+        //  try
+        //  {
+        //      RefreshTemplateMap(templateMap, classMap, dto, parentIdentifierVariable);
+        //  }
+        //  catch (Exception ex)
+        //  {
+        //      _logger.Warn("Warning with RefreshTemplateMap: " + ex);
+        //  }
+        //}
       }
       catch (Exception exception)
       {
@@ -1212,12 +1222,12 @@ namespace org.iringtools.adapter.semantic
         string unqualifiedClassId = classMap.classId.Split(':')[1];
         string identifier = "eg:" + unqualifiedClassId;
 
-        if (classMap.identifier != string.Empty)
+        if (classMap.identifiers.Count != 0)
         {
-          string[] identifiers = classMap.identifier.Split(',');
+          //string[] identifiers = classMap.identifier.Split(',');
 
 
-          foreach (string identifierPart in identifiers)
+          foreach (string identifierPart in classMap.identifiers)
           {
             object identifierPartValue = dto.GetPropertyValueByInternalName(identifierPart.Trim());
 
@@ -1257,7 +1267,7 @@ namespace org.iringtools.adapter.semantic
         {
           BNode bNodeTemplate = new BNode("t1");
           SemWeb.Entity templateTypeEntity = templateMap.templateId.Replace("tpl:", tplPrefix);
-          string templateMapClassRole = templateMap.classRole.Replace("tpl:", tplPrefix);
+          string templateMapClassRole = templateMap.roleMaps.Select(c => c.type == RoleType.ClassRole).ToString().Replace("tpl:", tplPrefix);
           string roleMapRoleId = roleMap.roleId.Replace("tpl:", tplPrefix);
           SemWeb.Entity classNameEntity = className.Replace("eg:", egPrefix);
           SemWeb.Entity identifierEntity = identifier.Replace("eg:", egPrefix);
@@ -1294,7 +1304,7 @@ namespace org.iringtools.adapter.semantic
         SemWeb.Entity templateIdEntity = templateMap.templateId.Replace("tpl:", tplPrefix);
         SemWeb.Entity parentIdentifierVariableEntity = parentIdentifierVariable.Replace("eg:", egPrefix);
         SemWeb.Variable templateVariable = new SemWeb.Variable("t1");
-        string templateMapClassRole = templateMap.classRole.Replace("tpl:", tplPrefix);
+        string templateMapClassRole = templateMap.roleMaps.Select(c => c.type == RoleType.ClassRole).ToString().Replace("tpl:", tplPrefix);
 
         Statement statementA = new Statement(templateVariable, rdfType, owlThingEntity);
         Statement statementB = new Statement(templateVariable, rdfType, templateIdEntity);
@@ -1306,9 +1316,9 @@ namespace org.iringtools.adapter.semantic
 
         foreach (RoleMap roleMap in templateMap.roleMaps)
         {
-          if (roleMap.reference != null && roleMap.reference != String.Empty)
+          if (roleMap.type == RoleType.Reference)// != null && roleMap.reference != String.Empty)
           {
-            SemWeb.Entity roleMapReference = roleMap.reference.Replace("rdl:", rdlPrefix);
+            SemWeb.Entity roleMapReference = roleMap.dataType.Replace("rdl:", rdlPrefix);
             string roleMapRoleId = roleMap.roleId.Replace("tpl:", tplPrefix);
             Statement statementD = new Statement(templateVariable, roleMapRoleId, roleMapReference);
             query.AddGraphStatement(statementD);
@@ -1404,7 +1414,7 @@ namespace org.iringtools.adapter.semantic
 
         SemWeb.Entity templateIdEntity = templateMap.templateId.Replace("tpl:", tplPrefix);
         SemWeb.Entity classNameEntity = className.Replace("eg:", egPrefix);
-        string templateMapClassRole = templateMap.classRole.Replace("tpl:", tplPrefix);
+        string templateMapClassRole = templateMap.roleMaps.Select(c => c.type == RoleType.ClassRole).ToString().Replace("tpl:", tplPrefix);
         string roleMapRoleId = roleMap.roleId.Replace("tpl:", tplPrefix);
         SemWeb.Variable relatedClassificationTemplate = new SemWeb.Variable("i1");
         SemWeb.Variable templateVariable = new SemWeb.Variable("t1");
@@ -1453,7 +1463,7 @@ namespace org.iringtools.adapter.semantic
               string key = valueMap.internalValue;
               if (!valueList.ContainsKey(key))
               {
-                valueList.Add(key, valueMap.modelURI); //First one is the default
+                valueList.Add(key, valueMap.uri); //First one is the default
               }
             }
           }

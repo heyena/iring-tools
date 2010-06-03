@@ -181,6 +181,18 @@
   <ItemGroup>
     <Resource Include="Resources\key.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\value.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\list.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\valuel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\valuelist.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\v3.0\Microsoft.Silverlight.CSharp.targets" Condition="" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

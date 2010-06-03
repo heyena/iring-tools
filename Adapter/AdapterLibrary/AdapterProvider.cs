@@ -47,7 +47,7 @@ using System.Data.SqlClient;
 using NHibernate;
 using org.ids_adi.qxf;
 using System.Xml.Xsl;
-using System.Xml.Serialization;
+//using System.Xml.Serialization;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -118,7 +118,7 @@ namespace org.iringtools.adapter
 
         if (File.Exists(path))
         {
-          mapping = Utility.Read<Mapping>(path, false);
+          mapping = Utility.Read<Mapping>(path, true);
         }
 
         return mapping;
@@ -168,7 +168,7 @@ namespace org.iringtools.adapter
 
         if (File.Exists(path))
         {
-          Mapping mapping = Utility.Read<Mapping>(path, false);
+          Mapping mapping = Utility.Read<Mapping>(path, true);
 
           foreach (GraphMap graphMap in mapping.graphMaps)
           {
@@ -218,7 +218,7 @@ namespace org.iringtools.adapter
 
       try
       {
-        Utility.Write<Mapping>(mapping, path, false);
+        Utility.Write<Mapping>(mapping, path, true);
         response.Add("Mapping file updated successfully.");
       }
       catch (Exception exception)
@@ -637,12 +637,12 @@ namespace org.iringtools.adapter
     public Response Generate(string projectName, string applicationName)
     {
       Response response = new Response();
-      DTOGenerator dtoGenerator = new DTOGenerator(_settings);
+     // DTOGenerator dtoGenerator = new DTOGenerator(_settings);
 
       try
       {
         // Generate DTO code
-        dtoGenerator.Generate(projectName, applicationName);
+      //  dtoGenerator.Generate(projectName, applicationName);
 
         // Update NInject binding configuration
         Binding dtoServiceBinding = new Binding()
@@ -1217,7 +1217,7 @@ namespace org.iringtools.adapter
           string mappingPath = _settings.XmlPath + "Mapping." + projectName + "." + applicationName + ".xml";
           if (!File.Exists(mappingPath))
           {
-            Utility.Write<Mapping>(new Mapping(), mappingPath, false);
+            Utility.Write<Mapping>(new Mapping(), mappingPath, true);
           }
 
           // Generate DTO layer if it does not exist

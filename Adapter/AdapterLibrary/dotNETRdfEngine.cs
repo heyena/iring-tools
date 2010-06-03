@@ -117,6 +117,8 @@ namespace org.iringtools.adapter.semantic
                 bool isIdentifierMapped = false;
                 TemplateMap identifierTemplateMap = null;
                 RoleMap identifierRoleMap = null;
+                string classIdentifier = string.Empty;
+
                 foreach (GraphMap mappingGraphMap in _mapping.graphMaps)
                 {
                     if (mappingGraphMap.name == graphName)
@@ -124,20 +126,23 @@ namespace org.iringtools.adapter.semantic
                         graphMap = mappingGraphMap;
                     }
                 }
-
-                foreach (TemplateMap templateMap in graphMap.templateMaps)
+                foreach (var keyValuePair in graphMap.classTemplateListMaps)
                 {
-                    foreach (RoleMap roleMap in templateMap.roleMaps)
+                    foreach (TemplateMap templateMap in keyValuePair.Value)
                     {
-                        if (roleMap.propertyName == graphMap.identifier)
+                        foreach (RoleMap roleMap in templateMap.roleMaps)
                         {
-                            identifierTemplateMap = templateMap;
-                            identifierRoleMap = roleMap;
-                            isIdentifierMapped = true;
-                            break;
+                            if (keyValuePair.Key.identifiers.Contains(roleMap.propertyName))
+                            {
+                                classIdentifier = keyValuePair.Key.classId;
+                                identifierTemplateMap = templateMap;
+                                identifierRoleMap = roleMap;
+                                isIdentifierMapped = true;
+                                break;
+                            }
                         }
+                        if (isIdentifierMapped) break;
                     }
-                    if (isIdentifierMapped) break;
                 }
 
                 if (isIdentifierMapped)
@@ -151,19 +156,19 @@ namespace org.iringtools.adapter.semantic
                     identifierQuery.addVariable("?" + identifierRoleMap.propertyName);
                     //identifierQuery.addVariable("?i");
 
-                    SPARQLClassification classification = identifierQuery.addClassification(graphMap.classId, "?i");
+                    SPARQLClassification classification = identifierQuery.addClassification(classIdentifier, "?i");
                     //identifierQuery.addTemplate(identifierTemplateMap.templateId, identifierTemplateMap.classRole, "?i", identifierRoleMap.roleId, "?" + identifierRoleMap.propertyName);
 
                     SPARQLTemplate identifierTemplate = new SPARQLTemplate();
                     identifierTemplate.TemplateName = identifierTemplateMap.templateId;
-                    identifierTemplate.ClassRole = identifierTemplateMap.classRole;
+                    identifierTemplate.ClassRole = identifierTemplateMap.roleMaps.Select(c => c.type == RoleType.ClassRole).ToString();
                     identifierTemplate.ClassId = "?i";
 
                     foreach (RoleMap roleMap in identifierTemplateMap.roleMaps)
                     {
-                        if (roleMap.reference != String.Empty && roleMap.reference != null)
+                        if (roleMap.type == RoleType.Reference)
                         {
-                            identifierTemplate.addRole(roleMap.roleId, roleMap.reference);
+                            identifierTemplate.addRole(roleMap.roleId, roleMap.type);
                         }
                         else if (roleMap.value != null && roleMap.value != String.Empty)
                         {
@@ -324,15 +329,15 @@ namespace org.iringtools.adapter.semantic
                 {
                     SPARQLTemplate sparqlTemplate = new SPARQLTemplate();
                     sparqlTemplate.TemplateName = templateMap.templateId;
-                    sparqlTemplate.ClassRole = templateMap.classRole;
+                    sparqlTemplate.ClassRole = templateMap.roleMaps.Select(c => c.type == RoleType.ClassRole).ToString();
                     sparqlTemplate.ClassId = parentIdentifierVariable;
 
                     foreach (RoleMap roleMap in templateMap.roleMaps)
                     {
 
-                        if (roleMap.reference != null && roleMap.reference != String.Empty)
+                        if (roleMap.type == RoleType.Reference)
                         {
-                            sparqlTemplate.addRole(roleMap.roleId, roleMap.reference);
+                            sparqlTemplate.addRole(roleMap.roleId, roleMap.dataType);
                         }
                         else if (roleMap.value != null && roleMap.value != String.Empty)
                         {
@@ -398,14 +403,14 @@ namespace org.iringtools.adapter.semantic
 
                     SPARQLTemplate sparqlTemplate = new SPARQLTemplate();
                     sparqlTemplate.TemplateName = templateMap.templateId;
-                    sparqlTemplate.ClassRole = templateMap.classRole;
+                    sparqlTemplate.ClassRole = templateMap.roleMaps.Select(c => c.type == RoleType.ClassRole).ToString();
                     sparqlTemplate.ClassId = parentIdentifierVariable;
 
                     string instanceVariable = "?i" + _instanceCounter.ToString();
 
-                    if (classRoleMap.reference != null && classRoleMap.reference != String.Empty)
+                    if (classRoleMap.type == RoleType.Reference)
                     {
-                        sparqlTemplate.addRole(classRoleMap.roleId, classRoleMap.reference);
+                        sparqlTemplate.addRole(classRoleMap.roleId, classRoleMap.dataType);
                     }
                     else if (classRoleMap.value != null && classRoleMap.value != String.Empty)
                     {
@@ -419,7 +424,7 @@ namespace org.iringtools.adapter.semantic
                     sparqlTemplate.addRole("p7tpl:valEndTime", "?endDateTime");
                     query.addTemplate(sparqlTemplate);
 
-                    QueryClassMap(classRoleMap.classMap, classRoleMap, query, instanceVariable);
+                   // QueryClassMap(classRoleMap.classMap, classRoleMap, query, instanceVariable);
 
                     _instanceCounter--;
                 }

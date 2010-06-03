@@ -155,7 +155,7 @@ namespace AdapterService.Tests
     public void UpdateMapping_ABC()
     {
       AdapterProxy target = new AdapterProxy();
-      Mapping mapping = Utility.Read<Mapping>(@"C:\iring-tools\Adapter\AdapterService.Tests\XML\Mapping.12345_000.ABC.xml", false);
+      Mapping mapping = Utility.Read<Mapping>(@"C:\iring-tools\Adapter\AdapterService.Tests\XML\Mapping.12345_000.ABC.xml", true);
       Response actual = target.UpdateMapping("12345_000", "ABC", mapping);
       bool isError = false;
       for (int i = 0; i < actual.Count; i++)

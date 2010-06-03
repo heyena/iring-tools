@@ -194,8 +194,8 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
             ComboBox cb = sender as ComboBox;
             ComboBoxItem cbi = cb.SelectedItem as ComboBoxItem;
 
-            if (model.SelectedQMXF == null)
-                model.SelectedQMXF = new QMXF();
+            if (this.model.SelectedQMXF == null)
+                this.model.SelectedQMXF = new QMXF();
             Repository rep = cbi.Tag as Repository;
             if (rep.isReadOnly == true)
             {
@@ -208,7 +208,7 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
                 btnApply.IsEnabled = true;
             }
             
-            model.SelectedQMXF.targetRepository = rep.uri;
+            this.model.SelectedQMXF.targetRepository = rep.uri;
         }
 
         public void InitializeEditorForAdd()

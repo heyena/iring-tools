@@ -24,17 +24,10 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ////////////////////////////////////////////////////////////////////////////////
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Web;
-using System.Text;
-using org.ids_adi.qxf;
-using org.iringtools.adapter;
 using org.iringtools.library;
-using System.ServiceModel.Channels;
 using System.Xml.Linq;
 
 namespace org.iringtools.adapter
@@ -54,12 +47,12 @@ namespace org.iringtools.adapter
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/datadictionary")]
     DataDictionary GetDictionary(string projectName, string applicationName);
 
-    [XmlSerializerFormat]
+   // [XmlSerializerFormat]
     [OperationContract]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/mapping")]
     Mapping GetMapping(string projectName, string applicationName);
 
-    [XmlSerializerFormat]
+   // [XmlSerializerFormat]
     [OperationContract]
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/mapping")]
     Response UpdateMapping(string projectName, string applicationName, Mapping mapping);

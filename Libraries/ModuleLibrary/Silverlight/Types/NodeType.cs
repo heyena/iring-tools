@@ -13,5 +13,6 @@ namespace org.iringtools.modulelibrary.types
         ClassMap,
         TemplateMap,
         RoleMap,
+        ValueMap
     }
 }

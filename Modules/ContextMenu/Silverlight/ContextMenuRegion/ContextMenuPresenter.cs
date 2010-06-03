@@ -32,35 +32,35 @@ namespace org.iringtools.modules.contextmenu.contextmenuregion
         {
             get { return ButtonCtrl("btnPromoteItem1"); }
         }
-        
+
         private Button btnAddClass
         {
-            get 
-            { 
-                return ButtonCtrl("btnAddClass1"); 
+            get
+            {
+                return ButtonCtrl("btnAddClass1");
             }
         }
 
         private Button btnEditClass
         {
-            get 
-            { 
-                return ButtonCtrl("btnEditClass1"); 
+            get
+            {
+                return ButtonCtrl("btnEditClass1");
             }
         }
 
         private Button btnEditTemplate
         {
-            get 
-            { 
-                return ButtonCtrl("btnEditTemplate1"); 
+            get
+            {
+                return ButtonCtrl("btnEditTemplate1");
             }
         }
 
         private Button btnAddTemplate
         {
-            get 
-            { 
+            get
+            {
                 return ButtonCtrl("btnAddTemplate1");
             }
         }
@@ -93,7 +93,7 @@ namespace org.iringtools.modules.contextmenu.contextmenuregion
             => { buttonPromoteItemHandler(sender, e); };
 
             aggregator.GetEvent<NavigationEvent>().Subscribe(NavigationEventHandler);
-            btnEditClass.IsEnabled = false;            
+            btnEditClass.IsEnabled = false;
             btnEditTemplate.IsEnabled = false;
 
             aggregator.GetEvent<SpinnerEvent>().Subscribe(SpinnerEventHandler);
@@ -102,18 +102,18 @@ namespace org.iringtools.modules.contextmenu.contextmenuregion
         CustomTreeItem tvwItem = new CustomTreeItem();
         public void NavigationEventHandler(NavigationEventArgs e)
         {
-            tvwItem = e.SelectedNode;  
-            
-            btnEditClass.IsEnabled = tvwItem.GetType().Equals(typeof(ClassTreeItem));            
+            tvwItem = e.SelectedNode;
+
+            btnEditClass.IsEnabled = tvwItem.GetType().Equals(typeof(ClassTreeItem));
             btnEditTemplate.IsEnabled = tvwItem.GetType().Equals(typeof(TemplateTreeItem));
-                        
+
         }
 
         void buttonAddClassHandler(object sender, System.Windows.RoutedEventArgs e)
         {
             aggregator.GetEvent<ButtonEvent>().Publish(new ButtonEventArgs() { ButtonClicked = (Button)e.OriginalSource, Sender = sender });
         }
-        
+
         void buttonEditClassHandler(object sender, System.Windows.RoutedEventArgs e)
         {
             org.ids_adi.qmxf.ClassDefinition classDefinition = null;
@@ -148,7 +148,7 @@ namespace org.iringtools.modules.contextmenu.contextmenuregion
                 ButtonClicked = btnPromoteItem,
                 Sender = this
             };
-           
+
             // place the search request in the tag
             args.ButtonClicked.Tag = ((CustomTreeItem)tvwItem).itemTextBlock.Text;
 
@@ -160,43 +160,45 @@ namespace org.iringtools.modules.contextmenu.contextmenuregion
 
         public void SpinnerEventHandler(SpinnerEventArgs e)
         {
-          switch (e.Active)
-          {
-            case SpinnerEventType.Started:
+            switch (e.Active)
+            {
+                case SpinnerEventType.Started:
 
-              btnPromoteItem.IsEnabled = false;
+                    btnPromoteItem.IsEnabled = false;
 
-              btnAddClass.IsEnabled = false;
-              btnEditClass.IsEnabled = false;
+                    btnAddClass.IsEnabled = false;
+                    btnEditClass.IsEnabled = false;
 
-              btnAddTemplate.IsEnabled = false;
-              btnEditTemplate.IsEnabled = false;
+                    btnAddTemplate.IsEnabled = false;
+                    btnEditTemplate.IsEnabled = false;
 
-              break;
-            //TODO need a bit of work here
-            case SpinnerEventType.Stopped:
+                    break;
+                //TODO need a bit of work here
+                case SpinnerEventType.Stopped:
 
-              switch (e.ActiveService)
-              {
-                case "Search":
-                  btnAddClass.IsEnabled = true;
-                  btnAddTemplate.IsEnabled = true;
-                  break;
+                    switch (e.ActiveService)
+                    {
+                        case "Search":
+                            btnAddClass.IsEnabled = true;
+                            btnAddTemplate.IsEnabled = true;
+                            break;
+
+                        default:
+                            btnPromoteItem.IsEnabled = true;
+                            btnAddClass.IsEnabled = true;
+                            btnAddTemplate.IsEnabled = true;
+                            if (tvwItem != null)
+                            {
+                                btnEditClass.IsEnabled = tvwItem.GetType().Equals(typeof(ClassTreeItem));
+                                btnEditTemplate.IsEnabled = tvwItem.GetType().Equals(typeof(TemplateTreeItem));
+                            }
+                            break;
+                    }
+                    break;
 
                 default:
-                  btnPromoteItem.IsEnabled = true;
-                  btnEditClass.IsEnabled = tvwItem.GetType().Equals(typeof(ClassTreeItem));
-                  btnEditTemplate.IsEnabled = tvwItem.GetType().Equals(typeof(TemplateTreeItem));
-                  btnAddClass.IsEnabled = true;
-                  btnAddTemplate.IsEnabled = true;
-
-                  break;
-              }
-              break;
-
-            default:
-              break;
-          }
+                    break;
+            }
         }
     }
 
