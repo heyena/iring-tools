@@ -19,32 +19,30 @@ namespace org.iringtools.adapter.datalayer
   public class NHibernateDataLayer : IDataLayer
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(NHibernateDataLayer));
-    private AdapterSettings _settings = null;
     private ApplicationSettings _appSettings = null;
     private string _dataDictionaryPath = String.Empty;
-    private ISessionFactory factory;
+    private ISessionFactory _sessionFactory;
 
     [Inject]
     public NHibernateDataLayer(AdapterSettings settings, ApplicationSettings appSettings)
     {
-      _dataDictionaryPath = settings.XmlPath + "DataDictionary." + appSettings.ProjectName + "." + appSettings.ApplicationName + ".xml";
-      _settings = settings;
+      string scope = appSettings.ProjectName + "." + appSettings.ApplicationName;
+      string hibernateConfigPath = settings.XmlPath + "nh-configuration." + scope + ".xml";
+      string hibernateMappingPath = settings.XmlPath + "nh-mapping." + scope + ".xml";
+
       _appSettings = appSettings;
+      _dataDictionaryPath = settings.XmlPath + "DataDictionary." + scope + ".xml";      
+      _sessionFactory = new Configuration()
+        .Configure(hibernateConfigPath)
+        .AddFile(hibernateMappingPath)
+        .BuildSessionFactory();
     }
 
     private ISession OpenSession()
     {
       try
       {
-        string hibernateConfigPath = _settings.XmlPath + "nh-configuration." + _appSettings.ProjectName + "." + _appSettings.ApplicationName + ".xml";
-        string hibernateMappingPath = _settings.XmlPath + "nh-mapping." + _appSettings.ProjectName + "." + _appSettings.ApplicationName + ".xml";
-
-        factory = new Configuration()
-          .Configure(hibernateConfigPath)
-          .AddFile(hibernateMappingPath)
-          .BuildSessionFactory();
-
-        return factory.OpenSession();
+        return _sessionFactory.OpenSession();
       }
       catch (Exception ex)
       {
