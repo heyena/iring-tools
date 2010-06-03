@@ -79,6 +79,9 @@ namespace org.iringtools.adapter.semantic
                 bool isIdentifierMapped = false;
                 TemplateMap identifierTemplateMap = null;
                 RoleMap identifierRoleMap = null;
+                ClassMap identifierClass = null;
+                string classIdentifier = string.Empty;
+
                 foreach (GraphMap mappingGraphMap in _mapping.graphMaps)
                 {
                     if (mappingGraphMap.name == graphName)
@@ -87,19 +90,23 @@ namespace org.iringtools.adapter.semantic
                     }
                 }
 
-                foreach (TemplateMap templateMap in graphMap.templateMaps)
+                foreach (var keyValuePair in graphMap.classTemplateListMaps)
                 {
-                    foreach (RoleMap roleMap in templateMap.roleMaps)
+                    foreach (TemplateMap templateMap in keyValuePair.Value)
                     {
-                        if (roleMap.propertyName == graphMap.identifier)
+                        foreach (RoleMap roleMap in templateMap.roleMaps)
                         {
-                            identifierTemplateMap = templateMap;
-                            identifierRoleMap = roleMap;
-                            isIdentifierMapped = true;
-                            break;
+                            if (keyValuePair.Key.identifiers.Contains(roleMap.propertyName))
+                            {
+                                classIdentifier = keyValuePair.Key.classId;
+                                identifierTemplateMap = templateMap;
+                                identifierRoleMap = roleMap;
+                                isIdentifierMapped = true;
+                                break;
+                            }
                         }
+                        if (isIdentifierMapped) break;
                     }
-                    if (isIdentifierMapped) break;
                 }
 
                 if (isIdentifierMapped)
@@ -113,19 +120,19 @@ namespace org.iringtools.adapter.semantic
                     identifierQuery.addVariable("?" + identifierRoleMap.propertyName);
                     //identifierQuery.addVariable("?i");
 
-                    SPARQLClassification classification = identifierQuery.addClassification(graphMap.classId, "?i");
+                    SPARQLClassification classification = identifierQuery.addClassification(classIdentifier, "?i");
                     //identifierQuery.addTemplate(identifierTemplateMap.templateId, identifierTemplateMap.classRole, "?i", identifierRoleMap.roleId, "?" + identifierRoleMap.propertyName);
 
                     SPARQLTemplate identifierTemplate = new SPARQLTemplate();
                     identifierTemplate.TemplateName = identifierTemplateMap.templateId;
-                    identifierTemplate.ClassRole = identifierTemplateMap.classRole;
+                    identifierTemplate.ClassRole = identifierTemplateMap.roleMaps.Select(c => c.type == RoleType.ClassRole).ToString();
                     identifierTemplate.ClassId = "?i";
 
                     foreach (RoleMap roleMap in identifierTemplateMap.roleMaps)
                     {
-                      if (roleMap.reference != String.Empty && roleMap.reference != null)
+                      if (roleMap.type == RoleType.Reference)
                       {
-                        identifierTemplate.addRole(roleMap.roleId, roleMap.reference);
+                        identifierTemplate.addRole(roleMap.roleId, roleMap.dataType);
                       }
                       else if (roleMap.value != null && roleMap.value != String.Empty)
                       {
@@ -317,20 +324,27 @@ namespace org.iringtools.adapter.semantic
                 List<string> identifiers = GetIdentifiers(graphMap.name);
                 TemplateMap identifierTemplateMap = null;
                 RoleMap identifierRoleMap = null;
-                foreach (TemplateMap templateMap in graphMap.templateMaps)
+                ClassMap classMap = null;
+                string classIdentifier = string.Empty;
+ 
+                foreach (var keyValuePair in graphMap.classTemplateListMaps)
                 {
-                    foreach (RoleMap roleMap in templateMap.roleMaps)
+                    foreach (TemplateMap templateMap in keyValuePair.Value)
                     {
-                        if (roleMap.propertyName == graphMap.identifier)
+                        foreach (RoleMap roleMap in templateMap.roleMaps)
                         {
-                            identifierTemplateMap = templateMap;
-                            identifierRoleMap = roleMap;
-                            break;
+                            if (keyValuePair.Key.identifiers.Contains(roleMap.propertyName))
+                            {
+                                classMap = keyValuePair.Key;
+                                classIdentifier = keyValuePair.Key.identifiers.Select(c => c == roleMap.propertyName).ToString();
+                                identifierTemplateMap = templateMap;
+                                identifierRoleMap = roleMap;
+                                break;
+                            }
                         }
+
                     }
-
                 }
-
                 SPARQLQuery identifierQuery = new SPARQLQuery(SPARQLQueryType.SELECTDISTINCT);
 
                 identifierQuery.addVariable("?" + identifierRoleMap.propertyName);
@@ -341,7 +355,7 @@ namespace org.iringtools.adapter.semantic
                
 
                 SPARQLClassification classification = new SPARQLClassification();
-                classification.ClassId = graphMap.classId;
+                classification.ClassId = classMap.classId;
                 classification.addRole("p7tpl:R99011248051", "?i");
                 classification.addRole("p7tpl:valEndTime", "?endDateTime");
 
@@ -349,16 +363,16 @@ namespace org.iringtools.adapter.semantic
 
                 SPARQLTemplate identifierTemplate = new SPARQLTemplate();
                 identifierTemplate.TemplateName = identifierTemplateMap.templateId;
-                identifierTemplate.ClassRole = identifierTemplateMap.classRole;
+                identifierTemplate.ClassRole = identifierTemplateMap.roleMaps.Select(c => c.type == RoleType.ClassRole).ToString();
                 identifierTemplate.ClassId = "?i";
                 identifierTemplate.addRole(identifierRoleMap.roleId, "?" + identifierRoleMap.propertyName);
                 foreach (RoleMap roleMap in identifierTemplateMap.roleMaps)
                 {
                   if (roleMap != identifierRoleMap)
                   {
-                    if (roleMap.reference != String.Empty && roleMap.reference != null)
+                    if (roleMap.type == RoleType.Reference)
                     {
-                      identifierTemplate.addRole(roleMap.roleId, roleMap.reference);
+                      identifierTemplate.addRole(roleMap.roleId, roleMap.dataType);
                     }
                   }
                 }
@@ -372,9 +386,10 @@ namespace org.iringtools.adapter.semantic
                     _dtoList.Add(identifier, dto);
                 }
 
-                foreach (TemplateMap templateMap in graphMap.templateMaps)
+                foreach (var keyValuePair in graphMap.classTemplateListMaps)
                 {
-                    QueryTemplateMap(templateMap, (ClassMap)graphMap, identifierQuery);
+                    foreach(TemplateMap templateMap in keyValuePair.Value)
+                    QueryTemplateMap(templateMap, keyValuePair.Key, identifierQuery);
                 }
             }
             catch (Exception exception)
@@ -406,15 +421,15 @@ namespace org.iringtools.adapter.semantic
                 {
                     SPARQLTemplate sparqlTemplate = new SPARQLTemplate();
                     sparqlTemplate.TemplateName = templateMap.templateId;
-                    sparqlTemplate.ClassRole = templateMap.classRole;
+                    sparqlTemplate.ClassRole = templateMap.roleMaps.Select(c => c.type == RoleType.ClassRole).ToString();
                     sparqlTemplate.ClassId = parentIdentifierVariable;
 
                     foreach (RoleMap roleMap in templateMap.roleMaps)
                     {
 
-                      if (roleMap.reference != null && roleMap.reference != String.Empty)
+                      if (roleMap.type == RoleType.Reference)
                         {
-                          sparqlTemplate.addRole(roleMap.roleId, roleMap.reference);
+                          sparqlTemplate.addRole(roleMap.roleId, roleMap.dataType);
                         }
                         else if (roleMap.value != null && roleMap.value != String.Empty)
                         {
@@ -477,14 +492,14 @@ namespace org.iringtools.adapter.semantic
 
                     SPARQLTemplate sparqlTemplate = new SPARQLTemplate();
                     sparqlTemplate.TemplateName = templateMap.templateId;
-                    sparqlTemplate.ClassRole = templateMap.classRole;
+                    sparqlTemplate.ClassRole = templateMap.roleMaps.Select(c => c.type == RoleType.ClassRole).ToString();
                     sparqlTemplate.ClassId = parentIdentifierVariable;
 
                     string instanceVariable = "?i" + _instanceCounter.ToString();
 
-                    if (classRoleMap.reference != null && classRoleMap.reference != String.Empty)
+                    if (classRoleMap.type == RoleType.Reference)
                     {
-                      sparqlTemplate.addRole(classRoleMap.roleId, classRoleMap.reference);
+                      sparqlTemplate.addRole(classRoleMap.roleId, classRoleMap.dataType);
                     }
                     else if (classRoleMap.value != null && classRoleMap.value != String.Empty)
                     {
@@ -498,7 +513,7 @@ namespace org.iringtools.adapter.semantic
                     sparqlTemplate.addRole("p7tpl:valEndTime", "?endDateTime");
                     query.addTemplate(sparqlTemplate);
 
-                    QueryClassMap(classRoleMap.classMap, classRoleMap, query, instanceVariable);
+                 //   QueryClassMap(classRoleMap.classMap, classRoleMap, query, instanceVariable);
 
                     _instanceCounter--;
                 }
@@ -509,33 +524,33 @@ namespace org.iringtools.adapter.semantic
             }
         }
 
-        internal void QueryClassMap(ClassMap classMap, RoleMap roleMap, SPARQLQuery previousQuery, string instanceVariable)
-        {
-            try
-            {
-                SPARQLQuery query = new SPARQLQuery(SPARQLQueryType.SELECTDISTINCT);
-                query.Merge(previousQuery);
+        //internal void QueryClassMap(ClassMap classMap, RoleMap roleMap, SPARQLQuery previousQuery, string instanceVariable)
+        //{
+        //    try
+        //    {
+        //        SPARQLQuery query = new SPARQLQuery(SPARQLQueryType.SELECTDISTINCT);
+        //        query.Merge(previousQuery);
 
-                query.addVariable(instanceVariable);
+        //        query.addVariable(instanceVariable);
                 
-                SPARQLClassification classification = new SPARQLClassification();
-                classification.ClassId = classMap.classId;
-                classification.addRole("p7tpl:R99011248051", instanceVariable);
-                classification.addRole("p7tpl:valEndTime", "?endDateTime");
+        //        SPARQLClassification classification = new SPARQLClassification();
+        //        classification.ClassId = classMap.classId;
+        //        classification.addRole("p7tpl:R99011248051", instanceVariable);
+        //        classification.addRole("p7tpl:valEndTime", "?endDateTime");
 
-                query.addTemplate(classification);
+        //        query.addTemplate(classification);
 
-                foreach (TemplateMap templateMap in classMap.templateMaps)
-                {
-                    QueryTemplateMap(templateMap, classMap, query);
-                }
+        //        foreach (var keyValuePair in classMap.TemplateMaps)
+        //        {
+        //            QueryTemplateMap(templateMap, classMap, query);
+        //        }
 
-            }
-            catch (Exception exception)
-            {
-                throw new Exception(String.Format("QueryClassMap[{0}][{1}]", classMap.name, roleMap.name), exception);
-            }
-        }
+        //    }
+        //    catch (Exception exception)
+        //    {
+        //        throw new Exception(String.Format("QueryClassMap[{0}][{1}]", classMap.name, roleMap.name), exception);
+        //    }
+        //}
 
         internal Dictionary<string, string> GetPullValueMap(string valueListName)
         {
@@ -559,7 +574,7 @@ namespace org.iringtools.adapter.semantic
                     {
                         if (valueMap.valueList == valueListName)
                         {
-                            string uri = valueMap.modelURI;
+                            string uri = valueMap.uri;
                             if (!valueList.ContainsKey(uri))
                             {
                                 valueList.Add(uri, valueMap.internalValue); //First one is the default
@@ -602,7 +617,7 @@ namespace org.iringtools.adapter.semantic
                             string key = valueMap.internalValue;
                             if (!valueList.ContainsKey(key))
                             {
-                                valueList.Add(key, valueMap.modelURI); //First one is the default
+                                valueList.Add(key, valueMap.uri); //First one is the default
                             }
                         }
                     }
@@ -675,17 +690,20 @@ namespace org.iringtools.adapter.semantic
         {
           try
           {
+            ClassMap classMap = null;
             identifier = "eg:id__" + identifier;
-
-            foreach (TemplateMap templateMap in graphMap.templateMaps)
+            foreach (var keyValuePair in graphMap.classTemplateListMaps)
             {
-              RefreshDeleteTemplateMap(templateMap, (ClassMap)graphMap, identifier);
+                foreach (TemplateMap templateMap in keyValuePair.Value)
+                {
+                    classMap = keyValuePair.Key;
+                    RefreshDeleteTemplateMap(templateMap, keyValuePair.Key, identifier);
+                }
             }
-
             SPARQLQuery query = new SPARQLQuery(SPARQLQueryType.SELECTFORDELETE);
             query.addVariable("?subject");
             query.addVariable("?predicate");
-            SPARQLClassification classificationForQuery = query.addClassification(graphMap.classId, query.getPREFIX_URI(identifier));
+            SPARQLClassification classificationForQuery = query.addClassification(classMap.classId, query.getPREFIX_URI(identifier));
 
             SPARQLResults sparqlResults = SPARQLClient.PostQuery(_targetUri, query.getSPARQL(), _targetCredentials, _proxyCredentials);
             //if not terminate it
@@ -693,7 +711,7 @@ namespace org.iringtools.adapter.semantic
             if (sparqlResults.resultsElement.results.Count() == 0)
             {
               SPARQLQuery insertTemporalQuery = new SPARQLQuery(SPARQLQueryType.INSERTTEMPORAL);
-              SPARQLClassification classification = insertTemporalQuery.addClassification(graphMap.classId, query.getPREFIX_URI(identifier));
+              SPARQLClassification classification = insertTemporalQuery.addClassification(classMap.classId, query.getPREFIX_URI(identifier));
               string endTimeValue = query.getLITERAL_SPARQL(DateTime.UtcNow.ToString(), "datetime");
               insertTemporalQuery.addTemplate(classification.TemplateName, classification.ClassRole, identifier, "p7tpl:valEndTime", "?endDateTime", endTimeValue);
               SPARQLBuilder.ExecuteUpdateQuery(_targetUri, _targetCredentials, _proxyCredentials, insertTemporalQuery.getSPARQL());
@@ -710,20 +728,20 @@ namespace org.iringtools.adapter.semantic
         {
           try
           {
-            if (templateMap.type == TemplateType.Property)
-            {
-              //terminate the template
-              SPARQLQuery query = new SPARQLQuery(SPARQLQueryType.INSERTTEMPORAL);
-              foreach (RoleMap roleMap in templateMap.roleMaps)
-              {
-                query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, "?" + roleMap.propertyName);
-              }
-              string endTimeValue = query.getLITERAL_SPARQL(DateTime.UtcNow.ToString(), "datetime");
-              query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, "p7tpl:valEndTime", "?endDateTime", endTimeValue);
-              SPARQLBuilder.ExecuteUpdateQuery(_targetUri, _targetCredentials, _proxyCredentials, query.getSPARQL());
-            }
-            else
-            {
+            //if (templateMap.type == TemplateType.Property)
+            //{
+            //  //terminate the template
+            //  SPARQLQuery query = new SPARQLQuery(SPARQLQueryType.INSERTTEMPORAL);
+            //  foreach (RoleMap roleMap in templateMap.roleMaps)
+            //  {
+            //    query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, "?" + roleMap.propertyName);
+            //  }
+            //  string endTimeValue = query.getLITERAL_SPARQL(DateTime.UtcNow.ToString(), "datetime");
+            //  query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, "p7tpl:valEndTime", "?endDateTime", endTimeValue);
+            //  SPARQLBuilder.ExecuteUpdateQuery(_targetUri, _targetCredentials, _proxyCredentials, query.getSPARQL());
+            //}
+            //else
+            //{
               foreach (RoleMap roleMap in templateMap.roleMaps)
               {
                 if (roleMap.classMap != null)
@@ -733,8 +751,8 @@ namespace org.iringtools.adapter.semantic
                   SPARQLClassification classification = query.addClassification(classMap.classId, query.getPREFIX_URI(parentIdentifierVariable));
                   string endTimeValue = query.getLITERAL_SPARQL(DateTime.UtcNow.ToString(), "datetime");
 
-                  query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, query.getPREFIX_URI(instanceVariable));
-                  query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, "p7tpl:valEndTime", "?endDateTime", endTimeValue);
+                //  query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, query.getPREFIX_URI(instanceVariable));
+                //  query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, "p7tpl:valEndTime", "?endDateTime", endTimeValue);
 
                   SPARQLBuilder.ExecuteUpdateQuery(_targetUri, _targetCredentials, _proxyCredentials, query.getSPARQL());
                   RefreshDeleteClassMap(roleMap.classMap, roleMap, instanceVariable);
@@ -742,7 +760,7 @@ namespace org.iringtools.adapter.semantic
                   break;
                 }
               }
-            }
+            //}
           }
           catch (Exception exception)
           {
@@ -770,10 +788,10 @@ namespace org.iringtools.adapter.semantic
               insertTemporalQuery.addTemplate(classification.TemplateName, classification.ClassRole, parentIdentifierVariable, "p7tpl:valEndTime", "?endDateTime", endTimeValue);
               SPARQLBuilder.ExecuteUpdateQuery(_targetUri, _targetCredentials, _proxyCredentials, insertTemporalQuery.getSPARQL());
 
-              foreach (TemplateMap templateMap in classMap.templateMaps)
-              {
-                RefreshDeleteTemplateMap(templateMap, classMap, parentIdentifierVariable);
-              }
+              //foreach (TemplateMap templateMap in classMap.templateMaps)
+              //{
+              //  RefreshDeleteTemplateMap(templateMap, classMap, parentIdentifierVariable);
+              //}
             }
             
             
@@ -791,11 +809,13 @@ namespace org.iringtools.adapter.semantic
             string identifier = dto.Identifier;
 
             identifier = "eg:id__" + identifier;
-            SPARQLBuilder.RefreshGraphClassName(_targetUri, _targetCredentials, _proxyCredentials, graphMap.classId, identifier);
-
-            foreach (TemplateMap templateMap in graphMap.templateMaps)
+            SPARQLBuilder.RefreshGraphClassName(_targetUri, _targetCredentials, _proxyCredentials, graphMap.classTemplateListMaps.Select(c => c.Key).First().classId , identifier);
+            foreach (var keyValuePair in graphMap.classTemplateListMaps)
             {
-              RefreshTemplateMap(templateMap, (ClassMap)graphMap, dto, identifier);
+                foreach (TemplateMap templateMap in keyValuePair.Value)
+                {
+                    RefreshTemplateMap(templateMap, keyValuePair.Key, dto, identifier);
+                }
             }
           }
           catch (Exception exception)
@@ -808,241 +828,241 @@ namespace org.iringtools.adapter.semantic
         {
             try
             {
-                if (templateMap.type == TemplateType.Property)
-                {
-                  SPARQLResults sparqlResults = SPARQLBuilder.GetTemplateValues(_targetUri, _targetCredentials, _proxyCredentials, templateMap, parentIdentifierVariable); 
-                  #region If property exists already
-                  if (sparqlResults.resultsElement.results.Count > 0)
-                    {
-                        foreach (SPARQLResult result in sparqlResults.resultsElement.results)
-                        {
+                //if (templateMap.type == TemplateType.Property)
+                //{
+                //  SPARQLResults sparqlResults = SPARQLBuilder.GetTemplateValues(_targetUri, _targetCredentials, _proxyCredentials, templateMap, parentIdentifierVariable); 
+                //  #region If property exists already
+                //  if (sparqlResults.resultsElement.results.Count > 0)
+                //    {
+                //        foreach (SPARQLResult result in sparqlResults.resultsElement.results)
+                //        {
 
-                            SPARQLQuery insertTemporalQuery = new SPARQLQuery(SPARQLQueryType.INSERTTEMPORAL);
+                //            SPARQLQuery insertTemporalQuery = new SPARQLQuery(SPARQLQueryType.INSERTTEMPORAL);
 
-                            SPARQLQuery insertQuery = new SPARQLQuery(SPARQLQueryType.INSERT);
+                //            SPARQLQuery insertQuery = new SPARQLQuery(SPARQLQueryType.INSERT);
 
-                            bool isPropertyValueDifferent = false;
+                //            bool isPropertyValueDifferent = false;
 
-                            #region Check if Current property Value differs from New Value
-                            foreach (SPARQLBinding binding in result.bindings)
-                            {
-                                string propertyName = binding.name;
-                                string propertyValue = string.Empty;
-                                string propertyType = string.Empty;
-                                string dtoPropertyValue = string.Empty;
-                                string curPropertyValue = string.Empty;
+                //            #region Check if Current property Value differs from New Value
+                //            foreach (SPARQLBinding binding in result.bindings)
+                //            {
+                //                string propertyName = binding.name;
+                //                string propertyValue = string.Empty;
+                //                string propertyType = string.Empty;
+                //                string dtoPropertyValue = string.Empty;
+                //                string curPropertyValue = string.Empty;
 
-                                if (binding.literal != null && binding.literal.value != null)
-                                {
-                                    curPropertyValue = binding.literal.value;
-                                    propertyType = "literal";
-                                }
-                                else if (binding.uri != null)
-                                {
-                                    curPropertyValue = insertQuery.getPREFIX_URI(binding.uri);
-                                    propertyType = "uri";
-                                }
-                                else
-                                {
-                                    curPropertyValue = string.Empty;
-                                    propertyType = "literal";
-                                }
+                //                if (binding.literal != null && binding.literal.value != null)
+                //                {
+                //                    curPropertyValue = binding.literal.value;
+                //                    propertyType = "literal";
+                //                }
+                //                else if (binding.uri != null)
+                //                {
+                //                    curPropertyValue = insertQuery.getPREFIX_URI(binding.uri);
+                //                    propertyType = "uri";
+                //                }
+                //                else
+                //                {
+                //                    curPropertyValue = string.Empty;
+                //                    propertyType = "literal";
+                //                }
 
-                                object obj = dto.GetPropertyValueByInternalName(propertyName);
-                                if (obj != null)
-                                  if (_trimData)
-                                    dtoPropertyValue = obj.ToString().Trim();
-                                  else
-                                    dtoPropertyValue = obj.ToString();
-                                else
-                                    dtoPropertyValue = "";
+                //                object obj = dto.GetPropertyValueByInternalName(propertyName);
+                //                if (obj != null)
+                //                  if (_trimData)
+                //                    dtoPropertyValue = obj.ToString().Trim();
+                //                  else
+                //                    dtoPropertyValue = obj.ToString();
+                //                else
+                //                    dtoPropertyValue = "";
 
-                                RoleMap roleMap = FindRoleMap(templateMap, propertyName);
+                //                RoleMap roleMap = FindRoleMap(templateMap, propertyName);
 
-                                if (roleMap.reference != null && roleMap.reference != String.Empty)
-                                {
-                                  if (roleMap.valueList != null && roleMap.valueList != String.Empty)
-                                  {
-                                    Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);
-                                    if (valueList.ContainsKey(dtoPropertyValue))
-                                    {
-                                      propertyValue = valueList[dtoPropertyValue];
-                                    }
-                                    else
-                                    {
-                                      throw (new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue)));
-                                    }
-                                  }
-                                  else
-                                  {
-                                    propertyValue = roleMap.reference;
-                                  }
-                                }
-                                else if (roleMap.value != null && roleMap.value != String.Empty)
-                                {
-                                  propertyValue = roleMap.value;
-                                }
-                                else
-                                {
-                                  propertyValue = dtoPropertyValue;
-                                }
+                //                if (roleMap.reference != null && roleMap.reference != String.Empty)
+                //                {
+                //                  if (roleMap.valueList != null && roleMap.valueList != String.Empty)
+                //                  {
+                //                    Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);
+                //                    if (valueList.ContainsKey(dtoPropertyValue))
+                //                    {
+                //                      propertyValue = valueList[dtoPropertyValue];
+                //                    }
+                //                    else
+                //                    {
+                //                      throw (new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue)));
+                //                    }
+                //                  }
+                //                  else
+                //                  {
+                //                    propertyValue = roleMap.reference;
+                //                  }
+                //                }
+                //                else if (roleMap.value != null && roleMap.value != String.Empty)
+                //                {
+                //                  propertyValue = roleMap.value;
+                //                }
+                //                else
+                //                {
+                //                  propertyValue = dtoPropertyValue;
+                //                }
                                
-                                if (!curPropertyValue.Equals(propertyValue))
-                                {
-                                    isPropertyValueDifferent = true;
-                                }
+                //                if (!curPropertyValue.Equals(propertyValue))
+                //                {
+                //                    isPropertyValueDifferent = true;
+                //                }
 
-                            }
-                            #endregion
+                //            }
+                //            #endregion
 
-                            if (isPropertyValueDifferent)
-                            {
-                                foreach (SPARQLBinding binding in result.bindings)
-                                {
-                                    string propertyName = binding.name;
-                                    string propertyValue = string.Empty;
-                                    string propertyType = string.Empty;
-                                    string dtoPropertyValue = string.Empty;
+                //            if (isPropertyValueDifferent)
+                //            {
+                //                foreach (SPARQLBinding binding in result.bindings)
+                //                {
+                //                    string propertyName = binding.name;
+                //                    string propertyValue = string.Empty;
+                //                    string propertyType = string.Empty;
+                //                    string dtoPropertyValue = string.Empty;
 
-                                    if (binding.literal != null && binding.literal.value != null)
-                                    {
-                                        propertyType = "literal";
-                                    }
-                                    else if (binding.uri != null)
-                                    {
-                                        propertyType = "uri";
-                                    }
-                                    else
-                                    {
-                                        propertyType = "literal";
-                                    }
+                //                    if (binding.literal != null && binding.literal.value != null)
+                //                    {
+                //                        propertyType = "literal";
+                //                    }
+                //                    else if (binding.uri != null)
+                //                    {
+                //                        propertyType = "uri";
+                //                    }
+                //                    else
+                //                    {
+                //                        propertyType = "literal";
+                //                    }
 
-                                    object obj = dto.GetPropertyValueByInternalName(propertyName);
-                                    if (obj != null)
-                                      if (_trimData)
-                                        dtoPropertyValue = obj.ToString().Trim();
-                                      else
-                                        dtoPropertyValue = obj.ToString();
-                                    else
-                                        dtoPropertyValue = "";
+                //                    object obj = dto.GetPropertyValueByInternalName(propertyName);
+                //                    if (obj != null)
+                //                      if (_trimData)
+                //                        dtoPropertyValue = obj.ToString().Trim();
+                //                      else
+                //                        dtoPropertyValue = obj.ToString();
+                //                    else
+                //                        dtoPropertyValue = "";
 
-                                    RoleMap roleMap = FindRoleMap(templateMap, propertyName);
+                //                    RoleMap roleMap = FindRoleMap(templateMap, propertyName);
 
-                                    if (roleMap.reference != null && roleMap.reference != String.Empty)
-                                    {
-                                      if (roleMap.valueList != null && roleMap.valueList != String.Empty)
-                                      {
-                                        Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);
-                                        if (valueList.ContainsKey(dtoPropertyValue))
-                                        {
-                                          propertyValue = valueList[dtoPropertyValue];
-                                        }
-                                        else
-                                        {
-                                          throw (new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue)));
-                                        }
-                                      }
-                                      else
-                                      {
-                                        propertyValue = roleMap.reference;
-                                      }
-                                    }
-                                    else if (roleMap.value != null && roleMap.value != String.Empty)
-                                    {
-                                      propertyValue = roleMap.value;
-                                    }
-                                    else
-                                    {
-                                      propertyValue = dtoPropertyValue;
-                                    }                                    
-                                    if (propertyType == "literal")
-                                        propertyValue = insertQuery.getLITERAL_SPARQL(propertyValue, roleMap.dataType);
+                //                    if (roleMap.reference != null && roleMap.reference != String.Empty)
+                //                    {
+                //                      if (roleMap.valueList != null && roleMap.valueList != String.Empty)
+                //                      {
+                //                        Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);
+                //                        if (valueList.ContainsKey(dtoPropertyValue))
+                //                        {
+                //                          propertyValue = valueList[dtoPropertyValue];
+                //                        }
+                //                        else
+                //                        {
+                //                          throw (new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue)));
+                //                        }
+                //                      }
+                //                      else
+                //                      {
+                //                        propertyValue = roleMap.reference;
+                //                      }
+                //                    }
+                //                    else if (roleMap.value != null && roleMap.value != String.Empty)
+                //                    {
+                //                      propertyValue = roleMap.value;
+                //                    }
+                //                    else
+                //                    {
+                //                      propertyValue = dtoPropertyValue;
+                //                    }                                    
+                //                    if (propertyType == "literal")
+                //                        propertyValue = insertQuery.getLITERAL_SPARQL(propertyValue, roleMap.dataType);
 
-                                    insertTemporalQuery.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, "?" + roleMap.propertyName, propertyValue);
-                                    insertQuery.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, "?" + roleMap.propertyName, propertyValue);
-                                }
-                                string endTimeValue = insertTemporalQuery.getLITERAL_SPARQL(DateTime.UtcNow.ToString(), "datetime");
-                                insertTemporalQuery.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, "p7tpl:valEndTime", "?endDateTime", endTimeValue);
-                                SPARQLBuilder.ExecuteUpdateQuery(_targetUri, _targetCredentials, _proxyCredentials, insertTemporalQuery.getSPARQL());
+                //                    insertTemporalQuery.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, "?" + roleMap.propertyName, propertyValue);
+                //                    insertQuery.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, "?" + roleMap.propertyName, propertyValue);
+                //                }
+                //                string endTimeValue = insertTemporalQuery.getLITERAL_SPARQL(DateTime.UtcNow.ToString(), "datetime");
+                //                insertTemporalQuery.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, "p7tpl:valEndTime", "?endDateTime", endTimeValue);
+                //                SPARQLBuilder.ExecuteUpdateQuery(_targetUri, _targetCredentials, _proxyCredentials, insertTemporalQuery.getSPARQL());
 
-                                string startTimeValue = insertQuery.getLITERAL_SPARQL(DateTime.UtcNow.ToString(), "datetime");
-                                insertQuery.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, "p7tpl:valStartTime", "?startDateTime", startTimeValue);
-                                SPARQLBuilder.ExecuteUpdateQuery(_targetUri, _targetCredentials, _proxyCredentials, insertQuery.getSPARQL());
-                            }
+                //                string startTimeValue = insertQuery.getLITERAL_SPARQL(DateTime.UtcNow.ToString(), "datetime");
+                //                insertQuery.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, "p7tpl:valStartTime", "?startDateTime", startTimeValue);
+                //                SPARQLBuilder.ExecuteUpdateQuery(_targetUri, _targetCredentials, _proxyCredentials, insertQuery.getSPARQL());
+                //            }
 
-                        }
-                    }
-                    #endregion
-                  #region Else if property doesn't exist
-                    else
-                    {
+                //        }
+                //    }
+                //    #endregion
+                //  #region Else if property doesn't exist
+                //    else
+                //    {
 
-                        SPARQLQuery insertQuery = new SPARQLQuery(SPARQLQueryType.INSERT);
+                //        SPARQLQuery insertQuery = new SPARQLQuery(SPARQLQueryType.INSERT);
 
-                        foreach (RoleMap roleMap in templateMap.roleMaps)
-                        {
-                            string propertyValue = string.Empty;
-                            string propertyType = "literal";
-                            string dtoPropertyValue = string.Empty;
-                            string curPropertyValue = string.Empty;
+                //        foreach (RoleMap roleMap in templateMap.roleMaps)
+                //        {
+                //            string propertyValue = string.Empty;
+                //            string propertyType = "literal";
+                //            string dtoPropertyValue = string.Empty;
+                //            string curPropertyValue = string.Empty;
 
-                            object obj = dto.GetPropertyValueByInternalName(roleMap.propertyName);
-                            if (obj != null)
-                              if (_trimData)
-                                dtoPropertyValue = obj.ToString().Trim();
-                              else
-                                dtoPropertyValue = obj.ToString();
-                            else
-                                dtoPropertyValue = string.Empty;
+                //            object obj = dto.GetPropertyValueByInternalName(roleMap.propertyName);
+                //            if (obj != null)
+                //              if (_trimData)
+                //                dtoPropertyValue = obj.ToString().Trim();
+                //              else
+                //                dtoPropertyValue = obj.ToString();
+                //            else
+                //                dtoPropertyValue = string.Empty;
 
-                            if (roleMap.reference != null && roleMap.reference != String.Empty)
-                            {
-                              if (roleMap.valueList != null && roleMap.valueList != String.Empty)
-                              {
-                                Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);
-                                if (valueList.ContainsKey(dtoPropertyValue))
-                                {
-                                  propertyValue = valueList[dtoPropertyValue];
-                                  propertyType = "uri";
-                                }
-                                else
-                                {
-                                  throw (new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue)));
-                                }
-                              }
-                              else
-                              {
-                                propertyValue = roleMap.reference;
-                                propertyType = "uri";
-                              }
-                            }
-                            else if (roleMap.value != null && roleMap.value != String.Empty)
-                            {
-                              propertyValue = roleMap.value;
-                              propertyType = "literal";
-                            }
-                            else
-                            {
-                              propertyValue = dtoPropertyValue;
-                              propertyType = "literal";
-                            }
-                            {
-                                if (propertyType == "literal")
-                                    propertyValue = insertQuery.getLITERAL_SPARQL(propertyValue, roleMap.dataType);
+                //            if (roleMap.reference != null && roleMap.reference != String.Empty)
+                //            {
+                //              if (roleMap.valueList != null && roleMap.valueList != String.Empty)
+                //              {
+                //                Dictionary<string, string> valueList = GetRefreshValueMap(roleMap.valueList);
+                //                if (valueList.ContainsKey(dtoPropertyValue))
+                //                {
+                //                  propertyValue = valueList[dtoPropertyValue];
+                //                  propertyType = "uri";
+                //                }
+                //                else
+                //                {
+                //                  throw (new Exception(String.Format("valueList[{0}] value[{1}] isn't defined", roleMap.valueList, dtoPropertyValue)));
+                //                }
+                //              }
+                //              else
+                //              {
+                //                propertyValue = roleMap.reference;
+                //                propertyType = "uri";
+                //              }
+                //            }
+                //            else if (roleMap.value != null && roleMap.value != String.Empty)
+                //            {
+                //              propertyValue = roleMap.value;
+                //              propertyType = "literal";
+                //            }
+                //            else
+                //            {
+                //              propertyValue = dtoPropertyValue;
+                //              propertyType = "literal";
+                //            }
+                //            {
+                //                if (propertyType == "literal")
+                //                    propertyValue = insertQuery.getLITERAL_SPARQL(propertyValue, roleMap.dataType);
 
-                                insertQuery.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, "?" + roleMap.propertyName, propertyValue);
-                            }
+                //                insertQuery.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, "?" + roleMap.propertyName, propertyValue);
+                //            }
 
-                        }
-                        string startTimeValue = insertQuery.getLITERAL_SPARQL(DateTime.UtcNow.ToString(), "datetime");
-                        insertQuery.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, "p7tpl:valStartTime", "?startDateTime", startTimeValue);
+                //        }
+                //        string startTimeValue = insertQuery.getLITERAL_SPARQL(DateTime.UtcNow.ToString(), "datetime");
+                //        insertQuery.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, "p7tpl:valStartTime", "?startDateTime", startTimeValue);
 
-                        SPARQLBuilder.ExecuteUpdateQuery(_targetUri, _targetCredentials, _proxyCredentials, insertQuery.getSPARQL());
-                    }
-                    #endregion
-                }
-                else
-                {
+                //        SPARQLBuilder.ExecuteUpdateQuery(_targetUri, _targetCredentials, _proxyCredentials, insertQuery.getSPARQL());
+                //    }
+                //    #endregion
+                //}
+                //else
+                //{
                     foreach (RoleMap roleMap in templateMap.roleMaps)
                     {
                         if (roleMap.classMap != null)
@@ -1052,7 +1072,7 @@ namespace org.iringtools.adapter.semantic
                         }
                     }
                 }
-            }
+            //}
             catch (Exception exception)
             {
               throw new Exception(String.Format("RefreshTemplateMap[{0}][{1}][{2}]", templateMap.name, classMap.name, parentIdentifierVariable), exception);
@@ -1063,10 +1083,10 @@ namespace org.iringtools.adapter.semantic
         {
           try
           {
-            foreach (TemplateMap templateMap in classMap.templateMaps)
-            {
-              RefreshTemplateMap(templateMap, classMap, dto, parentIdentifierVariable);
-            }
+          //  foreach (TemplateMap templateMap in classMap.templateMaps)
+          //  {
+           //   RefreshTemplateMap(templateMap, classMap, dto, parentIdentifierVariable);
+          //  }
           }
           catch (Exception exception)
           {
@@ -1110,12 +1130,12 @@ namespace org.iringtools.adapter.semantic
                 string unqualifiedClassId = classMap.classId.Split(':')[1];
                 string identifier = "eg:" + unqualifiedClassId;
 
-                if (classMap.identifier != string.Empty)
+                if (classMap.identifiers != null)
                 {
-                    string[] identifiers = classMap.identifier.Split(',');
+                    //string[] identifiers = classMap.identifier.Split(',');
 
                     
-                    foreach (string identifierPart in identifiers)
+                    foreach (string identifierPart in classMap.identifiers)
                     {                      
                         object identifierPartValue = dto.GetPropertyValueByInternalName(identifierPart.Trim());
 
@@ -1138,9 +1158,9 @@ namespace org.iringtools.adapter.semantic
                 if (relatedClassName == string.Empty)
                 {
                     SPARQLQuery query = new SPARQLQuery(SPARQLQueryType.INSERT);
-                    query.addTemplate(templateMap.templateId, templateMap.classRole, className, roleMap.roleId, identifier);
+                    query.addTemplate(templateMap.templateId, templateMap.roleMaps.Select(c => c.type == RoleType.ClassRole).ToString(), className, roleMap.roleId, identifier);
                     string startTimeValue = query.getLITERAL_SPARQL(DateTime.UtcNow.ToString(), "datetime");
-                    query.addTemplate(templateMap.templateId, templateMap.classRole, className, "p7tpl:valStartTime", "?startDateTime", startTimeValue);
+                    query.addTemplate(templateMap.templateId, templateMap.roleMaps.Select(c => c.type == RoleType.ClassRole).ToString(), className, "p7tpl:valStartTime", "?startDateTime", startTimeValue);
                     
                     ExecuteUpdateQuery(uri, targetCredentials, proxyCredentials, query.getSPARQL());
                     relatedClassName = identifier;
@@ -1180,22 +1200,22 @@ namespace org.iringtools.adapter.semantic
             foreach (RoleMap roleMap in templateMap.roleMaps)
             {
 
-              if (roleMap.reference != null && roleMap.reference != String.Empty)
+              if (roleMap.type == RoleType.Reference)
               {
-                query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, roleMap.reference);                
+                query.addTemplate(templateMap.templateId, templateMap.roleMaps.Select(c => c.type == RoleType.ClassRole).ToString(), parentIdentifierVariable, roleMap.roleId, roleMap.dataType);                
               }
               else if (roleMap.value != null && roleMap.value != String.Empty)
               {
                 string value = query.getLITERAL_SPARQL(roleMap.value, roleMap.dataType);
-                query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, value);                
+                query.addTemplate(templateMap.templateId, templateMap.roleMaps.Select(c => c.type == RoleType.ClassRole).ToString(), parentIdentifierVariable, roleMap.roleId, value);                
               }
               else
               {
                 query.addVariable("?" + roleMap.propertyName);
-                query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, roleMap.roleId, "?" + roleMap.propertyName);
+                query.addTemplate(templateMap.templateId, templateMap.roleMaps.Select(c => c.type == RoleType.ClassRole).ToString(), parentIdentifierVariable, roleMap.roleId, "?" + roleMap.propertyName);
               }              
             }
-            query.addTemplate(templateMap.templateId, templateMap.classRole, parentIdentifierVariable, "p7tpl:valEndTime", "?endDateTime");
+            query.addTemplate(templateMap.templateId, templateMap.roleMaps.Select(c => c.type == RoleType.ClassRole).ToString(), parentIdentifierVariable, "p7tpl:valEndTime", "?endDateTime");
 
             SPARQLResults sparqlResults = SPARQLClient.PostQuery(uri, query.getSPARQL(), targetCredentials, proxyCredentials);
             return sparqlResults;
@@ -1216,8 +1236,8 @@ namespace org.iringtools.adapter.semantic
 
                 query.addVariable("?i2");
                 SPARQLClassification classification = query.addClassification(roleMap.classMap.classId, "?i2");
-                query.addTemplate(templateMap.templateId, templateMap.classRole, className, roleMap.roleId, "?i2");
-                query.addTemplate(templateMap.templateId, templateMap.classRole, className, "p7tpl:valEndTime", "?endDateTime");
+                query.addTemplate(templateMap.templateId, templateMap.roleMaps.Select(c => c.type == RoleType.ClassRole).ToString(), className, roleMap.roleId, "?i2");
+                query.addTemplate(templateMap.templateId, templateMap.roleMaps.Select(c => c.type == RoleType.ClassRole).ToString(), className, "p7tpl:valEndTime", "?endDateTime");
 
                 string result = ExecuteScalarSelectQuery(uri, targetCredentials, proxyCredentials, query.getSPARQL(), relationshipType);
                 results.Add(result);
@@ -1236,7 +1256,7 @@ namespace org.iringtools.adapter.semantic
                 SPARQLQuery query = new SPARQLQuery(SPARQLQueryType.SELECTDISTINCT);
 
                 query.addVariable("?" + roleMap.propertyName);
-                query.addTemplate(templateMap.templateId, templateMap.classRole, className, roleMap.roleId, "?" + roleMap.propertyName);
+                query.addTemplate(templateMap.templateId, templateMap.roleMaps.Select(c => c.type == RoleType.ClassRole).ToString(), className, roleMap.roleId, "?" + roleMap.propertyName);
 
                 return ExecuteScalarSelectQuery(uri, targetCredentials, proxyCredentials, query.getSPARQL(), propertyType);
             }

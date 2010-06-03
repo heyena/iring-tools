@@ -216,7 +216,7 @@ namespace org.iringtools.modulelibrary.layerdal
               // retrieve the Result - assign to mappingResult
               string result = ((DownloadStringCompletedEventArgs)e).Result;
 
-              Mapping mapping = result.DeserializeXml<Mapping>();
+              Mapping mapping = result.DeserializeDataContract<Mapping>();
 
               // If the cast failed then return
               if (mapping == null)
@@ -315,7 +315,7 @@ namespace org.iringtools.modulelibrary.layerdal
           try
           {
               var result = ((UploadStringCompletedEventArgs)e).Result;
-              Response response = result.DeserializeXml<Response>();
+              Response response = result.DeserializeDataContract<Response>();
 
               // Configure event argument
               args = new CompletedEventArgs
@@ -381,7 +381,7 @@ namespace org.iringtools.modulelibrary.layerdal
 
     public Response UpdateMapping(string projectName, string applicationName, Mapping mapping)
     {
-      string message = Utility.SerializeXml<Mapping>(mapping);
+      string message = Utility.SerializeDataContract<Mapping>(mapping);
 
       StringBuilder sb = new StringBuilder();
       sb.Append(_adapterServiceUri);

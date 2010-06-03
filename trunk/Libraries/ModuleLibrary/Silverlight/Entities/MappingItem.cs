@@ -13,6 +13,7 @@ namespace org.iringtools.modulelibrary.entities
     public ClassMap ClassMap { get; set; }
     public TemplateMap TemplateMap { get; set; }
     public RoleMap RoleMap { get; set; }
+    public ValueMap ValueMap { get; set; }
 
     // Need to oveeride this method
     public override void nodeSelectedHandler(object sender, RoutedEventArgs e)
