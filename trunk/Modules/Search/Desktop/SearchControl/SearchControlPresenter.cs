@@ -181,21 +181,28 @@ namespace org.iringtools.modules.search.searchregion
         #region Spinner Event Handler (toggles Search button and model treeview control enables/disabled)
         public void SpinnerEventHandler(SpinnerEventArgs e)
         {
-          switch (e.Active)
-          {
-            case SpinnerEventType.Started:
-              btnSearch.IsEnabled = false;
-              this.itcModelBrowser.IsEnabled = false;
-              break;
+            try
+            {
+                switch (e.Active)
+                {
+                    case SpinnerEventType.Started:
+                        btnSearch.IsEnabled = false;
+                        this.itcModelBrowser.IsEnabled = false;
+                        break;
 
-            case SpinnerEventType.Stopped:
-              btnSearch.IsEnabled = true;
-              this.itcModelBrowser.IsEnabled = true;
-              break;
+                    case SpinnerEventType.Stopped:
+                        btnSearch.IsEnabled = true;
+                        this.itcModelBrowser.IsEnabled = true;
+                        break;
 
-            default:
-              break;
-          }
+                    default:
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
         #endregion
         #region EVENT HANDLER: ButtonClickHandler(ButtonEventArgs e)  -- Search Button
@@ -206,107 +213,115 @@ namespace org.iringtools.modules.search.searchregion
 
         public void ButtonClickHandler(ButtonEventArgs e)
         {
-            //// We're only handling the search button click - we 
-            //// don't care about others
-
-            //if (!e.GetUniqueName().Contains("SearchControlPresenter:btnSearch"))
-            //  return;
-
-            //// The ButtonEventArgs will contain the search string (stored in in the
-            //// button's tag prior to publishing search event)
-            //string searchString = e.GetTag<string>();
-
-            //Logger.Log(string.Format("{0} is handling EVENT {1}", ModuleFullName, e.GetUniqueName()),
-            //  Category.Debug, Priority.None);
-
-            //// On search button click instantiate a new tab
-            //SearchTabItem tabItem = Container.Resolve<SearchTabItem>();
-
-            //// Set the tab header to the search content
-            //tabItem.HeaderText = searchString;
-
-            //// Subscribe to close click event
-            //tabItem.OnCloseClick += OnTabCloseHandler;
-
-            //// Add new search tab item to the tab control
-            //tabCtrl.Items.Add(tabItem);
-
-            //// Set it as the currently selected tab
-            //tabCtrl.SelectedItem = tabItem;
-
-            //// Perform the search - async response handled by the
-            //// OnDataArrivedHandler(); we'll send the current tab
-            //// as UserState for the async call
-            //referenceDataService.Search(searchString, tabItem);
-
-            //new code
-            // We're only handling the search button click - we 
-            // don't care about others
-
-            if (e.GetUniqueName().Contains("SearchControlPresenter:btnSearch"))
+            try
             {
+                //// We're only handling the search button click - we 
+                //// don't care about others
 
-                // The ButtonEventArgs will contain the search string (stored in in the
-                // button's tag prior to publishing search event)
-                string searchString = e.GetTag<string>();
+                //if (!e.GetUniqueName().Contains("SearchControlPresenter:btnSearch"))
+                //  return;
 
-                Logger.Log(string.Format("{0} is handling EVENT {1}", ModuleFullName, e.GetUniqueName()),
-                  Category.Debug, Priority.None);
+                //// The ButtonEventArgs will contain the search string (stored in in the
+                //// button's tag prior to publishing search event)
+                //string searchString = e.GetTag<string>();
 
-                // On search button click instantiate a new tab
-                SearchTabItem tabItem = Container.Resolve<SearchTabItem>();
-                //tabItem.SetImageSource("close.png");
-                // Set the tab header to the search content
-                tabItem.HeaderText = searchString;
+                //Logger.Log(string.Format("{0} is handling EVENT {1}", ModuleFullName, e.GetUniqueName()),
+                //  Category.Debug, Priority.None);
 
-                // Subscribe to close click event
-                tabItem.OnCloseClick += OnTabCloseHandler;
+                //// On search button click instantiate a new tab
+                //SearchTabItem tabItem = Container.Resolve<SearchTabItem>();
 
-                // Add new search tab item to the tab control
-                tabCtrl.Items.Add(tabItem);
+                //// Set the tab header to the search content
+                //tabItem.HeaderText = searchString;
 
-                // Set it as the currently selected tab
-                tabCtrl.SelectedItem = tabItem;
+                //// Subscribe to close click event
+                //tabItem.OnCloseClick += OnTabCloseHandler;
 
-                // Perform the search - async response handled by the
-                // OnDataArrivedHandler(); we'll send the current tab
-                // as UserState for the async call
-                if(chkReset.IsChecked == true)
-                    referenceDataService.SearchReset(searchString, tabItem);
+                //// Add new search tab item to the tab control
+                //tabCtrl.Items.Add(tabItem);
+
+                //// Set it as the currently selected tab
+                //tabCtrl.SelectedItem = tabItem;
+
+                //// Perform the search - async response handled by the
+                //// OnDataArrivedHandler(); we'll send the current tab
+                //// as UserState for the async call
+                //referenceDataService.Search(searchString, tabItem);
+
+                //new code
+                // We're only handling the search button click - we 
+                // don't care about others
+
+                if (e.GetUniqueName().Contains("SearchControlPresenter:btnSearch"))
+                {
+
+                    // The ButtonEventArgs will contain the search string (stored in in the
+                    // button's tag prior to publishing search event)
+                    string searchString = e.GetTag<string>();
+
+                    Logger.Log(string.Format("{0} is handling EVENT {1}", ModuleFullName, e.GetUniqueName()),
+                      Category.Debug, Priority.None);
+
+                    // On search button click instantiate a new tab
+                    SearchTabItem tabItem = Container.Resolve<SearchTabItem>();
+                    //tabItem.SetImageSource("close.png");
+                    // Set the tab header to the search content
+                    tabItem.HeaderText = searchString;
+
+                    // Subscribe to close click event
+                    tabItem.OnCloseClick += OnTabCloseHandler;
+
+                    // Add new search tab item to the tab control
+                    tabCtrl.Items.Add(tabItem);
+
+                    // Set it as the currently selected tab
+                    tabCtrl.SelectedItem = tabItem;
+
+                    // Perform the search - async response handled by the
+                    // OnDataArrivedHandler(); we'll send the current tab
+                    // as UserState for the async call
+                    if (chkReset.IsChecked == true)
+                        referenceDataService.SearchReset(searchString, tabItem);
+                    else
+                        referenceDataService.Search(searchString, tabItem);
+                }
+                else if (e.GetUniqueName().Contains("btnPromoteItem"))
+                {
+                    // The ButtonEventArgs will contain the search string (stored in in the
+                    // button's tag prior to publishing search event)
+                    string searchString = e.GetTag<string>();
+
+                    Logger.Log(string.Format("{0} is handling EVENT {1}", ModuleFullName, e.GetUniqueName()),
+                      Category.Debug, Priority.None);
+
+                    // On search button click instantiate a new tab
+                    SearchTabItem tabItem = Container.Resolve<SearchTabItem>();
+                    //tabItem.SetImageSource("close.png");
+                    // Set the tab header to the search content
+                    tabItem.HeaderText = searchString;
+
+                    // Subscribe to close click event
+                    tabItem.OnCloseClick += OnTabCloseHandler;
+
+                    // Add new search tab item to the tab control
+                    tabCtrl.Items.Add(tabItem);
+
+                    // Set it as the currently selected tab
+                    tabCtrl.SelectedItem = tabItem;
+
+                    // Perform the search - async response handled by the
+                    // OnDataArrivedHandler(); we'll send the current tab
+                    // as UserState for the async call
+                    referenceDataService.Find(searchString, tabItem);
+                }
                 else
-                    referenceDataService.Search(searchString, tabItem);
+                    return;
             }
-            else if (e.GetUniqueName().Contains("btnPromoteItem"))
+            catch (Exception ex)
             {
-                // The ButtonEventArgs will contain the search string (stored in in the
-                // button's tag prior to publishing search event)
-                string searchString = e.GetTag<string>();
-
-                Logger.Log(string.Format("{0} is handling EVENT {1}", ModuleFullName, e.GetUniqueName()),
-                  Category.Debug, Priority.None);
-
-                // On search button click instantiate a new tab
-                SearchTabItem tabItem = Container.Resolve<SearchTabItem>();
-                //tabItem.SetImageSource("close.png");
-                // Set the tab header to the search content
-                tabItem.HeaderText = searchString;
-
-                // Subscribe to close click event
-                tabItem.OnCloseClick += OnTabCloseHandler;
-
-                // Add new search tab item to the tab control
-                tabCtrl.Items.Add(tabItem);
-
-                // Set it as the currently selected tab
-                tabCtrl.SelectedItem = tabItem;
-
-                // Perform the search - async response handled by the
-                // OnDataArrivedHandler(); we'll send the current tab
-                // as UserState for the async call
-                referenceDataService.Find(searchString, tabItem);
+                Error.SetError(ex, "Error occurred... \r\n" + ex.Message + ex.StackTrace,
+                    Category.Exception, Priority.High);
             }
-            else
-                return;
         }
         #endregion
 
@@ -378,18 +393,26 @@ namespace org.iringtools.modules.search.searchregion
         /// <param name="e">The <see cref="System.Windows.Controls.SelectionChangedEventArgs"/> instance containing the event data.</param>
         void tabSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // If tab is being closed then return
-            if (e.AddedItems.Count == 0)
-                return;
+            try
+            {
+                // If tab is being closed then return
+                if (e.AddedItems.Count == 0)
+                    return;
 
-            CustomTabItem currentTab = (CustomTabItem)
-              e.AddedItems[0] as CustomTabItem;
+                CustomTabItem currentTab = (CustomTabItem)
+                  e.AddedItems[0] as CustomTabItem;
 
-            if (currentTab == null)
-                return;
+                if (currentTab == null)
+                    return;
 
-            // Activate the Tab - executes any required business logic in control's Activate()
-            currentTab.Activate();
+                // Activate the Tab - executes any required business logic in control's Activate()
+                currentTab.Activate();
+            }
+            catch (Exception ex)
+            {
+                Error.SetError(ex, "Error occurred... \r\n" + ex.Message + ex.StackTrace,
+                    Category.Exception, Priority.High);
+            }
         }
         #endregion
 

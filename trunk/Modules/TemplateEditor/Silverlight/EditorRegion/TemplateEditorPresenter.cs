@@ -122,85 +122,99 @@ namespace org.iringtools.modules.templateeditor.editorregion
             IEventAggregator aggregator)
             : base(view, model)
         {
-            this.aggregator = aggregator;
-            this.model = model;
-            this.regionManager = regionManager;            
-            this.referenceDataService = referenceDataService;
-            
-            //foreach (Repository rep in referenceDataService.GetRepositories())
-            //{
-            // cmbRepositories.Items.Add(new ComboBoxItem{ Content = rep.name +  " ReadOnly = " + rep.isReadOnly.ToString(), Tag = rep });
-            //}
-
-            lstRoles.SelectionChanged += (object sender, SelectionChangedEventArgs e) =>
+            try
             {
-                rolesSelectionChanged(sender, e);
-            };
+                this.aggregator = aggregator;
+                this.model = model;
+                this.regionManager = regionManager;
+                this.referenceDataService = referenceDataService;
 
-            cmbRange.SelectionChanged += (object sender, SelectionChangedEventArgs e) =>
+                //foreach (Repository rep in referenceDataService.GetRepositories())
+                //{
+                // cmbRepositories.Items.Add(new ComboBoxItem{ Content = rep.name +  " ReadOnly = " + rep.isReadOnly.ToString(), Tag = rep });
+                //}
+
+                lstRoles.SelectionChanged += (object sender, SelectionChangedEventArgs e) =>
+                {
+                    rolesSelectionChanged(sender, e);
+                };
+
+                cmbRange.SelectionChanged += (object sender, SelectionChangedEventArgs e) =>
+                {
+                    rangeSelectionChanged(sender, e);
+                };
+
+                cmbRepositories.SelectionChanged += (object sender, SelectionChangedEventArgs e) =>
+                    repositorySelectionChanged(sender, e);
+
+                btnOK.Click += (object sender, RoutedEventArgs e) =>
+                {
+                    buttonClickHandler(new ButtonEventArgs(this, btnOK));
+                };
+
+                btnCancel.Click += (object sender, RoutedEventArgs e) =>
+                {
+                    buttonClickHandler(new ButtonEventArgs(this, btnCancel));
+                };
+
+                btnApply.Click += (object sender, RoutedEventArgs e) =>
+                {
+                    buttonClickHandler(new ButtonEventArgs(this, btnApply));
+                };
+
+                btnAddRole.Click += (object sender, RoutedEventArgs e) =>
+                {
+                    buttonClickHandler(new ButtonEventArgs(this, btnAddRole));
+                };
+
+                btnRemoveRole.Click += (object sender, RoutedEventArgs e) =>
+                {
+                    buttonClickHandler(new ButtonEventArgs(this, btnRemoveRole));
+                };
+
+                btnApplyRole.Click += (object sender, RoutedEventArgs e) =>
+                {
+                    buttonClickHandler(new ButtonEventArgs(this, btnApplyRole));
+                };
+
+                referenceDataService.OnDataArrived += OnDataArrivedHandler;
+
+                aggregator.GetEvent<ButtonEvent>().Subscribe(showEditorHandler);
+            }
+            catch (Exception ex)
             {
-                rangeSelectionChanged(sender, e);
-            };
-
-            cmbRepositories.SelectionChanged += (object sender, SelectionChangedEventArgs e) =>
-                repositorySelectionChanged(sender, e);
-
-            btnOK.Click += (object sender, RoutedEventArgs e) =>
-            {
-                buttonClickHandler(new ButtonEventArgs(this, btnOK));
-            };
-
-            btnCancel.Click += (object sender, RoutedEventArgs e) =>
-            {
-                buttonClickHandler(new ButtonEventArgs(this, btnCancel));
-            };
-
-            btnApply.Click += (object sender, RoutedEventArgs e) =>
-            {
-                buttonClickHandler(new ButtonEventArgs(this, btnApply));
-            };
-
-            btnAddRole.Click += (object sender, RoutedEventArgs e) =>
-            {
-                buttonClickHandler(new ButtonEventArgs(this, btnAddRole));
-            };
-
-            btnRemoveRole.Click += (object sender, RoutedEventArgs e) =>
-            {
-                buttonClickHandler(new ButtonEventArgs(this, btnRemoveRole));
-            };
-
-            btnApplyRole.Click += (object sender, RoutedEventArgs e) =>
-            {
-                buttonClickHandler(new ButtonEventArgs(this, btnApplyRole));
-            };
-
-            referenceDataService.OnDataArrived += OnDataArrivedHandler;
-
-            aggregator.GetEvent<ButtonEvent>().Subscribe(showEditorHandler);
+                Error.SetError(ex);
+            }
 
         }
 
         private void repositorySelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ComboBox cb = sender as ComboBox;
-            ComboBoxItem cbi = cb.SelectedItem as ComboBoxItem;
+            try
+            {
+                ComboBox cb = sender as ComboBox;
+                ComboBoxItem cbi = cb.SelectedItem as ComboBoxItem;
 
 
-            if (model.SelectedQMXF == null)
-                model.SelectedQMXF = new QMXF();
-            Repository rep = cbi.Tag as Repository;
-            if(rep.isReadOnly == true)
-            {
-                btnOK.IsEnabled = false;
-                btnApply.IsEnabled = false;
+                if (model.SelectedQMXF == null)
+                    model.SelectedQMXF = new QMXF();
+                Repository rep = cbi.Tag as Repository;
+                if (rep.isReadOnly == true)
+                {
+                    btnOK.IsEnabled = false;
+                    btnApply.IsEnabled = false;
+                }
+                else
+                {
+                    btnOK.IsEnabled = true;
+                    btnApply.IsEnabled = true;
+                }
+                model.SelectedQMXF.targetRepository = rep.uri;
             }
-            else
+            catch (Exception ex)
             {
-                btnOK.IsEnabled = true;
-                btnApply.IsEnabled = true;
-            }
-            model.SelectedQMXF.targetRepository = rep.uri;            
+                Error.SetError(ex);
+            }         
         }
 
         void OnDataArrivedHandler(object sender, System.EventArgs e)
@@ -256,45 +270,52 @@ namespace org.iringtools.modules.templateeditor.editorregion
 
         public void InitializeEditor(EditorMode editorMode, QMXF qmxf)
         {
-            _editorMode = editorMode;
-            _templateModel = null;
-
-            if (qmxf != null)
+            try
             {
-                if (qmxf.templateQualifications.Count > 0)
+                _editorMode = editorMode;
+                _templateModel = null;
+
+                if (qmxf != null)
                 {
-                    _templateModel = new TemplateQualificationModel(qmxf);
+                    if (qmxf.templateQualifications.Count > 0)
+                    {
+                        _templateModel = new TemplateQualificationModel(qmxf);
+                    }
+                    else
+                    {
+                        _templateModel = new TemplateDefinitionModel(qmxf);
+                    }
                 }
                 else
                 {
                     _templateModel = new TemplateDefinitionModel(qmxf);
                 }
+
+                TextCtrl("templateName").DataContext = _templateModel;
+                TextCtrl("description").DataContext = _templateModel;
+
+                TextCtrl("authority").DataContext = _templateModel;
+                TextCtrl("recorded").DataContext = _templateModel;
+                TextCtrl("dateFrom").DataContext = _templateModel;
+                TextCtrl("dateTo").DataContext = _templateModel;
+
+                TextCtrl("roleId").DataContext = _templateModel;
+                TextCtrl("roleName").DataContext = _templateModel;
+                TextCtrl("roleDescription").DataContext = _templateModel;
+                ComboBoxCtrl("roleRange").DataContext = _templateModel;
+
+                lstRoles.DataContext = _templateModel;
+
+                GetControl<Label>("heading").DataContext = _templateModel;
+
+                ButtonCtrl("addRole1").DataContext = _templateModel;
+                ButtonCtrl("removeRole1").DataContext = _templateModel;
+                ButtonCtrl("applyRole1").DataContext = _templateModel;
             }
-            else
+            catch (Exception ex)
             {
-                _templateModel = new TemplateDefinitionModel(qmxf);                
+                Error.SetError(ex);
             }
-
-            TextCtrl("templateName").DataContext = _templateModel;
-            TextCtrl("description").DataContext = _templateModel;
-
-            TextCtrl("authority").DataContext = _templateModel;
-            TextCtrl("recorded").DataContext = _templateModel;
-            TextCtrl("dateFrom").DataContext = _templateModel;
-            TextCtrl("dateTo").DataContext = _templateModel;
-
-            TextCtrl("roleId").DataContext = _templateModel;
-            TextCtrl("roleName").DataContext = _templateModel;
-            TextCtrl("roleDescription").DataContext = _templateModel;                        
-            ComboBoxCtrl("roleRange").DataContext = _templateModel;
-                        
-            lstRoles.DataContext = _templateModel;
-
-            GetControl<Label>("heading").DataContext = _templateModel;
-
-            ButtonCtrl("addRole1").DataContext = _templateModel;
-            ButtonCtrl("removeRole1").DataContext = _templateModel;
-            ButtonCtrl("applyRole1").DataContext = _templateModel;
 
         }
 
@@ -374,68 +395,90 @@ namespace org.iringtools.modules.templateeditor.editorregion
 
         public void rolesSelectionChanged(object sender, SelectionChangedEventArgs e)         
         {
-            if (lstRoles.SelectedItem != null)
+            try
             {
-                //GvR ToDo
-                _templateModel.SelectedRole = ((KeyValuePair<string, object>)lstRoles.SelectedItem).Value;
-                //string range = ((RoleDefinition)_templateModel.SelectedRole).range;
-                //_templateModel.SelectedRoleRange = new KeyValuePair<string, string>(range, range);
+                if (lstRoles.SelectedItem != null)
+                {
+                    //GvR ToDo
+                    _templateModel.SelectedRole = ((KeyValuePair<string, object>)lstRoles.SelectedItem).Value;
+                    //string range = ((RoleDefinition)_templateModel.SelectedRole).range;
+                    //_templateModel.SelectedRoleRange = new KeyValuePair<string, string>(range, range);
+                }
+            }
+            catch (Exception ex)
+            {
+                
+                throw ex;
             }
         }
 
         public void rangeSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (cmbRange.SelectedItem != null)
+            try
             {
-                KeyValuePair<string, string> range = (KeyValuePair<string, string>)cmbRange.SelectedItem;
-
-                if (range.Value != null && range.Value.Equals("<Use Selected Item>"))
+                if (cmbRange.SelectedItem != null)
                 {
-                    KeyValuePair<string, string> cmbItem = new KeyValuePair<string, string>(model.SelectedIMLabel, model.SelectedIMUri);
+                    KeyValuePair<string, string> range = (KeyValuePair<string, string>)cmbRange.SelectedItem;
 
-                    //GvR need to fix this issue of add already existing item
-                    var items = from query in _templateModel.Ranges
-                                where query.Key == cmbItem.Key
-                                select query;
+                    if (range.Value != null && range.Value.Equals("<Use Selected Item>"))
+                    {
+                        KeyValuePair<string, string> cmbItem = new KeyValuePair<string, string>(model.SelectedIMLabel, model.SelectedIMUri);
 
-                    if (items.Count() == 0)
-                    {
-                        _templateModel.Ranges.Add(cmbItem);
-                        cmbRange.SelectedItem = cmbItem;
+                        //GvR need to fix this issue of add already existing item
+                        var items = from query in _templateModel.Ranges
+                                    where query.Key == cmbItem.Key
+                                    select query;
+
+                        if (items.Count() == 0)
+                        {
+                            _templateModel.Ranges.Add(cmbItem);
+                            cmbRange.SelectedItem = cmbItem;
+                        }
+                        else
+                        {
+                            cmbRange.SelectedItem = items.FirstOrDefault();
+                        }
+
                     }
-                    else
-                    {
-                        cmbRange.SelectedItem = items.FirstOrDefault();
-                    }
-                    
                 }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
 
         public void showEditorHandler(ButtonEventArgs e)
         {
-            if (e.ButtonClicked.Tag.Equals("AddTemplate1"))
+            try
             {
-                InitializeEditorForAdd();
-
-                IRegion region = regionManager.Regions["TemplateEditorRegion"];
-
-                foreach (UserControl userControl in region.Views)
+                if (e.ButtonClicked.Tag.Equals("AddTemplate1"))
                 {
-                    userControl.Visibility = Visibility.Visible;
-                }
+                    InitializeEditorForAdd();
 
+                    IRegion region = regionManager.Regions["TemplateEditorRegion"];
+
+                    foreach (UserControl userControl in region.Views)
+                    {
+                        userControl.Visibility = Visibility.Visible;
+                    }
+
+                }
+                else if (e.ButtonClicked.Tag.Equals("EditTemplate1"))
+                {
+                    InitializeEditor(EditorMode.Edit, model.SelectedQMXF);
+
+                    IRegion region = regionManager.Regions["TemplateEditorRegion"];
+
+                    foreach (UserControl userControl in region.Views)
+                    {
+                        userControl.Visibility = Visibility.Visible;
+                    }
+                }
             }
-            else if (e.ButtonClicked.Tag.Equals("EditTemplate1"))
+            catch (Exception ex)
             {
-                InitializeEditor(EditorMode.Edit, model.SelectedQMXF);
-
-                IRegion region = regionManager.Regions["TemplateEditorRegion"];
-
-                foreach (UserControl userControl in region.Views)
-                {
-                    userControl.Visibility = Visibility.Visible;
-                }
+               throw ex;
             }
         }
 

@@ -70,22 +70,29 @@ namespace org.iringtools.modules.medatasourceregion
 
     public void SpinnerEventHandler(SpinnerEventArgs e)
     {
-      if (!e.ActiveService.Equals("GetMapping"))
-      {
-        switch (e.Active)
+        try
         {
-          case SpinnerEventType.Started:
-            this.tvwDataDictionary.IsEnabled = false;
-            break;
+            if (!e.ActiveService.Equals("GetMapping"))
+            {
+                switch (e.Active)
+                {
+                    case SpinnerEventType.Started:
+                        this.tvwDataDictionary.IsEnabled = false;
+                        break;
 
-          case SpinnerEventType.Stopped:
-            this.tvwDataDictionary.IsEnabled = true;
-            break;
+                    case SpinnerEventType.Stopped:
+                        this.tvwDataDictionary.IsEnabled = true;
+                        break;
 
-          default:
-            break;
+                    default:
+                        break;
+                }
+            }
         }
-      }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
     }
 
     /// <summary>
@@ -95,21 +102,28 @@ namespace org.iringtools.modules.medatasourceregion
     /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
     void OnDataArrivedHandler(object sender, System.EventArgs e)
     {
-      CompletedEventArgs args = e as CompletedEventArgs;
-      if (args == null)
-        return;
+        try
+        {
+            CompletedEventArgs args = e as CompletedEventArgs;
+            if (args == null)
+                return;
 
-      // handle the GetDataDictionary event 
-      if (args.CheckForType(CompletedEventType.GetDataDictionary))
-      {
-          if (args.Error != null)
-          {
-              MessageBox.Show(args.FriendlyErrorMessage, "Get Data Dictionary Error", MessageBoxButton.OK);
-              return;
-          }
+            // handle the GetDataDictionary event 
+            if (args.CheckForType(CompletedEventType.GetDataDictionary))
+            {
+                if (args.Error != null)
+                {
+                    MessageBox.Show(args.FriendlyErrorMessage, "Get Data Dictionary Error", MessageBoxButton.OK);
+                    return;
+                }
 
-          GetDictionaryHandler(args);
-      }
+                GetDictionaryHandler(args);
+            }
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
     }
 
     /// <summary>
@@ -118,82 +132,99 @@ namespace org.iringtools.modules.medatasourceregion
     /// <param name="dataDictionary">The data dictionary.</param>
     void GetDictionaryHandler(CompletedEventArgs e)
     {
-      // Ensure we have a valid parameter
-      DataDictionary dictionary = e.Data as DataDictionary;
-      if (dictionary == null)
-        return;
+        try
+        {
+            // Ensure we have a valid parameter
+            DataDictionary dictionary = e.Data as DataDictionary;
+            if (dictionary == null)
+                return;
 
-      tvwDataDictionary.Items.Clear();
+            tvwDataDictionary.Items.Clear();
 
-      // Note that we only load first level nodes
-      foreach (org.iringtools.library.DataObject dataObject in dictionary.dataObjects)
-      {
-        tvwDataDictionary.Items.Add(AddNode(dataObject.objectName, dataObject, tvwDataDictionary));
-      }
+            // Note that we only load first level nodes
+            foreach (org.iringtools.library.DataObject dataObject in dictionary.dataObjects)
+            {
+                tvwDataDictionary.Items.Add(AddNode(dataObject.objectName, dataObject, tvwDataDictionary));
+            }
+        }
+        catch (Exception ex)
+        {
+            Error.SetError(ex, "Error occurred... \r\n" + ex.Message + ex.StackTrace, 
+                Category.Exception, Priority.High);
+        }
     }
 
     private DataObjectItem AddNode(string header, object tag, object parent)
     {
-      DataObjectItem node = null;
-
-      // Setup node
-      if (tag is org.iringtools.library.DataObject)
-      {
-        node = new DataObjectItem
+        try
         {
-          Parent = parent,
-          DataObject = (org.iringtools.library.DataObject)tag,
-          DataProperty = null,
-          Tag = tag
-        };
-        node.SetImageSource("object.png");
-        node.SetTextBlockText(header);
-        node.SetTooltipText("Object : " + header);
-      //}
-      //else if (tag is org.iringtools.library.KeyProperty)
-      //{
-      //    node = new DataObjectItem
-      //    {
-      //        Parent = parent,
-      //        DataObject = ((DataObjectItem)parent).DataObject,
-      //        KeyProperty = (KeyProperty)tag,
-      //        Tag = tag
-      //    };
-      }
-      else if (tag is DataProperty)
-      {
-          node = new DataObjectItem
-          {
-              Parent = parent,
-              DataObject = ((DataObjectItem)parent).DataObject,
-              DataProperty = (DataProperty)tag,
-              Tag = tag,
-          };
-          if (tag is KeyProperty)
-          {
-              node.SetImageSource("key.png");
-              node.SetTooltipText("Key Property : " + header);
-          }
-          else
-          {
-              node.SetImageSource("property.png");
-              node.SetTooltipText("Property : " + header);
-          }
-          node.SetTextBlockText(header);
-      }
+            DataObjectItem node = null;
 
-      // Subscribe to it's events
-      //node.Selected += nodeSelectedHandler;
-      node.MouseLeftButtonUp += nodeMouseLeftButtonUpHandler;
-      node.Expanded += nodeExpandedHandler;
+            // Setup node
+            if (tag is org.iringtools.library.DataObject)
+            {
+                node = new DataObjectItem
+                {
+                    Parent = parent,
+                    DataObject = (org.iringtools.library.DataObject)tag,
+                    DataProperty = null,
+                    Tag = tag
+                };
+                node.SetImageSource("object.png");
+                node.SetTextBlockText(header);
+                node.SetTooltipText("Object : " + header);
+                //}
+                //else if (tag is org.iringtools.library.KeyProperty)
+                //{
+                //    node = new DataObjectItem
+                //    {
+                //        Parent = parent,
+                //        DataObject = ((DataObjectItem)parent).DataObject,
+                //        KeyProperty = (KeyProperty)tag,
+                //        Tag = tag
+                //    };
+            }
+            else if (tag is DataProperty)
+            {
+                node = new DataObjectItem
+                {
+                    Parent = parent,
+                    DataObject = ((DataObjectItem)parent).DataObject,
+                    DataProperty = (DataProperty)tag,
+                    Tag = tag,
+                };
+                if (tag is KeyProperty)
+                {
+                    node.SetImageSource("key.png");
+                    node.SetTooltipText("Key Property : " + header);
+                }
+                else
+                {
+                    node.SetImageSource("property.png");
+                    node.SetTooltipText("Property : " + header);
+                }
+                node.SetTextBlockText(header);
+            }
 
-      bool isProcessed = false;
+            // Subscribe to it's events
+            //node.Selected += nodeSelectedHandler;
+            node.MouseLeftButtonUp += nodeMouseLeftButtonUpHandler;
+            node.Expanded += nodeExpandedHandler;
 
-      // Now populate it as applicable
-      if (tag is org.iringtools.library.DataObject)
-        isProcessed = PopulateDataObjectNode(node, (org.iringtools.library.DataObject)tag);
+            bool isProcessed = false;
 
-      return node;
+            // Now populate it as applicable
+            if (tag is org.iringtools.library.DataObject)
+                isProcessed = PopulateDataObjectNode(node, (org.iringtools.library.DataObject)tag);
+
+            return node;
+        }
+        catch (Exception ex)
+        {
+            Error.SetError(ex, "Error occurred... \r\n" + ex.Message + ex.StackTrace, 
+                Category.Exception, Priority.High);
+            return null;
+        }
     }
 
     /// <summary>
@@ -204,38 +235,47 @@ namespace org.iringtools.modules.medatasourceregion
     /// <returns></returns>
     bool PopulateDataObjectNode(DataObjectItem node, org.iringtools.library.DataObject dataObject)
     {
-      DataObjectItem item = null;
-
-      if (dataObject == null)
-        return false;
-        if (dataObject.keyProperties != null && dataObject.keyProperties.Count > 0)
+        try
         {
-            item = new DataObjectItem();
-            item.SetTextBlockText("Stub");
-            item.Tag = dataObject.keyProperties;
-            item.SetTooltipText("Keys : " + dataObject.keyProperties.ToString());
-            node.Items.Add(item);
+            DataObjectItem item = null;
+
+            if (dataObject == null)
+                return false;
+            if (dataObject.keyProperties != null && dataObject.keyProperties.Count > 0)
+            {
+                item = new DataObjectItem();
+                item.SetTextBlockText("Stub");
+                item.Tag = dataObject.keyProperties;
+                item.SetTooltipText("Keys : " + dataObject.keyProperties.ToString());
+                node.Items.Add(item);
+            }
+
+            if (dataObject.dataProperties != null && dataObject.dataProperties.Count > 0)
+            {
+                item = new DataObjectItem();
+                item.SetTextBlockText("Stub");
+                item.Tag = dataObject.dataProperties;
+                item.SetTooltipText("Object : " + dataObject.dataProperties.ToString());
+                node.Items.Add(item);
+            }
+
+            if (dataObject.dataRelationships != null && dataObject.dataRelationships.Count > 0)
+            {
+                item = new DataObjectItem();
+                item.SetTextBlockText("Stub");
+                item.Tag = dataObject.dataRelationships;
+                item.SetTooltipText(dataObject.dataRelationships.ToString());
+                node.Items.Add(item);
+            }
+
+            return true;
         }
-
-      if (dataObject.dataProperties != null && dataObject.dataProperties.Count > 0)
-      {
-        item = new DataObjectItem();
-        item.SetTextBlockText("Stub");
-        item.Tag = dataObject.dataProperties;
-        item.SetTooltipText("Object : " + dataObject.dataProperties.ToString());
-        node.Items.Add(item);
-      }
-
-      if (dataObject.dataRelationships != null && dataObject.dataRelationships.Count > 0)
-      {
-        item = new DataObjectItem();
-        item.SetTextBlockText("Stub");
-        item.Tag = dataObject.dataRelationships;
-        item.SetTooltipText(dataObject.dataRelationships.ToString());
-        node.Items.Add(item);
-      }
-
-      return true;
+        catch (Exception ex)
+        {
+            Error.SetError(ex, "Error occurred... \r\n" + ex.Message + ex.StackTrace, 
+                Category.Exception, Priority.High);
+            return false;
+        }
     }
 
     /// <summary>
@@ -246,9 +286,16 @@ namespace org.iringtools.modules.medatasourceregion
     /// <returns></returns>
     bool PopulateDataObject(DataObjectItem node, org.iringtools.library.DataObject dataObject)
     {
-        DataObjectItem newNode = AddNode(dataObject.objectName, dataObject, node);
-        node.Items.Add(newNode);
-        return true;
+        try
+        {
+            DataObjectItem newNode = AddNode(dataObject.objectName, dataObject, node);
+            node.Items.Add(newNode);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
     }
 
     /// <summary>
@@ -259,9 +306,16 @@ namespace org.iringtools.modules.medatasourceregion
     /// <returns></returns>
     private bool PopulateKeyProperty(DataObjectItem node, KeyProperty keyProperty)
     {
-        DataObjectItem newNode = AddNode(keyProperty.propertyName, keyProperty, node);
-        node.Items.Add(newNode);
-        return true;
+        try
+        {
+            DataObjectItem newNode = AddNode(keyProperty.propertyName, keyProperty, node);
+            node.Items.Add(newNode);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
     }
 
     /// <summary>
@@ -272,9 +326,16 @@ namespace org.iringtools.modules.medatasourceregion
     /// <returns></returns>
     bool PopulateDataProperty(DataObjectItem node, DataProperty dataProperty)
     {
-      DataObjectItem newNode = AddNode(dataProperty.propertyName, dataProperty, node);
-      node.Items.Add(newNode);
-      return true;
+        try
+        {
+            DataObjectItem newNode = AddNode(dataProperty.propertyName, dataProperty, node);
+            node.Items.Add(newNode);
+            return true;
+        }
+        catch (Exception ex)
+        {
+           throw ex;
+        }
     }
 
     /// <summary>
@@ -285,46 +346,61 @@ namespace org.iringtools.modules.medatasourceregion
     /// <returns></returns>
     bool PopulateDataRelationship(DataObjectItem node, DataRelationship dataRelationship)
     {
-      DataObjectItem newNode = AddNode(dataRelationship.relatedObjectName, dataRelationship, node);
-      node.Items.Add(newNode);
-      return true;
+        try
+        {
+            DataObjectItem newNode = AddNode(dataRelationship.relatedObjectName, dataRelationship, node);
+            node.Items.Add(newNode);
+            return true;
+        }
+        catch (Exception ex)
+        {
+           throw ex;
+        }
     }
 
     void nodeMouseLeftButtonUpHandler(object sender, MouseButtonEventArgs e)
     {
-      DataObjectItem selectedNode = sender as DataObjectItem;
+        try
+        {
+            DataObjectItem selectedNode = sender as DataObjectItem;
 
-      if (selectedNode == null)
-        return;
+            if (selectedNode == null)
+                return;
 
-      model.DetailProperties.Clear();
-      model.SelectedDataSourcePropertyName = selectedNode.Header.ToString();
-      model.SelectedDataObject = selectedNode;
+            model.DetailProperties.Clear();
+            model.SelectedDataSourcePropertyName = selectedNode.Header.ToString();
+            model.SelectedDataObject = selectedNode;
 
-      if (selectedNode.Tag is org.iringtools.library.DataObject)
-      {
-        org.iringtools.library.DataObject dataObject = (org.iringtools.library.DataObject)selectedNode.Tag;
-        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("DataObject Name", dataObject.objectName);
-        model.DetailProperties.Add(keyValuePair);
-      }
+            if (selectedNode.Tag is org.iringtools.library.DataObject)
+            {
+                org.iringtools.library.DataObject dataObject = (org.iringtools.library.DataObject)selectedNode.Tag;
+                KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("DataObject Name", dataObject.objectName);
+                model.DetailProperties.Add(keyValuePair);
+            }
 
-      if (selectedNode.Tag is DataProperty)
-      {
-        DataProperty dataProperty = (DataProperty)selectedNode.Tag;
-        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Property Name", dataProperty.propertyName);
-        model.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("Datatype", dataProperty.dataType.ToString());
-        model.DetailProperties.Add(keyValuePair);
-      }
+            if (selectedNode.Tag is DataProperty)
+            {
+                DataProperty dataProperty = (DataProperty)selectedNode.Tag;
+                KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Property Name", dataProperty.propertyName);
+                model.DetailProperties.Add(keyValuePair);
+                keyValuePair = new KeyValuePair<string, string>("Datatype", dataProperty.dataType.ToString());
+                model.DetailProperties.Add(keyValuePair);
+            }
 
-      if (selectedNode.Tag is DataRelationship)
-      {
-        DataRelationship dataRelationship = (DataRelationship)selectedNode.Tag;
-        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Related Object", dataRelationship.relatedObjectName);
-        model.DetailProperties.Add(keyValuePair);
-      }
+            if (selectedNode.Tag is DataRelationship)
+            {
+                DataRelationship dataRelationship = (DataRelationship)selectedNode.Tag;
+                KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Related Object", dataRelationship.relatedObjectName);
+                model.DetailProperties.Add(keyValuePair);
+            }
 
-      e.Handled = true;
+            e.Handled = true;
+        }
+        catch (Exception ex)
+        {
+            Error.SetError(ex, "Error occurred... \r\n" + ex.Message + ex.StackTrace, 
+                Category.Exception, Priority.High);
+        }
     }
 
     /// <summary>
@@ -335,53 +411,61 @@ namespace org.iringtools.modules.medatasourceregion
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     void nodeExpandedHandler(object sender, System.Windows.RoutedEventArgs e)
     {
-      // If the sender is not a valid node return
-      DataObjectItem selectedNode = sender as DataObjectItem;
-      if (selectedNode == null)
-        return;
-      DataObjectItem dataPropertyNode = null;
-      DataObjectItem keyPropertyNode = null;
+        try
+        {
+            // If the sender is not a valid node return
+            DataObjectItem selectedNode = sender as DataObjectItem;
+            if (selectedNode == null)
+                return;
+            DataObjectItem dataPropertyNode = null;
+            DataObjectItem keyPropertyNode = null;
 
-      if (selectedNode.Items.Count > 0)
-      {
-          keyPropertyNode = selectedNode.Items[0] as DataObjectItem;
-          dataPropertyNode = selectedNode.Items[1] as DataObjectItem;
-      }
-//          childNode = selectedNode.Items[0] as DataObjectItem;
+            if (selectedNode.Items.Count > 0)
+            {
+                keyPropertyNode = selectedNode.Items[0] as DataObjectItem;
+                dataPropertyNode = selectedNode.Items[1] as DataObjectItem;
+            }
+            //          childNode = selectedNode.Items[0] as DataObjectItem;
 
-      if (dataPropertyNode == null)
-        return;
+            if (dataPropertyNode == null)
+                return;
 
-      // If expanded then the tree has nodes so we'll grab the
-      // first node and see if it is a stub.  If it isn't then
-      // we have nothing to do
-      if (dataPropertyNode.itemTextBlock.Text != "Stub")
-        return;
+            // If expanded then the tree has nodes so we'll grab the
+            // first node and see if it is a stub.  If it isn't then
+            // we have nothing to do
+            if (dataPropertyNode.itemTextBlock.Text != "Stub")
+                return;
 
-      // Remove the stub
-      selectedNode.Items.Clear();
+            // Remove the stub
+            selectedNode.Items.Clear();
 
-      bool isProcessed = false;
+            bool isProcessed = false;
 
-      // Add the key nodes
+            // Add the key nodes
 
-      if (keyPropertyNode.Tag is List<KeyProperty>)
-          foreach (KeyProperty keyProperty in ((List<KeyProperty>)keyPropertyNode.Tag))
-              isProcessed = PopulateKeyProperty(selectedNode, keyProperty);
-
-       
-      if (dataPropertyNode.Tag is org.iringtools.library.DataObject)
-        isProcessed = PopulateDataObject(selectedNode, (org.iringtools.library.DataObject)dataPropertyNode.Tag);
+            if (keyPropertyNode.Tag is List<KeyProperty>)
+                foreach (KeyProperty keyProperty in ((List<KeyProperty>)keyPropertyNode.Tag))
+                    isProcessed = PopulateKeyProperty(selectedNode, keyProperty);
 
 
-      //add property nodes
-      if (dataPropertyNode.Tag is List<DataProperty>)
-        foreach (DataProperty dataProperty in ((List<DataProperty>)dataPropertyNode.Tag))
-          isProcessed = PopulateDataProperty(selectedNode, dataProperty);
+            if (dataPropertyNode.Tag is org.iringtools.library.DataObject)
+                isProcessed = PopulateDataObject(selectedNode, (org.iringtools.library.DataObject)dataPropertyNode.Tag);
 
-      if (dataPropertyNode.Tag is List<DataRelationship>)
-        foreach (DataRelationship dataRelationship in ((List<DataRelationship>)dataPropertyNode.Tag))
-          isProcessed = PopulateDataRelationship(selectedNode, dataRelationship);
+
+            //add property nodes
+            if (dataPropertyNode.Tag is List<DataProperty>)
+                foreach (DataProperty dataProperty in ((List<DataProperty>)dataPropertyNode.Tag))
+                    isProcessed = PopulateDataProperty(selectedNode, dataProperty);
+
+            if (dataPropertyNode.Tag is List<DataRelationship>)
+                foreach (DataRelationship dataRelationship in ((List<DataRelationship>)dataPropertyNode.Tag))
+                    isProcessed = PopulateDataRelationship(selectedNode, dataRelationship);
+        }
+        catch (Exception ex)
+        {
+            Error.SetError(ex, "Error occurred... \r\n" + ex.Message + ex.StackTrace, 
+                Category.Exception, Priority.High);
+        }
     }
 
   }
