@@ -193,9 +193,6 @@ namespace org.iringtools.modules.contextmenu.contextmenuregion
                 // place the search request in the tag
                 args.ButtonClicked.Tag = ((CustomTreeItem)tvwItem).itemTextBlock.Text;
 
-                // place the search request in the tag
-                args.ButtonClicked.Tag = ((CustomTreeItem)tvwItem).itemTextBlock.Text;
-
                 //ButtonClickHandler(new ButtonEventArgs(this, btnSearch));
 
                 //aggregator.GetEvent<ButtonEvent>().Publish(new ButtonEventArgs() { ButtonClicked = (Button)e.OriginalSource, Sender = sender });
