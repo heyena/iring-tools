@@ -35,6 +35,7 @@ namespace org.iringtools.adapter
     Response CreateRDF(string graphName, List<DataTransferObject> dtoList);
     XElement SerializeDTO(string graphName, List<DataTransferObject> dtoList);
     XElement SerializeXML(string graphName, List<DataTransferObject> dtoList);
+    List<DataTransferObject> DeSerializeXElement(string graphName, XElement dtoElement);
     DataTransferObject Create(string graphName, string identifier);
     List<DataTransferObject> CreateList(string graphName, List<string> identifiers);
     DataTransferObject GetDTO(string graphName, string identifier);

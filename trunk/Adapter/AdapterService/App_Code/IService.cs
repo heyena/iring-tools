@@ -94,6 +94,10 @@ namespace org.iringtools.adapter
     Response Pull(string projectName, string applicationName, Request request);
 
     [OperationContract]
+    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/put")]
+    Response Put(string projectName, string applicationName, string graphName, XElement dtoElement);
+
+    [OperationContract]
     [WebGet(UriTemplate = "/version")]
     string GetVersion();
 
