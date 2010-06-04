@@ -454,6 +454,33 @@ namespace org.iringtools.adapter
         return result;
     }
 
+      /// <summary>
+      /// Puts the DTO into the database.
+      /// </summary>
+      /// <param name="projectName"></param>
+      /// <param name="applicationName"></param>
+      /// <param name="graphName"></param>
+      /// <param name="dtoElement"></param>
+      /// <returns></returns>
+    public Response Put(string projectName, string applicationName, string graphName, XElement dtoElement)
+    {
+        Response response = null;
+        try
+        {
+            InitializeApplication(projectName, applicationName);
+
+            List<DataTransferObject> dtoList = _dtoService.DeSerializeXElement(graphName, dtoElement);
+
+            response = _dtoService.PostList(graphName, dtoList);
+
+        }
+        catch (Exception exception)
+        {
+            throw new Exception("Error in Push: " + exception);
+        }
+        return response;
+    }
+
     /// <summary>
     /// Pulls the data from a triple store into the database.
     /// </summary>

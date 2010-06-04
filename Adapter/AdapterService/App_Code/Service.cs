@@ -168,6 +168,19 @@ namespace org.iringtools.adapter
     }
 
     /// <summary>
+    /// Puts the DTO.
+    /// </summary>
+    /// <param name="projectName"></param>
+    /// <param name="applicationName"></param>
+    /// <param name="graphName"></param>
+    /// <param name="dtoElement"></param>
+    /// <returns></returns>
+    public Response Put(string projectName, string applicationName, string graphName, XElement dtoElement)
+    {
+        return _adapterServiceProvider.Put(projectName, applicationName, graphName, dtoElement);
+    }
+
+    /// <summary>
     /// Generates DTO Layer for an application
     /// </summary>
     /// <returns>Returns the response as success/failure.</returns>
