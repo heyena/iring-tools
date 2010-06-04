@@ -19,7 +19,7 @@
         <Button x:Name="btnAddGraph" Height="24" Width="40" Margin="5,0,0,0" Content="+G" ToolTipService.ToolTip="Add Graph" ToolTipService.Placement="Top" IsEnabled="False"/>
         <Button x:Name="btnAddTemplate" Height="24" Width="40" Margin="5,0,0,0" Content="+T" ToolTipService.ToolTip="Add Template" ToolTipService.Placement="Top" IsEnabled="False"/>
         <Button x:Name="btnMap" Height="24" Width="40" Margin="5,0,0,0" Content="+M" ToolTipService.ToolTip="Add Map" ToolTipService.Placement="Top" IsEnabled="False"/>
-        <Button x:Name="btnMakeClassRole" Height="24" Width="40" Margin="5,0,0,0" Content="+CR" ToolTipService.ToolTip="Make ClassRole" ToolTipService.Placement="Top" IsEnabled="False"/>
+        <!--<Button x:Name="btnMakeClassRole" Height="24" Width="40" Margin="5,0,0,0" Content="+CR" ToolTipService.ToolTip="Make ClassRole" ToolTipService.Placement="Top" IsEnabled="False"/>-->
         <ComboBox x:Name="cbValueList" MinWidth="120" Margin="5,0,0,0" Height="24" IsEnabled="False"/>
         <Button x:Name="btnAddValueList" Height="24" Width="40" Margin="1,0,0,0" Content="+VL" ToolTipService.ToolTip="Add Value List" ToolTipService.Placement="Top" IsEnabled="False"/>
         <Button x:Name="btnDelete" Height="24" Width="40" Margin="5,0,0,0" Content="DEL" ToolTipService.ToolTip="Delete" ToolTipService.Placement="Top" IsEnabled="False"/>
@@ -27,9 +27,16 @@
       </StackPanel>
     </Grid>
 
-    <Grid Grid.Row="1" Margin="4,4,4,4">
-      <controls:TreeView x:Name="tvwMapping" VerticalAlignment="Stretch" Height="Auto" BorderBrush="#8FA0AE" BorderThickness="1"/>
-      <TextBlock Height="29" Margin="0,0,18,23" VerticalAlignment="Bottom" Text="Mapping" FontFamily="Portable User Interface" FontSize="20" FontStyle="Italic" FontWeight="Bold" Opacity="0.1" Width="106" HorizontalAlignment="Right"/>
+    <Grid Grid.Row="1" Margin="4,4,4,4">      
+        <controls:TabControl>
+            <controls:TabItem Header="Graph Maps">
+                <controls:TreeView x:Name="tvwMapping" VerticalAlignment="Stretch" Height="Auto" BorderBrush="#8FA0AE" BorderThickness="1"/>
+            </controls:TabItem>
+            <controls:TabItem Header="Value Maps">                
+                <controls:TreeView x:Name="tvwValues" VerticalAlignment="Stretch" Height="Auto" BorderBrush="#8FA0AE" BorderThickness="1"/>
+            </controls:TabItem>
+        </controls:TabControl>
+        <TextBlock Height="29" Margin="0,0,18,23" VerticalAlignment="Bottom" Text="Mapping" FontFamily="Portable User Interface" FontSize="20" FontStyle="Italic" FontWeight="Bold" Opacity="0.1" Width="106" HorizontalAlignment="Right"/>
     </Grid>
   </Grid>
 </UserControl>
