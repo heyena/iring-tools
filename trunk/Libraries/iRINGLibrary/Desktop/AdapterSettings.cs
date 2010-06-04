@@ -11,7 +11,6 @@ namespace org.iringtools.adapter
 {
   public class AdapterSettings : ServiceSettings
   {
-
     private string _encryptedToken = String.Empty;
     private string _tripleStoreConnectionString = String.Empty;
     private string _interfaceServerUri = String.Empty;
@@ -29,6 +28,7 @@ namespace org.iringtools.adapter
     public AdapterSettings(NameValueCollection AppSettings)
     {
       this.BaseDirectoryPath = AppSettings["BaseDirectoryPath"];
+      this.ExecutingAssemblyName = AppSettings["ExecutingAssemblyName"];
       this.XmlPath = AppSettings["XmlPath"];
       this.EncryptedProxyToken = AppSettings["ProxyCredentialToken"];
       this.ProxyHost = AppSettings["ProxyHost"];

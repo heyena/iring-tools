@@ -25,6 +25,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -88,13 +89,14 @@ namespace org.iringtools.adapter
     private NHibernateDataLayer _dataLayer = null;
     private Mapping _mapping = null;
     private GraphMap _graphMap = null;
+    private Graph _graph = null;  // dotNetRdf graph
     private Dictionary<string, IList<IDataObject>> _dataObjectSet = null; // dictionary of object names and list of data objects
     private Dictionary<string, List<string>> _classIdentifiers = null; // dictionary of class ids and list of identifiers
     private List<Dictionary<string, string>> _dtoList = null;  // dictionary of property xpath and value pairs
     private MicrosoftSqlStoreManager _tripleStore = null;
     private TripleStore _memoryStore = null;    
     private XNamespace _graphNs = String.Empty;
-    private string _dataLayerAssemblyName = String.Empty;
+    private string _dataObjectsAssemblyName = String.Empty;
     private string _dataObjectNs = String.Empty;
 
     [Inject]
@@ -106,8 +108,7 @@ namespace org.iringtools.adapter
       _mapping = Utility.Read<Mapping>(adapterSettings.XmlPath + "Mapping." + scope + ".xml");
       _graphNs = adapterSettings.GraphBaseUri + appSettings.ProjectName + "/" + appSettings.ApplicationName + "#";
       _dataObjectNs = DATALAYER_NS + ".proj_" + scope;
-      //todo: get dataObjectAssembly from datalayer binding configuration
-      _dataLayerAssemblyName = "MappingTest";
+      _dataObjectsAssemblyName = adapterSettings.ExecutingAssemblyName;
       _tripleStore = new MicrosoftSqlStoreManager(adapterSettings.DBServer, adapterSettings.DBname, adapterSettings.DBUser, adapterSettings.DBPassword);
     }
 
@@ -209,7 +210,7 @@ namespace org.iringtools.adapter
 
         // create RDF from graphName
         XElement rdf = GetGraphRdf(graphName);
-
+        
         #region load RDF to graph then save it to triple store
         Uri graphUri = new Uri(_graphMap.baseUri);
         XmlDocument xdoc = new XmlDocument();        
@@ -217,13 +218,13 @@ namespace org.iringtools.adapter
         rdf.RemoveAll();
 
         RdfXmlParser parser = new RdfXmlParser();
-        Graph graph = new Graph();
-        graph.BaseUri = graphUri;
-        parser.Load(graph, xdoc);
+        _graph = new Graph();
+        _graph.BaseUri = graphUri;
+        parser.Load(_graph, xdoc);
         xdoc.RemoveAll();
 
         DeleteGraph(graphUri);
-        _tripleStore.SaveGraph(graph);
+        _tripleStore.SaveGraph(_graph);        
         #endregion
 
         #region report status
@@ -255,124 +256,22 @@ namespace org.iringtools.adapter
         DateTime startTime = DateTime.Now;
         FindGraphMap(graphName);
 
-        #region load graph from triple store
-        Graph graph = new Graph();
-        graph.BaseUri = new Uri(_graphMap.baseUri);
-        _tripleStore.LoadGraph(graph, _graphMap.baseUri);
-        #endregion
+        // load graph from triple store
+        _graph = new Graph();
+        _graph.BaseUri = new Uri(_graphMap.baseUri);
+        _tripleStore.LoadGraph(_graph, _graphMap.baseUri);
 
-        #region create in-memory store
+        // create in-memory store for querying
         _memoryStore = new TripleStore();
-        _memoryStore.Add(graph);
-        graph.Dispose();
-        #endregion
-
-        #region query in-memory store and build data objects from query results
-        int classInstanceCount = ClassInstanceCount();
-        _dataObjectSet = new Dictionary<string, IList<IDataObject>>();
-
-        foreach (var pair in _graphMap.classTemplateListMaps)
-        {
-          ClassMap classMap = pair.Key;
-          List<TemplateMap> templateMaps = pair.Value;
-          int dupTemplatePos = 0;
-
-          foreach (TemplateMap templateMap in templateMaps)
-          {
-            List<RoleMap> propertyMapRoles = new List<RoleMap>();
-            string classRoleId = String.Empty;
-
-            #region find propertyMapRoles and classRoleId
-            foreach (RoleMap roleMap in templateMap.roleMaps)
-            {
-              if (roleMap.type == RoleType.ClassRole)
-              {
-                classRoleId = roleMap.roleId;
-              }
-              else if (roleMap.type == RoleType.Property)
-              {
-                propertyMapRoles.Add(roleMap);
-              }
-            }
-            #endregion
-
-            #region query for property values and save them into dataObjects
-            foreach (RoleMap roleMap in propertyMapRoles)
-            {
-              string query = String.Format(LITERAL_QUERY_TEMPLATE, classMap.classId, classRoleId, templateMap.templateId, roleMap.roleId);
-              object results = _memoryStore.ExecuteQuery(query);
-
-              if (results is SparqlResultSet)
-              {
-                string[] property = roleMap.propertyName.Split('.');
-                string objectName = property[0].Trim();
-                string propertyName = property[1].Trim();
-
-                if (!_dataObjectSet.ContainsKey(objectName))
-                {
-                  _dataObjectSet.Add(objectName, new List<IDataObject>());
-                }
-
-                IList<IDataObject> dataObjects = _dataObjectSet[objectName];
-                if (dataObjects.Count == 0)
-                {
-                  string objectType = _dataObjectNs + "." + objectName + "," + _dataLayerAssemblyName;
-                  dataObjects = _dataLayer.Create(objectType, new string[classInstanceCount]);
-                }
-
-                SparqlResultSet resultSet = (SparqlResultSet)results;
-                if (resultSet.Count > classInstanceCount)
-                {
-                  dupTemplatePos++;
-                }
-
-                int objectIndex = 0;
-                int resultSetIndex = (dupTemplatePos == 0) ? 0 : dupTemplatePos - 1;
-
-                while (resultSetIndex < resultSet.Count)
-                {
-                  string value = Regex.Replace(resultSet[resultSetIndex].ToString(), @".*= ", String.Empty);
-
-                  if (value == RDF_NIL)
-                  {
-                    value = String.Empty;
-                  }
-                  else if (value.Contains("^^"))
-                  {
-                    value = value.Substring(0, value.IndexOf("^^"));
-                  }
-                  else if (!String.IsNullOrEmpty(roleMap.valueList))
-                  {
-                    value = ResolveValueMap(roleMap.valueList, value);
-                  }
-
-                  dataObjects[objectIndex++].SetPropertyValue(propertyName, value);
-
-                  if (dupTemplatePos == 0)
-                    resultSetIndex++;
-                  else if (dupTemplatePos < 3)
-                    resultSetIndex += 2;
-                  else
-                    resultSetIndex += dupTemplatePos;
-                }
-
-                _dataObjectSet[objectName] = dataObjects;
-              }
-              else
-              {
-                throw new Exception("Error querying in-memory triple store.");
-              }
-            }
-            #endregion
-          }
-          #endregion
-        }
+        _memoryStore.Add(_graph);
+        _graph.Dispose();
+        
+        // query in-memory store to fill dataObjectSet
+        FillDataObjectSet();
 
         // post data objects to data layer
         foreach (var pair in _dataObjectSet)
-        {
           response.Append(_dataLayer.Post(pair.Value));
-        }
 
         #region report status
         DateTime endTime = DateTime.Now;
@@ -731,13 +630,13 @@ namespace org.iringtools.adapter
       ClassMap classMap = classTemplateListMap.Key;
       List<TemplateMap> templateMaps = classTemplateListMap.Value;
 
-      classElement.Add(new XAttribute("rdluri", classMap.classId));
+      classElement.Add(new XAttribute("rdlUri", classMap.classId));
       classElement.Add(new XAttribute("id", _classIdentifiers[classMap.classId][dataObjectIndex]));
 
       foreach (TemplateMap templateMap in templateMaps)
       {
         XElement templateElement = new XElement(_graphNs + templateMap.name);
-        templateElement.Add(new XAttribute("rdluri", templateMap.templateId));
+        templateElement.Add(new XAttribute("rdlUri", templateMap.templateId));
         classElement.Add(templateElement);
 
         foreach (RoleMap roleMap in templateMap.roleMaps)
@@ -751,7 +650,7 @@ namespace org.iringtools.adapter
               break;
 
             case RoleType.Reference:
-              roleElement.Add(new XAttribute("rdluri", roleMap.roleId));
+              roleElement.Add(new XAttribute("rdlUri", roleMap.roleId));
               roleElement.Add(new XAttribute("reference", roleMap.value));
               templateElement.Add(roleElement);
 
@@ -765,7 +664,7 @@ namespace org.iringtools.adapter
               break;
 
             case RoleType.FixedValue:
-              roleElement.Add(new XAttribute("rdluri", roleMap.roleId));
+              roleElement.Add(new XAttribute("rdlUri", roleMap.roleId));
               roleElement.Add(new XText(roleMap.value));
               templateElement.Add(roleElement);
               break;
@@ -775,7 +674,7 @@ namespace org.iringtools.adapter
               string objectName = property[0].Trim();
               string propertyName = property[1].Trim();
               IDataObject dataObject = _dataObjectSet[objectName][dataObjectIndex];
-              roleElement.Add(new XAttribute("rdluri", roleMap.roleId));
+              roleElement.Add(new XAttribute("rdlUri", roleMap.roleId));
 
               string value = Convert.ToString(dataObject.GetPropertyValue(propertyName));
               if (!String.IsNullOrEmpty(roleMap.valueList))
@@ -805,7 +704,7 @@ namespace org.iringtools.adapter
       }
     }
 
-    private int ClassInstanceCount()
+    private int GetClassInstanceCount()
     {
       ClassMap classMap = _graphMap.classTemplateListMaps.First().Key;
       string query = String.Format(CLASS_INSTANCE_QUERY_TEMPLATE, classMap.classId);
@@ -818,6 +717,102 @@ namespace org.iringtools.adapter
       }
 
       throw new Exception("Error querying instances of class [" + classMap.name + "].");
+    }
+
+    private void FillDataObjectSet()
+    {
+      int classInstanceCount = GetClassInstanceCount();
+      _dataObjectSet = new Dictionary<string, IList<IDataObject>>();
+        
+      foreach (var pair in _graphMap.classTemplateListMaps)
+      {
+        ClassMap classMap = pair.Key;
+        List<TemplateMap> templateMaps = pair.Value;
+        int dupTemplatePos = 0;
+
+        foreach (TemplateMap templateMap in templateMaps)
+        {
+          List<RoleMap> propertyMapRoles = new List<RoleMap>();
+          string classRoleId = String.Empty;
+
+          #region find propertyMapRoles and classRoleId
+          foreach (RoleMap roleMap in templateMap.roleMaps)
+          {
+            if (roleMap.type == RoleType.ClassRole)
+            {
+              classRoleId = roleMap.roleId;
+            }
+            else if (roleMap.type == RoleType.Property)
+            {
+              propertyMapRoles.Add(roleMap);
+            }
+          }
+          #endregion
+
+          #region query for property values and save them into dataObjects
+          foreach (RoleMap roleMap in propertyMapRoles)
+          {
+            string query = String.Format(LITERAL_QUERY_TEMPLATE, classMap.classId, classRoleId, templateMap.templateId, roleMap.roleId);
+            object results = _memoryStore.ExecuteQuery(query);
+
+            if (results is SparqlResultSet)
+            {
+              string[] property = roleMap.propertyName.Split('.');
+              string objectName = property[0].Trim();
+              string propertyName = property[1].Trim();
+
+              if (!_dataObjectSet.ContainsKey(objectName))
+              {
+                _dataObjectSet.Add(objectName, new List<IDataObject>());
+              }
+
+              IList<IDataObject> dataObjects = _dataObjectSet[objectName];
+              if (dataObjects.Count == 0)
+              {
+                string objectType = _dataObjectNs + "." + objectName + "," + _dataObjectsAssemblyName;
+                dataObjects = _dataLayer.Create(objectType, new string[classInstanceCount]);
+              }
+
+              SparqlResultSet resultSet = (SparqlResultSet)results;
+              if (resultSet.Count > classInstanceCount)
+              {
+                dupTemplatePos++;
+              }
+
+              int objectIndex = 0;
+              int resultSetIndex = (dupTemplatePos == 0) ? 0 : dupTemplatePos - 1;
+
+              while (resultSetIndex < resultSet.Count)
+              {
+                string value = Regex.Replace(resultSet[resultSetIndex].ToString(), @".*= ", String.Empty);
+
+                if (value == RDF_NIL)
+                  value = String.Empty;
+                else if (value.Contains("^^"))
+                  value = value.Substring(0, value.IndexOf("^^"));
+                else if (!String.IsNullOrEmpty(roleMap.valueList))
+                  value = ResolveValueMap(roleMap.valueList, value);
+
+                dataObjects[objectIndex++].SetPropertyValue(propertyName, value);
+
+                if (dupTemplatePos == 0)
+                  resultSetIndex++;
+                else if (dupTemplatePos < 3)
+                  resultSetIndex += 2;
+                else
+                  resultSetIndex += dupTemplatePos;
+              }
+
+              _dataObjectSet[objectName] = dataObjects;
+            }
+            else
+            {
+              throw new Exception("Error querying in-memory triple store.");
+            }
+          }
+          #endregion
+        }
+      }
     }
     #endregion
   }
