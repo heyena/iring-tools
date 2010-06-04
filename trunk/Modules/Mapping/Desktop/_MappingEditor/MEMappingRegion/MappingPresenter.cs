@@ -418,7 +418,7 @@ namespace org.iringtools.modules.memappingregion
                 keyValuePair = new KeyValuePair<string, string>("ValueList", roleMap.valueList);
                 model.DetailProperties.Add(keyValuePair);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 Error.SetError(ex, "Error occurred... \r\n" + ex.Message + ex.StackTrace,
                     Category.Exception, Priority.High);
@@ -629,7 +629,7 @@ namespace org.iringtools.modules.memappingregion
                 }
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 Error.SetError(ex, "Error occurred... \r\n" + ex.Message + ex.StackTrace,
                     Category.Exception, Priority.High);
