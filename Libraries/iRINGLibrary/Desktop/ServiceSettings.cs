@@ -54,6 +54,8 @@ namespace org.iringtools.library
       }
     }
 
+    public string ExecutingAssemblyName { get; set; }
+
     public string XmlPath
     {
       get
