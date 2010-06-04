@@ -118,7 +118,7 @@ namespace org.iringtools.adapter
       try
       {
         FindGraphMap(graphName);
-        LoadDataObjects();
+        LoadDataObjectSet();
 
         _dtoList = new List<Dictionary<string, string>>();
         int maxDataObjectsCount = MaxDataObjectsCount();
@@ -144,7 +144,7 @@ namespace org.iringtools.adapter
       try
       {
         FindGraphMap(graphName);
-        LoadDataObjects();
+        LoadDataObjectSet();
 
         XElement graphElement = new XElement(_graphNs + graphName, new XAttribute(XNamespace.Xmlns + "i", XSI_NS));
         ClassMap classMap = _graphMap.classTemplateListMaps.First().Key;
@@ -165,18 +165,152 @@ namespace org.iringtools.adapter
       }
     }
 
-    public XElement GetGraphRdf(string graphName)
+    public XElement GetRdf(string graphName)
     {
       try
       {
         FindGraphMap(graphName);
-        LoadDataObjects();
-        return GetGraphRdf();
+        LoadDataObjectSet();
+        return GetRdf();
       }
       catch (Exception ex)
       {
         throw ex;
       }      
+    }
+
+    public XElement GetQtxf(string graphName)
+    {
+      string RDF_TYPE_ID = "tpl:R63638239485";
+      string CLASSIFICATION_INSTANCE_ID = "tpl:R55055340393";
+      string CLASS_INSTANCE_ID = "tpl:R99011248051";
+
+      try
+      {
+        FindGraphMap(graphName);
+        LoadDataObjectSet();
+
+        XElement graphElement = new XElement(_graphNs + graphName, new XAttribute(XNamespace.Xmlns + "i", XSI_NS));
+        int maxDataObjectsCount = MaxDataObjectsCount();
+
+        for (int i = 0; i < maxDataObjectsCount; i++)
+        {
+          foreach (var pair in _graphMap.classTemplateListMaps)
+          {
+            ClassMap classMap = pair.Key;
+            List<TemplateMap> templateMaps = pair.Value;
+            string classInstance = _classIdentifiers[classMap.classId][i];
+
+            XElement typeOfThingElement = new XElement(_graphNs + "TypeOfThing");
+            typeOfThingElement.Add(new XAttribute("rdlUri", RDF_TYPE_ID));
+
+            XElement hasClassElement = new XElement(_graphNs + "hasClass");
+            hasClassElement.Add(new XAttribute("rdlUri", CLASSIFICATION_INSTANCE_ID));
+            hasClassElement.Add(new XAttribute("reference", classMap.classId));
+            typeOfThingElement.Add(hasClassElement);
+
+            XElement hasIndividualElement = new XElement(_graphNs + "hasIndividual");
+            hasIndividualElement.Add(new XAttribute("rdlUri", CLASS_INSTANCE_ID));
+            hasIndividualElement.Add(new XAttribute("reference", classInstance));
+            typeOfThingElement.Add(hasIndividualElement);
+            graphElement.Add(typeOfThingElement);
+
+            foreach (TemplateMap templateMap in templateMaps)
+            {
+              XElement templateElement = new XElement(_graphNs + templateMap.name);
+              templateElement.Add(new XAttribute("rdlUri", templateMap.templateId));
+              graphElement.Add(templateElement);
+
+              foreach (RoleMap roleMap in templateMap.roleMaps)
+              {
+                XElement roleElement = new XElement(_graphNs + roleMap.name);
+                roleElement.Add(new XAttribute("rdlUri", roleMap.roleId));
+                templateElement.Add(roleElement);
+
+                switch (roleMap.type)
+                {
+                  case RoleType.ClassRole:
+                    roleElement.Add(new XAttribute("reference", classInstance));
+                    break;
+
+                  case RoleType.Reference:
+                    {
+                      if (roleMap.classMap != null)
+                      {
+                        string identifierValue = String.Empty;
+
+                        foreach (string identifier in roleMap.classMap.identifiers)
+                        {
+                          string[] property = identifier.Split('.');
+                          string objectName = property[0].Trim();
+                          string propertyName = property[1].Trim();
+
+                          IDataObject dataObject = _dataObjectSet[objectName].ElementAt(i);
+
+                          if (dataObject != null)
+                          {
+                            string value = Convert.ToString(dataObject.GetPropertyValue(propertyName));
+
+                            if (identifierValue != String.Empty)
+                              identifierValue += roleMap.classMap.identifierDelimeter;
+
+                            identifierValue += value;
+                          }
+                        }
+
+                        roleElement.Add(new XAttribute("reference", identifierValue));
+                      }
+                      else
+                      {
+                        roleElement.Add(new XAttribute("reference", roleMap.value));
+                      }
+                      break;
+                    }
+
+                  case RoleType.FixedValue:
+                    roleElement.Add(new XAttribute("reference", roleMap.value));
+                    break;
+
+                  case RoleType.Property:
+                    {
+                      string[] property = roleMap.propertyName.Split('.');
+                      string objectName = property[0].Trim();
+                      string propertyName = property[1].Trim();
+
+                      IDataObject dataObject = _dataObjectSet[objectName].ElementAt(i);
+                      string value = Convert.ToString(dataObject.GetPropertyValue(propertyName));
+
+                      if (String.IsNullOrEmpty(roleMap.valueList))
+                      {
+                        if (String.IsNullOrEmpty(value))
+                        {
+                          roleElement.Add(new XAttribute("reference", RDF_NIL));
+                        }
+                        else
+                        {
+                          roleElement.Add(new XText(value));
+                        }
+                      }
+                      else // resolve value list to uri
+                      {
+                        string valueListUri = ResolveValueList(roleMap.valueList, value);
+                        roleElement.Add(new XAttribute("reference", Regex.Replace(valueListUri, ".*#", "rdl:")));
+                      }
+
+                      break;
+                    }
+                }
+              }
+            }
+          }
+        }
+
+        return graphElement;
+      }
+      catch (Exception ex)
+      {
+        throw ex;
+      }
     }
 
     public Response DeleteGraph(string graphName)
@@ -209,7 +343,7 @@ namespace org.iringtools.adapter
         DateTime startTime = DateTime.Now;
 
         // create RDF from graphName
-        XElement rdf = GetGraphRdf(graphName);
+        XElement rdf = GetRdf(graphName);
         
         #region load RDF to graph then save it to triple store
         Uri graphUri = new Uri(_graphMap.baseUri);
@@ -345,7 +479,7 @@ namespace org.iringtools.adapter
       throw new Exception("Graph [" + graphName + "] does not exist.");
     }
 
-    private void LoadDataObjects()
+    private void LoadDataObjectSet()
     {
       _dataObjectSet = new Dictionary<string, IList<IDataObject>>();
 
@@ -442,7 +576,7 @@ namespace org.iringtools.adapter
       return maxCount;
     }
 
-    private XElement GetGraphRdf()
+    private XElement GetRdf()
     {
       XElement graphElement = new XElement(RDF_NS + "RDF",
         new XAttribute(XNamespace.Xmlns + "rdf", RDF_NS),
@@ -475,8 +609,7 @@ namespace org.iringtools.adapter
     private XElement CreateRdfClassElement(string classId, string classInstance)
     {
       return new XElement(OWL_THING, new XAttribute(RDF_ABOUT, classInstance),
-      new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, RDL_NS.NamespaceName + classId))
-      );
+        new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, RDL_NS.NamespaceName + classId)));
     }
 
     private XElement CreateRdfTemplateElement(TemplateMap templateMap, string classInstance, int dataObjectIndex)
