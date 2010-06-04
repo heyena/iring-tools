@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
@@ -74,44 +75,65 @@ namespace org.iringtools.modules.contextmenu.contextmenuregion
           IEventAggregator aggregator)
             : base(view, model)
         {
-            this.aggregator = aggregator;
-            this.model = model;
+            try
+            {
+                this.aggregator = aggregator;
+                this.model = model;
 
-            btnAddClass.Click += (object sender, RoutedEventArgs e)
-            => { buttonAddClassHandler(sender, e); };
+                btnAddClass.Click += (object sender, RoutedEventArgs e)
+                => { buttonAddClassHandler(sender, e); };
 
-            btnEditClass.Click += (object sender, RoutedEventArgs e)
-            => { buttonEditClassHandler(sender, e); };
+                btnEditClass.Click += (object sender, RoutedEventArgs e)
+                => { buttonEditClassHandler(sender, e); };
 
-            btnAddTemplate.Click += (object sender, RoutedEventArgs e)
-            => { buttonAddTemplateHandler(sender, e); };
+                btnAddTemplate.Click += (object sender, RoutedEventArgs e)
+                => { buttonAddTemplateHandler(sender, e); };
 
-            btnEditTemplate.Click += (object sender, RoutedEventArgs e)
-            => { buttonEditTemplateHandler(sender, e); };
+                btnEditTemplate.Click += (object sender, RoutedEventArgs e)
+                => { buttonEditTemplateHandler(sender, e); };
 
-            btnPromoteItem.Click += (object sender, RoutedEventArgs e)
-            => { buttonPromoteItemHandler(sender, e); };
+                btnPromoteItem.Click += (object sender, RoutedEventArgs e)
+                => { buttonPromoteItemHandler(sender, e); };
 
-            aggregator.GetEvent<NavigationEvent>().Subscribe(NavigationEventHandler);
-            btnEditClass.IsEnabled = false;
-            btnEditTemplate.IsEnabled = false;
+                aggregator.GetEvent<NavigationEvent>().Subscribe(NavigationEventHandler);
+                btnEditClass.IsEnabled = false;
+                btnEditTemplate.IsEnabled = false;
 
-            aggregator.GetEvent<SpinnerEvent>().Subscribe(SpinnerEventHandler);
+                aggregator.GetEvent<SpinnerEvent>().Subscribe(SpinnerEventHandler);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
 
         }
         CustomTreeItem tvwItem = new CustomTreeItem();
         public void NavigationEventHandler(NavigationEventArgs e)
         {
-            tvwItem = e.SelectedNode;
+            try
+            {
+                tvwItem = e.SelectedNode;
 
-            btnEditClass.IsEnabled = tvwItem.GetType().Equals(typeof(ClassTreeItem));
-            btnEditTemplate.IsEnabled = tvwItem.GetType().Equals(typeof(TemplateTreeItem));
+                btnEditClass.IsEnabled = tvwItem.GetType().Equals(typeof(ClassTreeItem));
+                btnEditTemplate.IsEnabled = tvwItem.GetType().Equals(typeof(TemplateTreeItem));
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
 
         }
 
         void buttonAddClassHandler(object sender, System.Windows.RoutedEventArgs e)
         {
-            aggregator.GetEvent<ButtonEvent>().Publish(new ButtonEventArgs() { ButtonClicked = (Button)e.OriginalSource, Sender = sender });
+            try
+            {
+                aggregator.GetEvent<ButtonEvent>().Publish(new ButtonEventArgs() { ButtonClicked = (Button)e.OriginalSource, Sender = sender });
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         void buttonEditClassHandler(object sender, System.Windows.RoutedEventArgs e)
@@ -122,7 +144,10 @@ namespace org.iringtools.modules.contextmenu.contextmenuregion
             {
                 classDefinition = model.SelectedQMXF.classDefinitions.FirstOrDefault<org.ids_adi.qmxf.ClassDefinition>();
             }
-            catch { }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
 
             if (classDefinition != null)
             {
@@ -132,72 +157,103 @@ namespace org.iringtools.modules.contextmenu.contextmenuregion
 
         void buttonAddTemplateHandler(object sender, System.Windows.RoutedEventArgs e)
         {
-            aggregator.GetEvent<ButtonEvent>().Publish(new ButtonEventArgs() { ButtonClicked = (Button)e.OriginalSource, Sender = sender });
+            try
+            {
+                aggregator.GetEvent<ButtonEvent>().Publish(new ButtonEventArgs() { ButtonClicked = (Button)e.OriginalSource, Sender = sender });
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         void buttonEditTemplateHandler(object sender, System.Windows.RoutedEventArgs e)
         {
-            aggregator.GetEvent<ButtonEvent>().Publish(new ButtonEventArgs() { ButtonClicked = (Button)e.OriginalSource, Sender = sender });
+            try
+            {
+                aggregator.GetEvent<ButtonEvent>().Publish(new ButtonEventArgs() { ButtonClicked = (Button)e.OriginalSource, Sender = sender });
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
 
         void buttonPromoteItemHandler(object sender, System.Windows.RoutedEventArgs e)
         {
-            ButtonEventArgs args = new ButtonEventArgs
+            try
             {
-                ButtonClicked = btnPromoteItem,
-                Sender = this
-            };
+                ButtonEventArgs args = new ButtonEventArgs
+                {
+                    ButtonClicked = btnPromoteItem,
+                    Sender = this
+                }; 
+ 
+                // place the search request in the tag
+                args.ButtonClicked.Tag = ((CustomTreeItem)tvwItem).itemTextBlock.Text;
 
-            // place the search request in the tag
-            args.ButtonClicked.Tag = ((CustomTreeItem)tvwItem).itemTextBlock.Text;
+                // place the search request in the tag
+                args.ButtonClicked.Tag = ((CustomTreeItem)tvwItem).itemTextBlock.Text;
 
-            //ButtonClickHandler(new ButtonEventArgs(this, btnSearch));
+                //ButtonClickHandler(new ButtonEventArgs(this, btnSearch));
 
-            //aggregator.GetEvent<ButtonEvent>().Publish(new ButtonEventArgs() { ButtonClicked = (Button)e.OriginalSource, Sender = sender });
-            aggregator.GetEvent<ButtonEvent>().Publish(args);
+                //aggregator.GetEvent<ButtonEvent>().Publish(new ButtonEventArgs() { ButtonClicked = (Button)e.OriginalSource, Sender = sender });
+                aggregator.GetEvent<ButtonEvent>().Publish(args);
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public void SpinnerEventHandler(SpinnerEventArgs e)
         {
-            switch (e.Active)
+            try
             {
-                case SpinnerEventType.Started:
+                switch (e.Active)
+                {
+                    case SpinnerEventType.Started:
 
-                    btnPromoteItem.IsEnabled = false;
+                        btnPromoteItem.IsEnabled = false;
 
-                    btnAddClass.IsEnabled = false;
-                    btnEditClass.IsEnabled = false;
+                        btnAddClass.IsEnabled = false;
+                        btnEditClass.IsEnabled = false;
 
-                    btnAddTemplate.IsEnabled = false;
-                    btnEditTemplate.IsEnabled = false;
+                        btnAddTemplate.IsEnabled = false;
+                        btnEditTemplate.IsEnabled = false;
 
-                    break;
-                //TODO need a bit of work here
-                case SpinnerEventType.Stopped:
+                        break;
+                    //TODO need a bit of work here
+                    case SpinnerEventType.Stopped:
 
-                    switch (e.ActiveService)
-                    {
-                        case "Search":
-                            btnAddClass.IsEnabled = true;
-                            btnAddTemplate.IsEnabled = true;
-                            break;
+                        switch (e.ActiveService)
+                        {
+                            case "Search":
+                                btnAddClass.IsEnabled = true;
+                                btnAddTemplate.IsEnabled = true;
+                                break;
 
-                        default:
-                            btnPromoteItem.IsEnabled = true;
-                            btnAddClass.IsEnabled = true;
-                            btnAddTemplate.IsEnabled = true;
-                            if (tvwItem != null)
-                            {
-                                btnEditClass.IsEnabled = tvwItem.GetType().Equals(typeof(ClassTreeItem));
-                                btnEditTemplate.IsEnabled = tvwItem.GetType().Equals(typeof(TemplateTreeItem));
-                            }
-                            break;
-                    }
-                    break;
+                            default:
+                                btnPromoteItem.IsEnabled = true;
+                                btnAddClass.IsEnabled = true;
+                                btnAddTemplate.IsEnabled = true;
+                                if (tvwItem != null)
+                                {
+                                    btnEditClass.IsEnabled = tvwItem.GetType().Equals(typeof(ClassTreeItem));
+                                    btnEditTemplate.IsEnabled = tvwItem.GetType().Equals(typeof(TemplateTreeItem));
+                                }
+                                break;
+                        }
+                        break;
 
-                default:
-                    break;
+                    default:
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
     }

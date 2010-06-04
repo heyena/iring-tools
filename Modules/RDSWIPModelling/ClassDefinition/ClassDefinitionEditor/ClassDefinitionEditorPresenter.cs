@@ -191,75 +191,105 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
 
         private void repositorySelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ComboBox cb = sender as ComboBox;
-            ComboBoxItem cbi = cb.SelectedItem as ComboBoxItem;
+            try
+            {
+                ComboBox cb = sender as ComboBox;
+                ComboBoxItem cbi = cb.SelectedItem as ComboBoxItem;
 
-            if (this.model.SelectedQMXF == null)
-                this.model.SelectedQMXF = new QMXF();
-            Repository rep = cbi.Tag as Repository;
-            if (rep.isReadOnly == true)
-            {
-                btnOK.IsEnabled = false;
-                btnApply.IsEnabled = false;
+                if (this.model.SelectedQMXF == null)
+                    this.model.SelectedQMXF = new QMXF();
+                Repository rep = cbi.Tag as Repository;
+                if (rep.isReadOnly == true)
+                {
+                    btnOK.IsEnabled = false;
+                    btnApply.IsEnabled = false;
+                }
+                else
+                {
+                    btnOK.IsEnabled = true;
+                    btnApply.IsEnabled = true;
+                }
+
+                this.model.SelectedQMXF.targetRepository = rep.uri;   
             }
-            else
+            catch (Exception ex)
             {
-                btnOK.IsEnabled = true;
-                btnApply.IsEnabled = true;
-            }
+                Error.SetError(ex);
+            }          
             
-            this.model.SelectedQMXF.targetRepository = rep.uri;
         }
 
         public void InitializeEditorForAdd()
         {
-            EditorMode editorMode = EditorMode.Add;
-            InitializeEditor(editorMode, null);
+            try
+            {
+                EditorMode editorMode = EditorMode.Add;
+                InitializeEditor(editorMode, null);
+            }
+            catch (Exception ex)
+            {
+               throw ex;
+            }
         }
 
         public void InitializeEditor(EditorMode editorMode, QMXF qmxf)
         {
-            _editorMode = editorMode;
-            _classBLL = new ClassDefinitionBLL(qmxf);
-            
-            TextCtrl("className").DataContext = _classBLL;
-            TextCtrl("entityType").DataContext = _classBLL;
-            TextCtrl("description").DataContext = _classBLL;
+            try
+            {
+                _editorMode = editorMode;
+                _classBLL = new ClassDefinitionBLL(qmxf);
 
-            TextCtrl("authority").DataContext = _classBLL;
-            TextCtrl("recorded").DataContext = _classBLL;
-            TextCtrl("dateFrom").DataContext = _classBLL;
-            TextCtrl("dateTo").DataContext = _classBLL;
+                TextCtrl("className").DataContext = _classBLL;
+                TextCtrl("entityType").DataContext = _classBLL;
+                TextCtrl("description").DataContext = _classBLL;
 
-            ListBoxCtrl("specialization").DataContext = _classBLL;
-            ListBoxCtrl("classification").DataContext = _classBLL;
+                TextCtrl("authority").DataContext = _classBLL;
+                TextCtrl("recorded").DataContext = _classBLL;
+                TextCtrl("dateFrom").DataContext = _classBLL;
+                TextCtrl("dateTo").DataContext = _classBLL;
+
+                ListBoxCtrl("specialization").DataContext = _classBLL;
+                ListBoxCtrl("classification").DataContext = _classBLL;
+            }
+            catch (Exception ex)
+            {
+                Error.SetError(ex);
+            }
         }
 
         public void showClassEditorHandler(ButtonEventArgs e)
         {
-            if (e.ButtonClicked.Tag.Equals("AddClass1"))
+            try
             {
-
-                InitializeEditorForAdd();
-                
-                IRegion region = regionManager.Regions["ClassEditorRegion"];
-
-                foreach (UserControl userControl in region.Views)
+                if (e.ButtonClicked.Tag.Equals("AddClass1"))
                 {
-                    userControl.Visibility = Visibility.Visible;
-                }
 
+                    InitializeEditorForAdd();
+
+                    IRegion region = regionManager.Regions["ClassEditorRegion"];
+
+                    foreach (UserControl userControl in region.Views)
+                    {
+                        userControl.Visibility = Visibility.Visible;
+                    }
+
+                }
+                else if (e.ButtonClicked.Tag.Equals("EditClass1"))
+                {
+                    InitializeEditor(EditorMode.Edit, model.SelectedQMXF);
+
+                    IRegion region = regionManager.Regions["ClassEditorRegion"];
+
+                    foreach (UserControl userControl in region.Views)
+                    {
+                        userControl.Visibility = Visibility.Visible;
+                    }
+                }
             }
-            else if (e.ButtonClicked.Tag.Equals("EditClass1"))
+            catch (Exception ex)
             {
-                InitializeEditor(EditorMode.Edit, model.SelectedQMXF);
-
-                IRegion region = regionManager.Regions["ClassEditorRegion"];
-
-                foreach (UserControl userControl in region.Views)
-                {
-                    userControl.Visibility = Visibility.Visible;
-                }
+                
+                throw ex;
             }
         }
 
@@ -340,14 +370,28 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
 
         void removeSpecializationClickHandler(object sender, System.Windows.RoutedEventArgs e)
         {
-            ListBox lstCtrl = ListBoxCtrl("specialization");
-            _classBLL.Specialization.Remove((ListBoxItem)lstCtrl.SelectedItem);
+            try
+            {
+                ListBox lstCtrl = ListBoxCtrl("specialization");
+                _classBLL.Specialization.Remove((ListBoxItem)lstCtrl.SelectedItem);
+            }
+            catch (Exception ex)
+            {
+                Error.SetError(ex);
+            }
         }
 
         void removeClassificationClickHandler(object sender, System.Windows.RoutedEventArgs e)
         {
-            ListBox lstCtrl = ListBoxCtrl("classification");
-            _classBLL.Classification.Remove((ListBoxItem)lstCtrl.SelectedItem);
+            try
+            {
+                ListBox lstCtrl = ListBoxCtrl("classification");
+                _classBLL.Classification.Remove((ListBoxItem)lstCtrl.SelectedItem);
+            }
+            catch (Exception ex)
+            {
+                Error.SetError(ex);
+            }
         }
     }
 }

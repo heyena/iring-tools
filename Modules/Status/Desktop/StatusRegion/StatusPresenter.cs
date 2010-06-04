@@ -94,97 +94,104 @@ namespace org.iringtools.modules.status.statusregion
 
     public void NavigationEventHandler(NavigationEventArgs e)
     {
-      Logger.Log(string.Format("{0} handled {1} event", ModuleFullName, e.DetailProcess),
-          Category.Debug, Priority.None);
-
-      //if (e.DetailProcess == DetailType.DataSource && e.SelectedNode.Tag is DataObject)
-      //{
-      //    StatusEventHandler(new StatusEventArgs
-      //    {
-      //        Message = string.Format("{0}", ""),                   
-      //        StatusPanel = StatusType.Left
-      //    });
-      //}
-
-      if (e.DetailProcess == DetailType.Mapping && e.SelectedNode.Tag is GraphMap)
-      {
-        GraphMap selectedMappingNode = (GraphMap)e.SelectedNode.Tag;
-        StatusEventHandler(new StatusEventArgs
+        try
         {
-          Message = string.Format("Adapter Service: {0}", adapterProxy.GetAdapterServiceUri),
-          StatusPanel = StatusType.Left
-        });
-      }
-      else if (e.DetailProcess == DetailType.Mapping && e.SelectedNode.Tag is TemplateMap)
-      {
-        TemplateMap selectedMappingNode = (TemplateMap)e.SelectedNode.Tag;
-        StatusEventHandler(new StatusEventArgs
-        {
-          Message = string.Format("Adapter Service: {0}", adapterProxy.GetAdapterServiceUri),
-          StatusPanel = StatusType.Left
-        });
-      }
-      else if (e.DetailProcess == DetailType.Mapping && e.SelectedNode.Tag is RoleMap)
-      {
-        RoleMap selectedMappingNode = (RoleMap)e.SelectedNode.Tag;
-        StatusEventHandler(new StatusEventArgs
-        {
-          Message = string.Format("Adapter Service: {0}", adapterProxy.GetAdapterServiceUri),
-          StatusPanel = StatusType.Left
-        });
-      }
+            Logger.Log(string.Format("{0} handled {1} event", ModuleFullName, e.DetailProcess),
+              Category.Debug, Priority.None);
 
-      if ((e.DetailProcess == DetailType.NotDefined || e.DetailProcess == DetailType.InformationModel))
-      {
-        if (e.SelectedNode.Tag is Entity)
-        {
-          //Entity selectedInformationModelNode = (Entity)e.SelectedNode.Tag;
+            //if (e.DetailProcess == DetailType.DataSource && e.SelectedNode.Tag is DataObject)
+            //{
+            //    StatusEventHandler(new StatusEventArgs
+            //    {
+            //        Message = string.Format("{0}", ""),                   
+            //        StatusPanel = StatusType.Left
+            //    });
+            //}
 
-          //StatusEventHandler(new StatusEventArgs
-          //{
-          //    Message = string.Format("{0}", selectedInformationModelNode.uri),
-          //    StatusPanel = StatusType.Right
-          //});
+            if (e.DetailProcess == DetailType.Mapping && e.SelectedNode.Tag is GraphMap)
+            {
+                GraphMap selectedMappingNode = (GraphMap)e.SelectedNode.Tag;
+                StatusEventHandler(new StatusEventArgs
+                {
+                    Message = string.Format("Adapter Service: {0}", adapterProxy.GetAdapterServiceUri),
+                    StatusPanel = StatusType.Left
+                });
+            }
+            else if (e.DetailProcess == DetailType.Mapping && e.SelectedNode.Tag is TemplateMap)
+            {
+                TemplateMap selectedMappingNode = (TemplateMap)e.SelectedNode.Tag;
+                StatusEventHandler(new StatusEventArgs
+                {
+                    Message = string.Format("Adapter Service: {0}", adapterProxy.GetAdapterServiceUri),
+                    StatusPanel = StatusType.Left
+                });
+            }
+            else if (e.DetailProcess == DetailType.Mapping && e.SelectedNode.Tag is RoleMap)
+            {
+                RoleMap selectedMappingNode = (RoleMap)e.SelectedNode.Tag;
+                StatusEventHandler(new StatusEventArgs
+                {
+                    Message = string.Format("Adapter Service: {0}", adapterProxy.GetAdapterServiceUri),
+                    StatusPanel = StatusType.Left
+                });
+            }
 
-          StatusEventHandler(new StatusEventArgs
-          {
-            Message = string.Format("Reference Data Service: {0}", referenceDataService.GetReferenceDataServiceUri),
-            StatusPanel = StatusType.Left
-          });
+            if ((e.DetailProcess == DetailType.NotDefined || e.DetailProcess == DetailType.InformationModel))
+            {
+                if (e.SelectedNode.Tag is Entity)
+                {
+                    //Entity selectedInformationModelNode = (Entity)e.SelectedNode.Tag;
+
+                    //StatusEventHandler(new StatusEventArgs
+                    //{
+                    //    Message = string.Format("{0}", selectedInformationModelNode.uri),
+                    //    StatusPanel = StatusType.Right
+                    //});
+
+                    StatusEventHandler(new StatusEventArgs
+                    {
+                        Message = string.Format("Reference Data Service: {0}", referenceDataService.GetReferenceDataServiceUri),
+                        StatusPanel = StatusType.Left
+                    });
+                }
+                else if (e.SelectedNode.Tag is ClassDefinition)
+                {
+                    //ClassDefinition selectedInformationModelNode = (ClassDefinition)e.SelectedNode.Tag;
+
+                    //StatusEventHandler(new StatusEventArgs
+                    //{
+                    //  Message = string.Format("{0}", selectedInformationModelNode.identifier),
+                    //  StatusPanel = StatusType.Right
+                    //});
+
+                    StatusEventHandler(new StatusEventArgs
+                    {
+                        Message = string.Format("Reference Data Service: {0}", referenceDataService.GetReferenceDataServiceUri),
+                        StatusPanel = StatusType.Left
+                    });
+                }
+                else if (e.SelectedNode.Tag is TemplateQualification)
+                {
+                    //TemplateQualification selectedInformationModelNode = (TemplateQualification)e.SelectedNode.Tag;
+
+                    //StatusEventHandler(new StatusEventArgs
+                    //{
+                    //    Message = string.Format("{0}", selectedInformationModelNode.identifier),
+                    //    StatusPanel = StatusType.Right
+                    //});
+
+                    StatusEventHandler(new StatusEventArgs
+                    {
+                        Message = string.Format("Reference Data Service: {0}", referenceDataService.GetReferenceDataServiceUri),
+                        StatusPanel = StatusType.Left
+                    });
+                }
+            }
         }
-        else if (e.SelectedNode.Tag is ClassDefinition)
+        catch (Exception ex)
         {
-          //ClassDefinition selectedInformationModelNode = (ClassDefinition)e.SelectedNode.Tag;
-
-          //StatusEventHandler(new StatusEventArgs
-          //{
-          //  Message = string.Format("{0}", selectedInformationModelNode.identifier),
-          //  StatusPanel = StatusType.Right
-          //});
-
-          StatusEventHandler(new StatusEventArgs
-          {
-            Message = string.Format("Reference Data Service: {0}", referenceDataService.GetReferenceDataServiceUri),
-            StatusPanel = StatusType.Left
-          });
+            Error.SetError(ex);
         }
-        else if (e.SelectedNode.Tag is TemplateQualification)
-        {
-          //TemplateQualification selectedInformationModelNode = (TemplateQualification)e.SelectedNode.Tag;
-
-          //StatusEventHandler(new StatusEventArgs
-          //{
-          //    Message = string.Format("{0}", selectedInformationModelNode.identifier),
-          //    StatusPanel = StatusType.Right
-          //});
-
-          StatusEventHandler(new StatusEventArgs
-          {
-            Message = string.Format("Reference Data Service: {0}", referenceDataService.GetReferenceDataServiceUri),
-            StatusPanel = StatusType.Left
-          });
-        }
-      }
     }
 
 
@@ -195,18 +202,25 @@ namespace org.iringtools.modules.status.statusregion
     /// <param name="e"></param>
     public override void OnModelPropertyChange(object sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-      switch (e.PropertyName)
-      {
-        case "CurrentModelNode":
-          // Show selected model node in middle status area
-          StatusEventHandler(new StatusEventArgs
-          {
-            Message = "Selected: " + model.SelectedIMLabel
-          });
-          break;
+        try
+        {
+            switch (e.PropertyName)
+            {
+                case "CurrentModelNode":
+                    // Show selected model node in middle status area
+                    StatusEventHandler(new StatusEventArgs
+                    {
+                        Message = "Selected: " + model.SelectedIMLabel
+                    });
+                    break;
 
 
-      }
+            }
+        }
+        catch (Exception ex)
+        {
+            Error.SetError(ex);
+        }
     }
 
   }

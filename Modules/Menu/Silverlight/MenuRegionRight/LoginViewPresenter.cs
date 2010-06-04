@@ -72,40 +72,48 @@ namespace org.iringtools.modules.menu.menuregionright
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     void buttonClickHandler(object sender, RoutedEventArgs e)
     {
-      Button button = sender as Button;
+        try
+        {
+            Button button = sender as Button;
 
 
-      switch (button.Name)
-      {
-        case "btnLogin":
-          // Get the password and set the lblLogin value
-          PasswordBox passResults = PasswordBoxCtrl("txtPassword");
-          TextBlockCtrl("lblLoginName").Text = TextCtrl("txtLogin").Text;
-          bool isValid = passResults.Password.Equals("iring");
+            switch (button.Name)
+            {
+                case "btnLogin":
+                    // Get the password and set the lblLogin value
+                    PasswordBox passResults = PasswordBoxCtrl("txtPassword");
+                    TextBlockCtrl("lblLoginName").Text = TextCtrl("txtLogin").Text;
+                    bool isValid = passResults.Password.Equals("iring");
 
-          // Set row definitions based on status
-          rdLogin.Height = new GridLength(isValid ? 1 : 20);
-          rdLogout.Height = new GridLength(isValid ? 22 : 0);
+                    // Set row definitions based on status
+                    rdLogin.Height = new GridLength(isValid ? 1 : 20);
+                    rdLogout.Height = new GridLength(isValid ? 22 : 0);
 
 
-          //if (!isValid)
-          //  aggregator.GetEvent<StatusEvent>().Publish(new StatusEventArgs
-          //  {
-          //    Message = "Password is iring ",
-          //  });
-          //else
-          //  aggregator.GetEvent<StatusEvent>().Publish(new StatusEventArgs
-          //  {
-          //    Message = "logged in as " + TextCtrl("txtLogin").Text,
-          //    StatusPanel = StatusType.Right
-          //  });
-          break;
+                    //if (!isValid)
+                    //  aggregator.GetEvent<StatusEvent>().Publish(new StatusEventArgs
+                    //  {
+                    //    Message = "Password is iring ",
+                    //  });
+                    //else
+                    //  aggregator.GetEvent<StatusEvent>().Publish(new StatusEventArgs
+                    //  {
+                    //    Message = "logged in as " + TextCtrl("txtLogin").Text,
+                    //    StatusPanel = StatusType.Right
+                    //  });
+                    break;
 
-        case "btnLogout":
-          rdLogin.Height = new GridLength(20);
-          rdLogout.Height = new GridLength(0);
-          break;
-      }
+                case "btnLogout":
+                    rdLogin.Height = new GridLength(20);
+                    rdLogout.Height = new GridLength(0);
+                    break;
+            }
+        }
+        catch (System.Exception ex)
+        {
+            Error.SetError(ex, "Error occurred... \r\n" + ex.Message + ex.StackTrace,
+                Category.Exception, Priority.High);
+        }
     }
 
   }
