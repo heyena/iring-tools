@@ -34,332 +34,312 @@ using System.Runtime.Serialization;
 
 namespace org.iringtools.library
 {
-  [DataContract]
-  public class Mapping
-  {
-    public Mapping()
+    [DataContract]
+    public class Mapping
     {
-      graphMaps = new List<GraphMap>();
-      valueMaps = new List<ValueMap>();
-    }
-
-    [DataMember(EmitDefaultValue = false, Order = 0)]
-    public List<GraphMap> graphMaps { get; set; }
-
-    [DataMember(EmitDefaultValue = false, Order = 1)]
-    public List<ValueMap> valueMaps { get; set; }
-
-    [DataMember(EmitDefaultValue = false, Order = 2)]
-    public string version { get; set; }
-  }
-
-  [DataContract]
-  public class GraphMap
-  {
-    public GraphMap()
-    {
-      classTemplateListMaps = new Dictionary<ClassMap, List<TemplateMap>>();
-      dataObjectMaps = new List<DataObjectMap>();
-    }
-
-    [DataMember(EmitDefaultValue = false, Order = 0)]
-    public string name { get; set; }
-
-    [DataMember(EmitDefaultValue = false, Order = 1)]
-    public string baseUri { get; set; }
-
-    [DataMember(EmitDefaultValue = false, Order = 2)]
-    public Dictionary<ClassMap, List<TemplateMap>> classTemplateListMaps { get; set; }
-
-    [DataMember(EmitDefaultValue = false, Order = 3)]
-    public List<DataObjectMap> dataObjectMaps { get; set; } // only top level data objects
-
-    public KeyValuePair<ClassMap, List<TemplateMap>> GetClassTemplateListMap(string classId)
-    {
-      foreach (var pair in classTemplateListMaps)
-      {
-        if (pair.Key.classId == classId)
-          return pair;
-      }
-
-      return default(KeyValuePair<ClassMap, List<TemplateMap>>);
-    }
-
-    // roleMap is not required for root node
-    public void AddClassMap(RoleMap roleMap, ClassMap classMap)
-    {
-      KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = GetClassTemplateListMap(classMap.classId);
-
-      if (classTemplateListMap.Key == null)        
-      {
-        classTemplateListMaps.Add(classMap, new List<TemplateMap>());
-
-        if (roleMap != null)
-          roleMap.classMap = classMap;
-      }
-    }
-
-    // classMap can have more than one templateMaps of the same templateIds
-    public void AddTemplateMap(ClassMap classMap, TemplateMap templateMap)
-    {
-      AddClassMap(null, classMap);
-      List<TemplateMap> templateMaps = classTemplateListMaps[classMap];
-      templateMaps.Add(templateMap);
-    }
-
-    public void DeleteClassMap(string classId)
-    {
-      KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = GetClassTemplateListMap(classId);
-
-      if (classTemplateListMap.Key == null)        
-      {
-        List<TemplateMap> templateMaps = classTemplateListMap.Value;
-
-        foreach (TemplateMap templateMap in templateMaps)
+        public Mapping()
         {
-          foreach (RoleMap roleMap in templateMap.roleMaps)
-          {
-            if (roleMap.classMap != null)
-            {
-              DeleteClassMap(roleMap.classMap.classId);
-            }
-
-            templateMap.roleMaps.Remove(roleMap);
-          }
-
-          templateMaps.Remove(templateMap);
+            graphMaps = new List<GraphMap>();
+            valueMaps = new List<ValueMap>();
         }
 
-        classTemplateListMaps.Remove(classTemplateListMap.Key);        
-      }
+        [DataMember(EmitDefaultValue = false, Order = 0)]
+        public List<GraphMap> graphMaps { get; set; }
+
+        [DataMember(EmitDefaultValue = false, Order = 1)]
+        public List<ValueMap> valueMaps { get; set; }
+
+        [DataMember(EmitDefaultValue = false, Order = 2)]
+        public string version { get; set; }
     }
 
-    public void DeleteTemplateMap(string classId, string templateId)
+    [DataContract]
+    public class GraphMap
     {
-      KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = GetClassTemplateListMap(classId);
-      if (classTemplateListMap.Key != null)
-      {
-        List<TemplateMap> templateMaps = classTemplateListMap.Value;
-        foreach (TemplateMap templateMap in templateMaps)
+        public GraphMap()
         {
-          if (templateMap.templateId == templateId)
-          {
+            classTemplateListMaps = new Dictionary<ClassMap, List<TemplateMap>>();
+            dataObjectMaps = new List<DataObjectMap>();
+        }
+
+        [DataMember(EmitDefaultValue = false, Order = 0)]
+        public string name { get; set; }
+
+        [DataMember(EmitDefaultValue = false, Order = 1)]
+        public string baseUri { get; set; }
+
+        [DataMember(EmitDefaultValue = false, Order = 2)]
+        public Dictionary<ClassMap, List<TemplateMap>> classTemplateListMaps { get; set; }
+
+        [DataMember(EmitDefaultValue = false, Order = 3)]
+        public List<DataObjectMap> dataObjectMaps { get; set; } // only top level data objects
+
+        public KeyValuePair<ClassMap, List<TemplateMap>> GetClassTemplateListMap(string classId)
+        {
+            foreach (var pair in classTemplateListMaps)
+            {
+                if (pair.Key.classId == classId)
+                    return pair;
+            }
+
+            return default(KeyValuePair<ClassMap, List<TemplateMap>>);
+        }
+
+        // roleMap is not required for root node
+        public void AddClassMap(RoleMap roleMap, ClassMap classMap)
+        {
+            KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = GetClassTemplateListMap(classMap.classId);
+
+            if (classTemplateListMap.Key == null)
+            {
+                classTemplateListMaps.Add(classMap, new List<TemplateMap>());
+
+                if (roleMap != null)
+                    roleMap.classMap = classMap;
+            }
+        }
+
+        // classMap can have more than one templateMaps of the same templateIds
+        public void AddTemplateMap(ClassMap classMap, TemplateMap templateMap)
+        {
+            AddClassMap(null, classMap);
+            KeyValuePair<ClassMap, List<TemplateMap>> pair = classTemplateListMaps.Where(c => c.Key.classId == classMap.classId).FirstOrDefault();
+            if (pair.Key != null)
+                pair.Value.Add(templateMap);
+        }
+
+        public void DeleteClassMap(string classId)
+        {
+            KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = GetClassTemplateListMap(classId);
+
+            if (classTemplateListMap.Key != null)
+            {
+                List<TemplateMap> templateMaps = classTemplateListMap.Value;
+                foreach (TemplateMap templateMap in templateMaps)
+                {
+                    RoleMap classRole = templateMap.roleMaps.Where(c => c.classMap != null).FirstOrDefault();
+                    if (classRole != null)
+                    {
+                        DeleteClassMap(classRole.classMap.classId);
+                        classRole.classMap = null;
+                    }
+                }
+                templateMaps.Clear();
+                classTemplateListMaps.Remove(classTemplateListMap.Key);
+            }
+        }
+
+        public void DeleteTemplateMap(string classId, string templateId)
+        {
+            KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = GetClassTemplateListMap(classId);
+            if (classTemplateListMap.Key != null)
+            {
+                List<TemplateMap> templateMaps = classTemplateListMap.Value;
+                TemplateMap templateMap = classTemplateListMap.Value.Where(c => c.templateId == templateId).FirstOrDefault();
+                RoleMap classRole = templateMap.roleMaps.Where(c => c.classMap != null).FirstOrDefault();
+                if (classRole != null)
+                    DeleteClassMap(classRole.classMap.classId);
+
+                templateMaps.Remove(templateMap);
+            }
+        }
+
+        public void DeleteRoleMap(TemplateMap templateMap, string roleId)
+        {
+            RoleMap roleMap = templateMap.roleMaps.Where(c => c.roleId == roleId).FirstOrDefault();
+            if (roleMap != null)
+            {
+                if (roleMap.classMap != null)
+                {
+                    DeleteClassMap(roleMap.classMap.classId);
+                    roleMap.classMap = null;
+                }
+            }
+        }
+    }
+
+    [DataContract]
+    public class ClassMap
+    {
+        public ClassMap()
+        {
+            identifiers = new List<string>();
+        }
+
+        public ClassMap(ClassMap classMap)
+            : this()
+        {
+            classId = classMap.classId;
+            name = classMap.name;
+            identifierDelimeter = String.Empty;
+
+            foreach (string identifier in classMap.identifiers)
+            {
+                identifiers.Add(identifier);
+            }
+        }
+
+        [DataMember(EmitDefaultValue = false, Order = 0)]
+        public string classId { get; set; }
+
+        [DataMember(EmitDefaultValue = false, Order = 1)]
+        public string name { get; set; }
+
+        [DataMember(EmitDefaultValue = false, Order = 2)]
+        public string identifierDelimeter { get; set; }
+
+        [DataMember(EmitDefaultValue = false, Order = 3)]
+        public List<string> identifiers { get; set; }
+
+        [DataMember(EmitDefaultValue = false, Order = 4)]
+        public string identifierValue { get; set; }
+    }
+
+    [DataContract]
+    public class TemplateMap
+    {
+        public TemplateMap()
+        {
+            roleMaps = new List<RoleMap>();
+        }
+
+        public TemplateMap(TemplateMap templateMap)
+            : this()
+        {
+            templateId = templateMap.templateId;
+            name = templateMap.name;
+
             foreach (RoleMap roleMap in templateMap.roleMaps)
             {
-              if (roleMap.classMap != null)
-              {
-                DeleteClassMap(roleMap.classMap.classId);
-              }
+                roleMaps.Add(new RoleMap(roleMap));
+            }
+        }
 
-              templateMap.roleMaps.Remove(roleMap);
+        public TemplateMap(TemplateMap templateMap, RoleMap roleMap)
+            : this(templateMap)
+        {
+            AddRoleMap(roleMap);
+        }
+
+        [DataMember(EmitDefaultValue = false, Order = 0)]
+        public string templateId { get; set; }
+
+        [DataMember(EmitDefaultValue = false, Order = 1)]
+        public string name { get; set; }
+
+        [DataMember(EmitDefaultValue = false, Order = 2)]
+        public List<RoleMap> roleMaps { get; set; }
+
+        // roleId is unique within templateMap scope
+        public void AddRoleMap(RoleMap roleMap)
+        {
+            bool found = false;
+
+            foreach (RoleMap role in roleMaps)
+            {
+                if (role.roleId == roleMap.roleId)
+                {
+                    found = true;
+                    break;
+                }
             }
 
-            templateMaps.Remove(templateMap);
-            break;
-          }
+            if (!found)
+            {
+                roleMaps.Add(roleMap);
+            }
         }
-      }
     }
 
-    public void DeleteRoleMap(TemplateMap templateMap, string roleId)
+    [DataContract]
+    public class RoleMap
     {
-      foreach (RoleMap roleMap in templateMap.roleMaps)
-      {
-        if (roleMap.roleId == roleId)
+        public RoleMap() { }
+
+        public RoleMap(RoleMap roleMap)
         {
-          if (roleMap.classMap != null)
-          {
-            DeleteClassMap(roleMap.classMap.classId);
-          }
-
-          templateMap.roleMaps.Remove(roleMap);
+            type = roleMap.type;
+            roleId = roleMap.roleId;
+            name = roleMap.name;
+            dataType = roleMap.dataType;
+            propertyName = roleMap.propertyName;
+            value = roleMap.value;
+            valueList = roleMap.valueList;
+            classMap = roleMap.classMap;
         }
-      }
-    }
-  }
 
-  [DataContract]
-  public class ClassMap
-  {
-    public ClassMap()
-    {
-      identifiers = new List<string>();
-    }
+        [DataMember(Order = 0)]
+        public RoleType type { get; set; }
 
-    public ClassMap(ClassMap classMap)
-      : this()
-    {
-      classId = classMap.classId;
-      name = classMap.name;
-      identifierDelimeter = String.Empty;
+        [DataMember(EmitDefaultValue = false, Order = 1)]
+        public string roleId { get; set; }
 
-      foreach (string identifier in classMap.identifiers)
-      {
-        identifiers.Add(identifier);
-      }
-    }
+        [DataMember(EmitDefaultValue = false, Order = 2)]
+        public string name { get; set; }
 
-    [DataMember(EmitDefaultValue = false, Order = 0)]
-    public string classId { get; set; }
+        [DataMember(EmitDefaultValue = false, Order = 3)]
+        public string dataType { get; set; }
 
-    [DataMember(EmitDefaultValue = false, Order = 1)]
-    public string name { get; set; }
+        [DataMember(EmitDefaultValue = false, Order = 4)]
+        public string propertyName { get; set; }
 
-    [DataMember(EmitDefaultValue = false, Order = 2)]
-    public string identifierDelimeter { get; set; }
+        [DataMember(EmitDefaultValue = false, Order = 5)]
+        public string value { get; set; }
 
-    [DataMember(EmitDefaultValue = false, Order = 3)]
-    public List<string> identifiers { get; set; }
+        [DataMember(EmitDefaultValue = false, Order = 6)]
+        public string valueList { get; set; }
 
-    [DataMember(EmitDefaultValue = false, Order = 4)]
-    public string identifierValue { get; set; }
-  }
+        [DataMember(EmitDefaultValue = false, Order = 7)]
+        public ClassMap classMap { get; set; }
 
-  [DataContract]
-  public class TemplateMap
-  {
-    public TemplateMap()
-    {
-      roleMaps = new List<RoleMap>();
-    }
-
-    public TemplateMap(TemplateMap templateMap)
-      : this()
-    {
-      templateId = templateMap.templateId;
-      name = templateMap.name;
-
-      foreach (RoleMap roleMap in templateMap.roleMaps)
-      {
-        roleMaps.Add(new RoleMap(roleMap));
-      }
-    }
-
-    public TemplateMap(TemplateMap templateMap, RoleMap roleMap)
-      : this(templateMap)
-    {
-      AddRoleMap(roleMap);
-    }
-
-    [DataMember(EmitDefaultValue = false, Order = 0)]
-    public string templateId { get; set; }
-
-    [DataMember(EmitDefaultValue = false, Order = 1)]
-    public string name { get; set; }
-
-    [DataMember(EmitDefaultValue = false, Order = 2)]
-    public List<RoleMap> roleMaps { get; set; }
-    
-    // roleId is unique within templateMap scope
-    public void AddRoleMap(RoleMap roleMap)
-    {
-      bool found = false;
-
-      foreach (RoleMap role in roleMaps)
-      {
-        if (role.roleId == roleMap.roleId)
+        public bool isMapped
         {
-          found = true;
-          break;
+            get
+            {
+                return classMap != null || !String.IsNullOrEmpty(propertyName) || !String.IsNullOrEmpty(value);
+            }
         }
-      }
-
-      if (!found)
-      {
-        roleMaps.Add(roleMap);
-      }
     }
-  }
 
-  [DataContract]
-  public class RoleMap
-  {
-    public RoleMap() { }
-
-    public RoleMap(RoleMap roleMap)
+    [DataContract]
+    public enum RoleType
     {
-      type = roleMap.type;
-      roleId = roleMap.roleId;
-      name = roleMap.name;
-      dataType = roleMap.dataType;
-      propertyName = roleMap.propertyName;
-      value = roleMap.value;
-      valueList = roleMap.valueList;
-      classMap = roleMap.classMap;
+        [EnumMember]
+        Property,
+
+        [EnumMember]
+        Reference,
+
+        [EnumMember]
+        ClassRole,
+
+        [EnumMember]
+        FixedValue,
     }
 
-    [DataMember(Order = 0)]
-    public RoleType type { get; set; }
-
-    [DataMember(EmitDefaultValue = false, Order = 1)]
-    public string roleId { get; set; }
-
-    [DataMember(EmitDefaultValue = false, Order = 2)]
-    public string name { get; set; }
-
-    [DataMember(EmitDefaultValue = false, Order = 3)]
-    public string dataType { get; set; }
-
-    [DataMember(EmitDefaultValue = false, Order = 4)]
-    public string propertyName { get; set; }
-
-    [DataMember(EmitDefaultValue = false, Order = 5)]
-    public string value { get; set; }
-
-    [DataMember(EmitDefaultValue = false, Order = 6)]
-    public string valueList { get; set; }
-
-    [DataMember(EmitDefaultValue = false, Order = 7)]
-    public ClassMap classMap { get; set; }
-
-    public bool isMapped
+    [DataContract]
+    public class ValueMap
     {
-      get
-      {
-        return classMap != null || !String.IsNullOrEmpty(propertyName) || !String.IsNullOrEmpty(value);
-      }
+        [DataMember(EmitDefaultValue = false, Order = 0)]
+        public string valueList { get; set; }
+
+        [DataMember(EmitDefaultValue = false, Order = 1)]
+        public string internalValue { get; set; }
+
+        [DataMember(EmitDefaultValue = false, Order = 2)]
+        public string uri { get; set; }
     }
-  }
 
-  [DataContract]
-  public enum RoleType
-  {
-    [EnumMember]
-    Property,
+    [DataContract]
+    public class DataObjectMap
+    {
+        [DataMember(EmitDefaultValue = false, Order = 0)]
+        public string name { get; set; }
 
-    [EnumMember]
-    Reference,
+        [DataMember(EmitDefaultValue = false, Order = 1)]
+        public string inFilter { get; set; }
 
-    [EnumMember]
-    ClassRole,
-
-    [EnumMember]
-    FixedValue,
-  }
-
-  [DataContract]
-  public class ValueMap
-  {
-    [DataMember(EmitDefaultValue = false, Order = 0)]
-    public string valueList { get; set; }
-
-    [DataMember(EmitDefaultValue = false, Order = 1)]
-    public string internalValue { get; set; }
-
-    [DataMember(EmitDefaultValue = false, Order = 2)]
-    public string uri { get; set; }
-  }
-
-  [DataContract]
-  public class DataObjectMap
-  {
-    [DataMember(EmitDefaultValue = false, Order = 0)]
-    public string name { get; set; }
-
-    [DataMember(EmitDefaultValue = false, Order = 1)]
-    public string inFilter { get; set; }
-
-    [DataMember(EmitDefaultValue = false, Order = 2)]
-    public string outFilter { get; set; }
-  }
+        [DataMember(EmitDefaultValue = false, Order = 2)]
+        public string outFilter { get; set; }
+    }
 }
