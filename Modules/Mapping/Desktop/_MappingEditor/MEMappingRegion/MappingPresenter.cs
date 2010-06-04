@@ -127,38 +127,38 @@ namespace org.iringtools.modules.memappingregion
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         void OnDataArrivedHandler(object sender, System.EventArgs e)
         {
-        try
-        {
-            CompletedEventArgs args = e as CompletedEventArgs;
-
-            if (args == null)
-                return;
-
-            if (args.CheckForType(CompletedEventType.GetMapping))
+            try
             {
-                if (args.Error != null)
-                {
-                    MessageBox.Show(args.FriendlyErrorMessage, "Get Data Dictionary Error", MessageBoxButton.OK);
+                CompletedEventArgs args = e as CompletedEventArgs;
+
+                if (args == null)
                     return;
+
+                if (args.CheckForType(CompletedEventType.GetMapping))
+                {
+                    if (args.Error != null)
+                    {
+                        MessageBox.Show(args.FriendlyErrorMessage, "Get Data Dictionary Error", MessageBoxButton.OK);
+                        return;
+                    }
+                    GetMappingHandler(args);
                 }
-                GetMappingHandler(args);
+                else if (args.CheckForType(CompletedEventType.GetClassLabel))
+                {
+                    if (args.Error != null)
+                    {
+                        MessageBox.Show(args.FriendlyErrorMessage, "Get Class Label Error", MessageBoxButton.OK);
+                        return;
+                    }
+                    GetClassLabelHandler(args);
+                }
             }
-            else if (args.CheckForType(CompletedEventType.GetClassLabel))
+            catch (Exception ex)
             {
-                if (args.Error != null)
-                {
-                    MessageBox.Show(args.FriendlyErrorMessage, "Get Class Label Error", MessageBoxButton.OK);
-                    return;
-                }
-                GetClassLabelHandler(args);
+                 Error.SetError(ex, "Error occurred... \r\n" + ex.Message + ex.StackTrace,
+                    Category.Exception, Priority.High);
             }
         }
-        catch (Exception ex)
-        {
-            Error.SetError(ex, "Error occurred... \r\n" + ex.Message + ex.StackTrace,
-                Category.Exception, Priority.High);
-        }
-    }
 
         /// <summary>
         /// mapping handler.
@@ -166,69 +166,69 @@ namespace org.iringtools.modules.memappingregion
         /// <param name="e">The <see cref="org.iringtools.modulelibrary.events.CompletedEventArgs"/> instance containing the event data.</param>
         void GetMappingHandler(CompletedEventArgs e)
         {
-        try
-        {
-            // Ensure we have a valid parameter
-            Mapping mapping = e.Data as Mapping;
-            if (mapping == null)
-                return;
-
-            mappingCRUD.mapping = mapping;
-            tvwMapping.Items.Clear();
-            tvwValues.Items.Clear();
-
-            // Note that we only load first level nodes
-            foreach (GraphMap graphMap in mapping.graphMaps)
+            try
             {
-                tvwMapping.Items.Add(AddNode(graphMap.name, graphMap, null));
-            }
+                // Ensure we have a valid parameter
+                Mapping mapping = e.Data as Mapping;
+                if (mapping == null)
+                    return;
 
-            //Add an empty value list item so we can use that value to clear erroneous entries
-            cbValueList.Items.Add(new ComboBoxItem { Content = "<No ValueList>", IsSelected = true });
+                mappingCRUD.mapping = mapping;
+                tvwMapping.Items.Clear();
+                tvwValues.Items.Clear();
 
-            // Add value maps to value list drop list
-
-            List<ValueMap> valueMaps = mapping.valueMaps;
-            MappingItem valueList = null;
-
-            if (valueMaps.Count > 0)
-            {
-                string prevValueList = String.Empty;
-
-                foreach (ValueMap valueMap in valueMaps)
+                // Note that we only load first level nodes
+                foreach (GraphMap graphMap in mapping.graphMaps)
                 {
-                    string currValueList = valueMap.valueList;
+                    tvwMapping.Items.Add(AddNode(graphMap.name, graphMap, null));
+                }
 
-                    if (currValueList != prevValueList)
-                    {
-                        ComboBoxItem cbItem = new ComboBoxItem();
-                        cbItem.Content = currValueList;
-                        cbValueList.Items.Add(cbItem);
-                        prevValueList = currValueList;
-                        valueList = AddNode(valueMap.valueList, (String)valueMap.valueList, null);
-                        tvwValues.Items.Add(valueList);
-                    }
+                //Add an empty value list item so we can use that value to clear erroneous entries
+                cbValueList.Items.Add(new ComboBoxItem { Content = "<No ValueList>", IsSelected = true });
 
-                    if (valueList != null)
+                // Add value maps to value list drop list
+
+                List<ValueMap> valueMaps = mapping.valueMaps;
+                MappingItem valueList = null;
+
+                if (valueMaps.Count > 0)
+                {
+                    string prevValueList = String.Empty;
+
+                    foreach (ValueMap valueMap in valueMaps)
                     {
-                        MappingItem internalValue = AddNode(valueMap.internalValue, valueMap, valueList);
-                        valueList.Items.Add(internalValue);
+                        string currValueList = valueMap.valueList;
+
+                        if (currValueList != prevValueList)
+                        {
+                            ComboBoxItem cbItem = new ComboBoxItem();
+                            cbItem.Content = currValueList;
+                            cbValueList.Items.Add(cbItem);
+                            prevValueList = currValueList;
+                            valueList = AddNode(valueMap.valueList, (String)valueMap.valueList, null);
+                            tvwValues.Items.Add(valueList);
+                        }
+
+                        if (valueList != null)
+                        {
+                            MappingItem internalValue = AddNode(valueMap.internalValue, valueMap, valueList);
+                            valueList.Items.Add(internalValue);
+                        }
                     }
                 }
+
+                //if (cbValueList.SelectedItem == null)
+                //    btnAddValueList.IsEnabled = false;
+                //else
+                //    btnAddValueList.IsEnabled = true;
+
+                ChangeControlsState(true);
             }
-
-            //if (cbValueList.SelectedItem == null)
-            //    btnAddValueList.IsEnabled = false;
-            //else
-            //    btnAddValueList.IsEnabled = true;
-
-            ChangeControlsState(true);
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
-        catch (Exception ex)
-        {
-            throw ex;
-        }
-    }
 
         /// <summary>
         /// getclasslabel handler.
@@ -236,22 +236,22 @@ namespace org.iringtools.modules.memappingregion
         /// <param name="e">The <see cref="org.iringtools.modulelibrary.events.CompletedEventArgs"/> instance containing the event data.</param>
         void GetClassLabelHandler(CompletedEventArgs e)
         {
-        try
-        {
-            string[] data = (string[])e.Data;
-            string tag = data[0];
-            string id = data[1];
-            string label = data[2];
+            try
+            {
+                string[] data = (string[])e.Data;
+                string tag = data[0];
+                string id = data[1];
+                string label = data[2];
 
-            KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>(tag, label);
-            model.DetailProperties.Add(keyValuePair);
-            model.IdLabelDictionary[id] = label;
+                KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>(tag, label);
+                model.DetailProperties.Add(keyValuePair);
+                model.IdLabelDictionary[id] = label;
+            }
+            catch (Exception ex)
+            {
+               throw ex;
+            }
         }
-        catch (Exception ex)
-        {
-           throw ex;
-        }
-    }
 
         /// <summary>
         /// Handles MouseLeftButtonUp Event
@@ -260,67 +260,67 @@ namespace org.iringtools.modules.memappingregion
         /// <param name="e"></param>
         void nodeMouseLeftButtonUpHandler(object sender, MouseButtonEventArgs e)
         {
-        try
-        {
-            MappingItem selectedNode = sender as MappingItem;
-
-            if (selectedNode == null)
-                return;
-
-            model.SelectedMappingItem = selectedNode;
-            model.SelectedGraphMap = selectedNode.GraphMap;
-            model.SelectedClassMap = selectedNode.ClassMap;
-            model.SelectedTemplateMap = selectedNode.TemplateMap;
-            model.SelectedRoleMap = selectedNode.RoleMap;
-            model.SelectedNodeType = selectedNode.NodeType;
-
-            model.DetailProperties.Clear();
-
-            if (selectedNode.Tag is GraphMap)
+            try
             {
-                GraphMap graph = (GraphMap)selectedNode.Tag;
-                string id = Utility.GetIdFromURI(graph.baseUri);
-                KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Graph Name", graph.name);
-                model.DetailProperties.Add(keyValuePair);
+                MappingItem selectedNode = sender as MappingItem;
 
-                keyValuePair = new KeyValuePair<string, string>("Class Id", graph.baseUri);
-                model.DetailProperties.Add(keyValuePair);
-                if (model.IdLabelDictionary.ContainsKey(id))
+                if (selectedNode == null)
+                    return;
+
+                model.SelectedMappingItem = selectedNode;
+                model.SelectedGraphMap = selectedNode.GraphMap;
+                model.SelectedClassMap = selectedNode.ClassMap;
+                model.SelectedTemplateMap = selectedNode.TemplateMap;
+                model.SelectedRoleMap = selectedNode.RoleMap;
+                model.SelectedNodeType = selectedNode.NodeType;
+
+                model.DetailProperties.Clear();
+
+                if (selectedNode.Tag is GraphMap)
                 {
-                    keyValuePair = new KeyValuePair<string, string>("Class Name", model.IdLabelDictionary[id]);
+                    GraphMap graph = (GraphMap)selectedNode.Tag;
+                    string id = Utility.GetIdFromURI(graph.baseUri);
+                    KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Graph Name", graph.name);
                     model.DetailProperties.Add(keyValuePair);
+
+                    keyValuePair = new KeyValuePair<string, string>("Class Id", graph.baseUri);
+                    model.DetailProperties.Add(keyValuePair);
+                    if (model.IdLabelDictionary.ContainsKey(id))
+                    {
+                        keyValuePair = new KeyValuePair<string, string>("Class Name", model.IdLabelDictionary[id]);
+                        model.DetailProperties.Add(keyValuePair);
+                    }
+                    for (int i = 0; i < graph.dataObjectMaps.Count; i++)
+                    {
+                        keyValuePair = new KeyValuePair<string, string>("DataObject Name", graph.dataObjectMaps[i].name);
+                        model.DetailProperties.Add(keyValuePair);
+                    }
                 }
-                for (int i = 0; i < graph.dataObjectMaps.Count; i++)
+
+                if (selectedNode.Tag is ClassMap)
                 {
-                    keyValuePair = new KeyValuePair<string, string>("DataObject Name", graph.dataObjectMaps[i].name);
-                    model.DetailProperties.Add(keyValuePair);
+                    ClassMap classMap = (ClassMap)selectedNode.Tag;
+                    RefreshClassMap(classMap);
                 }
-            }
+                else if (selectedNode.Tag is TemplateMap)
+                {
+                    TemplateMap templateMap = (TemplateMap)selectedNode.Tag;
+                    RefreshTemplateMap(templateMap);
+                }
+                else if (selectedNode.Tag is RoleMap)
+                {
+                    RoleMap roleMap = (RoleMap)selectedNode.Tag;
+                    RefreshRoleMap(roleMap);
+                }
 
-            if (selectedNode.Tag is ClassMap)
-            {
-                ClassMap classMap = (ClassMap)selectedNode.Tag;
-                RefreshClassMap(classMap);
+                e.Handled = true;
             }
-            else if (selectedNode.Tag is TemplateMap)
+            catch (Exception ex)
             {
-                TemplateMap templateMap = (TemplateMap)selectedNode.Tag;
-                RefreshTemplateMap(templateMap);
+                Error.SetError(ex, "Error occurred... \r\n" + ex.Message + ex.StackTrace,
+                    Category.Exception, Priority.High);
             }
-            else if (selectedNode.Tag is RoleMap)
-            {
-                RoleMap roleMap = (RoleMap)selectedNode.Tag;
-                RefreshRoleMap(roleMap);
-            }
-
-            e.Handled = true;
         }
-        catch (Exception ex)
-        {
-            Error.SetError(ex, "Error occurred... \r\n" + ex.Message + ex.StackTrace,
-                Category.Exception, Priority.High);
-        }
-    }
 
         public void RefreshClassMap(ClassMap classMap)
         {
@@ -367,15 +367,15 @@ namespace org.iringtools.modules.memappingregion
                 //keyValuePair = new KeyValuePair<string, string>("Type", templateMap.type.ToString());
                 //model.DetailProperties.Add(keyValuePair);
 
-                string id = Utility.GetIdFromURI(templateMap.classRole);
-                if (model.IdLabelDictionary.ContainsKey(id))
-                {
-                    model.DetailProperties.Add(new KeyValuePair<string, string>("Class Role Name", model.IdLabelDictionary[id]));
-                }
-                else if (!String.IsNullOrEmpty(id))
-                {
-                    referenceDataService.GetTemplateLabel("Class Role Name", id, this);
-                }
+                //string id = Utility.GetIdFromURI(templateMap.templateId);
+                //if (model.IdLabelDictionary.ContainsKey(id))
+                //{
+                //  model.DetailProperties.Add(new KeyValuePair<string, string>("Class Role Name", model.IdLabelDictionary[id]));
+                //}
+                //else if (!String.IsNullOrEmpty(id))
+                //{
+                //  referenceDataService.GetTemplateLabel("Class Role Name", id, this);
+                //}
             }
             catch (Exception ex)
             {
@@ -417,14 +417,12 @@ namespace org.iringtools.modules.memappingregion
                 model.DetailProperties.Add(keyValuePair);
                 keyValuePair = new KeyValuePair<string, string>("ValueList", roleMap.valueList);
                 model.DetailProperties.Add(keyValuePair);
-
-		      }
-            catch (Exception ex)
+            }
+            catch (Exception)
             {
                 Error.SetError(ex, "Error occurred... \r\n" + ex.Message + ex.StackTrace,
                     Category.Exception, Priority.High);
             }
-
         }
 
         // INFORMATION MODEL TREEVIEW CODE FOLLOWS
@@ -522,9 +520,10 @@ namespace org.iringtools.modules.memappingregion
             }
             catch (Exception ex)
             {
-                Error.SetError(ex, "Error occurred... \r\n" + ex.Message + ex.StackTrace,
-                   Category.Exception, Priority.High);
+                 Error.SetError(ex, "Error occurred... \r\n" + ex.Message + ex.StackTrace,
+                    Category.Exception, Priority.High);
             }
+
             return node;
         }
         #endregion
@@ -579,7 +578,7 @@ namespace org.iringtools.modules.memappingregion
 
                 if (childNode.Tag is Dictionary<ClassMap, List<TemplateMap>>)
                 {
-                    
+
                     if (selectedNode.Tag is GraphMap)
                     {
                         GraphMap selectedGraphMap = (GraphMap)selectedNode.Tag;
@@ -589,7 +588,7 @@ namespace org.iringtools.modules.memappingregion
 
                         foreach (TemplateMap templateMap in classTemplates.Value)
                         {
-                           isProcessed = PopulateTemplateMap(selectedNode, templateMap);
+                            isProcessed = PopulateTemplateMap(selectedNode, templateMap);
                         }
                     }
                 }
@@ -603,7 +602,7 @@ namespace org.iringtools.modules.memappingregion
             }
             catch (Exception ex)
             {
-                Error.SetError(ex, "Error occurred... \r\n" + ex.Message + ex.StackTrace,
+                 Error.SetError(ex, "Error occurred... \r\n" + ex.Message + ex.StackTrace,
                     Category.Exception, Priority.High);
             }
         }
@@ -621,7 +620,7 @@ namespace org.iringtools.modules.memappingregion
         {
             try
             {
-                if (graphMap.templateMaps != null && graphMap.templateMaps.Count > 0)
+                if (graphMap.classTemplateListMaps != null && graphMap.classTemplateListMaps.Count > 0)
                 {
                     MappingItem map = new MappingItem();
                     map.Tag = graphMap.classTemplateListMaps;
@@ -630,7 +629,7 @@ namespace org.iringtools.modules.memappingregion
                 }
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Error.SetError(ex, "Error occurred... \r\n" + ex.Message + ex.StackTrace,
                     Category.Exception, Priority.High);
@@ -733,7 +732,7 @@ namespace org.iringtools.modules.memappingregion
         /// <param name="templateMap">The template map.</param>
         /// <returns></returns>
         public bool PopulateTemplateMap(MappingItem node, TemplateMap templateMap)
-            {
+        {
             try
             {
                 MappingItem newNode = AddNode(templateMap.name, templateMap, node);
@@ -768,7 +767,7 @@ namespace org.iringtools.modules.memappingregion
                 MappingItem newNode = AddNode(roleName, roleMap, node);
                 node.Items.Add(newNode);
 
-                return true;  
+                return true;
             }
             catch (Exception ex)
             {
@@ -810,7 +809,7 @@ namespace org.iringtools.modules.memappingregion
             }
             catch (Exception ex)
             {
-                throw ex;
+               throw ex;
             }
         }
 
@@ -835,7 +834,7 @@ namespace org.iringtools.modules.memappingregion
             }
             catch (Exception ex)
             {
-                throw ex;
+               throw ex;
             }
         }
 
@@ -881,6 +880,6 @@ namespace org.iringtools.modules.memappingregion
                 Error.SetError(ex, "Error occurred... \r\n" + ex.Message + ex.StackTrace,
                     Category.Exception, Priority.High);
             }
-         }
+        }
     }
 }
