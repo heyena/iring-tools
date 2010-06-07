@@ -369,6 +369,10 @@ namespace org.iringtools.adapter
       return response;
     }
 
+    public string GetGraphBaseUri()
+    {
+        return _settings.GraphBaseUri;
+    }
     /// <summary>
     /// Creates RDF for a graph
     /// </summary>

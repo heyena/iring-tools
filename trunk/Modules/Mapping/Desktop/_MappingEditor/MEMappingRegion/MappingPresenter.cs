@@ -47,7 +47,7 @@ namespace org.iringtools.modules.memappingregion
         private Button btnAddTemplate { get { return ButtonCtrl("btnAddTemplate"); } }
         private Button btnAddGraph { get { return ButtonCtrl("btnAddGraph"); } }
         private Button btnMap { get { return ButtonCtrl("btnMap"); } }
-        //private Button btnMakeClassRole { get { return ButtonCtrl("btnMakeClassRole"); } }
+        //private Button btnEditFixedRole { get { return ButtonCtrl("btnEditFixedRole"); } }
         private ComboBox cbValueList { get { return ComboBoxCtrl("cbValueList"); } }
         private Button btnAddValueList { get { return ButtonCtrl("btnAddValueList"); } }
         private Button btnDelete { get { return ButtonCtrl("btnDelete"); } }
@@ -86,7 +86,7 @@ namespace org.iringtools.modules.memappingregion
                 btnAddTemplate.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnAddTemplate_Click(txtLabel, e); };
                 btnAddGraph.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnAddGraph_Click(txtLabel, e); };
                 btnMap.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnMap_Click(txtLabel, e); };
-                //  btnMakeClassRole.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnMakeClassRole_Click(txtLabel, e); };
+               // btnEditFixedRole.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnEditFixedRole_Click(txtLabel, e); };
                 btnAddValueList.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnAddValueList(txtLabel, e); };
                 btnSave.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnSave_Click(txtLabel, e); };
                 btnDelete.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnDelete_Click(txtLabel, e); };
@@ -283,7 +283,7 @@ namespace org.iringtools.modules.memappingregion
                     KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Graph Name", graph.name);
                     model.DetailProperties.Add(keyValuePair);
 
-                    keyValuePair = new KeyValuePair<string, string>("Class Id", graph.baseUri);
+                    keyValuePair = new KeyValuePair<string, string>("Graph Uri", graph.baseUri);
                     model.DetailProperties.Add(keyValuePair);
                     if (model.IdLabelDictionary.ContainsKey(id))
                     {
@@ -388,6 +388,8 @@ namespace org.iringtools.modules.memappingregion
         {
             try
             {
+                model.DetailProperties.Clear();
+
                 KeyValuePair<string, string> keyValuePair;
                 keyValuePair = new KeyValuePair<string, string>("Role Type", roleMap.type.ToString());
                 model.DetailProperties.Add(keyValuePair);
@@ -395,12 +397,13 @@ namespace org.iringtools.modules.memappingregion
                 model.DetailProperties.Add(keyValuePair);
                 keyValuePair = new KeyValuePair<string, string>("Role Id", roleMap.roleId);
                 model.DetailProperties.Add(keyValuePair);
+
+                string referenceId = (roleMap.value != null ? roleMap.value : string.Empty);
+                keyValuePair = new KeyValuePair<string, string>("Reference Id", referenceId);
+                model.DetailProperties.Add(keyValuePair);
                 if (roleMap.type == RoleType.Reference)
                 {
-                    string referenceId = (roleMap.value != null ? roleMap.value : string.Empty);
-                    keyValuePair = new KeyValuePair<string, string>("Reference Id", referenceId);
-                    model.DetailProperties.Add(keyValuePair);
-
+                    
                     string id = Utility.GetIdFromURI(referenceId);
                     if (model.IdLabelDictionary.ContainsKey(id))
                     {
@@ -417,6 +420,7 @@ namespace org.iringtools.modules.memappingregion
                 model.DetailProperties.Add(keyValuePair);
                 keyValuePair = new KeyValuePair<string, string>("ValueList", roleMap.valueList);
                 model.DetailProperties.Add(keyValuePair);
+
             }
             catch (Exception ex)
             {
@@ -852,7 +856,7 @@ namespace org.iringtools.modules.memappingregion
                         tvwMapping.IsEnabled = enabled;
                         btnAddTemplate.IsEnabled = enabled;
                         btnMap.IsEnabled = enabled;
-                        // btnMakeClassRole.IsEnabled = enabled;
+                       // btnEditFixedRole.IsEnabled = enabled;
 
                         if (enabled && cbValueList.Items.Count > 0)
                         {

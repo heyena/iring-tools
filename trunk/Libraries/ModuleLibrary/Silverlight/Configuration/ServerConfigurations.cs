@@ -59,6 +59,10 @@ namespace org.iringtools.library.configuration
           get { return GetParameter("AdapterServiceUri"); }
         }
 
+        public string GraphBaseUri
+        {
+            get { return GetParameter("GraphBaseUri"); }
+        }
         public string ReferenceDataServiceUri
         {
           get { return GetParameter("ReferenceDataServiceUri"); }

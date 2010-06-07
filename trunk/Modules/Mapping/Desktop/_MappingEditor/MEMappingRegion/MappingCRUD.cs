@@ -28,6 +28,7 @@ using org.ids_adi.qmxf;
 
 using org.iringtools.informationmodel.usercontrols;
 using org.iringtools.library;
+using org.iringtools.library.configuration;
 using org.iringtools.utility;
 using System.Text.RegularExpressions;
 
@@ -42,7 +43,6 @@ namespace org.iringtools.modules.memappingregion
         private IEventAggregator aggregator = null;
         private string projectName = null;
         private string applicationName = null;
-
         public MappingPresenter Presenter { get; set; }
         public TreeView tvwMapping { get; set; }
         public Mapping mapping { get; set; }
@@ -115,8 +115,9 @@ namespace org.iringtools.modules.memappingregion
             {
                 GraphMap graphMap = new GraphMap();
                 graphMap.name = graphName;
-                //TODO: graphMap.GraphUri to be constructed here
-                //graphMap.uri = SPARQLExtensions.GetIdWithAliasFromUri(model.SelectedIMUri);
+              
+               
+                graphMap.baseUri = string.Format("{0}{1}/{2}#{3}", adapterProxy.GetGraphBaseUri, projectName, applicationName, graphName);
 
                 if (graphMap.dataObjectMaps == null)
                     graphMap.dataObjectMaps = new List<DataObjectMap>();
@@ -134,7 +135,7 @@ namespace org.iringtools.modules.memappingregion
                         classId = SPARQLExtensions.GetIdWithAliasFromUri(model.SelectedIMUri)
                     };
 
-                classMap.identifiers.Add(string.Format("{0}.{1}",dataObjectMap.name,model.SelectedDataObject.DataProperty.propertyName));
+                classMap.identifiers.Add(string.Format("{0}.{1}",dataObjectMap.name, model.SelectedDataObject.DataProperty.propertyName));
 
                 graphMap.AddClassMap(null, classMap);
 
@@ -142,6 +143,33 @@ namespace org.iringtools.modules.memappingregion
                 mapping.graphMaps.Add(graphMap);
                 tvwMapping.Items.Add(Presenter.AddNode(graphMap.name, graphMap, null));
             }
+        }
+
+        public void btnEditFixedRole_Click(object sender, RoutedEventArgs e)
+        {
+            TextBox txtLabel = sender as TextBox;
+            string fixedValue = txtLabel.Text;
+
+            if (txtLabel.Text == "" || txtLabel.Text == null)
+            {
+                MessageBox.Show("Please enter value into textbox", "EDIT FIXED VALUE", MessageBoxButton.OK);
+            }
+             else if (!Regex.IsMatch(fixedValue, @"^[A-Za-z_]+\w*$"))
+            {
+                MessageBox.Show("Fixed value is invalid", "EDIT FIXED VALUE", MessageBoxButton.OK);
+            }
+            if (model.SelectedMappingItem.Tag is RoleMap)
+            {
+                RoleMap roleMap = (RoleMap)model.SelectedMappingItem.Tag;
+                roleMap.value = fixedValue;
+                
+                Presenter.RefreshRoleMap(roleMap);
+            }
+            else
+            {
+                MessageBox.Show("Please select a roleMap", "EDIT FIXED VALUE", MessageBoxButton.OK);
+            }
+            
         }
 
         private string AdjustTemplateName(MappingItem mappingItem, string templateName)
@@ -599,7 +627,7 @@ namespace org.iringtools.modules.memappingregion
                     {
                         MappingItem parent = (MappingItem)mappingItem.Parent;
                         RoleMap roleMap = (RoleMap)mappingItem.Tag;
-                        mappingItem.GraphMap.DeleteRoleMap(mappingItem.TemplateMap, mappingItem.RoleMap.roleId);
+                        mappingItem.GraphMap.DeleteRoleMap(mappingItem.TemplateMap, roleMap.classMap.classId);
 
                         mappingItem.Items.Clear();
                         mappingItem.IsExpanded = false;
@@ -616,7 +644,7 @@ namespace org.iringtools.modules.memappingregion
                     {
                         MappingItem parent = (MappingItem)mappingItem.Parent;
 
-                        mappingItem.GraphMap.DeleteRoleMap(mappingItem.TemplateMap, mappingItem.RoleMap.roleId);
+                        mappingItem.GraphMap.DeleteRoleMap(mappingItem.TemplateMap,mappingItem.RoleMap.classMap.classId);
                         
                         parent.Items.Clear();
                         parent.IsExpanded = false;
