@@ -96,7 +96,7 @@ namespace org.iringtools.adapter
     private Dictionary<string, IList<IDataObject>> _dataObjectSet = null; // dictionary of object names and list of data objects
     private Dictionary<string, List<string>> _classIdentifiers = null; // dictionary of class ids and list of identifiers
     private List<Dictionary<string, string>> _dtoList = null;  // dictionary of property xpath and value pairs
-    private Dictionary<string, string> _hierachicalDTOClasses = null;  // dictionary of class rdlUris and ids
+    private Dictionary<string, List<string>> _hierachicalDTOClasses = null;  // dictionary of class rdlUri and identifiers
     private MicrosoftSqlStoreManager _tripleStore = null;
     private TripleStore _memoryStore = null;    
     private XNamespace _graphNs = String.Empty;
@@ -111,7 +111,7 @@ namespace org.iringtools.adapter
       _dataObjectSet = new Dictionary<string, IList<IDataObject>>();
       _classIdentifiers = new Dictionary<string, List<string>>();
       _dtoList = new List<Dictionary<string, string>>();
-      _hierachicalDTOClasses = new Dictionary<string, string>();
+      _hierachicalDTOClasses = new Dictionary<string, List<string>>();
       _graph = new Graph();
 
       _dataLayer = new NHibernateDataLayer(adapterSettings, appSettings);
@@ -895,7 +895,16 @@ namespace org.iringtools.adapter
 
       classElement.Add(new XAttribute("rdlUri", classMap.classId));
       classElement.Add(new XAttribute("id", classIdentifier));
-      _hierachicalDTOClasses[classMap.classId] = classIdentifier;
+
+      if (_hierachicalDTOClasses.ContainsKey(classId))
+      {
+        List<string> classIdentifiers = _hierachicalDTOClasses[classId];
+        classIdentifiers.Add(classIdentifier);
+      }
+      else
+      {
+        _hierachicalDTOClasses[classId] = new List<string> { classIdentifier };
+      }
 
       foreach (TemplateMap templateMap in templateMaps)
       {
@@ -924,9 +933,10 @@ namespace org.iringtools.adapter
                 // check if the class instance has been created
                 if (_hierachicalDTOClasses.ContainsKey(roleMap.classMap.classId))
                 {
-                  string identifier = _hierachicalDTOClasses[roleMap.classMap.classId];
+                  List<string> identifiers = _hierachicalDTOClasses[roleMap.classMap.classId];
+                  string identifier = _classIdentifiers[roleMap.classMap.classId][dataObjectIndex];
 
-                  if (identifier == classIdentifier)
+                  if (identifiers.Contains(identifier))
                   {
                     roleElement.Add(new XAttribute("reference", identifier));
                     classExists = true;
