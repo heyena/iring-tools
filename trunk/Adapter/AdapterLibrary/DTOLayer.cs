@@ -146,10 +146,14 @@ namespace org.iringtools.adapter
         FindGraphMap(graphName);
         LoadDataObjectSet();
 
-        XElement graphElement = new XElement(_graphNs + graphName, new XAttribute(XNamespace.Xmlns + "i", XSI_NS));
-        ClassMap classMap = _graphMap.classTemplateListMaps.First().Key;
+        XElement graphElement = new XElement(_graphNs + graphName,
+          new XAttribute(XNamespace.Xmlns + "i", XSI_NS),
+          new XAttribute(XNamespace.Xmlns + "rdl", RDL_NS),
+          new XAttribute(XNamespace.Xmlns + "tpl", TPL_NS));
 
+        ClassMap classMap = _graphMap.classTemplateListMaps.First().Key;
         int maxDataObjectsCount = MaxDataObjectsCount();
+
         for (int i = 0; i < maxDataObjectsCount; i++)
         {
           XElement classElement = new XElement(_graphNs + TitleCase(classMap.name));
@@ -813,6 +817,7 @@ namespace org.iringtools.adapter
               if (!String.IsNullOrEmpty(roleMap.valueList))
               {
                 value = ResolveValueList(roleMap.valueList, value);
+                value = value.Replace(RDL_NS.NamespaceName, "rdl:");
                 roleElement.Add(new XAttribute("reference", value));
               }
               else
