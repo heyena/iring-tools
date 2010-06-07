@@ -52,6 +52,7 @@ namespace org.iringtools.modulelibrary.layerdal
     private WebClient _testClient;
 
     private string _adapterServiceUri;
+    private string _graphBaseUri;
 
 
     #region Configure WebClient (client)
@@ -66,6 +67,7 @@ namespace org.iringtools.modulelibrary.layerdal
       {
 
         _adapterServiceUri = config.AdapterServiceUri;
+        _graphBaseUri = config.GraphBaseUri;
 
         // Instantiate Adapter Service using baseclass 
         // properties
@@ -480,5 +482,7 @@ namespace org.iringtools.modulelibrary.layerdal
     #endregion
 
     public string GetAdapterServiceUri { get { return _adapterServiceUri; } }
+
+    public string GetGraphBaseUri { get { return _graphBaseUri; } }
   }
 }

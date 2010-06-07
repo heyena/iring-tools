@@ -44,5 +44,7 @@ public interface IAdapter : org.iringtools.library.IAdapter
   /// <returns></returns>
   org.iringtools.library.Response UpdateMapping(org.iringtools.library.Mapping mapping);
 
+  string GetGraphBaseUri { get; }
+  
   string GetAdapterServiceUri { get; }
 }

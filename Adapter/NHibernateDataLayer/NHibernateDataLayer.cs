@@ -26,12 +26,12 @@ namespace org.iringtools.adapter.datalayer
     [Inject]
     public NHibernateDataLayer(AdapterSettings settings, ApplicationSettings appSettings)
     {
-      string scope = appSettings.ProjectName + "." + appSettings.ApplicationName;
-      string hibernateConfigPath = settings.XmlPath + "nh-configuration." + scope + ".xml";
-      string hibernateMappingPath = settings.XmlPath + "nh-mapping." + scope + ".xml";
+      string scope = string.Format("{0}.{1}",appSettings.ProjectName, appSettings.ApplicationName);
+      string hibernateConfigPath = string.Format("{0}nh-configuration.{1}.xml", settings.XmlPath, scope);
+      string hibernateMappingPath = string.Format("{0}nh-mapping.{1}.xml", settings.XmlPath, scope);
 
       _appSettings = appSettings;
-      _dataDictionaryPath = settings.XmlPath + "DataDictionary." + scope + ".xml";      
+      _dataDictionaryPath = string.Format("{0}DataDictionary.{1}.xml",settings.XmlPath, scope);      
       _sessionFactory = new Configuration()
         .Configure(hibernateConfigPath)
         .AddFile(hibernateMappingPath)
@@ -46,7 +46,7 @@ namespace org.iringtools.adapter.datalayer
       }
       catch (Exception ex)
       {
-        _logger.Error("Error in OpenSession: project \"" + _appSettings.ProjectName + "\" application \"" + _appSettings.ApplicationName + "\"" + ex);
+        _logger.Error(string.Format("Error in OpenSession: project[{0}] application[{1}] {2}", _appSettings.ProjectName, _appSettings.ApplicationName, ex));
         throw new Exception("Error while openning nhibernate session " + ex);
       }
     }
@@ -78,7 +78,7 @@ namespace org.iringtools.adapter.datalayer
       catch (Exception ex)
       {
         _logger.Error("Error in CreateList: " + ex);
-        throw new Exception("Error while creating a list of data objects of type [" + objectType + "].", ex);
+        throw new Exception(string.Format("Error while creating a list of data objects of type [{0}]. {1}", objectType, ex));
       }
     }
 
@@ -104,7 +104,7 @@ namespace org.iringtools.adapter.datalayer
       catch (Exception ex)
       {
         _logger.Error("Error in GetIdentifiers: " + ex);
-        throw new Exception("Error while getting a list of identifiers of type [" + objectType + "].", ex);
+        throw new Exception(string.Format("Error while getting a list of identifiers of type [{0}]. {1}", objectType, ex));
       }
     }
 
@@ -129,7 +129,7 @@ namespace org.iringtools.adapter.datalayer
       catch (Exception ex)
       {
         _logger.Error("Error in Get: " + ex);
-        throw new Exception("Error while getting a list of data objects of type [" + objectType + "].", ex);
+        throw new Exception(string.Format("Error while getting a list of data objects of type [{0}]. {1}", objectType, ex));
       }
     }
 
@@ -173,7 +173,7 @@ namespace org.iringtools.adapter.datalayer
       catch (Exception ex)
       {
         _logger.Error("Error in Get: " + ex);
-        throw new Exception("Error while getting a list of data objects of type [" + objectType + "].", ex);
+        throw new Exception(string.Format("Error while getting a list of data objects of type [{0}]. {1}", objectType, ex));
       }
     }
 
@@ -193,11 +193,11 @@ namespace org.iringtools.adapter.datalayer
               {
                 session.SaveOrUpdate(dataObject);
                 session.Flush();
-                response.Add("Record [" + dataObject.GetPropertyValue("Id") + "] have been saved successfully.");
+                response.Add(string.Format("Record [{0}] have been saved successfully.", dataObject.GetPropertyValue("Id")));
               }
               catch (Exception ex)
               {
-                response.Add("Error while posting record [" + dataObject.GetPropertyValue("Id") + "]." + ex);
+                response.Add(string.Format("Error while posting record [{0}]. {1}", dataObject.GetPropertyValue("Id"), ex));
               }
             }
           }
@@ -211,7 +211,7 @@ namespace org.iringtools.adapter.datalayer
 
         object sample = dataObjects.FirstOrDefault();
         string objectType = (sample != null) ? sample.GetType().Name : String.Empty;
-        throw new Exception("Error while posting data objects of type [" + objectType + "].", ex);
+        throw new Exception(string.Format("Error while posting data objects of type [{0}]. {1}", objectType,  ex));
       }
     }
 
@@ -232,7 +232,7 @@ namespace org.iringtools.adapter.datalayer
         using (ISession session = OpenSession())
         {
           session.Delete(queryString.ToString());
-          response.Add("Records of type [" + objectType + "] has been deleted succesfully.");
+          response.Add(string.Format("Records of type [{0}] has been deleted succesfully.", objectType));
         }
 
         return response;
@@ -240,7 +240,7 @@ namespace org.iringtools.adapter.datalayer
       catch (Exception ex)
       {
         _logger.Error("Error in Delete: " + ex);
-        throw new Exception("Error while deleting data objects of type [" + objectType + "].", ex);
+        throw new Exception(string.Format("Error while deleting data objects of type [{0}]. {1}", objectType, ex));
       }
     }
 
@@ -262,7 +262,7 @@ namespace org.iringtools.adapter.datalayer
         using (ISession session = OpenSession())
         {
           session.Delete(queryString.ToString());
-          response.Add("Records of type [" + objectType + "] has been deleted succesfully.");
+          response.Add(string.Format("Records of type [{0}] has been deleted succesfully.", objectType));
         }
 
         return response;
@@ -270,7 +270,7 @@ namespace org.iringtools.adapter.datalayer
       catch (Exception ex)
       {
         _logger.Error("Error in Delete: " + ex);
-        throw new Exception("Error while deleting data objects of type [" + objectType + "].", ex);
+        throw new Exception(string.Format("Error while deleting data objects of type [{0}]. {1}", objectType, ex));
       }
     }
 
