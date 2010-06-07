@@ -34,41 +34,41 @@ namespace org.iringtools.adapter
 
   public class DataService : IDataService
   {
-    private AdapterProvider _adapterServiceProvider = null;
+    //private AdapterProvider _adapterServiceProvider = null;
 
-    /// <summary>
-    /// Adapter Service Constructor
-    /// </summary>
-    public DataService()
-    {
-      _adapterServiceProvider = new AdapterProvider(ConfigurationManager.AppSettings);
-    }
+    ///// <summary>
+    ///// Adapter Service Constructor
+    ///// </summary>
+    //public DataService()
+    //{
+    //  _adapterServiceProvider = new AdapterProvider(ConfigurationManager.AppSettings);
+    //}
 
-    /// <summary>
-    /// Gets the list of projects by reading Project.xml.
-    /// </summary>
-    /// <returns>Returns a strongly typed list of ScopeProject objects.</returns>
-    public List<ScopeProject> GetScopes()
-    {
-      return _adapterServiceProvider.GetScopes();
-    }
+    ///// <summary>
+    ///// Gets the list of projects by reading Project.xml.
+    ///// </summary>
+    ///// <returns>Returns a strongly typed list of ScopeProject objects.</returns>
+    //public List<ScopeProject> GetScopes()
+    //{
+    //  return _adapterServiceProvider.GetScopes();
+    //}
 
-    public DTOResponse GetData(DTORequest request)
-    {
-      DTOResponse response = new DTOResponse();
+    //public DTOResponse GetData(DTORequest request)
+    //{
+    //  DTOResponse response = new DTOResponse();
 
-      response.dto = _adapterServiceProvider.GetDTO(request.projectName, request.applicationName, request.graphName, request.identifier);
+    //  response.dto = _adapterServiceProvider.GetDTO(request.projectName, request.applicationName, request.graphName, request.identifier);
 
-      return response;
-    }
+    //  return response;
+    //}
 
-    public DTOListResponse GetDataList(DTORequest request)
-    {
-      DTOListResponse response = new DTOListResponse();
+    //public DTOListResponse GetDataList(DTORequest request)
+    //{
+    //  DTOListResponse response = new DTOListResponse();
 
-      response.dtoList = _adapterServiceProvider.GetDTOList(request.projectName, request.applicationName, request.graphName);
+    //  response.dtoList = _adapterServiceProvider.GetDTOList(request.projectName, request.applicationName, request.graphName);
 
-      return response;
-    }
+    //  return response;
+    //}
   }
 }

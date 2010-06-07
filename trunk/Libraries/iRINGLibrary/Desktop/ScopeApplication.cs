@@ -20,12 +20,5 @@ namespace org.iringtools.library
       /// <returns>A string of the Description of the application</returns>
       [DataMember(Order = 1)]
       public string Description { get; set; }
-
-      /// <summary>
-      /// The flag indicating whether dto code has been generated
-      /// </summary>
-      /// <returns>true if dto code has been generated</returns>
-      [DataMember(Order = 2)]
-      public bool hasDTOLayer { get; set; }
     }
 }

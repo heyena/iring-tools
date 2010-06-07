@@ -41,18 +41,18 @@ namespace AdapterService.Tests
       File.Copy(nhMappingTestPath, nhMappingPath, true);
     }
 
-    [TestMethod()]
-    public void GenerateTest_ABC()
-    {
-      string bindingConfigPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.xml";
-      string bindingConfigTestPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.Test.xml";
+    //[TestMethod()]
+    //public void GenerateTest_ABC()
+    //{
+    //  string bindingConfigPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.xml";
+    //  string bindingConfigTestPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.Test.xml";
 
-      AdapterProxy target = new AdapterProxy();
-      Response actual = target.Generate("12345_000", "ABC");
-      Assert.AreEqual("DTO Model generated successfully.", actual[0]);
+    //  AdapterProxy target = new AdapterProxy();
+    //  Response actual = target.Generate("12345_000", "ABC");
+    //  Assert.AreEqual("DTO Model generated successfully.", actual[0]);
 
-      File.Copy(bindingConfigTestPath, bindingConfigPath, true);
-    }
+    //  File.Copy(bindingConfigTestPath, bindingConfigPath, true);
+    //}
 
     [TestMethod()]
     public void GetDictionaryTest_ABC()
@@ -70,21 +70,21 @@ namespace AdapterService.Tests
       Assert.AreNotEqual(0, actual.graphMaps.Count);
     }
 
-    [TestMethod()]
-    public void GetTest_ABC()
-    {
-      AdapterProxy target = new AdapterProxy();
-      XElement xml = target.Get("12345_000", "ABC", "Lines", "1-AB-L-001");
-      Assert.AreNotEqual(0, xml.Elements().Count());
-    }
+    //[TestMethod()]
+    //public void GetTest_ABC()
+    //{
+    //  AdapterProxy target = new AdapterProxy();
+    //  XElement xml = target.Get("12345_000", "ABC", "Lines", "1-AB-L-001");
+    //  Assert.AreNotEqual(0, xml.Elements().Count());
+    //}
 
-    [TestMethod()]
-    public void GetListTest_ABC()
-    {
-      AdapterProxy target = new AdapterProxy();
-      XElement xml = target.GetList("12345_000", "ABC", "Lines");
-      Assert.AreNotEqual(0, xml.Elements().Count());
-    }
+    //[TestMethod()]
+    //public void GetListTest_ABC()
+    //{
+    //  AdapterProxy target = new AdapterProxy();
+    //  XElement xml = target.GetList("12345_000", "ABC", "Lines");
+    //  Assert.AreNotEqual(0, xml.Elements().Count());
+    //}
 
     [TestMethod()]
     public void ClearStoreTest_ABC()

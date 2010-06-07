@@ -185,12 +185,6 @@
     <Resource Include="Resources\value.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\list.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\valuel.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\valuelist.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\v3.0\Microsoft.Silverlight.CSharp.targets" Condition="" />

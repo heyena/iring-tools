@@ -26,12 +26,12 @@ namespace org.iringtools.adapter.datalayer
     [Inject]
     public NHibernateDataLayer(AdapterSettings settings, ApplicationSettings appSettings)
     {
-      string scope = string.Format("{0}.{1}",appSettings.ProjectName, appSettings.ApplicationName);
+      string scope = string.Format("{0}.{1}", appSettings.ProjectName, appSettings.ApplicationName);
       string hibernateConfigPath = string.Format("{0}nh-configuration.{1}.xml", settings.XmlPath, scope);
       string hibernateMappingPath = string.Format("{0}nh-mapping.{1}.xml", settings.XmlPath, scope);
 
       _appSettings = appSettings;
-      _dataDictionaryPath = string.Format("{0}DataDictionary.{1}.xml",settings.XmlPath, scope);      
+      _dataDictionaryPath = string.Format("{0}DataDictionary.{1}.xml", settings.XmlPath, scope);      
       _sessionFactory = new Configuration()
         .Configure(hibernateConfigPath)
         .AddFile(hibernateMappingPath)
