@@ -79,7 +79,6 @@ namespace org.iringtools.adapter.semantic
                 bool isIdentifierMapped = false;
                 TemplateMap identifierTemplateMap = null;
                 RoleMap identifierRoleMap = null;
-                ClassMap identifierClass = null;
                 string classIdentifier = string.Empty;
 
                 foreach (GraphMap mappingGraphMap in _mapping.graphMaps)

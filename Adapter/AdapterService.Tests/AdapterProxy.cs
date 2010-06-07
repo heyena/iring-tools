@@ -16,7 +16,7 @@ namespace AdapterService.Tests
   [TestClass]
   public class AdapterProxy
   {
-    private AdapterProvider _adapterServiceProvider = null;   
+    private AdapterProvider _adapterProvider = null;   
 
     /// <summary>
     /// Gets or sets the error.
@@ -34,21 +34,7 @@ namespace AdapterService.Tests
     /// <param name="container">The container.</param>
     public AdapterProxy()
     {
-      _adapterServiceProvider = new AdapterProvider(ConfigurationManager.AppSettings);
-    }
-
-    public Response Generate(string projectName, string applicationName)
-    {
-      Response response = null;
-      try
-      {
-        response = _adapterServiceProvider.Generate(projectName, applicationName);
-      }
-      catch (Exception ex)
-      {
-        Error.SetError(ex);
-      }
-      return response;
+      _adapterProvider = new AdapterProvider(ConfigurationManager.AppSettings);
     }
 
     public Mapping GetMapping(string projectName, string applicationName)
@@ -57,7 +43,7 @@ namespace AdapterService.Tests
 
       try
       {
-        mapping = _adapterServiceProvider.GetMapping(projectName, applicationName);
+        mapping = _adapterProvider.GetMapping(projectName, applicationName);
       }
       catch (Exception ex)
       {
@@ -72,7 +58,7 @@ namespace AdapterService.Tests
       DataDictionary data = null;
       try
       {
-        data = _adapterServiceProvider.GetDictionary(projectName, applicationName);
+        data = _adapterProvider.GetDictionary(projectName, applicationName);
       }
       catch (Exception ex)
       {
@@ -86,7 +72,7 @@ namespace AdapterService.Tests
       Response response = null;
       try
       {
-        response = _adapterServiceProvider.UpdateMapping(projectName, applicationName, mapping);
+        response = _adapterProvider.UpdateMapping(projectName, applicationName, mapping);
       }
       catch (Exception ex)
       {
@@ -95,40 +81,40 @@ namespace AdapterService.Tests
       return response;
     }
 
-    public XElement Get(string projectName, string applicationName, string graphName, string identifier)
-    {
-      XElement xml = null;
-      try
-      {
-        xml = _adapterServiceProvider.Get(projectName, applicationName, graphName, identifier, null);
-      }
-      catch (Exception ex)
-      {
-        Error.SetError(ex);
-      }
-      return xml;
-    }
+    //public XElement Get(string projectName, string applicationName, string graphName, string identifier)
+    //{
+    //  XElement xml = null;
+    //  try
+    //  {
+    //    xml = _adapterProvider.Get(projectName, applicationName, graphName, identifier, null);
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    Error.SetError(ex);
+    //  }
+    //  return xml;
+    //}
 
-    public XElement GetList(string projectName, string applicationName, string graphName)
-    {
-      XElement envelope = null;
-      try
-      {
-        envelope = _adapterServiceProvider.GetList(projectName, applicationName, graphName, null);
-      }
-      catch (Exception ex)
-      {
-        Error.SetError(ex);
-      }
-      return envelope;
-    }
+    //public XElement GetList(string projectName, string applicationName, string graphName)
+    //{
+    //  XElement envelope = null;
+    //  try
+    //  {
+    //    envelope = _adapterProvider.GetList(projectName, applicationName, graphName, null);
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    Error.SetError(ex);
+    //  }
+    //  return envelope;
+    //}
 
     public Response ClearAll(string projectName, string applicationName)
     {
       Response response = null;
       try
       {
-        response = _adapterServiceProvider.ClearAll(projectName, applicationName);
+        response = _adapterProvider.DeleteAll(projectName, applicationName);
       }
       catch (Exception ex)
       {
@@ -142,7 +128,7 @@ namespace AdapterService.Tests
       Response response = null;
       try
       {
-        response = _adapterServiceProvider.RefreshGraph(projectName, applicationName, graphName);
+        response = _adapterProvider.Refresh(projectName, applicationName, graphName);
       }
       catch (Exception ex)
       {
@@ -156,7 +142,7 @@ namespace AdapterService.Tests
       Response response = null;
       try
       {
-        response = _adapterServiceProvider.RefreshAll(projectName, applicationName);
+        response = _adapterProvider.RefreshAll(projectName, applicationName);
       }
       catch (Exception ex)
       {
@@ -170,7 +156,7 @@ namespace AdapterService.Tests
       Response response = null;
       try
       {
-        response = _adapterServiceProvider.Pull(projectName, applicationName, request);
+        response = _adapterProvider.Pull(projectName, applicationName, request);
       }
       catch (Exception ex)
       {
@@ -179,26 +165,26 @@ namespace AdapterService.Tests
       return response;
     }
 
-    public Response PullDTO(string projectName, string applicationName, Request request)
-    {
-      Response response = null;
-      try
-      {
-        response = _adapterServiceProvider.PullDTO(projectName, applicationName, request);
-      }
-      catch (Exception ex)
-      {
-        Error.SetError(ex);
-      }
-      return response;
-    }
+    //public Response PullDTO(string projectName, string applicationName, Request request)
+    //{
+    //  Response response = null;
+    //  try
+    //  {
+    //    response = _adapterProvider.PullDTO(projectName, applicationName, request);
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    Error.SetError(ex);
+    //  }
+    //  return response;
+    //}
 
     public Response UpdateDatabaseDictionary(DatabaseDictionary databaseDictionary, string projectName, string applicationName)
     {
       Response response = null;
       try
       {
-        response = _adapterServiceProvider.UpdateDatabaseDictionary(databaseDictionary, projectName, applicationName);
+        response = _adapterProvider.UpdateDatabaseDictionary(databaseDictionary, projectName, applicationName);
       }
       catch (Exception ex)
       {
@@ -207,26 +193,26 @@ namespace AdapterService.Tests
       return response;
     }
 
-    public List<DataTransferObject> GetDTOList(string projectName, string applicationName, string graphName)
-    {
-      List<DataTransferObject> dtoList = null;
-      try
-      {
-        dtoList = _adapterServiceProvider.GetDTOList(projectName, applicationName, graphName);
-      }
-      catch (Exception ex)
-      {
-        Error.SetError(ex);
-      }
-      return dtoList;
-    }
+    //public List<DataTransferObject> GetDTOList(string projectName, string applicationName, string graphName)
+    //{
+    //  List<DataTransferObject> dtoList = null;
+    //  try
+    //  {
+    //    dtoList = _adapterProvider.GetDTOList(projectName, applicationName, graphName);
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    Error.SetError(ex);
+    //  }
+    //  return dtoList;
+    //}
 
      public List<ScopeProject> GetScopes()
     {
       List<ScopeProject> scopes = null;
       try
       {
-        scopes = _adapterServiceProvider.GetScopes();
+        scopes = _adapterProvider.GetScopes();
       }
       catch (Exception ex)
       {
@@ -240,7 +226,7 @@ namespace AdapterService.Tests
       Manifest manifest = null;
       try
       {
-        manifest = _adapterServiceProvider.GetManifest(projectName, applicationName);
+        manifest = _adapterProvider.GetManifest(projectName, applicationName);
       }
       catch (Exception ex)
       {

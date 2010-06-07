@@ -57,17 +57,9 @@ namespace org.iringtools.adapter
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/mapping")]
     Response UpdateMapping(string projectName, string applicationName, Mapping mapping);
 
-    [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/generate")]
-    Response Generate(string projectName, string applicationName);
-
-    [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/delete")]
-    Response Delete(string projectName, string applicationName);
-
-    [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}?format={format}")]
-    XElement Get(string projectName, string applicationName, string graphName, string identifier, string format);
+    //[OperationContract]
+    //[WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}?format={format}")]
+    //XElement Get(string projectName, string applicationName, string graphName, string identifier, string format);
 
     [OperationContract]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}")]

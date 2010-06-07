@@ -97,6 +97,7 @@
   <ItemGroup>
     <Compile Include="AdapterModule.cs" />
     <Compile Include="dotNETRdfEngine.cs" />
+    <Compile Include="AdapterProvider.cs" />
     <Compile Include="SemWebRDFEngine.cs" />
     <Compile Include="DTOGenerator.cs" />
     <Compile Include="IAdapter.cs" />
@@ -109,7 +110,6 @@
     <Compile Include="RDFTransform.cs" />
     <Compile Include="RuleEngine.cs" />
     <Compile Include="SemWebEngine.cs" />
-    <Compile Include="AdapterProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\..\AssemblyInfo.cs" />
     <Compile Include="SPARQLEngine.cs" />

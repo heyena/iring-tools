@@ -57,7 +57,7 @@ namespace org.iringtools.adapter
     {
       DTOResponse response = new DTOResponse();
 
-      response.dto = _adapterServiceProvider.GetDTO(request.projectName, request.applicationName, request.graphName, request.identifier);
+      //response.dto = _adapterServiceProvider.GetDTO(request.projectName, request.applicationName, request.graphName, request.identifier);
 
       return response;
     }
@@ -66,7 +66,7 @@ namespace org.iringtools.adapter
     {
       DTOListResponse response = new DTOListResponse();
 
-      response.dtoList = _adapterServiceProvider.GetDTOList(request.projectName, request.applicationName, request.graphName);
+      //response.dtoList = _adapterServiceProvider.GetDTOList(request.projectName, request.applicationName, request.graphName);
 
       return response;
     }
