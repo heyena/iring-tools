@@ -175,7 +175,7 @@ namespace org.iringtools.adapter.semantic
             }
         }
 
-        public virtual List<DataTransferObject> Get(string graphName)
+        public virtual List<DataTransferObject> GetOLD(string graphName)
         {
           try
           {
