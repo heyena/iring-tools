@@ -43,14 +43,16 @@ namespace org.iringtools.adapter.datalayer
   {
     private string NAMESPACE_PREFIX = "org.iringtools.adapter.datalayer.proj_";
     private string COMPILER_VERSION = "v3.5";
-    private string ASSEMBLY_NAME = "App_Code";
     private List<string> NHIBERNATE_ASSEMBLIES = new List<string>() 
     {
       "NHibernate.dll",     
       "NHibernate.ByteCode.Castle.dll",
       "Iesi.Collections.dll",
     };
-
+    
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(EntityGenerator));
+    
+    private string _executingAssemblyName = String.Empty;
     private string _namespace = String.Empty; 
     private AdapterSettings _settings = null;
     private StringBuilder _mappingBuilder = null;
@@ -58,12 +60,11 @@ namespace org.iringtools.adapter.datalayer
     private List<DataObject> _dataObjects = null;
     private IndentedTextWriter _dataObjectWriter = null;
     private StringBuilder _dataObjectBuilder = null;
-    private ILog _logger = null;
 
     public EntityGenerator(AdapterSettings settings)
     {
       _settings = settings;
-      _logger = LogManager.GetLogger(typeof(EntityGenerator));
+      _executingAssemblyName = _settings.ExecutingAssemblyName;
     }
 
     public Response Generate(DatabaseDictionary dbDictionary, string projectName, string applicationName)
@@ -172,7 +173,7 @@ namespace org.iringtools.adapter.datalayer
       string keyClassName = dataObject.objectName + "Id";
 
       _mappingWriter.WriteStartElement("class");
-      _mappingWriter.WriteAttributeString("name", _namespace + "." + dataObject.objectName + ", " + ASSEMBLY_NAME);
+      _mappingWriter.WriteAttributeString("name", _namespace + "." + dataObject.objectName + ", " + _executingAssemblyName);
       _mappingWriter.WriteAttributeString("table", "\"" + dataObject.tableName + "\"");
 
       #region Create composite key
@@ -186,7 +187,7 @@ namespace org.iringtools.adapter.datalayer
 
         _mappingWriter.WriteStartElement("composite-id");
         _mappingWriter.WriteAttributeString("name", "Id");
-        _mappingWriter.WriteAttributeString("class", _namespace + "." + keyClassName + ", " + ASSEMBLY_NAME);
+        _mappingWriter.WriteAttributeString("class", _namespace + "." + keyClassName + ", " + _executingAssemblyName);
 
         foreach (KeyProperty keyProperty in dataObject.keyProperties)
         {
@@ -371,7 +372,7 @@ namespace org.iringtools.adapter.datalayer
 
               _mappingWriter.WriteStartElement("one-to-one");
               _mappingWriter.WriteAttributeString("name", relatedDataObject.tableName);
-              _mappingWriter.WriteAttributeString("class", _namespace + "." + dataRelationship.relatedObjectName + ", " + ASSEMBLY_NAME);
+              _mappingWriter.WriteAttributeString("class", _namespace + "." + dataRelationship.relatedObjectName + ", " + _executingAssemblyName);
 
               if (oneToOneRelationship.isKeySource)
               {
@@ -397,7 +398,7 @@ namespace org.iringtools.adapter.datalayer
               _mappingWriter.WriteAttributeString("column", "\"" + GetColumnName(relatedDataObject, oneToManyRelationship.relatedPropertyName) + "\"");
               _mappingWriter.WriteEndElement(); // end one-to-many
               _mappingWriter.WriteStartElement("one-to-many");
-              _mappingWriter.WriteAttributeString("class", _namespace + "." + dataRelationship.relatedObjectName + ", " + ASSEMBLY_NAME);
+              _mappingWriter.WriteAttributeString("class", _namespace + "." + dataRelationship.relatedObjectName + ", " + _executingAssemblyName);
               _mappingWriter.WriteEndElement(); // end key element
               _mappingWriter.WriteEndElement(); // end set element
               break;

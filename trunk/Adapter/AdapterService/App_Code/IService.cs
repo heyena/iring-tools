@@ -95,6 +95,6 @@ namespace org.iringtools.adapter
 
     [OperationContract]
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/dbdictionary")]
-    Response UpdateDatabaseDictionary(DatabaseDictionary databaseDictionary, string projectName, string applicationName);
+    Response UpdateDatabaseDictionary(string projectName, string applicationName, DatabaseDictionary databaseDictionary);
   }
 }
