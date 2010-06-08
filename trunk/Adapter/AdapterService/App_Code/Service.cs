@@ -139,7 +139,7 @@ namespace org.iringtools.adapter
           return _adapterProvider.GetQtxf(projectName, applicationName, graphName);
 
         case "DTO":
-          return _adapterProvider.GetHierarchicalDTOListWithReference(projectName, applicationName, graphName);
+          return _adapterProvider.GetHierarchicalDTOList(projectName, applicationName, graphName);
 
         default:
           return null;
@@ -147,13 +147,15 @@ namespace org.iringtools.adapter
     }
 
     /// <summary>
-    /// Pulls the data from a triple store into the database.
+    /// Pulls the data from a triple store into legacy database
     /// </summary>
-    /// <param name="request">The request parameter containing targetUri, targetCredentials, graphName, filter will be passed.</param>
-    /// <returns>Returns the response as success/failure.</returns>
-    public Response Pull(string projectName, string applicationName, Request request)
+    /// <param name="projectName"></param>
+    /// <param name="applicationName"></param>
+    /// <param name="graphName"></param>
+    /// <returns></returns>
+    public Response Pull(string projectName, string applicationName, string graphName)
     {
-      return _adapterProvider.Pull(projectName, applicationName, request);
+      return _adapterProvider.Pull(projectName, applicationName, graphName);
     }
 
     /// <summary>
@@ -185,7 +187,7 @@ namespace org.iringtools.adapter
     /// Clears the triple store.
     /// </summary>
     /// <returns>Returns the response as success/failure.</returns>
-    public Response ClearAll(string projectName, string applicationName)
+    public Response DeleteAll(string projectName, string applicationName)
     {
       return _adapterProvider.DeleteAll(projectName, applicationName);
     }
@@ -194,9 +196,9 @@ namespace org.iringtools.adapter
     /// Clears a triple store graph.
     /// </summary>
     /// <returns>Returns the response as success/failure.</returns>
-    public Response ClearGraph(string projectName, string applicationName, string graphName)
+    public Response DeleteGraph(string projectName, string applicationName, string graphName)
     {
-      return _adapterProvider.DeleteGraph(projectName, applicationName, graphName);
+      return _adapterProvider.Delete(projectName, applicationName, graphName);
     }
 
     /// <summary>

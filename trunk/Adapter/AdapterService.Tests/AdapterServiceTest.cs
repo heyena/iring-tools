@@ -34,7 +34,7 @@ namespace AdapterService.Tests
 
       AdapterProxy target = new AdapterProxy();
       DatabaseDictionary databaseDictionary = Utility.Read<DatabaseDictionary>(dbDictionaryPath);
-      Response actual = target.UpdateDatabaseDictionary(databaseDictionary, "12345_000", "ABC");
+      Response actual = target.UpdateDatabaseDictionary("12345_000", "ABC", databaseDictionary);
       Assert.AreEqual("Entities generated successfully.", actual[0]);
 
       File.Copy(bindingConfigTestPath, bindingConfigPath, true);

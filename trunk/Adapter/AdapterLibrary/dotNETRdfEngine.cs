@@ -19,421 +19,351 @@ using System.Net;
 using System.Xml;
 using System.Xml.Linq;
 using Microsoft.ServiceModel.Web;
+using System.Text.RegularExpressions;
 
 namespace org.iringtools.adapter.semantic
 {
-    class dotNETRdfEngine : SPARQLEngine, ISemanticLayer
+  public class dotNetRdfEngine : ISemanticLayer
+  {
+    private static readonly string DATALAYER_NS = "org.iringtools.adapter.datalayer";
+
+    private static readonly XNamespace RDF_NS = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+    private static readonly XNamespace OWL_NS = "http://www.w3.org/2002/07/owl#";
+    private static readonly XNamespace XSD_NS = "http://www.w3.org/2001/XMLSchema#";
+    private static readonly XNamespace XSI_NS = "http://www.w3.org/2001/XMLSchema-instance#";
+    private static readonly XNamespace TPL_NS = "http://tpl.rdlfacade.org/data#";
+    private static readonly XNamespace RDL_NS = "http://rdl.rdlfacade.org/data#";
+
+    private static readonly XName OWL_THING = OWL_NS + "Thing";
+    private static readonly XName RDF_ABOUT = RDF_NS + "about";
+    private static readonly XName RDF_TYPE = RDF_NS + "type";
+    private static readonly XName RDF_RESOURCE = RDF_NS + "resource";
+    private static readonly XName RDF_DATATYPE = RDF_NS + "datatype";
+
+    private static readonly string RDF_PREFIX = "rdf:";    
+    private static readonly string RDF_NIL = RDF_PREFIX + "nil";
+
+    private static readonly string CLASS_INSTANCE_QUERY_TEMPLATE = String.Format(@"
+      PREFIX rdf: <{0}>
+      PREFIX rdl: <{1}> 
+      SELECT ?_instance
+      WHERE {{{{ 
+        ?_instance rdf:type {{0}} . 
+      }}}}", RDF_NS.NamespaceName, RDL_NS.NamespaceName);
+
+    private static readonly string LITERAL_QUERY_TEMPLATE = String.Format(@"
+      PREFIX rdf: <{0}>
+      PREFIX rdl: <{1}> 
+      PREFIX tpl: <{2}> 
+      SELECT ?_values 
+      WHERE {{{{
+	      ?_instance rdf:type {{0}} . 
+	      ?_bnode {{1}} ?_instance . 
+	      ?_bnode rdf:type {{2}} . 
+	      ?_bnode {{3}} ?_values 
+      }}}}", RDF_NS.NamespaceName, RDL_NS.NamespaceName, TPL_NS.NamespaceName);
+
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(dotNetRdfEngine));
+
+    private Mapping _mapping = null;
+    private GraphMap _graphMap = null;
+    private Graph _graph = null;  // dotNetRdf graph
+    private MicrosoftSqlStoreManager _tripleStore = null;
+    private TripleStore _memoryStore = null;    
+    private XNamespace _graphNs = String.Empty;
+    private string _dataObjectsAssemblyName = String.Empty;
+    private string _dataObjectNs = String.Empty;
+
+    [Inject]
+    public dotNetRdfEngine(AdapterSettings adapterSettings, ApplicationSettings appSettings)
     {
-        private static readonly ILog _logger = LogManager.GetLogger(typeof(dotNETRdfEngine));
-        private IKernel _kernel;
-        private string _scopeName = String.Empty;
-        private string _scopedConnectionString = String.Empty;
-        private string _company = string.Empty;
-        internal Graph _remoteGraph = null;
-        private MicrosoftSqlStoreManager _msStore = null;
-        private AdapterSettings _settings;
-        private ApplicationSettings _applicationSettings;
-
-        #region Constants
-        public const string hash = "#";
-        public string propertyType = "Property";
-        public string relationshipType = "Relationship";
-        public string endDateTime = "endDateTime";
-
-        public const string rdfPrefix = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
-        public const string dmPrefix = "http://dm.rdlfacade.org/data#";
-        public const string rdlPrefix = "http://rdl.rdlfacade.org/data#";
-        public const string tplPrefix = "http://tpl.rdlfacade.org/data#";
-        public const string egPrefix = "http://www.example.com/data#";
-        public const string owlPrefix = "http://www.w3.org/2002/07/owl#";
-        public const string p7tplPrefix = "http://tpl.rdlfacade.org/data#";
-
-        const string _sqlCheckDatabase =
-          @"SELECT name FROM sys.databases WHERE name = N'@token'";
-
-
-        const string _sqlCreateDatabase =
-          @"CREATE DATABASE [@token]";
-
-        const string _sqlCreateLogin =
-          @"USE [@token]
-        CREATE LOGIN [@token] WITH PASSWORD = '@token', CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF
-        CREATE USER [@token] FOR LOGIN [@token]
-        EXEC sp_addrolemember db_owner, [@token]";
-
-        public static Uri rdfType = new Uri(rdfPrefix + "type");
-        public static Uri owlThingEntity = new Uri(owlPrefix + "Thing");
-        public static Uri classificationTemplateType = new Uri(p7tplPrefix + "R63638239485");
-        public static Uri classType = new Uri(p7tplPrefix + "R55055340393");
-        public static Uri instanceType = new Uri(p7tplPrefix + "R99011248051");
-        public static Uri startDateTimeTemplate = new Uri(p7tplPrefix + "valStartTime");
-        public static Uri endDateTimeTemplate = new Uri(p7tplPrefix + "valEndTime");
-        #endregion
-
-
-
-        [Inject]
-        public dotNETRdfEngine(AdapterSettings settings, ApplicationSettings applicationSettings, IDTOLayer dtoService, IKernel kernel)
-            : base(settings, dtoService)
-        {
-            _kernel = kernel;
-            _settings = settings;
-            _applicationSettings = applicationSettings;
-            _scopeName = _applicationSettings.ProjectName + "_" + _applicationSettings.ApplicationName;
-            string dbServer, dbName, dbUser, dbPassword = string.Empty;
-            dbServer = settings.DBServer;
-            dbName = settings.DBname;
-            dbUser = settings.DBUser;
-            dbPassword = settings.DBPassword;
-            _scopedConnectionString = string.Format("Data Source={0};Initial Catalog={1};User ID={2};Password={3}", dbServer, dbName, dbUser, dbPassword);
-        }
-
-        private SparqlResultSet PostQuery(string sparql)
-        {
-
-            Uri endpointAddress = new Uri(this._targetUri);
-
-            SparqlQueryParser parser = new SparqlQueryParser();
-
-            SparqlQuery sparqlQuery = parser.ParseFromString(sparql);
-
-            SparqlRemoteEndpoint sparqlEndpoint = new SparqlRemoteEndpoint(endpointAddress);
-
-            sparqlEndpoint.SetCredentials(_settings.InterfaceCredentials.GetNetworkCredential());
-
-            sparqlEndpoint.Timeout = 50000;
-
-            return sparqlEndpoint.QueryWithResultSet(sparqlQuery.ToString());
-
-        }
-
-        public override List<string> GetIdentifiers(string graphName)
-        {
-            try
-            {
-
-                GraphMap graphMap = new GraphMap();
-                List<string> identifiers = new List<string>();
-                bool isIdentifierMapped = false;
-                TemplateMap identifierTemplateMap = null;
-                RoleMap identifierRoleMap = null;
-                string classIdentifier = string.Empty;
-
-                foreach (GraphMap mappingGraphMap in _mapping.graphMaps)
-                {
-                    if (mappingGraphMap.name == graphName)
-                    {
-                        graphMap = mappingGraphMap;
-                    }
-                }
-                foreach (var keyValuePair in graphMap.classTemplateListMaps)
-                {
-                    foreach (TemplateMap templateMap in keyValuePair.Value)
-                    {
-                        foreach (RoleMap roleMap in templateMap.roleMaps)
-                        {
-                            if (keyValuePair.Key.identifiers.Contains(roleMap.propertyName))
-                            {
-                                classIdentifier = keyValuePair.Key.classId;
-                                identifierTemplateMap = templateMap;
-                                identifierRoleMap = roleMap;
-                                isIdentifierMapped = true;
-                                break;
-                            }
-                        }
-                        if (isIdentifierMapped) break;
-                    }
-                }
-
-                if (isIdentifierMapped)
-                {
-                    string identifier = String.Empty;
-                    string identifierUri = String.Empty;
-                    string identifierVariable = String.Empty;
-
-                    SPARQLQuery identifierQuery = new SPARQLQuery(SPARQLQueryType.SELECTDISTINCT);
-
-                    identifierQuery.addVariable("?" + identifierRoleMap.propertyName);
-                    //identifierQuery.addVariable("?i");
-
-                    SPARQLClassification classification = identifierQuery.addClassification(classIdentifier, "?i");
-                    //identifierQuery.addTemplate(identifierTemplateMap.templateId, identifierTemplateMap.classRole, "?i", identifierRoleMap.roleId, "?" + identifierRoleMap.propertyName);
-
-                    SPARQLTemplate identifierTemplate = new SPARQLTemplate();
-                    identifierTemplate.TemplateName = identifierTemplateMap.templateId;
-                    identifierTemplate.ClassRole = identifierTemplateMap.roleMaps.Select(c => c.type == RoleType.ClassRole).ToString();
-                    identifierTemplate.ClassId = "?i";
-
-                    foreach (RoleMap roleMap in identifierTemplateMap.roleMaps)
-                    {
-                        if (roleMap.type == RoleType.Reference)
-                        {
-                            identifierTemplate.addRole(roleMap.roleId, roleMap.type);
-                        }
-                        else if (roleMap.value != null && roleMap.value != String.Empty)
-                        {
-                            string value = identifierQuery.getLITERAL_SPARQL(roleMap.value, roleMap.dataType);
-                            identifierTemplate.addRole(roleMap.roleId, value);
-                        }
-                        else
-                        {
-                            identifierVariable = roleMap.propertyName;
-                            identifierQuery.addVariable("?" + identifierVariable);
-                            identifierTemplate.addRole(roleMap.roleId, "?" + identifierVariable);
-                        }
-                    }
-                    identifierTemplate.addRole("p7tpl:valEndTime", "?endDateTime");
-                    identifierQuery.addTemplate(identifierTemplate);
-
-                    Uri targetUri = new Uri(_settings.GraphBaseUri);
-                    string remoteServer = targetUri.ToString().Substring(0, targetUri.ToString().IndexOf(targetUri.PathAndQuery));
-
-                    identifierQuery.addSource(String.Format("{0}/{1}/{2}/{3}", _settings.GraphBaseUri, _applicationSettings.ProjectName, _applicationSettings.ApplicationName, graphName));
-
-                    SparqlResultSet sparqlResults = this.PostQuery(identifierQuery.getSPARQL());
-
-                    foreach (SparqlResult sparqlResult in sparqlResults.Results)
-                    {
-                        identifiers.Add(((LiteralNode)sparqlResult.Value(sparqlResult.Variables.First())).Value);
-                    }
-
-                    return identifiers;
-                }
-                else
-                {
-                    throw new Exception(String.Format("Identifier is not mapped for graph {0}", graphMap.name));
-                }
-            }
-            catch (Exception exception)
-            {
-                throw new Exception(String.Format("GetIdentifiersFromTripleStore[{0}]", graphName), exception);
-            }
-        }
-
-
-
-        public override Response Clear(String graphName)
-        {
-            
-            using (_msStore)
-            {
-                try
-                {
-                    DateTime b = DateTime.Now;
-                    Response response = new Response();
-                    Graph graph = new Graph();
-
-                    string graphUri = string.Format("{0}/{1}/{2}/{3}", _settings.GraphBaseUri, _applicationSettings.ProjectName, _applicationSettings.ApplicationName, graphName);
-
-                    _msStore.LoadGraph(graph, graphUri);
-                    graph.Clear();
-
-                    _msStore.SaveGraph(graph);
-
-                    DateTime e = DateTime.Now;
-                    TimeSpan d = e.Subtract(b);
-
-
-                    return response;
-                }
-                catch (Exception exception)
-                {
-                    throw new Exception("DeleteAll: " + exception);
-                }
-
-            }
-        }
-
-        public override void Initialize()
-        {
-            _msStore = new MicrosoftSqlStoreManager(_settings.DBServer, _settings.DBname, _settings.DBUser, _settings.DBPassword);
-        }
-
-        public override Response Post(string graphName, List<DataTransferObject> dtoList)
-        {
-            Response response = new Response();
-           // DateTime b = DateTime.Now;
-            try
-            {
-                using (_msStore)
-                {
-                    _msStore.Open(false);
-
-                    if (dtoList.FirstOrDefault() != null)
-                    {
-                        ITransformationLayer transformEngine = _kernel.Get<ITransformationLayer>("rdf");
-                        string baseURI = string.Format("{0}/{1}/{2}/{3}", _settings.GraphBaseUri, _applicationSettings.ProjectName, _applicationSettings.ApplicationName, graphName);
-                        Graph workGraph = new Graph();
-
-                        workGraph.BaseUri = new Uri(baseURI);
-                        _msStore.LoadGraph(workGraph, baseURI);
-                        workGraph.Clear();
-                        _msStore.SaveGraph(workGraph);
-                        
-                        XElement dtoListXml = _dtoService.SerializeDTO(graphName, dtoList);
-                        XElement rdf = transformEngine.Transform(graphName, dtoListXml);
-
-                        XmlDocument xdoc = new XmlDocument();
-                        xdoc.LoadXml(rdf.ToString());
-
-                        RdfXmlParser parser = new RdfXmlParser();
-                        Graph graph = new Graph();
-
-                        parser.Load(graph, xdoc);
-                        graph.BaseUri = new Uri(baseURI);
-                        _msStore.LoadGraph(graph, baseURI);
-                        _msStore.SaveGraph(graph);
-
-                        response.Add(string.Format("Graph[{0}] updated", baseURI));
-                    }
-                }
-
-            }
-            catch (Exception exception)
-            {
-                response.Level = StatusLevel.Error;
-                response.Add("Error in Post[].");
-                response.Add(exception.ToString());
-            }
-           // DateTime e = DateTime.Now;
-            //TimeSpan d = e.Subtract(b);
-           // response.Add(String.Format("Post([{3}]) Execution time [{0}:{1}.{2}] minutes.", d.Minutes, d.Seconds, d.Milliseconds, graphName));
-            return response;
-        }
-
-        protected override void QueryTemplateMap(TemplateMap templateMap, ClassMap classMap, SPARQLQuery previousQuery)
-        {
-            try
-            {
-
-                SPARQLQuery query = new SPARQLQuery(SPARQLQueryType.SELECT);
-                query.Merge(previousQuery);
-
-                query.Sources.Add(String.Format("{0}/{1}/{2}/{3}",
-                        _settings.GraphBaseUri,
-                         _applicationSettings.ProjectName,
-                         _applicationSettings.ApplicationName,
-                         this._graphName));
-
-                string graphIdentifierVariable = query.Variables.First<string>();
-                string graphIdentifierVariableName = graphIdentifierVariable.Replace("?", "");
-                string parentIdentifierVariable = query.Variables.Last<string>();
-                string identifierVariable = String.Empty;
-
-                RoleMap classRoleMap =
-                         (from roleMap in templateMap.roleMaps
-                          where roleMap.classMap != null
-                          select roleMap).FirstOrDefault();
-
-                if (classRoleMap == null)
-                {
-                    SPARQLTemplate sparqlTemplate = new SPARQLTemplate();
-                    sparqlTemplate.TemplateName = templateMap.templateId;
-                    sparqlTemplate.ClassRole = templateMap.roleMaps.Select(c => c.type == RoleType.ClassRole).ToString();
-                    sparqlTemplate.ClassId = parentIdentifierVariable;
-
-                    foreach (RoleMap roleMap in templateMap.roleMaps)
-                    {
-
-                        if (roleMap.type == RoleType.Reference)
-                        {
-                            sparqlTemplate.addRole(roleMap.roleId, roleMap.dataType);
-                        }
-                        else if (roleMap.value != null && roleMap.value != String.Empty)
-                        {
-                            string value = query.getLITERAL_SPARQL(roleMap.value, roleMap.dataType);
-                            sparqlTemplate.addRole(roleMap.roleId, value);
-                        }
-                        else
-                        {
-                            identifierVariable = roleMap.propertyName;
-                            query.addVariable("?" + identifierVariable);
-                            sparqlTemplate.addRole(roleMap.roleId, "?" + identifierVariable);
-                        }
-                    }
-
-                    sparqlTemplate.addRole("p7tpl:valEndTime", "?endDateTime");
-                    query.addTemplate(sparqlTemplate);
-
-                    SparqlResultSet sparqlResults = this.PostQuery(query.getSPARQL());
-
-                    foreach (SparqlResult sparqlResult in sparqlResults.Results)
-                    {
-                        INode identifierNode =
-                         (from binding in sparqlResult
-                          where binding.Key == graphIdentifierVariableName
-                          select binding.Value).FirstOrDefault();
-
-                        DataTransferObject dto = _dtoList[((LiteralNode)identifierNode).Value];
-
-                        foreach (KeyValuePair<string, INode> binding in sparqlResult)
-                        {
-                            string propertyName = binding.Key;
-
-                            if (propertyName != graphIdentifierVariableName)
-                            {
-                                object propertyValue = null;
-
-                                RoleMap roleMap = FindRoleMap(templateMap, propertyName);
-
-                                if (binding.Value is LiteralNode)
-                                    if (((LiteralNode)binding.Value).Value != null)
-                                    {
-                                        propertyValue = ((LiteralNode)binding.Value).Value;
-                                        dto.SetPropertyValueByInternalName(propertyName, propertyValue);
-                                    }
-                                    else if (roleMap != null && (roleMap.valueList != "" || roleMap.valueList != null))
-                                    {
-                                        Dictionary<string, string> valueList = GetPullValueMap(roleMap.valueList);
-                                        if (binding.Value is UriNode)
-                                        {
-                                            string propertyUri = ((UriNode)binding.Value).Uri.ToString();
-                                            propertyValue = valueList[propertyUri];
-                                            dto.SetPropertyValueByInternalName(propertyName, propertyValue);
-                                        }
-                                    }
-
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    _instanceCounter++;
-
-                    SPARQLTemplate sparqlTemplate = new SPARQLTemplate();
-                    sparqlTemplate.TemplateName = templateMap.templateId;
-                    sparqlTemplate.ClassRole = templateMap.roleMaps.Select(c => c.type == RoleType.ClassRole).ToString();
-                    sparqlTemplate.ClassId = parentIdentifierVariable;
-
-                    string instanceVariable = "?i" + _instanceCounter.ToString();
-
-                    if (classRoleMap.type == RoleType.Reference)
-                    {
-                        sparqlTemplate.addRole(classRoleMap.roleId, classRoleMap.dataType);
-                    }
-                    else if (classRoleMap.value != null && classRoleMap.value != String.Empty)
-                    {
-                        string value = query.getLITERAL_SPARQL(classRoleMap.value, classRoleMap.dataType);
-                        sparqlTemplate.addRole(classRoleMap.roleId, value);
-                    }
-                    else
-                    {
-                        sparqlTemplate.addRole(classRoleMap.roleId, instanceVariable);
-                    }
-                    sparqlTemplate.addRole("p7tpl:valEndTime", "?endDateTime");
-                    query.addTemplate(sparqlTemplate);
-
-                   // QueryClassMap(classRoleMap.classMap, classRoleMap, query, instanceVariable);
-
-                    _instanceCounter--;
-                }
-            }
-            catch (Exception exception)
-            {
-                throw new Exception(String.Format("QueryTemplateMap[{0}]", templateMap.name), exception);
-            }
-
-        }
+      string scope = appSettings.ProjectName + "{0}" + appSettings.ApplicationName;
+      
+      _tripleStore = new MicrosoftSqlStoreManager(adapterSettings.DBServer, adapterSettings.DBname, adapterSettings.DBUser, adapterSettings.DBPassword);
+      _mapping = Utility.Read<Mapping>(String.Format(adapterSettings.XmlPath + "Mapping." + scope + ".xml", "."));
+      _graph = new Graph();
+      _graphNs = String.Format(adapterSettings.GraphBaseUri + scope + "#", "/");
+      _dataObjectNs = String.Format(DATALAYER_NS + ".proj_" + scope, ".");
+      _dataObjectsAssemblyName = adapterSettings.ExecutingAssemblyName;
     }
+
+    public Response Refresh(string graphName, XElement rdf)
+    {
+      Response response = new Response();
+
+      try
+      {
+        DateTime startTime = DateTime.Now;
+        
+        FindGraphMap(graphName);
+        
+        // create xdoc from xelement
+        Uri graphUri = new Uri(_graphMap.baseUri);
+        XmlDocument xdoc = new XmlDocument();
+        xdoc.LoadXml(rdf.ToString());
+        rdf.RemoveAll();
+
+        // load xdoc to graph
+        RdfXmlParser parser = new RdfXmlParser();
+        _graph.Clear();
+        _graph.BaseUri = graphUri;
+        parser.Load(_graph, xdoc);
+        xdoc.RemoveAll();
+
+        // delete old graph and save new one
+        DeleteGraph(graphUri);
+        _tripleStore.SaveGraph(_graph);
+
+        #region report status
+        DateTime endTime = DateTime.Now;
+        TimeSpan duration = endTime.Subtract(startTime);
+
+        response.Level = StatusLevel.Success;
+        response.Add("Graph [" + graphName + "] has been refreshed in triple store successfully.");
+
+        response.Add(String.Format("Execution time [{0}:{1}.{2}] minutes.",
+          duration.Minutes, duration.Seconds, duration.Milliseconds));
+        #endregion
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error refreshing graph [" + graphName + "]. " + ex);
+
+        response.Level = StatusLevel.Error;
+        response.Add("Error refreshing graph [" + graphName + "]. " + ex);
+      }
+
+      return response;
+    }
+
+    public Dictionary<string, IList<IDataObject>> Get(string graphName)
+    {
+      FindGraphMap(graphName);
+
+      // load graph from triple store
+      _graph.Clear();
+      _graph.BaseUri = new Uri(_graphMap.baseUri);
+      _tripleStore.LoadGraph(_graph, _graphMap.baseUri);
+
+      // create in-memory store for querying
+      _memoryStore = new TripleStore();
+      _memoryStore.Add(_graph);
+      _graph.Dispose();
+
+      return FillDataObjectSet(GetClassInstanceCount());
+    }
+
+    public Response Delete(string graphName)
+    {
+      Response response = new Response();
+
+      try
+      {
+        FindGraphMap(graphName);
+
+        Uri graphUri = new Uri(_graphMap.baseUri);
+        string graphId = _tripleStore.GetGraphID(graphUri);
+
+        if (!String.IsNullOrEmpty(graphId))
+        {
+          _tripleStore.ClearGraph(graphId);
+          _tripleStore.RemoveGraph(graphId);
+        }
+
+        response.Level = StatusLevel.Success;
+        response.Add("Graph [" + graphUri + "] has been deleted successfully.");
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error delete graph [" + graphName + "]: " + ex);
+
+        response.Level = StatusLevel.Error;
+        response.Add("Error deleting graph [" + graphName + "]. " + ex);
+      }
+
+      return response;
+    }
+
+    #region helper methods
+    private void FindGraphMap(string graphName)
+    {
+      foreach (GraphMap graphMap in _mapping.graphMaps)
+      {
+        if (graphMap.name.ToLower() == graphName.ToLower())
+        {
+          _graphMap = graphMap;
+
+          if (_graphMap.classTemplateListMaps.Count == 0)
+            throw new Exception("Graph [" + graphName + "] is empty.");
+
+          return;
+        }
+      }
+
+      throw new Exception("Graph [" + graphName + "] does not exist.");
+    }
+
+    private string ResolveValueMap(string valueList, string uri)
+    {
+      if (_mapping != null && _mapping.valueMaps.Count > 0)
+      {
+        foreach (ValueMap valueMap in _mapping.valueMaps)
+        {
+          if (valueMap.valueList == valueList && valueMap.uri == uri)
+          {
+            return valueMap.internalValue;
+          }
+        }
+      }
+
+      return String.Empty;
+    }
+
+    private Response DeleteGraph(Uri graphUri)
+    {
+      Response response = new Response();
+
+      try
+      {
+        string graphId = _tripleStore.GetGraphID(graphUri);
+
+        if (!String.IsNullOrEmpty(graphId))
+        {
+          _tripleStore.ClearGraph(graphId);
+          _tripleStore.RemoveGraph(graphId);
+        }
+
+        response.Level = StatusLevel.Success;
+        response.Add("Graph [" + graphUri + "] has been deleted successfully.");
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error delete graph [" + graphUri + "]: " + ex);
+
+        response.Level = StatusLevel.Error;
+        response.Add("Error deleting graph [" + graphUri + "]. " + ex);
+      }
+
+      return response;
+    }
+
+    private int GetClassInstanceCount()
+    {
+      ClassMap classMap = _graphMap.classTemplateListMaps.First().Key;
+      string query = String.Format(CLASS_INSTANCE_QUERY_TEMPLATE, classMap.classId);
+      object results = _memoryStore.ExecuteQuery(query);
+
+      if (results is SparqlResultSet)
+      {
+        SparqlResultSet resultSet = (SparqlResultSet)results;
+        return resultSet.Count;
+      }
+
+      throw new Exception("Error querying instances of class [" + classMap.name + "].");
+    }
+
+    private Dictionary<string, IList<IDataObject>> FillDataObjectSet(int classInstanceCount)
+    {
+      Dictionary<string, IList<IDataObject>> dataObjectSet = new Dictionary<string, IList<IDataObject>>();
+
+      foreach (var pair in _graphMap.classTemplateListMaps)
+      {
+        ClassMap classMap = pair.Key;
+        List<TemplateMap> templateMaps = pair.Value;
+        int dupTemplatePos = 0;
+
+        foreach (TemplateMap templateMap in templateMaps)
+        {
+          List<RoleMap> propertyMapRoles = new List<RoleMap>();
+          string classRoleId = String.Empty;
+
+          #region find propertyMapRoles and classRoleId
+          foreach (RoleMap roleMap in templateMap.roleMaps)
+          {
+            if (roleMap.type == RoleType.ClassRole)
+            {
+              classRoleId = roleMap.roleId;
+            }
+            else if (roleMap.type == RoleType.Property)
+            {
+              propertyMapRoles.Add(roleMap);
+            }
+          }
+          #endregion
+
+          #region query for property values and save them into dataObjects
+          foreach (RoleMap roleMap in propertyMapRoles)
+          {
+            string query = String.Format(LITERAL_QUERY_TEMPLATE, classMap.classId, classRoleId, templateMap.templateId, roleMap.roleId);
+            object results = _memoryStore.ExecuteQuery(query);
+
+            if (results is SparqlResultSet)
+            {
+              string[] property = roleMap.propertyName.Split('.');
+              string objectName = property[0].Trim();
+              string propertyName = property[1].Trim();
+
+              if (!dataObjectSet.ContainsKey(objectName))
+              {
+                dataObjectSet.Add(objectName, new List<IDataObject>());
+              }
+
+              IList<IDataObject> dataObjects = dataObjectSet[objectName];
+              if (dataObjects.Count == 0)
+              {
+                string objectType = _dataObjectNs + "." + objectName + "," + _dataObjectsAssemblyName;
+                Type type = Type.GetType(objectType);
+                  
+                for (int i = 0; i < classInstanceCount; i++)
+                {
+                  IDataObject dataObject = (IDataObject)Activator.CreateInstance(type);
+                  dataObjects.Add(dataObject);
+                }
+              }
+
+              SparqlResultSet resultSet = (SparqlResultSet)results;
+              if (resultSet.Count > classInstanceCount)
+              {
+                dupTemplatePos++;
+              }
+
+              int objectIndex = 0;
+              int resultSetIndex = (dupTemplatePos == 0) ? 0 : dupTemplatePos - 1;
+
+              while (resultSetIndex < resultSet.Count)
+              {
+                string value = Regex.Replace(resultSet[resultSetIndex].ToString(), @".*= ", String.Empty);
+
+                if (value == RDF_NIL)
+                  value = String.Empty;
+                else if (value.Contains("^^"))
+                  value = value.Substring(0, value.IndexOf("^^"));
+                else if (!String.IsNullOrEmpty(roleMap.valueList))
+                  value = ResolveValueMap(roleMap.valueList, value);
+
+                dataObjects[objectIndex++].SetPropertyValue(propertyName, value);
+
+                if (dupTemplatePos == 0)
+                  resultSetIndex++;
+                else if (dupTemplatePos < 3)
+                  resultSetIndex += 2;
+                else
+                  resultSetIndex += dupTemplatePos;
+              }
+
+              dataObjectSet[objectName] = dataObjects;
+            }
+            else
+            {
+              throw new Exception("Error querying in-memory triple store.");
+            }
+          }
+          #endregion
+        }
+      }
+
+      return dataObjectSet;
+    }
+    #endregion
+  }
 }

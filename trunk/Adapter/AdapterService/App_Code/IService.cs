@@ -36,6 +36,10 @@ namespace org.iringtools.adapter
   public partial interface IService
   {
     [OperationContract]
+    [WebGet(UriTemplate = "/version")]
+    string GetVersion();
+
+    [OperationContract]
     [WebGet(UriTemplate = "/scopes")]
     List<ScopeProject> GetScopes();
 
@@ -47,12 +51,10 @@ namespace org.iringtools.adapter
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/datadictionary")]
     DataDictionary GetDictionary(string projectName, string applicationName);
 
-   // [XmlSerializerFormat]
     [OperationContract]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/mapping")]
     Mapping GetMapping(string projectName, string applicationName);
 
-   // [XmlSerializerFormat]
     [OperationContract]
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/mapping")]
     Response UpdateMapping(string projectName, string applicationName, Mapping mapping);
@@ -66,12 +68,12 @@ namespace org.iringtools.adapter
     XElement GetList(string projectName, string applicationName, string graphName, string format);
 
     [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/clear")]
-    Response ClearAll(string projectName, string applicationName);
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/delete")]
+    Response DeleteAll(string projectName, string applicationName);
 
     [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/clear")]
-    Response ClearGraph(string projectName, string applicationName, string graphName);
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/delete")]
+    Response DeleteGraph(string projectName, string applicationName, string graphName);
 
     [OperationContract]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/refresh")]
@@ -81,17 +83,17 @@ namespace org.iringtools.adapter
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/refresh")]
     Response RefreshGraph(string projectName, string applicationName, string graphName);
 
-    [OperationContract]
-    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/pull")]
-    Response Pull(string projectName, string applicationName, Request request);
+    //[OperationContract]
+    //[WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/pull")]
+    //Response Pull(string projectName, string applicationName, Request request);
 
     [OperationContract]
-    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/put")]
-    Response Put(string projectName, string applicationName, string graphName, XElement dtoElement);
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/pull")]
+    Response Pull(string projectName, string applicationName, string graphName);
 
-    [OperationContract]
-    [WebGet(UriTemplate = "/version")]
-    string GetVersion();
+    //[OperationContract]
+    //[WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/put")]
+    //Response Put(string projectName, string applicationName, string graphName, XElement dtoElement);
 
     [OperationContract]
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/dbdictionary")]

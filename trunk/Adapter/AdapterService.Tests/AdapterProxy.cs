@@ -156,7 +156,7 @@ namespace AdapterService.Tests
       Response response = null;
       try
       {
-        response = _adapterProvider.Pull(projectName, applicationName, request);
+        response = _adapterProvider.Pull(projectName, applicationName, request["graphName"]);
       }
       catch (Exception ex)
       {
@@ -179,12 +179,12 @@ namespace AdapterService.Tests
     //  return response;
     //}
 
-    public Response UpdateDatabaseDictionary(DatabaseDictionary databaseDictionary, string projectName, string applicationName)
+    public Response UpdateDatabaseDictionary(string projectName, string applicationName, DatabaseDictionary databaseDictionary)
     {
       Response response = null;
       try
       {
-        response = _adapterProvider.UpdateDatabaseDictionary(databaseDictionary, projectName, applicationName);
+        response = _adapterProvider.UpdateDatabaseDictionary(projectName, applicationName, databaseDictionary);
       }
       catch (Exception ex)
       {

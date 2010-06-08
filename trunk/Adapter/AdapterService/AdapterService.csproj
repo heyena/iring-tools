@@ -104,10 +104,6 @@
     <Content Include="Service.svc" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Code\DataService.cs" />
-    <Compile Include="App_Code\IDataService.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="App_Code\IService.cs">
       <SubType>Code</SubType>
     </Compile>

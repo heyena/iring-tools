@@ -26,21 +26,21 @@
 
 using System.Collections.Generic;
 using org.iringtools.library;
+using System.Xml.Linq;
 
 namespace org.iringtools.adapter
 {
   public interface ISemanticLayer
   {
-    void Initialize();
+    //void Initialize();
+    //List<string> GetIdentifiers(string graphName);
+    //List<DataTransferObject> Get(string graphName);
+    //Response Post(string graphName, List<DataTransferObject> dtoList);
+    //Response Delete(string graphName, List<string> identifiers);
+    //Response Clear(string graphName);
 
-    List<string> GetIdentifiers(string graphName);
-
-    List<DataTransferObject> Get(string graphName);
-
-    Response Post(string graphName, List<DataTransferObject> dtoList);
-
-    Response Delete(string graphName, List<string> identifiers);
-
-    Response Clear(string graphName);
+    Response Refresh(string graphName, XElement rdf);
+    Dictionary<string, IList<IDataObject>> Get(string graphName);
+    Response Delete(string graphName);
   }
 }
