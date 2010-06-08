@@ -583,7 +583,7 @@ namespace DbDictionaryEditor
                 enableCheckBox = true;
             try
             {
-                root.Tag = dict.connectionString + "~" + dict.provider;
+                root.Tag = dict;
                 if (dict.dataObjects == null)
                   dict.dataObjects = new List<DataObject>();
                 foreach (DataObject table in dict.dataObjects)
@@ -793,13 +793,15 @@ namespace DbDictionaryEditor
         {
             try
             {
+                DatabaseDictionary dbdict = new DatabaseDictionary();
+                dbdict = (DatabaseDictionary)tvwItemDestinationRoot.Tag;
                 biBusyWindow.IsBusy = true;
                 isPosting = true;
-
+                
                 string project = cbDictionary.SelectedItem.ToString().Split('.')[1];
                 string application = cbDictionary.SelectedItem.ToString().Split('.')[2];
-
-                _dal.DeleteApp(project, application);
+              
+                _dal.PostDictionaryToAdapterService(project, application, dbdict);
             }
             catch (Exception ex)
             {
