@@ -13,6 +13,7 @@ namespace org.iringtools.library
     private string _proxyHost = String.Empty;
     private string _proxyPort = String.Empty;
     private string _baseDirectoryPath = String.Empty;
+    private string _executingAssemblyName = String.Empty;
 
     public string BaseDirectoryPath 
     {
@@ -54,7 +55,19 @@ namespace org.iringtools.library
       }
     }
 
-    public string ExecutingAssemblyName { get; set; }
+    public string ExecutingAssemblyName {
+      get
+      {
+        return _executingAssemblyName;
+      }
+      set
+      {
+        if (String.IsNullOrEmpty(value))
+          _executingAssemblyName = "App_Code";
+        else
+          _executingAssemblyName = value;
+      }
+    }
 
     public string XmlPath
     {

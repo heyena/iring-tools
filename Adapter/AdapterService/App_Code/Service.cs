@@ -130,10 +130,20 @@ namespace org.iringtools.adapter
     /// <returns>xelement</returns>
     public XElement GetList(string projectName, string applicationName, string graphName, string format)
     {
-      if (format.ToUpper() == "RDF")
-        return _adapterProvider.GetRdf(projectName, applicationName, graphName);
+      switch (format.ToUpper())
+      {
+        case "RDF":
+          return _adapterProvider.GetRdf(projectName, applicationName, graphName);
 
-      return null;
+        case "QTXF":
+          return _adapterProvider.GetQtxf(projectName, applicationName, graphName);
+
+        case "DTO":
+          return _adapterProvider.GetHierarchicalDTOListWithReference(projectName, applicationName, graphName);
+
+        default:
+          return null;
+      }
     }
 
     /// <summary>
@@ -193,9 +203,9 @@ namespace org.iringtools.adapter
     /// Pass the call to adapter service provider
     /// </summary>
     /// <returns>Returns the response as success/failure.</returns>
-    public Response UpdateDatabaseDictionary(DatabaseDictionary dbDictionary, string projectName, string applicationName)
+    public Response UpdateDatabaseDictionary(string projectName, string applicationName, DatabaseDictionary dbDictionary)
     {
-      return _adapterProvider.UpdateDatabaseDictionary(dbDictionary, projectName, applicationName);
+      return _adapterProvider.UpdateDatabaseDictionary(projectName, applicationName, dbDictionary);
     }
   }
 }

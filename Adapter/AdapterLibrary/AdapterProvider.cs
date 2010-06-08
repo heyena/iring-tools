@@ -119,17 +119,18 @@ namespace org.iringtools.adapter
     public AdapterProvider(NameValueCollection settings)
     {
       _kernel = new StandardKernel(new AdapterModule());
-      _settings = _kernel.Get<AdapterSettings>(new ConstructorArgument("AppSettings", settings));
+      _settings = _kernel.Get<AdapterSettings>(new ConstructorArgument("AppSettings", settings)); 
+      
       Directory.SetCurrentDirectory(_settings.BaseDirectoryPath);
     }
 
     #region public methods
     public List<ScopeProject> GetScopes()
     {
-      string path = _settings.XmlPath + "Scopes.xml";      
+      string path = _settings.XmlPath + "Scopes.xml";
 
       try
-      {        
+      {
         if (File.Exists(path))
         {
           return Utility.Read<List<ScopeProject>>(path);
@@ -287,11 +288,12 @@ namespace org.iringtools.adapter
         throw ex;
       }
     }
-    
-    public List<Dictionary<string, string>> GetDTOList(string graphName)
+
+    public List<Dictionary<string, string>> GetDTOList(string projectName, string applicationName, string graphName)
     {
       try
       {
+        Initialize(projectName, applicationName);
         FindGraphMap(graphName);
         LoadDataObjectSet();
 
@@ -314,10 +316,11 @@ namespace org.iringtools.adapter
       }
     }
 
-    public XElement GetHierarchicalDTOList(string graphName)
+    public XElement GetHierarchicalDTOList(string projectName, string applicationName, string graphName)
     {
       try
       {
+        Initialize(projectName, applicationName);
         FindGraphMap(graphName);
         LoadDataObjectSet();
 
@@ -344,10 +347,11 @@ namespace org.iringtools.adapter
       }
     }
 
-    public XElement GetHierarchicalDTOListWithReference(string graphName)
+    public XElement GetHierarchicalDTOListWithReference(string projectName, string applicationName, string graphName)
     {
       try
       {
+        Initialize(projectName, applicationName);
         FindGraphMap(graphName);
         LoadDataObjectSet();
 
@@ -390,10 +394,11 @@ namespace org.iringtools.adapter
       }      
     }
 
-    public XElement GetQtxf(string graphName)
+    public XElement GetQtxf(string projectName, string applicationName, string graphName)
     {
       try
       {
+        Initialize(projectName, applicationName);
         FindGraphMap(graphName);
         LoadDataObjectSet();
 
@@ -518,7 +523,7 @@ namespace org.iringtools.adapter
       return DeleteGraph(new Uri(_graphMap.baseUri));
     }
     
-    public Response UpdateDatabaseDictionary(DatabaseDictionary dbDictionary, string projectName, string applicationName)
+    public Response UpdateDatabaseDictionary(string projectName, string applicationName, DatabaseDictionary dbDictionary)
     {
       Response response = new Response();
 
@@ -612,7 +617,7 @@ namespace org.iringtools.adapter
         if (!_isInitialized)
         {
           string scope = projectName + "." + applicationName;
-
+          
           ApplicationSettings applicationSettings = _kernel.Get<ApplicationSettings>(
             new ConstructorArgument("projectName", projectName),
             new ConstructorArgument("applicationName", applicationName)
@@ -623,22 +628,21 @@ namespace org.iringtools.adapter
 
           _kernel.Load(new DynamicModule(bindingConfiguration));
           _dataLayer = _kernel.Get<IDataLayer>("DataLayer");
-          _semanticEngine = _kernel.Get<ISemanticLayer>("SemanticLayer");
-          //todo: move this to dotNetEngine constructor
+          //todo: update dotNetRdfEngine
+          //_semanticEngine = _kernel.Get<ISemanticLayer>("SemanticLayer");
+          //todo: move this to dotNetRdfEngine constructor
           _tripleStore = new MicrosoftSqlStoreManager(_settings.DBServer, _settings.DBname, _settings.DBUser, _settings.DBPassword);
 
+          _graph = new Graph();
           _dataObjectSet = new Dictionary<string, IList<IDataObject>>();
           _classIdentifiers = new Dictionary<string, List<string>>();
           _dtoList = new List<Dictionary<string, string>>();
           _hierachicalDTOClasses = new Dictionary<string, List<string>>();
-          _graph = new Graph();
 
           _mapping = Utility.Read<Mapping>(_settings.XmlPath + "Mapping." + scope + ".xml");
           _graphNs = _settings.GraphBaseUri + projectName + "/" + applicationName + "#";
           _dataObjectNs = DATALAYER_NS + ".proj_" + scope;
           _dataObjectsAssemblyName = _settings.ExecutingAssemblyName;
-
-          Directory.SetCurrentDirectory(_settings.BaseDirectoryPath);
           _isInitialized = true;
         }
       }
@@ -681,46 +685,34 @@ namespace org.iringtools.adapter
 
     private string ResolveValueList(string valueList, string value)
     {
-        if (_mapping != null)
+      if (_mapping != null && _mapping.valueMaps.Count > 0)
+      {
+        foreach (ValueMap valueMap in _mapping.valueMaps)
         {
-            foreach (ValueList valueLst in _mapping.valueLists)
-            {
-                if (valueLst.name == valueList)
-                {
-                    foreach (ValueMap valueMap in valueLst.valueMaps)
-                    {
-                        if (valueMap.internalValue == value)
-                        {
-                            return valueMap.uri;
-                        }
-                    }
-                }
-            }
+          if (valueMap.valueList == valueList && valueMap.internalValue == value)
+          {
+            return valueMap.uri;
+          }
         }
+      }
 
-        return RDF_NIL;
+      return RDF_NIL;
     }
 
     private string ResolveValueMap(string valueList, string uri)
     {
-        if (_mapping != null)
+      if (_mapping != null && _mapping.valueMaps.Count > 0)
+      {
+        foreach (ValueMap valueMap in _mapping.valueMaps)
         {
-            foreach (ValueList valueLst in _mapping.valueLists)
-            {
-                if (valueLst.name == valueList)
-                {
-                    foreach (ValueMap valueMap in valueLst.valueMaps)
-                    {
-                        if (valueMap.uri == uri)
-                        {
-                            return valueMap.internalValue;
-                        }
-                    }                    
-                }
-            }
+          if (valueMap.valueList == valueList && valueMap.uri == uri)
+          {
+            return valueMap.internalValue;
+          }
         }
+      }
 
-        return String.Empty;
+      return String.Empty;
     }
 
     private void PopulateClassIdentifiers()
