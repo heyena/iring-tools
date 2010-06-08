@@ -45,6 +45,7 @@ namespace org.iringtools.modules.memappingregion
         private string applicationName = null;
         public MappingPresenter Presenter { get; set; }
         public TreeView tvwMapping { get; set; }
+        public TreeView tvwValues { get; set; }
         public Mapping mapping { get; set; }
 
         [Dependency]
@@ -91,6 +92,155 @@ namespace org.iringtools.modules.memappingregion
                 default:
                     break;
             }
+        }
+
+        public void btnMoveDown_Click(object sender, RoutedEventArgs e)
+        {
+            TextBox txtLabel = sender as TextBox;
+            string valueListName = txtLabel.Text;
+
+            if (mapping != null)
+            {
+                if (model.SelectedMappingItem == null || model.SelectedMappingItem.NodeType != NodeType.ValueMap)
+                {
+                    MessageBox.Show("Please select a ValueMap", "ADD VALUEMAP", MessageBoxButton.OK);
+                }
+                else
+                {
+                    MappingItem itemMap = model.SelectedMappingItem;
+                    MappingItem parentMap = (MappingItem)itemMap.Parent;
+                    ValueMap valueMap = (ValueMap)itemMap.Tag;
+                    ValueList valueList = (ValueList)parentMap.Tag;
+                                        
+                    int idx = parentMap.Items.IndexOf(itemMap);
+                    if (idx != parentMap.Items.Count - 1)
+                    {
+                        parentMap.Items.Remove(itemMap);
+                        parentMap.Items.Insert(idx + 1, itemMap);
+                        itemMap.Focus();
+                    }
+
+                    idx = valueList.valueMaps.IndexOf(valueMap);
+                    if (idx != valueList.valueMaps.Count - 1)
+                    {
+                        valueList.valueMaps.Remove(valueMap);
+                        valueList.valueMaps.Insert(idx + 1, valueMap);
+                    }
+
+                }
+            }
+
+        }
+
+        public void btnMoveUp_Click(object sender, RoutedEventArgs e)
+        {
+            TextBox txtLabel = sender as TextBox;
+            string valueListName = txtLabel.Text;
+
+            if (mapping != null)
+            {
+                if (model.SelectedMappingItem == null || model.SelectedMappingItem.NodeType != NodeType.ValueMap)
+                {
+                    MessageBox.Show("Please select a ValueMap", "ADD VALUEMAP", MessageBoxButton.OK);
+                }
+                else
+                {
+                    MappingItem itemMap = model.SelectedMappingItem;
+                    MappingItem parentMap = (MappingItem)itemMap.Parent;
+                    ValueMap valueMap = (ValueMap)itemMap.Tag;
+                    ValueList valueList = (ValueList)parentMap.Tag;
+
+                    int idx = parentMap.Items.IndexOf(itemMap);
+                    if (idx > 0)
+                    {
+                        parentMap.Items.Remove(itemMap);
+                        parentMap.Items.Insert(idx - 1, itemMap);
+                        itemMap.Focus();
+                    }
+
+                    idx = valueList.valueMaps.IndexOf(valueMap);
+                    if (idx > 0)
+                    {
+                        valueList.valueMaps.Remove(valueMap);
+                        valueList.valueMaps.Insert(idx - 1, valueMap);
+                    }
+
+                }
+            }
+
+        }
+
+        public void btnAddValueList_Click(object sender, RoutedEventArgs e)
+        {
+            TextBox txtLabel = sender as TextBox;
+            string valueListName = txtLabel.Text;
+
+            if (mapping != null)
+            {
+                ValueList valueList = new ValueList { name = valueListName, valueMaps = new List<ValueMap>() };
+                mapping.valueLists.Add(valueList);
+                tvwValues.Items.Add(Presenter.AddNode(valueListName, valueList, null));
+            }
+
+        }
+
+        public void btnAddValueMap_Click(object sender, RoutedEventArgs e)
+        {
+            TextBox txtLabel = sender as TextBox;
+            string internalValue = txtLabel.Text;
+
+            if (mapping != null)
+            {
+                if (!Regex.IsMatch(internalValue, @"^[A-Za-z_]+\w*$"))
+                {
+                    MessageBox.Show("ValueMap internal value is invalid", "ADD VALUEMAP", MessageBoxButton.OK);
+                }
+                else if (model.SelectedIMUri == null ||
+                SPARQLExtensions.GetObjectTypeFromUri(model.SelectedIMUri) != SPARQLPrefix.ObjectType.Class)
+                {
+                    MessageBox.Show("Please select a valid class", "ADD VALUEMAP", MessageBoxButton.OK);
+                }
+                else if (model.SelectedMappingItem == null || model.SelectedMappingItem.NodeType != NodeType.ValueList)
+                {
+                    MessageBox.Show("Please select a ValueList", "ADD VALUEMAP", MessageBoxButton.OK);
+                }
+                else
+                {
+                    ValueList valueList = (ValueList)model.SelectedMappingItem.Tag;
+                    String uri = Regex.Replace(model.SelectedIMUri, ".*#", "rdl:");
+
+                    ValueMap valueMap = new ValueMap { internalValue = internalValue, uri = uri };
+                    valueList.valueMaps.Add(valueMap);
+                    model.SelectedMappingItem.Items.Add(Presenter.AddNode(uri, valueMap, model.SelectedMappingItem));
+                }
+            }
+
+        }
+
+        public void btnDeleteValue_Click(object sender, RoutedEventArgs e)
+        {
+            MappingItem mapItem = model.SelectedMappingItem;
+
+            if (mapItem != null)
+            {
+                if (mapItem.Tag is ValueList)
+                {
+                    ValueList valueList = (ValueList)mapItem.Tag;
+                    mapping.valueLists.Remove(valueList);
+                    tvwValues.Items.Remove(mapItem);
+                }
+                else if (mapItem.Tag is ValueMap)
+                {
+                    MappingItem parentMap = (MappingItem)mapItem.Parent;
+
+                    ValueMap valueMap = (ValueMap)mapItem.Tag;
+                    ValueList valueList = (ValueList)parentMap.Tag;
+                    
+                    valueList.valueMaps.Remove(valueMap);
+                    parentMap.Items.Remove(mapItem);
+                }
+            }
+
         }
 
         public void btnAddGraph_Click(object sender, RoutedEventArgs e)

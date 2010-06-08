@@ -40,14 +40,14 @@ namespace org.iringtools.library
         public Mapping()
         {
             graphMaps = new List<GraphMap>();
-            valueMaps = new List<ValueMap>();
+            valueLists = new List<ValueList>();
         }
 
         [DataMember(EmitDefaultValue = false, Order = 0)]
         public List<GraphMap> graphMaps { get; set; }
 
         [DataMember(EmitDefaultValue = false, Order = 1)]
-        public List<ValueMap> valueMaps { get; set; }
+        public List<ValueList> valueLists { get; set; }
 
         [DataMember(EmitDefaultValue = false, Order = 2)]
         public string version { get; set; }
@@ -318,15 +318,25 @@ namespace org.iringtools.library
     }
 
     [DataContract]
-    public class ValueMap
+    public class ValueList
     {
         [DataMember(EmitDefaultValue = false, Order = 0)]
-        public string valueList { get; set; }
+        public string name { get; set; }
 
         [DataMember(EmitDefaultValue = false, Order = 1)]
+        public List<ValueMap> valueMaps { get; set; }
+    }
+
+    [DataContract]
+    public class ValueMap
+    {
+        //[DataMember(EmitDefaultValue = false, Order = 0)]
+        //public string valueList { get; set; }
+
+        [DataMember(EmitDefaultValue = false, Order = 0)]
         public string internalValue { get; set; }
 
-        [DataMember(EmitDefaultValue = false, Order = 2)]
+        [DataMember(EmitDefaultValue = false, Order = 1)]
         public string uri { get; set; }
     }
 

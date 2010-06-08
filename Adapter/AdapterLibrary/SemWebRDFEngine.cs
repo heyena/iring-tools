@@ -939,16 +939,20 @@ namespace org.iringtools.adapter.semantic
         else
         {
           valueList = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-          foreach (ValueMap valueMap in _mapping.valueMaps)
+          foreach (ValueList valueLst in _mapping.valueLists)
           {
-            if (valueMap.valueList == valueListName)
-            {
-              string key = valueMap.internalValue;
-              if (!valueList.ContainsKey(key))
+              if (valueLst.name == valueListName)
               {
-                valueList.Add(key, valueMap.uri); //First one is the default
+
+                  foreach (ValueMap valueMap in valueLst.valueMaps)
+                  {
+                      string key = valueMap.internalValue;
+                      if (!valueList.ContainsKey(key))
+                      {
+                          valueList.Add(key, valueMap.uri); //First one is the default
+                      }
+                  }
               }
-            }
           }
           _refreshValueLists.Add(valueListName, valueList);
         }

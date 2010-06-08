@@ -569,17 +569,20 @@ namespace org.iringtools.adapter.semantic
                 else
                 {
                     valueList = new Dictionary<string, string>();
-                    foreach (ValueMap valueMap in _mapping.valueMaps)
+                    foreach (ValueList valueLst in _mapping.valueLists)
                     {
-                        if (valueMap.valueList == valueListName)
+                        if (valueLst.name == valueListName)
                         {
-                            string uri = valueMap.uri;
-                            if (!valueList.ContainsKey(uri))
+                            foreach (ValueMap valueMap in valueLst.valueMaps)
                             {
-                                valueList.Add(uri, valueMap.internalValue); //First one is the default
+                                string uri = valueMap.uri;
+                                if (!valueList.ContainsKey(uri))
+                                {
+                                    valueList.Add(uri, valueMap.internalValue); //First one is the default
+                                }
                             }
                         }
-                    }
+                    }                    
                     _pullValueLists.Add(valueListName, valueList);
                 }
 
@@ -609,9 +612,9 @@ namespace org.iringtools.adapter.semantic
                 else
                 {
                     valueList = new Dictionary<string, string>();
-                    foreach (ValueMap valueMap in _mapping.valueMaps)
+                    foreach (ValueList valueLst in _mapping.valueLists)
                     {
-                        if (valueMap.valueList == valueListName)
+                        foreach (ValueMap valueMap in valueLst.valueMaps)
                         {
                             string key = valueMap.internalValue;
                             if (!valueList.ContainsKey(key))

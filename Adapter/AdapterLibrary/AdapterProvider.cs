@@ -120,15 +120,16 @@ namespace org.iringtools.adapter
     {
       _kernel = new StandardKernel(new AdapterModule());
       _settings = _kernel.Get<AdapterSettings>(new ConstructorArgument("AppSettings", settings));
+      Directory.SetCurrentDirectory(_settings.BaseDirectoryPath);
     }
 
     #region public methods
     public List<ScopeProject> GetScopes()
     {
-      string path = _settings.XmlPath + "Scopes.xml";
+      string path = _settings.XmlPath + "Scopes.xml";      
 
       try
-      {
+      {        
         if (File.Exists(path))
         {
           return Utility.Read<List<ScopeProject>>(path);
@@ -680,34 +681,46 @@ namespace org.iringtools.adapter
 
     private string ResolveValueList(string valueList, string value)
     {
-      if (_mapping != null && _mapping.valueMaps.Count > 0)
-      {
-        foreach (ValueMap valueMap in _mapping.valueMaps)
+        if (_mapping != null)
         {
-          if (valueMap.valueList == valueList && valueMap.internalValue == value)
-          {
-            return valueMap.uri;
-          }
+            foreach (ValueList valueLst in _mapping.valueLists)
+            {
+                if (valueLst.name == valueList)
+                {
+                    foreach (ValueMap valueMap in valueLst.valueMaps)
+                    {
+                        if (valueMap.internalValue == value)
+                        {
+                            return valueMap.uri;
+                        }
+                    }
+                }
+            }
         }
-      }
 
-      return RDF_NIL;
+        return RDF_NIL;
     }
 
     private string ResolveValueMap(string valueList, string uri)
     {
-      if (_mapping != null && _mapping.valueMaps.Count > 0)
-      {
-        foreach (ValueMap valueMap in _mapping.valueMaps)
+        if (_mapping != null)
         {
-          if (valueMap.valueList == valueList && valueMap.uri == uri)
-          {
-            return valueMap.internalValue;
-          }
+            foreach (ValueList valueLst in _mapping.valueLists)
+            {
+                if (valueLst.name == valueList)
+                {
+                    foreach (ValueMap valueMap in valueLst.valueMaps)
+                    {
+                        if (valueMap.uri == uri)
+                        {
+                            return valueMap.internalValue;
+                        }
+                    }                    
+                }
+            }
         }
-      }
 
-      return String.Empty;
+        return String.Empty;
     }
 
     private void PopulateClassIdentifiers()

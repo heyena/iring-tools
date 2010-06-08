@@ -41,6 +41,9 @@ namespace org.iringtools.modules.memappingregion
         private IReferenceData referenceDataService = null;
         IIMPresentationModel model = null;
 
+        private TabControl tabMappings { get { return GetControl<TabControl>("tabMappings"); } }
+        private TabItem tabGraphMaps { get { return GetControl<TabItem>("tabGraphMaps"); } }
+        private TabItem tabValueMaps { get { return GetControl<TabItem>("tabValueMaps"); } }
         private TreeView tvwMapping { get { return GetControl<TreeView>("tvwMapping"); } }
         private TreeView tvwValues { get { return GetControl<TreeView>("tvwValues"); } }
 
@@ -53,6 +56,13 @@ namespace org.iringtools.modules.memappingregion
         private Button btnDelete { get { return ButtonCtrl("btnDelete"); } }
         private Button btnSave { get { return ButtonCtrl("btnSave"); } }
         private TextBox txtLabel { get { return TextCtrl("txtLabel"); } }
+        private Button btnvAddValue { get { return ButtonCtrl("btnvAddValue"); } }
+        private Button btnvAddValueList { get { return ButtonCtrl("btnvAddValueList"); } }
+        private Button btnvMoveUp { get { return ButtonCtrl("btnvMoveUp"); } }
+        private Button btnvMoveDown { get { return ButtonCtrl("btnvMoveDown"); } }
+        private Button btnvDelete { get { return ButtonCtrl("btnvDelete"); } }
+        private Button btnvSave { get { return ButtonCtrl("btnvSave"); } }
+        private TextBox txtvLabel { get { return TextCtrl("txtvLabel"); } }
 
         public string selectedValueList { get { return ((ComboBoxItem)(cbValueList.SelectedItem)).Content.ToString(); } }
 
@@ -80,6 +90,7 @@ namespace org.iringtools.modules.memappingregion
                 mappingCRUD = container.Resolve<MappingCRUD>();
                 mappingCRUD.Presenter = this;
                 mappingCRUD.tvwMapping = tvwMapping;
+                mappingCRUD.tvwValues = tvwValues;
 
                 // Subcribe to button click events on mappingCRUD
                 // note that we're sending in the txtLabel object as sender
@@ -91,10 +102,19 @@ namespace org.iringtools.modules.memappingregion
                 btnSave.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnSave_Click(txtLabel, e); };
                 btnDelete.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnDelete_Click(txtLabel, e); };
                 cbValueList.SelectionChanged += new SelectionChangedEventHandler(cbValueList_SelectionChanged);
+                btnvSave.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnSave_Click(txtLabel, e); };
+                btnvAddValueList.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnAddValueList_Click(txtvLabel, e); };
+                btnvDelete.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnDeleteValue_Click(txtvLabel, e); };
+                btnvAddValue.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnAddValueMap_Click(txtvLabel, e); };
+                btnvMoveDown.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnMoveDown_Click(txtvLabel, e); };
+                btnvMoveUp.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnMoveUp_Click(txtvLabel, e); };
 
 #if SILVERLIGHT
                 MouseScrollBehavior mouseScrollBehavior = new MouseScrollBehavior();
                 Interaction.GetBehaviors(tvwMapping).Add(mouseScrollBehavior);
+
+                MouseScrollBehavior mousevScrollBehavior = new MouseScrollBehavior();
+                Interaction.GetBehaviors(tvwValues).Add(mousevScrollBehavior);
 #else
         //TODO
 #endif
@@ -186,42 +206,23 @@ namespace org.iringtools.modules.memappingregion
                 //Add an empty value list item so we can use that value to clear erroneous entries
                 cbValueList.Items.Add(new ComboBoxItem { Content = "<No ValueList>", IsSelected = true });
 
-                // Add value maps to value list drop list
-
-                List<ValueMap> valueMaps = mapping.valueMaps;
-                MappingItem valueList = null;
-
-                if (valueMaps.Count > 0)
+                // Add value maps to value list drop list                                                
+                foreach (ValueList valueList in mapping.valueLists) 
                 {
-                    string prevValueList = String.Empty;
-
-                    foreach (ValueMap valueMap in valueMaps)
-                    {
-                        string currValueList = valueMap.valueList;
-
-                        if (currValueList != prevValueList)
-                        {
-                            ComboBoxItem cbItem = new ComboBoxItem();
-                            cbItem.Content = currValueList;
-                            cbValueList.Items.Add(cbItem);
-                            prevValueList = currValueList;
-                            valueList = AddNode(valueMap.valueList, (String)valueMap.valueList, null);
-                            tvwValues.Items.Add(valueList);
-                        }
-
-                        if (valueList != null)
-                        {
-                            MappingItem internalValue = AddNode(valueMap.internalValue, valueMap, valueList);
-                            valueList.Items.Add(internalValue);
-                        }
+                    ComboBoxItem cbItem = new ComboBoxItem();
+                    cbItem.Content = valueList.name;
+                    cbItem.Tag = valueList;
+                    cbValueList.Items.Add(cbItem);
+                    
+                    MappingItem nodeValueList = AddNode(valueList.name, valueList, null);
+                    tvwValues.Items.Add(nodeValueList);
+                                        
+                    foreach (ValueMap valueMap in valueList.valueMaps)
+                    {                        
+                        nodeValueList.Items.Add(AddNode(valueMap.uri, valueMap, nodeValueList));
                     }
-                }
-
-                //if (cbValueList.SelectedItem == null)
-                //    btnAddValueList.IsEnabled = false;
-                //else
-                //    btnAddValueList.IsEnabled = true;
-
+                }                              
+                
                 ChangeControlsState(true);
             }
             catch (Exception ex)
@@ -242,10 +243,19 @@ namespace org.iringtools.modules.memappingregion
                 string tag = data[0];
                 string id = data[1];
                 string label = data[2];
-
-                KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>(tag, label);
-                model.DetailProperties.Add(keyValuePair);
                 model.IdLabelDictionary[id] = label;
+            if (e.UserState is MappingItem)
+            {
+                MappingItem mappingItem = (MappingItem)e.UserState;
+                ValueMap valueMap = (ValueMap)mappingItem.Tag;
+
+                mappingItem.SetTextBlockText(label + " [" + valueMap.internalValue + "]");
+            }
+            else
+            {
+                KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>(tag, label);
+                model.DetailProperties.Add(keyValuePair);                
+            }
             }
             catch (Exception ex)
             {
@@ -312,7 +322,11 @@ namespace org.iringtools.modules.memappingregion
                     RoleMap roleMap = (RoleMap)selectedNode.Tag;
                     RefreshRoleMap(roleMap);
                 }
-
+            else if (selectedNode.Tag is ValueMap)
+            {
+                ValueMap ValueMap = (ValueMap)selectedNode.Tag;
+                RefreshValueMap(ValueMap, selectedNode);
+            }
                 e.Handled = true;
             }
             catch (Exception ex)
@@ -429,6 +443,25 @@ namespace org.iringtools.modules.memappingregion
             }
         }
 
+        public void RefreshValueMap(ValueMap valueMap, MappingItem mappingItem)
+        {
+            KeyValuePair<string, string> keyValuePair;
+            keyValuePair = new KeyValuePair<string, string>("Internal Value", valueMap.internalValue);
+            model.DetailProperties.Add(keyValuePair);
+            keyValuePair = new KeyValuePair<string, string>("Referenace Id", valueMap.uri);
+            model.DetailProperties.Add(keyValuePair);
+            
+            string id = Utility.GetIdFromURI(valueMap.uri);
+            if (model.IdLabelDictionary.ContainsKey(id))
+            {
+                model.DetailProperties.Add(new KeyValuePair<string, string>("Reference Class", model.IdLabelDictionary[id]));
+            }
+            else if (!String.IsNullOrEmpty(id))
+            {
+                referenceDataService.GetClassLabel("Reference Name", id, this);
+            }
+
+        }
         // INFORMATION MODEL TREEVIEW CODE FOLLOWS
 
         #region METHOD: AddNode(string header, object tag)
@@ -469,7 +502,7 @@ namespace org.iringtools.modules.memappingregion
                     node.SetTooltipText("Graph : " + node.GraphMap.name);
                     isProcessed = PopulateGraphNode(node, graphMap);
                 }
-                if (tag is TemplateMap)
+                else if (tag is TemplateMap)
                 {
                     node.NodeType = NodeType.TemplateMap;
                     if (parent.NodeType == NodeType.GraphMap)
@@ -487,7 +520,7 @@ namespace org.iringtools.modules.memappingregion
                     node.SetTooltipText("Template : " + node.TemplateMap.name);
                     isProcessed = PopulateTemplateNode(node, (TemplateMap)tag);
                 }
-                if (tag is RoleMap)
+                else if (tag is RoleMap)
                 {
                     RoleMap roleMap = (RoleMap)tag;
                     node.NodeType = NodeType.RoleMap;
@@ -502,7 +535,7 @@ namespace org.iringtools.modules.memappingregion
                 // ClassMap is the base for the above so we'll
                 // need to ensure we only process if none of the
                 // above already processed
-                if (tag is ClassMap && !isProcessed)
+                else if (tag is ClassMap && !isProcessed)
                 {
                     node.NodeType = NodeType.ClassMap;
                     node.GraphMap = parent.GraphMap;
@@ -513,13 +546,21 @@ namespace org.iringtools.modules.memappingregion
                     node.SetTooltipText("Class : " + node.ClassMap.name);
                     PopulateClassNode(node, (ClassMap)tag);
                 }
-                if (tag is ValueMap)
+                else if (tag is ValueMap)
                 {
                     node.NodeType = NodeType.ValueMap;
                     //node.ClassMap = (ClassMap)tag;
                     node.SetImageSource("value.png");
                     node.SetTooltipText("Value : " + ((ValueMap)tag).internalValue);
                     isProcessed = PopulateValueNode(node, (ValueMap)tag);
+                }
+                else if (tag is ValueList)
+                {
+                    node.NodeType = NodeType.ValueList;
+                    //node.ClassMap = (ClassMap)tag;
+                    node.SetImageSource("valuelist.png");
+                    node.SetTooltipText("ValueList : " + ((ValueList)tag).name);
+                    //isProcessed = PopulateValueNode(node, (ValueMap)tag);
                 }
             }
             catch (Exception ex)
@@ -789,10 +830,7 @@ namespace org.iringtools.modules.memappingregion
         /// <returns></returns>
         private bool PopulateValueNode(MappingItem node, ValueMap valueMap)
         {
-            //if (valueMap.internalValue.Equals(String.Empty))
-            //{
-            //    node.Header += unmappedToken;
-            //}
+            referenceDataService.GetClassLabel("Update Text", valueMap.uri, node);
 
             return true;
         }
@@ -848,34 +886,54 @@ namespace org.iringtools.modules.memappingregion
             {
                 if (mappingCRUD.mapping != null)
                 {
-                    txtLabel.IsEnabled = enabled;
-                    btnAddGraph.IsEnabled = enabled;
+                    tabGraphMaps.IsEnabled = enabled;
+                    tabValueMaps.IsEnabled = enabled;
 
-                    if (mappingCRUD.mapping.graphMaps.Count > 0)
+                    if (tabMappings.SelectedItem == tabValueMaps)
                     {
+                        btnvAddValue.IsEnabled = enabled;
+                        btnvAddValueList.IsEnabled = enabled;
+                        btnvDelete.IsEnabled = enabled;
+                        btnvSave.IsEnabled = enabled;
+                        btnvMoveDown.IsEnabled = enabled;
+                        btnvMoveUp.IsEnabled = enabled;
+                        txtvLabel.IsEnabled = enabled;                        
+                    }
+                    else if (tabMappings.SelectedItem == tabGraphMaps)
+                    {
+                        txtLabel.IsEnabled = enabled;
+                        btnAddGraph.IsEnabled = enabled;
                         tvwMapping.IsEnabled = enabled;
                         btnAddTemplate.IsEnabled = enabled;
                         btnMap.IsEnabled = enabled;
                        // btnEditFixedRole.IsEnabled = enabled;
 
-                        if (enabled && cbValueList.Items.Count > 0)
+                        if (mappingCRUD.mapping.graphMaps.Count > 0)
                         {
-                            cbValueList.IsEnabled = enabled;
-                            btnAddValueList.IsEnabled = enabled;
-                        }
-                        else if (enabled && cbValueList.SelectedItem != null)
-                        {
-                            cbValueList.IsEnabled = false;
-                            btnAddValueList.IsEnabled = false;
-                        }
-                        else
-                        {
-                            cbValueList.IsEnabled = false;
-                            btnAddValueList.IsEnabled = false;
-                        }
+                            tvwMapping.IsEnabled = enabled;
+                            btnAddTemplate.IsEnabled = enabled;
+                            btnMap.IsEnabled = enabled;
+                            // btnMakeClassRole.IsEnabled = enabled;
 
-                        btnDelete.IsEnabled = enabled;
-                        btnSave.IsEnabled = enabled;
+                            if (enabled && cbValueList.Items.Count > 0)
+                            {
+                                cbValueList.IsEnabled = enabled;
+                                btnAddValueList.IsEnabled = enabled;
+                            }
+                            else if (enabled && cbValueList.SelectedItem != null)
+                            {
+                                cbValueList.IsEnabled = false;
+                                btnAddValueList.IsEnabled = false;
+                            }
+                            else
+                            {
+                                cbValueList.IsEnabled = false;
+                                btnAddValueList.IsEnabled = false;
+                            }
+
+                            btnDelete.IsEnabled = enabled;
+                            btnSave.IsEnabled = enabled;
+                        }
                     }
                 }
             }
