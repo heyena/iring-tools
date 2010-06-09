@@ -414,8 +414,8 @@ namespace org.iringtools.adapter
 
           _kernel.Load(new DynamicModule(bindingConfiguration));
           _dataLayer = _kernel.Get<IDataLayer>("DataLayer");
-          _semanticEngine = _kernel.Get<ISemanticLayer>("SemanticLayer");
           _projectionEngine = _kernel.Get<IProjectionLayer>("ProjectionLayer");
+          _semanticEngine = _kernel.Get<ISemanticLayer>("SemanticLayer");
           _mapping = Utility.Read<Mapping>(string.Format("{0}Mapping.{1}.xml",_settings.XmlPath, scope));
 
           _isInitialized = true;
