@@ -130,20 +130,7 @@ namespace org.iringtools.adapter
     /// <returns>xelement</returns>
     public XElement GetList(string projectName, string applicationName, string graphName, string format)
     {
-      switch (format.ToUpper())
-      {
-        case "RDF":
-          return _adapterProvider.GetRdf(projectName, applicationName, graphName);
-
-        case "QTXF":
-          return _adapterProvider.GetQtxf(projectName, applicationName, graphName);
-
-        case "DTO":
-          return _adapterProvider.GetHierarchicalDTOList(projectName, applicationName, graphName);
-
-        default:
-          return null;
-      }
+      return _adapterProvider.GetProjection(projectName, applicationName, graphName, format.ToLower());
     }
 
     /// <summary>

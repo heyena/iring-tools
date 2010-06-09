@@ -99,10 +99,10 @@
     <Compile Include="dotNetRdfEngine.cs" />
     <Compile Include="AdapterProvider.cs" />
     <Compile Include="IProjectionLayer.cs" />
-    <Compile Include="DTOProjectionEngine.cs" />
     <Compile Include="ISemanticLayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\..\AssemblyInfo.cs" />
+    <Compile Include="RdfProjectionEngine.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">

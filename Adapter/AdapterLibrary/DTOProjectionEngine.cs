@@ -205,24 +205,6 @@ namespace org.iringtools.adapter.projection
       return returnValue;
     }
 
-    private void FindGraphMap(string graphName)
-    {
-      foreach (GraphMap graphMap in _mapping.graphMaps)
-      {
-        if (graphMap.name.ToLower() == graphName.ToLower())
-        {
-          _graphMap = graphMap;
-
-          if (_graphMap.classTemplateListMaps.Count == 0)
-            throw new Exception("Graph [" + graphName + "] is empty.");
-
-          return;
-        }
-      }
-
-      throw new Exception("Graph [" + graphName + "] does not exist.");
-    }
-
     private void LoadDataObjectSet()
     {
       _dataObjectSet.Clear();
@@ -249,43 +231,6 @@ namespace org.iringtools.adapter.projection
       }
 
       return maxCount;
-    }
-
-    private void PopulateClassIdentifiers()
-    {
-      _classIdentifiers.Clear();
-
-      foreach (ClassMap classMap in _graphMap.classTemplateListMaps.Keys)
-      {
-        List<string> classIdentifiers = new List<string>();
-
-        foreach (string identifier in classMap.identifiers)
-        {
-          string[] property = identifier.Split('.');
-          string objectName = property[0].Trim();
-          string propertyName = property[1].Trim();
-
-          IList<IDataObject> dataObjects = _dataObjectSet[objectName];
-          if (dataObjects != null)
-          {
-            for (int i = 0; i < dataObjects.Count; i++)
-            {
-              string value = Convert.ToString(dataObjects[i].GetPropertyValue(propertyName));
-
-              if (classIdentifiers.Count == i)
-              {
-                classIdentifiers.Add(value);
-              }
-              else
-              {
-                classIdentifiers[i] += classMap.identifierDelimeter + value;
-              }
-            }
-          }
-        }
-
-        _classIdentifiers[classMap.classId] = classIdentifiers;
-      }
     }
 
     private string ResolveValueList(string valueList, string value)
