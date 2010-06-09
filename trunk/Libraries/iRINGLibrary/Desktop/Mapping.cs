@@ -330,9 +330,6 @@ namespace org.iringtools.library
     [DataContract]
     public class ValueMap
     {
-        //[DataMember(EmitDefaultValue = false, Order = 0)]
-        //public string valueList { get; set; }
-
         [DataMember(EmitDefaultValue = false, Order = 0)]
         public string internalValue { get; set; }
 
