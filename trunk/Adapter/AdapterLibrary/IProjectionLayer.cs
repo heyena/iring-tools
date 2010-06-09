@@ -9,9 +9,7 @@ namespace org.iringtools.adapter
 {
   public interface IProjectionLayer
   {
-    XElement GetRdf(string graphName);
-    XElement GetQtxf(string graphName);
-    XElement GetHierachicalDTOList(string graphName);
-    List<Dictionary<string, string>> GetDTOList(string graphName);
+    XElement GetXml(ref Mapping mapping, string graphName,
+      ref DataDictionary dataDictionary, ref Dictionary<string, IList<IDataObject>> dataObjects);
   }
 }

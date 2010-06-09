@@ -57,7 +57,14 @@ namespace org.iringtools.adapter
     private IDataLayer _dataLayer = null;
     private ISemanticLayer _semanticEngine = null;
     private IProjectionLayer _projectionEngine = null;
+    private DataDictionary _dataDictionary = null;
     private Mapping _mapping = null;
+    private GraphMap _graphMap = null;
+    
+    //Projection specific stuff
+    private Dictionary<string, IList<IDataObject>> _dataObjectSet = null; // dictionary of object names and list of data objects
+    private Dictionary<string, List<string>> _classIdentifiers = null; // dictionary of class ids and list of identifiers
+    
     private bool _isInitialized = false;
 
     [Inject]
@@ -216,6 +223,27 @@ namespace org.iringtools.adapter
       }
 
       return response;
+    }
+
+    public XElement GetProjection(string projectName, string applicationName, string graphName, string format)
+    {
+      try
+      {
+        Initialize(projectName, applicationName);
+
+        IProjectionLayer _projectionEngine = _kernel.Get<IProjectionLayer>(format);
+
+        _graphMap = _mapping.FindGraphMap(graphName);
+
+        LoadDataObjectSet();
+
+        return _projectionEngine.GetXml(ref _mapping, graphName, ref _dataDictionary, ref _dataObjectSet);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in Refresh: {0}", ex));
+        throw ex;
+      }
     }
 
     public XElement GetRdf(string projectName, string applicationName, string graphName)
@@ -417,6 +445,7 @@ namespace org.iringtools.adapter
           _projectionEngine = _kernel.Get<IProjectionLayer>("ProjectionLayer");
           _semanticEngine = _kernel.Get<ISemanticLayer>("SemanticLayer");
           _mapping = Utility.Read<Mapping>(string.Format("{0}Mapping.{1}.xml",_settings.XmlPath, scope));
+          _dataDictionary = _dataLayer.GetDictionary();
 
           _isInitialized = true;
         }
@@ -432,6 +461,55 @@ namespace org.iringtools.adapter
     {      
       XElement rdf = _projectionEngine.GetRdf(graphName);
       return _semanticEngine.Refresh(graphName, rdf);
+    }
+
+    private void LoadDataObjectSet()
+    {
+      _dataObjectSet.Clear();
+
+      foreach (DataObjectMap dataObjectMap in _graphMap.dataObjectMaps)
+      {
+        _dataObjectSet.Add(dataObjectMap.name, _dataLayer.Get(dataObjectMap.name, null));
+      }
+
+      PopulateClassIdentifiers();
+    }
+
+    private void PopulateClassIdentifiers()
+    {
+      _classIdentifiers.Clear();
+
+      foreach (ClassMap classMap in _graphMap.classTemplateListMaps.Keys)
+      {
+        List<string> classIdentifiers = new List<string>();
+
+        foreach (string identifier in classMap.identifiers)
+        {
+          string[] property = identifier.Split('.');
+          string objectName = property[0].Trim();
+          string propertyName = property[1].Trim();
+
+          IList<IDataObject> dataObjects = _dataObjectSet[objectName];
+          if (dataObjects != null)
+          {
+            for (int i = 0; i < dataObjects.Count; i++)
+            {
+              string value = Convert.ToString(dataObjects[i].GetPropertyValue(propertyName));
+
+              if (classIdentifiers.Count == i)
+              {
+                classIdentifiers.Add(value);
+              }
+              else
+              {
+                classIdentifiers[i] += classMap.identifierDelimeter + value;
+              }
+            }
+          }
+        }
+
+        _classIdentifiers[classMap.classId] = classIdentifiers;
+      }
     }
 
     private void RemoveDups(DataObject dataObject)
@@ -668,5 +746,24 @@ namespace org.iringtools.adapter
     }
 
     #endregion
+  }
+
+  static class AdapterUtility
+  {
+    public static GraphMap FindGraphMap(this Mapping mapping, string graphName)
+    {
+      foreach (GraphMap graphMap in mapping.graphMaps)
+      {
+        if (graphMap.name.ToLower() == graphName.ToLower())
+        {
+          if (graphMap.classTemplateListMaps.Count == 0)
+            throw new Exception("Graph [" + graphName + "] is empty.");
+
+          return graphMap;
+        }
+      }
+
+      throw new Exception("Graph [" + graphName + "] does not exist.");
+    }
   }
 }
