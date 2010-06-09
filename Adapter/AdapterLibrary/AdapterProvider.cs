@@ -181,8 +181,9 @@ namespace org.iringtools.adapter
       try
       {
         Initialize(projectName, applicationName);
-        DateTime start = DateTime.Now;
         
+        DateTime start = DateTime.Now;
+
         foreach (GraphMap graphMap in _mapping.graphMaps)
         {
           response.Append(Refresh(graphMap.name));
@@ -212,6 +213,7 @@ namespace org.iringtools.adapter
       try
       {
         Initialize(projectName, applicationName);
+
         response.Append(Refresh(graphName));
       }
       catch (Exception ex)
@@ -245,59 +247,6 @@ namespace org.iringtools.adapter
         throw ex;
       }
     }
-
-    public XElement GetRdf(string projectName, string applicationName, string graphName)
-    {
-      try
-      {
-        Initialize(projectName, applicationName);
-        return _projectionEngine.GetRdf(graphName);
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(string.Format("Error in Refresh: {0}", ex));
-        throw ex;
-      }
-    }
-
-    public List<Dictionary<string, string>> GetDTOList(string projectName, string applicationName, string graphName)
-    {
-      try
-      {
-        Initialize(projectName, applicationName);
-        return _projectionEngine.GetDTOList(graphName);
-      }
-      catch (Exception ex)
-      {
-        throw ex;
-      }
-    }
-
-    public XElement GetHierarchicalDTOList(string projectName, string applicationName, string graphName)
-    {
-      try
-      {
-        Initialize(projectName, applicationName);
-        return _projectionEngine.GetHierachicalDTOList(graphName);
-      }
-      catch (Exception ex)
-      {
-        throw ex;
-      }
-    }
-
-    public XElement GetQtxf(string projectName, string applicationName, string graphName)
-    {
-      try
-      {
-        Initialize(projectName, applicationName);
-        return _projectionEngine.GetQtxf(graphName);
-      }
-      catch (Exception ex)
-      {
-        throw ex;
-      }
-    }    
 
     public Response Pull(string projectName, string applicationName, string graphName)
     {
@@ -458,8 +407,14 @@ namespace org.iringtools.adapter
     }
 
     private Response Refresh(string graphName)
-    {      
-      XElement rdf = _projectionEngine.GetRdf(graphName);
+    {
+      _projectionEngine = _kernel.Get<IProjectionLayer>("rdf");
+
+      _graphMap = _mapping.FindGraphMap(graphName);
+
+      LoadDataObjectSet();
+
+      XElement rdf = _projectionEngine.GetXml(ref _mapping, graphName, ref _dataDictionary, ref _dataObjectSet);
       return _semanticEngine.Refresh(graphName, rdf);
     }
 
