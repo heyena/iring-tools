@@ -115,18 +115,15 @@ namespace org.iringtools.adapter.projection
 
     private string ResolveValueList(string valueList, string value)
     {
-      if (_mapping != null)// && _mapping.valueMaps.Count > 0)
+      foreach (ValueList valueLst in _mapping.valueLists)
       {
-        foreach (ValueList valueLst in _mapping.valueLists)
+        if (valueLst.name == valueList)
         {
-          if (valueLst.name == valueList)
+          foreach (ValueMap valueMap in valueLst.valueMaps)
           {
-            foreach (ValueMap valueMap in valueLst.valueMaps)
+            if (valueMap.internalValue == value)
             {
-              if (valueMap.internalValue == value)
-              {
-                return valueMap.uri.Replace("rdl:", RDL_NS.NamespaceName);
-              }
+              return valueMap.uri.Replace("rdl:", RDL_NS.NamespaceName);
             }
           }
         }

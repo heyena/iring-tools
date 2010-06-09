@@ -204,24 +204,23 @@ namespace org.iringtools.adapter.semantic
       throw new Exception(string.Format("Graph [{0}] does not exist.", graphName));
     }
 
-    private string ResolveValueMap(string valueList, string uri)
+    private string ResolveValueMap(string valueList, string qualifiedUri)
     {
-        if (_mapping != null)//&& _mapping.valueMaps.Count > 0)
+      string uri = qualifiedUri.Replace(RDL_NS.NamespaceName, "rdl:");
+
+      foreach (ValueList valueLst in _mapping.valueLists)
+      {
+        if (valueLst.name == valueList)
         {
-            foreach(ValueList valueLst in _mapping.valueLists)
+          foreach (ValueMap valueMap in valueLst.valueMaps)
+          {
+            if (valueMap.uri == uri)
             {
-                if (valueLst.name == valueList)
-                {
-                    foreach (ValueMap valueMap in valueLst.valueMaps)
-                    {
-                        if (valueMap.uri == uri)
-                        {
-                            return valueMap.internalValue;
-                        }
-                    }
-                }
+              return valueMap.internalValue;
             }
+          }
         }
+      }
 
       return String.Empty;
     }
