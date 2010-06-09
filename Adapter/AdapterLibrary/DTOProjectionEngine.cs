@@ -26,6 +26,7 @@ namespace org.iringtools.adapter.projection
 
     private static readonly XName OWL_THING = OWL_NS + "Thing";
     private static readonly XName RDF_ABOUT = RDF_NS + "about";
+    private static readonly XName RDF_DESCRIPTION = RDF_NS + "Description";
     private static readonly XName RDF_TYPE = RDF_NS + "type";
     private static readonly XName RDF_RESOURCE = RDF_NS + "resource";
     private static readonly XName RDF_DATATYPE = RDF_NS + "datatype";
@@ -289,15 +290,21 @@ namespace org.iringtools.adapter.projection
 
     private string ResolveValueList(string valueList, string value)
     {
-      if (_mapping != null && _mapping.valueMaps.Count > 0)
+      if (_mapping != null)// && _mapping.valueMaps.Count > 0)
       {
-        foreach (ValueMap valueMap in _mapping.valueMaps)
-        {
-          if (valueMap.valueList == valueList && valueMap.internalValue == value)
+          foreach (ValueList valueLst in _mapping.valueLists)
           {
-            return valueMap.uri;
+              if (valueLst.name == valueList)
+              {
+                  foreach (ValueMap valueMap in valueLst.valueMaps)
+                  {
+                      if (valueMap.internalValue == value)
+                      {
+                          return valueMap.uri.Replace("rdl:",RDL_NS.NamespaceName);
+                      }
+                  }
+              }
           }
-        }
       }
 
       return RDF_NIL;

@@ -480,7 +480,7 @@ namespace org.iringtools.modules.memappingregion
                 {
                     string range = roleDefinition.range.GetIdWithAliasFromUri();
 
-                    if (range.StartsWith("xsd:"))// != String.Empty && range != classId)
+                    if (range.StartsWith("xsd:") || roleDefinition.name.FirstOrDefault().value == "hasScale" )// != String.Empty && range != classId)
                     {
                         RoleMap roleMap = new RoleMap
                         {
@@ -498,7 +498,7 @@ namespace org.iringtools.modules.memappingregion
                     {
                         RoleMap roleMap = new RoleMap
                         {
-                            type = RoleType.Reference,
+                            type = RoleType.ClassRole,
                             name = utility.Utility.NameSafe(roleDefinition.name.FirstOrDefault().value),
                             dataType = range,
                             propertyName = "",
@@ -538,7 +538,7 @@ namespace org.iringtools.modules.memappingregion
 
                         currentTemplateMap.roleMaps.Add(roleMap);
                     }
-                    else if (range.StartsWith("xsd:"))//  != classId)  // property role
+                    else if (range.StartsWith("xsd:") || roleQualification.name.FirstOrDefault().value == "hasScale")//  != classId)  // property role
                     {
                         roleMap.type = RoleType.Property;
                         roleMap.dataType = range;
@@ -707,12 +707,20 @@ namespace org.iringtools.modules.memappingregion
                     {
                         roleMap.valueList = valuelist;
                         if (valuelist == "")
+                        {
                             roleMap.propertyName = null;
+                            model.SelectedMappingItem.itemTextBlock.Text += Presenter.unmappedToken;
+                        }
                         else
-                          roleMap.propertyName = 
-                              string.Format("{0}.{1}", 
-                              model.SelectedDataObject.DataObject.objectName, 
-                              model.SelectedDataObject.DataProperty.propertyName);
+                        {
+                            roleMap.propertyName =
+                                string.Format("{0}.{1}",
+                                model.SelectedDataObject.DataObject.objectName,
+                                model.SelectedDataObject.DataProperty.propertyName);
+
+                            model.SelectedMappingItem.itemTextBlock.Text =
+                                model.SelectedMappingItem.itemTextBlock.Text.Replace(Presenter.unmappedToken, "");
+                        }
                     }
                     if (roleMap.type == RoleType.Reference)// == null || roleMap.reference == "")
                     {
@@ -777,7 +785,11 @@ namespace org.iringtools.modules.memappingregion
                     {
                         MappingItem parent = (MappingItem)mappingItem.Parent;
                         RoleMap roleMap = (RoleMap)mappingItem.Tag;
-                        mappingItem.GraphMap.DeleteRoleMap(mappingItem.TemplateMap, roleMap.classMap.classId);
+                        if(roleMap.classMap != null)
+                          mappingItem.GraphMap.DeleteRoleMap(mappingItem.TemplateMap, roleMap.classMap.classId);
+
+                        roleMap.propertyName = null;
+                        roleMap.valueList = null;
 
                         mappingItem.Items.Clear();
                         mappingItem.IsExpanded = false;

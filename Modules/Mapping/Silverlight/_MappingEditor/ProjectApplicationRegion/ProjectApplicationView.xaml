@@ -9,7 +9,7 @@
       <ComboBox Name="ProjectCombo" ItemsSource="{Binding ScopeList.Project}" Width="Auto" MinWidth="150" Height="24" IsEnabled="False"/>
       <TextBlock Text="Application:" Margin="10,5,0,5" Height="24"/>
       <ComboBox Name="AppCombo" Width="Auto" MinWidth="150" Height="24" IsEnabled="False"/>
-      <Button x:Name="btnGenerate" Margin="10,0,0,0" Content=" Generate DTO " Height="24" IsEnabled="False"/>
+     <!-- <Button x:Name="btnGenerate" Margin="10,0,0,0" Content=" Generate DTO " Height="24" IsEnabled="False"/>-->
       <Button x:Name="btnRefresh" Margin="10,0,0,0" Content=" Refresh Facade " Height="24" IsEnabled="False"/>
     </StackPanel>
   </Grid>

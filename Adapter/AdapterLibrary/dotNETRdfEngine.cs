@@ -36,6 +36,7 @@ namespace org.iringtools.adapter.semantic
 
     private static readonly XName OWL_THING = OWL_NS + "Thing";
     private static readonly XName RDF_ABOUT = RDF_NS + "about";
+    private static readonly XName RDF_DESCRIPTION = RDF_NS + "Description";
     private static readonly XName RDF_TYPE = RDF_NS + "type";
     private static readonly XName RDF_RESOURCE = RDF_NS + "resource";
     private static readonly XName RDF_DATATYPE = RDF_NS + "datatype";
@@ -77,13 +78,13 @@ namespace org.iringtools.adapter.semantic
     [Inject]
     public dotNetRdfEngine(AdapterSettings adapterSettings, ApplicationSettings appSettings)
     {
-      string scope = appSettings.ProjectName + "{0}" + appSettings.ApplicationName;
+      string scope = string.Format("{0}.{1}",appSettings.ProjectName, appSettings.ApplicationName);
       
       _tripleStore = new MicrosoftSqlStoreManager(adapterSettings.DBServer, adapterSettings.DBname, adapterSettings.DBUser, adapterSettings.DBPassword);
-      _mapping = Utility.Read<Mapping>(String.Format(adapterSettings.XmlPath + "Mapping." + scope + ".xml", "."));
+      _mapping = Utility.Read<Mapping>(String.Format("{0}Mapping.{1}.xml",adapterSettings.XmlPath, scope));
       _graph = new Graph();
-      _graphNs = String.Format(adapterSettings.GraphBaseUri + scope + "#", "/");
-      _dataObjectNs = String.Format(DATALAYER_NS + ".proj_" + scope, ".");
+      _graphNs = String.Format("{0}/{1}/{2}#", adapterSettings.GraphBaseUri, appSettings.ProjectName, appSettings.ApplicationName);
+      _dataObjectNs = String.Format("{0}.proj_{1}",DATALAYER_NS, scope);
       _dataObjectsAssemblyName = adapterSettings.ExecutingAssemblyName;
     }
 
@@ -127,10 +128,10 @@ namespace org.iringtools.adapter.semantic
       }
       catch (Exception ex)
       {
-        _logger.Error("Error refreshing graph [" + graphName + "]. " + ex);
+        _logger.Error(string.Format("Error refreshing graph [{0}]. {1}", graphName, ex));
 
         response.Level = StatusLevel.Error;
-        response.Add("Error refreshing graph [" + graphName + "]. " + ex);
+        response.Add(string.Format("Error refreshing graph [{0}]. {1}", graphName, ex));
       }
 
       return response;
@@ -171,14 +172,14 @@ namespace org.iringtools.adapter.semantic
         }
 
         response.Level = StatusLevel.Success;
-        response.Add("Graph [" + graphUri + "] has been deleted successfully.");
+        response.Add(string.Format("Graph [{0}] has been deleted successfully.", graphUri));
       }
       catch (Exception ex)
       {
-        _logger.Error("Error delete graph [" + graphName + "]: " + ex);
+        _logger.Error(string.Format("Error delete graph [{0}]: {1}", graphName, ex));
 
         response.Level = StatusLevel.Error;
-        response.Add("Error deleting graph [" + graphName + "]. " + ex);
+        response.Add(string.Format("Error delete graph [{0}]: {1}", graphName, ex));
       }
 
       return response;
@@ -194,27 +195,33 @@ namespace org.iringtools.adapter.semantic
           _graphMap = graphMap;
 
           if (_graphMap.classTemplateListMaps.Count == 0)
-            throw new Exception("Graph [" + graphName + "] is empty.");
+            throw new Exception(string.Format("Graph [{0}] is empty.", graphName));
 
           return;
         }
       }
 
-      throw new Exception("Graph [" + graphName + "] does not exist.");
+      throw new Exception(string.Format("Graph [{0}] does not exist.", graphName));
     }
 
     private string ResolveValueMap(string valueList, string uri)
     {
-      if (_mapping != null && _mapping.valueMaps.Count > 0)
-      {
-        foreach (ValueMap valueMap in _mapping.valueMaps)
+        if (_mapping != null)//&& _mapping.valueMaps.Count > 0)
         {
-          if (valueMap.valueList == valueList && valueMap.uri == uri)
-          {
-            return valueMap.internalValue;
-          }
+            foreach(ValueList valueLst in _mapping.valueLists)
+            {
+                if (valueLst.name == valueList)
+                {
+                    foreach (ValueMap valueMap in valueLst.valueMaps)
+                    {
+                        if (valueMap.uri == uri)
+                        {
+                            return valueMap.internalValue;
+                        }
+                    }
+                }
+            }
         }
-      }
 
       return String.Empty;
     }
@@ -234,14 +241,15 @@ namespace org.iringtools.adapter.semantic
         }
 
         response.Level = StatusLevel.Success;
-        response.Add("Graph [" + graphUri + "] has been deleted successfully.");
+        response.Add(string.Format("Graph [{0}] has been deleted successfully.", graphUri));
       }
       catch (Exception ex)
       {
-        _logger.Error("Error delete graph [" + graphUri + "]: " + ex);
+        _logger.Error(string.Format("Error delete graph [{0}]: {1}", graphUri, ex));
 
         response.Level = StatusLevel.Error;
-        response.Add("Error deleting graph [" + graphUri + "]. " + ex);
+        response.Add(string.Format("Error delete graph [{0}]: {1}", graphUri, ex));
+
       }
 
       return response;
@@ -259,7 +267,7 @@ namespace org.iringtools.adapter.semantic
         return resultSet.Count;
       }
 
-      throw new Exception("Error querying instances of class [" + classMap.name + "].");
+      throw new Exception(string.Format("Error querying instances of class [{0}].", classMap.name));
     }
 
     private Dictionary<string, IList<IDataObject>> FillDataObjectSet(int classInstanceCount)
