@@ -36,7 +36,7 @@ namespace org.iringtools.modules.projectapplicationregion
 
     private ComboBox prjCB { get { return ComboBoxCtrl("ProjectCombo"); } }
     private ComboBox appCB { get { return ComboBoxCtrl("AppCombo"); } }
-    private Button btnGenerate { get { return ButtonCtrl("btnGenerate"); } }
+   // private Button btnGenerate { get { return ButtonCtrl("btnGenerate"); } }
     private Button btnRefresh { get { return ButtonCtrl("btnRefresh"); } }
     
     public ProjectApplicationPresenter(
@@ -55,7 +55,7 @@ namespace org.iringtools.modules.projectapplicationregion
 
             prjCB.SelectionChanged += new SelectionChangedEventHandler(prjCB_SelectionChanged);
             appCB.SelectionChanged += new SelectionChangedEventHandler(appCB_SelectionChanged);
-            btnGenerate.Click += new RoutedEventHandler(btnGenerate_Click);
+           // btnGenerate.Click += new RoutedEventHandler(btnGenerate_Click);
             btnRefresh.Click += new RoutedEventHandler(btnRefresh_Click);
 
             _adapterProxy.OnDataArrived += new EventHandler<EventArgs>(adapterProxy_OnDataArrived);
@@ -177,12 +177,12 @@ namespace org.iringtools.modules.projectapplicationregion
                 _adapterProxy.GetDictionary(projName, appName);
                 _adapterProxy.GetMapping(projName, appName);
 
-                btnGenerate.IsEnabled = true;
+               // btnGenerate.IsEnabled = true;
                 btnRefresh.IsEnabled = true;
             }
             else
             {
-                btnGenerate.IsEnabled = false;
+              //  btnGenerate.IsEnabled = false;
                 btnRefresh.IsEnabled = false;
             }
 
@@ -210,7 +210,7 @@ namespace org.iringtools.modules.projectapplicationregion
                 if (project.Name == (string)prjCB.SelectedItem)
                 {
                     appCB.Items.Clear();
-                    btnGenerate.IsEnabled = false;
+                    //btnGenerate.IsEnabled = false;
                     btnRefresh.IsEnabled = false;
 
                     foreach (ScopeApplication app in project.Applications)

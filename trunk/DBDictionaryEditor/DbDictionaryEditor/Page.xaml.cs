@@ -737,9 +737,9 @@ namespace DbDictionaryEditor
                 object currentObject = null;
                 DataObject table;
                 databaseDictionary.dataObjects = new List<DataObject>();
-                databaseDictionary.connectionString = tvwItemDestinationRoot.Tag.ToString().Split('~')[0];
-                string provider = tvwItemDestinationRoot.Tag.ToString().Split('~')[1];
-                databaseDictionary.provider = (Provider)Enum.Parse(typeof(Provider), provider, true);
+                databaseDictionary.connectionString = ((DatabaseDictionary)tvwItemDestinationRoot.Tag).connectionString;
+                
+                databaseDictionary.provider = ((DatabaseDictionary)tvwItemDestinationRoot.Tag).provider;
                 foreach (TreeViewItem tableTreeViewItem in tvwItemDestinationRoot.Items)
                 {
                     table = new DataObject();

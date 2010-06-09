@@ -376,20 +376,7 @@ namespace org.iringtools.modules.memappingregion
                 model.DetailProperties.Add(keyValuePair);
                 keyValuePair = new KeyValuePair<string, string>("Template Id", templateMap.templateId);
                 model.DetailProperties.Add(keyValuePair);
-                //keyValuePair = new KeyValuePair<string, string>("Class Role Id", templateMap.classRole);
-                //model.DetailProperties.Add(keyValuePair);
-                //keyValuePair = new KeyValuePair<string, string>("Type", templateMap.type.ToString());
-                //model.DetailProperties.Add(keyValuePair);
 
-                //string id = Utility.GetIdFromURI(templateMap.templateId);
-                //if (model.IdLabelDictionary.ContainsKey(id))
-                //{
-                //  model.DetailProperties.Add(new KeyValuePair<string, string>("Class Role Name", model.IdLabelDictionary[id]));
-                //}
-                //else if (!String.IsNullOrEmpty(id))
-                //{
-                //  referenceDataService.GetTemplateLabel("Class Role Name", id, this);
-                //}
             }
             catch (Exception ex)
             {

@@ -72,7 +72,7 @@ namespace org.iringtools.adapter
     #region public methods
     public List<ScopeProject> GetScopes()
     {
-      string path = _settings.XmlPath + "Scopes.xml";
+      string path = string.Format("{0}Scopes.xml", _settings.XmlPath);
 
       try
       {
@@ -85,14 +85,14 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _logger.Error("Error in GetScopes: " + ex);
-        throw new Exception("Error getting the list of projects/applications from path [" + path + "]: " + ex);
+        _logger.Error(string.Format("Error in GetScopes: {0}", ex));
+        throw new Exception(string.Format("Error getting the list of projects/applications from path [{0}]: {1}", path, ex));
       }
     }
 
     public Manifest GetManifest(string projectName, string applicationName)
     {
-      string path = _settings.XmlPath + "Mapping." + projectName + "." + applicationName + ".xml";
+      string path = string.Format("{0}Mapping.{1}.{2}.xml",_settings.XmlPath, projectName, applicationName);
 
       try
       {
@@ -114,8 +114,8 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _logger.Error("Error in GetManifest: " + ex);
-        throw new Exception("Error getting manifest from path [" + path + "]: " + ex);
+        _logger.Error(string.Format("Error in GetManifest: {0}", ex));
+        throw new Exception(string.Format("Error getting manifest from path [{0}: {1}", path, ex));
       }
     }
 
@@ -128,8 +128,8 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _logger.Error("Error in GetDictionary: " + ex);
-        throw new Exception("Error getting data dictionary: " + ex);
+        _logger.Error(string.Format("Error in GetDictionary: {0}", ex));
+        throw new Exception(string.Format("Error getting data dictionary: {0}", ex));
       }
     }
 
@@ -142,15 +142,15 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _logger.Error("Error in GetMapping: " + ex);
-        throw new Exception("Error getting mapping: " + ex);
+        _logger.Error(string.Format("Error in GetMapping: {0}", ex));
+        throw new Exception(string.Format("Error getting mapping: {0}", ex));
       }
     }
 
     public Response UpdateMapping(string projectName, string applicationName, Mapping mapping)
     {
       Response response = new Response();
-      string path = _settings.XmlPath + "Mapping." + projectName + "." + applicationName + ".xml";
+      string path = string.Format("{0}Mapping.{1}.{2}.xml", _settings.XmlPath, projectName, applicationName);
 
       try
       {
@@ -159,9 +159,9 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _logger.Error("Error in UpdateMapping: " + ex);
+        _logger.Error(string.Format("Error in UpdateMapping: {0}", ex));
         response.Level = StatusLevel.Error;
-        response.Add("Error saving mapping file to path [" + path + "]: " + ex);
+        response.Add(string.Format("Error saving mapping file to path [{0}]: {1}", path, ex));
       }
 
       return response;
@@ -189,10 +189,10 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _logger.Error("Error in RefreshAll: " + ex);
+        _logger.Error(string.Format("Error in RefreshAll: {0}", ex));
 
         response.Level = StatusLevel.Error;
-        response.Add("Error refreshing all graphs. " + ex);
+        response.Add(string.Format("Error refreshing all graphs: {0}", ex));
       }
 
       return response;
@@ -209,10 +209,10 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _logger.Error("Error in Refresh: " + ex);
+        _logger.Error(string.Format("Error in Refresh: {0}", ex));
 
         response.Level = StatusLevel.Error;
-        response.Add("Error refreshing graph [" + graphName + "]." + ex);
+        response.Add(string.Format("Error refreshing graph [{0}]: {1}", graphName, ex));
       }
 
       return response;
@@ -227,7 +227,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _logger.Error("Error in Refresh: " + ex);
+        _logger.Error(string.Format("Error in Refresh: {0}", ex));
         throw ex;
       }
     }
@@ -288,7 +288,7 @@ namespace org.iringtools.adapter
         TimeSpan duration = endTime.Subtract(startTime);
         
         response.Level = StatusLevel.Success;
-        response.Add("Graph [" + graphName + "] has been posted to legacy system successfully.");
+        response.Add(string.Format("Graph [{0}] has been posted to legacy system successfully.", graphName));
 
         response.Add(String.Format("Execution time [{0}:{1}.{2}] minutes.",
           duration.Minutes, duration.Seconds, duration.Milliseconds));
@@ -296,7 +296,7 @@ namespace org.iringtools.adapter
       catch (Exception ex)
       {
         response.Level = StatusLevel.Error;
-        response.Add("Error pulling graph. " + ex);
+        response.Add(string.Format("Error pulling graph: {0}", ex));
       }
 
       return response;
@@ -317,10 +317,10 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _logger.Error("Error clearing all graphs: " + ex);
+        _logger.Error(string.Format("Error clearing all graphs: {0}", ex));
 
         response.Level = StatusLevel.Error;
-        response.Add("Error clearing all graphs. " + ex);
+        response.Add(string.Format("Error clearing all graphs: {0}", ex));
       }
 
       return response;
@@ -385,10 +385,10 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _logger.Error("Error in UpdateDatabaseDictionary: " + ex);
+        _logger.Error(string.Format("Error in UpdateDatabaseDictionary: {0}", ex));
 
         response.Level = StatusLevel.Error;
-        response.Add("Error updating database dictionary: " + ex);
+        response.Add(string.Format("Error updating database dictionary: {0}", ex));
       }
 
       return response;
@@ -402,7 +402,7 @@ namespace org.iringtools.adapter
       {
         if (!_isInitialized)
         {
-          string scope = projectName + "." + applicationName;
+          string scope = string.Format("{0}.{1}",projectName, applicationName);
           
           ApplicationSettings applicationSettings = _kernel.Get<ApplicationSettings>(
             new ConstructorArgument("projectName", projectName),
@@ -416,15 +416,15 @@ namespace org.iringtools.adapter
           _dataLayer = _kernel.Get<IDataLayer>("DataLayer");
           _semanticEngine = _kernel.Get<ISemanticLayer>("SemanticLayer");
           _projectionEngine = _kernel.Get<IProjectionLayer>("ProjectionLayer");
-          _mapping = Utility.Read<Mapping>(_settings.XmlPath + "Mapping." + scope + ".xml");
+          _mapping = Utility.Read<Mapping>(string.Format("{0}Mapping.{1}.xml",_settings.XmlPath, scope));
 
           _isInitialized = true;
         }
       }
       catch (Exception exception)
       {
-        _logger.Error("Error initializing application: " + exception);
-        throw new Exception("Error initializing application: " + exception.ToString() + exception);
+        _logger.Error(string.Format("Error initializing application: {0}", exception));
+        throw new Exception(string.Format("Error initializing application: {0} {1)", exception.ToString(), exception));
       }
     }
 
@@ -532,7 +532,7 @@ namespace org.iringtools.adapter
       {
         if (dataObject.keyProperties == null || dataObject.keyProperties.Count == 0)
         {
-          throw new Exception("Table \"" + dataObject.tableName + "\" has no key.");
+          throw new Exception(string.Format("Table \"{0}\" has no key.", dataObject.tableName ));
         }
       }
 
@@ -543,7 +543,7 @@ namespace org.iringtools.adapter
     {
       try
       {
-        string bindingConfigurationPath = _settings.XmlPath + "BindingConfiguration." + projectName + "." + applicationName + ".xml";
+        string bindingConfigurationPath = string.Format("{0}BindingConfiguration.{1}.{2}.xml", _settings.XmlPath, projectName, applicationName);
 
         if (File.Exists(bindingConfigurationPath))
         {
@@ -579,7 +579,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _logger.Error("Error in UpdateBindingConfiguration: " + ex);
+        _logger.Error(string.Format("Error in UpdateBindingConfiguration: {0}", ex));
         throw ex;
       }
     }
@@ -588,7 +588,7 @@ namespace org.iringtools.adapter
     {
       try
       {
-        string scopesPath = _settings.XmlPath + "Scopes.xml";
+        string scopesPath = string.Format("{0}Scopes.xml", _settings.XmlPath);
 
         if (File.Exists(scopesPath))
         {
@@ -662,7 +662,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _logger.Error("Error in UpdateScopes: " + ex);
+        _logger.Error(string.Format("Error in UpdateScopes: {0}", ex));
         throw ex;
       }
     }
