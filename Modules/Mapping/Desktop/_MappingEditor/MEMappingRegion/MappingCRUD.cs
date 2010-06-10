@@ -47,6 +47,8 @@ namespace org.iringtools.modules.memappingregion
         public TreeView tvwMapping { get; set; }
         public TreeView tvwValues { get; set; }
         public Mapping mapping { get; set; }
+        public bool saveActive { get; set; }
+        private bool popupFlag { get; set; }
 
         [Dependency]
         public IError Error { get; set; }
@@ -80,12 +82,13 @@ namespace org.iringtools.modules.memappingregion
             {
                 case SpinnerEventType.Started:
                     this.tvwMapping.IsEnabled = false;
-
+                    this.tvwValues.IsEnabled = false;
+                   
                     break;
 
                 case SpinnerEventType.Stopped:
                     this.tvwMapping.IsEnabled = true;
-                    this.tvwMapping.IsEnabled = true;
+                    this.tvwValues.IsEnabled = true;
 
                     break;
 
@@ -94,6 +97,30 @@ namespace org.iringtools.modules.memappingregion
             }
         }
 
+        public void tabMappins_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            
+            TabItem previousItem = (TabItem)e.RemovedItems[0];
+            TabControl tab = sender as TabControl;
+            TabItem selectedItem = (TabItem)e.AddedItems[0];
+            if (saveActive && !popupFlag)
+            {
+                MessageBoxResult result = MessageBox.Show("There is unsaved mapping changes. Do you want to discard your changes?", "TAB ITEM", MessageBoxButton.OKCancel);
+                if (result == MessageBoxResult.Cancel)
+                {
+                    popupFlag = true;
+                    tab.SelectedItem = previousItem;
+                }
+                else
+                {
+                    saveActive = false;
+                    tab.SelectedItem = selectedItem;
+                }
+            }
+            popupFlag = false;
+          
+        }
+        
         public void btnMoveDown_Click(object sender, RoutedEventArgs e)
         {
             TextBox txtLabel = sender as TextBox;
@@ -180,6 +207,10 @@ namespace org.iringtools.modules.memappingregion
                 ValueList valueList = new ValueList { name = valueListName, valueMaps = new List<ValueMap>() };
                 mapping.valueLists.Add(valueList);
                 tvwValues.Items.Add(Presenter.AddNode(valueListName, valueList, null));
+                Presenter.ButtonCtrl("btnvSave").IsEnabled = true;
+                
+
+                saveActive = true;
             }
 
         }
@@ -212,6 +243,10 @@ namespace org.iringtools.modules.memappingregion
                     ValueMap valueMap = new ValueMap { internalValue = internalValue, uri = uri };
                     valueList.valueMaps.Add(valueMap);
                     model.SelectedMappingItem.Items.Add(Presenter.AddNode(uri, valueMap, model.SelectedMappingItem));
+
+                    Presenter.ButtonCtrl("btnvSave").IsEnabled = true;
+
+                    saveActive = true;
                 }
             }
 
@@ -239,6 +274,10 @@ namespace org.iringtools.modules.memappingregion
                     valueList.valueMaps.Remove(valueMap);
                     parentMap.Items.Remove(mapItem);
                 }
+                Presenter.ButtonCtrl("btnvSave").IsEnabled = true;
+                
+
+                saveActive = true;
             }
 
         }
@@ -267,7 +306,7 @@ namespace org.iringtools.modules.memappingregion
                 graphMap.name = graphName;
               
                
-                graphMap.baseUri = string.Format("{0}{1}/{2}#{3}", adapterProxy.GetGraphBaseUri, projectName, applicationName, graphName);
+               // graphMap.baseUri = string.Format("{0}{1}/{2}/{3}#", adapterProxy.GetGraphBaseUri, projectName, applicationName, graphName);
 
                 if (graphMap.dataObjectMaps == null)
                     graphMap.dataObjectMaps = new List<DataObjectMap>();
@@ -292,6 +331,10 @@ namespace org.iringtools.modules.memappingregion
                 graphMap.dataObjectMaps.Add(dataObjectMap);
                 mapping.graphMaps.Add(graphMap);
                 tvwMapping.Items.Add(Presenter.AddNode(graphMap.name, graphMap, null));
+                Presenter.ButtonCtrl("btnSave").IsEnabled = true;
+                
+
+                saveActive = true;
             }
         }
 
@@ -413,6 +456,9 @@ namespace org.iringtools.modules.memappingregion
 
                 model.SelectedGraphMap.AddTemplateMap(selectedClassMap, templateMap);
                 Presenter.PopulateTemplateMap(mappingItem, templateMap);
+                Presenter.ButtonCtrl("btnSave").IsEnabled = true;
+                
+                saveActive = true;
             }
         }
 
@@ -425,52 +471,11 @@ namespace org.iringtools.modules.memappingregion
             return outputString;
         }
 
-        //private bool GetClassRole(string classId, object template, TemplateMap currentTemplateMap)
-        //{
-        //  bool isClassRoleFound = false;
-
-        //  if (template is TemplateDefinition)
-        //  {
-        //    TemplateDefinition templateDefinition = (TemplateDefinition)template;
-        //    List<RoleDefinition> roleDefinitions = templateDefinition.roleDefinition;
-
-        //    foreach (RoleDefinition roleDefinition in roleDefinitions)
-        //    {
-        //      string range = roleDefinition.range.GetIdWithAliasFromUri();
-        //      if (range == classId)
-        //      {
-        //        RoleMap rm = currentTemplateMap.roleMaps.Where(c=>c.type == RoleType.ClassRole).First();
-        //        string test    = roleDefinition.identifier.GetIdWithAliasFromUri();
-        //        isClassRoleFound = true;
-        //        break;
-        //      }
-        //    }
-        //  }
-
-        //  if (template is TemplateQualification)
-        //  {
-        //    TemplateQualification templateQualification = (TemplateQualification)template;
-
-        //    foreach (RoleQualification roleQualification in templateQualification.roleQualification)
-        //    {
-        //      string range = roleQualification.range.GetIdWithAliasFromUri();
-        //      if (range == classId)
-        //      {
-        //       // currentTemplateMap.classRole = roleQualification.qualifies.GetIdWithAliasFromUri();
-        //        isClassRoleFound = true;
-        //        break;
-        //      }
-        //    }
-        //  }
-
-        //      return isClassRoleFound;
-        //}
-
         private void GetRoleMaps(string classId, object template, TemplateMap currentTemplateMap)
         {
             if (currentTemplateMap.roleMaps == null)
                 currentTemplateMap.roleMaps = new List<RoleMap>();
-            //TODO: need to refactor TemplateDefinition still
+            
             if (template is TemplateDefinition)
             {
                 TemplateDefinition templateDefinition = (TemplateDefinition)template;
@@ -556,39 +561,6 @@ namespace org.iringtools.modules.memappingregion
             }
         }
 
-        private void GetTemplateType(object template, TemplateMap currentTemplateMap)
-        {
-            bool isMappable = false;
-            if (template is TemplateDefinition)
-            {
-                TemplateDefinition templateDefinition = (TemplateDefinition)template;
-
-                List<RoleDefinition> roleDefinitions = templateDefinition.roleDefinition;
-                foreach (RoleDefinition roleDefinition in roleDefinitions)
-                {
-                    isMappable = roleDefinition.range.IsMappable();
-                    if (isMappable)
-                        break;
-                }
-            }
-            if (template is TemplateQualification)
-            {
-                TemplateQualification templateQualification = (TemplateQualification)template;
-
-                List<RoleQualification> roleQulalifications = templateQualification.roleQualification;
-                foreach (RoleQualification roleQualification in roleQulalifications)
-                {
-                    isMappable = roleQualification.range.IsMappable();
-                    if (isMappable)
-                        break;
-                }
-            }
-
-            //if (isMappable)
-            //  currentTemplateMap.type = TemplateType.Property;
-            //else
-            //  currentTemplateMap.type = TemplateType.Relationship;
-        }
 
         public void btnMap_Click(object sender, RoutedEventArgs e)
         {
@@ -599,6 +571,11 @@ namespace org.iringtools.modules.memappingregion
             }
 
             MappingItem mappingItem = model.SelectedMappingItem;
+
+            Presenter.ButtonCtrl("btnSave").IsEnabled = true;
+            
+
+            saveActive = true;
 
             RoleMap roleMap = model.SelectedRoleMap;
             if (roleMap.type == RoleType.Property)
@@ -666,6 +643,7 @@ namespace org.iringtools.modules.memappingregion
                 model.SelectedMappingItem.itemTextBlock.Text = model.SelectedMappingItem.itemTextBlock.Text.Replace(Presenter.unmappedToken, "");
 
                 Presenter.PopulateRoleNode(mappingItem, roleMap);
+
             }
 
             aggregator.GetEvent<NavigationEvent>().Publish(new NavigationEventArgs
@@ -688,6 +666,8 @@ namespace org.iringtools.modules.memappingregion
 
             if (mappingItem == null)
                 return;
+
+
 
             if (mappingItem.NodeType == NodeType.RoleMap)
             {
@@ -748,6 +728,10 @@ namespace org.iringtools.modules.memappingregion
 
                     }
                 }
+                Presenter.ButtonCtrl("btnSave").IsEnabled = true;
+                
+
+                saveActive = true;
             }
         }
 
@@ -758,6 +742,9 @@ namespace org.iringtools.modules.memappingregion
             if (mappingItem == null)
                 return;
 
+            Presenter.ButtonCtrl("btnSave").IsEnabled = true;
+            
+            saveActive = true;
             switch (mappingItem.NodeType)
             {
                 case NodeType.GraphMap:
@@ -831,6 +818,19 @@ namespace org.iringtools.modules.memappingregion
         public void btnSave_Click(object sender, RoutedEventArgs e)
         {
             Response response = adapterProxy.UpdateMapping(projectName, applicationName, mapping);
+            Presenter.ButtonCtrl("btnSave").IsEnabled = false;
+            
+
+            saveActive = false;
+        }
+
+        public void btnvSave_Click(object sender, RoutedEventArgs e)
+        {
+            Response response = adapterProxy.UpdateMapping(projectName, applicationName, mapping);
+            Presenter.ButtonCtrl("btnvSave").IsEnabled = false;
+            
+
+            saveActive = false;
         }
     }
 }

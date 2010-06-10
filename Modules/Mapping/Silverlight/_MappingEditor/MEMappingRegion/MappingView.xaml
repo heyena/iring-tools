@@ -34,7 +34,7 @@
                             <Button x:Name="btnSave" Height="24" Width="40" Margin="5,0,0,0" Content="SAVE" ToolTipService.ToolTip="Save Mapping File" ToolTipService.Placement="Top" IsEnabled="False"/>
                         </StackPanel>
                     </Grid>
-                    <controls:TreeView Grid.Row="1" Margin="4,4,4,4" x:Name="tvwMapping" VerticalAlignment="Stretch" Height="Auto" BorderBrush="#8FA0AE" BorderThickness="1"/>
+                    <controls:TreeView Grid.Row="1" Margin="4,4,4,4" x:Name="tvwMapping" VerticalAlignment="Stretch" Height="Auto" BorderBrush="#8FA0AE" BorderThickness="1"  />
                 </Grid>                        
             </controls:TabItem>
             <controls:TabItem x:Name="tabValueMaps" Header="Value Maps" IsEnabled="False">                                

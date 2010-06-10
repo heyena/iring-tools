@@ -99,7 +99,7 @@ namespace org.iringtools.adapter.semantic
         FindGraphMap(graphName);
         
         // create xdoc from xelement
-        Uri graphUri = new Uri(_graphMap.baseUri);
+        Uri graphUri = new Uri(_graphNs.NamespaceName + graphName);
         XmlDocument xdoc = new XmlDocument();
         xdoc.LoadXml(rdf.ToString());
         rdf.RemoveAll();

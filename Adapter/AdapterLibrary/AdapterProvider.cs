@@ -62,8 +62,8 @@ namespace org.iringtools.adapter
     private GraphMap _graphMap = null;
     
     //Projection specific stuff
-    private Dictionary<string, IList<IDataObject>> _dataObjectSet = null; // dictionary of object names and list of data objects
-    private Dictionary<string, List<string>> _classIdentifiers = null; // dictionary of class ids and list of identifiers
+    private Dictionary<string, IList<IDataObject>> _dataObjectSet = new Dictionary<string,IList<IDataObject>>(); // dictionary of object names and list of data objects
+    private Dictionary<string, List<string>> _classIdentifiers = new Dictionary<string, List<string>>(); // dictionary of class ids and list of identifiers
     
     private bool _isInitialized = false;
 
@@ -351,7 +351,7 @@ namespace org.iringtools.adapter
           {
             Name = "ProjectionLayer",
             Interface = "org.iringtools.adapter.IProjectionLayer, AdapterLibrary",
-            Implementation = "org.iringtools.adapter.projection.DTOProjectionEngine, AdapterLibrary"
+            Implementation = "org.iringtools.adapter.projection.RdfProjectionEngine, AdapterLibrary"
           };
           UpdateBindingConfiguration(projectName, applicationName, projectionLayerBinding);
 
@@ -408,7 +408,7 @@ namespace org.iringtools.adapter
 
     private Response Refresh(string graphName)
     {
-      _projectionEngine = _kernel.Get<IProjectionLayer>("rdf");
+    //  _projectionEngine = _kernel.Get<IProjectionLayer>("rdf");
 
       _graphMap = _mapping.FindGraphMap(graphName);
 
@@ -420,6 +420,7 @@ namespace org.iringtools.adapter
 
     private void LoadDataObjectSet()
     {
+
       _dataObjectSet.Clear();
 
       foreach (DataObjectMap dataObjectMap in _graphMap.dataObjectMaps)
@@ -432,6 +433,7 @@ namespace org.iringtools.adapter
 
     private void PopulateClassIdentifiers()
     {
+
       _classIdentifiers.Clear();
 
       foreach (ClassMap classMap in _graphMap.classTemplateListMaps.Keys)
