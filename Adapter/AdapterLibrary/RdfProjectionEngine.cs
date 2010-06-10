@@ -173,17 +173,14 @@ namespace org.iringtools.adapter.projection
 
         foreach (string identifier in classMap.identifiers)
         {
-          string[] property = identifier.Split('.');
-          string objectName = property[0].Trim();
-          string propertyName = property[1].Trim();
-
-          IList<IDataObject> dataObjects = _dataObjectSet[objectName];
-          if (dataObjects != null)
+          // identifier is a fixed value
+          if (identifier.StartsWith("#") && identifier.EndsWith("#"))
           {
-            for (int i = 0; i < dataObjects.Count; i++)
-            {
-              string value = Convert.ToString(dataObjects[i].GetPropertyValue(propertyName));
+            string value = identifier.Substring(1, identifier.Length - 2);
+            int maxDataObjectsCount = MaxDataObjectsCount();
 
+            for (int i = 0; i < maxDataObjectsCount; i++)
+            {
               if (classIdentifiers.Count == i)
               {
                 classIdentifiers.Add(value);
@@ -191,6 +188,30 @@ namespace org.iringtools.adapter.projection
               else
               {
                 classIdentifiers[i] += classMap.identifierDelimeter + value;
+              }
+            }
+          }
+          else  // identifier value comes from a property
+          {
+            string[] property = identifier.Split('.');
+            string objectName = property[0].Trim();
+            string propertyName = property[1].Trim();
+
+            IList<IDataObject> dataObjects = _dataObjectSet[objectName];
+            if (dataObjects != null)
+            {
+              for (int i = 0; i < dataObjects.Count; i++)
+              {
+                string value = Convert.ToString(dataObjects[i].GetPropertyValue(propertyName));
+
+                if (classIdentifiers.Count == i)
+                {
+                  classIdentifiers.Add(value);
+                }
+                else
+                {
+                  classIdentifiers[i] += classMap.identifierDelimeter + value;
+                }
               }
             }
           }
