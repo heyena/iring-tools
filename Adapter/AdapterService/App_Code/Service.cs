@@ -121,6 +121,20 @@ namespace org.iringtools.adapter
       return _adapterProvider.Refresh(projectName, applicationName, graphName);
     }
 
+      /// <summary>
+      /// Calls adapter provider to get a specific data object in specific format
+      /// </summary>
+      /// <param name="projectName"></param>
+      /// <param name="applicationName"></param>
+      /// <param name="graphName"></param>
+      /// <param name="identifier"></param>
+      /// <param name="format"></param>
+      /// <returns></returns>
+    public XElement Get(string projectName, string applicationName, string graphName, string identifier, string format)
+    {
+        return _adapterProvider.GetProjection(projectName, applicationName, graphName, identifier, format.ToLower());
+    }
+
     /// <summary>
     /// Calls adapter provider to produce specific format for a graph
     /// </summary>

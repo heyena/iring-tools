@@ -227,6 +227,30 @@ namespace org.iringtools.adapter
       return response;
     }
 
+    public XElement GetProjection(string projectName, string applicationName, string graphName, string identifier, string format)
+    {
+        try
+        {
+            Initialize(projectName, applicationName);
+
+            IList<string> identifiers = null;
+            identifiers.Add(identifier);
+
+            IProjectionLayer _projectionEngine = _kernel.Get<IProjectionLayer>(format);
+
+            _graphMap = _mapping.FindGraphMap(graphName);
+
+            LoadDataObjectSet(identifiers);
+
+            return _projectionEngine.GetXml(ref _mapping, graphName, ref _dataDictionary, ref _dataObjectSet);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(string.Format("Error in GetProjection: {0}", ex));
+            throw ex;
+        }
+    }
+
     public XElement GetProjection(string projectName, string applicationName, string graphName, string format)
     {
       try
@@ -237,13 +261,13 @@ namespace org.iringtools.adapter
 
         _graphMap = _mapping.FindGraphMap(graphName);
 
-        LoadDataObjectSet();
+        LoadDataObjectSet(null);
 
         return _projectionEngine.GetXml(ref _mapping, graphName, ref _dataDictionary, ref _dataObjectSet);
       }
       catch (Exception ex)
       {
-        _logger.Error(string.Format("Error in Refresh: {0}", ex));
+          _logger.Error(string.Format("Error in GetProjection: {0}", ex));
         throw ex;
       }
     }
@@ -412,23 +436,39 @@ namespace org.iringtools.adapter
 
       _graphMap = _mapping.FindGraphMap(graphName);
 
-      LoadDataObjectSet();
+      LoadDataObjectSet(null);
 
       XElement rdf = _projectionEngine.GetXml(ref _mapping, graphName, ref _dataDictionary, ref _dataObjectSet);
       return _semanticEngine.Refresh(graphName, rdf);
     }
 
-    private void LoadDataObjectSet()
+    //private void LoadDataObjectSet()
+    //{
+
+    //  _dataObjectSet.Clear();
+
+    //  foreach (DataObjectMap dataObjectMap in _graphMap.dataObjectMaps)
+    //  {
+    //    _dataObjectSet.Add(dataObjectMap.name, _dataLayer.Get(dataObjectMap.name, null));
+    //  }
+
+    //  PopulateClassIdentifiers();
+    //}
+
+    private void LoadDataObjectSet(IList<string> identifiers)
     {
 
-      _dataObjectSet.Clear();
+        _dataObjectSet.Clear();
 
-      foreach (DataObjectMap dataObjectMap in _graphMap.dataObjectMaps)
-      {
-        _dataObjectSet.Add(dataObjectMap.name, _dataLayer.Get(dataObjectMap.name, null));
-      }
+        foreach (DataObjectMap dataObjectMap in _graphMap.dataObjectMaps)
+        {
+            if(identifiers != null)
+            _dataObjectSet.Add(dataObjectMap.name, _dataLayer.Get(dataObjectMap.name, identifiers));
+            else
+            _dataObjectSet.Add(dataObjectMap.name, _dataLayer.Get(dataObjectMap.name, null));
+        }
 
-      PopulateClassIdentifiers();
+        PopulateClassIdentifiers();
     }
 
     private void PopulateClassIdentifiers()
