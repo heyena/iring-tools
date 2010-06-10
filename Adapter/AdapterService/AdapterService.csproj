@@ -108,7 +108,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="App_Code\Service.cs" />
-    <Content Include="DataService.svc" />
     <Content Include="Web.config" />
     <Content Include="XML\ABC.DatabaseDictionary.xml" />
     <Content Include="XML\Mapping.12345_000.ABC.xml" />
