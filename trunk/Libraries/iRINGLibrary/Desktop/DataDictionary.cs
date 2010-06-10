@@ -118,7 +118,6 @@ namespace org.iringtools.library
   [DataContract(Namespace = "http://ns.iringtools.org/library")]
   [KnownType(typeof(OneToOneRelationship))]
   [KnownType(typeof(OneToManyRelationship))]
-  [KnownType(typeof(ManyToOneRelationship))]
   public abstract class DataRelationship
   {
     [DataMember(IsRequired = true)]
@@ -137,13 +136,6 @@ namespace org.iringtools.library
   {
     [DataMember(IsRequired = true)]
     public string relatedPropertyName { get; set; }
-  }
-
-  [DataContract(Namespace = "http://ns.iringtools.org/library")]
-  public class ManyToOneRelationship : DataRelationship
-  {
-    [DataMember(IsRequired = true)]
-    public string objectPropertyName { get; set; }
   }
 
   [DataContract(Namespace = "http://ns.iringtools.org/library")]
