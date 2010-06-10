@@ -441,18 +441,21 @@ namespace org.iringtools.adapter
       return _semanticEngine.Refresh(graphName, rdf);
     }
 
-    //private void LoadDataObjectSet()
-    //{
+    // get max # of data records from all data objects
+    private int MaxDataObjectsCount()
+    {
+      int maxCount = 0;
 
-    //  _dataObjectSet.Clear();
+      foreach (var pair in _dataObjectSet)
+      {
+        if (pair.Value.Count > maxCount)
+        {
+          maxCount = pair.Value.Count;
+        }
+      }
 
-    //  foreach (DataObjectMap dataObjectMap in _graphMap.dataObjectMaps)
-    //  {
-    //    _dataObjectSet.Add(dataObjectMap.name, _dataLayer.Get(dataObjectMap.name, null));
-    //  }
-
-    //  PopulateClassIdentifiers();
-    //}
+      return maxCount;
+    }
 
     private void LoadDataObjectSet(IList<string> identifiers)
     {
@@ -472,7 +475,6 @@ namespace org.iringtools.adapter
 
     private void PopulateClassIdentifiers()
     {
-
       _classIdentifiers.Clear();
 
       foreach (ClassMap classMap in _graphMap.classTemplateListMaps.Keys)
@@ -481,17 +483,14 @@ namespace org.iringtools.adapter
 
         foreach (string identifier in classMap.identifiers)
         {
-          string[] property = identifier.Split('.');
-          string objectName = property[0].Trim();
-          string propertyName = property[1].Trim();
-
-          IList<IDataObject> dataObjects = _dataObjectSet[objectName];
-          if (dataObjects != null)
+          // identifier is a fixed value
+          if (identifier.StartsWith("#") && identifier.EndsWith("#"))
           {
-            for (int i = 0; i < dataObjects.Count; i++)
-            {
-              string value = Convert.ToString(dataObjects[i].GetPropertyValue(propertyName));
+            string value = identifier.Substring(1, identifier.Length - 2);
+            int maxDataObjectsCount = MaxDataObjectsCount();
 
+            for (int i = 0; i < maxDataObjectsCount; i++)
+            {
               if (classIdentifiers.Count == i)
               {
                 classIdentifiers.Add(value);
@@ -499,6 +498,30 @@ namespace org.iringtools.adapter
               else
               {
                 classIdentifiers[i] += classMap.identifierDelimeter + value;
+              }
+            }
+          }
+          else  // identifier value comes from a property
+          {
+            string[] property = identifier.Split('.');
+            string objectName = property[0].Trim();
+            string propertyName = property[1].Trim();
+
+            IList<IDataObject> dataObjects = _dataObjectSet[objectName];
+            if (dataObjects != null)
+            {
+              for (int i = 0; i < dataObjects.Count; i++)
+              {
+                string value = Convert.ToString(dataObjects[i].GetPropertyValue(propertyName));
+
+                if (classIdentifiers.Count == i)
+                {
+                  classIdentifiers.Add(value);
+                }
+                else
+                {
+                  classIdentifiers[i] += classMap.identifierDelimeter + value;
+                }
               }
             }
           }
