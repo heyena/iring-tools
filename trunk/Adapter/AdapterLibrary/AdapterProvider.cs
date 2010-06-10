@@ -564,6 +564,20 @@ namespace org.iringtools.adapter
       }
     }
 
+    // get max # of data records from all data objects
+    private int MaxDataObjectsCount()
+    {
+        int maxCount = 0;
+        foreach (var pair in _dataObjectSet)
+        {
+            if (pair.Value.Count > maxCount)
+            {
+                maxCount = pair.Value.Count;
+            }
+        }
+        return maxCount;
+    }
+
     private void RemoveDups(DataObject dataObject)
     {
       try
