@@ -402,22 +402,6 @@ namespace org.iringtools.adapter.datalayer
               _mappingWriter.WriteEndElement(); // end key element
               _mappingWriter.WriteEndElement(); // end set element
               break;
-
-            case "ManyToOneRelationship":
-              ManyToOneRelationship manyToOneRelationship = (ManyToOneRelationship)dataRelationship;
-              _dataObjectWriter.WriteLine("public virtual {0} {0} {{ get; set; }}", relatedDataObject.tableName);
-              _mappingWriter.WriteStartElement("many-to-one");
-              _mappingWriter.WriteAttributeString("name", dataRelationship.relatedObjectName);
-              _mappingWriter.WriteAttributeString("column", "\"" + GetColumnName(relatedDataObject, manyToOneRelationship.objectPropertyName) + "\"");
-
-              if (ContainsRelationship(dataObject.keyProperties, manyToOneRelationship))
-              {
-                _mappingWriter.WriteAttributeString("update", "false");
-                _mappingWriter.WriteAttributeString("insert", "false");
-              }
-
-              _mappingWriter.WriteEndElement(); // end many-to-one element
-              break;
           }
         }
       }
@@ -533,7 +517,6 @@ namespace org.iringtools.adapter.datalayer
         _dataObjectWriter.WriteLine("}");
         #endregion Process columns
 
-        // Implements GetRelatedObjects of IDataObject
         _dataObjectWriter.WriteLine(@"
     public virtual IList<IDataObject> GetRelatedObjects(string relatedObjectType)
     {
@@ -685,19 +668,6 @@ namespace org.iringtools.adapter.datalayer
       }
 
       return String.Empty;
-    }
-
-    private bool ContainsRelationship(List<KeyProperty> keyProperties, ManyToOneRelationship relationship)
-    {
-      foreach (KeyProperty keyProperty in keyProperties)
-      {
-        if (relationship.objectPropertyName.ToLower() == keyProperty.propertyName.ToLower())
-        {
-          return true;
-        }
-      }
-
-      return false;
     }
   }
 }
