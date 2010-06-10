@@ -165,10 +165,10 @@ namespace org.iringtools.adapter
     /// <param name="projectName"></param>
     /// <param name="applicationName"></param>
     /// <returns></returns>
-    //public Response PullDTO(string projectName, string applicationName, Request request)
-    //{
-    //  return _adapterProvider.PullDTO(projectName, applicationName, request);
-    //}
+    public Response PullDTO(string projectName, string applicationName, Request request)
+    {
+        return _adapterProvider.PullDTO(projectName, applicationName, request);
+    }
 
     /// <summary>
     /// Puts the DTO.
