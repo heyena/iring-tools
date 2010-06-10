@@ -147,6 +147,19 @@ namespace org.iringtools.adapter
       return _adapterProvider.GetProjection(projectName, applicationName, graphName, format.ToLower());
     }
 
+
+    /// <summary>
+    /// Calls adapter provider to produce specific format for a graph
+    /// </summary>
+    /// <param name="projectName"></param>
+    /// <param name="applicationName"></param>
+    /// <param name="graphName"></param>
+    /// <returns>xelement</returns>
+    public XElement Get(string projectName, string applicationName, string graphName, string identifier, string format)
+    {
+      return _adapterProvider.GetProjection(projectName, applicationName, graphName, identifier, format.ToLower());
+    }
+
     /// <summary>
     /// Pulls the data from a triple store into legacy database
     /// </summary>

@@ -233,8 +233,7 @@ namespace org.iringtools.adapter
         {
             Initialize(projectName, applicationName);
 
-            IList<string> identifiers = null;
-            identifiers.Add(identifier);
+            IList<string> identifiers = new List<string>() { identifier };
 
             IProjectionLayer _projectionEngine = _kernel.Get<IProjectionLayer>(format);
 
@@ -463,9 +462,9 @@ namespace org.iringtools.adapter
         foreach (DataObjectMap dataObjectMap in _graphMap.dataObjectMaps)
         {
             if(identifiers != null)
-            _dataObjectSet.Add(dataObjectMap.name, _dataLayer.Get(dataObjectMap.name, identifiers));
+              _dataObjectSet.Add(dataObjectMap.name, _dataLayer.Get(dataObjectMap.name, identifiers));
             else
-            _dataObjectSet.Add(dataObjectMap.name, _dataLayer.Get(dataObjectMap.name, null));
+              _dataObjectSet.Add(dataObjectMap.name, _dataLayer.Get(dataObjectMap.name, null));
         }
 
         PopulateClassIdentifiers();
