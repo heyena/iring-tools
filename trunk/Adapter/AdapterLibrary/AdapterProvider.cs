@@ -271,6 +271,55 @@ namespace org.iringtools.adapter
       }
     }
 
+    public Response PullDTO(string projectName, string applicationName, Request request)
+    {
+        String targetUri = String.Empty;
+        String targetCredentialsXML = String.Empty;
+        String graphName = String.Empty;
+        String filter = String.Empty;
+        String projectNameForPull = String.Empty;
+        String applicationNameForPull = String.Empty;
+        String dataObjectsString = String.Empty;
+        Response response = new Response();
+        try
+        {
+            Initialize(projectName, applicationName);
+
+            targetUri = request["targetUri"];
+            targetCredentialsXML = request["targetCredentials"];
+            graphName = request["graphName"];
+            filter = request["filter"];
+            projectNameForPull = request["projectName"];
+            applicationNameForPull = request["applicationName"];
+
+            WebCredentials targetCredentials = Utility.Deserialize<WebCredentials>(targetCredentialsXML, true);
+            if (targetCredentials.isEncrypted) targetCredentials.Decrypt();
+
+            WebHttpClient httpClient = new WebHttpClient(targetUri);
+            if (filter != String.Empty)
+            {
+                dataObjectsString = httpClient.GetMessage(@"/" + projectNameForPull + "/" + applicationNameForPull + "/" + graphName + "/" + filter);
+            }
+            else
+            {
+                dataObjectsString = httpClient.GetMessage(@"/" + projectNameForPull + "/" + applicationNameForPull + "/" + graphName);
+            }
+            IList<IDataObject> dataObjects = CreateDataObjects(graphName, dataObjectsString);
+            
+            response.Append(_dataLayer.Post(dataObjects));
+            response.Add(String.Format("Pull is successful from " + targetUri + "for Graph " + graphName));
+        }
+        catch (Exception exception)
+        {
+            _logger.Error("Error in PullDTO: " + exception);
+
+            response.Level = StatusLevel.Error;
+            response.Add("Error while pulling " + graphName + " data from " + targetUri + " as " + targetUri + " data with filter " + filter + ".\r\n");
+            response.Add(exception.ToString());
+        }
+        return response;
+    }
+    
     public Response Pull(string projectName, string applicationName, string graphName)
     {
       Response response = new Response();
@@ -441,23 +490,7 @@ namespace org.iringtools.adapter
       return _semanticEngine.Refresh(graphName, rdf);
     }
 
-    // get max # of data records from all data objects
-    private int MaxDataObjectsCount()
-    {
-      int maxCount = 0;
-
-      foreach (var pair in _dataObjectSet)
-      {
-        if (pair.Value.Count > maxCount)
-        {
-          maxCount = pair.Value.Count;
-        }
-      }
-
-      return maxCount;
-    }
-
-    private void LoadDataObjectSet(IList<string> identifiers)
+   private void LoadDataObjectSet(IList<string> identifiers)
     {
 
         _dataObjectSet.Clear();
@@ -764,6 +797,33 @@ namespace org.iringtools.adapter
       }
     }
 
+    private IList<IDataObject> CreateDataObjects(string graphName, string dataObjectsString)
+    {
+        IList<IDataObject> dataObjects = new List<IDataObject>();
+        dataObjects = _dataLayer.Create(graphName, null);
+
+        if (dataObjectsString != null && dataObjectsString != String.Empty)
+        {
+            XmlReader reader = XmlReader.Create(new StringReader(dataObjectsString));
+            XDocument file = XDocument.Load(reader);
+            file = Utility.RemoveNamespace(file);
+
+            var dtoResults = from c in file.Elements("ArrayOf" + graphName).Elements(graphName) select c;
+            int j = 0;
+            foreach (var dtoResult in dtoResults)
+            {
+                var dtoProperties = from c in dtoResult.Elements("Properties").Elements("Property") select c;
+                IDataObject dto = dataObjects[j];
+                j++;
+                foreach (var dtoProperty in dtoProperties)
+                {
+                    dto.SetPropertyValue(dtoProperty.Attribute("name").Value, dtoProperty.Attribute("value").Value);
+                }
+                dataObjects.Add(dto);
+            }
+        }
+        return dataObjects;
+    }
     #endregion
   }
 
