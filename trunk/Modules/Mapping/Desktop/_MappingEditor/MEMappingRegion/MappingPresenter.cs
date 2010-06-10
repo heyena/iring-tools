@@ -64,6 +64,7 @@ namespace org.iringtools.modules.memappingregion
         private Button btnvSave { get { return ButtonCtrl("btnvSave"); } }
         private TextBox txtvLabel { get { return TextCtrl("txtvLabel"); } }
 
+
         public string selectedValueList { get { return ((ComboBoxItem)(cbValueList.SelectedItem)).Content.ToString(); } }
 
         // Create, Update, Delete code for Mapping Editor treeview
@@ -94,6 +95,7 @@ namespace org.iringtools.modules.memappingregion
 
                 // Subcribe to button click events on mappingCRUD
                 // note that we're sending in the txtLabel object as sender
+                tabMappings.SelectionChanged += (object sender, SelectionChangedEventArgs e) => { mappingCRUD.tabMappins_SelectionChanged(tabMappings, e); };
                 btnAddTemplate.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnAddTemplate_Click(txtLabel, e); };
                 btnAddGraph.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnAddGraph_Click(txtLabel, e); };
                 btnMap.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnMap_Click(txtLabel, e); };
@@ -102,13 +104,13 @@ namespace org.iringtools.modules.memappingregion
                 btnSave.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnSave_Click(txtLabel, e); };
                 btnDelete.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnDelete_Click(txtLabel, e); };
                 cbValueList.SelectionChanged += new SelectionChangedEventHandler(cbValueList_SelectionChanged);
-                btnvSave.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnSave_Click(txtLabel, e); };
+                btnvSave.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnvSave_Click(txtLabel, e); };
                 btnvAddValueList.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnAddValueList_Click(txtvLabel, e); };
                 btnvDelete.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnDeleteValue_Click(txtvLabel, e); };
                 btnvAddValue.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnAddValueMap_Click(txtvLabel, e); };
                 btnvMoveDown.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnMoveDown_Click(txtvLabel, e); };
                 btnvMoveUp.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnMoveUp_Click(txtvLabel, e); };
-
+                
 #if SILVERLIGHT
                 MouseScrollBehavior mouseScrollBehavior = new MouseScrollBehavior();
                 Interaction.GetBehaviors(tvwMapping).Add(mouseScrollBehavior);
@@ -124,8 +126,8 @@ namespace org.iringtools.modules.memappingregion
                 this.model.MappingTree = tvwMapping;
                 this.adapterProxy = adapterProxy;
                 this.referenceDataService = referenceDataService;
-
                 adapterProxy.OnDataArrived += OnDataArrivedHandler;
+
                 referenceDataService.OnDataArrived += OnDataArrivedHandler;
                 aggregator.GetEvent<SpinnerEvent>().Subscribe(SpinnerEventHandler);
             }
@@ -134,6 +136,7 @@ namespace org.iringtools.modules.memappingregion
                 Error.SetError(ex);
             }
         }
+
 
         void cbValueList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -223,7 +226,7 @@ namespace org.iringtools.modules.memappingregion
                     }
                 }                              
                 
-                ChangeControlsState(true);
+                ChangeControlsState(false);
             }
             catch (Exception ex)
             {
@@ -881,7 +884,6 @@ namespace org.iringtools.modules.memappingregion
                         btnvAddValue.IsEnabled = enabled;
                         btnvAddValueList.IsEnabled = enabled;
                         btnvDelete.IsEnabled = enabled;
-                        btnvSave.IsEnabled = enabled;
                         btnvMoveDown.IsEnabled = enabled;
                         btnvMoveUp.IsEnabled = enabled;
                         txtvLabel.IsEnabled = enabled;                        
@@ -919,7 +921,7 @@ namespace org.iringtools.modules.memappingregion
                             }
 
                             btnDelete.IsEnabled = enabled;
-                            btnSave.IsEnabled = enabled;
+                          
                         }
                     }
                 }

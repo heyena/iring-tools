@@ -211,6 +211,8 @@ namespace org.iringtools.adapter.projection
         new XAttribute(XNamespace.Xmlns + "xsd", XSD_NS),
         new XAttribute(XNamespace.Xmlns + "tpl", TPL_NS));
 
+      PopulateClassIdentifiers();
+
       foreach (var pair in _graphMap.classTemplateListMaps)
       {
         ClassMap classMap = pair.Key;
