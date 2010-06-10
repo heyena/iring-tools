@@ -408,7 +408,7 @@ namespace org.iringtools.adapter
 
     private Response Refresh(string graphName)
     {
-    //  _projectionEngine = _kernel.Get<IProjectionLayer>("rdf");
+      _projectionEngine = _kernel.Get<IProjectionLayer>("rdf");
 
       _graphMap = _mapping.FindGraphMap(graphName);
 

@@ -35,6 +35,7 @@ namespace org.iringtools.adapter.projection
     private static readonly string RDF_PREFIX = "rdf:";
     private static readonly string RDL_PREFIX = "rdl:";
     private static readonly string TPL_PREFIX = "tpl:";
+
     private static readonly string RDF_NIL = RDF_PREFIX + "nil";
 
     private static readonly ILog _logger = LogManager.GetLogger(typeof(RdfProjectionEngine));
@@ -71,7 +72,7 @@ namespace org.iringtools.adapter.projection
       try
       {
         _mapping = mapping;
-        FindGraphMap(graphName);
+        _graphMap = _mapping.FindGraphMap(graphName);
 
         _dataDictionary = dataDictionary;
         _dataObjectSet = dataObjects;

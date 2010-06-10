@@ -5,6 +5,7 @@ using System.Text;
 using Ninject.Modules;
 using org.iringtools.adapter.semantic;
 using org.iringtools.library;
+using org.iringtools.adapter.projection;
 
 namespace org.iringtools.adapter
 {
@@ -14,6 +15,8 @@ namespace org.iringtools.adapter
     {
       Bind<AdapterSettings>().ToSelf().InSingletonScope();
       Bind<ApplicationSettings>().ToSelf().InThreadScope();
+      Bind<IProjectionLayer>().To<RdfProjectionEngine>().Named("rdf");
+      Bind<IProjectionLayer>().To<qtxfProjectionEngine>().Named("qtxf");
     }
   }
 }
