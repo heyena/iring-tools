@@ -294,7 +294,7 @@ namespace DbDictionaryEditor
             {
                 if (args.Error != null)
                 {
-                    MessageBox.Show(args.FriendlyErrorMessage, "Post Database Dictionary Error", MessageBoxButton.OK);
+                    MessageBox.Show(args.FriendlyErrorMessage, "Clear Triple Store Error", MessageBoxButton.OK);
                     return;
                 }
                 Response resp = (Response)args.Data;

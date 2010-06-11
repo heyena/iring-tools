@@ -246,13 +246,17 @@ namespace DbDictionaryEditor
                 }
                 catch (Exception ex)
                 {
+                    string s = "Error Getting Database Dictionary from DBDictionaryService.";
                     // Configure event argument
                     args = new CompletedEventArgs
                     {
                         // Define your method in CompletedEventType and assign
                         CompletedType = CompletedEventType.GetDbDictionary,
                         Error = ex,
-                        FriendlyErrorMessage = "Error Getting Database Dictionary from DBDictionaryService.",
+                        FriendlyErrorMessage = 
+                            ex.GetBaseException().Message.ToUpper().Contains("SECURITY ERROR") || ex.GetBaseException() is System.Net.WebException ?
+                            s + "\nPlease verify if the DBDictionary Service is available" :
+                            s + "\nPlease review the log on the server.",
                     };
                 }
             }
@@ -279,13 +283,17 @@ namespace DbDictionaryEditor
                 }
                 catch (Exception ex)
                 {
+                    string s = "Error Getting Database Schema from DBDictionaryService.";
                     // Configure event argument
                     args = new CompletedEventArgs
                     {
                         // Define your method in CompletedEventType and assign
                         CompletedType = CompletedEventType.GetDatabaseSchema,
                         Error = ex,
-                        FriendlyErrorMessage = "Error Getting Database Schema from DBDictionaryService.",
+                        FriendlyErrorMessage = 
+                            ex.GetBaseException().Message.ToUpper().Contains("SECURITY ERROR") || ex.GetBaseException() is System.Net.WebException ?
+                            s + "\nPlease verify if the DBDictionary Service is available" :
+                            s + "\nPlease review the log on the server.",
                     };
                 }
             }
@@ -308,13 +316,17 @@ namespace DbDictionaryEditor
                 }
                 catch (Exception ex)
                 {
+                    string s = "Error while saving Database Dictionary through DBDictionaryService.";
                     // Configure event argument
                     args = new CompletedEventArgs
                     {
                         // Define your method in CompletedEventType and assign
                         CompletedType = CompletedEventType.SaveDatabaseDictionary,
                         Error = ex,
-                        FriendlyErrorMessage = "Error while saving Database Dictionary through DBDictionaryService.",
+                        FriendlyErrorMessage = 
+                            ex.GetBaseException().Message.ToUpper().Contains("SECURITY ERROR") || ex.GetBaseException() is System.Net.WebException ?
+                            s + "\nPlease verify if the DBDictionary Service is available" :
+                            s + "\nPlease review the log on the server.",
                     };
                 }
             }
@@ -341,13 +353,17 @@ namespace DbDictionaryEditor
                 }
                 catch (Exception ex)
                 {
+                    string s = "Error Getting existing Database Dictionary Files from DBDictionaryService.";
                     // Configure event argument
                     args = new CompletedEventArgs
                     {
                         // Define your method in CompletedEventType and assign
                         CompletedType = CompletedEventType.GetExistingDbDictionaryFiles,
                         Error = ex,
-                        FriendlyErrorMessage = "Error Getting existing Database Dictionary Files from DBDictionaryService.",
+                        FriendlyErrorMessage = 
+                            ex.GetBaseException().Message.ToUpper().Contains("SECURITY ERROR") || ex.GetBaseException() is System.Net.WebException ?
+                            s + "\nPlease verify if the DBDictionary Service is available" :
+                            s + "\nPlease review the log on the server.",
                     };
                 }
             }
@@ -374,13 +390,17 @@ namespace DbDictionaryEditor
                 }
                 catch (Exception ex)
                 {
+                    string s = "Error Getting Provider Names from DBDictionaryService.";
                     // Configure event argument
                     args = new CompletedEventArgs
                     {
                         // Define your method in CompletedEventType and assign
                         CompletedType = CompletedEventType.GetProviders,
                         Error = ex,
-                        FriendlyErrorMessage = "Error Getting Provider Names from DBDictionaryService.",
+                        FriendlyErrorMessage = 
+                            ex.GetBaseException().Message.ToUpper().Contains("SECURITY ERROR") || ex.GetBaseException() is System.Net.WebException ?
+                            s + "\nPlease verify if the DBDictionary Service is available" :
+                            s + "\nPlease review the log on the server.",
                     };
                 }
             }
@@ -403,13 +423,17 @@ namespace DbDictionaryEditor
                 }
                 catch (Exception ex)
                 {
+                    string s = "Error while posting Database Dictionary to the AdapterService.";
                     // Configure event argument
                     args = new CompletedEventArgs
                     {
                         // Define your method in CompletedEventType and assign
                         CompletedType = CompletedEventType.PostDictionaryToAdapterService,
                         Error = ex,
-                        FriendlyErrorMessage = "Error while posting Database Dictionary to the AdapterService.",
+                        FriendlyErrorMessage = 
+                            ex.GetBaseException().Message.ToUpper().Contains("SECURITY ERROR") || ex.GetBaseException() is System.Net.WebException ?
+                            s + "\nPlease verify if the DBDictionary Service is available" :
+                            s + "\nPlease review the log on the server.",
                     };
                 }
             }
@@ -432,13 +456,17 @@ namespace DbDictionaryEditor
                 }
                 catch (Exception ex)
                 {
+                    string s = "Error while clearing triple store through the AdapterService.";
                     // Configure event argument
                     args = new CompletedEventArgs
                     {
                         // Define your method in CompletedEventType and assign
                         CompletedType = CompletedEventType.ClearTripleStore,
                         Error = ex,
-                        FriendlyErrorMessage = "Error while clearing triple store through the AdapterService.",
+                        FriendlyErrorMessage = 
+                            ex.GetBaseException().Message.ToUpper().Contains("SECURITY ERROR") || ex.GetBaseException() is System.Net.WebException ?
+                            s + "\nPlease verify if the DBDictionary Service is available" :
+                            s + "\nPlease review the log on the server.",
                     };
                 }
             }
@@ -461,13 +489,17 @@ namespace DbDictionaryEditor
                 }
                 catch (Exception ex)
                 {
+                    string s = "Error while deleting the app from AdapterService.";
                     // Configure event argument
                     args = new CompletedEventArgs
                     {
                         // Define your method in CompletedEventType and assign
                         CompletedType = CompletedEventType.DeleteApp,
                         Error = ex,
-                        FriendlyErrorMessage = "Error while deleting the app from AdapterService.",
+                        FriendlyErrorMessage = 
+                            ex.GetBaseException().Message.ToUpper().Contains("SECURITY ERROR") || ex.GetBaseException() is System.Net.WebException ?
+                            s + "\nPlease verify if the DBDictionary Service is available" :
+                            s + "\nPlease review the log on the server.",
                     };
                 }
             }

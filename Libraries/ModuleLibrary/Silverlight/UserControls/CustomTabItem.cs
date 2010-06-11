@@ -62,50 +62,57 @@ namespace org.iringtools.informationmodel.usercontrols
         public CustomTabItem()
         {
 
-            Grid grid = new Grid();
-            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
-            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(5) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(20) });
-            grid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
-            StackPanel panel = new StackPanel() { Orientation = Orientation.Horizontal };
-
-            //buttonImage = new Image()
-            //{
-            //    Height = 16,
-            //    Width = 16,
-            //    Stretch = Stretch.Uniform
-            //};
-
-            txtCtrl = new TextBlock();
-
-            btnCtrl = new Button()
+            try
             {
-                Content = "x" //buttonImage
-            };
-          
-            // Subscribe to click event and bubble to parent
-            btnCtrl.Click += (object sender, RoutedEventArgs e) => { OnCloseClick(this, e); };
+                Grid grid = new Grid();
+                grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
+                grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(5) });
+                grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(20) });
+                grid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
+                StackPanel panel = new StackPanel() { Orientation = Orientation.Horizontal };
 
-            grid.Children.Add(txtCtrl);
-            grid.Children.Add(new TextBlock() { Text = " " });
-            grid.Children.Add(btnCtrl);
+                //buttonImage = new Image()
+                //{
+                //    Height = 16,
+                //    Width = 16,
+                //    Stretch = Stretch.Uniform
+                //};
 
-            txtCtrl.SetValue(Grid.ColumnProperty, 0);
-            btnCtrl.SetValue(Grid.ColumnProperty, 2);
-          
-            tvwCtrl = new TreeView();
-            tvwCtrl.BorderThickness = new Thickness(1);
-            tvwCtrl.BorderBrush = new SolidColorBrush(Colors.LightGray);                
+                txtCtrl = new TextBlock();
+
+                btnCtrl = new Button()
+                {
+                    Content = "x" //buttonImage
+                };
+
+                // Subscribe to click event and bubble to parent
+                btnCtrl.Click += (object sender, RoutedEventArgs e) => { OnCloseClick(this, e); };
+
+                grid.Children.Add(txtCtrl);
+                grid.Children.Add(new TextBlock() { Text = " " });
+                grid.Children.Add(btnCtrl);
+
+                txtCtrl.SetValue(Grid.ColumnProperty, 0);
+                btnCtrl.SetValue(Grid.ColumnProperty, 2);
+
+                tvwCtrl = new TreeView();
+                tvwCtrl.BorderThickness = new Thickness(1);
+                tvwCtrl.BorderBrush = new SolidColorBrush(Colors.LightGray);
 
 #if SILVERLIGHT
-            MouseScrollBehavior mouseScrollBehavior = new MouseScrollBehavior();
-            Interaction.GetBehaviors(tvwCtrl).Add(mouseScrollBehavior);
+                MouseScrollBehavior mouseScrollBehavior = new MouseScrollBehavior();
+                Interaction.GetBehaviors(tvwCtrl).Add(mouseScrollBehavior);
 #else
      //TODO
 #endif
 
-            this.Header = grid;
-            this.Content = tvwCtrl;
+                this.Header = grid;
+                this.Content = tvwCtrl;
+            }
+            catch (Exception ex)
+            {
+                Error.SetError(ex);
+            }
         }
 
         //public void SetImageSource(string iconName)
@@ -169,19 +176,26 @@ namespace org.iringtools.informationmodel.usercontrols
 
         public void Activate()
         {
-            Logger.Log(GetType().FullName + " ACTIVATED", Category.Debug, Priority.None);
+            try
+            {
+                Logger.Log(GetType().FullName + " ACTIVATED", Category.Debug, Priority.None);
 
-            CustomTreeItem selectedItem = (CustomTreeItem)tvwCtrl.SelectedItem;
-            if (selectedItem != null)
-                selectedItem.UpdateModel();
+                CustomTreeItem selectedItem = (CustomTreeItem)tvwCtrl.SelectedItem;
+                if (selectedItem != null)
+                    selectedItem.UpdateModel();
 
-            // Publish the event for anyone that requires it
-            Aggregator.GetEvent<CustomTabEvent>().Publish(
-              new CustomTabEventArgs
-              {
-                  ActiveTab = this,
-                  Process = CustomTabProcess.Activate
-              });
+                // Publish the event for anyone that requires it
+                Aggregator.GetEvent<CustomTabEvent>().Publish(
+                  new CustomTabEventArgs
+                  {
+                      ActiveTab = this,
+                      Process = CustomTabProcess.Activate
+                  });
+            }
+            catch (Exception ex)
+            {
+                Error.SetError(ex);
+            }
         }
 
         public CompletedEventArgs CompletedEventArgs { get; set; }
@@ -266,7 +280,10 @@ namespace org.iringtools.informationmodel.usercontrols
                 }
             }
 
-            catch { }
+            catch (Exception ex)
+            {
+                Error.SetError(ex);
+            }
             return item;
 
         }

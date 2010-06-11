@@ -195,21 +195,24 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 ComboBox cb = sender as ComboBox;
                 ComboBoxItem cbi = cb.SelectedItem as ComboBoxItem;
 
-
                 if (model.SelectedQMXF == null)
                     model.SelectedQMXF = new QMXF();
-                Repository rep = cbi.Tag as Repository;
-                if (rep.isReadOnly == true)
+
+                if (cbi != null)
                 {
-                    btnOK.IsEnabled = false;
-                    btnApply.IsEnabled = false;
+                    Repository rep = cbi.Tag as Repository;
+                    if (rep.isReadOnly == true)
+                    {
+                        btnOK.IsEnabled = false;
+                        btnApply.IsEnabled = false;
+                    }
+                    else
+                    {
+                        btnOK.IsEnabled = true;
+                        btnApply.IsEnabled = true;
+                    }
+                    _templateModel.QMXF.targetRepository = rep.name;
                 }
-                else
-                {
-                    btnOK.IsEnabled = true;
-                    btnApply.IsEnabled = true;
-                }
-                _templateModel.QMXF.targetRepository = rep.name;
             }
             catch (Exception ex)
             {
@@ -226,7 +229,7 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 {
                     if (args.Error != null)
                     {
-                        MessageBox.Show(args.FriendlyErrorMessage, "Generate Repositories Error", MessageBoxButton.OK);
+                        MessageBox.Show(args.FriendlyErrorMessage, "Get Repositories Error", MessageBoxButton.OK);
                         return;
                     }
                     object obj = args.Data;
@@ -311,6 +314,11 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 ButtonCtrl("addRole1").DataContext = _templateModel;
                 ButtonCtrl("removeRole1").DataContext = _templateModel;
                 ButtonCtrl("applyRole1").DataContext = _templateModel;
+
+                cmbRepositories.SelectedItem = null;
+
+                btnOK.IsEnabled = false;
+                btnApply.IsEnabled = false;
             }
             catch (Exception ex)
             {
