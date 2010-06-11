@@ -209,7 +209,7 @@ namespace org.iringtools.modules.templateeditor.editorregion
                     btnOK.IsEnabled = true;
                     btnApply.IsEnabled = true;
                 }
-                model.SelectedQMXF.targetRepository = rep.uri;
+                _templateModel.QMXF.targetRepository = rep.name;
             }
             catch (Exception ex)
             {

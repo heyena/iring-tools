@@ -210,7 +210,7 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
                     btnApply.IsEnabled = true;
                 }
 
-                this.model.SelectedQMXF.targetRepository = rep.uri;   
+                _classBLL.QMXF.targetRepository = rep.name;
             }
             catch (Exception ex)
             {

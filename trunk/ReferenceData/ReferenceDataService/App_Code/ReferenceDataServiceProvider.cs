@@ -1144,7 +1144,7 @@ namespace org.ids_adi.iring.referenceData
                         int repository = 0;
                         int templateIndex = -1;
 
-                        repository = getIndexFromName(template.repositoryName);
+                        repository = getIndexFromName(qmxf.targetRepository);
                         Repository source = _repositories[repository];
 
                         ID = template.identifier;
@@ -1698,7 +1698,7 @@ namespace org.ids_adi.iring.referenceData
                     Repository source = new Repository();
 
 
-                    repository = getIndexFromName(Class.repositoryName);
+                    repository = getIndexFromName(qmxf.targetRepository);
                     source = _repositories[repository];
 
                     if (source.isReadOnly)
