@@ -745,11 +745,10 @@ namespace org.iringtools.modulelibrary.layerdal
 
                 _postTemplateClient.Headers["Content-type"] = "application/xml";
                 _postTemplateClient.Encoding = Encoding.UTF8;
-                _postTemplateClient.UploadStringAsync(new Uri(template.targetRepository + "/templates"), "POST", message);
+                _postTemplateClient.UploadStringAsync(new Uri(_referenceDataServiceUri + "/templates"), "POST", message);
             }
             catch (Exception ex)
             {
-                //Error.SetError(ex, "Error occurred while trying to post the template.", Category.Exception, Priority.High);
                 throw ex;
             }
             return null;
@@ -763,11 +762,10 @@ namespace org.iringtools.modulelibrary.layerdal
 
                 _postClassClient.Headers["Content-type"] = "application/xml";
                 _postClassClient.Encoding = Encoding.UTF8;
-                _postClassClient.UploadStringAsync(new Uri(@class.targetRepository + "/classes"), "POST", message);                
+                _postClassClient.UploadStringAsync(new Uri(_referenceDataServiceUri + "/classes"), "POST", message);
             }
             catch (Exception ex)
             {
-                //Error.SetError(ex, "Error occurred while trying to post the class.", Category.Exception, Priority.High);
                 throw ex;
             }
             return null;
