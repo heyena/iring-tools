@@ -1,9 +1,10 @@
 ﻿<UserControl x:Class="org.iringtools.modules.spinner.WorkingSpinner"  
-     xmlns="http://schemas.microsoft.com/client/2007"   
+     xmlns="http://schemas.microsoft.com/client/2007"  
+     xmlns:toolkit="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Toolkit"
      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     
     <Grid x:Name="LayoutRoot" >
-        <Canvas x:Name="canvas2" Visibility="Collapsed">
+        <!--<Canvas x:Name="canvas2" Visibility="Collapsed">
             <Canvas Margin="-50,-50,0,0" 
               Height="100" Width="100" x:Name="canvas1" RenderTransformOrigin=".5,.5">
                 <Canvas.Resources>
@@ -19,7 +20,11 @@
                     <RotateTransform x:Name="spin" Angle="0"/>
                 </Canvas.RenderTransform>
             </Canvas>
-        </Canvas>
+        </Canvas>-->
+        <toolkit:BusyIndicator x:Name="biBusyWindow" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="4"  Grid.RowSpan="4"  
+                               FontFamily="Portable User Interface" FontSize="18" FontStyle="Italic" 
+                               Content="" BusyContent="Processing request, Please wait..." HorizontalAlignment="Stretch"  VerticalAlignment="Stretch"/>
+
     </Grid>
 </UserControl>
    

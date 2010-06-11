@@ -9,6 +9,18 @@
 <head id="Head1" runat="server">
     <meta http-equiv="cache-control" content="no-cache">
     <title>RefDataEditor</title>
+     <script type="text/javascript">
+ function onBeforeUnloadAction(){
+   return "Did you save your changes!!!........";
+ }
+ window.onbeforeunload = function(){
+   if((window.event.clientX<0) || 
+      (window.event.clientY<0)){ 
+     return onBeforeUnloadAction();
+   }
+ } 
+ </script>
+
 </head>
 <body style="height:100%;margin:0;">
     <form id="form1" runat="server" style="height:100%;">
