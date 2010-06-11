@@ -83,7 +83,7 @@ namespace org.iringtools.adapter.semantic
       _tripleStore = new MicrosoftSqlStoreManager(adapterSettings.DBServer, adapterSettings.DBname, adapterSettings.DBUser, adapterSettings.DBPassword);
       _mapping = Utility.Read<Mapping>(String.Format("{0}Mapping.{1}.xml",adapterSettings.XmlPath, scope));
       _graph = new Graph();
-      _graphNs = String.Format("{0}/{1}/{2}#", adapterSettings.GraphBaseUri, appSettings.ProjectName, appSettings.ApplicationName);
+      _graphNs = String.Format("{0}/{1}/{2}/", adapterSettings.GraphBaseUri, appSettings.ProjectName, appSettings.ApplicationName);
       _dataObjectNs = String.Format("{0}.proj_{1}",DATALAYER_NS, scope);
       _dataObjectsAssemblyName = adapterSettings.ExecutingAssemblyName;
     }
@@ -140,11 +140,11 @@ namespace org.iringtools.adapter.semantic
     public Dictionary<string, IList<IDataObject>> Get(string graphName)
     {
       FindGraphMap(graphName);
-
+       string graphBaseUri = string.Format("{0}/{1}", _graphNs, graphName); 
       // load graph from triple store
       _graph.Clear();
-      _graph.BaseUri = new Uri(_graphMap.baseUri);
-      _tripleStore.LoadGraph(_graph, _graphMap.baseUri);
+      _graph.BaseUri = new Uri(graphBaseUri);
+      _tripleStore.LoadGraph(_graph, graphBaseUri);
 
       // create in-memory store for querying
       _memoryStore = new TripleStore();

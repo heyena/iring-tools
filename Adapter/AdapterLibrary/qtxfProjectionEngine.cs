@@ -70,6 +70,7 @@ namespace org.iringtools.adapter.projection
         {
             try
             {
+                PopulateClassIdentifiers();
 
                 XElement graphElement = new XElement(_graphNs + _graphMap.name, new XAttribute(XNamespace.Xmlns + "i", XSI_NS));
                 int maxDataObjectsCount = MaxDataObjectsCount();
@@ -245,5 +246,64 @@ namespace org.iringtools.adapter.projection
 
             return RDF_NIL;
         }
+
+        private void PopulateClassIdentifiers()
+        {
+            _classIdentifiers.Clear();
+
+            foreach (ClassMap classMap in _graphMap.classTemplateListMaps.Keys)
+            {
+                List<string> classIdentifiers = new List<string>();
+
+                foreach (string identifier in classMap.identifiers)
+                {
+                    // identifier is a fixed value
+                    if (identifier.StartsWith("#") && identifier.EndsWith("#"))
+                    {
+                        string value = identifier.Substring(1, identifier.Length - 2);
+                        int maxDataObjectsCount = MaxDataObjectsCount();
+
+                        for (int i = 0; i < maxDataObjectsCount; i++)
+                        {
+                            if (classIdentifiers.Count == i)
+                            {
+                                classIdentifiers.Add(value);
+                            }
+                            else
+                            {
+                                classIdentifiers[i] += classMap.identifierDelimeter + value;
+                            }
+                        }
+                    }
+                    else  // identifier value comes from a property
+                    {
+                        string[] property = identifier.Split('.');
+                        string objectName = property[0].Trim();
+                        string propertyName = property[1].Trim();
+
+                        IList<IDataObject> dataObjects = _dataObjectSet[objectName];
+                        if (dataObjects != null)
+                        {
+                            for (int i = 0; i < dataObjects.Count; i++)
+                            {
+                                string value = Convert.ToString(dataObjects[i].GetPropertyValue(propertyName));
+
+                                if (classIdentifiers.Count == i)
+                                {
+                                    classIdentifiers.Add(value);
+                                }
+                                else
+                                {
+                                    classIdentifiers[i] += classMap.identifierDelimeter + value;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                _classIdentifiers[classMap.classId] = classIdentifiers;
+            }
+        }
+
     }
 }

@@ -33,8 +33,8 @@
 			Margin="8,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center"
 			Content="Entity Type:"/>
             <TextBox x:Name="entityType" Grid.Column="1" Grid.Row="0" Height="22" 
-			Margin="79,0,8,0" VerticalAlignment="Center" Text="{Binding EntityType, Mode=OneWay}"
-			IsReadOnly="True"/>
+			Margin="79,0,8,0" VerticalAlignment="Center" Text="{Binding EntityType, Mode=Twoway}"
+			IsReadOnly="False"/>
 
             <Border Margin="8" Grid.Column="0" Grid.Row="1" BorderBrush="Black" BorderThickness="1" CornerRadius="4">
                 <TextBox x:Name="description" Margin="8,8,8,8" 
