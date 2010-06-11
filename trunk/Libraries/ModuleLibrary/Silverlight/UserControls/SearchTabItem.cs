@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -66,11 +67,23 @@ namespace org.iringtools.informationmodel.usercontrols
       {
           RefDataEntities entities = (RefDataEntities)CompletedEventArgs.Data;
 
+          List<string> labels = new List<string>();
+          
           // Add first level Search result nodes
           foreach (KeyValuePair<string, Entity> keyValuePair in entities)
           {
+              int count = 0;
+              if (keyValuePair.Value.repository.ToUpper() != "REFERENCEDATA")
+              {
+                  var dups = from label in labels
+                             where label.ToUpper() == keyValuePair.Value.label.ToUpper()
+                             select label;
+                   count = dups.Count();
+                   labels.Add(keyValuePair.Value.label.ToUpper());             
+              }
+              
               if (keyValuePair.Value != null)
-                ContentTree.Items.Add(AddTreeItem(keyValuePair.Key, keyValuePair.Value));
+                  ContentTree.Items.Add(AddTreeItem(keyValuePair.Key, keyValuePair.Value, count > 0, count));
               else
                 Error.SetError(new Exception("Search returned no results......"+Environment.NewLine + "Please try again"));
           }

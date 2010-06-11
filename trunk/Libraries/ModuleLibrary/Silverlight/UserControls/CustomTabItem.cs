@@ -195,6 +195,11 @@ namespace org.iringtools.informationmodel.usercontrols
 
         public CustomTreeItem AddTreeItem(string header, Entity entity)
         {
+            return AddTreeItem(header, entity, false, 0);
+        }
+
+        public CustomTreeItem AddTreeItem(string header, Entity entity, bool isDuplicate, int duplicateCount)
+        {
             // Instantiate a new treeview node object, populate and return it
             CustomTreeItem item = null;
             try
@@ -205,7 +210,13 @@ namespace org.iringtools.informationmodel.usercontrols
                         {
                             item = Container.Resolve<ClassTreeItem>();
                             item.SetImageSource("class.png");
-                            item.SetTextBlockText(entity.label);
+                            if (!isDuplicate)
+                                item.SetTextBlockText(entity.label + " (" + entity.repository + ")");
+                            else
+                            {
+                                string s = duplicateCount > 1 ? " " + duplicateCount.ToString() : string.Empty;
+                                item.SetTextBlockText(entity.label + " (" + entity.repository + ")" + " [Duplicate" + s + "]");
+                            }
                             item.SetTooltipText("Class : " + entity.label);
                             item.Entity = entity;
                             item.Tag = entity;
@@ -216,7 +227,13 @@ namespace org.iringtools.informationmodel.usercontrols
                         {
                             item = Container.Resolve<TemplateTreeItem>();
                             item.SetImageSource("template.png");
-                            item.SetTextBlockText(entity.label);
+                            if (!isDuplicate)
+                                item.SetTextBlockText(entity.label + " (" + entity.repository + ")");
+                            else
+                            {
+                                string s = duplicateCount > 1 ? " " + duplicateCount.ToString() : string.Empty;
+                                item.SetTextBlockText(entity.label + " (" + entity.repository + ")" + " [Duplicate" + s + "]");
+                            }
                             item.SetTooltipText("Template : " + entity.label);
                             item.Entity = entity;
                             item.Tag = entity;
