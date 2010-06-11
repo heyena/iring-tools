@@ -40,174 +40,195 @@ namespace org.iringtools.informationmodel.usercontrols
 
     public override void Execute(object parameter)
     {
-      CompletedEventArgs = (CompletedEventArgs)parameter;
-
-      if (CompletedEventArgs.CheckForType(CompletedEventType.GetClass))
-      {
-        if (CompletedEventArgs.Error != null)
+        try
         {
-            MessageBox.Show(CompletedEventArgs.FriendlyErrorMessage, "Get Class Error", MessageBoxButton.OK);
-            return;
+            CompletedEventArgs = (CompletedEventArgs)parameter;
+
+            if (CompletedEventArgs.CheckForType(CompletedEventType.GetClass))
+            {
+                if (CompletedEventArgs.Error != null)
+                {
+                    MessageBox.Show(CompletedEventArgs.FriendlyErrorMessage, "Get Class Error", MessageBoxButton.OK);
+                    return;
+                }
+
+                QMXF qmxf = (QMXF)CompletedEventArgs.Data;
+                ClassDefinition classDefinition = qmxf.classDefinitions.FirstOrDefault();
+
+                if (classDefinition != null)
+                {
+                    Entity entity = new Entity()
+                    {
+                        label = classDefinition.name[0].value,
+                        repository = "UnKnown",
+                        uri = classDefinition.identifier
+                    };
+
+                    ClassTreeItem item = (ClassTreeItem)AddTreeItem(entity.label, entity);
+                    item.ProcessClassDefinition(classDefinition);
+                    this.Items.Add(item);
+                    _hasExecuted = true;
+                }
+
+                //if (this.IsSelectionActive)
+                //{
+                UpdateModel(qmxf);
+                //}
+            }
+            else if (CompletedEventArgs.CheckForType(CompletedEventType.GetClassLabel))
+            {
+                if (CompletedEventArgs.Error != null)
+                {
+                    MessageBox.Show(CompletedEventArgs.FriendlyErrorMessage, "Get Class Label", MessageBoxButton.OK);
+                    return;
+                }
+
+                DisplayAndSaveLabel(CompletedEventArgs.Data);
+            }
         }
-
-        QMXF qmxf = (QMXF)CompletedEventArgs.Data;
-        ClassDefinition classDefinition = qmxf.classDefinitions.FirstOrDefault();
-
-        if (classDefinition != null)
+        catch (Exception ex)
         {
-          Entity entity = new Entity()
-          {
-            label = classDefinition.name[0].value,
-            repository = "UnKnown",
-            uri = classDefinition.identifier
-          };
-
-          ClassTreeItem item = (ClassTreeItem)AddTreeItem(entity.label, entity);
-          item.ProcessClassDefinition(classDefinition);
-          this.Items.Add(item);
-          _hasExecuted = true;
+            Error.SetError(ex);
         }
-
-        //if (this.IsSelectionActive)
-        //{
-          UpdateModel(qmxf);
-        //}
-      }
-      else if (CompletedEventArgs.CheckForType(CompletedEventType.GetClassLabel))
-      {
-        if (CompletedEventArgs.Error != null)
-        {
-            MessageBox.Show(CompletedEventArgs.FriendlyErrorMessage, "Get Class Label", MessageBoxButton.OK);
-            return;
-        }
-
-        DisplayAndSaveLabel(CompletedEventArgs.Data);
-      }
     }
 
     public override void nodeMouseLeftButtonUpHandler(object sender, MouseButtonEventArgs e)
     {
-        if (!_hasExecuted && RoleQualification != null)
+        try
         {
-            if (RoleQualification.range != null &&
-                RoleQualification.range != String.Empty &&
-                !RoleQualification.range.IsMappable())
+            if (!_hasExecuted && RoleQualification != null)
             {
-                ReferenceDataService.GetClass(RoleQualification.range.GetIdFromUri(), this);
+                if (RoleQualification.range != null &&
+                    RoleQualification.range != String.Empty &&
+                    !RoleQualification.range.IsMappable())
+                {
+                    ReferenceDataService.GetClass(RoleQualification.range.GetIdFromUri(), this);
+                }
             }
-        }
-        else if (!_hasExecuted && RoleDefinition != null)
-        {
-            if (RoleDefinition.range != null &&
-                    RoleDefinition.range != string.Empty &&
-                    !RoleDefinition.range.IsMappable())
+            else if (!_hasExecuted && RoleDefinition != null)
             {
-                ReferenceDataService.GetClass(RoleDefinition.range.GetIdFromUri(), this);
+                if (RoleDefinition.range != null &&
+                        RoleDefinition.range != string.Empty &&
+                        !RoleDefinition.range.IsMappable())
+                {
+                    ReferenceDataService.GetClass(RoleDefinition.range.GetIdFromUri(), this);
+                }
             }
-        }
 
-      FillRoleDetailView();
-      e.Handled = true;
+            FillRoleDetailView();
+            e.Handled = true;
+        }
+        catch (Exception ex)
+        {
+            Error.SetError(ex);
+        }
     }
 
     private void FillRoleDetailView()
     {
-      PresentationModel.SelectedTreeItem = this;
-      PresentationModel.DetailProperties.Clear();
-
-      if (Tag == null)
-        return;
-
-      if (Tag is Entity)
-      {
-        Entity = (Entity)Tag;
-      }
-      else
-      {
-        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Repository", Entity.repository);
-        PresentationModel.DetailProperties.Add(keyValuePair);
-
-        keyValuePair = new KeyValuePair<string, string>("URI", Entity.uri);
-        PresentationModel.DetailProperties.Add(keyValuePair);
-
-        if (Tag is RoleDefinition)
+        try
         {
-          RoleDefinition roleDefinition = (RoleDefinition)Tag;
+            PresentationModel.SelectedTreeItem = this;
+            PresentationModel.DetailProperties.Clear();
 
-          keyValuePair = new KeyValuePair<string, string>("QMXF Type", "Role Definition");
-          PresentationModel.DetailProperties.Add(keyValuePair);
+            if (Tag == null)
+                return;
 
-          keyValuePair = new KeyValuePair<string, string>("Name", (roleDefinition.name.FirstOrDefault() != null ? roleDefinition.name.FirstOrDefault().value : string.Empty));
-          PresentationModel.DetailProperties.Add(keyValuePair);
+            if (Tag is Entity)
+            {
+                Entity = (Entity)Tag;
+            }
+            else
+            {
+                KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Repository", Entity.repository);
+                PresentationModel.DetailProperties.Add(keyValuePair);
 
-          keyValuePair = new KeyValuePair<string, string>("Identifier", (roleDefinition.identifier != null ? roleDefinition.identifier.ToString() : string.Empty));
-          PresentationModel.DetailProperties.Add(keyValuePair);
+                keyValuePair = new KeyValuePair<string, string>("URI", Entity.uri);
+                PresentationModel.DetailProperties.Add(keyValuePair);
 
-          keyValuePair = new KeyValuePair<string, string>("Description", roleDefinition.description.value);
-          PresentationModel.DetailProperties.Add(keyValuePair);
+                if (Tag is RoleDefinition)
+                {
+                    RoleDefinition roleDefinition = (RoleDefinition)Tag;
 
-          GetClassLabel("Range", roleDefinition.range);
+                    keyValuePair = new KeyValuePair<string, string>("QMXF Type", "Role Definition");
+                    PresentationModel.DetailProperties.Add(keyValuePair);
 
-          keyValuePair = new KeyValuePair<string, string>("Inverse Minimum", roleDefinition.inverseMinimum);
-          PresentationModel.DetailProperties.Add(keyValuePair);
+                    keyValuePair = new KeyValuePair<string, string>("Name", (roleDefinition.name.FirstOrDefault() != null ? roleDefinition.name.FirstOrDefault().value : string.Empty));
+                    PresentationModel.DetailProperties.Add(keyValuePair);
 
-          keyValuePair = new KeyValuePair<string, string>("Inverse Maximum", roleDefinition.inverseMaximum);
-          PresentationModel.DetailProperties.Add(keyValuePair);
+                    keyValuePair = new KeyValuePair<string, string>("Identifier", (roleDefinition.identifier != null ? roleDefinition.identifier.ToString() : string.Empty));
+                    PresentationModel.DetailProperties.Add(keyValuePair);
 
-          keyValuePair = new KeyValuePair<string, string>("Minimum", roleDefinition.minimum);
-          PresentationModel.DetailProperties.Add(keyValuePair);
+                    keyValuePair = new KeyValuePair<string, string>("Description", roleDefinition.description.value);
+                    PresentationModel.DetailProperties.Add(keyValuePair);
 
-          keyValuePair = new KeyValuePair<string, string>("Maximum", roleDefinition.inverseMaximum);
-          PresentationModel.DetailProperties.Add(keyValuePair);
+                    GetClassLabel("Range", roleDefinition.range);
 
+                    keyValuePair = new KeyValuePair<string, string>("Inverse Minimum", roleDefinition.inverseMinimum);
+                    PresentationModel.DetailProperties.Add(keyValuePair);
+
+                    keyValuePair = new KeyValuePair<string, string>("Inverse Maximum", roleDefinition.inverseMaximum);
+                    PresentationModel.DetailProperties.Add(keyValuePair);
+
+                    keyValuePair = new KeyValuePair<string, string>("Minimum", roleDefinition.minimum);
+                    PresentationModel.DetailProperties.Add(keyValuePair);
+
+                    keyValuePair = new KeyValuePair<string, string>("Maximum", roleDefinition.inverseMaximum);
+                    PresentationModel.DetailProperties.Add(keyValuePair);
+
+                }
+                else if (Tag is RoleQualification)
+                {
+                    RoleQualification roleQualification = (RoleQualification)Tag;
+
+                    keyValuePair = new KeyValuePair<string, string>("QMXF Type", "Role Qualification");
+                    PresentationModel.DetailProperties.Add(keyValuePair);
+
+                    keyValuePair = new KeyValuePair<string, string>("Name", (roleQualification.name.FirstOrDefault() != null ? roleQualification.name.FirstOrDefault().value : string.Empty));
+                    PresentationModel.DetailProperties.Add(keyValuePair);
+
+                    keyValuePair = new KeyValuePair<string, string>("Identifier", roleQualification.qualifies);
+                    PresentationModel.DetailProperties.Add(keyValuePair);
+
+                    GetClassLabel("Qualifies", roleQualification.qualifies);
+
+                    keyValuePair = new KeyValuePair<string, string>("Description", (roleQualification.description.FirstOrDefault() != null ? roleQualification.description.FirstOrDefault().value : string.Empty));
+                    PresentationModel.DetailProperties.Add(keyValuePair);
+
+                    string value = String.Empty;
+                    if (roleQualification.value != null)
+                    {
+                        string text = roleQualification.value.text;
+                        string reference = roleQualification.value.reference;
+                        if (text != null)
+                            value = roleQualification.value.text;
+                        if (reference != null)
+                            value = roleQualification.value.reference;
+                    }
+                    if (!string.IsNullOrEmpty(value)) //This is due to data error??
+                        GetClassLabel("Value", value);
+
+                    if (!string.IsNullOrEmpty(roleQualification.range))
+                        GetClassLabel("Range", roleQualification.range);
+
+                    keyValuePair = new KeyValuePair<string, string>("Inverse Minimum", roleQualification.inverseMinimum);
+                    PresentationModel.DetailProperties.Add(keyValuePair);
+
+                    keyValuePair = new KeyValuePair<string, string>("Inverse Maximum", roleQualification.inverseMaximum);
+                    PresentationModel.DetailProperties.Add(keyValuePair);
+
+                    keyValuePair = new KeyValuePair<string, string>("Minimum", roleQualification.minimum);
+                    PresentationModel.DetailProperties.Add(keyValuePair);
+
+                    keyValuePair = new KeyValuePair<string, string>("Maximum", roleQualification.maximum);
+                    PresentationModel.DetailProperties.Add(keyValuePair);
+                }
+            }
         }
-        else if (Tag is RoleQualification)
+        catch (Exception ex)
         {
-          RoleQualification roleQualification = (RoleQualification)Tag;
-
-          keyValuePair = new KeyValuePair<string, string>("QMXF Type", "Role Qualification");
-          PresentationModel.DetailProperties.Add(keyValuePair);
-
-          keyValuePair = new KeyValuePair<string, string>("Name", (roleQualification.name.FirstOrDefault() != null ? roleQualification.name.FirstOrDefault().value : string.Empty));
-          PresentationModel.DetailProperties.Add(keyValuePair);
-
-          keyValuePair = new KeyValuePair<string, string>("Identifier", roleQualification.qualifies);
-          PresentationModel.DetailProperties.Add(keyValuePair);
-
-          GetClassLabel("Qualifies", roleQualification.qualifies);
-
-          keyValuePair = new KeyValuePair<string, string>("Description", (roleQualification.description.FirstOrDefault() != null ? roleQualification.description.FirstOrDefault().value : string.Empty));
-          PresentationModel.DetailProperties.Add(keyValuePair);
-
-          string value = String.Empty;
-          if (roleQualification.value != null)
-          {
-            string text = roleQualification.value.text;
-            string reference = roleQualification.value.reference;
-            if (text != null)
-              value = roleQualification.value.text;
-            if (reference != null)
-              value = roleQualification.value.reference;
-          }
-          if (!string.IsNullOrEmpty(value)) //This is due to data error??
-            GetClassLabel("Value", value);
-
-          if (!string.IsNullOrEmpty(roleQualification.range))
-            GetClassLabel("Range", roleQualification.range);
-
-          keyValuePair = new KeyValuePair<string, string>("Inverse Minimum", roleQualification.inverseMinimum);
-          PresentationModel.DetailProperties.Add(keyValuePair);
-
-          keyValuePair = new KeyValuePair<string, string>("Inverse Maximum", roleQualification.inverseMaximum);
-          PresentationModel.DetailProperties.Add(keyValuePair);
-
-          keyValuePair = new KeyValuePair<string, string>("Minimum", roleQualification.minimum);
-          PresentationModel.DetailProperties.Add(keyValuePair);
-
-          keyValuePair = new KeyValuePair<string, string>("Maximum", roleQualification.maximum);
-          PresentationModel.DetailProperties.Add(keyValuePair);
+            Error.SetError(ex);
         }
-      }
     }
   }
 }

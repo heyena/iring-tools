@@ -155,13 +155,17 @@ namespace org.iringtools.modulelibrary.layerdal
         }
         catch (Exception ex)
         {
-          // Configure event argument
+            string s = "Error Getting Scope List from Adapter Service.";
+            // Configure event argument
             args = new CompletedEventArgs
             {
               // Define your method in CompletedEventType and assign
               CompletedType = CompletedEventType.GetScopes,
               Error = ex,
-              FriendlyErrorMessage = "Error Getting Scope List from Adapter Service.",
+              FriendlyErrorMessage =
+                IsServiceUnavailable(ex) ?                
+                s + "\nPlease verify if the Adapter Service is available" :
+                s + "\nPlease review the log on the server.",
             };
         }
       }
@@ -194,13 +198,17 @@ namespace org.iringtools.modulelibrary.layerdal
           }
           catch (Exception ex)
           {
+            string s ="Error Getting DataDictionary from Adapter Service.";
               // Configure event argument
             args = new CompletedEventArgs
             {
               // Define your method in CompletedEventType and assign
               CompletedType = CompletedEventType.GetDataDictionary,
               Error = ex,
-              FriendlyErrorMessage = "Error Getting DataDictionary from Adapter Service.",
+              FriendlyErrorMessage =
+                IsServiceUnavailable(ex) ?
+                s + "\nPlease verify if the Adapter Service is available" :
+                s + "\nPlease review the log on the server.",
             };
           }
       }
@@ -233,13 +241,17 @@ namespace org.iringtools.modulelibrary.layerdal
           }
           catch (Exception ex)
           {
+            string s = "Error getting Mapping from Adapter Service.";
             // Configure event argument
             args = new CompletedEventArgs
             {
               // Define your method in CompletedEventType and assign
               CompletedType = CompletedEventType.GetMapping,
               Error = ex,
-              FriendlyErrorMessage = "Error getting Mapping from Adapter Service.",
+              FriendlyErrorMessage = 
+                IsServiceUnavailable(ex) ?
+                s + "\nPlease verify if the Adapter Service is available" :
+                s + "\nPlease review the log on the server.",
             };
           }
       }
@@ -265,13 +277,17 @@ namespace org.iringtools.modulelibrary.layerdal
           }
           catch (Exception ex)
           {
+            string s = "Adapter Service returned an error while refreshing the facade.";
             // Configure event argument
             args = new CompletedEventArgs
             {
               // Define your method in CompletedEventType and assign
               CompletedType = CompletedEventType.RefreshAll,
               Error = ex,
-              FriendlyErrorMessage = "Adapter Service returned an error while refreshing the facade.",
+              FriendlyErrorMessage = 
+                IsServiceUnavailable(ex) ?
+                s + "\nPlease verify if the Adapter Service is available" :
+                s + "\nPlease review the log on the server.",
             };
           }
       }
@@ -297,13 +313,17 @@ namespace org.iringtools.modulelibrary.layerdal
           }
           catch (Exception ex)
           {
+              string s = "Adapter Service returned an error while generating DTO.";
             // Configure event argument
             args = new CompletedEventArgs
             {
               // Define your method in CompletedEventType and assign
               CompletedType = CompletedEventType.Generate,
               Error = ex,
-              FriendlyErrorMessage = "Adapter Service returned an error while generating DTO.",
+              FriendlyErrorMessage = 
+                IsServiceUnavailable(ex) ?
+                s + "\nPlease verify if the Adapter Service is available" :
+                s + "\nPlease review the log on the server.",
             };
           }
       }
@@ -329,13 +349,17 @@ namespace org.iringtools.modulelibrary.layerdal
           }
           catch (Exception ex)
           {
+              string s = "Adapter Service returned an error while updating the mapping.";
             // Configure event argument
             args = new CompletedEventArgs
             {
               // Define your method in CompletedEventType and assign
               CompletedType = CompletedEventType.UpdateMapping,
               Error = ex,
-              FriendlyErrorMessage = "Adapter Service returned an error while updating the mapping.",
+              FriendlyErrorMessage = 
+                IsServiceUnavailable(ex) ?
+                s + "\nPlease verify if the Adapter Service is available" :
+                s + "\nPlease review the log on the server.",
             };
           }
       }

@@ -105,5 +105,25 @@ namespace org.iringtools.modulelibrary.baseclass
            return (completedEventArg is T);
         }
 
+        /// <summary>
+        /// Determines whether an exception is due to service unavailibility.
+        /// </summary>
+        /// <param name="ex">The exception.</param>
+        /// <returns>
+        /// 	<c>true</c> if exception is due to service unavailibility; otherwise, <c>false</c>.
+        /// </returns>
+        protected bool IsServiceUnavailable(Exception ex)
+        {
+            if (
+                ex.GetBaseException().Message.ToUpper().Contains("SECURITY ERROR") ||
+                ex.GetBaseException() is System.Net.WebException
+               )
+            {
+                return true;
+            }
+            else
+                return false;
+        }
+
     }
 }

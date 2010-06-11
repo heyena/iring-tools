@@ -152,7 +152,7 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
                 {
                    if (args.Error != null)
                    {
-                       MessageBox.Show(args.FriendlyErrorMessage, "Generate Repositories Error", MessageBoxButton.OK);
+                       MessageBox.Show(args.FriendlyErrorMessage, "Get Repositories Error", MessageBoxButton.OK);
                        return;
                    }
                    object obj = args.Data;
@@ -198,19 +198,23 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
 
                 if (this.model.SelectedQMXF == null)
                     this.model.SelectedQMXF = new QMXF();
-                Repository rep = cbi.Tag as Repository;
-                if (rep.isReadOnly == true)
-                {
-                    btnOK.IsEnabled = false;
-                    btnApply.IsEnabled = false;
-                }
-                else
-                {
-                    btnOK.IsEnabled = true;
-                    btnApply.IsEnabled = true;
-                }
 
-                _classBLL.QMXF.targetRepository = rep.name;
+                if (cbi != null)
+                {
+                    Repository rep = cbi.Tag as Repository;
+                    if (rep.isReadOnly == true)
+                    {
+                        btnOK.IsEnabled = false;
+                        btnApply.IsEnabled = false;
+                    }
+                    else
+                    {
+                        btnOK.IsEnabled = true;
+                        btnApply.IsEnabled = true;
+                    }
+
+                    _classBLL.QMXF.targetRepository = rep.name;
+                }
             }
             catch (Exception ex)
             {
@@ -250,6 +254,11 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
 
                 ListBoxCtrl("specialization").DataContext = _classBLL;
                 ListBoxCtrl("classification").DataContext = _classBLL;
+
+                cmbRepositories.SelectedItem = null;
+
+                btnApply.IsEnabled = false;
+                btnOK.IsEnabled = false;
             }
             catch (Exception ex)
             {

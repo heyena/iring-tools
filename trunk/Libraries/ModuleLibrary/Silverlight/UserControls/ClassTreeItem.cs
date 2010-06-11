@@ -42,68 +42,82 @@ namespace org.iringtools.informationmodel.usercontrols
 
     public override void nodeMouseLeftButtonUpHandler(object sender, MouseButtonEventArgs e)
     {
-      if (!isProcessed)
-      {
-        Logger.Log(string.Format("node_selected in {0} executing GetQMXF for {1}", GetType().FullName, id),
-            Category.Debug, Priority.None);
+        try
+        {
+            if (!isProcessed)
+            {
+                Logger.Log(string.Format("node_selected in {0} executing GetQMXF for {1}", GetType().FullName, id),
+                    Category.Debug, Priority.None);
 
-        ReferenceDataService.GetClass(id, this);
-      }
+                ReferenceDataService.GetClass(id, this);
+            }
 
-      UpdateModel();
-      FillClassDetailView();
-      e.Handled = true;
+            UpdateModel();
+            FillClassDetailView();
+            e.Handled = true;
+        }
+        catch (Exception ex)
+        {
+            Error.SetError(ex);
+        }
     }
 
     private void FillClassDetailView()
     {
-      PresentationModel.SelectedTreeItem = this;
-      PresentationModel.DetailProperties.Clear();
+        try
+        {
+            PresentationModel.SelectedTreeItem = this;
+            PresentationModel.DetailProperties.Clear();
 
-      if (Tag == null)
-        return;
+            if (Tag == null)
+                return;
 
-      if (Tag is Entity)
-      {
-        Entity = (Entity)Tag;
-      }
-      else if (Tag is ClassDefinition)
-      {
-        ClassDefinition classDefinition = (ClassDefinition)Tag;
+            if (Tag is Entity)
+            {
+                Entity = (Entity)Tag;
+            }
+            else if (Tag is ClassDefinition)
+            {
+                ClassDefinition classDefinition = (ClassDefinition)Tag;
 
-        KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Repository", Entity.repository);
-        PresentationModel.DetailProperties.Add(keyValuePair);
+                KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Repository", Entity.repository);
+                PresentationModel.DetailProperties.Add(keyValuePair);
 
-        keyValuePair = new KeyValuePair<string, string>("URI", Entity.uri);
-        PresentationModel.DetailProperties.Add(keyValuePair);
+                keyValuePair = new KeyValuePair<string, string>("URI", Entity.uri);
+                PresentationModel.DetailProperties.Add(keyValuePair);
 
-        keyValuePair = new KeyValuePair<string, string>("QMXF Type", "Class Definition");
-        PresentationModel.DetailProperties.Add(keyValuePair);
+                keyValuePair = new KeyValuePair<string, string>("QMXF Type", "Class Definition");
+                PresentationModel.DetailProperties.Add(keyValuePair);
 
-        keyValuePair = new KeyValuePair<string, string>("Name", (classDefinition.name.FirstOrDefault() != null ? classDefinition.name.FirstOrDefault().value : string.Empty));
-        PresentationModel.DetailProperties.Add(keyValuePair);
+                keyValuePair = new KeyValuePair<string, string>("Name", (classDefinition.name.FirstOrDefault() != null ? classDefinition.name.FirstOrDefault().value : string.Empty));
+                PresentationModel.DetailProperties.Add(keyValuePair);
 
-        keyValuePair = new KeyValuePair<string, string>("Identifier", (classDefinition.identifier != null ? classDefinition.identifier.ToString() : string.Empty));
-        PresentationModel.DetailProperties.Add(keyValuePair);
+                keyValuePair = new KeyValuePair<string, string>("Identifier", (classDefinition.identifier != null ? classDefinition.identifier.ToString() : string.Empty));
+                PresentationModel.DetailProperties.Add(keyValuePair);
 
-        keyValuePair = new KeyValuePair<string, string>("Entity Type", (classDefinition.entityType != null ? classDefinition.entityType.reference : string.Empty));
-        PresentationModel.DetailProperties.Add(keyValuePair);
+                keyValuePair = new KeyValuePair<string, string>("Entity Type", (classDefinition.entityType != null ? classDefinition.entityType.reference : string.Empty));
+                PresentationModel.DetailProperties.Add(keyValuePair);
 
-        keyValuePair = new KeyValuePair<string, string>("Description", (classDefinition.description.FirstOrDefault() != null ? classDefinition.description.FirstOrDefault().value : string.Empty));
-        PresentationModel.DetailProperties.Add(keyValuePair);
+                keyValuePair = new KeyValuePair<string, string>("Description", (classDefinition.description.FirstOrDefault() != null ? classDefinition.description.FirstOrDefault().value : string.Empty));
+                PresentationModel.DetailProperties.Add(keyValuePair);
 
-        string statusClass = classDefinition.status.FirstOrDefault() != null ? classDefinition.status.FirstOrDefault().Class : string.Empty;
-        PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>("Status Class", statusClass));
+                string statusClass = classDefinition.status.FirstOrDefault() != null ? classDefinition.status.FirstOrDefault().Class : string.Empty;
+                PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>("Status Class", statusClass));
 
-        string statusAuthority = classDefinition.status.FirstOrDefault() != null ? classDefinition.status.FirstOrDefault().authority : string.Empty;
-        PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>("Status Authority", statusAuthority));
+                string statusAuthority = classDefinition.status.FirstOrDefault() != null ? classDefinition.status.FirstOrDefault().authority : string.Empty;
+                PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>("Status Authority", statusAuthority));
 
-        string statusFrom = classDefinition.status.FirstOrDefault() != null ? classDefinition.status.FirstOrDefault().from : string.Empty;
-        PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>("Status From", statusFrom));
+                string statusFrom = classDefinition.status.FirstOrDefault() != null ? classDefinition.status.FirstOrDefault().from : string.Empty;
+                PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>("Status From", statusFrom));
 
-        string statusTo = classDefinition.status.FirstOrDefault() != null ? classDefinition.status.FirstOrDefault().to : string.Empty;
-        PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>("Status To", statusTo));
-      }
+                string statusTo = classDefinition.status.FirstOrDefault() != null ? classDefinition.status.FirstOrDefault().to : string.Empty;
+                PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>("Status To", statusTo));
+            }
+        }
+        catch (Exception ex)
+        {
+            Error.SetError(ex);
+        }
     }
 
     /// <summary>
@@ -113,30 +127,37 @@ namespace org.iringtools.informationmodel.usercontrols
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     public void superclasses_selected(object sender, System.Windows.RoutedEventArgs e)
     {
-      if (superclasses.isProcessed)
-        return;
-
-      Logger.Log(string.Format("superclasses_selected in {0}", GetType().FullName),
-          Category.Debug, Priority.None);
-
-      List<Specialization> specializations = ClassDefinition.specialization;
-
-      foreach (Specialization specialization in specializations)
-      {
-        string label = specialization.label;
-
-        Entity entity = new Entity
+        try
         {
-          label = label ?? "[null]",
-          repository = "UnKnown",
-          uri = specialization.reference,
-        };
-        superclasses.Items.Add(AddTreeItem(label, entity));
-      }
+            if (superclasses.isProcessed)
+                return;
 
-      superclasses.itemTextBlock.Text = "Super Classes (" + specializations.Count + ")";
-      superclasses.IsExpanded = false;
-      superclasses.isProcessed = true;
+            Logger.Log(string.Format("superclasses_selected in {0}", GetType().FullName),
+                Category.Debug, Priority.None);
+
+            List<Specialization> specializations = ClassDefinition.specialization;
+
+            foreach (Specialization specialization in specializations)
+            {
+                string label = specialization.label;
+
+                Entity entity = new Entity
+                {
+                    label = label ?? "[null]",
+                    repository = "UnKnown",
+                    uri = specialization.reference,
+                };
+                superclasses.Items.Add(AddTreeItem(label, entity));
+            }
+
+            superclasses.itemTextBlock.Text = "Super Classes (" + specializations.Count + ")";
+            superclasses.IsExpanded = false;
+            superclasses.isProcessed = true;
+        }
+        catch (Exception ex)
+        {
+            Error.SetError(ex);
+        }
 
     }
 
@@ -147,30 +168,37 @@ namespace org.iringtools.informationmodel.usercontrols
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     public void classifications_selected(object sender, System.Windows.RoutedEventArgs e)
     {
-      if (classifications.isProcessed)
-        return;
-
-      Logger.Log(string.Format("classifications_selected in {0}", GetType().FullName),
-          Category.Debug, Priority.None);
-
-      List<Classification> classification = ClassDefinition.classification;
-
-      foreach (Classification classificationDetails in classification)
-      {
-        string label = classificationDetails.label;
-
-        Entity entity = new Entity
+        try
         {
-          label = label ?? "[null]",
-          repository = "UnKnown",
-          uri = classificationDetails.reference,
-        };
-        classifications.Items.Add(AddTreeItem(label, entity));
-      }
+            if (classifications.isProcessed)
+                return;
 
-      classifications.itemTextBlock.Text = "Classifications (" + classification.Count + ")";
-      classifications.IsExpanded = false;
-      classifications.isProcessed = true;
+            Logger.Log(string.Format("classifications_selected in {0}", GetType().FullName),
+                Category.Debug, Priority.None);
+
+            List<Classification> classification = ClassDefinition.classification;
+
+            foreach (Classification classificationDetails in classification)
+            {
+                string label = classificationDetails.label;
+
+                Entity entity = new Entity
+                {
+                    label = label ?? "[null]",
+                    repository = "UnKnown",
+                    uri = classificationDetails.reference,
+                };
+                classifications.Items.Add(AddTreeItem(label, entity));
+            }
+
+            classifications.itemTextBlock.Text = "Classifications (" + classification.Count + ")";
+            classifications.IsExpanded = false;
+            classifications.isProcessed = true;
+        }
+        catch (Exception ex)
+        {
+            Error.SetError(ex);
+        }
     }
 
     /// <summary>
@@ -180,13 +208,20 @@ namespace org.iringtools.informationmodel.usercontrols
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     public void subclasses_selected(object sender, System.Windows.RoutedEventArgs e)
     {
-      if (subclasses.isProcessed)
-        return;
+        try
+        {
+            if (subclasses.isProcessed)
+                return;
 
-      Logger.Log(string.Format("subclasses_selected in {0}", GetType().FullName),
-          Category.Debug, Priority.None);
+            Logger.Log(string.Format("subclasses_selected in {0}", GetType().FullName),
+                Category.Debug, Priority.None);
 
-      ReferenceDataService.GetSubClasses(id, this);
+            ReferenceDataService.GetSubClasses(id, this);
+        }
+        catch (Exception ex)
+        {
+           Error.SetError(ex);
+        }
     }
 
     #region METHOD: Execute()
@@ -196,76 +231,83 @@ namespace org.iringtools.informationmodel.usercontrols
     /// <param name="parameter">The parameter.</param>
     public override void Execute(object parameter)
     {
-      CompletedEventArgs = (CompletedEventArgs)parameter;
-      Logger.Log(string.Format("Execute for type {0} in {1}",
-          CompletedEventArgs.CompletedType,
-          GetType().FullName), Category.Debug, Priority.None);
-
-      if (CompletedEventArgs.CheckForType(CompletedEventType.GetClass))
-      {
-        if (CompletedEventArgs.Error != null)
+        try
         {
-            MessageBox.Show(CompletedEventArgs.FriendlyErrorMessage, "Get Class Error", MessageBoxButton.OK);
-            return;
+            CompletedEventArgs = (CompletedEventArgs)parameter;
+            Logger.Log(string.Format("Execute for type {0} in {1}",
+                CompletedEventArgs.CompletedType,
+                GetType().FullName), Category.Debug, Priority.None);
+
+            if (CompletedEventArgs.CheckForType(CompletedEventType.GetClass))
+            {
+                if (CompletedEventArgs.Error != null)
+                {
+                    MessageBox.Show(CompletedEventArgs.FriendlyErrorMessage, "Get Class Error", MessageBoxButton.OK);
+                    return;
+                }
+
+                QMXF qmxf = (QMXF)CompletedEventArgs.Data;
+                ClassDefinition classDefinition = qmxf.classDefinitions.FirstOrDefault();
+
+                ProcessClassDefinition(classDefinition);
+
+                //GvJ this is breaking the load of the qmxf of the selected item
+                //if (this.IsSelectionActive)
+                //{
+                UpdateModel(qmxf);
+                //}
+
+                FillClassDetailView();
+            }
+            else if (CompletedEventArgs.CheckForType(CompletedEventType.GetSubClasses))
+            {
+                if (CompletedEventArgs.Error != null)
+                {
+                    MessageBox.Show(CompletedEventArgs.FriendlyErrorMessage, "Get SubClasses Error", MessageBoxButton.OK);
+                    return;
+                }
+
+                List<Entity> entities = (List<Entity>)CompletedEventArgs.Data;
+
+                foreach (Entity entity in entities)
+                    subclasses.Items.Add(AddTreeItem(entity.label, entity));
+
+                subclasses.itemTextBlock.Text = "Sub Classes (" + entities.Count + ")";
+                subclasses.IsExpanded = false;
+                subclasses.isProcessed = true;
+
+            }
+            else if (CompletedEventArgs.CheckForType(CompletedEventType.GetClassTemplates))
+            {
+                if (CompletedEventArgs.Error != null)
+                {
+                    MessageBox.Show(CompletedEventArgs.FriendlyErrorMessage, "Get ClassTemplates Error", MessageBoxButton.OK);
+                    return;
+                }
+
+                List<Entity> entities = (List<Entity>)CompletedEventArgs.Data;
+
+                foreach (Entity entity in entities)
+                    templates.Items.Add(AddTreeItem(entity.label, entity));
+
+                templates.itemTextBlock.Text = "Templates (" + entities.Count + ")";
+                templates.IsExpanded = false;
+                templates.isProcessed = true;
+            }
+            else if (CompletedEventArgs.CheckForType(CompletedEventType.GetClassLabel))
+            {
+                if (CompletedEventArgs.Error != null)
+                {
+                    MessageBox.Show(CompletedEventArgs.FriendlyErrorMessage, "Get Class Label Error", MessageBoxButton.OK);
+                    return;
+                }
+                DisplayAndSaveLabel(CompletedEventArgs.Data);
+            }
         }
-
-        QMXF qmxf = (QMXF)CompletedEventArgs.Data;
-        ClassDefinition classDefinition = qmxf.classDefinitions.FirstOrDefault();
-
-        ProcessClassDefinition(classDefinition);
-
-        //GvJ this is breaking the load of the qmxf of the selected item
-        //if (this.IsSelectionActive)
-        //{
-        UpdateModel(qmxf);
-        //}
-
-        FillClassDetailView();
-      }
-      else if (CompletedEventArgs.CheckForType(CompletedEventType.GetSubClasses))
-      {
-        if (CompletedEventArgs.Error != null)
+        catch (Exception ex)
         {
-            MessageBox.Show(CompletedEventArgs.FriendlyErrorMessage, "Get SubClasses Error", MessageBoxButton.OK);
-            return;
+            Error.SetError(ex);
         }
-
-        List<Entity> entities = (List<Entity>)CompletedEventArgs.Data;
-
-        foreach (Entity entity in entities)
-          subclasses.Items.Add(AddTreeItem(entity.label, entity));
-
-        subclasses.itemTextBlock.Text = "Sub Classes (" + entities.Count + ")";
-        subclasses.IsExpanded = false;
-        subclasses.isProcessed = true;
-
-      }
-      else if (CompletedEventArgs.CheckForType(CompletedEventType.GetClassTemplates))
-      {
-        if (CompletedEventArgs.Error != null)
-        {
-            MessageBox.Show(CompletedEventArgs.FriendlyErrorMessage, "Get ClassTemplates Error", MessageBoxButton.OK);
-            return;
-        }
-        
-        List<Entity> entities = (List<Entity>)CompletedEventArgs.Data;
-
-        foreach (Entity entity in entities)
-          templates.Items.Add(AddTreeItem(entity.label, entity));
-
-        templates.itemTextBlock.Text = "Templates (" + entities.Count + ")";
-        templates.IsExpanded = false;
-        templates.isProcessed = true;
-      }
-      else if (CompletedEventArgs.CheckForType(CompletedEventType.GetClassLabel))
-      {
-        if (CompletedEventArgs.Error != null)
-        {
-            MessageBox.Show(CompletedEventArgs.FriendlyErrorMessage, "Get Class Label Error", MessageBoxButton.OK);
-            return;
-        }
-        DisplayAndSaveLabel(CompletedEventArgs.Data);
-      }
     }
     #endregion
 
@@ -276,59 +318,73 @@ namespace org.iringtools.informationmodel.usercontrols
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     public void templates_selected(object sender, System.Windows.RoutedEventArgs e)
     {
-      if (templates.isProcessed)
-        return;
+        try
+        {
+            if (templates.isProcessed)
+                return;
 
-      Logger.Log(string.Format("templates_selected in {0}", GetType().FullName),
-              Category.Debug, Priority.None);
+            Logger.Log(string.Format("templates_selected in {0}", GetType().FullName),
+                    Category.Debug, Priority.None);
 
-      ReferenceDataService.GetClassTemplates(id, this);
+            ReferenceDataService.GetClassTemplates(id, this);
+        }
+        catch (Exception ex)
+        {
+            Error.SetError(ex);
+        }
     }
 
     public void ProcessClassDefinition(ClassDefinition classDefinition)
     {
 
-      //Image image = null;
-      ClassDefinition = classDefinition;
-      Tag = classDefinition;
+        try
+        {
+            //Image image = null;
+            ClassDefinition = classDefinition;
+            Tag = classDefinition;
 
-      classifications = Container.Resolve<CustomTreeItem>();
+            classifications = Container.Resolve<CustomTreeItem>();
 
-      classifications.SetImageSource("folder.png");
-      classifications.SetTooltipText("Classification Collection...");
-      classifications.itemTextBlock.Text = "Classifications";
-      // classifications.Header = "Classifications";
-      classifications.Selected += classifications_selected;
-      this.Items.Add(classifications);
-      superclasses = Container.Resolve<CustomTreeItem>();
+            classifications.SetImageSource("folder.png");
+            classifications.SetTooltipText("Classification Collection...");
+            classifications.itemTextBlock.Text = "Classifications";
+            // classifications.Header = "Classifications";
+            classifications.Selected += classifications_selected;
+            this.Items.Add(classifications);
+            superclasses = Container.Resolve<CustomTreeItem>();
 
-      superclasses.SetImageSource("folder.png");
-      superclasses.SetTooltipText("Super Class Collection...");
-      superclasses.SetTextBlockText("Super Classes");
+            superclasses.SetImageSource("folder.png");
+            superclasses.SetTooltipText("Super Class Collection...");
+            superclasses.SetTextBlockText("Super Classes");
 
-      // superclasses.Header = "Super Classes";
-      superclasses.Selected += superclasses_selected;
-      this.Items.Add(superclasses);
+            // superclasses.Header = "Super Classes";
+            superclasses.Selected += superclasses_selected;
+            this.Items.Add(superclasses);
 
-      subclasses = Container.Resolve<CustomTreeItem>();
-      subclasses.SetTooltipText("Sub Class Collection...");
-      subclasses.SetImageSource("folder.png");
-      subclasses.SetTextBlockText("Sub Classes");
+            subclasses = Container.Resolve<CustomTreeItem>();
+            subclasses.SetTooltipText("Sub Class Collection...");
+            subclasses.SetImageSource("folder.png");
+            subclasses.SetTextBlockText("Sub Classes");
 
-      //subclasses.Header = "Sub Classes";
-      subclasses.Selected += subclasses_selected;
-      this.Items.Add(subclasses);
+            //subclasses.Header = "Sub Classes";
+            subclasses.Selected += subclasses_selected;
+            this.Items.Add(subclasses);
 
-      templates = Container.Resolve<CustomTreeItem>();
-      templates.SetTooltipText("Template Collection...");
-      templates.SetImageSource("folder.png");
-      templates.SetTextBlockText("Templates");
+            templates = Container.Resolve<CustomTreeItem>();
+            templates.SetTooltipText("Template Collection...");
+            templates.SetImageSource("folder.png");
+            templates.SetTextBlockText("Templates");
 
-      // templates.Header = "Templates";
-      templates.Selected += templates_selected;
-      this.Items.Add(templates);
+            // templates.Header = "Templates";
+            templates.Selected += templates_selected;
+            this.Items.Add(templates);
 
-      isProcessed = true;
+            isProcessed = true;
+        }
+        catch (Exception ex)
+        {
+            Error.SetError(ex);
+        }
     }
   }
 }

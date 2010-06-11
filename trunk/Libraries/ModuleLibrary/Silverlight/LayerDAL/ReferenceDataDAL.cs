@@ -155,13 +155,16 @@ namespace org.iringtools.modulelibrary.layerdal
               }
               catch (Exception ex)
               {
+                  string s = "Reference Data Service returned an error while getting repositories.";
                   args = new CompletedEventArgs
                   {
                       CompletedType = CompletedEventType.GetRepositories,
                       Error = ex,
-                      FriendlyErrorMessage = "Reference Data Service returned an error while getting repositories.",
+                      FriendlyErrorMessage =
+                       IsServiceUnavailable(ex) ?
+                       s + "\nPlease verify if the Reference Data Service is available." :
+                       s + "\nPlease review the log on the server.",
                   };
-                  //Error.SetError(ex);
               }
           }
           #endregion
@@ -192,14 +195,17 @@ namespace org.iringtools.modulelibrary.layerdal
                 }
                 catch (Exception ex)
                 {
+                    string s = "Reference Data Service returned an error while performing search.";
                     // filling args to stop spinner
                     args = new CompletedEventArgs
                     {                        
                         CompletedType = CompletedEventType.Search,
                         Error = ex,
-                        FriendlyErrorMessage = "Reference Data Service returned an error while performing search.",
-                    };                    
-                    //Error.SetError(ex);
+                        FriendlyErrorMessage = 
+                           IsServiceUnavailable(ex) ?
+                           s + "\nPlease verify if the Reference Data Service is available." :
+                           s + "\nPlease review the log on the server.",
+                    };                                        
                 }
             }
 
@@ -232,14 +238,17 @@ namespace org.iringtools.modulelibrary.layerdal
                 }
                 catch (Exception ex)
                 {
+                    string s = "Reference Data Service returned an error while performing search.";
                     // filling args to stop spinner
                     args = new CompletedEventArgs
                     {
                         CompletedType = CompletedEventType.Search,
                         Error = ex,
-                        FriendlyErrorMessage = "Reference Data Service returned an error while performing search.",
+                        FriendlyErrorMessage = 
+                           IsServiceUnavailable(ex) ?
+                           s + "\nPlease verify if the Reference Data Service is available." :
+                           s + "\nPlease review the log on the server.",
                     };
-                    //Error.SetError(ex);
                 }
             }
 
@@ -272,14 +281,17 @@ namespace org.iringtools.modulelibrary.layerdal
                 }
                 catch (Exception ex)
                 {
+                    string s = "Reference Data Service returned an error while performing \"Find\".";
                     // filling args to stop spinner
                     args = new CompletedEventArgs
                     {
                         CompletedType = CompletedEventType.Find,
                         Error = ex,
-                        FriendlyErrorMessage = "Reference Data Service returned an error while performing \"Find\".",
+                        FriendlyErrorMessage = 
+                           IsServiceUnavailable(ex) ?
+                           s + "\nPlease verify if the Reference Data Service is available." :
+                           s + "\nPlease review the log on the server.",
                     };
-                    //Error.SetError(ex);
                 }
             }
 
@@ -317,20 +329,31 @@ namespace org.iringtools.modulelibrary.layerdal
                 {
                     // filling args to stop spinner
                     if (sender == _classClient)
+                    {
+                        string s = "Reference Data Service returned an error while performing GetClass.";
                         args = new CompletedEventArgs
                         {
                             CompletedType = CompletedEventType.GetClass,
                             Error = ex,
-                            FriendlyErrorMessage = "Reference Data Service returned an error while performing GetClass.",
-                        };      
+                            FriendlyErrorMessage =
+                               IsServiceUnavailable(ex) ?
+                               s + "\nPlease verify if the Reference Data Service is available." :
+                               s + "\nPlease review the log on the server.",
+                        };
+                    }
                     else if (sender == _templateClient)
+                    {
+                        string s ="Reference Data Service returned an error while performing GetTemplate.";
                         args = new CompletedEventArgs
                         {
                             CompletedType = CompletedEventType.GetTemplate,
                             Error = ex,
-                            FriendlyErrorMessage = "Reference Data Service returned an error while performing GetTemplate.",
+                            FriendlyErrorMessage =
+                               IsServiceUnavailable(ex) ?
+                               s + "\nPlease verify if the Reference Data Service is available." :
+                               s + "\nPlease review the log on the server.",
                         };
-                    //Error.SetError(ex);
+                    }
                 }
             }
             #endregion
@@ -359,15 +382,17 @@ namespace org.iringtools.modulelibrary.layerdal
                 }
                 catch (Exception ex)
                 {
-                    
+                    string s = "Reference Data Service returned an error while performing GetSubClasses.";
                     // filling args to stop spinner
                     args = new CompletedEventArgs
                     {
                         CompletedType = CompletedEventType.GetSubClasses,
                         Error = ex,
-                        FriendlyErrorMessage = "Reference Data Service returned an error while performing GetSubClasses.",
-                    };
-                    //Error.SetError(ex);
+                        FriendlyErrorMessage =
+                           IsServiceUnavailable(ex) ?
+                           s + "\nPlease verify if the Reference Data Service is available." :
+                           s + "\nPlease review the log on the server.",
+                    };                    
                 }              
             }
             #endregion
@@ -395,14 +420,17 @@ namespace org.iringtools.modulelibrary.layerdal
               }
               catch (Exception ex)
               {
+                  string s = "Reference Data Service returned an error while performing GetClassTemplates.";
                   // filling args to stop spinner
                     args = new CompletedEventArgs
                     {
                         CompletedType = CompletedEventType.GetClassTemplates,
                         Error = ex,
-                        FriendlyErrorMessage = "Reference Data Service returned an error while performing GetClassTemplates.",
+                        FriendlyErrorMessage = 
+                           IsServiceUnavailable(ex) ?
+                           s + "\nPlease verify if the Reference Data Service is available." :
+                           s + "\nPlease review the log on the server.",
                     };
-                  //Error.SetError(ex);
               }            
           }
             #endregion
@@ -426,14 +454,17 @@ namespace org.iringtools.modulelibrary.layerdal
               }
               catch (Exception ex)
               {
+                  string s = "Reference Data Service returned an error while posting the class.";
                   // filling args to stop spinner
                   args = new CompletedEventArgs
                   {
                       CompletedType = CompletedEventType.PostClass,
                       Error = ex,
-                      FriendlyErrorMessage = "Reference Data Service returned an error while posting the class.",
+                      FriendlyErrorMessage = 
+                        IsServiceUnavailable(ex) ?
+                        s + "\nPlease verify if the Reference Data Service is available." :
+                        s + "\nPlease review the log on the server.",
                   };
-                  //Error.SetError(ex);
               }              
           }
             #endregion
@@ -457,14 +488,17 @@ namespace org.iringtools.modulelibrary.layerdal
               }
               catch (Exception ex)
               {
+                  string s = "Reference Data Service returned an error while posting the template.";
                   // filling args to stop spinner
                   args = new CompletedEventArgs
                   {
                       CompletedType = CompletedEventType.PostTemplate,
                       Error = ex,
-                      FriendlyErrorMessage = "Reference Data Service returned an error while posting the template.",
+                      FriendlyErrorMessage = 
+                        IsServiceUnavailable(ex) ?
+                        s + "\nPlease verify if the Reference Data Service is available." :
+                        s + "\nPlease review the log on the server.",
                   };
-                  //Error.SetError(ex);
               }              
           }
           #endregion
