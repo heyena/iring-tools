@@ -129,10 +129,6 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 this.regionManager = regionManager;
                 this.referenceDataService = referenceDataService;
 
-                //foreach (Repository rep in referenceDataService.GetRepositories())
-                //{
-                // cmbRepositories.Items.Add(new ComboBoxItem{ Content = rep.name +  " ReadOnly = " + rep.isReadOnly.ToString(), Tag = rep });
-                //}
 
                 lstRoles.SelectionChanged += (object sender, SelectionChangedEventArgs e) =>
                 {
@@ -195,24 +191,22 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 ComboBox cb = sender as ComboBox;
                 ComboBoxItem cbi = cb.SelectedItem as ComboBoxItem;
 
+
                 if (model.SelectedQMXF == null)
                     model.SelectedQMXF = new QMXF();
-
-                if (cbi != null)
+                Repository rep = cbi.Tag as Repository;
+                if (rep.isReadOnly == true)
                 {
-                    Repository rep = cbi.Tag as Repository;
-                    if (rep.isReadOnly == true)
-                    {
-                        btnOK.IsEnabled = false;
-                        btnApply.IsEnabled = false;
-                    }
-                    else
-                    {
-                        btnOK.IsEnabled = true;
-                        btnApply.IsEnabled = true;
-                    }
-                    _templateModel.QMXF.targetRepository = rep.name;
+                    btnOK.IsEnabled = false;
+                    btnApply.IsEnabled = false;
                 }
+                else
+                {
+                    btnOK.IsEnabled = true;
+                    btnApply.IsEnabled = true;
+                }
+                if(_templateModel != null)
+                _templateModel.QMXF.targetRepository = rep.name;
             }
             catch (Exception ex)
             {
@@ -245,6 +239,8 @@ namespace org.iringtools.modules.templateeditor.editorregion
 
                         cmbRepositories.Items.Add(item);
                     }
+
+                  
                 }
 
                 if (args.CheckForType(CompletedEventType.PostTemplate))
@@ -314,11 +310,6 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 ButtonCtrl("addRole1").DataContext = _templateModel;
                 ButtonCtrl("removeRole1").DataContext = _templateModel;
                 ButtonCtrl("applyRole1").DataContext = _templateModel;
-
-                cmbRepositories.SelectedItem = null;
-
-                btnOK.IsEnabled = false;
-                btnApply.IsEnabled = false;
             }
             catch (Exception ex)
             {
@@ -463,7 +454,8 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 if (e.ButtonClicked.Tag.Equals("AddTemplate1"))
                 {
                     InitializeEditorForAdd();
-
+                    if (cmbRepositories.Items.Count > 1)
+                        cmbRepositories.SelectedIndex = 0;
                     IRegion region = regionManager.Regions["TemplateEditorRegion"];
 
                     foreach (UserControl userControl in region.Views)
