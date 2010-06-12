@@ -168,6 +168,7 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
 
                        cmbRepositories.Items.Add(item);
                    }
+
                 }
 
                 if (args.CheckForType(CompletedEventType.PostClass))
@@ -198,23 +199,20 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
 
                 if (this.model.SelectedQMXF == null)
                     this.model.SelectedQMXF = new QMXF();
-
-                if (cbi != null)
+    
+            Repository rep = cbi.Tag as Repository;
+                if (rep.isReadOnly == true)
                 {
-                    Repository rep = cbi.Tag as Repository;
-                    if (rep.isReadOnly == true)
-                    {
-                        btnOK.IsEnabled = false;
-                        btnApply.IsEnabled = false;
-                    }
-                    else
-                    {
-                        btnOK.IsEnabled = true;
-                        btnApply.IsEnabled = true;
-                    }
-
-                    _classBLL.QMXF.targetRepository = rep.name;
+                    btnOK.IsEnabled = false;
+                    btnApply.IsEnabled = false;
                 }
+                else
+                {
+                    btnOK.IsEnabled = true;
+                    btnApply.IsEnabled = true;
+                }
+                if(_classBLL != null)
+                _classBLL.QMXF.targetRepository = rep.name;
             }
             catch (Exception ex)
             {
@@ -254,11 +252,6 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
 
                 ListBoxCtrl("specialization").DataContext = _classBLL;
                 ListBoxCtrl("classification").DataContext = _classBLL;
-
-                cmbRepositories.SelectedItem = null;
-
-                btnApply.IsEnabled = false;
-                btnOK.IsEnabled = false;
             }
             catch (Exception ex)
             {
@@ -274,6 +267,8 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
                 {
 
                     InitializeEditorForAdd();
+                    if (cmbRepositories.Items.Count > 0)
+                        cmbRepositories.SelectedIndex = 0;
 
                     IRegion region = regionManager.Regions["ClassEditorRegion"];
 
