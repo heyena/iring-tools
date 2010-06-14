@@ -292,17 +292,17 @@ namespace org.iringtools.modules.memappingregion
                 if (selectedNode.Tag is GraphMap)
                 {
                     GraphMap graph = (GraphMap)selectedNode.Tag;
-                    string id = Utility.GetIdFromURI(graph.baseUri);
+                    //string id = Utility.GetIdFromURI(graph.baseUri);
                     KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Graph Name", graph.name);
                     model.DetailProperties.Add(keyValuePair);
 
-                    keyValuePair = new KeyValuePair<string, string>("Graph Uri", graph.baseUri);
+                    //keyValuePair = new KeyValuePair<string, string>("Graph Uri", graph.baseUri);
                     model.DetailProperties.Add(keyValuePair);
-                    if (model.IdLabelDictionary.ContainsKey(id))
-                    {
-                        keyValuePair = new KeyValuePair<string, string>("Class Name", model.IdLabelDictionary[id]);
-                        model.DetailProperties.Add(keyValuePair);
-                    }
+                    //if (model.IdLabelDictionary.ContainsKey(id))
+                    //{
+                    //    keyValuePair = new KeyValuePair<string, string>("Class Name", model.IdLabelDictionary[id]);
+                    //    model.DetailProperties.Add(keyValuePair);
+                    //}
                     for (int i = 0; i < graph.dataObjectMaps.Count; i++)
                     {
                         keyValuePair = new KeyValuePair<string, string>("DataObject Name", graph.dataObjectMaps[i].name);
