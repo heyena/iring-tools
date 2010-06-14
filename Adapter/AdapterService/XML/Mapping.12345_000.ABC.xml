@@ -567,7 +567,7 @@
             <classId>rdl:R98505918404</classId>
             <name>INSTRUMENT</name>
             <identifiers>
-              <a:string>Instrument.Tag</a:string>
+              <a:string>Instruments.Tag</a:string>
             </identifiers>
           </a:Key>
           <a:Value>
