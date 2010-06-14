@@ -62,19 +62,19 @@ namespace org.iringtools.adapter
     private DataDictionary _dataDictionary = null;
     private Mapping _mapping = null;
     private GraphMap _graphMap = null;
-    
+
     //Projection specific stuff
-    private Dictionary<string, IList<IDataObject>> _dataObjectSet = new Dictionary<string,IList<IDataObject>>(); // dictionary of object names and list of data objects
+    private IList<IDataObject> _dataObjects = new List<IDataObject>(); // dictionary of object names and list of data objects
     private Dictionary<string, List<string>> _classIdentifiers = new Dictionary<string, List<string>>(); // dictionary of class ids and list of identifiers
-    
+
     private bool _isInitialized = false;
 
     [Inject]
     public AdapterProvider(NameValueCollection settings)
     {
       _kernel = new StandardKernel(new AdapterModule());
-      _settings = _kernel.Get<AdapterSettings>(new ConstructorArgument("AppSettings", settings)); 
-      
+      _settings = _kernel.Get<AdapterSettings>(new ConstructorArgument("AppSettings", settings));
+
       Directory.SetCurrentDirectory(_settings.BaseDirectoryPath);
     }
 
@@ -101,7 +101,7 @@ namespace org.iringtools.adapter
 
     public Manifest GetManifest(string projectName, string applicationName)
     {
-      string path = string.Format("{0}Mapping.{1}.{2}.xml",_settings.XmlPath, projectName, applicationName);
+      string path = string.Format("{0}Mapping.{1}.{2}.xml", _settings.XmlPath, projectName, applicationName);
 
       try
       {
@@ -183,7 +183,7 @@ namespace org.iringtools.adapter
       try
       {
         Initialize(projectName, applicationName);
-        
+
         DateTime start = DateTime.Now;
 
         foreach (GraphMap graphMap in _mapping.graphMaps)
@@ -231,32 +231,32 @@ namespace org.iringtools.adapter
 
     public XElement GetProjection(string projectName, string applicationName, string graphName, string identifier, string format)
     {
-        try
+      try
+      {
+        Initialize(projectName, applicationName);
+
+        IList<string> identifiers = new List<string>() { identifier };
+
+        if (format != null)
         {
-            Initialize(projectName, applicationName);
-
-            IList<string> identifiers = new List<string>() { identifier };
-
-            if (format != null)
-            {
-              _projectionEngine = _kernel.Get<IProjectionLayer>(format);
-            }
-            else
-            {
-              _projectionEngine = _kernel.Get<IProjectionLayer>(_settings.DefaultProjectionFormat);
-            }
-
-            _graphMap = _mapping.FindGraphMap(graphName);
-
-            LoadDataObjectSet(identifiers);
-
-            return _projectionEngine.GetXml(ref _mapping, graphName, ref _dataDictionary, ref _dataObjectSet);
+          _projectionEngine = _kernel.Get<IProjectionLayer>(format);
         }
-        catch (Exception ex)
+        else
         {
-            _logger.Error(string.Format("Error in GetProjection: {0}", ex));
-            throw ex;
+          _projectionEngine = _kernel.Get<IProjectionLayer>(_settings.DefaultProjectionFormat);
         }
+
+        _graphMap = _mapping.FindGraphMap(graphName);
+
+        LoadDataObjectSet(identifiers);
+
+        return _projectionEngine.GetXml(ref _mapping, graphName, ref _dataDictionary, ref _dataObjects);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in GetProjection: {0}", ex));
+        throw ex;
+      }
     }
 
     public XElement GetProjection(string projectName, string applicationName, string graphName, string format)
@@ -278,64 +278,64 @@ namespace org.iringtools.adapter
 
         LoadDataObjectSet(null);
 
-        return _projectionEngine.GetXml(ref _mapping, graphName, ref _dataDictionary, ref _dataObjectSet);
+        return _projectionEngine.GetXml(ref _mapping, graphName, ref _dataDictionary, ref _dataObjects);
       }
       catch (Exception ex)
       {
-          _logger.Error(string.Format("Error in GetProjection: {0}", ex));
+        _logger.Error(string.Format("Error in GetProjection: {0}", ex));
         throw ex;
       }
     }
 
     public Response PullDTO(string projectName, string applicationName, Request request)
     {
-        String targetUri = String.Empty;
-        String targetCredentialsXML = String.Empty;
-        String graphName = String.Empty;
-        String filter = String.Empty;
-        String projectNameForPull = String.Empty;
-        String applicationNameForPull = String.Empty;
-        String dataObjectsString = String.Empty;
-        Response response = new Response();
-        try
+      String targetUri = String.Empty;
+      String targetCredentialsXML = String.Empty;
+      String graphName = String.Empty;
+      String filter = String.Empty;
+      String projectNameForPull = String.Empty;
+      String applicationNameForPull = String.Empty;
+      String dataObjectsString = String.Empty;
+      Response response = new Response();
+      try
+      {
+        Initialize(projectName, applicationName);
+
+        targetUri = request["targetUri"];
+        targetCredentialsXML = request["targetCredentials"];
+        graphName = request["graphName"];
+        filter = request["filter"];
+        projectNameForPull = request["projectName"];
+        applicationNameForPull = request["applicationName"];
+
+        WebCredentials targetCredentials = Utility.Deserialize<WebCredentials>(targetCredentialsXML, true);
+        if (targetCredentials.isEncrypted) targetCredentials.Decrypt();
+
+        WebHttpClient httpClient = new WebHttpClient(targetUri);
+        if (filter != String.Empty)
         {
-            Initialize(projectName, applicationName);
-
-            targetUri = request["targetUri"];
-            targetCredentialsXML = request["targetCredentials"];
-            graphName = request["graphName"];
-            filter = request["filter"];
-            projectNameForPull = request["projectName"];
-            applicationNameForPull = request["applicationName"];
-
-            WebCredentials targetCredentials = Utility.Deserialize<WebCredentials>(targetCredentialsXML, true);
-            if (targetCredentials.isEncrypted) targetCredentials.Decrypt();
-
-            WebHttpClient httpClient = new WebHttpClient(targetUri);
-            if (filter != String.Empty)
-            {
-                dataObjectsString = httpClient.GetMessage(@"/" + projectNameForPull + "/" + applicationNameForPull + "/" + graphName + "/" + filter);
-            }
-            else
-            {
-                dataObjectsString = httpClient.GetMessage(@"/" + projectNameForPull + "/" + applicationNameForPull + "/" + graphName);
-            }
-            IList<IDataObject> dataObjects = CreateDataObjects(graphName, dataObjectsString);
-            
-            response.Append(_dataLayer.Post(dataObjects));
-            response.Add(String.Format("Pull is successful from " + targetUri + "for Graph " + graphName));
+          dataObjectsString = httpClient.GetMessage(@"/" + projectNameForPull + "/" + applicationNameForPull + "/" + graphName + "/" + filter);
         }
-        catch (Exception exception)
+        else
         {
-            _logger.Error("Error in PullDTO: " + exception);
-
-            response.Level = StatusLevel.Error;
-            response.Add("Error while pulling " + graphName + " data from " + targetUri + " as " + targetUri + " data with filter " + filter + ".\r\n");
-            response.Add(exception.ToString());
+          dataObjectsString = httpClient.GetMessage(@"/" + projectNameForPull + "/" + applicationNameForPull + "/" + graphName);
         }
-        return response;
+        IList<IDataObject> dataObjects = CreateDataObjects(graphName, dataObjectsString);
+
+        response.Append(_dataLayer.Post(dataObjects));
+        response.Add(String.Format("Pull is successful from " + targetUri + "for Graph " + graphName));
+      }
+      catch (Exception exception)
+      {
+        _logger.Error("Error in PullDTO: " + exception);
+
+        response.Level = StatusLevel.Error;
+        response.Add("Error while pulling " + graphName + " data from " + targetUri + " as " + targetUri + " data with filter " + filter + ".\r\n");
+        response.Add(exception.ToString());
+      }
+      return response;
     }
-    
+
     public Response Pull(string projectName, string applicationName, string graphName)
     {
       Response response = new Response();
@@ -350,14 +350,12 @@ namespace org.iringtools.adapter
 
         XElement xml = SerializationExtensions.ToXml<Dictionary<string, SPARQLResults>>(resultSet);
 
-        _dataObjectSet = _projectionEngine.GetDataObjects(ref _mapping, graphName, ref _dataDictionary, ref xml);
-
-        foreach (var pair in _dataObjectSet)
-          response.Append(_dataLayer.Post(pair.Value));
+        _dataObjects = _projectionEngine.GetDataObjects(ref _mapping, graphName, ref _dataDictionary, ref xml);
+        _dataLayer.Post(_dataObjects);
 
         DateTime endTime = DateTime.Now;
         TimeSpan duration = endTime.Subtract(startTime);
-        
+
         response.Level = StatusLevel.Success;
         response.Add(string.Format("Graph [{0}] has been posted to legacy system successfully.", graphName));
 
@@ -403,7 +401,7 @@ namespace org.iringtools.adapter
 
       return _semanticEngine.Delete(graphName);
     }
-    
+
     public Response UpdateDatabaseDictionary(string projectName, string applicationName, DatabaseDictionary dbDictionary)
     {
       Response response = new Response();
@@ -473,8 +471,8 @@ namespace org.iringtools.adapter
       {
         if (!_isInitialized)
         {
-          string scope = string.Format("{0}.{1}",projectName, applicationName);
-          
+          string scope = string.Format("{0}.{1}", projectName, applicationName);
+
           ApplicationSettings applicationSettings = _kernel.Get<ApplicationSettings>(
             new ConstructorArgument("projectName", projectName),
             new ConstructorArgument("applicationName", applicationName)
@@ -487,7 +485,7 @@ namespace org.iringtools.adapter
           _dataLayer = _kernel.Get<IDataLayer>("DataLayer");
           _projectionEngine = _kernel.Get<IProjectionLayer>("ProjectionLayer");
           _semanticEngine = _kernel.Get<ISemanticLayer>("SemanticLayer");
-          _mapping = Utility.Read<Mapping>(string.Format("{0}Mapping.{1}.xml",_settings.XmlPath, scope));
+          _mapping = Utility.Read<Mapping>(string.Format("{0}Mapping.{1}.xml", _settings.XmlPath, scope));
           _dataDictionary = _dataLayer.GetDictionary();
 
           _isInitialized = true;
@@ -503,101 +501,22 @@ namespace org.iringtools.adapter
     private Response Refresh(string graphName)
     {
       _projectionEngine = _kernel.Get<IProjectionLayer>("rdf");
-
       _graphMap = _mapping.FindGraphMap(graphName);
-
       LoadDataObjectSet(null);
 
-      XElement rdf = _projectionEngine.GetXml(ref _mapping, graphName, ref _dataDictionary, ref _dataObjectSet);
+      XElement rdf = _projectionEngine.GetXml(ref _mapping, graphName, ref _dataDictionary, ref _dataObjects);
+
       return _semanticEngine.Refresh(graphName, rdf);
     }
 
-   private void LoadDataObjectSet(IList<string> identifiers)
+    private void LoadDataObjectSet(IList<string> identifiers)
     {
-
-        _dataObjectSet.Clear();
-
-        foreach (DataObjectMap dataObjectMap in _graphMap.dataObjectMaps)
-        {
-            if(identifiers != null)
-              _dataObjectSet.Add(dataObjectMap.name, _dataLayer.Get(dataObjectMap.name, identifiers));
-            else
-              _dataObjectSet.Add(dataObjectMap.name, _dataLayer.Get(dataObjectMap.name, null));
-        }
-
-        PopulateClassIdentifiers();
-    }
-
-    private void PopulateClassIdentifiers()
-    {
-      _classIdentifiers.Clear();
-
-      foreach (ClassMap classMap in _graphMap.classTemplateListMaps.Keys)
-      {
-        List<string> classIdentifiers = new List<string>();
-
-        foreach (string identifier in classMap.identifiers)
-        {
-          // identifier is a fixed value
-          if (identifier.StartsWith("#") && identifier.EndsWith("#"))
-          {
-            string value = identifier.Substring(1, identifier.Length - 2);
-            int maxDataObjectsCount = MaxDataObjectsCount();
-
-            for (int i = 0; i < maxDataObjectsCount; i++)
-            {
-              if (classIdentifiers.Count == i)
-              {
-                classIdentifiers.Add(value);
-              }
-              else
-              {
-                classIdentifiers[i] += classMap.identifierDelimeter + value;
-              }
-            }
-          }
-          else  // identifier value comes from a property
-          {
-            string[] property = identifier.Split('.');
-            string objectName = property[0].Trim();
-            string propertyName = property[1].Trim();
-
-            IList<IDataObject> dataObjects = _dataObjectSet[objectName];
-            if (dataObjects != null)
-            {
-              for (int i = 0; i < dataObjects.Count; i++)
-              {
-                string value = Convert.ToString(dataObjects[i].GetPropertyValue(propertyName));
-
-                if (classIdentifiers.Count == i)
-                {
-                  classIdentifiers.Add(value);
-                }
-                else
-                {
-                  classIdentifiers[i] += classMap.identifierDelimeter + value;
-                }
-              }
-            }
-          }
-        }
-
-        _classIdentifiers[classMap.classId] = classIdentifiers;
-      }
-    }
-
-    // get max # of data records from all data objects
-    private int MaxDataObjectsCount()
-    {
-        int maxCount = 0;
-        foreach (var pair in _dataObjectSet)
-        {
-            if (pair.Value.Count > maxCount)
-            {
-                maxCount = pair.Value.Count;
-            }
-        }
-        return maxCount;
+      _dataObjects.Clear();
+            
+      if (identifiers != null)
+        _dataObjects =_dataLayer.Get(_graphMap.dataObjectMap, identifiers);
+      else
+        _dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, null);
     }
 
     private void RemoveDups(DataObject dataObject)
@@ -698,13 +617,13 @@ namespace org.iringtools.adapter
       {
         if (dataObject.keyProperties == null || dataObject.keyProperties.Count == 0)
         {
-          throw new Exception(string.Format("Table \"{0}\" has no key.", dataObject.tableName ));
+          throw new Exception(string.Format("Table \"{0}\" has no key.", dataObject.tableName));
         }
       }
 
       return true;
     }
-    
+
     private void UpdateBindingConfiguration(string projectName, string applicationName, Binding binding)
     {
       try
@@ -835,30 +754,30 @@ namespace org.iringtools.adapter
 
     private IList<IDataObject> CreateDataObjects(string graphName, string dataObjectsString)
     {
-        IList<IDataObject> dataObjects = new List<IDataObject>();
-        dataObjects = _dataLayer.Create(graphName, null);
+      IList<IDataObject> dataObjects = new List<IDataObject>();
+      dataObjects = _dataLayer.Create(graphName, null);
 
-        if (dataObjectsString != null && dataObjectsString != String.Empty)
+      if (dataObjectsString != null && dataObjectsString != String.Empty)
+      {
+        XmlReader reader = XmlReader.Create(new StringReader(dataObjectsString));
+        XDocument file = XDocument.Load(reader);
+        file = Utility.RemoveNamespace(file);
+
+        var dtoResults = from c in file.Elements("ArrayOf" + graphName).Elements(graphName) select c;
+        int j = 0;
+        foreach (var dtoResult in dtoResults)
         {
-            XmlReader reader = XmlReader.Create(new StringReader(dataObjectsString));
-            XDocument file = XDocument.Load(reader);
-            file = Utility.RemoveNamespace(file);
-
-            var dtoResults = from c in file.Elements("ArrayOf" + graphName).Elements(graphName) select c;
-            int j = 0;
-            foreach (var dtoResult in dtoResults)
-            {
-                var dtoProperties = from c in dtoResult.Elements("Properties").Elements("Property") select c;
-                IDataObject dto = dataObjects[j];
-                j++;
-                foreach (var dtoProperty in dtoProperties)
-                {
-                    dto.SetPropertyValue(dtoProperty.Attribute("name").Value, dtoProperty.Attribute("value").Value);
-                }
-                dataObjects.Add(dto);
-            }
+          var dtoProperties = from c in dtoResult.Elements("Properties").Elements("Property") select c;
+          IDataObject dto = dataObjects[j];
+          j++;
+          foreach (var dtoProperty in dtoProperties)
+          {
+            dto.SetPropertyValue(dtoProperty.Attribute("name").Value, dtoProperty.Attribute("value").Value);
+          }
+          dataObjects.Add(dto);
         }
-        return dataObjects;
+      }
+      return dataObjects;
     }
     #endregion
   }

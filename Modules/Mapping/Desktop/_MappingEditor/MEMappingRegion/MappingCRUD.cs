@@ -304,31 +304,21 @@ namespace org.iringtools.modules.memappingregion
             {
                 GraphMap graphMap = new GraphMap();
                 graphMap.name = graphName;
-              
-               
-               // graphMap.baseUri = string.Format("{0}{1}/{2}/{3}#", adapterProxy.GetGraphBaseUri, projectName, applicationName, graphName);
 
-                if (graphMap.dataObjectMaps == null)
-                    graphMap.dataObjectMaps = new List<DataObjectMap>();
-
-                DataObjectMap dataObjectMap = new DataObjectMap
-                {
-                    name = model.SelectedDataObject.DataObject.objectName,
-                    inFilter = "",
-                    outFilter = ""
-
-                };
+                string dataObjectMap = model.SelectedDataObject.DataObject.objectName;
                 ClassMap classMap = new ClassMap
                     {
                         name = model.SelectedIMLabel,
                         classId = SPARQLExtensions.GetIdWithAliasFromUri(model.SelectedIMUri)
                     };
 
-                classMap.identifiers.Add(string.Format("{0}.{1}",dataObjectMap.name, model.SelectedDataObject.DataProperty.propertyName));
+                classMap.identifiers.Add(string.Format("{0}.{1}", dataObjectMap, model.SelectedDataObject.DataProperty.propertyName));
 
                 graphMap.AddClassMap(null, classMap);
 
-                graphMap.dataObjectMaps.Add(dataObjectMap);
+                if (String.IsNullOrEmpty(graphMap.dataObjectMap))
+                  graphMap.dataObjectMap = dataObjectMap;
+                
                 mapping.graphMaps.Add(graphMap);
                 tvwMapping.Items.Add(Presenter.AddNode(graphMap.name, graphMap, null));
                 Presenter.ButtonCtrl("btnSave").IsEnabled = true;

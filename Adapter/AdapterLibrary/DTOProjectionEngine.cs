@@ -49,7 +49,7 @@ namespace org.iringtools.adapter.projection
     private Mapping _mapping = null;
     private GraphMap _graphMap = null;
     private DataDictionary _dataDictionary = null;
-    private Dictionary<string, IList<IDataObject>> _dataObjectSet = null; // dictionary of object names and list of data objects
+    private IList<IDataObject> _dataObjects = null;
     private Dictionary<string, List<string>> _classIdentifiers = null; // dictionary of class ids and list of identifiers
     private List<Dictionary<string, string>> _xPathValuePairs = null;  // dictionary of property xpath and value pairs
     private Dictionary<string, List<string>> _hierachicalDTOClasses = null;  // dictionary of class rdlUri and identifiers
@@ -62,7 +62,7 @@ namespace org.iringtools.adapter.projection
     {
       string scope = appSettings.ProjectName + "{0}" + appSettings.ApplicationName;
 
-      _dataObjectSet = new Dictionary<string, IList<IDataObject>>();
+      _dataObjects = new List<IDataObject>();
       _classIdentifiers = new Dictionary<string, List<string>>();
       _xPathValuePairs = new List<Dictionary<string, string>>();
       _hierachicalDTOClasses = new Dictionary<string, List<string>>();
@@ -75,7 +75,7 @@ namespace org.iringtools.adapter.projection
     }
 
     public XElement GetXml(ref Mapping mapping, string graphName,
-      ref DataDictionary dataDictionary, ref Dictionary<string, IList<IDataObject>> dataObjects)
+      ref DataDictionary dataDictionary, ref IList<IDataObject> dataObjects)
     {
       try
       {
@@ -83,12 +83,11 @@ namespace org.iringtools.adapter.projection
         _graphMap = _mapping.FindGraphMap(graphName);
 
         _dataDictionary = dataDictionary;
-        _dataObjectSet = dataObjects;
+        _dataObjects = dataObjects;
 
-        int maxDataObjectsCount = MaxDataObjectsCount();
         _xPathValuePairs.Clear();
 
-        for (int i = 0; i < maxDataObjectsCount; i++)
+        for (int i = 0; i < _dataObjects.Count; i++)
         {
           _xPathValuePairs.Add(new Dictionary<string, string>());
         }
@@ -104,7 +103,7 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    public Dictionary<string, IList<IDataObject>> GetDataObjects(ref Mapping mapping, string graphName,
+    public IList<IDataObject> GetDataObjects(ref Mapping mapping, string graphName,
           ref DataDictionary dataDictionary, ref XElement xml)
     {
       throw new NotImplementedException();
@@ -133,22 +132,6 @@ namespace org.iringtools.adapter.projection
       }
 
       return returnValue;
-    }
-
-    // get max # of data records from all data objects
-    private int MaxDataObjectsCount()
-    {
-      int maxCount = 0;
-
-      foreach (var pair in _dataObjectSet)
-      {
-        if (pair.Value.Count > maxCount)
-        {
-          maxCount = pair.Value.Count;
-        }
-      }
-
-      return maxCount;
     }
 
     private string ResolveValueList(string valueList, string value)
@@ -194,10 +177,9 @@ namespace org.iringtools.adapter.projection
             string propertyName = property[1].Trim();
             string value = String.Empty;
 
-            IList<IDataObject> dataObjects = _dataObjectSet[objectName];
-            for (int i = 0; i < dataObjects.Count; i++)
+            for (int i = 0; i < _dataObjects.Count; i++)
             {
-              value = Convert.ToString(dataObjects[i].GetPropertyValue(propertyName));
+              value = Convert.ToString(_dataObjects[i].GetPropertyValue(propertyName));
 
               if (!String.IsNullOrEmpty(roleMap.valueList))
               {

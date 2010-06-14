@@ -22,7 +22,7 @@ namespace org.iringtools.adapter.projection
         private Mapping _mapping = null;
         private GraphMap _graphMap = null;
         private DataDictionary _dataDictionary = null;
-        private Dictionary<string, IList<IDataObject>> _dataObjectSet = null; // dictionary of object names and list of data objects
+        private IList<IDataObject> _dataObjects = null; // dictionary of object names and list of data objects
         private Dictionary<string, List<string>> _classIdentifiers = null; // dictionary of class ids and list of identifiers
         private XNamespace _graphNs = String.Empty;
         private string _dataObjectNs = String.Empty;
@@ -39,7 +39,7 @@ namespace org.iringtools.adapter.projection
         {
           string scope = appSettings.ProjectName + "{0}" + appSettings.ApplicationName;
 
-          _dataObjectSet = new Dictionary<string, IList<IDataObject>>();
+          _dataObjects = new List<IDataObject>();
           _classIdentifiers = new Dictionary<string, List<string>>();
           
           _graphNs = String.Format(adapterSettings.GraphBaseUri + scope + "#", "/");
@@ -47,7 +47,7 @@ namespace org.iringtools.adapter.projection
          }
 
         public XElement GetXml(ref Mapping mapping, string graphName, 
-          ref DataDictionary dataDictionary, ref Dictionary<string, IList<IDataObject>> dataObjects)
+          ref DataDictionary dataDictionary, ref IList<IDataObject> dataObjects)
         {
           try
           {
@@ -55,7 +55,7 @@ namespace org.iringtools.adapter.projection
             _graphMap = _mapping.FindGraphMap(graphName);
 
             _dataDictionary = dataDictionary;
-            _dataObjectSet = dataObjects;
+            _dataObjects = dataObjects;
 
             return GetQtxf();
           }
@@ -65,7 +65,7 @@ namespace org.iringtools.adapter.projection
           }
         }
 
-        public Dictionary<string, IList<IDataObject>> GetDataObjects(ref Mapping mapping, string graphName,
+        public IList<IDataObject> GetDataObjects(ref Mapping mapping, string graphName,
           ref DataDictionary dataDictionary, ref XElement xml)
         {
           throw new NotImplementedException();
@@ -85,12 +85,11 @@ namespace org.iringtools.adapter.projection
               string objectName = property[0].Trim();
               string propertyName = property[1].Trim();
 
-              IList<IDataObject> dataObjects = _dataObjectSet[objectName];
-              if (dataObjects != null)
+              if (_dataObjects != null)
               {
-                for (int i = 0; i < dataObjects.Count; i++)
+                for (int i = 0; i < _dataObjects.Count; i++)
                 {
-                  string value = Convert.ToString(dataObjects[i].GetPropertyValue(propertyName));
+                  string value = Convert.ToString(_dataObjects[i].GetPropertyValue(propertyName));
 
                   if (classIdentifiers.Count == i)
                   {
@@ -115,9 +114,8 @@ namespace org.iringtools.adapter.projection
                 PopulateClassIdentifiers();
 
                 XElement graphElement = new XElement(_graphNs + _graphMap.name, new XAttribute(XNamespace.Xmlns + "i", XSI_NS));
-                int maxDataObjectsCount = MaxDataObjectsCount();
-
-                for (int i = 0; i < maxDataObjectsCount; i++)
+                
+                for (int i = 0; i < _dataObjects.Count; i++)
                 {
                     foreach (var pair in _graphMap.classTemplateListMaps)
                     {
@@ -142,22 +140,6 @@ namespace org.iringtools.adapter.projection
             {
                 throw ex;
             }
-        }
-
-        // get max # of data records from all data objects
-        private int MaxDataObjectsCount()
-        {
-            int maxCount = 0;
-
-            foreach (var pair in _dataObjectSet)
-            {
-                if (pair.Value.Count > maxCount)
-                {
-                    maxCount = pair.Value.Count;
-                }
-            }
-
-            return maxCount;
         }
 
         private XElement CreateQtxfClassElement(ClassMap classMap, string classInstance)
@@ -207,7 +189,7 @@ namespace org.iringtools.adapter.projection
                                     string objectName = property[0].Trim();
                                     string propertyName = property[1].Trim();
 
-                                    IDataObject dataObject = _dataObjectSet[objectName].ElementAt(objectIndex);
+                                    IDataObject dataObject = _dataObjects.ElementAt(objectIndex);
 
                                     if (dataObject != null)
                                     {
@@ -239,7 +221,7 @@ namespace org.iringtools.adapter.projection
                             string objectName = property[0].Trim();
                             string propertyName = property[1].Trim();
 
-                            IDataObject dataObject = _dataObjectSet[objectName].ElementAt(objectIndex);
+                            IDataObject dataObject = _dataObjects.ElementAt(objectIndex);
                             string value = Convert.ToString(dataObject.GetPropertyValue(propertyName));
 
                             if (String.IsNullOrEmpty(roleMap.valueList))
