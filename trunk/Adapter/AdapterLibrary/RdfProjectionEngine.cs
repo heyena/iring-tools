@@ -64,7 +64,7 @@ namespace org.iringtools.adapter.projection
       _hierachicalDTOClasses = new Dictionary<string, List<string>>();
       _adapterSettings = adapterSettings;
       _appSettings = appSettings;
-      //_graphNs = String.Format(adapterSettings.GraphBaseUri + scope + "#", "/");
+      _graphNs = String.Format(adapterSettings.GraphBaseUri + "/" + scope + "#", "/");
       _dataObjectNs = String.Format(DATALAYER_NS + ".proj_" + scope, ".");
       _dataObjectsAssemblyName = adapterSettings.ExecutingAssemblyName;
     }
@@ -76,8 +76,7 @@ namespace org.iringtools.adapter.projection
       {
         _mapping = mapping;
         _graphMap = _mapping.FindGraphMap(graphName);
-        _graphNs = string.Format("{0}/{1}/{2}/{3}", _adapterSettings.GraphBaseUri, _appSettings.ProjectName, _appSettings.ApplicationName, graphName);
-              
+               
         _dataDictionary = dataDictionary;
         _dataObjectSet = dataObjects;
 
@@ -195,7 +194,7 @@ namespace org.iringtools.adapter.projection
               }
             }
           }
-          else  // identifier value comes from a property
+          else  // identifier comes from a property
           {
             string[] property = identifier.Split('.');
             string objectName = property[0].Trim();
