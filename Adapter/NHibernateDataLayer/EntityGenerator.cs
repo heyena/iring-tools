@@ -389,9 +389,9 @@ namespace org.iringtools.adapter.datalayer
 
             case "OneToManyRelationship":
               OneToManyRelationship oneToManyRelationship = (OneToManyRelationship)dataRelationship;
-              _dataObjectWriter.WriteLine("public virtual ISet<{0}> {0}List {{ get; set; }}", dataRelationship.relatedObjectName);
+              _dataObjectWriter.WriteLine("public virtual ISet<{0}> {0} {{ get; set; }}", dataRelationship.relatedObjectName);
               _mappingWriter.WriteStartElement("set");
-              _mappingWriter.WriteAttributeString("name", relatedDataObject.tableName + "List");
+              _mappingWriter.WriteAttributeString("name", relatedDataObject.tableName);
               _mappingWriter.WriteAttributeString("inverse", "true");
               _mappingWriter.WriteAttributeString("cascade", "all-delete-orphan");
               _mappingWriter.WriteStartElement("key");
@@ -517,11 +517,44 @@ namespace org.iringtools.adapter.datalayer
         _dataObjectWriter.WriteLine("}");
         #endregion Process columns
 
-        _dataObjectWriter.WriteLine(@"
-    public virtual IList<IDataObject> GetRelatedObjects(string relatedObjectType)
-    {
-      throw new NotImplementedException();
-    }");
+        #region generate GetRelatedObjects method
+        _dataObjectWriter.WriteLine();
+        _dataObjectWriter.WriteLine(@"public virtual IList<IDataObject> GetRelatedObjects(string relatedObjectType)");
+        _dataObjectWriter.WriteLine("{");
+        _dataObjectWriter.Indent++;
+        _dataObjectWriter.WriteLine("switch (relatedObjectType)");
+        _dataObjectWriter.WriteLine("{");
+        _dataObjectWriter.Indent++;
+        
+        foreach (DataRelationship dataRelationship in dataObject.dataRelationships)
+        {
+          _dataObjectWriter.WriteLine("case \"{0}\":", dataRelationship.relatedObjectName);
+          _dataObjectWriter.Indent++;
+
+          if (dataRelationship is OneToOneRelationship)
+          {
+            _dataObjectWriter.WriteLine(@"return new List<IDataObject>{{{0}}};", dataRelationship.relatedObjectName);
+          }
+          else if (dataRelationship is OneToManyRelationship)
+          {
+            _dataObjectWriter.WriteLine(
+        @"IList<IDataObject> __relatedObjects = new List<IDataObject>();
+          foreach ({0} __relatedObject in {0})
+            __relatedObjects.Add(__relatedObject);
+          return __relatedObjects;", dataRelationship.relatedObjectName);
+          }
+
+          _dataObjectWriter.Indent--;
+        }
+
+        _dataObjectWriter.WriteLine("default:");
+        _dataObjectWriter.Indent++;
+        _dataObjectWriter.WriteLine("throw new Exception(\"Related object [\" + relatedObjectType + \"] does not exist.\");");
+        _dataObjectWriter.Indent--;
+        _dataObjectWriter.WriteLine("}");
+        _dataObjectWriter.Indent--;
+        _dataObjectWriter.WriteLine("}");
+        #endregion
 
         _dataObjectWriter.Indent--;
         _dataObjectWriter.WriteLine("}"); // end class block
@@ -661,10 +694,10 @@ namespace org.iringtools.adapter.datalayer
 
     private string GetColumnName(DataObject dataObject, string propertyName)
     {
-      foreach (DataProperty dataProperty in dataObject.dataProperties)
+      foreach (DataProperty property in dataObject.properties)
       {
-        if (dataProperty.propertyName.ToLower() == propertyName.ToLower())
-          return dataProperty.columnName;
+        if (property.propertyName.ToLower() == propertyName.ToLower())
+          return property.columnName;
       }
 
       return String.Empty;

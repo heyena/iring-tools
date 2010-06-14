@@ -33,6 +33,11 @@ namespace org.iringtools.library
   [DataContract(Namespace = "http://ns.iringtools.org/library")]
   public class DataDictionary
   {
+    public DataDictionary()
+    {
+      dataObjects = new List<DataObject>();
+    }
+
     [DataMember]
     public List<DataObject> dataObjects { get; set; }
   }
@@ -40,6 +45,13 @@ namespace org.iringtools.library
   [DataContract(Namespace = "http://ns.iringtools.org/library")]
   public class DataObject
   {
+    public DataObject()
+    {
+      keyProperties = new List<KeyProperty>();
+      dataProperties = new List<DataProperty>();
+      dataRelationships = new List<DataRelationship>();
+    }
+
     [DataMember(IsRequired = true, Order = 0)]
     public string tableName { get; set; }
 
