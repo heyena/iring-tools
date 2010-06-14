@@ -45,6 +45,8 @@ using System.IO;
 using log4net;
 using Ninject.Contrib.Dynamic;
 using NHibernate;
+using org.w3.sparql_results;
+using Microsoft.ServiceModel.Web;
 
 namespace org.iringtools.adapter
 {
@@ -235,7 +237,14 @@ namespace org.iringtools.adapter
 
             IList<string> identifiers = new List<string>() { identifier };
 
-            IProjectionLayer _projectionEngine = _kernel.Get<IProjectionLayer>(format);
+            if (format != null)
+            {
+              _projectionEngine = _kernel.Get<IProjectionLayer>(format);
+            }
+            else
+            {
+              _projectionEngine = _kernel.Get<IProjectionLayer>(_settings.DefaultProjectionFormat);
+            }
 
             _graphMap = _mapping.FindGraphMap(graphName);
 
@@ -256,7 +265,14 @@ namespace org.iringtools.adapter
       {
         Initialize(projectName, applicationName);
 
-        IProjectionLayer _projectionEngine = _kernel.Get<IProjectionLayer>(format);
+        if (format != null)
+        {
+          _projectionEngine = _kernel.Get<IProjectionLayer>(format);
+        }
+        else
+        {
+          _projectionEngine = _kernel.Get<IProjectionLayer>(_settings.DefaultProjectionFormat);
+        }
 
         _graphMap = _mapping.FindGraphMap(graphName);
 
@@ -327,10 +343,16 @@ namespace org.iringtools.adapter
       try
       {
         Initialize(projectName, applicationName);
-        Dictionary<string, IList<IDataObject>> dataObjectSet = _semanticEngine.Get(graphName);
+        Dictionary<string, SPARQLResults> resultSet = _semanticEngine.Get(graphName);
         DateTime startTime = DateTime.Now;
 
-        foreach (var pair in dataObjectSet)
+        _projectionEngine = _kernel.Get<IProjectionLayer>("sparql");
+
+        XElement xml = SerializationExtensions.ToXml<Dictionary<string, SPARQLResults>>(resultSet);
+
+        _dataObjectSet = _projectionEngine.GetDataObjects(ref _mapping, graphName, ref _dataDictionary, ref xml);
+
+        foreach (var pair in _dataObjectSet)
           response.Append(_dataLayer.Post(pair.Value));
 
         DateTime endTime = DateTime.Now;

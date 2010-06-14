@@ -10,10 +10,12 @@ using System.Text.RegularExpressions;
 using VDS.RDF;
 using VDS.RDF.Storage;
 using org.iringtools.utility;
+using Microsoft.ServiceModel.Web;
+using System.Xml.Serialization;
 
 namespace org.iringtools.adapter.projection
 {
-  public class DTOProjectionEngine : IProjectionLayer
+  public class DtoProjectionEngine : IProjectionLayer
   {
     private static readonly string DATALAYER_NS = "org.iringtools.adapter.datalayer";
     
@@ -41,11 +43,12 @@ namespace org.iringtools.adapter.projection
     private static readonly string CLASS_INSTANCE_ID = "tpl:R99011248051";
     private static readonly string RDF_NIL = RDF_PREFIX + "nil";
 
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(DTOProjectionEngine));
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(DtoProjectionEngine));
 
     private IDataLayer _dataLayer = null;
     private Mapping _mapping = null;
     private GraphMap _graphMap = null;
+    private DataDictionary _dataDictionary = null;
     private Dictionary<string, IList<IDataObject>> _dataObjectSet = null; // dictionary of object names and list of data objects
     private Dictionary<string, List<string>> _classIdentifiers = null; // dictionary of class ids and list of identifiers
     private List<Dictionary<string, string>> _xPathValuePairs = null;  // dictionary of property xpath and value pairs
@@ -55,7 +58,7 @@ namespace org.iringtools.adapter.projection
     private string _dataObjectNs = String.Empty;
 
     [Inject]
-    public DTOProjectionEngine(AdapterSettings adapterSettings, ApplicationSettings appSettings, IDataLayer dataLayer)
+    public DtoProjectionEngine(AdapterSettings adapterSettings, ApplicationSettings appSettings, IDataLayer dataLayer)
     {
       string scope = appSettings.ProjectName + "{0}" + appSettings.ApplicationName;
 
@@ -71,63 +74,16 @@ namespace org.iringtools.adapter.projection
       _dataObjectsAssemblyName = adapterSettings.ExecutingAssemblyName;
     }
 
-    public XElement GetRdf(string graphName)
+    public XElement GetXml(ref Mapping mapping, string graphName,
+      ref DataDictionary dataDictionary, ref Dictionary<string, IList<IDataObject>> dataObjects)
     {
       try
       {
-        FindGraphMap(graphName);
-        LoadDataObjectSet();
-        return GetRdf();
-      }
-      catch (Exception ex)
-      {
-        throw ex;
-      }
-    }
+        _mapping = mapping;
+        _graphMap = _mapping.FindGraphMap(graphName);
 
-    public XElement GetQtxf(string graphName)
-    {
-      try
-      {
-        FindGraphMap(graphName);
-        LoadDataObjectSet();
-
-        XElement graphElement = new XElement(_graphNs + graphName, new XAttribute(XNamespace.Xmlns + "i", XSI_NS));
-        int maxDataObjectsCount = MaxDataObjectsCount();
-
-        for (int i = 0; i < maxDataObjectsCount; i++)
-        {
-          foreach (var pair in _graphMap.classTemplateListMaps)
-          {
-            ClassMap classMap = pair.Key;
-            List<TemplateMap> templateMaps = pair.Value;
-            string classInstance = _classIdentifiers[classMap.classId][i];
-
-            XElement typeOfThingElement = CreateQtxfClassElement(classMap, classInstance);
-            graphElement.Add(typeOfThingElement);
-
-            foreach (TemplateMap templateMap in templateMaps)
-            {
-              XElement templateElement = CreateQtxfTemplateElement(templateMap, classInstance, i);
-              graphElement.Add(templateElement);
-            }
-          }
-        }
-
-        return graphElement;
-      }
-      catch (Exception ex)
-      {
-        throw ex;
-      }
-    }
-
-    public List<Dictionary<string, string>> GetDTOList(string graphName)
-    {
-      try
-      {
-        FindGraphMap(graphName);
-        LoadDataObjectSet();
+        _dataDictionary = dataDictionary;
+        _dataObjectSet = dataObjects;
 
         int maxDataObjectsCount = MaxDataObjectsCount();
         _xPathValuePairs.Clear();
@@ -140,7 +96,7 @@ namespace org.iringtools.adapter.projection
         ClassMap classMap = _graphMap.classTemplateListMaps.First().Key;
         FillDTOList(classMap.classId, "rdl:" + classMap.name);
 
-        return _xPathValuePairs;
+        return SerializationExtensions.ToXml<List<Dictionary<string, string>>>(_xPathValuePairs);
       }
       catch (Exception ex)
       {
@@ -148,36 +104,10 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    public XElement GetHierachicalDTOList(string graphName)
+    public Dictionary<string, IList<IDataObject>> GetDataObjects(ref Mapping mapping, string graphName,
+          ref DataDictionary dataDictionary, ref XElement xml)
     {
-      try
-      {
-        FindGraphMap(graphName);
-        LoadDataObjectSet();
-
-        _hierachicalDTOClasses.Clear();
-
-        XElement graphElement = new XElement(_graphNs + graphName,
-          new XAttribute(XNamespace.Xmlns + "i", XSI_NS),
-          new XAttribute(XNamespace.Xmlns + "rdl", RDL_NS),
-          new XAttribute(XNamespace.Xmlns + "tpl", TPL_NS));
-
-        ClassMap classMap = _graphMap.classTemplateListMaps.First().Key;
-        int maxDataObjectsCount = MaxDataObjectsCount();
-
-        for (int i = 0; i < maxDataObjectsCount; i++)
-        {
-          XElement classElement = new XElement(_graphNs + TitleCase(classMap.name));
-          graphElement.Add(classElement);
-          FillHierachicalDTOList(classElement, classMap.classId, i);
-        }
-
-        return graphElement;
-      }
-      catch (Exception ex)
-      {
-        throw ex;
-      }
+      throw new NotImplementedException();
     }
 
     #region helper methods
@@ -203,18 +133,6 @@ namespace org.iringtools.adapter.projection
       }
 
       return returnValue;
-    }
-
-    private void LoadDataObjectSet()
-    {
-      _dataObjectSet.Clear();
-
-      foreach (DataObjectMap dataObjectMap in _graphMap.dataObjectMaps)
-      {
-        _dataObjectSet.Add(dataObjectMap.name, _dataLayer.Get(dataObjectMap.name, null));
-      }
-
-      PopulateClassIdentifiers();
     }
 
     // get max # of data records from all data objects
@@ -253,247 +171,6 @@ namespace org.iringtools.adapter.projection
       }
 
       return RDF_NIL;
-    }
-
-    private XElement GetRdf()
-    {
-      XElement graphElement = new XElement(RDF_NS + "RDF",
-        new XAttribute(XNamespace.Xmlns + "rdf", RDF_NS),
-        new XAttribute(XNamespace.Xmlns + "owl", OWL_NS),
-        new XAttribute(XNamespace.Xmlns + "xsd", XSD_NS),
-        new XAttribute(XNamespace.Xmlns + "tpl", TPL_NS));
-
-      foreach (var pair in _graphMap.classTemplateListMaps)
-      {
-        ClassMap classMap = pair.Key;
-        int maxDataObjectsCount = MaxDataObjectsCount();
-
-        for (int i = 0; i < maxDataObjectsCount; i++)
-        {
-          string classId = classMap.classId.Substring(classMap.classId.IndexOf(":") + 1);
-          string classInstance = _graphNs.NamespaceName + _classIdentifiers[classMap.classId][i];
-
-          graphElement.Add(CreateRdfClassElement(classId, classInstance));
-
-          foreach (TemplateMap templateMap in pair.Value)
-          {
-            graphElement.Add(CreateRdfTemplateElement(templateMap, classInstance, i));
-          }
-        }
-      }
-
-      return graphElement;
-    }
-
-    private XElement CreateRdfClassElement(string classId, string classInstance)
-    {
-      return new XElement(OWL_THING, new XAttribute(RDF_ABOUT, classInstance),
-        new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, RDL_NS.NamespaceName + classId)));
-    }
-
-    private XElement CreateRdfTemplateElement(TemplateMap templateMap, string classInstance, int dataObjectIndex)
-    {
-      string templateId = templateMap.templateId.Replace(TPL_PREFIX, TPL_NS.NamespaceName);
-
-      XElement templateElement = new XElement(OWL_THING);
-      templateElement.Add(new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, templateId)));
-
-      foreach (RoleMap roleMap in templateMap.roleMaps)
-      {
-        string roleId = roleMap.roleId.Substring(roleMap.roleId.IndexOf(":") + 1);
-        string dataType = String.Empty;
-        XElement roleElement = new XElement(TPL_NS + roleId);
-
-        switch (roleMap.type)
-        {
-          case RoleType.ClassRole:
-            {
-              roleElement.Add(new XAttribute(RDF_RESOURCE, classInstance));
-              break;
-            }
-          case RoleType.Reference:
-            {
-              if (roleMap.classMap != null)
-              {
-                string identifierValue = String.Empty;
-
-                foreach (string identifier in roleMap.classMap.identifiers)
-                {
-                  string[] property = identifier.Split('.');
-                  string objectName = property[0].Trim();
-                  string propertyName = property[1].Trim();
-
-                  IDataObject dataObject = _dataObjectSet[objectName].ElementAt(dataObjectIndex);
-
-                  if (dataObject != null)
-                  {
-                    string value = Convert.ToString(dataObject.GetPropertyValue(propertyName));
-
-                    if (identifierValue != String.Empty)
-                      identifierValue += roleMap.classMap.identifierDelimeter;
-
-                    identifierValue += value;
-                  }
-                }
-
-                roleElement.Add(new XAttribute(RDF_RESOURCE, _graphNs.NamespaceName + identifierValue));
-              }
-              else
-              {
-                roleElement.Add(new XAttribute(RDF_RESOURCE, roleMap.value.Replace(RDL_PREFIX, RDL_NS.NamespaceName)));
-              }
-              break;
-            }
-          case RoleType.FixedValue:
-            {
-              dataType = roleMap.dataType.Replace(XSD_PREFIX, XSD_NS.NamespaceName);
-              roleElement.Add(new XAttribute(RDF_DATATYPE, dataType));
-              roleElement.Add(new XText(roleMap.value));
-              break;
-            }
-          case RoleType.Property:
-            {
-              string[] property = roleMap.propertyName.Split('.');
-              string objectName = property[0].Trim();
-              string propertyName = property[1].Trim();
-
-              IDataObject dataObject = _dataObjectSet[objectName].ElementAt(dataObjectIndex);
-              string value = Convert.ToString(dataObject.GetPropertyValue(propertyName));
-
-              if (String.IsNullOrEmpty(roleMap.valueList))
-              {
-                if (String.IsNullOrEmpty(value))
-                {
-                  roleElement.Add(new XAttribute(RDF_RESOURCE, RDF_NIL));
-                }
-                else
-                {
-                  dataType = roleMap.dataType.Replace(XSD_PREFIX, XSD_NS.NamespaceName);
-                  roleElement.Add(new XAttribute(RDF_DATATYPE, dataType));
-                  roleElement.Add(new XText(value));
-                }
-              }
-              else // resolve value list to uri
-              {
-                string valueListUri = ResolveValueList(roleMap.valueList, value);
-                roleElement.Add(new XAttribute(RDF_RESOURCE, valueListUri));
-              }
-
-              break;
-            }
-        }
-
-        templateElement.Add(roleElement);
-      }
-
-      return templateElement;
-    }
-
-    private XElement CreateQtxfClassElement(ClassMap classMap, string classInstance)
-    {
-      XElement typeOfThingElement = new XElement(_graphNs + "TypeOfThing");
-      typeOfThingElement.Add(new XAttribute("rdlUri", RDF_TYPE_ID));
-
-      XElement hasClassElement = new XElement(_graphNs + "hasClass");
-      hasClassElement.Add(new XAttribute("rdlUri", CLASSIFICATION_INSTANCE_ID));
-      hasClassElement.Add(new XAttribute("reference", classMap.classId));
-      typeOfThingElement.Add(hasClassElement);
-
-      XElement hasIndividualElement = new XElement(_graphNs + "hasIndividual");
-      hasIndividualElement.Add(new XAttribute("rdlUri", CLASS_INSTANCE_ID));
-      hasIndividualElement.Add(new XAttribute("reference", classInstance));
-      typeOfThingElement.Add(hasIndividualElement);
-
-      return typeOfThingElement;
-    }
-
-    private XElement CreateQtxfTemplateElement(TemplateMap templateMap, string classInstance, int objectIndex)
-    {
-      XElement templateElement = new XElement(_graphNs + templateMap.name);
-      templateElement.Add(new XAttribute("rdlUri", templateMap.templateId));
-
-      foreach (RoleMap roleMap in templateMap.roleMaps)
-      {
-        XElement roleElement = new XElement(_graphNs + roleMap.name);
-        roleElement.Add(new XAttribute("rdlUri", roleMap.roleId));
-        templateElement.Add(roleElement);
-
-        switch (roleMap.type)
-        {
-          case RoleType.ClassRole:
-            roleElement.Add(new XAttribute("reference", classInstance));
-            break;
-
-          case RoleType.Reference:
-            {
-              if (roleMap.classMap != null)
-              {
-                string identifierValue = String.Empty;
-
-                foreach (string identifier in roleMap.classMap.identifiers)
-                {
-                  string[] property = identifier.Split('.');
-                  string objectName = property[0].Trim();
-                  string propertyName = property[1].Trim();
-
-                  IDataObject dataObject = _dataObjectSet[objectName].ElementAt(objectIndex);
-
-                  if (dataObject != null)
-                  {
-                    string value = Convert.ToString(dataObject.GetPropertyValue(propertyName));
-
-                    if (identifierValue != String.Empty)
-                      identifierValue += roleMap.classMap.identifierDelimeter;
-
-                    identifierValue += value;
-                  }
-                }
-
-                roleElement.Add(new XAttribute("reference", identifierValue));
-              }
-              else
-              {
-                roleElement.Add(new XAttribute("reference", roleMap.value));
-              }
-              break;
-            }
-
-          case RoleType.FixedValue:
-            roleElement.Add(new XAttribute("reference", roleMap.value));
-            break;
-
-          case RoleType.Property:
-            {
-              string[] property = roleMap.propertyName.Split('.');
-              string objectName = property[0].Trim();
-              string propertyName = property[1].Trim();
-
-              IDataObject dataObject = _dataObjectSet[objectName].ElementAt(objectIndex);
-              string value = Convert.ToString(dataObject.GetPropertyValue(propertyName));
-
-              if (String.IsNullOrEmpty(roleMap.valueList))
-              {
-                if (String.IsNullOrEmpty(value))
-                {
-                  roleElement.Add(new XAttribute("reference", RDF_NIL));
-                }
-                else
-                {
-                  roleElement.Add(new XText(value));
-                }
-              }
-              else // resolve value list to uri
-              {
-                string valueListUri = ResolveValueList(roleMap.valueList, value);
-                roleElement.Add(new XAttribute("reference", Regex.Replace(valueListUri, ".*#", "rdl:")));
-              }
-
-              break;
-            }
-        }
-      }
-
-      return templateElement;
     }
 
     private void FillDTOList(string classId, string xPath)
@@ -542,184 +219,6 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    private void FillHierarchicalDTOList(XElement classElement, string classId, int dataObjectIndex)
-    {
-      KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = _graphMap.GetClassTemplateListMap(classId);
-      ClassMap classMap = classTemplateListMap.Key;
-      List<TemplateMap> templateMaps = classTemplateListMap.Value;
-
-      classElement.Add(new XAttribute("rdlUri", classMap.classId));
-      classElement.Add(new XAttribute("id", _classIdentifiers[classMap.classId][dataObjectIndex]));
-
-      foreach (TemplateMap templateMap in templateMaps)
-      {
-        XElement templateElement = new XElement(_graphNs + templateMap.name);
-        templateElement.Add(new XAttribute("rdlUri", templateMap.templateId));
-        classElement.Add(templateElement);
-
-        foreach (RoleMap roleMap in templateMap.roleMaps)
-        {
-          XElement roleElement = new XElement(_graphNs + roleMap.name);
-
-          switch (roleMap.type)
-          {
-            case RoleType.ClassRole:
-              templateElement.Add(new XAttribute("classRole", roleMap.roleId));
-              break;
-
-            case RoleType.Reference:
-              roleElement.Add(new XAttribute("rdlUri", roleMap.roleId));
-              templateElement.Add(roleElement);
-
-              if (roleMap.classMap != null)
-              {
-                XElement element = new XElement(_graphNs + TitleCase(roleMap.classMap.name));
-                roleElement.Add(element);
-                FillHierarchicalDTOList(element, roleMap.classMap.classId, dataObjectIndex);
-              }
-              else
-              {
-                roleElement.Add(new XAttribute("reference", roleMap.value));
-              }
-
-              break;
-
-            case RoleType.FixedValue:
-              roleElement.Add(new XAttribute("rdlUri", roleMap.roleId));
-              roleElement.Add(new XText(roleMap.value));
-              templateElement.Add(roleElement);
-              break;
-
-            case RoleType.Property:
-              string[] property = roleMap.propertyName.Split('.');
-              string objectName = property[0].Trim();
-              string propertyName = property[1].Trim();
-              IDataObject dataObject = _dataObjectSet[objectName][dataObjectIndex];
-              roleElement.Add(new XAttribute("rdlUri", roleMap.roleId));
-
-              string value = Convert.ToString(dataObject.GetPropertyValue(propertyName));
-              if (!String.IsNullOrEmpty(roleMap.valueList))
-              {
-                value = ResolveValueList(roleMap.valueList, value);
-                value = value.Replace(RDL_NS.NamespaceName, "rdl:");
-                roleElement.Add(new XAttribute("reference", value));
-              }
-              else
-              {
-                roleElement.Add(new XText(value));
-              }
-
-              templateElement.Add(roleElement);
-              break;
-          }
-        }
-      }
-    }
-
-    private void FillHierachicalDTOList(XElement classElement, string classId, int dataObjectIndex)
-    {
-      KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = _graphMap.GetClassTemplateListMap(classId);
-      ClassMap classMap = classTemplateListMap.Key;
-      List<TemplateMap> templateMaps = classTemplateListMap.Value;
-      string classIdentifier = _classIdentifiers[classMap.classId][dataObjectIndex];
-
-      classElement.Add(new XAttribute("rdlUri", classMap.classId));
-      classElement.Add(new XAttribute("id", classIdentifier));
-
-      if (_hierachicalDTOClasses.ContainsKey(classId))
-      {
-        List<string> classIdentifiers = _hierachicalDTOClasses[classId];
-        classIdentifiers.Add(classIdentifier);
-      }
-      else
-      {
-        _hierachicalDTOClasses[classId] = new List<string> { classIdentifier };
-      }
-
-      foreach (TemplateMap templateMap in templateMaps)
-      {
-        XElement templateElement = new XElement(_graphNs + templateMap.name);
-        templateElement.Add(new XAttribute("rdlUri", templateMap.templateId));
-        classElement.Add(templateElement);
-
-        foreach (RoleMap roleMap in templateMap.roleMaps)
-        {
-          XElement roleElement = new XElement(_graphNs + roleMap.name);
-
-          switch (roleMap.type)
-          {
-            case RoleType.ClassRole:
-              templateElement.Add(new XAttribute("classRole", roleMap.roleId));
-              break;
-
-            case RoleType.Reference:
-              roleElement.Add(new XAttribute("rdlUri", roleMap.roleId));
-              templateElement.Add(roleElement);
-
-              if (roleMap.classMap != null)
-              {
-                bool classExists = false;
-
-                // check if the class instance has been created
-                if (_hierachicalDTOClasses.ContainsKey(roleMap.classMap.classId))
-                {
-                  List<string> identifiers = _hierachicalDTOClasses[roleMap.classMap.classId];
-                  string identifier = _classIdentifiers[roleMap.classMap.classId][dataObjectIndex];
-
-                  if (identifiers.Contains(identifier))
-                  {
-                    roleElement.Add(new XAttribute("reference", identifier));
-                    classExists = true;
-                  }
-                }
-
-                if (!classExists)
-                {
-                  XElement element = new XElement(_graphNs + TitleCase(roleMap.classMap.name));
-                  roleElement.Add(element);
-
-                  FillHierachicalDTOList(element, roleMap.classMap.classId, dataObjectIndex);
-                }
-              }
-              else
-              {
-                roleElement.Add(new XAttribute("reference", roleMap.value));
-              }
-
-              break;
-
-            case RoleType.FixedValue:
-              roleElement.Add(new XAttribute("rdlUri", roleMap.roleId));
-              roleElement.Add(new XText(roleMap.value));
-              templateElement.Add(roleElement);
-              break;
-
-            case RoleType.Property:
-              string[] property = roleMap.propertyName.Split('.');
-              string objectName = property[0].Trim();
-              string propertyName = property[1].Trim();
-              IDataObject dataObject = _dataObjectSet[objectName][dataObjectIndex];
-
-              roleElement.Add(new XAttribute("rdlUri", roleMap.roleId));
-              templateElement.Add(roleElement);
-
-              string value = Convert.ToString(dataObject.GetPropertyValue(propertyName));
-              if (!String.IsNullOrEmpty(roleMap.valueList))
-              {
-                value = ResolveValueList(roleMap.valueList, value);
-                value = value.Replace(RDL_NS.NamespaceName, "rdl:");
-                roleElement.Add(new XAttribute("reference", value));
-              }
-              else
-              {
-                roleElement.Add(new XText(value));
-              }
-
-              break;
-          }
-        }
-      }
-    }
     #endregion
   }
 }

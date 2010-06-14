@@ -132,7 +132,7 @@ namespace org.iringtools.adapter
       /// <returns></returns>
     public XElement Get(string projectName, string applicationName, string graphName, string identifier, string format)
     {
-        return _adapterProvider.GetProjection(projectName, applicationName, graphName, identifier, format.ToLower());
+        return _adapterProvider.GetProjection(projectName, applicationName, graphName, identifier, format);
     }
 
     /// <summary>
@@ -144,7 +144,7 @@ namespace org.iringtools.adapter
     /// <returns>xelement</returns>
     public XElement GetList(string projectName, string applicationName, string graphName, string format)
     {
-      return _adapterProvider.GetProjection(projectName, applicationName, graphName, format.ToLower());
+      return _adapterProvider.GetProjection(projectName, applicationName, graphName, format);
     }
 
     /// <summary>
