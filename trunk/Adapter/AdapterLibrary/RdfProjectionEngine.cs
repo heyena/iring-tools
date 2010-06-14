@@ -50,11 +50,9 @@ namespace org.iringtools.adapter.projection
     private XNamespace _graphNs = String.Empty;
     private string _dataObjectsAssemblyName = String.Empty;
     private string _dataObjectNs = String.Empty;
-    private AdapterSettings _adapterSettings = null;
-    private ApplicationSettings _appSettings = null;
 
     [Inject]
-    public RdfProjectionEngine(AdapterSettings adapterSettings, ApplicationSettings appSettings, IDataLayer dataLayer)
+    public RdfProjectionEngine(AdapterSettings adapterSettings, ApplicationSettings appSettings)
     {
       string scope = appSettings.ProjectName + "{0}" + appSettings.ApplicationName;
 
@@ -62,8 +60,6 @@ namespace org.iringtools.adapter.projection
       _classIdentifiers = new Dictionary<string, List<string>>();
       _xPathValuePairs = new List<Dictionary<string, string>>();
       _hierachicalDTOClasses = new Dictionary<string, List<string>>();
-      _adapterSettings = adapterSettings;
-      _appSettings = appSettings;
       _graphNs = String.Format(adapterSettings.GraphBaseUri + "/" + scope + "#", "/");
       _dataObjectNs = String.Format(DATALAYER_NS + ".proj_" + scope, ".");
       _dataObjectsAssemblyName = adapterSettings.ExecutingAssemblyName;
@@ -75,8 +71,7 @@ namespace org.iringtools.adapter.projection
       try
       {
         _mapping = mapping;
-        _graphMap = _mapping.FindGraphMap(graphName);
-               
+        _graphMap = _mapping.FindGraphMap(graphName);               
         _dataDictionary = dataDictionary;
         _dataObjectSet = dataObjects;
 

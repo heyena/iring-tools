@@ -70,7 +70,7 @@ namespace org.iringtools.adapter.semantic
     private GraphMap _graphMap = null;
     private Graph _graph = null;  // dotNetRdf graph
     private MicrosoftSqlStoreManager _tripleStore = null;
-    private TripleStore _memoryStore = null;    
+    private TripleStore _memoryStore = null;
     private XNamespace _graphNs = String.Empty;
     private string _dataObjectsAssemblyName = String.Empty;
     private string _dataObjectNs = String.Empty;
@@ -78,13 +78,13 @@ namespace org.iringtools.adapter.semantic
     [Inject]
     public dotNetRdfEngine(AdapterSettings adapterSettings, ApplicationSettings appSettings)
     {
-      string scope = string.Format("{0}.{1}",appSettings.ProjectName, appSettings.ApplicationName);
+      string scope = string.Format("{0}.{1}", appSettings.ProjectName, appSettings.ApplicationName);
       
       _tripleStore = new MicrosoftSqlStoreManager(adapterSettings.DBServer, adapterSettings.DBname, adapterSettings.DBUser, adapterSettings.DBPassword);
-      _mapping = Utility.Read<Mapping>(String.Format("{0}Mapping.{1}.xml",adapterSettings.XmlPath, scope));
+      _mapping = Utility.Read<Mapping>(String.Format("{0}Mapping.{1}.xml", adapterSettings.XmlPath, scope));
       _graph = new Graph();
       _graphNs = String.Format("{0}/{1}/{2}/", adapterSettings.GraphBaseUri, appSettings.ProjectName, appSettings.ApplicationName);
-      _dataObjectNs = String.Format("{0}.proj_{1}",DATALAYER_NS, scope);
+      _dataObjectNs = String.Format("{0}.proj_{1}", DATALAYER_NS, scope);
       _dataObjectsAssemblyName = adapterSettings.ExecutingAssemblyName;
     }
 
@@ -162,7 +162,7 @@ namespace org.iringtools.adapter.semantic
       {
         FindGraphMap(graphName);
 
-        Uri graphUri = new Uri(_graphMap.baseUri);
+        Uri graphUri = new Uri(_graphNs.NamespaceName + graphName);
         string graphId = _tripleStore.GetGraphID(graphUri);
 
         if (!String.IsNullOrEmpty(graphId))

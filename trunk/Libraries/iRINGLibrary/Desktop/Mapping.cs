@@ -66,12 +66,9 @@ namespace org.iringtools.library
         public string name { get; set; }
 
         [DataMember(EmitDefaultValue = false, Order = 1)]
-        public string baseUri { get; set; }
-
-        [DataMember(EmitDefaultValue = false, Order = 2)]
         public Dictionary<ClassMap, List<TemplateMap>> classTemplateListMaps { get; set; }
 
-        [DataMember(EmitDefaultValue = false, Order = 3)]
+        [DataMember(EmitDefaultValue = false, Order = 2)]
         public List<DataObjectMap> dataObjectMaps { get; set; } // only top level data objects
 
         public KeyValuePair<ClassMap, List<TemplateMap>> GetClassTemplateListMap(string classId)
