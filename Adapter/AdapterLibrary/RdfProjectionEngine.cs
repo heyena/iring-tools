@@ -83,6 +83,12 @@ namespace org.iringtools.adapter.projection
       }
     }
 
+    public Dictionary<string, IList<IDataObject>> GetDataObjects(ref Mapping mapping, string graphName,
+          ref DataDictionary dataDictionary, ref XElement xml)
+    {
+      throw new NotImplementedException();
+    }
+
     #region helper methods
     private string ExtractId(string qualifiedId)
     {
@@ -125,24 +131,6 @@ namespace org.iringtools.adapter.projection
       }
 
       return RDF_NIL;
-    }
-
-    private void FindGraphMap(string graphName)
-    {
-      foreach (GraphMap graphMap in _mapping.graphMaps)
-      {
-        if (graphMap.name.ToLower() == graphName.ToLower())
-        {
-          _graphMap = graphMap;
-
-          if (_graphMap.classTemplateListMaps.Count == 0)
-            throw new Exception("Graph [" + graphName + "] is empty.");
-
-          return;
-        }
-      }
-
-      throw new Exception("Graph [" + graphName + "] does not exist.");
     }
 
     // get max # of data records from all data objects

@@ -23,6 +23,7 @@ namespace org.iringtools.adapter
     private string _dotnetRDFDbPassword = string.Empty;
     private string _interfaceCredential = string.Empty;
     private string _graphBaseUri = string.Empty;
+    private string _defaultProjectionFormat = string.Empty;
     private int _endpointTimeout = 0;
 
     public AdapterSettings(NameValueCollection AppSettings)
@@ -49,6 +50,7 @@ namespace org.iringtools.adapter
       this.EndpointTimeout = Convert.ToInt32(AppSettings["EndpointTimeout"]);
       this.InterfaceCredentialToken = AppSettings["InterfaceCredentialToken"];
       this.GraphBaseUri = AppSettings["GraphBaseUri"];
+      this.DefaultProjectionFormat = AppSettings["DefaultProjectionFormat"];
       this.PrepareCredentials();
     }
     
@@ -67,6 +69,23 @@ namespace org.iringtools.adapter
         { return _graphBaseUri; }
         set
         { this._graphBaseUri = value; }
+    }
+
+    public string DefaultProjectionFormat
+    {
+      get
+      { return _defaultProjectionFormat; }
+      set
+      {
+        if (value == null)
+        {
+          _defaultProjectionFormat = "xml";
+        }
+        else
+        {
+          _defaultProjectionFormat = value;
+        }
+      }
     }
 
     public WebCredentials InterfaceCredentials { get; set; }

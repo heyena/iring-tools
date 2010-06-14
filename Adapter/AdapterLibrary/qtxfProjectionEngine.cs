@@ -10,14 +10,14 @@ using Ninject;
 
 namespace org.iringtools.adapter.projection
 {
-    public class qtxfProjectionEngine : IProjectionLayer
+    public class QtxfProjectionEngine : IProjectionLayer
     {
         private static readonly string DATALAYER_NS = "org.iringtools.adapter.datalayer";
 
         private static readonly XNamespace XSI_NS = "http://www.w3.org/2001/XMLSchema-instance#";
         private static readonly XNamespace RDL_NS = "http://rdl.rdlfacade.org/data#";
 
-        private static readonly ILog _logger = LogManager.GetLogger(typeof(RdfProjectionEngine));
+        private static readonly ILog _logger = LogManager.GetLogger(typeof(QtxfProjectionEngine));
 
         private Mapping _mapping = null;
         private GraphMap _graphMap = null;
@@ -35,7 +35,7 @@ namespace org.iringtools.adapter.projection
         private static readonly string RDF_NIL = RDF_PREFIX + "nil";
 
         [Inject]
-        public qtxfProjectionEngine(AdapterSettings adapterSettings, ApplicationSettings appSettings, IDataLayer dataLayer)
+        public QtxfProjectionEngine(AdapterSettings adapterSettings, ApplicationSettings appSettings, IDataLayer dataLayer)
         {
           string scope = appSettings.ProjectName + "{0}" + appSettings.ApplicationName;
 
@@ -65,6 +65,48 @@ namespace org.iringtools.adapter.projection
           }
         }
 
+        public Dictionary<string, IList<IDataObject>> GetDataObjects(ref Mapping mapping, string graphName,
+          ref DataDictionary dataDictionary, ref XElement xml)
+        {
+          throw new NotImplementedException();
+        }
+
+        private void PopulateClassIdentifiers()
+        {
+          _classIdentifiers.Clear();
+
+          foreach (ClassMap classMap in _graphMap.classTemplateListMaps.Keys)
+          {
+            List<string> classIdentifiers = new List<string>();
+
+            foreach (string identifier in classMap.identifiers)
+            {
+              string[] property = identifier.Split('.');
+              string objectName = property[0].Trim();
+              string propertyName = property[1].Trim();
+
+              IList<IDataObject> dataObjects = _dataObjectSet[objectName];
+              if (dataObjects != null)
+              {
+                for (int i = 0; i < dataObjects.Count; i++)
+                {
+                  string value = Convert.ToString(dataObjects[i].GetPropertyValue(propertyName));
+
+                  if (classIdentifiers.Count == i)
+                  {
+                    classIdentifiers.Add(value);
+                  }
+                  else
+                  {
+                    classIdentifiers[i] += classMap.identifierDelimeter + value;
+                  }
+                }
+              }
+            }
+
+            _classIdentifiers[classMap.classId] = classIdentifiers;
+          }
+        }
 
         public XElement GetQtxf()
         {
@@ -246,64 +288,5 @@ namespace org.iringtools.adapter.projection
 
             return RDF_NIL;
         }
-
-        private void PopulateClassIdentifiers()
-        {
-            _classIdentifiers.Clear();
-
-            foreach (ClassMap classMap in _graphMap.classTemplateListMaps.Keys)
-            {
-                List<string> classIdentifiers = new List<string>();
-
-                foreach (string identifier in classMap.identifiers)
-                {
-                    // identifier is a fixed value
-                    if (identifier.StartsWith("#") && identifier.EndsWith("#"))
-                    {
-                        string value = identifier.Substring(1, identifier.Length - 2);
-                        int maxDataObjectsCount = MaxDataObjectsCount();
-
-                        for (int i = 0; i < maxDataObjectsCount; i++)
-                        {
-                            if (classIdentifiers.Count == i)
-                            {
-                                classIdentifiers.Add(value);
-                            }
-                            else
-                            {
-                                classIdentifiers[i] += classMap.identifierDelimeter + value;
-                            }
-                        }
-                    }
-                    else  // identifier value comes from a property
-                    {
-                        string[] property = identifier.Split('.');
-                        string objectName = property[0].Trim();
-                        string propertyName = property[1].Trim();
-
-                        IList<IDataObject> dataObjects = _dataObjectSet[objectName];
-                        if (dataObjects != null)
-                        {
-                            for (int i = 0; i < dataObjects.Count; i++)
-                            {
-                                string value = Convert.ToString(dataObjects[i].GetPropertyValue(propertyName));
-
-                                if (classIdentifiers.Count == i)
-                                {
-                                    classIdentifiers.Add(value);
-                                }
-                                else
-                                {
-                                    classIdentifiers[i] += classMap.identifierDelimeter + value;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                _classIdentifiers[classMap.classId] = classIdentifiers;
-            }
-        }
-
     }
 }

@@ -16,7 +16,10 @@ namespace org.iringtools.adapter
       Bind<AdapterSettings>().ToSelf().InSingletonScope();
       Bind<ApplicationSettings>().ToSelf().InThreadScope();
       Bind<IProjectionLayer>().To<RdfProjectionEngine>().Named("rdf");
-      Bind<IProjectionLayer>().To<qtxfProjectionEngine>().Named("qtxf");
+      Bind<IProjectionLayer>().To<QtxfProjectionEngine>().Named("qtxf");
+      Bind<IProjectionLayer>().To<DtoProjectionEngine>().Named("dto");
+      Bind<IProjectionLayer>().To<XmlProjectionEngine>().Named("xml");
+      Bind<IProjectionLayer>().To<SparqlResultsProjectionEngine>().Named("sparql");
     }
   }
 }

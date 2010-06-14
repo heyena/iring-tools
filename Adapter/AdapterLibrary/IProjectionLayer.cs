@@ -11,5 +11,8 @@ namespace org.iringtools.adapter
   {
     XElement GetXml(ref Mapping mapping, string graphName,
       ref DataDictionary dataDictionary, ref Dictionary<string, IList<IDataObject>> dataObjects);
+
+    Dictionary<string, IList<IDataObject>> GetDataObjects(ref Mapping mapping, string graphName,
+      ref DataDictionary dataDictionary, ref XElement xml);
   }
 }

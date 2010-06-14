@@ -27,6 +27,7 @@
 using System.Collections.Generic;
 using org.iringtools.library;
 using System.Xml.Linq;
+using org.w3.sparql_results;
 
 namespace org.iringtools.adapter
 {
@@ -40,7 +41,7 @@ namespace org.iringtools.adapter
     //Response Clear(string graphName);
 
     Response Refresh(string graphName, XElement rdf);
-    Dictionary<string, IList<IDataObject>> Get(string graphName);
+    Dictionary<string, SPARQLResults> Get(string graphName);
     Response Delete(string graphName);
   }
 }
