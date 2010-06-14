@@ -43,7 +43,7 @@ namespace org.iringtools.adapter.projection
     private Mapping _mapping = null;
     private GraphMap _graphMap = null;
     private DataDictionary _dataDictionary = null;
-    private Dictionary<string, IList<IDataObject>> _dataObjectSet = null; // dictionary of object names and list of data objects
+    private IList<IDataObject> _dataObjects = null; // dictionary of object names and list of data objects
     private Dictionary<string, List<string>> _classIdentifiers = null; // dictionary of class ids and list of identifiers
     private List<Dictionary<string, string>> _xPathValuePairs = null;  // dictionary of property xpath and value pairs
     private Dictionary<string, List<string>> _hierachicalDTOClasses = null;  // dictionary of class rdlUri and identifiers
@@ -56,7 +56,7 @@ namespace org.iringtools.adapter.projection
     {
       string scope = appSettings.ProjectName + "{0}" + appSettings.ApplicationName;
 
-      _dataObjectSet = new Dictionary<string, IList<IDataObject>>();
+      _dataObjects = new List<IDataObject>();
       _classIdentifiers = new Dictionary<string, List<string>>();
       _xPathValuePairs = new List<Dictionary<string, string>>();
       _hierachicalDTOClasses = new Dictionary<string, List<string>>();
@@ -67,7 +67,7 @@ namespace org.iringtools.adapter.projection
     }
 
     public XElement GetXml(ref Mapping mapping, string graphName,
-      ref DataDictionary dataDictionary, ref Dictionary<string, IList<IDataObject>> dataObjects)
+      ref DataDictionary dataDictionary, ref IList<IDataObject> dataObjects)
     {
       throw new NotImplementedException();
 
@@ -88,7 +88,7 @@ namespace org.iringtools.adapter.projection
       //}
     }
 
-    public Dictionary<string, IList<IDataObject>> GetDataObjects(ref Mapping mapping, string graphName,
+    public IList<IDataObject> GetDataObjects(ref Mapping mapping, string graphName,
       ref DataDictionary dataDictionary, ref XElement xml)
     {
       throw new NotImplementedException();
@@ -154,22 +154,6 @@ namespace org.iringtools.adapter.projection
       return RDF_NIL;
     }
 
-    // get max # of data records from all data objects
-    private int MaxDataObjectsCount()
-    {
-      int maxCount = 0;
-
-      foreach (var pair in _dataObjectSet)
-      {
-        if (pair.Value.Count > maxCount)
-        {
-          maxCount = pair.Value.Count;
-        }
-      }
-
-      return maxCount;
-    }
-
     private void PopulateClassIdentifiers()
     {
       _classIdentifiers.Clear();
@@ -184,9 +168,8 @@ namespace org.iringtools.adapter.projection
           if (identifier.StartsWith("#") && identifier.EndsWith("#"))
           {
             string value = identifier.Substring(1, identifier.Length - 2);
-            int maxDataObjectsCount = MaxDataObjectsCount();
-
-            for (int i = 0; i < maxDataObjectsCount; i++)
+            
+            for (int i = 0; i < _dataObjects.Count; i++)
             {
               if (classIdentifiers.Count == i)
               {
@@ -204,12 +187,11 @@ namespace org.iringtools.adapter.projection
             string objectName = property[0].Trim();
             string propertyName = property[1].Trim();
 
-            IList<IDataObject> dataObjects = _dataObjectSet[objectName];
-            if (dataObjects != null)
+            if (_dataObjects != null)
             {
-              for (int i = 0; i < dataObjects.Count; i++)
+              for (int i = 0; i < _dataObjects.Count; i++)
               {
-                string value = Convert.ToString(dataObjects[i].GetPropertyValue(propertyName));
+                string value = Convert.ToString(_dataObjects[i].GetPropertyValue(propertyName));
 
                 if (classIdentifiers.Count == i)
                 {

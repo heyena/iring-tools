@@ -303,11 +303,11 @@ namespace org.iringtools.modules.memappingregion
                     //    keyValuePair = new KeyValuePair<string, string>("Class Name", model.IdLabelDictionary[id]);
                     //    model.DetailProperties.Add(keyValuePair);
                     //}
-                    for (int i = 0; i < graph.dataObjectMaps.Count; i++)
-                    {
-                        keyValuePair = new KeyValuePair<string, string>("DataObject Name", graph.dataObjectMaps[i].name);
+                    //for (int i = 0; i < graph.dataObjectMaps.Count; i++)
+                    //{
+                        keyValuePair = new KeyValuePair<string, string>("DataObject Name", graph.dataObjectMap);
                         model.DetailProperties.Add(keyValuePair);
-                    }
+                    //}
                 }
 
                 if (selectedNode.Tag is ClassMap)

@@ -552,11 +552,7 @@
           </a:Value>
         </a:KeyValueOfClassMapArrayOfTemplateMap5KeNI5sr>
       </classTemplateListMaps>
-      <dataObjectMaps>
-        <DataObjectMap>
-          <name>Lines</name>
-        </DataObjectMap>
-      </dataObjectMaps>
+      <dataObjectMap>Lines</dataObjectMap>
     </GraphMap>
     <GraphMap>
       <name>Instruments</name>
@@ -568,6 +564,7 @@
             <name>INSTRUMENT</name>
             <identifiers>
               <a:string>Instruments.Tag</a:string>
+              <a:string>Instruments.Lines.Tag</a:string>
             </identifiers>
           </a:Key>
           <a:Value>
@@ -1005,11 +1002,7 @@
           </a:Value>
         </a:KeyValueOfClassMapArrayOfTemplateMap5KeNI5sr>
       </classTemplateListMaps>
-      <dataObjectMaps>
-        <DataObjectMap>
-          <name>Instruments</name>
-        </DataObjectMap>
-      </dataObjectMaps>
+      <dataObjectMap>Instruments</dataObjectMap>
     </GraphMap>
   </graphMaps>
   <valueLists>

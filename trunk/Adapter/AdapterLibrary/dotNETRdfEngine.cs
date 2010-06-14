@@ -141,8 +141,8 @@ namespace org.iringtools.adapter.semantic
     public Dictionary<string, SPARQLResults> Get(string graphName)
     {
       _graphMap = _mapping.FindGraphMap(graphName);
-
       string graphBaseUri = string.Format("{0}/{1}", _graphNs, graphName); 
+
       // load graph from triple store
       _graph.Clear();
       _graph.BaseUri = new Uri(graphBaseUri);
