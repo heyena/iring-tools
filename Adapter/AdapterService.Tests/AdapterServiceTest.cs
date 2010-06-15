@@ -136,9 +136,8 @@ namespace AdapterService.Tests
       string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
       request.Add("targetUri", "http://localhost/InterfaceService/sparql/");
       request.Add("targetCredentials", targetCredentialsXML);
-      request.Add("graphName", "Lines");
       request.Add("filter", "");
-      Response actual = target.Pull("12345_000", "ABC", request);
+      Response actual = target.Pull("12345_000", "ABC", "Lines", request);
       bool isError = false;
       for (int i = 0; i < actual.Count; i++)
       {

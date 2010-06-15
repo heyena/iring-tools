@@ -33,14 +33,7 @@ namespace org.iringtools.adapter.projection
     private static readonly XName RDF_RESOURCE = RDF_NS + "resource";
     private static readonly XName RDF_DATATYPE = RDF_NS + "datatype";
 
-    private static readonly string XSD_PREFIX = "xsd:";
     private static readonly string RDF_PREFIX = "rdf:";
-    private static readonly string RDL_PREFIX = "rdl:";
-    private static readonly string TPL_PREFIX = "tpl:";
-
-    private static readonly string RDF_TYPE_ID = "tpl:R63638239485";
-    private static readonly string CLASSIFICATION_INSTANCE_ID = "tpl:R55055340393";
-    private static readonly string CLASS_INSTANCE_ID = "tpl:R99011248051";
     private static readonly string RDF_NIL = RDF_PREFIX + "nil";
 
     private static readonly ILog _logger = LogManager.GetLogger(typeof(DtoProjectionEngine));

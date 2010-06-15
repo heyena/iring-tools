@@ -336,20 +336,19 @@ namespace org.iringtools.adapter
       return response;
     }
 
-    public Response Pull(string projectName, string applicationName, string graphName)
+    public Response Pull(string projectName, string applicationName, string graphName, Request request)
     {
       Response response = new Response();
 
       try
       {
         Initialize(projectName, applicationName);
-        Dictionary<string, SPARQLResults> resultSet = _semanticEngine.Get(graphName);
         DateTime startTime = DateTime.Now;
 
+        Dictionary<string, SPARQLResults> resultSet = _semanticEngine.Get(request);
         _projectionEngine = _kernel.Get<IProjectionLayer>("sparql");
 
         XElement xml = SerializationExtensions.ToXml<Dictionary<string, SPARQLResults>>(resultSet);
-
         _dataObjects = _projectionEngine.GetDataObjects(ref _mapping, graphName, ref _dataDictionary, ref xml);
         _dataLayer.Post(_dataObjects);
 
