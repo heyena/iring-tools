@@ -130,14 +130,26 @@ namespace AdapterService.Tests
     [TestMethod()]
     public void PullTest_ABC()
     {
-      AdapterProxy target = new AdapterProxy();
-      Request request = new Request();
       WebCredentials targetCredentials = new WebCredentials();
       string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
-      request.Add("targetUri", "http://localhost/InterfaceService/sparql/");
-      request.Add("targetCredentials", targetCredentialsXML);
-      request.Add("filter", "");
-      Response actual = target.Pull("12345_000", "ABC", "Lines", request);
+
+      WebCredentials proxyCredentials = new WebCredentials();
+      string proxyCredentialsXML = Utility.Serialize<WebCredentials>(proxyCredentials, true);
+
+      Request request = new Request
+      {
+        {"targetUri", "http://localhost:52786/Service.svc/"},
+        //{"targetCredentials", targetCredentialsXML},
+        {"graphName", "Lines"},
+        //{"filter", String.Empty},
+        //{"proxyHost", String.Empty},
+        //{"proxyPort", "8080"},
+        //{"proxyCredentials", proxyCredentialsXML},
+      };
+
+      AdapterProxy target = new AdapterProxy();
+      Response actual = target.Pull("12345_000", "ABC", request);
+
       bool isError = false;
       for (int i = 0; i < actual.Count; i++)
       {
@@ -147,6 +159,7 @@ namespace AdapterService.Tests
           break;
         }
       }
+
       Assert.AreEqual(false, isError);
     }
 

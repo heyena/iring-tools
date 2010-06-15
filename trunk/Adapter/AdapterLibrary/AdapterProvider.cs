@@ -355,13 +355,13 @@ namespace org.iringtools.adapter
         response.Append(_dataLayer.Post(dataObjects));
         response.Add(String.Format("Pull is successful from " + targetUri + "for Graph " + graphName));
       }
-      catch (Exception exception)
+      catch (Exception ex)
       {
-        _logger.Error("Error in PullDTO: " + exception);
+        _logger.Error("Error in PullDTO: " + ex);
 
         response.Level = StatusLevel.Error;
         response.Add("Error while pulling " + graphName + " data from " + targetUri + " as " + targetUri + " data with filter " + filter + ".\r\n");
-        response.Add(exception.ToString());
+        response.Add(ex.ToString());
       }
       return response;
     }
@@ -375,27 +375,85 @@ namespace org.iringtools.adapter
         Initialize(projectName, applicationName);
         DateTime startTime = DateTime.Now;
 
-        #region get rdf from an uri
+        #region parsing request
+        if (!request.ContainsKey("targetUri"))
+          throw new Exception("Target uri is required");
+
         string targetUri = request["targetUri"];
-        string graphName = request["graphName"];
-        string targetCredentialsXML = request["targetCredentials"];
-        string proxyHost = request["proxyHost"];
-        int proxyPort = Int32.Parse(request["proxyPort"]);
-        string proxyCredentialsXML = request["proxyCredentials"];
+        
+        if (!request.ContainsKey("graphName"))
+          throw new Exception("Graph name is required");
 
-        WebCredentials targetCredentials = Utility.Deserialize<WebCredentials>(targetCredentialsXML, true);
-        if (targetCredentials.isEncrypted) targetCredentials.Decrypt();
+        string graphName = request["graphName"];        
+        
+        WebCredentials targetCredentials = null;
+        if (request.ContainsKey("targetCredentials"))
+        {
+          string targetCredentialsXML = request["targetCredentials"];
+          targetCredentials = Utility.Deserialize<WebCredentials>(targetCredentialsXML, true);
+          
+          if (targetCredentials.isEncrypted) 
+            targetCredentials.Decrypt();
+        }
 
-        WebCredentials proxyCredentials = Utility.Deserialize<WebCredentials>(proxyCredentialsXML, true);
-        if (proxyCredentials.isEncrypted) proxyCredentials.Decrypt();
+        WebCredentials proxyCredentials = null;
+        string proxyHost = String.Empty;
+        string proxyPort = String.Empty;
+        if (request.ContainsKey("proxyCredentials"))
+        {
+          string proxyCredentialsXML = request["proxyCredentials"];
+          proxyCredentials = Utility.Deserialize<WebCredentials>(proxyCredentialsXML, true);
 
-        WebHttpClient client = new WebHttpClient(
-          targetUri, targetCredentials.GetNetworkCredential(), proxyHost, proxyPort, proxyCredentials.GetNetworkCredential());
-        XElement rdf = client.Get<XElement>(String.Empty);
+          if (proxyCredentials.isEncrypted)
+            proxyCredentials.Decrypt();
+
+          if (!request.ContainsKey("proxyHost"))
+            throw new Exception("");
+
+          proxyHost = request["proxyHost"];
+
+          if (!request.ContainsKey("proxyPort"))
+            throw new Exception("");
+
+          proxyPort = request["proxyPort"];
+        }
         #endregion
 
+        // sending request to get rdf
+        WebHttpClient client = null;
+        if (targetCredentials == null)
+        {
+          if (proxyCredentials == null)
+          {
+            client = new WebHttpClient(targetUri);
+          }
+          else
+          {
+            //create client with proxy credential only 
+          }
+        }
+        else 
+        {
+          if (proxyCredentials == null)
+          {
+            client = new WebHttpClient(targetUri, targetCredentials.GetNetworkCredential());
+          }
+          else
+          {
+            client = new WebHttpClient(
+              targetUri, 
+              targetCredentials.GetNetworkCredential(), 
+              proxyHost, 
+              Int32.Parse(proxyPort), 
+              proxyCredentials.GetNetworkCredential());
+          }
+        }
+
+        XElement rdf = client.Get<XElement>(projectName + "/" + applicationName + "/" + graphName + "?format=rdf");
+        
         // call RdfProjectionEngine to fill data objects from the given rdf
         _projectionEngine = _kernel.Get<IProjectionLayer>("rdf");
+        _graphMap = _mapping.FindGraphMap(graphName);
         _dataObjects = _projectionEngine.GetDataObjects(ref _graphMap, ref _dataDictionary, ref rdf);
 
         // post data objects to data layer
@@ -412,6 +470,8 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
+        _logger.Error("Error in Pull(): ", ex);
+
         response.Level = StatusLevel.Error;
         response.Add(string.Format("Error pulling graph: {0}", ex));
       }
@@ -539,10 +599,10 @@ namespace org.iringtools.adapter
           _isInitialized = true;
         }
       }
-      catch (Exception exception)
+      catch (Exception ex)
       {
-        _logger.Error(string.Format("Error initializing application: {0}", exception));
-        throw new Exception(string.Format("Error initializing application: {0} {1)", exception.ToString(), exception));
+        _logger.Error(string.Format("Error initializing application: {0}", ex));
+        throw new Exception(string.Format("Error initializing application: {0})", ex));
       }
     }
 
