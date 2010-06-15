@@ -52,8 +52,7 @@ namespace org.iringtools.adapter
       this.GraphBaseUri = AppSettings["GraphBaseUri"];
       this.DefaultProjectionFormat = AppSettings["DefaultProjectionFormat"];
       this.PrepareCredentials();
-    }
-    
+    }    
   
     public string InterfaceCredentialToken 
     {

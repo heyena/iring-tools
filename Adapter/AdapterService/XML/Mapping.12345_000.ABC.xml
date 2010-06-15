@@ -564,7 +564,6 @@
             <name>INSTRUMENT</name>
             <identifiers>
               <a:string>Instruments.Tag</a:string>
-              <a:string>Instruments.Lines.Tag</a:string>
             </identifiers>
           </a:Key>
           <a:Value>

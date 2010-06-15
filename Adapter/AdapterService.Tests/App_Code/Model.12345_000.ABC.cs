@@ -14,43 +14,39 @@ using org.iringtools.library;
 
 namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
 {
-  public class InLinePipingComponent : IDataObject
+  public class Instruments : IDataObject
   {
     public virtual String Id { get; set; }
-    public virtual String tag
+    public virtual String Tag
     {
       get { return Id; }
       set { Id = value; }
     }
-    public virtual String componentType { get; set; }
-    public virtual Single diameter { get; set; }
-    public virtual Boolean isCloned { get; set; }
-    public virtual String lineTag { get; set; }
-    public virtual String pid { get; set; }
-    public virtual String projectNumber { get; set; }
-    public virtual Int32 quantity { get; set; }
-    public virtual String rating { get; set; }
-    public virtual String system { get; set; }
-    public virtual String unit { get; set; }
-    public virtual String uomDiameter { get; set; }
+    public virtual Single DesignPressure { get; set; }
+    public virtual String Manufacturer { get; set; }
+    public virtual Single OperatingPressure { get; set; }
+    public virtual String PID { get; set; }
+    public virtual String PIDRev { get; set; }
+    public virtual String Plant { get; set; }
+    public virtual String PlantArea { get; set; }
+    public virtual String PressUOM { get; set; }
+    public virtual String System { get; set; }
     
     public virtual object GetPropertyValue(string propertyName)
     {
       switch (propertyName)
       {
         case "Id": return Id;
-        case "tag": return tag;
-        case "componentType": return componentType;
-        case "diameter": return diameter;
-        case "isCloned": return isCloned;
-        case "lineTag": return lineTag;
-        case "pid": return pid;
-        case "projectNumber": return projectNumber;
-        case "quantity": return quantity;
-        case "rating": return rating;
-        case "system": return system;
-        case "unit": return unit;
-        case "uomDiameter": return uomDiameter;
+        case "Tag": return Tag;
+        case "DesignPressure": return DesignPressure;
+        case "Manufacturer": return Manufacturer;
+        case "OperatingPressure": return OperatingPressure;
+        case "PID": return PID;
+        case "PIDRev": return PIDRev;
+        case "Plant": return Plant;
+        case "PlantArea": return PlantArea;
+        case "PressUOM": return PressUOM;
+        case "System": return System;
         default: throw new Exception("Property [" + propertyName + "] does not exist.");
       }
     }
@@ -62,41 +58,35 @@ namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
         case "Id":
           Id = Convert.ToString(value);
           break;
-        case "tag":
-          if (value != null) tag = Convert.ToString(value);
+        case "Tag":
+          if (value != null) Tag = Convert.ToString(value);
           break;
-        case "componentType":
-          if (value != null) componentType = Convert.ToString(value);
+        case "DesignPressure":
+          if (value != null) DesignPressure = Convert.ToSingle(value);
           break;
-        case "diameter":
-          if (value != null) diameter = Convert.ToSingle(value);
+        case "Manufacturer":
+          if (value != null) Manufacturer = Convert.ToString(value);
           break;
-        case "isCloned":
-          if (value != null) isCloned = Convert.ToBoolean(value);
+        case "OperatingPressure":
+          if (value != null) OperatingPressure = Convert.ToSingle(value);
           break;
-        case "lineTag":
-          if (value != null) lineTag = Convert.ToString(value);
+        case "PID":
+          if (value != null) PID = Convert.ToString(value);
           break;
-        case "pid":
-          if (value != null) pid = Convert.ToString(value);
+        case "PIDRev":
+          if (value != null) PIDRev = Convert.ToString(value);
           break;
-        case "projectNumber":
-          if (value != null) projectNumber = Convert.ToString(value);
+        case "Plant":
+          if (value != null) Plant = Convert.ToString(value);
           break;
-        case "quantity":
-          if (value != null) quantity = Convert.ToInt32(value);
+        case "PlantArea":
+          if (value != null) PlantArea = Convert.ToString(value);
           break;
-        case "rating":
-          if (value != null) rating = Convert.ToString(value);
+        case "PressUOM":
+          if (value != null) PressUOM = Convert.ToString(value);
           break;
-        case "system":
-          if (value != null) system = Convert.ToString(value);
-          break;
-        case "unit":
-          if (value != null) unit = Convert.ToString(value);
-          break;
-        case "uomDiameter":
-          if (value != null) uomDiameter = Convert.ToString(value);
+        case "System":
+          if (value != null) System = Convert.ToString(value);
           break;
         default:
           throw new Exception("Property [" + propertyName + "] does not exist.");
@@ -105,62 +95,120 @@ namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
     
     public virtual IList<IDataObject> GetRelatedObjects(string relatedObjectType)
     {
-      throw new NotImplementedException();
-    }
-  }
-  
-  public class Line : IDataObject
-  {
-    public virtual String Id { get; set; }
-    public virtual String tag
-    {
-      get { return Id; }
-      set { Id = value; }
-    }
-    public virtual Single diameter { get; set; }
-    public virtual String system { get; set; }
-    public virtual String uomDiameter { get; set; }
-    
-    public virtual object GetPropertyValue(string propertyName)
-    {
-      switch (propertyName)
+      switch (relatedObjectType)
       {
-        case "Id": return Id;
-        case "tag": return tag;
-        case "diameter": return diameter;
-        case "system": return system;
-        case "uomDiameter": return uomDiameter;
-        default: throw new Exception("Property [" + propertyName + "] does not exist.");
+        default:
+          throw new Exception("Related object [" + relatedObjectType + "] does not exist.");
+        }
       }
     }
     
-    public virtual void SetPropertyValue(string propertyName, object value)
+    public class Lines : IDataObject
     {
-      switch (propertyName)
+      public virtual String Id { get; set; }
+      public virtual String Tag
       {
+        get { return Id; }
+        set { Id = value; }
+      }
+      public virtual Single DesignTemperature { get; set; }
+      public virtual Single Diameter { get; set; }
+      public virtual String DiameterUOM { get; set; }
+      public virtual String Fluid { get; set; }
+      public virtual Single Length { get; set; }
+      public virtual String LengthUOM { get; set; }
+      public virtual Single OperatingTemperature { get; set; }
+      public virtual String PID { get; set; }
+      public virtual String PIDRev { get; set; }
+      public virtual String Plant { get; set; }
+      public virtual String PlantArea { get; set; }
+      public virtual String System { get; set; }
+      public virtual String TempUOM { get; set; }
+      
+      public virtual object GetPropertyValue(string propertyName)
+      {
+        switch (propertyName)
+        {
+          case "Id": return Id;
+          case "Tag": return Tag;
+          case "DesignTemperature": return DesignTemperature;
+          case "Diameter": return Diameter;
+          case "DiameterUOM": return DiameterUOM;
+          case "Fluid": return Fluid;
+          case "Length": return Length;
+          case "LengthUOM": return LengthUOM;
+          case "OperatingTemperature": return OperatingTemperature;
+          case "PID": return PID;
+          case "PIDRev": return PIDRev;
+          case "Plant": return Plant;
+          case "PlantArea": return PlantArea;
+          case "System": return System;
+          case "TempUOM": return TempUOM;
+          default: throw new Exception("Property [" + propertyName + "] does not exist.");
+        }
+      }
+      
+      public virtual void SetPropertyValue(string propertyName, object value)
+      {
+        switch (propertyName)
+        {
         case "Id":
           Id = Convert.ToString(value);
           break;
-        case "tag":
-          if (value != null) tag = Convert.ToString(value);
-          break;
-        case "diameter":
-          if (value != null) diameter = Convert.ToSingle(value);
-          break;
-        case "system":
-          if (value != null) system = Convert.ToString(value);
-          break;
-        case "uomDiameter":
-          if (value != null) uomDiameter = Convert.ToString(value);
-          break;
-        default:
-          throw new Exception("Property [" + propertyName + "] does not exist.");
+          case "Tag":
+            if (value != null) Tag = Convert.ToString(value);
+            break;
+          case "DesignTemperature":
+            if (value != null) DesignTemperature = Convert.ToSingle(value);
+            break;
+          case "Diameter":
+            if (value != null) Diameter = Convert.ToSingle(value);
+            break;
+          case "DiameterUOM":
+            if (value != null) DiameterUOM = Convert.ToString(value);
+            break;
+          case "Fluid":
+            if (value != null) Fluid = Convert.ToString(value);
+            break;
+          case "Length":
+            if (value != null) Length = Convert.ToSingle(value);
+            break;
+          case "LengthUOM":
+            if (value != null) LengthUOM = Convert.ToString(value);
+            break;
+          case "OperatingTemperature":
+            if (value != null) OperatingTemperature = Convert.ToSingle(value);
+            break;
+          case "PID":
+            if (value != null) PID = Convert.ToString(value);
+            break;
+          case "PIDRev":
+            if (value != null) PIDRev = Convert.ToString(value);
+            break;
+          case "Plant":
+            if (value != null) Plant = Convert.ToString(value);
+            break;
+          case "PlantArea":
+            if (value != null) PlantArea = Convert.ToString(value);
+            break;
+          case "System":
+            if (value != null) System = Convert.ToString(value);
+            break;
+          case "TempUOM":
+            if (value != null) TempUOM = Convert.ToString(value);
+            break;
+          default:
+            throw new Exception("Property [" + propertyName + "] does not exist.");
+        }
+      }
+      
+      public virtual IList<IDataObject> GetRelatedObjects(string relatedObjectType)
+      {
+        switch (relatedObjectType)
+        {
+          default:
+            throw new Exception("Related object [" + relatedObjectType + "] does not exist.");
+          }
+        }
       }
     }
-    
-    public virtual IList<IDataObject> GetRelatedObjects(string relatedObjectType)
-    {
-      throw new NotImplementedException();
-    }
-  }
-}
