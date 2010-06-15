@@ -151,12 +151,12 @@ namespace AdapterService.Tests
       return response;
     }
 
-    public Response Pull(string projectName, string applicationName, string graphName, Request request)
+    public Response Pull(string projectName, string applicationName, Request request)
     {
       Response response = null;
       try
       {
-        response = _adapterProvider.Pull(projectName, applicationName, graphName, request);
+        response = _adapterProvider.Pull(projectName, applicationName, request);
       }
       catch (Exception ex)
       {

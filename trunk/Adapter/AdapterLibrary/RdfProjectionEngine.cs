@@ -134,46 +134,6 @@ namespace org.iringtools.adapter.projection
     }
 
     #region helper methods
-    private string ResolveValueList(string valueList, string value)
-    {
-      foreach (ValueList valueLst in _mapping.valueLists)
-      {
-        if (valueLst.name == valueList)
-        {
-          foreach (ValueMap valueMap in valueLst.valueMaps)
-          {
-            if (valueMap.internalValue == value)
-            {
-              return valueMap.uri.Replace("rdl:", RDL_NS.NamespaceName);
-            }
-          }
-        }
-      }
-
-      return RDF_NIL;
-    }
-
-    private string ResolveValueMap(string valueList, string qualifiedUri)
-    {
-      string uri = qualifiedUri.Replace(RDL_NS.NamespaceName, "rdl:");
-
-      foreach (ValueList valueLst in _mapping.valueLists)
-      {
-        if (valueLst.name == valueList)
-        {
-          foreach (ValueMap valueMap in valueLst.valueMaps)
-          {
-            if (valueMap.uri == uri)
-            {
-              return valueMap.internalValue;
-            }
-          }
-        }
-      }
-
-      return String.Empty;
-    }
-
     private void PopulateClassIdentifiers()
     {
       _classIdentifiers.Clear();
@@ -351,7 +311,7 @@ namespace org.iringtools.adapter.projection
               }
               else // resolve value list to uri
               {
-                string valueListUri = ResolveValueList(roleMap.valueList, value);
+                string valueListUri = _mapping.ResolveValueList(roleMap.valueList, value);
                 roleElement.Add(new XAttribute(RDF_RESOURCE, valueListUri));
               }
 
@@ -445,7 +405,7 @@ namespace org.iringtools.adapter.projection
                 else if (value.Contains("^^"))
                   value = value.Substring(0, value.IndexOf("^^"));
                 else if (!String.IsNullOrEmpty(roleMap.valueList))
-                  value = ResolveValueMap(roleMap.valueList, value);
+                  value = _mapping.ResolveValueMap(roleMap.valueList, value);
 
                 _dataObjects[objectIndex++].SetPropertyValue(propertyName, value);
 

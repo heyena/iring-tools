@@ -122,28 +122,6 @@ namespace org.iringtools.adapter.projection
       return returnValue;
     }
 
-    private string ResolveValueList(string valueList, string value)
-    {
-      if (_mapping != null)// && _mapping.valueMaps.Count > 0)
-      {
-          foreach (ValueList valueLst in _mapping.valueLists)
-          {
-              if (valueLst.name == valueList)
-              {
-                  foreach (ValueMap valueMap in valueLst.valueMaps)
-                  {
-                      if (valueMap.internalValue == value)
-                      {
-                          return valueMap.uri.Replace("rdl:",RDL_NS.NamespaceName);
-                      }
-                  }
-              }
-          }
-      }
-
-      return RDF_NIL;
-    }
-
     private void FillDTOList(string classId, string xPath)
     {
       KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = _graphMap.GetClassTemplateListMap(classId);
@@ -171,7 +149,7 @@ namespace org.iringtools.adapter.projection
 
               if (!String.IsNullOrEmpty(roleMap.valueList))
               {
-                value = ResolveValueList(roleMap.valueList, value);
+                value = _mapping.ResolveValueList(roleMap.valueList, value);
               }
 
               Dictionary<string, string> propertyValuePair = _xPathValuePairs[i];

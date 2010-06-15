@@ -84,8 +84,8 @@ namespace org.iringtools.adapter
     Response RefreshGraph(string projectName, string applicationName, string graphName);
 
     [OperationContract]
-    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/pull")]
-    Response Pull(string projectName, string applicationName, string graphName, Request request);
+    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/pull")]
+    Response Pull(string projectName, string applicationName, Request request);
 
     [OperationContract]
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/pullDTO")]

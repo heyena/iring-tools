@@ -37,6 +37,9 @@ namespace org.iringtools.library
   [DataContract]
   public class Mapping
   {
+    private static readonly string RDL_NS = "http://rdl.rdlfacade.org/data#";
+    private static readonly string RDF_NIL = "rdf:nil";
+
     public Mapping()
     {
       graphMaps = new List<GraphMap>();
@@ -66,6 +69,46 @@ namespace org.iringtools.library
       }
 
       throw new Exception("Graph [" + graphName + "] does not exist.");
+    }
+
+    public string ResolveValueList(string valueList, string value)
+    {
+      foreach (ValueList valueLst in valueLists)
+      {
+        if (valueLst.name == valueList)
+        {
+          foreach (ValueMap valueMap in valueLst.valueMaps)
+          {
+            if (valueMap.internalValue == value)
+            {
+              return valueMap.uri.Replace("rdl:", RDL_NS);
+            }
+          }
+        }
+      }
+
+      return RDF_NIL;
+    }
+
+    public string ResolveValueMap(string valueList, string qualifiedUri)
+    {
+      string uri = qualifiedUri.Replace(RDL_NS, "rdl:");
+
+      foreach (ValueList valueLst in valueLists)
+      {
+        if (valueLst.name == valueList)
+        {
+          foreach (ValueMap valueMap in valueLst.valueMaps)
+          {
+            if (valueMap.uri == uri)
+            {
+              return valueMap.internalValue;
+            }
+          }
+        }
+      }
+
+      return String.Empty;
     }
   }
 
