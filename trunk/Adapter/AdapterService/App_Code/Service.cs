@@ -150,13 +150,14 @@ namespace org.iringtools.adapter
     /// <summary>
     /// Pulls the data from a triple store into legacy database
     /// </summary>
-    /// <param name="projectName"></param>
-    /// <param name="applicationName"></param>
-    /// <param name="graphName"></param>
+    /// <param name="projectName">project name</param>
+    /// <param name="applicationName">application name</param>
+    /// <param name="graphName">graph name</param>
+    /// <param name="request">request containing credentials and uri to pull rdf from</param>
     /// <returns></returns>
-    public Response Pull(string projectName, string applicationName, string graphName)
+    public Response Pull(string projectName, string applicationName, string graphName, Request request)
     {
-      return _adapterProvider.Pull(projectName, applicationName, graphName);
+      return _adapterProvider.Pull(projectName, applicationName, graphName, request);
     }
 
     /// <summary>

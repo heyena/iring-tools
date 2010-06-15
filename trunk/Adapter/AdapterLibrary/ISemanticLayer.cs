@@ -33,15 +33,8 @@ namespace org.iringtools.adapter
 {
   public interface ISemanticLayer
   {
-    //void Initialize();
-    //List<string> GetIdentifiers(string graphName);
-    //List<DataTransferObject> Get(string graphName);
-    //Response Post(string graphName, List<DataTransferObject> dtoList);
-    //Response Delete(string graphName, List<string> identifiers);
-    //Response Clear(string graphName);
-
     Response Refresh(string graphName, XElement rdf);
-    Dictionary<string, SPARQLResults> Get(string graphName);
+    Dictionary<string, SPARQLResults> Get(Request request);
     Response Delete(string graphName);
   }
 }

@@ -67,6 +67,7 @@ namespace org.iringtools.adapter.semantic
 
     private static readonly ILog _logger = LogManager.GetLogger(typeof(dotNetRdfEngine));
 
+    private AdapterSettings _settings = null;
     private Mapping _mapping = null;
     private GraphMap _graphMap = null;
     private Graph _graph = null;  // dotNetRdf graph
@@ -80,7 +81,8 @@ namespace org.iringtools.adapter.semantic
     public dotNetRdfEngine(AdapterSettings adapterSettings, ApplicationSettings appSettings)
     {
       string scope = string.Format("{0}.{1}", appSettings.ProjectName, appSettings.ApplicationName);
-      
+
+      _settings = adapterSettings;
       _tripleStore = new MicrosoftSqlStoreManager(adapterSettings.DBServer, adapterSettings.DBname, adapterSettings.DBUser, adapterSettings.DBPassword);
       _mapping = Utility.Read<Mapping>(String.Format("{0}Mapping.{1}.xml", adapterSettings.XmlPath, scope));
       _graph = new Graph();
@@ -99,7 +101,7 @@ namespace org.iringtools.adapter.semantic
 
         _graphMap = _mapping.FindGraphMap(graphName);
         
-        // create xdoc from xelement
+        // create xdoc from rdf xelement
         Uri graphUri = new Uri(_graphNs.NamespaceName + graphName);
         XmlDocument xdoc = new XmlDocument();
         xdoc.LoadXml(rdf.ToString());
@@ -138,18 +140,38 @@ namespace org.iringtools.adapter.semantic
       return response;
     }
 
-    public Dictionary<string, SPARQLResults> Get(string graphName)
+    public Dictionary<string, SPARQLResults> Get(Request request)
     {
-      _graphMap = _mapping.FindGraphMap(graphName);
-      string graphBaseUri = string.Format("{0}/{1}", _graphNs, graphName); 
+      // get rdf from an uri
+      string targetUri = request["targetUri"];
+      string targetCredentialsXML = request["targetCredentials"];
+      string proxyHost = request["proxyHost"];
+      int proxyPort = Int32.Parse(request["proxyPort"]);
+      string proxyCredentialsXML = request["proxyCredentials"];
 
-      // load graph from triple store
+      WebCredentials targetCredentials = Utility.Deserialize<WebCredentials>(targetCredentialsXML, true);
+      if (targetCredentials.isEncrypted) targetCredentials.Decrypt();
+
+      WebCredentials proxyCredentials = Utility.Deserialize<WebCredentials>(proxyCredentialsXML, true);
+      if (proxyCredentials.isEncrypted) proxyCredentials.Decrypt();
+
+      WebHttpClient client = new WebHttpClient(
+        targetUri, targetCredentials.GetNetworkCredential(), proxyHost, proxyPort, proxyCredentials.GetNetworkCredential());
+      XElement xElement = client.Get<XElement>(String.Empty);
+
+      // load rdf to xdoc
+      XmlDocument xDoc = new XmlDocument();      
+      xDoc.LoadXml(xElement.ToString());
+      xElement.RemoveAll();
+
+      // create dotNetRdf graph from xdoc
       _graph.Clear();
-      _graph.BaseUri = new Uri(graphBaseUri);
-      _tripleStore.LoadGraph(_graph, graphBaseUri);
+      RdfXmlParser parser = new RdfXmlParser();
+      parser.Load(_graph, xDoc);
+      xDoc.RemoveAll();
 
-      // create in-memory store for querying
-      _memoryStore = new TripleStore();
+      // load dotNetRdf graph to memory store for sparql-querying
+      TripleStore _memoryStore = new TripleStore();
       _memoryStore.Add(_graph);
       _graph.Dispose();
 
@@ -339,7 +361,6 @@ namespace org.iringtools.adapter.semantic
 
                   case NodeType.GraphLiteral:
                     throw new NotImplementedException("Graph Literals are not supported.");
-                    break;
 
                   case NodeType.Literal:
                     LiteralNode literalNode = (LiteralNode)node;

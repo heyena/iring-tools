@@ -31,18 +31,13 @@ namespace org.iringtools.adapter.projection
     private static readonly XName RDF_RESOURCE = RDF_NS + "resource";
     private static readonly XName RDF_DATATYPE = RDF_NS + "datatype";
 
-    private static readonly string XSD_PREFIX = "xsd:";
     private static readonly string RDF_PREFIX = "rdf:";
-    private static readonly string RDL_PREFIX = "rdl:";
-    private static readonly string TPL_PREFIX = "tpl:";
-
     private static readonly string RDF_NIL = RDF_PREFIX + "nil";
 
     private static readonly ILog _logger = LogManager.GetLogger(typeof(SparqlResultsProjectionEngine));
 
     private Mapping _mapping = null;
     private GraphMap _graphMap = null;
-    private DataDictionary _dataDictionary = null;
     private IList<IDataObject> _dataObjects = null; // dictionary of object names and list of data objects
     private Dictionary<string, List<string>> _classIdentifiers = null; // dictionary of class ids and list of identifiers
     private List<Dictionary<string, string>> _xPathValuePairs = null;  // dictionary of property xpath and value pairs
