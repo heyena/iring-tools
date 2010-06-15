@@ -34,7 +34,6 @@ namespace org.iringtools.adapter
   public interface ISemanticLayer
   {
     Response Refresh(string graphName, XElement rdf);
-    Dictionary<string, SPARQLResults> Get(Request request);
     Response Delete(string graphName);
   }
 }

@@ -19,7 +19,7 @@ namespace org.iringtools.adapter
       Bind<IProjectionLayer>().To<QtxfProjectionEngine>().Named("qtxf");
       Bind<IProjectionLayer>().To<DtoProjectionEngine>().Named("dto");
       Bind<IProjectionLayer>().To<XmlProjectionEngine>().Named("xml");
-      Bind<IProjectionLayer>().To<SparqlResultsProjectionEngine>().Named("sparql");
+      //Bind<IProjectionLayer>().To<SparqlResultsProjectionEngine>().Named("sparql");
     }
   }
 }

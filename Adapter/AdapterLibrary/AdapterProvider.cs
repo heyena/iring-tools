@@ -176,6 +176,36 @@ namespace org.iringtools.adapter
       return response;
     }
 
+    public Response UpdateMappingNEW(string projectName, string applicationName, string mappingXml)
+    {
+      Response response = new Response();
+      string path = string.Format("{0}Mapping.{1}.{2}.xml", _settings.XmlPath, projectName, applicationName);
+
+      try
+      {
+        bool isOldMapping = true;
+
+        if (isOldMapping)
+        {
+          // convert to old mapping to new
+        }
+        
+        Mapping mapping = Utility.DeserializeDataContract<Mapping>(mappingXml);
+        Utility.Write<Mapping>(mapping, path, true);      
+
+        response.Add("Mapping file updated successfully.");
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in UpdateMapping: {0}", ex));
+
+        response.Level = StatusLevel.Error;
+        response.Add(string.Format("Error saving mapping file to path [{0}]: {1}", path, ex));
+      }
+
+      return response;
+    }
+
     public Response RefreshAll(string projectName, string applicationName)
     {
       Response response = new Response();
@@ -250,7 +280,7 @@ namespace org.iringtools.adapter
 
         LoadDataObjectSet(identifiers);
 
-        return _projectionEngine.GetXml(ref _mapping, graphName, ref _dataDictionary, ref _dataObjects);
+        return _projectionEngine.GetXml(ref _graphMap, ref _dataDictionary, ref _dataObjects);
       }
       catch (Exception ex)
       {
@@ -278,7 +308,7 @@ namespace org.iringtools.adapter
 
         LoadDataObjectSet(null);
 
-        return _projectionEngine.GetXml(ref _mapping, graphName, ref _dataDictionary, ref _dataObjects);
+        return _projectionEngine.GetXml(ref _graphMap, ref _dataDictionary, ref _dataObjects);
       }
       catch (Exception ex)
       {
@@ -345,11 +375,29 @@ namespace org.iringtools.adapter
         Initialize(projectName, applicationName);
         DateTime startTime = DateTime.Now;
 
-        Dictionary<string, SPARQLResults> resultSet = _semanticEngine.Get(request);
-        _projectionEngine = _kernel.Get<IProjectionLayer>("sparql");
+        #region get rdf from an uri
+        string targetUri = request["targetUri"];
+        string targetCredentialsXML = request["targetCredentials"];
+        string proxyHost = request["proxyHost"];
+        int proxyPort = Int32.Parse(request["proxyPort"]);
+        string proxyCredentialsXML = request["proxyCredentials"];
 
-        XElement xml = SerializationExtensions.ToXml<Dictionary<string, SPARQLResults>>(resultSet);
-        _dataObjects = _projectionEngine.GetDataObjects(ref _mapping, graphName, ref _dataDictionary, ref xml);
+        WebCredentials targetCredentials = Utility.Deserialize<WebCredentials>(targetCredentialsXML, true);
+        if (targetCredentials.isEncrypted) targetCredentials.Decrypt();
+
+        WebCredentials proxyCredentials = Utility.Deserialize<WebCredentials>(proxyCredentialsXML, true);
+        if (proxyCredentials.isEncrypted) proxyCredentials.Decrypt();
+
+        WebHttpClient client = new WebHttpClient(
+          targetUri, targetCredentials.GetNetworkCredential(), proxyHost, proxyPort, proxyCredentials.GetNetworkCredential());
+        XElement rdf = client.Get<XElement>(String.Empty);
+        #endregion
+
+        // call RdfProjectionEngine to fill data objects from the given rdf
+        _projectionEngine = _kernel.Get<IProjectionLayer>("rdf");
+        _dataObjects = _projectionEngine.GetDataObjects(ref _graphMap, ref _dataDictionary, ref rdf);
+
+        // post data objects to data layer
         _dataLayer.Post(_dataObjects);
 
         DateTime endTime = DateTime.Now;
@@ -503,7 +551,7 @@ namespace org.iringtools.adapter
       _graphMap = _mapping.FindGraphMap(graphName);
       LoadDataObjectSet(null);
 
-      XElement rdf = _projectionEngine.GetXml(ref _mapping, graphName, ref _dataDictionary, ref _dataObjects);
+      XElement rdf = _projectionEngine.GetXml(ref _graphMap, ref _dataDictionary, ref _dataObjects);
 
       return _semanticEngine.Refresh(graphName, rdf);
     }
@@ -779,24 +827,5 @@ namespace org.iringtools.adapter
       return dataObjects;
     }
     #endregion
-  }
-
-  static class AdapterUtility
-  {
-    public static GraphMap FindGraphMap(this Mapping mapping, string graphName)
-    {
-      foreach (GraphMap graphMap in mapping.graphMaps)
-      {
-        if (graphMap.name.ToLower() == graphName.ToLower())
-        {
-          if (graphMap.classTemplateListMaps.Count == 0)
-            throw new Exception("Graph [" + graphName + "] is empty.");
-
-          return graphMap;
-        }
-      }
-
-      throw new Exception("Graph [" + graphName + "] does not exist.");
-    }
   }
 }

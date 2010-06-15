@@ -7,6 +7,7 @@ using org.iringtools.library;
 using System.Xml.Linq;
 using System.Text.RegularExpressions;
 using Ninject;
+using org.iringtools.utility;
 
 namespace org.iringtools.adapter.projection
 {
@@ -41,19 +42,16 @@ namespace org.iringtools.adapter.projection
 
           _dataObjects = new List<IDataObject>();
           _classIdentifiers = new Dictionary<string, List<string>>();
-          
+          _mapping = Utility.Read<Mapping>(String.Format(adapterSettings.XmlPath + "Mapping." + scope + ".xml", "."));      
           _graphNs = String.Format(adapterSettings.GraphBaseUri + scope + "#", "/");
           _dataObjectNs = String.Format(DATALAYER_NS + ".proj_" + scope, ".");
          }
 
-        public XElement GetXml(ref Mapping mapping, string graphName, 
-          ref DataDictionary dataDictionary, ref IList<IDataObject> dataObjects)
+        public XElement GetXml(ref GraphMap graphMap, ref DataDictionary dataDictionary, ref IList<IDataObject> dataObjects)
         {
           try
           {
-            _mapping = mapping;
-            _graphMap = _mapping.FindGraphMap(graphName);
-
+            _graphMap = graphMap;
             _dataDictionary = dataDictionary;
             _dataObjects = dataObjects;
 
@@ -65,8 +63,7 @@ namespace org.iringtools.adapter.projection
           }
         }
 
-        public IList<IDataObject> GetDataObjects(ref Mapping mapping, string graphName,
-          ref DataDictionary dataDictionary, ref XElement xml)
+        public IList<IDataObject> GetDataObjects(ref GraphMap graphMap, ref DataDictionary dataDictionary, ref XElement xml)
         {
           throw new NotImplementedException();
         }

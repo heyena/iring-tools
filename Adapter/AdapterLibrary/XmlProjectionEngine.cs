@@ -65,14 +65,11 @@ namespace org.iringtools.adapter.projection
       _dataObjectsAssemblyName = adapterSettings.ExecutingAssemblyName;
     }
 
-    public XElement GetXml(ref Mapping mapping, string graphName,
-      ref DataDictionary dataDictionary, ref IList<IDataObject> dataObjects)
+    public XElement GetXml(ref GraphMap graphMap, ref DataDictionary dataDictionary, ref IList<IDataObject> dataObjects)
     {
       try
       {
-        _mapping = mapping;
-        _graphMap = _mapping.FindGraphMap(graphName);
-
+        _graphMap = graphMap;
         _dataDictionary = dataDictionary;
         _dataObjects = dataObjects;
 
@@ -80,7 +77,7 @@ namespace org.iringtools.adapter.projection
 
         _hierachicalDTOClasses.Clear();
 
-        XElement graphElement = new XElement(_graphNs + graphName,
+        XElement graphElement = new XElement(_graphNs + graphMap.name,
           new XAttribute(XNamespace.Xmlns + "i", XSI_NS),
           new XAttribute(XNamespace.Xmlns + "rdl", RDL_NS),
           new XAttribute(XNamespace.Xmlns + "tpl", TPL_NS));
@@ -102,8 +99,7 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    public IList<IDataObject> GetDataObjects(ref Mapping mapping, string graphName,
-          ref DataDictionary dataDictionary, ref XElement xml)
+    public IList<IDataObject> GetDataObjects(ref GraphMap graphMap, ref DataDictionary dataDictionary, ref XElement xml)
     {
       throw new NotImplementedException();
     }
@@ -171,18 +167,15 @@ namespace org.iringtools.adapter.projection
 
     private string ResolveValueList(string valueList, string value)
     {
-      if (_mapping != null)// && _mapping.valueMaps.Count > 0)
+      foreach (ValueList valueLst in _mapping.valueLists)
       {
-        foreach (ValueList valueLst in _mapping.valueLists)
+        if (valueLst.name == valueList)
         {
-          if (valueLst.name == valueList)
+          foreach (ValueMap valueMap in valueLst.valueMaps)
           {
-            foreach (ValueMap valueMap in valueLst.valueMaps)
+            if (valueMap.internalValue == value)
             {
-              if (valueMap.internalValue == value)
-              {
-                return valueMap.uri.Replace("rdl:", RDL_NS.NamespaceName);
-              }
+              return valueMap.uri.Replace("rdl:", RDL_NS.NamespaceName);
             }
           }
         }

@@ -10,6 +10,9 @@ using System.Text.RegularExpressions;
 using VDS.RDF;
 using VDS.RDF.Storage;
 using org.iringtools.utility;
+using System.Xml;
+using VDS.RDF.Parsing;
+using VDS.RDF.Query;
 
 namespace org.iringtools.adapter.projection
 {
@@ -35,11 +38,31 @@ namespace org.iringtools.adapter.projection
     private static readonly string RDF_PREFIX = "rdf:";
     private static readonly string RDL_PREFIX = "rdl:";
     private static readonly string TPL_PREFIX = "tpl:";
-
     private static readonly string RDF_NIL = RDF_PREFIX + "nil";
+
+    private static readonly string CLASS_INSTANCE_QUERY_TEMPLATE = String.Format(@"
+      PREFIX rdf: <{0}>
+      PREFIX rdl: <{1}> 
+      SELECT ?instance
+      WHERE {{{{ 
+        ?instance rdf:type {{0}} . 
+      }}}}", RDF_NS.NamespaceName, RDL_NS.NamespaceName);
+
+    private static readonly string LITERAL_QUERY_TEMPLATE = String.Format(@"
+      PREFIX rdf: <{0}>
+      PREFIX rdl: <{1}> 
+      PREFIX tpl: <{2}> 
+      SELECT ?literals 
+      WHERE {{{{
+	      ?instance rdf:type {{0}} . 
+	      ?bnode {{1}} ?instance . 
+	      ?bnode rdf:type {{2}} . 
+	      ?bnode {{3}} ?literals 
+      }}}}", RDF_NS.NamespaceName, RDL_NS.NamespaceName, TPL_NS.NamespaceName);
 
     private static readonly ILog _logger = LogManager.GetLogger(typeof(RdfProjectionEngine));
 
+    private IDataLayer _dataLayer = null;
     private Mapping _mapping = null;
     private GraphMap _graphMap = null;
     private DataDictionary _dataDictionary = null;
@@ -47,6 +70,7 @@ namespace org.iringtools.adapter.projection
     private Dictionary<string, List<string>> _classIdentifiers = null; // dictionary of class ids and list of identifiers
     private List<Dictionary<string, string>> _xPathValuePairs = null;  // dictionary of property xpath and value pairs
     private Dictionary<string, List<string>> _hierachicalDTOClasses = null;  // dictionary of class rdlUri and identifiers
+    private TripleStore _memoryStore = null;
     private XNamespace _graphNs = String.Empty;
     private string _dataObjectsAssemblyName = String.Empty;
     private string _dataObjectNs = String.Empty;
@@ -56,22 +80,22 @@ namespace org.iringtools.adapter.projection
     {
       string scope = appSettings.ProjectName + "{0}" + appSettings.ApplicationName;
 
+      _dataLayer = dataLayer;
       _dataObjects = new List<IDataObject>();
       _classIdentifiers = new Dictionary<string, List<string>>();
       _xPathValuePairs = new List<Dictionary<string, string>>();
       _hierachicalDTOClasses = new Dictionary<string, List<string>>();
+      _mapping = Utility.Read<Mapping>(String.Format(adapterSettings.XmlPath + "Mapping." + scope + ".xml", "."));
       _graphNs = String.Format(adapterSettings.GraphBaseUri + "/" + scope + "#", "/");
       _dataObjectNs = String.Format(DATALAYER_NS + ".proj_" + scope, ".");
       _dataObjectsAssemblyName = adapterSettings.ExecutingAssemblyName;
     }
 
-    public XElement GetXml(ref Mapping mapping, string graphName, 
-      ref DataDictionary dataDictionary, ref IList<IDataObject> dataObjects)
+    public XElement GetXml(ref GraphMap graphMap, ref DataDictionary dataDictionary, ref IList<IDataObject> dataObjects)
     {
       try
       {
-        _mapping = mapping;
-        _graphMap = _mapping.FindGraphMap(graphName);               
+        _graphMap = graphMap;               
         _dataDictionary = dataDictionary;
         _dataObjects = dataObjects;
 
@@ -83,37 +107,33 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    public IList<IDataObject> GetDataObjects(ref Mapping mapping, string graphName,
-          ref DataDictionary dataDictionary, ref XElement xml)
+    public IList<IDataObject> GetDataObjects(ref GraphMap graphMap, ref DataDictionary dataDictionary, ref XElement rdf)
     {
-      throw new NotImplementedException();
+      _graphMap = graphMap;
+      _dataDictionary = dataDictionary;
+      
+      // load rdf to xdoc
+      XmlDocument xDoc = new XmlDocument();
+      xDoc.LoadXml(rdf.ToString());
+      rdf.RemoveAll();
+
+      // create dotNetRdf graph from the xDoc
+      Graph graph = new Graph();
+      RdfXmlParser parser = new RdfXmlParser();
+      parser.Load(graph, xDoc);
+      xDoc.RemoveAll();
+
+      // load dotNetRdf graph to memory store for sparql-querying
+      _memoryStore = new TripleStore();
+      _memoryStore.Add(graph);
+      graph.Dispose();
+
+      // fill data objects and return
+      FillDataObjects(GetClassInstanceCount());
+      return _dataObjects;
     }
 
     #region helper methods
-    private string ExtractId(string qualifiedId)
-    {
-      if (String.IsNullOrEmpty(qualifiedId) || !qualifiedId.Contains(":"))
-        return qualifiedId;
-
-      return qualifiedId.Substring(qualifiedId.IndexOf(":") + 1);
-    }
-
-    private string TitleCase(string value)
-    {
-      string returnValue = String.Empty;
-      string[] words = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-      foreach (string word in words)
-      {
-        returnValue += word.Substring(0, 1).ToUpper();
-
-        if (word.Length > 1)
-          returnValue += word.Substring(1).ToLower();
-      }
-
-      return returnValue;
-    }
-
     private string ResolveValueList(string valueList, string value)
     {
       foreach (ValueList valueLst in _mapping.valueLists)
@@ -131,6 +151,27 @@ namespace org.iringtools.adapter.projection
       }
 
       return RDF_NIL;
+    }
+
+    private string ResolveValueMap(string valueList, string qualifiedUri)
+    {
+      string uri = qualifiedUri.Replace(RDL_NS.NamespaceName, "rdl:");
+
+      foreach (ValueList valueLst in _mapping.valueLists)
+      {
+        if (valueLst.name == valueList)
+        {
+          foreach (ValueMap valueMap in valueLst.valueMaps)
+          {
+            if (valueMap.uri == uri)
+            {
+              return valueMap.internalValue;
+            }
+          }
+        }
+      }
+
+      return String.Empty;
     }
 
     private void PopulateClassIdentifiers()
@@ -322,6 +363,108 @@ namespace org.iringtools.adapter.projection
       }
 
       return templateElement;
+    }
+
+    private int GetClassInstanceCount()
+    {
+      ClassMap classMap = _graphMap.classTemplateListMaps.First().Key;
+      string query = String.Format(CLASS_INSTANCE_QUERY_TEMPLATE, classMap.classId);
+      object results = _memoryStore.ExecuteQuery(query);
+
+      if (results is SparqlResultSet)
+      {
+        SparqlResultSet resultSet = (SparqlResultSet)results;
+        return resultSet.Count;
+      }
+
+      throw new Exception("Error querying instances of class [" + classMap.name + "].");
+    }
+
+    private void FillDataObjects(int classInstanceCount)
+    {
+      _dataObjects.Clear();
+
+      foreach (var pair in _graphMap.classTemplateListMaps)
+      {
+        ClassMap classMap = pair.Key;
+        List<TemplateMap> templateMaps = pair.Value;
+        int dupTemplatePos = 0;
+
+        foreach (TemplateMap templateMap in templateMaps)
+        {
+          List<RoleMap> propertyMapRoles = new List<RoleMap>();
+          string classRoleId = String.Empty;
+
+          #region find propertyMapRoles and classRoleId
+          foreach (RoleMap roleMap in templateMap.roleMaps)
+          {
+            if (roleMap.type == RoleType.ClassRole)
+            {
+              classRoleId = roleMap.roleId;
+            }
+            else if (roleMap.type == RoleType.Property)
+            {
+              propertyMapRoles.Add(roleMap);
+            }
+          }
+          #endregion
+
+          #region query for property values and save them into dataObjects
+          foreach (RoleMap roleMap in propertyMapRoles)
+          {
+            string query = String.Format(LITERAL_QUERY_TEMPLATE, classMap.classId, classRoleId, templateMap.templateId, roleMap.roleId);
+            object results = _memoryStore.ExecuteQuery(query);
+
+            if (results is SparqlResultSet)
+            {
+              string[] property = roleMap.propertyName.Split('.');
+              string objectName = property[0].Trim();
+              string propertyName = property[1].Trim();
+
+              if (_dataObjects.Count == 0)
+              {
+                string objectType = _dataObjectNs + "." + objectName + "," + _dataObjectsAssemblyName;
+                _dataObjects = _dataLayer.Create(objectType, new string[classInstanceCount]);
+              }
+
+              SparqlResultSet resultSet = (SparqlResultSet)results;
+              if (resultSet.Count > classInstanceCount)
+              {
+                dupTemplatePos++;
+              }
+
+              int objectIndex = 0;
+              int resultSetIndex = (dupTemplatePos == 0) ? 0 : dupTemplatePos - 1;
+
+              while (resultSetIndex < resultSet.Count)
+              {
+                string value = Regex.Replace(resultSet[resultSetIndex].ToString(), @".*= ", String.Empty);
+
+                if (value == RDF_NIL)
+                  value = String.Empty;
+                else if (value.Contains("^^"))
+                  value = value.Substring(0, value.IndexOf("^^"));
+                else if (!String.IsNullOrEmpty(roleMap.valueList))
+                  value = ResolveValueMap(roleMap.valueList, value);
+
+                _dataObjects[objectIndex++].SetPropertyValue(propertyName, value);
+
+                if (dupTemplatePos == 0)
+                  resultSetIndex++;
+                else if (dupTemplatePos < 3)
+                  resultSetIndex += 2;
+                else
+                  resultSetIndex += dupTemplatePos;
+              }
+            }
+            else
+            {
+              throw new Exception("Error querying in-memory triple store.");
+            }
+          }
+          #endregion
+        }
+      }
     }
     #endregion
   }

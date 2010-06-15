@@ -51,6 +51,22 @@ namespace org.iringtools.library
 
     [DataMember(EmitDefaultValue = false, Order = 2)]
     public string version { get; set; }
+
+    public GraphMap FindGraphMap(string graphName)
+    {
+      foreach (GraphMap graphMap in graphMaps)
+      {
+        if (graphMap.name.ToLower() == graphName.ToLower())
+        {
+          if (graphMap.classTemplateListMaps.Count == 0)
+            throw new Exception("Graph [" + graphName + "] is empty.");
+
+          return graphMap;
+        }
+      }
+
+      throw new Exception("Graph [" + graphName + "] does not exist.");
+    }
   }
 
   [DataContract]
