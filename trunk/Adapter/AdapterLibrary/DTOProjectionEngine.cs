@@ -67,19 +67,15 @@ namespace org.iringtools.adapter.projection
       _dataObjectsAssemblyName = adapterSettings.ExecutingAssemblyName;
     }
 
-    public XElement GetXml(ref Mapping mapping, string graphName,
-      ref DataDictionary dataDictionary, ref IList<IDataObject> dataObjects)
+    public XElement GetXml(ref GraphMap graphMap, ref DataDictionary dataDictionary, ref IList<IDataObject> dataObjects)
     {
       try
       {
-        _mapping = mapping;
-        _graphMap = _mapping.FindGraphMap(graphName);
-
+        _graphMap = graphMap;
         _dataDictionary = dataDictionary;
         _dataObjects = dataObjects;
 
         _xPathValuePairs.Clear();
-
         for (int i = 0; i < _dataObjects.Count; i++)
         {
           _xPathValuePairs.Add(new Dictionary<string, string>());
@@ -96,8 +92,7 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    public IList<IDataObject> GetDataObjects(ref Mapping mapping, string graphName,
-          ref DataDictionary dataDictionary, ref XElement xml)
+    public IList<IDataObject> GetDataObjects(ref GraphMap graphMap, ref DataDictionary dataDictionary, ref XElement xml)
     {
       throw new NotImplementedException();
     }

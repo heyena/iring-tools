@@ -105,7 +105,6 @@
     <Compile Include="..\..\AssemblyInfo.cs" />
     <Compile Include="QtxfProjectionEngine.cs" />
     <Compile Include="RdfProjectionEngine.cs" />
-    <Compile Include="SparqlResultsProjectionEngine.cs" />
     <Compile Include="XmlProjectionEngine.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -34,6 +34,26 @@ namespace org.iringtools.adapter.projection
     private static readonly string RDF_PREFIX = "rdf:";
     private static readonly string RDF_NIL = RDF_PREFIX + "nil";
 
+    private static readonly string CLASS_INSTANCE_QUERY_TEMPLATE = String.Format(@"
+      PREFIX rdf: <{0}>
+      PREFIX rdl: <{1}> 
+      SELECT ?_instance
+      WHERE {{{{ 
+        ?_instance rdf:type {{0}} . 
+      }}}}", RDF_NS.NamespaceName, RDL_NS.NamespaceName);
+
+    private static readonly string LITERAL_QUERY_TEMPLATE = String.Format(@"
+      PREFIX rdf: <{0}>
+      PREFIX rdl: <{1}> 
+      PREFIX tpl: <{2}> 
+      SELECT ?values 
+      WHERE {{{{
+	      ?instance rdf:type {{0}} . 
+	      ?bnode {{1}} ?instance . 
+	      ?bnode rdf:type {{2}} . 
+	      ?bnode {{3}} ?values 
+      }}}}", RDF_NS.NamespaceName, RDL_NS.NamespaceName, TPL_NS.NamespaceName);
+
     private static readonly ILog _logger = LogManager.GetLogger(typeof(SparqlResultsProjectionEngine));
 
     private Mapping _mapping = null;

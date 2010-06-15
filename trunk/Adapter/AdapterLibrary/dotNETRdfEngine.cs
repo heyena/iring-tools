@@ -45,26 +45,6 @@ namespace org.iringtools.adapter.semantic
     private static readonly string RDF_PREFIX = "rdf:";    
     private static readonly string RDF_NIL = RDF_PREFIX + "nil";
 
-    private static readonly string CLASS_INSTANCE_QUERY_TEMPLATE = String.Format(@"
-      PREFIX rdf: <{0}>
-      PREFIX rdl: <{1}> 
-      SELECT ?instance
-      WHERE {{{{ 
-        ?instance rdf:type {{0}} . 
-      }}}}", RDF_NS.NamespaceName, RDL_NS.NamespaceName);
-
-    private static readonly string LITERAL_QUERY_TEMPLATE = String.Format(@"
-      PREFIX rdf: <{0}>
-      PREFIX rdl: <{1}> 
-      PREFIX tpl: <{2}> 
-      SELECT ?_values 
-      WHERE {{{{
-	      ?_instance rdf:type {{0}} . 
-	      ?_bnode {{1}} ?_instance . 
-	      ?_bnode rdf:type {{2}} . 
-	      ?_bnode {{3}} ?_values 
-      }}}}", RDF_NS.NamespaceName, RDL_NS.NamespaceName, TPL_NS.NamespaceName);
-
     private static readonly ILog _logger = LogManager.GetLogger(typeof(dotNetRdfEngine));
 
     private AdapterSettings _settings = null;
@@ -72,7 +52,6 @@ namespace org.iringtools.adapter.semantic
     private GraphMap _graphMap = null;
     private Graph _graph = null;  // dotNetRdf graph
     private MicrosoftSqlStoreManager _tripleStore = null;
-    private TripleStore _memoryStore = null;
     private XNamespace _graphNs = String.Empty;
     private string _dataObjectsAssemblyName = String.Empty;
     private string _dataObjectNs = String.Empty;
@@ -98,7 +77,6 @@ namespace org.iringtools.adapter.semantic
       try
       {
         DateTime startTime = DateTime.Now;
-
         _graphMap = _mapping.FindGraphMap(graphName);
         
         // create xdoc from rdf xelement
@@ -140,44 +118,6 @@ namespace org.iringtools.adapter.semantic
       return response;
     }
 
-    public Dictionary<string, SPARQLResults> Get(Request request)
-    {
-      // get rdf from an uri
-      string targetUri = request["targetUri"];
-      string targetCredentialsXML = request["targetCredentials"];
-      string proxyHost = request["proxyHost"];
-      int proxyPort = Int32.Parse(request["proxyPort"]);
-      string proxyCredentialsXML = request["proxyCredentials"];
-
-      WebCredentials targetCredentials = Utility.Deserialize<WebCredentials>(targetCredentialsXML, true);
-      if (targetCredentials.isEncrypted) targetCredentials.Decrypt();
-
-      WebCredentials proxyCredentials = Utility.Deserialize<WebCredentials>(proxyCredentialsXML, true);
-      if (proxyCredentials.isEncrypted) proxyCredentials.Decrypt();
-
-      WebHttpClient client = new WebHttpClient(
-        targetUri, targetCredentials.GetNetworkCredential(), proxyHost, proxyPort, proxyCredentials.GetNetworkCredential());
-      XElement xElement = client.Get<XElement>(String.Empty);
-
-      // load rdf to xdoc
-      XmlDocument xDoc = new XmlDocument();      
-      xDoc.LoadXml(xElement.ToString());
-      xElement.RemoveAll();
-
-      // create dotNetRdf graph from xdoc
-      _graph.Clear();
-      RdfXmlParser parser = new RdfXmlParser();
-      parser.Load(_graph, xDoc);
-      xDoc.RemoveAll();
-
-      // load dotNetRdf graph to memory store for sparql-querying
-      TripleStore _memoryStore = new TripleStore();
-      _memoryStore.Add(_graph);
-      _graph.Dispose();
-
-      return FillResultSet(GetClassInstanceCount());
-    }
-
     public Response Delete(string graphName)
     {
       Response response = new Response();
@@ -210,27 +150,6 @@ namespace org.iringtools.adapter.semantic
     }
 
     #region helper methods
-    private string ResolveValueMap(string valueList, string qualifiedUri)
-    {
-      string uri = qualifiedUri.Replace(RDL_NS.NamespaceName, "rdl:");
-
-      foreach (ValueList valueLst in _mapping.valueLists)
-      {
-        if (valueLst.name == valueList)
-        {
-          foreach (ValueMap valueMap in valueLst.valueMaps)
-          {
-            if (valueMap.uri == uri)
-            {
-              return valueMap.internalValue;
-            }
-          }
-        }
-      }
-
-      return String.Empty;
-    }
-
     private Response DeleteGraph(Uri graphUri)
     {
       Response response = new Response();
@@ -258,150 +177,6 @@ namespace org.iringtools.adapter.semantic
       }
 
       return response;
-    }
-
-    private int GetClassInstanceCount()
-    {
-      ClassMap classMap = _graphMap.classTemplateListMaps.First().Key;
-      string query = String.Format(CLASS_INSTANCE_QUERY_TEMPLATE, classMap.classId);
-      object results = _memoryStore.ExecuteQuery(query);
-
-      if (results is SparqlResultSet)
-      {
-        SparqlResultSet resultSet = (SparqlResultSet)results;
-        return resultSet.Count;
-      }
-
-      throw new Exception(string.Format("Error querying instances of class [{0}].", classMap.name));
-    }
-
-    private Dictionary<string, SPARQLResults> FillResultSet(int classInstanceCount)
-    {
-      Dictionary<string, SPARQLResults> resultSet = new Dictionary<string, SPARQLResults>();
-
-      foreach (var pair in _graphMap.classTemplateListMaps)
-      {
-        ClassMap classMap = pair.Key;
-        string classId = classMap.classId;
-        List<TemplateMap> templateMaps = pair.Value;
-        int dupeTemplatePosition = 0;
-
-        foreach (TemplateMap templateMap in templateMaps)
-        {
-          List<RoleMap> propertyMapRoles = new List<RoleMap>();
-          string classRoleId = String.Empty;
-
-          #region find propertyMapRoles and classRoleId
-          foreach (RoleMap roleMap in templateMap.roleMaps)
-          {
-            if (roleMap.type == RoleType.ClassRole)
-            {
-              classRoleId = roleMap.roleId;
-            }
-            else if (roleMap.type == RoleType.Property)
-            {
-              propertyMapRoles.Add(roleMap);
-            }
-          }
-          #endregion
-
-          #region query for property values and save them into dataObjects
-          foreach (RoleMap roleMap in propertyMapRoles)
-          {
-            string query = 
-              String.Format(LITERAL_QUERY_TEMPLATE, 
-                classId, 
-                classRoleId, 
-                templateMap.templateId, 
-                roleMap.roleId);
-            
-            object results = _memoryStore.ExecuteQuery(query);
-
-            if (results is SparqlResultSet)
-            {
-              if (!resultSet.ContainsKey(classId))
-              {
-                resultSet.Add(classId, new SPARQLResults());
-              }
-
-              SPARQLResults sparqlResults = resultSet[classId];
-
-              SparqlResultSet sparqlResultsSet = (SparqlResultSet)results;
-              if (resultSet.Count > classInstanceCount)
-              {
-                dupeTemplatePosition++;
-              }
-
-              int sparqlResultsSetIndex = (dupeTemplatePosition == 0) ? 0 : dupeTemplatePosition - 1;
-
-              List<SPARQLResult> resultList = new List<SPARQLResult>();
-
-              while (sparqlResultsSetIndex < sparqlResultsSet.Count)
-              {
-                string variable = sparqlResultsSet.Variables.ElementAt(sparqlResultsSetIndex);
-                
-                sparqlResults.head.variables.Add(new Variable { name = variable });
-
-                INode node = sparqlResultsSet[sparqlResultsSetIndex].Value(variable);
-
-                SPARQLBinding sparqlBinding = new SPARQLBinding
-                {
-                  name = variable,
-                };
-
-                NodeType nodeType = node.NodeType;
-
-                switch (nodeType)
-                {
-                  case NodeType.Blank:
-                    BlankNode blankNode = (BlankNode)node;
-
-                    sparqlBinding.bnode = blankNode.InternalID;
-                    break;
-
-                  case NodeType.GraphLiteral:
-                    throw new NotImplementedException("Graph Literals are not supported.");
-
-                  case NodeType.Literal:
-                    LiteralNode literalNode = (LiteralNode)node;
-                    
-                    sparqlBinding.literal = new SPARQLLiteral
-                    {
-                      dataType = literalNode.DataType.ToString(),
-                      lang = literalNode.Language,
-                      value = literalNode.Value,
-                    };
-                    break;
-
-                  case NodeType.Uri:
-                    UriNode uriNode = (UriNode)node;
-
-                    sparqlBinding.uri = uriNode.Uri.ToString();
-                    break;
-                };
-
-                sparqlResults.resultsElement.results.FirstOrDefault().bindings.Add(sparqlBinding);
-
-                if (dupeTemplatePosition == 0)
-                  sparqlResultsSetIndex++;
-                else if (dupeTemplatePosition < 3)
-                  sparqlResultsSetIndex += 2;
-                else
-                  sparqlResultsSetIndex += dupeTemplatePosition;
-              }
-
-              resultSet[classId] = sparqlResults;
-            }
-            else
-            {
-              throw new Exception("Error querying in-memory triple store.");
-            }
-          }
-          #endregion
-        }
-      }
-
-      return resultSet;
     }
     #endregion
   }
