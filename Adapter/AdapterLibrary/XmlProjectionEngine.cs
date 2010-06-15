@@ -165,25 +165,6 @@ namespace org.iringtools.adapter.projection
       return returnValue;
     }
 
-    private string ResolveValueList(string valueList, string value)
-    {
-      foreach (ValueList valueLst in _mapping.valueLists)
-      {
-        if (valueLst.name == valueList)
-        {
-          foreach (ValueMap valueMap in valueLst.valueMaps)
-          {
-            if (valueMap.internalValue == value)
-            {
-              return valueMap.uri.Replace("rdl:", RDL_NS.NamespaceName);
-            }
-          }
-        }
-      }
-
-      return RDF_NIL;
-    }
-
     private void FillHierarchicalDTOList(XElement classElement, string classId, int dataObjectIndex)
     {
       KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = _graphMap.GetClassTemplateListMap(classId);
@@ -274,7 +255,7 @@ namespace org.iringtools.adapter.projection
               string value = Convert.ToString(dataObject.GetPropertyValue(propertyName));
               if (!String.IsNullOrEmpty(roleMap.valueList))
               {
-                value = ResolveValueList(roleMap.valueList, value);
+                value = _mapping.ResolveValueList(roleMap.valueList, value);
                 value = value.Replace(RDL_NS.NamespaceName, "rdl:");
                 roleElement.Add(new XAttribute("reference", value));
               }

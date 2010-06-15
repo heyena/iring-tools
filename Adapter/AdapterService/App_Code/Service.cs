@@ -155,9 +155,9 @@ namespace org.iringtools.adapter
     /// <param name="graphName">graph name</param>
     /// <param name="request">request containing credentials and uri to pull rdf from</param>
     /// <returns></returns>
-    public Response Pull(string projectName, string applicationName, string graphName, Request request)
+    public Response Pull(string projectName, string applicationName, Request request)
     {
-      return _adapterProvider.Pull(projectName, applicationName, graphName, request);
+      return _adapterProvider.Pull(projectName, applicationName, request);
     }
 
     /// <summary>

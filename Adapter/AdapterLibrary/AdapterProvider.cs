@@ -366,7 +366,7 @@ namespace org.iringtools.adapter
       return response;
     }
 
-    public Response Pull(string projectName, string applicationName, string graphName, Request request)
+    public Response Pull(string projectName, string applicationName, Request request)
     {
       Response response = new Response();
 
@@ -377,6 +377,7 @@ namespace org.iringtools.adapter
 
         #region get rdf from an uri
         string targetUri = request["targetUri"];
+        string graphName = request["graphName"];
         string targetCredentialsXML = request["targetCredentials"];
         string proxyHost = request["proxyHost"];
         int proxyPort = Int32.Parse(request["proxyPort"]);
