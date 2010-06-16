@@ -107,23 +107,12 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    public IList<IDataObject> GetDataObjects(ref GraphMap graphMap, ref DataDictionary dataDictionary, ref XElement rdf)
+    public IList<IDataObject> GetDataObjects(ref GraphMap graphMap, ref DataDictionary dataDictionary, ref Graph graph)
     {
       _graphMap = graphMap;
       _dataDictionary = dataDictionary;
       
-      // load rdf to xdoc
-      XmlDocument xDoc = new XmlDocument();
-      xDoc.LoadXml(rdf.ToString());
-      rdf.RemoveAll();
-
-      // create dotNetRdf graph from the xDoc
-      Graph graph = new Graph();
-      RdfXmlParser parser = new RdfXmlParser();
-      parser.Load(graph, xDoc);
-      xDoc.RemoveAll();
-
-      // load dotNetRdf graph to memory store for sparql-querying
+      // load graph to memory store for to allow querying locally
       _memoryStore = new TripleStore();
       _memoryStore.Add(graph);
       graph.Dispose();
