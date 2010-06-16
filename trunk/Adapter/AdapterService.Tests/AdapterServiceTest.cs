@@ -134,7 +134,7 @@ namespace AdapterService.Tests
       //string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
       Request request = new Request
       {
-        {"targetUri", "http://localhost/dotNetRdfInterfaceService/sparql/"},
+        {"targetUri", "http://localhost"},
         //{"targetCredentials", targetCredentialsXML},
         {"graphName", "Lines"},
         //{"filter", String.Empty},
