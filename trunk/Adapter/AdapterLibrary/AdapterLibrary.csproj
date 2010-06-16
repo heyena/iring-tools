@@ -96,6 +96,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdapterModule.cs" />
+    <Compile Include="DataTransferObject.cs" />
     <Compile Include="dotNetRdfEngine.cs" />
     <Compile Include="AdapterProvider.cs" />
     <Compile Include="DtoProjectionEngine.cs" />
