@@ -8,6 +8,7 @@ using System.Xml.Linq;
 using System.Text.RegularExpressions;
 using Ninject;
 using org.iringtools.utility;
+using VDS.RDF;
 
 namespace org.iringtools.adapter.projection
 {
@@ -63,7 +64,7 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    public IList<IDataObject> GetDataObjects(ref GraphMap graphMap, ref DataDictionary dataDictionary, ref XElement xml)
+    public IList<IDataObject> GetDataObjects(ref GraphMap graphMap, ref DataDictionary dataDictionary, ref Graph graph)
     {
       throw new NotImplementedException();
     }

@@ -47,6 +47,7 @@ using Ninject.Contrib.Dynamic;
 using NHibernate;
 using org.w3.sparql_results;
 using Microsoft.ServiceModel.Web;
+using System.Net;
 
 namespace org.iringtools.adapter
 {
@@ -375,86 +376,59 @@ namespace org.iringtools.adapter
         Initialize(projectName, applicationName);
         DateTime startTime = DateTime.Now;
 
-        #region parsing request
+        #region move to this portion to dotNetRdfEngine?
         if (!request.ContainsKey("targetUri"))
           throw new Exception("Target uri is required");
 
         string targetUri = request["targetUri"];
-        
+
         if (!request.ContainsKey("graphName"))
           throw new Exception("Graph name is required");
 
-        string graphName = request["graphName"];        
-        
+        string graphName = request["graphName"];
+
         WebCredentials targetCredentials = null;
         if (request.ContainsKey("targetCredentials"))
         {
           string targetCredentialsXML = request["targetCredentials"];
           targetCredentials = Utility.Deserialize<WebCredentials>(targetCredentialsXML, true);
-          
-          if (targetCredentials.isEncrypted) 
+
+          if (targetCredentials.isEncrypted)
             targetCredentials.Decrypt();
         }
 
-        WebCredentials proxyCredentials = null;
-        string proxyHost = String.Empty;
-        string proxyPort = String.Empty;
-        if (request.ContainsKey("proxyCredentials"))
+        string proxyHost = _settings.ProxyHost;
+        string proxyPort = _settings.ProxyPort;
+        WebProxyCredentials proxyCrendentials = _settings.ProxyCredentials;
+
+        string interfaceService = _settings.InterfaceServer;
+        string graphUri = _settings.GraphBaseUri + projectName + "/" + applicationName + "/" + graphName;
+        SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(targetUri), graphUri);
+        
+        if (targetCredentials != null)
         {
-          string proxyCredentialsXML = request["proxyCredentials"];
-          proxyCredentials = Utility.Deserialize<WebCredentials>(proxyCredentialsXML, true);
-
-          if (proxyCredentials.isEncrypted)
-            proxyCredentials.Decrypt();
-
-          if (!request.ContainsKey("proxyHost"))
-            throw new Exception("");
-
-          proxyHost = request["proxyHost"];
-
-          if (!request.ContainsKey("proxyPort"))
-            throw new Exception("");
-
-          proxyPort = request["proxyPort"];
+          endpoint.SetCredentials(targetCredentials.GetNetworkCredential());
         }
+
+        if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
+        {
+          WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
+          endpoint.SetProxy(webProxy);
+
+          if (proxyCrendentials != null)
+          {
+            endpoint.UseCredentialsForProxy = true;
+            endpoint.SetProxyCredentials(proxyCrendentials.GetNetworkCredential());
+          }
+        }
+
+        Graph graph = endpoint.QueryWithResultGraph("CONSTRUCT { ?s ?p ?o } WHERE {?s ?p ?o}");
         #endregion
 
-        // sending request to get rdf
-        WebHttpClient client = null;
-        if (targetCredentials == null)
-        {
-          if (proxyCredentials == null)
-          {
-            client = new WebHttpClient(targetUri);
-          }
-          else
-          {
-            //create client with proxy credential only 
-          }
-        }
-        else 
-        {
-          if (proxyCredentials == null)
-          {
-            client = new WebHttpClient(targetUri, targetCredentials.GetNetworkCredential());
-          }
-          else
-          {
-            client = new WebHttpClient(
-              targetUri, 
-              targetCredentials.GetNetworkCredential(), 
-              proxyHost, 
-              Int32.Parse(proxyPort), 
-              proxyCredentials.GetNetworkCredential());
-          }
-        }
-
-        XElement rdf = client.Get<XElement>(projectName + "/" + applicationName + "/" + graphName + "?format=rdf");
-        
         // call RdfProjectionEngine to fill data objects from the given rdf
         _projectionEngine = _kernel.Get<IProjectionLayer>("rdf");
         _graphMap = _mapping.FindGraphMap(graphName);
-        _dataObjects = _projectionEngine.GetDataObjects(ref _graphMap, ref _dataDictionary, ref rdf);
+        _dataObjects = _projectionEngine.GetDataObjects(ref _graphMap, ref _dataDictionary, ref graph);
 
         // post data objects to data layer
         _dataLayer.Post(_dataObjects);
