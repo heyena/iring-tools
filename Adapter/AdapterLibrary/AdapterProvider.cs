@@ -426,7 +426,7 @@ namespace org.iringtools.adapter
         Graph graph = endpoint.QueryWithResultGraph("CONSTRUCT { ?s ?p ?o } WHERE {?s ?p ?o}");
         #endregion
 
-        // call RdfProjectionEngine to fill data objects from the given rdf
+        // call RdfProjectionEngine to fill data objects from a given graph
         _projectionEngine = _kernel.Get<IProjectionLayer>("rdf");
         _graphMap = _mapping.FindGraphMap(graphName);
         _dataObjects = _projectionEngine.GetDataObjects(ref _graphMap, ref _dataDictionary, ref graph);

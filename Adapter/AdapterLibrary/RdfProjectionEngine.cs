@@ -112,7 +112,7 @@ namespace org.iringtools.adapter.projection
       _graphMap = graphMap;
       _dataDictionary = dataDictionary;
       
-      // load graph to memory store for to allow querying locally
+      // load graph to memory store to allow querying locally
       _memoryStore = new TripleStore();
       _memoryStore.Add(graph);
       graph.Dispose();
