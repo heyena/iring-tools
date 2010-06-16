@@ -388,33 +388,28 @@ namespace org.iringtools.adapter
 
         string graphName = request["graphName"];
 
-        WebCredentials targetCredentials = null;
+        string graphUri = _settings.GraphBaseUri + projectName + "/" + applicationName + "/" + graphName;        
+        SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(targetUri), graphUri);
+
         if (request.ContainsKey("targetCredentials"))
         {
           string targetCredentialsXML = request["targetCredentials"];
-          targetCredentials = Utility.Deserialize<WebCredentials>(targetCredentialsXML, true);
+          WebCredentials targetCredentials = Utility.Deserialize<WebCredentials>(targetCredentialsXML, true);
 
           if (targetCredentials.isEncrypted)
             targetCredentials.Decrypt();
+
+          endpoint.SetCredentials(targetCredentials.GetNetworkCredential());
         }
 
         string proxyHost = _settings.ProxyHost;
         string proxyPort = _settings.ProxyPort;
-        WebProxyCredentials proxyCrendentials = _settings.ProxyCredentials;
-
-        string graphUri = _settings.GraphBaseUri + projectName + "/" + applicationName + "/" + graphName;
-        SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(targetUri), graphUri);
-        
-        if (targetCredentials != null)
-        {
-          endpoint.SetCredentials(targetCredentials.GetNetworkCredential());
-        }
-
         if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
         {
           WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
           endpoint.SetProxy(webProxy);
 
+          WebProxyCredentials proxyCrendentials = _settings.ProxyCredentials;
           if (proxyCrendentials != null)
           {
             endpoint.UseCredentialsForProxy = true;
