@@ -376,7 +376,7 @@ namespace org.iringtools.adapter
         Initialize(projectName, applicationName);
         DateTime startTime = DateTime.Now;
 
-        #region move to this portion to dotNetRdfEngine?
+        #region move this portion to dotNetRdfEngine?
         if (!request.ContainsKey("targetUri"))
           throw new Exception("Target uri is required");
 

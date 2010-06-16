@@ -130,21 +130,14 @@ namespace AdapterService.Tests
     [TestMethod()]
     public void PullTest_ABC()
     {
-      WebCredentials targetCredentials = new WebCredentials();
-      string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
-
-      WebCredentials proxyCredentials = new WebCredentials();
-      string proxyCredentialsXML = Utility.Serialize<WebCredentials>(proxyCredentials, true);
-
+      //WebCredentials targetCredentials = new WebCredentials();
+      //string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
       Request request = new Request
       {
-        {"targetUri", "http://localhost:52786/Service.svc/"},
+        {"targetUri", "http://localhost/dotNetRdfInterfaceService/sparql/"},
         //{"targetCredentials", targetCredentialsXML},
         {"graphName", "Lines"},
         //{"filter", String.Empty},
-        //{"proxyHost", String.Empty},
-        //{"proxyPort", "8080"},
-        //{"proxyCredentials", proxyCredentialsXML},
       };
 
       AdapterProxy target = new AdapterProxy();
