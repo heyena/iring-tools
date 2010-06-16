@@ -130,13 +130,13 @@ namespace AdapterService.Tests
     [TestMethod()]
     public void PullTest_ABC()
     {
-      //WebCredentials targetCredentials = new WebCredentials();
-      //string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
+      WebCredentials targetCredentials = new WebCredentials();
+      string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
       Request request = new Request
       {
         {"targetUri", "http://localhost/InterfaceService/sparql/"},
-        //{"targetCredentials", targetCredentialsXML},
         {"graphName", "Lines"},
+        {"targetCredentials", targetCredentialsXML},
         //{"filter", String.Empty},
       };
 
