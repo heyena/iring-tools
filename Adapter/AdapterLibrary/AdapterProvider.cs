@@ -402,9 +402,8 @@ namespace org.iringtools.adapter
         string proxyPort = _settings.ProxyPort;
         WebProxyCredentials proxyCrendentials = _settings.ProxyCredentials;
 
-        string interfaceService = _settings.InterfaceServer;
-        string graphUri = targetUri + projectName + "/" + applicationName + "/" + graphName;
-        SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(interfaceService), graphUri);
+        string graphUri = _settings.GraphBaseUri + projectName + "/" + applicationName + "/" + graphName;
+        SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(targetUri), graphUri);
         
         if (targetCredentials != null)
         {
