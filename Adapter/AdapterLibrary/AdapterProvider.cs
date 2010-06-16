@@ -381,6 +381,7 @@ namespace org.iringtools.adapter
           throw new Exception("Target uri is required");
 
         string targetUri = request["targetUri"];
+        if (!targetUri.EndsWith("/")) targetUri += "/";
 
         if (!request.ContainsKey("graphName"))
           throw new Exception("Graph name is required");
@@ -402,8 +403,8 @@ namespace org.iringtools.adapter
         WebProxyCredentials proxyCrendentials = _settings.ProxyCredentials;
 
         string interfaceService = _settings.InterfaceServer;
-        string graphUri = _settings.GraphBaseUri + projectName + "/" + applicationName + "/" + graphName;
-        SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(targetUri), graphUri);
+        string graphUri = targetUri + projectName + "/" + applicationName + "/" + graphName;
+        SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(interfaceService), graphUri);
         
         if (targetCredentials != null)
         {
