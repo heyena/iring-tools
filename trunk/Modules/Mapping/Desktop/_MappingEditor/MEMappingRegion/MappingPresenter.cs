@@ -226,7 +226,7 @@ namespace org.iringtools.modules.memappingregion
                     }
                 }                              
                 
-                ChangeControlsState(false);
+                ChangeControlsState(true);
             }
             catch (Exception ex)
             {
@@ -870,7 +870,7 @@ namespace org.iringtools.modules.memappingregion
             }
         }
 
-        private void ChangeControlsState(bool enabled)
+        public void ChangeControlsState(bool enabled)
         {
             try
             {
@@ -881,6 +881,7 @@ namespace org.iringtools.modules.memappingregion
 
                     if (tabMappings.SelectedItem == tabValueMaps)
                     {
+                        if (btnvAddValue == null) return;
                         btnvAddValue.IsEnabled = enabled;
                         btnvAddValueList.IsEnabled = enabled;
                         btnvDelete.IsEnabled = enabled;
@@ -890,6 +891,7 @@ namespace org.iringtools.modules.memappingregion
                     }
                     else if (tabMappings.SelectedItem == tabGraphMaps)
                     {
+                        if (btnAddGraph == null) return;
                         txtLabel.IsEnabled = enabled;
                         btnAddGraph.IsEnabled = enabled;
                         tvwMapping.IsEnabled = enabled;

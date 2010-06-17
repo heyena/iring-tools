@@ -118,7 +118,7 @@ namespace org.iringtools.modules.memappingregion
                 }
             }
             popupFlag = false;
-          
+            Presenter.ChangeControlsState(true);
         }
         
         public void btnMoveDown_Click(object sender, RoutedEventArgs e)

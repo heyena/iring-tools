@@ -249,7 +249,7 @@ namespace org.iringtools.informationmodel.usercontrols
           item.SetTooltipText("Role : " + entity.label);
           item.SetTextBlockText(entity.label);
           item.Entity = entity;
-          item.SetTextBlockText(entity.label);
+          item.SetTextBlockText(roleQualification.name[0].value);
           item.Entity = entity;
           item.RoleQualification = roleQualification;
           item.Tag = roleQualification;
