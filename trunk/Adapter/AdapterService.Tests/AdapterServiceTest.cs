@@ -163,9 +163,12 @@ namespace AdapterService.Tests
     [TestMethod()]
     public void UpdateMapping_ABC()
     {
+      string mapping = Utility.ReadString(@"C:\iring-tools\Adapter\AdapterService.Tests\XML\Mapping.12345_000.ABC.xml");
+      XElement mappingXml = XElement.Parse(mapping);
+      
       AdapterProxy target = new AdapterProxy();
-      Mapping mapping = Utility.Read<Mapping>(@"C:\iring-tools\Adapter\AdapterService.Tests\XML\Mapping.12345_000.ABC.xml", true);
-      Response actual = target.UpdateMapping("12345_000", "ABC", mapping);
+      Response actual = target.UpdateMapping("12345_000", "ABC", mappingXml);
+
       bool isError = false;
       for (int i = 0; i < actual.Count; i++)
       {
@@ -175,6 +178,7 @@ namespace AdapterService.Tests
           break;
         }
       }
+
       Assert.AreEqual(false, isError);
     }
 
