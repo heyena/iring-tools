@@ -156,10 +156,10 @@ namespace org.iringtools.informationmodel.usercontrols
         try
         {
             if (IsExpanded.Equals(false) &
-              itemTextBlock.Text.Contains("Classifications") ||
-              itemTextBlock.Text.Contains("Super Classes") ||
-              itemTextBlock.Text.Contains("Sub Classes") ||
-              itemTextBlock.Text.Contains("Templates"))
+              itemTextBlock.Text.Contains("[Classifications]") ||
+              itemTextBlock.Text.Contains("[Super Classes]") ||
+              itemTextBlock.Text.Contains("[Sub Classes]") ||
+              itemTextBlock.Text.Contains("[Templates]"))
             {
                 SetImageSource("folder.png");
             }
@@ -174,10 +174,10 @@ namespace org.iringtools.informationmodel.usercontrols
     {
         try
         {
-            if (itemTextBlock.Text.Contains("Classifications") ||
-              itemTextBlock.Text.Contains("Super Classes") ||
-              itemTextBlock.Text.Contains("Sub Classes") ||
-              itemTextBlock.Text.Contains("Templates"))
+            if (itemTextBlock.Text.Contains("[Classifications]") ||
+              itemTextBlock.Text.Contains("[Super Classes]") ||
+              itemTextBlock.Text.Contains("[Sub Classes]") ||
+              itemTextBlock.Text.Contains("[Templates]"))
             {
                 SetImageSource("folder-open.png");
             }
@@ -228,7 +228,7 @@ namespace org.iringtools.informationmodel.usercontrols
         {
             item.SetImageSource("role.png");
             item.SetTooltipText("Role : " + entity.label);
-            item.SetTextBlockText(entity.label);
+            item.SetTextBlockText(roleDefinition.name[0].value);
             item.Entity = entity;
             item.RoleDefinition = roleDefinition;
             item.Tag = roleDefinition;            

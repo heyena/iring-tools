@@ -224,7 +224,7 @@ namespace org.ids_adi.iring.referenceData
             catch (Exception ex)
             {
                 _log4netLogger.Error("Error in Search: " + ex);
-                return null;
+                throw new Exception("Error while Searching " + query + ".\n" + ex.ToString(), ex);
             }
         }
 

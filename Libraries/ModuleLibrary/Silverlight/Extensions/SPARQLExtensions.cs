@@ -30,6 +30,8 @@ namespace org.iringtools.modulelibrary.extensions
       if (uri == null)
         return SPARQLPrefix.ObjectType.Unknown;
 
+      if (uri.ToLower().StartsWith("file"))
+          return SPARQLPrefix.ObjectType.Unknown;
         //Split up the URI
         string[] uriParts = uri.Split('#');
         string @namespace = uriParts[0] + "#";
@@ -113,6 +115,9 @@ namespace org.iringtools.modulelibrary.extensions
     {
       if (uri == null)
         return String.Empty;
+
+      if (uri.ToLower().StartsWith("file"))
+          return string.Empty;
 
       //Split up the URI
       string[] uriParts = uri.Split('#');
