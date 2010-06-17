@@ -163,7 +163,7 @@ namespace org.iringtools.adapter
           }
           else
           {
-            _dotnetRDFDbUser = value;
+              _dotnetRDFDbPassword = value;
           }
         }
     }
