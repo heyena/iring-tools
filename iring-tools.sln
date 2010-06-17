@@ -121,7 +121,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSVDataLayer.Tests", "Adapt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RdfImportExport", "Utilities\RdfImportExport\RdfImportExport\RdfImportExport.csproj", "{B3AD51C6-20FB-4865-9499-DE68B15874D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InterfaceService", "InterfaceService.dotNetRDF\InterfaceService.dotNetRDF\InterfaceService.csproj", "{68AC584F-4DDF-4E03-9756-EFAEE1AEDD70}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InterfaceService.dotNetRDF", "InterfaceService.dotNetRDF\InterfaceService.dotNetRDF.csproj", "{68AC584F-4DDF-4E03-9756-EFAEE1AEDD70}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution

@@ -10,9 +10,8 @@
     <AdapterServiceRoot>Adapter</AdapterServiceRoot>
     <AdapterServiceDir>$(AdapterServiceRoot)\AdapterService</AdapterServiceDir>
     <JosekiInterfaceServiceRoot>InterfaceService.Joseki</JosekiInterfaceServiceRoot>
-    <dotNetRdfInterfaceServiceRoot>InterfaceService.dotNetRdf</dotNetRdfInterfaceServiceRoot>
-    <dotNetRdfInterfaceServiceDir>$(dotNetRdfInterfaceServiceRoot)\InterfaceService.dotNetRdf</dotNetRdfInterfaceServiceDir>
-    <SemWebInterfaceServiceRoot>InterfaceService</SemWebInterfaceServiceRoot>
+    <dotNetRdfInterfaceServiceDir>InterfaceService.dotNetRdf</dotNetRdfInterfaceServiceDir>
+    <SemWebInterfaceServiceRoot>InterfaceService.SemWeb</SemWebInterfaceServiceRoot>
 	  <JosekiSandboxServiceRoot>SandboxService.Joseki</JosekiSandboxServiceRoot>
 	  <SemWebSandboxServiceRoot>SandboxService</SemWebSandboxServiceRoot>
     <MappingEditorRoot>MappingEditor</MappingEditorRoot>
@@ -30,7 +29,7 @@
     <DbDictionaryServiceDeploymentDir>$(iRINGAdapter)\DbDictionaryService</DbDictionaryServiceDeploymentDir>
     <JosekiInterfaceServiceDeploymentDir>$(iRINGAdapter)\InterfaceService.Joseki</JosekiInterfaceServiceDeploymentDir>
     <dotNetRdfInterfaceServiceDeploymentDir>$(iRINGAdapter)\InterfaceService.dotNetRdf</dotNetRdfInterfaceServiceDeploymentDir>
-    <SemWebInterfaceServiceDeploymentDir>$(iRINGAdapter)\InterfaceService</SemWebInterfaceServiceDeploymentDir>
+    <SemWebInterfaceServiceDeploymentDir>$(iRINGAdapter)\InterfaceService.SemWeb</SemWebInterfaceServiceDeploymentDir>
     <AdapterToolsDeploymentDir>$(iRINGAdapter)\Tools</AdapterToolsDeploymentDir>
     <MappingEditorDeploymentDir>$(iRINGAdapter)\MappingEditor</MappingEditorDeploymentDir>
     <DbDictionaryEditorDeploymentDir>$(iRINGAdapter)\DbDictionaryEditor</DbDictionaryEditorDeploymentDir>

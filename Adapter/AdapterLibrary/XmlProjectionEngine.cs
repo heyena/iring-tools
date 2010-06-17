@@ -60,7 +60,7 @@ namespace org.iringtools.adapter.projection
 
       _dataLayer = dataLayer;
       _mapping = Utility.Read<Mapping>(String.Format(adapterSettings.XmlPath + "Mapping." + scope + ".xml", "."));
-      _graphNs = String.Format(adapterSettings.GraphBaseUri + scope + "#", "/");
+      _graphNs = String.Format(adapterSettings.GraphBaseUri + "/" + scope + "#", "/");
       _dataObjectNs = String.Format(DATALAYER_NS + ".proj_" + scope, ".");
       _dataObjectsAssemblyName = adapterSettings.ExecutingAssemblyName;
     }

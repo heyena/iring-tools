@@ -44,7 +44,7 @@ namespace org.iringtools.adapter.projection
       _dataObjects = new List<IDataObject>();
       _classIdentifiers = new Dictionary<string, List<string>>();
       _mapping = Utility.Read<Mapping>(String.Format(adapterSettings.XmlPath + "Mapping." + scope + ".xml", "."));
-      _graphNs = String.Format(adapterSettings.GraphBaseUri + scope + "#", "/");
+      _graphNs = String.Format(adapterSettings.GraphBaseUri + "/" + scope + "#", "/");
       _dataObjectNs = String.Format(DATALAYER_NS + ".proj_" + scope, ".");
     }
 
