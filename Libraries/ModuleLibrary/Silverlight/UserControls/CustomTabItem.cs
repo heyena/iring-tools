@@ -218,6 +218,7 @@ namespace org.iringtools.informationmodel.usercontrols
             CustomTreeItem item = null;
             try
             {
+                
                 switch (entity.uri.GetObjectTypeFromUri())
                 {
                     case SPARQLPrefix.ObjectType.Class:
