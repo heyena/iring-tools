@@ -91,12 +91,12 @@ namespace AdapterService.Tests
     {
       AdapterProxy target = new AdapterProxy();
       Response actual = target.ClearAll("12345_000", "ABC");
-      if ("Graph[Valves] cleared successfully." != actual[0])
+      if ("Graph [http://yourcompany.com/12345_000/ABC/Lines] has been deleted successfully." != actual[0])
       {
         throw new AssertFailedException(Utility.SerializeDataContract<Response>(actual));
       }
 
-      Assert.AreEqual("Graph[Valves] cleared successfully.", actual[0].ToString());
+      Assert.AreEqual("Graph [http://yourcompany.com/12345_000/ABC/Lines] has been deleted successfully.", actual[0].ToString());
     }
 
     [TestMethod()]
@@ -130,17 +130,21 @@ namespace AdapterService.Tests
     [TestMethod()]
     public void PullTest_ABC()
     {
-      WebCredentials targetCredentials = new WebCredentials();
-      string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
+      AdapterProxy target = new AdapterProxy();
+
+      Response prepare = target.RefreshAll("12345_000", "ABC");
+
+      if (prepare[0].ToUpper().Contains("ERROR"))
+      {
+        throw new AssertFailedException(Utility.SerializeDataContract<Response>(prepare));
+      }
+
       Request request = new Request
       {
         {"targetUri", "http://localhost/InterfaceService/sparql/"},
         {"graphName", "Lines"},
-        {"targetCredentials", targetCredentialsXML},
-        //{"filter", String.Empty},
       };
 
-      AdapterProxy target = new AdapterProxy();
       Response actual = target.Pull("12345_000", "ABC", request);
 
       bool isError = false;

@@ -24,17 +24,10 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ////////////////////////////////////////////////////////////////////////////////
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Web;
-using System.Text;
-using org.ids_adi.qxf;
-using org.iringtools.adapter;
 using org.iringtools.library;
-using System.ServiceModel.Channels;
 using System.Xml.Linq;
 
 namespace org.iringtools.adapter
@@ -42,6 +35,10 @@ namespace org.iringtools.adapter
   [ServiceContract(Namespace = "http://ns.iringtools.org/protocol")]
   public partial interface IService
   {
+    [OperationContract]
+    [WebGet(UriTemplate = "/version")]
+    string GetVersion();
+
     [OperationContract]
     [WebGet(UriTemplate = "/scopes")]
     List<ScopeProject> GetScopes();
@@ -54,23 +51,13 @@ namespace org.iringtools.adapter
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/datadictionary")]
     DataDictionary GetDictionary(string projectName, string applicationName);
 
-    [XmlSerializerFormat]
     [OperationContract]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/mapping")]
     Mapping GetMapping(string projectName, string applicationName);
 
-    [XmlSerializerFormat]
     [OperationContract]
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/mapping")]
     Response UpdateMapping(string projectName, string applicationName, Mapping mapping);
-
-    [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/generate")]
-    Response Generate(string projectName, string applicationName);
-
-    [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/delete")]
-    Response Delete(string projectName, string applicationName);
 
     [OperationContract]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}?format={format}")]
@@ -81,12 +68,12 @@ namespace org.iringtools.adapter
     XElement GetList(string projectName, string applicationName, string graphName, string format);
 
     [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/clear")]
-    Response ClearAll(string projectName, string applicationName);
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/delete")]
+    Response DeleteAll(string projectName, string applicationName);
 
     [OperationContract]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/clear")]
-    Response ClearGraph(string projectName, string applicationName, string graphName);
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/delete")]
+    Response DeleteGraph(string projectName, string applicationName, string graphName);
 
     [OperationContract]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/refresh")]
@@ -101,11 +88,15 @@ namespace org.iringtools.adapter
     Response Pull(string projectName, string applicationName, Request request);
 
     [OperationContract]
-    [WebGet(UriTemplate = "/version")]
-    string GetVersion();
+    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/pullDTO")]
+    Response PullDTO(string projectName, string applicationName, Request request);
+
+    //[OperationContract]
+    //[WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/put")]
+    //Response Put(string projectName, string applicationName, string graphName, XElement dtoElement);
 
     [OperationContract]
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/dbdictionary")]
-    Response UpdateDatabaseDictionary(DatabaseDictionary databaseDictionary, string projectName, string applicationName);
+    Response UpdateDatabaseDictionary(string projectName, string applicationName, DatabaseDictionary databaseDictionary);
   }
 }
