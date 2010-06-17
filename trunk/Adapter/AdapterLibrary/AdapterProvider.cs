@@ -48,6 +48,7 @@ using NHibernate;
 using org.w3.sparql_results;
 using Microsoft.ServiceModel.Web;
 using System.Net;
+using org.ids_adi.qmxf;
 
 namespace org.iringtools.adapter
 {
@@ -63,6 +64,8 @@ namespace org.iringtools.adapter
     private DataDictionary _dataDictionary = null;
     private Mapping _mapping = null;
     private GraphMap _graphMap = null;
+    private WebHttpClient _webHttpClient = null;  // for old mapping conversion
+    private Dictionary<string, KeyValuePair<string, Dictionary<string, string>>> _qmxfTemplateResultCache = null;
 
     //Projection specific stuff
     private IList<IDataObject> _dataObjects = new List<IDataObject>(); // dictionary of object names and list of data objects
@@ -76,6 +79,29 @@ namespace org.iringtools.adapter
       _kernel = new StandardKernel(new AdapterModule());
       _kernel.Bind<NameValueCollection>().ToConstant(settings);
       _settings = _kernel.Get<AdapterSettings>(); //new ConstructorArgument("AppSettings", settings));
+
+      #region initialize webHttpClient for converting old mapping
+      string proxyHost = _settings.ProxyHost;
+      string proxyPort = _settings.ProxyPort;
+      string rdsUri = _settings.ReferenceDataServiceUri;
+     
+      if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
+      {
+        WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
+        WebProxyCredentials proxyCrendentials = _settings.ProxyCredentials;
+
+        if (proxyCrendentials != null)
+        {
+          webProxy.Credentials = proxyCrendentials.GetNetworkCredential();
+        }
+
+        _webHttpClient = new WebHttpClient(rdsUri, null, webProxy);
+      }
+      else
+      {
+        _webHttpClient = new WebHttpClient(rdsUri);
+      }
+      #endregion
 
       Directory.SetCurrentDirectory(_settings.BaseDirectoryPath);
     }
@@ -158,15 +184,58 @@ namespace org.iringtools.adapter
       }
     }
 
+    private string GetClassName(string classId)
+    {
+      QMXF qmxf = _webHttpClient.Get<QMXF>("/classes/" + classId.Substring(classId.IndexOf(":") + 1), false);
+      return qmxf.classDefinitions.First().name.First().value;
+    }
+
+    private KeyValuePair<string, Dictionary<string, string>> GetQmxfTemplateRolesPair(string templateId)
+    {
+      string templateName = String.Empty;
+      Dictionary<string, string> roleIdNames = new Dictionary<string, string>();
+
+      QMXF qmxf = _webHttpClient.Get<QMXF>("/templates/" + templateId.Substring(templateId.IndexOf(":") + 1), false);
+
+      if (qmxf.templateDefinitions.Count > 0)
+      {
+        TemplateDefinition tplDef = qmxf.templateDefinitions.First();
+        templateName = tplDef.name.First().value;
+
+        foreach (RoleDefinition roleDef in tplDef.roleDefinition)
+        {
+          roleIdNames.Add(roleDef.identifier.Replace("http://tpl.rdlfacade.org/data#", "tpl:"), roleDef.name.First().value);
+        }
+      }
+      else if (qmxf.templateQualifications.Count > 0)
+      {
+        TemplateQualification tplQual = qmxf.templateQualifications.First();
+        templateName = tplQual.name.First().value;
+
+        foreach (RoleQualification roleQual in tplQual.roleQualification)
+        {
+          roleIdNames.Add(roleQual.qualifies.Replace("http://tpl.rdlfacade.org/data#", "tpl:"), roleQual.name.First().value);
+        }
+      }
+
+      return new KeyValuePair<string, Dictionary<string, string>>(templateName, roleIdNames);
+    }
+
     private void ConvertClassMap(ref GraphMap newGraphMap, ref RoleMap parentRoleMap, XElement classMap, string dataObjectMap)
     {
+      string classId = classMap.Attribute("classId").Value;
+
       ClassMap newClassMap = new ClassMap();
-      newClassMap.classId = classMap.Attribute("classId").Value;
+      newClassMap.classId = classId;
       newClassMap.identifiers.Add(dataObjectMap + "." + classMap.Attribute("identifier").Value);
 
-      if (parentRoleMap != null)
+      if (parentRoleMap == null)
+      {        
+        newClassMap.name = GetClassName(classId);
+      }
+      else 
       {
-        //todo: get class name
+        newClassMap.name = classMap.Attribute("name").Value;
         parentRoleMap.classMap = newClassMap;
       }
 
@@ -174,37 +243,55 @@ namespace org.iringtools.adapter
       newGraphMap.classTemplateListMaps.Add(newClassMap, newTemplateMaps);
 
       IEnumerable<XElement> templateMaps = classMap.Element("TemplateMaps").Elements("TemplateMap");
-
+      KeyValuePair<string, Dictionary<string, string>> templateNameRolesPair;
+        
       foreach (XElement templateMap in templateMaps)
       {
+        string classRoleId = String.Empty;
+
+        try
+        {
+          classRoleId = templateMap.Attribute("classRole").Value;
+        }
+        catch (Exception)
+        {
+          continue; // class role not found, skip this template
+        }
+
+        IEnumerable<XElement> roleMaps = templateMap.Element("RoleMaps").Elements("RoleMap");
+        string templateId = templateMap.Attribute("templateId").Value;
+        
         TemplateMap newTemplateMap = new TemplateMap();
-        newTemplateMap.templateId = templateMap.Attribute("templateId").Value;
-        //todo: get template name
+        newTemplateMap.templateId = templateId;
         newTemplateMaps.Add(newTemplateMap);
+
+        if (_qmxfTemplateResultCache.ContainsKey(templateId))
+        {
+          templateNameRolesPair = _qmxfTemplateResultCache[templateId];
+        }
+        else
+        {
+          templateNameRolesPair = GetQmxfTemplateRolesPair(templateId);
+          _qmxfTemplateResultCache[templateId] = templateNameRolesPair;
+        }
+
+        newTemplateMap.name = templateNameRolesPair.Key;
 
         RoleMap newClassRoleMap = new RoleMap();
         newClassRoleMap.type = RoleType.ClassRole;
         newTemplateMap.roleMaps.Add(newClassRoleMap);
-
-        try
-        {
-          newClassRoleMap.roleId = templateMap.Attribute("classRole").Value;
-        }
-        catch (Exception)
-        {
-          //todo: get class role id
-        }
-
-        //todo: get class role name
+        newClassRoleMap.roleId = classRoleId;
         
-        IEnumerable<XElement> roleMaps = templateMap.Element("RoleMaps").Elements("RoleMap");
+        Dictionary<string, string> roles = templateNameRolesPair.Value;
+        newClassRoleMap.name = roles[classRoleId];
+
         for (int i = 0; i < roleMaps.Count(); i++)
         {
           XElement roleMap = roleMaps.ElementAt(i);
 
           string value = String.Empty;
-          try { value = roleMap.Attribute("value").Value; } 
-          catch(Exception){}
+          try { value = roleMap.Attribute("value").Value; }
+          catch (Exception) { }
 
           string reference = String.Empty;
           try { reference = roleMap.Attribute("reference").Value; }
@@ -219,8 +306,9 @@ namespace org.iringtools.adapter
           catch (Exception) { }
 
           RoleMap newRoleMap = new RoleMap();
+          newTemplateMap.roleMaps.Add(newRoleMap);
           newRoleMap.roleId = roleMap.Attribute("roleId").Value;
-          newRoleMap.name = roleMap.Attribute("name").Value;
+          newRoleMap.name = roles[newRoleMap.roleId];
 
           if (!String.IsNullOrEmpty(value))
           {
@@ -246,11 +334,12 @@ namespace org.iringtools.adapter
               newRoleMap.dataType = roleMap.Attribute("dataType").Value;
             }
           }
-          
-          newTemplateMap.roleMaps.Add(newRoleMap);
 
           if (roleMap.HasElements)
           {
+            newRoleMap.type = RoleType.Reference;
+            newRoleMap.value = roleMap.Attribute("dataType").Value;
+
             ConvertClassMap(ref newGraphMap, ref newRoleMap, roleMap.Element("ClassMap"), dataObjectMap);
           }
         }
@@ -267,7 +356,9 @@ namespace org.iringtools.adapter
         if (!mappingXml.Name.NamespaceName.Contains("schemas.datacontract.org"))
         {
           response.Add("Detected old mapping. Attempting to convert it...");
+
           Mapping mapping = new Mapping();
+          _qmxfTemplateResultCache = new Dictionary<string, KeyValuePair<string, Dictionary<string, string>>>();
 
           #region convert graphMaps
           IEnumerable<XElement> graphMaps = mappingXml.Element("GraphMaps").Elements("GraphMap");
@@ -327,7 +418,7 @@ namespace org.iringtools.adapter
           Utility.Write<Mapping>(mapping, path, true);
         }
 
-        response.Add("Mapping file updated to path [" + path + "] successfully.");
+        response.Add("Mapping file has been updated to path [" + path + "] successfully.");
       }
       catch (Exception ex)
       {
@@ -540,14 +631,15 @@ namespace org.iringtools.adapter
         if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
         {
           WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
-          endpoint.SetProxy(webProxy);
-
+          
           WebProxyCredentials proxyCrendentials = _settings.ProxyCredentials;
           if (proxyCrendentials != null)
           {
             endpoint.UseCredentialsForProxy = true;
-            endpoint.SetProxyCredentials(proxyCrendentials.GetNetworkCredential());
-          }
+            webProxy.Credentials = proxyCrendentials.GetNetworkCredential();
+          } 
+          
+          endpoint.SetProxy(webProxy);          
         }
 
         Graph graph = endpoint.QueryWithResultGraph("CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o}");

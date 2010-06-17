@@ -14,14 +14,15 @@ namespace org.iringtools.adapter
   {
     private string _encryptedToken = String.Empty;
     private string _interfaceServerUri = String.Empty;
-    private string _binaryPath = string.Empty;
-    private string _codePath = string.Empty;
-    private string _dotnetRDFDbName = string.Empty;
-    private string _dotnetRDFDbServer = string.Empty;
-    private string _dotnetRDFDbUser = string.Empty;
-    private string _dotnetRDFDbPassword = string.Empty;
-    private string _graphBaseUri = string.Empty;
-    private string _defaultProjectionFormat = string.Empty;
+    private string _binaryPath = String.Empty;
+    private string _codePath = String.Empty;
+    private string _dotnetRDFDbName = String.Empty;
+    private string _dotnetRDFDbServer = String.Empty;
+    private string _dotnetRDFDbUser = String.Empty;
+    private string _dotnetRDFDbPassword = String.Empty;
+    private string _graphBaseUri = String.Empty;
+    private string _defaultProjectionFormat = String.Empty;
+    private string _referenceDataServiceUri = String.Empty;
     private int _endpointTimeout = 0;
 
     public AdapterSettings(NameValueCollection AppSettings)
@@ -43,6 +44,7 @@ namespace org.iringtools.adapter
       this.EndpointTimeout = Convert.ToInt32(AppSettings["EndpointTimeout"]);
       this.GraphBaseUri = AppSettings["GraphBaseUri"];
       this.DefaultProjectionFormat = AppSettings["DefaultProjectionFormat"];
+      this.ReferenceDataServiceUri = AppSettings["ReferenceDataServiceUri"];
       this.PrepareCredentials();
     }    
 
@@ -227,7 +229,24 @@ namespace org.iringtools.adapter
         }
       }
     }
-  }
 
-  
+    public string ReferenceDataServiceUri
+    {
+      get
+      {
+        return _referenceDataServiceUri;
+      }
+      set
+      {
+        if (String.IsNullOrEmpty(value))
+        {
+          _referenceDataServiceUri = "http://showroom.iringsandbox.org/RefDataService/Service.svc";
+        }
+        else
+        {
+          _referenceDataServiceUri = value;
+        }
+      }
+    }
+  }  
 }
