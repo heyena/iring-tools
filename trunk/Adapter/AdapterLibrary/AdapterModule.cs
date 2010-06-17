@@ -6,6 +6,7 @@ using Ninject.Modules;
 using org.iringtools.adapter.semantic;
 using org.iringtools.library;
 using org.iringtools.adapter.projection;
+using System.Collections.Specialized;
 
 namespace org.iringtools.adapter
 {

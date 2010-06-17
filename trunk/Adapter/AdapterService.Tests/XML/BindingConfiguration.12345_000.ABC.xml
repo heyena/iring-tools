@@ -1,1 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?><BindingConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><Bindings><Binding Name="DataLayer" Interface="org.iringtools.library.IDataLayer, iRINGLibrary" Implementation="org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateDataLayer"/><Binding Name="SemanticLayer" Interface="org.iringtools.adapter.ISemanticLayer, AdapterLibrary" Implementation="org.iringtools.adapter.semantic.dotNetRdfEngine, AdapterLibrary"/><Binding Name="rdf" Interface="org.iringtools.adapter.IProjectionLayer, AdapterLibrary" Implementation="org.iringtools.adapter.projection.RdfProjectionEngine, AdapterLibrary"/><Binding Name="ProjectionLayer" Interface="org.iringtools.adapter.IProjectionLayer, AdapterLibrary" Implementation="org.iringtools.adapter.projection.RdfProjectionEngine, AdapterLibrary"/></Bindings></BindingConfiguration>
+<?xml version="1.0" encoding="utf-8"?>
+<BindingConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Bindings>
+    <Binding Name="DataLayer" Interface="org.iringtools.library.IDataLayer, iRINGLibrary" Implementation="org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateDataLayer"/>
+    <Binding Name="SemanticLayer" Interface="org.iringtools.adapter.ISemanticLayer, AdapterLibrary" Implementation="org.iringtools.adapter.semantic.dotNetRdfEngine, AdapterLibrary"/>
+  </Bindings>
+</BindingConfiguration>

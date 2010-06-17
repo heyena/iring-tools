@@ -107,10 +107,19 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    public IList<IDataObject> GetDataObjects(ref GraphMap graphMap, ref DataDictionary dataDictionary, ref Graph graph)
+    public IList<IDataObject> GetDataObjects(ref GraphMap graphMap, ref DataDictionary dataDictionary, ref XElement xml)
     {
       _graphMap = graphMap;
       _dataDictionary = dataDictionary;
+
+      XmlDocument xdoc = new XmlDocument();
+      xdoc.LoadXml(xml.ToString());
+      xml.RemoveAll();
+
+      RdfXmlParser parser = new RdfXmlParser();
+      Graph graph = new Graph();
+      parser.Load(graph, xdoc);
+      xdoc.RemoveAll();
       
       // load graph to memory store to allow querying locally
       _memoryStore = new TripleStore();

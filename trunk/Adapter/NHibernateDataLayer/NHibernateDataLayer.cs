@@ -13,6 +13,7 @@ using System.Text;
 using Ninject;
 using log4net;
 using System.Reflection;
+using System.Collections.Specialized;
 
 namespace org.iringtools.adapter.datalayer
 {
@@ -24,7 +25,7 @@ namespace org.iringtools.adapter.datalayer
     private ISessionFactory _sessionFactory;
 
     [Inject]
-    public NHibernateDataLayer(AdapterSettings settings, ApplicationSettings appSettings)
+    public NHibernateDataLayer(AdapterSettings settings, ApplicationSettings appSettings, NameValueCollection webConfig)
     {
       string scope = string.Format("{0}.{1}", appSettings.ProjectName, appSettings.ApplicationName);
       string hibernateConfigPath = string.Format("{0}nh-configuration.{1}.xml", settings.XmlPath, scope);

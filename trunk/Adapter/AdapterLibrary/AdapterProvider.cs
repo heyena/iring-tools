@@ -74,7 +74,8 @@ namespace org.iringtools.adapter
     public AdapterProvider(NameValueCollection settings)
     {
       _kernel = new StandardKernel(new AdapterModule());
-      _settings = _kernel.Get<AdapterSettings>(new ConstructorArgument("AppSettings", settings));
+      _kernel.Bind<NameValueCollection>().ToConstant(settings);
+      _settings = _kernel.Get<AdapterSettings>(); //new ConstructorArgument("AppSettings", settings));
 
       Directory.SetCurrentDirectory(_settings.BaseDirectoryPath);
     }
@@ -388,7 +389,7 @@ namespace org.iringtools.adapter
 
         string graphName = request["graphName"];
 
-        string graphUri = _settings.GraphBaseUri + projectName + "/" + applicationName + "/" + graphName;        
+        string graphUri = _settings.GraphBaseUri + "/" + projectName + "/" + applicationName + "/" + graphName;        
         SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(targetUri), graphUri);
 
         if (request.ContainsKey("targetCredentials"))
@@ -423,7 +424,14 @@ namespace org.iringtools.adapter
         // call RdfProjectionEngine to fill data objects from a given graph
         _projectionEngine = _kernel.Get<IProjectionLayer>("rdf");
         _graphMap = _mapping.FindGraphMap(graphName);
-        _dataObjects = _projectionEngine.GetDataObjects(ref _graphMap, ref _dataDictionary, ref graph);
+
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+        TextWriter textWriter = new StringWriter(sb);
+        VDS.RDF.Writing.RdfXmlTreeWriter rdfWriter = new VDS.RDF.Writing.RdfXmlTreeWriter();
+        rdfWriter.Save(graph, textWriter);
+        XElement rdf = XElement.Parse(sb.ToString());
+
+        _dataObjects = _projectionEngine.GetDataObjects(ref _graphMap, ref _dataDictionary, ref rdf);
 
         // post data objects to data layer
         _dataLayer.Post(_dataObjects);

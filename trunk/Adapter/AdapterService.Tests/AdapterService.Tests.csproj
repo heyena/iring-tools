@@ -118,7 +118,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="App_Code\Model.12345_000.ABC.cs">
-      <SubType>Code</SubType>
+      <SubType>
+      </SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\..\AssemblyInfo.cs" />
@@ -156,31 +157,25 @@
     <Content Include="Transforms\dto2qxf.xsl" />
     <Content Include="Transforms\qxf2rdf.xsl" />
     <Content Include="XML\BindingConfiguration.12345_000.ABC.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="XML\BindingConfiguration.12345_000.ABC.Test.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="XML\nh-mapping.12345_000.ABC.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="XML\DatabaseDictionary.12345_000.ABC.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="XML\DataDictionary.12345_000.ABC.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="XML\Mapping.12345_000.ABC.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="XML\nh-configuration.12345_000.ABC.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="XML\nh-mapping.12345_000.ABC.Test.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="XML\Scopes.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

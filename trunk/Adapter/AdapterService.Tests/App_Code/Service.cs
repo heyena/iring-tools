@@ -41,47 +41,14 @@ namespace org.iringtools.adapter
   public class AdapterService : IService
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterService));
-    private AdapterProvider _adapterServiceProvider = null;
+    private AdapterProvider _adapterProvider = null;
 
     /// <summary>
     /// Adapter Service Constructor
     /// </summary>
     public AdapterService()
     {
-      _adapterServiceProvider = new AdapterProvider(ConfigurationManager.AppSettings);
-    }
-
-    public Manifest GetManifest(string projectName, string applicationName)
-    {
-      return _adapterServiceProvider.GetManifest(projectName, applicationName);
-    }
-
-    /// <summary>
-    /// Gets the mapping by reading Mapping.xml.
-    /// </summary>
-    /// <returns>Returns mapping object.</returns>
-    public Mapping GetMapping(string projectName, string applicationName)
-    {
-      return _adapterServiceProvider.GetMapping(projectName, applicationName);
-    }
-
-    /// <summary>
-    /// Gets the list of projects by reading Project.xml.
-    /// </summary>
-    /// <returns>Returns a strongly typed list of ScopeProject objects.</returns>
-    public List<ScopeProject> GetScopes()
-    {
-        return _adapterServiceProvider.GetScopes();
-    }
-
-    /// <summary>
-    /// Gets the Data Dictionary by reading DataDictionary.xml
-    /// </summary>
-    /// <returns>Returns Data Dictionary object.</returns>
-    public DataDictionary GetDictionary(string projectName, string applicationName)
-    {
-      _logger.Info("GetDictionary of \"" + projectName + "-" + applicationName + "\"");
-      return _adapterServiceProvider.GetDictionary(projectName, applicationName);
+      _adapterProvider = new AdapterProvider(ConfigurationManager.AppSettings);
     }
 
     /// <summary>
@@ -90,7 +57,39 @@ namespace org.iringtools.adapter
     /// <returns>Returns Data Dictionary object.</returns>
     public string GetVersion()
     {
-      return _adapterServiceProvider.GetType().Assembly.GetName().Version.ToString();
+      return _adapterProvider.GetType().Assembly.GetName().Version.ToString();
+    }
+
+    public Manifest GetManifest(string projectName, string applicationName)
+    {
+      return _adapterProvider.GetManifest(projectName, applicationName);
+    }
+
+    /// <summary>
+    /// Gets the mapping by reading Mapping.xml.
+    /// </summary>
+    /// <returns>Returns mapping object.</returns>
+    public Mapping GetMapping(string projectName, string applicationName)
+    {
+      return _adapterProvider.GetMapping(projectName, applicationName);
+    }
+
+    /// <summary>
+    /// Gets the list of projects by reading Project.xml.
+    /// </summary>
+    /// <returns>Returns a strongly typed list of ScopeProject objects.</returns>
+    public List<ScopeProject> GetScopes()
+    {
+      return _adapterProvider.GetScopes();
+    }
+
+    /// <summary>
+    /// Gets the Data Dictionary by reading DataDictionary.xml
+    /// </summary>
+    /// <returns>Returns Data Dictionary object.</returns>
+    public DataDictionary GetDictionary(string projectName, string applicationName)
+    {
+      return _adapterProvider.GetDictionary(projectName, applicationName);
     }
 
     /// <summary>
@@ -100,7 +99,7 @@ namespace org.iringtools.adapter
     /// <returns>Returns the response as success/failure.</returns>
     public Response UpdateMapping(string projectName, string applicationName, Mapping mapping)
     {
-      return _adapterServiceProvider.UpdateMapping(projectName, applicationName, mapping);
+      return _adapterProvider.UpdateMapping(projectName, applicationName, mapping);
     }
 
     /// <summary>
@@ -109,7 +108,7 @@ namespace org.iringtools.adapter
     /// <returns>Returns the response as success/failure.</returns>
     public Response RefreshAll(string projectName, string applicationName)
     {
-      return _adapterServiceProvider.RefreshAll(projectName, applicationName);
+      return _adapterProvider.RefreshAll(projectName, applicationName);
     }
 
     /// <summary>
@@ -119,41 +118,46 @@ namespace org.iringtools.adapter
     /// <returns>Returns the response as success/failure.</returns>
     public Response RefreshGraph(string projectName, string applicationName, string graphName)
     {
-      return _adapterServiceProvider.RefreshGraph(projectName, applicationName, graphName);
+      return _adapterProvider.Refresh(projectName, applicationName, graphName);
     }
 
-    /// <summary>
-    /// Calls adapter service provider to create RDF for a graph
-    /// </summary>
-    /// <param name="projectName"></param>
-    /// <param name="applicationName"></param>
-    /// <param name="graphName"></param>
-    /// <returns>success/failed</returns>
+      /// <summary>
+      /// Calls adapter provider to get a specific data object in specific format
+      /// </summary>
+      /// <param name="projectName"></param>
+      /// <param name="applicationName"></param>
+      /// <param name="graphName"></param>
+      /// <param name="identifier"></param>
+      /// <param name="format"></param>
+      /// <returns></returns>
     public XElement Get(string projectName, string applicationName, string graphName, string identifier, string format)
     {
-      return _adapterServiceProvider.Get(projectName, applicationName, graphName, identifier, format);
+        return _adapterProvider.GetProjection(projectName, applicationName, graphName, identifier, format);
     }
 
     /// <summary>
-    /// Calls adapter service provider to create RDF for a graph
+    /// Calls adapter provider to produce specific format for a graph
     /// </summary>
     /// <param name="projectName"></param>
     /// <param name="applicationName"></param>
     /// <param name="graphName"></param>
-    /// <returns>success/failed</returns>
+    /// <returns>xelement</returns>
     public XElement GetList(string projectName, string applicationName, string graphName, string format)
     {
-        return _adapterServiceProvider.GetList(projectName, applicationName, graphName, format);
+      return _adapterProvider.GetProjection(projectName, applicationName, graphName, format);
     }
 
     /// <summary>
-    /// Pulls the data from a triple store into the database.
+    /// Pulls the data from a triple store into legacy database
     /// </summary>
-    /// <param name="request">The request parameter containing targetUri, targetCredentials, graphName, filter will be passed.</param>
-    /// <returns>Returns the response as success/failure.</returns>
+    /// <param name="projectName">project name</param>
+    /// <param name="applicationName">application name</param>
+    /// <param name="graphName">graph name</param>
+    /// <param name="request">request containing credentials and uri to pull rdf from</param>
+    /// <returns></returns>
     public Response Pull(string projectName, string applicationName, Request request)
     {
-      return _adapterServiceProvider.Pull(projectName, applicationName, request);
+      return _adapterProvider.Pull(projectName, applicationName, request);
     }
 
     /// <summary>
@@ -164,54 +168,48 @@ namespace org.iringtools.adapter
     /// <returns></returns>
     public Response PullDTO(string projectName, string applicationName, Request request)
     {
-      return _adapterServiceProvider.PullDTO(projectName, applicationName, request);
+        return _adapterProvider.PullDTO(projectName, applicationName, request);
     }
 
     /// <summary>
-    /// Generates DTO Layer for an application
-    /// </summary>
-    /// <returns>Returns the response as success/failure.</returns>
-    public Response Generate(string projectName, string applicationName)
-    {
-      return _adapterServiceProvider.Generate(projectName, applicationName);
-    }
-
-    /// <summary>
-    /// Deletes an application
+    /// Puts the DTO.
     /// </summary>
     /// <param name="projectName"></param>
     /// <param name="applicationName"></param>
-    /// <returns>Returns the response as success/failure.</returns>
-    public Response Delete(string projectName, string applicationName)
+    /// <param name="graphName"></param>
+    /// <param name="dtoElement"></param>
+    /// <returns></returns>
+    public Response Put(string projectName, string applicationName, string graphName, XElement dtoElement)
     {
-      return _adapterServiceProvider.Delete(projectName, applicationName);
+      //return _adapterProvider.Put(projectName, applicationName, graphName, dtoElement);
+      return null;
     }
 
     /// <summary>
     /// Clears the triple store.
     /// </summary>
     /// <returns>Returns the response as success/failure.</returns>
-    public Response ClearAll(string projectName, string applicationName)
+    public Response DeleteAll(string projectName, string applicationName)
     {
-      return _adapterServiceProvider.ClearAll(projectName, applicationName);
+      return _adapterProvider.DeleteAll(projectName, applicationName);
     }
 
     /// <summary>
     /// Clears a triple store graph.
     /// </summary>
     /// <returns>Returns the response as success/failure.</returns>
-    public Response ClearGraph(string projectName, string applicationName, string graphName)
+    public Response DeleteGraph(string projectName, string applicationName, string graphName)
     {
-      return _adapterServiceProvider.ClearGraph(projectName, applicationName, graphName);
+      return _adapterProvider.Delete(projectName, applicationName, graphName);
     }
 
     /// <summary>
     /// Pass the call to adapter service provider
     /// </summary>
     /// <returns>Returns the response as success/failure.</returns>
-    public Response UpdateDatabaseDictionary(DatabaseDictionary dbDictionary, string projectName, string applicationName)
+    public Response UpdateDatabaseDictionary(string projectName, string applicationName, DatabaseDictionary dbDictionary)
     {
-      return _adapterServiceProvider.UpdateDatabaseDictionary(dbDictionary, projectName, applicationName);
+      return _adapterProvider.UpdateDatabaseDictionary(projectName, applicationName, dbDictionary);
     }
   }
 }
