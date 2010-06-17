@@ -67,12 +67,12 @@ namespace AdapterService.Tests
       return data;
     }
 
-    public Response UpdateMapping(string projectName, string applicationName, Mapping mapping)
+    public Response UpdateMapping(string projectName, string applicationName, XElement mappingXml)
     {
       Response response = null;
       try
       {
-        response = _adapterProvider.UpdateMapping(projectName, applicationName, mapping);
+        response = _adapterProvider.UpdateMapping(projectName, applicationName, mappingXml);
       }
       catch (Exception ex)
       {

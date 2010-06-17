@@ -86,7 +86,7 @@ namespace org.iringtools.adapter.projection
       _xPathValuePairs = new List<Dictionary<string, string>>();
       _hierachicalDTOClasses = new Dictionary<string, List<string>>();
       _mapping = Utility.Read<Mapping>(String.Format(adapterSettings.XmlPath + "Mapping." + scope + ".xml", "."));
-      _graphNs = String.Format(adapterSettings.GraphBaseUri + "/" + scope + "#", "/");
+      _graphNs = String.Format(adapterSettings.GraphBaseUri + "/" + scope, "/");
       _dataObjectNs = String.Format(DATALAYER_NS + ".proj_" + scope, ".");
       _dataObjectsAssemblyName = adapterSettings.ExecutingAssemblyName;
     }
@@ -205,7 +205,7 @@ namespace org.iringtools.adapter.projection
         for (int i = 0; i < _dataObjects.Count; i++)
         {
           string classId = classMap.classId.Substring(classMap.classId.IndexOf(":") + 1);
-          string classInstance = _graphNs.NamespaceName + _classIdentifiers[classMap.classId][i];
+          string classInstance = _graphNs.NamespaceName + "/" + _graphMap.name + "#" + _classIdentifiers[classMap.classId][i];
 
           graphElement.Add(CreateRdfClassElement(classId, classInstance));
 
@@ -270,7 +270,7 @@ namespace org.iringtools.adapter.projection
                   }
                 }
 
-                roleElement.Add(new XAttribute(RDF_RESOURCE, _graphNs.NamespaceName + identifierValue));
+                roleElement.Add(new XAttribute(RDF_RESOURCE, _graphNs.NamespaceName + "/" + _graphMap.name + "#" + identifierValue));
               }
               else
               {

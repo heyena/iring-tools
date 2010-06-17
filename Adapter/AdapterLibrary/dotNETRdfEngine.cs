@@ -120,33 +120,8 @@ namespace org.iringtools.adapter.semantic
 
     public Response Delete(string graphName)
     {
-      Response response = new Response();
-
-      try
-      {
-        _graphMap = _mapping.FindGraphMap(graphName);
-
-        Uri graphUri = new Uri(_graphNs.NamespaceName + graphName);
-        string graphId = _tripleStore.GetGraphID(graphUri);
-
-        if (!String.IsNullOrEmpty(graphId))
-        {
-          _tripleStore.ClearGraph(graphId);
-          _tripleStore.RemoveGraph(graphId);
-        }
-
-        response.Level = StatusLevel.Success;
-        response.Add(string.Format("Graph [{0}] has been deleted successfully.", graphUri));
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(string.Format("Error delete graph [{0}]: {1}", graphName, ex));
-
-        response.Level = StatusLevel.Error;
-        response.Add(string.Format("Error delete graph [{0}]: {1}", graphName, ex));
-      }
-
-      return response;
+      Uri graphUri = new Uri(_graphNs.NamespaceName + graphName);
+      return DeleteGraph(graphUri);
     }
 
     #region helper methods
@@ -169,11 +144,10 @@ namespace org.iringtools.adapter.semantic
       }
       catch (Exception ex)
       {
-        _logger.Error(string.Format("Error delete graph [{0}]: {1}", graphUri, ex));
+        _logger.Error(string.Format("Error deleting graph [{0}]: {1}", graphUri, ex));
 
         response.Level = StatusLevel.Error;
-        response.Add(string.Format("Error delete graph [{0}]: {1}", graphUri, ex));
-
+        response.Add(string.Format("Error deleting graph [{0}]: {1}", graphUri, ex));
       }
 
       return response;

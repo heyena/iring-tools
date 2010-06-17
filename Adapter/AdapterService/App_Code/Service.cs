@@ -97,9 +97,9 @@ namespace org.iringtools.adapter
     /// </summary>
     /// <param name="mapping">The new mapping object with which the mapping file is to be updated.</param>
     /// <returns>Returns the response as success/failure.</returns>
-    public Response UpdateMapping(string projectName, string applicationName, Mapping mapping)
+    public Response UpdateMapping(string projectName, string applicationName, XElement mappingXml)
     {
-      return _adapterProvider.UpdateMapping(projectName, applicationName, mapping);
+      return _adapterProvider.UpdateMapping(projectName, applicationName, mappingXml);
     }
 
     /// <summary>

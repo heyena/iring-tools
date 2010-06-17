@@ -158,44 +158,176 @@ namespace org.iringtools.adapter
       }
     }
 
-    public Response UpdateMapping(string projectName, string applicationName, Mapping mapping)
+    private void ConvertClassMap(ref GraphMap newGraphMap, ref RoleMap parentRoleMap, XElement classMap, string dataObjectMap)
     {
-      Response response = new Response();
-      string path = string.Format("{0}Mapping.{1}.{2}.xml", _settings.XmlPath, projectName, applicationName);
+      ClassMap newClassMap = new ClassMap();
+      newClassMap.classId = classMap.Attribute("classId").Value;
+      newClassMap.identifiers.Add(dataObjectMap + "." + classMap.Attribute("identifier").Value);
 
-      try
+      if (parentRoleMap != null)
       {
-        Utility.Write<Mapping>(mapping, path, true);
-        response.Add("Mapping file updated successfully.");
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(string.Format("Error in UpdateMapping: {0}", ex));
-        response.Level = StatusLevel.Error;
-        response.Add(string.Format("Error saving mapping file to path [{0}]: {1}", path, ex));
+        //todo: get class name
+        parentRoleMap.classMap = newClassMap;
       }
 
-      return response;
+      List<TemplateMap> newTemplateMaps = new List<TemplateMap>();
+      newGraphMap.classTemplateListMaps.Add(newClassMap, newTemplateMaps);
+
+      IEnumerable<XElement> templateMaps = classMap.Element("TemplateMaps").Elements("TemplateMap");
+
+      foreach (XElement templateMap in templateMaps)
+      {
+        TemplateMap newTemplateMap = new TemplateMap();
+        newTemplateMap.templateId = templateMap.Attribute("templateId").Value;
+        //todo: get template name
+        newTemplateMaps.Add(newTemplateMap);
+
+        RoleMap newClassRoleMap = new RoleMap();
+        newClassRoleMap.type = RoleType.ClassRole;
+        newTemplateMap.roleMaps.Add(newClassRoleMap);
+
+        try
+        {
+          newClassRoleMap.roleId = templateMap.Attribute("classRole").Value;
+        }
+        catch (Exception)
+        {
+          //todo: get class role id
+        }
+
+        //todo: get class role name
+        
+        IEnumerable<XElement> roleMaps = templateMap.Element("RoleMaps").Elements("RoleMap");
+        for (int i = 0; i < roleMaps.Count(); i++)
+        {
+          XElement roleMap = roleMaps.ElementAt(i);
+
+          string value = String.Empty;
+          try { value = roleMap.Attribute("value").Value; } 
+          catch(Exception){}
+
+          string reference = String.Empty;
+          try { reference = roleMap.Attribute("reference").Value; }
+          catch (Exception) { }
+
+          string propertyName = String.Empty;
+          try { propertyName = roleMap.Attribute("propertyName").Value; }
+          catch (Exception) { }
+
+          string valueList = String.Empty;
+          try { valueList = roleMap.Attribute("valueList").Value; }
+          catch (Exception) { }
+
+          RoleMap newRoleMap = new RoleMap();
+          newRoleMap.roleId = roleMap.Attribute("roleId").Value;
+          newRoleMap.name = roleMap.Attribute("name").Value;
+
+          if (!String.IsNullOrEmpty(value))
+          {
+            newRoleMap.type = RoleType.FixedValue;
+            newRoleMap.value = value;
+          }
+          else if (!String.IsNullOrEmpty(reference))
+          {
+            newRoleMap.type = RoleType.Reference;
+            newRoleMap.value = reference;
+          }
+          else if (!String.IsNullOrEmpty(propertyName))
+          {
+            newRoleMap.type = RoleType.Property;
+            newRoleMap.propertyName = dataObjectMap + "." + propertyName;
+
+            if (!String.IsNullOrEmpty(valueList))
+            {
+              newRoleMap.valueList = valueList;
+            }
+            else
+            {
+              newRoleMap.dataType = roleMap.Attribute("dataType").Value;
+            }
+          }
+          
+          newTemplateMap.roleMaps.Add(newRoleMap);
+
+          if (roleMap.HasElements)
+          {
+            ConvertClassMap(ref newGraphMap, ref newRoleMap, roleMap.Element("ClassMap"), dataObjectMap);
+          }
+        }
+      }
     }
 
-    public Response UpdateMappingNEW(string projectName, string applicationName, string mappingXml)
+    public Response UpdateMapping(string projectName, string applicationName, XElement mappingXml)
     {
       Response response = new Response();
       string path = string.Format("{0}Mapping.{1}.{2}.xml", _settings.XmlPath, projectName, applicationName);
 
       try
       {
-        bool isOldMapping = true;
-
-        if (isOldMapping)
+        if (!mappingXml.Name.NamespaceName.Contains("schemas.datacontract.org"))
         {
-          // convert to old mapping to new
-        }
-        
-        Mapping mapping = Utility.DeserializeDataContract<Mapping>(mappingXml);
-        Utility.Write<Mapping>(mapping, path, true);      
+          response.Add("Detected old mapping. Attempting to convert it...");
+          Mapping mapping = new Mapping();
 
-        response.Add("Mapping file updated successfully.");
+          #region convert graphMaps
+          IEnumerable<XElement> graphMaps = mappingXml.Element("GraphMaps").Elements("GraphMap");
+          foreach (XElement graphMap in graphMaps)
+          {
+            string dataObjectMap = graphMap.Element("DataObjectMaps").Element("DataObjectMap").Attribute("name").Value;
+            RoleMap roleMap = null;
+
+            GraphMap newGraphMap = new GraphMap();
+            newGraphMap.name = graphMap.Attribute("name").Value;
+            newGraphMap.dataObjectMap = dataObjectMap;
+            mapping.graphMaps.Add(newGraphMap);
+
+            ConvertClassMap(ref newGraphMap, ref roleMap, graphMap, dataObjectMap);
+          }
+          #endregion
+
+          #region convert valueMaps
+          IEnumerable<XElement> valueMaps = mappingXml.Element("ValueMaps").Elements("ValueMap");
+          string previousValueList = String.Empty;
+          ValueList newValueList = null;
+          
+          foreach (XElement valueMap in valueMaps)
+          {
+            string valueList = valueMap.Attribute("valueList").Value;
+            ValueMap newValueMap = new ValueMap
+            {
+               internalValue = valueMap.Attribute("internalValue").Value,
+               uri = valueMap.Attribute("modelURI").Value
+            };
+
+            if (valueList != previousValueList)
+            {
+              newValueList = new ValueList
+              {
+                name = valueList,
+                valueMaps = { newValueMap }
+              };
+              mapping.valueLists.Add(newValueList);
+              
+              previousValueList = valueList;
+            }
+            else
+            {
+              newValueList.valueMaps.Add(newValueMap);
+            }
+          }
+          #endregion
+
+          response.Add("Old mapping has been converted sucessfully.");
+          
+          Utility.Write<Mapping>(mapping, path, true);
+        }
+        else
+        {
+          Mapping mapping = Utility.DeserializeDataContract<Mapping>(mappingXml.ToString());
+          Utility.Write<Mapping>(mapping, path, true);
+        }
+
+        response.Add("Mapping file updated to path [" + path + "] successfully.");
       }
       catch (Exception ex)
       {
@@ -418,7 +550,7 @@ namespace org.iringtools.adapter
           }
         }
 
-        Graph graph = endpoint.QueryWithResultGraph("CONSTRUCT { ?s ?p ?o } WHERE {?s ?p ?o}");
+        Graph graph = endpoint.QueryWithResultGraph("CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o}");
         #endregion
 
         // call RdfProjectionEngine to fill data objects from a given graph
@@ -471,10 +603,10 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _logger.Error(string.Format("Error clearing all graphs: {0}", ex));
+        _logger.Error(string.Format("Error deleting all graphs: {0}", ex));
 
         response.Level = StatusLevel.Error;
-        response.Add(string.Format("Error clearing all graphs: {0}", ex));
+        response.Add(string.Format("Error deleting all graphs: {0}", ex));
       }
 
       return response;
