@@ -150,7 +150,7 @@ namespace org.iringtools.informationmodel.usercontrols
                 superclasses.Items.Add(AddTreeItem(label, entity));
             }
 
-            superclasses.itemTextBlock.Text = "Super Classes (" + specializations.Count + ")";
+            superclasses.itemTextBlock.Text = "[Super Classes] (" + specializations.Count + ")";
             superclasses.IsExpanded = false;
             superclasses.isProcessed = true;
         }
@@ -191,7 +191,7 @@ namespace org.iringtools.informationmodel.usercontrols
                 classifications.Items.Add(AddTreeItem(label, entity));
             }
 
-            classifications.itemTextBlock.Text = "Classifications (" + classification.Count + ")";
+            classifications.itemTextBlock.Text = "[Classifications] (" + classification.Count + ")";
             classifications.IsExpanded = false;
             classifications.isProcessed = true;
         }
@@ -272,7 +272,7 @@ namespace org.iringtools.informationmodel.usercontrols
                 foreach (Entity entity in entities)
                     subclasses.Items.Add(AddTreeItem(entity.label, entity));
 
-                subclasses.itemTextBlock.Text = "Sub Classes (" + entities.Count + ")";
+                subclasses.itemTextBlock.Text = "[Sub Classes] (" + entities.Count + ")";
                 subclasses.IsExpanded = false;
                 subclasses.isProcessed = true;
 
@@ -290,7 +290,7 @@ namespace org.iringtools.informationmodel.usercontrols
                 foreach (Entity entity in entities)
                     templates.Items.Add(AddTreeItem(entity.label, entity));
 
-                templates.itemTextBlock.Text = "Templates (" + entities.Count + ")";
+                templates.itemTextBlock.Text = "[Templates] (" + entities.Count + ")";
                 templates.IsExpanded = false;
                 templates.isProcessed = true;
             }
@@ -347,7 +347,7 @@ namespace org.iringtools.informationmodel.usercontrols
 
             classifications.SetImageSource("folder.png");
             classifications.SetTooltipText("Classification Collection...");
-            classifications.itemTextBlock.Text = "Classifications";
+            classifications.itemTextBlock.Text = "[Classifications]";
             // classifications.Header = "Classifications";
             classifications.Selected += classifications_selected;
             this.Items.Add(classifications);
@@ -355,7 +355,7 @@ namespace org.iringtools.informationmodel.usercontrols
 
             superclasses.SetImageSource("folder.png");
             superclasses.SetTooltipText("Super Class Collection...");
-            superclasses.SetTextBlockText("Super Classes");
+            superclasses.SetTextBlockText("[Super Classes]");
 
             // superclasses.Header = "Super Classes";
             superclasses.Selected += superclasses_selected;
@@ -364,7 +364,7 @@ namespace org.iringtools.informationmodel.usercontrols
             subclasses = Container.Resolve<CustomTreeItem>();
             subclasses.SetTooltipText("Sub Class Collection...");
             subclasses.SetImageSource("folder.png");
-            subclasses.SetTextBlockText("Sub Classes");
+            subclasses.SetTextBlockText("[Sub Classes]");
 
             //subclasses.Header = "Sub Classes";
             subclasses.Selected += subclasses_selected;
@@ -373,7 +373,7 @@ namespace org.iringtools.informationmodel.usercontrols
             templates = Container.Resolve<CustomTreeItem>();
             templates.SetTooltipText("Template Collection...");
             templates.SetImageSource("folder.png");
-            templates.SetTextBlockText("Templates");
+            templates.SetTextBlockText("[Templates]");
 
             // templates.Header = "Templates";
             templates.Selected += templates_selected;
