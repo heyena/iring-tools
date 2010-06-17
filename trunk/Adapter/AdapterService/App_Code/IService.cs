@@ -57,7 +57,7 @@ namespace org.iringtools.adapter
 
     [OperationContract]
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/mapping")]
-    Response UpdateMapping(string projectName, string applicationName, Mapping mapping);
+    Response UpdateMapping(string projectName, string applicationName, XElement mappingXml);
 
     [OperationContract]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}?format={format}")]

@@ -375,6 +375,11 @@ namespace org.iringtools.library
   [DataContract]
   public class ValueList
   {
+    public ValueList()
+    {
+      valueMaps = new List<ValueMap>();
+    }
+
     [DataMember(EmitDefaultValue = false, Order = 0)]
     public string name { get; set; }
 
