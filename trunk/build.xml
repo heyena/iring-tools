@@ -13,7 +13,7 @@
     <dotNetRdfInterfaceServiceDir>InterfaceService.dotNetRdf</dotNetRdfInterfaceServiceDir>
     <SemWebInterfaceServiceRoot>InterfaceService.SemWeb</SemWebInterfaceServiceRoot>
 	  <JosekiSandboxServiceRoot>SandboxService.Joseki</JosekiSandboxServiceRoot>
-	  <SemWebSandboxServiceRoot>SandboxService</SemWebSandboxServiceRoot>
+	  <SemWebSandboxServiceRoot>SandboxService.SemWeb</SemWebSandboxServiceRoot>
     <MappingEditorRoot>MappingEditor</MappingEditorRoot>
     <MappingEditorDir>$(MappingEditorRoot)\$(MappingEditorRoot).Web</MappingEditorDir>
     <RefDataEditorRoot>RefDataEditor</RefDataEditorRoot>
@@ -36,7 +36,7 @@
     <RefDataEditorDeploymentDir>$(iRINGSandbox)\RefDataEditor</RefDataEditorDeploymentDir>
     <RefDataServiceDeploymentDir>$(iRINGSandbox)\RefDataService</RefDataServiceDeploymentDir>
     <JosekiSandboxServiceDeploymentDir>$(iRINGSandbox)\SandboxService.Joseki</JosekiSandboxServiceDeploymentDir>
-    <SemWebSandboxServiceDeploymentDir>$(iRINGSandbox)\SandboxService</SemWebSandboxServiceDeploymentDir>
+    <SemWebSandboxServiceDeploymentDir>$(iRINGSandbox)\SandboxService.SemWeb</SemWebSandboxServiceDeploymentDir>
     <SandboxToolsDeploymentDir>$(iRINGSandbox)\Tools</SandboxToolsDeploymentDir>
     <TortoiseSVNCmd>"C:\Program Files\TortoiseSVN\bin\TortoiseProc.exe"</TortoiseSVNCmd>
     <MSTestCmd>"$(VSINSTALLDIR)\Common7\IDE\MSTest.exe"</MSTestCmd>
