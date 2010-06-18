@@ -381,7 +381,7 @@ namespace org.iringtools.adapter.projection
 
               if (_dataObjects.Count == 0)
               {
-                string objectType = _dataObjectNs + "." + objectName + "," + _dataObjectsAssemblyName;
+                string objectType = _dataObjectNs + "." + objectName + ", " + _dataObjectsAssemblyName;
                 _dataObjects = _dataLayer.Create(objectType, new string[classInstanceCount]);
               }
 
