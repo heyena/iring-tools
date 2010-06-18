@@ -1,0 +1,41 @@
+<html>
+  <head>
+    <meta http-equiv="cache-control" content="no-cache">
+    <link rel="stylesheet" type="text/css" href="adapter.css">
+    <title>iRING Interface</title>
+  </head>
+  <body>
+    <div class="banner">
+      <img src="iRING.png"/>
+    </div>
+    <div class="main">
+      <h1>
+        Interface Service
+      </h1>
+      <br>
+      <p>
+        This service provides <a href="http://www.w3.org/TR/rdf-sparql-protocol/">SPARQL Protocol</a> access to a <a href="http://razor.occams.info/code/semweb/">SemWeb</a> triple store containing an <a href="https://www.posccaesar.org/wiki/ISO15926">ISO 15926</a> representation of data from a legacy application.
+      <p>
+      <br>
+      <p>
+        See the <a href="http://www.w3.org/TR/rdf-sparql-protocol/#ap">SPARQL Protocol Specification</a> for details on caling the service over <a href="http://www.w3.org/TR/soap/">SOAP</a> and <a href="http://www.w3.org/Protocols/">HTTP</a>.
+      <p>
+      <br>
+      <p>
+        The form below can be used to test <a href="http://www.w3.org/TR/rdf-sparql-query/">SPARQL queries</a> against the <a href="http://razor.occams.info/code/semweb/">SemWeb</a> triple store.
+      <p>
+    </div>
+    <form action="sparql" method="post" enctype="application/x-www-form-urlencoded">
+      <input type="hidden" name="outputMimeType" value="text/html"/>
+      <input type="hidden" name="stylesheet" size="25" value="/xml-to-html.xsl">
+      <textarea name="query" rows="10" cols="80">
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+SELECT * WHERE {
+  ?s ?p ?o .
+}
+LIMIT 10
+      </textarea>
+      <input class="button" type="submit" value="Execute Query"/>
+    </form>
+  </body>
+</html> 
