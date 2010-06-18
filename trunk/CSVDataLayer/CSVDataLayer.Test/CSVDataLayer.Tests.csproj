@@ -17,6 +17,7 @@
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -29,7 +30,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -53,10 +53,21 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AdapterLibrary">
+      <HintPath>..\lib\iring-tools\AdapterLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="iRINGLibrary, Version=2.0.0.1057, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\iring-tools\iRINGLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="UtilityLibrary, Version=2.0.0.1057, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\iring-tools\UtilityLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -64,18 +75,6 @@
     <Compile Include="CSVDataLayerTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
-      <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
-      <Name>iRINGLibrary.Desktop</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Libraries\UtilityLibrary\Desktop\UtilityLibrary.Desktop.csproj">
-      <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
-      <Name>UtilityLibrary.Desktop</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AdapterLibrary\AdapterLibrary.csproj">
-      <Project>{6AFEF057-8D02-4F3C-AC41-6815E9CFD15A}</Project>
-      <Name>AdapterLibrary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\CSVDataLayer\CSVDataLayer.csproj">
       <Project>{4F181541-AFF4-4AE6-9FEE-A7A07E1ACB26}</Project>
       <Name>CSVDataLayer</Name>
