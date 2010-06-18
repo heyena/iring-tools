@@ -1,5 +1,5 @@
 <Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />  
+  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
 
   <PropertyGroup>
     <SolutionFile>iring-tools.sln</SolutionFile>
@@ -7,13 +7,20 @@
     <iRINGAdapter>$(DeploymentDir)\iRINGAdapter</iRINGAdapter>
     <iRINGSandbox>$(DeploymentDir)\iRINGSandbox</iRINGSandbox>
     <LandingPageDir>LandingPage</LandingPageDir>
+    <Log4NetPath>"ExternalBinaries\NHibernate 2.0\bin\net-2.0"</Log4NetPath>
+    <CSVDataLayerRoot>CSVDataLayer</CSVDataLayerRoot>
+    <CSVDataLayerSolutionFile>$(CSVDataLayerRoot)\CSVDataLayer.sln</CSVDataLayerSolutionFile>
+    <CSVDataLayerDir>$(CSVDataLayerRoot)\CSVDataLayer</CSVDataLayerDir>
+    <CSVDataLayerTestDir>$(CSVDataLayerRoot)\CSVDataLayer.Test</CSVDataLayerTestDir>
+    <CSVDataLayerLibDir>$(CSVDataLayerRoot)\lib</CSVDataLayerLibDir>
     <AdapterServiceRoot>Adapter</AdapterServiceRoot>
     <AdapterServiceDir>$(AdapterServiceRoot)\AdapterService</AdapterServiceDir>
+    <AdapterLibraryDir>$(AdapterServiceRoot)\AdapterLibrary</AdapterLibraryDir>
     <JosekiInterfaceServiceRoot>InterfaceService.Joseki</JosekiInterfaceServiceRoot>
     <dotNetRdfInterfaceServiceDir>InterfaceService.dotNetRdf</dotNetRdfInterfaceServiceDir>
     <SemWebInterfaceServiceRoot>InterfaceService.SemWeb</SemWebInterfaceServiceRoot>
-	  <JosekiSandboxServiceRoot>SandboxService.Joseki</JosekiSandboxServiceRoot>
-	  <SemWebSandboxServiceRoot>SandboxService.SemWeb</SemWebSandboxServiceRoot>
+    <JosekiSandboxServiceRoot>SandboxService.Joseki</JosekiSandboxServiceRoot>
+    <SemWebSandboxServiceRoot>SandboxService.SemWeb</SemWebSandboxServiceRoot>
     <MappingEditorRoot>MappingEditor</MappingEditorRoot>
     <MappingEditorDir>$(MappingEditorRoot)\$(MappingEditorRoot).Web</MappingEditorDir>
     <RefDataEditorRoot>RefDataEditor</RefDataEditorRoot>
@@ -23,6 +30,7 @@
     <RefDataServiceRoot>ReferenceData</RefDataServiceRoot>
     <DBDictionaryServiceRoot>DBDictionary</DBDictionaryServiceRoot>
     <LandingPageDeploymentDir>$(DeploymentDir)\LandingPage</LandingPageDeploymentDir>
+    <SDKDeploymentDir>$(DeploymentDir)\SDK</SDKDeploymentDir>
     <RefDataServiceDir>$(RefDataServiceRoot)\ReferenceDataService</RefDataServiceDir>
     <DbDictionaryServiceDir>$(DBDictionaryServiceRoot)\DbDictionaryService</DbDictionaryServiceDir>
     <AdapterServiceDeploymentDir>$(iRINGAdapter)\AdapterService</AdapterServiceDeploymentDir>
@@ -41,7 +49,7 @@
     <TortoiseSVNCmd>"C:\Program Files\TortoiseSVN\bin\TortoiseProc.exe"</TortoiseSVNCmd>
     <MSTestCmd>"$(VSINSTALLDIR)\Common7\IDE\MSTest.exe"</MSTestCmd>
   </PropertyGroup>
-  
+
   <PropertyGroup>
     <AssemblyInfoFile>$(MSBuildProjectDirectory)\AssemblyInfo.cs</AssemblyInfoFile>
     <Major>2</Major>
@@ -49,7 +57,7 @@
     <Build>0</Build>
     <Revision>0</Revision>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <UnitTest Include="RefDataServiceTests">
       <TestContainer>/testcontainer:$(RefDataServiceRoot)\ReferenceDataService.Tests\bin\Debug\ReferenceDataService.Tests.dll</TestContainer>
@@ -58,7 +66,7 @@
       <TestContainer>/testcontainer:$(AdapterServiceRoot)\AdapterService.Tests\bin\Debug\AdapterService.Tests.dll /runconfig:AdapterService.testrunconfig</TestContainer>
     </UnitTest>
   </ItemGroup>
-  
+
   <ItemGroup>
     <AdapterServiceDeployment
       Include="$(AdapterServiceDir)\**"
@@ -93,7 +101,7 @@
                $(AdapterServiceRoot)\*\*\.svn\**;
                $(AdapterServiceRoot)\*\*\*\.svn\**;">
     </AdapterServiceDeployment>
-    
+
     <JosekiInterfaceServiceDeployment
       Include="$(JosekiInterfaceServiceRoot)\**"
       Exclude="$(JosekiInterfaceServiceRoot)\.svn\**;
@@ -122,15 +130,15 @@
                $(dotNetRdfInterfaceServiceRoot)\*\*\*\.svn\**;
                $(dotNetRdfInterfaceServiceRoot)\*.log;">
     </dotNetRdfInterfaceServiceDeployment>
-	
-	  <SemWebInterfaceServiceDeployment
+
+    <SemWebInterfaceServiceDeployment
       Include="$(SemWebInterfaceServiceRoot)\**"
       Exclude="$(SemWebInterfaceServiceRoot)\web.config;
                $(SemWebInterfaceServiceRoot)\setup.conf;
                $(SemWebInterfaceServiceRoot)\.svn\**;
                $(SemWebInterfaceServiceRoot)\*\.svn\**;">
     </SemWebInterfaceServiceDeployment>
-	
+
     <JosekiSandboxServiceDeployment
       Include="$(JosekiSandboxServiceRoot)\**"
       Exclude="$(JosekiSandboxServiceRoot)\.svn\**;
@@ -139,7 +147,7 @@
                $(JosekiSandboxServiceRoot)\*\*\*\.svn\**;
                $(JosekiSandboxServiceRoot)\*.log;">
     </JosekiSandboxServiceDeployment>
-    
+
     <SemWebSandboxServiceDeployment
       Include="$(SemWebSandboxServiceRoot)\**"
       Exclude="$(SemWebSandboxServiceRoot)\web.config;
@@ -147,7 +155,7 @@
                $(SemWebSandboxServiceRoot)\.svn\**;
                $(SemWebSandboxServiceRoot)\*\.svn\**;">
     </SemWebSandboxServiceDeployment>
-	
+
     <MappingEditorDeployment
       Include="$(MappingEditorDir)\**"
       Exclude="$(MappingEditorDir)\bin\*.pdb;
@@ -168,7 +176,7 @@
       Exclude="$(LandingPageDir)\.svn\**;
                $(LandingPageDir)\*\.svn\**;">
     </LandingPageDeployment>
-    
+
     <RefDataEditorDeployment
       Include="$(RefDataEditorDir)\**"
       Exclude="$(RefDataEditorDir)\bin\*.pdb;
@@ -199,7 +207,7 @@
                $(DBDictionaryEditorDir)\.svn\**;
                $(DBDictionaryEditorDir)\*\.svn\**">
     </DBDictionaryEditorDeployment>
-    
+
     <RefDataServiceDeployment
       Include="$(RefDataServiceDir)\**"
       Exclude="$(RefDataServiceDir).Tests\**;               
@@ -234,7 +242,7 @@
                $(DBDictionaryServiceRoot)\*\.svn\**;
                $(DBDictionaryServiceRoot)\*\*\.svn\**;">
     </DBDictionaryServiceDeployment>
-    
+
     <AdapterToolsDeployment
       Include="ExternalBinaries\SemWeb\rdfstorage.exe;
                ExternalBinaries\SemWeb\SemWeb.dll;
@@ -269,7 +277,7 @@
                Utilities\RdfImportExport\RdfImportExport\bin\Debug\RdfImportExport.exe;
                Utilities\RdfImportExport\RdfImportExport\Developer_App.config;">
     </AdapterToolsDeployment>
-    
+
     <SandboxToolsDeployment
       Include="ExternalBinaries\SemWeb\rdfstorage.exe;
                ExternalBinaries\SemWeb\SemWeb.dll;
@@ -288,7 +296,7 @@
                Utilities\QMXFTransforms\*.dtd;
                Utilities\QMXFTransforms\*.xsd;
                Utilities\QMXFTransforms\*.xsl;">
-    </SandboxToolsDeployment>    
+    </SandboxToolsDeployment>
   </ItemGroup>
 
   <ItemGroup>
@@ -314,60 +322,101 @@
 
   <Target Name="Version">
     <Message Text="Updating assembly info ..." />
-    
-    <SvnVersion LocalPath="$(MSBuildProjectDirectory)">  
-      <Output TaskParameter="Revision" PropertyName="Revision" />  
-    </SvnVersion>  
-    
-    <FileUpdate  
-      Files="$(AssemblyInfoFile)" 
-      Regex="(\d+)\.(\d+)\.(\d+)(\.(\d+))*" 
+
+    <SvnVersion LocalPath="$(MSBuildProjectDirectory)">
+      <Output TaskParameter="Revision" PropertyName="Revision" />
+    </SvnVersion>
+
+    <FileUpdate
+      Files="$(AssemblyInfoFile)"
+      Regex="(\d+)\.(\d+)\.(\d+)(\.(\d+))*"
       ReplacementText="$(Major).$(Minor).$(Build).$(Revision)"/>
   </Target>
-  
+
   <Target Name="SvnCleanUp">
     <Message Text="Performing SVN clean-up ..." />
     <!--<Exec Command="$(TortoiseSVNCmd) /notempfile /command:cleanup /path:C:\iring-tools /closeonend:1"/>
     <Message Text="Closing SVN clean-up diaglog ..." />-->
     <Exec Command="svn cleanup"/>
   </Target>
-  
+
   <Target Name="SvnUpdate">
     <Message Text="Performing SVN update ..." />
     <!--<Exec Command="$(TortoiseSVNCmd) /notempfile /command:update /path:C:\iring-tools /closeonend:1"/>-->
     <Exec Command="svn update"/>
   </Target>
-  
+
   <Target Name="CoreBuild" DependsOnTargets="Version">
     <Message Text="Performing MSBuild ..." />
     <MSBuild Projects="$(SolutionFile)" Targets="Build"/>
+    <CallTarget Targets="CreateCSVDataLayerLib"/>
+    <MSBuild Projects="$(CSVDataLayerSolutionFile)" Targets="Build"/>
   </Target>
-  
+
   <Target Name="CleanBuild">
     <Message Text="Performing MSBuild clean-up ..." />
     <MSBuild Projects="$(SolutionFile)" Targets="Clean"/>
   </Target>
 
-  <Target Name="PrepareBuild">
-    <Message Text="Preparing build ..." />
-    <Exec Command="Copy $(AdapterServiceDir)\Web_Default.config $(AdapterServiceDir)\Web.config" />
-    <Exec Command="Copy $(dotNetRdfInterfaceServiceDir)\Developer_Web.config $(dotNetRdfInterfaceServiceDir)\Web.config" />
-    <Exec Command="Copy $(DBDictionaryServiceDir)\Web_Default.config $(DBDictionaryServiceDir)\Web.config" />
-    <Exec Command="Copy $(RefDataServiceDir)\Web_Default.config $(RefDataServiceDir)\Web.config" />
-    <Exec Command="Copy $(MappingEditorDir)\Web_Default.config $(MappingEditorDir)\Web.config" />
-    <Exec Command="Copy $(DBDictionaryEditorDir)\Web_Default.config $(DBDictionaryEditorDir)\Web.config" />
-    <Exec Command="Copy $(SemWebInterfaceServiceRoot)\Web_Default.config $(SemWebInterfaceServiceRoot)\Web.config" />
-    <Exec Command="Copy $(RefDataEditorDir)\Web_Default.config $(RefDataEditorDir)\Web.config" />
-    <Exec Command="Copy $(SemWebSandboxServiceRoot)\Web_Default.config $(SemWebSandboxServiceRoot)\Web.config" />
-    <Exec Command="Copy Utilities\DBDictionaryUtil\DBDictionaryUtil\App_Default.config Utilities\DBDictionaryUtil\DBDictionaryUtil\App.config" />
-    <Exec Command="Copy Utilities\SWDump\App.Default.config Utilities\SWDump\App.config" />
-    <Exec Command="Copy Utilities\QMXFGenerator\QMXFGenerator\App_Default.config Utilities\QMXFGenerator\QMXFGenerator\App.config" />
-    <Exec Command="Copy Utilities\RdfImportExport\RdfImportExport\Developer_App.config Utilities\RdfImportExport\RdfImportExport\App.config" />
+  <Target Name="CreateCSVDataLayerLib">
+    <Message Text="Creating CSVDataLayer lib folder ..." />
+    <Exec Command="Copy ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.chm $(CSVDataLayerLibDir)\Flee-0.9.26.0\Ciloci.Flee.chm" />
+    <Exec Command="Copy ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.dll $(CSVDataLayerLibDir)\Flee-0.9.26.0\Ciloci.Flee.dll" />
+    <Exec Command="Copy ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.xml $(CSVDataLayerLibDir)\Flee-0.9.26.0\Ciloci.Flee.xml" />
+    <Exec Command="Copy $(AdapterLibraryDir)\bin\Debug\AdapterLibrary.dll $(CSVDataLayerLibDir)\iring-tools\AdapterLibrary.dll" />
+    <Exec Command="Copy Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll $(CSVDataLayerLibDir)\iring-tools\iRINGLibrary.dll" />
+    <Exec Command="Copy Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll $(CSVDataLayerLibDir)\iring-tools\UtilityLibrary.dll" />
+    <Exec Command="Copy $(Log4NetPath)\log4net.dll $(CSVDataLayerLibDir)\log4net\log4net.dll" />
+    <Exec Command="Copy $(Log4NetPath)\log4net.license.txt $(CSVDataLayerLibDir)\log4net\log4net.license.txt" />
+    <Exec Command="Copy $(Log4NetPath)\log4net.xml $(CSVDataLayerLibDir)\log4net\log4net.xml" />
+    <Exec Command="Copy ExternalBinaries\Ninject2\Ninject.dll $(CSVDataLayerLibDir)\Ninject2\Ninject.dll" />
   </Target>
   
+  <Target Name="PrepareBuild">
+    <Message Text="Preparing build ..." />
+    <Exec Condition="!Exists('$(AdapterServiceDir)\Web.config')" 
+          Command="Copy $(AdapterServiceDir)\Web_Development.config $(AdapterServiceDir)\Web.config" />
+    
+    <Exec Condition="!Exists('$(dotNetRdfInterfaceServiceDir)\Web.config')"
+          Command="Copy $(dotNetRdfInterfaceServiceDir)\Developer_Web.config $(dotNetRdfInterfaceServiceDir)\Web.config" />
+    
+    <Exec Condition="!Exists('$(DBDictionaryServiceDir)\Web.config')" 
+          Command="Copy $(DBDictionaryServiceDir)\Web_Default.config $(DBDictionaryServiceDir)\Web.config" />
+    
+    <Exec Condition="!Exists('$(RefDataServiceDir)\Web.config')"
+          Command="Copy $(RefDataServiceDir)\Web_Development.config $(RefDataServiceDir)\Web.config" />
+    
+    <Exec Condition="!Exists('$(MappingEditorDir)\Web.config')"
+          Command="Copy $(MappingEditorDir)\Web_Default.config $(MappingEditorDir)\Web.config" />
+    
+    <Exec Condition="!Exists('$(DBDictionaryEditorDir)\Web.config')"
+          Command="Copy $(DBDictionaryEditorDir)\Web_Default.config $(DBDictionaryEditorDir)\Web.config" />
+    
+    <Exec Condition="!Exists('$(SemWebInterfaceServiceRoot)\Web.config')"
+          Command="Copy $(SemWebInterfaceServiceRoot)\Web_Default.config $(SemWebInterfaceServiceRoot)\Web.config" />
+    
+    <Exec Condition="!Exists('$(RefDataEditorDir)\Web.config')"
+          Command="Copy $(RefDataEditorDir)\Web_Default.config $(RefDataEditorDir)\Web.config" />
+    
+    <Exec Condition="!Exists('$(SemWebSandboxServiceRoot)\Web.config')"
+          Command="Copy $(SemWebSandboxServiceRoot)\Web_Default.config $(SemWebSandboxServiceRoot)\Web.config" />
+    
+    <Exec Condition="!Exists('Utilities\DBDictionaryUtil\DBDictionaryUtil\App_Default.config')"
+          Command="Copy Utilities\DBDictionaryUtil\DBDictionaryUtil\App_Default.config Utilities\DBDictionaryUtil\DBDictionaryUtil\App.config" />
+    
+    <Exec Condition="!Exists('Utilities\SWDump\App.config')"
+          Command="Copy Utilities\SWDump\App.Default.config Utilities\SWDump\App.config" />
+    
+    <Exec Condition="!Exists('Utilities\QMXFGenerator\QMXFGenerator\App.config')"
+          Command="Copy Utilities\QMXFGenerator\QMXFGenerator\App_Default.config Utilities\QMXFGenerator\QMXFGenerator\App.config" />
+    
+    <Exec Condition="!Exists('Utilities\RdfImportExport\RdfImportExport\App.config')"
+          Command="Copy Utilities\RdfImportExport\RdfImportExport\Developer_App.config Utilities\RdfImportExport\RdfImportExport\App.config" />
+  </Target>
+
   <Target Name="Test">
     <Message Text="Cleaning old test results ..." />
-    <Exec Command="RmDir /S /Q TestResults" />   
+    <Exec Command="RmDir /S /Q TestResults" />
     <Message Text="Executing unit tests..." />
     <Exec Command="$(MSTestCmd) %(UnitTest.TestContainer)" />
   </Target>
@@ -395,7 +444,7 @@
           DestinationFiles="@(JosekiInterfaceServiceDeployment->'$(JosekiInterfaceServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Exec Command="Move /Y $(JosekiInterfaceServiceDeploymentDir)\setup.default.conf $(JosekiInterfaceServiceDeploymentDir)\setup.conf" />
     <Exec Command="Move /Y $(JosekiInterfaceServiceDeploymentDir)\webapps\joseki\WEB-INF\web.default.xml $(JosekiInterfaceServiceDeploymentDir)\webapps\joseki\WEB-INF\web.xml" />-->
-    
+
     <Message Text="Creating SemWeb interface service deployment ..." />
     <Copy SourceFiles="@(SemWebInterfaceServiceDeployment)"
           DestinationFiles="@(SemWebInterfaceServiceDeployment->'$(SemWebInterfaceServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
@@ -406,7 +455,7 @@
     <Copy SourceFiles="@(dotNetRdfInterfaceServiceDeployment)"
           DestinationFiles="@(dotNetRdfInterfaceServiceDeployment->'$(dotNetRdfInterfaceServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Exec Command="Move /Y $(dotNetRdfInterfaceServiceDeploymentDir)\Developer_Web.config $(dotNetRdfInterfaceServiceDeploymentDir)\Web.config" />
-    
+
     <Message Text="Creating mapping editor deployment ..." />
     <Copy SourceFiles="@(MappingEditorDeployment)"
           DestinationFiles="@(MappingEditorDeployment->'$(MappingEditorDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
@@ -434,18 +483,18 @@
           DestinationFiles="@(JosekiSandboxServiceDeployment->'$(JosekiSandboxServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Exec Command="Move /Y $(JosekiSandboxServiceDeploymentDir)\setup.default.conf $(JosekiSandboxServiceDeploymentDir)\setup.conf" />
     <Exec Command="Move /Y $(JosekiSandboxServiceDeploymentDir)\webapps\joseki\WEB-INF\web.default.xml $(JosekiSandboxServiceDeploymentDir)\webapps\joseki\WEB-INF\web.xml" />
-    
+
     <Message Text="Creating SemWeb sandbox service deployment ..." />
     <Copy SourceFiles="@(SemWebSandboxServiceDeployment)"
           DestinationFiles="@(SemWebSandboxServiceDeployment->'$(SemWebSandboxServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Exec Command="Move /Y $(SemWebSandboxServiceDeploymentDir)\Web_Default.config $(SemWebSandboxServiceDeploymentDir)\Web.config" />
     <Exec Command="Move /Y $(SemWebSandboxServiceDeploymentDir)\setup_default.conf $(SemWebSandboxServiceDeploymentDir)\setup.conf" />
-    
+
     <Message Text="Creating adapter tools deployment ..." />
     <Copy SourceFiles="@(AdapterToolsDeployment)"
           DestinationFiles="@(AdapterToolsDeployment->'$(AdapterToolsDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Exec Command="Move /Y $(AdapterToolsDeploymentDir)\App_Default.config $(AdapterToolsDeploymentDir)\DBDictionaryUtil.exe.config" />
-       
+
     <Message Text="Creating sandbox tools deployment ..." />
     <Copy SourceFiles="@(SandboxToolsDeployment)"
           DestinationFiles="@(SandboxToolsDeployment->'$(SandboxToolsDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
@@ -459,10 +508,10 @@
   <Target Name="CreatePackages" DependsOnTargets="CreateDeployment">
     <Exec Command="cd %(DeploymentPackage.Path) &amp;&amp; zip %(DeploymentPackage.Options) %(DeploymentPackage.ZIPFile) %(DeploymentPackage.Source)" />
   </Target>
-  
+
   <Target Name="Build" DependsOnTargets="SvnUpdate; CoreBuild"/>
-  
+
   <Target Name="Rebuild" DependsOnTargets="SvnUpdate; CleanBuild; PrepareBuild; CoreBuild"/>
-  
+
   <Target Name="All" DependsOnTargets="Rebuild; Test; CreatePackages"/>
 </Project>

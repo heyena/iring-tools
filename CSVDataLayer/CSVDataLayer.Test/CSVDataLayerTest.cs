@@ -22,7 +22,7 @@ namespace Bechtel.CSVDataLayer.API
     {
       NameValueCollection settings = new NameValueCollection();
       settings["BaseDirectoryPath"] = String.Empty;
-      settings["XmlPath"] = @"C:\iring-tools\Adapter\CSVDataLayer\";
+      settings["XmlPath"] = @"C:\iring-tools\CSVDataLayer\CSVDataLayer\";
       settings["ProxyCredentialToken"] = String.Empty;
       settings["ProxyHost"] = String.Empty;
       settings["ProxyPort"] = String.Empty;

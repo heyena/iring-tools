@@ -115,7 +115,7 @@
     <Compile Include="App_Code\Service.cs" />
     <Content Include="Web.config" />
     <Content Include="XML\ABC.DatabaseDictionary.xml" />
-    <Content Include="XML\Mapping.12345_000.ABC.xml" />
+    <Content Include="XML\Mapping.GeometrySIG.CircleTest.xml" />
     <Content Include="XML\Seed.DatabaseDictionary.xml" />
     <Content Include="XML\Seed.Mapping.xml" />
     <Compile Include="Properties\AssemblyInfo.cs" />
