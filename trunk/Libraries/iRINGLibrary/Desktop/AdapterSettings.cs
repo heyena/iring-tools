@@ -56,8 +56,15 @@ namespace org.iringtools.adapter
         {
           if (value == null)
           {
-            var baseAddress = OperationContext.Current.Host.BaseAddresses[0];
-            _graphBaseUri = baseAddress.ToString();
+            if (OperationContext.Current != null)
+            {
+              var baseAddress = OperationContext.Current.Host.BaseAddresses[0];
+              _graphBaseUri = baseAddress.ToString();
+            }
+            else
+            {
+              _graphBaseUri = "http://yourcompany.com";
+            }
           }
           else
           {
