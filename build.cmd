@@ -1,5 +1,5 @@
 @echo off
-call "%VS90COMNTOOLS%\vsvars32.bat"
+call "%VS100COMNTOOLS%\vsvars32.bat"
 cd %~dp0%
 rem "C:\Program Files\TortoiseSVN\bin\TortoiseProc.exe" /notempfile /command:update /path:build.xml /closeonend:1
 svn update
