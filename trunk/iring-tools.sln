@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{9589D070-E5C0-415E-B2D6-2AC6A25E7832}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Applications", "Applications", "{3B620E60-2B54-48B4-B0D3-8C0A8DD7E503}"
@@ -10,6 +10,32 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit Tests", "Unit Tests", "{45FF71E8-CA94-4ED4-8058-D29BB2DE052D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{0CE13F71-3913-4C34-863E-FF1A7788C177}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UtilityLibrary", "UtilityLibrary", "{DBE0B254-4C58-46C4-A3DE-140364B4623B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8DC0E577-3416-41FD-80BA-11DDE04C1BAE}"
+	ProjectSection(SolutionItems) = preProject
+		AdapterService.testrunconfig = AdapterService.testrunconfig
+		iring-tools.vsmdi = iring-tools.vsmdi
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "QMXFTransforms", "QMXFTransforms", "{0A204D3D-73E9-4C85-A601-D91282B4CA16}"
+	ProjectSection(SolutionItems) = preProject
+		Utilities\QMXFTransforms\entities.dtd = Utilities\QMXFTransforms\entities.dtd
+		Utilities\QMXFTransforms\QMXF.xml = Utilities\QMXFTransforms\QMXF.xml
+		Utilities\QMXFTransforms\qmxf2qxf.xsl = Utilities\QMXFTransforms\qmxf2qxf.xsl
+		Utilities\QMXFTransforms\QXF.xml = Utilities\QMXFTransforms\QXF.xml
+		Utilities\QMXFTransforms\qxf.xsd = Utilities\QMXFTransforms\qxf.xsd
+		Utilities\QMXFTransforms\qxf2rdf.xsl = Utilities\QMXFTransforms\qxf2rdf.xsl
+		Utilities\QMXFTransforms\RDF.xml = Utilities\QMXFTransforms\RDF.xml
+		Utilities\QMXFTransforms\schema.dtd = Utilities\QMXFTransforms\schema.dtd
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "iRINGLibrary", "iRINGLibrary", "{270F5203-FE58-480F-AF4B-C38D4461FEEC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Adapter", "Adapter", "{4DBA978E-FCE5-4FF2-A22D-E4506C4E6DEA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PrismContrib", "PrismContrib", "{05A05970-7324-4D5A-9B69-4BF1542676F3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UtilityLibrary.Desktop", "Libraries\UtilityLibrary\Desktop\UtilityLibrary.Desktop.csproj", "{E937EE2D-064B-4EDA-9E81-7E7F509A784A}"
 EndProject
@@ -26,8 +52,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrismContrib.Silverlight", "Libraries\PrismContrib\Silverlight\PrismContrib.Silverlight.csproj", "{04C08B97-3D9E-4BB4-B0EC-6AE035105BF8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UtilityLibrary.Silverlight", "Libraries\UtilityLibrary\Silverlight\UtilityLibrary.Silverlight.csproj", "{EA853599-4781-4BD2-8EC7-61E893520A23}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UtilityLibrary", "UtilityLibrary", "{DBE0B254-4C58-46C4-A3DE-140364B4623B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdapterService", "Adapter\AdapterService\AdapterService.csproj", "{6865624F-EEC7-4F4F-B7FF-4483F8D0B22D}"
 EndProject
@@ -53,12 +77,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RefDataEditor.Web", "RefDat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContextMenu.Silverlight", "Modules\ContextMenu\Silverlight\ContextMenu.Silverlight.csproj", "{AF76DFF8-2267-4370-83D3-FE254B774C3D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8DC0E577-3416-41FD-80BA-11DDE04C1BAE}"
-	ProjectSection(SolutionItems) = preProject
-		AdapterService.testrunconfig = AdapterService.testrunconfig
-		iring-tools.vsmdi = iring-tools.vsmdi
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMXFGenerator", "Utilities\QMXFGenerator\QMXFGenerator\QMXFGenerator.csproj", "{F77C735A-2334-4471-A4F2-41BDAC8A8492}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdapterService.Tests", "Adapter\AdapterService.Tests\AdapterService.Tests.csproj", "{C0120CB3-63EB-4DB1-9D21-1F68FF99DDAE}"
@@ -67,29 +85,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReferenceDataService.Tests"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemplateEditor.Silverlight", "Modules\TemplateEditor\Silverlight\TemplateEditor.Silverlight.csproj", "{B5B94B38-4901-4D3F-859E-E157623501D9}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "QMXFTransforms", "QMXFTransforms", "{0A204D3D-73E9-4C85-A601-D91282B4CA16}"
-	ProjectSection(SolutionItems) = preProject
-		Utilities\QMXFTransforms\entities.dtd = Utilities\QMXFTransforms\entities.dtd
-		Utilities\QMXFTransforms\QMXF.xml = Utilities\QMXFTransforms\QMXF.xml
-		Utilities\QMXFTransforms\qmxf2qxf.xsl = Utilities\QMXFTransforms\qmxf2qxf.xsl
-		Utilities\QMXFTransforms\QXF.xml = Utilities\QMXFTransforms\QXF.xml
-		Utilities\QMXFTransforms\qxf.xsd = Utilities\QMXFTransforms\qxf.xsd
-		Utilities\QMXFTransforms\qxf2rdf.xsl = Utilities\QMXFTransforms\qxf2rdf.xsl
-		Utilities\QMXFTransforms\RDF.xml = Utilities\QMXFTransforms\RDF.xml
-		Utilities\QMXFTransforms\schema.dtd = Utilities\QMXFTransforms\schema.dtd
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdapterClient", "Utilities\AdapterClient\AdapterClient.csproj", "{170080C7-08E4-4870-A2A4-C71F7CAE9ABD}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "iRINGLibrary", "iRINGLibrary", "{270F5203-FE58-480F-AF4B-C38D4461FEEC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iRINGLibrary.Desktop", "Libraries\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj", "{46FB3942-D0A5-4BFF-97B0-739E56BFB111}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iRINGLibrary.Silverlight", "Libraries\iRINGLibrary\Silverlight\iRINGLibrary.Silverlight.csproj", "{748B993D-4F65-4A39-B865-6A7D5412C4BA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NInjectContrib", "Libraries\NInjectContrib\NInjectContrib.csproj", "{DC7F8819-3368-4B76-A7E7-C4433176EC58}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Adapter", "Adapter", "{4DBA978E-FCE5-4FF2-A22D-E4506C4E6DEA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdapterLibrary", "Adapter\AdapterLibrary\AdapterLibrary.csproj", "{6AFEF057-8D02-4F3C-AC41-6815E9CFD15A}"
 EndProject
@@ -100,8 +102,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSDLTransform", "Utilities\SSDLTransform\SSDLTransform.csproj", "{381AA0C1-5EB4-4EF0-A6F3-BB1C657BB2F1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBDictionaryUtil", "Utilities\DBDictionaryUtil\DBDictionaryUtil\DBDictionaryUtil.csproj", "{EFC25AE4-D88F-48D2-8652-98777D81E95B}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PrismContrib", "PrismContrib", "{05A05970-7324-4D5A-9B69-4BF1542676F3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrismContrib.Desktop", "Libraries\PrismContrib\Desktop\PrismContrib.Desktop.csproj", "{1A611244-54BE-4F12-AA34-12F54A2B07E6}"
 EndProject
@@ -1008,9 +1008,9 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{DBE0B254-4C58-46C4-A3DE-140364B4623B} = {9589D070-E5C0-415E-B2D6-2AC6A25E7832}
-		{EDF3DE51-8D39-4E53-9154-A18DDA989DA9} = {9589D070-E5C0-415E-B2D6-2AC6A25E7832}
-		{05A05970-7324-4D5A-9B69-4BF1542676F3} = {9589D070-E5C0-415E-B2D6-2AC6A25E7832}
 		{270F5203-FE58-480F-AF4B-C38D4461FEEC} = {9589D070-E5C0-415E-B2D6-2AC6A25E7832}
+		{05A05970-7324-4D5A-9B69-4BF1542676F3} = {9589D070-E5C0-415E-B2D6-2AC6A25E7832}
+		{EDF3DE51-8D39-4E53-9154-A18DDA989DA9} = {9589D070-E5C0-415E-B2D6-2AC6A25E7832}
 		{DC7F8819-3368-4B76-A7E7-C4433176EC58} = {9589D070-E5C0-415E-B2D6-2AC6A25E7832}
 		{2E2D6E2D-99B2-438F-B44B-1F292817E623} = {9589D070-E5C0-415E-B2D6-2AC6A25E7832}
 		{472F51C6-9A40-44F4-93AA-4BFD944BB9A9} = {3B620E60-2B54-48B4-B0D3-8C0A8DD7E503}
@@ -1031,22 +1031,22 @@ Global
 		{C0120CB3-63EB-4DB1-9D21-1F68FF99DDAE} = {45FF71E8-CA94-4ED4-8058-D29BB2DE052D}
 		{B93589B3-9BFD-4030-8FAA-D7E21524EF0B} = {45FF71E8-CA94-4ED4-8058-D29BB2DE052D}
 		{C3AEEECD-E521-414B-9E36-D1E9440091D6} = {45FF71E8-CA94-4ED4-8058-D29BB2DE052D}
+		{0A204D3D-73E9-4C85-A601-D91282B4CA16} = {0CE13F71-3913-4C34-863E-FF1A7788C177}
 		{47F8BAD7-332C-4463-8AA1-5BC7F9B3A663} = {0CE13F71-3913-4C34-863E-FF1A7788C177}
 		{F77C735A-2334-4471-A4F2-41BDAC8A8492} = {0CE13F71-3913-4C34-863E-FF1A7788C177}
-		{0A204D3D-73E9-4C85-A601-D91282B4CA16} = {0CE13F71-3913-4C34-863E-FF1A7788C177}
 		{170080C7-08E4-4870-A2A4-C71F7CAE9ABD} = {0CE13F71-3913-4C34-863E-FF1A7788C177}
 		{381AA0C1-5EB4-4EF0-A6F3-BB1C657BB2F1} = {0CE13F71-3913-4C34-863E-FF1A7788C177}
 		{EFC25AE4-D88F-48D2-8652-98777D81E95B} = {0CE13F71-3913-4C34-863E-FF1A7788C177}
 		{A5A5317A-421B-4C4D-B640-9E134D55B5E7} = {0CE13F71-3913-4C34-863E-FF1A7788C177}
 		{B3AD51C6-20FB-4865-9499-DE68B15874D4} = {0CE13F71-3913-4C34-863E-FF1A7788C177}
-		{EA853599-4781-4BD2-8EC7-61E893520A23} = {DBE0B254-4C58-46C4-A3DE-140364B4623B}
 		{E937EE2D-064B-4EDA-9E81-7E7F509A784A} = {DBE0B254-4C58-46C4-A3DE-140364B4623B}
-		{04C08B97-3D9E-4BB4-B0EC-6AE035105BF8} = {05A05970-7324-4D5A-9B69-4BF1542676F3}
-		{1A611244-54BE-4F12-AA34-12F54A2B07E6} = {05A05970-7324-4D5A-9B69-4BF1542676F3}
+		{EA853599-4781-4BD2-8EC7-61E893520A23} = {DBE0B254-4C58-46C4-A3DE-140364B4623B}
 		{46FB3942-D0A5-4BFF-97B0-739E56BFB111} = {270F5203-FE58-480F-AF4B-C38D4461FEEC}
 		{748B993D-4F65-4A39-B865-6A7D5412C4BA} = {270F5203-FE58-480F-AF4B-C38D4461FEEC}
 		{6AFEF057-8D02-4F3C-AC41-6815E9CFD15A} = {4DBA978E-FCE5-4FF2-A22D-E4506C4E6DEA}
 		{A9DAEA2D-26AC-4FFE-A4B0-3DEF95DE4168} = {4DBA978E-FCE5-4FF2-A22D-E4506C4E6DEA}
 		{4F181541-AFF4-4AE6-9FEE-A7A07E1ACB26} = {4DBA978E-FCE5-4FF2-A22D-E4506C4E6DEA}
+		{04C08B97-3D9E-4BB4-B0EC-6AE035105BF8} = {05A05970-7324-4D5A-9B69-4BF1542676F3}
+		{1A611244-54BE-4F12-AA34-12F54A2B07E6} = {05A05970-7324-4D5A-9B69-4BF1542676F3}
 	EndGlobalSection
 EndGlobal
