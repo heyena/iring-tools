@@ -227,7 +227,7 @@ namespace org.iringtools.informationmodel.usercontrols
         try
         {
             item.SetImageSource("role.png");
-            item.SetTooltipText("Role : " + entity.label);
+            item.SetTooltipText("Role : " + roleDefinition.name[0].value);
             item.SetTextBlockText(roleDefinition.name[0].value);
             item.Entity = entity;
             item.RoleDefinition = roleDefinition;
@@ -246,7 +246,7 @@ namespace org.iringtools.informationmodel.usercontrols
       try
       {
           item.SetImageSource("role.png");
-          item.SetTooltipText("Role : " + entity.label);
+          item.SetTooltipText("Role : " + roleQualification.name[0].value);
           item.SetTextBlockText(entity.label);
           item.Entity = entity;
           item.SetTextBlockText(roleQualification.name[0].value);
