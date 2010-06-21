@@ -10,8 +10,8 @@
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WCF4AdapterService</RootNamespace>
-    <AssemblyName>WCF4AdapterService</AssemblyName>
+    <RootNamespace>AdapterService</RootNamespace>
+    <AssemblyName>AdapterService</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -80,9 +80,6 @@
     <Content Include="XML\Seed.Mapping.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\AssemblyInfo.cs">
-      <Link>AssemblyInfo.cs</Link>
-    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -94,7 +91,7 @@
     <Folder Include="Logs\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Adapter\NHibernateDataLayer\NHibernateDataLayer.csproj">
+    <ProjectReference Include="..\NHibernateDataLayer\NHibernateDataLayer.csproj">
       <Project>{A9DAEA2D-26AC-4FFE-A4B0-3DEF95DE4168}</Project>
       <Name>NHibernateDataLayer</Name>
     </ProjectReference>
