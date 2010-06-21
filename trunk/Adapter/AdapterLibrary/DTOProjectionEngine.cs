@@ -85,7 +85,7 @@ namespace org.iringtools.adapter.projection
         {
             DataTransferObject dataTransferObject = new DataTransferObject();
             _dataTransferObjects.Add(dataTransferObject);
-            dataTransferObject.classObjects = new Dictionary<string, List<ClassObject>>();
+            dataTransferObject.classObjects = new List<ClassObject>();
             FillDataTransferObjectList(dataTransferObject, classMap.classId, dataObjectIndex);            
         }
           XElement xElement = SerializationExtensions.ToXml<List<DataTransferObject>>(_dataTransferObjects);
@@ -100,15 +100,27 @@ namespace org.iringtools.adapter.projection
    
     public IList<IDataObject> GetDataObjects(ref GraphMap graphMap, ref DataDictionary dataDictionary, ref XElement xml)
     {
-      throw new NotImplementedException();
+        _graphMap = graphMap;
+        _dataDictionary = dataDictionary;
+
+        List<IDataObject> dataObjects = new List<IDataObject>();
+        List<DataTransferObject> dataTransferObjects = SerializationExtensions.ToObject<List<DataTransferObject>>(xml);
+        foreach (DataTransferObject dataTransferObject in dataTransferObjects)
+        {
+            ClassMap classMap = _graphMap.classTemplateListMaps.First().Key;
+            List<string> identifiers = new List<string>();
+            List<ClassObject> classObjects = dataTransferObject.classObjects;
+            identifiers.Add(classObjects[0].identifier);
+            string objectType = _dataObjectNs + "." + graphMap.dataObjectMap + ", " + _dataObjectsAssemblyName;
+            IList<IDataObject> dataObjectList = _dataLayer.Create(objectType, identifiers);             
+        }
+        return dataObjects;
     }
 
     #region helper methods
 
     private void FillDataTransferObjectList(DataTransferObject dataTransferObject, string classId, int dataObjectIndex)
     {
-        List<ClassObject> classObjects = new List<ClassObject>();
-
         KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = _graphMap.GetClassTemplateListMap(classId);
         List<TemplateMap> templateMaps = classTemplateListMap.Value;
 
@@ -116,10 +128,9 @@ namespace org.iringtools.adapter.projection
 
         ClassObject classObject = new ClassObject();
         classObject.classId = classId;
-        classObject.templateObjects = new Dictionary<string, List<TemplateObject>>();
+        classObject.templateObjects = new List<TemplateObject>();
         classObject.identifier = classIdentifier;
-        classObjects.Add(classObject);
-
+        
         foreach (TemplateMap templateMap in templateMaps)
         {
             TemplateObject templateObject = new TemplateObject();
@@ -141,7 +152,7 @@ namespace org.iringtools.adapter.projection
                     if (roleMap.classMap != null)
                     {
                         bool classExists = false;
-                        if (dataTransferObject.classObjects.ContainsKey(roleMap.classMap.classId))
+                        if (dataTransferObject.GetClassObjects(roleMap.classMap.classId).Count > 0)
                         {
                             roleObject.reference = roleMap.value;
                             classExists = true;
@@ -163,19 +174,10 @@ namespace org.iringtools.adapter.projection
                 }
                 templateObject.roleObjects.Add(roleObject);
             }
-
-            if (classObject.templateObjects.ContainsKey(templateObject.templateId))
-            {
-                classObject.templateObjects[templateObject.templateId].Add(templateObject);
-            }
-            else
-            {
-                List<TemplateObject> templateObjects = new List<TemplateObject>();
-                templateObjects.Add(templateObject);
-                classObject.templateObjects.Add(templateObject.templateId, templateObjects);
-            }
+            classObject.templateObjects.Add(templateObject);
+            
         }
-        dataTransferObject.classObjects.Add(classId, classObjects);
+        dataTransferObject.classObjects.Add(classObject);
     }
 
     private void PopulateClassIdentifiers()
