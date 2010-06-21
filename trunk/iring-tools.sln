@@ -53,8 +53,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrismContrib.Silverlight", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UtilityLibrary.Silverlight", "Libraries\UtilityLibrary\Silverlight\UtilityLibrary.Silverlight.csproj", "{EA853599-4781-4BD2-8EC7-61E893520A23}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdapterService", "Adapter\AdapterService\AdapterService.csproj", "{6865624F-EEC7-4F4F-B7FF-4483F8D0B22D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReferenceDataService", "ReferenceData\ReferenceDataService\ReferenceDataService.csproj", "{9C43C2EB-DB4A-4BA0-B14F-24D0EA60D954}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MappingEditor.Silverlight", "Modules\Mapping\Silverlight\MappingEditor.Silverlight.csproj", "{ABD639A6-E306-4C15-BB2E-CDA458AA7761}"
@@ -119,7 +117,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RdfImportExport", "Utilitie
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InterfaceService.dotNetRDF", "InterfaceService.dotNetRDF\InterfaceService.dotNetRDF.csproj", "{68AC584F-4DDF-4E03-9756-EFAEE1AEDD70}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WCF4AdapterService", "Prototypes\WCF4AdapterService\WCF4AdapterService\WCF4AdapterService.csproj", "{4C5B3DE0-EFCF-497B-BF62-8DB71436361D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdapterService", "Adapter\AdapterService\AdapterService.csproj", "{4C5B3DE0-EFCF-497B-BF62-8DB71436361D}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
@@ -300,26 +298,6 @@ Global
 		{EA853599-4781-4BD2-8EC7-61E893520A23}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{EA853599-4781-4BD2-8EC7-61E893520A23}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{EA853599-4781-4BD2-8EC7-61E893520A23}.Release|x86.ActiveCfg = Release|Any CPU
-		{6865624F-EEC7-4F4F-B7FF-4483F8D0B22D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6865624F-EEC7-4F4F-B7FF-4483F8D0B22D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6865624F-EEC7-4F4F-B7FF-4483F8D0B22D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{6865624F-EEC7-4F4F-B7FF-4483F8D0B22D}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{6865624F-EEC7-4F4F-B7FF-4483F8D0B22D}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{6865624F-EEC7-4F4F-B7FF-4483F8D0B22D}.Demo|Any CPU.ActiveCfg = Debug|Any CPU
-		{6865624F-EEC7-4F4F-B7FF-4483F8D0B22D}.Demo|Any CPU.Build.0 = Debug|Any CPU
-		{6865624F-EEC7-4F4F-B7FF-4483F8D0B22D}.Demo|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{6865624F-EEC7-4F4F-B7FF-4483F8D0B22D}.Demo|Mixed Platforms.Build.0 = Debug|Any CPU
-		{6865624F-EEC7-4F4F-B7FF-4483F8D0B22D}.Demo|x86.ActiveCfg = Debug|Any CPU
-		{6865624F-EEC7-4F4F-B7FF-4483F8D0B22D}.MobileDev|Any CPU.ActiveCfg = Release|Any CPU
-		{6865624F-EEC7-4F4F-B7FF-4483F8D0B22D}.MobileDev|Any CPU.Build.0 = Release|Any CPU
-		{6865624F-EEC7-4F4F-B7FF-4483F8D0B22D}.MobileDev|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{6865624F-EEC7-4F4F-B7FF-4483F8D0B22D}.MobileDev|Mixed Platforms.Build.0 = Release|Any CPU
-		{6865624F-EEC7-4F4F-B7FF-4483F8D0B22D}.MobileDev|x86.ActiveCfg = Release|Any CPU
-		{6865624F-EEC7-4F4F-B7FF-4483F8D0B22D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6865624F-EEC7-4F4F-B7FF-4483F8D0B22D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6865624F-EEC7-4F4F-B7FF-4483F8D0B22D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{6865624F-EEC7-4F4F-B7FF-4483F8D0B22D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{6865624F-EEC7-4F4F-B7FF-4483F8D0B22D}.Release|x86.ActiveCfg = Release|Any CPU
 		{9C43C2EB-DB4A-4BA0-B14F-24D0EA60D954}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9C43C2EB-DB4A-4BA0-B14F-24D0EA60D954}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C43C2EB-DB4A-4BA0-B14F-24D0EA60D954}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
