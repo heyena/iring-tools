@@ -35,14 +35,40 @@ namespace org.iringtools.adapter
 {
     public class DataTransferObject
     {
-        public Dictionary<string, List<ClassObject>> classObjects { get; set; }
+        public List<ClassObject> classObjects { get; set; }
+
+        public List<ClassObject> GetClassObjects(string classId)
+        {
+            List<ClassObject> classObjectList = new List<ClassObject>();
+            foreach (ClassObject classObject in this.classObjects)
+            {
+                if (classObject.classId == classId)
+                {
+                    classObjectList.Add(classObject);
+                }
+            }
+            return classObjectList;
+        }
     }
 
     public class ClassObject
     {
         public string classId { get; set; }
         public string identifier { get; set; }
-        public Dictionary<string, List<TemplateObject>> templateObjects  { get; set; }
+        public List<TemplateObject> templateObjects  { get; set; }
+
+        public List<TemplateObject> GetTemplateObjects(string templateId)
+        {
+            List<TemplateObject> templateObjectList = new List<TemplateObject>();
+            foreach (TemplateObject templateObject in this.templateObjects)
+            {
+                if (templateObject.templateId == templateId)
+                {
+                    templateObjectList.Add(templateObject);
+                }
+            }
+            return templateObjectList;
+        }
     }
 
     public class TemplateObject
