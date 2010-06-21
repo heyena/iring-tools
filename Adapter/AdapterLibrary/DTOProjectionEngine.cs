@@ -103,18 +103,23 @@ namespace org.iringtools.adapter.projection
         _graphMap = graphMap;
         _dataDictionary = dataDictionary;
 
-        List<IDataObject> dataObjects = new List<IDataObject>();
-        List<DataTransferObject> dataTransferObjects = SerializationExtensions.ToObject<List<DataTransferObject>>(xml);
-        foreach (DataTransferObject dataTransferObject in dataTransferObjects)
+        _dataTransferObjects = SerializationExtensions.ToObject<List<DataTransferObject>>(xml);
+        ClassMap classMap = _graphMap.classTemplateListMaps.First().Key;
+        List<string> identifiers = new List<string>();
+        foreach (DataTransferObject dataTransferObject in _dataTransferObjects)
         {
-            ClassMap classMap = _graphMap.classTemplateListMaps.First().Key;
-            List<string> identifiers = new List<string>();
-            List<ClassObject> classObjects = dataTransferObject.classObjects;
-            identifiers.Add(classObjects[0].identifier);
-            string objectType = _dataObjectNs + "." + graphMap.dataObjectMap + ", " + _dataObjectsAssemblyName;
-            IList<IDataObject> dataObjectList = _dataLayer.Create(objectType, identifiers);             
+            List<ClassObject> classObjects = dataTransferObject.GetClassObjects(classMap.classId);
+            identifiers.Add(classObjects[0].identifier);                        
         }
-        return dataObjects;
+        string objectType = _dataObjectNs + "." + _graphMap.dataObjectMap + ", " + _dataObjectsAssemblyName;
+        IList<IDataObject> dataObjectList = _dataLayer.Create(objectType, identifiers);
+
+        for (int dataTransferObjectIndex = 0; dataTransferObjectIndex < _dataTransferObjects.Count; dataTransferObjectIndex++)
+        {
+            IDataObject dataObject = dataObjectList[dataTransferObjectIndex];
+            FillDataObjectList(dataObject, classMap.classId, dataTransferObjectIndex);
+        }
+        return dataObjectList;
     }
 
     #region helper methods
@@ -178,6 +183,38 @@ namespace org.iringtools.adapter.projection
             
         }
         dataTransferObject.classObjects.Add(classObject);
+    }
+
+    private void FillDataObjectList(IDataObject dataObject, string classId, int dataTransferObjectIndex)
+    {
+        KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = _graphMap.GetClassTemplateListMap(classId);
+        List<TemplateMap> templateMaps = classTemplateListMap.Value;
+        List<ClassObject> classObjects = _dataTransferObjects[dataTransferObjectIndex].GetClassObjects(classId);
+      
+        foreach (TemplateMap templateMap in templateMaps)
+        {            
+            List<TemplateObject> templateObjects = classObjects[0].GetTemplateObjects(templateMap.templateId);
+           
+            int roleObjectIndex = 0;
+            foreach (RoleMap roleMap in templateMap.roleMaps)
+            {                
+                List<RoleObject> roleObjects = templateObjects[0].roleObjects;
+               
+                if (roleMap.type == RoleType.Property)
+                {
+                    string propertyName = roleMap.propertyName.Substring(_graphMap.name.Length + 1);
+                    dataObject.SetPropertyValue(propertyName, roleObjects[roleObjectIndex].value);                    
+                }
+                else if (roleMap.type == RoleType.Reference)
+                {
+                    if (roleMap.classMap != null)
+                    {
+                       FillDataObjectList(dataObject, roleMap.classMap.classId, dataTransferObjectIndex);                       
+                    }                    
+                }
+                roleObjectIndex++;               
+            }
+        }       
     }
 
     private void PopulateClassIdentifiers()

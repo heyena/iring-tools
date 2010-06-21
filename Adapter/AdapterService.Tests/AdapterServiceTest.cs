@@ -296,33 +296,50 @@ namespace AdapterService.Tests
     //  Assert.AreEqual(false, isError);
     //}
 
-    //[TestMethod()]
-    //public void PullDTO()
-    //{
-    //    AdapterProxy target = new AdapterProxy();
-    //    Request request = new Request();
-    //    WebCredentials targetCredentials = new WebCredentials();
-    //    string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
-    //    request.Add("targetUri", "http://localhost/AdapterService/Service.svc");
-    //    request.Add("targetCredentials", targetCredentialsXML);
-    //    request.Add("graphName", "Lines");
-    //    request.Add("filter", "1-AB-L-003");
-    //    //request.Add("filter", String.Empty);
-    //    request.Add("projectName", "12345_000");
-    //    request.Add("applicationName", "ABC");
-    //    Response actual = target.PullDTO("12345_000", "ABC", request);
-    //    bool isError = false;
-    //    for (int i = 0; i < actual.Count; i++)
-    //    {
-    //        if (actual[i].ToUpper().Contains("ERROR"))
-    //        {
-    //            isError = true;
-    //            break;
-    //        }
-    //    }
-    //    Assert.AreEqual(false, isError);
-    //}
+    [TestMethod()]
+    public void PullDTO()
+    {
+        AdapterProxy target = new AdapterProxy();
+        Request request = new Request();
+        WebCredentials targetCredentials = new WebCredentials();
+        string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
+        request.Add("targetUri", "http://localhost:52786/Service.svc");
+        request.Add("targetCredentials", targetCredentialsXML);
+        request.Add("graphName", "Lines");
+        request.Add("filter", "Tag-1");
+        //request.Add("filter", String.Empty);
+        request.Add("projectName", "12345_000");
+        request.Add("applicationName", "ABC");
+        Response actual = target.PullDTO("12345_000", "ABC", request);
+        bool isError = false;
+        for (int i = 0; i < actual.Count; i++)
+        {
+            if (actual[i].ToUpper().Contains("ERROR"))
+            {
+                isError = true;
+                break;
+            }
+        }
+        Assert.AreEqual(false, isError);
+    }
 
+    [TestMethod]
+    public void GetXml()
+    {
+        AdapterProxy target = new AdapterProxy();
+        XElement xElement = target.GetXml("12345_000", "ABC", "Lines", "dto");
+        Utility.WriteString(xElement.ToString(), @"C:\iring-tools\Adapter\AdapterService.Tests\XML\DTO.xml");
+        Assert.AreNotEqual(null, xElement);
+    }
+
+    [TestMethod]
+    public void GetDataObjects()
+    {
+        AdapterProxy target = new AdapterProxy();
+        XElement xml = XElement.Load(@"C:\iring-tools\Adapter\AdapterService.Tests\XML\DTO.xml");
+        IList<IDataObject> dataObjects = target.GetDataObject("12345_000", "ABC", "Lines", "dto", xml);
+        Assert.AreNotEqual(0, dataObjects.Count);
+    }
     //[TestMethod()]
     //public void PullDTOPrototype()
     //{
