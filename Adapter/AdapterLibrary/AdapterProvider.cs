@@ -542,6 +542,25 @@ namespace org.iringtools.adapter
       }
     }
 
+    public IList<IDataObject> GetDataObjects(string projectName, string applicationName, string graphName, string format, XElement xml)
+    {
+        Initialize(projectName, applicationName);
+
+        if (format != null)
+        {
+            _projectionEngine = _kernel.Get<IProjectionLayer>(format);
+        }
+        else
+        {
+            _projectionEngine = _kernel.Get<IProjectionLayer>(_settings.DefaultProjectionFormat);
+        }
+
+        _graphMap = _mapping.FindGraphMap(graphName);
+
+        IList<IDataObject> dataObjects = _projectionEngine.GetDataObjects(ref _graphMap, ref _dataDictionary, ref xml);
+        return dataObjects;
+    }
+
     public Response PullDTO(string projectName, string applicationName, Request request)
     {
       String targetUri = String.Empty;
