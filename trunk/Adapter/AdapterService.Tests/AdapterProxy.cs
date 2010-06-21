@@ -81,6 +81,33 @@ namespace AdapterService.Tests
       return response;
     }
 
+    public XElement GetXml(string projectName, string applicationName, string graphName, string format)
+    {
+        XElement xElement = null;
+        try
+        {
+            xElement = _adapterProvider.GetProjection(projectName, applicationName, graphName, format);
+        }
+        catch (Exception ex)
+        {
+            Error.SetError(ex);
+        }
+        return xElement;
+    }
+
+    public IList<IDataObject> GetDataObject(string projectName, string applicationName, string graphName, string format, XElement xml)
+    {
+        IList<IDataObject> dataObjects = null;
+        try
+        {
+            dataObjects = _adapterProvider.GetDataObjects(projectName, applicationName, graphName, format, xml);
+        }
+        catch (Exception ex)
+        {
+            Error.SetError(ex);
+        }
+        return dataObjects;
+    }
     //public XElement Get(string projectName, string applicationName, string graphName, string identifier)
     //{
     //  XElement xml = null;
@@ -165,19 +192,19 @@ namespace AdapterService.Tests
       return response;
     }
 
-    //public Response PullDTO(string projectName, string applicationName, Request request)
-    //{
-    //  Response response = null;
-    //  try
-    //  {
-    //    response = _adapterProvider.PullDTO(projectName, applicationName, request);
-    //  }
-    //  catch (Exception ex)
-    //  {
-    //    Error.SetError(ex);
-    //  }
-    //  return response;
-    //}
+    public Response PullDTO(string projectName, string applicationName, Request request)
+    {
+        Response response = null;
+        try
+        {
+            response = _adapterProvider.PullDTO(projectName, applicationName, request);
+        }
+        catch (Exception ex)
+        {
+            Error.SetError(ex);
+        }
+        return response;
+    }
 
     public Response UpdateDatabaseDictionary(string projectName, string applicationName, DatabaseDictionary databaseDictionary)
     {
