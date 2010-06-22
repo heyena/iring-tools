@@ -328,7 +328,6 @@ namespace AdapterService.Tests
     {
         AdapterProxy target = new AdapterProxy();
         XElement xElement = target.GetXml("12345_000", "ABC", "Lines", "dto");
-        Utility.WriteString(xElement.ToString(), @"C:\iring-tools\Adapter\AdapterService.Tests\XML\DTO.xml");
         Assert.AreNotEqual(null, xElement);
     }
 
@@ -336,8 +335,8 @@ namespace AdapterService.Tests
     public void GetDataObjects()
     {
         AdapterProxy target = new AdapterProxy();
-        XElement xml = XElement.Load(@"C:\iring-tools\Adapter\AdapterService.Tests\XML\DTO.xml");
-        IList<IDataObject> dataObjects = target.GetDataObject("12345_000", "ABC", "Lines", "dto", xml);
+        XElement xElement = target.GetXml("12345_000", "ABC", "Lines", "dto");
+        IList<IDataObject> dataObjects = target.GetDataObject("12345_000", "ABC", "Lines", "dto", xElement);
         Assert.AreNotEqual(0, dataObjects.Count);
     }
     //[TestMethod()]
