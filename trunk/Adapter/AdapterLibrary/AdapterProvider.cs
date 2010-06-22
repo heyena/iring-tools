@@ -573,7 +573,12 @@ namespace org.iringtools.adapter
       Response response = new Response();
       try
       {
-        Initialize(projectName, applicationName);       
+        Initialize(projectName, applicationName);
+        
+        _projectionEngine = _kernel.Get<IProjectionLayer>("dto");
+       
+        
+
         targetUri = request["targetUri"];
         targetCredentialsXML = request["targetCredentials"];
         graphName = request["graphName"];
@@ -588,11 +593,11 @@ namespace org.iringtools.adapter
         WebHttpClient httpClient = new WebHttpClient(targetUri);
         if (filter != String.Empty)
         {
-            dataObjectsString = httpClient.GetMessage(projectNameForPull + "/" + applicationNameForPull + "/" + graphName + "/" + filter + "?format=dto");
+            dataObjectsString = httpClient.GetMessage(@"/" + projectNameForPull + "/" + applicationNameForPull + "/" + graphName + "/" + filter + "?format=dto");
         }
         else
         {
-            dataObjectsString = httpClient.GetMessage(projectNameForPull + "/" + applicationNameForPull + "/" + graphName + "?format=dto");
+            dataObjectsString = httpClient.GetMessage(@"/" + projectNameForPull + "/" + applicationNameForPull + "/" + graphName + "?format=dto");
         }
         XElement xml = XElement.Parse(dataObjectsString);
           
