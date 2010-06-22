@@ -1,0 +1,44 @@
+<DatabaseDictionary xmlns="http://ns.iringtools.org/library" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <dataObjects>
+     <DataObject>
+      <tableName>Line</tableName>
+      <objectName>Line</objectName>
+      <keyProperties>
+        <KeyProperty>
+          <columnName>tag</columnName>
+          <propertyName>tag</propertyName>
+          <dataType>String</dataType>
+          <dataLength>255</dataLength>
+          <isNullable>false</isNullable>
+          <keyType>assigned</keyType>
+        </KeyProperty>
+      </keyProperties>
+      <dataProperties>
+        <DataProperty>
+          <columnName>diameter</columnName>
+          <propertyName>diameter</propertyName>
+          <dataType>Single</dataType>
+          <dataLength>8</dataLength>
+          <isNullable>true</isNullable>
+        </DataProperty>
+        <DataProperty>
+          <columnName>system</columnName>
+          <propertyName>system</propertyName>
+          <dataType>String</dataType>
+          <dataLength>50</dataLength>
+          <isNullable>true</isNullable>
+        </DataProperty>
+        <DataProperty>
+          <columnName>uomDiameter</columnName>
+          <propertyName>uomDiameter</propertyName>
+          <dataType>String</dataType>
+          <dataLength>255</dataLength>
+          <isNullable>true</isNullable>
+        </DataProperty>
+      </dataProperties>
+      <dataRelationships/>
+    </DataObject>
+  </dataObjects>
+  <provider>MsSql2008</provider>
+  <connectionString>Data Source=.\SQLEXPRESS;Initial Catalog=DEF;User Id=def;Password=def;</connectionString>
+</DatabaseDictionary>
