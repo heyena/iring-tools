@@ -1,0 +1,10 @@
+PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:   <http://www.w3.org/2002/07/owl#>
+PREFIX part8: <http://standards.tc184-sc4.org/iso/15926/-8/templates#>
+SELECT DISTINCT ?role WHERE {
+ part8:variable rdfs:subClassOf ?b0 .
+ _:b0 owl:intersectionOf _:b1 .
+ _:b1 rdf:first _:b2 .
+ _:b2 owl:onProperty ?role
+}
