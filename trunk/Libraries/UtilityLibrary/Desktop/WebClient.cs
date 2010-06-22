@@ -201,7 +201,7 @@ namespace org.iringtools.utility
         {
             try
             {
-                string uri = _baseUri + GetUri(relativeUri);
+                string uri = _baseUri + relativeUri; // GetUri(relativeUri);
 
                 WebRequest request = HttpWebRequest.Create(uri);
 
@@ -233,7 +233,7 @@ namespace org.iringtools.utility
         {
             try
             {
-                string uri = _baseUri + GetUri(relativeUri);
+              string uri = _baseUri + relativeUri; // GetUri(relativeUri);
 
                 WebRequest request = HttpWebRequest.Create(uri);
 
@@ -270,7 +270,7 @@ namespace org.iringtools.utility
         {
             try
             {
-                string uri = _baseUri + GetUri(relativeUri);
+              string uri = _baseUri + relativeUri; // GetUri(relativeUri);
 
                 MemoryStream stream = Utility.SerializeToMemoryStream<T>(requestEntity, useDataContractSerializer);
 
@@ -400,7 +400,7 @@ namespace org.iringtools.utility
         {
             try
             {
-                string uri = _baseUri + GetUri(relativeUri);
+                string uri = _baseUri + relativeUri; // GetUri(relativeUri);
 
                 MemoryStream stream = Utility.SerializeToMemoryStream<T>(requestEntity, useDataContractSerializer);
 
