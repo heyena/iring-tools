@@ -303,7 +303,8 @@ namespace AdapterService.Tests
         Request request = new Request();
         WebCredentials targetCredentials = new WebCredentials();
         string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
-        request.Add("targetUri", "http://localhost:54560");
+        string adapterServiceUri = System.Configuration.ConfigurationManager.AppSettings["AdapterServiceUri"].ToString();
+        request.Add("targetUri", adapterServiceUri);
         request.Add("targetCredentials", targetCredentialsXML);
         request.Add("graphName", "Lines");
         request.Add("filter", "Tag-1");
