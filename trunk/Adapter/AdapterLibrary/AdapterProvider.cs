@@ -573,11 +573,11 @@ namespace org.iringtools.adapter
       Response response = new Response();
       try
       {
-        Initialize(projectName, applicationName);
-
+        Initialize(projectName, applicationName);       
         targetUri = request["targetUri"];
         targetCredentialsXML = request["targetCredentials"];
         graphName = request["graphName"];
+        _graphMap = _mapping.FindGraphMap(graphName);
         filter = request["filter"];
         projectNameForPull = request["projectName"];
         applicationNameForPull = request["applicationName"];
@@ -588,13 +588,15 @@ namespace org.iringtools.adapter
         WebHttpClient httpClient = new WebHttpClient(targetUri);
         if (filter != String.Empty)
         {
-          dataObjectsString = httpClient.GetMessage(@"/" + projectNameForPull + "/" + applicationNameForPull + "/" + graphName + "/" + filter);
+            dataObjectsString = httpClient.GetMessage(projectNameForPull + "/" + applicationNameForPull + "/" + graphName + "/" + filter + "?format=dto");
         }
         else
         {
-          dataObjectsString = httpClient.GetMessage(@"/" + projectNameForPull + "/" + applicationNameForPull + "/" + graphName);
+            dataObjectsString = httpClient.GetMessage(projectNameForPull + "/" + applicationNameForPull + "/" + graphName + "?format=dto");
         }
-        IList<IDataObject> dataObjects = CreateDataObjects(graphName, dataObjectsString);
+        XElement xml = XElement.Parse(dataObjectsString);
+          
+        IList<IDataObject> dataObjects = _projectionEngine.GetDataObjects(ref _graphMap, ref _dataDictionary, ref xml);
 
         response.Append(_dataLayer.Post(dataObjects));
         response.Add(String.Format("Pull is successful from " + targetUri + "for Graph " + graphName));
