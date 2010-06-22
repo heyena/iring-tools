@@ -32,9 +32,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AdapterLibrary">
-      <HintPath>..\..\..\Adapter\AdapterLibrary\bin\Debug\AdapterLibrary.dll</HintPath>
-    </Reference>
     <Reference Include="iRINGLibrary">
       <HintPath>..\..\..\Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll</HintPath>
     </Reference>
@@ -90,6 +87,10 @@
     <Folder Include="Logs\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AdapterLibrary\AdapterLibrary.csproj">
+      <Project>{6AFEF057-8D02-4F3C-AC41-6815E9CFD15A}</Project>
+      <Name>AdapterLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NHibernateDataLayer\NHibernateDataLayer.csproj">
       <Project>{A9DAEA2D-26AC-4FFE-A4B0-3DEF95DE4168}</Project>
       <Name>NHibernateDataLayer</Name>
