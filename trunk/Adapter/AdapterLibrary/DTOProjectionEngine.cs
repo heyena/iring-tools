@@ -149,7 +149,7 @@ namespace org.iringtools.adapter.projection
                 roleObject.name = roleMap.name;
                 if (roleMap.type == RoleType.Property)
                 {
-                    roleObject.value = _dataObjects[dataObjectIndex].GetPropertyValue(roleMap.propertyName.Substring(_graphMap.name.Length + 1)).ToString();
+                    roleObject.value = _dataObjects[dataObjectIndex].GetPropertyValue(roleMap.propertyName.Substring(_graphMap.dataObjectMap.Length + 1)).ToString();
                 }
                 else if (roleMap.type == RoleType.Reference)
                 {
