@@ -202,7 +202,7 @@ namespace org.iringtools.adapter.projection
                
                 if (roleMap.type == RoleType.Property)
                 {
-                    string propertyName = roleMap.propertyName.Substring(_graphMap.name.Length + 1);
+                    string propertyName = roleMap.propertyName.Substring(_graphMap.dataObjectMap.Length + 1);
                     dataObject.SetPropertyValue(propertyName, roleObjects[roleObjectIndex].value);                    
                 }
                 else if (roleMap.type == RoleType.Reference)

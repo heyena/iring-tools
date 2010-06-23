@@ -306,12 +306,13 @@ namespace AdapterService.Tests
         string adapterServiceUri = System.Configuration.ConfigurationManager.AppSettings["AdapterServiceUri"].ToString();
         request.Add("targetUri", adapterServiceUri);
         request.Add("targetCredentials", targetCredentialsXML);
-        request.Add("graphName", "Lines");
+        request.Add("graphName", "LinesGraph");
+        request.Add("targetGraphName", "Lines");
         request.Add("filter", "Tag-1");
         //request.Add("filter", String.Empty);
         request.Add("projectName", "12345_000");
         request.Add("applicationName", "ABC");
-        Response actual = target.PullDTO("12345_000", "ABC", request);
+        Response actual = target.PullDTO("12345_000", "DEF", request);
         bool isError = false;
         for (int i = 0; i < actual.Count; i++)
         {
