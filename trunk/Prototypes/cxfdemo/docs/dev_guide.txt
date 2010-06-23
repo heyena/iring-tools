@@ -7,7 +7,7 @@ Apache CXF web services in Eclipse
       http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/galileo/SR2/eclipse-jee-galileo-SR2-win32.zip
   - download and install apache tomcat (v6)
       http://tomcat.apache.org/download-60.cgi
-  - download apache cxf (v2.2.9) and extract it to <tomcat home>/shared folder
+  - download apache cxf (v2.2.9) and extract it to <tomcat home>/shared folder (create shared folder if it does not exist)
       http://mirror.cloudera.com/apache/cxf/2.2.9/apache-cxf-2.2.9.zip
   - download and extract jsr311-api
       http://www.java2s.com/Code/Jar/STUVWXYZ/Downloadjsr311apijar.htm
