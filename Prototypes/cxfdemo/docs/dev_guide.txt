@@ -26,9 +26,8 @@ Apache CXF web services in Eclipse
         shared.loader=${catalina.base}/shared/apache-cxf-2.2.9/lib,${catalina.base}/shared/apache-cxf-2.2.9/lib/*.jar
   - add user libraries
     - add cxf library
-      - right click on the project - Build Path - Configure Build Path - Libraries - Add Library
-      - select User Library - Next
-      - click on User Libraries - New - enter user library name
+      - click on Windows on the menu bar - Preferences - Java - Build Path - User Libraries - New
+      - enter library name
       - click on Add JARs - browse to <cxf home>/lib and select all the jar files
       - OK - Finish
     - similarly add jsr311-api library
