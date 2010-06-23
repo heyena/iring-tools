@@ -311,7 +311,7 @@ namespace AdapterService.Tests
         //request.Add("filter", String.Empty);
         request.Add("projectName", "12345_000");
         request.Add("applicationName", "ABC");
-        Response actual = target.PullDTO("12345_000", "DEF", request);
+        Response actual = target.PullDTO("12345_000", "ABC", request);
         bool isError = false;
         for (int i = 0; i < actual.Count; i++)
         {
@@ -336,8 +336,8 @@ namespace AdapterService.Tests
     public void GetDataObjects()
     {
         AdapterProxy target = new AdapterProxy();
-        XElement xElement = target.GetXml("12345_000", "DEF", "Lines", "dto");
-        IList<IDataObject> dataObjects = target.GetDataObject("12345_000", "DEF", "Lines", "dto", xElement);
+        XElement xElement = target.GetXml("12345_000", "ABC", "Lines", "dto");
+        IList<IDataObject> dataObjects = target.GetDataObject("12345_000", "ABC", "Lines", "dto", xElement);
         Assert.AreNotEqual(0, dataObjects.Count);
     }
     //[TestMethod()]
