@@ -41,6 +41,26 @@ namespace AdapterService.Tests
       File.Copy(nhMappingTestPath, nhMappingPath, true);
     }
 
+    [TestMethod()]
+    public void UpdateDatabaseDictionaryTest_DEF()
+    {
+
+        string bindingConfigPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.DEF.xml";
+        string bindingConfigTestPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.DEF.Test.xml";
+        string nhMappingPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\nh-mapping.12345_000.DEF.xml";
+        string nhMappingTestPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\nh-mapping.12345_000.DEF.Test.xml";
+
+        string dbDictionaryPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\DatabaseDictionary.12345_000.DEF.xml";
+
+        AdapterProxy target = new AdapterProxy();
+        DatabaseDictionary databaseDictionary = Utility.Read<DatabaseDictionary>(dbDictionaryPath);
+        Response actual = target.UpdateDatabaseDictionary("12345_000", "DEF", databaseDictionary);
+        Assert.AreEqual("Entities generated successfully.", actual[0]);
+
+        File.Copy(bindingConfigTestPath, bindingConfigPath, true);
+        File.Copy(nhMappingTestPath, nhMappingPath, true);
+    }
+
     //[TestMethod()]
     //public void GenerateTest_ABC()
     //{
