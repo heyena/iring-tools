@@ -335,7 +335,7 @@
    <DeploymentPackage Include="*" Exclude="">
       <Options>-r -u</Options>
       <Path>$(CSVDataLayerDeploymentDir)</Path>
-      <ZIPFile>..\iRINGTools-200.zip</ZIPFile>
+      <ZIPFile>..\CSVDataLayer.zip</ZIPFile>
       <Source>*</Source>
     </DeploymentPackage>
     <DeploymentPackage Include="*" Exclude="">
