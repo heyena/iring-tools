@@ -6,8 +6,8 @@
     <DeploymentDir>$(MSBuildProjectDirectory)\Deployment</DeploymentDir>
     <iRINGAdapter>$(DeploymentDir)\iRINGAdapter</iRINGAdapter>
     <iRINGSandbox>$(DeploymentDir)\iRINGSandbox</iRINGSandbox>
+    <CSVDataLayer>$(DeploymentDir)\CSVDataLayer</CSVDataLayer>
     <LandingPageDir>LandingPage</LandingPageDir>
-    <Log4NetPath>"ExternalBinaries\NHibernate 2.0\bin\net-2.0"</Log4NetPath>
     <CSVDataLayerRoot>CSVDataLayer</CSVDataLayerRoot>
     <CSVDataLayerSolutionFile>$(CSVDataLayerRoot)\CSVDataLayer.sln</CSVDataLayerSolutionFile>
     <CSVDataLayerDir>$(CSVDataLayerRoot)\CSVDataLayer</CSVDataLayerDir>
@@ -30,6 +30,8 @@
     <RefDataServiceRoot>ReferenceData</RefDataServiceRoot>
     <DBDictionaryServiceRoot>DBDictionary</DBDictionaryServiceRoot>
     <LandingPageDeploymentDir>$(DeploymentDir)\LandingPage</LandingPageDeploymentDir>
+    <CSVDataLayerDeploymentDir>$(DeploymentDir)\CSVDataLayer</CSVDataLayerDeploymentDir>
+    <CSVDataLayerLibDeploymentDir>$(DeploymentDir)\CSVDataLayer\lib</CSVDataLayerLibDeploymentDir>
     <SDKDeploymentDir>$(DeploymentDir)\SDK</SDKDeploymentDir>
     <RefDataServiceDir>$(RefDataServiceRoot)\ReferenceDataService</RefDataServiceDir>
     <DbDictionaryServiceDir>$(DBDictionaryServiceRoot)\DbDictionaryService</DbDictionaryServiceDir>
@@ -278,6 +280,24 @@
                Utilities\RdfImportExport\RdfImportExport\Developer_App.config;">
     </AdapterToolsDeployment>
 
+    <CSVDataLayerDeployment
+      Include ="$(CSVDataLayerRoot)\**"
+      Exclude ="$(CSVDataLayerRoot)\.svn\**;
+               $(CSVDataLayerRoot)\*\.svn\**;">                    
+    </CSVDataLayerDeployment>
+
+    <CSVDataLayerLibDeployment
+      Include = "ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.chm;
+                ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.dll;
+                ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.xml;
+                Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll;
+                Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;                
+                ExternalBinaries\Ninject2\Ninject.dll;
+                ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll;
+                ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.license.txt;
+                ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.xml;">
+    </CSVDataLayerLibDeployment>
+ 
     <SandboxToolsDeployment
       Include="ExternalBinaries\SemWeb\rdfstorage.exe;
                ExternalBinaries\SemWeb\SemWeb.dll;
@@ -309,6 +329,12 @@
     <DeploymentPackage Include="*" Exclude="">
       <Options>-r -u</Options>
       <Path>$(iRINGSandbox)</Path>
+      <ZIPFile>..\iRINGTools-200.zip</ZIPFile>
+      <Source>*</Source>
+    </DeploymentPackage>
+   <DeploymentPackage Include="*" Exclude="">
+      <Options>-r -u</Options>
+      <Path>$(CSVDataLayerDeploymentDir)</Path>
       <ZIPFile>..\iRINGTools-200.zip</ZIPFile>
       <Source>*</Source>
     </DeploymentPackage>
@@ -348,30 +374,16 @@
 
   <Target Name="CoreBuild" DependsOnTargets="Version">
     <Message Text="Performing MSBuild ..." />
-    <MSBuild Projects="$(SolutionFile)" Targets="Build"/>
-    <CallTarget Targets="CreateCSVDataLayerLib"/>
+    <MSBuild Projects="$(SolutionFile)" Targets="Build"/>    
     <MSBuild Projects="$(CSVDataLayerSolutionFile)" Targets="Build"/>
   </Target>
-
+  
   <Target Name="CleanBuild">
     <Message Text="Performing MSBuild clean-up ..." />
     <MSBuild Projects="$(SolutionFile)" Targets="Clean"/>
   </Target>
 
-  <Target Name="CreateCSVDataLayerLib">
-    <Message Text="Creating CSVDataLayer lib folder ..." />
-    <Exec Command="Copy ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.chm $(CSVDataLayerLibDir)\Flee-0.9.26.0\Ciloci.Flee.chm" />
-    <Exec Command="Copy ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.dll $(CSVDataLayerLibDir)\Flee-0.9.26.0\Ciloci.Flee.dll" />
-    <Exec Command="Copy ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.xml $(CSVDataLayerLibDir)\Flee-0.9.26.0\Ciloci.Flee.xml" />
-    <Exec Command="Copy $(AdapterLibraryDir)\bin\Debug\AdapterLibrary.dll $(CSVDataLayerLibDir)\iring-tools\AdapterLibrary.dll" />
-    <Exec Command="Copy Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll $(CSVDataLayerLibDir)\iring-tools\iRINGLibrary.dll" />
-    <Exec Command="Copy Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll $(CSVDataLayerLibDir)\iring-tools\UtilityLibrary.dll" />
-    <Exec Command="Copy $(Log4NetPath)\log4net.dll $(CSVDataLayerLibDir)\log4net\log4net.dll" />
-    <Exec Command="Copy $(Log4NetPath)\log4net.license.txt $(CSVDataLayerLibDir)\log4net\log4net.license.txt" />
-    <Exec Command="Copy $(Log4NetPath)\log4net.xml $(CSVDataLayerLibDir)\log4net\log4net.xml" />
-    <Exec Command="Copy ExternalBinaries\Ninject2\Ninject.dll $(CSVDataLayerLibDir)\Ninject2\Ninject.dll" />
-  </Target>
-  
+   
   <Target Name="PrepareBuild">
     <Message Text="Preparing build ..." />
     <Exec Condition="!Exists('$(AdapterServiceDir)\Web.config')" 
@@ -503,6 +515,15 @@
     <Message Text="Creating landing page deployment ..." />
     <Copy SourceFiles="@(LandingPageDeployment)"
           DestinationFiles="@(LandingPageDeployment->'$(LandingPageDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+
+    <Message Text="Creating CSVDataLayer deployment ..." />
+    <Copy SourceFiles="@(CSVDataLayerDeployment)"
+          DestinationFiles="@(CSVDataLayerDeployment->'$(CSVDataLayerDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+
+    <Message Text="Creating CSVDataLayer Library deployment ..." />
+    <Copy SourceFiles="@(CSVDataLayerLibDeployment)"
+          DestinationFiles="@(CSVDataLayerLibDeployment->'$(CSVDataLayerLibDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+
   </Target>
 
   <Target Name="CreatePackages" DependsOnTargets="CreateDeployment">
