@@ -815,7 +815,13 @@ namespace org.iringtools.adapter
 
           string bindingConfigurationPath = _settings.XmlPath + applicationSettings.BindingConfigurationPath;
           BindingConfiguration bindingConfiguration = Utility.Read<BindingConfiguration>(bindingConfigurationPath, false);
+          string configurationPath = _settings.XmlPath + projectName + "." + applicationName + ".config";
 
+            if(File.Exists(configurationPath))
+            {              
+              applicationSettings.Configuration = new StaticDust.Configuration.AppSettingsReader(configurationPath);
+            }
+          
           _kernel.Load(new DynamicModule(bindingConfiguration));
           _dataLayer = _kernel.Get<IDataLayer>("DataLayer");
           _projectionEngine = _kernel.Get<IProjectionLayer>("ProjectionLayer");
