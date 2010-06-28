@@ -18,7 +18,7 @@
               <name>IdentificationByTag</name>
               <roleMaps>
                 <RoleMap>
-                  <type>ClassRole</type>
+                  <type>Possessor</type>
                   <roleId>tpl:R44537504070</roleId>
                   <name>hasObject</name>
                 </RoleMap>
@@ -42,7 +42,7 @@
               <name>PlantAreaHasPlantObject</name>
               <roleMaps>
                 <RoleMap>
-                  <type>ClassRole</type>
+                  <type>Possessor</type>
                   <roleId>tpl:R77585325576</roleId>
                   <name>part</name>
                 </RoleMap>
@@ -72,7 +72,7 @@
               <name>SystemHasPlantObject</name>
               <roleMaps>
                 <RoleMap>
-                  <type>ClassRole</type>
+                  <type>Possessor</type>
                   <roleId>tpl:R77585325576</roleId>
                   <name>part</name>
                 </RoleMap>
@@ -102,7 +102,7 @@
               <name>PAndIDRepresentation</name>
               <roleMaps>
                 <RoleMap>
-                  <type>ClassRole</type>
+                  <type>Possessor</type>
                   <roleId>tpl:R22715013877</roleId>
                   <name>object</name>
                 </RoleMap>
@@ -132,7 +132,7 @@
               <name>PlantHasPlantObject</name>
               <roleMaps>
                 <RoleMap>
-                  <type>ClassRole</type>
+                  <type>Possessor</type>
                   <roleId>tpl:R77585325576</roleId>
                   <name>part</name>
                 </RoleMap>
@@ -162,7 +162,7 @@
               <name>Length</name>
               <roleMaps>
                 <RoleMap>
-                  <type>ClassRole</type>
+                  <type>Possessor</type>
                   <roleId>tpl:R16314127825</roleId>
                   <name>hasPossessor</name>
                 </RoleMap>
@@ -194,7 +194,7 @@
               <name>NominalDiameter</name>
               <roleMaps>
                 <RoleMap>
-                  <type>ClassRole</type>
+                  <type>Possessor</type>
                   <roleId>tpl:R16314127825</roleId>
                   <name>hasPossessor</name>
                 </RoleMap>
@@ -226,7 +226,7 @@
               <name>PipingFluidContainment</name>
               <roleMaps>
                 <RoleMap>
-                  <type>ClassRole</type>
+                  <type>Possessor</type>
                   <roleId>tpl:R22381561900</roleId>
                   <name>container</name>
                 </RoleMap>
@@ -267,7 +267,7 @@
               <name>IdentificationByTag</name>
               <roleMaps>
                 <RoleMap>
-                  <type>ClassRole</type>
+                  <type>Possessor</type>
                   <roleId>tpl:R44537504070</roleId>
                   <name>hasObject</name>
                 </RoleMap>
@@ -302,7 +302,7 @@
               <name>ClassifiedIdentification</name>
               <roleMaps>
                 <RoleMap>
-                  <type>ClassRole</type>
+                  <type>Possessor</type>
                   <roleId>tpl:R44537504070</roleId>
                   <name>hasObject</name>
                 </RoleMap>
@@ -337,7 +337,7 @@
               <name>FluidStreamFluidCompound</name>
               <roleMaps>
                 <RoleMap>
-                  <type>ClassRole</type>
+                  <type>Possessor</type>
                   <roleId>tpl:R44710169867</roleId>
                   <name>object</name>
                 </RoleMap>
@@ -361,7 +361,7 @@
               <name>DesignTemperature</name>
               <roleMaps>
                 <RoleMap>
-                  <type>ClassRole</type>
+                  <type>Possessor</type>
                   <roleId>tpl:R11450580697</roleId>
                   <name>hasPossessor</name>
                 </RoleMap>
@@ -393,7 +393,7 @@
               <name>OperatingTemperature</name>
               <roleMaps>
                 <RoleMap>
-                  <type>ClassRole</type>
+                  <type>Possessor</type>
                   <roleId>tpl:R11450580697</roleId>
                   <name>hasPossessor</name>
                 </RoleMap>
@@ -436,7 +436,7 @@
               <name>ClassifiedIdentification</name>
               <roleMaps>
                 <RoleMap>
-                  <type>ClassRole</type>
+                  <type>Possessor</type>
                   <roleId>tpl:R44537504070</roleId>
                   <name>hasObject</name>
                 </RoleMap>
@@ -471,7 +471,7 @@
               <name>ClassifiedIdentification</name>
               <roleMaps>
                 <RoleMap>
-                  <type>ClassRole</type>
+                  <type>Possessor</type>
                   <roleId>tpl:R44537504070</roleId>
                   <name>hasObject</name>
                 </RoleMap>
@@ -495,7 +495,7 @@
               <name>ClassifiedIdentification</name>
               <roleMaps>
                 <RoleMap>
-                  <type>ClassRole</type>
+                  <type>Possessor</type>
                   <roleId>tpl:R44537504070</roleId>
                   <name>hasObject</name>
                 </RoleMap>
@@ -530,7 +530,7 @@
               <name>IdentificationByTag</name>
               <roleMaps>
                 <RoleMap>
-                  <type>ClassRole</type>
+                  <type>Possessor</type>
                   <roleId>tpl:R44537504070</roleId>
                   <name>hasObject</name>
                 </RoleMap>
