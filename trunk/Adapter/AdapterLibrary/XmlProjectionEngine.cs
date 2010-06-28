@@ -197,7 +197,7 @@ namespace org.iringtools.adapter.projection
 
           switch (roleMap.type)
           {
-            case RoleType.ClassRole:
+            case RoleType.Possessor:
               templateElement.Add(new XAttribute("classRole", roleMap.roleId));
               break;
 

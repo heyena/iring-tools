@@ -8,7 +8,6 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.ServiceModel;
 using org.iringtools.library;
-using System.Windows.Interactivity;
 using System.Text;
 using System.Net;
 using org.iringtools.utility;
@@ -157,15 +156,15 @@ namespace DbDictionaryEditor
                                 if (uiElement2 is TextBox)
                                 {
                                     TextBox tbox = (TextBox)uiElement2 as TextBox;
-                                    if (selectedItem.Tag is DataObject)
+                                    if (selectedItem.Tag is org.iringtools.library.DataObject)
                                     {
                                         if (tbox.Tag.ToString() == "entityName")
                                         {
-                                            ((DataObject)selectedItem.Tag).objectName = tbox.Text;
+                                          ((org.iringtools.library.DataObject)selectedItem.Tag).objectName = tbox.Text;
                                             textBlock.Text = tbox.Text;
                                         }
                                         else if (tbox.Tag.ToString() == "tableName")
-                                            ((DataObject)selectedItem.Tag).tableName = tbox.Text;
+                                          ((org.iringtools.library.DataObject)selectedItem.Tag).tableName = tbox.Text;
                                     }
                                     else if (selectedItem.Tag is DataProperty)
                                     {
@@ -418,12 +417,12 @@ namespace DbDictionaryEditor
                 newDictionary.Append(".xml");
 
                 string connectionstring = BuildConnectionString(newProvider, newDataSourceName, newDatabaseName, newDatabaseUserName, newDatabaseUserPassword);
-                DataObject table = new DataObject();
+                org.iringtools.library.DataObject table = new org.iringtools.library.DataObject();
                 DatabaseDictionary dict = new DatabaseDictionary()
                 {
                     connectionString = connectionstring,
                     provider = (Provider)Enum.Parse(typeof(Provider), newProvider, true),
-                    dataObjects = new List<DataObject>()
+                    dataObjects = new List<org.iringtools.library.DataObject>()
                 };
 
                 _dal.SaveDatabaseDictionary(dict, newProject, newApplication);
@@ -585,8 +584,8 @@ namespace DbDictionaryEditor
             {
                 root.Tag = dict;
                 if (dict.dataObjects == null)
-                  dict.dataObjects = new List<DataObject>();
-                foreach (DataObject table in dict.dataObjects)
+                  dict.dataObjects = new List<org.iringtools.library.DataObject>();
+                foreach (org.iringtools.library.DataObject table in dict.dataObjects)
                 {
                     tableTreeViewItem = new TreeViewItem() { Header = table.tableName };
                     tableTreeViewItem.Tag = table;
@@ -643,7 +642,7 @@ namespace DbDictionaryEditor
                     checkbox.IsEnabled = true;
                 else
                     checkbox.IsEnabled = false;
-                if (child.Tag is DataObject && !checkBox)
+                if (child.Tag is org.iringtools.library.DataObject && !checkBox)
                     checkbox.IsEnabled = true;
                 stackpanel.Children.Add(checkbox);
                 stackpanel.Children.Add(textblock);
@@ -735,19 +734,19 @@ namespace DbDictionaryEditor
 
                 DatabaseDictionary databaseDictionary = new DatabaseDictionary();
                 object currentObject = null;
-                DataObject table;
-                databaseDictionary.dataObjects = new List<DataObject>();
+                org.iringtools.library.DataObject table;
+                databaseDictionary.dataObjects = new List<org.iringtools.library.DataObject>();
                 databaseDictionary.connectionString = ((DatabaseDictionary)tvwItemDestinationRoot.Tag).connectionString;
                 
                 databaseDictionary.provider = ((DatabaseDictionary)tvwItemDestinationRoot.Tag).provider;
                 foreach (TreeViewItem tableTreeViewItem in tvwItemDestinationRoot.Items)
                 {
-                    table = new DataObject();
+                  table = new org.iringtools.library.DataObject();
                     currentObject = tableTreeViewItem.Tag;
-                    if (currentObject is DataObject)
+                    if (currentObject is org.iringtools.library.DataObject)
                     {
-                        table.objectName = ((DataObject)currentObject).objectName;
-                        table.tableName = ((DataObject)currentObject).tableName;
+                      table.objectName = ((org.iringtools.library.DataObject)currentObject).objectName;
+                      table.tableName = ((org.iringtools.library.DataObject)currentObject).tableName;
                         table.keyProperties = new List<KeyProperty>();
                         table.dataRelationships = new List<DataRelationship>();
                         table.dataProperties = new List<DataProperty>();
@@ -940,7 +939,7 @@ namespace DbDictionaryEditor
 
 
                 TreeViewItem treeViewItem = (TreeViewItem)selectedItem;
-                if (selectedItem.Tag is DataObject)
+                if (selectedItem.Tag is org.iringtools.library.DataObject)
                 {
                     stackPanel = new StackPanel() { Orientation = Orientation.Horizontal };
                     textBlock = CreateTextBlock("      --==  Edit Table  ==--    ");
@@ -950,13 +949,13 @@ namespace DbDictionaryEditor
 
                     stackPanel = new StackPanel() { Orientation = Orientation.Horizontal };
                     textBlock = CreateTextBlock("Entity Name: ");
-                    textBox = CreateTextBox(((DataObject)selectedItem.Tag).objectName, "entityName");
+                    textBox = CreateTextBox(((org.iringtools.library.DataObject)selectedItem.Tag).objectName, "entityName");
                     stackPanel.Children.Add(textBlock);
                     stackPanel.Children.Add(textBox);
                     editTreeNode.spContainer.Children.Add(stackPanel);
                     stackPanel = new StackPanel() { Orientation = Orientation.Horizontal };
                     textBlock = CreateTextBlock("Table Name: ");
-                    textBox = CreateTextBox(((DataObject)selectedItem.Tag).tableName, "tableName");
+                    textBox = CreateTextBox(((org.iringtools.library.DataObject)selectedItem.Tag).tableName, "tableName");
                     stackPanel.Children.Add(textBlock);
                     stackPanel.Children.Add(textBox);
                     editTreeNode.spContainer.Children.Add(stackPanel);

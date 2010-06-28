@@ -316,7 +316,7 @@ namespace org.iringtools.utility
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
 
                 PrepareCredentials(request);
-
+                
                 request.Timeout = TIMEOUT;
                 request.Method = "POST";
                 request.ContentType = "application/x-www-form-urlencoded";
@@ -326,8 +326,14 @@ namespace org.iringtools.utility
                 ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
                   ValidateRemoteCertificate
                 );
-
-                request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
+            
+                using (var requestStream = request.GetRequestStream())
+                {
+                  foreach (var bit in stream.ToArray())
+                  {
+                    requestStream.WriteByte(bit);
+                  }
+                }
 
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 T responseEntity = Utility.DeserializeFromStream<T>(response.GetResponseStream(), useDataContractSerializer);

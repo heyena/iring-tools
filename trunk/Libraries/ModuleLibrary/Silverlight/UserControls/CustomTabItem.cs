@@ -25,12 +25,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Resources;
 using org.iringtools.library;
 
-#if SILVERLIGHT
-using org.iringtools.modulelibrary.behaviors;
-using System.Windows.Interactivity;
-#else
-
-#endif
 
 namespace org.iringtools.informationmodel.usercontrols
 {
@@ -99,12 +93,6 @@ namespace org.iringtools.informationmodel.usercontrols
                 tvwCtrl.BorderThickness = new Thickness(1);
                 tvwCtrl.BorderBrush = new SolidColorBrush(Colors.LightGray);
 
-#if SILVERLIGHT
-                MouseScrollBehavior mouseScrollBehavior = new MouseScrollBehavior();
-                Interaction.GetBehaviors(tvwCtrl).Add(mouseScrollBehavior);
-#else
-     //TODO
-#endif
 
                 this.Header = grid;
                 this.Content = tvwCtrl;

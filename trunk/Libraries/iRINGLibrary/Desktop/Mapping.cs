@@ -359,6 +359,7 @@ namespace org.iringtools.library
   [DataContract]
   public enum RoleType
   {
+
     [EnumMember]
     Property,
 
@@ -366,14 +367,14 @@ namespace org.iringtools.library
     Reference,
 
     [EnumMember]
-    ClassRole,
+    Possessor,
 
     [EnumMember]
     FixedValue,
   }
 
   [DataContract]
-  public class ValueList
+  public class ValueList 
   {
     public ValueList()
     {

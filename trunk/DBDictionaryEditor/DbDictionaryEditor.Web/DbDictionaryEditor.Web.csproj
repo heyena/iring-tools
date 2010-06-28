@@ -69,7 +69,7 @@
     <Content Include="ClientBin\DbDictionaryEditor.xap" />
     <Content Include="Default.aspx" />
     <Content Include="Silverlight.js" />
-    <Content Include="Web.config" />
+    <None Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Default.aspx.cs">
