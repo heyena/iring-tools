@@ -109,17 +109,8 @@ namespace org.iringtools.modules.memappingregion
         btnvEditValue.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnEditValueMap_Click(txtvLabel, e); };
         btnvMoveDown.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnMoveDown_Click(txtvLabel, e); };
         btnvMoveUp.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnMoveUp_Click(txtvLabel, e); };
-        
 
-#if SILVERLIGHT
- //       MouseScrollBehavior mouseScrollBehavior = new MouseScrollBehavior();
- //       Interaction.GetBehaviors(tvwMapping).Add(mouseScrollBehavior);
 
- //       MouseScrollBehavior mousevScrollBehavior = new MouseScrollBehavior();
- //       Interaction.GetBehaviors(tvwValues).Add(mousevScrollBehavior);
-#else
-        //TODO
-#endif
 
         this.aggregator = aggregator;
         this.model = model;
@@ -221,11 +212,10 @@ namespace org.iringtools.modules.memappingregion
         cbValueList.Items.Clear();
         //Add an empty value list item so we can use that value to clear erroneous entries
         cbValueList.Items.Add(new ComboBoxItem { Content = "<No ValueList>", IsSelected = true });
-        //cbValueList.ItemsSource = _valueList;
         // Add value maps to value list drop list                                                
-       foreach (ValueList valueList in mapping.valueLists)
-       {
-         ComboBoxItem cbItem = new ComboBoxItem();
+        foreach (ValueList valueList in mapping.valueLists)
+        {
+          ComboBoxItem cbItem = new ComboBoxItem();
           cbItem.Content = valueList.name;
           cbItem.Tag = valueList;
           cbValueList.Items.Add(cbItem);
@@ -300,19 +290,10 @@ namespace org.iringtools.modules.memappingregion
         if (selectedNode.Tag is GraphMap)
         {
           GraphMap graph = (GraphMap)selectedNode.Tag;
-          //string id = Utility.GetIdFromURI(graph.baseUri);
+
           KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Graph Name", graph.name);
           model.DetailProperties.Add(keyValuePair);
 
-          //keyValuePair = new KeyValuePair<string, string>("Graph Uri", graph.baseUri);
-          // model.DetailProperties.Add(keyValuePair);
-          //if (model.IdLabelDictionary.ContainsKey(id))
-          //{
-          //    keyValuePair = new KeyValuePair<string, string>("Class Name", model.IdLabelDictionary[id]);
-          //    model.DetailProperties.Add(keyValuePair);
-          //}
-          //for (int i = 0; i < graph.dataObjectMaps.Count; i++)
-          //{
           keyValuePair = new KeyValuePair<string, string>("DataObject Name", graph.dataObjectMap);
           model.DetailProperties.Add(keyValuePair);
           //}
@@ -480,7 +461,6 @@ namespace org.iringtools.modules.memappingregion
         node.Tag = tag;
 
         // Subscribe to it's events
-        //node.Selected += nodeSelectedHandler;
         node.MouseLeftButtonUp += nodeMouseLeftButtonUpHandler;
         node.Expanded += nodeExpandedHandler;
 
@@ -507,12 +487,10 @@ namespace org.iringtools.modules.memappingregion
           if (parent.NodeType == NodeType.GraphMap)
           {
             node.GraphMap = (GraphMap)parent.Tag;
-            // node.ClassMap = (ClassMap)parent.Tag;
           }
           else
           {
             node.GraphMap = parent.GraphMap;
-            // node.ClassMap = (ClassMap)parent.Tag;
           }
           node.TemplateMap = (TemplateMap)tag;
           node.SetImageSource("template.png");
@@ -524,7 +502,6 @@ namespace org.iringtools.modules.memappingregion
           RoleMap roleMap = (RoleMap)tag;
           node.NodeType = NodeType.RoleMap;
           node.GraphMap = parent.GraphMap;
-          // node.ClassMap = parent.ClassMap;
           node.TemplateMap = (TemplateMap)parent.Tag;
           node.RoleMap = roleMap;
           node.SetImageSource("role.png");
@@ -548,7 +525,6 @@ namespace org.iringtools.modules.memappingregion
         else if (tag is ValueMap)
         {
           node.NodeType = NodeType.ValueMap;
-          //node.ClassMap = (ClassMap)tag;
           node.SetImageSource("value.png");
           node.SetTooltipText("Value : " + ((ValueMap)tag).internalValue);
           isProcessed = PopulateValueNode(node, (ValueMap)tag);
@@ -556,10 +532,8 @@ namespace org.iringtools.modules.memappingregion
         else if (tag is ValueList)
         {
           node.NodeType = NodeType.ValueList;
-          //node.ClassMap = (ClassMap)tag;
           node.SetImageSource("valuelist.png");
           node.SetTooltipText("ValueList : " + ((ValueList)tag).name);
-          //isProcessed = PopulateValueNode(node, (ValueMap)tag);
         }
       }
       catch (Exception ex)
@@ -594,7 +568,6 @@ namespace org.iringtools.modules.memappingregion
         // If expanded then the tree has nodes so we'll grab the
         // first node and see if it is a stub.  If it isn't then
         // we have nothing to do
-        // if (childNode.Header.ToString() != "Stub")
 
         if (childNode.itemTextBlock.Text != "Stub")
           return;
@@ -699,7 +672,6 @@ namespace org.iringtools.modules.memappingregion
           map.SetTextBlockText("Stub");
           node.Items.Add(map);
         }
-        //node.Items.Add(new MappingItem { Header = "Stub", Tag = templateMap.roleMaps });
         return true;
       }
       catch (Exception ex)
@@ -727,7 +699,6 @@ namespace org.iringtools.modules.memappingregion
           map.SetTextBlockText("Stub");
           node.Items.Add(map);
         }
-        // node.Items.Add(new MappingItem { Header = "Stub", Tag = roleMap.classMap });
         return true;
       }
       catch (Exception ex)
@@ -748,7 +719,6 @@ namespace org.iringtools.modules.memappingregion
     {
       try
       {
-        //if (node.Items.Count == 0)
         if (classMap.identifiers != null && classMap.identifiers.Count > 0)
         {
           MappingItem map = new MappingItem();
@@ -756,9 +726,6 @@ namespace org.iringtools.modules.memappingregion
           map.SetTextBlockText("Stub");
           node.Items.Add(map);
         }
-        //        node.Items.Add(new MappingItem { Header = "Stub", Tag = classMap.templateMaps });
-        //else
-        //  PopulateTemplateMap(node, classMap.templateMaps[0]);
         return true;
       }
       catch (Exception ex)
@@ -947,10 +914,5 @@ namespace org.iringtools.modules.memappingregion
             Category.Exception, Priority.High);
       }
     }
-
-    //internal void PopulateValueList(Mapping mapping)
-    //{
-    //  PolulateValuelist(mapping);
-    //}
   }
 }
