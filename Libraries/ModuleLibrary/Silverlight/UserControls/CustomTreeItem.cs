@@ -53,6 +53,7 @@ namespace org.iringtools.informationmodel.usercontrols
     public IError Error { get; set; }
 
     private StackPanel itemStackPanel = null;
+    public CheckBox itemCheckbox { get; set; }
     public TextBlock itemTextBlock { get; set; }
     public Image itemImage { get; set; }
     public string id = String.Empty;
@@ -68,6 +69,7 @@ namespace org.iringtools.informationmodel.usercontrols
         try
         {
             itemStackPanel = new StackPanel();
+         //   itemCheckbox = new CheckBox();
             itemStackPanel.Orientation = Orientation.Horizontal;
             itemTextBlock = new TextBlock();
             tooltipText = new TextBlock();
@@ -81,6 +83,7 @@ namespace org.iringtools.informationmodel.usercontrols
                 Visibility = Visibility.Visible
             };
             itemImage.ImageFailed += new EventHandler<ExceptionRoutedEventArgs>(img_ImageFailed);
+        //    itemStackPanel.Children.Add(itemCheckbox);
             itemStackPanel.Children.Add(itemImage);
             itemStackPanel.Children.Add(new TextBlock() { Text = " " });
             itemStackPanel.Children.Add(itemTextBlock);

@@ -21,8 +21,6 @@ using org.iringtools.ontologyservice.presentation.presentationmodels;
 using org.iringtools.library;
 
 #if SILVERLIGHT
-using org.iringtools.modulelibrary.behaviors;
-using System.Windows.Interactivity;
 using System;
 using System.Windows.Input;
 #else
@@ -62,10 +60,6 @@ namespace org.iringtools.modules.medatasourceregion
       adapterProxy.OnDataArrived += OnDataArrivedHandler;
       aggregator.GetEvent<SpinnerEvent>().Subscribe(SpinnerEventHandler);
 
-#if SILVERLIGHT
-      MouseScrollBehavior mouseScrollBehavior = new MouseScrollBehavior();
-      Interaction.GetBehaviors(tvwDataDictionary).Add(mouseScrollBehavior);
-#endif
     }
 
     public void SpinnerEventHandler(SpinnerEventArgs e)

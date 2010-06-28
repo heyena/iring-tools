@@ -278,7 +278,7 @@ namespace org.iringtools.adapter
         newTemplateMap.name = templateNameRolesPair.Key;
 
         RoleMap newClassRoleMap = new RoleMap();
-        newClassRoleMap.type = RoleType.ClassRole;
+        newClassRoleMap.type = RoleType.Possessor;
         newTemplateMap.roleMaps.Add(newClassRoleMap);
         newClassRoleMap.roleId = classRoleId;
         
@@ -834,8 +834,16 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _logger.Error(string.Format("Error initializing application: {0}", ex));
-        throw new Exception(string.Format("Error initializing application: {0})", ex));
+        if (ex.Message.Contains("Mapping"))
+        {
+          _mapping = new Mapping();
+          Utility.Write<Mapping>(_mapping, string.Format("{0}Mapping.{1}.{2}.xml", _settings.XmlPath, projectName, applicationName));
+        }
+        else
+        {
+          _logger.Error(string.Format("Error initializing application: {0}", ex));
+          throw new Exception(string.Format("Error initializing application: {0})", ex));
+        }
       }
     }
 

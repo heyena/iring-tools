@@ -240,7 +240,7 @@ namespace org.iringtools.adapter.projection
 
         switch (roleMap.type)
         {
-          case RoleType.ClassRole:
+          case RoleType.Possessor:
             {
               roleElement.Add(new XAttribute(RDF_RESOURCE, classInstance));
               break;
@@ -356,7 +356,7 @@ namespace org.iringtools.adapter.projection
           #region find propertyMapRoles and classRoleId
           foreach (RoleMap roleMap in templateMap.roleMaps)
           {
-            if (roleMap.type == RoleType.ClassRole)
+            if (roleMap.type == RoleType.Possessor)
             {
               classRoleId = roleMap.roleId;
             }
