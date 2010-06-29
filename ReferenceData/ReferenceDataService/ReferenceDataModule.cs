@@ -7,7 +7,7 @@ using org.iringtools.library;
 
 namespace org.ids_adi.iring.referenceData
 {
-    class ReferenceDataModule : NinjectModule
+    public class ReferenceDataModule : NinjectModule
     {
         public override void Load()
         {

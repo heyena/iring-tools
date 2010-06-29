@@ -1,148 +1,76 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
-using System.Web;
 using org.iringtools.utility;
+using StaticDust.Configuration;
 
 namespace org.iringtools.library
 {
-  public class ServiceSettings
+  public class ServiceSettings : NameValueCollection
   {
-    private string _xmlPath = String.Empty;
-    private string _encryptedProxyToken = String.Empty;
-    private string _proxyHost = String.Empty;
-    private string _proxyPort = String.Empty;
-    private string _baseDirectoryPath = String.Empty;
-    private string _executingAssemblyName = String.Empty;
-
-    public string BaseDirectoryPath 
+    public ServiceSettings()
     {
-      get
+      this.Add("BaseDirectoryPath",     AppDomain.CurrentDomain.BaseDirectory);
+      this.Add("ExecutingAssemblyName", "App_Code");
+      this.Add("XmlPath",               @".\XML\");
+      this.Add("ProxyCredentialToken",  String.Empty);
+      this.Add("ProxyHost",             String.Empty);
+      this.Add("ProxyPort",             String.Empty);
+      this.Add("IgnoreSslErrors",       "True");
+    }
+
+    public void AppendSettings(NameValueCollection settings)
+    {
+      foreach (string s in settings.AllKeys)
       {
-        return _baseDirectoryPath;
-      }
-      set
-      {
-        if (value == String.Empty || value == null)
+        if (this.AllKeys.Contains(s))
         {
-          _baseDirectoryPath = System.AppDomain.CurrentDomain.BaseDirectory;
+          this[s] = settings[s];
         }
         else
         {
-          _baseDirectoryPath = value;
+          this.Add(s, settings[s]);
         }
       }
     }
 
-    public WebProxyCredentials ProxyCredentials { get; set; }
-
-    public virtual void PrepareCredentials()
+    public void AppendSettings(AppSettingsReader settings)
     {
-      if (EncryptedProxyToken == String.Empty)
+      foreach (string s in settings.Keys)
       {
-        this.ProxyCredentials = new WebProxyCredentials();
+        if (this.AllKeys.Contains(s))
+        {
+          this[s] = settings[s].ToString();
+        }
+        else
+        {
+          this.Add(s, settings[s].ToString());
+        }
+      }
+    }
+
+    public WebProxyCredentials GetProxyCredentials()
+    {
+      WebProxyCredentials proxyCredentials = null;
+
+      if (this["ProxyCredentialToken"] == String.Empty)
+      {
+        proxyCredentials = new WebProxyCredentials();
       }
       else
       {
-        int portNumber = 80;
-        Int32.TryParse(this.ProxyPort, out portNumber);
+        int portNumber = 8080;
+        Int32.TryParse(this["ProxyPort"], out portNumber);
 
-        this.ProxyCredentials = new WebProxyCredentials(
-          this.EncryptedProxyToken,
-          this.ProxyHost, 
+        proxyCredentials = new WebProxyCredentials(
+          this["ProxyCredentialToken"],
+          this["ProxyHost"], 
           portNumber);
-        this.ProxyCredentials.Decrypt();
-      }
-    }
 
-    public string ExecutingAssemblyName {
-      get
-      {
-        return _executingAssemblyName;
+        proxyCredentials.Decrypt();
       }
-      set
-      {
-        if (String.IsNullOrEmpty(value))
-          _executingAssemblyName = "App_Code";
-        else
-          _executingAssemblyName = value;
-      }
-    }
 
-    public string XmlPath
-    {
-      get
-      {
-        return _xmlPath;
-      }
-      set
-      {
-        if (value == String.Empty || value == null)
-        {
-          _xmlPath = @".\XML\";
-        }
-        else
-        {
-          _xmlPath = value;
-        }
-      }
-    }
-
-    public string EncryptedProxyToken
-    {
-      get
-      {
-        return _encryptedProxyToken;
-      }
-      set
-      {
-        if (value == null)
-        {
-          _encryptedProxyToken = String.Empty;
-        }
-        else
-        {
-          _encryptedProxyToken = value;
-        }
-      }
-    }
-
-    public string ProxyHost
-    {
-      get
-      {
-        return _proxyHost;
-      }
-      set
-      {
-        if (value == null)
-        {
-          _proxyHost = String.Empty;
-        }
-        else
-        {
-          _proxyHost = value;
-        }
-      }
-    }
-
-    public string ProxyPort
-    {
-      get
-      {
-        return _proxyPort;
-      }
-      set
-      {
-        if (value == null)
-        {
-          _proxyPort = String.Empty;
-        }
-        else
-        {
-          _proxyPort = value;
-        }
-      }
+      return proxyCredentials;
     }
   }
   

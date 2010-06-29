@@ -49,35 +49,44 @@ namespace org.iringtools.adapter.projection
     private string _dataObjectNs = String.Empty;
 
     [Inject]
-    public XmlProjectionEngine(AdapterSettings adapterSettings, ApplicationSettings appSettings, IDataLayer dataLayer)
+    public XmlProjectionEngine(AdapterSettings settings, IDataLayer dataLayer, Mapping mapping, DataDictionary dataDictionry)
     {
-      string scope = appSettings.ProjectName + "{0}" + appSettings.ApplicationName;
-
       _dataObjects = new List<IDataObject>();
       _classIdentifiers = new Dictionary<string, List<string>>();
       _xPathValuePairs = new List<Dictionary<string, string>>();
       _hierachicalDTOClasses = new Dictionary<string, List<string>>();
 
       _dataLayer = dataLayer;
-      _mapping = Utility.Read<Mapping>(String.Format(adapterSettings.XmlPath + "Mapping." + scope + ".xml", "."));
-      _graphNs = String.Format(adapterSettings.GraphBaseUri + "/" + scope + "#", "/");
-      _dataObjectNs = String.Format(DATALAYER_NS + ".proj_" + scope, ".");
-      _dataObjectsAssemblyName = adapterSettings.ExecutingAssemblyName;
-    }
+      _dataDictionary = dataDictionry;
+      _mapping = mapping;
 
-    public XElement GetXml(ref GraphMap graphMap, ref DataDictionary dataDictionary, ref IList<IDataObject> dataObjects)
+      _graphNs = String.Format("{0}/{1}/{2}",
+        settings["GraphBaseUri"],
+        settings["ProjectName"],
+        settings["ApplicationName"]
+      );
+
+      _dataObjectNs = String.Format("{0}.proj_{1}.{2}",
+        DATALAYER_NS,
+        settings["ProjectName"],
+        settings["ApplicationName"]
+      );
+
+      _dataObjectsAssemblyName = settings["ExecutingAssemblyName"];
+    }
+    
+    public XElement GetXml(string graphName, ref IList<IDataObject> dataObjects)
     {
       try
       {
-        _graphMap = graphMap;
-        _dataDictionary = dataDictionary;
+        _graphMap = _mapping.FindGraphMap(graphName);
         _dataObjects = dataObjects;
 
         PopulateClassIdentifiers();
 
         _hierachicalDTOClasses.Clear();
 
-        XElement graphElement = new XElement(_graphNs + graphMap.name,
+        XElement graphElement = new XElement(_graphNs + _graphMap.name,
           new XAttribute(XNamespace.Xmlns + "i", XSI_NS),
           new XAttribute(XNamespace.Xmlns + "rdl", RDL_NS),
           new XAttribute(XNamespace.Xmlns + "tpl", TPL_NS));
@@ -99,7 +108,7 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    public IList<IDataObject> GetDataObjects(ref GraphMap graphMap, ref DataDictionary dataDictionary, ref XElement xml)
+    public IList<IDataObject> GetDataObjects(string graphName, ref XElement xml)
     {
       throw new NotImplementedException();
     }

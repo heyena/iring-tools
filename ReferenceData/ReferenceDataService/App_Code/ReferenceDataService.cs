@@ -35,6 +35,8 @@ using org.w3.sparql_results;
 using org.ids_adi.iring.referenceData;
 using org.iringtools.library;
 using log4net;
+using System.Configuration;
+using System.Collections.Specialized;
 
 namespace org.ids_adi.iring.referenceData
 {
@@ -46,20 +48,8 @@ namespace org.ids_adi.iring.referenceData
        
         public ReferenceDataService()
         {
-          ConfigSettings configSettings = new ConfigSettings();
-          configSettings.BaseDirectoryPath = System.AppDomain.CurrentDomain.BaseDirectory;
-          configSettings.SPARQLPath = System.Configuration.ConfigurationManager.AppSettings["SPARQLPath"];
-          configSettings.XMLPath = System.Configuration.ConfigurationManager.AppSettings["XMLPath"];
-          configSettings.PageSize = System.Configuration.ConfigurationManager.AppSettings["PageSize"];
-          configSettings.ClassRegistryBase = System.Configuration.ConfigurationManager.AppSettings["ClassRegistryBase"];
-          configSettings.TemplateRegistryBase = System.Configuration.ConfigurationManager.AppSettings["TemplateRegistryBase"];
-          configSettings.ExampleRegistryBase = System.Configuration.ConfigurationManager.AppSettings["ExampleRegistryBase"];
-          configSettings.UseExampleRegistryBase = Convert.ToBoolean(System.Configuration.ConfigurationManager.AppSettings["UseExampleRegistryBase"]);
-          configSettings.RegistryCredentialToken = System.Configuration.ConfigurationManager.AppSettings["RegistryCredentialToken"];
-          configSettings.ProxyCredentialToken = System.Configuration.ConfigurationManager.AppSettings["ProxyCredentialToken"];
-          configSettings.ProxyHost = System.Configuration.ConfigurationManager.AppSettings["ProxyHost"];
-          configSettings.ProxyPort = System.Configuration.ConfigurationManager.AppSettings["ProxyPort"];
-          _referenceDataServiceProvider = new ReferenceDataServiceProvider(configSettings);            
+          NameValueCollection settings = ConfigurationManager.AppSettings;
+          _referenceDataServiceProvider = new ReferenceDataServiceProvider(settings);            
         }
 
         public List<Repository> GetRepositories()

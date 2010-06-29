@@ -57,17 +57,32 @@ namespace org.iringtools.adapter.semantic
     private string _dataObjectNs = String.Empty;
 
     [Inject]
-    public dotNetRdfEngine(AdapterSettings adapterSettings, ApplicationSettings appSettings)
+    public dotNetRdfEngine(AdapterSettings settings, Mapping mapping)
     {
-      string scope = string.Format("{0}.{1}", appSettings.ProjectName, appSettings.ApplicationName);
+      _settings = settings;
 
-      _settings = adapterSettings;
-      _tripleStore = new MicrosoftSqlStoreManager(adapterSettings.DBServer, adapterSettings.DBname, adapterSettings.DBUser, adapterSettings.DBPassword);
-      _mapping = Utility.Read<Mapping>(String.Format("{0}Mapping.{1}.xml", adapterSettings.XmlPath, scope));
+      _tripleStore = new MicrosoftSqlStoreManager(
+        _settings["DBServer"],
+        _settings["DBname"],
+        _settings["DBUser"],
+        _settings["DBPassword"]
+        );
+
+      _mapping = mapping;
+
       _graph = new Graph();
-      _graphNs = String.Format("{0}/{1}/{2}/", adapterSettings.GraphBaseUri, appSettings.ProjectName, appSettings.ApplicationName);
-      _dataObjectNs = String.Format("{0}.proj_{1}", DATALAYER_NS, scope);
-      _dataObjectsAssemblyName = adapterSettings.ExecutingAssemblyName;
+      _graphNs = String.Format("{0}/{1}/{2}/",
+        _settings["GraphBaseUri"],
+        _settings["ProjectName"],
+        _settings["ApplicationName"]
+        );
+
+      _dataObjectNs = String.Format("{0}.proj_{1}", 
+        DATALAYER_NS, 
+        _settings["Scope"]
+      );
+
+      _dataObjectsAssemblyName = _settings["ExecutingAssemblyName"];
     }
 
     public Response Refresh(string graphName, XElement rdf)

@@ -20,19 +20,30 @@ namespace org.iringtools.adapter.datalayer
   public class NHibernateDataLayer : IDataLayer
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(NHibernateDataLayer));
-    private ApplicationSettings _appSettings = null;
     private string _dataDictionaryPath = String.Empty;
+    private AdapterSettings _settings = null;
     private ISessionFactory _sessionFactory;
 
     [Inject]
-    public NHibernateDataLayer(AdapterSettings settings, ApplicationSettings appSettings, NameValueCollection webConfig)
+    public NHibernateDataLayer(AdapterSettings settings)
     {
-      string scope = string.Format("{0}.{1}", appSettings.ProjectName, appSettings.ApplicationName);
-      string hibernateConfigPath = string.Format("{0}nh-configuration.{1}.xml", settings.XmlPath, scope);
-      string hibernateMappingPath = string.Format("{0}nh-mapping.{1}.xml", settings.XmlPath, scope);
+      _settings = settings;
 
-      _appSettings = appSettings;
-      _dataDictionaryPath = string.Format("{0}DataDictionary.{1}.xml", settings.XmlPath, scope);      
+      string hibernateConfigPath = string.Format("{0}nh-configuration.{1}.xml",
+        _settings["XmlPath"],
+        _settings["Scope"]
+      );
+
+      string hibernateMappingPath = string.Format("{0}nh-mapping.{1}.xml",
+        _settings["XmlPath"],
+        _settings["Scope"]
+      );
+
+      _dataDictionaryPath = string.Format("{0}DataDictionary.{1}.xml",
+        _settings["XmlPath"],
+        _settings["Scope"]
+      );      
+      
       _sessionFactory = new Configuration()
         .Configure(hibernateConfigPath)
         .AddFile(hibernateMappingPath)
@@ -47,7 +58,7 @@ namespace org.iringtools.adapter.datalayer
       }
       catch (Exception ex)
       {
-        _logger.Error(string.Format("Error in OpenSession: project[{0}] application[{1}] {2}", _appSettings.ProjectName, _appSettings.ApplicationName, ex));
+        _logger.Error(string.Format("Error in OpenSession: project[{0}] application[{1}] {2}", _settings["ProjectName"], _settings["ApplicationName"], ex));
         throw new Exception("Error while openning nhibernate session " + ex);
       }
     }
