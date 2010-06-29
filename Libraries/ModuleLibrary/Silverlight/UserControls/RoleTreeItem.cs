@@ -150,6 +150,8 @@ namespace org.iringtools.informationmodel.usercontrols
                 {
                     RoleDefinition roleDefinition = (RoleDefinition)Tag;
 
+                    PresentationModel.SelectedNodeType = NodeType.RoleDefinition;
+
                     keyValuePair = new KeyValuePair<string, string>("QMXF Type", "Role Definition");
                     PresentationModel.DetailProperties.Add(keyValuePair);
 
@@ -180,6 +182,8 @@ namespace org.iringtools.informationmodel.usercontrols
                 else if (Tag is RoleQualification)
                 {
                     RoleQualification roleQualification = (RoleQualification)Tag;
+
+                    PresentationModel.SelectedNodeType = NodeType.RoleQualification;
 
                     keyValuePair = new KeyValuePair<string, string>("QMXF Type", "Role Qualification");
                     PresentationModel.DetailProperties.Add(keyValuePair);

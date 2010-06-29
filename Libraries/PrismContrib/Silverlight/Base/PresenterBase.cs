@@ -304,7 +304,17 @@ namespace PrismContrib.Base
     public Storyboard StoryBoardCtrl(string controlName)
     {
       return GetControl<Storyboard>(controlName);
-    } 
+    }
+
+    /// <summary>
+    /// RadioButton the CTRL.
+    /// </summary>
+    /// <param name="controlName">Name of the control.</param>
+    /// <returns></returns>
+    public RadioButton RadioButtonCtrl(string controlName)
+    {
+        return GetControl<RadioButton>(controlName);
+    }
     #endregion
 
     /// <summary>

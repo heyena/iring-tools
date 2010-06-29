@@ -148,6 +148,8 @@ namespace org.iringtools.informationmodel.usercontrols
                 {
                     TemplateDefinition templateDefinition = (TemplateDefinition)Tag;
 
+                    PresentationModel.SelectedNodeType = NodeType.TemplateDefinition;
+
                     keyValuePair = new KeyValuePair<string, string>("QMXF Type", "Template Definition");
                     PresentationModel.DetailProperties.Add(keyValuePair);
 
@@ -178,6 +180,8 @@ namespace org.iringtools.informationmodel.usercontrols
                 else if (Tag is TemplateQualification)
                 {
                     TemplateQualification templateQualification = (TemplateQualification)Tag;
+
+                    PresentationModel.SelectedNodeType = NodeType.TemplateQualification;
 
                     keyValuePair = new KeyValuePair<string, string>("QMXF Type", "Template Qualification");
                     PresentationModel.DetailProperties.Add(keyValuePair);

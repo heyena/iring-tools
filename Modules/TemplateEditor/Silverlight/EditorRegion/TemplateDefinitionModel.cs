@@ -17,10 +17,12 @@ namespace org.iringtools.modules.templateeditor.editorregion
     {
         private TemplateDefinition _templateDefinition;
                         
-        public TemplateDefinitionModel(QMXF qmxf)
+        public TemplateDefinitionModel(QMXF qmxf, EditorMode editorMode)
         {
             _heading = " Role Definition ";
             _readonly = false;
+            _isBaseTemplate = true;
+            _isEditMode = (editorMode == EditorMode.Edit);
 
             if (qmxf != null)
             {
@@ -89,6 +91,18 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 }
                                
                 RaisePropertyChanged(this, "Name");                
+            }
+        }
+
+        public override string Qualifies
+        {
+            get
+            {
+                return "";                
+            }
+            set
+            {
+                return;
             }
         }
 
@@ -386,6 +400,18 @@ namespace org.iringtools.modules.templateeditor.editorregion
 
                     RaisePropertyChanged(this, "SelectedRoleRange");
                 }
+            }
+        }
+
+        public override string SelectedRoleValue
+        {
+            get
+            {
+                return "";                
+            }
+            set
+            {
+                return;
             }
         }
 

@@ -80,6 +80,8 @@ namespace org.iringtools.informationmodel.usercontrols
             {
                 ClassDefinition classDefinition = (ClassDefinition)Tag;
 
+                PresentationModel.SelectedNodeType = NodeType.Class;
+
                 KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Repository", Entity.repository);
                 PresentationModel.DetailProperties.Add(keyValuePair);
 

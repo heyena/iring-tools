@@ -17,10 +17,12 @@ namespace org.iringtools.modules.templateeditor.editorregion
     {
         private TemplateQualification _templateQualification = null;        
                         
-        public TemplateQualificationModel(QMXF qmxf)
+        public TemplateQualificationModel(QMXF qmxf, EditorMode editorMode)
         {
             _heading = " Role Qualification ";
             _readonly = true;
+            _isBaseTemplate = false;
+            _isEditMode = (editorMode == EditorMode.Edit);
             
             if (qmxf != null)
             {
@@ -85,6 +87,27 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 }
 
                 RaisePropertyChanged(this, "Name");
+            }
+        }
+
+        public override string Qualifies
+        {
+            get
+            {
+                try
+                {
+                    return _templateQualification.qualifies;
+                }
+                catch
+                {
+                    return "";
+                }
+            }
+            set
+            {
+                _templateQualification.qualifies = value;
+
+                RaisePropertyChanged(this, "Qualifies");
             }
         }
 
@@ -381,6 +404,44 @@ namespace org.iringtools.modules.templateeditor.editorregion
                     selectedRole.range = value.Key;
 
                     RaisePropertyChanged(this, "SelectedRoleRange");
+                }
+            }
+        }
+
+        public override string SelectedRoleValue
+        {
+            get
+            {
+                try
+                {
+                    if (_selectedRole != null)
+                    {
+                        if (selectedRole.value.reference != string.Empty)
+                        {
+                            return selectedRole.value.reference;
+                        }
+                        else
+                        {
+                            return selectedRole.value.text;
+                        }
+                    }
+                    else
+                    {
+                        return string.Empty;
+                    }
+                }
+                catch
+                {
+                    return string.Empty;
+                }
+            }
+            set
+            {
+                if (_selectedRole != null)
+                {
+                    selectedRole.value.text = value;
+
+                    RaisePropertyChanged(this, "SelectedRoleValue");
                 }
             }
         }
