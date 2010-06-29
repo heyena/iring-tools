@@ -10,7 +10,7 @@ namespace org.iringtools.adapter
 {
   public interface IProjectionLayer
   {
-    XElement GetXml(ref GraphMap graphMap, ref DataDictionary dataDictionary, ref IList<IDataObject> dataObjects);
-    IList<IDataObject> GetDataObjects(ref GraphMap graphMap, ref DataDictionary dataDictionary, ref XElement xml);
+    XElement GetXml(string graphName, ref IList<IDataObject> dataObjects);
+    IList<IDataObject> GetDataObjects(string graphName, ref XElement xml);
   }
 }

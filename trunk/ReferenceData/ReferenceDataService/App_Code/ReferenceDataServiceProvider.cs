@@ -40,6 +40,7 @@ using Ninject.Parameters;
 using Ninject.Contrib.Dynamic;
 using Ninject.Modules;
 using log4net;
+using System.Collections.Specialized;
 
 namespace org.ids_adi.iring.referenceData
 {
@@ -65,13 +66,10 @@ namespace org.ids_adi.iring.referenceData
         private const string REPOSITORIES_FILE_NAME = "Repositories.xml";
         private const string QUERIES_FILE_NAME = "Queries.xml";
 
-        private string _sparqlPath = String.Empty;
-        private string _xmlPath = String.Empty;
-        private string _pageSize = String.Empty;
-        private string _classRegistryBase = String.Empty;
-        private string _templateRegistryBase = String.Empty;
-        private string _exampleRegistryBase = String.Empty;
+        private int _pageSize = 0;
+
         private bool _useExampleRegistryBase = false;
+
         private WebCredentials _registryCredentials = null;
 
         private WebProxyCredentials _proxyCredentials = null;
@@ -82,68 +80,48 @@ namespace org.ids_adi.iring.referenceData
 
         private static Dictionary<string, RefDataEntities> _searchHistory = new Dictionary<string, RefDataEntities>();
         
-        /*
-         * private IKernel _kernel = null;
-         * private ReferenceDataSettings _settings = null;
+        private IKernel _kernel = null;
+        private ReferenceDataSettings _settings = null;
         
         public ReferenceDataServiceProvider(NameValueCollection settings)
-         * {
-         *      _kernel = new StandardKernel(new ReferenceDataModule());
-         *      _settings = _kernel.Get<ReferenceDataSettings>(new ConstructorArgument("AppSettings", settings));
-         *      Directory.SetCurrentDirectory(_settings.BaseDirectoryPath);
-         * }
-        */
-
-        public ReferenceDataServiceProvider(ConfigSettings configSettings)
         {
-            try
+          try
+          {
+            _kernel = new StandardKernel(new ReferenceDataModule());
+            _settings = _kernel.Get<ReferenceDataSettings>();
+            _settings.AppendSettings(settings);
+
+            Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
+
+            _pageSize = Convert.ToInt32(_settings["PageSize"]);
+
+            _useExampleRegistryBase = Convert.ToBoolean(_settings["UseExampleRegistryBase"]);
+
+            string registryCredentialToken = _settings["RegistryCredentialToken"];
+            bool tokenIsEmpty = registryCredentialToken == String.Empty;
+
+            if (tokenIsEmpty)
             {
-                Directory.SetCurrentDirectory(configSettings.BaseDirectoryPath);
-
-                _sparqlPath = configSettings.SPARQLPath;
-                _xmlPath = configSettings.XMLPath;
-                _pageSize = configSettings.PageSize;
-                _classRegistryBase = configSettings.ClassRegistryBase;
-                _templateRegistryBase = configSettings.TemplateRegistryBase;
-                _exampleRegistryBase = configSettings.ExampleRegistryBase;
-                _useExampleRegistryBase = configSettings.UseExampleRegistryBase;
-                string encryptedRegistryToken = configSettings.RegistryCredentialToken;
-                string encryptedProxyToken = configSettings.ProxyCredentialToken;
-                string proxyHost = configSettings.ProxyHost;
-                string proxyPortString = configSettings.ProxyPort;
-
-                if (encryptedRegistryToken == String.Empty)
-                {
-                    _registryCredentials = new WebCredentials();
-                }
-                else
-                {
-                    _registryCredentials = new WebCredentials(encryptedRegistryToken);
-                    _registryCredentials.Decrypt();
-                }
-
-                int proxyPort = 0;
-                Int32.TryParse(proxyPortString, out proxyPort);
-                if (encryptedProxyToken == String.Empty)
-                {
-                    _proxyCredentials = new WebProxyCredentials();
-                }
-                else
-                {
-                    _proxyCredentials = new WebProxyCredentials(encryptedProxyToken, proxyHost, proxyPort);
-                    _proxyCredentials.Decrypt();
-                }
-
-                string repositoriesPath = _xmlPath + REPOSITORIES_FILE_NAME;
-                _repositories = Utility.Read<List<Repository>>(repositoriesPath);
-
-                string queriesPath = _xmlPath + QUERIES_FILE_NAME;
-                _queries = Utility.Read<Queries>(queriesPath);
+                _registryCredentials = new WebCredentials();
             }
-            catch (Exception ex)
+            else
             {
-                _log4netLogger.Error("Error in initializing ReferenceDataServiceProvider: " + ex);
+              _registryCredentials = new WebCredentials(registryCredentialToken);
+              _registryCredentials.Decrypt();
             }
+
+            _proxyCredentials = _settings.GetProxyCredentials();
+
+            string repositoriesPath = _settings["XmlPath"] + REPOSITORIES_FILE_NAME;
+            _repositories = Utility.Read<List<Repository>>(repositoriesPath);
+
+            string queriesPath = _settings["XmlPath"] + QUERIES_FILE_NAME;
+            _queries = Utility.Read<Queries>(queriesPath);
+          }
+          catch (Exception ex)
+          {
+            _log4netLogger.Error("Error in initializing ReferenceDataServiceProvider: " + ex);
+          }
         }
 
         public List<Repository> GetRepositories()
@@ -234,9 +212,8 @@ namespace org.ids_adi.iring.referenceData
             {
                 RefDataEntities entities = null;
                 int counter = 0;
-
+              
                 int pageNumber = Convert.ToInt32(page);
-                int pageSize = Convert.ToInt32(_pageSize);
                 int pageTotal = 0;
 
                 try
@@ -291,8 +268,8 @@ namespace org.ids_adi.iring.referenceData
                         entities = resultEntities;
                     }
 
-                    entities = GetRequestedPage(entities, pageNumber, pageSize);
-                    entities.total = pageTotal / pageSize;
+                    entities = GetRequestedPage(entities, pageNumber, _pageSize);
+                    entities.total = pageTotal / _pageSize;
                     Logger.Log(string.Format("SearchPage is returning {0} records", entities.Count), Category.Debug, Priority.None);
                     return entities;
                 }
@@ -1184,9 +1161,9 @@ namespace org.ids_adi.iring.referenceData
                                 templateName = "Template definition " + label;
                                 /// TODO: change to class registry base
                                 if (_useExampleRegistryBase)
-                                    generatedTempId = CreateIdsAdiId(_exampleRegistryBase, templateName);
+                                    generatedTempId = CreateIdsAdiId(_settings["ExampleRegistryBase"], templateName);
                                 else
-                                    generatedTempId = CreateIdsAdiId(_templateRegistryBase, templateName);
+                                    generatedTempId = CreateIdsAdiId(_settings["TemplateRegistryBase"], templateName);
                                 ID = "<" + generatedTempId + ">";
                                 Utility.WriteString("\n" + ID + "\t" + label, "TempDef IDs.log", true);
                                 //append description to sparql query
@@ -1218,9 +1195,9 @@ namespace org.ids_adi.iring.referenceData
                                     genName = "Role definition " + roleLabel;
                                     /// TODO: change to template registry base
                                     if (_useExampleRegistryBase)
-                                        generatedId = CreateIdsAdiId(_exampleRegistryBase, genName);
+                                        generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], genName);
                                     else
-                                        generatedId = CreateIdsAdiId(_templateRegistryBase, genName);
+                                        generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], genName);
 
                                     roleID = "<" + generatedId + ">";
 
@@ -1336,9 +1313,9 @@ namespace org.ids_adi.iring.referenceData
                                             gen = "Role definition " + label;
                                             /// TODO: change to template registry base
                                             if (_useExampleRegistryBase)
-                                                generatedId = CreateIdsAdiId(_exampleRegistryBase, gen);
+                                                generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], gen);
                                             else
-                                                generatedId = CreateIdsAdiId(_templateRegistryBase, gen);
+                                                generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], gen);
 
                                             roleID = generatedId;
                                         }
@@ -1406,9 +1383,9 @@ namespace org.ids_adi.iring.referenceData
                                     templateName = "Template qualification " + label;
                                     /// TODO: change to class registry base
                                     if (_useExampleRegistryBase)
-                                        generatedTempId = CreateIdsAdiId(_exampleRegistryBase, templateName);
+                                        generatedTempId = CreateIdsAdiId(_settings["ExampleRegistryBase"], templateName);
                                     else
-                                        generatedTempId = CreateIdsAdiId(_templateRegistryBase, templateName);
+                                        generatedTempId = CreateIdsAdiId(_settings["TemplateRegistryBase"], templateName);
                                     ID = "<" + generatedTempId + ">";
                                     Utility.WriteString("\n" + ID + "\t" + label, "TempQual IDs.log", true);
                                     specialization = template.qualifies;
@@ -1431,9 +1408,9 @@ namespace org.ids_adi.iring.referenceData
                                         genName = "Role definition " + roleLabel;
                                         /// TODO: change to template registry base
                                         //if (_useExampleRegistryBase)
-                                        //    generatedId = CreateIdsAdiId(_exampleRegistryBase, genName);
+                                        //    generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], genName);
                                         //else
-                                        //    generatedId = CreateIdsAdiId(_templateRegistryBase, genName);
+                                        //    generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], genName);
                                         roleID = "<" + generatedId + ">";
 
                                         //roleID = role.identifier;
@@ -1738,11 +1715,14 @@ namespace org.ids_adi.iring.referenceData
                             Utility.WriteString("Inserting : " + label, "stats.log", true);
 
                             className = "Class definition " + label;
+
                             if (_useExampleRegistryBase)
-                                generatedId = CreateIdsAdiId(_exampleRegistryBase, className);
+                              generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], className);
                             else
-                                generatedId = CreateIdsAdiId(_classRegistryBase, className);
+                              generatedId = CreateIdsAdiId(_settings["ClassRegistryBase"], className);
+                            
                             ID = "<" + generatedId + ">";
+                            
                             Utility.WriteString("\n" + ID + "\t" + label, "Class IDs.log", true);
                             //ID = Class.identifier.Remove(0, 1);
 
@@ -1990,7 +1970,7 @@ namespace org.ids_adi.iring.referenceData
             {
                 string query;
 
-                query = Utility.ReadString(_sparqlPath + queryName);
+                query = Utility.ReadString(_settings["SparqlPath"] + queryName);
 
                 return query;
             }

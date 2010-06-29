@@ -49,6 +49,7 @@ using org.w3.sparql_results;
 using Microsoft.ServiceModel.Web;
 using System.Net;
 using org.ids_adi.qmxf;
+using StaticDust.Configuration;
 
 namespace org.iringtools.adapter
 {
@@ -77,18 +78,19 @@ namespace org.iringtools.adapter
     public AdapterProvider(NameValueCollection settings)
     {
       _kernel = new StandardKernel(new AdapterModule());
-      _kernel.Bind<NameValueCollection>().ToConstant(settings);
-      _settings = _kernel.Get<AdapterSettings>(); //new ConstructorArgument("AppSettings", settings));
+      _settings = _kernel.Get<AdapterSettings>();
+      _settings.AppendSettings(settings);
 
+      //TODO: Move me!
       #region initialize webHttpClient for converting old mapping
-      string proxyHost = _settings.ProxyHost;
-      string proxyPort = _settings.ProxyPort;
-      string rdsUri = _settings.ReferenceDataServiceUri;
+      string proxyHost = _settings["ProxyHost"];
+      string proxyPort = _settings["ProxyPort"];
+      string rdsUri = _settings["ReferenceDataServiceUri"];
      
       if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
       {
         WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
-        WebProxyCredentials proxyCrendentials = _settings.ProxyCredentials;
+        WebProxyCredentials proxyCrendentials = _settings.GetProxyCredentials();
 
         if (proxyCrendentials != null)
         {
@@ -103,13 +105,13 @@ namespace org.iringtools.adapter
       }
       #endregion
 
-      Directory.SetCurrentDirectory(_settings.BaseDirectoryPath);
+      Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
     }
 
     #region public methods
     public List<ScopeProject> GetScopes()
     {
-      string path = string.Format("{0}Scopes.xml", _settings.XmlPath);
+      string path = string.Format("{0}Scopes.xml", _settings["XmlPath"]);
 
       try
       {
@@ -129,7 +131,7 @@ namespace org.iringtools.adapter
 
     public Manifest GetManifest(string projectName, string applicationName)
     {
-      string path = string.Format("{0}Mapping.{1}.{2}.xml", _settings.XmlPath, projectName, applicationName);
+      string path = string.Format("{0}Mapping.{1}.{2}.xml", _settings["XmlPath"], projectName, applicationName);
 
       try
       {
@@ -349,7 +351,7 @@ namespace org.iringtools.adapter
     public Response UpdateMapping(string projectName, string applicationName, XElement mappingXml)
     {
       Response response = new Response();
-      string path = string.Format("{0}Mapping.{1}.{2}.xml", _settings.XmlPath, projectName, applicationName);
+      string path = string.Format("{0}Mapping.{1}.{2}.xml", _settings["XmlPath"], projectName, applicationName);
 
       try
       {
@@ -498,14 +500,12 @@ namespace org.iringtools.adapter
         }
         else
         {
-          _projectionEngine = _kernel.Get<IProjectionLayer>(_settings.DefaultProjectionFormat);
+          _projectionEngine = _kernel.Get<IProjectionLayer>(_settings["DefaultProjectionFormat"]);
         }
-
-        _graphMap = _mapping.FindGraphMap(graphName);
 
         LoadDataObjectSet(identifiers);
 
-        return _projectionEngine.GetXml(ref _graphMap, ref _dataDictionary, ref _dataObjects);
+        return _projectionEngine.GetXml(graphName, ref _dataObjects);
       }
       catch (Exception ex)
       {
@@ -526,14 +526,14 @@ namespace org.iringtools.adapter
         }
         else
         {
-          _projectionEngine = _kernel.Get<IProjectionLayer>(_settings.DefaultProjectionFormat);
+          _projectionEngine = _kernel.Get<IProjectionLayer>(_settings["DefaultProjectionFormat"]);
         }
 
         _graphMap = _mapping.FindGraphMap(graphName);
 
         LoadDataObjectSet(null);
 
-        return _projectionEngine.GetXml(ref _graphMap, ref _dataDictionary, ref _dataObjects);
+        return _projectionEngine.GetXml(graphName, ref _dataObjects);
       }
       catch (Exception ex)
       {
@@ -552,12 +552,11 @@ namespace org.iringtools.adapter
         }
         else
         {
-            _projectionEngine = _kernel.Get<IProjectionLayer>(_settings.DefaultProjectionFormat);
+            _projectionEngine = _kernel.Get<IProjectionLayer>(_settings["DefaultProjectionFormat"]);
         }
 
-        _graphMap = _mapping.FindGraphMap(graphName);
+        IList<IDataObject> dataObjects = _projectionEngine.GetDataObjects(graphName, ref xml);
 
-        IList<IDataObject> dataObjects = _projectionEngine.GetDataObjects(ref _graphMap, ref _dataDictionary, ref xml);
         return dataObjects;
     }
 
@@ -582,7 +581,6 @@ namespace org.iringtools.adapter
         targetCredentialsXML = request["targetCredentials"];
         graphName = request["graphName"];
         graphNameForPull = request["targetGraphName"];
-        _graphMap = _mapping.FindGraphMap(graphName);
         filter = request["filter"];
         projectNameForPull = request["projectName"];
         applicationNameForPull = request["applicationName"];
@@ -600,8 +598,8 @@ namespace org.iringtools.adapter
             dataObjectsString = httpClient.GetMessage(@"/" + projectNameForPull + "/" + applicationNameForPull + "/" + graphNameForPull + "?format=dto");
         }
         XElement xml = XElement.Parse(dataObjectsString);
-          
-        IList<IDataObject> dataObjects = _projectionEngine.GetDataObjects(ref _graphMap, ref _dataDictionary, ref xml);
+
+        IList<IDataObject> dataObjects = _projectionEngine.GetDataObjects(graphName, ref xml);
 
         response.Append(_dataLayer.Post(dataObjects));
         response.Add(String.Format("Pull is successful from " + targetUri + "for Graph " + graphName));
@@ -638,7 +636,7 @@ namespace org.iringtools.adapter
 
         string graphName = request["graphName"];
 
-        string graphUri = _settings.GraphBaseUri + "/" + projectName + "/" + applicationName + "/" + graphName;        
+        string graphUri = _settings["GraphBaseUri"] + "/" + projectName + "/" + applicationName + "/" + graphName;        
         SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(targetUri), graphUri);
 
         if (request.ContainsKey("targetCredentials"))
@@ -652,13 +650,13 @@ namespace org.iringtools.adapter
           endpoint.SetCredentials(targetCredentials.GetNetworkCredential());
         }
 
-        string proxyHost = _settings.ProxyHost;
-        string proxyPort = _settings.ProxyPort;
+        string proxyHost = _settings["ProxyHost"];
+        string proxyPort = _settings["ProxyPort"];
         if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
         {
           WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
           
-          WebProxyCredentials proxyCrendentials = _settings.ProxyCredentials;
+          WebProxyCredentials proxyCrendentials = _settings.GetProxyCredentials();
           if (proxyCrendentials != null)
           {
             endpoint.UseCredentialsForProxy = true;
@@ -673,7 +671,6 @@ namespace org.iringtools.adapter
 
         // call RdfProjectionEngine to fill data objects from a given graph
         _projectionEngine = _kernel.Get<IProjectionLayer>("rdf");
-        _graphMap = _mapping.FindGraphMap(graphName);
 
         System.Text.StringBuilder sb = new System.Text.StringBuilder();
         TextWriter textWriter = new StringWriter(sb);
@@ -681,7 +678,7 @@ namespace org.iringtools.adapter
         rdfWriter.Save(graph, textWriter);
         XElement rdf = XElement.Parse(sb.ToString());
 
-        _dataObjects = _projectionEngine.GetDataObjects(ref _graphMap, ref _dataDictionary, ref rdf);
+        _dataObjects = _projectionEngine.GetDataObjects(graphName, ref rdf);
 
         // post data objects to data layer
         _dataLayer.Post(_dataObjects);
@@ -807,27 +804,44 @@ namespace org.iringtools.adapter
         if (!_isInitialized)
         {
           string scope = string.Format("{0}.{1}", projectName, applicationName);
+          
+          _settings.Add("ProjectName",              projectName);
+          _settings.Add("ApplicationName",          applicationName);
+          _settings.Add("Scope", scope);
 
-          ApplicationSettings applicationSettings = _kernel.Get<ApplicationSettings>(
-            new ConstructorArgument("projectName", projectName),
-            new ConstructorArgument("applicationName", applicationName)
+          string appSettingsPath = String.Format("{0}{1}.config", 
+            _settings["XmlPath"],
+            scope
           );
 
-          string bindingConfigurationPath = _settings.XmlPath + applicationSettings.BindingConfigurationPath;
-          BindingConfiguration bindingConfiguration = Utility.Read<BindingConfiguration>(bindingConfigurationPath, false);
-          string configurationPath = _settings.XmlPath + projectName + "." + applicationName + ".config";
+          if (File.Exists(appSettingsPath))
+          {
+            AppSettingsReader appSettings = new AppSettingsReader(appSettingsPath);
+            _settings.AppendSettings(appSettings);
+          }
 
-            if(File.Exists(configurationPath))
-            {              
-              applicationSettings.Configuration = new StaticDust.Configuration.AppSettingsReader(configurationPath);
-            }
+          string bindingConfigurationPath = String.Format("{0}BindingConfiguration.{1}.xml", 
+            _settings["XmlPath"], 
+            scope
+          );
           
+          BindingConfiguration bindingConfiguration = 
+            Utility.Read<BindingConfiguration>(bindingConfigurationPath, false);
           _kernel.Load(new DynamicModule(bindingConfiguration));
+
           _dataLayer = _kernel.Get<IDataLayer>("DataLayer");
-          _projectionEngine = _kernel.Get<IProjectionLayer>("ProjectionLayer");
-          _semanticEngine = _kernel.Get<ISemanticLayer>("SemanticLayer");
-          _mapping = Utility.Read<Mapping>(string.Format("{0}Mapping.{1}.xml", _settings.XmlPath, scope));
           _dataDictionary = _dataLayer.GetDictionary();
+          _kernel.Bind<DataDictionary>().ToConstant(_dataDictionary);
+
+          string mappingPath = String.Format("{0}Mapping.{1}.xml",
+            _settings["XmlPath"],
+            scope
+          );
+
+          _mapping = Utility.Read<Mapping>(mappingPath);
+          _kernel.Bind<Mapping>().ToConstant(_mapping);
+
+          _semanticEngine = _kernel.Get<ISemanticLayer>("SemanticLayer");
 
           _isInitialized = true;
         }
@@ -837,7 +851,7 @@ namespace org.iringtools.adapter
         //if (ex.Message.Contains("Mapping"))
         //{
         //  _mapping = new Mapping();
-        //  Utility.Write<Mapping>(_mapping, string.Format("{0}Mapping.{1}.{2}.xml", _settings.XmlPath, projectName, applicationName));
+        //  Utility.Write<Mapping>(_mapping, string.Format("{0}Mapping.{1}.{2}.xml", _settings["XmlPath"], projectName, applicationName));
         //}
         //else
         //{
@@ -849,11 +863,13 @@ namespace org.iringtools.adapter
 
     private Response Refresh(string graphName)
     {
-      _projectionEngine = _kernel.Get<IProjectionLayer>("rdf");
       _graphMap = _mapping.FindGraphMap(graphName);
+
       LoadDataObjectSet(null);
 
-      XElement rdf = _projectionEngine.GetXml(ref _graphMap, ref _dataDictionary, ref _dataObjects);
+      _projectionEngine = _kernel.Get<IProjectionLayer>("rdf");
+
+      XElement rdf = _projectionEngine.GetXml(graphName, ref _dataObjects);
 
       return _semanticEngine.Refresh(graphName, rdf);
     }
@@ -977,7 +993,7 @@ namespace org.iringtools.adapter
     {
       try
       {
-        string bindingConfigurationPath = string.Format("{0}BindingConfiguration.{1}.{2}.xml", _settings.XmlPath, projectName, applicationName);
+        string bindingConfigurationPath = string.Format("{0}BindingConfiguration.{1}.{2}.xml", _settings["XmlPath"], projectName, applicationName);
 
         if (File.Exists(bindingConfigurationPath))
         {
@@ -1022,7 +1038,7 @@ namespace org.iringtools.adapter
     {
       try
       {
-        string scopesPath = string.Format("{0}Scopes.xml", _settings.XmlPath);
+        string scopesPath = string.Format("{0}Scopes.xml", _settings["XmlPath"]);
 
         if (File.Exists(scopesPath))
         {

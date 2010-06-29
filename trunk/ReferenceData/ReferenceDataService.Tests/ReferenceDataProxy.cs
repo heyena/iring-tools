@@ -11,6 +11,8 @@ using PrismContrib.Loggers;
 using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Unity;
 using org.iringtools.library;
+using System.Configuration;
+using System.Collections.Specialized;
 
 namespace ReferenceDataService.Tests
 {
@@ -34,19 +36,8 @@ namespace ReferenceDataService.Tests
     /// <param name="container">The container.</param>
     public ReferenceDataProxy()
     {
-      ConfigSettings configSettings = new ConfigSettings();
-      configSettings.BaseDirectoryPath = System.Configuration.ConfigurationManager.AppSettings["BasePath"];
-      configSettings.SPARQLPath = System.Configuration.ConfigurationManager.AppSettings["SPARQLPath"];
-      configSettings.XMLPath = System.Configuration.ConfigurationManager.AppSettings["XMLPath"];
-      configSettings.PageSize = System.Configuration.ConfigurationManager.AppSettings["PageSize"];
-      configSettings.ClassRegistryBase = System.Configuration.ConfigurationManager.AppSettings["ClassRegistryBase"];
-      configSettings.TemplateRegistryBase = System.Configuration.ConfigurationManager.AppSettings["TemplateRegistryBase"];
-      configSettings.ExampleRegistryBase = System.Configuration.ConfigurationManager.AppSettings["ExampleRegistryBase"];
-      configSettings.RegistryCredentialToken = System.Configuration.ConfigurationManager.AppSettings["RegistryCredentialToken"];
-      configSettings.ProxyCredentialToken = System.Configuration.ConfigurationManager.AppSettings["ProxyCredentialToken"];
-      configSettings.ProxyHost = System.Configuration.ConfigurationManager.AppSettings["ProxyHost"];
-      configSettings.ProxyPort = System.Configuration.ConfigurationManager.AppSettings["ProxyPort"];
-      _referenceDataServiceProvider = new ReferenceDataServiceProvider(configSettings);
+      NameValueCollection settings = ConfigurationManager.AppSettings;
+      _referenceDataServiceProvider = new ReferenceDataServiceProvider(settings);
     }
 
     public List<Repository> GetRepositories()

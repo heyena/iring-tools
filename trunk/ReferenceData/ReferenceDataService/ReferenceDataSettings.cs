@@ -7,36 +7,18 @@ using System.Collections.Specialized;
 
 namespace org.ids_adi.iring.referenceData
 {
-    public class ReferenceDataSettings : ServiceSettings
+  public class ReferenceDataSettings : ServiceSettings
+  {
+    public ReferenceDataSettings()
+      : base()
     {
-        public ReferenceDataSettings(NameValueCollection AppSettings)
-        {
-            this.BaseDirectoryPath = AppSettings["BaseDirectory"];
-            this.SPARQLPath = AppSettings["SPARQLPath"];
-            this.XMLPath = AppSettings["XMLPath"];
-            this.PageSize = AppSettings["PageSize"];
-            this.ClassRegistryBase = AppSettings["ClassRegistryBase"];
-            this.TemplateRegistryBase = AppSettings["TemplateRegistryBase"];
-            this.ExampleRegistryBase = AppSettings["ExampleRegistryBase"];
-            this.UseExampleRegistryBase = Convert.ToBoolean(AppSettings["UseExampleRegistryBase"]);
-            this.RegistryCredentialToken = AppSettings["RegistryCredentialToken"];
-            this.ProxyCredentialToken = AppSettings["ProxyCredentialToken"];
-            this.ProxyHost = AppSettings["ProxyHost"];
-            this.ProxyPort = AppSettings["ProxyPort"];
-        }
-
-        //public string BaseDirectoryPath { get; set; }
-        public string ClassRegistryBase { get; set; }
-        public string TemplateRegistryBase { get; set; }
-        public string ExampleRegistryBase { get; set; }
-        public bool UseExampleRegistryBase { get; set; }
-        public string SPARQLPath { get; set; }
-        public string XMLPath { get; set; }
-        public string RegistryCredentialToken { get; set; }
-        public string ProxyCredentialToken { get; set; }
-        //public string ProxyHost { get; set; }
-        //public string ProxyPort { get; set; }
-        public string PageSize { get; set; }
-        public string IgnoreSslErrors { get; set; }
+      this.Add("SparqlPath",              @".\SPARQL\");
+      this.Add("PageSize",                "100");
+      this.Add("ClassRegistryBase",       @"http://rdl.rdlfacade.org/data#");
+      this.Add("TemplateRegistryBase",    @"http://tpl.rdlfacade.org/data#");
+      this.Add("ExampleRegistryBase",     @"http://example.org/data#");
+      this.Add("UseExampleRegistryBase",  "False");
+      this.Add("RegistryCredentialToken", String.Empty);
     }
+  }
 }
