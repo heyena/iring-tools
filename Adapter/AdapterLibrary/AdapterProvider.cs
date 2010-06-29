@@ -503,6 +503,8 @@ namespace org.iringtools.adapter
           _projectionEngine = _kernel.Get<IProjectionLayer>(_settings["DefaultProjectionFormat"]);
         }
 
+        _graphMap = _mapping.FindGraphMap(graphName);
+
         LoadDataObjectSet(identifiers);
 
         return _projectionEngine.GetXml(graphName, ref _dataObjects);
