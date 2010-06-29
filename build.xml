@@ -126,11 +126,11 @@
                $(dotNetRdfInterfaceServiceDir)\*.vspscc;
                $(dotNetRdfInterfaceServiceDir)\Web.config;
                $(dotNetRdfInterfaceServiceDir)\Web_Development.config;
-               $(dotNetRdfInterfaceServiceRoot)\.svn\**;
-               $(dotNetRdfInterfaceServiceRoot)\*\.svn\**;
-               $(dotNetRdfInterfaceServiceRoot)\*\*\.svn\**;
-               $(dotNetRdfInterfaceServiceRoot)\*\*\*\.svn\**;
-               $(dotNetRdfInterfaceServiceRoot)\*.log;">
+               $(dotNetRdfInterfaceServiceDir)\.svn\**;
+               $(dotNetRdfInterfaceServiceDir)\*\.svn\**;
+               $(dotNetRdfInterfaceServiceDir)\*\*\.svn\**;
+               $(dotNetRdfInterfaceServiceDir)\*\*\*\.svn\**;
+               $(dotNetRdfInterfaceServiceDir)\*.log;">
     </dotNetRdfInterfaceServiceDeployment>
 
     <SemWebInterfaceServiceDeployment
