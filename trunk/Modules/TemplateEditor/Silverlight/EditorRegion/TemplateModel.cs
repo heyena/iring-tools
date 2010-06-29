@@ -23,6 +23,8 @@ namespace org.iringtools.modules.templateeditor.editorregion
         internal string _heading = "";
         internal Boolean _readonly = false;
         internal QMXF _qmxf;
+        internal Boolean _isBaseTemplate;
+        internal Boolean _isEditMode;
         
         internal object _selectedRole = null;
         
@@ -37,6 +39,8 @@ namespace org.iringtools.modules.templateeditor.editorregion
         public abstract QMXF QMXF { get; }
                 
         public abstract string Name { get; set; }
+
+        public abstract string Qualifies { get; set; }
 
         public abstract string Description { get; set; }
 
@@ -72,6 +76,44 @@ namespace org.iringtools.modules.templateeditor.editorregion
             }
         }
 
+        public virtual Boolean IsBaseTemplate
+        {
+            get
+            {
+                return _isBaseTemplate;
+            }
+        }
+
+        public virtual Boolean IsSpecializedTemplate
+        {
+            get
+            {
+                return !_isBaseTemplate;
+            }
+        }
+
+        public virtual Boolean IsBaseTemplateEnabled
+        {
+            get
+            {
+                if (_isEditMode)
+                    return _isBaseTemplate;
+                else
+                    return true;
+            }
+        }
+
+        public virtual Boolean IsSpecializedTemplateEnabled
+        {
+            get
+            {
+                if (_isEditMode)
+                    return !_isBaseTemplate;
+                else
+                    return true;
+            }
+        }
+
         public virtual Boolean IsReadOnly
         {
             get
@@ -103,6 +145,7 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 RaisePropertyChanged(this, "SelectedRoleName");
                 RaisePropertyChanged(this, "SelectedRoleDescription");
                 RaisePropertyChanged(this, "SelectedRoleRange");
+                RaisePropertyChanged(this, "SelectedRoleValue");
                 RaisePropertyChanged(this, "SelectedRoleDesignation");
             }
         }
@@ -116,6 +159,8 @@ namespace org.iringtools.modules.templateeditor.editorregion
         public abstract string SelectedRoleDescription { get; set; }
 
         public abstract KeyValuePair<string, string> SelectedRoleRange { get; set; }
+
+        public abstract string SelectedRoleValue { get; set; }
 
         public abstract void AddRole(string name, string description, string range);
 

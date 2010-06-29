@@ -13,37 +13,70 @@
     Visibility="Collapsed">
     <Grid x:Name="LayoutRoot" Background="#FFF0F0F0"
 		Height="auto" Width="auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-
+        
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="40"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="148"/>
             <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
-
-
-        <dataInput:Label Grid.ColumnSpan="2" Grid.Row="0" Height="16" 
+        
+        <RadioButton
+            x:Name="radBaseTemplate"
+            Grid.ColumnSpan="2"
+            Grid.Row="0"
+            Height="22"
+            Margin="54,0,0,0" 
+            VerticalAlignment="Center"
+            GroupName="TemplateType"
+            Content="Base Template" 
+            IsChecked="{Binding IsBaseTemplate, Mode=TwoWay}"
+            IsEnabled="{Binding IsBaseTemplateEnabled}"/>
+        
+        <RadioButton
+            x:Name="radSpecializedTemplate"
+            Grid.ColumnSpan="2"
+            Grid.Row="0"
+            Height="22"
+            Margin="300,0,0,0"
+            VerticalAlignment="Center"
+            GroupName="TemplateType"
+            Content="Specialized Template" 
+            IsChecked="{Binding IsSpecializedTemplate, Mode=TwoWay}"
+            IsEnabled="{Binding IsSpecializedTemplateEnabled}"/>
+        
+        <dataInput:Label Grid.ColumnSpan="2" Grid.Row="1" Height="16" 
 			Margin="8,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center"
 			Content="Name:"/>
-        <TextBox x:Name="templateName" Grid.ColumnSpan="2" Grid.Row="0" Height="22" 
-			Margin="54,0,8,0" VerticalAlignment="Center" Text="{Binding Name, Mode=TwoWay}"/>
+        <TextBox x:Name="templateName" Grid.ColumnSpan="2" Grid.Row="1" Height="22" 
+			Margin="110,0,8,0" VerticalAlignment="Center" Text="{Binding Name, Mode=TwoWay}"/>
 
-        <Border Margin="8" Grid.Column="0" Grid.Row="1" BorderBrush="Black" BorderThickness="1" CornerRadius="4">
+        <dataInput:Label x:Name="lblParentTemplate" Grid.ColumnSpan="2" Grid.Row="2" Height="16" 
+			Margin="8,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center"
+            Content="Parent Template:" IsEnabled="{Binding IsSpecializedTemplate}"/>
+        <TextBox x:Name="parentTemplate" Grid.ColumnSpan="2" Grid.Row="2" Height="22" 
+			Margin="110,0,8,0" VerticalAlignment="Center" 
+            Text="{Binding Qualifies, Mode=TwoWay}"
+            IsReadOnly="{Binding IsSpecializedTemplate}" IsEnabled="{Binding IsSpecializedTemplate}"/>
+        
+        <Border Margin="8" Grid.Column="0" Grid.Row="3" BorderBrush="Black" BorderThickness="1" CornerRadius="4">
             <TextBox x:Name="description" Margin="8,8,8,8" 
 				TextWrapping="Wrap" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible"
 				AcceptsReturn="True" Text="{Binding Description, Mode=TwoWay}" 
 			/>
         </Border>
-        <dataInput:Label Grid.Column="0" Grid.Row="1" Background="#FFF0F0F0"
+        <dataInput:Label Grid.Column="0" Grid.Row="3" Background="#FFF0F0F0"
 				Margin="16,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"
 				Content=" Description "/>
 
-        <Border Margin="8" Grid.Column="0" Grid.Row="2" BorderBrush="Black" BorderThickness="1" CornerRadius="4">
+        <Border Margin="8" Grid.Column="0" Grid.Row="4" BorderBrush="Black" BorderThickness="1" CornerRadius="4">
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="8,4,8,4">
 
                 <Grid.ColumnDefinitions>
@@ -88,16 +121,16 @@
 
             </Grid>
         </Border>
-        <dataInput:Label Grid.Column="0" Grid.Row="2" Background="#FFF0F0F0"
+        <dataInput:Label Grid.Column="0" Grid.Row="4" Background="#FFF0F0F0"
 				Margin="16,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"
 				Content=" Status "/>
 
-        <Border Margin="8" Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" BorderBrush="Black" BorderThickness="1" CornerRadius="4">
+        <Border Margin="8" Grid.Column="1" Grid.Row="3" Grid.RowSpan="2" BorderBrush="Black" BorderThickness="1" CornerRadius="4">
             <Grid Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="200"/>
+                    <RowDefinition Height="190"/>
                 </Grid.RowDefinitions>
                 
                 <ListBox 
@@ -118,7 +151,8 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>                        
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
                         <RowDefinition Height="35"/>
                     </Grid.RowDefinitions>
                                         
@@ -167,27 +201,62 @@
                         IsReadOnly="{Binding IsReadOnly, Mode=OneWay}"
                         Text="{Binding SelectedRoleDescription, Mode=OneWay}"/>
 
-                    <dataInput:Label 
-                        Grid.Column="0" 
-                        Grid.Row="3" 
-                        VerticalAlignment="Center" 
+                    <RadioButton
+                        x:Name="radRoleRange"
+                        Grid.Column="0"
+                        Grid.Row="3"
+                        Height="22"
+                        HorizontalAlignment="Left" 
+                        VerticalAlignment="Bottom"
+                        GroupName="RoleRangeValue"
                         Content="Range:" />
 
+                    <!--<dataInput:Label 
+                        Grid.Column="0" 
+                        Grid.Row="1" 
+                        VerticalAlignment="Center" 
+                        Content="Range:" />-->
                     <ComboBox
                         x:Name="roleRange" 
                         Grid.Column="1"
                         Grid.Row="3" 
                         Height="22" 
-				        VerticalAlignment="Center"                        
+		                VerticalAlignment="Center"                        
                         IsEnabled="{Binding IsEnabled, Mode=OneWay}"
                         ItemsSource="{Binding Ranges, Mode=TwoWay}"
                         DisplayMemberPath="Value"
                         SelectedItem="{Binding SelectedRoleRange, Mode=TwoWay}"/>
                     
+                    <RadioButton
+                        x:Name="radRoleValue"
+                        Grid.Column="0"
+                        Grid.Row="4"
+                        Height="22"
+                        HorizontalAlignment="Left" 
+                        VerticalAlignment="Bottom"
+                        GroupName="RoleRangeValue"
+                        Content="Value:" 
+                        IsEnabled="{Binding IsSpecializedTemplate}"/>
+                    
+                    <!--<dataInput:Label 
+                        Grid.Column="0" 
+                        Grid.Row="5" 
+                        VerticalAlignment="Center" 
+                        Content="Value:" />-->
+
+                    <TextBox 
+                        x:Name="roleValue" 
+                        Grid.Column="1" 
+                        Grid.Row="4" 
+                        Height="22" 
+				        VerticalAlignment="Center"					    
+                        Text="{Binding SelectedRoleValue, Mode=OneWay}"
+                        IsEnabled="{Binding IsSpecializedTemplate}"/>
+
                     <Button 
                         x:Name="addRole1" 
 				        Grid.ColumnSpan="2"
-                        Grid.Row="4" 
+                        Grid.Row="6" 
                         Height="21" 
                         Width="60" 
 				        Margin="8,0,0,8" 
@@ -199,7 +268,7 @@
                     <Button 
                         x:Name="removeRole1" 
                         Grid.ColumnSpan="2"
-				        Grid.Row="4" 
+				        Grid.Row="6" 
                         Height="21" 
                         Width="60" 
 				        Margin="76,0,0,8" 
@@ -211,7 +280,7 @@
                     <Button 
                         x:Name="applyRole1" 
 				        Grid.ColumnSpan="2"
-                        Grid.Row="4" 
+                        Grid.Row="6" 
                         Height="21" 
                         Width="60" 
 				        Margin="144,0,0,8" 
@@ -225,22 +294,22 @@
         </Grid>
 
         </Border>
-
-        <dataInput:Label x:Name="heading" Grid.Column="1" Grid.Row="1" Background="#FFF0F0F0"
+        <dataInput:Label x:Name="heading" Grid.Column="1" Grid.Row="3" Background="#FFF0F0F0"
 				Margin="16,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"
 				Content="{Binding Heading, Mode=OneWay}"/>
-        <dataInput:Label Content="Target Repository : " Height="20" HorizontalAlignment="Left" Grid.Column="0" Grid.Row="3" />
-        <ComboBox x:Name="cmbRepositories" Grid.Row="3" Margin="0,0,250,0" Grid.Column="0" Grid.ColumnSpan="2" Height="21" FontSize="10" Width="255" HorizontalAlignment="Right"/>
+        
+        <dataInput:Label Content="Target Repository : " Height="20" HorizontalAlignment="Left" Grid.Column="0" Grid.Row="5" />
+        <ComboBox x:Name="cmbRepositories" Grid.Row="5" Margin="0,0,250,0" Grid.Column="0" Grid.ColumnSpan="2" Height="21" FontSize="10" Width="255" HorizontalAlignment="Right"/>
         <Button x:Name="btnApply1" 
-			Grid.Column="1" Grid.Row="3" Height="21" Width="73"
+			Grid.Column="1" Grid.Row="5" Height="21" Width="73"
 			Margin="0,0,8,0" VerticalAlignment="Center" HorizontalAlignment="Right"  
 			Content="Apply" Tag="Apply1"/>
         <Button x:Name="btnCancel1" 
-			Grid.Column="1" Grid.Row="3" Height="21" Width="73" 
+			Grid.Column="1" Grid.Row="5" Height="21" Width="73" 
 			Margin="0,0,89,0" VerticalAlignment="Center" HorizontalAlignment="Right" 
 			Content="Cancel" Tag="Cancel1"/>
         <Button x:Name="btnOK1"
-			Grid.Column="1" Grid.Row="3" Height="21" Width="73"
+			Grid.Column="1" Grid.Row="5" Height="21" Width="73"
 			Margin="0,0,170,0" VerticalAlignment="Center" HorizontalAlignment="Right" 
 			Content="OK" Tag="OK1"/>
 

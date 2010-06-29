@@ -110,6 +110,31 @@ namespace org.iringtools.modules.templateeditor.editorregion
         {
             get { return ComboBoxCtrl("cmbRepositories"); }
         }
+
+        private RadioButton radRoleRange
+        {
+            get { return RadioButtonCtrl("radRoleRange"); }
+        }
+
+        private RadioButton radRoleValue
+        {
+            get { return RadioButtonCtrl("radRoleValue"); }
+        }
+
+        private RadioButton radBaseTemplate
+        {
+            get { return RadioButtonCtrl("radBaseTemplate"); }
+        }
+
+        private RadioButton radSpecializedTemplate
+        {
+            get { return RadioButtonCtrl("radSpecializedTemplate"); }
+        }
+
+        private TextBlock lblParentTemplate
+        {
+            get { return TextBlockCtrl("lblParentTemplate"); } 
+        }
     
         /// <summary>
         /// Initializes a new instance of the <see cref="PopupPresenter"/> class.
@@ -173,6 +198,14 @@ namespace org.iringtools.modules.templateeditor.editorregion
                     buttonClickHandler(new ButtonEventArgs(this, btnApplyRole));
                 };
 
+                radRoleRange.Click += new RoutedEventHandler(radRoleRangeValueClickHandler);
+
+                radRoleValue.Click += new RoutedEventHandler(radRoleRangeValueClickHandler);
+
+                radBaseTemplate.Click += new RoutedEventHandler(radTemplateTypeClickHandler);
+
+                radSpecializedTemplate.Click += new RoutedEventHandler(radTemplateTypeClickHandler);
+
                 referenceDataService.OnDataArrived += OnDataArrivedHandler;
 
                 aggregator.GetEvent<ButtonEvent>().Subscribe(showEditorHandler);
@@ -182,6 +215,145 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 Error.SetError(ex);
             }
 
+        }
+
+        void radRoleRangeValueClickHandler(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (radRoleRange.IsChecked == true)
+                {
+                    TextCtrl("roleValue").IsEnabled = false;
+                    ComboBoxCtrl("roleRange").IsEnabled = true;
+                }
+                else if (radRoleValue.IsChecked == true)
+                {
+                    TextCtrl("roleValue").IsEnabled = true;
+                    ComboBoxCtrl("roleRange").IsEnabled = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Error.SetError(ex);
+            }
+        }
+
+        void radTemplateTypeClickHandler(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (radBaseTemplate.IsChecked == true)
+                {
+                    switch (_editorMode)
+                    { 
+                        case EditorMode.Add:
+                            InitializeEditorForAdd();
+                            break;
+
+                        case EditorMode.Edit:
+                            InitializeEditor(EditorMode.Edit, model.SelectedQMXF);
+                            break;
+                    }                    
+                }
+                else if (radSpecializedTemplate.IsChecked == true)
+                {
+                    if (model.SelectedIMLabel != null)
+                    {
+                        QMXF qmxf = new QMXF();
+                        if (model.SelectedNodeType == NodeType.TemplateQualification)
+                        {
+                            //_templateModel = new TemplateQualificationModel(model.SelectedQMXF, _editorMode);
+                            foreach (TemplateQualification templateQualification in model.SelectedQMXF.templateQualifications)
+                            {
+                                TemplateQualification template = new TemplateQualification();
+                                template.description = templateQualification.description;
+                                template.qualifies = model.SelectedIMUri;
+                                foreach (RoleQualification roleQualification in templateQualification.roleQualification)
+                                {
+                                    RoleQualification role = new RoleQualification();
+                                    role.name = roleQualification.name;
+                                    role.description = roleQualification.description;
+                                    role.qualifies = roleQualification.qualifies;
+                                    role.range = roleQualification.range;
+                                    role.value = roleQualification.value;
+                                    role.inverseMaximum = roleQualification.inverseMaximum;
+                                    role.inverseMinimum = roleQualification.inverseMinimum;
+                                    role.maximum = roleQualification.maximum;
+                                    role.minimum = roleQualification.minimum;
+
+                                    template.roleQualification.Add(role);
+                                }
+                                qmxf.templateQualifications.Add(template);
+                            }
+                        }
+                        else if (model.SelectedNodeType == NodeType.TemplateDefinition)
+                        {
+
+                            foreach (TemplateDefinition templateDefinition in model.SelectedQMXF.templateDefinitions)
+                            {
+                                TemplateQualification template = new TemplateQualification();
+                                template.description = templateDefinition.description;
+                                template.qualifies = model.SelectedIMUri;
+                                foreach (RoleDefinition roleDefinition in templateDefinition.roleDefinition)
+                                {
+                                    RoleQualification role = new RoleQualification();
+                                    role.name = roleDefinition.name;
+                                    role.description.Add(roleDefinition.description);
+                                    role.qualifies = roleDefinition.identifier;
+                                    role.range = roleDefinition.range;
+                                    role.inverseMaximum = roleDefinition.inverseMaximum;
+                                    role.inverseMinimum = roleDefinition.inverseMinimum;
+                                    role.maximum = roleDefinition.maximum;
+                                    role.minimum = roleDefinition.minimum;
+
+                                    template.roleQualification.Add(role);
+                                }
+                                qmxf.templateQualifications.Add(template);
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception("Error: Invalid item selected. Please select a template from the tree.");
+                        }
+
+                        _templateModel = new TemplateQualificationModel(qmxf, _editorMode);
+                    }
+                    else
+                    {
+                        throw new Exception("Error: No item selected. Please select a template from the tree.");
+                    }
+
+                    TextCtrl("templateName").DataContext = _templateModel;
+                    TextCtrl("description").DataContext = _templateModel;
+
+                    GetControl<Label>("lblParentTemplate").DataContext = _templateModel;
+                    TextCtrl("parentTemplate").DataContext = _templateModel;
+
+                    TextCtrl("roleId").DataContext = _templateModel;
+                    TextCtrl("roleName").DataContext = _templateModel;
+                    TextCtrl("roleDescription").DataContext = _templateModel;
+                    ComboBoxCtrl("roleRange").DataContext = _templateModel;
+                    TextCtrl("roleValue").DataContext = _templateModel;
+
+                    lstRoles.DataContext = _templateModel;
+
+                    GetControl<Label>("heading").DataContext = _templateModel;
+
+                    RadioButtonCtrl("radBaseTemplate").DataContext = _templateModel;
+                    RadioButtonCtrl("radSpecializedTemplate").DataContext = _templateModel;
+
+                    RadioButtonCtrl("radRoleValue").DataContext = _templateModel;
+
+                    ButtonCtrl("addRole1").DataContext = _templateModel;
+                    ButtonCtrl("removeRole1").DataContext = _templateModel;
+                    ButtonCtrl("applyRole1").DataContext = _templateModel;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Error.SetError(ex);
+            }
         }
 
         private void repositorySelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -274,24 +446,28 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 _editorMode = editorMode;
                 _templateModel = null;
 
-                if (qmxf != null)
+                if (qmxf != null) //edit mode, disable the other template type
                 {
                     if (qmxf.templateQualifications.Count > 0)
                     {
-                        _templateModel = new TemplateQualificationModel(qmxf);
+                        _templateModel = new TemplateQualificationModel(qmxf, _editorMode);
                     }
                     else
                     {
-                        _templateModel = new TemplateDefinitionModel(qmxf);
+                        _templateModel = new TemplateDefinitionModel(qmxf, _editorMode);
                     }
                 }
                 else
                 {
-                    _templateModel = new TemplateDefinitionModel(qmxf);
+                    //qmxf == null, so its in add mode, so default to base template.
+                    _templateModel = new TemplateDefinitionModel(qmxf, _editorMode);                                 
                 }
 
                 TextCtrl("templateName").DataContext = _templateModel;
                 TextCtrl("description").DataContext = _templateModel;
+
+                GetControl<Label>("lblParentTemplate").DataContext = _templateModel;
+                TextCtrl("parentTemplate").DataContext = _templateModel;
 
                 TextCtrl("authority").DataContext = _templateModel;
                 TextCtrl("recorded").DataContext = _templateModel;
@@ -302,11 +478,17 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 TextCtrl("roleName").DataContext = _templateModel;
                 TextCtrl("roleDescription").DataContext = _templateModel;
                 ComboBoxCtrl("roleRange").DataContext = _templateModel;
+                TextCtrl("roleValue").DataContext = _templateModel;
 
                 lstRoles.DataContext = _templateModel;
 
                 GetControl<Label>("heading").DataContext = _templateModel;
 
+                RadioButtonCtrl("radBaseTemplate").DataContext = _templateModel;
+                RadioButtonCtrl("radSpecializedTemplate").DataContext = _templateModel;
+
+                RadioButtonCtrl("radRoleValue").DataContext = _templateModel;
+                
                 ButtonCtrl("addRole1").DataContext = _templateModel;
                 ButtonCtrl("removeRole1").DataContext = _templateModel;
                 ButtonCtrl("applyRole1").DataContext = _templateModel;
@@ -454,8 +636,7 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 if (e.ButtonClicked.Tag.Equals("AddTemplate1"))
                 {
                     InitializeEditorForAdd();
-                    if (cmbRepositories.Items.Count > 1)
-                        cmbRepositories.SelectedIndex = 0;
+
                     IRegion region = regionManager.Regions["TemplateEditorRegion"];
 
                     foreach (UserControl userControl in region.Views)
@@ -475,6 +656,8 @@ namespace org.iringtools.modules.templateeditor.editorregion
                         userControl.Visibility = Visibility.Visible;
                     }
                 }
+                if (cmbRepositories.Items.Count > 1)
+                    cmbRepositories.SelectedIndex = 0;
             }
             catch (Exception ex)
             {
