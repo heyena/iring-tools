@@ -1103,7 +1103,17 @@ namespace org.ids_adi.iring.referenceData
                                 + "PREFIX tpl: <http://tpl.rdlfacade.org/data#> "
                                 + "PREFIX owl: <http://www.w3.org/2002/07/owl#> "
                                 + "INSERT DATA { ";
-                if (qmxf.templateDefinitions.Count > 0)
+
+                int repository = qmxf.targetRepository != null ? getIndexFromName(qmxf.targetRepository) : 0;
+                Repository source = _repositories[repository];
+
+                if (source.isReadOnly)
+                {
+                    response.Add("Repository is Read Only");
+                    return response;
+                }
+
+                if (qmxf.templateDefinitions.Count > 0) //Template Definitions
                 {
                     foreach (TemplateDefinition template in qmxf.templateDefinitions)
                     {
@@ -1118,11 +1128,7 @@ namespace org.ids_adi.iring.referenceData
                         string nameSparql = string.Empty;
                         string specSparql = string.Empty;
                         string classSparql = string.Empty;
-                        int repository = 0;
                         int templateIndex = -1;
-
-                        repository = getIndexFromName(qmxf.targetRepository);
-                        Repository source = _repositories[repository];
 
                         ID = template.identifier;
 
@@ -1340,7 +1346,7 @@ namespace org.ids_adi.iring.referenceData
                                 }
                                 nameSparql = nameSparql.Insert(nameSparql.LastIndexOf("."), "}").Remove(nameSparql.Length - 1);
                             }
-                            response = PostToRepository(_repositories[repository], nameSparql);
+                            response = PostToRepository(source, nameSparql);
                         }
                     }
                 }
@@ -1425,35 +1431,33 @@ namespace org.ids_adi.iring.referenceData
                                         }
                                         //append role to sparql query
                                         //value restriction
-                                        if (role.value.As != null)
+                                        if (role.value != null)
                                         {
-                                            sparql += role.qualifies + " rdf:type tpl:R67036823327 ; "
-                                                  + " tpl:R56456315674 " + ID + " ; "
-                                                  + " tpl:R89867215482 " + role.qualifies + " ; "
-                                                  + " R29577887690 " + role.value.As + "^^xsd:int . ";
-                                        }
-                                        else
-                                        {
-                                            //reference restriction
-                                            if (role.value.reference != null)
+                                            if (role.value.As != null)
                                             {
+                                                sparql += role.qualifies + " rdf:type tpl:R67036823327 ; "
+                                                      + " tpl:R56456315674 " + ID + " ; "
+                                                      + " tpl:R89867215482 " + role.qualifies + " ; "
+                                                      + " R29577887690 " + role.value.As + "^^xsd:int . ";
+                                            }
+                                            else if (role.value.reference != null) 
+                                            {
+                                                //reference restriction
                                                 sparql += role.qualifies + " rdf:type tpl:R40103148466 ; "
                                                       + " tpl:R49267603385 " + ID + " ; "
                                                       + " tpl:R30741601855 " + role.qualifies + " ; "
                                                       + " tpl:R21129944603 " + role.value.reference + " . ";
                                             }
-                                            else
-                                            {
-                                                if (role.range != null)
-                                                {
-                                                    //range restriction
-                                                    sparql += role.qualifies + " rdf:type tpl:R76288246068 ; "
-                                                            + " tpl:R99672026745 " + ID + " ; "
-                                                            + " tpl:R91125890543 " + role.qualifies + " ; "
-                                                            + " tpl:R98983340497 " + role.range + " . ";
-                                                }
-                                            }
                                         }
+                                        else if (role.range != null)
+                                        {
+                                            //range restriction
+                                            sparql += role.qualifies + " rdf:type tpl:R76288246068 ; "
+                                                    + " tpl:R99672026745 " + ID + " ; "
+                                                    + " tpl:R91125890543 " + role.qualifies + " ; "
+                                                    + " tpl:R98983340497 " + role.range + " . ";
+                                        }
+
                                     }
                                     //status
                                     sparql += "_:status rdf:type tpl:R20247551573 ; "
@@ -1462,7 +1466,7 @@ namespace org.ids_adi.iring.referenceData
                                               + "tpl:R61794465713 rdl:R3732211754 . ";
 
                                     sparql = sparql.Insert(sparql.LastIndexOf("."), "}").Remove(sparql.Length - 1);
-                                    response = PostToRepository(_repositories[0], sparql);
+                                    response = PostToRepository(source, sparql);
                                 }
                             }
                             else
@@ -1588,7 +1592,7 @@ namespace org.ids_adi.iring.referenceData
                                     nameSparql = nameSparql.Insert(nameSparql.LastIndexOf("."), "}").Remove(nameSparql.Length - 1);
                                 }
 
-                                response = PostToRepository(_repositories[0], nameSparql);
+                                response = PostToRepository(source, nameSparql);
                             }
                         }
                     }
@@ -1657,6 +1661,9 @@ namespace org.ids_adi.iring.referenceData
                 string specSparql = string.Empty;
                 string classSparql = string.Empty;
 
+                int repository = qmxf.targetRepository != null ? getIndexFromName(qmxf.targetRepository) : 0;
+                Repository source = _repositories[repository];
+
                 Utility.WriteString("Number of classes to insert: " + qmxf.classDefinitions.Count.ToString(), "stats.log", true);
                 foreach (ClassDefinition Class in qmxf.classDefinitions)
                 {
@@ -1670,14 +1677,8 @@ namespace org.ids_adi.iring.referenceData
                     string generatedId = string.Empty;
                     string serviceUrl = string.Empty;
                     string className = string.Empty;
-                    int repository = 0;
                     int classIndex = -1;
-                    Repository source = new Repository();
-
-
-                    repository = getIndexFromName(qmxf.targetRepository);
-                    source = _repositories[repository];
-
+                    
                     if (source.isReadOnly)
                     {
                         response.Add("Repository is Read Only");
