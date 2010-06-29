@@ -387,7 +387,7 @@
   <Target Name="PrepareBuild">
     <Message Text="Preparing build ..." />
     <Exec Condition="!Exists('$(AdapterServiceDir)\Web.config')" 
-          Command="Copy $(AdapterServiceDir)\Web_Development.config $(AdapterServiceDir)\Web.config" />
+          Command="Copy $(AdapterServiceDir)\Web_Default.config $(AdapterServiceDir)\Web.config" />
     
     <Exec Condition="!Exists('$(dotNetRdfInterfaceServiceDir)\Web.config')"
           Command="Copy $(dotNetRdfInterfaceServiceDir)\Developer_Web.config $(dotNetRdfInterfaceServiceDir)\Web.config" />
