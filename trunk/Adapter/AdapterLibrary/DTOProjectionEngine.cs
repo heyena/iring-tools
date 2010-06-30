@@ -18,7 +18,7 @@ namespace org.iringtools.adapter.projection
   public class DtoProjectionEngine : IProjectionLayer
   {
     private static readonly string DATALAYER_NS = "org.iringtools.adapter.datalayer";
-    
+
     private static readonly XNamespace RDF_NS = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
     private static readonly XNamespace OWL_NS = "http://www.w3.org/2002/07/owl#";
     private static readonly XNamespace XSD_NS = "http://www.w3.org/2001/XMLSchema#";
@@ -90,15 +90,15 @@ namespace org.iringtools.adapter.projection
         ClassMap classMap = _graphMap.classTemplateListMaps.First().Key;
 
         _dataTransferObjects = new List<DataTransferObject>();
-        for (int dataObjectIndex = 0; dataObjectIndex < _dataObjects.Count; dataObjectIndex++ )
+        for (int dataObjectIndex = 0; dataObjectIndex < _dataObjects.Count; dataObjectIndex++)
         {
-            DataTransferObject dataTransferObject = new DataTransferObject();
-            _dataTransferObjects.Add(dataTransferObject);
-            dataTransferObject.classObjects = new List<ClassObject>();
-            FillDataTransferObjectList(dataTransferObject, classMap.classId, dataObjectIndex);            
+          DataTransferObject dataTransferObject = new DataTransferObject();
+          _dataTransferObjects.Add(dataTransferObject);
+          dataTransferObject.classObjects = new List<ClassObject>();
+          FillDataTransferObjectList(dataTransferObject, classMap.classId, dataObjectIndex);
         }
-          XElement xElement = SerializationExtensions.ToXml<List<DataTransferObject>>(_dataTransferObjects);
-          return xElement;       
+        XElement xElement = SerializationExtensions.ToXml<List<DataTransferObject>>(_dataTransferObjects);
+        return xElement;
       }
       catch (Exception ex)
       {
@@ -106,159 +106,160 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-   
+
     public IList<IDataObject> GetDataObjects(string graphName, ref XElement xml)
     {
-        _graphMap = _mapping.FindGraphMap(graphName);
+      _graphMap = _mapping.FindGraphMap(graphName);
 
-        _dataTransferObjects = SerializationExtensions.ToObject<List<DataTransferObject>>(xml);
-        ClassMap classMap = _graphMap.classTemplateListMaps.First().Key;
-        List<string> identifiers = new List<string>();
-        foreach (DataTransferObject dataTransferObject in _dataTransferObjects)
-        {
-            List<ClassObject> classObjects = dataTransferObject.GetClassObjects(classMap.classId);
-            identifiers.Add(classObjects[0].identifier);                        
-        }
-        string objectType = _dataObjectNs + "." + _graphMap.dataObjectMap + ", " + _dataObjectsAssemblyName;
-        IList<IDataObject> dataObjectList = _dataLayer.Create(objectType, identifiers);
+      _dataTransferObjects = SerializationExtensions.ToObject<List<DataTransferObject>>(xml);
+      ClassMap classMap = _graphMap.classTemplateListMaps.First().Key;
+      List<string> identifiers = new List<string>();
+      foreach (DataTransferObject dataTransferObject in _dataTransferObjects)
+      {
+        List<ClassObject> classObjects = dataTransferObject.GetClassObjects(classMap.classId);
+        identifiers.Add(classObjects[0].identifier);
+      }
+      string objectType = _dataObjectNs + "." + _graphMap.dataObjectMap + ", " + _dataObjectsAssemblyName;
+      IList<IDataObject> dataObjectList = _dataLayer.Create(objectType, identifiers);
 
-        for (int dataTransferObjectIndex = 0; dataTransferObjectIndex < _dataTransferObjects.Count; dataTransferObjectIndex++)
-        {
-            IDataObject dataObject = dataObjectList[dataTransferObjectIndex];
-            FillDataObjectList(dataObject, classMap.classId, dataTransferObjectIndex);
-        }
-        return dataObjectList;
+      for (int dataTransferObjectIndex = 0; dataTransferObjectIndex < _dataTransferObjects.Count; dataTransferObjectIndex++)
+      {
+        IDataObject dataObject = dataObjectList[dataTransferObjectIndex];
+        FillDataObjectList(dataObject, classMap.classId, dataTransferObjectIndex);
+      }
+      return dataObjectList;
     }
 
     #region helper methods
 
     private void FillDataTransferObjectList(DataTransferObject dataTransferObject, string classId, int dataObjectIndex)
     {
-        KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = _graphMap.GetClassTemplateListMap(classId);
-        List<TemplateMap> templateMaps = classTemplateListMap.Value;
+      KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = _graphMap.GetClassTemplateListMap(classId);
+      List<TemplateMap> templateMaps = classTemplateListMap.Value;
 
-        string classIdentifier = _classIdentifiers[classId][dataObjectIndex];
+      string classIdentifier = _classIdentifiers[classId][dataObjectIndex];
 
-        ClassObject classObject = new ClassObject();
-        classObject.classId = classId;
-        classObject.templateObjects = new List<TemplateObject>();
-        classObject.identifier = classIdentifier;
-        
-        foreach (TemplateMap templateMap in templateMaps)
+      ClassObject classObject = new ClassObject();
+      classObject.classId = classId;
+      classObject.templateObjects = new List<TemplateObject>();
+      classObject.identifier = classIdentifier;
+      dataTransferObject.classObjects.Add(classObject);
+
+      foreach (TemplateMap templateMap in templateMaps)
+      {
+        TemplateObject templateObject = new TemplateObject();
+        templateObject.templateId = templateMap.templateId;
+        templateObject.name = templateMap.name;
+        templateObject.roleObjects = new List<RoleObject>();
+        classObject.templateObjects.Add(templateObject);
+
+        foreach (RoleMap roleMap in templateMap.roleMaps)
         {
-            TemplateObject templateObject = new TemplateObject();
-            templateObject.templateId = templateMap.templateId;
-            templateObject.name = templateMap.name;
-            templateObject.roleObjects = new List<RoleObject>();
-            foreach (RoleMap roleMap in templateMap.roleMaps)
-            {
-                RoleObject roleObject = new RoleObject();
-                roleObject.roleId = roleMap.roleId;
-                roleObject.name = roleMap.name;
-                if (roleMap.type == RoleType.Property)
-                {
-                    roleObject.value = _dataObjects[dataObjectIndex].GetPropertyValue(roleMap.propertyName.Substring(_graphMap.dataObjectMap.Length + 1)).ToString();
-                }
-                else if (roleMap.type == RoleType.Reference)
-                {
+          RoleObject roleObject = new RoleObject();
+          roleObject.roleId = roleMap.roleId;
+          roleObject.name = roleMap.name;
+          templateObject.roleObjects.Add(roleObject);
 
-                    if (roleMap.classMap != null)
-                    {
-                        bool classExists = false;
-                        if (dataTransferObject.GetClassObjects(roleMap.classMap.classId).Count > 0)
-                        {
-                            roleObject.reference = roleMap.value;
-                            classExists = true;
-                        }
-                        if (!classExists)
-                        {
-                            roleObject.reference = roleMap.value;
-                            FillDataTransferObjectList(dataTransferObject, roleMap.classMap.classId, dataObjectIndex);
-                        }
-                    }
-                    else
-                    {
-                        roleObject.reference = roleMap.value;
-                    }
-                }
-                else
-                {
-                    roleObject.value = roleMap.value;
-                }
-                templateObject.roleObjects.Add(roleObject);
+          if (roleMap.type == RoleType.Property)
+          {
+            roleObject.value = _dataObjects[dataObjectIndex].GetPropertyValue(roleMap.propertyName.Substring(_graphMap.dataObjectMap.Length + 1)).ToString();
+          }
+          else if (roleMap.type == RoleType.Reference)
+          {
+
+            if (roleMap.classMap != null)
+            {
+              bool classExists = false;
+              if (dataTransferObject.GetClassObjects(roleMap.classMap.classId).Count > 0)
+              {
+                roleObject.reference = roleMap.value;
+                classExists = true;
+              }
+              if (!classExists)
+              {
+                roleObject.reference = roleMap.value;
+                FillDataTransferObjectList(dataTransferObject, roleMap.classMap.classId, dataObjectIndex);
+              }
             }
-            classObject.templateObjects.Add(templateObject);
-            
+            else
+            {
+              roleObject.reference = roleMap.value;
+            }
+          }
+          else
+          {
+            roleObject.value = roleMap.value;
+          }
         }
-        dataTransferObject.classObjects.Add(classObject);
+      }
     }
 
     private void FillDataObjectList(IDataObject dataObject, string classId, int dataTransferObjectIndex)
     {
-        KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = _graphMap.GetClassTemplateListMap(classId);
-        List<TemplateMap> templateMaps = classTemplateListMap.Value;
-        List<ClassObject> classObjects = _dataTransferObjects[dataTransferObjectIndex].GetClassObjects(classId);
-      
-        foreach (TemplateMap templateMap in templateMaps)
-        {            
-            List<TemplateObject> templateObjects = classObjects[0].GetTemplateObjects(templateMap.templateId);
-           
-            int roleObjectIndex = 0;
-            foreach (RoleMap roleMap in templateMap.roleMaps)
-            {                
-                List<RoleObject> roleObjects = templateObjects[0].roleObjects;
-               
-                if (roleMap.type == RoleType.Property)
-                {
-                    string propertyName = roleMap.propertyName.Substring(_graphMap.dataObjectMap.Length + 1);
-                    dataObject.SetPropertyValue(propertyName, roleObjects[roleObjectIndex].value);                    
-                }
-                else if (roleMap.type == RoleType.Reference)
-                {
-                    if (roleMap.classMap != null)
-                    {
-                       FillDataObjectList(dataObject, roleMap.classMap.classId, dataTransferObjectIndex);                       
-                    }                    
-                }
-                roleObjectIndex++;               
+      KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = _graphMap.GetClassTemplateListMap(classId);
+      List<TemplateMap> templateMaps = classTemplateListMap.Value;
+      List<ClassObject> classObjects = _dataTransferObjects[dataTransferObjectIndex].GetClassObjects(classId);
+
+      foreach (TemplateMap templateMap in templateMaps)
+      {
+        List<TemplateObject> templateObjects = classObjects[0].GetTemplateObjects(templateMap.templateId);
+
+        int roleObjectIndex = 0;
+        foreach (RoleMap roleMap in templateMap.roleMaps)
+        {
+          List<RoleObject> roleObjects = templateObjects[0].roleObjects;
+
+          if (roleMap.type == RoleType.Property)
+          {
+            string propertyName = roleMap.propertyName.Substring(_graphMap.dataObjectMap.Length + 1);
+            dataObject.SetPropertyValue(propertyName, roleObjects[roleObjectIndex].value);
+          }
+          else if (roleMap.type == RoleType.Reference)
+          {
+            if (roleMap.classMap != null)
+            {
+              FillDataObjectList(dataObject, roleMap.classMap.classId, dataTransferObjectIndex);
             }
-        }       
+          }
+          roleObjectIndex++;
+        }
+      }
     }
 
     private void PopulateClassIdentifiers()
     {
-        _classIdentifiers.Clear();
+      _classIdentifiers.Clear();
 
-        foreach (ClassMap classMap in _graphMap.classTemplateListMaps.Keys)
+      foreach (ClassMap classMap in _graphMap.classTemplateListMaps.Keys)
+      {
+        List<string> classIdentifiers = new List<string>();
+
+        foreach (string identifier in classMap.identifiers)
         {
-            List<string> classIdentifiers = new List<string>();
+          string[] property = identifier.Split('.');
+          string objectName = property[0].Trim();
+          string propertyName = property[1].Trim();
 
-            foreach (string identifier in classMap.identifiers)
+          if (_dataObjects != null)
+          {
+            for (int i = 0; i < _dataObjects.Count; i++)
             {
-                string[] property = identifier.Split('.');
-                string objectName = property[0].Trim();
-                string propertyName = property[1].Trim();
+              string value = Convert.ToString(_dataObjects[i].GetPropertyValue(propertyName));
 
-                if (_dataObjects != null)
-                {
-                    for (int i = 0; i < _dataObjects.Count; i++)
-                    {
-                        string value = Convert.ToString(_dataObjects[i].GetPropertyValue(propertyName));
-
-                        if (classIdentifiers.Count == i)
-                        {
-                            classIdentifiers.Add(value);
-                        }
-                        else
-                        {
-                            classIdentifiers[i] += classMap.identifierDelimeter + value;
-                        }
-                    }
-                }
+              if (classIdentifiers.Count == i)
+              {
+                classIdentifiers.Add(value);
+              }
+              else
+              {
+                classIdentifiers[i] += classMap.identifierDelimeter + value;
+              }
             }
-
-            _classIdentifiers[classMap.classId] = classIdentifiers;
+          }
         }
+
+        _classIdentifiers[classMap.classId] = classIdentifiers;
+      }
     }
 
     private string ExtractId(string qualifiedId)
