@@ -124,6 +124,7 @@ namespace org.iringtools.adapter.datalayer
     {
       try
       {
+
         StringBuilder queryString = new StringBuilder();
         queryString.Append("from " + objectType);
 

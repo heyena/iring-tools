@@ -591,8 +591,10 @@ namespace DbDictionaryEditor
                     tableTreeViewItem.Tag = table;
                     root.IsExpanded = true;
 
-                    foreach (org.iringtools.library.KeyProperty key in table.keyProperties)
+                    foreach (org.iringtools.library.KeyProperty keyName in table.keyProperties)
                     {
+                        DataProperty key = table.getKeyProperty(keyName.keyPropertyName);
+
                         columnTreeViewItem = new TreeViewItem();
                         columnTreeViewItem.Tag = key;
                         AddTreeItem(tableTreeViewItem, columnTreeViewItem, key.columnName, "Magenta", false);
@@ -756,13 +758,9 @@ namespace DbDictionaryEditor
                         currentObject = columnTreeViewItem.Tag;
                         if (currentObject is org.iringtools.library.KeyProperty)
                         {
-                            org.iringtools.library.KeyProperty key = new org.iringtools.library.KeyProperty();
-                            key.columnName = ((org.iringtools.library.KeyProperty)currentObject).columnName;
-                            key.dataLength = ((org.iringtools.library.KeyProperty)currentObject).dataLength;
-                            key.dataType = ((org.iringtools.library.KeyProperty)currentObject).dataType;
-                            key.isNullable = ((org.iringtools.library.KeyProperty)currentObject).isNullable;
-                            key.propertyName = ((org.iringtools.library.KeyProperty)currentObject).propertyName;
-                            table.keyProperties.Add(key);
+                          org.iringtools.library.KeyProperty key = new org.iringtools.library.KeyProperty();
+                          key.keyPropertyName = ((org.iringtools.library.KeyProperty)currentObject).keyPropertyName;
+                          table.keyProperties.Add(key);
                         }
                         else
                         {

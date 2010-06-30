@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbDictionaryEditor", "DbDictionaryEditor\DbDictionaryEditor.csproj", "{0E89BCC7-792C-4317-9951-3A3892718BA8}"
 	ProjectSection(ProjectDependencies) = postProject
 		{88377877-6FA3-4570-B4AC-14F9D0A7BBEC} = {88377877-6FA3-4570-B4AC-14F9D0A7BBEC}
@@ -12,7 +12,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Behaviors", "Behaviors\Beha
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbDictionaryService", "DbDictionaryService\DbDictionaryService.csproj", "{1D82BC46-91F5-441F-A664-0EF9226B1892}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdapterService", "..\..\Adapter\AdapterService\AdapterService.csproj", "{6865624F-EEC7-4F4F-B7FF-4483F8D0B22D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdapterService", "..\..\Adapter\AdapterService\AdapterService.csproj", "{4C5B3DE0-EFCF-497B-BF62-8DB71436361D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,10 +36,10 @@ Global
 		{1D82BC46-91F5-441F-A664-0EF9226B1892}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D82BC46-91F5-441F-A664-0EF9226B1892}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D82BC46-91F5-441F-A664-0EF9226B1892}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6865624F-EEC7-4F4F-B7FF-4483F8D0B22D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6865624F-EEC7-4F4F-B7FF-4483F8D0B22D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6865624F-EEC7-4F4F-B7FF-4483F8D0B22D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6865624F-EEC7-4F4F-B7FF-4483F8D0B22D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C5B3DE0-EFCF-497B-BF62-8DB71436361D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C5B3DE0-EFCF-497B-BF62-8DB71436361D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C5B3DE0-EFCF-497B-BF62-8DB71436361D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C5B3DE0-EFCF-497B-BF62-8DB71436361D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

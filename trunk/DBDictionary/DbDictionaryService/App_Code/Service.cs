@@ -262,18 +262,17 @@ namespace DbDictionaryService
                             keyType = KeyType.foreign;
                         }
 
-                        KeyProperty key = new KeyProperty()
+                        DataProperty key = new DataProperty()
                         {
                             columnName = columnName,
                             dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
-                            //   dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
                             dataLength = dataLength,
                             isNullable = isNullable,
                             keyType = keyType,
                             propertyName = Utility.NameSafe(columnName),
                         };
 
-                        table.keyProperties.Add(key);
+                        table.addKeyProperty(key);
                     }
                 }
                 return dbDictionary;
