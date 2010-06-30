@@ -138,7 +138,7 @@
       <Name>UtilityLibrary.Desktop</Name>
     </ProjectReference>
     <ProjectReference Include="..\ReferenceDataService\ReferenceDataService.csproj">
-      <Project>{9C43C2EB-DB4A-4BA0-B14F-24D0EA60D954}</Project>
+      <Project>{80F46AE8-078E-4149-9D02-6241020B114F}</Project>
       <Name>ReferenceDataService</Name>
     </ProjectReference>
   </ItemGroup>
