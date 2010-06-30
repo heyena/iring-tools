@@ -60,7 +60,7 @@ namespace org.iringtools.adapter.projection
       _dataDictionary = dataDictionry;
       _mapping = mapping;
 
-      _graphNs = String.Format("{0}/{1}/{2}",
+      _graphNs = String.Format("{0}{1}/{2}",
         settings["GraphBaseUri"],
         settings["ProjectName"],
         settings["ApplicationName"]
