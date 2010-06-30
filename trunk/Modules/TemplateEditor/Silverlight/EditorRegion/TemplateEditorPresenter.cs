@@ -313,6 +313,7 @@ namespace org.iringtools.modules.templateeditor.editorregion
                         }
                         else
                         {
+                            radBaseTemplate.IsChecked = true;
                             throw new Exception("Error: Invalid item selected. Please select a template from the tree.");
                         }
 
@@ -320,6 +321,7 @@ namespace org.iringtools.modules.templateeditor.editorregion
                     }
                     else
                     {
+                        radBaseTemplate.IsChecked = true;
                         throw new Exception("Error: No item selected. Please select a template from the tree.");
                     }
 
