@@ -70,6 +70,7 @@ namespace org.iringtools.adapter.projection
     private Dictionary<string, List<string>> _classIdentifiers = null; // dictionary of class ids and list of identifiers
     private List<Dictionary<string, string>> _xPathValuePairs = null;  // dictionary of property xpath and value pairs
     private Dictionary<string, List<string>> _hierachicalDTOClasses = null;  // dictionary of class rdlUri and identifiers
+    private Dictionary<string, List<string>> _classInstances = null;  // dictionary of class ids and list instances/individuals
     private TripleStore _memoryStore = null;
     private XNamespace _graphNs = String.Empty;
     private string _dataObjectsAssemblyName = String.Empty;
@@ -84,6 +85,7 @@ namespace org.iringtools.adapter.projection
       _classIdentifiers = new Dictionary<string, List<string>>();
       _xPathValuePairs = new List<Dictionary<string, string>>();
       _hierachicalDTOClasses = new Dictionary<string, List<string>>();
+      _classInstances = new Dictionary<string, List<string>>();
       _mapping = mapping;
       
       _graphNs = String.Format("{0}/{1}/{2}", 
@@ -204,7 +206,8 @@ namespace org.iringtools.adapter.projection
         new XAttribute(XNamespace.Xmlns + "tpl", TPL_NS));
 
       PopulateClassIdentifiers();
-
+      _classInstances.Clear();
+            
       foreach (var pair in _graphMap.classTemplateListMaps)
       {
         ClassMap classMap = pair.Key;
@@ -214,7 +217,16 @@ namespace org.iringtools.adapter.projection
           string classId = classMap.classId.Substring(classMap.classId.IndexOf(":") + 1);
           string classInstance = _graphNs.NamespaceName + "/" + _graphMap.name + "/" + _classIdentifiers[classMap.classId][i];
 
-          graphElement.Add(CreateRdfClassElement(classId, classInstance));
+          if (!_classInstances.ContainsKey(classId))
+          {
+            _classInstances[classId] = new List<string> { classInstance };
+            graphElement.Add(CreateRdfClassElement(classId, classInstance));
+          }
+          else if (!_classInstances[classId].Contains(classInstance))
+          {
+            _classInstances[classId].Add(classInstance);
+            graphElement.Add(CreateRdfClassElement(classId, classInstance));
+          }
 
           foreach (TemplateMap templateMap in pair.Value)
           {
