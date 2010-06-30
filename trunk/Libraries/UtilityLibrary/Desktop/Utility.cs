@@ -39,6 +39,7 @@ using Microsoft.CSharp;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Security.Cryptography;
 
 namespace org.iringtools.utility
 {
@@ -988,6 +989,27 @@ namespace org.iringtools.utility
         xmlDoc.Load(xmlReader);
         return xmlDoc;
       }
+    }
+
+    private static string ByteArrayToString(byte[] source)
+    {
+      StringBuilder result = new StringBuilder(source.Length);
+
+      for (int i = 0; i < source.Length - 1; i++)
+      {
+        result.Append(source[i].ToString("X2"));
+      }
+
+      return result.ToString();
+    }
+
+    public static string ComputeHash(string source)
+    {
+      MD5CryptoServiceProvider hashProvider = new MD5CryptoServiceProvider();       
+      byte[] tmpSource = ASCIIEncoding.ASCII.GetBytes(source);
+      byte[] tmpHash = hashProvider.ComputeHash(tmpSource);
+
+      return ByteArrayToString(tmpHash);
     }
   }
 }
