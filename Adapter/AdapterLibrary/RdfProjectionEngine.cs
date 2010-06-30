@@ -230,7 +230,7 @@ namespace org.iringtools.adapter.projection
 
           foreach (TemplateMap templateMap in pair.Value)
           {
-            graphElement.Add(CreateRdfTemplateElement(templateMap, classInstance, i));
+            graphElement.Add(CreateRdfTemplateElement(classInstance, templateMap, i));
           }
         }
       }
@@ -244,10 +244,11 @@ namespace org.iringtools.adapter.projection
         new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, RDL_NS.NamespaceName + classId)));
     }
 
-    private XElement CreateRdfTemplateElement(TemplateMap templateMap, string classInstance, int dataObjectIndex)
+    private XElement CreateRdfTemplateElement(string classInstance, TemplateMap templateMap, int dataObjectIndex)
     {
       string templateId = templateMap.templateId.Replace(TPL_PREFIX, TPL_NS.NamespaceName);
-
+      StringBuilder roleMapValues = new StringBuilder();
+      
       XElement templateElement = new XElement(OWL_THING);
       templateElement.Add(new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, templateId)));
 
@@ -266,6 +267,8 @@ namespace org.iringtools.adapter.projection
             }
           case RoleType.Reference:
             {
+              roleMapValues.Append(roleMap.value);
+
               if (roleMap.classMap != null)
               {
                 string identifierValue = String.Empty;
@@ -299,9 +302,12 @@ namespace org.iringtools.adapter.projection
             }
           case RoleType.FixedValue:
             {
+              roleMapValues.Append(roleMap.value);
+
               dataType = roleMap.dataType.Replace(XSD_PREFIX, XSD_NS.NamespaceName);
               roleElement.Add(new XAttribute(RDF_DATATYPE, dataType));
               roleElement.Add(new XText(roleMap.value));
+
               break;
             }
           case RoleType.Property:
@@ -321,6 +327,8 @@ namespace org.iringtools.adapter.projection
                 }
                 else
                 {
+                  roleMapValues.Append(value);
+
                   dataType = roleMap.dataType.Replace(XSD_PREFIX, XSD_NS.NamespaceName);
                   roleElement.Add(new XAttribute(RDF_DATATYPE, dataType));
                   roleElement.Add(new XText(value));
@@ -329,6 +337,8 @@ namespace org.iringtools.adapter.projection
               else // resolve value list to uri
               {
                 string valueListUri = _mapping.ResolveValueList(roleMap.valueList, value);
+
+                roleMapValues.Append(valueListUri);
                 roleElement.Add(new XAttribute(RDF_RESOURCE, valueListUri));
               }
 
@@ -338,6 +348,9 @@ namespace org.iringtools.adapter.projection
 
         templateElement.Add(roleElement);
       }
+
+      string hashCode = Utility.ComputeHash(templateId + roleMapValues.ToString());
+      templateElement.Add(new XAttribute(RDF_ABOUT, hashCode));
 
       return templateElement;
     }
