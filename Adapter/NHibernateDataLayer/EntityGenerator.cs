@@ -67,14 +67,14 @@ namespace org.iringtools.adapter.datalayer
       _executingAssemblyName = _settings["ExecutingAssemblyName"];
     }
 
-    public Response Generate(DatabaseDictionary dbDictionary, string projectName, string applicationName)
+    public Response Generate(DatabaseDictionary dbSchema, string projectName, string applicationName)
     {
       Response response = new Response();
 
-      if (dbDictionary.dataObjects != null)
+      if (dbSchema.dataObjects != null)
       {
         _namespace = NAMESPACE_PREFIX + projectName + "." + applicationName;
-        _dataObjects = dbDictionary.dataObjects;
+        _dataObjects = dbSchema.dataObjects;
 
         try
         {
@@ -100,7 +100,7 @@ namespace org.iringtools.adapter.datalayer
           _dataObjectWriter.Write("{"); // begin namespace block
           _dataObjectWriter.Indent++;
 
-          foreach (DataObject dataObject in dbDictionary.dataObjects)
+          foreach (DataObject dataObject in dbSchema.dataObjects)
           {
             // create namespace for dataObject
             dataObject.objectNamespace = _namespace;
@@ -132,11 +132,11 @@ namespace org.iringtools.adapter.datalayer
           #endregion Compile entities
 
           #region Writing memory data to disk
-          string hibernateConfig = CreateConfiguration(dbDictionary.provider, dbDictionary.connectionString);
+          string hibernateConfig = CreateConfiguration(dbSchema.provider, dbSchema.connectionString);
           Utility.WriteString(hibernateConfig, _settings["XmlPath"] + "nh-configuration." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
           Utility.WriteString(mappingXml, _settings["XmlPath"] + "nh-mapping." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
           Utility.WriteString(sourceCode, _settings["CodePath"] + "Model." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
-          DataDictionary dataDictionary = CreateDataDictionary(dbDictionary.dataObjects);
+          DataDictionary dataDictionary = CreateDataDictionary(dbSchema.dataObjects);
           Utility.Write<DataDictionary>(dataDictionary, _settings["XmlPath"] + "DataDictionary." + projectName + "." + applicationName + ".xml");
           #endregion
 
@@ -154,16 +154,15 @@ namespace org.iringtools.adapter.datalayer
     // Remove table names and column names from database dictionary
     private DataDictionary CreateDataDictionary(List<DataObject> dataObjects)
     {
+      /*
       foreach (DataObject dataObject in dataObjects)
       {        
         dataObject.tableName = null;
 
-        foreach (DataProperty dataProperty in dataObject.keyProperties)
-          dataProperty.columnName = null;
-
-        foreach (DataProperty dataProperty in dataObject.keyProperties)
+        foreach (DataProperty dataProperty in dataObject.dataProperties)
           dataProperty.columnName = null;
       }
+      */
 
       return new DataDictionary { dataObjects = dataObjects };
     }
@@ -189,14 +188,19 @@ namespace org.iringtools.adapter.datalayer
         _mappingWriter.WriteAttributeString("name", "Id");
         _mappingWriter.WriteAttributeString("class", _namespace + "." + keyClassName + ", " + _executingAssemblyName);
 
-        foreach (KeyProperty keyProperty in dataObject.keyProperties)
+        foreach (KeyProperty keyName in dataObject.keyProperties)
         {
-          _dataObjectWriter.WriteLine("public {0} {1} {{ get; set; }}", keyProperty.dataType, keyProperty.propertyName);
+          DataProperty keyProperty = dataObject.getKeyProperty(keyName.keyPropertyName);
 
-          _mappingWriter.WriteStartElement("key-property");
-          _mappingWriter.WriteAttributeString("name", keyProperty.propertyName);
-          _mappingWriter.WriteAttributeString("column", "\"" + keyProperty.columnName + "\"");
-          _mappingWriter.WriteEndElement(); // end key-property
+          if (keyProperty != null)
+          {
+            _dataObjectWriter.WriteLine("public {0} {1} {{ get; set; }}", keyProperty.dataType, keyProperty.propertyName);
+
+            _mappingWriter.WriteStartElement("key-property");
+            _mappingWriter.WriteAttributeString("name", keyProperty.propertyName);
+            _mappingWriter.WriteAttributeString("column", "\"" + keyProperty.columnName + "\"");
+            _mappingWriter.WriteEndElement(); // end key-property
+          }
         }
 
         _dataObjectWriter.WriteLine("public override bool Equals(object obj)"); // start Equals method
@@ -209,7 +213,9 @@ namespace org.iringtools.adapter.datalayer
 
         for (int i = 0; i < dataObject.keyProperties.Count; i++)
         {
-          string keyName = String.IsNullOrEmpty(dataObject.keyProperties[i].propertyName) ? dataObject.keyProperties[i].columnName : dataObject.keyProperties[i].propertyName;
+          DataProperty keyProperty = dataObject.getKeyProperty( dataObject.keyProperties[i].keyPropertyName );
+
+          string keyName = String.IsNullOrEmpty(keyProperty.propertyName) ? keyProperty.columnName : keyProperty.propertyName;
 
           if (i == 0)
           {
@@ -238,7 +244,9 @@ namespace org.iringtools.adapter.datalayer
 
         for (int i = 0; i < dataObject.keyProperties.Count; i++)
         {
-          string keyName = String.IsNullOrEmpty(dataObject.keyProperties[i].propertyName) ? dataObject.keyProperties[i].columnName : dataObject.keyProperties[i].propertyName;
+          DataProperty keyProperty = dataObject.getKeyProperty(dataObject.keyProperties[i].keyPropertyName);
+
+          string keyName = String.IsNullOrEmpty(keyProperty.propertyName) ? keyProperty.columnName : keyProperty.propertyName;
 
           _dataObjectWriter.WriteLine("_hashCode += {0}.GetHashCode();", keyName);
         }
@@ -254,7 +262,8 @@ namespace org.iringtools.adapter.datalayer
 
         for (int i = 0; i < dataObject.keyProperties.Count; i++)
         {
-          string keyName = String.IsNullOrEmpty(dataObject.keyProperties[i].propertyName) ? dataObject.keyProperties[i].columnName : dataObject.keyProperties[i].propertyName;
+          DataProperty keyProperty = dataObject.getKeyProperty(dataObject.keyProperties[i].keyPropertyName);
+          string keyName = String.IsNullOrEmpty(keyProperty.propertyName) ? keyProperty.columnName : keyProperty.propertyName;
 
           if (i == 0)
           {
@@ -292,8 +301,10 @@ namespace org.iringtools.adapter.datalayer
         _dataObjectWriter.WriteLine("}");
         _dataObjectWriter.WriteLine("public virtual {0} Id {{ get; set; }}", keyClassName);
 
-        foreach (KeyProperty keyProperty in dataObject.keyProperties)
+        foreach (KeyProperty keyName in dataObject.keyProperties)
         {
+          DataProperty keyProperty = dataObject.getKeyProperty(keyName.keyPropertyName);
+
           _dataObjectWriter.WriteLine("public virtual {0} {1}", keyProperty.dataType, keyProperty.propertyName);
           _dataObjectWriter.WriteLine("{");
           _dataObjectWriter.Indent++;
@@ -301,43 +312,45 @@ namespace org.iringtools.adapter.datalayer
           _dataObjectWriter.WriteLine("set {{ Id.{0} = value; }}", keyProperty.propertyName);
           _dataObjectWriter.Indent--;
           _dataObjectWriter.WriteLine("}");
-
+                    
           _mappingWriter.WriteStartElement("property");
           _mappingWriter.WriteAttributeString("name", keyProperty.propertyName);
           _mappingWriter.WriteAttributeString("column", "\"" + keyProperty.columnName + "\"");
           _mappingWriter.WriteAttributeString("update", "false");
           _mappingWriter.WriteAttributeString("insert", "false");
-          _mappingWriter.WriteEndElement();
+          _mappingWriter.WriteEndElement();          
         }
       }
-      else if (dataObject.keyProperties.Count == 1 && dataObject.keyProperties.First().keyType != KeyType.foreign)
+      else if (dataObject.keyProperties.Count == 1)
       {
-        _dataObjectWriter.WriteLine("public virtual {0} Id {{ get; set; }}", dataObject.keyProperties.First().dataType);
+        DataProperty keyProperty = dataObject.getKeyProperty(dataObject.keyProperties.First().keyPropertyName);
+        
+        _dataObjectWriter.WriteLine("public virtual {0} Id {{ get; set; }}", keyProperty.dataType);
 
         _mappingWriter.WriteStartElement("id");
         _mappingWriter.WriteAttributeString("name", "Id");
-        _mappingWriter.WriteAttributeString("column", "\"" + dataObject.keyProperties.First().columnName + "\"");
+        _mappingWriter.WriteAttributeString("column", "\"" + keyProperty.columnName + "\"");
         _mappingWriter.WriteStartElement("generator");
-        _mappingWriter.WriteAttributeString("class", dataObject.keyProperties.First().keyType.ToString());
+        _mappingWriter.WriteAttributeString("class", keyProperty.keyType.ToString());
         _mappingWriter.WriteEndElement(); // end generator element
         _mappingWriter.WriteEndElement(); // end id element
 
-        if (dataObject.keyProperties.First().keyType == KeyType.assigned)
+        if (keyProperty.keyType == KeyType.assigned)
         {
-          _dataObjectWriter.WriteLine("public virtual {0} {1}", dataObject.keyProperties.First().dataType, dataObject.keyProperties.First().propertyName);
+          _dataObjectWriter.WriteLine("public virtual {0} {1}", keyProperty.dataType, keyProperty.propertyName);
           _dataObjectWriter.WriteLine("{");
           _dataObjectWriter.Indent++;
           _dataObjectWriter.WriteLine("get { return Id; }");
           _dataObjectWriter.WriteLine("set { Id = value; }");
           _dataObjectWriter.Indent--;
           _dataObjectWriter.WriteLine("}");
-
+                    
           _mappingWriter.WriteStartElement("property");
-          _mappingWriter.WriteAttributeString("name", dataObject.keyProperties.First().propertyName);
-          _mappingWriter.WriteAttributeString("column", "\"" + dataObject.keyProperties.First().columnName + "\"");
+          _mappingWriter.WriteAttributeString("name", keyProperty.propertyName);
+          _mappingWriter.WriteAttributeString("column", "\"" + keyProperty.columnName + "\"");
           _mappingWriter.WriteAttributeString("update", "false");
           _mappingWriter.WriteAttributeString("insert", "false");
-          _mappingWriter.WriteEndElement(); // end property element
+          _mappingWriter.WriteEndElement(); // end property element          
         }
       }
 
@@ -348,11 +361,11 @@ namespace org.iringtools.adapter.datalayer
         {
           DataObject relatedDataObject = GetDataObject(dataRelationship.relatedObjectName);
 
-          switch (dataRelationship.GetType().Name)
+          switch (dataRelationship.relationshipType)
           {
-            case "OneToOneRelationship":
-              OneToOneRelationship oneToOneRelationship = (OneToOneRelationship)dataRelationship;
-
+            case RelationshipType.OneToOne:
+              
+              /*
               if (dataObject.keyProperties.First().keyType == KeyType.foreign)
               {
                 _dataObjectWriter.WriteLine("public virtual {0} Id {{ get; set; }}", dataObject.keyProperties.First().dataType);
@@ -385,9 +398,11 @@ namespace org.iringtools.adapter.datalayer
 
               _dataObjectWriter.WriteLine("public virtual {0} {0} {{ get; set; }}", dataRelationship.relatedObjectName);
               _mappingWriter.WriteEndElement(); // end one-to-one element
+              */
               break;
 
-            case "OneToManyRelationship":
+            case RelationshipType.OneToMany:
+              /*
               OneToManyRelationship oneToManyRelationship = (OneToManyRelationship)dataRelationship;
               _dataObjectWriter.WriteLine("public virtual ISet<{0}> {0} {{ get; set; }}", dataRelationship.relatedObjectName);
               _mappingWriter.WriteStartElement("set");
@@ -401,6 +416,7 @@ namespace org.iringtools.adapter.datalayer
               _mappingWriter.WriteAttributeString("class", _namespace + "." + dataRelationship.relatedObjectName + ", " + _executingAssemblyName);
               _mappingWriter.WriteEndElement(); // end key element
               _mappingWriter.WriteEndElement(); // end set element
+              */
               break;
           }
         }
@@ -412,11 +428,14 @@ namespace org.iringtools.adapter.datalayer
       {
         foreach (DataProperty dataProperty in dataObject.dataProperties)
         {
-          _dataObjectWriter.WriteLine("public virtual {0} {1} {{ get; set; }}", dataProperty.dataType, dataProperty.propertyName);
-          _mappingWriter.WriteStartElement("property");
-          _mappingWriter.WriteAttributeString("name", dataProperty.propertyName);
-          _mappingWriter.WriteAttributeString("column", "\"" + dataProperty.columnName + "\"");
-          _mappingWriter.WriteEndElement(); // end property element
+          if (!dataObject.isKeyProperty(dataProperty.propertyName))
+          {
+            _dataObjectWriter.WriteLine("public virtual {0} {1} {{ get; set; }}", dataProperty.dataType, dataProperty.propertyName);
+            _mappingWriter.WriteStartElement("property");
+            _mappingWriter.WriteAttributeString("name", dataProperty.propertyName);
+            _mappingWriter.WriteAttributeString("column", "\"" + dataProperty.columnName + "\"");
+            _mappingWriter.WriteEndElement(); // end property element
+          }
         }
 
         // Implements GetPropertyValue of IDataObject
@@ -427,12 +446,7 @@ namespace org.iringtools.adapter.datalayer
         _dataObjectWriter.WriteLine("{");
         _dataObjectWriter.Indent++;
         _dataObjectWriter.WriteLine("case \"Id\": return Id;");
-
-        foreach (KeyProperty keyProperty in dataObject.keyProperties)
-        {
-          _dataObjectWriter.WriteLine("case \"{0}\": return {0};", keyProperty.propertyName);
-        }
-
+        
         foreach (DataProperty dataProperty in dataObject.dataProperties)
         {
           _dataObjectWriter.WriteLine("case \"{0}\": return {0};", dataProperty.propertyName);
@@ -455,7 +469,9 @@ namespace org.iringtools.adapter.datalayer
 
         if (dataObject.keyProperties.Count == 1)
         {
-          DataType keyDataType = dataObject.keyProperties.First().dataType; 
+          DataProperty keyProperty = dataObject.getKeyProperty(dataObject.keyProperties.First().keyPropertyName);
+
+          DataType keyDataType = keyProperty.dataType; 
           _dataObjectWriter.WriteLine(@"
         case ""Id"":
           Id = Convert.To{0}(value);
@@ -469,8 +485,11 @@ namespace org.iringtools.adapter.datalayer
           break;", dataObject.objectName);
         }
 
-        foreach (KeyProperty keyProperty in dataObject.keyProperties)
+        /*
+        foreach (KeyProperty keyName in dataObject.keyProperties)
         {
+          DataProperty keyProperty = dataObject.getKeyProperty(keyName.keyPropertyName);
+
           _dataObjectWriter.WriteLine("case \"{0}\":", keyProperty.propertyName);
           _dataObjectWriter.Indent++;
 
@@ -486,7 +505,7 @@ namespace org.iringtools.adapter.datalayer
 
           _dataObjectWriter.WriteLine("break;");
           _dataObjectWriter.Indent--;
-        }
+        }*/
 
         foreach (DataProperty dataProperty in dataObject.dataProperties)
         {
@@ -531,11 +550,11 @@ namespace org.iringtools.adapter.datalayer
           _dataObjectWriter.WriteLine("case \"{0}\":", dataRelationship.relatedObjectName);
           _dataObjectWriter.Indent++;
 
-          if (dataRelationship is OneToOneRelationship)
+          if (dataRelationship.relationshipType == RelationshipType.OneToOne)
           {
             _dataObjectWriter.WriteLine(@"return new List<IDataObject>{{{0}}};", dataRelationship.relatedObjectName);
           }
-          else if (dataRelationship is OneToManyRelationship)
+          else if (dataRelationship.relationshipType == RelationshipType.OneToMany)
           {
             _dataObjectWriter.WriteLine(
         @"IList<IDataObject> __relatedObjects = new List<IDataObject>();
@@ -694,7 +713,7 @@ namespace org.iringtools.adapter.datalayer
 
     private string GetColumnName(DataObject dataObject, string propertyName)
     {
-      foreach (DataProperty property in dataObject.properties)
+      foreach (DataProperty property in dataObject.dataProperties)
       {
         if (property.propertyName.ToLower() == propertyName.ToLower())
           return property.columnName;

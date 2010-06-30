@@ -890,6 +890,7 @@ namespace org.iringtools.adapter
     {
       try
       {
+        /* GvR
         for (int i = 0; i < dataObject.keyProperties.Count; i++)
         {
           for (int j = 0; j < dataObject.dataProperties.Count; j++)
@@ -928,7 +929,7 @@ namespace org.iringtools.adapter
               dataObject.keyProperties.Remove(dataObject.keyProperties[ii--]);
             }
           }
-        }
+        } */
       }
       catch (Exception ex)
       {

@@ -289,7 +289,7 @@ namespace DBDictionaryUtil
             keyType = KeyType.foreign;
           }
 
-          KeyProperty keyProperty = new KeyProperty()
+          DataProperty keyProperty = new DataProperty()
           {            
             columnName = columnName,
             propertyName = Utility.NameSafe(columnName),
@@ -299,7 +299,7 @@ namespace DBDictionaryUtil
             keyType = keyType,
           };
 
-          dataObject.keyProperties.Add(keyProperty);
+          dataObject.addKeyProperty(keyProperty);
         }
       }
 

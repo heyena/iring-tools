@@ -298,7 +298,7 @@ namespace org.iringtools.modules.medatasourceregion
     /// <param name="node">The node.</param>
     /// <param name="keyProperty">Key property</param>
     /// <returns></returns>
-    private bool PopulateKeyProperty(DataObjectItem node, KeyProperty keyProperty)
+    private bool PopulateKeyProperty(DataObjectItem node, DataProperty keyProperty)
     {
         try
         {
@@ -436,11 +436,11 @@ namespace org.iringtools.modules.medatasourceregion
             bool isProcessed = false;
 
             // Add the key nodes
-
+            int a = 0;
             if (keyPropertyNode.Tag is List<KeyProperty>)
                 foreach (KeyProperty keyProperty in ((List<KeyProperty>)keyPropertyNode.Tag))
-                    isProcessed = PopulateKeyProperty(selectedNode, keyProperty);
-
+                    a++;
+                    //isProcessed = PopulateKeyProperty(selectedNode, keyProperty);
 
             if (dataPropertyNode.Tag is org.iringtools.library.DataObject)
                 isProcessed = PopulateDataObject(selectedNode, (org.iringtools.library.DataObject)dataPropertyNode.Tag);

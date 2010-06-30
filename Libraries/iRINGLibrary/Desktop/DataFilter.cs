@@ -245,7 +245,7 @@ namespace org.iringtools.library
       {
         if (dataObject.objectName == objectType)
         {
-          foreach (DataProperty dataProperty in dataObject.properties)
+          foreach (DataProperty dataProperty in dataObject.dataProperties)
           {
             if (dataProperty.propertyName == propertyName)
             {
