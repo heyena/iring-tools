@@ -503,9 +503,7 @@ namespace org.iringtools.adapter
           _projectionEngine = _kernel.Get<IProjectionLayer>(_settings["DefaultProjectionFormat"]);
         }
 
-        _graphMap = _mapping.FindGraphMap(graphName);
-
-        LoadDataObjectSet(identifiers);
+        LoadDataObjectSet(graphName, identifiers);
 
         return _projectionEngine.GetXml(graphName, ref _dataObjects);
       }
@@ -531,9 +529,7 @@ namespace org.iringtools.adapter
           _projectionEngine = _kernel.Get<IProjectionLayer>(_settings["DefaultProjectionFormat"]);
         }
 
-        _graphMap = _mapping.FindGraphMap(graphName);
-
-        LoadDataObjectSet(null);
+        LoadDataObjectSet(graphName, null);
 
         return _projectionEngine.GetXml(graphName, ref _dataObjects);
       }
@@ -713,6 +709,8 @@ namespace org.iringtools.adapter
       {
         Initialize(projectName, applicationName);
 
+        _semanticEngine = _kernel.Get<ISemanticLayer>("SemanticLayer");
+
         foreach (GraphMap graphMap in _mapping.graphMaps)
         {
           response.Append(_semanticEngine.Delete(graphMap.name));
@@ -732,6 +730,8 @@ namespace org.iringtools.adapter
     public Response Delete(string projectName, string applicationName, string graphName)
     {
       Initialize(projectName, applicationName);
+      
+      _semanticEngine = _kernel.Get<ISemanticLayer>("SemanticLayer");
 
       return _semanticEngine.Delete(graphName);
     }
@@ -840,44 +840,44 @@ namespace org.iringtools.adapter
             scope
           );
 
-          _mapping = Utility.Read<Mapping>(mappingPath);
+          if (File.Exists(mappingPath))
+          {
+            _mapping = Utility.Read<Mapping>(mappingPath);
+          }
+          else
+          {
+            _mapping = new Mapping();
+            Utility.Write<Mapping>(_mapping, mappingPath);
+          }
           _kernel.Bind<Mapping>().ToConstant(_mapping);
-
-          _semanticEngine = _kernel.Get<ISemanticLayer>("SemanticLayer");
 
           _isInitialized = true;
         }
       }
       catch (Exception ex)
       {
-        //if (ex.Message.Contains("Mapping"))
-        //{
-        //  _mapping = new Mapping();
-        //  Utility.Write<Mapping>(_mapping, string.Format("{0}Mapping.{1}.{2}.xml", _settings["XmlPath"], projectName, applicationName));
-        //}
-        //else
-        //{
-          _logger.Error(string.Format("Error initializing application: {0}", ex));
-          throw new Exception(string.Format("Error initializing application: {0})", ex));
-        //}
+        _logger.Error(string.Format("Error initializing application: {0}", ex));
+        throw new Exception(string.Format("Error initializing application: {0})", ex));
       }
     }
 
     private Response Refresh(string graphName)
     {
-      _graphMap = _mapping.FindGraphMap(graphName);
-
-      LoadDataObjectSet(null);
+      _semanticEngine = _kernel.Get<ISemanticLayer>("SemanticLayer");
 
       _projectionEngine = _kernel.Get<IProjectionLayer>("rdf");
+
+      LoadDataObjectSet(graphName, null);
 
       XElement rdf = _projectionEngine.GetXml(graphName, ref _dataObjects);
 
       return _semanticEngine.Refresh(graphName, rdf);
     }
 
-    private void LoadDataObjectSet(IList<string> identifiers)
+    private void LoadDataObjectSet(string graphName, IList<string> identifiers)
     {
+      _graphMap = _mapping.FindGraphMap(graphName);
+
       _dataObjects.Clear();
             
       if (identifiers != null)

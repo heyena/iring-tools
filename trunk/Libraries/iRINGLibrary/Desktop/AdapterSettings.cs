@@ -1,6 +1,8 @@
-﻿using System.ServiceModel;
+﻿using System;
+using System.Linq;
+using System.ServiceModel;
 using org.iringtools.library;
-using System.Collections.Specialized;
+using StaticDust.Configuration;
 
 namespace org.iringtools.adapter
 {
@@ -29,6 +31,19 @@ namespace org.iringtools.adapter
       {
         this.Add("GraphBaseUri", @"http://yourcompany.com");
       }
-    }    
+    }
+
+    //Append Scope specific {projectName}.{appName}.config settings.
+    public void AppendSettings(AppSettingsReader settings)
+    {
+      foreach (string s in settings.Keys)
+      {
+        //Protect existing settings, but add new ones.
+        if (!this.AllKeys.Contains(s, StringComparer.CurrentCultureIgnoreCase))
+        {
+          this.Add(s, settings[s].ToString());
+        }
+      }
+    }
   }  
 }

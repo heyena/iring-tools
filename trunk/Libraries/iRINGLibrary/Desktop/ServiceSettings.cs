@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Specialized;
-using System.Linq;
 using org.iringtools.utility;
-using StaticDust.Configuration;
 
 namespace org.iringtools.library
 {
@@ -19,33 +17,13 @@ namespace org.iringtools.library
       this.Add("IgnoreSslErrors",       "True");
     }
 
+    //Append Web.config settings
     public void AppendSettings(NameValueCollection settings)
     {
       foreach (string s in settings.AllKeys)
       {
-        if (this.AllKeys.Contains(s))
-        {
-          this[s] = settings[s];
-        }
-        else
-        {
-          this.Add(s, settings[s]);
-        }
-      }
-    }
-
-    public void AppendSettings(AppSettingsReader settings)
-    {
-      foreach (string s in settings.Keys)
-      {
-        if (this.AllKeys.Contains(s))
-        {
-          this[s] = settings[s].ToString();
-        }
-        else
-        {
-          this.Add(s, settings[s].ToString());
-        }
+        //Override existing settings, and create new ones
+        this.Set(s, settings[s]);
       }
     }
 

@@ -607,14 +607,17 @@ namespace DbDictionaryEditor
                     }
                     foreach (DataProperty column in table.dataProperties)
                     {
+                      if (column.keyType == KeyType.unassigned)
+                      {
                         columnTreeViewItem = new TreeViewItem();
                         columnTreeViewItem.Tag = column;
                         AddTreeItem(tableTreeViewItem, columnTreeViewItem, column.columnName, null, enableCheckBox);
                         AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Data Length = " + column.dataLength.ToString(), null, false);
                         AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Column Type = " + column.dataType.ToString(), null, false);
-                     //   AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Data Type = " + column.dataType.ToString(), null, false);
+                        //   AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Data Type = " + column.dataType.ToString(), null, false);
                         AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Is Nullable = " + column.isNullable, null, false);
                         AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Property Name = " + column.propertyName, null, false);
+                      }
                     }
                     AddTreeItem(root, tableTreeViewItem, table.tableName, null, enableCheckBox);
                 }
@@ -756,23 +759,21 @@ namespace DbDictionaryEditor
                     foreach (TreeViewItem columnTreeViewItem in tableTreeViewItem.Items)
                     {
                         currentObject = columnTreeViewItem.Tag;
-                        if (currentObject is org.iringtools.library.KeyProperty)
+                        if (((DataProperty)currentObject).keyType != KeyType.unassigned)
                         {
                           org.iringtools.library.KeyProperty key = new org.iringtools.library.KeyProperty();
-                          key.keyPropertyName = ((org.iringtools.library.KeyProperty)currentObject).keyPropertyName;
+                          key.keyPropertyName = ((DataProperty)currentObject).propertyName;
                           table.keyProperties.Add(key);
                         }
-                        else
-                        {
-                            DataProperty column = new DataProperty();
-                            column.columnName = ((DataProperty)currentObject).columnName;
-                            column.dataLength = ((DataProperty)currentObject).dataLength;
-                            column.dataType = ((DataProperty)currentObject).dataType;
-                            column.isNullable = ((DataProperty)currentObject).isNullable;
-                            column.propertyName = ((DataProperty)currentObject).propertyName;
-                            table.dataProperties.Add(column);
-                        }
 
+                        DataProperty column = new DataProperty();
+                        column.columnName = ((DataProperty)currentObject).columnName;
+                        column.dataLength = ((DataProperty)currentObject).dataLength;
+                        column.dataType = ((DataProperty)currentObject).dataType;
+                        column.isNullable = ((DataProperty)currentObject).isNullable;
+                        column.keyType = ((DataProperty)currentObject).keyType;
+                        column.propertyName = ((DataProperty)currentObject).propertyName;
+                        table.dataProperties.Add(column);
                     }
                     databaseDictionary.dataObjects.Add(table);
                 }
