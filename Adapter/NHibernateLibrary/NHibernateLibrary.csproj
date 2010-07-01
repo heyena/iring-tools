@@ -58,10 +58,6 @@
       <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
       <Name>iRINGLibrary.Desktop</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Libraries\NInjectContrib\NInjectContrib.csproj">
-      <Project>{DC7F8819-3368-4B76-A7E7-C4433176EC58}</Project>
-      <Name>NInjectContrib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Libraries\UtilityLibrary\Desktop\UtilityLibrary.Desktop.csproj">
       <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
       <Name>UtilityLibrary.Desktop</Name>
