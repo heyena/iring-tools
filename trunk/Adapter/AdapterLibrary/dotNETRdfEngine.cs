@@ -24,7 +24,7 @@ using org.w3.sparql_results;
 
 namespace org.iringtools.adapter.semantic
 {
-  public class dotNetRdfEngine : ISemanticLayer
+  public class dotNetRDFEngine : ISemanticLayer
   {
     private static readonly string DATALAYER_NS = "org.iringtools.adapter.datalayer";
 
@@ -45,7 +45,7 @@ namespace org.iringtools.adapter.semantic
     private static readonly string RDF_PREFIX = "rdf:";    
     private static readonly string RDF_NIL = RDF_PREFIX + "nil";
 
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(dotNetRdfEngine));
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(dotNetRDFEngine));
 
     private AdapterSettings _settings = null;
     private Mapping _mapping = null;
@@ -57,7 +57,7 @@ namespace org.iringtools.adapter.semantic
     private string _dataObjectNs = String.Empty;
 
     [Inject]
-    public dotNetRdfEngine(AdapterSettings settings, Mapping mapping)
+    public dotNetRDFEngine(AdapterSettings settings, Mapping mapping)
     {
       _settings = settings;
 

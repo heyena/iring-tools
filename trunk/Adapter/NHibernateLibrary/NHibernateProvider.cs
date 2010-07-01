@@ -35,7 +35,6 @@ using System.Xml;
 using System.Xml.Linq;
 using log4net;
 using Ninject;
-using Ninject.Contrib.Dynamic;
 using org.ids_adi.qmxf;
 using org.iringtools.library;
 using org.iringtools.utility;
@@ -87,28 +86,28 @@ namespace org.iringtools.nhibernate
           response = generator.Generate(dbDictionary, projectName, applicationName);
 
           // Update binding configuration
-          Binding dataLayerBinding = new Binding()
-          {
-            Name = "DataLayer",
-            Interface = "org.iringtools.library.IDataLayer, iRINGLibrary",
-            Implementation = "org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateDataLayer"
-          };
+          //Binding dataLayerBinding = new Binding()
+          //{
+          //  Name = "DataLayer",
+          //  Interface = "org.iringtools.library.IDataLayer, iRINGLibrary",
+          //  Implementation = "org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateDataLayer"
+          //};
           //UpdateBindingConfiguration(projectName, applicationName, dataLayerBinding);
 
-          Binding semanticLayerBinding = new Binding()
-          {
-            Name = "SemanticLayer",
-            Interface = "org.iringtools.adapter.ISemanticLayer, AdapterLibrary",
-            Implementation = "org.iringtools.adapter.semantic.dotNetRdfEngine, AdapterLibrary"
-          };
+          //Binding semanticLayerBinding = new Binding()
+          //{
+          //  Name = "SemanticLayer",
+          //  Interface = "org.iringtools.adapter.ISemanticLayer, AdapterLibrary",
+          //  Implementation = "org.iringtools.adapter.semantic.dotNetRdfEngine, AdapterLibrary"
+          //};
           //UpdateBindingConfiguration(projectName, applicationName, semanticLayerBinding);
 
-          Binding projectionLayerBinding = new Binding()
-          {
-            Name = "ProjectionLayer",
-            Interface = "org.iringtools.adapter.IProjectionLayer, AdapterLibrary",
-            Implementation = "org.iringtools.adapter.projection.RdfProjectionEngine, AdapterLibrary"
-          };
+          //Binding projectionLayerBinding = new Binding()
+          //{
+          //  Name = "ProjectionLayer",
+          //  Interface = "org.iringtools.adapter.IProjectionLayer, AdapterLibrary",
+          //  Implementation = "org.iringtools.adapter.projection.RdfProjectionEngine, AdapterLibrary"
+          //};
           //UpdateBindingConfiguration(projectName, applicationName, projectionLayerBinding);
 
           //UpdateScopes(projectName, applicationName);

@@ -148,7 +148,9 @@
     <Reference Include="System.Windows.Browser" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Base\BootStrapper.cs" />
+    <Compile Include="Base\BootStrapper.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Base\IPresentationModel.cs" />
     <Compile Include="Base\IPresenterBase.cs" />
     <Compile Include="Base\IViewBase.cs" />

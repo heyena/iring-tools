@@ -83,6 +83,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ExternalBinaries\Ninject2\Ninject.dll</HintPath>
     </Reference>
+    <Reference Include="Ninject.Extensions.Xml, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ExternalBinaries\Ninject2\extensions\Ninject.Extensions.Xml.dll</HintPath>
+    </Reference>
     <Reference Include="StaticDust.Configuration">
       <HintPath>..\..\ExternalBinaries\Configuration\StaticDust.Configuration.dll</HintPath>
     </Reference>
@@ -116,7 +120,7 @@
   <ItemGroup>
     <Compile Include="AdapterModule.cs" />
     <Compile Include="DataTransferObject.cs" />
-    <Compile Include="dotNetRdfEngine.cs" />
+    <Compile Include="dotNetRDFEngine.cs" />
     <Compile Include="AdapterProvider.cs" />
     <Compile Include="DtoProjectionEngine.cs" />
     <Compile Include="IProjectionLayer.cs" />
@@ -131,10 +135,6 @@
     <ProjectReference Include="..\..\Libraries\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
       <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
       <Name>iRINGLibrary.Desktop</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Libraries\NInjectContrib\NInjectContrib.csproj">
-      <Project>{DC7F8819-3368-4B76-A7E7-C4433176EC58}</Project>
-      <Name>NInjectContrib</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Libraries\UtilityLibrary\Desktop\UtilityLibrary.Desktop.csproj">
       <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>

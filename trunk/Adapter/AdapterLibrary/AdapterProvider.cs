@@ -35,7 +35,7 @@ using System.Xml;
 using System.Xml.Linq;
 using log4net;
 using Ninject;
-using Ninject.Contrib.Dynamic;
+using Ninject.Extensions.Xml;
 using org.ids_adi.qmxf;
 using org.iringtools.library;
 using org.iringtools.utility;
@@ -69,7 +69,10 @@ namespace org.iringtools.adapter
     [Inject]
     public AdapterProvider(NameValueCollection settings)
     {
-      _kernel = new StandardKernel(new AdapterModule());
+      var ninjectSettings = new NinjectSettings { LoadExtensions = false };
+      _kernel = new StandardKernel(ninjectSettings, new XmlExtensionModule());
+
+      _kernel.Load(new AdapterModule());
       _settings = _kernel.Get<AdapterSettings>();
       _settings.AppendSettings(settings);
 
@@ -733,7 +736,7 @@ namespace org.iringtools.adapter
       {
         Initialize(projectName, applicationName);
 
-        _semanticEngine = _kernel.Get<ISemanticLayer>("SemanticLayer");
+        _semanticEngine = _kernel.Get<ISemanticLayer>("dotNetRDF");
 
         foreach (GraphMap graphMap in _mapping.graphMaps)
         {
@@ -755,7 +758,7 @@ namespace org.iringtools.adapter
     {
       Initialize(projectName, applicationName);
       
-      _semanticEngine = _kernel.Get<ISemanticLayer>("SemanticLayer");
+      _semanticEngine = _kernel.Get<ISemanticLayer>("dotNetRDF");
 
       return _semanticEngine.Delete(graphName);
     }
@@ -785,14 +788,16 @@ namespace org.iringtools.adapter
             _settings.AppendSettings(appSettings);
           }
 
-          string bindingConfigurationPath = String.Format("{0}BindingConfiguration.{1}.xml", 
-            _settings["XmlPath"], 
+          string bindingConfigurationPath = String.Format("{0}\\Xml\\BindingConfiguration.{1}.xml",
+            _settings["BaseDirectoryPath"], 
             scope
           );
-          
-          BindingConfiguration bindingConfiguration = 
-            Utility.Read<BindingConfiguration>(bindingConfigurationPath, false);
-          _kernel.Load(new DynamicModule(bindingConfiguration));
+
+          _kernel.Load(bindingConfigurationPath);
+
+          //BindingConfiguration bindingConfiguration = 
+          //  Utility.Read<BindingConfiguration>(bindingConfigurationPath, false);
+          //_kernel.Load(new DynamicModule(bindingConfiguration));
 
           _dataLayer = _kernel.Get<IDataLayer>("DataLayer");
           _dataDictionary = _dataLayer.GetDictionary();
@@ -826,7 +831,7 @@ namespace org.iringtools.adapter
 
     private Response Refresh(string graphName)
     {
-      _semanticEngine = _kernel.Get<ISemanticLayer>("SemanticLayer");
+      _semanticEngine = _kernel.Get<ISemanticLayer>("dotNetRDF");
 
       _projectionEngine = _kernel.Get<IProjectionLayer>("rdf");
 
@@ -849,50 +854,50 @@ namespace org.iringtools.adapter
         _dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, null);
     }
 
-    private void UpdateBindingConfiguration(string projectName, string applicationName, Binding binding)
-    {
-      try
-      {
-        string bindingConfigurationPath = string.Format("{0}BindingConfiguration.{1}.{2}.xml", _settings["XmlPath"], projectName, applicationName);
+    //private void UpdateBindingConfiguration(string projectName, string applicationName, Binding binding)
+    //{
+    //  try
+    //  {
+    //    string bindingConfigurationPath = string.Format("{0}BindingConfiguration.{1}.{2}.xml", _settings["XmlPath"], projectName, applicationName);
 
-        if (File.Exists(bindingConfigurationPath))
-        {
-          BindingConfiguration bindingConfiguration = Utility.Read<BindingConfiguration>(bindingConfigurationPath, false);
-          bool bindingExists = false;
+    //    if (File.Exists(bindingConfigurationPath))
+    //    {
+    //      BindingConfiguration bindingConfiguration = Utility.Read<BindingConfiguration>(bindingConfigurationPath, false);
+    //      bool bindingExists = false;
 
-          // Update binding if exists
-          for (int i = 0; i < bindingConfiguration.Bindings.Count; i++)
-          {
-            if (bindingConfiguration.Bindings[i].Name.ToUpper() == binding.Name.ToUpper())
-            {
-              bindingConfiguration.Bindings[i] = binding;
-              bindingExists = true;
-              break;
-            }
-          }
+    //      // Update binding if exists
+    //      for (int i = 0; i < bindingConfiguration.Bindings.Count; i++)
+    //      {
+    //        if (bindingConfiguration.Bindings[i].Name.ToUpper() == binding.Name.ToUpper())
+    //        {
+    //          bindingConfiguration.Bindings[i] = binding;
+    //          bindingExists = true;
+    //          break;
+    //        }
+    //      }
 
-          // Add binding if not exist
-          if (!bindingExists)
-          {
-            bindingConfiguration.Bindings.Add(binding);
-          }
+    //      // Add binding if not exist
+    //      if (!bindingExists)
+    //      {
+    //        bindingConfiguration.Bindings.Add(binding);
+    //      }
 
-          Utility.Write<BindingConfiguration>(bindingConfiguration, bindingConfigurationPath, false);
-        }
-        else
-        {
-          BindingConfiguration bindingConfiguration = new BindingConfiguration();
-          bindingConfiguration.Bindings = new List<Binding>();
-          bindingConfiguration.Bindings.Add(binding);
-          Utility.Write<BindingConfiguration>(bindingConfiguration, bindingConfigurationPath, false);
-        }
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(string.Format("Error in UpdateBindingConfiguration: {0}", ex));
-        throw ex;
-      }
-    }
+    //      Utility.Write<BindingConfiguration>(bindingConfiguration, bindingConfigurationPath, false);
+    //    }
+    //    else
+    //    {
+    //      BindingConfiguration bindingConfiguration = new BindingConfiguration();
+    //      bindingConfiguration.Bindings = new List<Binding>();
+    //      bindingConfiguration.Bindings.Add(binding);
+    //      Utility.Write<BindingConfiguration>(bindingConfiguration, bindingConfigurationPath, false);
+    //    }
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    _logger.Error(string.Format("Error in UpdateBindingConfiguration: {0}", ex));
+    //    throw ex;
+    //  }
+    //}
 
     private void UpdateScopes(string projectName, string projectDescription, string applicationName, string applicationDescription)
     {

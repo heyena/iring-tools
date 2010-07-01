@@ -15,6 +15,7 @@ namespace org.iringtools.adapter
     public override void Load()
     {
       Bind<AdapterSettings>().ToSelf().InSingletonScope();
+      Bind<ISemanticLayer>().To<dotNetRDFEngine>().Named("dotNetRDF");
       Bind<IProjectionLayer>().To<RdfProjectionEngine>().Named("rdf");
       Bind<IProjectionLayer>().To<QtxfProjectionEngine>().Named("qtxf");
       Bind<IProjectionLayer>().To<DtoProjectionEngine>().Named("dto");
