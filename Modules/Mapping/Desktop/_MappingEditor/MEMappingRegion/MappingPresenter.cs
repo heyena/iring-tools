@@ -17,7 +17,6 @@ using org.iringtools.ontologyservice.presentation.presentationmodels;
 using org.iringtools.informationmodel.events;
 using PrismContrib.Base;
 
-using InformationModel.Events;
 using org.iringtools.library;
 
 #if SILVERLIGHT

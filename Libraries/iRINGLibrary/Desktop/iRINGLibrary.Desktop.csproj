@@ -112,20 +112,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdapterSettings.cs" />
-    <Compile Include="ApplicationSettings.cs" />
     <Compile Include="DatabaseDictionary.cs" />
     <Compile Include="DataDictionary.cs" />
     <Compile Include="DataFilter.cs" />
     <Compile Include="IAdapter.cs" />
-    <Compile Include="IData.cs" />
     <Compile Include="IDataLayer.cs" />
     <Compile Include="Manifest.cs" />
     <Compile Include="ScopeApplication.cs" />
     <Compile Include="Mapping.cs" />
-    <Compile Include="ISparqlQuery.cs" />
-    <Compile Include="ITransformation.cs" />
     <Compile Include="ScopeProject.cs" />
-    <Compile Include="ScopeSettings.cs" />
+    <Compile Include="ScopeList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\..\..\AssemblyInfo.cs" />
     <Compile Include="QMXF.cs" />
