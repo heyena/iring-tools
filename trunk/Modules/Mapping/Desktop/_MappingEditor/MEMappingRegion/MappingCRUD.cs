@@ -10,8 +10,6 @@ using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Unity;
 
-using InformationModel.Events;
-
 using org.iringtools.modulelibrary.events;
 using org.iringtools.modulelibrary.extensions;
 using org.iringtools.modulelibrary.entities;

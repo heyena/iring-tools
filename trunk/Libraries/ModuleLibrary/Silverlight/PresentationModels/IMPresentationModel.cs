@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net;
 using PrismContrib.Base;
-using org.iringtools.ontologyservice.presentation.entities;
 using System.Collections.Generic;
 using org.iringtools.ontologyservice.presentation.presentationmodels;
 using System.Windows.Controls;

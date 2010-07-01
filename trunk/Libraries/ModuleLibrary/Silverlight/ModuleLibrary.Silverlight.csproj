@@ -144,14 +144,8 @@
     <Compile Include="..\..\..\Libraries\iRINGLibrary\Desktop\Response.cs">
       <Link>Entities\Response.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\Libraries\iRINGLibrary\Desktop\SPARQLQuery.cs">
-      <Link>Entities\SPARQLQuery.cs</Link>
-    </Compile>
     <Compile Include="..\..\..\Libraries\iRINGLibrary\Desktop\SPARQLResults.cs">
       <Link>Entities\SPARQLResults.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\Libraries\iRINGLibrary\Desktop\IAdapter.cs">
-      <Link>Entities\IAdapter.cs</Link>
     </Compile>
     <Compile Include="..\..\..\Libraries\iRINGLibrary\Desktop\Query.cs">
       <Link>LayerDAL\Query.cs</Link>
@@ -159,50 +153,44 @@
     <Compile Include="..\..\..\Libraries\iRINGLibrary\Desktop\RefDataEntities.cs">
       <Link>LayerDAL\RefDataEntities.cs</Link>
     </Compile>
+    <Compile Include="..\..\iRINGLibrary\Desktop\IAdapter.cs">
+      <Link>Entities\IAdapter.cs</Link>
+    </Compile>
     <Compile Include="..\..\iRINGLibrary\Desktop\ScopeApplication.cs">
       <Link>Entities\ScopeApplication.cs</Link>
     </Compile>
     <Compile Include="..\..\iRINGLibrary\Desktop\ScopeProject.cs">
       <Link>Entities\ScopeProject.cs</Link>
     </Compile>
+    <Compile Include="..\..\iRINGLibrary\Desktop\SPARQLQuery.cs">
+      <Link>Entities\SPARQLQuery.cs</Link>
+    </Compile>
     <Compile Include="Base\AppBase.cs" />
     <Compile Include="Base\BLLBase.cs" />
     <Compile Include="Base\DALBase.cs" />
     <Compile Include="Base\IAppBase.cs" />
     <Compile Include="Entities\Compatibility.cs" />
-    <Compile Include="Base\ResultBase.cs" />
     <Compile Include="Configuration\IServerConfiguration.cs" />
     <Compile Include="Configuration\ServerConfigurations.cs" />
-    <Compile Include="Entities\EntitySearchInfo.cs" />
     <Compile Include="Entities\MappingItem.cs" />
     <Compile Include="Events\ButtonEvent.cs" />
     <Compile Include="Events\ButtonEventArgs.cs" />
     <Compile Include="Events\CustomTabEvent.cs" />
     <Compile Include="Events\CustomTabEventArgs.cs" />
-    <Compile Include="Events\ListBoxEvent.cs" />
-    <Compile Include="Events\ListBoxEventArgs.cs" />
-    <Compile Include="Events\MenuEvent.cs" />
-    <Compile Include="Events\MenuEventArgs.cs" />
     <Compile Include="Events\NavigationEvent.cs" />
     <Compile Include="Events\NavigationEventArgs.cs" />
     <Compile Include="Events\PopupEvent.cs" />
     <Compile Include="Events\PopupEventArgs.cs" />
-    <Compile Include="Events\ProcessingEvent.cs" />
-    <Compile Include="Events\ProcessingEventArgs.cs" />
-    <Compile Include="Events\QueryEventArgs.cs" />
     <Compile Include="Events\SelectionEvent.cs" />
     <Compile Include="Events\SelectionEventArgs.cs" />
     <Compile Include="Events\ServiceEvent.cs" />
     <Compile Include="Events\ServiceEventArgs.cs" />
     <Compile Include="Events\SpinnerEvent.cs" />
     <Compile Include="Events\SpinnerEventsArgs.cs" />
-    <Compile Include="Events\StatusEvent.cs" />
-    <Compile Include="Events\StatusEventArgs.cs" />
-    <Compile Include="Events\TreeViewEvent.cs" />
-    <Compile Include="Events\TreeViewEventArgs.cs" />
-    <Compile Include="Events\TreeViewEventType.cs" />
     <Compile Include="Extensions\CompletedEventTypeExtension.cs" />
-    <Compile Include="Extensions\SPARQLExtensions.cs" />
+    <Compile Include="Extensions\SPARQLExtensions.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="LayerBLL\AdapterBLL.cs" />
     <Compile Include="LayerBLL\ReferenceDataBLL.cs" />
     <Compile Include="LayerDAL\AdapterDAL.cs" />
@@ -214,11 +202,8 @@
     <Compile Include="PresentationModels\IMPresentationModel.cs" />
     <Compile Include="Types\CompletedEventType.cs" />
     <Compile Include="Types\CustomTabProcess.cs" />
-    <Compile Include="Types\EntityType.cs" />
     <Compile Include="Types\NodeType.cs" />
-    <Compile Include="Types\ProcessingType.cs" />
     <Compile Include="Types\QueryType.cs" />
-    <Compile Include="Types\SearchType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\..\..\AssemblyInfo.cs" />
     <Compile Include="Types\StatusType.cs" />

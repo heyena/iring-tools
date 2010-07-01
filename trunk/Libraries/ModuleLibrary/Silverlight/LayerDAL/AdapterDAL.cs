@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Net;
 using org.iringtools.modulelibrary.types;
 using org.iringtools.modulelibrary.extensions;
-using org.iringtools.ontologyservice.presentation.entities;
 using System;
 using System.Text;
 using org.iringtools.utility;

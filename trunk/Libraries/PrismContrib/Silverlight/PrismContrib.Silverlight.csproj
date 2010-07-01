@@ -156,15 +156,11 @@
     <Compile Include="Base\PresentationModelBase.cs" />
     <Compile Include="Base\PresenterBase.cs" />
     <Compile Include="Configuration\IAppConfiguration.cs" />
-    <Compile Include="Configuration\AppConfigurations.cs" />
     <Compile Include="Errors\ErrorDetail.cs" />
     <Compile Include="Errors\IError.cs" />
     <Compile Include="Errors\Error.cs" />
     <Compile Include="Events\BootStrapperEventArgs.cs" />
     <Compile Include="Events\CompletedEventArgs.cs" />
-    <Compile Include="Events\ListEvent.cs" />
-    <Compile Include="Events\ListEventArgs.cs" />
-    <Compile Include="Events\ListEventType.cs" />
     <Compile Include="Interfaces\IUnitTest.cs" />
     <Compile Include="Loggers\DebugLogger.cs" />
     <Compile Include="Loggers\DefaultLogger.cs" />
@@ -188,6 +184,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

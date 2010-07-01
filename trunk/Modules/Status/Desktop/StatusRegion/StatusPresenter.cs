@@ -9,7 +9,6 @@ using Microsoft.Practices.Composite.Logging;
 using org.iringtools.modulelibrary.events;
 using org.iringtools.modulelibrary.types;
 using org.iringtools.modulelibrary.layerdal;
-using InformationModel.Events;
 
 using org.iringtools.ontologyservice.presentation.presentationmodels;
 
@@ -63,33 +62,6 @@ namespace org.iringtools.modules.status.statusregion
       }
     }
 
-    /// <summary>
-    /// Status event handler.
-    /// </summary>
-    /// <param name="e">The <see cref="org.iringtools.modulelibrary.events.StatusEventArgs"/> 
-    /// instance containing the event data.</param>
-    public void StatusEventHandler(StatusEventArgs e)
-    {
-      //StoryBoardCtrl("NoticeMe").Stop();
-
-      //switch (e.StatusPanel)
-      //{
-      //  case StatusType.Left:
-      //    View.stsLeftMessage = e.Message;
-      //    break;
-
-      //  case StatusType.Right:
-      //    View.stsRightMessage = e.Message;
-      //    break;
-
-      //  default:
-      //    // Reset status bar messages
-      //    View.stsLeftMessage = "";
-      //    View.stsRightMessage = "";
-      //    break;
-      //}
-    }
-
     public void NavigationEventHandler(NavigationEventArgs e)
     {
         try
@@ -109,81 +81,14 @@ namespace org.iringtools.modules.status.statusregion
             if (e.DetailProcess == DetailType.Mapping && e.SelectedNode.Tag is GraphMap)
             {
                 GraphMap selectedMappingNode = (GraphMap)e.SelectedNode.Tag;
-                StatusEventHandler(new StatusEventArgs
-                {
-                    Message = string.Format("Adapter Service: {0}", adapterProxy.GetAdapterServiceUri),
-                    StatusPanel = StatusType.Left
-                });
             }
             else if (e.DetailProcess == DetailType.Mapping && e.SelectedNode.Tag is TemplateMap)
             {
                 TemplateMap selectedMappingNode = (TemplateMap)e.SelectedNode.Tag;
-                StatusEventHandler(new StatusEventArgs
-                {
-                    Message = string.Format("Adapter Service: {0}", adapterProxy.GetAdapterServiceUri),
-                    StatusPanel = StatusType.Left
-                });
             }
             else if (e.DetailProcess == DetailType.Mapping && e.SelectedNode.Tag is RoleMap)
             {
                 RoleMap selectedMappingNode = (RoleMap)e.SelectedNode.Tag;
-                StatusEventHandler(new StatusEventArgs
-                {
-                    Message = string.Format("Adapter Service: {0}", adapterProxy.GetAdapterServiceUri),
-                    StatusPanel = StatusType.Left
-                });
-            }
-
-            if ((e.DetailProcess == DetailType.NotDefined || e.DetailProcess == DetailType.InformationModel))
-            {
-                if (e.SelectedNode.Tag is Entity)
-                {
-                    //Entity selectedInformationModelNode = (Entity)e.SelectedNode.Tag;
-
-                    //StatusEventHandler(new StatusEventArgs
-                    //{
-                    //    Message = string.Format("{0}", selectedInformationModelNode.uri),
-                    //    StatusPanel = StatusType.Right
-                    //});
-
-                    StatusEventHandler(new StatusEventArgs
-                    {
-                        Message = string.Format("Reference Data Service: {0}", referenceDataService.GetReferenceDataServiceUri),
-                        StatusPanel = StatusType.Left
-                    });
-                }
-                else if (e.SelectedNode.Tag is ClassDefinition)
-                {
-                    //ClassDefinition selectedInformationModelNode = (ClassDefinition)e.SelectedNode.Tag;
-
-                    //StatusEventHandler(new StatusEventArgs
-                    //{
-                    //  Message = string.Format("{0}", selectedInformationModelNode.identifier),
-                    //  StatusPanel = StatusType.Right
-                    //});
-
-                    StatusEventHandler(new StatusEventArgs
-                    {
-                        Message = string.Format("Reference Data Service: {0}", referenceDataService.GetReferenceDataServiceUri),
-                        StatusPanel = StatusType.Left
-                    });
-                }
-                else if (e.SelectedNode.Tag is TemplateQualification)
-                {
-                    //TemplateQualification selectedInformationModelNode = (TemplateQualification)e.SelectedNode.Tag;
-
-                    //StatusEventHandler(new StatusEventArgs
-                    //{
-                    //    Message = string.Format("{0}", selectedInformationModelNode.identifier),
-                    //    StatusPanel = StatusType.Right
-                    //});
-
-                    StatusEventHandler(new StatusEventArgs
-                    {
-                        Message = string.Format("Reference Data Service: {0}", referenceDataService.GetReferenceDataServiceUri),
-                        StatusPanel = StatusType.Left
-                    });
-                }
             }
         }
         catch (Exception ex)
@@ -191,35 +96,5 @@ namespace org.iringtools.modules.status.statusregion
             Error.SetError(ex);
         }
     }
-
-
-    /// <summary>
-    /// Called when [model property change].
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    public override void OnModelPropertyChange(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-    {
-        try
-        {
-            switch (e.PropertyName)
-            {
-                case "CurrentModelNode":
-                    // Show selected model node in middle status area
-                    StatusEventHandler(new StatusEventArgs
-                    {
-                        Message = "Selected: " + model.SelectedIMLabel
-                    });
-                    break;
-
-
-            }
-        }
-        catch (Exception ex)
-        {
-            Error.SetError(ex);
-        }
-    }
-
   }
 }

@@ -6,8 +6,6 @@ using System.Windows.Controls;
 using org.iringtools.informationmodel.events;
 using PrismContrib.Base;
 
-using InformationModel.Events;
-
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Composite.Logging;
 

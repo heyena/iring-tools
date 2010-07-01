@@ -166,9 +166,6 @@
     <Compile Include="..\Silverlight\Base\PresenterBase.cs">
       <Link>Base\PresenterBase.cs</Link>
     </Compile>
-    <Compile Include="..\Silverlight\Configuration\AppConfigurations.cs">
-      <Link>Configuration\AppConfigurations.cs</Link>
-    </Compile>
     <Compile Include="..\Silverlight\Configuration\IAppConfiguration.cs">
       <Link>Configuration\IAppConfiguration.cs</Link>
     </Compile>
@@ -186,15 +183,6 @@
     </Compile>
     <Compile Include="..\Silverlight\Events\CompletedEventArgs.cs">
       <Link>Events\CompletedEventArgs.cs</Link>
-    </Compile>
-    <Compile Include="..\Silverlight\Events\ListEvent.cs">
-      <Link>Events\ListEvent.cs</Link>
-    </Compile>
-    <Compile Include="..\Silverlight\Events\ListEventArgs.cs">
-      <Link>Events\ListEventArgs.cs</Link>
-    </Compile>
-    <Compile Include="..\Silverlight\Events\ListEventType.cs">
-      <Link>Events\ListEventType.cs</Link>
     </Compile>
     <Compile Include="..\Silverlight\Interfaces\IUnitTest.cs">
       <Link>Interfaces\IUnitTest.cs</Link>
@@ -236,7 +224,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties ProjectLinkReference="04c08b97-3d9e-4bb4-b0ec-6ae035105bf8" ProjectLinkerExcludeFilter="\\?desktop(\\.*)?$;\\?silverlight(\\.*)?$;\.desktop;\.silverlight;\.xaml;^service references(\\.*)?$;\.clientconfig;^web references(\\.*)?$" />
+      <UserProperties ProjectLinkerExcludeFilter="\\?desktop(\\.*)?$;\\?silverlight(\\.*)?$;\.desktop;\.silverlight;\.xaml;^service references(\\.*)?$;\.clientconfig;^web references(\\.*)?$" ProjectLinkReference="04c08b97-3d9e-4bb4-b0ec-6ae035105bf8" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

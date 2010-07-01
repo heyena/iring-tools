@@ -8,7 +8,6 @@ using PrismContrib.Base;
 
 using Microsoft.Practices.Composite.Events;
 
-using InformationModel.Events;
 using org.iringtools.modulelibrary.events;
 
 using org.iringtools.ontologyservice.presentation.presentationmodels;
