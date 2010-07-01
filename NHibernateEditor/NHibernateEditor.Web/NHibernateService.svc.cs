@@ -10,7 +10,7 @@ using NHibernate;
 
 namespace DbDictionaryEditor.Web
 {
-    public class DbDictionaryService : IDbDictionaryService
+    public class NHibernateService : INHibernateService
     {
         WebProxyCredentials _proxyCredentials = null;
         string adapterServiceUri = string.Empty;
@@ -19,7 +19,7 @@ namespace DbDictionaryEditor.Web
         string proxyHost = string.Empty;
         string proxyCredentialToken = string.Empty;
 
-        public DbDictionaryService()
+        public NHibernateService()
         {
             Directory.SetCurrentDirectory(System.AppDomain.CurrentDomain.BaseDirectory);
             _proxyCredentials = new WebProxyCredentials();

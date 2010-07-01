@@ -5,7 +5,7 @@ using org.iringtools.library;
 namespace DbDictionaryEditor.Web
 {
     [ServiceContract]
-    public interface IDbDictionaryService
+    public interface INHibernateService
     {
         [OperationContract]
         Collection<ScopeProject> GetScopes();
