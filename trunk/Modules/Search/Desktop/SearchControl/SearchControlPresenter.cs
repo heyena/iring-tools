@@ -21,7 +21,6 @@ using org.iringtools.informationmodel.usercontrols;
 using org.iringtools.ontologyservice.presentation;
 using org.iringtools.ontologyservice.presentation.presentationmodels;
 
-using org.ids_adi.iring;
 using System.Windows.Media.Imaging;
 using System.Windows.Resources;
 using System.Windows.Media;

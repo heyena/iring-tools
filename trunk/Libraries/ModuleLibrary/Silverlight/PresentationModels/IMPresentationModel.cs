@@ -6,8 +6,6 @@ using System.Collections.Generic;
 using org.iringtools.ontologyservice.presentation.presentationmodels;
 using System.Windows.Controls;
 using System.Collections.ObjectModel;
-using org.ids_adi.iring.referenceData;
-using org.ids_adi.iring;
 using org.iringtools.modulelibrary.entities;
 using org.iringtools.modulelibrary.types;
 using org.ids_adi.qmxf;

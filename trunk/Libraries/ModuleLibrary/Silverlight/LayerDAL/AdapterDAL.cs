@@ -9,7 +9,6 @@ using org.iringtools.modulelibrary.extensions;
 using org.iringtools.ontologyservice.presentation.entities;
 using System;
 using System.Text;
-using org.ids_adi.iring;
 using org.iringtools.utility;
 using org.ids_adi.qxf;
 using System.IO;

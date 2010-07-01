@@ -3,7 +3,6 @@ using Microsoft.Practices.Unity;
 using org.iringtools.modulelibrary.types;
 using org.iringtools.modulelibrary.events;
 using System.Collections.ObjectModel;
-using org.ids_adi.iring;
 using org.ids_adi.qxf;
 using org.iringtools.modulelibrary.baseclass;
 using Microsoft.Practices.Composite.Events;

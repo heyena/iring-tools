@@ -15,7 +15,7 @@ namespace org.ids_adi.iring.referenceData
         private void RegisterRoutes()
         {
             // Edit the base address of Service1 by replacing the "Service1" string below
-            RouteTable.Routes.Add(new ServiceRoute("", new WebServiceHostFactory(), typeof(org.ids_adi.iring.referenceData.ReferenceDataService)));
+            RouteTable.Routes.Add(new ServiceRoute("", new WebServiceHostFactory(), typeof(Service)));
         }
     }
 }

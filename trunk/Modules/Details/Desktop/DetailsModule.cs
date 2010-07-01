@@ -14,8 +14,6 @@ using org.iringtools.modules.details.detailsregion;
 using org.iringtools.ontologyservice.presentation;
 using org.iringtools.ontologyservice.presentation.presentationmodels;
 
-using org.ids_adi.iring.referenceData;
-
 namespace org.iringtools.modules.details
 {
     public class DetailsModule : ModuleBase

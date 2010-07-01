@@ -7,8 +7,6 @@ using org.iringtools.modulelibrary.types;
 using System;
 using System.Collections.Generic;
 using org.ids_adi.qmxf;
-using org.ids_adi.iring;
-using org.ids_adi.iring.referenceData;
 using Microsoft.Practices.Composite.Events;
 using org.iringtools.library.presentation.events;
 using org.iringtools.informationmodel.events;

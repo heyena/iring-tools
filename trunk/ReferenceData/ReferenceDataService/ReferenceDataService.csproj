@@ -62,6 +62,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ClientAccessPolicy.xml" />
     <Content Include="Global.asax" />
     <Content Include="SPARQL\ClassRelations.txt" />
     <Content Include="SPARQL\ContainsSearch.txt" />
@@ -103,12 +104,8 @@
     <Content Include="XML\Repositories_Development.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ReferenceDataModule.cs" />
-    <Compile Include="ReferenceDataSettings.cs" />
-    <Compile Include="App_Code\ConfigSettings.cs" />
-    <Compile Include="App_Code\IReferenceDataService.cs" />
-    <Compile Include="App_Code\ReferenceDataService.cs" />
-    <Compile Include="App_Code\ReferenceDataServiceProvider.cs" />
+    <Compile Include="App_Code\IService.cs" />
+    <Compile Include="App_Code\Service.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -129,6 +126,10 @@
     <ProjectReference Include="..\..\Libraries\UtilityLibrary\Desktop\UtilityLibrary.Desktop.csproj">
       <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
       <Name>UtilityLibrary.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ReferenceDataLibrary\ReferenceDataLibrary.csproj">
+      <Project>{F271963F-10B1-4495-B047-BD5A977ED187}</Project>
+      <Name>ReferenceDataLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

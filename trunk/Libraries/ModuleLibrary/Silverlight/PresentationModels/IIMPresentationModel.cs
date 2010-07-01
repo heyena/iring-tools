@@ -1,8 +1,6 @@
 ﻿using System.Net;
 using System;
 using PrismContrib.Base;
-using org.ids_adi.iring.referenceData;
-using org.ids_adi.iring;
 using System.Collections.ObjectModel;
 using org.iringtools.modulelibrary.types;
 using org.iringtools.modulelibrary.entities;

@@ -150,9 +150,6 @@
     <Compile Include="..\..\..\Libraries\iRINGLibrary\Desktop\SPARQLResults.cs">
       <Link>Entities\SPARQLResults.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\ReferenceData\ReferenceDataService\App_Code\IReferenceDataService.cs">
-      <Link>Entities\IReferenceDataService.cs</Link>
-    </Compile>
     <Compile Include="..\..\..\Libraries\iRINGLibrary\Desktop\IAdapter.cs">
       <Link>Entities\IAdapter.cs</Link>
     </Compile>

@@ -26,26 +26,21 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
-using System.Web;
+using log4net;
+using Ninject;
+using org.ids_adi.qmxf;
+using org.iringtools.library;
 using org.iringtools.utility;
 using org.iringtools.utility.Loggers;
-using org.ids_adi.qmxf;
 using org.w3.sparql_results;
-using org.ids_adi.iring.referenceData;
-using org.iringtools.library;
-
-using Ninject;
-using Ninject.Parameters;
-using Ninject.Contrib.Dynamic;
-using Ninject.Modules;
-using log4net;
-using System.Collections.Specialized;
+using System.Web;
 
 namespace org.ids_adi.iring.referenceData
 {
     // NOTE: If you change the class name "Service" here, you must also update the reference to "Service" in Web.config and in the associated .svc file.
-    public class ReferenceDataServiceProvider : org.iringtools.utility.Loggers.ILog
+    public class ReferenceDataProvider : org.iringtools.utility.Loggers.ILog
     {
         #region Logger
         private ILogger _logger;
@@ -62,7 +57,7 @@ namespace org.ids_adi.iring.referenceData
 
         #endregion
 
-        private static readonly log4net.ILog _log4netLogger = LogManager.GetLogger(typeof(ReferenceDataServiceProvider));
+        private static readonly log4net.ILog _log4netLogger = LogManager.GetLogger(typeof(ReferenceDataProvider));
         private const string REPOSITORIES_FILE_NAME = "Repositories.xml";
         private const string QUERIES_FILE_NAME = "Queries.xml";
 
@@ -83,7 +78,7 @@ namespace org.ids_adi.iring.referenceData
         private IKernel _kernel = null;
         private ReferenceDataSettings _settings = null;
         
-        public ReferenceDataServiceProvider(NameValueCollection settings)
+        public ReferenceDataProvider(NameValueCollection settings)
         {
           try
           {

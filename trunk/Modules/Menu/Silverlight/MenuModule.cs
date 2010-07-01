@@ -8,7 +8,6 @@ using org.iringtools.ontologyservice.presentation.presentationmodels;
 using PrismContrib.Base;
 using PrismContrib.Loggers;
 using Microsoft.Practices.Composite.Modularity;
-using org.ids_adi.iring.referenceData;
 using org.iringtools.modules.menu.menuregion;
 
 namespace org.iringtools.modules.menu

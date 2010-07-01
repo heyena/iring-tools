@@ -206,19 +206,19 @@ namespace AdapterService.Tests
         return response;
     }
 
-    public Response UpdateDatabaseDictionary(string projectName, string applicationName, DatabaseDictionary databaseDictionary)
-    {
-      Response response = null;
-      try
-      {
-        response = _adapterProvider.UpdateDatabaseDictionary(projectName, applicationName, databaseDictionary);
-      }
-      catch (Exception ex)
-      {
-        Error.SetError(ex);
-      }
-      return response;
-    }
+    //public Response UpdateDatabaseDictionary(string projectName, string applicationName, DatabaseDictionary databaseDictionary)
+    //{
+    //  Response response = null;
+    //  try
+    //  {
+    //    response = _adapterProvider.UpdateDatabaseDictionary(projectName, applicationName, databaseDictionary);
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    Error.SetError(ex);
+    //  }
+    //  return response;
+    //}
 
     //public List<DataTransferObject> GetDTOList(string projectName, string applicationName, string graphName)
     //{

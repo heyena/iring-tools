@@ -19,7 +19,6 @@ using org.iringtools.informationmodel.events;
 using org.iringtools.informationmodel.types;
 using org.iringtools.informationmodel.usercontrols;
 
-using org.ids_adi.iring.referenceData;
 using org.iringtools.utility;
 using System.Windows.Media.Imaging;
 using System.Windows.Resources;

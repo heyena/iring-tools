@@ -18,7 +18,6 @@ using org.iringtools.modulelibrary.types;
 using org.iringtools.informationmodel.events;
 using org.iringtools.informationmodel.types;
 
-using org.ids_adi.iring.referenceData;
 using org.iringtools.utility;
 using org.ids_adi.qmxf;
 using org.iringtools.library;

@@ -17,7 +17,6 @@ using org.iringtools.modulelibrary.layerdal;
 using org.iringtools.informationmodel.events;
 using org.iringtools.informationmodel.types;
 
-using org.ids_adi.iring.referenceData;
 using org.iringtools.utility;
 using org.iringtools.library;
 

@@ -27,29 +27,21 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
+using System.Net;
 using System.Xml;
 using System.Xml.Linq;
+using log4net;
 using Ninject;
-using org.iringtools.adapter.datalayer;
+using Ninject.Contrib.Dynamic;
+using org.ids_adi.qmxf;
 using org.iringtools.library;
 using org.iringtools.utility;
-using VDS.RDF;
-using VDS.RDF.Parsing;
-using VDS.RDF.Query;
-using VDS.RDF.Storage;
-using System.Collections.Specialized;
-using Ninject.Parameters;
-using System.IO;
-using log4net;
-using Ninject.Contrib.Dynamic;
-using NHibernate;
-using org.w3.sparql_results;
-using Microsoft.ServiceModel.Web;
-using System.Net;
-using org.ids_adi.qmxf;
 using StaticDust.Configuration;
+using VDS.RDF;
+using VDS.RDF.Query;
 
 namespace org.iringtools.adapter
 {
@@ -111,13 +103,13 @@ namespace org.iringtools.adapter
     #region public methods
     public List<ScopeProject> GetScopes()
     {
-      string path = string.Format("{0}Scopes.xml", _settings["XmlPath"]);
+      string scopesPath = string.Format("{0}Scopes.xml", _settings["XmlPath"]);
 
       try
       {
-        if (File.Exists(path))
+        if (File.Exists(scopesPath))
         {
-          return Utility.Read<List<ScopeProject>>(path);
+          return Utility.Read<List<ScopeProject>>(scopesPath);
         }
 
         return new List<ScopeProject>();
@@ -125,7 +117,7 @@ namespace org.iringtools.adapter
       catch (Exception ex)
       {
         _logger.Error(string.Format("Error in GetScopes: {0}", ex));
-        throw new Exception(string.Format("Error getting the list of projects/applications from path [{0}]: {1}", path, ex));
+        throw new Exception(string.Format("Error getting the list of projects/applications from path [{0}]: {1}", scopesPath, ex));
       }
     }
 
@@ -433,6 +425,38 @@ namespace org.iringtools.adapter
       return response;
     }
 
+    public Response UpdateScopes(List<ScopeProject> scopes)
+    {
+      Response response = new Response();
+      
+      try
+      {
+        foreach (ScopeProject project in scopes)
+        {
+          foreach (ScopeApplication application in project.Applications)
+          {
+            UpdateScopes(
+              project.Name, 
+              project.Description, 
+              application.Name, 
+              application.Description
+            );
+          }
+        }
+
+        response.Add("Scopes have been updated successfully.");
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in UpdateScopes: {0}", ex));
+
+        response.Level = StatusLevel.Error;
+        response.Add(string.Format("Error saving scopes: {0}", ex));
+      }
+
+      return response;
+    }
+
     public Response RefreshAll(string projectName, string applicationName)
     {
       Response response = new Response();
@@ -735,67 +759,6 @@ namespace org.iringtools.adapter
 
       return _semanticEngine.Delete(graphName);
     }
-
-    public Response UpdateDatabaseDictionary(string projectName, string applicationName, DatabaseDictionary dbDictionary)
-    {
-      Response response = new Response();
-
-      try
-      {
-        if (String.IsNullOrEmpty(projectName) || String.IsNullOrEmpty(applicationName))
-        {
-          response.Add("Error project name and application name can not be null");
-        }
-        else if (ValidateDatabaseDictionary(dbDictionary))
-        {
-          foreach (DataObject dataObject in dbDictionary.dataObjects)
-          {
-            RemoveDups(dataObject);
-          }
-
-          EntityGenerator generator = _kernel.Get<EntityGenerator>();
-          response = generator.Generate(dbDictionary, projectName, applicationName);
-
-          // Update binding configuration
-          Binding dataLayerBinding = new Binding()
-          {
-            Name = "DataLayer",
-            Interface = "org.iringtools.library.IDataLayer, iRINGLibrary",
-            Implementation = "org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateDataLayer"
-          };
-          UpdateBindingConfiguration(projectName, applicationName, dataLayerBinding);
-
-          Binding semanticLayerBinding = new Binding()
-          {
-            Name = "SemanticLayer",
-            Interface = "org.iringtools.adapter.ISemanticLayer, AdapterLibrary",
-            Implementation = "org.iringtools.adapter.semantic.dotNetRdfEngine, AdapterLibrary"
-          };
-          UpdateBindingConfiguration(projectName, applicationName, semanticLayerBinding);
-
-          Binding projectionLayerBinding = new Binding()
-          {
-            Name = "ProjectionLayer",
-            Interface = "org.iringtools.adapter.IProjectionLayer, AdapterLibrary",
-            Implementation = "org.iringtools.adapter.projection.RdfProjectionEngine, AdapterLibrary"
-          };
-          UpdateBindingConfiguration(projectName, applicationName, projectionLayerBinding);
-
-          UpdateScopes(projectName, applicationName);
-
-          response.Add("Database dictionary updated successfully.");
-        }
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(string.Format("Error in UpdateDatabaseDictionary: {0}", ex));
-
-        response.Level = StatusLevel.Error;
-        response.Add(string.Format("Error updating database dictionary: {0}", ex));
-      }
-
-      return response;
-    }
     #endregion
 
     #region private methods
@@ -886,112 +849,6 @@ namespace org.iringtools.adapter
         _dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, null);
     }
 
-    private void RemoveDups(DataObject dataObject)
-    {
-      try
-      {
-        /* GvR
-        for (int i = 0; i < dataObject.keyProperties.Count; i++)
-        {
-          for (int j = 0; j < dataObject.dataProperties.Count; j++)
-          {
-            // remove columns that are already in keys
-            if (dataObject.dataProperties[j].propertyName.ToLower() == dataObject.keyProperties[i].propertyName.ToLower())
-            {
-              dataObject.dataProperties.Remove(dataObject.dataProperties[j--]);
-              continue;
-            }
-
-            // remove duplicate columns
-            for (int jj = j + 1; jj < dataObject.dataProperties.Count; jj++)
-            {
-              if (dataObject.dataProperties[jj].propertyName.ToLower() == dataObject.dataProperties[j].propertyName.ToLower())
-              {
-                dataObject.dataProperties.Remove(dataObject.dataProperties[jj--]);
-              }
-            }
-          }
-
-          // remove duplicate keys (in order of foreign - assigned - iddataObject/sequence)
-          for (int ii = i + 1; ii < dataObject.keyProperties.Count; ii++)
-          {
-            if (dataObject.keyProperties[ii].columnName.ToLower() == dataObject.keyProperties[i].columnName.ToLower())
-            {
-              if (dataObject.keyProperties[ii].keyType != KeyType.foreign)
-              {
-                if (((dataObject.keyProperties[ii].keyType == KeyType.identity || dataObject.keyProperties[ii].keyType == KeyType.sequence) && dataObject.keyProperties[i].keyType == KeyType.assigned) ||
-                      dataObject.keyProperties[ii].keyType == KeyType.assigned && dataObject.keyProperties[i].keyType == KeyType.foreign)
-                {
-                  dataObject.keyProperties[i].keyType = dataObject.keyProperties[ii].keyType;
-                }
-              }
-
-              dataObject.keyProperties.Remove(dataObject.keyProperties[ii--]);
-            }
-          }
-        } */
-      }
-      catch (Exception ex)
-      {
-        throw ex;
-      }
-    }
-
-    private bool ValidateDatabaseDictionary(DatabaseDictionary dbDictionary)
-    {
-      ISession session = null;
-
-      try
-      {
-        // Validate connection string
-        string connectionString = dbDictionary.connectionString;
-        NHibernate.Cfg.Configuration config = new NHibernate.Cfg.Configuration();
-        Dictionary<string, string> properties = new Dictionary<string, string>();
-
-        properties.Add("connection.provider", "NHibernate.Connection.DriverConnectionProvider");
-        properties.Add("connection.connection_string", dbDictionary.connectionString);
-        properties.Add("proxyfactory.factory_class", "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle");
-        properties.Add("dialect", "NHibernate.Dialect." + dbDictionary.provider + "Dialect");
-
-        if (dbDictionary.provider.ToString().ToUpper().Contains("MSSQL"))
-        {
-          properties.Add("connection.driver_class", "NHibernate.Driver.SqlClientDriver");
-        }
-        else if (dbDictionary.provider.ToString().ToUpper().Contains("ORACLE"))
-        {
-          properties.Add("connection.driver_class", "NHibernate.Driver.OracleClientDriver");
-        }
-        else
-        {
-          throw new Exception("Database not supported.");
-        }
-
-        config.AddProperties(properties);
-        ISessionFactory factory = config.BuildSessionFactory();
-
-        session = factory.OpenSession();
-      }
-      catch (Exception ex)
-      {
-        throw new Exception("Invalid connection string: " + ex.Message);
-      }
-      finally
-      {
-        if (session != null) session.Close();
-      }
-
-      // Validate table key
-      foreach (DataObject dataObject in dbDictionary.dataObjects)
-      {
-        if (dataObject.keyProperties == null || dataObject.keyProperties.Count == 0)
-        {
-          throw new Exception(string.Format("Table \"{0}\" has no key.", dataObject.tableName));
-        }
-      }
-
-      return true;
-    }
-
     private void UpdateBindingConfiguration(string projectName, string applicationName, Binding binding)
     {
       try
@@ -1037,7 +894,7 @@ namespace org.iringtools.adapter
       }
     }
 
-    private void UpdateScopes(string projectName, string applicationName)
+    private void UpdateScopes(string projectName, string projectDescription, string applicationName, string applicationDescription)
     {
       try
       {
@@ -1058,40 +915,51 @@ namespace org.iringtools.adapter
               {
                 if (application.Name.ToUpper() == applicationName.ToUpper())
                 {
+                  application.Description = applicationDescription;
                   applicationExists = true;
                   break;
                 }
-              }
 
-              if (!applicationExists)
-              {
-                project.Applications.Add(new ScopeApplication() { Name = applicationName });
-              }
 
-              projectExists = true;
-              break;
+                if (!applicationExists)
+                {
+                  project.Applications.Add(
+                    new ScopeApplication()
+                    {
+                      Name = applicationName,
+                      Description = applicationDescription,
+                    }
+                  );
+                }
+
+                project.Description = projectDescription;
+                projectExists = true;
+                break;
+              }
             }
-          }
 
-          // project does not exist, add it
-          if (!projectExists)
-          {
-            ScopeProject project = new ScopeProject()
+            // project does not exist, add it
+            if (!projectExists)
             {
-              Name = projectName,
-              Applications = new List<ScopeApplication>()
+              ScopeProject newProject = new ScopeProject()
+              {
+                Name = projectName,
+                Description = projectDescription,
+                Applications = new List<ScopeApplication>()
                {
                  new ScopeApplication()
                  {
-                   Name = applicationName
+                   Name = applicationName,
+                   Description = applicationDescription,
                  }
                }
-            };
+              };
 
-            projects.Add(project);
+              projects.Add(newProject);
+            }
+
+            Utility.Write<List<ScopeProject>>(projects, scopesPath, true);
           }
-
-          Utility.Write<List<ScopeProject>>(projects, scopesPath, true);
         }
         else
         {
