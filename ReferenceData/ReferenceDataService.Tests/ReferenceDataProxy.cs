@@ -16,9 +16,9 @@ using System.Collections.Specialized;
 
 namespace ReferenceDataService.Tests
 {
-  class ReferenceDataProxy:IReferenceDataService
+  class ReferenceDataProxy:IService
   {
-    private ReferenceDataServiceProvider _referenceDataServiceProvider = null;
+    private ReferenceDataProvider _referenceDataServiceProvider = null;
 
     /// <summary>
     /// Gets or sets the error.
@@ -37,7 +37,7 @@ namespace ReferenceDataService.Tests
     public ReferenceDataProxy()
     {
       NameValueCollection settings = ConfigurationManager.AppSettings;
-      _referenceDataServiceProvider = new ReferenceDataServiceProvider(settings);
+      _referenceDataServiceProvider = new ReferenceDataProvider(settings);
     }
 
     public List<Repository> GetRepositories()

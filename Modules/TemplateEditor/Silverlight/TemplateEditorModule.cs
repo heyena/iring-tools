@@ -19,8 +19,6 @@ using org.iringtools.modules.templateeditor.editorregion;
 using org.iringtools.ontologyservice.presentation;
 using org.iringtools.ontologyservice.presentation.presentationmodels;
 
-using org.ids_adi.iring.referenceData;
-
 namespace org.iringtools.modules.templateeditor
 {
     public class TemplateEditorModule : ModuleBase

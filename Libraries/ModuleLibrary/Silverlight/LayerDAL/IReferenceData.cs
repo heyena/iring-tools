@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using org.ids_adi.iring.referenceData;
 using org.ids_adi.qmxf;
-using org.ids_adi.iring;
 using org.iringtools.library;
 
 namespace org.iringtools.modulelibrary.layerdal

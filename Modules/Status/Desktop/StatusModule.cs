@@ -14,8 +14,6 @@ using org.iringtools.modules.status.statusregion;
 using org.iringtools.ontologyservice.presentation;
 using org.iringtools.ontologyservice.presentation.presentationmodels;
 
-using org.ids_adi.iring.referenceData;
-
 namespace org.iringtools.modules.status
 {
     public class StatusModule : ModuleBase

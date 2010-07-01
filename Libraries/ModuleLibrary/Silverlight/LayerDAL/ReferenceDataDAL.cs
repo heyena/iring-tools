@@ -7,7 +7,6 @@ using org.iringtools.modulelibrary.events;
 using org.iringtools.modulelibrary.types;
 using System.Linq;
 using System.Net;
-using org.ids_adi.iring.referenceData;
 using org.iringtools.utility;
 using org.ids_adi.qmxf;
 using org.iringtools.modulelibrary.extensions;

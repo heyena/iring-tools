@@ -79,14 +79,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ExternalBinaries\WCFRESTStarterKit\Microsoft.ServiceModel.Web.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate, Version=2.1.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\NHibernate.dll</HintPath>
-    </Reference>
-    <Reference Include="NHibernate.ByteCode.Castle, Version=2.1.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\NHibernate.ByteCode.Castle.dll</HintPath>
-    </Reference>
     <Reference Include="Ninject, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ExternalBinaries\Ninject2\Ninject.dll</HintPath>
@@ -159,10 +151,6 @@
     <ProjectReference Include="..\..\Libraries\UtilityLibrary\Desktop\UtilityLibrary.Desktop.csproj">
       <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
       <Name>UtilityLibrary.Desktop</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NHibernateDataLayer\NHibernateDataLayer.csproj">
-      <Project>{A9DAEA2D-26AC-4FFE-A4B0-3DEF95DE4168}</Project>
-      <Name>NHibernateDataLayer</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

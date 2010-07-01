@@ -17,8 +17,6 @@ using org.iringtools.ontologyservice.presentation.presentationmodels;
 
 using org.iringtools.informationmodel.usercontrols;
 
-using org.ids_adi.iring;
-using org.ids_adi.iring.referenceData;
 using org.ids_adi.qmxf;
 
 

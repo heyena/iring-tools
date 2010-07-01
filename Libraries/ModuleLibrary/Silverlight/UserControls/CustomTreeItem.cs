@@ -17,7 +17,6 @@ using org.iringtools.modulelibrary.extensions;
 
 using org.iringtools.informationmodel.events;
 
-using org.ids_adi.iring.referenceData;
 using org.iringtools.utility;
 using org.ids_adi.qmxf;
 using org.iringtools.ontologyservice.presentation;

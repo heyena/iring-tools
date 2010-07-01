@@ -95,6 +95,16 @@ namespace org.iringtools.adapter
     }
 
     /// <summary>
+    /// Updates scopes.
+    /// </summary>
+    /// <param name="scopes">The new scopes object with which the mapping file is to be updated.</param>
+    /// <returns>Returns the response as success/failure.</returns>
+    public Response UpdateScopes(List<ScopeProject> scopes)
+    {
+      return _adapterProvider.UpdateScopes(scopes);
+    }
+
+    /// <summary>
     /// Updates mapping.
     /// </summary>
     /// <param name="mapping">The new mapping object with which the mapping file is to be updated.</param>
@@ -135,6 +145,20 @@ namespace org.iringtools.adapter
     public XElement Get(string projectName, string applicationName, string graphName, string identifier, string format)
     {
         return _adapterProvider.GetProjection(projectName, applicationName, graphName, identifier, format);
+    }
+
+    /// <summary>
+    /// Calls adapter provider to get a specific data object in specific format
+    /// </summary>
+    /// <param name="projectName"></param>
+    /// <param name="applicationName"></param>
+    /// <param name="graphName"></param>
+    /// <param name="identifier"></param>
+    /// <param name="format"></param>
+    /// <returns></returns>
+    public XElement GetIndividual(string projectName, string applicationName, string alias, string classId, string identifier, string graphName, string format)
+    {
+      throw new NotImplementedException();
     }
 
     /// <summary>
@@ -205,13 +229,13 @@ namespace org.iringtools.adapter
       return _adapterProvider.Delete(projectName, applicationName, graphName);
     }
 
-    /// <summary>
-    /// Pass the call to adapter service provider
-    /// </summary>
-    /// <returns>Returns the response as success/failure.</returns>
-    public Response UpdateDatabaseDictionary(string projectName, string applicationName, DatabaseDictionary dbDictionary)
-    {
-      return _adapterProvider.UpdateDatabaseDictionary(projectName, applicationName, dbDictionary);
-    }
+    ///// <summary>
+    ///// Pass the call to adapter service provider
+    ///// </summary>
+    ///// <returns>Returns the response as success/failure.</returns>
+    //public Response UpdateDatabaseDictionary(string projectName, string applicationName, DatabaseDictionary dbDictionary)
+    //{
+    //  return _adapterProvider.UpdateDatabaseDictionary(projectName, applicationName, dbDictionary);
+    //}
   }
 }

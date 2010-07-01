@@ -14,8 +14,6 @@ using org.iringtools.modules.edits.editsregion;
 using org.iringtools.ontologyservice.presentation;
 using org.iringtools.ontologyservice.presentation.presentationmodels;
 
-using org.ids_adi.iring.referenceData;
-
 namespace org.iringtools.modules.edits
 {
     public class EditsModule : ModuleBase

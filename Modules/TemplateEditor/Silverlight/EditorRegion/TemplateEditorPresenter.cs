@@ -30,7 +30,6 @@ using org.iringtools.ontologyservice.presentation;
 using org.iringtools.ontologyservice.presentation.presentationmodels;
 
 using org.ids_adi.qmxf;
-using org.ids_adi.iring.referenceData;
 using org.iringtools.library;
 
 namespace org.iringtools.modules.templateeditor.editorregion

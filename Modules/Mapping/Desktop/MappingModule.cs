@@ -18,8 +18,6 @@ using org.iringtools.modules.medatasourceregion;
 using org.iringtools.modules.memappingregion;
 using org.iringtools.modules.mainregion;
 
-using org.ids_adi.iring.referenceData;
-
 namespace org.iringtools.modules
 {
   public class MappingModule : ModuleBase

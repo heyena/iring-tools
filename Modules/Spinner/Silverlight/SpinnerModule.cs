@@ -12,8 +12,6 @@ using org.iringtools.modulelibrary.layerdal;
 using org.iringtools.ontologyservice.presentation;
 using org.iringtools.ontologyservice.presentation.presentationmodels;
 
-using org.ids_adi.iring.referenceData;
-
 namespace org.iringtools.modules.spinner
 {
     public class SpinnerModule : ModuleBase
