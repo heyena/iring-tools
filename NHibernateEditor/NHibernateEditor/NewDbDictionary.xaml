@@ -1,4 +1,4 @@
-﻿<basic:ChildWindow x:Class="DbDictionaryEditor.NewDbDictionary"
+﻿<basic:ChildWindow x:Class="ApplicationEditor.NewDbDictionary"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:basic="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls"         
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 

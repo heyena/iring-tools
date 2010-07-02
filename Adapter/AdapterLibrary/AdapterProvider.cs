@@ -51,6 +51,7 @@ namespace org.iringtools.adapter
 
     private IKernel _kernel = null;
     private AdapterSettings _settings = null;
+    private List<ScopeProject> _scopes = null;
     private IDataLayer _dataLayer = null;
     private ISemanticLayer _semanticEngine = null;
     private IProjectionLayer _projectionEngine = null;
@@ -64,17 +65,20 @@ namespace org.iringtools.adapter
     private IList<IDataObject> _dataObjects = new List<IDataObject>(); // dictionary of object names and list of data objects
     private Dictionary<string, List<string>> _classIdentifiers = new Dictionary<string, List<string>>(); // dictionary of class ids and list of identifiers
 
-    private bool _isInitialized = false;
+    private bool _isScopeInitialized = false;
+    private bool _isDataLayerInitialized = false;
 
     [Inject]
     public AdapterProvider(NameValueCollection settings)
     {
       var ninjectSettings = new NinjectSettings { LoadExtensions = false };
-      _kernel = new StandardKernel(ninjectSettings, new XmlExtensionModule());
+      _kernel = new StandardKernel(ninjectSettings, new AdapterModule());
 
-      _kernel.Load(new AdapterModule());
+      _kernel.Load(new XmlExtensionModule());
       _settings = _kernel.Get<AdapterSettings>();
       _settings.AppendSettings(settings);
+
+      Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
 
       //TODO: Move me!
       #region initialize webHttpClient for converting old mapping
@@ -100,37 +104,143 @@ namespace org.iringtools.adapter
       }
       #endregion
 
-      Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
+      string scopesPath = String.Format("{0}Scopes.xml", _settings["XmlPath"]);
+      _settings["ScopesPath"] = scopesPath;
+
+      if (File.Exists(scopesPath))
+      {
+        _scopes = Utility.Read<List<ScopeProject>>(scopesPath);
+      }
+      else
+      {
+        _scopes = new List<ScopeProject>();
+        Utility.Write<List<ScopeProject>>(_scopes, scopesPath);
+      }
     }
 
     #region public methods
+
+    #region application methods
+
     public List<ScopeProject> GetScopes()
     {
-      string scopesPath = string.Format("{0}Scopes.xml", _settings["XmlPath"]);
-
       try
       {
-        if (File.Exists(scopesPath))
-        {
-          return Utility.Read<List<ScopeProject>>(scopesPath);
-        }
-
-        return new List<ScopeProject>();
+        return _scopes;
       }
       catch (Exception ex)
       {
         _logger.Error(string.Format("Error in GetScopes: {0}", ex));
-        throw new Exception(string.Format("Error getting the list of projects/applications from path [{0}]: {1}", scopesPath, ex));
+        throw new Exception(string.Format("Error getting the list of scopes: {0}", ex));
       }
     }
 
+    public Response UpdateScopes(List<ScopeProject> scopes)
+    {
+      Response response = new Response();
+
+      try
+      {
+        foreach (ScopeProject project in scopes)
+        {
+          foreach (ScopeApplication application in project.Applications)
+          {
+            UpdateScopes(
+              project.Name,
+              project.Description,
+              application.Name,
+              application.Description
+            );
+          }
+        }
+
+        response.Add("Scopes have been updated successfully.");
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in UpdateScopes: {0}", ex));
+
+        response.Level = StatusLevel.Error;
+        response.Add(string.Format("Error saving scopes: {0}", ex));
+      }
+
+      return response;
+    }
+
+    public Response DeleteScope(string projectName, string applicationName)
+    {
+      Response response = new Response();
+
+      try
+      {
+        InitializeScope(projectName, applicationName);
+
+        DeleteScope();
+
+        response.Add("Scopes have been updated successfully.");
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in UpdateScopes: {0}", ex));
+
+        response.Level = StatusLevel.Error;
+        response.Add(string.Format("Error saving scopes: {0}", ex));
+      }
+
+      return response;
+    }
+
+    public XElement GetBinding(string projectName, string applicationName)
+    {
+      XElement binding = null;
+
+      try
+      {
+        InitializeScope(projectName, applicationName);
+
+        binding = XElement.Load(_settings["BindingConfigurationPath"]);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in UpdateBindingConfiguration: {0}", ex));
+        throw ex;
+      }
+      return binding;
+    }
+
+    public Response UpdateBinding(string projectName, string applicationName, XElement binding)
+    {
+      Response response = new Response();
+
+      try
+      {
+        InitializeScope(projectName, applicationName);
+
+        XDocument bindingConfiguration = new XDocument();
+        bindingConfiguration.Add(binding);
+
+        bindingConfiguration.Save(_settings["BindingConfigurationPath"]);
+
+        response.Add("BindingConfiguration was saved.");
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in UpdateBindingConfiguration: {0}", ex));
+        throw ex;
+      }
+      return response;
+    }
+
+    #endregion
+
+    #region adapter methods
     public Manifest GetManifest(string projectName, string applicationName)
     {
       string path = string.Format("{0}Mapping.{1}.{2}.xml", _settings["XmlPath"], projectName, applicationName);
 
       try
       {
-        Initialize(projectName, applicationName);
+        InitializeScope(projectName, applicationName);
 
         Manifest manifest = new Manifest();
         manifest.Graphs = new List<ManifestGraph>();
@@ -157,7 +267,9 @@ namespace org.iringtools.adapter
     {
       try
       {
-        Initialize(projectName, applicationName);
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
+
         return _dataLayer.GetDictionary();
       }
       catch (Exception ex)
@@ -171,175 +283,14 @@ namespace org.iringtools.adapter
     {
       try
       {
-        Initialize(projectName, applicationName);
+        InitializeScope(projectName, applicationName);
+
         return _mapping;
       }
       catch (Exception ex)
       {
         _logger.Error(string.Format("Error in GetMapping: {0}", ex));
         throw new Exception(string.Format("Error getting mapping: {0}", ex));
-      }
-    }
-
-    private string GetClassName(string classId)
-    {
-      QMXF qmxf = _webHttpClient.Get<QMXF>("/classes/" + classId.Substring(classId.IndexOf(":") + 1), false);
-      return qmxf.classDefinitions.First().name.First().value;
-    }
-
-    private KeyValuePair<string, Dictionary<string, string>> GetQmxfTemplateRolesPair(string templateId)
-    {
-      string templateName = String.Empty;
-      Dictionary<string, string> roleIdNames = new Dictionary<string, string>();
-
-      QMXF qmxf = _webHttpClient.Get<QMXF>("/templates/" + templateId.Substring(templateId.IndexOf(":") + 1), false);
-
-      if (qmxf.templateDefinitions.Count > 0)
-      {
-        TemplateDefinition tplDef = qmxf.templateDefinitions.First();
-        templateName = tplDef.name.First().value;
-
-        foreach (RoleDefinition roleDef in tplDef.roleDefinition)
-        {
-          roleIdNames.Add(roleDef.identifier.Replace("http://tpl.rdlfacade.org/data#", "tpl:"), roleDef.name.First().value);
-        }
-      }
-      else if (qmxf.templateQualifications.Count > 0)
-      {
-        TemplateQualification tplQual = qmxf.templateQualifications.First();
-        templateName = tplQual.name.First().value;
-
-        foreach (RoleQualification roleQual in tplQual.roleQualification)
-        {
-          roleIdNames.Add(roleQual.qualifies.Replace("http://tpl.rdlfacade.org/data#", "tpl:"), roleQual.name.First().value);
-        }
-      }
-
-      return new KeyValuePair<string, Dictionary<string, string>>(templateName, roleIdNames);
-    }
-
-    private void ConvertClassMap(ref GraphMap newGraphMap, ref RoleMap parentRoleMap, XElement classMap, string dataObjectMap)
-    {
-      string classId = classMap.Attribute("classId").Value;
-
-      ClassMap newClassMap = new ClassMap();
-      newClassMap.classId = classId;
-      newClassMap.identifiers.Add(dataObjectMap + "." + classMap.Attribute("identifier").Value);
-
-      if (parentRoleMap == null)
-      {        
-        newClassMap.name = GetClassName(classId);
-      }
-      else 
-      {
-        newClassMap.name = classMap.Attribute("name").Value;
-        parentRoleMap.classMap = newClassMap;
-      }
-
-      List<TemplateMap> newTemplateMaps = new List<TemplateMap>();
-      newGraphMap.classTemplateListMaps.Add(newClassMap, newTemplateMaps);
-
-      IEnumerable<XElement> templateMaps = classMap.Element("TemplateMaps").Elements("TemplateMap");
-      KeyValuePair<string, Dictionary<string, string>> templateNameRolesPair;
-        
-      foreach (XElement templateMap in templateMaps)
-      {
-        string classRoleId = String.Empty;
-
-        try
-        {
-          classRoleId = templateMap.Attribute("classRole").Value;
-        }
-        catch (Exception)
-        {
-          continue; // class role not found, skip this template
-        }
-
-        IEnumerable<XElement> roleMaps = templateMap.Element("RoleMaps").Elements("RoleMap");
-        string templateId = templateMap.Attribute("templateId").Value;
-        
-        TemplateMap newTemplateMap = new TemplateMap();
-        newTemplateMap.templateId = templateId;
-        newTemplateMaps.Add(newTemplateMap);
-
-        if (_qmxfTemplateResultCache.ContainsKey(templateId))
-        {
-          templateNameRolesPair = _qmxfTemplateResultCache[templateId];
-        }
-        else
-        {
-          templateNameRolesPair = GetQmxfTemplateRolesPair(templateId);
-          _qmxfTemplateResultCache[templateId] = templateNameRolesPair;
-        }
-
-        newTemplateMap.name = templateNameRolesPair.Key;
-
-        RoleMap newClassRoleMap = new RoleMap();
-        newClassRoleMap.type = RoleType.Possessor;
-        newTemplateMap.roleMaps.Add(newClassRoleMap);
-        newClassRoleMap.roleId = classRoleId;
-        
-        Dictionary<string, string> roles = templateNameRolesPair.Value;
-        newClassRoleMap.name = roles[classRoleId];
-
-        for (int i = 0; i < roleMaps.Count(); i++)
-        {
-          XElement roleMap = roleMaps.ElementAt(i);
-
-          string value = String.Empty;
-          try { value = roleMap.Attribute("value").Value; }
-          catch (Exception) { }
-
-          string reference = String.Empty;
-          try { reference = roleMap.Attribute("reference").Value; }
-          catch (Exception) { }
-
-          string propertyName = String.Empty;
-          try { propertyName = roleMap.Attribute("propertyName").Value; }
-          catch (Exception) { }
-
-          string valueList = String.Empty;
-          try { valueList = roleMap.Attribute("valueList").Value; }
-          catch (Exception) { }
-
-          RoleMap newRoleMap = new RoleMap();
-          newTemplateMap.roleMaps.Add(newRoleMap);
-          newRoleMap.roleId = roleMap.Attribute("roleId").Value;
-          newRoleMap.name = roles[newRoleMap.roleId];
-
-          if (!String.IsNullOrEmpty(value))
-          {
-            newRoleMap.type = RoleType.FixedValue;
-            newRoleMap.value = value;
-          }
-          else if (!String.IsNullOrEmpty(reference))
-          {
-            newRoleMap.type = RoleType.Reference;
-            newRoleMap.value = reference;
-          }
-          else if (!String.IsNullOrEmpty(propertyName))
-          {
-            newRoleMap.type = RoleType.Property;
-            newRoleMap.propertyName = dataObjectMap + "." + propertyName;
-
-            if (!String.IsNullOrEmpty(valueList))
-            {
-              newRoleMap.valueList = valueList;
-            }
-            else
-            {
-              newRoleMap.dataType = roleMap.Attribute("dataType").Value;
-            }
-          }
-
-          if (roleMap.HasElements)
-          {
-            newRoleMap.type = RoleType.Reference;
-            newRoleMap.value = roleMap.Attribute("dataType").Value;
-
-            ConvertClassMap(ref newGraphMap, ref newRoleMap, roleMap.Element("ClassMap"), dataObjectMap);
-          }
-        }
       }
     }
 
@@ -428,45 +379,14 @@ namespace org.iringtools.adapter
       return response;
     }
 
-    public Response UpdateScopes(List<ScopeProject> scopes)
-    {
-      Response response = new Response();
-      
-      try
-      {
-        foreach (ScopeProject project in scopes)
-        {
-          foreach (ScopeApplication application in project.Applications)
-          {
-            UpdateScopes(
-              project.Name, 
-              project.Description, 
-              application.Name, 
-              application.Description
-            );
-          }
-        }
-
-        response.Add("Scopes have been updated successfully.");
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(string.Format("Error in UpdateScopes: {0}", ex));
-
-        response.Level = StatusLevel.Error;
-        response.Add(string.Format("Error saving scopes: {0}", ex));
-      }
-
-      return response;
-    }
-
     public Response RefreshAll(string projectName, string applicationName)
     {
       Response response = new Response();
 
       try
       {
-        Initialize(projectName, applicationName);
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
 
         DateTime start = DateTime.Now;
 
@@ -498,7 +418,8 @@ namespace org.iringtools.adapter
 
       try
       {
-        Initialize(projectName, applicationName);
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
 
         response.Append(Refresh(graphName));
       }
@@ -517,7 +438,8 @@ namespace org.iringtools.adapter
     {
       try
       {
-        Initialize(projectName, applicationName);
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
 
         IList<string> identifiers = new List<string>() { identifier };
 
@@ -545,7 +467,8 @@ namespace org.iringtools.adapter
     {
       try
       {
-        Initialize(projectName, applicationName);
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
 
         if (format != null)
         {
@@ -569,7 +492,8 @@ namespace org.iringtools.adapter
 
     public IList<IDataObject> GetDataObjects(string projectName, string applicationName, string graphName, string format, XElement xml)
     {
-        Initialize(projectName, applicationName);
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
 
         if (format != null)
         {
@@ -598,7 +522,8 @@ namespace org.iringtools.adapter
       Response response = new Response();
       try
       {
-        Initialize(projectName, applicationName);
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
         
         _projectionEngine = _kernel.Get<IProjectionLayer>("dto");
 
@@ -646,7 +571,9 @@ namespace org.iringtools.adapter
 
       try
       {
-        Initialize(projectName, applicationName);
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
+
         DateTime startTime = DateTime.Now;
 
         #region move this portion to dotNetRdfEngine?
@@ -734,7 +661,7 @@ namespace org.iringtools.adapter
 
       try
       {
-        Initialize(projectName, applicationName);
+        InitializeScope(projectName, applicationName);
 
         _semanticEngine = _kernel.Get<ISemanticLayer>("dotNetRDF");
 
@@ -756,7 +683,7 @@ namespace org.iringtools.adapter
 
     public Response Delete(string projectName, string applicationName, string graphName)
     {
-      Initialize(projectName, applicationName);
+      InitializeScope(projectName, applicationName);
       
       _semanticEngine = _kernel.Get<ISemanticLayer>("dotNetRDF");
 
@@ -764,15 +691,34 @@ namespace org.iringtools.adapter
     }
     #endregion
 
+    #endregion
+
     #region private methods
-    private void Initialize(string projectName, string applicationName)
+    private void InitializeScope(string projectName, string applicationName)
     {
       try
       {
-        if (!_isInitialized)
+        if (!_isScopeInitialized)
         {
+          bool isScopeValid = false;
+          foreach (ScopeProject project in _scopes)
+          {
+            if (project.Name == projectName)
+            {
+              foreach (ScopeApplication application in project.Applications)
+              {
+                if (application.Name == applicationName)
+                {
+                  isScopeValid = true;
+                }
+              }
+            }
+          }
+
           string scope = string.Format("{0}.{1}", projectName, applicationName);
-          
+
+          if (!isScopeValid) throw new Exception(String.Format("Invalid scope [{0}].", scope));
+
           _settings.Add("ProjectName",              projectName);
           _settings.Add("ApplicationName",          applicationName);
           _settings.Add("Scope", scope);
@@ -787,21 +733,34 @@ namespace org.iringtools.adapter
             AppSettingsReader appSettings = new AppSettingsReader(appSettingsPath);
             _settings.AppendSettings(appSettings);
           }
-
-          string bindingConfigurationPath = String.Format("{0}\\Xml\\BindingConfiguration.{1}.xml",
-            _settings["BaseDirectoryPath"], 
+          string relativePath = String.Format("{0}BindingConfiguration.{1}.xml",
+            _settings["XmlPath"],
             scope
           );
 
+          //Ninject Extension requires fully qualified path.
+          string bindingConfigurationPath = Path.Combine(
+            _settings["BaseDirectoryPath"], 
+            relativePath
+          );
+
+          _settings["BindingConfigurationPath"] = bindingConfigurationPath;
+
+          if (!File.Exists(bindingConfigurationPath))
+          {
+            XElement binding = new XElement("module",
+              new XAttribute("name", _settings["Scope"]),
+              new XElement("bind",
+                new XAttribute("name", "DataLayer"),
+                new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
+                new XAttribute("to", "org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateDataLayer")
+              )
+            );
+
+            binding.Save(bindingConfigurationPath);
+          }
+
           _kernel.Load(bindingConfigurationPath);
-
-          //BindingConfiguration bindingConfiguration = 
-          //  Utility.Read<BindingConfiguration>(bindingConfigurationPath, false);
-          //_kernel.Load(new DynamicModule(bindingConfiguration));
-
-          _dataLayer = _kernel.Get<IDataLayer>("DataLayer");
-          _dataDictionary = _dataLayer.GetDictionary();
-          _kernel.Bind<DataDictionary>().ToConstant(_dataDictionary);
 
           string mappingPath = String.Format("{0}Mapping.{1}.xml",
             _settings["XmlPath"],
@@ -819,7 +778,28 @@ namespace org.iringtools.adapter
           }
           _kernel.Bind<Mapping>().ToConstant(_mapping);
 
-          _isInitialized = true;
+          _isScopeInitialized = true;
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error initializing application: {0}", ex));
+        throw new Exception(string.Format("Error initializing application: {0})", ex));
+      }
+    }
+    
+    private void InitializeDataLayer()
+    {
+      try
+      {
+        if (!_isDataLayerInitialized)
+        {
+          _dataLayer = _kernel.Get<IDataLayer>("DataLayer");
+
+          _dataDictionary = _dataLayer.GetDictionary();
+          _kernel.Bind<DataDictionary>().ToConstant(_dataDictionary);
+
+          _isDataLayerInitialized = true;
         }
       }
       catch (Exception ex)
@@ -854,142 +834,266 @@ namespace org.iringtools.adapter
         _dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, null);
     }
 
-    //private void UpdateBindingConfiguration(string projectName, string applicationName, Binding binding)
-    //{
-    //  try
-    //  {
-    //    string bindingConfigurationPath = string.Format("{0}BindingConfiguration.{1}.{2}.xml", _settings["XmlPath"], projectName, applicationName);
-
-    //    if (File.Exists(bindingConfigurationPath))
-    //    {
-    //      BindingConfiguration bindingConfiguration = Utility.Read<BindingConfiguration>(bindingConfigurationPath, false);
-    //      bool bindingExists = false;
-
-    //      // Update binding if exists
-    //      for (int i = 0; i < bindingConfiguration.Bindings.Count; i++)
-    //      {
-    //        if (bindingConfiguration.Bindings[i].Name.ToUpper() == binding.Name.ToUpper())
-    //        {
-    //          bindingConfiguration.Bindings[i] = binding;
-    //          bindingExists = true;
-    //          break;
-    //        }
-    //      }
-
-    //      // Add binding if not exist
-    //      if (!bindingExists)
-    //      {
-    //        bindingConfiguration.Bindings.Add(binding);
-    //      }
-
-    //      Utility.Write<BindingConfiguration>(bindingConfiguration, bindingConfigurationPath, false);
-    //    }
-    //    else
-    //    {
-    //      BindingConfiguration bindingConfiguration = new BindingConfiguration();
-    //      bindingConfiguration.Bindings = new List<Binding>();
-    //      bindingConfiguration.Bindings.Add(binding);
-    //      Utility.Write<BindingConfiguration>(bindingConfiguration, bindingConfigurationPath, false);
-    //    }
-    //  }
-    //  catch (Exception ex)
-    //  {
-    //    _logger.Error(string.Format("Error in UpdateBindingConfiguration: {0}", ex));
-    //    throw ex;
-    //  }
-    //}
-
     private void UpdateScopes(string projectName, string projectDescription, string applicationName, string applicationDescription)
     {
       try
       {
-        string scopesPath = string.Format("{0}Scopes.xml", _settings["XmlPath"]);
+        bool projectExists = false;
+        bool applicationExists = false;
+        ScopeProject existingProject = null;
 
-        if (File.Exists(scopesPath))
+        foreach (ScopeProject project in _scopes)
         {
-          List<ScopeProject> projects = Utility.Read<List<ScopeProject>>(scopesPath);
-          bool projectExists = false;
-
-          foreach (ScopeProject project in projects)
+          if (project.Name.ToUpper() == projectName.ToUpper())
           {
-            bool applicationExists = false;
-
-            if (project.Name.ToUpper() == projectName.ToUpper())
+            foreach (ScopeApplication application in project.Applications)
             {
-              foreach (ScopeApplication application in project.Applications)
+              if (application.Name.ToUpper() == applicationName.ToUpper())
               {
-                if (application.Name.ToUpper() == applicationName.ToUpper())
-                {
-                  application.Description = applicationDescription;
-                  applicationExists = true;
-                  break;
-                }
-
-
-                if (!applicationExists)
-                {
-                  project.Applications.Add(
-                    new ScopeApplication()
-                    {
-                      Name = applicationName,
-                      Description = applicationDescription,
-                    }
-                  );
-                }
-
-                project.Description = projectDescription;
-                projectExists = true;
+                applicationExists = true;
                 break;
               }
+
+              existingProject = project;
+              projectExists = true;
+              break;
             }
-
-            // project does not exist, add it
-            if (!projectExists)
-            {
-              ScopeProject newProject = new ScopeProject()
-              {
-                Name = projectName,
-                Description = projectDescription,
-                Applications = new List<ScopeApplication>()
-               {
-                 new ScopeApplication()
-                 {
-                   Name = applicationName,
-                   Description = applicationDescription,
-                 }
-               }
-              };
-
-              projects.Add(newProject);
-            }
-
-            Utility.Write<List<ScopeProject>>(projects, scopesPath, true);
           }
         }
-        else
+
+        // project does not exist, add it
+        if (!projectExists)
         {
-          List<ScopeProject> projects = new List<ScopeProject>()
+          ScopeProject newProject = new ScopeProject()
           {
-            new ScopeProject()
+            Name = projectName,
+            Description = projectDescription,
+            Applications = new List<ScopeApplication>()
             {
-              Name = projectName,
-              Applications = new List<ScopeApplication>()
-               {
-                 new ScopeApplication()
-                 {
-                   Name = applicationName
-                 }
-               }
+              new ScopeApplication()
+              {
+                Name = applicationName,
+                Description = applicationDescription,
+              }
             }
           };
 
-          Utility.Write<List<ScopeProject>>(projects, scopesPath, true);
+          _scopes.Add(newProject);
         }
+        else if (!applicationExists)
+        {
+          existingProject.Applications.Add(
+            new ScopeApplication()
+            {
+              Name = applicationName,
+              Description = applicationDescription,
+            }
+          );
+        }
+
+        Utility.Write<List<ScopeProject>>(_scopes, _settings["ScopesPath"], true);
       }
       catch (Exception ex)
       {
         _logger.Error(string.Format("Error in UpdateScopes: {0}", ex));
         throw ex;
+      }
+    }
+
+    private void DeleteScope()
+    {
+      try
+      {
+        //Clean up ScopeList
+        foreach (ScopeProject project in _scopes)
+        {
+          if (project.Name.ToUpper() == _settings["ProjectName"].ToUpper())
+          {
+            foreach (ScopeApplication application in project.Applications)
+            {
+              if (application.Name.ToUpper() == _settings["ApplicationName"].ToUpper())
+              {
+                project.Applications.Remove(application);
+              }
+              break;
+            }
+            break;
+          }
+        }
+
+        //Save ScopeList
+        Utility.Write<List<ScopeProject>>(_scopes, _settings["ScopesPath"], true);
+
+        //BindingConfig
+        File.Delete(_settings["BindingConfigurationPath"]);
+
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in DeleteScope: {0}", ex));
+        throw ex;
+      }
+    }
+
+    private string GetClassName(string classId)
+    {
+      QMXF qmxf = _webHttpClient.Get<QMXF>("/classes/" + classId.Substring(classId.IndexOf(":") + 1), false);
+      return qmxf.classDefinitions.First().name.First().value;
+    }
+
+    private KeyValuePair<string, Dictionary<string, string>> GetQmxfTemplateRolesPair(string templateId)
+    {
+      string templateName = String.Empty;
+      Dictionary<string, string> roleIdNames = new Dictionary<string, string>();
+
+      QMXF qmxf = _webHttpClient.Get<QMXF>("/templates/" + templateId.Substring(templateId.IndexOf(":") + 1), false);
+
+      if (qmxf.templateDefinitions.Count > 0)
+      {
+        TemplateDefinition tplDef = qmxf.templateDefinitions.First();
+        templateName = tplDef.name.First().value;
+
+        foreach (RoleDefinition roleDef in tplDef.roleDefinition)
+        {
+          roleIdNames.Add(roleDef.identifier.Replace("http://tpl.rdlfacade.org/data#", "tpl:"), roleDef.name.First().value);
+        }
+      }
+      else if (qmxf.templateQualifications.Count > 0)
+      {
+        TemplateQualification tplQual = qmxf.templateQualifications.First();
+        templateName = tplQual.name.First().value;
+
+        foreach (RoleQualification roleQual in tplQual.roleQualification)
+        {
+          roleIdNames.Add(roleQual.qualifies.Replace("http://tpl.rdlfacade.org/data#", "tpl:"), roleQual.name.First().value);
+        }
+      }
+
+      return new KeyValuePair<string, Dictionary<string, string>>(templateName, roleIdNames);
+    }
+
+    private void ConvertClassMap(ref GraphMap newGraphMap, ref RoleMap parentRoleMap, XElement classMap, string dataObjectMap)
+    {
+      string classId = classMap.Attribute("classId").Value;
+
+      ClassMap newClassMap = new ClassMap();
+      newClassMap.classId = classId;
+      newClassMap.identifiers.Add(dataObjectMap + "." + classMap.Attribute("identifier").Value);
+
+      if (parentRoleMap == null)
+      {
+        newClassMap.name = GetClassName(classId);
+      }
+      else
+      {
+        newClassMap.name = classMap.Attribute("name").Value;
+        parentRoleMap.classMap = newClassMap;
+      }
+
+      List<TemplateMap> newTemplateMaps = new List<TemplateMap>();
+      newGraphMap.classTemplateListMaps.Add(newClassMap, newTemplateMaps);
+
+      IEnumerable<XElement> templateMaps = classMap.Element("TemplateMaps").Elements("TemplateMap");
+      KeyValuePair<string, Dictionary<string, string>> templateNameRolesPair;
+
+      foreach (XElement templateMap in templateMaps)
+      {
+        string classRoleId = String.Empty;
+
+        try
+        {
+          classRoleId = templateMap.Attribute("classRole").Value;
+        }
+        catch (Exception)
+        {
+          continue; // class role not found, skip this template
+        }
+
+        IEnumerable<XElement> roleMaps = templateMap.Element("RoleMaps").Elements("RoleMap");
+        string templateId = templateMap.Attribute("templateId").Value;
+
+        TemplateMap newTemplateMap = new TemplateMap();
+        newTemplateMap.templateId = templateId;
+        newTemplateMaps.Add(newTemplateMap);
+
+        if (_qmxfTemplateResultCache.ContainsKey(templateId))
+        {
+          templateNameRolesPair = _qmxfTemplateResultCache[templateId];
+        }
+        else
+        {
+          templateNameRolesPair = GetQmxfTemplateRolesPair(templateId);
+          _qmxfTemplateResultCache[templateId] = templateNameRolesPair;
+        }
+
+        newTemplateMap.name = templateNameRolesPair.Key;
+
+        RoleMap newClassRoleMap = new RoleMap();
+        newClassRoleMap.type = RoleType.Possessor;
+        newTemplateMap.roleMaps.Add(newClassRoleMap);
+        newClassRoleMap.roleId = classRoleId;
+
+        Dictionary<string, string> roles = templateNameRolesPair.Value;
+        newClassRoleMap.name = roles[classRoleId];
+
+        for (int i = 0; i < roleMaps.Count(); i++)
+        {
+          XElement roleMap = roleMaps.ElementAt(i);
+
+          string value = String.Empty;
+          try { value = roleMap.Attribute("value").Value; }
+          catch (Exception) { }
+
+          string reference = String.Empty;
+          try { reference = roleMap.Attribute("reference").Value; }
+          catch (Exception) { }
+
+          string propertyName = String.Empty;
+          try { propertyName = roleMap.Attribute("propertyName").Value; }
+          catch (Exception) { }
+
+          string valueList = String.Empty;
+          try { valueList = roleMap.Attribute("valueList").Value; }
+          catch (Exception) { }
+
+          RoleMap newRoleMap = new RoleMap();
+          newTemplateMap.roleMaps.Add(newRoleMap);
+          newRoleMap.roleId = roleMap.Attribute("roleId").Value;
+          newRoleMap.name = roles[newRoleMap.roleId];
+
+          if (!String.IsNullOrEmpty(value))
+          {
+            newRoleMap.type = RoleType.FixedValue;
+            newRoleMap.value = value;
+          }
+          else if (!String.IsNullOrEmpty(reference))
+          {
+            newRoleMap.type = RoleType.Reference;
+            newRoleMap.value = reference;
+          }
+          else if (!String.IsNullOrEmpty(propertyName))
+          {
+            newRoleMap.type = RoleType.Property;
+            newRoleMap.propertyName = dataObjectMap + "." + propertyName;
+
+            if (!String.IsNullOrEmpty(valueList))
+            {
+              newRoleMap.valueList = valueList;
+            }
+            else
+            {
+              newRoleMap.dataType = roleMap.Attribute("dataType").Value;
+            }
+          }
+
+          if (roleMap.HasElements)
+          {
+            newRoleMap.type = RoleType.Reference;
+            newRoleMap.value = roleMap.Attribute("dataType").Value;
+
+            ConvertClassMap(ref newGraphMap, ref newRoleMap, roleMap.Element("ClassMap"), dataObjectMap);
+          }
+        }
       }
     }
 

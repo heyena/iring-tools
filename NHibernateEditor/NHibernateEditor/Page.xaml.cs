@@ -14,7 +14,7 @@ using org.iringtools.utility;
 using org.iringtools.modulelibrary.events;
 
 
-namespace DbDictionaryEditor
+namespace ApplicationEditor
 {
     public partial class Page : UserControl
     {
@@ -34,7 +34,7 @@ namespace DbDictionaryEditor
 
         private bool isPosting;
 
-        private DBDictionaryEditorDAL _dal;
+        private ApplicationDAL _dal;
 
         //public event System.EventHandler<System.EventArgs> OnDataArrived;
 
@@ -54,7 +54,7 @@ namespace DbDictionaryEditor
                 editTreeNode = new EditTreeNode();
                 editTreeNode.Closed += new EventHandler(editTreeNode_Closed);
 
-                _dal = new DBDictionaryEditorDAL();
+                _dal = new ApplicationDAL();
 
                 _dal.OnDataArrived += dal_OnDataArrived;
 

@@ -83,7 +83,7 @@
     </div>--%>
     <div id="silverlightControlHost">
         <object data="data:application/x-silverlight-2," type="application/x-silverlight-2" width="100%" height="100%">
-		  <param name="source" value="ClientBin/NHibernateEditor.xap"/>
+		  <param name="source" value="ClientBin/ApplicationEditor.xap"/>
 		  <param name="onError" value="onSilverlightError" />
 		  <param name="background" value="white" />
 		  <param name="minRuntimeVersion" value="3.0.40624.0" />

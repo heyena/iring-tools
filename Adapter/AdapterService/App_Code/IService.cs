@@ -48,6 +48,14 @@ namespace org.iringtools.adapter
     Response UpdateScopes(List<ScopeProject> scopes);
 
     [OperationContract]
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/binding")]
+    XElement GetBinding(string projectName, string applicationName);
+
+    [OperationContract]
+    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/binding")]
+    Response UpdateBinding(string projectName, string applicationName, XElement binding);
+
+    [OperationContract]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/manifest")]
     Manifest GetManifest(string projectName, string applicationName);
 
@@ -103,8 +111,5 @@ namespace org.iringtools.adapter
     //[WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/put")]
     //Response Put(string projectName, string applicationName, string graphName, XElement dtoElement);
 
-    //[OperationContract]
-    //[WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/dbdictionary")]
-    //Response UpdateDatabaseDictionary(string projectName, string applicationName, DatabaseDictionary databaseDictionary);
   }
 }

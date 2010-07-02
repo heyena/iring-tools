@@ -1,5 +1,5 @@
 ﻿
-namespace DbDictionaryEditor
+namespace ApplicationEditor
 {
   public enum CompletedEventType
   {

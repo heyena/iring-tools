@@ -86,6 +86,15 @@ namespace org.iringtools.adapter
     }
 
     /// <summary>
+    /// Gets the list of projects by reading Project.xml.
+    /// </summary>
+    /// <returns>Returns a strongly typed list of ScopeProject objects.</returns>
+    public XElement GetBinding(string projectName, string applicationName)
+    {
+      return _adapterProvider.GetBinding(projectName, applicationName);
+    }
+
+    /// <summary>
     /// Gets the Data Dictionary by reading DataDictionary.xml
     /// </summary>
     /// <returns>Returns Data Dictionary object.</returns>
@@ -102,6 +111,15 @@ namespace org.iringtools.adapter
     public Response UpdateScopes(List<ScopeProject> scopes)
     {
       return _adapterProvider.UpdateScopes(scopes);
+    }
+
+    /// <summary>
+    /// Pass the call to adapter service provider
+    /// </summary>
+    /// <returns>Returns the response as success/failure.</returns>
+    public Response UpdateBinding(string projectName, string applicationName, XElement binding)
+    {
+      return _adapterProvider.UpdateBinding(projectName, applicationName, binding);
     }
 
     /// <summary>
@@ -228,14 +246,5 @@ namespace org.iringtools.adapter
     {
       return _adapterProvider.Delete(projectName, applicationName, graphName);
     }
-
-    ///// <summary>
-    ///// Pass the call to adapter service provider
-    ///// </summary>
-    ///// <returns>Returns the response as success/failure.</returns>
-    //public Response UpdateDatabaseDictionary(string projectName, string applicationName, DatabaseDictionary dbDictionary)
-    //{
-    //  return _adapterProvider.UpdateDatabaseDictionary(projectName, applicationName, dbDictionary);
-    //}
   }
 }

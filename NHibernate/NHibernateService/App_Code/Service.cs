@@ -8,47 +8,52 @@ using org.iringtools.library;
 using NHibernate;
 using log4net;
 using System.ServiceModel.Activation;
-using org.iringtools.nhibernate;
+using org.iringtools.application;
 
-namespace org.iringtools.nhibernate
+namespace org.iringtools.application
 {
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
     public class Service : IService
     {
         
         private static readonly ILog _logger = LogManager.GetLogger(typeof(Service));
-        private NHibernateProvider _nhibernateProvider = null;
+        private ApplicationProvider _applicationProvider = null;
        
 
         public Service()
         {
-            _nhibernateProvider = new NHibernateProvider(WebConfigurationManager.AppSettings);
+            _applicationProvider = new ApplicationProvider(WebConfigurationManager.AppSettings);
         }
 
         public DatabaseDictionary GetDbDictionary(string project, string application)
         {
-            return _nhibernateProvider.GetDbDictionary(project, application);
+            return _applicationProvider.GetDbDictionary(project, application);
         }
 
         public Response SaveDatabaseDictionary(string project, string application, DatabaseDictionary dict)
         {
-            return _nhibernateProvider.SaveDatabaseDictionary(project, application, dict);
+            return _applicationProvider.SaveDatabaseDictionary(project, application, dict);
+        }
+
+        public Response UpdateDatabaseDictionary(string project, string application, DatabaseDictionary dict)
+        {
+          return _applicationProvider.UpdateDatabaseDictionary(project, application, dict);
         }
 
         public DatabaseDictionary GetDatabaseSchema(Request request)
         {
-            return _nhibernateProvider.GetDatabaseSchema(request);
+            return _applicationProvider.GetDatabaseSchema(request);
         }
 
        
         public List<string> GetExistingDbDictionaryFiles()
         {
-            return _nhibernateProvider.GetExistingDbDictionaryFiles();
+            return _applicationProvider.GetExistingDbDictionaryFiles();
         }
 
         public String[] GetProviders()
         {
-            return _nhibernateProvider.GetProviders();
+            return _applicationProvider.GetProviders();
         }
     }
 }
