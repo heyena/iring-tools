@@ -8,13 +8,12 @@ namespace org.iringtools.library
   {
     public ServiceSettings()
     {
-      this.Add("BaseDirectoryPath",     AppDomain.CurrentDomain.BaseDirectory);
-      this.Add("ExecutingAssemblyName", "App_Code");
-      this.Add("XmlPath",               @".\XML\");
-      this.Add("ProxyCredentialToken",  String.Empty);
-      this.Add("ProxyHost",             String.Empty);
-      this.Add("ProxyPort",             String.Empty);
-      this.Add("IgnoreSslErrors",       "True");
+      this.Add("BaseDirectoryPath", AppDomain.CurrentDomain.BaseDirectory);
+      this.Add("XmlPath", @".\XML\");
+      this.Add("ProxyCredentialToken", String.Empty);
+      this.Add("ProxyHost", String.Empty);
+      this.Add("ProxyPort", String.Empty);
+      this.Add("IgnoreSslErrors", "True");
     }
 
     //Append Web.config settings

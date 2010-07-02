@@ -104,6 +104,9 @@
     <Content Include="XML\Repositories_Development.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\AssemblyInfo.cs">
+      <Link>AssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="App_Code\IService.cs" />
     <Compile Include="App_Code\Service.cs" />
     <Compile Include="Global.asax.cs">
@@ -127,6 +130,14 @@
       <Project>{F271963F-10B1-4495-B047-BD5A977ED187}</Project>
       <Name>ReferenceDataLibrary</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Logs\RefDataService.log" />
+    <None Include="Logs\RefDataService.log.2010-02-02" />
+    <None Include="Logs\RefDataService.log.2010-02-03" />
+    <None Include="Logs\RefDataService.log.2010-02-04" />
+    <None Include="Logs\RefDataService.log.2010-02-08" />
+    <None Include="Logs\RefDataService.log.2010-02-12" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

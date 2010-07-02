@@ -1,4 +1,4 @@
-﻿<basic:ChildWindow x:Class="DbDictionaryEditor.ResultsList"
+﻿<basic:ChildWindow x:Class="ApplicationEditor.ResultsList"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:toolkit="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Toolkit"

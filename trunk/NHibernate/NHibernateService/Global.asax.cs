@@ -3,7 +3,7 @@ using System.ServiceModel.Activation;
 using System.Web;
 using System.Web.Routing;
 
-namespace org.iringtools.nhibernate 
+namespace org.iringtools.application 
 {
     public class Global : HttpApplication
     {
@@ -15,7 +15,7 @@ namespace org.iringtools.nhibernate
         private void RegisterRoutes()
         {
             // Edit the base address of Service1 by replacing the "Service1" string below
-            RouteTable.Routes.Add(new ServiceRoute("", new WebServiceHostFactory(), typeof(org.iringtools.nhibernate.Service)));
+            RouteTable.Routes.Add(new ServiceRoute("", new WebServiceHostFactory(), typeof(org.iringtools.application.Service)));
         }
     }
 }

@@ -3,7 +3,7 @@ using System.ServiceModel;
 using System.ServiceModel.Web;
 using org.iringtools.library;
 
-namespace org.iringtools.nhibernate 
+namespace org.iringtools.application 
 {
     [ServiceContract]
     public interface IService
@@ -17,8 +17,12 @@ namespace org.iringtools.nhibernate
         DatabaseDictionary GetDatabaseSchema(Request request);
 
         [OperationContract]
-        [WebInvoke(Method = "POST", UriTemplate = "/{project}/{application}/savedbdictionary")]
+        [WebInvoke(Method = "POST", UriTemplate = "/{project}/{application}/dbdictionary")]
         Response SaveDatabaseDictionary(string project, string application, DatabaseDictionary dict);
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", UriTemplate = "/{project}/{application}/dbdictionary/commit")]
+        Response UpdateDatabaseDictionary(string project, string application, DatabaseDictionary dict);
 
         [OperationContract]
         [WebGet(UriTemplate = "/dbdictionaries")]

@@ -36,6 +36,7 @@ using Microsoft.CSharp;
 using log4net;
 using org.iringtools.library;
 using org.iringtools.utility;
+using org.iringtools.application;
 
 namespace org.iringtools.adapter.datalayer
 {
@@ -52,19 +53,19 @@ namespace org.iringtools.adapter.datalayer
     
     private static readonly ILog _logger = LogManager.GetLogger(typeof(EntityGenerator));
     
-    private string _executingAssemblyName = String.Empty;
     private string _namespace = String.Empty; 
-    private AdapterSettings _settings = null;
+    private ApplicationSettings _settings = null;
     private StringBuilder _mappingBuilder = null;
     private XmlTextWriter _mappingWriter = null;
     private List<DataObject> _dataObjects = null;
     private IndentedTextWriter _dataObjectWriter = null;
     private StringBuilder _dataObjectBuilder = null;
 
-    public EntityGenerator(AdapterSettings settings)
+    public EntityGenerator(ApplicationSettings settings)
     {
       _settings = settings;
-      _executingAssemblyName = _settings["ExecutingAssemblyName"];
+      _settings["AdapterBinaryPath"] = Path.Combine(_settings["AdapterPath"], _settings["BinaryPath"]);
+      _settings["AdapterCodePath"] = Path.Combine(_settings["AdapterPath"], _settings["CodePath"]);
     }
 
     public Response Generate(DatabaseDictionary dbSchema, string projectName, string applicationName)
@@ -78,7 +79,7 @@ namespace org.iringtools.adapter.datalayer
 
         try
         {
-          Directory.CreateDirectory(_settings["XmlPath"]);
+          Directory.CreateDirectory(_settings["AdapterXmlPath"]);
 
           _mappingBuilder = new StringBuilder();
           _mappingWriter = new XmlTextWriter(new StringWriter(_mappingBuilder));
@@ -124,20 +125,20 @@ namespace org.iringtools.adapter.datalayer
           CompilerParameters parameters = new CompilerParameters();
           parameters.GenerateExecutable = false;
           parameters.ReferencedAssemblies.Add("System.dll");
-          parameters.ReferencedAssemblies.Add(_settings["BinaryPath"] + "Iesi.Collections.dll");
-          parameters.ReferencedAssemblies.Add(_settings["BinaryPath"] + "iRINGLibrary.dll");
-          NHIBERNATE_ASSEMBLIES.ForEach(assembly => parameters.ReferencedAssemblies.Add(_settings["BinaryPath"] + assembly));
+          parameters.ReferencedAssemblies.Add(_settings["AdapterBinaryPath"] + "Iesi.Collections.dll");
+          parameters.ReferencedAssemblies.Add(_settings["AdapterBinaryPath"] + "iRINGLibrary.dll");
+          NHIBERNATE_ASSEMBLIES.ForEach(assembly => parameters.ReferencedAssemblies.Add(_settings["AdapterBinaryPath"] + assembly));
 
           Utility.Compile(compilerOptions, parameters, new string[] { sourceCode });
           #endregion Compile entities
 
           #region Writing memory data to disk
           string hibernateConfig = CreateConfiguration(dbSchema.provider, dbSchema.connectionString);
-          Utility.WriteString(hibernateConfig, _settings["XmlPath"] + "nh-configuration." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
-          Utility.WriteString(mappingXml, _settings["XmlPath"] + "nh-mapping." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
-          Utility.WriteString(sourceCode, _settings["CodePath"] + "Model." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
+          Utility.WriteString(hibernateConfig, _settings["AdapterXmlPath"] + "nh-configuration." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
+          Utility.WriteString(mappingXml, _settings["AdapterXmlPath"] + "nh-mapping." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
+          Utility.WriteString(sourceCode, _settings["AdapterCodePath"] + "Model." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
           DataDictionary dataDictionary = CreateDataDictionary(dbSchema.dataObjects);
-          Utility.Write<DataDictionary>(dataDictionary, _settings["XmlPath"] + "DataDictionary." + projectName + "." + applicationName + ".xml");
+          Utility.Write<DataDictionary>(dataDictionary, _settings["AdapterXmlPath"] + "DataDictionary." + projectName + "." + applicationName + ".xml");
           #endregion
 
           response.Add("Entities generated successfully.");
@@ -172,7 +173,7 @@ namespace org.iringtools.adapter.datalayer
       string keyClassName = dataObject.objectName + "Id";
 
       _mappingWriter.WriteStartElement("class");
-      _mappingWriter.WriteAttributeString("name", _namespace + "." + dataObject.objectName + ", " + _executingAssemblyName);
+      _mappingWriter.WriteAttributeString("name", _namespace + "." + dataObject.objectName + ", " + _settings["ExecutingAssemblyName"]);
       _mappingWriter.WriteAttributeString("table", "\"" + dataObject.tableName + "\"");
 
       #region Create composite key
@@ -186,7 +187,7 @@ namespace org.iringtools.adapter.datalayer
 
         _mappingWriter.WriteStartElement("composite-id");
         _mappingWriter.WriteAttributeString("name", "Id");
-        _mappingWriter.WriteAttributeString("class", _namespace + "." + keyClassName + ", " + _executingAssemblyName);
+        _mappingWriter.WriteAttributeString("class", _namespace + "." + keyClassName + ", " + _settings["ExecutingAssemblyName"]);
 
         foreach (KeyProperty keyName in dataObject.keyProperties)
         {
@@ -385,7 +386,7 @@ namespace org.iringtools.adapter.datalayer
 
               _mappingWriter.WriteStartElement("one-to-one");
               _mappingWriter.WriteAttributeString("name", relatedDataObject.tableName);
-              _mappingWriter.WriteAttributeString("class", _namespace + "." + dataRelationship.relatedObjectName + ", " + _executingAssemblyName);
+              _mappingWriter.WriteAttributeString("class", _namespace + "." + dataRelationship.relatedObjectName + ", " + _settings["ExecutingAssemblyName"]);
 
               if (oneToOneRelationship.isKeySource)
               {
@@ -413,7 +414,7 @@ namespace org.iringtools.adapter.datalayer
               _mappingWriter.WriteAttributeString("column", "\"" + GetColumnName(relatedDataObject, oneToManyRelationship.relatedPropertyName) + "\"");
               _mappingWriter.WriteEndElement(); // end one-to-many
               _mappingWriter.WriteStartElement("one-to-many");
-              _mappingWriter.WriteAttributeString("class", _namespace + "." + dataRelationship.relatedObjectName + ", " + _executingAssemblyName);
+              _mappingWriter.WriteAttributeString("class", _namespace + "." + dataRelationship.relatedObjectName + ", " + _settings["ExecutingAssemblyName"]);
               _mappingWriter.WriteEndElement(); // end key element
               _mappingWriter.WriteEndElement(); // end set element
               */
