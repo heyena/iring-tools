@@ -24,17 +24,18 @@
     <MappingEditorRoot>MappingEditor</MappingEditorRoot>
     <MappingEditorDir>$(MappingEditorRoot)\$(MappingEditorRoot).Web</MappingEditorDir>
     <RefDataEditorRoot>RefDataEditor</RefDataEditorRoot>
-    <DBDictionaryEditorRoot>DBDictionaryEditor</DBDictionaryEditorRoot>
+    <ApplicationEditorRoot>NHibernateEditor</ApplicationEditorRoot>
     <RefDataEditorDir>$(RefDataEditorRoot)\$(RefDataEditorRoot).Web</RefDataEditorDir>
-    <DBDictionaryEditorDir>$(DBDictionaryEditorRoot)\$(DBDictionaryEditorRoot).Web</DBDictionaryEditorDir>
+    <ApplicationEditorDir>$(ApplicationEditorRoot)\$(ApplicationEditorRoot).Web</ApplicationEditorDir>
     <RefDataServiceRoot>ReferenceData</RefDataServiceRoot>
-    <DBDictionaryServiceRoot>DBDictionary</DBDictionaryServiceRoot>
+    <ApplicationServiceRoot>NHibernate</ApplicationServiceRoot>
+    <ApplicationServiceDir>$(ApplicationServiceRoot)\NHibernateService</ApplicationServiceDir>
     <LandingPageDeploymentDir>$(DeploymentDir)\LandingPage</LandingPageDeploymentDir>
     <CSVDataLayerDeploymentDir>$(DeploymentDir)\CSVDataLayer</CSVDataLayerDeploymentDir>
     <CSVDataLayerLibDeploymentDir>$(DeploymentDir)\CSVDataLayer\lib</CSVDataLayerLibDeploymentDir>
     <SDKDeploymentDir>$(DeploymentDir)\SDK</SDKDeploymentDir>
     <RefDataServiceDir>$(RefDataServiceRoot)\ReferenceDataService</RefDataServiceDir>
-    <DbDictionaryServiceDir>$(DBDictionaryServiceRoot)\DbDictionaryService</DbDictionaryServiceDir>
+    <DbDictionaryServiceDir>$(ApplicationServiceRoot)\NHibernateService</DbDictionaryServiceDir>
     <AdapterServiceDeploymentDir>$(iRINGAdapter)\AdapterService</AdapterServiceDeploymentDir>
     <DbDictionaryServiceDeploymentDir>$(iRINGAdapter)\DbDictionaryService</DbDictionaryServiceDeploymentDir>
     <JosekiInterfaceServiceDeploymentDir>$(iRINGAdapter)\InterfaceService.Joseki</JosekiInterfaceServiceDeploymentDir>
@@ -194,21 +195,21 @@
                $(RefDataEditorDir)\*\.svn\**">
     </RefDataEditorDeployment>
 
-    <DBDictionaryEditorDeployment
-     Include="$(DBDictionaryEditorDir)\**"
-     Exclude="$(DBDictionaryEditorDir)\bin\*.pdb;
-               $(DBDictionaryEditorDir)\obj\**;
-               $(DBDictionaryEditorDir)\Properties\**;
-               $(DBDictionaryEditorDir)\*.cs;
-               $(DBDictionaryEditorDir)\*.svc;
-               $(DBDictionaryEditorDir)\*.html;
-               $(DBDictionaryEditorDir)\*.csproj;
-               $(DBDictionaryEditorDir)\*.user;
-               $(DBDictionaryEditorDir)\*.vspscc;
-               $(DBDictionaryEditorDir)\web.config;
-               $(DBDictionaryEditorDir)\.svn\**;
-               $(DBDictionaryEditorDir)\*\.svn\**">
-    </DBDictionaryEditorDeployment>
+    <ApplicationEditorDeployment
+     Include="$(ApplicationEditorDir)\**"
+     Exclude="$(ApplicationEditorDir)\bin\*.pdb;
+               $(ApplicationEditorDir)\obj\**;
+               $(ApplicationEditorDir)\Properties\**;
+               $(ApplicationEditorDir)\*.cs;
+               $(ApplicationEditorDir)\*.svc;
+               $(ApplicationEditorDir)\*.html;
+               $(ApplicationEditorDir)\*.csproj;
+               $(ApplicationEditorDir)\*.user;
+               $(ApplicationEditorDir)\*.vspscc;
+               $(ApplicationEditorDir)\web.config;
+               $(ApplicationEditorDir)\.svn\**;
+               $(ApplicationEditorDir)\*\.svn\**">
+    </ApplicationEditorDeployment>
 
     <RefDataServiceDeployment
       Include="$(RefDataServiceDir)\**"
@@ -229,21 +230,21 @@
                $(RefDataServiceRoot)\*\*\.svn\**;">
     </RefDataServiceDeployment>
 
-    <DBDictionaryServiceDeployment
-      Include="$(DBDictionaryServiceDir)\**"
-      Exclude="$(DBDictionaryServiceDir)\bin\*.pdb;
-               $(DBDictionaryServiceDir)\Logs\**;
-               $(DBDictionaryServiceDir)\obj\**;
-               $(DBDictionaryServiceDir)\Properties\**;
-               $(DBDictionaryServiceDir)\*.csproj;
-               $(DBDictionaryServiceDir)\*.user;
-               $(DBDictionaryServiceDir)\*.vspscc;
-               $(DBDictionaryServiceDir)\web.config;
-               $(DBDictionaryServiceDir)\Web_Development.config;
-               $(DBDictionaryServiceRoot)\.svn\**;
-               $(DBDictionaryServiceRoot)\*\.svn\**;
-               $(DBDictionaryServiceRoot)\*\*\.svn\**;">
-    </DBDictionaryServiceDeployment>
+    <ApplicationServiceDeployment
+      Include="$(ApplicationServiceDir)\**"
+      Exclude="$(ApplicationServiceDir)\bin\*.pdb;
+               $(ApplicationServiceDir)\Logs\**;
+               $(ApplicationServiceDir)\obj\**;
+               $(ApplicationServiceDir)\Properties\**;
+               $(ApplicationServiceDir)\*.csproj;
+               $(ApplicationServiceDir)\*.user;
+               $(ApplicationServiceDir)\*.vspscc;
+               $(ApplicationServiceDir)\web.config;
+               $(ApplicationServiceDir)\Web_Development.config;
+               $(ApplicationServiceRoot)\.svn\**;
+               $(ApplicationServiceRoot)\*\.svn\**;
+               $(ApplicationServiceRoot)\*\*\.svn\**;">
+    </ApplicationServiceDeployment>
 
     <AdapterToolsDeployment
       Include="ExternalBinaries\SemWeb\rdfstorage.exe;
@@ -392,17 +393,17 @@
     <Exec Condition="!Exists('$(dotNetRdfInterfaceServiceDir)\Web.config')"
           Command="Copy $(dotNetRdfInterfaceServiceDir)\Developer_Web.config $(dotNetRdfInterfaceServiceDir)\Web.config" />
     
-    <Exec Condition="!Exists('$(DBDictionaryServiceDir)\Web.config')" 
-          Command="Copy $(DBDictionaryServiceDir)\Web_Default.config $(DBDictionaryServiceDir)\Web.config" />
+    <Exec Condition="!Exists('$(ApplicationServiceDir)\Web.config')" 
+          Command="Copy $(ApplicationServiceDir)\Web_Default.config $(ApplicationServiceDir)\Web.config" />
     
     <Exec Condition="!Exists('$(RefDataServiceDir)\Web.config')"
-          Command="Copy $(RefDataServiceDir)\Web_Development.config $(RefDataServiceDir)\Web.config" />
+          Command="Copy $(RefDataServiceDir)\Web_Default.config $(RefDataServiceDir)\Web.config" />
     
     <Exec Condition="!Exists('$(MappingEditorDir)\Web.config')"
           Command="Copy $(MappingEditorDir)\Web_Default.config $(MappingEditorDir)\Web.config" />
     
-    <Exec Condition="!Exists('$(DBDictionaryEditorDir)\Web.config')"
-          Command="Copy $(DBDictionaryEditorDir)\Web_Default.config $(DBDictionaryEditorDir)\Web.config" />
+    <Exec Condition="!Exists('$(ApplicationEditorDir)\Web.config')"
+          Command="Copy $(ApplicationEditorDir)\Web_Default.config $(ApplicationEditorDir)\Web.config" />
     
     <Exec Condition="!Exists('$(SemWebInterfaceServiceRoot)\Web.config')"
           Command="Copy $(SemWebInterfaceServiceRoot)\Web_Default.config $(SemWebInterfaceServiceRoot)\Web.config" />
@@ -413,7 +414,7 @@
     <Exec Condition="!Exists('$(SemWebSandboxServiceRoot)\Web.config')"
           Command="Copy $(SemWebSandboxServiceRoot)\Web_Default.config $(SemWebSandboxServiceRoot)\Web.config" />
     
-    <Exec Condition="!Exists('Utilities\DBDictionaryUtil\DBDictionaryUtil\App_Default.config')"
+    <Exec Condition="!Exists('Utilities\DBDictionaryUtil\DBDictionaryUtil\App.config')"
           Command="Copy Utilities\DBDictionaryUtil\DBDictionaryUtil\App_Default.config Utilities\DBDictionaryUtil\DBDictionaryUtil\App.config" />
     
     <Exec Condition="!Exists('Utilities\SWDump\App.config')"
@@ -447,10 +448,10 @@
     <Exec Command="Mkdir $(AdapterServiceDeploymentDir)\Logs" />
 
     <Message Text="Creating dbdictionary service deployment ..." />
-    <Copy SourceFiles="@(DBDictionaryServiceDeployment)"
-          DestinationFiles="@(DBDictionaryServiceDeployment->'$(DBDictionaryServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Exec Command="Move /Y $(DBDictionaryServiceDeploymentDir)\Web_Default.config $(DBDictionaryServiceDeploymentDir)\Web.config" />
-    <Exec Command="Mkdir $(DBDictionaryServiceDeploymentDir)\Logs" />
+    <Copy SourceFiles="@(ApplicationServiceDeployment)"
+          DestinationFiles="@(ApplicationServiceDeployment->'$(ApplicationServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(ApplicationServiceDeploymentDir)\Web_Default.config $(ApplicationServiceDeploymentDir)\Web.config" />
+    <Exec Command="Mkdir $(ApplicationServiceDeploymentDir)\Logs" />
     <!--<Message Text="Creating Joseki interface service deployment ..." />
     <Copy SourceFiles="@(JosekiInterfaceServiceDeployment)"
           DestinationFiles="@(JosekiInterfaceServiceDeployment->'$(JosekiInterfaceServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
@@ -474,9 +475,9 @@
     <Exec Command="Move /Y $(MappingEditorDeploymentDir)\Web_Default.config $(MappingEditorDeploymentDir)\Web.config" />
 
     <Message Text="Creating dbdictionary editor deployment ..." />
-    <Copy SourceFiles="@(DBDictionaryEditorDeployment)"
-          DestinationFiles="@(DBDictionaryEditorDeployment->'$(DBDictionaryEditorDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Exec Command="Move /Y $(DBDictionaryEditorDeploymentDir)\Web_Default.config $(DBDictionaryEditorDeploymentDir)\Web.config" />
+    <Copy SourceFiles="@(ApplicationEditorDeployment)"
+          DestinationFiles="@(ApplicationEditorDeployment->'$(ApplicationEditorDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(ApplicationEditorDeploymentDir)\Web_Default.config $(ApplicationEditorDeploymentDir)\Web.config" />
 
     <Message Text="Creating reference data editor deployment ..." />
     <Copy SourceFiles="@(RefDataEditorDeployment)"
