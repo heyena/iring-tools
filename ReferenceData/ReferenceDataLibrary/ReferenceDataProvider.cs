@@ -1108,6 +1108,7 @@ namespace org.ids_adi.iring.referenceData
                     return response;
                 }
 
+                #region Template Definitions
                 if (qmxf.templateDefinitions.Count > 0) //Template Definitions
                 {
                     foreach (TemplateDefinition template in qmxf.templateDefinitions)
@@ -1345,6 +1346,8 @@ namespace org.ids_adi.iring.referenceData
                         }
                     }
                 }
+                #endregion
+                #region Template Qualifications
                 else//template qualification
                 {
                     if (qmxf.templateQualifications.Count > 0)
@@ -1394,7 +1397,20 @@ namespace org.ids_adi.iring.referenceData
                                             + "dm:hasSuperclass <" + specialization + "> ; "
                                             + "dm:hasSubclass " + ID + " . ";
 
-                                    sparql += ID + " rdfs:label \"" + label + "\"^^xsd:string . ";
+                                    //sparql += ID + " rdfs:label \"" + label + "\"^^xsd:string . ";
+                                    if (template.description.Count == 0)
+                                    {
+                                        sparql += ID + " rdfs:label \"" + label + "\"^^xsd:string . ";
+                                    }
+                                    else
+                                    {
+                                        sparql += ID + " rdfs:label \"" + label + "\"^^xsd:string ; ";
+                                    }
+                                    foreach (Description descr in template.description)
+                                    {
+                                        description = descr.value;
+                                        sparql += " rdfs:comment \"" + description + "\"^^xsd:string . ";
+                                    }
 
                                     foreach (RoleQualification role in template.roleQualification)
                                     {
@@ -1430,27 +1446,27 @@ namespace org.ids_adi.iring.referenceData
                                         {
                                             if (role.value.As != null)
                                             {
-                                                sparql += role.qualifies + " rdf:type tpl:R67036823327 ; "
+                                                sparql += "<" + role.qualifies + "> rdf:type tpl:R67036823327 ; "
                                                       + " tpl:R56456315674 " + ID + " ; "
-                                                      + " tpl:R89867215482 " + role.qualifies + " ; "
+                                                      + " tpl:R89867215482 <" + role.qualifies + "> ; "
                                                       + " R29577887690 " + role.value.As + "^^xsd:int . ";
                                             }
                                             else if (role.value.reference != null) 
                                             {
                                                 //reference restriction
-                                                sparql += role.qualifies + " rdf:type tpl:R40103148466 ; "
+                                                sparql += "<" + role.qualifies + "> rdf:type tpl:R40103148466 ; "
                                                       + " tpl:R49267603385 " + ID + " ; "
-                                                      + " tpl:R30741601855 " + role.qualifies + " ; "
-                                                      + " tpl:R21129944603 " + role.value.reference + " . ";
+                                                      + " tpl:R30741601855 <" + role.qualifies + "> ; "
+                                                      + " tpl:R21129944603 <" + role.value.reference + "> . ";
                                             }
                                         }
                                         else if (role.range != null)
                                         {
                                             //range restriction
-                                            sparql += role.qualifies + " rdf:type tpl:R76288246068 ; "
+                                            sparql += "<" + role.qualifies + "> rdf:type tpl:R76288246068 ; "
                                                     + " tpl:R99672026745 " + ID + " ; "
-                                                    + " tpl:R91125890543 " + role.qualifies + " ; "
-                                                    + " tpl:R98983340497 " + role.range + " . ";
+                                                    + " tpl:R91125890543 <" + role.qualifies + "> ; "
+                                                    + " tpl:R98983340497 <" + role.range + "> . ";
                                         }
 
                                     }
@@ -1485,6 +1501,12 @@ namespace org.ids_adi.iring.referenceData
 
                                     label = name.value;
                                     nameSparql = sparql + ID + " rdfs:label \"" + label + "\"^^xsd:string . ";
+
+                                    foreach (Description descr in template.description)
+                                    {
+                                        description = descr.value;
+                                        nameSparql += "rdfs:comment \"" + description + "\"^^xsd:string ; ";
+                                    }
 
                                     foreach (RoleQualification rd in td.roleQualification)
                                     {
@@ -1541,6 +1563,12 @@ namespace org.ids_adi.iring.referenceData
                                     label = name.value;
                                     nameSparql = sparql + ID + " rdfs:label \"" + label + "\"^^xsd:string . ";
 
+                                    foreach (Description descr in template.description)
+                                    {
+                                        description = descr.value;
+                                        nameSparql += "rdfs:comment \"" + description + "\"^^xsd:string ; ";
+                                    }
+
                                     foreach (RoleQualification rd in template.roleQualification)
                                     {
 
@@ -1592,6 +1620,7 @@ namespace org.ids_adi.iring.referenceData
                         }
                     }
                 }
+                #endregion
                 return response;
             }
             catch (Exception ex)
