@@ -173,12 +173,18 @@ namespace org.iringtools.application
         return response;
     }
 
-    public DatabaseDictionary GetDatabaseSchema(Request request)
+    public DatabaseDictionary GetDatabaseSchema(string projectName, string applicationName)
     {
         try
         {
-            string connString = request["connectionString"];
-            string dbProvider = request["dbProvider"];
+            DatabaseDictionary databaseDictionary = new DatabaseDictionary();
+       
+            InitializeScope(projectName, applicationName);
+
+            databaseDictionary = Utility.Read<DatabaseDictionary>(_settings["DBDictionaryPath"]);
+
+            string connString = databaseDictionary.connectionString;
+            string dbProvider = databaseDictionary.provider.ToString();
             dbProvider = dbProvider.ToUpper();
             string parsedConnStr = ParseConnectionString(connString, dbProvider);
 
