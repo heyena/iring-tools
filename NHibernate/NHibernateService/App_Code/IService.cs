@@ -13,15 +13,15 @@ namespace org.iringtools.application
         DatabaseDictionary GetDictionary(string project, string application);
 
         [OperationContract]
-        [WebInvoke(Method = "POST", UriTemplate = "/{project}/{application}/schema")]
-        DatabaseDictionary GetDatabaseSchema(Request request);
+        [WebGet(UriTemplate = "/{project}/{application}/schema")]
+        DatabaseDictionary GetDatabaseSchema(string project, string application);
 
         [OperationContract]
         [WebInvoke(Method = "POST", UriTemplate = "/{project}/{application}/dictionary")]
         Response PostDictionary(string project, string application, DatabaseDictionary dict);
 
         [OperationContract]
-        [WebInvoke(Method = "POST", UriTemplate = "/{project}/{application}/generate")]
+        [WebGet(UriTemplate = "/{project}/{application}/generate")]
         Response Generate(string project, string application);
 
         [OperationContract]

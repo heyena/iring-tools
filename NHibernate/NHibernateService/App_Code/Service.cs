@@ -40,9 +40,9 @@ namespace org.iringtools.application
             return _applicationProvider.Generate(project, application);
         }
 
-        public DatabaseDictionary GetDatabaseSchema(Request request)
+        public DatabaseDictionary GetDatabaseSchema(string project, string application)
         {
-            return _applicationProvider.GetDatabaseSchema(request);
+            return _applicationProvider.GetDatabaseSchema(project, application);
         }
         
         public String[] GetProviders()
