@@ -1500,12 +1500,19 @@ namespace org.ids_adi.iring.referenceData
                                           + " ?c dm:hasSubclass " + ID + " . ";
 
                                     label = name.value;
-                                    nameSparql = sparql + ID + " rdfs:label \"" + label + "\"^^xsd:string . ";
+                                    if (td.description.Count == 0)
+                                    {
+                                        nameSparql += ID + " rdfs:label \"" + label + "\"^^xsd:string . ";
+                                    }
+                                    else 
+                                    {
+                                        nameSparql += ID + " rdfs:label \"" + label + "\"^^xsd:string ; ";
+                                    }
 
-                                    foreach (Description descr in template.description)
+                                    foreach (Description descr in td.description)
                                     {
                                         description = descr.value;
-                                        nameSparql += "rdfs:comment \"" + description + "\"^^xsd:string ; ";
+                                        nameSparql += "rdfs:comment \"" + description + "\"^^xsd:string . ";
                                     }
 
                                     foreach (RoleQualification rd in td.roleQualification)
@@ -1521,52 +1528,58 @@ namespace org.ids_adi.iring.referenceData
                                         }
                                         //append role to sparql query
                                         //value restriction
-                                        if (rd.value.As != null)
+                                        if (rd.value != null)
                                         {
-                                            sparql += rd.qualifies + " rdf:type tpl:R67036823327 ; "
-                                                  + " tpl:R56456315674 " + ID + " ; "
-                                                  + " tpl:R89867215482 " + rd.qualifies + " ; "
-                                                  + " R29577887690 " + rd.value.As + "^^xsd:int . ";
-                                        }
-                                        else
-                                        {
-                                            //reference restriction
-                                            if (rd.value.reference != null)
+                                            if (rd.value.As != null)
                                             {
-                                                sparql += rd.qualifies + " rdf:type tpl:R40103148466 ; "
-                                                      + " tpl:R49267603385 " + ID + " ; "
-                                                      + " tpl:R30741601855 " + rd.qualifies + " ; "
-                                                      + " tpl:R21129944603 " + rd.value.reference + " . ";
+                                                nameSparql += "<" + rd.qualifies + "> rdf:type tpl:R67036823327 ; "
+                                                      + " tpl:R56456315674 " + ID + " ; "
+                                                      + " tpl:R89867215482 <" + rd.qualifies + "> ; "
+                                                      + " R29577887690 <" + rd.value.As + ">^^xsd:int . ";
                                             }
-                                            else
+                                            else if (rd.value.reference != null)
                                             {
-                                                if (rd.range != null)
-                                                {
-                                                    //range restriction
-                                                    sparql += rd.qualifies + " rdf:type tpl:R76288246068 ; "
-                                                            + " tpl:R99672026745 " + ID + " ; "
-                                                            + " tpl:R91125890543 " + rd.qualifies + " ; "
-                                                            + " tpl:R98983340497 " + rd.range + " . ";
-                                                }
+                                                //reference restriction                                                
+                                                nameSparql += "<" + rd.qualifies + "> rdf:type tpl:R40103148466 ; "
+                                                        + " tpl:R49267603385 " + ID + " ; "
+                                                        + " tpl:R30741601855 <" + rd.qualifies + "> ; "
+                                                        + " tpl:R21129944603 <" + rd.value.reference + "> . ";                                               
                                             }
                                         }
+                                        else if (rd.range != null)
+                                        {
+                                            //range restriction
+                                            nameSparql += "<" + rd.qualifies + "> rdf:type tpl:R76288246068 ; "
+                                                    + " tpl:R99672026745 " + ID + " ; "
+                                                    + " tpl:R91125890543 <" + rd.qualifies + "> ; "
+                                                    + " tpl:R98983340497 <" + rd.range + "> . ";
+                                        }                                        
                                     }
                                     nameSparql = nameSparql.Insert(nameSparql.LastIndexOf("."), "}").Remove(nameSparql.Length - 1);
                                 }
                                 foreach (QMXFName name in template.name)
                                 {
                                     specialization = template.qualifies;
-                                    nameSparql = sparql + " INSERT { _:spec rdf:type dm:Specialization ; "
+                                    nameSparql += " INSERT { _:spec rdf:type dm:Specialization ; "
                                           + " dm:hasSuperclass <" + specialization + "> ; "
                                           + " dm:hasSubclass " + ID + " . ";
 
                                     label = name.value;
-                                    nameSparql = sparql + ID + " rdfs:label \"" + label + "\"^^xsd:string . ";
+                                    
+
+                                    if (template.description.Count == 0)
+                                    {
+                                        nameSparql += ID + " rdfs:label \"" + label + "\"^^xsd:string . ";
+                                    }
+                                    else
+                                    {
+                                        nameSparql += ID + " rdfs:label \"" + label + "\"^^xsd:string ; ";
+                                    }
 
                                     foreach (Description descr in template.description)
                                     {
                                         description = descr.value;
-                                        nameSparql += "rdfs:comment \"" + description + "\"^^xsd:string ; ";
+                                        nameSparql += "rdfs:comment \"" + description + "\"^^xsd:string . ";
                                     }
 
                                     foreach (RoleQualification rd in template.roleQualification)
@@ -1582,35 +1595,32 @@ namespace org.ids_adi.iring.referenceData
                                         }
                                         //append role to sparql query
                                         //value restriction
-                                        if (rd.value.As != null)
+                                        if (rd.value != null)
                                         {
-                                            sparql += rd.qualifies + " rdf:type tpl:R67036823327 ; "
-                                                  + " tpl:R56456315674 " + ID + " ; "
-                                                  + " tpl:R89867215482 " + rd.qualifies + " ; "
-                                                  + " R29577887690 " + rd.value.As + "^^xsd:int . ";
-                                        }
-                                        else
-                                        {
-                                            //reference restriction
-                                            if (rd.value.reference != null)
+                                            if (rd.value.As != null)
                                             {
-                                                sparql += rd.qualifies + " rdf:type tpl:R40103148466 ; "
-                                                      + " tpl:R49267603385 " + ID + " ; "
-                                                      + " tpl:R30741601855 " + rd.qualifies + " ; "
-                                                      + " tpl:R21129944603 " + rd.value.reference + " . ";
+                                                nameSparql += "<" + rd.qualifies + "> rdf:type tpl:R67036823327 ; "
+                                                      + " tpl:R56456315674 " + ID + " ; "
+                                                      + " tpl:R89867215482 <" + rd.qualifies + "> ; "
+                                                      + " R29577887690 <" + rd.value.As + ">^^xsd:int . ";
                                             }
-                                            else
+                                            else if (rd.value.reference != null)
                                             {
-                                                if (rd.range != null)
-                                                {
-                                                    //range restriction
-                                                    sparql += rd.qualifies + " rdf:type tpl:R76288246068 ; "
-                                                            + " tpl:R99672026745 " + ID + " ; "
-                                                            + " tpl:R91125890543 " + rd.qualifies + " ; "
-                                                            + " tpl:R98983340497 " + rd.range + " . ";
-                                                }
+                                                //reference restriction
+                                                nameSparql += "<" + rd.qualifies + "> rdf:type tpl:R40103148466 ; "
+                                                        + " tpl:R49267603385 " + ID + " ; "
+                                                        + " tpl:R30741601855 <" + rd.qualifies + "> ; "
+                                                        + " tpl:R21129944603 <" + rd.value.reference + "> . ";
                                             }
                                         }
+                                        else if (rd.range != null)
+                                        {
+                                            //range restriction
+                                            nameSparql += "<" + rd.qualifies + "> rdf:type tpl:R76288246068 ; "
+                                                    + " tpl:R99672026745 " + ID + " ; "
+                                                    + " tpl:R91125890543 <" + rd.qualifies + "> ; "
+                                                    + " tpl:R98983340497 <" + rd.range + "> . ";
+                                        }                                        
                                     }
                                     nameSparql = nameSparql.Insert(nameSparql.LastIndexOf("."), "}").Remove(nameSparql.Length - 1);
                                 }
