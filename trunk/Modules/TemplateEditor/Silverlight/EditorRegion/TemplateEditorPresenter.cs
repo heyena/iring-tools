@@ -507,11 +507,11 @@ namespace org.iringtools.modules.templateeditor.editorregion
             {
                 if (e.Name.ToString() == "btnOK1")
                 {
-                    if (!_templateModel.IsReadOnly)
-                    {
+                    //if (!_templateModel.IsReadOnly)
+                    //{
                         QMXF @qmxf = _templateModel.QMXF;
                         referenceDataService.PostTemplate(@qmxf);
-                    }
+                    //}
 
                     IRegion region = regionManager.Regions["TemplateEditorRegion"];
                     foreach (UserControl userControl in region.Views)
@@ -531,13 +531,13 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 }
                 else if (e.Name.ToString() == "btnApply1")
                 {
-                    if (!_templateModel.IsReadOnly)
-                    {
+                    //if (!_templateModel.IsReadOnly)
+                    //{
                         QMXF @qmxf = _templateModel.QMXF;
                         referenceDataService.PostTemplate(@qmxf);
 
                         InitializeEditor(EditorMode.Edit, @qmxf);
-                    }
+                    //}
                 }
                 else if (e.Name.ToString() == "addRole1")
                 {
