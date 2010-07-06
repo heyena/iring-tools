@@ -71,7 +71,7 @@ namespace org.iringtools.application
     }
 
     #region public methods
-    public Response UpdateDatabaseDictionary(string projectName, string applicationName, DatabaseDictionary dbDictionary)
+    public Response Generate(string projectName, string applicationName)
     {
       Response response = new Response();
 
@@ -79,6 +79,7 @@ namespace org.iringtools.application
       {
         InitializeScope(projectName, applicationName);
 
+        DatabaseDictionary dbDictionary = Utility.Read<DatabaseDictionary>(_settings["DBDictionaryPath"]);
         if (String.IsNullOrEmpty(projectName) || String.IsNullOrEmpty(applicationName))
         {
           response.Add("Error project name and application name can not be null");
@@ -136,7 +137,7 @@ namespace org.iringtools.application
       return response;
     }
 
-    public DatabaseDictionary GetDbDictionary(string projectName, string applicationName)
+    public DatabaseDictionary GetDictionary(string projectName, string applicationName)
     {
         DatabaseDictionary databaseDictionary = new DatabaseDictionary();
         try
@@ -153,7 +154,7 @@ namespace org.iringtools.application
         return databaseDictionary;
     }
 
-    public Response SaveDatabaseDictionary(string projectName, string applicationName, DatabaseDictionary databaseDictionary)
+    public Response PostDictionary(string projectName, string applicationName, DatabaseDictionary databaseDictionary)
     {
         Response response = new Response();
         try

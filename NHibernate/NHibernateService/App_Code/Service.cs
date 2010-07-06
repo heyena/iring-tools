@@ -25,32 +25,26 @@ namespace org.iringtools.application
             _applicationProvider = new ApplicationProvider(WebConfigurationManager.AppSettings);
         }
 
-        public DatabaseDictionary GetDbDictionary(string project, string application)
+        public DatabaseDictionary GetDictionary(string project, string application)
         {
-            return _applicationProvider.GetDbDictionary(project, application);
+            return _applicationProvider.GetDictionary(project, application);
         }
 
-        public Response SaveDatabaseDictionary(string project, string application, DatabaseDictionary dict)
+        public Response PostDictionary(string project, string application, DatabaseDictionary dict)
         {
-            return _applicationProvider.SaveDatabaseDictionary(project, application, dict);
+            return _applicationProvider.PostDictionary(project, application, dict);
         }
 
-        public Response UpdateDatabaseDictionary(string project, string application, DatabaseDictionary dict)
+        public Response Generate(string project, string application)
         {
-          return _applicationProvider.UpdateDatabaseDictionary(project, application, dict);
+            return _applicationProvider.Generate(project, application);
         }
 
         public DatabaseDictionary GetDatabaseSchema(Request request)
         {
             return _applicationProvider.GetDatabaseSchema(request);
         }
-
-       
-        public List<string> GetExistingDbDictionaryFiles()
-        {
-            return _applicationProvider.GetExistingDbDictionaryFiles();
-        }
-
+        
         public String[] GetProviders()
         {
             return _applicationProvider.GetProviders();
