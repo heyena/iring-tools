@@ -5,62 +5,40 @@
     xmlns:vsm="clr-namespace:System.Windows;assembly=System.Windows" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-    HorizontalAlignment="Stretch"   
->
+    HorizontalAlignment="Stretch" Background="Black">
   <Grid x:Name="LayoutRoot" HorizontalAlignment="Stretch" Background="#FFF0F0F0">
-    <!--     
+
     <Grid.RowDefinitions>
-      <RowDefinition Height="28"/>
+      <RowDefinition Height="32"/>
+
       <RowDefinition Height="*"/>
-    </Grid.RowDefinitions>    
--->
-    <Grid Grid.Row="0" Margin="4,4,4,4">
-      <controls:TabControl x:Name="tabMappings">
-        <controls:TabItem x:Name="tabGraphMaps" Header="Graph Maps" IsEnabled="False">
-          <Grid>
-            <Grid.RowDefinitions>
-              <RowDefinition Height="32"/>
-              <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Grid Grid.Row="0">
-              <StackPanel Orientation="Horizontal" Margin="4,0,4,0">
-                <TextBox x:Name="txtLabel" BorderBrush="#8FA0AE" Width="Auto" MinWidth="150" Height="24" Text="{Binding Path=SelectedIMLabel}" IsEnabled="False"/>
-                <Button x:Name="btnAddGraph" Height="24" Width="40" Margin="5,0,0,0" Content="+G" ToolTipService.ToolTip="Add Graph" ToolTipService.Placement="Top" IsEnabled="False"/>
-                <Button x:Name="btnAddTemplate" Height="24" Width="40" Margin="5,0,0,0" Content="+T" ToolTipService.ToolTip="Add Template" ToolTipService.Placement="Top" IsEnabled="False"/>
-                <Button x:Name="btnMap" Height="24" Width="40" Margin="5,0,0,0" Content="+M" ToolTipService.ToolTip="Add Map" ToolTipService.Placement="Top" IsEnabled="False"/>
-                <Button x:Name="btnMakePossessor" Height="24" Width="40" Margin="5,0,0,0" Content="+PR" ToolTipService.ToolTip="Make Possessor Role" ToolTipService.Placement="Top" IsEnabled="False"/>
-                <ComboBox x:Name="cbValueList" MinWidth="120" Margin="5,0,0,0" Height="24" IsEnabled="False"/>
-                <Button x:Name="btnAddValueList" Height="24" Width="40" Margin="1,0,0,0" Content="+VL" ToolTipService.ToolTip="Add Value List" ToolTipService.Placement="Top" IsEnabled="False"/>
-                <Button x:Name="btnDelete" Height="24" Width="40" Margin="5,0,0,0" Content="DEL" ToolTipService.ToolTip="Delete" ToolTipService.Placement="Top" IsEnabled="False"/>
-                <Button x:Name="btnSave" Height="24" Width="40" Margin="5,0,0,0" Content="SAVE" ToolTipService.ToolTip="Save Mapping File" ToolTipService.Placement="Top" IsEnabled="False"/>
-              </StackPanel>
-            </Grid>
-            <controls:TreeView Grid.Row="1" Margin="4,4,4,4" x:Name="tvwMapping" VerticalAlignment="Stretch" Height="Auto" BorderBrush="#8FA0AE" BorderThickness="1"  />
-          </Grid>
-        </controls:TabItem>
-        <controls:TabItem x:Name="tabValueMaps" Header="Value Maps" IsEnabled="False">
-          <Grid>
-            <Grid.RowDefinitions>
-              <RowDefinition Height="32"/>
-              <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Grid Grid.Row="0">
-              <StackPanel Orientation="Horizontal" Margin="4,0,4,0">
-                <TextBox x:Name="txtvLabel" BorderBrush="#8FA0AE" Width="Auto" MinWidth="150" Height="24" Text="{Binding Path=SelectedIMLabel}" IsEnabled="False"/>
-                <Button x:Name="btnvAddValue" Height="24" Width="40" Margin="5,0,0,0" Content="+V" ToolTipService.ToolTip="Add Value" ToolTipService.Placement="Top" IsEnabled="False"/>
-                <Button x:Name="btnvEditValue" Height="24" Width="40" Margin="5,0,0,0" Content="+E" ToolTipService.ToolTip="Edit Value" ToolTipService.Placement="Top" IsEnabled="False"/>
-                <Button x:Name="btnvAddValueList" Height="24" Width="40" Margin="5,0,0,0" Content="+VL" ToolTipService.ToolTip="Add Value List" ToolTipService.Placement="Top" IsEnabled="False"/>
-                <Button x:Name="btnvMoveUp" Height="24" Width="40" Margin="5,0,0,0" Content="Up" ToolTipService.ToolTip="Move Value Up" ToolTipService.Placement="Top" IsEnabled="False"/>
-                <Button x:Name="btnvMoveDown" Height="24" Width="40" Margin="5,0,0,0" Content="Dn" ToolTipService.ToolTip="Move Value Down" ToolTipService.Placement="Top" IsEnabled="False"/>
-                <Button x:Name="btnvDelete" Height="24" Width="40" Margin="5,0,0,0" Content="DEL" ToolTipService.ToolTip="Delete" ToolTipService.Placement="Top" IsEnabled="False"/>
-                <Button x:Name="btnvSave" Height="24" Width="40" Margin="5,0,0,0" Content="SAVE" ToolTipService.ToolTip="Save Mapping File" ToolTipService.Placement="Top" IsEnabled="False"/>
-              </StackPanel>
-            </Grid>
-            <controls:TreeView Grid.Row="1" Margin="4,4,4,4" x:Name="tvwValues" VerticalAlignment="Stretch" Height="Auto" BorderBrush="#8FA0AE" BorderThickness="1"/>
-          </Grid>
-        </controls:TabItem>
-      </controls:TabControl>
-      <TextBlock Height="29" Margin="0,0,18,23" VerticalAlignment="Bottom" Text="Mapping" FontFamily="Portable User Interface" FontSize="20" FontStyle="Italic" FontWeight="Bold" Opacity="0.1" Width="106" HorizontalAlignment="Right"/>
-    </Grid>
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="200*"/>
+      <ColumnDefinition Width="120*"/>
+    </Grid.ColumnDefinitions>
+    <StackPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0"  Orientation="Horizontal" Margin="4,0,4,0">
+      <TextBox x:Name="txtLabel" BorderBrush="#8FA0AE" Width="Auto" MinWidth="150" Height="24" Text="{Binding Path=SelectedIMLabel}" IsEnabled="False"/>
+      <Button x:Name="btnAddGraph" Height="24" Width="40" Margin="2,0,0,0" Content="+G" ToolTipService.ToolTip="Add Graph" ToolTipService.Placement="Top" IsEnabled="False"/>
+      <Button x:Name="btnAddTemplate" Height="24" Width="40" Margin="2,0,0,0" Content="+T" ToolTipService.ToolTip="Add Template" ToolTipService.Placement="Top" IsEnabled="False"/>
+      <Button x:Name="btnMap" Height="24" Width="40" Margin="2,0,0,0" Content="+M" ToolTipService.ToolTip="Add Map" ToolTipService.Placement="Top" IsEnabled="False"/>
+      <Button x:Name="btnMakePossessor" Height="24" Width="40" Content="+PR" ToolTipService.ToolTip="Make Possessor Role" ToolTipService.Placement="Top" IsEnabled="False" Margin="2,0,0,0" />
+      <!--<ComboBox x:Name="cbValueList" MinWidth="120" Height="24" IsEnabled="False" />-->
+      <Button x:Name="btnMapValueList" Height="24" Width="40" Content="+MVL" ToolTipService.ToolTip="Map Value List" ToolTipService.Placement="Top" IsEnabled="False" Margin="2,0,0,0" />
+      <Button x:Name="btnDelete" Height="24" Width="40" Content="DEL" ToolTipService.ToolTip="Delete" ToolTipService.Placement="Top" IsEnabled="False" Margin="10,0,0,0" />
+      <Button x:Name="btnSave" Height="24" Width="40" Content="SAVE" ToolTipService.ToolTip="Save Mapping File" ToolTipService.Placement="Top" IsEnabled="False" Margin="1,0,10,0" Background="Red" />
+      <Button x:Name="btnvAddValue" Height="24" Width="40" Content="+V" ToolTipService.ToolTip="Add Value" ToolTipService.Placement="Top" IsEnabled="False" />
+      <Button x:Name="btnvEditValue" Height="24" Width="40" Content="+E" ToolTipService.ToolTip="Edit Value" ToolTipService.Placement="Top" IsEnabled="False" Margin="2,0,0,0" />
+      <Button x:Name="btnvMoveUp" Height="24" Width="40" Content="Up" ToolTipService.ToolTip="Move Value Up" ToolTipService.Placement="Top" IsEnabled="False" Margin="2,0,0,0" />
+      <Button x:Name="btnvMoveDown" Height="24" Width="40" Content="Dn" ToolTipService.ToolTip="Move Value Down" ToolTipService.Placement="Top" IsEnabled="False" Margin="2,0,0,0" />
+      <Button x:Name="btnvAddValueList" Height="24" Width="40" Content="+VL" ToolTipService.ToolTip="Add Value List To TreeView" ToolTipService.Placement="Top" IsEnabled="False" Margin="2,0,0,0" />
+    </StackPanel>
+    <controls:TreeView Grid.Column="0" Grid.Row="2"   Margin="2" x:Name="tvwMapping" VerticalAlignment="Stretch" Height="Auto" BorderBrush="#8FA0AE" BorderThickness="1"  />
+    <TextBlock Grid.Row="1" Height="29" Margin="0,0,17,21" VerticalAlignment="Bottom" Text="Graph Maps" FontFamily="Portable User Interface" FontSize="20" FontStyle="Italic" FontWeight="Bold" Opacity="0.1" Width="Auto" HorizontalAlignment="Right"/>
+
+
+    <controls:TreeView Grid.Row="2" Grid.Column="1" Margin="2" x:Name="tvwValues" VerticalAlignment="Stretch" Height="Auto" BorderBrush="#8FA0AE" BorderThickness="1"/>
+    <!--</Grid>-->
+    <TextBlock Grid.Column="1" Grid.Row="1" Height="29" Margin="0,0,17,21" VerticalAlignment="Bottom" Text="Value Maps" FontFamily="Portable User Interface" FontSize="20" FontStyle="Italic" FontWeight="Bold" Opacity="0.1" Width="Auto" HorizontalAlignment="Right"/>
   </Grid>
 </UserControl>

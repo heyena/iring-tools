@@ -28,6 +28,7 @@ using org.iringtools.library.configuration;
 using org.iringtools.utility;
 using System.Text.RegularExpressions;
 using System.Collections.ObjectModel;
+using System.Windows.Media;
 
 namespace org.iringtools.modules.memappingregion
 {
@@ -94,32 +95,6 @@ namespace org.iringtools.modules.memappingregion
       }
     }
 
-    public void tabMappins_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-
-      TabItem previousItem = (TabItem)e.RemovedItems[0];
-      TabControl tab = sender as TabControl;
-      TabItem selectedItem = (TabItem)e.AddedItems[0];
-
-      if (saveActive && !popupFlag)
-      {
-        MessageBoxResult result = MessageBox.Show("There is unsaved mapping changes. Do you want to discard your changes?", "TAB ITEM", MessageBoxButton.OKCancel);
-        if (result == MessageBoxResult.Cancel)
-        {
-          popupFlag = true;
-          tab.SelectedItem = previousItem;
-        }
-        else
-        {
-          saveActive = false;
-          tab.SelectedItem = selectedItem;
-        }
-      }
-      popupFlag = false;
-
-      Presenter.ChangeControlsState(true);
-    }
-
     public void btnMoveDown_Click(object sender, RoutedEventArgs e)
     {
       TextBox txtLabel = sender as TextBox;
@@ -152,7 +127,8 @@ namespace org.iringtools.modules.memappingregion
             valueList.valueMaps.Remove(valueMap);
             valueList.valueMaps.Insert(idx + 1, valueMap);
           }
-
+          Presenter.ButtonCtrl("btnSave").IsEnabled = true;
+          Presenter.ButtonCtrl("btnSave").Background = new SolidColorBrush(Color.FromArgb(255, 255, 0, 0));
         }
       }
 
@@ -190,7 +166,8 @@ namespace org.iringtools.modules.memappingregion
             valueList.valueMaps.Remove(valueMap);
             valueList.valueMaps.Insert(idx - 1, valueMap);
           }
-
+          Presenter.ButtonCtrl("btnSave").IsEnabled = true;
+          Presenter.ButtonCtrl("btnSave").Background = new SolidColorBrush(Color.FromArgb(255, 255, 0, 0));
         }
       }
 
@@ -201,7 +178,7 @@ namespace org.iringtools.modules.memappingregion
 
       if (model.SelectedMappingItem == null || model.SelectedNodeType != NodeType.RoleMap)
       {
-        MessageBox.Show("Please Select a Undefined Role", "MAKE POSSESSOR", MessageBoxButton.OK);
+        MessageBox.Show("Please Select a Role", "MAKE POSSESSOR", MessageBoxButton.OK);
       }
       else
       {
@@ -212,6 +189,8 @@ namespace org.iringtools.modules.memappingregion
         roleMap.type = RoleType.Possessor;
         roleMap.value = string.Empty;
         roleMap.dataType = string.Empty;
+        Presenter.ButtonCtrl("btnSave").IsEnabled = true;
+        Presenter.ButtonCtrl("btnSave").Background = new SolidColorBrush(Color.FromArgb(255, 255, 0, 0));
         Presenter.RefreshRoleMap(roleMap);
       }
     }
@@ -237,7 +216,8 @@ namespace org.iringtools.modules.memappingregion
         string id = Utility.GetIdFromURI(valueMap.uri);
         valueMap.internalValue = internalValue;
         item.SetTextBlockText(model.IdLabelDictionary[id] + "[" + internalValue + "]");
-        Presenter.ButtonCtrl("btnvSave").IsEnabled = true;
+        Presenter.ButtonCtrl("btnSave").IsEnabled = true;
+        Presenter.ButtonCtrl("btnSave").Background = new SolidColorBrush(Color.FromArgb(255, 255, 0, 0));
         Presenter.RefreshValueMap(valueMap, item);
         saveActive = true;
       }
@@ -251,13 +231,20 @@ namespace org.iringtools.modules.memappingregion
 
       if (mapping != null)
       {
-        ValueList valueList = new ValueList { name = valueListName, valueMaps = new List<ValueMap>() };
-        mapping.valueLists.Add(valueList);
-        tvwValues.Items.Add(Presenter.AddNode(valueListName, valueList, null));
-        Presenter.ButtonCtrl("btnvSave").IsEnabled = true;
+        if (!Regex.IsMatch(valueListName, @"^[A-Za-z_]+\w*$"))
+        {
+          MessageBox.Show("ValueList value is invalid", "ADD VALUELIST", MessageBoxButton.OK);
+        }
+        
+        else
+        {
+          ValueList valueList = new ValueList { name = valueListName, valueMaps = new List<ValueMap>() };
+          mapping.valueLists.Add(valueList);
+          tvwValues.Items.Add(Presenter.AddNode(valueListName, valueList, null));
+          Presenter.ButtonCtrl("btnSave").IsEnabled = true;
+          Presenter.ButtonCtrl("btnSave").Background = new SolidColorBrush(Color.FromArgb(255, 255, 0, 0));
 
-
-        saveActive = true;
+        }
       }
 
     }
@@ -290,41 +277,10 @@ namespace org.iringtools.modules.memappingregion
           ValueMap valueMap = new ValueMap { internalValue = internalValue, uri = uri };
           valueList.valueMaps.Add(valueMap);
           model.SelectedMappingItem.Items.Add(Presenter.AddNode(uri, valueMap, model.SelectedMappingItem));
-
-          Presenter.ButtonCtrl("btnvSave").IsEnabled = true;
-
-          saveActive = true;
+          Presenter.RefreshValueMap(valueMap, model.SelectedMappingItem);
+          Presenter.ButtonCtrl("btnSave").IsEnabled = true;
+          Presenter.ButtonCtrl("btnSave").Background = new SolidColorBrush(Color.FromArgb(255, 255, 0, 0));
         }
-      }
-
-    }
-
-    public void btnDeleteValue_Click(object sender, RoutedEventArgs e)
-    {
-      MappingItem mapItem = model.SelectedMappingItem;
-
-      if (mapItem != null)
-      {
-        if (mapItem.Tag is ValueList)
-        {
-          ValueList valueList = (ValueList)mapItem.Tag;
-          mapping.valueLists.Remove(valueList);
-          tvwValues.Items.Remove(mapItem);
-        }
-        else if (mapItem.Tag is ValueMap)
-        {
-          MappingItem parentMap = (MappingItem)mapItem.Parent;
-
-          ValueMap valueMap = (ValueMap)mapItem.Tag;
-          ValueList valueList = (ValueList)parentMap.Tag;
-
-          valueList.valueMaps.Remove(valueMap);
-          parentMap.Items.Remove(mapItem);
-        }
-        Presenter.ButtonCtrl("btnvSave").IsEnabled = true;
-
-
-        saveActive = true;
       }
 
     }
@@ -341,11 +297,11 @@ namespace org.iringtools.modules.memappingregion
       else if (model.SelectedIMUri == null ||
           SPARQLExtensions.GetObjectTypeFromUri(model.SelectedIMUri) != SPARQLPrefix.ObjectType.Class)
       {
-        MessageBox.Show("Please select a valid class", "ADD GRAPH", MessageBoxButton.OK);
+        MessageBox.Show("Please select a valid class from Information Model", "ADD GRAPH", MessageBoxButton.OK);
       }
       else if (model.SelectedDataObject == null || model.SelectedDataObject.DataProperty == null)
       {
-        MessageBox.Show("Please select an identifier", "ADD GRAPH", MessageBoxButton.OK);
+        MessageBox.Show("Please select an identifier from Data Dictionary", "ADD GRAPH", MessageBoxButton.OK);
       }
       else
       {
@@ -369,37 +325,10 @@ namespace org.iringtools.modules.memappingregion
         mapping.graphMaps.Add(graphMap);
         tvwMapping.Items.Add(Presenter.AddNode(graphMap.name, graphMap, null));
         Presenter.ButtonCtrl("btnSave").IsEnabled = true;
-
+        Presenter.ButtonCtrl("btnSave").Background = new SolidColorBrush(Color.FromArgb(255, 255, 0, 0));
 
         saveActive = true;
       }
-    }
-
-    public void btnEditFixedRole_Click(object sender, RoutedEventArgs e)
-    {
-      TextBox txtLabel = sender as TextBox;
-      string fixedValue = txtLabel.Text;
-
-      if (txtLabel.Text == "" || txtLabel.Text == null)
-      {
-        MessageBox.Show("Please enter value into textbox", "EDIT FIXED VALUE", MessageBoxButton.OK);
-      }
-      else if (!Regex.IsMatch(fixedValue, @"^[A-Za-z_]+\w*$"))
-      {
-        MessageBox.Show("Fixed value is invalid", "EDIT FIXED VALUE", MessageBoxButton.OK);
-      }
-      if (model.SelectedMappingItem.Tag is RoleMap)
-      {
-        RoleMap roleMap = (RoleMap)model.SelectedMappingItem.Tag;
-        roleMap.value = fixedValue;
-
-        Presenter.RefreshRoleMap(roleMap);
-      }
-      else
-      {
-        MessageBox.Show("Please select a roleMap", "EDIT FIXED VALUE", MessageBoxButton.OK);
-      }
-
     }
 
     private string AdjustTemplateName(MappingItem mappingItem, string templateName)
@@ -500,6 +429,7 @@ namespace org.iringtools.modules.memappingregion
         model.SelectedGraphMap.AddTemplateMap(selectedClassMap, templateMap);
         Presenter.PopulateTemplateMap(mappingItem, templateMap);
         Presenter.ButtonCtrl("btnSave").IsEnabled = true;
+        Presenter.ButtonCtrl("btnSave").Background = new SolidColorBrush(Color.FromArgb(255, 255, 0, 0));
 
         saveActive = true;
       }
@@ -628,6 +558,7 @@ namespace org.iringtools.modules.memappingregion
       MappingItem mappingItem = model.SelectedMappingItem;
 
       Presenter.ButtonCtrl("btnSave").IsEnabled = true;
+      Presenter.ButtonCtrl("btnSave").Background = new SolidColorBrush(Color.FromArgb(255, 255, 0, 0));
 
 
       saveActive = true;
@@ -646,11 +577,11 @@ namespace org.iringtools.modules.memappingregion
               string.Format("{0}.{1}", model.SelectedDataObject.DataObject.objectName, model.SelectedDataObject.DataProperty.propertyName);
           roleMap.valueList = String.Empty;
         }
-        else if (model.SelectedTreeItem == null || !(model.SelectedTreeItem is ClassTreeItem))
-        {
-          MessageBox.Show("Please select a class to map", "MAP ROLE", MessageBoxButton.OK);
-          return;
-        }
+        //else if (model.SelectedTreeItem == null || !(model.SelectedTreeItem is ClassTreeItem))
+        //{
+        //  MessageBox.Show("Please select a class to map", "MAP ROLE", MessageBoxButton.OK);
+        //  return;
+        //}
         else if (roleMap.dataType != null || roleMap.dataType.StartsWith("xsd:"))
         {
           roleMap.propertyName =
@@ -713,13 +644,11 @@ namespace org.iringtools.modules.memappingregion
     public void btnAddValueList(object sender, RoutedEventArgs e)
     {
       MappingItem mappingItem = model.SelectedMappingItem;
-      string valuelist = Presenter.selectedValueList;
-      if (valuelist == "<No ValueList>")
-      {
-        valuelist = "";
-      }
-      if (mappingItem == null)
-        return;
+      MappingItem valueList = (MappingItem)tvwValues.SelectedItem;
+      if (mappingItem == null) return;
+       
+      if (valueList == null || valueList.Tag is ValueMap) return;
+      string valuelist = ((MappingItem)tvwValues.SelectedItem).itemTextBlock.Text;
 
       if (mappingItem.NodeType == NodeType.RoleMap)
       {
@@ -727,7 +656,7 @@ namespace org.iringtools.modules.memappingregion
         {
           MessageBox.Show("Please select a property to map", "MAP ROLE", MessageBoxButton.OK);
         }
-        else if (Presenter.selectedValueList == null)
+        else if (string.IsNullOrEmpty(valuelist))
         {
           MessageBox.Show("Please select a value list", "MAP ROLE", MessageBoxButton.OK);
         }
@@ -757,6 +686,7 @@ namespace org.iringtools.modules.memappingregion
           }
         }
         Presenter.ButtonCtrl("btnSave").IsEnabled = true;
+        Presenter.ButtonCtrl("btnSave").Background = new SolidColorBrush(Color.FromArgb(255, 255, 0, 0));
         saveActive = true;
       }
     }
@@ -769,6 +699,7 @@ namespace org.iringtools.modules.memappingregion
         return;
 
       Presenter.ButtonCtrl("btnSave").IsEnabled = true;
+      Presenter.ButtonCtrl("btnSave").Background = new SolidColorBrush(Color.FromArgb(255, 255, 0, 0));
 
       saveActive = true;
       switch (mappingItem.NodeType)
@@ -831,6 +762,25 @@ namespace org.iringtools.modules.memappingregion
             }
             break;
           }
+        case NodeType.ValueList:
+          {
+            ValueList valueList = (ValueList)mappingItem.Tag;
+            mapping.valueLists.Remove(valueList);
+            tvwValues.Items.Remove(mappingItem);
+            break;
+          }
+        case NodeType.ValueMap:
+          {
+            MappingItem parentMap = (MappingItem)mappingItem.Parent;
+
+            ValueMap valueMap = (ValueMap)mappingItem.Tag;
+            ValueList valueList = (ValueList)parentMap.Tag;
+
+            valueList.valueMaps.Remove(valueMap);
+            parentMap.Items.Remove(mappingItem);
+            break;
+          }
+
       }
 
       aggregator.GetEvent<NavigationEvent>().Publish(new NavigationEventArgs
@@ -845,16 +795,7 @@ namespace org.iringtools.modules.memappingregion
     {
       Response response = adapterProxy.UpdateMapping(projectName, applicationName, mapping);
       Presenter.ButtonCtrl("btnSave").IsEnabled = false;
-
-
-      saveActive = false;
-    }
-
-    public void btnvSave_Click(object sender, RoutedEventArgs e)
-    {
-      Response response = adapterProxy.UpdateMapping(projectName, applicationName, mapping);
-      Presenter.ButtonCtrl("btnvSave").IsEnabled = false;
-
+      Presenter.ButtonCtrl("btnSave").Background = new SolidColorBrush(Color.FromArgb(255,31,59,83)); 
 
       saveActive = false;
     }
