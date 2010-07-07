@@ -38,9 +38,6 @@ namespace org.iringtools.modules.memappingregion
     private IReferenceData referenceDataService = null;
     IIMPresentationModel model = null;
 
-    private TabControl tabMappings { get { return GetControl<TabControl>("tabMappings"); } }
-    private TabItem tabGraphMaps { get { return GetControl<TabItem>("tabGraphMaps"); } }
-    private TabItem tabValueMaps { get { return GetControl<TabItem>("tabValueMaps"); } }
     private TreeView tvwMapping { get { return GetControl<TreeView>("tvwMapping"); } }
     private TreeView tvwValues { get { return GetControl<TreeView>("tvwValues"); } }
 
@@ -48,8 +45,7 @@ namespace org.iringtools.modules.memappingregion
     private Button btnAddGraph { get { return ButtonCtrl("btnAddGraph"); } }
     private Button btnMap { get { return ButtonCtrl("btnMap"); } }
     private Button btnMakePossessor { get { return ButtonCtrl("btnMakePossessor"); } }
-    private ComboBox cbValueList { get { return ComboBoxCtrl("cbValueList"); } }
-    private Button btnAddValueList { get { return ButtonCtrl("btnAddValueList"); } }
+    private Button btnMapValueList { get { return ButtonCtrl("btnMapValueList"); } }
     private Button btnDelete { get { return ButtonCtrl("btnDelete"); } }
     private Button btnSave { get { return ButtonCtrl("btnSave"); } }
     private TextBox txtLabel { get { return TextCtrl("txtLabel"); } }
@@ -58,12 +54,10 @@ namespace org.iringtools.modules.memappingregion
     private Button btnvAddValueList { get { return ButtonCtrl("btnvAddValueList"); } }
     private Button btnvMoveUp { get { return ButtonCtrl("btnvMoveUp"); } }
     private Button btnvMoveDown { get { return ButtonCtrl("btnvMoveDown"); } }
-    private Button btnvDelete { get { return ButtonCtrl("btnvDelete"); } }
-    private Button btnvSave { get { return ButtonCtrl("btnvSave"); } }
-    private TextBox txtvLabel { get { return TextCtrl("txtvLabel"); } }
 
 
-    public string selectedValueList { get { return ((ComboBoxItem)(cbValueList.SelectedItem)).Content.ToString(); } }
+
+    //   public string selectedValueList { get { return ((ComboBoxItem)(cbValueList.SelectedItem)).Content.ToString(); } }
 
     // Create, Update, Delete code for Mapping Editor treeview
     private MappingCRUD mappingCRUD = null;
@@ -92,22 +86,18 @@ namespace org.iringtools.modules.memappingregion
         mappingCRUD.tvwValues = tvwValues;
         // Subcribe to button click events on mappingCRUD
         // note that we're sending in the txtLabel object as sender
-        tabMappings.SelectionChanged += (object sender, SelectionChangedEventArgs e) => { mappingCRUD.tabMappins_SelectionChanged(tabMappings, e); };
         btnAddTemplate.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnAddTemplate_Click(txtLabel, e); };
         btnAddGraph.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnAddGraph_Click(txtLabel, e); };
         btnMap.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnMap_Click(txtLabel, e); };
         btnMakePossessor.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnMakePossessor_Click(txtLabel, e); };
-        btnAddValueList.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnAddValueList(txtLabel, e); };
+        btnMapValueList.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnAddValueList(txtLabel, e); };
         btnSave.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnSave_Click(txtLabel, e); };
         btnDelete.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnDelete_Click(txtLabel, e); };
-        cbValueList.SelectionChanged += new SelectionChangedEventHandler(cbValueList_SelectionChanged);
-        btnvSave.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnvSave_Click(txtLabel, e); };
-        btnvAddValueList.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnAddValueList_Click(txtvLabel, e); };
-        btnvDelete.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnDeleteValue_Click(txtvLabel, e); };
-        btnvAddValue.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnAddValueMap_Click(txtvLabel, e); };
-        btnvEditValue.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnEditValueMap_Click(txtvLabel, e); };
-        btnvMoveDown.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnMoveDown_Click(txtvLabel, e); };
-        btnvMoveUp.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnMoveUp_Click(txtvLabel, e); };
+        btnvAddValueList.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnAddValueList_Click(txtLabel, e); };
+        btnvAddValue.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnAddValueMap_Click(txtLabel, e); };
+        btnvEditValue.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnEditValueMap_Click(txtLabel, e); };
+        btnvMoveDown.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnMoveDown_Click(txtLabel, e); };
+        btnvMoveUp.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnMoveUp_Click(txtLabel, e); };
 
 
 
@@ -127,11 +117,7 @@ namespace org.iringtools.modules.memappingregion
       }
     }
 
-
-    void cbValueList_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-      btnAddValueList.IsEnabled = true;
-    }
+  
 
     /// <summary>
     /// Called when [data arrived handler].
@@ -183,19 +169,11 @@ namespace org.iringtools.modules.memappingregion
       {
         // Ensure we have a valid parameter
         Mapping mapping = e.Data as Mapping;
-        if (mapping == null)
-          return;
+        if (mapping == null) return;
 
         mappingCRUD.mapping = mapping;
-        tvwMapping.Items.Clear();
-        tvwValues.Items.Clear();
-
-        // Note that we only load first level nodes
-        foreach (GraphMap graphMap in mapping.graphMaps)
-        {
-          tvwMapping.Items.Add(AddNode(graphMap.name, graphMap, null));
-        }
-        PolulateValuelist(mapping);
+        PopulateTreeViewMapping(mapping);
+        PopulateTreeViewValueLists(mapping);
 
       }
       catch (Exception ex)
@@ -203,34 +181,30 @@ namespace org.iringtools.modules.memappingregion
         throw ex;
       }
     }
-
-    internal void PolulateValuelist(Mapping mapping)
+    internal void PopulateTreeViewMapping(Mapping mapping)
     {
-      if (mapping != null)
+      tvwMapping.Items.Clear();
+      foreach (GraphMap graphMap in mapping.graphMaps)
       {
-        cbValueList.Items.Clear();
-        //Add an empty value list item so we can use that value to clear erroneous entries
-        cbValueList.Items.Add(new ComboBoxItem { Content = "<No ValueList>", IsSelected = true });
-        // Add value maps to value list drop list                                                
-        foreach (ValueList valueList in mapping.valueLists)
-        {
-          ComboBoxItem cbItem = new ComboBoxItem();
-          cbItem.Content = valueList.name;
-          cbItem.Tag = valueList;
-          cbValueList.Items.Add(cbItem);
-
-          MappingItem nodeValueList = AddNode(valueList.name, valueList, null);
-          tvwValues.Items.Add(nodeValueList);
-
-          foreach (ValueMap valueMap in valueList.valueMaps)
-          {
-            nodeValueList.Items.Add(AddNode(valueMap.uri, valueMap, nodeValueList));
-          }
-        }
-
-        ChangeControlsState(true);
+        tvwMapping.Items.Add(AddNode(graphMap.name, graphMap, null));
       }
     }
+
+    internal void PopulateTreeViewValueLists(Mapping mapping)
+    {
+      tvwValues.Items.Clear();
+      foreach (ValueList valueList in mapping.valueLists)
+      {
+        MappingItem nodeValueList = AddNode(valueList.name, valueList, null);
+        tvwValues.Items.Add(nodeValueList);
+
+        foreach (ValueMap valueMap in valueList.valueMaps)
+        {
+          nodeValueList.Items.Add(AddNode(valueMap.uri, valueMap, nodeValueList));
+        }
+      }
+    }
+
     /// <summary>
     /// getclasslabel handler.
     /// </summary>
@@ -854,57 +828,24 @@ namespace org.iringtools.modules.memappingregion
       {
         if (mappingCRUD.mapping != null)
         {
-          tabGraphMaps.IsEnabled = enabled;
-          tabValueMaps.IsEnabled = enabled;
+          btnvAddValue.IsEnabled = enabled;
+          btnvEditValue.IsEnabled = enabled;
+          btnvAddValueList.IsEnabled = enabled;
+          btnvMoveDown.IsEnabled = enabled;
+          btnvMoveUp.IsEnabled = enabled;
+          btnMapValueList.IsEnabled = true;
+          txtLabel.IsEnabled = enabled;
+          btnAddGraph.IsEnabled = enabled;
+          tvwMapping.IsEnabled = enabled;
+          btnAddTemplate.IsEnabled = enabled;
+          btnMap.IsEnabled = enabled;
+          btnMakePossessor.IsEnabled = enabled;
+          tvwMapping.IsEnabled = enabled;
+          btnAddTemplate.IsEnabled = enabled;
+          btnMap.IsEnabled = enabled;
+          btnMakePossessor.IsEnabled = enabled;
 
-          if (tabMappings.SelectedItem == tabValueMaps)
-          {
-            if (btnvAddValue == null) return;
-            btnvAddValue.IsEnabled = enabled;
-            btnvEditValue.IsEnabled = enabled;
-            btnvAddValueList.IsEnabled = enabled;
-            btnvDelete.IsEnabled = enabled;
-            btnvMoveDown.IsEnabled = enabled;
-            btnvMoveUp.IsEnabled = enabled;
-            txtvLabel.IsEnabled = enabled;
-          }
-          else if (tabMappings.SelectedItem == tabGraphMaps)
-          {
-            if (btnAddGraph == null) return;
-            txtLabel.IsEnabled = enabled;
-            btnAddGraph.IsEnabled = enabled;
-            tvwMapping.IsEnabled = enabled;
-            btnAddTemplate.IsEnabled = enabled;
-            btnMap.IsEnabled = enabled;
-            btnMakePossessor.IsEnabled = enabled;
-
-            if (mappingCRUD.mapping.graphMaps.Count > 0)
-            {
-              tvwMapping.IsEnabled = enabled;
-              btnAddTemplate.IsEnabled = enabled;
-              btnMap.IsEnabled = enabled;
-              btnMakePossessor.IsEnabled = enabled;
-
-              if (enabled && cbValueList.Items.Count > 0)
-              {
-                cbValueList.IsEnabled = enabled;
-                btnAddValueList.IsEnabled = enabled;
-              }
-              else if (enabled && cbValueList.SelectedItem != null)
-              {
-                cbValueList.IsEnabled = false;
-                btnAddValueList.IsEnabled = false;
-              }
-              else
-              {
-                cbValueList.IsEnabled = false;
-                btnAddValueList.IsEnabled = false;
-              }
-
-              btnDelete.IsEnabled = enabled;
-
-            }
-          }
+          btnDelete.IsEnabled = enabled;
         }
       }
       catch (Exception ex)
