@@ -22,6 +22,7 @@ namespace ApplicationEditor
         private ResultsList resultsList;
         private EditTreeNode editTreeNode;
         List<string> dbDictionaries;
+        Collection<ScopeProject> scopes;
         public string newProvider;
         public string newProject;
         public string newApplication;
@@ -60,7 +61,8 @@ namespace ApplicationEditor
 
                 LayoutRoot.SizeChanged += new SizeChangedEventHandler(LayoutRoot_SizeChanged);
 
-                _dal.GetExistingDbDictionaryFiles();
+                _dal.GetScopes();
+                //_dal.GetExistingDbDictionaryFiles();
 
                 isPosting = false;
             }
@@ -487,8 +489,12 @@ namespace ApplicationEditor
                     MessageBox.Show(args.FriendlyErrorMessage, "Save Database Dictionary Error", MessageBoxButton.OK);
                     return;
                 }
-
-                _dal.GetExistingDbDictionaryFiles();
+                //string dictionaries = cbDictionary.SelectedItem.ToString();
+                //string project = dictionaries.Split('.')[1];
+                //string application = dictionaries.Split('.')[2];
+                //_dal.GetDbDictionary(project, application);
+                _dal.GetScopes();
+                //_dal.GetExistingDbDictionaryFiles();
                 //tvwItemDestinationRoot.Items.Clear();
             }
             catch (Exception ex)
@@ -553,17 +559,27 @@ namespace ApplicationEditor
                 }
 
                 DatabaseDictionary dict = (DatabaseDictionary)args.Data;
-                if (isPosting)
+                string project = string.Empty;
+                string application = string.Empty;
+                if (cbDictionary.SelectedItem != null)
                 {
-                    string project = cbDictionary.SelectedItem.ToString().Split('.')[1];
-                    string application = cbDictionary.SelectedItem.ToString().Split('.')[2];
-                    _dal.PostDictionaryToAdapterService(project, application, dict);
+                    project = cbDictionary.SelectedItem.ToString().Split('.')[1];
+                    application = cbDictionary.SelectedItem.ToString().Split('.')[2];
+                }
+                else
+                {
+                    project = newProject;
+                    application = newApplication;
+                }
+                if (isPosting)
+                {                   
+                    _dal.PostDictionaryToAdapterService(project, application);
                 }
                 else
                 {
                     tvwItemDestinationRoot.Items.Clear();
 
-                    _dal.GetDatabaseSchema(dict.connectionString, dict.provider.ToString());
+                    _dal.GetDatabaseSchema(project, application);
                     ConstructTreeView(dict, tvwItemDestinationRoot);
                 }
             }
@@ -675,8 +691,48 @@ namespace ApplicationEditor
         {
             try
             {
-                cbDictionary.IsEnabled = false;
-  
+                if (args.Error != null)
+                {
+                    MessageBox.Show(args.FriendlyErrorMessage, "Get Existing Database Dictionaries Error", MessageBoxButton.OK);
+                    return;
+                }
+
+                scopes = (Collection<ScopeProject>)args.Data;
+                cbDictionary.IsEnabled = true;
+
+                List<string> dbDict = new List<string>();
+                foreach (ScopeProject scopeProject in scopes)
+                {
+                    foreach (ScopeApplication application in scopeProject.Applications)
+                    {
+                        dbDict.Add("DatabaseDictionary." + scopeProject.Name + "." + application.Name);
+                    }
+                }
+                dbDict.Sort();
+                cbDictionary.ItemsSource = dbDict;
+                if (cbDictionary.Items.Count > 0)
+                {
+                    if (newDictionary != null)
+                    {
+                        if (cbDictionary.Items.Contains(newDictionary.ToString()))
+                            cbDictionary.SelectedIndex = cbDictionary.Items.IndexOf(newDictionary.ToString());
+
+                        _dal.GetDbDictionary(newDictionary.ToString().Split('.')[1], newDictionary.ToString().Split('.')[2]);
+                        newDictionary = null;
+                    }
+                    else
+                    {
+                        if (string.IsNullOrEmpty(selectedCBItem))
+                        {
+                            cbDictionary.SelectedIndex = 0;
+                            selectedCBItem = cbDictionary.SelectedItem.ToString();
+                        }
+                        cbDictionary.SelectedIndex = cbDictionary.Items.IndexOf(selectedCBItem);
+                    }
+
+                    _dal.GetDbDictionary(selectedCBItem.Split('.')[1], selectedCBItem.Split('.')[2]);
+                }
+
             }
             catch (Exception ex)
             {
@@ -720,6 +776,7 @@ namespace ApplicationEditor
                     selectedCBItem = cbDictionary.SelectedItem.ToString();
 
                     _dal.GetDbDictionary(selectedCBItem.Split('.')[1], selectedCBItem.Split('.')[2]);
+
                 }
             }
             catch (Exception ex)
@@ -799,7 +856,7 @@ namespace ApplicationEditor
                 string project = cbDictionary.SelectedItem.ToString().Split('.')[1];
                 string application = cbDictionary.SelectedItem.ToString().Split('.')[2];
               
-                _dal.PostDictionaryToAdapterService(project, application, dbdict);
+                _dal.PostDictionaryToAdapterService(project, application);
             }
             catch (Exception ex)
             {

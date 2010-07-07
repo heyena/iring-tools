@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using org.iringtools.modulelibrary.events;
 using org.iringtools.utility;
+using System.Collections.ObjectModel;
 
 namespace ApplicationEditor
 {
@@ -45,12 +46,12 @@ namespace ApplicationEditor
 
             _scopesClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
             _dbDictionaryClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
-            _dbschemaClient.UploadStringCompleted += new UploadStringCompletedEventHandler(OnCompletedEvent);
+            _dbschemaClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
             _savedbdictionaryClient.UploadStringCompleted += new UploadStringCompletedEventHandler(OnCompletedEvent);
             _dbdictionariesClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
             _providersClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
             _clearClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
-            _postdbdictionaryClient.UploadStringCompleted += new UploadStringCompletedEventHandler(OnCompletedEvent);
+            _postdbdictionaryClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
             _deleteClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
 
             _dbDictionaryServiceUri = App.Current.Resources["ApplicationServiceURI"].ToString();
@@ -61,7 +62,7 @@ namespace ApplicationEditor
         {
             if (!_dbDictionaryClient.IsBusy)
             {
-              string relativeUri = String.Format("/{0}/{1}/dbdictionary",
+              string relativeUri = String.Format("/{0}/{1}/dictionary",
                 projectName,
                 applicationName
               );
@@ -73,9 +74,20 @@ namespace ApplicationEditor
             return null;
         }
 
+        public void GetScopes()
+        {
+            
+            string relativeUri = String.Format("/scopes");
+
+            Uri address = new Uri(new Uri(_adapterServiceUri), relativeUri);
+
+            _scopesClient.DownloadStringAsync(address);
+            
+        }
+
         public void SaveDatabaseDictionary(DatabaseDictionary databaseDictionary, string projectName, string applicationName)
         {
-          string relativeUri = String.Format("/{0}/{1}/dbdictionary",
+          string relativeUri = String.Format("/{0}/{1}/dictionary",
             projectName,
             applicationName
           );
@@ -88,32 +100,25 @@ namespace ApplicationEditor
           _savedbdictionaryClient.UploadStringAsync(address, "POST", data);
         }
 
-        public void GetDatabaseSchema(string connString, string dbProvider)
+        public void GetDatabaseSchema(string projectName, string applicationName)
         {
-          Request request = new Request
-          {
-            {"connectionString", connString},
-            {"dbProvider", dbProvider}
-          };
-
-          string relativeUri = "/dbschema";
+            string relativeUri = String.Format("/{0}/{1}/schema",
+               projectName,
+               applicationName
+             );
 
           Uri address = new Uri(new Uri(_dbDictionaryServiceUri), relativeUri);
-          string data = Utility.SerializeDataContract<Request>(request);
-
-          _dbschemaClient.Headers["Content-type"] = "application/xml";
-          _dbschemaClient.Encoding = Encoding.UTF8;
-          _dbschemaClient.UploadStringAsync(address, "POST", data);
+          _dbschemaClient.DownloadStringAsync(address);
         }
 
-        public void GetExistingDbDictionaryFiles()
-        {
-          string relativeUri = "/dbdictionaries";
+        //public void GetExistingDbDictionaryFiles()
+        //{
+        //  string relativeUri = "/dbdictionaries";
 
-          Uri address = new Uri(new Uri(_dbDictionaryServiceUri), relativeUri);
+        //  Uri address = new Uri(new Uri(_dbDictionaryServiceUri), relativeUri);
 
-          _dbdictionariesClient.DownloadStringAsync(address);
-        }
+        //  _dbdictionariesClient.DownloadStringAsync(address);
+        //}
 
         public void GetProviders()
         {
@@ -124,19 +129,21 @@ namespace ApplicationEditor
           _providersClient.DownloadStringAsync(address);
         }
 
-        public void PostDictionaryToAdapterService(string projectName, string applicationName, DatabaseDictionary databaseDictionary)
+        public void PostDictionaryToAdapterService(string projectName, string applicationName)
         {
-          string relativeUri = String.Format("/{0}/{1}/dbdictionary/commit",
+          string relativeUri = String.Format("/{0}/{1}/generate",
             projectName,
             applicationName
           );
 
           Uri address = new Uri(new Uri(_dbDictionaryServiceUri), relativeUri);
-          string data = Utility.SerializeDataContract<DatabaseDictionary>(databaseDictionary);
 
-          _postdbdictionaryClient.Headers["Content-type"] = "application/xml";
-          _postdbdictionaryClient.Encoding = Encoding.UTF8;
-          _postdbdictionaryClient.UploadStringAsync(address, "POST", data);
+          _postdbdictionaryClient.DownloadStringAsync(address);
+          //string data = Utility.SerializeDataContract<DatabaseDictionary>(databaseDictionary);
+
+          //_postdbdictionaryClient.Headers["Content-type"] = "application/xml";
+          //_postdbdictionaryClient.Encoding = Encoding.UTF8;
+          //_postdbdictionaryClient.UploadStringAsync(address, "POST", data);
         }
 
         void OnCompletedEvent(object sender, AsyncCompletedEventArgs e)
@@ -161,25 +168,25 @@ namespace ApplicationEditor
                 };
             }
             #endregion
-            
-            //if (sender == _scopesClient)
-            //{
-            //    string result = ((DownloadStringCompletedEventArgs)e).Result;
 
-            //    Collection<ScopeProject> scopes = result.DeserializeDataContract<Collection<ScopeProject>>();
+            if (sender == _scopesClient)
+            {
+                string result = ((DownloadStringCompletedEventArgs)e).Result;
 
-            //    // If the cast failed then return
-            //    if (scopes == null)
-            //        return;
+                Collection<ScopeProject> scopes = result.DeserializeDataContract<Collection<ScopeProject>>();
 
-            //    // Configure event argument
-            //    args = new CompletedEventArgs
-            //    {
-            //        // Define your method in CompletedEventType and assign
-            //        CompletedType = CompletedEventType.GetScopes,
-            //        Data = scopes,
-            //    };
-            //}
+                // If the cast failed then return
+                if (scopes == null)
+                    return;
+
+                // Configure event argument
+                args = new CompletedEventArgs
+                {
+                    // Define your method in CompletedEventType and assign
+                    CompletedType = CompletedEventType.GetScopes,
+                    Data = scopes,
+                };
+            }
 
             if (sender == _dbDictionaryClient)
             {
@@ -222,7 +229,7 @@ namespace ApplicationEditor
             {
                 try
                 {
-                    string result = ((UploadStringCompletedEventArgs)e).Result;
+                    string result = ((DownloadStringCompletedEventArgs)e).Result;
 
                     DatabaseDictionary dbSchema = result.DeserializeDataContract<DatabaseDictionary>();
 
