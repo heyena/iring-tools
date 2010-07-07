@@ -34,24 +34,80 @@ namespace org.iringtools.library
 {
   [XmlRoot]
   [CollectionDataContract]
-  public class Response : List<string>
+  public class Response
   {
     [XmlElement]
     [DataMember]
     public StatusLevel Level { get; set; }
 
     [XmlElement]
-    [DataMember(EmitDefaultValue=false)]
+    [DataMember(EmitDefaultValue = false)]
     public DateTime DateTimeStamp { get; set; }
 
-    public bool Append(Response responses)
+    [XmlElement]
+    [DataMember]
+    public List<Status> StatusList { get; set; }
+
+    public void Append(Response response)
     {
-      foreach (string item in responses)
+      foreach (Status status in response.StatusList)
       {
-        base.Add(item);
+        Append(status);
       }
-      return true;
     }
+
+    public void Append(Status status)
+    {
+      Status foundStatus = null;
+      bool wasFound = false;
+      foreach (Status candidateStatus in StatusList)
+      {
+        if (status.Identifier == candidateStatus.Identifier)
+        {
+          foundStatus = candidateStatus;
+          wasFound = true;
+        }
+      }
+
+      if (!wasFound)
+      {
+        StatusList.Add(status);
+      }
+      else
+      {
+        if (foundStatus.Level < status.Level)
+          foundStatus.Level = status.Level;
+
+        foreach (string message in status.Messages)
+        {
+          foundStatus.Messages.Add(message);
+        }
+      }
+
+      if (Level < status.Level)
+        Level = status.Level;
+    }
+  }
+
+  [XmlRoot]
+  [CollectionDataContract]
+  public class Status
+  {
+    [XmlElement]
+    [DataMember]
+    public StatusLevel Level { get; set; }
+
+    [XmlElement]
+    [DataMember(EmitDefaultValue = false)]
+    public string Identifier { get; set; }
+
+    [XmlElement]
+    [DataMember(EmitDefaultValue = false)]
+    public Dictionary<string, string> Results { get; set; }
+
+    [XmlElement]
+    [DataMember(EmitDefaultValue = false)]
+    public List<string> Messages { get; set; }
   }
 
   [XmlRoot]
