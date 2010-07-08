@@ -240,7 +240,7 @@ namespace ApplicationEditor
                 string project = dictionaries.Split('.')[1];
                 string application = dictionaries.Split('.')[2];
 
-                resultsList.lbResult.ItemsSource = response;
+                resultsList.lbResult.ItemsSource = response.StatusList[0].Messages;
 
                 _dal.GetDbDictionary(project, application);
             }
@@ -277,7 +277,7 @@ namespace ApplicationEditor
 
                 Response response = (Response)args.Data;
 
-                resultsList.lbResult.ItemsSource = response;
+                resultsList.lbResult.ItemsSource = response.StatusList[0].Messages;
 
                 isPosting = false;
                 resultsList.Show();
@@ -298,14 +298,14 @@ namespace ApplicationEditor
                     MessageBox.Show(args.FriendlyErrorMessage, "Clear Triple Store Error", MessageBoxButton.OK);
                     return;
                 }
-                Response resp = (Response)args.Data;
+                Response response = (Response)args.Data;
 
                 string dictionary = cbDictionary.SelectedItem.ToString();
 
                 string project = dictionary.Split('.')[1];
                 string application = dictionary.Split('.')[2];
 
-                resultsList.lbResult.ItemsSource = resp;
+                resultsList.lbResult.ItemsSource = response.StatusList[0].Messages;
 
                 //_dal.PostDictionaryToAdapterService(project, application);
             }

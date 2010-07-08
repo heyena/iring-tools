@@ -48,6 +48,7 @@ namespace org.iringtools.application
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(ApplicationProvider));
 
+    private Response _response = null;
     private IKernel _kernel = null;
     private ApplicationSettings _settings = null;
     WebProxyCredentials _proxyCredentials = null;
@@ -68,21 +69,26 @@ namespace org.iringtools.application
       Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
 
       _adapterClient = new AdapterClient(_settings);
+
+      _response = new Response();
+      _kernel.Bind<Response>().ToConstant(_response);
     }
 
     #region public methods
     public Response Generate(string projectName, string applicationName)
     {
-      Response response = new Response();
+      Status status = new Status();
 
       try
       {
+        status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
+
         InitializeScope(projectName, applicationName);
 
         DatabaseDictionary dbDictionary = Utility.Read<DatabaseDictionary>(_settings["DBDictionaryPath"]);
         if (String.IsNullOrEmpty(projectName) || String.IsNullOrEmpty(applicationName))
         {
-          response.Add("Error project name and application name can not be null");
+          status.Messages.Add("Error project name and application name can not be null");
         }
         else if (ValidateDatabaseDictionary(dbDictionary))
         {
@@ -92,7 +98,7 @@ namespace org.iringtools.application
           }
 
           EntityGenerator generator = _kernel.Get<EntityGenerator>();
-          response = generator.Generate(dbDictionary, projectName, applicationName);
+          _response.Append(generator.Generate(dbDictionary, projectName, applicationName));
 
           List<ScopeProject> scopes = new List<ScopeProject> 
           {
@@ -109,7 +115,7 @@ namespace org.iringtools.application
             }
           };
 
-          response.Append(_adapterClient.PostScopes(scopes));
+          _response.Append(_adapterClient.PostScopes(scopes));
 
           // Update binding configuration
           XElement binding = new XElement("module",
@@ -121,20 +127,21 @@ namespace org.iringtools.application
             )
           );
 
-          response.Append(_adapterClient.PostBinding(binding));
+          _response.Append(_adapterClient.PostBinding(binding));
 
-          response.Add("Database dictionary updated successfully.");
+          status.Messages.Add("Database dictionary updated successfully.");
         }
       }
       catch (Exception ex)
       {
         _logger.Error(string.Format("Error in UpdateDatabaseDictionary: {0}", ex));
 
-        response.Level = StatusLevel.Error;
-        response.Add(string.Format("Error updating database dictionary: {0}", ex));
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(string.Format("Error updating database dictionary: {0}", ex));
       }
 
-      return response;
+      _response.Append(status);
+      return _response;
     }
 
     public DatabaseDictionary GetDictionary(string projectName, string applicationName)
@@ -156,21 +163,25 @@ namespace org.iringtools.application
 
     public Response PostDictionary(string projectName, string applicationName, DatabaseDictionary databaseDictionary)
     {
-        Response response = new Response();
+      Status status = new Status();
         try
         {
+          status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
+
           InitializeScope(projectName, applicationName);
 
           Utility.Write<DatabaseDictionary>(databaseDictionary, _settings["DBDictionaryPath"]);
 
-          response.Add("Database Dictionary saved successfully");
+          status.Messages.Add("Database Dictionary saved successfully");
         }
         catch (Exception ex)
         {
           _logger.Error("Error in SaveDatabaseDictionary: " + ex);
-          response.Add("Error in saving database dictionary" + ex.Message);
+          status.Messages.Add("Error in saving database dictionary" + ex.Message);
         }
-        return response;
+
+        _response.Append(status);
+        return _response;
     }
 
     public DatabaseDictionary GetDatabaseSchema(string projectName, string applicationName)
