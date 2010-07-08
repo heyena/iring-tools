@@ -24,6 +24,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ////////////////////////////////////////////////////////////////////////////////
 
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
@@ -33,7 +34,7 @@ using System;
 namespace org.iringtools.library
 {
   [XmlRoot]
-  [CollectionDataContract]
+  //[CollectionDataContract]
   public class Response
   {
     [XmlElement]
@@ -102,10 +103,11 @@ namespace org.iringtools.library
 
       return messages;
     }
+    
   }
 
   [XmlRoot]
-  [CollectionDataContract]
+  //[CollectionDataContract]
   public class Status
   {
     [XmlElement]
@@ -123,6 +125,7 @@ namespace org.iringtools.library
     [XmlElement]
     [DataMember(EmitDefaultValue = false)]
     public List<string> Messages { get; set; }
+
   }
 
   [XmlRoot]
