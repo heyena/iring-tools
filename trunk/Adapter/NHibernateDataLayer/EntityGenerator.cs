@@ -71,7 +71,8 @@ namespace org.iringtools.adapter.datalayer
     public Response Generate(DatabaseDictionary dbSchema, string projectName, string applicationName)
     {
       Response response = new Response();
-
+      Status status = new Status();
+      
       if (dbSchema.dataObjects != null)
       {
         _namespace = NAMESPACE_PREFIX + projectName + "." + applicationName;
@@ -79,6 +80,8 @@ namespace org.iringtools.adapter.datalayer
 
         try
         {
+          status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
+
           Directory.CreateDirectory(_settings["AdapterXmlPath"]);
 
           _mappingBuilder = new StringBuilder();
@@ -141,14 +144,17 @@ namespace org.iringtools.adapter.datalayer
           Utility.Write<DataDictionary>(dataDictionary, _settings["AdapterXmlPath"] + "DataDictionary." + projectName + "." + applicationName + ".xml");
           #endregion
 
-          response.Add("Entities generated successfully.");
+          status.Messages.Add("Entities generated successfully.");
         }
         catch (Exception ex)
         {
           throw new Exception("Error generating application entities " + ex);
+
+          //no need to status, thrown exception will be statused above.
         }
       }
 
+      response.Append(status);
       return response;
     }
 

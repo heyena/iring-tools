@@ -88,9 +88,12 @@ namespace org.iringtools.adapter.semantic
     public Response Refresh(string graphName, XElement rdf)
     {
       Response response = new Response();
+      Status status = new Status();
 
       try
-      {
+      {  
+        status.Identifier = graphName;
+
         DateTime startTime = DateTime.Now;
         _graphMap = _mapping.FindGraphMap(graphName);
         
@@ -111,25 +114,27 @@ namespace org.iringtools.adapter.semantic
         DeleteGraph(graphUri);
         _tripleStore.SaveGraph(_graph);
 
-        #region report status
         DateTime endTime = DateTime.Now;
         TimeSpan duration = endTime.Subtract(startTime);
 
-        response.Level = StatusLevel.Success;
-        response.Add("Graph [" + graphName + "] has been refreshed in triple store successfully.");
-
-        response.Add(String.Format("Execution time [{0}:{1}.{2}] minutes.",
-          duration.Minutes, duration.Seconds, duration.Milliseconds));
-        #endregion
+        status.Messages.Add("Graph [" + graphName + "] has been refreshed in triple store successfully.");
+        status.Messages.Add(
+          String.Format("Execution time [{0}:{1}.{2}] minutes.",
+            duration.Minutes, 
+            duration.Seconds, 
+            duration.Milliseconds
+          )
+        );
       }
       catch (Exception ex)
       {
         _logger.Error(string.Format("Error refreshing graph [{0}]. {1}", graphName, ex));
 
-        response.Level = StatusLevel.Error;
-        response.Add(string.Format("Error refreshing graph [{0}]. {1}", graphName, ex));
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(String.Format("Error refreshing graph [{0}]. {1}", graphName, ex));
       }
-
+      
+      response.Append(status);
       return response;
     }
 
@@ -143,9 +148,11 @@ namespace org.iringtools.adapter.semantic
     private Response DeleteGraph(Uri graphUri)
     {
       Response response = new Response();
-
+      Status status = new Status();
       try
       {
+        status.Identifier = graphUri.ToString();
+
         string graphId = _tripleStore.GetGraphID(graphUri);
 
         if (!String.IsNullOrEmpty(graphId))
@@ -154,17 +161,17 @@ namespace org.iringtools.adapter.semantic
           _tripleStore.RemoveGraph(graphId);
         }
 
-        response.Level = StatusLevel.Success;
-        response.Add(string.Format("Graph [{0}] has been deleted successfully.", graphUri));
+        status.Messages.Add(String.Format("Graph [{0}] has been deleted successfully.", graphUri));
       }
       catch (Exception ex)
       {
         _logger.Error(string.Format("Error deleting graph [{0}]: {1}", graphUri, ex));
 
-        response.Level = StatusLevel.Error;
-        response.Add(string.Format("Error deleting graph [{0}]: {1}", graphUri, ex));
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(String.Format("Error deleting graph [{0}]: {1}", graphUri, ex));
       }
 
+      response.Append(status);
       return response;
     }
     #endregion

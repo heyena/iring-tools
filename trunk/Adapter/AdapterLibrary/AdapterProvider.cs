@@ -49,6 +49,7 @@ namespace org.iringtools.adapter
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterProvider));
 
+    private Response _response = null;
     private IKernel _kernel = null;
     private AdapterSettings _settings = null;
     private List<ScopeProject> _scopes = null;
@@ -116,6 +117,9 @@ namespace org.iringtools.adapter
         _scopes = new List<ScopeProject>();
         Utility.Write<List<ScopeProject>>(_scopes, scopesPath);
       }
+
+      _response = new Response();
+      _kernel.Bind<Response>().ToConstant(_response);
     }
 
     #region public methods
@@ -138,13 +142,19 @@ namespace org.iringtools.adapter
     public Response UpdateScopes(List<ScopeProject> scopes)
     {
       Response response = new Response();
-
+      Status status = new Status();
       try
       {
         foreach (ScopeProject project in scopes)
         {
           foreach (ScopeApplication application in project.Applications)
           {
+            Status localStatus = new Status();
+            localStatus.Identifier = String.Format("{0}.{1}",
+              project.Name,
+              application.Name
+             );
+
             UpdateScopes(
               project.Name,
               project.Description,
@@ -154,23 +164,24 @@ namespace org.iringtools.adapter
           }
         }
 
-        response.Add("Scopes have been updated successfully.");
+        status.Messages.Add("Scopes have been updated successfully.");
       }
       catch (Exception ex)
       {
         _logger.Error(string.Format("Error in UpdateScopes: {0}", ex));
 
-        response.Level = StatusLevel.Error;
-        response.Add(string.Format("Error saving scopes: {0}", ex));
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(string.Format("Error saving scopes: {0}", ex));
       }
 
+      response.Append(status);
       return response;
     }
 
     public Response DeleteScope(string projectName, string applicationName)
     {
       Response response = new Response();
-
+      Status status = new Status();
       try
       {
         InitializeScope(projectName, applicationName);

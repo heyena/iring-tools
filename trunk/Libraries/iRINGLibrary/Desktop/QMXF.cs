@@ -84,7 +84,7 @@ namespace org.ids_adi.qmxf
             this.name = new List<QMXFName>();
             this.description = new List<Description>();
             this.suggestedDesignation = new List<SuggestedDesignation>();
-            this.status = new List<Status>();
+            this.status = new List<QMXFStatus>();
             this.textualDefinition = new List<TextualDefinition>();
             this.roleDefinition = new List<RoleDefinition>();
             this.repositoryName = string.Empty;
@@ -116,7 +116,7 @@ namespace org.ids_adi.qmxf
 
         [DataMember]
         [XmlElement(ElementName = "status")]
-        public List<Status> status { get; set; }
+        public List<QMXFStatus> status { get; set; }
 
         [DataMember]
         [XmlAttribute(AttributeName = "id")]
@@ -136,7 +136,7 @@ namespace org.ids_adi.qmxf
           this.description = new List<Description>();
           this.classification = new List<Classification>();
           this.specialization = new List<Specialization>();
-          this.status = new List<Status>();
+          this.status = new List<QMXFStatus>();
           this.suggestedDesignation = new List<SuggestedDesignation>();
           this.textualDefinition = new List<TextualDefinition>();
           this.repositoryName = string.Empty;
@@ -180,7 +180,7 @@ namespace org.ids_adi.qmxf
 
         [DataMember]
         [XmlElement(ElementName = "status")]
-        public List<Status> status { get; set; }
+        public List<QMXFStatus> status { get; set; }
 
         [DataMember]
         [XmlAttribute(AttributeName = "id")]
@@ -197,7 +197,7 @@ namespace org.ids_adi.qmxf
           this.description = new List<Description>();
           this.suggestedDesignation = new List<SuggestedDesignation>();
           this.designation = new List<Designation>();
-          this.status = new List<Status>();
+          this.status = new List<QMXFStatus>();
           this.textualDefinition = new List<TextualDefinition>();
           this.roleQualification = new List<RoleQualification>();
         }
@@ -224,7 +224,7 @@ namespace org.ids_adi.qmxf
 
         [DataMember]
         [XmlElement(ElementName = "status")]
-        public List<Status> status { get; set; }
+        public List<QMXFStatus> status { get; set; }
 
         [DataMember]
         [XmlAttribute(AttributeName = "id")]
@@ -594,9 +594,9 @@ namespace org.ids_adi.qmxf
     }
 
     [DataContract]
-    public class Status
+    public class QMXFStatus
     {
-        public Status()
+        public QMXFStatus()
         {
             this.authority = "http://rdl.rdlfacade.org/data#R6569332477";
             this.Class = "http://rdl.rdlfacade.org/data#R3732211754";

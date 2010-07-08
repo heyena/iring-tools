@@ -460,7 +460,7 @@ namespace org.ids_adi.iring.referenceData
                 ClassDefinition classDefinition;
                 QMXFName name;
                 Description description;
-                Status status;
+                QMXFStatus status;
                 List<Classification> classifications = new List<Classification>();
                 List<Specialization> specializations = new List<Specialization>();
 
@@ -490,7 +490,7 @@ namespace org.ids_adi.iring.referenceData
                         classDefinition.repositoryName = repository.name;
                         name = new QMXFName();
                         description = new Description();
-                        status = new Status();
+                        status = new QMXFStatus();
 
                         if (result.ContainsKey("label"))
                             name.value = result["label"];
@@ -736,7 +736,7 @@ namespace org.ids_adi.iring.referenceData
                 string relativeUri = String.Empty;
 
                 Description description = new Description();
-                Status status = new Status();
+                QMXFStatus status = new QMXFStatus();
                 //List<Classification> classifications = new List<Classification>();
 
                 List<RoleDefinition> roleDefinitions = new List<RoleDefinition>();
@@ -810,7 +810,7 @@ namespace org.ids_adi.iring.referenceData
                 string relativeUri2 = String.Empty;
 
                 Description description = new Description();
-                Status status = new Status();
+                QMXFStatus status = new QMXFStatus();
                 //List<Classification> classifications = new List<Classification>();
 
                 List<RoleQualification> roleQualifications = new List<RoleQualification>();
@@ -935,7 +935,7 @@ namespace org.ids_adi.iring.referenceData
                 string relativeUri = String.Empty;
 
                 Description description = new Description();
-                Status status = new Status();
+                QMXFStatus status = new QMXFStatus();
 
                 RefDataEntities resultEntities = new RefDataEntities();
 
@@ -1043,7 +1043,7 @@ namespace org.ids_adi.iring.referenceData
                     {
                         templateQualification = new TemplateQualification();
                         Description description = new Description();
-                        Status status = new Status();
+                        QMXFStatus status = new QMXFStatus();
                         QMXFName name = new QMXFName();
 
                         if (result.ContainsKey("name"))
