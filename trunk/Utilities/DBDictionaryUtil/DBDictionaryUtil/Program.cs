@@ -317,10 +317,7 @@ namespace DBDictionaryUtil
       WebHttpClient httpClient = new WebHttpClient(adapterServiceUri, null);
       Response response = httpClient.Post<DatabaseDictionary, Response>(relativeUri, dbDictionary, true);
       
-      foreach (string line in response)
-      {
-        Console.WriteLine(line);
-      }
+      Console.WriteLine(response.ToString());
     }
 
     static string ParseConnectionString(string connStr, string dbProvider)
