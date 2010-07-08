@@ -87,6 +87,21 @@ namespace org.iringtools.library
       if (Level < status.Level)
         Level = status.Level;
     }
+
+    public string ToString()
+    {
+      string messages = String.Empty;
+
+      foreach (Status status in StatusList)
+      {
+        foreach (string message in status.Messages)
+        {
+          messages += String.Format("{0} : {1}\\r\\n", status.Identifier, message);
+        }
+      }
+
+      return messages;
+    }
   }
 
   [XmlRoot]

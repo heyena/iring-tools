@@ -141,7 +141,6 @@ namespace org.iringtools.adapter
 
     public Response UpdateScopes(List<ScopeProject> scopes)
     {
-      Response response = new Response();
       Status status = new Status();
       try
       {
@@ -149,12 +148,6 @@ namespace org.iringtools.adapter
         {
           foreach (ScopeApplication application in project.Applications)
           {
-            Status localStatus = new Status();
-            localStatus.Identifier = String.Format("{0}.{1}",
-              project.Name,
-              application.Name
-             );
-
             UpdateScopes(
               project.Name,
               project.Description,
@@ -174,31 +167,33 @@ namespace org.iringtools.adapter
         status.Messages.Add(string.Format("Error saving scopes: {0}", ex));
       }
 
-      response.Append(status);
-      return response;
+      _response.Append(status);
+      return _response;
     }
 
     public Response DeleteScope(string projectName, string applicationName)
     {
-      Response response = new Response();
       Status status = new Status();
       try
       {
+        status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
+
         InitializeScope(projectName, applicationName);
 
         DeleteScope();
 
-        response.Add("Scopes have been updated successfully.");
+        status.Messages.Add(String.Format("Scope {0} has been deleted successfully.", _settings["Scope"]));
       }
       catch (Exception ex)
       {
-        _logger.Error(string.Format("Error in UpdateScopes: {0}", ex));
+        _logger.Error(string.Format("Error in DeleteScope: {0}", ex));
 
-        response.Level = StatusLevel.Error;
-        response.Add(string.Format("Error saving scopes: {0}", ex));
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(string.Format("Error deleting scope: {0}", ex));
       }
 
-      return response;
+      _response.Append(status);
+      return _response;
     }
 
     public XElement GetBinding(string projectName, string applicationName)
@@ -221,10 +216,11 @@ namespace org.iringtools.adapter
 
     public Response UpdateBinding(string projectName, string applicationName, XElement binding)
     {
-      Response response = new Response();
-
+      Status status = new Status();
       try
       {
+        status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
+
         InitializeScope(projectName, applicationName);
 
         XDocument bindingConfiguration = new XDocument();
@@ -232,14 +228,18 @@ namespace org.iringtools.adapter
 
         bindingConfiguration.Save(_settings["BindingConfigurationPath"]);
 
-        response.Add("BindingConfiguration was saved.");
+        status.Messages.Add("BindingConfiguration was saved.");
       }
       catch (Exception ex)
       {
         _logger.Error(string.Format("Error in UpdateBindingConfiguration: {0}", ex));
-        throw ex;
+
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(string.Format("Error updating the binding configuration: {0}", ex));
       }
-      return response;
+
+      _response.Append(status);
+      return _response;
     }
 
     #endregion
@@ -307,14 +307,16 @@ namespace org.iringtools.adapter
 
     public Response UpdateMapping(string projectName, string applicationName, XElement mappingXml)
     {
-      Response response = new Response();
+      Status status = new Status();
       string path = string.Format("{0}Mapping.{1}.{2}.xml", _settings["XmlPath"], projectName, applicationName);
 
       try
       {
+        status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
+
         if (!mappingXml.Name.NamespaceName.Contains("schemas.datacontract.org"))
         {
-          response.Add("Detected old mapping. Attempting to convert it...");
+          status.Messages.Add("Detected old mapping. Attempting to convert it...");
 
           Mapping mapping = new Mapping();
           _qmxfTemplateResultCache = new Dictionary<string, KeyValuePair<string, Dictionary<string, string>>>();
@@ -367,7 +369,7 @@ namespace org.iringtools.adapter
           }
           #endregion
 
-          response.Add("Old mapping has been converted sucessfully.");
+          status.Messages.Add("Old mapping has been converted sucessfully.");
           
           Utility.Write<Mapping>(mapping, path, true);
         }
@@ -377,25 +379,28 @@ namespace org.iringtools.adapter
           Utility.Write<Mapping>(mapping, path, true);
         }
 
-        response.Add("Mapping file has been updated to path [" + path + "] successfully.");
+        status.Messages.Add("Mapping file has been updated to path [" + path + "] successfully.");
       }
       catch (Exception ex)
       {
         _logger.Error(string.Format("Error in UpdateMapping: {0}", ex));
 
-        response.Level = StatusLevel.Error;
-        response.Add(string.Format("Error saving mapping file to path [{0}]: {1}", path, ex));
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(string.Format("Error saving mapping file to path [{0}]: {1}", path, ex));
       }
-
-      return response;
+      
+      _response.Append(status);
+      return _response;
     }
 
     public Response RefreshAll(string projectName, string applicationName)
     {
-      Response response = new Response();
+      Status status = new Status();
 
       try
       {
+        status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
+
         InitializeScope(projectName, applicationName);
         InitializeDataLayer();
 
@@ -403,46 +408,50 @@ namespace org.iringtools.adapter
 
         foreach (GraphMap graphMap in _mapping.graphMaps)
         {
-          response.Append(Refresh(graphMap.name));
+          _response.Append(Refresh(graphMap.name));
         }
 
         DateTime end = DateTime.Now;
         TimeSpan duration = end.Subtract(start);
 
-        response.Add(String.Format("RefreshAll() completed in [{0}:{1}.{2}] minutes.",
+        status.Messages.Add(String.Format("RefreshAll() completed in [{0}:{1}.{2}] minutes.",
           duration.Minutes, duration.Seconds, duration.Milliseconds));
       }
       catch (Exception ex)
       {
         _logger.Error(string.Format("Error in RefreshAll: {0}", ex));
 
-        response.Level = StatusLevel.Error;
-        response.Add(string.Format("Error refreshing all graphs: {0}", ex));
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(string.Format("Error refreshing all graphs: {0}", ex));
       }
 
-      return response;
+      _response.Append(status);
+      return _response;
     }
 
     public Response Refresh(string projectName, string applicationName, string graphName)
     {
-      Response response = new Response();
+      Status status = new Status();
 
       try
       {
+        status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
+
         InitializeScope(projectName, applicationName);
         InitializeDataLayer();
 
-        response.Append(Refresh(graphName));
+        _response.Append(Refresh(graphName));
       }
       catch (Exception ex)
       {
         _logger.Error(string.Format("Error in Refresh: {0}", ex));
 
-        response.Level = StatusLevel.Error;
-        response.Add(string.Format("Error refreshing graph [{0}]: {1}", graphName, ex));
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(string.Format("Error refreshing graph [{0}]: {1}", graphName, ex));
       }
 
-      return response;
+      _response.Append(status);
+      return _response;
     }
 
     public XElement GetProjection(string projectName, string applicationName, string graphName, string identifier, string format)
@@ -530,9 +539,11 @@ namespace org.iringtools.adapter
       String applicationNameForPull = String.Empty;
       String graphNameForPull = String.Empty;
       String dataObjectsString = String.Empty;
-      Response response = new Response();
+      Status status = new Status();
       try
       {
+        status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
+
         InitializeScope(projectName, applicationName);
         InitializeDataLayer();
         
@@ -562,26 +573,30 @@ namespace org.iringtools.adapter
 
         IList<IDataObject> dataObjects = _projectionEngine.GetDataObjects(graphName, ref xml);
 
-        response.Append(_dataLayer.Post(dataObjects));
-        response.Add(String.Format("Pull is successful from " + targetUri + "for Graph " + graphName));
+        _response.Append(_dataLayer.Post(dataObjects));
+        status.Messages.Add(String.Format("Pull is successful from " + targetUri + "for Graph " + graphName));
       }
       catch (Exception ex)
       {
         _logger.Error("Error in PullDTO: " + ex);
 
-        response.Level = StatusLevel.Error;
-        response.Add("Error while pulling " + graphName + " data from " + targetUri + " as " + targetUri + " data with filter " + filter + ".\r\n");
-        response.Add(ex.ToString());
+        status.Level = StatusLevel.Error;
+        status.Messages.Add("Error while pulling " + graphName + " data from " + targetUri + " as " + targetUri + " data with filter " + filter + ".\r\n");
+        status.Messages.Add(ex.ToString());
       }
-      return response;
+
+      _response.Append(status);
+      return _response;
     }
 
     public Response Pull(string projectName, string applicationName, Request request)
     {
-      Response response = new Response();
+      Status status = new Status();
 
       try
       {
+        status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
+
         InitializeScope(projectName, applicationName);
         InitializeDataLayer();
 
@@ -649,56 +664,76 @@ namespace org.iringtools.adapter
         DateTime endTime = DateTime.Now;
         TimeSpan duration = endTime.Subtract(startTime);
 
-        response.Level = StatusLevel.Success;
-        response.Add(string.Format("Graph [{0}] has been posted to legacy system successfully.", graphName));
+        status.Messages.Add(string.Format("Graph [{0}] has been posted to legacy system successfully.", graphName));
 
-        response.Add(String.Format("Execution time [{0}:{1}.{2}] minutes.",
+        status.Messages.Add(String.Format("Execution time [{0}:{1}.{2}] minutes.",
           duration.Minutes, duration.Seconds, duration.Milliseconds));
       }
       catch (Exception ex)
       {
         _logger.Error("Error in Pull(): ", ex);
 
-        response.Level = StatusLevel.Error;
-        response.Add(string.Format("Error pulling graph: {0}", ex));
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(string.Format("Error pulling graph: {0}", ex));
       }
 
-      return response;
+      _response.Append(status);
+      return _response;
     }
 
     public Response DeleteAll(string projectName, string applicationName)
     {
-      Response response = new Response();
+      Status status = new Status();
 
       try
       {
+        status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
+
         InitializeScope(projectName, applicationName);
 
         _semanticEngine = _kernel.Get<ISemanticLayer>("dotNetRDF");
 
         foreach (GraphMap graphMap in _mapping.graphMaps)
         {
-          response.Append(_semanticEngine.Delete(graphMap.name));
+          _response.Append(_semanticEngine.Delete(graphMap.name));
         }
       }
       catch (Exception ex)
       {
         _logger.Error(string.Format("Error deleting all graphs: {0}", ex));
 
-        response.Level = StatusLevel.Error;
-        response.Add(string.Format("Error deleting all graphs: {0}", ex));
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(string.Format("Error deleting all graphs: {0}", ex));
       }
 
-      return response;
+      _response.Append(status);
+      return _response;
     }
 
     public Response Delete(string projectName, string applicationName, string graphName)
     {
-      InitializeScope(projectName, applicationName);
-      
-      _semanticEngine = _kernel.Get<ISemanticLayer>("dotNetRDF");
+      Status status = new Status();
 
-      return _semanticEngine.Delete(graphName);
+      try
+      {
+        status.Identifier = String.Format("{0}.{1}.{2}", projectName, applicationName, graphName);
+
+        InitializeScope(projectName, applicationName);
+      
+        _semanticEngine = _kernel.Get<ISemanticLayer>("dotNetRDF");
+
+        _response.Append(_semanticEngine.Delete(graphName));
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error deleting {0} graphs: {1}", graphName, ex));
+
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(string.Format("Error deleting all graphs: {0}", ex));
+      }
+
+      _response.Append(status);
+      return _response;
     }
     #endregion
 
@@ -726,7 +761,7 @@ namespace org.iringtools.adapter
             }
           }
 
-          string scope = string.Format("{0}.{1}", projectName, applicationName);
+          string scope = String.Format("{0}.{1}", projectName, applicationName);
 
           if (!isScopeValid) throw new Exception(String.Format("Invalid scope [{0}].", scope));
 

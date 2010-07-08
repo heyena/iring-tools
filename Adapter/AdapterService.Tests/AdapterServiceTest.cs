@@ -111,12 +111,12 @@ namespace AdapterService.Tests
     {
       AdapterProxy target = new AdapterProxy();
       Response actual = target.ClearAll("12345_000", "ABC");
-      if ("Graph [http://yourcompany.com/12345_000/ABC/Lines] has been deleted successfully." != actual[0])
+      if (!actual.ToString().Contains("Graph [http://yourcompany.com/12345_000/ABC/Lines] has been deleted successfully."))
       {
         throw new AssertFailedException(Utility.SerializeDataContract<Response>(actual));
       }
 
-      Assert.AreEqual("Graph [http://yourcompany.com/12345_000/ABC/Lines] has been deleted successfully.", actual[0].ToString());
+      Assert.IsTrue(actual.ToString().Contains("Graph [http://yourcompany.com/12345_000/ABC/Lines] has been deleted successfully."));
     }
 
     [TestMethod()]
@@ -125,12 +125,12 @@ namespace AdapterService.Tests
       AdapterProxy target = new AdapterProxy();
       Response actual = target.RefreshGraph("12345_000", "ABC", "Lines");
 
-      if (actual[0].ToUpper().Contains("ERROR"))
+      if (actual.Level == StatusLevel.Error)
       {
         throw new AssertFailedException(Utility.SerializeDataContract<Response>(actual));
       }
 
-      Assert.AreEqual(false, actual[0].ToUpper().Contains("ERROR"));
+      Assert.IsFalse(actual.Level == StatusLevel.Error);
     }
 
     [TestMethod()]
@@ -139,12 +139,12 @@ namespace AdapterService.Tests
       AdapterProxy target = new AdapterProxy();
       Response actual = target.RefreshAll("12345_000", "ABC");
 
-      if (actual[0].ToUpper().Contains("ERROR"))
+      if (actual.Level == StatusLevel.Error)
       {
         throw new AssertFailedException(Utility.SerializeDataContract<Response>(actual));
       }
 
-      Assert.AreEqual(false, actual[0].ToUpper().Contains("ERROR"));
+      Assert.IsFalse(actual.Level == StatusLevel.Error);
     }
 
     [TestMethod()]
@@ -154,7 +154,7 @@ namespace AdapterService.Tests
 
       Response prepare = target.RefreshAll("12345_000", "ABC");
 
-      if (prepare[0].ToUpper().Contains("ERROR"))
+      if (prepare.Level == StatusLevel.Error)
       {
         throw new AssertFailedException(Utility.SerializeDataContract<Response>(prepare));
       }
@@ -167,17 +167,7 @@ namespace AdapterService.Tests
 
       Response actual = target.Pull("12345_000", "ABC", request);
 
-      bool isError = false;
-      for (int i = 0; i < actual.Count; i++)
-      {
-        if (actual[i].ToUpper().Contains("ERROR"))
-        {
-          isError = true;
-          break;
-        }
-      }
-
-      Assert.AreEqual(false, isError);
+      Assert.IsFalse(actual.Level == StatusLevel.Error);
     }
 
     [TestMethod()]
@@ -189,17 +179,7 @@ namespace AdapterService.Tests
       AdapterProxy target = new AdapterProxy();
       Response actual = target.UpdateMapping("12345_000", "ABC", mappingXml);
 
-      bool isError = false;
-      for (int i = 0; i < actual.Count; i++)
-      {
-        if (actual[i].ToUpper().Contains("ERROR"))
-        {
-          isError = true;
-          break;
-        }
-      }
-
-      Assert.AreEqual(false, isError);
+      Assert.IsFalse(actual.Level == StatusLevel.Error);
     }
 
     [TestMethod()]
@@ -333,16 +313,8 @@ namespace AdapterService.Tests
         request.Add("projectName", "12345_000");
         request.Add("applicationName", "ABC");
         Response actual = target.PullDTO("12345_000", "DEF", request);
-        bool isError = false;
-        for (int i = 0; i < actual.Count; i++)
-        {
-            if (actual[i].ToUpper().Contains("ERROR"))
-            {
-                isError = true;
-                break;
-            }
-        }
-        Assert.AreEqual(false, isError);
+
+        Assert.IsFalse(actual.Level == StatusLevel.Error);
     }
 
     [TestMethod]

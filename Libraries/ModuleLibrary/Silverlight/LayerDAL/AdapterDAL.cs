@@ -342,7 +342,7 @@ namespace org.iringtools.modulelibrary.layerdal
               {
                   // Define your method in CompletedEventType and assign
                   CompletedType = CompletedEventType.UpdateMapping,
-                  Data = response.FirstOrDefault<string>()
+                  Data = response.ToString()
               };
           }
           catch (Exception ex)
