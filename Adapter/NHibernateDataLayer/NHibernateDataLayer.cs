@@ -193,7 +193,6 @@ namespace org.iringtools.adapter.datalayer
     public Response Post(IList<IDataObject> dataObjects)
     {
       Response response = new Response();
-
       try
       {
         if (dataObjects != null && dataObjects.Count > 0)
@@ -202,16 +201,25 @@ namespace org.iringtools.adapter.datalayer
           {
             foreach (IDataObject dataObject in dataObjects)
             {
+              string identifier = dataObject.GetPropertyValue("Id").ToString();
+
+              Status status = new Status();
+              status.Identifier = identifier;
+              
               try
               {
                 session.SaveOrUpdate(dataObject);
                 session.Flush();
-                response.Add(string.Format("Record [{0}] have been saved successfully.", dataObject.GetPropertyValue("Id")));
+
+                status.Messages.Add(string.Format("Record [{0}] have been saved successfully.", identifier));
               }
               catch (Exception ex)
               {
-                response.Add(string.Format("Error while posting record [{0}]. {1}", dataObject.GetPropertyValue("Id"), ex));
+                status.Level = StatusLevel.Error;
+                status.Messages.Add(string.Format("Error while posting record [{0}]. {1}", identifier, ex));
               }
+
+              response.Append(status);
             }
           }
         }
@@ -231,9 +239,11 @@ namespace org.iringtools.adapter.datalayer
     public Response Delete(string objectType, IList<string> identifiers)
     {
       Response response = new Response();
-
+      Status status = new Status();
       try
       {
+        status.Identifier = objectType;
+
         StringBuilder queryString = new StringBuilder();
         queryString.Append("from " + objectType);
 
@@ -245,24 +255,30 @@ namespace org.iringtools.adapter.datalayer
         using (ISession session = OpenSession())
         {
           session.Delete(queryString.ToString());
-          response.Add(string.Format("Records of type [{0}] has been deleted succesfully.", objectType));
+          
+          status.Messages.Add(string.Format("Records of type [{0}] has been deleted succesfully.", objectType));
         }
-
-        return response;
       }
       catch (Exception ex)
       {
         _logger.Error("Error in Delete: " + ex);
         throw new Exception(string.Format("Error while deleting data objects of type [{0}]. {1}", objectType, ex));
+
+        //no need to status, thrown exception will be statused above.
       }
+
+      response.Append(status);
+      return response;
     }
 
     public Response Delete(string objectType, DataFilter filter)
     {
       Response response = new Response();
-
+      Status status = new Status();
       try
       {
+        status.Identifier = objectType;
+
         StringBuilder queryString = new StringBuilder();
         queryString.Append("from " + objectType);
 
@@ -275,16 +291,20 @@ namespace org.iringtools.adapter.datalayer
         using (ISession session = OpenSession())
         {
           session.Delete(queryString.ToString());
-          response.Add(string.Format("Records of type [{0}] has been deleted succesfully.", objectType));
-        }
 
-        return response;
+          status.Messages.Add(string.Format("Records of type [{0}] has been deleted succesfully.", objectType));
+        }
       }
       catch (Exception ex)
       {
         _logger.Error("Error in Delete: " + ex);
         throw new Exception(string.Format("Error while deleting data objects of type [{0}]. {1}", objectType, ex));
+
+        //no need to status, thrown exception will be statused above.
       }
+
+      response.Append(status);
+      return response;
     }
 
     public DataDictionary GetDictionary()
