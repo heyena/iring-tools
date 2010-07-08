@@ -35,6 +35,7 @@ namespace org.iringtools.adapter
   [ServiceContract(Namespace = "http://ns.iringtools.org/protocol")]
   public partial interface IService
   {
+    #region Basic Stuff
     [OperationContract]
     [WebGet(UriTemplate = "/version")]
     string GetVersion();
@@ -55,6 +56,10 @@ namespace org.iringtools.adapter
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/binding")]
     Response UpdateBinding(string projectName, string applicationName, XElement binding);
 
+    #endregion
+
+    #region metadata
+
     [OperationContract]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/manifest")]
     Manifest GetManifest(string projectName, string applicationName);
@@ -71,6 +76,9 @@ namespace org.iringtools.adapter
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/mapping")]
     Response UpdateMapping(string projectName, string applicationName, XElement mappingXml);
 
+    #endregion
+
+    #region Xml Get
     [OperationContract]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}?format={format}")]
     XElement Get(string projectName, string applicationName, string graphName, string identifier, string format);
@@ -82,7 +90,38 @@ namespace org.iringtools.adapter
     [OperationContract]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}")]
     XElement GetList(string projectName, string applicationName, string graphName, string format);
+    #endregion
 
+    //Xml Put/Post
+    [OperationContract]
+    [WebInvoke(Method = "PUT", UriTemplate = "/{projectName}/{applicationName}/{graphName}/?format={format}")]
+    Response Put(string projectName, string applicationName, string graphName, string format, XElement xml);
+
+    [OperationContract]
+    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/?format={format}")]
+    Response Post(string projectName, string applicationName, string graphName, string format, XElement xml);
+
+    //Xml Delete
+    //Receive identifiers and delete from DataLayer
+    //[OperationContract]
+    //[WebInvoke(Method = "DELETE", UriTemplate = "/{projectName}/{applicationName}/{graphName}/?format={format}")]
+    //Response Delete(string projectName, string applicationName, string graphName, string format, XElement xml);
+
+    #region Xml DataExchange
+    //Xml Pull style DataExchange
+    //Calls Get on another endpoint and posts to DataLayer
+    [OperationContract]
+    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/pullDTO")]
+    Response PullDTO(string projectName, string applicationName, Request request);
+
+    //Xml Push style DataExchange
+    //Calls Get from DataLayer and post to on another endpoint
+    [OperationContract]
+    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/pushDTO")]
+    Response PushDTO(string projectName, string applicationName, Request request);
+    #endregion
+
+    #region TripleStore
     [OperationContract]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/delete")]
     Response DeleteAll(string projectName, string applicationName);
@@ -99,17 +138,10 @@ namespace org.iringtools.adapter
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/refresh")]
     Response RefreshGraph(string projectName, string applicationName, string graphName);
 
+    //SPARQL Query
     [OperationContract]
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/pull")]
     Response Pull(string projectName, string applicationName, Request request);
-
-    [OperationContract]
-    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/pullDTO")]
-    Response PullDTO(string projectName, string applicationName, Request request);
-
-    //[OperationContract]
-    //[WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/put")]
-    //Response Put(string projectName, string applicationName, string graphName, XElement dtoElement);
-
+    #endregion
   }
 }
