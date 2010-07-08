@@ -1,6 +1,2 @@
 INDEX VERSION 1.121+C:\iring-tools-java\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
-3807830131.index
-322998508.index
-1340952841.index
-2214389135.index
 3347095622.index
