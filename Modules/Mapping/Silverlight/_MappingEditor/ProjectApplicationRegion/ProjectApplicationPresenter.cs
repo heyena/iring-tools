@@ -130,10 +130,7 @@ namespace org.iringtools.modules.projectapplicationregion
                 Response response = (Response)args.Data;
                 string messages = String.Empty;
 
-                foreach (string message in response)
-                {
-                    messages += message + "\n";
-                }
+                messages = response.ToString();
 
                 MessageBox.Show(messages, "Generate DTO", MessageBoxButton.OK);
             }
@@ -148,10 +145,7 @@ namespace org.iringtools.modules.projectapplicationregion
                 Response response = (Response)args.Data;
                 string messages = String.Empty;
 
-                foreach (string message in response)
-                {
-                    messages += message + "\n";
-                }
+                messages = response.ToString();
 
                 MessageBox.Show(messages, "Refresh Facade", MessageBoxButton.OK);
             }

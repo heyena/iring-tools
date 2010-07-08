@@ -57,6 +57,8 @@ namespace org.ids_adi.iring.referenceData
 
         #endregion
 
+        private Response _response = null;
+
         private static readonly log4net.ILog _log4netLogger = LogManager.GetLogger(typeof(ReferenceDataProvider));
         private const string REPOSITORIES_FILE_NAME = "Repositories.xml";
         private const string QUERIES_FILE_NAME = "Queries.xml";
@@ -112,6 +114,9 @@ namespace org.ids_adi.iring.referenceData
 
             string queriesPath = _settings["XmlPath"] + QUERIES_FILE_NAME;
             _queries = Utility.Read<Queries>(queriesPath);
+
+            _response = new Response();
+            _kernel.Bind<Response>().ToConstant(_response);
           }
           catch (Exception ex)
           {
@@ -1086,6 +1091,8 @@ namespace org.ids_adi.iring.referenceData
 
         public Response PostTemplate(QMXF qmxf)
         {
+          Status status = new Status();
+
             try
             {
                 Response response = null;
@@ -1104,8 +1111,10 @@ namespace org.ids_adi.iring.referenceData
 
                 if (source.isReadOnly)
                 {
-                    response.Add("Repository is Read Only");
-                    return response;
+                    status.Level = StatusLevel.Error;
+                    status.Messages.Add("Repository is Read Only");
+                    _response.Append(status);
+                    return _response;
                 }
 
                 #region Template Definitions
@@ -1631,7 +1640,9 @@ namespace org.ids_adi.iring.referenceData
                     }
                 }
                 #endregion
-                return response;
+
+                _response.Append(status);
+                return _response;
             }
             catch (Exception ex)
             {
@@ -1672,9 +1683,10 @@ namespace org.ids_adi.iring.referenceData
 
         public Response PostClass(QMXF qmxf)
         {
+          Status status = new Status();
+
             try
             {
-                Response response = null;
                 int count = 0;
                 /*SPARQL sparqlQuery = new SPARQL();
 
@@ -1715,8 +1727,10 @@ namespace org.ids_adi.iring.referenceData
                     
                     if (source.isReadOnly)
                     {
-                        response.Add("Repository is Read Only");
-                        return response;
+                      status.Level = StatusLevel.Error;
+                      status.Messages.Add("Repository is Read Only");
+                      _response.Append(status);
+                      return _response;
                     }
 
                     ID = Class.identifier;
@@ -1812,7 +1826,7 @@ namespace org.ids_adi.iring.referenceData
                             {
                                 Reset(label);
                             }
-                            response = PostToRepository(source, sparql);
+                            _response = PostToRepository(source, sparql);
                         }
                     }
                     else
@@ -1933,16 +1947,16 @@ namespace org.ids_adi.iring.referenceData
                         {
                             Reset(label);
                         }
-                        response = PostToRepository(source, nameSparql);
-                        response = PostToRepository(source, classSparql);
-                        response = PostToRepository(source, specSparql);
+                        _response = PostToRepository(source, nameSparql);
+                        _response = PostToRepository(source, classSparql);
+                        _response = PostToRepository(source, specSparql);
                     }
                 }
 
                 Utility.WriteString("Insertion Done", "stats.log", true);
                 Utility.WriteString("Total classes inserted: " + count, "stats.log", true);
 
-                return response;
+                return _response;
             }
 
             catch (Exception e)

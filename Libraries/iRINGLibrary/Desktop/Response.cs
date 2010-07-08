@@ -88,7 +88,7 @@ namespace org.iringtools.library
         Level = status.Level;
     }
 
-    public string ToString()
+    public override string ToString()
     {
       string messages = String.Empty;
 
