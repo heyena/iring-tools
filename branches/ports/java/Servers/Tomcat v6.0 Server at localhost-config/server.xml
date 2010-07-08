@@ -131,7 +131,7 @@
                prefix="localhost_access_log." suffix=".txt" pattern="common" resolveHosts="false"/>
         -->
 
-      <Context docBase="iringtools" path="/iringtools" reloadable="true" source="org.eclipse.jst.jee.server:iringtools"/></Host>
+      </Host>
     </Engine>
   </Service>
 </Server>
