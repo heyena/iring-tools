@@ -1,0 +1,2 @@
+INDEX VERSION 1.126+C:\iring-tools-java\.metadata\.plugins\org.eclipse.jdt.core
+3347095622.index
