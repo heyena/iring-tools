@@ -11,6 +11,7 @@ namespace ApplicationEditor
     GetExistingDbDictionaryFiles,
     GetProviders,
     PostDictionaryToAdapterService,
+    PostScopes,
     ClearTripleStore,
     DeleteApp
   }

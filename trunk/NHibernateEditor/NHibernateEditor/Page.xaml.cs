@@ -61,15 +61,33 @@ namespace ApplicationEditor
 
                 LayoutRoot.SizeChanged += new SizeChangedEventHandler(LayoutRoot_SizeChanged);
 
-                _dal.GetScopes();
+                _dal.GetScopes();                
                 //_dal.GetExistingDbDictionaryFiles();
 
                 isPosting = false;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "DBDictionary Editor Error", MessageBoxButton.OK);
+                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);
             }
+        }
+
+        public string _project
+        {
+          get
+          {
+            ScopeProject project = (ScopeProject)((ComboBoxItem)cmbProject.SelectedItem).Tag;
+            return project.Name;
+          }
+        }
+
+        public string _application
+        {
+          get
+          {
+            ScopeApplication application = (ScopeApplication)((ComboBoxItem)cmbApp.SelectedItem).Tag;
+            return application.Name;
+          }
         }
 
         void dal_OnDataArrived(object sender, System.EventArgs e)
@@ -107,10 +125,6 @@ namespace ApplicationEditor
                         getdbDictionaryComplete(args);
                         break;
 
-                    case CompletedEventType.GetExistingDbDictionaryFiles:
-                        getdbdictionariesComplete(args);
-                        break;
-
                     case CompletedEventType.GetProviders:
                         getProvidersComplete(args);
                         break;
@@ -123,6 +137,10 @@ namespace ApplicationEditor
                         postdbdictionaryComplete(args);
                         break;
 
+                    case CompletedEventType.PostScopes:
+                        postScopesComplete(args);
+                        break;
+
                     case CompletedEventType.SaveDatabaseDictionary:
                         savedbdictionaryComplete(args);
                         break;
@@ -133,7 +151,7 @@ namespace ApplicationEditor
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "DBDictionary Editor Error", MessageBoxButton.OK);
+                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);
             }
         }
 
@@ -186,7 +204,7 @@ namespace ApplicationEditor
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "DBDictionary Editor Error", MessageBoxButton.OK);
+                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);
             }
         }
 
@@ -218,7 +236,7 @@ namespace ApplicationEditor
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "DBDictionary Editor Error", MessageBoxButton.OK);                
+                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);                
             }
             return treeViewItem;
         }
@@ -236,17 +254,13 @@ namespace ApplicationEditor
 
                 Response response = (Response)args.Data;
 
-                string dictionaries = cbDictionary.SelectedItem.ToString();
-                string project = dictionaries.Split('.')[1];
-                string application = dictionaries.Split('.')[2];
-
                 resultsList.lbResult.ItemsSource = response.StatusList[0].Messages;
 
-                _dal.GetDbDictionary(project, application);
+                _dal.GetDbDictionary(_project, _application);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "DBDictionary Editor Error", MessageBoxButton.OK);                
+                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);                
             }           
         }
 
@@ -261,7 +275,7 @@ namespace ApplicationEditor
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "DBDictionary Editor Error", MessageBoxButton.OK);                
+                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);                
             }
         }
 
@@ -284,9 +298,33 @@ namespace ApplicationEditor
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "DBDictionary Editor Error", MessageBoxButton.OK);                
+                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);                
             }
             biBusyWindow.IsBusy = false;
+        }
+
+        void postScopesComplete(CompletedEventArgs args)
+        {
+          try
+          {
+            if (args.Error != null)
+            {
+              MessageBox.Show(args.FriendlyErrorMessage, "Post Scopes Error", MessageBoxButton.OK);
+              return;
+            }
+
+            Response response = (Response)args.Data;
+
+            resultsList.lbResult.ItemsSource = response.StatusList[0].Messages;
+
+            isPosting = false;
+            resultsList.Show();
+          }
+          catch (Exception ex)
+          {
+            MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);
+          }
+          biBusyWindow.IsBusy = false;
         }
 
         void clearTripleStoreComplete(CompletedEventArgs args)
@@ -300,18 +338,13 @@ namespace ApplicationEditor
                 }
                 Response response = (Response)args.Data;
 
-                string dictionary = cbDictionary.SelectedItem.ToString();
-
-                string project = dictionary.Split('.')[1];
-                string application = dictionary.Split('.')[2];
-
                 resultsList.lbResult.ItemsSource = response.StatusList[0].Messages;
 
-                //_dal.PostDictionaryToAdapterService(project, application);
+                //_dal.PostDictionaryToAdapterService(_project, _application);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "DBDictionary Editor Error", MessageBoxButton.OK);                
+                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);                
             }
         }
 
@@ -328,57 +361,9 @@ namespace ApplicationEditor
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "DBDictionary Editor Error", MessageBoxButton.OK);                
+                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);                
             }
-        }
-
-        void getdbdictionariesComplete(CompletedEventArgs args)
-        {
-            try
-            {
-                if (args.Error != null)
-                {
-                    MessageBox.Show(args.FriendlyErrorMessage, "Get Existing Database Dictionaries Error", MessageBoxButton.OK);
-                    return;
-                }
-
-                dbDictionaries = (List<string>)args.Data;
-                cbDictionary.IsEnabled = true;
-
-                List<string> dbDict = dbDictionaries.ToList<string>();
-                dbDict.Sort();
-
-
-                cbDictionary.ItemsSource = dbDict;
-                if (cbDictionary.Items.Count > 0)
-                {
-                    if (newDictionary != null)
-                    {
-                        if (cbDictionary.Items.Contains(newDictionary.ToString()))
-                            cbDictionary.SelectedIndex = cbDictionary.Items.IndexOf(newDictionary.ToString());
-
-                        _dal.GetDbDictionary(newDictionary.ToString().Split('.')[1], newDictionary.ToString().Split('.')[2]);
-                        newDictionary = null;
-                    }
-                    else
-                    {
-                        if (string.IsNullOrEmpty(selectedCBItem))
-                        {
-                            cbDictionary.SelectedIndex = 0;
-                            selectedCBItem = cbDictionary.SelectedItem.ToString();
-                        }
-                        cbDictionary.SelectedIndex = cbDictionary.Items.IndexOf(selectedCBItem);
-                    }
-
-                    _dal.GetDbDictionary(selectedCBItem.Split('.')[1], selectedCBItem.Split('.')[2]);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "DBDictionary Editor Error", MessageBoxButton.OK);                
-            }
-            biBusyWindow.IsBusy = false;
-        }
+        }        
 
         void newDbDictionary_Closed(object sender, EventArgs e)
         {
@@ -403,7 +388,7 @@ namespace ApplicationEditor
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "DBDictionary Editor Error", MessageBoxButton.OK);                
+                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);                
             }
         }
 
@@ -431,7 +416,7 @@ namespace ApplicationEditor
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "DBDictionary Editor Error", MessageBoxButton.OK);                
+                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);                
             }
         }
 
@@ -499,7 +484,7 @@ namespace ApplicationEditor
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "DBDictionary Editor Error", MessageBoxButton.OK);                
+                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);                
             }
         }
 
@@ -543,7 +528,7 @@ namespace ApplicationEditor
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "DBDictionary Editor Error", MessageBoxButton.OK);                
+                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);                
             }
             biBusyWindow.IsBusy = false;
         }
@@ -561,16 +546,18 @@ namespace ApplicationEditor
                 DatabaseDictionary dict = (DatabaseDictionary)args.Data;
                 string project = string.Empty;
                 string application = string.Empty;
-                if (cbDictionary.SelectedItem != null)
+
+                if (cmbProject.SelectedItem != null && cmbApp.SelectedItem != null)
                 {
-                    project = cbDictionary.SelectedItem.ToString().Split('.')[1];
-                    application = cbDictionary.SelectedItem.ToString().Split('.')[2];
+                    project = _project;
+                    application = _application;
                 }
                 else
                 {
                     project = newProject;
                     application = newApplication;
                 }
+
                 if (isPosting)
                 {                   
                     _dal.PostDictionaryToAdapterService(project, application);
@@ -585,64 +572,78 @@ namespace ApplicationEditor
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "DBDictionary Editor Error", MessageBoxButton.OK);                
+                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);                
             }
         }
-        
+
         void ConstructTreeView(DatabaseDictionary dict, TreeViewItem root)
         {
-            TreeViewItem tableTreeViewItem = null;
-            TreeViewItem columnTreeViewItem = null;
-            bool enableCheckBox = false;
-            if (root.Name != "tvwItemSourceRoot")
-                enableCheckBox = true;
-            try
-            {
-                root.Tag = dict;
-                if (dict.dataObjects == null)
-                  dict.dataObjects = new List<org.iringtools.library.DataObject>();
-                foreach (org.iringtools.library.DataObject table in dict.dataObjects)
-                {
-                    tableTreeViewItem = new TreeViewItem() { Header = table.tableName };
-                    tableTreeViewItem.Tag = table;
-                    root.IsExpanded = true;
+          TreeViewItem tableTreeViewItem = null;
+          TreeViewItem keysTreeViewItem = null;
+          TreeViewItem propertiesTreeViewItem = null;
+          TreeViewItem relationshipsTreeViewItem = null;
+          TreeViewItem columnTreeViewItem = null;
 
-                    foreach (org.iringtools.library.KeyProperty keyName in table.keyProperties)
-                    {
-                        DataProperty key = table.getKeyProperty(keyName.keyPropertyName);
+          bool enableCheckBox = false;
+          if (root.Name != "tvwItemSourceRoot")
+            enableCheckBox = true;
+          try
+          {
+            root.Tag = dict;
+            
+            if (dict.dataObjects == null)
+              dict.dataObjects = new List<org.iringtools.library.DataObject>();
 
-                        columnTreeViewItem = new TreeViewItem();
-                        columnTreeViewItem.Tag = key;
-                        AddTreeItem(tableTreeViewItem, columnTreeViewItem, key.columnName, "Magenta", false);
-                        AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Data Length = " + key.dataLength.ToString(), null, false);
-                        AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Column Type = " + key.dataType.ToString(), null, false);
-                      //  AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Data Type = " + key.dataType.ToString(), null, false);
-                        AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Is Nullable = " + key.isNullable, null, false);
-                        AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Key Type = " + key.keyType, null, false);
-                        AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Property Name = " + key.propertyName, null, false);
-                    }
-                    foreach (DataProperty column in table.dataProperties)
-                    {
-                      if (column.keyType == KeyType.unassigned)
-                      {
-                        columnTreeViewItem = new TreeViewItem();
-                        columnTreeViewItem.Tag = column;
-                        AddTreeItem(tableTreeViewItem, columnTreeViewItem, column.columnName, null, enableCheckBox);
-                        AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Data Length = " + column.dataLength.ToString(), null, false);
-                        AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Column Type = " + column.dataType.ToString(), null, false);
-                        //   AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Data Type = " + column.dataType.ToString(), null, false);
-                        AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Is Nullable = " + column.isNullable, null, false);
-                        AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Property Name = " + column.propertyName, null, false);
-                      }
-                    }
-                    AddTreeItem(root, tableTreeViewItem, table.tableName, null, enableCheckBox);
-                }
-                root.Visibility = Visibility.Visible;
-            }
-            catch (Exception ex)
+            foreach (org.iringtools.library.DataObject table in dict.dataObjects)
             {
-                throw new Exception(ex.Message);
+              tableTreeViewItem = new TreeViewItem() { Header = table.tableName };
+              tableTreeViewItem.Tag = table;
+              root.IsExpanded = true;
+
+              keysTreeViewItem = new TreeViewItem() { Header = "Keys" };
+              propertiesTreeViewItem = new TreeViewItem() { Header = "Properties" };
+              relationshipsTreeViewItem = new TreeViewItem() { Header = "Relationships" };
+
+              tableTreeViewItem.Items.Add(keysTreeViewItem);
+              tableTreeViewItem.Items.Add(propertiesTreeViewItem);
+              tableTreeViewItem.Items.Add(relationshipsTreeViewItem);
+
+              foreach (org.iringtools.library.KeyProperty keyName in table.keyProperties)
+              {
+                DataProperty key = table.getKeyProperty(keyName.keyPropertyName);
+
+                columnTreeViewItem = new TreeViewItem();
+                columnTreeViewItem.Tag = key;
+                AddTreeItem(keysTreeViewItem, columnTreeViewItem, key.columnName, "Magenta", false);
+                AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Data Length = " + key.dataLength.ToString(), null, false);
+                AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Column Type = " + key.dataType.ToString(), null, false);
+                //AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Data Type = " + key.dataType.ToString(), null, false);
+                AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Is Nullable = " + key.isNullable, null, false);
+                AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Key Type = " + key.keyType, null, false);
+                AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Property Name = " + key.propertyName, null, false);
+              }
+
+              foreach (DataProperty column in table.dataProperties)
+              { 
+                  columnTreeViewItem = new TreeViewItem();
+                  columnTreeViewItem.Tag = column;
+                  AddTreeItem(propertiesTreeViewItem, columnTreeViewItem, column.columnName, null, enableCheckBox);
+                  AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Data Length = " + column.dataLength.ToString(), null, false);
+                  AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Column Type = " + column.dataType.ToString(), null, false);
+                  //AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Data Type = " + column.dataType.ToString(), null, false);
+                  AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Is Nullable = " + column.isNullable, null, false);
+                  AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Property Name = " + column.propertyName, null, false);                
+              }
+
+              AddTreeItem(root, tableTreeViewItem, table.tableName, null, enableCheckBox);
+
             }
+            root.Visibility = Visibility.Visible;
+          }
+          catch (Exception ex)
+          {
+            throw new Exception(ex.Message);
+          }
         }
 
         void AddTreeItem(TreeViewItem parent, TreeViewItem child, string headerText, string color, bool checkBox)
@@ -691,48 +692,32 @@ namespace ApplicationEditor
         {
             try
             {
-                if (args.Error != null)
+
+              if (args != null && args.Data != null) 
+              {
+
+                Collection<ScopeProject> scopes = (Collection<ScopeProject>)args.Data;
+
+                foreach (ScopeProject project in scopes)
                 {
-                    MessageBox.Show(args.FriendlyErrorMessage, "Get Existing Database Dictionaries Error", MessageBoxButton.OK);
-                    return;
+                  cmbProject.Items.Add(new ComboBoxItem { Content = project.Name, Tag = project });
+
+                  TreeViewItem tvwItemProject = new TreeViewItem { Header = project.Name, Tag = project };
+                  
+                  foreach (ScopeApplication application in project.Applications) 
+                  {
+                    tvwItemProject.Items.Add( new TreeViewItem { Header = application.Name, Tag = application });
+                  }
+
+                  tvwScopesItemRoot.Items.Add( tvwItemProject );
+
                 }
 
-                scopes = (Collection<ScopeProject>)args.Data;
-                cbDictionary.IsEnabled = true;
-
-                List<string> dbDict = new List<string>();
-                foreach (ScopeProject scopeProject in scopes)
-                {
-                    foreach (ScopeApplication application in scopeProject.Applications)
-                    {
-                        dbDict.Add("DatabaseDictionary." + scopeProject.Name + "." + application.Name);
-                    }
-                }
-                dbDict.Sort();
-                cbDictionary.ItemsSource = dbDict;
-                if (cbDictionary.Items.Count > 0)
-                {
-                    if (newDictionary != null)
-                    {
-                        if (cbDictionary.Items.Contains(newDictionary.ToString()))
-                            cbDictionary.SelectedIndex = cbDictionary.Items.IndexOf(newDictionary.ToString());
-
-                        _dal.GetDbDictionary(newDictionary.ToString().Split('.')[1], newDictionary.ToString().Split('.')[2]);
-                        newDictionary = null;
-                    }
-                    else
-                    {
-                        if (string.IsNullOrEmpty(selectedCBItem))
-                        {
-                            cbDictionary.SelectedIndex = 0;
-                            selectedCBItem = cbDictionary.SelectedItem.ToString();
-                        }
-                        cbDictionary.SelectedIndex = cbDictionary.Items.IndexOf(selectedCBItem);
-                    }
-
-                    _dal.GetDbDictionary(selectedCBItem.Split('.')[1], selectedCBItem.Split('.')[2]);
-                }
-
+                tvwScopesItemRoot.Tag = scopes;
+                tvwScopes.Visibility = Visibility.Visible;
+              
+              }             
+  
             }
             catch (Exception ex)
             {
@@ -758,31 +743,49 @@ namespace ApplicationEditor
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "DBDictionary Editor Error", MessageBoxButton.OK);                
+                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);                
             }
         }
 
-        private void cbProject_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void cmbProject_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            try
+          try
+          {
+            ComboBoxItem cmbItem = (ComboBoxItem)cmbProject.SelectedItem;
+            ScopeProject project = (ScopeProject)cmbItem.Tag;
+
+            foreach (ScopeApplication application in project.Applications ) 
             {
-                if (cbDictionary.SelectedIndex != -1)
-                {
-                    tvwItemSourceRoot.Items.Clear();
-                    tvwItemSourceRoot.Visibility = Visibility.Collapsed;
-                    tvwItemDestinationRoot.Items.Clear();
-                    tvwItemDestinationRoot.Visibility = Visibility.Collapsed;
-
-                    selectedCBItem = cbDictionary.SelectedItem.ToString();
-
-                    _dal.GetDbDictionary(selectedCBItem.Split('.')[1], selectedCBItem.Split('.')[2]);
-
-                }
+              cmbApp.Items.Add(new ComboBoxItem { Content = application.Name, Tag = application });
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "DBDictionary Editor Error", MessageBoxButton.OK);                
-            }
+
+          }
+          catch (Exception ex)
+          {
+            MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);
+          }
+        }
+
+        private void cmbApp_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+          try
+          {
+            tvwItemSourceRoot.Items.Clear();
+            tvwItemSourceRoot.Visibility = Visibility.Collapsed;
+            tvwItemDestinationRoot.Items.Clear();
+            tvwItemDestinationRoot.Visibility = Visibility.Collapsed;
+
+            ScopeProject project = (ScopeProject)((ComboBoxItem)cmbProject.SelectedItem).Tag;
+            ScopeApplication application = (ScopeApplication)((ComboBoxItem)cmbApp.SelectedItem).Tag;
+
+            _dal.GetDbDictionary(project.Name, application.Name);
+          }
+          catch (Exception ex)
+          {
+            
+          }
+          
         }
 
         private void btnSaveDbDictionary_Click(object sender, RoutedEventArgs e)
@@ -790,9 +793,8 @@ namespace ApplicationEditor
             try
             {
                 biBusyWindow.IsBusy = true;
-                selectedCBItem = cbDictionary.SelectedItem.ToString();
-                string projectName = cbDictionary.SelectedItem.ToString().Split('.')[1];
-                string applicationName = cbDictionary.SelectedItem.ToString().Split('.')[2];
+                string projectName = _project;
+                string applicationName = _application;
 
                 DatabaseDictionary databaseDictionary = new DatabaseDictionary();
                 object currentObject = null;
@@ -839,7 +841,7 @@ namespace ApplicationEditor
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "DBDictionary Editor Error", MessageBoxButton.OK);
+                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);
                 biBusyWindow.IsBusy = false;
             }
         }
@@ -852,15 +854,12 @@ namespace ApplicationEditor
                 dbdict = (DatabaseDictionary)tvwItemDestinationRoot.Tag;
                 biBusyWindow.IsBusy = true;
                 isPosting = true;
-                
-                string project = cbDictionary.SelectedItem.ToString().Split('.')[1];
-                string application = cbDictionary.SelectedItem.ToString().Split('.')[2];
-              
-                _dal.PostDictionaryToAdapterService(project, application);
+                              
+                _dal.PostDictionaryToAdapterService(_project, _application);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "DBDictionary Editor Error", MessageBoxButton.OK);
+                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);
                 biBusyWindow.IsBusy = false;
             }
         }
@@ -878,7 +877,7 @@ namespace ApplicationEditor
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "DBDictionary Editor Error", MessageBoxButton.OK);                
+                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);                
             }
 
         }
@@ -921,7 +920,7 @@ namespace ApplicationEditor
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "DBDictionary Editor Error", MessageBoxButton.OK);                
+                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);                
             }
         }
         
@@ -977,7 +976,7 @@ namespace ApplicationEditor
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "DBDictionary Editor Error", MessageBoxButton.OK);                
+                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);                
             }
         }
 
@@ -1066,7 +1065,7 @@ namespace ApplicationEditor
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "DBDictionary Editor Error", MessageBoxButton.OK);                
+                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);                
             }                      
         }
 
@@ -1100,5 +1099,63 @@ namespace ApplicationEditor
                 throw ex;
             }
         }
+
+        private void btnAddScope_Click(object sender, RoutedEventArgs e)
+        {
+          try
+          {
+            if (tbNewPrjName.Text != null && tbNewAppName != null)
+            {
+              Collection<ScopeProject> scopes = (Collection<ScopeProject>)tvwScopesItemRoot.Tag;
+
+              TreeViewItem tvwPrj = null;
+
+              foreach (TreeViewItem tvwItem in tvwScopesItemRoot.Items ) {
+                if (tvwItem.Header.ToString() == tbNewPrjName.Text) 
+                {
+                  tvwPrj = tvwItem;
+                  break;
+                }
+              }
+
+              if (tvwPrj == null)
+              {
+                ScopeProject project = new ScopeProject { Name = tbNewPrjName.Text, Applications = new List<ScopeApplication>() };
+                tvwPrj = new TreeViewItem { Header = tbNewPrjName.Text, Tag = project };
+                scopes.Add(project);
+                tvwScopesItemRoot.Items.Add(tvwPrj);
+              }
+
+              TreeViewItem tvwApp = null;
+
+              foreach (TreeViewItem tvwItem in tvwPrj.Items ) {
+                if (tvwItem.Header.ToString() == tbNewAppName.Text) 
+                {
+                  tvwApp = tvwItem;
+                  break;
+                }
+              }
+
+              if (tvwApp == null)
+              {
+                ScopeProject project = (ScopeProject)tvwPrj.Tag;
+                ScopeApplication application = new ScopeApplication { Name = tbNewAppName.Text, Description = tbNewAppDesc.Text };
+                tvwApp = new TreeViewItem { Header = tbNewAppName.Text, Tag = application };
+                project.Applications.Add(application);
+                tvwPrj.Items.Add(tvwApp);
+              }
+            }
+          }
+          catch
+          {
+          }
+        }
+
+        private void btnPostScope_Click(object sender, RoutedEventArgs e)
+        {
+          Collection<ScopeProject> scopes = (Collection<ScopeProject>)tvwScopesItemRoot.Tag;
+          _dal.UpdateScopes(scopes);
+        }
+        
     }
 }
