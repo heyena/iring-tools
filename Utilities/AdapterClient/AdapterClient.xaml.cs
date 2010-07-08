@@ -118,13 +118,16 @@ namespace IDS_ADI.iRING.Adapter
     {
       Response response = result.DeserializeDataContract<Response>();
 
-      foreach (string message in response)
+      foreach (Status status in response.StatusList)
       {
         string imageName = "info_22.png";
-        if (message.Contains("error")) imageName = "error_22.png";
-        if (message.Contains("success")) imageName = "success_22.png";
+        if (status.Level == StatusLevel.Error) imageName = "error_22.png";
+        if (status.Level == StatusLevel.Success) imageName = "success_22.png";
 
-        _messages.Add(new StatusMessage { Message = message, ImageName = imageName });
+        foreach (string message in status.Messages)
+        {
+          _messages.Add(new StatusMessage { Message = message, ImageName = imageName });
+        }
       }
 
       listBoxResults.ScrollIntoView(listBoxResults.Items[listBoxResults.Items.Count - 1]);
