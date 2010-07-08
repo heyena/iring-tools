@@ -371,29 +371,29 @@ namespace org.iringtools.adapter.datalayer
           switch (dataRelationship.relationshipType)
           {
             case RelationshipType.OneToOne:
+
+              DataProperty keyProperty = dataObject.getKeyProperty(dataObject.keyProperties.First().keyPropertyName);
+
+              _dataObjectWriter.WriteLine("public virtual {0} Id {{ get; set; }}", keyProperty.dataType);
+
+              _mappingWriter.WriteStartElement("id");
+              _mappingWriter.WriteAttributeString("name", "Id");
+              _mappingWriter.WriteAttributeString("column", "\"" + keyProperty.columnName + "\"");
+              _mappingWriter.WriteStartElement("generator");
+              _mappingWriter.WriteAttributeString("class", keyProperty.keyType.ToString());
+              _mappingWriter.WriteStartElement("param");
+              _mappingWriter.WriteAttributeString("name", "property");
+              _mappingWriter.WriteString(dataRelationship.relatedObjectName);
+              _mappingWriter.WriteEndElement(); // end param element
+              _mappingWriter.WriteEndElement(); // end generator element
+              _mappingWriter.WriteEndElement(); // end id element
               
-              /*
-              if (dataObject.keyProperties.First().keyType == KeyType.foreign)
-              {
-                _dataObjectWriter.WriteLine("public virtual {0} Id {{ get; set; }}", dataObject.keyProperties.First().dataType);
-
-                _mappingWriter.WriteStartElement("id");
-                _mappingWriter.WriteAttributeString("name", "Id");
-                _mappingWriter.WriteAttributeString("column", "\"" + dataObject.keyProperties.First().columnName + "\"");
-                _mappingWriter.WriteStartElement("generator");
-                _mappingWriter.WriteAttributeString("class", dataObject.keyProperties.First().keyType.ToString());
-                _mappingWriter.WriteStartElement("param");
-                _mappingWriter.WriteAttributeString("name", "property");
-                _mappingWriter.WriteString(dataRelationship.relatedObjectName);
-                _mappingWriter.WriteEndElement(); // end param element
-                _mappingWriter.WriteEndElement(); // end generator element
-                _mappingWriter.WriteEndElement(); // end id element
-              }
-
               _mappingWriter.WriteStartElement("one-to-one");
               _mappingWriter.WriteAttributeString("name", relatedDataObject.tableName);
               _mappingWriter.WriteAttributeString("class", _namespace + "." + dataRelationship.relatedObjectName + ", " + _settings["ExecutingAssemblyName"]);
+              _mappingWriter.WriteAttributeString("cascade", "save-update");
 
+              /*
               if (oneToOneRelationship.isKeySource)
               {
                 _mappingWriter.WriteAttributeString("cascade", "save-update");
@@ -402,28 +402,28 @@ namespace org.iringtools.adapter.datalayer
               {
                 _mappingWriter.WriteAttributeString("constrained", "true");
               }
-
-              _dataObjectWriter.WriteLine("public virtual {0} {0} {{ get; set; }}", dataRelationship.relatedObjectName);
-              _mappingWriter.WriteEndElement(); // end one-to-one element
               */
+
+              _dataObjectWriter.WriteLine("public virtual {0} Get{0} {{ get; set; }}", dataRelationship.relatedObjectName);
+              _mappingWriter.WriteEndElement(); // end one-to-one element
+              
               break;
 
             case RelationshipType.OneToMany:
-              /*
-              OneToManyRelationship oneToManyRelationship = (OneToManyRelationship)dataRelationship;
+                            
               _dataObjectWriter.WriteLine("public virtual ISet<{0}> {0} {{ get; set; }}", dataRelationship.relatedObjectName);
               _mappingWriter.WriteStartElement("set");
               _mappingWriter.WriteAttributeString("name", relatedDataObject.tableName);
               _mappingWriter.WriteAttributeString("inverse", "true");
               _mappingWriter.WriteAttributeString("cascade", "all-delete-orphan");
               _mappingWriter.WriteStartElement("key");
-              _mappingWriter.WriteAttributeString("column", "\"" + GetColumnName(relatedDataObject, oneToManyRelationship.relatedPropertyName) + "\"");
+              _mappingWriter.WriteAttributeString("column", "\"" + GetColumnName(relatedDataObject, dataRelationship.propertyMaps.First().relatedPropertyName) + "\"");
               _mappingWriter.WriteEndElement(); // end one-to-many
               _mappingWriter.WriteStartElement("one-to-many");
               _mappingWriter.WriteAttributeString("class", _namespace + "." + dataRelationship.relatedObjectName + ", " + _settings["ExecutingAssemblyName"]);
               _mappingWriter.WriteEndElement(); // end key element
               _mappingWriter.WriteEndElement(); // end set element
-              */
+              
               break;
           }
         }

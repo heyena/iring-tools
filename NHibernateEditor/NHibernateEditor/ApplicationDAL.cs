@@ -2,6 +2,7 @@
 using System.Net;
 using org.iringtools.library;
 using System.Text;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using org.iringtools.modulelibrary.events;
@@ -20,8 +21,9 @@ namespace ApplicationEditor
         private WebClient _dbschemaClient;
         private WebClient _savedbdictionaryClient;
         private WebClient _dbdictionariesClient;
-        private WebClient _providersClient;
+        private WebClient _providersClient;        
         private WebClient _postdbdictionaryClient;
+        private WebClient _postScopesClient;
         private WebClient _clearClient;
         private WebClient _deleteClient;
         private WebClient _testClient;
@@ -39,6 +41,7 @@ namespace ApplicationEditor
             _dbdictionariesClient = new WebClient();
             _providersClient = new WebClient();
             _postdbdictionaryClient = new WebClient();
+            _postScopesClient = new WebClient();
             _clearClient = new WebClient();
             _deleteClient = new WebClient();
             _testClient = new WebClient();
@@ -52,6 +55,7 @@ namespace ApplicationEditor
             _providersClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
             _clearClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
             _postdbdictionaryClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
+            _postScopesClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
             _deleteClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
 
             _dbDictionaryServiceUri = App.Current.Resources["ApplicationServiceURI"].ToString();
@@ -72,17 +76,6 @@ namespace ApplicationEditor
               _dbDictionaryClient.DownloadStringAsync(address);
             }
             return null;
-        }
-
-        public void GetScopes()
-        {
-            
-            string relativeUri = String.Format("/scopes");
-
-            Uri address = new Uri(new Uri(_adapterServiceUri), relativeUri);
-
-            _scopesClient.DownloadStringAsync(address);
-            
         }
 
         public void SaveDatabaseDictionary(DatabaseDictionary databaseDictionary, string projectName, string applicationName)
@@ -129,6 +122,17 @@ namespace ApplicationEditor
           _providersClient.DownloadStringAsync(address);
         }
 
+
+        public void GetScopes()
+        {
+          string relativeUri = "/scopes";
+
+          Uri address = new Uri(new Uri(_adapterServiceUri), relativeUri);
+
+          _scopesClient.DownloadStringAsync(address);
+        }
+
+
         public void PostDictionaryToAdapterService(string projectName, string applicationName)
         {
           string relativeUri = String.Format("/{0}/{1}/generate",
@@ -144,6 +148,19 @@ namespace ApplicationEditor
           //_postdbdictionaryClient.Headers["Content-type"] = "application/xml";
           //_postdbdictionaryClient.Encoding = Encoding.UTF8;
           //_postdbdictionaryClient.UploadStringAsync(address, "POST", data);
+        }
+
+        public void UpdateScopes(Collection<ScopeProject> scopes)
+        {
+          string relativeUri = String.Format("/scopes");
+
+          Uri address = new Uri(new Uri(_adapterServiceUri), relativeUri);
+
+          string data = Utility.SerializeDataContract<Collection<ScopeProject>>(scopes);
+
+          _postScopesClient.Headers["Content-type"] = "application/xml";
+          _postScopesClient.Encoding = Encoding.UTF8;
+          _postScopesClient.UploadStringAsync(address, "POST", data);
         }
 
         void OnCompletedEvent(object sender, AsyncCompletedEventArgs e)
@@ -171,21 +188,52 @@ namespace ApplicationEditor
 
             if (sender == _scopesClient)
             {
-                string result = ((DownloadStringCompletedEventArgs)e).Result;
+              string result = ((DownloadStringCompletedEventArgs)e).Result;
 
-                Collection<ScopeProject> scopes = result.DeserializeDataContract<Collection<ScopeProject>>();
-
+              Collection<ScopeProject> scopes = result.DeserializeDataContract<Collection<ScopeProject>>();
                 // If the cast failed then return
                 if (scopes == null)
                     return;
+              // Configure event argument
+              args = new CompletedEventArgs
+              {
+                // Define your method in CompletedEventType and assign
+                CompletedType = CompletedEventType.GetScopes,
+                Data = scopes,
+              };
+            }
+
+            if (sender == _postScopesClient)
+            {
+              try
+              {
+                string result = ((UploadStringCompletedEventArgs)e).Result;
+
+                Response response = result.DeserializeDataContract<Response>();
 
                 // Configure event argument
                 args = new CompletedEventArgs
                 {
-                    // Define your method in CompletedEventType and assign
-                    CompletedType = CompletedEventType.GetScopes,
-                    Data = scopes,
+                  // Define your method in CompletedEventType and assign
+                  CompletedType = CompletedEventType.PostScopes,
+                  Data = response,
                 };
+              }
+              catch (Exception ex)
+              {
+                string s = "Error while posting Scopes to the AdapterService.";
+                // Configure event argument
+                args = new CompletedEventArgs
+                {
+                  // Define your method in CompletedEventType and assign
+                  CompletedType = CompletedEventType.PostScopes,
+                  Error = ex,
+                  FriendlyErrorMessage =
+                      ex.GetBaseException().Message.ToUpper().Contains("SECURITY ERROR") || ex.GetBaseException() is System.Net.WebException ?
+                      s + "\nPlease verify if the Application Service is available" :
+                      s + "\nPlease review the log on the server.",
+                };
+              }
             }
 
             if (sender == _dbDictionaryClient)

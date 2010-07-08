@@ -48,6 +48,7 @@ namespace org.iringtools.application
         public String[] GetProviders()
         {
             return _applicationProvider.GetProviders();
-        }
+        }        
+
     }
 }
