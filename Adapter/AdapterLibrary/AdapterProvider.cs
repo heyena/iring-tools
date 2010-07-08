@@ -735,6 +735,67 @@ namespace org.iringtools.adapter
       _response.Append(status);
       return _response;
     }
+
+      //Gets from datalayer and send it to another endpoint
+    public Response Push(string projectName, string applicationName, Request request)
+    {
+        String targetUri = String.Empty;
+        String targetCredentialsXML = String.Empty;
+        String graphName = String.Empty;
+        String filter = String.Empty;
+        String projectNameForPush = String.Empty;
+        String applicationNameForPush = String.Empty;
+        String graphNameForPush = String.Empty;
+        Response response = null;
+        targetUri = request["targetUri"];
+        targetCredentialsXML = request["targetCredentials"];
+        graphName = request["graphName"];
+        filter = request["filter"];
+        projectNameForPush = request["targetProjectName"];
+        applicationNameForPush = request["targetApplicationName"];
+        graphNameForPush = request["targetGraphName"];
+
+        WebCredentials targetCredentials = Utility.Deserialize<WebCredentials>(targetCredentialsXML, true);
+        if (targetCredentials.isEncrypted) targetCredentials.Decrypt();
+
+        WebHttpClient httpClient = new WebHttpClient(targetUri);
+
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
+
+        _projectionEngine = _kernel.Get<IProjectionLayer>("dto");
+        IList<IDataObject> dataObjectList;
+        if (filter != String.Empty)
+        {
+            IList<string> identifiers = new List<string>();
+            identifiers.Add(filter);
+            dataObjectList = _dataLayer.Get(graphName, identifiers);
+        }
+        else
+        {
+           dataObjectList  = _dataLayer.Get(graphName, null);
+        }
+
+        XElement xml = _projectionEngine.GetXml(graphName, ref dataObjectList);
+
+        response = httpClient.PostMessage<Response>(@"/" + projectNameForPush + "/" + applicationNameForPush + "/" + graphNameForPush + "?format=dto", xml.ToString(), false);
+        return response;
+
+    }
+
+    public Response Put(string projectName, string applicationName, string graphName, string format, XElement xml)
+    {
+        Response response = null;
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
+
+        _projectionEngine = _kernel.Get<IProjectionLayer>(format);
+        IList<IDataObject> dataObjects = _projectionEngine.GetDataObjects(graphName, ref xml);
+        response = _dataLayer.Post(dataObjects);
+        return response;
+    }
+
+   
     #endregion
 
     #endregion

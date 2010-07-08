@@ -62,6 +62,12 @@ namespace org.iringtools.adapter
       return _adapterProvider.GetType().Assembly.GetName().Version.ToString();
     }
 
+    /// <summary>
+      /// Gets the manifest.
+      /// </summary>
+      /// <param name="projectName"></param>
+      /// <param name="applicationName"></param>
+      /// <returns></returns>
     public Manifest GetManifest(string projectName, string applicationName)
     {
       return _adapterProvider.GetManifest(projectName, applicationName);
@@ -151,7 +157,7 @@ namespace org.iringtools.adapter
       return _adapterProvider.Refresh(projectName, applicationName, graphName);
     }
 
-      /// <summary>
+    /// <summary>
       /// Calls adapter provider to get a specific data object in specific format
       /// </summary>
       /// <param name="projectName"></param>
@@ -223,10 +229,21 @@ namespace org.iringtools.adapter
     /// <param name="graphName"></param>
     /// <param name="dtoElement"></param>
     /// <returns></returns>
-    public Response Put(string projectName, string applicationName, string graphName, XElement dtoElement)
+    public Response Put(string projectName, string applicationName, string graphName, string format, XElement xml)
     {
-      //return _adapterProvider.Put(projectName, applicationName, graphName, dtoElement);
-      return null;
+      return _adapterProvider.Put(projectName, applicationName, graphName, format, xml);      
+    }
+
+    /// <summary>
+      /// Push the DTO
+      /// </summary>
+      /// <param name="projectName"></param>
+      /// <param name="applicationName"></param>
+      /// <param name="request"></param>
+      /// <returns></returns>
+    public Response PushDTO(string projectName, string applicationName, Request request)
+    {
+       return _adapterProvider.Push(projectName, applicationName, request);
     }
 
     /// <summary>

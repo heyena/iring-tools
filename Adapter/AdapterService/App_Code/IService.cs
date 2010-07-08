@@ -97,9 +97,9 @@ namespace org.iringtools.adapter
     [WebInvoke(Method = "PUT", UriTemplate = "/{projectName}/{applicationName}/{graphName}/?format={format}")]
     Response Put(string projectName, string applicationName, string graphName, string format, XElement xml);
 
-    [OperationContract]
-    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/?format={format}")]
-    Response Post(string projectName, string applicationName, string graphName, string format, XElement xml);
+    //[OperationContract]
+    //[WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/?format={format}")]
+    //Response Post(string projectName, string applicationName, string graphName, string format, XElement xml);
 
     //Xml Delete
     //Receive identifiers and delete from DataLayer
@@ -140,7 +140,7 @@ namespace org.iringtools.adapter
 
     //SPARQL Query
     [OperationContract]
-    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/pull")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/pull?method=sparql")]
     Response Pull(string projectName, string applicationName, Request request);
     #endregion
   }
