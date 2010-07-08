@@ -440,12 +440,25 @@ namespace org.ids_adi.qmxf
     }
 
     [DataContract]
+    public class PropertyRestriction
+    {
+        [DataMember]
+        [XmlElement(ElementName = "type")]
+        public string type { get; set; }
+
+        [DataMember]
+        [XmlElement(ElementName = "value")]
+        public string value { get; set; }
+    }
+
+    [DataContract]
     public class RoleDefinition
     {
         public RoleDefinition()
         {
           this.name = new List<QMXFName>();
           this.suggestedDesignation = new List<SuggestedDesignation>();
+          this.restrictions = new List<PropertyRestriction>();
           //this.designation = new Designation();
           this.description = new Description();
           //this.range = "http://www.w3.org/2000/01/rdf-schema#Class";
@@ -454,6 +467,10 @@ namespace org.ids_adi.qmxf
           //this.inverseMinimum = "0";
           //this.inverseMaximum = "unbounded";
         }
+
+        [DataMember]
+        [XmlElement(ElementName = "restriction")]
+        public List<PropertyRestriction> restrictions { get; set; }
 
         [DataMember]
         [XmlElement(ElementName = "name")]
