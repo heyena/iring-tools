@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="org.iringtools.adapter.library.dto.TemplateObject"/>
+<fullyQualifiedTypeName name="org.iringtools.adapter.library.dto.DataTransferObject.ClassObjects"/>
+<fullyQualifiedTypeName name="org.iringtools.adapter.library.dto.ClassObject.TemplateObjects"/>
+<fullyQualifiedTypeName name="org.iringtools.adapter.library.dto.TemplateObject.RoleObjects"/>
+</qualifiedTypeNameHistroy>
