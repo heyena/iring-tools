@@ -35,7 +35,8 @@ namespace org.iringtools.library
 {
   [XmlRoot]
   //[CollectionDataContract]
-  public class Response
+  public class Response 
+
   {
     [XmlElement]
     [DataMember]
@@ -103,12 +104,11 @@ namespace org.iringtools.library
 
       return messages;
     }
-    
   }
 
   [XmlRoot]
   //[CollectionDataContract]
-  public class Status
+  public class Status : IXmlSerializable
   {
     [XmlElement]
     [DataMember]
@@ -125,6 +125,21 @@ namespace org.iringtools.library
     [XmlElement]
     [DataMember(EmitDefaultValue = false)]
     public List<string> Messages { get; set; }
+
+      public System.Xml.Schema.XmlSchema GetSchema()
+    {
+      throw new NotImplementedException();
+    }
+
+    public void ReadXml(System.Xml.XmlReader reader)
+    {
+
+    }
+
+    public void WriteXml(System.Xml.XmlWriter writer)
+    {
+      
+    }
 
   }
 
