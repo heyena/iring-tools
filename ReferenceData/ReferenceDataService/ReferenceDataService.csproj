@@ -98,7 +98,6 @@
     <Content Include="SPARQL\TemplateTypes.txt" />
     <Content Include="Web.config" />
     <Content Include="XML\Queries.xml" />
-    <Content Include="XML\Repositories - Copy.xml" />
     <Content Include="XML\Repositories.xml" />
     <Content Include="XML\Repositories_Default.xml" />
     <Content Include="XML\Repositories_Development.xml" />
