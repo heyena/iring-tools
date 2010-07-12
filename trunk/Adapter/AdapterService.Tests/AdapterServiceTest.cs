@@ -333,6 +333,36 @@ namespace AdapterService.Tests
         IList<IDataObject> dataObjects = target.GetDataObject("12345_000", "ABC", "Lines", "dto", xElement);
         Assert.AreNotEqual(0, dataObjects.Count);
     }
+
+    [TestMethod]
+    public void Push()
+    {
+        AdapterProxy target = new AdapterProxy();
+        Request request = new Request();
+        WebCredentials targetCredentials = new WebCredentials();
+        string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
+        string adapterServiceUri = System.Configuration.ConfigurationManager.AppSettings["AdapterServiceUri"].ToString();
+        request.Add("targetUri", adapterServiceUri);
+        request.Add("targetCredentials", targetCredentialsXML);
+        request.Add("graphName", "Lines");
+        request.Add("filter", "Tag-1");
+        request.Add("targetProjectName", "12345_000");
+        request.Add("targetApplicationName", "ABC");
+        request.Add("targetGraphName", "LinesGraph");
+        request.Add("format", "dto");
+
+        Response actual = target.Push("12345_000", "ABC", request);
+        Assert.IsFalse(actual.Level == StatusLevel.Error);
+    }
+
+    [TestMethod]
+    public void Put()
+    {
+        AdapterProxy target = new AdapterProxy();
+        XElement xElement = target.GetXml("12345_000", "DEF", "LinesGraph", "dto");
+        Response actual = target.Put("12345_000", "ABC", "Lines", "dto", xElement);
+        Assert.IsFalse(actual.Level == StatusLevel.Error);        
+    }
     //[TestMethod()]
     //public void PullDTOPrototype()
     //{

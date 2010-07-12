@@ -206,6 +206,34 @@ namespace AdapterService.Tests
         return response;
     }
 
+    public Response Push(string projectName, string applicationName, Request request)
+    {
+        Response response = null;
+        try
+        {
+            response = _adapterProvider.Push(projectName, applicationName, request);
+        }
+        catch (Exception ex)
+        {
+            Error.SetError(ex);
+        }
+        return response;
+    }
+
+    public Response Put(string projectName, string applicationName, string graphName, string format, XElement xml)
+    {
+        Response response = null;
+        try
+        {
+            response = _adapterProvider.Put(projectName, applicationName, graphName, format, xml);
+        }
+        catch (Exception ex)
+        {
+            Error.SetError(ex);
+        }
+        return response;
+    }
+
     //public Response UpdateDatabaseDictionary(string projectName, string applicationName, DatabaseDictionary databaseDictionary)
     //{
     //  Response response = null;
