@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<BindingConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Bindings>
-    <Binding Name="DataLayer" Interface="org.iringtools.library.IDataLayer, iRINGLibrary" Implementation="org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateDataLayer"/>
-    <Binding Name="SemanticLayer" Interface="org.iringtools.adapter.ISemanticLayer, AdapterLibrary" Implementation="org.iringtools.adapter.semantic.dotNetRdfEngine, AdapterLibrary"/>
-    <Binding Name="ProjectionLayer" Interface="org.iringtools.adapter.IProjectionLayer, AdapterLibrary" Implementation="org.iringtools.adapter.projection.RdfProjectionEngine, AdapterLibrary"/>
-  </Bindings>
-</BindingConfiguration>
+<module name="12345_000.DEF">
+  <bind name="DataLayer" service="org.iringtools.library.IDataLayer, iRINGLibrary" to="org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateDataLayer" />
+</module>

@@ -193,6 +193,7 @@ namespace org.iringtools.adapter.datalayer
     public Response Post(IList<IDataObject> dataObjects)
     {
       Response response = new Response();
+      response.StatusList = new List<Status>();
       try
       {
         if (dataObjects != null && dataObjects.Count > 0)
@@ -204,6 +205,7 @@ namespace org.iringtools.adapter.datalayer
               string identifier = dataObject.GetPropertyValue("Id").ToString();
 
               Status status = new Status();
+              status.Messages = new List<string>();
               status.Identifier = identifier;
               
               try

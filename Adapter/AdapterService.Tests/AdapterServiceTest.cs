@@ -348,7 +348,7 @@ namespace AdapterService.Tests
         request.Add("filter", "Tag-1");
         request.Add("targetProjectName", "12345_000");
         request.Add("targetApplicationName", "ABC");
-        request.Add("targetGraphName", "LinesGraph");
+        request.Add("targetGraphName", "Lines");
         request.Add("format", "dto");
 
         Response actual = target.Push("12345_000", "ABC", request);
@@ -360,6 +360,7 @@ namespace AdapterService.Tests
     {
         AdapterProxy target = new AdapterProxy();
         XElement xElement = target.GetXml("12345_000", "DEF", "LinesGraph", "dto");
+        target = new AdapterProxy();
         Response actual = target.Put("12345_000", "ABC", "Lines", "dto", xElement);
         Assert.IsFalse(actual.Level == StatusLevel.Error);        
     }
