@@ -348,6 +348,51 @@ namespace org.iringtools.utility
             }
         }
 
+        public T PutMessage<T>(string relativeUri, string requestMessage, bool useDataContractSerializer)
+        {
+            try
+            {
+                string uri = _baseUri + relativeUri; // GetUri(relativeUri);
+                MemoryStream stream = new MemoryStream();
+                StreamWriter writer = new StreamWriter(stream);
+                writer.Write(requestMessage);
+                writer.Flush();
+
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+
+                PrepareCredentials(request);
+
+                request.Timeout = TIMEOUT;
+                request.Method = "PUT";
+                request.ContentType = "application/x-www-form-urlencoded";
+                request.ContentLength = stream.Length;
+
+                // allows for validation of SSL conversations
+                ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
+                  ValidateRemoteCertificate
+                );
+
+                using (var requestStream = request.GetRequestStream())
+                {
+                    foreach (var bit in stream.ToArray())
+                    {
+                        requestStream.WriteByte(bit);
+                    }
+                }
+
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                T responseEntity = Utility.DeserializeFromStream<T>(response.GetResponseStream(), useDataContractSerializer);
+
+                return responseEntity;
+            }
+            catch (Exception exception)
+            {
+                string uri = _baseUri + relativeUri;
+
+                throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
+            }
+        }
+
         public void PostMultipartMessage(string relativeUri, List<MultiPartMessage> requestMessages)
         {
             try

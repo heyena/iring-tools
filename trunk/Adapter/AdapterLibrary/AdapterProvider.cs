@@ -765,6 +765,28 @@ namespace org.iringtools.adapter
 
             WebHttpClient httpClient = new WebHttpClient(targetUri);
 
+            #region initialize webHttpClient for converting old mapping
+            string proxyHost = _settings["ProxyHost"];
+            string proxyPort = _settings["ProxyPort"];
+            
+            if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
+            {
+                WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
+                WebProxyCredentials proxyCrendentials = _settings.GetProxyCredentials();
+
+                if (proxyCrendentials != null)
+                {
+                    webProxy.Credentials = proxyCrendentials.GetNetworkCredential();
+                }
+
+                httpClient = new WebHttpClient(targetUri, null, webProxy);
+            }
+            else
+            {
+                httpClient = new WebHttpClient(targetUri);
+            }
+            #endregion
+
             InitializeScope(projectName, applicationName);
             InitializeDataLayer();
 
@@ -783,7 +805,7 @@ namespace org.iringtools.adapter
 
             XElement xml = _projectionEngine.GetXml(graphName, ref dataObjectList);
 
-            response = httpClient.PostMessage<Response>(@"/" + projectNameForPush + "/" + applicationNameForPush + "/" + graphNameForPush + "?format=" + format, xml.ToString(), false);
+            response = httpClient.Post<string, Response>(@"/" + projectNameForPush + "/" + applicationNameForPush + "/" + graphNameForPush + "?format=" + format, xml.ToString(), false);
         }
         catch (Exception ex)
         {

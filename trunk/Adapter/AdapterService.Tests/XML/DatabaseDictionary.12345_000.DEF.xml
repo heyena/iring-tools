@@ -1,105 +1,29 @@
 <DatabaseDictionary xmlns="http://ns.iringtools.org/library" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
   <dataObjects>
     <DataObject>
-      <tableName>Instruments</tableName>
-      <objectName>Instruments</objectName>
-      <keyProperties>
-        <KeyProperty>
-          <columnName>Tag</columnName>
-          <propertyName>Tag</propertyName>
-          <dataType>String</dataType>
-          <dataLength>50</dataLength>
-          <isNullable>false</isNullable>
-          <keyType>assigned</keyType>
-        </KeyProperty>
-      </keyProperties>
-      <dataProperties>
-        <DataProperty>
-          <columnName>DesignPressure</columnName>
-          <propertyName>DesignPressure</propertyName>
-          <dataType>Single</dataType>
-          <dataLength>8</dataLength>
-          <isNullable>true</isNullable>
-        </DataProperty>
-        <DataProperty>
-          <columnName>Manufacturer</columnName>
-          <propertyName>Manufacturer</propertyName>
-          <dataType>String</dataType>
-          <dataLength>50</dataLength>
-          <isNullable>true</isNullable>
-        </DataProperty>
-        <DataProperty>
-          <columnName>OperatingPressure</columnName>
-          <propertyName>OperatingPressure</propertyName>
-          <dataType>Single</dataType>
-          <dataLength>8</dataLength>
-          <isNullable>true</isNullable>
-        </DataProperty>
-        <DataProperty>
-          <columnName>PID</columnName>
-          <propertyName>PID</propertyName>
-          <dataType>String</dataType>
-          <dataLength>50</dataLength>
-          <isNullable>true</isNullable>
-        </DataProperty>
-        <DataProperty>
-          <columnName>PIDRev</columnName>
-          <propertyName>PIDRev</propertyName>
-          <dataType>String</dataType>
-          <dataLength>50</dataLength>
-          <isNullable>true</isNullable>
-        </DataProperty>
-        <DataProperty>
-          <columnName>Plant</columnName>
-          <propertyName>Plant</propertyName>
-          <dataType>String</dataType>
-          <dataLength>50</dataLength>
-          <isNullable>true</isNullable>
-        </DataProperty>
-        <DataProperty>
-          <columnName>PlantArea</columnName>
-          <propertyName>PlantArea</propertyName>
-          <dataType>String</dataType>
-          <dataLength>50</dataLength>
-          <isNullable>true</isNullable>
-        </DataProperty>
-        <DataProperty>
-          <columnName>PressUOM</columnName>
-          <propertyName>PressUOM</propertyName>
-          <dataType>String</dataType>
-          <dataLength>50</dataLength>
-          <isNullable>true</isNullable>
-        </DataProperty>
-        <DataProperty>
-          <columnName>System</columnName>
-          <propertyName>System</propertyName>
-          <dataType>String</dataType>
-          <dataLength>50</dataLength>
-          <isNullable>true</isNullable>
-        </DataProperty>
-      </dataProperties>
-      <dataRelationships/>
-    </DataObject>
-    <DataObject>
       <tableName>Lines</tableName>
       <objectName>Lines</objectName>
       <keyProperties>
         <KeyProperty>
+          <keyPropertyName>Tag</keyPropertyName>
+        </KeyProperty>
+      </keyProperties>
+      <dataProperties>
+        <DataProperty>
           <columnName>Tag</columnName>
           <propertyName>Tag</propertyName>
           <dataType>String</dataType>
           <dataLength>50</dataLength>
           <isNullable>false</isNullable>
           <keyType>assigned</keyType>
-        </KeyProperty>
-      </keyProperties>
-      <dataProperties>
+        </DataProperty>
         <DataProperty>
           <columnName>DesignTemperature</columnName>
           <propertyName>DesignTemperature</propertyName>
           <dataType>Single</dataType>
           <dataLength>8</dataLength>
           <isNullable>true</isNullable>
+          <keyType>unassigned</keyType>
         </DataProperty>
         <DataProperty>
           <columnName>Diameter</columnName>
@@ -107,6 +31,7 @@
           <dataType>Single</dataType>
           <dataLength>8</dataLength>
           <isNullable>true</isNullable>
+          <keyType>unassigned</keyType>
         </DataProperty>
         <DataProperty>
           <columnName>DiameterUOM</columnName>
@@ -114,6 +39,7 @@
           <dataType>String</dataType>
           <dataLength>50</dataLength>
           <isNullable>true</isNullable>
+          <keyType>unassigned</keyType>
         </DataProperty>
         <DataProperty>
           <columnName>Fluid</columnName>
@@ -121,6 +47,7 @@
           <dataType>String</dataType>
           <dataLength>50</dataLength>
           <isNullable>true</isNullable>
+          <keyType>unassigned</keyType>
         </DataProperty>
         <DataProperty>
           <columnName>Length</columnName>
@@ -128,6 +55,7 @@
           <dataType>Single</dataType>
           <dataLength>8</dataLength>
           <isNullable>true</isNullable>
+          <keyType>unassigned</keyType>
         </DataProperty>
         <DataProperty>
           <columnName>LengthUOM</columnName>
@@ -135,6 +63,7 @@
           <dataType>String</dataType>
           <dataLength>50</dataLength>
           <isNullable>true</isNullable>
+          <keyType>unassigned</keyType>
         </DataProperty>
         <DataProperty>
           <columnName>OperatingTemperature</columnName>
@@ -142,6 +71,7 @@
           <dataType>Single</dataType>
           <dataLength>8</dataLength>
           <isNullable>true</isNullable>
+          <keyType>unassigned</keyType>
         </DataProperty>
         <DataProperty>
           <columnName>PID</columnName>
@@ -149,6 +79,7 @@
           <dataType>String</dataType>
           <dataLength>50</dataLength>
           <isNullable>true</isNullable>
+          <keyType>unassigned</keyType>
         </DataProperty>
         <DataProperty>
           <columnName>PIDRev</columnName>
@@ -156,6 +87,7 @@
           <dataType>String</dataType>
           <dataLength>50</dataLength>
           <isNullable>true</isNullable>
+          <keyType>unassigned</keyType>
         </DataProperty>
         <DataProperty>
           <columnName>Plant</columnName>
@@ -163,6 +95,7 @@
           <dataType>String</dataType>
           <dataLength>50</dataLength>
           <isNullable>true</isNullable>
+          <keyType>unassigned</keyType>
         </DataProperty>
         <DataProperty>
           <columnName>PlantArea</columnName>
@@ -170,6 +103,7 @@
           <dataType>String</dataType>
           <dataLength>50</dataLength>
           <isNullable>true</isNullable>
+          <keyType>unassigned</keyType>
         </DataProperty>
         <DataProperty>
           <columnName>System</columnName>
@@ -177,6 +111,7 @@
           <dataType>String</dataType>
           <dataLength>50</dataLength>
           <isNullable>true</isNullable>
+          <keyType>unassigned</keyType>
         </DataProperty>
         <DataProperty>
           <columnName>TempUOM</columnName>
@@ -184,11 +119,12 @@
           <dataType>String</dataType>
           <dataLength>50</dataLength>
           <isNullable>true</isNullable>
+          <keyType>unassigned</keyType>
         </DataProperty>
       </dataProperties>
       <dataRelationships/>
     </DataObject>
   </dataObjects>
   <provider>MsSql2008</provider>
-  <connectionString>Data Source=.\SQLEXPRESS;Initial Catalog=DEF;User Id=def;Password=def;</connectionString>
+  <connectionString>Data Source=.\SQLEXPRESS;Initial Catalog=DEF;User ID=def;Password=def;</connectionString>
 </DatabaseDictionary>
