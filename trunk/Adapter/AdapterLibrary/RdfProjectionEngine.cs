@@ -275,20 +275,27 @@ namespace org.iringtools.adapter.projection
 
                 foreach (string identifier in roleMap.classMap.identifiers)
                 {
-                  string[] property = identifier.Split('.');
-                  string objectName = property[0].Trim();
-                  string propertyName = property[1].Trim();
-
-                  IDataObject dataObject = _dataObjects.ElementAt(dataObjectIndex);
-
-                  if (dataObject != null)
+                  if (identifier.StartsWith("#") && identifier.EndsWith("#"))
                   {
-                    string value = Convert.ToString(dataObject.GetPropertyValue(propertyName));
+                    identifierValue += identifier.Substring(1, identifier.Length - 2);
+                  }
+                  else
+                  {
+                    string[] property = identifier.Split('.');
+                    string objectName = property[0].Trim();
+                    string propertyName = property[1].Trim();
 
-                    if (identifierValue != String.Empty)
-                      identifierValue += roleMap.classMap.identifierDelimeter;
+                    IDataObject dataObject = _dataObjects.ElementAt(dataObjectIndex);
 
-                    identifierValue += value;
+                    if (dataObject != null)
+                    {
+                      string value = Convert.ToString(dataObject.GetPropertyValue(propertyName));
+
+                      if (identifierValue != String.Empty)
+                        identifierValue += roleMap.classMap.identifierDelimeter;
+
+                      identifierValue += value;
+                    }
                   }
                 }
 

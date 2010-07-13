@@ -90,7 +90,7 @@
                     <classId>rdl:R16348302781</classId>
                     <name>SYSTEM</name>
                     <identifiers>
-                      <a:string>Lines.System</a:string>
+                      <a:string>#AB#</a:string>
                     </identifiers>
                   </classMap>
                 </RoleMap>
@@ -292,7 +292,7 @@
             <classId>rdl:R16348302781</classId>
             <name>SYSTEM</name>
             <identifiers>
-              <a:string>Lines.System</a:string>
+              <a:string>#AB#</a:string>
             </identifiers>
           </a:Key>
           <a:Value>
