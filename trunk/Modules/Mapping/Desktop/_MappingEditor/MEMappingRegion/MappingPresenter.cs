@@ -341,7 +341,8 @@ namespace org.iringtools.modules.memappingregion
         model.DetailProperties.Add(keyValuePair);
         keyValuePair = new KeyValuePair<string, string>("Template Id", templateMap.templateId);
         model.DetailProperties.Add(keyValuePair);
-
+        keyValuePair = new KeyValuePair<string, string>("Template Type", templateMap.templateType.ToString());
+        model.DetailProperties.Add(keyValuePair);
       }
       catch (Exception ex)
       {

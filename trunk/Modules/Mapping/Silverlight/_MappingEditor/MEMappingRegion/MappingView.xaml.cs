@@ -13,9 +13,6 @@ namespace org.iringtools.modules.memappingregion
       InitializeComponent();
     }
 
-    public IPresentationModel Model { get; set; }
-
-
-
+    public IPresentationModel Model { get; set; 
   }
 }

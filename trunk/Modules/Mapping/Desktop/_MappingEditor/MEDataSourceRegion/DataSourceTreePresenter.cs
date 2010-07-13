@@ -130,9 +130,9 @@ namespace org.iringtools.modules.medatasourceregion
             DataDictionary dictionary = e.Data as DataDictionary;
             if (dictionary == null)
                 return;
-
+            
             tvwDataDictionary.Items.Clear();
-
+            
             // Note that we only load first level nodes
             foreach (org.iringtools.library.DataObject dataObject in dictionary.dataObjects)
             {
@@ -165,16 +165,6 @@ namespace org.iringtools.modules.medatasourceregion
                 node.SetImageSource("object.png");
                 node.SetTextBlockText(header);
                 node.SetTooltipText("Object : " + header);
-                //}
-                //else if (tag is org.iringtools.library.KeyProperty)
-                //{
-                //    node = new DataObjectItem
-                //    {
-                //        Parent = parent,
-                //        DataObject = ((DataObjectItem)parent).DataObject,
-                //        KeyProperty = (KeyProperty)tag,
-                //        Tag = tag
-                //    };
             }
             else if (tag is DataProperty)
             {
@@ -199,7 +189,7 @@ namespace org.iringtools.modules.medatasourceregion
             }
 
             // Subscribe to it's events
-            //node.Selected += nodeSelectedHandler;
+
             node.MouseLeftButtonUp += nodeMouseLeftButtonUpHandler;
             node.Expanded += nodeExpandedHandler;
 
@@ -410,11 +400,11 @@ namespace org.iringtools.modules.medatasourceregion
             if (selectedNode == null)
                 return;
             DataObjectItem dataPropertyNode = null;
-            DataObjectItem keyPropertyNode = null;
+           // DataObjectItem keyPropertyNode = null;
 
             if (selectedNode.Items.Count > 0)
             {
-                keyPropertyNode = selectedNode.Items[0] as DataObjectItem;
+               // keyPropertyNode = selectedNode.Items[0] as DataObjectItem;
                 dataPropertyNode = selectedNode.Items[1] as DataObjectItem;
             }
             //          childNode = selectedNode.Items[0] as DataObjectItem;
@@ -434,10 +424,10 @@ namespace org.iringtools.modules.medatasourceregion
             bool isProcessed = false;
 
             // Add the key nodes
-            int a = 0;
-            if (keyPropertyNode.Tag is List<KeyProperty>)
-                foreach (KeyProperty keyProperty in ((List<KeyProperty>)keyPropertyNode.Tag))
-                    a++;
+            //int a = 0;
+            //if (keyPropertyNode.Tag is List<KeyProperty>)
+            //    foreach (KeyProperty keyProperty in ((List<KeyProperty>)keyPropertyNode.Tag))
+            //        a++;
                     //isProcessed = PopulateKeyProperty(selectedNode, keyProperty);
 
             if (dataPropertyNode.Tag is org.iringtools.library.DataObject)

@@ -128,7 +128,7 @@ namespace org.iringtools.library
 
       public System.Xml.Schema.XmlSchema GetSchema()
     {
-      throw new NotImplementedException();
+      return null;
     }
 
     public void ReadXml(System.Xml.XmlReader reader)
