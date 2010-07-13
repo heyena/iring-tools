@@ -383,7 +383,6 @@
     <Message Text="Performing MSBuild clean-up ..." />
     <MSBuild Projects="$(SolutionFile)" Targets="Clean"/>
   </Target>
-
    
   <Target Name="PrepareBuild">
     <Message Text="Preparing build ..." />

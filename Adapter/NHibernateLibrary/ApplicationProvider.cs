@@ -51,7 +51,7 @@ namespace org.iringtools.application
     private Response _response = null;
     private IKernel _kernel = null;
     private ApplicationSettings _settings = null;
-    WebProxyCredentials _proxyCredentials = null;
+    //private WebProxyCredentials _proxyCredentials = null;
 
     bool _isScopeInitialized = false;
     

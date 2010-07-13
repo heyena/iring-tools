@@ -648,7 +648,7 @@ namespace org.iringtools.utility
       {
         StringReader input = new StringReader(xml);
         XmlReaderSettings settings = new XmlReaderSettings();
-        settings.ProhibitDtd = false;
+        settings.DtdProcessing = DtdProcessing.Ignore;
         XmlReader reader = XmlDictionaryReader.Create(input, settings);
 
         if (useDataContractSerializer)

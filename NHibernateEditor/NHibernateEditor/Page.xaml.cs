@@ -21,8 +21,8 @@ namespace ApplicationEditor
         private NewDbDictionary newDbDictionary;
         private ResultsList resultsList;
         private EditTreeNode editTreeNode;
-        List<string> dbDictionaries;
-        Collection<ScopeProject> scopes;
+        //List<string> dbDictionaries;
+        //Collection<ScopeProject> scopes;
         public string newProvider;
         public string newProject;
         public string newApplication;
@@ -781,7 +781,7 @@ namespace ApplicationEditor
 
             _dal.GetDbDictionary(project.Name, application.Name);
           }
-          catch (Exception ex)
+          catch (Exception)
           {
             
           }
