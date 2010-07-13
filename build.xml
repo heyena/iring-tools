@@ -2,6 +2,14 @@
   <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
 
   <PropertyGroup>
+    <AssemblyInfoFile>$(MSBuildProjectDirectory)\AssemblyInfo.cs</AssemblyInfoFile>
+    <Major>2</Major>
+    <Minor>0</Minor>
+    <Build>0</Build>
+    <Revision>0</Revision>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <SolutionFile>iring-tools.sln</SolutionFile>
     <DeploymentDir>$(MSBuildProjectDirectory)\Deployment</DeploymentDir>
     <iRINGAdapter>$(DeploymentDir)\iRINGAdapter</iRINGAdapter>
@@ -41,17 +49,10 @@
     <CSVDataLayerDir>CSVDataLayer</CSVDataLayerDir>
     <CSVDataLayerSolutionFile>$(CSVDataLayerDir)\CSVDataLayer.sln</CSVDataLayerSolutionFile>
     <SDKDeploymentDir>$(DeploymentDir)\SDK</SDKDeploymentDir>
-    <CSVDataLayerDeploymentDir>$(SDKDeploymentDir)\CSVDataLayer</CSVDataLayerDeploymentDir>    
+    <CSVDataLayerDeploymentDir>$(SDKDeploymentDir)\CSVDataLayer</CSVDataLayerDeploymentDir>  
+    <CSVDataLayerLibDeploymentDir>$(CSVDataLayerDeploymentDir)\lib</CSVDataLayerLibDeploymentDir>    
     <MSTestCmd>"$(VSINSTALLDIR)\Common7\IDE\MSTest.exe"</MSTestCmd>
     <ZipCmd>"$(MSBuildProjectDirectory)\ExternalBinaries\7-Zip\7z.exe"</ZipCmd>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <AssemblyInfoFile>$(MSBuildProjectDirectory)\AssemblyInfo.cs</AssemblyInfoFile>
-    <Major>2</Major>
-    <Minor>0</Minor>
-    <Build>0</Build>
-    <Revision>0</Revision>
   </PropertyGroup>
 
   <ItemGroup>
@@ -299,18 +300,30 @@
                $(CSVDataLayerDir)\*\*\.svn\**;
                $(CSVDataLayerDir)\*\*\*\.svn\**;">                    
     </CSVDataLayerDeployment>
+    
+    <CSVDataLayerLibDeployment
+      Include="ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.chm;
+               ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.dll;
+               ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.xml;
+               Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll;
+               Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;                
+               ExternalBinaries\Ninject2\Ninject.dll;
+               ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll;
+               ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.license.txt;
+               ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.xml;">
+    </CSVDataLayerLibDeployment>
   </ItemGroup>
 
   <ItemGroup>
     <DeploymentPackage Include="*" Exclude="">
       <Options>a -tzip -r</Options>
       <FileSet>$(iRINGAdapter) $(iRINGSandbox) $(LandingPageDeploymentDir)</FileSet>
-      <ZipFile>$(DeploymentDir)\iRINGTools-200.zip</ZipFile>
+      <ZipFile>$(DeploymentDir)\iRINGTools-$(Major).$(Minor).$(Build).zip</ZipFile>
     </DeploymentPackage>
     <DeploymentPackage Include="*" Exclude="">
       <Options>a -tzip -r</Options>
       <FileSet>$(SDKDeploymentDir)\*</FileSet>
-      <ZipFile>$(DeploymentDir)\iRINGTools-SDK-200.zip</ZipFile>
+      <ZipFile>$(DeploymentDir)\iRINGTools-SDK-$(Major).$(Minor).$(Build).zip</ZipFile>
     </DeploymentPackage>
   </ItemGroup>
 
@@ -484,6 +497,10 @@
     <Message Text="Creating CSVDataLayer deployment ..." />
     <Copy SourceFiles="@(CSVDataLayerDeployment)"
           DestinationFiles="@(CSVDataLayerDeployment->'$(CSVDataLayerDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+
+    <Message Text="Creating CSVDataLayer library deployment ..." />
+    <Copy SourceFiles="@(CSVDataLayerLibDeployment)"
+          DestinationFiles="@(CSVDataLayerLibDeployment->'$(CSVDataLayerLibDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
 
   </Target>
 
