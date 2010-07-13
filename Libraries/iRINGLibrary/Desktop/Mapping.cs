@@ -285,6 +285,9 @@ namespace org.iringtools.library
     [DataMember(EmitDefaultValue = false, Order = 2)]
     public List<RoleMap> roleMaps { get; set; }
 
+    [DataMember(EmitDefaultValue = false, Order = 3)]
+    public TemplateType templateType { get; set; }
+
     // roleId is unique within templateMap scope
     public void AddRoleMap(RoleMap roleMap)
     {
@@ -371,6 +374,16 @@ namespace org.iringtools.library
 
     [EnumMember]
     FixedValue,
+  }
+
+  [DataContract]
+  public enum TemplateType
+  {
+    [EnumMember]
+    Qualification,
+
+    [EnumMember]
+    Definition
   }
 
   [DataContract]
