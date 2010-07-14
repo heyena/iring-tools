@@ -88,7 +88,10 @@ namespace org.iringtools.adapter.semantic
     public Response Refresh(string graphName, XElement rdf)
     {
       Response response = new Response();
+      response.StatusList = new List<Status>();
+
       Status status = new Status();
+      status.Messages = new List<string>();
 
       try
       {  
@@ -147,8 +150,11 @@ namespace org.iringtools.adapter.semantic
     #region helper methods
     private Response DeleteGraph(Uri graphUri)
     {
-      Response response = new Response();
-      Status status = new Status();
+        Response response = new Response();
+        response.StatusList = new List<Status>();
+
+        Status status = new Status();
+        status.Messages = new List<string>();
       try
       {
         status.Identifier = graphUri.ToString();

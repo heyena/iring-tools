@@ -241,6 +241,7 @@ namespace org.iringtools.adapter.datalayer
     public Response Delete(string objectType, IList<string> identifiers)
     {
       Response response = new Response();
+      response.StatusList = new List<Status>();
       Status status = new Status();
       try
       {
@@ -276,6 +277,7 @@ namespace org.iringtools.adapter.datalayer
     public Response Delete(string objectType, DataFilter filter)
     {
       Response response = new Response();
+      response.StatusList = new List<Status>();
       Status status = new Status();
       try
       {

@@ -79,7 +79,7 @@ namespace AdapterService.Tests
     {
       AdapterProxy target = new AdapterProxy();
       DataDictionary actual = target.GetDictionary("12345_000", "ABC");
-      Assert.AreEqual(2, actual.dataObjects.Count);
+      Assert.AreEqual(1, actual.dataObjects.Count);
     }
 
     [TestMethod()]
@@ -111,12 +111,12 @@ namespace AdapterService.Tests
     {
       AdapterProxy target = new AdapterProxy();
       Response actual = target.ClearAll("12345_000", "ABC");
-      if (!actual.ToString().Contains("Graph [http://yourcompany.com/12345_000/ABC/Lines] has been deleted successfully."))
+      if (!actual.ToString().Contains("has been deleted successfully."))
       {
         throw new AssertFailedException(Utility.SerializeDataContract<Response>(actual));
       }
 
-      Assert.IsTrue(actual.ToString().Contains("Graph [http://yourcompany.com/12345_000/ABC/Lines] has been deleted successfully."));
+      Assert.IsTrue(actual.ToString().Contains("has been deleted successfully."));
     }
 
     [TestMethod()]

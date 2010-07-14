@@ -119,6 +119,7 @@ namespace org.iringtools.adapter
       }
 
       _response = new Response();
+      _response.StatusList = new List<Status>();
       _kernel.Bind<Response>().ToConstant(_response);
     }
 
@@ -142,6 +143,7 @@ namespace org.iringtools.adapter
     public Response UpdateScopes(List<ScopeProject> scopes)
     {
       Status status = new Status();
+      status.Messages = new List<string>();
       try
       {
         foreach (ScopeProject project in scopes)
@@ -174,6 +176,7 @@ namespace org.iringtools.adapter
     public Response DeleteScope(string projectName, string applicationName)
     {
       Status status = new Status();
+      status.Messages = new List<string>();
       try
       {
         status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
@@ -217,6 +220,7 @@ namespace org.iringtools.adapter
     public Response UpdateBinding(string projectName, string applicationName, XElement binding)
     {
       Status status = new Status();
+      status.Messages = new List<string>();
       try
       {
         status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
@@ -308,6 +312,7 @@ namespace org.iringtools.adapter
     public Response UpdateMapping(string projectName, string applicationName, XElement mappingXml)
     {
       Status status = new Status();
+      status.Messages = new List<string>();
       string path = string.Format("{0}Mapping.{1}.{2}.xml", _settings["XmlPath"], projectName, applicationName);
 
       try
@@ -396,7 +401,7 @@ namespace org.iringtools.adapter
     public Response RefreshAll(string projectName, string applicationName)
     {
       Status status = new Status();
-
+      status.Messages = new List<string>();
       try
       {
         status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
@@ -432,7 +437,7 @@ namespace org.iringtools.adapter
     public Response Refresh(string projectName, string applicationName, string graphName)
     {
       Status status = new Status();
-
+      status.Messages = new List<string>();
       try
       {
         status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
@@ -540,6 +545,7 @@ namespace org.iringtools.adapter
       String graphNameForPull = String.Empty;
       String dataObjectsString = String.Empty;
       Status status = new Status();
+      status.Messages = new List<string>();
       try
       {
         status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
@@ -592,7 +598,7 @@ namespace org.iringtools.adapter
     public Response Pull(string projectName, string applicationName, Request request)
     {
       Status status = new Status();
-
+      status.Messages = new List<string>();
       try
       {
         status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
@@ -684,7 +690,7 @@ namespace org.iringtools.adapter
     public Response DeleteAll(string projectName, string applicationName)
     {
       Status status = new Status();
-
+      status.Messages = new List<string>();
       try
       {
         status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
@@ -713,7 +719,7 @@ namespace org.iringtools.adapter
     public Response Delete(string projectName, string applicationName, string graphName)
     {
       Status status = new Status();
-
+      status.Messages = new List<string>();
       try
       {
         status.Identifier = String.Format("{0}.{1}.{2}", projectName, applicationName, graphName);
@@ -740,7 +746,7 @@ namespace org.iringtools.adapter
     public Response Push(string projectName, string applicationName, Request request)
     {
         Status status = new Status();
-        Response response = null;
+        status.Messages = new List<string>();
         try
         {
             String targetUri = String.Empty;
@@ -784,7 +790,7 @@ namespace org.iringtools.adapter
 
             _isDataLayerInitialized = false;
             _isScopeInitialized = false;
-            response = httpClient.PutMessage<XElement, Response>(@"/" + projectNameForPush + "/" + applicationNameForPush + "/" + graphNameForPush + "?format=" + format, xml, true);
+            _response = httpClient.PutMessage<XElement, Response>(@"/" + projectNameForPush + "/" + applicationNameForPush + "/" + graphNameForPush + "?format=" + format, xml, true);
         }
         catch (Exception ex)
         {
@@ -793,7 +799,7 @@ namespace org.iringtools.adapter
             status.Level = StatusLevel.Error;
             status.Messages.Add(string.Format("Error in pushing data: {0}", ex));
         }
-        return response;
+        return _response;
 
     }
 
