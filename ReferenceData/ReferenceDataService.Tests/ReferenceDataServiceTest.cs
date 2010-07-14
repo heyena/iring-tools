@@ -18,7 +18,8 @@ namespace ReferenceDataService.Tests
   {
     public ReferenceDataServiceTest()
     {
-      string path = Directory.GetCurrentDirectory() + @"\..\..\..\ReferenceData\ReferenceDataService\XML\";
+      string path = @"C:\iring-tools\ReferenceData\ReferenceDataService\XML\";
+
       if (!File.Exists(path + "Repositories.xml"))
       {
         File.Copy(path + "Repositories_Test.xml", path + "Repositories.xml");
