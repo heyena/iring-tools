@@ -348,15 +348,13 @@ namespace org.iringtools.utility
             }
         }
 
-        public T PutMessage<T>(string relativeUri, string requestMessage, bool useDataContractSerializer)
+        public R PutMessage<T, R>(string relativeUri, T requestEntity, bool useDataContractSerializer)
         {
             try
             {
                 string uri = _baseUri + relativeUri; // GetUri(relativeUri);
-                MemoryStream stream = new MemoryStream();
-                StreamWriter writer = new StreamWriter(stream);
-                writer.Write(requestMessage);
-                writer.Flush();
+
+                MemoryStream stream = Utility.SerializeToMemoryStream<T>(requestEntity, useDataContractSerializer);
 
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
 
@@ -364,7 +362,7 @@ namespace org.iringtools.utility
 
                 request.Timeout = TIMEOUT;
                 request.Method = "PUT";
-                request.ContentType = "application/x-www-form-urlencoded";
+                request.ContentType = "text/xml";
                 request.ContentLength = stream.Length;
 
                 // allows for validation of SSL conversations
@@ -372,16 +370,10 @@ namespace org.iringtools.utility
                   ValidateRemoteCertificate
                 );
 
-                using (var requestStream = request.GetRequestStream())
-                {
-                    foreach (var bit in stream.ToArray())
-                    {
-                        requestStream.WriteByte(bit);
-                    }
-                }
+                request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
 
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                T responseEntity = Utility.DeserializeFromStream<T>(response.GetResponseStream(), useDataContractSerializer);
+                R responseEntity = Utility.DeserializeFromStream<R>(response.GetResponseStream(), useDataContractSerializer);
 
                 return responseEntity;
             }

@@ -94,7 +94,7 @@ namespace org.iringtools.adapter
 
     //Xml Put/Post
     [OperationContract]
-    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}")]
+    [WebInvoke(Method = "PUT", UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}")]
     Response Put(string projectName, string applicationName, string graphName, string format, XElement xml);
 
     //[OperationContract]

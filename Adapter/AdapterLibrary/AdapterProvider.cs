@@ -760,52 +760,31 @@ namespace org.iringtools.adapter
             graphNameForPush = request["targetGraphName"];
             format = request["format"];
 
-            WebCredentials targetCredentials = Utility.Deserialize<WebCredentials>(targetCredentialsXML, true);
-            if (targetCredentials.isEncrypted) targetCredentials.Decrypt();
-
             WebHttpClient httpClient = new WebHttpClient(targetUri);
-
-            #region initialize webHttpClient for converting old mapping
-            string proxyHost = _settings["ProxyHost"];
-            string proxyPort = _settings["ProxyPort"];
-            
-            if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
-            {
-                WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
-                WebProxyCredentials proxyCrendentials = _settings.GetProxyCredentials();
-
-                if (proxyCrendentials != null)
-                {
-                    webProxy.Credentials = proxyCrendentials.GetNetworkCredential();
-                }
-
-                httpClient = new WebHttpClient(targetUri, null, webProxy);
-            }
-            else
-            {
-                httpClient = new WebHttpClient(targetUri);
-            }
-            #endregion
 
             InitializeScope(projectName, applicationName);
             InitializeDataLayer();
 
+            _graphMap = _mapping.FindGraphMap(graphName);
+            
             _projectionEngine = _kernel.Get<IProjectionLayer>(format);
             IList<IDataObject> dataObjectList;
             if (filter != String.Empty)
             {
                 IList<string> identifiers = new List<string>();
                 identifiers.Add(filter);
-                dataObjectList = _dataLayer.Get(graphName, identifiers);
+                dataObjectList = _dataLayer.Get(_graphMap.dataObjectMap, identifiers);
             }
             else
             {
-                dataObjectList = _dataLayer.Get(graphName, null);
+                dataObjectList = _dataLayer.Get(_graphMap.dataObjectMap, null);
             }
 
             XElement xml = _projectionEngine.GetXml(graphName, ref dataObjectList);
 
-            response = httpClient.Post<string, Response>(@"/" + projectNameForPush + "/" + applicationNameForPush + "/" + graphNameForPush + "?format=" + format, xml.ToString(), false);
+            _isDataLayerInitialized = false;
+            _isScopeInitialized = false;
+            response = httpClient.PutMessage<XElement, Response>(@"/" + projectNameForPush + "/" + applicationNameForPush + "/" + graphNameForPush + "?format=" + format, xml, true);
         }
         catch (Exception ex)
         {
