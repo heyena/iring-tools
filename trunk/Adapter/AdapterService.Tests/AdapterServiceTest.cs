@@ -344,14 +344,14 @@ namespace AdapterService.Tests
         string adapterServiceUri = System.Configuration.ConfigurationManager.AppSettings["AdapterServiceUri"].ToString();
         request.Add("targetUri", adapterServiceUri);
         request.Add("targetCredentials", targetCredentialsXML);
-        request.Add("graphName", "Lines");
-        request.Add("filter", "Tag-1");
+        request.Add("graphName", "LinesGraph");
+        request.Add("filter", "Tag-2");
         request.Add("targetProjectName", "12345_000");
         request.Add("targetApplicationName", "ABC");
         request.Add("targetGraphName", "Lines");
         request.Add("format", "dto");
 
-        Response actual = target.Push("12345_000", "ABC", request);
+        Response actual = target.Push("12345_000", "DEF", request);
         Assert.IsFalse(actual.Level == StatusLevel.Error);
     }
 
@@ -359,9 +359,9 @@ namespace AdapterService.Tests
     public void Put()
     {
         AdapterProxy target = new AdapterProxy();
-        XElement xElement = target.GetXml("12345_000", "DEF", "LinesGraph", "dto");
+        XElement xElement = target.GetXml("12345_000", "ABC", "Lines", "dto");
         target = new AdapterProxy();
-        Response actual = target.Put("12345_000", "ABC", "Lines", "dto", xElement);
+        Response actual = target.Put("12345_000", "DEF", "LinesGraph", "dto", xElement);
         Assert.IsFalse(actual.Level == StatusLevel.Error);        
     }
     //[TestMethod()]
