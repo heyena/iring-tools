@@ -147,6 +147,8 @@ namespace org.ids_adi.iring.referenceData
             }
         }
 
+        #region Prototype Part8
+
         public List<Entity> Find(string query)
         {
             List<Entity> queryResult = new List<Entity>();
@@ -2222,5 +2224,66 @@ namespace org.ids_adi.iring.referenceData
             }
         }
 
+        #endregion Protoype Part8
+
+        #region Part8
+
+        public List<Classification> GetPart8TemplateClassif(string id)
+        {
+            QMXF qmxf = new QMXF();
+
+            try
+            {
+                string sparql = String.Empty;
+                string relativeUri = String.Empty;
+
+                List<Classification> classifications = new List<Classification>();
+
+
+                Query queryContainsSearch = _queries["GetTemplateClassification"];
+                QueryBindings queryBindings = queryContainsSearch.bindings;
+
+                sparql = ReadSPARQL(queryContainsSearch.fileName);
+                sparql = sparql.Replace("param1", id);
+
+
+                foreach (Repository repository in _repositories)
+                {
+                    SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
+
+                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+
+                    foreach (Dictionary<string, string> result in results)
+                    {
+
+                        Classification classification = new Classification();
+                        string uri = String.Empty;
+                        string label = String.Empty;
+
+                        if (result.ContainsKey("uri"))
+                        {
+                            uri = result["uri"];
+                            classification.reference = uri;
+                        }
+
+                        //if (result.ContainsKey("label"))
+                        //    label = result["label"];
+
+                        classification.label = label;
+                        Utility.SearchAndInsert(classifications, classification, Classification.sortAscending());
+                    }
+
+                }
+
+                return classifications;
+            }
+            catch (Exception e)
+            {
+                _log4netLogger.Error("Error in GetClassifications: " + e);
+                throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
+            }
+        }
+
+        #endregion Part8
     }
 }
