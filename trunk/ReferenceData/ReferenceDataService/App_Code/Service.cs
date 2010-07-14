@@ -129,5 +129,14 @@ namespace org.ids_adi.iring.referenceData
           return _referenceDataServiceProvider.PostClass(qmxf);
         }
 
+        #region Part8
+
+        public List<Classification> GetPart8TemplateClassif(string id)
+        {
+            return _referenceDataServiceProvider.GetPart8TemplateClassif(id);
+        }
+
+        #endregion Part8
+
     }
 }

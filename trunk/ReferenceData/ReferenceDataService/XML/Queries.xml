@@ -339,4 +339,17 @@
       <fileName>ClassRelations.txt</fileName>
     </Query>
   </QueryItem>
+  <!-- part8 queries-->
+  <QueryItem>
+    <Key>GetTemplateClassification</Key>
+    <Query>
+      <bindings>
+        <QueryBinding>
+          <name>uri</name>
+          <type>Uri</type>
+        </QueryBinding>
+      </bindings>
+      <fileName>getTemplateClassification.txt</fileName>
+    </Query>
+  </QueryItem>
 </Queries>

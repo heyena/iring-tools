@@ -45,6 +45,8 @@ namespace org.ids_adi.iring.referenceData
     [WebGet(UriTemplate = "/repositories")]
     List<Repository> GetRepositories();
 
+    #region Prototype Part8
+
     /// <summary>
     ///do a search
     /// </summary>
@@ -147,7 +149,40 @@ namespace org.ids_adi.iring.referenceData
     [OperationContract]
     [WebInvoke(UriTemplate = "/classes")]
     Response PostClass(QMXF @class);
+
+    #endregion Prototype Part8
+
+    #region Part8
+      /*
+    /// <summary>
+    ///get part 8 template
+    /// </summary>
+    [OperationContract]
+    [WebGet(UriTemplate = "/part8/template")]
+    List<Repository> GetPart8Template();
+
+    /// <summary>
+    ///get part 8 template Specilaization
+    /// </summary>
+    [OperationContract]
+    [WebGet(UriTemplate = "/part8/templatespec")]
+    List<Repository> GetPart8TemplateSpec();
+      */
+    /// <summary>
+    ///get part 8 template Classification
+    /// </summary>
+    [OperationContract]
+    [WebGet(UriTemplate = "/part8/templateclasif/{id}")]
+    List<Classification> GetPart8TemplateClassif(string id);
+/*
+    /// <summary>
+    ///get part 8 template Roles
+    /// </summary>
+    [OperationContract]
+    [WebGet(UriTemplate = "/part8/templateroles")]
+    List<Repository> GetPart8TemplateRoles();
+      */
+    #endregion
   }
 
-  
 }
