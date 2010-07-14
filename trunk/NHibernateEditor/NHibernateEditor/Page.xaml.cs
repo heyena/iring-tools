@@ -21,8 +21,7 @@ namespace ApplicationEditor
         private NewDbDictionary newDbDictionary;
         private ResultsList resultsList;
         private EditTreeNode editTreeNode;
-        //List<string> dbDictionaries;
-        //Collection<ScopeProject> scopes;
+        Collection<ScopeProject> _scopes;
         public string newProvider;
         public string newProject;
         public string newApplication;
@@ -524,6 +523,7 @@ namespace ApplicationEditor
                         }
                     }
                 }
+                
 
             }
             catch (Exception ex)
@@ -688,6 +688,43 @@ namespace ApplicationEditor
         {
         }
 
+        void tvwItemProject_Selected(object sender, RoutedEventArgs e)
+        {
+          if (sender != null)
+          {
+            TreeViewItem tvwItem = (TreeViewItem)sender;
+            if (tvwItem.Tag != null)
+            {
+              ScopeProject oPrj = (ScopeProject)tvwItem.Tag;
+              tbNewPrjName.Text = oPrj.Name;
+              tbNewPrjDesc.Text = (oPrj.Description == null) ? string.Empty : oPrj.Description;
+            }
+          }
+        }
+
+        void tvwItemScope_Selected(object sender, RoutedEventArgs e)
+        {
+          if (sender != null)
+          {
+            TreeViewItem tvwItem = (TreeViewItem)sender;
+            TreeViewItem tvwParent = (TreeViewItem)tvwItem.Parent;
+
+            if (tvwParent.Tag != null)
+            {
+              ScopeProject oPrj = (ScopeProject)tvwParent.Tag;
+              tbNewPrjName.Text = oPrj.Name;
+              tbNewPrjDesc.Text = (oPrj.Description == null) ? string.Empty : oPrj.Description;
+            }
+            
+            if (tvwItem.Tag != null)
+            {
+              ScopeApplication oApp = (ScopeApplication)tvwItem.Tag;
+              tbNewAppName.Text = oApp.Name;
+              tbNewAppDesc.Text = (oApp.Description == null) ? string.Empty : oApp.Description;
+            }
+          }
+        }
+
         void getScopesComplete(CompletedEventArgs args)
         {
             try
@@ -696,24 +733,29 @@ namespace ApplicationEditor
               if (args != null && args.Data != null) 
               {
 
-                Collection<ScopeProject> scopes = (Collection<ScopeProject>)args.Data;
+                _scopes = (Collection<ScopeProject>)args.Data;
 
-                foreach (ScopeProject project in scopes)
+                foreach (ScopeProject project in _scopes)
                 {
                   cmbProject.Items.Add(new ComboBoxItem { Content = project.Name, Tag = project });
 
                   TreeViewItem tvwItemProject = new TreeViewItem { Header = project.Name, Tag = project };
-                  
+                  tvwItemProject.Selected += new RoutedEventHandler(tvwItemProject_Selected);
+
+                  TreeViewItem tvwItemScope = null;
+
                   foreach (ScopeApplication application in project.Applications) 
                   {
-                    tvwItemProject.Items.Add( new TreeViewItem { Header = application.Name, Tag = application });
+                    tvwItemScope = new TreeViewItem { Header = application.Name, Tag = application };
+                    tvwItemScope.Selected += new RoutedEventHandler(tvwItemScope_Selected);
+                    tvwItemProject.Items.Add( tvwItemScope );
                   }
 
                   tvwScopesItemRoot.Items.Add( tvwItemProject );
 
                 }
 
-                tvwScopesItemRoot.Tag = scopes;
+                tvwScopesItemRoot.Tag = _scopes;
                 tvwScopes.Visibility = Visibility.Visible;
               
               }             
@@ -781,7 +823,7 @@ namespace ApplicationEditor
 
             _dal.GetDbDictionary(project.Name, application.Name);
           }
-          catch (Exception)
+          catch (Exception ex)
           {
             
           }

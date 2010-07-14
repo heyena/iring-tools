@@ -87,10 +87,10 @@
                                     <TextBox x:Name="tbNewAppDesc" Width="110" Height="22" Margin="5,5,5,5" />
                                 </StackPanel>
                             </Border>                                
-                            <Button x:Name="btnAddScope" Content="Add" Width="110" Height="24" Margin="5,5,5,0" Click="btnAddScope_Click" />
-                            <Button x:Name="btnDeleteScope" Content="Delete" Width="110" Height="24" Margin="5,5,5,0"/>
-                            <Button x:Name="btnSaveScope" Content="Save" Width="110" Height="24" Margin="5,5,5,5" />
-                            <Button x:Name="btnPostScope" Content="Post" Width="110" Height="24" Margin="5,5,5,5" Click="btnPostScope_Click" />
+                            <Button x:Name="btnAddScope" Content="Add/Update" Width="110" Height="24" Margin="5,5,5,0" Click="btnAddScope_Click" />
+                            <Button x:Name="btnDeleteScope" Content="Delete" Width="110" Height="24" Margin="5,5,5,0" Click="btnDelScope_Click"/>
+                            <!--<Button x:Name="btnSaveScope" Content="Save" Width="110" Height="24" Margin="5,5,5,5" />-->
+                            <Button x:Name="btnPostScope" Content="Save" Width="110" Height="24" Margin="5,5,5,5" Click="btnPostScope_Click" />
                         </StackPanel>
                     </Border>                    
                 </Grid>             
@@ -126,10 +126,6 @@
                         </Border>
                         <Border Grid.Row="0" Grid.Column="1" BorderBrush="Gray" BorderThickness="1" CornerRadius="5">
                             <StackPanel Orientation="Vertical">
-                                <TextBlock Text="Project Name:" FontSize="11" Margin="5,5,5,0" />
-                                <TextBox x:Name="tbProject" Width="110" Height="22" Margin="5,5,5,0" />
-                                <TextBlock Text="Application Name:" FontSize="11" Margin="5,5,5,0" />
-                                <TextBox x:Name="tbApp" Width="110" Height="22" Margin="5,5,5,0" />
                                 <TextBlock Text="Database Provider:" FontSize="11" Margin="5,5,5,0" />
                                 <ComboBox x:Name="cbProvider" Height="22" Margin="5,5,5,0" Width="100"/>
                                 <TextBlock Text="Data Source:" FontSize="11" Margin="5,5,5,0"/>
