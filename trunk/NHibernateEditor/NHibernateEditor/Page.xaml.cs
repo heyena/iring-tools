@@ -1142,6 +1142,39 @@ namespace ApplicationEditor
             }
         }
 
+        private void btnDelScope_Click(object sender, RoutedEventArgs e)
+        {
+          try
+          {
+            
+            if (tvwScopes.SelectedItem != null) {
+
+              TreeViewItem selectedItem = (TreeViewItem)tvwScopes.SelectedItem;
+              object oItem = selectedItem.Tag;
+
+              if (oItem is ScopeProject)
+              {
+                _scopes.Remove((ScopeProject)oItem);
+                tvwScopes.Items.Remove(selectedItem);
+              }
+              else if (oItem is ScopeApplication)
+              {
+                TreeViewItem parentItem = (TreeViewItem)selectedItem.Parent;
+                ScopeProject project = (ScopeProject)parentItem.Tag;
+
+                project.Applications.Remove((ScopeApplication)oItem);
+                parentItem.Items.Remove(selectedItem);
+              }
+
+            }
+
+          }
+          catch (Exception ex)
+          {
+            throw ex;
+          }
+        }
+
         private void btnAddScope_Click(object sender, RoutedEventArgs e)
         {
           try
