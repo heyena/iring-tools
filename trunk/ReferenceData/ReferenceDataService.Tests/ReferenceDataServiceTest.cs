@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using org.ids_adi.iring.referenceData;
 using org.ids_adi.qmxf;
 using org.iringtools.library;
+using System.IO;
 
 namespace ReferenceDataService.Tests
 {
@@ -15,6 +16,15 @@ namespace ReferenceDataService.Tests
   [TestClass]
   public class ReferenceDataServiceTest
   {
+    public ReferenceDataServiceTest()
+    {
+      string path = Directory.GetCurrentDirectory() + @"\..\..\..\ReferenceData\ReferenceDataService\XML\";
+      if (!File.Exists(path + "Repositories.xml"))
+      {
+        File.Copy(path + "Repositories_Test.xml", path + "Repositories.xml");
+      }
+    }
+
     [TestMethod()]
     public void GetRepositoriesTest()
     {
