@@ -81,9 +81,6 @@
                $(AdapterServiceDir)\web.config;
                $(AdapterServiceDir)\Web_Development.config;
                $(AdapterServiceDir)\App_Code\Model.*.cs;
-               $(AdapterServiceDir)\App_Code\DTOModel.*.cs;
-               $(AdapterServiceDir)\App_Code\DTOService.*.cs;
-               $(AdapterServiceDir)\App_Code\*.Generated.cs;
                $(AdapterServiceDir)\XML\BindingConfiguration.*.xml;
                $(AdapterServiceDir)\XML\DataDictionary.*.xml;
                $(AdapterServiceDir)\XML\Mapping.*.xml;
