@@ -21,7 +21,15 @@ namespace ApplicationEditor
         private NewDbDictionary newDbDictionary;
         private ResultsList resultsList;
         private EditTreeNode editTreeNode;
+       
         Collection<ScopeProject> _scopes;
+      
+        TreeViewItem _editProject;
+        TreeViewItem _editApplication;
+
+        ScopeProject _currentProject;
+        ScopeApplication _currentApplication;
+
         public string newProvider;
         public string newProject;
         public string newApplication;
@@ -60,8 +68,7 @@ namespace ApplicationEditor
 
                 LayoutRoot.SizeChanged += new SizeChangedEventHandler(LayoutRoot_SizeChanged);
 
-                _dal.GetScopes();                
-                //_dal.GetExistingDbDictionaryFiles();
+                _dal.GetScopes();                                
 
                 isPosting = false;
             }
@@ -71,7 +78,7 @@ namespace ApplicationEditor
             }
         }
 
-        public string _project
+        public string currentProject
         {
           get
           {
@@ -80,7 +87,7 @@ namespace ApplicationEditor
           }
         }
 
-        public string _application
+        public string selectedApplication
         {
           get
           {
@@ -255,7 +262,7 @@ namespace ApplicationEditor
 
                 resultsList.lbResult.ItemsSource = response.StatusList[0].Messages;
 
-                _dal.GetDbDictionary(_project, _application);
+                _dal.GetDbDictionary(_currentProject.Name, _currentProject.Name);
             }
             catch (Exception ex)
             {
@@ -547,10 +554,10 @@ namespace ApplicationEditor
                 string project = string.Empty;
                 string application = string.Empty;
 
-                if (cmbProject.SelectedItem != null && cmbApp.SelectedItem != null)
+                if (_currentProject != null && _currentApplication != null)
                 {
-                    project = _project;
-                    application = _application;
+                    project = _currentProject.Name;
+                    application = _currentApplication.Name;
                 }
                 else
                 {
@@ -688,21 +695,22 @@ namespace ApplicationEditor
         {
         }
 
-        void tvwItemProject_Selected(object sender, RoutedEventArgs e)
+        void tvwItemScopeProject_Selected(object sender, RoutedEventArgs e)
         {
           if (sender != null)
           {
             TreeViewItem tvwItem = (TreeViewItem)sender;
             if (tvwItem.Tag != null)
             {
-              ScopeProject oPrj = (ScopeProject)tvwItem.Tag;
-              tbNewPrjName.Text = oPrj.Name;
-              tbNewPrjDesc.Text = (oPrj.Description == null) ? string.Empty : oPrj.Description;
+              _editProject = tvwItem;
+              ScopeProject project = (ScopeProject)_editProject.Tag;
+              tbNewPrjName.Text = project.Name;
+              tbNewPrjDesc.Text = (project.Description == null) ? string.Empty : project.Description;
             }
           }
         }
 
-        void tvwItemScope_Selected(object sender, RoutedEventArgs e)
+        void tvwItemScopeApplication_Selected(object sender, RoutedEventArgs e)
         {
           if (sender != null)
           {
@@ -711,16 +719,18 @@ namespace ApplicationEditor
 
             if (tvwParent.Tag != null)
             {
-              ScopeProject oPrj = (ScopeProject)tvwParent.Tag;
-              tbNewPrjName.Text = oPrj.Name;
-              tbNewPrjDesc.Text = (oPrj.Description == null) ? string.Empty : oPrj.Description;
+              _editProject = tvwParent;
+              ScopeProject project = (ScopeProject)_editProject.Tag;
+              tbNewPrjName.Text = project.Name;
+              tbNewPrjDesc.Text = (project.Description == null) ? string.Empty : project.Description;
             }
             
             if (tvwItem.Tag != null)
             {
-              ScopeApplication oApp = (ScopeApplication)tvwItem.Tag;
-              tbNewAppName.Text = oApp.Name;
-              tbNewAppDesc.Text = (oApp.Description == null) ? string.Empty : oApp.Description;
+              _editApplication = tvwItem;
+              ScopeApplication application = (ScopeApplication)_editApplication.Tag;
+              tbNewAppName.Text = application.Name;
+              tbNewAppDesc.Text = (application.Description == null) ? string.Empty : application.Description;
             }
           }
         }
@@ -740,14 +750,14 @@ namespace ApplicationEditor
                   cmbProject.Items.Add(new ComboBoxItem { Content = project.Name, Tag = project });
 
                   TreeViewItem tvwItemProject = new TreeViewItem { Header = project.Name, Tag = project };
-                  tvwItemProject.Selected += new RoutedEventHandler(tvwItemProject_Selected);
+                  tvwItemProject.Selected += new RoutedEventHandler(tvwItemScopeProject_Selected);
 
                   TreeViewItem tvwItemScope = null;
 
                   foreach (ScopeApplication application in project.Applications) 
                   {
                     tvwItemScope = new TreeViewItem { Header = application.Name, Tag = application };
-                    tvwItemScope.Selected += new RoutedEventHandler(tvwItemScope_Selected);
+                    tvwItemScope.Selected += new RoutedEventHandler(tvwItemScopeApplication_Selected);
                     tvwItemProject.Items.Add( tvwItemScope );
                   }
 
@@ -794,9 +804,10 @@ namespace ApplicationEditor
           try
           {
             ComboBoxItem cmbItem = (ComboBoxItem)cmbProject.SelectedItem;
-            ScopeProject project = (ScopeProject)cmbItem.Tag;
+            _currentProject = (ScopeProject)cmbItem.Tag;
 
-            foreach (ScopeApplication application in project.Applications ) 
+
+            foreach (ScopeApplication application in _currentProject.Applications) 
             {
               cmbApp.Items.Add(new ComboBoxItem { Content = application.Name, Tag = application });
             }
@@ -817,15 +828,14 @@ namespace ApplicationEditor
             tvwItemSourceRoot.Visibility = Visibility.Collapsed;
             tvwItemDestinationRoot.Items.Clear();
             tvwItemDestinationRoot.Visibility = Visibility.Collapsed;
+                        
+             _currentApplication = (ScopeApplication)((ComboBoxItem)cmbApp.SelectedItem).Tag;
 
-            ScopeProject project = (ScopeProject)((ComboBoxItem)cmbProject.SelectedItem).Tag;
-            ScopeApplication application = (ScopeApplication)((ComboBoxItem)cmbApp.SelectedItem).Tag;
-
-            _dal.GetDbDictionary(project.Name, application.Name);
+            _dal.GetDbDictionary(_currentProject.Name, _currentApplication.Name);
           }
           catch (Exception ex)
           {
-            
+            throw ex;
           }
           
         }
@@ -834,9 +844,7 @@ namespace ApplicationEditor
         {
             try
             {
-                biBusyWindow.IsBusy = true;
-                string projectName = _project;
-                string applicationName = _application;
+                biBusyWindow.IsBusy = true;                
 
                 DatabaseDictionary databaseDictionary = new DatabaseDictionary();
                 object currentObject = null;
@@ -879,7 +887,7 @@ namespace ApplicationEditor
                     databaseDictionary.dataObjects.Add(table);
                 }
 
-                _dal.SaveDatabaseDictionary(databaseDictionary, projectName, applicationName);
+                _dal.SaveDatabaseDictionary(databaseDictionary, _currentProject.Name, _currentProject.Name);
             }
             catch (Exception ex)
             {
@@ -896,8 +904,8 @@ namespace ApplicationEditor
                 dbdict = (DatabaseDictionary)tvwItemDestinationRoot.Tag;
                 biBusyWindow.IsBusy = true;
                 isPosting = true;
-                              
-                _dal.PostDictionaryToAdapterService(_project, _application);
+
+                _dal.PostDictionaryToAdapterService(_currentProject.Name, _currentProject.Name);
             }
             catch (Exception ex)
             {
@@ -1142,51 +1150,17 @@ namespace ApplicationEditor
             }
         }
 
-        private void btnDelScope_Click(object sender, RoutedEventArgs e)
-        {
-          try
-          {
-            
-            if (tvwScopes.SelectedItem != null) {
-
-              TreeViewItem selectedItem = (TreeViewItem)tvwScopes.SelectedItem;
-              object oItem = selectedItem.Tag;
-
-              if (oItem is ScopeProject)
-              {
-                _scopes.Remove((ScopeProject)oItem);
-                tvwScopes.Items.Remove(selectedItem);
-              }
-              else if (oItem is ScopeApplication)
-              {
-                TreeViewItem parentItem = (TreeViewItem)selectedItem.Parent;
-                ScopeProject project = (ScopeProject)parentItem.Tag;
-
-                project.Applications.Remove((ScopeApplication)oItem);
-                parentItem.Items.Remove(selectedItem);
-              }
-
-            }
-
-          }
-          catch (Exception ex)
-          {
-            throw ex;
-          }
-        }
-
         private void btnAddScope_Click(object sender, RoutedEventArgs e)
         {
           try
           {
-            if (tbNewPrjName.Text != null && tbNewAppName != null)
+            if (tbNewPrjName.Text != null && tbNewAppName.Text != null)
             {
-              Collection<ScopeProject> scopes = (Collection<ScopeProject>)tvwScopesItemRoot.Tag;
-
               TreeViewItem tvwPrj = null;
 
-              foreach (TreeViewItem tvwItem in tvwScopesItemRoot.Items ) {
-                if (tvwItem.Header.ToString() == tbNewPrjName.Text) 
+              foreach (TreeViewItem tvwItem in tvwScopesItemRoot.Items)
+              {
+                if (tvwItem.Header.ToString() == tbNewPrjName.Text)
                 {
                   tvwPrj = tvwItem;
                   break;
@@ -1197,14 +1171,15 @@ namespace ApplicationEditor
               {
                 ScopeProject project = new ScopeProject { Name = tbNewPrjName.Text, Applications = new List<ScopeApplication>() };
                 tvwPrj = new TreeViewItem { Header = tbNewPrjName.Text, Tag = project };
-                scopes.Add(project);
+                _scopes.Add(project);
                 tvwScopesItemRoot.Items.Add(tvwPrj);
               }
 
               TreeViewItem tvwApp = null;
 
-              foreach (TreeViewItem tvwItem in tvwPrj.Items ) {
-                if (tvwItem.Header.ToString() == tbNewAppName.Text) 
+              foreach (TreeViewItem tvwItem in tvwPrj.Items)
+              {
+                if (tvwItem.Header.ToString() == tbNewAppName.Text)
                 {
                   tvwApp = tvwItem;
                   break;
@@ -1221,8 +1196,82 @@ namespace ApplicationEditor
               }
             }
           }
-          catch
+          catch (Exception ex)
           {
+            throw ex;
+          }
+        }
+
+        private void btnSaveScope_Click(object sender, RoutedEventArgs e)
+        {
+          try
+          {
+            if (tbNewPrjName.Text != null && tbNewAppName.Text != null)
+            {
+              if (_editProject != null)
+              {
+                ScopeProject project = (ScopeProject)_editProject.Tag;
+                _editProject.Header = tbNewPrjName.Text;
+                project.Name = tbNewPrjName.Text;
+                project.Description = tbNewPrjDesc.Text;
+              }
+
+              if (_editApplication != null)
+              {
+                ScopeApplication application = (ScopeApplication)_editApplication.Tag;
+                _editApplication.Header = tbNewAppName.Text;
+                application.Name = tbNewAppName.Text;
+                application.Description = tbNewAppDesc.Text;
+              }
+            }
+          }
+          catch (Exception ex)
+          {
+            throw ex;
+          }
+        }
+
+        private void btnDelScope_Click(object sender, RoutedEventArgs e)
+        {
+          try
+          {
+
+            if (tvwScopes.SelectedItem != null)
+            {
+              TreeViewItem selectedItem = (TreeViewItem)tvwScopes.SelectedItem;
+              object oItem = selectedItem.Tag;
+
+              if (oItem is ScopeProject)
+              {
+                _scopes.Remove((ScopeProject)oItem);
+                tvwScopes.Items.Remove(selectedItem);
+
+                _editProject = null;
+                tbNewPrjName.Text = String.Empty;
+                tbNewPrjDesc.Text = String.Empty;
+
+                _editApplication = null;
+                tbNewAppName.Text = String.Empty;
+                tbNewAppDesc.Text = String.Empty;
+              }
+              else if (oItem is ScopeApplication)
+              {
+                TreeViewItem parentItem = (TreeViewItem)selectedItem.Parent;
+                ScopeProject project = (ScopeProject)parentItem.Tag;
+
+                project.Applications.Remove((ScopeApplication)oItem);
+                parentItem.Items.Remove(selectedItem);
+
+                _editApplication = null;
+                tbNewAppName.Text = String.Empty;
+                tbNewAppDesc.Text = String.Empty;
+              }
+            }
+
+          }
+          catch (Exception ex)
+          {
+            throw ex;
           }
         }
 

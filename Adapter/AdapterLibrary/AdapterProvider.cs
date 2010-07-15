@@ -146,6 +146,10 @@ namespace org.iringtools.adapter
       status.Messages = new List<string>();
       try
       {
+        _scopes = scopes;
+        Utility.Write<List<ScopeProject>>(_scopes, _settings["ScopesPath"], true);
+
+        /*
         foreach (ScopeProject project in scopes)
         {
           foreach (ScopeApplication application in project.Applications)
@@ -157,7 +161,8 @@ namespace org.iringtools.adapter
               application.Description
             );
           }
-        }
+        } 
+        */
 
         status.Messages.Add("Scopes have been updated successfully.");
       }

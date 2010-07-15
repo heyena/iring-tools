@@ -50,6 +50,11 @@ namespace org.iringtools.library
     [DataMember]
     public List<Status> StatusList { get; set; }
 
+    public Response()
+    {
+      this.StatusList = new List<Status>();      
+    }
+
     public void Append(Response response)
     {
       foreach (Status status in response.StatusList)
@@ -126,7 +131,13 @@ namespace org.iringtools.library
     [DataMember(EmitDefaultValue = false)]
     public List<string> Messages { get; set; }
 
-      public System.Xml.Schema.XmlSchema GetSchema()
+    public Status()
+    {
+      this.Messages = new List<string>();
+      this.Results = new Dictionary<string, string>();
+    }
+
+    public System.Xml.Schema.XmlSchema GetSchema()
     {
       return null;
     }
