@@ -87,17 +87,14 @@ namespace org.iringtools.adapter.projection
         List<string> classIdentifiers = new List<string>();
 
         foreach (string identifier in classMap.identifiers)
-        {
-          string[] property = identifier.Split('.');
-          string objectName = property[0].Trim();
-          string propertyName = property[1].Trim();
-
-          if (_dataObjects != null)
+        { 
+          // identifier is a fixed value
+          if (identifier.StartsWith("#") && identifier.EndsWith("#"))
           {
+            string value = identifier.Substring(1, identifier.Length - 2);
+
             for (int i = 0; i < _dataObjects.Count; i++)
             {
-              string value = Convert.ToString(_dataObjects[i].GetPropertyValue(propertyName));
-
               if (classIdentifiers.Count == i)
               {
                 classIdentifiers.Add(value);
@@ -105,6 +102,29 @@ namespace org.iringtools.adapter.projection
               else
               {
                 classIdentifiers[i] += classMap.identifierDelimeter + value;
+              }
+            }
+          }
+          else  // identifier comes from a property
+          {
+            string[] property = identifier.Split('.');
+            string objectName = property[0].Trim();
+            string propertyName = property[1].Trim();
+
+            if (_dataObjects != null)
+            {
+              for (int i = 0; i < _dataObjects.Count; i++)
+              {
+                string value = Convert.ToString(_dataObjects[i].GetPropertyValue(propertyName));
+
+                if (classIdentifiers.Count == i)
+                {
+                  classIdentifiers.Add(value);
+                }
+                else
+                {
+                  classIdentifiers[i] += classMap.identifierDelimeter + value;
+                }
               }
             }
           }
@@ -192,20 +212,27 @@ namespace org.iringtools.adapter.projection
 
                 foreach (string identifier in roleMap.classMap.identifiers)
                 {
-                  string[] property = identifier.Split('.');
-                  string objectName = property[0].Trim();
-                  string propertyName = property[1].Trim();
-
-                  IDataObject dataObject = _dataObjects.ElementAt(objectIndex);
-
-                  if (dataObject != null)
+                  if (identifier.StartsWith("#") && identifier.EndsWith("#"))
                   {
-                    string value = Convert.ToString(dataObject.GetPropertyValue(propertyName));
+                    identifierValue += identifier.Substring(1, identifier.Length - 2);
+                  }
+                  else
+                  {
+                    string[] property = identifier.Split('.');
+                    string objectName = property[0].Trim();
+                    string propertyName = property[1].Trim();
 
-                    if (identifierValue != String.Empty)
-                      identifierValue += roleMap.classMap.identifierDelimeter;
+                    IDataObject dataObject = _dataObjects.ElementAt(objectIndex);
 
-                    identifierValue += value;
+                    if (dataObject != null)
+                    {
+                      string value = Convert.ToString(dataObject.GetPropertyValue(propertyName));
+
+                      if (identifierValue != String.Empty)
+                        identifierValue += roleMap.classMap.identifierDelimeter;
+
+                      identifierValue += value;
+                    }
                   }
                 }
 
