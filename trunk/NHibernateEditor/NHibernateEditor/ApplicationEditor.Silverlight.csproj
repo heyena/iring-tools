@@ -103,6 +103,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Silverlight-toolkit\Release\Silverlight3\Source\Binaries\System.Windows.Controls.Data.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Controls.Data.Input, Version=2.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
     <Reference Include="System.Windows.Controls.Data.Toolkit, Version=4.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Windows.Controls.Input, Version=2.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
     <Reference Include="System.Windows.Controls.Input.Toolkit, Version=4.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
@@ -116,6 +117,9 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="CompletedEventType.cs" />
+    <Compile Include="CompositeKeys.xaml.cs">
+      <DependentUpon>CompositeKeys.xaml</DependentUpon>
+    </Compile>
     <Compile Include="EditTreeNode.xaml.cs">
       <DependentUpon>EditTreeNode.xaml</DependentUpon>
     </Compile>
@@ -138,6 +142,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="CompositeKeys.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="EditTreeNode.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:MarkupCompilePass1</Generator>
