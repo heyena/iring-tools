@@ -1,0 +1,86 @@
+<manifest xmlns="http://iringtools.org/adapter/library/manifest">
+	<graphMaps>
+		<graphMap>
+			<name>Lines</name>
+			<classTemplateListMaps>
+				<classTemplateListMap>
+					<classMap>
+						<classId>rdl:R19192462550</classId>
+						<name>PIPING NETWORK SYSTEM</name>
+						<transferOption>Required</transferOption>
+					</classMap>
+					<templateMaps>
+						<templateMap>
+							<templateId>tpl:R66921101783</templateId>
+							<name>IdentificationByTag</name>
+							<roleMaps>
+								<roleMap>
+									<type>Possessor</type>
+									<roleId>tpl:R44537504070</roleId>
+									<name>hasObject</name>
+								</roleMap>
+								<roleMap>
+									<type>Reference</type>
+									<roleId>tpl:R30790108016</roleId>
+									<name>hasIdentificationType</name>
+									<value>rdl:R40471041754</value>
+								</roleMap>
+								<roleMap>
+									<type>Property</type>
+									<roleId>tpl:R22674749688</roleId>
+									<name>valIdentifier</name>
+								</roleMap>
+							</roleMaps>
+							<transferOption>Required</transferOption>
+						</templateMap>
+						<!--<templateMap> <templateId>tpl:R41248767846</templateId> <name>PlantAreaHasPlantObject</name> 
+							<roleMaps> <roleMap> <type>Possessor</type> <roleId>tpl:R77585325576</roleId> <name>part</name> 
+							</roleMap> <roleMap> <type>Reference</type> <roleId>tpl:R62157498012</roleId> <name>assemblyType</name> 
+							<value>rdl:R30942378492</value> </roleMap> <roleMap> <type>Reference</type> <roleId>tpl:R62348020201</roleId> 
+							<name>whole</name> <value>rdl:R49658319833</value> <classMap> <classId>rdl:R49658319833</classId> 
+							<name>PLANT AREA</name> </classMap> </roleMap> </roleMaps> </templateMap> -->
+					</templateMaps>
+				</classTemplateListMap><!-- <classTemplateListMap> <classMap> <classId>rdl:R49658319833</classId> 
+					<name>PLANT AREA</name> </classMap> <templateMaps> <templateMap> <templateId>tpl:R66921101783</templateId> 
+					<name>IdentificationByTag</name> <roleMaps> <roleMap> <type>Possessor</type> <roleId>tpl:R44537504070</roleId> 
+					<name>hasObject</name> </roleMap> <roleMap> <type>Reference</type> <roleId>tpl:R30790108016</roleId> 
+					<name>hasIdentificationType</name> <value>rdl:R40471041754</value> </roleMap> <roleMap> 
+					<type>Property</type> <roleId>tpl:R22674749688</roleId> <name>valIdentifier</name> 
+					<dataType>xsd:string</dataType> <propertyName>Lines.PlantArea</propertyName> </roleMap> 
+					</roleMaps> </templateMap> </templateMaps> </classTemplateListMap> -->
+				<classTemplateListMap>
+					<classMap>
+						<classId>rdl:R16348302781</classId>
+						<name>SYSTEM</name>
+						<transferOption>Required</transferOption>
+					</classMap>
+					<templateMaps>
+						<templateMap>
+							<templateId>tpl:R30193386273</templateId>
+							<name>ClassifiedIdentification</name>
+							<roleMaps>
+								<roleMap>
+									<type>Possessor</type>
+									<roleId>tpl:R44537504070</roleId>
+									<name>hasObject</name>
+								</roleMap>
+								<roleMap>
+									<type>Reference</type>
+									<roleId>tpl:R30790108016</roleId>
+									<name>hasIdentificationType</name>
+									<value>rdl:R50548021125</value>
+								</roleMap>
+								<roleMap>
+									<type>Property</type>
+									<roleId>tpl:R22674749688</roleId>
+									<name>valIdentifier</name>
+								</roleMap>
+							</roleMaps>
+							<transferOption>Required</transferOption>
+						</templateMap>
+					</templateMaps>
+				</classTemplateListMap>
+			</classTemplateListMaps>
+		</graphMap>
+	</graphMaps>
+</manifest>

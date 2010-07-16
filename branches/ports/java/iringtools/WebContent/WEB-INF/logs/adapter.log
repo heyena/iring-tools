@@ -1,0 +1,3 @@
+2010-07-16 09:13:52,062 ERROR [org.iringtools.adapter.ExchangeProvider] java.io.FileNotFoundException: C:\iring-tools-java\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\iringtools\WEB-INF\data\Dto.12345_000.ABC.Send-3.xml (The system cannot find the file specified)
+2010-07-16 09:14:58,083 ERROR [org.iringtools.adapter.ExchangeProvider] java.io.FileNotFoundException: C:\iring-tools-java\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\iringtools\WEB-INF\data\Dto.12345_000.ABC.Send-3.xml (The system cannot find the file specified)
+2010-07-16 09:16:17,318 INFO  [org.iringtools.adapter.ExchangeProvider] Execution time [0:0.126] minutes.

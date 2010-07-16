@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="org.iringtools.adapter.library.dto.TemplateObject"/>
+<fullyQualifiedTypeName name="org.iringtools.adapter.library.dto.DataTransferObject.ClassObjects"/>
+<fullyQualifiedTypeName name="org.iringtools.adapter.library.dto.ClassObject.TemplateObjects"/>
+<fullyQualifiedTypeName name="org.iringtools.adapter.library.dto.TemplateObject.RoleObjects"/>
+<fullyQualifiedTypeName name="javax.annotation.Resource"/>
+<fullyQualifiedTypeName name="javax.xml.ws.WebServiceContext"/>
+<fullyQualifiedTypeName name="org.apache.cxf.jaxrs.ext.MessageContext"/>
+<fullyQualifiedTypeName name="java.util.Date"/>
+<fullyQualifiedTypeName name="javax.ws.rs.QueryParam"/>
+<fullyQualifiedTypeName name="javax.ws.rs.DefaultValue"/>
+<fullyQualifiedTypeName name="org.iringtools.utility.JaxbUtil"/>
+<fullyQualifiedTypeName name="org.iringtools.adapter.library.manifest.GraphMap.ClassTemplateListMaps"/>
+<fullyQualifiedTypeName name="org.iringtools.adapter.library.manifest.TemplateMap.RoleMaps"/>
+<fullyQualifiedTypeName name="java.util.Vector"/>
+</qualifiedTypeNameHistroy>
