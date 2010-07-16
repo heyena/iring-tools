@@ -85,8 +85,30 @@ namespace org.iringtools.library
             return false;
         }
 
-        public DataProperty getKeyProperty(string keyPropertyName) {
-            return dataProperties.FirstOrDefault(o=>o.propertyName == keyPropertyName);
+        public DataProperty getKeyProperty(string keyPropertyName) 
+        {
+          return dataProperties.FirstOrDefault(c => c.propertyName == keyPropertyName);
+        }
+
+        public bool deleteProperty(DataProperty dataProperty)
+        {
+          foreach (DataProperty property in dataProperties)
+          {
+            if (dataProperty == property)
+            {
+              this.dataProperties.Remove(dataProperty);
+              break;
+            }
+          }
+          foreach (KeyProperty keyProperty in keyProperties)
+          {
+            if (keyProperty.keyPropertyName.ToLower() == dataProperty.propertyName.ToLower())
+            {
+              keyProperties.Remove(keyProperty);
+              break;
+            }
+          }
+            return true;
         }
 
         public bool addKeyProperty(DataProperty keyProperty)

@@ -157,8 +157,8 @@
                                 <Button x:Name="btnEditNode" Width="95" Height="24" Margin="5,5,5,0" Content="Edit" Click="btnEditNode_Click" />
                 <Button x:Name="btnCreateCompKey" Width="95" Height="24" Margin="5,5,5,0" Content="Create Key" Click="btnCreateCompKey_Click" 
                         ToolTipService.ToolTip="Create composite key for selected object tree" ToolTipService.Placement="Top"/>
-                <Button Content="Move key up" Height="23" Name="btnMoveUp" Width="95" Margin="5,5,5,0" Click="btnMoveUp_Click" />
-                <Button Content="Move key down" Height="23" Name="btnMoveDown" Width="95"  Margin="5,5,5,0" Click="btnMoveDown_Click"/>
+                <Button Content="Move up" Height="23" Name="btnMoveUp" Width="95" Margin="5,5,5,0" Click="btnMoveUp_Click" />
+                <Button Content="Move down" Height="23" Name="btnMoveDown" Width="95"  Margin="5,5,5,0" Click="btnMoveDown_Click"/>
                 <Button x:Name="btnCreateRalation" Width="95" Height="24" Margin="5,5,5,0" Content="Create Relation" Click="btnCreateRalation_Click" />              
               </StackPanel>
                         </Border>

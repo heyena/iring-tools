@@ -72,7 +72,6 @@ namespace ApplicationEditor
         LayoutRoot.SizeChanged += new SizeChangedEventHandler(LayoutRoot_SizeChanged);
 
         _dal.GetScopes();
-        //_dal.GetExistingDbDictionaryFiles();
 
         isPosting = false;
       }
@@ -89,9 +88,8 @@ namespace ApplicationEditor
         if ((bool)compositeKeys.DialogResult && !compositeKeys.CancelButton.IsPressed)
         {
           TreeViewItem child;
-          KeyProperty keyProperty;
           object selectedItem = tvwDestination.SelectedItem;
-          TreeViewItem dataObjectItem = FindObjectParent(selectedItem as TreeViewItem);
+          TreeViewItem dataObjectItem = findObjectParent(selectedItem as TreeViewItem);
           org.iringtools.library.DataObject dataObject = dataObjectItem.Tag as org.iringtools.library.DataObject;
           dataObject.keyProperties.Clear();
 
@@ -102,9 +100,9 @@ namespace ApplicationEditor
               objectItem.Items.Clear();
               foreach (String lbItem in compositeKeys.lbKeys.Items)
               {
-                keyProperty = new KeyProperty { keyPropertyName = lbItem };
-                dataObject.keyProperties.Add(keyProperty);
-                child = new TreeViewItem { Tag = null };
+                KeyProperty key = new KeyProperty { keyPropertyName = lbItem };
+                dataObject.keyProperties.Add(key);
+                child = new TreeViewItem { Tag = key };
                 AddTreeItem(objectItem, child, lbItem, null, false);
               }
             }
@@ -646,7 +644,7 @@ namespace ApplicationEditor
           foreach (org.iringtools.library.KeyProperty keyName in table.keyProperties)
           {
             DataProperty key = table.getKeyProperty(keyName.keyPropertyName);
-
+            if (key == null) continue;
             columnTreeViewItem = new TreeViewItem();
             columnTreeViewItem.Tag = key;
             AddTreeItem(keysTreeViewItem, columnTreeViewItem, key.columnName, null, false);
@@ -871,68 +869,75 @@ namespace ApplicationEditor
       try
       {
         biBusyWindow.IsBusy = true;
-
-        DatabaseDictionary databaseDictionary = new DatabaseDictionary();
-        object currentObject = null;
-        org.iringtools.library.DataObject table;
-        databaseDictionary.dataObjects = new List<org.iringtools.library.DataObject>();
-        databaseDictionary.connectionString = ((DatabaseDictionary)tvwItemDestinationRoot.Tag).connectionString;
-
-        databaseDictionary.provider = ((DatabaseDictionary)tvwItemDestinationRoot.Tag).provider;
-        foreach (TreeViewItem tableTreeViewItem in tvwItemDestinationRoot.Items)
+        TreeViewItem dbdictRoot = tvwItemDestinationRoot;
+        DatabaseDictionary dbDict = dbdictRoot.Tag as DatabaseDictionary;
+        dbDict.dataObjects.Clear();
+        foreach (TreeViewItem dataObjectItem in dbdictRoot.Items)
         {
-          table = new org.iringtools.library.DataObject();
-          currentObject = tableTreeViewItem.Tag;
-          if (currentObject is org.iringtools.library.DataObject)
-          {
-            table.objectName = ((org.iringtools.library.DataObject)currentObject).objectName;
-            table.tableName = ((org.iringtools.library.DataObject)currentObject).tableName;
-            table.keyProperties = new List<KeyProperty>();
-            table.dataRelationships = new List<DataRelationship>();
-            table.dataProperties = new List<DataProperty>();
-          }
-          foreach (TreeViewItem columnTreeViewItem in tableTreeViewItem.Items)
-          {
-            if (columnTreeViewItem.Header.ToString() == "Properties")
-              foreach (TreeViewItem properties in columnTreeViewItem.Items)
-              {
-                currentObject = properties.Tag;
-                if (currentObject == null) continue;
-
-
-                DataProperty column = new DataProperty();
-                column.columnName = ((DataProperty)currentObject).columnName;
-                column.dataLength = ((DataProperty)currentObject).dataLength;
-                column.dataType = ((DataProperty)currentObject).dataType;
-                column.isNullable = ((DataProperty)currentObject).isNullable;
-                column.keyType = ((DataProperty)currentObject).keyType;
-                column.propertyName = ((DataProperty)currentObject).propertyName;
-                table.dataProperties.Add(column);
-              }
-            else if (columnTreeViewItem.Header.ToString() == "Keys")
-              foreach (TreeViewItem properties in columnTreeViewItem.Items)
-              {
-                currentObject = properties.Tag;
-                if (currentObject == null) continue;
-                KeyProperty key = new KeyProperty();
-                key.keyPropertyName = ((DataProperty)currentObject).propertyName;
-                table.keyProperties.Add(key);
-              }
-            else if (columnTreeViewItem.Header.ToString() == "Relationships")
-              foreach (TreeViewItem properties in columnTreeViewItem.Items)
-              {
-                currentObject = properties.Tag;
-                if (currentObject == null) continue;
-                DataRelationship relation = null;
-                  relation.propertyMaps = ((DataRelationship)currentObject).propertyMaps;
-                  relation = (DataRelationship)currentObject;
-                  table.dataRelationships.Add(relation);
-              }
-          }
-          databaseDictionary.dataObjects.Add(table);
+          dbDict.dataObjects.Add(dataObjectItem.Tag as org.iringtools.library.DataObject);
         }
+        _dal.SaveDatabaseDictionary(dbDict, _currentProject.Name, _currentApplication.Name);
+        //DatabaseDictionary databaseDictionary = new DatabaseDictionary();
+        //object currentObject = null;
+        //org.iringtools.library.DataObject table;
+        //databaseDictionary.dataObjects = new List<org.iringtools.library.DataObject>();
+        //databaseDictionary.connectionString = ((DatabaseDictionary)tvwItemDestinationRoot.Tag).connectionString;
 
-        _dal.SaveDatabaseDictionary(databaseDictionary, _currentProject.Name, _currentProject.Name);
+        //databaseDictionary.provider = ((DatabaseDictionary)tvwItemDestinationRoot.Tag).provider;
+        //foreach (TreeViewItem tableTreeViewItem in tvwItemDestinationRoot.Items)
+        //{
+        //  table = new org.iringtools.library.DataObject();
+        //  currentObject = tableTreeViewItem.Tag;
+        //  if (currentObject is org.iringtools.library.DataObject)
+        //  {
+        //    table.objectName = ((org.iringtools.library.DataObject)currentObject).objectName;
+        //    table.tableName = ((org.iringtools.library.DataObject)currentObject).tableName;
+        //    table.keyProperties = new List<KeyProperty>();
+        //    table.dataRelationships = new List<DataRelationship>();
+        //    table.dataProperties = new List<DataProperty>();
+        //  }
+        //  foreach (TreeViewItem columnTreeViewItem in tableTreeViewItem.Items)
+        //  {
+        //    if (columnTreeViewItem.Header.ToString() == "Properties")
+        //      foreach (TreeViewItem properties in columnTreeViewItem.Items)
+        //      {
+        //        currentObject = properties.Tag;
+        //        if (currentObject == null) continue;
+
+
+        //        DataProperty column = new DataProperty();
+        //        column.columnName = ((DataProperty)currentObject).columnName;
+        //        column.dataLength = ((DataProperty)currentObject).dataLength;
+        //        column.dataType = ((DataProperty)currentObject).dataType;
+        //        column.isNullable = ((DataProperty)currentObject).isNullable;
+        //        column.keyType = ((DataProperty)currentObject).keyType;
+        //        column.propertyName = ((DataProperty)currentObject).propertyName;
+        //        table.dataProperties.Add(column);
+        //      }
+        //    else if (columnTreeViewItem.Header.ToString() == "Keys")
+        //      foreach (TreeViewItem properties in columnTreeViewItem.Items)
+        //      {
+        //        currentObject = properties.Tag;
+        //        if (currentObject == null) continue;
+        //        KeyProperty key = new KeyProperty();
+        //        key.keyPropertyName = ((DataProperty)currentObject).propertyName;
+        //        table.keyProperties.Add(key);
+        //      }
+        //    else if (columnTreeViewItem.Header.ToString() == "Relationships")
+        //      foreach (TreeViewItem properties in columnTreeViewItem.Items)
+        //      {
+        //        currentObject = properties.Tag;
+        //        if (currentObject == null) continue;
+        //        DataRelationship relation = null;
+        //          relation.propertyMaps = ((DataRelationship)currentObject).propertyMaps;
+        //          relation = (DataRelationship)currentObject;
+        //          table.dataRelationships.Add(relation);
+        //      }
+        //  }
+        //  databaseDictionary.dataObjects.Add(table);
+        //}
+
+        //_dal.SaveDatabaseDictionary(databaseDictionary, _currentProject.Name, _currentProject.Name);
       }
       catch (Exception ex)
       {
@@ -1037,47 +1042,69 @@ namespace ApplicationEditor
     {
       try
       {
-        StackPanel stackPanel;
-        CheckBox checkBox;
-        TreeViewItem root = tvwItemDestinationRoot;
-        TreeViewItem tableItem;
-        TreeViewItem columnItem;
-        for (int i = 0; i < root.Items.Count; i++)
-        {
-          tableItem = (TreeViewItem)root.Items[i];
-          TreeViewItem parent = tableItem.Parent as TreeViewItem;
-          stackPanel = (StackPanel)tableItem.Header;
-          checkBox = (CheckBox)stackPanel.Children[0];
-          if (checkBox.IsChecked.Value.Equals(true))
-          {
-            RemoveTreeItem(parent, tableItem);//.Items.Remove(tableItem);
-            i--;
-          }
-          else
-          {
-            for (int j = 0; j < tableItem.Items.Count; j++)
-            {
+        TreeViewItem selectedItem = tvwDestination.SelectedItem as TreeViewItem;
+        TreeViewItem parent = selectedItem.Parent as TreeViewItem;
 
-              columnItem = (TreeViewItem)tableItem.Items[j];
-              if (columnItem.Header.ToString() != "Keys" && columnItem.Header.ToString() != "Properties" && columnItem.Header.ToString() != "Relationships")
-              {
-                TreeViewItem colParent = columnItem.Parent as TreeViewItem;
-                stackPanel = (StackPanel)columnItem.Header;
-                checkBox = (CheckBox)stackPanel.Children[0];
-                if (checkBox.IsChecked.Value.Equals(true))
-                {
-                  RemoveTreeItem(colParent, columnItem);// .Items.Remove(columnItem);
-                  j--;
-                }
-              }
-            }
-          }
+        DatabaseDictionary dbDict = tvwItemDestinationRoot.Tag as DatabaseDictionary;
+
+        TreeViewItem objectItem = findObjectParent(selectedItem);
+        org.iringtools.library.DataObject dataObject = objectItem.Tag as org.iringtools.library.DataObject;
+
+        if (selectedItem == null || selectedItem.Header is String)
+        {
+          MessageBox.Show("Please select a node to delete", "DELETE NODE", MessageBoxButton.OK);
+          return;
         }
+        if (selectedItem.Tag is org.iringtools.library.DataObject)
+        {
+          parent.Items.Remove(selectedItem);
+          dbDict.dataObjects.Remove(selectedItem.Tag as org.iringtools.library.DataObject);
+        }
+        else if (selectedItem.Tag is KeyProperty)
+        {
+          parent.Items.Remove(selectedItem);
+          dataObject.keyProperties.Remove((KeyProperty)selectedItem.Tag);
+        }
+        else if (selectedItem.Tag is DataProperty)
+        {
+          
+          dataObject.deleteProperty((DataProperty)selectedItem.Tag);
+          TreeViewItem key = findKeyItem(selectedItem, ((TextBlock)((StackPanel)selectedItem.Header).Children[1]).Text);
+          if (key == null) return;
+          TreeViewItem keyParent = key.Parent as TreeViewItem;
+          keyParent.Items.Remove(key);
+          parent.Items.Remove(selectedItem);
+        }
+        else if (selectedItem.Tag is DataRelationship)
+        {
+          parent.Items.Remove(selectedItem);
+          dataObject.dataRelationships.Remove((DataRelationship)selectedItem.Tag);
+          
+        }
+        _dal.GetDatabaseSchema(_currentProject.Name, _currentApplication.Name); 
       }
       catch (Exception ex)
       {
         MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);
       }
+    }
+
+    private TreeViewItem findKeyItem(TreeViewItem selectedItem, String itemName)
+    {
+      TreeViewItem found = null;
+      TreeViewItem objectItem = findObjectParent(selectedItem);
+      foreach (TreeViewItem item in objectItem.Items)
+      {
+        if (item.Header.ToString() == "Keys")
+        {
+          foreach (TreeViewItem keyItem in item.Items)
+          {
+            if (((TextBlock)((StackPanel)keyItem.Header).Children[1]).Text == itemName)
+              found = keyItem;
+          }
+        }
+      }     
+      return found;
     }
 
     private void btnEditNode_Click(object sender, RoutedEventArgs e)
@@ -1298,11 +1325,12 @@ namespace ApplicationEditor
         else if (treeViewItem.Tag is org.iringtools.library.DatabaseDictionary)
         {
           MessageBox.Show("Please at least select a table node in treeview", "COMPOSITE KEYS", MessageBoxButton.OK);
+          return;
         }
         else
         {
 
-          dataObjectparent = FindObjectParent(treeViewItem);
+          dataObjectparent = findObjectParent(treeViewItem);
           compositeKeys._dataItems = new ObservableCollection<String>();
           compositeKeys._keyItems = new ObservableCollection<String>();
           compositeKeys.lbSourceProperties.ItemsSource = compositeKeys._dataItems;
@@ -1336,22 +1364,22 @@ namespace ApplicationEditor
     }
 
 
-    private TreeViewItem FindObjectParent(TreeViewItem selectedItem)
+    private TreeViewItem findObjectParent(TreeViewItem selectedItem)
     {
       TreeViewItem parent = null;
       if (selectedItem.Tag is org.iringtools.library.DataObject)
         parent = selectedItem;
       else if (selectedItem.Tag is org.iringtools.library.DataProperty)
       {
-        parent = FindObjectParent(selectedItem.Parent as TreeViewItem);
+        parent = findObjectParent(selectedItem.Parent as TreeViewItem);
       }
       else if (selectedItem.Header is String)
       {
-        parent = FindObjectParent(selectedItem.Parent as TreeViewItem);
+        parent = findObjectParent(selectedItem.Parent as TreeViewItem);
       }
       else if (selectedItem.Header is StackPanel)
       {
-        parent = FindObjectParent(selectedItem.Parent as TreeViewItem);
+        parent = findObjectParent(selectedItem.Parent as TreeViewItem);
       }
 
       return parent;
@@ -1414,11 +1442,135 @@ namespace ApplicationEditor
 
     private void btnMoveUp_Click(object sender, RoutedEventArgs e)
     {
+      int treeIndex;
+      int dataIndex;
+      object selectedItem = tvwDestination.SelectedItem;
+      TreeViewItem treeViewItem = (TreeViewItem)selectedItem;
+      TreeViewItem parent = treeViewItem.Parent as TreeViewItem;
+      TreeViewItem dataObjectItem = findObjectParent(treeViewItem);
+      org.iringtools.library.DataObject dataObject = dataObjectItem.Tag as org.iringtools.library.DataObject;
+      if (selectedItem == null)
+        return;
+      else if (treeViewItem.Tag is org.iringtools.library.DataObject || treeViewItem.Tag == null)
+      {
+        MessageBox.Show("Please select keys, properties or relationships to move up", "MOVE UP", MessageBoxButton.OK);
+        return;
+      }
+      else if (treeViewItem.Tag is DataProperty)
+      {
+        treeIndex = parent.Items.IndexOf(treeViewItem);
+        dataIndex = dataObject.dataProperties.IndexOf(treeViewItem.Tag as DataProperty);
+        if (treeIndex > 0)
+        {
+          parent.Items.Remove(treeViewItem);
+          parent.Items.Insert(treeIndex - 1, treeViewItem);
+        }
+        if (dataIndex > 0)
+        {
+          dataObject.dataProperties.Remove(treeViewItem.Tag as DataProperty);
+          dataObject.dataProperties.Insert(dataIndex - 1, treeViewItem.Tag as DataProperty);
+        }
+      }
+      else if (treeViewItem.Tag is KeyProperty)
+      {
+        treeIndex = parent.Items.IndexOf(treeViewItem);
+        dataIndex = dataObject.keyProperties.IndexOf(treeViewItem.Tag as KeyProperty);
+        if (treeIndex > 0)
+        {
+          parent.Items.Remove(treeViewItem);
+          parent.Items.Insert(treeIndex - 1, treeViewItem);
+        }
+        if (dataIndex > 0)
+        {
+          dataObject.keyProperties.Remove(treeViewItem.Tag as KeyProperty);
+          dataObject.keyProperties.Insert(dataIndex - 1, treeViewItem.Tag as KeyProperty);
+        }
+      }
+
+      else if (treeViewItem.Tag is DataRelationship)
+      {
+        treeIndex = parent.Items.IndexOf(treeViewItem);
+        dataIndex = dataObject.dataRelationships.IndexOf(treeViewItem.Tag as DataRelationship);
+        if (treeIndex > 0)
+        {
+          parent.Items.Remove(treeViewItem);
+          parent.Items.Insert(treeIndex - 1, treeViewItem);
+        }
+        if (dataIndex > 0)
+        {
+          dataObject.dataRelationships.Remove(treeViewItem.Tag as DataRelationship);
+          dataObject.dataRelationships.Insert(dataIndex - 1, treeViewItem.Tag as DataRelationship);
+        }
+      }
+
+      treeViewItem.Focus();
 
     }
 
     private void btnMoveDown_Click(object sender, RoutedEventArgs e)
     {
+      int treeIndex;
+      int dataIndex;
+      object selectedItem = tvwDestination.SelectedItem;
+      TreeViewItem treeViewItem = (TreeViewItem)selectedItem;
+      TreeViewItem parent = treeViewItem.Parent as TreeViewItem;
+      TreeViewItem dataObjectItem = findObjectParent(treeViewItem); 
+      org.iringtools.library.DataObject dataObject = dataObjectItem.Tag as org.iringtools.library.DataObject;
+      if (selectedItem == null) 
+        return;
+      else if (treeViewItem.Tag is org.iringtools.library.DataObject || treeViewItem.Tag == null)
+      {
+        MessageBox.Show("Please select keys, properties or relationships to move down", "MOVE DOWN", MessageBoxButton.OK);
+        return;
+      }
+      else if (treeViewItem.Tag is DataProperty)
+      {
+        treeIndex = parent.Items.IndexOf(treeViewItem);
+        dataIndex = dataObject.dataProperties.IndexOf(treeViewItem.Tag as DataProperty);
+        if (treeIndex != parent.Items.Count - 1)
+        {
+          parent.Items.Remove(treeViewItem);
+          parent.Items.Insert(treeIndex + 1, treeViewItem);
+        }
+        if (dataIndex != dataObject.dataProperties.Count - 1)
+        {
+          dataObject.dataProperties.Remove(treeViewItem.Tag as DataProperty);
+          dataObject.dataProperties.Insert(dataIndex + 1, treeViewItem.Tag as DataProperty);
+        }
+      }
+      else if (treeViewItem.Tag is KeyProperty)
+      {
+        treeIndex = parent.Items.IndexOf(treeViewItem);
+        dataIndex = dataObject.keyProperties.IndexOf(treeViewItem.Tag as KeyProperty);
+        if (treeIndex != parent.Items.Count - 1)
+        {
+          parent.Items.Remove(treeViewItem);
+          parent.Items.Insert(treeIndex + 1, treeViewItem);
+        }
+        if (dataIndex != dataObject.keyProperties.Count - 1)
+        {
+          dataObject.keyProperties.Remove(treeViewItem.Tag as KeyProperty);
+          dataObject.keyProperties.Insert(dataIndex + 1, treeViewItem.Tag as KeyProperty);
+        }
+      }
+
+      else if (treeViewItem.Tag is DataRelationship)
+      {
+        treeIndex = parent.Items.IndexOf(treeViewItem);
+        dataIndex = dataObject.dataRelationships.IndexOf(treeViewItem.Tag as DataRelationship);
+        if (treeIndex != parent.Items.Count - 1)
+        {
+          parent.Items.Remove(treeViewItem);
+          parent.Items.Insert(treeIndex + 1, treeViewItem);
+        }
+        if (dataIndex != dataObject.dataRelationships.Count - 1)
+        {
+          dataObject.dataRelationships.Remove(treeViewItem.Tag as DataRelationship);
+          dataObject.dataRelationships.Insert(dataIndex + 1, treeViewItem.Tag as DataRelationship);
+        }
+      }
+
+      treeViewItem.Focus();
 
     }
 

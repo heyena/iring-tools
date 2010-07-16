@@ -34,38 +34,36 @@ namespace ApplicationEditor
 
     private void btnAddCompKey_Click(object sender, RoutedEventArgs e)
     {
-      //for (int control = lbSourceProperties.SelectedItems.Count - 1; control >= 0; control--)
-      //{
-        String lbItem = lbSourceProperties.SelectedItem as String;
-        int index = lbSourceProperties.SelectedIndex;
-        if (lbItem != null)
+      String lbItem = lbSourceProperties.SelectedItem as String;
+      int index = lbSourceProperties.SelectedIndex;
+      if (lbItem != null)
+      {
+        if (!_keyItems.Contains(lbItem))
         {
-          if (!_keyItems.Contains(lbItem))
-          {
-            _dataItems.RemoveAt(index);
-            _keyItems.Add(lbItem);
-          }
+          _dataItems.RemoveAt(index);
+          _keyItems.Add(lbItem);
         }
-      //}
+      }
     }
 
 
     private void btnDelCompKey_Click(object sender, RoutedEventArgs e)
     {
-     // for (int control = lbKeys.SelectedItems.Count - 1; control >= 0; control--)
-     // {
-        String lbItem = (String)lbKeys.SelectedItem;
-        int index = lbKeys.SelectedIndex;
-        if (lbItem != null)
+      String lbItem = (String)lbKeys.SelectedItem;
+      int index = lbKeys.SelectedIndex;
+      if (lbItem != null)
+      {
+        if (!_dataItems.Contains(lbItem))
         {
-          if (!_dataItems.Contains(lbItem))
-          {
-            _keyItems.RemoveAt(index);
-            _dataItems.Add(lbItem);
-          }
-
+          _keyItems.RemoveAt(index);
+          _dataItems.Add(lbItem);
         }
-      //}
+      }
+    }
+
+    private void ChildWindow_Closed(object sender, EventArgs e)
+    {
+
     }
   }
 }
