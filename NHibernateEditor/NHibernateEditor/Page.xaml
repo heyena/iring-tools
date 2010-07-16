@@ -78,10 +78,10 @@
                                 </StackPanel>
                             </Border>
                             <Button x:Name="btnAddScope" Content="Add" Width="110" Height="24" Margin="5,5,5,0" Click="btnAddScope_Click" />
-                            <Button x:Name="btnSaveScope" Content="Save" Width="110" Height="24" Margin="5,5,5,0" Click="btnSaveScope_Click" />                            
-              <Button x:Name="btnDeleteScope" Content="Delete" Width="110" Height="24" Margin="5,5,5,0" Click="btnDelScope_Click"/>
-              <!--<Button x:Name="btnSaveScope" Content="Save" Width="110" Height="24" Margin="5,5,5,5" />-->
-                            <Button x:Name="btnPostScope" Content="Post" Width="110" Height="24" Margin="5,5,5,5" Click="btnPostScope_Click" />
+                            <Button x:Name="btnSaveScope" Content="Update" Width="110" Height="24" Margin="5,5,5,0" Click="btnSaveScope_Click" />                            
+                            <Button x:Name="btnDeleteScope" Content="Delete" Width="110" Height="24" Margin="5,5,5,0" Click="btnDelScope_Click"/>
+                            <!--<Button x:Name="btnSaveScope" Content="Save" Width="110" Height="24" Margin="5,5,5,5" />-->
+                            <Button x:Name="btnPostScope" Content="Save" Width="110" Height="24" Margin="5,15,5,5" Click="btnPostScope_Click" />
                         </StackPanel>
                     </Border>                    
                 </Grid>             
@@ -126,7 +126,7 @@
                                 <TextBlock Text="User ID:" FontSize="11" Margin="5,5,5,0"/>
                                 <TextBox x:Name="tbUserID" Width="110" Height="22" Margin="5,5,5,0"/>
                                 <TextBlock Text="Password:" FontSize="11" Margin="5,5,5,0"/>
-                                <TextBox x:Name="tbPassword" Width="110" Height="22" Margin="5,5,5,0"/>
+                                <PasswordBox x:Name="tbPassword" Width="110" Height="22" Margin="5,5,5,0"/>
                                 <Button x:Name="btnFetch" Content="Fetch" Width="110" Height="24" Margin="5,15,5,0"/>
                                 <Button x:Name="btnAddColumnToDict" Content="Add" Width="110" Height="24" Margin="5,5,5,0" Click="btnAddColumnToDict_Click"/>
                             </StackPanel>
@@ -167,8 +167,8 @@
             </sdk:TabItem>           
         </sdk:TabControl>
 
-        <!--  <Button Margin="5,0,5,0" x:Name="btnGetScopes" Content="List existing DbDictionaries" Height="24" Width="170" Click="btnGetScopes_Click"/>-->
         <toolkit:BusyIndicator Grid.Column="0" Grid.Row="0" Grid.RowSpan="4" x:Name="biBusyWindow" Content="" BusyContent="Processing, Please wait..." />
 
-  </Grid>
+    </Grid>
+
 </UserControl>
