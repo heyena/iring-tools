@@ -34,7 +34,7 @@ using System;
 namespace org.iringtools.library
 {
   [XmlRoot]
-  //[CollectionDataContract]
+  [DataContract]
   public class Response 
 
   {
@@ -112,8 +112,8 @@ namespace org.iringtools.library
   }
 
   [XmlRoot]
-  //[CollectionDataContract]
-  public class Status : IXmlSerializable
+  [DataContract]
+  public class Status //: IXmlSerializable
   {
     [XmlElement]
     [DataMember]
@@ -134,24 +134,8 @@ namespace org.iringtools.library
     public Status()
     {
       this.Messages = new List<string>();
-      this.Results = new Dictionary<string, string>();
+      this.Results = new Dictionary<string,string>();
     }
-
-    public System.Xml.Schema.XmlSchema GetSchema()
-    {
-      return null;
-    }
-
-    public void ReadXml(System.Xml.XmlReader reader)
-    {
-
-    }
-
-    public void WriteXml(System.Xml.XmlWriter writer)
-    {
-      
-    }
-
   }
 
   [XmlRoot]
