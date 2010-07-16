@@ -1,8 +1,0 @@
-#Tomcat publish data
-#Fri Jul 16 09:15:48 EDT 2010
-org.eclipse.jst.jee.server\:/binary\:C\:\\iring-tools-java\\libraries\\apache-cxf-2.2.9\\js-1.7R1.jar=WEB-INF/lib/js-1.7R1.jar
-org.eclipse.jst.jee.server\:/binary\:C\:\\iring-tools-java\\libraries\\apache-cxf-2.2.9\\xml-resolver-1.2.jar=WEB-INF/lib/xml-resolver-1.2.jar
-org.eclipse.jst.jee.server\:/binary\:C\:\\iring-tools-java\\libraries\\apache-cxf-2.2.9\\serializer-2.7.1.jar=WEB-INF/lib/serializer-2.7.1.jar
-org.eclipse.jst.jee.server\:/binary\:C\:\\iring-tools-java\\libraries\\apache-cxf-2.2.9\\xalan-2.7.1.jar=WEB-INF/lib/xalan-2.7.1.jar
-org.eclipse.jst.jee.server\:/binary\:C\:\\iring-tools-java\\libraries\\apache-cxf-2.2.9\\ant-1.6.5.jar=WEB-INF/lib/ant-1.6.5.jar
-org.eclipse.jst.jee.server\:/binary\:C\:\\iring-tools-java\\libraries\\apache-cxf-2.2.9\\jaxb-xjc-2.1.13.jar=WEB-INF/lib/jaxb-xjc-2.1.13.jar
