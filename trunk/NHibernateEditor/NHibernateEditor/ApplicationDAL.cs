@@ -56,6 +56,7 @@ namespace ApplicationEditor
             _clearClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
             _postdbdictionaryClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
             _postScopesClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
+            _postScopesClient.UploadStringCompleted += new UploadStringCompletedEventHandler(OnCompletedEvent);
             _deleteClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
 
             _dbDictionaryServiceUri = App.Current.Resources["ApplicationServiceURI"].ToString();
