@@ -85,7 +85,7 @@ namespace org.ids_adi.iring.referenceData
     ///// <summary>
     /////return class details
     ///// </summary>
-    [XmlSerializerFormat]
+   // [XmlSerializerFormat]
     [OperationContract]
     [WebGet(UriTemplate = "/classes/{id}")]
     QMXF GetClass(string id);
@@ -93,7 +93,7 @@ namespace org.ids_adi.iring.referenceData
     ///// <summary>
     /////return class details
     ///// </summary>
-    [XmlSerializerFormat]
+   // [XmlSerializerFormat]
     [OperationContract]
     [WebGet(UriTemplate = "/classes/{id}/label")]
     string GetClassLabel(string id);
@@ -129,7 +129,7 @@ namespace org.ids_adi.iring.referenceData
     ///// <summary>
     ///// get roles on a template
     ///// </summary>
-    [XmlSerializerFormat]
+  //  [XmlSerializerFormat]
     [OperationContract]
     [WebGet(UriTemplate = "/templates/{id}")]
     QMXF GetTemplate(string id);
@@ -137,7 +137,7 @@ namespace org.ids_adi.iring.referenceData
     ///// <summary>
     /////Insert a Template into the Sandbox
     ///// </summary>
-    [XmlSerializerFormat]
+   // [XmlSerializerFormat]
     [OperationContract]
     [WebInvoke(UriTemplate = "/templates")]
     Response PostTemplate(QMXF template);
@@ -145,7 +145,7 @@ namespace org.ids_adi.iring.referenceData
     ///// <summary>
     /////Insert a class into the Sandbox
     ///// </summary>
-    [XmlSerializerFormat]
+   // [XmlSerializerFormat]
     [OperationContract]
     [WebInvoke(UriTemplate = "/classes")]
     Response PostClass(QMXF @class);
