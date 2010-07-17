@@ -8,6 +8,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.util.Properties;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
@@ -42,11 +45,27 @@ public class IOUtil
     StAXOMBuilder builder = new StAXOMBuilder(parser);
     return builder.getDocumentElement();
 	}
+	
+	public static OMElement stringToXml(String text) throws XMLStreamException, FactoryConfigurationError 
+	{
+	  XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new StringReader(text));
+    StAXOMBuilder builder = new StAXOMBuilder(parser);
+    return builder.getDocumentElement();
+	}
   
   public static void writeXml(OMElement xml, String filePath) throws FileNotFoundException, XMLStreamException, FactoryConfigurationError 
   {
     XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(new FileOutputStream(filePath));
     xml.serialize(writer); 
     writer.flush();
+  }
+  
+  public static Properties loadProperties(String filePath) throws IOException
+  {
+    Properties props = new Properties();
+    InputStream fis = new FileInputStream(filePath);
+    props.load(fis);
+    fis.close();    
+    return props;
   }
 }

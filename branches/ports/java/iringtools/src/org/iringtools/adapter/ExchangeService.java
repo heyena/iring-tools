@@ -1,5 +1,7 @@
 package org.iringtools.adapter;
 
+import java.util.Hashtable;
+
 import javax.servlet.ServletContext;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -15,12 +17,6 @@ public class ExchangeService
 {
   @Context private ServletContext context;
     
-  private void init(String projName, String appName)
-  {    
-    context.setAttribute("projName", projName);
-    context.setAttribute("appName", appName);
-  }
-  
   @GET
   @Path("/{projName}/{appName}/{graphName}/diff")
   public String diff(@PathParam("projName") String projName,
@@ -28,14 +24,12 @@ public class ExchangeService
                      @PathParam("graphName") String graphName,
                      @QueryParam("format") @DefaultValue("dto") String format)
   {
-    init(projName, appName);    
-    ExchangeProvider exchangeProvider = new ExchangeProvider(context);
+    Hashtable<String, String> settings = new Hashtable<String, String>();
+    settings.put("baseDirectory", context.getRealPath("/"));
+    settings.put("projName", projName);
+    settings.put("appName", appName);
     
-    if (format.equalsIgnoreCase("dto"))
-    {
-      return exchangeProvider.diffDto(graphName);
-    }
-    
-    return exchangeProvider.diffRdf(graphName);
+    ExchangeProvider exchangeProvider = new ExchangeProvider(settings);    
+    return exchangeProvider.diff(graphName, format);
   }
 }

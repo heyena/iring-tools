@@ -1,4 +1,4 @@
-#Thu Jul 08 16:00:30 EDT 2010
+#Fri Jul 16 11:27:40 EDT 2010
 org.eclipse.jdt.core.formatter.insert_space_before_comma_in_for_inits=do not insert
 org.eclipse.jdt.core.formatter.brace_position_for_block=next_line
 org.eclipse.jdt.core.formatter.insert_space_after_at_in_annotation_type_declaration=do not insert
@@ -127,6 +127,7 @@ org.eclipse.jdt.core.formatter.insert_space_before_opening_bracket_in_array_type
 org.eclipse.jdt.core.formatter.insert_space_between_empty_braces_in_array_initializer=do not insert
 org.eclipse.jdt.core.formatter.insert_space_before_comma_in_multiple_local_declarations=do not insert
 org.eclipse.jdt.core.formatter.insert_space_after_opening_paren_in_constructor_declaration=do not insert
+org.eclipse.jdt.core.userLibrary.guice-2.0=<?xml version\="1.0" encoding\="UTF-8"?>\r\n<userlibrary systemlibrary\="false" version\="1">\r\n\t<archive path\="C\:/iring-tools-java/libraries/guice-2.0/aopalliance.jar"/>\r\n\t<archive path\="C\:/iring-tools-java/libraries/guice-2.0/guice-2.0.jar"/>\r\n\t<archive path\="C\:/iring-tools-java/libraries/guice-2.0/guice-assistedinject-2.0.jar"/>\r\n\t<archive path\="C\:/iring-tools-java/libraries/guice-2.0/guice-jmx-2.0.jar"/>\r\n\t<archive path\="C\:/iring-tools-java/libraries/guice-2.0/guice-jndi-2.0.jar"/>\r\n\t<archive path\="C\:/iring-tools-java/libraries/guice-2.0/guice-multibindings-2.0.jar"/>\r\n\t<archive path\="C\:/iring-tools-java/libraries/guice-2.0/guice-servlet-2.0.jar"/>\r\n\t<archive path\="C\:/iring-tools-java/libraries/guice-2.0/guice-spring-2.0.jar"/>\r\n\t<archive path\="C\:/iring-tools-java/libraries/guice-2.0/guice-struts2-plugin-2.0.jar"/>\r\n\t<archive path\="C\:/iring-tools-java/libraries/guice-2.0/guice-throwingproviders-2.0.jar"/>\r\n</userlibrary>\r\n
 org.eclipse.jdt.core.formatter.indent_body_declarations_compare_to_enum_constant_header=true
 org.eclipse.jdt.core.formatter.comment.insert_new_line_for_parameter=insert
 org.eclipse.jdt.core.codeComplete.staticFinalFieldSuffixes=
