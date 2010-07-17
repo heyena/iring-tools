@@ -57,13 +57,13 @@ public class ExchangeProvider
     
     if (format.equalsIgnoreCase("dto"))
     {
-      sendingXmlPath = dataPath + "/Dto." + scope + ".Send-1000.xml";
-      receivingXmlPath = dataPath + "/Dto." + scope + ".Receive-1000.xml";
+      sendingXmlPath = dataPath + "/Dto." + scope + ".Send-3.xml";
+      receivingXmlPath = dataPath + "/Dto." + scope + ".Receive-3.xml";
     }
     else
     {
-      sendingXmlPath = dataPath + "/Rdf." + scope + ".Send-1000.xml";
-      receivingXmlPath = dataPath + "/Rdf." + scope + ".Receive-1000.xml";
+      sendingXmlPath = dataPath + "/Rdf." + scope + ".Send-3.xml";
+      receivingXmlPath = dataPath + "/Rdf." + scope + ".Receive-3.xml";
     }
     
     try
