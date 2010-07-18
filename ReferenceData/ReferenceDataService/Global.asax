@@ -1,1 +1,1 @@
-<%@ Application Codebehind="Global.asax.cs" Inherits="org.ids_adi.iring.referenceData.Global" Language="C#" %>
+<%@ Application Codebehind="~\App_Code\Global.asax.cs" Inherits="org.ids_adi.iring.referenceData.Global" Language="C#" %>

@@ -18,10 +18,10 @@ namespace ApplicationEditor
 {
     public partial class Page : UserControl
     {
-        private NewDbDictionary newDbDictionary;
+      //  private NewDbDictionary newDbDictionary;
         private ResultsList resultsList;
         private EditTreeNode editTreeNode;
-	    private CompositeKeys compositeKeys;
+        private CompositeKeys compositeKeys;
         Collection<ScopeProject> _scopes;
       
         TreeViewItem _editProject;
@@ -55,8 +55,10 @@ namespace ApplicationEditor
                 string uriScheme = Application.Current.Host.Source.Scheme;
                 bool usingTransportSecurity = uriScheme.Equals("https", StringComparison.InvariantCultureIgnoreCase);
                 //initialize child windows
-                newDbDictionary = new NewDbDictionary();
-                newDbDictionary.Closed += new EventHandler(newDbDictionary_Closed);
+             //   newDbDictionary = new NewDbDictionary();
+             //   newDbDictionary.Closed += new EventHandler(newDbDictionary_Closed);
+                compositeKeys = new CompositeKeys();
+                compositeKeys.Closed += new EventHandler(compositeKeys_Closed);
                 resultsList = new ResultsList();
                 resultsList.Closed += new EventHandler(results_Closed);
                 editTreeNode = new EditTreeNode();
@@ -70,7 +72,7 @@ namespace ApplicationEditor
 
                 biBusyWindow.IsBusy = true;
                 _dal.GetScopes();
-
+                _dal.GetProviders();
                 isPosting = false;
             }
             catch (Exception ex)
@@ -155,7 +157,7 @@ namespace ApplicationEditor
                 switch (processType)
                 {
                     case CompletedEventType.NotDefined:
-			            break;
+                        break;
 
                     case CompletedEventType.DeleteApp:
                         deleteComplete(args);
@@ -300,7 +302,7 @@ namespace ApplicationEditor
 
                 resultsList.lbResult.ItemsSource = response.StatusList[0].Messages;
 
-		        _dal.GetDbDictionary(_currentProject.Name, _currentApplication.Name);
+                _dal.GetDbDictionary(_currentProject.Name, _currentApplication.Name);
             }
             catch (Exception ex)
             {
@@ -383,40 +385,41 @@ namespace ApplicationEditor
                     MessageBox.Show(args.FriendlyErrorMessage, "Get Providers Error", MessageBoxButton.OK);
                     return;
                 }
-                newDbDictionary.cbProvider.ItemsSource = (string[])args.Data;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);                
-            }
-        }        
-
-        void newDbDictionary_Closed(object sender, EventArgs e)
-        {
-            try
-            {
-                if ((bool)newDbDictionary.DialogResult && !newDbDictionary.btnCancle.IsPressed)
-                {
-                    newProject = newDbDictionary.tbProject.Text;
-                    newProvider = newDbDictionary.cbProvider.SelectedItem.ToString();
-                    newApplication = newDbDictionary.tbApp.Text;
-                    newDataSourceName = newDbDictionary.tbNewDataSource.Text;
-                    newDatabaseName = newDbDictionary.tbNewDatabase.Text;
-                    newDatabaseUserName = newDbDictionary.tbUserID.Text;
-                    newDatabaseUserPassword = newDbDictionary.tbPassword.Text;
-                    BuildNewDbDictionary(newProvider, newProject, newApplication,
-                        newDataSourceName, newDatabaseName, newDatabaseUserName, newDatabaseUserPassword);
-                }
-                else if ((bool)newDbDictionary.DialogResult && newDbDictionary.btnCancle.IsPressed)
-                { }
-                else
-                    newDbDictionary.Show();
+                cbProvider.ItemsSource = (string[])args.Data;
+          //      newDbDictionary.cbProvider.ItemsSource = (string[])args.Data;
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);                
             }
         }
+
+        //void newDbDictionary_Closed(object sender, EventArgs e)
+        //{
+        //    try
+        //    {
+        //        if ((bool)newDbDictionary.DialogResult && !newDbDictionary.btnCancle.IsPressed)
+        //        {
+        //            newProject = newDbDictionary.tbProject.Text;
+        //            newProvider = newDbDictionary.cbProvider.SelectedItem.ToString();
+        //            newApplication = newDbDictionary.tbApp.Text;
+        //            newDataSourceName = newDbDictionary.tbNewDataSource.Text;
+        //            newDatabaseName = newDbDictionary.tbNewDatabase.Text;
+        //            newDatabaseUserName = newDbDictionary.tbUserID.Text;
+        //            newDatabaseUserPassword = newDbDictionary.tbPassword.Text;
+        //            BuildNewDbDictionary(newProvider, newProject, newApplication,
+        //                newDataSourceName, newDatabaseName, newDatabaseUserName, newDatabaseUserPassword);
+        //        }
+        //        else if ((bool)newDbDictionary.DialogResult && newDbDictionary.btnCancle.IsPressed)
+        //        { }
+        //        else
+        //            newDbDictionary.Show();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);
+        //    }
+        //}
 
         private void BuildNewDbDictionary(string newProvider, string newProject, string newApplication, string newDataSourceName, string newDatabaseName, string newDatabaseUserName, string newDatabaseUserPassword)
         {
@@ -501,17 +504,17 @@ namespace ApplicationEditor
                     return;
                 }
                 //string dictionaries = cbDictionary.SelectedItem.ToString();
-		        _dal.GetScopes();
+                _dal.GetScopes();
 
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);                
             }
-	      finally
-	      {
-	        biBusyWindow.IsBusy = false;
-	      }
+          finally
+          {
+            biBusyWindow.IsBusy = false;
+          }
         }
 
         void getdbschemaComplete(CompletedEventArgs args)
@@ -520,6 +523,7 @@ namespace ApplicationEditor
             {
                 if (args.Error != null)
                 {
+
                     MessageBox.Show(args.FriendlyErrorMessage, "Get Database Schema Error", MessageBoxButton.OK);
                     biBusyWindow.IsBusy = false;
                     return;
@@ -530,7 +534,21 @@ namespace ApplicationEditor
 
                 tvwItemSourceRoot.Items.Clear();
                 DatabaseDictionary databaseDictionary = (DatabaseDictionary)args.Data;
-                ConstructTreeView(databaseDictionary, tvwItemSourceRoot);
+                string connString = databaseDictionary.connectionString;
+
+                if (string.IsNullOrEmpty(connString) && cbProvider.SelectedItem.ToString() != "MsSql2000")
+                {
+                  databaseDictionary.connectionString = BuildConnectionString(cbProvider.SelectedItem.ToString(),
+                    tbNewDataSource.Text,
+                    tbNewDatabase.Text,
+                    tbUserID.Text,
+                    tbPassword.Password);
+                  databaseDictionary.provider = (Provider)Enum.Parse(typeof(Provider), cbProvider.SelectedItem.ToString(), true);
+                  _dal.SaveDatabaseDictionary(databaseDictionary, _currentProject.Name, _currentApplication.Name);
+                  _dal.GetDatabaseSchema(_currentProject.Name, _currentApplication.Name);
+                 
+                }
+                constructTreeView(databaseDictionary, tvwItemSourceRoot);
                 for (int sourceTables = 0; sourceTables < tvwItemSourceRoot.Items.Count; sourceTables++)
                 {
                     sourceTable = (TreeViewItem)tvwItemSourceRoot.Items[sourceTables];
@@ -542,12 +560,12 @@ namespace ApplicationEditor
                         destinationTable = (TreeViewItem)tvwItemDestinationRoot.Items[destTables];
                         StackPanel destinationStackPanel = (StackPanel)destinationTable.Header;
                         TextBlock destinationTextBlock = (TextBlock)destinationStackPanel.Children[1];
-                        if (sourceTextBlock.Text == destinationTextBlock.Text)
-                        {
-                            RemoveTreeItem(sourceParent, sourceTable);
-                            sourceTables--;
-                            break;
-                        }
+                        //if (sourceTextBlock.Text == destinationTextBlock.Text)
+                        //{
+                        //    RemoveTreeItem(sourceParent, sourceTable);
+                        //    sourceTables--;
+                        //    break;
+                        //}
                     }
                 }
                 
@@ -557,10 +575,10 @@ namespace ApplicationEditor
             {
                 MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);                
             }
-	      finally
-	      {
-	        biBusyWindow.IsBusy = false;
-	      }
+          finally
+          {
+            biBusyWindow.IsBusy = false;
+          }
         }
 
         void getdbDictionaryComplete(CompletedEventArgs args)
@@ -569,17 +587,22 @@ namespace ApplicationEditor
             {
                 if (args.Error != null)
                 {
-                    MessageBox.Show(args.FriendlyErrorMessage, "Get Database Dictionary Error", MessageBoxButton.OK);
+                  DatabaseDictionary dictionary = new DatabaseDictionary();
+                  //dictionary.connectionString = "Data Source= ;Initial Catalog= ;User Id= ;Password= ;";
+                  _dal.SaveDatabaseDictionary(dictionary, _currentProject.Name, _currentApplication.Name);
+//                  MessageBox.Show(args.FriendlyErrorMessage, "Get Database Dictionary Error", MessageBoxButton.OK);
                     return;
                 }
 
                 DatabaseDictionary dict = (DatabaseDictionary)args.Data;
+                if (dict.connectionString == null) return;
                 string[] tokens = dict.connectionString.Split( new char[] {';'}, StringSplitOptions.RemoveEmptyEntries);                
                 string[] token = null;
                 foreach (string part in tokens)
                 {                  
                   token = part.Split('=');
-                  switch ( token[0] ) {
+                  switch ( token[0] )
+                  {
                     case "Data Source":
                       tbNewDataSource.Text = token[1];
                       break;
@@ -593,8 +616,8 @@ namespace ApplicationEditor
                       tbPassword.Password = token[1];
                       break;                    
                   }
-                }                
-
+                }
+                cbProvider.SelectedItem = dict.provider.ToString();
                 string project = string.Empty;
                 string application = string.Empty;
 
@@ -618,26 +641,69 @@ namespace ApplicationEditor
                     tvwItemDestinationRoot.Items.Clear();
 
                     _dal.GetDatabaseSchema(project, application);
-                    ConstructTreeView(dict, tvwItemDestinationRoot);
+                    constructTreeView(dict, tvwItemDestinationRoot);
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);                
             }
-	      finally
-	      {
-	        biBusyWindow.IsBusy = false;
-	      }
+          finally
+          {
+            biBusyWindow.IsBusy = false;
+          }
         }
 
-        void ConstructTreeView(DatabaseDictionary dict, TreeViewItem root)
+        void constructObjectTree(TreeViewItem selectedItem, TreeViewItem destinationRoot)
         {
           TreeViewItem tableTreeViewItem = null;
-          TreeViewItem keysTreeViewItem = null;
-          TreeViewItem propertiesTreeViewItem = null;
-          TreeViewItem relationshipsTreeViewItem = null;
           TreeViewItem columnTreeViewItem = null;
+          TreeViewItem keysTreeViewItem = new TreeViewItem() { Header = "Keys" };
+          TreeViewItem propertiesTreeViewItem = new TreeViewItem() { Header = "Properties" };
+          TreeViewItem relationshipsTreeViewItem = new TreeViewItem() { Header = "Relationships" };
+          org.iringtools.library.DataObject dataObject;
+          bool enableCheckBox = false;
+          try
+          {
+            if (selectedItem.Tag is org.iringtools.library.DataObject)
+            {
+              dataObject = selectedItem.Tag as org.iringtools.library.DataObject;
+              tableTreeViewItem = new TreeViewItem { Header = dataObject.tableName, Tag = dataObject };
+              //constructObjectTree(tableTreeViewItem);
+              tableTreeViewItem.Items.Add(keysTreeViewItem);
+              tableTreeViewItem.Items.Add(propertiesTreeViewItem);
+              tableTreeViewItem.Items.Add(relationshipsTreeViewItem);
+              foreach (org.iringtools.library.KeyProperty keyName in dataObject.keyProperties)
+              {
+                DataProperty key = dataObject.getKeyProperty(keyName.keyPropertyName);
+                if (key == null) continue;
+                columnTreeViewItem = new TreeViewItem();
+                columnTreeViewItem.Tag = key;
+                AddTreeItem(keysTreeViewItem, columnTreeViewItem, key.columnName, null, false);
+              }
+
+              foreach (DataProperty column in dataObject.dataProperties)
+              {
+                columnTreeViewItem = new TreeViewItem();
+                columnTreeViewItem.Tag = column;
+                AddTreeItem(propertiesTreeViewItem, columnTreeViewItem, column.columnName, null, enableCheckBox);        
+              }
+
+              foreach (DataRelationship relation in dataObject.dataRelationships)
+              {
+
+              }
+              AddTreeItem(destinationRoot, tableTreeViewItem, dataObject.objectName, null, false);
+            }
+          }
+          catch (Exception ex)
+          {
+
+          }
+        }
+        void constructTreeView(DatabaseDictionary dict, TreeViewItem root)
+        {
+          TreeViewItem tableTreeViewItem = null;
 
           bool enableCheckBox = false;
           if (root.Name != "tvwItemSourceRoot")
@@ -654,45 +720,10 @@ namespace ApplicationEditor
               tableTreeViewItem = new TreeViewItem() { Header = table.tableName };
               tableTreeViewItem.Tag = table;
               root.IsExpanded = true;
+              constructObjectTree(tableTreeViewItem, root);
 
-              keysTreeViewItem = new TreeViewItem() { Header = "Keys" };
-              propertiesTreeViewItem = new TreeViewItem() { Header = "Properties" };
-              relationshipsTreeViewItem = new TreeViewItem() { Header = "Relationships" };
-
-              tableTreeViewItem.Items.Add(keysTreeViewItem);
-              tableTreeViewItem.Items.Add(propertiesTreeViewItem);
-              tableTreeViewItem.Items.Add(relationshipsTreeViewItem);
-
-              foreach (org.iringtools.library.KeyProperty keyName in table.keyProperties)
-              {
-                DataProperty key = table.getKeyProperty(keyName.keyPropertyName);
-            if (key == null) continue;
-                columnTreeViewItem = new TreeViewItem();
-                columnTreeViewItem.Tag = key;
-            AddTreeItem(keysTreeViewItem, columnTreeViewItem, key.columnName, null, false);
-                AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Data Length = " + key.dataLength.ToString(), null, false);
-                AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Column Type = " + key.dataType.ToString(), null, false);
-                //AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Data Type = " + key.dataType.ToString(), null, false);
-                AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Is Nullable = " + key.isNullable, null, false);
-                AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Key Type = " + key.keyType, null, false);
-                AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Property Name = " + key.propertyName, null, false);
               }
 
-              foreach (DataProperty column in table.dataProperties)
-              { 
-                  columnTreeViewItem = new TreeViewItem();
-                  columnTreeViewItem.Tag = column;
-                  AddTreeItem(propertiesTreeViewItem, columnTreeViewItem, column.columnName, null, enableCheckBox);
-                  AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Data Length = " + column.dataLength.ToString(), null, false);
-                  AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Column Type = " + column.dataType.ToString(), null, false);
-                  //AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Data Type = " + column.dataType.ToString(), null, false);
-                  AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Is Nullable = " + column.isNullable, null, false);
-                  AddTreeItem(columnTreeViewItem, new TreeViewItem(), "Property Name = " + column.propertyName, null, false);                
-              }
-
-              AddTreeItem(root, tableTreeViewItem, table.tableName, null, enableCheckBox);
-
-            }
             root.Visibility = Visibility.Visible;
           }
           catch (Exception ex)
@@ -791,6 +822,7 @@ namespace ApplicationEditor
 
                 _scopes = (Collection<ScopeProject>)args.Data;
 
+                tvwScopesItemRoot.Items.Clear();
                 foreach (ScopeProject project in _scopes)
                 {
                   cmbProject.Items.Add(new ComboBoxItem { Content = project.Name, Tag = project });
@@ -833,19 +865,19 @@ namespace ApplicationEditor
             
         }
 
-        private void btnNewDictionary_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                _dal.GetProviders();
-                newDbDictionary.tbMessages.Text = string.Empty;
-                newDbDictionary.Show();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);                
-            }
-        }
+        //private void btnNewDictionary_Click(object sender, RoutedEventArgs e)
+        //{
+        //    try
+        //    {
+        //       // _dal.GetProviders();
+        //        newDbDictionary.tbMessages.Text = string.Empty;
+        //        newDbDictionary.Show();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);
+        //    }
+        //}
 
         private void cmbProject_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -975,11 +1007,11 @@ namespace ApplicationEditor
             try
             {
                 DatabaseDictionary dbdict = new DatabaseDictionary();
-                dbdict = (DatabaseDictionary)tvwItemDestinationRoot.Tag;
+               // dbdict = (DatabaseDictionary)tvwItemDestinationRoot.Tag;
                 biBusyWindow.IsBusy = true;
                 isPosting = true;
 
-                _dal.PostDictionaryToAdapterService(_currentProject.Name, _currentProject.Name);
+                _dal.PostDictionaryToAdapterService(_currentProject.Name, _currentApplication.Name);
             }
             catch (Exception ex)
             {
@@ -1035,9 +1067,10 @@ namespace ApplicationEditor
                                 TreeViewItem parentParent = parent.Parent as TreeViewItem;
                                 parentParent.Items.Add(parent);
                             }
-                            RemoveTreeItem(parent, tableItem);
-                            destRoot.Items.Add(tableItem);
-                            i--;
+                           // RemoveTreeItem(parent, tableItem);
+                            constructObjectTree(tableItem, destRoot);
+                            //destRoot.Items.Add(tableItem);
+//                            i--;
                         }
                     }
                 }
@@ -1093,9 +1126,11 @@ namespace ApplicationEditor
           
           dataObject.deleteProperty((DataProperty)selectedItem.Tag);
           TreeViewItem key = findKeyItem(selectedItem, ((TextBlock)((StackPanel)selectedItem.Header).Children[1]).Text);
-          if (key == null) return;
-          TreeViewItem keyParent = key.Parent as TreeViewItem;
-          keyParent.Items.Remove(key);
+          if (key != null)
+          {
+            TreeViewItem keyParent = key.Parent as TreeViewItem;
+            keyParent.Items.Remove(key);
+          }
           parent.Items.Remove(selectedItem);
         }
         else if (selectedItem.Tag is DataRelationship)
@@ -1351,13 +1386,14 @@ namespace ApplicationEditor
         }
         else
         {
-
           dataObjectparent = findObjectParent(treeViewItem);
           compositeKeys._dataItems = new ObservableCollection<String>();
           compositeKeys._keyItems = new ObservableCollection<String>();
           compositeKeys.lbSourceProperties.ItemsSource = compositeKeys._dataItems;
           compositeKeys.lbKeys.ItemsSource = compositeKeys._keyItems;
           org.iringtools.library.DataObject dataObject = dataObjectparent.Tag as org.iringtools.library.DataObject;
+          compositeKeys.lblObjectName.Content = dataObject.objectName;
+
           foreach (DataProperty dataProperty in dataObject.dataProperties)
           {
           
@@ -1599,6 +1635,12 @@ namespace ApplicationEditor
         {
           biBusyWindow.IsBusy = true;
           _dal.UpdateScopes(_scopes);
+        }
+
+        private void btnFetch_Click(object sender, RoutedEventArgs e)
+        {
+            biBusyWindow.IsBusy = true;
+            _dal.GetDatabaseSchema(_currentProject.Name, _currentApplication.Name);
         }
         
     }

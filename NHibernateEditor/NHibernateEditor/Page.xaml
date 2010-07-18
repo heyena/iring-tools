@@ -21,7 +21,7 @@
             <RowDefinition Height="40" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>            
+            <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
             <Image Source="iRINGTools_logo.png"  />
@@ -31,14 +31,14 @@
         <Border Grid.Row="1" Grid.Column="0" Margin="2" BorderBrush="Gray" BorderThickness="1" CornerRadius="3">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Project:" Margin="5,5,0,5" Height="24"/>
-                <ComboBox Name="cmbProject" Width="Auto" MinWidth="150" Height="24" IsEnabled="True" SelectionChanged="cmbProject_SelectionChanged"/>                    
+                <ComboBox Name="cmbProject" Width="Auto" MinWidth="150" Height="24" IsEnabled="True" SelectionChanged="cmbProject_SelectionChanged"/>
                 <TextBlock Text="Application:" Margin="5,5,0,5" Height="24"/>
-                <ComboBox Name="cmbApp" Width="Auto" MinWidth="150" Height="24" IsEnabled="True" SelectionChanged="cmbApp_SelectionChanged" />                
+                <ComboBox Name="cmbApp" Width="Auto" MinWidth="150" Height="24" IsEnabled="True" SelectionChanged="cmbApp_SelectionChanged" />
             </StackPanel>
         </Border>
         <sdk:TabControl Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="5">
             <sdk:TabItem Header="Scopes">
-                <Grid>                    
+                <Grid>
                     <Grid.Background>
                         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                             <GradientStop Color="#FFFFFFFF"/>
@@ -50,7 +50,7 @@
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="200*"/>
-                        <ColumnDefinition Width="Auto"/>                        
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <Border Grid.Row="0" Grid.Column="0" BorderBrush="Gray" BorderThickness="1" CornerRadius="5" >
                         <basic:TreeView x:Name="tvwScopes" Height="Auto" BorderBrush="#8FA0AE" BorderThickness="1" >
@@ -58,7 +58,7 @@
                         </basic:TreeView>
                     </Border>
                     <Border Grid.Row="0" Grid.Column="1" BorderBrush="Gray" BorderThickness="1" CornerRadius="5">
-                        <StackPanel Orientation="Vertical" VerticalAlignment="Top">                            
+                        <StackPanel Orientation="Vertical" VerticalAlignment="Top">
                             <TextBlock Text="Project:" FontSize="11" Margin="5,5,5,0" />
                             <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="5" Margin="5,5,5,5">
                                 <StackPanel Orientation="Vertical" VerticalAlignment="Top">
@@ -78,15 +78,15 @@
                                 </StackPanel>
                             </Border>
                             <Button x:Name="btnAddScope" Content="Add" Width="110" Height="24" Margin="5,5,5,0" Click="btnAddScope_Click" />
-                            <Button x:Name="btnSaveScope" Content="Update" Width="110" Height="24" Margin="5,5,5,0" Click="btnSaveScope_Click" />                            
+                            <Button x:Name="btnSaveScope" Content="Update" Width="110" Height="24" Margin="5,5,5,0" Click="btnSaveScope_Click" />
                             <Button x:Name="btnDeleteScope" Content="Delete" Width="110" Height="24" Margin="5,5,5,0" Click="btnDelScope_Click"/>
                             <!--<Button x:Name="btnSaveScope" Content="Save" Width="110" Height="24" Margin="5,5,5,5" />-->
                             <Button x:Name="btnPostScope" Content="Save" Width="110" Height="24" Margin="5,15,5,5" Click="btnPostScope_Click" />
                         </StackPanel>
-                    </Border>                    
-                </Grid>             
+                    </Border>
+                </Grid>
             </sdk:TabItem>
-            <sdk:TabItem Header="Database Dictionary">
+            <sdk:TabItem Header="Database Dictionary" >
                 <Grid>
                     <Grid.Background>
                         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -95,7 +95,7 @@
                         </LinearGradientBrush>
                     </Grid.Background>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />                        
+                        <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="100*"/>
@@ -127,7 +127,7 @@
                                 <TextBox x:Name="tbUserID" Width="110" Height="22" Margin="5,5,5,0"/>
                                 <TextBlock Text="Password:" FontSize="11" Margin="5,5,5,0"/>
                                 <PasswordBox x:Name="tbPassword" Width="110" Height="22" Margin="5,5,5,0"/>
-                                <Button x:Name="btnFetch" Content="Fetch" Width="110" Height="24" Margin="5,15,5,0"/>
+                                <Button x:Name="btnFetch" Content="Fetch" Width="110" Height="24" Margin="5,15,5,0" Click="btnFetch_Click"/>
                                 <Button x:Name="btnAddColumnToDict" Content="Add" Width="110" Height="24" Margin="5,5,5,0" Click="btnAddColumnToDict_Click"/>
                             </StackPanel>
                         </Border>
@@ -150,21 +150,21 @@
                         </Border>
                         <Border Grid.Row="0" Grid.Column="1" BorderBrush="Gray" BorderThickness="1" CornerRadius="5">
                             <StackPanel Orientation="Vertical" Margin="1" Grid.Column="2" Grid.Row="3">
-                                <Button x:Name="btnNewDictionary" Width="95" Height="24" Margin="5,5,5,0" Content="New" Click="btnNewDictionary_Click" />
+                                <!--<Button x:Name="btnNewDictionary" Width="95" Height="24" Margin="5,5,5,0" Content="New" Click="btnNewDictionary_Click" />-->
                                 <Button x:Name="btnSaveDbDictionary" Width="95" Height="24" Margin="5,5,5,0" Content="Save" Click="btnSaveDbDictionary_Click" />
                                 <Button x:Name="btnPostDictionary" Width="95" Height="24" Margin="5,5,5,0" Content="Post" Click="btnPostDictionary_Click" />
                                 <Button x:Name="btnDelColFromDict" Width="95" Height="24" Margin="5,5,5,0" Content="Delete" Click="btnDelColFromDict_Click" />
                                 <Button x:Name="btnEditNode" Width="95" Height="24" Margin="5,5,5,0" Content="Edit" Click="btnEditNode_Click" />
-                <Button x:Name="btnCreateCompKey" Width="95" Height="24" Margin="5,5,5,0" Content="Create Key" Click="btnCreateCompKey_Click" 
+                                <Button x:Name="btnCreateCompKey" Width="95" Height="24" Margin="5,5,5,0" Content="Create Key" Click="btnCreateCompKey_Click" 
                         ToolTipService.ToolTip="Create composite key for selected object tree" ToolTipService.Placement="Top"/>
-                <Button Content="Move up" Height="23" Name="btnMoveUp" Width="95" Margin="5,5,5,0" Click="btnMoveUp_Click" />
-                <Button Content="Move down" Height="23" Name="btnMoveDown" Width="95"  Margin="5,5,5,0" Click="btnMoveDown_Click"/>
-                <Button x:Name="btnCreateRalation" Width="95" Height="24" Margin="5,5,5,0" Content="Create Relation" Click="btnCreateRalation_Click" />              
-              </StackPanel>
+                                <Button Content="Move up" Height="23" Name="btnMoveUp" Width="95" Margin="5,5,5,0" Click="btnMoveUp_Click" />
+                                <Button Content="Move down" Height="23" Name="btnMoveDown" Width="95"  Margin="5,5,5,0" Click="btnMoveDown_Click"/>
+                                <Button x:Name="btnCreateRalation" Width="95" Height="24" Margin="5,5,5,0" Content="Create Relation" Click="btnCreateRalation_Click" />
+                            </StackPanel>
                         </Border>
                     </Grid>
                 </Grid>
-            </sdk:TabItem>           
+            </sdk:TabItem>
         </sdk:TabControl>
 
         <toolkit:BusyIndicator Grid.Column="0" Grid.Row="0" Grid.RowSpan="4" x:Name="biBusyWindow" Content="" BusyContent="Processing, Please wait..." />

@@ -902,6 +902,7 @@ namespace org.iringtools.utility
         case "bit": return "Boolean";
         case "byte": return "Byte";
         case "char": return "Char";
+        case "nchar": return "String";
         case "character": return "Char";
         case "varchar": return "String";
         case "varchar2": return "String";
