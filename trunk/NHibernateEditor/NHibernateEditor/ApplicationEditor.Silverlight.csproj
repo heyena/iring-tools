@@ -123,9 +123,6 @@
     <Compile Include="EditTreeNode.xaml.cs">
       <DependentUpon>EditTreeNode.xaml</DependentUpon>
     </Compile>
-    <Compile Include="NewDbDictionary.xaml.cs">
-      <DependentUpon>NewDbDictionary.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ApplicationDAL.cs" />
     <Compile Include="Page.xaml.cs">
       <DependentUpon>Page.xaml</DependentUpon>
@@ -148,12 +145,6 @@
     </Page>
     <Page Include="EditTreeNode.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:MarkupCompilePass1</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="NewDbDictionary.xaml">
-      <SubType>Page</SubType>
       <Generator>MSBuild:MarkupCompilePass1</Generator>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

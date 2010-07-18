@@ -51,14 +51,14 @@ namespace org.iringtools.library
 
 #if !SILVERLIGHT
     [OperationContract]
-    [XmlSerializerFormat]
+    //[XmlSerializerFormat]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/mapping")]
 #endif
     Mapping GetMapping(string projectName, string applicationName);
 
 #if !SILVERLIGHT
     [OperationContract]
-    [XmlSerializerFormat]
+   // [XmlSerializerFormat]
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/mapping")]
 #endif
     Response UpdateMapping(string projectName, string applicationName, Mapping mapping);

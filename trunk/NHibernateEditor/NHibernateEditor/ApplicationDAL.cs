@@ -58,7 +58,6 @@ namespace ApplicationEditor
             _postScopesClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
             _postScopesClient.UploadStringCompleted += new UploadStringCompletedEventHandler(OnCompletedEvent);
             _deleteClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
-
             _dbDictionaryServiceUri = App.Current.Resources["ApplicationServiceURI"].ToString();
             _adapterServiceUri = App.Current.Resources["AdapterServiceUri"].ToString();
         }
@@ -142,13 +141,14 @@ namespace ApplicationEditor
           );
 
           Uri address = new Uri(new Uri(_dbDictionaryServiceUri), relativeUri);
+         
+         _postdbdictionaryClient.DownloadStringAsync(address);
+         // string data = Utility.SerializeDataContract<DatabaseDictionary>(dictionary);
 
-          _postdbdictionaryClient.DownloadStringAsync(address);
-          //string data = Utility.SerializeDataContract<DatabaseDictionary>(databaseDictionary);
-
-          //_postdbdictionaryClient.Headers["Content-type"] = "application/xml";
-          //_postdbdictionaryClient.Encoding = Encoding.UTF8;
-          //_postdbdictionaryClient.UploadStringAsync(address, "POST", data);
+      //    _postdbdictionaryClient.Headers["Content-type"] = "application/xml";
+      //    _postdbdictionaryClient.Encoding = Encoding.UTF8;
+       //   _postdbdictionaryClient.UploadStringAsync(address, "POST", data);
+         
         }
 
         public void UpdateScopes(Collection<ScopeProject> scopes)
@@ -422,7 +422,7 @@ namespace ApplicationEditor
             {
                 try
                 {
-                    string result = ((UploadStringCompletedEventArgs)e).Result;
+                    string result = ((DownloadStringCompletedEventArgs)e).Result;
 
                     Response response = result.DeserializeDataContract<Response>();
 

@@ -3,7 +3,7 @@ using System.ServiceModel.Activation;
 using System.Web;
 using System.Web.Routing;
 
-namespace org.iringtools.application 
+namespace org.iringtools.application
 {
     public class Global : HttpApplication
     {
