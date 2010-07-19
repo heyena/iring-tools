@@ -100,6 +100,7 @@ namespace org.iringtools.application
           EntityGenerator generator = _kernel.Get<EntityGenerator>();
           _response.Append(generator.Generate(dbDictionary, projectName, applicationName));
 
+          /* GJvR this is now handled by the application editor
           List<ScopeProject> scopes = new List<ScopeProject> 
           {
             new ScopeProject {
@@ -116,6 +117,7 @@ namespace org.iringtools.application
           };
 
           _response.Append(_adapterClient.PostScopes(scopes));
+          */
 
           // Update binding configuration
           XElement binding = new XElement("module",
