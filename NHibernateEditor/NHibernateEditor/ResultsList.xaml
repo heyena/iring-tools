@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:toolkit="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Toolkit"
     xmlns:basic="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls"
-    Width="400" Height="200">
+    Width="500" Height="250">
             <Grid x:Name="LayoutRoot" >
         <Grid.Background>
             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">

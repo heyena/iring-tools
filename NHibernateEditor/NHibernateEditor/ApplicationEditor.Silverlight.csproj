@@ -128,6 +128,9 @@
       <DependentUpon>Page.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Relations.xaml.cs">
+      <DependentUpon>Relations.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ResultsList.xaml.cs">
       <DependentUpon>ResultsList.xaml</DependentUpon>
     </Compile>
@@ -154,6 +157,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Relations.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ResultsList.xaml">
       <SubType>Designer</SubType>

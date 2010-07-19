@@ -28,7 +28,7 @@ namespace ApplicationEditor
         private WebClient _deleteClient;
         private WebClient _testClient;
 
-        private string _dbDictionaryServiceUri;
+        private string _appliactionServiceUri;
         private string _adapterServiceUri;
 
         public ApplicationDAL() 
@@ -58,7 +58,7 @@ namespace ApplicationEditor
             _postScopesClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
             _postScopesClient.UploadStringCompleted += new UploadStringCompletedEventHandler(OnCompletedEvent);
             _deleteClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
-            _dbDictionaryServiceUri = App.Current.Resources["ApplicationServiceURI"].ToString();
+            _appliactionServiceUri = App.Current.Resources["ApplicationServiceURI"].ToString();
             _adapterServiceUri = App.Current.Resources["AdapterServiceUri"].ToString();
         }
 
@@ -71,7 +71,7 @@ namespace ApplicationEditor
                 applicationName
               );
 
-              Uri address = new Uri(new Uri(_dbDictionaryServiceUri), relativeUri);
+              Uri address = new Uri(new Uri(_appliactionServiceUri), relativeUri);
 
               _dbDictionaryClient.DownloadStringAsync(address);
             }
@@ -85,7 +85,7 @@ namespace ApplicationEditor
             applicationName
           );
 
-          Uri address = new Uri(new Uri(_dbDictionaryServiceUri), relativeUri);
+          Uri address = new Uri(new Uri(_appliactionServiceUri), relativeUri);
           string data = Utility.SerializeDataContract<DatabaseDictionary>(databaseDictionary);
             
           _savedbdictionaryClient.Headers["Content-type"] = "application/xml";
@@ -100,7 +100,7 @@ namespace ApplicationEditor
                applicationName
              );
 
-          Uri address = new Uri(new Uri(_dbDictionaryServiceUri), relativeUri);
+          Uri address = new Uri(new Uri(_appliactionServiceUri), relativeUri);
           _dbschemaClient.DownloadStringAsync(address);
         }
 
@@ -117,7 +117,7 @@ namespace ApplicationEditor
         {
           string relativeUri = "/providers";
 
-          Uri address = new Uri(new Uri(_dbDictionaryServiceUri), relativeUri);
+          Uri address = new Uri(new Uri(_appliactionServiceUri), relativeUri);
 
           _providersClient.DownloadStringAsync(address);
         }
@@ -133,14 +133,14 @@ namespace ApplicationEditor
         }
 
 
-        public void PostDictionaryToAdapterService(string projectName, string applicationName)
+        public void PostDictionaryToApplicationService(string projectName, string applicationName)
         {
           string relativeUri = String.Format("/{0}/{1}/generate",
             projectName,
             applicationName
           );
 
-          Uri address = new Uri(new Uri(_dbDictionaryServiceUri), relativeUri);
+          Uri address = new Uri(new Uri(_appliactionServiceUri), relativeUri);
          
          _postdbdictionaryClient.DownloadStringAsync(address);
          // string data = Utility.SerializeDataContract<DatabaseDictionary>(dictionary);
@@ -344,42 +344,42 @@ namespace ApplicationEditor
                 }
             }
 
-            if (sender == _dbdictionariesClient)
-            {
-                try
-                {
-                    string result = ((DownloadStringCompletedEventArgs)e).Result;
+            //if (sender == _dbdictionariesClient)
+            //{
+            //    try
+            //    {
+            //        string result = ((DownloadStringCompletedEventArgs)e).Result;
 
-                    List<string> dbDictionaries = result.DeserializeDataContract<List<string>>();
+            //        List<string> dbDictionaries = result.DeserializeDataContract<List<string>>();
 
-                    // If the cast failed then return
-                    if (dbDictionaries == null)
-                        return;
+            //        // If the cast failed then return
+            //        if (dbDictionaries == null)
+            //            return;
 
-                    // Configure event argument
-                    args = new CompletedEventArgs
-                    {
-                        // Define your method in CompletedEventType and assign
-                        CompletedType = CompletedEventType.GetExistingDbDictionaryFiles,
-                        Data = dbDictionaries,
-                    };
-                }
-                catch (Exception ex)
-                {
-                    string s = "Error Getting existing Database Dictionary Files from DBDictionaryService.";
-                    // Configure event argument
-                    args = new CompletedEventArgs
-                    {
-                        // Define your method in CompletedEventType and assign
-                        CompletedType = CompletedEventType.GetExistingDbDictionaryFiles,
-                        Error = ex,
-                        FriendlyErrorMessage = 
-                            ex.GetBaseException().Message.ToUpper().Contains("SECURITY ERROR") || ex.GetBaseException() is System.Net.WebException ?
-                            s + "\nPlease verify if the DBDictionary Service is available" :
-                            s + "\nPlease review the log on the server.",
-                    };
-                }
-            }
+            //        // Configure event argument
+            //        args = new CompletedEventArgs
+            //        {
+            //            // Define your method in CompletedEventType and assign
+            //            CompletedType = CompletedEventType.GetExistingDbDictionaryFiles,
+            //            Data = dbDictionaries,
+            //        };
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        string s = "Error Getting existing Database Dictionary Files from DBDictionaryService.";
+            //        // Configure event argument
+            //        args = new CompletedEventArgs
+            //        {
+            //            // Define your method in CompletedEventType and assign
+            //            CompletedType = CompletedEventType.GetExistingDbDictionaryFiles,
+            //            Error = ex,
+            //            FriendlyErrorMessage = 
+            //                ex.GetBaseException().Message.ToUpper().Contains("SECURITY ERROR") || ex.GetBaseException() is System.Net.WebException ?
+            //                s + "\nPlease verify if the DBDictionary Service is available" :
+            //                s + "\nPlease review the log on the server.",
+            //        };
+            //    }
+            //}
 
             if (sender == _providersClient)
             {
