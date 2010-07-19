@@ -153,21 +153,22 @@ namespace org.ids_adi.iring.referenceData
     #endregion Prototype Part8
 
     #region Part8
-      /*
+    /*
     /// <summary>
     ///get part 8 template
     /// </summary>
     [OperationContract]
     [WebGet(UriTemplate = "/part8/template")]
     List<Repository> GetPart8Template();
+      */
 
-    /// <summary>
-    ///get part 8 template Specilaization
+   /// <summary>
+    ///get part 8 template Specialization
     /// </summary>
     [OperationContract]
-    [WebGet(UriTemplate = "/part8/templatespec")]
-    List<Repository> GetPart8TemplateSpec();
-      */
+    [WebGet(UriTemplate = "/part8/templatespec/{id}")]
+    List<Specialization> GetPart8TemplateSpec(string id);
+      
     /// <summary>
     ///get part 8 template Classification
     /// </summary>

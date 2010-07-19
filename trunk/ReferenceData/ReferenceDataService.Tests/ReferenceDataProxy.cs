@@ -123,6 +123,11 @@ namespace ReferenceDataService.Tests
         return _referenceDataServiceProvider.GetPart8TemplateClassif(id);
     }
 
+    public List<Specialization> GetPart8TemplateSpec(string id)
+    {
+        return _referenceDataServiceProvider.GetPart8TemplateSpec(id);
+    }
+
     #endregion Part8
   }
 }

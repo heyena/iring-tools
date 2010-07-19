@@ -2284,6 +2284,62 @@ namespace org.ids_adi.iring.referenceData
             }
         }
 
+        public List<Specialization> GetPart8TemplateSpec(string id)
+        {
+            QMXF qmxf = new QMXF();
+
+            try
+            {
+                string sparql = String.Empty;
+                string relativeUri = String.Empty;
+
+                List<Specialization> specializations = new List<Specialization>();
+
+
+                Query queryContainsSearch = _queries["GetTemplateSpecialization"];
+                QueryBindings queryBindings = queryContainsSearch.bindings;
+
+                sparql = ReadSPARQL(queryContainsSearch.fileName);
+                sparql = sparql.Replace("param1", id);
+
+
+                foreach (Repository repository in _repositories)
+                {
+                    SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
+
+                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+
+                    foreach (Dictionary<string, string> result in results)
+                    {
+
+                        Specialization specialization = new Specialization();
+                        string uri = String.Empty;
+                        string label = String.Empty;
+
+                        if (result.ContainsKey("uri"))
+                        {
+                            uri = result["uri"];
+                            specialization.reference = uri;
+                        }
+
+                        //if (result.ContainsKey("label"))
+                        //    label = result["label"];
+
+                        specialization.label = label;
+                        Utility.SearchAndInsert(specializations, specialization, Specialization.sortAscending());
+                    }
+
+                }
+
+                return specializations;
+            }
+            catch (Exception e)
+            {
+                _log4netLogger.Error("Error in GetClassifications: " + e);
+                throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
+            }
+        }
+
         #endregion Part8
     }
 }

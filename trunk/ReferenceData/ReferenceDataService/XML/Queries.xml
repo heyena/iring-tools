@@ -352,4 +352,16 @@
       <fileName>getTemplateClassification.txt</fileName>
     </Query>
   </QueryItem>
+  <QueryItem>
+    <Key>GetTemplateSpecialization</Key>
+    <Query>
+      <bindings>
+        <QueryBinding>
+          <name>uri</name>
+          <type>Uri</type>
+        </QueryBinding>
+      </bindings>
+      <fileName>getTemplateSpecialization.txt</fileName>
+    </Query>
+  </QueryItem>
 </Queries>
