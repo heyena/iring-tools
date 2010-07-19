@@ -69,6 +69,7 @@
       Include="$(AdapterServiceDir)\**"
       Exclude="$(AdapterServiceDir).Tests\**;
                $(AdapterServiceDir)\bin\*.pdb;
+               $(AdapterServiceDir)\bin\*.xml;
                $(AdapterServiceDir)\Logs\**;
                $(AdapterServiceDir)\Templates\**;
                $(AdapterServiceDir)\Transforms\**;
@@ -110,6 +111,7 @@
       Exclude="$(dotNetRdfInterfaceServiceDir)\App_Code;
                $(dotNetRdfInterfaceServiceDir)\App_Data;
                $(dotNetRdfInterfaceServiceDir)\bin\*.pdb;
+               $(dotNetRdfInterfaceServiceDir)\bin\*.xml;
                $(dotNetRdfInterfaceServiceDir)\obj\**;
                $(dotNetRdfInterfaceServiceDir)\Properties\**;
                $(dotNetRdfInterfaceServiceDir)\*.cs;
@@ -153,6 +155,7 @@
     <MappingEditorDeployment
       Include="$(MappingEditorDir)\**"
       Exclude="$(MappingEditorDir)\bin\*.pdb;
+               $(MappingEditorDir)\bin\*.xml;
                $(MappingEditorDir)\obj\**;
                $(MappingEditorDir)\Properties\**;
                $(MappingEditorDir)\*.html;
@@ -174,6 +177,7 @@
     <RefDataEditorDeployment
       Include="$(RefDataEditorDir)\**"
       Exclude="$(RefDataEditorDir)\bin\*.pdb;
+               $(RefDataEditorDir)\bin\*.xml;
                $(RefDataEditorDir)\obj\**;
                $(RefDataEditorDir)\Properties\**;
                $(RefDataEditorDir)\*.cs;
@@ -189,6 +193,7 @@
     <ApplicationEditorDeployment
      Include="$(ApplicationEditorDir)\**"
      Exclude="$(ApplicationEditorDir)\bin\*.pdb;
+              $(ApplicationEditorDir)\bin\*.xml;
                $(ApplicationEditorDir)\obj\**;
                $(ApplicationEditorDir)\Properties\**;
                $(ApplicationEditorDir)\*.cs;
@@ -206,6 +211,7 @@
       Include="$(RefDataServiceDir)\**"
       Exclude="$(RefDataServiceDir).Tests\**;               
                $(RefDataServiceDir)\bin\*.pdb;
+               $(RefDataServiceDir)\bin\*.xml;
                $(RefDataServiceDir)\Logs\**;
                $(RefDataServiceDir)\obj\**;
                $(RefDataServiceDir)\Properties\**;
@@ -226,6 +232,7 @@
     <ApplicationServiceDeployment
       Include="$(ApplicationServiceDir)\**"
       Exclude="$(ApplicationServiceDir)\bin\*.pdb;
+               $(ApplicationServiceDir)\bin\*.xml;
                $(ApplicationServiceDir)\Logs\**;
                $(ApplicationServiceDir)\obj\**;
                $(ApplicationServiceDir)\Properties\**;
