@@ -932,7 +932,7 @@ namespace org.iringtools.utility
         case "long": return "Int64";
         case "clob": return "String";
         case "blob": return "String";
-        default: throw new Exception("SQL type \"" + sqlType + "\" not currently supported.");
+        default: return "String"; 
       }
     }
 
