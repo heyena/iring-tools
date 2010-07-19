@@ -1,1 +1,1 @@
-<%@ Application Codebehind="~\App_Code\Global.asax.cs" Inherits="org.iringtools.adapter.Global " Language="C#" %>
+<%@ Application Codebehind="Global.asax.cs" Inherits="org.iringtools.adapter.Global" Language="C#" %>

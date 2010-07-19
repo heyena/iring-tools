@@ -111,6 +111,7 @@
     <Compile Include="App_Code\IService.cs" />
     <Compile Include="App_Code\Service.cs" />
     <Compile Include="Global.asax.cs">
+      <SubType>Code</SubType>
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
