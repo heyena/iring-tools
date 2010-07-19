@@ -136,6 +136,11 @@ namespace org.ids_adi.iring.referenceData
             return _referenceDataServiceProvider.GetPart8TemplateClassif(id);
         }
 
+        public List<Specialization> GetPart8TemplateSpec(string id)
+        {
+            return _referenceDataServiceProvider.GetPart8TemplateSpec(id);
+        }
+
         #endregion Part8
 
     }

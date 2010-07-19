@@ -97,7 +97,9 @@
     <Content Include="SPARQL\TemplateGetProperties.txt" />
     <Content Include="SPARQL\TemplateTypes.txt" />
     <Content Include="Web.config" />
-    <Content Include="XML\Queries.xml" />
+    <Content Include="XML\Queries.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="XML\Repositories.xml" />
     <Content Include="XML\Repositories_Default.xml" />
     <Content Include="XML\Repositories_Development.xml" />
