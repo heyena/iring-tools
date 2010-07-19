@@ -566,6 +566,12 @@ namespace ApplicationEditor
 
         DatabaseDictionary dict = (DatabaseDictionary)args.Data;
         if (dict.connectionString == null) return;
+
+        tbNewDataSource.Text = String.Empty;
+        tbNewDatabase.Text = String.Empty;
+        tbUserID.Text = String.Empty;
+        tbPassword.Password = String.Empty;
+
         string[] tokens = dict.connectionString.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
         string[] token = null;
         foreach (string part in tokens)
@@ -1204,8 +1210,9 @@ namespace ApplicationEditor
           {
             ScopeProject project = new ScopeProject { Name = tbNewPrjName.Text, Applications = new List<ScopeApplication>() };
             tvwPrj = new TreeViewItem { Header = tbNewPrjName.Text, Tag = project };
-            _scopes.Add(project);
+            _scopes.Add(project);            
             tvwScopesItemRoot.Items.Add(tvwPrj);
+            cmbProject.Items.Add(new ComboBoxItem { Content = project.Name, Tag = project });
           }
 
           TreeViewItem tvwApp = null;
@@ -1226,6 +1233,17 @@ namespace ApplicationEditor
             tvwApp = new TreeViewItem { Header = tbNewAppName.Text, Tag = application };
             project.Applications.Add(application);
             tvwPrj.Items.Add(tvwApp);
+
+            if (cmbProject.SelectedIndex > -1)
+            {
+              ComboBoxItem selectedItem = (ComboBoxItem)cmbProject.SelectedItem;
+              ScopeProject cbPrj = (ScopeProject)selectedItem.Tag;
+              if (project.Equals(cbPrj))
+              {
+                cmbApp.Items.Add(new ComboBoxItem { Content = application.Name, Tag = application });
+              }
+            }
+
           }
         }
       }
