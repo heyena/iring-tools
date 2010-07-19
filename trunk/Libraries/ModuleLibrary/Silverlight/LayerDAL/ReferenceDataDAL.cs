@@ -304,7 +304,7 @@ namespace org.iringtools.modulelibrary.layerdal
               {
                 string result = ((DownloadStringCompletedEventArgs)e).Result;
 
-                QMXF qmxf = result.DeserializeXml<QMXF>();
+                QMXF qmxf = result.DeserializeDataContract<QMXF>();
 
               // If the cast failed then return
               if (qmxf == null)
