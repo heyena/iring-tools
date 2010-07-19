@@ -69,7 +69,6 @@
       Include="$(AdapterServiceDir)\**"
       Exclude="$(AdapterServiceDir).Tests\**;
                $(AdapterServiceDir)\bin\*.pdb;
-               $(AdapterServiceDir)\bin\AdapterService.dll;
                $(AdapterServiceDir)\Logs\**;
                $(AdapterServiceDir)\Templates\**;
                $(AdapterServiceDir)\Transforms\**;
@@ -80,10 +79,12 @@
                $(AdapterServiceDir)\*.vspscc;
                $(AdapterServiceDir)\web.config;
                $(AdapterServiceDir)\Web_Development.config;
-               $(AdapterServiceDir)\App_Code\Model.*.cs;
+               $(AdapterServiceDir)\Service.cs;
+               $(AdapterServiceDir)\IService.cs;
+               $(AdapterServiceDir)\Global.asax.cs;
+               $(AdapterServiceDir)\App_Code\Model.*.cs;               
                $(AdapterServiceDir)\XML\BindingConfiguration.*.xml;
                $(AdapterServiceDir)\XML\DataDictionary.*.xml;
-               $(AdapterServiceDir)\XML\Mapping.*.xml;
                $(AdapterServiceDir)\XML\DTO.*.xml;
                $(AdapterServiceDir)\XML\QXF.*.xml;
                $(AdapterServiceDir)\XML\RDF.*.xml;
@@ -208,6 +209,9 @@
                $(RefDataServiceDir)\Logs\**;
                $(RefDataServiceDir)\obj\**;
                $(RefDataServiceDir)\Properties\**;
+               $(RefDataServiceDir)\Service.cs;
+               $(RefDataServiceDir)\IService.cs;
+               $(RefDataServiceDir)\Global.asax.cs;
                $(RefDataServiceDir)\XML\Repositories.xml;
                $(RefDataServiceDir)\XML\Repositories_Development.xml;
                $(RefDataServiceDir)\*.csproj;
@@ -225,6 +229,9 @@
                $(ApplicationServiceDir)\Logs\**;
                $(ApplicationServiceDir)\obj\**;
                $(ApplicationServiceDir)\Properties\**;
+               $(ApplicationServiceDir)\Service.cs;
+               $(ApplicationServiceDir)\IService.cs;
+               $(ApplicationServiceDir)\Global.asax.cs;
                $(ApplicationServiceDir)\*.csproj;
                $(ApplicationServiceDir)\*.user;
                $(ApplicationServiceDir)\*.vspscc;
@@ -419,13 +426,14 @@
           DestinationFiles="@(AdapterServiceDeployment->'$(AdapterServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Exec Command="Move /Y $(AdapterServiceDeploymentDir)\Web_Default.config $(AdapterServiceDeploymentDir)\Web.config" />
     <Exec Command="Mkdir $(AdapterServiceDeploymentDir)\Logs" />
+    <Exec Command="Mkdir $(AdapterServiceDeploymentDir)\App_Code"/>
 
     <Message Text="Creating application service deployment ..." />
     <Copy SourceFiles="@(ApplicationServiceDeployment)"
           DestinationFiles="@(ApplicationServiceDeployment->'$(ApplicationServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Exec Command="Move /Y $(ApplicationServiceDeploymentDir)\Web_Default.config $(ApplicationServiceDeploymentDir)\Web.config" />
-    <Exec Command="Mkdir $(ApplicationServiceDeploymentDir)\Logs" />
-    
+    <Exec Command="Mkdir $(ApplicationServiceDeploymentDir)\Logs"/> 
+   
     <!--<Message Text="Creating Joseki interface service deployment ..." />
     <Copy SourceFiles="@(JosekiInterfaceServiceDeployment)"
           DestinationFiles="@(JosekiInterfaceServiceDeployment->'$(JosekiInterfaceServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />

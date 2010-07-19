@@ -66,14 +66,15 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Code\IService.cs" />
-    <Compile Include="App_Code\Service.cs" />
+    <Compile Include="IService.cs" />
+    <Compile Include="Service.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="App_Code\" />
     <Folder Include="App_Data\" />
     <Folder Include="Logs\" />
   </ItemGroup>
