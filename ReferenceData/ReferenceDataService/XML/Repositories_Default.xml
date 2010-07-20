@@ -1,5 +1,11 @@
 <ArrayOfRepository xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.library" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
   <Repository>
+    <description>iRING Sandbox</description>
+    <isReadOnly>true</isReadOnly>
+    <name>iRING Sandbox</name>
+    <uri>http://www.iringsandbox.org/SandboxService/sparql</uri>
+  </Repository>
+  <Repository>
     <description>Development Sandbox</description>
     <isReadOnly>false</isReadOnly>
     <name>My Private Sandbox</name>
