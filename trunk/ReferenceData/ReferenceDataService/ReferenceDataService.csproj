@@ -85,6 +85,7 @@
     <Content Include="SPARQL\getTemplate.txt" />
     <Content Include="SPARQL\getTemplateClassification.txt" />
     <Content Include="SPARQL\GetTemplateQualification.txt" />
+    <Content Include="SPARQL\getTemplateRoleRestriction.txt" />
     <Content Include="SPARQL\getTemplateRoles.txt" />
     <Content Include="SPARQL\getTemplateSpecialization.txt" />
     <Content Include="SPARQL\GetValueRestriction.txt" />

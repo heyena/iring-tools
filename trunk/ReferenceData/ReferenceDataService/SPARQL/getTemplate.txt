@@ -1,11 +1,11 @@
 PREFIX part8: <http://standards.tc184-sc4.org/iso/15926/-8/templates#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-
-SELECT ?label ?comment
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+SELECT ?label ?definition
 WHERE
 { 
-part8:variable	rdf:type		owl:class 	.
-			rdfs:label		?label	.
-			rdfs:comment	?comment
+part8:param1	rdf:type	owl:Class 	;
+		rdfs:label	?label	        ;
+		rdfs:comment	?definition
 }
