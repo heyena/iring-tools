@@ -364,4 +364,52 @@
       <fileName>getTemplateSpecialization.txt</fileName>
     </Query>
   </QueryItem>
+  <QueryItem>
+    <Key>GetPart8Template</Key>
+    <Query>
+      <bindings>
+        <QueryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </QueryBinding>
+        <QueryBinding>
+          <name>definition</name>
+          <type>Literal</type>
+        </QueryBinding>
+        <QueryBinding>
+          <name>creationDate</name>
+          <type>Literal</type>
+        </QueryBinding>
+      </bindings>
+      <fileName>getTemplate.txt</fileName>
+    </Query>
+  </QueryItem>
+  <QueryItem>
+    <Key>GetPart8Roles</Key>
+    <Query>
+      <bindings>
+        <QueryBinding>
+          <name>role</name>
+          <type>Uri</type>
+        </QueryBinding>
+      </bindings>
+      <fileName>getTemplateRoles.txt</fileName>
+    </Query>
+  </QueryItem>
+  <QueryItem>
+    <Key>GetPart8RoleRestrictions</Key>
+    <Query>
+      <bindings>
+        <QueryBinding>
+          <name>valuesFrom</name>
+          <type>Uri</type>
+        </QueryBinding>
+        <QueryBinding>
+          <name>cardinality</name>
+          <type>Literal</type>
+        </QueryBinding>
+      </bindings>
+      <fileName>getTemplateRoleRestriction.txt</fileName>
+    </Query>
+  </QueryItem>
 </Queries>

@@ -447,8 +447,12 @@ namespace org.ids_adi.qmxf
         public string type { get; set; }
 
         [DataMember]
-        [XmlElement(ElementName = "value")]
-        public string value { get; set; }
+        [XmlElement(ElementName = "valuesFrom")]
+        public string valuesFrom { get; set; }
+
+        [DataMember]
+        [XmlElement(ElementName = "cardinality")]
+        public string cardiniality { get; set; }
     }
 
     [DataContract]

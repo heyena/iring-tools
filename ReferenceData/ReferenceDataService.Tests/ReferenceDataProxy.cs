@@ -118,6 +118,11 @@ namespace ReferenceDataService.Tests
 
     #region Part8
 
+    public QMXF GetPart8Template(string id)
+    {
+        return _referenceDataServiceProvider.GetPart8Template(id);
+    }
+
     public List<Classification> GetPart8TemplateClassif(string id)
     {
         return _referenceDataServiceProvider.GetPart8TemplateClassif(id);

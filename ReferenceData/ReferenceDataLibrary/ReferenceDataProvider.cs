@@ -2340,6 +2340,214 @@ namespace org.ids_adi.iring.referenceData
             }
         }
 
+        public QMXF GetPart8Template(string id)
+        {
+            QMXF qmxf = new QMXF();
+
+            try
+            {
+                TemplateDefinition templateDefinition = GetPart8TemplateDefinition(id);
+                qmxf.templateDefinitions.Add(templateDefinition);
+            }
+            catch (Exception ex)
+            {
+                _log4netLogger.Error("Error in GetPart8Template: " + ex);
+            }
+
+            return qmxf;
+        }
+
+        private TemplateDefinition GetPart8TemplateDefinition(string id)
+        {
+            TemplateDefinition templateDefinition = null;
+
+            try
+            {
+                string sparql = String.Empty;
+                string relativeUri = String.Empty;
+
+                Description description = new Description();
+                QMXFStatus status = new QMXFStatus();
+
+                RefDataEntities resultEntities = new RefDataEntities();
+
+                Query queryContainsSearch = _queries["GetPart8Template"];
+                QueryBindings queryBindings = queryContainsSearch.bindings;
+
+                sparql = ReadSPARQL(queryContainsSearch.fileName);
+                sparql = sparql.Replace("param1", id);
+
+
+                foreach (Repository repository in _repositories)
+                {
+                    SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
+
+                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+
+                    foreach (Dictionary<string, string> result in results)
+                    {
+                        templateDefinition = new TemplateDefinition();
+                        QMXFName name = new QMXFName();
+
+                        if (result.ContainsKey("label"))
+                        {
+                            name.value = result["label"];
+                        }
+
+                        if (result.ContainsKey("definition"))
+                        {
+                            description.value = result["definition"];
+                        }
+
+                        if (result.ContainsKey("creationDate"))
+                        {
+                            status.from = result["creationDate"];
+                        }
+                        templateDefinition.identifier = "part8:" + id;
+                        templateDefinition.name.Add(name);
+                        templateDefinition.description.Add(description);
+                        templateDefinition.status.Add(status);
+
+                        templateDefinition.roleDefinition = GetPart8RoleDefintion(id);
+                    }
+                }
+
+                return templateDefinition;
+            }
+            catch (Exception e)
+            {
+                _log4netLogger.Error("Error in GetTemplateDefinition: " + e);
+                throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
+            }
+        }
+
+        private List<RoleDefinition> GetPart8RoleDefintion(string id)
+        {
+            try
+            {
+                string sparql = String.Empty;
+                string relativeUri = String.Empty;
+
+                Description description = new Description();
+                QMXFStatus status = new QMXFStatus();
+                //List<Classification> classifications = new List<Classification>();
+
+                List<RoleDefinition> roleDefinitions = new List<RoleDefinition>();
+
+                RefDataEntities resultEntities = new RefDataEntities();
+
+                Query queryContainsSearch = _queries["GetPart8Roles"];
+                QueryBindings queryBindings = queryContainsSearch.bindings;
+
+                sparql = ReadSPARQL(queryContainsSearch.fileName);
+                sparql = sparql.Replace("param1", id);
+
+                foreach (Repository repository in _repositories)
+                {
+                    SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
+
+                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+
+                    foreach (Dictionary<string, string> result in results)
+                    {
+
+                        RoleDefinition roleDefinition = new RoleDefinition();
+                        QMXFName name = new QMXFName();
+
+                        if (result.ContainsKey("label"))
+                        {
+                            name.value = result["label"];
+                        }
+                        if (result.ContainsKey("role"))
+                        {
+                            roleDefinition.identifier = result["role"];
+                        }
+                        if (result.ContainsKey("comment"))
+                        {
+                            roleDefinition.description.value = result["comment"];
+                        }
+                        if (result.ContainsKey("index"))
+                        {
+                            roleDefinition.description.value = result["index"].ToString();
+                        }
+                        if (result.ContainsKey("type"))
+                        {
+                            roleDefinition.range = result["type"];
+                        }
+                        roleDefinition.name.Add(name);
+                        //Utility.SearchAndInsert(roleDefinitions, roleDefinition, RoleDefinition.sortAscending()); //problem with search an insert - skips some roles
+                        roleDefinitions.Add(roleDefinition);
+                        roleDefinition.restrictions = GetPart8RoleRestrictions(roleDefinition.identifier.Replace(roleDefinition.identifier.Substring(0, roleDefinition.identifier.LastIndexOf("#") + 1), ""));
+                        //roleDefinitions.Add(roleDefinition);
+                    }
+                }
+
+                return roleDefinitions;
+            }
+            catch (Exception e)
+            {
+                _log4netLogger.Error("Error in GetRoleDefinition: " + e);
+                throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
+            }
+        }
+
+        private List<PropertyRestriction> GetPart8RoleRestrictions(string id)
+        {
+            try
+            {
+                string sparql = String.Empty;
+                string relativeUri = String.Empty;
+
+                Description description = new Description();
+                QMXFStatus status = new QMXFStatus();
+                //List<Classification> classifications = new List<Classification>();
+
+                List<PropertyRestriction> propertyRestrictions = new List<PropertyRestriction>();
+
+                RefDataEntities resultEntities = new RefDataEntities();
+
+                Query queryContainsSearch = _queries["GetPart8RoleRestrictions"];
+                QueryBindings queryBindings = queryContainsSearch.bindings;
+
+                sparql = ReadSPARQL(queryContainsSearch.fileName);
+                sparql = sparql.Replace("param1", id);
+
+                foreach (Repository repository in _repositories)
+                {
+                    SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
+
+                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+
+                    foreach (Dictionary<string, string> result in results)
+                    {
+
+                        PropertyRestriction propertyRestriction = new PropertyRestriction();
+
+                        if (result.ContainsKey("valuesFrom"))
+                        {
+                            propertyRestriction.valuesFrom = result["valuesFrom"];
+                            propertyRestriction.type = "allValuesFrom";
+                        } 
+                        if (result.ContainsKey("cardinality"))
+                        {
+                            propertyRestriction.cardiniality = result["cardinality"];
+                            propertyRestriction.type = "minCardinality";
+                        }
+                        //roleDefinition.name.Add(name);
+                        //Utility.SearchAndInsert(propertyRestrictions, propertyRestriction, PropertyRestriction.sortAscending());
+                        propertyRestrictions.Add(propertyRestriction);
+                    }
+                }
+
+                return propertyRestrictions;
+            }
+            catch (Exception e)
+            {
+                _log4netLogger.Error("Error in GetRoleDefinition: " + e);
+                throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
+            }
+        }
+
         #endregion Part8
     }
 }
