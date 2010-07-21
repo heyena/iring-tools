@@ -6,8 +6,8 @@
            Title="Manage Data Object Relations" xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk">
     <Grid x:Name="LayoutRoot" Margin="2">
         <Grid.RowDefinitions>
-      <RowDefinition Height="40"/>
-      <RowDefinition Height="30" />
+      <RowDefinition Height="68"/>
+      <RowDefinition Height="68" />
       <RowDefinition Height="30" />
       <RowDefinition Height="*"/>
       <RowDefinition Height="Auto" />
@@ -50,7 +50,13 @@
       <Button x:Name="btnAddRelation" Content="Add Property Map" Height="25" Width="150" Click="btnAddRelation_Click" Grid.Column="2" Grid.Row="2" HorizontalAlignment="Center"/>
       <ListBox x:Name="lbRelatedProps" Margin="5" SelectionMode="Single" Height="Auto" Width="Auto"  AllowDrop="True"  Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
       <Button x:Name="btnDelRelation" Height="25" Width="150" Margin="10" Content="Delete Property Map" Click="btnDelRelation_Click" Grid.Row="3" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-    <ComboBox Grid.Column="1" Grid.Row="0" Height="23" HorizontalAlignment="Left" Margin="10,5,0,0" x:Name="cbExisting" VerticalAlignment="Top" Width="120" SelectionChanged="cbExisting_SelectionChanged" />
-    <sdk:Label  Height="25" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Margin="10,5,0,0" Name="label6" VerticalAlignment="Top" Width="120" Content="Existing Relationships" />
-  </Grid>
+        <StackPanel Orientation="Vertical" Grid.Column="2" Grid.Row="0">
+            <sdk:Label  Height="25" Grid.Column="2" HorizontalAlignment="Left" Margin="7,1,0,0" Name="label6" VerticalAlignment="Top" Width="120" Content="Existing Relationships" />
+            <ComboBox Grid.Column="2" Height="23" HorizontalAlignment="Left" Margin="57,1,0,0" x:Name="cbExisting" VerticalAlignment="Top" Width="120" SelectionChanged="cbExisting_SelectionChanged" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2">
+            <sdk:Label Name="lblRelationshipName" Width="Auto" Height="25" Margin="5,0,0,0" Content="Relationship Name: " />
+            <TextBlock Height="25" HorizontalAlignment="Left" Margin="5,5,0,0" x:Name="tblRelationshipName" VerticalAlignment="Top" />
+        </StackPanel>
+    </Grid>    
 </controls:ChildWindow>
