@@ -19,6 +19,7 @@ namespace org.iringtools.modules.templateeditor.editorregion
         public event PropertyChangedEventHandler PropertyChanged;
 
         internal ObservableCollection<KeyValuePair<string, string>> _ranges;
+        internal ObservableCollection<KeyValuePair<string, string>> _literalDatatypes;
         internal ObservableCollection<KeyValuePair<string, object>> _roles = new ObservableCollection<KeyValuePair<string, object>>();
         internal string _heading = "";
         internal Boolean _readonly = false;
@@ -130,6 +131,14 @@ namespace org.iringtools.modules.templateeditor.editorregion
             }
         }
 
+        public virtual Boolean IsRoleSelected
+        {
+            get
+            {
+                return _selectedRole != null;
+            }
+        }
+
         public virtual object SelectedRole
         {
             get
@@ -146,7 +155,11 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 RaisePropertyChanged(this, "SelectedRoleDescription");
                 RaisePropertyChanged(this, "SelectedRoleRange");
                 RaisePropertyChanged(this, "SelectedRoleValue");
+                RaisePropertyChanged(this, "SelectedRoleValueReference");
+                RaisePropertyChanged(this, "SelectedRoleValueLiteral");
+                RaisePropertyChanged(this, "SelectedRoleValueLiteralDatatype");
                 RaisePropertyChanged(this, "SelectedRoleDesignation");
+                RaisePropertyChanged(this, "IsRoleSelected");
             }
         }
 
@@ -160,7 +173,13 @@ namespace org.iringtools.modules.templateeditor.editorregion
 
         public abstract KeyValuePair<string, string> SelectedRoleRange { get; set; }
 
-        public abstract string SelectedRoleValue { get; set; }
+        public abstract string SelectedRoleValueReference { get; set; }
+
+        public abstract string SelectedRoleValueLiteral { get; set; }
+
+        public abstract KeyValuePair<string, string> SelectedRoleValueLiteralDatatype { get; set; }
+
+        //public abstract string SelectedRoleValue { get; set; }
 
         public abstract void AddRole(string name, string description, string range);
 
@@ -216,6 +235,33 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 _ranges = value;
 
                 RaisePropertyChanged(this, "Ranges"); 
+            }
+        }
+
+        public ObservableCollection<KeyValuePair<string, string>> LiteralDataTypes
+        {
+            get
+            {
+                if (_literalDatatypes == null)
+                {
+                    _literalDatatypes = new ObservableCollection<KeyValuePair<string, string>>();
+
+                    _literalDatatypes.Add(new KeyValuePair<string, string>("SelectClass", "<Use Selected Item>"));
+
+                    foreach (string str in GetValues<XmlTypeCode>())
+                    {
+                        _literalDatatypes.Add(new KeyValuePair<string, string>("http://www.w3.org/2001/XMLSchema#" + str.ToLower(), str));
+                        //_ranges.Add(new KeyValuePair<string, string>(str, str));
+                    }
+                }
+
+                return _literalDatatypes;
+            }
+            set
+            {
+                _literalDatatypes = value;
+
+                RaisePropertyChanged(this, "LiteralDataTypes");
             }
         }
 

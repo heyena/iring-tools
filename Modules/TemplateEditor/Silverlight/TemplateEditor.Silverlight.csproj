@@ -125,6 +125,12 @@
     <Compile Include="EditorRegion\TemplateQualificationModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\..\..\AssemblyInfo.cs" />
+    <Compile Include="RolesPopup\DialogClosedEventArgs.cs" />
+    <Compile Include="RolesPopup\IRolesPopup.cs" />
+    <Compile Include="RolesPopup\RolesPopup.xaml.cs">
+      <DependentUpon>RolesPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="RolesPopup\RolesPopupModel.cs" />
     <Compile Include="TemplateEditorModule.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -133,6 +139,10 @@
       <Generator>MSBuild:MarkupCompilePass1</Generator>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="RolesPopup\RolesPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>

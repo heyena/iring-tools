@@ -1431,6 +1431,7 @@ namespace org.ids_adi.iring.referenceData
                                         string roleDescription = string.Empty;
                                         string generatedId = string.Empty;
                                         string genName = string.Empty;
+                                        int i = 0;
 
                                         //ID generator
                                         genName = "Role definition " + roleLabel;
@@ -1455,12 +1456,14 @@ namespace org.ids_adi.iring.referenceData
                                         //value restriction
                                         if (role.value != null)
                                         {
-                                            if (role.value.As != null)
+                                            if (role.value.text != null)
                                             {
-                                                sparql += "<" + role.qualifies + "> rdf:type tpl:R67036823327 ; "
+                                                sparql += "_:role" + i + " rdf:type tpl:R67036823327 ; "
                                                       + " tpl:R56456315674 " + ID + " ; "
                                                       + " tpl:R89867215482 <" + role.qualifies + "> ; "
-                                                      + " R29577887690 " + role.value.As + "^^xsd:int . ";
+                                                      + " tpl:R29577887690 '" + role.value.text + "'^^xsd:" + role.value.As + " .";
+                                                
+                                                i++;
                                             }
                                             else if (role.value.reference != null) 
                                             {
@@ -1498,6 +1501,7 @@ namespace org.ids_adi.iring.referenceData
                                 string roleDescription = string.Empty;
                                 string generatedId = string.Empty;
                                 string genName = string.Empty;
+                                int i = 0;
 
                                 TemplateQualification td = q.templateQualifications[0];
                                 string rName = string.Empty;
@@ -1541,12 +1545,14 @@ namespace org.ids_adi.iring.referenceData
                                         //value restriction
                                         if (rd.value != null)
                                         {
-                                            if (rd.value.As != null)
+                                            if (rd.value.text != null)
                                             {
-                                                nameSparql += "<" + rd.qualifies + "> rdf:type tpl:R67036823327 ; "
+                                                nameSparql += "_:role" + i + " rdf:type tpl:R67036823327 ; "
                                                       + " tpl:R56456315674 " + ID + " ; "
                                                       + " tpl:R89867215482 <" + rd.qualifies + "> ; "
-                                                      + " R29577887690 <" + rd.value.As + ">^^xsd:int . ";
+                                                      + " tpl:R29577887690 '" + rd.value.text + "'^^xsd:" + rd.value.As + " .";
+
+                                                i++;
                                             }
                                             else if (rd.value.reference != null)
                                             {
@@ -1595,7 +1601,7 @@ namespace org.ids_adi.iring.referenceData
 
                                     foreach (RoleQualification rd in template.roleQualification)
                                     {
-
+                                        i = 0;
                                         foreach (QMXFName roleName in rd.name)
                                         {
                                             roleLabel = roleName.value;
@@ -1608,12 +1614,14 @@ namespace org.ids_adi.iring.referenceData
                                         //value restriction
                                         if (rd.value != null)
                                         {
-                                            if (rd.value.As != null)
+                                            if (rd.value.text != null)
                                             {
-                                                nameSparql += "<" + rd.qualifies + "> rdf:type tpl:R67036823327 ; "
+                                                nameSparql += "_:role" + i + " rdf:type tpl:R67036823327 ; "
                                                       + " tpl:R56456315674 " + ID + " ; "
                                                       + " tpl:R89867215482 <" + rd.qualifies + "> ; "
-                                                      + " R29577887690 <" + rd.value.As + ">^^xsd:int . ";
+                                                      + " tpl:R29577887690 '" + rd.value.text + "'^^xsd:" + rd.value.As + " .";
+
+                                                i++;
                                             }
                                             else if (rd.value.reference != null)
                                             {
