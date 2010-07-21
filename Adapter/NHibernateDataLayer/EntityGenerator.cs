@@ -406,14 +406,14 @@ namespace org.iringtools.adapter.datalayer
               }
               */
 
-              _dataObjectWriter.WriteLine("public virtual {0} {0} {{ get; set; }}", dataRelationship.relatedObjectName);
+              _dataObjectWriter.WriteLine("public virtual {0} {1} {{ get; set; }}", dataRelationship.relatedObjectName, dataRelationship.relationshipName);
               _mappingWriter.WriteEndElement(); // end one-to-one element
               
               break;
 
             case RelationshipType.OneToMany:
                             
-              _dataObjectWriter.WriteLine("public virtual ISet<{0}> {0} {{ get; set; }}", dataRelationship.relatedObjectName);
+              _dataObjectWriter.WriteLine("public virtual ISet<{0}> {1} {{ get; set; }}", dataRelationship.relatedObjectName, dataRelationship.relationshipName);
               _mappingWriter.WriteStartElement("set");
               _mappingWriter.WriteAttributeString("name", relatedDataObject.tableName);
               _mappingWriter.WriteAttributeString("inverse", "true");
@@ -556,17 +556,17 @@ namespace org.iringtools.adapter.datalayer
         
         foreach (DataRelationship dataRelationship in dataObject.dataRelationships)
         {
-          _dataObjectWriter.WriteLine("case \"{0}\":", dataRelationship.relatedObjectName);
+          _dataObjectWriter.WriteLine("case \"{0}\":", dataRelationship.relationshipName);
           _dataObjectWriter.Indent++;
 
           if (dataRelationship.relationshipType == RelationshipType.OneToOne)
           {
-            _dataObjectWriter.WriteLine(@"return new List<IDataObject>{{{0}}};", dataRelationship.relatedObjectName);
+            _dataObjectWriter.WriteLine(@"return new List<IDataObject>{{{0}}};", dataRelationship.relationshipName);
           }
           else if (dataRelationship.relationshipType == RelationshipType.OneToMany)
           {
             _dataObjectWriter.WriteLine(@"IList<IDataObject> __relatedObjects = new List<IDataObject>();");
-            _dataObjectWriter.WriteLine(@"foreach ({0} __relatedObject in {0}) __relatedObjects.Add(__relatedObject);", dataRelationship.relatedObjectName);
+            _dataObjectWriter.WriteLine(@"foreach ({0} __relatedObject in {1}) __relatedObjects.Add(__relatedObject);", dataRelationship.relatedObjectName, dataRelationship.relationshipName);
             _dataObjectWriter.WriteLine(@"return __relatedObjects;");
           }
 

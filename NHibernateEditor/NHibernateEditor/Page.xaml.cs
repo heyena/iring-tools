@@ -118,6 +118,7 @@ namespace ApplicationEditor
           else if (dataRelationship == null && lbMaps != 0) //not existing
           {
             dataRelationship = new DataRelationship();
+            dataRelationship.relationshipName = relations.tblRelationshipName.Text;
             dataRelationship.relationshipType = (RelationshipType)Enum.Parse(typeof(RelationshipType), relations.cbRelationType.SelectedItem.ToString(), true);
             dataRelationship.relatedObjectName = relations.cbRelated.SelectedItem.ToString();
             foreach (String propMap in relations.lbRelatedProps.Items)
@@ -1458,7 +1459,7 @@ namespace ApplicationEditor
         else
         {
           TreeViewItem selectedItem = findObjectParent((TreeViewItem)selectedObject);
-
+                    
           relations.cbExisting.Items.Clear();
           relations.cbSourceProps.Items.Clear();
           relations.cbRelated.Items.Clear();
@@ -1469,7 +1470,7 @@ namespace ApplicationEditor
           relations.tblPrimaryObject.Tag = dataObject;
           foreach (DataRelationship dataRelation in dataObject.dataRelationships)
           {
-            relations.cbExisting.Items.Add(dataRelation.relatedObjectName);
+            relations.cbExisting.Items.Add(dataRelation.relationshipName);
           }
 
           foreach (DataProperty dataProperty in dataObject.dataProperties)

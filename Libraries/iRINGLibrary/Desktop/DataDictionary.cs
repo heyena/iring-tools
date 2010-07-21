@@ -156,10 +156,10 @@ namespace org.iringtools.library
         OneToOne,
         [EnumMember]
         OneToMany,
-        [EnumMember]
-        ManyToOne,
-        [EnumMember]
-        ManyToMany
+        //[EnumMember]
+        //ManyToOne,
+        //[EnumMember]
+        //ManyToMany
     }
 
     [DataContract(Namespace = "http://ns.iringtools.org/library")]
@@ -175,6 +175,9 @@ namespace org.iringtools.library
     [DataContract(Namespace = "http://ns.iringtools.org/library")]
     public class DataRelationship
     {
+        [DataMember(IsRequired = true)]
+        public string relationshipName { get; set; }
+
         [DataMember(IsRequired = true)]
         public RelationshipType relationshipType { get; set; }
 

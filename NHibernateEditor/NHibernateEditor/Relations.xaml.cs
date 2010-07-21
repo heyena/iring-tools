@@ -123,7 +123,8 @@ namespace ApplicationEditor
       DatabaseDictionary dbdict = (DatabaseDictionary)cbRelated.Tag;
       string selectedrelationship = e.AddedItems[0].ToString();
       org.iringtools.library.DataObject selectedDataObject = tblPrimaryObject.Tag as org.iringtools.library.DataObject;
-      DataRelationship dataRelationship = selectedDataObject.dataRelationships.First(c => c.relatedObjectName == e.AddedItems[0].ToString());
+      DataRelationship dataRelationship = selectedDataObject.dataRelationships.First(c => c.relationshipName == e.AddedItems[0].ToString());
+      tblRelationshipName.Text = dataRelationship.relationshipName;
       cbRelated.SelectedValue = dataRelationship.relatedObjectName;
       cbRelationType.SelectedValue = dataRelationship.relationshipType.ToString();
       foreach (PropertyMap map in dataRelationship.propertyMaps)
