@@ -1,0 +1,14 @@
+==Java Development Environment Configuration==
+ * checkout from svn/branches/ports/java
+ * copy and modify iring-tools-java.userlibraries
+ * import copy of iring-tools-java.userlibraries into 
+  * Window -> Preferences...
+  * Java -> Build Path -> User Libraries
+ * import Preference.epf
+ * create Server for Tomcat 6.0 on localhost
+ * import existing project iringtools
+ * Select build.xml and run as Ant script
+ * Select iringtools project and run on server (Tomcat 6.0 on localhost)
+ * navigate using web browser to...
+   http://localhost:8080/iringtools/ExchangeService/12345_000/ABC/Lines/diff
+   result is the difference of two RDF filess
