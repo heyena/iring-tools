@@ -774,7 +774,7 @@ namespace org.iringtools.modulelibrary.layerdal
         {
             try
             {
-                string message = Utility.SerializeXml<QMXF>(template);
+                string message = Utility.SerializeDataContract<QMXF>(template);
 
                 _postTemplateClient.Headers["Content-type"] = "application/xml";
                 _postTemplateClient.Encoding = Encoding.UTF8;
@@ -791,7 +791,7 @@ namespace org.iringtools.modulelibrary.layerdal
         {
             try
             {
-                string message = Utility.SerializeXml<QMXF>(@class);
+                string message = Utility.SerializeDataContract<QMXF>(@class);
 
                 _postClassClient.Headers["Content-type"] = "application/xml";
                 _postClassClient.Encoding = Encoding.UTF8;
