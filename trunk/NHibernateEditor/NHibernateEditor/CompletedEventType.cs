@@ -13,6 +13,7 @@ namespace ApplicationEditor
     PostDictionaryToAdapterService,
     PostScopes,
     ClearTripleStore,
-    DeleteApp
+    DeleteApp,
+    GetRelationships
   }
 }

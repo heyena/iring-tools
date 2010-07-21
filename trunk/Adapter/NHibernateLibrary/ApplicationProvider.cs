@@ -92,32 +92,10 @@ namespace org.iringtools.application
         }
         else if (ValidateDatabaseDictionary(dbDictionary))
         {
-          foreach (DataObject dataObject in dbDictionary.dataObjects)
-          {
-            RemoveDups(dataObject);
-          }
 
           EntityGenerator generator = _kernel.Get<EntityGenerator>();
           _response.Append(generator.Generate(dbDictionary, projectName, applicationName));
 
-          /* GJvR this is now handled by the application editor
-          List<ScopeProject> scopes = new List<ScopeProject> 
-          {
-            new ScopeProject {
-              Name = projectName,
-              Description = String.Empty,
-              Applications = new List<ScopeApplication>
-              {
-                new ScopeApplication {
-                  Name = applicationName,
-                  Description = String.Empty,
-                }
-              }
-            }
-          };
-
-          _response.Append(_adapterClient.PostScopes(scopes));
-          */
 
           // Update binding configuration
           XElement binding = new XElement("module",
@@ -225,6 +203,7 @@ namespace org.iringtools.application
               "inner join sys.tables t3 on t3.name = t1.table_name and t3.object_id = t2.object_id " +
               "left join information_schema.key_column_usage t4 on t4.table_name = t1.table_name and t4.column_name = t1.column_name " +
               "left join information_schema.table_constraints t5 on t5.constraint_name = t4.constraint_name " +
+              "where t1.data_type not in ('image') " + 
               "order by t1.table_name, t5.constraint_type, t1.column_name";// +
           properties.Add("connection.driver_class", "NHibernate.Driver.SqlClientDriver");
 
@@ -395,24 +374,19 @@ namespace org.iringtools.application
         _logger.Error("Error in GetDatabaseSchema: " + ex);
         return dbDictionary;
       }
-    }   
+    }
 
-    public List<string> GetExistingDbDictionaryFiles()
+    public String[] GetRelationships()
     {
-        List<string> resultFiles = new List<string>();
-        try
-        {
-            DirectoryInfo directoryInfo = new DirectoryInfo(_settings["AdapterXmlPath"]);
-            FileInfo[] files = directoryInfo.GetFiles("DatabaseDictionary.*.xml");
-            foreach (FileInfo file in files)
-                resultFiles.Add(file.Name);
-
-        }
-        catch (Exception ex)
-        {
-            _logger.Error("Error in GetExistingDbDictionaryFiles: " + ex);
-        }
-        return resultFiles;
+      try
+      {
+        return Enum.GetNames(typeof(RelationshipType));
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in GetRelationships: " + ex);
+        return null;
+      }
     }
 
     public String[] GetProviders()
