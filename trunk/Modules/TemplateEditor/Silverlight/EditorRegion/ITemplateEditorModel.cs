@@ -49,7 +49,15 @@ namespace org.iringtools.modules.templateeditor.editorregion
 
         KeyValuePair<string, string> SelectedRoleRange { get; set; }
 
+        string SelectedRoleValueReference { get; set; }
+
+        string SelectedRoleValueLiteral { get; set; }
+
+        KeyValuePair<string, string> SelectedRoleValueLiteralDatatype { get; set; }
+
         ObservableCollection<KeyValuePair<string, string>> Ranges { get; }
+
+        ObservableCollection<KeyValuePair<string, string>> LiteralDataTypes { get; }
 
         void AddRole(string name, string description, string uri);
 

@@ -408,7 +408,45 @@ namespace org.iringtools.modules.templateeditor.editorregion
             }
         }
 
-        public override string SelectedRoleValue
+        //public override string SelectedRoleValue
+        //{
+        //    get
+        //    {
+        //        try
+        //        {
+        //            if (_selectedRole != null)
+        //            {
+        //                if (selectedRole.value.reference != string.Empty)
+        //                {
+        //                    return selectedRole.value.reference;
+        //                }
+        //                else
+        //                {
+        //                    return selectedRole.value.text;
+        //                }
+        //            }
+        //            else
+        //            {
+        //                return string.Empty;
+        //            }
+        //        }
+        //        catch
+        //        {
+        //            return string.Empty;
+        //        }
+        //    }
+        //    set
+        //    {
+        //        if (_selectedRole != null)
+        //        {
+        //            selectedRole.value.text = value;
+
+        //            RaisePropertyChanged(this, "SelectedRoleValue");
+        //        }
+        //    }
+        //}
+
+        public override string SelectedRoleValueReference
         {
             get
             {
@@ -416,14 +454,7 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 {
                     if (_selectedRole != null)
                     {
-                        if (selectedRole.value.reference != string.Empty)
-                        {
-                            return selectedRole.value.reference;
-                        }
-                        else
-                        {
-                            return selectedRole.value.text;
-                        }
+                        return selectedRole.value.reference;
                     }
                     else
                     {
@@ -439,9 +470,84 @@ namespace org.iringtools.modules.templateeditor.editorregion
             {
                 if (_selectedRole != null)
                 {
+                    selectedRole.value.reference = value;
+
+                    RaisePropertyChanged(this, "SelectedRoleValueReference");
+                }
+            }
+        }
+
+        public override string SelectedRoleValueLiteral
+        {
+            get
+            {
+                try
+                {
+                    if (_selectedRole != null)
+                    {
+                        return selectedRole.value.text;
+                    }
+                    else
+                    {
+                        return string.Empty;
+                    }
+                }
+                catch
+                {
+                    return string.Empty;
+                }
+            }
+            set
+            {
+                if (_selectedRole != null)
+                {
+                    if (selectedRole.value == null)
+                        selectedRole.value = new QMXFValue();
+
                     selectedRole.value.text = value;
 
-                    RaisePropertyChanged(this, "SelectedRoleValue");
+                    RaisePropertyChanged(this, "SelectedRoleValueLiteral");
+                }
+            }
+        }
+
+        public override KeyValuePair<string, string> SelectedRoleValueLiteralDatatype
+        {
+            get
+            {
+                try
+                {
+                    var items = from query in this.LiteralDataTypes
+                                where query.Key == selectedRole.value.As
+                                select query;
+
+                    if (items.Count() == 0)
+                    {
+                        KeyValuePair<string, string> dataType = new KeyValuePair<string, string>(selectedRole.value.As, selectedRole.value.As);
+
+                        this.LiteralDataTypes.Add(dataType);
+                        return dataType;
+                    }
+                    else
+                    {
+                        return items.FirstOrDefault();
+                    }
+                }
+                catch
+                {
+                    return new KeyValuePair<string, string>("", "");
+                }
+            }
+            set
+            {
+                if (_selectedRole != null)
+                {
+                    if (selectedRole.value == null)
+                        selectedRole.value = new QMXFValue();
+
+                    selectedRole.value.As = value.Value;
+
+                    RaisePropertyChanged(this, "SelectedRoleValueLiteralDatatype");
                 }
             }
         }

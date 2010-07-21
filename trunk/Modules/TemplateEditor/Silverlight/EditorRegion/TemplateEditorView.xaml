@@ -130,7 +130,7 @@
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="190"/>
+                    <RowDefinition Height="140"/>
                 </Grid.RowDefinitions>
                 
                 <ListBox 
@@ -148,11 +148,9 @@
                     </Grid.ColumnDefinitions>
 
                     <Grid.RowDefinitions>                        
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="35"/>
                         <RowDefinition Height="35"/>
                     </Grid.RowDefinitions>
                                         
@@ -201,65 +199,25 @@
                         IsReadOnly="{Binding IsReadOnly, Mode=OneWay}"
                         Text="{Binding SelectedRoleDescription, Mode=OneWay}"/>
 
-                    <RadioButton
-                        x:Name="radRoleRange"
-                        Grid.Column="0"
-                        Grid.Row="3"
-                        Height="22"
-                        HorizontalAlignment="Left" 
-                        VerticalAlignment="Bottom"
-                        GroupName="RoleRangeValue"
-                        Content="Range:" />
-
-                    <!--<dataInput:Label 
-                        Grid.Column="0" 
-                        Grid.Row="1" 
-                        VerticalAlignment="Center" 
-                        Content="Range:" />-->
-                    <ComboBox
-                        x:Name="roleRange" 
-                        Grid.Column="1"
-                        Grid.Row="3" 
-                        Height="22" 
-		                VerticalAlignment="Center"                        
-                        IsEnabled="{Binding IsEnabled, Mode=OneWay}"
-                        ItemsSource="{Binding Ranges, Mode=TwoWay}"
-                        DisplayMemberPath="Value"
-                        SelectedItem="{Binding SelectedRoleRange, Mode=TwoWay}"/>
-                    
-                    <RadioButton
-                        x:Name="radRoleValue"
-                        Grid.Column="0"
-                        Grid.Row="4"
-                        Height="22"
-                        HorizontalAlignment="Left" 
-                        VerticalAlignment="Bottom"
-                        GroupName="RoleRangeValue"
-                        Content="Value:" 
-                        IsEnabled="{Binding IsSpecializedTemplate}"/>
-                    
-                    <!--<dataInput:Label 
-                        Grid.Column="0" 
-                        Grid.Row="5" 
-                        VerticalAlignment="Center" 
-                        Content="Value:" />-->
-
-                    <TextBox 
-                        x:Name="roleValue" 
-                        Grid.Column="1" 
+                    <Button 
+                        x:Name="editRole" 
+				        Grid.ColumnSpan="2"
                         Grid.Row="4" 
-                        Height="22" 
-				        VerticalAlignment="Center"					    
-                        Text="{Binding SelectedRoleValue, Mode=OneWay}"
-                        IsEnabled="{Binding IsSpecializedTemplate}"/>
+                        Height="21" 
+                        Width="60" 
+				        Margin="8,0,0,8" 
+                        HorizontalAlignment="Left" 
+                        VerticalAlignment="Bottom" 
+                        IsEnabled="{Binding IsRoleSelected, Mode=OneWay}"
+				        Content="Edit" />
 
                     <Button 
                         x:Name="addRole1" 
 				        Grid.ColumnSpan="2"
-                        Grid.Row="6" 
+                        Grid.Row="4" 
                         Height="21" 
                         Width="60" 
-				        Margin="8,0,0,8" 
+				        Margin="136,0,0,8" 
                         HorizontalAlignment="Left" 
                         VerticalAlignment="Bottom" 
                         IsEnabled="{Binding IsEnabled, Mode=OneWay}"
@@ -268,10 +226,10 @@
                     <Button 
                         x:Name="removeRole1" 
                         Grid.ColumnSpan="2"
-				        Grid.Row="6" 
+				        Grid.Row="4" 
                         Height="21" 
                         Width="60" 
-				        Margin="76,0,0,8" 
+				        Margin="204,0,0,8" 
                         HorizontalAlignment="Left" 
                         VerticalAlignment="Bottom"
                         IsEnabled="{Binding IsEnabled, Mode=OneWay}"
@@ -280,10 +238,10 @@
                     <Button 
                         x:Name="applyRole1" 
 				        Grid.ColumnSpan="2"
-                        Grid.Row="6" 
+                        Grid.Row="4" 
                         Height="21" 
                         Width="60" 
-				        Margin="144,0,0,8" 
+				        Margin="272,0,0,8" 
                         HorizontalAlignment="Left" 
                         VerticalAlignment="Bottom" 
                         IsEnabled="{Binding IsEnabled, Mode=OneWay}"

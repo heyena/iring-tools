@@ -31,6 +31,8 @@ using org.iringtools.ontologyservice.presentation.presentationmodels;
 
 using org.ids_adi.qmxf;
 using org.iringtools.library;
+using org.iringtools.modules.templateeditor.rolespopup;
+using Microsoft.Practices.Unity;
 
 namespace org.iringtools.modules.templateeditor.editorregion
 {
@@ -64,6 +66,10 @@ namespace org.iringtools.modules.templateeditor.editorregion
         private ITemplateEditorModel _templateModel = null;
         private EditorMode _editorMode = EditorMode.Add;
 
+        private readonly IUnityContainer container;
+
+        private IRolesPopup _dialog = null;
+
 
         private Button btnOK
         {
@@ -95,30 +101,35 @@ namespace org.iringtools.modules.templateeditor.editorregion
             get { return ButtonCtrl("applyRole1"); }
         }
 
+        private Button btnEditRole
+        {
+            get { return ButtonCtrl("editRole"); }
+        }
+
         private ListBox lstRoles
         {
             get { return ListBoxCtrl("lstRoles1"); }
         }
 
-        private ComboBox cmbRange
-        {
-            get { return ComboBoxCtrl("roleRange"); }
-        }
+        //private ComboBox cmbRange
+        //{
+        //    get { return ComboBoxCtrl("roleRange"); }
+        //}
 
         private ComboBox cmbRepositories
         {
             get { return ComboBoxCtrl("cmbRepositories"); }
         }
 
-        private RadioButton radRoleRange
-        {
-            get { return RadioButtonCtrl("radRoleRange"); }
-        }
+        //private RadioButton radRoleRange
+        //{
+        //    get { return RadioButtonCtrl("radRoleRange"); }
+        //}
 
-        private RadioButton radRoleValue
-        {
-            get { return RadioButtonCtrl("radRoleValue"); }
-        }
+        //private RadioButton radRoleValue
+        //{
+        //    get { return RadioButtonCtrl("radRoleValue"); }
+        //}
 
         private RadioButton radBaseTemplate
         {
@@ -143,7 +154,8 @@ namespace org.iringtools.modules.templateeditor.editorregion
         public TemplateEditorPresenter(ITemplateEditorView view, IIMPresentationModel model,          
             IRegionManager regionManager,
             IReferenceData referenceDataService,
-            IEventAggregator aggregator)
+            IEventAggregator aggregator,
+            IUnityContainer container)
             : base(view, model)
         {
             try
@@ -153,16 +165,19 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 this.regionManager = regionManager;
                 this.referenceDataService = referenceDataService;
 
+                this.container = container;
+                this.container.RegisterType<IRolesPopup, RolesPopup>();
+
 
                 lstRoles.SelectionChanged += (object sender, SelectionChangedEventArgs e) =>
                 {
                     rolesSelectionChanged(sender, e);
                 };
 
-                cmbRange.SelectionChanged += (object sender, SelectionChangedEventArgs e) =>
-                {
-                    rangeSelectionChanged(sender, e);
-                };
+                //cmbRange.SelectionChanged += (object sender, SelectionChangedEventArgs e) =>
+                //{
+                //    rangeSelectionChanged(sender, e);
+                //};
 
                 cmbRepositories.SelectionChanged += (object sender, SelectionChangedEventArgs e) =>
                     repositorySelectionChanged(sender, e);
@@ -197,9 +212,14 @@ namespace org.iringtools.modules.templateeditor.editorregion
                     buttonClickHandler(new ButtonEventArgs(this, btnApplyRole));
                 };
 
-                radRoleRange.Click += new RoutedEventHandler(radRoleRangeValueClickHandler);
+                btnEditRole.Click += (object sender, RoutedEventArgs e) =>
+                {
+                    buttonClickHandler(new ButtonEventArgs(this, btnEditRole));
+                };
 
-                radRoleValue.Click += new RoutedEventHandler(radRoleRangeValueClickHandler);
+                //radRoleRange.Click += new RoutedEventHandler(radRoleRangeValueClickHandler);
+
+                //radRoleValue.Click += new RoutedEventHandler(radRoleRangeValueClickHandler);
 
                 radBaseTemplate.Click += new RoutedEventHandler(radTemplateTypeClickHandler);
 
@@ -216,26 +236,26 @@ namespace org.iringtools.modules.templateeditor.editorregion
 
         }
 
-        void radRoleRangeValueClickHandler(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                if (radRoleRange.IsChecked == true)
-                {
-                    TextCtrl("roleValue").IsEnabled = false;
-                    ComboBoxCtrl("roleRange").IsEnabled = true;
-                }
-                else if (radRoleValue.IsChecked == true)
-                {
-                    TextCtrl("roleValue").IsEnabled = true;
-                    ComboBoxCtrl("roleRange").IsEnabled = false;
-                }
-            }
-            catch (Exception ex)
-            {
-                Error.SetError(ex);
-            }
-        }
+        //void radRoleRangeValueClickHandler(object sender, RoutedEventArgs e)
+        //{
+        //    try
+        //    {
+        //        if (radRoleRange.IsChecked == true)
+        //        {
+        //            TextCtrl("roleValue").IsEnabled = false;
+        //            ComboBoxCtrl("roleRange").IsEnabled = true;
+        //        }
+        //        else if (radRoleValue.IsChecked == true)
+        //        {
+        //            TextCtrl("roleValue").IsEnabled = true;
+        //            ComboBoxCtrl("roleRange").IsEnabled = false;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Error.SetError(ex);
+        //    }
+        //}
 
         void radTemplateTypeClickHandler(object sender, RoutedEventArgs e)
         {
@@ -333,8 +353,8 @@ namespace org.iringtools.modules.templateeditor.editorregion
                     TextCtrl("roleId").DataContext = _templateModel;
                     TextCtrl("roleName").DataContext = _templateModel;
                     TextCtrl("roleDescription").DataContext = _templateModel;
-                    ComboBoxCtrl("roleRange").DataContext = _templateModel;
-                    TextCtrl("roleValue").DataContext = _templateModel;
+                    //ComboBoxCtrl("roleRange").DataContext = _templateModel;
+                    //TextCtrl("roleValue").DataContext = _templateModel;
 
                     lstRoles.DataContext = _templateModel;
 
@@ -343,11 +363,12 @@ namespace org.iringtools.modules.templateeditor.editorregion
                     RadioButtonCtrl("radBaseTemplate").DataContext = _templateModel;
                     RadioButtonCtrl("radSpecializedTemplate").DataContext = _templateModel;
 
-                    RadioButtonCtrl("radRoleValue").DataContext = _templateModel;
+                    //RadioButtonCtrl("radRoleValue").DataContext = _templateModel;
 
                     ButtonCtrl("addRole1").DataContext = _templateModel;
                     ButtonCtrl("removeRole1").DataContext = _templateModel;
                     ButtonCtrl("applyRole1").DataContext = _templateModel;
+                    ButtonCtrl("editRole").DataContext = _templateModel;
                 }
 
             }
@@ -478,8 +499,8 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 TextCtrl("roleId").DataContext = _templateModel;
                 TextCtrl("roleName").DataContext = _templateModel;
                 TextCtrl("roleDescription").DataContext = _templateModel;
-                ComboBoxCtrl("roleRange").DataContext = _templateModel;
-                TextCtrl("roleValue").DataContext = _templateModel;
+                //ComboBoxCtrl("roleRange").DataContext = _templateModel;
+                //TextCtrl("roleValue").DataContext = _templateModel;
 
                 lstRoles.DataContext = _templateModel;
 
@@ -488,11 +509,12 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 RadioButtonCtrl("radBaseTemplate").DataContext = _templateModel;
                 RadioButtonCtrl("radSpecializedTemplate").DataContext = _templateModel;
 
-                RadioButtonCtrl("radRoleValue").DataContext = _templateModel;
+                //RadioButtonCtrl("radRoleValue").DataContext = _templateModel;
                 
                 ButtonCtrl("addRole1").DataContext = _templateModel;
                 ButtonCtrl("removeRole1").DataContext = _templateModel;
                 ButtonCtrl("applyRole1").DataContext = _templateModel;
+                ButtonCtrl("editRole").DataContext = _templateModel;
             }
             catch (Exception ex)
             {
@@ -541,13 +563,12 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 }
                 else if (e.Name.ToString() == "addRole1")
                 {
-                    if (cmbRange.SelectedItem != null)
-                    {
-                        TextBox txtName = TextCtrl("roleName");
-                        TextBox txtDesc = TextCtrl("roleDescription");
+                    
+                    TextBox txtName = TextCtrl("roleName");
+                    TextBox txtDesc = TextCtrl("roleDescription");
 
-                        _templateModel.AddRole(txtName.Text, txtDesc.Text, ((KeyValuePair<string, string>)cmbRange.SelectedItem).Value);
-                    }
+                    _templateModel.AddRole(txtName.Text, txtDesc.Text, string.Empty);
+                   
                 }
                 else if (e.Name.ToString() == "removeRole1")
                 {
@@ -562,10 +583,27 @@ namespace org.iringtools.modules.templateeditor.editorregion
                     TextBox txtName = TextCtrl("roleName");
                     TextBox txtDesc = TextCtrl("roleDescription");
 
-                    if (lstRoles.SelectedItem != null && cmbRange.SelectedItem != null)
+                    if (lstRoles.SelectedItem != null)
                     {
-                        _templateModel.ApplyRole((KeyValuePair<string, object>)lstRoles.SelectedItem, txtName.Text, txtDesc.Text, ((KeyValuePair<string, string>)cmbRange.SelectedItem).Key);
+                        _templateModel.ApplyRole((KeyValuePair<string, object>)lstRoles.SelectedItem, txtName.Text, txtDesc.Text, string.Empty);
                     }
+                }
+                else if (e.Name.ToString() == "editRole")
+                {
+                    _dialog = container.Resolve<IRolesPopup>();
+
+                    RolesPopupModel rolesPopupModel = new RolesPopupModel()
+                    {
+                        LiteralDataTypes = _templateModel.LiteralDataTypes,
+                        Ranges = _templateModel.Ranges,
+                        SelectedRoleRange = _templateModel.SelectedRoleRange,
+                        SelectedRoleValueLiteral = _templateModel.SelectedRoleValueLiteral,
+                        SelectedRoleValueLiteralDatatype = _templateModel.SelectedRoleValueLiteralDatatype,
+                        SelectedRoleValueReference = _templateModel.SelectedRoleValueReference
+                    };
+
+                    _dialog.Closed += new EventHandler(dialog_DialogClosed);
+                    _dialog.Show(rolesPopupModel);
                 }
             }
             catch (Exception ex)
@@ -589,46 +627,57 @@ namespace org.iringtools.modules.templateeditor.editorregion
             }
             catch (Exception ex)
             {
-                
                 throw ex;
             }
         }
 
-        public void rangeSelectionChanged(object sender, SelectionChangedEventArgs e)
+        void dialog_DialogClosed(object sender, EventArgs e)
         {
-            try
+            DialogClosedEventArgs args = e as DialogClosedEventArgs;
+            if (args.DialogResult.Value == true)
             {
-                if (cmbRange.SelectedItem != null)
-                {
-                    KeyValuePair<string, string> range = (KeyValuePair<string, string>)cmbRange.SelectedItem;
-
-                    if (range.Value != null && range.Value.Equals("<Use Selected Item>"))
-                    {
-                        KeyValuePair<string, string> cmbItem = new KeyValuePair<string, string>(model.SelectedIMLabel, model.SelectedIMUri);
-
-                        //GvR need to fix this issue of add already existing item
-                        var items = from query in _templateModel.Ranges
-                                    where query.Key == cmbItem.Key
-                                    select query;
-
-                        if (items.Count() == 0)
-                        {
-                            _templateModel.Ranges.Add(cmbItem);
-                            cmbRange.SelectedItem = cmbItem;
-                        }
-                        else
-                        {
-                            cmbRange.SelectedItem = items.FirstOrDefault();
-                        }
-
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
+                _templateModel.SelectedRoleRange = _dialog.rolesPopupModel.SelectedRoleRange;
+                _templateModel.SelectedRoleValueLiteral = _dialog.rolesPopupModel.SelectedRoleValueLiteral;
+                _templateModel.SelectedRoleValueLiteralDatatype = _dialog.rolesPopupModel.SelectedRoleValueLiteralDatatype;
+                _templateModel.SelectedRoleValueReference = _dialog.rolesPopupModel.SelectedRoleValueReference;
             }
         }
+
+        //public void rangeSelectionChanged(object sender, SelectionChangedEventArgs e)
+        //{
+        //    try
+        //    {
+        //        if (cmbRange.SelectedItem != null)
+        //        {
+        //            KeyValuePair<string, string> range = (KeyValuePair<string, string>)cmbRange.SelectedItem;
+
+        //            if (range.Value != null && range.Value.Equals("<Use Selected Item>"))
+        //            {
+        //                KeyValuePair<string, string> cmbItem = new KeyValuePair<string, string>(model.SelectedIMLabel, model.SelectedIMUri);
+
+        //                //GvR need to fix this issue of add already existing item
+        //                var items = from query in _templateModel.Ranges
+        //                            where query.Key == cmbItem.Key
+        //                            select query;
+
+        //                if (items.Count() == 0)
+        //                {
+        //                    _templateModel.Ranges.Add(cmbItem);
+        //                    cmbRange.SelectedItem = cmbItem;
+        //                }
+        //                else
+        //                {
+        //                    cmbRange.SelectedItem = items.FirstOrDefault();
+        //                }
+
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
 
         public void showEditorHandler(ButtonEventArgs e)
         {
