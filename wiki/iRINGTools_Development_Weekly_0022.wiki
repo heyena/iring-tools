@@ -1,4 +1,6 @@
+#summary Date: 2010/07/13  Time: 09:00 EST
 #labels Meeting
+
 =ATTENDEES=
   * Mohamed
   * Monika
