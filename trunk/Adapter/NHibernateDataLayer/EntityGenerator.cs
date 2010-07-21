@@ -132,6 +132,8 @@ namespace org.iringtools.adapter.datalayer
           parameters.ReferencedAssemblies.Add(_settings["AdapterBinaryPath"] + "iRINGLibrary.dll");
           NHIBERNATE_ASSEMBLIES.ForEach(assembly => parameters.ReferencedAssemblies.Add(_settings["AdapterBinaryPath"] + assembly));
 
+          Utility.WriteString(sourceCode, @"C:\Projects\sourcecode.cs");
+
           Utility.Compile(compilerOptions, parameters, new string[] { sourceCode });
           #endregion Compile entities
 
@@ -374,7 +376,7 @@ namespace org.iringtools.adapter.datalayer
 
               DataProperty keyProperty = dataObject.getKeyProperty(dataObject.keyProperties.First().keyPropertyName);
 
-              _dataObjectWriter.WriteLine("public virtual {0} Id {{ get; set; }}", keyProperty.dataType);
+              //_dataObjectWriter.WriteLine("public virtual {0} Id {{ get; set; }}", keyProperty.dataType);
 
               _mappingWriter.WriteStartElement("id");
               _mappingWriter.WriteAttributeString("name", "Id");
@@ -404,7 +406,7 @@ namespace org.iringtools.adapter.datalayer
               }
               */
 
-              _dataObjectWriter.WriteLine("public virtual {0} Get{0} {{ get; set; }}", dataRelationship.relatedObjectName);
+              _dataObjectWriter.WriteLine("public virtual {0} {0} {{ get; set; }}", dataRelationship.relatedObjectName);
               _mappingWriter.WriteEndElement(); // end one-to-one element
               
               break;
@@ -563,11 +565,9 @@ namespace org.iringtools.adapter.datalayer
           }
           else if (dataRelationship.relationshipType == RelationshipType.OneToMany)
           {
-            _dataObjectWriter.WriteLine(
-        @"IList<IDataObject> __relatedObjects = new List<IDataObject>();
-          foreach ({0} __relatedObject in {0})
-            __relatedObjects.Add(__relatedObject);
-          return __relatedObjects;", dataRelationship.relatedObjectName);
+            _dataObjectWriter.WriteLine(@"IList<IDataObject> __relatedObjects = new List<IDataObject>();");
+            _dataObjectWriter.WriteLine(@"foreach ({0} __relatedObject in {0}) __relatedObjects.Add(__relatedObject);", dataRelationship.relatedObjectName);
+            _dataObjectWriter.WriteLine(@"return __relatedObjects;");
           }
 
           _dataObjectWriter.Indent--;
