@@ -89,6 +89,10 @@
     <Content Include="SPARQL\getTemplateRoles.txt" />
     <Content Include="SPARQL\getTemplateSpecialization.txt" />
     <Content Include="SPARQL\GetValueRestriction.txt" />
+    <Content Include="SPARQL\part8containssearch.txt" />
+    <Content Include="SPARQL\part8getclass.txt" />
+    <Content Include="SPARQL\part8getsuberclass.txt" />
+    <Content Include="SPARQL\part8getsuperclass.txt" />
     <Content Include="SPARQL\SandboxContainsSearch.txt" />
     <Content Include="SPARQL\SandboxExactSearch.txt" />
     <Content Include="SPARQL\SandboxTemplateContainsSearch.txt" />
