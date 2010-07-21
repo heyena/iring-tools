@@ -49,7 +49,12 @@ namespace org.iringtools.application
         public String[] GetProviders()
         {
             return _applicationProvider.GetProviders();
-        }        
+        }
+
+        public String[] GetRelationships()
+        {
+          return _applicationProvider.GetRelationships();
+        }
 
     }
 }

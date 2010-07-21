@@ -27,5 +27,9 @@ namespace org.iringtools.application
         [OperationContract]
         [WebGet(UriTemplate = "/providers")]
         string[] GetProviders();
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/relationship")]
+        string[] GetRelationships();
     }
 }

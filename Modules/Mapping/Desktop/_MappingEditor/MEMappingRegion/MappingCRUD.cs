@@ -710,7 +710,9 @@ namespace org.iringtools.modules.memappingregion
                   model.SelectedMappingItem.itemTextBlock.Text.Replace(Presenter.unmappedToken, "");
             }
           }
+          Presenter.RefreshRoleMap(roleMap);
         }
+        
         Presenter.ButtonCtrl("btnSave").IsEnabled = true;
         Presenter.ButtonCtrl("btnSave").Background = new SolidColorBrush(Color.FromArgb(255, 255, 0, 0));
         saveActive = true;

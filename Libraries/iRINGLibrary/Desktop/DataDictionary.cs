@@ -96,7 +96,7 @@ namespace org.iringtools.library
           {
             if (dataProperty == property)
             {
-              this.dataProperties.Remove(dataProperty);
+              dataProperties.Remove(dataProperty);
               break;
             }
           }
@@ -173,7 +173,7 @@ namespace org.iringtools.library
     }
 
     [DataContract(Namespace = "http://ns.iringtools.org/library")]
-    public abstract class DataRelationship
+    public class DataRelationship
     {
         [DataMember(IsRequired = true)]
         public RelationshipType relationshipType { get; set; }
@@ -183,6 +183,11 @@ namespace org.iringtools.library
 
         [DataMember(IsRequired = true)]
         public List<PropertyMap> propertyMaps { get; set; }
+
+        public DataRelationship()
+        {
+          this.propertyMaps = new List<PropertyMap>();
+        }
     }
 
     [DataContract(Namespace = "http://ns.iringtools.org/library")]

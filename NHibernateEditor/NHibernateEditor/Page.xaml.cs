@@ -42,7 +42,7 @@ namespace ApplicationEditor
     public string selectedCBItem = string.Empty;
 
     private bool isPosting;
-
+    private bool isFetched;
     private ApplicationDAL _dal;
 
     //public event System.EventHandler<System.EventArgs> OnDataArrived;
@@ -74,7 +74,9 @@ namespace ApplicationEditor
         biBusyWindow.IsBusy = true;
         _dal.GetScopes();
         _dal.GetProviders();
+        _dal.GetRelationShipTypes();
         isPosting = false;
+        isFetched = false;
       }
       catch (Exception ex)
       {
@@ -84,13 +86,61 @@ namespace ApplicationEditor
 
     void relations_Closed(object sender, EventArgs e)
     {
+      DataRelationship dataRelationship = null;
+      PropertyMap map = null;
+      int lbMaps = relations.lbRelatedProps.Items.Count;
       try
       {
         if ((bool)relations.DialogResult && !compositeKeys.CancelButton.IsPressed)
         {
-        }
-        else
-        {
+          if (relations.cbRelationType.SelectedIndex == -1) return;
+
+          TreeViewItem objectParent = findObjectParent((TreeViewItem)tvwDestination.SelectedItem);
+          org.iringtools.library.DataObject dataObject = (org.iringtools.library.DataObject)objectParent.Tag;
+          if (relations.cbExisting.SelectedValue != null)
+          {
+            string existingRelation = relations.cbExisting.SelectedValue.ToString();
+            dataRelationship = dataObject.dataRelationships.First(c => c.relatedObjectName == existingRelation);
+          }
+          // edit exiisting
+          if (dataRelationship != null)
+          {
+            dataRelationship.propertyMaps.Clear();
+            if (lbMaps != 0)// got maps
+            {
+              foreach (String propMap in relations.lbRelatedProps.Items)
+              {
+                map = new PropertyMap { dataPropertyName = propMap.Split('.')[0], relatedPropertyName = propMap.Split('.')[1] };
+                dataRelationship.propertyMaps.Add(map);
+              }
+            }
+          }
+          else if (dataRelationship == null && lbMaps != 0) //not existing
+          {
+            dataRelationship = new DataRelationship();
+            dataRelationship.relationshipType = (RelationshipType)Enum.Parse(typeof(RelationshipType), relations.cbRelationType.SelectedItem.ToString(), true);
+            dataRelationship.relatedObjectName = relations.cbRelated.SelectedItem.ToString();
+            foreach (String propMap in relations.lbRelatedProps.Items)
+            {
+              map = new PropertyMap { dataPropertyName = propMap.Split('.')[0], relatedPropertyName = propMap.Split('.')[1] };
+              dataRelationship.propertyMaps.Add(map);
+            }
+          }
+          DataRelationship currentRelationship = dataObject.dataRelationships.Where(c => c.relatedObjectName == dataRelationship.relatedObjectName).FirstOrDefault();
+          if (dataRelationship.propertyMaps.Count == 0)
+          {
+            if (currentRelationship != null)
+            {
+              dataObject.dataRelationships.Remove(currentRelationship);
+            }
+          }
+          else
+          {
+            dataObject.dataRelationships.Remove(dataRelationship);
+            dataObject.dataRelationships.Add(dataRelationship);
+          }
+          tvwItemDestinationRoot.Items.Clear();
+          constructTreeView((DatabaseDictionary)relations.cbRelated.Tag, tvwItemDestinationRoot);
         }
       }
       catch (Exception ex)
@@ -207,10 +257,31 @@ namespace ApplicationEditor
           case CompletedEventType.SaveDatabaseDictionary:
             savedbdictionaryComplete(args);
             break;
+           
+          case CompletedEventType.GetRelationships:
+            getRelationShipTypesCompeted(args);
+            break;
 
           default:
             break;
         }
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);
+      }
+    }
+
+    private void getRelationShipTypesCompeted(CompletedEventArgs args)
+    {
+      try
+      {
+        if (args.Error != null)
+        {
+          MessageBox.Show(args.FriendlyErrorMessage, "Get relationship types Error", MessageBoxButton.OK);
+          return;
+        }
+        relations.cbRelationType.ItemsSource = (string[])args.Data;
       }
       catch (Exception ex)
       {
@@ -538,7 +609,11 @@ namespace ApplicationEditor
             tbPassword.Password);
           databaseDictionary.provider = (Provider)Enum.Parse(typeof(Provider), cbProvider.SelectedItem.ToString(), true);
           _dal.SaveDatabaseDictionary(databaseDictionary, _currentProject.Name, _currentApplication.Name);
-          _dal.GetDatabaseSchema(_currentProject.Name, _currentApplication.Name);
+          if (!isFetched)
+          {
+            _dal.GetDatabaseSchema(_currentProject.Name, _currentApplication.Name);
+            isFetched = true;
+          }
 
         }
         constructTreeView(databaseDictionary, tvwItemSourceRoot);
@@ -615,8 +690,11 @@ namespace ApplicationEditor
         else
         {
           tvwItemDestinationRoot.Items.Clear();
-
-          _dal.GetDatabaseSchema(project, application);
+          if (!isFetched)
+          {
+            _dal.GetDatabaseSchema(project, application);
+            isFetched = true;
+          }
           constructTreeView(dict, tvwItemDestinationRoot);
         }
       }
@@ -667,7 +745,9 @@ namespace ApplicationEditor
 
           foreach (DataRelationship relation in dataObject.dataRelationships)
           {
-            //columnTreeViewItem = new TreeViewItem{ Header = relation;
+            columnTreeViewItem = new TreeViewItem();
+            columnTreeViewItem.Tag = relation;
+            AddTreeItem(relationshipsTreeViewItem, columnTreeViewItem, relation.relatedObjectName, null, false);
           }
           AddTreeItem(destinationRoot, tableTreeViewItem, dataObject.objectName, null, false);
         }
@@ -1044,7 +1124,11 @@ namespace ApplicationEditor
           dataObject.dataRelationships.Remove((DataRelationship)selectedItem.Tag);
 
         }
-        _dal.GetDatabaseSchema(_currentProject.Name, _currentApplication.Name);
+        if (!isFetched)
+        {
+          _dal.GetDatabaseSchema(_currentProject.Name, _currentApplication.Name);
+          isFetched = true;
+        }
       }
       catch (Exception ex)
       {
@@ -1362,7 +1446,54 @@ namespace ApplicationEditor
 
     private void btnCreateRalation_Click(object sender, RoutedEventArgs e)
     {
-      relations.Show();
+      TreeViewItem selectedObject = (TreeViewItem)tvwDestination.SelectedItem;
+      
+      try
+      {
+        if(selectedObject.Parent is TreeView || selectedObject == null)
+        {
+          MessageBox.Show("Please select a DataDictionary tree view item", "EDIT RELATIONSHIP", MessageBoxButton.OK);
+          return;
+        }
+        else
+        {
+          TreeViewItem selectedItem = findObjectParent((TreeViewItem)selectedObject);
+
+          relations.cbExisting.Items.Clear();
+          relations.cbSourceProps.Items.Clear();
+          relations.cbRelated.Items.Clear();
+          TreeViewItem parent = selectedItem.Parent as TreeViewItem;
+          DataDictionary dbdict = (DataDictionary)parent.Tag;
+          org.iringtools.library.DataObject dataObject = (org.iringtools.library.DataObject)selectedItem.Tag;
+          relations.tblPrimaryObject.Text = dataObject.objectName;
+          relations.tblPrimaryObject.Tag = dataObject;
+          foreach (DataRelationship dataRelation in dataObject.dataRelationships)
+          {
+            relations.cbExisting.Items.Add(dataRelation.relatedObjectName);
+          }
+
+          foreach (DataProperty dataProperty in dataObject.dataProperties)
+          {
+            relations.cbSourceProps.Items.Add(dataProperty.propertyName);
+          }
+
+        //  relations.cbSourceProps.ItemsSource = relations._selectedObjectProperties;
+
+          foreach (org.iringtools.library.DataObject dataObj in dbdict.dataObjects)
+          {
+            relations.cbRelated.Items.Add(dataObj.objectName);
+          }
+
+       //   relations.cbRelated.ItemsSource = relations._relatedObjects;
+          relations.cbRelated.Tag = dbdict;
+          
+          relations.Show();
+        }
+      }
+      catch (Exception ex)
+      {
+      }
+
     }
 
     private void tvwDestination_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
@@ -1561,33 +1692,39 @@ namespace ApplicationEditor
       {
         MessageBox.Show("Please select a provider", "GET SCHEMA", MessageBoxButton.OK);
         cbProvider.Focus();
+        biBusyWindow.IsBusy = false;
         return;
       }
       if (string.IsNullOrEmpty(tbNewDataSource.Text))
       {
         MessageBox.Show("Please enter a data source name", "GET SCHEMA", MessageBoxButton.OK);
         tbNewDataSource.Focus();
+        biBusyWindow.IsBusy = false;
         return;
       }
       if (string.IsNullOrEmpty(tbNewDatabase.Text))
       {
         MessageBox.Show("Please enter a database name", "GET SCHEMA", MessageBoxButton.OK);
         tbNewDatabase.Focus();
+        biBusyWindow.IsBusy = false;
         return;
       }
       if (string.IsNullOrEmpty(tbUserID.Text))
       {
         MessageBox.Show("Please enter a sql server user id", "GET SCHEMA", MessageBoxButton.OK);
         tbUserID.Focus();
+        biBusyWindow.IsBusy = false;
         return;
       }
       if (string.IsNullOrEmpty(tbPassword.Password))
       {
         MessageBox.Show("Please enter a sql server user password", "GET SCHEMA", MessageBoxButton.OK);
         tbPassword.Focus();
+         biBusyWindow.IsBusy = false;
         return;
       }
       _dal.GetDatabaseSchema(_currentProject.Name, _currentApplication.Name);
+      isFetched = true;
     }
 
   }
