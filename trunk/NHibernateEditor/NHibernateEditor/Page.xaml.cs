@@ -926,34 +926,22 @@ namespace ApplicationEditor
 
     }
 
-    //private void btnNewDictionary_Click(object sender, RoutedEventArgs e)
-    //{
-    //    try
-    //    {
-    //       // _dal.GetProviders();
-    //        newDbDictionary.tbMessages.Text = string.Empty;
-    //        newDbDictionary.Show();
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);
-    //    }
-    //}
 
     private void cmbProject_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
       try
       {
-        ComboBoxItem cmbItem = (ComboBoxItem)cmbProject.SelectedItem;
-        if (cmbItem == null) return;
-        _currentProject = (ScopeProject)cmbItem.Tag;
-
-
-        foreach (ScopeApplication application in _currentProject.Applications)
+        ComboBox prjCB = (ComboBox)sender;
+        foreach (ScopeProject project in _scopes)
         {
-          cmbApp.Items.Add(new ComboBoxItem { Content = application.Name, Tag = application });
+          if (project.Name == ((ScopeProject)((ComboBoxItem)prjCB.SelectedItem).Tag).Name)
+          {
+            cmbApp.Items.Clear();
+          
+            foreach (ScopeApplication app in project.Applications)
+              cmbApp.Items.Add(new ComboBoxItem { Content = app.Name, Tag = app });
+          }
         }
-
       }
       catch (Exception ex)
       {
@@ -966,13 +954,14 @@ namespace ApplicationEditor
 
       try
       {
+        ComboBox appCB = (ComboBox)sender;
+        _currentProject = (ScopeProject)((ComboBoxItem)cmbProject.SelectedItem).Tag;
+        _currentApplication = (ScopeApplication)((ComboBoxItem)appCB.SelectedItem).Tag;
         if (cmbApp.Items.Count == 0) return;
-        tvwItemSourceRoot.Items.Clear();
-        tvwItemSourceRoot.Visibility = Visibility.Collapsed;
-        tvwItemDestinationRoot.Items.Clear();
-        tvwItemDestinationRoot.Visibility = Visibility.Collapsed;
 
-        _currentApplication = (ScopeApplication)((ComboBoxItem)cmbApp.SelectedItem).Tag;
+        tvwItemSourceRoot.Items.Clear();
+
+        tvwItemDestinationRoot.Items.Clear();
 
         _dal.GetDbDictionary(_currentProject.Name, _currentApplication.Name);
         _dal.GetDatabaseSchema(_currentProject.Name, _currentApplication.Name);
