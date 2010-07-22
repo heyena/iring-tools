@@ -376,11 +376,11 @@ namespace org.iringtools.application
       }
     }
 
-    public String[] GetRelationships()
+    public List<string> GetRelationships()
     {
       try
       {
-        return Enum.GetNames(typeof(RelationshipType));
+        return Enum.GetNames(typeof(RelationshipType)).ToList();
       }
       catch (Exception ex)
       {
@@ -389,11 +389,11 @@ namespace org.iringtools.application
       }
     }
 
-    public String[] GetProviders()
+    public List<string> GetProviders()
     {
         try
         {
-            return Enum.GetNames(typeof(Provider));
+            return Enum.GetNames(typeof(Provider)).ToList();
         }
         catch (Exception ex)
         {
