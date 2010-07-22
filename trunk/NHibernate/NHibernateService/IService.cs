@@ -32,5 +32,13 @@ namespace org.iringtools.application
         [OperationContract]
         [WebGet(UriTemplate = "/relationship")]
         List<String> GetRelationships();
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/{project}/{application}/schemaObjects")]
+        List<String> GetSchemaObjects(string project, string application);
+
+        [OperationContract]
+        [WebGet(UriTemplate = "/{project}/{application}/schemaObjects/{schemaObjectName}")]
+        DatabaseDictionary GetSchemaObjectSchema(string project, string application, string schemaObjectName);
     }
 }
