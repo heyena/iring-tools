@@ -330,7 +330,7 @@ namespace org.iringtools.modules.medatasourceregion
     {
         try
         {
-            DataObjectItem newNode = AddNode(dataRelationship.relatedObjectName, dataRelationship, node);
+            DataObjectItem newNode = AddNode(dataRelationship.relationshipName, dataRelationship, node);
             node.Items.Add(newNode);
             return true;
         }
@@ -338,6 +338,20 @@ namespace org.iringtools.modules.medatasourceregion
         {
            throw ex;
         }
+    }
+
+    bool PopulatePropertyMap(DataObjectItem node, PropertyMap propertyMap)
+    {
+      try
+      {
+        DataObjectItem newNode = AddNode(propertyMap.relatedPropertyName, propertyMap, node);
+        node.Items.Add(newNode);
+        return true;
+      }
+      catch (Exception ex)
+      {
+        throw ex;
+      }
     }
 
     void nodeMouseLeftButtonUpHandler(object sender, MouseButtonEventArgs e)
@@ -442,6 +456,10 @@ namespace org.iringtools.modules.medatasourceregion
             if (dataPropertyNode.Tag is List<DataRelationship>)
                 foreach (DataRelationship dataRelationship in ((List<DataRelationship>)dataPropertyNode.Tag))
                     isProcessed = PopulateDataRelationship(selectedNode, dataRelationship);
+
+            if (dataPropertyNode.Tag is List<PropertyMap>)
+              foreach (PropertyMap propertyMap in ((List<PropertyMap>)dataPropertyNode.Tag))
+                isProcessed = PopulatePropertyMap(selectedNode, propertyMap);
         }
         catch (Exception ex)
         {
