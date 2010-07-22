@@ -36,6 +36,8 @@ namespace org.iringtools.modules.templateeditor.editorregion
 
         Boolean IsReadOnly { get; }
         Boolean IsEnabled { get; }
+        Boolean IsBaseTemplate { get; }
+        Boolean IsSpecializedTemplate { get; }
 
         object SelectedRole { get; set; }
 

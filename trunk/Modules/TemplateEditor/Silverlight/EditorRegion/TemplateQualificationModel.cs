@@ -408,44 +408,6 @@ namespace org.iringtools.modules.templateeditor.editorregion
             }
         }
 
-        //public override string SelectedRoleValue
-        //{
-        //    get
-        //    {
-        //        try
-        //        {
-        //            if (_selectedRole != null)
-        //            {
-        //                if (selectedRole.value.reference != string.Empty)
-        //                {
-        //                    return selectedRole.value.reference;
-        //                }
-        //                else
-        //                {
-        //                    return selectedRole.value.text;
-        //                }
-        //            }
-        //            else
-        //            {
-        //                return string.Empty;
-        //            }
-        //        }
-        //        catch
-        //        {
-        //            return string.Empty;
-        //        }
-        //    }
-        //    set
-        //    {
-        //        if (_selectedRole != null)
-        //        {
-        //            selectedRole.value.text = value;
-
-        //            RaisePropertyChanged(this, "SelectedRoleValue");
-        //        }
-        //    }
-        //}
-
         public override string SelectedRoleValueReference
         {
             get

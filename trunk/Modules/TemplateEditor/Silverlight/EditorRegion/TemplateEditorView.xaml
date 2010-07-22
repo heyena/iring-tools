@@ -209,7 +209,7 @@
                         HorizontalAlignment="Left" 
                         VerticalAlignment="Bottom" 
                         IsEnabled="{Binding IsRoleSelected, Mode=OneWay}"
-				        Content="Edit" />
+				        Content="Edit..." />
 
                     <Button 
                         x:Name="addRole1" 

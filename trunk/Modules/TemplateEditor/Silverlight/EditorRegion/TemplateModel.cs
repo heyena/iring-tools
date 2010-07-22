@@ -154,7 +154,6 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 RaisePropertyChanged(this, "SelectedRoleName");
                 RaisePropertyChanged(this, "SelectedRoleDescription");
                 RaisePropertyChanged(this, "SelectedRoleRange");
-                RaisePropertyChanged(this, "SelectedRoleValue");
                 RaisePropertyChanged(this, "SelectedRoleValueReference");
                 RaisePropertyChanged(this, "SelectedRoleValueLiteral");
                 RaisePropertyChanged(this, "SelectedRoleValueLiteralDatatype");
@@ -178,8 +177,6 @@ namespace org.iringtools.modules.templateeditor.editorregion
         public abstract string SelectedRoleValueLiteral { get; set; }
 
         public abstract KeyValuePair<string, string> SelectedRoleValueLiteralDatatype { get; set; }
-
-        //public abstract string SelectedRoleValue { get; set; }
 
         public abstract void AddRole(string name, string description, string range);
 
@@ -246,12 +243,11 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 {
                     _literalDatatypes = new ObservableCollection<KeyValuePair<string, string>>();
 
-                    _literalDatatypes.Add(new KeyValuePair<string, string>("SelectClass", "<Use Selected Item>"));
+                    //_literalDatatypes.Add(new KeyValuePair<string, string>("SelectClass", "<Use Selected Item>"));
 
                     foreach (string str in GetValues<XmlTypeCode>())
                     {
-                        _literalDatatypes.Add(new KeyValuePair<string, string>("http://www.w3.org/2001/XMLSchema#" + str.ToLower(), str));
-                        //_ranges.Add(new KeyValuePair<string, string>(str, str));
+                        _literalDatatypes.Add(new KeyValuePair<string, string>("http://www.w3.org/2001/XMLSchema#" + str.ToLower(), str));                        
                     }
                 }
 
