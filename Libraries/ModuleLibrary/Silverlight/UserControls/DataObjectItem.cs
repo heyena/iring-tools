@@ -14,6 +14,7 @@ namespace org.iringtools.modulelibrary.usercontrols
 
     public org.iringtools.library.DataObject DataObject { get; set; }
     public DataProperty DataProperty { get; set; }
+    public DataRelationship DataRelationship { get; set; }
 
     public bool IsRoot()
     {
