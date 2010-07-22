@@ -1453,7 +1453,7 @@ namespace ApplicationEditor
       {
         if(selectedObject.Parent is TreeView || selectedObject == null)
         {
-          MessageBox.Show("Please select a DataDictionary tree view item", "EDIT RELATIONSHIP", MessageBoxButton.OK);
+          MessageBox.Show("Please select a Data Object tree view item", "EDIT RELATIONSHIP", MessageBoxButton.OK);
           return;
         }
         else
