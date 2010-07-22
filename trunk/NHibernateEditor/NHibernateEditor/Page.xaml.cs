@@ -881,6 +881,9 @@ namespace ApplicationEditor
           _scopes = (Collection<ScopeProject>)args.Data;
 
           tvwScopesItemRoot.Items.Clear();
+          cmbProject.Items.Clear();
+          cmbApp.Items.Clear();
+
           foreach (ScopeProject project in _scopes)
           {
             cmbProject.Items.Add(new ComboBoxItem { Content = project.Name, Tag = project });
@@ -942,6 +945,7 @@ namespace ApplicationEditor
       try
       {
         ComboBoxItem cmbItem = (ComboBoxItem)cmbProject.SelectedItem;
+        if (cmbItem == null) return;
         _currentProject = (ScopeProject)cmbItem.Tag;
 
 
@@ -962,6 +966,7 @@ namespace ApplicationEditor
 
       try
       {
+        if (cmbApp.Items.Count == 0) return;
         tvwItemSourceRoot.Items.Clear();
         tvwItemSourceRoot.Visibility = Visibility.Collapsed;
         tvwItemDestinationRoot.Items.Clear();
@@ -970,6 +975,8 @@ namespace ApplicationEditor
         _currentApplication = (ScopeApplication)((ComboBoxItem)cmbApp.SelectedItem).Tag;
 
         _dal.GetDbDictionary(_currentProject.Name, _currentApplication.Name);
+        _dal.GetDatabaseSchema(_currentProject.Name, _currentApplication.Name);
+        isFetched = true;
       }
       catch (Exception ex)
       {
@@ -1684,6 +1691,7 @@ namespace ApplicationEditor
     {
       biBusyWindow.IsBusy = true;
       _dal.UpdateScopes(_scopes);
+      _dal.GetScopes();
     }
 
     private void btnFetch_Click(object sender, RoutedEventArgs e)
