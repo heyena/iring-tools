@@ -403,18 +403,6 @@ namespace org.iringtools.modules.templateeditor.editorregion
             }
         }
 
-        //public override string SelectedRoleValue
-        //{
-        //    get
-        //    {
-        //        return "";                
-        //    }
-        //    set
-        //    {
-        //        return;
-        //    }
-        //}
-
         public override string SelectedRoleValueReference
         {
             get
