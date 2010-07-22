@@ -131,9 +131,7 @@ namespace org.iringtools.adapter.datalayer
           parameters.ReferencedAssemblies.Add(_settings["AdapterBinaryPath"] + "Iesi.Collections.dll");
           parameters.ReferencedAssemblies.Add(_settings["AdapterBinaryPath"] + "iRINGLibrary.dll");
           NHIBERNATE_ASSEMBLIES.ForEach(assembly => parameters.ReferencedAssemblies.Add(_settings["AdapterBinaryPath"] + assembly));
-
-          Utility.WriteString(sourceCode, @"C:\Projects\sourcecode.cs");
-
+                    
           Utility.Compile(compilerOptions, parameters, new string[] { sourceCode });
           #endregion Compile entities
 
@@ -376,7 +374,8 @@ namespace org.iringtools.adapter.datalayer
 
               DataProperty keyProperty = dataObject.getKeyProperty(dataObject.keyProperties.First().keyPropertyName);
 
-              //_dataObjectWriter.WriteLine("public virtual {0} Id {{ get; set; }}", keyProperty.dataType);
+              /*
+              _dataObjectWriter.WriteLine("public virtual {0} Id {{ get; set; }}", keyProperty.dataType);
 
               _mappingWriter.WriteStartElement("id");
               _mappingWriter.WriteAttributeString("name", "Id");
@@ -389,9 +388,10 @@ namespace org.iringtools.adapter.datalayer
               _mappingWriter.WriteEndElement(); // end param element
               _mappingWriter.WriteEndElement(); // end generator element
               _mappingWriter.WriteEndElement(); // end id element
+              */
               
               _mappingWriter.WriteStartElement("one-to-one");
-              _mappingWriter.WriteAttributeString("name", relatedDataObject.tableName);
+              _mappingWriter.WriteAttributeString("name", dataRelationship.relationshipName);
               _mappingWriter.WriteAttributeString("class", _namespace + "." + dataRelationship.relatedObjectName + ", " + _settings["ExecutingAssemblyName"]);
               _mappingWriter.WriteAttributeString("cascade", "save-update");
 
@@ -412,10 +412,11 @@ namespace org.iringtools.adapter.datalayer
               break;
 
             case RelationshipType.OneToMany:
-                            
-              _dataObjectWriter.WriteLine("public virtual ISet<{0}> {1} {{ get; set; }}", dataRelationship.relatedObjectName, dataRelationship.relationshipName);
+
+              _dataObjectWriter.WriteLine("public virtual Iesi.Collections.Generic.ISet<{0}> {1} {{ get; set; }}", dataRelationship.relatedObjectName, dataRelationship.relationshipName);
               _mappingWriter.WriteStartElement("set");
-              _mappingWriter.WriteAttributeString("name", relatedDataObject.tableName);
+              _mappingWriter.WriteAttributeString("name", dataRelationship.relationshipName);
+              _mappingWriter.WriteAttributeString("table", relatedDataObject.tableName);
               _mappingWriter.WriteAttributeString("inverse", "true");
               _mappingWriter.WriteAttributeString("cascade", "all-delete-orphan");
               _mappingWriter.WriteStartElement("key");
@@ -565,9 +566,9 @@ namespace org.iringtools.adapter.datalayer
           }
           else if (dataRelationship.relationshipType == RelationshipType.OneToMany)
           {
-            _dataObjectWriter.WriteLine(@"IList<IDataObject> __relatedObjects = new List<IDataObject>();");
-            _dataObjectWriter.WriteLine(@"foreach ({0} __relatedObject in {1}) __relatedObjects.Add(__relatedObject);", dataRelationship.relatedObjectName, dataRelationship.relationshipName);
-            _dataObjectWriter.WriteLine(@"return __relatedObjects;");
+            _dataObjectWriter.WriteLine(@"IList<IDataObject> relatedObjects = new List<IDataObject>();");
+            _dataObjectWriter.WriteLine(@"foreach ({0} relatedObject in {1}) relatedObjects.Add(relatedObject);", dataRelationship.relatedObjectName, dataRelationship.relationshipName);
+            _dataObjectWriter.WriteLine(@"return relatedObjects;");
           }
 
           _dataObjectWriter.Indent--;

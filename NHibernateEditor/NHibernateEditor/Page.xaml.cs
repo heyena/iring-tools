@@ -748,7 +748,7 @@ namespace ApplicationEditor
           {
             columnTreeViewItem = new TreeViewItem();
             columnTreeViewItem.Tag = relation;
-            AddTreeItem(relationshipsTreeViewItem, columnTreeViewItem, relation.relatedObjectName, null, false);
+            AddTreeItem(relationshipsTreeViewItem, columnTreeViewItem, relation.relationshipName, null, false);
           }
           AddTreeItem(destinationRoot, tableTreeViewItem, dataObject.objectName, null, false);
         }
