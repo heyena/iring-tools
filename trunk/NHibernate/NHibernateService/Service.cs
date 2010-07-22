@@ -46,12 +46,12 @@ namespace org.iringtools.application
         }
 
 
-        public String[] GetProviders()
+        public List<String> GetProviders()
         {
             return _applicationProvider.GetProviders();
         }
 
-        public String[] GetRelationships()
+        public List<String> GetRelationships()
         {
           return _applicationProvider.GetRelationships();
         }
