@@ -2,6 +2,7 @@
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using org.iringtools.library;
+using System;
 
 namespace org.iringtools.application
 {
@@ -26,10 +27,10 @@ namespace org.iringtools.application
 
         [OperationContract]
         [WebGet(UriTemplate = "/providers")]
-        string[] GetProviders();
+        List<String> GetProviders();
 
         [OperationContract]
         [WebGet(UriTemplate = "/relationship")]
-        string[] GetRelationships();
+        List<String> GetRelationships();
     }
 }
