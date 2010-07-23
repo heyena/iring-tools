@@ -119,7 +119,7 @@ namespace org.w3.sparql_results
     public string lang { get; set; }
 
     [XmlAttribute]
-    public string dataType { get; set; }
+    public string datatype { get; set; }
 
     [XmlText]
     public string value { get; set; }

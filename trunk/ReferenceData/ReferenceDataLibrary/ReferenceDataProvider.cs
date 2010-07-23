@@ -2127,7 +2127,7 @@ namespace org.ids_adi.iring.referenceData
                                 else if (queryBinding.type == SPARQLBindingType.Literal)
                                 {
                                     value = sparqlBinding.literal.value;
-                                    dataType = sparqlBinding.literal.dataType;
+                                    dataType = sparqlBinding.literal.datatype;
                                     sortKey = value;
                                 }
 
