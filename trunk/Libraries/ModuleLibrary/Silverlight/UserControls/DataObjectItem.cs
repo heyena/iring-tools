@@ -14,7 +14,7 @@ namespace org.iringtools.modulelibrary.usercontrols
 
     public org.iringtools.library.DataObject DataObject { get; set; }
     public DataProperty DataProperty { get; set; }
-    public DataRelationship DataRelationship { get; set; }
+    public string ParentObjectName { get; set; }
 
     public bool IsRoot()
     {
@@ -43,7 +43,7 @@ namespace org.iringtools.modulelibrary.usercontrols
 
     public override void nodeSelectedHandler(object sender, RoutedEventArgs e)
     {
-	//TODO May need to do something here
+  //TODO May need to do something here
     }
   }
 }

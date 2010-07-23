@@ -341,6 +341,7 @@ namespace org.iringtools.modules.medatasourceregion
       try
       {
         DataObjectItem newNode = AddNode(dataObject.objectName, dataObject, node);
+        newNode.ParentObjectName = node.DataObject.objectName;
         node.Items.Add(newNode);
         return true;
       }

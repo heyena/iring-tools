@@ -15,6 +15,7 @@ using org.iringtools.modulelibrary.extensions;
 using org.iringtools.modulelibrary.entities;
 using org.iringtools.modulelibrary.layerdal;
 using org.iringtools.modulelibrary.types;
+using org.iringtools.modulelibrary.usercontrols;
 
 using org.iringtools.ontologyservice.presentation;
 using org.iringtools.ontologyservice.presentation.presentationmodels;
@@ -566,12 +567,14 @@ namespace org.iringtools.modules.memappingregion
 
       MappingItem mappingItem = model.SelectedMappingItem;
       MappingItem parent = (MappingItem)mappingItem.Parent;
+
       TemplateMap templateMap = (TemplateMap)parent.Tag;
       
       Presenter.ButtonCtrl("btnSave").IsEnabled = true;
       Presenter.ButtonCtrl("btnSave").Background = new SolidColorBrush(Color.FromArgb(255, 255, 0, 0));
       saveActive = true;
 
+      DataObjectItem parentObject = (DataObjectItem)model.SelectedDataObject.Parent;
       RoleMap roleMap = model.SelectedRoleMap;
       if (roleMap.type == RoleType.Property)
       {
@@ -582,14 +585,26 @@ namespace org.iringtools.modules.memappingregion
             MessageBox.Show("Please select a property to map", "MAP ROLE", MessageBoxButton.OK);
             return;
           }
+         
           roleMap.propertyName =
               string.Format("{0}.{1}", model.SelectedDataObject.DataObject.objectName, model.SelectedDataObject.DataProperty.propertyName);
           roleMap.valueList = String.Empty;
         }
         else if (roleMap.dataType != null || roleMap.dataType.StartsWith("xsd:"))
         {
-          roleMap.propertyName =
-              string.Format("{0}.{1}", model.SelectedDataObject.DataObject.objectName, model.SelectedDataObject.DataProperty.propertyName);
+
+          if (!string.IsNullOrEmpty(parentObject.ParentObjectName))
+          {
+            roleMap.propertyName = string.Format("{0}.{1}.{2}",
+              parentObject.ParentObjectName,
+              model.SelectedDataObject.DataObject.objectName,
+              model.SelectedDataObject.DataProperty.propertyName);
+          }
+          else
+          {
+            roleMap.propertyName =
+                string.Format("{0}.{1}", model.SelectedDataObject.DataObject.objectName, model.SelectedDataObject.DataProperty.propertyName);
+          }
         }
         else
         {
