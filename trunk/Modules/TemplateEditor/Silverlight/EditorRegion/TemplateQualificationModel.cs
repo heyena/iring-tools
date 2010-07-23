@@ -480,7 +480,7 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 try
                 {
                     var items = from query in this.LiteralDataTypes
-                                where query.Key == selectedRole.value.As
+                                where query.Key.ToLower() == selectedRole.value.As.ToLower()
                                 select query;
 
                     if (items.Count() == 0)

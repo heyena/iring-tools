@@ -1423,6 +1423,7 @@ namespace org.ids_adi.iring.referenceData
                                         sparql += " rdfs:comment \"" + description + "\"^^xsd:string . ";
                                     }
 
+                                    int i = 0;
                                     foreach (RoleQualification role in template.roleQualification)
                                     {
 
@@ -1430,8 +1431,7 @@ namespace org.ids_adi.iring.referenceData
                                         string roleLabel = string.Empty;
                                         string roleDescription = string.Empty;
                                         string generatedId = string.Empty;
-                                        string genName = string.Empty;
-                                        int i = 0;
+                                        string genName = string.Empty;                                        
 
                                         //ID generator
                                         genName = "Role definition " + roleLabel;
@@ -1456,16 +1456,22 @@ namespace org.ids_adi.iring.referenceData
                                         //value restriction
                                         if (role.value != null)
                                         {
-                                            if (role.value.text != null)
+                                            if (!String.IsNullOrEmpty(role.value.text))
                                             {
+                                                string roleValueAs = role.value.As;
+                                                if (role.value.As.StartsWith(@"http://www.w3.org/2001/XMLSchema#"))
+                                                {
+                                                    roleValueAs = role.value.As.Replace(@"http://www.w3.org/2001/XMLSchema#", string.Empty);
+                                                }
+
                                                 sparql += "_:role" + i + " rdf:type tpl:R67036823327 ; "
                                                       + " tpl:R56456315674 " + ID + " ; "
                                                       + " tpl:R89867215482 <" + role.qualifies + "> ; "
-                                                      + " tpl:R29577887690 '" + role.value.text + "'^^xsd:" + role.value.As + " .";
+                                                      + " tpl:R29577887690 '" + role.value.text + "'^^xsd:" + roleValueAs + " . ";
                                                 
                                                 i++;
                                             }
-                                            else if (role.value.reference != null) 
+                                            else if (!String.IsNullOrEmpty(role.value.reference)) 
                                             {
                                                 //reference restriction
                                                 sparql += "<" + role.qualifies + "> rdf:type tpl:R40103148466 ; "
@@ -1474,7 +1480,7 @@ namespace org.ids_adi.iring.referenceData
                                                       + " tpl:R21129944603 <" + role.value.reference + "> . ";
                                             }
                                         }
-                                        else if (role.range != null)
+                                        else if (!String.IsNullOrEmpty(role.range))
                                         {
                                             //range restriction
                                             sparql += "<" + role.qualifies + "> rdf:type tpl:R76288246068 ; "
@@ -1545,16 +1551,22 @@ namespace org.ids_adi.iring.referenceData
                                         //value restriction
                                         if (rd.value != null)
                                         {
-                                            if (rd.value.text != null)
+                                            if (!String.IsNullOrEmpty(rd.value.text))
                                             {
+                                                string roleValueAs = rd.value.As;
+                                                if (rd.value.As.StartsWith(@"http://www.w3.org/2001/XMLSchema#"))
+                                                {
+                                                    roleValueAs = rd.value.As.Replace(@"http://www.w3.org/2001/XMLSchema#", string.Empty);
+                                                }
+
                                                 nameSparql += "_:role" + i + " rdf:type tpl:R67036823327 ; "
                                                       + " tpl:R56456315674 " + ID + " ; "
                                                       + " tpl:R89867215482 <" + rd.qualifies + "> ; "
-                                                      + " tpl:R29577887690 '" + rd.value.text + "'^^xsd:" + rd.value.As + " .";
+                                                      + " tpl:R29577887690 '" + rd.value.text + "'^^xsd:" + roleValueAs + " . ";
 
                                                 i++;
                                             }
-                                            else if (rd.value.reference != null)
+                                            else if (!String.IsNullOrEmpty(rd.value.reference))
                                             {
                                                 //reference restriction                                                
                                                 nameSparql += "<" + rd.qualifies + "> rdf:type tpl:R40103148466 ; "
@@ -1562,15 +1574,23 @@ namespace org.ids_adi.iring.referenceData
                                                         + " tpl:R30741601855 <" + rd.qualifies + "> ; "
                                                         + " tpl:R21129944603 <" + rd.value.reference + "> . ";                                               
                                             }
+                                            else if (!String.IsNullOrEmpty(rd.range))
+                                            {
+                                                //range restriction
+                                                nameSparql += "<" + rd.qualifies + "> rdf:type tpl:R76288246068 ; "
+                                                        + " tpl:R99672026745 " + ID + " ; "
+                                                        + " tpl:R91125890543 <" + rd.qualifies + "> ; "
+                                                        + " tpl:R98983340497 <" + rd.range + "> . ";
+                                            }
                                         }
-                                        else if (rd.range != null)
+                                        else if (!String.IsNullOrEmpty(rd.range))
                                         {
                                             //range restriction
                                             nameSparql += "<" + rd.qualifies + "> rdf:type tpl:R76288246068 ; "
                                                     + " tpl:R99672026745 " + ID + " ; "
                                                     + " tpl:R91125890543 <" + rd.qualifies + "> ; "
                                                     + " tpl:R98983340497 <" + rd.range + "> . ";
-                                        }                                        
+                                        }
                                     }
                                     nameSparql = nameSparql.Insert(nameSparql.LastIndexOf("."), "}").Remove(nameSparql.Length - 1);
                                 }
@@ -1599,9 +1619,9 @@ namespace org.ids_adi.iring.referenceData
                                         nameSparql += "rdfs:comment \"" + description + "\"^^xsd:string . ";
                                     }
 
+                                    i = 0;
                                     foreach (RoleQualification rd in template.roleQualification)
-                                    {
-                                        i = 0;
+                                    {   
                                         foreach (QMXFName roleName in rd.name)
                                         {
                                             roleLabel = roleName.value;
@@ -1614,16 +1634,22 @@ namespace org.ids_adi.iring.referenceData
                                         //value restriction
                                         if (rd.value != null)
                                         {
-                                            if (rd.value.text != null)
+                                            if (!String.IsNullOrEmpty(rd.value.text))
                                             {
+                                                string roleValueAs = rd.value.As;
+                                                if (rd.value.As.StartsWith(@"http://www.w3.org/2001/XMLSchema#"))
+                                                {
+                                                    roleValueAs = rd.value.As.Replace(@"http://www.w3.org/2001/XMLSchema#", string.Empty);
+                                                }                                                
+
                                                 nameSparql += "_:role" + i + " rdf:type tpl:R67036823327 ; "
                                                       + " tpl:R56456315674 " + ID + " ; "
                                                       + " tpl:R89867215482 <" + rd.qualifies + "> ; "
-                                                      + " tpl:R29577887690 '" + rd.value.text + "'^^xsd:" + rd.value.As + " .";
+                                                      + " tpl:R29577887690 '" + rd.value.text + "'^^xsd:" + roleValueAs + " . ";
 
                                                 i++;
                                             }
-                                            else if (rd.value.reference != null)
+                                            else if (!String.IsNullOrEmpty(rd.value.reference))
                                             {
                                                 //reference restriction
                                                 nameSparql += "<" + rd.qualifies + "> rdf:type tpl:R40103148466 ; "
@@ -1631,15 +1657,23 @@ namespace org.ids_adi.iring.referenceData
                                                         + " tpl:R30741601855 <" + rd.qualifies + "> ; "
                                                         + " tpl:R21129944603 <" + rd.value.reference + "> . ";
                                             }
+                                            else if (!String.IsNullOrEmpty(rd.range))
+                                            {
+                                                //range restriction
+                                                nameSparql += "<" + rd.qualifies + "> rdf:type tpl:R76288246068 ; "
+                                                        + " tpl:R99672026745 " + ID + " ; "
+                                                        + " tpl:R91125890543 <" + rd.qualifies + "> ; "
+                                                        + " tpl:R98983340497 <" + rd.range + "> . ";
+                                            }
                                         }
-                                        else if (rd.range != null)
+                                        else if (!String.IsNullOrEmpty(rd.range))
                                         {
                                             //range restriction
                                             nameSparql += "<" + rd.qualifies + "> rdf:type tpl:R76288246068 ; "
                                                     + " tpl:R99672026745 " + ID + " ; "
                                                     + " tpl:R91125890543 <" + rd.qualifies + "> ; "
                                                     + " tpl:R98983340497 <" + rd.range + "> . ";
-                                        }                                        
+                                        }
                                     }
                                     nameSparql = nameSparql.Insert(nameSparql.LastIndexOf("."), "}").Remove(nameSparql.Length - 1);
                                 }

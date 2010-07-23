@@ -73,7 +73,7 @@
                         IsChecked="{Binding ValueHasReference, Mode=OneWay}"
                         GroupName="RoleValueType"
                         Content="Reference:" 
-                        IsEnabled="{Binding ValueTypesEnabled}"/>
+                        IsEnabled="{Binding IsSpecializedTemplate}"/>
                     <TextBox 
                         x:Name="roleValueReference" 
                         Height="22" 
@@ -81,7 +81,7 @@
                         Grid.Row="2"
 				        VerticalAlignment="Center"					    
                         Text="{Binding SelectedRoleValueReference, Mode=TwoWay}"
-                        IsEnabled="{Binding ValueTypesEnabled}"/>
+                        IsEnabled="{Binding IsSpecializedTemplate}"/>
 
                     <RadioButton
                         x:Name="radRoleValueLiteral"
@@ -94,7 +94,7 @@
                         GroupName="RoleValueType"
                         Content="Literal:" 
                         IsChecked="{Binding ValueHasLiteral, Mode=OneWay}"
-                        IsEnabled="{Binding ValueTypesEnabled}"/>
+                        IsEnabled="{Binding IsSpecializedTemplate}"/>
                     <TextBox 
                         x:Name="roleValueLiteral" 
                         Height="22" 
@@ -102,19 +102,20 @@
                         Grid.Row="3"
 				        VerticalAlignment="Center"					    
                         Text="{Binding SelectedRoleValueLiteral, Mode=TwoWay}"
-                        IsEnabled="{Binding ValueTypesEnabled}"/>
+                        IsEnabled="{Binding IsSpecializedTemplate}"/>
 
-                    <dataInput:Label Grid.Row="4"
-                                        Margin="30,0,0,0"
-					                    VerticalAlignment="Center" 
-					                    Content="Data Type:" HorizontalAlignment="Left" Width="70" />
+                    <dataInput:Label 
+                        Grid.Row="4"
+                        Margin="30,0,0,0"
+					    VerticalAlignment="Center" 
+					    Content="Data Type:" HorizontalAlignment="Left" Width="70" />
                     <ComboBox
                         x:Name="roleValueLiteralDatatype"
                         Height="22"
                         Grid.Column="1" 
                         Grid.Row="4"
 		                VerticalAlignment="Center"                        
-                        IsEnabled="{Binding ValueTypesEnabled, Mode=OneWay}"
+                        IsEnabled="{Binding IsSpecializedTemplate, Mode=OneWay}"
                         ItemsSource="{Binding LiteralDataTypes, Mode=TwoWay}"
                         DisplayMemberPath="Value"
                         SelectedItem="{Binding SelectedRoleValueLiteralDatatype, Mode=TwoWay}"/>
@@ -127,7 +128,7 @@
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="75"/>
+                <ColumnDefinition Width="85"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 

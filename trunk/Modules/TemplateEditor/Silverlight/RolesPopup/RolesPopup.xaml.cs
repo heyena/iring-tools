@@ -14,7 +14,33 @@ namespace org.iringtools.modules.templateeditor.rolespopup
 
         public RolesPopup()
         {
-            InitializeComponent();            
+            InitializeComponent();
+            radRoleRange.Checked += new RoutedEventHandler(radioButtonCheckedHandler);
+            radRoleValue.Checked += new RoutedEventHandler(radioButtonCheckedHandler);
+            radRoleValueLiteral.Checked += new RoutedEventHandler(radioButtonCheckedHandler);
+            radRoleValueReference.Checked += new RoutedEventHandler(radioButtonCheckedHandler);
+        }
+
+        void radioButtonCheckedHandler(object sender, RoutedEventArgs e)
+        {
+            if (radRoleRange.IsChecked == true)
+            {
+                roleRange.IsEnabled = true;
+                radRoleValueLiteral.IsEnabled = false;
+                radRoleValueReference.IsEnabled = false;
+                roleValueLiteral.IsEnabled = false;
+                roleValueLiteralDatatype.IsEnabled = false;
+                roleValueReference.IsEnabled = false;
+            }
+            else if (radRoleValue.IsChecked == true)
+            {
+                roleRange.IsEnabled = false;
+                radRoleValueLiteral.IsEnabled = true;
+                radRoleValueReference.IsEnabled = true;
+                roleValueLiteral.IsEnabled = true;
+                roleValueLiteralDatatype.IsEnabled = radRoleValueLiteral.IsChecked == true;
+                roleValueReference.IsEnabled = true;
+            }            
         }
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
