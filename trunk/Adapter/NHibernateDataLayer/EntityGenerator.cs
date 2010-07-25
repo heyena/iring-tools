@@ -413,20 +413,38 @@ namespace org.iringtools.adapter.datalayer
 
             case RelationshipType.OneToMany:
 
-              _dataObjectWriter.WriteLine("public virtual Iesi.Collections.Generic.ISet<{0}> {1} {{ get; set; }}", dataRelationship.relatedObjectName, dataRelationship.relationshipName);
-              _mappingWriter.WriteStartElement("set");
-              _mappingWriter.WriteAttributeString("name", dataRelationship.relationshipName);
-              _mappingWriter.WriteAttributeString("table", relatedDataObject.tableName);
-              _mappingWriter.WriteAttributeString("inverse", "true");
-              _mappingWriter.WriteAttributeString("cascade", "all-delete-orphan");
-              _mappingWriter.WriteStartElement("key");
-              _mappingWriter.WriteAttributeString("column", "\"" + GetColumnName(relatedDataObject, dataRelationship.propertyMaps.First().relatedPropertyName) + "\"");
-              _mappingWriter.WriteEndElement(); // end one-to-many
-              _mappingWriter.WriteStartElement("one-to-many");
-              _mappingWriter.WriteAttributeString("class", _namespace + "." + dataRelationship.relatedObjectName + ", " + _settings["ExecutingAssemblyName"]);
-              _mappingWriter.WriteEndElement(); // end key element
-              _mappingWriter.WriteEndElement(); // end set element
-              
+              if (dataRelationship.propertyMaps.Count > 0)
+              {
+                _dataObjectWriter.WriteLine("public virtual Iesi.Collections.Generic.ISet<{0}> {1} {{ get; set; }}", dataRelationship.relatedObjectName, dataRelationship.relationshipName);
+                _mappingWriter.WriteStartElement("set");
+                _mappingWriter.WriteAttributeString("name", dataRelationship.relationshipName);
+                _mappingWriter.WriteAttributeString("table", relatedDataObject.tableName);
+                _mappingWriter.WriteAttributeString("inverse", "true");
+                _mappingWriter.WriteAttributeString("cascade", "all-delete-orphan");
+
+                if (dataRelationship.propertyMaps.Count == 1)
+                {
+                  _mappingWriter.WriteStartElement("key");
+                  _mappingWriter.WriteAttributeString("column", "\"" + GetColumnName(relatedDataObject, dataRelationship.propertyMaps.First().relatedPropertyName) + "\"");
+                  _mappingWriter.WriteEndElement(); // end key
+                }
+                else 
+                {
+                  _mappingWriter.WriteStartElement("key");
+                  foreach (PropertyMap propertyMap in dataRelationship.propertyMaps)
+                  {
+                    _mappingWriter.WriteStartElement("column");
+                    _mappingWriter.WriteAttributeString("name", "\"" + GetColumnName(relatedDataObject, propertyMap.relatedPropertyName) + "\"");
+                    _mappingWriter.WriteEndElement(); // end column
+                  }
+                  _mappingWriter.WriteEndElement(); // end key
+                }
+
+                _mappingWriter.WriteStartElement("one-to-many");
+                _mappingWriter.WriteAttributeString("class", _namespace + "." + dataRelationship.relatedObjectName + ", " + _settings["ExecutingAssemblyName"]);
+                _mappingWriter.WriteEndElement(); // one-to-many
+                _mappingWriter.WriteEndElement(); // end set element
+              }
               break;
           }
         }
