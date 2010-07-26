@@ -99,6 +99,10 @@
       <Project>{6AFEF057-8D02-4F3C-AC41-6815E9CFD15A}</Project>
       <Name>AdapterLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NHibernateDataLayer\NHibernateDataLayer.csproj">
+      <Project>{A9DAEA2D-26AC-4FFE-A4B0-3DEF95DE4168}</Project>
+      <Name>NHibernateDataLayer</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
