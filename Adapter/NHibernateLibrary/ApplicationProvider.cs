@@ -401,6 +401,17 @@ namespace org.iringtools.application
             return null;
         }
     }
+
+    public List<String> GetSchemaObjects(string project, string application)
+    {
+      throw new NotImplementedException();
+    }
+
+    public DatabaseDictionary GetSchemaObjectSchema(string project, string application, string schemaObjectName)
+    {
+      throw new NotImplementedException();
+    }
+
     #endregion
 
     #region private methods
