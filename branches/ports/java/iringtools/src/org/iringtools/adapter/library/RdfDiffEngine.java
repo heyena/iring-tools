@@ -11,6 +11,7 @@ import org.iringtools.adapter.library.dto.ClassObject.TemplateObjects;
 import org.iringtools.adapter.library.dto.DataTransferObject.ClassObjects;
 import org.iringtools.adapter.library.dto.TemplateObject.RoleObjects;
 import org.iringtools.adapter.library.manifest.*;
+import org.iringtools.adapter.library.manifest.Class;
 import org.iringtools.utility.IOUtil;
 
 public class RdfDiffEngine implements DiffEngine
@@ -28,9 +29,9 @@ public class RdfDiffEngine implements DiffEngine
   private static final Logger logger = Logger.getLogger(DtoDiffEngine.class);
 
   @Override
-  public DataTransferObjects diff(GraphMap graphMap, String sendingXml, String receivingXml) throws Exception
+  public DataTransferObjects diff(Graph graph, String sendingXml, String receivingXml) throws Exception
   {
-    if (graphMap == null || graphMap.getClassTemplateListMaps().getClassTemplateListMap().size() == 0)
+    if (graph == null || graph.getClassTemplatesMaps().getClassTemplatesMap().size() == 0)
     {
       String errorMessage = "Unable to perform diffencing due to empty graph.";
 
@@ -46,15 +47,15 @@ public class RdfDiffEngine implements DiffEngine
     DataTransferObject dto = null;
     List<ClassObject> classObjectList = null;
 
-    List<ClassTemplateListMap> classTemplateListMaps = graphMap.getClassTemplateListMaps().getClassTemplateListMap();
+    List<ClassTemplatesMap> classTemplatesMaps = graph.getClassTemplatesMaps().getClassTemplatesMap();
     List<Integer> intersectClassInstanceIndexes = new ArrayList<Integer>();
     boolean isRoot = true;
 
-    for (ClassTemplateListMap classTemplateListMap : classTemplateListMaps)
+    for (ClassTemplatesMap classTemplatesMap : classTemplatesMaps)
     {
-      ClassMap classMap = classTemplateListMap.getClassMap();
-      List<TemplateMap> templateMaps = classTemplateListMap.getTemplateMaps().getTemplateMap();
-      String classId = classMap.getClassId();
+      Class clazz = classTemplatesMap.getClazz();
+      List<Template> templates = classTemplatesMap.getTemplates().getTemplate();
+      String classId = clazz.getClassId();
       List<String> sendingClassInstances = getClassInstances(sendingRdf, classId);
       List<String> receivingClassInstances = getClassInstances(receivingRdf, classId);
 
@@ -81,7 +82,7 @@ public class RdfDiffEngine implements DiffEngine
         classObjectList.add(classObject);
         classObject.setClassId(classId);
         classObject.setIdentifier(sendingClassInstance);
-        classObject.setName(classMap.getName());
+        classObject.setName(clazz.getName());
         TemplateObjects templateObjects = new TemplateObjects();
         classObject.setTemplateObjects(templateObjects);
         List<TemplateObject> templateObjectList = templateObjects.getTemplateObject();
@@ -102,12 +103,12 @@ public class RdfDiffEngine implements DiffEngine
 
             classObjectMatched = true;
 
-            for (TemplateMap templateMap : templateMaps)
+            for (Template template : templates)
             {
               List<TemplateObject> sendingTemplateObjectList = getTemplateObjectList(sendingRdf, sendingClassInstance,
-                  templateMap);
+                  template);
               List<TemplateObject> receivingTemplateObjectList = getTemplateObjectList(receivingRdf,
-                  sendingClassInstance, templateMap);
+                  sendingClassInstance, template);
 
               for (TemplateObject sendingTemplateObject : sendingTemplateObjectList)
               {
@@ -158,10 +159,10 @@ public class RdfDiffEngine implements DiffEngine
             dto.setTransferType(TransferType.ADD);
           }
 
-          for (TemplateMap templateMap : templateMaps)
+          for (Template template : templates)
           {
             List<TemplateObject> sendingTemplateObjectList = getTemplateObjectList(sendingRdf, sendingClassInstance,
-                templateMap);
+                template);
             templateObjectList.addAll(sendingTemplateObjectList);
           }
 
@@ -191,7 +192,7 @@ public class RdfDiffEngine implements DiffEngine
             classObjectList.add(classObject);
             classObject.setClassId(classId);
             classObject.setIdentifier(receivingClassInstance);
-            classObject.setName(classMap.getName());
+            classObject.setName(clazz.getName());
           }
         }
       }
@@ -225,13 +226,13 @@ public class RdfDiffEngine implements DiffEngine
     return classInstances;
   }
 
-  private List<TemplateObject> getTemplateObjectList(OMElement rdf, String classInstance, TemplateMap templateMap)
+  private List<TemplateObject> getTemplateObjectList(OMElement rdf, String classInstance, Template template)
       throws Exception
   {
     List<TemplateObject> templateObjects = new ArrayList<TemplateObject>();
-    String templateId = templateMap.getTemplateId();
+    String templateId = template.getTemplateId();
     String qualTemplateId = templateId.replace("tpl:", TPL_NS);
-    List<RoleMap> roleMaps = templateMap.getRoleMaps().getRoleMap();
+    List<Role> roles = template.getRoles().getRole();
 
     @SuppressWarnings("rawtypes")
     Iterator owlThings = rdf.getChildrenWithName(OWL_THING);
@@ -247,25 +248,17 @@ public class RdfDiffEngine implements DiffEngine
         RoleObjects roleObjects = new RoleObjects();
         List<RoleObject> roleObjectList = roleObjects.getRoleObject();
 
-        for (RoleMap roleMap : roleMaps)
+        for (Role role : roles)
         {
-          RoleType roleType = roleMap.getType();
-          String roleId = roleMap.getRoleId();
+          RoleType roleType = role.getType();
+          String roleId = role.getRoleId();
           QName qualRoleId = new QName(TPL_NS, roleId.replace("tpl:", ""));
           OMElement roleElement = owlThing.getFirstChildWithName(qualRoleId);
-
-          if (roleElement == null)
-          {
-            if (roleMap.getTransferOption() == TransferOption.REQUIRED)
-              throw new Exception("Sending RDF does not have role [" + roleId + "].");
-
-            break;
-          }
 
           RoleObject roleObject = new RoleObject();
           roleObjectList.add(roleObject);
           roleObject.setRoleId(roleId);
-          roleObject.setName(roleMap.getName());
+          roleObject.setName(role.getName());
 
           if (roleType == RoleType.POSSESSOR)
           {
@@ -296,7 +289,7 @@ public class RdfDiffEngine implements DiffEngine
           TemplateObject templateObject = new TemplateObject();
           templateObjects.add(templateObject);
           templateObject.setTemplateId(templateId);
-          templateObject.setName(templateMap.getName());
+          templateObject.setName(template.getName());
           templateObject.setRoleObjects(roleObjects);
           owlThings.remove();
         }

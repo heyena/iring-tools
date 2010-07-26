@@ -6,18 +6,10 @@
 	<xs:element name="manifest">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="graphMaps">
+				<xs:element name="graphs">
 					<xs:complexType>
 						<xs:sequence>
-							<xs:element name="graphMap" type="GraphMap" minOccurs="0"
-								maxOccurs="unbounded" />
-						</xs:sequence>
-					</xs:complexType>
-				</xs:element>
-				<xs:element name="valueLists">
-					<xs:complexType>
-						<xs:sequence>
-							<xs:element name="valueList" type="ValueList" minOccurs="0"
+							<xs:element name="graph" type="Graph" minOccurs="0"
 								maxOccurs="unbounded" />
 						</xs:sequence>
 					</xs:complexType>
@@ -27,13 +19,13 @@
 		</xs:complexType>
 	</xs:element>
 
-	<xs:complexType name="GraphMap">
+	<xs:complexType name="Graph">
 		<xs:sequence>
 			<xs:element name="name" type="xs:string" />
-			<xs:element name="classTemplateListMaps">
+			<xs:element name="classTemplatesMaps">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="classTemplateListMap" type="ClassTemplateListMap"
+						<xs:element name="classTemplatesMap" type="ClassTemplatesMap"
 							minOccurs="0" maxOccurs="unbounded" />
 					</xs:sequence>
 				</xs:complexType>
@@ -41,13 +33,13 @@
 		</xs:sequence>
 	</xs:complexType>
 
-	<xs:complexType name="ClassTemplateListMap">
+	<xs:complexType name="ClassTemplatesMap">
 		<xs:sequence>
-			<xs:element name="classMap" type="ClassMap" />
-			<xs:element name="templateMaps">
+			<xs:element name="class" type="Class" />
+			<xs:element name="templates">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="templateMap" type="TemplateMap" minOccurs="0"
+						<xs:element name="template" type="Template" minOccurs="0"
 							maxOccurs="unbounded" />
 					</xs:sequence>
 				</xs:complexType>
@@ -55,7 +47,7 @@
 		</xs:sequence>
 	</xs:complexType>
 
-	<xs:complexType name="ClassMap">
+	<xs:complexType name="Class">
 		<xs:sequence>
 			<xs:element name="classId" type="xs:string" />
 			<xs:element name="name" type="xs:string" />
@@ -63,14 +55,14 @@
 		</xs:sequence>
 	</xs:complexType>
 
-	<xs:complexType name="TemplateMap">
+	<xs:complexType name="Template">
 		<xs:sequence>
 			<xs:element name="templateId" type="xs:string" />
 			<xs:element name="name" type="xs:string" />
-			<xs:element name="roleMaps">
+			<xs:element name="roles">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="roleMap" type="RoleMap" minOccurs="0"
+						<xs:element name="role" type="Role" minOccurs="0"
 							maxOccurs="unbounded" />
 					</xs:sequence>
 				</xs:complexType>
@@ -79,7 +71,7 @@
 		</xs:sequence>
 	</xs:complexType>
 
-	<xs:complexType name="RoleMap">
+	<xs:complexType name="Role">
 		<xs:sequence>
 			<xs:element name="type" type="RoleType" />
 			<xs:element name="roleId" type="xs:string" />
@@ -87,12 +79,12 @@
 			<xs:element name="dataType" type="xs:string" />
 			<xs:element name="propertyName" type="xs:string" />
 			<xs:element name="value" type="xs:string" />
-			<xs:element name="valueList" type="xs:string" />
-			<xs:element name="classMap" type="ClassMap" />
-			<xs:element name="transferOption" type="TransferOption" default="Desired" />
+			<!--<xs:element name="valueList" type="xs:string" />-->
+			<xs:element name="class" type="Class" />
 		</xs:sequence>
 	</xs:complexType>
 
+  <!--
 	<xs:complexType name="ValueList">
 		<xs:sequence>
 			<xs:element name="name" type="xs:string" />
@@ -113,6 +105,7 @@
 			<xs:element name="uri" type="xs:string" />
 		</xs:sequence>
 	</xs:complexType>
+	-->
 
 	<xs:simpleType name="TransferOption">
 		<xs:restriction base="xs:string">

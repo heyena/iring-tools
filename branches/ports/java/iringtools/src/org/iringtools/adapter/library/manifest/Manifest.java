@@ -60,17 +60,14 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "graphMaps",
-    "valueLists",
+    "graphs",
     "version"
 })
 @XmlRootElement(name = "manifest")
 public class Manifest {
 
     @XmlElement(required = true)
-    protected Manifest.GraphMaps graphMaps;
-    @XmlElement(required = true)
-    protected Manifest.ValueLists valueLists;
+    protected Manifest.Graphs graphs;
     @XmlElement(required = true)
     protected String version;
 
@@ -79,11 +76,11 @@ public class Manifest {
      * 
      * @return
      *     possible object is
-     *     {@link Manifest.GraphMaps }
+     *     {@link Manifest.Graphs }
      *     
      */
-    public Manifest.GraphMaps getGraphMaps() {
-        return graphMaps;
+    public Manifest.Graphs getGraphs() {
+        return graphs;
     }
 
     /**
@@ -91,35 +88,11 @@ public class Manifest {
      * 
      * @param value
      *     allowed object is
-     *     {@link Manifest.GraphMaps }
+     *     {@link Manifest.Graphs }
      *     
      */
-    public void setGraphMaps(Manifest.GraphMaps value) {
-        this.graphMaps = value;
-    }
-
-    /**
-     * Gets the value of the valueLists property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Manifest.ValueLists }
-     *     
-     */
-    public Manifest.ValueLists getValueLists() {
-        return valueLists;
-    }
-
-    /**
-     * Sets the value of the valueLists property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Manifest.ValueLists }
-     *     
-     */
-    public void setValueLists(Manifest.ValueLists value) {
-        this.valueLists = value;
+    public void setGraphs(Manifest.Graphs value) {
+        this.graphs = value;
     }
 
     /**
@@ -168,11 +141,11 @@ public class Manifest {
      */
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = {
-        "graphMap"
+        "graph"
     })
-    public static class GraphMaps {
+    public static class Graphs {
 
-        protected List<GraphMap> graphMap;
+        protected List<Graph> graph;
 
         /**
          * Gets the value of the graphMap property.
@@ -192,15 +165,15 @@ public class Manifest {
          * 
          * <p>
          * Objects of the following type(s) are allowed in the list
-         * {@link GraphMap }
+         * {@link Graph }
          * 
          * 
          */
-        public List<GraphMap> getGraphMap() {
-            if (graphMap == null) {
-                graphMap = new ArrayList<GraphMap>();
+        public List<Graph> getGraph() {
+            if (graph == null) {
+                graph = new ArrayList<Graph>();
             }
-            return this.graphMap;
+            return this.graph;
         }
 
         /**
@@ -208,84 +181,11 @@ public class Manifest {
          * 
          * @param graphMap
          *     allowed object is
-         *     {@link GraphMap }
+         *     {@link Graph }
          *     
          */
-        public void setGraphMap(List<GraphMap> graphMap) {
-            this.graphMap = graphMap;
+        public void setGraph(List<Graph> graphMap) {
+            this.graph = graphMap;
         }
-
     }
-
-
-    /**
-     * <p>Java class for anonymous complex type.
-     * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
-     * 
-     * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *         &lt;element name="valueList" type="{http://iringtools.org/adapter/library/manifest}ValueList" maxOccurs="unbounded" minOccurs="0"/>
-     *       &lt;/sequence>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
-     * </pre>
-     * 
-     * 
-     */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "valueList"
-    })
-    public static class ValueLists {
-
-        protected List<ValueList> valueList;
-
-        /**
-         * Gets the value of the valueList property.
-         * 
-         * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the valueList property.
-         * 
-         * <p>
-         * For example, to add a new item, do as follows:
-         * <pre>
-         *    getValueList().add(newItem);
-         * </pre>
-         * 
-         * 
-         * <p>
-         * Objects of the following type(s) are allowed in the list
-         * {@link ValueList }
-         * 
-         * 
-         */
-        public List<ValueList> getValueList() {
-            if (valueList == null) {
-                valueList = new ArrayList<ValueList>();
-            }
-            return this.valueList;
-        }
-
-        /**
-         * Sets the value of the valueList property.
-         * 
-         * @param valueList
-         *     allowed object is
-         *     {@link ValueList }
-         *     
-         */
-        public void setValueList(List<ValueList> valueList) {
-            this.valueList = valueList;
-        }
-
-    }
-
 }

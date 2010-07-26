@@ -8,27 +8,28 @@ import org.iringtools.adapter.library.dto.ClassObject.TemplateObjects;
 import org.iringtools.adapter.library.dto.DataTransferObject.ClassObjects;
 import org.iringtools.adapter.library.dto.TemplateObject.RoleObjects;
 import org.iringtools.adapter.library.manifest.*;
-import org.iringtools.adapter.library.manifest.GraphMap.ClassTemplateListMaps;
-import org.iringtools.adapter.library.manifest.TemplateMap.RoleMaps;
+import org.iringtools.adapter.library.manifest.Class;
+import org.iringtools.adapter.library.manifest.Graph.ClassTemplatesMaps;
+import org.iringtools.adapter.library.manifest.Template.Roles;
 import org.iringtools.utility.JaxbUtil;
 
 public class DtoDiffEngine implements DiffEngine
 {
   private static final Logger logger = Logger.getLogger(DtoDiffEngine.class);
-  private GraphMap graphMap;
+  private Graph graph;
   
   @Override
-  public DataTransferObjects diff(GraphMap graphMap, String sendingXml, String receivingXml)
+  public DataTransferObjects diff(Graph graph, String sendingXml, String receivingXml)
       throws Exception
   {
-    if (graphMap == null || graphMap.getClassTemplateListMaps().getClassTemplateListMap().size() == 0)
+    if (graph == null || graph.getClassTemplatesMaps().getClassTemplatesMap().size() == 0)
     {
       String errorMessage = "Unable to perform diffencing due to empty graph.";
       logger.error(errorMessage);
       throw new Exception(errorMessage);
     }
 
-    this.graphMap = graphMap;
+    this.graph = graph;
     
     DataTransferObjects result = new DataTransferObjects();
     List<DataTransferObject> resultDtoList = result.getDataTransferObject();
@@ -140,18 +141,18 @@ public class DtoDiffEngine implements DiffEngine
     ClassObjects resultClassObjects = new ClassObjects();
     resultDto.setClassObjects(resultClassObjects);
     List<ClassObject> resultClassObjectList = resultClassObjects.getClassObject();
-    ClassTemplateListMaps classTemplateListMaps = graphMap.getClassTemplateListMaps();
+    ClassTemplatesMaps classTemplatesMaps = graph.getClassTemplatesMaps();
 
-    for (ClassTemplateListMap classTemplateListMap : classTemplateListMaps)
+    for (ClassTemplatesMap classTemplateListMap : classTemplatesMaps)
     {
-      ClassMap classMap = classTemplateListMap.getClassMap();
-      List<TemplateMap> templateMaps = classTemplateListMap.getTemplateMaps().getTemplateMap();
+      Class clazz = classTemplateListMap.getClazz();
+      List<Template> templates = classTemplateListMap.getTemplates().getTemplate();
       ClassObjects classObjects = sourceDto.getClassObjects();
       boolean classFound = false;
 
       for (ClassObject classObject : classObjects)
       {
-        if (classObject.getClassId().equals(classMap.getClassId()))
+        if (classObject.getClassId().equals(clazz.getClassId()))
         {
           classFound = true;
 
@@ -167,20 +168,20 @@ public class DtoDiffEngine implements DiffEngine
           resultClassObject.setTemplateObjects(resultTemplateObjects);
           List<TemplateObject> resultTemplateObjectList = resultTemplateObjects.getTemplateObject();
           
-          for (TemplateMap templateMap : templateMaps)
+          for (Template template : templates)
           {
             boolean templateFound = false;
             TemplateObjects templateObjects = classObject.getTemplateObjects();
 
             for (TemplateObject templateObject : templateObjects)
             {
-              if (templateObject.getTemplateId().equals(templateMap.getTemplateId()))
+              if (templateObject.getTemplateId().equals(template.getTemplateId()))
               {
                 templateFound = true;
-                RoleMaps roleMaps = templateMap.getRoleMaps();
+                Roles roles = template.getRoles();
                 RoleObjects roleObjects = templateObject.getRoleObjects();
                 
-                if (validateRoleObjects(roleObjects, roleMaps))
+                if (validateRoleObjects(roleObjects, roles))
                 {
                   TemplateObject resultTemplateObject = new TemplateObject();
                   resultTemplateObject.setTemplateId(templateObject.getTemplateId());
@@ -193,11 +194,11 @@ public class DtoDiffEngine implements DiffEngine
                   resultTemplateObject.setRoleObjects(resultRoleObjects);
                   List<RoleObject> resultRoleObjectList = resultRoleObjects.getRoleObject();
 
-                  for (RoleMap roleMap : roleMaps)
+                  for (Role role : roles)
                   {
                     for (RoleObject roleObject : roleObjects)
                     {
-                      if (roleObject.getRoleId().equals(roleMap.getRoleId()))
+                      if (roleObject.getRoleId().equals(role.getRoleId()))
                       {
                         RoleObject resultRoleObject = new RoleObject();
                         resultRoleObject.setRoleId(roleObject.getRoleId());
@@ -212,31 +213,31 @@ public class DtoDiffEngine implements DiffEngine
               }
             }
             
-            if (!templateFound && templateMap.getTransferOption() == TransferOption.REQUIRED)
+            if (!templateFound && template.getTransferOption() == TransferOption.REQUIRED)
             {
-              throw new Exception("Sending DTOs does not contain required template [" + templateMap.getName() + "].");
+              throw new Exception("Sending DTOs does not contain required template [" + template.getName() + "].");
             }
           }
         }
       }
 
-      if (!classFound && classMap.getTransferOption() == TransferOption.REQUIRED)
+      if (!classFound && clazz.getTransferOption() == TransferOption.REQUIRED)
       {
-        throw new Exception("Sending DTOs does not contain required class [" + classMap.getName() + "].");
+        throw new Exception("Sending DTOs does not contain required class [" + clazz.getName() + "].");
       }
     }
 
     return resultDto;
   }
 
-  private boolean validateRoleObjects(RoleObjects roleObjects, RoleMaps roleMaps)
+  private boolean validateRoleObjects(RoleObjects roleObjects, Roles roles)
   {
     for (RoleObject roleObject : roleObjects)
     {
-      for (RoleMap roleMap : roleMaps)
+      for (Role role : roles)
       {
-        if (roleObject.getRoleId().equals(roleMap.getRoleId()) && roleMap.getType() == RoleType.REFERENCE
-            && roleObject.getReference() != roleMap.getValue())
+        if (roleObject.getRoleId().equals(role.getRoleId()) && role.getType() == RoleType.REFERENCE
+            && roleObject.getReference() != role.getValue())
         {
           return false;
         }

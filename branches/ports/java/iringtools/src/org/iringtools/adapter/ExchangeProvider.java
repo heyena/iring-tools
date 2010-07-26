@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Properties;
 import org.iringtools.adapter.library.DiffEngine;
 import org.iringtools.adapter.library.dto.DataTransferObjects;
-import org.iringtools.adapter.library.manifest.GraphMap;
+import org.iringtools.adapter.library.manifest.Graph;
 import org.iringtools.adapter.library.manifest.Manifest;
 import org.iringtools.utility.IOUtil;
 import org.iringtools.utility.JaxbUtil;
@@ -27,11 +27,11 @@ public class ExchangeProvider
     this.settings = settings;
   }
 
-  private GraphMap getGraphMap(String graphName)
+  private Graph getGraphMap(String graphName)
   {
-    List<GraphMap> graphMaps = manifest.getGraphMaps().getGraphMap();
+    List<Graph> graphMaps = manifest.getGraphs().getGraph();
 
-    for (GraphMap graphMap : graphMaps)
+    for (Graph graphMap : graphMaps)
     {
       if (graphMap.getName().equalsIgnoreCase(graphName))
       {
@@ -69,7 +69,7 @@ public class ExchangeProvider
     try
     {
       manifest = JaxbUtil.read(Manifest.class, manifestPath);
-      GraphMap graphMap = getGraphMap(graphName);
+      Graph graphMap = getGraphMap(graphName);
 
       if (graphMap != null)
       {
