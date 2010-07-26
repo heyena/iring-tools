@@ -254,7 +254,7 @@ namespace org.iringtools.adapter
     #endregion
 
     #region adapter methods
-    public Manifest GetManifest(string projectName, string applicationName)
+    public org.iringtools.library.manifest.Manifest GetManifest(string projectName, string applicationName)
     {
       string path = string.Format("{0}Mapping.{1}.{2}.xml", _settings["XmlPath"], projectName, applicationName);
 
@@ -262,19 +262,18 @@ namespace org.iringtools.adapter
       {
         InitializeScope(projectName, applicationName);
 
-        Manifest manifest = new Manifest();
-        manifest.Graphs = new List<ManifestGraph>();
-
+        org.iringtools.library.manifest.Manifest manifest = new org.iringtools.library.manifest.Manifest();
+        
         if (File.Exists(path))
         {
           foreach (GraphMap graphMap in _mapping.graphMaps)
           {
-            ManifestGraph manifestGraph = new ManifestGraph { GraphName = graphMap.name };
-            manifest.Graphs.Add(manifestGraph);
+            org.iringtools.library.manifest.Graph graph = new org.iringtools.library.manifest.Graph { Name = graphMap.name };
+            manifest.Graphs.Add(graph);
           }
         }
-
-        return manifest;
+        
+        return manifest;        
       }
       catch (Exception ex)
       {

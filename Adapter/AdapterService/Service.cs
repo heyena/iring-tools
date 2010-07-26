@@ -68,7 +68,7 @@ namespace org.iringtools.adapter
       /// <param name="projectName"></param>
       /// <param name="applicationName"></param>
       /// <returns></returns>
-    public Manifest GetManifest(string projectName, string applicationName)
+    public org.iringtools.library.manifest.Manifest GetManifest(string projectName, string applicationName)
     {
       return _adapterProvider.GetManifest(projectName, applicationName);
     }

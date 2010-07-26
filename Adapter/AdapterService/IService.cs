@@ -62,7 +62,7 @@ namespace org.iringtools.adapter
 
     [OperationContract]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/manifest")]
-    Manifest GetManifest(string projectName, string applicationName);
+    org.iringtools.library.manifest.Manifest GetManifest(string projectName, string applicationName);
 
     [OperationContract]
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/datadictionary")]

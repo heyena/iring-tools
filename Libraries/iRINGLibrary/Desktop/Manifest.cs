@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2009, ids-adi.org /////////////////////////////////////////////
+﻿// Copyright (c) 2010, ids-adi.org /////////////////////////////////////////////
 // All rights reserved.
 //------------------------------------------------------------------------------
 // Redistribution and use in source and binary forms, with or without
@@ -28,38 +28,135 @@ using System.Runtime.Serialization;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 
-namespace org.iringtools.library
+namespace org.iringtools.library.manifest
 {
-  [DataContract(Namespace = "http://ns.iringtools.org/library")]
+  [DataContract(Namespace = "http://iringtools.org/adapter/library/manifest", Name = "manifest")]
   public class Manifest
   {
-    [DataMember(Name="Graphs")]
-    public List<ManifestGraph> Graphs { get; set; }
+    public Manifest()
+    {
+      Graphs = new List<Graph>();
+    }
+
+    [DataMember(Name = "graphs", EmitDefaultValue = false)]
+    public List<Graph> Graphs { get; set; }
+
+    [DataMember(Name = "version", EmitDefaultValue = false)]
+    public string Version { get; set; }
   }
 
-  [DataContract(Namespace = "http://ns.iringtools.org/library", Name="Graph")]
-  public class ManifestGraph
+  [DataContract(Namespace = "http://iringtools.org/adapter/library/manifest", Name = "graph")]
+  public class Graph
   {
-    [DataMember(Name="Properties")]
-    public List<ManifestProperty> ManifestProperties { get; set; }
+    public Graph()
+    {
+      ClassTemplatesMaps = new List<ClassTemplatesMap>();
+    }
 
-    [DataMember]
-    public string GraphName { get; set; }
+    [DataMember(Name = "name", EmitDefaultValue = false)]
+    public string Name { get; set; }
+
+    [DataMember(Name = "classTemplatesMaps", EmitDefaultValue = false)]
+    public List<ClassTemplatesMap> ClassTemplatesMaps { get; set; }
+  }
+  
+  [DataContract(Namespace = "http://iringtools.org/adapter/library/manifest", Name = "classTemplatesMap")]
+  public class ClassTemplatesMap
+  {
+    public ClassTemplatesMap()
+    {
+      Templates = new List<Template>();
+    }
+
+    [DataMember(Name = "class", EmitDefaultValue = false)]
+    public Class Class { get; set; }
+
+    [DataMember(Name = "templates", EmitDefaultValue = false)]
+    public List<Template> Templates { get; set; }
   }
 
-  [DataContract(Namespace = "http://ns.iringtools.org/library")]
-  public class ManifestProperty
+  [DataContract(Namespace = "http://iringtools.org/adapter/library/manifest", Name = "class")]
+  public class Class
   {
-    [DataMember]
+    [DataMember(Name = "classId", EmitDefaultValue = false)]
+    public string ClassId { get; set; }
+
+    [DataMember(Name = "name", EmitDefaultValue = false)]
+    public string Name { get; set; }
+
+    [DataMember(Name = "transferOption", EmitDefaultValue = false)]
+    public TransferOption TransferOption { get; set; }
+  }
+
+  [DataContract(Namespace = "http://iringtools.org/adapter/library/manifest", Name = "template")]
+  public class Template
+  {
+    public Template()
+    {
+      Roles = new List<Role>();
+    }
+
+    [DataMember(Name = "templateId", EmitDefaultValue = false)]
+    public string TemplateId { get; set; }
+
+    [DataMember(Name = "name", EmitDefaultValue = false)]
+    public string Name { get; set; }
+
+    [DataMember(Name = "roles", EmitDefaultValue = false)]
+    public List<Role> Roles { get; set; }
+
+    [DataMember(Name = "transferOption", EmitDefaultValue = false)]
+    public TransferOption TransferOption { get; set; }
+  }
+
+  [DataContract(Namespace = "http://iringtools.org/adapter/library/manifest", Name = "role")]
+  public class Role
+  {
+    [DataMember(Name = "type", EmitDefaultValue = false)]
+    public string Type { get; set; }
+
+    [DataMember(Name = "roleId", EmitDefaultValue = false)]
+    public string RoleId { get; set; }
+
+    [DataMember(Name = "name", EmitDefaultValue = false)]
+    public string Name { get; set; }
+
+    [DataMember(Name = "dataType", EmitDefaultValue = false)]
+    public string DataType { get; set; }
+
+    [DataMember(Name = "propertyName", EmitDefaultValue = false)]
     public string PropertyName { get; set; }
 
-    [DataMember]
-    public bool IsKey { get; set; }
+    [DataMember(Name = "value", EmitDefaultValue = false)]
+    public string Value { get; set; }
 
-    [DataMember]
-    public bool IsRequired { get; set; }
+    [DataMember(Name = "class", EmitDefaultValue = false)]
+    public Class Class { get; set; }
+  }
 
-    [DataMember]
-    public string DataType { get; set; }
+  [DataContract]
+  public enum TransferOption
+  {
+    [EnumMember]
+    Desired,
+
+    [EnumMember]
+    Required,
+  }
+
+  [DataContract]
+  public enum RoleType
+  {
+    [EnumMember]
+    FixedValue,
+
+    [EnumMember]
+    Possessor,
+
+    [EnumMember]
+    Property,
+
+    [EnumMember]
+    Reference,
   }
 }
