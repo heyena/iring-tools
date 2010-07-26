@@ -147,28 +147,28 @@ namespace AdapterService.Tests
       Assert.IsFalse(actual.Level == StatusLevel.Error);
     }
 
-    [TestMethod()]
-    public void PullTest_ABC()
-    {
-      AdapterProxy target = new AdapterProxy();
+    //[TestMethod()]
+    //public void PullTest_ABC()
+    //{
+    //  AdapterProxy target = new AdapterProxy();
 
-      Response prepare = target.RefreshAll("12345_000", "ABC");
+    //  Response prepare = target.RefreshAll("12345_000", "ABC");
 
-      if (prepare.Level == StatusLevel.Error)
-      {
-        throw new AssertFailedException(Utility.SerializeDataContract<Response>(prepare));
-      }
+    //  if (prepare.Level == StatusLevel.Error)
+    //  {
+    //    throw new AssertFailedException(Utility.SerializeDataContract<Response>(prepare));
+    //  }
 
-      Request request = new Request
-      {
-        {"targetUri", "http://localhost/InterfaceService/sparql/"},
-        {"graphName", "Lines"},
-      };
+    //  Request request = new Request
+    //  {
+    //    {"targetUri", "http://localhost/InterfaceService/sparql/"},
+    //    {"graphName", "Lines"},
+    //  };
 
-      Response actual = target.Pull("12345_000", "ABC", request);
+    //  Response actual = target.Pull("12345_000", "ABC", request);
 
-      Assert.IsFalse(actual.Level == StatusLevel.Error);
-    }
+    //  Assert.IsFalse(actual.Level == StatusLevel.Error);
+    //}
 
     [TestMethod()]
     public void UpdateMapping_ABC()
@@ -194,7 +194,7 @@ namespace AdapterService.Tests
     public void GetManifest()
     {
       AdapterProxy target = new AdapterProxy();
-      Manifest manifest = target.GetManifest("12345_000", "ABC");
+      org.iringtools.library.manifest.Manifest manifest = target.GetManifest("12345_000", "ABC");
       Assert.AreNotEqual(0, manifest.Graphs.Count);
     }
 
