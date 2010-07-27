@@ -166,6 +166,7 @@ namespace org.iringtools.modules.medatasourceregion
           {
             node.SetImageSource("relation.png");
             node.SetTextBlockText(header);
+            node.RelationshipName = header;
             node.SetTooltipText("DataRelationship : " + header);
           }
           else
@@ -336,11 +337,11 @@ namespace org.iringtools.modules.medatasourceregion
     /// <param name="node">The node.</param>
     /// <param name="classMap">The class map.</param>
     /// <returns></returns>
-    bool PopulateDataRelationship(DataObjectItem node, org.iringtools.library.DataObject dataObject)
+    bool PopulateDataRelationship(DataObjectItem node, org.iringtools.library.DataObject dataObject, string relationshipName)
     {
       try
       {
-        DataObjectItem newNode = AddNode(dataObject.objectName, dataObject, node);
+        DataObjectItem newNode = AddNode(relationshipName, dataObject, node);
         newNode.ParentObjectName = node.DataObject.objectName;
         node.Items.Add(newNode);
         return true;
@@ -473,7 +474,7 @@ namespace org.iringtools.modules.medatasourceregion
           {
             org.iringtools.library.DataObject dataObject = ((DataDictionary)tvwDataDictionary.Tag).dataObjects.First(c => c.objectName == dataRelationship.relatedObjectName);
               if(dataObject != null)
-            isProcessed = PopulateDataRelationship(selectedNode, dataObject);
+            isProcessed = PopulateDataRelationship(selectedNode, dataObject, dataRelationship.relationshipName);
           }
       }
       catch (Exception ex)

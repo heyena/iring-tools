@@ -52,14 +52,14 @@ namespace org.iringtools.adapter.datalayer
 
     private ISession OpenSession()
     {
-      try
-      {
-        return _sessionFactory.OpenSession();
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(string.Format("Error in OpenSession: project[{0}] application[{1}] {2}", _settings["ProjectName"], _settings["ApplicationName"], ex));
-        throw new Exception("Error while openning nhibernate session " + ex);
+        try
+        {
+          return _sessionFactory.OpenSession();
+        }
+        catch (Exception ex)
+        {
+          _logger.Error(string.Format("Error in OpenSession: project[{0}] application[{1}] {2}", _settings["ProjectName"], _settings["ApplicationName"], ex));
+          throw new Exception("Error while openning nhibernate session " + ex);
       }
     }
 
@@ -315,5 +315,33 @@ namespace org.iringtools.adapter.datalayer
     {
       return Utility.Read<DataDictionary>(_dataDictionaryPath);
     }
+
+    public IList<IDataObject> GetRelatedObjects(IDataObject  sourceDataObject, string relatedObjectType)
+    {
+      DataDictionary dictionary = GetDictionary();
+      IList<IDataObject> relatedObjects;
+      DataObject dataObject = dictionary.dataObjects.First(c => c.objectName == sourceDataObject.GetType().Name);      
+      DataRelationship dataRelationship = dataObject.dataRelationships.First(c=>c.relationshipName == relatedObjectType);
+      DataObject relatedObject = dictionary.dataObjects.First(c => c.objectName == dataRelationship.relatedObjectName);
+      
+
+      StringBuilder sql = new StringBuilder();
+      sql.Append("from " + dataRelationship.relatedObjectName + " where ");
+      foreach(PropertyMap map in dataRelationship.propertyMaps)
+      {
+        sql.Append(map.relatedPropertyName + " = '" + sourceDataObject.GetPropertyValue(map.dataPropertyName) + "' and ");
+      }
+      sql.Remove(sql.Length - 4, 4);
+
+      using (ISession session = OpenSession())
+      {
+        IQuery query = session.CreateQuery(sql.ToString());
+        relatedObjects = query.List<IDataObject>();
+
+      }
+
+      return relatedObjects;
+    }
+
   }
 }

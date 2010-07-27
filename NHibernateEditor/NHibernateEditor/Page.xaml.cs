@@ -615,7 +615,6 @@ namespace ApplicationEditor
             _dal.GetDatabaseSchema(_currentProject.Name, _currentApplication.Name);
             isFetched = true;
           }
-
         }
         constructTreeView(databaseDictionary, tvwItemSourceRoot);
       }
@@ -692,10 +691,8 @@ namespace ApplicationEditor
         {
           tvwItemDestinationRoot.Items.Clear();
           if (!isFetched)
-          {
             _dal.GetDatabaseSchema(project, application);
-            isFetched = true;
-          }
+
           constructTreeView(dict, tvwItemDestinationRoot);
         }
       }
@@ -955,17 +952,20 @@ namespace ApplicationEditor
       try
       {
         ComboBox appCB = (ComboBox)sender;
+
+        if (appCB.SelectedIndex == -1) return;
+
         _currentProject = (ScopeProject)((ComboBoxItem)cmbProject.SelectedItem).Tag;
         _currentApplication = (ScopeApplication)((ComboBoxItem)appCB.SelectedItem).Tag;
         if (cmbApp.Items.Count == 0) return;
 
         tvwItemSourceRoot.Items.Clear();
-
+        
         tvwItemDestinationRoot.Items.Clear();
 
         _dal.GetDbDictionary(_currentProject.Name, _currentApplication.Name);
+        if(!isFetched)
         _dal.GetDatabaseSchema(_currentProject.Name, _currentApplication.Name);
-        isFetched = true;
       }
       catch (Exception ex)
       {
@@ -1121,11 +1121,9 @@ namespace ApplicationEditor
           dataObject.dataRelationships.Remove((DataRelationship)selectedItem.Tag);
 
         }
-        if (!isFetched)
-        {
+        if (!isFetched)         
           _dal.GetDatabaseSchema(_currentProject.Name, _currentApplication.Name);
-          isFetched = true;
-        }
+
       }
       catch (Exception ex)
       {
@@ -1721,8 +1719,9 @@ namespace ApplicationEditor
          biBusyWindow.IsBusy = false;
         return;
       }
+      if(!isFetched)
       _dal.GetDatabaseSchema(_currentProject.Name, _currentApplication.Name);
-      isFetched = true;
+      
     }
 
   }
