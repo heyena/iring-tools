@@ -1,7 +1,7 @@
 ==Java Development Environment Configuration==
  * checkout from svn/branches/ports/java
  * copy and modify iring-tools-java.userlibraries
- * import copy of iring-tools-java.userlibraries into 
+ * import copy of user.libraries into 
   * Window -> Preferences...
   * Java -> Build Path -> User Libraries
  * import Preference.epf
