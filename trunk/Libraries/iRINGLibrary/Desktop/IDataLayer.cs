@@ -34,7 +34,7 @@ using org.w3.sparql_results;
 namespace org.iringtools.library
 {
   public interface IDataObject
-  {
+  {    
     object GetPropertyValue(string propertyName);
 
     void SetPropertyValue(string propertyName, object value);
@@ -59,5 +59,7 @@ namespace org.iringtools.library
     Response Delete(string objectType, DataFilter filter);
 
     DataDictionary GetDictionary();
+
+    IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType);
   }
 }

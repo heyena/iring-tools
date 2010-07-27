@@ -131,7 +131,8 @@ namespace org.iringtools.adapter.datalayer
           parameters.ReferencedAssemblies.Add(_settings["AdapterBinaryPath"] + "Iesi.Collections.dll");
           parameters.ReferencedAssemblies.Add(_settings["AdapterBinaryPath"] + "iRINGLibrary.dll");
           NHIBERNATE_ASSEMBLIES.ForEach(assembly => parameters.ReferencedAssemblies.Add(_settings["AdapterBinaryPath"] + assembly));
-                    
+         
+        
           Utility.Compile(compilerOptions, parameters, new string[] { sourceCode });
           #endregion Compile entities
 
@@ -372,7 +373,7 @@ namespace org.iringtools.adapter.datalayer
           {
             case RelationshipType.OneToOne:
 
-              DataProperty keyProperty = dataObject.getKeyProperty(dataObject.keyProperties.First().keyPropertyName);
+              //DataProperty keyProperty = dataObject.getKeyProperty(dataObject.keyProperties.First().keyPropertyName);
 
               /*
               _dataObjectWriter.WriteLine("public virtual {0} Id {{ get; set; }}", keyProperty.dataType);
@@ -390,10 +391,10 @@ namespace org.iringtools.adapter.datalayer
               _mappingWriter.WriteEndElement(); // end id element
               */
               
-              _mappingWriter.WriteStartElement("one-to-one");
-              _mappingWriter.WriteAttributeString("name", dataRelationship.relationshipName);
-              _mappingWriter.WriteAttributeString("class", _namespace + "." + dataRelationship.relatedObjectName + ", " + _settings["ExecutingAssemblyName"]);
-              _mappingWriter.WriteAttributeString("cascade", "save-update");
+              //_mappingWriter.WriteStartElement("one-to-one");
+              //_mappingWriter.WriteAttributeString("name", dataRelationship.relationshipName);
+              //_mappingWriter.WriteAttributeString("class", _namespace + "." + dataRelationship.relatedObjectName + ", " + _settings["ExecutingAssemblyName"]);
+              //_mappingWriter.WriteAttributeString("cascade", "save-update");
 
               /*
               if (oneToOneRelationship.isKeySource)
@@ -406,45 +407,45 @@ namespace org.iringtools.adapter.datalayer
               }
               */
 
-              _dataObjectWriter.WriteLine("public virtual {0} {1} {{ get; set; }}", dataRelationship.relatedObjectName, dataRelationship.relationshipName);
-              _mappingWriter.WriteEndElement(); // end one-to-one element
+              //_dataObjectWriter.WriteLine("public virtual {0} {1} {{ get; set; }}", dataRelationship.relatedObjectName, dataRelationship.relationshipName);
+              //_mappingWriter.WriteEndElement(); // end one-to-one element
               
               break;
 
             case RelationshipType.OneToMany:
 
-              if (dataRelationship.propertyMaps.Count > 0)
-              {
-                _dataObjectWriter.WriteLine("public virtual Iesi.Collections.Generic.ISet<{0}> {1} {{ get; set; }}", dataRelationship.relatedObjectName, dataRelationship.relationshipName);
-                _mappingWriter.WriteStartElement("set");
-                _mappingWriter.WriteAttributeString("name", dataRelationship.relationshipName);
-                _mappingWriter.WriteAttributeString("table", relatedDataObject.tableName);
-                _mappingWriter.WriteAttributeString("inverse", "true");
-                _mappingWriter.WriteAttributeString("cascade", "all-delete-orphan");
+              //if (dataRelationship.propertyMaps.Count > 0)
+              //{
+              //  _dataObjectWriter.WriteLine("public virtual Iesi.Collections.Generic.ISet<{0}> {1} {{ get; set; }}", dataRelationship.relatedObjectName, dataRelationship.relationshipName);
+              //  _mappingWriter.WriteStartElement("set");
+              //  _mappingWriter.WriteAttributeString("name", dataRelationship.relationshipName);
+              //  _mappingWriter.WriteAttributeString("table", relatedDataObject.tableName);
+              //  _mappingWriter.WriteAttributeString("inverse", "true");
+              //  _mappingWriter.WriteAttributeString("cascade", "all-delete-orphan");
 
-                if (dataRelationship.propertyMaps.Count == 1)
-                {
-                  _mappingWriter.WriteStartElement("key");
-                  _mappingWriter.WriteAttributeString("column", "\"" + GetColumnName(relatedDataObject, dataRelationship.propertyMaps.First().relatedPropertyName) + "\"");
-                  _mappingWriter.WriteEndElement(); // end key
-                }
-                else 
-                {
-                  _mappingWriter.WriteStartElement("key");
-                  foreach (PropertyMap propertyMap in dataRelationship.propertyMaps)
-                  {
-                    _mappingWriter.WriteStartElement("column");
-                    _mappingWriter.WriteAttributeString("name", "\"" + GetColumnName(relatedDataObject, propertyMap.relatedPropertyName) + "\"");
-                    _mappingWriter.WriteEndElement(); // end column
-                  }
-                  _mappingWriter.WriteEndElement(); // end key
-                }
+              //  if (dataRelationship.propertyMaps.Count == 1)
+              //  {
+              //    _mappingWriter.WriteStartElement("key");
+              //    _mappingWriter.WriteAttributeString("column", "\"" + GetColumnName(relatedDataObject, dataRelationship.propertyMaps.First().relatedPropertyName) + "\"");
+              //    _mappingWriter.WriteEndElement(); // end key
+              //  }
+              //  else 
+              //  {
+              //    _mappingWriter.WriteStartElement("key");
+              //    foreach (PropertyMap propertyMap in dataRelationship.propertyMaps)
+              //    {
+              //      _mappingWriter.WriteStartElement("column");
+              //      _mappingWriter.WriteAttributeString("name", "\"" + GetColumnName(relatedDataObject, propertyMap.relatedPropertyName) + "\"");
+              //      _mappingWriter.WriteEndElement(); // end column
+              //    }
+              //    _mappingWriter.WriteEndElement(); // end key
+              //  }
 
-                _mappingWriter.WriteStartElement("one-to-many");
-                _mappingWriter.WriteAttributeString("class", _namespace + "." + dataRelationship.relatedObjectName + ", " + _settings["ExecutingAssemblyName"]);
-                _mappingWriter.WriteEndElement(); // one-to-many
-                _mappingWriter.WriteEndElement(); // end set element
-              }
+              //  _mappingWriter.WriteStartElement("one-to-many");
+              //  _mappingWriter.WriteAttributeString("class", _namespace + "." + dataRelationship.relatedObjectName + ", " + _settings["ExecutingAssemblyName"]);
+              //  _mappingWriter.WriteEndElement(); // one-to-many
+              //  _mappingWriter.WriteEndElement(); // end set element
+              //}
               break;
           }
         }
@@ -573,24 +574,24 @@ namespace org.iringtools.adapter.datalayer
         _dataObjectWriter.WriteLine("{");
         _dataObjectWriter.Indent++;
         
-        foreach (DataRelationship dataRelationship in dataObject.dataRelationships)
-        {
-          _dataObjectWriter.WriteLine("case \"{0}\":", dataRelationship.relationshipName);
-          _dataObjectWriter.Indent++;
+        //foreach (DataRelationship dataRelationship in dataObject.dataRelationships)
+        //{
+        //  _dataObjectWriter.WriteLine("case \"{0}\":", dataRelationship.relationshipName);
+        //  _dataObjectWriter.Indent++;
 
-          if (dataRelationship.relationshipType == RelationshipType.OneToOne)
-          {
-            _dataObjectWriter.WriteLine(@"return new List<IDataObject>{{{0}}};", dataRelationship.relationshipName);
-          }
-          else if (dataRelationship.relationshipType == RelationshipType.OneToMany)
-          {
-            _dataObjectWriter.WriteLine(@"IList<IDataObject> relatedObjects = new List<IDataObject>();");
-            _dataObjectWriter.WriteLine(@"foreach ({0} relatedObject in {1}) relatedObjects.Add(relatedObject);", dataRelationship.relatedObjectName, dataRelationship.relationshipName);
-            _dataObjectWriter.WriteLine(@"return relatedObjects;");
-          }
+        //  if (dataRelationship.relationshipType == RelationshipType.OneToOne)
+        //  {
+        //    _dataObjectWriter.WriteLine(@"return new List<IDataObject>{{{0}}};", dataRelationship.relationshipName);
+        //  }
+        //  else if (dataRelationship.relationshipType == RelationshipType.OneToMany)
+        //  {
+        //    _dataObjectWriter.WriteLine(@"IList<IDataObject> relatedObjects = new List<IDataObject>();");
+        //    _dataObjectWriter.WriteLine(@"foreach ({0} relatedObject in {1}) relatedObjects.Add(relatedObject);", dataRelationship.relatedObjectName, dataRelationship.relationshipName);
+        //    _dataObjectWriter.WriteLine(@"return relatedObjects;");
+        //  }
 
-          _dataObjectWriter.Indent--;
-        }
+        //  _dataObjectWriter.Indent--;
+        //}
 
         _dataObjectWriter.WriteLine("default:");
         _dataObjectWriter.Indent++;
