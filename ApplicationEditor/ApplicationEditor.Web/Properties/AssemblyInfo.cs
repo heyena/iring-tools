@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("InterfaceService.dotNetRDF")]
+[assembly: AssemblyTitle("ApplicationEditor.Web")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Hatch Associates")]
-[assembly: AssemblyProduct("InterfaceService.dotNetRDF")]
-[assembly: AssemblyCopyright("Copyright © Hatch Associates 2010")]
+[assembly: AssemblyCompany("Microsoft")]
+[assembly: AssemblyProduct("ApplicationEditor.Web")]
+[assembly: AssemblyCopyright("Copyright © Microsoft 2010")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("3d5900ae-111a-45be-96b3-d9e4606ca793")]
+[assembly: Guid("0d7068c7-72d7-42f2-891c-9e93d9cf3c71")]
 
 // Version information for an assembly consists of the following four values:
 //
