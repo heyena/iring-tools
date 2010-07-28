@@ -296,26 +296,26 @@ namespace AdapterService.Tests
     //  Assert.AreEqual(false, isError);
     //}
 
-    [TestMethod()]
-    public void PullDTO()
-    {
-        AdapterProxy target = new AdapterProxy();
-        Request request = new Request();
-        WebCredentials targetCredentials = new WebCredentials();
-        string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
-        string adapterServiceUri = System.Configuration.ConfigurationManager.AppSettings["AdapterServiceUri"].ToString();
-        request.Add("targetUri", adapterServiceUri);
-        request.Add("targetCredentials", targetCredentialsXML);
-        request.Add("graphName", "LinesGraph");
-        request.Add("targetGraphName", "Lines");
-        request.Add("filter", "Tag-1");
-        //request.Add("filter", String.Empty);
-        request.Add("projectName", "12345_000");
-        request.Add("applicationName", "ABC");
-        Response actual = target.PullDTO("12345_000", "DEF", request);
+    //[TestMethod()]
+    //public void PullDTO()
+    //{
+    //    AdapterProxy target = new AdapterProxy();
+    //    Request request = new Request();
+    //    WebCredentials targetCredentials = new WebCredentials();
+    //    string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
+    //    string adapterServiceUri = System.Configuration.ConfigurationManager.AppSettings["AdapterServiceUri"].ToString();
+    //    request.Add("targetUri", adapterServiceUri);
+    //    request.Add("targetCredentials", targetCredentialsXML);
+    //    request.Add("graphName", "LinesGraph");
+    //    request.Add("targetGraphName", "Lines");
+    //    request.Add("filter", "Tag-1");
+    //    //request.Add("filter", String.Empty);
+    //    request.Add("projectName", "12345_000");
+    //    request.Add("applicationName", "ABC");
+    //    Response actual = target.PullDTO("12345_000", "DEF", request);
 
-        Assert.IsFalse(actual.Level == StatusLevel.Error);
-    }
+    //    Assert.IsFalse(actual.Level == StatusLevel.Error);
+    //}
 
     [TestMethod]
     public void GetXml()
