@@ -31,7 +31,7 @@ namespace ReferenceDataService.Tests
     {
       ReferenceDataProxy target = new ReferenceDataProxy();
       List<Repository> actual = target.GetRepositories();
-      Assert.AreEqual(3, actual.Count);
+      Assert.AreEqual(4, actual.Count);
     }
 
     [TestMethod()]
@@ -39,7 +39,7 @@ namespace ReferenceDataService.Tests
     {
       ReferenceDataProxy target = new ReferenceDataProxy();
       RefDataEntities actual = target.Search("^vortex");
-      Assert.AreEqual(8, actual.Count);
+      Assert.AreEqual(20, actual.Count);
     }
 
     [TestMethod()]
@@ -77,7 +77,7 @@ namespace ReferenceDataService.Tests
     {
       ReferenceDataProxy target = new ReferenceDataProxy();
       RefDataEntities actual = target.SearchPage("valve", "15");
-      Assert.AreEqual(73, actual.Count);
+      Assert.AreEqual(100, actual.Count);
     }
 
     [TestMethod()]
@@ -115,7 +115,7 @@ namespace ReferenceDataService.Tests
     {
       ReferenceDataProxy target = new ReferenceDataProxy();
       List<Entity> actual = target.Find("transmitter");
-      Assert.AreEqual(1, actual.Count);
+      Assert.AreEqual(2, actual.Count);
     }
 
     [TestMethod()]

@@ -372,7 +372,7 @@
           Command="Copy $(AdapterServiceDir)\Web_Default.config $(AdapterServiceDir)\Web.config" />
     
     <Exec Condition="!Exists('$(dotNetRdfInterfaceServiceDir)\Web.config')"
-          Command="Copy $(dotNetRdfInterfaceServiceDir)\Developer_Web.config $(dotNetRdfInterfaceServiceDir)\Web.config" />
+          Command="Copy $(dotNetRdfInterfaceServiceDir)\Web_Default.config $(dotNetRdfInterfaceServiceDir)\Web.config" />
     
     <Exec Condition="!Exists('$(ApplicationServiceDir)\Web.config')" 
           Command="Copy $(ApplicationServiceDir)\Web_Default.config $(ApplicationServiceDir)\Web.config" />
