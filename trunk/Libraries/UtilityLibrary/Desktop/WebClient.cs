@@ -326,14 +326,8 @@ namespace org.iringtools.utility
                 ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
                   ValidateRemoteCertificate
                 );
-            
-                using (var requestStream = request.GetRequestStream())
-                {
-                  foreach (var bit in stream.ToArray())
-                  {
-                    requestStream.WriteByte(bit);
-                  }
-                }
+
+                request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
 
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 T responseEntity = Utility.DeserializeFromStream<T>(response.GetResponseStream(), useDataContractSerializer);
