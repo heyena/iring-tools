@@ -115,11 +115,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationEditor.Web", "NH
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationEditor.Silverlight", "NHibernateEditor\NHibernateEditor\ApplicationEditor.Silverlight.csproj", "{2AD28296-22DA-465F-90AA-6538661B3F86}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RefDataConsole", "Prototypes\RefDataConsole\RefDataConsole.csproj", "{00B81899-98C6-4818-90D5-5E53CA2D6E66}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReferenceDataEditor.Web", "ReferenceData\ReferenceDataEditor.Web\ReferenceDataEditor.Web.csproj", "{F3F90985-34C5-4226-B991-850EB596C776}"
+EndProject
 Global
-	GlobalSection(SubversionScc) = preSolution
-		Svn-Managed = True
-		Manager = AnkhSVN - Subversion Support for Visual Studio
-	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = iring-tools.vsmdi
 	EndGlobalSection
@@ -1140,6 +1140,56 @@ Global
 		{2AD28296-22DA-465F-90AA-6538661B3F86}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{2AD28296-22DA-465F-90AA-6538661B3F86}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{2AD28296-22DA-465F-90AA-6538661B3F86}.Release|x86.ActiveCfg = Release|Any CPU
+		{00B81899-98C6-4818-90D5-5E53CA2D6E66}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{00B81899-98C6-4818-90D5-5E53CA2D6E66}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{00B81899-98C6-4818-90D5-5E53CA2D6E66}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{00B81899-98C6-4818-90D5-5E53CA2D6E66}.Debug|x86.ActiveCfg = Debug|x86
+		{00B81899-98C6-4818-90D5-5E53CA2D6E66}.Debug|x86.Build.0 = Debug|x86
+		{00B81899-98C6-4818-90D5-5E53CA2D6E66}.Default|Any CPU.ActiveCfg = Debug|x86
+		{00B81899-98C6-4818-90D5-5E53CA2D6E66}.Default|Mixed Platforms.ActiveCfg = Debug|x86
+		{00B81899-98C6-4818-90D5-5E53CA2D6E66}.Default|Mixed Platforms.Build.0 = Debug|x86
+		{00B81899-98C6-4818-90D5-5E53CA2D6E66}.Default|x86.ActiveCfg = Debug|x86
+		{00B81899-98C6-4818-90D5-5E53CA2D6E66}.Default|x86.Build.0 = Debug|x86
+		{00B81899-98C6-4818-90D5-5E53CA2D6E66}.Demo|Any CPU.ActiveCfg = Debug|x86
+		{00B81899-98C6-4818-90D5-5E53CA2D6E66}.Demo|Mixed Platforms.ActiveCfg = Debug|x86
+		{00B81899-98C6-4818-90D5-5E53CA2D6E66}.Demo|Mixed Platforms.Build.0 = Debug|x86
+		{00B81899-98C6-4818-90D5-5E53CA2D6E66}.Demo|x86.ActiveCfg = Debug|x86
+		{00B81899-98C6-4818-90D5-5E53CA2D6E66}.Demo|x86.Build.0 = Debug|x86
+		{00B81899-98C6-4818-90D5-5E53CA2D6E66}.MobileDev|Any CPU.ActiveCfg = Release|x86
+		{00B81899-98C6-4818-90D5-5E53CA2D6E66}.MobileDev|Mixed Platforms.ActiveCfg = Release|x86
+		{00B81899-98C6-4818-90D5-5E53CA2D6E66}.MobileDev|Mixed Platforms.Build.0 = Release|x86
+		{00B81899-98C6-4818-90D5-5E53CA2D6E66}.MobileDev|x86.ActiveCfg = Release|x86
+		{00B81899-98C6-4818-90D5-5E53CA2D6E66}.MobileDev|x86.Build.0 = Release|x86
+		{00B81899-98C6-4818-90D5-5E53CA2D6E66}.Release|Any CPU.ActiveCfg = Release|x86
+		{00B81899-98C6-4818-90D5-5E53CA2D6E66}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{00B81899-98C6-4818-90D5-5E53CA2D6E66}.Release|Mixed Platforms.Build.0 = Release|x86
+		{00B81899-98C6-4818-90D5-5E53CA2D6E66}.Release|x86.ActiveCfg = Release|x86
+		{00B81899-98C6-4818-90D5-5E53CA2D6E66}.Release|x86.Build.0 = Release|x86
+		{F3F90985-34C5-4226-B991-850EB596C776}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3F90985-34C5-4226-B991-850EB596C776}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3F90985-34C5-4226-B991-850EB596C776}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F3F90985-34C5-4226-B991-850EB596C776}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F3F90985-34C5-4226-B991-850EB596C776}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F3F90985-34C5-4226-B991-850EB596C776}.Default|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3F90985-34C5-4226-B991-850EB596C776}.Default|Any CPU.Build.0 = Debug|Any CPU
+		{F3F90985-34C5-4226-B991-850EB596C776}.Default|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F3F90985-34C5-4226-B991-850EB596C776}.Default|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F3F90985-34C5-4226-B991-850EB596C776}.Default|x86.ActiveCfg = Debug|Any CPU
+		{F3F90985-34C5-4226-B991-850EB596C776}.Demo|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3F90985-34C5-4226-B991-850EB596C776}.Demo|Any CPU.Build.0 = Debug|Any CPU
+		{F3F90985-34C5-4226-B991-850EB596C776}.Demo|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F3F90985-34C5-4226-B991-850EB596C776}.Demo|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F3F90985-34C5-4226-B991-850EB596C776}.Demo|x86.ActiveCfg = Debug|Any CPU
+		{F3F90985-34C5-4226-B991-850EB596C776}.MobileDev|Any CPU.ActiveCfg = Release|Any CPU
+		{F3F90985-34C5-4226-B991-850EB596C776}.MobileDev|Any CPU.Build.0 = Release|Any CPU
+		{F3F90985-34C5-4226-B991-850EB596C776}.MobileDev|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F3F90985-34C5-4226-B991-850EB596C776}.MobileDev|Mixed Platforms.Build.0 = Release|Any CPU
+		{F3F90985-34C5-4226-B991-850EB596C776}.MobileDev|x86.ActiveCfg = Release|Any CPU
+		{F3F90985-34C5-4226-B991-850EB596C776}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3F90985-34C5-4226-B991-850EB596C776}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3F90985-34C5-4226-B991-850EB596C776}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F3F90985-34C5-4226-B991-850EB596C776}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{F3F90985-34C5-4226-B991-850EB596C776}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1177,11 +1227,16 @@ Global
 		{EFC25AE4-D88F-48D2-8652-98777D81E95B} = {0CE13F71-3913-4C34-863E-FF1A7788C177}
 		{A5A5317A-421B-4C4D-B640-9E134D55B5E7} = {0CE13F71-3913-4C34-863E-FF1A7788C177}
 		{B3AD51C6-20FB-4865-9499-DE68B15874D4} = {0CE13F71-3913-4C34-863E-FF1A7788C177}
+		{00B81899-98C6-4818-90D5-5E53CA2D6E66} = {0CE13F71-3913-4C34-863E-FF1A7788C177}
 		{E937EE2D-064B-4EDA-9E81-7E7F509A784A} = {DBE0B254-4C58-46C4-A3DE-140364B4623B}
 		{EA853599-4781-4BD2-8EC7-61E893520A23} = {DBE0B254-4C58-46C4-A3DE-140364B4623B}
 		{46FB3942-D0A5-4BFF-97B0-739E56BFB111} = {270F5203-FE58-480F-AF4B-C38D4461FEEC}
 		{748B993D-4F65-4A39-B865-6A7D5412C4BA} = {270F5203-FE58-480F-AF4B-C38D4461FEEC}
 		{04C08B97-3D9E-4BB4-B0EC-6AE035105BF8} = {05A05970-7324-4D5A-9B69-4BF1542676F3}
 		{1A611244-54BE-4F12-AA34-12F54A2B07E6} = {05A05970-7324-4D5A-9B69-4BF1542676F3}
+	EndGlobalSection
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
 	EndGlobalSection
 EndGlobal
