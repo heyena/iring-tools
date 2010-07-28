@@ -22,6 +22,11 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.USER_LIBRARY/guice-2.0">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/ExchangeLibrary"/>
 	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
 </classpath>
