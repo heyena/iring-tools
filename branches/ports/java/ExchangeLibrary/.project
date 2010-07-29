@@ -3,6 +3,8 @@
 	<name>ExchangeLibrary</name>
 	<comment></comment>
 	<projects>
+		<project>AdapterLibrary</project>
+		<project>UtilityLibrary</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

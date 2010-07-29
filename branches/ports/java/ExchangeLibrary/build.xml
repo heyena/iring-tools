@@ -85,11 +85,17 @@
                 <propertyref name="build.compiler"/>
             </propertyset>
         </ant>
+        <copy todir="bin">
+            <fileset dir="${AdapterLibrary.location}/bin" includes="**/*.class"/>
+        </copy>
         <ant antfile="build.xml" dir="${UtilityLibrary.location}" inheritAll="false" target="build-project">
             <propertyset>
                 <propertyref name="build.compiler"/>
             </propertyset>
         </ant>
+    	  <copy todir="bin">
+    	      <fileset dir="${UtilityLibrary.location}/bin" includes="**/*.class"/>
+    	  </copy>    	        
     </target>
     <target depends="init" name="build-project">
         <echo message="${ant.project.name}: ${ant.file}"/>
