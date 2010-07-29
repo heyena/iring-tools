@@ -412,4 +412,36 @@
       <fileName>getTemplateRoleRestriction.txt</fileName>
     </Query>
   </QueryItem>
+  <QueryItem>
+    <Key>GetPart8Specialization</Key>
+    <Query>
+      <bindings>
+        <QueryBinding>
+          <name>uri</name>
+          <type>Uri</type>
+        </QueryBinding>
+        <QueryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </QueryBinding>
+      </bindings>
+      <fileName>part8getsuperclass.txt</fileName>
+    </Query>
+  </QueryItem>
+  <QueryItem>
+    <Key>GetPart8Class</Key>
+    <Query>
+      <bindings>
+        <QueryBinding>
+          <name>comment</name>
+          <type>Literal</type>
+        </QueryBinding>
+        <QueryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </QueryBinding>
+      </bindings>
+      <fileName>part8getclass.txt</fileName>
+    </Query>
+  </QueryItem>
 </Queries>
