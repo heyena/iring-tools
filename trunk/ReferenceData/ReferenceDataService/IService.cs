@@ -174,14 +174,15 @@ namespace org.ids_adi.iring.referenceData
     [OperationContract]
     [WebGet(UriTemplate = "/part8/templateclasif/{id}")]
     List<Classification> GetPart8TemplateClassif(string id);
-/*
-    /// <summary>
-    ///get part 8 template Roles
-    /// </summary>
+
+    ///// <summary>
+    /////Insert a Template into the Sandbox
+    ///// </summary>
+    // [XmlSerializerFormat]
     [OperationContract]
-    [WebGet(UriTemplate = "/part8/templateroles")]
-    List<Repository> GetPart8TemplateRoles();
-      */
+    [WebInvoke(UriTemplate = "part8/templates")]
+    Response PostPart8Template(QMXF template);
+
     #endregion
   }
 
