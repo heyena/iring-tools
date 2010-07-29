@@ -14,50 +14,57 @@
     <DeploymentDir>$(MSBuildProjectDirectory)\Deployment</DeploymentDir>
     <iRINGAdapter>$(DeploymentDir)\iRINGAdapter</iRINGAdapter>
     <iRINGSandbox>$(DeploymentDir)\iRINGSandbox</iRINGSandbox>
-    <LandingPageDir>LandingPage</LandingPageDir>
-    <AdapterDir>Adapter</AdapterDir>
-    <AdapterServiceDir>$(AdapterDir)\AdapterService</AdapterServiceDir>
-    <AdapterLibraryDir>$(AdapterDir)\AdapterLibrary</AdapterLibraryDir>
-    <JosekiInterfaceServiceDir>InterfaceService.Joseki</JosekiInterfaceServiceDir>
-    <dotNetRdfInterfaceServiceDir>InterfaceService.dotNetRdf</dotNetRdfInterfaceServiceDir>
-    <SemWebInterfaceServiceDir>InterfaceService.SemWeb</SemWebInterfaceServiceDir>
-    <JosekiSandboxServiceDir>SandboxService.Joseki</JosekiSandboxServiceDir>
-    <SemWebSandboxServiceDir>SandboxService.SemWeb</SemWebSandboxServiceDir>
-    <MappingEditorDir>MappingEditor\MappingEditor.Web</MappingEditorDir>
-    <ApplicationEditorDeploymentDir>$(iRINGAdapter)\ApplicationEditor</ApplicationEditorDeploymentDir>
-    <RefDataEditorDir>RefDataEditor\RefDataEditor.Web</RefDataEditorDir>
-    <ApplicationEditorDir>NHibernateEditor\NHibernateEditor.Web</ApplicationEditorDir>
-    <RefDataDir>ReferenceData</RefDataDir>
-    <ApplicationServiceDir>NHibernate\NHibernateService</ApplicationServiceDir>
-    <ApplicationServiceDeploymentDir>$(iRINGAdapter)\ApplicationService</ApplicationServiceDeploymentDir>
-    <LandingPageDeploymentDir>$(DeploymentDir)\LandingPage</LandingPageDeploymentDir>
-    <RefDataServiceDir>$(RefDataDir)\ReferenceDataService</RefDataServiceDir>
-    <DbDictionaryServiceDir>NHibernate\NHibernateService</DbDictionaryServiceDir>
-    <AdapterServiceDeploymentDir>$(iRINGAdapter)\AdapterService</AdapterServiceDeploymentDir>
-    <DbDictionaryServiceDeploymentDir>$(iRINGAdapter)\DbDictionaryService</DbDictionaryServiceDeploymentDir>
-    <JosekiInterfaceServiceDeploymentDir>$(iRINGAdapter)\InterfaceService.Joseki</JosekiInterfaceServiceDeploymentDir>
-    <dotNetRdfInterfaceServiceDeploymentDir>$(iRINGAdapter)\InterfaceService.dotNetRdf</dotNetRdfInterfaceServiceDeploymentDir>
-    <SemWebInterfaceServiceDeploymentDir>$(iRINGAdapter)\InterfaceService.SemWeb</SemWebInterfaceServiceDeploymentDir>
-    <AdapterToolsDeploymentDir>$(iRINGAdapter)\Tools</AdapterToolsDeploymentDir>
-    <MappingEditorDeploymentDir>$(iRINGAdapter)\MappingEditor</MappingEditorDeploymentDir>
-    <DbDictionaryEditorDeploymentDir>$(iRINGAdapter)\DbDictionaryEditor</DbDictionaryEditorDeploymentDir>
-    <RefDataEditorDeploymentDir>$(iRINGSandbox)\RefDataEditor</RefDataEditorDeploymentDir>
-    <RefDataServiceDeploymentDir>$(iRINGSandbox)\RefDataService</RefDataServiceDeploymentDir>
-    <JosekiSandboxServiceDeploymentDir>$(iRINGSandbox)\SandboxService.Joseki</JosekiSandboxServiceDeploymentDir>
-    <SemWebSandboxServiceDeploymentDir>$(iRINGSandbox)\SandboxService.SemWeb</SemWebSandboxServiceDeploymentDir>
-    <SandboxToolsDeploymentDir>$(iRINGSandbox)\Tools</SandboxToolsDeploymentDir>    
-    <CSVDataLayerDir>CSVDataLayer</CSVDataLayerDir>
-    <CSVDataLayerSolutionFile>$(CSVDataLayerDir)\CSVDataLayer.sln</CSVDataLayerSolutionFile>
-    <SDKDeploymentDir>$(DeploymentDir)\SDK</SDKDeploymentDir>
-    <CSVDataLayerDeploymentDir>$(SDKDeploymentDir)\CSVDataLayer</CSVDataLayerDeploymentDir>  
-    <CSVDataLayerLibDeploymentDir>$(CSVDataLayerDeploymentDir)\lib</CSVDataLayerLibDeploymentDir>    
     <MSTestCmd>"$(VSINSTALLDIR)\Common7\IDE\MSTest.exe"</MSTestCmd>
     <ZipCmd>"$(MSBuildProjectDirectory)\ExternalBinaries\7-Zip\7z.exe"</ZipCmd>
+    
+    <AdapterDir>Adapter</AdapterDir>
+    <AdapterLibraryDir>$(AdapterDir)\AdapterLibrary</AdapterLibraryDir>
+    <AdapterServiceDir>$(AdapterDir)\AdapterService</AdapterServiceDir>
+    
+    <ApplicationServiceDir>Application\ApplicationService</ApplicationServiceDir>
+    <AdapterServiceDeploymentDir>$(iRINGAdapter)\AdapterService</AdapterServiceDeploymentDir>
+    <ApplicationServiceDeploymentDir>$(iRINGAdapter)\ApplicationService</ApplicationServiceDeploymentDir>
+    <ApplicationEditorDir>Application\ApplicationEditor.Web</ApplicationEditorDir>
+    <ApplicationEditorDeploymentDir>$(iRINGAdapter)\ApplicationEditor</ApplicationEditorDeploymentDir>
+    
+    <MappingEditorDir>MappingEditor\MappingEditor.Web</MappingEditorDir>
+    <MappingEditorDeploymentDir>$(iRINGAdapter)\MappingEditor</MappingEditorDeploymentDir>
+    
+    <ReferenceDataDir>ReferenceData</ReferenceDataDir>
+    <ReferenceDataServiceDir>$(ReferenceDataDir)\ReferenceDataService</ReferenceDataServiceDir>
+    <ReferenceDataServiceDeploymentDir>$(iRINGSandbox)\ReferenceDataService</ReferenceDataServiceDeploymentDir>
+    <ReferenceDataEditorDir>$(ReferenceDataDir)\ReferenceDataEditor.Web</ReferenceDataEditorDir>
+    <ReferenceDataEditorDeploymentDir>$(iRINGSandbox)\ReferenceDataEditor</ReferenceDataEditorDeploymentDir>
+    
+    <JosekiInterfaceServiceDir>InterfaceService.Joseki</JosekiInterfaceServiceDir>
+    <JosekiInterfaceServiceDeploymentDir>$(iRINGAdapter)\InterfaceService.Joseki</JosekiInterfaceServiceDeploymentDir>
+    <JosekiSandboxServiceDir>SandboxService.Joseki</JosekiSandboxServiceDir>
+    <JosekiSandboxServiceDeploymentDir>$(iRINGSandbox)\SandboxService.Joseki</JosekiSandboxServiceDeploymentDir>
+    
+    <dotNetRdfInterfaceServiceDir>InterfaceService.dotNetRdf</dotNetRdfInterfaceServiceDir>    
+    <dotNetRdfInterfaceServiceDeploymentDir>$(iRINGAdapter)\InterfaceService.dotNetRdf</dotNetRdfInterfaceServiceDeploymentDir>
+    
+    <SemWebInterfaceServiceDir>InterfaceService.SemWeb</SemWebInterfaceServiceDir>
+    <SemWebInterfaceServiceDeploymentDir>$(iRINGAdapter)\InterfaceService.SemWeb</SemWebInterfaceServiceDeploymentDir>
+    <SemWebSandboxServiceDir>SandboxService.SemWeb</SemWebSandboxServiceDir>
+    <SemWebSandboxServiceDeploymentDir>$(iRINGSandbox)\SandboxService.SemWeb</SemWebSandboxServiceDeploymentDir>
+    
+    <AdapterToolsDeploymentDir>$(iRINGAdapter)\Tools</AdapterToolsDeploymentDir>
+    <SandboxToolsDeploymentDir>$(iRINGSandbox)\Tools</SandboxToolsDeploymentDir>    
+    
+    <LandingPageDir>LandingPage</LandingPageDir>
+    <LandingPageDeploymentDir>$(DeploymentDir)\LandingPage</LandingPageDeploymentDir>
+    
+    <SDKDeploymentDir>$(DeploymentDir)\SDK</SDKDeploymentDir>
+    <CSVDataLayerDir>CSVDataLayer</CSVDataLayerDir>
+    <CSVDataLayerSolutionFile>$(CSVDataLayerDir)\CSVDataLayer.sln</CSVDataLayerSolutionFile>
+    <CSVDataLayerDeploymentDir>$(SDKDeploymentDir)\CSVDataLayer</CSVDataLayerDeploymentDir>  
+    <CSVDataLayerLibDeploymentDir>$(CSVDataLayerDeploymentDir)\lib</CSVDataLayerLibDeploymentDir>    
   </PropertyGroup>
 
   <ItemGroup>
-    <UnitTest Include="RefDataServiceTests">
-      <TestContainer>/testcontainer:$(RefDataDir)\ReferenceDataService.Tests\bin\Debug\ReferenceDataService.Tests.dll</TestContainer>
+    <UnitTest Include="ReferenceDataServiceTests">
+      <TestContainer>/testcontainer:$(ReferenceDataDir)\ReferenceDataService.Tests\bin\Debug\ReferenceDataService.Tests.dll</TestContainer>
     </UnitTest>
     <UnitTest Include="AdapterServiceTests">
       <TestContainer>/testcontainer:$(AdapterDir)\AdapterService.Tests\bin\Debug\AdapterService.Tests.dll /runconfig:AdapterService.testrunconfig</TestContainer>
@@ -174,26 +181,26 @@
                $(LandingPageDir)\*\.svn\**;">
     </LandingPageDeployment>
 
-    <RefDataEditorDeployment
-      Include="$(RefDataEditorDir)\**"
-      Exclude="$(RefDataEditorDir)\bin\*.pdb;
-               $(RefDataEditorDir)\bin\*.xml;
-               $(RefDataEditorDir)\obj\**;
-               $(RefDataEditorDir)\Properties\**;
-               $(RefDataEditorDir)\*.cs;
-               $(RefDataEditorDir)\*.html;
-               $(RefDataEditorDir)\*.csproj;
-               $(RefDataEditorDir)\*.user;
-               $(RefDataEditorDir)\*.vspscc;
-               $(RefDataEditorDir)\web.config;
-               $(RefDataEditorDir)\.svn\**;
-               $(RefDataEditorDir)\*\.svn\**">
-    </RefDataEditorDeployment>
+    <ReferenceDataEditorDeployment
+      Include="$(ReferenceDataEditorDir)\**"
+      Exclude="$(ReferenceDataEditorDir)\bin\*.pdb;
+               $(ReferenceDataEditorDir)\bin\*.xml;
+               $(ReferenceDataEditorDir)\obj\**;
+               $(ReferenceDataEditorDir)\Properties\**;
+               $(ReferenceDataEditorDir)\*.cs;
+               $(ReferenceDataEditorDir)\*.html;
+               $(ReferenceDataEditorDir)\*.csproj;
+               $(ReferenceDataEditorDir)\*.user;
+               $(ReferenceDataEditorDir)\*.vspscc;
+               $(ReferenceDataEditorDir)\web.config;
+               $(ReferenceDataEditorDir)\.svn\**;
+               $(ReferenceDataEditorDir)\*\.svn\**">
+    </ReferenceDataEditorDeployment>
 
     <ApplicationEditorDeployment
-     Include="$(ApplicationEditorDir)\**"
-     Exclude="$(ApplicationEditorDir)\bin\*.pdb;
-              $(ApplicationEditorDir)\bin\*.xml;
+      Include="$(ApplicationEditorDir)\**"
+      Exclude="$(ApplicationEditorDir)\bin\*.pdb;
+               $(ApplicationEditorDir)\bin\*.xml;
                $(ApplicationEditorDir)\obj\**;
                $(ApplicationEditorDir)\Properties\**;
                $(ApplicationEditorDir)\*.cs;
@@ -207,27 +214,27 @@
                $(ApplicationEditorDir)\*\.svn\**">
     </ApplicationEditorDeployment>
 
-    <RefDataServiceDeployment
-      Include="$(RefDataServiceDir)\**"
-      Exclude="$(RefDataServiceDir).Tests\**;               
-               $(RefDataServiceDir)\bin\*.pdb;
-               $(RefDataServiceDir)\bin\*.xml;
-               $(RefDataServiceDir)\Logs\**;
-               $(RefDataServiceDir)\obj\**;
-               $(RefDataServiceDir)\Properties\**;
-               $(RefDataServiceDir)\Service.cs;
-               $(RefDataServiceDir)\IService.cs;
-               $(RefDataServiceDir)\Global.asax.cs;
-               $(RefDataServiceDir)\XML\Repositories.xml;
-               $(RefDataServiceDir)\XML\Repositories_Development.xml;
-               $(RefDataServiceDir)\*.csproj;
-               $(RefDataServiceDir)\*.user;
-               $(RefDataServiceDir)\*.vspscc;
-               $(RefDataServiceDir)\web.config;
-               $(RefDataServiceDir)\Web_Development.config;
-               $(RefDataServiceDir)\.svn\**;
-               $(RefDataServiceDir)\*\.svn\**;">
-    </RefDataServiceDeployment>
+    <ReferenceDataServiceDeployment
+      Include="$(ReferenceDataServiceDir)\**"
+      Exclude="$(ReferenceDataServiceDir).Tests\**;               
+               $(ReferenceDataServiceDir)\bin\*.pdb;
+               $(ReferenceDataServiceDir)\bin\*.xml;
+               $(ReferenceDataServiceDir)\Logs\**;
+               $(ReferenceDataServiceDir)\obj\**;
+               $(ReferenceDataServiceDir)\Properties\**;
+               $(ReferenceDataServiceDir)\Service.cs;
+               $(ReferenceDataServiceDir)\IService.cs;
+               $(ReferenceDataServiceDir)\Global.asax.cs;
+               $(ReferenceDataServiceDir)\XML\Repositories.xml;
+               $(ReferenceDataServiceDir)\XML\Repositories_Development.xml;
+               $(ReferenceDataServiceDir)\*.csproj;
+               $(ReferenceDataServiceDir)\*.user;
+               $(ReferenceDataServiceDir)\*.vspscc;
+               $(ReferenceDataServiceDir)\web.config;
+               $(ReferenceDataServiceDir)\Web_Development.config;
+               $(ReferenceDataServiceDir)\.svn\**;
+               $(ReferenceDataServiceDir)\*\.svn\**;">
+    </ReferenceDataServiceDeployment>
 
     <ApplicationServiceDeployment
       Include="$(ApplicationServiceDir)\**"
@@ -377,8 +384,8 @@
     <Exec Condition="!Exists('$(ApplicationServiceDir)\Web.config')" 
           Command="Copy $(ApplicationServiceDir)\Web_Default.config $(ApplicationServiceDir)\Web.config" />
     
-    <Exec Condition="!Exists('$(RefDataServiceDir)\Web.config')"
-          Command="Copy $(RefDataServiceDir)\Web_Default.config $(RefDataServiceDir)\Web.config" />
+    <Exec Condition="!Exists('$(ReferenceDataServiceDir)\Web.config')"
+          Command="Copy $(ReferenceDataServiceDir)\Web_Default.config $(ReferenceDataServiceDir)\Web.config" />
     
     <Exec Condition="!Exists('$(MappingEditorDir)\Web.config')"
           Command="Copy $(MappingEditorDir)\Web_Default.config $(MappingEditorDir)\Web.config" />
@@ -389,8 +396,8 @@
     <Exec Condition="!Exists('$(SemWebInterfaceServiceDir)\Web.config')"
           Command="Copy $(SemWebInterfaceServiceDir)\Web_Default.config $(SemWebInterfaceServiceDir)\Web.config" />
     
-    <Exec Condition="!Exists('$(RefDataEditorDir)\Web.config')"
-          Command="Copy $(RefDataEditorDir)\Web_Default.config $(RefDataEditorDir)\Web.config" />
+    <Exec Condition="!Exists('$(ReferenceDataEditorDir)\Web.config')"
+          Command="Copy $(ReferenceDataEditorDir)\Web_Default.config $(ReferenceDataEditorDir)\Web.config" />
     
     <Exec Condition="!Exists('$(SemWebSandboxServiceDir)\Web.config')"
           Command="Copy $(SemWebSandboxServiceDir)\Web_Default.config $(SemWebSandboxServiceDir)\Web.config" />
@@ -441,6 +448,11 @@
     <Exec Command="Move /Y $(ApplicationServiceDeploymentDir)\Web_Default.config $(ApplicationServiceDeploymentDir)\Web.config" />
     <Exec Command="Mkdir $(ApplicationServiceDeploymentDir)\Logs"/> 
    
+    <Message Text="Creating application editor deployment ..." />
+    <Copy SourceFiles="@(ApplicationEditorDeployment)"
+          DestinationFiles="@(ApplicationEditorDeployment->'$(ApplicationEditorDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(ApplicationEditorDeploymentDir)\Web_Default.config $(ApplicationEditorDeploymentDir)\Web.config" />
+
     <!--<Message Text="Creating Joseki interface service deployment ..." />
     <Copy SourceFiles="@(JosekiInterfaceServiceDeployment)"
           DestinationFiles="@(JosekiInterfaceServiceDeployment->'$(JosekiInterfaceServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
@@ -456,29 +468,24 @@
     <Message Text="Creating dotNetRdf interface service deployment ..." />
     <Copy SourceFiles="@(dotNetRdfInterfaceServiceDeployment)"
           DestinationFiles="@(dotNetRdfInterfaceServiceDeployment->'$(dotNetRdfInterfaceServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Exec Command="Move /Y $(dotNetRdfInterfaceServiceDeploymentDir)\Developer_Web.config $(dotNetRdfInterfaceServiceDeploymentDir)\Web.config" />
+    <Exec Command="Move /Y $(dotNetRdfInterfaceServiceDeploymentDir)\Web_Default.config $(dotNetRdfInterfaceServiceDeploymentDir)\Web.config" />
 
     <Message Text="Creating mapping editor deployment ..." />
     <Copy SourceFiles="@(MappingEditorDeployment)"
           DestinationFiles="@(MappingEditorDeployment->'$(MappingEditorDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Exec Command="Move /Y $(MappingEditorDeploymentDir)\Web_Default.config $(MappingEditorDeploymentDir)\Web.config" />
 
-    <Message Text="Creating application editor deployment ..." />
-    <Copy SourceFiles="@(ApplicationEditorDeployment)"
-          DestinationFiles="@(ApplicationEditorDeployment->'$(ApplicationEditorDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Exec Command="Move /Y $(ApplicationEditorDeploymentDir)\Web_Default.config $(ApplicationEditorDeploymentDir)\Web.config" />
-
     <Message Text="Creating reference data editor deployment ..." />
-    <Copy SourceFiles="@(RefDataEditorDeployment)"
-          DestinationFiles="@(RefDataEditorDeployment->'$(RefDataEditorDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Exec Command="Move /Y $(RefDataEditorDeploymentDir)\Web_Default.config $(RefDataEditorDeploymentDir)\Web.config" />
+    <Copy SourceFiles="@(ReferenceDataEditorDeployment)"
+          DestinationFiles="@(ReferenceDataEditorDeployment->'$(ReferenceDataEditorDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(ReferenceDataEditorDeploymentDir)\Web_Default.config $(ReferenceDataEditorDeploymentDir)\Web.config" />
 
     <Message Text="Creating reference data service deployment ..." />
-    <Copy SourceFiles="@(RefDataServiceDeployment)"
-          DestinationFiles="@(RefDataServiceDeployment->'$(RefDataServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Exec Command="Move /Y $(RefDataServiceDeploymentDir)\Web_Default.config $(RefDataServiceDeploymentDir)\Web.config" />
-    <Exec Command="Move /Y $(RefDataServiceDeploymentDir)\XML\Repositories_Default.xml $(RefDataServiceDeploymentDir)\XML\Repositories.xml" />
-    <Exec Command="Mkdir $(RefDataServiceDeploymentDir)\Logs" />
+    <Copy SourceFiles="@(ReferenceDataServiceDeployment)"
+          DestinationFiles="@(ReferenceDataServiceDeployment->'$(ReferenceDataServiceDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(ReferenceDataServiceDeploymentDir)\Web_Default.config $(ReferenceDataServiceDeploymentDir)\Web.config" />
+    <Exec Command="Move /Y $(ReferenceDataServiceDeploymentDir)\XML\Repositories_Default.xml $(ReferenceDataServiceDeploymentDir)\XML\Repositories.xml" />
+    <Exec Command="Mkdir $(ReferenceDataServiceDeploymentDir)\Logs" />
 
     <Message Text="Creating Joseki sandbox service deployment ..." />
     <Copy SourceFiles="@(JosekiSandboxServiceDeployment)"
@@ -513,7 +520,6 @@
     <Message Text="Creating CSVDataLayer library deployment ..." />
     <Copy SourceFiles="@(CSVDataLayerLibDeployment)"
           DestinationFiles="@(CSVDataLayerLibDeployment->'$(CSVDataLayerLibDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
-
   </Target>
 
   <Target Name="CreatePackages" DependsOnTargets="CreateDeployment">
