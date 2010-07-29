@@ -7,7 +7,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" style="height:100%;">
 <head id="Head1" runat="server">
-    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="cache-control" content="no-cache"/>
     <title>MappingEditor</title>
  <script type="text/javascript">
  function onBeforeUnloadAction(){
