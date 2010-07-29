@@ -2886,6 +2886,97 @@ namespace org.ids_adi.iring.referenceData
             }
         }
 
+        public RefDataEntities Part8Search(string query)
+        {
+            try
+            {
+                using (new LoggerHelper(this, "Search", query))
+                {
+                    return Part8SearchPage(query, "0");
+                }
+            }
+            catch (Exception ex)
+            {
+                _log4netLogger.Error("Error in Search: " + ex);
+                throw new Exception("Error while Searching " + query + ".\n" + ex.ToString(), ex);
+            }
+        }
+
+        public RefDataEntities Part8SearchPage(string query, string page)
+        {
+            using (new LoggerHelper(this, "SearchPage", query + "," + page))
+            {
+                RefDataEntities entities = null;
+                int counter = 0;
+
+                int pageNumber = Convert.ToInt32(page);
+                int pageTotal = 0;
+
+                try
+                {
+                    string sparql = String.Empty;
+                    string relativeUri = String.Empty;
+
+                    //Check the search History for Optimization
+                    if (_searchHistory.ContainsKey(query))
+                    {
+                        entities = _searchHistory[query];
+                    }
+                    else
+                    {
+                        RefDataEntities resultEntities = new RefDataEntities();
+
+                        Query queryContainsSearch = _queries["Part8ContainsSearch"];
+                        QueryBindings queryBindings = queryContainsSearch.bindings;
+
+                        sparql = ReadSPARQL(queryContainsSearch.fileName);
+                        sparql = sparql.Replace("param1", query);
+
+                        foreach (Repository repository in _repositories)
+                        {
+                            SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
+
+
+                            List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                            foreach (Dictionary<string, string> result in results)
+                            {
+                                Entity resultEntity = new Entity
+                                {
+                                    uri = result["uri"],
+                                    label = result["label"],
+                                    repository = repository.name
+                                };
+
+                                string key = resultEntity.label;
+
+                                if (resultEntities.ContainsKey(key))
+                                {
+                                    key += ++counter;
+                                }
+
+                                resultEntities.Add(key, resultEntity);
+                            }
+                            results.Clear();
+                        }
+
+                        _searchHistory.Add(query, resultEntities);
+                        pageTotal = resultEntities.Count;
+                        entities = resultEntities;
+                    }
+
+                    entities = GetRequestedPage(entities, pageNumber, _pageSize);
+                    entities.total = pageTotal / _pageSize;
+                    Logger.Log(string.Format("SearchPage is returning {0} records", entities.Count), Category.Debug, Priority.None);
+                    return entities;
+                }
+                catch (Exception e)
+                {
+                    _log4netLogger.Error("Error in SearchPage: " + e);
+                    throw new Exception("Error while Finding " + query + ".\n" + e.ToString(), e);
+                }
+            }
+        }
+
         #endregion Part8
     }
 }

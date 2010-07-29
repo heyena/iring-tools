@@ -444,4 +444,20 @@
       <fileName>part8getclass.txt</fileName>
     </Query>
   </QueryItem>
+  <QueryItem>
+    <Key>Part8ContainsSearch</Key>
+    <Query>
+      <bindings>
+        <QueryBinding>
+          <name>uri</name>
+          <type>Uri</type>
+        </QueryBinding>
+        <QueryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </QueryBinding>
+      </bindings>
+      <fileName>part8containssearch.txt</fileName>
+    </Query>
+  </QueryItem>
 </Queries>
