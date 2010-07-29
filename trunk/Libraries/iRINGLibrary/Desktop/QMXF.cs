@@ -447,6 +447,10 @@ namespace org.ids_adi.qmxf
         public string type { get; set; }
 
         [DataMember]
+        [XmlElement(ElementName = "value")]
+        public string value { get; set; }
+
+        [DataMember]
         [XmlElement(ElementName = "valuesFrom")]
         public string valuesFrom { get; set; }
 

@@ -76,52 +76,52 @@ namespace org.ids_adi.iring.referenceData
         private Queries _queries = null;
 
         private static Dictionary<string, RefDataEntities> _searchHistory = new Dictionary<string, RefDataEntities>();
-        
+
         private IKernel _kernel = null;
         private ReferenceDataSettings _settings = null;
-        
+
         public ReferenceDataProvider(NameValueCollection settings)
         {
-          try
-          {
-            _kernel = new StandardKernel(new ReferenceDataModule());
-            _settings = _kernel.Get<ReferenceDataSettings>();
-            _settings.AppendSettings(settings);
-
-            Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
-
-            _pageSize = Convert.ToInt32(_settings["PageSize"]);
-
-            _useExampleRegistryBase = Convert.ToBoolean(_settings["UseExampleRegistryBase"]);
-
-            string registryCredentialToken = _settings["RegistryCredentialToken"];
-            bool tokenIsEmpty = registryCredentialToken == String.Empty;
-
-            if (tokenIsEmpty)
+            try
             {
-                _registryCredentials = new WebCredentials();
+                _kernel = new StandardKernel(new ReferenceDataModule());
+                _settings = _kernel.Get<ReferenceDataSettings>();
+                _settings.AppendSettings(settings);
+
+                Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
+
+                _pageSize = Convert.ToInt32(_settings["PageSize"]);
+
+                _useExampleRegistryBase = Convert.ToBoolean(_settings["UseExampleRegistryBase"]);
+
+                string registryCredentialToken = _settings["RegistryCredentialToken"];
+                bool tokenIsEmpty = registryCredentialToken == String.Empty;
+
+                if (tokenIsEmpty)
+                {
+                    _registryCredentials = new WebCredentials();
+                }
+                else
+                {
+                    _registryCredentials = new WebCredentials(registryCredentialToken);
+                    _registryCredentials.Decrypt();
+                }
+
+                _proxyCredentials = _settings.GetProxyCredentials();
+
+                string repositoriesPath = _settings["XmlPath"] + REPOSITORIES_FILE_NAME;
+                _repositories = Utility.Read<List<Repository>>(repositoriesPath);
+
+                string queriesPath = _settings["XmlPath"] + QUERIES_FILE_NAME;
+                _queries = Utility.Read<Queries>(queriesPath);
+
+                _response = new Response();
+                _kernel.Bind<Response>().ToConstant(_response);
             }
-            else
+            catch (Exception ex)
             {
-              _registryCredentials = new WebCredentials(registryCredentialToken);
-              _registryCredentials.Decrypt();
+                _log4netLogger.Error("Error in initializing ReferenceDataServiceProvider: " + ex);
             }
-
-            _proxyCredentials = _settings.GetProxyCredentials();
-
-            string repositoriesPath = _settings["XmlPath"] + REPOSITORIES_FILE_NAME;
-            _repositories = Utility.Read<List<Repository>>(repositoriesPath);
-
-            string queriesPath = _settings["XmlPath"] + QUERIES_FILE_NAME;
-            _queries = Utility.Read<Queries>(queriesPath);
-
-            _response = new Response();
-            _kernel.Bind<Response>().ToConstant(_response);
-          }
-          catch (Exception ex)
-          {
-            _log4netLogger.Error("Error in initializing ReferenceDataServiceProvider: " + ex);
-          }
         }
 
         public List<Repository> GetRepositories()
@@ -187,7 +187,7 @@ namespace org.ids_adi.iring.referenceData
             catch (Exception e)
             {
                 _log4netLogger.Error("Error in Find: " + e);
-                throw new Exception("Error while Finding " + query + ".\n" + e.ToString(), e);                
+                throw new Exception("Error while Finding " + query + ".\n" + e.ToString(), e);
             }
             return queryResult;
         }
@@ -214,7 +214,7 @@ namespace org.ids_adi.iring.referenceData
             {
                 RefDataEntities entities = null;
                 int counter = 0;
-              
+
                 int pageNumber = Convert.ToInt32(page);
                 int pageTotal = 0;
 
@@ -793,7 +793,7 @@ namespace org.ids_adi.iring.referenceData
                         //roleDefinitions.Add(roleDefinition);
                     }
                 }
-                
+
                 return roleDefinitions;
             }
             catch (Exception e)
@@ -1093,7 +1093,7 @@ namespace org.ids_adi.iring.referenceData
 
         public Response PostTemplate(QMXF qmxf)
         {
-          Status status = new Status();
+            Status status = new Status();
 
             try
             {
@@ -1468,9 +1468,10 @@ namespace org.ids_adi.iring.referenceData
                                                       + " tpl:R56456315674 " + ID + " ; "
                                                       + " tpl:R89867215482 <" + role.qualifies + "> ; "
                                                       + " tpl:R29577887690 '" + role.value.text + "'^^xsd:" + roleValueAs + " . ";
-                                                
+
                                                 i++;
                                             }
+
                                             else if (!String.IsNullOrEmpty(role.value.reference)) 
                                             {
                                                 //reference restriction
@@ -1525,7 +1526,7 @@ namespace org.ids_adi.iring.referenceData
                                     {
                                         nameSparql += ID + " rdfs:label \"" + label + "\"^^xsd:string . ";
                                     }
-                                    else 
+                                    else
                                     {
                                         nameSparql += ID + " rdfs:label \"" + label + "\"^^xsd:string ; ";
                                     }
@@ -1572,7 +1573,7 @@ namespace org.ids_adi.iring.referenceData
                                                 nameSparql += "<" + rd.qualifies + "> rdf:type tpl:R40103148466 ; "
                                                         + " tpl:R49267603385 " + ID + " ; "
                                                         + " tpl:R30741601855 <" + rd.qualifies + "> ; "
-                                                        + " tpl:R21129944603 <" + rd.value.reference + "> . ";                                               
+                                                        + " tpl:R21129944603 <" + rd.value.reference + "> . ";
                                             }
                                             else if (!String.IsNullOrEmpty(rd.range))
                                             {
@@ -1602,7 +1603,7 @@ namespace org.ids_adi.iring.referenceData
                                           + " dm:hasSubclass " + ID + " . ";
 
                                     label = name.value;
-                                    
+
 
                                     if (template.description.Count == 0)
                                     {
@@ -1727,7 +1728,7 @@ namespace org.ids_adi.iring.referenceData
 
         public Response PostClass(QMXF qmxf)
         {
-          Status status = new Status();
+            Status status = new Status();
 
             try
             {
@@ -1768,13 +1769,13 @@ namespace org.ids_adi.iring.referenceData
                     string serviceUrl = string.Empty;
                     string className = string.Empty;
                     int classIndex = -1;
-                    
+
                     if (source.isReadOnly)
                     {
-                      status.Level = StatusLevel.Error;
-                      status.Messages.Add("Repository is Read Only");
-                      _response.Append(status);
-                      return _response;
+                        status.Level = StatusLevel.Error;
+                        status.Messages.Add("Repository is Read Only");
+                        _response.Append(status);
+                        return _response;
                     }
 
                     ID = Class.identifier;
@@ -1810,12 +1811,12 @@ namespace org.ids_adi.iring.referenceData
                             className = "Class definition " + label;
 
                             if (_useExampleRegistryBase)
-                              generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], className);
+                                generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], className);
                             else
-                              generatedId = CreateIdsAdiId(_settings["ClassRegistryBase"], className);
-                            
+                                generatedId = CreateIdsAdiId(_settings["ClassRegistryBase"], className);
+
                             ID = "<" + generatedId + ">";
-                            
+
                             Utility.WriteString("\n" + ID + "\t" + label, "Class IDs.log", true);
                             //ID = Class.identifier.Remove(0, 1);
 
@@ -2247,7 +2248,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception ex)
             {
-               throw ex;
+                throw ex;
             }
         }
 
@@ -2409,7 +2410,6 @@ namespace org.ids_adi.iring.referenceData
                 string relativeUri = String.Empty;
 
                 Description description = new Description();
-                QMXFStatus status = new QMXFStatus();
 
                 RefDataEntities resultEntities = new RefDataEntities();
 
@@ -2441,14 +2441,9 @@ namespace org.ids_adi.iring.referenceData
                             description.value = result["definition"];
                         }
 
-                        if (result.ContainsKey("creationDate"))
-                        {
-                            status.from = result["creationDate"];
-                        }
-                        templateDefinition.identifier = "part8:" + id;
+                        templateDefinition.identifier = @"http://standards.tc184-sc4.org/iso/15926/-8/templates#" + id;
                         templateDefinition.name.Add(name);
                         templateDefinition.description.Add(description);
-                        templateDefinition.status.Add(status);
 
                         templateDefinition.roleDefinition = GetPart8RoleDefintion(id);
                     }
@@ -2516,6 +2511,8 @@ namespace org.ids_adi.iring.referenceData
                         {
                             roleDefinition.range = result["type"];
                         }
+                        if (name.value.Equals(string.Empty))
+                            name.value = roleDefinition.identifier.Replace(roleDefinition.identifier.Substring(0, roleDefinition.identifier.LastIndexOf("#") + 1), "");
                         roleDefinition.name.Add(name);
                         //Utility.SearchAndInsert(roleDefinitions, roleDefinition, RoleDefinition.sortAscending()); //problem with search an insert - skips some roles
                         roleDefinitions.Add(roleDefinition);
@@ -2569,7 +2566,7 @@ namespace org.ids_adi.iring.referenceData
                         {
                             propertyRestriction.valuesFrom = result["valuesFrom"];
                             propertyRestriction.type = "allValuesFrom";
-                        } 
+                        }
                         if (result.ContainsKey("cardinality"))
                         {
                             propertyRestriction.cardiniality = result["cardinality"];
@@ -2587,6 +2584,176 @@ namespace org.ids_adi.iring.referenceData
             {
                 _log4netLogger.Error("Error in GetRoleDefinition: " + e);
                 throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
+            }
+        }
+
+        public Response PostPart8Template(QMXF qmxf)
+        {
+            Status status = new Status();
+
+            try
+            {
+                Response response = null;
+                string sparql = "PREFIX eg: <http://example.org/data#> "
+                                + "PREFIX rdl: <http://rdl.rdlfacade.org/data#> "
+                                + "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
+                                + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
+                                + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "
+                                + "PREFIX dm: <http://dm.rdlfacade.org/data#> "
+                                + "PREFIX part8: <http://tpl.rdlfacade.org/data#> "
+                                + "PREFIX owl: <http://www.w3.org/2002/07/owl#> "
+                                + "PREFIX owl2xml: <http://www.w3.org/2006/12/owl2-xml#> "
+                                + "PREFIX p8: <http://standards.tc184-sc4.org/iso/15926/-8/template-model#> "
+                                + "PREFIX templates: <http://standards.tc184-sc4.org/iso/15926/-8/templates#> "
+                                + "PREFIX data-model: <http://standards.tc184-sc4.org/iso/15926/-8/data-model#> "
+                                + "INSERT DATA { ";
+
+                int repository = qmxf.targetRepository != null ? getIndexFromName(qmxf.targetRepository) : 0;
+                Repository source = _repositories[repository];
+
+                if (source.isReadOnly)
+                {
+                    status.Level = StatusLevel.Error;
+                    status.Messages.Add("Repository is Read Only");
+                    _response.Append(status);
+                    return _response;
+                }
+
+                #region Template Definitions
+                if (qmxf.templateDefinitions.Count > 0) //Template Definitions
+                {
+                    foreach (TemplateDefinition template in qmxf.templateDefinitions)
+                    {
+                        string ID = string.Empty;
+                        string id = string.Empty;
+                        string label = string.Empty;
+                        string description = string.Empty;
+                        string generatedTempId = string.Empty;
+                        string templateName = string.Empty;
+                        string roleDefinition = string.Empty;
+                        string nameSparql = string.Empty;
+                        string specSparql = string.Empty;
+                        string classSparql = string.Empty;
+                        int templateIndex = -1;
+
+                        ID = template.identifier;
+
+                        QMXF q = new QMXF();
+                        if (ID != null)
+                        {
+                            id = ID.Replace(ID.Substring(0, ID.LastIndexOf("#")), "");
+                            q = GetTemplate(id);
+                            foreach (TemplateDefinition templateFound in q.templateDefinitions)
+                            {
+                                templateIndex++;
+                                if (templateFound.repositoryName.Equals(_repositories[repository]))
+                                {
+                                    ID = "<" + ID + ">";
+                                    Utility.WriteString("Template found: " + q.templateDefinitions[templateIndex].name[0].value, "stats.log", true);
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (q.templateDefinitions.Count == 0)
+                        {
+                            foreach (QMXFName name in template.name)
+                            {
+                                label = name.value;
+
+                                //ID generator
+                                templateName = "Template definition " + label;
+
+                                if (_useExampleRegistryBase)
+                                    generatedTempId = CreateIdsAdiId(_settings["ExampleRegistryBase"], templateName);
+                                else
+                                    generatedTempId = CreateIdsAdiId(_settings["TemplateRegistryBase"], templateName);
+                                ID = "<" + generatedTempId + ">";
+                                Utility.WriteString("\n" + ID + "\t" + label, "TempDef IDs.log", true);
+
+                                sparql += ID + " rdf:type owl:class ; ";
+                                //append description to sparql query
+                                int descrCount = template.description.Count;
+                                if (descrCount == 0)
+                                {
+                                    sparql += " rdfs:label \"" + label + "\"^^xsd:string . ";
+                                }
+                                else
+                                {
+                                    sparql += " rdfs:label \"" + label + "\"^^xsd:string ; ";
+                                }
+                                foreach (Description descr in template.description)
+                                {
+                                    description = descr.value;
+
+                                    if (--descrCount > 0)
+                                        sparql += " rdfs:comment \"" + description + "\"^^xsd:string ; ";
+                                    else
+                                        sparql += " rdfs:comment \"" + description + "\"^^xsd:string . ";
+                                }
+
+                                foreach (RoleDefinition role in template.roleDefinition)
+                                {
+                                    string roleID = string.Empty;
+                                    string roleLabel = string.Empty;
+                                    string roleDescription = string.Empty;
+                                    string generatedId = string.Empty;
+                                    string genName = string.Empty;
+                                    int blankNodeCount = 0;
+
+                                    //ID generator
+                                    genName = "Role definition " + roleLabel;
+
+                                    if (_useExampleRegistryBase)
+                                        generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], genName);
+                                    else
+                                        generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], genName);
+
+                                    roleID = "<" + generatedId + ">";
+
+                                    //roleID = role.identifier;
+                                    foreach (QMXFName roleName in role.name)
+                                    {
+                                        roleLabel = roleName.value;
+                                        //roleDescription = role.description.value;
+                                        Utility.WriteString("\n" + roleID + "\t" + roleLabel, "RoleDef IDs.log", true);
+                                    }
+                                    //append role to sparql query
+                                    sparql += roleID + "rdfs:subClassOf + _:b"+ blankNodeCount +" . " +
+                                              "_:b" + blankNodeCount++ + " owl:type owl:Class ; " +
+                                                   "owl:intersectionOf _:b" + blankNodeCount + " . " ;
+
+                                    int restrictionCount = role.restrictions.Count;
+                                    foreach(PropertyRestriction restriction in role.restrictions)
+                                    {
+                                        sparql += "_:b" + blankNodeCount++ + " rdf:first _:b" + blankNodeCount + " ; ";
+                                        if (--restrictionCount > 0)
+                                            sparql += "rdf:rest _:b" + ++blankNodeCount + " . ";
+                                        else
+                                            sparql += "rdf:rest rdf:nil .";
+
+                                    //now add the first restriction at blankNodeCount-1
+                                    sparql += "_:b" + blankNodeCount + " rdf:type owl:restriction ; " +
+                                                    "owl:onProperty " + roleID + " ; " +
+                                                    "owl:" + restriction.type + " " + restriction.value + " .";
+                                    }
+                                }
+
+                                sparql = sparql.Insert(sparql.LastIndexOf("."), "}").Remove(sparql.Length - 1);
+                                response = PostToRepository(source, sparql);
+                            }
+                        }
+                    }
+                }
+                #endregion
+
+                _response.Append(status);
+                return _response;
+            }
+            catch (Exception ex)
+            {
+                _log4netLogger.Error("Error in PostTemplate: " + ex);
+                throw ex;
             }
         }
 
