@@ -1,128 +1,103 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- WARNING: Eclipse auto-generated file.
-              Any modifications will be overwritten.
-              To include a user specific buildfile here, simply create one in the same
-              directory with the processing instruction <?eclipse.ant.import?>
-              as the first entry and export the buildfile again. -->
 <project basedir="." default="build" name="ExchangeLibrary">
-    <property environment="env"/>
-    <property name="ExchangeService.location" value="../ExchangeService"/>
-    <property name="ECLIPSE_HOME" value="../../Program Files/Eclipse"/>
-    <property name="AdapterLibrary.location" value="../AdapterLibrary"/>
-    <property name="UtilityLibrary.location" value="../UtilityLibrary"/>
-    <property name="debuglevel" value="source,lines,vars"/>
-    <property name="target" value="1.6"/>
-    <property name="source" value="1.6"/>
-    <path id="guice-2.0.userclasspath">
-        <pathelement location="../libraries/guice-2.0/aopalliance.jar"/>
-        <pathelement location="../libraries/guice-2.0/guice-2.0.jar"/>
-        <pathelement location="../libraries/guice-2.0/guice-assistedinject-2.0.jar"/>
-        <pathelement location="../libraries/guice-2.0/guice-jmx-2.0.jar"/>
-        <pathelement location="../libraries/guice-2.0/guice-jndi-2.0.jar"/>
-        <pathelement location="../libraries/guice-2.0/guice-multibindings-2.0.jar"/>
-        <pathelement location="../libraries/guice-2.0/guice-servlet-2.0.jar"/>
-        <pathelement location="../libraries/guice-2.0/guice-spring-2.0.jar"/>
-        <pathelement location="../libraries/guice-2.0/guice-struts2-plugin-2.0.jar"/>
-        <pathelement location="../libraries/guice-2.0/guice-throwingproviders-2.0.jar"/>
-    </path>
-    <path id="axiom-1.2.8.userclasspath">
-        <pathelement location="../libraries/axiom-1.2.8/axiom.jar"/>
-    </path>
-    <path id="AdapterLibrary.classpath">
-        <pathelement location="${AdapterLibrary.location}/bin"/>
-        <path refid="axiom-1.2.8.userclasspath"/>
-    </path>
-    <path id="gson-1.4.userclasspath">
-        <pathelement location="../libraries/google-gson-1.4/gson-1.4.jar"/>
-    </path>
-    <path id="jaxb-ri-20100511.userclasspath">
-        <pathelement location="../libraries/jaxb-ri-20100511/lib/activation.jar"/>
-        <pathelement location="../libraries/jaxb-ri-20100511/lib/collection-setter-injector.jar"/>
-        <pathelement location="../libraries/jaxb-ri-20100511/lib/jaxb1-impl.jar"/>
-        <pathelement location="../libraries/jaxb-ri-20100511/lib/jaxb-api.jar"/>
-        <pathelement location="../libraries/jaxb-ri-20100511/lib/jaxb-impl.jar"/>
-        <pathelement location="../libraries/jaxb-ri-20100511/lib/jaxb-xjc.jar"/>
-        <pathelement location="../libraries/jaxb-ri-20100511/lib/jsr173_1.0_api.jar"/>
-    </path>
-    <path id="UtilityLibrary.classpath">
-        <pathelement location="${UtilityLibrary.location}/bin"/>
-        <path refid="axiom-1.2.8.userclasspath"/>
-        <path refid="gson-1.4.userclasspath"/>
-        <path refid="jaxb-ri-20100511.userclasspath"/>
-    </path>
-    <path id="log4j-1.2.16.userclasspath">
-        <pathelement location="../libraries/apache-log4j-1.2.16/log4j-1.2.16.jar"/>
-    </path>
-    <path id="ExchangeLibrary.classpath">
-        <pathelement location="bin"/>
-        <path refid="guice-2.0.userclasspath"/>
-        <path refid="AdapterLibrary.classpath"/>
-        <path refid="UtilityLibrary.classpath"/>
-        <path refid="axiom-1.2.8.userclasspath"/>
-        <path refid="log4j-1.2.16.userclasspath"/>
-    </path>
-    <target name="init">
-        <mkdir dir="bin"/>
-        <copy includeemptydirs="false" todir="bin">
-            <fileset dir="src">
-                <exclude name="**/*.launch"/>
-                <exclude name="**/.svn/"/>
-                <exclude name="**/*.java"/>
-            </fileset>
-        </copy>
-    </target>
-    <target name="clean">
-        <delete dir="bin"/>
-    </target>
-    <target depends="clean" name="cleanall">
-        <ant antfile="build.xml" dir="${AdapterLibrary.location}" inheritAll="false" target="clean"/>
-        <ant antfile="build.xml" dir="${UtilityLibrary.location}" inheritAll="false" target="clean"/>
-    </target>
-    <target depends="build-subprojects,build-project" name="build"/>
-    <target name="build-subprojects">
-        <ant antfile="build.xml" dir="${AdapterLibrary.location}" inheritAll="false" target="build-project">
-            <propertyset>
-                <propertyref name="build.compiler"/>
-            </propertyset>
-        </ant>
-        <copy todir="bin">
-            <fileset dir="${AdapterLibrary.location}/bin" includes="**/*.class"/>
-        </copy>
-        <ant antfile="build.xml" dir="${UtilityLibrary.location}" inheritAll="false" target="build-project">
-            <propertyset>
-                <propertyref name="build.compiler"/>
-            </propertyset>
-        </ant>
-    	  <copy todir="bin">
-    	      <fileset dir="${UtilityLibrary.location}/bin" includes="**/*.class"/>
-    	  </copy>    	        
-    </target>
-    <target depends="init" name="build-project">
-        <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}">
-            <src path="src"/>
-            <classpath refid="ExchangeLibrary.classpath"/>
-        </javac>
-    </target>
-    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects">
-        <ant antfile="build.xml" dir="${ExchangeService.location}" inheritAll="false" target="clean"/>
-        <ant antfile="build.xml" dir="${ExchangeService.location}" inheritAll="false" target="build">
-            <propertyset>
-                <propertyref name="build.compiler"/>
-            </propertyset>
-        </ant>
-    </target>
-    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
-        <copy todir="${ant.library.dir}">
-            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
-        </copy>
-        <unzip dest="${ant.library.dir}">
-            <patternset includes="jdtCompilerAdapter.jar"/>
-            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
-        </unzip>
-    </target>
-    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
-        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
-        <antcall target="build"/>
-    </target>
+	<property name="debuglevel" value="source,lines,vars" />
+	<property name="target" value="1.6" />
+	<property name="source" value="1.6" />
+	<property name="AdapterLibrary.location" value="../AdapterLibrary" />
+	<property name="UtilityLibrary.location" value="../UtilityLibrary" />
+
+	<path id="guice-2.0.userclasspath">
+		<pathelement location="../libraries/guice-2.0/aopalliance.jar" />
+		<pathelement location="../libraries/guice-2.0/guice-2.0.jar" />
+		<pathelement location="../libraries/guice-2.0/guice-assistedinject-2.0.jar" />
+		<pathelement location="../libraries/guice-2.0/guice-jmx-2.0.jar" />
+		<pathelement location="../libraries/guice-2.0/guice-jndi-2.0.jar" />
+		<pathelement location="../libraries/guice-2.0/guice-multibindings-2.0.jar" />
+		<pathelement location="../libraries/guice-2.0/guice-servlet-2.0.jar" />
+		<pathelement location="../libraries/guice-2.0/guice-spring-2.0.jar" />
+		<pathelement location="../libraries/guice-2.0/guice-struts2-plugin-2.0.jar" />
+		<pathelement location="../libraries/guice-2.0/guice-throwingproviders-2.0.jar" />
+	</path>
+
+	<path id="axiom-1.2.8.userclasspath">
+		<pathelement location="../libraries/axiom-1.2.8/axiom.jar" />
+	</path>
+
+	<path id="AdapterLibrary.classpath">
+		<pathelement location="${AdapterLibrary.location}/bin" />
+		<path refid="axiom-1.2.8.userclasspath" />
+	</path>
+
+	<path id="gson-1.4.userclasspath">
+		<pathelement location="../libraries/google-gson-1.4/gson-1.4.jar" />
+	</path>
+
+	<path id="jaxb-ri-20100511.userclasspath">
+		<pathelement location="../libraries/jaxb-ri-20100511/lib/activation.jar" />
+		<pathelement location="../libraries/jaxb-ri-20100511/lib/collection-setter-injector.jar" />
+		<pathelement location="../libraries/jaxb-ri-20100511/lib/jaxb1-impl.jar" />
+		<pathelement location="../libraries/jaxb-ri-20100511/lib/jaxb-api.jar" />
+		<pathelement location="../libraries/jaxb-ri-20100511/lib/jaxb-impl.jar" />
+		<pathelement location="../libraries/jaxb-ri-20100511/lib/jaxb-xjc.jar" />
+		<pathelement location="../libraries/jaxb-ri-20100511/lib/jsr173_1.0_api.jar" />
+	</path>
+
+	<path id="UtilityLibrary.classpath">
+		<pathelement location="${UtilityLibrary.location}/bin" />
+		<path refid="axiom-1.2.8.userclasspath" />
+		<path refid="gson-1.4.userclasspath" />
+		<path refid="jaxb-ri-20100511.userclasspath" />
+	</path>
+
+	<path id="log4j-1.2.16.userclasspath">
+		<pathelement location="../libraries/apache-log4j-1.2.16/log4j-1.2.16.jar" />
+	</path>
+
+	<path id="ExchangeLibrary.classpath">
+		<pathelement location="bin" />
+		<path refid="guice-2.0.userclasspath" />
+		<path refid="AdapterLibrary.classpath" />
+		<path refid="UtilityLibrary.classpath" />
+		<path refid="axiom-1.2.8.userclasspath" />
+		<path refid="log4j-1.2.16.userclasspath" />
+	</path>
+
+	<target name="init">
+		<mkdir dir="bin" />
+		<copy includeemptydirs="false" todir="bin">
+			<fileset dir="src">
+				<exclude name="**/*.launch" />
+				<exclude name="**/.svn/" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="clean">
+		<delete dir="bin" />
+	</target>
+
+	<target depends="build-subprojects,build-project" name="build" />
+
+	<target name="build-subprojects">
+		<ant antfile="build.xml" dir="${AdapterLibrary.location}" inheritAll="false" target="build-project">
+			<propertyset>
+				<propertyref name="build.compiler" />
+			</propertyset>
+		</ant>
+		<ant antfile="build.xml" dir="${UtilityLibrary.location}" inheritAll="false" target="build-project">
+			<propertyset>
+				<propertyref name="build.compiler" />
+			</propertyset>
+		</ant>
+	</target>
+
+	<target depends="clean,init" name="build-project">
+		<echo message="${ant.project.name}: ${ant.file}" />
+		<javac debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}">
+			<src path="src" />
+			<classpath refid="ExchangeLibrary.classpath" />
+		</javac>
+		<jar destfile="bin/${ant.project.name}.jar" basedir="bin" includes="**/*.class" excludes="**/.svn/" />
+	</target>
 </project>
