@@ -146,6 +146,11 @@ namespace org.ids_adi.iring.referenceData
             return _referenceDataServiceProvider.GetPart8TemplateSpec(id);
         }
 
+        public Response PostPart8Template(QMXF qmxf)
+        {
+            return _referenceDataServiceProvider.PostPart8Template(qmxf);
+        }
+
         #endregion Part8
 
     }

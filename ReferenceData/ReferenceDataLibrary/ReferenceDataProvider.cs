@@ -2692,6 +2692,7 @@ namespace org.ids_adi.iring.referenceData
                                         sparql += " rdfs:comment \"" + description + "\"^^xsd:string . ";
                                 }
 
+                                #region roles
                                 foreach (RoleDefinition role in template.roleDefinition)
                                 {
                                     string roleID = string.Empty;
@@ -2738,6 +2739,7 @@ namespace org.ids_adi.iring.referenceData
                                                     "owl:" + restriction.type + " " + restriction.value + " .";
                                     }
                                 }
+                                #endregion roles
 
                                 sparql = sparql.Insert(sparql.LastIndexOf("."), "}").Remove(sparql.Length - 1);
                                 response = PostToRepository(source, sparql);
@@ -2745,7 +2747,7 @@ namespace org.ids_adi.iring.referenceData
                         }
                     }
                 }
-                #endregion
+                #endregion template Definitions
 
                 _response.Append(status);
                 return _response;
