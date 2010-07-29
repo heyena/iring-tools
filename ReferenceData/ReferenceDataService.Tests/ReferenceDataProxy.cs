@@ -143,6 +143,11 @@ namespace ReferenceDataService.Tests
         return _referenceDataServiceProvider.GetPart8Class(id);
     }
 
+    public RefDataEntities Part8Search(string query)
+    {
+        return _referenceDataServiceProvider.Part8Search(query);
+    }
+
     #endregion Part8
   }
 }

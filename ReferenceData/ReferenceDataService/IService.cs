@@ -180,7 +180,7 @@ namespace org.ids_adi.iring.referenceData
     ///// </summary>
     // [XmlSerializerFormat]
     [OperationContract]
-    [WebInvoke(UriTemplate = "part8/templates")]
+    [WebInvoke(UriTemplate = "/part8/templates")]
     Response PostPart8Template(QMXF template);
 
     /// <summary>
@@ -189,6 +189,13 @@ namespace org.ids_adi.iring.referenceData
     [OperationContract]
     [WebGet(UriTemplate = "/part8/class/{id}")]
     QMXF GetPart8Class(string id);
+
+    /// <summary>
+    ///do a search
+    /// </summary>
+    [OperationContract]
+    [WebGet(UriTemplate = "/part8/search/{query}")]
+    RefDataEntities Part8Search(string query);
 
     #endregion
   }
