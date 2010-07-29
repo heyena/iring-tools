@@ -183,6 +183,13 @@ namespace org.ids_adi.iring.referenceData
     [WebInvoke(UriTemplate = "part8/templates")]
     Response PostPart8Template(QMXF template);
 
+    /// <summary>
+    ///get part 8 class
+    /// </summary>
+    [OperationContract]
+    [WebGet(UriTemplate = "/part8/class/{id}")]
+    QMXF GetPart8Class(string id);
+
     #endregion
   }
 

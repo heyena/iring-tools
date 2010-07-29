@@ -133,6 +133,16 @@ namespace ReferenceDataService.Tests
         return _referenceDataServiceProvider.GetPart8TemplateSpec(id);
     }
 
+    public Response PostPart8Template(QMXF qmxf)
+    {
+        return _referenceDataServiceProvider.PostPart8Template(qmxf);
+    }
+
+    public QMXF GetPart8Class(string id)
+    {
+        return _referenceDataServiceProvider.GetPart8Class(id);
+    }
+
     #endregion Part8
   }
 }

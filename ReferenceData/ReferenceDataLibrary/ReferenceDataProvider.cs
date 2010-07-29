@@ -2759,6 +2759,133 @@ namespace org.ids_adi.iring.referenceData
             }
         }
 
+        public QMXF GetPart8Class(string id)
+        {
+            QMXF qmxf = new QMXF();
+
+            try
+            {
+                string sparql = String.Empty;
+                string relativeUri = String.Empty;
+
+                ClassDefinition classDefinition;
+                QMXFName name;
+                Description description;
+                QMXFStatus status;
+                //List<Classification> classifications = new List<Classification>();
+                List<Specialization> specializations = new List<Specialization>();
+
+                RefDataEntities resultEntities = new RefDataEntities();
+                List<Entity> resultEnt = new List<Entity>();
+
+                Query queryContainsSearch = _queries["GetPart8Class"];
+                QueryBindings queryBindings = queryContainsSearch.bindings;
+
+                sparql = ReadSPARQL(queryContainsSearch.fileName);
+                sparql = sparql.Replace("param1", id);
+
+                foreach (Repository repository in _repositories)
+                {
+                    SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
+
+                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                   // classifications = new List<Classification>();
+                    specializations = new List<Specialization>();
+
+                    foreach (Dictionary<string, string> result in results)
+                    {
+                        classDefinition = new ClassDefinition();
+
+                        classDefinition.identifier = "http://rdl.rdlfacade.org/data#" + id;
+                        classDefinition.repositoryName = repository.name;
+                        name = new QMXFName();
+                        description = new Description();
+                        status = new QMXFStatus();
+
+                        if (result.ContainsKey("label"))
+                            name.value = result["label"];
+
+                        if (result.ContainsKey("comment"))
+                            description.value = result["comment"];
+
+                        classDefinition.name.Add(name);
+                        classDefinition.description.Add(description);
+                        
+                        //classifications = GetPart8Classifications(id);
+                        specializations = GetPart8Specializations(id);
+                        //classDefinition.classification = classifications;
+                        classDefinition.specialization = specializations;
+
+                        qmxf.classDefinitions.Add(classDefinition);
+                    }
+
+                }
+
+                return qmxf;
+            }
+            catch (Exception e)
+            {
+                _log4netLogger.Error("Error in GetClass: " + e);
+                throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
+            }
+        }
+
+        private List<Specialization> GetPart8Specializations(string id)
+        {
+            try
+            {
+                string sparql = String.Empty;
+                string relativeUri = String.Empty;
+
+                List<Specialization> specializations = new List<Specialization>();
+
+                Query queryContainsSearch = _queries["GetPart8Specialization"];
+                QueryBindings queryBindings = queryContainsSearch.bindings;
+
+                sparql = ReadSPARQL(queryContainsSearch.fileName);
+                sparql = sparql.Replace("param1", id);
+
+                foreach (Repository repository in _repositories)
+                {
+                    SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
+
+                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+
+                    foreach (Dictionary<string, string> result in results)
+                    {
+                        Specialization specialization = new Specialization();
+
+                        string uri = String.Empty;
+                        string label = String.Empty;
+                        if (result.ContainsKey("uri"))
+                        {
+                            uri = result["uri"];
+                            specialization.reference = uri;
+                        }
+                        if (result.ContainsKey("label"))
+                        {
+                            label = result["label"];
+                        }
+                        else
+                        {
+                            label = GetLabel(uri);
+                        }
+
+                        specialization.label = label;
+                        Utility.SearchAndInsert(specializations, specialization, Specialization.sortAscending());
+                        //specializations.Add(specialization);
+                    }
+                }
+
+                return specializations;
+            }
+            catch (Exception e)
+            {
+                _log4netLogger.Error("Error in GetSpecializations: " + e);
+                throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
+            }
+        }
+
         #endregion Part8
     }
 }
