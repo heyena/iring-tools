@@ -80,12 +80,12 @@
 	<target depends="build-subprojects,build-project" name="build" />
 
 	<target name="build-subprojects">
-		<ant antfile="build.xml" dir="${AdapterLibrary.location}" inheritAll="false" target="build-project">
+		<ant antfile="build.xml" dir="${AdapterLibrary.location}" inheritAll="false" target="build">
 			<propertyset>
 				<propertyref name="build.compiler" />
 			</propertyset>
 		</ant>
-		<ant antfile="build.xml" dir="${UtilityLibrary.location}" inheritAll="false" target="build-project">
+		<ant antfile="build.xml" dir="${UtilityLibrary.location}" inheritAll="false" target="build">
 			<propertyset>
 				<propertyref name="build.compiler" />
 			</propertyset>
