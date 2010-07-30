@@ -41,8 +41,8 @@ namespace ApplicationEditor
     public StringBuilder newDictionary;
     public string selectedCBItem = string.Empty;
 
-    private bool isPosting;
-    private bool isFetched;
+    private bool isPosting = false;
+    private bool isFetched = false;
     private ApplicationDAL _dal;
 
     //public event System.EventHandler<System.EventArgs> OnDataArrived;
@@ -144,7 +144,7 @@ namespace ApplicationEditor
           constructTreeView((DatabaseDictionary)relations.cbRelated.Tag, tvwItemDestinationRoot);
         }
       }
-      catch (Exception ex)
+      catch (Exception)
       {
       }
     }
@@ -232,11 +232,11 @@ namespace ApplicationEditor
             break;
 
           case CompletedEventType.GetDatabaseSchema:
-            getdbschemaComplete(args);
+            getDbSchemaComplete(args);
             break;
 
           case CompletedEventType.GetDbDictionary:
-            getdbDictionaryComplete(args);
+            getDbDictionaryComplete(args);
             break;
 
           case CompletedEventType.GetProviders:
@@ -258,7 +258,7 @@ namespace ApplicationEditor
           case CompletedEventType.SaveDatabaseDictionary:
             savedbdictionaryComplete(args);
             break;
-           
+
           case CompletedEventType.GetRelationships:
             getRelationShipTypesCompeted(args);
             break;
@@ -585,7 +585,7 @@ namespace ApplicationEditor
       }
     }
 
-    void getdbschemaComplete(CompletedEventArgs args)
+    void getDbSchemaComplete(CompletedEventArgs args)
     {
       try
       {
@@ -610,12 +610,14 @@ namespace ApplicationEditor
             tbPassword.Password);
           databaseDictionary.provider = (Provider)Enum.Parse(typeof(Provider), cbProvider.SelectedItem.ToString(), true);
           _dal.SaveDatabaseDictionary(databaseDictionary, _currentProject.Name, _currentApplication.Name);
+
           if (!isFetched)
           {
-            _dal.GetDatabaseSchema(_currentProject.Name, _currentApplication.Name);
             isFetched = true;
+            _dal.GetDatabaseSchema(_currentProject.Name, _currentApplication.Name);
           }
         }
+
         constructTreeView(databaseDictionary, tvwItemSourceRoot);
       }
       catch (Exception ex)
@@ -628,7 +630,7 @@ namespace ApplicationEditor
       }
     }
 
-    void getdbDictionaryComplete(CompletedEventArgs args)
+    void getDbDictionaryComplete(CompletedEventArgs args)
     {
       try
       {
@@ -690,8 +692,11 @@ namespace ApplicationEditor
         else
         {
           tvwItemDestinationRoot.Items.Clear();
+
           if (!isFetched)
-            _dal.GetDatabaseSchema(project, application);
+          {
+            //_dal.GetDatabaseSchema(project, application);
+          }
 
           constructTreeView(dict, tvwItemDestinationRoot);
         }
@@ -750,9 +755,8 @@ namespace ApplicationEditor
           AddTreeItem(destinationRoot, tableTreeViewItem, dataObject.objectName, null, false);
         }
       }
-      catch (Exception ex)
+      catch (Exception)
       {
-
       }
     }
 
@@ -760,9 +764,10 @@ namespace ApplicationEditor
     {
       TreeViewItem tableTreeViewItem = null;
 
-      bool enableCheckBox = false;
-      if (root.Name != "tvwItemSourceRoot")
-        enableCheckBox = true;
+      //bool enableCheckBox = false;
+      //if (root.Name != "tvwItemSourceRoot")
+      //  enableCheckBox = true;
+
       try
       {
         root.Tag = dict;
@@ -923,7 +928,6 @@ namespace ApplicationEditor
 
     }
 
-
     private void cmbProject_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
       try
@@ -934,7 +938,7 @@ namespace ApplicationEditor
           if (project.Name == ((ScopeProject)((ComboBoxItem)prjCB.SelectedItem).Tag).Name)
           {
             cmbApp.Items.Clear();
-          
+
             foreach (ScopeApplication app in project.Applications)
               cmbApp.Items.Add(new ComboBoxItem { Content = app.Name, Tag = app });
           }
@@ -948,7 +952,6 @@ namespace ApplicationEditor
 
     private void cmbApp_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-
       try
       {
         ComboBox appCB = (ComboBox)sender;
@@ -960,18 +963,20 @@ namespace ApplicationEditor
         if (cmbApp.Items.Count == 0) return;
 
         tvwItemSourceRoot.Items.Clear();
-        
+
         tvwItemDestinationRoot.Items.Clear();
 
         _dal.GetDbDictionary(_currentProject.Name, _currentApplication.Name);
-        if(!isFetched)
-        _dal.GetDatabaseSchema(_currentProject.Name, _currentApplication.Name);
+
+        if (!isFetched)
+        {
+          _dal.GetDatabaseSchema(_currentProject.Name, _currentApplication.Name);
+        }
       }
       catch (Exception ex)
       {
         throw ex;
       }
-
     }
 
     private void btnSaveDbDictionary_Click(object sender, RoutedEventArgs e)
@@ -1027,7 +1032,6 @@ namespace ApplicationEditor
       {
         MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);
       }
-
     }
 
     private void btnAddColumnToDict_Click(object sender, RoutedEventArgs e)
@@ -1121,8 +1125,11 @@ namespace ApplicationEditor
           dataObject.dataRelationships.Remove((DataRelationship)selectedItem.Tag);
 
         }
-        if (!isFetched)         
+
+        if (!isFetched)
+        {
           _dal.GetDatabaseSchema(_currentProject.Name, _currentApplication.Name);
+        }
 
       }
       catch (Exception ex)
@@ -1148,6 +1155,7 @@ namespace ApplicationEditor
       }
       return found;
     }
+
     private void btnEditNode_Click(object sender, RoutedEventArgs e)
     {
       try
@@ -1289,7 +1297,7 @@ namespace ApplicationEditor
           {
             ScopeProject project = new ScopeProject { Name = tbNewPrjName.Text, Applications = new List<ScopeApplication>() };
             tvwPrj = new TreeViewItem { Header = tbNewPrjName.Text, Tag = project };
-            _scopes.Add(project);            
+            _scopes.Add(project);
             tvwScopesItemRoot.Items.Add(tvwPrj);
             cmbProject.Items.Add(new ComboBoxItem { Content = project.Name, Tag = project });
           }
@@ -1416,8 +1424,7 @@ namespace ApplicationEditor
         MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);
       }
     }
-
-
+    
     private TreeViewItem findObjectParent(TreeViewItem selectedItem)
     {
       TreeViewItem parent = null;
@@ -1442,10 +1449,10 @@ namespace ApplicationEditor
     private void btnCreateRalation_Click(object sender, RoutedEventArgs e)
     {
       TreeViewItem selectedObject = (TreeViewItem)tvwDestination.SelectedItem;
-      
+
       try
       {
-        if(selectedObject.Parent is TreeView || selectedObject == null)
+        if (selectedObject.Parent is TreeView || selectedObject == null)
         {
           MessageBox.Show("Please select a Data Object tree view item", "EDIT RELATIONSHIP", MessageBoxButton.OK);
           return;
@@ -1453,7 +1460,7 @@ namespace ApplicationEditor
         else
         {
           TreeViewItem selectedItem = findObjectParent((TreeViewItem)selectedObject);
-                    
+
           relations.cbExisting.Items.Clear();
           relations.cbSourceProps.Items.Clear();
           relations.cbRelated.Items.Clear();
@@ -1472,29 +1479,29 @@ namespace ApplicationEditor
             relations.cbSourceProps.Items.Add(dataProperty.propertyName);
           }
 
-        //  relations.cbSourceProps.ItemsSource = relations._selectedObjectProperties;
+          //  relations.cbSourceProps.ItemsSource = relations._selectedObjectProperties;
 
           foreach (org.iringtools.library.DataObject dataObj in dbdict.dataObjects)
           {
             relations.cbRelated.Items.Add(dataObj.objectName);
           }
 
-       //   relations.cbRelated.ItemsSource = relations._relatedObjects;
+          //   relations.cbRelated.ItemsSource = relations._relatedObjects;
           relations.cbRelated.Tag = dbdict;
-          
+
           relations.Show();
         }
       }
-      catch (Exception ex)
+      catch (Exception)
       {
       }
-
     }
 
     private void tvwDestination_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
     {
 
     }
+
     private void btnDelScope_Click(object sender, RoutedEventArgs e)
     {
       try
@@ -1538,7 +1545,6 @@ namespace ApplicationEditor
         throw ex;
       }
     }
-
 
     private void btnMoveUp_Click(object sender, RoutedEventArgs e)
     {
@@ -1604,7 +1610,6 @@ namespace ApplicationEditor
       }
 
       treeViewItem.Focus();
-
     }
 
     private void btnMoveDown_Click(object sender, RoutedEventArgs e)
@@ -1671,7 +1676,6 @@ namespace ApplicationEditor
       }
 
       treeViewItem.Focus();
-
     }
 
     private void btnPostScope_Click(object sender, RoutedEventArgs e)
@@ -1716,13 +1720,14 @@ namespace ApplicationEditor
       {
         MessageBox.Show("Please enter a sql server user password", "GET SCHEMA", MessageBoxButton.OK);
         tbPassword.Focus();
-         biBusyWindow.IsBusy = false;
+        biBusyWindow.IsBusy = false;
         return;
       }
-      if(!isFetched)
-      _dal.GetDatabaseSchema(_currentProject.Name, _currentApplication.Name);
-      
-    }
 
+      if (!isFetched)
+      {
+        _dal.GetDatabaseSchema(_currentProject.Name, _currentApplication.Name);
+      }
+    }
   }
 }
