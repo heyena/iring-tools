@@ -8,6 +8,6 @@
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/UtilityLibrary"/>
 	<classpathentry exported="true" kind="lib" path="C:/iring-tools-java/AdapterLibrary/bin/AdapterLibrary.jar"/>
 	<classpathentry exported="true" kind="lib" path="C:/iring-tools-java/UtilityLibrary/bin/UtilityLibrary.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/AdapterLibrary"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/AdapterLibrary"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
