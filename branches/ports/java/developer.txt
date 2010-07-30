@@ -11,6 +11,7 @@
     select tomcat home directory
  * Compile ExchangeService
   * Right click ExchangeService build.xml - Run As - Ant Build
+  * Right click ExchangeService - Refresh
  * Run ExchangeService
   * Select ExchangeService project - Run - Run on Server
   * Navigate using web browser to...

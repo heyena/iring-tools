@@ -17,10 +17,9 @@ public class DtoDiffEngine implements DiffEngine
 {
   private static final Logger logger = Logger.getLogger(DtoDiffEngine.class);
   private Graph graph;
-  
+
   @Override
-  public DataTransferObjects diff(Graph graph, String sendingXml, String receivingXml)
-      throws Exception
+  public DataTransferObjects diff(Graph graph, String sendingXml, String receivingXml) throws Exception
   {
     if (graph == null || graph.getClassTemplatesMaps().getClassTemplatesMap().size() == 0)
     {
@@ -30,11 +29,11 @@ public class DtoDiffEngine implements DiffEngine
     }
 
     this.graph = graph;
-    
+
     DataTransferObjects result = new DataTransferObjects();
     List<DataTransferObject> resultDtoList = result.getDataTransferObject();
     List<Integer> intersectDtoIndexes = new ArrayList<Integer>();
-    
+
     DataTransferObjects sendingDtos = JaxbUtil.deserialize(DataTransferObjects.class, sendingXml);
     DataTransferObjects receivingDtos = JaxbUtil.deserialize(DataTransferObjects.class, receivingXml);
 
@@ -132,8 +131,8 @@ public class DtoDiffEngine implements DiffEngine
 
     return result;
   }
-  
-  // creates dto according to receiving manifest and raise exception if sourceDto does not meet manifest requirement  
+
+  // creates dto according to receiving manifest and raise exception if sourceDto does not meet manifest requirement
   private DataTransferObject createDiffDto(DataTransferObject sourceDto, TransferType dtoTransferType) throws Exception
   {
     DataTransferObject resultDto = new DataTransferObject();
@@ -167,7 +166,7 @@ public class DtoDiffEngine implements DiffEngine
           TemplateObjects resultTemplateObjects = new TemplateObjects();
           resultClassObject.setTemplateObjects(resultTemplateObjects);
           List<TemplateObject> resultTemplateObjectList = resultTemplateObjects.getTemplateObject();
-          
+
           for (Template template : templates)
           {
             boolean templateFound = false;
@@ -180,8 +179,8 @@ public class DtoDiffEngine implements DiffEngine
                 templateFound = true;
                 Roles roles = template.getRoles();
                 RoleObjects roleObjects = templateObject.getRoleObjects();
-                
-                if (validateRoleObjects(roleObjects, roles))
+
+                if (validateRoleObjects(roles, roleObjects))
                 {
                   TemplateObject resultTemplateObject = new TemplateObject();
                   resultTemplateObject.setTemplateId(templateObject.getTemplateId());
@@ -212,7 +211,7 @@ public class DtoDiffEngine implements DiffEngine
                 }
               }
             }
-            
+
             if (!templateFound && template.getTransferOption() == TransferOption.REQUIRED)
             {
               throw new Exception("Sending DTOs does not contain required template [" + template.getName() + "].");
@@ -230,20 +229,22 @@ public class DtoDiffEngine implements DiffEngine
     return resultDto;
   }
 
-  private boolean validateRoleObjects(RoleObjects roleObjects, Roles roles)
+  private boolean validateRoleObjects(Roles roles, RoleObjects roleObjects)
   {
-    for (RoleObject roleObject : roleObjects)
+    for (Role role : roles)
     {
-      for (Role role : roles)
+      if (role.getType() == RoleType.REFERENCE)
       {
-        if (roleObject.getRoleId().equals(role.getRoleId()) && role.getType() == RoleType.REFERENCE
-            && roleObject.getReference() != role.getValue())
+        for (RoleObject roleObject : roleObjects)
         {
-          return false;
+          if (role.getRoleId().equals(roleObject.getRoleId()) && !role.getValue().equals(roleObject.getReference()))
+          {
+            return false;
+          }
         }
       }
     }
-
+    
     return true;
   }
 
