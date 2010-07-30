@@ -13,7 +13,7 @@
     <RootNamespace>ReferenceDataEditor.Web</RootNamespace>
     <AssemblyName>ReferenceDataEditor.Web</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <SilverlightApplicationList>{965B155F-23B5-4650-8CEF-2B36A1B6F843}|..\ReferenceDataEditor\ReferenceDataEditor.csproj|ClientBin|False</SilverlightApplicationList>
+    <SilverlightApplicationList>{965B155F-23B5-4650-8CEF-2B36A1B6F843}|..\ReferenceDataEditor\ReferenceDataEditor.Silverlight.csproj|ClientBin|False</SilverlightApplicationList>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
