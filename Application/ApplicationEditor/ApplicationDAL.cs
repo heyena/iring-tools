@@ -74,7 +74,7 @@ namespace ApplicationEditor
                 applicationName
               );
 
-              Uri address = new Uri(new Uri(_appliactionServiceUri), relativeUri);
+              Uri address = new Uri(_appliactionServiceUri + relativeUri);
 
               _dbDictionaryClient.DownloadStringAsync(address);
             }
@@ -88,7 +88,7 @@ namespace ApplicationEditor
             applicationName
           );
 
-          Uri address = new Uri(new Uri(_appliactionServiceUri), relativeUri);
+          Uri address = new Uri(_appliactionServiceUri + relativeUri);
           string data = Utility.SerializeDataContract<DatabaseDictionary>(databaseDictionary);
             
           _savedbdictionaryClient.Headers["Content-type"] = "application/xml";
@@ -103,7 +103,7 @@ namespace ApplicationEditor
                applicationName
              );
 
-          Uri address = new Uri(new Uri(_appliactionServiceUri), relativeUri);
+          Uri address = new Uri(_appliactionServiceUri + relativeUri);
           _dbschemaClient.DownloadStringAsync(address);
         }
 
@@ -120,7 +120,7 @@ namespace ApplicationEditor
         {
           string relativeUri = "/providers";
 
-          Uri address = new Uri(new Uri(_appliactionServiceUri), relativeUri);
+          Uri address = new Uri(_appliactionServiceUri + relativeUri);
 
           _providersClient.DownloadStringAsync(address);
         }
@@ -129,7 +129,7 @@ namespace ApplicationEditor
         {
           string relativeUri = "/relationship";
 
-          Uri address = new Uri(new Uri(_appliactionServiceUri), relativeUri);
+          Uri address = new Uri(_appliactionServiceUri + relativeUri);
 
           _relationshipClient.DownloadStringAsync(address);
         }
@@ -138,7 +138,7 @@ namespace ApplicationEditor
         {
           string relativeUri = "/scopes";
 
-          Uri address = new Uri(new Uri(_adapterServiceUri), relativeUri);
+          Uri address = new Uri(_adapterServiceUri + relativeUri);
 
           _scopesClient.DownloadStringAsync(address);
         }
@@ -151,7 +151,7 @@ namespace ApplicationEditor
             applicationName
           );
 
-          Uri address = new Uri(new Uri(_appliactionServiceUri), relativeUri);
+          Uri address = new Uri(_appliactionServiceUri + relativeUri);
          
          _postdbdictionaryClient.DownloadStringAsync(address);
          // string data = Utility.SerializeDataContract<DatabaseDictionary>(dictionary);
@@ -166,7 +166,7 @@ namespace ApplicationEditor
         {
           string relativeUri = String.Format("/scopes");
 
-          Uri address = new Uri(new Uri(_adapterServiceUri), relativeUri);
+          Uri address = new Uri(_adapterServiceUri + relativeUri);
 
           string data = Utility.SerializeDataContract<Collection<ScopeProject>>(scopes);
 
