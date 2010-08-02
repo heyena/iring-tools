@@ -112,7 +112,7 @@
                         </Grid.ColumnDefinitions>
                         <Border Grid.Row="0" Grid.Column="0" BorderBrush="Gray" BorderThickness="1" CornerRadius="5" >
                             <basic:TreeView x:Name="tvwSource" Height="Auto" BorderBrush="#8FA0AE" BorderThickness="1" >
-                                <basic:TreeViewItem x:Name="tvwItemSourceRoot" Header="Available Database Schema Items" Expanded="itm_Expanded" Visibility="Collapsed" />
+                                <basic:TreeViewItem x:Name="tvwItemSourceRoot" Header="Available Database Schema Items" Expanded="itm_Expanded" Visibility="Visible" />
                             </basic:TreeView>
                         </Border>
                         <Border Grid.Row="0" Grid.Column="1" BorderBrush="Gray" BorderThickness="1" CornerRadius="5">
@@ -145,7 +145,7 @@
                         </Grid.ColumnDefinitions>
                         <Border Grid.Row="0" Grid.Column="0" BorderBrush="Gray" BorderThickness="1" CornerRadius="5" >
                             <basic:TreeView x:Name="tvwDestination" Height="Auto" BorderBrush="#8FA0AE" BorderThickness="1" SelectedItemChanged="tvwDestination_SelectedItemChanged">
-                                <basic:TreeViewItem x:Name="tvwItemDestinationRoot" Header="Database Dictionary" Expanded="itm_Expanded" Visibility="Collapsed" />
+                                <basic:TreeViewItem x:Name="tvwItemDestinationRoot" Header="Database Dictionary" Expanded="itm_Expanded" Visibility="Visible" />
                             </basic:TreeView>
                         </Border>
                         <Border Grid.Row="0" Grid.Column="1" BorderBrush="Gray" BorderThickness="1" CornerRadius="5">

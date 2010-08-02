@@ -54,9 +54,9 @@ namespace org.iringtools.application
     //private WebProxyCredentials _proxyCredentials = null;
 
     bool _isScopeInitialized = false;
-    
+
     AdapterClient _adapterClient = null;
-    
+
     [Inject]
     public ApplicationProvider(NameValueCollection settings)
     {
@@ -126,42 +126,42 @@ namespace org.iringtools.application
 
     public DatabaseDictionary GetDictionary(string projectName, string applicationName)
     {
-        DatabaseDictionary databaseDictionary = new DatabaseDictionary();
-        try
-        {
-          InitializeScope(projectName, applicationName);
+      DatabaseDictionary databaseDictionary = new DatabaseDictionary();
+      try
+      {
+        InitializeScope(projectName, applicationName);
 
-          databaseDictionary = Utility.Read<DatabaseDictionary>(_settings["DBDictionaryPath"]);
-        }
-        catch (Exception ex)
-        {
-            _logger.Error("Error in GetDbDictionary: " + ex);
-            return null;
-        }
-        return databaseDictionary;
+        databaseDictionary = Utility.Read<DatabaseDictionary>(_settings["DBDictionaryPath"]);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in GetDbDictionary: " + ex);
+        return null;
+      }
+      return databaseDictionary;
     }
 
     public Response PostDictionary(string projectName, string applicationName, DatabaseDictionary databaseDictionary)
     {
       Status status = new Status();
-        try
-        {
-          status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
+      try
+      {
+        status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
 
-          InitializeScope(projectName, applicationName);
+        InitializeScope(projectName, applicationName);
 
-          Utility.Write<DatabaseDictionary>(databaseDictionary, _settings["DBDictionaryPath"]);
+        Utility.Write<DatabaseDictionary>(databaseDictionary, _settings["DBDictionaryPath"]);
 
-          status.Messages.Add("Database Dictionary saved successfully");
-        }
-        catch (Exception ex)
-        {
-          _logger.Error("Error in SaveDatabaseDictionary: " + ex);
-          status.Messages.Add("Error in saving database dictionary" + ex.Message);
-        }
+        status.Messages.Add("Database Dictionary saved successfully");
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in SaveDatabaseDictionary: " + ex);
+        status.Messages.Add("Error in saving database dictionary" + ex.Message);
+      }
 
-        _response.Append(status);
-        return _response;
+      _response.Append(status);
+      return _response;
     }
 
     public DatabaseDictionary GetDatabaseSchema(string projectName, string applicationName)
@@ -203,7 +203,7 @@ namespace org.iringtools.application
               "inner join sys.tables t3 on t3.name = t1.table_name and t3.object_id = t2.object_id " +
               "left join information_schema.key_column_usage t4 on t4.table_name = t1.table_name and t4.column_name = t1.column_name " +
               "left join information_schema.table_constraints t5 on t5.constraint_name = t4.constraint_name " +
-              "where t1.data_type not in ('image') " + 
+              "where t1.data_type not in ('image') " +
               "order by t1.table_name, t5.constraint_type, t1.column_name";// +
           properties.Add("connection.driver_class", "NHibernate.Driver.SqlClientDriver");
 
@@ -391,30 +391,281 @@ namespace org.iringtools.application
 
     public List<string> GetProviders()
     {
-        try
-        {
-            return Enum.GetNames(typeof(Provider)).ToList();
-        }
-        catch (Exception ex)
-        {
-            _logger.Error("Error in GetProviders: " + ex);
-            return null;
-        }
+      try
+      {
+        return Enum.GetNames(typeof(Provider)).ToList();
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in GetProviders: " + ex);
+        return null;
+      }
     }
 
-    public List<String> GetSchemaObjects(string project, string application)
+    public List<string> GetSchemaObjects(string projectName, string applicationName)
     {
-      throw new NotImplementedException();
+      List<string> tableNames = new List<string>();
+      DatabaseDictionary dbDictionary = new DatabaseDictionary();
+      try
+      {
+        InitializeScope(projectName, applicationName);
+        if (File.Exists(_settings["DBDictionaryPath"]))
+          dbDictionary = Utility.Read<DatabaseDictionary>(_settings["DBDictionaryPath"]);
+
+        string connString = dbDictionary.connectionString;
+        string dbProvider = dbDictionary.provider.ToString();
+        dbProvider = dbProvider.ToUpper();
+        string parsedConnStr = ParseConnectionString(connString, dbProvider);
+
+        Dictionary<string, string> properties = new Dictionary<string, string>();
+
+        dbDictionary.connectionString = parsedConnStr;
+        dbDictionary.dataObjects = new System.Collections.Generic.List<DataObject>();
+
+        properties.Add("connection.provider", "NHibernate.Connection.DriverConnectionProvider");
+        properties.Add("proxyfactory.factory_class", "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle");
+        properties.Add("connection.connection_string", parsedConnStr);
+        properties.Add("connection.driver_class", GetConnectionDriver(dbProvider));
+        properties.Add("dialect", GetDatabaseDialect(dbProvider));
+
+        NHibernate.Cfg.Configuration config = new NHibernate.Cfg.Configuration();
+        config.AddProperties(properties);
+
+        ISessionFactory sessionFactory = config.BuildSessionFactory();
+        ISession session = sessionFactory.OpenSession();
+        ISQLQuery query = session.CreateSQLQuery(GetDatabaseMetaquery(dbProvider, parsedConnStr.Split(';')[1].Split('=')[1]));
+
+        IList<string> metadataList = query.List<string>();
+        session.Close();
+
+        tableNames = metadataList as List<string>;
+        return tableNames;
+      }
+      catch (Exception ex)
+      {
+        return tableNames;
+      }
     }
 
-    public DatabaseDictionary GetSchemaObjectSchema(string project, string application, string schemaObjectName)
+    public org.iringtools.library.DataObject GetSchemaObjectSchema(string projectName, string applicationName, string schemaObjectName)
     {
-      throw new NotImplementedException();
+      List<string> tableNames = new List<string>();
+      DatabaseDictionary dbDictionary = new DatabaseDictionary();
+      org.iringtools.library.DataObject dataObject = new org.iringtools.library.DataObject
+      {
+        tableName = schemaObjectName,
+        dataProperties = new List<DataProperty>(),
+        keyProperties = new List<KeyProperty>(),
+        dataRelationships = new List<DataRelationship>(),
+        objectName = Utility.NameSafe(schemaObjectName)
+      };
+      try
+      {
+        InitializeScope(projectName, applicationName);
+
+        if (File.Exists(_settings["DBDictionaryPath"]))
+          dbDictionary = Utility.Read<DatabaseDictionary>(_settings["DBDictionaryPath"]);
+
+        string connString = dbDictionary.connectionString;
+        string dbProvider = dbDictionary.provider.ToString();
+        dbProvider = dbProvider.ToUpper();
+        string parsedConnStr = ParseConnectionString(connString, dbProvider);
+
+        Dictionary<string, string> properties = new Dictionary<string, string>();
+
+        dbDictionary.connectionString = parsedConnStr;
+        dbDictionary.dataObjects = new System.Collections.Generic.List<DataObject>();
+
+        properties.Add("connection.provider", "NHibernate.Connection.DriverConnectionProvider");
+        properties.Add("proxyfactory.factory_class", "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle");
+        properties.Add("connection.connection_string", parsedConnStr);
+        properties.Add("connection.driver_class", GetConnectionDriver(dbProvider));
+        properties.Add("dialect", GetDatabaseDialect(dbProvider));
+
+        NHibernate.Cfg.Configuration config = new NHibernate.Cfg.Configuration();
+        config.AddProperties(properties);
+
+        ISessionFactory sessionFactory = config.BuildSessionFactory();
+        ISession session = sessionFactory.OpenSession();
+
+        ISQLQuery query = session.CreateSQLQuery(GetTableMetaQuery(dbProvider, parsedConnStr.Split(';')[1].Split('=')[1], schemaObjectName));
+        IList<object[]> metadataList = query.List<object[]>();
+        session.Close();
+
+
+        foreach (object[] metadata in metadataList)
+        {
+          string columnName = Convert.ToString(metadata[0]);
+          string dataType = Utility.SqlTypeToCSharpType(Convert.ToString(metadata[1]));
+          int dataLength = Convert.ToInt32(metadata[2]);
+          bool isIdentity = Convert.ToBoolean(metadata[3]);
+          string nullable = Convert.ToString(metadata[4]).ToUpper();
+          bool isNullable = (nullable == "Y" || nullable == "TRUE");
+          string constraint = Convert.ToString(metadata[5]);
+
+          if (String.IsNullOrEmpty(constraint)) // process columns
+          {
+            DataProperty column = new DataProperty()
+            {
+              columnName = columnName,
+              dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
+              dataLength = dataLength,
+              isNullable = isNullable,
+              propertyName = Utility.NameSafe(columnName)
+            };
+
+            dataObject.dataProperties.Add(column);
+          }
+          else
+          {
+            KeyType keyType = KeyType.assigned;
+
+            if (isIdentity)
+            {
+              keyType = KeyType.identity;
+            }
+            else if (constraint.ToUpper() == "FOREIGN KEY" || constraint.ToUpper() == "R")
+            {
+              keyType = KeyType.foreign;
+            }
+
+            DataProperty key = new DataProperty()
+            {
+              columnName = columnName,
+              dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
+              dataLength = dataLength,
+              isNullable = isNullable,
+              keyType = keyType,
+              propertyName = Utility.NameSafe(columnName),
+            };
+            dataObject.addKeyProperty(key);
+          }
+        }
+        return dataObject;
+      }
+      catch (Exception x)
+      {
+        return dataObject;
+      }
     }
+
 
     #endregion
 
     #region private methods
+
+    private string GetTableMetaQuery(string dbProvider, string databaseName, string objectName)
+    {
+      string tableQuery = string.Empty;
+
+      if (dbProvider.ToUpper().Contains("MSSQL"))
+      {
+        tableQuery = string.Format("SELECT t1.COLUMN_NAME, t1.DATA_TYPE, t2.max_length, t2.is_identity, t2.is_nullable, t5.CONSTRAINT_TYPE " +
+                                   " FROM INFORMATION_SCHEMA.COLUMNS AS t1 INNER JOIN sys.columns AS t2 ON t2.name = t1.COLUMN_NAME INNER JOIN " +
+                                   " sys.tables AS t3 ON t3.name = t1.TABLE_NAME AND t3.object_id = t2.object_id LEFT OUTER JOIN " +
+                                   " INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS t4 ON t4.TABLE_NAME = t1.TABLE_NAME AND t4.COLUMN_NAME = t1.COLUMN_NAME LEFT OUTER JOIN " +
+                                   " INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS t5 ON t5.CONSTRAINT_NAME = t4.CONSTRAINT_NAME " +
+                                   " WHERE (t1.DATA_TYPE NOT IN ('image')) AND (t1.TABLE_CATALOG = '{0}') AND (t1.TABLE_NAME = '{1}') "
+                                   , databaseName
+                                   , objectName);
+      }
+      else if (dbProvider.ToUpper().Contains("MYSQL"))
+      {
+        tableQuery = string.Format("select t1.COLUMN_NAME, t1.DATA_TYPE, t1.CHARACTER_MAXIMUM_LENGTH, t1.COLUMN_KEY, t1.IS_NULLABLE, c1.CONSTRAINT_TYPE " +
+                                   " from INFORMATION_SCHEMA.COLUMNS t1 join KEY_COLUMN_USAGE u1 on u1.TABLE_NAME = t1.TABLE_NAME and u1.TABLE_SCHEMA = t1.TABLE_SCHEMA and " +
+                                   " t1.COLUMN_NAME = u1.COLUMN_NAME join INFORMATION_SCHEMA.TABLE_CONSTRAINTS c1 on u1.CONSTRAINT_NAME = c1.CONSTRAINT_NAME and u1.TABLE_NAME = c1.TABLE_NAME " +
+                                   " where t1.TABLE_SCHEMA = '{0}' and t1.TABLE_NAME = '{1}'"
+                                   , databaseName
+                                   , objectName
+                                   );
+      }
+      else if (dbProvider.ToUpper().Contains("ORACLE"))
+      {
+        tableQuery = string.Format(" select t2.column_name, t2.data_type, t2.data_length, 0 as is_sequence, t2.nullable, t4.constraint_type " +
+                                   " from user_objects t1 inner join all_tab_cols t2 on t2.table_name = t1.object_name " +
+                                   " left join all_cons_columns t3 on t3.table_name = t2.table_name and t3.column_name = t2.column_name " +
+                                   " left join all_constraints t4 on t4.constraint_name = t3.constraint_name and (t4.constraint_type = 'P' or t4.constraint_type = 'R') " +
+                                   " where t1.object_type = 'TABLE' and t1.object_name = '{0}' order by t1.object_name, t4.constraint_type, t2.column_name"
+                                   , objectName
+                                   );
+
+      }
+      return tableQuery;
+    }
+
+    private string GetDatabaseMetaquery(string dbProvider, string database)
+    {
+      if (dbProvider.ToUpper().Contains("MSSQL"))
+      {
+        return "select table_name from INFORMATION_SCHEMA.TABLES order by table_name";
+      }
+      else if (dbProvider.ToUpper().Contains("MYSQL"))
+      {
+        return string.Format("select table_name from INFORMATION_SCHEMA.TABLES where table_schema = '{0}' order by table_name;",database);
+      }
+      else if (dbProvider.ToUpper().Contains("ORACLE"))
+      {
+        return "select object_name from user_objects where object_type = 'TABLE' order by object_name";
+      }
+      else
+        throw new Exception(string.Format("Database provider {0} not supported.", dbProvider));
+    }
+
+    private string GetDatabaseDialect(string dbProvider)
+    {
+
+      switch (dbProvider.ToUpper())
+      {
+        case "MSSQL2008":
+          return "NHibernate.Dialect.MsSql2008Dialect";
+
+        case "MSSQL2005":
+          return "NHibernate.Dialect.MsSql2005Dialect";
+
+        case "MSSQL2000":
+          return "NHibernate.Dialect.MsSql2000Dialect";
+
+        case "ORACLE10G":
+          return "NHibernate.Dialect.Oracle10gDialect";
+
+        case "ORACLE9I":
+          return "NHibernate.Dialect.Oracle9iDialect";
+
+        case "ORACLE8I":
+          return "NHibernate.Dialect.Oracle8iDialect";
+
+        case "ORACLELITE":
+          return "NHibernate.Dialect.OracleLiteDialect";
+
+        case "MYSQL3":
+        case "MYSQL4":
+        case "MYSQL5":
+          return "NHibernate.Dialect.MySQL5Dialect";
+
+        default:
+          throw new Exception(string.Format("Database provider {0} not supported.", dbProvider));
+      }
+    }
+
+
+    private string GetConnectionDriver(string dbProvider)
+    {
+      if (dbProvider.ToUpper().Contains("MSSQL"))
+      {
+        return "NHibernate.Driver.SqlClientDriver";
+      }
+      else if (dbProvider.ToUpper().Contains("MYSQL"))
+      {
+        return "NHibernate.Driver.MySqlDataDriver";
+      }
+      else if (dbProvider.ToUpper().Contains("ORACLE"))
+      {
+        return "NHibernate.Driver.OracleClientDriver";
+      }
+      else
+        throw new Exception(string.Format("Database provider {0} is not supported", dbProvider));
+    }
+
     private void InitializeScope(string projectName, string applicationName)
     {
       try
@@ -550,45 +801,45 @@ namespace org.iringtools.application
 
     private static string ParseConnectionString(string connStr, string dbProvider)
     {
-        try
-        {
-            string parsedConnStr = String.Empty;
-            char[] ch = { ';' };
-            string[] connStrKeyValuePairs = connStr.Split(ch, StringSplitOptions.RemoveEmptyEntries);
+      try
+      {
+        string parsedConnStr = String.Empty;
+        char[] ch = { ';' };
+        string[] connStrKeyValuePairs = connStr.Split(ch, StringSplitOptions.RemoveEmptyEntries);
 
-            foreach (string connStrKeyValuePair in connStrKeyValuePairs)
+        foreach (string connStrKeyValuePair in connStrKeyValuePairs)
+        {
+          string[] connStrKeyValuePairTemp = connStrKeyValuePair.Split('=');
+          string connStrKey = connStrKeyValuePairTemp[0].Trim();
+          string connStrValue = connStrKeyValuePairTemp[1].Trim();
+
+          if (connStrKey.ToUpper() == "DATA SOURCE" ||
+              connStrKey.ToUpper() == "USER ID" ||
+              connStrKey.ToUpper() == "PASSWORD")
+          {
+            parsedConnStr += connStrKey + "=" + connStrValue + ";";
+          }
+
+          if (dbProvider.ToUpper().Contains("MSSQL"))
+          {
+            if (connStrKey.ToUpper() == "INITIAL CATALOG" ||
+                connStrKey.ToUpper() == "INTEGRATED SECURITY")
             {
-                string[] connStrKeyValuePairTemp = connStrKeyValuePair.Split('=');
-                string connStrKey = connStrKeyValuePairTemp[0].Trim();
-                string connStrValue = connStrKeyValuePairTemp[1].Trim();
-
-                if (connStrKey.ToUpper() == "DATA SOURCE" ||
-                    connStrKey.ToUpper() == "USER ID" ||
-                    connStrKey.ToUpper() == "PASSWORD")
-                {
-                    parsedConnStr += connStrKey + "=" + connStrValue + ";";
-                }
-
-                if (dbProvider.ToUpper().Contains("MSSQL"))
-                {
-                    if (connStrKey.ToUpper() == "INITIAL CATALOG" ||
-                        connStrKey.ToUpper() == "INTEGRATED SECURITY")
-                    {
-                        parsedConnStr += connStrKey + "=" + connStrValue + ";";
-                    }
-                }
-                else if (dbProvider.ToUpper().Contains("MYSQL"))
-                {
-                    parsedConnStr += connStrKey + "=" + connStrValue + ";";
-                }
+              parsedConnStr += connStrKey + "=" + connStrValue + ";";
             }
+          }
+          else if (dbProvider.ToUpper().Contains("MYSQL"))
+          {
+            parsedConnStr += connStrKey + "=" + connStrValue + ";";
+          }
+        }
 
-            return parsedConnStr;
-        }
-        catch (Exception ex)
-        {
-            throw ex;
-        }
+        return parsedConnStr;
+      }
+      catch (Exception ex)
+      {
+        throw ex;
+      }
     }
     #endregion
   }

@@ -39,6 +39,6 @@ namespace org.iringtools.application
 
         [OperationContract]
         [WebGet(UriTemplate = "/{project}/{application}/schemaObjects/{schemaObjectName}")]
-        DatabaseDictionary GetSchemaObjectSchema(string project, string application, string schemaObjectName);
+        org.iringtools.library.DataObject GetSchemaObjectSchema(string project, string application, string schemaObjectName);
     }
 }

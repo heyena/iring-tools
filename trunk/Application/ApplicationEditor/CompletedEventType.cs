@@ -12,8 +12,9 @@ namespace ApplicationEditor
     GetProviders,
     PostDictionaryToAdapterService,
     PostScopes,
-    ClearTripleStore,
     DeleteApp,
-    GetRelationships
+    GetRelationships,
+    GetSchemaObjects,
+    GetSchemaObjectsSchema
   }
 }
