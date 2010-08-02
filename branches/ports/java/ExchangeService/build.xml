@@ -144,7 +144,13 @@
 
 	<target depends="build-subprojects,build-project" name="build" />
 
-	<target name="build-subprojects" />
+	<target name="build-subprojects">
+		<ant antfile="build.xml" dir="${ExchangeLibrary.location}" inheritAll="false" target="build">
+			<propertyset>
+				<propertyref name="build.compiler" />
+			</propertyset>
+		</ant>
+	</target>
 
 	<target depends="init" name="build-project">
 		<echo message="${ant.project.name}: ${ant.file}" />
