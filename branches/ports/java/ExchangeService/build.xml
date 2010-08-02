@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="build" name="ExchangeService">
+	<property name="ExchangeLibrary.location" value="../ExchangeLibrary" />
+	<property name="AdapterLibrary.location" value="../AdapterLibrary" />
+	<property name="UtilityLibrary.location" value="../UtilityLibrary" />
 	<property name="debuglevel" value="source,lines,vars" />
 	<property name="target" value="1.6" />
 	<property name="source" value="1.6" />
-	<property name="AdapterLibrary.location" value="../AdapterLibrary" />
-	<property name="UtilityLibrary.location" value="../UtilityLibrary" />
-	<property name="ExchangeLibrary.location" value="../ExchangeLibrary" />
 
 	<path id="cxf-2.2.9.userclasspath">
 		<pathelement location="../libraries/apache-cxf-2.2.9/abdera-core-1.0.jar" />
@@ -122,9 +122,9 @@
 		<path refid="Apache Tomcat v6.0 [Apache Tomcat v6.0].libraryclasspath" />
 		<path refid="log4j-1.2.16.userclasspath" />
 		<path refid="guice-2.0.userclasspath" />
-		<pathelement location="../ExchangeLibrary/bin/ExchangeLibrary.jar" />
-		<pathelement location="../AdapterLibrary/bin/AdapterLibrary.jar" />
-		<pathelement location="../UtilityLibrary/bin/UtilityLibrary.jar" />
+		<pathelement location="${ExchangeLibrary.location}/bin" />
+		<pathelement location="${AdapterLibrary.location}/bin" />
+		<pathelement location="${UtilityLibrary.location}/bin" />
 	</path>
 
 	<target name="init">
@@ -144,13 +144,7 @@
 
 	<target depends="build-subprojects,build-project" name="build" />
 
-	<target name="build-subprojects">
-		<ant antfile="build.xml" dir="${ExchangeLibrary.location}" inheritAll="false" target="build">
-			<propertyset>
-				<propertyref name="build.compiler" />
-			</propertyset>
-		</ant>
-	</target>
+	<target name="build-subprojects" />
 
 	<target depends="init" name="build-project">
 		<echo message="${ant.project.name}: ${ant.file}" />
@@ -158,15 +152,21 @@
 			<src path="src" />
 			<classpath refid="ExchangeService.classpath" />
 		</javac>
-		<copy todir="WebContent/WEB-INF/lib" flatten="true">
-      <path refid="cxf-2.2.9.userclasspath" />
-      <path refid="jsr311-api.userclasspath" />
-      <path refid="log4j-1.2.16.userclasspath" />
-      <path refid="guice-2.0.userclasspath" />	
+		<copy todir="WebContent/WEB-INF/classes">
+			<fileset dir="${AdapterLibrary.location}/bin" excludes="**/*.svn/" />
 		</copy>
-		<copy file="${AdapterLibrary.location}/bin/AdapterLibrary.jar" todir="WebContent/WEB-INF/lib" />
-		<copy file="${UtilityLibrary.location}/bin/UtilityLibrary.jar" todir="WebContent/WEB-INF/lib" />
-		<copy file="${ExchangeLibrary.location}/bin/ExchangeLibrary.jar" todir="WebContent/WEB-INF/lib" />
+		<copy todir="WebContent/WEB-INF/classes">
+			<fileset dir="${UtilityLibrary.location}/bin" excludes="**/*.svn/" />
+		</copy>
+		<copy todir="WebContent/WEB-INF/classes">
+			<fileset dir="${ExchangeLibrary.location}/bin" excludes="**/*.svn/" />
+		</copy>
+		<copy todir="WebContent/WEB-INF/lib" flatten="true">
+			<path refid="cxf-2.2.9.userclasspath" />
+			<path refid="jsr311-api.userclasspath" />
+			<path refid="log4j-1.2.16.userclasspath" />
+			<path refid="guice-2.0.userclasspath" />
+		</copy>
 		<jar destfile="${ant.project.name}.war" basedir="WebContent" excludes="**/.svn/" />
 	</target>
 </project>

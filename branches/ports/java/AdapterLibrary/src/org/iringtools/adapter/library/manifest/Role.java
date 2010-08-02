@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="roleId" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="dataType" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="propertyName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="class" type="{http://iringtools.org/adapter/library/manifest}Class"/>
  *       &lt;/sequence>
@@ -45,7 +44,6 @@ import javax.xml.bind.annotation.XmlType;
     "roleId",
     "name",
     "dataType",
-    "propertyName",
     "value",
     "clazz"
 })
@@ -59,8 +57,6 @@ public class Role {
     protected String name;
     @XmlElement(required = true)
     protected String dataType;
-    @XmlElement(required = true)
-    protected String propertyName;
     @XmlElement(required = true)
     protected String value;
     @XmlElement(name = "class", required = true)
@@ -160,30 +156,6 @@ public class Role {
      */
     public void setDataType(String value) {
         this.dataType = value;
-    }
-
-    /**
-     * Gets the value of the propertyName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getPropertyName() {
-        return propertyName;
-    }
-
-    /**
-     * Sets the value of the propertyName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setPropertyName(String value) {
-        this.propertyName = value;
     }
 
     /**

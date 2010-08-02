@@ -36,6 +36,5 @@
 			<src path="src" />
 			<classpath refid="AdapterLibrary.classpath" />
 		</javac>		
-		<jar destfile="bin/${ant.project.name}.jar" basedir="bin" includes="**/*.class" excludes="**/.svn/" />
 	</target>
 </project>

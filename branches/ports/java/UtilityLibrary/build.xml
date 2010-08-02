@@ -52,6 +52,5 @@
 			<src path="src" />
 			<classpath refid="UtilityLibrary.classpath" />
 		</javac>
-		<jar destfile="bin/${ant.project.name}.jar" basedir="bin" includes="**/*.class" excludes="**/.svn/" />
 	</target>
 </project>

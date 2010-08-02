@@ -27,23 +27,20 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="C:/iring-tools-java/AdapterLibrary/bin/AdapterLibrary.jar">
+	<classpathentry kind="lib" path="/ExchangeLibrary/bin">
 		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/classes"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="C:/iring-tools-java/UtilityLibrary/bin/UtilityLibrary.jar">
+	<classpathentry kind="lib" path="/AdapterLibrary/bin">
 		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/classes"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="C:/iring-tools-java/ExchangeLibrary/bin/ExchangeLibrary.jar">
+	<classpathentry kind="lib" path="/UtilityLibrary/bin">
 		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/classes"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/AdapterLibrary"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/ExchangeLibrary"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/UtilityLibrary"/>
 	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
 </classpath>

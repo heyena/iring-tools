@@ -9,11 +9,9 @@
  * Create Tomcat server instance in eclipse
   * Right click an empty spot in Servers tab - New - Server - Apache - Tomcat 6.0 - Next - 
     select tomcat home directory
- * Compile ExchangeService
-  * Right click ExchangeService build.xml - Run As - Ant Build
   * Right click ExchangeService - Refresh
  * Run ExchangeService
-  * Select ExchangeService project - Run - Run on Server
+  * Select Tomcat Server under Servers tab - click on Run (the player) button
   * Navigate using web browser to...
     http://localhost:8080/ExchangeService/12345_000/ABC/Lines/diff
     Result is the difference of two RDF files
