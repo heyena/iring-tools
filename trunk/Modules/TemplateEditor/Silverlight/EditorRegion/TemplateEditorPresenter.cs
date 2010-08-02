@@ -1,22 +1,14 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Xml.Schema;
-using System.Reflection;
 
 using PrismContrib.Base;
 
 using Microsoft.Practices.Composite.Events;
 using Microsoft.Practices.Composite.Logging;
 using Microsoft.Practices.Composite.Regions;
-using Microsoft.Practices.Composite.Presentation.Regions.Behaviors;
 
-using org.iringtools.library.presentation.events;
 
 using org.iringtools.modulelibrary.events;
 using org.iringtools.modulelibrary.types;
@@ -24,9 +16,7 @@ using org.iringtools.modulelibrary.extensions;
 
 //using org.iringtools.modules.popup;
 using org.iringtools.modulelibrary.layerdal;
-using org.iringtools.modulelibrary.layerbll;
 
-using org.iringtools.ontologyservice.presentation;
 using org.iringtools.ontologyservice.presentation.presentationmodels;
 
 using org.ids_adi.qmxf;
@@ -552,17 +542,18 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 {
                     LiteralDataTypes = _templateModel.LiteralDataTypes,
                     Ranges = _templateModel.Ranges,
-                    SelectedRoleRange = _templateModel.SelectedRoleRange,
-                    SelectedRoleValueLiteral = _templateModel.SelectedRoleValueLiteral,
-                    SelectedRoleValueLiteralDatatype = _templateModel.SelectedRoleValueLiteralDatatype,
-                    SelectedRoleValueReference = _templateModel.SelectedRoleValueReference,
+                    RoleRange = _templateModel.SelectedRoleRange,
+                    RoleValueLiteral = _templateModel.SelectedRoleValueLiteral,
+                    RoleValueLiteralDatatype = _templateModel.SelectedRoleValueLiteralDatatype,
+                    RoleValueReference = _templateModel.SelectedRoleValueReference,
                     IsBaseTemplate = _templateModel.IsBaseTemplate,
                     IsSpecializedTemplate = _templateModel.IsSpecializedTemplate,
                     HasRange = !String.IsNullOrEmpty(_templateModel.SelectedRoleRange.Key),
                     HasValue = !String.IsNullOrEmpty(_templateModel.SelectedRoleValueLiteral) || 
                                !String.IsNullOrEmpty(_templateModel.SelectedRoleValueReference),
                     ValueHasLiteral = !String.IsNullOrEmpty(_templateModel.SelectedRoleValueLiteral),
-                    ValueHasReference = !String.IsNullOrEmpty(_templateModel.SelectedRoleValueReference)
+                    ValueHasReference = !String.IsNullOrEmpty(_templateModel.SelectedRoleValueReference),
+                    RoleRestrictions = _templateModel.SelectedRoleRestrictions
                 };
 
                 _dialog.Closed += new EventHandler(dialog_DialogClosed);
@@ -597,10 +588,11 @@ namespace org.iringtools.modules.templateeditor.editorregion
             DialogClosedEventArgs args = e as DialogClosedEventArgs;
             if (args.DialogResult.Value == true)
             {
-                _templateModel.SelectedRoleRange = _dialog.rolesPopupModel.SelectedRoleRange;
-                _templateModel.SelectedRoleValueLiteral = _dialog.rolesPopupModel.SelectedRoleValueLiteral;
-                _templateModel.SelectedRoleValueLiteralDatatype = _dialog.rolesPopupModel.SelectedRoleValueLiteralDatatype;
-                _templateModel.SelectedRoleValueReference = _dialog.rolesPopupModel.SelectedRoleValueReference;
+                _templateModel.SelectedRoleRange = _dialog.rolesPopupModel.RoleRange;
+                _templateModel.SelectedRoleValueLiteral = _dialog.rolesPopupModel.RoleValueLiteral;
+                _templateModel.SelectedRoleValueLiteralDatatype = _dialog.rolesPopupModel.RoleValueLiteralDatatype;
+                _templateModel.SelectedRoleValueReference = _dialog.rolesPopupModel.RoleValueReference;
+                _templateModel.SelectedRoleRestrictions = _dialog.rolesPopupModel.RoleRestrictions;
             }
         }
 

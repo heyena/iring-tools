@@ -61,6 +61,8 @@ namespace org.iringtools.modules.templateeditor.editorregion
 
         ObservableCollection<KeyValuePair<string, string>> LiteralDataTypes { get; }
 
+        ObservableCollection<KeyValuePair<string, object>> SelectedRoleRestrictions { get; set; }
+
         void AddRole(string name, string description, string uri);
 
         void ApplyRole(object objRole, string name, string description, string uri);

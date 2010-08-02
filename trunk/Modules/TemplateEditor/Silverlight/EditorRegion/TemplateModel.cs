@@ -21,6 +21,7 @@ namespace org.iringtools.modules.templateeditor.editorregion
         internal ObservableCollection<KeyValuePair<string, string>> _ranges;
         internal ObservableCollection<KeyValuePair<string, string>> _literalDatatypes;
         internal ObservableCollection<KeyValuePair<string, object>> _roles = new ObservableCollection<KeyValuePair<string, object>>();
+        internal ObservableCollection<KeyValuePair<string, object>> _selectedRoleRestrictions = new ObservableCollection<KeyValuePair<string, object>>();
         internal string _heading = "";
         internal Boolean _readonly = false;
         internal QMXF _qmxf;
@@ -178,6 +179,8 @@ namespace org.iringtools.modules.templateeditor.editorregion
 
         public abstract KeyValuePair<string, string> SelectedRoleValueLiteralDatatype { get; set; }
 
+        public abstract ObservableCollection<KeyValuePair<string, object>> SelectedRoleRestrictions { get; set; }
+        
         public abstract void AddRole(string name, string description, string range);
 
         public abstract void ApplyRole(object objRole, string name, string description, string range);

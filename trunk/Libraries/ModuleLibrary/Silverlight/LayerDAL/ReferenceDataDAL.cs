@@ -46,6 +46,7 @@ namespace org.iringtools.modulelibrary.layerdal
         private WebClient _findClient;
         private WebClient _classClient;
         private WebClient _templateClient;
+        private WebClient _part8TemplateClient;
         private WebClient _subClassClient;
         private WebClient _classTemplatesClient;
         private WebClient _testClient;
@@ -71,6 +72,7 @@ namespace org.iringtools.modulelibrary.layerdal
               _findClient = new WebClient();
               _classClient = new WebClient();
               _templateClient = new WebClient();
+              _part8TemplateClient = new WebClient();
               _subClassClient = new WebClient();
               _classTemplatesClient = new WebClient();
               _testClient = new WebClient();
@@ -84,6 +86,7 @@ namespace org.iringtools.modulelibrary.layerdal
               _findClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
               _classClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
               _templateClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
+              _part8TemplateClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
               _subClassClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
               _classTemplatesClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
               _testClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
@@ -298,7 +301,7 @@ namespace org.iringtools.modulelibrary.layerdal
             
             ////:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
             #region // GetClass data arrived event handler
-            if (sender == _classClient || sender == _templateClient)
+            if (sender == _classClient || sender == _templateClient || sender == _part8TemplateClient)
             {
               try
               {
@@ -313,7 +316,7 @@ namespace org.iringtools.modulelibrary.layerdal
               bool isClass = true;
               if (sender == _classClient)
                 isClass = true;
-              else if (sender == _templateClient)
+              else if (sender == _templateClient || sender == _part8TemplateClient)
                 isClass = false;
                        
                 args = new CompletedEventArgs
@@ -340,9 +343,9 @@ namespace org.iringtools.modulelibrary.layerdal
                                s + "\nPlease review the log on the server.",
                         };
                     }
-                    else if (sender == _templateClient)
+                    else if (sender == _templateClient || sender == _part8TemplateClient)
                     {
-                        string s ="Reference Data Service returned an error while performing GetTemplate.";
+                        string s = "Reference Data Service returned an error while performing GetTemplate.";
                         args = new CompletedEventArgs
                         {
                             CompletedType = CompletedEventType.GetTemplate,
@@ -770,6 +773,18 @@ namespace org.iringtools.modulelibrary.layerdal
           return null;
         }
 
+        public org.ids_adi.qmxf.QMXF GetPart8Template(string id)
+        {
+            _part8TemplateClient.DownloadStringAsync(new Uri(_referenceDataServiceUri + "/part8/template/" + id));
+            return null;
+        }
+
+        public org.ids_adi.qmxf.QMXF GetPart8Template(string id, object userState)
+        {
+            _part8TemplateClient.DownloadStringAsync(new Uri(_referenceDataServiceUri + "/part8/template/" + id), userState);
+            return null;
+        }
+
         public org.iringtools.library.Response PostTemplate(QMXF template)
         {
             try
@@ -779,6 +794,23 @@ namespace org.iringtools.modulelibrary.layerdal
                 _postTemplateClient.Headers["Content-type"] = "application/xml";
                 _postTemplateClient.Encoding = Encoding.UTF8;
                 _postTemplateClient.UploadStringAsync(new Uri(_referenceDataServiceUri + "/templates"), "POST", message);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return null;
+        }
+
+        public org.iringtools.library.Response PostPart8Template(QMXF template)
+        {
+            try
+            {
+                string message = Utility.SerializeDataContract<QMXF>(template);
+
+                _postTemplateClient.Headers["Content-type"] = "application/xml";
+                _postTemplateClient.Encoding = Encoding.UTF8;
+                _postTemplateClient.UploadStringAsync(new Uri(_referenceDataServiceUri + "/part8/templates"), "POST", message);
             }
             catch (Exception ex)
             {

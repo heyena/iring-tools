@@ -439,6 +439,32 @@ namespace org.iringtools.modules.templateeditor.editorregion
             }
         }
 
+        public override ObservableCollection<KeyValuePair<string, object>> SelectedRoleRestrictions
+        {
+            get
+            {
+                ObservableCollection<KeyValuePair<string, object>> restrictions = new ObservableCollection<KeyValuePair<string, object>>();
+                if (_selectedRole != null)
+                {
+                    foreach(PropertyRestriction restriction in selectedRole.restrictions)
+                    {
+                        restrictions.Add(new KeyValuePair<string,object>(restriction.type, restriction));
+                    }
+                }
+                return restrictions;
+            }
+            set
+            {
+                //_selectedRoleRestrictions = value;
+                foreach (KeyValuePair<string, object> kvpair in value)
+                {
+                    selectedRole.restrictions.Add(kvpair.Value as PropertyRestriction);
+                }
+
+                RaisePropertyChanged(this, "SelectedRoleRestrictions");
+            }
+        }
+
         public override void AddRole(string name, string description, string uri)
         {
             RoleDefinition role = new RoleDefinition();

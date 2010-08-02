@@ -514,6 +514,18 @@ namespace org.iringtools.modules.templateeditor.editorregion
             }
         }
 
+        public override ObservableCollection<KeyValuePair<string, object>> SelectedRoleRestrictions
+        {
+            get
+            {
+                return new ObservableCollection<KeyValuePair<string, object>>();
+            }
+            set
+            {
+                return;
+            }
+        }
+
         public override void AddRole(string name, string description, string uri)
         {
             RoleQualification role = new RoleQualification();

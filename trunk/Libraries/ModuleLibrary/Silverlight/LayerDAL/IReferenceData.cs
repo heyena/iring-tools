@@ -29,7 +29,11 @@ namespace org.iringtools.modulelibrary.layerdal
 
         QMXF GetTemplate(string id, object userState);
 
+        QMXF GetPart8Template(string id, object userState);
+
         Response PostTemplate(QMXF template);
+
+        Response PostPart8Template(QMXF template);
 
         Response PostClass(QMXF @class);
 
