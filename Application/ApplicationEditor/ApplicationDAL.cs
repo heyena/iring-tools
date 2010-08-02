@@ -50,7 +50,7 @@ namespace ApplicationEditor
       string data = Utility.SerializeDataContract<DatabaseDictionary>(databaseDictionary);
 
       WebClient webClient = new WebClient();
-      webClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnSaveDbDictionaryCompletedEvent);
+      webClient.UploadStringCompleted += new UploadStringCompletedEventHandler(OnSaveDbDictionaryCompletedEvent);
       webClient.Headers["Content-type"] = "application/xml";
       webClient.Encoding = Encoding.UTF8;
       webClient.UploadStringAsync(address, "POST", data);
@@ -212,11 +212,14 @@ namespace ApplicationEditor
     void OnGetDbDictionaryCompletedEvent(object sender, AsyncCompletedEventArgs e)
     {
       CompletedEventArgs args;
-
+      DatabaseDictionary dbDictionary = null;
       try
       {
         string result = ((DownloadStringCompletedEventArgs)e).Result;
-        DatabaseDictionary dbDictionary = result.DeserializeDataContract<DatabaseDictionary>();
+        if (result != string.Empty)
+        {
+          dbDictionary = result.DeserializeDataContract<DatabaseDictionary>();
+        }
 
         // If the cast failed then return
         if (dbDictionary == null)
@@ -526,11 +529,18 @@ namespace ApplicationEditor
     void OnGetSchemaObectsCompletedEvent(object sender, AsyncCompletedEventArgs e)
     {
       CompletedEventArgs args;
+      string[] schemaObjects = null;
       try
       {
         string result = ((DownloadStringCompletedEventArgs)e).Result;
-        string[] schemaObjects = result.DeserializeDataContract<string[]>();
-
+        if (result != string.Empty)
+        {
+          schemaObjects = result.DeserializeDataContract<string[]>();
+        }
+        else
+        {
+          return;
+        }
         args = new CompletedEventArgs
         {
           CompletedType = CompletedEventType.GetSchemaObjects,
