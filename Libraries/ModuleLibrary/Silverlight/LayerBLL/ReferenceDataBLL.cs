@@ -384,12 +384,21 @@ namespace org.iringtools.modulelibrary.layerbll
     //  StartService("GetTemplate");
     //  return dal.GetTemplate(id);
     //}
-
-
     public QMXF GetTemplate(string id, object userState)
     {
         StartService("GetTemplate");
         return dal.GetTemplate(id, userState);
+    }
+
+    /// <summary>
+    /// Gets the part8 template.
+    /// </summary>
+    /// <param name="id">The id.</param>
+    /// <returns></returns>
+    public QMXF GetPart8Template(string id, object userState)
+    {
+        StartService("GetPart8Template");
+        return dal.GetPart8Template(id, userState);
     }
 
     /// <summary>
@@ -401,6 +410,17 @@ namespace org.iringtools.modulelibrary.layerbll
     {
       StartService("PostTemplate");
       return dal.PostTemplate(template);
+    }
+
+    /// <summary>
+    /// Posts the part8 template.
+    /// </summary>
+    /// <param name="template">The template.</param>
+    /// <returns></returns>
+    public Response PostPart8Template(QMXF template)
+    {
+        StartService("PostTemplate");
+        return dal.PostPart8Template(template);
     }
 
     /// <summary>

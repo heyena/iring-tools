@@ -5,7 +5,7 @@
            xmlns:dataInput="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Data.Input"
            Width="300" Height="400" 
            Title="Role Range/Value and Restrictions">
-    <Grid x:Name="LayoutRoot" Margin="2">
+    <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition />
@@ -13,8 +13,8 @@
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0">
-            <Border Margin="8" BorderBrush="Black" BorderThickness="1" CornerRadius="4">
-                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="8,4,8,4">
+            <Border Margin="4" BorderBrush="Black" BorderThickness="1" CornerRadius="4">
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="4">
 
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="95"/>
@@ -47,7 +47,7 @@
 		                VerticalAlignment="Center"                        
                         ItemsSource="{Binding Ranges, Mode=TwoWay}"
                         DisplayMemberPath="Value"                        
-                        SelectedItem="{Binding SelectedRoleRange, Mode=TwoWay}"/>
+                        SelectedItem="{Binding RoleRange, Mode=TwoWay}"/>
                     <!--IsEnabled="{Binding HasRange}"-->
 
                     <RadioButton
@@ -80,7 +80,7 @@
                         Grid.Column="1" 
                         Grid.Row="2"
 				        VerticalAlignment="Center"					    
-                        Text="{Binding SelectedRoleValueReference, Mode=TwoWay}"
+                        Text="{Binding RoleValueReference, Mode=TwoWay}"
                         IsEnabled="{Binding IsSpecializedTemplate}"/>
 
                     <RadioButton
@@ -101,7 +101,7 @@
                         Grid.Column="1" 
                         Grid.Row="3"
 				        VerticalAlignment="Center"					    
-                        Text="{Binding SelectedRoleValueLiteral, Mode=TwoWay}"
+                        Text="{Binding RoleValueLiteral, Mode=TwoWay}"
                         IsEnabled="{Binding IsSpecializedTemplate}"/>
 
                     <dataInput:Label 
@@ -118,7 +118,7 @@
                         IsEnabled="{Binding IsSpecializedTemplate, Mode=OneWay}"
                         ItemsSource="{Binding LiteralDataTypes, Mode=TwoWay}"
                         DisplayMemberPath="Value"
-                        SelectedItem="{Binding SelectedRoleValueLiteralDatatype, Mode=TwoWay}"/>
+                        SelectedItem="{Binding RoleValueLiteralDatatype, Mode=TwoWay}"/>
                 </Grid>
             </Border>
             <dataInput:Label Background="#FFF0F0F0"
@@ -132,8 +132,8 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Border Margin="8" Grid.ColumnSpan="2" BorderBrush="Black" BorderThickness="1" CornerRadius="4">
-                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="8,4,8,4">
+            <Border Margin="4" Grid.ColumnSpan="2" BorderBrush="Black" BorderThickness="1" CornerRadius="4">
+                <Grid Margin="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
 
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="90"/>
@@ -153,15 +153,15 @@
                         Grid.Row="0"
                         Grid.ColumnSpan="2"
                         Grid.RowSpan="2"
-                        Margin="8,8,8,8" 
                         DisplayMemberPath="Key"
-                        IsEnabled="False"/>
+                        Margin="2"
+                        ItemsSource="{Binding RoleRestrictions, Mode=OneWay}"
+                        IsEnabled="{Binding IsBaseTemplate}"/>
 
                     <dataInput:Label 
                         Grid.Row="2" 
                         Grid.Column="0"
-                        VerticalAlignment="Center"
-                        IsEnabled="False"
+                        VerticalAlignment="Center"                        
 					    Content="Restriction Type:" />
                     <ComboBox
                         x:Name="roleRestrictionType"
@@ -169,13 +169,15 @@
                         Grid.Column="1" 
                         Grid.Row="2"
 		                VerticalAlignment="Center"                        
-                        IsEnabled="False"/>
+                        IsEnabled="{Binding IsBaseTemplate, Mode=OneWay}"
+                        ItemsSource="{Binding RestrictionTypes, Mode=TwoWay}"
+                        DisplayMemberPath="Value"
+                        SelectedItem="{Binding SelectedRoleRestrictionType, Mode=TwoWay}"/>
 
                     <dataInput:Label 
                         Grid.Column="0" 
                         Grid.Row="3" 
                         VerticalAlignment="Center" 
-                        IsEnabled="False"
                         Content="Value:"/>
                     <TextBox 
                         x:Name="roleRestrictionValue" 
@@ -183,7 +185,8 @@
                         Grid.Row="3" 
                         Height="22" 
 				        VerticalAlignment="Center"
-                        IsEnabled="False"/>
+                        Text="{Binding SelectedRoleRestrictionValue, Mode=TwoWay}"
+                        IsEnabled="{Binding IsBaseTemplate}"/>
 
                     <Button 
                         x:Name="addRestriction" 
@@ -194,7 +197,7 @@
 				        Margin="90,0,0,8" 
                         HorizontalAlignment="Left"
                         VerticalAlignment="Bottom"
-                        IsEnabled="False"
+                        IsEnabled="{Binding IsBaseTemplate}"
 				        Content="Add" />
 
                     <Button 
@@ -206,7 +209,7 @@
 				        Margin="150,0,0,8" 
                         HorizontalAlignment="Left" 
                         VerticalAlignment="Bottom"
-                        IsEnabled="False"
+                        IsEnabled="{Binding IsRestrictionSelected}"
 				        Content="Remove" />
 
                 </Grid>
