@@ -261,15 +261,93 @@ namespace org.iringtools.adapter
       try
       {
         InitializeScope(projectName, applicationName);
-
         org.iringtools.library.manifest.Manifest manifest = new org.iringtools.library.manifest.Manifest();
         
         if (File.Exists(path))
         {
+          DataDictionary dataDictionary = GetDictionary(projectName, applicationName);
+
           foreach (GraphMap graphMap in _mapping.graphMaps)
           {
-            org.iringtools.library.manifest.Graph graph = new org.iringtools.library.manifest.Graph { Name = graphMap.name };
-            manifest.Graphs.Add(graph);
+            org.iringtools.library.manifest.Graph manifestGraph = new org.iringtools.library.manifest.Graph { Name = graphMap.name };
+            manifest.Graphs.Add(manifestGraph);
+
+            string dataObjectMap = graphMap.dataObjectMap;
+            DataObject dataObject = null;
+
+            foreach (DataObject dataObj in dataDictionary.dataObjects)
+            {
+              if (dataObj.objectName == dataObjectMap)
+              {
+                dataObject = dataObj;
+                break;
+              }
+            }
+
+            if (dataObject != null)
+            {
+              foreach (var classTemplateListMap in graphMap.classTemplateListMaps)
+              {
+                org.iringtools.library.manifest.ClassTemplatesMap manifestClassTemplatesMap = new org.iringtools.library.manifest.ClassTemplatesMap();
+                manifestGraph.ClassTemplatesMaps.Add(manifestClassTemplatesMap);
+
+                ClassMap classMap = classTemplateListMap.Key;
+                List<TemplateMap> templateMaps = classTemplateListMap.Value;
+
+                org.iringtools.library.manifest.Class manifestClass = new org.iringtools.library.manifest.Class
+                {
+                  ClassId = classMap.classId,
+                  Name = classMap.name,
+                };
+                manifestClassTemplatesMap.Class = manifestClass;
+
+                foreach (TemplateMap templateMap in templateMaps)
+                {
+                  org.iringtools.library.manifest.Template manifestTemplate = new org.iringtools.library.manifest.Template 
+                  {
+                    TemplateId = templateMap.templateId,
+                    Name = templateMap.name,
+                    TransferOption = org.iringtools.library.manifest.TransferOption.Desired,
+                  };
+                  manifestClassTemplatesMap.Templates.Add(manifestTemplate);
+
+                  foreach (RoleMap roleMap in templateMap.roleMaps)
+                  {
+                    org.iringtools.library.manifest.Role manifestRole = new org.iringtools.library.manifest.Role
+                    {
+                      Type = roleMap.type.ToString(),
+                      RoleId = roleMap.roleId,
+                      Name = roleMap.name,
+                      DataType = roleMap.dataType,
+                      PropertyName = roleMap.propertyName,
+                      Value = roleMap.value,
+                    };
+                    manifestTemplate.Roles.Add(manifestRole);
+
+                    if (roleMap.type == RoleType.Property)
+                    {
+                      string[] property = roleMap.propertyName.Split('.');
+                      string objectName = property[0].Trim();
+                      string propertyName = property[1].Trim();
+
+                      if (dataObject.isKeyProperty(propertyName))
+                      {
+                        manifestTemplate.TransferOption = org.iringtools.library.manifest.TransferOption.Required;
+                      }
+                    }
+
+                    if (roleMap.classMap != null)
+                    {
+                      manifestRole.Class = new org.iringtools.library.manifest.Class
+                      {
+                        ClassId = roleMap.classMap.classId,
+                        Name = roleMap.classMap.name,
+                      };
+                    }
+                  }
+                }
+              }
+            }
           }
         }
         

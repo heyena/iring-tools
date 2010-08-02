@@ -38,10 +38,10 @@ namespace org.iringtools.library.manifest
       Graphs = new List<Graph>();
     }
 
-    [DataMember(Name = "graphs", EmitDefaultValue = false)]
+    [DataMember(Name = "graphs", Order = 0, EmitDefaultValue = false)]
     public List<Graph> Graphs { get; set; }
 
-    [DataMember(Name = "version", EmitDefaultValue = false)]
+    [DataMember(Name = "version", Order = 1, EmitDefaultValue = false)]
     public string Version { get; set; }
   }
 
@@ -53,10 +53,10 @@ namespace org.iringtools.library.manifest
       ClassTemplatesMaps = new List<ClassTemplatesMap>();
     }
 
-    [DataMember(Name = "name", EmitDefaultValue = false)]
+    [DataMember(Name = "name", Order = 0, EmitDefaultValue = false)]
     public string Name { get; set; }
 
-    [DataMember(Name = "classTemplatesMaps", EmitDefaultValue = false)]
+    [DataMember(Name = "classTemplatesMaps", Order = 1, EmitDefaultValue = false)]
     public List<ClassTemplatesMap> ClassTemplatesMaps { get; set; }
   }
   
@@ -68,24 +68,21 @@ namespace org.iringtools.library.manifest
       Templates = new List<Template>();
     }
 
-    [DataMember(Name = "class", EmitDefaultValue = false)]
+    [DataMember(Name = "class", Order = 0, EmitDefaultValue = false)]
     public Class Class { get; set; }
 
-    [DataMember(Name = "templates", EmitDefaultValue = false)]
+    [DataMember(Name = "templates", Order = 1, EmitDefaultValue = false)]
     public List<Template> Templates { get; set; }
   }
 
   [DataContract(Namespace = "http://iringtools.org/adapter/library/manifest", Name = "class")]
   public class Class
   {
-    [DataMember(Name = "classId", EmitDefaultValue = false)]
+    [DataMember(Name = "classId", Order = 0, EmitDefaultValue = false)]
     public string ClassId { get; set; }
 
-    [DataMember(Name = "name", EmitDefaultValue = false)]
+    [DataMember(Name = "name", Order = 1, EmitDefaultValue = false)]
     public string Name { get; set; }
-
-    [DataMember(Name = "transferOption", EmitDefaultValue = false)]
-    public TransferOption TransferOption { get; set; }
   }
 
   [DataContract(Namespace = "http://iringtools.org/adapter/library/manifest", Name = "template")]
@@ -96,41 +93,41 @@ namespace org.iringtools.library.manifest
       Roles = new List<Role>();
     }
 
-    [DataMember(Name = "templateId", EmitDefaultValue = false)]
+    [DataMember(Name = "templateId", Order = 0, EmitDefaultValue = false)]
     public string TemplateId { get; set; }
 
-    [DataMember(Name = "name", EmitDefaultValue = false)]
+    [DataMember(Name = "name", Order = 1, EmitDefaultValue = false)]
     public string Name { get; set; }
 
-    [DataMember(Name = "roles", EmitDefaultValue = false)]
+    [DataMember(Name = "roles", Order = 2, EmitDefaultValue = false)]
     public List<Role> Roles { get; set; }
 
-    [DataMember(Name = "transferOption", EmitDefaultValue = false)]
+    [DataMember(Name = "transferOption", Order = 3)]
     public TransferOption TransferOption { get; set; }
   }
 
   [DataContract(Namespace = "http://iringtools.org/adapter/library/manifest", Name = "role")]
   public class Role
   {
-    [DataMember(Name = "type", EmitDefaultValue = false)]
+    [DataMember(Name = "type", Order = 0, EmitDefaultValue = false)]
     public string Type { get; set; }
 
-    [DataMember(Name = "roleId", EmitDefaultValue = false)]
+    [DataMember(Name = "roleId", Order = 1, EmitDefaultValue = false)]
     public string RoleId { get; set; }
 
-    [DataMember(Name = "name", EmitDefaultValue = false)]
+    [DataMember(Name = "name", Order = 2, EmitDefaultValue = false)]
     public string Name { get; set; }
 
-    [DataMember(Name = "dataType", EmitDefaultValue = false)]
+    [DataMember(Name = "dataType", Order = 3, EmitDefaultValue = false)]
     public string DataType { get; set; }
 
-    [DataMember(Name = "propertyName", EmitDefaultValue = false)]
+    [DataMember(Name = "propertyName", Order = 4, EmitDefaultValue = false)]
     public string PropertyName { get; set; }
 
-    [DataMember(Name = "value", EmitDefaultValue = false)]
+    [DataMember(Name = "value", Order = 5, EmitDefaultValue = false)]
     public string Value { get; set; }
 
-    [DataMember(Name = "class", EmitDefaultValue = false)]
+    [DataMember(Name = "class", Order = 6, EmitDefaultValue = false)]
     public Class Class { get; set; }
   }
 
@@ -142,21 +139,5 @@ namespace org.iringtools.library.manifest
 
     [EnumMember]
     Required,
-  }
-
-  [DataContract]
-  public enum RoleType
-  {
-    [EnumMember]
-    FixedValue,
-
-    [EnumMember]
-    Possessor,
-
-    [EnumMember]
-    Property,
-
-    [EnumMember]
-    Reference,
   }
 }
