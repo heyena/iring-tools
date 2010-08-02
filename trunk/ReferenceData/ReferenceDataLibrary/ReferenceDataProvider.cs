@@ -2720,7 +2720,7 @@ namespace org.ids_adi.iring.referenceData
                                         Utility.WriteString("\n" + roleID + "\t" + roleLabel, "RoleDef IDs.log", true);
                                     }
                                     //append role to sparql query
-                                    sparql += roleID + "rdfs:subClassOf + _:b"+ blankNodeCount +" . " +
+                                    sparql += roleID + "rdfs:subClassOf _:b"+ blankNodeCount +" . " +
                                               "_:b" + blankNodeCount++ + " owl:type owl:Class ; " +
                                                    "owl:intersectionOf _:b" + blankNodeCount + " . " ;
 
@@ -2736,7 +2736,7 @@ namespace org.ids_adi.iring.referenceData
                                     //now add the first restriction at blankNodeCount-1
                                     sparql += "_:b" + blankNodeCount + " rdf:type owl:restriction ; " +
                                                     "owl:onProperty " + roleID + " ; " +
-                                                    "owl:" + restriction.type + " " + restriction.value + " .";
+                                                    "owl:" + restriction.type + " " + restriction.value + " . ";
                                     }
                                 }
                                 #endregion roles
