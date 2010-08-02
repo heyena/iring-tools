@@ -42,6 +42,7 @@ using org.iringtools.utility;
 using StaticDust.Configuration;
 using VDS.RDF;
 using VDS.RDF.Query;
+using org.iringtools.adapter.projection;
 
 namespace org.iringtools.adapter
 {
@@ -896,7 +897,27 @@ namespace org.iringtools.adapter
         return response;
     }
 
-   
+    // handle data exchange objects (data transfer objects with transfer types filled)
+    public Response Post(string projectName, string applicationName, string graphName, string format, XElement xml)
+    {
+      Response response = null;
+      InitializeScope(projectName, applicationName);
+      InitializeDataLayer();
+
+      _projectionEngine = _kernel.Get<IProjectionLayer>(format);
+      IList<IDataObject> dataObjects = _projectionEngine.GetDataObjects(graphName, ref xml);
+      response = _dataLayer.Post(dataObjects);
+
+      if (format.ToLower() == "dxo")
+      {
+        IList<string> deletingIdentifiers = ((DxoProjectionEngine)_projectionEngine).GetDeletingDataObjects(graphName, ref xml);
+        string _dataObjectNs = String.Format("{0}.proj_{1}.{2}", "org.iringtools.adapter.datalayer", projectName, applicationName);
+        string objectType = _dataObjectNs + "." + _graphMap.dataObjectMap + ", " + _settings["ExecutingAssemblyName"];
+        response.Append(_dataLayer.Delete(objectType, deletingIdentifiers));
+      }
+
+      return response;
+    }
     #endregion
 
     #endregion

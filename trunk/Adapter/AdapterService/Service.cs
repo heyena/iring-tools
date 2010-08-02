@@ -235,6 +235,20 @@ namespace org.iringtools.adapter
     }
 
     /// <summary>
+    /// Post data exchange objects to adapter service
+    /// </summary>
+    /// <param name="projectName">project name</param>
+    /// <param name="applicationName">application name</param>
+    /// <param name="graphName">graph name</param>
+    /// <param name="format">xml/dto/dxo</param>
+    /// <param name="xml">dxo xml</param>
+    /// <returns>response object</returns>
+    public Response Post(string projectName, string applicationName, string graphName, string format, XElement xml)
+    {
+      return _adapterProvider.Post(projectName, applicationName, graphName, format, xml);
+    }
+
+    /// <summary>
       /// Push the DTO
       /// </summary>
       /// <param name="projectName"></param>
