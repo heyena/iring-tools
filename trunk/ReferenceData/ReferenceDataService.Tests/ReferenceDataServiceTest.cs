@@ -31,7 +31,7 @@ namespace ReferenceDataService.Tests
     {
       ReferenceDataProxy target = new ReferenceDataProxy();
       List<Repository> actual = target.GetRepositories();
-      Assert.AreEqual(4, actual.Count);
+      Assert.AreNotEqual(0, actual.Count);
     }
 
     [TestMethod()]
