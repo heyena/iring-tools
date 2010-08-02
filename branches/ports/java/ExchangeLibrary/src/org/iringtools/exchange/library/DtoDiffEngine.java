@@ -147,14 +147,11 @@ public class DtoDiffEngine implements DiffEngine
       Class clazz = classTemplateListMap.getClazz();
       List<Template> templates = classTemplateListMap.getTemplates().getTemplate();
       ClassObjects classObjects = sourceDto.getClassObjects();
-      boolean classFound = false;
 
       for (ClassObject classObject : classObjects)
       {
         if (classObject.getClassId().equals(clazz.getClassId()))
         {
-          classFound = true;
-
           ClassObject resultClassObject = new ClassObject();
           resultClassObject.setClassId(classObject.getClassId());
           resultClassObject.setName(classObject.getName());
@@ -218,11 +215,6 @@ public class DtoDiffEngine implements DiffEngine
             }
           }
         }
-      }
-
-      if (!classFound && clazz.getTransferOption() == TransferOption.REQUIRED)
-      {
-        throw new Exception("Sending DTOs does not contain required class [" + clazz.getName() + "].");
       }
     }
 

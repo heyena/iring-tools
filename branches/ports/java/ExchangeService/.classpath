@@ -42,8 +42,8 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/AdapterLibrary"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/ExchangeLibrary"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/UtilityLibrary"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/AdapterLibrary"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/ExchangeLibrary"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/UtilityLibrary"/>
 	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
 </classpath>

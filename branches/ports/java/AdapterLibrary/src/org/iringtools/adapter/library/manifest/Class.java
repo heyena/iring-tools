@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="classId" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="transferOption" type="{http://iringtools.org/adapter/library/manifest}TransferOption"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -38,8 +37,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Class", propOrder = {
     "classId",
-    "name",
-    "transferOption"
+    "name"
 })
 public class Class {
 
@@ -47,8 +45,6 @@ public class Class {
     protected String classId;
     @XmlElement(required = true)
     protected String name;
-    @XmlElement(required = true, defaultValue = "Desired")
-    protected TransferOption transferOption;
 
     /**
      * Gets the value of the classId property.
@@ -97,29 +93,4 @@ public class Class {
     public void setName(String value) {
         this.name = value;
     }
-
-    /**
-     * Gets the value of the transferOption property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link TransferOption }
-     *     
-     */
-    public TransferOption getTransferOption() {
-        return transferOption;
-    }
-
-    /**
-     * Sets the value of the transferOption property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link TransferOption }
-     *     
-     */
-    public void setTransferOption(TransferOption value) {
-        this.transferOption = value;
-    }
-
 }
