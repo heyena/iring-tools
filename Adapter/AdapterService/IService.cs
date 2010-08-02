@@ -92,10 +92,14 @@ namespace org.iringtools.adapter
     XElement GetList(string projectName, string applicationName, string graphName, string format);
     #endregion
 
-    //Xml Put/Post
+    //Xml Put
     [OperationContract]
     [WebInvoke(Method = "PUT", UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}")]
     Response Put(string projectName, string applicationName, string graphName, string format, XElement xml);
+
+    [OperationContract]
+    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}")]
+    Response Post(string projectName, string applicationName, string graphName, string format, XElement xml);
 
     //[OperationContract]
     //[WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/?format={format}")]

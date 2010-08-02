@@ -49,7 +49,7 @@ namespace org.iringtools.adapter.projection
     private XNamespace _graphNs = String.Empty;
     private string _dataObjectsAssemblyName = String.Empty;
     private string _dataObjectNs = String.Empty;
-    List<DataTransferObject> _dataTransferObjects;
+    private DataTransferObjects _dataTransferObjects;
 
     [Inject]
     public DtoProjectionEngine(AdapterSettings settings, IDataLayer dataLayer, Mapping mapping, DataDictionary dataDictionary)
@@ -89,15 +89,15 @@ namespace org.iringtools.adapter.projection
 
         ClassMap classMap = _graphMap.classTemplateListMaps.First().Key;
 
-        _dataTransferObjects = new List<DataTransferObject>();
+        _dataTransferObjects = new DataTransferObjects();
         for (int dataObjectIndex = 0; dataObjectIndex < _dataObjects.Count; dataObjectIndex++)
         {
           DataTransferObject dataTransferObject = new DataTransferObject();
           _dataTransferObjects.Add(dataTransferObject);
           dataTransferObject.classObjects = new List<ClassObject>();
-          FillDataTransferObjectList(dataTransferObject, classMap.classId, dataObjectIndex);
+          FillDataTransferObjectList(dataTransferObject, classMap.classId, classMap.name, dataObjectIndex);
         }
-        XElement xElement = SerializationExtensions.ToXml<List<DataTransferObject>>(_dataTransferObjects);
+        XElement xElement = SerializationExtensions.ToXml<DataTransferObjects>(_dataTransferObjects);
         return xElement;
       }
       catch (Exception ex)
@@ -106,12 +106,11 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-
     public IList<IDataObject> GetDataObjects(string graphName, ref XElement xml)
     {
       _graphMap = _mapping.FindGraphMap(graphName);
 
-      _dataTransferObjects = SerializationExtensions.ToObject<List<DataTransferObject>>(xml);
+      _dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(xml);
       ClassMap classMap = _graphMap.classTemplateListMaps.First().Key;
       List<string> identifiers = new List<string>();
       foreach (DataTransferObject dataTransferObject in _dataTransferObjects)
@@ -132,25 +131,28 @@ namespace org.iringtools.adapter.projection
 
     #region helper methods
 
-    private void FillDataTransferObjectList(DataTransferObject dataTransferObject, string classId, int dataObjectIndex)
+    private void FillDataTransferObjectList(DataTransferObject dataTransferObject, string classId, string className, int dataObjectIndex)
     {
       KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = _graphMap.GetClassTemplateListMap(classId);
       List<TemplateMap> templateMaps = classTemplateListMap.Value;
 
       string classIdentifier = _classIdentifiers[classId][dataObjectIndex];
 
-      ClassObject classObject = new ClassObject();
-      classObject.classId = classId;
-      classObject.templateObjects = new List<TemplateObject>();
-      classObject.identifier = classIdentifier;
+      ClassObject classObject = new ClassObject
+      {
+        classId = classId,
+        name = className,
+        identifier = classIdentifier,
+      };
       dataTransferObject.classObjects.Add(classObject);
 
       foreach (TemplateMap templateMap in templateMaps)
       {
-        TemplateObject templateObject = new TemplateObject();
-        templateObject.templateId = templateMap.templateId;
-        templateObject.name = templateMap.name;
-        templateObject.roleObjects = new List<RoleObject>();
+        TemplateObject templateObject = new TemplateObject
+        {
+          templateId = templateMap.templateId,
+          name = templateMap.name,
+        };
         classObject.templateObjects.Add(templateObject);
 
         foreach (RoleMap roleMap in templateMap.roleMaps)
@@ -178,7 +180,7 @@ namespace org.iringtools.adapter.projection
               if (!classExists)
               {
                 roleObject.reference = roleMap.value;
-                FillDataTransferObjectList(dataTransferObject, roleMap.classMap.classId, dataObjectIndex);
+                FillDataTransferObjectList(dataTransferObject, roleMap.classMap.classId, roleMap.classMap.name, dataObjectIndex);
               }
             }
             else

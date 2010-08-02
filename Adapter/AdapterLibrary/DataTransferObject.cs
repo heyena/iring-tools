@@ -33,57 +33,121 @@ using System.Linq;
 
 namespace org.iringtools.adapter
 {
-    public class DataTransferObject
-    {
-        public List<ClassObject> classObjects { get; set; }
+  [CollectionDataContract(Namespace = "http://iringtools.org/adapter/library/dto", Name = "dataTransferObjects")]
+  public class DataTransferObjects : List<DataTransferObject> {}
 
-        public List<ClassObject> GetClassObjects(string classId)
+  [DataContract(Namespace = "http://iringtools.org/adapter/library/dto", Name = "dataTransferObject")]
+  public class DataTransferObject
+  {
+    public DataTransferObject()
+    {
+      classObjects = new List<ClassObject>();
+    }
+
+    [DataMember(Order = 0)]
+    public List<ClassObject> classObjects { get; set; }
+
+    [DataMember(Order = 1, EmitDefaultValue = false)]
+    public TransferType transferType { get; set; }
+
+    public List<ClassObject> GetClassObjects(string classId)
+    {
+      List<ClassObject> classObjectList = new List<ClassObject>();
+      foreach (ClassObject classObject in this.classObjects)
+      {
+        if (classObject.classId == classId)
         {
-            List<ClassObject> classObjectList = new List<ClassObject>();
-            foreach (ClassObject classObject in this.classObjects)
-            {
-                if (classObject.classId == classId)
-                {
-                    classObjectList.Add(classObject);
-                }
-            }
-            return classObjectList;
+          classObjectList.Add(classObject);
         }
+      }
+      return classObjectList;
+    }
+  }
+
+  [DataContract(Namespace = "http://iringtools.org/adapter/library/dto", Name = "classObject")]
+  public class ClassObject
+  {
+    public ClassObject()
+    {
+      templateObjects = new List<TemplateObject>();
     }
 
-    public class ClassObject
-    {
-        public string classId { get; set; }
-        public string identifier { get; set; }
-        public List<TemplateObject> templateObjects  { get; set; }
+    [DataMember(Order = 0)]
+    public string classId { get; set; }
 
-        public List<TemplateObject> GetTemplateObjects(string templateId)
+    [DataMember(Order = 1)]
+    public string name { get; set; }
+
+    [DataMember(Order = 2)]
+    public string identifier { get; set; }
+
+    [DataMember(Order = 3)]
+    public List<TemplateObject> templateObjects { get; set; }
+
+    [DataMember(Order = 4, EmitDefaultValue = false)]
+    public TransferType transferType { get; set; }
+
+    public List<TemplateObject> GetTemplateObjects(string templateId)
+    {
+      List<TemplateObject> templateObjectList = new List<TemplateObject>();
+      foreach (TemplateObject templateObject in this.templateObjects)
+      {
+        if (templateObject.templateId == templateId)
         {
-            List<TemplateObject> templateObjectList = new List<TemplateObject>();
-            foreach (TemplateObject templateObject in this.templateObjects)
-            {
-                if (templateObject.templateId == templateId)
-                {
-                    templateObjectList.Add(templateObject);
-                }
-            }
-            return templateObjectList;
+          templateObjectList.Add(templateObject);
         }
+      }
+      return templateObjectList;
+    }
+  }
+
+  [DataContract(Namespace = "http://iringtools.org/adapter/library/dto", Name = "templateObject")]
+  public class TemplateObject
+  {
+    public TemplateObject()
+    {
+      roleObjects = new List<RoleObject>();
     }
 
-    public class TemplateObject
-    {
-        public string templateId { get; set; }
-        public string name { get; set; }
-        public List<RoleObject> roleObjects { get; set; }
-    }
+    [DataMember(Order = 0)]
+    public string templateId { get; set; }
 
-    public class RoleObject
-    {
-        public string roleId { get; set; }
-        public string name { get; set; }
-        public string value { get; set; }
-        public string reference { get; set; }
-    }
+    [DataMember(Order = 1)]
+    public string name { get; set; }
+
+    [DataMember(Order = 2)]
+    public List<RoleObject> roleObjects { get; set; }
+
+    [DataMember(Order = 3, EmitDefaultValue = false)]
+    public TransferType transferType { get; set; }
+  }
+
+  [DataContract(Namespace = "http://iringtools.org/adapter/library/dto", Name = "roleObject")]
+  public class RoleObject
+  {
+    [DataMember(Order = 0)]
+    public string roleId { get; set; }
+
+    [DataMember(Order = 1)]
+    public string name { get; set; }
+
+    [DataMember(Order = 2, EmitDefaultValue = false)]
+    public string value { get; set; }
+
+    [DataMember(Order = 3, EmitDefaultValue = false)]
+    public string reference { get; set; }
+  }
+
+  [DataContract]
+  public enum TransferType
+  {
+    [EnumMember]
+    Sync,
+    [EnumMember]
+    Add,
+    [EnumMember]
+    Change,
+    [EnumMember]
+    Delete,
+  }
 }
- 

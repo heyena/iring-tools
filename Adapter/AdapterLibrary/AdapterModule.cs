@@ -19,6 +19,7 @@ namespace org.iringtools.adapter
       Bind<IProjectionLayer>().To<RdfProjectionEngine>().Named("rdf");
       Bind<IProjectionLayer>().To<QtxfProjectionEngine>().Named("qtxf");
       Bind<IProjectionLayer>().To<DtoProjectionEngine>().Named("dto");
+      Bind<IProjectionLayer>().To<DxoProjectionEngine>().Named("dxo");
       Bind<IProjectionLayer>().To<XmlProjectionEngine>().Named("xml");
     }
   }
