@@ -411,6 +411,8 @@ namespace org.iringtools.application
         InitializeScope(projectName, applicationName);
         if (File.Exists(_settings["DBDictionaryPath"]))
           dbDictionary = Utility.Read<DatabaseDictionary>(_settings["DBDictionaryPath"]);
+        else
+          return null;
 
         string connString = dbDictionary.connectionString;
         string dbProvider = dbDictionary.provider.ToString();

@@ -654,7 +654,9 @@ namespace ApplicationEditor
           return;
         }
 
-        //_dal.GetScopes();
+        //Response response = (Response)args.Data;
+        //resultsList.lbResult.ItemsSource = response.StatusList[0].Messages;
+        //resultsList.Show();
 
       }
       catch (Exception ex)
@@ -696,11 +698,11 @@ namespace ApplicationEditor
           if (!isFetched)
           {
             isFetched = true;
-            _dal.GetDatabaseSchema(_currentProject.Name, _currentApplication.Name);
+            _dal.GetSchemaObjects(_currentProject.Name, _currentApplication.Name);
           }
         }
 
-        constructTreeView(databaseDictionary, tvwItemSourceRoot);
+        //constructTreeView(databaseDictionary, tvwItemSourceRoot);
       }
       catch (Exception ex)
       {
@@ -1084,10 +1086,6 @@ namespace ApplicationEditor
         MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);
         
       }
-      finally
-      {
-        biBusyWindow.IsBusy = false;
-      }
     }
 
     private void btnPostDictionary_Click(object sender, RoutedEventArgs e)
@@ -1217,7 +1215,7 @@ namespace ApplicationEditor
 
         if (!isFetched)
         {
-          _dal.GetDatabaseSchema(_currentProject.Name, _currentApplication.Name);
+          _dal.GetSchemaObjects(_currentProject.Name, _currentApplication.Name);
         }
 
       }
