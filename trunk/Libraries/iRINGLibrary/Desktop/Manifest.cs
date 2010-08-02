@@ -121,13 +121,10 @@ namespace org.iringtools.library.manifest
     [DataMember(Name = "dataType", Order = 3, EmitDefaultValue = false)]
     public string DataType { get; set; }
 
-    [DataMember(Name = "propertyName", Order = 4, EmitDefaultValue = false)]
-    public string PropertyName { get; set; }
-
-    [DataMember(Name = "value", Order = 5, EmitDefaultValue = false)]
+    [DataMember(Name = "value", Order = 4, EmitDefaultValue = false)]
     public string Value { get; set; }
 
-    [DataMember(Name = "class", Order = 6, EmitDefaultValue = false)]
+    [DataMember(Name = "class", Order = 5, EmitDefaultValue = false)]
     public Class Class { get; set; }
   }
 

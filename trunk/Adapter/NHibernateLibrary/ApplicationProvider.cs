@@ -441,7 +441,7 @@ namespace org.iringtools.application
         tableNames = metadataList as List<string>;
         return tableNames;
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         return tableNames;
       }
@@ -543,7 +543,7 @@ namespace org.iringtools.application
         }
         return dataObject;
       }
-      catch (Exception x)
+      catch (Exception)
       {
         return dataObject;
       }

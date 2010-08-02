@@ -319,7 +319,6 @@ namespace org.iringtools.adapter
                       RoleId = roleMap.roleId,
                       Name = roleMap.name,
                       DataType = roleMap.dataType,
-                      PropertyName = roleMap.propertyName,
                       Value = roleMap.value,
                     };
                     manifestTemplate.Roles.Add(manifestRole);

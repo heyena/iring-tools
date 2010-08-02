@@ -29,8 +29,8 @@ namespace org.iringtools.modules.templateeditor.rolespopup
         private bool _IsBaseTemplate;
         private bool _IsSpecializedTemplate;
         
-        private string _SelectedRoleRestrictionType;
-        private string _SelectedRoleRestrictionValue;
+        //private string _SelectedRoleRestrictionType;
+        //private string _SelectedRoleRestrictionValue;
         private object _SelectedRoleRestriction;
 
 
