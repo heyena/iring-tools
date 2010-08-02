@@ -73,6 +73,12 @@ namespace ApplicationEditor
         cbRelationType.Focus();
         return;
       }
+      else if (string.IsNullOrEmpty(tblRelationshipName.Text))
+      {
+        MessageBox.Show("Please Please enter relationship name", "CREATE RELATION", MessageBoxButton.OK);
+        tblRelationshipName.Focus();
+        return;
+      }
       else
       {
 
@@ -86,9 +92,9 @@ namespace ApplicationEditor
         //sb.Append(cbRelated.SelectedItem.ToString());
         //sb.Append(".");
         sb.Append(cbRelatedProps.SelectedItem.ToString());
-        if(!lbRelatedProps.Items.Contains(sb.ToString()))
+        if (!lbRelatedProps.Items.Contains(sb.ToString()))
         {
-         lbRelatedProps.Items.Add(sb.ToString());
+          lbRelatedProps.Items.Add(sb.ToString());
         }
         else
         {

@@ -235,6 +235,14 @@ namespace ApplicationEditor
             getDbSchemaComplete(args);
             break;
 
+          case CompletedEventType.GetSchemaObjects:
+            getSchemaObjectsComlete(args);
+            break;
+
+          case CompletedEventType.GetSchemaObjectsSchema:
+            getSchemaObjectsSchemaCompleted(args);
+            break;
+
           case CompletedEventType.GetDbDictionary:
             getDbDictionaryComplete(args);
             break;
@@ -270,6 +278,80 @@ namespace ApplicationEditor
       catch (Exception ex)
       {
         MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);
+      }
+    }
+
+    private void getSchemaObjectsSchemaCompleted(CompletedEventArgs args)
+    {
+      try
+      {
+        if (args.Error != null)
+        {
+          MessageBox.Show(args.FriendlyErrorMessage, "Get Schema objects schema Error", MessageBoxButton.OK);
+          biBusyWindow.IsBusy = false;
+          return;
+        }
+        DatabaseDictionary dbDictionry = (DatabaseDictionary)tvwItemDestinationRoot.Tag;
+        org.iringtools.library.DataObject schemaObject = (org.iringtools.library.DataObject)args.Data;
+
+        StackPanel sp = new StackPanel{ Orientation = System.Windows.Controls.Orientation.Horizontal};
+        sp.Children.Add(new CheckBox());
+        sp.Children.Add(new TextBlock{ Text = schemaObject.objectName });
+
+        TreeViewItem treeItem = new TreeViewItem { Header = sp };
+        treeItem.Tag = schemaObject;
+        
+        if (!dbDictionry.dataObjects.Contains(schemaObject))
+        {
+          dbDictionry.dataObjects.Add(schemaObject);
+          constructObjectTree(treeItem, tvwItemDestinationRoot);
+        }
+        else
+        {
+          MessageBox.Show("Data object already in Dictionary", "ADD DATA OBJECT", MessageBoxButton.OK);
+        }
+
+  
+      }
+      catch (Exception ex)
+      {
+      }
+    }
+
+    private void getSchemaObjectsComlete(CompletedEventArgs args)
+    {
+      try
+      {
+        if (args.Error != null)
+        {
+          MessageBox.Show(args.FriendlyErrorMessage, "Get Schema objects Error", MessageBoxButton.OK);
+          biBusyWindow.IsBusy = false;
+          return;
+        }
+
+        string[] schemaObjects = (string[])args.Data;
+
+        tvwItemSourceRoot.Items.Clear();
+
+        foreach (string schemaObject in schemaObjects)
+        {
+          StackPanel sp = new StackPanel { Orientation = Orientation.Horizontal };
+          sp.Children.Add(new CheckBox());
+          sp.Children.Add(new TextBlock{ Text = schemaObject});
+          TreeViewItem item = new TreeViewItem { Header = sp };
+          tvwItemSourceRoot.Items.Add(item);
+        }
+
+        tvwItemSourceRoot.Visibility = System.Windows.Visibility.Visible;
+        tvwItemSourceRoot.IsExpanded = true;
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);
+      }
+      finally
+      {
+        biBusyWindow.IsBusy = false;
       }
     }
 
@@ -933,6 +1015,9 @@ namespace ApplicationEditor
       try
       {
         ComboBox prjCB = (ComboBox)sender;
+        
+        if (prjCB.SelectedItem == null) return;
+
         foreach (ScopeProject project in _scopes)
         {
           if (project.Name == ((ScopeProject)((ComboBoxItem)prjCB.SelectedItem).Tag).Name)
@@ -970,7 +1055,8 @@ namespace ApplicationEditor
 
         if (!isFetched)
         {
-          _dal.GetDatabaseSchema(_currentProject.Name, _currentApplication.Name);
+          _dal.GetSchemaObjects(_currentProject.Name, _currentApplication.Name);
+         // _dal.GetDatabaseSchema(_currentProject.Name, _currentApplication.Name);
         }
       }
       catch (Exception ex)
@@ -996,6 +1082,10 @@ namespace ApplicationEditor
       catch (Exception ex)
       {
         MessageBox.Show("Error occurred... \r\n" + ex.Message + ex.StackTrace, "Application Editor Error", MessageBoxButton.OK);
+        
+      }
+      finally
+      {
         biBusyWindow.IsBusy = false;
       }
     }
@@ -1038,6 +1128,7 @@ namespace ApplicationEditor
     {
       try
       {
+
         TreeViewItem sourceRoot = tvwItemSourceRoot;
         TreeViewItem destRoot = tvwItemDestinationRoot;
         TreeViewItem tableItem = new TreeViewItem();
@@ -1048,17 +1139,15 @@ namespace ApplicationEditor
           TreeViewItem parent = tableItem.Parent as TreeViewItem;
           if (((CheckBox)((StackPanel)tableItem.Header).Children[0]).IsChecked.Value.Equals(true))
           {
-            if (!destRoot.Items.Contains(tableItem))
-            {
-              if ((!destRoot.Items.Contains(parent)) &
-                  (!parent.Header.ToString().Equals("Available Database Schema Items")))
+            if (!parent.Header.ToString().Equals("Available Database Schema Items"))
               {
                 TreeViewItem parentParent = parent.Parent as TreeViewItem;
                 parentParent.Items.Add(parent);
               }
-              constructObjectTree(tableItem, destRoot);
+             _dal.GetSchemaObjectsSchma(_currentProject.Name, _currentApplication.Name, ((TextBlock)((StackPanel)tableItem.Header).Children[1]).Text);
+             // constructObjectTree(tableItem, destRoot);
             }
-          }
+          
         }
       }
       catch (Exception ex)
@@ -1726,7 +1815,21 @@ namespace ApplicationEditor
 
       if (!isFetched)
       {
-        _dal.GetDatabaseSchema(_currentProject.Name, _currentApplication.Name);
+        if(tvwItemDestinationRoot.Tag == null)
+        {
+          DatabaseDictionary dict = new DatabaseDictionary
+            { connectionString = BuildConnectionString(cbProvider.SelectedItem.ToString()
+                                  , tbNewDataSource.Text
+                                  , tbNewDatabase.Text
+                                  , tbUserID.Text
+                                  , tbPassword.Password.ToString()),
+                                   provider = (Provider)Enum.Parse(typeof(Provider),cbProvider.SelectedItem.ToString(), true)
+            };
+          _dal.SaveDatabaseDictionary(dict, _currentProject.Name, _currentApplication.Name);
+          
+        }
+        _dal.GetSchemaObjects(_currentProject.Name, _currentApplication.Name);
+        
       }
     }
   }

@@ -70,6 +70,36 @@ namespace ApplicationEditor
       webClient.DownloadStringAsync(address);
     }
 
+    public void GetSchemaObjects(string projectName, string applicationName)
+    {
+      string relativeUri = String.Format("/{0}/{1}/schemaObjects",
+        projectName,
+        applicationName
+        );
+      Uri address = new Uri(_applicationServiceUri + relativeUri);
+
+      WebClient webClient = new WebClient();
+      webClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnGetSchemaObectsCompletedEvent);
+      webClient.DownloadStringAsync(address);
+    }
+
+    public void GetSchemaObjectsSchma(string projectName, string applicationName, string objectName)
+    {
+        string relativeUri = String.Format("/{0}/{1}/schemaObjects/{2}",
+        projectName,
+        applicationName,
+        objectName
+        );
+      Uri address = new Uri(_applicationServiceUri + relativeUri);
+
+      WebClient webClient = new WebClient();
+      webClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnGetSchemaObjectSchemaCompletedEvent);
+      webClient.DownloadStringAsync(address);
+
+    }
+
+
+
     public void GetProviders()
     {
       string relativeUri = "/providers";
@@ -113,10 +143,6 @@ namespace ApplicationEditor
       webClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnPostDbDictionaryCompletedEvent);
       webClient.DownloadStringAsync(address);
 
-      //string data = Utility.SerializeDataContract<DatabaseDictionary>(dictionary);
-      //postdbdictionaryClient.Headers["Content-type"] = "application/xml";
-      //postdbdictionaryClient.Encoding = Encoding.UTF8;
-      //postdbdictionaryClient.UploadStringAsync(address, "POST", data);
     }
 
     public void UpdateScopes(Collection<ScopeProject> scopes)
@@ -254,6 +280,39 @@ namespace ApplicationEditor
         };
       }
 
+      OnDataArrived(sender, args);
+    }
+
+    void OnGetSchemaObjectSchemaCompletedEvent(object sender, DownloadStringCompletedEventArgs e)
+    {
+      CompletedEventArgs args;
+      try
+      {
+        string result = ((DownloadStringCompletedEventArgs)e).Result;
+        org.iringtools.library.DataObject dataObject = result.DeserializeDataContract<org.iringtools.library.DataObject>();
+
+        if (dataObject == null) return;
+
+        args = new CompletedEventArgs
+        {
+          CompletedType = CompletedEventType.GetSchemaObjectsSchema,
+          Data = dataObject
+        };
+
+      }
+      catch (Exception ex)
+      {
+        string s = "Error getting data object from data source";
+        args = new CompletedEventArgs
+        {
+          CompletedType = CompletedEventType.GetDatabaseSchema,
+          Error = ex,
+          FriendlyErrorMessage =
+              ex.GetBaseException().Message.ToUpper().Contains("SECURITY ERROR") || ex.GetBaseException() is System.Net.WebException ?
+              s + "\nPlease verify if the Application Service is available" :
+              s + "\nPlease review the log on the server.",
+        };
+      }
       OnDataArrived(sender, args);
     }
 
@@ -397,39 +456,39 @@ namespace ApplicationEditor
       OnDataArrived(sender, args);
     }
 
-    void OnClearTripleStoreCompletedEvent(object sender, AsyncCompletedEventArgs e)
-    {
-      CompletedEventArgs args;
+    //void OnClearTripleStoreCompletedEvent(object sender, AsyncCompletedEventArgs e)
+    //{
+    //  CompletedEventArgs args;
 
-      try
-      {
-        string result = ((DownloadStringCompletedEventArgs)e).Result;
-        Response response = result.DeserializeDataContract<Response>();
+    //  try
+    //  {
+    //    string result = ((DownloadStringCompletedEventArgs)e).Result;
+    //    Response response = result.DeserializeDataContract<Response>();
 
-        args = new CompletedEventArgs
-        {
-          CompletedType = CompletedEventType.ClearTripleStore,
-          Data = response,
-        };
-      }
-      catch (Exception ex)
-      {
-        string s = "Error while clearing triple store through the AdapterService.";
+    //    args = new CompletedEventArgs
+    //    {
+    //      CompletedType = CompletedEventType.ClearTripleStore,
+    //      Data = response,
+    //    };
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    string s = "Error while clearing triple store through the AdapterService.";
 
-        args = new CompletedEventArgs
-        {
-          // Define your method in CompletedEventType and assign
-          CompletedType = CompletedEventType.ClearTripleStore,
-          Error = ex,
-          FriendlyErrorMessage =
-              ex.GetBaseException().Message.ToUpper().Contains("SECURITY ERROR") || ex.GetBaseException() is System.Net.WebException ?
-              s + "\nPlease verify if the Application Service is available" :
-              s + "\nPlease review the log on the server.",
-        };
-      }
+    //    args = new CompletedEventArgs
+    //    {
+    //      // Define your method in CompletedEventType and assign
+    //      CompletedType = CompletedEventType.ClearTripleStore,
+    //      Error = ex,
+    //      FriendlyErrorMessage =
+    //          ex.GetBaseException().Message.ToUpper().Contains("SECURITY ERROR") || ex.GetBaseException() is System.Net.WebException ?
+    //          s + "\nPlease verify if the Application Service is available" :
+    //          s + "\nPlease review the log on the server.",
+    //    };
+    //  }
 
-      OnDataArrived(sender, args);
-    }
+    //  OnDataArrived(sender, args);
+    //}
 
     void OnDeleteAppCompletedEvent(object sender, AsyncCompletedEventArgs e)
     {
@@ -461,6 +520,37 @@ namespace ApplicationEditor
         };
       }
 
+      OnDataArrived(sender, args);
+    }
+
+    void OnGetSchemaObectsCompletedEvent(object sender, AsyncCompletedEventArgs e)
+    {
+      CompletedEventArgs args;
+      try
+      {
+        string result = ((DownloadStringCompletedEventArgs)e).Result;
+        string[] schemaObjects = result.DeserializeDataContract<string[]>();
+
+        args = new CompletedEventArgs
+        {
+          CompletedType = CompletedEventType.GetSchemaObjects,
+          Data = schemaObjects,
+        };
+      }
+      catch (Exception ex)
+      {
+        string s = "Error while getting schema objects.";
+
+        args = new CompletedEventArgs
+        {
+          CompletedType = CompletedEventType.GetSchemaObjects,
+          Error = ex,
+          FriendlyErrorMessage =
+              ex.GetBaseException().Message.ToUpper().Contains("SECURITY ERROR") || ex.GetBaseException() is System.Net.WebException ?
+              s + "\nPlease verify if the Application Service is available" :
+              s + "\nPlease review the log on the server.",
+        };
+      }
       OnDataArrived(sender, args);
     }
   }

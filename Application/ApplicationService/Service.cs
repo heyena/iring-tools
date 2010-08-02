@@ -61,7 +61,7 @@ namespace org.iringtools.application
             return _applicationProvider.GetSchemaObjects(project, application);
         }
 
-        public DatabaseDictionary GetSchemaObjectSchema(string project, string application, string schemaObjectName)
+        public org.iringtools.library.DataObject GetSchemaObjectSchema(string project, string application, string schemaObjectName)
         {
             return _applicationProvider.GetSchemaObjectSchema(project, application, schemaObjectName);
         }
