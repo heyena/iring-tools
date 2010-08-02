@@ -313,7 +313,7 @@ namespace ApplicationEditor
 
   
       }
-      catch (Exception ex)
+      catch (Exception)
       {
       }
     }
