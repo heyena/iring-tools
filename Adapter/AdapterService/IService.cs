@@ -92,24 +92,9 @@ namespace org.iringtools.adapter
     XElement GetList(string projectName, string applicationName, string graphName, string format);
     #endregion
 
-    //Xml Put
-    [OperationContract]
-    [WebInvoke(Method = "PUT", UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}")]
-    Response Put(string projectName, string applicationName, string graphName, string format, XElement xml);
-
     [OperationContract]
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}")]
     Response Post(string projectName, string applicationName, string graphName, string format, XElement xml);
-
-    //[OperationContract]
-    //[WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/?format={format}")]
-    //Response Post(string projectName, string applicationName, string graphName, string format, XElement xml);
-
-    //Xml Delete
-    //Receive identifiers and delete from DataLayer
-    //[OperationContract]
-    //[WebInvoke(Method = "DELETE", UriTemplate = "/{projectName}/{applicationName}/{graphName}/?format={format}")]
-    //Response Delete(string projectName, string applicationName, string graphName, string format, XElement xml);
 
     #region Xml DataExchange
     //Xml Pull style DataExchange

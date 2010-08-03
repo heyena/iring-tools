@@ -206,6 +206,7 @@
     <Content Include="XML\BindingConfiguration.12345_000.DEF.xml" />
     <Content Include="XML\DatabaseDictionary.12345_000.DEF.xml" />
     <Content Include="XML\DataDictionary.12345_000.DEF.xml" />
+    <Content Include="XML\DXO.12345_000.ABC.Lines.xml" />
     <Content Include="XML\Mapping.12345_000.DEF.xml" />
     <Content Include="XML\nh-configuration.12345_000.DEF.xml" />
     <Content Include="XML\nh-mapping.12345_000.ABC.xml">

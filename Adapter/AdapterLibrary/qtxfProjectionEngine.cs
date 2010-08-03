@@ -78,6 +78,7 @@ namespace org.iringtools.adapter.projection
       throw new NotImplementedException();
     }
 
+    #region helper methods
     private void PopulateClassIdentifiers()
     {
       _classIdentifiers.Clear();
@@ -134,7 +135,7 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    public XElement GetQtxf()
+    private XElement GetQtxf()
     {
       try
       {
@@ -282,5 +283,6 @@ namespace org.iringtools.adapter.projection
 
       return templateElement;
     }
+    #endregion
   }
 }

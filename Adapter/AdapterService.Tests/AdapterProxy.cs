@@ -195,12 +195,12 @@ namespace AdapterService.Tests
       return response;
     }
 
-    public Response Put(string projectName, string applicationName, string graphName, string format, XElement xml)
+    public Response Post(string projectName, string applicationName, string graphName, string format, XElement xml)
     {
       Response response = null;
       try
       {
-        response = _adapterProvider.Put(projectName, applicationName, graphName, format, xml);
+        response = _adapterProvider.Post(projectName, applicationName, graphName, format, xml);
       }
       catch (Exception ex)
       {

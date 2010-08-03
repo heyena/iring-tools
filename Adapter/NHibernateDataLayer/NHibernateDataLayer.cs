@@ -243,6 +243,7 @@ namespace org.iringtools.adapter.datalayer
       Response response = new Response();
       response.StatusList = new List<Status>();
       Status status = new Status();
+
       try
       {
         status.Identifier = objectType;
@@ -265,9 +266,9 @@ namespace org.iringtools.adapter.datalayer
       catch (Exception ex)
       {
         _logger.Error("Error in Delete: " + ex);
-        throw new Exception(string.Format("Error while deleting data objects of type [{0}]. {1}", objectType, ex));
 
-        //no need to status, thrown exception will be statused above.
+        //no need to status, thrown exception will be statused by the caller.
+        throw new Exception(string.Format("Error while deleting data objects of type [{0}]. {1}", objectType, ex));
       }
 
       response.Append(status);

@@ -355,15 +355,26 @@ namespace AdapterService.Tests
         Assert.IsFalse(actual.Level == StatusLevel.Error);
     }
 
+    //[TestMethod]
+    //public void PutTest()
+    //{
+    //    AdapterProxy target = new AdapterProxy();
+    //    XElement xElement = target.GetXml("12345_000", "ABC", "Lines", "dto");
+    //    target = new AdapterProxy();
+    //    Response actual = target.Put("12345_000", "DEF", "LinesGraph", "dto", xElement);
+    //    Assert.IsFalse(actual.Level == StatusLevel.Error);        
+    //}
+
     [TestMethod]
-    public void Put()
+    public void PostTest()
     {
-        AdapterProxy target = new AdapterProxy();
-        XElement xElement = target.GetXml("12345_000", "ABC", "Lines", "dto");
-        target = new AdapterProxy();
-        Response actual = target.Put("12345_000", "DEF", "LinesGraph", "dto", xElement);
-        Assert.IsFalse(actual.Level == StatusLevel.Error);        
+      AdapterProxy target = new AdapterProxy();
+      string linesDxo = Utility.ReadString(@"C:\iring-tools\Adapter\AdapterService.Tests\XML\DXO.12345_000.ABC.Lines.xml");
+      XElement linesDxoXml = XElement.Parse(linesDxo);
+      Response actual = target.Post("12345_000", "ABC", "Lines", "dxo", linesDxoXml);
+      Assert.IsFalse(actual.Level == StatusLevel.Error);
     }
+
     //[TestMethod()]
     //public void PullDTOPrototype()
     //{

@@ -97,7 +97,7 @@ namespace org.iringtools.adapter.projection
         {
           XElement classElement = new XElement(_graphNs + TitleCase(classMap.name));
           graphElement.Add(classElement);
-          FillHierarchicalDTOList(classElement, classMap.classId, i);
+          PopulateDataTransferObjects(classElement, classMap.classId, i);
         }
 
         return graphElement;
@@ -114,6 +114,30 @@ namespace org.iringtools.adapter.projection
     }
 
     #region helper methods
+    private string ExtractId(string qualifiedId)
+    {
+      if (String.IsNullOrEmpty(qualifiedId) || !qualifiedId.Contains(":"))
+        return qualifiedId;
+
+      return qualifiedId.Substring(qualifiedId.IndexOf(":") + 1);
+    }
+
+    private string TitleCase(string value)
+    {
+      string returnValue = String.Empty;
+      string[] words = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+      foreach (string word in words)
+      {
+        returnValue += word.Substring(0, 1).ToUpper();
+
+        if (word.Length > 1)
+          returnValue += word.Substring(1).ToLower();
+      }
+
+      return returnValue;
+    }
+
     private void PopulateClassIdentifiers()
     {
       _classIdentifiers.Clear();
@@ -124,7 +148,7 @@ namespace org.iringtools.adapter.projection
 
         foreach (string identifier in classMap.identifiers)
         {
-           // identifier is a fixed value
+          // identifier is a fixed value
           if (identifier.StartsWith("#") && identifier.EndsWith("#"))
           {
             string value = identifier.Substring(1, identifier.Length - 2);
@@ -170,31 +194,7 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    private string ExtractId(string qualifiedId)
-    {
-      if (String.IsNullOrEmpty(qualifiedId) || !qualifiedId.Contains(":"))
-        return qualifiedId;
-
-      return qualifiedId.Substring(qualifiedId.IndexOf(":") + 1);
-    }
-
-    private string TitleCase(string value)
-    {
-      string returnValue = String.Empty;
-      string[] words = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-      foreach (string word in words)
-      {
-        returnValue += word.Substring(0, 1).ToUpper();
-
-        if (word.Length > 1)
-          returnValue += word.Substring(1).ToLower();
-      }
-
-      return returnValue;
-    }
-
-    private void FillHierarchicalDTOList(XElement classElement, string classId, int dataObjectIndex)
+    private void PopulateDataTransferObjects(XElement classElement, string classId, int dataObjectIndex)
     {
       KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = _graphMap.GetClassTemplateListMap(classId);
       ClassMap classMap = classTemplateListMap.Key;
@@ -256,7 +256,7 @@ namespace org.iringtools.adapter.projection
                   XElement element = new XElement(_graphNs + TitleCase(roleMap.classMap.name));
                   roleElement.Add(element);
 
-                  FillHierarchicalDTOList(element, roleMap.classMap.classId, dataObjectIndex);
+                  PopulateDataTransferObjects(element, roleMap.classMap.classId, dataObjectIndex);
                 }
               }
               else
