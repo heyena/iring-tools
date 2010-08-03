@@ -30,6 +30,7 @@ using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using System.ServiceModel;
 using System.Linq;
+using org.iringtools.library;
 
 namespace org.iringtools.adapter
 {
@@ -50,17 +51,17 @@ namespace org.iringtools.adapter
     [DataMember(Order = 1, EmitDefaultValue = false)]
     public TransferType transferType { get; set; }
 
-    public List<ClassObject> GetClassObjects(string classId)
+    public ClassObject GetClassObject(string classId)
     {
-      List<ClassObject> classObjectList = new List<ClassObject>();
-      foreach (ClassObject classObject in this.classObjects)
+      foreach (ClassObject classObject in classObjects)
       {
         if (classObject.classId == classId)
         {
-          classObjectList.Add(classObject);
+          return classObject;
         }
       }
-      return classObjectList;
+
+      return null;
     }
   }
 
@@ -87,17 +88,34 @@ namespace org.iringtools.adapter
     [DataMember(Order = 4, EmitDefaultValue = false)]
     public TransferType transferType { get; set; }
 
-    public List<TemplateObject> GetTemplateObjects(string templateId)
+    public TemplateObject GetTemplateObject(TemplateMap templateMap)
     {
-      List<TemplateObject> templateObjectList = new List<TemplateObject>();
-      foreach (TemplateObject templateObject in this.templateObjects)
+      foreach (TemplateObject templateObject in templateObjects)
       {
-        if (templateObject.templateId == templateId)
+        if (templateObject.templateId == templateMap.templateId)
         {
-          templateObjectList.Add(templateObject);
+          string roleMapRef = String.Empty;
+
+          foreach (RoleMap roleMap in templateMap.roleMaps)
+          {
+            if (roleMap.type == RoleType.Reference)
+            {
+              roleMapRef = roleMap.value;
+            }
+          }
+
+          if (roleMapRef != String.Empty)
+          {
+            foreach (RoleObject roleObject in templateObject.roleObjects)
+            {
+              if (!String.IsNullOrEmpty(roleObject.reference) && roleObject.reference == roleMapRef)
+                return templateObject;
+            }
+          }
         }
       }
-      return templateObjectList;
+
+      return null;
     }
   }
 

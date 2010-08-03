@@ -137,11 +137,26 @@ namespace org.iringtools.adapter.projection
       graph.Dispose();
 
       // fill data objects and return
-      FillDataObjects(GetClassInstanceCount());
+      PopulateDataObjects(GetClassInstanceCount());
       return _dataObjects;
     }
 
     #region helper methods
+    private int GetClassInstanceCount()
+    {
+      ClassMap classMap = _graphMap.classTemplateListMaps.First().Key;
+      string query = String.Format(CLASS_INSTANCE_QUERY_TEMPLATE, classMap.classId);
+      object results = _memoryStore.ExecuteQuery(query);
+
+      if (results is SparqlResultSet)
+      {
+        SparqlResultSet resultSet = (SparqlResultSet)results;
+        return resultSet.Count;
+      }
+
+      throw new Exception("Error querying instances of class [" + classMap.name + "].");
+    }
+
     private void PopulateClassIdentifiers()
     {
       _classIdentifiers.Clear();
@@ -431,22 +446,7 @@ namespace org.iringtools.adapter.projection
       return templateElement;
     }
 
-    private int GetClassInstanceCount()
-    {
-      ClassMap classMap = _graphMap.classTemplateListMaps.First().Key;
-      string query = String.Format(CLASS_INSTANCE_QUERY_TEMPLATE, classMap.classId);
-      object results = _memoryStore.ExecuteQuery(query);
-
-      if (results is SparqlResultSet)
-      {
-        SparqlResultSet resultSet = (SparqlResultSet)results;
-        return resultSet.Count;
-      }
-
-      throw new Exception("Error querying instances of class [" + classMap.name + "].");
-    }
-
-    private void FillDataObjects(int classInstanceCount)
+    private void PopulateDataObjects(int classInstanceCount)
     {
       _dataObjects.Clear();
 

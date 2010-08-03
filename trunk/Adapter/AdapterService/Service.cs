@@ -222,19 +222,6 @@ namespace org.iringtools.adapter
     }
 
     /// <summary>
-    /// Puts the DTO.
-    /// </summary>
-    /// <param name="projectName"></param>
-    /// <param name="applicationName"></param>
-    /// <param name="graphName"></param>
-    /// <param name="dtoElement"></param>
-    /// <returns></returns>
-    public Response Put(string projectName, string applicationName, string graphName, string format, XElement xml)
-    {
-      return _adapterProvider.Put(projectName, applicationName, graphName, format, xml);      
-    }
-
-    /// <summary>
     /// Post data exchange objects to adapter service
     /// </summary>
     /// <param name="projectName">project name</param>

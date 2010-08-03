@@ -872,7 +872,7 @@ namespace org.iringtools.adapter
 
             _isDataLayerInitialized = false;
             _isScopeInitialized = false;
-            _response = httpClient.PutMessage<XElement, Response>(@"/" + projectNameForPush + "/" + applicationNameForPush + "/" + graphNameForPush + "?format=" + format, xml, true);
+            _response = httpClient.Post<XElement, Response>(@"/" + projectNameForPush + "/" + applicationNameForPush + "/" + graphNameForPush + "?format=" + format, xml, true);
         }
         catch (Exception ex)
         {
@@ -885,35 +885,44 @@ namespace org.iringtools.adapter
 
     }
 
-    public Response Put(string projectName, string applicationName, string graphName, string format, XElement xml)
+    // handle data exchange objects (data transfer objects with transfer types filled)
+    public Response Post(string projectName, string applicationName, string graphName, string format, XElement xml)
     {
-        Response response = null;
+      Response response = null;
+
+      try
+      {
         InitializeScope(projectName, applicationName);
         InitializeDataLayer();
 
         _projectionEngine = _kernel.Get<IProjectionLayer>(format);
         IList<IDataObject> dataObjects = _projectionEngine.GetDataObjects(graphName, ref xml);
         response = _dataLayer.Post(dataObjects);
-        return response;
-    }
 
-    // handle data exchange objects (data transfer objects with transfer types filled)
-    public Response Post(string projectName, string applicationName, string graphName, string format, XElement xml)
-    {
-      Response response = null;
-      InitializeScope(projectName, applicationName);
-      InitializeDataLayer();
+        if (format.ToLower() == "dxo")
+        {
+          DxoProjectionEngine dxoProjectionEngine = ((DxoProjectionEngine)_projectionEngine);
+          IList<string> deletingIdentifiers = dxoProjectionEngine.GetDeletingDataObjects(graphName, ref xml);
+          response.Append(_dataLayer.Delete(dxoProjectionEngine.ObjectType, deletingIdentifiers));
+        }
 
-      _projectionEngine = _kernel.Get<IProjectionLayer>(format);
-      IList<IDataObject> dataObjects = _projectionEngine.GetDataObjects(graphName, ref xml);
-      response = _dataLayer.Post(dataObjects);
-
-      if (format.ToLower() == "dxo")
+        response.Level = StatusLevel.Success;
+      }
+      catch (Exception ex)
       {
-        IList<string> deletingIdentifiers = ((DxoProjectionEngine)_projectionEngine).GetDeletingDataObjects(graphName, ref xml);
-        string _dataObjectNs = String.Format("{0}.proj_{1}.{2}", "org.iringtools.adapter.datalayer", projectName, applicationName);
-        string objectType = _dataObjectNs + "." + _graphMap.dataObjectMap + ", " + _settings["ExecutingAssemblyName"];
-        response.Append(_dataLayer.Delete(objectType, deletingIdentifiers));
+        if (response == null)
+        {
+          response = new Response();
+        }
+
+        Status status = new Status
+        {
+          Level = StatusLevel.Error,
+          Messages = new List<string> { ex.Message },
+        };
+
+        response.Level = StatusLevel.Error;
+        response.StatusList.Add(status);
       }
 
       return response;
