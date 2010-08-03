@@ -267,8 +267,8 @@ namespace org.iringtools.adapter.datalayer
       {
         _logger.Error("Error in Delete: " + ex);
 
-        //no need to status, thrown exception will be statused by the caller.
-        throw new Exception(string.Format("Error while deleting data objects of type [{0}]. {1}", objectType, ex));
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(string.Format("Error while deleting data objects of type [{0}]. {1}", objectType, ex));
       }
 
       response.Append(status);
