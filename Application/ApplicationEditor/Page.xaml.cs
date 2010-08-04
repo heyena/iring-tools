@@ -540,7 +540,7 @@ namespace ApplicationEditor
         Response response = (Response)args.Data;
 
         resultsList.lbResult.ItemsSource = response.StatusList[0].Messages;
-
+        _dal.GetScopes();
         isPosting = false;
         resultsList.Show();
       }
@@ -727,7 +727,7 @@ namespace ApplicationEditor
 
         DatabaseDictionary dict = (DatabaseDictionary)args.Data;
         if (dict.connectionString == null) return;
-
+        tvwItemDestinationRoot.Tag = dict;
         tbNewDataSource.Text = String.Empty;
         tbNewDatabase.Text = String.Empty;
         tbUserID.Text = String.Empty;
@@ -1769,7 +1769,7 @@ namespace ApplicationEditor
     {
       biBusyWindow.IsBusy = true;
       _dal.UpdateScopes(_scopes);
-      _dal.GetScopes();
+      //_dal.GetScopes();
     }
 
     private void btnFetch_Click(object sender, RoutedEventArgs e)
