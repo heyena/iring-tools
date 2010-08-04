@@ -246,7 +246,10 @@ namespace org.iringtools.adapter.projection
 
           foreach (TemplateMap templateMap in pair.Value)
           {
-            graphElement.Add(CreateRdfTemplateElement(classInstance, templateMap, _dataObjects[i]));
+            foreach (XElement template in CreateRdfTemplateElement(classInstance, templateMap, _dataObjects[i]))
+            {
+              graphElement.Add(template);
+            }
           }
         }
       }
@@ -294,21 +297,17 @@ namespace org.iringtools.adapter.projection
       return parentObjects;
     }    
 
-    private XElement CreateRdfTemplateElement(string classInstance, TemplateMap templateMap, IDataObject dataObject)
+    private List<XElement> CreateRdfTemplateElement(string classInstance, TemplateMap templateMap, IDataObject dataObject)
     {
       string templateId = templateMap.templateId.Replace(TPL_PREFIX, TPL_NS.NamespaceName);
       StringBuilder roleMapValues = new StringBuilder();
-      
+      List<XElement> roleElements = new List<XElement>();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
       XElement templateElement = new XElement(OWL_THING);
       templateElement.Add(new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, templateId)));
 
       #region Possessor RoleTypes
-      IEnumerable<RoleMap> roleMaps_Possessor = 
-        from roleMap in templateMap.roleMaps
-        where roleMap.type == RoleType.Possessor
-        select roleMap;
-
-      foreach (RoleMap roleMap in roleMaps_Possessor)
+      foreach (RoleMap roleMap in templateMap.roleMaps.Where(o => o.type == RoleType.Possessor))
       {
         string roleId = roleMap.roleId.Substring(roleMap.roleId.IndexOf(":") + 1);
         string dataType = String.Empty;
@@ -319,12 +318,7 @@ namespace org.iringtools.adapter.projection
       #endregion
 
       #region Reference RoleTypes
-      IEnumerable<RoleMap> roleMaps_Reference =
-        from roleMap in templateMap.roleMaps
-        where roleMap.type == RoleType.Reference
-        select roleMap;
-
-      foreach (RoleMap roleMap in roleMaps_Reference)
+      foreach (RoleMap roleMap in templateMap.roleMaps.Where(o => o.type == RoleType.Reference))
       {
         string roleId = roleMap.roleId.Substring(roleMap.roleId.IndexOf(":") + 1);
         string dataType = String.Empty;
@@ -372,12 +366,7 @@ namespace org.iringtools.adapter.projection
       #endregion
 
       #region FixedValue RoleTypes
-      IEnumerable<RoleMap> roleMaps_FixedValue =
-        from roleMap in templateMap.roleMaps
-        where roleMap.type == RoleType.FixedValue
-        select roleMap;
-
-      foreach (RoleMap roleMap in roleMaps_FixedValue)
+      foreach (RoleMap roleMap in templateMap.roleMaps.Where(o => o.type == RoleType.FixedValue))
       {
         string roleId = roleMap.roleId.Substring(roleMap.roleId.IndexOf(":") + 1);
         string dataType = String.Empty;
@@ -394,56 +383,64 @@ namespace org.iringtools.adapter.projection
       #endregion
 
       #region Property RoleTypes
-      IEnumerable<RoleMap> roleMaps_Property =
-        from roleMap in templateMap.roleMaps
-        where roleMap.type == RoleType.Property
-        select roleMap;
-
-      foreach (RoleMap roleMap in roleMaps_Property)
+      foreach (RoleMap roleMap in templateMap.roleMaps.Where(o => o.type == RoleType.Property))
       {
-        string roleId = roleMap.roleId.Substring(roleMap.roleId.IndexOf(":") + 1);
-        string dataType = String.Empty;
-        XElement roleElement = new XElement(TPL_NS + roleId);
-
         string[] property = roleMap.propertyName.Split('.');
-        string objectName = property[0].Trim();
-        string propertyName = property[1].Trim();
+        string propertyName = property[property.Length - 1].Trim();
 
-        //List<IDataObject> objects = GetRelatedObjects(roleMap.propertyName, dataObject);
+        List<IDataObject> dataObjects = GetRelatedObjects(roleMap.propertyName, dataObject);
 
-        string value = Convert.ToString(dataObject.GetPropertyValue(propertyName));
+        string roleId = roleMap.roleId.Substring(roleMap.roleId.IndexOf(":") + 1);
+        string dataType = String.Empty;        
+        XElement roleElement;
 
-        if (String.IsNullOrEmpty(roleMap.valueList))
+        foreach (IDataObject dataObj in dataObjects)
         {
-          if (String.IsNullOrEmpty(value))
+          roleElement = new XElement(TPL_NS + roleId);
+          string value = Convert.ToString(dataObj.GetPropertyValue(propertyName));
+          
+          if (String.IsNullOrEmpty(roleMap.valueList))
           {
-            roleElement.Add(new XAttribute(RDF_RESOURCE, RDF_NIL));
+            if (String.IsNullOrEmpty(value))
+            {
+              roleElement.Add(new XAttribute(RDF_RESOURCE, RDF_NIL));
+            }
+            else
+            {
+              //roleMapValues.Append(value);
+              dataType = roleMap.dataType.Replace(XSD_PREFIX, XSD_NS.NamespaceName);
+              roleElement.Add(new XAttribute(RDF_DATATYPE, dataType));
+              roleElement.Add(new XText(value));
+            }
           }
-          else
+          else // resolve value list to uri
           {
-            roleMapValues.Append(value);
+            string valueListUri = _mapping.ResolveValueList(roleMap.valueList, value);
 
-            dataType = roleMap.dataType.Replace(XSD_PREFIX, XSD_NS.NamespaceName);
-            roleElement.Add(new XAttribute(RDF_DATATYPE, dataType));
-            roleElement.Add(new XText(value));
+            //roleMapValues.Append(valueListUri);
+            roleElement.Add(new XAttribute(RDF_RESOURCE, valueListUri));
           }
-        }
-        else // resolve value list to uri
-        {
-          string valueListUri = _mapping.ResolveValueList(roleMap.valueList, value);
 
-          roleMapValues.Append(valueListUri);
-          roleElement.Add(new XAttribute(RDF_RESOURCE, valueListUri));
-        }
-
-        templateElement.Add(roleElement);
+          roleElements.Add(roleElement);
+        }        
+        
       }
       #endregion
-      
-      string hashCode = Utility.ComputeHash(templateId + roleMapValues.ToString());
-      templateElement.Add(new XAttribute(RDF_ABOUT, hashCode));
 
-      return templateElement;
+      List<XElement> templateElements = new List<XElement>();
+      XElement pattern;
+
+      foreach (XElement roleElement in roleElements)
+      {
+        pattern = new XElement(templateElement);
+        pattern.Add(roleElement);
+        templateElements.Add(pattern);        
+      }
+      
+      //string hashCode = Utility.ComputeHash(templateId + roleMapValues.ToString());
+      //templateElement.Add(new XAttribute(RDF_ABOUT, hashCode));      
+
+      return templateElements;
     }
 
     private void PopulateDataObjects(int classInstanceCount)
