@@ -152,7 +152,7 @@ namespace ApplicationEditor
       string data = Utility.SerializeDataContract<Collection<ScopeProject>>(scopes);
 
       WebClient webClient = new WebClient();
-      webClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnUpdateScopesCompletedEvent);
+      webClient.UploadStringCompleted += new UploadStringCompletedEventHandler(OnUpdateScopesCompletedEvent);
       webClient.Headers["Content-type"] = "application/xml";
       webClient.Encoding = Encoding.UTF8;
       webClient.UploadStringAsync(address, "POST", data);
@@ -251,39 +251,39 @@ namespace ApplicationEditor
 
     void OnGetDbSchemaCompletedEvent(object sender, AsyncCompletedEventArgs e)
     {
-      CompletedEventArgs args;
+      //CompletedEventArgs args;
 
-      try
-      {
-        string result = ((DownloadStringCompletedEventArgs)e).Result;
-        DatabaseDictionary dbSchema = result.DeserializeDataContract<DatabaseDictionary>();
+      //try
+      //{
+      //  string result = ((DownloadStringCompletedEventArgs)e).Result;
+      //  DatabaseDictionary dbSchema = result.DeserializeDataContract<DatabaseDictionary>();
 
-        // If the cast failed then return
-        if (dbSchema == null)
-          return;
+      //  // If the cast failed then return
+      //  if (dbSchema == null)
+      //    return;
 
-        args = new CompletedEventArgs
-        {
-          CompletedType = CompletedEventType.GetDatabaseSchema,
-          Data = dbSchema,
-        };
-      }
-      catch (Exception ex)
-      {
-        string s = "Error Getting Database Schema from ApplicationService.";
+      //  args = new CompletedEventArgs
+      //  {
+      //    CompletedType = CompletedEventType.GetDatabaseSchema,
+      //    Data = dbSchema,
+      //  };
+      //}
+      //catch (Exception ex)
+      //{
+      //  string s = "Error Getting Database Schema from ApplicationService.";
 
-        args = new CompletedEventArgs
-        {
-          CompletedType = CompletedEventType.GetDatabaseSchema,
-          Error = ex,
-          FriendlyErrorMessage =
-              ex.GetBaseException().Message.ToUpper().Contains("SECURITY ERROR") || ex.GetBaseException() is System.Net.WebException ?
-              s + "\nPlease verify if the Application Service is available" :
-              s + "\nPlease review the log on the server.",
-        };
-      }
+      //  args = new CompletedEventArgs
+      //  {
+      //    CompletedType = CompletedEventType.GetDatabaseSchema,
+      //    Error = ex,
+      //    FriendlyErrorMessage =
+      //        ex.GetBaseException().Message.ToUpper().Contains("SECURITY ERROR") || ex.GetBaseException() is System.Net.WebException ?
+      //        s + "\nPlease verify if the Application Service is available" :
+      //        s + "\nPlease review the log on the server.",
+      //  };
+      //}
 
-      OnDataArrived(sender, args);
+      //OnDataArrived(sender, args);
     }
 
     void OnGetSchemaObjectSchemaCompletedEvent(object sender, DownloadStringCompletedEventArgs e)
