@@ -28,6 +28,9 @@ namespace org.iringtools.modules.templateeditor.rolespopup
         private bool _ValueHasLiteral;
         private bool _IsBaseTemplate;
         private bool _IsSpecializedTemplate;
+
+        private string _ModelSelectedIMLabel;
+        private string _ModelSelectedIMURI;
         
         //private string _SelectedRoleRestrictionType;
         //private string _SelectedRoleRestrictionValue;
@@ -39,6 +42,32 @@ namespace org.iringtools.modules.templateeditor.rolespopup
             if (PropertyChanged != null)
             {
                 PropertyChanged(sender, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        public string ModelSelectedIMLabel
+        {
+            get
+            {
+                return _ModelSelectedIMLabel;
+            }
+            set
+            {
+                _ModelSelectedIMLabel = value;
+                RaisePropertyChanged(this, "ModelSelectedIMLabel");
+            }
+        }
+
+        public string ModelSelectedIMURI
+        {
+            get
+            {
+                return _ModelSelectedIMURI;
+            }
+            set
+            {
+                _ModelSelectedIMURI = value;
+                RaisePropertyChanged(this, "ModelSelectedIMURI");
             }
         }
         
