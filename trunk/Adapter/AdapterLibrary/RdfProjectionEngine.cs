@@ -58,7 +58,8 @@ namespace org.iringtools.adapter.projection
 	      ?instance rdf:type {{0}} . 
 	      ?bnode {{1}} ?instance . 
 	      ?bnode rdf:type {{2}} . 
-	      ?bnode {{3}} ?literals 
+	      ?bnode {{3}} {{4}} . 
+	      ?bnode {{5}} ?literals 
       }}}}", RDF_NS.NamespaceName, RDL_NS.NamespaceName, TPL_NS.NamespaceName);
 
     private static readonly ILog _logger = LogManager.GetLogger(typeof(RdfProjectionEngine));
@@ -88,15 +89,15 @@ namespace org.iringtools.adapter.projection
       _hierachicalDTOClasses = new Dictionary<string, List<string>>();
       _classInstances = new Dictionary<string, List<string>>();
       _mapping = mapping;
-      
-      _graphNs = String.Format("{0}{1}/{2}", 
-        settings["GraphBaseUri"], 
+
+      _graphNs = String.Format("{0}{1}/{2}",
+        settings["GraphBaseUri"],
         settings["ProjectName"],
         settings["ApplicationName"]
       );
 
-      _dataObjectNs = String.Format("{0}.proj_{1}", 
-        DATALAYER_NS, 
+      _dataObjectNs = String.Format("{0}.proj_{1}",
+        DATALAYER_NS,
         settings["Scope"]
       );
 
@@ -107,7 +108,7 @@ namespace org.iringtools.adapter.projection
     {
       try
       {
-        _graphMap = _mapping.FindGraphMap(graphName);               
+        _graphMap = _mapping.FindGraphMap(graphName);
         _dataObjects = dataObjects;
 
         return GetRdf();
@@ -130,7 +131,7 @@ namespace org.iringtools.adapter.projection
       Graph graph = new Graph();
       parser.Load(graph, xdoc);
       xdoc.RemoveAll();
-      
+
       // load graph to memory store to allow querying locally
       _memoryStore = new TripleStore();
       _memoryStore.Add(graph);
@@ -139,6 +140,14 @@ namespace org.iringtools.adapter.projection
       // fill data objects and return
       PopulateDataObjects(GetClassInstanceCount());
       return _dataObjects;
+    }
+
+    public string ObjectType
+    {
+      get
+      {
+        return _dataObjectNs + "." + _graphMap.dataObjectMap + ", " + _dataObjectsAssemblyName;
+      }
     }
 
     #region helper methods
@@ -171,7 +180,7 @@ namespace org.iringtools.adapter.projection
           if (identifier.StartsWith("#") && identifier.EndsWith("#"))
           {
             string value = identifier.Substring(1, identifier.Length - 2);
-            
+
             for (int i = 0; i < _dataObjects.Count; i++)
             {
               if (classIdentifiers.Count == i)
@@ -227,7 +236,7 @@ namespace org.iringtools.adapter.projection
       foreach (var pair in _graphMap.classTemplateListMaps)
       {
         ClassMap classMap = pair.Key;
-        
+
         for (int i = 0; i < _dataObjects.Count; i++)
         {
           string classId = classMap.classId.Substring(classMap.classId.IndexOf(":") + 1);
@@ -273,7 +282,7 @@ namespace org.iringtools.adapter.projection
 
       parentObjects.Add(dataObject);
 
-      for (int i = 0; i < objectPath.Length - 1; i++) 
+      for (int i = 0; i < objectPath.Length - 1; i++)
       {
         foreach (IDataObject parentObj in parentObjects)
         {
@@ -288,27 +297,26 @@ namespace org.iringtools.adapter.projection
                 relatedObjects.Add(relatedObj);
               }
             }
-            
-            parentObjects = relatedObjects;            
+
+            parentObjects = relatedObjects;
           }
         }
       }
 
       return parentObjects;
-    }    
+    }
 
     private List<XElement> CreateRdfTemplateElement(string classInstance, TemplateMap templateMap, IDataObject dataObject)
     {
       string templateId = templateMap.templateId.Replace(TPL_PREFIX, TPL_NS.NamespaceName);
       StringBuilder roleMapValues = new StringBuilder();
       List<XElement> roleElements = new List<XElement>();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+
       XElement templateElement = new XElement(OWL_THING);
       templateElement.Add(new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, templateId)));
 
       foreach (RoleMap roleMap in templateMap.roleMaps)
       {
-
         string roleId = roleMap.roleId.Substring(roleMap.roleId.IndexOf(":") + 1);
         string dataType = String.Empty;
         XElement roleElement = new XElement(TPL_NS + roleId);
@@ -316,7 +324,7 @@ namespace org.iringtools.adapter.projection
         switch (roleMap.type)
         {
           case RoleType.Possessor:
-          {
+            {
               #region RoleType.Possessor
 
               roleElement.Add(new XAttribute(RDF_RESOURCE, classInstance));
@@ -324,9 +332,9 @@ namespace org.iringtools.adapter.projection
               break;
 
               #endregion
-          }
+            }
           case RoleType.Reference:
-          {
+            {
               #region RoleType.Reference
 
               roleMapValues.Append(roleMap.value);
@@ -369,9 +377,9 @@ namespace org.iringtools.adapter.projection
               break;
 
               #endregion
-          }
+            }
           case RoleType.FixedValue:
-          {
+            {
               #region RoleType.FixedValue
 
               roleMapValues.Append(roleMap.value);
@@ -383,9 +391,9 @@ namespace org.iringtools.adapter.projection
               break;
 
               #endregion
-          }
+            }
           case RoleType.Property:
-          {
+            {
               #region Property RoleTypes
 
               string[] property = roleMap.propertyName.Split('.');
@@ -425,14 +433,14 @@ namespace org.iringtools.adapter.projection
               break;
 
               #endregion
-          }
+            }
         }
       }
 
       List<XElement> templateElements = new List<XElement>();
 
       if (roleElements.Count > 0)
-      { 
+      {
         XElement pattern;
 
         foreach (XElement roleElement in roleElements)
@@ -446,72 +454,66 @@ namespace org.iringtools.adapter.projection
       {
         templateElements.Add(templateElement);
       }
-      
+
       string hashCode = Utility.ComputeHash(templateId + roleMapValues.ToString());
-      templateElement.Add(new XAttribute(RDF_ABOUT, hashCode));      
+      templateElement.Add(new XAttribute(RDF_ABOUT, hashCode));
 
       return templateElements;
     }
 
     private void PopulateDataObjects(int classInstanceCount)
     {
-      _dataObjects.Clear();
+      _dataObjects = _dataLayer.Create(ObjectType, new string[classInstanceCount]);
 
       foreach (var pair in _graphMap.classTemplateListMaps)
       {
         ClassMap classMap = pair.Key;
         List<TemplateMap> templateMaps = pair.Value;
-        int dupTemplatePos = 0;
 
         foreach (TemplateMap templateMap in templateMaps)
         {
-          List<RoleMap> propertyMapRoles = new List<RoleMap>();
-          string classRoleId = String.Empty;
+          string possessorRoleId = String.Empty;
+          string referenceRoleId = String.Empty;
+          string referenceClassId = String.Empty;
+          List<RoleMap> propertyRoleMaps = new List<RoleMap>();
 
-          #region find propertyMapRoles and classRoleId
+          // find property roleMaps
           foreach (RoleMap roleMap in templateMap.roleMaps)
           {
-            if (roleMap.type == RoleType.Possessor)
+            switch (roleMap.type)
             {
-              classRoleId = roleMap.roleId;
-            }
-            else if (roleMap.type == RoleType.Property)
-            {
-              propertyMapRoles.Add(roleMap);
+              case RoleType.Possessor:
+                possessorRoleId = roleMap.roleId;
+                break;
+
+              case RoleType.Reference:
+                referenceRoleId = roleMap.roleId;
+                referenceClassId = roleMap.value;
+                break;
+
+              case RoleType.Property:
+                propertyRoleMaps.Add(roleMap);
+                break;
             }
           }
-          #endregion
 
-          #region query for property values and save them into dataObjects
-          foreach (RoleMap roleMap in propertyMapRoles)
+          // query for property roleMaps values
+          foreach (RoleMap roleMap in propertyRoleMaps)
           {
-            string query = String.Format(LITERAL_QUERY_TEMPLATE, classMap.classId, classRoleId, templateMap.templateId, roleMap.roleId);
+            string[] property = roleMap.propertyName.Split('.');
+            string propertyName = property[property.Length - 1].Trim();
+            string query = String.Format(LITERAL_QUERY_TEMPLATE,
+              classMap.classId, possessorRoleId, templateMap.templateId, referenceRoleId, referenceClassId, roleMap.roleId);
             object results = _memoryStore.ExecuteQuery(query);
 
             if (results is SparqlResultSet)
             {
-              string[] property = roleMap.propertyName.Split('.');
-              string objectName = property[0].Trim();
-              string propertyName = property[1].Trim();
-
-              if (_dataObjects.Count == 0)
+              SparqlResultSet sparqlResultSet = (SparqlResultSet)results;
+              int dataObjectIndex = 0;
+          
+              foreach (SparqlResult sparqlResult in sparqlResultSet)
               {
-                string objectType = _dataObjectNs + "." + objectName + ", " + _dataObjectsAssemblyName;
-                _dataObjects = _dataLayer.Create(objectType, new string[classInstanceCount]);
-              }
-
-              SparqlResultSet resultSet = (SparqlResultSet)results;
-              if (resultSet.Count > classInstanceCount)
-              {
-                dupTemplatePos++;
-              }
-
-              int objectIndex = 0;
-              int resultSetIndex = (dupTemplatePos == 0) ? 0 : dupTemplatePos - 1;
-
-              while (resultSetIndex < resultSet.Count)
-              {
-                string value = Regex.Replace(resultSet[resultSetIndex].ToString(), @".*= ", String.Empty);
+                string value = Regex.Replace(sparqlResult.ToString(), @".*= ", String.Empty);
 
                 if (value == RDF_NIL)
                   value = String.Empty;
@@ -519,23 +521,11 @@ namespace org.iringtools.adapter.projection
                   value = value.Substring(0, value.IndexOf("^^"));
                 else if (!String.IsNullOrEmpty(roleMap.valueList))
                   value = _mapping.ResolveValueMap(roleMap.valueList, value);
-
-                _dataObjects[objectIndex++].SetPropertyValue(propertyName, value);
-
-                if (dupTemplatePos == 0)
-                  resultSetIndex++;
-                else if (dupTemplatePos < 3)
-                  resultSetIndex += 2;
-                else
-                  resultSetIndex += dupTemplatePos;
+                
+                _dataObjects[dataObjectIndex++].SetPropertyValue(propertyName, value);
               }
             }
-            else
-            {
-              throw new Exception("Error querying in-memory triple store.");
-            }
           }
-          #endregion
         }
       }
     }
