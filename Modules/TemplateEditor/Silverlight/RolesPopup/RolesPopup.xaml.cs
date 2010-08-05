@@ -6,6 +6,7 @@ using PrismContrib.Base;
 using System.Collections.Generic;
 using System.ComponentModel;
 using org.iringtools.modulelibrary.events;
+using System.Linq;
 
 namespace org.iringtools.modules.templateeditor.rolespopup
 {
@@ -23,6 +24,8 @@ namespace org.iringtools.modules.templateeditor.rolespopup
             radRoleValueReference.Checked += new RoutedEventHandler(radioButtonCheckedHandler);
 
             roleRestrictionType.SelectionChanged += new SelectionChangedEventHandler(roleRestrictionType_SelectionChanged);
+
+            roleRange.SelectionChanged += new SelectionChangedEventHandler(rangeSelectionChanged);
 
             lstRestrictions.SelectionChanged += new SelectionChangedEventHandler(restrictionsSelectionChanged);
 
@@ -114,6 +117,42 @@ namespace org.iringtools.modules.templateeditor.rolespopup
                 roleValueLiteralDatatype.IsEnabled = radRoleValueLiteral.IsChecked == true;
                 roleValueReference.IsEnabled = true;
             }            
+        }
+
+        public void rangeSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                if (roleRange.SelectedItem != null)
+                {
+                    KeyValuePair<string, string> range = (KeyValuePair<string, string>)roleRange.SelectedItem;
+
+                    if (range.Value != null && range.Value.Equals("<Use Selected Item>"))
+                    {
+                        KeyValuePair<string, string> cmbItem = new KeyValuePair<string, string>(_rolesPopupModel.ModelSelectedIMLabel, _rolesPopupModel.ModelSelectedIMURI);
+
+                        //GvR need to fix this issue of add already existing item
+                        var items = from query in _rolesPopupModel.Ranges 
+                                    where query.Key == cmbItem.Key
+                                    select query;
+
+                        if (items.Count() == 0)
+                        {
+                            _rolesPopupModel.Ranges.Add(cmbItem);
+                            roleRange.SelectedItem = cmbItem;
+                        }
+                        else
+                        {
+                            roleRange.SelectedItem = items.FirstOrDefault();
+                        }
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         private void OKButton_Click(object sender, RoutedEventArgs e)

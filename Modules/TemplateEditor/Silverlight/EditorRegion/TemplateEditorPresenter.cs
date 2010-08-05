@@ -553,9 +553,11 @@ namespace org.iringtools.modules.templateeditor.editorregion
                                !String.IsNullOrEmpty(_templateModel.SelectedRoleValueReference),
                     ValueHasLiteral = !String.IsNullOrEmpty(_templateModel.SelectedRoleValueLiteral),
                     ValueHasReference = !String.IsNullOrEmpty(_templateModel.SelectedRoleValueReference),
-                    RoleRestrictions = _templateModel.SelectedRoleRestrictions
+                    RoleRestrictions = _templateModel.SelectedRoleRestrictions,
+                    ModelSelectedIMLabel = model.SelectedIMLabel,
+                    ModelSelectedIMURI = model.SelectedIMUri
                 };
-
+                
                 _dialog.Closed += new EventHandler(dialog_DialogClosed);
                 _dialog.Show(rolesPopupModel);
             }
@@ -592,7 +594,7 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 _templateModel.SelectedRoleValueLiteral = _dialog.rolesPopupModel.RoleValueLiteral;
                 _templateModel.SelectedRoleValueLiteralDatatype = _dialog.rolesPopupModel.RoleValueLiteralDatatype;
                 _templateModel.SelectedRoleValueReference = _dialog.rolesPopupModel.RoleValueReference;
-                _templateModel.SelectedRoleRestrictions = _dialog.rolesPopupModel.RoleRestrictions;
+                _templateModel.SelectedRoleRestrictions = _dialog.rolesPopupModel.RoleRestrictions;                
             }
         }
 
