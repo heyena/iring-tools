@@ -312,6 +312,7 @@ namespace org.iringtools.utility
                 StreamWriter writer = new StreamWriter(stream);
                 writer.Write(requestMessage);
                 writer.Flush();
+                byte[] bytes = stream.ToArray();
 
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
 
@@ -320,14 +321,18 @@ namespace org.iringtools.utility
                 request.Timeout = TIMEOUT;
                 request.Method = "POST";
                 request.ContentType = "application/x-www-form-urlencoded";
-                request.ContentLength = stream.Length;
+                request.ContentLength = bytes.Length;
+
+                System.Net.ServicePointManager.Expect100Continue = false;
 
                 // allows for validation of SSL conversations
                 ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
                   ValidateRemoteCertificate
                 );
 
-                request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
+                Stream requestStream = request.GetRequestStream();
+                requestStream.Write(bytes, 0, bytes.Length);
+                requestStream.Flush();
 
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 T responseEntity = Utility.DeserializeFromStream<T>(response.GetResponseStream(), useDataContractSerializer);
