@@ -180,7 +180,7 @@ namespace AdapterService.Tests
       return response;
     }
 
-    public Response Push(string projectName, string applicationName, Request request)
+    public Response Push(string projectName, string applicationName, PushRequest request)
     {
       Response response = null;
       try

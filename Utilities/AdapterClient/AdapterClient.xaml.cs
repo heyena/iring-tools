@@ -174,6 +174,39 @@ namespace IDS_ADI.iRING.Adapter
       _application = (ScopeApplication)comboBoxAppName.SelectedItem;
     }
 
+    private void buttonPush_Click(object sender, RoutedEventArgs e)
+    {
+      _messages.Add(new StatusMessage { Message = "Posting Push Request...", ImageName = "info_22.png" });
+
+      WebClient client = new WebClient();
+      client.UploadStringCompleted += new UploadStringCompletedEventHandler(client_UploadStringCompleted);
+      client.Headers["Content-type"] = "application/xml";
+      client.Encoding = Encoding.UTF8;
+
+      Uri pushURI = new Uri(textBoxAdapterURL.Text + "/" + _project.Name + "/" + _application.Name + "/pushDTO");
+
+      PushRequest request = new PushRequest();
+      WebCredentials targetCredentials = new WebCredentials();
+      string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
+      request.Add("targetUri", textBoxTargetURL.Text);
+      request.Add("targetCredentials", targetCredentialsXML);
+      request.Add("graphName", textBoxGraphName.Text);
+      request.Add("filter", "");
+      request.Add("targetProjectName", "12345_000");
+      request.Add("targetApplicationName", "DEF");
+      request.Add("targetGraphName", "LinesGraph");
+      request.Add("format", "dto");
+
+      ExpectedResults expectedResults = new ExpectedResults();
+      expectedResults.DataObjectName = textBoxDataObjectName.Text;
+      expectedResults.Add("ResultTag", "TargetTag");
+      request.ExpectedResults = expectedResults;
+
+      string message = Utility.SerializeDataContract<PushRequest>(request);
+
+      client.UploadStringAsync(pushURI, message);
+    }
+
 
     //private void buttonDictionaryGenerate_Click(object sender, RoutedEventArgs e)
     //{

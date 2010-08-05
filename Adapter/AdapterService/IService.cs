@@ -107,7 +107,7 @@ namespace org.iringtools.adapter
     //Calls Get from DataLayer and post to on another endpoint
     [OperationContract]
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/pushDTO")]
-    Response PushDTO(string projectName, string applicationName, Request request);
+    Response PushDTO(string projectName, string applicationName, PushRequest request);
     #endregion
 
     #region TripleStore

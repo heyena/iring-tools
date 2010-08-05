@@ -25,10 +25,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace org.iringtools.library
 {
+  [CollectionDataContract]
   public class Request : Dictionary<string, string>
-  {
-  }
+  {}
 }
