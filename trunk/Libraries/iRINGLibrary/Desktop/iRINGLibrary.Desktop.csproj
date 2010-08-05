@@ -119,6 +119,7 @@
     <Compile Include="IAdapter.cs" />
     <Compile Include="IDataLayer.cs" />
     <Compile Include="Manifest.cs" />
+    <Compile Include="PushRequest.cs" />
     <Compile Include="ScopeApplication.cs" />
     <Compile Include="Mapping.cs" />
     <Compile Include="ScopeProject.cs" />

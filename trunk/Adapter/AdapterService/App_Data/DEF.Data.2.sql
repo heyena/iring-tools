@@ -1,3 +1,5 @@
+DELETE FROM [DEF].[dbo].[Lines]
+GO
 
 INSERT INTO [DEF].[dbo].[Lines]
    ([Tag],[PlantArea],[System],[PID],[PIDRev],[Plant],[LengthUOM],[Length],[DiameterUOM],[Diameter],[Fluid],[TempUOM],[DesignTemperature],[OperatingTemperature])

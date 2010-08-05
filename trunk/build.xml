@@ -59,7 +59,8 @@
     <CSVDataLayerDir>CSVDataLayer</CSVDataLayerDir>
     <CSVDataLayerSolutionFile>$(CSVDataLayerDir)\CSVDataLayer.sln</CSVDataLayerSolutionFile>
     <CSVDataLayerDeploymentDir>$(SDKDeploymentDir)\CSVDataLayer</CSVDataLayerDeploymentDir>  
-    <CSVDataLayerLibDeploymentDir>$(CSVDataLayerDeploymentDir)\lib</CSVDataLayerLibDeploymentDir>    
+    <CSVDataLayerLibDeploymentDir>$(CSVDataLayerDeploymentDir)\lib</CSVDataLayerLibDeploymentDir>
+    <CSVDataLayerLibDir>$(CSVDataLayerDir)\lib</CSVDataLayerLibDir>
   </PropertyGroup>
 
   <ItemGroup>
@@ -318,7 +319,12 @@
                $(CSVDataLayerDir)\*\*\.svn\**;
                $(CSVDataLayerDir)\*\*\*\.svn\**;">                    
     </CSVDataLayerDeployment>
-    
+
+    <CSVDataLayerLib
+      Include="Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll;
+               Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;">
+    </CSVDataLayerLib>
+
     <CSVDataLayerLibDeployment
       Include="ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.chm;
                ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.dll;
@@ -418,6 +424,10 @@
   <Target Name="CoreBuild" DependsOnTargets="Version">
     <Message Text="Performing MSBuild ..." />
     <MSBuild Projects="$(SolutionFile)" Targets="Build"/>
+  </Target>
+
+  <Target Name="SDKBuild" DependsOnTargets="CoreBuild; DeployToSDK">
+    <Message Text="Performing MSBuild of SDK ..." />
     <MSBuild Projects="$(CSVDataLayerSolutionFile)" Targets="Build"/>
   </Target>
 
@@ -522,13 +532,20 @@
           DestinationFiles="@(CSVDataLayerLibDeployment->'$(CSVDataLayerLibDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
   </Target>
 
+  <Target Name="DeployToSDK">
+   
+    <Message Text="Deploying to CSVDataLayer library ..." />
+    <Copy SourceFiles="@(CSVDataLayerLib)"
+          DestinationFiles="@(CSVDataLayerLib->'$(CSVDataLayerLibDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+
   <Target Name="CreatePackages" DependsOnTargets="CreateDeployment">
     <Exec Command="$(zipCmd) %(DeploymentPackage.Options) %(DeploymentPackage.ZipFile) %(DeploymentPackage.FileSet)" />
   </Target>
 
-  <Target Name="Build" DependsOnTargets="SvnUpdate; CoreBuild"/>
+  <Target Name="Build" DependsOnTargets="SvnUpdate; CoreBuild; SDKBuild"/>
 
-  <Target Name="Rebuild" DependsOnTargets="SvnUpdate; CleanBuild; PrepareBuild; CoreBuild"/>
+  <Target Name="Rebuild" DependsOnTargets="SvnUpdate; CleanBuild; PrepareBuild; CoreBuild; SDKBuild"/>
 
   <Target Name="All" DependsOnTargets="Rebuild; Test; CreatePackages"/>
 </Project>

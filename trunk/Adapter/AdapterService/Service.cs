@@ -242,7 +242,7 @@ namespace org.iringtools.adapter
       /// <param name="applicationName"></param>
       /// <param name="request"></param>
       /// <returns></returns>
-    public Response PushDTO(string projectName, string applicationName, Request request)
+    public Response PushDTO(string projectName, string applicationName, PushRequest request)
     {
        return _adapterProvider.Push(projectName, applicationName, request);
     }

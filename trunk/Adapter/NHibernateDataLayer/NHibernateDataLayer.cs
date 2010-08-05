@@ -219,6 +219,7 @@ namespace org.iringtools.adapter.datalayer
               {
                 status.Level = StatusLevel.Error;
                 status.Messages.Add(string.Format("Error while posting record [{0}]. {1}", identifier, ex));
+                status.Results.Add("ResultTag", identifier);
               }
 
               response.Append(status);

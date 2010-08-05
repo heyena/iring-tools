@@ -825,7 +825,7 @@ namespace org.iringtools.adapter
     }
 
       //Gets from datalayer and send it to another endpoint
-    public Response Push(string projectName, string applicationName, Request request)
+    public Response Push(string projectName, string applicationName, PushRequest request)
     {
         Status status = new Status();
         status.Messages = new List<string>();
@@ -872,7 +872,27 @@ namespace org.iringtools.adapter
 
             _isDataLayerInitialized = false;
             _isScopeInitialized = false;
-            _response = httpClient.Post<XElement, Response>(@"/" + projectNameForPush + "/" + applicationNameForPush + "/" + graphNameForPush + "?format=" + format, xml, true);
+            Response localResponse = httpClient.Post<XElement, Response>(@"/" + projectNameForPush + "/" + applicationNameForPush + "/" + graphNameForPush + "?format=" + format, xml, true);
+
+            _response.Append(localResponse);
+
+            foreach (Status responseStatus in localResponse.StatusList)
+            {
+              string dataObjectName = request.ExpectedResults.DataObjectName;
+
+              IList<IDataObject> dataObjects = _dataLayer.Get(
+                dataObjectName, new List<string> { responseStatus.Identifier });
+
+              foreach (var resultMap in request.ExpectedResults)
+              {
+                string propertyValue = responseStatus.Results[resultMap.Key];
+                string dataPropertyName = resultMap.Value;
+                
+                dataObjects[0].SetPropertyValue(dataPropertyName, propertyValue);
+              }
+
+              _response.Append(_dataLayer.Post(dataObjects));
+            }
         }
         catch (Exception ex)
         {

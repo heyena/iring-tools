@@ -338,7 +338,7 @@ namespace AdapterService.Tests
     public void Push()
     {
         AdapterProxy target = new AdapterProxy();
-        Request request = new Request();
+        PushRequest request = new PushRequest();
         WebCredentials targetCredentials = new WebCredentials();
         string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
         string adapterServiceUri = System.Configuration.ConfigurationManager.AppSettings["AdapterServiceUri"].ToString();
