@@ -50,7 +50,7 @@
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="200*"/>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="200"/>
                     </Grid.ColumnDefinitions>
                     <Border Grid.Row="0" Grid.Column="0" BorderBrush="Gray" BorderThickness="1" CornerRadius="5" >
                         <basic:TreeView x:Name="tvwScopes" Height="Auto" BorderBrush="#8FA0AE" BorderThickness="1" >
@@ -63,18 +63,18 @@
                             <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="5" Margin="5,5,5,5">
                                 <StackPanel Orientation="Vertical" VerticalAlignment="Top">
                                     <TextBlock Text="Name:" FontSize="11" Margin="5,5,5,0" />
-                                    <TextBox x:Name="tbNewPrjName" Width="110" Height="22" Margin="5,5,5,0" />
+                                    <TextBox x:Name="tbNewPrjName" Width="160" Height="22" Margin="5,5,5,0" />
                                     <TextBlock Text="Description:" FontSize="11" Margin="5,5,5,0" />
-                                    <TextBox x:Name="tbNewPrjDesc" Width="110" Height="22" Margin="5,5,5,5" />
+                                    <TextBox x:Name="tbNewPrjDesc" Width="160" Height="22" Margin="5,5,5,5" />
                                 </StackPanel>
                             </Border>
                             <TextBlock Text="Application:" FontSize="11" Margin="5,5,5,0" />
                             <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="5" Margin="5,5,5,5">
                                 <StackPanel Orientation="Vertical" VerticalAlignment="Top">
                                     <TextBlock Text="Name:" FontSize="11" Margin="5,5,5,0" />
-                                    <TextBox x:Name="tbNewAppName" Width="110" Height="22" Margin="5,5,5,0" />
+                                    <TextBox x:Name="tbNewAppName" Width="160" Height="22" Margin="5,5,5,0" />
                                     <TextBlock Text="Description:" FontSize="11" Margin="5,5,5,0" />
-                                    <TextBox x:Name="tbNewAppDesc" Width="110" Height="22" Margin="5,5,5,5" />
+                                    <TextBox x:Name="tbNewAppDesc" Width="160" Height="22" Margin="5,5,5,5" />
                                 </StackPanel>
                             </Border>
                             <Button x:Name="btnAddScope" Content="Add" Width="110" Height="24" Margin="5,5,5,0" Click="btnAddScope_Click" />

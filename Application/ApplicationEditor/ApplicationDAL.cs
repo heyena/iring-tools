@@ -184,7 +184,7 @@ namespace ApplicationEditor
       {
         string result = ((UploadStringCompletedEventArgs)e).Result;
         Response response = result.DeserializeDataContract<Response>();
-
+        
         args = new CompletedEventArgs
         {
           CompletedType = CompletedEventType.PostScopes,
@@ -537,7 +537,7 @@ namespace ApplicationEditor
         {
           schemaObjects = result.DeserializeDataContract<string[]>();
         }
-        else
+        else 
         {
           return;
         }
