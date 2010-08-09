@@ -2511,7 +2511,7 @@ namespace org.ids_adi.iring.referenceData
                         {
                             roleDefinition.range = result["type"];
                         }
-                        if (name.value.Equals(string.Empty))
+                        if (string.IsNullOrEmpty(name.value))
                             name.value = roleDefinition.identifier.Replace(roleDefinition.identifier.Substring(0, roleDefinition.identifier.LastIndexOf("#") + 1), "");
                         roleDefinition.name.Add(name);
                         //Utility.SearchAndInsert(roleDefinitions, roleDefinition, RoleDefinition.sortAscending()); //problem with search an insert - skips some roles
