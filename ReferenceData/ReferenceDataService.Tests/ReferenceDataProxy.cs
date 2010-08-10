@@ -148,6 +148,11 @@ namespace ReferenceDataService.Tests
         return _referenceDataServiceProvider.Part8Search(query);
     }
 
+    public Response PostPart8Class(QMXF qmxf)
+    {
+        return _referenceDataServiceProvider.PostPart8Class(qmxf);
+    }
+
     #endregion Part8
   }
 }

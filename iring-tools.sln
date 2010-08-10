@@ -116,6 +116,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MappingEditor.Web", "MappingEditor\MappingEditor.Web\MappingEditor.Web.csproj", "{A02C36B0-AA71-4584-862F-68BC9B94BD65}"
 EndProject
 Global
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = iring-tools.vsmdi
 	EndGlobalSection
@@ -1179,9 +1183,5 @@ Global
 		{748B993D-4F65-4A39-B865-6A7D5412C4BA} = {270F5203-FE58-480F-AF4B-C38D4461FEEC}
 		{04C08B97-3D9E-4BB4-B0EC-6AE035105BF8} = {05A05970-7324-4D5A-9B69-4BF1542676F3}
 		{1A611244-54BE-4F12-AA34-12F54A2B07E6} = {05A05970-7324-4D5A-9B69-4BF1542676F3}
-	EndGlobalSection
-	GlobalSection(SubversionScc) = preSolution
-		Svn-Managed = True
-		Manager = AnkhSVN - Subversion Support for Visual Studio
 	EndGlobalSection
 EndGlobal
