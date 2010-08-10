@@ -197,6 +197,10 @@ namespace org.ids_adi.iring.referenceData
     [WebGet(UriTemplate = "/part8/search/{query}")]
     RefDataEntities Part8Search(string query);
 
+    [OperationContract]
+    [WebInvoke(UriTemplate = "/part8/classes")]
+    Response PostPart8Class(QMXF @class);
+
     #endregion
   }
 

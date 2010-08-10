@@ -2792,15 +2792,16 @@ namespace org.ids_adi.iring.referenceData
                    // classifications = new List<Classification>();
                     specializations = new List<Specialization>();
 
+                    classDefinition = new ClassDefinition();
+
+                    classDefinition.identifier = "http://rdl.rdlfacade.org/data#" + id;
+                    classDefinition.repositoryName = repository.name;
+                    name = new QMXFName();
+
                     foreach (Dictionary<string, string> result in results)
                     {
-                        classDefinition = new ClassDefinition();
-
-                        classDefinition.identifier = "http://rdl.rdlfacade.org/data#" + id;
-                        classDefinition.repositoryName = repository.name;
-                        name = new QMXFName();
+                        
                         description = new Description();
-                        status = new QMXFStatus();
 
                         if (result.ContainsKey("label"))
                             name.value = result["label"];
@@ -2811,13 +2812,11 @@ namespace org.ids_adi.iring.referenceData
                         classDefinition.name.Add(name);
                         classDefinition.description.Add(description);
                         
-                        //classifications = GetPart8Classifications(id);
-                        specializations = GetPart8Specializations(id);
-                        //classDefinition.classification = classifications;
-                        classDefinition.specialization = specializations;
-
-                        qmxf.classDefinitions.Add(classDefinition);
                     }
+                    specializations = GetPart8Specializations(id);
+                    classDefinition.specialization = specializations;
+
+                    qmxf.classDefinitions.Add(classDefinition);
 
                 }
 
@@ -2977,6 +2976,153 @@ namespace org.ids_adi.iring.referenceData
             }
         }
 
+        public Response PostPart8Class(QMXF qmxf)
+        {
+            Status status = new Status();
+
+            try
+            {
+                int count = 0;
+                /*SPARQL sparqlQuery = new SPARQL();
+
+                Clause insertClause = new Clause();
+                insertClause.SetSPARQLType(Clause.SPARQLType.Insert);
+
+                sparqlQuery.AddClause(insertClause);*/
+
+                string sparql = "PREFIX eg: <http://example.org/data#> "
+                                + "PREFIX rdl: <http://rdl.rdlfacade.org/data#> "
+                                + "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
+                                + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
+                                + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "
+                                + "PREFIX part8: <http://tpl.rdlfacade.org/data#> "
+                                + "PREFIX owl: <http://www.w3.org/2002/07/owl#> "
+                                + "PREFIX owl2xml: <http://www.w3.org/2006/12/owl2-xml#> "
+                                + "PREFIX p8: <http://standards.tc184-sc4.org/iso/15926/-8/template-model#> "
+                                + "PREFIX templates: <http://standards.tc184-sc4.org/iso/15926/-8/templates#> "
+                                + "PREFIX dm: <http://standards.tc184-sc4.org/iso/15926/-8/data-model#> "
+                                + "INSERT DATA { ";
+                string nameSparql = string.Empty;
+                string specSparql = string.Empty;
+                string classSparql = string.Empty;
+
+                int repository = qmxf.targetRepository != null ? getIndexFromName(qmxf.targetRepository) : 0;
+                Repository source = _repositories[repository];
+
+                Utility.WriteString("Number of classes to insert: " + qmxf.classDefinitions.Count.ToString(), "stats.log", true);
+                foreach (ClassDefinition Class in qmxf.classDefinitions)
+                {
+
+                    string ID = string.Empty;
+                    string id = string.Empty;
+                    string label = string.Empty;
+                    string description = string.Empty;
+                    string specialization = string.Empty;
+                    string classification = string.Empty;
+                    string generatedId = string.Empty;
+                    string serviceUrl = string.Empty;
+                    string className = string.Empty;
+                    int classIndex = -1;
+
+                    if (source.isReadOnly)
+                    {
+                        status.Level = StatusLevel.Error;
+                        status.Messages.Add("Repository is Read Only");
+                        _response.Append(status);
+                        return _response;
+                    }
+
+                    ID = Class.identifier;
+
+                    QMXF q = new QMXF();
+                    if (ID != null)
+                    {
+                        id = ID.Substring((ID.LastIndexOf("#") + 1), ID.Length - (ID.LastIndexOf("#") + 1));
+
+                        q = GetClass(id);
+
+                        foreach (ClassDefinition classFound in q.classDefinitions)
+                        {
+                            classIndex++;
+                            if (classFound.repositoryName.Equals(_repositories[repository].name))
+                            {
+                                ID = "<" + ID + ">";
+                                Utility.WriteString("Class found: " + q.classDefinitions[classIndex].name[0].value, "stats.log", true);
+                                break;
+                            }
+                        }
+                    }
+
+                    if (q.classDefinitions.Count == 0)
+                    {
+                        //add the class
+                        foreach (QMXFName name in Class.name)
+                        {
+                            label = name.value;
+                            count++;
+                            Utility.WriteString("Inserting : " + label, "stats.log", true);
+
+                            className = "Class definition " + label;
+
+                            if (_useExampleRegistryBase)
+                                generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], className);
+                            else
+                                generatedId = CreateIdsAdiId(_settings["ClassRegistryBase"], className);
+
+                            ID = "<" + generatedId + ">";
+
+                            Utility.WriteString("\n" + ID + "\t" + label, "Class IDs.log", true);
+
+                            sparql += ID + " rdf:type owl:Class ; ";
+                            //ID = Class.identifier.Remove(0, 1);
+
+                            //if (Class.description.Count == 0)
+                            //{
+                            //    sparql += ID + " rdfs:label \"" + label + "\"^^xsd:string . ";
+                            //}
+                            //else
+                            //{
+                            //    sparql += ID + " rdfs:label \"" + label + "\"^^xsd:string ; ";
+                            //}
+                            foreach (Description descr in Class.description)
+                            {
+                                description = descr.value;
+                                sparql += "rdfs:comment \"" + description + "\"^^xsd:string ; ";
+                            }
+
+                            //append Specialization to sparql query
+                            foreach (Specialization spec in Class.specialization)
+                            {
+                                /// Note: QMXF contains only superclass info while qxf and rdf contain superclass and subclass info
+                                specialization = spec.reference;
+                                sparql += "rdfs:subClassOf " + specialization + "; ";
+                            }
+
+                            //remove last semi-colon
+                            sparql = sparql.Insert(sparql.LastIndexOf("."), "}").Remove(sparql.Length - 1);
+                            if (!label.Equals(String.Empty))
+                            {
+                                Reset(label);
+                            }
+                            _response = PostToRepository(source, sparql);
+                        }
+                    }
+                }
+
+                Utility.WriteString("Insertion Done", "stats.log", true);
+                Utility.WriteString("Total classes inserted: " + count, "stats.log", true);
+
+                return _response;
+            }
+
+            catch (Exception e)
+            {
+                Utility.WriteString(e.ToString(), "error.log");
+                _log4netLogger.Error("Error in PostClass: " + e);
+                throw e;
+            }
+        }
+        
         #endregion Part8
     }
 }
