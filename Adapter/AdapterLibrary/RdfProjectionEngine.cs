@@ -313,7 +313,7 @@ namespace org.iringtools.adapter.projection
 
       XElement preElement = new XElement(OWL_THING);
       preElement.Add(new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, templateId)));
-      preElement.Add(new XAttribute(RDF_ABOUT, ""));
+      //preElement.Add(new XAttribute(RDF_ABOUT, ""));
 
       #region RoleType.Possessor
       foreach (RoleMap roleMap in templateMap.roleMaps.Where(o => o.type == RoleType.Possessor))
@@ -321,7 +321,7 @@ namespace org.iringtools.adapter.projection
         string roleId = roleMap.roleId.Substring(roleMap.roleId.IndexOf(":") + 1);
         string dataType = String.Empty;
         XElement roleElement = new XElement(TPL_NS + roleId);
-        
+
         roleElement.Add(new XAttribute(RDF_RESOURCE, classInstance));
         preElement.Add(roleElement);
         break;
@@ -372,7 +372,7 @@ namespace org.iringtools.adapter.projection
         }
 
         preElement.Add(roleElement);
-        break;
+        //break;
 
       }
       #endregion
@@ -395,85 +395,99 @@ namespace org.iringtools.adapter.projection
       #endregion
 
       #region RoleType.Property
-
-      //RelatedObject cache
-      Dictionary<string, List<IDataObject>> relatedObjects = new Dictionary<string, List<IDataObject>>();
-
-      List<XElement> templateElements = new List<XElement>();
-      List<XElement> propertyElements = new List<XElement>();
-      
-      //Add orignal template without property values to parent array
-      templateElements.Add(preElement);
-
-      foreach (RoleMap roleMap in templateMap.roleMaps.Where(o => o.type == RoleType.Property))
+      List<RoleMap> roleMaps = templateMap.roleMaps.Where(o => o.type == RoleType.Property).ToList<RoleMap>();
+      if (roleMaps.Count == 0)
       {
-        string roleId = roleMap.roleId.Substring(roleMap.roleId.IndexOf(":") + 1);
-                
-        #region Process PropertyMapping
+        return new List<XElement> { preElement };
+      }
+
+      int maxRelatedObjectsCount = 0;
+      Dictionary<string, List<IDataObject>> relatedObjects = new Dictionary<string, List<IDataObject>>();
+      Dictionary<string, RoleMap> objectPathRoleMaps = new Dictionary<string, RoleMap>();
+
+      foreach (RoleMap roleMap in roleMaps)
+      {
         string propertyMap = roleMap.propertyName;
-        string propertyName = propertyMap.Substring(propertyMap.LastIndexOf('.')+1);
-        string objectPath = propertyMap.Substring(0, propertyMap.LastIndexOf('.'));
+        string propertyName = propertyMap.Substring(propertyMap.LastIndexOf('.') + 1);
+        string objectPath = propertyMap.Substring(0, propertyMap.IndexOf('.'));
         List<IDataObject> valueObjects;
 
         //Get Related Object(s)
         if (!relatedObjects.TryGetValue(objectPath, out valueObjects))
-        {          
-          valueObjects = GetRelatedObjects(roleMap.propertyName, dataObject);
-          relatedObjects.Add(objectPath, valueObjects);
-        }
-        #endregion
-
-        foreach (XElement templateElement in templateElements)
         {
-          foreach (IDataObject valueObject in valueObjects)
+          valueObjects = GetRelatedObjects(propertyName, dataObject);
+          relatedObjects.Add(propertyMap, valueObjects);
+          objectPathRoleMaps.Add(propertyMap, roleMap);
+
+          if (valueObjects.Count > maxRelatedObjectsCount)
+            maxRelatedObjectsCount = valueObjects.Count;
+        }
+      }
+
+      XElement[] templateElements = new XElement[maxRelatedObjectsCount];
+      for (int i = 0; i < maxRelatedObjectsCount; i++)
+      {
+        templateElements[i] = new XElement(preElement);
+
+        foreach (var pair in relatedObjects)
+        {
+          string propertyMap = pair.Key;
+          List<IDataObject> valueObjects = pair.Value;
+          RoleMap roleMap = objectPathRoleMaps[propertyMap];
+
+          string roleId = roleMap.roleId.Substring(roleMap.roleId.IndexOf(":") + 1);
+          string propertyName = propertyMap.Substring(propertyMap.LastIndexOf('.') + 1);
+
+          XElement roleElement = null;
+          for (int j = 0; j < maxRelatedObjectsCount; j++)
           {
-            string dataType = String.Empty;
-            XElement roleElement = new XElement(TPL_NS + roleId);
-            
-            #region Process PropertyValue
-            string value = Convert.ToString(valueObject.GetPropertyValue(propertyName));
-            if (String.IsNullOrEmpty(roleMap.valueList))
+            IDataObject valueObject = null;
+            if (j < valueObjects.Count)
             {
-              if (String.IsNullOrEmpty(value))
+              valueObject = valueObjects[j];
+              roleElement = new XElement(TPL_NS + roleId);
+
+              #region Process PropertyValue
+              string value = Convert.ToString(valueObject.GetPropertyValue(propertyName));
+              if (String.IsNullOrEmpty(roleMap.valueList))
               {
-                roleElement.Add(new XAttribute(RDF_RESOURCE, RDF_NIL));
+                if (String.IsNullOrEmpty(value))
+                {
+                  roleElement.Add(new XAttribute(RDF_RESOURCE, RDF_NIL));
+                }
+                else
+                {
+                  roleMapValues.Append(value);
+                  string dataType = roleMap.dataType.Replace(XSD_PREFIX, XSD_NS.NamespaceName);
+                  roleElement.Add(new XAttribute(RDF_DATATYPE, dataType));
+                  roleElement.Add(new XText(value));
+                }
               }
-              else
+              else // resolve value list to uri
               {
-                roleMapValues.Append(value);
-                dataType = roleMap.dataType.Replace(XSD_PREFIX, XSD_NS.NamespaceName);
-                roleElement.Add(new XAttribute(RDF_DATATYPE, dataType));
-                roleElement.Add(new XText(value));
+                string valueListUri = _mapping.ResolveValueList(roleMap.valueList, value);
+
+                roleMapValues.Append(valueListUri);
+                roleElement.Add(new XAttribute(RDF_RESOURCE, valueListUri));
               }
+              #endregion
+
+              templateElements[i].Add(roleElement);
             }
-            else // resolve value list to uri
+            else
             {
-              string valueListUri = _mapping.ResolveValueList(roleMap.valueList, value);
-
-              roleMapValues.Append(valueListUri);
-              roleElement.Add(new XAttribute(RDF_RESOURCE, valueListUri));
+              templateElements[i].Add(roleElement);
             }
-            #endregion
-
-            //Copy the template and add the current property value
-            XElement copyElement = new XElement(templateElement);
-            copyElement.Add(roleElement);
-            propertyElements.Add(copyElement);
           }
         }
-
-        //Swap the arrays around for futher processing
-        templateElements = propertyElements;
-
-        break;
       }
       #endregion
-      
+
       //GvR not sure how to resolve this
       //string hashCode = Utility.ComputeHash(templateId + roleMapValues.ToString());
       //templateElement.Add(new XAttribute(RDF_ABOUT, hashCode));
 
-      return templateElements;
+      return templateElements.ToList<XElement>();
     }
 
     private void PopulateDataObjects(int classInstanceCount)
@@ -525,7 +539,7 @@ namespace org.iringtools.adapter.projection
             {
               SparqlResultSet sparqlResultSet = (SparqlResultSet)results;
               int dataObjectIndex = 0;
-          
+
               foreach (SparqlResult sparqlResult in sparqlResultSet)
               {
                 string value = Regex.Replace(sparqlResult.ToString(), @".*= ", String.Empty);
@@ -536,7 +550,7 @@ namespace org.iringtools.adapter.projection
                   value = value.Substring(0, value.IndexOf("^^"));
                 else if (!String.IsNullOrEmpty(roleMap.valueList))
                   value = _mapping.ResolveValueMap(roleMap.valueList, value);
-                
+
                 _dataObjects[dataObjectIndex++].SetPropertyValue(propertyName, value);
               }
             }
