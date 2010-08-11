@@ -161,6 +161,7 @@ namespace AdapterService.Tests
 
     //  Request request = new Request
     //  {
+
     //    {"targetUri", "http://localhost/InterfaceService/sparql/"},
     //    {"graphName", "Lines"},
     //  };
