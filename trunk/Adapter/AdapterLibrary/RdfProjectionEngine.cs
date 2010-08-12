@@ -311,6 +311,9 @@ namespace org.iringtools.adapter.projection
       string templateId = templateMap.templateId.Replace(TPL_PREFIX, TPL_NS.NamespaceName);
       StringBuilder roleMapValues = new StringBuilder();
 
+      //RelatedObject cache
+      Dictionary<string, List<IDataObject>> relatedObjects = new Dictionary<string, List<IDataObject>>();
+
       XElement preElement = new XElement(OWL_THING);
       preElement.Add(new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, templateId)));
       //preElement.Add(new XAttribute(RDF_ABOUT, ""));
@@ -348,11 +351,24 @@ namespace org.iringtools.adapter.projection
             }
             else
             {
-              string[] property = identifier.Split('.');
-              string objectName = property[0].Trim();
-              string propertyName = property[1].Trim();
+              //string[] property = identifier.Split('.');
+              //string objectName = property[0].Trim();
+              //string propertyName = property[1].Trim();
 
-              if (dataObject != null)
+              #region Process RoleMapping
+              string propertyName = identifier.Substring(identifier.LastIndexOf('.') + 1);
+              string objectPath = identifier.Substring(0, identifier.LastIndexOf('.'));
+              List<IDataObject> valueObjects;
+
+              //Get Related Object(s)
+              if (!relatedObjects.TryGetValue(objectPath, out valueObjects))
+              {
+                valueObjects = GetRelatedObjects(identifier, dataObject);
+                relatedObjects.Add(objectPath, valueObjects);
+              }
+              #endregion
+
+              foreach (IDataObject valueObject in valueObjects)
               {
                 string value = Convert.ToString(dataObject.GetPropertyValue(propertyName));
 
@@ -402,7 +418,7 @@ namespace org.iringtools.adapter.projection
       }
 
       int maxRelatedObjectsCount = 0;
-      Dictionary<string, List<IDataObject>> relatedObjects = new Dictionary<string, List<IDataObject>>();
+      //Dictionary<string, List<IDataObject>> relatedObjects = new Dictionary<string, List<IDataObject>>();
       Dictionary<string, RoleMap> objectPathRoleMaps = new Dictionary<string, RoleMap>();
 
       foreach (RoleMap roleMap in roleMaps)
