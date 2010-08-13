@@ -124,6 +124,7 @@
     <Compile Include="AdapterProvider.cs" />
     <Compile Include="DtoProjectionEngine.cs" />
     <Compile Include="DxoProjectionEngine.cs" />
+    <Compile Include="ExchangeProvider.cs" />
     <Compile Include="IProjectionLayer.cs" />
     <Compile Include="ISemanticLayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

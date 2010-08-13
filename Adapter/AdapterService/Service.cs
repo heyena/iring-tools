@@ -44,6 +44,7 @@ namespace org.iringtools.adapter
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterService));
     private AdapterProvider _adapterProvider = null;
+    private ExchangeProvider _exchangeProvider = null;
 
     /// <summary>
     /// Adapter Service Constructor
@@ -51,6 +52,7 @@ namespace org.iringtools.adapter
     public AdapterService()
     {
       _adapterProvider = new AdapterProvider(ConfigurationManager.AppSettings);
+      _exchangeProvider = new ExchangeProvider(ConfigurationManager.AppSettings);
     }
 
     /// <summary>
@@ -263,6 +265,23 @@ namespace org.iringtools.adapter
     public Response DeleteGraph(string projectName, string applicationName, string graphName)
     {
       return _adapterProvider.Delete(projectName, applicationName, graphName);
+    }
+
+    /// <summary>
+    /// Gets a dictionary of identifiers and hash values.
+    /// </summary>
+    /// <param name="projectName"></param>
+    /// <param name="applicationName"></param>
+    /// <param name="graphName"></param>
+    /// <returns></returns>
+    public XElement GetDxi(string projectName, string applicationName, Request request)
+    {
+      return _exchangeProvider.GetDxi(projectName, applicationName, request);
+    }
+    
+    public XElement GetPage(string projectName, string applicationName, Request request)
+    {
+      return _exchangeProvider.GetPage(projectName, applicationName, request);
     }
   }
 }

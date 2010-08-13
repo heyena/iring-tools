@@ -1004,7 +1004,7 @@ namespace org.iringtools.utility
       return result.ToString();
     }
 
-    public static string ComputeHash(string source)
+    public static string MD5Hash(string source)
     {
       MD5CryptoServiceProvider hashProvider = new MD5CryptoServiceProvider();       
       byte[] tmpSource = ASCIIEncoding.ASCII.GetBytes(source);
