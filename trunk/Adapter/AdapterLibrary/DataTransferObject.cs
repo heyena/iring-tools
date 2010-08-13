@@ -168,4 +168,14 @@ namespace org.iringtools.adapter
     [EnumMember]
     Delete,
   }
+
+  [CollectionDataContract(Namespace = "http://iringtools.org/adapter/library/dto", Name = "dataTransferIndices", ItemName = "dataTransferIndex", KeyName = "identifier", ValueName = "hashValue")]
+  public class DataTransferIndices : Dictionary<string, string> {}
+
+  [DataContract]
+  public enum HashAlgorithm
+  {
+    [EnumMember]
+    MD5,
+  }
 }

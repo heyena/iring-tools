@@ -92,9 +92,11 @@ namespace org.iringtools.adapter
     XElement GetList(string projectName, string applicationName, string graphName, string format);
     #endregion
 
+    #region Xml Post
     [OperationContract]
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}")]
     Response Post(string projectName, string applicationName, string graphName, string format, XElement xml);
+    #endregion
 
     #region Xml DataExchange
     //Xml Pull style DataExchange
@@ -131,6 +133,18 @@ namespace org.iringtools.adapter
     [OperationContract]
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/pull?method=sparql")]
     Response Pull(string projectName, string applicationName, Request request);
+    #endregion
+
+    #region DTO DataExchange
+    [OperationContract]
+    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/dxi")]
+    // request must include graphName and manifest
+    XElement GetDxi(string projectName, string applicationName, Request request);
+
+    [OperationContract]
+    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/page")]
+    // request must include graphName, manifest, and list of identifiers
+    XElement GetPage(string projectName, string applicationName, Request request);
     #endregion
   }
 }

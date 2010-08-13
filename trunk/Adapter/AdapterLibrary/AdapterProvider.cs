@@ -123,11 +123,8 @@ namespace org.iringtools.adapter
       _response.StatusList = new List<Status>();
       _kernel.Bind<Response>().ToConstant(_response);
     }
-
-    #region public methods
-
+    
     #region application methods
-
     public List<ScopeProject> GetScopes()
     {
       try
@@ -251,7 +248,6 @@ namespace org.iringtools.adapter
       _response.Append(status);
       return _response;
     }
-
     #endregion
 
     #region adapter methods
@@ -824,7 +820,7 @@ namespace org.iringtools.adapter
       return _response;
     }
 
-      //Gets from datalayer and send it to another endpoint
+    //Gets from datalayer and send it to another endpoint
     public Response Push(string projectName, string applicationName, PushRequest request)
     {
         Status status = new Status();
@@ -947,8 +943,6 @@ namespace org.iringtools.adapter
 
       return response;
     }
-    #endregion
-
     #endregion
 
     #region private methods
@@ -1382,6 +1376,8 @@ namespace org.iringtools.adapter
       }
       return dataObjects;
     }
+
+
     #endregion
   }
 }

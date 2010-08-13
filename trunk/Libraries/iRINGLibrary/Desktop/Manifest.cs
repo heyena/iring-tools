@@ -27,6 +27,7 @@
 using System.Runtime.Serialization;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System;
 
 namespace org.iringtools.library.manifest
 {
@@ -43,6 +44,22 @@ namespace org.iringtools.library.manifest
 
     [DataMember(Name = "version", Order = 1, EmitDefaultValue = false)]
     public string Version { get; set; }
+
+    public Graph FindGraph(string graphName)
+    {
+      foreach (Graph graph in Graphs)
+      {
+        if (graph.Name.ToLower() == graphName.ToLower())
+        {
+          if (graph.ClassTemplatesMaps.Count == 0)
+            throw new Exception("Graph [" + graphName + "] is empty.");
+
+          return graph;
+        }
+      }
+
+      throw new Exception("Graph [" + graphName + "] does not exist.");
+    }
   }
 
   [DataContract(Namespace = "http://iringtools.org/adapter/library/manifest", Name = "graph")]

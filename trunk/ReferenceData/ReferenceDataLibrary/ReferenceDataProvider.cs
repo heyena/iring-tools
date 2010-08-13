@@ -2771,7 +2771,7 @@ namespace org.ids_adi.iring.referenceData
                 ClassDefinition classDefinition;
                 QMXFName name;
                 Description description;
-                QMXFStatus status;
+                //QMXFStatus status;
                 //List<Classification> classifications = new List<Classification>();
                 List<Specialization> specializations = new List<Specialization>();
 

@@ -259,6 +259,11 @@ namespace org.iringtools.adapter.projection
           {
             string propertyName = roleMap.propertyName.Substring(_graphMap.dataObjectMap.Length + 1);
             roleObject.value = Convert.ToString(_dataObjects[dataObjectIndex].GetPropertyValue(propertyName));
+
+            if (!String.IsNullOrEmpty(roleMap.valueList))
+            {
+              roleObject.value = _mapping.ResolveValueList(roleMap.valueList, roleObject.value);
+            }
           }
           else if (roleMap.type == RoleType.Reference)
           {
