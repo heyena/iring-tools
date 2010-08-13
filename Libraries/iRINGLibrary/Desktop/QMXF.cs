@@ -33,7 +33,7 @@ using System.Text;
 
 namespace org.ids_adi.qmxf
 {
-    [DataContract]
+    [DataContract(Name="qmxf")]
     [XmlRoot(ElementName = "qmxf", Namespace = "http://ns.ids-adi.org/qxf/model#")]
     public class QMXF
     {
@@ -45,31 +45,31 @@ namespace org.ids_adi.qmxf
             this.licenses = new List<License>();
         }
 
-        [DataMember]
+        [DataMember(Name = "class-definition", EmitDefaultValue = false)]
         [XmlElement(ElementName = "class-definition")]
         public List<ClassDefinition> classDefinitions { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "template-definition", EmitDefaultValue = false)]
         [XmlElement(ElementName = "template-definition")]
         public List<TemplateDefinition> templateDefinitions { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "template-qualification", EmitDefaultValue = false)]
         [XmlElement(ElementName = "template-qualification")]
         public List<TemplateQualification> templateQualifications { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "license", EmitDefaultValue = false)]
         [XmlElement(ElementName = "license")]
         public List<License> licenses { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "timestamp", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "timestamp")]
         public string timestamp { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "license-ref", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "license-ref")]
         public string licenseRef { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "targetRepository", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "targetRepository")]
         public string targetRepository { get; set; }
 
@@ -90,39 +90,39 @@ namespace org.ids_adi.qmxf
             this.repositoryName = string.Empty;
         }
 
-        [DataMember]
+        [DataMember(Name = "repository", EmitDefaultValue = false)]
         [XmlElement(ElementName = "repository")]
         public string repositoryName { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "suggested-designation", EmitDefaultValue = false)]
         [XmlElement(ElementName = "suggested-designation")]
         public List<SuggestedDesignation> suggestedDesignation { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "designation", EmitDefaultValue = false)]
         [XmlElement(ElementName = "designation")]
         public Designation designation { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "name", EmitDefaultValue = false)]
         [XmlElement(ElementName = "name")]
         public List<QMXFName> name { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "description", EmitDefaultValue = false)]
         [XmlElement(ElementName = "description")]
         public List<Description> description { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "textual-definition", EmitDefaultValue = false)]
         [XmlElement(ElementName = "textual-definition")]
         public List<TextualDefinition> textualDefinition { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "status", EmitDefaultValue = false)]
         [XmlElement(ElementName = "status")]
         public List<QMXFStatus> status { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "id", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "id")]
         public string identifier { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "role-definition", EmitDefaultValue = false)]
         [XmlElement(ElementName = "role-definition")]
         public List<RoleDefinition> roleDefinition { get; set; }
     }
@@ -142,47 +142,47 @@ namespace org.ids_adi.qmxf
           this.repositoryName = string.Empty;
         }
 
-        [DataMember]
+        [DataMember(Name = "repository", EmitDefaultValue = false)]
         [XmlElement(ElementName = "repository")]
         public string repositoryName { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "entity-type", EmitDefaultValue = false)]
         [XmlElement(ElementName = "entity-type")]
         public EntityType entityType { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "classification", EmitDefaultValue = false)]
         [XmlElement(ElementName = "classification")]
         public List<Classification> classification { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "specialization", EmitDefaultValue = false)]
         [XmlElement(ElementName = "specialization")]
         public List<Specialization> specialization { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "suggested-designation", EmitDefaultValue = false)]
         [XmlElement(ElementName = "suggested-designation")]
         public List<SuggestedDesignation> suggestedDesignation { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "designation", EmitDefaultValue = false)]
         [XmlElement(ElementName = "designation")]
         public Designation designation { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "name", EmitDefaultValue = false)]
         [XmlElement(ElementName = "name")]
         public List<QMXFName> name { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "description", EmitDefaultValue = false)]
         [XmlElement(ElementName = "description")]
         public List<Description> description { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "textual-definition", EmitDefaultValue = false)]
         [XmlElement(ElementName = "textual-definition")]
         public List<TextualDefinition> textualDefinition { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "status", EmitDefaultValue = false)]
         [XmlElement(ElementName = "status")]
         public List<QMXFStatus> status { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "id", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "id")]
         public string identifier { get; set; }
 
@@ -202,39 +202,39 @@ namespace org.ids_adi.qmxf
           this.roleQualification = new List<RoleQualification>();
         }
 
-        [DataMember]
+        [DataMember(Name = "suggested-designation", EmitDefaultValue = false)]
         [XmlElement(ElementName = "suggested-designation")]
         public List<SuggestedDesignation> suggestedDesignation { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "designation", EmitDefaultValue = false)]
         [XmlElement(ElementName = "designation")]
         public List<Designation> designation { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "name", EmitDefaultValue = false)]
         [XmlElement(ElementName = "name")]
         public List<QMXFName> name { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "description", EmitDefaultValue = false)]
         [XmlElement(ElementName = "description")]
         public List<Description> description { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "textual-definition", EmitDefaultValue = false)]
         [XmlElement(ElementName = "textual-definition")]
         public List<TextualDefinition> textualDefinition { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "status", EmitDefaultValue = false)]
         [XmlElement(ElementName = "status")]
         public List<QMXFStatus> status { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "id", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "id")]
         public string identifier { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "qualifies", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "qualifies")]
         public string qualifies { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "role-qualification", EmitDefaultValue = false)]
         [XmlElement(ElementName = "role-qualification")]
         public List<RoleQualification> roleQualification { get; set; }
 
@@ -248,7 +248,7 @@ namespace org.ids_adi.qmxf
             this.licenseTerms = new List<LicenseTerms>();
         }
 
-        [DataMember]
+        [DataMember(Name = "license-terms", EmitDefaultValue = false)]
         [XmlElement(ElementName = "license-terms")]
         public List<LicenseTerms> licenseTerms { get; set; }
     }
@@ -261,11 +261,11 @@ namespace org.ids_adi.qmxf
             this.licenseText = new List<LicenseText>();
         }
 
-        [DataMember]
+        [DataMember(Name = "license-text", EmitDefaultValue = false)]
         [XmlElement(ElementName = "license-text")]
         public List<LicenseText> licenseText { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "id", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "id")]
         public string identifier { get; set; }
 
@@ -279,15 +279,15 @@ namespace org.ids_adi.qmxf
             this.formal = "true";
         }
 
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         [XmlAttribute]
         public string lang { get; set; }
 
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         [XmlText]
         public string value { get; set; }
 
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         [XmlAttribute]
         public string formal { get; set; }
     }
@@ -295,7 +295,7 @@ namespace org.ids_adi.qmxf
     [DataContract]
     public class EntityType
     {
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         [XmlAttribute]
         public string reference { get; set; }
     }
@@ -303,11 +303,11 @@ namespace org.ids_adi.qmxf
     [DataContract]
     public class Classification
     {
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         [XmlAttribute]
         public string reference { get; set; }
 
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         [XmlAttribute]
         public string label { get; set; }
 
@@ -328,11 +328,11 @@ namespace org.ids_adi.qmxf
     [DataContract]
     public class Specialization
     {
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         [XmlAttribute]
         public string reference { get; set; }
 
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         [XmlAttribute]
         public string label { get; set; }
 
@@ -353,7 +353,7 @@ namespace org.ids_adi.qmxf
     [DataContract]
     public class SuggestedDesignation
     {
-      [DataMember]
+      [DataMember(EmitDefaultValue = false)]
       [XmlText]
       public string value { get; set; }
     }
@@ -362,11 +362,11 @@ namespace org.ids_adi.qmxf
     public class QMXFName
     {
         //TODO: Ignore for now
-        [DataMember]  
+        [DataMember(EmitDefaultValue = false)]  
         [XmlAttribute]
         public string lang { get; set; }
 
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         [XmlText]
         public string value { get; set; }
     }
@@ -374,7 +374,7 @@ namespace org.ids_adi.qmxf
     [DataContract]
     public class Designation
     {
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         [XmlText]
         public string value { get; set; }
     }
@@ -383,21 +383,21 @@ namespace org.ids_adi.qmxf
     public class Description
     {
         //TODO: Ignore for now
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         [XmlAttribute]
         public string lang { get; set; }
 
         //TODO: Ignore for now
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         [XmlAttribute]
         public string contentType { get; set; }
 
         //TODO: Ignore for now
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         [XmlAttribute]
         public string parseType { get; set; }
 
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         [XmlText]
         public string value { get; set; }
     }
@@ -410,11 +410,11 @@ namespace org.ids_adi.qmxf
             this.lang = "en-GB";
         }
 
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         [XmlAttribute]
         public string lang { get; set; }
 
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         [XmlText]
         public string value { get; set; }
     }
@@ -422,19 +422,19 @@ namespace org.ids_adi.qmxf
     [DataContract]
     public class RuleSet
     {
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         [XmlAttribute]
         public string contentType { get; set; }
 
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         [XmlAttribute]
         public string dlType { get; set; }
 
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         [XmlAttribute]
         public string parseType { get; set; }
 
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         [XmlText]
         public string value { get; set; }
     }
@@ -442,19 +442,19 @@ namespace org.ids_adi.qmxf
     [DataContract]
     public class PropertyRestriction
     {
-        [DataMember]
+        [DataMember(Name = "type", EmitDefaultValue = false)]
         [XmlElement(ElementName = "type")]
         public string type { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "value", EmitDefaultValue = false)]
         [XmlElement(ElementName = "value")]
         public string value { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "valuesFrom", EmitDefaultValue = false)]
         [XmlElement(ElementName = "valuesFrom")]
         public string valuesFrom { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "cardinality", EmitDefaultValue = false)]
         [XmlElement(ElementName = "cardinality")]
         public string cardiniality { get; set; }
     }
@@ -476,47 +476,47 @@ namespace org.ids_adi.qmxf
           //this.inverseMaximum = "unbounded";
         }
 
-        [DataMember]
+        [DataMember(Name = "restriction", EmitDefaultValue = false)]
         [XmlElement(ElementName = "restriction")]
         public List<PropertyRestriction> restrictions { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "name", EmitDefaultValue = false)]
         [XmlElement(ElementName = "name")]
         public List<QMXFName> name { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "suggested-designation", EmitDefaultValue = false)]
         [XmlElement(ElementName = "suggested-designation")]
         public List<SuggestedDesignation> suggestedDesignation { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "designation", EmitDefaultValue = false)]
         [XmlElement(ElementName = "designation")]
         public Designation designation { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "description", EmitDefaultValue = false)]
         [XmlElement(ElementName = "description")]
         public Description description { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "id", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "id")]
         public string identifier { get; set; }
        
-        [DataMember]
+        [DataMember(Name = "range", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "range")]
         public string range { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "minimum", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "minimum")]
         public string minimum { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "maximum", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "maximum")]
         public string maximum { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "inverse-minimum", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "inverse-minimum")]
         public string inverseMinimum { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "inverse-maximum", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "inverse-maximum")]
         public string inverseMaximum { get; set; }
 
@@ -537,19 +537,19 @@ namespace org.ids_adi.qmxf
     [DataContract]
     public class QMXFValue
     {
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         [XmlText]
         public string text { get; set; }
         
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         [XmlAttribute]
         public string lang { get; set; }
 
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         [XmlAttribute]
         public string reference { get; set; }
 
-        [DataMember]
+        [DataMember(EmitDefaultValue = false)]
         [XmlAttribute]
         public string As { get; set; }
     }
@@ -568,39 +568,39 @@ namespace org.ids_adi.qmxf
           //this.inverseMaximum = "unbounded";
         }
 
-        [DataMember]
+        [DataMember(Name = "name", EmitDefaultValue = false)]
         [XmlElement(ElementName = "name")]
         public List<QMXFName> name { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "value", EmitDefaultValue = false)]
         [XmlElement(ElementName = "value")]
         public QMXFValue value { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "description", EmitDefaultValue = false)]
         [XmlElement(ElementName = "description")]
         public List<Description> description { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "qualifies", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "qualifies")]
         public string qualifies { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "range", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "range")]
         public string range { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "minimum", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "minimum")]
         public string minimum { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "maximum", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "maximum")]
         public string maximum { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "inverse-minimum", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "inverse-minimum")]
         public string inverseMinimum { get; set; }
       
-        [DataMember]
+        [DataMember(Name = "inverse-maximum", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "inverse-maximum")]
         public string inverseMaximum { get; set; }
 
@@ -627,19 +627,19 @@ namespace org.ids_adi.qmxf
             this.Class = "http://rdl.rdlfacade.org/data#R3732211754";
         }
 
-        [DataMember]
+        [DataMember(Name = "authority", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "authority")]
         public string authority { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "class", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "class")]
         public string Class { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "from", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "from")]
         public string from { get; set; }
 
-        [DataMember]
+        [DataMember(Name = "to", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "to")]
         public string to { get; set; }
     }
