@@ -279,9 +279,9 @@ namespace org.iringtools.adapter
       return _exchangeProvider.GetDxi(projectName, applicationName, request);
     }
     
-    public XElement GetPage(string projectName, string applicationName, Request request)
+    public XElement GetDto(string projectName, string applicationName, Request request)
     {
-      return _exchangeProvider.GetPage(projectName, applicationName, request);
+      return _exchangeProvider.GetDto(projectName, applicationName, request);
     }
   }
 }
