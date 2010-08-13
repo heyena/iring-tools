@@ -175,7 +175,9 @@ namespace org.iringtools.adapter
   [DataContract]
   public enum HashAlgorithm
   {
-    [EnumMember]
+    [EnumMember]    
     MD5,
+    [EnumMember]
+    SHA1,
   }
 }

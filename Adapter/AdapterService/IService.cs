@@ -142,9 +142,9 @@ namespace org.iringtools.adapter
     XElement GetDxi(string projectName, string applicationName, Request request);
 
     [OperationContract]
-    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/page")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/dto")]
     // request must include graphName, manifest, and list of identifiers
-    XElement GetPage(string projectName, string applicationName, Request request);
+    XElement GetDto(string projectName, string applicationName, Request request);
     #endregion
   }
 }

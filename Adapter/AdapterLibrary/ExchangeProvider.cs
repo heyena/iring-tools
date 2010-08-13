@@ -27,6 +27,7 @@ namespace org.iringtools.adapter
     private IDataLayer _dataLayer = null;
     //private DataDictionary _dataDictionary = null;
     private Mapping _mapping = null;
+    private Manifest _manifest = null;
     private GraphMap _mappingGraph = null;
     private Graph _manifestGraph = null;
     private GraphMap _crossedGraph = null;
@@ -74,7 +75,7 @@ namespace org.iringtools.adapter
       InitializeDataLayer();
 
       string graphName = request["graphName"];
-      Manifest manifest = Utility.DeserializeDataContract<Manifest>(request["manifest"]);
+      _manifest = Utility.DeserializeDataContract<Manifest>(request["manifest"]);
 
       if (request.ContainsKey("hashAlgorithm"))
       {
@@ -90,41 +91,31 @@ namespace org.iringtools.adapter
         }
       }
 
-      _mappingGraph = _mapping.FindGraphMap(graphName);
-      _manifestGraph = manifest.FindGraph(graphName);
+      BuildCrossedGraphMap(graphName);
+      PopulateClassIdentifiers(null);
 
-      _crossedGraph = new GraphMap();
-      _crossedGraph.dataObjectMap = _mappingGraph.dataObjectMap;
+      DataTransferIndices dxi = CreateDxi(graphName);
+      XElement dxiXml = SerializationExtensions.ToXml<DataTransferIndices>(dxi);
 
-      ClassTemplatesMap manifestClassTemplatesMap = _manifestGraph.ClassTemplatesMaps.First();
-      Class manifestClass = manifestClassTemplatesMap.Class;
-
-      if (manifestClassTemplatesMap != null)
-      {
-        foreach (var mappingClassTemplatesMap in _mappingGraph.classTemplateListMaps)
-        {
-          ClassMap mappingClass = mappingClassTemplatesMap.Key;
-
-          if (mappingClass.classId == manifestClass.ClassId)
-          {
-            BuildCrossedGraphMap(manifestClass, mappingClass);
-          }
-        }
-      }
-
-      DataTransferIndices dxi = GetDataTransferIndices(graphName);
-      XElement xml = SerializationExtensions.ToXml<DataTransferIndices>(dxi);
-
-      return xml;
+      return dxiXml;
     }
 
-    public XElement GetPage(string projectName, string applicationName, Request request)
+    public XElement GetDto(string projectName, string applicationName, Request request)
     {
-      string graphName = request["graphName"];
-      Manifest manifest = Utility.DeserializeDataContract<Manifest>(request["manifest"]);
-      List<string> identifiers = Utility.DeserializeDataContract<List<string>>(request["identifiers"]);
+      InitializeScope(projectName, applicationName);
+      InitializeDataLayer();
 
-      return null;
+      string graphName = request["graphName"];
+      _manifest = Utility.DeserializeDataContract<Manifest>(request["manifest"]);
+      Identifiers identifiers = Utility.DeserializeDataContract<Identifiers>(request["identifiers"]);
+
+      BuildCrossedGraphMap(graphName);
+      PopulateClassIdentifiers(identifiers);
+
+      DataTransferObjects dto = CreateDto(graphName, identifiers);
+      XElement dtoXml = SerializationExtensions.ToXml<DataTransferObjects>(dto);
+
+      return dtoXml;
     }
 
     #region helper methods
@@ -243,9 +234,9 @@ namespace org.iringtools.adapter
       }
     }
 
-    private void PopulateClassIdentifiers()
+    private void PopulateClassIdentifiers(List<string> identifiers)
     {
-      _dataObjects = _dataLayer.Get(_crossedGraph.dataObjectMap, null);
+      _dataObjects = _dataLayer.Get(_crossedGraph.dataObjectMap, identifiers);  
       _classIdentifiers.Clear();
 
       foreach (ClassMap classMap in _crossedGraph.classTemplateListMaps.Keys)
@@ -300,7 +291,32 @@ namespace org.iringtools.adapter
       }
     }
 
-    private void BuildCrossedGraphMap(Class manifestClass, ClassMap mappingClass)
+    private void BuildCrossedGraphMap(string graphName)
+    {
+      _mappingGraph = _mapping.FindGraphMap(graphName);
+      _manifestGraph = _manifest.FindGraph(graphName);      
+      
+      _crossedGraph = new GraphMap();
+      _crossedGraph.dataObjectMap = _mappingGraph.dataObjectMap;
+
+      ClassTemplatesMap manifestClassTemplatesMap = _manifestGraph.ClassTemplatesMaps.First();
+      Class manifestClass = manifestClassTemplatesMap.Class;
+
+      if (manifestClassTemplatesMap != null)
+      {
+        foreach (var mappingClassTemplatesMap in _mappingGraph.classTemplateListMaps)
+        {
+          ClassMap mappingClass = mappingClassTemplatesMap.Key;
+
+          if (mappingClass.classId == manifestClass.ClassId)
+          {
+            RecurBuildCrossedGraphMap(manifestClass, mappingClass);
+          }
+        }
+      }
+    }
+
+    private void RecurBuildCrossedGraphMap(Class manifestClass, ClassMap mappingClass)
     {
       List<Template> manifestTemplates = null;
 
@@ -346,7 +362,7 @@ namespace org.iringtools.adapter
                       {
                         if (mappingRole.classMap != null && mappingRole.classMap.classId == manifestRole.Class.ClassId)
                         {
-                          BuildCrossedGraphMap(manifestRole.Class, mappingRole.classMap);
+                          RecurBuildCrossedGraphMap(manifestRole.Class, mappingRole.classMap);
                         }
                       }
                     }
@@ -359,10 +375,8 @@ namespace org.iringtools.adapter
       }
     }
 
-    private DataTransferIndices GetDataTransferIndices(string graphName)
+    private DataTransferIndices CreateDxi(string graphName)
     {
-      PopulateClassIdentifiers();
-
       DataTransferIndices dataTransferIndices = new DataTransferIndices();
       ClassMap crossedClass = _crossedGraph.classTemplateListMaps.First().Key;
 
@@ -372,7 +386,7 @@ namespace org.iringtools.adapter
         StringBuilder propertyValues = new StringBuilder();
         string hashValue = String.Empty;
         
-        GetDataTransferIndex(ref propertyValues, crossedClass, dataObjectIndex);
+        RecurCreateDxi(ref propertyValues, crossedClass, dataObjectIndex);
 
         // todo: handle/implement more hash algorithms
         switch (_hashAlgorithm)
@@ -388,7 +402,7 @@ namespace org.iringtools.adapter
       return dataTransferIndices;
     }
     
-    private void GetDataTransferIndex(ref StringBuilder propertyValues, ClassMap classMap, int dataObjectIndex)
+    private void RecurCreateDxi(ref StringBuilder propertyValues, ClassMap classMap, int dataObjectIndex)
     {
       string classId = classMap.classId;
       KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = _crossedGraph.GetClassTemplateListMap(classId);
@@ -414,8 +428,83 @@ namespace org.iringtools.adapter
           {
             if (roleMap.classMap != null)
             {
-              GetDataTransferIndex(ref propertyValues, roleMap.classMap, dataObjectIndex);
+              RecurCreateDxi(ref propertyValues, roleMap.classMap, dataObjectIndex);
             }
+          }
+        }
+      }
+    }
+
+    private DataTransferObjects CreateDto(string graphName, List<string> identifiers)
+    {
+      DataTransferObjects dataTransferObjects = new DataTransferObjects();
+      ClassMap classMap = _crossedGraph.classTemplateListMaps.First().Key;
+
+      for (int dataObjectIndex = 0; dataObjectIndex < _dataObjects.Count; dataObjectIndex++)
+      {
+        DataTransferObject dataTransferObject = new DataTransferObject();
+        dataTransferObjects.Add(dataTransferObject);
+        RecurCreateDto(ref dataTransferObject, classMap, dataObjectIndex);
+      }
+
+      return dataTransferObjects;
+    }
+    
+    private void RecurCreateDto(ref DataTransferObject dataTransferObject, ClassMap classMap, int dataObjectIndex)
+    {
+      string classId = classMap.classId;
+      string className = classMap.name;
+
+      KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = _crossedGraph.GetClassTemplateListMap(classId);
+      List<TemplateMap> templateMaps = classTemplateListMap.Value;
+      string classIdentifier = _classIdentifiers[classId][dataObjectIndex];
+
+      ClassObject classObject = new ClassObject
+      {
+        classId = classId,
+        name = className,
+        identifier = classIdentifier,
+      };
+      dataTransferObject.classObjects.Add(classObject);
+
+      foreach (TemplateMap templateMap in templateMaps)
+      {
+        TemplateObject templateObject = new TemplateObject
+        {
+          templateId = templateMap.templateId,
+          name = templateMap.name,
+        };
+        classObject.templateObjects.Add(templateObject);
+
+        foreach (RoleMap roleMap in templateMap.roleMaps)
+        {
+          RoleObject roleObject = new RoleObject();
+          roleObject.roleId = roleMap.roleId;
+          roleObject.name = roleMap.name;
+          templateObject.roleObjects.Add(roleObject);
+
+          if (roleMap.type == RoleType.Property)
+          {
+            string propertyName = roleMap.propertyName.Substring(_crossedGraph.dataObjectMap.Length + 1);
+            roleObject.value = Convert.ToString(_dataObjects[dataObjectIndex].GetPropertyValue(propertyName));
+
+            if (!String.IsNullOrEmpty(roleMap.valueList))
+            {
+              roleObject.value = _mapping.ResolveValueList(roleMap.valueList, roleObject.value);
+            }
+          }
+          else if (roleMap.type == RoleType.Reference)
+          {
+            roleObject.reference = roleMap.value;
+
+            if (roleMap.classMap != null)
+            {
+              RecurCreateDto(ref dataTransferObject, roleMap.classMap, dataObjectIndex);
+            }
+          }
+          else
+          {
+            roleObject.value = roleMap.value;
           }
         }
       }
