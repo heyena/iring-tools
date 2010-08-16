@@ -6,16 +6,20 @@
 <head runat="server">
   <meta http-equiv="cache-control" content="no-cache" />
   <link rel="stylesheet" type="text/css" href="css/interface.css" />
-  <title>iRING Interface</title>
+  <title>iRINGTools SPAQRL Query</title>
 </head>
 <body>
   <div class="banner">
     <h1>
       <img src="img/iRINGTools_logo.png" alt="iRING Logo" />
-      Interface Service</h1>
+      SPARQL Query</h1>
   </div>
   <form id="form1" runat="server">
   <div style="width: 734px; height: 516px">
+    <asp:Label ID="Label5" runat="server" Font-Names="Arial Black" Font-Size="Small"
+      Text="SPARQL Endpoint URI:"></asp:Label>
+    <asp:TextBox ID="txtDefaultGraph0" Columns="100" runat="server" Width="534px" >http://localhost:52786/Facade/sparql</asp:TextBox>
+    <br />
     <asp:TextBox ID="txtQuery" runat="server" Rows="15" Columns="100" TextMode="MultiLine"
       Height="257px" Width="688px">PREFIX rdl: &lt;http://rdl.rdlfacade.org/data#&gt;
 PREFIX tpl: &lt;http://tpl.rdlfacade.org/data#&gt;

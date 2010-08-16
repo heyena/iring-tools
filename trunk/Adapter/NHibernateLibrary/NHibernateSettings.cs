@@ -5,11 +5,11 @@ using System.Web;
 using org.iringtools.library;
 using System.Collections.Specialized;
 
-namespace org.iringtools.application
+namespace org.iringtools.nhibernate
 {
-  public class ApplicationSettings : ServiceSettings
+  public class NHibernateSettings : ServiceSettings
   {
-    public ApplicationSettings()
+    public NHibernateSettings()
       : base()
     {
       this.Add("ExecutingAssemblyName", "App_Code");

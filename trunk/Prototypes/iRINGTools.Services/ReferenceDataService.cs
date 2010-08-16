@@ -43,13 +43,26 @@ namespace org.iringtools.services
   public class ReferenceDataService
   {
     private static readonly ILog log = LogManager.GetLogger(typeof(ReferenceDataService));
-    private ReferenceDataProvider _referenceDataServiceProvider = null;
+    private ReferenceDataProvider _referenceDataProvider = null;
 
     public ReferenceDataService()
     {
       NameValueCollection settings = ConfigurationManager.AppSettings;
-      _referenceDataServiceProvider = new ReferenceDataProvider(settings);            
+      _referenceDataProvider = new ReferenceDataProvider(settings);            
     }
+
+    #region GetVersion
+    /// <summary>
+    /// Gets the version of the service.
+    /// </summary>
+    /// <returns>Returns the version as a string.</returns>
+    [Description("Gets the version of the service.")]
+    [WebGet(UriTemplate = "/version")]
+    public string GetVersion()
+    {
+      return _referenceDataProvider.GetType().Assembly.GetName().Version.ToString();
+    }
+    #endregion
 
     /// <summary>
     /// Gets configured repositories.
@@ -58,7 +71,7 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/repositories")]
     public List<Repository> GetRepositories()
     {
-      return _referenceDataServiceProvider.GetRepositories();
+      return _referenceDataProvider.GetRepositories();
     }
 
     /// <summary>
@@ -68,7 +81,7 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/find/{query}")]
     public List<Entity> Find(string query)
     {
-      return _referenceDataServiceProvider.Find(query);
+      return _referenceDataProvider.Find(query);
     }
 
     /// <summary>
@@ -78,7 +91,7 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/search/{query}")]
     public RefDataEntities Search(string query)
     {
-      return _referenceDataServiceProvider.Search(query);
+      return _referenceDataProvider.Search(query);
     }
 
     /// <summary>
@@ -88,7 +101,7 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/search/{query}/{page}")]
     public RefDataEntities SearchPage(string query, string page)
     {
-      return _referenceDataServiceProvider.SearchPage(query, page);
+      return _referenceDataProvider.SearchPage(query, page);
     }
 
     /// <summary>
@@ -98,7 +111,7 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/search/{query}/reset")]
     public RefDataEntities SearchReset(string query)
     {
-      return _referenceDataServiceProvider.SearchReset(query);
+      return _referenceDataProvider.SearchReset(query);
     }
 
     /// <summary>
@@ -108,7 +121,7 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/search/{query}/{page}/reset")]
     public RefDataEntities SearchPageReset(string query, string page)
     {
-      return _referenceDataServiceProvider.SearchPageReset(query, page);
+      return _referenceDataProvider.SearchPageReset(query, page);
     }
 
     /// <summary>
@@ -118,7 +131,7 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/classes/{id}/label")]
     public string GetClassLabel(string id)
     {
-      return _referenceDataServiceProvider.GetClassLabel(id);
+      return _referenceDataProvider.GetClassLabel(id);
     }
 
     /// <summary>
@@ -129,7 +142,7 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/classes/{id}")]
     public QMXF GetClass(string id)
     {
-      return _referenceDataServiceProvider.GetClass(id);
+      return _referenceDataProvider.GetClass(id);
     }
 
     /// <summary>
@@ -139,7 +152,7 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/classes/{id}/superclasses")]
     public List<Entity> GetSuperClasses(string id)
     {
-      return _referenceDataServiceProvider.GetSuperClasses(id);
+      return _referenceDataProvider.GetSuperClasses(id);
     }
 
     /// <summary>
@@ -149,7 +162,7 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/classes/{id}/allsuperclasses")]
     public List<Entity> GetAllSuperClasses(string id)
     {
-        return _referenceDataServiceProvider.GetAllSuperClasses(id);
+        return _referenceDataProvider.GetAllSuperClasses(id);
     }
 
     /// <summary>
@@ -159,7 +172,7 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/classes/{id}/subclasses")]
     public List<Entity> GetSubClasses(string id)
     {
-      return _referenceDataServiceProvider.GetSubClasses(id);
+      return _referenceDataProvider.GetSubClasses(id);
     }
 
     /// <summary>
@@ -169,7 +182,7 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/classes/{id}/templates")]
     public List<Entity> GetClassTemplates(string id)
     {
-      return _referenceDataServiceProvider.GetClassTemplates(id);
+      return _referenceDataProvider.GetClassTemplates(id);
     }
 
     ///<summary>
@@ -180,7 +193,7 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/templates/{id}")]
     public QMXF GetTemplate(string id)
     {
-      return _referenceDataServiceProvider.GetTemplate(id);
+      return _referenceDataProvider.GetTemplate(id);
     }
 
     /// <summary>
@@ -191,7 +204,7 @@ namespace org.iringtools.services
     [WebInvoke(UriTemplate = "/templates")]
     public Response PostTemplate(QMXF qmxf)
     {
-      return _referenceDataServiceProvider.PostTemplate(qmxf);                
+      return _referenceDataProvider.PostTemplate(qmxf);                
     }
 
     ///<summary>
@@ -202,7 +215,7 @@ namespace org.iringtools.services
     [WebInvoke(UriTemplate = "/classes")]
     public Response PostClass(QMXF qmxf)
     {
-      return _referenceDataServiceProvider.PostClass(qmxf);
+      return _referenceDataProvider.PostClass(qmxf);
     }
   }
 }

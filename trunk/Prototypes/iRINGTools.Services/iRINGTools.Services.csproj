@@ -72,7 +72,17 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="css\interface.css" />
+    <Content Include="css\iring-tools.css" />
+    <Content Include="css\reset.css" />
+    <Content Include="css\sparql.css" />
+    <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
+    <Content Include="img\blue-fade.png" />
+    <Content Include="img\fade.png" />
+    <Content Include="img\iring-tools-logo.png" />
+    <Content Include="img\iRINGTools_logo.png" />
+    <Content Include="index.html" />
     <Content Include="SPARQL\ClassRelations.txt" />
     <Content Include="SPARQL\ContainsSearch.txt" />
     <Content Include="SPARQL\ExactSearch.txt" />
@@ -129,7 +139,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AdapterService.cs" />
-    <Compile Include="ApplicationService.cs" />
+    <Compile Include="NHibernateService.cs" />
     <Compile Include="ReferenceDataService.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -138,9 +148,9 @@
     <Folder Include="Logs\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Adapter\NHibernateLibrary\ApplicationLibrary.csproj">
+    <ProjectReference Include="..\..\Adapter\NHibernateLibrary\NHibernateLibrary.csproj">
       <Project>{02377ADB-F40D-4AD0-B8A8-95810CB55047}</Project>
-      <Name>ApplicationLibrary</Name>
+      <Name>NHibernateLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Libraries\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
       <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>

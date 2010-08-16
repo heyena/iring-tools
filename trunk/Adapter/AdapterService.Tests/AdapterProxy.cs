@@ -10,6 +10,7 @@ using System.Configuration;
 using System.IO;
 using System.Collections.Generic;
 using System.Xml.Linq;
+using org.iringtools.exchange;
 
 namespace AdapterService.Tests
 {
@@ -17,6 +18,7 @@ namespace AdapterService.Tests
   public class AdapterProxy
   {
     private AdapterProvider _adapterProvider = null;
+    private ExchangeProvider _exchangeProvider = null;
 
     [Dependency]
     public IError Error { get; set; }
@@ -155,7 +157,7 @@ namespace AdapterService.Tests
       Response response = null;
       try
       {
-        response = _adapterProvider.Pull(projectName, applicationName, request);
+        response = _exchangeProvider.Pull(projectName, applicationName, request);
       }
       catch (Exception ex)
       {
@@ -170,7 +172,7 @@ namespace AdapterService.Tests
       Response response = null;
       try
       {
-        response = _adapterProvider.PullDTO(projectName, applicationName, request);
+        response = _exchangeProvider.PullDTO(projectName, applicationName, request);
       }
       catch (Exception ex)
       {
@@ -185,7 +187,7 @@ namespace AdapterService.Tests
       Response response = null;
       try
       {
-        response = _adapterProvider.Push(projectName, applicationName, request);
+        response = _exchangeProvider.Push(projectName, applicationName, request);
       }
       catch (Exception ex)
       {
