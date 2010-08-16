@@ -341,7 +341,7 @@ namespace org.iringtools.exchange
         bool firstClassMap = true;
         StringBuilder propertyValues = new StringBuilder();
 
-        foreach (var pair in _crossedGraph.classTemplateListMaps)
+        foreach (var pair in _graphMap.classTemplateListMaps)
         {
           ClassMap classMap = pair.Key;
           List<TemplateMap> templateMaps = pair.Value;
@@ -358,7 +358,7 @@ namespace org.iringtools.exchange
             {
               if (roleMap.type == RoleType.Property)
               {
-                string propertyName = roleMap.propertyName.Substring(_crossedGraph.dataObjectMap.Length + 1);
+                string propertyName = roleMap.propertyName.Substring(_graphMap.dataObjectMap.Length + 1);
                 string value = Convert.ToString(_dataObjects[i].GetPropertyValue(propertyName));
 
                 if (!String.IsNullOrEmpty(roleMap.valueList))
@@ -409,7 +409,7 @@ namespace org.iringtools.exchange
         XElement classObjects = new XElement(DTO_NS + "classObjects");
         dto.Add(classObjects);
 
-        foreach (var pair in _crossedGraph.classTemplateListMaps)
+        foreach (var pair in _graphMap.classTemplateListMaps)
         {
           ClassMap classMap = pair.Key;
           List<TemplateMap> templateMaps = pair.Value;
@@ -445,7 +445,7 @@ namespace org.iringtools.exchange
 
               if (roleMap.type == RoleType.Property)
               {
-                string propertyName = roleMap.propertyName.Substring(_crossedGraph.dataObjectMap.Length + 1);
+                string propertyName = roleMap.propertyName.Substring(_graphMap.dataObjectMap.Length + 1);
                 string value = Convert.ToString(_dataObjects[i].GetPropertyValue(propertyName));
 
                 if (!String.IsNullOrEmpty(roleMap.valueList))
