@@ -398,7 +398,7 @@ namespace org.iringtools.modulelibrary.layerdal
       sb.Append(projectName);
       sb.Append("/");
       sb.Append(applicationName);
-      sb.Append("/datadictionary");
+      sb.Append("/dictionary");
       _dictionaryClient.DownloadStringAsync(new Uri(sb.ToString()));
       return null;
     }

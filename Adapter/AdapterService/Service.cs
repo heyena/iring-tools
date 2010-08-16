@@ -36,6 +36,7 @@ using System.Net;
 using System.Xml.Linq;
 using System.Reflection;
 using System.ServiceModel.Activation;
+using org.iringtools.exchange;
 
 namespace org.iringtools.adapter
 {
@@ -174,20 +175,6 @@ namespace org.iringtools.adapter
     }
 
     /// <summary>
-    /// Calls adapter provider to get a specific data object in specific format
-    /// </summary>
-    /// <param name="projectName"></param>
-    /// <param name="applicationName"></param>
-    /// <param name="graphName"></param>
-    /// <param name="identifier"></param>
-    /// <param name="format"></param>
-    /// <returns></returns>
-    public XElement GetIndividual(string projectName, string applicationName, string alias, string classId, string identifier, string graphName, string format)
-    {
-      throw new NotImplementedException();
-    }
-
-    /// <summary>
     /// Calls adapter provider to produce specific format for a graph
     /// </summary>
     /// <param name="projectName"></param>
@@ -232,7 +219,7 @@ namespace org.iringtools.adapter
     /// <param name="format">xml/dto/dxo</param>
     /// <param name="xml">dxo xml</param>
     /// <returns>response object</returns>
-    public Response Post(string projectName, string applicationName, string graphName, string format, XElement xml)
+    public Response PostList(string projectName, string applicationName, string graphName, string format, XElement xml)
     {
       return _adapterProvider.Post(projectName, applicationName, graphName, format, xml);
     }
@@ -274,14 +261,46 @@ namespace org.iringtools.adapter
     /// <param name="applicationName"></param>
     /// <param name="graphName"></param>
     /// <returns></returns>
-    public XElement GetDxi(string projectName, string applicationName, Request request)
+    public XElement GetDxi(string projectName, string applicationName, string graphName, DXRequest request)
     {
-      return _exchangeProvider.GetDxi(projectName, applicationName, request);
+      return _exchangeProvider.GetDxi(projectName, applicationName, graphName, request);
     }
-    
-    public XElement GetDto(string projectName, string applicationName, Request request)
+
+    public XElement GetDxo(string projectName, string applicationName, string graphName, DXRequest request)
     {
-      return _exchangeProvider.GetDto(projectName, applicationName, request);
+      return _exchangeProvider.GetDto(projectName, applicationName, graphName, request);
+    }
+  }
+
+  [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
+  public class ExchangeService : IExchangeService
+  {
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(ExchangeService));
+    private ExchangeProvider _exchangeProvider = null;
+
+    /// <summary>
+    /// Adapter Service Constructor
+    /// </summary>
+    public ExchangeService()
+    {
+      _exchangeProvider = new ExchangeProvider(ConfigurationManager.AppSettings);
+    }
+
+    /// <summary>
+    /// Gets a dictionary of identifiers and hash values.
+    /// </summary>
+    /// <param name="projectName"></param>
+    /// <param name="applicationName"></param>
+    /// <param name="graphName"></param>
+    /// <returns></returns>
+    public XElement GetDxi(string projectName, string applicationName, string graphName, DXRequest request)
+    {
+      return _exchangeProvider.GetDxi(projectName, applicationName, graphName, request);
+    }
+
+    public XElement GetDxo(string projectName, string applicationName, string graphName, DXRequest request)
+    {
+      return _exchangeProvider.GetDto(projectName, applicationName, graphName, request);
     }
   }
 }

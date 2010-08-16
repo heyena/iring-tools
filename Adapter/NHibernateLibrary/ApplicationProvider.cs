@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2009, ids-adi.org /////////////////////////////////////////////
+﻿// Copyright (c) 2010, iringtools.org /////////////////////////////////////////////
 // All rights reserved.
 //------------------------------------------------------------------------------
 // Redistribution and use in source and binary forms, with or without
@@ -63,8 +63,6 @@ namespace org.iringtools.application
       _kernel = new StandardKernel(new ApplicationModule());
       _settings = _kernel.Get<ApplicationSettings>();
       _settings.AppendSettings(settings);
-
-      _settings["AdapterXmlPath"] = Path.Combine(_settings["AdapterPath"], _settings["XmlPath"]);
 
       Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
 
@@ -681,7 +679,7 @@ namespace org.iringtools.application
           _settings.Add("Scope", scope);
 
           _settings["DBDictionaryPath"] = String.Format("{0}DatabaseDictionary.{1}.xml",
-            _settings["AdapterXmlPath"],
+            _settings["XmlPath"],
             scope
           );
 

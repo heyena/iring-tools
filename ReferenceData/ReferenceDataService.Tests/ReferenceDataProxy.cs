@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using org.ids_adi.iring;
-using org.ids_adi.iring.referenceData;
 using org.ids_adi.qmxf;
 using System.ComponentModel;
 using System.Net;
@@ -13,10 +12,12 @@ using Microsoft.Practices.Unity;
 using org.iringtools.library;
 using System.Configuration;
 using System.Collections.Specialized;
+using org.iringtools.referenceData;
+using org.ids_adi.iring.referenceData;
 
 namespace ReferenceDataService.Tests
 {
-  class ReferenceDataProxy:IService
+  class ReferenceDataProxy : IService
   {
     private ReferenceDataProvider _referenceDataServiceProvider = null;
 

@@ -145,6 +145,7 @@ namespace org.iringtools.adapter
       try
       {
         _scopes = scopes;
+
         Utility.Write<List<ScopeProject>>(_scopes, _settings["ScopesPath"], true);
 
         /*
@@ -917,9 +918,11 @@ namespace org.iringtools.adapter
 
         if (format.ToLower() == "dxo")
         {
+          GraphMap graphMap = _mapping.FindGraphMap(graphName);
+          
           DxoProjectionEngine dxoProjectionEngine = ((DxoProjectionEngine)_projectionEngine);
           IList<string> deletingIdentifiers = dxoProjectionEngine.GetDeletingDataObjects(graphName, ref xml);
-          response.Append(_dataLayer.Delete(dxoProjectionEngine.ObjectType, deletingIdentifiers));
+          response.Append(_dataLayer.Delete(graphMap.dataObjectMap, deletingIdentifiers));
         }
 
         response.Level = StatusLevel.Success;

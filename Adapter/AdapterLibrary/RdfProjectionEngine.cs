@@ -19,8 +19,6 @@ namespace org.iringtools.adapter.projection
 {
   public class RdfProjectionEngine : IProjectionLayer
   {
-    private static readonly string DATALAYER_NS = "org.iringtools.adapter.datalayer";
-
     private static readonly XNamespace RDF_NS = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
     private static readonly XNamespace OWL_NS = "http://www.w3.org/2002/07/owl#";
     private static readonly XNamespace XSD_NS = "http://www.w3.org/2001/XMLSchema#";
@@ -67,7 +65,6 @@ namespace org.iringtools.adapter.projection
     private IDataLayer _dataLayer = null;
     private Mapping _mapping = null;
     private GraphMap _graphMap = null;
-    private DataDictionary _dataDictionary = null;
     private IList<IDataObject> _dataObjects = null;
     private Dictionary<string, List<string>> _classIdentifiers = null; // dictionary of class ids and list of identifiers
     private List<Dictionary<string, string>> _xPathValuePairs = null;  // dictionary of property xpath and value pairs
@@ -75,15 +72,12 @@ namespace org.iringtools.adapter.projection
     private Dictionary<string, List<string>> _classInstances = null;  // dictionary of class ids and list instances/individuals
     private TripleStore _memoryStore = null;
     private XNamespace _graphNs = String.Empty;
-    private string _dataObjectsAssemblyName = String.Empty;
-    private string _dataObjectNs = String.Empty;
 
     [Inject]
-    public RdfProjectionEngine(AdapterSettings settings, IDataLayer dataLayer, Mapping mapping, DataDictionary dataDictionary)
+    public RdfProjectionEngine(AdapterSettings settings, IDataLayer dataLayer, Mapping mapping)
     {
       _dataLayer = dataLayer;
       _dataObjects = new List<IDataObject>();
-      _dataDictionary = dataDictionary;
       _classIdentifiers = new Dictionary<string, List<string>>();
       _xPathValuePairs = new List<Dictionary<string, string>>();
       _hierachicalDTOClasses = new Dictionary<string, List<string>>();
@@ -95,13 +89,6 @@ namespace org.iringtools.adapter.projection
         settings["ProjectName"],
         settings["ApplicationName"]
       );
-
-      _dataObjectNs = String.Format("{0}.proj_{1}",
-        DATALAYER_NS,
-        settings["Scope"]
-      );
-
-      _dataObjectsAssemblyName = settings["ExecutingAssemblyName"];
     }
 
     public XElement GetXml(string graphName, ref IList<IDataObject> dataObjects)
@@ -140,14 +127,6 @@ namespace org.iringtools.adapter.projection
       // fill data objects and return
       PopulateDataObjects(GetClassInstanceCount());
       return _dataObjects;
-    }
-
-    public string ObjectType
-    {
-      get
-      {
-        return _dataObjectNs + "." + _graphMap.dataObjectMap + ", " + _dataObjectsAssemblyName;
-      }
     }
 
     #region helper methods
@@ -508,7 +487,7 @@ namespace org.iringtools.adapter.projection
 
     private void PopulateDataObjects(int classInstanceCount)
     {
-      _dataObjects = _dataLayer.Create(ObjectType, new string[classInstanceCount]);
+      _dataObjects = _dataLayer.Create(_graphMap.dataObjectMap, new string[classInstanceCount]);
 
       foreach (var pair in _graphMap.classTemplateListMaps)
       {

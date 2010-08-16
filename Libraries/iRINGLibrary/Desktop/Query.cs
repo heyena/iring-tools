@@ -16,12 +16,28 @@ namespace org.iringtools.library
 
     [DataMember]
     public string description { get; set; }
-
+    
     [DataMember(EmitDefaultValue = false)]
     public string encryptedCredentials { get; set; }
 
     [DataMember]
     public bool isReadOnly { get; set; }
+
+    [DataMember]
+    public RepositoryType repositoryType { get; set; }
+
+  }
+
+
+  [DataContract]
+  public enum RepositoryType
+  {
+    [EnumMember]
+    RDSWIP,
+    [EnumMember]
+    Camelot,
+    [EnumMember]
+    Part8,
   }
 
   [CollectionDataContract(ValueName = "Query", ItemName = "QueryItem")]

@@ -76,7 +76,7 @@ namespace org.iringtools.services
     /// </summary>
     /// <returns>Returns a list of ScopeProject objects.</returns>
     [Description("Gets the scopes (project and application combinations) available from the service.")]
-    [WebGet(UriTemplate = "/scopes", ResponseFormat = WebMessageFormat.Json)]
+    [WebGet(UriTemplate = "/scopes")]
     public List<ScopeProject> GetScopes()
     {
       return _adapterProvider.GetScopes();

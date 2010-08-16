@@ -8,7 +8,7 @@ SELECT DISTINCT ?label ?type
   ?comment ?authority ?recorded ?from
 WHERE { 
 rdl:param1  rdfs:label ?label .
-OPTIONAL { rdl:param1 rdfs:comment        ?comment }
+OPTIONAL { rdl:param1  rdfs:comment        ?comment }
 OPTIONAL { rdl:param1  rds:hasDefinition   ?definition } 
 OPTIONAL { rdl:param1  rdf:type            ?type }
 OPTIONAL { rdl:param1  rds:hasCreator      ?creator } 

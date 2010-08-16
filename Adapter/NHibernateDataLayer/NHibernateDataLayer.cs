@@ -68,7 +68,7 @@ namespace org.iringtools.adapter.datalayer
       try
       {
         IList<IDataObject> dataObjects = new List<IDataObject>();
-        Type type = Type.GetType(objectType);
+        Type type = Type.GetType("org.iringtools.adapter.datalayer.proj_" + _settings["Scope"] + "." + objectType + ", " + _settings["ExecutingAssembly"]);
 
         if (identifiers != null && identifiers.Count > 0)
         {
