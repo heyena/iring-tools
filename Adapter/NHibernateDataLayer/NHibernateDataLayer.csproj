@@ -8,7 +8,7 @@
     <ProjectGuid>{A9DAEA2D-26AC-4FFE-A4B0-3DEF95DE4168}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>org.iringtools.adapter.datalayer</RootNamespace>
+    <RootNamespace>org.iringtools.nhibernate.datalayer</RootNamespace>
     <AssemblyName>NHibernateDataLayer</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -106,7 +106,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EntityGenerator.cs" />
     <Compile Include="NHibernateDataLayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\..\AssemblyInfo.cs" />

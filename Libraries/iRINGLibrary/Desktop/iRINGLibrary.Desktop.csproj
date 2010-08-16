@@ -112,7 +112,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdapterSettings.cs" />
-    <Compile Include="ApplicationSettings.cs" />
     <Compile Include="DatabaseDictionary.cs" />
     <Compile Include="DataDictionary.cs" />
     <Compile Include="DataFilter.cs" />

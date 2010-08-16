@@ -3,7 +3,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using org.ids_adi.iring.referenceData;
+using org.iringtools.referenceData;
 using org.ids_adi.qmxf;
 using org.iringtools.library;
 using System.IO;

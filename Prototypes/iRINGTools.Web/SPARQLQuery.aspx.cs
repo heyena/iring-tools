@@ -13,7 +13,7 @@ namespace dotnetRDFInterfaceService
         protected void btnQuery_Click(object sender, EventArgs e)
         {
 //            String query = this.rbSparql.SelectedValue + "?query=" + Uri.EscapeDataString(this.txtQuery.Text) + 
-             String query = "http://localhost:52786/Facade/sparql/?query=" + Uri.EscapeDataString(this.txtQuery.Text) + 
+          String query = this.txtDefaultGraph0.Text + "/?query=" + Uri.EscapeDataString(this.txtQuery.Text) + 
                 "&default-graph-uri=" + Uri.EscapeDataString(this.txtDefaultGraph.Text) + "&timeout=" + 
                 Uri.EscapeDataString(this.txtTimeout.Text) + "&partialResults=" + 
                 Uri.EscapeDataString(this.chkPartialResults.Checked.ToString());

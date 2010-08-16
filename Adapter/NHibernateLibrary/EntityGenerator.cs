@@ -36,9 +36,8 @@ using Microsoft.CSharp;
 using log4net;
 using org.iringtools.library;
 using org.iringtools.utility;
-using org.iringtools.application;
 
-namespace org.iringtools.adapter.datalayer
+namespace org.iringtools.nhibernate
 {
   public class EntityGenerator
   {
@@ -54,14 +53,14 @@ namespace org.iringtools.adapter.datalayer
     private static readonly ILog _logger = LogManager.GetLogger(typeof(EntityGenerator));
     
     private string _namespace = String.Empty; 
-    private ApplicationSettings _settings = null;
+    private NHibernateSettings _settings = null;
     private StringBuilder _mappingBuilder = null;
     private XmlTextWriter _mappingWriter = null;
     private List<DataObject> _dataObjects = null;
     private IndentedTextWriter _dataObjectWriter = null;
     private StringBuilder _dataObjectBuilder = null;
 
-    public EntityGenerator(ApplicationSettings settings)
+    public EntityGenerator(NHibernateSettings settings)
     {
       _settings = settings;
       _settings["AdapterBinaryPath"] = Path.Combine(_settings["AdapterPath"], _settings["BinaryPath"]);

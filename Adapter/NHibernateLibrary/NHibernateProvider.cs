@@ -40,33 +40,33 @@ using org.ids_adi.qmxf;
 using org.iringtools.library;
 using org.iringtools.utility;
 using NHibernate;
-using org.iringtools.adapter.datalayer;
+using org.iringtools.adapter;
 
-namespace org.iringtools.application
+namespace org.iringtools.nhibernate
 {
-  public class ApplicationProvider
+  public class NHibernateProvider
   {
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(ApplicationProvider));
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(NHibernateProvider));
 
     private Response _response = null;
     private IKernel _kernel = null;
-    private ApplicationSettings _settings = null;
+    private NHibernateSettings _settings = null;
     //private WebProxyCredentials _proxyCredentials = null;
 
     bool _isScopeInitialized = false;
 
-    AdapterClient _adapterClient = null;
+    AdapterProvider _adapterProvider = null;
 
     [Inject]
-    public ApplicationProvider(NameValueCollection settings)
+    public NHibernateProvider(NameValueCollection settings)
     {
-      _kernel = new StandardKernel(new ApplicationModule());
-      _settings = _kernel.Get<ApplicationSettings>();
+      _kernel = new StandardKernel(new NHibernateModule());
+      _settings = _kernel.Get<NHibernateSettings>();
       _settings.AppendSettings(settings);
 
       Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
 
-      _adapterClient = new AdapterClient(_settings);
+      _adapterProvider = new AdapterProvider(_settings);
 
       _response = new Response();
       _kernel.Bind<Response>().ToConstant(_response);
@@ -105,7 +105,9 @@ namespace org.iringtools.application
             )
           );
 
-          _response.Append(_adapterClient.PostBinding(binding));
+          Response localResponse = _adapterProvider.UpdateBinding(projectName, applicationName, binding);
+
+          _response.Append(localResponse);
 
           status.Messages.Add("Database dictionary updated successfully.");
         }

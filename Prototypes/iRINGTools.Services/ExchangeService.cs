@@ -51,6 +51,78 @@ namespace org.iringtools.services
       _exchangeProvider = new ExchangeProvider(ConfigurationManager.AppSettings);
     }
 
+    #region GetVersion
+    /// <summary>
+    /// Gets the version of the service.
+    /// </summary>
+    /// <returns>Returns the version as a string.</returns>
+    [Description("Gets the version of the service.")]
+    [WebGet(UriTemplate = "/version")]
+    public string GetVersion()
+    {
+      return _exchangeProvider.GetType().Assembly.GetName().Version.ToString();
+    }
+    #endregion
+
+    #region Adapter-based Data Exchange
+    #region PullDTO
+    /// <summary>
+    /// Pull Style Adapter-based data exchange.
+    /// </summary>
+    /// <param name="projectName">Project name</param>
+    /// <param name="applicationName">Application name</param>
+    /// <param name="request">
+    /// Request object containing the following: targetUri, targetCredentials, graphName, targetGraphName, filter, projectName, applicationName.
+    /// </param>
+    /// <returns>Returns a Response object.</returns>
+    [Description("Pull Style Adapter-based data exchange. Returns a response with status. Request should include: " +
+      "targetUri, targetCredentials, graphName, targetGraphName, filter, projectName, applicationName.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/pull")]
+    public Response PullDTO(string projectName, string applicationName, Request request)
+    {
+      return _exchangeProvider.PullDTO(projectName, applicationName, request);
+    }
+    #endregion
+
+    #region PushDTO
+    /// <summary>
+    /// Push Style Adapter-based data exchange.
+    /// </summary>
+    /// <param name="projectName">Project name</param>
+    /// <param name="applicationName">Application name</param>
+    /// <param name="request">
+    /// PushRequest object containing the following: targetUri, targetCredentials, graphName, targetGraphName, filter, projectName, applicationName.
+    /// </param>
+    /// <returns>Returns a Response object.</returns>
+    [Description("Push Style Adapter-based data exchange. Returns a response with status. PushRequest should include: " +
+      "targetUri, targetCredentials, graphName, targetGraphName, filter, projectName, applicationName.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/push")]
+    public Response PushDTO(string projectName, string applicationName, PushRequest request)
+    {
+      return _exchangeProvider.Push(projectName, applicationName, request);
+    }
+    #endregion
+    #endregion
+
+    #region Facade-based Data Exchange (Part 9 Draft)
+    #region Pull
+    /// <summary>
+    /// Pulls the data from a triple store into legacy database
+    /// </summary>
+    /// <param name="projectName">project name</param>
+    /// <param name="applicationName">application name</param>
+    /// <param name="graphName">graph name</param>
+    /// <param name="request">request containing credentials and uri to pull rdf from</param>
+    /// <returns></returns>
+    [Description("Pull Style Facade-based data exchange using SPARQL query. Returns a response with status.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/pull?method=sparql")]
+    public Response Pull(string projectName, string applicationName, Request request)
+    {
+      return _exchangeProvider.Pull(projectName, applicationName, request);
+    }
+    #endregion
+    #endregion
+
     #region Difference-based Data Exchange
     
     #region GetDxi

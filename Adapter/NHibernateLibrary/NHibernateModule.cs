@@ -6,13 +6,13 @@ using Ninject.Modules;
 using org.iringtools.library;
 using System.Collections.Specialized;
 
-namespace org.iringtools.application
+namespace org.iringtools.nhibernate
 {
-  class ApplicationModule : NinjectModule
+  class NHibernateModule : NinjectModule
   {
     public override void Load()
     {
-      Bind<ApplicationSettings>().ToSelf().InSingletonScope();
+      Bind<NHibernateSettings>().ToSelf().InSingletonScope();
     }
   }
 }

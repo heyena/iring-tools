@@ -141,10 +141,6 @@
       <Project>{F271963F-10B1-4495-B047-BD5A977ED187}</Project>
       <Name>ReferenceDataLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ReferenceDataService\ReferenceDataService.csproj">
-      <Project>{80F46AE8-078E-4149-9D02-6241020B114F}</Project>
-      <Name>ReferenceDataService</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
