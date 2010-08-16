@@ -15,49 +15,29 @@ namespace org.iringtools.adapter.projection
 {
   public class XmlProjectionEngine : IProjectionLayer
   {
-    private static readonly string DATALAYER_NS = "org.iringtools.adapter.datalayer";
-
-    private static readonly XNamespace RDF_NS = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
-    private static readonly XNamespace OWL_NS = "http://www.w3.org/2002/07/owl#";
-    private static readonly XNamespace XSD_NS = "http://www.w3.org/2001/XMLSchema#";
+    
     private static readonly XNamespace XSI_NS = "http://www.w3.org/2001/XMLSchema-instance#";
     private static readonly XNamespace TPL_NS = "http://tpl.rdlfacade.org/data#";
     private static readonly XNamespace RDL_NS = "http://rdl.rdlfacade.org/data#";
-
-    private static readonly XName OWL_THING = OWL_NS + "Thing";
-    private static readonly XName RDF_ABOUT = RDF_NS + "about";
-    private static readonly XName RDF_DESCRIPTION = RDF_NS + "Description";
-    private static readonly XName RDF_TYPE = RDF_NS + "type";
-    private static readonly XName RDF_RESOURCE = RDF_NS + "resource";
-    private static readonly XName RDF_DATATYPE = RDF_NS + "datatype";
-
-    private static readonly string RDF_PREFIX = "rdf:";
-    private static readonly string RDF_NIL = RDF_PREFIX + "nil";
 
     private static readonly ILog _logger = LogManager.GetLogger(typeof(XmlProjectionEngine));
 
     private IDataLayer _dataLayer = null;
     private Mapping _mapping = null;
     private GraphMap _graphMap = null;
-    private DataDictionary _dataDictionary = null;
     private IList<IDataObject> _dataObjects = null;
     private Dictionary<string, List<string>> _classIdentifiers = null; // dictionary of class ids and list of identifiers
-    private List<Dictionary<string, string>> _xPathValuePairs = null;  // dictionary of property xpath and value pairs
     private Dictionary<string, List<string>> _hierachicalDTOClasses = null;  // dictionary of class rdlUri and identifiers
     private XNamespace _graphNs = String.Empty;
-    private string _dataObjectsAssemblyName = String.Empty;
-    private string _dataObjectNs = String.Empty;
 
     [Inject]
-    public XmlProjectionEngine(AdapterSettings settings, IDataLayer dataLayer, Mapping mapping, DataDictionary dataDictionry)
+    public XmlProjectionEngine(AdapterSettings settings, IDataLayer dataLayer, Mapping mapping)
     {
       _dataObjects = new List<IDataObject>();
       _classIdentifiers = new Dictionary<string, List<string>>();
-      _xPathValuePairs = new List<Dictionary<string, string>>();
       _hierachicalDTOClasses = new Dictionary<string, List<string>>();
 
       _dataLayer = dataLayer;
-      _dataDictionary = dataDictionry;
       _mapping = mapping;
 
       _graphNs = String.Format("{0}{1}/{2}",
@@ -65,14 +45,6 @@ namespace org.iringtools.adapter.projection
         settings["ProjectName"],
         settings["ApplicationName"]
       );
-
-      _dataObjectNs = String.Format("{0}.proj_{1}.{2}",
-        DATALAYER_NS,
-        settings["ProjectName"],
-        settings["ApplicationName"]
-      );
-
-      _dataObjectsAssemblyName = settings["ExecutingAssemblyName"];
     }
     
     public XElement GetXml(string graphName, ref IList<IDataObject> dataObjects)

@@ -13,8 +13,9 @@ using System.IO;
 using log4net;
 using Microsoft.ServiceModel.Web;
 using StaticDust.Configuration;
+using org.iringtools.adapter;
 
-namespace org.iringtools.adapter
+namespace org.iringtools.exchange
 {
   public class ExchangeProvider
   {
@@ -69,13 +70,12 @@ namespace org.iringtools.adapter
       _kernel.Bind<Response>().ToConstant(_response);
     }
 
-    public XElement GetDxi(string projectName, string applicationName, Request request)
+    public XElement GetDxi(string projectName, string applicationName, string graphName, DXRequest request)
     {
       InitializeScope(projectName, applicationName);
       InitializeDataLayer();
 
-      string graphName = request["graphName"];
-      _manifest = Utility.DeserializeDataContract<Manifest>(request["manifest"]);
+      _manifest = request.Manifest;
 
       if (request.ContainsKey("hashAlgorithm"))
       {
@@ -100,14 +100,13 @@ namespace org.iringtools.adapter
       return dxiXml;
     }
 
-    public XElement GetDto(string projectName, string applicationName, Request request)
+    public XElement GetDto(string projectName, string applicationName, string graphName, DXRequest request)
     {
       InitializeScope(projectName, applicationName);
       InitializeDataLayer();
 
-      string graphName = request["graphName"];
-      _manifest = Utility.DeserializeDataContract<Manifest>(request["manifest"]);
-      Identifiers identifiers = Utility.DeserializeDataContract<Identifiers>(request["identifiers"]);
+      _manifest = request.Manifest;
+      Identifiers identifiers = request.Identifiers;
 
       BuildCrossedGraphMap(graphName);
       PopulateClassIdentifiers(identifiers);

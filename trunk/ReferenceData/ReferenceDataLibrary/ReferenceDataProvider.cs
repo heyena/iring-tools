@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2009, ids-adi.org /////////////////////////////////////////////
+﻿// Copyright (c) 2010, iringtools.org //////////////////////////////////////////
 // All rights reserved.
 //------------------------------------------------------------------------------
 // Redistribution and use in source and binary forms, with or without
@@ -28,38 +28,23 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
+using System.Web;
 using log4net;
 using Ninject;
 using org.ids_adi.qmxf;
 using org.iringtools.library;
 using org.iringtools.utility;
-using org.iringtools.utility.Loggers;
 using org.w3.sparql_results;
-using System.Web;
 
-namespace org.ids_adi.iring.referenceData
+namespace org.iringtools.referenceData
 {
     // NOTE: If you change the class name "Service" here, you must also update the reference to "Service" in Web.config and in the associated .svc file.
-    public class ReferenceDataProvider : org.iringtools.utility.Loggers.ILog
+    public class ReferenceDataProvider
     {
-        #region Logger
-        private ILogger _logger;
-        public ILogger Logger
-        {
-            get
-            {   // Lazy instantiation
-                if (_logger == null)
-                    _logger = new DefaultLogger();
-                return _logger;
-            }
-            set { _logger = value; }
-        }
-
-        #endregion
-
+      private static readonly ILog _logger = LogManager.GetLogger(typeof(ReferenceDataProvider));
+      
         private Response _response = null;
 
-        private static readonly log4net.ILog _log4netLogger = LogManager.GetLogger(typeof(ReferenceDataProvider));
         private const string REPOSITORIES_FILE_NAME = "Repositories.xml";
         private const string QUERIES_FILE_NAME = "Queries.xml";
 
@@ -120,7 +105,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception ex)
             {
-                _log4netLogger.Error("Error in initializing ReferenceDataServiceProvider: " + ex);
+              _logger.Error("Error in initializing ReferenceDataServiceProvider: " + ex);
             }
         }
 
@@ -142,7 +127,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception ex)
             {
-                _log4netLogger.Error("Error in GetRepositories: " + ex);
+                _logger.Error("Error in GetRepositories: " + ex);
                 return null;
             }
         }
@@ -186,7 +171,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
-                _log4netLogger.Error("Error in Find: " + e);
+              _logger.Error("Error in Find: " + e);
                 throw new Exception("Error while Finding " + query + ".\n" + e.ToString(), e);
             }
             return queryResult;
@@ -196,22 +181,17 @@ namespace org.ids_adi.iring.referenceData
         {
             try
             {
-                using (new LoggerHelper(this, "Search", query))
-                {
-                    return SearchPage(query, "0");
-                }
+                return SearchPage(query, "0");
             }
             catch (Exception ex)
             {
-                _log4netLogger.Error("Error in Search: " + ex);
+                _logger.Error("Error in Search: " + ex);
                 throw new Exception("Error while Searching " + query + ".\n" + ex.ToString(), ex);
             }
         }
 
         public RefDataEntities SearchPage(string query, string page)
         {
-            using (new LoggerHelper(this, "SearchPage", query + "," + page))
-            {
                 RefDataEntities entities = null;
                 int counter = 0;
 
@@ -242,7 +222,6 @@ namespace org.ids_adi.iring.referenceData
                         {
                             SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-
                             List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
                             foreach (Dictionary<string, string> result in results)
                             {
@@ -272,15 +251,14 @@ namespace org.ids_adi.iring.referenceData
 
                     entities = GetRequestedPage(entities, pageNumber, _pageSize);
                     entities.total = pageTotal / _pageSize;
-                    Logger.Log(string.Format("SearchPage is returning {0} records", entities.Count), Category.Debug, Priority.None);
+                    _logger.Info(string.Format("SearchPage is returning {0} records", entities.Count));
                     return entities;
                 }
                 catch (Exception e)
                 {
-                    _log4netLogger.Error("Error in SearchPage: " + e);
+                    _logger.Error("Error in SearchPage: " + e);
                     throw new Exception("Error while Finding " + query + ".\n" + e.ToString(), e);
                 }
-            }
         }
 
         public RefDataEntities SearchReset(string query)
@@ -330,7 +308,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
-                _log4netLogger.Error("Error in GetLabel: " + e);
+                _logger.Error("Error in GetLabel: " + e);
                 throw new Exception("Error while Getting Label for " + uri + ".\n" + e.ToString(), e);
             }
         }
@@ -389,7 +367,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
-                _log4netLogger.Error("Error in GetClassifications: " + e);
+                _logger.Error("Error in GetClassifications: " + e);
                 throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
             }
         }
@@ -445,7 +423,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
-                _log4netLogger.Error("Error in GetSpecializations: " + e);
+                _logger.Error("Error in GetSpecializations: " + e);
                 throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
             }
         }
@@ -549,7 +527,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
-                _log4netLogger.Error("Error in GetClass: " + e);
+                _logger.Error("Error in GetClass: " + e);
                 throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
             }
         }
@@ -581,7 +559,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
-                _log4netLogger.Error("Error in GetSuperClasses: " + e);
+                _logger.Error("Error in GetSuperClasses: " + e);
                 throw new Exception("Error while Finding " + id + ".\n" + e.ToString(), e);
             }
             return queryResult;
@@ -644,7 +622,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
-                _log4netLogger.Error("Error in GetAllSuperClasses: " + e);
+                _logger.Error("Error in GetAllSuperClasses: " + e);
                 throw new Exception("Error while Finding " + id + ".\n" + e.ToString(), e);
             }
 
@@ -687,7 +665,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
-                _log4netLogger.Error("Error in GetSubClasses: " + e);
+                _logger.Error("Error in GetSubClasses: " + e);
                 throw new Exception("Error while Finding " + id + ".\n" + e.ToString(), e);
             }
             return queryResult;
@@ -729,7 +707,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
-                _log4netLogger.Error("Error in GetClassTemplates: " + e);
+                _logger.Error("Error in GetClassTemplates: " + e);
                 throw new Exception("Error while Finding " + id + ".\n" + e.ToString(), e);
             }
             return queryResult;
@@ -798,7 +776,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
-                _log4netLogger.Error("Error in GetRoleDefinition: " + e);
+                _logger.Error("Error in GetRoleDefinition: " + e);
                 throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
             }
         }
@@ -927,7 +905,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
-                _log4netLogger.Error("Error in GetRoleQualification: " + e);
+                _logger.Error("Error in GetRoleQualification: " + e);
                 throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
             }
         }
@@ -991,7 +969,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
-                _log4netLogger.Error("Error in GetTemplateDefinition: " + e);
+                _logger.Error("Error in GetTemplateDefinition: " + e);
                 throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
             }
         }
@@ -1016,7 +994,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception ex)
             {
-                _log4netLogger.Error("Error in GetTemplate: " + ex);
+                _logger.Error("Error in GetTemplate: " + ex);
             }
 
             return qmxf;
@@ -1086,7 +1064,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
-                _log4netLogger.Error("Error in GetTemplateQualification: " + e);
+                _logger.Error("Error in GetTemplateQualification: " + e);
                 throw new Exception("Error while Getting Template: " + id + ".\n" + e.ToString(), e);
             }
         }
@@ -1691,7 +1669,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception ex)
             {
-                _log4netLogger.Error("Error in PostTemplate: " + ex);
+                _logger.Error("Error in PostTemplate: " + ex);
                 throw ex;
             }
         }
@@ -2007,7 +1985,7 @@ namespace org.ids_adi.iring.referenceData
             catch (Exception e)
             {
                 Utility.WriteString(e.ToString(), "error.log");
-                _log4netLogger.Error("Error in PostClass: " + e);
+                _logger.Error("Error in PostClass: " + e);
                 throw e;
             }
         }
@@ -2032,7 +2010,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
-                _log4netLogger.Error("Error in CreateIdsAdiId: " + e);
+                _logger.Error("Error in CreateIdsAdiId: " + e);
                 throw new Exception("CreateIdsAdiId: " + e.ToString() + " registrybase: " + RegistryBase);
             }
 
@@ -2322,7 +2300,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
-                _log4netLogger.Error("Error in GetClassifications: " + e);
+                _logger.Error("Error in GetClassifications: " + e);
                 throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
             }
         }
@@ -2378,7 +2356,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
-                _log4netLogger.Error("Error in GetClassifications: " + e);
+                _logger.Error("Error in GetClassifications: " + e);
                 throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
             }
         }
@@ -2394,7 +2372,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception ex)
             {
-                _log4netLogger.Error("Error in GetPart8Template: " + ex);
+                _logger.Error("Error in GetPart8Template: " + ex);
             }
 
             return qmxf;
@@ -2453,7 +2431,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
-                _log4netLogger.Error("Error in GetTemplateDefinition: " + e);
+                _logger.Error("Error in GetTemplateDefinition: " + e);
                 throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
             }
         }
@@ -2525,7 +2503,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
-                _log4netLogger.Error("Error in GetRoleDefinition: " + e);
+                _logger.Error("Error in GetRoleDefinition: " + e);
                 throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
             }
         }
@@ -2582,7 +2560,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
-                _log4netLogger.Error("Error in GetRoleDefinition: " + e);
+                _logger.Error("Error in GetRoleDefinition: " + e);
                 throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
             }
         }
@@ -2754,7 +2732,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception ex)
             {
-                _log4netLogger.Error("Error in PostTemplate: " + ex);
+                _logger.Error("Error in PostTemplate: " + ex);
                 throw ex;
             }
         }
@@ -2824,7 +2802,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
-                _log4netLogger.Error("Error in GetClass: " + e);
+                _logger.Error("Error in GetClass: " + e);
                 throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
             }
         }
@@ -2880,7 +2858,7 @@ namespace org.ids_adi.iring.referenceData
             }
             catch (Exception e)
             {
-                _log4netLogger.Error("Error in GetSpecializations: " + e);
+                _logger.Error("Error in GetSpecializations: " + e);
                 throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
             }
         }
@@ -2889,22 +2867,17 @@ namespace org.ids_adi.iring.referenceData
         {
             try
             {
-                using (new LoggerHelper(this, "Search", query))
-                {
-                    return Part8SearchPage(query, "0");
-                }
+                return Part8SearchPage(query, "0");
             }
             catch (Exception ex)
             {
-                _log4netLogger.Error("Error in Search: " + ex);
+                _logger.Error("Error in Search: " + ex);
                 throw new Exception("Error while Searching " + query + ".\n" + ex.ToString(), ex);
             }
         }
 
         public RefDataEntities Part8SearchPage(string query, string page)
         {
-            using (new LoggerHelper(this, "SearchPage", query + "," + page))
-            {
                 RefDataEntities entities = null;
                 int counter = 0;
 
@@ -2965,15 +2938,14 @@ namespace org.ids_adi.iring.referenceData
 
                     entities = GetRequestedPage(entities, pageNumber, _pageSize);
                     entities.total = pageTotal / _pageSize;
-                    Logger.Log(string.Format("SearchPage is returning {0} records", entities.Count), Category.Debug, Priority.None);
+                    _logger.Info(string.Format("SearchPage is returning {0} records", entities.Count));
                     return entities;
                 }
                 catch (Exception e)
                 {
-                    _log4netLogger.Error("Error in SearchPage: " + e);
+                    _logger.Error("Error in SearchPage: " + e);
                     throw new Exception("Error while Finding " + query + ".\n" + e.ToString(), e);
                 }
-            }
         }
 
         public Response PostPart8Class(QMXF qmxf)
@@ -3118,7 +3090,7 @@ namespace org.ids_adi.iring.referenceData
             catch (Exception e)
             {
                 Utility.WriteString(e.ToString(), "error.log");
-                _log4netLogger.Error("Error in PostClass: " + e);
+                _logger.Error("Error in PostClass: " + e);
                 throw e;
             }
         }

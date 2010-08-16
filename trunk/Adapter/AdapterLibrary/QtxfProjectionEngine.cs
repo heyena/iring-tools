@@ -14,8 +14,6 @@ namespace org.iringtools.adapter.projection
 {
   public class QtxfProjectionEngine : IProjectionLayer
   {
-    private static readonly string DATALAYER_NS = "org.iringtools.adapter.datalayer";
-
     private static readonly XNamespace XSI_NS = "http://www.w3.org/2001/XMLSchema-instance#";
     private static readonly XNamespace RDL_NS = "http://rdl.rdlfacade.org/data#";
 
@@ -23,11 +21,9 @@ namespace org.iringtools.adapter.projection
 
     private Mapping _mapping = null;
     private GraphMap _graphMap = null;
-    private DataDictionary _dataDictionary = null;
     private IList<IDataObject> _dataObjects = null; // dictionary of object names and list of data objects
     private Dictionary<string, List<string>> _classIdentifiers = null; // dictionary of class ids and list of identifiers
     private XNamespace _graphNs = String.Empty;
-    private string _dataObjectNs = String.Empty;
 
     private static readonly string RDF_PREFIX = "rdf:";
 
@@ -37,19 +33,12 @@ namespace org.iringtools.adapter.projection
     private static readonly string RDF_NIL = RDF_PREFIX + "nil";
 
     [Inject]
-    public QtxfProjectionEngine(AdapterSettings settings, IDataLayer dataLayer, Mapping mapping, DataDictionary dataDictionary)
+    public QtxfProjectionEngine(AdapterSettings settings, IDataLayer dataLayer, Mapping mapping)
     {
-      _dataDictionary = dataDictionary;
       _mapping = mapping;
 
       _graphNs = String.Format("{0}{1}/{2}",
         settings["GraphBaseUri"],
-        settings["ProjectName"],
-        settings["ApplicationName"]
-      );
-
-      _dataObjectNs = String.Format("{0}.proj_{1}.{2}",
-        DATALAYER_NS,
         settings["ProjectName"],
         settings["ApplicationName"]
       );
