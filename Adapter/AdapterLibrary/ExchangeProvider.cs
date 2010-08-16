@@ -19,6 +19,7 @@ namespace org.iringtools.exchange
 {
   public class ExchangeProvider
   {
+    private static readonly XNamespace DTO_NS = "http://iringtools.org/adapter/library/dto";
     private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterProvider));
 
     private Response _response = null;
@@ -94,10 +95,60 @@ namespace org.iringtools.exchange
       BuildCrossedGraphMap(graphName);
       PopulateClassIdentifiers(null);
 
-      DataTransferIndices dxi = CreateDxi(graphName);
-      XElement dxiXml = SerializationExtensions.ToXml<DataTransferIndices>(dxi);
+      XElement dxiList = new XElement(DTO_NS + "dataTransferIndices");
+      for (int i = 0; i < _dataObjects.Count; i++)
+      {
+        XElement dxi = new XElement(DTO_NS + "dataTransferIndex");
+        dxiList.Add(dxi);
 
-      return dxiXml;
+        bool firstClassMap = true;
+        StringBuilder propertyValues = new StringBuilder();
+
+        foreach (var pair in _crossedGraph.classTemplateListMaps)
+        {
+          ClassMap classMap = pair.Key;
+          List<TemplateMap> templateMaps = pair.Value;
+
+          if (firstClassMap)
+          {
+            dxi.Add(new XElement(DTO_NS + "identifier", _classIdentifiers[classMap.classId][i]));
+            firstClassMap = false;
+          }
+
+          foreach (TemplateMap templateMap in templateMaps)
+          {
+            foreach (RoleMap roleMap in templateMap.roleMaps)
+            {
+              if (roleMap.type == RoleType.Property)
+              {
+                string propertyName = roleMap.propertyName.Substring(_crossedGraph.dataObjectMap.Length + 1);
+                string value = Convert.ToString(_dataObjects[i].GetPropertyValue(propertyName));
+
+                if (!String.IsNullOrEmpty(roleMap.valueList))
+                {
+                  value = _mapping.ResolveValueList(roleMap.valueList, value);
+                }
+
+                propertyValues.Append(value);
+              }
+            }
+          }
+        }
+
+        string hashValue = String.Empty;
+
+        // todo: handle/implement more hash algorithms
+        switch (_hashAlgorithm)
+        {
+          default: // MD5
+            hashValue = Utility.MD5Hash(propertyValues.ToString());
+            break;
+        }
+
+        dxi.Add(new XElement(DTO_NS + "hashValue", hashValue));
+      }
+
+      return dxiList;
     }
 
     public XElement GetDto(string projectName, string applicationName, string graphName, DXRequest request)
@@ -111,10 +162,79 @@ namespace org.iringtools.exchange
       BuildCrossedGraphMap(graphName);
       PopulateClassIdentifiers(identifiers);
 
-      DataTransferObjects dto = CreateDto(graphName, identifiers);
-      XElement dtoXml = SerializationExtensions.ToXml<DataTransferObjects>(dto);
+      XElement dtoList = new XElement(DTO_NS + "dataTransferObjects");
 
-      return dtoXml;
+      for (int i = 0; i < _dataObjects.Count; i++)
+      {
+        XElement dto = new XElement(DTO_NS + "dataTransferObject");
+        dtoList.Add(dto);
+
+        XElement classObjects = new XElement(DTO_NS + "classObjects");
+        dto.Add(classObjects);
+
+        foreach (var pair in _crossedGraph.classTemplateListMaps)
+        {
+          ClassMap classMap = pair.Key;
+          List<TemplateMap> templateMaps = pair.Value;
+
+          XElement classObject = new XElement(DTO_NS + "classObject");
+          classObjects.Add(classObject);
+
+          classObject.Add(new XElement(DTO_NS + "classId", classMap.classId));
+          classObject.Add(new XElement(DTO_NS + "name", classMap.name));
+          classObject.Add(new XElement(DTO_NS + "identifier", _classIdentifiers[classMap.classId][i]));
+
+          XElement templateObjects = new XElement(DTO_NS + "templateObjects");
+          classObjects.Add(templateObjects);          
+
+          foreach (TemplateMap templateMap in templateMaps)
+          {
+            XElement templateObject = new XElement(DTO_NS + "templateObject");
+            templateObjects.Add(templateObject);
+
+            templateObject.Add(new XElement(DTO_NS + "templateId", templateMap.templateId));
+            templateObject.Add(new XElement(DTO_NS + "name", templateMap.name));
+
+            XElement roleObjects = new XElement(DTO_NS + "roleObjects");
+            templateObject.Add(roleObjects);
+
+            foreach (RoleMap roleMap in templateMap.roleMaps)
+            {
+              XElement roleObject = new XElement(DTO_NS + "roleObject");
+              roleObjects.Add(roleObject);
+
+              roleObject.Add(new XElement(DTO_NS + "roleId", roleMap.roleId));
+              roleObject.Add(new XElement(DTO_NS + "name", roleMap.name));
+
+              if (roleMap.type == RoleType.Property)
+              {
+                string propertyName = roleMap.propertyName.Substring(_crossedGraph.dataObjectMap.Length + 1);
+                string value = Convert.ToString(_dataObjects[i].GetPropertyValue(propertyName));
+
+                if (!String.IsNullOrEmpty(roleMap.valueList))
+                {
+                  value = _mapping.ResolveValueList(roleMap.valueList, value);
+                }
+
+                roleObject.Add(new XElement(DTO_NS + "value", value));
+              }
+              else if (!String.IsNullOrEmpty(roleMap.value))                
+              {
+                if (roleMap.type == RoleType.Reference)
+                {
+                  roleObject.Add(new XElement(DTO_NS + "reference", roleMap.value));
+                }
+                else
+                {
+                  roleObject.Add(new XElement(DTO_NS + "value", roleMap.value));
+                }
+              }
+            }
+          }
+        }
+      }
+
+      return dtoList;
     }
 
     #region helper methods
@@ -369,141 +489,6 @@ namespace org.iringtools.exchange
                 }
               }
             }
-          }
-        }
-      }
-    }
-
-    private DataTransferIndices CreateDxi(string graphName)
-    {
-      DataTransferIndices dataTransferIndices = new DataTransferIndices();
-      ClassMap crossedClass = _crossedGraph.classTemplateListMaps.First().Key;
-
-      for (int dataObjectIndex = 0; dataObjectIndex < _dataObjects.Count; dataObjectIndex++)
-      {
-        string identifier = _classIdentifiers[crossedClass.classId][dataObjectIndex];
-        StringBuilder propertyValues = new StringBuilder();
-        string hashValue = String.Empty;
-        
-        RecurCreateDxi(ref propertyValues, crossedClass, dataObjectIndex);
-
-        // todo: handle/implement more hash algorithms
-        switch (_hashAlgorithm)
-        {
-          default: // default MD5
-            hashValue = Utility.MD5Hash(propertyValues.ToString());
-            break;
-        }
-
-        dataTransferIndices.Add(identifier, hashValue);        
-      }
-
-      return dataTransferIndices;
-    }
-    
-    private void RecurCreateDxi(ref StringBuilder propertyValues, ClassMap classMap, int dataObjectIndex)
-    {
-      string classId = classMap.classId;
-      KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = _crossedGraph.GetClassTemplateListMap(classId);
-      List<TemplateMap> templateMaps = classTemplateListMap.Value;
-
-      foreach (TemplateMap templateMap in templateMaps)
-      {
-        foreach (RoleMap roleMap in templateMap.roleMaps)
-        {
-          if (roleMap.type == RoleType.Property)
-          {
-            string propertyName = roleMap.propertyName.Substring(_crossedGraph.dataObjectMap.Length + 1);
-            string value = Convert.ToString(_dataObjects[dataObjectIndex].GetPropertyValue(propertyName));
-
-            if (!String.IsNullOrEmpty(roleMap.valueList))
-            {
-              value = _mapping.ResolveValueList(roleMap.valueList, value);
-            }
-
-            propertyValues.Append(value);
-          }
-          else if (roleMap.type == RoleType.Reference)
-          {
-            if (roleMap.classMap != null)
-            {
-              RecurCreateDxi(ref propertyValues, roleMap.classMap, dataObjectIndex);
-            }
-          }
-        }
-      }
-    }
-
-    private DataTransferObjects CreateDto(string graphName, List<string> identifiers)
-    {
-      DataTransferObjects dataTransferObjects = new DataTransferObjects();
-      ClassMap classMap = _crossedGraph.classTemplateListMaps.First().Key;
-
-      for (int dataObjectIndex = 0; dataObjectIndex < _dataObjects.Count; dataObjectIndex++)
-      {
-        DataTransferObject dataTransferObject = new DataTransferObject();
-        dataTransferObjects.Add(dataTransferObject);
-        RecurCreateDto(ref dataTransferObject, classMap, dataObjectIndex);
-      }
-
-      return dataTransferObjects;
-    }
-    
-    private void RecurCreateDto(ref DataTransferObject dataTransferObject, ClassMap classMap, int dataObjectIndex)
-    {
-      string classId = classMap.classId;
-      string className = classMap.name;
-
-      KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = _crossedGraph.GetClassTemplateListMap(classId);
-      List<TemplateMap> templateMaps = classTemplateListMap.Value;
-      string classIdentifier = _classIdentifiers[classId][dataObjectIndex];
-
-      ClassObject classObject = new ClassObject
-      {
-        classId = classId,
-        name = className,
-        identifier = classIdentifier,
-      };
-      dataTransferObject.classObjects.Add(classObject);
-
-      foreach (TemplateMap templateMap in templateMaps)
-      {
-        TemplateObject templateObject = new TemplateObject
-        {
-          templateId = templateMap.templateId,
-          name = templateMap.name,
-        };
-        classObject.templateObjects.Add(templateObject);
-
-        foreach (RoleMap roleMap in templateMap.roleMaps)
-        {
-          RoleObject roleObject = new RoleObject();
-          roleObject.roleId = roleMap.roleId;
-          roleObject.name = roleMap.name;
-          templateObject.roleObjects.Add(roleObject);
-
-          if (roleMap.type == RoleType.Property)
-          {
-            string propertyName = roleMap.propertyName.Substring(_crossedGraph.dataObjectMap.Length + 1);
-            roleObject.value = Convert.ToString(_dataObjects[dataObjectIndex].GetPropertyValue(propertyName));
-
-            if (!String.IsNullOrEmpty(roleMap.valueList))
-            {
-              roleObject.value = _mapping.ResolveValueList(roleMap.valueList, roleObject.value);
-            }
-          }
-          else if (roleMap.type == RoleType.Reference)
-          {
-            roleObject.reference = roleMap.value;
-
-            if (roleMap.classMap != null)
-            {
-              RecurCreateDto(ref dataTransferObject, roleMap.classMap, dataObjectIndex);
-            }
-          }
-          else
-          {
-            roleObject.value = roleMap.value;
           }
         }
       }
