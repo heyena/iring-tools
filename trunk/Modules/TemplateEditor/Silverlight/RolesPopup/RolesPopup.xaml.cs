@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using org.iringtools.modulelibrary.events;
 using System.Linq;
+using PrismContrib.Errors;
+using Microsoft.Practices.Composite.Logging;
 
 namespace org.iringtools.modules.templateeditor.rolespopup
 {
@@ -14,71 +16,96 @@ namespace org.iringtools.modules.templateeditor.rolespopup
     {
         private RolesPopupModel _rolesPopupModel = null;
 
+        IError error;
+
         public RolesPopup()
         {
-            InitializeComponent();
-            
-            radRoleRange.Checked += new RoutedEventHandler(radioButtonCheckedHandler);
-            radRoleValue.Checked += new RoutedEventHandler(radioButtonCheckedHandler);
-            radRoleValueLiteral.Checked += new RoutedEventHandler(radioButtonCheckedHandler);
-            radRoleValueReference.Checked += new RoutedEventHandler(radioButtonCheckedHandler);
-
-            roleRestrictionType.SelectionChanged += new SelectionChangedEventHandler(roleRestrictionType_SelectionChanged);
-
-            roleRange.SelectionChanged += new SelectionChangedEventHandler(rangeSelectionChanged);
-
-            lstRestrictions.SelectionChanged += new SelectionChangedEventHandler(restrictionsSelectionChanged);
-
-            OKButton.Click += (object sender, RoutedEventArgs e) =>
+            try
             {
-                ButtonClickHandler(new ButtonEventArgs(this, OKButton));
-            };
+                InitializeComponent();
 
-            CancelButton.Click += (object sender, RoutedEventArgs e) =>
-            {
-                ButtonClickHandler(new ButtonEventArgs(this, CancelButton));
-            };
+                error = new Error();
 
-            addRestriction.Click += (object sender, RoutedEventArgs e) =>
-            {
-                ButtonClickHandler(new ButtonEventArgs(this, addRestriction));
-            };
+                radRoleRange.Checked += new RoutedEventHandler(radioButtonCheckedHandler);
+                radRoleValue.Checked += new RoutedEventHandler(radioButtonCheckedHandler);
+                radRoleValueLiteral.Checked += new RoutedEventHandler(radioButtonCheckedHandler);
+                radRoleValueReference.Checked += new RoutedEventHandler(radioButtonCheckedHandler);
 
-            removeRestriction.Click += (object sender, RoutedEventArgs e) =>
+                roleRestrictionType.SelectionChanged += new SelectionChangedEventHandler(roleRestrictionType_SelectionChanged);
+
+                roleRange.SelectionChanged += new SelectionChangedEventHandler(rangeSelectionChanged);
+
+                lstRestrictions.SelectionChanged += new SelectionChangedEventHandler(restrictionsSelectionChanged);
+
+                OKButton.Click += (object sender, RoutedEventArgs e) =>
+                {
+                    ButtonClickHandler(new ButtonEventArgs(this, OKButton));
+                };
+
+                CancelButton.Click += (object sender, RoutedEventArgs e) =>
+                {
+                    ButtonClickHandler(new ButtonEventArgs(this, CancelButton));
+                };
+
+                addRestriction.Click += (object sender, RoutedEventArgs e) =>
+                {
+                    ButtonClickHandler(new ButtonEventArgs(this, addRestriction));
+                };
+
+                removeRestriction.Click += (object sender, RoutedEventArgs e) =>
+                {
+                    ButtonClickHandler(new ButtonEventArgs(this, removeRestriction));
+                };
+            }
+            catch (Exception ex)
             {
-                ButtonClickHandler(new ButtonEventArgs(this, removeRestriction));
-            };
+                throw ex;
+            }
         }
 
         void ButtonClickHandler(ButtonEventArgs e)
         {
-            if (e.Name.ToString() == "OKButton")
+            try
             {
-                FinalizeModel();
-                this.DialogResult = true;
+                if (e.Name.ToString() == "OKButton")
+                {
+                    FinalizeModel();
+                    this.DialogResult = true;
+                }
+                else if (e.Name.ToString() == "CancelButton")
+                {
+                    this.DialogResult = false;
+                }
+                else if (e.Name.ToString() == "addRestriction")
+                {
+                    string type = ((KeyValuePair<string, string>)roleRestrictionType.SelectedItem).Value;
+                    string value = roleRestrictionValue.Text;
+                    _rolesPopupModel.AddRestriction(type, value);
+                }
+                else if (e.Name.ToString() == "removeRestriction")
+                {
+                    _rolesPopupModel.RemoveRestriction();
+                }
             }
-            else if (e.Name.ToString() == "CancelButton")
+            catch (Exception ex)
             {
-                this.DialogResult = false;
-            }
-            else if (e.Name.ToString() == "addRestriction")
-            {
-                string type = ((KeyValuePair<string, string>)roleRestrictionType.SelectedItem).Value;
-                string value = roleRestrictionValue.Text;
-                _rolesPopupModel.AddRestriction(type, value);
-            }
-            else if (e.Name.ToString() == "removeRestriction")
-            {
-                _rolesPopupModel.RemoveRestriction();
+                error.SetError(ex);
             }
         }
 
 
         void roleRestrictionType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (roleRestrictionType.SelectedItem != null)
+            try
             {
-                _rolesPopupModel.SelectedRoleRestrictionType = (KeyValuePair<string, string>)roleRestrictionType.SelectedItem;
+                if (roleRestrictionType.SelectedItem != null)
+                {
+                    _rolesPopupModel.SelectedRoleRestrictionType = (KeyValuePair<string, string>)roleRestrictionType.SelectedItem;
+                }
+            }
+            catch (Exception ex)
+            {
+                error.SetError(ex);
             }
         }
 
@@ -93,30 +120,37 @@ namespace org.iringtools.modules.templateeditor.rolespopup
             }
             catch (Exception ex)
             {
-                throw ex;
+                error.SetError(ex);
             }
         }
 
         void radioButtonCheckedHandler(object sender, RoutedEventArgs e)
         {
-            if (radRoleRange.IsChecked == true)
+            try
             {
-                roleRange.IsEnabled = true;
-                radRoleValueLiteral.IsEnabled = false;
-                radRoleValueReference.IsEnabled = false;
-                roleValueLiteral.IsEnabled = false;
-                roleValueLiteralDatatype.IsEnabled = false;
-                roleValueReference.IsEnabled = false;
+                if (radRoleRange.IsChecked == true)
+                {
+                    roleRange.IsEnabled = true;
+                    radRoleValueLiteral.IsEnabled = false;
+                    radRoleValueReference.IsEnabled = false;
+                    roleValueLiteral.IsEnabled = false;
+                    roleValueLiteralDatatype.IsEnabled = false;
+                    roleValueReference.IsEnabled = false;
+                }
+                else if (radRoleValue.IsChecked == true)
+                {
+                    roleRange.IsEnabled = false;
+                    radRoleValueLiteral.IsEnabled = true;
+                    radRoleValueReference.IsEnabled = true;
+                    roleValueLiteral.IsEnabled = true;
+                    roleValueLiteralDatatype.IsEnabled = radRoleValueLiteral.IsChecked == true;
+                    roleValueReference.IsEnabled = true;
+                }
             }
-            else if (radRoleValue.IsChecked == true)
+            catch (Exception ex)
             {
-                roleRange.IsEnabled = false;
-                radRoleValueLiteral.IsEnabled = true;
-                radRoleValueReference.IsEnabled = true;
-                roleValueLiteral.IsEnabled = true;
-                roleValueLiteralDatatype.IsEnabled = radRoleValueLiteral.IsChecked == true;
-                roleValueReference.IsEnabled = true;
-            }            
+                error.SetError(ex);
+            }
         }
 
         public void rangeSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -151,48 +185,76 @@ namespace org.iringtools.modules.templateeditor.rolespopup
             }
             catch (Exception ex)
             {
-                throw ex;
+                error.SetError(ex);
             }
         }
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
-            FinalizeModel();
-            this.DialogResult = true;
+            try
+            {
+                FinalizeModel();
+                this.DialogResult = true;
+            }
+            catch (Exception ex)
+            {
+                error.SetError(ex);
+            }
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            this.DialogResult = false;
+            try
+            {
+                this.DialogResult = false;
+            }
+            catch (Exception ex) 
+            {
+                error.SetError(ex);
+            }
         }
 
         protected override void OnClosed(EventArgs e)
         {
-            base.OnClosed(e);
-            this.Closed(this, new DialogClosedEventArgs(this.DialogResult));
+            try
+            {
+                base.OnClosed(e);
+                this.Closed(this, new DialogClosedEventArgs(this.DialogResult));
+            }
+            catch (Exception ex)
+            {
+                error.SetError(ex);
+            }
         }
 
         private void FinalizeModel()
         {
-            if (radRoleRange.IsChecked == true)
+            try
             {
-                _rolesPopupModel.RoleValueLiteral = String.Empty;
-                _rolesPopupModel.RoleValueLiteralDatatype = new KeyValuePair<string, string>();
-                _rolesPopupModel.RoleValueReference = String.Empty;
-            }
-            else if (radRoleValue.IsChecked == true)
-            {
-                if (radRoleValueReference.IsChecked == true)
+                if (radRoleRange.IsChecked == true)
                 {
                     _rolesPopupModel.RoleValueLiteral = String.Empty;
                     _rolesPopupModel.RoleValueLiteralDatatype = new KeyValuePair<string, string>();
-                    _rolesPopupModel.RoleRange = new KeyValuePair<string, string>();
-                }
-                else if (radRoleValueLiteral.IsChecked == true)
-                {
                     _rolesPopupModel.RoleValueReference = String.Empty;
-                    _rolesPopupModel.RoleRange = new KeyValuePair<string, string>();
-                }                
+                }
+                else if (radRoleValue.IsChecked == true)
+                {
+                    if (radRoleValueReference.IsChecked == true)
+                    {
+                        _rolesPopupModel.RoleValueLiteral = String.Empty;
+                        _rolesPopupModel.RoleValueLiteralDatatype = new KeyValuePair<string, string>();
+                        _rolesPopupModel.RoleRange = new KeyValuePair<string, string>();
+                    }
+                    else if (radRoleValueLiteral.IsChecked == true)
+                    {
+                        _rolesPopupModel.RoleValueReference = String.Empty;
+                        _rolesPopupModel.RoleRange = new KeyValuePair<string, string>();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                error.SetError(ex);
             }
         }
 
@@ -210,27 +272,34 @@ namespace org.iringtools.modules.templateeditor.rolespopup
 
         void IRolesPopup.Show(RolesPopupModel model)
         {
-            _rolesPopupModel = model;
+            try
+            {
+                _rolesPopupModel = model;
 
-            radRoleRange.DataContext = _rolesPopupModel;
-            roleRange.DataContext = _rolesPopupModel;
+                radRoleRange.DataContext = _rolesPopupModel;
+                roleRange.DataContext = _rolesPopupModel;
 
-            radRoleValue.DataContext = _rolesPopupModel;
+                radRoleValue.DataContext = _rolesPopupModel;
 
-            radRoleValueReference.DataContext = _rolesPopupModel;
-            roleValueReference.DataContext = _rolesPopupModel;
+                radRoleValueReference.DataContext = _rolesPopupModel;
+                roleValueReference.DataContext = _rolesPopupModel;
 
-            radRoleValueLiteral.DataContext = _rolesPopupModel;
-            roleValueLiteral.DataContext = _rolesPopupModel;
-            roleValueLiteralDatatype.DataContext = _rolesPopupModel;
+                radRoleValueLiteral.DataContext = _rolesPopupModel;
+                roleValueLiteral.DataContext = _rolesPopupModel;
+                roleValueLiteralDatatype.DataContext = _rolesPopupModel;
 
-            lstRestrictions.DataContext = _rolesPopupModel;
-            roleRestrictionType.DataContext = _rolesPopupModel;
-            roleRestrictionValue.DataContext = _rolesPopupModel;
-            addRestriction.DataContext = _rolesPopupModel;
-            removeRestriction.DataContext = _rolesPopupModel;
+                lstRestrictions.DataContext = _rolesPopupModel;
+                roleRestrictionType.DataContext = _rolesPopupModel;
+                roleRestrictionValue.DataContext = _rolesPopupModel;
+                addRestriction.DataContext = _rolesPopupModel;
+                removeRestriction.DataContext = _rolesPopupModel;
 
-            this.Show();
+                this.Show();
+            }
+            catch (Exception ex)
+            {
+                error.SetError(ex);
+            }
         }
 
         public RolesPopupModel rolesPopupModel
