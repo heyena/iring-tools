@@ -87,32 +87,39 @@ namespace org.iringtools.adapter.projection
               XElement roleObject = new XElement(DTO_NS + "roleObject");
               roleObjects.Add(roleObject);
 
+              roleObject.Add(new XElement(DTO_NS + "type", roleMap.type));
               roleObject.Add(new XElement(DTO_NS + "roleId", roleMap.roleId));
               roleObject.Add(new XElement(DTO_NS + "name", roleMap.name));
 
-              if (roleMap.type == RoleType.Property)
+              switch (roleMap.type)
               {
-                string propertyName = roleMap.propertyName.Substring(_graphMap.dataObjectMap.Length + 1);
-                string value = Convert.ToString(_dataObjects[i].GetPropertyValue(propertyName));
+                case RoleType.Property:
+                  string propertyName = roleMap.propertyName.Substring(_graphMap.dataObjectMap.Length + 1);
+                  string value = Convert.ToString(_dataObjects[i].GetPropertyValue(propertyName));
 
-                if (!String.IsNullOrEmpty(roleMap.valueList))
-                {
-                  value = _mapping.ResolveValueList(roleMap.valueList, value);
-                  value = value.Replace(RDL_NS.NamespaceName, "rdl:");
-                }
+                  if (!String.IsNullOrEmpty(roleMap.valueList))
+                  {
+                    value = _mapping.ResolveValueList(roleMap.valueList, value);
+                    value = value.Replace(RDL_NS.NamespaceName, "rdl:");
+                  }
 
-                roleObject.Add(new XElement(DTO_NS + "value", value));
-              }
-              else if (!String.IsNullOrEmpty(roleMap.value))
-              {
-                if (roleMap.type == RoleType.Reference)
-                {
-                  roleObject.Add(new XElement(DTO_NS + "reference", roleMap.value));
-                }
-                else
-                {
+                  roleObject.Add(new XElement(DTO_NS + "value", value));
+                  break;
+
+                case RoleType.FixedValue:
                   roleObject.Add(new XElement(DTO_NS + "value", roleMap.value));
-                }
+                  break;
+
+                case RoleType.Reference:
+                  if (roleMap.classMap != null)
+                  {
+                    roleObject.Add(new XElement(DTO_NS + "value", "#" + _classIdentifiers[roleMap.classMap.classId][i]));
+                  }
+                  else
+                  {
+                    roleObject.Add(new XElement(DTO_NS + "value", roleMap.value));
+                  }
+                  break;
               }
             }
           }

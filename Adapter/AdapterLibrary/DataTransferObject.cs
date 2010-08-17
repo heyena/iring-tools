@@ -144,15 +144,18 @@ namespace org.iringtools.adapter
   public class RoleObject
   {
     [DataMember(Order = 0)]
-    public string roleId { get; set; }
+    public RoleType type { get; set; }
 
     [DataMember(Order = 1)]
+    public string roleId { get; set; }
+
+    [DataMember(Order = 2)]
     public string name { get; set; }
 
-    [DataMember(Order = 2, EmitDefaultValue = false)]
+    [DataMember(Order = 3, EmitDefaultValue = false)]
     public string value { get; set; }
 
-    [DataMember(Order = 3, EmitDefaultValue = false)]
+    [DataMember(Order = 4, EmitDefaultValue = false)]
     public string reference { get; set; }
   }
 
