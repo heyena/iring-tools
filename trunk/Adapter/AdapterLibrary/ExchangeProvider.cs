@@ -22,6 +22,8 @@ namespace org.iringtools.exchange
   public class ExchangeProvider
   {
     private static readonly XNamespace DTO_NS = "http://iringtools.org/adapter/library/dto";
+    private static readonly XNamespace RDL_NS = "http://rdl.rdlfacade.org/data#";
+    
     private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterProvider));
 
     private Response _response = null;
@@ -451,6 +453,7 @@ namespace org.iringtools.exchange
                 if (!String.IsNullOrEmpty(roleMap.valueList))
                 {
                   value = _mapping.ResolveValueList(roleMap.valueList, value);
+                  value = value.Replace(RDL_NS.NamespaceName, "rdl:");
                 }
 
                 roleObject.Add(new XElement(DTO_NS + "value", value));
