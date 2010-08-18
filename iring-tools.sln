@@ -7,7 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Applications", "Application
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{AC5E737F-B409-4F3C-A5DA-9B8C5DEB47EB}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit Tests", "Unit Tests", "{45FF71E8-CA94-4ED4-8058-D29BB2DE052D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{45FF71E8-CA94-4ED4-8058-D29BB2DE052D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{0CE13F71-3913-4C34-863E-FF1A7788C177}"
 EndProject
@@ -65,9 +65,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContextMenu.Silverlight", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMXFGenerator", "Utilities\QMXFGenerator\QMXFGenerator\QMXFGenerator.csproj", "{F77C735A-2334-4471-A4F2-41BDAC8A8492}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdapterService.Tests", "Adapter\AdapterService.Tests\AdapterService.Tests.csproj", "{C0120CB3-63EB-4DB1-9D21-1F68FF99DDAE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdapterService.Tests", "UnitTests\AdapterService.Tests\AdapterService.Tests.csproj", "{C0120CB3-63EB-4DB1-9D21-1F68FF99DDAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReferenceDataService.Tests", "ReferenceData\ReferenceDataService.Tests\ReferenceDataService.Tests.csproj", "{B93589B3-9BFD-4030-8FAA-D7E21524EF0B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReferenceDataService.Tests", "UnitTests\ReferenceDataService.Tests\ReferenceDataService.Tests.csproj", "{B93589B3-9BFD-4030-8FAA-D7E21524EF0B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemplateEditor.Silverlight", "Modules\TemplateEditor\Silverlight\TemplateEditor.Silverlight.csproj", "{B5B94B38-4901-4D3F-859E-E157623501D9}"
 EndProject
@@ -77,7 +77,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iRINGLibrary.Desktop", "Lib
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iRINGLibrary.Silverlight", "Libraries\iRINGLibrary\Silverlight\iRINGLibrary.Silverlight.csproj", "{748B993D-4F65-4A39-B865-6A7D5412C4BA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdapterLibrary", "Adapter\AdapterLibrary\AdapterLibrary.csproj", "{6AFEF057-8D02-4F3C-AC41-6815E9CFD15A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdapterLibrary", "Libraries\AdapterLibrary\AdapterLibrary.csproj", "{6AFEF057-8D02-4F3C-AC41-6815E9CFD15A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Edits.Silverlight", "Modules\Edits\Silverlight\Edits.Silverlight\Edits.Silverlight.csproj", "{48C20C15-3E83-47C8-87F3-C5EA0D389528}"
 EndProject
@@ -89,19 +89,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SWDump", "Utilities\SWDump\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RdfImportExport", "Utilities\RdfImportExport\RdfImportExport\RdfImportExport.csproj", "{B3AD51C6-20FB-4865-9499-DE68B15874D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReferenceDataLibrary", "ReferenceData\ReferenceDataLibrary\ReferenceDataLibrary.csproj", "{F271963F-10B1-4495-B047-BD5A977ED187}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReferenceDataLibrary", "Libraries\ReferenceDataLibrary\ReferenceDataLibrary.csproj", "{F271963F-10B1-4495-B047-BD5A977ED187}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHibernateLibrary", "Adapter\NHibernateLibrary\NHibernateLibrary.csproj", "{02377ADB-F40D-4AD0-B8A8-95810CB55047}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHibernateLibrary", "Libraries\NHibernateLibrary\NHibernateLibrary.csproj", "{02377ADB-F40D-4AD0-B8A8-95810CB55047}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationEditor.Silverlight", "Application\ApplicationEditor\ApplicationEditor.Silverlight.csproj", "{2AD28296-22DA-465F-90AA-6538661B3F86}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationEditor.Silverlight", "Applications\ApplicationEditor\ApplicationEditor.Silverlight.csproj", "{2AD28296-22DA-465F-90AA-6538661B3F86}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReferenceDataEditor.Silverlight", "ReferenceData\ReferenceDataEditor\ReferenceDataEditor.Silverlight.csproj", "{965B155F-23B5-4650-8CEF-2B36A1B6F843}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReferenceDataEditor.Silverlight", "Applications\ReferenceDataEditor\ReferenceDataEditor.Silverlight.csproj", "{965B155F-23B5-4650-8CEF-2B36A1B6F843}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MappingEditor.Silverlight", "MappingEditor\MappingEditor\MappingEditor.Silverlight.csproj", "{4549FEAF-A62B-4126-9D6D-10D1DB543466}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MappingEditor.Silverlight", "Applications\MappingEditor\MappingEditor.Silverlight.csproj", "{4549FEAF-A62B-4126-9D6D-10D1DB543466}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iRINGTools.Services", "Prototypes\iRINGTools.Services\iRINGTools.Services.csproj", "{F1FB051C-DFBD-4017-A248-9BE61D26EA70}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iRINGTools.Services", "iRINGTools.Services\iRINGTools.Services.csproj", "{F1FB051C-DFBD-4017-A248-9BE61D26EA70}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iRINGTools.Web", "Prototypes\iRINGTools.Web\iRINGTools.Web.csproj", "{E37C08B4-7B71-4FC6-A19F-CC508D620876}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iRINGTools.Web", "iRINGTools.Web\iRINGTools.Web.csproj", "{E37C08B4-7B71-4FC6-A19F-CC508D620876}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
