@@ -1,0 +1,60 @@
+<html>
+   <head>
+   <title>Complex Layout</title>
+   <link rel="stylesheet" type="text/css" href="lib/ext-3.2.1/resources/css/ext-all.css" />
+	<style type="text/css">
+	html, body {
+	font:normal 12px verdana;
+	margin:0;
+	padding:0;
+	border:0 none;
+	overflow:hidden;
+	height:100%;
+	}
+	p {
+	margin:5px;
+	}
+	.settings {
+		background-image:url(lib/ext-3.2.1/resources/images/folder_wrench.png);
+	}
+	.nav {
+		background-image:url(lib/ext-3.2.1/resources/images/folder_go.png); 
+	}
+	.profile{   
+		background:transparent url(lib/ext-3.2.1/resources/images/folder_go.png) no-repeat;   
+	} 
+
+	.headerLnk{
+		font-family:Calibri, Arial;
+		font-size:18;
+		text-decoration:none;
+		color:#4784B6;
+	}
+</style>
+   <!-- LIBS -->
+   <script type="text/javascript" src="lib/ext-3.2.1/adapter/ext/ext-base.js"></script>
+  <!-- ENDLIBS -->
+  <script type="text/javascript" src="lib/ext-3.2.1/ext-all-debug.js"></script>
+  <script type="text/javascript" src="resources/js/home.js"></script>
+   </head>
+   <body>
+   <!-- use class="x-hide-display" to prevent a brief flicker of the content -->
+	<div id="west" class="x-hide-display">
+    <p><script type="text/javascript" src="resources/js/check-tree.js"></script></p>
+	<div id='tree-div'></div>									  
+	</div>
+	<div id="center2" class="x-hide-display">
+	<p>RESULTS TAB Content will come here.....</p>
+	</div>
+	<div id="center1" class="x-hide-display">
+	<p> REVIEW &amp; ACCEPTANCE CONTENTS...........</p>
+	</div>
+	<div id="props-panel" class="x-hide-display" style="width:200px;height:200px;overflow:hidden;">
+	</div>
+	<div id="south" class="x-hide-display">
+	<p align="right">
+    <input type="button" style="background: none repeat scroll 0% 0% rgb(71, 132, 182); color: white; font-family: Calibri, Arial; font-size: 17px;" value="Refresh">
+	<input type="button" style="margin:0px 10px 0 0;background: none repeat scroll 0% 0% rgb(71, 132, 182); color: white; font-family: Calibri, Arial; font-size: 17px;" value="Exchange"> </p>
+	</div>
+	</body>
+</html>
