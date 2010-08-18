@@ -101,7 +101,7 @@ namespace org.iringtools.nhibernate
             new XElement("bind",
               new XAttribute("name", "DataLayer"),
               new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
-              new XAttribute("to", "org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateDataLayer")
+              new XAttribute("to", "org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary")
             )
           );
 
