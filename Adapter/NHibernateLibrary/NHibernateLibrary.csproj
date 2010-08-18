@@ -57,6 +57,7 @@
       <Link>AssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="EntityGenerator.cs" />
+    <Compile Include="NHibernateDataLayer.cs" />
     <Compile Include="NHibernateModule.cs" />
     <Compile Include="NHibernateProvider.cs" />
     <Compile Include="NHibernateSettings.cs" />
@@ -74,10 +75,6 @@
     <ProjectReference Include="..\AdapterLibrary\AdapterLibrary.csproj">
       <Project>{6AFEF057-8D02-4F3C-AC41-6815E9CFD15A}</Project>
       <Name>AdapterLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NHibernateDataLayer\NHibernateDataLayer.csproj">
-      <Project>{A9DAEA2D-26AC-4FFE-A4B0-3DEF95DE4168}</Project>
-      <Name>NHibernateDataLayer</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
