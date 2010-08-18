@@ -21,10 +21,10 @@ _:sqlStore a dnr:TripleStore ;
         dnr:sqlManager _:sqlServer .	
 _:sqlServer a dnr:SqlIOManager ;
         dnr:type "VDS.RDF.Storage.MicrosoftSqlStoreManager" ;
-        dnr:server "localhost" ;
+        dnr:server ".\SQLEXPRESS" ;
         dnr:database "InterfaceDb" ;
-        dnr:user "rdladmin" ;
-        dnr:password "Lm!1N2w" .
+        dnr:user "dotNetRDF" ;
+        dnr:password "dotNetRDF" .
 <dotnetrdf:/SandboxService/*> a dnr:HttpHandler ;
         dnr:cacheDuration "0";
         dnr:queryProcessor _:qProcS ;
@@ -47,7 +47,7 @@ _:sqlStoreS a dnr:TripleStore ;
         dnr:sqlManager _:sqlServerS .		
 _:sqlServerS a dnr:SqlIOManager ;
         dnr:type "VDS.RDF.Storage.MicrosoftSqlStoreManager" ;
-        dnr:server "localhost" ;
+        dnr:server ".\SQLEXPRESS" ;
         dnr:database "SandboxDb" ;
-        dnr:user "rdladmin" ;
-        dnr:password "Lm!1N2w" .		
+        dnr:user "dotNetRDF" ;
+        dnr:password "dotNetRDF" .		
