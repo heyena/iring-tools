@@ -1,1 +1,0 @@
-<%@ Application Codebehind="Global.asax.cs" Inherits="org.ids_adi.iring.referenceData.Global" Language="C#" %>
