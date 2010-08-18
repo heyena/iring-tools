@@ -46,6 +46,10 @@
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="dotNetRDF, Version=0.3.0.24258, Culture=neutral, PublicKeyToken=97baefd4b4357f01, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ExternalBinaries\dotnetRDF\dotNetRDF.dll</HintPath>
+    </Reference>
     <Reference Include="Iesi.Collections">
       <HintPath>..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Iesi.Collections.dll</HintPath>
     </Reference>
@@ -126,7 +130,8 @@
     <Content Include="XML\Repositories.xml" />
     <Content Include="XML\Scopes.xml" />
     <None Include="Web.config">
-      <SubType>Designer</SubType>
+      <SubType>
+      </SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
