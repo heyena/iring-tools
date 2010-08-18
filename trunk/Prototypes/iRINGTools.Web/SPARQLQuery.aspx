@@ -18,7 +18,7 @@
   <div style="width: 734px; height: 516px">
     <asp:Label ID="Label5" runat="server" Font-Names="Arial Black" Font-Size="Small"
       Text="SPARQL Endpoint URI:"></asp:Label>
-    <asp:TextBox ID="txtDefaultGraph0" Columns="100" runat="server" Width="534px" >http://localhost:52786/Facade/sparql</asp:TextBox>
+    <asp:TextBox ID="txtDefaultGraph0" Columns="100" runat="server" Width="534px" >http://localhost:54321/InterfaceService/query</asp:TextBox>
     <br />
     <asp:TextBox ID="txtQuery" runat="server" Rows="15" Columns="100" TextMode="MultiLine"
       Height="257px" Width="688px">PREFIX rdl: &lt;http://rdl.rdlfacade.org/data#&gt;

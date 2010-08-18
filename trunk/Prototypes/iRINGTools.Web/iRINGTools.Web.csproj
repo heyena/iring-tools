@@ -81,6 +81,7 @@
     <Content Include="css\reset.css" />
     <Content Include="Silverlight.js" />
     <Content Include="css\sparql.css" />
+    <Content Include="SPARQLQuery.aspx" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -112,6 +113,13 @@
       <DependentUpon>MappingEditor.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SPARQLQuery.aspx.cs">
+      <DependentUpon>SPARQLQuery.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SPARQLQuery.aspx.designer.cs">
+      <DependentUpon>SPARQLQuery.aspx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App_data\config.ttl" />
