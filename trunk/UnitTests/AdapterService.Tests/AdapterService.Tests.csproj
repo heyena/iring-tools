@@ -178,7 +178,7 @@
       <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
       <Name>UtilityLibrary.Desktop</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AdapterLibrary\AdapterLibrary.csproj">
+    <ProjectReference Include="..\..\Libraries\AdapterLibrary\AdapterLibrary.csproj">
       <Project>{6AFEF057-8D02-4F3C-AC41-6815E9CFD15A}</Project>
       <Name>AdapterLibrary</Name>
     </ProjectReference>

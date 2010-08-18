@@ -144,7 +144,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\AssemblyInfo.cs">
+    <Compile Include="..\AssemblyInfo.cs">
       <Link>AssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ExchangeService.cs" />
@@ -161,19 +161,19 @@
     <Folder Include="Logs\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Adapter\NHibernateLibrary\NHibernateLibrary.csproj">
+    <ProjectReference Include="..\Libraries\NHibernateLibrary\NHibernateLibrary.csproj">
       <Project>{02377ADB-F40D-4AD0-B8A8-95810CB55047}</Project>
       <Name>NHibernateLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Libraries\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
+    <ProjectReference Include="..\Libraries\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
       <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
       <Name>iRINGLibrary.Desktop</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Adapter\AdapterLibrary\AdapterLibrary.csproj">
+    <ProjectReference Include="..\Libraries\AdapterLibrary\AdapterLibrary.csproj">
       <Project>{6AFEF057-8D02-4F3C-AC41-6815E9CFD15A}</Project>
       <Name>AdapterLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ReferenceData\ReferenceDataLibrary\ReferenceDataLibrary.csproj">
+    <ProjectReference Include="..\Libraries\ReferenceDataLibrary\ReferenceDataLibrary.csproj">
       <Project>{F271963F-10B1-4495-B047-BD5A977ED187}</Project>
       <Name>ReferenceDataLibrary</Name>
     </ProjectReference>
