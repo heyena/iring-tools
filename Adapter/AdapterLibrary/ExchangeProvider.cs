@@ -173,7 +173,7 @@ namespace org.iringtools.exchange
           if (targetCredentials.isEncrypted)
             targetCredentials.Decrypt();
 
-          endpoint.SetCredentials(targetCredentials.GetNetworkCredential());
+          endpoint.SetCredentials(targetCredentials.GetNetworkCredential().UserName,targetCredentials.GetNetworkCredential().Password);
         }
 
         string proxyHost = _settings["ProxyHost"];
@@ -188,8 +188,8 @@ namespace org.iringtools.exchange
             endpoint.UseCredentialsForProxy = true;
             webProxy.Credentials = proxyCrendentials.GetNetworkCredential();
           }
-
-          endpoint.SetProxy(webProxy);
+          endpoint.SetProxyCredentials(proxyCrendentials.userName,proxyCrendentials.password);
+          endpoint.SetProxy(webProxy.Address);
         }
 
         VDS.RDF.Graph graph = endpoint.QueryWithResultGraph("CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o}");

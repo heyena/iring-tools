@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="dotNetRDF">
+      <HintPath>..\..\ExternalBinaries\dotnetRDF\dotNetRDF.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
@@ -55,6 +58,12 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_data\FederatedIntro.txt" />
+    <Content Include="App_data\InterfaceIntro.txt" />
+    <Content Include="App_data\LeviathanIntro.txt" />
+    <Content Include="App_data\PelletIntro.txt" />
+    <Content Include="App_data\SandboxIntro.txt" />
+    <Content Include="App_data\ServerIntro.txt" />
     <Content Include="img\blue-fade.png" />
     <Content Include="ClientBin\ApplicationEditor.xap" />
     <Content Include="ClientBin\MappingEditor.xap" />
@@ -72,7 +81,6 @@
     <Content Include="css\reset.css" />
     <Content Include="Silverlight.js" />
     <Content Include="css\sparql.css" />
-    <Content Include="SPARQLQuery.aspx" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -104,15 +112,12 @@
       <DependentUpon>MappingEditor.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SPARQLQuery.aspx.cs">
-      <DependentUpon>SPARQLQuery.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="SPARQLQuery.aspx.designer.cs">
-      <DependentUpon>SPARQLQuery.aspx</DependentUpon>
-    </Compile>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="App_data\config.ttl" />
+    <None Include="App_data\default.rq" />
+    <None Include="App_data\InferenceTest.ttl" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
   <ProjectExtensions>
@@ -121,7 +126,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>64486</DevelopmentServerPort>
+          <DevelopmentServerPort>1352</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

@@ -58,7 +58,7 @@
     <Content Include="ClientBin\ReferenceDataEditor.xap" />
     <Content Include="Default.aspx" />
     <Content Include="Silverlight.js" />
-    <Content Include="Web.config" />
+    <None Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigFile.cs" />
