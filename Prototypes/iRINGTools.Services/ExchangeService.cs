@@ -77,10 +77,10 @@ namespace org.iringtools.services
     /// <returns>Returns a Response object.</returns>
     [Description("Pull Style Adapter-based data exchange. Returns a response with status. Request should include: " +
       "targetUri, targetCredentials, graphName, targetGraphName, filter, projectName, applicationName.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/pull")]
-    public Response PullDTO(string projectName, string applicationName, Request request)
+    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/pull")]
+    public Response PullDTO(string projectName, string applicationName, string graphName, Request request)
     {
-      return _exchangeProvider.PullDTO(projectName, applicationName, request);
+      return _exchangeProvider.PullDTO(projectName, applicationName, graphName, request);
     }
     #endregion
 
@@ -96,10 +96,10 @@ namespace org.iringtools.services
     /// <returns>Returns a Response object.</returns>
     [Description("Push Style Adapter-based data exchange. Returns a response with status. PushRequest should include: " +
       "targetUri, targetCredentials, graphName, targetGraphName, filter, projectName, applicationName.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/push")]
-    public Response PushDTO(string projectName, string applicationName, PushRequest request)
+    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/push")]
+    public Response PushDTO(string projectName, string applicationName, string graphName, PushRequest request)
     {
-      return _exchangeProvider.Push(projectName, applicationName, request);
+      return _exchangeProvider.Push(projectName, applicationName, graphName, request);
     }
     #endregion
     #endregion
@@ -115,10 +115,10 @@ namespace org.iringtools.services
     /// <param name="request">request containing credentials and uri to pull rdf from</param>
     /// <returns></returns>
     [Description("Pull Style Facade-based data exchange using SPARQL query. Returns a response with status.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/pull?method=sparql")]
-    public Response Pull(string projectName, string applicationName, Request request)
+    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/pull?method=sparql")]
+    public Response Pull(string projectName, string applicationName, string graphName, Request request)
     {
-      return _exchangeProvider.Pull(projectName, applicationName, request);
+      return _exchangeProvider.Pull(projectName, applicationName, graphName, request);
     }
     #endregion
     #endregion

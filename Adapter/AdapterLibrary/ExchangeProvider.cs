@@ -76,11 +76,10 @@ namespace org.iringtools.exchange
       _kernel.Bind<Response>().ToConstant(_response);
     }
 
-    public Response PullDTO(string projectName, string applicationName, Request request)
+    public Response PullDTO(string projectName, string applicationName, string graphName, Request request)
     {
       String targetUri = String.Empty;
       String targetCredentialsXML = String.Empty;
-      String graphName = String.Empty;
       String filter = String.Empty;
       String projectNameForPull = String.Empty;
       String applicationNameForPull = String.Empty;
@@ -99,7 +98,6 @@ namespace org.iringtools.exchange
 
         targetUri = request["targetUri"];
         targetCredentialsXML = request["targetCredentials"];
-        graphName = request["graphName"];
         graphNameForPull = request["targetGraphName"];
         filter = request["filter"];
         projectNameForPull = request["projectName"];
@@ -137,7 +135,7 @@ namespace org.iringtools.exchange
       return _response;
     }
 
-    public Response Pull(string projectName, string applicationName, Request request)
+    public Response Pull(string projectName, string applicationName, string graphName, Request request)
     {
       Status status = new Status();
       status.Messages = new List<string>();
@@ -151,19 +149,18 @@ namespace org.iringtools.exchange
         DateTime startTime = DateTime.Now;
 
         #region move this portion to dotNetRdfEngine?
-        if (!request.ContainsKey("targetUri"))
-          throw new Exception("Target uri is required");
+        if (!request.ContainsKey("targetEndpointUri"))
+          throw new Exception("Target Endpoint Uri is required");
 
-        string targetUri = request["targetUri"];
-        if (!targetUri.EndsWith("/")) targetUri += "/";
+        string targetEndpointUri = request["targetEndpointUri"];
+        if (!targetEndpointUri.EndsWith("/")) targetEndpointUri += "/";
 
-        if (!request.ContainsKey("graphName"))
-          throw new Exception("Graph name is required");
+        if (!request.ContainsKey("targetGraphBaseUri"))
+          throw new Exception("Target graph uri is required");
 
-        string graphName = request["graphName"];
+        string targetGraphBaseUri = request["targetGraphBaseUri"];
 
-        string graphUri = _settings["GraphBaseUri"] + "/" + projectName + "/" + applicationName + "/" + graphName;
-        SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(targetUri), graphUri);
+        SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(targetEndpointUri), targetGraphBaseUri);
 
         if (request.ContainsKey("targetCredentials"))
         {
@@ -230,7 +227,7 @@ namespace org.iringtools.exchange
     }
 
     //Gets from datalayer and send it to another endpoint
-    public Response Push(string projectName, string applicationName, PushRequest request)
+    public Response Push(string projectName, string applicationName, string graphName, PushRequest request)
     {
       Status status = new Status();
       status.Messages = new List<string>();
@@ -238,7 +235,6 @@ namespace org.iringtools.exchange
       {
         String targetUri = String.Empty;
         String targetCredentialsXML = String.Empty;
-        String graphName = String.Empty;
         String filter = String.Empty;
         String projectNameForPush = String.Empty;
         String applicationNameForPush = String.Empty;
@@ -246,7 +242,6 @@ namespace org.iringtools.exchange
         String format = String.Empty;
         targetUri = request["targetUri"];
         targetCredentialsXML = request["targetCredentials"];
-        graphName = request["graphName"];
         filter = request["filter"];
         projectNameForPush = request["targetProjectName"];
         applicationNameForPush = request["targetApplicationName"];

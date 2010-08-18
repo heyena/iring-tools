@@ -226,6 +226,16 @@ namespace PrismContrib.Base
     }
 
     /// <summary>
+    /// Lists the box CTRL.
+    /// </summary>
+    /// <param name="listBoxName">Name of the list box.</param>
+    /// <returns></returns>
+    public DataGrid DataGridCtrl(string gridName)
+    {
+      return GetControl<DataGrid>(gridName);
+    }
+
+    /// <summary>
     /// CheckBox the CTRL
     /// </summary>
     /// <param name="controlName">Name of the control.</param>

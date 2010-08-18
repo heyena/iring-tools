@@ -4,8 +4,13 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
 >
-  <Grid x:Name="LayoutRoot" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#FFF0F0F0">
-    <data:DataGrid x:Name="dg" BorderThickness="1" BorderBrush="#8FA0AE" HorizontalContentAlignment="Stretch" ItemsSource="{Binding DetailProperties}" Margin="4,4,4,4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CanUserSortColumns="True"></data:DataGrid>
-    <TextBlock Height="29" Margin="0,0,28,28" VerticalAlignment="Bottom" Text="Details" TextWrapping="Wrap" FontFamily="Portable User Interface" FontSize="20" FontStyle="Italic" FontWeight="Bold" Opacity="0.1" Width="84.068" HorizontalAlignment="Right"/>		
-  </Grid>
+    <Grid x:Name="LayoutRoot" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="#FFF0F0F0">
+        <StackPanel>
+            <Button Name="btnClipBoard" Click="btnClipBoard_Click">Copy Detail To Clipboard</Button>
+            <Grid>
+                <data:DataGrid x:Name="dg" BorderThickness="1" BorderBrush="#8FA0AE" HorizontalContentAlignment="Stretch" ItemsSource="{Binding DetailProperties}" Margin="4,4,4,4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CanUserSortColumns="True"></data:DataGrid>
+                <TextBlock Height="29" Margin="0,0,28,28" VerticalAlignment="Bottom" Text="Details" TextWrapping="Wrap" FontFamily="Portable User Interface" FontSize="20" FontStyle="Italic" FontWeight="Bold" Opacity="0.1" Width="84.068" HorizontalAlignment="Right"/>
+            </Grid>            
+        </StackPanel>      
+    </Grid>
 </UserControl>

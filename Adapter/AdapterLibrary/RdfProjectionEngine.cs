@@ -17,6 +17,43 @@ using VDS.RDF.Query;
 
 namespace org.iringtools.adapter.projection
 {
+  public class RdfElement : ICloneable
+  {
+    private StringBuilder builder;
+    public XElement Element { get; set; }
+    public String Values
+    {
+      get
+      {
+        if (builder != null)
+        {
+          return builder.ToString();
+        }
+        else
+        {
+          return String.Empty;
+        }
+      }
+      set
+      {
+        builder = new StringBuilder(value);
+      }
+    }
+
+    public void Append(String value) 
+    {
+      builder.Append(value);
+    }
+
+    public object Clone()
+    {
+      RdfElement clone = new RdfElement();
+      clone.Element = new XElement(Element);
+      clone.Values = Values;      
+      return clone;
+    }
+  }
+
   public class RdfProjectionEngine : IProjectionLayer
   {
     private static readonly XNamespace RDF_NS = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
@@ -84,7 +121,7 @@ namespace org.iringtools.adapter.projection
       _classInstances = new Dictionary<string, List<string>>();
       _mapping = mapping;
 
-      _graphNs = String.Format("{0}{1}/{2}",
+      _graphNs = String.Format("{0}/{1}/{2}",
         settings["GraphBaseUri"],
         settings["ProjectName"],
         settings["ApplicationName"]
@@ -290,13 +327,9 @@ namespace org.iringtools.adapter.projection
       string templateId = templateMap.templateId.Replace(TPL_PREFIX, TPL_NS.NamespaceName);
       StringBuilder roleMapValues = new StringBuilder();
 
-      //RelatedObject cache
-      Dictionary<string, List<IDataObject>> relatedObjects = new Dictionary<string, List<IDataObject>>();
-
       XElement preElement = new XElement(OWL_THING);
       preElement.Add(new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, templateId)));
-      //preElement.Add(new XAttribute(RDF_ABOUT, ""));
-
+      
       #region RoleType.Possessor
       foreach (RoleMap roleMap in templateMap.roleMaps.Where(o => o.type == RoleType.Possessor))
       {
@@ -305,8 +338,7 @@ namespace org.iringtools.adapter.projection
         XElement roleElement = new XElement(TPL_NS + roleId);
 
         roleElement.Add(new XAttribute(RDF_RESOURCE, classInstance));
-        preElement.Add(roleElement);
-        break;
+        preElement.Add(roleElement);        
       }
       #endregion
 
@@ -330,24 +362,11 @@ namespace org.iringtools.adapter.projection
             }
             else
             {
-              //string[] property = identifier.Split('.');
-              //string objectName = property[0].Trim();
-              //string propertyName = property[1].Trim();
+              string[] property = identifier.Split('.');
+              string objectName = property[0].Trim();
+              string propertyName = property[1].Trim();
 
-              #region Process RoleMapping
-              string propertyName = identifier.Substring(identifier.LastIndexOf('.') + 1);
-              string objectPath = identifier.Substring(0, identifier.LastIndexOf('.'));
-              List<IDataObject> valueObjects;
-
-              //Get Related Object(s)
-              if (!relatedObjects.TryGetValue(objectPath, out valueObjects))
-              {
-                valueObjects = GetRelatedObjects(identifier, dataObject);
-                relatedObjects.Add(objectPath, valueObjects);
-              }
-              #endregion
-
-              foreach (IDataObject valueObject in valueObjects)
+              if (dataObject != null)
               {
                 string value = Convert.ToString(dataObject.GetPropertyValue(propertyName));
 
@@ -367,8 +386,6 @@ namespace org.iringtools.adapter.projection
         }
 
         preElement.Add(roleElement);
-        //break;
-
       }
       #endregion
 
@@ -385,104 +402,93 @@ namespace org.iringtools.adapter.projection
         roleElement.Add(new XText(roleMap.value));
 
         preElement.Add(roleElement);
-        break;
       }
       #endregion
 
       #region RoleType.Property
-      List<RoleMap> roleMaps = templateMap.roleMaps.Where(o => o.type == RoleType.Property).ToList<RoleMap>();
-      if (roleMaps.Count == 0)
-      {
-        return new List<XElement> { preElement };
-      }
+            
+      //RelatedObject cache
+      Dictionary<string, List<IDataObject>> relatedObjects = new Dictionary<string, List<IDataObject>>();
 
-      int maxRelatedObjectsCount = 0;
-      //Dictionary<string, List<IDataObject>> relatedObjects = new Dictionary<string, List<IDataObject>>();
-      Dictionary<string, RoleMap> objectPathRoleMaps = new Dictionary<string, RoleMap>();
+      List<RdfElement> templateElements = new List<RdfElement>();
+      List<RdfElement> propertyElements = new List<RdfElement>();
 
-      foreach (RoleMap roleMap in roleMaps)
+      //Add orignal template without property values to parent array
+      templateElements.Add(new RdfElement { Element = preElement, Values = roleMapValues.ToString() });
+
+      foreach (RoleMap roleMap in templateMap.roleMaps.Where(o => o.type == RoleType.Property))
       {
+        string roleId = roleMap.roleId.Substring(roleMap.roleId.IndexOf(":") + 1);
+
+        #region Process PropertyMapping
         string propertyMap = roleMap.propertyName;
         string propertyName = propertyMap.Substring(propertyMap.LastIndexOf('.') + 1);
-        string objectPath = propertyMap.Substring(0, propertyMap.IndexOf('.'));
+        string objectPath = propertyMap.Substring(0, propertyMap.LastIndexOf('.'));
         List<IDataObject> valueObjects;
 
         //Get Related Object(s)
         if (!relatedObjects.TryGetValue(objectPath, out valueObjects))
         {
-          valueObjects = GetRelatedObjects(propertyName, dataObject);
-          relatedObjects.Add(propertyMap, valueObjects);
-          objectPathRoleMaps.Add(propertyMap, roleMap);
-
-          if (valueObjects.Count > maxRelatedObjectsCount)
-            maxRelatedObjectsCount = valueObjects.Count;
+          valueObjects = GetRelatedObjects(roleMap.propertyName, dataObject);
+          relatedObjects.Add(objectPath, valueObjects);
         }
-      }
+        #endregion
 
-      XElement[] templateElements = new XElement[maxRelatedObjectsCount];
-      for (int i = 0; i < maxRelatedObjectsCount; i++)
-      {
-        templateElements[i] = new XElement(preElement);
-
-        foreach (var pair in relatedObjects)
+        foreach (RdfElement rdfElement in templateElements)
         {
-          string propertyMap = pair.Key;
-          List<IDataObject> valueObjects = pair.Value;
-          RoleMap roleMap = objectPathRoleMaps[propertyMap];
-
-          string roleId = roleMap.roleId.Substring(roleMap.roleId.IndexOf(":") + 1);
-          string propertyName = propertyMap.Substring(propertyMap.LastIndexOf('.') + 1);
-
-          XElement roleElement = null;
-          for (int j = 0; j < maxRelatedObjectsCount; j++)
+          foreach (IDataObject valueObject in valueObjects)
           {
-            IDataObject valueObject = null;
-            if (j < valueObjects.Count)
+            string dataType = String.Empty;
+            XElement roleElement = new XElement(TPL_NS + roleId);
+
+            #region Process PropertyValue
+            string value = Convert.ToString(valueObject.GetPropertyValue(propertyName));
+            if (String.IsNullOrEmpty(roleMap.valueList))
             {
-              valueObject = valueObjects[j];
-              roleElement = new XElement(TPL_NS + roleId);
-
-              #region Process PropertyValue
-              string value = Convert.ToString(valueObject.GetPropertyValue(propertyName));
-              if (String.IsNullOrEmpty(roleMap.valueList))
+              if (String.IsNullOrEmpty(value))
               {
-                if (String.IsNullOrEmpty(value))
-                {
-                  roleElement.Add(new XAttribute(RDF_RESOURCE, RDF_NIL));
-                }
-                else
-                {
-                  roleMapValues.Append(value);
-                  string dataType = roleMap.dataType.Replace(XSD_PREFIX, XSD_NS.NamespaceName);
-                  roleElement.Add(new XAttribute(RDF_DATATYPE, dataType));
-                  roleElement.Add(new XText(value));
-                }
+                roleElement.Add(new XAttribute(RDF_RESOURCE, RDF_NIL));
               }
-              else // resolve value list to uri
+              else
               {
-                string valueListUri = _mapping.ResolveValueList(roleMap.valueList, value);
-
-                roleMapValues.Append(valueListUri);
-                roleElement.Add(new XAttribute(RDF_RESOURCE, valueListUri));
+                rdfElement.Append(value);
+                dataType = roleMap.dataType.Replace(XSD_PREFIX, XSD_NS.NamespaceName);
+                roleElement.Add(new XAttribute(RDF_DATATYPE, dataType));
+                roleElement.Add(new XText(value));
               }
-              #endregion
-
-              templateElements[i].Add(roleElement);
             }
-            else
+            else // resolve value list to uri
             {
-              templateElements[i].Add(roleElement);
+              string valueListUri = _mapping.ResolveValueList(roleMap.valueList, value);
+
+              rdfElement.Append(valueListUri);
+              roleElement.Add(new XAttribute(RDF_RESOURCE, valueListUri));
             }
+            #endregion
+
+            //Copy the template and add the current property value
+            RdfElement copyElement = (RdfElement)rdfElement.Clone();                        
+            copyElement.Element.Add(roleElement);
+            propertyElements.Add(copyElement);
           }
         }
+
+        //Swap the arrays around for futher processing
+        templateElements = propertyElements.GetRange(0, propertyElements.Count);
+        propertyElements.Clear();
       }
       #endregion
 
-      //GvR not sure how to resolve this
-      //string hashCode = Utility.ComputeHash(templateId + roleMapValues.ToString());
-      //templateElement.Add(new XAttribute(RDF_ABOUT, hashCode));
+      List<XElement> templates = new List<XElement>();
+      foreach (RdfElement rdfElement in templateElements)
+      {
+        XElement template = rdfElement.Element;
+        string hashCode = Utility.MD5Hash(templateId + rdfElement.Values);
+        template.Add(new XAttribute(RDF_ABOUT, hashCode));
+        templates.Add(template);
+      }
 
-      return templateElements.ToList<XElement>();
+      return templates;
     }
 
     private void PopulateDataObjects(int classInstanceCount)

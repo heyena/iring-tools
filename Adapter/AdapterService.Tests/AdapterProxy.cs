@@ -152,12 +152,12 @@ namespace AdapterService.Tests
       return response;
     }
 
-    public Response Pull(string projectName, string applicationName, Request request)
+    public Response Pull(string projectName, string applicationName, string graphName, Request request)
     {
       Response response = null;
       try
       {
-        response = _exchangeProvider.Pull(projectName, applicationName, request);
+        response = _exchangeProvider.Pull(projectName, applicationName, graphName, request);
       }
       catch (Exception ex)
       {
@@ -167,12 +167,12 @@ namespace AdapterService.Tests
       return response;
     }
 
-    public Response PullDTO(string projectName, string applicationName, Request request)
+    public Response PullDTO(string projectName, string applicationName, string graphName, Request request)
     {
       Response response = null;
       try
       {
-        response = _exchangeProvider.PullDTO(projectName, applicationName, request);
+        response = _exchangeProvider.PullDTO(projectName, applicationName, graphName, request);
       }
       catch (Exception ex)
       {
@@ -182,12 +182,12 @@ namespace AdapterService.Tests
       return response;
     }
 
-    public Response Push(string projectName, string applicationName, PushRequest request)
+    public Response Push(string projectName, string applicationName, string graphName, PushRequest request)
     {
       Response response = null;
       try
       {
-        response = _exchangeProvider.Push(projectName, applicationName, request);
+        response = _exchangeProvider.Push(projectName, applicationName, graphName, request);
       }
       catch (Exception ex)
       {

@@ -345,14 +345,13 @@ namespace AdapterService.Tests
         string adapterServiceUri = System.Configuration.ConfigurationManager.AppSettings["AdapterServiceUri"].ToString();
         request.Add("targetUri", adapterServiceUri);
         request.Add("targetCredentials", targetCredentialsXML);
-        request.Add("graphName", "LinesGraph");
         request.Add("filter", "Tag-2");
         request.Add("targetProjectName", "12345_000");
         request.Add("targetApplicationName", "ABC");
         request.Add("targetGraphName", "Lines");
         request.Add("format", "dto");
 
-        Response actual = target.Push("12345_000", "DEF", request);
+        Response actual = target.Push("12345_000", "DEF", "LinesGraph", request);
         Assert.IsFalse(actual.Level == StatusLevel.Error);
     }
 

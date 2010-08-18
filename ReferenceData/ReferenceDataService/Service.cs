@@ -38,6 +38,7 @@ using log4net;
 using System.Configuration;
 using System.Collections.Specialized;
 using System.ServiceModel.Activation;
+using org.iringtools.referenceData;
 
 namespace org.ids_adi.iring.referenceData
 {
