@@ -62,9 +62,7 @@ namespace org.iringtools.nhibernate
 
     public EntityGenerator(NHibernateSettings settings)
     {
-      _settings = settings;
-      _settings["AdapterBinaryPath"] = _settings["BinaryPath"];
-      _settings["AdapterCodePath"] = _settings["CodePath"];
+      _settings = settings;           
     }
 
     public Response Generate(DatabaseDictionary dbSchema, string projectName, string applicationName)
@@ -127,9 +125,9 @@ namespace org.iringtools.nhibernate
           CompilerParameters parameters = new CompilerParameters();
           parameters.GenerateExecutable = false;
           parameters.ReferencedAssemblies.Add("System.dll");
-          parameters.ReferencedAssemblies.Add(_settings["AdapterBinaryPath"] + "Iesi.Collections.dll");
-          parameters.ReferencedAssemblies.Add(_settings["AdapterBinaryPath"] + "iRINGLibrary.dll");
-          NHIBERNATE_ASSEMBLIES.ForEach(assembly => parameters.ReferencedAssemblies.Add(_settings["AdapterBinaryPath"] + assembly));
+          parameters.ReferencedAssemblies.Add(_settings["BinaryPath"] + "Iesi.Collections.dll");
+          parameters.ReferencedAssemblies.Add(_settings["BinaryPath"] + "iRINGLibrary.dll");
+          NHIBERNATE_ASSEMBLIES.ForEach(assembly => parameters.ReferencedAssemblies.Add(_settings["BinaryPath"] + assembly));
          
         
           Utility.Compile(compilerOptions, parameters, new string[] { sourceCode });
@@ -137,11 +135,11 @@ namespace org.iringtools.nhibernate
 
           #region Writing memory data to disk
           string hibernateConfig = CreateConfiguration(dbSchema.provider, dbSchema.connectionString);
-          Utility.WriteString(hibernateConfig, _settings["AdapterXmlPath"] + "nh-configuration." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
-          Utility.WriteString(mappingXml, _settings["AdapterXmlPath"] + "nh-mapping." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
-          Utility.WriteString(sourceCode, _settings["AdapterCodePath"] + "Model." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
+          Utility.WriteString(hibernateConfig, _settings["XmlPath"] + "nh-configuration." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
+          Utility.WriteString(mappingXml, _settings["XmlPath"] + "nh-mapping." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
+          Utility.WriteString(sourceCode, _settings["CodePath"] + "Model." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
           DataDictionary dataDictionary = CreateDataDictionary(dbSchema.dataObjects);
-          Utility.Write<DataDictionary>(dataDictionary, _settings["AdapterXmlPath"] + "DataDictionary." + projectName + "." + applicationName + ".xml");
+          Utility.Write<DataDictionary>(dataDictionary, _settings["XmlPath"] + "DataDictionary." + projectName + "." + applicationName + ".xml");
           #endregion
 
           status.Messages.Add("Entities generated successfully.");
