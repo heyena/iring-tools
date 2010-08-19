@@ -12379,6 +12379,11 @@
             <param name="text">String to escape</param>
             <returns>Escaped String</returns>
         </member>
+        <member name="M:VDS.RDF.Storage.ISqlIOManager.Flush">
+            <summary>
+            Flushes any outstanding changes to the underlying SQL database
+            </summary>
+        </member>
         <member name="P:VDS.RDF.Storage.ISqlIOManager.PreserveState">
             <summary>
             Gets/Sets whether the Manager should preserve its state (Object to ID maps and ID to Object maps) even if its Dispose method is called
@@ -12815,6 +12820,11 @@
         <member name="M:VDS.RDF.Storage.BaseStoreManager.Dispose">
             <summary>
             Base Implementation of Dispose which stops the Writer Thread and clears all the Mapping dictionaries unless <see cref="P:VDS.RDF.Storage.BaseStoreManager.PreserveState">PreserveState</see> has been set as True
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Storage.BaseStoreManager.Flush">
+            <summary>
+            Flushes any outstanding changes to the underlying store
             </summary>
         </member>
         <member name="M:VDS.RDF.Storage.BaseStoreManager.SerializeConfiguration(VDS.RDF.Configuration.ConfigurationSerializationContext)">
@@ -13268,11 +13278,21 @@
             </summary>
             <param name="cmd">Insert/Delete Command</param>
         </member>
+        <member name="M:VDS.RDF.Update.ISparqlUpdateProcessor.Flush">
+            <summary>
+            Causes any outstanding changes to be flushed to the underlying store
+            </summary>
+        </member>
         <member name="M:VDS.RDF.Update.LeviathanUpdateProcessor.#ctor(VDS.RDF.IInMemoryQueryableStore)">
             <summary>
             Creates a new Leviathan Update Processor
             </summary>
             <param name="store">Triple Store</param>
+        </member>
+        <member name="M:VDS.RDF.Update.LeviathanUpdateProcessor.Flush">
+            <summary>
+            Flushes any outstanding changes to the underlying store
+            </summary>
         </member>
         <member name="M:VDS.RDF.Update.LeviathanUpdateProcessor.ProcessClearCommand(VDS.RDF.Update.Commands.ClearCommand)">
             <summary>
@@ -14226,6 +14246,56 @@
             Invokes the normal <see cref="T:VDS.RDF.Parsing.UriLoader">UriLoader</see> instead if a the URI provided is not a data: URI
             </remarks>
             <exception cref="T:System.UriFormatException">Thrown if the metadata portion of the URI which indicates the MIME Type, Character Set and whether Base64 encoding is used is malformed</exception>
+        </member>
+        <member name="T:VDS.RDF.Writing.RdfXmlWriter">
+            <summary>
+            Class for generating RDF/XML Concrete Syntax
+            </summary>
+            <remarks>
+            <para>
+            Use this if you require fast writing and are not so bothered about the readibility of syntax produced, if you prefer readable syntax and can live with the very slow speeds (around 300 Triple/second) use the <see cref="T:VDS.RDF.Writing.RdfXmlWriter">RdfXmlWriter</see> or the <see cref="T:VDS.RDF.Writing.RdfXmlTreeWriter">RdfXmlTreeWriter</see>.
+            </para>
+            <para>
+            This is a fast writer based on the fast writing technique used in the other non-RDF/XML writers.  While it is significantly faster than the existing RDF/XML writers achieving a speed of around 25,000 Triples/second the syntax produced is not the 'prettiest'.  It uses various syntax compressions but since it doesn't generate output in an explicitly striped manner it cannot produce the nice striped syntax
+            </para>
+            </remarks>
+        </member>
+        <member name="M:VDS.RDF.Writing.RdfXmlWriter.Save(VDS.RDF.IGraph,System.String)">
+            <summary>
+            Saves a Graph in RDF/XML syntax to the given File
+            </summary>
+            <param name="g">Graph to save</param>
+            <param name="filename">Filename to save to</param>
+        </member>
+        <member name="M:VDS.RDF.Writing.RdfXmlWriter.Save(VDS.RDF.IGraph,System.IO.TextWriter)">
+            <summary>
+            Saves a Graph to an arbitrary output stream
+            </summary>
+            <param name="g">Graph to save</param>
+            <param name="output">Stream to save to</param>
+        </member>
+        <member name="M:VDS.RDF.Writing.RdfXmlWriter.GenerateOutput(VDS.RDF.IGraph,System.IO.TextWriter)">
+            <summary>
+            Internal method which generates the RDF/Json Output for a Graph
+            </summary>
+            <param name="g">Graph to save</param>
+            <param name="output">Stream to save to</param>
+        </member>
+        <member name="M:VDS.RDF.Writing.RdfXmlWriter.OnWarning(System.String)">
+            <summary>
+            Internal Helper method for raising the Warning event
+            </summary>
+            <param name="message">Warning Message</param>
+        </member>
+        <member name="P:VDS.RDF.Writing.RdfXmlWriter.PrettyPrintMode">
+            <summary>
+            Gets/Sets Pretty Print Mode for the Writer
+            </summary>
+        </member>
+        <member name="E:VDS.RDF.Writing.RdfXmlWriter.Warning">
+            <summary>
+            Event which is raised when there is a non-fatal issue with the RDF being output
+            </summary>
         </member>
         <member name="T:VDS.RDF.Query.SparqlResultsType">
             <summary>
@@ -15206,6 +15276,11 @@
             Creates a new Simple Update Processor
             </summary>
             <param name="store">Updateable Triple Store</param>
+        </member>
+        <member name="M:VDS.RDF.Update.SimpleUpdateProcessor.Flush">
+            <summary>
+            Flushes any outstanding changes to the underlying store
+            </summary>
         </member>
         <member name="M:VDS.RDF.Update.SimpleUpdateProcessor.ProcessClearCommand(VDS.RDF.Update.Commands.ClearCommand)">
             <summary>
@@ -23795,7 +23870,7 @@
             This is a non-streaming Writer which generates an XML DOM Tree and then saves it to a Stream
             </para>
             <para>
-            Since this Writer is non-streaming it may be slower particularly for large Graphs since it has to build the entire XML DOM Tree for the output before it can be saved to disk.  While this may be a slight disadvantage this writer is capable of applying more of the RDF/XML syntax compressions than the standard streaming <see cref="!:RdfXmlWriter">RdfXmlWriter</see> because it can alter the parts of the DOM Tree it has already generated.
+            Since this Writer is non-streaming it may be slower particularly for large Graphs since it has to build the entire XML DOM Tree for the output before it can be saved to disk.  While this may be a slight disadvantage this writer is capable of applying more of the RDF/XML syntax compressions than the standard streaming <see cref="T:VDS.RDF.Writing.RdfXmlWriter">RdfXmlWriter</see> because it can alter the parts of the DOM Tree it has already generated.
             </para>
             </remarks>
         </member>
@@ -23834,7 +23909,7 @@
             <summary>
             Gets/Sets the Compression Level
             </summary>
-            <remarks>Uses the same Compression Levels as the <see cref="!:RdfXmlWriter">RdfXmlWriter</see></remarks>
+            <remarks>Uses the same Compression Levels as the <see cref="T:VDS.RDF.Writing.RdfXmlWriter">RdfXmlWriter</see></remarks>
         </member>
         <member name="P:VDS.RDF.Writing.RdfXmlTreeWriter.PrettyPrintMode">
             <summary>
@@ -25225,6 +25300,16 @@
             Class for representing Triple Stores which are automatically stored to a backing SQL Store as it is modified
             </summary>
         </member>
+        <member name="T:VDS.RDF.IFlushableStore">
+            <summary>
+            Interface for Triple Stores which are backed by some storage layer that may delay persistence and thus require flushing to ensure changes are persisted to the backing store
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.IFlushableStore.Flush">
+            <summary>
+            Flushes any outstanding changes to the underlying store
+            </summary>
+        </member>
         <member name="F:VDS.RDF.SqlTripleStore._manager">
             <summary>
             Store Manager which manages the IO to the Triple Store
@@ -25295,6 +25380,11 @@
             Removes a Graph from the Triple Store
             </summary>
             <param name="graphUri">Uri of the Graph to remove</param>
+        </member>
+        <member name="M:VDS.RDF.SqlTripleStore.Flush">
+            <summary>
+            Flushes any outstanding changes to the underlying SQL Store
+            </summary>
         </member>
         <member name="M:VDS.RDF.SqlTripleStore.Dispose">
             <summary>
@@ -31946,7 +32036,7 @@
             </summary>
             <remarks>
             <para>
-            Use this if you require fast writing and are not so bothered about the readibility of syntax produced, if you prefer readable syntax and can live with the very slow speeds (around 300 Triple/second) use the <see cref="!:RdfXmlWriter">RdfXmlWriter</see> or the <see cref="T:VDS.RDF.Writing.RdfXmlTreeWriter">RdfXmlTreeWriter</see>.
+            Use this if you require fast writing and are not so bothered about the readibility of syntax produced, if you prefer readable syntax and can live with the very slow speeds (around 300 Triple/second) use the <see cref="T:VDS.RDF.Writing.RdfXmlWriter">RdfXmlWriter</see> or the <see cref="T:VDS.RDF.Writing.RdfXmlTreeWriter">RdfXmlTreeWriter</see>.
             </para>
             <para>
             This is a fast writer based on the fast writing technique used in the other non-RDF/XML writers.  While it is significantly faster than the existing RDF/XML writers achieving a speed of around 25,000 Triples/second the syntax produced is not the 'prettiest'.  It uses various syntax compressions but since it doesn't generate output in an explicitly striped manner it cannot produce the nice striped syntax
@@ -36581,6 +36671,11 @@
             Creates a new Generic Update Processor
             </summary>
             <param name="manager">Generic IO Manager</param>
+        </member>
+        <member name="M:VDS.RDF.Update.GenericUpdateProcessor.Flush">
+            <summary>
+            Flushes any outstanding changes to the underlying store
+            </summary>
         </member>
         <member name="M:VDS.RDF.Update.GenericUpdateProcessor.ProcessClearCommand(VDS.RDF.Update.Commands.ClearCommand)">
             <summary>
