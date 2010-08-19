@@ -10,7 +10,7 @@ namespace org.iringtools.adapter
   {
     public AdapterSettings() : base()
     {
-      this.Add("InterfaceService",        @"http://localhost/InterfaceService/sparql/");
+      this.Add("InterfaceService",        @"http://localhost/InterfaceService/query");
       this.Add("ReferenceDataServiceUri", @"http://showroom.iringsandbox.org/RefDataService/Service.svc");
       this.Add("DefaultProjectionFormat", "xml");
       this.Add("EndpointTimeout",         "30000");
