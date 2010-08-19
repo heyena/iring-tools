@@ -753,12 +753,12 @@ namespace ApplicationEditor
             case "INITIAL CATALOG":
               tbNewDatabase.Text = token[1];
               break;
-            //case "USER ID":
-            //  tbUserID.Text = token[1];
-            //  break;
-            //case "PASSWORD":
-            //  tbPassword.Password = token[1];
-            //  break;
+            case "USER ID":
+              tbUserID.Text = token[1];
+              break;
+            case "PASSWORD":
+              tbPassword.Password = token[1];
+              break;
           }
         }
         cbProvider.SelectedItem = dict.provider.ToString();
@@ -1405,7 +1405,7 @@ namespace ApplicationEditor
 
           if (tvwPrj == null)
           {
-            ScopeProject project = new ScopeProject { Name = tbNewPrjName.Text, Applications = new List<ScopeApplication>() };
+            ScopeProject project = new ScopeProject { Name = tbNewPrjName.Text, Description = tbNewPrjDesc.Text, Applications = new List<ScopeApplication>() };
             tvwPrj = new TreeViewItem { Header = tbNewPrjName.Text, Tag = project };
             _scopes.Add(project);
             tvwScopesItemRoot.Items.Add(tvwPrj);

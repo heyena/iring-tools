@@ -131,7 +131,15 @@ namespace org.iringtools.nhibernate
       {
         InitializeScope(projectName, applicationName);
 
-        databaseDictionary = Utility.Read<DatabaseDictionary>(_settings["DBDictionaryPath"]);
+        if (File.Exists(_settings["DBDictionaryPath"]))
+        {
+          databaseDictionary = Utility.Read<DatabaseDictionary>(_settings["DBDictionaryPath"]);
+        }
+        else
+        {
+          databaseDictionary = new DatabaseDictionary();
+        }
+
       }
       catch (Exception ex)
       {
