@@ -63,8 +63,8 @@ namespace org.iringtools.nhibernate
     public EntityGenerator(NHibernateSettings settings)
     {
       _settings = settings;
-      _settings["AdapterBinaryPath"] = Path.Combine(_settings["AdapterPath"], _settings["BinaryPath"]);
-      _settings["AdapterCodePath"] = Path.Combine(_settings["AdapterPath"], _settings["CodePath"]);
+      _settings["AdapterBinaryPath"] = _settings["BinaryPath"];
+      _settings["AdapterCodePath"] = _settings["CodePath"];
     }
 
     public Response Generate(DatabaseDictionary dbSchema, string projectName, string applicationName)
@@ -81,7 +81,7 @@ namespace org.iringtools.nhibernate
         {
           status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
 
-          Directory.CreateDirectory(_settings["AdapterXmlPath"]);
+          Directory.CreateDirectory(_settings["XmlPath"]);
 
           _mappingBuilder = new StringBuilder();
           _mappingWriter = new XmlTextWriter(new StringWriter(_mappingBuilder));

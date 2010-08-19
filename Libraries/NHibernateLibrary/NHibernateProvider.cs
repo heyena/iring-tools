@@ -138,6 +138,7 @@ namespace org.iringtools.nhibernate
         else
         {
           databaseDictionary = new DatabaseDictionary();
+          Utility.Write<DatabaseDictionary>(databaseDictionary, _settings["DBDictionaryPath"], true);
         }
 
       }
