@@ -69,7 +69,7 @@ namespace org.iringtools.adapter.projection
           classObject.Add(new XElement(DTO_NS + "identifier", _classIdentifiers[classMap.classId][i]));
 
           XElement templateObjects = new XElement(DTO_NS + "templateObjects");
-          classObjects.Add(templateObjects);
+          classObject.Add(templateObjects);
 
           foreach (TemplateMap templateMap in templateMaps)
           {
