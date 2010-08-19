@@ -15,7 +15,7 @@ namespace org.iringtools.adapter
       this.Add("DefaultProjectionFormat", "xml");
       this.Add("EndpointTimeout",         "30000");
       this.Add("DBServer",                @".\SQLEXPRESS");
-      this.Add("DBName",                  "dotNetRDF");
+      this.Add("DBName",                  "InterfaceDb");
       this.Add("DBUser",                  "dotNetRDF");
       this.Add("DBPassword",              "dotNetRDF");
       this.Add("TrimData",                "False");

@@ -18,7 +18,7 @@ namespace ReferenceDataService.Tests
   {
     public ReferenceDataServiceTest()
     {
-      string path = @"C:\iring-tools\ReferenceData\ReferenceDataService\XML\";
+      string path = @"C:\iring-tools\iRINGTools.Services\XML\";
 
       if (!File.Exists(path + "Repositories.xml"))
       {

@@ -9,7 +9,7 @@
     <description>Development Sandbox</description>
     <isReadOnly>false</isReadOnly>
     <name>My Private Sandbox</name>
-    <uri>http://localhost/SandboxService/sparql</uri>
+    <uri>http://localhost/iRINGTools/SandboxService/query</uri>
   </Repository>
   <Repository>
     <description>RDS/WIP Part 4 Reference Data Library</description>

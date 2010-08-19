@@ -3,7 +3,7 @@
     <description>Development Sandbox</description>
     <isReadOnly>false</isReadOnly>
     <name>My Private Sandbox</name>
-    <uri>http://localhost/SandboxService/sparql</uri>
+    <uri>http://localhost:54321/SandboxService/query</uri>
   </Repository>
   <Repository>
     <description>iRING Sandbox</description>
