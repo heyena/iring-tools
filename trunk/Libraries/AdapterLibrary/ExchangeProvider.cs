@@ -153,7 +153,7 @@ namespace org.iringtools.exchange
           throw new Exception("Target Endpoint Uri is required");
 
         string targetEndpointUri = request["targetEndpointUri"];
-        if (!targetEndpointUri.EndsWith("/")) targetEndpointUri += "/";
+        //if (!targetEndpointUri.EndsWith("/")) targetEndpointUri += "/";
 
         if (!request.ContainsKey("targetGraphBaseUri"))
           throw new Exception("Target graph uri is required");
