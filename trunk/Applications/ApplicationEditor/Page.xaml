@@ -54,7 +54,7 @@
                     </Grid.ColumnDefinitions>
                     <Border Grid.Row="0" Grid.Column="0" BorderBrush="Gray" BorderThickness="1" CornerRadius="5" >
                         <basic:TreeView x:Name="tvwScopes" Height="Auto" BorderBrush="#8FA0AE" BorderThickness="1" >
-                            <basic:TreeViewItem x:Name="tvwScopesItemRoot" Header="Projects" Expanded="itm_Expanded" Visibility="Visible" />
+                            <basic:TreeViewItem x:Name="tvwScopesItemRoot" Header="Scopes" Expanded="itm_Expanded" Visibility="Visible" />
                         </basic:TreeView>
                     </Border>
                     <Border Grid.Row="0" Grid.Column="1" BorderBrush="Gray" BorderThickness="1" CornerRadius="5">

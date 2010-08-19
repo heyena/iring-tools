@@ -32,7 +32,7 @@ namespace ApplicationEditor
 
       Uri address = new Uri(_applicationServiceUri + relativeUri);
 
-      WebClient webClient = new WebClient();
+      WebClient webClient = new WebClient();      
       webClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnGetDbDictionaryCompletedEvent);
       webClient.DownloadStringAsync(address);
 
