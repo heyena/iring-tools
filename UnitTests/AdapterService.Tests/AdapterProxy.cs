@@ -29,6 +29,7 @@ namespace AdapterService.Tests
     public AdapterProxy()
     {
       _adapterProvider = new AdapterProvider(ConfigurationManager.AppSettings);
+      _exchangeProvider = new ExchangeProvider(ConfigurationManager.AppSettings);
     }
 
     public Mapping GetMapping(string projectName, string applicationName)

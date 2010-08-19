@@ -170,6 +170,10 @@
       <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
       <Name>iRINGLibrary.Desktop</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\NHibernateLibrary\NHibernateLibrary.csproj">
+      <Project>{02377ADB-F40D-4AD0-B8A8-95810CB55047}</Project>
+      <Name>NHibernateLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Libraries\PrismContrib\Desktop\PrismContrib.Desktop.csproj">
       <Project>{1A611244-54BE-4F12-AA34-12F54A2B07E6}</Project>
       <Name>PrismContrib.Desktop</Name>

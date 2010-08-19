@@ -90,31 +90,33 @@ namespace org.iringtools.adapter
 
     public TemplateObject GetTemplateObject(TemplateMap templateMap)
     {
-      foreach (TemplateObject templateObject in templateObjects)
+      if (templateObjects != null)
       {
-        if (templateObject.templateId == templateMap.templateId)
+        foreach (TemplateObject templateObject in templateObjects)
         {
-          string roleMapRef = String.Empty;
-
-          foreach (RoleMap roleMap in templateMap.roleMaps)
+          if (templateObject.templateId == templateMap.templateId)
           {
-            if (roleMap.type == RoleType.Reference)
+            string roleMapRef = String.Empty;
+
+            foreach (RoleMap roleMap in templateMap.roleMaps)
             {
-              roleMapRef = roleMap.value;
+              if (roleMap.type == RoleType.Reference)
+              {
+                roleMapRef = roleMap.value;
+              }
             }
-          }
 
-          if (roleMapRef != String.Empty)
-          {
-            foreach (RoleObject roleObject in templateObject.roleObjects)
+            if (roleMapRef != String.Empty)
             {
-              if (!String.IsNullOrEmpty(roleObject.reference) && roleObject.reference == roleMapRef)
-                return templateObject;
+              foreach (RoleObject roleObject in templateObject.roleObjects)
+              {
+                if (!String.IsNullOrEmpty(roleObject.reference) && roleObject.reference == roleMapRef)
+                  return templateObject;
+              }
             }
           }
         }
       }
-
       return null;
     }
   }

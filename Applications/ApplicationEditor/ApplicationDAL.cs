@@ -19,7 +19,7 @@ namespace ApplicationEditor
 
     public ApplicationDAL()
     {
-      _applicationServiceUri = App.Current.Resources["ApplicationServiceURI"].ToString();
+      _applicationServiceUri = App.Current.Resources["NHibernateServiceURI"].ToString();
       _adapterServiceUri = App.Current.Resources["AdapterServiceUri"].ToString();
     }
 
