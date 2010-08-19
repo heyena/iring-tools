@@ -369,7 +369,7 @@ namespace AdapterService.Tests
     public void PostTest()
     {
       AdapterProxy target = new AdapterProxy();
-      string linesDxo = Utility.ReadString(@"C:\iring-tools\Adapter\AdapterService.Tests\XML\DXO.12345_000.ABC.Lines.xml");
+      string linesDxo = Utility.ReadString(@"C:\iring-tools\UnitTests\AdapterService.Tests\XML\DXO.12345_000.ABC.Lines.xml");
       XElement linesDxoXml = XElement.Parse(linesDxo);
       Response actual = target.Post("12345_000", "ABC", "Lines", "dxo", linesDxoXml);
       Assert.IsFalse(actual.Level == StatusLevel.Error);
