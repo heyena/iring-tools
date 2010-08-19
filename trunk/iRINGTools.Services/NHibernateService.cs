@@ -36,6 +36,12 @@ namespace org.iringtools.services
     }
     #endregion
 
+    [WebGet(UriTemplate = "/{project}/{application}/dictionary")]
+    public DatabaseDictionary GetDictionary(string project, string application)
+    {
+      return _NHibernateProvider.GetDictionary(project, application);
+    }
+
     [WebInvoke(Method = "POST", UriTemplate = "/{project}/{application}/dictionary")]
     public Response PostDictionary(string project, string application, DatabaseDictionary dictionary)
     {

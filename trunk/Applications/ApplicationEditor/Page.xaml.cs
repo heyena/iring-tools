@@ -1166,7 +1166,7 @@ namespace ApplicationEditor
               parentParent.Items.Add(parent);
             }
             _dal.GetSchemaObjectsSchma(_currentProject.Name, _currentApplication.Name, ((TextBlock)((StackPanel)tableItem.Header).Children[1]).Text);
-            // constructObjectTree(tableItem, destRoot);
+             //constructObjectTree(tableItem, destRoot);
           }
 
         }
@@ -1834,32 +1834,32 @@ namespace ApplicationEditor
         return;
       }
 
+      string connString = BuildConnectionString(cbProvider.SelectedItem.ToString()
+                        , tbNewDataSource.Text
+                        , tbNewDatabase.Text
+                        , tbUserID.Text
+                        , tbPassword.Password.ToString());
+
       if (tvwItemDestinationRoot.Tag == null)
       {
+
          dict = new DatabaseDictionary
           {
-            connectionString = BuildConnectionString(cbProvider.SelectedItem.ToString()
-                                , tbNewDataSource.Text
-                                , tbNewDatabase.Text
-                                , tbUserID.Text
-                                , tbPassword.Password.ToString()),
+            connectionString = connString,
             provider = (Provider)Enum.Parse(typeof(Provider), cbProvider.SelectedItem.ToString(), true)
           };
+         tvwItemDestinationRoot.Tag = dict;
       }
       else
       {
         dict = tvwItemDestinationRoot.Tag as DatabaseDictionary;
-        dict.connectionString = BuildConnectionString(cbProvider.SelectedItem.ToString()
-                                , tbNewDataSource.Text
-                                , tbNewDatabase.Text
-                                , tbUserID.Text
-                                , tbPassword.Password.ToString());
+        if (dict.connectionString != connString)
+        {
+          dict.connectionString = connString;
+          
+        }
       }
-        _dal.SaveDatabaseDictionary(dict, _currentProject.Name, _currentApplication.Name);
-
-      
-      
-      
+      _dal.SaveDatabaseDictionary(dict, _currentProject.Name, _currentApplication.Name);
         _dal.GetSchemaObjects(_currentProject.Name, _currentApplication.Name);
        // isFetched = true;
       
