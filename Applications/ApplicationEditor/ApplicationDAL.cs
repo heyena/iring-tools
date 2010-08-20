@@ -33,7 +33,6 @@ namespace ApplicationEditor
       Uri address = new Uri(_applicationServiceUri + relativeUri);
 
       WebClient webClient = new WebClient();      
-      webClient.Headers["Cache-Control"] = "no-cache";
       webClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnGetDbDictionaryCompletedEvent);
       webClient.DownloadStringAsync(address);
 
