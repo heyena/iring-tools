@@ -2063,7 +2063,8 @@ namespace org.iringtools.referenceData
                 WebCredentials credentials = new WebCredentials(encryptedCredentials);
                 if (credentials.isEncrypted) credentials.Decrypt();
 
-                sparqlResults = SPARQLClient.PostQuery(repository.uri, sparql, credentials, _proxyCredentials);
+                //sparqlResults = SPARQLClient.PostQuery(repository.uri, sparql, credentials, _proxyCredentials);
+                sparqlResults = SPARQLClient.Query(repository.uri, sparql, credentials, _proxyCredentials);
 
                 return sparqlResults;
             }
