@@ -312,18 +312,16 @@ namespace org.iringtools.exchange
       InitializeScope(projectName, applicationName);
       InitializeDataLayer();
 
-      if (request.ContainsKey("hashAlgorithm"))
-      {
-        string hashAlgorithm = request["hashAlgorithm"];
 
-        if (String.IsNullOrEmpty(hashAlgorithm))
-        {
-          _hashAlgorithm = HashAlgorithm.MD5;
-        }
-        else
-        {
-          _hashAlgorithm = (HashAlgorithm)Enum.Parse(typeof(HashAlgorithm), hashAlgorithm);
-        }
+      string hashAlgorithm = request.HashAlgorithm;
+
+      if (String.IsNullOrEmpty(hashAlgorithm))
+      {
+        _hashAlgorithm = HashAlgorithm.MD5;
+      }
+      else
+      {
+        _hashAlgorithm = (HashAlgorithm)Enum.Parse(typeof(HashAlgorithm), hashAlgorithm);
       }
 
       BuildCrossedGraphMap(graphName);

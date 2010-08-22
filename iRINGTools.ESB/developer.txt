@@ -1,0 +1,21 @@
+==Java Development Environment Configuration==
+ * Checkout from svn/branches/ports/java
+ * Import user libraries 
+  * Window - Preferences - Java - Build Path - User Libraries - iringtools.userlibraries
+ * Import preferences
+  * File - Import - General - Preferences - preferences.epf
+ * Import iring-tools-java projects into workspace
+  * File - Import - General - Existing Projects into Workspace - select root(workspace) folder
+ * Create Tomcat server instance in eclipse
+  * Right click an empty spot in Servers tab - New - Server - Apache - Tomcat 6.0 - Next - 
+    select tomcat home directory
+  * Right click ExchangeService - Refresh
+ * Run ExchangeService
+  * Select Tomcat Server under Servers tab - click on Run (the player) button
+  * Navigate using web browser to...
+    http://localhost:8080/ExchangeService/12345_000/ABC/Lines/diff
+    Result is the difference of two RDF files
+ * Deploying ExchangeService to Tomcat Server in operation
+  * Copy ExchangeService\ExchangeService.war to TOMCAT_HOME\webapps\ folder
+  * Restart Tomcat Service
+  
