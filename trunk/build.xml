@@ -13,15 +13,15 @@
     <MSTestCmd>"$(VSINSTALLDIR)\Common7\IDE\MSTest.exe"</MSTestCmd>
     <ZipCmd>"$(MSBuildProjectDirectory)\ExternalBinaries\7-Zip\7z.exe"</ZipCmd>
 
-    <ServicesDir>iRINGTools.Services</ServicesDir>
-    <WebDir>iRINGTools.Web</WebDir>
-    <LandingPageDir>LandingPage</LandingPageDir>
-    <UnitTestsDir>UnitTests</UnitTestsDir>
-    <UtilitiesDir>Utilities</UtilitiesDir>
+    <ServicesDir>$(MSBuildProjectDirectory)\iRINGTools.Services</ServicesDir>
+    <WebDir>$(MSBuildProjectDirectory)\iRINGTools.Web</WebDir>
+    <LandingPageDir>$(MSBuildProjectDirectory)\LandingPage</LandingPageDir>
+    <UnitTestsDir>$(MSBuildProjectDirectory)\UnitTests</UnitTestsDir>
+    <UtilitiesDir>$(MSBuildProjectDirectory)\Utilities</UtilitiesDir>
     <RDFImportExportDir>$(UtilitiesDir)\RDFImportExport\RDFImportExport</RDFImportExportDir>
     <QMXFGeneratorDir>$(UtilitiesDir)\QMXFGeneratorDir\QMXFGeneratorDir</QMXFGeneratorDir>
     
-    <SDKDir>iRINGTools.SDK</SDKDir>
+    <SDKDir>$(MSBuildProjectDirectory)\iRINGTools.SDK</SDKDir>
     <SDKLibDir>$(SDKDir)\lib</SDKLibDir>
     
     <DeploymentDir>$(MSBuildProjectDirectory)\Deployment</DeploymentDir>
@@ -50,8 +50,7 @@
     <ServicesDeployment
       Include="$(ServicesDir)\**"
       Exclude="$(ServicesDir).Tests\**;
-               $(ServicesDir)\App_Code;
-               $(ServicesDir)\App_Data;         
+               $(ServicesDir)\App_Code\**;
                $(ServicesDir)\bin\*.pdb;
                $(ServicesDir)\bin\*.xml;
                $(ServicesDir)\obj\**;
@@ -194,7 +193,7 @@
     <Message Text="Performing SVN update ..." />
     <Exec Command="svn update"/>
   </Target>
-  
+
   <Target Name="CleanBuild">
     <Message Text="Performing MSBuild clean-up ..." />
     <MSBuild Projects="$(SolutionFile)" Targets="Clean"/>
@@ -245,7 +244,7 @@
     <Exec Command="Move /Y $(ServicesDeploymentDir)\Web_Default.config $(ServicesDeploymentDir)\Web.config" />
     <Exec Command="Move /Y $(ServicesDeploymentDir)\XML\Repositories_Default.xml $(ServicesDeploymentDir)\XML\Repositories.xml" />
     <Exec Command="Mkdir $(ServicesDeploymentDir)\Logs" />
-    <Exec Command="Mkdir $(ServicesDeploymentDir)\App_Code"/>    
+    <Exec Command="Mkdir $(ServicesDeploymentDir)\App_Code"/>
 
     <Message Text="Creating Web deployment ..." />
     <Copy SourceFiles="@(WebDeployment)"

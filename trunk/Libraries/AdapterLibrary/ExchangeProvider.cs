@@ -276,22 +276,25 @@ namespace org.iringtools.exchange
 
         _response.Append(localResponse);
 
-        foreach (Status responseStatus in localResponse.StatusList)
+        if (request.ExpectedResults != null)
         {
-          string dataObjectName = request.ExpectedResults.DataObjectName;
-
-          IList<IDataObject> dataObjects = _dataLayer.Get(
-            dataObjectName, new List<string> { responseStatus.Identifier });
-
-          foreach (var resultMap in request.ExpectedResults)
+          foreach (Status responseStatus in localResponse.StatusList)
           {
-            string propertyValue = responseStatus.Results[resultMap.Key];
-            string dataPropertyName = resultMap.Value;
+            string dataObjectName = request.ExpectedResults.DataObjectName;
 
-            dataObjects[0].SetPropertyValue(dataPropertyName, propertyValue);
+            IList<IDataObject> dataObjects = _dataLayer.Get(
+              dataObjectName, new List<string> { responseStatus.Identifier });
+
+            foreach (var resultMap in request.ExpectedResults)
+            {
+              string propertyValue = responseStatus.Results[resultMap.Key];
+              string dataPropertyName = resultMap.Value;
+
+              dataObjects[0].SetPropertyValue(dataPropertyName, propertyValue);
+            }
+
+            _response.Append(_dataLayer.Post(dataObjects));
           }
-
-          _response.Append(_dataLayer.Post(dataObjects));
         }
       }
       catch (Exception ex)
