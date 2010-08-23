@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+  xmlns="http://iringtools.org/library"
+  targetNamespace="http://iringtools.org/library" 
+  xmlns:m="http://iringtools.org/adapter/library/manifest" 
+  elementFormDefault="qualified">
+  
+  <xs:import namespace="http://iringtools.org/adapter/library/manifest" schemaLocation="manifest.xsd"/>
+  <xs:include schemaLocation="identifiers.xsd"/>
+  
+  <xs:element name="dxRequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="manifest" type="m:manifest"/>
+        <xs:element name="identifiers" type="identifiers"/>
+        <xs:element name="hashAlgorithm" type="xs:string"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
