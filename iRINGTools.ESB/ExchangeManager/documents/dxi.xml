@@ -3,7 +3,7 @@
   <dataTransferIndex>
     <identifier>Tag-1</identifier>  
     <hashValue>Component tag</hashValue>
-    <transferType>Add</transferType> from DXO
+    <transferType>Add</transferType>
  
    <hashValue>PID</hashValue>
     <transferType>Add</transferType>
@@ -12,26 +12,28 @@
   <dataTransferIndex>
     <identifier>Tag-2</identifier>
     <hashValue>ABC002</hashValue>
-
-    <transferType>Change</transferType> From DXO
-
+    <transferType>Change</transferType>
   </dataTransferIndex>
+						   
   <dataTransferIndex>
     <identifier>Tag-3</identifier>
     <hashValue>ABC003</hashValue>
     <transferType>Delete</transferType>
   </dataTransferIndex>
-  <dataTransferIndex>
+
+ <dataTransferIndex>
     <identifier>Tag-4</identifier>
     <hashValue>ABC004</hashValue>
     <transferType>Add</transferType>
   </dataTransferIndex>
-  <dataTransferIndex>
+
+ <dataTransferIndex>
     <identifier>Tag-5</identifier>
     <hashValue>ABC005</hashValue>
     <transferType>Change</transferType>
   </dataTransferIndex>
-  <dataTransferIndex>
+
+ <dataTransferIndex>
     <identifier>Tag-6</identifier>
     <hashValue>ABC006</hashValue>
     <transferType>Delete</transferType>
