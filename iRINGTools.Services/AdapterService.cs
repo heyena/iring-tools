@@ -35,6 +35,7 @@ using log4net;
 using org.iringtools.library;
 using org.iringtools.library.manifest;
 using org.iringtools.adapter;
+using org.iringtools.exchange;
 
 namespace org.iringtools.services
 {
@@ -44,6 +45,7 @@ namespace org.iringtools.services
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterService));
     private AdapterProvider _adapterProvider = null;
+    private ExchangeProvider _exchangeProvider = null;
 
     /// <summary>
     /// Adapter Service Constructor
@@ -51,6 +53,7 @@ namespace org.iringtools.services
     public AdapterService()
     {
       _adapterProvider = new AdapterProvider(ConfigurationManager.AppSettings);
+      _exchangeProvider = new ExchangeProvider(ConfigurationManager.AppSettings);
     }
 
     #region Public Resources
@@ -150,6 +153,61 @@ namespace org.iringtools.services
       return _adapterProvider.Post(projectName, applicationName, graphName, format, xml);
     }
     #endregion
+    #endregion
+    #endregion
+
+    #region Facade-based Data Exchange (Part 9 Draft)
+    #region Pull
+    /// <summary>
+    /// Pulls the data from a triple store into legacy database
+    /// </summary>
+    /// <param name="projectName">project name</param>
+    /// <param name="applicationName">application name</param>
+    /// <param name="graphName">graph name</param>
+    /// <param name="request">request containing credentials and uri to pull rdf from</param>
+    /// <returns></returns>
+    [Description("Pull Style Facade-based data exchange using SPARQL query. Returns a response with status.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/pull?method=sparql")]
+    public Response Pull(string projectName, string applicationName, string graphName, Request request)
+    {
+      return _exchangeProvider.Pull(projectName, applicationName, graphName, request);
+    }
+    #endregion
+    #endregion
+
+    #region Difference-based Data Exchange
+    #region GetDxi
+    /// <summary>
+    /// DXI Resource for Difference-based data exchange.
+    /// </summary>
+    /// <param name="projectName">Project name</param>
+    /// <param name="applicationName">Application name</param>
+    /// <param name="graphName">Graph name</param>
+    /// <param name="request">DXRequest object containing the manifest to be used.</param>
+    /// <returns>Returns an arbitrary XML</returns>
+    [Description("DXI Resource for Difference-based data exchange.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/dxi")]
+    public XElement GetDxi(string projectName, string applicationName, string graphName, DXRequest request)
+    {
+      return _exchangeProvider.GetDxi(projectName, applicationName, graphName, request);
+    }
+    #endregion
+
+    #region GetDxo
+    /// <summary>
+    /// DXO Resource for Difference-based data exchange.
+    /// </summary>
+    /// <param name="projectName">Project name</param>
+    /// <param name="applicationName">Application name</param>
+    /// <param name="graphName">Graph name</param>
+    /// <param name="request">DXRequest object containing the manifest to be used and a list of identifiers to return.</param>
+    /// <returns>Returns an arbitrary XML</returns>
+    [Description("DXO Resource for Difference-based data exchange.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/dto")]
+    public XElement DtoList(string projectName, string applicationName, string graphName, DXRequest request)
+    {
+      return _exchangeProvider.GetDtoList(projectName, applicationName, graphName, request);
+    }
     #endregion
     #endregion
 
