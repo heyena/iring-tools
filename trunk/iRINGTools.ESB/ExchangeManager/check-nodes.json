@@ -7,31 +7,46 @@
 				icon:'resources/images/iringlogo.png',
 				children: [{
 				text: 'ABC',
+				desc:'Test Application 1',
 				cls: 'folder',		  
 				children: [{
 				text: 'Line',
-				icon:'component.png',
+				icon:'resources/images/icons/graph.png',
 				names:'aswini',
 				leaf: true
 				},
 				{
 				 text: 'Instruments',
-				 icon:'component.png',
+				 icon:'resources/images/icons/graph.png',
 				 leaf: true
 				}
 				]},
 			{
 			 text: 'DEF',
+			 desc:'Test Application 2',
 			 cls: 'folder',		  
 				children: [{
 				text: 'LinesGraph',
+				icon:'resources/images/icons/graph.png',
 				leaf: true
 				},
 				{
-				text: 'Graph 3A.1',
+				text: 'InstrumentsGraph',
+				icon:'resources/images/icons/graph.png',
 				leaf: true
 				}]
-			 }]
+			 },
+				{
+text: 'XYZ',
+desc:'Test Application 3',
+cls: 'folder',		  
+children: [{
+text: 'InstrumentsGraph',
+icon:'resources/images/icons/graph.png',
+leaf: true
+	  }]
+				}
+					  ]
 		    },
 		   {
 			text: 'Data Exchange',
@@ -42,10 +57,12 @@
 					cls:'folder',
 					children:[{
 							text: 'ABC -> DEF',
+							icon:'resources/images/icons/graph-1.JPG',
 							leaf: true
 						  },
 						  {
 							text: 'DEF -> ABC',
+							icon:'resources/images/icons/graph-1.JPG',
 							leaf: true
 						  }]
 				  },
@@ -54,11 +71,23 @@
 					cls:'folder',
 					children: [{
 						text: 'ABC -> DEF',
+						icon:'resources/images/icons/graph-1.JPG',						
 						leaf: true
 					},{
-text: 'DEF -> ABC ',
-leaf: true
-						  }]
+						text: 'DEF -> ABC ',
+						icon:'resources/images/icons/graph-1.JPG',						
+						leaf: true
+						  },
+						{
+						text: 'ABC -> XYZ',
+						icon:'resources/images/icons/graph-1.JPG',						
+						leaf: true
+						},
+						{
+						text: 'XYZ -> ABC ',
+						icon:'resources/images/icons/graph-1.JPG',						
+						leaf: true
+						}]
 				  }]
 			   }]
 	},
