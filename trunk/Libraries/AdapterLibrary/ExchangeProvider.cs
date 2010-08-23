@@ -197,7 +197,8 @@ namespace org.iringtools.exchange
 
         System.Text.StringBuilder sb = new System.Text.StringBuilder();
         TextWriter textWriter = new StringWriter(sb);
-        VDS.RDF.Writing.RdfXmlTreeWriter rdfWriter = new VDS.RDF.Writing.RdfXmlTreeWriter();
+        //VDS.RDF.Writing.RdfXmlTreeWriter rdfWriter = new VDS.RDF.Writing.RdfXmlTreeWriter();
+        VDS.RDF.Writing.FastRdfXmlWriter rdfWriter = new VDS.RDF.Writing.FastRdfXmlWriter();
         rdfWriter.Save(graph, textWriter);
         XElement rdf = XElement.Parse(sb.ToString());
 
@@ -386,7 +387,7 @@ namespace org.iringtools.exchange
       return dxiList;
     }
 
-    public XElement GetDto(string projectName, string applicationName, string graphName, DXRequest request)
+    public XElement GetDtoList(string projectName, string applicationName, string graphName, DXRequest request)
     {
       _manifest = request.Manifest;
       Identifiers identifiers = request.Identifiers;
