@@ -1,0 +1,32 @@
+<directory>
+	<project name="12345_000" description="Test Project">
+		<applicationData>
+			<application name="ABC" description="Test Application">
+				<graph name="Lines" commodity="PipingNetworkSystem"/>
+				<graph name="Instruments" commodity="Instrument"/>
+			</application>
+
+		<application name="DEF" description="Test Application 2">
+				<graph name="LinesGraph" commodity="PipingNetworkSystem"/>
+				<graph name="InstrumentsGraph" commodity="Instrument"/>
+		</application>
+
+		<application name="XYZ" description="Test Application 3">
+				<graph name="InstrumentsGraph" commodity="Instrument"/>
+		</application>
+		</applicationData>
+		<dataExchanges>
+			<commodity name="PipingNetworkSystem">
+				<exchange name="ABC -> DEF"/>
+				<exchange name="DEF -> ABC"/>
+			</commodity>
+
+		<commodity name="Instrument">
+				<exchange name="ABC -> DEF"/>
+				<exchange name="DEF -> ABC"/>
+			    <exchange name="XYZ -> ABC"/>
+				<exchange name="ABC -> XYZ"/>							   							   
+		</commodity>							   
+		</dataExchanges>
+	</project>
+</directory>
