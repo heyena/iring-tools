@@ -12,17 +12,16 @@ Ext.onReady(function(){
 		bodyBorder:false,
 		border:true,
 		hlColor:'C3DAF',
-		footer : true,
+		//footer : true,
 		//autoHeight:true,
         width: 250,
-		lines:true, 
         useArrows:false, // true for vista like 
         autoScroll:true,
         animate:true,
 		lines :true,
         //enableDD:true,
         containerScroll: true,
-        rootVisible: false,
+        rootVisible: true,
         frame: true,
 		//requestMethod:'GET', default is post
 		labelStyle: 'font-weight:bolder;font-size:100px;',
@@ -32,62 +31,27 @@ Ext.onReady(function(){
 			iconCls: 'my-icon',
 			text: 'Directory'
         },
-        
         // auto create TreeLoader
 		//loader: new Ext.tree.TreeLoader(),
         dataUrl: 'check-nodes.json',
-		listeners: {
-            /*'checkchange': function(node, checked){
-                if(checked){
-                    node.getUI().addClass('complete');
-                }else{
-                    node.getUI().removeClass('complete');
-                }
-            }*/
-		
-		},
-        
         buttons: [{
             text: 'Exchange',
             handler: function(){
-                /*var msg = '', selNodes = tree.getChecked();
-                Ext.each(selNodes, function(node){
-                    if(msg.length > 0){
-                        msg += ', ';
-                    }
-                    msg += node.text;
-                });
-                Ext.Msg.show({
-                    title: 'Completed Tasks', 
-                    msg: msg.length > 0 ? msg : 'None',
-                    icon: Ext.Msg.INFO,
-                    minWidth: 200,
-                    buttons: Ext.Msg.OK
-                });
-				*/
-/*Ext.Msg.show({
-title: 'Milton',
-msg: 'Would you like to review the Data Exchange before starting?',
-buttons: {
-yes: true,
-no: true
-}
-});*/
-
-Ext.Msg.show({
-title: ':: :: :: :: :: :: :: :: :: :: :: :: :: :: :: :: :: :: ',
-msg: 'Would you like to review the <br/>Data Exchange before starting?',
-buttons: Ext.Msg.YESNO,
-icon: Ext.Msg.QUESTION,//'profile', // &lt;- customized icon
-fn: function(action){
+			Ext.Msg.show({
+			title: ':: :: :: :: :: :: :: :: :: :: :: :: :: :: :: :: :: :: ',
+			msg: 'Would you like to review the <br/>Data Exchange before starting?',
+			buttons: Ext.Msg.YESNO,
+			icon: Ext.Msg.QUESTION,//'profile', // &lt;- customized icon
+			fn: function(action){
 		   if(action=='yes'){
 		   alert('You have clicked: '+tree.getSelectionModel().getSelectedNode().text+' \n\nid: '+tree.getSelectionModel().getSelectedNode().id+' \n\n');
 		   }
 		   else if(action=='no')  {alert('You clicked on No');}
-	   }
-});
+			}
+		});
             }
-        },{
+        },
+		{
 			text: 'Refresh',
 			handler: function(){
 				  }
@@ -95,23 +59,43 @@ fn: function(action){
 		}]
 	});
 
-   //*** tree.getRootNode().expand(false);
-	//tree.expandAll();
-	//tree.lines ='true';
-	//alert(tree.getSelectionModel)
+var contextMenu = new Ext.menu.Menu({
+items: [
+	{ text: 'Sort', handler: sortHandler }
+	,{ text: 'Exchange', handler: exchangeHandler}
+	   ]
+});
+//tree.on('contextmenu', treeContextHandler);
+
+function exchangeHandler(){
+	alert(tree.getSelectionModel().getSelectedNode().id);
+}
+function sortHandler() {
+	tree.getSelectionModel().getSelectedNode().sort(
+		function (leftNode, rightNode) {
+		return 1;//(leftNode.text.toUpperCase() < rightNode.text.toUpperCase() ? 1 : -1);
+	}
+	);
+}
 
 	/* to maintain the state of the tree */
 		Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
+
+		tree.on('contextmenu', function (node) {
+			node.select();
+			contextMenu.show(node.ui.getAnchor());
+		});
 		
-		tree.on('expandnode', function (node){
-			//alert(node.id)
+		/*tree.on('expandnode', function (node){
+			//node.id
 			Ext.state.Manager.set("treestate", node.getPath());
-		});				
+			//Ext.get('pg').collapse();
+		});*/
+		
 		var treeState = Ext.state.Manager.get("treestate");
 			if (treeState){
 				tree.expandPath(treeState);
 			}
-			
 	/* to maintain the state of the tree */
 			
 });
