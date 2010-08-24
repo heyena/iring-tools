@@ -86,24 +86,50 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppEditor.aspx.cs">
+      <DependentUpon>AppEditor.aspx</DependentUpon>
+    </Compile>
     <Compile Include="ConfigFile.cs" />
-    <Compile Include="Controllers\AdapterServiceController.cs" />
+    <Compile Include="Controllers\ServiceController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MappingEditorController.cs" />
     <Compile Include="Controllers\ScopeEditorController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="MappingEditor.aspx.cs">
+      <DependentUpon>MappingEditor.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MappingEditor.aspx.designer.cs">
+      <DependentUpon>MappingEditor.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Models\Ext\TreeNode.cs" />
     <Compile Include="Models\ProjectContainer.cs" />
-    <Compile Include="Models\ProjectTreeContainer.cs" />
+    <Compile Include="Models\ProjectTreeNode.cs" />
+    <Compile Include="Models\RefDataEntitiesContainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RefDataEditor.aspx.cs">
+      <DependentUpon>RefDataEditor.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RefDataEditor.aspx.designer.cs">
+      <DependentUpon>RefDataEditor.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="SPARQLQuery.aspx.cs">
+      <DependentUpon>SPARQLQuery.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SPARQLQuery.aspx.designer.cs">
+      <DependentUpon>SPARQLQuery.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Views\MappingEditor\Index.aspx.cs">
       <DependentUpon>Index.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AppEditor.aspx" />
     <Content Include="ClientBin\ApplicationEditor.xap" />
     <Content Include="ClientBin\MappingEditor.xap" />
     <Content Include="ClientBin\ReferenceDataEditor.xap" />
@@ -117,6 +143,8 @@
     <Content Include="Content\img\iRINGTools_logo.png" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="MappingEditor.aspx" />
+    <Content Include="RefDataEditor.aspx" />
     <Content Include="Scripts\ext\adapter\ext\ext-base-debug-w-comments.js" />
     <Content Include="Scripts\ext\adapter\ext\ext-base-debug.js" />
     <Content Include="Scripts\ext\adapter\ext\ext-base.js" />
@@ -883,8 +911,112 @@
     <Content Include="Scripts\ext\resources\images\yourtheme\window\left-right.png" />
     <Content Include="Scripts\ext\resources\images\yourtheme\window\right-corners.png" />
     <Content Include="Scripts\ext\resources\images\yourtheme\window\top-bottom.png" />
+    <Content Include="Scripts\ext\ux\BufferView.js" />
+    <Content Include="Scripts\ext\ux\CenterLayout.js" />
+    <Content Include="Scripts\ext\ux\CheckColumn.js" />
+    <Content Include="Scripts\ext\ux\ColumnHeaderGroup.js" />
+    <Content Include="Scripts\ext\ux\ColumnNodeUI.js" />
+    <Content Include="Scripts\ext\ux\css\CenterLayout.css" />
+    <Content Include="Scripts\ext\ux\css\ColumnHeaderGroup.css" />
+    <Content Include="Scripts\ext\ux\css\ColumnNodeUI.css" />
+    <Content Include="Scripts\ext\ux\css\GroupSummary.css" />
+    <Content Include="Scripts\ext\ux\css\GroupTab.css" />
+    <Content Include="Scripts\ext\ux\css\LockingGridView.css" />
+    <Content Include="Scripts\ext\ux\css\MultiSelect.css" />
+    <Content Include="Scripts\ext\ux\css\PanelResizer.css" />
+    <Content Include="Scripts\ext\ux\css\Portal.css" />
+    <Content Include="Scripts\ext\ux\css\RowEditor.css" />
+    <Content Include="Scripts\ext\ux\css\Spinner.css" />
+    <Content Include="Scripts\ext\ux\css\ux-all.css" />
+    <Content Include="Scripts\ext\ux\DataView-more.js" />
+    <Content Include="Scripts\ext\ux\DataViewTransition.js" />
+    <Content Include="Scripts\ext\ux\FieldLabeler.js" />
+    <Content Include="Scripts\ext\ux\FieldReplicator.js" />
+    <Content Include="Scripts\ext\ux\fileuploadfield\css\fileuploadfield.css" />
+    <Content Include="Scripts\ext\ux\fileuploadfield\FileUploadField.js" />
+    <Content Include="Scripts\ext\ux\Focus.js" />
+    <Content Include="Scripts\ext\ux\GMapPanel.js" />
+    <Content Include="Scripts\ext\ux\gridfilters\css\GridFilters.css" />
+    <Content Include="Scripts\ext\ux\gridfilters\css\RangeMenu.css" />
+    <Content Include="Scripts\ext\ux\gridfilters\filter\BooleanFilter.js" />
+    <Content Include="Scripts\ext\ux\gridfilters\filter\DateFilter.js" />
+    <Content Include="Scripts\ext\ux\gridfilters\filter\Filter.js" />
+    <Content Include="Scripts\ext\ux\gridfilters\filter\ListFilter.js" />
+    <Content Include="Scripts\ext\ux\gridfilters\filter\NumericFilter.js" />
+    <Content Include="Scripts\ext\ux\gridfilters\filter\StringFilter.js" />
+    <Content Include="Scripts\ext\ux\gridfilters\GridFilters.js" />
+    <Content Include="Scripts\ext\ux\gridfilters\images\equals.png" />
+    <Content Include="Scripts\ext\ux\gridfilters\images\find.png" />
+    <Content Include="Scripts\ext\ux\gridfilters\images\greater_than.png" />
+    <Content Include="Scripts\ext\ux\gridfilters\images\less_than.png" />
+    <Content Include="Scripts\ext\ux\gridfilters\images\sort_filtered_asc.gif" />
+    <Content Include="Scripts\ext\ux\gridfilters\images\sort_filtered_desc.gif" />
+    <Content Include="Scripts\ext\ux\gridfilters\menu\ListMenu.js" />
+    <Content Include="Scripts\ext\ux\gridfilters\menu\RangeMenu.js" />
+    <Content Include="Scripts\ext\ux\GroupSummary.js" />
+    <Content Include="Scripts\ext\ux\GroupTab.js" />
+    <Content Include="Scripts\ext\ux\GroupTabPanel.js" />
+    <Content Include="Scripts\ext\ux\images\bottom2.gif" />
+    <Content Include="Scripts\ext\ux\images\down2.gif" />
+    <Content Include="Scripts\ext\ux\images\elbow-minus-nl.gif" />
+    <Content Include="Scripts\ext\ux\images\elbow-plus-nl.gif" />
+    <Content Include="Scripts\ext\ux\images\left2.gif" />
+    <Content Include="Scripts\ext\ux\images\panel-handle.gif" />
+    <Content Include="Scripts\ext\ux\images\right2.gif" />
+    <Content Include="Scripts\ext\ux\images\row-editor-bg.gif" />
+    <Content Include="Scripts\ext\ux\images\row-editor-btns.gif" />
+    <Content Include="Scripts\ext\ux\images\spinner-split.gif" />
+    <Content Include="Scripts\ext\ux\images\spinner.gif" />
+    <Content Include="Scripts\ext\ux\images\summary-bg.gif" />
+    <Content Include="Scripts\ext\ux\images\summary-group-bg.gif" />
+    <Content Include="Scripts\ext\ux\images\top2.gif" />
+    <Content Include="Scripts\ext\ux\images\up2.gif" />
+    <Content Include="Scripts\ext\ux\images\x-grouptabs-corners.gif" />
+    <Content Include="Scripts\ext\ux\ItemSelector.js" />
+    <Content Include="Scripts\ext\ux\LockingGridView.js" />
+    <Content Include="Scripts\ext\ux\MultiSelect.js" />
+    <Content Include="Scripts\ext\ux\PagingMemoryProxy.js" />
+    <Content Include="Scripts\ext\ux\PanelResizer.js" />
+    <Content Include="Scripts\ext\ux\Portal.js" />
+    <Content Include="Scripts\ext\ux\PortalColumn.js" />
+    <Content Include="Scripts\ext\ux\Portlet.js" />
+    <Content Include="Scripts\ext\ux\ProgressBarPager.js" />
+    <Content Include="Scripts\ext\ux\Reorderer.js" />
+    <Content Include="Scripts\ext\ux\RowEditor.js" />
+    <Content Include="Scripts\ext\ux\RowExpander.js" />
+    <Content Include="Scripts\ext\ux\RowLayout.js" />
+    <Content Include="Scripts\ext\ux\SearchField.js" />
+    <Content Include="Scripts\ext\ux\SelectBox.js" />
+    <Content Include="Scripts\ext\ux\SlidingPager.js" />
+    <Content Include="Scripts\ext\ux\Spinner.js" />
+    <Content Include="Scripts\ext\ux\SpinnerField.js" />
+    <Content Include="Scripts\ext\ux\Spotlight.js" />
+    <Content Include="Scripts\ext\ux\statusbar\css\statusbar.css" />
+    <Content Include="Scripts\ext\ux\statusbar\images\accept.png" />
+    <Content Include="Scripts\ext\ux\statusbar\images\exclamation.gif" />
+    <Content Include="Scripts\ext\ux\statusbar\images\loading.gif" />
+    <Content Include="Scripts\ext\ux\statusbar\images\saved.png" />
+    <Content Include="Scripts\ext\ux\statusbar\images\saving.gif" />
+    <Content Include="Scripts\ext\ux\statusbar\StatusBar.js" />
+    <Content Include="Scripts\ext\ux\statusbar\ValidationStatus.js" />
+    <Content Include="Scripts\ext\ux\TabCloseMenu.js" />
+    <Content Include="Scripts\ext\ux\TableGrid.js" />
+    <Content Include="Scripts\ext\ux\TabScrollerMenu.js" />
+    <Content Include="Scripts\ext\ux\ToolbarDroppable.js" />
+    <Content Include="Scripts\ext\ux\ToolbarReorderer.js" />
+    <Content Include="Scripts\ext\ux\treegrid\treegrid.css" />
+    <Content Include="Scripts\ext\ux\treegrid\TreeGrid.js" />
+    <Content Include="Scripts\ext\ux\treegrid\TreeGridColumnResizer.js" />
+    <Content Include="Scripts\ext\ux\treegrid\TreeGridColumns.js" />
+    <Content Include="Scripts\ext\ux\treegrid\TreeGridLoader.js" />
+    <Content Include="Scripts\ext\ux\treegrid\TreeGridNodeUI.js" />
+    <Content Include="Scripts\ext\ux\treegrid\TreeGridSorter.js" />
+    <Content Include="Scripts\ext\ux\ux-all-debug.js" />
+    <Content Include="Scripts\ext\ux\ux-all.js" />
+    <Content Include="Scripts\ext\ux\XmlTreeLoader.js" />
     <Content Include="Scripts\Silverlight.js" />
     <Content Include="Silverlight.js" />
+    <Content Include="SPARQLQuery.aspx" />
     <Content Include="Views\MappingEditor\Index.aspx" />
     <Content Include="Views\ScopeEditor\Index.aspx" />
     <Content Include="Views\Shared\Index.aspx" />
@@ -915,6 +1047,7 @@
   <ItemGroup>
     <Folder Include="Scripts\ext\resources\images\vista\dd\" />
     <Folder Include="Scripts\ext\resources\images\vista\tree\" />
+    <Folder Include="Scripts\NewFolder1\" />
     <Folder Include="Views\Home\" />
   </ItemGroup>
   <ItemGroup>

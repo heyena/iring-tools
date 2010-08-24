@@ -22,11 +22,11 @@ namespace org.iringtools.client.Models.Ext
    
   */
 
-  public class TreeNode
+  public class TreeNode<T>
   {
     public virtual string id { get; set; }
     public virtual string text { get; set; }
     public bool leaf { get; set; }
-    public List<TreeNode> children { get; set; }
+    public List<T> children { get; set; }
   }
 }

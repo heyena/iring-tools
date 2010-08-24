@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-public partial class MappingEditor : System.Web.Mvc.ViewPage<System.Web.UI.Page>
+public partial class MappingEditor1 : System.Web.Mvc.ViewPage<System.Web.UI.Page>
 {
   /// <summary>
   /// The following code is blogged about on the following link:
