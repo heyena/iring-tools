@@ -1,0 +1,11 @@
+<exchangeDefinition xmlns="http://iringtools.org/exchange/library/directory">
+  <senderUri>http://localhost:54321/AdapterService</senderUri>
+  <senderAppName>ABC</senderAppName>
+  <senderAppScope>12345_000</senderAppScope>
+  <senderGraphName>Lines</senderGraphName>
+  <receiverUri>http://localhost:54321/AdapterService</receiverUri>
+  <receiverAppName>DEF</receiverAppName>
+  <receiverAppScope>12345_000</receiverAppScope>
+  <receiverGraphName>Lines</receiverGraphName>
+  <hashAlgorithm>MD5</hashAlgorithm>
+</exchangeDefinition>
