@@ -9,7 +9,7 @@ namespace org.iringtools.client.Models
 {
   public class ProjectContainer
   {
-    public Collection<ScopeProject> Projects { get; set; }
+    public List<ScopeProject> Projects { get; set; }
     public int Count { get; set; }
   }
 }
