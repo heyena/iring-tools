@@ -1,19 +1,18 @@
-<dataTransferIndices xmlns="http://iringtools.org/adapter/library/dxo">
-		<dataTransferIndex>
-			<identifier>Tag-1</identifier>
-			<hashValue>ABC001</hashValue>
-			<transferType>Add</transferType>
-		</dataTransferIndex>
-
-		<dataTransferIndex>
-			<identifier>Tag-2</identifier>
-			<hashValue>ABC002</hashValue>
-			<transferType>Change</transferType>
-		</dataTransferIndex>
-						   
-		<dataTransferIndex>
-			<identifier>Tag-3</identifier>
-			<hashValue>ABC003</hashValue>
-			<transferType>Delete</transferType>
-		</dataTransferIndex>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<dataTransferIndices xmlns="http://iringtools.org/adapter/library/dto">
+  <dataTransferIndex>
+    <identifier>Tag-1</identifier>
+    <hashValue>7CCF26882D79E26686FAAC9F8E7862</hashValue>
+    <transferType>Change</transferType>
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>Tag-2</identifier>
+    <hashValue>D43A1DB51F7B1150A3171DCC97C114</hashValue>
+    <transferType>Change</transferType>
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>Tag-3</identifier>
+    <hashValue>FA36780CACAEE4E815C8E22B371312</hashValue>
+    <transferType>Change</transferType>
+  </dataTransferIndex>
 </dataTransferIndices>
