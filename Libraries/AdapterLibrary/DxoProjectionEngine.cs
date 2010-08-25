@@ -17,8 +17,9 @@ namespace org.iringtools.adapter.projection
 {
   public class DxoProjectionEngine : IProjectionLayer
   {
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(DtoProjectionEngine));
-
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(DtoProjectionEngine));    
+    private static readonly XNamespace RDL_NS = "http://rdl.rdlfacade.org/data#";
+    
     private IDataLayer _dataLayer = null;
     private Mapping _mapping = null;
     private GraphMap _graphMap = null;
@@ -45,31 +46,79 @@ namespace org.iringtools.adapter.projection
 
     public XElement GetXml(string graphName, ref IList<IDataObject> dataObjects)
     {
-      try
+      _graphMap = _mapping.FindGraphMap(graphName);
+      _dataObjects = dataObjects;
+
+      PopulateClassIdentifiers();
+      DataTransferObjects dtoList = new DataTransferObjects();
+
+      for (int i = 0; i < _dataObjects.Count; i++)
       {
-        _graphMap = _mapping.FindGraphMap(graphName);
-        _dataObjects = dataObjects;
+        DataTransferObject dto = new DataTransferObject();
+        dtoList.Add(dto);
 
-        PopulateClassIdentifiers();
-
-        ClassMap classMap = _graphMap.classTemplateListMaps.First().Key;
-        _dataTransferObjects = new DataTransferObjects();
-
-        for (int dataObjectIndex = 0; dataObjectIndex < _dataObjects.Count; dataObjectIndex++)
+        foreach (var pair in _graphMap.classTemplateListMaps)
         {
-          DataTransferObject dataTransferObject = new DataTransferObject();
-          _dataTransferObjects.Add(dataTransferObject);
-          PopulateDataTransferObjects(ref dataTransferObject, classMap, dataObjectIndex);
+          ClassMap classMap = pair.Key;
+          List<TemplateMap> templateMaps = pair.Value;
+
+          ClassObject classObject = new ClassObject
+          {
+            classId = classMap.classId,
+            name = classMap.name,
+            identifier = _classIdentifiers[classMap.classId][i],
+          };
+
+          dto.classObjects.Add(classObject);
+
+          foreach (TemplateMap templateMap in templateMaps)
+          {
+            TemplateObject templateObject = new TemplateObject
+            {
+              templateId = templateMap.templateId,
+              name = templateMap.name,
+            };
+
+            classObject.templateObjects.Add(templateObject);
+
+            foreach (RoleMap roleMap in templateMap.roleMaps)
+            {
+              RoleObject roleObject = new RoleObject
+              {
+                type = roleMap.type,
+                roleId = roleMap.roleId,
+                name = roleMap.name,
+              };
+
+              templateObject.roleObjects.Add(roleObject);
+              string value = roleMap.value;
+
+              if (roleMap.type == RoleType.Property)
+              {
+                string propertyName = roleMap.propertyName.Substring(_graphMap.dataObjectMap.Length + 1);
+                value = Convert.ToString(_dataObjects[i].GetPropertyValue(propertyName));
+
+                if (!String.IsNullOrEmpty(roleMap.valueList))
+                {
+                  value = _mapping.ResolveValueList(roleMap.valueList, value);
+                  value = value.Replace(RDL_NS.NamespaceName, "rdl:");
+                }
+              }
+              else if (roleMap.classMap != null)
+              {
+                value = "#" + _classIdentifiers[roleMap.classMap.classId][i];
+              }
+
+              roleObject.value = value;
+            }
+          }
         }
+      }
 
-        return SerializationExtensions.ToXml<DataTransferObjects>(_dataTransferObjects);
-      }
-      catch (Exception ex)
-      {
-        throw ex;
-      }
+      XElement xml = SerializationExtensions.ToXml<DataTransferObjects>(dtoList);
+      return xml;
     }
-
+    
     public IList<IDataObject> GetDataObjects(string graphName, ref XElement xml)
     {
       _graphMap = _mapping.FindGraphMap(graphName);
@@ -210,61 +259,6 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    private void PopulateDataTransferObjects(ref DataTransferObject dataTransferObject, ClassMap classMap, int dataObjectIndex)
-    {
-      string classId = classMap.classId;
-      string className = classMap.name;
-
-      KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = _graphMap.GetClassTemplateListMap(classId);
-      List<TemplateMap> templateMaps = classTemplateListMap.Value;
-      string classIdentifier = _classIdentifiers[classId][dataObjectIndex];
-
-      ClassObject classObject = new ClassObject
-      {
-        classId = classId,
-        name = className,
-        identifier = classIdentifier,
-      };
-      dataTransferObject.classObjects.Add(classObject);
-
-      foreach (TemplateMap templateMap in templateMaps)
-      {
-        TemplateObject templateObject = new TemplateObject
-        {
-          templateId = templateMap.templateId,
-          name = templateMap.name,
-        };
-        classObject.templateObjects.Add(templateObject);
-
-        foreach (RoleMap roleMap in templateMap.roleMaps)
-        {
-          RoleObject roleObject = new RoleObject();
-          roleObject.roleId = roleMap.roleId;
-          roleObject.name = roleMap.name;
-          templateObject.roleObjects.Add(roleObject);
-
-          if (roleMap.type == RoleType.Property)
-          {
-            string propertyName = roleMap.propertyName.Substring(_graphMap.dataObjectMap.Length + 1);
-            roleObject.value = Convert.ToString(_dataObjects[dataObjectIndex].GetPropertyValue(propertyName));
-          }
-          else if (roleMap.type == RoleType.Reference)
-          {
-            roleObject.reference = roleMap.value;
-
-            if (roleMap.classMap != null)
-            {
-              PopulateDataTransferObjects(ref dataTransferObject, roleMap.classMap, dataObjectIndex);
-            }
-          }
-          else
-          {
-            roleObject.value = roleMap.value;
-          }
-        }
-      }
-    }
-
     private void PopulateDataObjects(ref IDataObject dataObject, string classId, int dataTransferObjectIndex)
     {
       KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = _graphMap.GetClassTemplateListMap(classId);
@@ -287,7 +281,14 @@ namespace org.iringtools.adapter.projection
               {
                 if (roleObject.roleId == roleMap.roleId)
                 {
-                  dataObject.SetPropertyValue(propertyName, roleObject.value);
+                  string value = roleObject.value;
+
+                  if (!String.IsNullOrEmpty(roleMap.valueList))
+                  {
+                    value = _mapping.ResolveValueMap(roleMap.valueList, value);
+                  }
+
+                  dataObject.SetPropertyValue(propertyName, value);
                 }
               }
             }

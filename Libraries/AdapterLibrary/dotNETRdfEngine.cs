@@ -91,7 +91,7 @@ namespace org.iringtools.adapter.semantic
       response.StatusList = new List<Status>();
 
       Status status = new Status();
-      status.Messages = new List<string>();
+      status.Messages = new Messages();
 
       try
       {  
@@ -154,7 +154,7 @@ namespace org.iringtools.adapter.semantic
         response.StatusList = new List<Status>();
 
         Status status = new Status();
-        status.Messages = new List<string>();
+        status.Messages = new Messages();
       try
       {
         status.Identifier = graphUri.ToString();

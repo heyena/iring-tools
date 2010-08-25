@@ -141,7 +141,7 @@ namespace org.iringtools.adapter
     public Response UpdateScopes(List<ScopeProject> scopes)
     {
       Status status = new Status();
-      status.Messages = new List<string>();
+      status.Messages = new Messages();
       try
       {
         _scopes = scopes;
@@ -180,7 +180,7 @@ namespace org.iringtools.adapter
     public Response DeleteScope(string projectName, string applicationName)
     {
       Status status = new Status();
-      status.Messages = new List<string>();
+      status.Messages = new Messages();
       try
       {
         status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
@@ -224,7 +224,7 @@ namespace org.iringtools.adapter
     public Response UpdateBinding(string projectName, string applicationName, XElement binding)
     {
       Status status = new Status();
-      status.Messages = new List<string>();
+      status.Messages = new Messages();
       try
       {
         status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
@@ -391,7 +391,7 @@ namespace org.iringtools.adapter
     public Response UpdateMapping(string projectName, string applicationName, XElement mappingXml)
     {
       Status status = new Status();
-      status.Messages = new List<string>();
+      status.Messages = new Messages();
       string path = string.Format("{0}Mapping.{1}.{2}.xml", _settings["XmlPath"], projectName, applicationName);
 
       try
@@ -480,7 +480,7 @@ namespace org.iringtools.adapter
     public Response RefreshAll(string projectName, string applicationName)
     {
       Status status = new Status();
-      status.Messages = new List<string>();
+      status.Messages = new Messages();
       try
       {
         status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
@@ -516,7 +516,7 @@ namespace org.iringtools.adapter
     public Response Refresh(string projectName, string applicationName, string graphName)
     {
       Status status = new Status();
-      status.Messages = new List<string>();
+      status.Messages = new Messages();
       try
       {
         status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
@@ -584,7 +584,6 @@ namespace org.iringtools.adapter
         }
 
         LoadDataObjectSet(graphName, null);
-
         return _projectionEngine.GetXml(graphName, ref _dataObjects);
       }
       catch (Exception ex)
@@ -616,7 +615,7 @@ namespace org.iringtools.adapter
     public Response DeleteAll(string projectName, string applicationName)
     {
       Status status = new Status();
-      status.Messages = new List<string>();
+      status.Messages = new Messages();
       try
       {
         status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
@@ -645,7 +644,7 @@ namespace org.iringtools.adapter
     public Response Delete(string projectName, string applicationName, string graphName)
     {
       Status status = new Status();
-      status.Messages = new List<string>();
+      status.Messages = new Messages();
       try
       {
         status.Identifier = String.Format("{0}.{1}.{2}", projectName, applicationName, graphName);
@@ -703,7 +702,7 @@ namespace org.iringtools.adapter
         Status status = new Status
         {
           Level = StatusLevel.Error,
-          Messages = new List<string> { ex.Message },
+          Messages = new Messages { ex.Message },
         };
 
         response.Level = StatusLevel.Error;

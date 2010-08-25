@@ -34,20 +34,19 @@ using System;
 namespace org.iringtools.library
 {
   [XmlRoot]
-  [DataContract]
+  [DataContract(Namespace = "http://iringtools.org/library/response", Name = "response")]
   public class Response 
-
   {
     [XmlElement]
-    [DataMember]
+    [DataMember(Name = "level", Order = 0)]
     public StatusLevel Level { get; set; }
 
     [XmlElement]
-    [DataMember(EmitDefaultValue = false)]
+    [DataMember(Name = "dateTimeStamp", Order = 1, EmitDefaultValue = false)]
     public DateTime DateTimeStamp { get; set; }
 
     [XmlElement]
-    [DataMember]
+    [DataMember(Name = "statusList", Order = 2)]
     public List<Status> StatusList { get; set; }
 
     public Response()
@@ -112,34 +111,42 @@ namespace org.iringtools.library
   }
 
   [XmlRoot]
-  [DataContract]
+  [DataContract(Namespace = "http://iringtools.org/library/response", Name = "status")]
   public class Status //: IXmlSerializable
   {
     [XmlElement]
-    [DataMember]
+    [DataMember(Name = "level", Order = 0)]
     public StatusLevel Level { get; set; }
 
     [XmlElement]
-    [DataMember(EmitDefaultValue = false)]
+    [DataMember(Name = "identifier", Order = 1, EmitDefaultValue = false)]
     public string Identifier { get; set; }
 
     [XmlElement]
-    [DataMember(EmitDefaultValue = false)]
-    public Dictionary<string, string> Results { get; set; }
+    [DataMember(Name = "results", Order = 2, EmitDefaultValue = false)]
+    public Results Results { get; set; }
 
     [XmlElement]
-    [DataMember(EmitDefaultValue = false)]
-    public List<string> Messages { get; set; }
+    [DataMember(Name = "messages", Order = 3, EmitDefaultValue = false)]
+    public Messages Messages { get; set; }
 
     public Status()
     {
-      this.Messages = new List<string>();
-      this.Results = new Dictionary<string,string>();
+      this.Messages = new Messages();
+      this.Results = new Results();
     }
   }
 
   [XmlRoot]
-  [DataContract]
+  [CollectionDataContract(Namespace = "http://iringtools.org/library/response", Name = "results", KeyName = "key", ItemName="value")]
+  public class Results : Dictionary<string, string> {}
+   
+  [XmlRoot]
+  [CollectionDataContract(Namespace = "http://iringtools.org/library/response", Name = "messages", ItemName = "message")]
+  public class Messages : List<string> {}
+
+  [XmlRoot]
+  [DataContract(Namespace = "http://iringtools.org/library/response", Name = "level")]
   public enum StatusLevel
   {
     [XmlEnum]

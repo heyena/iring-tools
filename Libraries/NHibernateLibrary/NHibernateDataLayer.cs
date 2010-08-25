@@ -205,7 +205,7 @@ namespace org.iringtools.adapter.datalayer
               string identifier = dataObject.GetPropertyValue("Id").ToString();
 
               Status status = new Status();
-              status.Messages = new List<string>();
+              status.Messages = new Messages();
               status.Identifier = identifier;
               
               try

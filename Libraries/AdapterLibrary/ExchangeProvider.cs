@@ -86,7 +86,7 @@ namespace org.iringtools.exchange
       String graphNameForPull = String.Empty;
       String dataObjectsString = String.Empty;
       Status status = new Status();
-      status.Messages = new List<string>();
+      status.Messages = new Messages();
       try
       {
         status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
@@ -138,7 +138,7 @@ namespace org.iringtools.exchange
     public Response Pull(string projectName, string applicationName, string graphName, Request request)
     {
       Status status = new Status();
-      status.Messages = new List<string>();
+      status.Messages = new Messages();
       try
       {
         status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
@@ -231,7 +231,7 @@ namespace org.iringtools.exchange
     public Response Push(string projectName, string applicationName, string graphName, PushRequest request)
     {
       Status status = new Status();
-      status.Messages = new List<string>();
+      status.Messages = new Messages();
       try
       {
         String targetUri = String.Empty;
@@ -398,88 +398,75 @@ namespace org.iringtools.exchange
       BuildCrossedGraphMap(graphName);
       PopulateClassIdentifiers(identifiers);
 
-      XElement dtoList = new XElement(DTO_NS + "dataTransferObjects");
+      DataTransferObjects dtoList = new DataTransferObjects();
 
       for (int i = 0; i < _dataObjects.Count; i++)
       {
-        XElement dto = new XElement(DTO_NS + "dataTransferObject");
+        DataTransferObject dto = new DataTransferObject();
         dtoList.Add(dto);
-
-        XElement classObjects = new XElement(DTO_NS + "classObjects");
-        dto.Add(classObjects);
 
         foreach (var pair in _graphMap.classTemplateListMaps)
         {
           ClassMap classMap = pair.Key;
           List<TemplateMap> templateMaps = pair.Value;
 
-          XElement classObject = new XElement(DTO_NS + "classObject");
-          classObjects.Add(classObject);
+          ClassObject classObject = new ClassObject
+          {
+            classId = classMap.classId,
+            name = classMap.name,
+            identifier = _classIdentifiers[classMap.classId][i],
+          };
 
-          classObject.Add(new XElement(DTO_NS + "classId", classMap.classId));
-          classObject.Add(new XElement(DTO_NS + "name", classMap.name));
-          classObject.Add(new XElement(DTO_NS + "identifier", _classIdentifiers[classMap.classId][i]));
-
-          XElement templateObjects = new XElement(DTO_NS + "templateObjects");
-          classObject.Add(templateObjects);          
+          dto.classObjects.Add(classObject);
 
           foreach (TemplateMap templateMap in templateMaps)
           {
-            XElement templateObject = new XElement(DTO_NS + "templateObject");
-            templateObjects.Add(templateObject);
+            TemplateObject templateObject = new TemplateObject
+            {
+              templateId = templateMap.templateId,
+              name = templateMap.name,
+            };
 
-            templateObject.Add(new XElement(DTO_NS + "templateId", templateMap.templateId));
-            templateObject.Add(new XElement(DTO_NS + "name", templateMap.name));
-
-            XElement roleObjects = new XElement(DTO_NS + "roleObjects");
-            templateObject.Add(roleObjects);
+            classObject.templateObjects.Add(templateObject);
 
             foreach (RoleMap roleMap in templateMap.roleMaps)
             {
-              XElement roleObject = new XElement(DTO_NS + "roleObject");
-              roleObjects.Add(roleObject);
-
-              roleObject.Add(new XElement(DTO_NS + "type", roleMap.type));
-              roleObject.Add(new XElement(DTO_NS + "roleId", roleMap.roleId));
-              roleObject.Add(new XElement(DTO_NS + "name", roleMap.name));
-
-              switch (roleMap.type)
+              RoleObject roleObject = new RoleObject
               {
-                case RoleType.Property:
-                  string propertyName = roleMap.propertyName.Substring(_graphMap.dataObjectMap.Length + 1);
-                  string value = Convert.ToString(_dataObjects[i].GetPropertyValue(propertyName));
+                type = roleMap.type,
+                roleId = roleMap.roleId,
+                name = roleMap.name,
+              };
 
-                  if (!String.IsNullOrEmpty(roleMap.valueList))
-                  {
-                    value = _mapping.ResolveValueList(roleMap.valueList, value);
-                    value = value.Replace(RDL_NS.NamespaceName, "rdl:");
-                  }
+              templateObject.roleObjects.Add(roleObject);
+              string value = roleMap.value;
 
-                  roleObject.Add(new XElement(DTO_NS + "value", value));
-                  break;
+              if (roleMap.type == RoleType.Property)
+              {
+                string propertyName = roleMap.propertyName.Substring(_graphMap.dataObjectMap.Length + 1);
+                value = Convert.ToString(_dataObjects[i].GetPropertyValue(propertyName));
 
-                case RoleType.FixedValue:
-                  roleObject.Add(new XElement(DTO_NS + "value", roleMap.value));
-                  break;
-
-                case RoleType.Reference:
-                  if (roleMap.classMap != null)
-                  {
-                    roleObject.Add(new XElement(DTO_NS + "value", "#" + _classIdentifiers[roleMap.classMap.classId][i]));
-                  }
-                  else
-                  {
-                    roleObject.Add(new XElement(DTO_NS + "value", roleMap.value));
-                  }
-                  break;
+                if (!String.IsNullOrEmpty(roleMap.valueList))
+                {
+                  value = _mapping.ResolveValueList(roleMap.valueList, value);
+                  value = value.Replace(RDL_NS.NamespaceName, "rdl:");
+                }
               }
+              else if (roleMap.classMap != null)
+              {
+                value = "#" + _classIdentifiers[roleMap.classMap.classId][i];
+              }
+
+              roleObject.value = value;
             }
           }
         }
       }
 
-      return dtoList;
+      XElement xml = SerializationExtensions.ToXml<DataTransferObjects>(dtoList);
+      return xml;
     }
+
 
     #region helper methods
     private void InitializeScope(string projectName, string applicationName)
