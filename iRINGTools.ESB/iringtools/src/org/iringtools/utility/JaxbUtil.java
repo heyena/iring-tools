@@ -42,7 +42,7 @@ public class JaxbUtil
 		String pkgName = c.getPackage().getName();
 		JAXBContext jc = JAXBContext.newInstance(pkgName);
 	  Marshaller m = jc.createMarshaller();
-	  m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+	  //m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 	  m.marshal(object, stream);
   }
 	

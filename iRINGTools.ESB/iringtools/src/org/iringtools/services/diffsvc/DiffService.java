@@ -66,6 +66,7 @@ public class DiffService
   
   @POST
   @Path("/dxo/{exchangeId}")
+  //TODO: take dxi instead of identifiers for adds and deletes also
   public DataTransferObjects dxo(@PathParam("exchangeId") String exchangeId, Identifiers identifiers) throws JAXBException, IOException
   { 
     // get exchange definition
@@ -87,7 +88,7 @@ public class DiffService
     // get receiving DTOs
     String receiverUrl = xdef.getReceiverUri() + "/" + xdef.getReceiverAppScope() + "/" + xdef.getReceiverAppName() + "/" + xdef.getReceiverGraphName() + "/dto";    
     DataTransferObjects receivingDtos = NetUtil.post(DataTransferObjects.class, receiverUrl, dxRequest);
-    
+
     return diff(sendingDtos, receivingDtos);
   }
   
