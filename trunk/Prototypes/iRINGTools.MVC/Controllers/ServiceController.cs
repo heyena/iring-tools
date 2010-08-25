@@ -50,30 +50,36 @@ namespace org.iringtools.client.Controllers
       {
         case "TREE":
           {
-            List<ProjectTreeNode> nodes = new List<ProjectTreeNode>();
+            List<ScopeTreeNode> nodes = new List<ScopeTreeNode>();
 
-            foreach (ScopeProject prj in scopes)
+            foreach (ScopeProject scope in scopes)
             {
 
-              ProjectTreeNode treePrj = new ProjectTreeNode
+              ScopeTreeNode nodeScope = new ScopeTreeNode
               {
-                name = prj.Name,
-                description = prj.Description,
-                expanded = true
+                id = scope.Name,
+                expanded = true,
+
+                Name = scope.Name,
+                Description = scope.Description                
               };
 
-              nodes.Add(treePrj);
+              nodes.Add(nodeScope);
 
-              foreach (ScopeApplication app in prj.Applications)
+              foreach (ScopeApplication app in scope.Applications)
               {
-                ProjectTreeNode treeApp = new ProjectTreeNode
+                ApplicationTreeNode nodeApp = new ApplicationTreeNode
                 {
-                  name = app.Name,
-                  description = app.Description,                  
-                  leaf = true
+                  id = scope.Name + ":" + app.Name,
+                  expanded = false,
+                  leaf = true,
+
+                  Name = app.Name,
+                  Description = app.Description,
+                  Mapping = "Need Mapping"
                 };
 
-                treePrj.children.Add(treeApp);
+                nodeScope.children.Add(nodeApp);
               }
             }
 
@@ -96,21 +102,32 @@ namespace org.iringtools.client.Controllers
       }
     }
 
-    // GET: /Service/Search/{query}
-    public JsonResult Search(string param)
+    // POST: /Service/Search?query={value}
+    [AcceptVerbs(HttpVerbs.Post)]
+    public JsonResult Search()
     {
-      Uri address = new Uri(_refDataServiceURI + "/search/" + param);
+      string query = Request.Form["query"];
+      string start = Request.Form["start"];
+      string limit = Request.Form["limit"];
+      RefDataEntitiesContainer container = new RefDataEntitiesContainer();
 
-      WebClient webClient = new WebClient();
-      string result = webClient.DownloadString(address);
-
-      List<RefDataEntities> entities = result.DeserializeDataContract<List<RefDataEntities>>();
-
-      RefDataEntitiesContainer container = new RefDataEntitiesContainer
+      if (query != null && !query.Equals(String.Empty))
       {
-        RefDataEntities = entities,
-        Count = entities.Count
-      };
+
+        Uri address = new Uri(_refDataServiceURI + "/search/" + query);
+
+        WebClient webClient = new WebClient();
+        string result = webClient.DownloadString(address);
+
+        RefDataEntities entities = result.DeserializeDataContract<RefDataEntities>();
+
+        container = new RefDataEntitiesContainer
+        {
+          RefDataEntities = entities,
+          Count = entities.Count
+        };
+
+      }
 
       return Json(container, JsonRequestBehavior.AllowGet);
     }
