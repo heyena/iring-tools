@@ -96,27 +96,30 @@ namespace org.iringtools.adapter
         {
           if (templateObject.templateId == templateMap.templateId)
           {
-            string roleMapRef = String.Empty;
-
             foreach (RoleMap roleMap in templateMap.roleMaps)
             {
-              if (roleMap.type == RoleType.Reference)
-              {
-                roleMapRef = roleMap.value;
-              }
-            }
+              bool roleIdFound = false;
 
-            if (roleMapRef != String.Empty)
-            {
               foreach (RoleObject roleObject in templateObject.roleObjects)
               {
-                if (!String.IsNullOrEmpty(roleObject.reference) && roleObject.reference == roleMapRef)
-                  return templateObject;
+                if (roleObject.roleId == roleMap.roleId)
+                {
+                  if (roleMap.type == RoleType.Reference && roleMap.classMap == null && roleMap.value == roleObject.value)
+                    return templateObject;
+
+                  roleIdFound = true;
+                  break;
+                }
               }
+
+              if (!roleIdFound) return null;
             }
+
+            return templateObject;
           }
         }
       }
+
       return null;
     }
   }
@@ -156,9 +159,6 @@ namespace org.iringtools.adapter
 
     [DataMember(Order = 3, EmitDefaultValue = false)]
     public string value { get; set; }
-
-    [DataMember(Order = 4, EmitDefaultValue = false)]
-    public string reference { get; set; }
   }
 
   [DataContract]
