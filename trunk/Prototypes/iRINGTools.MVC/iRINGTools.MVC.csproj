@@ -34,9 +34,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="iRINGLibrary, Version=2.0.0.1350, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\iRINGLibrary.dll</HintPath>
+    <Reference Include="iRINGLibrary">
+      <HintPath>..\..\iRINGTools.SDK\lib\iring-tools\iRINGLibrary.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Http">
@@ -82,7 +81,7 @@
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="UtilityLibrary, Version=2.0.0.1350, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\UtilityLibrary.dll</HintPath>
+      <HintPath>..\..\iRINGTools.SDK\lib\iring-tools\UtilityLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
