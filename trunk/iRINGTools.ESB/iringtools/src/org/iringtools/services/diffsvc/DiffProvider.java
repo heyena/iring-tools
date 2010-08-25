@@ -12,6 +12,7 @@ import org.iringtools.adapter.library.dto.DataTransferObject;
 import org.iringtools.adapter.library.dto.DataTransferObjects;
 import org.iringtools.adapter.library.dto.IdentifierComparator;
 import org.iringtools.adapter.library.dto.RoleObject;
+import org.iringtools.adapter.library.dto.RoleType;
 import org.iringtools.adapter.library.dto.TemplateObject; 
 import org.iringtools.adapter.library.dto.TransferType;
 
@@ -167,7 +168,7 @@ public class DiffProvider
     
       Collections.sort(sendingDtoList);      
       Collections.sort(receivingDtoList);
-      
+
       for (int i = 0; i < sendingDtoList.size(); i++)
       {
         DataTransferObject sendingDto = sendingDtoList.get(i);
@@ -211,21 +212,25 @@ public class DiffProvider
             for (int l = 0; l < sendingRoleObjectList.size(); l++)
             {
               RoleObject sendingRoleObject = sendingRoleObjectList.get(l);
-              RoleObject receivingRoleObject = receivingRoleObjectList.get(l);     
-
-              String sendingRoleValue = sendingRoleObject.getValue();
-              String receivingRoleValue = receivingRoleObject.getValue();
               
-              receivingRoleObject.setOldValue(sendingRoleValue);
-              
-              if (sendingRoleValue == null) sendingRoleValue = "";
-              if (receivingRoleValue == null) receivingRoleValue = "";
-              
-              if (!sendingRoleValue.equals(receivingRoleValue))
+              if (sendingRoleObject.getType() == RoleType.PROPERTY)
               {
-                receivingTemplateObject.setTransferType(TransferType.CHANGE);
-                receivingClassObject.setTransferType(TransferType.CHANGE);
-                receivingDto.setTransferType(TransferType.CHANGE);
+                RoleObject receivingRoleObject = receivingRoleObjectList.get(l);     
+  
+                String sendingRoleValue = sendingRoleObject.getValue();
+                String receivingRoleValue = receivingRoleObject.getValue();
+                
+                if (sendingRoleValue == null) sendingRoleValue = "";
+                if (receivingRoleValue == null) receivingRoleValue = "";
+                
+                receivingRoleObject.setOldValue(sendingRoleValue);
+                
+                if (!sendingRoleValue.equals(receivingRoleValue))
+                {
+                  receivingTemplateObject.setTransferType(TransferType.CHANGE);
+                  receivingClassObject.setTransferType(TransferType.CHANGE);
+                  receivingDto.setTransferType(TransferType.CHANGE);
+                }
               }
             }
           }
