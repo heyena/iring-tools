@@ -8,7 +8,7 @@ namespace org.iringtools.client.Models
 {
   public class RefDataEntitiesContainer
   {
-    public List<RefDataEntities> RefDataEntities { get; set; }
+    public RefDataEntities RefDataEntities { get; set; }
     public int Count { get; set; }
   }
 }
