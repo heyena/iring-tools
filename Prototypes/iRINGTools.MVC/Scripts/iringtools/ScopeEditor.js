@@ -18,9 +18,11 @@ Ext.onReady(function () {
         reader: new Ext.data.JsonReader({
             root: 'RefDataEntities',
             totalProperty: 'Count',
-            id: 'Key'
+            id: 'label'
         }, [
-            { name: 'Key', allowBlank: false }
+            { name: 'label', allowBlank: false },
+            { name: 'uri', allowBlank: false },
+            { name: 'repository', allowBlank: false }
         ]),
 
         baseParams: { limit: 20 }
@@ -30,7 +32,7 @@ Ext.onReady(function () {
     var resultTpl = new Ext.XTemplate(
         '<tpl for=".">',
         '<div class="search-item">',
-            '<h3><span>{Key}</span></h3>',            
+            '<h3><span>{label} {uri} {repository}</span></h3>',            
         '</div></tpl>'
     );
 
