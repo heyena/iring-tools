@@ -1,6 +1,5 @@
 package org.iringtools.services.diffsvc;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
@@ -26,130 +25,155 @@ public class DiffProvider
     //this.settings = settings;
   }
 
-  public DataTransferIndices diff(DataTransferIndices sendingDxis, DataTransferIndices receivingDxis)
+  public DataTransferIndices diff(DataTransferIndices sourceDxis, DataTransferIndices targetDxis)
   {
-    DataTransferIndices resultDxi = new DataTransferIndices();
+    DataTransferIndices resultDxis = new DataTransferIndices();
+    List<DataTransferIndex> resultDxiList = resultDxis.getDataTransferIndex();
     
     try
     {
       /*
        * Case 1:
        * 
-       *    Receiving: * * * * 
-       *    Sending:
+       *    Source DXIs:
+       *    Target DXIs: x x x x 
        */
-      if (sendingDxis == null || sendingDxis.getDataTransferIndex().size() == 0)
+      if (sourceDxis == null || sourceDxis.getDataTransferIndex().size() == 0)
       {
-        return receivingDxis;
+        if (targetDxis != null)
+        {
+          for (DataTransferIndex dxi : targetDxis.getDataTransferIndex())
+          {
+            dxi.setTransferType(TransferType.DELETE);
+          }
+        }
+        
+        return targetDxis;
       }
 
       /*
        * Case 2:
        * 
-       *    Receiving: 
-       *    Sending:   * * * *
+       *    Source DXIs: x x x x
+       *    Target DXIs: 
        */
-      if (receivingDxis == null || receivingDxis.getDataTransferIndex().size() == 0)
+      if (targetDxis == null || targetDxis.getDataTransferIndex().size() == 0)
       {
-        if (sendingDxis != null)
+        if (sourceDxis != null)
         {
-          for (DataTransferIndex dxi : sendingDxis.getDataTransferIndex())
+          for (DataTransferIndex dxi : sourceDxis.getDataTransferIndex())
           {
             dxi.setTransferType(TransferType.ADD);
           }
         }
 
-        return sendingDxis;
+        return sourceDxis;
       }
 
-      List<DataTransferIndex> sendingDxiList = sendingDxis.getDataTransferIndex();
-      List<DataTransferIndex> receivingDxiList = receivingDxis.getDataTransferIndex();      
+      List<DataTransferIndex> sourceDxiList = sourceDxis.getDataTransferIndex();
+      List<DataTransferIndex> targetDxiList = targetDxis.getDataTransferIndex();      
       IdentifierComparator identifierComparator = new IdentifierComparator();
-      Collections.sort(sendingDxiList, identifierComparator);
-      Collections.sort(receivingDxiList, identifierComparator);
+      Collections.sort(sourceDxiList, identifierComparator);
+      Collections.sort(targetDxiList, identifierComparator);
 
       /*
        * Case 3, 4:
        * 
-       *    Receiving:         * * * * 
-       *    Sending:   * * * *
+       *    Source DXIs: x x x x
+       *    Target DXIs:         x x x x 
        * 
-       *    Receiving: * * * * 
-       *    Sending:           * * * *
+       *    Source DXIs:         x x x x
+       *    Target DXIs: x x x x 
        */
-      if (sendingDxiList.get(0).getIdentifier().compareTo(receivingDxiList.get(sendingDxiList.size() - 1).getIdentifier()) > 0 ||
-          receivingDxiList.get(0).getIdentifier().compareTo(sendingDxiList.get(sendingDxiList.size() - 1).getIdentifier()) > 0)
+      if (sourceDxiList.get(0).getIdentifier().compareTo(targetDxiList.get(sourceDxiList.size() - 1).getIdentifier()) > 0 ||
+          targetDxiList.get(0).getIdentifier().compareTo(sourceDxiList.get(sourceDxiList.size() - 1).getIdentifier()) > 0)
       {
-        for (DataTransferIndex dxi : sendingDxiList)
+        for (DataTransferIndex dxi : sourceDxiList)
         {
           dxi.setTransferType(TransferType.ADD);
         }
-
-        receivingDxiList.addAll(sendingDxiList);
-        resultDxi.setDataTransferIndex(receivingDxiList);
         
-        return resultDxi;
-      }
+        for (DataTransferIndex dxi : targetDxiList)
+        {
+          dxi.setTransferType(TransferType.DELETE);
+        }
 
-      List<DataTransferIndex> resultDxiList = new ArrayList<DataTransferIndex>();
-      int lastComparedIndex = -1;
+        resultDxiList.addAll(sourceDxiList);
+        resultDxiList.addAll(targetDxiList);
+        
+        return resultDxis;
+      }
 
       /*
        * Case 5, 6, 7:
-       * 
-       *    Receiving: * * * * 
-       *    Sending:       * * * *
-       * 
-       *    Receiving: * * * * 
-       *    Sending:   * * * *
-       * 
-       *    Receiving:     * * * * 
-       *    Sending:   * * * *
+       *    
+       *    Source DXIs: x x x x
+       *    Target DXIs:     x x x x
+       *
+       *    Source DXIs: x x x x
+       *    Target DXIs: x x x x
+       *    
+       *    Source DXIs:     x x x x
+       *    Target DXIs: x x x x
        */
-      for (DataTransferIndex sendingDxi : sendingDxiList)
+      int sourceIndex = 0;
+      int targetIndex = 0;
+      
+      while (sourceIndex < sourceDxiList.size() && targetIndex < targetDxiList.size())
       {
-        if (lastComparedIndex + 1 == receivingDxiList.size())
+        DataTransferIndex sourceDxi = sourceDxis.getDataTransferIndex().get(sourceIndex);
+        DataTransferIndex targetDxi = targetDxis.getDataTransferIndex().get(targetIndex);
+        
+        int value = sourceDxi.getIdentifier().compareTo(targetDxi.getIdentifier());
+        
+        if (value < 0)
         {
-          sendingDxi.setTransferType(TransferType.ADD);
-          resultDxiList.add(sendingDxi);
+          sourceDxi.setTransferType(TransferType.ADD);
+          resultDxiList.add(sourceDxi);
+          
+          if (sourceIndex < sourceDxiList.size()) sourceIndex++;
+        }
+        else if (value == 0)
+        {
+          if (sourceDxi.getHashValue().compareTo(targetDxi.getHashValue()) == 0)
+            targetDxi.setTransferType(TransferType.SYNC);
+          else
+            targetDxi.setTransferType(TransferType.CHANGE);
+          
+          resultDxiList.add(targetDxi);
+          
+          if (sourceIndex < sourceDxiList.size()) sourceIndex++;          
+          if (targetIndex < targetDxiList.size()) targetIndex++;
         }
         else
         {
-          for (int i = lastComparedIndex + 1; i < receivingDxiList.size(); i++)
-          {
-            DataTransferIndex receivingDxi = receivingDxiList.get(i);
-            int diffValue = sendingDxi.getIdentifier().compareTo(receivingDxi.getIdentifier());
-  
-            if (diffValue < 0)
-            {
-              resultDxiList.add(receivingDxi);
-            }
-            else if (diffValue == 0)
-            {
-              if (sendingDxi.getHashValue().compareTo(receivingDxi.getHashValue()) != 0)
-                sendingDxi.setTransferType(TransferType.CHANGE);
-              
-              resultDxiList.add(sendingDxi);
-              lastComparedIndex = i;
-              break;
-            }
-            else
-            {
-              sendingDxi.setTransferType(TransferType.ADD);
-              resultDxiList.add(sendingDxi);
-              break;
-            }
-          }
+          targetDxi.setTransferType(TransferType.DELETE);
+          resultDxiList.add(targetDxi);   
+          
+          if (targetIndex < targetDxiList.size()) targetIndex++;
         }
       }
       
-      for (int i = lastComparedIndex + 1; i < receivingDxiList.size(); i++)
+      if (sourceIndex < sourceDxiList.size())
       {
-        resultDxiList.add(receivingDxiList.get(i));
+        for (int i = sourceIndex; i < sourceDxiList.size(); i++)
+        {
+          DataTransferIndex sourceDxi = sourceDxis.getDataTransferIndex().get(i);
+          sourceDxi.setTransferType(TransferType.ADD);
+          resultDxiList.add(sourceDxi);
+        }
+      }
+      else if (targetIndex < targetDxiList.size())
+      {
+        for (int i = targetIndex; i < targetDxiList.size(); i++)
+        {
+          DataTransferIndex targetDxi = targetDxis.getDataTransferIndex().get(i);
+          targetDxi.setTransferType(TransferType.DELETE);
+          resultDxiList.add(targetDxi);
+        }
       }
       
-      resultDxi.setDataTransferIndex(resultDxiList);
-      return resultDxi;
+      return resultDxis;
     }
     catch (Exception ex)
     {
@@ -158,78 +182,78 @@ public class DiffProvider
     }
   }
 
-  // Result DTOs are receiving DTOs with transfer type on every class and template (in-line differencing)
-  public DataTransferObjects diff(DataTransferObjects sendingDtos, DataTransferObjects receivingDtos)
+  // in-line differencing to reduce memory allocation
+  public DataTransferObjects diff(DataTransferObjects sourceDtos, DataTransferObjects targetDtos)
   {
     try
     {
-      List<DataTransferObject> sendingDtoList = sendingDtos.getDataTransferObject();
-      List<DataTransferObject> receivingDtoList = receivingDtos.getDataTransferObject();
+      List<DataTransferObject> targetDtoList = targetDtos.getDataTransferObject();
+      List<DataTransferObject> sourceDtoList = sourceDtos.getDataTransferObject();
     
-      Collections.sort(sendingDtoList);      
-      Collections.sort(receivingDtoList);
+      Collections.sort(targetDtoList);      
+      Collections.sort(sourceDtoList);
 
-      for (int i = 0; i < sendingDtoList.size(); i++)
+      for (int i = 0; i < targetDtoList.size(); i++)
       {
-        DataTransferObject sendingDto = sendingDtoList.get(i);
-        DataTransferObject receivingDto = receivingDtoList.get(i);
+        DataTransferObject targetDto = targetDtoList.get(i);
+        DataTransferObject sourceDto = sourceDtoList.get(i);
         
         // sanity check see if the data transfer object might have SYNC'ed since DXI differencing occurs 
-        receivingDto.setTransferType(TransferType.SYNC); // default SYNC
+        sourceDto.setTransferType(TransferType.SYNC); // default SYNC
 
-        List<ClassObject> sendingClassObjectList = sendingDto.getClassObjects().getClassObject();
-        List<ClassObject> receivingClassObjectList = receivingDto.getClassObjects().getClassObject();
+        List<ClassObject> targetClassObjectList = targetDto.getClassObjects().getClassObject();
+        List<ClassObject> sourceClassObjectList = sourceDto.getClassObjects().getClassObject();
         
-        for (int j = 0; j < sendingClassObjectList.size(); j++)
+        for (int j = 0; j < targetClassObjectList.size(); j++)
         {
-          ClassObject sendingClassObject = sendingClassObjectList.get(j);
-          ClassObject receivingClassObject = receivingClassObjectList.get(j);
+          ClassObject targetClassObject = targetClassObjectList.get(j);
+          ClassObject sourceClassObject = sourceClassObjectList.get(j);
           
-          // assure sending and receiving identifier are still the same
-          if (j == 0 && !sendingClassObject.getIdentifier().equalsIgnoreCase(receivingClassObject.getIdentifier()))
+          // assure target and source identifier are still the same
+          if (j == 0 && !targetClassObject.getIdentifier().equalsIgnoreCase(sourceClassObject.getIdentifier()))
           {
-            String message = String.format("Identifiers out of sync - sending identifier [%s], receiving identifier [%s]", 
-                sendingClassObject.getIdentifier(), receivingClassObject.getIdentifier());
+            String message = String.format("Identifiers out of sync - target identifier [%s], source identifier [%s]", 
+                targetClassObject.getIdentifier(), sourceClassObject.getIdentifier());
             logger.warn(message);
             break;
           }
           
-          receivingClassObject.setTransferType(TransferType.SYNC); // default SYNC first
+          sourceClassObject.setTransferType(TransferType.SYNC); // default SYNC first
 
-          List<TemplateObject> sendingTemplateObjectList = sendingClassObject.getTemplateObjects().getTemplateObject();
-          List<TemplateObject> receivingTemplateObjectList = receivingClassObject.getTemplateObjects().getTemplateObject();
+          List<TemplateObject> targetTemplateObjectList = targetClassObject.getTemplateObjects().getTemplateObject();
+          List<TemplateObject> sourceTemplateObjectList = sourceClassObject.getTemplateObjects().getTemplateObject();
           
-          for (int k = 0; k < sendingTemplateObjectList.size(); k++)
+          for (int k = 0; k < targetTemplateObjectList.size(); k++)
           {
-            TemplateObject sendingTemplateObject = sendingTemplateObjectList.get(k);
-            TemplateObject receivingTemplateObject = receivingTemplateObjectList.get(k);    
+            TemplateObject targetTemplateObject = targetTemplateObjectList.get(k);
+            TemplateObject sourceTemplateObject = sourceTemplateObjectList.get(k);    
             
-            receivingTemplateObject.setTransferType(TransferType.SYNC); // default SYNC first
+            sourceTemplateObject.setTransferType(TransferType.SYNC); // default SYNC first
             
-            List<RoleObject> sendingRoleObjectList = sendingTemplateObject.getRoleObjects().getRoleObject();
-            List<RoleObject> receivingRoleObjectList = receivingTemplateObject.getRoleObjects().getRoleObject();
+            List<RoleObject> targetRoleObjectList = targetTemplateObject.getRoleObjects().getRoleObject();
+            List<RoleObject> sourceRoleObjectList = sourceTemplateObject.getRoleObjects().getRoleObject();
             
-            for (int l = 0; l < sendingRoleObjectList.size(); l++)
+            for (int l = 0; l < targetRoleObjectList.size(); l++)
             {
-              RoleObject sendingRoleObject = sendingRoleObjectList.get(l);
+              RoleObject targetRoleObject = targetRoleObjectList.get(l);
               
-              if (sendingRoleObject.getType() == RoleType.PROPERTY)
+              if (targetRoleObject.getType() == RoleType.PROPERTY)
               {
-                RoleObject receivingRoleObject = receivingRoleObjectList.get(l);     
+                RoleObject sourceRoleObject = sourceRoleObjectList.get(l);     
   
-                String sendingRoleValue = sendingRoleObject.getValue();
-                String receivingRoleValue = receivingRoleObject.getValue();
+                String targetRoleValue = targetRoleObject.getValue();
+                String sourceRoleValue = sourceRoleObject.getValue();
                 
-                if (sendingRoleValue == null) sendingRoleValue = "";
-                if (receivingRoleValue == null) receivingRoleValue = "";
+                if (targetRoleValue == null) targetRoleValue = "";
+                if (sourceRoleValue == null) sourceRoleValue = "";
                 
-                receivingRoleObject.setOldValue(sendingRoleValue);
+                sourceRoleObject.setOldValue(targetRoleValue);
                 
-                if (!sendingRoleValue.equals(receivingRoleValue))
+                if (!targetRoleValue.equals(sourceRoleValue))
                 {
-                  receivingTemplateObject.setTransferType(TransferType.CHANGE);
-                  receivingClassObject.setTransferType(TransferType.CHANGE);
-                  receivingDto.setTransferType(TransferType.CHANGE);
+                  sourceTemplateObject.setTransferType(TransferType.CHANGE);
+                  sourceClassObject.setTransferType(TransferType.CHANGE);
+                  sourceDto.setTransferType(TransferType.CHANGE);
                 }
               }
             }
@@ -237,7 +261,7 @@ public class DiffProvider
         }
       }
       
-      return receivingDtos;
+      return sourceDtos;
     }
     catch (Exception ex)
     {
