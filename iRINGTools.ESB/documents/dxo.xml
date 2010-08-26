@@ -315,7 +315,6 @@
                 <value>PIDRev-1</value>
               </roleObject>
             </roleObjects>
-          </templateObject>
         </templateObjects>
       </classObject>
       <classObject>
@@ -366,7 +365,7 @@
                 <type>Reference</type>
                 <roleId>tpl:R71512319901</roleId>
                 <name>material</name>
-                <value>#Fluid-1</value>
+                <value>#FluidCompound-1</value>
               </roleObject>
             </roleObjects>
           </templateObject>
@@ -433,7 +432,7 @@
       <classObject>
         <classId>rdl:R94068452432</classId>
         <name>FLUID COMPOUND</name>
-        <identifier>FluidComp-1</identifier>
+        <identifier>FluidCompound-1</identifier>
         <templateObjects>
           <templateObject>
             <templateId>tpl:R30193386273</templateId>
@@ -454,7 +453,7 @@
                 <type>Property</type>
                 <roleId>tpl:R22674749688</roleId>
                 <name>valIdentifier</name>
-                <value>Fluid-1</value>
+                <value>FluidCompound-1</value>
               </roleObject>
             </roleObjects>
           </templateObject>
@@ -803,56 +802,6 @@
             </roleObjects>
             <transferType>Sync</transferType>
           </templateObject>
-          <templateObject>
-            <templateId>tpl:R30193386273</templateId>
-            <name>ClassifiedIdentification</name>
-            <roleObjects>
-              <roleObject>
-                <type>Possessor</type>
-                <roleId>tpl:R44537504070</roleId>
-                <name>hasObject</name>
-              </roleObject>
-              <roleObject>
-                <type>Reference</type>
-                <roleId>tpl:R30790108016</roleId>
-                <name>hasIdentificationType</name>
-                <value>rdl:R16893283050</value>
-              </roleObject>
-              <roleObject>
-                <type>Property</type>
-                <roleId>tpl:R22674749688</roleId>
-                <name>valIdentifier</name>
-                <oldValue>PID-2</oldValue>
-                <value>PID-2</value>
-              </roleObject>
-            </roleObjects>
-            <transferType>Sync</transferType>
-          </templateObject>
-          <templateObject>
-            <templateId>tpl:R30193386273</templateId>
-            <name>ClassifiedIdentification</name>
-            <roleObjects>
-              <roleObject>
-                <type>Possessor</type>
-                <roleId>tpl:R44537504070</roleId>
-                <name>hasObject</name>
-              </roleObject>
-              <roleObject>
-                <type>Reference</type>
-                <roleId>tpl:R30790108016</roleId>
-                <name>hasIdentificationType</name>
-                <value>rdl:R86464765280</value>
-              </roleObject>
-              <roleObject>
-                <type>Property</type>
-                <roleId>tpl:R22674749688</roleId>
-                <name>valIdentifier</name>
-                <oldValue>PIDRev-2</oldValue>
-                <value>PIDRev-2</value>
-              </roleObject>
-            </roleObjects>
-            <transferType>Sync</transferType>
-          </templateObject>
         </templateObjects>
         <transferType>Sync</transferType>
       </classObject>
@@ -907,7 +856,7 @@
                 <type>Reference</type>
                 <roleId>tpl:R71512319901</roleId>
                 <name>material</name>
-                <value>#Fluid-2</value>
+                <value>#FluidCompound-2</value>
               </roleObject>
             </roleObjects>
             <transferType>Sync</transferType>
@@ -982,7 +931,7 @@
       <classObject>
         <classId>rdl:R94068452432</classId>
         <name>FLUID COMPOUND</name>
-        <identifier>Fluid-2</identifier>
+        <identifier>FluidCompound-2</identifier>
         <templateObjects>
           <templateObject>
             <templateId>tpl:R30193386273</templateId>
@@ -1004,7 +953,7 @@
                 <roleId>tpl:R22674749688</roleId>
                 <name>valIdentifier</name>
                 <oldValue>Fluid-2</oldValue>
-                <value>Fluid-2</value>
+                <value>FluidCompound-2</value>
               </roleObject>
             </roleObjects>
             <transferType>Sync</transferType>
@@ -1459,7 +1408,7 @@
                 <type>Reference</type>
                 <roleId>tpl:R71512319901</roleId>
                 <name>material</name>
-                <value>#Fluid-3</value>
+                <value>#FluidCompound-3</value>
               </roleObject>
             </roleObjects>
             <transferType>Sync</transferType>
@@ -1534,7 +1483,7 @@
       <classObject>
         <classId>rdl:R94068452432</classId>
         <name>FLUID COMPOUND</name>
-        <identifier>Fluid-3</identifier>
+        <identifier>FluidCompound-3</identifier>
         <templateObjects>
           <templateObject>
             <templateId>tpl:R30193386273</templateId>
@@ -1556,7 +1505,7 @@
                 <roleId>tpl:R22674749688</roleId>
                 <name>valIdentifier</name>
                 <oldValue>Fluid-30</oldValue>
-                <value>Fluid-3</value>
+                <value>FluidCompound-3</value>
               </roleObject>
             </roleObjects>
             <transferType>Change</transferType>
@@ -1979,7 +1928,7 @@
                 <type>Reference</type>
                 <roleId>tpl:R71512319901</roleId>
                 <name>material</name>
-                <value>#Fluid-4</value>
+                <value>#FluidCompound-4</value>
               </roleObject>
             </roleObjects>
           </templateObject>
@@ -2046,7 +1995,7 @@
       <classObject>
         <classId>rdl:R94068452432</classId>
         <name>FLUID COMPOUND</name>
-        <identifier>Fluid-4</identifier>
+        <identifier>FluidCompound-4</identifier>
         <templateObjects>
           <templateObject>
             <templateId>tpl:R30193386273</templateId>
@@ -2067,7 +2016,7 @@
                 <type>Property</type>
                 <roleId>tpl:R22674749688</roleId>
                 <name>valIdentifier</name>
-                <value>Fluid-4</value>
+                <value>FluidCompound-4</value>
               </roleObject>
             </roleObjects>
           </templateObject>
