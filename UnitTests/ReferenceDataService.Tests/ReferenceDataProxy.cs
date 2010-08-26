@@ -54,14 +54,14 @@ namespace ReferenceDataService.Tests
       return _referenceDataServiceProvider.SearchReset(query);
     }
 
-    public RefDataEntities SearchPage(string query, string page)
+    public RefDataEntities SearchPage(string query, int start, int limit)
     {
-      return _referenceDataServiceProvider.SearchPage(query, page);
+      return _referenceDataServiceProvider.SearchPage(query, start, limit);
     }
 
-    public RefDataEntities SearchPageReset(string query, string page)
+    public RefDataEntities SearchPageReset(string query, int start, int limit)
     {
-      return _referenceDataServiceProvider.SearchPageReset(query, page);
+      return _referenceDataServiceProvider.SearchPageReset(query, start, limit);
     }
 
     public List<Entity> Find(string query)

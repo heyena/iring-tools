@@ -40,7 +40,7 @@ namespace ReferenceDataService.Tests
     {
       ReferenceDataProxy target = new ReferenceDataProxy();
       RefDataEntities actual = target.Search("^vortex");
-      Assert.AreEqual(8, actual.Count);
+      Assert.AreEqual(8, actual.Entities.Count);
     }
 
     [TestMethod()]
@@ -70,15 +70,15 @@ namespace ReferenceDataService.Tests
 
       RefDataEntities actual = target.SearchReset("^vortex");
 
-      Assert.AreEqual(initial.Count, actual.Count);
+      Assert.AreEqual(initial.Entities.Count, actual.Entities.Count);
     }
 
     [TestMethod()]
     public void SearchPageTest()
     {
       ReferenceDataProxy target = new ReferenceDataProxy();
-      RefDataEntities actual = target.SearchPage("valve", "15");
-      Assert.AreEqual(73, actual.Count);
+      RefDataEntities actual = target.SearchPage("valve", 0, 100);
+      Assert.AreEqual(73, actual.Entities.Count);
     }
 
     [TestMethod()]
@@ -86,7 +86,7 @@ namespace ReferenceDataService.Tests
     {
       ReferenceDataProxy target = new ReferenceDataProxy();
 
-      RefDataEntities initial = target.SearchPage("valve", "15");
+      RefDataEntities initial = target.SearchPage("valve", 0, 100);
 
       //TODO: We need to fix RefDataService to enable SemWeb TripleStore.
       //QMXF @class = new QMXF();
@@ -106,9 +106,9 @@ namespace ReferenceDataService.Tests
 
       //Assert.AreNotEqual(response.Level, StatusLevel.Error);
 
-      RefDataEntities actual = target.SearchPageReset("valve", "15");
+      RefDataEntities actual = target.SearchPageReset("valve", 0, 100);
 
-      Assert.AreEqual(initial.Count, actual.Count);
+      Assert.AreEqual(initial.Entities.Count, actual.Entities.Count);
     }
 
     [TestMethod()]

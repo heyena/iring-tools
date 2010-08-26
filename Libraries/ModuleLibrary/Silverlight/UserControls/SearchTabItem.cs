@@ -78,7 +78,7 @@ namespace org.iringtools.informationmodel.usercontrols
                     List<string> labels = new List<string>();
 
                     // Add first level Search result nodes
-                    foreach (KeyValuePair<string, Entity> keyValuePair in entities)
+                    foreach (KeyValuePair<string, Entity> keyValuePair in entities.Entities)
                     {
                         int count = 0;
                         if (keyValuePair.Value != null)

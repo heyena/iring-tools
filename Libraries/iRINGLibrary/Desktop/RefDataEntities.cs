@@ -6,9 +6,18 @@ using System.Runtime.Serialization;
 
 namespace org.iringtools.library
 {
-  [CollectionDataContract]
-  public class RefDataEntities : SortedList<string, Entity>
+  [DataContract]
+  public class RefDataEntities
   {
-    public int total { get; set; }
+    public RefDataEntities()
+    {
+      Entities = new SortedList<string, Entity>();
+    }
+
+    [DataMember]
+    public SortedList<string, Entity> Entities { get; set; }
+
+    [DataMember]
+    public int Total { get; set; }
   }
 }
