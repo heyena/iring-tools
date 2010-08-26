@@ -85,10 +85,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppEditor.aspx.cs">
-      <DependentUpon>AppEditor.aspx</DependentUpon>
+    <Compile Include="Views\AppEditor\Index.aspx.cs">
+      <DependentUpon>Index.aspx</DependentUpon>
     </Compile>
     <Compile Include="ConfigFile.cs" />
+    <Compile Include="Controllers\AppEditorController.cs" />
+    <Compile Include="Controllers\RefDataEditorController.cs" />
+    <Compile Include="Controllers\SPARQLQueryController.cs" />
     <Compile Include="Controllers\ServiceController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MappingEditorController.cs" />
@@ -96,40 +99,36 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="MappingEditor.aspx.cs">
-      <DependentUpon>MappingEditor.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="MappingEditor.aspx.designer.cs">
-      <DependentUpon>MappingEditor.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Models\ApplicationTreeNode.cs" />
     <Compile Include="Models\EntitiesContainer.cs" />
     <Compile Include="Models\Ext\TreeNode.cs" />
     <Compile Include="Models\ProjectContainer.cs" />
     <Compile Include="Models\ScopeTreeNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RefDataEditor.aspx.cs">
-      <DependentUpon>RefDataEditor.aspx</DependentUpon>
+    <Compile Include="Views\RefDataEditor\Index.aspx.cs">
+      <DependentUpon>Index.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="RefDataEditor.aspx.designer.cs">
-      <DependentUpon>RefDataEditor.aspx</DependentUpon>
+    <Compile Include="Views\RefDataEditor\Index.aspx.designer.cs">
+      <DependentUpon>Index.aspx</DependentUpon>
     </Compile>
-    <Compile Include="SPARQLQuery.aspx.cs">
-      <DependentUpon>SPARQLQuery.aspx</DependentUpon>
+    <Compile Include="Views\SPARQLQuery\Index.aspx.cs">
+      <DependentUpon>Index.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="SPARQLQuery.aspx.designer.cs">
-      <DependentUpon>SPARQLQuery.aspx</DependentUpon>
+    <Compile Include="Views\SPARQLQuery\Index.aspx.designer.cs">
+      <DependentUpon>Index.aspx</DependentUpon>
     </Compile>
     <Compile Include="Views\MappingEditor\Index.aspx.cs">
       <DependentUpon>Index.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="Views\MappingEditor\Index.aspx.designer.cs">
+      <DependentUpon>Index.aspx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AppEditor.aspx" />
+    <Content Include="Views\AppEditor\Index.aspx" />
     <Content Include="ClientBin\ApplicationEditor.xap" />
     <Content Include="ClientBin\MappingEditor.xap" />
     <Content Include="ClientBin\ReferenceDataEditor.xap" />
@@ -143,8 +142,7 @@
     <Content Include="Content\img\iRINGTools_logo.png" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="MappingEditor.aspx" />
-    <Content Include="RefDataEditor.aspx" />
+    <Content Include="Views\RefDataEditor\Index.aspx" />
     <Content Include="Scripts\ext-3.2.1\adapter\ext\ext-base-debug-w-comments.js" />
     <Content Include="Scripts\ext-3.2.1\adapter\ext\ext-base-debug.js" />
     <Content Include="Scripts\ext-3.2.1\adapter\ext\ext-base.js" />
@@ -265,11 +263,10 @@
     <Content Include="Scripts\iringtools\ScopeEditor.js" />
     <Content Include="Scripts\iringtools\ScopeMapping.js" />
     <Content Include="Scripts\Silverlight.js" />
-    <Content Include="Silverlight.js" />
-    <Content Include="SPARQLQuery.aspx" />
+    <Content Include="Views\SPARQLQuery\Index.aspx" />
     <Content Include="Views\MappingEditor\Index.aspx" />
     <Content Include="Views\ScopeEditor\Index.aspx" />
-    <Content Include="Views\Shared\Index.aspx" />
+    <Content Include="Views\Home\Index.aspx" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -289,13 +286,13 @@
     <Content Include="Scripts\MicrosoftMvcAjax.debug.js" />
     <Content Include="Scripts\MicrosoftMvcValidation.js" />
     <Content Include="Scripts\MicrosoftMvcValidation.debug.js" />
-    <Content Include="Views\Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Shared\Site.Master" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Views\Home\" />
+    <Content Include="Views\Web.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

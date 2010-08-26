@@ -17,7 +17,6 @@ public partial class MappingEditor1 : System.Web.Mvc.ViewPage<System.Web.UI.Page
   /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
   protected void Page_Load(object sender, EventArgs e)
   {    
-    /*
     // Load all Web.Config AppSettings and ConnectionStrings
     string configString = Server.MapPath("~/Web.Config").GetConfigString();
 
@@ -31,6 +30,5 @@ public partial class MappingEditor1 : System.Web.Mvc.ViewPage<System.Web.UI.Page
     // Set InitParameters for Silverlight use
     Xaml1.InitParameters = string.Format("InitParameters={0}~{1}",
         configString, configItems.GetConfigString());
-    */
   }
 }

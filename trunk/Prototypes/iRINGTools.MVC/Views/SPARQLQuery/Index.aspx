@@ -1,17 +1,17 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="SPARQLQuery.aspx.cs" Inherits="dotnetRDFInterfaceService._Default"
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Index.aspx.cs" Inherits="dotnetRDFInterfaceService._Default"
   ValidateRequest="false" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
   <meta http-equiv="cache-control" content="no-cache" />
-  <link rel="stylesheet" type="text/css" href="css/interface.css" />
+  <link href="../../Content/css/interface.css" rel="stylesheet" type="text/css" />
   <title>iRINGTools SPAQRL Query</title>
 </head>
 <body>
   <div class="banner">
     <h1>
-      <img src="img/iRINGTools_logo.png" alt="iRING Logo" />
+      <img src="../../Content/img/iRINGTools_logo.png" />
       SPARQL Query</h1>
   </div>
   <form id="form1" runat="server">
