@@ -10,18 +10,14 @@ Ext.ns('iIRNGTools', 'iIRNGTools.ScopeEditor');
 * @extends FormPanel
 * @author by Gert Jansen van Rensburg
 */
-iIRNGTools.ScopeEditor.ScopeDetails = Ext.extend(Ext.form.FormPanel, {
+iIRNGTools.ScopeEditor.ScopeDetails = Ext.extend(Ext.grid.PropertyGrid, {
     iconCls: 'silk-user',
     frame: true,
-    labelAlign: 'right',
-    frame: true,
     width: 500,
-    defaultType: 'textfield',
-    defaults: {
-        anchor: '100%'
+    viewConfig: {
+        forceFit: true
     },
 
-    // private A pointer to the currently loaded record
     record: null,
 
     /**
@@ -29,12 +25,8 @@ iIRNGTools.ScopeEditor.ScopeDetails = Ext.extend(Ext.form.FormPanel, {
     * @protected
     */
     initComponent: function () {
-        // build the form-fields.  Always a good idea to defer form-building to a method so that this class can
-        // be over-ridden to provide different form-fields
-        this.items = this.buildForm();
-
-        // build form-buttons
-        this.buttons = this.buildUI();
+        // build form-top toolbar buttons        
+        this.tbar = this.buildUI();
 
         // add a create event for convenience in our application-code.
         this.addEvents({
@@ -52,37 +44,24 @@ iIRNGTools.ScopeEditor.ScopeDetails = Ext.extend(Ext.form.FormPanel, {
     },
 
     /**
-    * buildform
-    * @private
-    */
-    buildForm: function () {
-        return [
-            { fieldLabel: 'Scope Name', name: 'scopeName', allowBlank: false },
-            { fieldLabel: 'Scope Description', name: 'scopeDescription', allowBlank: true },
-            { fieldLabel: 'Application Name', name: 'applicationName', allowBlank: false },
-            { fieldLabel: 'Application Description', name: 'applicationDescription', allowBlank: true }
-        ];
-    },
-
-    /**
     * buildUI
     * @private
     */
     buildUI: function () {
         return [{
             text: 'Save',
-            iconCls: 'icon-save',
+            //iconCls: 'icon-save',
             handler: this.onUpdate,
             scope: this
         }, {
             text: 'Create',
-            iconCls: 'silk-user-add',
+            //iconCls: 'silk-user-add',
             handler: this.onCreate,
             scope: this
         }, {
             text: 'Reset',
             handler: function (btn, ev) {
-                this.getForm().reset();
+                loadRecord(record);
             },
             scope: this
         }];
@@ -94,7 +73,7 @@ iIRNGTools.ScopeEditor.ScopeDetails = Ext.extend(Ext.form.FormPanel, {
     */
     loadRecord: function (rec) {
         this.record = rec;
-        this.getForm().loadRecord(rec);
+        this.setSource(rec);
     },
 
     /**

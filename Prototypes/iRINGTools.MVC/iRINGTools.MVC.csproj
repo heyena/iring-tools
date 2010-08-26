@@ -85,6 +85,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\ScopesController.cs" />
+    <Compile Include="Controllers\SearchController.cs" />
+    <Compile Include="Models\ScopesContainer.cs" />
     <Compile Include="Views\AppEditor\Index.aspx.cs">
       <DependentUpon>Index.aspx</DependentUpon>
     </Compile>
@@ -92,7 +95,6 @@
     <Compile Include="Controllers\AppEditorController.cs" />
     <Compile Include="Controllers\RefDataEditorController.cs" />
     <Compile Include="Controllers\SPARQLQueryController.cs" />
-    <Compile Include="Controllers\ServiceController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MappingEditorController.cs" />
     <Compile Include="Controllers\ScopeEditorController.cs" />
@@ -102,7 +104,6 @@
     <Compile Include="Models\ApplicationTreeNode.cs" />
     <Compile Include="Models\EntitiesContainer.cs" />
     <Compile Include="Models\Ext\TreeNode.cs" />
-    <Compile Include="Models\ProjectContainer.cs" />
     <Compile Include="Models\ScopeTreeNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Views\RefDataEditor\Index.aspx.cs">
@@ -128,6 +129,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\css\scopeeditor.css" />
     <Content Include="Views\AppEditor\Index.aspx" />
     <Content Include="ClientBin\ApplicationEditor.xap" />
     <Content Include="ClientBin\MappingEditor.xap" />
