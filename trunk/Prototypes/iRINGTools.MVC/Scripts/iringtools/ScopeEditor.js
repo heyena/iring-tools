@@ -13,30 +13,27 @@ Ext.onReady(function () {
 
     var searchStore = new Ext.data.Store({
         proxy: new Ext.data.HttpProxy({
-            url: 'service/search'
+            url: 'Search'
         }),
         reader: new Ext.data.JsonReader({
             root: 'Entities',
-            totalProperty: 'Count',
+            totalProperty: 'Total',
             id: 'label'
         }, [
             { name: 'uri', allowBlank: false },
-            { name: 'label', allowBlank: false },            
+            { name: 'label', allowBlank: false },
             { name: 'repository', allowBlank: false }
         ]),
 
         baseParams: { limit: 100 }
     });
 
-    // Custom rendering Template for the View
-    var resultTpl = new Ext.XTemplate(
-        '<tpl for=".">',
-        '<div class="search-item">',
-            '<h3><span>{label}</span>',
-            '<p>{repository}</p></h3>',
-            '<p>{uri}</p>',
-        '</div></tpl>'
-    );
+    var searchExpander = new Ext.ux.grid.RowExpander({
+        tpl: new Ext.Template(
+            '<p><b>Uri:</b> {uri}</p><br>',
+            '<p><b>Description:</b> {desc}</p>'
+        )
+    });
 
     var searchPanel = new Ext.Panel({
         id: 'search-panel',
@@ -47,10 +44,15 @@ Ext.onReady(function () {
         //margins: '2 5 5 0',
         border: true,
 
-        items: new Ext.DataView({
-            tpl: resultTpl,
+        items: new Ext.grid.GridPanel({
             store: searchStore,
-            itemSelector: 'div.search-item'
+            plugins: searchExpander,
+            cm: new Ext.grid.ColumnModel([
+                searchExpander,
+                { header: "Label", width: 400, sortable: true, dataIndex: 'label' },
+                { header: "Repository", width: 150, sortable: true, dataIndex: 'repository' },
+                { header: "Uri", width: 400, sortable: true, dataIndex: 'uri', hidden: true }
+            ])
         }),
 
         tbar: [
@@ -65,19 +67,17 @@ Ext.onReady(function () {
             store: searchStore,
             pageSize: 100,
             displayInfo: true,
-            displayMsg: 'Topics {0} - {1} of {2}',
-            emptyMsg: "No topics to display"
+            displayMsg: 'Results {0} - {1} of {2}',
+            emptyMsg: "No results to display"
         })
     });
 
-    searchStore.load({ params: { start: 0, limit: 100 } });
-
-    alert(searchStore.getCount());
+    searchStore.load({ params: { start: 0, limit: 100} });
 
     var mappingPanel = new iIRNGTools.ScopeEditor.ScopeMapping({
         id: 'mapping-panel',
         region: 'center', // this is what makes this panel into a region within the containing layout
-        title: 'Scope Mapping',
+        title: 'Scope Definition',
         layout: 'fit',
         border: true,
         loader: new Ext.tree.TreeLoader({}),
@@ -135,7 +135,7 @@ Ext.onReady(function () {
         useArrows: true,
 
         loader: new Ext.tree.TreeLoader({
-            dataUrl: 'service/scopes?format=tree'
+            dataUrl: 'Scopes/Navigation'
         }),
 
         root: new Ext.tree.AsyncTreeNode({})
@@ -144,40 +144,42 @@ Ext.onReady(function () {
     // Assign the changeLayout function to be called on tree node click.
     treePanel.on('click', function (n) {
         var sn = this.selModel.selNode || {}; // selNode is null on initial selection              
-        if (n.leaf && n.id != sn.id) {  // ignore clicks on folders and currently selected node                     
-
-            var ScopeDetailRecord = Ext.data.Record.create([ // creates a subclass of Ext.data.Record
-                {name: 'Name', allowBlank: false },
-                { name: 'Description' }
-            ]);
-
-            // create Record instance
-            var rec = new ScopeDetailRecord(
-            {
-                Name: n.attributes.Name,
-                Description: n.attributes.Description
-            });
-
-            detailsPanel.loadRecord(rec);
-
-            //Ext.getCmp('content-panel').layout.setActiveItem(n.id + '-panel');
-            //if (!detailEl) {
-            //    var bd = Ext.getCmp('details-panel').body;
-            //    bd.update('').setStyle('background', '#fff');
-            //    detailEl = bd.createChild(); //create default empty div
-            //}
-            //detailEl.hide().update(Ext.getDom(n.id + '-details').innerHTML).slideIn('l', { stopFx: true, duration: .2 });
-
+        if (n.id != sn.id) {  // ignore clicks on folders and currently selected node                     
+            if (n.leaf) {
+                detailsPanel.loadRecord(n.attributes.Application);
+            } else {
+                detailsPanel.loadRecord(n.attributes.Scope);
+            }
         }
+    });
+
+    var scopeStore = new Ext.data.Store({
+        proxy: new Ext.data.HttpProxy({
+            url: 'Scopes'
+        }),
+        reader: new Ext.data.JsonReader({
+            root: 'Entities',
+            totalProperty: 'Total',
+            id: 'label'
+        }, [
+            { name: 'name', allowBlank: false },
+            { name: 'description', allowBlank: false },
+            { name: 'connectionString', allowBlank: false }
+        ]),
+
+        baseParams: { limit: 100 }
     });
 
     // This is the Details panel that contains the description for each example layout.
     var detailsPanel = new iIRNGTools.ScopeEditor.ScopeDetails({
         id: 'details-panel',
-        title: 'Scope Details',
+        title: 'Details',
         region: 'center',
-        bodyStyle: 'padding-bottom:15px;background:#eee;',
         autoScroll: true,
+        propertyNames: {
+            name: 'Name',
+            description: 'Description'
+        },
         listeners: {
             create: function (fpanel, data) {   // <-- custom "create" event defined in App.user.Form class
                 //var rec = new userGrid.store.recordType(data);
@@ -195,13 +197,7 @@ Ext.onReady(function () {
             xtype: 'box',
             region: 'north',
             applyTo: 'header',
-            height: 30
-        }],
-        items: [{
-            xtype: 'box',
-            region: 'north',
-            applyTo: 'header',
-            height: 30
+            height: 70
         }, {
             layout: 'border',
             id: 'layout-browser',
@@ -217,5 +213,5 @@ Ext.onReady(function () {
             contentPanel
         ],
         renderTo: Ext.getBody()
-    });
+    });    
 }); 

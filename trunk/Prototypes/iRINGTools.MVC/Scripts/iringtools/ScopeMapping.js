@@ -35,7 +35,7 @@ iIRNGTools.ScopeEditor.ScopeMapping = Ext.extend(Ext.tree.TreePanel, {
     */
     initComponent: function () {
         // build panel-buttons
-        this.buttons = this.buildUI();
+        this.tbar = this.buildUI();
 
         // add a create event for convenience in our application-code.
         //this.addEvents({
@@ -59,12 +59,12 @@ iIRNGTools.ScopeEditor.ScopeMapping = Ext.extend(Ext.tree.TreePanel, {
     buildUI: function () {
         return [{
             text: 'Save',
-            iconCls: 'icon-save',
+            //iconCls: 'icon-save',
             //handler: this.onUpdate,
             scope: this
         }, {
             text: 'Create',
-            iconCls: 'silk-user-add',
+            //iconCls: 'silk-user-add',
             //handler: this.onCreate,
             scope: this
         }, {

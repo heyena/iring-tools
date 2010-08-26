@@ -2,11 +2,34 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using org.iringtools.library;
+using org.iringtools.client.Models.Ext;
 
 namespace org.iringtools.client.Models
 {
-  public class ApplicationTreeNode : ScopeTreeNode
+  public class ApplicationTreeNode : TreeNode<ApplicationTreeNode>
   {
-    public string Mapping { get; set; }
+    public ScopeApplication Application { get; set; }
+    public override string text
+    {
+      get
+      {
+        if (Application.Description != null && !Application.Description.Equals(String.Empty))
+        {
+          return Application.Name + " [" + Application.Description + "]";
+        }
+        else
+        {
+          return Application.Name;
+        }
+      }      
+    }
+
+    public ApplicationTreeNode(ScopeApplication application)
+    {
+      this.Application = application;
+      this.id = application.Name;
+      this.leaf = true;
+    }
   }
 }

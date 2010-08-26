@@ -7,9 +7,9 @@ using org.iringtools.library;
 
 namespace org.iringtools.client.Models
 {
-  public class ProjectContainer
+  public class ScopesContainer
   {
-    public List<ScopeProject> Projects { get; set; }
-    public int Count { get; set; }
+    public List<ScopeProject> Scopes { get; set; }
+    public int Total { get; set; }
   }
 }
