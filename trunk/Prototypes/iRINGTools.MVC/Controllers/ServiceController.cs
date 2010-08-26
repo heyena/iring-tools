@@ -9,6 +9,7 @@ using org.iringtools.library;
 using org.iringtools.utility;
 using System.Configuration;
 using System.Collections.Specialized;
+using org.iringtools.library;
 using org.iringtools.client.Models;
 
 namespace org.iringtools.client.Controllers
@@ -120,12 +121,13 @@ namespace org.iringtools.client.Controllers
         string result = webClient.DownloadString(address);
 
         RefDataEntities entities = result.DeserializeDataContract<RefDataEntities>();
-
-        container = new RefDataEntitiesContainer
-        {
-          RefDataEntities = entities,
-          Count = entities.Count
-        };
+        
+        container.Entities = new List<Entity>();
+        foreach (KeyValuePair<string, Entity> kvp in entities)
+        { 
+          container.Entities.Add(kvp.Value);
+        }
+        container.Count = entities.Count;        
 
       }
 
