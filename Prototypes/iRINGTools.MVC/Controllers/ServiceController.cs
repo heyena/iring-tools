@@ -110,7 +110,7 @@ namespace org.iringtools.client.Controllers
       string query = Request.Form["query"];
       string start = Request.Form["start"];
       string limit = Request.Form["limit"];
-      RefDataEntitiesContainer container = new RefDataEntitiesContainer();
+      EntitiesContainer container = new EntitiesContainer();
 
       if (query != null && !query.Equals(String.Empty))
       {
