@@ -2,6 +2,7 @@ package org.iringtools.services.diffsvc;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -183,6 +184,7 @@ public class DiffService
     // add change-sync DTOs to resultDtoList
     DataTransferObjects diffDtos = diff(sourceDtos, targetDtos);    
     resultDtoList.addAll(diffDtos.getDataTransferObject());
+    Collections.sort(resultDtoList);
     
     return resultDtos;
   }
