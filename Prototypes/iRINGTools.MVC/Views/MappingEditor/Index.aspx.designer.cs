@@ -9,7 +9,7 @@
 
 
 
-public partial class MappingEditor {
+public partial class MappingEditor1 {
     
     /// <summary>
     /// Head1 control.

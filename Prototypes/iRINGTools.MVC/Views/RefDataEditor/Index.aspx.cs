@@ -6,7 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 
-public partial class ReferenceDataEditor : System.Web.UI.Page
+public partial class ReferenceDataEditor : System.Web.Mvc.ViewPage<System.Web.UI.Page>
     {
         protected void Page_Load(object sender, EventArgs e)
         {

@@ -21,7 +21,7 @@
 	    text-align:center;
     }
     </style>
-    <script type="text/javascript" src="Silverlight.js"></script>
+    <script src="../../Scripts/Silverlight.js" type="text/javascript"></script>
     <script type="text/javascript">
         function onSilverlightError(sender, args) {
             var appSource = "";
@@ -58,6 +58,17 @@
             throw new Error(errMsg);
         }
     </script>
+     <script type="text/javascript">
+       function onBeforeUnloadAction() {
+         return "You are about to leave this page.  Did you save your changes?";
+       }
+       window.onbeforeunload = function () {
+         if ((window.event.clientX < 0) ||
+      (window.event.clientY < 0)) {
+           return onBeforeUnloadAction();
+         }
+       } 
+ </script>
     <script runat="server" language="C#">
     public string InitialParams { get; set; }
     protected void Page_Load(object sender, EventArgs e)
