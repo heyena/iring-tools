@@ -98,10 +98,15 @@ namespace org.iringtools.services
     /// do a search and return a specific page
     /// </summary>
     [Description("do a search and return a specific page")]
-    [WebGet(UriTemplate = "/search/{query}/{page}")]
-    public RefDataEntities SearchPage(string query, string page)
+    [WebGet(UriTemplate = "/search/{query}/{start}/{limit}")]
+    public RefDataEntities SearchPage(string query, string start, string limit)
     {
-      return _referenceDataProvider.SearchPage(query, page);
+      int startIdx = 0;
+      int pageLimit = 0;
+      int.TryParse(start, out startIdx);
+      int.TryParse(limit, out pageLimit);
+
+      return _referenceDataProvider.SearchPage(query, startIdx, pageLimit);
     }
 
     /// <summary>
@@ -118,10 +123,15 @@ namespace org.iringtools.services
     /// do a search, ignoring cached results, and return a specific page
     /// </summary>
     [Description("do a search, ignoring cached results, and return a specific page")]
-    [WebGet(UriTemplate = "/search/{query}/{page}/reset")]
-    public RefDataEntities SearchPageReset(string query, string page)
+    [WebGet(UriTemplate = "/search/{query}/{start}/{limit}/reset")]
+    public RefDataEntities SearchPageReset(string query, string start, string limit)
     {
-      return _referenceDataProvider.SearchPageReset(query, page);
+      int startIdx = 0;
+      int pageLimit = 0;
+      int.TryParse(start, out startIdx);
+      int.TryParse(limit, out pageLimit);
+
+      return _referenceDataProvider.SearchPageReset(query, startIdx, pageLimit);
     }
 
     /// <summary>

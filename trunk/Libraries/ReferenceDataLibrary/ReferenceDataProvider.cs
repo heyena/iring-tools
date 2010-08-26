@@ -181,7 +181,7 @@ namespace org.iringtools.referenceData
         {
             try
             {
-                return SearchPage(query, "0");
+                return SearchPage(query, 0, 0);
             }
             catch (Exception ex)
             {
@@ -190,13 +190,10 @@ namespace org.iringtools.referenceData
             }
         }
 
-        public RefDataEntities SearchPage(string query, string page)
+        public RefDataEntities SearchPage(string query, int start, int limit)
         {
-                RefDataEntities entities = null;
+                RefDataEntities entities = null;          
                 int counter = 0;
-
-                int pageNumber = Convert.ToInt32(page);
-                int pageTotal = 0;
 
                 try
                 {
@@ -234,24 +231,27 @@ namespace org.iringtools.referenceData
 
                                 string key = resultEntity.label;
 
-                                if (resultEntities.ContainsKey(key))
+                                if (resultEntities.Entities.ContainsKey(key))
                                 {
                                     key += ++counter;
                                 }
 
-                                resultEntities.Add(key, resultEntity);
+                                resultEntities.Entities.Add(key, resultEntity);
                             }
                             results.Clear();
                         }
 
-                        _searchHistory.Add(query, resultEntities);
-                        pageTotal = resultEntities.Count;
+                        _searchHistory.Add(query, resultEntities);                        
                         entities = resultEntities;
+                        entities.Total = resultEntities.Entities.Count;
                     }
 
-                    entities = GetRequestedPage(entities, pageNumber, _pageSize);
-                    entities.total = pageTotal / _pageSize;
-                    _logger.Info(string.Format("SearchPage is returning {0} records", entities.Count));
+                    if (limit > 0)
+                    {
+                      entities = GetRequestedPage(entities, start, limit);
+                    }
+
+                    _logger.Info(string.Format("SearchPage is returning {0} records", entities.Entities.Count));
                     return entities;
                 }
                 catch (Exception e)
@@ -268,11 +268,11 @@ namespace org.iringtools.referenceData
             return Search(query);
         }
 
-        public RefDataEntities SearchPageReset(string query, string page)
+        public RefDataEntities SearchPageReset(string query, int start, int limit)
         {
             Reset(query);
 
-            return SearchPage(query, page);
+            return SearchPage(query, start, limit);
         }
 
         private string GetLabel(string uri)
@@ -2194,34 +2194,21 @@ namespace org.iringtools.referenceData
             }
         }
 
-        private RefDataEntities GetRequestedPage(RefDataEntities entities, int pageNumber, int pageSize)
+        private RefDataEntities GetRequestedPage(RefDataEntities entities, int startIdx, int pageSize)
         {
             try
             {
                 RefDataEntities page = new RefDataEntities();
+                page.Total = entities.Entities.Count;
 
-                int startIndex = 0;
-                if (pageNumber > 1) startIndex = ((pageNumber - 1) * pageSize) + 1;
-
-                if (entities.Count > startIndex)
+                for (int i = startIdx; i < startIdx + pageSize; i++)
                 {
-                    for (int i = startIndex; i < startIndex + pageSize; i++)
-                    {
-                        if (entities.Count == i) break;
+                  if (entities.Entities.Count == i) break;
 
-                        string key = entities.Keys[i];
-                        Entity entity = entities[key];
-                        page.Add(key, entity);
-                    }
-                }
-
-                if (page.Count == 0)
-                {
-                    int lastPage = entities.Count / pageSize;
-                    int remainder = entities.Count % pageSize;
-                    if (remainder > 0) lastPage++;
-                    page.Add("Warning: Page " + lastPage + " is the last page.", null);
-                }
+                  string key = entities.Entities.Keys[i];
+                  Entity entity = entities.Entities[key];
+                  page.Entities.Add(key, entity);                    
+                }                
 
                 return page;
             }
@@ -2868,7 +2855,7 @@ namespace org.iringtools.referenceData
         {
             try
             {
-                return Part8SearchPage(query, "0");
+                return Part8SearchPage(query, 0, 0);
             }
             catch (Exception ex)
             {
@@ -2877,14 +2864,11 @@ namespace org.iringtools.referenceData
             }
         }
 
-        public RefDataEntities Part8SearchPage(string query, string page)
+        public RefDataEntities Part8SearchPage(string query, int start, int limit)
         {
                 RefDataEntities entities = null;
                 int counter = 0;
-
-                int pageNumber = Convert.ToInt32(page);
-                int pageTotal = 0;
-
+          
                 try
                 {
                     string sparql = String.Empty;
@@ -2922,24 +2906,27 @@ namespace org.iringtools.referenceData
 
                                 string key = resultEntity.label;
 
-                                if (resultEntities.ContainsKey(key))
+                                if (resultEntities.Entities.ContainsKey(key))
                                 {
                                     key += ++counter;
                                 }
 
-                                resultEntities.Add(key, resultEntity);
+                                resultEntities.Entities.Add(key, resultEntity);
                             }
                             results.Clear();
                         }
 
                         _searchHistory.Add(query, resultEntities);
-                        pageTotal = resultEntities.Count;
                         entities = resultEntities;
+                        entities.Total = resultEntities.Entities.Count;
                     }
 
-                    entities = GetRequestedPage(entities, pageNumber, _pageSize);
-                    entities.total = pageTotal / _pageSize;
-                    _logger.Info(string.Format("SearchPage is returning {0} records", entities.Count));
+                    if (limit > 0)
+                    {
+                      entities = GetRequestedPage(entities, start, limit);
+                    }
+
+                    _logger.Info(string.Format("SearchPage is returning {0} records", entities.Entities.Count));
                     return entities;
                 }
                 catch (Exception e)
