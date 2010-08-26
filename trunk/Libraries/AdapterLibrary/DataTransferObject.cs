@@ -90,16 +90,18 @@ namespace org.iringtools.adapter
 
     public TemplateObject GetTemplateObject(TemplateMap templateMap)
     {
+      TemplateObject theTemplateObject = null;
+
       if (templateObjects != null)
       {
         foreach (TemplateObject templateObject in templateObjects)
         {
           if (templateObject.templateId == templateMap.templateId)
           {
+            int roleIdsMatchedCount = 0;
+
             foreach (RoleMap roleMap in templateMap.roleMaps)
             {
-              bool roleIdFound = false;
-
               foreach (RoleObject roleObject in templateObject.roleObjects)
               {
                 if (roleObject.roleId == roleMap.roleId)
@@ -107,20 +109,21 @@ namespace org.iringtools.adapter
                   if (roleMap.type == RoleType.Reference && roleMap.classMap == null && roleMap.value == roleObject.value)
                     return templateObject;
 
-                  roleIdFound = true;
+                  roleIdsMatchedCount++;
                   break;
                 }
               }
-
-              if (!roleIdFound) return null;
             }
 
-            return templateObject;
+            if (roleIdsMatchedCount == templateMap.roleMaps.Count)
+            {
+              theTemplateObject = templateObject;
+            }
           }
         }
       }
 
-      return null;
+      return theTemplateObject;
     }
   }
 

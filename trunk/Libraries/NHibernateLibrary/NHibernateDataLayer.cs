@@ -248,19 +248,13 @@ namespace org.iringtools.adapter.datalayer
       try
       {
         status.Identifier = objectType;
-
-        StringBuilder queryString = new StringBuilder();
-        queryString.Append("from " + objectType);
-
-        if (identifiers != null && identifiers.Count > 0)
-        {
-          queryString.Append(" where Id in " + String.Join(",", identifiers.ToArray()));
-        }
+        IList<IDataObject> dataObjects = Create(objectType, identifiers);
 
         using (ISession session = OpenSession())
         {
-          session.Delete(queryString.ToString());
-          
+          foreach (IDataObject dataObject in dataObjects)
+            session.Delete(dataObject);
+          session.Flush();
           status.Messages.Add(string.Format("Records of type [{0}] has been deleted succesfully.", objectType));
         }
       }
@@ -297,7 +291,7 @@ namespace org.iringtools.adapter.datalayer
         using (ISession session = OpenSession())
         {
           session.Delete(queryString.ToString());
-
+          session.Flush();
           status.Messages.Add(string.Format("Records of type [{0}] has been deleted succesfully.", objectType));
         }
       }
