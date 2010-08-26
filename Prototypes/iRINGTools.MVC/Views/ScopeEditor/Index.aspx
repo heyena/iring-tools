@@ -1,7 +1,5 @@
 ﻿<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<dynamic>" %>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 <html>
 <head runat="server">
     <title>Scope Editor</title>
@@ -26,7 +24,7 @@
 </head>
 <body>
     <div id="header" class="banner">
-      <h1><img src="../../Content/img/iring-tools-logo.png" />&nbsp; Scope Editor</h1>
+      <h1><img src="../../Content/img/iRINGTools_logo.png" />&nbsp; Scope Editor</h1>
     </div>
     </body>
 </html>

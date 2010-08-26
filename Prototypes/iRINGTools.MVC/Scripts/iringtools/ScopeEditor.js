@@ -36,40 +36,42 @@ Ext.onReady(function () {
     });
 
     var searchPanel = new Ext.Panel({
-        id: 'search-panel',
-        region: 'south', // this is what makes this panel into a region within the containing layout
-        title: 'Reference Data Search',
-        layout: 'fit',
-        split: true,
-        //margins: '2 5 5 0',
-        border: true,
+      id: 'search-panel',
+      region: 'south',
+      height: 300,
+      title: 'Reference Data Search',
+      collapsible: true,
+      collapsed: false,
+      split: true,
+      layout: 'fit',
+      border: true,
+        
+      items: new Ext.grid.GridPanel({
+          store: searchStore,
+          plugins: searchExpander,
+          cm: new Ext.grid.ColumnModel([
+              searchExpander,
+              { header: "Label", width: 400, sortable: true, dataIndex: 'label' },
+              { header: "Repository", width: 150, sortable: true, dataIndex: 'repository' },
+              { header: "Uri", width: 400, sortable: true, dataIndex: 'uri', hidden: true }
+          ])
+      }),
 
-        items: new Ext.grid.GridPanel({
-            store: searchStore,
-            plugins: searchExpander,
-            cm: new Ext.grid.ColumnModel([
-                searchExpander,
-                { header: "Label", width: 400, sortable: true, dataIndex: 'label' },
-                { header: "Repository", width: 150, sortable: true, dataIndex: 'repository' },
-                { header: "Uri", width: 400, sortable: true, dataIndex: 'uri', hidden: true }
-            ])
-        }),
+      tbar: [
+          'Search: ', ' ',
+          new Ext.ux.form.SearchField({
+              store: searchStore,
+              width: 320
+          })
+      ],
 
-        tbar: [
-            'Search: ', ' ',
-            new Ext.ux.form.SearchField({
-                store: searchStore,
-                width: 320
-            })
-        ],
-
-        bbar: new Ext.PagingToolbar({
-            store: searchStore,
-            pageSize: 100,
-            displayInfo: true,
-            displayMsg: 'Results {0} - {1} of {2}',
-            emptyMsg: "No results to display"
-        })
+      bbar: new Ext.PagingToolbar({
+          store: searchStore,
+          pageSize: 100,
+          displayInfo: true,
+          displayMsg: 'Results {0} - {1} of {2}',
+          emptyMsg: "No results to display"
+      })
     });
 
     searchStore.load({ params: { start: 0, limit: 100} });
@@ -78,8 +80,10 @@ Ext.onReady(function () {
         id: 'mapping-panel',
         region: 'center', // this is what makes this panel into a region within the containing layout
         title: 'Scope Definition',
+        collapsible: false,
         layout: 'fit',
         border: true,
+
         loader: new Ext.tree.TreeLoader({}),
         root: new Ext.tree.AsyncTreeNode({
             expanded: true,
@@ -99,58 +103,43 @@ Ext.onReady(function () {
         })
     });
 
-    // This is the main content center region that will contain each example layout panel.
-    // It will be implemented as a CardLayout since it will contain multiple panels with
-    // only one being visible at any given time.
-    var contentPanel = {
-        id: 'content-panel',
-        region: 'center', // this is what makes this panel into a region within the containing layout
-        layout: 'card',
-        margins: '2 5 5 0',
-        activeItem: 0,
-        border: false,
-        items: [{
-            id: 'border-panel',
-            region: 'center', // this is what makes this panel into a region within the containing layout
-            layout: 'border',
-            border: false,
-            items: [mappingPanel, searchPanel]
-        }]
-    };
-
     // Go ahead and create the TreePanel now so that we can use it below
     var treePanel = new Ext.tree.TreePanel({
-        id: 'tree-panel',
-        title: 'Registered Scopes',
-        region: 'north',
-        split: true,
-        height: 300,
-        minSize: 150,
-        autoScroll: true,
+      id: 'tree-panel',
+      title: 'Registered Scopes',
+      region: 'west',
+      width: 200,
+      collapsible: true,
+      collapsed: false,
+      split: true,
+      layout: 'fit',
+      border: true,
 
-        // tree-specific configs:
-        rootVisible: false,
-        lines: false,
-        singleExpand: true,
-        useArrows: true,
+      // tree-specific configs:
+      rootVisible: false,
+      lines: false,
+      singleExpand: true,
+      useArrows: true,
 
-        loader: new Ext.tree.TreeLoader({
-            dataUrl: 'Scopes/Navigation'
-        }),
+      loader: new Ext.tree.TreeLoader({
+          dataUrl: 'Scopes/Navigation'
+      }),
 
-        root: new Ext.tree.AsyncTreeNode({})
+      
+
+      root: new Ext.tree.AsyncTreeNode({})
     });
 
     // Assign the changeLayout function to be called on tree node click.
     treePanel.on('click', function (n) {
-        var sn = this.selModel.selNode || {}; // selNode is null on initial selection              
-        if (n.id != sn.id) {  // ignore clicks on folders and currently selected node                     
-            if (n.leaf) {
-                detailsPanel.loadRecord(n.attributes.Application);
-            } else {
-                detailsPanel.loadRecord(n.attributes.Scope);
-            }
+      var sn = this.selModel.selNode || {}; // selNode is null on initial selection              
+      if (n.id != sn.id) {  // ignore clicks on folders and currently selected node                     
+        if (n.leaf) {
+          detailsPanel.loadRecord(n.attributes.Application);
+        } else {
+          detailsPanel.loadRecord(n.attributes.Scope);
         }
+      }
     });
 
     var scopeStore = new Ext.data.Store({
@@ -174,8 +163,15 @@ Ext.onReady(function () {
     var detailsPanel = new iIRNGTools.ScopeEditor.ScopeDetails({
         id: 'details-panel',
         title: 'Details',
-        region: 'center',
-        autoScroll: true,
+        region: 'east',
+        width: 200,
+        collapsible: true,
+        collapsed: false,
+        split: true,
+        layout: 'fit',
+        border: true,
+        frame: false,
+
         propertyNames: {
             name: 'Name',
             description: 'Description'
@@ -193,24 +189,17 @@ Ext.onReady(function () {
     var viewPort = new Ext.Viewport({
         layout: 'border',
         title: 'Scope Editor',
-        items: [{
+        items: [
+          {
             xtype: 'box',
             region: 'north',
             applyTo: 'header',
-            height: 70
-        }, {
-            layout: 'border',
-            id: 'layout-browser',
-            region: 'west',
-            border: false,
-            split: true,
-            margins: '2 0 5 5',
-            width: 275,
-            minSize: 100,
-            maxSize: 500,
-            items: [treePanel, detailsPanel]
-        },
-            contentPanel
+            height: 90
+          },
+          mappingPanel,
+          searchPanel,
+          treePanel,
+          detailsPanel
         ],
         renderTo: Ext.getBody()
     });    
