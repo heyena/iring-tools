@@ -56,14 +56,14 @@
   <xs:element name="exchangeDefinition">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="senderUri" type="xs:string" />
-        <xs:element name="senderAppName" type="xs:string" />
-        <xs:element name="senderAppScope" type="xs:string" />
-        <xs:element name="senderGraphName" type="xs:string" />
-        <xs:element name="receiverUri" type="xs:string" />
-        <xs:element name="receiverAppName" type="xs:string" />
-        <xs:element name="receiverAppScope" type="xs:string" />
-        <xs:element name="receiverGraphName" type="xs:string" />
+        <xs:element name="sourceUri" type="xs:string" />
+        <xs:element name="sourceAppName" type="xs:string" />
+        <xs:element name="sourceAppScope" type="xs:string" />
+        <xs:element name="sourceGraphName" type="xs:string" />
+        <xs:element name="targetUri" type="xs:string" />
+        <xs:element name="targetAppName" type="xs:string" />
+        <xs:element name="targetAppScope" type="xs:string" />
+        <xs:element name="targetGraphName" type="xs:string" />
         <xs:element name="hashAlgorithm" type="xs:string" />
       </xs:sequence>
     </xs:complexType>
