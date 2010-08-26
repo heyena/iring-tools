@@ -16,23 +16,25 @@ Ext.onReady(function () {
             url: 'service/search'
         }),
         reader: new Ext.data.JsonReader({
-            root: 'RefDataEntities',
+            root: 'Entities',
             totalProperty: 'Count',
             id: 'label'
         }, [
-            { name: 'label', allowBlank: false },
             { name: 'uri', allowBlank: false },
+            { name: 'label', allowBlank: false },            
             { name: 'repository', allowBlank: false }
         ]),
 
-        baseParams: { limit: 20 }
+        baseParams: { limit: 100 }
     });
 
     // Custom rendering Template for the View
     var resultTpl = new Ext.XTemplate(
         '<tpl for=".">',
         '<div class="search-item">',
-            '<h3><span>{label} {uri} {repository}</span></h3>',            
+            '<h3><span>{label}</span>',
+            '<p>{repository}</p></h3>',
+            '<p>{uri}</p>',
         '</div></tpl>'
     );
 
@@ -61,14 +63,16 @@ Ext.onReady(function () {
 
         bbar: new Ext.PagingToolbar({
             store: searchStore,
-            pageSize: 20,
+            pageSize: 100,
             displayInfo: true,
             displayMsg: 'Topics {0} - {1} of {2}',
             emptyMsg: "No topics to display"
         })
     });
 
-    searchStore.load({ params: { start: 0, limit: 20 } });
+    searchStore.load({ params: { start: 0, limit: 100 } });
+
+    alert(searchStore.getCount());
 
     var mappingPanel = new iIRNGTools.ScopeEditor.ScopeMapping({
         id: 'mapping-panel',
@@ -143,21 +147,16 @@ Ext.onReady(function () {
         if (n.leaf && n.id != sn.id) {  // ignore clicks on folders and currently selected node                     
 
             var ScopeDetailRecord = Ext.data.Record.create([ // creates a subclass of Ext.data.Record
-                        {name: 'scopeName', allowBlank: false },
-                        { name: 'scopeDescription' },
-                        { name: 'applicationName', allowBlank: false },
-                        { name: 'applicationDescription' },
-                    ]);
+                {name: 'Name', allowBlank: false },
+                { name: 'Description' }
+            ]);
 
             // create Record instance
             var rec = new ScopeDetailRecord(
-                        {
-                            scopeName: n.attributes.scopeName,
-                            scopeDescription: n.attributes.scopeDescription,
-                            applicationName: n.attributes.applicationName,
-                            applicationDescription: n.attributes.applicationDescription
-                        }
-                    );
+            {
+                Name: n.attributes.Name,
+                Description: n.attributes.Description
+            });
 
             detailsPanel.loadRecord(rec);
 
@@ -215,8 +214,8 @@ Ext.onReady(function () {
             maxSize: 500,
             items: [treePanel, detailsPanel]
         },
-                    contentPanel
-                ],
+            contentPanel
+        ],
         renderTo: Ext.getBody()
     });
 }); 

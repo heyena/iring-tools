@@ -104,10 +104,10 @@
       <DependentUpon>MappingEditor.aspx</DependentUpon>
     </Compile>
     <Compile Include="Models\ApplicationTreeNode.cs" />
+    <Compile Include="Models\EntitiesContainer.cs" />
     <Compile Include="Models\Ext\TreeNode.cs" />
     <Compile Include="Models\ProjectContainer.cs" />
     <Compile Include="Models\ScopeTreeNode.cs" />
-    <Compile Include="Models\RefDataEntitiesContainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RefDataEditor.aspx.cs">
       <DependentUpon>RefDataEditor.aspx</DependentUpon>
