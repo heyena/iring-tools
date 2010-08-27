@@ -156,6 +156,9 @@
     <Compile Include="..\..\iRINGLibrary\Desktop\IAdapter.cs">
       <Link>Entities\IAdapter.cs</Link>
     </Compile>
+    <Compile Include="..\..\iRINGLibrary\Desktop\Manifest.cs">
+      <Link>Entities\Manifest.cs</Link>
+    </Compile>
     <Compile Include="..\..\iRINGLibrary\Desktop\ScopeApplication.cs">
       <Link>Entities\ScopeApplication.cs</Link>
     </Compile>

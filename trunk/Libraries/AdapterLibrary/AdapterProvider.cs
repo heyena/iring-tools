@@ -313,7 +313,7 @@ namespace org.iringtools.adapter
                   {
                     org.iringtools.library.manifest.Role manifestRole = new org.iringtools.library.manifest.Role
                     {
-                      Type = roleMap.type.ToString(),
+                      Type = roleMap.type,
                       RoleId = roleMap.roleId,
                       Name = roleMap.name,
                       DataType = roleMap.dataType,

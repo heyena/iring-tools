@@ -696,24 +696,59 @@ namespace org.iringtools.exchange
 
             foreach (Template manifestTemplate in manifestTemplates)
             {
+              TemplateMap theMappingTemplate = null;
+              bool found = false;
+
               foreach (TemplateMap mappingTemplate in mappingTemplates)
               {
+                if (found) break;
+                
                 if (mappingTemplate.templateId == manifestTemplate.TemplateId)
                 {
-                  TemplateMap crossedTemplateMap = new TemplateMap(mappingTemplate);
-                  crossedTemplates.Add(crossedTemplateMap);
+                  int rolesMatchedCount = 0;
 
-                  // assume that all roles within a template are matched, thus only interested in classMap
-                  foreach (Role manifestRole in manifestTemplate.Roles)
+                  foreach (RoleMap roleMap in mappingTemplate.roleMaps)
                   {
-                    if (manifestRole.Class != null)
+                    if (found) break;
+                      
+                    foreach (Role manifestRole in manifestTemplate.Roles)
                     {
-                      foreach (RoleMap mappingRole in mappingTemplate.roleMaps)
+                      if (manifestRole.RoleId == roleMap.roleId)
                       {
-                        if (mappingRole.classMap != null && mappingRole.classMap.classId == manifestRole.Class.ClassId)
+                        if (roleMap.type == RoleType.Reference && roleMap.classMap == null && roleMap.value == manifestRole.Value)
                         {
-                          RecurBuildCrossedGraphMap(manifestRole.Class, mappingRole.classMap);
+                          theMappingTemplate = mappingTemplate;
+                          found = true;
                         }
+
+                        rolesMatchedCount++;
+                        break;
+                      }
+                    }
+                  }
+
+                  if (rolesMatchedCount == manifestTemplate.Roles.Count)
+                  {
+                    theMappingTemplate = mappingTemplate;
+                  }
+                }                
+              }
+
+              if (theMappingTemplate != null)
+              {
+                TemplateMap crossedTemplateMap = new TemplateMap(theMappingTemplate);
+                crossedTemplates.Add(crossedTemplateMap);
+
+                // assume that all roles within a template are matched, thus only interested in classMap
+                foreach (Role manifestRole in manifestTemplate.Roles)
+                {
+                  if (manifestRole.Class != null)
+                  {
+                    foreach (RoleMap mappingRole in theMappingTemplate.roleMaps)
+                    {
+                      if (mappingRole.classMap != null && mappingRole.classMap.classId == manifestRole.Class.ClassId)
+                      {
+                        RecurBuildCrossedGraphMap(manifestRole.Class, mappingRole.classMap);
                       }
                     }
                   }

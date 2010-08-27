@@ -103,6 +103,9 @@
     <Compile Include="..\Desktop\IAdapter.cs">
       <Link>IAdapter.cs</Link>
     </Compile>
+    <Compile Include="..\Desktop\Manifest.cs">
+      <Link>Manifest.cs</Link>
+    </Compile>
     <Compile Include="..\Desktop\Mapping.cs">
       <Link>Mapping.cs</Link>
     </Compile>
@@ -169,7 +172,7 @@
       <FlavorProperties GUID="{A1591282-1198-4647-A2B1-27E5FF5F6F3B}">
         <SilverlightProjectProperties />
       </FlavorProperties>
-      <UserProperties ProjectLinkerExcludeFilter="\\?desktop(\\.*)?$;\\?silverlight(\\.*)?$;\.desktop;\.silverlight;\.xaml;^service references(\\.*)?$;\.clientconfig;^web references(\\.*)?$" ProjectLinkReference="46fb3942-d0a5-4bff-97b0-739e56bfb111" />
+      <UserProperties ProjectLinkReference="46fb3942-d0a5-4bff-97b0-739e56bfb111" ProjectLinkerExcludeFilter="\\?desktop(\\.*)?$;\\?silverlight(\\.*)?$;\.desktop;\.silverlight;\.xaml;^service references(\\.*)?$;\.clientconfig;^web references(\\.*)?$" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

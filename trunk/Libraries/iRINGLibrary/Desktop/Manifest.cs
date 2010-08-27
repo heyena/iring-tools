@@ -127,7 +127,7 @@ namespace org.iringtools.library.manifest
   public class Role
   {
     [DataMember(Name = "type", Order = 0, EmitDefaultValue = false)]
-    public string Type { get; set; }
+    public RoleType Type { get; set; }
 
     [DataMember(Name = "roleId", Order = 1, EmitDefaultValue = false)]
     public string RoleId { get; set; }
