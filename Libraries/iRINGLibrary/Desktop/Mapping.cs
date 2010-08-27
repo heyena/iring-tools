@@ -31,6 +31,7 @@ using System.Text;
 using System.Xml.Serialization;
 using System.IO;
 using System.Runtime.Serialization;
+using org.iringtools.library.manifest;
 
 namespace org.iringtools.library
 {
