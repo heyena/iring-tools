@@ -1,9 +1,9 @@
 [{
-    text: 'PSN STAGING NEW DELHI [12345_001_TEST]', 
+    text: 'PSN STAGING NEW DELHI [12345_001]', 
     cls: 'folder',
 	children:[
 		  {
-				text: 'Application Data',
+			    text: "Application Data",
 				icon:'resources/images/iringlogo.png',
 				children: [{
 				text: 'ABC',
@@ -50,6 +50,7 @@ leaf: true
 		    },
 		   {
 			text: 'Data Exchange',
+			id:'denode',
 			cls: 'folder',
 			children: [
 				  {
@@ -57,11 +58,13 @@ leaf: true
 					cls:'folder',
 					children:[{
 							text: 'ABC -> DEF',
+							id:'1',
 							icon:'resources/images/icons/graph-1.JPG',
 							leaf: true
 						  },
 						  {
 							text: 'DEF -> ABC',
+							id:'2',
 							icon:'resources/images/icons/graph-1.JPG',
 							leaf: true
 						  }]
@@ -71,20 +74,24 @@ leaf: true
 					cls:'folder',
 					children: [{
 						text: 'ABC -> DEF',
+						name:'3',
 						icon:'resources/images/icons/graph-1.JPG',						
 						leaf: true
 					},{
 						text: 'DEF -> ABC ',
+						id:'4',
 						icon:'resources/images/icons/graph-1.JPG',						
 						leaf: true
 						  },
 						{
 						text: 'ABC -> XYZ',
+						id:'5',
 						icon:'resources/images/icons/graph-1.JPG',						
 						leaf: true
 						},
 						{
 						text: 'XYZ -> ABC ',
+						id:'6',
 						icon:'resources/images/icons/graph-1.JPG',						
 						leaf: true
 						}]
