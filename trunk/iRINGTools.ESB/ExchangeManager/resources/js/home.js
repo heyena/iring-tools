@@ -5,29 +5,46 @@ var store = new Ext.data.Store({
 data: [
           [
             1,
-            "Office Space",
-            "Mike Judge",
-            "1999-02-19",
-            1,
-            "Work Sucks",
-            "19.95",
-            1
+            "Tag-1",
+            "PlantArea-1",
+            "System-1",
+            "Plant-1",
+            "[Need to Resolve]",
+            "1",
+            "[Need to Resolve]",
+			"1",
+			"Fluid-1","[Need to Resolve]","	1","[Need to Resolve]","1"
           ],
           [
-            3,
-            "Super Troopers",
-            "Jay Chandrasekhar",
-            "2002-02-15",
-            1,
-            "Altered State Police",
-            "14.95",
-            1
-          ]
+            2,
+            "Tag-2",
+            "PlantArea-2",
+            "System-2",
+			"Plant-2","[Need to Resolve]","2","[Need to Resolve]","1","Fluid-2","[Need to Resolve]","2","[Need to Resolve]","2"
+          ],[
+			  3,
+			  "Tag-3",
+			  "PlantArea-3",
+			  "System-3",
+			  "Plant-3",
+			  "[Need to Resolve]",
+			  "1",
+			  "[Need to Resolve]",
+			  "1",
+			  "Fluid-3","[Need to Resolve]","1","[Need to Resolve]","3"
+					],
+					[
+					4,
+					"Tag-4",
+					"PlantArea-4",
+					"System-4",
+					"Plant-4","[Need to Resolve]","4","[Need to Resolve]","1","Fluid-4","[Need to Resolve]","4","[Need to Resolve]","4"
+					]
     ]
     
     ,
 reader: new Ext.data.ArrayReader(
-  {id:'id'},
+{id:'id'},
 [
   'id','title','director',{name: 'released', type: 'date', dateFormat: 'Y-m-d'},
   'genre','tagline','price','available'
@@ -106,40 +123,63 @@ region: 'center',
 xtype: 'tabpanel',
 //disabled:true,
 activeTab: 0,
-items: [{
+items: [
+{
 title: 'Review & Acceptance',
 id:'rnatab',
 layout: 'border',
 border: false,
 items: [{
+		   
 region: 'west',
-//split: true,
-html: "<br/> @ Piping Network System <br><br> &nbsp;&nbsp;&nbsp;@ Tag-1 <br><br> &nbsp;&nbsp;&nbsp;@ Tag-3",
+width: 250,
+minSize: 175,
+maxSize: 500,
+//collapsible: true,
+margins: '0 0 0 5',
+layout: 'fit',
+//baseCls : 'x-plain',
+id:'tag-nodes-div',
+layout: 'fit',
+split: true,
+autoHeight:true,
 width:200,
-	
 },
-{
+/*{
 region: 'south',
-html: 'Nested South'
-},
+//html: 'Nested South'
+buttons: [
+{
+text: 'Transfer',
+disabled :false
+}]
+},*/
 {
 region: 'center',
 xtype: 'grid',
 store: store,
 columns: [
-{header: "Title", dataIndex: 'title'},
-{header: "Director", dataIndex: 'director'},
-{header: "Released", dataIndex: 'released',
-renderer: Ext.util.Format.dateRenderer('m/d/Y')},
-{header: "Genre", dataIndex: 'genre'},
-{header: "Tagline", dataIndex: 'tagline'}
+{header: "IdentificationByTag", dataIndex: 'title'},
+{header: "PlantArea.IdentificationByTag", dataIndex: 'director'},
+{header: "System.IdentificationByTag", dataIndex: 'released'},
+{header: "Plant.IdentificationByTag", dataIndex: 'genre'},
+{header: "Length.hasScale", dataIndex: 'tagline'},
+{header: "Length.valValue", dataIndex: 'tagline'},
+{header: "NominalDiameter.hasScale", dataIndex: 'tagline'},
+{header: "NominalDiameter.valValue", dataIndex: 'tagline'},
+{header: "FluidCompound.ClassifiedIdentification", dataIndex: 'tagline'},
+{header: "FluidStream.DesignTemperature.hasScale", dataIndex: 'tagline'},
+{header: "FluidStream.DesignTemperature.valValue", dataIndex: 'tagline'},
+{header: "FluidStream.OperatingTemperature.hasScale", dataIndex: 'tagline'},
+{header: "FluidStream.OperatingTemperature.valValue", dataIndex: 'tagline'}
+		
 ]
 }]
 
 
 },{
 title: 'Results',
-html: 'Result'
+html: '................'
 }]
 }
 ]});
@@ -150,7 +190,7 @@ function test()
         autoLoad: true,  //autoload the data
         url: 'getproperties.php',
         root: 'props',
-        fields: ['First name', 'Last name', 'E-mail'],
+        fields: ['Property', 'Property1', 'Property2'],
         listeners: {
             load: {
                 fn: function(store, records, options){
