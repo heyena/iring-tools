@@ -1,20 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <buildpath>
-	<buildpathentry kind="src" path="lib/ext-3.2.1/examples/direct"/>
-	<buildpathentry kind="src" path="lib/ext-3.2.1/examples/state"/>
-	<buildpathentry kind="src" path="src/view/ExchangeReader"/>
-	<buildpathentry kind="src" path="lib/ext-3.2.1/examples/grid-filtering"/>
-	<buildpathentry kind="src" path="lib/ext-3.2.1/examples/restful"/>
-	<buildpathentry kind="src" path="lib/ext-3.2.1/examples/view"/>
-	<buildpathentry kind="lib" path="lib/ext-3.2.1/LABjs-1.0.2rc1.zip"/>
-	<buildpathentry kind="src" path="lib/ext-3.2.1/examples/form"/>
-	<buildpathentry kind="src" path="src/model/ExchangeReader"/>
-	<buildpathentry kind="src" path="lib/ext-3.2.1/examples/writer"/>
-	<buildpathentry kind="src" path="lib/ext-3.2.1/examples/image-organizer/php"/>
-	<buildpathentry kind="src" path="lib/ext-3.2.1/examples/key-feed-viewer"/>
 	<buildpathentry kind="con" path="org.eclipse.php.core.LANGUAGE"/>
-	<buildpathentry kind="src" path="lib/ext-3.2.1/examples/tree"/>
-	<buildpathentry kind="src" path="lib/ext-3.2.1/examples/statusbar"/>
+	<buildpathentry kind="src" path="src/view/ExchangeReader"/>
+	<buildpathentry kind="lib" path="lib/ext-3.2.1/LABjs-1.0.2rc1.zip"/>
 	<buildpathentry kind="src" path="src/controller/ExchangeReader"/>
-	<buildpathentry kind="src" path="lib/ext-3.2.1/examples/feed-viewer"/>
+	<buildpathentry kind="src" path="src/model/ExchangeReader"/>
 </buildpath>
