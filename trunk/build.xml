@@ -31,7 +31,7 @@
     <LandingPageDeploymentDir>$(DeploymentDir)\LandingPage</LandingPageDeploymentDir>
     <SDKDeploymentDir>$(DeploymentDir)\SDK</SDKDeploymentDir>
     <CSVDataLayerDeploymentDir>$(SDKDeploymentDir)\CSVDataLayer</CSVDataLayerDeploymentDir>
-    <SDKLibDeploymentDir>$(SDKLibDeploymentDir)\lib</SDKLibDeploymentDir>
+    <SDKLibDeploymentDir>$(SDKLibDeploymentDir)\lib\iring-tools</SDKLibDeploymentDir>
 
     <SolutionFile>iring-tools.sln</SolutionFile>
     <SDKSolutionFile>$(SDKDir)\iring-tools-sdk.sln</SDKSolutionFile>
