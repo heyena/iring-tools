@@ -72,7 +72,7 @@
                 <type>Reference</type>
                 <roleId>tpl:R62348020201</roleId>
                 <name>whole</name>
-                <value>#AB</value>
+                <value>#System-1</value>
               </roleObject>
             </roleObjects>
           </templateObject>
@@ -238,7 +238,7 @@
       <classObject>
         <classId>rdl:R16348302781</classId>
         <name>SYSTEM</name>
-        <identifier>AB</identifier>
+        <identifier>System-1</identifier>
         <templateObjects>
           <templateObject>
             <templateId>tpl:R30193386273</templateId>
@@ -315,6 +315,7 @@
                 <value>PIDRev-1</value>
               </roleObject>
             </roleObjects>
+          </templateObject>
         </templateObjects>
       </classObject>
       <classObject>
@@ -354,7 +355,7 @@
         <templateObjects>
           <templateObject>
             <templateId>tpl:R76242742365</templateId>
-            <name>FluidStreamFluidCompound</name>
+            <name>FluidStreamFluidComp</name>
             <roleObjects>
               <roleObject>
                 <type>Possessor</type>
@@ -365,7 +366,7 @@
                 <type>Reference</type>
                 <roleId>tpl:R71512319901</roleId>
                 <name>material</name>
-                <value>#FluidCompound-1</value>
+                <value>#FluidComp-1</value>
               </roleObject>
             </roleObjects>
           </templateObject>
@@ -432,7 +433,7 @@
       <classObject>
         <classId>rdl:R94068452432</classId>
         <name>FLUID COMPOUND</name>
-        <identifier>FluidCompound-1</identifier>
+        <identifier>FluidComp-1</identifier>
         <templateObjects>
           <templateObject>
             <templateId>tpl:R30193386273</templateId>
@@ -453,7 +454,7 @@
                 <type>Property</type>
                 <roleId>tpl:R22674749688</roleId>
                 <name>valIdentifier</name>
-                <value>FluidCompound-1</value>
+                <value>FluidComp-1</value>
               </roleObject>
             </roleObjects>
           </templateObject>
@@ -537,7 +538,7 @@
                 <type>Reference</type>
                 <roleId>tpl:R62348020201</roleId>
                 <name>whole</name>
-                <value>#AB</value>
+                <value>#System-2</value>
               </roleObject>
             </roleObjects>
             <transferType>Sync</transferType>
@@ -717,7 +718,7 @@
       <classObject>
         <classId>rdl:R16348302781</classId>
         <name>SYSTEM</name>
-        <identifier>AB</identifier>
+        <identifier>System-2</identifier>
         <templateObjects>
           <templateObject>
             <templateId>tpl:R30193386273</templateId>
@@ -752,6 +753,56 @@
         <name>P AND I DIAGRAM</name>
         <identifier>PID-2</identifier>
         <templateObjects>
+          <templateObject>
+            <templateId>tpl:R30193386273</templateId>
+            <name>ClassifiedIdentification</name>
+            <roleObjects>
+              <roleObject>
+                <type>Possessor</type>
+                <roleId>tpl:R44537504070</roleId>
+                <name>hasObject</name>
+              </roleObject>
+              <roleObject>
+                <type>Reference</type>
+                <roleId>tpl:R30790108016</roleId>
+                <name>hasIdentificationType</name>
+                <value>rdl:R16893283050</value>
+              </roleObject>
+              <roleObject>
+                <type>Property</type>
+                <roleId>tpl:R22674749688</roleId>
+                <name>valIdentifier</name>
+                <oldValue>PID-2</oldValue>
+                <value>PID-2</value>
+              </roleObject>
+            </roleObjects>
+            <transferType>Sync</transferType>
+          </templateObject>
+          <templateObject>
+            <templateId>tpl:R30193386273</templateId>
+            <name>ClassifiedIdentification</name>
+            <roleObjects>
+              <roleObject>
+                <type>Possessor</type>
+                <roleId>tpl:R44537504070</roleId>
+                <name>hasObject</name>
+              </roleObject>
+              <roleObject>
+                <type>Reference</type>
+                <roleId>tpl:R30790108016</roleId>
+                <name>hasIdentificationType</name>
+                <value>rdl:R86464765280</value>
+              </roleObject>
+              <roleObject>
+                <type>Property</type>
+                <roleId>tpl:R22674749688</roleId>
+                <name>valIdentifier</name>
+                <oldValue>PIDRev-2</oldValue>
+                <value>PIDRev-2</value>
+              </roleObject>
+            </roleObjects>
+            <transferType>Sync</transferType>
+          </templateObject>
           <templateObject>
             <templateId>tpl:R30193386273</templateId>
             <name>ClassifiedIdentification</name>
@@ -845,7 +896,7 @@
         <templateObjects>
           <templateObject>
             <templateId>tpl:R76242742365</templateId>
-            <name>FluidStreamFluidCompound</name>
+            <name>FluidStreamFluidComp</name>
             <roleObjects>
               <roleObject>
                 <type>Possessor</type>
@@ -856,7 +907,7 @@
                 <type>Reference</type>
                 <roleId>tpl:R71512319901</roleId>
                 <name>material</name>
-                <value>#FluidCompound-2</value>
+                <value>#FluidComp-2</value>
               </roleObject>
             </roleObjects>
             <transferType>Sync</transferType>
@@ -931,7 +982,7 @@
       <classObject>
         <classId>rdl:R94068452432</classId>
         <name>FLUID COMPOUND</name>
-        <identifier>FluidCompound-2</identifier>
+        <identifier>FluidComp-2</identifier>
         <templateObjects>
           <templateObject>
             <templateId>tpl:R30193386273</templateId>
@@ -953,7 +1004,7 @@
                 <roleId>tpl:R22674749688</roleId>
                 <name>valIdentifier</name>
                 <oldValue>Fluid-2</oldValue>
-                <value>FluidCompound-2</value>
+                <value>FluidComp-2</value>
               </roleObject>
             </roleObjects>
             <transferType>Sync</transferType>
@@ -1039,7 +1090,7 @@
                 <type>Reference</type>
                 <roleId>tpl:R62348020201</roleId>
                 <name>whole</name>
-                <value>#AB</value>
+                <value>#System-3</value>
               </roleObject>
             </roleObjects>
             <transferType>Sync</transferType>
@@ -1219,7 +1270,7 @@
       <classObject>
         <classId>rdl:R16348302781</classId>
         <name>SYSTEM</name>
-        <identifier>AB</identifier>
+        <identifier>System-3</identifier>
         <templateObjects>
           <templateObject>
             <templateId>tpl:R30193386273</templateId>
@@ -1397,7 +1448,7 @@
         <templateObjects>
           <templateObject>
             <templateId>tpl:R76242742365</templateId>
-            <name>FluidStreamFluidCompound</name>
+            <name>FluidStreamFluidComp</name>
             <roleObjects>
               <roleObject>
                 <type>Possessor</type>
@@ -1408,7 +1459,7 @@
                 <type>Reference</type>
                 <roleId>tpl:R71512319901</roleId>
                 <name>material</name>
-                <value>#FluidCompound-3</value>
+                <value>#FluidComp-3</value>
               </roleObject>
             </roleObjects>
             <transferType>Sync</transferType>
@@ -1483,7 +1534,7 @@
       <classObject>
         <classId>rdl:R94068452432</classId>
         <name>FLUID COMPOUND</name>
-        <identifier>FluidCompound-3</identifier>
+        <identifier>FluidComp-3</identifier>
         <templateObjects>
           <templateObject>
             <templateId>tpl:R30193386273</templateId>
@@ -1505,7 +1556,7 @@
                 <roleId>tpl:R22674749688</roleId>
                 <name>valIdentifier</name>
                 <oldValue>Fluid-30</oldValue>
-                <value>FluidCompound-3</value>
+                <value>FluidComp-3</value>
               </roleObject>
             </roleObjects>
             <transferType>Change</transferType>
@@ -1588,7 +1639,7 @@
                 <type>Reference</type>
                 <roleId>tpl:R62348020201</roleId>
                 <name>whole</name>
-                <value>#AB</value>
+                <value>#System-4</value>
               </roleObject>
             </roleObjects>
           </templateObject>
@@ -1754,7 +1805,7 @@
       <classObject>
         <classId>rdl:R16348302781</classId>
         <name>SYSTEM</name>
-        <identifier>AB</identifier>
+        <identifier>System-4</identifier>
         <templateObjects>
           <templateObject>
             <templateId>tpl:R30193386273</templateId>
@@ -1917,7 +1968,7 @@
         <templateObjects>
           <templateObject>
             <templateId>tpl:R76242742365</templateId>
-            <name>FluidStreamFluidCompound</name>
+            <name>FluidStreamFluidComp</name>
             <roleObjects>
               <roleObject>
                 <type>Possessor</type>
@@ -1928,7 +1979,7 @@
                 <type>Reference</type>
                 <roleId>tpl:R71512319901</roleId>
                 <name>material</name>
-                <value>#FluidCompound-4</value>
+                <value>#FluidComp-4</value>
               </roleObject>
             </roleObjects>
           </templateObject>
@@ -1995,7 +2046,7 @@
       <classObject>
         <classId>rdl:R94068452432</classId>
         <name>FLUID COMPOUND</name>
-        <identifier>FluidCompound-4</identifier>
+        <identifier>FluidComp-4</identifier>
         <templateObjects>
           <templateObject>
             <templateId>tpl:R30193386273</templateId>
@@ -2016,7 +2067,7 @@
                 <type>Property</type>
                 <roleId>tpl:R22674749688</roleId>
                 <name>valIdentifier</name>
-                <value>FluidCompound-4</value>
+                <value>FluidComp-4</value>
               </roleObject>
             </roleObjects>
           </templateObject>
