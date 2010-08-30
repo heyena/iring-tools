@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<buildpath>
-	<buildpathentry kind="con" path="org.eclipse.php.core.LANGUAGE"/>
-	<buildpathentry kind="src" path="src/view/ExchangeReader"/>
-	<buildpathentry kind="lib" path="lib/ext-3.2.1/LABjs-1.0.2rc1.zip"/>
-	<buildpathentry kind="src" path="src/controller/ExchangeReader"/>
-	<buildpathentry kind="src" path="src/model/ExchangeReader"/>
-</buildpath>

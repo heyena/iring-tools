@@ -1,29 +1,29 @@
 ﻿ html, body {
-        font:normal 12px verdana;
-        margin:0;
-        padding:0;
-        border:0 none;
-        overflow:hidden;
-        height:100%;
-    }
-    p {
-        margin:5px;
-    }
-    .settings {
-        background-image:url(../lib/extjs/resources/images/folder_wrench.png);
-    }
-    .nav {
-        background-image:url(../lib/extjs/resources/images/folder_go.png);
-		background-repeat:no-repeat;background-position:inherit;
-    }
+  font:normal 12px verdana;
+  margin:0;
+  padding:0;
+  border:0 none;
+  overflow:hidden;
+  height:100%;
+}
+p {
+  margin:5px;
+}
+.settings {
+  background-image:url(../lib/extjs/resources/images/folder_wrench.png);
+}
+.nav {
+  background-image:url(../lib/extjs/resources/images/folder_go.png);
+  background-repeat:no-repeat;background-position:inherit;
+}
 
-	.x-tree-node-collapseds .x-tree-node-icon {
-		background-image:url("../lib/extjs/resources/images/folder_go.png");
-	}
-		
+.x-tree-node-collapseds .x-tree-node-icon {
+  background-image:url("../lib/extjs/resources/images/folder_go.png");
+}
+
 .headerLnk{
-font-family:Calibri, Arial;
-font-size:18;
-text-decoration:none;
-color:#4784B6;
+  font-family:Calibri, Arial;
+  font-size:18;
+  text-decoration:none;
+  color:#4784B6;
 }
