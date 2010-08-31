@@ -18,7 +18,6 @@ namespace org.iringtools.modulelibrary.entities
     // Need to oveeride this method
     public override void nodeSelectedHandler(object sender, RoutedEventArgs e)
     {
-      //TODO may need to do something here
     }
   }
 }

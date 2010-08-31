@@ -44,7 +44,6 @@ namespace org.iringtools.modulelibrary.usercontrols
 
     public override void nodeSelectedHandler(object sender, RoutedEventArgs e)
     {
-  //TODO May need to do something here
     }
   }
 }

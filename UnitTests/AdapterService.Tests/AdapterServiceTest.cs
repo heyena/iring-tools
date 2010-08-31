@@ -352,6 +352,7 @@ namespace AdapterService.Tests
         request.Add("format", "dto");
 
         Response actual = target.Push("12345_000", "DEF", "LinesGraph", request);
+        Utility.Write<Response>(actual, @"C:\iring-tools\PushResponse.xml", true);
         Assert.IsFalse(actual.Level == StatusLevel.Error);
     }
 

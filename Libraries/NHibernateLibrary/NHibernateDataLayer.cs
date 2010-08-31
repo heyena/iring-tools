@@ -193,7 +193,7 @@ namespace org.iringtools.adapter.datalayer
     public Response Post(IList<IDataObject> dataObjects)
     {
       Response response = new Response();
-      response.StatusList = new List<Status>();
+
       try
       {
         if (dataObjects != null && dataObjects.Count > 0)
@@ -239,10 +239,10 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
+    //TODO: Status should be assigned to the appropriate identifier
     public Response Delete(string objectType, IList<string> identifiers)
     {
       Response response = new Response();
-      response.StatusList = new List<Status>();
       Status status = new Status();
 
       try

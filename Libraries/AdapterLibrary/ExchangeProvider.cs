@@ -373,7 +373,7 @@ namespace org.iringtools.exchange
 
         string hashValue = String.Empty;
 
-        // todo: handle/implement more hash algorithms
+        // TODO: Handle/implement more hash algorithms
         switch (_hashAlgorithm)
         {
           default: // MD5

@@ -44,14 +44,6 @@ namespace org.iringtools.modulelibrary.layerbll
 
     //:::::::::::::::[ ASYNC Data Completed Events handled ]::::::::::::::::::::::
 
-    //!!!!!!!!!!!!!!!!!!!!!!!!
-    // TODO:
-    // + Post DAL processing
-    // + Error Handling
-    // + Status Codes
-    // + Friendly Messages
-    //!!!!!!!!!!!!!!!!!!!!!!!!
-
     #region dal_OnDataArrived(object sender, EventArgs e)
     /// <summary>
     /// Bubble event to consumer
@@ -141,14 +133,6 @@ namespace org.iringtools.modulelibrary.layerbll
         ActiveService =  serviceName
       });
     }
-
-    //!!!!!!!!!!!!!!!!!!!!!!!!
-    // TODO:
-    // + Pre DAL processing
-    // + Validation 
-    // + Error Handling
-    // + Friendly Messages
-    //!!!!!!!!!!!!!!!!!!!!!!!!
 
 
     // IMPORTANT NOTE:  All calls are Async so we don't actually

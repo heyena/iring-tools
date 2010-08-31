@@ -18,15 +18,13 @@ namespace Bechtel.CSVDataLayer.API
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(CSVDataLayer));
     private AdapterSettings _settings = null;
-    private ApplicationSettings _appSettings = null;
     private string _dataDictionaryPath = String.Empty;
 
     [Inject]
-    public CSVDataLayer(AdapterSettings settings, ApplicationSettings appSettings)
+    public CSVDataLayer(AdapterSettings settings)
     {
-      _dataDictionaryPath = settings.XmlPath + "DataDictionary." + appSettings.ProjectName + "." + appSettings.ApplicationName + ".xml";
+      _dataDictionaryPath = _settings["XmlPath"] + "DataDictionary." + _settings["ProjectName"] + "." + _settings["ApplicationName"] + ".xml";
       _settings = settings;
-      _appSettings = appSettings;
     }
 
     public IList<IDataObject> Create(string objectType, IList<string> identifiers)
@@ -92,7 +90,7 @@ namespace Bechtel.CSVDataLayer.API
         Type type = Type.GetType("Bechtel.CSVDataLayer.API." + objectType + "DataObject");
 
         // Load config xml 
-        string configFile = _settings.XmlPath + objectType + "." + _appSettings.ProjectName + "." + _appSettings.ApplicationName + ".xml";
+        string configFile = _settings["XmlPath"] + objectType + "." + _settings["ProjectName"] + "." + _settings["ApplicationName"] + ".xml";
         XDocument configDoc = XDocument.Load(configFile);
         XElement configRootElement = configDoc.Element("commodity");
 
@@ -225,7 +223,7 @@ namespace Bechtel.CSVDataLayer.API
         Type type = Type.GetType("Bechtel.CSVDataLayer.API." + objectType + "DataObject");
 
         // Load config xml 
-        string configFile = _settings.XmlPath + objectType + "." + _appSettings.ProjectName + "." + _appSettings.ApplicationName + ".xml";
+        string configFile = _settings["XmlPath"] + objectType + "." + _settings["ProjectName"] + "." + _settings["ApplicationName"] + ".xml";
         XDocument configDoc = XDocument.Load(configFile);
         XElement configRootElement = configDoc.Element("commodity");
 
@@ -297,9 +295,13 @@ namespace Bechtel.CSVDataLayer.API
     public Response Post(IList<IDataObject> dataObjects)
     {
       Response response = new Response();
+
       if (dataObjects == null || dataObjects.Count == 0)
       {
-        response.Add("Nothing to update.");
+        Status status = new Status();
+        status.Level = StatusLevel.Warning;
+        status.Messages.Add("Nothing to update.");
+        response.Append(status);
         return response;
       }
 
@@ -311,7 +313,7 @@ namespace Bechtel.CSVDataLayer.API
         string objectType = dataObjectType.Substring(0, dataObjectType.Length - "DataObject".Length);
         objectType = objectType.Substring(objectType.LastIndexOf('.') + 1);
         
-        string configFile = _settings.XmlPath + objectType + "." + _appSettings.ProjectName + "." + _appSettings.ApplicationName + ".xml";
+        string configFile = _settings["XmlPath"] + objectType + "." + _settings["ProjectName"] + "." + _settings["ApplicationName"] + ".xml";
         XDocument configDoc = XDocument.Load(configFile);
         XElement configRootElement = configDoc.Element("commodity");
 
@@ -323,9 +325,13 @@ namespace Bechtel.CSVDataLayer.API
 
         foreach (IDataObject dataObject in dataObjects)
         {
+          Status status = new Status();
+
           try
           {
             string identifier = (string)dataObject.GetPropertyValue("Tag");
+            status.Identifier = identifier;
+
             TextWriter writer = new StreamWriter(dataObjectPath + identifier + ".csv");
             IEnumerable<XElement> attrs = configRootElement.Element("attributesSequence").Elements("attribute");
             List<string> csvValues = new List<string>();
@@ -338,11 +344,12 @@ namespace Bechtel.CSVDataLayer.API
 
             writer.WriteLine(String.Join(", ", csvValues.ToArray()));
             writer.Close();
-            response.Add("Record [" + identifier + "] has been saved successfully.");
+            status.Messages.Add("Record [" + identifier + "] has been saved successfully.");
           }
           catch (Exception ex)
           {
-            response.Add("Error while post data object [" + dataObject.GetPropertyValue("Tag") + ex);
+            status.Level = StatusLevel.Error;
+            status.Messages.Add("Error while post data object [" + dataObject.GetPropertyValue("Tag") + ex);
           }
         }
 
@@ -361,36 +368,40 @@ namespace Bechtel.CSVDataLayer.API
     public Response Delete(string objectType, IList<string> identifiers)
     {
       Response response = new Response();
+      
       if (identifiers == null || identifiers.Count == 0)
       {
-        response.Add("Nothing to delete.");
+        Status status = new Status();
+        status.Level = StatusLevel.Warning;
+        status.Messages.Add("Nothing to delete.");
+        response.Append(status);
         return response;
       }
 
-      try
+      string dataObjectPath = GetDataObjectPath(objectType);
+      foreach (string identifier in identifiers)
       {
-        string dataObjectPath = GetDataObjectPath(objectType);
-        foreach (string identifier in identifiers)
+        Status status = new Status();
+        status.Identifier = identifier;
+
+        try
         {
-          try
-          {
-            File.Delete(dataObjectPath + identifier + ".csv");
-            response.Add("Data object [" + identifier + "] deleted successfully.");
-          }
-          catch (Exception ex)
-          {
-            _logger.Error("Error in Delete: " + ex);
-            response.Add("Error while deleting data object [" + identifier + "]." + ex);
-          }
+            
+          File.Delete(dataObjectPath + identifier + ".csv");
+          status.Messages.Add("Data object [" + identifier + "] deleted successfully.");
+            
+        }
+        catch (Exception ex)
+        {
+          _logger.Error("Error in Delete: " + ex);
+          status.Level = StatusLevel.Error;
+          status.Messages.Add("Error while deleting data object [" + identifier + "]." + ex);
         }
 
-        return response;
+        response.Append(status);
       }
-      catch (Exception ex)
-      {
-        _logger.Error("Error in Delete: " + ex);
-        throw new Exception("Error while deleting data objects of type [" + objectType + "].", ex);
-      }
+
+      return response;
     }
 
     public Response Delete(string objectType, DataFilter filter)
@@ -429,10 +440,7 @@ namespace Bechtel.CSVDataLayer.API
             {
               new KeyProperty()
               {
-                dataLength = 50,
-                dataType = DataType.String,
-                propertyName = "Tag",
-                isNullable = false,
+                keyPropertyName = "Tag"
               },
             },
             dataProperties = new List<DataProperty>()
@@ -498,13 +506,13 @@ namespace Bechtel.CSVDataLayer.API
     private string GetdataObjectType(string objectType)
     {
       string dataLayerNamespace = "org.iringtools.adapter.datalayer";
-      return dataLayerNamespace + ".proj_" + _appSettings.ProjectName + "." + _appSettings.ApplicationName + "." + objectType;
+      return dataLayerNamespace + ".proj_" + _settings["ProjectName"] + "." + _settings["ApplicationName"] + "." + objectType;
     }
 
     private string GetDataObjectPath(string objectType)
     {
       // Load config xml 
-      string configFile = _settings.XmlPath + objectType + "." + _appSettings.ProjectName + "." + _appSettings.ApplicationName + ".xml";
+      string configFile = _settings["XmlPath"] + objectType + "." + _settings["ProjectName"] + "." + _settings["ApplicationName"] + ".xml";
       XDocument configDoc = XDocument.Load(configFile);
       XElement configRootElement = configDoc.Element("commodity");
 
@@ -517,5 +525,14 @@ namespace Bechtel.CSVDataLayer.API
 
       return dataObjectPath;
     }
+
+    #region IDataLayer Members
+
+    public IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType)
+    {
+      throw new NotImplementedException();
+    }
+
+    #endregion
   }
 }
