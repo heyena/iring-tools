@@ -106,6 +106,7 @@
     <Content Include="SPARQL\GetReferenceRestriction.txt" />
     <Content Include="SPARQL\GetRelatedTemplates.txt" />
     <Content Include="SPARQL\GetRoleData.txt" />
+    <Content Include="SPARQL\GetRoleInfo.txt" />
     <Content Include="SPARQL\GetRoles.txt" />
     <Content Include="SPARQL\GetStatus.txt" />
     <Content Include="SPARQL\GetSubClass.txt" />
