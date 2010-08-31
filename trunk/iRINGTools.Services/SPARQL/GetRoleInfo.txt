@@ -2,11 +2,11 @@ PREFIX tpl: <http://tpl.rdlfacade.org/data#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-SELECT ?role ?index ?type
+SELECT ?template ?index ?type
 WHERE 
 {
-	?roleDescription	tpl:hasTemplate		tpl:param1 ; 
-						tpl:hasRole			?role ; 
+	?roleDescription	tpl:hasTemplate		?template ; 
+						tpl:hasRole			tpl:param1 ; 
 						tpl:valRoleIndex	?index ; 
 						rdf:type			?type . 
 }
