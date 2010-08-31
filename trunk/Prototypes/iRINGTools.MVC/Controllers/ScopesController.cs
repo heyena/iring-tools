@@ -30,6 +30,7 @@ namespace org.iringtools.client.Controllers
 
     //
     // GET: /Scopes
+    
     public JsonResult Index()
     {      
       Uri address = new Uri(_adapterServiceURI + "/scopes");
@@ -50,16 +51,50 @@ namespace org.iringtools.client.Controllers
     }
 
     //
-    // GET: /Scopes/Details/5
+    // GET: /Scopes?scope=12345_000
 
-    public JsonResult Details(int id)
+    public JsonResult Scope(string id)
     {
-      return Json(null, JsonRequestBehavior.AllowGet);
+      Uri address = new Uri(_adapterServiceURI + "/scopes");
+
+      WebClient webClient = new WebClient();
+      string result = webClient.DownloadString(address);
+
+      List<ScopeProject> scopes = result.DeserializeDataContract<List<ScopeProject>>();
+
+      ScopeProject scope = scopes.Find(o => o.Name == id);
+
+      return Json(scope, JsonRequestBehavior.AllowGet);      
+    }
+
+    //
+    // GET: /Scopes/Application/ABC
+
+    public JsonResult Application(string id)
+    {
+      Uri address = new Uri(_adapterServiceURI + "/scopes");
+
+      WebClient webClient = new WebClient();
+      string result = webClient.DownloadString(address);
+
+      List<ScopeProject> scopes = result.DeserializeDataContract<List<ScopeProject>>();
+
+      ScopeProject scope = scopes.Find(o => o.Name == id);
+
+      ApplicationContainer container = new ApplicationContainer();
+
+      if (scope != null)
+      {
+        container.Applications = scope.Applications;
+        container.Total = scope.Applications.Count;
+      }
+
+      return Json(container, JsonRequestBehavior.AllowGet);
     }
 
     //
     // GET: /Scopes/Create
-
+    
     public JsonResult Create()
     {
       return Json(null, JsonRequestBehavior.AllowGet);
@@ -86,7 +121,7 @@ namespace org.iringtools.client.Controllers
 
     //
     // GET: /Scopes/Edit/5
-
+    
     public JsonResult Edit(int id)
     {
       return Json(null, JsonRequestBehavior.AllowGet);
