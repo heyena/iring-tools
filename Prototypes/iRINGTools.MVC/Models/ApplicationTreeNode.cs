@@ -10,6 +10,11 @@ namespace org.iringtools.client.Models
   public class ApplicationTreeNode : TreeNode<ApplicationTreeNode>
   {
     public ScopeApplication Application { get; set; }
+
+    public string ScopeHeader { get; set; }
+    public string Configure { get; set; }
+    public string Mapping { get; set; }
+    
     public override string text
     {
       get

@@ -15,9 +15,8 @@
     <!-- extensions -->
     <script src="../../Scripts/iringtools/iRINGTools.js" type="text/javascript"></script>
     <script src="../../Scripts/iringtools/ScopeDetails.js" type="text/javascript"></script>    
-    <script src="../../Scripts/iringtools/ScopeMapping.js" type="text/javascript"></script>
-    <script src="../../Scripts/ext-3.2.1/ux/SearchField.js" type="text/javascript"></script>
-    <script src="../../Scripts/ext-3.2.1/ux/RowExpander.js" type="text/javascript"></script>
+    <script src="../../Scripts/iringtools/ScopeMapping.js" type="text/javascript"></script>    
+    <script src="../../Scripts/ext-3.2.1/ux/ux-all.js" type="text/javascript"></script>   
 
     <!-- page specific -->    
     <script src="../../Scripts/iringtools/ScopeEditor.js" type="text/javascript"></script>    

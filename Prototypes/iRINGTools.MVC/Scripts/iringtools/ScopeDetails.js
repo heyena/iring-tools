@@ -7,13 +7,14 @@
 Ext.ns('iIRNGTools', 'iIRNGTools.ScopeEditor');
 /**
 * @class iIRNGTools.ScopeDetails
-* @extends FormPanel
+* @extends PropertyGrid
 * @author by Gert Jansen van Rensburg
 */
 iIRNGTools.ScopeEditor.ScopeDetails = Ext.extend(Ext.grid.PropertyGrid, {
     iconCls: 'silk-user',
     frame: true,
     width: 500,
+    proxy: null,
     viewConfig: {
         forceFit: true
     },
@@ -26,7 +27,7 @@ iIRNGTools.ScopeEditor.ScopeDetails = Ext.extend(Ext.grid.PropertyGrid, {
     */
     initComponent: function () {
         // build form-top toolbar buttons        
-        this.tbar = this.buildUI();
+        //this.tbar = this.buildUI();
 
         // add a create event for convenience in our application-code.
         this.addEvents({
@@ -60,9 +61,7 @@ iIRNGTools.ScopeEditor.ScopeDetails = Ext.extend(Ext.grid.PropertyGrid, {
             scope: this
         }, {
             text: 'Reset',
-            handler: function (btn, ev) {
-                loadRecord(record);
-            },
+            handler: this.onReset,
             scope: this
         }];
     },
@@ -80,33 +79,21 @@ iIRNGTools.ScopeEditor.ScopeDetails = Ext.extend(Ext.grid.PropertyGrid, {
     * onUpdate
     */
     onUpdate: function (btn, ev) {
-        if (this.record == null) {
-            return;
-        }
-        if (!this.getForm().isValid()) {
-            App.setAlert(false, "Form is invalid.");
-            return false;
-        }
-        this.getForm().updateRecord(this.record);
+        this.fireEvent('update', this, this.getSource());
     },
 
     /**
     * onCreate
     */
     onCreate: function (btn, ev) {
-        if (!this.getForm().isValid()) {
-            App.setAlert(false, "Form is invalid");
-            return false;
-        }
-        this.fireEvent('create', this, this.getForm().getValues());
-        this.getForm().reset();
+        this.fireEvent('create', this, this.getSource());
     },
 
     /**
     * onReset
     */
     onReset: function (btn, ev) {
-        this.fireEvent('update', this, this.getForm().getValues());
-        this.getForm().reset();
+        this.fireEvent('reset', this, this.getSource());
+        this.setSource(rec);
     }
 });

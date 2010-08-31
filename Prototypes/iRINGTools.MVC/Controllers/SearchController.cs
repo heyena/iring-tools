@@ -30,7 +30,7 @@ namespace org.iringtools.client.Controllers
     //
     // POST: /Search/
     [HttpPost]
-    public ActionResult Index(FormCollection collection)
+    public JsonResult Index(FormCollection collection)
     {
       string query = collection["query"];
       string start = collection["start"];
