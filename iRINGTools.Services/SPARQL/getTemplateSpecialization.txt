@@ -6,6 +6,5 @@ PREFIX owl: <http://www.w3.org/2002/07/owl#>
 SELECT ?uri
 WHERE
 { 
-part8:param1	rdf:type		owl:Class 	;	
-				rdfs:subClassOf	?uri		.
+	part8:param1	rdfs:subClassOf	?uri	.
 }
