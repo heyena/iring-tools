@@ -219,7 +219,7 @@ namespace org.iringtools.modules.contextmenu.contextmenuregion
                         btnEditTemplate.IsEnabled = false;
 
                         break;
-                    //TODO need a bit of work here
+
                     case SpinnerEventType.Stopped:
 
                         switch (e.ActiveService)

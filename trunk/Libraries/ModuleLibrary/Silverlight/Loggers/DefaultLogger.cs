@@ -19,7 +19,6 @@ namespace org.iringtools.ontologyservice.presentation.loggers
         /// <param name="priority">The priority.</param>
         public void Log(string message, Category category, Priority priority)
         {
-            // TODO: Write logger - for now use DebugLogger
             defaultLogger.Log(message, category, priority);
         }
 

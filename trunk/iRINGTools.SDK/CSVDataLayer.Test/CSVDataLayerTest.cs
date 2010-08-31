@@ -35,9 +35,10 @@ namespace Bechtel.CSVDataLayer.API
       settings["BinaryPath"] = String.Empty;
       settings["CodePath"] = String.Empty;
 
-      AdapterSettings adapterSettings = new AdapterSettings(settings);
-      ApplicationSettings appSettings = new ApplicationSettings("12345_000", "API");
-      _csvDataLayer = new CSVDataLayer(adapterSettings, appSettings);
+      AdapterSettings adapterSettings = new AdapterSettings();
+      adapterSettings.AppendSettings(settings);
+
+      _csvDataLayer = new CSVDataLayer(adapterSettings);
     }
 
     private TestContext testContextInstance;
@@ -84,12 +85,12 @@ namespace Bechtel.CSVDataLayer.API
       }
       Response actual = _csvDataLayer.Post(dataObjects);
 
-      if (!actual[0].ToLower().Contains("successfully"))
+      if (actual.Level != StatusLevel.Success)
       {
         throw new AssertFailedException(Utility.SerializeDataContract<Response>(actual));
       }
 
-      Assert.IsTrue(actual[0].ToLower().Contains("successfully"));
+      Assert.IsTrue(actual.Level == StatusLevel.Success);
     }
 
     [TestMethod]

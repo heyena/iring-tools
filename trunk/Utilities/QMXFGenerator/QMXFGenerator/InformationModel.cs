@@ -55,7 +55,6 @@
     Type,
     Value,
     Count,
-    //TODO: Get rid of this!
     Max = 7,
   }
   #endregion

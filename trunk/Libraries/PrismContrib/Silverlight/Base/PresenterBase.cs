@@ -194,7 +194,6 @@ namespace PrismContrib.Base
 
     /// <summary>
     /// Gets the control.
-    /// TODO: Validation and error handling
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="controlName">Name of the control.</param>

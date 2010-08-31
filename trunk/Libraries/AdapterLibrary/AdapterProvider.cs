@@ -82,7 +82,6 @@ namespace org.iringtools.adapter
 
       Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
 
-      //TODO: Move me!
       #region initialize webHttpClient for converting old mapping
       string proxyHost = _settings["ProxyHost"];
       string proxyPort = _settings["ProxyPort"];

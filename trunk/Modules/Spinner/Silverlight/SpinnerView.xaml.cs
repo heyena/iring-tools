@@ -11,7 +11,6 @@ using PrismContrib.Base;
 namespace org.iringtools.modules.spinner
 {
   /// <summary>
-  /// TODO: Move code out of code-behind into Presenter
   /// </summary>
     public partial class WorkingSpinner : UserControl, IWorkingSpinner
     {
