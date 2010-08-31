@@ -87,6 +87,7 @@
   <ItemGroup>
     <Compile Include="Controllers\ScopesController.cs" />
     <Compile Include="Controllers\SearchController.cs" />
+    <Compile Include="Models\ApplicationContainer.cs" />
     <Compile Include="Models\ScopesContainer.cs" />
     <Compile Include="Views\AppEditor\Index.aspx.cs">
       <DependentUpon>Index.aspx</DependentUpon>
