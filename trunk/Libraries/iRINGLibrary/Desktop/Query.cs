@@ -14,6 +14,9 @@ namespace org.iringtools.library
     [DataMember]
     public string uri { get; set; }
 
+    [DataMember(EmitDefaultValue=false)]
+    public string updateUri { get; set; }
+
     [DataMember]
     public string description { get; set; }
     
