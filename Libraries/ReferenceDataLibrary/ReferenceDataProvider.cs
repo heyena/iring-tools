@@ -197,7 +197,8 @@ namespace org.iringtools.referenceData
 
                 try
                 {
-                    string sparql = String.Empty;
+                    string sparql1 = String.Empty;
+                    string sparql2 = String.Empty;
                     string relativeUri = String.Empty;
 
                     //Check the search History for Optimization
@@ -212,12 +213,18 @@ namespace org.iringtools.referenceData
                         Query queryContainsSearch = _queries["ContainsSearch"];
                         QueryBindings queryBindings = queryContainsSearch.bindings;
 
-                        sparql = ReadSPARQL(queryContainsSearch.fileName);
-                        sparql = sparql.Replace("param1", query);
+                        Query queryTemplateContainsSearch = _queries["TemplateContainsSearch"];
+                        QueryBindings queryBindings2 = queryTemplateContainsSearch.bindings;
+
+                        sparql1 = ReadSPARQL(queryContainsSearch.fileName);
+                        sparql1 = sparql1.Replace("param1", query);
+
+                        sparql2 = ReadSPARQL(queryTemplateContainsSearch.fileName);
+                        sparql2 = sparql2.Replace("param1", query);
 
                         foreach (Repository repository in _repositories)
                         {
-                            SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
+                            SPARQLResults sparqlResults = QueryFromRepository(repository, sparql1);
 
                             List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
                             foreach (Dictionary<string, string> result in results)
@@ -239,6 +246,33 @@ namespace org.iringtools.referenceData
                                 resultEntities.Entities.Add(key, resultEntity);
                             }
                             results.Clear();
+
+                            //for Camelot repositories, search using "TemplateContainsSearch" too
+                            if (repository.repositoryType == RepositoryType.Camelot)
+                            {
+                                sparqlResults = QueryFromRepository(repository, sparql2);
+
+                                results = BindQueryResults(queryBindings, sparqlResults);
+                                foreach (Dictionary<string, string> result in results)
+                                {
+                                    Entity resultEntity = new Entity
+                                    {
+                                        uri = result["uri"],
+                                        label = result["label"],
+                                        repository = repository.name
+                                    };
+
+                                    string key = resultEntity.label;
+
+                                    if (resultEntities.Entities.ContainsKey(key))
+                                    {
+                                        key += ++counter;
+                                    }
+
+                                    resultEntities.Entities.Add(key, resultEntity);
+                                }
+                                results.Clear();
+                            }
                         }
 
                         _searchHistory.Add(query, resultEntities);                        
@@ -377,45 +411,86 @@ namespace org.iringtools.referenceData
             try
             {
                 string sparql = String.Empty;
+                string sparqlPart8 = String.Empty;
                 string relativeUri = String.Empty;
 
                 List<Specialization> specializations = new List<Specialization>();
 
-                Query queryContainsSearch = _queries["GetSpecialization"];
-                QueryBindings queryBindings = queryContainsSearch.bindings;
+                Query queryGetSpecialization = _queries["GetSpecialization"];
+                QueryBindings queryBindings = queryGetSpecialization.bindings;
 
-                sparql = ReadSPARQL(queryContainsSearch.fileName);
+                sparql = ReadSPARQL(queryGetSpecialization.fileName);
                 sparql = sparql.Replace("param1", id);
+
+                Query queryGetSubClassOf = _queries["GetSubClassOf"];
+                QueryBindings queryBindingsPart8 = queryGetSubClassOf.bindings;
+
+                sparqlPart8 = ReadSPARQL(queryGetSubClassOf.fileName);
+                sparqlPart8 = sparqlPart8.Replace("param1", id);
 
                 foreach (Repository repository in _repositories)
                 {
-                    SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
-
-                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
-
-                    foreach (Dictionary<string, string> result in results)
+                    if (repository.repositoryType == RepositoryType.Part8)
                     {
-                        Specialization specialization = new Specialization();
+                        SPARQLResults sparqlResults = QueryFromRepository(repository, sparqlPart8);
 
-                        string uri = String.Empty;
-                        string label = String.Empty;
-                        if (result.ContainsKey("uri"))
-                        {
-                            uri = result["uri"];
-                            specialization.reference = uri;
-                        }
-                        if (result.ContainsKey("label"))
-                        {
-                            label = result["label"];
-                        }
-                        else
-                        {
-                            label = GetLabel(uri);
-                        }
+                        List<Dictionary<string, string>> results = BindQueryResults(queryBindingsPart8, sparqlResults);
 
-                        specialization.label = label;
-                        Utility.SearchAndInsert(specializations, specialization, Specialization.sortAscending());
-                        //specializations.Add(specialization);
+                        foreach (Dictionary<string, string> result in results)
+                        {
+                            Specialization specialization = new Specialization();
+
+                            string uri = String.Empty;
+                            string label = String.Empty;
+                            if (result.ContainsKey("uri"))
+                            {
+                                uri = result["uri"];
+                                specialization.reference = uri;
+                            }
+                            if (result.ContainsKey("label"))
+                            {
+                                label = result["label"];
+                            }
+                            else
+                            {
+                                label = GetLabel(uri);
+                            }
+
+                            specialization.label = label;
+                            Utility.SearchAndInsert(specializations, specialization, Specialization.sortAscending());
+                            //specializations.Add(specialization); 
+                        }                    
+                    }
+                    else
+                    {
+                        SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
+
+                        List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+
+                        foreach (Dictionary<string, string> result in results)
+                        {
+                            Specialization specialization = new Specialization();
+
+                            string uri = String.Empty;
+                            string label = String.Empty;
+                            if (result.ContainsKey("uri"))
+                            {
+                                uri = result["uri"];
+                                specialization.reference = uri;
+                            }
+                            if (result.ContainsKey("label"))
+                            {
+                                label = result["label"];
+                            }
+                            else
+                            {
+                                label = GetLabel(uri);
+                            }
+
+                            specialization.label = label;
+                            Utility.SearchAndInsert(specializations, specialization, Specialization.sortAscending());
+                            //specializations.Add(specialization); 
+                        }
                     }
                 }
 
@@ -636,30 +711,56 @@ namespace org.iringtools.referenceData
             try
             {
                 string sparql = String.Empty;
+                string sparqlPart8 = String.Empty;
                 string relativeUri = String.Empty;
 
-                Query queryExactSearch = _queries["GetSubClasses"];
-                QueryBindings queryBindings = queryExactSearch.bindings;
+                Query queryGetSubClasses = _queries["GetSubClasses"];
+                QueryBindings queryBindings = queryGetSubClasses.bindings;
 
-                sparql = ReadSPARQL(queryExactSearch.fileName);
-
+                sparql = ReadSPARQL(queryGetSubClasses.fileName);
                 sparql = sparql.Replace("param1", id);
+
+                Query queryGetSubClassOfInverse = _queries["GetSubClassOfInverse"];
+                QueryBindings queryBindingsPart8 = queryGetSubClassOfInverse.bindings;
+
+                sparqlPart8 = ReadSPARQL(queryGetSubClassOfInverse.fileName);
+                sparqlPart8 = sparqlPart8.Replace("param1", id);
 
                 foreach (Repository repository in _repositories)
                 {
-                    SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
-
-                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
-
-                    foreach (Dictionary<string, string> result in results)
+                    if (repository.repositoryType == RepositoryType.Part8)
                     {
-                        Entity resultEntity = new Entity
+                        SPARQLResults sparqlResults = QueryFromRepository(repository, sparqlPart8);
+
+                        List<Dictionary<string, string>> results = BindQueryResults(queryBindingsPart8, sparqlResults);
+
+                        foreach (Dictionary<string, string> result in results)
                         {
-                            uri = result["uri"],
-                            label = result["label"],
-                        };
-                        Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
-                        //queryResult.Add(resultEntity);
+                            Entity resultEntity = new Entity
+                            {
+                                uri = result["uri"],
+                                label = result["label"],
+                            };
+                            Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
+                            //queryResult.Add(resultEntity);
+                        }                    
+                    }
+                    else
+                    {
+                        SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
+
+                        List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+
+                        foreach (Dictionary<string, string> result in results)
+                        {
+                            Entity resultEntity = new Entity
+                            {
+                                uri = result["uri"],
+                                label = result["label"],
+                            };
+                            Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
+                            //queryResult.Add(resultEntity);
+                        } 
                     }
                 }
             }
@@ -676,32 +777,59 @@ namespace org.iringtools.referenceData
             List<Entity> queryResult = new List<Entity>();
             try
             {
-                string sparql = String.Empty;
+                string sparqlGetClassTemplates = String.Empty;
+                string sparqlGetRelatedTemplates = String.Empty;
                 string relativeUri = String.Empty;
 
-                Query queryExactSearch = _queries["GetClassTemplates"];
-                QueryBindings queryBindings = queryExactSearch.bindings;
+                Query queryGetClassTemplates = _queries["GetClassTemplates"];
+                QueryBindings queryBindingsGetClassTemplates = queryGetClassTemplates.bindings;
 
-                sparql = ReadSPARQL(queryExactSearch.fileName);
+                sparqlGetClassTemplates = ReadSPARQL(queryGetClassTemplates.fileName);
+                sparqlGetClassTemplates = sparqlGetClassTemplates.Replace("param1", id);
 
-                sparql = sparql.Replace("param1", id);
+                Query queryGetRelatedTemplates = _queries["GetRelatedTemplates"];
+                QueryBindings queryBindingsGetRelatedTemplates = queryGetRelatedTemplates.bindings;
+
+                sparqlGetRelatedTemplates = ReadSPARQL(queryGetRelatedTemplates.fileName);
+                sparqlGetRelatedTemplates = sparqlGetRelatedTemplates.Replace("param1", id);
 
                 foreach (Repository repository in _repositories)
                 {
-                    SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
-
-                    List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
-
-                    foreach (Dictionary<string, string> result in results)
+                    if (repository.repositoryType == RepositoryType.Part8)
                     {
-                        Entity resultEntity = new Entity
+                        SPARQLResults sparqlResults = QueryFromRepository(repository, sparqlGetRelatedTemplates);
+
+                        List<Dictionary<string, string>> results = BindQueryResults(queryBindingsGetRelatedTemplates, sparqlResults);
+
+                        foreach (Dictionary<string, string> result in results)
                         {
-                            uri = result["uri"],
-                            label = result["label"],
-                            repository = repository.name,
-                        };
-                        Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
-                        //queryResult.Add(resultEntity);
+                            Entity resultEntity = new Entity
+                            {
+                                uri = result["uri"],
+                                label = result["label"],
+                                repository = repository.name,
+                            };
+                            Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
+                            //queryResult.Add(resultEntity);                        
+                        }
+                    }
+                    else
+                    {
+                        SPARQLResults sparqlResults = QueryFromRepository(repository, sparqlGetClassTemplates);
+
+                        List<Dictionary<string, string>> results = BindQueryResults(queryBindingsGetClassTemplates, sparqlResults);
+
+                        foreach (Dictionary<string, string> result in results)
+                        {
+                            Entity resultEntity = new Entity
+                            {
+                                uri = result["uri"],
+                                label = result["label"],
+                                repository = repository.name,
+                            };
+                            Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
+                            //queryResult.Add(resultEntity);
+                        }
                     }
                 }
             }
