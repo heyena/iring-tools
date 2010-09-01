@@ -2098,11 +2098,12 @@ namespace org.iringtools.referenceData
                 Response response = new Response();
 
                 string encryptedCredentials = repository.encryptedCredentials;
+                string uri = string.IsNullOrEmpty(repository.updateUri) ? repository.uri : repository.updateUri;
 
                 WebCredentials credentials = new WebCredentials(encryptedCredentials);
                 if (credentials.isEncrypted) credentials.Decrypt();
 
-                SPARQLClient.PostQueryAsMultipartMessage(repository.uri, sparql, credentials, _proxyCredentials);
+                SPARQLClient.PostQueryAsMultipartMessage(uri, sparql, credentials, _proxyCredentials);
 
                 return response;
             }
