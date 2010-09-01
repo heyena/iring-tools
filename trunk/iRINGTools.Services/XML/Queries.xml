@@ -460,4 +460,52 @@
       <fileName>part8containssearch.txt</fileName>
     </Query>
   </QueryItem>
+  <QueryItem>
+    <Key>GetSubClassOf</Key>
+    <Query>
+      <bindings>
+        <QueryBinding>
+          <name>uri</name>
+          <type>Uri</type>
+        </QueryBinding>
+        <QueryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </QueryBinding>
+      </bindings>
+      <fileName>GetSubClassOf.txt</fileName>
+    </Query>
+  </QueryItem>
+  <QueryItem>
+    <Key>GetSubClassOfInverse</Key>
+    <Query>
+      <bindings>
+        <QueryBinding>
+          <name>uri</name>
+          <type>Uri</type>
+        </QueryBinding>
+        <QueryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </QueryBinding>
+      </bindings>
+      <fileName>GetSubClassOfInverse.txt</fileName>
+    </Query>
+  </QueryItem>
+  <QueryItem>
+    <Key>GetRelatedTemplates</Key>
+    <Query>
+      <bindings>
+        <QueryBinding>
+          <name>uri</name>
+          <type>Uri</type>
+        </QueryBinding>
+        <QueryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </QueryBinding>
+      </bindings>
+      <fileName>GetRelatedTemplates.txt</fileName>
+    </Query>
+  </QueryItem>
 </Queries>
