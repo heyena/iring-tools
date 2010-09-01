@@ -301,7 +301,7 @@ Ext.onReady(function () {
           xtype: 'box',
           region: 'north',
           applyTo: 'header',
-          height: 90
+          height: 50
         },
         navigationPanel,
         contentPanel,
