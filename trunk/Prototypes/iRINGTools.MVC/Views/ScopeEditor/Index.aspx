@@ -23,7 +23,7 @@
 </head>
 <body>
     <div id="header" class="banner">
-      <h1><img src="../../Content/img/iRINGTools_logo.png" />&nbsp; Scope Editor</h1>
+      <h1><img src="../../Content/img/iRINGTools_logo.png" />&nbsp; Adapter Manager</h1>
     </div>
     </body>
 </html>
