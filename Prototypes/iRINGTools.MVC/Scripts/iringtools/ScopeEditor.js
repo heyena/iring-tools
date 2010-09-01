@@ -93,7 +93,7 @@ Ext.onReady(function () {
       displayInfo: true,
       displayMsg: 'Results {0} - {1} of {2}',
       emptyMsg: "No results to display"
-    }),    
+    })    
   });
 
   var defintionPanel = new iIRNGTools.ScopeEditor.ScopeMapping({
@@ -283,7 +283,7 @@ Ext.onReady(function () {
 
             contentPanel.activate(newTab);
           }
-        },
+        }
       }
     ]
   });
