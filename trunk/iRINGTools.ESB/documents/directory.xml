@@ -21,10 +21,34 @@
     </application>
   </applications>
   <applicationData>
-    <graph id="1" name="Lines" description="Line List" applicationId="1" commodity="PipingNetworkSystem"/>
-    <graph id="2" name="Instruments" description="Instrument List" applicationId="1" commodity="Instrument"/>
-    <graph id="3" name="Instruments" description="Instrument List" applicationId="3" commodity="Instrument"/>
-    <graph id="4" name="Lines" description="Line List" applicationId="2" commodity="PipingNetworkSystem"/>
+    <graph>
+      <identifier>1</identifier>
+      <name>Lines</name>
+      <description>Line List</description>
+      <applicationId>1</applicationId>
+      <commodity>PipingNetworkSystem</commodity>
+    </graph>
+    <graph>
+      <identifier>2</identifier>
+      <name>Instruments</name>
+      <description>Instrument List</description>
+      <applicationId>1</applicationId>
+      <commodity>Instrument</commodity>
+    </graph>
+    <graph>
+      <identifier>3</identifier>
+      <name>Instruments</name>
+      <description>Instrument List</description>
+      <applicationId>3</applicationId>
+      <commodity>Instrument</commodity>
+    </graph>
+    <graph>
+      <identifier>4</identifier>
+      <name>Lines</name>
+      <description>Line List</description>
+      <applicationId>2</applicationId>
+      <commodity>PipingNetworkSystem</commodity>
+    </graph>
   </applicationData>
   <dataExchanges>
     <exchange id="1" scope="12345_000" commodity="PipingNetworkSystem" name="12345_000.ABC.Lines -&gt; 54321_000.ABC.Lines" description="Synchronizing two projects Line Lists"/>
