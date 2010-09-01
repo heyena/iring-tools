@@ -508,4 +508,24 @@
       <fileName>GetRelatedTemplates.txt</fileName>
     </Query>
   </QueryItem>
+  <QueryItem>
+    <Key>TemplateContainsSearch</Key>
+    <Query>
+      <bindings>
+        <QueryBinding>
+          <name>uri</name>
+          <type>Uri</type>
+        </QueryBinding>
+        <QueryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </QueryBinding>
+        <QueryBinding>
+          <name>type</name>
+          <type>Uri</type>
+        </QueryBinding>
+      </bindings>
+      <fileName>TemplateContainsSearch.txt</fileName>
+    </Query>
+  </QueryItem>
 </Queries>
