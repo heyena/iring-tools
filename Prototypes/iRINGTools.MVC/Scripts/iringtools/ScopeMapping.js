@@ -1,8 +1,4 @@
-﻿new Ext.tree.TreePanel({
-    
-});
-
-/*!
+﻿/*!
 * Ext JS Library 3.2.1
 * Copyright(c) 2006-2010 Ext JS, Inc.
 * licensing@extjs.com

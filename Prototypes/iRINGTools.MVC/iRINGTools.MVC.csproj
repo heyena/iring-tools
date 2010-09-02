@@ -85,6 +85,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\AdapterManagerController.cs" />
     <Compile Include="Controllers\ScopesController.cs" />
     <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Models\ApplicationContainer.cs" />
@@ -98,7 +99,6 @@
     <Compile Include="Controllers\SPARQLQueryController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MappingEditorController.cs" />
-    <Compile Include="Controllers\ScopeEditorController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -131,6 +131,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\css\scopeeditor.css" />
+    <Content Include="Scripts\iringtools\AdapterManager.js" />
+    <Content Include="Scripts\iringtools\DataObjectsPanel.js" />
+    <Content Include="Scripts\iringtools\MappingPanel.js" />
+    <Content Include="Scripts\iringtools\ScopePanel.js" />
+    <Content Include="Scripts\iringtools\SearchPanel.js" />
+    <Content Include="Views\AdapterManager\Index.aspx" />
     <Content Include="Views\AppEditor\Index.aspx" />
     <Content Include="ClientBin\ApplicationEditor.xap" />
     <Content Include="ClientBin\MappingEditor.xap" />
@@ -263,12 +269,10 @@
     <Content Include="Scripts\ext-3.2.1\ux\XmlTreeLoader.js" />
     <Content Include="Scripts\iringtools\iRINGTools.js" />
     <Content Include="Scripts\iringtools\ScopeDetails.js" />
-    <Content Include="Scripts\iringtools\ScopeEditor.js" />
     <Content Include="Scripts\iringtools\ScopeMapping.js" />
     <Content Include="Scripts\Silverlight.js" />
     <Content Include="Views\SPARQLQuery\Index.aspx" />
     <Content Include="Views\MappingEditor\Index.aspx" />
-    <Content Include="Views\ScopeEditor\Index.aspx" />
     <Content Include="Views\Home\Index.aspx" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -291,9 +295,8 @@
     <Content Include="Scripts\MicrosoftMvcValidation.debug.js" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Shared\Site.Master" />
+    <Folder Include="Views\Shared\" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Content Include="Views\Web.config" />
   </ItemGroup>
