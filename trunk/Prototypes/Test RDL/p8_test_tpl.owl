@@ -29,9 +29,9 @@
      xmlns:owl="http://www.w3.org/2002/07/owl#">
 
 
-  <!-- http://tpl.rdlfacade.org/data#R1234567890 -->
+  <!-- http://tpl.rdlfacade.org/data#R86316343921 -->
 
-  <owl:Class rdf:about="#R1234567890">
+  <owl:Class rdf:about="#R86316343921">
         <rdfs:label
             >AssemblyRelation</rdfs:label>
         <rdfs:subClassOf rdf:resource="&p8;BaseTemplateStatement"/>
@@ -165,21 +165,60 @@ AssemblyRelation( x1, x2, x3, x4, x5, x6, x7 ) &lt;-&gt;
 | 7 | Maximum Cardinality of Whole | dm:INTEGER                     |</rdfs:comment>
     </owl:Class>
 
-  <!-- http://tpl.rdlfacade.org/data#R1234567890 -->
+  <!-- http://tpl.rdlfacade.org/data#R86316343921 -->
 
-    <owl:Thing rdf:about="#R1234567890">
+    <owl:Thing rdf:about="#R86316343921">
         <rdf:type rdf:resource="&p8;Template"/>
     </owl:Thing>
     
-  <!-- http://tpl.rdlfacade.org/data#R95281998584 --->
+  <!-- ROles -->
+
+  <!-- http://tpl.rdlfacade.org/data#R36573597723 -->
+
+  <owl:Thing rdf:about="#R36573597723">
+    <rdf:type rdf:resource="owl:ObjectProperty"/>
+    <rdfs:label>hasClassOfPart</rdfs:label>
+  </owl:Thing>
+
+  <!-- http://tpl.rdlfacade.org/data#R27413995417 -->
+
+  <owl:Thing rdf:about="#R27413995417">
+    <rdf:type rdf:resource="owl:ObjectProperty"/>
+    <rdfs:label>hasClassOfWhole</rdfs:label>
+  </owl:Thing>
+
+  <!-- http://tpl.rdlfacade.org/data#R95281998584 -->
+
+  <owl:Thing rdf:about="#R95281998584">
+    <rdf:type rdf:resource="owl:ObjectProperty"/>
+    <rdfs:label>hasAssemblyType</rdfs:label>
+    <rdfs:subPropertyOf rdf:resource="tpl:hasRelation"/>
+  </owl:Thing>
+
+  <!-- http://tpl.rdlfacade.org/data#R56232327044 -->
+
+  <owl:Thing rdf:about="#R56232327044">
+    <rdfs:label>minimumCardinalityPart</rdfs:label>
+  </owl:Thing>
+
+  <!-- http://tpl.rdlfacade.org/data#R62838584965 -->
+
+  <owl:Thing rdf:about="#R62838584965">
+    <rdfs:label>maximumCardinalityPart</rdfs:label>
+  </owl:Thing>
+
+  <!-- http://tpl.rdlfacade.org/data#R62998003871 -->
+
+  <owl:Thing rdf:about="#R41027766855">
+    <rdfs:label>minimumCardinalityWhole</rdfs:label>
+  </owl:Thing>
+
+  <!-- http://tpl.rdlfacade.org/data#R41027766855 -->
+
+  <owl:Thing rdf:about="#R41027766855">
+    <rdfs:label>maximumCardinalityWhole</rdfs:label>
+  </owl:Thing>
     
-    <owl:Thing rdf:about="#R95281998584">
-        <rdf:type rdf:resource="owl:ObjectProperty"/>
-        <rdfs:label>hasAssemblyType</rdfs:label>
-        <rdfs:subPropertyOf rdf:resource="tpl:hasRelation"/>
-    </owl:Thing>
-    
-    <!--Add the rest of the roles--->
 
   <!-- http://tpl.rdlfacade.org/data#TemplateDescription_of_AssemblyRelation -->
 
@@ -188,7 +227,7 @@ AssemblyRelation( x1, x2, x3, x4, x5, x6, x7 ) &lt;-&gt;
         <rdfs:label
             >TemplateDescription_of_AssemblyRelation</rdfs:label>
         <p8:valNumberOfRoles rdf:datatype="&xsd;integer">7</p8:valNumberOfRoles>
-        <p8:hasTemplate rdf:resource="#R1234567890"/>
+        <p8:hasTemplate rdf:resource="#R86316343921"/>
     </p8:TemplateDescription>
 
   <!-- http://tpl.rdlfacade.org/data#TemplateRoleDescription_of_AssemblyRelation_1 -->
@@ -199,8 +238,8 @@ AssemblyRelation( x1, x2, x3, x4, x5, x6, x7 ) &lt;-&gt;
             >TemplateRoleDescription_of_AssemblyRelation_1</rdfs:label>
         <p8:valRoleIndex rdf:datatype="&xsd;integer">1</p8:valRoleIndex>
         <p8:hasRoleFillerType rdf:resource="&dm;ClassOfIndividual"/>
-        <p8:hasTemplate rdf:resource="#R1234567890"/>
-        <p8:hasRole rdf:resource="&templates;hasClassOfPart"/>
+        <p8:hasTemplate rdf:resource="#R86316343921"/>
+        <p8:hasRole rdf:resource="&templates;R36573597723"/>
     </p8:TemplateRoleDescription>
 
 
@@ -212,8 +251,8 @@ AssemblyRelation( x1, x2, x3, x4, x5, x6, x7 ) &lt;-&gt;
             >TemplateRoleDescription_of_AssemblyRelation_2</rdfs:label>
         <p8:valRoleIndex rdf:datatype="&xsd;integer">2</p8:valRoleIndex>
         <p8:hasRoleFillerType rdf:resource="&dm;ClassOfArrangedIndividual"/>
-        <p8:hasTemplate rdf:resource="#R1234567890"/>
-        <p8:hasRole rdf:resource="&templates;hasClassOfWhole"/>
+        <p8:hasTemplate rdf:resource="#R86316343921"/>
+        <p8:hasRole rdf:resource="&templates;R27413995417"/>
     </p8:TemplateRoleDescription> 
 
 
@@ -225,8 +264,8 @@ AssemblyRelation( x1, x2, x3, x4, x5, x6, x7 ) &lt;-&gt;
             >TemplateRoleDescription_of_AssemblyRelation_3</rdfs:label>
         <p8:valRoleIndex rdf:datatype="&xsd;integer">3</p8:valRoleIndex>
         <p8:hasRoleFillerType rdf:resource="&dm;ClassOfAssemblyOfIndividual"/>
-        <p8:hasTemplate rdf:resource="#R1234567890"/>
-        <p8:hasRole rdf:resource="#hasAssemblyType"/>
+        <p8:hasTemplate rdf:resource="#R86316343921"/>
+        <p8:hasRole rdf:resource="#R95281998584"/>
     </owl:Thing> 
 
 
@@ -237,8 +276,8 @@ AssemblyRelation( x1, x2, x3, x4, x5, x6, x7 ) &lt;-&gt;
         <rdfs:label
             >TemplateRoleDescription_of_AssemblyRelation_4</rdfs:label>
         <p8:valRoleIndex rdf:datatype="&xsd;integer">4</p8:valRoleIndex>
-        <p8:hasTemplate rdf:resource="#R1234567890"/>
-        <p8:hasRole rdf:resource="#minimumCardinalityPart"/>
+        <p8:hasTemplate rdf:resource="#R86316343921"/>
+        <p8:hasRole rdf:resource="#R56232327044"/>
         <p8:hasRoleFillerType rdf:resource="&xsd;double"/>
     </p8:TemplateRoleDescription> 
 
@@ -250,8 +289,8 @@ AssemblyRelation( x1, x2, x3, x4, x5, x6, x7 ) &lt;-&gt;
         <rdfs:label
             >TemplateRoleDescription_of_AssemblyRelation_5</rdfs:label>
         <p8:valRoleIndex rdf:datatype="&xsd;integer">5</p8:valRoleIndex>
-        <p8:hasTemplate rdf:resource="#R1234567890"/>
-        <p8:hasRole rdf:resource="#maximumCardinalityPart"/>
+        <p8:hasTemplate rdf:resource="#R86316343921"/>
+        <p8:hasRole rdf:resource="#R62838584965"/>
         <p8:hasRoleFillerType rdf:resource="&xsd;double"/>
     </owl:Thing> 
 
@@ -263,8 +302,8 @@ AssemblyRelation( x1, x2, x3, x4, x5, x6, x7 ) &lt;-&gt;
         <rdfs:label
             >TemplateRoleDescription_of_AssemblyRelation_6</rdfs:label>
         <p8:valRoleIndex rdf:datatype="&xsd;integer">6</p8:valRoleIndex>
-        <p8:hasTemplate rdf:resource="#R1234567890"/>
-        <p8:hasRole rdf:resource="#minimumCardinalityWhole"/>
+        <p8:hasTemplate rdf:resource="#R86316343921"/>
+        <p8:hasRole rdf:resource="#R62998003871"/>
         <p8:hasRoleFillerType rdf:resource="&xsd;double"/>
     </owl:Thing> 
 
@@ -276,8 +315,8 @@ AssemblyRelation( x1, x2, x3, x4, x5, x6, x7 ) &lt;-&gt;
         <rdfs:label
             >TemplateRoleDescription_of_AssemblyRelation_7</rdfs:label>
         <p8:valRoleIndex rdf:datatype="&xsd;integer">7</p8:valRoleIndex>
-        <p8:hasTemplate rdf:resource="#R1234567890"/>
-        <p8:hasRole rdf:resource="#maximumCardinalityWhole"/>
+        <p8:hasTemplate rdf:resource="#R86316343921"/>
+        <p8:hasRole rdf:resource="#R41027766855"/>
         <p8:hasRoleFillerType rdf:resource="&xsd;double"/>
     </owl:Thing> 
 
