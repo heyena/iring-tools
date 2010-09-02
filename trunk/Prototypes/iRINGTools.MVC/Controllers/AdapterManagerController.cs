@@ -6,10 +6,10 @@ using System.Web.Mvc;
 
 namespace org.iringtools.client.Controllers
 {
-    public class ScopeEditorController : Controller
+    public class AdapterManagerController : Controller
     {
         //
-        // GET: /ScopeEditor/
+        // GET: /AdapterManager/
 
         public ActionResult Index()
         {
