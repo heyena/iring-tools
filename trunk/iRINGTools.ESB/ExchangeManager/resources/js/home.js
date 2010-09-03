@@ -68,11 +68,7 @@ Ext.onReady(function(){
     new Ext.BoxComponent({
       region: 'north',
       //style:'background-color:red;',
-      height: 85, // give north and south regions a height
-      autoEl: {
-        tag: 'div',
-        html:'<div style="float:left;"><img src="resources/images/iringlogo.png" style="margin:10;border:0px solid red;" /><span style="position:absolute;border:0px solid red;margin-top:25px;"><font size="6" style="font-family:Calibri, Arial;">Exchange Manager</font></span></div><div style="margin-right:30px;margin-top:30px;float:right;border:0px solid red;"><a href="#" class="headerLnk">Help</a>&nbsp;&nbsp;&nbsp;<a href="#" class="headerLnk">About</a></div>'
-      }
+      height: 85 // give north and south regions a height      
     }),
     {
       region: 'east',
@@ -148,11 +144,9 @@ Ext.onReady(function(){
           margins: '0 0 0 5',
           layout: 'fit',
           //baseCls : 'x-plain',
-          id:'tag-nodes-div',
-          layout: 'fit',
+          id:'tag-nodes-div',          
           split: true,
-          autoHeight:true,
-          width:200,
+          autoHeight:true
         },
         /*{
 region: 'south',
@@ -259,9 +253,9 @@ disabled :false
             var propGrids = Ext.getCmp('propGrid');
             // make sure the property grid exists
             if (propGrids) {
-              //alert(1)
+             // alert(1)
               // populate the property grid with store data
-              //alert(store.getAt(0));
+             // alert(store.getAt(0));
               propGrids.setSource(store.getAt(0).data);
             }
           }
