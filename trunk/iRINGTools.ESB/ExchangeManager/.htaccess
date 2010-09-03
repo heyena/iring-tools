@@ -3,6 +3,4 @@ RewriteEngine on
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 
-RewriteRule ^([^/]+)/([^/]+)/([^/]+) src/Controller.php?cnmae=$1&mname=$2&mparameter=$3 [NC]
-
-
+RewriteRule ^(.*)$ src/router.php?rt=$1 [L,QSA]
