@@ -13,8 +13,8 @@ function useModel($className,$parameter=null)
 class ExchangeReader{
 	private $modelObj;
 
-	function __construct($projectId){
-		$this->modelObj = useModel(get_class($this),$projectId);
+	function __construct(){
+		$this->modelObj = useModel(get_class($this));
 	}
 
 	function exchangeXML($projectId=null)
@@ -25,10 +25,11 @@ class ExchangeReader{
 		}
 	}
 
-	function exchnageList($projectId=null)
+	function exchnageList($params)
 	{
-		if(!empty($projectId)){
-			$this->modelObj->convertXMLtoJSON();
+            	if(is_array($params)){
+                    // it can be used in View
+			echo $this->modelObj->getDirectoryTreeJSONData();
 		}
 	}
 }

@@ -33,7 +33,7 @@ Ext.onReady(function(){
     },
     // auto create TreeLoader
     //loader: new Ext.tree.TreeLoader(),
-    dataUrl: 'check-nodes.json',
+    dataUrl: 'ExchangeReader/exchnageList/1',
     buttons: [{
       text: 'Exchange',
       handler: function(){
