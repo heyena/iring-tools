@@ -51,35 +51,26 @@
     </graph>
   </applicationData>
   <dataExchanges>
-    <exchange id="1" scope="12345_000" commodity="PipingNetworkSystem" name="12345_000.ABC.Lines -&gt; 54321_000.ABC.Lines" description="Synchronizing two projects Line Lists"/>
-    <exchange id="2" scope="54321_000" commodity="PipingNetworkSystem" name="12345_000.ABC.Lines -&gt; 54321_000.ABC.Lines" description="Synchronizing two projects Line Lists"/>
-    <exchange id="3" scope="12345_000" commodity="Instrument" name="12345_000.ABC.Instruments -&gt; 12345_000.DEF.Insturments" description="Sending Instruments from ABC to DEF"/>
+    <exchange>
+      <identifier>1</identifier>
+      <scope>12345_000</scope>
+      <commodity>PipingNetworkSystem</commodity>
+      <name>12345_000.ABC.Lines -&gt; 54321_000.ABC.Lines</name>
+      <description>Synchronizing two projects Line Lists</description>
+    </exchange>
+    <exchange>
+      <identifier>2</identifier>
+      <scope>54321_000</scope>
+      <commodity>PipingNetworkSystem</commodity>
+      <name>12345_000.ABC.Lines -&gt; 54321_000.ABC.Lines</name>
+      <description>Synchronizing two projects Line Lists</description>
+    </exchange>
+    <exchange>
+      <identifier>3</identifier>
+      <scope>12345_000</scope>
+      <commodity>Instrument</commodity>
+      <name>12345_000.ABC.Instruments -&gt; 12345_000.DEF.Insturments</name>
+      <description>Sending Instruments from ABC to DEF</description>
+    </exchange>
   </dataExchanges>
 </directory>
-
-<!--
-Directory
-  Scope:12345_000
-    Application Data
-      Application:ABC
-        Graph:Lines
-          ...
-        Graph:Instruments
-          ...
-      Application:DEF
-        Graph:Lines
-          ...
-    DataExchanges
-      DataExchange:12345_000.ABC.Lines -> 54321_000.ABC.Lines
-        ...
-      DataExchange:12345_000.ABC.Instruments -> 12345_000.DEF.Insturments
-        ...
-  Scope:54321_000
-    Application Data
-      Application:ABC
-        Graph:Lines
-          ...
-    DataExchanges
-      DataExchange:12345_000.ABC.Lines -> 54321_000.ABC.Lines
-        ...
--->
