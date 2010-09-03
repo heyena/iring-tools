@@ -62,9 +62,68 @@ Ext.onReady(function () {
     id: 'content-panel',
     region: 'center', // this is what makes this panel into a region within the containing layout    
     collapsible: false,    
-    border: true    
+    border: true
   });
 
+  var treePanel = new Ext.tree.TreePanel({
+    region: 'center',
+    collapseMode: 'mini',
+    height: 200,
+    collapsible: false,
+    collapsed: false,
+    split: true,
+    layout: 'fit',
+    border: true,
+
+    rootVisible: false,
+    lines: false,
+    singleExpand: true,
+    useArrows: true,
+
+    loader: new Ext.tree.TreeLoader({
+      dataUrl: 'Scopes/Navigation'
+    }),
+
+    root: new Ext.tree.AsyncTreeNode({}),
+
+    listeners: {
+      click: function (n) {
+        var sn = this.selModel.selNode || {}; // selNode is null on initial selection              
+        if (n.id != sn.id) {  // ignore clicks on folders and currently selected node                     
+          if (n.leaf) {
+            //detailsPanel.loadRecord(n.attributes.Application);
+          } else {
+            //detailsPanel.loadRecord(n.attributes.Scope);
+          }
+        }
+      }
+    }
+  });
+
+  var detailsPanel = new Ext.grid.PropertyGrid({
+    title: 'Details',
+    region: 'south',
+    collapseMode: 'mini',
+    height: 150,
+    collapsible: true,
+    collapsed: false,
+    split: true,
+    layout: 'fit',
+    border: true,
+    frame: false,
+
+    propertyNames: {
+      name: 'Name',
+      description: 'Description'
+    },
+
+    listeners: {
+      'beforeedit': function (e) { return false; }
+    }
+
+  });
+
+  
   var navigationPanel = new Ext.Panel({
     id: 'nav-panel',
     title: 'Registered Scopes',
