@@ -96,7 +96,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MappingEditor.Silverlight",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iRINGTools.Services", "iRINGTools.Services\iRINGTools.Services.csproj", "{F1FB051C-DFBD-4017-A248-9BE61D26EA70}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iRINGTools.Web", "iRINGTools.Web\iRINGTools.Web.csproj", "{130ACD72-B533-45A4-AF3D-1CB69C53ACEF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iRINGTools.Applications", "iRINGTools.Applications\iRINGTools.Applications.csproj", "{130ACD72-B533-45A4-AF3D-1CB69C53ACEF}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
