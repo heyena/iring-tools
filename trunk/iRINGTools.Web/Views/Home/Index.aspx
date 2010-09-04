@@ -18,13 +18,13 @@
       	 services. With iRINGTools you can browse and extend ISO 15926 reference data, map an application schema to the<br>
       	 ISO 15926 reference data, and transform an application's data into an ISO 15926 representation. iRINGTools can perform 
       	 these functions via the following services:</p><br>
-      <h2>iRINGTools Web</h2>
+      <h2>iRINGTools Applications</h2>
       <ul>
-		<li><a href="SPARQLQuery">SPARQL Query</a></li>
-		<li><a href="RefDataEditor">Reference Data Editor</a></li>        
-		<li><a href="AppEditor">Application Editor</a></li>
+		    <li><a href="SPARQLQuery">SPARQL Query</a></li>
+		    <li><a href="RefDataEditor">Reference Data Editor</a></li>        
+		    <li><a href="AppEditor">Application Editor</a></li>
         <li><a href="MappingEditor">Mapping Editor</a></li>
-	  </ul>
+	    </ul>
     </div>
   </body>
 </html>
