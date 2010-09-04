@@ -1,11 +1,10 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Index.aspx.cs" Inherits="dotnetRDFInterfaceService._Default"
   ValidateRequest="false" %>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
   <meta http-equiv="cache-control" content="no-cache" />
-  <link href="../../Content/css/interface.css" rel="stylesheet" type="text/css" />
+  <link href="../../Content/css/iring-tools.css" rel="stylesheet" type="text/css" />
   <title>iRINGTools SPAQRL Query</title>
 </head>
 <body>
