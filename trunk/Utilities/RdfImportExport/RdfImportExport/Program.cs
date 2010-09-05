@@ -94,7 +94,8 @@ namespace RdfConverter
         {
             MicrosoftSqlStoreManager msStore = new MicrosoftSqlStoreManager(dbServer, dbName, dbUser, dbPassword);
             msStore.Open(false);
-            RdfXmlTreeWriter rdfXmlWriter = new RdfXmlTreeWriter();
+            FastRdfXmlWriter rdfXmlWriter = new FastRdfXmlWriter();
+//            RdfXmlTreeWriter rdfXmlWriter = new RdfXmlTreeWriter();
             
             Graph workGraph = new Graph();
             msStore.LoadGraph(workGraph, graphUri);
