@@ -1,4 +1,4 @@
-﻿<workbook xmlns="http://schemas.datacontract.org/2004/07/Hatch.iPasXLDataLayer.API" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+<workbook xmlns="http://schemas.datacontract.org/2004/07/Hatch.iPasXLDataLayer.API" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
   <location>C:\Projects\iring-tools\trunk\Prototypes\iPasXLDataLayer\iPasXLDataLayer\iPasXL.12345_000.API.xlsx</location>
   <worksheets>
     <worksheet>
@@ -44,11 +44,6 @@
           <name>SpecificGravity</name>
           <datatype>String</datatype>
           <index>8</index>
-        </column>
-        <column>
-          <name>DifferentialPressure</name>
-          <datatype>String</datatype>
-          <index>9</index>
         </column>
       </columns>
     </worksheet>
