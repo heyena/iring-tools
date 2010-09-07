@@ -174,7 +174,7 @@ namespace Hatch.iPasXLDataLayer.API
     {
       try
       {
-        string location = _configuration.Location;
+        //string location = _configuration.Location;
 
         DataDictionary dataDictionary = new DataDictionary()
         {
@@ -261,7 +261,15 @@ namespace Hatch.iPasXLDataLayer.API
         Excel.Range usedRange = xlWorksheet.UsedRange;
         Excel.Range findRange = usedRange.Find(identifier, Type.Missing, Type.Missing, Type.Missing, Excel.XlSearchOrder.xlByRows, Excel.XlSearchDirection.xlNext, true, Type.Missing, Type.Missing);
 
-        int row = findRange.Cells[1, 1].Row;
+        int row = 0;
+        if (findRange != null)
+        {
+          row = findRange.Cells[1, 1].Row;
+        }
+        else
+        {
+          row = usedRange.Rows.Count + 1;
+        }
                 
         return row;
       }

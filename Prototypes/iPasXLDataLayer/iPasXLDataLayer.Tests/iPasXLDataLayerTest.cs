@@ -20,6 +20,7 @@ namespace Hatch.iPasXLDataLayer.API
   {    
 
     private iPasXLDataLayer _dataLayer;
+    private EntityGenerator _generator;
 
     public iPasXLDataLayerTest()
     {
@@ -37,13 +38,17 @@ namespace Hatch.iPasXLDataLayer.API
       settings["InterfaceServicePath"] = String.Empty;
       settings["TargetCredentialToken"] = String.Empty;
       settings["TrimData"] = "False";
-      settings["BinaryPath"] = String.Empty;
-      settings["CodePath"] = String.Empty;
+      settings["BinaryPath"] = @"C:\Projects\iring-tools\trunk\Libraries\iRINGLibrary\Desktop\bin\Debug\";
+      settings["CodePath"] = @"C:\Projects\iring-tools\trunk\Prototypes\iPasXLDataLayer\iPasXLDataLayer\";
 
       AdapterSettings adapterSettings = new AdapterSettings();
       adapterSettings.AppendSettings(settings);
 
+      iPasXLSettings ipasxlSettings = new iPasXLSettings();
+      ipasxlSettings.AppendSettings(settings);
+
       _dataLayer = new iPasXLDataLayer(adapterSettings);
+      _generator = new EntityGenerator(ipasxlSettings);
     }
 
     private TestContext testContextInstance;
@@ -65,6 +70,12 @@ namespace Hatch.iPasXLDataLayer.API
     }
 
     [TestMethod]
+    public void Generate()
+    {
+      _generator.Generate(@"C:\Projects\iring-tools\trunk\Prototypes\iPasXLDataLayer\iPasXLDataLayer\iPasXL.12345_000.API.xlsx", "12345_000", "API");
+    }
+
+    //[TestMethod]
     public void Create()
     {
       IList<string> identifiers = new List<string>() 
@@ -99,7 +110,7 @@ namespace Hatch.iPasXLDataLayer.API
       Assert.IsTrue(actual.Level == StatusLevel.Success);
     }
 
-    [TestMethod]
+    //[TestMethod]
     public void Read()
     {
       IList<string> identifiers = new List<string>() 
