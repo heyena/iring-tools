@@ -11,7 +11,7 @@ using System;
 using System.Collections.Generic;
 using org.iringtools.library;
 
-namespace Hatch.iPasXLDataLayer.Model_12345_000.API
+namespace Hatch.iPasXLDataLayer.API.Model_12345_000_API
 {
   public class Equipment : IDataObject
   {
@@ -23,6 +23,7 @@ namespace Hatch.iPasXLDataLayer.Model_12345_000.API
     public virtual String DesignPressure { get; set; }
     public virtual String Capacity { get; set; }
     public virtual String SpecificGravity { get; set; }
+    public virtual String DifferentialPressure { get; set; }
     
     public virtual object GetPropertyValue(string propertyName)
     {
@@ -36,6 +37,7 @@ namespace Hatch.iPasXLDataLayer.Model_12345_000.API
         case "DesignPressure": return DesignPressure;
         case "Capacity": return Capacity;
         case "SpecificGravity": return SpecificGravity;
+        case "DifferentialPressure": return DifferentialPressure;
         default: throw new Exception("Property [" + propertyName + "] does not exist.");
       }
     }
@@ -43,7 +45,8 @@ namespace Hatch.iPasXLDataLayer.Model_12345_000.API
     public virtual void SetPropertyValue(string propertyName, object value)
     {
       switch (propertyName)
-      {case "Tag":
+      {
+        case "Tag":
           if (value != null) Tag = Convert.ToString(value);
           break;
         case "Description":
@@ -66,6 +69,9 @@ namespace Hatch.iPasXLDataLayer.Model_12345_000.API
           break;
         case "SpecificGravity":
           if (value != null) SpecificGravity = Convert.ToString(value);
+          break;
+        case "DifferentialPressure":
+          if (value != null) DifferentialPressure = Convert.ToString(value);
           break;
         default:
           throw new Exception("Property [" + propertyName + "] does not exist.");

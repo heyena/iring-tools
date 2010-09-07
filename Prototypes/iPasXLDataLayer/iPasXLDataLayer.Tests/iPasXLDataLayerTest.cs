@@ -69,13 +69,13 @@ namespace Hatch.iPasXLDataLayer.API
       }
     }
 
-    [TestMethod]
+    //[TestMethod]
     public void Generate()
     {
       _generator.Generate(@"C:\Projects\iring-tools\trunk\Prototypes\iPasXLDataLayer\iPasXLDataLayer\iPasXL.12345_000.API.xlsx", "12345_000", "API");
     }
 
-    //[TestMethod]
+    [TestMethod]
     public void Create()
     {
       IList<string> identifiers = new List<string>() 
@@ -110,7 +110,7 @@ namespace Hatch.iPasXLDataLayer.API
       Assert.IsTrue(actual.Level == StatusLevel.Success);
     }
 
-    //[TestMethod]
+    [TestMethod]
     public void Read()
     {
       IList<string> identifiers = new List<string>() 
