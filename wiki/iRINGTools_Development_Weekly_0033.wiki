@@ -44,7 +44,6 @@
   * Still need to complete XmlProjectionEngine & DTOProjectionEngines.
   
 ==Action Items==
- * Rob to update Thursday meeting notes with Robertsons status.
  * Robertson
   * Will externalize the SPARQLs from Camelot and Part 8 methods.
   * Will test all methods using RDF provided by Mohd.
