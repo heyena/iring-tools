@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
+using Ciloci.Flee;
+using log4net;
 using Microsoft.Office.Core;
 using Excel = Microsoft.Office.Interop.Excel;
-using log4net;
 using Ninject;
+using org.iringtools.adapter;
 using org.iringtools.library;
 using org.iringtools.utility;
-using org.iringtools.adapter;
 
 namespace Hatch.iPasXLDataLayer.API
 {
@@ -92,17 +94,213 @@ namespace Hatch.iPasXLDataLayer.API
 
     public Response Delete(string objectType, DataFilter filter)
     {
-      throw new NotImplementedException();
+      try
+      {
+        IList<string> identifiers = new List<string>();
+        IList<IDataObject> dataObjects = Get(objectType, filter, 0, 0);
+
+        foreach (IDataObject dataObject in dataObjects)
+        {
+          identifiers.Add((string)dataObject.GetPropertyValue("Tag"));
+        }
+
+        return Delete(objectType, identifiers);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in Delete: " + ex);
+        throw new Exception("Error while deleting data objects of type [" + objectType + "].", ex);
+      }
     }
 
     public Response Delete(string objectType, IList<string> identifiers)
     {
-      throw new NotImplementedException();
+      Response response = new Response();
+
+      if (identifiers == null || identifiers.Count == 0)
+      {
+        Status status = new Status();
+        status.Level = StatusLevel.Warning;
+        status.Messages.Add("Nothing to delete.");
+        response.Append(status);
+        return response;
+      }
+
+      Excel.Application xlApplication = null;
+      Excel.Workbook xlWorkBook = null;
+
+      try
+      {
+
+        xlApplication = new Excel.Application();
+        xlWorkBook = xlApplication.Workbooks.Open(_configuration.Location, 0, false, 5, "", "", true, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
+
+        Worksheet cfWorksheet = GetConfigWorkSheet(objectType);
+        Excel.Worksheet xlWorksheet = GetWorkSheet(objectType, xlWorkBook, cfWorksheet);
+
+        IList<IDataObject> dataObjects = new List<IDataObject>();
+        Type type = Type.GetType("Hatch.iPasXLDataLayer.API.Model_" + _settings["ProjectName"] + "_" + _settings["ApplicationName"] + "." + objectType);
+
+        if (identifiers != null && identifiers.Count > 0)
+        {
+          foreach (string identifier in identifiers)
+          {
+            Status status = new Status();
+            status.Identifier = identifier;
+            
+            int row = GetRowIndex(xlWorksheet, cfWorksheet, identifier);
+
+            try
+            {
+              xlWorksheet.Rows[row].Delete(Excel.XlDeleteShiftDirection.xlShiftUp);
+              status.Messages.Add("Data object [" + identifier + "] deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+              _logger.Error("Error in Delete: " + ex);
+              status.Level = StatusLevel.Error;
+              status.Messages.Add("Error while deleting data object [" + identifier + "]." + ex);
+            }
+
+            response.Append(status);            
+          }
+        }
+
+        System.Runtime.InteropServices.Marshal.ReleaseComObject(xlWorksheet);
+        xlWorksheet = null;        
+
+        return response;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in DeletList: " + ex);
+        throw new Exception("Error while delete a list of data objects of type [" + objectType + "].", ex);
+      }
+      finally
+      {
+        if (xlWorkBook != null)
+        {
+          xlWorkBook.Close(true, Type.Missing, Type.Missing);
+          System.Runtime.InteropServices.Marshal.ReleaseComObject(xlWorkBook);
+          xlWorkBook = null;
+        }
+
+        if (xlApplication != null)
+        {
+          xlApplication.Quit();
+          System.Runtime.InteropServices.Marshal.ReleaseComObject(xlApplication);
+          xlApplication = null;
+        }
+
+        GC.Collect();
+      }
     }
 
     public IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int pageNumber)
     {
-      throw new NotImplementedException();
+      Excel.Application xlApplication = null;
+      Excel.Workbook xlWorkBook = null;
+
+      try
+      {
+        xlApplication = new Excel.Application();
+        xlWorkBook = xlApplication.Workbooks.Open(_configuration.Location, 0, false, 5, "", "", true, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
+
+        Worksheet cfWorksheet = GetConfigWorkSheet(objectType);
+        Excel.Worksheet xlWorksheet = GetWorkSheet(objectType, xlWorkBook, cfWorksheet);
+
+        List<IDataObject> dataObjects = new List<IDataObject>();
+        Type type = Type.GetType("Hatch.iPasXLDataLayer.API.Model_" + _settings["ProjectName"] + "_" + _settings["ApplicationName"] + "." + objectType);
+
+        Excel.Range usedRange = xlWorksheet.UsedRange;
+        Column keyColumn = cfWorksheet.Columns.FirstOrDefault<Column>(o=>o.Name == cfWorksheet.Identifier);
+
+        for(int row = 1; row <= usedRange.Rows.Count; row++)
+        {
+          IDataObject dataObject = (IDataObject)Activator.CreateInstance(type);
+          
+          foreach (Column column in cfWorksheet.Columns)
+          {
+            dataObject.SetPropertyValue(column.Name, xlWorksheet.Cells[row, column.Index].Value2);
+          }
+
+          dataObjects.Add(dataObject);
+        }        
+
+        System.Runtime.InteropServices.Marshal.ReleaseComObject(xlWorksheet);
+        xlWorksheet = null;         
+
+        // Apply filter
+        if (filter != null && filter.Expressions.Count > 0)
+        {
+          string variable = "dataObject";
+          string linqExpression = string.Empty;
+          switch (objectType)
+          { 
+            default:
+              linqExpression = filter.ToLinqExpression<IDataObject>(variable);
+              break;
+          }
+
+          if (linqExpression != String.Empty)
+          {
+            ExpressionContext context = new ExpressionContext();
+            context.Variables.DefineVariable(variable, type);
+
+            for (int i = 0; i < dataObjects.Count; i++)
+            {
+              context.Variables[variable] = dataObjects[i];
+              var expression = context.CompileGeneric<bool>(linqExpression);
+              if (!expression.Evaluate())
+              {
+                dataObjects.RemoveAt(i--);
+              }
+            }
+          }
+        }
+
+        // Apply paging
+        if (pageSize > 0 && pageNumber > 0)
+        {
+          if (dataObjects.Count > (pageSize * (pageNumber - 1) + pageSize))
+          {
+            dataObjects = dataObjects.GetRange(pageSize * (pageNumber - 1), pageSize);
+          }
+          else if (pageSize * (pageNumber - 1) > dataObjects.Count)
+          {
+            dataObjects = dataObjects.GetRange(pageSize * (pageNumber - 1), dataObjects.Count);
+          }
+          else
+          {
+            return null;
+          }
+        }
+
+        return dataObjects;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in GetList: " + ex);
+        throw new Exception("Error while getting a list of data objects of type [" + objectType + "].", ex);
+      }
+      finally
+      {
+        if (xlWorkBook != null)
+        {
+          xlWorkBook.Close(true, Type.Missing, Type.Missing);
+          System.Runtime.InteropServices.Marshal.ReleaseComObject(xlWorkBook);
+          xlWorkBook = null;
+        }
+
+        if (xlApplication != null)
+        {
+          xlApplication.Quit();
+          System.Runtime.InteropServices.Marshal.ReleaseComObject(xlApplication);
+          xlApplication = null;
+        }
+
+        GC.Collect();
+      }
     }
 
     public IList<IDataObject> Get(string objectType, IList<string> identifiers)
@@ -115,7 +313,7 @@ namespace Hatch.iPasXLDataLayer.API
         xlApplication = new Excel.Application();
         xlWorkBook = xlApplication.Workbooks.Open(_configuration.Location, 0, false, 5, "", "", true, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
 
-        Worksheet cfWorksheet = _configuration.Worksheets.FirstOrDefault<Worksheet>(o => o.Name == objectType);
+        Worksheet cfWorksheet = GetConfigWorkSheet(objectType);
         Excel.Worksheet xlWorksheet = GetWorkSheet(objectType, xlWorkBook, cfWorksheet);
 
         IList<IDataObject> dataObjects = new List<IDataObject>();
@@ -129,7 +327,7 @@ namespace Hatch.iPasXLDataLayer.API
 
             dataObject.SetPropertyValue(cfWorksheet.Identifier, identifier);
 
-            int row = GetRowIndex(xlWorksheet, cfWorksheet, dataObject);
+            int row = GetRowIndex(xlWorksheet, cfWorksheet, identifier);
 
             foreach (Column column in cfWorksheet.Columns)
             {
@@ -216,7 +414,25 @@ namespace Hatch.iPasXLDataLayer.API
 
     public IList<string> GetIdentifiers(string objectType, DataFilter filter)
     {
-      throw new NotImplementedException();
+      try
+      {
+        Worksheet cfWorkSheet = GetConfigWorkSheet(objectType);
+
+        List<string> identifiers = new List<string>();
+        IList<IDataObject> dataObjects = Get(objectType, filter, 0, 0);     
+
+        foreach (IDataObject dataObject in dataObjects)
+        {
+          identifiers.Add((string)dataObject.GetPropertyValue(cfWorkSheet.Identifier));
+        }
+
+        return identifiers;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in GetIdentifiers: " + ex);
+        throw new Exception("Error while getting a list of identifiers of type [" + objectType + "].", ex);
+      }
     }
 
     public IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType)
@@ -251,13 +467,10 @@ namespace Hatch.iPasXLDataLayer.API
       }
     }
 
-    private int GetRowIndex(Excel.Worksheet xlWorksheet, Worksheet cfWorksheet, IDataObject dataObject)
+    private int GetRowIndex(Excel.Worksheet xlWorksheet, Worksheet cfWorksheet, string identifier)
     {
       try
       {
-        Column key = cfWorksheet.Columns.FirstOrDefault<Column>(o => o.Name == cfWorksheet.Identifier);
-        string identifier = dataObject.GetPropertyValue(key.Name).ToString();
-
         Excel.Range usedRange = xlWorksheet.UsedRange;
         Excel.Range findRange = usedRange.Find(identifier, Type.Missing, Type.Missing, Type.Missing, Excel.XlSearchOrder.xlByRows, Excel.XlSearchDirection.xlNext, true, Type.Missing, Type.Missing);
 
@@ -270,13 +483,18 @@ namespace Hatch.iPasXLDataLayer.API
         {
           row = usedRange.Rows.Count + 1;
         }
-                
+
         return row;
       }
       catch (Exception e)
       {
         throw new Exception("Error getting excel row index for object [" + cfWorksheet.Name + "].", e);
       }
+    }
+
+    private Worksheet GetConfigWorkSheet(string objectType)
+    {
+      return _configuration.Worksheets.FirstOrDefault<Worksheet>(o => o.Name == objectType);
     }
 
     public Response Post(IList<IDataObject> dataObjects)
@@ -302,11 +520,13 @@ namespace Hatch.iPasXLDataLayer.API
         foreach(IDataObject dataObject in dataObjects)
         {
           string objectType = dataObject.GetType().Name;
-          Worksheet cfWorksheet = _configuration.Worksheets.FirstOrDefault<Worksheet>(o => o.Name == objectType);
+          Worksheet cfWorksheet = GetConfigWorkSheet(objectType);
 
           Excel.Worksheet xlWorksheet = GetWorkSheet(objectType, xlWorkBook, cfWorksheet);
+                    
+          string identifier = dataObject.GetPropertyValue(cfWorksheet.Identifier).ToString();
 
-          int row = GetRowIndex(xlWorksheet, cfWorksheet, dataObject);
+          int row = GetRowIndex(xlWorksheet, cfWorksheet, identifier);
 
           foreach (Column column in cfWorksheet.Columns)
           {
