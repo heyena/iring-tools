@@ -140,6 +140,25 @@ namespace Hatch.iPasXLDataLayer.API
       }
     }
 
+    [TestMethod]
+    public void Delete()
+    {
+      IList<string> identifiers = new List<string>() 
+      {         
+        "Equip-002",         
+        "Equip-004" 
+      };
+
+      Response response =_dataLayer.Delete("Equipment", identifiers);
+
+      if (!(response.StatusList.Count < 2))
+      {
+        throw new AssertFailedException("No Rows Delete.");
+      }
+
+      Assert.IsTrue(response.StatusList.Count == 2);
+    }
+
     //[TestMethod]
     public void GetDictionary()
     {
