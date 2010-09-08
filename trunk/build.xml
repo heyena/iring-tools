@@ -14,7 +14,7 @@
     <ZipCmd>"$(MSBuildProjectDirectory)\ExternalBinaries\7-Zip\7z.exe"</ZipCmd>
 
     <ServicesDir>$(MSBuildProjectDirectory)\iRINGTools.Services</ServicesDir>
-    <WebDir>$(MSBuildProjectDirectory)\iRINGTools.Web</WebDir>
+    <ApplicationsDir>$(MSBuildProjectDirectory)\iRINGTools.Applications</ApplicationsDir>
     <LandingPageDir>$(MSBuildProjectDirectory)\LandingPage</LandingPageDir>
     <UnitTestsDir>$(MSBuildProjectDirectory)\UnitTests</UnitTestsDir>
     <UtilitiesDir>$(MSBuildProjectDirectory)\Utilities</UtilitiesDir>
@@ -26,7 +26,7 @@
     
     <DeploymentDir>$(MSBuildProjectDirectory)\Deployment</DeploymentDir>
     <ServicesDeploymentDir>$(DeploymentDir)\Services</ServicesDeploymentDir>
-    <WebDeploymentDir>$(DeploymentDir)\Web</WebDeploymentDir>
+    <AppsDeploymentDir>$(DeploymentDir)\Applications</AppsDeploymentDir>
     <UtilitiesDeploymentDir>$(DeploymentDir)\Utilities</UtilitiesDeploymentDir>
     <LandingPageDeploymentDir>$(DeploymentDir)\LandingPage</LandingPageDeploymentDir>
     <SDKDeploymentDir>$(DeploymentDir)\SDK</SDKDeploymentDir>
@@ -90,20 +90,20 @@
                $(LandingPageDir)\*\.svn\**;">
     </LandingPageDeployment>
 
-    <WebDeployment
-      Include="$(WebDir)\**"
-      Exclude="$(WebDir)\bin\*.pdb;
-               $(WebDir)\bin\*.xml;
-               $(WebDir)\obj\**;
-               $(WebDir)\Properties\**;
-               $(WebDir)\*.cs;
-               $(WebDir)\*.csproj;
-               $(WebDir)\*.user;
-               $(WebDir)\*.vspscc;
-               $(WebDir)\web.config;
-               $(WebDir)\.svn\**;
-               $(WebDir)\*\.svn\**">
-    </WebDeployment>
+    <AppsDeployment
+      Include="$(ApplicationsDir)\**"
+      Exclude="$(ApplicationsDir)\bin\*.pdb;
+               $(ApplicationsDir)\bin\*.xml;
+               $(ApplicationsDir)\obj\**;
+               $(ApplicationsDir)\Properties\**;
+               $(ApplicationsDir)\*.cs;
+               $(ApplicationsDir)\*.csproj;
+               $(ApplicationsDir)\*.user;
+               $(ApplicationsDir)\*.vspscc;
+               $(ApplicationsDir)\web.config;
+               $(ApplicationsDir)\.svn\**;
+               $(ApplicationsDir)\*\.svn\**">
+    </AppsDeployment>
 
     <UtilitiesDeployment
       Include="Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll;
@@ -161,7 +161,7 @@
   <ItemGroup>
     <DeploymentPackage Include="*" Exclude="">
       <Options>a -tzip -r</Options>
-      <FileSet>$(ServicesDeploymentDir) $(WebDeploymentDir) $(LandingPageDeploymentDir) $(UtilitiesDeploymentDir)</FileSet>
+      <FileSet>$(ServicesDeploymentDir) $(AppsDeploymentDir) $(LandingPageDeploymentDir) $(UtilitiesDeploymentDir)</FileSet>
       <ZipFile>$(DeploymentDir)\iRINGTools-$(Major).$(Minor).$(Build).zip</ZipFile>
     </DeploymentPackage>
     <DeploymentPackage Include="*" Exclude="">
@@ -204,8 +204,8 @@
     <Exec Condition="!Exists('$(ServicesDir)\Web.config')" 
           Command="Copy $(ServicesDir)\Web_Default.config $(ServicesDir)\Web.config" />
     
-    <Exec Condition="!Exists('$(WebDir)\Web.config')"
-          Command="Copy $(WebDir)\Web_Default.config $(WebDir)\Web.config" />
+    <Exec Condition="!Exists('$(ApplicationsDir)\Web.config')"
+          Command="Copy $(ApplicationsDir)\Web_Default.config $(ApplicationsDir)\Web.config" />
     
     <Exec Condition="!Exists('Utilities\QMXFGenerator\QMXFGenerator\App.config')"
           Command="Copy $(QMXFGeneratorDir)\QMXFGenerator_Default.config $(QMXFGeneratorDir)\App.config" />
@@ -234,9 +234,9 @@
   <Target Name="CreateDeployment">
     <Message Text="Cleaning up old deployment folders..." />
     <Exec Command="RmDir /S /Q $(DeploymentDir)" />
-    <MakeDir Directories="$(ServicesDeploymentDir); $(WebDeploymentDir); $(LandingPageDeploymentDir); $(UtilitiesDeploymentDir);"/>
+    <MakeDir Directories="$(ServicesDeploymentDir); $(AppsDeploymentDir); $(LandingPageDeploymentDir); $(UtilitiesDeploymentDir);"/>
     <!--<Exec Command="Copy .\ClientAccessPolicy.xml $(ServicesDeploymentDir)\ClientAccessPolicy.xml" />
-    <Exec Command="Copy .\ClientAccessPolicy.xml $(WebDeploymentDir)\ClientAccessPolicy.xml" />-->
+    <Exec Command="Copy .\ClientAccessPolicy.xml $(AppsDeploymentDir)\ClientAccessPolicy.xml" />-->
 
     <Message Text="Creating Services deployment ..." />
     <Copy SourceFiles="@(ServicesDeployment)"
@@ -246,10 +246,10 @@
     <Exec Command="Mkdir $(ServicesDeploymentDir)\Logs" />
     <Exec Command="Mkdir $(ServicesDeploymentDir)\App_Code"/>
 
-    <Message Text="Creating Web deployment ..." />
-    <Copy SourceFiles="@(WebDeployment)"
-          DestinationFiles="@(WebDeployment->'$(WebDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Exec Command="Move /Y $(WebDeploymentDir)\Web_Default.config $(WebDeploymentDir)\Web.config" />
+    <Message Text="Creating Applications deployment ..." />
+    <Copy SourceFiles="@(AppsDeployment)"
+          DestinationFiles="@(AppsDeployment->'$(AppsDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(AppsDeploymentDir)\Web_Default.config $(AppsDeploymentDir)\Web.config" />
 
     <Message Text="Creating Utilities deployment ..." />
     <Copy SourceFiles="@(UtilitiesDeployment)"
