@@ -51,6 +51,19 @@ namespace org.iringtools.adapter
     [DataMember(Order = 1, EmitDefaultValue = false)]
     public TransferType transferType { get; set; }
 
+    public string Identifier
+    {
+      get
+      {
+        if (classObjects.Count > 0)
+        {
+          return classObjects[0].identifier;
+        }
+
+        return String.Empty;
+      }
+    }
+
     public ClassObject GetClassObject(string classId)
     {
       foreach (ClassObject classObject in classObjects)
