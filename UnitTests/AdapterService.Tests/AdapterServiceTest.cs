@@ -172,6 +172,22 @@ namespace AdapterService.Tests
     //}
 
     [TestMethod()]
+    public void SparqlPull()
+    {
+      AdapterProxy target = new AdapterProxy();
+
+      Request request = new Request
+      {
+        {"targetEndpointUri", "http://localhost:54321/InterfaceService/query"},
+        {"targetGraphBaseUri", "http://localhost:54321/AdapterService/12345_000/XYZ/LINES"},
+      };
+
+      Response actual = target.Pull("12345_000", "XYZ", "LINES", request);
+
+      Assert.IsFalse(actual.Level == StatusLevel.Error);
+    }
+
+    [TestMethod()]
     public void UpdateMapping_ABC()
     {
       string mapping = Utility.ReadString(@"C:\iring-tools\UnitTests\AdapterService.Tests\XML\Mapping.12345_000.ABC.xml");

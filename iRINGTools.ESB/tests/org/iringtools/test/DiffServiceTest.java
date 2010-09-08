@@ -18,7 +18,7 @@ public class DiffServiceTest
       BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
       System.out.println("Getting exchanges ...");
-      String directoryUrl = "http://localhost:8080/iringtools/directoryservice/exchanges";
+      String directoryUrl = "http://localhost:8080/ESBServices/directoryservice/exchanges";
       Directory directory = NetUtil.get(Directory.class, directoryUrl);
       System.out.println(JaxbUtil.toXml(directory));
       
@@ -26,7 +26,7 @@ public class DiffServiceTest
       in.readLine();
       
       System.out.println("Getting dxi of exchange [1]...");
-      String dxiUrl = "http://localhost:8080/iringtools/diffservice/dxi/1";
+      String dxiUrl = "http://localhost:8080/ESBServices/diffservice/dxi/1";
       DataTransferIndices dxi = NetUtil.get(DataTransferIndices.class, dxiUrl);
       System.out.println(JaxbUtil.toXml(dxi));
       
@@ -34,7 +34,7 @@ public class DiffServiceTest
       in.readLine();    
       
       System.out.println("Getting dxo of exchange [1]...");
-      String dxoUrl = "http://localhost:8080/iringtools/diffservice/dxo/1";
+      String dxoUrl = "http://localhost:8080/ESBServices/diffservice/dxo/1";
       DataTransferObjects dxo = NetUtil.post(DataTransferObjects.class, dxoUrl, dxi);  
       System.out.println(JaxbUtil.toXml(dxo));
       

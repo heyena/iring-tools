@@ -159,6 +159,7 @@ namespace org.iringtools.exchange
           throw new Exception("Target graph uri is required");
 
         string targetGraphBaseUri = request["targetGraphBaseUri"];
+        _settings.Add("TargetGraphBaseUri", targetGraphBaseUri);
 
         SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(targetEndpointUri), targetGraphBaseUri);
 
@@ -197,7 +198,6 @@ namespace org.iringtools.exchange
 
         System.Text.StringBuilder sb = new System.Text.StringBuilder();
         TextWriter textWriter = new StringWriter(sb);
-        //VDS.RDF.Writing.RdfXmlTreeWriter rdfWriter = new VDS.RDF.Writing.RdfXmlTreeWriter();
         VDS.RDF.Writing.FastRdfXmlWriter rdfWriter = new VDS.RDF.Writing.FastRdfXmlWriter();
         rdfWriter.Save(graph, textWriter);
         XElement rdf = XElement.Parse(sb.ToString());

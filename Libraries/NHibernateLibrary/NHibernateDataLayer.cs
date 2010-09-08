@@ -124,7 +124,6 @@ namespace org.iringtools.adapter.datalayer
     {
       try
       {
-
         StringBuilder queryString = new StringBuilder();
         queryString.Append("from " + objectType);
 
@@ -194,6 +193,7 @@ namespace org.iringtools.adapter.datalayer
     {
       Response response = new Response();
 
+
       try
       {
         if (dataObjects != null && dataObjects.Count > 0)
@@ -212,7 +212,6 @@ namespace org.iringtools.adapter.datalayer
               {
                 session.SaveOrUpdate(dataObject);
                 session.Flush();
-
                 status.Messages.Add(string.Format("Record [{0}] have been saved successfully.", identifier));
               }
               catch (Exception ex)
@@ -275,6 +274,7 @@ namespace org.iringtools.adapter.datalayer
       Response response = new Response();
       response.StatusList = new List<Status>();
       Status status = new Status();
+
       try
       {
         status.Identifier = objectType;
@@ -312,18 +312,16 @@ namespace org.iringtools.adapter.datalayer
       return Utility.Read<DataDictionary>(_dataDictionaryPath);
     }
 
-    public IList<IDataObject> GetRelatedObjects(IDataObject  sourceDataObject, string relatedObjectType)
+    public IList<IDataObject> GetRelatedObjects(IDataObject sourceDataObject, string relatedObjectType)
     {
-      DataDictionary dictionary = GetDictionary();
       IList<IDataObject> relatedObjects;
-      DataObject dataObject = dictionary.dataObjects.First(c => c.objectName == sourceDataObject.GetType().Name);      
-      DataRelationship dataRelationship = dataObject.dataRelationships.First(c=>c.relationshipName == relatedObjectType);
-      DataObject relatedObject = dictionary.dataObjects.First(c => c.objectName == dataRelationship.relatedObjectName);
-      
+      DataDictionary dictionary = GetDictionary();
+      DataObject dataObject = dictionary.dataObjects.First(c => c.objectName == sourceDataObject.GetType().Name);
+      DataRelationship dataRelationship = dataObject.dataRelationships.First(c => c.relationshipName == relatedObjectType);
 
       StringBuilder sql = new StringBuilder();
       sql.Append("from " + dataRelationship.relatedObjectName + " where ");
-      foreach(PropertyMap map in dataRelationship.propertyMaps)
+      foreach (PropertyMap map in dataRelationship.propertyMaps)
       {
         sql.Append(map.relatedPropertyName + " = '" + sourceDataObject.GetPropertyValue(map.dataPropertyName) + "' and ");
       }
@@ -333,11 +331,9 @@ namespace org.iringtools.adapter.datalayer
       {
         IQuery query = session.CreateQuery(sql.ToString());
         relatedObjects = query.List<IDataObject>();
-
       }
 
       return relatedObjects;
     }
-
   }
 }

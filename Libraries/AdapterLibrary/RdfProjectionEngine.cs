@@ -40,7 +40,7 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    public void Append(String value) 
+    public void Append(String value)
     {
       builder.Append(value);
     }
@@ -49,7 +49,7 @@ namespace org.iringtools.adapter.projection
     {
       RdfElement clone = new RdfElement();
       clone.Element = new XElement(Element);
-      clone.Values = Values;      
+      clone.Values = Values;
       return clone;
     }
   }
@@ -88,27 +88,31 @@ namespace org.iringtools.adapter.projection
       PREFIX rdf: <{0}>
       PREFIX rdl: <{1}> 
       PREFIX tpl: <{2}> 
+      PREFIX i:   <{{0}}>
       SELECT ?literals 
       WHERE {{{{
-	      ?instance rdf:type {{0}} . 
-	      ?bnode {{1}} ?instance . 
-	      ?bnode rdf:type {{2}} . 
-	      ?bnode {{3}} {{4}} . 
-	      ?bnode {{5}} ?literals 
+	      ?bnode {{1}} i:{{2}} . 
+	      ?bnode rdf:type {{3}} . 
+	      ?bnode {{4}} {{5}} . 
+	      ?bnode {{6}} ?literals 
       }}}}", RDF_NS.NamespaceName, RDL_NS.NamespaceName, TPL_NS.NamespaceName);
 
     private static readonly ILog _logger = LogManager.GetLogger(typeof(RdfProjectionEngine));
 
+    private AdapterSettings _settings;
     private IDataLayer _dataLayer = null;
     private Mapping _mapping = null;
     private GraphMap _graphMap = null;
     private IList<IDataObject> _dataObjects = null;
+    private List<string> _relatedObjectPaths = null;
+    private Dictionary<string, IList<IDataObject>>[] _relatedObjects = null;
     private Dictionary<string, List<string>> _classIdentifiers = null; // dictionary of class ids and list of identifiers
     private List<Dictionary<string, string>> _xPathValuePairs = null;  // dictionary of property xpath and value pairs
     private Dictionary<string, List<string>> _hierachicalDTOClasses = null;  // dictionary of class rdlUri and identifiers
     private Dictionary<string, List<string>> _classInstances = null;  // dictionary of class ids and list instances/individuals
     private TripleStore _memoryStore = null;
     private XNamespace _graphNs = String.Empty;
+    private string _graphBaseUri = String.Empty;
 
     [Inject]
     public RdfProjectionEngine(AdapterSettings settings, IDataLayer dataLayer, Mapping mapping)
@@ -126,6 +130,8 @@ namespace org.iringtools.adapter.projection
         settings["ProjectName"],
         settings["ApplicationName"]
       );
+
+      _settings = settings;
     }
 
     public XElement GetXml(string graphName, ref IList<IDataObject> dataObjects)
@@ -145,6 +151,12 @@ namespace org.iringtools.adapter.projection
 
     public IList<IDataObject> GetDataObjects(string graphName, ref XElement xml)
     {
+      _graphBaseUri = _settings["TargetGraphBaseUri"];
+      if (!_graphBaseUri.EndsWith("/"))
+      {
+        _graphBaseUri += "/";
+      }
+
       _graphMap = _mapping.FindGraphMap(graphName);
 
       XmlDocument xdoc = new XmlDocument();
@@ -162,27 +174,76 @@ namespace org.iringtools.adapter.projection
       graph.Dispose();
 
       // fill data objects and return
-      PopulateDataObjects(GetClassInstanceCount());
+      SetClassInstances();
+
+      var rootClassTemplatesMap = _classInstances.First();
+      string rootClassId = rootClassTemplatesMap.Key;
+      List<string> rootClassInstances = rootClassTemplatesMap.Value;
+      int classInstanceCount = rootClassInstances.Count;
+      _dataObjects = _dataLayer.Create(_graphMap.dataObjectMap, new string[classInstanceCount]);
+      _relatedObjects = new Dictionary<string, IList<IDataObject>>[classInstanceCount];
+      _relatedObjectPaths = new List<string>();
+
+      for (int i = 0; i < rootClassInstances.Count; i++)
+      {
+        _relatedObjects[i] = new Dictionary<string, IList<IDataObject>>();
+        SetDataObjects(rootClassId, rootClassInstances[i], i);
+      }
+
+      SetIntermediateRelatedObjects();
+
+      // add related data objects to top level data objects
+      foreach (Dictionary<string, IList<IDataObject>> relatedObjectDictionary in _relatedObjects)
+      {
+        foreach (var pair in relatedObjectDictionary)
+        {
+          foreach (IDataObject relatedObject in pair.Value)
+          {
+            _dataObjects.Add(relatedObject);
+          }
+        }
+      }
+
       return _dataObjects;
     }
 
     #region helper methods
-    private int GetClassInstanceCount()
+    private void SetClassInstances()
     {
-      ClassMap classMap = _graphMap.classTemplateListMaps.First().Key;
-      string query = String.Format(CLASS_INSTANCE_QUERY_TEMPLATE, classMap.classId);
-      object results = _memoryStore.ExecuteQuery(query);
+      _classInstances.Clear();
 
-      if (results is SparqlResultSet)
+      foreach (var pair in _graphMap.classTemplateListMaps)
       {
-        SparqlResultSet resultSet = (SparqlResultSet)results;
-        return resultSet.Count;
-      }
+        string classId = pair.Key.classId;
+        string query = String.Format(CLASS_INSTANCE_QUERY_TEMPLATE, classId);
+        object results = _memoryStore.ExecuteQuery(query);
 
-      throw new Exception("Error querying instances of class [" + classMap.name + "].");
+        if (results != null)
+        {
+          SparqlResultSet resultSet = (SparqlResultSet)results;
+
+          foreach (SparqlResult result in resultSet)
+          {
+            string qualifiedClassInstance = result.ToString();
+            string classInstance = qualifiedClassInstance.Substring(qualifiedClassInstance.LastIndexOf("/") + 1);
+
+            if (!String.IsNullOrEmpty(classInstance))
+            {
+              if (!_classInstances.ContainsKey(classId))
+              {
+                _classInstances[classId] = new List<string> { classInstance };
+              }
+              else if (!_classInstances[classId].Contains(classInstance))
+              {
+                _classInstances[classId].Add(classInstance);
+              }
+            }
+          }
+        }
+      }
     }
 
-    private void PopulateClassIdentifiers()
+    private void SetClassIdentifiers()
     {
       _classIdentifiers.Clear();
 
@@ -246,7 +307,7 @@ namespace org.iringtools.adapter.projection
         new XAttribute(XNamespace.Xmlns + "xsd", XSD_NS),
         new XAttribute(XNamespace.Xmlns + "tpl", TPL_NS));
 
-      PopulateClassIdentifiers();
+      SetClassIdentifiers();
       _classInstances.Clear();
 
       foreach (var pair in _graphMap.classTemplateListMaps)
@@ -288,40 +349,6 @@ namespace org.iringtools.adapter.projection
         new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, RDL_NS.NamespaceName + classId)));
     }
 
-    private List<IDataObject> GetRelatedObjects(string propertyPath, IDataObject dataObject)
-    {
-      //propertyPath = "Instrument.LineItems.Tag";
-      List<IDataObject> parentObjects = new List<IDataObject>();
-      List<IDataObject> relatedObjects = null;
-
-      string[] objectPath = propertyPath.Split('.');
-
-      parentObjects.Add(dataObject);
-
-      for (int i = 0; i < objectPath.Length - 1; i++)
-      {
-        foreach (IDataObject parentObj in parentObjects)
-        {
-          if (parentObj.GetType().Name != objectPath[i])
-          {
-            relatedObjects = new List<IDataObject>();
-
-            foreach (IDataObject relatedObj in _dataLayer.GetRelatedObjects(parentObj, objectPath[i]))
-            {
-              if (!relatedObjects.Contains(relatedObj))
-              {
-                relatedObjects.Add(relatedObj);
-              }
-            }
-
-            parentObjects = relatedObjects;
-          }
-        }
-      }
-
-      return parentObjects;
-    }
-
     private List<XElement> CreateRdfTemplateElement(string classInstance, TemplateMap templateMap, IDataObject dataObject)
     {
       string templateId = templateMap.templateId.Replace(TPL_PREFIX, TPL_NS.NamespaceName);
@@ -329,7 +356,7 @@ namespace org.iringtools.adapter.projection
 
       XElement preElement = new XElement(OWL_THING);
       preElement.Add(new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, templateId)));
-      
+
       #region RoleType.Possessor
       foreach (RoleMap roleMap in templateMap.roleMaps.Where(o => o.type == RoleType.Possessor))
       {
@@ -338,7 +365,7 @@ namespace org.iringtools.adapter.projection
         XElement roleElement = new XElement(TPL_NS + roleId);
 
         roleElement.Add(new XAttribute(RDF_RESOURCE, classInstance));
-        preElement.Add(roleElement);        
+        preElement.Add(roleElement);
       }
       #endregion
 
@@ -349,7 +376,6 @@ namespace org.iringtools.adapter.projection
         string dataType = String.Empty;
         XElement roleElement = new XElement(TPL_NS + roleId);
 
-        roleMapValues.Append(roleMap.value);
         if (roleMap.classMap != null)
         {
           string identifierValue = String.Empty;
@@ -378,10 +404,12 @@ namespace org.iringtools.adapter.projection
             }
           }
 
+          roleMapValues.Append(identifierValue);
           roleElement.Add(new XAttribute(RDF_RESOURCE, _graphNs.NamespaceName + "/" + _graphMap.name + "/" + identifierValue));
         }
         else
         {
+          roleMapValues.Append(roleMap.value);
           roleElement.Add(new XAttribute(RDF_RESOURCE, roleMap.value.Replace(RDL_PREFIX, RDL_NS.NamespaceName)));
         }
 
@@ -406,7 +434,7 @@ namespace org.iringtools.adapter.projection
       #endregion
 
       #region RoleType.Property
-            
+
       //RelatedObject cache
       Dictionary<string, List<IDataObject>> relatedObjects = new Dictionary<string, List<IDataObject>>();
 
@@ -467,7 +495,7 @@ namespace org.iringtools.adapter.projection
             #endregion
 
             //Copy the template and add the current property value
-            RdfElement copyElement = (RdfElement)rdfElement.Clone();                        
+            RdfElement copyElement = (RdfElement)rdfElement.Clone();
             copyElement.Element.Add(roleElement);
             propertyElements.Add(copyElement);
           }
@@ -491,69 +519,225 @@ namespace org.iringtools.adapter.projection
       return templates;
     }
 
-    private void PopulateDataObjects(int classInstanceCount)
+    private List<IDataObject> GetRelatedObjects(string propertyPath, IDataObject dataObject)
     {
-      _dataObjects = _dataLayer.Create(_graphMap.dataObjectMap, new string[classInstanceCount]);
+      //propertyPath = "Instrument.LineItems.Tag";
+      List<IDataObject> parentObjects = new List<IDataObject>();
+      string[] objectPath = propertyPath.Split('.');
 
-      foreach (var pair in _graphMap.classTemplateListMaps)
+      parentObjects.Add(dataObject);
+
+      for (int i = 0; i < objectPath.Length - 1; i++)
       {
-        ClassMap classMap = pair.Key;
-        List<TemplateMap> templateMaps = pair.Value;
-
-        foreach (TemplateMap templateMap in templateMaps)
+        foreach (IDataObject parentObj in parentObjects)
         {
-          string possessorRoleId = String.Empty;
-          string referenceRoleId = String.Empty;
-          string referenceClassId = String.Empty;
-          List<RoleMap> propertyRoleMaps = new List<RoleMap>();
-
-          // find property roleMaps
-          foreach (RoleMap roleMap in templateMap.roleMaps)
+          if (parentObj.GetType().Name != objectPath[i])
           {
-            switch (roleMap.type)
+            List<IDataObject> relatedObjects = new List<IDataObject>();
+
+            foreach (IDataObject relatedObj in _dataLayer.GetRelatedObjects(parentObj, objectPath[i]))
             {
-              case RoleType.Possessor:
-                possessorRoleId = roleMap.roleId;
-                break;
-
-              case RoleType.Reference:
-                referenceRoleId = roleMap.roleId;
-                referenceClassId = roleMap.value;
-                break;
-
-              case RoleType.Property:
-                propertyRoleMaps.Add(roleMap);
-                break;
+              if (!relatedObjects.Contains(relatedObj))
+              {
+                relatedObjects.Add(relatedObj);
+              }
             }
+
+            parentObjects = relatedObjects;
+          }
+        }
+      }
+
+      return parentObjects;
+    }
+
+    // senario (assume no circular relationships - should be handled by AppEditor): 
+    //  dataObject1.L1RelatedDataObjects.L2RelatedDataObjects.LnRelatedDataObjects.property1
+    //  dataObject1.L1RelatedDataObjects.L2RelatedDataObjects.LnRelatedDataObjects.property2
+    private void SetLastRelatedObjects(int dataObjectIndex, string propertyPath, List<string> relatedValues)
+    {
+      Dictionary<string, IList<IDataObject>> relatedObjectDictionary = _relatedObjects[dataObjectIndex];
+      int lastDotPosition = propertyPath.LastIndexOf('.');
+      string property = propertyPath.Substring(lastDotPosition + 1);
+      string objectPathString = propertyPath.Substring(0, lastDotPosition);  // exclude property
+      string[] objectPath = objectPathString.Split('.');
+
+      if (!_relatedObjectPaths.Contains(objectPathString))
+        _relatedObjectPaths.Add(objectPathString);
+
+      // top level data objects are processed separately, so start with 1
+      for (int i = 1; i < objectPath.Length; i++)
+      {
+        string relatedObjectType = objectPath[i];
+        IList<IDataObject> relatedObjects = null;
+
+        if (relatedObjectDictionary.ContainsKey(relatedObjectType))
+        {
+          relatedObjects = relatedObjectDictionary[relatedObjectType];
+        }
+        else
+        {
+          if (i == objectPath.Length - 1)  // last related object in the chain
+          {
+            relatedObjects = _dataLayer.Create(relatedObjectType, new string[relatedValues.Count]);
+          }
+          else // intermediate related object
+          {
+            relatedObjects = _dataLayer.Create(relatedObjectType, null);
           }
 
-          // query for property roleMaps values
-          foreach (RoleMap roleMap in propertyRoleMaps)
+          relatedObjectDictionary.Add(relatedObjectType, relatedObjects);
+        }
+
+        // only fill last related object values now; values of intermediate related objects' parent might not be available yet.
+        if (i == objectPath.Length - 1)
+        {
+          for (int j = 0; j < relatedValues.Count; j++)
           {
-            string[] property = roleMap.propertyName.Split('.');
-            string propertyName = property[property.Length - 1].Trim();
-            string query = String.Format(LITERAL_QUERY_TEMPLATE,
-              classMap.classId, possessorRoleId, templateMap.templateId, referenceRoleId, referenceClassId, roleMap.roleId);
-            object results = _memoryStore.ExecuteQuery(query);
+            relatedObjects[j].SetPropertyValue(property, relatedValues[j]);
+          }
+        }
+      }
+    }
 
-            if (results is SparqlResultSet)
+    // senario:
+    //  dataObject1.L1RelatedDataObjects.property1
+    //  dataObject1.L1RelatedDataObjects.property2
+    //  dataObject1.L1RelatedDataObjects.L2RelatedDataObjects.property3.value1
+    //  dataObject1.L1RelatedDataObjects.L2RelatedDataObjects.property4.value2
+    //
+    // L2RelatedDataObjects result:
+    //  dataObject1.L1RelatedDataObjects[1].L2RelatedDataObjects[1].property3.value1
+    //  dataObject1.L1RelatedDataObjects[1].L2RelatedDataObjects[2].property4.value2
+    //  dataObject1.L1RelatedDataObjects[2].L2RelatedDataObjects[1].property3.value1
+    //  dataObject1.L1RelatedDataObjects[2].L2RelatedDataObjects[2].property4.value2
+    private void SetIntermediateRelatedObjects()
+    {
+      DataDictionary dictionary = _dataLayer.GetDictionary();
+
+      for (int i = 0; i < _dataObjects.Count; i++)
+      {
+        Dictionary<string, IList<IDataObject>> relatedObjectDictionary = _relatedObjects[i];
+
+        foreach (string relatedObjectPath in _relatedObjectPaths)
+        {
+          string[] relatedObjectPathElements = relatedObjectPath.Split('.');
+
+          for (int j = 0; j < relatedObjectPathElements.Length - 1; j++)
+          {
+            string parentObjectType = relatedObjectPathElements[j];
+            string relatedObjectType = relatedObjectPathElements[j + 1];
+
+            if (relatedObjectDictionary.ContainsKey(relatedObjectType))
             {
-              SparqlResultSet sparqlResultSet = (SparqlResultSet)results;
-              int dataObjectIndex = 0;
+              IList<IDataObject> parentObjects = null;
 
-              foreach (SparqlResult sparqlResult in sparqlResultSet)
+              if (j == 0)
+                parentObjects = new List<IDataObject> { _dataObjects[i] };
+              else
+                parentObjects = relatedObjectDictionary[parentObjectType];
+
+              IList<IDataObject> relatedObjects = relatedObjectDictionary[relatedObjectType];
+
+              foreach (IDataObject parentObject in parentObjects)
               {
-                string value = Regex.Replace(sparqlResult.ToString(), @".*= ", String.Empty);
+                DataObject dataObject = dictionary.dataObjects.First(c => c.objectName == parentObjectType);
+                DataRelationship dataRelationship = dataObject.dataRelationships.First(c => c.relationshipName == relatedObjectType);
 
-                if (value == RDF_NIL)
-                  value = String.Empty;
-                else if (value.Contains("^^"))
-                  value = value.Substring(0, value.IndexOf("^^"));
-                else if (!String.IsNullOrEmpty(roleMap.valueList))
-                  value = _mapping.ResolveValueMap(roleMap.valueList, value);
-
-                _dataObjects[dataObjectIndex++].SetPropertyValue(propertyName, value);
+                foreach (IDataObject relatedObject in relatedObjects)
+                {
+                  foreach (PropertyMap map in dataRelationship.propertyMaps)
+                  {
+                    relatedObject.SetPropertyValue(map.relatedPropertyName, parentObject.GetPropertyValue(map.dataPropertyName));
+                  }
+                }
               }
+            }
+          }
+        }
+      }
+    }
+
+    private void SetDataObjects(string classId, string classInstance, int dataObjectIndex)
+    {
+      KeyValuePair<ClassMap, List<TemplateMap>> pair = _graphMap.GetClassTemplateListMap(classId);
+      List<TemplateMap> templateMaps = pair.Value;
+
+      foreach (TemplateMap templateMap in templateMaps)
+      {
+        string possessorRoleId = String.Empty;
+        string referenceRoleId = String.Empty;
+        string referenceClassId = String.Empty;
+        List<RoleMap> propertyRoleMaps = new List<RoleMap>();
+
+        // find property roleMaps
+        foreach (RoleMap roleMap in templateMap.roleMaps)
+        {
+          switch (roleMap.type)
+          {
+            case RoleType.Possessor:
+              possessorRoleId = roleMap.roleId;
+              break;
+
+            case RoleType.Reference:
+              referenceRoleId = roleMap.roleId;
+              referenceClassId = roleMap.value;
+
+              if (roleMap.classMap != null)
+              {
+                string nextClassId = roleMap.classMap.classId;
+                List<string> nextClassInstances = _classInstances[nextClassId];
+                SetDataObjects(nextClassId, nextClassInstances[dataObjectIndex], dataObjectIndex);
+              }
+
+              break;
+
+            case RoleType.Property:
+              propertyRoleMaps.Add(roleMap);
+              break;
+          }
+        }
+
+        // query for property roleMaps values
+        foreach (RoleMap roleMap in propertyRoleMaps)
+        {
+          string query = String.Format(LITERAL_QUERY_TEMPLATE, _graphBaseUri, possessorRoleId, classInstance,
+              templateMap.templateId, referenceRoleId, referenceClassId, roleMap.roleId);
+
+          object results = _memoryStore.ExecuteQuery(query);
+
+          if (results is SparqlResultSet)
+          {
+            string[] propertyPath = roleMap.propertyName.Split('.');
+            string property = propertyPath[propertyPath.Length - 1].Trim();
+            List<string> values = new List<string>();
+
+            SparqlResultSet resultSet = (SparqlResultSet)results;
+
+            foreach (SparqlResult result in resultSet)
+            {
+              string value = Regex.Replace(result.ToString(), @".*= ", String.Empty);
+
+              if (value == RDF_NIL)
+                value = String.Empty;
+              else if (value.Contains("^^"))
+                value = value.Substring(0, value.IndexOf("^^"));
+              else if (!String.IsNullOrEmpty(roleMap.valueList))
+                value = _mapping.ResolveValueMap(roleMap.valueList, value);
+
+              if (propertyPath.Length > 2)
+              {
+                values.Add(value);
+              }
+              else
+              {
+                _dataObjects[dataObjectIndex].SetPropertyValue(property, value);
+              }
+            }
+
+            if (propertyPath.Length > 2)
+            {
+              SetLastRelatedObjects(dataObjectIndex, roleMap.propertyName, values);
             }
           }
         }
