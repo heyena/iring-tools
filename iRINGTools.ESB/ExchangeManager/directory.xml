@@ -1,65 +1,86 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <directory xmlns="http://iringtools.org/exchange/library/directory">
-<project name="PSN STAGING NEW DELHI" id="12345_000">
+  <applications>
+    <application>
+      <id>1</id>
+      <name>ABC</name>
+      <description>Test Application</description>
+      <scope>12345_000</scope>
+    </application>
+    <application>
+      <id>2</id>
+      <name>ABC2</name>
+      <description>Test Application2</description>
+      <scope>54321_000</scope>
+    </application>
+    <application>
+      <id>3</id>
+      <name>DEF</name>
+      <description>Test Application</description>
+      <scope>12345_000</scope>
+    </application>
+  </applications>
   <applicationData>
-    <application description="Test Application ABC" scope="12345_000"
-      name="ABC">
-      <graph commodity="PipingNetworkSystem" name="Lines" />
-      <graph commodity="Instrument" name="Instruments" />
-    </application>
-    <application description="Test Application DEF" scope="12345_000"
-      name="DEF">
-      <graph commodity="PipingNetworkSystem" name="LinesGraph" />
-      <graph commodity="Instrument" name="InstrumentsGraph" />
-    </application>
-    <application description="Test Application XYZ" scope="12345_001"
-      name="XYZ">
-      <graph commodity="Instrument" name="InstrumentsGraph" />
-    </application>
+    <graph>
+      <identifier>1</identifier>
+      <name>Lines</name>
+      <description>Line List</description>
+      <applicationId>1</applicationId>
+      <commodity>PipingNetworkSystem</commodity>
+    </graph>
+    <graph>
+      <identifier>2</identifier>
+      <name>Instruments</name>
+      <description>Instrument List</description>
+      <applicationId>1</applicationId>
+      <commodity>Instrument</commodity>
+    </graph>
+    <graph>
+      <identifier>3</identifier>
+      <name>Instruments</name>
+      <description>Instrument List</description>
+      <applicationId>3</applicationId>
+      <commodity>Instrument</commodity>
+    </graph>
+    <graph>
+      <identifier>4</identifier>
+      <name>Lines</name>
+      <description>Line List</description>
+      <applicationId>2</applicationId>
+      <commodity>PipingNetworkSystem</commodity>
+    </graph>
   </applicationData>
   <dataExchanges>
-    <commodity name="PipingNetworkSystem">
-      <exchange id="1" name="ABC -&gt; DEF" />
-      <exchange id="2" name="DEF -&gt; ABC" />
-    </commodity>
-    <commodity name="Instrument">
-      <exchange id="3" name="ABC -&gt; DEF" />
-      <exchange id="4" name="DEF -&gt; ABC" />
-      <exchange id="5" name="XYZ -&gt; ABC" />
-      <exchange id="6" name="ABC -&gt; XYZ" />
-    </commodity>
+    <exchange id="1" scope="12345_000" commodity="PipingNetworkSystem" name="12345_000.ABC.Lines -&gt; 54321_000.ABC.Lines" description="Synchronizing two projects Line Lists"/>
+    <exchange id="2" scope="54321_000" commodity="PipingNetworkSystem" name="12345_000.ABC.Lines -&gt; 54321_000.ABC.Lines" description="Synchronizing two projects Line Lists"/>
+    <exchange id="3" scope="12345_000" commodity="Instrument" name="12345_000.ABC.Instruments -&gt; 12345_000.DEF.Insturments" description="Sending Instruments from ABC to DEF"/>
+  	<exchange id="4" scope="12345_000" commodity="PipingNetworkSystem" name="12345_000.ABC1.Lines -&gt; 54321_000.ABC1.Lines" description="1Synchronizing two projects Line Lists"/>
   </dataExchanges>
-</project>
-
-<project name="====PSN STAGING NEW DELHI===" id="5555_000">
-  <applicationData>
-    <application description="Test Application ABC" scope="5555_000"
-      name="ABC">
-      <graph commodity="PipingNetworkSystem" name="Lines" />
-      <graph commodity="Instrument" name="Instruments" />
-    </application>
-    <application description="Test Application DEF" scope="5555_000"
-      name="DEF">
-      <graph commodity="PipingNetworkSystem" name="LinesGraph" />
-      <graph commodity="Instrument" name="InstrumentsGraph" />
-    </application>
-    <application description="Test Application XYZ" scope="5555_001"
-      name="XYZ">
-      <graph commodity="Instrument" name="InstrumentsGraph" />
-    </application>
-  </applicationData>
-  <dataExchanges>
-    <commodity name="PipingNetworkSystem">
-      <exchange id="1" name="ABC -&gt; DEF" />
-      <exchange id="2" name="DEF -&gt; ABC" />
-    </commodity>
-    <commodity name="Instrument">
-      <exchange id="3" name="ABC -&gt; DEF" />
-      <exchange id="4" name="DEF -&gt; ABC" />
-      <exchange id="5" name="XYZ -&gt; ABC" />
-      <exchange id="6" name="ABC -&gt; XYZ" />
-    </commodity>
-  </dataExchanges>
-</project>
-
 </directory>
+
+<!--
+Directory
+  Scope:12345_000
+    Application Data
+      Application:ABC
+        Graph:Lines
+          ...
+        Graph:Instruments
+          ...
+      Application:DEF
+        Graph:Lines
+          ...
+    DataExchanges
+      DataExchange:12345_000.ABC.Lines -> 54321_000.ABC.Lines
+        ...
+      DataExchange:12345_000.ABC.Instruments -> 12345_000.DEF.Insturments
+        ...
+  Scope:54321_000
+    Application Data
+      Application:ABC
+        Graph:Lines
+          ...
+    DataExchanges
+      DataExchange:12345_000.ABC.Lines -> 54321_000.ABC.Lines
+        ...
+-->
