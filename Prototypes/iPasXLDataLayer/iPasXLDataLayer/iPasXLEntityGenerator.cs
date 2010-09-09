@@ -14,24 +14,24 @@ using org.iringtools.adapter;
 using org.iringtools.library;
 using org.iringtools.utility;
 
-namespace Hatch.iPasXLDataLayer.API
+namespace Hatch.DataLayers.iPasXL
 {
-  public class EntityGenerator
-  {
-    private string NAMESPACE_PREFIX = "Hatch.iPasXLDataLayer.API.Model_";
+  public class iPasXLEntityGenerator
+  { 
+    private string NAMESPACE_PREFIX = "Hatch.DataLayers.iPasXL.Model_";
     private string COMPILER_VERSION = "v4.0";
     private List<string> EXTRA_ASSEMBLIES = new List<string>() 
     {      
     };
 
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(EntityGenerator));
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(iPasXLEntityGenerator));
 
     private string _namespace = String.Empty;
     private iPasXLSettings _settings = null;
     private IndentedTextWriter _dataObjectWriter = null;
     private StringBuilder _dataObjectBuilder = null;
 
-    public EntityGenerator(iPasXLSettings settings)
+    public iPasXLEntityGenerator(iPasXLSettings settings)
     {
       _settings = settings;
     }
@@ -65,7 +65,7 @@ namespace Hatch.iPasXLDataLayer.API
           _dataObjectWriter.Write("{"); // begin namespace block
           _dataObjectWriter.Indent++;
 
-          foreach (Worksheet cfWorksheet in iPasXLConfig.Worksheets)
+          foreach (iPasXLWorksheet cfWorksheet in iPasXLConfig.Worksheets)
           {
             CreateGenericDataObjectMap(cfWorksheet);
           }
@@ -116,7 +116,7 @@ namespace Hatch.iPasXLDataLayer.API
       Excel.Workbook xlWorkBook = null;
       iPasXLConfiguration config = new iPasXLConfiguration()
       {
-        Worksheets = new List<Worksheet>()
+        Worksheets = new List<iPasXLWorksheet>()
       };
 
       try
@@ -128,9 +128,9 @@ namespace Hatch.iPasXLDataLayer.API
 
         foreach (Excel.Worksheet xlWorkSheet in xlWorkBook.Worksheets)
         {
-          Worksheet cfWorkSheet = new Worksheet() {
+          iPasXLWorksheet cfWorkSheet = new iPasXLWorksheet() {
             Name = xlWorkSheet.Name,
-            Columns = new List<Column>()
+            Columns = new List<iPasXLColumn>()
           };
 
           Excel.Range usedRange = xlWorkSheet.UsedRange;
@@ -140,7 +140,7 @@ namespace Hatch.iPasXLDataLayer.API
             string header = usedRange.Cells[1, i].Value2;
             if (header != null && !header.Equals(String.Empty))             
             {
-              Column cfColumn = new Column() {
+              iPasXLColumn cfColumn = new iPasXLColumn() {
                 Index = i,
                 Name = header,
                 DataType = DataType.String
@@ -191,7 +191,7 @@ namespace Hatch.iPasXLDataLayer.API
         dataObjects = new List<DataObject>()
       };
 
-      foreach (Worksheet worksheet in iPasXLConfig.Worksheets)
+      foreach (iPasXLWorksheet worksheet in iPasXLConfig.Worksheets)
       {
         DataObject dataObject = new DataObject()
         {
@@ -199,7 +199,7 @@ namespace Hatch.iPasXLDataLayer.API
           dataProperties = new List<DataProperty>()
         };
 
-        foreach (Column column in worksheet.Columns)
+        foreach (iPasXLColumn column in worksheet.Columns)
         {
           DataProperty dataProperty = new DataProperty()
           {
@@ -219,7 +219,7 @@ namespace Hatch.iPasXLDataLayer.API
       return dataDictionary;
     }
 
-    private void CreateGenericDataObjectMap(Worksheet cfWorkSheet)    
+    private void CreateGenericDataObjectMap(iPasXLWorksheet cfWorkSheet)    
     {
       _dataObjectWriter.WriteLine();
       _dataObjectWriter.WriteLine("public class {0} : IDataObject", cfWorkSheet.Name);
@@ -229,7 +229,7 @@ namespace Hatch.iPasXLDataLayer.API
       #region Process columns
       if (cfWorkSheet.Columns != null && cfWorkSheet.Columns.Count > 0)
       {
-        foreach (Column column in cfWorkSheet.Columns)
+        foreach (iPasXLColumn column in cfWorkSheet.Columns)
         {
           _dataObjectWriter.WriteLine("public virtual {0} {1} {{ get; set; }}", column.DataType, column.Name);                      
         }
@@ -242,7 +242,7 @@ namespace Hatch.iPasXLDataLayer.API
         _dataObjectWriter.WriteLine("{");
         _dataObjectWriter.Indent++;        
 
-        foreach (Column column in cfWorkSheet.Columns)
+        foreach (iPasXLColumn column in cfWorkSheet.Columns)
         {
           _dataObjectWriter.WriteLine("case \"{0}\": return {0};", column.Name);
         }
@@ -263,7 +263,7 @@ namespace Hatch.iPasXLDataLayer.API
         _dataObjectWriter.Indent++;
         _dataObjectWriter.WriteLine();
 
-        foreach (Column column in cfWorkSheet.Columns)
+        foreach (iPasXLColumn column in cfWorkSheet.Columns)
         {
           _dataObjectWriter.WriteLine("case \"{0}\":", column.Name);
           _dataObjectWriter.Indent++;

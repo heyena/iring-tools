@@ -362,6 +362,15 @@ namespace org.iringtools.services
       return _adapterProvider.Refresh(projectName, applicationName, graphName);
     }
     #endregion
+
+    #region GetDataLayers
+    [Description("Get a list of Data Layers available from the service.")]
+    [WebGet(UriTemplate = "/datalayers")]
+    public List<string> GetDatalayers()
+    {
+      return _adapterProvider.GetDataLayers();      
+    }
+    #endregion
     #endregion
   }
 }

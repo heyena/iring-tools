@@ -268,8 +268,6 @@
     <Content Include="Scripts\ext-3.2.1\ux\ux-all.js" />
     <Content Include="Scripts\ext-3.2.1\ux\XmlTreeLoader.js" />
     <Content Include="Scripts\iringtools\iRINGTools.js" />
-    <Content Include="Scripts\iringtools\ScopeDetails.js" />
-    <Content Include="Scripts\iringtools\ScopeMapping.js" />
     <Content Include="Scripts\Silverlight.js" />
     <Content Include="Views\SPARQLQuery\Index.aspx" />
     <Content Include="Views\MappingEditor\Index.aspx" />

@@ -12,7 +12,7 @@ using org.iringtools.adapter;
 using org.iringtools.library;
 using org.iringtools.utility;
 
-namespace Hatch.iPasXLDataLayer.API
+namespace Hatch.DataLayers.iPasXL
 {
   public class iPasXLDataLayer : IDataLayer
   {
@@ -43,28 +43,14 @@ namespace Hatch.iPasXLDataLayer.API
       }
     }
 
-    ~iPasXLDataLayer()
-    {
-      try
-      {
-        
-      }
-      catch (Exception e)
-      {
-        _logger.Error("Failed to release excel com object", e);
-      }
-    }
-
-    #region IDataLayer Members
-
     public IList<IDataObject> Create(string objectType, IList<string> identifiers)
     {
       try
       {
-        Worksheet worksheet = _configuration.Worksheets.FirstOrDefault<Worksheet>(o => o.Name == objectType);
+        iPasXLWorksheet worksheet = _configuration.Worksheets.FirstOrDefault<iPasXLWorksheet>(o => o.Name == objectType);
 
         IList<IDataObject> dataObjects = new List<IDataObject>();
-        Type type = Type.GetType("Hatch.iPasXLDataLayer.API.Model_" + _settings["ProjectName"] + "_" + _settings["ApplicationName"] + "." + objectType);
+        Type type = Type.GetType("Hatch.DataLayers.iPasXL.Model_" + _settings["ProjectName"] + "_" + _settings["ApplicationName"] + "." + objectType);
 
         objectType = objectType.Substring(objectType.LastIndexOf('.') + 1);
 
@@ -135,11 +121,11 @@ namespace Hatch.iPasXLDataLayer.API
         xlApplication = new Excel.Application();
         xlWorkBook = xlApplication.Workbooks.Open(_configuration.Location, 0, false, 5, "", "", true, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
 
-        Worksheet cfWorksheet = GetConfigWorkSheet(objectType);
+        iPasXLWorksheet cfWorksheet = GetConfigWorkSheet(objectType);
         Excel.Worksheet xlWorksheet = GetWorkSheet(objectType, xlWorkBook, cfWorksheet);
 
         IList<IDataObject> dataObjects = new List<IDataObject>();
-        Type type = Type.GetType("Hatch.iPasXLDataLayer.API.Model_" + _settings["ProjectName"] + "_" + _settings["ApplicationName"] + "." + objectType);
+        Type type = Type.GetType("Hatch.DataLayers.iPasXL.Model_" + _settings["ProjectName"] + "_" + _settings["ApplicationName"] + "." + objectType);
 
         if (identifiers != null && identifiers.Count > 0)
         {
@@ -206,20 +192,20 @@ namespace Hatch.iPasXLDataLayer.API
         xlApplication = new Excel.Application();
         xlWorkBook = xlApplication.Workbooks.Open(_configuration.Location, 0, false, 5, "", "", true, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
 
-        Worksheet cfWorksheet = GetConfigWorkSheet(objectType);
+        iPasXLWorksheet cfWorksheet = GetConfigWorkSheet(objectType);
         Excel.Worksheet xlWorksheet = GetWorkSheet(objectType, xlWorkBook, cfWorksheet);
 
         List<IDataObject> dataObjects = new List<IDataObject>();
-        Type type = Type.GetType("Hatch.iPasXLDataLayer.API.Model_" + _settings["ProjectName"] + "_" + _settings["ApplicationName"] + "." + objectType);
+        Type type = Type.GetType("Hatch.DataLayers.iPasXL.Model_" + _settings["ProjectName"] + "_" + _settings["ApplicationName"] + "." + objectType);
 
         Excel.Range usedRange = xlWorksheet.UsedRange;
-        Column keyColumn = cfWorksheet.Columns.FirstOrDefault<Column>(o=>o.Name == cfWorksheet.Identifier);
+        iPasXLColumn keyColumn = cfWorksheet.Columns.FirstOrDefault<iPasXLColumn>(o=>o.Name == cfWorksheet.Identifier);
 
         for(int row = 1; row <= usedRange.Rows.Count; row++)
         {
           IDataObject dataObject = (IDataObject)Activator.CreateInstance(type);
           
-          foreach (Column column in cfWorksheet.Columns)
+          foreach (iPasXLColumn column in cfWorksheet.Columns)
           {
             dataObject.SetPropertyValue(column.Name, xlWorksheet.Cells[row, column.Index].Value2);
           }
@@ -313,11 +299,11 @@ namespace Hatch.iPasXLDataLayer.API
         xlApplication = new Excel.Application();
         xlWorkBook = xlApplication.Workbooks.Open(_configuration.Location, 0, false, 5, "", "", true, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
 
-        Worksheet cfWorksheet = GetConfigWorkSheet(objectType);
+        iPasXLWorksheet cfWorksheet = GetConfigWorkSheet(objectType);
         Excel.Worksheet xlWorksheet = GetWorkSheet(objectType, xlWorkBook, cfWorksheet);
 
         IList<IDataObject> dataObjects = new List<IDataObject>();
-        Type type = Type.GetType("Hatch.iPasXLDataLayer.API.Model_" + _settings["ProjectName"] + "_" + _settings["ApplicationName"] + "." + objectType);
+        Type type = Type.GetType("Hatch.DataLayers.iPasXL.Model_" + _settings["ProjectName"] + "_" + _settings["ApplicationName"] + "." + objectType);
 
         if (identifiers != null && identifiers.Count > 0)
         {
@@ -329,7 +315,7 @@ namespace Hatch.iPasXLDataLayer.API
 
             int row = GetRowIndex(xlWorksheet, cfWorksheet, identifier);
 
-            foreach (Column column in cfWorksheet.Columns)
+            foreach (iPasXLColumn column in cfWorksheet.Columns)
             {
               dataObject.SetPropertyValue(column.Name, xlWorksheet.Cells[row, column.Index].Value2);
             }
@@ -372,14 +358,12 @@ namespace Hatch.iPasXLDataLayer.API
     {
       try
       {
-        //string location = _configuration.Location;
-
         DataDictionary dataDictionary = new DataDictionary()
         {
           dataObjects = new List<DataObject>()          
         };
                 
-        foreach (Worksheet worksheet in _configuration.Worksheets)
+        foreach (iPasXLWorksheet worksheet in _configuration.Worksheets)
         {
           DataObject dataObject = new DataObject()
           {
@@ -387,7 +371,7 @@ namespace Hatch.iPasXLDataLayer.API
             dataProperties = new List<DataProperty>()            
           };
 
-          foreach (Column column in worksheet.Columns)
+          foreach (iPasXLColumn column in worksheet.Columns)
           {
             DataProperty dataProperty = new DataProperty() 
             {
@@ -416,7 +400,7 @@ namespace Hatch.iPasXLDataLayer.API
     {
       try
       {
-        Worksheet cfWorkSheet = GetConfigWorkSheet(objectType);
+        iPasXLWorksheet cfWorkSheet = GetConfigWorkSheet(objectType);
 
         List<string> identifiers = new List<string>();
         IList<IDataObject> dataObjects = Get(objectType, filter, 0, 0);     
@@ -433,14 +417,9 @@ namespace Hatch.iPasXLDataLayer.API
         _logger.Error("Error in GetIdentifiers: " + ex);
         throw new Exception("Error while getting a list of identifiers of type [" + objectType + "].", ex);
       }
-    }
+    }   
 
-    public IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType)
-    {
-      throw new NotImplementedException();
-    }
-
-    private Excel.Worksheet GetWorkSheet(string objectType, Excel.Workbook xlWorkBook, Worksheet cfWorksheet)
+    private Excel.Worksheet GetWorkSheet(string objectType, Excel.Workbook xlWorkBook, iPasXLWorksheet cfWorksheet)
     {
       try
       {
@@ -451,7 +430,7 @@ namespace Hatch.iPasXLDataLayer.API
           Excel.Worksheet nwWorksheet = xlWorkBook.Worksheets.Add(Type.Missing, Type.Missing, Type.Missing, Type.Missing);
           nwWorksheet.Name = objectType;
 
-          foreach (Column column in cfWorksheet.Columns)
+          foreach (iPasXLColumn column in cfWorksheet.Columns)
           {
             nwWorksheet.Cells[1, column.Index] = column.Name;
           }
@@ -467,7 +446,7 @@ namespace Hatch.iPasXLDataLayer.API
       }
     }
 
-    private int GetRowIndex(Excel.Worksheet xlWorksheet, Worksheet cfWorksheet, string identifier)
+    private int GetRowIndex(Excel.Worksheet xlWorksheet, iPasXLWorksheet cfWorksheet, string identifier)
     {
       try
       {
@@ -492,9 +471,9 @@ namespace Hatch.iPasXLDataLayer.API
       }
     }
 
-    private Worksheet GetConfigWorkSheet(string objectType)
+    private iPasXLWorksheet GetConfigWorkSheet(string objectType)
     {
-      return _configuration.Worksheets.FirstOrDefault<Worksheet>(o => o.Name == objectType);
+      return _configuration.Worksheets.FirstOrDefault<iPasXLWorksheet>(o => o.Name == objectType);
     }
 
     public Response Post(IList<IDataObject> dataObjects)
@@ -520,7 +499,7 @@ namespace Hatch.iPasXLDataLayer.API
         foreach(IDataObject dataObject in dataObjects)
         {
           string objectType = dataObject.GetType().Name;
-          Worksheet cfWorksheet = GetConfigWorkSheet(objectType);
+          iPasXLWorksheet cfWorksheet = GetConfigWorkSheet(objectType);
 
           Excel.Worksheet xlWorksheet = GetWorkSheet(objectType, xlWorkBook, cfWorksheet);
                     
@@ -528,7 +507,7 @@ namespace Hatch.iPasXLDataLayer.API
 
           int row = GetRowIndex(xlWorksheet, cfWorksheet, identifier);
 
-          foreach (Column column in cfWorksheet.Columns)
+          foreach (iPasXLColumn column in cfWorksheet.Columns)
           {
             xlWorksheet.Cells[row, column.Index] = dataObject.GetPropertyValue(column.Name);
           }
@@ -565,6 +544,13 @@ namespace Hatch.iPasXLDataLayer.API
 
         GC.Collect();
       }
+    }
+
+    #region IDataLayer Members
+    
+    public IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType)
+    {
+      throw new NotImplementedException();
     }
 
     #endregion    

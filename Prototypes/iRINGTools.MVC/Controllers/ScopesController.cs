@@ -32,28 +32,6 @@ namespace org.iringtools.client.Controllers
     // GET: /Scopes
     
     public JsonResult Index()
-    {      
-      Uri address = new Uri(_adapterServiceURI + "/scopes");
-
-      WebClient webClient = new WebClient();
-      string result = webClient.DownloadString(address);
-
-      List<ScopeProject> scopes = result.DeserializeDataContract<List<ScopeProject>>();
-
-      ScopesContainer container = new ScopesContainer
-      {
-        Scopes = scopes,
-        Total = scopes.Count
-      };
-    
-      return Json(container, JsonRequestBehavior.AllowGet);
-    
-    }
-
-    //
-    // GET: /Scopes?scope=12345_000
-
-    public JsonResult Scope(string id)
     {
       Uri address = new Uri(_adapterServiceURI + "/scopes");
 
@@ -62,35 +40,32 @@ namespace org.iringtools.client.Controllers
 
       List<ScopeProject> scopes = result.DeserializeDataContract<List<ScopeProject>>();
 
-      ScopeProject scope = scopes.Find(o => o.Name == id);
+      List<ScopeTreeNode> nodes = new List<ScopeTreeNode>();
 
-      return Json(scope, JsonRequestBehavior.AllowGet);      
-    }
-
-    //
-    // GET: /Scopes/Application/ABC
-
-    public JsonResult Application(string id)
-    {
-      Uri address = new Uri(_adapterServiceURI + "/scopes");
-
-      WebClient webClient = new WebClient();
-      string result = webClient.DownloadString(address);
-
-      List<ScopeProject> scopes = result.DeserializeDataContract<List<ScopeProject>>();
-
-      ScopeProject scope = scopes.Find(o => o.Name == id);
-
-      ApplicationContainer container = new ApplicationContainer();
-
-      if (scope != null)
+      foreach (ScopeProject scope in scopes)
       {
-        container.Applications = scope.Applications;
-        container.Total = scope.Applications.Count;
+
+        ScopeTreeNode nodeScope = new ScopeTreeNode(scope);
+
+        nodes.Add(nodeScope);
+
+        foreach (ScopeApplication app in scope.Applications)
+        {
+          ApplicationTreeNode nodeApp = new ApplicationTreeNode(app);
+          nodeScope.children.Add(nodeApp);
+        }
       }
 
-      return Json(container, JsonRequestBehavior.AllowGet);
+      return Json(nodes, JsonRequestBehavior.AllowGet);    
     }
+
+    //
+    // GET: /Scopes/Details/{scope}/{application}
+
+    public JsonResult Details(string scope, string application)
+    {
+      return Json(null, JsonRequestBehavior.AllowGet);
+    }    
 
     //
     // GET: /Scopes/Create
@@ -172,36 +147,6 @@ namespace org.iringtools.client.Controllers
         return Json(null, JsonRequestBehavior.AllowGet);
       }
     }
-
-    //
-    // POST: /Scopes/Navigation
-
-    public JsonResult Navigation()
-    {
-      Uri address = new Uri(_adapterServiceURI + "/scopes");
-
-      WebClient webClient = new WebClient();
-      string result = webClient.DownloadString(address);
-
-      List<ScopeProject> scopes = result.DeserializeDataContract<List<ScopeProject>>();
-
-      List<ScopeTreeNode> nodes = new List<ScopeTreeNode>();
-
-      foreach (ScopeProject scope in scopes)
-      {
-
-        ScopeTreeNode nodeScope = new ScopeTreeNode(scope);
-
-        nodes.Add(nodeScope);
-
-        foreach (ScopeApplication app in scope.Applications)
-        {
-          ApplicationTreeNode nodeApp = new ApplicationTreeNode(app);
-          nodeScope.children.Add(nodeApp);
-        }
-      }
-
-      return Json(nodes, JsonRequestBehavior.AllowGet);
-    }
+    
   }
 }

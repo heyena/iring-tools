@@ -1,7 +1,6 @@
 ﻿/// <reference path="../ext-3.2.1/adapter/ext/ext-base.js" />
 /// <reference path="../ext-3.2.1/ext-all.js" />
 
-
 Ext.ns('iIRNGTools', 'iIRNGTools.AdapterManager');
 /**
 * @class iIRNGTools.AdapterManager.MappingPanel
@@ -13,7 +12,7 @@ iIRNGTools.AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   height: 300,
   minSize: 150,
   autoScroll: true,
-  layout: 'border',
+  layout: 'border', 
 
   /**
   * initComponent

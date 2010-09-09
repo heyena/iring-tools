@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using org.iringtools.library;
 
-namespace Hatch.iPasXLDataLayer.API
+namespace Hatch.DataLayers.iPasXL
 {
   [DataContract(Name = "workbook")]
   public class iPasXLConfiguration
@@ -15,11 +15,11 @@ namespace Hatch.iPasXLDataLayer.API
     public string Location { get; set; }
 
     [DataMember(Name = "worksheets", Order = 1)]
-    public List<Worksheet> Worksheets { get; set; }  
+    public List<iPasXLWorksheet> Worksheets { get; set; }  
   }
 
   [DataContract(Name = "worksheet")]
-  public class Worksheet
+  public class iPasXLWorksheet
   {
     [DataMember(Name = "name", Order = 0)]
     public string Name { get; set; }
@@ -28,11 +28,11 @@ namespace Hatch.iPasXLDataLayer.API
     public string Identifier { get; set; }
 
     [DataMember(Name = "columns", Order = 2)]
-    public List<Column> Columns { get; set; }
+    public List<iPasXLColumn> Columns { get; set; }
   }
 
   [DataContract(Name = "column")]
-  public class Column
+  public class iPasXLColumn
   {
     [DataMember(Name = "name", Order = 0)]
     public string Name { get; set; }
