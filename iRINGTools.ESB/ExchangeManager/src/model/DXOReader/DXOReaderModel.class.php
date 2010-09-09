@@ -7,7 +7,7 @@ include_once('/model/RestfulService/curl.class.php');
 class DXOReaderModel{
 	private $dxoUrl;
 	function __construct(){
-		$this->dxoUrl = 'http://localhost:81/iRINGTools.ESB/ExchangeManager/src/dto.xml';
+		$this->dxoUrl = DXO_REQUEST_URL;
 	}
 
 function getDXOInfo($exchangeID,$postParams){

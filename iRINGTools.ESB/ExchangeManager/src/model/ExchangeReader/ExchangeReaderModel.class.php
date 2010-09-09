@@ -10,9 +10,8 @@ class ExchangeReaderModel{
 	private $projectid;
 
 	function __construct(){
-		//$this->projectid=$id;
-		//$this->exchangeUrl = 'http://localhost:81/test/PRM/testxml.xml';
-                $this->exchangeUrl = 'http://localhost:81/projects/iRINGTools.ESB/ExchangeManager/directory.xml';
+             $this->exchangeUrl = DIRECTORY_REQUEST_URI;
+                
 	}
 
 	function readXML(){

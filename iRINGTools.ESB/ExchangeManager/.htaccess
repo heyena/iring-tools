@@ -3,4 +3,4 @@ RewriteEngine on
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 
-RewriteRule ^(.*)$ src/router.php?rt=$1 [L,QSA]
+RewriteRule ^(.*)$ src/index.php?rt=$1 [L,QSA]
