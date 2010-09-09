@@ -528,4 +528,40 @@
       <fileName>TemplateContainsSearch.txt</fileName>
     </Query>
   </QueryItem>
+  <QueryItem>
+    <Key>PostPart8Template_1</Key>
+    <Query>
+      <fileName>PostPart8Template_1.txt</fileName>
+    </Query>
+  </QueryItem>
+  <QueryItem>
+    <Key>PostPart8Template_2</Key>
+    <Query>
+      <fileName>PostPart8Template_2.txt</fileName>
+    </Query>
+  </QueryItem>
+  <QueryItem>
+    <Key>PostPart8Template_3</Key>
+    <Query>
+      <fileName>PostPart8Template_3.txt</fileName>
+    </Query>
+  </QueryItem>
+  <QueryItem>
+    <Key>PostPart8Template_4</Key>
+    <Query>
+      <fileName>PostPart8Template_4.txt</fileName>
+    </Query>
+  </QueryItem>
+  <QueryItem>
+    <Key>PostPart8Template_5_1</Key>
+    <Query>
+      <fileName>PostPart8Template_5_1.txt</fileName>
+    </Query>
+  </QueryItem>
+  <QueryItem>
+    <Key>PostPart8Template_5_2</Key>
+    <Query>
+      <fileName>PostPart8Template_5_2.txt</fileName>
+    </Query>
+  </QueryItem>
 </Queries>
