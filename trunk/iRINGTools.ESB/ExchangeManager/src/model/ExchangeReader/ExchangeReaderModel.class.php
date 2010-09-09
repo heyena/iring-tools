@@ -10,7 +10,7 @@ class ExchangeReaderModel{
 	private $projectid;
 
 	function __construct(){
-             $this->exchangeUrl = DIRECTORY_REQUEST_URI;
+            $this->exchangeUrl = DIRECTORY_REQUEST_URL;
                 
 	}
 
