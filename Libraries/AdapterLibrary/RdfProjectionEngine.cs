@@ -17,43 +17,6 @@ using VDS.RDF.Query;
 
 namespace org.iringtools.adapter.projection
 {
-  public class RdfElement : ICloneable
-  {
-    private StringBuilder builder;
-    public XElement Element { get; set; }
-    public String Values
-    {
-      get
-      {
-        if (builder != null)
-        {
-          return builder.ToString();
-        }
-        else
-        {
-          return String.Empty;
-        }
-      }
-      set
-      {
-        builder = new StringBuilder(value);
-      }
-    }
-
-    public void Append(String value)
-    {
-      builder.Append(value);
-    }
-
-    public object Clone()
-    {
-      RdfElement clone = new RdfElement();
-      clone.Element = new XElement(Element);
-      clone.Values = Values;
-      return clone;
-    }
-  }
-
   public class RdfProjectionEngine : IProjectionLayer
   {
     private static readonly XNamespace RDF_NS = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
@@ -79,10 +42,23 @@ namespace org.iringtools.adapter.projection
     private static readonly string CLASS_INSTANCE_QUERY_TEMPLATE = String.Format(@"
       PREFIX rdf: <{0}>
       PREFIX rdl: <{1}> 
-      SELECT ?instance
+      SELECT ?class
       WHERE {{{{ 
-        ?instance rdf:type {{0}} . 
+        ?class rdf:type {{0}} . 
       }}}}", RDF_NS.NamespaceName, RDL_NS.NamespaceName);
+
+    private static readonly string SUBCLASS_INSTANCE_QUERY_TEMPLATE = String.Format(@"
+      PREFIX rdf: <{0}>
+      PREFIX rdl: <{1}> 
+      PREFIX tpl: <{2}> 
+      PREFIX i:   <{{0}}>
+      SELECT ?subclass 
+      WHERE {{{{
+	      ?bnode {{1}} i:{{2}} . 
+	      ?bnode rdf:type {{3}} . 
+	      ?bnode {{4}} {{5}} . 
+	      ?bnode {{6}} ?subclass 
+      }}}}", RDF_NS.NamespaceName, RDL_NS.NamespaceName, TPL_NS.NamespaceName);
 
     private static readonly string LITERAL_QUERY_TEMPLATE = String.Format(@"
       PREFIX rdf: <{0}>
@@ -174,7 +150,7 @@ namespace org.iringtools.adapter.projection
       graph.Dispose();
 
       // fill data objects and return
-      SetClassInstances();
+      ResetClassInstances();
 
       var rootClassTemplatesMap = _classInstances.First();
       string rootClassId = rootClassTemplatesMap.Key;
@@ -208,42 +184,42 @@ namespace org.iringtools.adapter.projection
     }
 
     #region helper methods
-    private void SetClassInstances()
+    private void ResetClassInstances()
     {
       _classInstances.Clear();
 
-      foreach (var pair in _graphMap.classTemplateListMaps)
+      if (_graphMap.classTemplateListMaps.Count == 0)
+        return;
+
+      var pair = _graphMap.classTemplateListMaps.First();
+      string classId = pair.Key.classId;
+      string query = String.Format(CLASS_INSTANCE_QUERY_TEMPLATE, classId);
+      object results = _memoryStore.ExecuteQuery(query);
+
+      if (results != null)
       {
-        string classId = pair.Key.classId;
-        string query = String.Format(CLASS_INSTANCE_QUERY_TEMPLATE, classId);
-        object results = _memoryStore.ExecuteQuery(query);
+        SparqlResultSet resultSet = (SparqlResultSet)results;
 
-        if (results != null)
+        foreach (SparqlResult result in resultSet)
         {
-          SparqlResultSet resultSet = (SparqlResultSet)results;
+          string classInstance = result.ToString().Remove(0, ("?class = " + _graphBaseUri).Length);
 
-          foreach (SparqlResult result in resultSet)
+          if (!String.IsNullOrEmpty(classInstance))
           {
-            string qualifiedClassInstance = result.ToString();
-            string classInstance = qualifiedClassInstance.Substring(qualifiedClassInstance.LastIndexOf("/") + 1);
-
-            if (!String.IsNullOrEmpty(classInstance))
+            if (!_classInstances.ContainsKey(classId))
             {
-              if (!_classInstances.ContainsKey(classId))
-              {
-                _classInstances[classId] = new List<string> { classInstance };
-              }
-              else if (!_classInstances[classId].Contains(classInstance))
-              {
-                _classInstances[classId].Add(classInstance);
-              }
+              _classInstances[classId] = new List<string> { classInstance };
+            }
+            else if (!_classInstances[classId].Contains(classInstance))
+            {
+              _classInstances[classId].Add(classInstance);
             }
           }
         }
       }
     }
 
-    private void SetClassIdentifiers()
+    private void ResetClassIdentifiers()
     {
       _classIdentifiers.Clear();
 
@@ -307,7 +283,7 @@ namespace org.iringtools.adapter.projection
         new XAttribute(XNamespace.Xmlns + "xsd", XSD_NS),
         new XAttribute(XNamespace.Xmlns + "tpl", TPL_NS));
 
-      SetClassIdentifiers();
+      ResetClassIdentifiers();
       _classInstances.Clear();
 
       foreach (var pair in _graphMap.classTemplateListMaps)
@@ -668,6 +644,8 @@ namespace org.iringtools.adapter.projection
         string possessorRoleId = String.Empty;
         string referenceRoleId = String.Empty;
         string referenceClassId = String.Empty;
+        string nextClassReferenceId = String.Empty;
+        ClassMap nextClassMap = null;
         List<RoleMap> propertyRoleMaps = new List<RoleMap>();
 
         // find property roleMaps
@@ -680,14 +658,15 @@ namespace org.iringtools.adapter.projection
               break;
 
             case RoleType.Reference:
-              referenceRoleId = roleMap.roleId;
-              referenceClassId = roleMap.value;
-
               if (roleMap.classMap != null)
               {
-                string nextClassId = roleMap.classMap.classId;
-                List<string> nextClassInstances = _classInstances[nextClassId];
-                SetDataObjects(nextClassId, nextClassInstances[dataObjectIndex], dataObjectIndex);
+                nextClassMap = roleMap.classMap;
+                nextClassReferenceId = roleMap.roleId;
+              }
+              else
+              {
+                referenceRoleId = roleMap.roleId;
+                referenceClassId = roleMap.value;
               }
 
               break;
@@ -698,51 +677,109 @@ namespace org.iringtools.adapter.projection
           }
         }
 
-        // query for property roleMaps values
-        foreach (RoleMap roleMap in propertyRoleMaps)
+        if (nextClassMap != null)
         {
-          string query = String.Format(LITERAL_QUERY_TEMPLATE, _graphBaseUri, possessorRoleId, classInstance,
-              templateMap.templateId, referenceRoleId, referenceClassId, roleMap.roleId);
+          string query = String.Format(SUBCLASS_INSTANCE_QUERY_TEMPLATE, _graphBaseUri, possessorRoleId, classInstance,
+              templateMap.templateId, referenceRoleId, referenceClassId, nextClassReferenceId);
 
           object results = _memoryStore.ExecuteQuery(query);
 
           if (results is SparqlResultSet)
           {
-            string[] propertyPath = roleMap.propertyName.Split('.');
-            string property = propertyPath[propertyPath.Length - 1].Trim();
-            List<string> values = new List<string>();
-
             SparqlResultSet resultSet = (SparqlResultSet)results;
 
             foreach (SparqlResult result in resultSet)
             {
-              string value = Regex.Replace(result.ToString(), @".*= ", String.Empty);
+              string nextClassInstance = result.ToString().Remove(0, ("?subclass = " + _graphBaseUri).Length);
+              SetDataObjects(nextClassMap.classId, nextClassInstance, dataObjectIndex);
+              break;  // should be one result only
+            }
+          }
+        }
+        else // query for property roleMaps values
+        {
+          foreach (RoleMap roleMap in propertyRoleMaps)
+          {
+            string query = String.Format(LITERAL_QUERY_TEMPLATE, _graphBaseUri, possessorRoleId, classInstance,
+                templateMap.templateId, referenceRoleId, referenceClassId, roleMap.roleId);
 
-              if (value == RDF_NIL)
-                value = String.Empty;
-              else if (value.Contains("^^"))
-                value = value.Substring(0, value.IndexOf("^^"));
-              else if (!String.IsNullOrEmpty(roleMap.valueList))
-                value = _mapping.ResolveValueMap(roleMap.valueList, value);
+            object results = _memoryStore.ExecuteQuery(query);
+
+            if (results is SparqlResultSet)
+            {
+              string[] propertyPath = roleMap.propertyName.Split('.');
+              string property = propertyPath[propertyPath.Length - 1].Trim();
+              List<string> values = new List<string>();
+
+              SparqlResultSet resultSet = (SparqlResultSet)results;
+
+              foreach (SparqlResult result in resultSet)
+              {
+                string value = Regex.Replace(result.ToString(), @".*= ", String.Empty);
+
+                if (value == RDF_NIL)
+                  value = String.Empty;
+                else if (value.Contains("^^"))
+                  value = value.Substring(0, value.IndexOf("^^"));
+                else if (!String.IsNullOrEmpty(roleMap.valueList))
+                  value = _mapping.ResolveValueMap(roleMap.valueList, value);
+
+                if (propertyPath.Length > 2)
+                {
+                  values.Add(value);
+                }
+                else
+                {
+                  _dataObjects[dataObjectIndex].SetPropertyValue(property, value);
+                }
+              }
 
               if (propertyPath.Length > 2)
               {
-                values.Add(value);
+                SetLastRelatedObjects(dataObjectIndex, roleMap.propertyName, values);
               }
-              else
-              {
-                _dataObjects[dataObjectIndex].SetPropertyValue(property, value);
-              }
-            }
-
-            if (propertyPath.Length > 2)
-            {
-              SetLastRelatedObjects(dataObjectIndex, roleMap.propertyName, values);
             }
           }
         }
       }
     }
     #endregion
+  }
+
+  public class RdfElement : ICloneable
+  {
+    private StringBuilder builder;
+    public XElement Element { get; set; }
+    public String Values
+    {
+      get
+      {
+        if (builder != null)
+        {
+          return builder.ToString();
+        }
+        else
+        {
+          return String.Empty;
+        }
+      }
+      set
+      {
+        builder = new StringBuilder(value);
+      }
+    }
+
+    public void Append(String value)
+    {
+      builder.Append(value);
+    }
+
+    public object Clone()
+    {
+      RdfElement clone = new RdfElement();
+      clone.Element = new XElement(Element);
+      clone.Values = Values;
+      return clone;
+    }
   }
 }

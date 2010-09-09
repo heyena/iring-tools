@@ -37,6 +37,38 @@
               </roleMaps>
             </TemplateMap>
             <TemplateMap>
+              <templateId>tpl:R74424074375</templateId>
+              <name>DesignTemperature</name>
+              <roleMaps>
+                <RoleMap>
+                  <type>Possessor</type>
+                  <roleId>tpl:R11450580697</roleId>
+                  <name>hasPossessor</name>
+                </RoleMap>
+                <RoleMap>
+                  <type>Property</type>
+                  <roleId>tpl:R10528152386</roleId>
+                  <name>hasScale</name>
+                  <dataType>xsd:string</dataType>
+                  <propertyName>LINES.UOM_DESTEMPERATURE</propertyName>
+                  <valueList>Temperature</valueList>
+                </RoleMap>
+                <RoleMap>
+                  <type>Reference</type>
+                  <roleId>tpl:R56806886394</roleId>
+                  <name>hasType</name>
+                  <value>rdl:R21210571481</value>
+                </RoleMap>
+                <RoleMap>
+                  <type>Property</type>
+                  <roleId>tpl:R65789235245</roleId>
+                  <name>valValue</name>
+                  <dataType>xsd:double</dataType>
+                  <propertyName>LINES.DESTEMPERATURE</propertyName>
+                </RoleMap>
+              </roleMaps>
+            </TemplateMap>
+            <TemplateMap>
               <templateId>tpl:R30736898138</templateId>
               <name>Length</name>
               <roleMaps>
@@ -149,7 +181,7 @@
       <name>Temperature</name>
       <valueMaps>
         <ValueMap>
-          <internalValue>degC</internalValue>
+          <internalValue>Deg C</internalValue>
           <uri>rdl:R74877992703</uri>
         </ValueMap>
         <ValueMap>
