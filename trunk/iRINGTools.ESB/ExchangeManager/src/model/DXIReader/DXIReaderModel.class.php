@@ -9,7 +9,7 @@ class DXIReaderModel{
 
 	function __construct(){
 		// URL from configfile
-		$this->dxiUrl = 'http://localhost:81/iRINGTools.ESB/ExchangeManager/src/dti.xml';
+		$this->dxiUrl = DXI_REQUEST_URL;
 	}
 
 function getDXIInfo($exchangeID){
