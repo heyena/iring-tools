@@ -1171,7 +1171,7 @@ namespace org.iringtools.adapter
     {
       List<string> asemblies = new List<string>();
 
-      string binaryPath = "file:\\" + _settings["BaseDirectoryPath"] + "bin";
+      string binaryPath = @"file:\\" + _settings["BaseDirectoryPath"] + "bin";
 
       System.Type ti = typeof(IDataLayer);
       foreach (System.Reflection.Assembly asm in System.AppDomain.CurrentDomain.GetAssemblies())
