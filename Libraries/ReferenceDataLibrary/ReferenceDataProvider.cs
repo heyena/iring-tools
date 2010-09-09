@@ -2855,6 +2855,210 @@ namespace org.iringtools.referenceData
             }
         }
 
+        public Response PostPart8Template2(QMXF qmxf)
+        {
+            Status status = new Status();
+
+            try
+            {
+                Response response = null;
+                string sparql = string.Empty;
+                string tempSparql = string.Empty;
+
+                Query query1 = _queries["PostPart8Template_1"];
+                string sparql1 = ReadSPARQL(query1.fileName);
+
+                Query query2 = _queries["PostPart8Template_2"];
+                string sparql2 = ReadSPARQL(query2.fileName);
+
+                Query query3 = _queries["PostPart8Template_3"];
+                string sparql3 = ReadSPARQL(query3.fileName);
+
+                Query query4 = _queries["PostPart8Template_4"];
+                string sparql4 = ReadSPARQL(query4.fileName);
+
+                Query query5_1 = _queries["PostPart8Template_5_1"];
+                string sparql5_1 = ReadSPARQL(query5_1.fileName);
+
+                Query query5_2 = _queries["PostPart8Template_5_2"];
+                string sparql5_2 = ReadSPARQL(query5_2.fileName);
+
+                int repository = qmxf.targetRepository != null ? getIndexFromName(qmxf.targetRepository) : 0;
+                Repository source = _repositories[repository];
+
+                if (source.isReadOnly)
+                {
+                    status.Level = StatusLevel.Error;
+                    status.Messages.Add("Repository is Read Only");
+                    _response.Append(status);
+                    return _response;
+                }
+
+                #region Template Definitions
+                if (qmxf.templateDefinitions.Count > 0) //Template Definitions
+                {
+                    foreach (TemplateDefinition template in qmxf.templateDefinitions)
+                    {
+                        string ID = string.Empty;
+                        string id = string.Empty;
+                        string label = string.Empty;
+                        string description = string.Empty;
+                        string generatedTempId = string.Empty;
+                        string templateName = string.Empty;
+                        string roleDefinition = string.Empty;
+                        string nameSparql = string.Empty;
+                        string specSparql = string.Empty;
+                        string classSparql = string.Empty;
+                        int templateIndex = -1;
+
+                        ID = template.identifier;
+
+                        QMXF q = new QMXF();
+                        if (ID != null)
+                        {
+                            id = ID.Replace(ID.Substring(0, ID.LastIndexOf("#")), "");
+                            q = GetTemplate(id);
+                            foreach (TemplateDefinition templateFound in q.templateDefinitions)
+                            {
+                                templateIndex++;
+                                if (templateFound.repositoryName.Equals(_repositories[repository]))
+                                {
+                                    ID = "<" + ID + ">";
+                                    Utility.WriteString("Template found: " + q.templateDefinitions[templateIndex].name[0].value, "stats.log", true);
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (q.templateDefinitions.Count == 0)
+                        {
+                            foreach (QMXFName name in template.name)
+                            {
+                                label = name.value;
+
+                                //ID generator
+                                templateName = "Template definition " + label;
+
+                                if (_useExampleRegistryBase)
+                                    generatedTempId = CreateIdsAdiId(_settings["ExampleRegistryBase"], templateName);
+                                else
+                                    generatedTempId = CreateIdsAdiId(_settings["TemplateRegistryBase"], templateName);
+                                ID = "<" + generatedTempId + ">";
+                                Utility.WriteString("\n" + ID + "\t" + label, "TempDef IDs.log", true);
+
+                                sparql1 = sparql1.Replace("param1", ID);
+                                sparql = sparql1;
+
+                                sparql2 = sparql2.Replace("param1", label);                                
+
+                                //append description to sparql query
+                                int descrCount = template.description.Count;
+                                if (descrCount == 0)
+                                {
+                                    sparql2 += " . ";
+                                }
+                                else
+                                {
+                                    sparql2 += " ; ";
+                                }
+                                sparql += sparql2;
+
+                                foreach (Description descr in template.description)
+                                {
+                                    description = descr.value;
+                                    tempSparql = sparql3.Replace("param1", description);
+
+                                    if (--descrCount > 0)
+                                        tempSparql += "  ; ";
+                                    else
+                                        tempSparql += "  . ";
+
+                                    sparql += tempSparql;
+                                }
+                                
+
+                                #region roles
+                                foreach (RoleDefinition role in template.roleDefinition)
+                                {
+                                    string roleID = string.Empty;
+                                    string roleLabel = string.Empty;
+                                    string roleDescription = string.Empty;
+                                    string generatedId = string.Empty;
+                                    string genName = string.Empty;
+                                    int blankNodeCount = 0;
+
+                                    //ID generator
+                                    genName = "Role definition " + roleLabel;
+
+                                    if (_useExampleRegistryBase)
+                                        generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], genName);
+                                    else
+                                        generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], genName);
+
+                                    roleID = "<" + generatedId + ">";
+
+                                    //roleID = role.identifier;
+                                    foreach (QMXFName roleName in role.name)
+                                    {
+                                        roleLabel = roleName.value;
+                                        //roleDescription = role.description.value;
+                                        Utility.WriteString("\n" + roleID + "\t" + roleLabel, "RoleDef IDs.log", true);
+                                    }
+                                    //append role to sparql query
+                                    tempSparql = sparql4.Replace("param1", roleID);
+                                    tempSparql = tempSparql.Replace("param2", blankNodeCount.ToString());
+                                    tempSparql = tempSparql.Replace("param3", blankNodeCount++.ToString());
+                                    tempSparql = tempSparql.Replace("param4", blankNodeCount.ToString());
+
+                                    sparql += tempSparql;
+
+                                    int restrictionCount = role.restrictions.Count;
+                                    foreach (PropertyRestriction restriction in role.restrictions)
+                                    {
+                                        if (--restrictionCount > 0)
+                                        {
+                                            tempSparql = sparql5_1.Replace("param1", blankNodeCount++.ToString());
+                                            tempSparql = tempSparql.Replace("param2", blankNodeCount.ToString());
+                                            tempSparql = tempSparql.Replace("param3", (++blankNodeCount).ToString());
+                                            tempSparql = tempSparql.Replace("param4", blankNodeCount.ToString());
+                                            tempSparql = tempSparql.Replace("param5", roleID);
+                                            tempSparql = tempSparql.Replace("param6", restriction.type);
+                                            tempSparql = tempSparql.Replace("param7", restriction.value);
+                                        }
+                                        else
+                                        {
+                                            tempSparql = sparql5_1.Replace("param1", blankNodeCount++.ToString());
+                                            tempSparql = tempSparql.Replace("param2", blankNodeCount.ToString());
+                                            tempSparql = tempSparql.Replace("param3", blankNodeCount.ToString());
+                                            tempSparql = tempSparql.Replace("param4", roleID);
+                                            tempSparql = tempSparql.Replace("param5", restriction.type);
+                                            tempSparql = tempSparql.Replace("param6", restriction.value);
+                                        }
+
+                                        sparql += tempSparql;
+                                    }
+                                }
+                                #endregion roles
+
+                                sparql = sparql.Insert(sparql.LastIndexOf("."), "}").Remove(sparql.Length - 1);
+                                //response = PostToRepository(source, sparql);
+                                Utility.WriteString(sparql, @"C:\XMLs\PostPart8Template.txt");
+                            }
+                        }
+                    }
+                }
+                #endregion template Definitions
+
+                _response.Append(status);
+                return _response;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error in PostTemplate: " + ex);
+                throw ex;
+            }
+        }
+
         public QMXF GetPart8Class(string id)
         {
             QMXF qmxf = new QMXF();
