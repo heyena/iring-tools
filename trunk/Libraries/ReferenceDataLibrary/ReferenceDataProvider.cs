@@ -2861,7 +2861,7 @@ namespace org.iringtools.referenceData
 
             try
             {
-                Response response = null;
+                //Response response = null;
                 string sparql = string.Empty;
                 string tempSparql = string.Empty;
 
