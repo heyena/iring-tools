@@ -1,10 +1,12 @@
 ==Java Development Environment Configuration==
- * Checkout from svn/branches/ports/java
+ * Checkout from svn
+ * Run eclipse using /iRINGTools.ESB as the workspace.
  * Import user libraries 
+  * search and replace in iringtools.userlibraries to match your svn checkout.
   * Window - Preferences - Java - Build Path - User Libraries - iringtools.userlibraries
  * Import preferences
   * File - Import - General - Preferences - preferences.epf
- * Import iring-tools-java projects into workspace
+ * Import projects into workspace
   * File - Import - General - Existing Projects into Workspace - select root(workspace) folder
  * Create Tomcat server instance in eclipse
   * Right click an empty spot in Servers tab - New - Server - Apache - Tomcat 6.0 - Next - 
