@@ -135,7 +135,7 @@ namespace org.iringtools.adapter
         _logger.Error(string.Format("Error in GetScopes: {0}", ex));
         throw new Exception(string.Format("Error getting the list of scopes: {0}", ex));
       }
-    }
+    }    
 
     public Response UpdateScopes(List<ScopeProject> scopes)
     {
@@ -143,24 +143,44 @@ namespace org.iringtools.adapter
       status.Messages = new Messages();
       try
       {
-        _scopes = scopes;
-
-        Utility.Write<List<ScopeProject>>(_scopes, _settings["ScopesPath"], true);
-
-        /*
+        //_scopes = scopes;
+                
         foreach (ScopeProject project in scopes)
         {
-          foreach (ScopeApplication application in project.Applications)
+          ScopeProject findProject = _scopes.FirstOrDefault<ScopeProject>(o => o.Name == project.Name);
+
+          if (findProject != null)
           {
-            UpdateScopes(
-              project.Name,
-              project.Description,
-              application.Name,
-              application.Description
-            );
+
+            findProject.Name = project.Name;
+            findProject.Description = project.Description;
+
+            foreach (ScopeApplication application in project.Applications)
+            {
+
+              ScopeApplication findApplication = findProject.Applications.FirstOrDefault<ScopeApplication>(o => o.Name == application.Name);
+
+              if (findApplication != null)
+              {
+                findApplication.Name = application.Name;
+                findApplication.Description = application.Description;
+              }
+              else
+              {
+                findProject.Applications.Add(application);
+              }
+
+            }
+                        
           }
-        } 
-        */
+          else
+          {
+            _scopes.Add(project);
+          }
+
+        }
+
+        Utility.Write<List<ScopeProject>>(_scopes, _settings["ScopesPath"], true);
 
         status.Messages.Add("Scopes have been updated successfully.");
       }
@@ -1146,5 +1166,29 @@ namespace org.iringtools.adapter
 
 
     #endregion
+
+    public List<string> GetDataLayers()
+    {
+      List<string> asemblies = new List<string>();
+
+      string binaryPath = "file:\\" + _settings["BaseDirectoryPath"] + "bin";
+
+      System.Type ti = typeof(IDataLayer);
+      foreach (System.Reflection.Assembly asm in System.AppDomain.CurrentDomain.GetAssemblies())
+      { 
+        if (!asm.IsDynamic && Path.GetDirectoryName(asm.CodeBase) == binaryPath)
+        {
+          foreach (System.Type t in asm.GetTypes())
+          {
+            if (!t.IsInterface && ti.IsAssignableFrom(t))
+            {
+              asemblies.Add(t.FullName + ", " + asm.FullName.Split(',')[0]);
+            }
+          }
+        }        
+      }
+
+      return asemblies;
+    }
   }
 }

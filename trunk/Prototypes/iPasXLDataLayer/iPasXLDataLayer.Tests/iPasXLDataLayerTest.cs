@@ -9,7 +9,7 @@ using org.iringtools.adapter;
 using org.iringtools.library;
 using org.iringtools.utility;
 
-namespace Hatch.iPasXLDataLayer.API
+namespace Hatch.DataLayers.iPasXL
 {
     
   /// <summary>
@@ -20,7 +20,7 @@ namespace Hatch.iPasXLDataLayer.API
   {    
 
     private iPasXLDataLayer _dataLayer;
-    private EntityGenerator _generator;
+    private iPasXLEntityGenerator _generator;
 
     public iPasXLDataLayerTest()
     {
@@ -48,7 +48,7 @@ namespace Hatch.iPasXLDataLayer.API
       ipasxlSettings.AppendSettings(settings);
 
       _dataLayer = new iPasXLDataLayer(adapterSettings);
-      _generator = new EntityGenerator(ipasxlSettings);
+      _generator = new iPasXLEntityGenerator(ipasxlSettings);
     }
 
     private TestContext testContextInstance;
@@ -159,7 +159,7 @@ namespace Hatch.iPasXLDataLayer.API
       Assert.IsTrue(response.StatusList.Count == 2);
     }
 
-    //[TestMethod]
+    [TestMethod]
     public void GetDictionary()
     {
       DataDictionary dictionary = _dataLayer.GetDictionary();
@@ -174,22 +174,22 @@ namespace Hatch.iPasXLDataLayer.API
     {
       iPasXLConfiguration settings = new iPasXLConfiguration();
       settings.Location = @"C:\Projects\iring-tools\trunk\Prototypes\iPasXLDataLayer\iPasXLDataLayer\iPasXL.12345_000.API.xlsx";
-      settings.Worksheets = new List<Worksheet>();
+      settings.Worksheets = new List<iPasXLWorksheet>();
 
-      Worksheet worksheet = new Worksheet();
+      iPasXLWorksheet worksheet = new iPasXLWorksheet();
       worksheet.Name = "Equipment";
       worksheet.Identifier = "Tag";
-      worksheet.Columns = new List<Column>();
+      worksheet.Columns = new List<iPasXLColumn>();
 
-      worksheet.Columns.Add(new Column { Name = "Tag", DataType = DataType.String, Index = 1 });
-      worksheet.Columns.Add(new Column { Name = "Description", DataType = DataType.String, Index = 2 });
-      worksheet.Columns.Add(new Column { Name = "PumpType", DataType = DataType.String, Index = 3 });
-      worksheet.Columns.Add(new Column { Name = "PumpDriverType", DataType = DataType.String, Index = 4 });
-      worksheet.Columns.Add(new Column { Name = "DesignTemp", DataType = DataType.String, Index = 5 });
-      worksheet.Columns.Add(new Column { Name = "DesignPressure", DataType = DataType.String, Index = 6 });
-      worksheet.Columns.Add(new Column { Name = "Capacity", DataType = DataType.String, Index = 7 });
-      worksheet.Columns.Add(new Column { Name = "SpecificGravity", DataType = DataType.String, Index = 8 });
-      worksheet.Columns.Add(new Column { Name = "DifferentialPressure", DataType = DataType.String, Index = 9 });
+      worksheet.Columns.Add(new iPasXLColumn { Name = "Tag", DataType = DataType.String, Index = 1 });
+      worksheet.Columns.Add(new iPasXLColumn { Name = "Description", DataType = DataType.String, Index = 2 });
+      worksheet.Columns.Add(new iPasXLColumn { Name = "PumpType", DataType = DataType.String, Index = 3 });
+      worksheet.Columns.Add(new iPasXLColumn { Name = "PumpDriverType", DataType = DataType.String, Index = 4 });
+      worksheet.Columns.Add(new iPasXLColumn { Name = "DesignTemp", DataType = DataType.String, Index = 5 });
+      worksheet.Columns.Add(new iPasXLColumn { Name = "DesignPressure", DataType = DataType.String, Index = 6 });
+      worksheet.Columns.Add(new iPasXLColumn { Name = "Capacity", DataType = DataType.String, Index = 7 });
+      worksheet.Columns.Add(new iPasXLColumn { Name = "SpecificGravity", DataType = DataType.String, Index = 8 });
+      worksheet.Columns.Add(new iPasXLColumn { Name = "DifferentialPressure", DataType = DataType.String, Index = 9 });
 
       settings.Worksheets.Add(worksheet);
 

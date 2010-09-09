@@ -11,7 +11,7 @@ using System;
 using System.Collections.Generic;
 using org.iringtools.library;
 
-namespace Hatch.iPasXLDataLayer.API.Model_12345_000_API
+namespace Hatch.DataLayers.iPasXL.Model_12345_000_API
 {
   public class Equipment : IDataObject
   {

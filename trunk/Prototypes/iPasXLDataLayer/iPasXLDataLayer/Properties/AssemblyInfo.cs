@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ExcelDataLayer")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Hatch.iPasXL.Library")]
+[assembly: AssemblyDescription("Generic Microsoft Excel Datalayer for iRINGTools")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Hatch")]
-[assembly: AssemblyProduct("ExcelDataLayer")]
+[assembly: AssemblyProduct("Hatch.iPasXL.Library")]
 [assembly: AssemblyCopyright("Copyright © Hatch 2010")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

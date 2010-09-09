@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using org.iringtools.library;
 
-namespace Hatch.iPasXLDataLayer.API
+namespace Hatch.DataLayers.iPasXL
 {
   public class iPasXLSettings : ServiceSettings
   {

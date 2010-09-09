@@ -8,8 +8,8 @@
     <ProjectGuid>{4DDB5151-FE9D-4041-BA46-63486D7DA32D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Hatch.iPasXLDataLayer.API</RootNamespace>
-    <AssemblyName>ExcelDataLayer</AssemblyName>
+    <RootNamespace>Hatch.DataLayers.iPasXL</RootNamespace>
+    <AssemblyName>Hatch.iPasXL.Library</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -56,7 +56,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EntityGenerator.cs" />
+    <Compile Include="iPasXLEntityGenerator.cs" />
     <Compile Include="iPasXLConfiguration.cs" />
     <Compile Include="iPasXLDataLayer.cs" />
     <Compile Include="iPasXLSettings.cs" />
