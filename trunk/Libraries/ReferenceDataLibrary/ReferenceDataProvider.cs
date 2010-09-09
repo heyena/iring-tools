@@ -221,6 +221,7 @@ namespace org.iringtools.referenceData
 
                         sparql2 = ReadSPARQL(queryTemplateContainsSearch.fileName);
                         sparql2 = sparql2.Replace("param1", query);
+                        sparql2 = sparql2.Replace("param2", "0"); //TODO:Remove hard-coded OFFSET parameter
 
                         foreach (Repository repository in _repositories)
                         {
