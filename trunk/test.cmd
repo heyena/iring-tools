@@ -5,7 +5,7 @@ rem "C:\Program Files\TortoiseSVN\bin\TortoiseProc.exe" /notempfile /command:upd
 svn update build.xml
 taskkill /IM WebDev.WebServer40.exe >> null
 start /B WebDev.WebServer40 /port:54321 /path:C:\iring-tools\iRINGTools.Services
-start /B WebDev.WebServer40 /port:12345 /path:C:\iring-tools\iRINGTools.Web
+start /B WebDev.WebServer40 /port:12345 /path:C:\iring-tools\iRINGTools.Applications
 msbuild build.xml /t:Test /fileLogger /flp:errorsonly;logfile=msbuild.error.log /fileLogger /flp1:warningsonly;logfile=msbuild.warning.log
 taskkill /IM WebDev.WebServer40.exe >> null
 pause

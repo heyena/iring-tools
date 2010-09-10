@@ -182,6 +182,10 @@ namespace AdapterService.Tests
         {"targetGraphBaseUri", "http://localhost:54321/AdapterService/12345_000/XYZ/LINES"},
       };
 
+      Response setup = target.RefreshGraph("12345_000", "XYZ", "LINES");
+
+      Assert.IsFalse(setup.Level == StatusLevel.Error);
+
       Response actual = target.Pull("12345_000", "XYZ", "LINES", request);
 
       Assert.IsFalse(actual.Level == StatusLevel.Error);
