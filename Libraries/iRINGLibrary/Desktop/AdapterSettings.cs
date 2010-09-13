@@ -10,16 +10,16 @@ namespace org.iringtools.adapter
   {
     public AdapterSettings() : base()
     {
-      this.Add("InterfaceService",        @"http://localhost/InterfaceService/query");
-      this.Add("ReferenceDataServiceUri", @"http://showroom.iringsandbox.org/RefDataService/Service.svc");
+      this.Add("InterfaceService", @"http://localhost/Services/InterfaceService/query");
+      this.Add("ReferenceDataServiceUri", @"http://localhost/Services/RefDataService");
       this.Add("DefaultProjectionFormat", "xml");
-      this.Add("EndpointTimeout",         "30000");
-      this.Add("DBServer",                @".\SQLEXPRESS");
-      this.Add("DBName",                  "InterfaceDb");
-      this.Add("DBUser",                  "dotNetRDF");
-      this.Add("DBPassword",              "dotNetRDF");
-      this.Add("TrimData",                "False");
-      this.Add("ExecutingAssemblyName",   "App_Code");
+      this.Add("EndpointTimeout", "30000");
+      this.Add("dotNetRDFServer", @".\SQLEXPRESS");
+      this.Add("dotNetRDFCatalog", "InterfaceDb");
+      this.Add("dotNetRDFUser", "dotNetRDF");
+      this.Add("dotNetRDFPassword", "dotNetRDF");
+      this.Add("TrimData", "False");
+      this.Add("ExecutingAssemblyName", "App_Code");
 
       if (OperationContext.Current != null)
       {
