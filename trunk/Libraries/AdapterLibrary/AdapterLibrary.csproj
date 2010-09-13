@@ -131,7 +131,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\..\AssemblyInfo.cs" />
     <Compile Include="QtxfProjectionEngine.cs" />
-    <Compile Include="RdfElement.cs" />
     <Compile Include="RdfProjectionEngine.cs" />
     <Compile Include="XmlProjectionEngine.cs" />
   </ItemGroup>

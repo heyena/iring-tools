@@ -21,6 +21,7 @@ namespace org.iringtools.adapter.projection
   public class RdfProjectionEngine : BaseProjectionEngine
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(RdfProjectionEngine));
+    private XElement _graphXml = null;
     
     [Inject]
     public RdfProjectionEngine(AdapterSettings settings, IDataLayer dataLayer, Mapping mapping)
@@ -150,7 +151,7 @@ namespace org.iringtools.adapter.projection
     {
       Dictionary<string, List<string>> classInstancesCache = new Dictionary<string, List<string>>();
 
-      XElement graphElement = new XElement(RDF_NS + "RDF",
+      _graphXml = new XElement(RDF_NS + "RDF",
         new XAttribute(XNamespace.Xmlns + "rdf", RDF_NS),
         new XAttribute(XNamespace.Xmlns + "owl", OWL_NS),
         new XAttribute(XNamespace.Xmlns + "xsd", XSD_NS),
@@ -169,34 +170,36 @@ namespace org.iringtools.adapter.projection
           if (!classInstancesCache.ContainsKey(classId))
           {
             classInstancesCache[classId] = new List<string> { classInstance };
-            graphElement.Add(CreateRdfClassElement(classId, classInstance));
+            AddRdfClassElement(classId, classInstance);
             classExists = false;
           }
           else if (!classInstancesCache[classId].Contains(classInstance))
           {
             classInstancesCache[classId].Add(classInstance);
-            graphElement.Add(CreateRdfClassElement(classId, classInstance));
+            AddRdfClassElement(classId, classInstance);
             classExists = false;
           }
 
           if (!classExists)
           {
             foreach (TemplateMap templateMap in pair.Value)
-              CreateRdfTemplateElements(ref graphElement, classInstance, templateMap, i);
+              AddRdfTemplateElements(classInstance, templateMap, i);
           }
         }
       }
 
-      return graphElement;
+      return _graphXml;
     }
 
-    private XElement CreateRdfClassElement(string classId, string classInstance)
+    private void AddRdfClassElement(string classId, string classInstance)
     {
-      return new XElement(OWL_THING, new XAttribute(RDF_ABOUT, classInstance),
+      XElement classElement = new XElement(OWL_THING, new XAttribute(RDF_ABOUT, classInstance),
         new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, RDL_NS.NamespaceName + classId)));
+
+      _graphXml.Add(classElement);
     }
 
-    private void CreateRdfTemplateElements(ref XElement graphElement, string classInstance, TemplateMap templateMap, int dataObjectIndex)
+    private void AddRdfTemplateElements(string classInstance, TemplateMap templateMap, int dataObjectIndex)
     {
       IDataObject dataObject = _dataObjects[dataObjectIndex];
       string templateId = templateMap.templateId.Replace(TPL_PREFIX, TPL_NS.NamespaceName);
@@ -259,7 +262,7 @@ namespace org.iringtools.adapter.projection
         roleElement.Add(new XAttribute(RDF_RESOURCE, _graphBaseUri + identifier));
         baseTemplateElement.Add(roleElement);
 
-        graphElement.Add(baseTemplateElement);        
+        _graphXml.Add(baseTemplateElement);        
       }
       else
       {
@@ -319,7 +322,7 @@ namespace org.iringtools.adapter.projection
           for (int i = 0; i < valueObjects.Count; i++)
           {
             XElement templateElement = new XElement(baseTemplateElement);
-            graphElement.Add(templateElement);
+            _graphXml.Add(templateElement);
             
             StringBuilder templateValue = new StringBuilder(baseValues.ToString());
             for (int j = 0; j < propertyRoles.Count; j++)
