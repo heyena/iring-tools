@@ -1012,5 +1012,29 @@ namespace org.iringtools.utility
 
       return ByteArrayToString(tmpHash);
     }
+
+    public static string ExtractId(string qualifiedId)
+    {
+      if (String.IsNullOrEmpty(qualifiedId) || !qualifiedId.Contains(":"))
+        return qualifiedId;
+
+      return qualifiedId.Substring(qualifiedId.IndexOf(":") + 1);
+    }
+
+    public static string TitleCase(string value)
+    {
+      string returnValue = String.Empty;
+      string[] words = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+      foreach (string word in words)
+      {
+        returnValue += word.Substring(0, 1).ToUpper();
+
+        if (word.Length > 1)
+          returnValue += word.Substring(1).ToLower();
+      }
+
+      return returnValue;
+    }
   }
 }

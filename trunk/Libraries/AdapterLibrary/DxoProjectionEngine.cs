@@ -44,7 +44,7 @@ namespace org.iringtools.adapter.projection
       );
     }
 
-    public XElement GetXml(string graphName, ref IList<IDataObject> dataObjects)
+    public XElement ToXml(string graphName, ref IList<IDataObject> dataObjects)
     {
       _graphMap = _mapping.FindGraphMap(graphName);
       _dataObjects = dataObjects;
@@ -119,7 +119,7 @@ namespace org.iringtools.adapter.projection
       return xml;
     }
     
-    public IList<IDataObject> GetDataObjects(string graphName, ref XElement xml)
+    public IList<IDataObject> ToDataObjects(string graphName, ref XElement xml)
     {
       _graphMap = _mapping.FindGraphMap(graphName);
       _dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(xml);
