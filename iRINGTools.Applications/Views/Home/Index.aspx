@@ -20,7 +20,6 @@
       	 these functions via the following services:</p><br>
       <h2>iRINGTools Applications</h2>
       <ul>
-		    <li><a href="SPARQLQuery">SPARQL Query</a></li>
 		    <li><a href="RefDataEditor">Reference Data Editor</a></li>        
 		    <li><a href="AppEditor">Application Editor</a></li>
         <li><a href="MappingEditor">Mapping Editor</a></li>

@@ -15,7 +15,7 @@
 
     <ServicesDir>$(MSBuildProjectDirectory)\iRINGTools.Services</ServicesDir>
     <ApplicationsDir>$(MSBuildProjectDirectory)\iRINGTools.Applications</ApplicationsDir>
-    <LandingPageDir>$(MSBuildProjectDirectory)\LandingPage</LandingPageDir>
+    <LandingPageDir>$(MSBuildProjectDirectory)\iRINGTools.Landing</LandingPageDir>
     <UnitTestsDir>$(MSBuildProjectDirectory)\UnitTests</UnitTestsDir>
     <UtilitiesDir>$(MSBuildProjectDirectory)\Utilities</UtilitiesDir>
     <RDFImportExportDir>$(UtilitiesDir)\RDFImportExport\RDFImportExport</RDFImportExportDir>
@@ -25,10 +25,10 @@
     <SDKLibDir>$(SDKDir)\lib</SDKLibDir>
     
     <DeploymentDir>$(MSBuildProjectDirectory)\Deployment</DeploymentDir>
-    <ServicesDeploymentDir>$(DeploymentDir)\Services</ServicesDeploymentDir>
-    <AppsDeploymentDir>$(DeploymentDir)\Applications</AppsDeploymentDir>
-    <UtilitiesDeploymentDir>$(DeploymentDir)\Utilities</UtilitiesDeploymentDir>
-    <LandingPageDeploymentDir>$(DeploymentDir)\LandingPage</LandingPageDeploymentDir>
+    <ServicesDeploymentDir>$(DeploymentDir)\iRINGTools\Services</ServicesDeploymentDir>
+    <AppsDeploymentDir>$(DeploymentDir)\iRINGTools\Apps</AppsDeploymentDir>
+    <UtilitiesDeploymentDir>$(DeploymentDir)\iRINGTools\Utils</UtilitiesDeploymentDir>
+    <LandingDeploymentDir>$(DeploymentDir)\iRINGTools</LandingDeploymentDir>
     <SDKDeploymentDir>$(DeploymentDir)\SDK</SDKDeploymentDir>
     <CSVDataLayerDeploymentDir>$(SDKDeploymentDir)\CSVDataLayer</CSVDataLayerDeploymentDir>
     <SDKLibDeploymentDir>$(SDKDeploymentDir)\lib\iring-tools</SDKLibDeploymentDir>
@@ -84,11 +84,12 @@
                $(ServicesDir)\*\*\*\.svn\**;">
     </ServicesDeployment>
 
-    <LandingPageDeployment
+    <LandingDeployment
       Include="$(LandingPageDir)\**"
       Exclude="$(LandingPageDir)\.svn\**;
-               $(LandingPageDir)\*\.svn\**;">
-    </LandingPageDeployment>
+               $(LandingPageDir)\*\.svn\**;
+			   $(LandingPageDir)\nbproject\**;">
+    </LandingDeployment>
 
     <AppsDeployment
       Include="$(ApplicationsDir)\**"
@@ -159,9 +160,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <DeploymentPackage Include="*" Exclude="">
+    <DeploymentPackage Include="*.*" Exclude="*.zip">
       <Options>a -tzip -r</Options>
-      <FileSet>$(ServicesDeploymentDir) $(AppsDeploymentDir) $(LandingPageDeploymentDir) $(UtilitiesDeploymentDir)</FileSet>
+      <FileSet>$(ServicesDeploymentDir) $(AppsDeploymentDir) $(UtilitiesDeploymentDir) $(LandingDeploymentDir)\*</FileSet>
       <ZipFile>$(DeploymentDir)\iRINGTools-$(Major).$(Minor).$(Build).zip</ZipFile>
     </DeploymentPackage>
     <DeploymentPackage Include="*" Exclude="">
@@ -234,7 +235,7 @@
   <Target Name="CreateDeployment">
     <Message Text="Cleaning up old deployment folders..." />
     <Exec Command="RmDir /S /Q $(DeploymentDir)" />
-    <MakeDir Directories="$(ServicesDeploymentDir); $(AppsDeploymentDir); $(LandingPageDeploymentDir); $(UtilitiesDeploymentDir);"/>
+    <MakeDir Directories="$(ServicesDeploymentDir); $(AppsDeploymentDir); $(LandingDeploymentDir); $(UtilitiesDeploymentDir);"/>
     <!--<Exec Command="Copy .\ClientAccessPolicy.xml $(ServicesDeploymentDir)\ClientAccessPolicy.xml" />
     <Exec Command="Copy .\ClientAccessPolicy.xml $(AppsDeploymentDir)\ClientAccessPolicy.xml" />-->
 
@@ -243,6 +244,9 @@
           DestinationFiles="@(ServicesDeployment ->'$(ServicesDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Exec Command="Move /Y $(ServicesDeploymentDir)\Web_Default.config $(ServicesDeploymentDir)\Web.config" />
     <Exec Command="Move /Y $(ServicesDeploymentDir)\XML\Repositories_Default.xml $(ServicesDeploymentDir)\XML\Repositories.xml" />
+	<Exec Command="Move /Y $(ServicesDeploymentDir)\App_Data\Config_Default.ttl $(ServicesDeploymentDir)\App_Data\Config.ttl" />
+	<Exec Command="Move /Y $(ServicesDeploymentDir)\App_Data\InterfaceIntro_Default.txt $(ServicesDeploymentDir)\App_Data\InterfaceIntro.txt" />
+	<Exec Command="Move /Y $(ServicesDeploymentDir)\App_Data\SandboxIntro_Default.txt $(ServicesDeploymentDir)\App_Data\SandboxIntro.txt" />
     <Exec Command="Mkdir $(ServicesDeploymentDir)\Logs" />
     <Exec Command="Mkdir $(ServicesDeploymentDir)\App_Code"/>
 
@@ -258,8 +262,8 @@
     <Exec Command="Move /Y $(UtilitiesDeploymentDir)\RDFImportExport_Default.config $(UtilitiesDeploymentDir)\RDFImportExport.exe.config" />
 
     <Message Text="Creating landing page deployment ..." />
-    <Copy SourceFiles="@(LandingPageDeployment)"
-          DestinationFiles="@(LandingPageDeployment->'$(LandingPageDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(LandingDeployment)"
+          DestinationFiles="@(LandingDeployment->'$(LandingDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
 
     <Message Text="Creating SDK deployment ..." />
     <Copy SourceFiles="@(SDKDeployment)"
@@ -278,6 +282,10 @@
   </Target>
 
   <Target Name="CreatePackages" DependsOnTargets="CreateDeployment">
+    <Exec Command="$(zipCmd) %(DeploymentPackage.Options) %(DeploymentPackage.ZipFile) %(DeploymentPackage.FileSet)" />
+  </Target>
+  
+  <Target Name="TestZIP">
     <Exec Command="$(zipCmd) %(DeploymentPackage.Options) %(DeploymentPackage.ZipFile) %(DeploymentPackage.FileSet)" />
   </Target>
 
