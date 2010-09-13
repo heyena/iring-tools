@@ -1171,24 +1171,32 @@ namespace org.iringtools.adapter
     {
       List<string> asemblies = new List<string>();
 
-      string binaryPath = @"file:\\" + _settings["BaseDirectoryPath"] + "bin";
+      try
+      {
+        //string binaryPath = @"file:///" + _settings["BaseDirectoryPath"] + "bin";        
 
-      System.Type ti = typeof(IDataLayer);
-      foreach (System.Reflection.Assembly asm in System.AppDomain.CurrentDomain.GetAssemblies())
-      { 
-        if (!asm.IsDynamic && Path.GetDirectoryName(asm.CodeBase) == binaryPath)
+        System.Type ti = typeof(IDataLayer);
+        foreach (System.Reflection.Assembly asm in System.AppDomain.CurrentDomain.GetAssemblies())
         {
-          foreach (System.Type t in asm.GetTypes())
+          //if (!asm.IsDynamic && Path.GetDirectoryName(asm.CodeBase) == binaryPath)
           {
-            if (!t.IsInterface && ti.IsAssignableFrom(t))
+            foreach (System.Type t in asm.GetTypes())
             {
-              asemblies.Add(t.FullName + ", " + asm.FullName.Split(',')[0]);
+              if (!t.IsInterface && ti.IsAssignableFrom(t))
+              {
+                asemblies.Add(t.FullName + ", " + asm.FullName.Split(',')[0]);
+              }
             }
           }
         }        
       }
-
-      return asemblies;
+      catch(Exception ex)
+      {
+        _logger.Error(string.Format("Error in GetDataLayers: {0}", ex), ex);
+      }
+      
+      return asemblies;      
     }
+
   }
 }
