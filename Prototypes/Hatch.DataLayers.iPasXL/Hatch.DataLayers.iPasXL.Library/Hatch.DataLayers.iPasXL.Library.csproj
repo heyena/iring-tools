@@ -56,15 +56,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="iPasXLEntityGenerator.cs" />
     <Compile Include="iPasXLConfiguration.cs" />
     <Compile Include="iPasXLDataLayer.cs" />
     <Compile Include="iPasXLSettings.cs" />
-    <Compile Include="Model.12345_000.API.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="iPasXL-Source.12345_000.API.xlsx" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="Microsoft.Office.Core">
@@ -85,11 +80,6 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="iPasXL-Configuration.12345_000.API.xml">
-      <SubType>Designer</SubType>
-    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

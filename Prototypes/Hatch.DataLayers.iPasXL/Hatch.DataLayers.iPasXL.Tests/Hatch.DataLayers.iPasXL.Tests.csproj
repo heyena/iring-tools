@@ -58,7 +58,7 @@
     <Compile Include="iPasXLTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Hatch.DataLayers.iPasXL\Hatch.DataLayers.iPasXL.Library.csproj">
+    <ProjectReference Include="..\Hatch.DataLayers.iPasXL.Library\Hatch.DataLayers.iPasXL.Library.csproj">
       <Project>{4DDB5151-FE9D-4041-BA46-63486D7DA32D}</Project>
       <Name>Hatch.DataLayers.iPasXL.Library</Name>
     </ProjectReference>

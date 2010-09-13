@@ -11,15 +11,51 @@ using Ninject;
 using org.iringtools.adapter;
 using org.iringtools.library;
 using org.iringtools.utility;
+using System.Web;
 
 namespace Hatch.DataLayers.iPasXL
 {
+  public class iPasXLRow : IDataObject {
+
+    private Dictionary<string, object> Row { get; set; }
+
+    public iPasXLRow()
+    {
+      Row = new Dictionary<string, object>();
+    }
+
+    public object GetPropertyValue(string propertyName)
+    {
+      if (Row.ContainsKey(propertyName))
+      {
+        return Row[propertyName];
+      }
+      else
+      {
+        throw new Exception("Property [" + propertyName + "] does not exist.");
+      }
+    }
+
+    public IList<IDataObject> GetRelatedObjects(string relatedObjectType)
+    {
+      switch (relatedObjectType)
+      {
+        default:
+          throw new Exception("Related object [" + relatedObjectType + "] does not exist.");
+      }
+    }    
+
+    public void SetPropertyValue(string propertyName, object value)
+    {      
+      Row[propertyName] = value;
+    }    
+  }
+
   public class iPasXLDataLayer : IDataLayer
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(iPasXLDataLayer));
     private AdapterSettings _settings = null;
-    //private string _dataDictionaryPath = String.Empty;
-    private string _configurationPath = null;
+    private string _configurationPath = String.Empty;    
     private iPasXLConfiguration _configuration = null;
     
     [Inject]
@@ -28,13 +64,14 @@ namespace Hatch.DataLayers.iPasXL
       try
       {
         _settings = settings;
-
-        //_dataDictionaryPath = _settings["XmlPath"] + "DataDictionary." + _settings["ProjectName"] + "." + _settings["ApplicationName"] + ".xml";
+                
         _configurationPath = _settings["XmlPath"] + "iPasXL-Configuration." + _settings["ProjectName"] + "." + _settings["ApplicationName"] + ".xml";
-
         _configuration = Utility.Read<iPasXLConfiguration>(_configurationPath, true);
 
-        
+        if (_configuration.Worksheets.Count == 0)
+        {
+          _configuration = CreateiPasXlConfig(_configuration.Location);
+        }       
 
       }
       catch (Exception e)
@@ -50,15 +87,14 @@ namespace Hatch.DataLayers.iPasXL
         iPasXLWorksheet worksheet = _configuration.Worksheets.FirstOrDefault<iPasXLWorksheet>(o => o.Name == objectType);
 
         IList<IDataObject> dataObjects = new List<IDataObject>();
-        Type type = Type.GetType("Hatch.DataLayers.iPasXL.Model_" + _settings["ProjectName"] + "_" + _settings["ApplicationName"] + "." + objectType);
-
+        
         objectType = objectType.Substring(objectType.LastIndexOf('.') + 1);
 
         if (identifiers != null && identifiers.Count > 0)
         {
           foreach (string identifier in identifiers)
           {
-            IDataObject dataObject = (IDataObject)Activator.CreateInstance(type);
+            iPasXLRow dataObject = new iPasXLRow();
 
             if (!String.IsNullOrEmpty(identifier))
             {
@@ -125,8 +161,7 @@ namespace Hatch.DataLayers.iPasXL
         Excel.Worksheet xlWorksheet = GetWorkSheet(objectType, xlWorkBook, cfWorksheet);
 
         IList<IDataObject> dataObjects = new List<IDataObject>();
-        Type type = Type.GetType("Hatch.DataLayers.iPasXL.Model_" + _settings["ProjectName"] + "_" + _settings["ApplicationName"] + "." + objectType);
-
+        
         if (identifiers != null && identifiers.Count > 0)
         {
           foreach (string identifier in identifiers)
@@ -196,14 +231,12 @@ namespace Hatch.DataLayers.iPasXL
         Excel.Worksheet xlWorksheet = GetWorkSheet(objectType, xlWorkBook, cfWorksheet);
 
         List<IDataObject> dataObjects = new List<IDataObject>();
-        Type type = Type.GetType("Hatch.DataLayers.iPasXL.Model_" + _settings["ProjectName"] + "_" + _settings["ApplicationName"] + "." + objectType);
-
+        
         Excel.Range usedRange = xlWorksheet.UsedRange;
-        iPasXLColumn keyColumn = cfWorksheet.Columns.FirstOrDefault<iPasXLColumn>(o=>o.Name == cfWorksheet.Identifier);
-
-        for(int row = 1; row <= usedRange.Rows.Count; row++)
+        
+        for(int row = 2; row <= usedRange.Rows.Count; row++)
         {
-          IDataObject dataObject = (IDataObject)Activator.CreateInstance(type);
+          iPasXLRow dataObject = new iPasXLRow();
           
           foreach (iPasXLColumn column in cfWorksheet.Columns)
           {
@@ -231,7 +264,7 @@ namespace Hatch.DataLayers.iPasXL
           if (linqExpression != String.Empty)
           {
             ExpressionContext context = new ExpressionContext();
-            context.Variables.DefineVariable(variable, type);
+            context.Variables.DefineVariable(variable, typeof(iPasXLRow));
 
             for (int i = 0; i < dataObjects.Count; i++)
             {
@@ -303,13 +336,12 @@ namespace Hatch.DataLayers.iPasXL
         Excel.Worksheet xlWorksheet = GetWorkSheet(objectType, xlWorkBook, cfWorksheet);
 
         IList<IDataObject> dataObjects = new List<IDataObject>();
-        Type type = Type.GetType("Hatch.DataLayers.iPasXL.Model_" + _settings["ProjectName"] + "_" + _settings["ApplicationName"] + "." + objectType);
 
         if (identifiers != null && identifiers.Count > 0)
         {
           foreach (string identifier in identifiers)
           {
-            IDataObject dataObject = (IDataObject)Activator.CreateInstance(type);
+            iPasXLRow dataObject = new iPasXLRow();
 
             dataObject.SetPropertyValue(cfWorksheet.Identifier, identifier);
 
@@ -319,7 +351,23 @@ namespace Hatch.DataLayers.iPasXL
             {
               dataObject.SetPropertyValue(column.Name, xlWorksheet.Cells[row, column.Index].Value2);
             }
-            
+
+            dataObjects.Add(dataObject);
+          }
+        }
+        else
+        {
+          Excel.Range usedRange = xlWorksheet.UsedRange;
+
+          for (int row = 2; row <= usedRange.Rows.Count; row++)
+          {
+            iPasXLRow dataObject = new iPasXLRow();
+                        
+            foreach (iPasXLColumn column in cfWorksheet.Columns)
+            {
+              dataObject.SetPropertyValue(column.Name, xlWorksheet.Cells[row, column.Index].Value2);
+            }
+
             dataObjects.Add(dataObject);
           }
         }
@@ -547,11 +595,93 @@ namespace Hatch.DataLayers.iPasXL
       }
     }
 
+    private iPasXLConfiguration CreateiPasXlConfig(string filePath)
+    {
+      Excel.Application xlApplication = null;
+      Excel.Workbook xlWorkBook = null;
+      iPasXLConfiguration config = new iPasXLConfiguration()
+      {
+        Worksheets = new List<iPasXLWorksheet>()
+      };
+
+      try
+      {
+        xlApplication = new Excel.Application();
+        xlWorkBook = xlApplication.Workbooks.Open(filePath, 0, true, 5, "", "", true, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
+
+        config.Location = filePath;
+
+        foreach (Excel.Worksheet xlWorkSheet in xlWorkBook.Worksheets)
+        {
+          iPasXLWorksheet cfWorkSheet = new iPasXLWorksheet()
+          {
+            Name = xlWorkSheet.Name,
+            Columns = new List<iPasXLColumn>()
+          };
+
+          Excel.Range usedRange = xlWorkSheet.UsedRange;
+
+          for (int i = 1; i <= usedRange.Columns.Count; i++)
+          {
+            string header = usedRange.Cells[1, i].Value2;
+            
+            if (header == null)
+              break;
+            
+            header = header.Trim();
+            header = header.Replace(" ", String.Empty);
+            if (header != null && !header.Equals(String.Empty))
+            {
+              iPasXLColumn cfColumn = new iPasXLColumn()
+              {
+                Index = i,
+                Name = header,
+                DataType = DataType.String
+              };
+
+              cfWorkSheet.Columns.Add(cfColumn);
+            }
+          }
+
+          if (cfWorkSheet.Columns.Count > 0)
+          {
+            cfWorkSheet.Identifier = cfWorkSheet.Columns[0].Name;
+            config.Worksheets.Add(cfWorkSheet);
+          }
+        }
+
+        return config;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in Createing iPasXL Configuration: " + ex);
+        return config;
+      }
+      finally
+      {
+        if (xlWorkBook != null)
+        {
+          xlWorkBook.Close(true, Type.Missing, Type.Missing);
+          System.Runtime.InteropServices.Marshal.ReleaseComObject(xlWorkBook);
+          xlWorkBook = null;
+        }
+
+        if (xlApplication != null)
+        {
+          xlApplication.Quit();
+          System.Runtime.InteropServices.Marshal.ReleaseComObject(xlApplication);
+          xlApplication = null;
+        }
+
+        GC.Collect();
+      }
+    }
+
     #region IDataLayer Members
     
     public IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType)
     {
-      throw new NotImplementedException();
+      return new List<IDataObject>(); 
     }
 
     #endregion    
