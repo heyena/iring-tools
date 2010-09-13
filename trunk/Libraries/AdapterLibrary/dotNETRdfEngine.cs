@@ -62,10 +62,10 @@ namespace org.iringtools.adapter.semantic
       _settings = settings;
 
       _tripleStore = new MicrosoftSqlStoreManager(
-        _settings["DBServer"],
-        _settings["DBname"],
-        _settings["DBUser"],
-        _settings["DBPassword"]
+        _settings["dotNetRDFServer"],
+        _settings["dotNetRDFCatalog"],
+        _settings["dotNetRDFUser"],
+        _settings["dotNetRDFPassword"]
         );
 
       _mapping = mapping;
