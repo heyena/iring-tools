@@ -115,7 +115,6 @@
     <Compile Include="DatabaseDictionary.cs" />
     <Compile Include="DataDictionary.cs" />
     <Compile Include="DataFilter.cs" />
-    <Compile Include="DataTransferObjects.cs" />
     <Compile Include="DXRequest.cs" />
     <Compile Include="IAdapter.cs" />
     <Compile Include="IDataLayer.cs" />

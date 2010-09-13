@@ -47,7 +47,7 @@ namespace org.iringtools.adapter.projection
       _classIdentifiers = new Dictionary<string, List<string>>();
     }
 
-    public XElement GetXml(string graphName, ref IList<IDataObject> dataObjects)
+    public XElement ToXml(string graphName, ref IList<IDataObject> dataObjects)
     {
       try
       {
@@ -62,7 +62,7 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    public IList<IDataObject> GetDataObjects(string graphName, ref XElement xml)
+    public IList<IDataObject> ToDataObjects(string graphName, ref XElement xml)
     {
       throw new NotImplementedException();
     }

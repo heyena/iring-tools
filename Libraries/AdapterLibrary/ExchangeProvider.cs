@@ -117,7 +117,7 @@ namespace org.iringtools.exchange
         }
         XElement xml = XElement.Parse(dataObjectsString);
 
-        IList<IDataObject> dataObjects = _projectionEngine.GetDataObjects(graphName, ref xml);
+        IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xml);
 
         _response.Append(_dataLayer.Post(dataObjects));
         status.Messages.Add(String.Format("Pull is successful from " + targetUri + "for Graph " + graphName));
@@ -202,7 +202,7 @@ namespace org.iringtools.exchange
         rdfWriter.Save(graph, textWriter);
         XElement rdf = XElement.Parse(sb.ToString());
 
-        _dataObjects = _projectionEngine.GetDataObjects(graphName, ref rdf);
+        _dataObjects = _projectionEngine.ToDataObjects(graphName, ref rdf);
 
         // post data objects to data layer
         _dataLayer.Post(_dataObjects);
@@ -269,7 +269,7 @@ namespace org.iringtools.exchange
           dataObjectList = _dataLayer.Get(_graphMap.dataObjectMap, null);
         }
 
-        XElement xml = _projectionEngine.GetXml(graphName, ref dataObjectList);
+        XElement xml = _projectionEngine.ToXml(graphName, ref dataObjectList);
 
         _isDataLayerInitialized = false;
         _isScopeInitialized = false;

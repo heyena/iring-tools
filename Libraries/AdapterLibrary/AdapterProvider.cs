@@ -577,7 +577,7 @@ namespace org.iringtools.adapter
 
         LoadDataObjectSet(graphName, identifiers);
 
-        return _projectionEngine.GetXml(graphName, ref _dataObjects);
+        return _projectionEngine.ToXml(graphName, ref _dataObjects);
       }
       catch (Exception ex)
       {
@@ -603,7 +603,7 @@ namespace org.iringtools.adapter
         }
 
         LoadDataObjectSet(graphName, null);
-        return _projectionEngine.GetXml(graphName, ref _dataObjects);
+        return _projectionEngine.ToXml(graphName, ref _dataObjects);
       }
       catch (Exception ex)
       {
@@ -626,7 +626,7 @@ namespace org.iringtools.adapter
             _projectionEngine = _kernel.Get<IProjectionLayer>(_settings["DefaultProjectionFormat"]);
         }
 
-        IList<IDataObject> dataObjects = _projectionEngine.GetDataObjects(graphName, ref xml);
+        IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xml);
 
         return dataObjects;
     }
@@ -697,7 +697,7 @@ namespace org.iringtools.adapter
         InitializeDataLayer();
 
         _projectionEngine = _kernel.Get<IProjectionLayer>(format);
-        IList<IDataObject> dataObjects = _projectionEngine.GetDataObjects(graphName, ref xml);
+        IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xml);
         response = _dataLayer.Post(dataObjects);
 
         if (format.ToLower() == "dxo")
@@ -856,7 +856,7 @@ namespace org.iringtools.adapter
 
       LoadDataObjectSet(graphName, null);
 
-      XElement rdf = _projectionEngine.GetXml(graphName, ref _dataObjects);
+      XElement rdf = _projectionEngine.ToXml(graphName, ref _dataObjects);
 
       return _semanticEngine.Refresh(graphName, rdf);
     }
