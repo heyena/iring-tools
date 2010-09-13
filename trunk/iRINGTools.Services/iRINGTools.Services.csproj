@@ -46,6 +46,9 @@
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Antlr3.Runtime">
+      <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Antlr3.Runtime.dll</HintPath>
+    </Reference>
     <Reference Include="dotNetRDF, Version=0.3.0.20182, Culture=neutral, PublicKeyToken=4329bfa42a2fc001, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalBinaries\dotnetRDF\dotNetRDF.dll</HintPath>
@@ -76,12 +79,8 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\FederatedIntro.txt" />
     <Content Include="App_Data\InterfaceIntro.txt" />
-    <Content Include="App_Data\LeviathanIntro.txt" />
-    <Content Include="App_Data\PelletIntro.txt" />
     <Content Include="App_Data\SandboxIntro.txt" />
-    <Content Include="App_Data\ServerIntro.txt" />
     <Content Include="css\interface.css" />
     <Content Include="css\iring-tools.css" />
     <Content Include="css\reset.css" />
@@ -139,7 +138,6 @@
     <Content Include="XML\Scopes.xml" />
     <None Include="App_Data\config.ttl" />
     <None Include="App_Data\default.rq" />
-    <None Include="App_Data\InferenceTest.ttl" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>

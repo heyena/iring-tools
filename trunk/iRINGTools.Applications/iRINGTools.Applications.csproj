@@ -74,7 +74,6 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MappingEditorController.cs" />
     <Compile Include="Controllers\RefDataEditorController.cs" />
-    <Compile Include="Controllers\SPARQLQueryController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -94,13 +93,6 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Views\RefDataEditor\Index.aspx.designer.cs">
-      <DependentUpon>Index.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Views\SPARQLQuery\Index.aspx.cs">
-      <DependentUpon>Index.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Views\SPARQLQuery\Index.aspx.designer.cs">
       <DependentUpon>Index.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
@@ -124,7 +116,6 @@
     <Content Include="Views\Home\Index.aspx" />
     <Content Include="Views\MappingEditor\Index.aspx" />
     <Content Include="Views\RefDataEditor\Index.aspx" />
-    <Content Include="Views\SPARQLQuery\Index.aspx" />
     <Content Include="Web.config" />
     <Content Include="Scripts\jquery-1.4.1.js" />
     <Content Include="Scripts\jquery-1.4.1.min.js" />
