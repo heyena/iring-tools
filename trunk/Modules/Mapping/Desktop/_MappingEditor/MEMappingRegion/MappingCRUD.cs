@@ -756,7 +756,11 @@ namespace org.iringtools.modules.memappingregion
         MappingItem valueList = (MappingItem)tvwValues.SelectedItem;
         if (mappingItem == null) return;
 
-        if (valueList == null || valueList.Tag is ValueMap) return;
+        if (valueList == null || valueList.Tag is ValueMap)
+        {
+          MessageBox.Show("Please select a ValueList to map", "MAP ROLE", MessageBoxButton.OK);
+          return;
+        }
         string valuelist = ((MappingItem)tvwValues.SelectedItem).itemTextBlock.Text;
 
         if (mappingItem.NodeType == NodeType.RoleMap)
