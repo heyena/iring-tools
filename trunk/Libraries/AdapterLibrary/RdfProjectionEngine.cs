@@ -21,6 +21,7 @@ namespace org.iringtools.adapter.projection
   public class RdfProjectionEngine : BaseProjectionEngine
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(RdfProjectionEngine));
+    private Dictionary<string, List<IDataObject>> _relatedObjectsCache = null;
     private XElement _rdfXml = null;
     
     [Inject]
@@ -37,14 +38,8 @@ namespace org.iringtools.adapter.projection
 
       try
       {
-        string graphBaseUri = _settings["GraphBaseUri"];
-        if (!graphBaseUri.EndsWith("/"))
-        {
-          graphBaseUri += "/";
-        }
-
         _graphBaseUri = String.Format("{0}{1}/{2}/{3}/",
-          graphBaseUri,
+          _settings["GraphBaseUri"],
           _settings["ProjectName"],
           _settings["ApplicationName"],
           graphName
@@ -167,6 +162,8 @@ namespace org.iringtools.adapter.projection
           string classInstance = _graphBaseUri + _classIdentifiers[classMap.classId][i];
           bool classExists = true;
 
+          _relatedObjectsCache = new Dictionary<string, List<IDataObject>>();
+          
           if (!classInstancesCache.ContainsKey(classId))
           {
             classInstancesCache[classId] = new List<string> { classInstance };
@@ -204,7 +201,6 @@ namespace org.iringtools.adapter.projection
       IDataObject dataObject = _dataObjects[dataObjectIndex];
       string templateId = templateMap.templateId.Replace(TPL_PREFIX, TPL_NS.NamespaceName);
 
-      Dictionary<string, List<IDataObject>> relatedObjects = new Dictionary<string, List<IDataObject>>();
       List<RoleMap> propertyRoles = new List<RoleMap>();
       XElement baseTemplateElement = new XElement(OWL_THING);
       baseTemplateElement.Add(new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, templateId)));
@@ -281,10 +277,10 @@ namespace org.iringtools.adapter.projection
 
           if (propertyMap.Split('.').Length > 2)  // related property
           {
-            if (!relatedObjects.TryGetValue(objectPath, out valueObjects))
+            if (!_relatedObjectsCache.TryGetValue(objectPath, out valueObjects))
             {
               valueObjects = GetRelatedObjects(propertyRole.propertyName, _dataObjects[dataObjectIndex]);
-              relatedObjects.Add(objectPath, valueObjects);
+              _relatedObjectsCache.Add(objectPath, valueObjects);
             }
           }
           else  // direct property
