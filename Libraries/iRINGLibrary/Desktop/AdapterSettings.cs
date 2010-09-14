@@ -24,6 +24,10 @@ namespace org.iringtools.adapter
       if (OperationContext.Current != null)
       {
         string baseAddress = OperationContext.Current.Host.BaseAddresses[0].ToString();
+
+        if (!baseAddress.EndsWith("/"))
+            baseAddress = baseAddress + "/";
+
         this.Add("GraphBaseUri", baseAddress);
       }
       else
