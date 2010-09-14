@@ -17,7 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		AdapterService.testrunconfig = AdapterService.testrunconfig
 		build.xml = build.xml
-		iring-tools3.vsmdi = iring-tools3.vsmdi
+		iring-tools1.vsmdi = iring-tools1.vsmdi
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "QMXFTransforms", "QMXFTransforms", "{0A204D3D-73E9-4C85-A601-D91282B4CA16}"
@@ -102,7 +102,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelLibrary", "Libraries\E
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = iring-tools3.vsmdi
+		CategoryFile = iring-tools1.vsmdi
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
