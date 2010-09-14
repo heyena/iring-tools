@@ -24,12 +24,6 @@ namespace org.iringtools.adapter
       if (OperationContext.Current != null)
       {
         string baseAddress = OperationContext.Current.Host.BaseAddresses[0].ToString();
-
-        if (!baseAddress.EndsWith("/"))
-        {
-          baseAddress = baseAddress + "/";
-        }
-
         this.Add("GraphBaseUri", baseAddress);
       }
       else
@@ -41,12 +35,22 @@ namespace org.iringtools.adapter
     //Append Scope specific {projectName}.{appName}.config settings.
     public void AppendSettings(AppSettingsReader settings)
     {
-      foreach (string s in settings.Keys)
+      foreach (string key in settings.Keys)
       {
-        //Protect existing settings, but add new ones.
-        if (!this.AllKeys.Contains(s, StringComparer.CurrentCultureIgnoreCase))
+        if (key.Equals("GraphBaseUri"))
         {
-          this.Add(s, settings[s].ToString());
+          string baseAddress = settings[key].ToString();
+          
+          if (!baseAddress.EndsWith("/"))
+            baseAddress = baseAddress + "/";
+          
+          settings[key] = baseAddress;
+        }
+
+        //Protect existing settings, but add new ones.
+        if (!this.AllKeys.Contains(key, StringComparer.CurrentCultureIgnoreCase))
+        {
+          this.Add(key, settings[key].ToString());
         }
       }
     }
