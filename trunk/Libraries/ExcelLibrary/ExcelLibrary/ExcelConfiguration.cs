@@ -27,7 +27,13 @@ namespace org.iringtools.excel
     [DataMember(Name = "identifier", Order = 1)]
     public string Identifier { get; set; }
 
-    [DataMember(Name = "columns", Order = 2)]
+    [DataMember(Name = "header", Order = 2)]
+    public int HeaderIdx { get; set; }
+
+    [DataMember(Name = "start", Order = 3)]
+    public int DataIdx { get; set; }
+
+    [DataMember(Name = "columns", Order = 4)]
     public List<ExcelColumn> Columns { get; set; }
   }
 
