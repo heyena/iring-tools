@@ -65,11 +65,16 @@ Ext.onReady(function(){
     layout: 'border',
     items: [
     // create instance immediately
-    new Ext.BoxComponent({
+    /*new Ext.BoxComponent({
       region: 'north',
       //style:'background-color:red;',
       height: 85 // give north and south regions a height      
-    }),
+    }),*/
+    { region: 'north',
+      baseCls : 'x-plain',
+      height: 85, // give north and south regions a height
+      contentEl:'myHeader'
+    },
     {
       region: 'east',
       title: 'Property Grid',
@@ -126,7 +131,7 @@ Ext.onReady(function(){
     {
       region: 'center',
       xtype: 'tabpanel',
-      //disabled:true,
+      disabled:true,
       activeTab: 0,
       items: [
       {
@@ -143,7 +148,7 @@ Ext.onReady(function(){
           //collapsible: true,
           margins: '0 0 0 5',
           layout: 'fit',
-          //baseCls : 'x-plain',
+          baseCls : 'x-plain',
           id:'tag-nodes-div',          
           split: true,
           autoHeight:true
