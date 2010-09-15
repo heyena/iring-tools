@@ -192,8 +192,7 @@ namespace org.iringtools.adapter.datalayer
     public Response Post(IList<IDataObject> dataObjects)
     {
       Response response = new Response();
-
-
+      
       try
       {
         if (dataObjects != null && dataObjects.Count > 0)
