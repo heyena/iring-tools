@@ -35,7 +35,7 @@ class ExchangeReaderModel{
                 {
                         $graphArray         =	array();
 
-                        $applicationId      = 	(string)$appGraph ->applicationId;
+                        $applicationId      = 	'appId_'.(string)$appGraph ->applicationId;
                         $graphIdentifier    = 	(string)$appGraph ->identifier;
                         $graphName          =	(string)$appGraph ->name;
                         $graphCommodity     = 	(string)$appGraph ->commodity;
@@ -65,7 +65,7 @@ class ExchangeReaderModel{
                 {
                         $exchangeArray 	=   array();
                         $scopeVal 	=   (string)$dataExchange['scope'];
-                        $dataExchangeID =   (string)$dataExchange['id'];
+                        $dataExchangeID =   'dxId_'.(string)$dataExchange['id'];
                         $commodity 	=   (string)$dataExchange['commodity'];
 
                         $exchangeArray	=   array("text" =>(string)$dataExchange['name'], "id"=>$dataExchangeID,"description"=>(string)$dataExchange['description'],"scope"=>$scopeVal, "icon" =>"resources/images/exc.bmp", "leaf" => "true");
@@ -102,7 +102,7 @@ class ExchangeReaderModel{
                 {
                         $appArray 	=   array();
                         $scopeVal 	=   (string)$applicaton->scope;
-                        $applicationId  =   (string)$applicaton->id;
+                        $applicationId  =   'appId_'.(string)$applicaton->id;
 
                         $appArray = array("text" =>(string)$applicaton->name, "id"=>$applicationId,"description"=>(string)$applicaton->description,'scope'=>(string)$applicaton->scope, "cls" => "folder", "children"=>$graphArr[$applicationId]);
 
