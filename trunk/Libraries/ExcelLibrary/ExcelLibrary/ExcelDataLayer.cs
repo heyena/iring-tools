@@ -438,18 +438,21 @@ namespace org.iringtools.adapter.datalayer
 
           foreach (ExcelColumn column in worksheet.Columns)
           {
-            DataProperty dataProperty = new DataProperty() 
+            DataProperty dataProperty = new DataProperty()
             {
-              propertyName = column.Name,              
-              dataType = column.DataType           
+              propertyName = column.Name,
+              dataType = column.DataType
             };
-           
-            dataObject.dataProperties.Add(dataProperty);
-          }
 
-          DataProperty keyProperty = dataObject.dataProperties.FirstOrDefault<DataProperty>(o => o.propertyName == worksheet.Identifier);
-          dataObject.keyProperties.Add(new KeyProperty { keyPropertyName = keyProperty.columnName });
-          
+            if (worksheet.Identifier == column.Name)
+            {
+              dataObject.addKeyProperty(dataProperty);
+            }
+            else
+            {
+              dataObject.dataProperties.Add(dataProperty);
+            }
+          }          
         }        
 
         return dataDictionary;
