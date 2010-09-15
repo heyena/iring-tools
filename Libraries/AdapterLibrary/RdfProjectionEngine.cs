@@ -70,10 +70,7 @@ namespace org.iringtools.adapter.projection
       try
       {
         _graphBaseUri = _settings["TargetGraphBaseUri"];
-        if (!_graphBaseUri.EndsWith("/"))
-        {
-          _graphBaseUri += "/";
-        }
+        if (!_graphBaseUri.EndsWith("/")) _graphBaseUri += "/";
 
         _graphMap = _mapping.FindGraphMap(graphName);
 
