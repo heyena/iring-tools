@@ -6,9 +6,11 @@
 
 [http://www.iringsandbox.org iRINGSandbox]
 
-[http://secure.ids-adi.org/repository/org/ids-adi/camelot/index.html IDS-ADI: Camelot Project]  (Archive)
-
 [http://rdswip.ids-adi.org RDS/WIP]
+
+=Historical Links=
+
+[http://secure.ids-adi.org/repository/org/ids-adi/camelot/index.html IDS-ADI: Camelot Project]  (Archive)
 
 [https://secure.ids-adi.org/repository/org/ids-adi/qxf/index.html QXF: Quick XML Format for ISO 15926]
 
