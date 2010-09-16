@@ -5,6 +5,34 @@
  * http://www.extjs.com/license
  */
 Ext.onReady(function(){
+	
+	var tBar = new Ext.Toolbar({ xtype: "toolbar",
+	items: [
+		{xtype:"tbbutton",text:"Exchange", id: 'headExchange', disabled: false,
+		handler: function(){
+		Ext.Msg.show({
+		title: ':: :: :: :: :: :: :: :: :: :: :: :: :: :: :: :: :: :: ',
+		msg: 'Would you like to review the <br/>Data Exchange before starting?',
+		buttons: Ext.Msg.YESNO,
+		icon: Ext.Msg.QUESTION,//'profile', // &lt;- customized icon
+		fn: function(action){
+		   if(action=='yes')
+		   {
+			   if(tree.getSelectionModel().getSelectedNode().id!=null){
+				   Ext.getCmp('centerPanel').enable();
+					//***** http://localhost:8080/iringtools/diffservice/12345_000/exchanges/1/index
+			   }
+		   }
+		   else if(action=='no')
+		   {
+			   alert('You clicked on No');
+		   }
+	   }});
+	}},
+	{xtype:"tbbutton",text:"Refresh", id: 'headRefresh', disabled: false,handler: function(){alert("Refresh Clicked")
+	}}							   
+	]});
+	
   var tree = new Ext.tree.TreePanel({
     renderTo:'tree-div',
     height: 400,
@@ -12,20 +40,17 @@ Ext.onReady(function(){
     bodyBorder:false,
     border:true,
     hlColor:'C3DAF',
-    //footer : true,
-    //autoHeight:true,
     width: 250,
     useArrows:false, // true for vista like
     autoScroll:true,
     animate:true,
+	margins: '0 0 0 0',
     lines :true,
     //enableDD:true,
     containerScroll: true,
     rootVisible: true,
     frame: true,
     //requestMethod:'GET', default is post
-    labelStyle: 'font-weight:bolder;font-size:100px;',
-    ctCls: 'x-box-layout-ct my-icon',
     root: {
       nodeType: 'async',
       iconCls: 'my-icon',
@@ -34,31 +59,7 @@ Ext.onReady(function(){
     // auto create TreeLoader
     //loader: new Ext.tree.TreeLoader(),
     dataUrl: 'ExchangeReader/exchnageList/1',
-    buttons: [{
-      text: 'Exchange',
-      handler: function(){
-        Ext.Msg.show({
-          title: ':: :: :: :: :: :: :: :: :: :: :: :: :: :: :: :: :: :: ',
-          msg: 'Would you like to review the <br/>Data Exchange before starting?',
-          buttons: Ext.Msg.YESNO,
-          icon: Ext.Msg.QUESTION,//'profile', // &lt;- customized icon
-          fn: function(action){
-            if(action=='yes'){
-              alert('You have clicked: '+tree.getSelectionModel().getSelectedNode().text+' \n\nid: '+tree.getSelectionModel().getSelectedNode().id+' \n\n');
-            }
-            else if(action=='no')  {
-              alert('You clicked on No');
-            }
-          }
-        });
-      }
-    },
-    {
-      text: 'Refresh',
-      handler: function(){
-      }
-
-    }]
+	tbar:tBar
   });
 
   var contextMenu = new Ext.menu.Menu({
@@ -88,8 +89,7 @@ Ext.onReady(function(){
 
   /* to maintain the state of the tree */
   Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
-
-  tree.on('contextmenu', function (node) {
+  tree.on('contextmenu', function (node){
     node.select();
     contextMenu.show(node.ui.getAnchor());
   });
