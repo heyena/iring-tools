@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<dataTransferIndices xmlns="http://iringtools.org/adapter/library/dto">
+  <dataTransferIndex>
+    <identifier>Tag-1</identifier>
+    <transferSource>Sender</transferSource>
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>Tag-2</identifier>
+    <transferSource>Receiver</transferSource>
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>Tag-3</identifier>
+    <transferSource>Both</transferSource>
+  </dataTransferIndex>
+</dataTransferIndices>
