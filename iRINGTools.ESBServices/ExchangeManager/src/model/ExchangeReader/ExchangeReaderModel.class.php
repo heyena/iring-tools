@@ -57,21 +57,21 @@ class ExchangeReaderModel{
 	 * @returns array
 	 * @access private
 	 */
-        private function getScopeDataExchangesArray($dataExchanges	){
+        private function getScopeDataExchangesArray($dataExchanges){
 
                 $exchangeScopeArray	=	array();
 
                 foreach($dataExchanges  as $dataExchange)
-                {
+                {  
                         $exchangeArray 	=   array();
-                        $scopeVal 	=   (string)$dataExchange['scope'];
-                        $dataExchangeID =   'dxId_'.(string)$dataExchange['id'];
-                        $commodity 	=   (string)$dataExchange['commodity'];
+                        $scopeVal 	=   (string)$dataExchange->scope;
+                        $dataExchangeID =   'dxId_'.(string)$dataExchange->id;
+                        $commodity 	=   (string)$dataExchange->commodity;
 
-                        $exchangeArray	=   array("text" =>(string)$dataExchange['name'], "id"=>$dataExchangeID,"description"=>(string)$dataExchange['description'],"scope"=>$scopeVal, "icon" =>"resources/images/exc.bmp", "leaf" => "true");
+                        $exchangeArray	=   array("text" =>(string)$dataExchange->name, "id"=>$dataExchangeID,"description"=>(string)$dataExchange->description,"scope"=>$scopeVal, "icon" =>"resources/images/exc.bmp", "leaf" => "true");
 
-                        $exchangeScopeArray[$scopeVal][$commodity]['text']			=	$commodity;
-                        $exchangeScopeArray[$scopeVal][$commodity]['children'][]	=	$exchangeArray;;  // exchange Array should be inside this children
+                        $exchangeScopeArray[$scopeVal][$commodity]['text']	=   $commodity;
+                        $exchangeScopeArray[$scopeVal][$commodity]['children'][]=   $exchangeArray;;  // exchange Array should be inside this children
                 }
                 unset($exchangeArray);
                 return $exchangeScopeArray;
