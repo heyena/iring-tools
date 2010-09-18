@@ -110,11 +110,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\class.png" />
-    <Resource Include="Resources\close.png" />
     <Resource Include="Resources\default.png" />
     <Resource Include="Resources\folder-open.png" />
     <Resource Include="Resources\folder.png" />
-    <Resource Include="Resources\graph.png" />
     <Resource Include="Resources\key.png" />
     <Resource Include="Resources\object.png" />
     <Resource Include="Resources\property.png" />
@@ -157,6 +155,16 @@
       <Project>{713819B0-F4EB-497C-AF98-C2BA616B01B4}</Project>
       <Name>Status.Silverlight</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\class-map.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\role-map.png" />
+    <Resource Include="Resources\template-map.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\graph-map.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

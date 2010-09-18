@@ -185,7 +185,7 @@ namespace org.iringtools.modules.medatasourceregion
             DataProperty = (DataProperty)tag,
             Tag = tag,
           };
-          if (tag is KeyProperty)
+          if (((DataProperty)tag).keyType != KeyType.unassigned)
           {
             node.SetImageSource("key.png");
             node.SetTooltipText("Key Property : " + header);

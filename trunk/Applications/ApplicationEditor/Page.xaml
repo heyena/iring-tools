@@ -5,7 +5,7 @@
     xmlns:basic="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls"
     xmlns:toolkit="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Toolkit"
     xmlns:msWindows="clr-namespace:Microsoft.Windows;assembly=System.Windows.Controls.Toolkit"
-    HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    HorizontalAlignment="Stretch" VerticalAlignment="Stretch" FontFamily="Portable User Interface">
 
     <Grid x:Name="LayoutRoot" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.Background>
@@ -25,7 +25,7 @@
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
             <Image Source="iRINGTools_logo.png"  />
-            <TextBlock Text="Application Editor"  FontSize="24" FontStyle="Italic" FontWeight="Bold" Margin="10,20,0,0"/>
+            <TextBlock Text="Application Editor"  FontSize="24" FontWeight="Bold" Margin="10,17,0,0"/>
         </StackPanel>
 
         <Border Grid.Row="1" Grid.Column="0" Margin="2" BorderBrush="Gray" BorderThickness="1" CornerRadius="3">
@@ -167,7 +167,7 @@
             </sdk:TabItem>
         </sdk:TabControl>
 
-        <toolkit:BusyIndicator Grid.Column="0" Grid.Row="0" Grid.RowSpan="4" x:Name="biBusyWindow" Content="" BusyContent="Processing, Please wait..." />
+        <toolkit:BusyIndicator Grid.Column="0" Grid.Row="0" Grid.RowSpan="4" x:Name="biBusyWindow" Content="" BusyContent="Processing, Please wait..." FontFamily="Lucida Sans Unicode" />
 
     </Grid>
 

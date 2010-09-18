@@ -161,7 +161,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\class.png" />
-    <Resource Include="Resources\close.png" />
     <Resource Include="Resources\default.png" />
     <Resource Include="Resources\folder-open.png" />
     <Resource Include="Resources\folder.png" />

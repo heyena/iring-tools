@@ -263,7 +263,7 @@ namespace org.iringtools.modules.search.searchregion
 
                     // On search button click instantiate a new tab
                     SearchTabItem tabItem = Container.Resolve<SearchTabItem>();
-                    //tabItem.SetImageSource("close.png");
+                    
                     // Set the tab header to the search content
                     tabItem.HeaderText = searchString;
 
@@ -295,7 +295,7 @@ namespace org.iringtools.modules.search.searchregion
 
                     // On search button click instantiate a new tab
                     SearchTabItem tabItem = Container.Resolve<SearchTabItem>();
-                    //tabItem.SetImageSource("close.png");
+                    
                     // Set the tab header to the search content
                     tabItem.HeaderText = searchString;
 

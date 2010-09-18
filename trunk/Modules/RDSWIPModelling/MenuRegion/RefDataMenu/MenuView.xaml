@@ -5,7 +5,7 @@
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d" 
     xmlns:dataInput="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Data.Input"
 	  x:Class="org.iringtools.menu.views.menuregion.MenuView"
-    Height="40" HorizontalAlignment="Stretch" d:DesignWidth="640"
+    Height="50" HorizontalAlignment="Stretch" d:DesignWidth="640"
 >
   <Grid x:Name="LayoutRoot">
     <Grid.Background>
@@ -15,6 +15,6 @@
       </LinearGradientBrush>
     </Grid.Background>
 
-    <Image Source="iRINGTools.ReferenceDataEditor.png" Stretch="None" Margin="2,2,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+    <Image Source="iRINGTools.ReferenceDataEditor.png" Stretch="None" Margin="0,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
   </Grid>
 </UserControl>
