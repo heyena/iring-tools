@@ -137,7 +137,8 @@ namespace org.iringtools.modules.memappingregion
       }
       catch (Exception ex)
       {
-        MessageBox.Show("Failed to Move Down", "MOVE DOWN", MessageBoxButton.OK);
+        MessageBox.Show("Failed to Move Down.  The error has been copied to the clipboard.", "MOVE DOWN", MessageBoxButton.OK);
+        Logger.Log(ex.ToString(), Category.Exception, Priority.Low);
       }
     }
 
@@ -183,6 +184,7 @@ namespace org.iringtools.modules.memappingregion
       catch (Exception ex)
       {
         MessageBox.Show("Failed to Move Up", "MOVE UP", MessageBoxButton.OK);
+        Logger.Log(ex.ToString(), Category.Exception, Priority.Low);
       }
     }
 
@@ -211,6 +213,7 @@ namespace org.iringtools.modules.memappingregion
       catch (Exception ex)
       {
         MessageBox.Show("Failed to Make Possessor", "MAKE POSSESSOR", MessageBoxButton.OK);
+        Logger.Log(ex.ToString(), Category.Exception, Priority.Low);
       }
     }
 
@@ -246,6 +249,7 @@ namespace org.iringtools.modules.memappingregion
       catch (Exception ex)
       {
         MessageBox.Show("Failed to Edit Value Map", "EDIT VALUE MAP", MessageBoxButton.OK);
+        Logger.Log(ex.ToString(), Category.Exception, Priority.Low);
       }
     }
 
@@ -277,6 +281,7 @@ namespace org.iringtools.modules.memappingregion
       catch (Exception ex) 
       {
         MessageBox.Show("Failed to Add Value List", "ADD VALUELIST", MessageBoxButton.OK);
+        Logger.Log(ex.ToString(), Category.Exception, Priority.Low);
       }
 
     }
@@ -320,6 +325,7 @@ namespace org.iringtools.modules.memappingregion
       catch (Exception ex)
       {
         MessageBox.Show("Failed to Add Value Map", "ADD VALUE MAP", MessageBoxButton.OK);
+        Logger.Log(ex.ToString(), Category.Exception, Priority.Low);
       }
 
     }
@@ -374,6 +380,7 @@ namespace org.iringtools.modules.memappingregion
       catch (Exception ex)
       { 
         MessageBox.Show("Failed to Add Graph", "ADD GRAPH", MessageBoxButton.OK);
+        Logger.Log(ex.ToString(), Category.Exception, Priority.Low);
       }
     }
 
@@ -418,6 +425,7 @@ namespace org.iringtools.modules.memappingregion
       catch (Exception ex)
       {
         MessageBox.Show("Failed to Add Graph", "ADD GRAPH", MessageBoxButton.OK);
+        Logger.Log(ex.ToString(), Category.Exception, Priority.Low);
         return "";
       }
     }
@@ -500,6 +508,7 @@ namespace org.iringtools.modules.memappingregion
       catch (Exception ex)
       {
         MessageBox.Show("Failed to Add Template", "ADD TEMPLATE", MessageBoxButton.OK);
+        Logger.Log(ex.ToString(), Category.Exception, Priority.Low);
       }
     }
 
@@ -745,6 +754,7 @@ namespace org.iringtools.modules.memappingregion
       catch (Exception ex)
       {
         MessageBox.Show("Failed to Map", "MAP", MessageBoxButton.OK);
+        Logger.Log(ex.ToString(), Category.Exception, Priority.Low);
       }
     }
 
@@ -808,6 +818,7 @@ namespace org.iringtools.modules.memappingregion
       catch (Exception ex)
       {
         MessageBox.Show("Failed to Add Value List", "ADD VALUE LIST", MessageBoxButton.OK);
+        Logger.Log(ex.ToString(), Category.Exception, Priority.Low);
       }
     }
 
@@ -915,6 +926,7 @@ namespace org.iringtools.modules.memappingregion
       catch (Exception ex)
       {
         MessageBox.Show("Failed to Delete", "DELETE", MessageBoxButton.OK);
+        Logger.Log(ex.ToString(), Category.Exception, Priority.Low);
       } 
     }    
 
@@ -931,6 +943,7 @@ namespace org.iringtools.modules.memappingregion
       catch (Exception ex)
       {
         MessageBox.Show("Failed to Save", "SAVE", MessageBoxButton.OK);
+        Logger.Log(ex.ToString(), Category.Exception, Priority.Low);
       }
     }
   }

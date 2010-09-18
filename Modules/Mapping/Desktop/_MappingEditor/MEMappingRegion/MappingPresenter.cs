@@ -451,7 +451,7 @@ namespace org.iringtools.modules.memappingregion
             node.ClassMap = pair.Key;
             break;
           }
-          node.SetImageSource("graph.png");
+          node.SetImageSource("graph-map.png");
           node.SetTooltipText("Graph : " + node.GraphMap.name);
           isProcessed = PopulateGraphNode(node, graphMap);
         }
@@ -467,7 +467,7 @@ namespace org.iringtools.modules.memappingregion
             node.GraphMap = parent.GraphMap;
           }
           node.TemplateMap = (TemplateMap)tag;
-          node.SetImageSource("template.png");
+          node.SetImageSource("template-map.png");
           node.SetTooltipText("Template : " + node.TemplateMap.name);
           isProcessed = PopulateTemplateNode(node, (TemplateMap)tag);
         }
@@ -478,7 +478,7 @@ namespace org.iringtools.modules.memappingregion
           node.GraphMap = parent.GraphMap;
           node.TemplateMap = (TemplateMap)parent.Tag;
           node.RoleMap = roleMap;
-          node.SetImageSource("role.png");
+          node.SetImageSource("role-map.png");
           node.SetTooltipText("Role : " + node.RoleMap.name);
           isProcessed = PopulateRoleNode(node, roleMap);
         }
@@ -492,7 +492,7 @@ namespace org.iringtools.modules.memappingregion
           node.ClassMap = (ClassMap)tag;
           node.TemplateMap = parent.TemplateMap;
           node.RoleMap = (RoleMap)parent.Tag;
-          node.SetImageSource("class.png");
+          node.SetImageSource("class-map.png");
           node.SetTooltipText("Class : " + node.ClassMap.name);
           PopulateClassNode(node, (ClassMap)tag);
         }
