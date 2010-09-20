@@ -131,6 +131,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\css\scopeeditor.css" />
+    <Content Include="Content\img\applications-internet.png" />
+    <Content Include="Content\img\document-properties.png" />
+    <Content Include="Content\img\internet-web-browser.png" />
+    <Content Include="Content\img\list-add.png" />
+    <Content Include="Content\img\list-remove.png" />
+    <Content Include="Content\img\system-file-manager.png" />
     <Content Include="Scripts\iringtools\AdapterManager.js" />
     <Content Include="Scripts\iringtools\DataObjectsPanel.js" />
     <Content Include="Scripts\iringtools\MappingPanel.js" />

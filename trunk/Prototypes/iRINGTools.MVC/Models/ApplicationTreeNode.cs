@@ -34,6 +34,7 @@ namespace org.iringtools.client.Models
     {
       this.Application = application;
       this.id = application.Name;
+      this.icon = "Content/img/applications-internet.png";
       this.leaf = true;
     }
   }

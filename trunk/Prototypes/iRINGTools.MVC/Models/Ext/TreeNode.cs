@@ -26,6 +26,7 @@ namespace org.iringtools.client.Models.Ext
   {
     public virtual string id { get; set; }
     public virtual string text { get; set; }
+    public string icon { get; set; }
     public bool leaf { get; set; }
     public bool expanded { get; set; }
     public List<T> children { get; set; }
