@@ -4,6 +4,22 @@
 * @extends TreePanel
 * @author by Gert Jansen van Rensburg
 */
+//image path
+var IMG_CLASS = 'Content/img/class.png';
+var IMG_TEMPLATE = 'Content/img/template.png';
+//renderer function
+function renderIcon(value, p, record) {
+    var label = null;
+
+    if (record.data.uri.indexOf("tpl") != -1) {
+      label = '<img src="' + IMG_TEMPLATE + '" align="top"> ' + value;
+    } else {
+      label = '<img src="' + IMG_CLASS + '" align="top"> ' + value;
+    }
+    return label;
+}
+
+
 iIRNGTools.AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
   title: 'Reference Data Search',
   collapsible: true,
@@ -24,20 +40,18 @@ iIRNGTools.AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
   */
   initComponent: function () {
 
-    this.searchStore = new Ext.data.Store({
-      proxy: new Ext.data.HttpProxy({
-        url: this.searchUrl
-      }),
-      reader: new Ext.data.JsonReader({
-        root: 'Entities',
-        totalProperty: 'Total',
-        id: 'label'
-      },
-      [
+    this.searchStore = new Ext.data.JsonStore({
+      root: 'Entities',
+      totalProperty: 'Total',
+      idProperty: 'label',
+      fields: [
         { name: 'uri', allowBlank: false },
         { name: 'label', allowBlank: false },
         { name: 'repository', allowBlank: false }
-      ]),
+      ],
+      proxy: new Ext.data.HttpProxy({
+          url: this.searchUrl
+      }),
       baseParams: { limit: this.limit }
     });
 
@@ -69,7 +83,7 @@ iIRNGTools.AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
       plugins: this.searchExpander,
       cm: new Ext.grid.ColumnModel([
         this.searchExpander,
-        { header: "Label", width: 400, sortable: true, dataIndex: 'label' },
+        { header: "Label", width: 400, sortable: true, dataIndex: 'label', renderer: renderIcon },
         { header: "Repository", width: 150, sortable: true, dataIndex: 'repository' },
         { header: "Uri", width: 400, sortable: true, dataIndex: 'uri', hidden: true }
       ])

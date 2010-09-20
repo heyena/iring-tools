@@ -12,7 +12,7 @@ iIRNGTools.AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   height: 300,
   minSize: 150,
   autoScroll: true,
-  layout: 'border', 
+  layout: 'border',  
 
   /**
   * initComponent
@@ -29,28 +29,24 @@ iIRNGTools.AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         collapsible: true,
         collapsed: false,
         split: true,
-        border: true,
+        border: true
       }),
       new Ext.TabPanel({
-        region: 'center',                
+        region: 'center',
         split: true,
         border: true,
         activeTab: 0,
-        //tabPosition: 'bottom',
+        tabPosition: 'bottom',
+        //tabIcon: 'Content/img/file-mapping.png',
+        tbar: [{ text: 'Save', icon: 'Content/img/document-save.png'}],
+        bbar: new Ext.ux.StatusBar({
+            defaultText: 'Ready',
+            statusAlign: 'right'
+        }),
         items: [{
-          title: 'Graph Maps',
-          tbar: [{text: 'Save'}],
-          bbar: new Ext.ux.StatusBar({      
-            defaultText: 'Ready',      
-            statusAlign: 'right'   
-          })  
+          title: 'Graph Maps'
         },{
-          title: 'Value Maps',
-          tbar: [{text: 'Save'}],
-          bbar: new Ext.ux.StatusBar({      
-            defaultText: 'Ready',      
-            statusAlign: 'right'   
-          })
+          title: 'Value Maps'
         }]
       })
     ];

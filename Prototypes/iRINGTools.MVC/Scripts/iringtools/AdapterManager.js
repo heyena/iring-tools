@@ -33,7 +33,7 @@ Ext.onReady(function () {
 
   var navigationPanel = new iIRNGTools.AdapterManager.ScopePanel({
     id: 'nav-panel',
-    title: 'Registered Scopes',
+    title: 'Directory',
     region: 'west',
     collapseMode: 'mini',
     width: 200,
@@ -82,7 +82,8 @@ Ext.onReady(function () {
     if (application.length > 0) {
       var newTab = new iIRNGTools.AdapterManager.MappingPanel({
         title: 'Mapping - ' + scope + '.' + application,
-        closable: true
+        closable: true,
+        
       });
 
       contentPanel.add(newTab);

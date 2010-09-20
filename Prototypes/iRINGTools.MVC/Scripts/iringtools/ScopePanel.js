@@ -5,7 +5,7 @@
 * @author by Gert Jansen van Rensburg
 */
 iIRNGTools.AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
-  title: 'Registered Scopes',
+  title: 'Directory',
   region: 'west',
   collapseMode: 'mini',
   width: 200,
@@ -43,16 +43,24 @@ iIRNGTools.AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
       layout: 'fit',
       border: true,
 
-      rootVisible: false,
-      lines: false,
-      singleExpand: true,
-      useArrows: true,
+      rootVisible: true,
+      lines: true,
+      singleExpand: false,
+      useArrows: false,
 
       loader: new Ext.tree.TreeLoader({
         dataUrl: this.navigationUrl
       }),
 
-      root: new Ext.tree.AsyncTreeNode({})
+      root: {
+        nodeType: 'async',
+        text: 'World',
+        draggable: false,
+        icon: 'Content/img/internet-web-browser.png',
+        id: 'src'
+      }
+
+      //root: new Ext.tree.AsyncTreeNode({})
             
     });    
 
@@ -91,24 +99,28 @@ iIRNGTools.AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
 
   buildToolbar: function() {
     return [
-      { 
-        text: 'Create', 
+      {
+        tooltip: 'Add',
         handler: this.onCreate,
+        icon: 'Content/img/list-add.png',
         scope: this 
       },
       { 
-        text: 'Update',
+        tooltip: 'Remove',
         handler: this.onUpdate,
+        icon: 'Content/img/list-remove.png',
         scope: this
       },
       { 
-        text: 'Configure',
+        text: 'Edit',
         handler: this.onConfigure,
+        icon: 'Content/img/document-properties.png',
         scope: this
       },
       { 
-        text: 'Mapping', 
+        text: 'Mapping',
         handler: this.onMapping,
+        icon: 'Content/img/file-mapping.png',
         scope: this
       }
     ]
