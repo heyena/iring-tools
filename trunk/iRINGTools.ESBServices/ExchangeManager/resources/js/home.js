@@ -1,6 +1,28 @@
 var propsGrid,eastGrid;
 Ext.onReady(function(){
-	  
+
+  var ab_button = Ext.get('show-about');
+    ab_button.on('click', function(){
+            win = new Ext.Window({
+
+                title : 'About',
+                width:750,
+                height:550,
+                maximizable:true,
+                closable: true,
+                resizable: false,
+                autoScroll: false,
+                buttons: [{
+                    text: 'Close',
+                    handler: function(){
+                        win.hide();
+                    }
+                }],
+               autoLoad:'about.html'
+            });
+            win.show();
+    });
+    
   var store = new Ext.data.Store({
     data: [
     [

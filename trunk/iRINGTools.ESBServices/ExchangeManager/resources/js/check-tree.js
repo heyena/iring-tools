@@ -35,7 +35,7 @@ Ext.onReady(function(){
 	
   var tree = new Ext.tree.TreePanel({
     renderTo:'tree-div',
-    height: 400,
+    height: 460,
     baseCls : 'x-plain',
     bodyBorder:false,
     border:true,
@@ -44,7 +44,7 @@ Ext.onReady(function(){
     useArrows:false, // true for vista like
     autoScroll:true,
     animate:true,
-	margins: '0 0 0 0',
+    margins: '0 0 0 0',
     lines :true,
     //enableDD:true,
     containerScroll: true,
@@ -53,7 +53,7 @@ Ext.onReady(function(){
     //requestMethod:'GET', default is post
     root: {
       nodeType: 'async',
-      iconCls: 'my-icon',
+      icon: 'resources/images/16x16/internet-web-browser.png',
       text: 'Directory'
     },
     // auto create TreeLoader
