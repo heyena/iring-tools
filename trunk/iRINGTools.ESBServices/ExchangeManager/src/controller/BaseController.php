@@ -6,6 +6,5 @@ class BaseController{
 		$modelName = $className.'Model';
 		return new $modelName($parameter);
 	}
-	protected $modelObj;
 }
 ?>
