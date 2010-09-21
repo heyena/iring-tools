@@ -36,8 +36,8 @@ Ext.onReady(function(){
     items: [    
         { region: 'north',
           baseCls : 'x-plain',
-          height: 60, // give north and south regions a height
-          margins: '-5 5 0 0',
+          height: 65, // give north and south regions a height
+          margins: '-10 5 0 0',
           contentEl:'myHeader'
         },
         {
