@@ -125,7 +125,7 @@ class ExchangeReaderModel{
                     // changed the keys(scope value) of array to keys(0,1,..). It is must for Tree Generation
                     $dXArray  = array_combine($numericArray, $dataExchangeScopeArray);
 
-                    $resultArray []= array("text"=>$scope,"icon"=>"resources/images/16x16/system-file-manager.png", "children"=>array($appScopeArray [$scope], array("text"=>"Data Exchange","icon" =>"resources/images/16x16/badge.png","children"=>$dXArray)));
+                    $resultArray []= array("text"=>$scope,"icon"=>"resources/images/16x16/system-file-manager.png", "children"=>array($appScopeArray [$scope], array("text"=>"Data Exchange","icon" =>"resources/images/16x16/folder.png","children"=>$dXArray)));
                 }
                 unset($dXArray);
                 unset($appArray);

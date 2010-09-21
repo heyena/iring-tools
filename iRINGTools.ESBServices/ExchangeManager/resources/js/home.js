@@ -3,8 +3,11 @@ Ext.onReady(function(){
 
   var ab_button = Ext.get('show-about');
     ab_button.on('click', function(){
+        Ext.DomHelper.applyStyles(Ext.getBody(),{
+            'background-color': '#FF0000'
+        });
             win = new Ext.Window({
-
+                disabled: disable,
                 title : 'About',
                 width:750,
                 height:550,
@@ -12,6 +15,7 @@ Ext.onReady(function(){
                 closable: true,
                 resizable: false,
                 autoScroll: false,
+                background: 'transparent url(recources/images/fade.png) 0 100% repeat-x',
                 buttons: [{
                     text: 'Close',
                     handler: function(){
@@ -21,252 +25,79 @@ Ext.onReady(function(){
                autoLoad:'about.html'
             });
             win.show();
-    });
-    
-  var store = new Ext.data.Store({
-    data: [
-    [
-    1,
-    "Tag-1",
-    "PlantArea-1",
-    "System-1",
-    "Plant-1",
-    "[Need to Resolve]",
-    "1",
-    "[Need to Resolve]",
-    "1",
-    "Fluid-1","[Need to Resolve]","	1","[Need to Resolve]","1"
-    ],
-    [
-    2,
-    "Tag-2",
-    "PlantArea-2",
-    "System-2",
-    "Plant-2","[Need to Resolve]","2","[Need to Resolve]","1","Fluid-2","[Need to Resolve]","2","[Need to Resolve]","2"
-    ],[
-    3,
-    "Tag-3",
-    "PlantArea-3",
-    "System-3",
-    "Plant-3",
-    "[Need to Resolve]",
-    "1",
-    "[Need to Resolve]",
-    "1",
-    "Fluid-3","[Need to Resolve]","1","[Need to Resolve]","3"
-    ],
-    [
-    4,
-    "Tag-4",
-    "PlantArea-4",
-    "System-4",
-    "Plant-4","[Need to Resolve]","4","[Need to Resolve]","1","Fluid-4","[Need to Resolve]","4","[Need to Resolve]","4"
-    ]
-    ]
-    
-    ,
-    reader: new Ext.data.ArrayReader(
-    {
-      id:'id'
-    },
-    [
-    'id','title','director',{
-      name: 'released',
-      type: 'date',
-      dateFormat: 'Y-m-d'
-    },
-    'genre','tagline','price','available'
-    ]
-    )
-    });
+    });    
+  
 
   Ext.BLANK_IMAGE_URL = 'resources/images/s.gif';
   //****     Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 
   var viewport = new Ext.Viewport({
     layout: 'border',
-    items: [
-    // create instance immediately
-    /*new Ext.BoxComponent({
-      region: 'north',
-      //style:'background-color:red;',
-      height: 85 // give north and south regions a height      
-    }),*/
-    { region: 'north',
-      baseCls : 'x-plain',
-      height: 85, // give north and south regions a height
-      contentEl:'myHeader'
-    },
-    {
-      region: 'east',
-      title: 'Property Grid',
-      id:'pg',
-      collapsible: true,
-      collapsed:true,
-      hideCollapseTool:false,
-      hideParent :true,
-      titleCollapse:true,
-      split: true,
-      width: 225, // give east and west regions a width
-      minSize: 175,
-      maxSize: 400,
-      margins: '0 5 0 0',
-      layout: 'fit', // specify layout manager for items
-      items:
-      // this TabPanel is wrapped by another Panel so the title will be applied
-      eastGrid=new Ext.TabPanel({
-        border: true, // already wrapped so don't add another border
-        activeTab: 0, // second tab initially active
-        tabPosition: 'top',
-        items: [
-        propsGrid = new Ext.grid.PropertyGrid({
-          title: 'Description',
-          //closable: false,
-          //animCollapse:false,
-          id:'propGrid',
-          buttons: [{
-            text: 'Save',
-            handler: saveProperties,
-            disabled :true,
-            id: 'saveProp'
-          }],
-          source:{}
-        })
-        ]
-      })
-    },
-    {
-      region: 'west',
-      id: 'west-panel', // see Ext.getCmp() below
-      title: 'Navigation',
-      split: true,
-      width: 250,
-      minSize: 175,
-      maxSize: 500,
-      collapsible: true,
-      margins: '0 0 0 5',
-      layout: 'fit',
-      items: [{
-        contentEl: 'directoryContent'
-      }]
-    },
-    {
-      region: 'center',
-      xtype: 'tabpanel',
-      disabled:true,
-      activeTab: 0,
-      items: [
-      {
-        title: 'Review & Acceptance',
-        id:'rnatab',
-        layout: 'border',
-        border: false,
-        items: [{
-		   
+    items: [    
+        { region: 'north',
+          baseCls : 'x-plain',
+          height: 60, // give north and south regions a height
+          margins: '-5 5 0 0',
+          contentEl:'myHeader'
+        },
+        {
+          region: 'east',
+          title: 'Detail Grid',
+          id:'pg',
+          collapsible: true,
+          collapsed:true,
+          hideCollapseTool:false,
+          hideParent :true,
+          titleCollapse:true,
+          split: true,
+          width: 225, // give east and west regions a width
+          minSize: 175,
+          maxSize: 400,
+          margins: '0 5 0 0',
+          layout: 'fit', // specify layout manager for items
+          items: [
+              propsGrid = new Ext.grid.PropertyGrid({
+              //title: 'Description',
+              //closable: false,
+              //animCollapse:false,
+              id:'propGrid',
+              buttons: [{
+                text: 'Save',
+                //handler: saveProperties,
+                disabled :true,
+                id: 'saveProp'
+              }],
+              source:{}
+            })
+            ]
+          },
+       
+        {
           region: 'west',
+          id: 'west-panel', // see Ext.getCmp() below
+          title: 'Directory',
+          split: true,
           width: 250,
           minSize: 175,
           maxSize: 500,
-          //collapsible: true,
+          collapsible: true,
           margins: '0 0 0 5',
           layout: 'fit',
-          baseCls : 'x-plain',
-          id:'tag-nodes-div',          
-          split: true,
-          autoHeight:true
+          items: [{
+            contentEl: 'directoryContent'
+          }]
         },
-        /*{
-region: 'south',
-//html: 'Nested South'
-buttons: [
-{
-text: 'Transfer',
-disabled :false
-}]
-},*/
         {
           region: 'center',
-          xtype: 'grid',
-          store: store,
-          columns: [
-          {
-            header: "IdentificationByTag",
-            dataIndex: 'title'
-          },
-
-          {
-            header: "PlantArea.IdentificationByTag",
-            dataIndex: 'director'
-          },
-
-          {
-            header: "System.IdentificationByTag",
-            dataIndex: 'released'
-          },
-
-          {
-            header: "Plant.IdentificationByTag",
-            dataIndex: 'genre'
-          },
-
-          {
-            header: "Length.hasScale",
-            dataIndex: 'tagline'
-          },
-
-          {
-            header: "Length.valValue",
-            dataIndex: 'tagline'
-          },
-
-          {
-            header: "NominalDiameter.hasScale",
-            dataIndex: 'tagline'
-          },
-
-          {
-            header: "NominalDiameter.valValue",
-            dataIndex: 'tagline'
-          },
-
-          {
-            header: "FluidCompound.ClassifiedIdentification",
-            dataIndex: 'tagline'
-          },
-
-          {
-            header: "FluidStream.DesignTemperature.hasScale",
-            dataIndex: 'tagline'
-          },
-
-          {
-            header: "FluidStream.DesignTemperature.valValue",
-            dataIndex: 'tagline'
-          },
-
-          {
-            header: "FluidStream.OperatingTemperature.hasScale",
-            dataIndex: 'tagline'
-          },
-
-          {
-            header: "FluidStream.OperatingTemperature.valValue",
-            dataIndex: 'tagline'
-          }
-		
-          ]
-        }]
-
-
-      },{
-        title: 'Results',
-        html: '................'
-      }]
-    }
+          xtype: 'tabpanel',
+          disabled:true,
+          margins: '0 0 0 0'
+          //activeTab: 0
+        }
     ]
-    });
+});
 
-  function test()
+  /* function test()
   {
     var propertyStore = new Ext.data.JsonStore({
       autoLoad: true,  //autoload the data
@@ -291,13 +122,13 @@ disabled :false
     }); 
   }
 
-  eastGrid.on('click',test());
+  //eastGrid.on('click',test());
 
   propsGrid.on('propertychange', function (){
     Ext.getCmp('saveProp').enable();
   });
-  function saveProperties(){
+ 
+ function saveProperties(){
     alert('save');
-  }
-
+  }*/
 });
