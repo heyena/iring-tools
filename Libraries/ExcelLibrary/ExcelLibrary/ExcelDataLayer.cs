@@ -33,7 +33,8 @@ namespace org.iringtools.adapter.datalayer
       }
       else
       {
-        throw new Exception("Property [" + propertyName + "] does not exist.");
+        //throw new Exception("Property [" + propertyName + "] does not exist.");
+        return null;
       }
     }
 
@@ -81,7 +82,7 @@ namespace org.iringtools.adapter.datalayer
     {
       try
       {
-        ExcelWorksheet worksheet = _configuration.Worksheets.FirstOrDefault<ExcelWorksheet>(o => o.Name == objectType);
+        ExcelWorksheet cfWorksheet = _configuration.Worksheets.FirstOrDefault<ExcelWorksheet>(o => o.Name == objectType);
 
         IList<IDataObject> dataObjects = new List<IDataObject>();
         
@@ -99,8 +100,8 @@ namespace org.iringtools.adapter.datalayer
 
             if (!String.IsNullOrEmpty(identifier))
             {
-              dataObject.SetPropertyValue(worksheet.Identifier, identifier);
-            }
+              dataObject.SetPropertyValue(cfWorksheet.Identifier, identifier);              
+            }            
 
             dataObjects.Add(dataObject);
           }
