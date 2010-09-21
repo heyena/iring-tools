@@ -2,19 +2,13 @@
 /**
  * @author Aswini Nayak (aknayak@bechtel.com)
 */
+   require_once('/controller/BaseController.php');   
 
-function useModel($className,$parameter=null)
-{
-	require_once('/model/'.$className.'/'.$className.'Model.class.php');
-	$modelName = $className.'Model';
-		return new $modelName($parameter);
-}
-
-class ExchangeReader{
+class ExchangeReader extends BaseController{
 	private $modelObj;
 
 	function __construct(){
-		$this->modelObj = useModel(get_class($this));
+		$this->modelObj = $this->useModel(get_class($this));
 	}
 
 	function exchangeXML($projectId=null)
