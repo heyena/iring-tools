@@ -7,6 +7,7 @@
 Ext.onReady(function(){
 	
 	var tBar = new Ext.Toolbar({ xtype: "toolbar",
+         
 	items: [
 		{xtype:"tbbutton",text:"Exchange", id: 'headExchange', disabled: false,
 		handler: function(){
@@ -28,13 +29,61 @@ Ext.onReady(function(){
 			   alert('You clicked on No');
 		   }
 	   }});
-	}},
-	{xtype:"tbbutton",text:"Refresh", id: 'headRefresh', disabled: false,handler: function(){alert("Refresh Clicked")
+	}},'-',
+	{xtype:"tbbutton",
+            icon:'resources/images/16x16/view-refresh.png',
+            qtip:'Refresh',
+            id: 'headRefresh', disabled: false,handler: function(){alert("Refresh Clicked")
+
 	}}							   
 	]});
 	
   var tree = new Ext.tree.TreePanel({
-    renderTo:'tree-div',
+      renderTo:'tree-div',
+    baseCls : 'x-plain',
+    bodyBorder:false,
+    border:true,
+    hlColor:'C3DAF',
+    width: 250,
+    useArrows:false, // true for vista like
+    autoScroll:true,
+    animate:true,
+    tbar: tBar,
+    /*[ {
+                                            text: 'Cancel',
+                                            margin:'100 01 01 01',
+                                            minWidth: 100,
+                                            ref: '../cancelButton'
+                                        }, {
+                                            text: 'Save',
+                                            minWidth: 100,
+                                            ref: '../saveButton'
+                                        }],
+
+   /*tbar: [
+       {
+                                            text: 'Add',
+                                            iconCls: 'silk-add'
+                                           // handler: this.onAdd,
+        //                                    scope: this
+                                        }, '-', {
+                                            text: 'Delete',
+                                            iconCls: 'silk-delete'
+                                            //handler: this.onDelete,
+          //                                  scope: this
+                                        }, '-'],
+
+                                    */
+                                        root: {
+      nodeType: 'async',
+      icon: 'resources/images/16x16/internet-web-browser.png',
+      text: 'Directory'
+    },
+                                        dataUrl: 'ExchangeReader/exchnageList/1'
+
+
+
+    /*renderTo:'tree-div',
     height: 460,
     baseCls : 'x-plain',
     bodyBorder:false,
@@ -45,6 +94,7 @@ Ext.onReady(function(){
     autoScroll:true,
     animate:true,
     margins: '0 0 0 0',
+    cmargins: '100 100 100 100',
     lines :true,
     //enableDD:true,
     containerScroll: true,
@@ -59,7 +109,8 @@ Ext.onReady(function(){
     // auto create TreeLoader
     //loader: new Ext.tree.TreeLoader(),
     dataUrl: 'ExchangeReader/exchnageList/1',
-	tbar:tBar
+	tbar:tBar*/
+    
   });
 
   var contextMenu = new Ext.menu.Menu({
