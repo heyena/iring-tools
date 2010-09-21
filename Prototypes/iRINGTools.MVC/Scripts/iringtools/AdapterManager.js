@@ -8,17 +8,25 @@ var iRINGTools = new Ext.iRINGTools({});
 Ext.onReady(function () {
   Ext.QuickTips.init();
 
+  var actionPanel = new iIRNGTools.AdapterManager.ActionPanel({
+    id: 'action-panel',
+    region: 'west',
+    width: 200,
+
+    collapseMode: 'mini',
+    collapsible: true,
+    collapsed: false
+  });
+
   var searchPanel = new iIRNGTools.AdapterManager.SearchPanel({
     id: 'search-panel',
     title: 'Reference Data Search',
     region: 'south',
-    collapseMode: 'mini',
     height: 300,
+
+    collapseMode: 'mini',
     collapsible: true,
     collapsed: false,
-    split: true,
-    layout: 'fit',
-    border: true,
 
     searchUrl: 'Search',
     limit: 100
@@ -26,38 +34,37 @@ Ext.onReady(function () {
 
   var contentPanel = new Ext.TabPanel({
     id: 'content-panel',
-    region: 'center', // this is what makes this panel into a region within the containing layout    
+    region: 'center',
+
     collapsible: false,
-    border: true
+
+    border: true,
+    split: true
   });
 
-  var navigationPanel = new iIRNGTools.AdapterManager.ScopePanel({
+  var navigationPanel = new iIRNGTools.AdapterManager.NavigationPanel({
     id: 'nav-panel',
     title: 'Directory',
     region: 'west',
-    collapseMode: 'mini',
     width: 200,
+
+    collapseMode: 'mini',
     collapsible: true,
     collapsed: false,
-    split: true,
-    layout: 'border',
-    border: true,
+
     navigationUrl: 'Scopes'
   });
 
-  navigationPanel.on('create', function () {
+  navigationPanel.on('create', function (npanel) {
 
-    var window = new Ext.Window({
-      title: 'Scope Details',
-      width: 300,
-      height: 300
-    });
+    var newTab = new iIRNGTools.AdapterManager.ScopePanel();
 
-    window.show();
+    contentPanel.add(newTab);
+    contentPanel.activate(newTab);
 
   });
 
-  navigationPanel.on('update', function () {
+  navigationPanel.on('update', function (npanel) {
 
     var window = new Ext.Window({
       title: 'Scope Details',
@@ -76,21 +83,66 @@ Ext.onReady(function () {
   });
 
   navigationPanel.on('mapping', function (npanel, scope, application) {
-    var scope = npanel.getScope();
-    var application = npanel.getApplication();
 
     if (application.length > 0) {
       var newTab = new iIRNGTools.AdapterManager.MappingPanel({
         title: 'Mapping - ' + scope + '.' + application,
-        closable: true,
-        
+        closable: true
       });
 
       contentPanel.add(newTab);
       contentPanel.activate(newTab);
     } else {
-      iRINGTools.setAlert(true, 'Select a application!!!');
+      iRINGTools.setAlert(true, 'Select a application before continuing.');
     }
+
+  });
+
+  navigationPanel.on('exchange', function (npanel, scope, application) {
+
+    if (application.length > 0) {
+
+      var exhangePanel = new iIRNGTools.AdapterManager.ExchangePanel({
+        scope: scope,
+        application: application
+      });
+
+      exhangePanel.on('pull', function (panel, form) {
+
+        if (!form.isValid()) {
+          iRINGTools.setAlert(false, "Information is invalid.");
+          return false;
+        }
+
+        form.submit({
+          url: "exchange/" + panel.scope + "/" + panel.application + "/" + form.graphName + "/pull",
+          success: function (form, action) {
+            iRINGTools.setAlert(true, 'got here');
+          }
+        });
+
+      });
+
+      exhangePanel.on('cancel', function (panel) {
+        var win = panel.findParentByType('window');
+        if (win) {
+          win.close();
+        }
+      });
+
+      var window = new Ext.Window({
+        title: 'Exchange - ' + scope + '.' + application,
+        layout: 'fit',
+        modal: true,
+        items: exhangePanel
+      });            
+
+      window.show();
+
+    } else {
+      iRINGTools.setAlert(true, 'Select a application before continuing.');
+    }
+
   });
 
   // Load Stores
@@ -101,16 +153,26 @@ Ext.onReady(function () {
   var viewPort = new Ext.Viewport({
     layout: 'border',
     title: 'Scope Editor',
+    border: false,
     items: [
       {
         xtype: 'box',
         region: 'north',
         applyTo: 'header',
+        border: false,
         height: 60
       },
-      navigationPanel,
-      contentPanel,
-      searchPanel
+      actionPanel,
+      {
+        region: 'center',
+        layout: 'border',
+        border: false,
+        items: [
+          navigationPanel,
+          contentPanel,
+          searchPanel
+        ]
+      }
     ],
     listeners: {
       render: function () {
@@ -120,42 +182,5 @@ Ext.onReady(function () {
     },
     renderTo: Ext.getBody()
   });
+
 });
-
-/*
-
-var defintionPanel = new iIRNGTools.ScopeEditor.ScopeMapping({
-    id: 'def-panel',
-    title: 'Scope Definition',
-    collapsible: false,
-    layout: 'fit',
-    border: true,
-    closable: true,
-
-    loader: new Ext.tree.TreeLoader({}),
-
-    root: new Ext.tree.AsyncTreeNode({
-      expanded: true,
-      children: [{
-        text: 'ScopeGraph',
-        leaf: false,
-        children: [{
-          text: 'ScopeTemplate1',
-          leaf: false,
-          children: [{
-            text: 'ScopeTemplate2',
-            leaf: true
-          }]
-        }]
-      }]
-    }),
-
-    bbar: new Ext.ux.StatusBar({
-      id: 'right-statusbar',
-      defaultText: 'Ready',
-      statusAlign: 'right'
-    })
-
-  });
-
-  */

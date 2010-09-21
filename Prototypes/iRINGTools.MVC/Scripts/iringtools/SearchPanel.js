@@ -22,11 +22,10 @@ function renderIcon(value, p, record) {
 
 iIRNGTools.AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
   title: 'Reference Data Search',
-  collapsible: true,
-  collapsed: false,
-  split: true,
+
   layout: 'fit',
   border: true,
+  split: true,
 
   searchStore: null,
   searchExpander: null,
@@ -41,7 +40,7 @@ iIRNGTools.AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
   initComponent: function () {
 
     this.searchStore = new Ext.data.JsonStore({
-      root: 'Entities',
+      root: 'Items',
       totalProperty: 'Total',
       idProperty: 'label',
       fields: [
@@ -78,7 +77,8 @@ iIRNGTools.AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
       emptyMsg: "No results to display"
     });
 
-    this.items = new Ext.grid.GridPanel({
+    this.items = new Ext.grid.GridPanel({      
+      border: false,
       store: this.searchStore,
       plugins: this.searchExpander,
       cm: new Ext.grid.ColumnModel([
