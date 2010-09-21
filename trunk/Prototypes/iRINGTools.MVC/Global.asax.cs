@@ -17,8 +17,14 @@ namespace iRINGTools.WebMVC
       routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
       routes.MapRoute(
+          "Default_ScopeApplicationGraph", // Route name
+          "{controller}/{scope}/{application}/{graph}/{action}", // URL with parameters
+          new { controller = "Home", action = "Index", scope = UrlParameter.Optional, application = UrlParameter.Optional, graph = UrlParameter.Optional } // Parameter defaults
+      );
+
+      routes.MapRoute(
           "Default_ScopeApplication", // Route name
-          "{controller}/{action}/{scope}/{application}", // URL with parameters
+          "{controller}/{scope}/{application}/{action}", // URL with parameters
           new { controller = "Home", action = "Index", scope = UrlParameter.Optional, application = UrlParameter.Optional } // Parameter defaults
       );
 

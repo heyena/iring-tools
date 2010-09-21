@@ -9,8 +9,10 @@ using System.Configuration;
 using System.Collections.Specialized;
 
 using org.iringtools.library;
+using org.iringtools.library.manifest;
 using org.iringtools.utility;
 using org.iringtools.client.Models;
+
 
 
 namespace org.iringtools.client.Controllers
@@ -146,6 +148,19 @@ namespace org.iringtools.client.Controllers
       {
         return Json(null, JsonRequestBehavior.AllowGet);
       }
+    }
+
+    public JsonResult Graphs(string scope, string application)
+    {
+      JsonContainer<Graph> container = new JsonContainer<Graph>();
+
+      WebHttpClient client = new WebHttpClient(_adapterServiceURI);
+      Manifest manifest = client.Get<Manifest>(String.Format("/{0}/{1}/manifest", scope, application));
+
+      container.Items = manifest.Graphs;
+      container.Total = manifest.Graphs.Count;
+
+      return Json(container, JsonRequestBehavior.AllowGet);
     }
     
   }

@@ -8,11 +8,14 @@ Ext.ns('iIRNGTools', 'iIRNGTools.AdapterManager');
 * @author by Gert Jansen van Rensburg
 */
 iIRNGTools.AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
-  split: true,
+    
   height: 300,
   minSize: 150,
+  
   autoScroll: true,
   layout: 'border',  
+  frame: true,
+  split: true,
 
   /**
   * initComponent

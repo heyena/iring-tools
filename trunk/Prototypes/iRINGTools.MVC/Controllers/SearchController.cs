@@ -35,7 +35,7 @@ namespace org.iringtools.client.Controllers
       string query = collection["query"];
       string start = collection["start"];
       string limit = collection["limit"];
-      EntitiesContainer container = new EntitiesContainer();
+      JsonContainer<Entity> container = new JsonContainer<Entity>();
 
       if (query != null && !query.Equals(String.Empty))
       {
@@ -47,7 +47,7 @@ namespace org.iringtools.client.Controllers
 
         RefDataEntities dataEntities = result.DeserializeDataContract<RefDataEntities>();
         
-        container.Entities = dataEntities.Entities.Values.ToList<Entity>();
+        container.Items = dataEntities.Entities.Values.ToList<Entity>();
         container.Total = dataEntities.Total;
 
       }
