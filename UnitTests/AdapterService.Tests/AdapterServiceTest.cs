@@ -11,6 +11,7 @@ using System.Xml;
 using System.Linq;
 using System.Xml.Linq;
 using System;
+using System.Configuration;
 
 namespace AdapterService.Tests
 {
@@ -21,58 +22,15 @@ namespace AdapterService.Tests
   [TestClass()]
   public class AdapterServiceTest
   {
-    //[TestMethod()]
-    //public void UpdateDatabaseDictionaryTest_ABC()
-    //{
+    private AdapterSettings _settings = null;
 
-    //  string bindingConfigPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.xml";
-    //  string bindingConfigTestPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.Test.xml";
-    //  string nhMappingPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\nh-mapping.12345_000.ABC.xml";
-    //  string nhMappingTestPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\nh-mapping.12345_000.ABC.Test.xml";
+    public AdapterServiceTest()
+    {
+      _settings = new AdapterSettings();
+      _settings.AppendSettings(ConfigurationManager.AppSettings);
 
-    //  string dbDictionaryPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\DatabaseDictionary.12345_000.ABC.xml";
-
-    //  AdapterProxy target = new AdapterProxy();
-    //  DatabaseDictionary databaseDictionary = Utility.Read<DatabaseDictionary>(dbDictionaryPath);
-    //  Response actual = target.UpdateDatabaseDictionary("12345_000", "ABC", databaseDictionary);
-    //  Assert.AreEqual("Entities generated successfully.", actual[0]);
-
-    //  File.Copy(bindingConfigTestPath, bindingConfigPath, true);
-    //  File.Copy(nhMappingTestPath, nhMappingPath, true);
-    //}
-
-    //[TestMethod()]
-    //public void UpdateDatabaseDictionaryTest_DEF()
-    //{
-
-    //    string bindingConfigPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.DEF.xml";
-    //    string bindingConfigTestPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.DEF.Test.xml";
-    //    string nhMappingPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\nh-mapping.12345_000.DEF.xml";
-    //    string nhMappingTestPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\nh-mapping.12345_000.DEF.Test.xml";
-
-    //    string dbDictionaryPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\DatabaseDictionary.12345_000.DEF.xml";
-
-    //    AdapterProxy target = new AdapterProxy();
-    //    DatabaseDictionary databaseDictionary = Utility.Read<DatabaseDictionary>(dbDictionaryPath);
-    //    Response actual = target.UpdateDatabaseDictionary("12345_000", "DEF", databaseDictionary);
-    //    Assert.AreEqual("Entities generated successfully.", actual[0]);
-
-    //    File.Copy(bindingConfigTestPath, bindingConfigPath, true);
-    //    File.Copy(nhMappingTestPath, nhMappingPath, true);
-    //}
-
-    //[TestMethod()]
-    //public void GenerateTest_ABC()
-    //{
-    //  string bindingConfigPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.xml";
-    //  string bindingConfigTestPath = @"C:\iring-tools\Adapter\AdapterService.Tests\XML\BindingConfiguration.12345_000.ABC.Test.xml";
-
-    //  AdapterProxy target = new AdapterProxy();
-    //  Response actual = target.Generate("12345_000", "ABC");
-    //  Assert.AreEqual("DTO Model generated successfully.", actual[0]);
-
-    //  File.Copy(bindingConfigTestPath, bindingConfigPath, true);
-    //}
+      Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
+    }
 
     [TestMethod()]
     public void GetDictionaryTest_ABC()
@@ -89,22 +47,6 @@ namespace AdapterService.Tests
       Mapping actual = target.GetMapping("12345_000", "ABC");
       Assert.AreNotEqual(0, actual.graphMaps.Count);
     }
-
-    //[TestMethod()]
-    //public void GetTest_ABC()
-    //{
-    //  AdapterProxy target = new AdapterProxy();
-    //  XElement xml = target.Get("12345_000", "ABC", "Lines", "1-AB-L-001");
-    //  Assert.AreNotEqual(0, xml.Elements().Count());
-    //}
-
-    //[TestMethod()]
-    //public void GetListTest_ABC()
-    //{
-    //  AdapterProxy target = new AdapterProxy();
-    //  XElement xml = target.GetList("12345_000", "ABC", "Lines");
-    //  Assert.AreNotEqual(0, xml.Elements().Count());
-    //}
 
     [TestMethod()]
     public void ClearStoreTest_ABC()
@@ -194,7 +136,7 @@ namespace AdapterService.Tests
     [TestMethod()]
     public void UpdateMapping_ABC()
     {
-      string mapping = Utility.ReadString(@"C:\iring-tools\UnitTests\AdapterService.Tests\XML\Mapping.12345_000.ABC.xml");
+      string mapping = Utility.ReadString(_settings["XmlPath"] + "Mapping.12345_000.ABC.xml");
       XElement mappingXml = XElement.Parse(mapping);
       
       AdapterProxy target = new AdapterProxy();
@@ -219,103 +161,7 @@ namespace AdapterService.Tests
       Assert.AreNotEqual(0, manifest.Graphs.Count);
     }
 
-    //[TestMethod()]
-    //public void UpdateDatabaseDictionaryTest_DEF()
-    //{
-    //  AdapterProxy target = new AdapterProxy();
-    //  string dbDictionaryPath = System.Environment.CurrentDirectory + @"\XML\DatabaseDictionary.12345_000.DEF.xml";
-    //  DatabaseDictionary databaseDictionary = Utility.Read<DatabaseDictionary>(dbDictionaryPath);
-    //  Response actual = target.UpdateDatabaseDictionary(databaseDictionary, "12345_000", "DEF");
-    //  Assert.AreEqual("Entities generated successfully.", actual[0]);
-    //}
-
-    //[TestMethod()]
-    //public void GenerateTest_DEF()
-    //{
-    //  AdapterProxy target = new AdapterProxy();
-    //  Response actual = target.Generate("12345_000", "DEF");
-    //  Assert.AreEqual("DTO Model generated successfully.", actual[0]);
-    //}
-
-    //[TestMethod()]
-    //public void GetDictionaryTest_DEF()
-    //{
-    //  AdapterProxy target = new AdapterProxy();
-    //  DataDictionary actual = target.GetDictionary("12345_000", "DEF");
-    //  Assert.AreEqual(1, actual.dataObjects.Count);
-    //}
-
-    //[TestMethod()]
-    //public void GetMappingTest_DEF()
-    //{
-    //  AdapterProxy target = new AdapterProxy();
-    //  Mapping actual = target.GetMapping("12345_000", "DEF");
-    //  Assert.AreEqual(1, actual.graphMaps.Count);
-    //}
-
-    //[TestMethod()]
-    //public void GetTest_DEF()
-    //{
-    //  AdapterProxy target = new AdapterProxy();
-    //  Envelope envelope = target.Get("12345_000", "DEF", "Lines", "1-AB-L126");
-    //  Assert.AreNotEqual(0, envelope.Payload.Count);
-    //}
-
-    //[TestMethod()]
-    //public void GetListTest_DEF()
-    //{
-    //  AdapterProxy target = new AdapterProxy();
-    //  Envelope envelope = target.GetList("12345_000", "DEF", "Lines");
-    //  Assert.AreNotEqual(0, envelope.Payload.Count);
-    //}
-
-    //[TestMethod()]
-    //public void ClearStoreTest_DEF()
-    //{
-    //  AdapterProxy target = new AdapterProxy();
-    //  Response actual = target.ClearStore("12345_000", "DEF");
-    //  Assert.AreEqual("Store cleared successfully.", actual[0]);
-    //}
-
-    //[TestMethod()]
-    //public void RefreshTest_DEF()
-    //{
-    //  AdapterProxy target = new AdapterProxy();
-    //  Response actual = target.RefreshGraph("12345_000", "DEF", "Lines");
-    //  Assert.AreEqual(false, actual[0].ToUpper().Contains("ERROR"));
-    //}
-
-    //[TestMethod()]
-    //public void RefreshAllTest_DEF()
-    //{
-    //  AdapterProxy target = new AdapterProxy();
-    //  Response actual = target.RefreshAll("12345_000", "DEF");
-    //  Assert.AreEqual(false, actual[0].ToUpper().Contains("ERROR"));
-    //}
-
-    //[TestMethod()]
-    //public void PullTest_DEF()
-    //{
-    //  AdapterProxy target = new AdapterProxy();
-    //  Request request = new Request();
-    //  WebCredentials targetCredentials = new WebCredentials();
-    //  string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
-    //  request.Add("targetUri", "http://localhost/InterfaceService/sparql");
-    //  request.Add("targetCredentials", targetCredentialsXML);
-    //  request.Add("graphName", "Lines");
-    //  request.Add("filter", "");
-    //  Response actual = target.Pull("12345_000", "DEF", request);
-    //  bool isError = false;
-    //  for (int i = 0; i < actual.Count; i++)
-    //  {
-    //    if (actual[i].ToUpper().Contains("ERROR"))
-    //    {
-    //      isError = true;
-    //      break;
-    //    }
-    //  }
-    //  Assert.AreEqual(false, isError);
-    //}
+   
 
     //[TestMethod()]
     //public void PullDTO()
@@ -372,82 +218,18 @@ namespace AdapterService.Tests
         request.Add("format", "dto");
 
         Response actual = target.Push("12345_000", "DEF", "LinesGraph", request);
-        Utility.Write<Response>(actual, @"C:\iring-tools\PushResponse.xml", true);
         Assert.IsFalse(actual.Level == StatusLevel.Error);
     }
-
-    //[TestMethod]
-    //public void PutTest()
-    //{
-    //    AdapterProxy target = new AdapterProxy();
-    //    XElement xElement = target.GetXml("12345_000", "ABC", "Lines", "dto");
-    //    target = new AdapterProxy();
-    //    Response actual = target.Put("12345_000", "DEF", "LinesGraph", "dto", xElement);
-    //    Assert.IsFalse(actual.Level == StatusLevel.Error);        
-    //}
 
     [TestMethod]
     public void PostTest()
     {
       AdapterProxy target = new AdapterProxy();
-      string linesDxo = Utility.ReadString(@"C:\iring-tools\UnitTests\AdapterService.Tests\XML\DXO.12345_000.ABC.Lines.xml");
+      string linesDxo = Utility.ReadString(_settings["XmlPath"] + "DXO.12345_000.ABC.Lines.xml");
       XElement linesDxoXml = XElement.Parse(linesDxo);
       Response actual = target.Post("12345_000", "ABC", "Lines", "dxo", linesDxoXml);
       Assert.IsFalse(actual.Level == StatusLevel.Error);
     }
-
-    //[TestMethod()]
-    //public void PullDTOPrototype()
-    //{
-    //  AdapterProxy target = new AdapterProxy();
-    //  WebHttpClient httpClient = new WebHttpClient(@"http://localhost:52786/Service.svc");
-    //  string dtoListString = httpClient.GetMessage(@"/12345_000/DEF/Lines/2-SC-L069");
-    //  File.WriteAllText(System.Environment.CurrentDirectory + @"\XML\DTOString.xml", dtoListString, System.Text.Encoding.UTF8);
-    //  #region Deserialization code
-    //  //StringReader input = new StringReader(dtoListString);
-    //  //XmlReaderSettings settings = new XmlReaderSettings();
-    //  //settings.ProhibitDtd = false;
-    //  //XmlReader reader = XmlDictionaryReader.Create(input, settings);
-
-    //  //System.Type[] extraTypes = { typeof(org.iringtools.adapter.proj_12345_000.DEF.Lines) };
-
-    //  //XmlSerializer serializer = new XmlSerializer(typeof(List<DataTransferObject>), extraTypes);
-
-    //  //List<DataTransferObject> dtoList = (List<DataTransferObject>)serializer.Deserialize(reader);
-
-    //  //List<DataTransferObject> dtoList = Utility.Deserialize<List<org.iringtools.adapter.DataTransferObject>>(dtoListString, false);
-
-    //  //foreach (DataTransferObject dto in dtoList)
-    //  //{
-    //  //  org.iringtools.adapter.proj_12345_000.DEF.Line line = (org.iringtools.adapter.proj_12345_000.DEF.Line)dto.GetDataObject();
-    //  //}
-    //  #endregion
-
-    //  XDocument xmlFile = XDocument.Load(System.Environment.CurrentDirectory + @"\XML\DTOString.xml");
-    //  XNamespace propertyNS = "http://dto.iringtools.org";
-    //  XNamespace projectNS = "http://DEF.bechtel.com/12345_000/data#";
-
-    //  List<org.iringtools.adapter.proj_12345_000.ABC.Lines> lineList = new List<org.iringtools.adapter.proj_12345_000.ABC.Lines>();
-
-    //  var query1 = from c in xmlFile.Elements(propertyNS + "Envelope").Elements(propertyNS + "Payload").Elements(propertyNS + "DataTransferObject")
-    //               select c;
-    //  foreach (var dto in query1)
-    //  {
-    //    var query2 = from c in dto.Elements(propertyNS + "Properties").Elements(propertyNS + "Property")
-    //                 select c;
-
-    //    org.iringtools.adapter.proj_12345_000.ABC.Lines line = new org.iringtools.adapter.proj_12345_000.ABC.Lines();
-
-    //    foreach (var dtoProperty in query2)
-    //    {
-    //      if (dtoProperty.Attribute("name").Value == "tpl_PipingNetworkSystemName_identifier")
-    //        line.tpl_PipingNetworkSystemName_tpl_identifier = dtoProperty.Attribute("value").Value.ToString();
-    //      if (dtoProperty.Attribute("name").Value == "tpl_SystemPipingNetworkSystemAssembly_hasClassOfWhole_rdl_System_tpl_SystemName_identifier")
-    //        line.tpl_SystemPipingNetworkSystemAssembly_tpl_hasClassOfWhole_rdl_System_tpl_SystemName_tpl_identifier = dtoProperty.Attribute("value").Value.ToString();
-    //    }
-    //    lineList.Add(line);
-    //  }
-    //}
     
     private TestContext testContextInstance;
 
@@ -465,37 +247,6 @@ namespace AdapterService.Tests
       {
         testContextInstance = value;
       }
-    }
-
-    #region Additional test attributes
-    // 
-    //You can use the following additional attributes as you write your tests:
-    //
-    //Use ClassInitialize to run code before running the first test in the class
-    //[ClassInitialize()]
-    //public static void MyClassInitialize(TestContext testContext)
-    //{
-    //}
-    //
-    //Use ClassCleanup to run code after all tests in a class have run
-    //[ClassCleanup()]
-    //public static void MyClassCleanup()
-    //{
-    //}
-    //
-    //Use TestInitialize to run code before running each test
-    //[TestInitialize()]
-    //public void MyTestInitialize()
-    //{
-    //}
-    //
-    //Use TestCleanup to run code after each test has run
-    //[TestCleanup()]
-    //public void MyTestCleanup()
-    //{
-    //}
-    //
-    #endregion
-      
+    }      
   }
 }
