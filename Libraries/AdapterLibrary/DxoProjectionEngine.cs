@@ -24,7 +24,7 @@ namespace org.iringtools.adapter.projection
     private Mapping _mapping = null;
     private GraphMap _graphMap = null;
     private IList<IDataObject> _dataObjects = null;
-    private Dictionary<string, List<string>> _classIdentifiers = null; // dictionary of class ids and list of identifiers
+    private Dictionary<string, List<string>> _classIdentifiers = null;
     private XNamespace _graphNs = String.Empty;
     private DataTransferObjects _dataTransferObjects;
 
@@ -158,20 +158,18 @@ namespace org.iringtools.adapter.projection
       return dataObjects;
     }
 
-    public IList<string> GetDeletingDataObjects(string graphName, ref XElement xml)
+    public IList<string> GetDeletingIdentifiers(string graphName, ref XElement xml)
     {
       _graphMap = _mapping.FindGraphMap(graphName);
       _dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(xml);
 
-      ClassMap classMap = _graphMap.classTemplateListMaps.First().Key;
       List<string> identifiers = new List<string>();
 
       foreach (DataTransferObject dataTransferObject in _dataTransferObjects)
       {
         if (dataTransferObject.transferType == TransferType.Delete)
         {
-          ClassObject classObject = dataTransferObject.GetClassObject(classMap.classId);
-          identifiers.Add(classObject.identifier);
+          identifiers.Add(dataTransferObject.classObjects[0].identifier);
         }
       }
 

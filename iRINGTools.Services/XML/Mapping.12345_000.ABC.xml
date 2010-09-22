@@ -267,8 +267,7 @@
       <name>Temperature</name>
       <valueMaps>
         <ValueMap>
-          <internalValue>degC</internalValue>
-          
+          <internalValue>degC</internalValue>          
           <uri>rdl:R74877992703</uri>
         </ValueMap>
         <ValueMap>

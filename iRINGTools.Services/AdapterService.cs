@@ -176,35 +176,35 @@ namespace org.iringtools.services
     #endregion
 
     #region Difference-based Data Exchange
-    #region GetDxi
+    #region GetDtiList
     /// <summary>
-    /// DXI Resource for Difference-based data exchange.
+    /// DTI Resource for Difference-based data exchange.
     /// </summary>
     /// <param name="projectName">Project name</param>
     /// <param name="applicationName">Application name</param>
     /// <param name="graphName">Graph name</param>
     /// <param name="request">DXRequest object containing the manifest to be used.</param>
     /// <returns>Returns an arbitrary XML</returns>
-    [Description("DXI Resource for Difference-based data exchange.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/dxi")]
-    public XElement GetDxi(string projectName, string applicationName, string graphName, DXRequest request)
+    [Description("DTI Resource for Difference-based data exchange.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/dti")]
+    public XElement GetDtiList(string projectName, string applicationName, string graphName, DxRequest request)
     {
-      return _exchangeProvider.GetDxi(projectName, applicationName, graphName, request);
+      return _exchangeProvider.GetDtiList(projectName, applicationName, graphName, request);
     }
     #endregion
 
-    #region GetDxo
+    #region GetDtoList
     /// <summary>
-    /// DXO Resource for Difference-based data exchange.
+    /// DTO Resource for Difference-based data exchange.
     /// </summary>
     /// <param name="projectName">Project name</param>
     /// <param name="applicationName">Application name</param>
     /// <param name="graphName">Graph name</param>
     /// <param name="request">DXRequest object containing the manifest to be used and a list of identifiers to return.</param>
     /// <returns>Returns an arbitrary XML</returns>
-    [Description("DXO Resource for Difference-based data exchange.")]
+    [Description("DTO Resource for Difference-based data exchange.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/dto")]
-    public XElement DtoList(string projectName, string applicationName, string graphName, DXRequest request)
+    public XElement GetDtoList(string projectName, string applicationName, string graphName, DxRequest request)
     {
       return _exchangeProvider.GetDtoList(projectName, applicationName, graphName, request);
     }

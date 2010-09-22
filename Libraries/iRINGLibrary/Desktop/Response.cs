@@ -138,7 +138,7 @@ namespace org.iringtools.library
   }
 
   [XmlRoot]
-  [CollectionDataContract(Namespace = "http://iringtools.org/library/response", Name = "results", KeyName = "key", ItemName="value")]
+  [CollectionDataContract(Namespace = "http://iringtools.org/library/response", Name = "results", ItemName="result", KeyName = "key", ValueName="value")]
   public class Results : Dictionary<string, string> {}
    
   [XmlRoot]
