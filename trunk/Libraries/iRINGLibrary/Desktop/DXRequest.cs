@@ -8,8 +8,8 @@ using org.iringtools.library.manifest;
 
 namespace org.iringtools.library
 {
-  [DataContract(Namespace = "http://iringtools.org/library", Name = "dxRequest")]
-  public class DXRequest
+  [DataContract(Namespace = "http://iringtools.org/exchange/library", Name = "dxRequest")]
+  public class DxRequest
   {
     [DataMember(Name = "manifest", Order = 0)]
     public Manifest Manifest { get; set; }
@@ -20,4 +20,7 @@ namespace org.iringtools.library
     [DataMember(Name = "hashAlgorithm", Order = 2)]
     public String HashAlgorithm { get; set; }
   }
+
+  [CollectionDataContract(Namespace = "http://iringtools.org/exchange/library", Name = "identifiers", ItemName = "identifier")]
+  public class Identifiers : List<string> { }
 }

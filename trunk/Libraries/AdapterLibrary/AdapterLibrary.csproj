@@ -120,6 +120,7 @@
   <ItemGroup>
     <Compile Include="AdapterModule.cs" />
     <Compile Include="BaseProjectionEngine.cs" />
+    <Compile Include="DataTransferIndices.cs" />
     <Compile Include="DataTransferObject.cs" />
     <Compile Include="dotNetRDFEngine.cs" />
     <Compile Include="AdapterProvider.cs" />

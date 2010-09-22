@@ -705,7 +705,7 @@ namespace org.iringtools.adapter
           GraphMap graphMap = _mapping.FindGraphMap(graphName);
           
           DxoProjectionEngine dxoProjectionEngine = ((DxoProjectionEngine)_projectionEngine);
-          IList<string> deletingIdentifiers = dxoProjectionEngine.GetDeletingDataObjects(graphName, ref xml);
+          IList<string> deletingIdentifiers = dxoProjectionEngine.GetDeletingIdentifiers(graphName, ref xml);
           response.Append(_dataLayer.Delete(graphMap.dataObjectMap, deletingIdentifiers));
         }
 

@@ -174,6 +174,9 @@ namespace org.iringtools.adapter
     public string name { get; set; }
 
     [DataMember(Order = 3, EmitDefaultValue = false)]
+    public string oldValue { get; set; }
+
+    [DataMember(Order = 4, EmitDefaultValue = false)]
     public string value { get; set; }
   }
 
@@ -188,17 +191,5 @@ namespace org.iringtools.adapter
     Change,
     [EnumMember]
     Delete,
-  }
-
-  [CollectionDataContract(Namespace = "http://iringtools.org/adapter/library/dto", Name = "dataTransferIndices", ItemName = "dataTransferIndex", KeyName = "identifier", ValueName = "hashValue")]
-  public class DataTransferIndices : Dictionary<string, string> {}
-
-  [DataContract]
-  public enum HashAlgorithm
-  {
-    [EnumMember]    
-    MD5,
-    [EnumMember]
-    SHA1,
   }
 }

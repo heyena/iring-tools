@@ -411,7 +411,4 @@ namespace org.iringtools.library
     [DataMember(EmitDefaultValue = false, Order = 1)]
     public string uri { get; set; }
   }
-
-  [CollectionDataContract(Namespace = "http://iringtools.org/library", Name = "identifiers", ItemName = "identifier")]
-  public class Identifiers : List<string> { }
 }
