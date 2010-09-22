@@ -8,6 +8,8 @@ using org.ids_adi.qmxf;
 using org.iringtools.library;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting.Web;
+using System.Configuration;
+using System.Collections.Specialized;
 
 namespace ReferenceDataService.Tests
 {
@@ -17,13 +19,20 @@ namespace ReferenceDataService.Tests
   [TestClass]
   public class ReferenceDataServiceTest
   {
+    private ReferenceDataSettings _settings = null;
+
     public ReferenceDataServiceTest()
     {
-      string path = @"C:\iring-tools\iRINGTools.Services\XML\";
+      _settings = new ReferenceDataSettings();
+      _settings.AppendSettings(ConfigurationManager.AppSettings);
 
-      if (!File.Exists(path + "Repositories.xml"))
+      Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
+
+      if (!File.Exists(_settings["XmlPath"] + "Repositories.xml"))
       {
-        File.Copy(path + "Repositories_Test.xml", path + "Repositories.xml");
+          File.Copy(
+              _settings["XmlPath"] + "Repositories_Development.xml", 
+              _settings["XmlPath"] + "Repositories.xml");
       }
     }
 
@@ -43,36 +52,6 @@ namespace ReferenceDataService.Tests
       Assert.AreEqual(8, actual.Entities.Count);
     }
 
-    //[TestMethod()]
-    //public void SearchResetTest()
-    //{
-    //  ReferenceDataProxy target = new ReferenceDataProxy();
-
-    //  RefDataEntities initial = target.Search("^vortex");
-
-    //  //TODO: We need to fix RefDataService to enable SemWeb TripleStore.
-    //  //QMXF @class = new QMXF();
-
-    //  //ClassDefinition classDefinition = new ClassDefinition()
-    //  //{
-    //  //  identifier = "TestClassVortex",
-    //  //  name = new List<QMXFName>() 
-    //  //  {
-    //  //    new QMXFName { lang = "en-us", value = "Vortex Test Class" },
-    //  //  },
-    //  //};
-
-    //  //@class.classDefinitions.Add(classDefinition);
-
-    //  //Response response = target.PostClass(@class);
-
-    //  //Assert.AreNotEqual(response.Level, StatusLevel.Error);
-
-    //  RefDataEntities actual = target.SearchReset("^vortex");
-
-    //  Assert.AreEqual(initial.Entities.Count, actual.Entities.Count);
-    //}
-
     [TestMethod()]
     public void SearchPageTest()
     {
@@ -80,36 +59,6 @@ namespace ReferenceDataService.Tests
       RefDataEntities actual = target.SearchPage("valve", 1400, 100);
       Assert.AreEqual(74, actual.Entities.Count);
     }
-
-    //[TestMethod()]
-    //public void SearchPageResetTest()
-    //{
-    //  ReferenceDataProxy target = new ReferenceDataProxy();
-
-    //  RefDataEntities initial = target.SearchPage("valve", 1400, 100);
-
-    //  //TODO: We need to fix RefDataService to enable SemWeb TripleStore.
-    //  //QMXF @class = new QMXF();
-
-    //  //ClassDefinition classDefinition = new ClassDefinition()
-    //  //{
-    //  //  identifier = "TestClassValve",
-    //  //  name = new List<QMXFName>() 
-    //  //  {
-    //  //    new QMXFName { lang = "en-us", value = "Test Class Valve" },
-    //  //  },
-    //  //};
-
-    //  //@class.classDefinitions.Add(classDefinition);
-
-    //  //Response response = target.PostClass(@class);
-
-    //  //Assert.AreNotEqual(response.Level, StatusLevel.Error);
-
-    //  RefDataEntities actual = target.SearchPageReset("valve", 1400, 100);
-
-    //  Assert.AreEqual(initial.Entities.Count, actual.Entities.Count);
-    //}
 
     [TestMethod()]
     public void FindTest()
@@ -176,20 +125,6 @@ namespace ReferenceDataService.Tests
       Assert.AreEqual(1, actual.templateQualifications.Count);
     }
 
-    //TODO: We need to fix RefDataService to enable SemWeb TripleStore.
-    //[TestMethod()]
-    //public void PostTemplateTest()
-    //{
-    //  Assert.Inconclusive();
-    //}
-
-    //TODO: We need to fix RefDataService to enable SemWeb TripleStore.
-    //[TestMethod()]
-    //public void PostClassTest()
-    //{
-    //  Assert.Inconclusive();
-    //} 
-
     private TestContext testContextInstance;
 
     /// <summary>
@@ -207,28 +142,5 @@ namespace ReferenceDataService.Tests
         testContextInstance = value;
       }
     }
-
-    #region Additional test attributes
-    //
-    // You can use the following additional attributes as you write your tests:
-    //
-    // Use ClassInitialize to run code before running the first test in the class
-    // [ClassInitialize()]
-    // public static void MyClassInitialize(TestContext testContext) { }
-    //
-    // Use ClassCleanup to run code after all tests in a class have run
-    // [ClassCleanup()]
-    // public static void MyClassCleanup() { }
-    //
-    // Use TestInitialize to run code before running each test 
-    // [TestInitialize()]
-    // public void MyTestInitialize() { }
-    //
-    // Use TestCleanup to run code after each test has run
-    // [TestCleanup()]
-    // public void MyTestCleanup() { }
-    //
-    #endregion
-
   }
 }

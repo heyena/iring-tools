@@ -19,7 +19,7 @@
     <UnitTestsDir>$(MSBuildProjectDirectory)\UnitTests</UnitTestsDir>
     <UtilitiesDir>$(MSBuildProjectDirectory)\Utilities</UtilitiesDir>
     <RDFImportExportDir>$(UtilitiesDir)\RDFImportExport\RDFImportExport</RDFImportExportDir>
-    <QMXFGeneratorDir>$(UtilitiesDir)\QMXFGeneratorDir\QMXFGeneratorDir</QMXFGeneratorDir>
+    <QMXFGeneratorDir>$(UtilitiesDir)\QMXFGenerator</QMXFGeneratorDir>
     
     <SDKDir>$(MSBuildProjectDirectory)\iRINGTools.SDK</SDKDir>
     <SDKLibDir>$(SDKDir)\lib</SDKLibDir>
@@ -120,13 +120,9 @@
                Utilities\RDFImportExport\RDFImportExport\bin\Debug\virtado3.dll;
                Utilities\RDFImportExport\RDFImportExport\bin\Debug\RDFImportExport.exe;
                Utilities\RDFImportExport\RDFImportExport\RDFImportExport_Default.config;
-               Utilities\QMXFGenerator\QMXFGenerator\bin\Debug\QMXFGenerator.exe;
-               Utilities\QMXFGenerator\QMXFGenerator\QMXFGenerator_Default.config;
-               Utilities\QMXFGenerator\QMXFGenerator\InformationModel.xls;
-               Utilities\QMXFGenerator\QMXFGenerator\QMXF.xml;
-               Utilities\QMXFGenerator\QMXFGenerator\bin\Debug\Microsoft.Office.Interop.Excel.dll;
-               Utilities\QMXFGenerator\QMXFGenerator\bin\Debug\Microsoft.Vbe.Interop.dll;
-               Utilities\QMXFGenerator\QMXFGenerator\bin\Debug\office.dll;
+               Utilities\QMXFGenerator\bin\Debug\QMXFGenerator.exe;
+               Utilities\QMXFGenerator\QMXFGenerator_default.config;
+               Utilities\QMXFGenerator\InformationModel.xls;
                Utilities\QMXFTransforms\*.dtd;
                Utilities\QMXFTransforms\*.xsd;
                Utilities\QMXFTransforms\*.xsl;">
@@ -143,7 +139,8 @@
 
     <SDKLibUpdate
       Include="Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll;
-               Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;">
+               Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;
+               Libraries\AdapterLibrary\bin\Debug\AdapterLibrary.dll;">
     </SDKLibUpdate>
 
     <SDKLibDeployment
@@ -208,7 +205,7 @@
     <Exec Condition="!Exists('$(ApplicationsDir)\Web.config')"
           Command="Copy $(ApplicationsDir)\Web_Default.config $(ApplicationsDir)\Web.config" />
     
-    <Exec Condition="!Exists('Utilities\QMXFGenerator\QMXFGenerator\App.config')"
+    <Exec Condition="!Exists('Utilities\QMXFGenerator\App.config')"
           Command="Copy $(QMXFGeneratorDir)\QMXFGenerator_Default.config $(QMXFGeneratorDir)\App.config" />
     
     <Exec Condition="!Exists('Utilities\RDFImportExport\RDFImportExport\App.config')"
