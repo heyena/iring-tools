@@ -9,6 +9,12 @@ Ext.onReady(function(){
 	var tBar = new Ext.Toolbar({ xtype: "toolbar",
          
 	items: [
+                {xtype:"tbbutton",
+                icon:'resources/images/16x16/view-refresh.png',
+                qtip:'Refresh',
+                id: 'headRefresh', disabled: false,handler: function(){alert("Refresh Clicked")
+
+                }},
 		{xtype:"tbbutton",text:"Exchange", id: 'headExchange', disabled: false,
 		handler: function(){
 		Ext.Msg.show({
@@ -29,61 +35,13 @@ Ext.onReady(function(){
 			   alert('You clicked on No');
 		   }
 	   }});
-	}},'-',
-	{xtype:"tbbutton",
-            icon:'resources/images/16x16/view-refresh.png',
-            qtip:'Refresh',
-            id: 'headRefresh', disabled: false,handler: function(){alert("Refresh Clicked")
-
-	}}							   
+	}}
+								   
 	]});
 	
   var tree = new Ext.tree.TreePanel({
-      renderTo:'tree-div',
-    baseCls : 'x-plain',
-    bodyBorder:false,
-    border:true,
-    hlColor:'C3DAF',
-    width: 250,
-    useArrows:false, // true for vista like
-    autoScroll:true,
-    animate:true,
-    tbar: tBar,
-    /*[ {
-                                            text: 'Cancel',
-                                            margin:'100 01 01 01',
-                                            minWidth: 100,
-                                            ref: '../cancelButton'
-                                        }, {
-                                            text: 'Save',
-                                            minWidth: 100,
-                                            ref: '../saveButton'
-                                        }],
-
-   /*tbar: [
-       {
-                                            text: 'Add',
-                                            iconCls: 'silk-add'
-                                           // handler: this.onAdd,
-        //                                    scope: this
-                                        }, '-', {
-                                            text: 'Delete',
-                                            iconCls: 'silk-delete'
-                                            //handler: this.onDelete,
-          //                                  scope: this
-                                        }, '-'],
-
-                                    */
-                                        root: {
-      nodeType: 'async',
-      icon: 'resources/images/16x16/internet-web-browser.png',
-      text: 'Directory'
-    },
-                                        dataUrl: 'ExchangeReader/exchnageList/1'
-
-
-
-    /*renderTo:'tree-div',
+      
+    renderTo:'tree-div',
     height: 460,
     baseCls : 'x-plain',
     bodyBorder:false,
@@ -109,8 +67,24 @@ Ext.onReady(function(){
     // auto create TreeLoader
     //loader: new Ext.tree.TreeLoader(),
     dataUrl: 'ExchangeReader/exchnageList/1',
-	tbar:tBar*/
-    
+    tbar:tBar,
+
+    listeners: {
+        click: {
+         fn: function(store, records, options){
+             //alert(store.getAt(0))
+            // get the property grid component
+            var propGrids = Ext.getCmp('propGrid');
+            // make sure the property grid exists
+            if (propGrids) {
+             // alert(1)
+              // populate the property grid with store data
+             // alert(store.getAt(0));
+              propGrids.setSource(store.getAt(0).data);
+            }
+          }
+        }
+      }
   });
 
   var contextMenu = new Ext.menu.Menu({

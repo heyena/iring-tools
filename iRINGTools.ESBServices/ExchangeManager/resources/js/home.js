@@ -3,19 +3,18 @@ Ext.onReady(function(){
 
   var ab_button = Ext.get('show-about');
     ab_button.on('click', function(){
-        Ext.DomHelper.applyStyles(Ext.getBody(),{
+     /*   Ext.DomHelper.applyStyles(Ext.getBody(),{
             'background-color': '#FF0000'
-        });
+        });*/
             win = new Ext.Window({
-                disabled: disable,
+                //disabled: disable,
                 title : 'About',
-                width:750,
-                height:550,
-                maximizable:true,
+                width:700,
+                height:500,
                 closable: true,
                 resizable: false,
                 autoScroll: false,
-                background: 'transparent url(recources/images/fade.png) 0 100% repeat-x',
+                //background: 'transparent url(recources/images/fade.png) 0 100% repeat-x',
                 buttons: [{
                     text: 'Close',
                     handler: function(){
@@ -43,7 +42,7 @@ Ext.onReady(function(){
         {
           region: 'east',
           title: 'Detail Grid',
-          id:'pg',
+          id:'detail-grid',
           collapsible: true,
           collapsed:true,
           hideCollapseTool:false,
@@ -89,6 +88,7 @@ Ext.onReady(function(){
         },
         {
           region: 'center',
+          id:'meraDiv',
           xtype: 'tabpanel',
           disabled:true,
           margins: '0 0 0 0'
