@@ -65,7 +65,7 @@ class ExchangeReaderModel{
                 {  
                         $exchangeArray 	=   array();
                         $scopeVal 	=   (string)$dataExchange->scope;
-                        $dataExchangeID =   'dxId_'.(string)$dataExchange->id;
+                        $dataExchangeID =   'dxId_'.(string)$dataExchange->identifier;
                         $commodity 	=   (string)$dataExchange->commodity;
 
                         $exchangeArray	=   array("text" =>(string)$dataExchange->name, "id"=>$dataExchangeID,"description"=>(string)$dataExchange->description,"scope"=>$scopeVal, "icon" =>"resources/images/16x16/file-table-diff.png", "leaf" => "true");
