@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="build" name="iRINGToolsServices">
+	<property name="debuglevel" value="source,lines,vars" />
+	<property name="target" value="1.6" />
+	<property name="source" value="1.6" />
+
+	<path id="cxf-2.2.9.userclasspath">
+		<pathelement location="../libraries/apache-cxf-2.2.9/abdera-core-1.0.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/abdera-extensions-json-1.0.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/abdera-extensions-main-1.0.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/abdera-i18n-1.0.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/abdera-parser-1.0.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/ant-1.6.5.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/antlr-2.7.7.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/aopalliance-1.0.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/asm-2.2.3.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/axiom-api-1.2.7.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/axiom-impl-1.2.7.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/bcprov-jdk15-1.43.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/commons-codec-1.3.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/commons-collections-3.2.1.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/commons-lang-2.4.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/commons-logging-1.1.1.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/commons-pool-1.5.2.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/cxf-2.2.9.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/cxf-manifest.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/cxf-xjc-boolean-2.2.9.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/cxf-xjc-bug671-2.2.9.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/cxf-xjc-dv-2.2.9.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/cxf-xjc-ts-2.2.9.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/FastInfoset-1.2.7.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/geronimo-activation_1.1_spec-1.0.2.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/geronimo-annotation_1.0_spec-1.1.1.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/geronimo-javamail_1.4_spec-1.6.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/geronimo-jaxws_2.1_spec-1.0.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/geronimo-jms_1.1_spec-1.1.1.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/geronimo-servlet_2.5_spec-1.2.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/geronimo-stax-api_1.0_spec-1.0.1.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/geronimo-ws-metadata_2.0_spec-1.1.2.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/jaxb-api-2.1.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/jaxb-impl-2.1.13.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/jaxb-xjc-2.1.13.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/jaxen-1.1.1.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/jettison-1.2.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/jetty-6.1.21.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/jetty-util-6.1.21.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/jra-1.0-alpha-4.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/js-1.7R1.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/jsr311-api-1.0.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/neethi-2.0.4.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/oro-2.0.8.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/saaj-api-1.3.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/saaj-impl-1.3.2.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/serializer-2.7.1.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/slf4j-api-1.5.8.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/slf4j-jdk14-1.5.8.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/spring-beans-2.5.6.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/spring-context-2.5.6.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/spring-context-support-2.5.6.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/spring-core-2.5.6.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/spring-jms-2.5.6.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/spring-tx-2.5.6.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/spring-web-2.5.6.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/velocity-1.6.4.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/wsdl4j-1.6.2.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/wss4j-1.5.8.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/wstx-asl-3.2.9.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/xalan-2.7.1.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/xmlbeans-2.4.0.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/xml-resolver-1.2.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/XmlSchema-1.4.5.jar" />
+		<pathelement location="../libraries/apache-cxf-2.2.9/xmlsec-1.4.3.jar" />
+	</path>
+
+	<path id="jsr311-api.userclasspath">
+		<pathelement location="../libraries/jsr311-api/jsr311-api.jar" />
+	</path>
+
+  <path id="gson-1.4.userclasspath">
+		<pathelement location="../libraries/google-gson-1.4/gson-1.4.jar" />
+	</path>
+  
+	<path id="log4j-1.2.16.userclasspath">
+		<pathelement location="../libraries/apache-log4j-1.2.16/log4j-1.2.16.jar" />
+	</path>
+
+	<path id="guice-2.0.userclasspath">
+		<pathelement location="../libraries/guice-2.0/aopalliance.jar" />
+		<pathelement location="../libraries/guice-2.0/guice-2.0.jar" />
+		<pathelement location="../libraries/guice-2.0/guice-assistedinject-2.0.jar" />
+		<pathelement location="../libraries/guice-2.0/guice-jmx-2.0.jar" />
+		<pathelement location="../libraries/guice-2.0/guice-jndi-2.0.jar" />
+		<pathelement location="../libraries/guice-2.0/guice-multibindings-2.0.jar" />
+		<pathelement location="../libraries/guice-2.0/guice-servlet-2.0.jar" />
+		<pathelement location="../libraries/guice-2.0/guice-spring-2.0.jar" />
+		<pathelement location="../libraries/guice-2.0/guice-struts2-plugin-2.0.jar" />
+		<pathelement location="../libraries/guice-2.0/guice-throwingproviders-2.0.jar" />
+	</path>
+	
+	<target name="clean">
+    <delete dir="WebContent/WEB-INF/classes" />
+  </target>
+
+	<target depends="clean" name="init">
+		<mkdir dir="WebContent/WEB-INF/classes" />
+		<copy includeemptydirs="false" todir="WebContent/WEB-INF/classes">
+			<fileset dir="src">
+				<exclude name="**/*.launch" />
+				<exclude name="**/.svn/" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target depends="init" name="build">
+		<echo message="${ant.project.name}: ${ant.file}" />
+		<javac debug="true" debuglevel="${debuglevel}" destdir="WebContent/WEB-INF/classes" source="${source}" target="${target}">
+			<src path="src" />
+      <classpath refid="cxf-2.2.9.userclasspath" />
+      <classpath refid="jsr311-api.userclasspath" />
+      <classpath refid="gson-1.4.userclasspath" />
+      <classpath refid="log4j-1.2.16.userclasspath" />
+      <classpath refid="guice-2.0.userclasspath" />
+		</javac>
+		<copy todir="WebContent/WEB-INF/lib" flatten="true">
+			<path refid="cxf-2.2.9.userclasspath" />
+			<path refid="jsr311-api.userclasspath" />
+			<path refid="gson-1.4.userclasspath" />
+			<path refid="log4j-1.2.16.userclasspath" />
+			<path refid="guice-2.0.userclasspath" />
+		</copy>
+		<jar destfile="iringtools.war" basedir="WebContent" excludes="**/.svn/" />
+	</target>
+</project>

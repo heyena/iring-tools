@@ -1,0 +1,11 @@
+<exchangeDefinition xmlns="http://iringtools.org/directory">
+  <sourceUri>http://localhost:54321/AdapterService</sourceUri>
+  <sourceAppName>DEF</sourceAppName>
+  <sourceAppScope>12345_000</sourceAppScope>
+  <sourceGraphName>LINES</sourceGraphName>
+  <targetUri>http://localhost:54321/AdapterService</targetUri>
+  <targetAppName>ABC</targetAppName>
+  <targetAppScope>12345_000</targetAppScope>
+  <targetGraphName>LINES</targetGraphName>
+  <hashAlgorithm>MD5</hashAlgorithm>
+</exchangeDefinition>
