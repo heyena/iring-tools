@@ -262,7 +262,9 @@ namespace org.iringtools.adapter.projection
               else // resolve value list to uri
               {
                 string valueListUri = _mapping.ResolveValueList(roleMap.valueList, value);
-                roleElement.Add(new XAttribute("reference", Regex.Replace(valueListUri, ".*#", "rdl:")));
+                
+                if (valueListUri != null)
+                  roleElement.Add(new XAttribute("reference", Regex.Replace(valueListUri, ".*#", "rdl:")));
               }
 
               break;

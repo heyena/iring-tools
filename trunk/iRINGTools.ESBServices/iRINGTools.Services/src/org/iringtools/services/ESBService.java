@@ -23,7 +23,7 @@ import org.iringtools.adapter.dto.ClassObject;
 import org.iringtools.adapter.dto.DataTransferObject.ClassObjects;
 import org.iringtools.adapter.dto.TransferType;
 import org.iringtools.adapter.dto.DataTransferObjects;
-import org.iringtools.adapter.manifest.Manifest;
+import org.iringtools.protocol.manifest.Manifest;
 import org.iringtools.directory.Directory;
 import org.iringtools.directory.ExchangeDefinition;
 import org.iringtools.exchange.DtiSubmission;
@@ -400,15 +400,6 @@ public class ESBService
               
               for (DataTransferIndex sourceDti : sourceDtiList)
               {
-                // case 1: if current dti found in original source dti list but hash value different, 
-                // remove it from sourceIdentifers and log message
-                
-                // case 2: if current dti found in original source dti list with same hash value and has sync status, 
-                // remove it from sourceIdentifers
-                
-                // case 3: if current dti not found in original source dti list (item no longer exists), 
-                // remove it from sourceIdentifiers and log message
-                
                 String sourceIdentifier = sourceDti.getIdentifier();                
                 boolean found = false;    
                 

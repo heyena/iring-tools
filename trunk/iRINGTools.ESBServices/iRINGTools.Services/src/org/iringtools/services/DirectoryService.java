@@ -9,8 +9,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
 import org.apache.log4j.Logger;
-import org.iringtools.exchange.DirectoryProvider;
 import org.iringtools.directory.Directory;
+import org.iringtools.directory.DirectoryProvider;
 import org.iringtools.directory.ExchangeDefinition;
 
 @Path("/")

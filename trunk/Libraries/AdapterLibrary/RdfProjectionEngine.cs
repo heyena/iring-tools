@@ -305,6 +305,10 @@ namespace org.iringtools.adapter.projection
             else // resolve value list to uri
             {
               value = _mapping.ResolveValueList(propertyRole.valueList, value);
+
+              if (value == null)
+                value = RDF_NIL;
+
               propertyElement.Add(new XAttribute(RDF_RESOURCE, value));
             }
           }

@@ -31,7 +31,7 @@ using System;
 
 namespace org.iringtools.library.manifest
 {
-  [DataContract(Namespace = "http://iringtools.org/adapter/manifest", Name = "manifest")]
+  [DataContract(Namespace = "http://iringtools.org/protocol/manifest", Name = "manifest")]
   public class Manifest
   {
     public Manifest()
@@ -51,7 +51,7 @@ namespace org.iringtools.library.manifest
       {
         if (graph.Name.ToLower() == graphName.ToLower())
         {
-          if (graph.ClassTemplatesMaps.Count == 0)
+          if (graph.ClassTemplatesList.Count == 0)
             throw new Exception("Graph [" + graphName + "] is empty.");
 
           return graph;
@@ -62,25 +62,25 @@ namespace org.iringtools.library.manifest
     }
   }
 
-  [DataContract(Namespace = "http://iringtools.org/adapter/manifest", Name = "graph")]
+  [DataContract(Namespace = "http://iringtools.org/protocol/manifest", Name = "graph")]
   public class Graph
   {
     public Graph()
     {
-      ClassTemplatesMaps = new List<ClassTemplatesMap>();
+      ClassTemplatesList = new List<ClassTemplates>();
     }
 
     [DataMember(Name = "name", Order = 0, EmitDefaultValue = false)]
     public string Name { get; set; }
 
-    [DataMember(Name = "classTemplatesMaps", Order = 1, EmitDefaultValue = false)]
-    public List<ClassTemplatesMap> ClassTemplatesMaps { get; set; }
+    [DataMember(Name = "classTemplatesList", Order = 1, EmitDefaultValue = false)]
+    public List<ClassTemplates> ClassTemplatesList { get; set; }
   }
   
-  [DataContract(Namespace = "http://iringtools.org/adapter/manifest", Name = "classTemplatesMap")]
-  public class ClassTemplatesMap
+  [DataContract(Namespace = "http://iringtools.org/protocol/manifest", Name = "classTemplates")]
+  public class ClassTemplates
   {
-    public ClassTemplatesMap()
+    public ClassTemplates()
     {
       Templates = new List<Template>();
     }
@@ -92,7 +92,7 @@ namespace org.iringtools.library.manifest
     public List<Template> Templates { get; set; }
   }
 
-  [DataContract(Namespace = "http://iringtools.org/adapter/manifest", Name = "class")]
+  [DataContract(Namespace = "http://iringtools.org/protocol/manifest", Name = "class")]
   public class Class
   {
     [DataMember(Name = "classId", Order = 0, EmitDefaultValue = false)]
@@ -102,7 +102,7 @@ namespace org.iringtools.library.manifest
     public string Name { get; set; }
   }
 
-  [DataContract(Namespace = "http://iringtools.org/adapter/manifest", Name = "template")]
+  [DataContract(Namespace = "http://iringtools.org/protocol/manifest", Name = "template")]
   public class Template
   {
     public Template()
@@ -123,7 +123,7 @@ namespace org.iringtools.library.manifest
     public TransferOption TransferOption { get; set; }
   }
 
-  [DataContract(Namespace = "http://iringtools.org/adapter/manifest", Name = "role")]
+  [DataContract(Namespace = "http://iringtools.org/protocol/manifest", Name = "role")]
   public class Role
   {
     [DataMember(Name = "type", Order = 0, EmitDefaultValue = false)]
