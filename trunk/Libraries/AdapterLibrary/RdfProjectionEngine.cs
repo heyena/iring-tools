@@ -247,7 +247,7 @@ namespace org.iringtools.adapter.projection
         string identifier = _classIdentifiers[classRole.classMap.classId][dataObjectIndex];
         baseValues.Append(identifier);
 
-        string hashCode = Utility.MD5Hash(templateId + baseValues.ToString());
+        string hashCode = Utility.md5Hash(templateId + baseValues.ToString());
         baseTemplateElement.Add(new XAttribute(RDF_ABOUT, hashCode));
 
         string roleId = classRole.roleId.Substring(classRole.roleId.IndexOf(":") + 1);
@@ -333,7 +333,7 @@ namespace org.iringtools.adapter.projection
                 templateValue.Append(propertyElement.Attribute(RDF_RESOURCE).Value);
             }
 
-            string hashCode = Utility.MD5Hash(templateId + templateValue.ToString());
+            string hashCode = Utility.md5Hash(templateId + templateValue.ToString());
             templateElement.Add(new XAttribute(RDF_ABOUT, hashCode));
           }
         }

@@ -46,7 +46,7 @@ public class ServiceTest
       String dxiUrl = "http://localhost:8080/iringtools/services/esbsvc/dti/1";  
       DtiSubmission dtiSubmission = new DtiSubmission();
       dtiSubmission.setDti(dti);
-      dtiSubmission.setReviewed(false);
+      dtiSubmission.setReviewed(true);
       Response response = NetUtil.post(Response.class, dxiUrl, dtiSubmission);
       System.out.println(JaxbUtil.toXml(response, true));
       
