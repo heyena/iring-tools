@@ -3,11 +3,13 @@ Ext.onReady(function(){
 
   var ab_button = Ext.get('show-about');
     ab_button.on('click', function(){
+		Ext.getBody().mask();
+
      /*   Ext.DomHelper.applyStyles(Ext.getBody(),{
             'background-color': '#FF0000'
         });*/
             win = new Ext.Window({
-                //disabled: disable,
+				//disabled: disable,
                 title : 'About',
                 width:700,
                 height:500,
@@ -18,12 +20,15 @@ Ext.onReady(function(){
                 buttons: [{
                     text: 'Close',
                     handler: function(){
+					    Ext.getBody().unmask();
                         win.hide();
+
                     }
                 }],
                autoLoad:'about.html'
             });
             win.show();
+
     });    
   
 
