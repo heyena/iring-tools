@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://iringtools.org/adapter/manifest"
-  targetNamespace="http://iringtools.org/adapter/manifest" elementFormDefault="qualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://iringtools.org/protocol/manifest"
+  targetNamespace="http://iringtools.org/protocol/manifest" elementFormDefault="qualified">
 
   <xs:complexType name="Manifest">
     <xs:sequence>
@@ -18,17 +18,17 @@
   <xs:complexType name="Graph">
     <xs:sequence>
       <xs:element name="name" type="xs:string"/>
-      <xs:element name="classTemplatesMaps">
+      <xs:element name="classTemplatesList">
         <xs:complexType>
           <xs:sequence>
-            <xs:element name="classTemplatesMap" type="ClassTemplatesMap" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="classTemplates" type="ClassTemplates" minOccurs="0" maxOccurs="unbounded"/>
           </xs:sequence>
         </xs:complexType>
       </xs:element>
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="ClassTemplatesMap">
+  <xs:complexType name="ClassTemplates">
     <xs:sequence>
       <xs:element name="class" type="Class"/>
       <xs:element name="templates">

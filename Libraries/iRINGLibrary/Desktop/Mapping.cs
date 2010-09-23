@@ -39,7 +39,6 @@ namespace org.iringtools.library
   public class Mapping
   {
     private static readonly string RDL_NS = "http://rdl.rdlfacade.org/data#";
-    private static readonly string RDF_NIL = "rdf:nil";
 
     public Mapping()
     {
@@ -88,11 +87,13 @@ namespace org.iringtools.library
         }
       }
 
-      return RDF_NIL;
+      return null;
     }
 
     public string ResolveValueMap(string valueList, string qualifiedUri)
     {
+      if (String.IsNullOrEmpty(qualifiedUri)) return qualifiedUri;
+
       string uri = qualifiedUri.Replace(RDL_NS, "rdl:");
 
       foreach (ValueList valueLst in valueLists)
@@ -109,7 +110,7 @@ namespace org.iringtools.library
         }
       }
 
-      return String.Empty;
+      return null;
     }
   }
 

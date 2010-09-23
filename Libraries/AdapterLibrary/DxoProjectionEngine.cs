@@ -101,7 +101,9 @@ namespace org.iringtools.adapter.projection
                 if (!String.IsNullOrEmpty(roleMap.valueList))
                 {
                   value = _mapping.ResolveValueList(roleMap.valueList, value);
-                  value = value.Replace(RDL_NS.NamespaceName, "rdl:");
+
+                  if (value != null)
+                    value = value.Replace(RDL_NS.NamespaceName, "rdl:");
                 }
               }
               else if (roleMap.classMap != null)

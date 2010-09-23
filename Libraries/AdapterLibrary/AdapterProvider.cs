@@ -305,8 +305,8 @@ namespace org.iringtools.adapter
             {
               foreach (var classTemplateListMap in graphMap.classTemplateListMaps)
               {
-                org.iringtools.library.manifest.ClassTemplatesMap manifestClassTemplatesMap = new org.iringtools.library.manifest.ClassTemplatesMap();
-                manifestGraph.ClassTemplatesMaps.Add(manifestClassTemplatesMap);
+                org.iringtools.library.manifest.ClassTemplates manifestClassTemplatesMap = new org.iringtools.library.manifest.ClassTemplates();
+                manifestGraph.ClassTemplatesList.Add(manifestClassTemplatesMap);
 
                 ClassMap classMap = classTemplateListMap.Key;
                 List<TemplateMap> templateMaps = classTemplateListMap.Value;

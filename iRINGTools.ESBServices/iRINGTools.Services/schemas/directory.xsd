@@ -47,19 +47,17 @@
     <xs:attribute name="id"/>
   </xs:complexType>
 
-  <xs:element name="exchangeDefinition">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element name="sourceUri" type="xs:string"/>
-        <xs:element name="sourceAppName" type="xs:string"/>
-        <xs:element name="sourceAppScope" type="xs:string"/>
-        <xs:element name="sourceGraphName" type="xs:string"/>
-        <xs:element name="targetUri" type="xs:string"/>
-        <xs:element name="targetAppName" type="xs:string"/>
-        <xs:element name="targetAppScope" type="xs:string"/>
-        <xs:element name="targetGraphName" type="xs:string"/>
-        <xs:element name="hashAlgorithm" type="xs:string"/>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
+  <xs:complexType name="ExchangeDefinition">
+    <xs:sequence>
+      <xs:element name="sourceUri" type="xs:string"/>
+      <xs:element name="sourceAppName" type="xs:string"/>
+      <xs:element name="sourceAppScope" type="xs:string"/>
+      <xs:element name="sourceGraphName" type="xs:string"/>
+      <xs:element name="targetUri" type="xs:string"/>
+      <xs:element name="targetAppName" type="xs:string"/>
+      <xs:element name="targetAppScope" type="xs:string"/>
+      <xs:element name="targetGraphName" type="xs:string"/>
+      <xs:element name="hashAlgorithm" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
 </xs:schema>

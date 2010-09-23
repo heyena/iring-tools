@@ -466,7 +466,9 @@ namespace org.iringtools.exchange
                   if (!String.IsNullOrEmpty(roleMap.valueList))
                   {
                     value = _mapping.ResolveValueList(roleMap.valueList, value);
-                    value = value.Replace(RDL_NS.NamespaceName, "rdl:");
+
+                    if (value != null)
+                      value = value.Replace(RDL_NS.NamespaceName, "rdl:");
                   }
                 }
                 else if (roleMap.classMap != null)
@@ -672,7 +674,7 @@ namespace org.iringtools.exchange
       _graphMap = new GraphMap();
       _graphMap.dataObjectMap = _mappingGraph.dataObjectMap;
 
-      ClassTemplatesMap manifestClassTemplatesMap = _manifestGraph.ClassTemplatesMaps.First();
+      ClassTemplates manifestClassTemplatesMap = _manifestGraph.ClassTemplatesList.First();
       Class manifestClass = manifestClassTemplatesMap.Class;
 
       if (manifestClassTemplatesMap != null)
@@ -694,7 +696,7 @@ namespace org.iringtools.exchange
       List<Template> manifestTemplates = null;
 
       // find manifest templates for the manifest class
-      foreach (ClassTemplatesMap manifestClassTemplates in _manifestGraph.ClassTemplatesMaps)
+      foreach (ClassTemplates manifestClassTemplates in _manifestGraph.ClassTemplatesList)
       {
         if (manifestClassTemplates.Class.ClassId == manifestClass.ClassId)
         {

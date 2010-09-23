@@ -209,8 +209,12 @@ namespace org.iringtools.adapter.projection
                 else // resolve value list to uri
                 {
                   value = _mapping.ResolveValueList(propertyRole.valueList, value);
-                  value = value.Replace(RDL_NS.NamespaceName, "rdl:");
-                  propertyElement.Add(new XAttribute("reference", value));
+
+                  if (value != null)
+                  {
+                    value = value.Replace(RDL_NS.NamespaceName, "rdl:");
+                    propertyElement.Add(new XAttribute("reference", value));
+                  }
                 }
               }
             }

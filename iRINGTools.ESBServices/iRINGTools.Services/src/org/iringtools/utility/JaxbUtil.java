@@ -16,33 +16,33 @@ import javax.xml.bind.Unmarshaller;
 
 public class JaxbUtil
 {
-	public static <T> void write(T object, String path) throws JAXBException, IOException
+	public static <T> void write(T object, String path, boolean indent) throws JAXBException, IOException
   {		
 		OutputStream stream = new FileOutputStream(path);
-		toXml(object, stream);
+		toXml(object, stream, indent);
   }
 	
-	public static <T> String toXml(T object) throws JAXBException, IOException 
+	public static <T> String toXml(T object, boolean indent) throws JAXBException, IOException 
   {
-	  OutputStream stream = toStream(object);
+	  OutputStream stream = toStream(object, indent);
     return stream.toString();   
   }
   
-	public static <T> OutputStream toStream(T object) throws JAXBException, IOException
+	public static <T> OutputStream toStream(T object, boolean indent) throws JAXBException, IOException
   {
     OutputStream stream = new ByteArrayOutputStream();    
-    if (object != null) toXml(object, stream);    
+    if (object != null) toXml(object, stream, indent);    
     return stream;
   }
   
   @SuppressWarnings("unchecked")
-  public static <T> void toXml(T object, OutputStream stream) throws JAXBException, IOException
+  public static <T> void toXml(T object, OutputStream stream, boolean indent) throws JAXBException, IOException
   {		
 		Class<T> c = (Class<T>)object.getClass();
 		String pkgName = c.getPackage().getName();
 		JAXBContext jc = JAXBContext.newInstance(pkgName);
 	  Marshaller m = jc.createMarshaller();
-	  //m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+	  m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, indent);
 	  m.marshal(object, stream);
   }
 	
