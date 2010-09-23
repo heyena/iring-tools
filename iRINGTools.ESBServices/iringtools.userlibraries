@@ -3,6 +3,9 @@
     <library name="axiom-1.2.8" systemlibrary="false">
         <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/axiom-1.2.8/axiom.jar"/>
     </library>
+    <library name="common-codec-1.4" systemlibrary="false">
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-commons-codec-1.4/commons-codec-1.4.jar"/>
+    </library>
     <library name="cxf-2.2.9" systemlibrary="false">
         <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.2.9/abdera-core-1.0.jar"/>
         <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.2.9/abdera-extensions-json-1.0.jar"/>
