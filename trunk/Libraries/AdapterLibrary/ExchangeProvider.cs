@@ -334,7 +334,7 @@ namespace org.iringtools.exchange
         }
 
         BuildCrossedGraphMap(graphName);
-        PopulateClassIdentifiers(null);
+        PopulateClassIdentifiers(request.Identifiers);
 
         DataTransferIndices dtiList = new DataTransferIndices();
 

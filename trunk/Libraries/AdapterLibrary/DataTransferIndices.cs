@@ -34,10 +34,10 @@ using org.iringtools.library;
 
 namespace org.iringtools.adapter
 {
-  [CollectionDataContract(Namespace = "http://iringtools.org/adapter/library/dti", Name = "dataTransferIndices")]
+  [CollectionDataContract(Namespace = "http://iringtools.org/adapter/dti", Name = "dataTransferIndices")]
   public class DataTransferIndices : List<DataTransferIndex> {}
 
-  [DataContract(Namespace = "http://iringtools.org/adapter/library/dti", Name = "dataTransferIndex")]
+  [DataContract(Namespace = "http://iringtools.org/adapter/dti", Name = "dataTransferIndex")]
   public class DataTransferIndex
   {
     [DataMember(Order = 0)]

@@ -709,6 +709,7 @@ namespace org.iringtools.adapter
           response.Append(_dataLayer.Delete(graphMap.dataObjectMap, deletingIdentifiers));
         }
 
+        response.DateTimeStamp = DateTime.Now;
         response.Level = StatusLevel.Success;
       }
       catch (Exception ex)
@@ -724,6 +725,7 @@ namespace org.iringtools.adapter
           Messages = new Messages { ex.Message },
         };
 
+        response.DateTimeStamp = DateTime.Now;
         response.Level = StatusLevel.Error;
         response.StatusList.Add(status);
       }
