@@ -71,17 +71,31 @@ Ext.onReady(function(){
 
     listeners: {
         click: {
-         fn: function(store, records, options){
-             //alert(store.getAt(0))
-            // get the property grid component
-            var propGrids = Ext.getCmp('propGrid');
-            // make sure the property grid exists
-            if (propGrids) {
-             // alert(1)
-              // populate the property grid with store data
-             // alert(store.getAt(0));
-              propGrids.setSource(store.getAt(0).data);
-            }
+         fn: function(node){
+             //get all the attributes of node
+             obj = node.attributes
+             var details_data = []
+               for(var key in obj){                 
+                 // val.push('"'+key+'":'+'"'+obj[key]+'"')
+                 // restrict some of the properties to be displayed
+                 if(key!='id' && key!='text' && key!='icon' && key!='children' && key!='loader' && key!='leaf' && key!='applicationId'){
+                    details_data[key]=obj[key]
+                 }  
+               }
+                
+               // get the property grid component
+                var propGrids = Ext.getCmp('propGrid');
+                // make sure the property grid exists
+                if (propGrids) {
+                  // populate the property grid with details_data
+                  propGrids.setSource(details_data);
+                }
+
+             // check the current state of Detail Grid panel
+             if(Ext.getCmp('detail-grid').collapsed==true){
+                 Ext.getCmp('detail-grid').expand();
+              }
+             
           }
         }
       }

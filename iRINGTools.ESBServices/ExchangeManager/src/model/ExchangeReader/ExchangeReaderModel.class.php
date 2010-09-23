@@ -41,7 +41,7 @@ class ExchangeReaderModel{
                         $graphCommodity     = 	(string)$appGraph ->commodity;
                         $graphDescription   = 	(string)$appGraph ->description;
 
-                        $graphArray = array("text" =>$graphName, "id"=>$graphIdentifier, "applicationId"=>$applicationId, "description"=>$graphDescription, "commodity"=>$graphCommodity, "icon" =>"resources/images/16x16/file-table.png", "leaf" => "true");
+                        $graphArray = array("text" =>$graphName, "id"=>$graphIdentifier, "applicationId"=>$applicationId,"Description"=>$graphDescription, "Commodity"=>$graphCommodity, "Title" =>$graphName, "icon" =>"resources/images/16x16/file-table.png", "leaf" => "true");
 
                         $applicationGraphArray[$applicationId][]=$graphArray;
 
@@ -68,8 +68,9 @@ class ExchangeReaderModel{
                         $dataExchangeID =   'dxId_'.(string)$dataExchange->identifier;
                         $commodity 	=   (string)$dataExchange->commodity;
 
-                        $exchangeArray	=   array("text" =>(string)$dataExchange->name, "id"=>$dataExchangeID,"description"=>(string)$dataExchange->description,"scope"=>$scopeVal, "icon" =>"resources/images/16x16/file-table-diff.png", "leaf" => "true");
+                        $exchangeArray	=   array("Title"=>(string)$dataExchange->name, "text" =>(string)$dataExchange->name, "id"=>$dataExchangeID,"Scope"=>$scopeVal,"Description"=>(string)$dataExchange->description, "icon" =>"resources/images/16x16/file-table-diff.png", "leaf" => "true");
 
+                        $exchangeScopeArray[$scopeVal][$commodity]['Title']	=   $commodity;
                         $exchangeScopeArray[$scopeVal][$commodity]['text']	=   $commodity;
                         $exchangeScopeArray[$scopeVal][$commodity]['icon']	=   'resources/images/16x16/class-badge.png';
                         $exchangeScopeArray[$scopeVal][$commodity]['children'][]=   $exchangeArray;;  // exchange Array should be inside this children
@@ -105,8 +106,9 @@ class ExchangeReaderModel{
                         $scopeVal 	=   (string)$applicaton->scope;
                         $applicationId  =   'appId_'.(string)$applicaton->id;
 
-                        $appArray = array("text" =>(string)$applicaton->name, "id"=>$applicationId,"description"=>(string)$applicaton->description,'scope'=>(string)$applicaton->scope, "icon" => "resources/images/16x16/applications-internet.png", "children"=>$graphArr[$applicationId]);
+                        $appArray = array("text" =>(string)$applicaton->name, "id"=>$applicationId,"Description"=>(string)$applicaton->description,'Scope'=>(string)$applicaton->scope,"Title" =>(string)$applicaton->name, "icon" => "resources/images/16x16/applications-internet.png", "children"=>$graphArr[$applicationId]);
 
+                        $appScopeArray[$scopeVal]["Title"]	=   "Application Data";
                         $appScopeArray[$scopeVal]["text"]	=   "Application Data";
                         $appScopeArray[$scopeVal]["icon"]	=   "resources/images/16x16/folder.png";
                         $appScopeArray[$scopeVal]["children"][]	=   $appArray;
@@ -125,7 +127,7 @@ class ExchangeReaderModel{
                     // changed the keys(scope value) of array to keys(0,1,..). It is must for Tree Generation
                     $dXArray  = array_combine($numericArray, $dataExchangeScopeArray);
 
-                    $resultArray []= array("text"=>$scope,"icon"=>"resources/images/16x16/system-file-manager.png", "children"=>array($appScopeArray [$scope], array("text"=>"Data Exchange","icon" =>"resources/images/16x16/folder.png","children"=>$dXArray)));
+                    $resultArray []= array("Title"=>$scope, "text"=>$scope, "icon"=>"resources/images/16x16/system-file-manager.png", "children"=>array($appScopeArray [$scope], array("Title"=>"Data Exchange", "text"=>"Data Exchange","icon" =>"resources/images/16x16/folder.png","children"=>$dXArray)));
                 }
                 unset($dXArray);
                 unset($appArray);

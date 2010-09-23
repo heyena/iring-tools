@@ -50,8 +50,8 @@ Ext.onReady(function(){
           titleCollapse:true,
           split: true,
           width: 225, // give east and west regions a width
-          minSize: 175,
-          maxSize: 400,
+          //minSize: 175,
+          //maxSize: 400,
           margins: '0 5 0 0',
           layout: 'fit', // specify layout manager for items
           items: [
@@ -88,7 +88,7 @@ Ext.onReady(function(){
         },
         {
           region: 'center',
-          id:'meraDiv',
+          id:'centerPanel',
           xtype: 'tabpanel',
           disabled:true,
           margins: '0 0 0 0'
