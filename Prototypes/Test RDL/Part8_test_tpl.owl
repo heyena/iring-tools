@@ -28,9 +28,59 @@
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:owl="http://www.w3.org/2002/07/owl#">
 
+  <!-- ROles -->
 
+  <!-- http://tpl.rdlfacade.org/data#R36573597723 -->
+
+  <owl:Thing rdf:about="#R36573597723">
+    <rdf:type rdf:resource="owl:ObjectProperty"/>
+    <rdfs:label>hasClassOfPart</rdfs:label>
+  </owl:Thing>
+
+  <!-- http://tpl.rdlfacade.org/data#R27413995417 -->
+
+  <owl:Thing rdf:about="#R27413995417">
+    <rdf:type rdf:resource="owl:ObjectProperty"/>
+    <rdfs:label>hasClassOfWhole</rdfs:label>
+  </owl:Thing>
+
+  <!-- http://tpl.rdlfacade.org/data#R95281998584 -->
+
+  <owl:Thing rdf:about="#R95281998584">
+    <rdf:type rdf:resource="owl:ObjectProperty"/>
+    <rdfs:label>hasAssemblyType</rdfs:label>
+    <rdfs:subPropertyOf rdf:resource="tpl:hasRelation"/>
+  </owl:Thing>
+
+  <!-- http://tpl.rdlfacade.org/data#R56232327044 -->
+
+  <owl:Thing rdf:about="#R56232327044">
+    <rdfs:label>minimumCardinalityPart</rdfs:label>
+  </owl:Thing>
+
+  <!-- http://tpl.rdlfacade.org/data#R62838584965 -->
+
+  <owl:Thing rdf:about="#R62838584965">
+    <rdfs:label>maximumCardinalityPart</rdfs:label>
+  </owl:Thing>
+
+  <!-- http://tpl.rdlfacade.org/data#R62998003871 -->
+
+  <owl:Thing rdf:about="#R41027766855">
+    <rdfs:label>minimumCardinalityWhole</rdfs:label>
+  </owl:Thing>
+
+  <!-- http://tpl.rdlfacade.org/data#R41027766855 -->
+
+  <owl:Thing rdf:about="#R41027766855">
+    <rdfs:label>maximumCardinalityWhole</rdfs:label>
+  </owl:Thing>
+  
+  
+  <!-- Base Template -->
+
+  <!-- Restrictions -->
   <!-- http://tpl.rdlfacade.org/data#R86316343921 -->
-
   <owl:Class rdf:about="#R86316343921">
         <rdfs:label
             >AssemblyRelation</rdfs:label>
@@ -166,62 +216,12 @@ AssemblyRelation( x1, x2, x3, x4, x5, x6, x7 ) &lt;-&gt;
     </owl:Class>
 
   <!-- http://tpl.rdlfacade.org/data#R86316343921 -->
-
     <owl:Thing rdf:about="#R86316343921">
         <rdf:type rdf:resource="&p8;Template"/>
     </owl:Thing>
-    
-  <!-- ROles -->
 
-  <!-- http://tpl.rdlfacade.org/data#R36573597723 -->
-
-  <owl:Thing rdf:about="#R36573597723">
-    <rdf:type rdf:resource="owl:ObjectProperty"/>
-    <rdfs:label>hasClassOfPart</rdfs:label>
-  </owl:Thing>
-
-  <!-- http://tpl.rdlfacade.org/data#R27413995417 -->
-
-  <owl:Thing rdf:about="#R27413995417">
-    <rdf:type rdf:resource="owl:ObjectProperty"/>
-    <rdfs:label>hasClassOfWhole</rdfs:label>
-  </owl:Thing>
-
-  <!-- http://tpl.rdlfacade.org/data#R95281998584 -->
-
-  <owl:Thing rdf:about="#R95281998584">
-    <rdf:type rdf:resource="owl:ObjectProperty"/>
-    <rdfs:label>hasAssemblyType</rdfs:label>
-    <rdfs:subPropertyOf rdf:resource="tpl:hasRelation"/>
-  </owl:Thing>
-
-  <!-- http://tpl.rdlfacade.org/data#R56232327044 -->
-
-  <owl:Thing rdf:about="#R56232327044">
-    <rdfs:label>minimumCardinalityPart</rdfs:label>
-  </owl:Thing>
-
-  <!-- http://tpl.rdlfacade.org/data#R62838584965 -->
-
-  <owl:Thing rdf:about="#R62838584965">
-    <rdfs:label>maximumCardinalityPart</rdfs:label>
-  </owl:Thing>
-
-  <!-- http://tpl.rdlfacade.org/data#R62998003871 -->
-
-  <owl:Thing rdf:about="#R41027766855">
-    <rdfs:label>minimumCardinalityWhole</rdfs:label>
-  </owl:Thing>
-
-  <!-- http://tpl.rdlfacade.org/data#R41027766855 -->
-
-  <owl:Thing rdf:about="#R41027766855">
-    <rdfs:label>maximumCardinalityWhole</rdfs:label>
-  </owl:Thing>
-    
-
+  <!-- Template Description -->
   <!-- http://tpl.rdlfacade.org/data#TemplateDescription_of_AssemblyRelation -->
-
     <p8:TemplateDescription rdf:about="#TemplateDescription_of_AssemblyRelation">
         <rdf:type rdf:resource="&owl;Thing"/>
         <rdfs:label
@@ -230,8 +230,8 @@ AssemblyRelation( x1, x2, x3, x4, x5, x6, x7 ) &lt;-&gt;
         <p8:hasTemplate rdf:resource="#R86316343921"/>
     </p8:TemplateDescription>
 
+  <!-- Role Descriptions -->
   <!-- http://tpl.rdlfacade.org/data#TemplateRoleDescription_of_AssemblyRelation_1 -->
-
     <p8:TemplateRoleDescription rdf:about="#TemplateRoleDescription_of_AssemblyRelation_1">
         <rdf:type rdf:resource="&owl;Thing"/>
         <rdfs:label
@@ -242,9 +242,7 @@ AssemblyRelation( x1, x2, x3, x4, x5, x6, x7 ) &lt;-&gt;
         <p8:hasRole rdf:resource="&templates;R36573597723"/>
     </p8:TemplateRoleDescription>
 
-
   <!-- http://tpl.rdlfacade.org/data#TemplateRoleDescription_of_AssemblyRelation_2 -->
-
     <p8:TemplateRoleDescription rdf:about="#TemplateRoleDescription_of_AssemblyRelation_2">
         <rdf:type rdf:resource="&owl;Thing"/>
         <rdfs:label
@@ -255,9 +253,7 @@ AssemblyRelation( x1, x2, x3, x4, x5, x6, x7 ) &lt;-&gt;
         <p8:hasRole rdf:resource="&templates;R27413995417"/>
     </p8:TemplateRoleDescription> 
 
-
   <!-- http://tpl.rdlfacade.org/data#TemplateRoleDescription_of_AssemblyRelation_3 -->
-
     <owl:Thing rdf:about="#TemplateRoleDescription_of_AssemblyRelation_3">
         <rdf:type rdf:resource="&p8;TemplateRoleDescription"/>
         <rdfs:label
@@ -268,9 +264,7 @@ AssemblyRelation( x1, x2, x3, x4, x5, x6, x7 ) &lt;-&gt;
         <p8:hasRole rdf:resource="#R95281998584"/>
     </owl:Thing> 
 
-
   <!-- http://tpl.rdlfacade.org/data#TemplateRoleDescription_of_AssemblyRelation_4 -->
-
     <p8:TemplateRoleDescription rdf:about="#TemplateRoleDescription_of_AssemblyRelation_4">
         <rdf:type rdf:resource="&owl;Thing"/>
         <rdfs:label
@@ -281,9 +275,7 @@ AssemblyRelation( x1, x2, x3, x4, x5, x6, x7 ) &lt;-&gt;
         <p8:hasRoleFillerType rdf:resource="&xsd;double"/>
     </p8:TemplateRoleDescription> 
 
-
   <!-- http://tpl.rdlfacade.org/data#TemplateRoleDescription_of_AssemblyRelation_5 -->
-
     <owl:Thing rdf:about="#TemplateRoleDescription_of_AssemblyRelation_5">
         <rdf:type rdf:resource="&p8;TemplateRoleDescription"/>
         <rdfs:label
@@ -294,9 +286,7 @@ AssemblyRelation( x1, x2, x3, x4, x5, x6, x7 ) &lt;-&gt;
         <p8:hasRoleFillerType rdf:resource="&xsd;double"/>
     </owl:Thing> 
 
-
   <!-- http://tpl.rdlfacade.org/data#TemplateRoleDescription_of_AssemblyRelation_6 -->
-
     <owl:Thing rdf:about="#TemplateRoleDescription_of_AssemblyRelation_6">
         <rdf:type rdf:resource="&p8;TemplateRoleDescription"/>
         <rdfs:label
@@ -307,9 +297,7 @@ AssemblyRelation( x1, x2, x3, x4, x5, x6, x7 ) &lt;-&gt;
         <p8:hasRoleFillerType rdf:resource="&xsd;double"/>
     </owl:Thing> 
 
-
   <!-- http://tpl.rdlfacade.org/data#TemplateRoleDescription_of_AssemblyRelation_7 -->
-
     <owl:Thing rdf:about="#TemplateRoleDescription_of_AssemblyRelation_7">
         <rdf:type rdf:resource="&p8;TemplateRoleDescription"/>
         <rdfs:label
@@ -318,6 +306,164 @@ AssemblyRelation( x1, x2, x3, x4, x5, x6, x7 ) &lt;-&gt;
         <p8:hasTemplate rdf:resource="#R86316343921"/>
         <p8:hasRole rdf:resource="#R41027766855"/>
         <p8:hasRoleFillerType rdf:resource="&xsd;double"/>
-    </owl:Thing> 
+    </owl:Thing>
 
+  
+  <!-- Base Template -->
+
+  <!-- Template Description -->
+  <!-- http://tpl.rdlfacade.org/data#TemplateDescription_of_ClassifiedAssemblyOfIndividual -->
+  <owl:Thing rdf:about="#TemplateDescription_of_ClassifiedAssemblyOfIndividual">
+    <rdf:type rdf:resource="&p8;TemplateDescription"/>
+    <rdfs:label
+            >TemplateDescription_of_ClassifiedAssemblyOfIndividual</rdfs:label>
+    <p8:valNumberOfRoles rdf:datatype="&xsd;integer">3</p8:valNumberOfRoles>
+    <p8:hasTemplate rdf:resource="#ClassifiedAssemblyOfIndividual"/>
+  </owl:Thing>
+
+  <!-- Role Descriptions-->
+  <!-- http://tpl.rdlfacade.org/data#TemplateRoleDescription_of_ClassifiedAssemblyOfIndividual_1 -->
+  <p8:TemplateRoleDescription rdf:about="#TemplateRoleDescription_of_ClassifiedAssemblyOfIndividual_1">
+    <rdf:type rdf:resource="&owl;Thing"/>
+    <rdfs:label
+            >TemplateRoleDescription_of_ClassifiedAssemblyOfIndividual_1</rdfs:label>
+    <p8:valRoleIndex rdf:datatype="&xsd;integer">1</p8:valRoleIndex>
+    <p8:hasRoleFillerType rdf:resource="&dm;PossibleIndividual"/>
+    <p8:hasTemplate rdf:resource="#ClassifiedAssemblyOfIndividual"/>
+    <p8:hasRole rdf:resource="&templates;hasPart"/>
+  </p8:TemplateRoleDescription>
+
+  <!-- http://tpl.rdlfacade.org/data#TemplateRoleDescription_of_ClassifiedAssemblyOfIndividual_2 -->
+  <owl:Thing rdf:about="#TemplateRoleDescription_of_ClassifiedAssemblyOfIndividual_2">
+    <rdf:type rdf:resource="&p8;TemplateRoleDescription"/>
+    <rdfs:label
+            >TemplateRoleDescription_of_ClassifiedAssemblyOfIndividual_2</rdfs:label>
+    <p8:valRoleIndex rdf:datatype="&xsd;integer">2</p8:valRoleIndex>
+    <p8:hasRoleFillerType rdf:resource="&dm;ClassOfIndividual"/>
+    <p8:hasTemplate rdf:resource="#ClassifiedAssemblyOfIndividual"/>
+    <p8:hasRole rdf:resource="&templates;hasWhole"/>
+  </owl:Thing>
+
+  <!-- http://tpl.rdlfacade.org/data#TemplateRoleDescription_of_ClassifiedAssemblyOfIndividual_3 -->
+  <owl:Thing rdf:about="#TemplateRoleDescription_of_ClassifiedAssemblyOfIndividual_3">
+    <rdf:type rdf:resource="&p8;TemplateRoleDescription"/>
+    <rdfs:label
+            >TemplateRoleDescription_of_ClassifiedAssemblyOfIndividual_3</rdfs:label>
+    <p8:valRoleIndex rdf:datatype="&xsd;integer">3</p8:valRoleIndex>
+    <p8:hasRoleFillerType rdf:resource="&dm;ClassOfAssemblyOfIndividual"/>
+    <p8:hasTemplate rdf:resource="#ClassifiedAssemblyOfIndividual"/>
+    <p8:hasRole rdf:resource="#hasAssemblyType"/>
+  </owl:Thing>
+  
+  
+  <!-- Specialized Template -->
+
+  <!-- Restrictions -->
+  <!-- http://tpl.rdlfacade.org/data#PipingNetworkSystemHasSegment -->
+  <owl:Class rdf:about="#PipingNetworkSystemHasSegment">
+    <rdfs:subClassOf rdf:resource="&p8;RDLindustryTemplateStatement"/>
+    <rdfs:subClassOf rdf:resource="#ClassifiedAssemblyOfIndividual"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="#hasAssemblyType"/>
+        <owl:someValuesFrom>
+          <owl:Class>
+            <owl:oneOf rdf:parseType="Collection">
+              <rdf:Description rdf:about="&rdl;PipingNetworkSystemHasSegment"/>
+            </owl:oneOf>
+          </owl:Class>
+        </owl:someValuesFrom>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="&templates;hasWhole"/>
+        <owl:someValuesFrom rdf:resource="&rdl;PipingNetworkSystem"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="&templates;hasPart"/>
+        <owl:someValuesFrom rdf:resource="&rdl;PipingNetworkSegment"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:comment
+            >
+      This is a /specialized/ variant of ClassifiedAssemblyOfIndividual,
+      made for the purpose of recording parts of piping systems.
+    </rdfs:comment>
+    <rdfs:comment
+            >
+      Signature for PipingNetworkSystemHasSegment:
+
+      | 1 | Part    | RDL:PipingNetworkSegment            |
+      | 2 | Whole   | RDL:PipingNetworkSystem             |
+      | 3 | Context | {RDL:PipingNetworkSystemHasSegment} |
+    </rdfs:comment>
+    <rdfs:comment
+            >
+      Template axiom:
+
+      PipingNetworkSystemHasSegment( x1, x2, x3 ) &lt;-&gt;
+      ClassificationOfIndividual( x1, RD_PipingNetworkSegment ) &amp;
+      ClassificationOfIndividual( x2, RDLPipingNetworkSystem ) &amp;
+      ClassificationOfClassOfRelationship( x3, {RDLPipingNetworkSystemHasSegment} ) &amp;
+      ClassifiedAssemblyOfIndividual( x1, x2, x3 ) .
+    </rdfs:comment>
+  </owl:Class>
+
+  <!-- Template Specialization Description-->
+  <!-- http://tpl.rdlfacade.org/data#TemplateSpecialization_of_ClassifiedAssemblyOfIndividual_to_PipingNetworkSystemHasSegment -->
+  <owl:Thing rdf:about="#TemplateSpecialization_of_ClassifiedAssemblyOfIndividual_to_PipingNetworkSystemHasSegment">
+    <rdf:type rdf:resource="&p8;TemplateSpecialization"/>
+    <rdfs:label
+            >TemplateSpecialization_of_ClassifiedAssemblyOfIndividual_to_PipingNetworkSystemHasSegment</rdfs:label>
+    <p8:hasSuperTemplate rdf:resource="#ClassifiedAssemblyOfIndividual"/>
+    <p8:hasSubTemplate rdf:resource="#PipingNetworkSystemHasSegment"/>
+  </owl:Thing>
+
+  <!-- Template Description -->
+  <!-- http://tpl.rdlfacade.org/data#TemplateDescription_of_PipingNetworkSystemHasSegment -->
+  <owl:Thing rdf:about="#TemplateDescription_of_PipingNetworkSystemHasSegment">
+    <rdf:type rdf:resource="&p8;TemplateDescription"/>
+    <rdfs:label
+            >TemplateDescription_of_PipingNetworkSystemHasSegment</rdfs:label>
+    <p8:valNumberOfRoles rdf:datatype="&xsd;integer">3</p8:valNumberOfRoles>
+    <p8:hasTemplate rdf:resource="#PipingNetworkSystemHasSegment"/>
+  </owl:Thing>
+
+  <!-- Role Descriptions -->
+  <!-- http://tpl.rdlfacade.org/data#TemplateRoleDescription_of_PipingNetworkSystemHasSegment_1 -->
+  <owl:Thing rdf:about="#TemplateRoleDescription_of_PipingNetworkSystemHasSegment_1">
+    <rdf:type rdf:resource="&p8;TemplateRoleDescription"/>
+    <rdfs:label
+            >TemplateRoleDescription_of_PipingNetworkSystemHasSegment_1</rdfs:label>
+    <p8:valRoleIndex rdf:datatype="&xsd;integer">1</p8:valRoleIndex>
+    <p8:hasRoleFillerType rdf:resource="&rdl;PipingNetworkSegment"/>
+    <p8:hasTemplate rdf:resource="#PipingNetworkSystemHasSegment"/>
+    <p8:hasRole rdf:resource="&templates;hasPart"/>
+  </owl:Thing>
+
+  <!-- http://tpl.rdlfacade.org/data#TemplateRoleDescription_of_PipingNetworkSystemHasSegment_2 -->
+  <owl:Thing rdf:about="#TemplateRoleDescription_of_PipingNetworkSystemHasSegment_2">
+    <rdf:type rdf:resource="&p8;TemplateRoleDescription"/>
+    <rdfs:label
+            >TemplateRoleDescription_of_PipingNetworkSystemHasSegment_2</rdfs:label>
+    <p8:valRoleIndex rdf:datatype="&xsd;integer">2</p8:valRoleIndex>
+    <p8:hasRoleFillerType rdf:resource="&rdl;PipingNetworkSystem"/>
+    <p8:hasTemplate rdf:resource="#PipingNetworkSystemHasSegment"/>
+    <p8:hasRole rdf:resource="&templates;hasWhole"/>
+  </owl:Thing>
+
+  <!-- http://tpl.rdlfacade.org/data#TemplateRoleDescription_of_PipingNetworkSystemHasSegment_3 -->
+  <owl:Thing rdf:about="#TemplateRoleDescription_of_PipingNetworkSystemHasSegment_3">
+    <rdf:type rdf:resource="&p8;TemplateRoleDescription"/>
+    <rdfs:label
+            >TemplateRoleDescription_of_PipingNetworkSystemHasSegment_3</rdfs:label>
+    <p8:valRoleIndex rdf:datatype="&xsd;integer">3</p8:valRoleIndex>
+    <p8:hasRoleFillerType rdf:resource="&rdl;PipingNetworkSystemHasSegment"/>
+    <p8:hasTemplate rdf:resource="#PipingNetworkSystemHasSegment"/>
+    <p8:hasRole rdf:resource="#hasAssemblyType"/>
+  </owl:Thing>
+  
 </rdf:RDF>
