@@ -1,0 +1,10 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dm: <http://dm.rdlfacade.org/data#>
+PREFIX tpl: <http://tpl.rdlfacade.org/data#>
+
+SELECT DISTINCT ?uri ?label
+WHERE {
+?template tpl:hasRoleFillerType dm:param1 ;
+		  tpl:hasTemplate		?uri .
+OPTIONAL { ?uri rdfs:label ?label }
+}

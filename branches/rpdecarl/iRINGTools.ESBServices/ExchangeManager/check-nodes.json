@@ -1,0 +1,103 @@
+[{
+    text: 'PSN STAGING NEW DELHI [12345_001]', 
+    cls: 'folder',
+	children:[
+		  {
+			    text: "Application Data",
+				icon:'resources/images/iringlogo.png',
+				children: [{
+				text: 'ABC',
+				desc:'Test Application 1',
+				cls: 'folder',		  
+				children: [{
+				text: 'Line',
+				icon:'resources/images/icons/graph.png',
+				names:'aswini',
+				leaf: true
+				},
+				{
+				 text: 'Instruments',
+				 icon:'resources/images/icons/graph.png',
+				 leaf: true
+				}
+				]},
+			{
+			 text: 'DEF',
+			 desc:'Test Application 2',
+			 cls: 'folder',		  
+				children: [{
+				text: 'LinesGraph',
+				icon:'resources/images/icons/graph.png',
+				leaf: true
+				},
+				{
+				text: 'InstrumentsGraph',
+				icon:'resources/images/icons/graph.png',
+				leaf: true
+				}]
+			 },
+				{
+text: 'XYZ',
+desc:'Test Application 3',
+cls: 'folder',		  
+children: [{
+text: 'InstrumentsGraph',
+icon:'resources/images/icons/graph.png',
+leaf: true
+	  }]
+				}
+					  ]
+		    },
+		   {
+			text: 'Data Exchange',
+			id:'denode',
+			cls: 'folder',
+			children: [
+				  {
+					text: 'PipingNetworkSystem',
+					cls:'folder',
+					children:[{
+							text: 'ABC -> DEF',
+							id:'1',
+							icon:'resources/images/icons/graph-1.JPG',
+							leaf: true
+						  },
+						  {
+							text: 'DEF -> ABC',
+							id:'2',
+							icon:'resources/images/icons/graph-1.JPG',
+							leaf: true
+						  }]
+				  },
+				  {
+					text: 'Instrument',
+					cls:'folder',
+					children: [{
+						text: 'ABC -> DEF',
+						name:'3',
+						icon:'resources/images/icons/graph-1.JPG',						
+						leaf: true
+					},{
+						text: 'DEF -> ABC ',
+						id:'4',
+						icon:'resources/images/icons/graph-1.JPG',						
+						leaf: true
+						  },
+						{
+						text: 'ABC -> XYZ',
+						id:'5',
+						icon:'resources/images/icons/graph-1.JPG',						
+						leaf: true
+						},
+						{
+						text: 'XYZ -> ABC ',
+						id:'6',
+						icon:'resources/images/icons/graph-1.JPG',						
+						leaf: true
+						}]
+				  }]
+			   }]
+	},
+
+
+]

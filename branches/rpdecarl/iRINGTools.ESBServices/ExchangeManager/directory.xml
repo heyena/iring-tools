@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<directory xmlns="http://iringtools.org/exchange/library/directory">
+  <applications>
+    <application>
+      <id>1</id>
+      <name>ABC</name>
+      <description>Test Application</description>
+      <scope>12345_000</scope>
+    </application>
+    <application>
+      <id>2</id>
+      <name>ABC2</name>
+      <description>Test Application2</description>
+      <scope>54321_000</scope>
+    </application>
+    <application>
+      <id>3</id>
+      <name>DEF</name>
+      <description>Test Application</description>
+      <scope>12345_000</scope>
+    </application>
+  </applications>
+  <applicationData>
+    <graph>
+      <identifier>1</identifier>
+      <name>Lines</name>
+      <description>Line List</description>
+      <applicationId>1</applicationId>
+      <commodity>PipingNetworkSystem</commodity>
+    </graph>
+    <graph>
+      <identifier>2</identifier>
+      <name>Instruments</name>
+      <description>Instrument List</description>
+      <applicationId>1</applicationId>
+      <commodity>Instrument</commodity>
+    </graph>
+    <graph>
+      <identifier>3</identifier>
+      <name>Instruments</name>
+      <description>Instrument List</description>
+      <applicationId>3</applicationId>
+      <commodity>Instrument</commodity>
+    </graph>
+    <graph>
+      <identifier>4</identifier>
+      <name>Lines</name>
+      <description>Line List</description>
+      <applicationId>2</applicationId>
+      <commodity>PipingNetworkSystem</commodity>
+    </graph>
+  </applicationData>  
+  <dataExchanges>
+    <exchange>
+      <identifier>1</identifier>
+      <scope>12345_000</scope>
+      <commodity>PipingNetworkSystem</commodity>
+      <name>12345_000.ABC.Lines -&gt; 54321_000.ABC.Lines</name>
+      <description>Synchronizing two projects Line Lists</description>
+    </exchange>
+    <exchange>
+      <identifier>2</identifier>
+      <scope>54321_000</scope>
+      <commodity>PipingNetworkSystem</commodity>
+      <name>12345_000.ABC.Lines -&gt; 54321_000.ABC.Lines</name>
+      <description>Synchronizing two projects Line Lists</description>
+    </exchange>
+    <exchange>
+      <identifier>3</identifier>
+      <scope>12345_000</scope>
+      <commodity>Instrument</commodity>
+      <name>12345_000.ABC.Instruments -&gt; 12345_000.DEF.Insturments</name>
+      <description>Sending Instruments from ABC to DEF</description>
+    </exchange>
+	<exchange>
+      <identifier>4</identifier>
+      <scope>12345_000</scope>
+      <commodity>PipingNetworkSystem</commodity>
+      <name>12345_000.ABC1.Lines -&gt; 54321_000.ABC1.Lines</name>
+      <description>Synchronizing two projects Line Lists</description>
+    </exchange>
+  </dataExchanges>
+</directory>

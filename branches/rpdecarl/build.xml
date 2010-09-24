@@ -1,0 +1,294 @@
+<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
+
+  <PropertyGroup>
+    <AssemblyInfoFile>$(MSBuildProjectDirectory)\AssemblyInfo.cs</AssemblyInfoFile>
+    <Major>2</Major>
+    <Minor>0</Minor>
+    <Build>0</Build>
+    <Revision>0</Revision>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <MSTestCmd>"$(VSINSTALLDIR)\Common7\IDE\MSTest.exe"</MSTestCmd>
+    <ZipCmd>"$(MSBuildProjectDirectory)\ExternalBinaries\7-Zip\7z.exe"</ZipCmd>
+
+    <ServicesDir>$(MSBuildProjectDirectory)\iRINGTools.Services</ServicesDir>
+    <ApplicationsDir>$(MSBuildProjectDirectory)\iRINGTools.Applications</ApplicationsDir>
+    <LandingPageDir>$(MSBuildProjectDirectory)\iRINGTools.Landing</LandingPageDir>
+    <UnitTestsDir>$(MSBuildProjectDirectory)\UnitTests</UnitTestsDir>
+    <UtilitiesDir>$(MSBuildProjectDirectory)\Utilities</UtilitiesDir>
+    <RDFImportExportDir>$(UtilitiesDir)\RDFImportExport\RDFImportExport</RDFImportExportDir>
+    <QMXFGeneratorDir>$(UtilitiesDir)\QMXFGenerator</QMXFGeneratorDir>
+    
+    <SDKDir>$(MSBuildProjectDirectory)\iRINGTools.SDK</SDKDir>
+    <SDKLibDir>$(SDKDir)\lib</SDKLibDir>
+    
+    <DeploymentDir>$(MSBuildProjectDirectory)\Deployment</DeploymentDir>
+    <ServicesDeploymentDir>$(DeploymentDir)\iRINGTools\Services</ServicesDeploymentDir>
+    <AppsDeploymentDir>$(DeploymentDir)\iRINGTools\Apps</AppsDeploymentDir>
+    <UtilitiesDeploymentDir>$(DeploymentDir)\iRINGTools\Utils</UtilitiesDeploymentDir>
+    <LandingDeploymentDir>$(DeploymentDir)\iRINGTools</LandingDeploymentDir>
+    <SDKDeploymentDir>$(DeploymentDir)\SDK</SDKDeploymentDir>
+    <CSVDataLayerDeploymentDir>$(SDKDeploymentDir)\CSVDataLayer</CSVDataLayerDeploymentDir>
+    <SDKLibDeploymentDir>$(SDKDeploymentDir)\lib\iring-tools</SDKLibDeploymentDir>
+
+    <SolutionFile>iring-tools.sln</SolutionFile>
+    <SDKSolutionFile>$(SDKDir)\iring-tools-sdk.sln</SDKSolutionFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <UnitTest Include="ReferenceDataServiceTests">
+      <TestContainer>/testcontainer:$(UnitTestsDir)\ReferenceDataService.Tests\bin\Debug\ReferenceDataService.Tests.dll</TestContainer>
+    </UnitTest>
+    <UnitTest Include="AdapterServiceTests">
+      <TestContainer>/testcontainer:$(UnitTestsDir)\AdapterService.Tests\bin\Debug\AdapterService.Tests.dll /runconfig:AdapterService.testrunconfig</TestContainer>
+    </UnitTest>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ServicesDeployment
+      Include="$(ServicesDir)\**"
+      Exclude="$(ServicesDir).Tests\**;
+               $(ServicesDir)\App_Code\**;
+               $(ServicesDir)\bin\*.pdb;
+               $(ServicesDir)\bin\*.xml;
+               $(ServicesDir)\obj\**;
+               $(ServicesDir)\Properties\**;
+               $(ServicesDir)\Logs\**;
+               $(ServicesDir)\Templates\**;
+               $(ServicesDir)\Transforms\**;
+               $(ServicesDir)\obj\**;
+               $(ServicesDir)\*.cs;
+               $(ServicesDir)\*.csproj;
+               $(ServicesDir)\*.user;
+               $(ServicesDir)\*.vspscc;
+               $(ServicesDir)\*.log;
+               $(ServicesDir)\web.config;
+               $(ServicesDir)\Web_Development.config;
+               $(ServicesDir)\Service.cs;
+               $(ServicesDir)\IService.cs;
+               $(ServicesDir)\Global.asax.cs;
+               $(ServicesDir)\XML\BindingConfiguration.*.xml;
+               $(ServicesDir)\XML\DataDictionary.*.xml;
+               $(ServicesDir)\XML\DatabaseDictionary.*.xml;
+               $(ServicesDir)\XML\nh-configuration.*.xml;
+               $(ServicesDir)\XML\nh-mapping.*.xml;
+               $(ServicesDir)\XML\Repositories.xml;
+               $(ServicesDir)\XML\Repositories_Development.xml;
+               $(ServicesDir)\XML\Repositories_Test.xml;
+               $(ServicesDir)\XML\Scopes.xml;
+               $(ServicesDir)\.svn\**;
+               $(ServicesDir)\*\.svn\**;
+               $(ServicesDir)\*\*\.svn\**;
+               $(ServicesDir)\*\*\*\.svn\**;">
+    </ServicesDeployment>
+
+    <LandingDeployment
+      Include="$(LandingPageDir)\**"
+      Exclude="$(LandingPageDir)\.svn\**;
+               $(LandingPageDir)\*\.svn\**;
+			   $(LandingPageDir)\nbproject\**;">
+    </LandingDeployment>
+
+    <AppsDeployment
+      Include="$(ApplicationsDir)\**"
+      Exclude="$(ApplicationsDir)\bin\*.pdb;
+               $(ApplicationsDir)\bin\*.xml;
+               $(ApplicationsDir)\obj\**;
+               $(ApplicationsDir)\Properties\**;
+               $(ApplicationsDir)\*.cs;
+               $(ApplicationsDir)\*.csproj;
+               $(ApplicationsDir)\*.user;
+               $(ApplicationsDir)\*.vspscc;
+               $(ApplicationsDir)\web.config;
+               $(ApplicationsDir)\.svn\**;
+               $(ApplicationsDir)\*\.svn\**">
+    </AppsDeployment>
+
+    <UtilitiesDeployment
+      Include="Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll;
+               Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;
+               Utilities\EncryptCredentials\bin\Debug\EncryptCredentials.exe;
+               Utilities\RDFImportExport\RDFImportExport\bin\Debug\dotNetRDF.dll;
+               Utilities\RDFImportExport\RDFImportExport\bin\Debug\dotNetRDF.xml;
+               Utilities\RDFImportExport\RDFImportExport\bin\Debug\HtmlAgilityPack.dll;
+               Utilities\RDFImportExport\RDFImportExport\bin\Debug\HtmlAgilityPack.xml;
+               Utilities\RDFImportExport\RDFImportExport\bin\Debug\MySql.Data.dll;
+               Utilities\RDFImportExport\RDFImportExport\bin\Debug\Newtonsoft.Json.dll;
+               Utilities\RDFImportExport\RDFImportExport\bin\Debug\Newtonsoft.Json.xml;
+               Utilities\RDFImportExport\RDFImportExport\bin\Debug\virtado3.dll;
+               Utilities\RDFImportExport\RDFImportExport\bin\Debug\RDFImportExport.exe;
+               Utilities\RDFImportExport\RDFImportExport\RDFImportExport_Default.config;
+               Utilities\QMXFGenerator\bin\Debug\QMXFGenerator.exe;
+               Utilities\QMXFGenerator\QMXFGenerator_default.config;
+               Utilities\QMXFGenerator\InformationModel.xls;
+               Utilities\QMXFTransforms\*.dtd;
+               Utilities\QMXFTransforms\*.xsd;
+               Utilities\QMXFTransforms\*.xsl;">
+    </UtilitiesDeployment>
+
+    <SDKDeployment
+      Include="$(SDKDir)\**;"
+      Exclude="$(SDKDir)\TestResults\**;
+               $(SDKDir)\.svn\**;
+               $(SDKDir)\*\.svn\**;
+               $(SDKDir)\*\*\.svn\**;
+               $(SDKDir)\*\*\*\.svn\**;">                    
+    </SDKDeployment>
+
+    <SDKLibUpdate
+      Include="Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll;
+               Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;
+               Libraries\AdapterLibrary\bin\Debug\AdapterLibrary.dll;">
+    </SDKLibUpdate>
+
+    <SDKLibDeployment
+      Include="ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.chm;
+               ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.dll;
+               ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.xml;
+               Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll;
+               Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;                
+               ExternalBinaries\Ninject2\Ninject.dll;
+               ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll;
+               ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.license.txt;
+               ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.xml;">
+    </SDKLibDeployment>
+  </ItemGroup>
+
+  <ItemGroup>
+    <DeploymentPackage Include="*.*" Exclude="*.zip">
+      <Options>a -tzip -r</Options>
+      <FileSet>$(ServicesDeploymentDir) $(AppsDeploymentDir) $(UtilitiesDeploymentDir) $(LandingDeploymentDir)\*</FileSet>
+      <ZipFile>$(DeploymentDir)\iRINGTools-$(Major).$(Minor).$(Build).zip</ZipFile>
+    </DeploymentPackage>
+    <DeploymentPackage Include="*" Exclude="">
+      <Options>a -tzip -r</Options>
+      <FileSet>$(SDKDeploymentDir)\*</FileSet>
+      <ZipFile>$(DeploymentDir)\iRINGTools-SDK-$(Major).$(Minor).$(Build).zip</ZipFile>
+    </DeploymentPackage>
+  </ItemGroup>
+
+  <Target Name="Version">
+    <Message Text="Updating assembly info ..." />
+
+    <SvnVersion LocalPath="$(MSBuildProjectDirectory)">
+      <Output TaskParameter="Revision" PropertyName="Revision" />
+    </SvnVersion>
+
+    <FileUpdate
+      Files="$(AssemblyInfoFile)"
+      Regex="(\d+)\.(\d+)\.(\d+)(\.(\d+))*"
+      ReplacementText="$(Major).$(Minor).$(Build).$(Revision)"/>
+  </Target>
+
+  <Target Name="SvnCleanUp">
+    <Message Text="Performing SVN clean-up ..." />
+    <Exec Command="svn cleanup"/>
+  </Target>
+
+  <Target Name="SvnUpdate">
+    <Message Text="Performing SVN update ..." />
+    <Exec Command="svn update"/>
+  </Target>
+
+  <Target Name="CleanBuild">
+    <Message Text="Performing MSBuild clean-up ..." />
+    <MSBuild Projects="$(SolutionFile)" Targets="Clean"/>
+  </Target>
+   
+  <Target Name="PrepareBuild">
+    <Message Text="Preparing build ..." />
+    <Exec Condition="!Exists('$(ServicesDir)\Web.config')" 
+          Command="Copy $(ServicesDir)\Web_Default.config $(ServicesDir)\Web.config" />
+    
+    <Exec Condition="!Exists('$(ApplicationsDir)\Web.config')"
+          Command="Copy $(ApplicationsDir)\Web_Default.config $(ApplicationsDir)\Web.config" />
+    
+    <Exec Condition="!Exists('Utilities\QMXFGenerator\App.config')"
+          Command="Copy $(QMXFGeneratorDir)\QMXFGenerator_Default.config $(QMXFGeneratorDir)\App.config" />
+    
+    <Exec Condition="!Exists('Utilities\RDFImportExport\RDFImportExport\App.config')"
+          Command="Copy $(RDFImportExportDir)\RDFImportExport_Default.config $(RDFImportExportDir)\App.config" />
+  </Target>
+
+  <Target Name="CoreBuild" DependsOnTargets="Version">
+    <Message Text="Performing MSBuild ..." />
+    <MSBuild Projects="$(SolutionFile)" Targets="Build"/>
+  </Target>
+
+  <Target Name="SDKBuild" DependsOnTargets="CoreBuild; DeployToSDK">
+    <Message Text="Performing MSBuild of SDK ..." />
+    <MSBuild Projects="$(SDKSolutionFile)" Targets="Build"/>
+  </Target>
+
+  <Target Name="Test">
+    <Message Text="Cleaning old test results ..." />
+    <Exec Command="RmDir /S /Q TestResults" />
+    <Message Text="Executing unit tests..." />
+    <Exec Command="$(MSTestCmd) %(UnitTest.TestContainer)" />
+  </Target>
+
+  <Target Name="CreateDeployment">
+    <Message Text="Cleaning up old deployment folders..." />
+    <Exec Command="RmDir /S /Q $(DeploymentDir)" />
+    <MakeDir Directories="$(ServicesDeploymentDir); $(AppsDeploymentDir); $(LandingDeploymentDir); $(UtilitiesDeploymentDir);"/>
+    <!--<Exec Command="Copy .\ClientAccessPolicy.xml $(ServicesDeploymentDir)\ClientAccessPolicy.xml" />
+    <Exec Command="Copy .\ClientAccessPolicy.xml $(AppsDeploymentDir)\ClientAccessPolicy.xml" />-->
+
+    <Message Text="Creating Services deployment ..." />
+    <Copy SourceFiles="@(ServicesDeployment)"
+          DestinationFiles="@(ServicesDeployment ->'$(ServicesDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(ServicesDeploymentDir)\Web_Default.config $(ServicesDeploymentDir)\Web.config" />
+    <Exec Command="Move /Y $(ServicesDeploymentDir)\XML\Repositories_Default.xml $(ServicesDeploymentDir)\XML\Repositories.xml" />
+	<Exec Command="Move /Y $(ServicesDeploymentDir)\App_Data\Config_Default.ttl $(ServicesDeploymentDir)\App_Data\Config.ttl" />
+	<Exec Command="Move /Y $(ServicesDeploymentDir)\App_Data\InterfaceIntro_Default.txt $(ServicesDeploymentDir)\App_Data\InterfaceIntro.txt" />
+	<Exec Command="Move /Y $(ServicesDeploymentDir)\App_Data\SandboxIntro_Default.txt $(ServicesDeploymentDir)\App_Data\SandboxIntro.txt" />
+    <Exec Command="Mkdir $(ServicesDeploymentDir)\Logs" />
+    <Exec Command="Mkdir $(ServicesDeploymentDir)\App_Code"/>
+
+    <Message Text="Creating Applications deployment ..." />
+    <Copy SourceFiles="@(AppsDeployment)"
+          DestinationFiles="@(AppsDeployment->'$(AppsDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(AppsDeploymentDir)\Web_Default.config $(AppsDeploymentDir)\Web.config" />
+
+    <Message Text="Creating Utilities deployment ..." />
+    <Copy SourceFiles="@(UtilitiesDeployment)"
+          DestinationFiles="@(UtilitiesDeployment->'$(UtilitiesDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(UtilitiesDeploymentDir)\QMXFGenerator_Default.config $(UtilitiesDeploymentDir)\QMXFGenerator.exe.config" />
+    <Exec Command="Move /Y $(UtilitiesDeploymentDir)\RDFImportExport_Default.config $(UtilitiesDeploymentDir)\RDFImportExport.exe.config" />
+
+    <Message Text="Creating landing page deployment ..." />
+    <Copy SourceFiles="@(LandingDeployment)"
+          DestinationFiles="@(LandingDeployment->'$(LandingDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+
+    <Message Text="Creating SDK deployment ..." />
+    <Copy SourceFiles="@(SDKDeployment)"
+          DestinationFiles="@(SDKDeployment->'$(SDKDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+
+    <Message Text="Creating SDK library deployment ..." />
+    <Copy SourceFiles="@(SDKLibDeployment)"
+          DestinationFiles="@(SDKLibDeployment->'$(SDKLibDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+
+  <Target Name="DeployToSDK">
+   
+    <Message Text="Deploying to SDK library ..." />
+    <Copy SourceFiles="@(SDKLibUpdate)"
+          DestinationFiles="@(SDKLibUpdate ->'$(SDKLibDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+
+  <Target Name="CreatePackages" DependsOnTargets="CreateDeployment">
+    <Exec Command="$(zipCmd) %(DeploymentPackage.Options) %(DeploymentPackage.ZipFile) %(DeploymentPackage.FileSet)" />
+  </Target>
+  
+  <Target Name="TestZIP">
+    <Exec Command="$(zipCmd) %(DeploymentPackage.Options) %(DeploymentPackage.ZipFile) %(DeploymentPackage.FileSet)" />
+  </Target>
+
+  <Target Name="Build" DependsOnTargets="SvnUpdate; CoreBuild; SDKBuild"/>
+
+  <Target Name="Rebuild" DependsOnTargets="SvnUpdate; CleanBuild; PrepareBuild; CoreBuild; SDKBuild"/>
+
+  <Target Name="All" DependsOnTargets="Rebuild; Test; CreatePackages"/>
+</Project>
