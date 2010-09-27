@@ -172,13 +172,68 @@ class dataObjectsModel{
 			unset($tempRoleValueArray);
 		}
 
-		echo '<b><h1>Rows Array</h1></b>';
+		/*echo '<b><h1>Rows Array</h1></b>';
 		echo '<pre>';
 		print_r($rowsArray);
-
+		*/
 		//echo '<b><h1>Header Array</h1></b>';
-		echo '<pre>';
-		print_r(array_unique($headersArray));
+		//echo '<pre>';
+		$headerArrayList = array_values((array_unique($headersArray)));
+
+		//print_r($headerArrayList);
+		
+		
+		$jsonrowsArray =array();
+		
+		for($i=0;$i<count($rowsArray);$i++){
+
+
+			for($j=0;$j<count($headerArrayList);$j++){
+			$headerName = $headerArrayList[$j];
+			
+			if(array_key_exists($headerName,$rowsArray[$i])){
+				$jsonrowsArray[$i][$headerName] =$rowsArray[$i][$headerName];
+			}else
+			{
+				$jsonrowsArray[$i][$headerName] ='';
+
+			}
+			//$headerName='';
+			}
+		///	echo '<Br>';
+		}
+
+		//echo '<pre>';
+		//print_r($jsonrowsArray);
+
+		//array("success"=>"true","rows"=>$jsonrowsArray);
+		//echo '<br><br><h1>The Grid json with Headers:</h1><br>'.
+
+
+		// $testArray = array('company','price','change','pctChange','lastChange');
+
+
+		/*{'name': 'company'},
+		{'name': 'price', type: 'float'},
+		{'name': 'change', type: 'float'},
+		{'name': 'pctChange', type: 'float'},
+		{'name': 'lastChange', type: 'date', dateFormat: 'n/j h:ia'}
+		*/
+		foreach($headerArrayList as $key =>$val){
+			//$headerArrayList1[]= array('name'=>str_replace(".", "_", $val));
+			$jsonHeaderArrayList[]= str_replace(".", "_", $val);
+		}
+
+		//echo '<pre>';
+		//echo json_encode(jsonHeaderArrayList);
+		
+		echo json_encode(array("success"=>"true","rowdata"=>$jsonrowsArray,"results"=>10,"headersList"=>(json_encode(jsonHeaderArrayList))));
+
+		//echo '';
+		//echo '<br><br> The Grid json'.json_encode(array("success"=>"true","rows"=>$jsonrowsArray));
+		unset($jsonrowsArray);
+		unset($rowsArray);
+		unset($headerArrayList);
 		exit;
 		
 		return (array_unique($headersArray));
