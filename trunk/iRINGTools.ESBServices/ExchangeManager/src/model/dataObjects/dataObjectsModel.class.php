@@ -227,7 +227,7 @@ class dataObjectsModel{
 		//echo '<pre>';
 		//echo json_encode(jsonHeaderArrayList);
 		
-		echo json_encode(array("success"=>"true","rowdata"=>$jsonrowsArray,"results"=>10,"headersList"=>(json_encode(jsonHeaderArrayList))));
+		echo json_encode(array("success"=>"true","rowdata"=>$jsonrowsArray,"results"=>10,"headersList"=>(json_encode($jsonHeaderArrayList))));
 
 		//echo '';
 		//echo '<br><br> The Grid json'.json_encode(array("success"=>"true","rows"=>$jsonrowsArray));
@@ -236,7 +236,6 @@ class dataObjectsModel{
 		unset($headerArrayList);
 		exit;
 		
-		return (array_unique($headersArray));
 	}
 
 	
