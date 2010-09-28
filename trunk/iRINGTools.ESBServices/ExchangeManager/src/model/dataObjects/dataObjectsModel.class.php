@@ -87,10 +87,10 @@ class dataObjectsModel{
 		$resultArr="";
 		$dataTransferObjects = $xmlIterator->dataTransferObject;
 
-
 		// Total no of datatransferobject elements found
 		$dtoCounts  = count($dataTransferObjects);
-		$headersArray=array();
+
+		$headerNamesArray=array();
 		$rowsArray=array();
 
 		$j=0;
@@ -127,24 +127,29 @@ class dataObjectsModel{
 									
 									if($dataTransferObject->transferType=='Change')
 									{
-										$tempRoleValueArray[$tempKey]=(string)$roleObject->oldValue.'->'.$roleObject->value;
+										// if there is any difference between old and new then represent as old->new
+										if((string)$roleObject->value!=(string)$roleObject->oldValue){
+											$tempRoleValueArray[$tempKey]=(string)$roleObject->oldValue.'->'.$roleObject->value;
+										}else{
+											$tempRoleValueArray[$tempKey]=(string)$roleObject->oldValue;
+
+										}
 									}else{
 										$tempRoleValueArray[$tempKey]=(string)$roleObject->value;
 
 									}
 									unset($tempKey);
-
 								}
 						}
 
 						// condition to make the Header & Row
 						if(count($tempRoleObjectNameArray)>1){
 								foreach($tempRoleObjectNameArray as $key=>$val){
-									$headersArray[]=(string)$templateObject->name.'.'.$val;
+									$headerNamesArray[]=(string)$templateObject->name.'.'.$val;
 								}
 							}else if(count($tempRoleObjectNameArray)==1){
 
-							$headersArray[]=(string)$templateObject->name;
+							$headerNamesArray[]=(string)$templateObject->name;
 
 							/*
 								Check the $tempRoleValueArray that store the value of role with "concanated key"
@@ -178,59 +183,38 @@ class dataObjectsModel{
 		*/
 		//echo '<b><h1>Header Array</h1></b>';
 		//echo '<pre>';
-		$headerArrayList = array_values((array_unique($headersArray)));
+		
+		$headerArrayList = array_values((array_unique($headerNamesArray)));
+		unset($headerNamesArray);
+		
+		$rowsDataArray = array();
+		$columnsDataArray = array();
 
-		//print_r($headerArrayList);
-		
-		
-		$jsonrowsArray =array();
-		
 		for($i=0;$i<count($rowsArray);$i++){
-
-
+			
 			for($j=0;$j<count($headerArrayList);$j++){
 			$headerName = $headerArrayList[$j];
 			
 			if(array_key_exists($headerName,$rowsArray[$i])){
-				$jsonrowsArray[$i][$headerName] =$rowsArray[$i][$headerName];
+				$rowsDataArray[$i][]=$rowsArray[$i][$headerName];
 			}else
 			{
-				$jsonrowsArray[$i][$headerName] ='';
-
+				$rowsDataArray[$i][]='';
 			}
-			//$headerName='';
-			}
-		///	echo '<Br>';
+		 }
 		}
 
-		//echo '<pre>';
-		//print_r($jsonrowsArray);
+		 $headerListDataArray = array();
 
-		//array("success"=>"true","rows"=>$jsonrowsArray);
-		//echo '<br><br><h1>The Grid json with Headers:</h1><br>'.
-
-
-		// $testArray = array('company','price','change','pctChange','lastChange');
-
-
-		/*{'name': 'company'},
-		{'name': 'price', type: 'float'},
-		{'name': 'change', type: 'float'},
-		{'name': 'pctChange', type: 'float'},
-		{'name': 'lastChange', type: 'date', dateFormat: 'n/j h:ia'}
-		*/
-		foreach($headerArrayList as $key =>$val){
-			//$headerArrayList1[]= array('name'=>str_replace(".", "_", $val));
-			$jsonHeaderArrayList[]= str_replace(".", "_", $val);
+		 foreach($headerArrayList as $key =>$val){
+			$headerListDataArray[]=array('name'=>str_replace(".", "_", $val));
+			$columnsDataArray[]=array('header'=>$val,'dataIndex'=>str_replace(".", "_", $val));
+			
 		}
 
-		//echo '<pre>';
-		//echo json_encode(jsonHeaderArrayList);
-		
-		echo json_encode(array("success"=>"true","rowdata"=>$jsonrowsArray,"results"=>10,"headersList"=>(json_encode($jsonHeaderArrayList))));
-
-		//echo '';
-		//echo '<br><br> The Grid json'.json_encode(array("success"=>"true","rows"=>$jsonrowsArray));
+		echo json_encode(array("success"=>"true","rowData"=>json_encode($rowsDataArray),
+							   "columnsData"=>json_encode($columnsDataArray),
+							   "headersList"=>(json_encode($headerListDataArray))));
 		unset($jsonrowsArray);
 		unset($rowsArray);
 		unset($headerArrayList);
@@ -238,6 +222,5 @@ class dataObjectsModel{
 		
 	}
 
-	
 }
 ?>
