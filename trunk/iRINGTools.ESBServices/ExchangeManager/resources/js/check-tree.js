@@ -30,48 +30,27 @@ function showgrid(response, request,label){
 	store: store,
 	columns: columnData,
 	stripeRows: true,
-	height:350,
-	width:600,
-	title:label,
+	title:'Title of the Grid',
+	id:label,
 	loadMask: true,
-	layout:'fit'
+	layout:'fit',
+	frame:true,
+	height:300
 	});
 	//grid.render('centerPanel');
 
-	if(Ext.getCmp('tab-'+label)) { 
-		Ext.getCmp('tab-'+label).show(); 
-	} else {   
+	//Ext.getCmp('centerPanel').add(grid);
+	
 		Ext.getCmp('centerPanel').add( 
-		  Ext.apply(grid,{ 
-		  id:'tab-'+label, 
-		  title: label, 
+		  Ext.apply(grid,{
+		  id:'tab-'+label,
+		  title: label,
 		  closable:true
-		  
 		}) 
 	).show();
-	}
-
+	
 }
 
-function renderPage(tabId,grid) {
-	var TabPanel = Ext.getCmp('centerPanel');
-	var tab ;//= TabPanel.getItem(tabId);
-
-	//Ext.MessageBox.alert('TabGet',tab);
-
-	if(tab){
-		TabPanel.setActiveTab(tabId);
-	}
-	else{
-		TabPanel.add({
-		title: tabId,
-		closable:true
-		}).show(); 
-
-TabPanel.doLayout();
-}
-
-}
 function sendAjaxRequest(label){
 Ext.getBody().mask('Loading...');
 Ext.Ajax.request({
@@ -118,7 +97,20 @@ Ext.onReady(function(){
 				   {
                       //alert(tree.getSelectionModel().getSelectedNode().text);
 					  Ext.getCmp('centerPanel').enable();
-					  sendAjaxRequest(tree.getSelectionModel().getSelectedNode().text);
+					  var label = tree.getSelectionModel().getSelectedNode().text;
+
+					  /*
+						  check the id of the tab
+						  if it's available just display don't send ajax request
+					   */
+					  if(Ext.getCmp(label))
+					  {
+						 //alert(Ext.getCmp(label).closable)
+						 Ext.getCmp(label).show();
+
+					  }else{
+					  sendAjaxRequest(label);
+					  }
                    }
            }
            else if(action=='no')
