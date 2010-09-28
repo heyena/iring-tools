@@ -35,7 +35,7 @@ namespace org.iringtools.client.Controllers
       string query = collection["query"];
       string start = collection["start"];
       string limit = collection["limit"];
-      JsonContainer<Entity> container = new JsonContainer<Entity>();
+      JsonContainer<List<Entity>> container = new JsonContainer<List<Entity>>();
 
       if (query != null && !query.Equals(String.Empty))
       {

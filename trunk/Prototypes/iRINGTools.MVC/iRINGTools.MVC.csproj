@@ -35,7 +35,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="iRINGLibrary">
-      <HintPath>..\..\iRINGTools.SDK\lib\iring-tools\iRINGLibrary.dll</HintPath>
+      <HintPath>..\..\Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Http">
@@ -46,6 +46,9 @@
     </Reference>
     <Reference Include="Microsoft.ServiceModel.Web">
       <HintPath>..\..\ExternalBinaries\WCFRESTStarterKit\Microsoft.ServiceModel.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="RouteDebug">
+      <HintPath>..\..\ExternalBinaries\RouteDebug\RouteDebug.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -79,9 +82,8 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
-    <Reference Include="UtilityLibrary, Version=2.0.0.1350, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\iRINGTools.SDK\lib\iring-tools\UtilityLibrary.dll</HintPath>
+    <Reference Include="UtilityLibrary">
+      <HintPath>..\..\Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -89,6 +91,7 @@
     <Compile Include="Controllers\ExchangeController.cs" />
     <Compile Include="Controllers\ScopesController.cs" />
     <Compile Include="Controllers\SearchController.cs" />
+    <Compile Include="Models\JsonArray.cs" />
     <Compile Include="Models\JsonContainer.cs" />
     <Compile Include="Views\AppEditor\Index.aspx.cs">
       <DependentUpon>Index.aspx</DependentUpon>
