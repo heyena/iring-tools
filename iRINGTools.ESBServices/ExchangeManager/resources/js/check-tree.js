@@ -9,60 +9,70 @@
  * 
  */
 
-function showGrid(response, request) {
-	var jsonData = Ext.util.JSON.decode(response);                  
-	//var grid = Ext.getCmp('contentGrid'+request.params.owner);
-	alert(jsonData.headersList);
-	//alert(typeof(jsonData.headersList));
+function showgrid(response, request,label){
+	var jsonData = Ext.util.JSON.decode(response);
+	var rowData = eval(jsonData.rowData);
+	var filedsVal = eval(jsonData.headersList);
+	var columnData = eval(jsonData.columnsData);
 
-	var filedsVal = jsonData.headersList;
-	//alert(filedsVal);
+	// create the data store
+	var store = new Ext.data.ArrayStore({
+	fields: filedsVal
+	});
+	store.loadData(rowData);
 
-	//alert((jsonData.headersList).length);
-	alert(jsonData.rowdata);
-	//alert('Rows data: '+jsonData.rowdata);
-	/*var store = new Ext.data.ArrayStore({ 
-	id  : 'arrayStore',
-	fields : jsonData.rowdata,
-	autoDestroy : true
-	});              
+	if(grid){ 
+		grid.destroy();                                  
+	}
 
-	store.load();
+	// create the Grid
+	var grid = new Ext.grid.GridPanel({
+	store: store,
+	columns: columnData,
+	stripeRows: true,
+	height:350,
+	width:600,
+	title:label,
+	loadMask: true,
+	layout:'fit'
+	});
+	//grid.render('centerPanel');
 
-var grid = new Ext.grid.GridPanel({
-renderTo: document.body,
-defaults: {sortable:true}, 
-//id:'contentGrid'+request.params.owner, 
-store: store,
-columns: [
-		  {
-header: "IdentificationByTag",
-width: 40,
-sortable: true,
-dataIndex: 'IdentificationByTag'
-		  }] 
-//loadMask: true
-});          
+	if(Ext.getCmp('tab-'+label)) { 
+		Ext.getCmp('tab-'+label).show(); 
+	} else {   
+		Ext.getCmp('centerPanel').add( 
+		  Ext.apply(grid,{ 
+		  id:'tab-'+label, 
+		  title: label, 
+		  closable:true
+		  
+		}) 
+	).show();
+	}
 
-// store.loadData(jsonData.rowdata);
-
-	/*if(Ext.getCmp('tab-'+request.params.owner))
-	{ 
-		Ext.getCmp('tab-'+request.params.owner).show(); 
-	} else {                 
-		grid.render('grid-div'); 
-		Ext.getCmp('card-tabs-panel').add({ 
-		id:'tab-'+request.params.owner, 
-		title: request.params.text, 
-		iconCls:'silk-tab', 
-		html:Ext.getDom('grid-div').innerHTML, 
-		closable:true 
-		}).show();
-	}*/
 }
 
+function renderPage(tabId,grid) {
+	var TabPanel = Ext.getCmp('centerPanel');
+	var tab ;//= TabPanel.getItem(tabId);
 
-function sendAjaxRequest(){
+	//Ext.MessageBox.alert('TabGet',tab);
+
+	if(tab){
+		TabPanel.setActiveTab(tabId);
+	}
+	else{
+		TabPanel.add({
+		title: tabId,
+		closable:true
+		}).show(); 
+
+TabPanel.doLayout();
+}
+
+}
+function sendAjaxRequest(label){
 Ext.getBody().mask('Loading...');
 Ext.Ajax.request({
 url : 'dataObjects/getDataObjects/1/2',
@@ -76,19 +86,14 @@ dropindex: index
 },
 success: function(result, request)
 { 
-		  //Ext.MessageBox.alert('Success', 'Data return from the server: '+ result.responseText);
-			alert(result.responseText);
-			showGrid(result.responseText, request);
-			//showgrid1(result.responseText, request);
-		},
-failure: function ( result, request) { 
-			alert(result.responseText); 
+			showgrid(result.responseText, request,label);
+},
+failure: function ( result, request){ 
+			//alert(result.responseText); 
 		},
 callback: function() { Ext.getBody().unmask(); }
-
 	})
 }
-
 
 Ext.onReady(function(){	
     var tBar = new Ext.Toolbar({ xtype: "toolbar",
@@ -109,9 +114,11 @@ Ext.onReady(function(){
         fn: function(action){
            if(action=='yes')
            {
-                   if(tree.getSelectionModel().getSelectedNode().id!=null){
-                           Ext.getCmp('centerPanel').enable();
-						   sendAjaxRequest();
+                   if(tree.getSelectionModel().getSelectedNode().id!=null)
+				   {
+                      //alert(tree.getSelectionModel().getSelectedNode().text);
+					  Ext.getCmp('centerPanel').enable();
+					  sendAjaxRequest(tree.getSelectionModel().getSelectedNode().text);
                    }
            }
            else if(action=='no')
@@ -184,7 +191,7 @@ Ext.onReady(function(){
 
              // check the current state of Detail Grid panel
              if(Ext.getCmp('detail-grid').collapsed==true){
-                 //Ext.getCmp('detail-grid').expand();
+                 Ext.getCmp('detail-grid').expand();
               }             
           }
         },
