@@ -35,10 +35,10 @@ public class JaxbUtil
     return stream;
   }
   
-  @SuppressWarnings("unchecked")
   public static <T> void toXml(T object, OutputStream stream, boolean indent) throws JAXBException, IOException
   {		
-		Class<T> c = (Class<T>)object.getClass();
+    @SuppressWarnings("unchecked")
+    Class<T> c = (Class<T>)object.getClass();
 		String pkgName = c.getPackage().getName();
 		JAXBContext jc = JAXBContext.newInstance(pkgName);
 	  Marshaller m = jc.createMarshaller();
@@ -59,13 +59,14 @@ public class JaxbUtil
 	  return toObject(clazz, stream);
 	}
   
-  @SuppressWarnings("unchecked")
   public static <T> T toObject(Class<T> clazz, InputStream stream) throws JAXBException 
   {
 	  String pkgName = clazz.getPackage().getName();
 	  JAXBContext jc = JAXBContext.newInstance(pkgName);
 	  Unmarshaller u = jc.createUnmarshaller();
-	  return (T)u.unmarshal(stream);
+	  @SuppressWarnings("unchecked")
+	  T object = (T)u.unmarshal(stream);
+	  return object;
 	}
 }
 

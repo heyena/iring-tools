@@ -28,7 +28,7 @@ public class DifferencingProvider
   public DataTransferIndices diff(DataTransferIndices sourceDtis, DataTransferIndices targetDtis)
   {
     DataTransferIndices resultDtis = new DataTransferIndices();
-    List<DataTransferIndex> resultDtiList = resultDtis.getDataTransferIndex();
+    List<DataTransferIndex> resultDtiList = resultDtis.getDataTransferIndices();
 
     /*
      * Case 1:
@@ -36,11 +36,11 @@ public class DifferencingProvider
      *    Source DTIs:
      *    Target DTIs: x x x x 
      */
-    if (sourceDtis == null || sourceDtis.getDataTransferIndex().size() == 0)
+    if (sourceDtis == null || sourceDtis.getDataTransferIndices().size() == 0)
     {
       if (targetDtis != null)
       {
-        for (DataTransferIndex dti : targetDtis.getDataTransferIndex())
+        for (DataTransferIndex dti : targetDtis.getDataTransferIndices())
         {
           dti.setTransferType(TransferType.DELETE);
           dti.setHashValue(null);
@@ -56,11 +56,11 @@ public class DifferencingProvider
      *    Source DTIs: x x x x
      *    Target DTIs: 
      */
-    if (targetDtis == null || targetDtis.getDataTransferIndex().size() == 0)
+    if (targetDtis == null || targetDtis.getDataTransferIndices().size() == 0)
     {
       if (sourceDtis != null)
       {
-        for (DataTransferIndex dti : sourceDtis.getDataTransferIndex())
+        for (DataTransferIndex dti : sourceDtis.getDataTransferIndices())
         {
           dti.setTransferType(TransferType.ADD);
         }
@@ -69,8 +69,8 @@ public class DifferencingProvider
       return sourceDtis;
     }
 
-    List<DataTransferIndex> sourceDtiList = sourceDtis.getDataTransferIndex();
-    List<DataTransferIndex> targetDtiList = targetDtis.getDataTransferIndex();      
+    List<DataTransferIndex> sourceDtiList = sourceDtis.getDataTransferIndices();
+    List<DataTransferIndex> targetDtiList = targetDtis.getDataTransferIndices();      
     IdentifierComparator identifierComparator = new IdentifierComparator();
     
     Collections.sort(sourceDtiList, identifierComparator);
@@ -122,8 +122,8 @@ public class DifferencingProvider
     
     while (sourceIndex < sourceDtiList.size() && targetIndex < targetDtiList.size())
     {
-      DataTransferIndex sourceDti = sourceDtis.getDataTransferIndex().get(sourceIndex);
-      DataTransferIndex targetDti = targetDtis.getDataTransferIndex().get(targetIndex);
+      DataTransferIndex sourceDti = sourceDtis.getDataTransferIndices().get(sourceIndex);
+      DataTransferIndex targetDti = targetDtis.getDataTransferIndices().get(targetIndex);
       
       int value = sourceDti.getIdentifier().compareTo(targetDti.getIdentifier());
       
@@ -163,7 +163,7 @@ public class DifferencingProvider
     {
       for (int i = sourceIndex; i < sourceDtiList.size(); i++)
       {
-        DataTransferIndex sourceDti = sourceDtis.getDataTransferIndex().get(i);
+        DataTransferIndex sourceDti = sourceDtis.getDataTransferIndices().get(i);
         sourceDti.setTransferType(TransferType.ADD);
         resultDtiList.add(sourceDti);
       }
@@ -172,7 +172,7 @@ public class DifferencingProvider
     {
       for (int i = targetIndex; i < targetDtiList.size(); i++)
       {
-        DataTransferIndex targetDti = targetDtis.getDataTransferIndex().get(i);
+        DataTransferIndex targetDti = targetDtis.getDataTransferIndices().get(i);
         targetDti.setTransferType(TransferType.DELETE);
         targetDti.setHashValue(null);
         resultDtiList.add(targetDti);
@@ -187,8 +187,8 @@ public class DifferencingProvider
   {
     if (sourceDtos == null || targetDtos == null) return null;
     
-    List<DataTransferObject> targetDtoList = targetDtos.getDataTransferObject();
-    List<DataTransferObject> sourceDtoList = sourceDtos.getDataTransferObject();
+    List<DataTransferObject> targetDtoList = targetDtos.getDataTransferObjects();
+    List<DataTransferObject> sourceDtoList = sourceDtos.getDataTransferObjects();
     
     if (sourceDtoList.size() == 0 || targetDtoList.size() == 0) return null;
   
@@ -204,8 +204,8 @@ public class DifferencingProvider
       // sanity check see if the data transfer object might have SYNC'ed since DTI differencing occurs 
       sourceDto.setTransferType(org.iringtools.adapter.dto.TransferType.SYNC);
 
-      List<ClassObject> targetClassObjectList = targetDto.getClassObjects().getClassObject();
-      List<ClassObject> sourceClassObjectList = sourceDto.getClassObjects().getClassObject();
+      List<ClassObject> targetClassObjectList = targetDto.getClassObjects().getClassObjects();
+      List<ClassObject> sourceClassObjectList = sourceDto.getClassObjects().getClassObjects();
       
       for (int j = 0; j < targetClassObjectList.size(); j++)
       {
@@ -221,8 +221,8 @@ public class DifferencingProvider
         
         sourceClassObject.setTransferType(org.iringtools.adapter.dto.TransferType.SYNC); // default SYNC first
 
-        List<TemplateObject> targetTemplateObjectList = targetClassObject.getTemplateObjects().getTemplateObject();
-        List<TemplateObject> sourceTemplateObjectList = sourceClassObject.getTemplateObjects().getTemplateObject();
+        List<TemplateObject> targetTemplateObjectList = targetClassObject.getTemplateObjects().getTemplateObjects();
+        List<TemplateObject> sourceTemplateObjectList = sourceClassObject.getTemplateObjects().getTemplateObjects();
         
         for (int k = 0; k < targetTemplateObjectList.size(); k++)
         {
@@ -231,8 +231,8 @@ public class DifferencingProvider
           
           sourceTemplateObject.setTransferType(org.iringtools.adapter.dto.TransferType.SYNC); // default SYNC first
           
-          List<RoleObject> targetRoleObjectList = targetTemplateObject.getRoleObjects().getRoleObject();
-          List<RoleObject> sourceRoleObjectList = sourceTemplateObject.getRoleObjects().getRoleObject();
+          List<RoleObject> targetRoleObjectList = targetTemplateObject.getRoleObjects().getRoleObjects();
+          List<RoleObject> sourceRoleObjectList = sourceTemplateObject.getRoleObjects().getRoleObjects();
           
           // find and set old value for roles that are changed
           for (int l = 0; l < targetRoleObjectList.size(); l++)
