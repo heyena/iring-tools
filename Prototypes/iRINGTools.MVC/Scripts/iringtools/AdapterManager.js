@@ -107,7 +107,7 @@ Ext.onReady(function () {
         application: application
       });
 
-      exhangePanel.on('pull', function (panel, form) {
+      exhangePanel.on('exchange', function (panel, form) {
 
         if (!form.isValid()) {
           iRINGTools.setAlert(false, "Information is invalid.");
@@ -115,7 +115,7 @@ Ext.onReady(function () {
         }
 
         form.submit({
-          url: "exchange/" + panel.scope + "/" + panel.application + "/" + form.graphName + "/pull",
+          url: "exchange/" + panel.scope + "/" + panel.application + "/pull",
           success: function (form, action) {
             iRINGTools.setAlert(true, 'got here');
           }
@@ -132,6 +132,9 @@ Ext.onReady(function () {
 
       var window = new Ext.Window({
         title: 'Exchange - ' + scope + '.' + application,
+        labelWidth: 110, // label settings here cascade unless overridden                  
+        width: 390,
+        height: 290,
         layout: 'fit',
         modal: true,
         items: exhangePanel

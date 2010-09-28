@@ -31,17 +31,38 @@ namespace org.iringtools.client.Controllers
 
     //
     // GET: /Exchange
+
     public JsonResult Index()
     {
       return Json(null, JsonRequestBehavior.AllowGet);
     }
 
     //
-    // POST: Exchange/{scope}/{application}/{graph}/pull
-    [HttpPost]
-    public JsonResult Pull(string scope, string application, string graphName, FormCollection collection)
+    // GET: /Exchange/Methods
+
+    public JsonResult Methods()
     {
-      JsonContainer<Status> container = new JsonContainer<Status>();
+      JsonContainer<JsonArray> container = new JsonContainer<JsonArray>();
+      container.Items = new JsonArray();
+      
+      container.Items.Add("Name","Data Tranfer Object");
+      container.Items.Add("Name","Reference Data Format");
+      container.Total = container.Items.Count();
+
+      return Json(container, JsonRequestBehavior.AllowGet);
+    }
+
+    //
+    // POST: Exchange/Pull?scope={scope}&application={application}
+
+    [HttpPost]
+    public JsonResult Pull(FormCollection collection)
+    {
+      string scope = Request.QueryString["scope"];
+      string application = Request.QueryString["application"];
+      string graphName = collection["graph"];
+
+      JsonContainer<List<Status>> container = new JsonContainer<List<Status>>();
 
       if (collection.Count > 0)
       {
