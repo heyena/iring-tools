@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://iringtools.org/exchange"
+    targetNamespace="http://iringtools.org/exchange" xmlns:mnf="http://iringtools.org/protocol/manifest"
+    xmlns:dti="http://iringtools.org/adapter/dti" xmlns:dto="http://iringtools.org/adapter/dto"
+    elementFormDefault="qualified"
+    xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.0"
+    xmlns:xjc= "http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc">
+    
+  <xs:annotation>
+    <xs:appinfo>
+      <jaxb:globalBindings>
+        <xjc:simple />
+      </jaxb:globalBindings>
+    </xs:appinfo>
+  </xs:annotation>
+
+  <xs:import namespace="http://iringtools.org/protocol/manifest" schemaLocation="manifest.xsd"/>
+  <xs:import namespace="http://iringtools.org/adapter/dti" schemaLocation="dti.xsd"/>
+  <xs:import namespace="http://iringtools.org/adapter/dto" schemaLocation="dto.xsd"/>
+
+  <xs:element name="dxRequest" type="DxRequest"/>
+  <xs:element name="dxiRequest" type="DxiRequest"/>
+  <xs:element name="dxoRequest" type="DxoRequest"/>
+  <xs:element name="dtiSubmission" type="DtiSubmission"/>
+
+  <xs:complexType name="DxRequest">
+    <xs:sequence>
+      <xs:element name="manifest" type="mnf:Manifest"/>
+      <xs:element name="identifiers" type="Identifiers"/>
+      <xs:element name="hashAlgorithm" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="DxiRequest">
+    <xs:sequence>
+      <xs:element name="sourceDataTransferIndicies" type="dti:DataTransferIndices"/>
+      <xs:element name="targetDataTransferIndicies" type="dti:DataTransferIndices"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="DxoRequest">
+    <xs:sequence>
+      <xs:element name="sourceDataTransferObjects" type="dto:DataTransferObjects"/>
+      <xs:element name="targetDataTransferObjects" type="dto:DataTransferObjects"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="DtiSubmission">
+    <xs:sequence>
+      <xs:element name="dti" type="dti:DataTransferIndices"/>
+      <xs:element name="reviewed" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="Identifiers">
+    <xs:sequence>
+      <xs:element name="identifier" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
