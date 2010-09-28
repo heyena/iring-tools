@@ -91,7 +91,7 @@ public class ESBService
       String targetManifestUrl = xdef.getTargetUri() + "/" + xdef.getTargetAppScope() + "/" + xdef.getTargetAppName()
           + "/manifest";
       Manifest targetManifest = NetUtil.get(Manifest.class, targetManifestUrl);    
-      if (targetManifest == null || targetManifest.getGraphs().getGraph().size() == 0) return null;
+      if (targetManifest == null || targetManifest.getGraphs().getGraphs().size() == 0) return null;
   
       // create data exchange request
       DxRequest dxRequest = new DxRequest();
@@ -139,7 +139,7 @@ public class ESBService
       DataTransferObjects targetDtos = null;
       
       resultDtos = new DataTransferObjects();
-      List<DataTransferObject> resultDtoList = resultDtos.getDataTransferObject();
+      List<DataTransferObject> resultDtoList = resultDtos.getDataTransferObjects();
       
       // get exchange definition
       ExchangeDefinition xdef = getExchangeDefinition(exchangeId);
@@ -147,7 +147,7 @@ public class ESBService
       // get target manifest
       String targetManifestUrl = xdef.getTargetUri() + "/" + xdef.getTargetAppScope() + "/" + xdef.getTargetAppName() + "/manifest";
       Manifest targetManifest = NetUtil.get(Manifest.class, targetManifestUrl);    
-      if (targetManifest == null || targetManifest.getGraphs().getGraph().size() == 0) return null;
+      if (targetManifest == null || targetManifest.getGraphs().getGraphs().size() == 0) return null;
   
       // store add/change-sync/delete identifiers in different lists
       List<String> addIdentifierList = new ArrayList<String>();
@@ -155,7 +155,7 @@ public class ESBService
       List<String> syncIdentifierList = new ArrayList<String>();
       List<String> deleteIdentifierList = new ArrayList<String>();
   
-      for (DataTransferIndex dti : dtis.getDataTransferIndex())
+      for (DataTransferIndex dti : dtis.getDataTransferIndices())
       {
         String identifier = dti.getIdentifier();
   
@@ -178,11 +178,11 @@ public class ESBService
   
       // get add/change/sync DTOs from source endpoint
       Identifiers sourceIdentifiers = new Identifiers();
-      sourceIdentifiers.getIdentifier().addAll(addIdentifierList);
-      sourceIdentifiers.getIdentifier().addAll(changeIdentifierList);
-      sourceIdentifiers.getIdentifier().addAll(syncIdentifierList);
+      sourceIdentifiers.getIdentifiers().addAll(addIdentifierList);
+      sourceIdentifiers.getIdentifiers().addAll(changeIdentifierList);
+      sourceIdentifiers.getIdentifiers().addAll(syncIdentifierList);
   
-      if (sourceIdentifiers.getIdentifier().size() > 0)
+      if (sourceIdentifiers.getIdentifiers().size() > 0)
       {
         DxRequest sourceDtosRequest = new DxRequest();
         sourceDtosRequest.setManifest(targetManifest);
@@ -191,13 +191,13 @@ public class ESBService
         String sourceUrl = xdef.getSourceUri() + "/" + xdef.getSourceAppScope() + "/" + xdef.getSourceAppName() + "/"
             + xdef.getSourceGraphName() + "/dto";
         sourceDtos = NetUtil.post(DataTransferObjects.class, sourceUrl, sourceDtosRequest);
-        List<DataTransferObject> sourceDtoList = sourceDtos.getDataTransferObject();
+        List<DataTransferObject> sourceDtoList = sourceDtos.getDataTransferObjects();
   
         // append add/sync DTOs to resultDtoList and remove them from sourceDtoList
         for (int i = 0; i < sourceDtoList.size(); i++)
         {
           DataTransferObject sourceDto = sourceDtoList.get(i);
-          List<ClassObject> sourceClassObjectList = sourceDto.getClassObjects().getClassObject();
+          List<ClassObject> sourceClassObjectList = sourceDto.getClassObjects().getClassObjects();
   
           if (sourceClassObjectList.size() > 0)
           {
@@ -232,10 +232,10 @@ public class ESBService
   
       // get delete/change DTOs from target endpoint
       Identifiers targetIdentifiers = new Identifiers();
-      targetIdentifiers.getIdentifier().addAll(changeIdentifierList);
-      targetIdentifiers.getIdentifier().addAll(deleteIdentifierList);
+      targetIdentifiers.getIdentifiers().addAll(changeIdentifierList);
+      targetIdentifiers.getIdentifiers().addAll(deleteIdentifierList);
   
-      if (targetIdentifiers.getIdentifier().size() > 0)
+      if (targetIdentifiers.getIdentifiers().size() > 0)
       {
         DxRequest targetDtosRequest = new DxRequest();
         targetDtosRequest.setManifest(targetManifest);
@@ -244,13 +244,13 @@ public class ESBService
         String targetUrl = xdef.getTargetUri() + "/" + xdef.getTargetAppScope() + "/" + xdef.getTargetAppName() + "/"
             + xdef.getTargetGraphName() + "/dto";
         targetDtos = NetUtil.post(DataTransferObjects.class, targetUrl, targetDtosRequest);
-        List<DataTransferObject> targetDtoList = targetDtos.getDataTransferObject();
+        List<DataTransferObject> targetDtoList = targetDtos.getDataTransferObjects();
   
         // add deleted DTOs to resultDtoList and remove them from targetDtoList
         for (int i = 0; i < targetDtoList.size(); i++)
         {
           DataTransferObject targetDto = targetDtoList.get(i);
-          List<ClassObject> targetClassObjectList = targetDto.getClassObjects().getClassObject();
+          List<ClassObject> targetClassObjectList = targetDto.getClassObjects().getClassObjects();
   
           if (targetClassObjectList.size() > 0)
           {
@@ -281,7 +281,7 @@ public class ESBService
     
         // add diff DTOs to add/change/sync list
         if (diffDtos != null)
-          resultDtoList.addAll(diffDtos.getDataTransferObject());
+          resultDtoList.addAll(diffDtos.getDataTransferObjects());
       }
       
       DataTransferObjectComparator dtoc = new DataTransferObjectComparator();
@@ -312,7 +312,7 @@ public class ESBService
       if (dtis == null)
         return null;
   
-      List<DataTransferIndex> dtiList = dtis.getDataTransferIndex();
+      List<DataTransferIndex> dtiList = dtis.getDataTransferIndices();
       if (dtiList.size() == 0)
         return null;
   
@@ -330,7 +330,7 @@ public class ESBService
   
       // get target manifest
       Manifest targetManifest = NetUtil.get(Manifest.class, targetManifestUrl);    
-      if (targetManifest == null || targetManifest.getGraphs().getGraph().size() == 0) return null;
+      if (targetManifest == null || targetManifest.getGraphs().getGraphs().size() == 0) return null;
   
       // submit DTOs to target adapter service by configured pool size per submission
       int dtiSize = dtiList.size();
@@ -339,7 +339,7 @@ public class ESBService
       for (int i = 0; i < dtiSize; i += poolSize)
       {
         int actualPoolSize = (dtiSize > (i + poolSize)) ? poolSize : dtiSize - i;
-        List<DataTransferIndex> poolDtiList = dtiList.subList(i, actualPoolSize);
+        List<DataTransferIndex> poolDtiList = dtiList.subList(i, i + actualPoolSize);
         List<DataTransferIndex> sourceDtiList = new ArrayList<DataTransferIndex>();
   
         List<String> addIdentifierList = new ArrayList<String>();
@@ -373,13 +373,13 @@ public class ESBService
   
         // get add/change/sync DTOs from source endpoint
         Identifiers sourceIdentifiers = new Identifiers();
-        sourceIdentifiers.getIdentifier().addAll(addIdentifierList);
-        sourceIdentifiers.getIdentifier().addAll(changeIdentifierList);
+        sourceIdentifiers.getIdentifiers().addAll(addIdentifierList);
+        sourceIdentifiers.getIdentifiers().addAll(changeIdentifierList);
   
         if (dtiSubmission.isReviewed())
-          sourceIdentifiers.getIdentifier().addAll(syncIdentifierList);
+          sourceIdentifiers.getIdentifiers().addAll(syncIdentifierList);
   
-        if (sourceIdentifiers.getIdentifier().size() > 0)
+        if (sourceIdentifiers.getIdentifiers().size() > 0)
         {   
           // request for current dti list and compare with previous set; also remove sync ones
           if (dtiSubmission.isReviewed())
@@ -395,8 +395,8 @@ public class ESBService
             
             if (currentSourceDtis != null)
             {
-              List<DataTransferIndex> currentSourceDtiList = currentSourceDtis.getDataTransferIndex();
-              List<String> sourceIdentifierList = sourceIdentifiers.getIdentifier();
+              List<DataTransferIndex> currentSourceDtiList = currentSourceDtis.getDataTransferIndices();
+              List<String> sourceIdentifierList = sourceIdentifiers.getIdentifiers();
               
               for (DataTransferIndex sourceDti : sourceDtiList)
               {
@@ -410,7 +410,7 @@ public class ESBService
                     if (!sourceDti.getHashValue().equals(currentSourceDti.getHashValue()))
                     {
                       Status status = createStatus(sourceIdentifier, "DTO has changed.");
-                      response.getStatusList().getStatus().add(status);
+                      response.getStatusList().getStatuses().add(status);
                       
                       sourceIdentifierList.remove(sourceIdentifier);
                     }
@@ -427,7 +427,7 @@ public class ESBService
                 if (!found)
                 {
                   Status status = createStatus(sourceIdentifier, "DTO no longer exists.");
-                  response.getStatusList().getStatus().add(status);
+                  response.getStatusList().getStatuses().add(status);
                   
                   sourceIdentifierList.remove(sourceIdentifier);
                 }
@@ -442,15 +442,15 @@ public class ESBService
     
           String sourceDtoUrl = sourceGraphUri + "/dto";
           DataTransferObjects poolDtos = NetUtil.post(DataTransferObjects.class, sourceDtoUrl, poolDtosRequest);
-          List<DataTransferObject> poolDtoList = poolDtos.getDataTransferObject();
+          List<DataTransferObject> poolDtoList = poolDtos.getDataTransferObjects();
               
           for (DataTransferObject dto : poolDtoList)
           {
-            if (addIdentifierList.contains(dto.getClassObjects().getClassObject().get(0).getIdentifier()))
+            if (addIdentifierList.contains(dto.getClassObjects().getClassObjects().get(0).getIdentifier()))
             {
               dto.setTransferType(TransferType.ADD);
             }
-            else if (changeIdentifierList.contains(dto.getClassObjects().getClassObject().get(0).getIdentifier()))
+            else if (changeIdentifierList.contains(dto.getClassObjects().getClassObjects().get(0).getIdentifier()))
             {
               dto.setTransferType(TransferType.CHANGE);
             }
@@ -465,7 +465,7 @@ public class ESBService
             ClassObjects classObjects = new ClassObjects();
             deleteDto.setClassObjects(classObjects);
     
-            List<ClassObject> classObjectList = classObjects.getClassObject();
+            List<ClassObject> classObjectList = classObjects.getClassObjects();
             ClassObject classObject = new ClassObject();
             classObject.setIdentifier(identifier);
             classObjectList.add(classObject);
@@ -474,7 +474,7 @@ public class ESBService
           }
     
           Response poolResponse = NetUtil.post(Response.class, targetGraphUri + "?format=dxo", poolDtos);
-          response.getStatusList().getStatus().addAll(poolResponse.getStatusList().getStatus());
+          response.getStatusList().getStatuses().addAll(poolResponse.getStatusList().getStatuses());
         }
       }
   
@@ -507,7 +507,7 @@ public class ESBService
   private Status createStatus(String identifier, String message)
   {
     Status.Messages messages = new Status.Messages();
-    List<String> messageList = messages.getMessage();
+    List<String> messageList = messages.getMessages();
     messageList.add(message);
     
     Status status = new Status();
