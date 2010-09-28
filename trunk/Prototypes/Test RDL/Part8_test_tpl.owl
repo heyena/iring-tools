@@ -14,6 +14,12 @@
   <!ENTITY templates "http://tpl.rdlfacade.org/data#" >
 ]>
 
+<!-- List of PREFIX Changes 
+
+
+
+
+-->
 
 <rdf:RDF xmlns="http://tpl.rdlfacade.org/data#"
      xml:base="http://tpl.rdlfacade.org/data"
@@ -28,24 +34,23 @@
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:owl="http://www.w3.org/2002/07/owl#">
 
+  
+  
   <!-- ROles -->
-
+  
   <!-- http://tpl.rdlfacade.org/data#R36573597723 -->
-
   <owl:Thing rdf:about="#R36573597723">
     <rdf:type rdf:resource="owl:ObjectProperty"/>
     <rdfs:label>hasClassOfPart</rdfs:label>
   </owl:Thing>
 
   <!-- http://tpl.rdlfacade.org/data#R27413995417 -->
-
   <owl:Thing rdf:about="#R27413995417">
     <rdf:type rdf:resource="owl:ObjectProperty"/>
     <rdfs:label>hasClassOfWhole</rdfs:label>
   </owl:Thing>
 
   <!-- http://tpl.rdlfacade.org/data#R95281998584 -->
-
   <owl:Thing rdf:about="#R95281998584">
     <rdf:type rdf:resource="owl:ObjectProperty"/>
     <rdfs:label>hasAssemblyType</rdfs:label>
@@ -53,28 +58,25 @@
   </owl:Thing>
 
   <!-- http://tpl.rdlfacade.org/data#R56232327044 -->
-
   <owl:Thing rdf:about="#R56232327044">
     <rdfs:label>minimumCardinalityPart</rdfs:label>
   </owl:Thing>
 
   <!-- http://tpl.rdlfacade.org/data#R62838584965 -->
-
   <owl:Thing rdf:about="#R62838584965">
     <rdfs:label>maximumCardinalityPart</rdfs:label>
   </owl:Thing>
 
   <!-- http://tpl.rdlfacade.org/data#R62998003871 -->
-
   <owl:Thing rdf:about="#R41027766855">
     <rdfs:label>minimumCardinalityWhole</rdfs:label>
   </owl:Thing>
 
   <!-- http://tpl.rdlfacade.org/data#R41027766855 -->
-
   <owl:Thing rdf:about="#R41027766855">
     <rdfs:label>maximumCardinalityWhole</rdfs:label>
   </owl:Thing>
+  
   
   
   <!-- Base Template -->
@@ -309,8 +311,83 @@ AssemblyRelation( x1, x2, x3, x4, x5, x6, x7 ) &lt;-&gt;
     </owl:Thing>
 
   
+  
   <!-- Base Template -->
 
+  <!-- Restrictions -->
+  <!-- http://rdl.rdswip.org/sampleTemplates#ClassifiedAssemblyOfIndividual -->
+  <owl:Class rdf:about="#ClassifiedAssemblyOfIndividual">
+    <rdfs:label
+            >ClassifiedAssemblyOfIndividual</rdfs:label>
+    <rdfs:subClassOf rdf:resource="&p8;BaseTemplateStatement"/>
+    <rdfs:subClassOf>
+      <owl:Class>
+        <owl:intersectionOf rdf:parseType="Collection">
+          <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasAssemblyType"/>
+            <owl:allValuesFrom rdf:resource="&dm;ClassOfAssemblyOfIndividual"/>
+          </owl:Restriction>
+          <owl:Restriction>
+            <owl:onProperty rdf:resource="#hasAssemblyType"/>
+            <owl:onClass rdf:resource="&dm;ClassOfAssemblyOfIndividual"/>
+            <owl:qualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:qualifiedCardinality>
+          </owl:Restriction>
+        </owl:intersectionOf>
+      </owl:Class>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Class>
+        <owl:intersectionOf rdf:parseType="Collection">
+          <owl:Restriction>
+            <owl:onProperty rdf:resource="&templates;hasWhole"/>
+            <owl:allValuesFrom rdf:resource="&dm;ArrangedIndividual"/>
+          </owl:Restriction>
+          <owl:Restriction>
+            <owl:onProperty rdf:resource="&templates;hasWhole"/>
+            <owl:onClass rdf:resource="&dm;ArrangedIndividual"/>
+            <owl:qualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:qualifiedCardinality>
+          </owl:Restriction>
+        </owl:intersectionOf>
+      </owl:Class>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Class>
+        <owl:intersectionOf rdf:parseType="Collection">
+          <owl:Restriction>
+            <owl:onProperty rdf:resource="&templates;hasPart"/>
+            <owl:allValuesFrom rdf:resource="&dm;PossibleIndividual"/>
+          </owl:Restriction>
+          <owl:Restriction>
+            <owl:onProperty rdf:resource="&templates;hasPart"/>
+            <owl:onClass rdf:resource="&dm;PossibleIndividual"/>
+            <owl:qualifiedCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:qualifiedCardinality>
+          </owl:Restriction>
+        </owl:intersectionOf>
+      </owl:Class>
+    </rdfs:subClassOf>
+    <rdfs:comment
+            >
+      This template is set up to match the pattern of
+      ClassifiedIdentification, as defined in P7.
+
+      Signature for ClassifiedAssemblyOfIndividual:
+      | 1 | Part    | dm:PossibleIndividual       |
+      | 2 | Whole   | dm:ArrangedIndividual       |
+      | 3 | Context | dm:ClassOfAssemblyOfIndividual |
+    </rdfs:comment>
+    <rdfs:comment
+            >
+      Template axiom:
+
+      ClassifiedAssemblyOfIndividual( x1, x2, x3 ) &lt;-&gt;
+      PossibleIndividual( x1 ) &amp;
+      ArrangedIndividual( x2 ) &amp;
+      ClassOfAssemblyOfIndividual( x3 ) &amp;
+      exists y ( AssemblyOfIndividualTriple( y, x1, x2 ) &amp;
+      ClassificationOfRelationship( y, x3 ) .
+    </rdfs:comment>
+  </owl:Class>
+  
   <!-- Template Description -->
   <!-- http://tpl.rdlfacade.org/data#TemplateDescription_of_ClassifiedAssemblyOfIndividual -->
   <owl:Thing rdf:about="#TemplateDescription_of_ClassifiedAssemblyOfIndividual">
@@ -354,6 +431,7 @@ AssemblyRelation( x1, x2, x3, x4, x5, x6, x7 ) &lt;-&gt;
     <p8:hasTemplate rdf:resource="#ClassifiedAssemblyOfIndividual"/>
     <p8:hasRole rdf:resource="#hasAssemblyType"/>
   </owl:Thing>
+  
   
   
   <!-- Specialized Template -->
