@@ -129,13 +129,31 @@ class dataObjectsModel{
 									{
 										// if there is any difference between old and new then represent as old->new
 										if((string)$roleObject->value!=(string)$roleObject->oldValue){
-											$tempRoleValueArray[$tempKey]=(string)$roleObject->oldValue.'->'.$roleObject->value;
+											$tempRoleValueArray[$tempKey]='<span style="color:blue;">'.(string)$roleObject->oldValue.'->'.$roleObject->value.'</span>';
 										}else{
 											$tempRoleValueArray[$tempKey]=(string)$roleObject->oldValue;
 
 										}
 									}else{
-										$tempRoleValueArray[$tempKey]=(string)$roleObject->value;
+
+										$spanColor='';
+
+										//echo '<br>'.(string)$dataTransferObject->transferType;
+										
+										switch (strtolower((string)$dataTransferObject->transferType))
+										{
+											case "add":
+												$spanColor='red';
+												break;
+											case "delete":
+												$spanColor='green';
+												break;
+											case "sync":
+												$spanColor='black';
+												break;
+										}
+
+										$tempRoleValueArray[$tempKey]='<span style="color:'.$spanColor.'">'.(string)$roleObject->value.'</span>';
 
 									}
 									unset($tempKey);
@@ -207,7 +225,7 @@ class dataObjectsModel{
 		 $headerListDataArray = array();
 
 		 foreach($headerArrayList as $key =>$val){
-			$headerListDataArray[]=array('name'=>str_replace(".", "_", $val));
+			$headerListDataArray[]=array('name'=>str_replace(".", "_", $val),'sort'=>true);
 			$columnsDataArray[]=array('header'=>$val,'dataIndex'=>str_replace(".", "_", $val));
 			
 		}
