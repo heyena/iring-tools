@@ -17,68 +17,66 @@ function showgrid(response, request,label){
 
 	// create the data store
 	var store = new Ext.data.ArrayStore({
-fields: filedsVal
+	fields: filedsVal
 	});
 	store.loadData(rowData);
 
-	if(grid){ 
+	if(grid){
+		alert('Going to destroy...')
 		grid.destroy();                                  
 	}
-
 	// create the Grid
 	var grid = new Ext.grid.GridPanel({
-store: store,
-columns: columnData,
-stripeRows: true,
-	//title:'Title of the Grid',
-viewConfig: {forceFit:true},
-id:label,
-loadMask: true,
-layout:'fit',
-frame:true,
-autoSizeColumns: true,
-autoSizeGrid: true,
-	//collapsible: true,
-	//animCollapse: true,
-columnLines: true,
-	//autoHeight:true,
-autoWidth:true
+	store: store,
+	columns: columnData,
+	stripeRows: true,
+	viewConfig: {forceFit:true},
+	id:label,
+	loadMask: true,
+	layout:'fit',
+	frame:true,
+	autoSizeColumns: true,
+	autoSizeGrid: true,
+	columnLines: true,
+	autoWidth:true
 	});
+	
 	Ext.getCmp('centerPanel').add( 
-								  Ext.apply(grid,{
-id:'tab-'+label,
-title: label,
-closable:true
-	}) 
-								 ).show();
+	Ext.apply(grid,{
+	id:'tab-'+label,
+	title: label,
+	closable:true
+	})).show();
 
 }
 
 function sendAjaxRequest(label){
-Ext.getBody().mask('Loading...');
-Ext.Ajax.request({
-url : 'dataObjects/getDataObjects/1/2',
-method: 'POST',
-params: {
-/*nodeid: node.id,
-newparentid: newParent.id,
-oldparentid: oldParent.id,
-dropindex: index
-*/
-},
-success: function(result, request)
-{ 
-			showgrid(result.responseText, request,label);
-},
-failure: function ( result, request){ 
-			//alert(result.responseText); 
+	Ext.getBody().mask('Loading...');
+
+	Ext.Ajax.request({
+		url : 'dataObjects/getDataObjects/1/2',
+		method: 'POST',
+		params: {
+		/*nodeid: node.id,
+		newparentid: newParent.id,
+		oldparentid: oldParent.id,
+		dropindex: index
+		*/
 		},
-callback: function() {Ext.getBody().unmask(); }
+		success: function(result, request)
+		{ 
+					showgrid(result.responseText, request,label);
+		},
+		failure: function ( result, request){ 
+					//alert(result.responseText); 
+				},
+		callback: function() {Ext.getBody().unmask();}
 	})
 }
 
 Ext.onReady(function(){	
-    var tBar = new Ext.Toolbar({ xtype: "toolbar",
+    var tBar = new Ext.Toolbar({
+	xtype: "toolbar",
     items: [ {
             xtype:"tbbutton",
             icon:'resources/images/16x16/view-refresh.png',
@@ -92,7 +90,9 @@ Ext.onReady(function(){
             qtip:'Exchange Data',
             disabled: false,
             handler: function()
-                {alert("Clicked on Exchange Data")
+                {
+					  //alert("Clicked on Exchange Data")
+					  dataExchange();
 				}
         },
         {
@@ -171,7 +171,9 @@ Ext.onReady(function(){
           }
         },
         dblclick :{
-            handler:showCentralGrid
+		fn : function (){
+			showCentralGrid();
+	 }
         },
         expandnode:{
             fn : function (node){
@@ -197,6 +199,22 @@ Ext.onReady(function(){
       );
   }
 
+  function dataExchange(){
+  Ext.Msg.show({
+        msg: 'Would you like to review the <br/>Data Exchange before starting?',
+        buttons: Ext.Msg.YESNO,
+        icon: Ext.Msg.QUESTION,//'profile', // &lt;- customized icon
+        fn: function(action){
+		   if(action=='yes'){
+			   showCentralGrid();
+		   }
+		   else if(action=='no')
+		   {
+			       alert('You clicked on No');
+		   }
+	   }});
+	  }
+  
   function showCentralGrid()
     {
 	  var label = tree.getSelectionModel().getSelectedNode().text;
@@ -205,13 +223,6 @@ Ext.onReady(function(){
 			 if it's available then just display the tab & don't send ajax request
 		  */
 	  if(!Ext.getCmp(label)){
-        Ext.Msg.show({
-        msg: 'Would you like to review the <br/>Data Exchange before starting?',
-        buttons: Ext.Msg.YESNO,
-        icon: Ext.Msg.QUESTION,//'profile', // &lt;- customized icon
-        fn: function(action){
-           if(action=='yes')
-           {
                    if(tree.getSelectionModel().getSelectedNode().id!=null)
                    {
                           Ext.getCmp('centerPanel').enable();
@@ -220,15 +231,7 @@ Ext.onReady(function(){
 						  if(Ext.getCmp('detail-grid').collapsed!=true){
 							  Ext.getCmp('detail-grid').collapse();
 						  }
-                          
                    }
-                   
-           }
-           else if(action=='no')
-           {
-                   alert('You clicked on No');
-           }
-       }});
 	}else{
 		// collapse the detail Grid panel & show the tab
 		  if(Ext.getCmp('detail-grid').collapsed!=true){
