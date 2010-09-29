@@ -7,7 +7,7 @@ import java.util.List;
 import org.iringtools.adapter.dti.IdentifierComparator;
 import org.iringtools.adapter.dto.DataTransferObjectComparator;
 import org.iringtools.adapter.dti.DataTransferIndices;
-import org.iringtools.adapter.dti.DataTransferIndices.DataTransferIndex;
+import org.iringtools.adapter.dti.DataTransferIndex;
 import org.iringtools.adapter.dti.TransferType;
 import org.iringtools.adapter.dto.ClassObject;
 import org.iringtools.adapter.dto.DataTransferObject;

@@ -6,28 +6,27 @@
 //
 
 
-package org.iringtools.adapter.dto;
+package org.iringtools.protocol.manifest;
 
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for DataTransferObjects complex type.
+ * <p>Java class for Graphs complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="DataTransferObjects">
+ * &lt;complexType name="Graphs">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="dataTransferObject" type="{http://iringtools.org/adapter/dto}DataTransferObject" maxOccurs="unbounded"/>
+ *         &lt;element name="graph" type="{http://iringtools.org/protocol/manifest}Graph" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -37,54 +36,53 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "DataTransferObjects", propOrder = {
-    "dataTransferObjects"
+@XmlType(name = "Graphs", propOrder = {
+    "graphs"
 })
-@XmlRootElement(name = "dataTransferObjects")
-public class DataTransferObjects {
+public class Graphs {
 
-    @XmlElement(name = "dataTransferObject", required = true)
-    protected List<DataTransferObject> dataTransferObjects;
+    @XmlElement(name = "graph", required = true)
+    protected List<Graph> graphs;
 
     /**
-     * Gets the value of the dataTransferObjects property.
+     * Gets the value of the graphs property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the dataTransferObjects property.
+     * This is why there is not a <CODE>set</CODE> method for the graphs property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getDataTransferObjects().add(newItem);
+     *    getGraphs().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link DataTransferObject }
+     * {@link Graph }
      * 
      * 
      */
-    public List<DataTransferObject> getDataTransferObjects() {
-        if (dataTransferObjects == null) {
-            dataTransferObjects = new ArrayList<DataTransferObject>();
+    public List<Graph> getGraphs() {
+        if (graphs == null) {
+            graphs = new ArrayList<Graph>();
         }
-        return this.dataTransferObjects;
+        return this.graphs;
     }
 
     /**
-     * Sets the value of the dataTransferObjects property.
+     * Sets the value of the graphs property.
      * 
-     * @param dataTransferObjects
+     * @param graphs
      *     allowed object is
-     *     {@link DataTransferObject }
+     *     {@link Graph }
      *     
      */
-    public void setDataTransferObjects(List<DataTransferObject> dataTransferObjects) {
-        this.dataTransferObjects = dataTransferObjects;
+    public void setGraphs(List<Graph> graphs) {
+        this.graphs = graphs;
     }
 
 }

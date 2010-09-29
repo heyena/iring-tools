@@ -7,11 +7,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-
 import org.apache.log4j.Logger;
 import org.iringtools.directory.Directory;
 import org.iringtools.directory.DirectoryProvider;
-import org.iringtools.directory.ExchangeDefinition;
+import org.iringtools.directory.Exchange;
 
 @Path("/")
 @Produces("application/xml")
@@ -30,7 +29,7 @@ public class DirectoryService
     
   @GET
   @Path("/exchanges")
-  public Directory getExchangeList()
+  public Directory getExchanges()
   {
     Directory directory = null;
     
@@ -38,7 +37,7 @@ public class DirectoryService
     {
       init();
       DirectoryProvider directoryProvider = new DirectoryProvider(settings);
-      directory = directoryProvider.getExchangeList();
+      directory = directoryProvider.getExchanges();
     }
     catch (Exception ex)
     {
@@ -50,15 +49,15 @@ public class DirectoryService
   
   @GET
   @Path("/exchanges/{id}")
-  public ExchangeDefinition getExchange(@PathParam("id") String id) 
+  public Exchange getExchange(@PathParam("id") String id) 
   {   
-    ExchangeDefinition xDef = null;
+    Exchange xDef = null;
     
     try
     {
       init();
       DirectoryProvider directoryProvider = new DirectoryProvider(settings);
-      xDef = directoryProvider.getExchangeDefinition(id);
+      xDef = directoryProvider.getExchange(id);
     }
     catch (Exception ex)
     {

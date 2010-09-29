@@ -54,7 +54,7 @@
   
   <xs:complexType name="Identifiers">
     <xs:sequence>
-      <xs:element name="identifier" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="identifier" type="xs:string" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
 </xs:schema>

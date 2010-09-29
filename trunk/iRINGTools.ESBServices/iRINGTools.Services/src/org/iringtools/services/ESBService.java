@@ -17,15 +17,15 @@ import javax.xml.bind.JAXBException;
 import org.apache.log4j.Logger;
 import org.iringtools.adapter.dto.DataTransferObjectComparator;
 import org.iringtools.adapter.dti.DataTransferIndices;
-import org.iringtools.adapter.dti.DataTransferIndices.DataTransferIndex;
+import org.iringtools.adapter.dti.DataTransferIndex;
 import org.iringtools.adapter.dto.DataTransferObject;
 import org.iringtools.adapter.dto.ClassObject;
-import org.iringtools.adapter.dto.DataTransferObject.ClassObjects;
+import org.iringtools.adapter.dto.ClassObjects;
 import org.iringtools.adapter.dto.TransferType;
 import org.iringtools.adapter.dto.DataTransferObjects;
 import org.iringtools.protocol.manifest.Manifest;
 import org.iringtools.directory.Directory;
-import org.iringtools.directory.ExchangeDefinition;
+import org.iringtools.directory.Exchange;
 import org.iringtools.exchange.DtiSubmission;
 import org.iringtools.exchange.DxiRequest;
 import org.iringtools.exchange.DxoRequest;
@@ -33,7 +33,9 @@ import org.iringtools.exchange.DxRequest;
 import org.iringtools.exchange.Identifiers;
 import org.iringtools.common.response.Response;
 import org.iringtools.common.response.Status;
-import org.iringtools.common.response.StatusLevel;
+import org.iringtools.common.response.Level;
+import org.iringtools.common.response.StatusList;
+import org.iringtools.common.response.Messages;
 import org.iringtools.utility.NetUtil;
 
 @Path("/")
@@ -85,7 +87,7 @@ public class ESBService
       init();
   
       // get exchange definition
-      ExchangeDefinition xdef = getExchangeDefinition(exchangeId);
+      Exchange xdef = getExchange(exchangeId);
   
       // get target manifest
       String targetManifestUrl = xdef.getTargetUri() + "/" + xdef.getTargetAppScope() + "/" + xdef.getTargetAppName()
@@ -142,7 +144,7 @@ public class ESBService
       List<DataTransferObject> resultDtoList = resultDtos.getDataTransferObjects();
       
       // get exchange definition
-      ExchangeDefinition xdef = getExchangeDefinition(exchangeId);
+      Exchange xdef = getExchange(exchangeId);
   
       // get target manifest
       String targetManifestUrl = xdef.getTargetUri() + "/" + xdef.getTargetAppScope() + "/" + xdef.getTargetAppName() + "/manifest";
@@ -300,7 +302,7 @@ public class ESBService
   public Response postDtiList(@PathParam("exchangeId") String exchangeId, DtiSubmission dtiSubmission)
   {
     Response response = new Response();
-    Response.StatusList statusList = new Response.StatusList();
+    StatusList statusList = new StatusList();
     response.setStatusList(statusList);
     
     try
@@ -319,7 +321,7 @@ public class ESBService
       init();
   
       // get exchange definition
-      ExchangeDefinition xdef = getExchangeDefinition(exchangeId);
+      Exchange xdef = getExchange(exchangeId);
   
       // get target application uri
       String targetAppUri = xdef.getTargetUri() + "/" + xdef.getTargetAppScope() + "/" + xdef.getTargetAppName();
@@ -334,7 +336,7 @@ public class ESBService
   
       // submit DTOs to target adapter service by configured pool size per submission
       int dtiSize = dtiList.size();
-      int poolSize = Integer.parseInt(settings.get("poolSize")) - 1; // zero-based
+      int poolSize = Integer.parseInt(settings.get("poolSize"));
   
       for (int i = 0; i < dtiSize; i += poolSize)
       {
@@ -478,12 +480,12 @@ public class ESBService
         }
       }
   
-      response.setLevel(StatusLevel.SUCCESS);
+      response.setLevel(Level.SUCCESS);
     }
     catch (Exception ex)
     {
       logger.error("Error while posting DTOs: " + ex);
-      response.setLevel(StatusLevel.ERROR);
+      response.setLevel(Level.ERROR);
     }
     
     return response;
@@ -498,15 +500,15 @@ public class ESBService
     settings.put("poolSize", context.getInitParameter("poolSize"));
   }
 
-  private ExchangeDefinition getExchangeDefinition(String exchangeId) throws JAXBException, IOException
+  private Exchange getExchange(String exchangeId) throws JAXBException, IOException
   {
     String directoryServiceUrl = settings.get("directoryServiceUri") + "/exchanges/" + exchangeId;
-    return NetUtil.get(ExchangeDefinition.class, directoryServiceUrl);
+    return NetUtil.get(Exchange.class, directoryServiceUrl);
   }
   
   private Status createStatus(String identifier, String message)
   {
-    Status.Messages messages = new Status.Messages();
+    Messages messages = new Messages();
     List<String> messageList = messages.getMessages();
     messageList.add(message);
     

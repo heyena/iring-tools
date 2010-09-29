@@ -13,21 +13,20 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for DataTransferObjects complex type.
+ * <p>Java class for TemplateObjects complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="DataTransferObjects">
+ * &lt;complexType name="TemplateObjects">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="dataTransferObject" type="{http://iringtools.org/adapter/dto}DataTransferObject" maxOccurs="unbounded"/>
+ *         &lt;element name="templateObject" type="{http://iringtools.org/adapter/dto}TemplateObject" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -37,54 +36,53 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "DataTransferObjects", propOrder = {
-    "dataTransferObjects"
+@XmlType(name = "TemplateObjects", propOrder = {
+    "templateObjects"
 })
-@XmlRootElement(name = "dataTransferObjects")
-public class DataTransferObjects {
+public class TemplateObjects {
 
-    @XmlElement(name = "dataTransferObject", required = true)
-    protected List<DataTransferObject> dataTransferObjects;
+    @XmlElement(name = "templateObject", required = true)
+    protected List<TemplateObject> templateObjects;
 
     /**
-     * Gets the value of the dataTransferObjects property.
+     * Gets the value of the templateObjects property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the dataTransferObjects property.
+     * This is why there is not a <CODE>set</CODE> method for the templateObjects property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getDataTransferObjects().add(newItem);
+     *    getTemplateObjects().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link DataTransferObject }
+     * {@link TemplateObject }
      * 
      * 
      */
-    public List<DataTransferObject> getDataTransferObjects() {
-        if (dataTransferObjects == null) {
-            dataTransferObjects = new ArrayList<DataTransferObject>();
+    public List<TemplateObject> getTemplateObjects() {
+        if (templateObjects == null) {
+            templateObjects = new ArrayList<TemplateObject>();
         }
-        return this.dataTransferObjects;
+        return this.templateObjects;
     }
 
     /**
-     * Sets the value of the dataTransferObjects property.
+     * Sets the value of the templateObjects property.
      * 
-     * @param dataTransferObjects
+     * @param templateObjects
      *     allowed object is
-     *     {@link DataTransferObject }
+     *     {@link TemplateObject }
      *     
      */
-    public void setDataTransferObjects(List<DataTransferObject> dataTransferObjects) {
-        this.dataTransferObjects = dataTransferObjects;
+    public void setTemplateObjects(List<TemplateObject> templateObjects) {
+        this.templateObjects = templateObjects;
     }
 
 }
