@@ -140,7 +140,11 @@
     <SDKLibUpdate
       Include="Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll;
                Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;
-               Libraries\AdapterLibrary\bin\Debug\AdapterLibrary.dll;">
+               Libraries\AdapterLibrary\bin\Debug\AdapterLibrary.dll;
+               ExternalBinaries\Configuration\StaticDust.Configuration.dll;
+               ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.dll;
+               ExternalBinaries\Ninject2\Ninject.dll;
+               ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll">
     </SDKLibUpdate>
 
     <SDKLibDeployment
@@ -217,7 +221,7 @@
     <MSBuild Projects="$(SolutionFile)" Targets="Build"/>
   </Target>
 
-  <Target Name="SDKBuild" DependsOnTargets="CoreBuild; DeployToSDK">
+  <Target Name="SDKBuild" DependsOnTargets="DeployToSDK">
     <Message Text="Performing MSBuild of SDK ..." />
     <MSBuild Projects="$(SDKSolutionFile)" Targets="Build"/>
   </Target>

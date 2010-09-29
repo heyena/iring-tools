@@ -1561,32 +1561,29 @@ namespace org.iringtools.referenceData
                                         }
                                         //append role to sparql query
                                         //value restriction
-                                        if (role.value != null)
+                                        if (role.value != null && !String.IsNullOrEmpty(role.value.text))
                                         {
-                                            if (!String.IsNullOrEmpty(role.value.text))
+                                            string roleValueAs = role.value.As;
+                                            if (role.value.As.StartsWith(@"http://www.w3.org/2001/XMLSchema#"))
                                             {
-                                                string roleValueAs = role.value.As;
-                                                if (role.value.As.StartsWith(@"http://www.w3.org/2001/XMLSchema#"))
-                                                {
-                                                    roleValueAs = role.value.As.Replace(@"http://www.w3.org/2001/XMLSchema#", string.Empty);
-                                                }
-
-                                                sparql += "_:role" + i + " rdf:type tpl:R67036823327 ; "
-                                                      + " tpl:R56456315674 " + ID + " ; "
-                                                      + " tpl:R89867215482 <" + role.qualifies + "> ; "
-                                                      + " tpl:R29577887690 '" + role.value.text + "'^^xsd:" + roleValueAs + " . ";
-
-                                                i++;
+                                                roleValueAs = role.value.As.Replace(@"http://www.w3.org/2001/XMLSchema#", string.Empty);
                                             }
 
-                                            else if (!String.IsNullOrEmpty(role.value.reference)) 
-                                            {
-                                                //reference restriction
-                                                sparql += "<" + role.qualifies + "> rdf:type tpl:R40103148466 ; "
-                                                      + " tpl:R49267603385 " + ID + " ; "
-                                                      + " tpl:R30741601855 <" + role.qualifies + "> ; "
-                                                      + " tpl:R21129944603 <" + role.value.reference + "> . ";
-                                            }
+                                            sparql += "_:role" + i + " rdf:type tpl:R67036823327 ; "
+                                                  + " tpl:R56456315674 " + ID + " ; "
+                                                  + " tpl:R89867215482 <" + role.qualifies + "> ; "
+                                                  + " tpl:R29577887690 '" + role.value.text + "'^^xsd:" + roleValueAs + " . ";
+
+                                            i++;
+                                        }
+
+                                        else if (role.value != null && !String.IsNullOrEmpty(role.value.reference)) 
+                                        {
+                                            //reference restriction
+                                            sparql += "<" + role.qualifies + "> rdf:type tpl:R40103148466 ; "
+                                                  + " tpl:R49267603385 " + ID + " ; "
+                                                  + " tpl:R30741601855 <" + role.qualifies + "> ; "
+                                                  + " tpl:R21129944603 <" + role.value.reference + "> . ";
                                         }
                                         else if (!String.IsNullOrEmpty(role.range))
                                         {
@@ -1927,19 +1924,17 @@ namespace org.iringtools.referenceData
                             Utility.WriteString("\n" + ID + "\t" + label, "Class IDs.log", true);
                             //ID = Class.identifier.Remove(0, 1);
 
-                            if (Class.description.Count == 0)
-                            {
-                                sparql += ID + " rdfs:label \"" + label + "\"^^xsd:string . ";
-                            }
-                            else
-                            {
-                                sparql += ID + " rdfs:label \"" + label + "\"^^xsd:string ; ";
-                            }
+                            if (Class.entityType != null)
+                              sparql += ID + " rdf:type <" + Class.entityType.reference + "> . ";
+
+                            sparql += ID + " rdfs:label \"" + label + "\"^^xsd:string . ";
+
                             foreach (Description descr in Class.description)
                             {
-                                description = descr.value;
-                                sparql += "rdfs:comment \"" + description + "\"^^xsd:string . ";
+                              description = descr.value;
+                              sparql += ID + "rdfs:comment \"" + description + "\"^^xsd:string . ";
                             }
+                            
 
                             /// TODO: fix the type
 

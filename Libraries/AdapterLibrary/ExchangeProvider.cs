@@ -633,7 +633,7 @@ namespace org.iringtools.exchange
               }
               else
               {
-                classIdentifiers[i] += classMap.identifierDelimeter + value;
+                classIdentifiers[i] += classMap.identifierDelimiter + value;
               }
             }
           }
@@ -655,7 +655,7 @@ namespace org.iringtools.exchange
                 }
                 else
                 {
-                  classIdentifiers[i] += classMap.identifierDelimeter + value;
+                  classIdentifiers[i] += classMap.identifierDelimiter + value;
                 }
               }
             }

@@ -110,7 +110,16 @@ namespace org.iringtools.modulelibrary.layerbll
                 {
                     return "";
                 }
-            }           
+            }
+          set
+          {
+            _classDefinition.entityType = new EntityType { reference = value };  
+            
+            if (PropertyChanged != null)
+            {
+              PropertyChanged(this, new PropertyChangedEventArgs("EntityType"));
+            }
+          } 
         }
 
         public string Description

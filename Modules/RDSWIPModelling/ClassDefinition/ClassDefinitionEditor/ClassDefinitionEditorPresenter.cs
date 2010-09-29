@@ -158,9 +158,15 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
                    object obj = args.Data;
                    foreach (Repository repository in (List<Repository>)obj)
                    {
+                      string label = repository.name;
+                      if (repository.isReadOnly)
+                      {
+                        label += " (Read Only)";
+                      }
+                        
                        ComboBoxItem item = new ComboBoxItem
                        {
-                           Content = repository.name + "<>IsReadOnly= " + repository.isReadOnly.ToString(),
+                         Content = label,
                            Tag = repository,
                            Height = 20,
                            FontSize =10
