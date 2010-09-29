@@ -43,6 +43,8 @@ using StaticDust.Configuration;
 using VDS.RDF;
 using VDS.RDF.Query;
 using org.iringtools.adapter.projection;
+using System.ServiceModel;
+using System.Security.Principal;
 
 namespace org.iringtools.adapter
 {
@@ -81,6 +83,12 @@ namespace org.iringtools.adapter
       _settings.AppendSettings(settings);
 
       Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
+
+      if (ServiceSecurityContext.Current != null)
+      {
+          IIdentity identity = ServiceSecurityContext.Current.PrimaryIdentity;
+          _settings["UserName"] = identity.Name;
+      }
 
       #region initialize webHttpClient for converting old mapping
       string proxyHost = _settings["ProxyHost"];

@@ -364,7 +364,7 @@ namespace org.iringtools.adapter.projection
               }
               else
               {
-                identifiers[i] += classMap.identifierDelimeter + value;
+                identifiers[i] += classMap.identifierDelimiter + value;
               }
             }
           }
@@ -386,7 +386,7 @@ namespace org.iringtools.adapter.projection
                 }
                 else
                 {
-                  identifiers[i] += classMap.identifierDelimeter + value;
+                  identifiers[i] += classMap.identifierDelimiter + value;
                 }
               }
             }

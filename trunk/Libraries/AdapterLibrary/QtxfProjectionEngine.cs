@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using Ninject;
 using org.iringtools.utility;
 using VDS.RDF;
+using System.Web;
 
 namespace org.iringtools.adapter.projection
 {
@@ -38,9 +39,9 @@ namespace org.iringtools.adapter.projection
       _mapping = mapping;
 
       _graphNs = String.Format("{0}{1}/{2}",
-        settings["GraphBaseUri"],
-        settings["ProjectName"],
-        settings["ApplicationName"]
+        HttpUtility.UrlEncode(settings["GraphBaseUri"]),
+        HttpUtility.UrlEncode(settings["ProjectName"]),
+        HttpUtility.UrlEncode(settings["ApplicationName"])
       );
 
       _dataObjects = new List<IDataObject>();
@@ -91,7 +92,7 @@ namespace org.iringtools.adapter.projection
               }
               else
               {
-                classIdentifiers[i] += classMap.identifierDelimeter + value;
+                classIdentifiers[i] += classMap.identifierDelimiter + value;
               }
             }
           }
@@ -113,7 +114,7 @@ namespace org.iringtools.adapter.projection
                 }
                 else
                 {
-                  classIdentifiers[i] += classMap.identifierDelimeter + value;
+                  classIdentifiers[i] += classMap.identifierDelimiter + value;
                 }
               }
             }
@@ -219,7 +220,7 @@ namespace org.iringtools.adapter.projection
                       string value = Convert.ToString(dataObject.GetPropertyValue(propertyName));
 
                       if (identifierValue != String.Empty)
-                        identifierValue += roleMap.classMap.identifierDelimeter;
+                        identifierValue += roleMap.classMap.identifierDelimiter;
 
                       identifierValue += value;
                     }

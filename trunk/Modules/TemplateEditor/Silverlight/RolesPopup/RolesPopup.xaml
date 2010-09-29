@@ -46,7 +46,7 @@
                         Grid.Row="0"
 		                VerticalAlignment="Center"                        
                         ItemsSource="{Binding Ranges, Mode=TwoWay}"
-                        DisplayMemberPath="Value"                        
+                        DisplayMemberPath="Key"                        
                         SelectedItem="{Binding RoleRange, Mode=TwoWay}"/>
                     <!--IsEnabled="{Binding HasRange}"-->
 

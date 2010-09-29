@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using VDS.RDF;
 using VDS.RDF.Storage;
 using org.iringtools.utility;
+using System.Web;
 
 namespace org.iringtools.adapter.projection
 {
@@ -35,9 +36,9 @@ namespace org.iringtools.adapter.projection
       try
       {
         _appNamespace = String.Format("{0}{1}/{2}",
-           _settings["GraphBaseUri"],
-           _settings["ProjectName"],
-           _settings["ApplicationName"]
+           HttpUtility.UrlEncode(_settings["GraphBaseUri"]),
+           HttpUtility.UrlEncode(_settings["ProjectName"]),
+           HttpUtility.UrlEncode(_settings["ApplicationName"])
          );
 
         _graphMap = _mapping.FindGraphMap(graphName);

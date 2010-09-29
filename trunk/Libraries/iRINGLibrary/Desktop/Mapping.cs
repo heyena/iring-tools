@@ -228,7 +228,7 @@ namespace org.iringtools.library
     {
       classId = classMap.classId;
       name = classMap.name;
-      identifierDelimeter = String.Empty;
+      identifierDelimiter = String.Empty;
 
       foreach (string identifier in classMap.identifiers)
       {
@@ -243,7 +243,7 @@ namespace org.iringtools.library
     public string name { get; set; }
 
     [DataMember(EmitDefaultValue = false, Order = 2)]
-    public string identifierDelimeter { get; set; }
+    public string identifierDelimiter { get; set; }
 
     [DataMember(EmitDefaultValue = false, Order = 3)]
     public List<string> identifiers { get; set; }

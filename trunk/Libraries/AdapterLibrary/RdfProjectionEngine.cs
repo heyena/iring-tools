@@ -14,6 +14,7 @@ using org.iringtools.utility;
 using System.Xml;
 using VDS.RDF.Parsing;
 using VDS.RDF.Query;
+using System.Web;
 
 namespace org.iringtools.adapter.projection
 {
@@ -39,10 +40,10 @@ namespace org.iringtools.adapter.projection
       try
       {
         _graphBaseUri = String.Format("{0}{1}/{2}/{3}/",
-          _settings["GraphBaseUri"],
-          _settings["ProjectName"],
-          _settings["ApplicationName"],
-          graphName
+          HttpUtility.UrlEncode(_settings["GraphBaseUri"]),
+          HttpUtility.UrlEncode(_settings["ProjectName"]),
+          HttpUtility.UrlEncode(_settings["ApplicationName"]),
+          HttpUtility.UrlEncode(graphName)
         );
 
         _graphMap = _mapping.FindGraphMap(graphName);
