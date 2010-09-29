@@ -16,9 +16,11 @@
 
 <!-- List of PREFIX Changes 
 
-
-
-
+  tpl from "http://rdl.rdswip.org/sampleTemplates#" to "http://tpl.rdlfacade.org/data#"
+  RDL form "http://rdl.rdswip.org/sampleReferenceData#" to rdl "http://rdl.rdlfacade.org/data#"
+  dm from "http://standards.tc184-sc4.org/iso/15926/-8/data-model#" to "http://dm.rdlfacade.org/data#"
+  templates from "http://standards.tc184-sc4.org/iso/15926/-8/templates#" to "http://tpl.rdlfacade.org/data#"
+  
 -->
 
 <rdf:RDF xmlns="http://tpl.rdlfacade.org/data#"
@@ -36,7 +38,7 @@
 
   
   
-  <!-- ROles -->
+  <!-- ROles - referenced by templates. not really needed here -->
   
   <!-- http://tpl.rdlfacade.org/data#R36573597723 -->
   <owl:Thing rdf:about="#R36573597723">
