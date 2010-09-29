@@ -30,12 +30,26 @@ function showgrid(response, request,label){
 	store: store,
 	columns: columnData,
 	stripeRows: true,
-	title:'Title of the Grid',
+	//title:'Title of the Grid',
+viewConfig: {
+forceFit:true
+		   },
 	id:label,
 	loadMask: true,
 	layout:'fit',
 	frame:true,
-	height:300
+	//height:300,
+	//autoExpandColumn: 0,
+	//autoSizeColumns:true,
+
+//autoSizeColumns: true,
+autoSizeGrid: true,
+//collapsible: true,
+animCollapse: true,
+//height: 445,
+columnLines: true,
+//autoHeight:true,
+//autoWidth:true
 	});
 	//grid.render('centerPanel');
 
@@ -48,7 +62,7 @@ function showgrid(response, request,label){
 		  closable:true
 		}) 
 	).show();
-	
+
 }
 
 function sendAjaxRequest(label){
@@ -70,7 +84,7 @@ success: function(result, request)
 failure: function ( result, request){ 
 			//alert(result.responseText); 
 		},
-callback: function() { Ext.getBody().unmask(); }
+callback: function() {Ext.getBody().unmask(); }
 	})
 }
 
@@ -84,7 +98,8 @@ Ext.onReady(function(){
             {alert("Refresh Clicked")}
         },
         {xtype:"tbbutton",text:"Exchange", id: 'headExchange', disabled: false,
-        handler: function(){
+        handler: function()
+		{
         Ext.Msg.show({
         title: ':: :: :: :: :: :: :: :: :: :: :: :: :: :: :: :: :: :: ',
         msg: 'Would you like to review the <br/>Data Exchange before starting?',
@@ -110,6 +125,10 @@ Ext.onReady(function(){
 
 					  }else{
 					  sendAjaxRequest(label);
+					  // check the current state of Detail Grid panel
+					  if(Ext.getCmp('detail-grid').collapsed!=true){
+						  Ext.getCmp('detail-grid').collapse();
+					  }
 					  }
                    }
            }
