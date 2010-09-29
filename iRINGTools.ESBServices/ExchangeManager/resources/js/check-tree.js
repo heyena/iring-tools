@@ -31,9 +31,9 @@ function showgrid(response, request,label){
 	columns: columnData,
 	stripeRows: true,
 	//title:'Title of the Grid',
-viewConfig: {
-forceFit:true
-		   },
+        viewConfig: {
+            forceFit:true
+	},
 	id:label,
 	loadMask: true,
 	layout:'fit',
@@ -47,7 +47,7 @@ autoSizeGrid: true,
 //collapsible: true,
 animCollapse: true,
 //height: 445,
-columnLines: true,
+columnLines: true
 //autoHeight:true,
 //autoWidth:true
 	});
@@ -91,53 +91,27 @@ callback: function() {Ext.getBody().unmask(); }
 Ext.onReady(function(){	
     var tBar = new Ext.Toolbar({ xtype: "toolbar",
     items: [ {
-        xtype:"tbbutton",
-        icon:'resources/images/16x16/view-refresh.png',
-        qtip:'Refresh',
-        id: 'headRefresh', disabled: false,handler: function()
-            {alert("Refresh Clicked")}
+            xtype:"tbbutton",
+            icon:'resources/images/16x16/view-refresh.png',
+            qtip:'Refresh',
+            id: 'headRefresh', disabled: false,handler: function()
+                {alert("Refresh Clicked")}
         },
-        {xtype:"tbbutton",text:"Exchange", id: 'headExchange', disabled: false,
-        handler: function()
-		{
-        Ext.Msg.show({
-        title: ':: :: :: :: :: :: :: :: :: :: :: :: :: :: :: :: :: :: ',
-        msg: 'Would you like to review the <br/>Data Exchange before starting?',
-        buttons: Ext.Msg.YESNO,
-        icon: Ext.Msg.QUESTION,//'profile', // &lt;- customized icon
-        fn: function(action){
-           if(action=='yes')
-           {
-                   if(tree.getSelectionModel().getSelectedNode().id!=null)
-				   {
-                      //alert(tree.getSelectionModel().getSelectedNode().text);
-					  Ext.getCmp('centerPanel').enable();
-					  var label = tree.getSelectionModel().getSelectedNode().text;
-
-					  /*
-						  check the id of the tab
-						  if it's available just display don't send ajax request
-					   */
-					  if(Ext.getCmp(label))
-					  {
-						 //alert(Ext.getCmp(label).closable)
-						 Ext.getCmp(label).show();
-
-					  }else{
-					  sendAjaxRequest(label);
-					  // check the current state of Detail Grid panel
-					  if(Ext.getCmp('detail-grid').collapsed!=true){
-						  Ext.getCmp('detail-grid').collapse();
-					  }
-					  }
-                   }
-           }
-           else if(action=='no')
-           {
-                   alert('You clicked on No');
-           }
-       }});
-    }}
+        {
+            xtype:"tbbutton",
+            icon:'resources/images/16x16/go-send.png',
+            qtip:'Exchange Data',
+            disabled: false,
+            handler: function()
+                {alert("Clicked on Exchange Data")}
+        },
+        {
+            xtype:"tbbutton",
+            icon:'resources/images/16x16/document-open.png',
+            id: 'headExchange',
+            disabled: false,
+            handler: showCentralGrid
+	}
 
     ]});
 	
@@ -206,6 +180,9 @@ Ext.onReady(function(){
               }             
           }
         },
+        dblclick :{
+            handler:showCentralGrid
+        },
         expandnode:{
             fn : function (node){
                 Ext.state.Manager.set("treestate", node.getPath())
@@ -228,6 +205,47 @@ Ext.onReady(function(){
         return 1;
       }
       );
+  }
+
+  function showCentralGrid()
+    { 
+        Ext.Msg.show({
+        title: ':: :: :: :: :: :: :: :: :: :: :: :: :: :: :: :: :: :: ',
+        msg: 'Would you like to review the <br/>Data Exchange before starting?',
+        buttons: Ext.Msg.YESNO,
+        icon: Ext.Msg.QUESTION,//'profile', // &lt;- customized icon
+        fn: function(action){
+           if(action=='yes')
+           {
+                   if(tree.getSelectionModel().getSelectedNode().id!=null)
+                   {
+                          //alert(tree.getSelectionModel().getSelectedNode().text);
+                          Ext.getCmp('centerPanel').enable();
+                          var label = tree.getSelectionModel().getSelectedNode().text;
+
+                          /*
+                                  check the id of the tab
+                                  if it's available just display don't send ajax request
+                           */
+                          if(Ext.getCmp(label))
+                          {
+                                 //alert(Ext.getCmp(label).closable)
+                                 Ext.getCmp(label).show();
+
+                          }else{
+                          sendAjaxRequest(label);
+                          // check the current state of Detail Grid panel
+                          if(Ext.getCmp('detail-grid').collapsed!=true){
+                                  Ext.getCmp('detail-grid').collapse();
+                          }
+                          }
+                   }
+           }
+           else if(action=='no')
+           {
+                   alert('You clicked on No');
+           }
+       }});
   }
 
   /* to maintain the state of the tree */

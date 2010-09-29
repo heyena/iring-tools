@@ -70,15 +70,8 @@ Ext.onReady(function(){
           margins: '0 5 0 0',
           layout: 'fit', // specify layout manager for items
           items: [
-              propsGrid = new Ext.grid.PropertyGrid({
-              
+              propsGrid = new Ext.grid.PropertyGrid({              
               id:'propGrid',
-              buttons: [{
-                text: 'Save',
-                //handler: saveProperties,
-                disabled :true,
-                id: 'saveProp'
-              }],
               source:{}
             })
             ]
