@@ -1,67 +1,80 @@
 <?xml version="1.0"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://iringtools.org/directory"
-    targetNamespace="http://iringtools.org/directory" elementFormDefault="qualified"
-    xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.0"
-    xmlns:xjc= "http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc">
-    
+  targetNamespace="http://iringtools.org/directory" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+  jaxb:version="2.0" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc">
+
   <xs:annotation>
     <xs:appinfo>
       <jaxb:globalBindings>
-        <xjc:simple />
+        <xjc:simple/>
       </jaxb:globalBindings>
     </xs:appinfo>
   </xs:annotation>
 
   <xs:element name="directory" type="Directory"/>
-  <xs:element name="exchangeDefinition" type="ExchangeDefinition"/>
-  
+  <xs:element name="exchange" type="Exchange"/>
+
   <xs:complexType name="Directory">
     <xs:sequence>
       <xs:element name="applicationData" type="ApplicationData"/>
-      <xs:element name="dataExchanges" type="DataExchange"/>
+      <xs:element name="exchangeData" type="ExchangeData" />
     </xs:sequence>
   </xs:complexType>
-  
+
   <xs:complexType name="ApplicationData">
     <xs:sequence>
-      <xs:element name="application" type="Application" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="application" type="Application" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="Application">
     <xs:sequence>
-      <xs:element name="graph" type="Graph" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="id" type="xs:string"/>
+      <xs:element name="name" type="xs:string"/>
+      <xs:element name="description" type="xs:string"/>
+      <xs:element name="scope" type="xs:string"/>
+      <xs:element name="graphs" type="Graphs"/>
     </xs:sequence>
-    <xs:attribute name="name"/>
-    <xs:attribute name="scope"/>
-    <xs:attribute name="description"/>
   </xs:complexType>
 
-  <xs:complexType name="Graph">
-    <xs:attribute name="name"/>
-    <xs:attribute name="commodity"/>
-  </xs:complexType>
-
-  <xs:complexType name="DataExchange">
+  <xs:complexType name="Graphs">
     <xs:sequence>
-      <xs:element name="commodity" type="Commodity" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="graph" type="Graph" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="Graph">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string"/>
+      <xs:element name="description" type="xs:string"/>
+      <xs:element name="commodity" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ExchangeData">
+    <xs:sequence>
+      <xs:element name="commodity" type="Commodity" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="Commodity">
     <xs:sequence>
-      <xs:element name="exchange" type="Exchange" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="name" type="xs:string"/>
+      <xs:element name="exchanges" type="Exchanges"/>
     </xs:sequence>
-    <xs:attribute name="name"/>
   </xs:complexType>
-
-  <xs:complexType name="Exchange">
-    <xs:attribute name="name"/>
-    <xs:attribute name="id"/>
-  </xs:complexType>
-
-  <xs:complexType name="ExchangeDefinition">
+  
+  <xs:complexType name="Exchanges">
     <xs:sequence>
+      <xs:element name="exchange" type="Exchange" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="Exchange">
+    <xs:sequence>
+      <xs:element name="id" type="xs:string"/>
+      <xs:element name="name" type="xs:string"/>
+      <xs:element name="description" type="xs:string"/>
       <xs:element name="sourceUri" type="xs:string"/>
       <xs:element name="sourceAppName" type="xs:string"/>
       <xs:element name="sourceAppScope" type="xs:string"/>

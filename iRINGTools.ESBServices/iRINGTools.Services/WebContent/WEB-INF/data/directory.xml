@@ -1,28 +1,90 @@
 <directory xmlns="http://iringtools.org/directory">
   <applicationData>
-    <application name="ABC" scope="12345_000" description="Test Application ABC">
-      <graph name="Lines" commodity="PipingNetworkSystem" />
-      <graph name="Instruments" commodity="Instrument" />
+    <application>
+      <id>1</id>
+      <name>ABC</name>
+      <description>Test Application</description>
+      <scope>12345_000</scope>
+      <graphs>
+        <graph>
+          <name>Lines</name>
+          <description>Line List</description>
+          <commodity>PipingNetworkSystem></commodity>
+        </graph>
+        <graph>
+          <name>Instruments</name>
+          <description>Instrument List</description>
+          <commodity>Instrument></commodity>
+        </graph>
+      </graphs>
     </application>
-    <application name="DEF" scope="12345_000" description="Test Application DEF">
-      <graph name="LinesGraph" commodity="PipingNetworkSystem" />
-      <graph name="InstrumentsGraph" commodity="Instrument" />
+    <application>
+      <id>2</id>
+      <name>DEF</name>
+      <description>Test Application</description>
+      <scope>12345_000</scope>
+      <graphs>
+        <graph>
+          <name>Lines</name>
+          <description>Line List</description>
+          <commodity>PipingNetworkSystem></commodity>
+        </graph>
+        <graph>
+          <name>Instruments</name>
+          <description>Instrument List</description>
+          <commodity>Instrument></commodity>
+        </graph>
+      </graphs>
     </application>
-    <application name="XYZ" scope="12345_001" description="Test Application XYZ">
-      <graph name="InstrumentsGraph" commodity="Instrument" />
-    </application>
-  </applicationData>
-  
-  <dataExchanges>
-    <commodity name="PipingNetworkSystem">
-      <exchange name="ABC -> DEF" id="1" />
-      <exchange name="DEF -> ABC" id="2" />
+  </applicationData>  
+  <exchangeData>  
+    <commodity>
+      <name>PipingNetworkSystem</name>
+      <exchanges>
+        <exchange>
+          <id>1</id>
+          <name>12345_000.ABC.Lines -> 54321_000.DEF.Lines</name>
+          <description>Exchange Lines from application 12345_000.ABC to application 12345_000.DEF</description>
+        </exchange>
+        <exchange>
+          <id>2</id>
+          <name>12345_000.DEF.Lines -> 54321_000.ABC.Lines</name>
+          <description>Exchange Lines from application 12345_000.DEF to application 12345_000.ABC</description>
+        </exchange>
+      </exchanges>
     </commodity>
-    <commodity name="Instrument">
-      <exchange name="ABC -> DEF" id="3" />
-      <exchange name="DEF -> ABC" id="4" />
-      <exchange name="XYZ -> ABC" id="5" />
-      <exchange name="ABC -> XYZ" id="6" />
+    <commodity>
+      <name>Instrument</name>
+      <exchanges>
+        <exchange>
+          <id>1</id>
+          <name>12345_000.ABC.Lines -> 54321_000.DEF.Lines</name>
+          <description>Exchange Lines from application 12345_000.ABC to application 12345_000.DEF</description>
+          <sourceUri>http://localhost:54321/AdapterService</sourceUri>
+          <sourceAppName>ABC</sourceAppName>
+          <sourceAppScope>12345_000</sourceAppScope>
+          <sourceGraphName>LINES</sourceGraphName>
+          <targetUri>http://localhost:54321/AdapterService</targetUri>
+          <targetAppName>DEF</targetAppName>
+          <targetAppScope>12345_000</targetAppScope>
+          <targetGraphName>LINES</targetGraphName>
+          <hashAlgorithm>MD5</hashAlgorithm>
+        </exchange>
+        <exchange>
+          <id>2</id>
+          <name>12345_000.DEF.Lines -> 54321_000.ABC.Lines</name>
+          <description>Exchange Lines from application 12345_000.DEF to application 12345_000.ABC</description>
+          <sourceUri>http://localhost:54321/AdapterService</sourceUri>
+          <sourceAppName>DEF</sourceAppName>
+          <sourceAppScope>12345_000</sourceAppScope>
+          <sourceGraphName>LINES</sourceGraphName>
+          <targetUri>http://localhost:54321/AdapterService</targetUri>
+          <targetAppName>ABC</targetAppName>
+          <targetAppScope>12345_000</targetAppScope>
+          <targetGraphName>LINES</targetGraphName>
+          <hashAlgorithm>MD5</hashAlgorithm>
+        </exchange>
+      </exchanges>
     </commodity>
-  </dataExchanges>
+  </exchangeData>
 </directory>

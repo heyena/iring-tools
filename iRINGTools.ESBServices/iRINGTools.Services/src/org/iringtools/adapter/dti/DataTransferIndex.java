@@ -6,7 +6,7 @@
 //
 
 
-package org.iringtools.adapter.dto;
+package org.iringtools.adapter.dti;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -15,20 +15,18 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for ClassObject complex type.
+ * <p>Java class for DataTransferIndex complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ClassObject">
+ * &lt;complexType name="DataTransferIndex">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="classId" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="identifier" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="templateObjects" type="{http://iringtools.org/adapter/dto}TemplateObjects"/>
- *         &lt;element name="transferType" type="{http://iringtools.org/adapter/dto}TransferType"/>
+ *         &lt;element name="hashValue" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="transferType" type="{http://iringtools.org/adapter/dti}TransferType"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -38,73 +36,19 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ClassObject", propOrder = {
-    "classId",
-    "name",
+@XmlType(name = "DataTransferIndex", propOrder = {
     "identifier",
-    "templateObjects",
+    "hashValue",
     "transferType"
 })
-public class ClassObject {
+public class DataTransferIndex {
 
-    @XmlElement(required = true)
-    protected String classId;
-    @XmlElement(required = true)
-    protected String name;
     @XmlElement(required = true)
     protected String identifier;
     @XmlElement(required = true)
-    protected TemplateObjects templateObjects;
+    protected String hashValue;
     @XmlElement(required = true)
     protected TransferType transferType;
-
-    /**
-     * Gets the value of the classId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getClassId() {
-        return classId;
-    }
-
-    /**
-     * Sets the value of the classId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setClassId(String value) {
-        this.classId = value;
-    }
-
-    /**
-     * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setName(String value) {
-        this.name = value;
-    }
 
     /**
      * Gets the value of the identifier property.
@@ -131,27 +75,27 @@ public class ClassObject {
     }
 
     /**
-     * Gets the value of the templateObjects property.
+     * Gets the value of the hashValue property.
      * 
      * @return
      *     possible object is
-     *     {@link TemplateObjects }
+     *     {@link String }
      *     
      */
-    public TemplateObjects getTemplateObjects() {
-        return templateObjects;
+    public String getHashValue() {
+        return hashValue;
     }
 
     /**
-     * Sets the value of the templateObjects property.
+     * Sets the value of the hashValue property.
      * 
      * @param value
      *     allowed object is
-     *     {@link TemplateObjects }
+     *     {@link String }
      *     
      */
-    public void setTemplateObjects(TemplateObjects value) {
-        this.templateObjects = value;
+    public void setHashValue(String value) {
+        this.hashValue = value;
     }
 
     /**

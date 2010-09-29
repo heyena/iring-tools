@@ -14,15 +14,15 @@ public class DirectoryProvider
     this.settings = settings;
   }
 
-  public Directory getExchangeList() throws FileNotFoundException, JAXBException 
+  public Directory getExchanges() throws FileNotFoundException, JAXBException 
   {
     String path = settings.get("baseDirectory") + "/WEB-INF/data/directory.xml";
     return JaxbUtil.read(Directory.class, path);    
   }
 
-  public ExchangeDefinition getExchangeDefinition(String id) throws FileNotFoundException, JAXBException
+  public Exchange getExchange(String id) throws FileNotFoundException, JAXBException
   {
-    String path = settings.get("baseDirectory") + "/WEB-INF/data/exchange-definition-" + id + ".xml";
-    return JaxbUtil.read(ExchangeDefinition.class, path);
+    String path = settings.get("baseDirectory") + "/WEB-INF/data/exchange-" + id + ".xml";
+    return JaxbUtil.read(Exchange.class, path);
   }
 }

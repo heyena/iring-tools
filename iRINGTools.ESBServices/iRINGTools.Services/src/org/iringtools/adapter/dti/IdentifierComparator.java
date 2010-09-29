@@ -1,7 +1,7 @@
 package org.iringtools.adapter.dti;
 
 import java.util.Comparator;
-import org.iringtools.adapter.dti.DataTransferIndices.DataTransferIndex;
+import org.iringtools.adapter.dti.DataTransferIndex;
 
 public class IdentifierComparator implements Comparator<DataTransferIndex>
 {

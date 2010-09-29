@@ -13,21 +13,20 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for DataTransferObjects complex type.
+ * <p>Java class for RoleObjects complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="DataTransferObjects">
+ * &lt;complexType name="RoleObjects">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="dataTransferObject" type="{http://iringtools.org/adapter/dto}DataTransferObject" maxOccurs="unbounded"/>
+ *         &lt;element name="roleObject" type="{http://iringtools.org/adapter/dto}RoleObject" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -37,54 +36,53 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "DataTransferObjects", propOrder = {
-    "dataTransferObjects"
+@XmlType(name = "RoleObjects", propOrder = {
+    "roleObjects"
 })
-@XmlRootElement(name = "dataTransferObjects")
-public class DataTransferObjects {
+public class RoleObjects {
 
-    @XmlElement(name = "dataTransferObject", required = true)
-    protected List<DataTransferObject> dataTransferObjects;
+    @XmlElement(name = "roleObject", required = true)
+    protected List<RoleObject> roleObjects;
 
     /**
-     * Gets the value of the dataTransferObjects property.
+     * Gets the value of the roleObjects property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the dataTransferObjects property.
+     * This is why there is not a <CODE>set</CODE> method for the roleObjects property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getDataTransferObjects().add(newItem);
+     *    getRoleObjects().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link DataTransferObject }
+     * {@link RoleObject }
      * 
      * 
      */
-    public List<DataTransferObject> getDataTransferObjects() {
-        if (dataTransferObjects == null) {
-            dataTransferObjects = new ArrayList<DataTransferObject>();
+    public List<RoleObject> getRoleObjects() {
+        if (roleObjects == null) {
+            roleObjects = new ArrayList<RoleObject>();
         }
-        return this.dataTransferObjects;
+        return this.roleObjects;
     }
 
     /**
-     * Sets the value of the dataTransferObjects property.
+     * Sets the value of the roleObjects property.
      * 
-     * @param dataTransferObjects
+     * @param roleObjects
      *     allowed object is
-     *     {@link DataTransferObject }
+     *     {@link RoleObject }
      *     
      */
-    public void setDataTransferObjects(List<DataTransferObject> dataTransferObjects) {
-        this.dataTransferObjects = dataTransferObjects;
+    public void setRoleObjects(List<RoleObject> roleObjects) {
+        this.roleObjects = roleObjects;
     }
 
 }

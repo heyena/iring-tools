@@ -6,28 +6,27 @@
 //
 
 
-package org.iringtools.adapter.dto;
+package org.iringtools.directory;
 
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for DataTransferObjects complex type.
+ * <p>Java class for ExchangeData complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="DataTransferObjects">
+ * &lt;complexType name="ExchangeData">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="dataTransferObject" type="{http://iringtools.org/adapter/dto}DataTransferObject" maxOccurs="unbounded"/>
+ *         &lt;element name="commodity" type="{http://iringtools.org/directory}Commodity" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -37,54 +36,53 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "DataTransferObjects", propOrder = {
-    "dataTransferObjects"
+@XmlType(name = "ExchangeData", propOrder = {
+    "commodities"
 })
-@XmlRootElement(name = "dataTransferObjects")
-public class DataTransferObjects {
+public class ExchangeData {
 
-    @XmlElement(name = "dataTransferObject", required = true)
-    protected List<DataTransferObject> dataTransferObjects;
+    @XmlElement(name = "commodity", required = true)
+    protected List<Commodity> commodities;
 
     /**
-     * Gets the value of the dataTransferObjects property.
+     * Gets the value of the commodities property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the dataTransferObjects property.
+     * This is why there is not a <CODE>set</CODE> method for the commodities property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getDataTransferObjects().add(newItem);
+     *    getCommodities().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link DataTransferObject }
+     * {@link Commodity }
      * 
      * 
      */
-    public List<DataTransferObject> getDataTransferObjects() {
-        if (dataTransferObjects == null) {
-            dataTransferObjects = new ArrayList<DataTransferObject>();
+    public List<Commodity> getCommodities() {
+        if (commodities == null) {
+            commodities = new ArrayList<Commodity>();
         }
-        return this.dataTransferObjects;
+        return this.commodities;
     }
 
     /**
-     * Sets the value of the dataTransferObjects property.
+     * Sets the value of the commodities property.
      * 
-     * @param dataTransferObjects
+     * @param commodities
      *     allowed object is
-     *     {@link DataTransferObject }
+     *     {@link Commodity }
      *     
      */
-    public void setDataTransferObjects(List<DataTransferObject> dataTransferObjects) {
-        this.dataTransferObjects = dataTransferObjects;
+    public void setCommodities(List<Commodity> commodities) {
+        this.commodities = commodities;
     }
 
 }
