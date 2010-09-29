@@ -91,8 +91,9 @@ class dataObjectsModel{
 		$dtoCounts  = count($dataTransferObjects);
 
 		$headerNamesArray=array();
+		$headerListDataArray = array();
 		$rowsArray=array();
-
+		
 		$j=0;
 		foreach($dataTransferObjects as $dataTransferObject)
 		{
@@ -114,45 +115,46 @@ class dataObjectsModel{
 						// iterate Role objects under each template
 						
 						$tempRoleObjectNameArray = array();
-						
+
 						foreach($templateObject->roleObjects->children() as $roleObject)
 						{
 								$tempKey='';
-								if($roleObject->type=='Property')
+								if(stristr($roleObject->type,'Property'))
 								{
 									$tempRoleObjectNameArray[]="$roleObject->name";
 									$tempKey = (string)$templateObject->name.'.'.(string)$roleObject->name;
 
-									// condition to check if the transferType is change for role->type
+									$spanColor='';
+									switch (strtolower((string)$dataTransferObject->transferType))
+									{
+										case "add":
+											$spanColor='red';
+											break;
+										case "change":
+											$spanColor='blue';
+											break;
+										case "delete":
+											$spanColor='green';
+											break;
+										case "sync":
+											$spanColor='black';
+											break;
+									}
 									
+									// We are adding custom keys to the array
+									$tempRoleValueArray['TransferType']='<span style="color:'.$spanColor.'">@ '.(string)$dataTransferObject->transferType.'</span>';
+
+									// condition to check if the transferType is change for role->type
 									if($dataTransferObject->transferType=='Change')
 									{
 										// if there is any difference between old and new then represent as old->new
 										if((string)$roleObject->value!=(string)$roleObject->oldValue){
-											$tempRoleValueArray[$tempKey]='<span style="color:blue;">'.(string)$roleObject->oldValue.'->'.$roleObject->value.'</span>';
+											$tempRoleValueArray[$tempKey]='<span style="color:'.$spanColor.'">'.(string)$roleObject->oldValue.'->'.$roleObject->value.'</span>';
 										}else{
 											$tempRoleValueArray[$tempKey]=(string)$roleObject->oldValue;
 
 										}
 									}else{
-
-										$spanColor='';
-
-										//echo '<br>'.(string)$dataTransferObject->transferType;
-										
-										switch (strtolower((string)$dataTransferObject->transferType))
-										{
-											case "add":
-												$spanColor='red';
-												break;
-											case "delete":
-												$spanColor='green';
-												break;
-											case "sync":
-												$spanColor='black';
-												break;
-										}
-
 										$tempRoleValueArray[$tempKey]='<span style="color:'.$spanColor.'">'.(string)$roleObject->value.'</span>';
 
 									}
@@ -198,16 +200,29 @@ class dataObjectsModel{
 		/*echo '<b><h1>Rows Array</h1></b>';
 		echo '<pre>';
 		print_r($rowsArray);
+		exit;
 		*/
 		//echo '<b><h1>Header Array</h1></b>';
 		//echo '<pre>';
-		
-		$headerArrayList = array_values((array_unique($headerNamesArray)));
+
+		$customListArray=array('TransferType');
+		$headerArrayList = array_merge($customListArray,array_values((array_unique($headerNamesArray))));
+		//$headerArrayList = array_values((array_unique($headerNamesArray)));
+		unset($customListArray);
 		unset($headerNamesArray);
 		
 		$rowsDataArray = array();
 		$columnsDataArray = array();
 
+		/*
+		 Loop over each row to genrate the json format required to display rows in grid
+		*/
+
+		/*echo '<pre>';
+		print_r($rowsArray);
+		print_r($headerArrayList);
+		exit;*/
+		
 		for($i=0;$i<count($rowsArray);$i++){
 			
 			for($j=0;$j<count($headerArrayList);$j++){
@@ -222,15 +237,19 @@ class dataObjectsModel{
 		 }
 		}
 
-		 $headerListDataArray = array();
-
+		 
+		$headerListDataArray[]=array('name'=>'TransferType');
 		 foreach($headerArrayList as $key =>$val){
 			$headerListDataArray[]=array('name'=>str_replace(".", "_", $val),'sort'=>true);
-			$columnsDataArray[]=array('header'=>$val,'dataIndex'=>str_replace(".", "_", $val));
+			$columnsDataArray[]=array('id'=>str_replace(".", "_", $val),'header'=>$val,'dataIndex'=>str_replace(".", "_", $val));
 			
 		}
 
-		echo json_encode(array("success"=>"true","rowData"=>json_encode($rowsDataArray),
+		/*echo '<pre>';
+		print_r($columnsDataArray);
+		exit;
+		*/
+		 echo json_encode(array("success"=>"true","rowData"=>json_encode($rowsDataArray),
 							   "columnsData"=>json_encode($columnsDataArray),
 							   "headersList"=>(json_encode($headerListDataArray))));
 		unset($jsonrowsArray);
