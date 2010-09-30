@@ -84,7 +84,9 @@ Ext.onReady(function(){
             id: 'headRefresh', disabled: false,handler: function()
                 {alert("Refresh Clicked")}
         },
-        {
+        /*
+		Exchane Button hided
+		{
             xtype:"tbbutton",
             icon:'resources/images/16x16/go-send.png',
             qtip:'Exchange Data',
@@ -94,7 +96,7 @@ Ext.onReady(function(){
 					  //alert("Clicked on Exchange Data")
 					  dataExchange();
 				}
-        },
+        },*/
         {
             xtype:"tbbutton",
             icon:'resources/images/16x16/document-open.png',
@@ -173,7 +175,7 @@ Ext.onReady(function(){
         dblclick :{
 		fn : function (){
 			showCentralGrid();
-	 }
+			}
         },
         expandnode:{
             fn : function (node){
@@ -227,9 +229,11 @@ Ext.onReady(function(){
                    {
                           Ext.getCmp('centerPanel').enable();
                           sendAjaxRequest(label);
-                          // check the current state of Detail Grid panel
+
+						  // check the current state of Detail Grid panel
 						  if(Ext.getCmp('detail-grid').collapsed!=true){
-							  Ext.getCmp('detail-grid').collapse();
+								  Ext.getCmp('detail-grid').collapse();
+							
 						  }
                    }
 	}else{
