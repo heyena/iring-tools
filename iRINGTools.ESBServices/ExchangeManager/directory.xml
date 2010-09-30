@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<directory xmlns="http://iringtools.org/exchange/library/directory">
-  <scopes>
+	<directory xmlns="http://iringtools.org/exchange/library/directory">
 	<scope>
 		<name>12345_000</name>
 		<applicationData>
@@ -97,5 +96,4 @@
 			</commodity>
 		</dataExchanges>
 	</scope>
-  </scopes>
 </directory>
