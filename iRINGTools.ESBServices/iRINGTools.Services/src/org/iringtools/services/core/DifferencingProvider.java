@@ -1,4 +1,4 @@
-package org.iringtools.exchange;
+package org.iringtools.services.core;
 
 import java.util.Collections;
 import java.util.Hashtable;

@@ -992,7 +992,7 @@ namespace org.iringtools.utility
       }
     }
 
-    public static string md5Hash(string input)
+    public static string MD5Hash(string input)
     {
       // calculate MD5 hash from input
       MD5 md5 = MD5.Create();

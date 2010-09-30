@@ -383,7 +383,7 @@ namespace org.iringtools.exchange
           switch (_hashAlgorithm)
           {
             default: // MD5
-              hashValue = Utility.md5Hash(propertyValues.ToString());
+              hashValue = Utility.MD5Hash(propertyValues.ToString());
               break;
           }
 

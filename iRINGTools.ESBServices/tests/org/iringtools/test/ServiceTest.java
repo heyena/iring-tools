@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import org.iringtools.adapter.dti.DataTransferIndices;
 import org.iringtools.adapter.dto.DataTransferObjects;
-import org.iringtools.exchange.DtiSubmission;
+import org.iringtools.common.request.DtiSubmission;
 import org.iringtools.directory.Directory;
 import org.iringtools.common.response.Response;
 import org.iringtools.utility.JaxbUtil;
@@ -19,7 +19,7 @@ public class ServiceTest
       BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
       
       System.out.println("Getting exchange definitions ...");
-      String directoryUrl = "http://localhost:8080/iringtools/services/esbsvc/exchanges";
+      String directoryUrl = "http://localhost:8080/iringtools/services/esbsvc/directory";
       Directory directory = NetUtil.get(Directory.class, directoryUrl);
       System.out.println(JaxbUtil.toXml(directory, true));
       
@@ -27,7 +27,7 @@ public class ServiceTest
       in.readLine();
       
       System.out.println("Getting dti of exchange id 1...");
-      String dtiUrl = "http://localhost:8080/iringtools/services/esbsvc/dti/1";
+      String dtiUrl = "http://localhost:8080/iringtools/services/esbsvc/12345_000/exchanges/1";
       DataTransferIndices dti = NetUtil.get(DataTransferIndices.class, dtiUrl);
       System.out.println(JaxbUtil.toXml(dti, true));
       
@@ -35,7 +35,7 @@ public class ServiceTest
       in.readLine();    
       
       System.out.println("Getting dto of exchange id 1...");
-      String dtoUrl = "http://localhost:8080/iringtools/services/esbsvc/dto/1";
+      String dtoUrl = "http://localhost:8080/iringtools/services/esbsvc/12345_000/exchanges/1";
       DataTransferObjects dto = NetUtil.post(DataTransferObjects.class, dtoUrl, dti);  
       System.out.println(JaxbUtil.toXml(dto, true));
       
@@ -43,7 +43,7 @@ public class ServiceTest
       in.readLine();    
       
       System.out.println("Submitting dti to esb service...");
-      String dxiUrl = "http://localhost:8080/iringtools/services/esbsvc/dti/1";  
+      String dxiUrl = "http://localhost:8080/iringtools/services/esbsvc/12345_000/exchanges/1/submit";  
       DtiSubmission dtiSubmission = new DtiSubmission();
       dtiSubmission.setDti(dti);
       dtiSubmission.setReviewed(true);
