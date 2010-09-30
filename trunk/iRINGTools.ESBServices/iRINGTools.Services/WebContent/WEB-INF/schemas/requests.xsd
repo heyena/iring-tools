@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://iringtools.org/exchange"
-    targetNamespace="http://iringtools.org/exchange" xmlns:mnf="http://iringtools.org/protocol/manifest"
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://iringtools.org/common/request"
+    targetNamespace="http://iringtools.org/common/request" xmlns:mnf="http://iringtools.org/protocol/manifest"
     xmlns:dti="http://iringtools.org/adapter/dti" xmlns:dto="http://iringtools.org/adapter/dto"
     elementFormDefault="qualified"
     xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.0"

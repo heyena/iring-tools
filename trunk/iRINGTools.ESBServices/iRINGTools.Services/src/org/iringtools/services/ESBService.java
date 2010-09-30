@@ -14,7 +14,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.xml.bind.JAXBException;
-
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
 import org.iringtools.adapter.dto.DataTransferObjectComparator;
@@ -31,11 +30,11 @@ import org.iringtools.adapter.dto.DataTransferObjects;
 import org.iringtools.protocol.manifest.Manifest;
 import org.iringtools.directory.Directory;
 import org.iringtools.directory.ExchangeDefinition;
-import org.iringtools.exchange.DtiSubmission;
-import org.iringtools.exchange.DxiRequest;
-import org.iringtools.exchange.DxoRequest;
-import org.iringtools.exchange.DxRequest;
-import org.iringtools.exchange.Identifiers;
+import org.iringtools.common.request.DtiSubmission;
+import org.iringtools.common.request.DxRequest;
+import org.iringtools.common.request.DxiRequest;
+import org.iringtools.common.request.DxoRequest;
+import org.iringtools.common.request.Identifiers;
 import org.iringtools.common.response.Response;
 import org.iringtools.common.response.Status;
 import org.iringtools.common.response.Level;
@@ -44,8 +43,8 @@ import org.iringtools.common.response.Messages;
 import org.iringtools.utility.NetUtil;
 
 @Path("/")
-@Produces("application/xml")
 @Consumes("application/xml")
+@Produces("application/xml")
 public class ESBService
 {
   private static final Logger logger = Logger.getLogger(ESBService.class);
@@ -60,7 +59,7 @@ public class ESBService
   }
 
   @GET
-  @Path("/exchanges")
+  @Path("/directory")
   public Directory getExchanges() throws JAXBException, IOException
   {
     Directory directory = null;
@@ -70,7 +69,7 @@ public class ESBService
       init();
 
       // request directory service to get exchange definitions
-      String diffServiceUrl = settings.get("directoryServiceUri") + "/exchanges";
+      String diffServiceUrl = settings.get("directoryServiceUri") + "/directory";
       directory = NetUtil.get(Directory.class, diffServiceUrl);
     }
     catch (Exception ex)
@@ -82,8 +81,8 @@ public class ESBService
   }
 
   @GET
-  @Path("/dti/{exchangeId}")
-  public DataTransferIndices getDtiList(@PathParam("exchangeId") String exchangeId)
+  @Path("/{scope}/exchanges/{exchangeId}")
+  public DataTransferIndices getDtiList(@PathParam("scope") String scope, @PathParam("exchangeId") String exchangeId)
   {
     DataTransferIndices resultDtis = null;
 
@@ -92,7 +91,7 @@ public class ESBService
       init();
 
       // get exchange definition
-      ExchangeDefinition xdef = getExchangeDefinition(exchangeId);
+      ExchangeDefinition xdef = getExchangeDefinition(scope, exchangeId);
 
       // get target manifest
       String targetManifestUrl = xdef.getTargetUri() + "/" + xdef.getTargetAppScope() + "/" + xdef.getTargetAppName()
@@ -134,8 +133,9 @@ public class ESBService
   }
 
   @POST
-  @Path("/dto/{exchangeId}")
-  public DataTransferObjects getDtoList(@PathParam("exchangeId") String exchangeId, DataTransferIndices dtis)
+  @Path("/{scope}/exchanges/{exchangeId}")
+  public DataTransferObjects getDtoList(@PathParam("scope") String scope, @PathParam("exchangeId") String exchangeId,
+      DataTransferIndices dtis)
   {
     DataTransferObjects resultDtos = null;
 
@@ -150,7 +150,7 @@ public class ESBService
       List<DataTransferObject> resultDtoList = resultDtos.getDataTransferObjects();
 
       // get exchange definition
-      ExchangeDefinition xdef = getExchangeDefinition(exchangeId);
+      ExchangeDefinition xdef = getExchangeDefinition(scope, exchangeId);
 
       // get target manifest
       String targetManifestUrl = xdef.getTargetUri() + "/" + xdef.getTargetAppScope() + "/" + xdef.getTargetAppName()
@@ -308,8 +308,9 @@ public class ESBService
   }
 
   @POST
-  @Path("/dti/{exchangeId}")
-  public Response postDtiList(@PathParam("exchangeId") String exchangeId, DtiSubmission dtiSubmission)
+  @Path("/{scope}/exchanges/{exchangeId}/submit")
+  public Response postDtiList(@PathParam("scope") String scope, @PathParam("exchangeId") String exchangeId,
+      DtiSubmission dtiSubmission)
   {
     Response response = new Response();
     StatusList statusList = new StatusList();
@@ -331,7 +332,7 @@ public class ESBService
       init();
 
       // get exchange definition
-      ExchangeDefinition xdef = getExchangeDefinition(exchangeId);
+      ExchangeDefinition xdef = getExchangeDefinition(scope, exchangeId);
 
       // get target application uri
       String targetAppUri = xdef.getTargetUri() + "/" + xdef.getTargetAppScope() + "/" + xdef.getTargetAppName();
@@ -404,7 +405,7 @@ public class ESBService
               if (dtiSubmission.isReviewed())
               {
                 sourceIdentifierList.remove(identifier);
-                
+
                 // TODO: handle more hash algorithms
                 String hashValue = md5Hash(dto);
 
@@ -426,7 +427,7 @@ public class ESBService
             }
           }
         }
-        
+
         // report DTOs that are deleted during review and acceptance
         if (dtiSubmission.isReviewed() && sourceIdentifierList.size() > 0)
         {
@@ -470,18 +471,29 @@ public class ESBService
     return response;
   }
 
-  // TODO: set default values if not provided
   private void init()
   {
     settings.put("baseDirectory", context.getRealPath("/"));
-    settings.put("directoryServiceUri", context.getInitParameter("directoryServiceUri"));
-    settings.put("differencingServiceUri", context.getInitParameter("differencingServiceUri"));
-    settings.put("poolSize", context.getInitParameter("poolSize"));
+
+    String directoryServiceUri = context.getInitParameter("directoryServiceUri");
+    if (directoryServiceUri == null || directoryServiceUri.equals(""))
+      directoryServiceUri = "http://localhost:8080/iringtools/services/dirsvc";
+    settings.put("directoryServiceUri", directoryServiceUri);
+
+    String differencingServiceUri = context.getInitParameter("differencingServiceUri");
+    if (differencingServiceUri == null || differencingServiceUri.equals(""))
+      differencingServiceUri = "http://localhost:8080/iringtools/services/diffsvc";
+    settings.put("differencingServiceUri", differencingServiceUri);
+
+    String poolSize = context.getInitParameter("poolSize");
+    if (poolSize == null || poolSize.equals(""))
+      poolSize = "50";
+    settings.put("poolSize", poolSize);
   }
 
-  private ExchangeDefinition getExchangeDefinition(String exchangeId) throws JAXBException, IOException
+  private ExchangeDefinition getExchangeDefinition(String scope, String exchangeId) throws JAXBException, IOException
   {
-    String directoryServiceUrl = settings.get("directoryServiceUri") + "/exchanges/" + exchangeId;
+    String directoryServiceUrl = settings.get("directoryServiceUri") + "/" + scope + "/exchanges/" + exchangeId;
     return NetUtil.get(ExchangeDefinition.class, directoryServiceUrl);
   }
 
