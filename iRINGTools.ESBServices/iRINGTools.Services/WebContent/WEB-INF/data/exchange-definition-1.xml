@@ -1,14 +1,14 @@
-<exchange xmlns="http://iringtools.org/directory">
+<exchangeDefinition xmlns="http://iringtools.org/directory">
   <id>1</id>
-  <name>12345_000.DEF -> 12345_000.ABC</name>
-  <description>Exchange LINES from DEF to ABC</description>
+  <name>12345_000.ABC -> 12345_000.DEF</name>
+  <description>Sending Line list from ABC to DEF</description>
   <sourceUri>http://localhost:54321/AdapterService</sourceUri>
-  <sourceAppName>DEF</sourceAppName>
+  <sourceAppName>ABC</sourceAppName>
   <sourceAppScope>12345_000</sourceAppScope>
   <sourceGraphName>LINES</sourceGraphName>
   <targetUri>http://localhost:54321/AdapterService</targetUri>
-  <targetAppName>ABC</targetAppName>
+  <targetAppName>DEF</targetAppName>
   <targetAppScope>12345_000</targetAppScope>
   <targetGraphName>LINES</targetGraphName>
   <hashAlgorithm>MD5</hashAlgorithm>
-</exchange>
+</exchangeDefinition>

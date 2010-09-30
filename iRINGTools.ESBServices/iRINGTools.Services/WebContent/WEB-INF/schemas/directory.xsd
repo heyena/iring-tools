@@ -12,12 +12,19 @@
   </xs:annotation>
 
   <xs:element name="directory" type="Directory"/>
-  <xs:element name="exchange" type="Exchange"/>
+  <xs:element name="exchangeDefinition" type="ExchangeDefinition"/>
 
   <xs:complexType name="Directory">
     <xs:sequence>
+      <xs:element name="scope" type="Scope" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Scope">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string"/>
       <xs:element name="applicationData" type="ApplicationData"/>
-      <xs:element name="exchangeData" type="ExchangeData" />
+      <xs:element name="dataExchanges" type="DataExchanges"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -32,7 +39,6 @@
       <xs:element name="id" type="xs:string"/>
       <xs:element name="name" type="xs:string"/>
       <xs:element name="description" type="xs:string"/>
-      <xs:element name="scope" type="xs:string"/>
       <xs:element name="graphs" type="Graphs"/>
     </xs:sequence>
   </xs:complexType>
@@ -42,16 +48,17 @@
       <xs:element name="graph" type="Graph" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
-  
+
   <xs:complexType name="Graph">
     <xs:sequence>
+      <xs:element name="id" type="xs:string"/>
       <xs:element name="name" type="xs:string"/>
       <xs:element name="description" type="xs:string"/>
       <xs:element name="commodity" type="xs:string"/>
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="ExchangeData">
+  <xs:complexType name="DataExchanges">
     <xs:sequence>
       <xs:element name="commodity" type="Commodity" maxOccurs="unbounded"/>
     </xs:sequence>
@@ -63,18 +70,24 @@
       <xs:element name="exchanges" type="Exchanges"/>
     </xs:sequence>
   </xs:complexType>
-  
+
   <xs:complexType name="Exchanges">
     <xs:sequence>
       <xs:element name="exchange" type="Exchange" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
-  
+
   <xs:complexType name="Exchange">
     <xs:sequence>
       <xs:element name="id" type="xs:string"/>
       <xs:element name="name" type="xs:string"/>
       <xs:element name="description" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ExchangeDefinition">  
+    <xs:sequence>
+      <xs:element name="id" type="xs:string"/>
       <xs:element name="sourceUri" type="xs:string"/>
       <xs:element name="sourceAppName" type="xs:string"/>
       <xs:element name="sourceAppScope" type="xs:string"/>
