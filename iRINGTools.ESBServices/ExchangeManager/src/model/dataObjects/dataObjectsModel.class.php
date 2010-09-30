@@ -21,7 +21,7 @@ class dataObjectsModel{
 	  * Will use the DXIObject to get the identifiers List with the particular exchangeID
 	 */
 
-		$this->identifiersList = $this->getDXIInfo($params); // Tag-1,Tag-2,Tag-3
+		$this->identifiersList = $this->getDtiInfo($params); // Tag-1,Tag-2,Tag-3
 		$totalTagCount = count(explode(',',$this->identifiersList));
 		$perPageTagCount=5; // configurable
 		$totalPages = ceil($totalTagCount/$perPageTagCount);
@@ -37,7 +37,7 @@ class dataObjectsModel{
 	 /**
 	  * Will use the DXIObject to get the identifiers List with the particular exchangeID
 	 */
-		$this->identifiersList = $this->getDXIInfo($params); // Tag-1,Tag-2,Tag-3
+		$this->identifiersList = $this->getDtiInfo($params); // Tag-1,Tag-2,Tag-3
 		$identifiersArray = explode(',',$this->identifiersList);
 		return json_encode($this->createJSONDataFormat($this->getDXOInfo($params,$this->identifiersList)));
 	}
@@ -47,12 +47,13 @@ class dataObjectsModel{
 		@params
 		get the Data transfer indexes
 		// http://localhost:8080/iringtools/directoryservice/{scope}/exchanges/{exchangeid}/index
+		// http://labst9413:8080/iringtools/services/esbsvc/dto/1
 	 */
 
-	private function getDXIInfo($exchangeID){
-		
+	private function getDtiInfo($exchangeID){
+
 		if(is_array($exchangeID)){
-			$this->dxiUrl = $this->dxiUrl.'?'.http_build_query($exchangeID);
+			$this->dxiUrl = $this->dxiUrl.$exchangeID[0];
 		}
 		$curlObj = new curl($this->dxiUrl);
 		$fetchedData = $curlObj->exec();
@@ -73,6 +74,7 @@ class dataObjectsModel{
 
 	private function getDXOInfo($exchangeID,$postParams){
 		if(is_array($exchangeID)){
+			//*** $this->dxoUrl = $this->dxoUrl.$exchangeID[0];
 			$this->dxoUrl = $this->dxoUrl.'?'.http_build_query($exchangeID);
 		}
 		$curlObj = new curl($this->dxoUrl);
@@ -94,17 +96,12 @@ class dataObjectsModel{
 		$headerListDataArray = array();
 		$rowsArray=array();
 		
-		$j=0;
 		foreach($dataTransferObjects as $dataTransferObject)
 		{
-			//echo "<br><br>Looped for: ".$j++.'<br><br>';
-			
 			$i=0;
-
 			foreach($dataTransferObject->classObjects->children() as $classObject)
 			{
 				$i++;
-
 				// Main class object
 				if($i==1)
 				{
@@ -242,7 +239,6 @@ class dataObjectsModel{
 		 foreach($headerArrayList as $key =>$val){
 			$headerListDataArray[]=array('name'=>str_replace(".", "_", $val),'sort'=>true);
 			$columnsDataArray[]=array('id'=>str_replace(".", "_", $val),'header'=>$val,'dataIndex'=>str_replace(".", "_", $val));
-			
 		}
 
 		/*echo '<pre>';
@@ -258,6 +254,5 @@ class dataObjectsModel{
 		exit;
 		
 	}
-
 }
 ?>
