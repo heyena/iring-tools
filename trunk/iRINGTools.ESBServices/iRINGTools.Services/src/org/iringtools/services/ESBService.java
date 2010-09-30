@@ -30,7 +30,7 @@ import org.iringtools.adapter.dto.TransferType;
 import org.iringtools.adapter.dto.DataTransferObjects;
 import org.iringtools.protocol.manifest.Manifest;
 import org.iringtools.directory.Directory;
-import org.iringtools.directory.Exchange;
+import org.iringtools.directory.ExchangeDefinition;
 import org.iringtools.exchange.DtiSubmission;
 import org.iringtools.exchange.DxiRequest;
 import org.iringtools.exchange.DxoRequest;
@@ -92,7 +92,7 @@ public class ESBService
       init();
 
       // get exchange definition
-      Exchange xdef = getExchange(exchangeId);
+      ExchangeDefinition xdef = getExchangeDefinition(exchangeId);
 
       // get target manifest
       String targetManifestUrl = xdef.getTargetUri() + "/" + xdef.getTargetAppScope() + "/" + xdef.getTargetAppName()
@@ -150,7 +150,7 @@ public class ESBService
       List<DataTransferObject> resultDtoList = resultDtos.getDataTransferObjects();
 
       // get exchange definition
-      Exchange xdef = getExchange(exchangeId);
+      ExchangeDefinition xdef = getExchangeDefinition(exchangeId);
 
       // get target manifest
       String targetManifestUrl = xdef.getTargetUri() + "/" + xdef.getTargetAppScope() + "/" + xdef.getTargetAppName()
@@ -331,7 +331,7 @@ public class ESBService
       init();
 
       // get exchange definition
-      Exchange xdef = getExchange(exchangeId);
+      ExchangeDefinition xdef = getExchangeDefinition(exchangeId);
 
       // get target application uri
       String targetAppUri = xdef.getTargetUri() + "/" + xdef.getTargetAppScope() + "/" + xdef.getTargetAppName();
@@ -479,10 +479,10 @@ public class ESBService
     settings.put("poolSize", context.getInitParameter("poolSize"));
   }
 
-  private Exchange getExchange(String exchangeId) throws JAXBException, IOException
+  private ExchangeDefinition getExchangeDefinition(String exchangeId) throws JAXBException, IOException
   {
     String directoryServiceUrl = settings.get("directoryServiceUri") + "/exchanges/" + exchangeId;
-    return NetUtil.get(Exchange.class, directoryServiceUrl);
+    return NetUtil.get(ExchangeDefinition.class, directoryServiceUrl);
   }
 
   private Status createStatus(String identifier, String message)

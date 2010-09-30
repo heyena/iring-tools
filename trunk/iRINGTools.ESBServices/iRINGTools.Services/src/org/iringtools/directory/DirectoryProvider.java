@@ -20,9 +20,9 @@ public class DirectoryProvider
     return JaxbUtil.read(Directory.class, path);    
   }
 
-  public Exchange getExchange(String id) throws FileNotFoundException, JAXBException
+  public ExchangeDefinition getExchangeDefinition(String id) throws FileNotFoundException, JAXBException
   {
-    String path = settings.get("baseDirectory") + "/WEB-INF/data/exchange-" + id + ".xml";
-    return JaxbUtil.read(Exchange.class, path);
+    String path = settings.get("baseDirectory") + "/WEB-INF/data/exchange-definition-" + id + ".xml";
+    return JaxbUtil.read(ExchangeDefinition.class, path);
   }
 }

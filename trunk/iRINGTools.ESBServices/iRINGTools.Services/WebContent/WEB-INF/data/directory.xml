@@ -1,90 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <directory xmlns="http://iringtools.org/directory">
-  <applicationData>
-    <application>
-      <id>1</id>
-      <name>ABC</name>
-      <description>Test Application</description>
-      <scope>12345_000</scope>
-      <graphs>
-        <graph>
-          <name>Lines</name>
-          <description>Line List</description>
-          <commodity>PipingNetworkSystem></commodity>
-        </graph>
-        <graph>
-          <name>Instruments</name>
-          <description>Instrument List</description>
-          <commodity>Instrument></commodity>
-        </graph>
-      </graphs>
-    </application>
-    <application>
-      <id>2</id>
-      <name>DEF</name>
-      <description>Test Application</description>
-      <scope>12345_000</scope>
-      <graphs>
-        <graph>
-          <name>Lines</name>
-          <description>Line List</description>
-          <commodity>PipingNetworkSystem></commodity>
-        </graph>
-        <graph>
-          <name>Instruments</name>
-          <description>Instrument List</description>
-          <commodity>Instrument></commodity>
-        </graph>
-      </graphs>
-    </application>
-  </applicationData>  
-  <exchangeData>  
-    <commodity>
-      <name>PipingNetworkSystem</name>
-      <exchanges>
-        <exchange>
-          <id>1</id>
-          <name>12345_000.ABC.Lines -> 54321_000.DEF.Lines</name>
-          <description>Exchange Lines from application 12345_000.ABC to application 12345_000.DEF</description>
-        </exchange>
-        <exchange>
-          <id>2</id>
-          <name>12345_000.DEF.Lines -> 54321_000.ABC.Lines</name>
-          <description>Exchange Lines from application 12345_000.DEF to application 12345_000.ABC</description>
-        </exchange>
-      </exchanges>
-    </commodity>
-    <commodity>
-      <name>Instrument</name>
-      <exchanges>
-        <exchange>
-          <id>1</id>
-          <name>12345_000.ABC.Lines -> 54321_000.DEF.Lines</name>
-          <description>Exchange Lines from application 12345_000.ABC to application 12345_000.DEF</description>
-          <sourceUri>http://localhost:54321/AdapterService</sourceUri>
-          <sourceAppName>ABC</sourceAppName>
-          <sourceAppScope>12345_000</sourceAppScope>
-          <sourceGraphName>LINES</sourceGraphName>
-          <targetUri>http://localhost:54321/AdapterService</targetUri>
-          <targetAppName>DEF</targetAppName>
-          <targetAppScope>12345_000</targetAppScope>
-          <targetGraphName>LINES</targetGraphName>
-          <hashAlgorithm>MD5</hashAlgorithm>
-        </exchange>
-        <exchange>
-          <id>2</id>
-          <name>12345_000.DEF.Lines -> 54321_000.ABC.Lines</name>
-          <description>Exchange Lines from application 12345_000.DEF to application 12345_000.ABC</description>
-          <sourceUri>http://localhost:54321/AdapterService</sourceUri>
-          <sourceAppName>DEF</sourceAppName>
-          <sourceAppScope>12345_000</sourceAppScope>
-          <sourceGraphName>LINES</sourceGraphName>
-          <targetUri>http://localhost:54321/AdapterService</targetUri>
-          <targetAppName>ABC</targetAppName>
-          <targetAppScope>12345_000</targetAppScope>
-          <targetGraphName>LINES</targetGraphName>
-          <hashAlgorithm>MD5</hashAlgorithm>
-        </exchange>
-      </exchanges>
-    </commodity>
-  </exchangeData>
+  <scope>
+    <name>12345_000</name>
+    <applicationData>
+      <application>
+        <id>1</id>
+        <name>ABC</name>
+        <description>Test Application</description>
+        <graphs>
+          <graph>
+            <id>1</id>
+            <name>Lines</name>
+            <description>Line List</description>
+            <commodity>PipingNetworkSystem</commodity>
+          </graph>
+          <graph>
+            <id>2</id>
+            <name>Instruments</name>
+            <description>Instrument List</description>
+            <commodity>Instrument</commodity>
+          </graph>
+          <graph>
+            <id>4</id>
+            <name>Lines</name>
+            <description>Line List</description>
+            <commodity>PipingNetworkSystem</commodity>
+          </graph>
+        </graphs>
+      </application>
+      <application>
+        <id>3</id>
+        <name>DEF</name>
+        <description>Test Application</description>
+        <graphs>
+          <graph>
+            <id>3</id>
+            <name>Instruments</name>
+            <description>Instrument List</description>
+            <commodity>Instrument</commodity>
+          </graph>
+        </graphs>
+      </application>
+    </applicationData>
+    <dataExchanges>
+      <commodity>
+        <name>PipingNetworkSystem</name>
+        <exchanges>
+          <exchange>
+            <id>1</id>
+            <name>12345_000.ABC.Lines -&gt; 12345_000.DEF.Lines</name>
+            <description>Synchronizing Line Lists</description>
+          </exchange>
+          <exchange>
+            <id>4</id>
+            <name>12345_000.ABC.Lines -&gt; 54321_000.ABC.Lines</name>
+            <description>Synchronizing two projects Line Lists</description>
+          </exchange>
+        </exchanges>
+      </commodity>
+      <commodity>
+        <name>Instrument</name>
+        <exchanges>
+          <exchange>
+            <id>3</id>
+            <name>12345_000.ABC.Instruments -&gt; 12345_000.DEF.Insturments</name>
+            <description>Synchronizing Instrument Lists</description>
+          </exchange>
+        </exchanges>
+      </commodity>
+    </dataExchanges>
+  </scope>
+  <scope>
+    <name>54321_000</name>
+    <applicationData>
+      <application>
+        <id>2</id>
+        <name>ABC</name>
+        <description>Test Application</description>
+        <graphs>
+          <graph>
+            <id>4</id>
+            <name>Lines</name>
+            <description>Line List</description>
+            <commodity>PipingNetworkSystem</commodity>
+          </graph>
+        </graphs>
+      </application>
+    </applicationData>
+    <dataExchanges>
+      <commodity>
+        <name>PipingNetworkSystem</name>
+        <exchanges>
+          <exchange>
+            <id>2</id>
+            <name>12345_000.DEF.Lines -&gt; 12345_000.ABC.Lines</name>
+            <description>Synchronizing Line Lists</description>
+          </exchange>
+        </exchanges>
+      </commodity>
+    </dataExchanges>
+  </scope>
 </directory>

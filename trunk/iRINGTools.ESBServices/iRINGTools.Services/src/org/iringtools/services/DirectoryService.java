@@ -10,7 +10,7 @@ import javax.ws.rs.core.Context;
 import org.apache.log4j.Logger;
 import org.iringtools.directory.Directory;
 import org.iringtools.directory.DirectoryProvider;
-import org.iringtools.directory.Exchange;
+import org.iringtools.directory.ExchangeDefinition;
 
 @Path("/")
 @Produces("application/xml")
@@ -49,15 +49,15 @@ public class DirectoryService
   
   @GET
   @Path("/exchanges/{id}")
-  public Exchange getExchange(@PathParam("id") String id) 
+  public ExchangeDefinition getExchange(@PathParam("id") String id) 
   {   
-    Exchange xDef = null;
+    ExchangeDefinition xDef = null;
     
     try
     {
       init();
       DirectoryProvider directoryProvider = new DirectoryProvider(settings);
-      xDef = directoryProvider.getExchange(id);
+      xDef = directoryProvider.getExchangeDefinition(id);
     }
     catch (Exception ex)
     {
