@@ -2,30 +2,19 @@
 /**
  * @author Aswini Nayak (aknayak@bechtel.com)
 */
-include_once('/model/RestfulService/curl.class.php');
+
+   include_once('/model/RestfulService/curl.class.php');
 
 class dataObjectsModel{
 	private $exchangeUrl;
 	private $dxiUrl;
 	private $dxoUrl;
-	private $identifiersList;
-	
+	//private $identifiersList;
+	private $dtiXMLData;
+
 	function __construct(){
 		$this->dxiUrl = DXI_REQUEST_URL;
 		$this->dxoUrl = DXO_REQUEST_URL;
-	}
-
-	function getReviewDatas($params)
-	{
-	 /**
-	  * Will use the DXIObject to get the identifiers List with the particular exchangeID
-	 */
-
-		$this->identifiersList = $this->getDtiInfo($params); // Tag-1,Tag-2,Tag-3
-		$totalTagCount = count(explode(',',$this->identifiersList));
-		$perPageTagCount=5; // configurable
-		$totalPages = ceil($totalTagCount/$perPageTagCount);
-		$this->getDXOInfo($params,$this->identifiersList);
 	}
 
 	/*
@@ -37,12 +26,13 @@ class dataObjectsModel{
 	 /**
 	  * Will use the DXIObject to get the identifiers List with the particular exchangeID
 	 */
-		$this->identifiersList = $this->getDtiInfo($params); // Tag-1,Tag-2,Tag-3
-		$identifiersArray = explode(',',$this->identifiersList);
-		return json_encode($this->createJSONDataFormat($this->getDXOInfo($params,$this->identifiersList)));
+
+		$this->dtiXMLData = $this->getDtiInfo($params);
+		//$identifiersArray = explode(',',$this->identifiersList);
+		return json_encode($this->createJSONDataFormat($this->getDXOInfo($params,$this->dtiXMLData)));
 	}
-	
-	
+
+
 	/**
 		@params
 		get the Data transfer indexes
@@ -57,9 +47,11 @@ class dataObjectsModel{
 		}
 		$curlObj = new curl($this->dxiUrl);
 		$fetchedData = $curlObj->exec();
-		$xmlIterator = new SimpleXMLIterator($fetchedData);
+		return $fetchedData;
+
+		/*$xmlIterator = new SimpleXMLIterator($fetchedData);
 		$resultArr="";
-		
+
 		foreach($xmlIterator  as $dataTransferIndices)
 		{
 			if($resultArr==''){
@@ -69,17 +61,20 @@ class dataObjectsModel{
 			}
 		}
 		unset($fetchedData);
-		return $resultArr;
+		return $resultArr;*/
 	}
 
 	private function getDXOInfo($exchangeID,$postParams){
 		if(is_array($exchangeID)){
-			//*** $this->dxoUrl = $this->dxoUrl.$exchangeID[0];
-			$this->dxoUrl = $this->dxoUrl.'?'.http_build_query($exchangeID);
+			$this->dxoUrl = $this->dxoUrl.$exchangeID[0];
+			//$this->dxoUrl = $this->dxoUrl.'?'.http_build_query($exchangeID);
 		}
+		//print_r($postParams);
+
 		$curlObj = new curl($this->dxoUrl);
 		$curlObj->setopt(CURLOPT_POST, 1);
-		$curlObj->setopt(CURLOPT_POSTFIELDS,'TagLists='.$postParams);
+		$curlObj->setopt(CURLOPT_HTTPHEADER, Array("Content-Type: application/xml"));
+		$curlObj->setopt(CURLOPT_POSTFIELDS,$postParams);
 		$fetchedData = $curlObj->exec();
 		return $fetchedData;
 	}
@@ -95,7 +90,7 @@ class dataObjectsModel{
 		$headerNamesArray=array();
 		$headerListDataArray = array();
 		$rowsArray=array();
-		
+
 		foreach($dataTransferObjects as $dataTransferObject)
 		{
 			$i=0;
@@ -108,63 +103,63 @@ class dataObjectsModel{
 					// Traverse each templateObjects under the Main classObject
 					foreach($classObject->templateObjects->templateObject as $templateObject)
 					{
-			
+
 						// iterate Role objects under each template
-						
+
 						$tempRoleObjectNameArray = array();
 
 						foreach($templateObject->roleObjects->children() as $roleObject)
 						{
-								$tempKey='';
-								if(stristr($roleObject->type,'Property'))
-								{
-									$tempRoleObjectNameArray[]="$roleObject->name";
-									$tempKey = (string)$templateObject->name.'.'.(string)$roleObject->name;
+							$tempKey='';
+							if(stristr($roleObject->type,'Property'))
+							{
+								$tempRoleObjectNameArray[]="$roleObject->name";
+								$tempKey = (string)$templateObject->name.'.'.(string)$roleObject->name;
 
-									$spanColor='';
-									switch (strtolower((string)$dataTransferObject->transferType))
-									{
-										case "add":
-											$spanColor='red';
-											break;
-										case "change":
-											$spanColor='blue';
-											break;
-										case "delete":
-											$spanColor='green';
-											break;
-										case "sync":
-											$spanColor='black';
-											break;
-									}
-									
+								$spanColor='';
+								switch (strtolower((string)$dataTransferObject->transferType))
+								{
+									case "add":
+										$spanColor='red';
+										break;
+									case "change":
+										$spanColor='blue';
+										break;
+									case "delete":
+										$spanColor='green';
+										break;
+									case "sync":
+										$spanColor='black';
+										break;
+								}
+
 									// We are adding custom keys to the array
-									$tempRoleValueArray['TransferType']='<span style="color:'.$spanColor.'">@ '.(string)$dataTransferObject->transferType.'</span>';
+								$tempRoleValueArray['TransferType']='<span style="color:'.$spanColor.'">'.(string)$dataTransferObject->transferType.'</span>';
 
 									// condition to check if the transferType is change for role->type
-									if($dataTransferObject->transferType=='Change')
-									{
+								if($dataTransferObject->transferType=='Change')
+								{
 										// if there is any difference between old and new then represent as old->new
-										if((string)$roleObject->value!=(string)$roleObject->oldValue){
-											$tempRoleValueArray[$tempKey]='<span style="color:'.$spanColor.'">'.(string)$roleObject->oldValue.'->'.$roleObject->value.'</span>';
-										}else{
-											$tempRoleValueArray[$tempKey]=(string)$roleObject->oldValue;
-
-										}
+									if((string)$roleObject->value!=(string)$roleObject->oldValue){
+										$tempRoleValueArray[$tempKey]='<span style="color:'.$spanColor.'">'.(string)$roleObject->oldValue.'->'.$roleObject->value.'</span>';
 									}else{
-										$tempRoleValueArray[$tempKey]='<span style="color:'.$spanColor.'">'.(string)$roleObject->value.'</span>';
+										$tempRoleValueArray[$tempKey]=(string)$roleObject->oldValue;
 
 									}
-									unset($tempKey);
+								}else{
+									$tempRoleValueArray[$tempKey]='<span style="color:'.$spanColor.'">'.(string)$roleObject->value.'</span>';
+
 								}
+								unset($tempKey);
+							}
 						}
 
 						// condition to make the Header & Row
 						if(count($tempRoleObjectNameArray)>1){
-								foreach($tempRoleObjectNameArray as $key=>$val){
-									$headerNamesArray[]=(string)$templateObject->name.'.'.$val;
-								}
-							}else if(count($tempRoleObjectNameArray)==1){
+							foreach($tempRoleObjectNameArray as $key=>$val){
+								$headerNamesArray[]=(string)$templateObject->name.'.'.$val;
+							}
+						}else if(count($tempRoleObjectNameArray)==1){
 
 							$headerNamesArray[]=(string)$templateObject->name;
 
@@ -181,7 +176,7 @@ class dataObjectsModel{
 							}
 
 						}
-					unset($tempRoleObjectNameArray);		
+						unset($tempRoleObjectNameArray);		
 					}
 				}else
 				{
@@ -207,7 +202,7 @@ class dataObjectsModel{
 		//$headerArrayList = array_values((array_unique($headerNamesArray)));
 		unset($customListArray);
 		unset($headerNamesArray);
-		
+
 		$rowsDataArray = array();
 		$columnsDataArray = array();
 
@@ -219,40 +214,41 @@ class dataObjectsModel{
 		print_r($rowsArray);
 		print_r($headerArrayList);
 		exit;*/
-		
+
 		for($i=0;$i<count($rowsArray);$i++){
-			
+
 			for($j=0;$j<count($headerArrayList);$j++){
-			$headerName = $headerArrayList[$j];
-			
-			if(array_key_exists($headerName,$rowsArray[$i])){
-				$rowsDataArray[$i][]=$rowsArray[$i][$headerName];
-			}else
-			{
-				$rowsDataArray[$i][]='';
+				$headerName = $headerArrayList[$j];
+
+				if(array_key_exists($headerName,$rowsArray[$i])){
+					$rowsDataArray[$i][]=$rowsArray[$i][$headerName];
+				}else
+				{
+					$rowsDataArray[$i][]='';
+				}
 			}
-		 }
 		}
 
-		 
+
 		$headerListDataArray[]=array('name'=>'TransferType');
-		 foreach($headerArrayList as $key =>$val){
-			$headerListDataArray[]=array('name'=>str_replace(".", "_", $val),'sort'=>true);
-			$columnsDataArray[]=array('id'=>str_replace(".", "_", $val),'header'=>$val,'dataIndex'=>str_replace(".", "_", $val));
+		foreach($headerArrayList as $key =>$val){
+			$headerListDataArray[]=array('name'=>str_replace(".", "_", $val));
+			$columnsDataArray[]=array('id'=>str_replace(".", "_", $val),'header'=>$val,'sortable'=>'true','dataIndex'=>str_replace(".", "_", $val));
 		}
+
 
 		/*echo '<pre>';
 		print_r($columnsDataArray);
 		exit;
 		*/
-		 echo json_encode(array("success"=>"true","rowData"=>json_encode($rowsDataArray),
+		echo json_encode(array("success"=>"true","rowData"=>json_encode($rowsDataArray),
 							   "columnsData"=>json_encode($columnsDataArray),
 							   "headersList"=>(json_encode($headerListDataArray))));
 		unset($jsonrowsArray);
 		unset($rowsArray);
 		unset($headerArrayList);
 		exit;
-		
+
 	}
 }
 ?>
