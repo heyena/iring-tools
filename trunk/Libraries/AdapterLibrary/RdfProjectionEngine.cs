@@ -40,7 +40,7 @@ namespace org.iringtools.adapter.projection
       try
       {
         _graphBaseUri = String.Format("{0}{1}/{2}/{3}/",
-          HttpUtility.UrlEncode(_settings["GraphBaseUri"]),
+          _settings["GraphBaseUri"],
           HttpUtility.UrlEncode(_settings["ProjectName"]),
           HttpUtility.UrlEncode(_settings["ApplicationName"]),
           HttpUtility.UrlEncode(graphName)
