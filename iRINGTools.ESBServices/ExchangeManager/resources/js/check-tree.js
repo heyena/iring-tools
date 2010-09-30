@@ -54,7 +54,7 @@ function sendAjaxRequest(label){
 	Ext.getBody().mask('Loading...');
 
 	Ext.Ajax.request({
-		url : 'dataObjects/getDataObjects/1/2',
+		url : 'dataObjects/getDataObjects/1',
 		method: 'POST',
 		params: {
 		/*nodeid: node.id,
