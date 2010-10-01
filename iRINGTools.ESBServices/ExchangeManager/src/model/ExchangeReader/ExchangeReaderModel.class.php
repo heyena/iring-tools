@@ -3,7 +3,7 @@
  * @author Aswini Nayak (aknayak@bechtel.com)
 */
 
-include_once('/model/RestfulService/curl.class.php');
+include_once('model/RestfulService/curl.class.php');
 
 class ExchangeReaderModel{
 	private $exchangeUrl;
@@ -85,10 +85,10 @@ class ExchangeReaderModel{
                         'text'=> (string)$exchange->name,
                         'Title'=> (string)$exchange->name,
                         'Description'=> (string)$exchange->description,
-                        'Commodity' => (string)$exchange->commodity,
+                        'Commodity' => (string)$commodity->name,
                         'Scope' => (string)$scope->name,
                         'icon' =>'resources/images/16x16/file-table-diff.png',
-                        'node_type' => 'exchange',
+                        'node_type' => 'exchanges',
                         'leaf' => 'true'
                       );
                     }
