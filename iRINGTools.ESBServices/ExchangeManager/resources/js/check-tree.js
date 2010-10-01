@@ -102,7 +102,9 @@ Ext.onReady(function(){
             icon:'resources/images/16x16/document-open.png',
             id: 'headExchange',
             disabled: false,
-            handler: showCentralGrid
+            handler: function(){
+                showCentralGrid(tree.getSelectionModel().getSelectedNode())
+            }
 	}
 
     ]});
