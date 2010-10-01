@@ -50,11 +50,11 @@ function showgrid(response, request,label){
 
 }
 
-function sendAjaxRequest(label){
+function sendAjaxRequest(requestURL,label){
 	Ext.getBody().mask('Loading...');
 
 	Ext.Ajax.request({
-		url : 'dataObjects/getDataObjects/1',
+		url : requestURL,
 		method: 'POST',
 		params: {
 		/*nodeid: node.id,
@@ -65,11 +65,11 @@ function sendAjaxRequest(label){
 		},
 		success: function(result, request)
 		{ 
-					showgrid(result.responseText, request,label);
+			showgrid(result.responseText, request,label);
 		},
 		failure: function ( result, request){ 
-					//alert(result.responseText); 
-				},
+			//alert(result.responseText); 
+		},
 		callback: function() {Ext.getBody().unmask();}
 	})
 }
@@ -85,17 +85,17 @@ Ext.onReady(function(){
                 {alert("Refresh Clicked")}
         },
         /*
-		Exchane Button hided
-		{
+            Exchane Button hided
+            {
             xtype:"tbbutton",
             icon:'resources/images/16x16/go-send.png',
             qtip:'Exchange Data',
             disabled: false,
             handler: function()
                 {
-					  //alert("Clicked on Exchange Data")
-					  dataExchange();
-				}
+                  //alert("Clicked on Exchange Data")
+                  dataExchange();
+                }
         },*/
         {
             xtype:"tbbutton",
@@ -115,7 +115,8 @@ Ext.onReady(function(){
     bodyBorder:false,
     border:true,
     hlColor:'C3DAF',
-    width: 250,
+    //width: 250,
+    layout:'fit',
     useArrows:false, // true for vista like
     autoScroll:true,
     animate:true,
@@ -153,7 +154,7 @@ Ext.onReady(function(){
              var details_data = []
                for(var key in obj){                
                  // restrict some of the properties to be displayed
-                 if(key!='id' && key!='text' && key!='icon' && key!='children' && key!='loader' && key!='leaf' && key!='applicationId'){
+                 if(key!='node_type' && key!='uid' && key!='id' && key!='text' && key!='icon' && key!='children' && key!='loader' && key!='leaf' && key!='applicationId'){
                     details_data[key]=obj[key]
                  }  
                }
@@ -173,15 +174,15 @@ Ext.onReady(function(){
           }
         },
         dblclick :{
-		fn : function (){
-			showCentralGrid();
-			}
-        },
-        expandnode:{
+		fn : function (node){
+                   showCentralGrid(node);
+                }
+        }
+       /* expandnode:{
             fn : function (node){
                 Ext.state.Manager.set("treestate", node.getPath())
             }
-        }
+        }*/
     }
   });
 
@@ -217,24 +218,37 @@ Ext.onReady(function(){
 	   }});
 	  }
   
-  function showCentralGrid()
+  function showCentralGrid(node)
     {
-	  var label = tree.getSelectionModel().getSelectedNode().text;
-		  /*
-			 check the id of the tab
-			 if it's available then just display the tab & don't send ajax request
-		  */
+	  var label = tree.getSelectionModel().getSelectedNode().text
+          var obj = node.attributes          
+          var eid
+	  var scopeId = obj['Scope']
+          var nodeType = obj['node_type']
+            if((obj['node_type']=='exchanges' && obj['uid']!='')){
+                eid = obj['uid']
+                var requestURL = 'dataObjects/getDataObjects/'+scopeId+'/'+nodeType+'/'+eid
+            }else{
+                alert('You can review only Data Exchange in this Version')
+                exit()
+            }
+          
+
+          /*
+                 check the id of the tab
+                 if it's available then just display the tab & don't send ajax request
+          */
 	  if(!Ext.getCmp(label)){
                    if(tree.getSelectionModel().getSelectedNode().id!=null)
                    {
                           Ext.getCmp('centerPanel').enable();
-                          sendAjaxRequest(label);
+                          sendAjaxRequest(requestURL,label);
 
-						  // check the current state of Detail Grid panel
-						  if(Ext.getCmp('detail-grid').collapsed!=true){
-								  Ext.getCmp('detail-grid').collapse();
-							
-						  }
+                          // check the current state of Detail Grid panel
+                          if(Ext.getCmp('detail-grid').collapsed!=true){
+                                          Ext.getCmp('detail-grid').collapse();
+
+                          }
                    }
 	}else{
 		// collapse the detail Grid panel & show the tab
