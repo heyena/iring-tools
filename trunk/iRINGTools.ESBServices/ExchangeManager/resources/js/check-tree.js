@@ -14,6 +14,12 @@ function showgrid(response, request,label){
 	if(eval(jsonData.success)==false)
 	{
 		Ext.getCmp('centerPanel').disable();
+		Ext.MessageBox.show({
+		title: '<font color=red>Error</font>',
+		msg: 'No Exchange Results found for:<br/>'+label,
+		buttons: Ext.MessageBox.OK,
+		icon: Ext.MessageBox.ERROR
+		});
 		return false;
 	}else{
 	var rowData = eval(jsonData.rowData);
@@ -110,8 +116,6 @@ Ext.onReady(function(){
             handler: function(){
                 showCentralGrid(tree.getSelectionModel().getSelectedNode());
             }
-                
-            
 	}
 
     ]});
