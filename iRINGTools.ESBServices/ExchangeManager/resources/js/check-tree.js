@@ -11,6 +11,11 @@
 
 function showgrid(response, request,label){
 	var jsonData = Ext.util.JSON.decode(response);
+	if(eval(jsonData.success)==false)
+	{
+		Ext.getCmp('centerPanel').disable();
+		return false;
+	}else{
 	var rowData = eval(jsonData.rowData);
 	var filedsVal = eval(jsonData.headersList);
 	var columnData = eval(jsonData.columnsData);
@@ -47,7 +52,7 @@ function showgrid(response, request,label){
 	title: label,
 	closable:true
 	})).show();
-
+}
 }
 
 function sendAjaxRequest(requestURL,label){
@@ -102,9 +107,7 @@ Ext.onReady(function(){
             icon:'resources/images/16x16/document-open.png',
             id: 'headExchange',
             disabled: false,
-            handler: function(){
-                showCentralGrid(tree.getSelectionModel().getSelectedNode())
-            }
+            handler: showCentralGrid
 	}
 
     ]});
@@ -231,8 +234,9 @@ Ext.onReady(function(){
                 eid = obj['uid']
                 var requestURL = 'dataObjects/getDataObjects/'+scopeId+'/'+nodeType+'/'+eid
             }else{
-                alert('You can review only Data Exchange in this Version')
-                exit()
+                alert('You can review only Data Exchange in this Version');
+				return false;
+						
             }
           
 
@@ -253,6 +257,7 @@ Ext.onReady(function(){
                           }
                    }
 	}else{
+		  Ext.getCmp('centerPanel').enable();
 		// collapse the detail Grid panel & show the tab
 		  if(Ext.getCmp('detail-grid').collapsed!=true){
 			  Ext.getCmp('detail-grid').collapse();
