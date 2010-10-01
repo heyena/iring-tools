@@ -28,8 +28,13 @@ class dataObjectsModel{
 	 */
 		
 		$this->dtiXMLData = $this->getDtiInfo($params);
-		//$identifiersArray = explode(',',$this->identifiersList);
+		if($this->dtiXMLData!=''){
 		return json_encode($this->createJSONDataFormat($this->getDXOInfo($params,$this->dtiXMLData)));
+		}else{
+			echo json_encode(array("success"=>"false"));
+		}
+		//$identifiersArray = explode(',',$this->identifiersList);
+		
 	}
 	
 	
@@ -41,10 +46,7 @@ class dataObjectsModel{
 	 */
 
 	private function getDtiInfo($exchangeID){
-
-		if(is_array($exchangeID)){
-			$this->dxiUrl = $this->dxiUrl.$exchangeID[0];
-		}
+		$this->dxiUrl = $this->dxiUrl.$exchangeID;
 		$curlObj = new curl($this->dxiUrl);
 		$fetchedData = $curlObj->exec();
 		return $fetchedData;
@@ -65,23 +67,12 @@ class dataObjectsModel{
 	}
 
 	private function getDXOInfo($exchangeID,$postParams){
-		if(is_array($exchangeID)){
-			$this->dxoUrl = $this->dxoUrl.$exchangeID[0];
-			//$this->dxoUrl = $this->dxoUrl.'?'.http_build_query($exchangeID);
-			//$this->dxoUrl = $this->dxoUrl;
-		}
-		//print_r($postParams);
-		
+		$this->dxoUrl = $this->dxoUrl.$exchangeID;
 		$curlObj = new curl($this->dxoUrl);
 		$curlObj->setopt(CURLOPT_POST, 1);
 		$curlObj->setopt(CURLOPT_HTTPHEADER, Array("Content-Type: application/xml"));
 		$curlObj->setopt(CURLOPT_POSTFIELDS,$postParams);
 		$fetchedData = $curlObj->exec();
-
-		/*echo '<pre>';
-		print_r($fetchedData);
-		exit;
-		*/
 		return $fetchedData;
 	}
 
