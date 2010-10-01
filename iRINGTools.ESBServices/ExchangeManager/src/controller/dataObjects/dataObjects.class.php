@@ -8,16 +8,10 @@
 	Function getReview() @params exchangeID
     @returns the JSON for Tree view + default grid view + array to be used in nodes
 */
-
-//*****123
-
-
-  // *****a1239
-
    class dataObjects extends BaseController{
 	private $defaultGrid = array();
 	private $treeData;
-	//private $keyparams=array('scope','exchangeID');
+	private $keyparams=array('scope','nodetype','exchangeID');
 	//private $keyparams=array();
 	protected $modelObj;
 
@@ -32,7 +26,8 @@
 	// http://localhost:81/iRINGTools.ESB/ExchangeManager/ReviewGenerator/getReview/1
 	
 	function getDataObjects($params){
-		$headerArray = $this->modelObj->getDataObjects($params);
+		$urlParams = implode('/',array_combine($this->keyparams,$params));
+		$headerArray = $this->modelObj->getDataObjects($urlParams);
 		echo ($headerArray);
 		
 	}
