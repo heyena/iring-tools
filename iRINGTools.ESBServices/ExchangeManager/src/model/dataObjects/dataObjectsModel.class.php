@@ -3,7 +3,7 @@
  * @author Aswini Nayak (aknayak@bechtel.com)
 */
 
-include_once('/model/RestfulService/curl.class.php');
+include_once('model/RestfulService/curl.class.php');
 
 class dataObjectsModel{
 	private $exchangeUrl;
