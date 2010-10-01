@@ -109,8 +109,9 @@ Ext.onReady(function(){
           id:'centerPanel',
           xtype: 'tabpanel',
           disabled:true,
-          margins: '0 0 0 0'
-          
+          margins: '0 0 0 0',
+		  enableTabScroll:true,
+		  defaults:{layout:'fit'}
         }
     ]
 });
