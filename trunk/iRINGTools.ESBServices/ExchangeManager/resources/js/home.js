@@ -72,10 +72,6 @@ Ext.onReady(function(){
           items: [
               propsGrid = new Ext.grid.PropertyGrid({              
               id:'propGrid',
-              customEditors: {
-                'ID': new Ext.form.TextField({readOnly :true }),
-                'Name': new Ext.form.TextField({readOnly :true })
-                },
               source:{},
               listeners: {
               // to disable editable option of the property grid
