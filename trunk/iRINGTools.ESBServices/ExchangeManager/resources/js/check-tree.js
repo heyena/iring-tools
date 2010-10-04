@@ -242,7 +242,15 @@ Ext.onReady(function(){
                 eid = obj['uid']
                 var requestURL = 'dataObjects/getDataObjects/'+scopeId+'/'+nodeType+'/'+eid
             }else{
-                alert('You can review only Data Exchange in this Version');
+		  
+				  Ext.MessageBox.show({
+					//title: '<font color=yellow>Warning</font>',
+					msg: 'You can review only Data Exchange in this Version<br/>',
+					buttons: Ext.MessageBox.OK,
+					icon: Ext.MessageBox.WARNING
+				  });
+
+                //alert('You can review only Data Exchange in this Version');
 				return false;
 						
             }
