@@ -50,20 +50,6 @@ class dataObjectsModel{
 		$curlObj = new curl($this->dxiUrl);
 		$fetchedData = $curlObj->exec();
 		return $fetchedData;
-		
-		/*$xmlIterator = new SimpleXMLIterator($fetchedData);
-		$resultArr="";
-		
-		foreach($xmlIterator  as $dataTransferIndices)
-		{
-			if($resultArr==''){
-				$resultArr=$dataTransferIndices->identifier;
-			}else{
-				$resultArr=$resultArr.','.$dataTransferIndices->identifier;
-			}
-		}
-		unset($fetchedData);
-		return $resultArr;*/
 	}
 
 	private function getDXOInfo($exchangeID,$postParams){
@@ -152,11 +138,11 @@ class dataObjectsModel{
 
 										if($oldvalue!=$value){
 
-											if($oldvalue!='' && $value!=''){
+											//if($oldvalue!='' && $value!=''){
 												$tempRoleValueArray[$tempKey]='<span style="color:'.$spanColor.'">'.$oldvalue.'->'.$value.'</span>';
-											}else{
-												$tempRoleValueArray[$tempKey]='<span style="color:'.$spanColor.'">'.$oldvalue.$value.'</span>';
-											}
+											//}else{
+												//$tempRoleValueArray[$tempKey]='<span style="color:'.$spanColor.'">'.$oldvalue.$value.'</span>';
+											//}
 
 										}
 										else{
