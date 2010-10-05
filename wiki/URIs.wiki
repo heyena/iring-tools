@@ -1,0 +1,98 @@
+#summary Uri's for Web Services.
+
+=Current=
+
+==AdapterService==
+
+===Meta Data===
+/{scope}/{app}/binding    GET              -> XElement
+/{scope}/{app}/binding    POST    XElement -> Response
+/{scope}/{app}/dictionary GET              -> DataDictionary
+/{scope}/{app}/manifest   GET              -> Manifest
+/{scope}/{app}/mapping    GET              -> Mapping (1.2.x)
+/{scope}/{app}/mapping    POST    XElement -> Response
+/datalayers		          GET              -> List<String>
+/scopes                   GET              -> List<Scope>
+/scopes                   POST List<Scope> -> Response
+/version                  GET              -> String
+
+===Dynamic Data===
+/{scope}/{app}/{graph}?format=xml/dto/rdf      GET            -> XElement
+/{scope}/{app}/{graph}?format=xml/dto/rdf      POST  XElement -> Response
+/{scope}/{app}/{graph}/{id}?format=xml/dto/rdf GET            -> XElement
+
+===Differencing Support===
+/{scope}/{app}/{graph}/dti                     POST dxRequest -> XElement
+/{scope}/{app}/{graph}/dto                     POST dxRequest -> XElement
+
+dxRequest = Manifest + Identifiers + hashAlgorithm
+
+===Triple Store===
+/{scope}/{app}/{graph}/delete  GET          -> Reponse
+/{scope}/{app}/{graph}/refresh GET          -> Reponse
+/{scope}/{app}/{graph}/pull    POST Request -> Reponse
+/{scope}/{app}/delete          GET          -> Reponse
+
+=2.0.0=
+
+==AdapterService==
+
+===Meta Data===
+/{scope}/{app}/binding    GET           -> XElement
+/{scope}/{app}/binding    POST XElement -> Response
+/{scope}/{app}/dictionary GET           -> DataDictionary
+/{scope}/{app}/mapping    GET           -> Mapping (1.2.x)
+/{scope}/{app}/mapping    POST XElement -> Response
+/datalayers		          GET           -> DataLayers
+/scopes                   GET           -> Scopes
+/scopes                   POST   Scopes -> Response
+/version                  GET           -> Version
+
+===Dynamic Data===
+/{scope}/{app}/{graph}?format=xml/rdf      GET            -> XElement
+/{scope}/{app}/{graph}?format=xml/rdf      POST  XElement -> Response
+/{scope}/{app}/{graph}/{id}?format=xml/rdf GET            -> XElement
+/{scope}/{app}/{graph}/{id}                DELTE          -> Response
+
+===Generic Data===
+/{scope}/{app}/{graph}/data      GET                       -> DataTransferIndices
+/{scope}/{app}/{graph}/data      POST  DataTransferIndices -> DataTransferObjects
+/{scope}/{app}/{graph}/data      POST  DataTransferObjects -> Response
+/{scope}/{app}/{graph}/data/{id} GET                       -> DataTransferObjects
+/{scope}/{app}/{graph}/data/{id} DELTE                     -> Response
+/{scope}/{app}/manifest          GET                       -> Manifest
+
+===Differencing Support===
+/{scope}/{app}/{graph}/dti POST Manifest    -> DataTransferIndices
+/{scope}/{app}/{graph}/dto POST PageRequest -> DataTransferObjects
+
+PageRequest = Manifest + DataTransferIndices
+
+===Triple Store===
+/{scope}/{app}/{graph}/delete  GET          -> Reponse
+/{scope}/{app}/{graph}/refresh GET          -> Reponse
+/{scope}/{app}/{graph}/pull    POST Request -> Reponse
+/{scope}/{app}/delete          GET          -> Reponse
+
+==ESBService==
+
+===Dynamic Data===
+/{scope}/{app}/{graph}?format=xml/dto/rdf      GET            -> XElement
+/{scope}/{app}/{graph}?format=xml/dto/rdf      POST  XElement -> Response
+/{scope}/{app}/{graph}/{id}?format=xml/dto/rdf GET            -> XElement
+/{scope}/{app}/{graph}/{id}                    DELTE          -> Response
+
+==Generic Data==
+/{scope}/{app}/{graph}/data      GET                       -> DataTransferIndices
+/{scope}/{app}/{graph}/data      POST  DataTransferIndices -> DataTransferObjects
+/{scope}/{app}/{graph}/data      POST  DataTransferObjects -> Response
+/{scope}/{app}/{graph}/data/{id} GET                       -> DataTransferObjects
+/{scope}/{app}/{graph}/data/{id} DELTE                     -> Response
+
+==Data Exchanges==
+/{scope}/exchanges/{id} GET                      -> DataTransferIndices
+/{scope}/exchanges/{id} POST DataTransferIndices -> DataTransferObjects
+
+==Directory==
+/directory GET -> Directory
+
