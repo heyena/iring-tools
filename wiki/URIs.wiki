@@ -90,9 +90,7 @@ PageRequest = Manifest + DataTransferIndices
 /{scope}/{app}/delete          GET          -> Reponse
 }}}
 
-==ESBService==
-
-===Dynamic Data===
+==DataProxyService==
 {{{
 /{scope}/{app}/{graph}?format=xml/dto/rdf      GET             -> XElement
 /{scope}/{app}/{graph}?format=xml/dto/rdf      POST   XElement -> Response
@@ -100,7 +98,7 @@ PageRequest = Manifest + DataTransferIndices
 /{scope}/{app}/{graph}/{id}                    DELETE          -> Response
 }}}
 
-==Generic Data==
+==DataTransferProxyService==
 {{{
 /{scope}/{app}/{graph}/data      GET                        -> DataTransferIndices
 /{scope}/{app}/{graph}/data      POST   DataTransferIndices -> DataTransferObjects
@@ -109,13 +107,13 @@ PageRequest = Manifest + DataTransferIndices
 /{scope}/{app}/{graph}/data/{id} DELETE                     -> Response
 }}}
 
-==Data Exchanges==
+==ExchangeProxyService==
 {{{
 /{scope}/exchanges/{id} GET                      -> DataTransferIndices
 /{scope}/exchanges/{id} POST DataTransferIndices -> DataTransferObjects
 }}}
 
-==Directory==
+==DirectoryProxyService==
 {{{
 /directory GET -> Directory
 }}}
