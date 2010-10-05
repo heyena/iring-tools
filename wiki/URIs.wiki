@@ -43,46 +43,42 @@ dxRequest = Manifest + Identifiers + hashAlgorithm
 
 =2.0.0=
 
-==AdapterService==
+==Adapter==
 {{{
-/{scope}/{app}/binding    GET           -> XElement
-/{scope}/{app}/binding    POST XElement -> Response
-/{scope}/{app}/dictionary GET           -> DataDictionary
-/{scope}/{app}/mapping    GET           -> Mapping (1.2.x)
-/{scope}/{app}/mapping    POST XElement -> Response
-/datalayers		  GET           -> DataLayers
-/scopes                   GET           -> Scopes
-/scopes                   POST   Scopes -> Response
-/version                  GET           -> Version
+/adapter/{scope}/{app}/binding    GET           -> XElement
+/adapter/{scope}/{app}/binding    POST XElement -> Response
+/adapter/{scope}/{app}/dictionary GET           -> DataDictionary
+/adapter/{scope}/{app}/mapping    GET           -> Mapping (1.2.x)
+/adapter/{scope}/{app}/mapping    POST XElement -> Response
+/adapter/datalayers		  GET           -> DataLayers
+/adapter/scopes                   GET           -> Scopes
+/adapter/scopes                   POST   Scopes -> Response
+/adapter/version                  GET           -> Version
 }}}
 
-==DataService==
+==Data=
 {{{
-/{scope}/{app}/{graph}?format=xml/rdf      GET             -> XElement
-/{scope}/{app}/{graph}?format=xml/rdf      POST   XElement -> Response
-/{scope}/{app}/{graph}/{id}?format=xml/rdf GET             -> XElement
-/{scope}/{app}/{graph}/{id}                DELETE          -> Response
+/data/{scope}/{app}/{graph}?format=xml/rdf      GET             -> XElement
+/data/{scope}/{app}/{graph}?format=xml/rdf      POST   XElement -> Response
+/data/{scope}/{app}/{graph}/{id}?format=xml/rdf GET             -> XElement
+/data/{scope}/{app}/{graph}/{id}                DELETE          -> Response
 }}}
 
-==DataTransferService==
+==DTO==
 {{{
-/{scope}/{app}/{graph}      GET                        -> DataTransferIndices
-/{scope}/{app}/{graph}      POST   DataTransferIndices -> DataTransferObjects
-/{scope}/{app}/{graph}      POST   DataTransferObjects -> Response
-/{scope}/{app}/{graph}/{id} GET                        -> DataTransferObjects
-/{scope}/{app}/{graph}/{id} DELETE                     -> Response
-/{scope}/{app}/manifest     GET                        -> Manifest
-}}}
-
-==DifferencingServices==
-{{{
-/{scope}/{app}/{graph}/dti POST Manifest    -> DataTransferIndices
-/{scope}/{app}/{graph}/dto POST PageRequest -> DataTransferObjects
+/dto/{scope}/{app}/{graph}           GET                        -> DataTransferIndices
+/dto/{scope}/{app}/{graph}/page      POST   DataTransferIndices -> DataTransferObjects
+/dto/{scope}/{app}/{graph}           POST   DataTransferObjects -> Response
+/dto/{scope}/{app}/{graph}/{id}      GET                        -> DataTransferObjects
+/dto/{scope}/{app}/{graph}/{id}      DELETE                     -> Response
+/dto/{scope}/{app}/{graph}/diff      POST           Manifest    -> DataTransferIndices
+/dto/{scope}/{app}/{graph}/diff/page POST           PageRequest -> DataTransferObjects
+/dto/{scope}/{app}/manifest          GET                        -> Manifest
 }}}
 
 PageRequest = Manifest + DataTransferIndices
 
-==InterfaceService==
+==Facade==
 {{{
 /{scope}/{app}/{graph}/delete  GET          -> Reponse
 /{scope}/{app}/{graph}/refresh GET          -> Reponse
