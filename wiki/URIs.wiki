@@ -100,13 +100,13 @@
 /dto/{scope}/{app}/{graph}           POST   DataTransferObjects -> Response
 /dto/{scope}/{app}/{graph}/{id}      GET                        -> DataTransferObjects
 /dto/{scope}/{app}/{graph}/{id}      DELETE                     -> Response
-/dto/{scope}/{app}/{graph}/xfr       POST           Manifest    -> DataTransferIndices
-/dto/{scope}/{app}/{graph}/xfr/page  POST           PageRequest -> DataTransferObjects
+/dto/{scope}/{app}/{graph}/xfr       POST              Manifest -> DataTransferIndices
+/dto/{scope}/{app}/{graph}/xfr/page  POST        DtoPageRequest -> DataTransferObjects
 /dto/{scope}/{app}/manifest          GET                        -> Manifest
 /dto/version                         GET                        -> Version
 }}}
 
-PageRequest = Manifest + DataTransferIndices
+DtoPageRequest= Manifest + DataTransferIndices
 
 ==InterfaceService==
 {{{
@@ -189,13 +189,13 @@ PageRequest = Manifest + DataTransferIndices
 /dto/{scope}/{app}/{graph}           POST   DataTransferObjects -> Response
 /dto/{scope}/{app}/{graph}/{id}      GET                        -> DataTransferObjects
 /dto/{scope}/{app}/{graph}/{id}      DELETE                     -> Response
-/dto/{scope}/{app}/{graph}/xfr       POST           Manifest    -> DataTransferIndices
-/dto/{scope}/{app}/{graph}/xfr/page  POST           PageRequest -> DataTransferObjects
+/dto/{scope}/{app}/{graph}/xfr       POST              Manifest -> DataTransferIndices
+/dto/{scope}/{app}/{graph}/xfr/page  POST        DtoPageRequest -> DataTransferObjects
 /dto/{scope}/{app}/manifest          GET                        -> Manifest
 /dto/version                         GET                        -> Version
 }}}
 
-PageRequest = Manifest + DataTransferIndices
+DtoPageRequest = Manifest + DataTransferIndices
 
 ==Facade==
 {{{
