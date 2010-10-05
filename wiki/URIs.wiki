@@ -87,11 +87,11 @@
 
 ==Data=
 {{{
-/data/{scope}/{app}/{graph}?format=xml/rdf      GET              -> XDocument
-/data/{scope}/{app}/{graph}?format=xml/rdf      POST   XDocument -> Response
-/data/{scope}/{app}/{graph}/{id}?format=xml/rdf GET              -> XDocument
-/data/{scope}/{app}/{graph}/{id}                DELETE           -> Response
-/data/version                                   GET              -> Version
+/data/{scope}/{app}/{graph}?format=xml/dto/rdf      GET              -> XDocument
+/data/{scope}/{app}/{graph}?format=xml/dto/rdf      POST   XDocument -> Response
+/data/{scope}/{app}/{graph}/{id}?format=xml/dto/rdf GET              -> XDocument
+/data/{scope}/{app}/{graph}/{id}                    DELETE           -> Response
+/data/version                                       GET              -> Version
 }}}
 
 ==DTO==
@@ -101,8 +101,8 @@
 /dto/{scope}/{app}/{graph}           POST   DataTransferObjects -> Response
 /dto/{scope}/{app}/{graph}/{id}      GET                        -> DataTransferObjects
 /dto/{scope}/{app}/{graph}/{id}      DELETE                     -> Response
-/dto/{scope}/{app}/{graph}/diff      POST           Manifest    -> DataTransferIndices
-/dto/{scope}/{app}/{graph}/diff/page POST           PageRequest -> DataTransferObjects
+/dto/{scope}/{app}/{graph}/xfr       POST           Manifest    -> DataTransferIndices
+/dto/{scope}/{app}/{graph}/xfr/page  POST           PageRequest -> DataTransferObjects
 /dto/{scope}/{app}/manifest          GET                        -> Manifest
 /dto/version                         GET                        -> Version
 }}}
@@ -154,13 +154,13 @@ PageRequest = Manifest + DataTransferIndices
 
 ---Java---
 
-==ESBProxy==
+==ESB==
 {{{
-/esb/{scope}/{app}/{graph}/data                         GET                        -> DataTransferIndices
-/esb/{scope}/{app}/{graph}/data                         POST   DataTransferIndices -> DataTransferObjects
-/esb/{scope}/{app}/{graph}/data                         POST   DataTransferObjects -> Response
-/esb/{scope}/{app}/{graph}/data/{id}                    GET                        -> DataTransferObjects
-/esb/{scope}/{app}/{graph}/data/{id}                    DELETE                     -> Response
+/esb/{scope}/{app}/{graph}                              GET                        -> DataTransferIndices
+/esb/{scope}/{app}/{graph}                              POST   DataTransferIndices -> DataTransferObjects
+/esb/{scope}/{app}/{graph}                              POST   DataTransferObjects -> Response
+/esb/{scope}/{app}/{graph}/{id}                         GET                        -> DataTransferObjects
+/esb/{scope}/{app}/{graph}/{id}                         DELETE                     -> Response
 /esb/{scope}/exchanges/{id}                             GET                        -> DataTransferIndices
 /esb/{scope}/exchanges/{id}                             POST   DataTransferIndices -> DataTransferObjects
 /esb/data/{scope}/{app}/{graph}?format=xml/dto/rdf      GET                        -> XDocument
