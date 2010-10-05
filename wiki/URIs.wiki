@@ -44,8 +44,6 @@ dxRequest = Manifest + Identifiers + hashAlgorithm
 =2.0.0=
 
 ==AdapterService==
-
-===Meta Data===
 {{{
 /{scope}/{app}/binding    GET           -> XElement
 /{scope}/{app}/binding    POST XElement -> Response
@@ -58,7 +56,7 @@ dxRequest = Manifest + Identifiers + hashAlgorithm
 /version                  GET           -> Version
 }}}
 
-===Dynamic Data===
+==DataService==
 {{{
 /{scope}/{app}/{graph}?format=xml/rdf      GET             -> XElement
 /{scope}/{app}/{graph}?format=xml/rdf      POST   XElement -> Response
@@ -66,17 +64,17 @@ dxRequest = Manifest + Identifiers + hashAlgorithm
 /{scope}/{app}/{graph}/{id}                DELETE          -> Response
 }}}
 
-===Generic Data===
+==DataTransferService==
 {{{
-/{scope}/{app}/{graph}/data      GET                        -> DataTransferIndices
-/{scope}/{app}/{graph}/data      POST   DataTransferIndices -> DataTransferObjects
-/{scope}/{app}/{graph}/data      POST   DataTransferObjects -> Response
-/{scope}/{app}/{graph}/data/{id} GET                        -> DataTransferObjects
-/{scope}/{app}/{graph}/data/{id} DELETE                     -> Response
-/{scope}/{app}/manifest          GET                        -> Manifest
+/{scope}/{app}/{graph}      GET                        -> DataTransferIndices
+/{scope}/{app}/{graph}      POST   DataTransferIndices -> DataTransferObjects
+/{scope}/{app}/{graph}      POST   DataTransferObjects -> Response
+/{scope}/{app}/{graph}/{id} GET                        -> DataTransferObjects
+/{scope}/{app}/{graph}/{id} DELETE                     -> Response
+/{scope}/{app}/manifest     GET                        -> Manifest
 }}}
 
-===Differencing Support===
+==DifferencingServices==
 {{{
 /{scope}/{app}/{graph}/dti POST Manifest    -> DataTransferIndices
 /{scope}/{app}/{graph}/dto POST PageRequest -> DataTransferObjects
@@ -84,7 +82,7 @@ dxRequest = Manifest + Identifiers + hashAlgorithm
 
 PageRequest = Manifest + DataTransferIndices
 
-===Triple Store===
+==InterfaceService==
 {{{
 /{scope}/{app}/{graph}/delete  GET          -> Reponse
 /{scope}/{app}/{graph}/refresh GET          -> Reponse
