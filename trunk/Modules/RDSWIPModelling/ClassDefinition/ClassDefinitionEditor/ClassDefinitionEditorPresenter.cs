@@ -44,6 +44,7 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
         private IMPresentationModel model;
         private ClassDefinitionBLL _classBLL = null;
         private EditorMode _editorMode = EditorMode.Add;
+        private string _clickedButton = String.Empty;
 
         private Button btnOK
         {
@@ -177,6 +178,17 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
 
                 }
 
+                //if (args.CheckForType(CompletedEventType.GetClass))
+                //{
+                //  if (args.Error != null)
+                //  {
+                //    MessageBox.Show(args.FriendlyErrorMessage, "Get Class Error", MessageBoxButton.OK);
+                //    return;
+                //  }
+
+                //  InitializeEditor(EditorMode.Edit, (QMXF)args.Data);
+                //}
+
                 if (args.CheckForType(CompletedEventType.PostClass))
                 {
                     if (args.Error != null)
@@ -185,6 +197,20 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
                         return;
                     }
                     MessageBox.Show("Class posted successfully", "Post Class", MessageBoxButton.OK);
+
+                    if (_clickedButton == "btnOK1")
+                    {
+                      IRegion region = regionManager.Regions["ClassEditorRegion"];
+                      foreach (UserControl userControl in region.Views)
+                      {
+                        userControl.Visibility = Visibility.Collapsed;
+                      }
+                    }
+                    else if (_clickedButton == "btnApply1")
+                    {
+                      //referenceDataService.GetClass(_classBLL.Identifier, null);
+                    }
+                    _clickedButton = String.Empty;
                     return;
                 }
             }
@@ -307,18 +333,14 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
         {
             try
             {
-                if (e.Name.ToString() == "btnOK1")
+                _clickedButton = e.Name.ToString();
+
+                if (_clickedButton == "btnOK1")
                 {
                     QMXF @qmxf = _classBLL.QMXF;
-                    referenceDataService.PostClass(@qmxf);
-
-                    IRegion region = regionManager.Regions["ClassEditorRegion"];
-                    foreach (UserControl userControl in region.Views)
-                    {
-                        userControl.Visibility = Visibility.Collapsed;
-                    }
+                    referenceDataService.PostClass(@qmxf); 
                 }
-                else if (e.Name.ToString() == "btnCancel1")
+                else if (_clickedButton == "btnCancel1")
                 {
                     _classBLL = null;
 
@@ -328,13 +350,10 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
                         userControl.Visibility = Visibility.Collapsed;
                     }
                 }
-                else if (e.Name.ToString() == "btnApply1")
+                else if (_clickedButton == "btnApply1")
                 {
                     QMXF @qmxf = _classBLL.QMXF;
                     referenceDataService.PostClass(@qmxf);
-
-                    InitializeEditor(EditorMode.Edit, @qmxf);
-
                 }
             }
             catch (Exception ex)
