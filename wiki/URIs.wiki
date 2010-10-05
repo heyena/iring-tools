@@ -12,7 +12,7 @@
 /{scope}/{app}/manifest   GET              -> Manifest
 /{scope}/{app}/mapping    GET              -> Mapping (1.2.x)
 /{scope}/{app}/mapping    POST    XElement -> Response
-/datalayers		  GET              -> List<String>
+/datalayers               GET              -> List<String>
 /scopes                   GET              -> List<Scope>
 /scopes                   POST List<Scope> -> Response
 /version                  GET              -> String
