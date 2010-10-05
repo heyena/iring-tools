@@ -90,30 +90,18 @@ PageRequest = Manifest + DataTransferIndices
 /{scope}/{app}/delete          GET          -> Reponse
 }}}
 
-==DataProxyService==
+==ESBProxyService==
 {{{
 /{scope}/{app}/{graph}?format=xml/dto/rdf      GET             -> XElement
 /{scope}/{app}/{graph}?format=xml/dto/rdf      POST   XElement -> Response
 /{scope}/{app}/{graph}/{id}?format=xml/dto/rdf GET             -> XElement
 /{scope}/{app}/{graph}/{id}                    DELETE          -> Response
-}}}
-
-==DataTransferProxyService==
-{{{
 /{scope}/{app}/{graph}/data      GET                        -> DataTransferIndices
 /{scope}/{app}/{graph}/data      POST   DataTransferIndices -> DataTransferObjects
 /{scope}/{app}/{graph}/data      POST   DataTransferObjects -> Response
 /{scope}/{app}/{graph}/data/{id} GET                        -> DataTransferObjects
 /{scope}/{app}/{graph}/data/{id} DELETE                     -> Response
-}}}
-
-==ExchangeProxyService==
-{{{
 /{scope}/exchanges/{id} GET                      -> DataTransferIndices
 /{scope}/exchanges/{id} POST DataTransferIndices -> DataTransferObjects
-}}}
-
-==DirectoryProxyService==
-{{{
 /directory GET -> Directory
 }}}
