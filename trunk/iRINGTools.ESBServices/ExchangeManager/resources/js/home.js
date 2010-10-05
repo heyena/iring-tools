@@ -75,7 +75,7 @@ Ext.onReady(function(){
               source:{},
               listeners: {
               // to disable editable option of the property grid
-                beforeedit : function( e)
+                beforeedit : function(e)
                 {               
                     //e.cancel=true;
                 }

@@ -51,7 +51,18 @@ function showgrid(response, request,label){
 	columnLines: true,
 	autoWidth:true
 	});
-	
+
+        //make the text selectable in cells of Grid
+        Ext.override(Ext.grid.GridView, {
+        templates: {
+        cell: new Ext.Template(
+            '<td class="x-grid3-col x-grid3-cell x-grid3-td-{id} {css}" style="{style}" tabIndex="0" {cellAttr}>',
+            '<div class="x-grid3-cell-inner x-grid3-col-{id}" {attr}>{value}</div>',
+            "</td>"
+            )
+            }
+        });
+
 	Ext.getCmp('centerPanel').add( 
 	Ext.apply(grid,{
 	id:'tab-'+label,
@@ -243,15 +254,13 @@ Ext.onReady(function(){
                 var requestURL = 'dataObjects/getDataObjects/'+scopeId+'/'+nodeType+'/'+eid
             }else{
 		  
-				  Ext.MessageBox.show({
-					//title: '<font color=yellow>Warning</font>',
-					msg: 'You can review only Data Exchange in this Version<br/>',
-					buttons: Ext.MessageBox.OK,
-					icon: Ext.MessageBox.WARNING
-				  });
-
-                //alert('You can review only Data Exchange in this Version');
-				return false;
+                  Ext.MessageBox.show({
+                        //title: '<font color=yellow>Warning</font>',
+                        msg: 'You can review only Data Exchange in this Version<br/>',
+                        buttons: Ext.MessageBox.OK,
+                        icon: Ext.MessageBox.WARNING
+                  });
+                return false;
 						
             }
           

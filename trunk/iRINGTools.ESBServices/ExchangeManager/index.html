@@ -11,6 +11,21 @@
     <script type="text/javascript" src="resources/js/home.js"></script>
     <script type="text/javascript" src="resources/js/check-tree.js"></script>
     <!--<script type="text/javascript" src="resources/js/tag-nodes.js"></script>-->
+
+      <!-- overwrite CSS style to change to enable text selection of Grid -->
+      <style type="text/css">
+        .x-grid3-row td,
+        .x-grid3-summary-row td,
+        .x-grid3-cell-text,
+        .x-grid3-hd-text,
+        .x-grid3-hd,
+        .x-grid3-row {
+	-moz-user-select:inherit;
+	-khtml-user-select:text;
+        }
+    </style>
+
+
   </head>
   <body>
     <div  id="myHeader">
