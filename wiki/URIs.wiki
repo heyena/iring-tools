@@ -60,20 +60,20 @@ dxRequest = Manifest + Identifiers + hashAlgorithm
 
 ===Dynamic Data===
 {{{
-/{scope}/{app}/{graph}?format=xml/rdf      GET            -> XElement
-/{scope}/{app}/{graph}?format=xml/rdf      POST  XElement -> Response
-/{scope}/{app}/{graph}/{id}?format=xml/rdf GET            -> XElement
-/{scope}/{app}/{graph}/{id}                DELTE          -> Response
+/{scope}/{app}/{graph}?format=xml/rdf      GET             -> XElement
+/{scope}/{app}/{graph}?format=xml/rdf      POST   XElement -> Response
+/{scope}/{app}/{graph}/{id}?format=xml/rdf GET             -> XElement
+/{scope}/{app}/{graph}/{id}                DELETE          -> Response
 }}}
 
 ===Generic Data===
 {{{
-/{scope}/{app}/{graph}/data      GET                       -> DataTransferIndices
-/{scope}/{app}/{graph}/data      POST  DataTransferIndices -> DataTransferObjects
-/{scope}/{app}/{graph}/data      POST  DataTransferObjects -> Response
-/{scope}/{app}/{graph}/data/{id} GET                       -> DataTransferObjects
-/{scope}/{app}/{graph}/data/{id} DELTE                     -> Response
-/{scope}/{app}/manifest          GET                       -> Manifest
+/{scope}/{app}/{graph}/data      GET                        -> DataTransferIndices
+/{scope}/{app}/{graph}/data      POST   DataTransferIndices -> DataTransferObjects
+/{scope}/{app}/{graph}/data      POST   DataTransferObjects -> Response
+/{scope}/{app}/{graph}/data/{id} GET                        -> DataTransferObjects
+/{scope}/{app}/{graph}/data/{id} DELETE                     -> Response
+/{scope}/{app}/manifest          GET                        -> Manifest
 }}}
 
 ===Differencing Support===
@@ -96,19 +96,19 @@ PageRequest = Manifest + DataTransferIndices
 
 ===Dynamic Data===
 {{{
-/{scope}/{app}/{graph}?format=xml/dto/rdf      GET            -> XElement
-/{scope}/{app}/{graph}?format=xml/dto/rdf      POST  XElement -> Response
-/{scope}/{app}/{graph}/{id}?format=xml/dto/rdf GET            -> XElement
-/{scope}/{app}/{graph}/{id}                    DELTE          -> Response
+/{scope}/{app}/{graph}?format=xml/dto/rdf      GET             -> XElement
+/{scope}/{app}/{graph}?format=xml/dto/rdf      POST   XElement -> Response
+/{scope}/{app}/{graph}/{id}?format=xml/dto/rdf GET             -> XElement
+/{scope}/{app}/{graph}/{id}                    DELETE          -> Response
 }}}
 
 ==Generic Data==
 {{{
-/{scope}/{app}/{graph}/data      GET                       -> DataTransferIndices
-/{scope}/{app}/{graph}/data      POST  DataTransferIndices -> DataTransferObjects
-/{scope}/{app}/{graph}/data      POST  DataTransferObjects -> Response
-/{scope}/{app}/{graph}/data/{id} GET                       -> DataTransferObjects
-/{scope}/{app}/{graph}/data/{id} DELTE                     -> Response
+/{scope}/{app}/{graph}/data      GET                        -> DataTransferIndices
+/{scope}/{app}/{graph}/data      POST   DataTransferIndices -> DataTransferObjects
+/{scope}/{app}/{graph}/data      POST   DataTransferObjects -> Response
+/{scope}/{app}/{graph}/data/{id} GET                        -> DataTransferObjects
+/{scope}/{app}/{graph}/data/{id} DELETE                     -> Response
 }}}
 
 ==Data Exchanges==
