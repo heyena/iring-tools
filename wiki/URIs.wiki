@@ -4,48 +4,37 @@
 
 ==NHibernateService==
 {{{
-/NHibernateService/{scope}/{app}/dictionary       GET                     -> DatabaseDictionary
-/NHibernateService/{scope}/{app}/dictionary       POST DatabaseDictionary -> Response 
-/NHibernateService/{scope}/{app}/generate         GET                     -> Response
-/NHibernateService/{scope}/{app}/objects          GET                     -> List<String>
-/NHibernateService/{scope}/{app}/objects/{object} GET                     -> DataObject
-/NHibernateService/{scope}/{app}/providers        GET                     -> List<String>
-/NHibernateService/{scope}/{app}/relationships    GET                     -> List<String>
-/NHibernateService/version                        GET                     -> Version
+/NHibernateService/{scope}/{app}/dictionary             GET                     -> DatabaseDictionary
+/NHibernateService/{scope}/{app}/dictionary             POST DatabaseDictionary -> Response 
+/NHibernateService/{scope}/{app}/generate               GET                     -> Response
+/NHibernateService/{scope}/{app}/schemaObjects          GET                     -> List<String>
+/NHibernateService/{scope}/{app}/schemaObjects/{object} GET                     -> DataObject
+/NHibernateService/{scope}/{app}/providers              GET                     -> List<String>
+/NHibernateService/{scope}/{app}/relationships          GET                     -> List<String>
+/NHibernateService/version                              GET                     -> Version
 }}}
 
 ==AdapterService==
-===Meta Data===
 {{{
-/AdapterService/{scope}/{app}/binding    GET              -> XElement
-/AdapterService/{scope}/{app}/binding    POST    XElement -> Response
-/AdapterService/{scope}/{app}/dictionary GET              -> DataDictionary
-/AdapterService/{scope}/{app}/manifest   GET              -> Manifest
-/AdapterService/{scope}/{app}/mapping    GET              -> Mapping (1.2.x)
-/AdapterService/{scope}/{app}/mapping    POST    XElement -> Response
-/AdapterService/datalayers               GET              -> List<String>
-/AdapterService/scopes                   GET              -> List<Scope>
-/AdapterService/scopes                   POST List<Scope> -> Response
-/AdapterService/version                  GET              -> String
-}}}
-===Dynamic Data===
-{{{
-/AdapterService/{scope}/{app}/{graph}?format=xml/dto/rdf      GET            -> XElement
-/AdapterService/{scope}/{app}/{graph}?format=xml/dto/rdf      POST  XElement -> Response
-/AdapterService/{scope}/{app}/{graph}/{id}?format=xml/dto/rdf GET            -> XElement
-}}}
-===Differencing Support===
-{{{
-/AdapterService/{scope}/{app}/{graph}/dti                     POST dxRequest -> XElement
-/AdapterService/{scope}/{app}/{graph}/dto                     POST dxRequest -> XElement
-}}}
-Note: dxRequest = Manifest + Identifiers + hashAlgorithm
-===Triple Store===
-{{{
-/AdapterService/{scope}/{app}/{graph}/delete  GET          -> Reponse
-/AdapterService/{scope}/{app}/{graph}/refresh GET          -> Reponse
-/AdapterService/{scope}/{app}/{graph}/pull    POST Request -> Reponse
-/AdapterService/{scope}/{app}/delete          GET          -> Reponse
+/AdapterService/{scope}/{app}/{graph}?format=xml/dto/rdf      GET              -> XElement
+/AdapterService/{scope}/{app}/{graph}?format=xml/dto/rdf      POST    XElement -> Response
+/AdapterService/{scope}/{app}/{graph}/{id}?format=xml/dto/rdf GET              -> XElement
+/AdapterService/{scope}/{app}/{graph}/delete                  GET              -> Reponse
+/AdapterService/{scope}/{app}/{graph}/dti                     POST   dxRequest -> XElement
+/AdapterService/{scope}/{app}/{graph}/dto                     POST   dxRequest -> XElement
+/AdapterService/{scope}/{app}/{graph}/refresh                 GET              -> Reponse
+/AdapterService/{scope}/{app}/{graph}/pull                    POST     Request -> Reponse
+/AdapterService/{scope}/{app}/binding                         GET              -> XElement
+/AdapterService/{scope}/{app}/binding                         POST    XElement -> Response
+/AdapterService/{scope}/{app}/delete                          GET              -> Reponse
+/AdapterService/{scope}/{app}/dictionary                      GET              -> DataDictionary
+/AdapterService/{scope}/{app}/manifest                        GET              -> Manifest
+/AdapterService/{scope}/{app}/mapping                         GET              -> Mapping (1.2.x)
+/AdapterService/{scope}/{app}/mapping                         POST    XElement -> Response
+/AdapterService/datalayers                                    GET              -> List<String>
+/AdapterService/scopes                                        GET              -> List<Scope>
+/AdapterService/scopes                                        POST List<Scope> -> Response
+/AdapterService/version                                       GET              -> String
 }}}
 
 ==RefDataService==
@@ -64,7 +53,7 @@ Note: dxRequest = Manifest + Identifiers + hashAlgorithm
 /RefDataService/search/{query}/{start}/{limit}/reset GET       -> List<Entity>
 /RefDataService/search/{query}/reset                 GET       -> List<Entity>
 /RefDataService/templates                            POST QMXF -> Response
-/RefDataService/templates/{id}                       GET	    -> QMXF
+/RefDataService/templates/{id}                       GET       -> QMXF
 /RefDataService/version                              GET       -> Version
 }}}
 
@@ -90,7 +79,7 @@ Note: dxRequest = Manifest + Identifiers + hashAlgorithm
 /adapter/{scope}/{app}/dictionary GET            -> DataDictionary
 /adapter/{scope}/{app}/mapping    GET            -> Mapping (1.2.x)
 /adapter/{scope}/{app}/mapping    POST XDocument -> Response
-/adapter/datalayers		          GET            -> DataLayers
+/adapter/datalayers               GET            -> DataLayers
 /adapter/scopes                   GET            -> Scopes
 /adapter/scopes                   POST    Scopes -> Response
 /adapter/version                  GET            -> Version
@@ -130,7 +119,7 @@ PageRequest = Manifest + DataTransferIndices
 /facade/query?query={query}           GET          -> SPARQL Results
 /facade/update                        GET          -> HTML (SPARQL Upadte Form)
 /facade/update?update={query}         GET          -> SPARQL Results
-/facade/version                       GET       -> Version
+/facade/version                       GET          -> Version
 }}}
 
 ==RefData==
@@ -138,9 +127,10 @@ PageRequest = Manifest + DataTransferIndices
 /refdata/classes                              POST QMXF -> Response
 /refdata/classes/{id}	                      GET       -> QMXF
 /refdata/classes/{id}/allsuperclasses         GET       -> List<Entity>
-/refdata/classes/{id}/label	                  GET       -> String
-/refdata/classes/{id}/subclasses	          GET       -> List<Entity>
-/refdata/classes/{id}/superclasses	          GET       -> List<Entity>
+/refdata/classes/{id}/label                   GET       -> String
+/refdata/classes/{id}/subclasses              GET       -> List<Entity>
+/refdata/classes/{id}/superclasses            GET       -> List<Entity>
+/refdata/classes/{id}/members                 GET       -> List<Entity>
 /refdata/classes/{id}/templates	              GET       -> List<Entity>
 /refdata/find/{query}	                      GET       -> List<Entity>
 /refdata/repositories	                      GET       -> List<Repositories>
@@ -148,8 +138,8 @@ PageRequest = Manifest + DataTransferIndices
 /refdata/search/{query}/{start}/{limit}	      GET       -> List<Entity>
 /refdata/search/{query}/{start}/{limit}/reset GET       -> List<Entity>
 /refdata/search/{query}/reset	              GET       -> List<Entity>
-/refdata/templates	                          POST QMXF -> Response
-/refdata/templates/{id}	                      GET	    -> QMXF
+/refdata/templates                            POST QMXF -> Response
+/refdata/templates/{id}	                      GET       -> QMXF
 /refdata/version                              GET       -> Version
 }}}
 
@@ -166,17 +156,17 @@ PageRequest = Manifest + DataTransferIndices
 
 ==ESBProxy==
 {{{
-/esb/{scope}/{app}/{graph}?format=xml/dto/rdf      GET                        -> XDocument
-/esb/{scope}/{app}/{graph}?format=xml/dto/rdf      POST             XDocument -> Response
-/esb/{scope}/{app}/{graph}/{id}?format=xml/dto/rdf GET                        -> XDocument
-/esb/{scope}/{app}/{graph}/{id}                    DELETE                     -> Response
-/esb/{scope}/{app}/{graph}/data                    GET                        -> DataTransferIndices
-/esb/{scope}/{app}/{graph}/data                    POST   DataTransferIndices -> DataTransferObjects
-/esb/{scope}/{app}/{graph}/data                    POST   DataTransferObjects -> Response
-/esb/{scope}/{app}/{graph}/data/{id}               GET                        -> DataTransferObjects
-/esb/{scope}/{app}/{graph}/data/{id}               DELETE                     -> Response
-/esb/{scope}/exchanges/{id}                        GET                        -> DataTransferIndices
-/esb/{scope}/exchanges/{id}                        POST   DataTransferIndices -> DataTransferObjects
-/esb/directory                                     GET                        -> Directory
-/esb/version                                       GET                        -> Version
+/esb/{scope}/{app}/{graph}/data                         GET                        -> DataTransferIndices
+/esb/{scope}/{app}/{graph}/data                         POST   DataTransferIndices -> DataTransferObjects
+/esb/{scope}/{app}/{graph}/data                         POST   DataTransferObjects -> Response
+/esb/{scope}/{app}/{graph}/data/{id}                    GET                        -> DataTransferObjects
+/esb/{scope}/{app}/{graph}/data/{id}                    DELETE                     -> Response
+/esb/{scope}/exchanges/{id}                             GET                        -> DataTransferIndices
+/esb/{scope}/exchanges/{id}                             POST   DataTransferIndices -> DataTransferObjects
+/esb/data/{scope}/{app}/{graph}?format=xml/dto/rdf      GET                        -> XDocument
+/esb/data/{scope}/{app}/{graph}?format=xml/dto/rdf      POST             XDocument -> Response
+/esb/data/{scope}/{app}/{graph}/{id}?format=xml/dto/rdf GET                        -> XDocument
+/esb/data/{scope}/{app}/{graph}/{id}                    DELETE                     -> Response
+/esb/directory                                          GET                        -> Directory
+/esb/version                                            GET                        -> Version
 }}}
