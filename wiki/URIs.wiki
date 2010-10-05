@@ -50,7 +50,7 @@ dxRequest = Manifest + Identifiers + hashAlgorithm
 /{scope}/{app}/dictionary GET           -> DataDictionary
 /{scope}/{app}/mapping    GET           -> Mapping (1.2.x)
 /{scope}/{app}/mapping    POST XElement -> Response
-/datalayers		          GET           -> DataLayers
+/datalayers		  GET           -> DataLayers
 /scopes                   GET           -> Scopes
 /scopes                   POST   Scopes -> Response
 /version                  GET           -> Version
