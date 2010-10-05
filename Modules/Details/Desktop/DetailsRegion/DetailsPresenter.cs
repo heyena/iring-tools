@@ -45,17 +45,17 @@ namespace org.iringtools.modules.details.detailsregion
       this.aggregator = aggregator;
       this.model = model;
       aggregator.GetEvent<NavigationEvent>().Subscribe(NavigationEventHandler);
-      btnClipboard.Click += btnClipBoard_Click;
+      //btnClipboard.Click += btnClipBoard_Click;
     }
 
-    private void btnClipBoard_Click(object sender, System.Windows.RoutedEventArgs e)
-    {
-      if (grdData.SelectedItem != null)
-      {
-        KeyValuePair<string, string> row = (KeyValuePair<string, string>)grdData.SelectedItem;
-        HtmlPage.Window.Eval("window.clipboardData.setData('Text','" + row.Key + ": " + row.Value + "')");
-      }
-    }
+    //private void btnClipBoard_Click(object sender, System.Windows.RoutedEventArgs e)
+    //{
+    //  if (grdData.SelectedItem != null)
+    //  {
+    //    KeyValuePair<string, string> row = (KeyValuePair<string, string>)grdData.SelectedItem;
+    //    HtmlPage.Window.Eval("window.clipboardData.setData('Text','" + row.Key + ": " + row.Value + "')");
+    //  }
+    //}
 
     public void NavigationEventHandler(NavigationEventArgs e)
     {
