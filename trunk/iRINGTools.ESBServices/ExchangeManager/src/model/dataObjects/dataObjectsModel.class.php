@@ -58,6 +58,7 @@ class dataObjectsModel{
 		$curlObj->setopt(CURLOPT_POST, 1);
 		$curlObj->setopt(CURLOPT_HTTPHEADER, Array("Content-Type: application/xml"));
 		$curlObj->setopt(CURLOPT_POSTFIELDS,$postParams);
+		$curlObj->setopt(CURLOPT_HEADER, false);
 		$fetchedData = $curlObj->exec();
 		return $fetchedData;
 	}
