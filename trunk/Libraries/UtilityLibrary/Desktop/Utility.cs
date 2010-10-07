@@ -1032,5 +1032,11 @@ namespace org.iringtools.utility
 
       return returnValue;
     }
+
+    public static string ToXsdDateTime(string dateTime)
+    {
+      DateTime dt = DateTime.Parse(dateTime);
+      return dt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffff");
+    }
   }
 }

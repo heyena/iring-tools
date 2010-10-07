@@ -207,7 +207,12 @@ namespace org.iringtools.adapter.projection
                   if (String.IsNullOrEmpty(value))
                     propertyElement.Add(new XAttribute("reference", RDF_NIL));
                   else
+                  {
+                    if (propertyRole.dataType.Contains("dateTime"))
+                      value = Utility.ToXsdDateTime(value);
+
                     propertyElement.Add(new XText(value));
+                  }
                 }
                 else // resolve value list to uri
                 {

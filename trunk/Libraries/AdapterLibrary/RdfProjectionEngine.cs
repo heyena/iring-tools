@@ -305,6 +305,10 @@ namespace org.iringtools.adapter.projection
               else
               {
                 propertyElement.Add(new XAttribute(RDF_DATATYPE, propertyRole.dataType.Replace(XSD_PREFIX, XSD_NS.NamespaceName)));
+
+                if (propertyRole.dataType.Contains("dateTime"))
+                  value = Utility.ToXsdDateTime(value);
+
                 propertyElement.Add(new XText(value));
               }
             }
