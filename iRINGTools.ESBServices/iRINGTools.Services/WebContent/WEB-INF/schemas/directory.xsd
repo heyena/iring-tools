@@ -89,13 +89,13 @@
     <xs:sequence>
       <xs:element name="id" type="xs:string"/>
       <xs:element name="sourceUri" type="xs:string"/>
-      <xs:element name="sourceAppName" type="xs:string"/>
-      <xs:element name="sourceAppScope" type="xs:string"/>
-      <xs:element name="sourceGraphName" type="xs:string"/>
+      <xs:element name="sourceScope" type="xs:string"/>
+      <xs:element name="sourceApp" type="xs:string"/>
+      <xs:element name="sourceGraph" type="xs:string"/>
       <xs:element name="targetUri" type="xs:string"/>
-      <xs:element name="targetAppName" type="xs:string"/>
-      <xs:element name="targetAppScope" type="xs:string"/>
-      <xs:element name="targetGraphName" type="xs:string"/>
+      <xs:element name="targetScope" type="xs:string"/>
+      <xs:element name="targetApp" type="xs:string"/>
+      <xs:element name="targetGraph" type="xs:string"/>
       <xs:element name="hashAlgorithm" type="xs:string"/>
     </xs:sequence>
   </xs:complexType>

@@ -5,5 +5,5 @@
 // Generated on: 2010.10.06 at 11:15:05 AM EDT 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://iringtools.org/protocol/manifest", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
-package org.iringtools.protocol.manifest;
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://iringtools.org/common", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+package org.iringtools.common;
