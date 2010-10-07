@@ -37,7 +37,8 @@ namespace org.iringtools.adapter.projection
 
       try
       {
-        _dataTransferObjects = ToDataTransferObjects(graphName, ref dataObjects);
+        GraphMap graphMap = _mapping.FindGraphMap(graphName);
+        _dataTransferObjects = ToDataTransferObjects(graphMap, ref dataObjects);
         xml = SerializationExtensions.ToXml<DataTransferObjects>(_dataTransferObjects);
       }
       catch (Exception ex)
@@ -48,13 +49,13 @@ namespace org.iringtools.adapter.projection
       return xml;
     }
 
-    public DataTransferObjects ToDataTransferObjects(string graphName, ref IList<IDataObject> dataObjects)
+    public DataTransferObjects ToDataTransferObjects(GraphMap graphMap, ref IList<IDataObject> dataObjects)
     {
       _dataTransferObjects = new DataTransferObjects();
 
       try
       {
-        _graphMap = _mapping.FindGraphMap(graphName);
+        _graphMap = graphMap;
         _dataObjects = dataObjects;
 
         if (_graphMap != null && _graphMap.classTemplateListMaps.Count > 0 &&
@@ -142,10 +143,10 @@ namespace org.iringtools.adapter.projection
 
       try
       {
-        _graphMap = _mapping.FindGraphMap(graphName);
+        GraphMap graphMap = _mapping.FindGraphMap(graphName);
         _dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(xml);
 
-        dataObjects = ToDataObjects(graphName, ref _dataTransferObjects);
+        dataObjects = ToDataObjects(graphMap, ref _dataTransferObjects);
       }
       catch (Exception ex)
       {
@@ -155,13 +156,13 @@ namespace org.iringtools.adapter.projection
       return dataObjects;
     }
 
-    public IList<IDataObject> ToDataObjects(string graphName, ref DataTransferObjects dataTransferObjects)
+    public IList<IDataObject> ToDataObjects(GraphMap graphMap, ref DataTransferObjects dataTransferObjects)
     {
       IList<IDataObject> dataObjects = null;
 
       try
       {
-        _graphMap = _mapping.FindGraphMap(graphName);
+        _graphMap = graphMap;
         _dataTransferObjects = dataTransferObjects;
 
         if (_graphMap != null && _graphMap.classTemplateListMaps.Count > 0 &&
