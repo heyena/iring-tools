@@ -430,6 +430,22 @@ namespace org.iringtools.modules.memappingregion
       }
     }
 
+    private string GetTemplateName(MappingItem mappingItem, string templateName)
+    {
+        try
+        {
+            string tplName = utility.Utility.NameSafe(templateName);
+
+            return tplName;
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Failed to Add Graph", "ADD GRAPH", MessageBoxButton.OK);
+            Logger.Log(ex.ToString(), Category.Exception, Priority.Low);
+            return "";
+        }
+    }
+
     public void btnAddTemplate_Click(object sender, RoutedEventArgs e)
     {
       try
@@ -463,7 +479,8 @@ namespace org.iringtools.modules.memappingregion
           TextBox txtLabel = sender as TextBox;
           TemplateMap templateMap = new TemplateMap();
 
-          templateMap.name = AdjustTemplateName(mappingItem, model.SelectedIMLabel);
+          //templateMap.name = AdjustTemplateName(mappingItem, model.SelectedIMLabel);
+          templateMap.name = GetTemplateName(mappingItem, model.SelectedIMLabel);
           templateMap.templateId = SPARQLExtensions.GetIdWithAliasFromUri(model.SelectedIMUri);
           TemplateTreeItem node = null;
           if (model.SelectedTreeItem is TemplateTreeItem)
