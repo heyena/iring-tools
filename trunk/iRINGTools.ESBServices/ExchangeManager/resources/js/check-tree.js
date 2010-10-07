@@ -41,7 +41,7 @@ function showgrid(response, request,label){
 	store: store,
 	columns: columnData,
 	stripeRows: true,
-	viewConfig: {forceFit:true},
+	//viewConfig: {forceFit:true},
 	id:label,
 	loadMask: true,
 	layout:'fit',
