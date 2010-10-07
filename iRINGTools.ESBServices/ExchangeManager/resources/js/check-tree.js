@@ -48,8 +48,10 @@ function showgrid(response, request,label){
 	frame:true,
 	autoSizeColumns: true,
 	autoSizeGrid: true,
+        AllowScroll : true,
 	columnLines: true,
-	autoWidth:true
+	autoWidth:true,
+        enableColumnMove:false
 	});
 
         //make the text selectable in cells of Grid
@@ -103,8 +105,11 @@ Ext.onReady(function(){
             xtype:"tbbutton",
             icon:'resources/images/16x16/view-refresh.png',
             qtip:'Refresh',
-            id: 'headRefresh', disabled: false,handler: function()
-                {alert("Refresh Clicked")}
+            id: 'headRefresh', 
+            disabled: false,
+            handler: function(){
+                tree.root.reload();
+            }
         },
         /*
             Exchane Button hided
