@@ -99,6 +99,7 @@ namespace org.iringtools.adapter.projection
                     type = roleMap.type,
                     roleId = roleMap.roleId,
                     name = roleMap.name,
+                    dataType = roleMap.dataType
                   };
 
                   templateObject.roleObjects.Add(roleObject);
@@ -119,6 +120,10 @@ namespace org.iringtools.adapter.projection
 
                       if (value != null)
                         value = value.Replace(RDL_NS.NamespaceName, "rdl:");
+                    }
+                    else if (roleMap.dataType.Contains("dateTime"))
+                    {
+                      value = Utility.ToXsdDateTime(value);
                     }
                   }
                   else if (roleMap.classMap != null)
