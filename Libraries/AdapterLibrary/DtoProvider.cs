@@ -139,7 +139,7 @@ namespace org.iringtools.adapter
         IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, identifiers);
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
 
-        dataTransferObjects = dtoProjectionEngine.ToDataTransferObjects(graph, ref dataObjects);
+        dataTransferObjects = dtoProjectionEngine.ToDataTransferObjects(_graphMap, ref dataObjects);
       }
       catch (Exception ex)
       {
@@ -173,7 +173,7 @@ namespace org.iringtools.adapter
         }
 
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-        IList<IDataObject> dataObjects = dtoProjectionEngine.ToDataObjects(graph, ref dataTransferObjects);
+        IList<IDataObject> dataObjects = dtoProjectionEngine.ToDataObjects(_graphMap, ref dataTransferObjects);
 
         response.Append(_dataLayer.Post(dataObjects));  // add/change/sync data objects
         response.Append(_dataLayer.Delete(_graphMap.dataObjectMap, deleteIdentifiers));
@@ -213,7 +213,7 @@ namespace org.iringtools.adapter
         IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, identifiers);
 
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-        dataTransferObjects = dtoProjectionEngine.ToDataTransferObjects(graph, ref dataObjects);
+        dataTransferObjects = dtoProjectionEngine.ToDataTransferObjects(_graphMap, ref dataObjects);
       }
       catch (Exception ex)
       {
@@ -301,7 +301,7 @@ namespace org.iringtools.adapter
         Dictionary<string, List<string>> classIdentifiers = GetClassIdentifiers(ref dataObjects);
 
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-        dataTransferObjects = dtoProjectionEngine.ToDataTransferObjects(graph, ref dataObjects);
+        dataTransferObjects = dtoProjectionEngine.ToDataTransferObjects(_graphMap, ref dataObjects);
       }
       catch (Exception ex)
       {
