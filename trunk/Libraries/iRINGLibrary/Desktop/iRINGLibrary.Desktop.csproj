@@ -115,7 +115,6 @@
     <Compile Include="DatabaseDictionary.cs" />
     <Compile Include="DataDictionary.cs" />
     <Compile Include="DataFilter.cs" />
-    <Compile Include="DxRequest.cs" />
     <Compile Include="IAdapter.cs" />
     <Compile Include="IDataLayer.cs" />
     <Compile Include="Manifest.cs" />
@@ -137,6 +136,7 @@
     <Compile Include="SPARQLClient.cs" />
     <Compile Include="SPARQLQuery.cs" />
     <Compile Include="SPARQLResults.cs" />
+    <Compile Include="Version.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\UtilityLibrary\Desktop\UtilityLibrary.Desktop.csproj">

@@ -15,16 +15,10 @@ using System.Xml.Serialization;
 
 namespace org.iringtools.adapter.projection
 {
-  public class DtoProjectionEngine : IProjectionLayer
+  public class DtoProjectionEngine : BaseProjectionEngine
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(DtoProjectionEngine));
-    private static readonly XNamespace RDL_NS = "http://rdl.rdlfacade.org/data#";
-    
-    private IDataLayer _dataLayer = null;
-    private Mapping _mapping = null;
-    private GraphMap _graphMap = null;
-    private IList<IDataObject> _dataObjects = null;
-    private Dictionary<string, List<string>> _classIdentifiers = null; // dictionary of class ids and list of identifiers
+
     private DataTransferObjects _dataTransferObjects;
 
     [Inject]
@@ -37,9 +31,26 @@ namespace org.iringtools.adapter.projection
       _mapping = mapping;
     }
 
-    public XElement ToXml(string graphName, ref IList<IDataObject> dataObjects)
+    public override XElement ToXml(string graphName, ref IList<IDataObject> dataObjects)
     {
       XElement xml = null;
+
+      try
+      {
+        _dataTransferObjects = ToDataTransferObjects(graphName, ref dataObjects);
+        xml = SerializationExtensions.ToXml<DataTransferObjects>(_dataTransferObjects);
+      }
+      catch (Exception ex)
+      {
+        throw ex;
+      }
+
+      return xml;
+    }
+
+    public DataTransferObjects ToDataTransferObjects(string graphName, ref IList<IDataObject> dataObjects)
+    {
+      _dataTransferObjects = new DataTransferObjects();
 
       try
       {
@@ -49,13 +60,12 @@ namespace org.iringtools.adapter.projection
         if (_graphMap != null && _graphMap.classTemplateListMaps.Count > 0 &&
           _dataObjects != null && _dataObjects.Count > 0)
         {
-          PopulateClassIdentifiers();
-          DataTransferObjects dtoList = new DataTransferObjects();
+          SetClassIdentifiers(DataDirection.InboundDto);
 
           for (int i = 0; i < _dataObjects.Count; i++)
           {
             DataTransferObject dto = new DataTransferObject();
-            dtoList.Add(dto);
+            _dataTransferObjects.Add(dto);
 
             foreach (var pair in _graphMap.classTemplateListMaps)
             {
@@ -116,8 +126,6 @@ namespace org.iringtools.adapter.projection
               }
             }
           }
-
-          xml = SerializationExtensions.ToXml<DataTransferObjects>(dtoList);
         }
       }
       catch (Exception ex)
@@ -125,10 +133,10 @@ namespace org.iringtools.adapter.projection
         throw ex;
       }
 
-      return xml;
+      return _dataTransferObjects;
     }
     
-    public IList<IDataObject> ToDataObjects(string graphName, ref XElement xml)
+    public override IList<IDataObject> ToDataObjects(string graphName, ref XElement xml)
     {
       IList<IDataObject> dataObjects = null;
 
@@ -136,6 +144,25 @@ namespace org.iringtools.adapter.projection
       {
         _graphMap = _mapping.FindGraphMap(graphName);
         _dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(xml);
+
+        dataObjects = ToDataObjects(graphName, ref _dataTransferObjects);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error projecting xml to data objects" + ex);
+      }
+
+      return dataObjects;
+    }
+
+    public IList<IDataObject> ToDataObjects(string graphName, ref DataTransferObjects dataTransferObjects)
+    {
+      IList<IDataObject> dataObjects = null;
+
+      try
+      {
+        _graphMap = _mapping.FindGraphMap(graphName);
+        _dataTransferObjects = dataTransferObjects;
 
         if (_graphMap != null && _graphMap.classTemplateListMaps.Count > 0 &&
           _dataTransferObjects != null && _dataTransferObjects.Count > 0)
@@ -157,7 +184,7 @@ namespace org.iringtools.adapter.projection
           for (int dataTransferObjectIndex = 0; dataTransferObjectIndex < _dataTransferObjects.Count; dataTransferObjectIndex++)
           {
             IDataObject dataObject = dataObjects[dataTransferObjectIndex];
-            PopulateDataObjects(ref dataObject, classMap.classId, dataTransferObjectIndex);
+            CreateDataObjects(ref dataObject, classMap.classId, dataTransferObjectIndex);
           }
 
           return dataObjects;
@@ -165,94 +192,13 @@ namespace org.iringtools.adapter.projection
       }
       catch (Exception ex)
       {
-        throw ex;
+        _logger.Error("Error projecting data transfer objects to data objects" + ex);
       }
 
       return dataObjects;
     }
 
-    #region helper methods
-    private string ExtractId(string qualifiedId)
-    {
-      if (String.IsNullOrEmpty(qualifiedId) || !qualifiedId.Contains(":"))
-        return qualifiedId;
-
-      return qualifiedId.Substring(qualifiedId.IndexOf(":") + 1);
-    }
-
-    private string TitleCase(string value)
-    {
-      string returnValue = String.Empty;
-      string[] words = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-      foreach (string word in words)
-      {
-        returnValue += word.Substring(0, 1).ToUpper();
-
-        if (word.Length > 1)
-          returnValue += word.Substring(1).ToLower();
-      }
-
-      return returnValue;
-    }
-
-    private void PopulateClassIdentifiers()
-    {
-      _classIdentifiers.Clear();
-
-      foreach (ClassMap classMap in _graphMap.classTemplateListMaps.Keys)
-      {
-        List<string> classIdentifiers = new List<string>();
-
-        foreach (string identifier in classMap.identifiers)
-        {
-          // identifier is a fixed value
-          if (identifier.StartsWith("#") && identifier.EndsWith("#"))
-          {
-            string value = identifier.Substring(1, identifier.Length - 2);
-
-            for (int i = 0; i < _dataObjects.Count; i++)
-            {
-              if (classIdentifiers.Count == i)
-              {
-                classIdentifiers.Add(value);
-              }
-              else
-              {
-                classIdentifiers[i] += classMap.identifierDelimiter + value;
-              }
-            }
-          }
-          else  // identifier comes from a property
-          {
-            string[] property = identifier.Split('.');
-            string objectName = property[0].Trim();
-            string propertyName = property[1].Trim();
-
-            if (_dataObjects != null)
-            {
-              for (int i = 0; i < _dataObjects.Count; i++)
-              {
-                string value = Convert.ToString(_dataObjects[i].GetPropertyValue(propertyName));
-
-                if (classIdentifiers.Count == i)
-                {
-                  classIdentifiers.Add(value);
-                }
-                else
-                {
-                  classIdentifiers[i] += classMap.identifierDelimiter + value;
-                }
-              }
-            }
-          }
-        }
-
-        _classIdentifiers[classMap.classId] = classIdentifiers;
-      }
-    }
-
-    private void PopulateDataObjects(ref IDataObject dataObject, string classId, int dataTransferObjectIndex)
+    private void CreateDataObjects(ref IDataObject dataObject, string classId, int dataTransferObjectIndex)
     {
       KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = _graphMap.GetClassTemplateListMap(classId);
       List<TemplateMap> templateMaps = classTemplateListMap.Value;
@@ -288,13 +234,11 @@ namespace org.iringtools.adapter.projection
 
             if (roleMap.classMap != null)
             {
-              PopulateDataObjects(ref dataObject, roleMap.classMap.classId, dataTransferObjectIndex);
+              CreateDataObjects(ref dataObject, roleMap.classMap.classId, dataTransferObjectIndex);
             }
           }
         }
       }
     }
-
-    #endregion
   }
 }

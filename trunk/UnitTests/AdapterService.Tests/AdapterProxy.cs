@@ -227,20 +227,5 @@ namespace AdapterService.Tests
 
       return scopes;
     }
-
-    public org.iringtools.library.manifest.Manifest GetManifest(string projectName, string applicationName)
-    {
-      org.iringtools.library.manifest.Manifest manifest = null;
-      try
-      {
-        manifest = _adapterProvider.GetManifest(projectName, applicationName);
-      }
-      catch (Exception ex)
-      {
-        Error.SetError(ex);
-      }
-
-      return manifest;
-    }
   }
 }

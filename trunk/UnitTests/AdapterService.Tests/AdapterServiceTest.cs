@@ -153,13 +153,13 @@ namespace AdapterService.Tests
       Assert.AreNotEqual(0, scopes.Count);
     }
 
-    [TestMethod()]
-    public void GetManifest()
-    {
-      AdapterProxy target = new AdapterProxy();
-      org.iringtools.library.manifest.Manifest manifest = target.GetManifest("12345_000", "ABC");
-      Assert.AreNotEqual(0, manifest.Graphs.Count);
-    }
+    //[TestMethod()]
+    //public void GetManifest()
+    //{
+    //  AdapterProxy target = new AdapterProxy();
+    //  org.iringtools.library.manifest.Manifest manifest = target.GetManifest("12345_000", "ABC");
+    //  Assert.AreNotEqual(0, manifest.Graphs.Count);
+    //}
 
    
 
