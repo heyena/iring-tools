@@ -34,6 +34,96 @@ namespace AdapterService.Tests
       _exchangeProvider = new ExchangeProvider(ConfigurationManager.AppSettings);
     }
 
+    public XDocument GetXml(string projectName, string applicationName, string graphName, string format)
+    {
+      XDocument xDocument = null;
+      try
+      {
+        xDocument = _adapterProvider.GetProjection(projectName, applicationName, graphName, format);
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
+
+      return xDocument;
+    }
+
+    public Response PostXml(string projectName, string applicationName, string graphName, string format, XDocument xDocument)
+    {
+      Response response = null;
+      try
+      {
+        response = _adapterProvider.Post(projectName, applicationName, graphName, format, xDocument);
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
+
+      return response;
+    }
+
+    public XDocument GetIndividualXml(string projectName, string applicationName, string graphName, string identifier, string format)
+    {
+      XDocument xDocument = null;
+      try
+      {
+        xDocument = _adapterProvider.GetProjection(projectName, applicationName, graphName, identifier, format);
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
+
+      return xDocument;
+    }
+
+    public Response DeleteIndividualXml(string projectName, string applicationName, string graphName, string identifier)
+    {
+      Response response = null;
+      try
+      {
+        response = _adapterProvider.DeleteIndividual(projectName, applicationName, graphName, identifier);
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
+
+      return response;
+    }
+
+    public Response DeleteAll(string projectName, string applicationName)
+    {
+      Response response = null;
+      try
+      {
+        response = _adapterProvider.DeleteAll(projectName, applicationName);
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
+
+      return response;
+    }
+
+    public Response RefreshAll(string projectName, string applicationName)
+    {
+      Response response = null;
+      try
+      {
+        response = _adapterProvider.RefreshAll(projectName, applicationName);
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
+
+      return response;
+    }
+
     public Mapping GetMapping(string projectName, string applicationName)
     {
       Mapping mapping = null;
@@ -80,21 +170,6 @@ namespace AdapterService.Tests
       return response;
     }
 
-    public XDocument GetXml(string projectName, string applicationName, string graphName, string format)
-    {
-      XDocument xDocument = null;
-      try
-      {
-        xDocument = _adapterProvider.GetProjection(projectName, applicationName, graphName, format);
-      }
-      catch (Exception ex)
-      {
-        Error.SetError(ex);
-      }
-
-      return xDocument;
-    }
-
     public IList<IDataObject> GetDataObject(string projectName, string applicationName, string graphName, string format, XDocument xml)
     {
       IList<IDataObject> dataObjects = null;
@@ -110,42 +185,12 @@ namespace AdapterService.Tests
       return dataObjects;
     }
 
-    public Response ClearAll(string projectName, string applicationName)
-    {
-      Response response = null;
-      try
-      {
-        response = _adapterProvider.DeleteAll(projectName, applicationName);
-      }
-      catch (Exception ex)
-      {
-        Error.SetError(ex);
-      }
-
-      return response;
-    }
-
     public Response RefreshGraph(string projectName, string applicationName, string graphName)
     {
       Response response = null;
       try
       {
         response = _adapterProvider.Refresh(projectName, applicationName, graphName);
-      }
-      catch (Exception ex)
-      {
-        Error.SetError(ex);
-      }
-
-      return response;
-    }
-
-    public Response RefreshAll(string projectName, string applicationName)
-    {
-      Response response = null;
-      try
-      {
-        response = _adapterProvider.RefreshAll(projectName, applicationName);
       }
       catch (Exception ex)
       {
@@ -191,21 +236,6 @@ namespace AdapterService.Tests
       try
       {
         response = _exchangeProvider.Push(projectName, applicationName, graphName, request);
-      }
-      catch (Exception ex)
-      {
-        Error.SetError(ex);
-      }
-
-      return response;
-    }
-
-    public Response Post(string projectName, string applicationName, string graphName, string format, XDocument xDocument)
-    {
-      Response response = null;
-      try
-      {
-        response = _adapterProvider.Post(projectName, applicationName, graphName, format, xDocument);
       }
       catch (Exception ex)
       {

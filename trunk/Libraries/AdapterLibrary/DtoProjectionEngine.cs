@@ -39,7 +39,8 @@ namespace org.iringtools.adapter.projection
       {
         GraphMap graphMap = _mapping.FindGraphMap(graphName);
         _dataTransferObjects = ToDataTransferObjects(graphMap, ref dataObjects);
-        xDocument = SerializationExtensions.ToXml<DataTransferObjects>(_dataTransferObjects).Document;
+        XElement xElement = SerializationExtensions.ToXml<DataTransferObjects>(_dataTransferObjects);
+        xDocument = new XDocument(xElement);
       }
       catch (Exception ex)
       {

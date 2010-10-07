@@ -32,6 +32,33 @@ namespace AdapterService.Tests
       Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
     }
 
+    [TestMethod]
+    public void GetXmlTest()
+    {
+      AdapterProxy target = new AdapterProxy();
+      XDocument xDocument = target.GetXml("12345_000", "ABC", "Lines", "dto");
+      Assert.AreNotEqual(null, xDocument);
+    }
+
+    [TestMethod]
+    public void PostXmlTest()
+    {
+      AdapterProxy target = new AdapterProxy();
+      String xml = Utility.ReadString(_settings["XmlPath"] + "DTO.12345_000.ABC.Lines.xml");
+      XDocument xDocument = XDocument.Parse(xml);
+
+      Response actual = target.PostXml("12345_000", "ABC", "Lines", "dto", xDocument);
+      Assert.IsFalse(actual.Level == StatusLevel.Error);
+    }
+
+    [TestMethod]
+    public void GetIndividualXmlTest()
+    {
+      AdapterProxy target = new AdapterProxy();
+      XDocument xDocument = target.GetIndividualXml("12345_000", "ABC", "Lines", "90009-O", "dto");
+      Assert.AreNotEqual(null, xDocument);
+    }
+
     [TestMethod()]
     public void GetDictionaryTest_ABC()
     {
@@ -52,7 +79,7 @@ namespace AdapterService.Tests
     public void ClearStoreTest_ABC()
     {
       AdapterProxy target = new AdapterProxy();
-      Response actual = target.ClearAll("12345_000", "ABC");
+      Response actual = target.DeleteAll("12345_000", "ABC");
       if (!actual.ToString().Contains("has been deleted successfully."))
       {
         throw new AssertFailedException(Utility.SerializeDataContract<Response>(actual));
@@ -184,13 +211,7 @@ namespace AdapterService.Tests
     //    Assert.IsFalse(actual.Level == StatusLevel.Error);
     //}
 
-    [TestMethod]
-    public void GetXml()
-    {
-        AdapterProxy target = new AdapterProxy();
-        XDocument xDocument = target.GetXml("12345_000", "ABC", "Lines", "dto");
-        Assert.AreNotEqual(null, xDocument);
-    }
+    
 
     [TestMethod]
     public void GetDataObjects()
@@ -221,16 +242,7 @@ namespace AdapterService.Tests
         Assert.IsFalse(actual.Level == StatusLevel.Error);
     }
 
-    [TestMethod]
-    public void PostTest()
-    {
-      AdapterProxy target = new AdapterProxy();
-      String xml = Utility.ReadString(_settings["XmlPath"] + "DTO.12345_000.ABC.Lines.xml");
-      XDocument xDocument = XDocument.Parse(xml);
 
-      Response actual = target.Post("12345_000", "ABC", "Lines", "xml", xDocument);
-      Assert.IsFalse(actual.Level == StatusLevel.Error);
-    }
 
     [TestMethod]
     public void PostDTOTest()
