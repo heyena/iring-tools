@@ -219,7 +219,7 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 {
                     _ranges = new ObservableCollection<KeyValuePair<string, string>>();
 
-                    _ranges.Add(new KeyValuePair<string, string>("SelectClass", "<Use Selected Item>"));
+                    //_ranges.Add(new KeyValuePair<string, string>("SelectClass", "<Use Selected Item>"));
 
                     foreach (string str in GetValues<XmlTypeCode>())
                     {
