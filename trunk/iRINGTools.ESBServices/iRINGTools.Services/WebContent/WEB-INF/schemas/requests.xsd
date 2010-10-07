@@ -18,43 +18,37 @@
   <xs:import namespace="http://iringtools.org/adapter/dti" schemaLocation="dti.xsd"/>
   <xs:import namespace="http://iringtools.org/adapter/dto" schemaLocation="dto.xsd"/>
 
-  <xs:element name="dxRequest" type="DxRequest"/>
-  <xs:element name="dxiRequest" type="DxiRequest"/>
-  <xs:element name="dxoRequest" type="DxoRequest"/>
-  <xs:element name="dtiSubmission" type="DtiSubmission"/>
+  <xs:element name="dtoPageRequest" type="DtoPageRequest"/>
+  <xs:element name="diffDtiRequest" type="DiffDtiRequest"/>
+  <xs:element name="diffDtoRequest" type="DiffDtoRequest"/>
+  <xs:element name="exchangeRequest" type="ExchangeRequest"/>
 
-  <xs:complexType name="DxRequest">
+  <xs:complexType name="DtoPageRequest">
     <xs:sequence>
       <xs:element name="manifest" type="mnf:Manifest"/>
-      <xs:element name="identifiers" type="Identifiers"/>
+      <xs:element name="dataTransferIndices" type="dti:DataTransferIndices"/>
       <xs:element name="hashAlgorithm" type="xs:string"/>
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="DxiRequest">
+  <xs:complexType name="DiffDtiRequest">
     <xs:sequence>
       <xs:element name="sourceDataTransferIndicies" type="dti:DataTransferIndices"/>
       <xs:element name="targetDataTransferIndicies" type="dti:DataTransferIndices"/>
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="DxoRequest">
+  <xs:complexType name="DiffDtoRequest">
     <xs:sequence>
       <xs:element name="sourceDataTransferObjects" type="dto:DataTransferObjects"/>
       <xs:element name="targetDataTransferObjects" type="dto:DataTransferObjects"/>
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="DtiSubmission">
+  <xs:complexType name="ExchangeRequest">
     <xs:sequence>
-      <xs:element name="dti" type="dti:DataTransferIndices"/>
+      <xs:element name="dataTransferIndices" type="dti:DataTransferIndices"/>
       <xs:element name="reviewed" type="xs:boolean"/>
-    </xs:sequence>
-  </xs:complexType>
-  
-  <xs:complexType name="Identifiers">
-    <xs:sequence>
-      <xs:element name="identifier" type="xs:string" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
 </xs:schema>

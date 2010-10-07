@@ -16,7 +16,6 @@ import javax.ws.rs.core.Context;
 import javax.xml.bind.JAXBException;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
-import org.iringtools.adapter.dto.DataTransferObjectComparator;
 import org.iringtools.adapter.dti.DataTransferIndices;
 import org.iringtools.adapter.dti.DataTransferIndex;
 import org.iringtools.adapter.dto.DataTransferObject;
@@ -25,22 +24,23 @@ import org.iringtools.adapter.dto.ClassObjects;
 import org.iringtools.adapter.dto.RoleObject;
 import org.iringtools.adapter.dto.RoleType;
 import org.iringtools.adapter.dto.TemplateObject;
-import org.iringtools.adapter.dto.TransferType;
+import org.iringtools.adapter.dti.TransferType;
 import org.iringtools.adapter.dto.DataTransferObjects;
 import org.iringtools.protocol.manifest.Manifest;
 import org.iringtools.directory.Directory;
 import org.iringtools.directory.ExchangeDefinition;
-import org.iringtools.common.request.DtiSubmission;
-import org.iringtools.common.request.DxRequest;
-import org.iringtools.common.request.DxiRequest;
-import org.iringtools.common.request.DxoRequest;
-import org.iringtools.common.request.Identifiers;
+import org.iringtools.common.request.ExchangeRequest;
+import org.iringtools.common.request.DtoPageRequest;
+import org.iringtools.common.request.DiffDtiRequest;
+import org.iringtools.common.request.DiffDtoRequest;
 import org.iringtools.common.response.Response;
 import org.iringtools.common.response.Status;
 import org.iringtools.common.response.Level;
 import org.iringtools.common.response.StatusList;
 import org.iringtools.common.response.Messages;
+import org.iringtools.services.core.DataTransferObjectComparator;
 import org.iringtools.utility.NetUtil;
+import org.iringtools.utility.JaxbUtil;
 
 @Path("/")
 @Consumes("application/xml")
@@ -81,8 +81,8 @@ public class ESBService
   }
 
   @GET
-  @Path("/{scope}/exchanges/{exchangeId}")
-  public DataTransferIndices getDtiList(@PathParam("scope") String scope, @PathParam("exchangeId") String exchangeId)
+  @Path("/{scope}/exchanges/{id}")
+  public DataTransferIndices getDataTransferIndices(@PathParam("scope") String scope, @PathParam("id") String id)
   {
     DataTransferIndices resultDtis = null;
 
@@ -91,38 +91,33 @@ public class ESBService
       init();
 
       // get exchange definition
-      ExchangeDefinition xdef = getExchangeDefinition(scope, exchangeId);
+      ExchangeDefinition xdef = getExchangeDefinition(scope, id);
 
       // get target manifest
-      String targetManifestUrl = xdef.getTargetUri() + "/" + xdef.getTargetAppScope() + "/" + xdef.getTargetAppName()
+      String targetManifestUrl = xdef.getTargetUri() + "/" + xdef.getTargetScope() + "/" + xdef.getTargetApp()
           + "/manifest";
       Manifest targetManifest = NetUtil.get(Manifest.class, targetManifestUrl);
       if (targetManifest == null || targetManifest.getGraphs().getGraphs().size() == 0)
         return null;
 
-      // create data exchange request
-      DxRequest dxRequest = new DxRequest();
-      dxRequest.setManifest(targetManifest);
-      dxRequest.setHashAlgorithm(xdef.getHashAlgorithm());
-
       // get source dti
-      String sourceUrl = xdef.getSourceUri() + "/" + xdef.getSourceAppScope() + "/" + xdef.getSourceAppName() + "/"
-          + xdef.getSourceGraphName() + "/dti";
-      DataTransferIndices sourceDtis = NetUtil.post(DataTransferIndices.class, sourceUrl, dxRequest);
+      String sourceUrl = xdef.getSourceUri() + "/" + xdef.getSourceScope() + "/" + xdef.getSourceApp() + "/"
+          + xdef.getSourceGraph() + "/xfr?hashAlgorithm=" + xdef.getHashAlgorithm();
+      DataTransferIndices sourceDtis = NetUtil.post(DataTransferIndices.class, sourceUrl, targetManifest);
 
       // get target dti
-      String targetUrl = xdef.getTargetUri() + "/" + xdef.getTargetAppScope() + "/" + xdef.getTargetAppName() + "/"
-          + xdef.getTargetGraphName() + "/dti";
-      DataTransferIndices targetDtis = NetUtil.post(DataTransferIndices.class, targetUrl, dxRequest);
+      String targetUrl = xdef.getTargetUri() + "/" + xdef.getTargetScope() + "/" + xdef.getTargetApp() + "/"
+          + xdef.getTargetGraph() + "/xfr?hashAlgorithm=" + xdef.getHashAlgorithm();
+      DataTransferIndices targetDtis = NetUtil.post(DataTransferIndices.class, targetUrl, targetManifest);
 
       // create dxi request to diff source and target dti
-      DxiRequest dxiRequest = new DxiRequest();
-      dxiRequest.setSourceDataTransferIndicies(sourceDtis);
-      dxiRequest.setTargetDataTransferIndicies(targetDtis);
+      DiffDtiRequest diffDtiRequest = new DiffDtiRequest();
+      diffDtiRequest.setSourceDataTransferIndicies(sourceDtis);
+      diffDtiRequest.setTargetDataTransferIndicies(targetDtis);
 
       // request exchange service to diff the dti
-      String diffServiceUrl = settings.get("differencingServiceUri") + "/dxi";
-      resultDtis = NetUtil.post(DataTransferIndices.class, diffServiceUrl, dxiRequest);
+      String diffServiceUrl = settings.get("differencingServiceUri") + "/dti";
+      resultDtis = NetUtil.post(DataTransferIndices.class, diffServiceUrl, diffDtiRequest);
     }
     catch (Exception ex)
     {
@@ -133,14 +128,16 @@ public class ESBService
   }
 
   @POST
-  @Path("/{scope}/exchanges/{exchangeId}")
-  public DataTransferObjects getDtoList(@PathParam("scope") String scope, @PathParam("exchangeId") String exchangeId,
-      DataTransferIndices dtis)
+  @Path("/{scope}/exchanges/{id}")
+  public DataTransferObjects getDataTransferObjects(@PathParam("scope") String scope, @PathParam("id") String id,
+      DataTransferIndices dataTransferIndices)
   {
     DataTransferObjects resultDtos = null;
 
     try
     {
+      logger.info("ExchangeRequest: " + JaxbUtil.toXml(dataTransferIndices, true));
+      
       init();
 
       DataTransferObjects sourceDtos = null;
@@ -150,132 +147,121 @@ public class ESBService
       List<DataTransferObject> resultDtoList = resultDtos.getDataTransferObjects();
 
       // get exchange definition
-      ExchangeDefinition xdef = getExchangeDefinition(scope, exchangeId);
+      ExchangeDefinition xdef = getExchangeDefinition(scope, id);
 
       // get target manifest
-      String targetManifestUrl = xdef.getTargetUri() + "/" + xdef.getTargetAppScope() + "/" + xdef.getTargetAppName()
+      String targetManifestUrl = xdef.getTargetUri() + "/" + xdef.getTargetScope() + "/" + xdef.getTargetApp()
           + "/manifest";
       Manifest targetManifest = NetUtil.get(Manifest.class, targetManifestUrl);
       if (targetManifest == null || targetManifest.getGraphs().getGraphs().size() == 0)
         return null;
 
-      // store add/change-sync/delete identifiers in different lists
-      List<String> addIdentifierList = new ArrayList<String>();
-      List<String> changeIdentifierList = new ArrayList<String>();
-      List<String> syncIdentifierList = new ArrayList<String>();
-      List<String> deleteIdentifierList = new ArrayList<String>();
+      List<DataTransferIndex> sourceDtiList = new ArrayList<DataTransferIndex>();
+      List<DataTransferIndex> targetDtiList = new ArrayList<DataTransferIndex>();
 
-      for (DataTransferIndex dti : dtis.getDataTransferIndices())
+      for (DataTransferIndex dti : dataTransferIndices.getDataTransferIndices())
       {
-        String identifier = dti.getIdentifier();
-
         switch (dti.getTransferType())
         {
         case ADD:
-          addIdentifierList.add(identifier);
+          sourceDtiList.add(dti);
           break;
         case CHANGE:
-          changeIdentifierList.add(identifier);
+          sourceDtiList.add(dti);
+          targetDtiList.add(dti);
           break;
         case SYNC:
-          syncIdentifierList.add(identifier);
+          sourceDtiList.add(dti);
           break;
         case DELETE:
-          deleteIdentifierList.add(identifier);
+          targetDtiList.add(dti);
           break;
         }
       }
 
-      // get add/change/sync DTOs from source endpoint
-      Identifiers sourceIdentifiers = new Identifiers();
-      List<String> sourceIdentifierList = sourceIdentifiers.getIdentifiers();
-      sourceIdentifierList.addAll(addIdentifierList);
-      sourceIdentifierList.addAll(changeIdentifierList);
-      sourceIdentifierList.addAll(syncIdentifierList);
-
-      if (sourceIdentifierList.size() > 0)
+      // get source DTOs
+      if (sourceDtiList.size() > 0)
       {
-        DxRequest sourceDtosRequest = new DxRequest();
-        sourceDtosRequest.setManifest(targetManifest);
-        sourceDtosRequest.setIdentifiers(sourceIdentifiers);
+        DtoPageRequest sourceDtoPageRequest = new DtoPageRequest();
+        sourceDtoPageRequest.setManifest(targetManifest);
+        DataTransferIndices sourceDataTransferIndices = new DataTransferIndices();
+        sourceDataTransferIndices.setDataTransferIndices(sourceDtiList);
+        sourceDtoPageRequest.setDataTransferIndices(sourceDataTransferIndices);
 
-        String sourceUrl = xdef.getSourceUri() + "/" + xdef.getSourceAppScope() + "/" + xdef.getSourceAppName() + "/"
-            + xdef.getSourceGraphName() + "/dto";
-        sourceDtos = NetUtil.post(DataTransferObjects.class, sourceUrl, sourceDtosRequest);
+        String sourceUrl = xdef.getSourceUri() + "/" + xdef.getSourceScope() + "/" + xdef.getSourceApp() + "/"
+            + xdef.getSourceGraph() + "/xfr/page";
+        sourceDtos = NetUtil.post(DataTransferObjects.class, sourceUrl, sourceDtoPageRequest);
         List<DataTransferObject> sourceDtoList = sourceDtos.getDataTransferObjects();
 
-        // append add/sync DTOs to resultDtoList and remove them from sourceDtoList
+        // append add/sync DTOs to resultDtoList, leave change DTOs to send to differencing engine
         for (int i = 0; i < sourceDtoList.size(); i++)
         {
           DataTransferObject sourceDto = sourceDtoList.get(i);
-          List<ClassObject> sourceClassObjectList = sourceDto.getClassObjects().getClassObjects();
-
-          if (sourceClassObjectList.size() > 0)
+          
+          if (sourceDto.getClassObjects() != null && sourceDto.getClassObjects().getClassObjects().size() > 0)
           {
-            for (int j = 0; j < addIdentifierList.size(); j++)
+            String sourceDtoIdentifier = sourceDto.getClassObjects().getClassObjects().get(0).getIdentifier();
+  
+            for (DataTransferIndex sourceDti : sourceDtiList)
             {
-              if (sourceClassObjectList.get(0).getIdentifier().equalsIgnoreCase(addIdentifierList.get(j)))
+              if (sourceDtoIdentifier.equalsIgnoreCase(sourceDti.getIdentifier()))
               {
-                DataTransferObject addDto = sourceDtoList.remove(i--);
-                addDto.setTransferType(TransferType.ADD);
-                resultDtoList.add(addDto);
-
-                addIdentifierList.remove(j--);
-                break;
-              }
-            }
-
-            for (int j = 0; j < syncIdentifierList.size(); j++)
-            {
-              if (sourceClassObjectList.get(0).getIdentifier().equalsIgnoreCase(syncIdentifierList.get(j)))
-              {
-                DataTransferObject syncDto = sourceDtoList.remove(i--);
-                syncDto.setTransferType(TransferType.SYNC);
-                resultDtoList.add(syncDto);
-
-                syncIdentifierList.remove(j--);
-                break;
+                TransferType transferType = sourceDti.getTransferType();
+                
+                if (transferType == TransferType.ADD)
+                {
+                  DataTransferObject addDto = sourceDtoList.remove(i--);
+                  addDto.setTransferType(org.iringtools.adapter.dto.TransferType.ADD);
+                  resultDtoList.add(addDto);
+                  break;
+                }
+                else if (transferType == TransferType.SYNC)
+                {
+                  DataTransferObject syncDto = sourceDtoList.remove(i--);
+                  syncDto.setTransferType(org.iringtools.adapter.dto.TransferType.SYNC);
+                  resultDtoList.add(syncDto);
+                  break;
+                }
               }
             }
           }
         }
       }
 
-      // get delete/change DTOs from target endpoint
-      Identifiers targetIdentifiers = new Identifiers();
-      List<String> targetIdentifierList = targetIdentifiers.getIdentifiers();
-      targetIdentifierList.addAll(changeIdentifierList);
-      targetIdentifierList.addAll(deleteIdentifierList);
-
-      if (targetIdentifierList.size() > 0)
+      // get target DTOs
+      if (targetDtiList.size() > 0)
       {
-        DxRequest targetDtosRequest = new DxRequest();
-        targetDtosRequest.setManifest(targetManifest);
-        targetDtosRequest.setIdentifiers(targetIdentifiers);
+        DtoPageRequest targetDtoPageRequest = new DtoPageRequest();
+        targetDtoPageRequest.setManifest(targetManifest);
+        DataTransferIndices targetDataTransferIndices = new DataTransferIndices();
+        targetDataTransferIndices.setDataTransferIndices(targetDtiList);
+        targetDtoPageRequest.setDataTransferIndices(targetDataTransferIndices);
 
-        String targetUrl = xdef.getTargetUri() + "/" + xdef.getTargetAppScope() + "/" + xdef.getTargetAppName() + "/"
-            + xdef.getTargetGraphName() + "/dto";
-        targetDtos = NetUtil.post(DataTransferObjects.class, targetUrl, targetDtosRequest);
+        String targetUrl = xdef.getTargetUri() + "/" + xdef.getTargetScope() + "/" + xdef.getTargetApp() + "/"
+            + xdef.getTargetGraph() + "/xfr/page";
+        targetDtos = NetUtil.post(DataTransferObjects.class, targetUrl, targetDtoPageRequest);
         List<DataTransferObject> targetDtoList = targetDtos.getDataTransferObjects();
 
-        // add deleted DTOs to resultDtoList and remove them from targetDtoList
+        // append delete DTOs to resultDtoList, leave change DTOs to send to differencing engine
         for (int i = 0; i < targetDtoList.size(); i++)
         {
           DataTransferObject targetDto = targetDtoList.get(i);
-          List<ClassObject> targetClassObjectList = targetDto.getClassObjects().getClassObjects();
-
-          if (targetClassObjectList.size() > 0)
+          
+          if (targetDto.getClassObjects() != null && targetDto.getClassObjects().getClassObjects().size() > 0)
           {
-            for (int j = 0; j < deleteIdentifierList.size(); j++)
+            String targetDtoIdentifier = targetDto.getClassObjects().getClassObjects().get(0).getIdentifier();
+  
+            for (DataTransferIndex targetDti : targetDtiList)
             {
-              if (targetClassObjectList.get(0).getIdentifier().equalsIgnoreCase(deleteIdentifierList.get(j)))
+              if (targetDtoIdentifier.equalsIgnoreCase(targetDti.getIdentifier()))
               {
-                DataTransferObject deleteDto = targetDtoList.remove(i--);
-                deleteDto.setTransferType(TransferType.DELETE);
-                resultDtoList.add(deleteDto);
-
-                deleteIdentifierList.remove(j--);
-                break;
+                if (targetDti.getTransferType() == TransferType.DELETE)
+                {
+                  DataTransferObject deleteDto = targetDtoList.remove(i--);
+                  deleteDto.setTransferType(org.iringtools.adapter.dto.TransferType.DELETE);
+                  resultDtoList.add(deleteDto);
+                  break;
+                }
               }
             }
           }
@@ -285,11 +271,11 @@ public class ESBService
       if (sourceDtos != null && targetDtos != null)
       {
         // request exchange service to compare changed DTOs
-        DxoRequest dxoRequest = new DxoRequest();
-        dxoRequest.setSourceDataTransferObjects(sourceDtos);
-        dxoRequest.setTargetDataTransferObjects(targetDtos);
-        String diffServiceUrl = settings.get("differencingServiceUri") + "/dxo";
-        DataTransferObjects diffDtos = NetUtil.post(DataTransferObjects.class, diffServiceUrl, dxoRequest);
+        DiffDtoRequest diffDtoRequest = new DiffDtoRequest();
+        diffDtoRequest.setSourceDataTransferObjects(sourceDtos);
+        diffDtoRequest.setTargetDataTransferObjects(targetDtos);
+        String diffServiceUrl = settings.get("differencingServiceUri") + "/dto";
+        DataTransferObjects diffDtos = NetUtil.post(DataTransferObjects.class, diffServiceUrl, diffDtoRequest);
 
         // add diff DTOs to add/change/sync list
         if (diffDtos != null)
@@ -308,9 +294,9 @@ public class ESBService
   }
 
   @POST
-  @Path("/{scope}/exchanges/{exchangeId}/submit")
-  public Response postDtiList(@PathParam("scope") String scope, @PathParam("exchangeId") String exchangeId,
-      DtiSubmission dtiSubmission)
+  @Path("/{scope}/exchanges/{id}/submit")
+  public Response submitExchange(@PathParam("scope") String scope, @PathParam("id") String id,
+      ExchangeRequest exchangeRequest)
   {
     Response response = new Response();
     StatusList statusList = new StatusList();
@@ -318,10 +304,12 @@ public class ESBService
 
     try
     {
-      if (dtiSubmission == null)
+      logger.info("ExchangeRequest: " + JaxbUtil.toXml(exchangeRequest, true));
+      
+      if (exchangeRequest == null)
         return null;
 
-      DataTransferIndices dtis = dtiSubmission.getDti();
+      DataTransferIndices dtis = exchangeRequest.getDataTransferIndices();
       if (dtis == null)
         return null;
 
@@ -332,21 +320,21 @@ public class ESBService
       init();
 
       // get exchange definition
-      ExchangeDefinition xdef = getExchangeDefinition(scope, exchangeId);
+      ExchangeDefinition xdef = getExchangeDefinition(scope, id);
 
       // get target application uri
-      String targetAppUri = xdef.getTargetUri() + "/" + xdef.getTargetAppScope() + "/" + xdef.getTargetAppName();
+      String targetAppUri = xdef.getTargetUri() + "/" + xdef.getTargetScope() + "/" + xdef.getTargetApp();
       String targetManifestUrl = targetAppUri + "/manifest";
-      String targetGraphUri = targetAppUri + "/" + xdef.getTargetGraphName();
-      String sourceGraphUri = xdef.getSourceUri() + "/" + xdef.getSourceAppScope() + "/" + xdef.getSourceAppName()
-          + "/" + xdef.getSourceGraphName();
+      String targetGraphUri = targetAppUri + "/" + xdef.getTargetGraph();
+      String sourceGraphUri = xdef.getSourceUri() + "/" + xdef.getSourceScope() + "/" + xdef.getSourceApp()
+          + "/" + xdef.getSourceGraph();
 
       // get target manifest
       Manifest targetManifest = NetUtil.get(Manifest.class, targetManifestUrl);
       if (targetManifest == null || targetManifest.getGraphs().getGraphs().size() == 0)
         return null;
 
-      // get pool (paginated) DTOs to send to target adapter service
+      // create a pool (page) DTOs to send to target endpoint
       int dtiSize = dtiList.size();
       int poolSize = Integer.parseInt(settings.get("poolSize"));
 
@@ -355,108 +343,111 @@ public class ESBService
         int actualPoolSize = (dtiSize > (i + poolSize)) ? poolSize : dtiSize - i;
         List<DataTransferIndex> poolDtiList = dtiList.subList(i, i + actualPoolSize);
 
-        List<String> syncIdentifierList = new ArrayList<String>();
-        List<String> deleteIdentifierList = new ArrayList<String>();
-        List<String> addChangeIdentifierList = new ArrayList<String>();
+        List<DataTransferIndex> sourcePoolDtiList = new ArrayList<DataTransferIndex>();
+        List<DataTransferIndex> syncDtiList = new ArrayList<DataTransferIndex>();
+        List<DataTransferIndex> deleteDtiList = new ArrayList<DataTransferIndex>();
 
-        for (DataTransferIndex dti : poolDtiList)
+        for (DataTransferIndex poolDti : poolDtiList)
         {
-          String identifier = dti.getIdentifier();
-
-          switch (dti.getTransferType())
+          switch (poolDti.getTransferType())
           {
           case SYNC:
-            syncIdentifierList.add(identifier);
+            syncDtiList.add(poolDti);
             break;
           case DELETE:
-            deleteIdentifierList.add(identifier);
+            deleteDtiList.add(poolDti);
             break;
           default:
-            addChangeIdentifierList.add(identifier);
+            sourcePoolDtiList.add(poolDti);
             break;
           }
         }
 
-        // build identifiers to request DTO from source
-        Identifiers sourceIdentifiers = new Identifiers();
-        List<String> sourceIdentifierList = sourceIdentifiers.getIdentifiers();
-        sourceIdentifierList.addAll(addChangeIdentifierList);
-        // only include SYNC identifiers if the DTOs have been reviewed
-        if (dtiSubmission.isReviewed())
-          sourceIdentifierList.addAll(syncIdentifierList);
+        // only include SYNC DTIs if the DTOs have been reviewed         
+        if (exchangeRequest.isReviewed())
+          sourcePoolDtiList.addAll(syncDtiList);
 
         // request source DTOs
-        DxRequest poolDtosRequest = new DxRequest();
+        DtoPageRequest poolDtosRequest = new DtoPageRequest();
         poolDtosRequest.setManifest(targetManifest);
-        poolDtosRequest.setIdentifiers(sourceIdentifiers);
-        String sourceDtoUrl = sourceGraphUri + "/dto";
+        DataTransferIndices poolDataTransferIndices = new DataTransferIndices();
+        poolDataTransferIndices.setDataTransferIndices(sourcePoolDtiList);
+        poolDtosRequest.setDataTransferIndices(poolDataTransferIndices);
+        
+        String sourceDtoUrl = sourceGraphUri + "/xfr/page";
         DataTransferObjects poolDtos = NetUtil.post(DataTransferObjects.class, sourceDtoUrl, poolDtosRequest);
         List<DataTransferObject> poolDtoList = poolDtos.getDataTransferObjects();
 
+        // set transfer type for each DTO in poolDtoList and remove/report ones that have changed
+        // and deleted during review and acceptance period
         for (int j = 0; j < poolDtoList.size(); j++)
         {
-          DataTransferObject dto = poolDtoList.get(j);
-          String identifier = dto.getClassObjects().getClassObjects().get(0).getIdentifier();
-
-          for (DataTransferIndex dti : poolDtiList)
+          DataTransferObject sourceDto = poolDtoList.get(j);
+          
+          if (sourceDto.getClassObjects() != null && sourceDto.getClassObjects().getClassObjects().size() > 0)
           {
-            if (dti.getIdentifier().equals(identifier))
+            String identifier = sourceDto.getClassObjects().getClassObjects().get(0).getIdentifier();
+  
+            for (DataTransferIndex dti : poolDtiList)
             {
-              if (dtiSubmission.isReviewed())
+              if (dti.getIdentifier().equals(identifier))
               {
-                sourceIdentifierList.remove(identifier);
-
-                // TODO: handle more hash algorithms
-                String hashValue = md5Hash(dto);
-
-                if (!hashValue.equalsIgnoreCase(dti.getHashValue()))
+                if (exchangeRequest.isReviewed())
                 {
-                  Status status = createStatus(identifier, "DTO has changed.");
-                  response.getStatusList().getStatuses().add(status);
-                  poolDtoList.remove(j--); // exclude from pool submission list
+                  sourcePoolDtiList.remove(dti);
+                  String hashValue = md5Hash(sourceDto);
+  
+                  if (!hashValue.equalsIgnoreCase(dti.getHashValue()))
+                  {
+                    Status status = createStatus(identifier, "DTO has changed.");
+                    response.getStatusList().getStatuses().add(status);
+                    poolDtoList.remove(j--); 
+                  }
+                  else if (dti.getTransferType() != TransferType.SYNC)
+                  {
+                    sourceDto.setTransferType(org.iringtools.adapter.dto.TransferType.valueOf(dti.getTransferType().toString()));
+                  }
                 }
-                else if (dti.getTransferType() != org.iringtools.adapter.dti.TransferType.SYNC)
-                  dto.setTransferType(TransferType.valueOf(dti.getTransferType().toString()));
+                else
+                {
+                  sourceDto.setTransferType(org.iringtools.adapter.dto.TransferType.valueOf(dti.getTransferType().toString()));
+                }
+  
+                break;
               }
-              else
-              {
-                dto.setTransferType(TransferType.valueOf(dti.getTransferType().toString()));
-              }
-
-              break;
             }
           }
         }
 
-        // report DTOs that are deleted during review and acceptance
-        if (dtiSubmission.isReviewed() && sourceIdentifierList.size() > 0)
+        // report DTOs that were deleted during review and acceptance period
+        if (exchangeRequest.isReviewed() && sourcePoolDtiList.size() > 0)
         {
-          for (String identifier : sourceIdentifierList)
+          for (DataTransferIndex sourceDti : sourcePoolDtiList)
           {
-            Status status = createStatus(identifier, "DTO no longer exists.");
+            Status status = createStatus(sourceDti.getIdentifier(), "DTO no longer exists.");
             response.getStatusList().getStatuses().add(status);
           }
         }
 
-        // append delete DTOs
-        for (String identifier : deleteIdentifierList)
+        // create identifiers for deleted DTOs
+        for (DataTransferIndex deleteDti : deleteDtiList)
         {
           DataTransferObject deleteDto = new DataTransferObject();
-          deleteDto.setTransferType(TransferType.DELETE);
+          deleteDto.setTransferType(org.iringtools.adapter.dto.TransferType.DELETE);
 
           ClassObjects classObjects = new ClassObjects();
           deleteDto.setClassObjects(classObjects);
 
           List<ClassObject> classObjectList = classObjects.getClassObjects();
           ClassObject classObject = new ClassObject();
-          classObject.setIdentifier(identifier);
+          classObject.setIdentifier(deleteDti.getIdentifier());
           classObjectList.add(classObject);
 
           poolDtoList.add(deleteDto);
         }
 
         // post add/change/delete DTOs to target endpoint
-        Response poolResponse = NetUtil.post(Response.class, targetGraphUri + "?format=dxo", poolDtos);
+        Response poolResponse = NetUtil.post(Response.class, targetGraphUri, poolDtos);
         response.getStatusList().getStatuses().addAll(poolResponse.getStatusList().getStatuses());
       }
 
@@ -491,9 +482,9 @@ public class ESBService
     settings.put("poolSize", poolSize);
   }
 
-  private ExchangeDefinition getExchangeDefinition(String scope, String exchangeId) throws JAXBException, IOException
+  private ExchangeDefinition getExchangeDefinition(String scope, String id) throws JAXBException, IOException
   {
-    String directoryServiceUrl = settings.get("directoryServiceUri") + "/" + scope + "/exchanges/" + exchangeId;
+    String directoryServiceUrl = settings.get("directoryServiceUri") + "/" + scope + "/exchanges/" + id;
     return NetUtil.get(ExchangeDefinition.class, directoryServiceUrl);
   }
 

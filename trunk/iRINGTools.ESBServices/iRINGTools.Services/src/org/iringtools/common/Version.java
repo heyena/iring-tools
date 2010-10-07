@@ -6,28 +6,29 @@
 //
 
 
-package org.iringtools.directory;
+package org.iringtools.common;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for Application complex type.
+ * <p>Java class for Version complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Application">
+ * &lt;complexType name="Version">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="graphs" type="{http://iringtools.org/directory}Graphs"/>
+ *         &lt;element name="major" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="minor" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="build" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="revision" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -37,117 +38,118 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Application", propOrder = {
-    "id",
-    "name",
-    "description",
-    "graphs"
+@XmlType(name = "Version", propOrder = {
+    "major",
+    "minor",
+    "build",
+    "revision"
 })
-public class Application {
+@XmlRootElement(name = "version")
+public class Version {
 
     @XmlElement(required = true)
-    protected String id;
+    protected String major;
     @XmlElement(required = true)
-    protected String name;
+    protected String minor;
     @XmlElement(required = true)
-    protected String description;
+    protected String build;
     @XmlElement(required = true)
-    protected Graphs graphs;
+    protected String revision;
 
     /**
-     * Gets the value of the id property.
+     * Gets the value of the major property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getId() {
-        return id;
+    public String getMajor() {
+        return major;
     }
 
     /**
-     * Sets the value of the id property.
+     * Sets the value of the major property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setId(String value) {
-        this.id = value;
+    public void setMajor(String value) {
+        this.major = value;
     }
 
     /**
-     * Gets the value of the name property.
+     * Gets the value of the minor property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getName() {
-        return name;
+    public String getMinor() {
+        return minor;
     }
 
     /**
-     * Sets the value of the name property.
+     * Sets the value of the minor property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setName(String value) {
-        this.name = value;
+    public void setMinor(String value) {
+        this.minor = value;
     }
 
     /**
-     * Gets the value of the description property.
+     * Gets the value of the build property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getDescription() {
-        return description;
+    public String getBuild() {
+        return build;
     }
 
     /**
-     * Sets the value of the description property.
+     * Sets the value of the build property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setDescription(String value) {
-        this.description = value;
+    public void setBuild(String value) {
+        this.build = value;
     }
 
     /**
-     * Gets the value of the graphs property.
+     * Gets the value of the revision property.
      * 
      * @return
      *     possible object is
-     *     {@link Graphs }
+     *     {@link String }
      *     
      */
-    public Graphs getGraphs() {
-        return graphs;
+    public String getRevision() {
+        return revision;
     }
 
     /**
-     * Sets the value of the graphs property.
+     * Sets the value of the revision property.
      * 
      * @param value
      *     allowed object is
-     *     {@link Graphs }
+     *     {@link String }
      *     
      */
-    public void setGraphs(Graphs value) {
-        this.graphs = value;
+    public void setRevision(String value) {
+        this.revision = value;
     }
 
 }

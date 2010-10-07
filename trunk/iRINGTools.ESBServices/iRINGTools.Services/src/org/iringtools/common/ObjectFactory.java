@@ -6,7 +6,7 @@
 //
 
 
-package org.iringtools.common.request;
+package org.iringtools.common;
 
 import javax.xml.bind.annotation.XmlRegistry;
 
@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlRegistry;
 /**
  * This object contains factory methods for each 
  * Java content interface and Java element interface 
- * generated in the org.iringtools.common.request package. 
+ * generated in the org.iringtools.common package. 
  * <p>An ObjectFactory allows you to programatically 
  * construct new instances of the Java representation 
  * for XML content. The Java representation of XML 
@@ -30,42 +30,18 @@ public class ObjectFactory {
 
 
     /**
-     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.iringtools.common.request
+     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.iringtools.common
      * 
      */
     public ObjectFactory() {
     }
 
     /**
-     * Create an instance of {@link ExchangeRequest }
+     * Create an instance of {@link Version }
      * 
      */
-    public ExchangeRequest createExchangeRequest() {
-        return new ExchangeRequest();
-    }
-
-    /**
-     * Create an instance of {@link DiffDtiRequest }
-     * 
-     */
-    public DiffDtiRequest createDiffDtiRequest() {
-        return new DiffDtiRequest();
-    }
-
-    /**
-     * Create an instance of {@link DiffDtoRequest }
-     * 
-     */
-    public DiffDtoRequest createDiffDtoRequest() {
-        return new DiffDtoRequest();
-    }
-
-    /**
-     * Create an instance of {@link DtoPageRequest }
-     * 
-     */
-    public DtoPageRequest createDtoPageRequest() {
-        return new DtoPageRequest();
+    public Version createVersion() {
+        return new Version();
     }
 
 }

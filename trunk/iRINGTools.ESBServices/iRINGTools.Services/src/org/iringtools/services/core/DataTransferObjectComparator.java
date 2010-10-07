@@ -1,4 +1,4 @@
-package org.iringtools.adapter.dto;
+package org.iringtools.services.core;
 
 import java.util.Comparator;
 

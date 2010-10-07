@@ -1,4 +1,4 @@
-package org.iringtools.adapter.dti;
+package org.iringtools.services.core;
 
 import java.util.Comparator;
 import org.iringtools.adapter.dti.DataTransferIndex;
