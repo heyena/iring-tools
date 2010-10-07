@@ -18,7 +18,6 @@ using System.Web;
 
 namespace org.iringtools.adapter.projection
 {
-  //TODO: use entity for graph base uri
   public class RdfProjectionEngine : BaseProjectionEngine
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(RdfProjectionEngine));
@@ -336,6 +335,107 @@ namespace org.iringtools.adapter.projection
 
             string hashCode = Utility.MD5Hash(templateId + templateValue.ToString());
             templateElement.Add(new XAttribute(RDF_ABOUT, hashCode));
+          }
+        }
+      }
+    }
+
+    private void CreateDataObjects(string classId, string classInstance, int dataObjectIndex)
+    {
+      KeyValuePair<ClassMap, List<TemplateMap>> pair = _graphMap.GetClassTemplateListMap(classId);
+      List<TemplateMap> templateMaps = pair.Value;
+
+      foreach (TemplateMap templateMap in templateMaps)
+      {
+        string possessorRoleId = String.Empty;
+        RoleMap referenceRole = null;
+        RoleMap classRole = null;
+        List<RoleMap> propertyRoleMaps = new List<RoleMap>();
+
+        // find property roleMaps
+        foreach (RoleMap roleMap in templateMap.roleMaps)
+        {
+          switch (roleMap.type)
+          {
+            case RoleType.Possessor:
+              possessorRoleId = roleMap.roleId;
+              break;
+
+            case RoleType.Reference:
+              if (roleMap.classMap != null)
+                classRole = roleMap;
+              else
+                referenceRole = roleMap;
+              break;
+
+            case RoleType.Property:
+              propertyRoleMaps.Add(roleMap);
+              break;
+          }
+        }
+
+        if (classRole != null)
+        {
+          string query = String.Format(SUBCLASS_INSTANCE_QUERY_TEMPLATE, _graphBaseUri, possessorRoleId, classInstance,
+              templateMap.templateId, referenceRole.roleId, referenceRole.value, classRole.roleId);
+
+          object results = _memoryStore.ExecuteQuery(query);
+
+          if (results is SparqlResultSet)
+          {
+            SparqlResultSet resultSet = (SparqlResultSet)results;
+
+            foreach (SparqlResult result in resultSet)
+            {
+              string subclassInstance = result.ToString().Remove(0, ("?class = " + _graphBaseUri).Length);
+              CreateDataObjects(classRole.classMap.classId, subclassInstance, dataObjectIndex);
+              break;  // should be one result only
+            }
+          }
+        }
+        else // query for property roleMaps values
+        {
+          foreach (RoleMap roleMap in propertyRoleMaps)
+          {
+            string query = String.Format(LITERAL_QUERY_TEMPLATE, _graphBaseUri, possessorRoleId, classInstance,
+                templateMap.templateId, referenceRole.roleId, referenceRole.value, roleMap.roleId);
+
+            object results = _memoryStore.ExecuteQuery(query);
+
+            if (results is SparqlResultSet)
+            {
+              string[] propertyPath = roleMap.propertyName.Split('.');
+              string property = propertyPath[propertyPath.Length - 1].Trim();
+              List<string> values = new List<string>();
+
+              SparqlResultSet resultSet = (SparqlResultSet)results;
+
+              foreach (SparqlResult result in resultSet)
+              {
+                string value = Regex.Replace(result.ToString(), @".*= ", String.Empty);
+
+                if (value == RDF_NIL)
+                  value = String.Empty;
+                else if (value.Contains("^^"))
+                  value = value.Substring(0, value.IndexOf("^^"));
+                else if (!String.IsNullOrEmpty(roleMap.valueList))
+                  value = _mapping.ResolveValueMap(roleMap.valueList, value);
+
+                if (propertyPath.Length > 2)
+                {
+                  values.Add(value);
+                }
+                else
+                {
+                  _dataObjects[dataObjectIndex].SetPropertyValue(property, value);
+                }
+              }
+
+              if (propertyPath.Length > 2)
+              {
+                SetObjects(dataObjectIndex, roleMap.propertyName, values);
+              }
+            }
           }
         }
       }

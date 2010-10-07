@@ -86,21 +86,6 @@ namespace org.iringtools.services
     }
     #endregion
 
-    #region GetManifest
-    /// <summary>
-    /// Gets the iRING manifest for the specified scope (project and application combination).
-    /// </summary>
-    /// <param name="projectName">Project name</param>
-    /// <param name="applicationName">Application name</param>
-    /// <returns>Returns a Manifest object.</returns>
-    [Description("Gets the iRING manifest for the specified scope.")]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/manifest")]
-    public Manifest GetManifest(string projectName, string applicationName)
-    {
-      return _adapterProvider.GetManifest(projectName, applicationName);
-    }
-    #endregion
-
     #region Get
     /// <summary>
     /// Gets an XML projection of the specified scope, graph and identifier in the format (xml, dto, rdf ...) specified.
@@ -171,42 +156,6 @@ namespace org.iringtools.services
     public Response Pull(string projectName, string applicationName, string graphName, Request request)
     {
       return _exchangeProvider.Pull(projectName, applicationName, graphName, request);
-    }
-    #endregion
-    #endregion
-
-    #region Difference-based Data Exchange
-    #region GetDtiList
-    /// <summary>
-    /// DTI Resource for Difference-based data exchange.
-    /// </summary>
-    /// <param name="projectName">Project name</param>
-    /// <param name="applicationName">Application name</param>
-    /// <param name="graphName">Graph name</param>
-    /// <param name="request">DXRequest object containing the manifest to be used.</param>
-    /// <returns>Returns an arbitrary XML</returns>
-    [Description("DTI Resource for Difference-based data exchange.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/dti")]
-    public XElement GetDtiList(string projectName, string applicationName, string graphName, DxRequest request)
-    {
-      return _exchangeProvider.GetDtiList(projectName, applicationName, graphName, request);
-    }
-    #endregion
-
-    #region GetDtoList
-    /// <summary>
-    /// DTO Resource for Difference-based data exchange.
-    /// </summary>
-    /// <param name="projectName">Project name</param>
-    /// <param name="applicationName">Application name</param>
-    /// <param name="graphName">Graph name</param>
-    /// <param name="request">DXRequest object containing the manifest to be used and a list of identifiers to return.</param>
-    /// <returns>Returns an arbitrary XML</returns>
-    [Description("DTO Resource for Difference-based data exchange.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/dto")]
-    public XElement GetDtoList(string projectName, string applicationName, string graphName, DxRequest request)
-    {
-      return _exchangeProvider.GetDtoList(projectName, applicationName, graphName, request);
     }
     #endregion
     #endregion

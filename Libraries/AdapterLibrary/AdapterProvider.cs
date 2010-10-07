@@ -278,112 +278,7 @@ namespace org.iringtools.adapter
     }
     #endregion
 
-    #region adapter methods
-    public org.iringtools.library.manifest.Manifest GetManifest(string projectName, string applicationName)
-    {
-      string path = string.Format("{0}Mapping.{1}.{2}.xml", _settings["XmlPath"], projectName, applicationName);
-
-      try
-      {
-        InitializeScope(projectName, applicationName);
-        org.iringtools.library.manifest.Manifest manifest = new org.iringtools.library.manifest.Manifest();
-        
-        if (File.Exists(path))
-        {
-          DataDictionary dataDictionary = GetDictionary(projectName, applicationName);
-
-          foreach (GraphMap graphMap in _mapping.graphMaps)
-          {
-            org.iringtools.library.manifest.Graph manifestGraph = new org.iringtools.library.manifest.Graph { Name = graphMap.name };
-            manifest.Graphs.Add(manifestGraph);
-
-            string dataObjectMap = graphMap.dataObjectMap;
-            DataObject dataObject = null;
-
-            foreach (DataObject dataObj in dataDictionary.dataObjects)
-            {
-              if (dataObj.objectName == dataObjectMap)
-              {
-                dataObject = dataObj;
-                break;
-              }
-            }
-
-            if (dataObject != null)
-            {
-              foreach (var classTemplateListMap in graphMap.classTemplateListMaps)
-              {
-                org.iringtools.library.manifest.ClassTemplates manifestClassTemplatesMap = new org.iringtools.library.manifest.ClassTemplates();
-                manifestGraph.ClassTemplatesList.Add(manifestClassTemplatesMap);
-
-                ClassMap classMap = classTemplateListMap.Key;
-                List<TemplateMap> templateMaps = classTemplateListMap.Value;
-
-                org.iringtools.library.manifest.Class manifestClass = new org.iringtools.library.manifest.Class
-                {
-                  ClassId = classMap.classId,
-                  Name = classMap.name,
-                };
-                manifestClassTemplatesMap.Class = manifestClass;
-
-                foreach (TemplateMap templateMap in templateMaps)
-                {
-                  org.iringtools.library.manifest.Template manifestTemplate = new org.iringtools.library.manifest.Template 
-                  {
-                    TemplateId = templateMap.templateId,
-                    Name = templateMap.name,
-                    TransferOption = org.iringtools.library.manifest.TransferOption.Desired,
-                  };
-                  manifestClassTemplatesMap.Templates.Add(manifestTemplate);
-
-                  foreach (RoleMap roleMap in templateMap.roleMaps)
-                  {
-                    org.iringtools.library.manifest.Role manifestRole = new org.iringtools.library.manifest.Role
-                    {
-                      Type = roleMap.type,
-                      RoleId = roleMap.roleId,
-                      Name = roleMap.name,
-                      DataType = roleMap.dataType,
-                      Value = roleMap.value,
-                    };
-                    manifestTemplate.Roles.Add(manifestRole);
-
-                    if (roleMap.type == RoleType.Property)
-                    {
-                      string[] property = roleMap.propertyName.Split('.');
-                      string objectName = property[0].Trim();
-                      string propertyName = property[1].Trim();
-
-                      if (dataObject.isKeyProperty(propertyName))
-                      {
-                        manifestTemplate.TransferOption = org.iringtools.library.manifest.TransferOption.Required;
-                      }
-                    }
-
-                    if (roleMap.classMap != null)
-                    {
-                      manifestRole.Class = new org.iringtools.library.manifest.Class
-                      {
-                        ClassId = roleMap.classMap.classId,
-                        Name = roleMap.classMap.name,
-                      };
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-        
-        return manifest;        
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(string.Format("Error in GetManifest: {0}", ex));
-        throw new Exception(string.Format("Error getting manifest from path [{0}: {1}", path, ex));
-      }
-    }
-
+    #region adapter methods    
     public DataDictionary GetDictionary(string projectName, string applicationName)
     {
       try
@@ -694,7 +589,6 @@ namespace org.iringtools.adapter
       return _response;
     }
 
-    // handle data exchange objects (data transfer objects with transfer types filled)
     public Response Post(string projectName, string applicationName, string graphName, string format, XElement xml)
     {
       Response response = null;
@@ -707,15 +601,6 @@ namespace org.iringtools.adapter
         _projectionEngine = _kernel.Get<IProjectionLayer>(format);
         IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xml);
         response = _dataLayer.Post(dataObjects);
-
-        if (format.ToLower() == "dxo")
-        {
-          GraphMap graphMap = _mapping.FindGraphMap(graphName);
-          
-          DxoProjectionEngine dxoProjectionEngine = ((DxoProjectionEngine)_projectionEngine);
-          IList<string> deletingIdentifiers = dxoProjectionEngine.GetDeletingIdentifiers(graphName, ref xml);
-          response.Append(_dataLayer.Delete(graphMap.dataObjectMap, deletingIdentifiers));
-        }
 
         response.DateTimeStamp = DateTime.Now;
         response.Level = StatusLevel.Success;
@@ -740,6 +625,7 @@ namespace org.iringtools.adapter
 
       return response;
     }
+    
     #endregion
 
     #region private methods
