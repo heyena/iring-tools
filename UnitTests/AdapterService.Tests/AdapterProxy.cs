@@ -19,6 +19,7 @@ namespace AdapterService.Tests
   {
     private AdapterProvider _adapterProvider = null;
     private ExchangeProvider _exchangeProvider = null;
+    private DtoProvider _dtoProvider = null;
 
     [Dependency]
     public IError Error { get; set; }
@@ -28,6 +29,7 @@ namespace AdapterService.Tests
 
     public AdapterProxy()
     {
+      _dtoProvider = new DtoProvider(ConfigurationManager.AppSettings);
       _adapterProvider = new AdapterProvider(ConfigurationManager.AppSettings);
       _exchangeProvider = new ExchangeProvider(ConfigurationManager.AppSettings);
     }
@@ -78,22 +80,22 @@ namespace AdapterService.Tests
       return response;
     }
 
-    public XElement GetXml(string projectName, string applicationName, string graphName, string format)
+    public XDocument GetXml(string projectName, string applicationName, string graphName, string format)
     {
-      XElement xElement = null;
+      XDocument xDocument = null;
       try
       {
-        xElement = _adapterProvider.GetProjection(projectName, applicationName, graphName, format);
+        xDocument = _adapterProvider.GetProjection(projectName, applicationName, graphName, format);
       }
       catch (Exception ex)
       {
         Error.SetError(ex);
       }
 
-      return xElement;
+      return xDocument;
     }
 
-    public IList<IDataObject> GetDataObject(string projectName, string applicationName, string graphName, string format, XElement xml)
+    public IList<IDataObject> GetDataObject(string projectName, string applicationName, string graphName, string format, XDocument xml)
     {
       IList<IDataObject> dataObjects = null;
       try
@@ -198,12 +200,27 @@ namespace AdapterService.Tests
       return response;
     }
 
-    public Response Post(string projectName, string applicationName, string graphName, string format, XElement xml)
+    public Response Post(string projectName, string applicationName, string graphName, string format, XDocument xDocument)
     {
       Response response = null;
       try
       {
-        response = _adapterProvider.Post(projectName, applicationName, graphName, format, xml);
+        response = _adapterProvider.Post(projectName, applicationName, graphName, format, xDocument);
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
+
+      return response;
+    }
+
+    public Response PostDTO(string projectName, string applicationName, string graphName, DataTransferObjects dto)
+    {
+      Response response = null;
+      try
+      {
+        response = _dtoProvider.PostDataTransferObjects(projectName, applicationName, graphName, dto);
       }
       catch (Exception ex)
       {

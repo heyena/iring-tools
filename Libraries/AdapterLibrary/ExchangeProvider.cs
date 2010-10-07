@@ -111,9 +111,9 @@ namespace org.iringtools.exchange
         {
           dataObjectsString = httpClient.GetMessage(@"/" + projectNameForPull + "/" + applicationNameForPull + "/" + graphNameForPull + "?format=dto");
         }
-        XElement xml = XElement.Parse(dataObjectsString);
+        XDocument xDocument = XDocument.Parse(dataObjectsString);
 
-        IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xml);
+        IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xDocument);
 
         _response.Append(_dataLayer.Post(dataObjects));
         status.Messages.Add(String.Format("Pull is successful from " + targetUri + "for Graph " + graphName));
@@ -176,11 +176,11 @@ namespace org.iringtools.exchange
         {
           WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
 
-          WebProxyCredentials proxyCrendentials = _settings.GetProxyCredentials();
+          WebProxyCredentials proxyCrendentials = _settings.GetWebProxyCredentials();
           if (proxyCrendentials != null)
           {
             endpoint.UseCredentialsForProxy = true;
-            webProxy.Credentials = proxyCrendentials.GetNetworkCredential();
+            webProxy.Credentials = _settings.GetProxyCredential();
           }
           endpoint.SetProxy(webProxy.Address);
           endpoint.SetProxyCredentials(proxyCrendentials.userName,proxyCrendentials.password);          
@@ -196,9 +196,9 @@ namespace org.iringtools.exchange
         TextWriter textWriter = new StringWriter(sb);
         VDS.RDF.Writing.FastRdfXmlWriter rdfWriter = new VDS.RDF.Writing.FastRdfXmlWriter();
         rdfWriter.Save(graph, textWriter);
-        XElement rdf = XElement.Parse(sb.ToString());
+        XDocument xDocument = XDocument.Parse(sb.ToString());
 
-        _dataObjects = _projectionEngine.ToDataObjects(graphName, ref rdf);
+        _dataObjects = _projectionEngine.ToDataObjects(graphName, ref xDocument);
 
         // post data objects to data layer
         _dataLayer.Post(_dataObjects);
@@ -266,11 +266,11 @@ namespace org.iringtools.exchange
           dataObjectList = _dataLayer.Get(_graphMap.dataObjectMap, null);
         }
 
-        XElement xml = _projectionEngine.ToXml(graphName, ref dataObjectList);
+        XDocument xDocument = _projectionEngine.ToXml(graphName, ref dataObjectList);
 
         _isDataLayerInitialized = false;
         _isScopeInitialized = false;
-        Response localResponse = httpClient.Post<XElement, Response>(@"/" + projectNameForPush + "/" + applicationNameForPush + "/" + graphNameForPush + "?format=" + format, xml, true);
+        Response localResponse = httpClient.Post<XDocument, Response>(@"/" + projectNameForPush + "/" + applicationNameForPush + "/" + graphNameForPush + "?format=" + format, xDocument, true);
 
         _response.Append(localResponse);
 

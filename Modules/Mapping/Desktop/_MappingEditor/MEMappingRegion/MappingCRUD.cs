@@ -391,34 +391,34 @@ namespace org.iringtools.modules.memappingregion
         string tplName = utility.Utility.NameSafe(templateName);
 
 
-        if (mappingItem.ClassMap != null && mappingItem.TemplateMap != null)
-        {
-          int lastSeqNum = 0;
+        //if (mappingItem.ClassMap != null && mappingItem.TemplateMap != null)
+        //{
+        //  int lastSeqNum = 0;
 
-          // find last sequence number of template names that match the new template name
-          TemplateMap templateMap = mappingItem.TemplateMap;
-          {
-            if (templateMap.name.StartsWith(tplName))
-            {
-              if (templateMap.name.Length == tplName.Length)
-              {
-                lastSeqNum = 1;
-              }
-              else
-              {
-                int seqNum;
-                if (int.TryParse(templateMap.name.Substring(tplName.Length), out seqNum))
-                {
-                  if (seqNum >= lastSeqNum)
-                    lastSeqNum = seqNum + 1;
-                }
-              }
-            }
-          }
+        //  // find last sequence number of template names that match the new template name
+        //  TemplateMap templateMap = mappingItem.TemplateMap;
+        //  {
+        //    if (templateMap.name.StartsWith(tplName))
+        //    {
+        //      if (templateMap.name.Length == tplName.Length)
+        //      {
+        //        lastSeqNum = 1;
+        //      }
+        //      else
+        //      {
+        //        int seqNum;
+        //        if (int.TryParse(templateMap.name.Substring(tplName.Length), out seqNum))
+        //        {
+        //          if (seqNum >= lastSeqNum)
+        //            lastSeqNum = seqNum + 1;
+        //        }
+        //      }
+        //    }
+        //  }
 
-          if (lastSeqNum != 0)
-            tplName += lastSeqNum;
-        }
+        //  if (lastSeqNum != 0)
+        //    tplName += lastSeqNum;
+        //}
 
         return tplName;
       }
@@ -554,7 +554,7 @@ namespace org.iringtools.modules.memappingregion
           RoleMap roleMap = new RoleMap();
           if (range != classId && range.StartsWith("xsd:"))
           {
-            roleMap.type = RoleType.Property;
+            roleMap.type = RoleType.DataProperty;
             roleMap.name = utility.Utility.NameSafe(roleDefinition.name.FirstOrDefault().value);
             roleMap.dataType = range;
             roleMap.propertyName = string.Empty;
@@ -616,21 +616,21 @@ namespace org.iringtools.modules.memappingregion
           }
           else if (range != classId && range.StartsWith("xsd:")) // property role
           {
-            roleMap.type = RoleType.Property;
+            roleMap.type = RoleType.DataProperty;
             roleMap.dataType = range;
             roleMap.propertyName = String.Empty;
             currentTemplateMap.roleMaps.Add(roleMap);
           }
           else if (range != classId && !range.StartsWith("xsd:"))
           {
-            roleMap.type = RoleType.Reference;
+            roleMap.type = RoleType.ObjectProperty;
 
             roleMap.dataType = range;
             roleMap.propertyName = String.Empty;
             currentTemplateMap.roleMaps.Add(roleMap);
           }
 
-          else if (range == classId)    // class role ??
+          else if (range == classId)    // class role
           {
             roleMap.type = RoleType.Possessor;
 
@@ -663,7 +663,9 @@ namespace org.iringtools.modules.memappingregion
 
         DataObjectItem parentObject = (DataObjectItem)model.SelectedDataObject.Parent;
         RoleMap roleMap = model.SelectedRoleMap;
-        if (roleMap.type == RoleType.Property)
+        if (
+          roleMap.type == RoleType.Property || 
+          roleMap.type == RoleType.DataProperty )
         {
           if (roleMap.dataType == null && !roleMap.dataType.StartsWith("xsd:"))
           {
@@ -806,15 +808,16 @@ namespace org.iringtools.modules.memappingregion
 
             if (roleMap.dataType != null || roleMap.dataType != "")
             {
-              roleMap.type = RoleType.Property;
               roleMap.valueList = valuelist;
               if (valuelist == "")
               {
+                //roleMap.type = RoleType.DataProperty;
                 roleMap.propertyName = null;
                 model.SelectedMappingItem.itemTextBlock.Text += Presenter.unmappedToken;
               }
               else
               {
+                //roleMap.type = RoleType.ObjectProperty;
                 roleMap.propertyName =
                 string.Format("{0}.{1}",
                     model.SelectedDataObject.DataObject.objectName,

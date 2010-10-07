@@ -31,22 +31,22 @@ namespace org.iringtools.adapter.projection
       _mapping = mapping;
     }
 
-    public override XElement ToXml(string graphName, ref IList<IDataObject> dataObjects)
+    public override XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects)
     {
-      XElement xml = null;
+      XDocument xDocument = null;
 
       try
       {
         GraphMap graphMap = _mapping.FindGraphMap(graphName);
         _dataTransferObjects = ToDataTransferObjects(graphMap, ref dataObjects);
-        xml = SerializationExtensions.ToXml<DataTransferObjects>(_dataTransferObjects);
+        xDocument = SerializationExtensions.ToXml<DataTransferObjects>(_dataTransferObjects).Document;
       }
       catch (Exception ex)
       {
         throw ex;
       }
 
-      return xml;
+      return xDocument;
     }
 
     public DataTransferObjects ToDataTransferObjects(GraphMap graphMap, ref IList<IDataObject> dataObjects)
@@ -104,7 +104,11 @@ namespace org.iringtools.adapter.projection
                   templateObject.roleObjects.Add(roleObject);
                   string value = roleMap.value;
 
-                  if (roleMap.type == RoleType.Property)
+                  if (
+                    roleMap.type == RoleType.Property ||
+                    roleMap.type == RoleType.DataProperty ||
+                    roleMap.type == RoleType.ObjectProperty
+                    )
                   {
                     string propertyName = roleMap.propertyName.Substring(_graphMap.dataObjectMap.Length + 1);
                     value = Convert.ToString(_dataObjects[i].GetPropertyValue(propertyName));
@@ -137,14 +141,14 @@ namespace org.iringtools.adapter.projection
       return _dataTransferObjects;
     }
     
-    public override IList<IDataObject> ToDataObjects(string graphName, ref XElement xml)
+    public override IList<IDataObject> ToDataObjects(string graphName, ref XDocument xDocument)
     {
       IList<IDataObject> dataObjects = null;
 
       try
       {
         GraphMap graphMap = _mapping.FindGraphMap(graphName);
-        _dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(xml);
+        _dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(xDocument.Root);
 
         dataObjects = ToDataObjects(graphMap, ref _dataTransferObjects);
       }
@@ -213,7 +217,11 @@ namespace org.iringtools.adapter.projection
         {
           foreach (RoleMap roleMap in templateMap.roleMaps)
           {
-            if (roleMap.type == RoleType.Property)
+            if (
+              roleMap.type == RoleType.Property ||
+              roleMap.type == RoleType.DataProperty ||
+              roleMap.type == RoleType.ObjectProperty
+              )
             {
               string propertyName = roleMap.propertyName.Substring(_graphMap.dataObjectMap.Length + 1);
 

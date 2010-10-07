@@ -744,7 +744,11 @@ namespace org.iringtools.modules.memappingregion
       {
         string roleName = roleMap.name;
 
-        if (!roleMap.isMapped && (roleMap.type == RoleType.Property))
+        if (!roleMap.isMapped && (
+          roleMap.type == RoleType.Property ||
+          roleMap.type == RoleType.DataProperty ||
+          roleMap.type == RoleType.ObjectProperty
+          ))
         {
           roleName += unmappedToken;
         }

@@ -10,7 +10,7 @@ namespace org.iringtools.adapter
 {
   public interface IProjectionLayer
   {
-    XElement ToXml(string graphName, ref IList<IDataObject> dataObjects);
-    IList<IDataObject> ToDataObjects(string graphName, ref XElement xml);
+    XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects);
+    IList<IDataObject> ToDataObjects(string graphName, ref XDocument xDocument);
   }
 }

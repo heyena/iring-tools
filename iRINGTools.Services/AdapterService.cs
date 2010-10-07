@@ -36,6 +36,12 @@ using org.iringtools.library;
 using org.iringtools.library.manifest;
 using org.iringtools.adapter;
 using org.iringtools.exchange;
+using System.Xml;
+using System.ServiceModel.Channels;
+using System.IO;
+using System.Text;
+using System;
+using org.iringtools.utility;
 
 namespace org.iringtools.services
 {
@@ -100,7 +106,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}?format={format}")]
     public XElement Get(string projectName, string applicationName, string graphName, string identifier, string format)
     {
-      return _adapterProvider.GetProjection(projectName, applicationName, graphName, identifier, format);
+      XDocument xDocument = _adapterProvider.GetProjection(projectName, applicationName, graphName, identifier, format);
+
+      return xDocument.Root;
     }
     #endregion
 
@@ -117,7 +125,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}")]
     public XElement GetList(string projectName, string applicationName, string graphName, string format)
     {
-      return _adapterProvider.GetProjection(projectName, applicationName, graphName, format);
+      XDocument xDocument = _adapterProvider.GetProjection(projectName, applicationName, graphName, format);
+
+      return xDocument.Root;
     }
     #endregion
 
@@ -133,9 +143,26 @@ namespace org.iringtools.services
     /// <returns>Returns a Response object</returns>
     [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}")]
-    public Response PostList(string projectName, string applicationName, string graphName, string format, XElement xml)
+    public Response PostList(string projectName, string applicationName, string graphName, string format, XElement xElement)
     {
-      return _adapterProvider.Post(projectName, applicationName, graphName, format, xml);
+      return _adapterProvider.Post(projectName, applicationName, graphName, format, new XDocument(xElement));
+    }
+    #endregion
+
+    #region Delete
+    /// <summary>
+    /// Deletes the specified individual based on scope, graph and identifier.
+    /// </summary>
+    /// <param name="projectName">Project name</param>
+    /// <param name="applicationName">Application name</param>
+    /// <param name="graphName">Graph name</param>
+    /// <param name="identifier">Identifier</param>
+    /// <returns>Returns an arbitrary XML</returns>
+    [Description("Deletes the specified individual based on scope, graph and identifier.")]
+    [WebInvoke(Method="DELETE", UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}")]
+    public Response Delete(string projectName, string applicationName, string graphName, string identifier)
+    {
+      return _adapterProvider.DeleteIndividual(projectName, applicationName, graphName, identifier);
     }
     #endregion
     #endregion

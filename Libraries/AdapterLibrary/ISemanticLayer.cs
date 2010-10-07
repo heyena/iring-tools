@@ -33,7 +33,7 @@ namespace org.iringtools.adapter
 {
   public interface ISemanticLayer
   {
-    Response Refresh(string graphName, XElement rdf);
+    Response Refresh(string graphName, XDocument rdf);
     Response Delete(string graphName);
   }
 }

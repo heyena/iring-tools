@@ -376,6 +376,12 @@ namespace org.iringtools.library
 
     [EnumMember]
     FixedValue,
+
+    [EnumMember]
+    DataProperty,
+
+    [EnumMember]
+    ObjectProperty,
   }
 
   [DataContract]
