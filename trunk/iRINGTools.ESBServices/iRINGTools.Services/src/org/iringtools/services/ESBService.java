@@ -403,15 +403,13 @@ public class ESBService
                     response.getStatusList().getStatuses().add(status);
                     poolDtoList.remove(j--); 
                   }
-                  else if (dti.getTransferType() != TransferType.SYNC)
-                  {
+                  else if (dti.getTransferType() == TransferType.SYNC)
+                    poolDtoList.remove(j--);  // exclude SYNC DTOs
+                  else
                     sourceDto.setTransferType(org.iringtools.adapter.dto.TransferType.valueOf(dti.getTransferType().toString()));
-                  }
                 }
                 else
-                {
                   sourceDto.setTransferType(org.iringtools.adapter.dto.TransferType.valueOf(dti.getTransferType().toString()));
-                }
   
                 break;
               }
