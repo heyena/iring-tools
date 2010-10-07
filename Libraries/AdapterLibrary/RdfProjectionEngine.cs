@@ -52,7 +52,7 @@ namespace org.iringtools.adapter.projection
           _dataObjects != null && _dataObjects.Count > 0)
         {
           SetClassIdentifiers(DataDirection.Outbound);
-          rdfXml = BuildRdfXml().Document;
+          rdfXml = new XDocument(BuildRdfXml());
         }
       }
       catch (Exception ex)
