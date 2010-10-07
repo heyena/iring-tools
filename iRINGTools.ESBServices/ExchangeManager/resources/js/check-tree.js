@@ -98,13 +98,15 @@ function sendAjaxRequest(requestURL,label){
 	})
 }
 
-Ext.onReady(function(){	
+Ext.onReady(function(){
+    Ext.QuickTips.init();
+
     var tBar = new Ext.Toolbar({
 	xtype: "toolbar",
-    items: [ {
+        items: [ {
             xtype:"tbbutton",
             icon:'resources/images/16x16/view-refresh.png',
-            qtip:'Refresh',
+            tooltip:'Refresh',
             id: 'headRefresh', 
             disabled: false,
             handler: function(){
@@ -128,6 +130,7 @@ Ext.onReady(function(){
             xtype:"tbbutton",
             icon:'resources/images/16x16/document-open.png',
             id: 'headExchange',
+            tooltip:'Open',
             disabled: false,
             handler: function(){
                 showCentralGrid(tree.getSelectionModel().getSelectedNode());
@@ -139,10 +142,12 @@ Ext.onReady(function(){
   var tree = new Ext.tree.TreePanel({
     id:'directory-tree',
     renderTo:'tree-div',
-    height: 494,    
-    baseCls : 'x-plain',
+    //height: 494,
+    //height: 194,
+    //hight:'100%',
+    //baseCls : 'x-plain',
     bodyBorder:false,
-    border:true,
+    border:false,
     hlColor:'C3DAF',
     //width: 250,
     layout:'fit',
@@ -150,11 +155,9 @@ Ext.onReady(function(){
     autoScroll:true,
     animate:true,
     margins: '0 0 0 0',
-    cmargins: '100 100 100 100',
     lines :true,
     containerScroll: true,
     rootVisible: true,
-    frame: true,
     root: {
       nodeType: 'async',
       icon: 'resources/images/16x16/internet-web-browser.png',
