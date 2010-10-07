@@ -92,7 +92,7 @@ namespace org.iringtools.referenceData
                     _registryCredentials.Decrypt();
                 }
 
-                _proxyCredentials = _settings.GetProxyCredentials();
+                _proxyCredentials = _settings.GetWebProxyCredentials();
 
                 string repositoriesPath = _settings["XmlPath"] + REPOSITORIES_FILE_NAME;
                 _repositories = Utility.Read<List<Repository>>(repositoriesPath);

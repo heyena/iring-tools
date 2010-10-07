@@ -32,9 +32,9 @@ namespace org.iringtools.adapter.projection
       _mapping = mapping;
     }
 
-    public override XElement ToXml(string graphName, ref IList<IDataObject> dataObjects)
+    public override XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects)
     {
-      XElement rdfXml = null;
+      XDocument rdfXml = null;
 
       try
       {
@@ -52,7 +52,7 @@ namespace org.iringtools.adapter.projection
           _dataObjects != null && _dataObjects.Count > 0)
         {
           SetClassIdentifiers(DataDirection.Outbound);
-          rdfXml = BuildRdfXml();
+          rdfXml = BuildRdfXml().Document;
         }
       }
       catch (Exception ex)
@@ -63,7 +63,7 @@ namespace org.iringtools.adapter.projection
       return rdfXml;
     }
 
-    public override IList<IDataObject> ToDataObjects(string graphName, ref XElement xml)
+    public override IList<IDataObject> ToDataObjects(string graphName, ref XDocument xDocument)
     {
       _dataObjects = null;
 
@@ -74,16 +74,20 @@ namespace org.iringtools.adapter.projection
 
         _graphMap = _mapping.FindGraphMap(graphName);
 
-        if (_graphMap != null && _graphMap.classTemplateListMaps.Count > 0 && xml != null)
+        if (_graphMap != null && _graphMap.classTemplateListMaps.Count > 0 && xDocument != null)
         {
-          XmlDocument xdoc = new XmlDocument();
-          xdoc.LoadXml(xml.ToString());
-          xml.RemoveAll();
 
+          XmlDocument xmlDocument = new XmlDocument();
+          using(XmlReader xmlReader = xDocument.CreateReader())
+          {
+              xmlDocument.Load(xmlReader);
+          }
+          xDocument.Root.RemoveAll();
+          
           RdfXmlParser parser = new RdfXmlParser();
           Graph graph = new Graph();
-          parser.Load(graph, xdoc);
-          xdoc.RemoveAll();
+          parser.Load(graph, xmlDocument);
+          xmlDocument.RemoveAll();
 
           // load graph to memory store to allow querying locally
           _memoryStore = new TripleStore();
@@ -237,6 +241,8 @@ namespace org.iringtools.adapter.projection
             break;
 
           case RoleType.Property:
+          case RoleType.DataProperty:
+          case RoleType.ObjectProperty:
             propertyRoles.Add(roleMap);
             break;
         }

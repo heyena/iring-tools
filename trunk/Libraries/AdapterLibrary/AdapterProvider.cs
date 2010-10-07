@@ -98,13 +98,9 @@ namespace org.iringtools.adapter
       if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
       {
         WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
-        WebProxyCredentials proxyCrendentials = _settings.GetProxyCredentials();
-
-        if (proxyCrendentials != null)
-        {
-          webProxy.Credentials = proxyCrendentials.GetNetworkCredential();
-        }
-
+        
+        webProxy.Credentials = _settings.GetProxyCredential();
+        
         _webHttpClient = new WebHttpClient(rdsUri, null, webProxy);
       }
       else
@@ -460,7 +456,7 @@ namespace org.iringtools.adapter
       return _response;
     }
 
-    public XElement GetProjection(string projectName, string applicationName, string graphName, string identifier, string format)
+    public XDocument GetProjection(string projectName, string applicationName, string graphName, string identifier, string format)
     {
       try
       {
@@ -489,7 +485,7 @@ namespace org.iringtools.adapter
       }
     }
 
-    public XElement GetProjection(string projectName, string applicationName, string graphName, string format)
+    public XDocument GetProjection(string projectName, string applicationName, string graphName, string format)
     {
       try
       {
@@ -515,7 +511,7 @@ namespace org.iringtools.adapter
       }
     }
 
-    public IList<IDataObject> GetDataObjects(string projectName, string applicationName, string graphName, string format, XElement xml)
+    public IList<IDataObject> GetDataObjects(string projectName, string applicationName, string graphName, string format, XDocument xDocument)
     {
         InitializeScope(projectName, applicationName);
         InitializeDataLayer();
@@ -529,7 +525,7 @@ namespace org.iringtools.adapter
             _projectionEngine = _kernel.Get<IProjectionLayer>(_settings["DefaultProjectionFormat"]);
         }
 
-        IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xml);
+        IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xDocument);
 
         return dataObjects;
     }
@@ -589,7 +585,7 @@ namespace org.iringtools.adapter
       return _response;
     }
 
-    public Response Post(string projectName, string applicationName, string graphName, string format, XElement xml)
+    public Response Post(string projectName, string applicationName, string graphName, string format, XDocument xml)
     {
       Response response = null;
 
@@ -625,7 +621,45 @@ namespace org.iringtools.adapter
 
       return response;
     }
-    
+
+
+    public Response DeleteIndividual(string projectName, string applicationName, string graphName, string identifier)
+    {
+      Response response = null;
+
+      try
+      {
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
+
+        GraphMap graphMap = _mapping.FindGraphMap(graphName);
+
+        string objectType = graphMap.dataObjectMap;
+        response = _dataLayer.Delete(objectType, new List<String> { identifier });
+
+        response.DateTimeStamp = DateTime.Now;
+        response.Level = StatusLevel.Success;
+      }
+      catch (Exception ex)
+      {
+        if (response == null)
+        {
+          response = new Response();
+        }
+
+        Status status = new Status
+        {
+          Level = StatusLevel.Error,
+          Messages = new Messages { ex.Message },
+        };
+
+        response.DateTimeStamp = DateTime.Now;
+        response.Level = StatusLevel.Error;
+        response.StatusList.Add(status);
+      }
+
+      return response;
+    }
     #endregion
 
     #region private methods
@@ -638,11 +672,11 @@ namespace org.iringtools.adapter
           bool isScopeValid = false;
           foreach (ScopeProject project in _scopes)
           {
-            if (project.Name == projectName)
+            if (project.Name.ToUpper() == projectName.ToUpper())
             {
               foreach (ScopeApplication application in project.Applications)
               {
-                if (application.Name == applicationName)
+                if (application.Name.ToUpper() == applicationName.ToUpper())
                 {
                   isScopeValid = true;
                 }
@@ -752,7 +786,7 @@ namespace org.iringtools.adapter
 
       LoadDataObjectSet(graphName, null);
 
-      XElement rdf = _projectionEngine.ToXml(graphName, ref _dataObjects);
+      XDocument rdf = _projectionEngine.ToXml(graphName, ref _dataObjects);
 
       return _semanticEngine.Refresh(graphName, rdf);
     }
@@ -1008,15 +1042,16 @@ namespace org.iringtools.adapter
           }
           else if (!String.IsNullOrEmpty(propertyName))
           {
-            newRoleMap.type = RoleType.Property;
             newRoleMap.propertyName = dataObjectMap + "." + propertyName;
 
             if (!String.IsNullOrEmpty(valueList))
             {
+              newRoleMap.type = RoleType.ObjectProperty;
               newRoleMap.valueList = valueList;
             }
             else
             {
+              newRoleMap.type = RoleType.DataProperty;
               newRoleMap.dataType = roleMap.Attribute("dataType").Value;
             }
           }

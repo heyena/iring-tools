@@ -175,10 +175,12 @@ namespace org.iringtools.adapter
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
         IList<IDataObject> dataObjects = dtoProjectionEngine.ToDataObjects(_graphMap, ref dataTransferObjects);
 
-        response.Append(_dataLayer.Post(dataObjects));  // add/change/sync data objects
-        response.Append(_dataLayer.Delete(_graphMap.dataObjectMap, deleteIdentifiers));
+        if (dataObjects.Count > 0)
+         response.Append(_dataLayer.Post(dataObjects));  // add/change/sync data objects
+
+        if (deleteIdentifiers.Count > 0)
+          response.Append(_dataLayer.Delete(_graphMap.dataObjectMap, deleteIdentifiers));
         
-        response.DateTimeStamp = DateTime.Now;
         response.Level = StatusLevel.Success;
       }
       catch (Exception ex)
@@ -189,7 +191,6 @@ namespace org.iringtools.adapter
           Messages = new Messages { ex.Message },
         };
 
-        response.DateTimeStamp = DateTime.Now;
         response.Level = StatusLevel.Error;
         response.StatusList.Add(status);
       }
@@ -434,11 +435,11 @@ namespace org.iringtools.adapter
           bool isScopeValid = false;
           foreach (ScopeProject project in _scopes)
           {
-            if (project.Name == projectName)
+            if (project.Name.ToUpper() == projectName.ToUpper())
             {
               foreach (ScopeApplication application in project.Applications)
               {
-                if (application.Name == applicationName)
+                if (application.Name.ToUpper() == applicationName.ToUpper())
                 {
                   isScopeValid = true;
                 }

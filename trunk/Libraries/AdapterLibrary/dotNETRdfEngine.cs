@@ -85,7 +85,7 @@ namespace org.iringtools.adapter.semantic
       _dataObjectsAssemblyName = _settings["ExecutingAssemblyName"];
     }
 
-    public Response Refresh(string graphName, XElement rdf)
+    public Response Refresh(string graphName, XDocument xDocument)
     {
       Response response = new Response();
       response.StatusList = new List<Status>();
@@ -102,16 +102,16 @@ namespace org.iringtools.adapter.semantic
         
         // create xdoc from rdf xelement
         Uri graphUri = new Uri(_graphNs.NamespaceName + graphName);
-        XmlDocument xdoc = new XmlDocument();
-        xdoc.LoadXml(rdf.ToString());
-        rdf.RemoveAll();
+        XmlDocument xmlDocument = new XmlDocument();
+        xmlDocument.LoadXml(xDocument.ToString());
+        xDocument.Root.RemoveAll();
 
         // load xdoc to graph
         RdfXmlParser parser = new RdfXmlParser();
         _graph.Clear();
         _graph.BaseUri = graphUri;
-        parser.Load(_graph, xdoc);
-        xdoc.RemoveAll();
+        parser.Load(_graph, xmlDocument);
+        xmlDocument.RemoveAll();
 
         // delete old graph and save new one
         DeleteGraph(graphUri);

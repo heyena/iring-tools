@@ -29,9 +29,9 @@ namespace org.iringtools.adapter.projection
       _mapping = mapping;
     }
     
-    public override XElement ToXml(string graphName, ref IList<IDataObject> dataObjects)
+    public override XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects)
     {
-      XElement xml = null;
+      XElement xElement = null;
 
       try
       {
@@ -51,7 +51,7 @@ namespace org.iringtools.adapter.projection
           SetClassIdentifiers(DataDirection.Outbound);
 
           //TODO: use entities for rdl & tpl instead of namespaces
-          xml = new XElement(_appNamespace + Utility.TitleCase(graphName),
+          xElement = new XElement(_appNamespace + Utility.TitleCase(graphName),
             new XAttribute(XNamespace.Xmlns + "i", XSI_NS),
             new XAttribute(XNamespace.Xmlns + "rdl", RDL_NS),
             new XAttribute(XNamespace.Xmlns + "tpl", TPL_NS));
@@ -59,7 +59,7 @@ namespace org.iringtools.adapter.projection
           var pair = _graphMap.classTemplateListMaps.First();          
           for (int i = 0; i < _dataObjects.Count; i++)
           {
-            CreateHierarchicalXml(xml, pair, i);
+            CreateHierarchicalXml(xElement, pair, i);
           }
         }
       }
@@ -68,10 +68,10 @@ namespace org.iringtools.adapter.projection
         throw ex;
       }
 
-      return xml;
+      return new XDocument(xElement);
     }
 
-    public override IList<IDataObject> ToDataObjects(string graphName, ref XElement xml)
+    public override IList<IDataObject> ToDataObjects(string graphName, ref XDocument xml)
     {
       throw new NotImplementedException();
     }
@@ -148,6 +148,8 @@ namespace org.iringtools.adapter.projection
                 break;
 
               case RoleType.Property:
+              case RoleType.DataProperty:
+              case RoleType.ObjectProperty:
                 propertyRoles.Add(roleMap);
                 break;
             }

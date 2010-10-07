@@ -84,8 +84,8 @@ namespace org.iringtools.adapter.projection
       _classIdentifiers = new Dictionary<string, List<string>>();
     }
 
-    public abstract XElement ToXml(string graphName, ref IList<IDataObject> dataObjects);
-    public abstract IList<IDataObject> ToDataObjects(string graphName, ref XElement xml);
+    public abstract XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects);
+    public abstract IList<IDataObject> ToDataObjects(string graphName, ref XDocument xDocument);
 
     //propertyPath = "Instrument.LineItems.Tag";
     protected List<IDataObject> GetRelatedObjects(string propertyPath, IDataObject dataObject)

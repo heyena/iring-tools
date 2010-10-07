@@ -188,16 +188,16 @@ namespace AdapterService.Tests
     public void GetXml()
     {
         AdapterProxy target = new AdapterProxy();
-        XElement xElement = target.GetXml("12345_000", "ABC", "Lines", "dto");
-        Assert.AreNotEqual(null, xElement);
+        XDocument xDocument = target.GetXml("12345_000", "ABC", "Lines", "dto");
+        Assert.AreNotEqual(null, xDocument);
     }
 
     [TestMethod]
     public void GetDataObjects()
     {
         AdapterProxy target = new AdapterProxy();
-        XElement xElement = target.GetXml("12345_000", "ABC", "Lines", "dto");
-        IList<IDataObject> dataObjects = target.GetDataObject("12345_000", "ABC", "Lines", "dto", xElement);
+        XDocument xDocument = target.GetXml("12345_000", "ABC", "Lines", "dto");
+        IList<IDataObject> dataObjects = target.GetDataObject("12345_000", "ABC", "Lines", "dto", xDocument);
         Assert.AreNotEqual(0, dataObjects.Count);
     }
 
@@ -225,9 +225,20 @@ namespace AdapterService.Tests
     public void PostTest()
     {
       AdapterProxy target = new AdapterProxy();
-      string linesDxo = Utility.ReadString(_settings["XmlPath"] + "DXO.12345_000.ABC.Lines.xml");
-      XElement linesDxoXml = XElement.Parse(linesDxo);
-      Response actual = target.Post("12345_000", "ABC", "Lines", "dxo", linesDxoXml);
+      String xml = Utility.ReadString(_settings["XmlPath"] + "DTO.12345_000.ABC.Lines.xml");
+      XDocument xDocument = XDocument.Parse(xml);
+
+      Response actual = target.Post("12345_000", "ABC", "Lines", "xml", xDocument);
+      Assert.IsFalse(actual.Level == StatusLevel.Error);
+    }
+
+    [TestMethod]
+    public void PostDTOTest()
+    {
+      AdapterProxy target = new AdapterProxy();
+      DataTransferObjects dto = Utility.Read<DataTransferObjects>(_settings["XmlPath"] + "DTO.12345_000.ABC.Lines.xml");
+
+      Response actual = target.PostDTO("12345_000", "ABC", "Lines", dto);
       Assert.IsFalse(actual.Level == StatusLevel.Error);
     }
     
