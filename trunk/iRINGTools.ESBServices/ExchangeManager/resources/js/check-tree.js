@@ -142,10 +142,8 @@ Ext.onReady(function(){
   var tree = new Ext.tree.TreePanel({
     id:'directory-tree',
     renderTo:'tree-div',
-    //height: 494,
-    //height: 194,
-    //hight:'100%',
-    //baseCls : 'x-plain',
+    height: 494,
+    baseCls : 'x-plain',
     bodyBorder:false,
     border:false,
     hlColor:'C3DAF',
