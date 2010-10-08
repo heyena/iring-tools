@@ -1035,6 +1035,9 @@ namespace org.iringtools.utility
 
     public static string ToXsdDateTime(string dateTime)
     {
+      if (String.IsNullOrEmpty(dateTime)) 
+        return dateTime;
+
       DateTime dt = DateTime.Parse(dateTime);
       return dt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffzzz");
     }
