@@ -173,7 +173,7 @@ namespace org.iringtools.adapter
     [DataMember(Order = 2)]
     public string name { get; set; }
 
-    [DataMember(Order = 3)]
+    [DataMember(Order = 3, EmitDefaultValue = false)]
     public string dataType { get; set; }
 
     [DataMember(Order = 4, EmitDefaultValue = false)]
