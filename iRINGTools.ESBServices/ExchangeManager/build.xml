@@ -1,31 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project basedir="." default="build" name="exchangeManager">
-	<property name="debuglevel" value="source,lines,vars" />
+<project basedir="." default="package" name="ExchangeManager">
+    <property name="packageFile" value="${ant.project.name}.zip" />
 
 	<target name="clean">
-		<delete dir="deployment" />
+		<delete file="${packageFile}" />
 	</target>
 
-	<target depends="clean" name="init">
-		<mkdir dir="deployment" />
-		<copy includeemptydirs="true" todir="deployment">
-			<fileset dir="src">
-				<exclude name="**/*.launch" />
-				<exclude name="**/.svn/" />
-				<exclude name="**/*.java" />
-			</fileset>
-		</copy>
-	</target>
-
-	<target depends="init" name="build">
+	<target depends="clean" name="package">
 		<echo message="${ant.project.name}: ${ant.file}" />
-		<copy todir="WebContent/WEB-INF/lib" flatten="true">
-			<path refid="cxf-2.2.9.userclasspath" />
-			<path refid="jsr311-api.userclasspath" />
-			<path refid="gson-1.4.userclasspath" />
-			<path refid="log4j-1.2.16.userclasspath" />
-			<path refid="guice-2.0.userclasspath" />
-		</copy>
-		<jar destfile="${ant.project.name}.war" basedir="WebContent" excludes="**/.svn/,WEB-INF/logs/*.*" />
+		<jar destfile="${packageFile}" basedir="${basedir}" excludes="**/.svn/,*.xml,**/nbproject/**" />
 	</target>
 </project>
