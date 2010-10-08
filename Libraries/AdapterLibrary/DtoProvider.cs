@@ -185,14 +185,18 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
+        string message = "Error posting data transfer objects: " + ex;
+
         Status status = new Status
         {
           Level = StatusLevel.Error,
-          Messages = new Messages { ex.Message },
+          Messages = new Messages { message },
         };
 
         response.Level = StatusLevel.Error;
         response.StatusList.Add(status);
+
+        _logger.Error(message);
       }
 
       return response;
@@ -515,8 +519,9 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _logger.Error(string.Format("Error initializing application: {0}", ex));
-        throw new Exception(string.Format("Error initializing application: {0})", ex));
+        string message = "Error initializing scope: " + ex;
+        _logger.Error(message);
+        throw new Exception(message);
       }
     }
 
@@ -536,8 +541,9 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _logger.Error(string.Format("Error initializing application: {0}", ex));
-        throw new Exception(string.Format("Error initializing application: {0})", ex));
+        string message = "Error initializing datalayer: " + ex;
+        _logger.Error(message);
+        throw new Exception(message);
       }
     }
 

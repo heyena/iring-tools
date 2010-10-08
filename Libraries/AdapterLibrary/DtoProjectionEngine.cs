@@ -44,7 +44,7 @@ namespace org.iringtools.adapter.projection
       }
       catch (Exception ex)
       {
-        throw ex;
+        _logger.Error("Error projecting data objects to xml." + ex);
       }
 
       return xDocument;
@@ -141,7 +141,7 @@ namespace org.iringtools.adapter.projection
       }
       catch (Exception ex)
       {
-        throw ex;
+        _logger.Error("Error projecting data objects to data transfer objects." + ex);
       }
 
       return _dataTransferObjects;
