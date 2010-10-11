@@ -48,10 +48,11 @@ function showgrid(response, request,label){
 	frame:true,
 	autoSizeColumns: true,
 	autoSizeGrid: true,
-        AllowScroll : true,
+    AllowScroll : true,
+	minColumnWidth:100, 
 	columnLines: true,
-	autoWidth:true,
-        enableColumnMove:false
+	//autoWidth:true,
+    enableColumnMove:false
 	});
 
         //make the text selectable in cells of Grid
