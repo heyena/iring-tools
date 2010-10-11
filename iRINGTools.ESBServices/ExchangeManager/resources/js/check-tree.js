@@ -111,6 +111,7 @@ Ext.onReady(function(){
             id: 'headRefresh', 
             disabled: false,
             handler: function(){
+                   Ext.state.Manager.clear("treestate");    
                 tree.root.reload();
             }
         },
@@ -208,12 +209,12 @@ Ext.onReady(function(){
 		fn : function (node){
                    showCentralGrid(node);
                 }
-        }
-       /* expandnode:{
+        },
+        expandnode:{
             fn : function (node){
                 Ext.state.Manager.set("treestate", node.getPath())
             }
-        }*/
+        }
     }
   });
 
