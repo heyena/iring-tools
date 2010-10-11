@@ -11,16 +11,10 @@ class dataObjectsModel{
 	private $dxoUrl;
 	//private $identifiersList;
 	private $dtiXMLData;
-	private $nodeType,$uriParams;
 	
 	function __construct(){
 		$this->dxiUrl = DXI_REQUEST_URL;
 		$this->dxoUrl = DXO_REQUEST_URL;
-	}
-
-	private function buildWSUri($params){
-		$this->nodeType=$params['nodetype'];
-		$this->uriParams=implode('/',$params);
 	}
 
 	/*
@@ -32,13 +26,14 @@ class dataObjectsModel{
 	 /**
 	  * Will use the DXIObject to get the identifiers List with the particular exchangeID
 	 */
-		$this->buildWSUri($params);
+		
 		$this->dtiXMLData = $this->getDtiInfo($params);
 		if($this->dtiXMLData!=''){
-		return json_encode($this->createJSONDataFormat($this->getDXOInfo($this->uriParams,$this->dtiXMLData)));
+		return json_encode($this->createJSONDataFormat($this->getDXOInfo($params,$this->dtiXMLData)));
 		}else{
 			echo json_encode(array("success"=>"false"));
 		}
+		//$identifiersArray = explode(',',$this->identifiersList);
 		
 	}
 	
@@ -50,16 +45,15 @@ class dataObjectsModel{
 		// http://labst9413:8080/iringtools/services/esbsvc/dto/1
 	 */
 
-	private function getDtiInfo($params){
-		//$this->dxiUrl = $this->dxiUrl.$this->uriParams;
-		$this->dxiUrl = $this->dxiUrl;
+	private function getDtiInfo($exchangeID){
+		$this->dxiUrl = $this->dxiUrl.$exchangeID;
 		$curlObj = new curl($this->dxiUrl);
 		$fetchedData = $curlObj->exec();
 		return $fetchedData;
 	}
 
 	private function getDXOInfo($exchangeID,$postParams){
-		//***$this->dxoUrl = $this->dxoUrl.$this->uriParams;
+		$this->dxoUrl = $this->dxoUrl.$exchangeID;
 		$curlObj = new curl($this->dxoUrl);
 		$curlObj->setopt(CURLOPT_POST, 1);
 		$curlObj->setopt(CURLOPT_HTTPHEADER, Array("Content-Type: application/xml"));
@@ -70,6 +64,8 @@ class dataObjectsModel{
 	}
 
 	private function createJSONDataFormat($fetchedData){
+
+		
 		$xmlIterator = new SimpleXMLIterator($fetchedData);
 		$resultArr="";
 		$dataTransferObjects = $xmlIterator->dataTransferObject;
