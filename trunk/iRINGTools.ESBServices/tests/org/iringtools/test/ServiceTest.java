@@ -47,6 +47,7 @@ public class ServiceTest
       ExchangeRequest exchangeRequest = new ExchangeRequest();
       exchangeRequest.setReviewed(true);
       exchangeRequest.setDataTransferIndices(dti);
+      System.out.println(JaxbUtil.toXml(exchangeRequest, true));
       Response response = NetUtil.post(Response.class, dxiUrl, exchangeRequest);
       System.out.println(JaxbUtil.toXml(response, true));
       

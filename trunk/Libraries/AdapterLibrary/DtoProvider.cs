@@ -175,8 +175,8 @@ namespace org.iringtools.adapter
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
         IList<IDataObject> dataObjects = dtoProjectionEngine.ToDataObjects(_graphMap, ref dataTransferObjects);
 
-        if (dataObjects.Count > 0)
-         response.Append(_dataLayer.Post(dataObjects));  // add/change/sync data objects
+        if (dataObjects != null && dataObjects.Count > 0)
+          response.Append(_dataLayer.Post(dataObjects));  // add/change/sync data objects
 
         if (deleteIdentifiers.Count > 0)
           response.Append(_dataLayer.Delete(_graphMap.dataObjectMap, deleteIdentifiers));
