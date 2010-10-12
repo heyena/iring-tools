@@ -445,8 +445,11 @@ public class ESBService
         }
 
         // post add/change/delete DTOs to target endpoint
-        Response poolResponse = NetUtil.post(Response.class, targetGraphUri, poolDtos);
-        response.getStatusList().getStatuses().addAll(poolResponse.getStatusList().getStatuses());
+        if (poolDtoList.size() > 0)
+        {
+          Response poolResponse = NetUtil.post(Response.class, targetGraphUri, poolDtos);
+          response.getStatusList().getStatuses().addAll(poolResponse.getStatusList().getStatuses());
+        }
       }
 
       response.setLevel(Level.SUCCESS);
