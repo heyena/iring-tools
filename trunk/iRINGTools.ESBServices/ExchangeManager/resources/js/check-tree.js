@@ -184,7 +184,8 @@ Ext.onReady(function(){
              //get all the attributes of node
              obj = node.attributes
              var details_data = []
-               for(var key in obj){                
+               for(var key in obj){
+				 //alert(key+' '+obj[key])
                  // restrict some of the properties to be displayed
                  if(key!='node_type' && key!='uid' && key!='id' && key!='text' && key!='icon' && key!='children' && key!='loader' && key!='leaf' && key!='applicationId'){
                     details_data[key]=obj[key]
@@ -252,19 +253,24 @@ Ext.onReady(function(){
   
   function showCentralGrid(node)
     {
-	  var label = tree.getSelectionModel().getSelectedNode().text
-          var obj = node.attributes          
+
+          var obj = node.attributes
           var eid
-	  var scopeId = obj['Scope']
+		  var scopeId  = obj['Scope']
           var nodeType = obj['node_type']
-            if((obj['node_type']=='exchanges' && obj['uid']!='')){
+						 
+			if((obj['node_type']=='exchanges' && obj['uid']!='')){
                 eid = obj['uid']
-                var requestURL = 'dataObjects/getDataObjects/'+scopeId+'/'+nodeType+'/'+eid
-            }else{
+                var requestURL = 'dataObjects/getDataObjects/'+nodeType+'/'+scopeId+'/'+eid
+				 var label = tree.getSelectionModel().getSelectedNode().text								 
+            }else if(obj['node_type']=='graph'){
+				var requestURL = 'dataObjects/getDataObjects/'+nodeType+'/'+scopeId+'/'+node.parentNode.text+'/'+obj['text']
+				 var label = node.parentNode.text+'->'+obj['text']
+			}else{
 		  
                   Ext.MessageBox.show({
                         //title: '<font color=yellow>Warning</font>',
-                        msg: 'You can review only Data Exchange in this Version<br/>',
+                        msg: 'You can review only Data Exchange & Graphs in this Version<br/>',
                         buttons: Ext.MessageBox.OK,
                         icon: Ext.MessageBox.WARNING
                   });
