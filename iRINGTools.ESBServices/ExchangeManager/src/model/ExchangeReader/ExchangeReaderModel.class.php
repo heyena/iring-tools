@@ -54,6 +54,7 @@ class ExchangeReaderModel{
                         'Commodity' => (string)$graph->commodity,
                         'icon' =>'resources/images/16x16/file-table.png',
                         'node_type' => 'graph',
+                        'Scope' => (string)$scope->name,
                         'leaf' => 'true'
                       );
                     }
@@ -64,6 +65,7 @@ class ExchangeReaderModel{
                         'Title'=>(string)$application->name,                        
                         'Desccription'=>(string)$application['description'],
                         'node_type' => 'application',
+                        'Scope' => (string)$scope->name,
                         'icon'=>'resources/images/16x16/applications-internet.png',
                         'children'=>$graphArray
                        );
