@@ -1,6 +1,6 @@
 <?php
-   require_once('/controller/BaseController.php');   
-/** Controller with capabilities :
+    require_once("./controller/BaseController.php");
+	/** Controller with capabilities :
 	to generate the tree for Review & Acceptance
 	to send the data of Review & Acceptance for Exchange
 	to get the status
@@ -11,7 +11,7 @@
    class dataObjects extends BaseController{
 	private $defaultGrid = array();
 	private $treeData;
-	private $keyparams=array('scope','nodetype','exchangeID');
+	private $keyparams=array('nodetype','scope','exchangeID');
 	//private $keyparams=array();
 	protected $modelObj;
 
@@ -26,7 +26,17 @@
 	// http://localhost:81/iRINGTools.ESB/ExchangeManager/ReviewGenerator/getReview/1
 	
 	function getDataObjects($params){
-		$urlParams = implode('/',array_combine($this->keyparams,$params));
+		switch($params[0]){
+			case "exchanges":
+				$urlParams = array_combine($this->keyparams,$params);
+				break;
+			case "graph":
+				unset($this->keyparams[array_search('exchangeID',$this->keyparams)]);
+				$this->keyparams[]="applname";
+				$this->keyparams[]="graphs";
+				$urlParams = array_combine($this->keyparams,$params);
+				break;
+		}
 		$headerArray = $this->modelObj->getDataObjects($urlParams);
 		echo ($headerArray);
 		
