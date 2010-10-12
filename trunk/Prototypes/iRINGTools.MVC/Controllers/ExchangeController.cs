@@ -44,9 +44,17 @@ namespace org.iringtools.client.Controllers
     {
       JsonContainer<JsonArray> container = new JsonContainer<JsonArray>();
       container.Items = new JsonArray();
-      
-      container.Items.Add("Name","Data Tranfer Object");
-      container.Items.Add("Name","Reference Data Format");
+
+      JsonArrayItem item1 = new JsonArrayItem();
+      item1.Add("Name", "Data Tranfer Object");
+      item1.Add("Uri", "AdapterService");
+      container.Items.Add(item1);
+
+      JsonArrayItem item2 = new JsonArrayItem();
+      item2.Add("Name", "Reference Data Format");
+      item2.Add("Uri", "InterfaceService/query");
+      container.Items.Add(item2);
+            
       container.Total = container.Items.Count();
 
       return Json(container, JsonRequestBehavior.AllowGet);
