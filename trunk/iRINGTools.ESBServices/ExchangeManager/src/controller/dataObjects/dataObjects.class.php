@@ -1,5 +1,5 @@
 <?php
-    require_once("./controller/BaseController.php");
+    require_once(CONTROLLER_DIR."BaseController.php");
 	/** Controller with capabilities :
 	to generate the tree for Review & Acceptance
 	to send the data of Review & Acceptance for Exchange
@@ -7,7 +7,7 @@
 	Will use DXI & DXO Controller
 	Function getReview() @params exchangeID
     @returns the JSON for Tree view + default grid view + array to be used in nodes
-*/
+	*/
    class dataObjects extends BaseController{
 	private $defaultGrid = array();
 	private $treeData;
@@ -23,23 +23,32 @@
 	}
 
 	// This function will be called in AJAX Request like
-	// http://localhost:81/iRINGTools.ESB/ExchangeManager/ReviewGenerator/getReview/1
-	
 	function getDataObjects($params){
+		$urlParams = $this->urlParameters($params);
+		$headerArray = $this->modelObj->getDataObjects($urlParams);
+		echo ($headerArray);
+	}
+
+	private function urlParameters($params){
 		switch($params[0]){
 			case "exchanges":
-				$urlParams = array_combine($this->keyparams,$params);
+				$urlParamsArray = array_combine($this->keyparams,$params);
 				break;
 			case "graph":
 				unset($this->keyparams[array_search('exchangeID',$this->keyparams)]);
 				$this->keyparams[]="applname";
 				$this->keyparams[]="graphs";
-				$urlParams = array_combine($this->keyparams,$params);
+				$urlParamsArray = array_combine($this->keyparams,$params);
 				break;
 		}
+		return $urlParamsArray;
+	}
+
+	// This function will show Graph Grid on central Panel
+	function getGraphObjects($params){
+		$urlParams = $this->urlParameters($params);
 		$headerArray = $this->modelObj->getDataObjects($urlParams);
 		echo ($headerArray);
-		
 	}
 
 	function setReview($params){
