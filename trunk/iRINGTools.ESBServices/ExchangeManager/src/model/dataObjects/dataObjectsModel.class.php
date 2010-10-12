@@ -40,16 +40,21 @@ class dataObjectsModel{
 	  * Will use the DXIObject to get the identifiers List with the particular exchangeID
 	 */
 		$this->buildWSUri($params);
-		
 		$this->dtiXMLData = $this->getDtiInfo($params);
-		if($this->dtiXMLData!=''){
-			return json_encode($this->createJSONDataFormat($this->getDXOInfo($this->uriParams,$this->dtiXMLData)));
+
+		if(($this->dtiXMLData!=false)&&($this->dtiXMLData!='')){
+			
+			$dxoResponse = $this->getDXOInfo($this->uriParams,$this->dtiXMLData);
+
+			if(($dxoResponse!=false) && ($dxoResponse!='')){
+				return json_encode($this->createJSONDataFormat($dxoResponse));
+			}else{
+				echo json_encode(array("success"=>"false"));
+			}
 		}else{
 			echo json_encode(array("success"=>"false"));
 		}
-
 	}
-
 
 	/**
 		@params
@@ -58,9 +63,27 @@ class dataObjectsModel{
 
 	private function getDtiInfo($params){
 		$curlObj = new curl($this->dtiUrl);
-		//$curlObj->setopt(CURLOPT_USERPWD,"aknayak:povuxitu722S!");
+		// will work on this
+		$curlObj->setopt(CURLOPT_USERPWD,"aknayak:povuxitu722S!");
 		$fetchedData = $curlObj->exec();
-		return $fetchedData;
+		$curlObj->close();
+		return $this->validateResponseCode($curlObj,$fetchedData);
+
+		/*// check the response code for curl
+		if($this->validateResponseCode($curlObj)){
+			return $fetchedData;
+		}else{
+			return false;
+		}*/
+	}
+
+	// Function to validate the http_code
+	private function validateResponseCode($curlObj,$fetchedData){
+		if(($curlObj->getStatus('http_code')==200) && ($curlObj->getStatus('errno')==0)){
+			return $fetchedData;
+		}else{
+			return false;
+		}
 	}
 
 	private function getDXOInfo($exchangeID,$postParams){
@@ -70,9 +93,12 @@ class dataObjectsModel{
 		$curlObj->setopt(CURLOPT_HTTPHEADER, Array("Content-Type: application/xml"));
 		$curlObj->setopt(CURLOPT_POSTFIELDS,$postParams);
 		$curlObj->setopt(CURLOPT_HEADER, false);
-		//$curlObj->setopt(CURLOPT_USERPWD,"aknayak:povuxitu722S!");
+		// will work on this
+		$curlObj->setopt(CURLOPT_USERPWD,"aknayak:povuxitu722S!");
 		$fetchedData = $curlObj->exec();
-		return $fetchedData;
+		$curlObj->close();
+		return $this->validateResponseCode($curlObj,$fetchedData);
+		
 	}
 
 	private function createJSONDataFormat($fetchedData){
