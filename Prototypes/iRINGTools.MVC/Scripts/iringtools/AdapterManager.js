@@ -52,7 +52,7 @@ Ext.onReady(function () {
     collapsible: true,
     collapsed: false,
 
-    navigationUrl: 'Scopes'
+    navigationUrl: 'Scopes?format=tree'
   });
 
   navigationPanel.on('create', function (npanel) {

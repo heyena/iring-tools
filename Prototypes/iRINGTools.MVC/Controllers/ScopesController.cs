@@ -33,26 +33,49 @@ namespace org.iringtools.client.Controllers
     
     public JsonResult Index()
     {
-      WebHttpClient client = new WebHttpClient(_adapterServiceURI);
-      List<ScopeProject> scopes = client.Get<List<ScopeProject>>("/scopes");      
+      string format = String.Empty;
+      string adapterServiceURI = _adapterServiceURI;
 
-      List<ScopeTreeNode> nodes = new List<ScopeTreeNode>();
+      if (Request.QueryString["format"] != null)
+        format = Request.QueryString["format"].ToUpper();
 
-      foreach (ScopeProject scope in scopes)
+      if (Request.QueryString["remote"] != null)
+        adapterServiceURI = Request.QueryString["remote"];
+
+      WebHttpClient client = new WebHttpClient(adapterServiceURI);
+      List<ScopeProject> scopes = client.Get<List<ScopeProject>>("/scopes");
+
+      switch (format)
       {
+        case "TREE":
+          {
+            List<ScopeTreeNode> nodes = new List<ScopeTreeNode>();
 
-        ScopeTreeNode nodeScope = new ScopeTreeNode(scope);
+            foreach (ScopeProject scope in scopes)
+            {
 
-        nodes.Add(nodeScope);
+              ScopeTreeNode nodeScope = new ScopeTreeNode(scope);
 
-        foreach (ScopeApplication app in scope.Applications)
-        {
-          ApplicationTreeNode nodeApp = new ApplicationTreeNode(app);
-          nodeScope.children.Add(nodeApp);
-        }
+              nodes.Add(nodeScope);
+
+              foreach (ScopeApplication app in scope.Applications)
+              {
+                ApplicationTreeNode nodeApp = new ApplicationTreeNode(app);
+                nodeScope.children.Add(nodeApp);
+              }
+            }
+
+            return Json(nodes, JsonRequestBehavior.AllowGet);
+          }
+        default:
+          {
+            JsonContainer<List<ScopeProject>> container = new JsonContainer<List<ScopeProject>>();
+            container.Items = scopes;
+            container.Total = scopes.Count;
+            container.Success = true;
+            return Json(container, JsonRequestBehavior.AllowGet);
+          }
       }
-
-      return Json(nodes, JsonRequestBehavior.AllowGet);    
     }
 
     //
@@ -75,12 +98,17 @@ namespace org.iringtools.client.Controllers
 
     public JsonResult Manifest()
     {
+      string adapterServiceURI = _adapterServiceURI;
+
+      if (Request.QueryString["remote"] != null)
+        adapterServiceURI = Request.QueryString["remote"];
+
       string scope = Request.QueryString["scope"];
       string application = Request.QueryString["application"];
 
       JsonContainer<List<Graph>> container = new JsonContainer<List<Graph>>();
 
-      WebHttpClient client = new WebHttpClient(_adapterServiceURI);
+      WebHttpClient client = new WebHttpClient(adapterServiceURI);
       Manifest manifest = client.Get<Manifest>(String.Format("/{0}/{1}/manifest", scope, application));
             
       container.Items = manifest.Graphs;
