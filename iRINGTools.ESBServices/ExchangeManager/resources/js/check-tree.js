@@ -264,7 +264,7 @@ Ext.onReady(function(){
                 var requestURL = 'dataObjects/getDataObjects/'+nodeType+'/'+scopeId+'/'+eid
 				 var label = tree.getSelectionModel().getSelectedNode().text								 
             }else if(obj['node_type']=='graph'){
-				var requestURL = 'dataObjects/getDataObjects/'+nodeType+'/'+scopeId+'/'+node.parentNode.text+'/'+obj['text']
+				var requestURL = 'dataObjects/getGraphObjects/'+nodeType+'/'+scopeId+'/'+node.parentNode.text+'/'+obj['text']
 				 var label = node.parentNode.text+'->'+obj['text']
 			}else{
 		  
