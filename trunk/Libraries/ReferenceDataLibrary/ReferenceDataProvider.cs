@@ -511,6 +511,11 @@ namespace org.iringtools.referenceData
 
         public QMXF GetClass(string id)
         {
+            return GetClass(id, String.Empty);
+        }
+
+        public QMXF GetClass(string id, string namespaceUrl)
+        {
             QMXF qmxf = new QMXF();
 
             try
@@ -532,7 +537,13 @@ namespace org.iringtools.referenceData
                 QueryBindings queryBindings = queryContainsSearch.bindings;
 
                 sparql = ReadSPARQL(queryContainsSearch.fileName);
-                sparql = sparql.Replace("param1", id);
+
+                if (namespaceUrl == String.Empty || namespaceUrl == null)
+                    namespaceUrl = @"http://rdl.rdlfacade.org/data";
+
+                string uri = namespaceUrl + "#" + id;
+
+                sparql = sparql.Replace("param1", uri);
 
                 foreach (Repository repository in _repositories)
                 {
@@ -993,6 +1004,9 @@ namespace org.iringtools.referenceData
                         else
                         {
                             string nameValue = GetLabel(uri);
+
+                            if (nameValue == String.Empty)
+                                nameValue = "tpl:" + Utility.GetIdFromURI(uri);
 
                             QMXFName name = new QMXFName
                             {
