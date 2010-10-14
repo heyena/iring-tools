@@ -236,8 +236,8 @@ namespace org.iringtools.adapter.datalayer
         //Type type = this.GetType(_settings["projectName"], _settings["applicationName"], objectType);
         
         Excel.Range usedRange = xlWorksheet.UsedRange;
-        
-        for(int row = 2; row <= usedRange.Rows.Count; row++)
+
+        for (int row = cfWorksheet.DataIdx; row <= usedRange.Rows.Count; row++)
         {
           //IDataObject dataObject = (IDataObject)Activator.CreateInstance(type);
           ExcelDataObject dataObject = new ExcelDataObject()
