@@ -1,0 +1,352 @@
+<?xml version="1.0"?>
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY owl2xml "http://www.w3.org/2006/12/owl2-xml#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY tpl "http://rdl.rdswip.org/sampleTemplates#" >
+    <!ENTITY RDL "http://rdl.rdswip.org/sampleReferenceData#" >
+    <!ENTITY inst "http://data.mycompany.com/sampleInstances#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+    <!ENTITY sampleInstances "http://data.mycompany.com/sampleInstances#" >
+    <!ENTITY p8 "http://standards.tc184-sc4.org/iso/15926/-8/template-model#" >
+    <!ENTITY dm "http://standards.tc184-sc4.org/iso/15926/-8/data-model#" >
+    <!ENTITY templates "http://standards.tc184-sc4.org/iso/15926/-8/templates#" >
+]>
+<rdf:RDF xmlns="http://standards.tc184-sc4.org/iso/15926/-8/data-model#"
+     xml:base="http://data.mycompany.com/sampleInstances"
+     xmlns:owl2xml="http://www.w3.org/2006/12/owl2-xml#"
+     xmlns:p8="http://standards.tc184-sc4.org/iso/15926/-8/template-model#"
+     xmlns:templates="http://standards.tc184-sc4.org/iso/15926/-8/templates#"
+     xmlns:sampleInstances="http://data.mycompany.com/sampleInstances#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:dm="http://standards.tc184-sc4.org/iso/15926/-8/data-model#"
+     xmlns:tpl="http://rdl.rdswip.org/sampleTemplates#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:RDL="http://rdl.rdswip.org/sampleReferenceData#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <owl:Ontology rdf:about="">
+        <rdfs:comment
+            >This ontology is for collecting various example instantiations of Part 8 classes. This ontology should *not* contain any class or property (relation) definitions.</rdfs:comment>
+        <owl:imports rdf:resource="http://rdl.rdswip.org/sampleTemplates"/>
+    </owl:Ontology>
+    
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+    
+    <!-- http://rdl.rdswip.org/sampleTemplates#hasAssemblyType -->
+    <owl:ObjectProperty rdf:about="&tpl;hasAssemblyType"/>
+    
+    <!-- http://standards.tc184-sc4.org/iso/15926/-8/templates#hasClassOfPart -->
+    <owl:ObjectProperty rdf:about="&templates;hasClassOfPart"/>
+    
+    <!-- http://standards.tc184-sc4.org/iso/15926/-8/templates#hasClassOfWhole -->
+    <owl:ObjectProperty rdf:about="&templates;hasClassOfWhole"/>
+    
+    <!-- http://standards.tc184-sc4.org/iso/15926/-8/templates#hasPart -->
+    <owl:ObjectProperty rdf:about="&templates;hasPart"/>
+    
+    <!-- http://standards.tc184-sc4.org/iso/15926/-8/templates#hasWhole -->
+    <owl:ObjectProperty rdf:about="&templates;hasWhole"/>
+    
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+    
+    <!-- http://rdl.rdswip.org/sampleTemplates#valMaximumCardinalityOfPart -->
+    <owl:DatatypeProperty rdf:about="&tpl;valMaximumCardinalityOfPart"/>
+    
+    <!-- http://rdl.rdswip.org/sampleTemplates#valMaximumCardinalityOfWhole -->
+    <owl:DatatypeProperty rdf:about="&tpl;valMaximumCardinalityOfWhole"/>
+    
+    <!-- http://rdl.rdswip.org/sampleTemplates#valMinimumCardinalityOfPart -->
+    <owl:DatatypeProperty rdf:about="&tpl;valMinimumCardinalityOfPart"/>
+    
+    <!-- http://rdl.rdswip.org/sampleTemplates#valMinimumCardinalityOfWhole -->
+    <owl:DatatypeProperty rdf:about="&tpl;valMinimumCardinalityOfWhole"/>
+    
+    <!-- http://standards.tc184-sc4.org/iso/15926/-8/templates#valStartTime -->
+    <owl:DatatypeProperty rdf:about="&templates;valStartTime"/>
+    
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+    
+    <!-- http://rdl.rdswip.org/sampleReferenceData#Driving -->
+    <owl:Class rdf:about="&RDL;Driving"/>
+    
+    <!-- http://rdl.rdswip.org/sampleReferenceData#Person -->
+    <owl:Class rdf:about="&RDL;Person"/>
+    
+    <!-- http://rdl.rdswip.org/sampleReferenceData#PipingNetworkSegment -->
+    <owl:Class rdf:about="&RDL;PipingNetworkSegment"/>
+    
+    <!-- http://rdl.rdswip.org/sampleReferenceData#PipingNetworkSystem -->
+    <owl:Class rdf:about="&RDL;PipingNetworkSystem"/>
+    
+    <!-- http://rdl.rdswip.org/sampleTemplates#AssemblyRelation -->
+    <owl:Class rdf:about="&tpl;AssemblyRelation"/>
+    
+    <!-- http://rdl.rdswip.org/sampleTemplates#BeginningOfPerson_dateAsEventObject -->
+    <owl:Class rdf:about="&tpl;BeginningOfPerson_dateAsEventObject"/>
+    
+    <!-- http://rdl.rdswip.org/sampleTemplates#BeginningOfPerson_dateAsXsdTime -->
+    <owl:Class rdf:about="&tpl;BeginningOfPerson_dateAsXsdTime"/>
+    
+    <!-- http://rdl.rdswip.org/sampleTemplates#PipingNetworkSystemHasSegment -->
+    <owl:Class rdf:about="&tpl;PipingNetworkSystemHasSegment"/>
+    
+    <!-- http://www.w3.org/2002/07/owl#Thing -->
+    <owl:Class rdf:about="&owl;Thing"/>
+    
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+    
+    <!-- http://data.mycompany.com/sampleInstances#BZ-001 -->
+    <RDL:PipingNetworkSystem rdf:about="#1-BZ-001">
+        <rdf:type rdf:resource="&owl;Thing"/>
+        <rdfs:label>1-BZ-001</rdfs:label>
+        <rdfs:comment
+            >An individual for the &quot;AssemblyRelation&quot; example.</rdfs:comment>
+    </RDL:PipingNetworkSystem>
+    
+    <!-- http://data.mycompany.com/sampleInstances#BZ-001-01 -->
+    <RDL:PipingNetworkSegment rdf:about="#1-BZ-001-01">
+        <rdf:type rdf:resource="&owl;Thing"/>
+        <rdfs:label>1-BZ-001-01</rdfs:label>
+    </RDL:PipingNetworkSegment>
+    
+    <!-- http://data.mycompany.com/sampleInstances#BZ-001-02 -->
+    <owl:Thing rdf:about="#1-BZ-001-02">
+        <rdf:type rdf:resource="&RDL;PipingNetworkSegment"/>
+        <rdfs:label>1-BZ-001-02</rdfs:label>
+    </owl:Thing>
+    
+    <!-- http://data.mycompany.com/sampleInstances#BZ-001-03 -->
+    <RDL:PipingNetworkSegment rdf:about="#1-BZ-001-03">
+        <rdf:type rdf:resource="&owl;Thing"/>
+        <rdfs:label>1-BZ-001-03</rdfs:label>
+    </RDL:PipingNetworkSegment>
+    
+    <!-- http://data.mycompany.com/sampleInstances#WG-002 -->
+    <owl:Thing rdf:about="#1-WG-002">
+        <rdf:type rdf:resource="&RDL;PipingNetworkSystem"/>
+        <rdfs:label>1-WG-002</rdfs:label>
+        <rdfs:comment
+            >An individual for the &quot;AssemblyRelation&quot; example.</rdfs:comment>
+    </owl:Thing>
+    
+    <!-- http://data.mycompany.com/sampleInstances#WG-002-01 -->
+    <RDL:PipingNetworkSegment rdf:about="#1-WG-002-01">
+        <rdf:type rdf:resource="&owl;Thing"/>
+        <rdfs:label>1-WG-002-01</rdfs:label>
+    </RDL:PipingNetworkSegment>
+    
+    <!-- http://data.mycompany.com/sampleInstances#WG-002-02 -->
+    <owl:Thing rdf:about="#1-WG-002-02">
+        <rdf:type rdf:resource="&RDL;PipingNetworkSegment"/>
+        <rdfs:label>1-WG-002-02</rdfs:label>
+    </owl:Thing>
+    
+    <!-- http://data.mycompany.com/sampleInstances#Alfred -->
+    <owl:Thing rdf:about="#Alfred">
+        <rdf:type rdf:resource="&RDL;Person"/>
+        <rdfs:label>Alfred</rdfs:label>
+    </owl:Thing>
+    
+    <!-- http://data.mycompany.com/sampleInstances#Beginning_of_Alfred_statement_datestamp -->
+    <owl:Thing rdf:about="#Beginning_of_Alfred_statement_datestamp">
+        <rdf:type rdf:resource="&tpl;BeginningOfPerson_dateAsXsdTime"/>
+        <templates:valStartTime rdf:datatype="&xsd;dateTime"
+            >1970-01-01T00:00:00</templates:valStartTime>
+        <templates:hasWhole rdf:resource="#Alfred"/>
+    </owl:Thing>
+    
+    <!-- http://data.mycompany.com/sampleInstances#Beginning_of_Alfred_statement_event -->
+    <owl:Thing rdf:about="#Beginning_of_Alfred_statement_event">
+        <rdf:type rdf:resource="&tpl;BeginningOfPerson_dateAsEventObject"/>
+        <templates:hasWhole rdf:resource="#Alfred"/>
+        <templates:hasPart rdf:resource="#_1970-01-01"/>
+    </owl:Thing>
+    
+    <!-- http://data.mycompany.com/sampleInstances#MyDrive -->
+    <RDL:Driving rdf:about="#MyDrive">
+        <rdf:type rdf:resource="&owl;Thing"/>
+        <rdfs:label>MyDrive</rdfs:label>
+    </RDL:Driving>
+    
+    <!-- http://data.mycompany.com/sampleInstances#RxL-001x -->
+    <owl:Thing rdf:about="#RxL-001x">
+        <rdf:type rdf:resource="&RDL;PipingNetworkSystem"/>
+        <rdfs:label>RxL-001x</rdfs:label>
+        <rdfs:comment
+            >An individual for the &quot;AssemblyRelation&quot; example.</rdfs:comment>
+    </owl:Thing>
+    
+    <!-- http://data.mycompany.com/sampleInstances#RxS-001x -->
+    <owl:Thing rdf:about="#RxS-001x">
+        <rdf:type rdf:resource="&RDL;PipingNetworkSegment"/>
+        <rdfs:label>RxS-001x</rdfs:label>
+    </owl:Thing>
+    
+    <RDL:PipingNetworkSegment rdf:about="#RxS-002x">
+        <rdf:type rdf:resource="&owl;Thing"/>
+        <rdfs:label>RxS-002x</rdfs:label>
+    </RDL:PipingNetworkSegment>
+    
+    <!-- http://data.mycompany.com/sampleInstances#_1970-01-01 -->
+    <owl:Thing rdf:about="#_1970-01-01">
+        <rdfs:label
+            >This individual represents the event/the point in time 1970-01-01, as an individual (not as a &quot;data&quot; value).</rdfs:label>
+    </owl:Thing>
+    
+    <!-- http://data.mycompany.com/sampleInstances#sample_statement_AssemblyRelation_Nozzle -->
+    <tpl:AssemblyRelation rdf:about="#sample_statement_AssemblyRelation_Nozzle">
+        <rdf:type rdf:resource="&owl;Thing"/>
+        <rdfs:label
+            >PipingSegment_statement</rdfs:label>
+        <tpl:valMinimumCardinalityOfPart rdf:datatype="&xsd;double">1</tpl:valMinimumCardinalityOfPart>
+        <tpl:valMinimumCardinalityOfWhole rdf:datatype="&xsd;double">1</tpl:valMinimumCardinalityOfWhole>
+        <tpl:valMaximumCardinalityOfWhole rdf:datatype="&xsd;double">1</tpl:valMaximumCardinalityOfWhole>
+        <tpl:valMaximumCardinalityOfPart rdf:datatype="&xsd;double">INF</tpl:valMaximumCardinalityOfPart>
+        <templates:hasClassOfWhole rdf:resource="&RDL;Equipment"/>
+        <tpl:hasAssemblyType rdf:resource="&RDL;EquipmentHasNozzles"/>
+        <templates:hasClassOfPart rdf:resource="&RDL;Nozzle"/>
+    </tpl:AssemblyRelation>
+    
+    <!-- http://data.mycompany.com/sampleInstances#sample_statement_AssemblyRelation_PipingSegment -->
+    <tpl:AssemblyRelation rdf:about="#sample_statement_AssemblyRelation_PipingSegment">
+        <rdf:type rdf:resource="&owl;Thing"/>
+        <rdfs:label
+            >PipingSegment_statement</rdfs:label>
+        <tpl:valMinimumCardinalityOfPart rdf:datatype="&xsd;double">1</tpl:valMinimumCardinalityOfPart>
+        <tpl:valMinimumCardinalityOfWhole rdf:datatype="&xsd;double">1</tpl:valMinimumCardinalityOfWhole>
+        <tpl:valMaximumCardinalityOfWhole rdf:datatype="&xsd;double">1</tpl:valMaximumCardinalityOfWhole>
+        <tpl:valMaximumCardinalityOfPart rdf:datatype="&xsd;double">INF</tpl:valMaximumCardinalityOfPart>
+        <templates:hasClassOfPart rdf:resource="&RDL;PipingNetworkSegment"/>
+        <templates:hasClassOfWhole rdf:resource="&RDL;PipingNetworkSystem"/>
+        <tpl:hasAssemblyType rdf:resource="&RDL;PipingNetworkSystemHasSegment"/>
+    </tpl:AssemblyRelation>
+    
+    <!-- http://data.mycompany.com/sampleInstances#sample_statement_PipingNetworkHasSegment_001 -->
+    <owl:Thing rdf:about="#sample_statement_PipingNetworkHasSegment_001">
+        <rdf:type rdf:resource="&tpl;PipingNetworkSystemHasSegment"/>
+        <rdfs:label
+            >sample_statement_PipingNetworkHasSegments_001</rdfs:label>
+        <rdfs:comment
+            >Example taken from AssemblyRelation.ppt, slide 10.</rdfs:comment>
+        <templates:hasWhole rdf:resource="#RxL-001x"/>
+        <templates:hasPart rdf:resource="#RxS-001x"/>
+        <tpl:hasAssemblyType rdf:resource="&RDL;PipingNetworkSystemHasSegment"/>
+    </owl:Thing>
+    
+    <!-- http://data.mycompany.com/sampleInstances#sample_statement_PipingNetworkHasSegment_002 -->
+    <owl:Thing rdf:about="#sample_statement_PipingNetworkHasSegment_002">
+        <rdf:type rdf:resource="&tpl;PipingNetworkSystemHasSegment"/>
+        <rdfs:label
+            >sample_statement_PipingNetworkHasSegments_002</rdfs:label>
+        <rdfs:comment
+            >Example taken from AssemblyRelation.ppt, slide 10.</rdfs:comment>
+        <templates:hasWhole rdf:resource="#RxL-001x"/>
+        <templates:hasPart rdf:resource="#RxS-002x"/>
+        <tpl:hasAssemblyType rdf:resource="&RDL;PipingNetworkSystemHasSegment"/>
+    </owl:Thing>
+    
+    <!-- http://data.mycompany.com/sampleInstances#sample_statement_PipingNetworkHasSegment_003 -->
+    <tpl:PipingNetworkSystemHasSegment rdf:about="#sample_statement_PipingNetworkHasSegment_003">
+        <rdf:type rdf:resource="&owl;Thing"/>
+        <rdfs:label
+            >sample_statement_PipingNetworkHasSegments_003</rdfs:label>
+        <rdfs:comment
+            >Example taken from AssemblyRelation.ppt, slide 10.</rdfs:comment>
+        <templates:hasWhole rdf:resource="#1-BZ-001"/>
+        <templates:hasPart rdf:resource="#1-BZ-001-01"/>
+        <tpl:hasAssemblyType rdf:resource="&RDL;PipingNetworkSystemHasSegment"/>
+    </tpl:PipingNetworkSystemHasSegment>
+    
+    <!-- http://data.mycompany.com/sampleInstances#sample_statement_PipingNetworkHasSegment_004 -->
+    <tpl:PipingNetworkSystemHasSegment rdf:about="#sample_statement_PipingNetworkHasSegment_004">
+        <rdf:type rdf:resource="&owl;Thing"/>
+        <rdfs:label
+            >sample_statement_PipingNetworkHasSegments_004</rdfs:label>
+        <rdfs:comment
+            >Example taken from AssemblyRelation.ppt, slide 10.</rdfs:comment>
+        <templates:hasWhole rdf:resource="#1-BZ-001"/>
+        <templates:hasPart rdf:resource="#1-BZ-001-02"/>
+        <tpl:hasAssemblyType rdf:resource="&RDL;PipingNetworkSystemHasSegment"/>
+    </tpl:PipingNetworkSystemHasSegment>
+    
+    <!-- http://data.mycompany.com/sampleInstances#sample_statement_PipingNetworkHasSegment_005 -->
+    <tpl:PipingNetworkSystemHasSegment rdf:about="#sample_statement_PipingNetworkHasSegment_005">
+        <rdf:type rdf:resource="&owl;Thing"/>
+        <rdfs:label
+            >sample_statement_PipingNetworkHasSegments_005</rdfs:label>
+        <rdfs:comment
+            >Example taken from AssemblyRelation.ppt, slide 10.</rdfs:comment>
+        <templates:hasWhole rdf:resource="#1-BZ-001"/>
+        <templates:hasPart rdf:resource="#1-BZ-001-03"/>
+        <tpl:hasAssemblyType rdf:resource="&RDL;PipingNetworkSystemHasSegment"/>
+    </tpl:PipingNetworkSystemHasSegment>
+    
+    <!-- http://data.mycompany.com/sampleInstances#sample_statement_PipingNetworkHasSegment_006 -->
+    <tpl:PipingNetworkSystemHasSegment rdf:about="#sample_statement_PipingNetworkHasSegment_006">
+        <rdf:type rdf:resource="&owl;Thing"/>
+        <rdfs:label
+            >sample_statement_PipingNetworkHasSegments_006</rdfs:label>
+        <rdfs:comment
+            >Example taken from AssemblyRelation.ppt, slide 10.</rdfs:comment>
+        <templates:hasWhole rdf:resource="#1-WG-002"/>
+        <templates:hasPart rdf:resource="#1-WG-002-01"/>
+        <tpl:hasAssemblyType rdf:resource="&RDL;PipingNetworkSystemHasSegment"/>
+    </tpl:PipingNetworkSystemHasSegment>
+    
+    <!-- http://data.mycompany.com/sampleInstances#sample_statement_PipingNetworkHasSegment_007 -->
+    <owl:Thing rdf:about="#sample_statement_PipingNetworkHasSegment_007">
+        <rdf:type rdf:resource="&tpl;PipingNetworkSystemHasSegment"/>
+        <rdfs:label
+            >sample_statement_PipingNetworkHasSegments_007</rdfs:label>
+        <rdfs:comment
+            >Example taken from AssemblyRelation.ppt, slide 10.</rdfs:comment>
+        <templates:hasWhole rdf:resource="#1-WG-002"/>
+        <templates:hasPart rdf:resource="#1-WG-002-02"/>
+        <tpl:hasAssemblyType rdf:resource="&RDL;PipingNetworkSystemHasSegment"/>
+    </owl:Thing>
+    
+    <!-- http://rdl.rdswip.org/sampleReferenceData#Equipment -->
+    <owl:Thing rdf:about="&RDL;Equipment"/>
+    
+    <!-- http://rdl.rdswip.org/sampleReferenceData#EquipmentHasNozzles -->
+    <owl:Thing rdf:about="&RDL;EquipmentHasNozzles"/>
+    
+    <!-- http://rdl.rdswip.org/sampleReferenceData#Nozzle -->
+    <owl:Thing rdf:about="&RDL;Nozzle"/>
+    
+    <!-- http://rdl.rdswip.org/sampleReferenceData#PipingNetworkSegment -->
+    <owl:Thing rdf:about="&RDL;PipingNetworkSegment"/>
+    
+    <!-- http://rdl.rdswip.org/sampleReferenceData#PipingNetworkSystem -->
+    <owl:Thing rdf:about="&RDL;PipingNetworkSystem"/>
+    
+    <!-- http://rdl.rdswip.org/sampleReferenceData#PipingNetworkSystemHasSegment -->
+    <owl:Thing rdf:about="&RDL;PipingNetworkSystemHasSegment"/>
+</rdf:RDF>
+<!-- Generated by the OWL API (version 2.2.1.1138) http://owlapi.sourceforge.net -->

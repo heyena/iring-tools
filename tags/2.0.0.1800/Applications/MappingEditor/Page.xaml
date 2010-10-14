@@ -1,0 +1,32 @@
+﻿<UserControl x:Class="MappingEditor.Page"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+		xmlns:Regions="clr-namespace:Microsoft.Practices.Composite.Presentation.Regions;assembly=Microsoft.Practices.Composite.Presentation"
+		HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+>
+	<Grid x:Name="LayoutRoot" ShowGridLines="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+		<Grid.Background>
+			<SolidColorBrush Color="White"/>
+		</Grid.Background>
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="50"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="14"/>
+		</Grid.RowDefinitions>
+
+		<ItemsControl Name="HeaderItem" Grid.Row="0"  
+									VerticalAlignment="Bottom" HorizontalAlignment="Stretch" 
+									Regions:RegionManager.RegionName="MenuRegion"/>
+
+		<ItemsControl Name="MainItem" Grid.Row="1" 
+									VerticalAlignment="Center" HorizontalAlignment="Stretch" 
+									Regions:RegionManager.RegionName="MainRegion"  />
+
+		<ItemsControl Name="StatusItem" Grid.Row="2" 
+									VerticalAlignment="Top" HorizontalAlignment="Stretch" 
+									Regions:RegionManager.RegionName="StatusRegion"  />
+
+
+	</Grid>
+</UserControl>

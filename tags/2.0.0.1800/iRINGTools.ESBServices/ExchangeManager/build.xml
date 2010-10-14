@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="package" name="ExchangeManager">
+    <property name="packageFile" value="${ant.project.name}.zip" />
+
+	<target name="clean">
+		<delete file="${packageFile}" />
+	</target>
+
+	<target depends="clean" name="package">
+		<echo message="${ant.project.name}: ${ant.file}" />
+		<jar destfile="${packageFile}" basedir="${basedir}" excludes="**/.svn/,*.xml,**/nbproject/**" />
+	</target>
+</project>

@@ -1,0 +1,68 @@
+<html>
+  <head>
+    <title>iRINGTools: Exchange Manager</title>
+    <link rel="stylesheet" type="text/css" href="lib/ext-3.2.1/resources/css/ext-all.css" />
+    <link rel="stylesheet" type="text/css" href="resources/css/index.css"/>
+	
+    <!-- LIBS -->
+    <script type="text/javascript" src="lib/ext-3.2.1/adapter/ext/ext-base.js"></script>
+    <!-- ENDLIBS -->
+    <script type="text/javascript" src="lib/ext-3.2.1/ext-all-debug.js"></script>
+    <script type="text/javascript" src="resources/js/home.js"></script>
+    <script type="text/javascript" src="resources/js/check-tree.js"></script>
+    <!--<script type="text/javascript" src="resources/js/tag-nodes.js"></script>-->
+
+      <!-- overwrite CSS style to change to enable text selection of Grid -->
+      <style type="text/css">
+        .x-grid3-row td,
+        .x-grid3-summary-row td,
+        .x-grid3-cell-text,
+        .x-grid3-hd-text,
+        .x-grid3-hd,
+        .x-grid3-row {
+	-moz-user-select:inherit;
+	-khtml-user-select:text;
+        }
+
+        .x-plain-tbar,        
+        .x-toolbar-layout-ct{
+            width:100% !important;
+        }
+    </style>
+
+
+  </head>
+  <body>
+    <div  id="myHeader">
+     <div>
+         <div style="float:left"><img src="resources/images/iringlogo.png" style="margin:10px;" /></div>
+         
+         <div style="margin-right:330px;margin-top:35px;float:left;border: 0px solid blue;">
+             <font size="5px" style="font-family:Arial, Helvetica, Sans-Serif">Exchange Manager
+             </font>
+         </div>
+         <div style="margin-right:30px;margin-top:35px;float:right;border: 0px solid red;">
+        <a href="http://iringug.org/wiki/index.php?title=ESBUsersGuide" target="_blank"class="headerLnk">Help</a>&nbsp;&nbsp;&nbsp;
+        <a href="#" id="show-about" class="headerLnk">About</a>
+        </div>
+     </div>
+     </div>
+    <div id="directoryContent" class="x-hide-display">
+      <div id='tree-div'></div>
+    </div>
+    <!--<div id="center2" class="x-hide-display">
+      <p>RESULTS TAB Content will come here.....</p>
+    </div>
+    <div id="center1" class="x-hide-display">
+      <p> REVIEW &amp; ACCEPTANCE CONTENTS...........</p>
+    </div>-->
+    <div id="props-panel" class="x-hide-display" style="width:200px;height:200px;overflow:hidden;">
+    </div>
+    <div id="south" class="x-hide-display">
+      <p align="right">
+        <input type="button" style="background: none repeat scroll 0% 0% rgb(71, 132, 182); color: white; font-family: Calibri, Arial; font-size: 17px;" value="Refresh">
+        <input type="button" style="margin:0px 10px 0 0;background: none repeat scroll 0% 0% rgb(71, 132, 182); color: white; font-family: Calibri, Arial; font-size: 17px;" value="Exchange"> </p>
+    </div>
+  </body>
+</html>
+
