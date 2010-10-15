@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project basedir="." default="build" name="iRINGToolsServices">
+<project basedir="." default="build" name="iringtools">
 	<property name="debuglevel" value="source,lines,vars" />
 	<property name="target" value="1.6" />
 	<property name="source" value="1.6" />
@@ -76,10 +76,10 @@
 		<pathelement location="../libraries/jsr311-api/jsr311-api.jar" />
 	</path>
 
-  <path id="gson-1.4.userclasspath">
+	<path id="gson-1.4.userclasspath">
 		<pathelement location="../libraries/google-gson-1.4/gson-1.4.jar" />
 	</path>
-  
+
 	<path id="log4j-1.2.16.userclasspath">
 		<pathelement location="../libraries/apache-log4j-1.2.16/log4j-1.2.16.jar" />
 	</path>
@@ -96,10 +96,25 @@
 		<pathelement location="../libraries/guice-2.0/guice-struts2-plugin-2.0.jar" />
 		<pathelement location="../libraries/guice-2.0/guice-throwingproviders-2.0.jar" />
 	</path>
-	
+
+	<path id="jaxb.userclasspath">
+    <pathelement location="../libraries/jaxb-ri-20100511/lib/jaxb-xjc.jar" />
+    <pathelement location="../libraries/jaxb-ri-20100511/lib/collection-setter-injector.jar" />
+	</path>
+
+	<target name="generate">
+		<taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask" >
+			<classpath refid="jaxb.userclasspath" />
+		</taskdef>		
+		<xjc destdir="src" extension="true">
+			<schema dir="WebContent/WEB-INF/schemas" includes="*.xsd" />
+      <arg value="-Xcollection-setter-injector" />
+		</xjc>
+	</target>
+
 	<target name="clean">
-    <delete dir="WebContent/WEB-INF/classes" />
-  </target>
+		<delete dir="WebContent/WEB-INF/classes" />
+	</target>
 
 	<target depends="clean" name="init">
 		<mkdir dir="WebContent/WEB-INF/classes" />
@@ -116,11 +131,11 @@
 		<echo message="${ant.project.name}: ${ant.file}" />
 		<javac debug="true" debuglevel="${debuglevel}" destdir="WebContent/WEB-INF/classes" source="${source}" target="${target}">
 			<src path="src" />
-      <classpath refid="cxf-2.2.9.userclasspath" />
-      <classpath refid="jsr311-api.userclasspath" />
-      <classpath refid="gson-1.4.userclasspath" />
-      <classpath refid="log4j-1.2.16.userclasspath" />
-      <classpath refid="guice-2.0.userclasspath" />
+			<classpath refid="cxf-2.2.9.userclasspath" />
+			<classpath refid="jsr311-api.userclasspath" />
+			<classpath refid="gson-1.4.userclasspath" />
+			<classpath refid="log4j-1.2.16.userclasspath" />
+			<classpath refid="guice-2.0.userclasspath" />
 		</javac>
 		<copy todir="WebContent/WEB-INF/lib" flatten="true">
 			<path refid="cxf-2.2.9.userclasspath" />
@@ -129,6 +144,6 @@
 			<path refid="log4j-1.2.16.userclasspath" />
 			<path refid="guice-2.0.userclasspath" />
 		</copy>
-		<jar destfile="iringtools.war" basedir="WebContent" excludes="**/.svn/" />
+		<jar destfile="${ant.project.name}.war" basedir="WebContent" excludes="**/.svn/,WEB-INF/logs/*.*" />
 	</target>
 </project>

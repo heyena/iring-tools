@@ -31,17 +31,46 @@ namespace org.iringtools.client.Controllers
 
     //
     // GET: /Exchange
+
     public JsonResult Index()
     {
       return Json(null, JsonRequestBehavior.AllowGet);
     }
 
     //
-    // POST: Exchange/{scope}/{application}/{graph}/pull
-    [HttpPost]
-    public JsonResult Pull(string scope, string application, string graphName, FormCollection collection)
+    // GET: /Exchange/Methods
+
+    public JsonResult Methods()
     {
-      JsonContainer<Status> container = new JsonContainer<Status>();
+      JsonContainer<JsonArray> container = new JsonContainer<JsonArray>();
+      container.Items = new JsonArray();
+
+      JsonArrayItem item1 = new JsonArrayItem();
+      item1.Add("Name", "Data Tranfer Object");
+      item1.Add("Uri", "AdapterService");
+      container.Items.Add(item1);
+
+      JsonArrayItem item2 = new JsonArrayItem();
+      item2.Add("Name", "Reference Data Format");
+      item2.Add("Uri", "InterfaceService/query");
+      container.Items.Add(item2);
+            
+      container.Total = container.Items.Count();
+
+      return Json(container, JsonRequestBehavior.AllowGet);
+    }
+
+    //
+    // POST: Exchange/Pull?scope={scope}&application={application}
+
+    [HttpPost]
+    public JsonResult Pull(FormCollection collection)
+    {
+      string scope = Request.QueryString["scope"];
+      string application = Request.QueryString["application"];
+      string graphName = collection["graph"];
+
+      JsonContainer<List<Status>> container = new JsonContainer<List<Status>>();
 
       if (collection.Count > 0)
       {

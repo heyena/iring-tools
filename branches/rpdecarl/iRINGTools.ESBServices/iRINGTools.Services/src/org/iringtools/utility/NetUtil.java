@@ -27,7 +27,7 @@ public class NetUtil
     conn.setDoOutput(true);
     conn.setDoInput(true);
     
-    String data = JaxbUtil.toXml(content);
+    String data = JaxbUtil.toXml(content, false);
     conn.setRequestProperty("Content-Type", "application/xml");
     conn.setRequestProperty("Content-Length", String.valueOf(data.length()));
     DataOutputStream outStream = new DataOutputStream(conn.getOutputStream());    

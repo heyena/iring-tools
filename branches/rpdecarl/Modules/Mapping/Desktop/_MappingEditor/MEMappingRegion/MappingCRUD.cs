@@ -271,16 +271,16 @@ namespace org.iringtools.modules.memappingregion
 
           else
           {
-            ValueListMap valueListMap = new ValueListMap { Name = valueListName, ValueMaps = new List<ValueMap>() };
-            mapping.ValueListMaps.Add(valueListMap);
-            tvwValues.Items.Add(Presenter.AddNode(valueListName, valueListMap, null));
+            ValueListMap valueList = new ValueListMap { Name = valueListName, ValueMaps = new List<ValueMap>() };
+            mapping.ValueListMaps.Add(valueList);
+            tvwValues.Items.Add(Presenter.AddNode(valueListName, valueList, null));
             Presenter.ButtonCtrl("btnSave").IsEnabled = true;
             Presenter.ButtonCtrl("btnSave").Background = new SolidColorBrush(Color.FromArgb(255, 255, 0, 0));
 
           }
         }
       }
-      catch (Exception ex) 
+      catch (Exception ex)
       {
         MessageBox.Show("Failed to Add Value List", "ADD VALUELIST", MessageBoxButton.OK);
         Logger.Log(ex.ToString(), Category.Exception, Priority.Low);
@@ -312,11 +312,11 @@ namespace org.iringtools.modules.memappingregion
           }
           else
           {
-            ValueListMap valueListMap = (ValueListMap)model.SelectedMappingItem.Tag;
+            ValueListMap valueList = (ValueListMap)model.SelectedMappingItem.Tag;
             String uri = Regex.Replace(model.SelectedIMUri, ".*#", "rdl:");
 
             ValueMap valueMap = new ValueMap { InternalValue = internalValue, Uri = uri };
-            valueListMap.ValueMaps.Add(valueMap);
+            valueList.ValueMaps.Add(valueMap);
             model.SelectedMappingItem.Items.Add(Presenter.AddNode(uri, valueMap, model.SelectedMappingItem));
             Presenter.RefreshValueMap(valueMap, model.SelectedMappingItem);
             Presenter.ButtonCtrl("btnSave").IsEnabled = true;
@@ -380,7 +380,7 @@ namespace org.iringtools.modules.memappingregion
         }
       }
       catch (Exception ex)
-      { 
+      {
         MessageBox.Show("Failed to Add Graph", "ADD GRAPH", MessageBoxButton.OK);
         Logger.Log(ex.ToString(), Category.Exception, Priority.Low);
       }
@@ -393,34 +393,50 @@ namespace org.iringtools.modules.memappingregion
         string tplName = utility.Utility.NameSafe(templateName);
 
 
-        if (mappingItem.ClassMap != null && mappingItem.TemplateMap != null)
-        {
-          int lastSeqNum = 0;
+        //if (mappingItem.ClassMap != null && mappingItem.TemplateMap != null)
+        //{
+        //  int lastSeqNum = 0;
 
-          // find last sequence number of template names that match the new template name
-          TemplateMap templateMap = mappingItem.TemplateMap;
-          {
-            if (templateMap.Name.StartsWith(tplName))
-            {
-              if (templateMap.Name.Length == tplName.Length)
-              {
-                lastSeqNum = 1;
-              }
-              else
-              {
-                int seqNum;
-                if (int.TryParse(templateMap.Name.Substring(tplName.Length), out seqNum))
-                {
-                  if (seqNum >= lastSeqNum)
-                    lastSeqNum = seqNum + 1;
-                }
-              }
-            }
-          }
+        //  // find last sequence number of template names that match the new template name
+        //  TemplateMap templateMap = mappingItem.TemplateMap;
+        //  {
+        //    if (templateMap.name.StartsWith(tplName))
+        //    {
+        //      if (templateMap.name.Length == tplName.Length)
+        //      {
+        //        lastSeqNum = 1;
+        //      }
+        //      else
+        //      {
+        //        int seqNum;
+        //        if (int.TryParse(templateMap.name.Substring(tplName.Length), out seqNum))
+        //        {
+        //          if (seqNum >= lastSeqNum)
+        //            lastSeqNum = seqNum + 1;
+        //        }
+        //      }
+        //    }
+        //  }
 
-          if (lastSeqNum != 0)
-            tplName += lastSeqNum;
-        }
+        //  if (lastSeqNum != 0)
+        //    tplName += lastSeqNum;
+        //}
+
+        return tplName;
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show("Failed to Add Graph", "ADD GRAPH", MessageBoxButton.OK);
+        Logger.Log(ex.ToString(), Category.Exception, Priority.Low);
+        return "";
+      }
+    }
+
+    private string GetTemplateName(MappingItem mappingItem, string templateName)
+    {
+      try
+      {
+        string tplName = utility.Utility.NameSafe(templateName);
 
         return tplName;
       }
@@ -455,17 +471,21 @@ namespace org.iringtools.modules.memappingregion
         else
         {
           if (model.SelectedMappingItem.NodeType == NodeType.GraphMap)
-            selectedClassMap = model.SelectedGraphMap.ClassTemplateMaps.First().ClassMap;
-
+          {
+            selectedClassMap = model.SelectedGraphMap.ClassTemplateMaps.FirstOrDefault().ClassMap;
+          }
           else if (model.SelectedMappingItem.NodeType == NodeType.ClassMap)
+          {
             selectedClassMap = model.SelectedClassMap;
+          }
 
           MappingItem mappingItem = model.SelectedMappingItem;
 
           TextBox txtLabel = sender as TextBox;
           TemplateMap templateMap = new TemplateMap();
 
-          templateMap.Name = AdjustTemplateName(mappingItem, model.SelectedIMLabel);
+          //templateMap.name = AdjustTemplateName(mappingItem, model.SelectedIMLabel);
+          templateMap.Name = GetTemplateName(mappingItem, model.SelectedIMLabel);
           templateMap.TemplateId = SPARQLExtensions.GetIdWithAliasFromUri(model.SelectedIMUri);
           TemplateTreeItem node = null;
           if (model.SelectedTreeItem is TemplateTreeItem)
@@ -520,7 +540,7 @@ namespace org.iringtools.modules.memappingregion
       string pattern = "[^a-zA-Z]";
       string outputString =
       System.Text.RegularExpressions.Regex.Replace(inputString, pattern, "");
-      return outputString;     
+      return outputString;
     }
 
     private void GetRoleMaps(string classId, object template, TemplateMap currentTemplateMap)
@@ -539,7 +559,7 @@ namespace org.iringtools.modules.memappingregion
           RoleMap roleMap = new RoleMap();
           if (range != classId && range.StartsWith("xsd:"))
           {
-            roleMap.Type = RoleType.Property;
+            roleMap.Type = RoleType.DataProperty;
             roleMap.Name = utility.Utility.NameSafe(roleDefinition.name.FirstOrDefault().value);
             roleMap.DataType = range;
             roleMap.PropertyName = string.Empty;
@@ -550,11 +570,10 @@ namespace org.iringtools.modules.memappingregion
           else if (range != classId && !range.StartsWith("xsd:"))
           {
 
-            roleMap.Type = RoleType.Reference;
-            //roleMap.isMapped = true;
+            roleMap.Type = RoleType.ObjectProperty;
             roleMap.Name = utility.Utility.NameSafe(roleDefinition.name.FirstOrDefault().value);
 
-            roleMap.Value = range;
+            roleMap.DataType = range;
             roleMap.PropertyName = string.Empty;
             roleMap.RoleId = roleDefinition.identifier.GetIdWithAliasFromUri();
             currentTemplateMap.RoleMaps.Add(roleMap);
@@ -601,21 +620,21 @@ namespace org.iringtools.modules.memappingregion
           }
           else if (range != classId && range.StartsWith("xsd:")) // property role
           {
-            roleMap.Type = RoleType.Property;
+            roleMap.Type = RoleType.DataProperty;
             roleMap.DataType = range;
             roleMap.PropertyName = String.Empty;
             currentTemplateMap.RoleMaps.Add(roleMap);
           }
           else if (range != classId && !range.StartsWith("xsd:"))
           {
-            roleMap.Type = RoleType.Reference;
+            roleMap.Type = RoleType.ObjectProperty;
 
             roleMap.DataType = range;
             roleMap.PropertyName = String.Empty;
             currentTemplateMap.RoleMaps.Add(roleMap);
           }
 
-          else if (range == classId)    // class role ??
+          else if (range == classId)    // class role
           {
             roleMap.Type = RoleType.Possessor;
 
@@ -646,24 +665,26 @@ namespace org.iringtools.modules.memappingregion
         Presenter.ButtonCtrl("btnSave").Background = new SolidColorBrush(Color.FromArgb(255, 255, 0, 0));
         saveActive = true;
 
-        DataObjectItem parentObject = (DataObjectItem)model.SelectedDataObject.Parent;
         RoleMap roleMap = model.SelectedRoleMap;
-        if (roleMap.Type == RoleType.Property)
+        if (
+          roleMap.Type == RoleType.Property ||
+          roleMap.Type == RoleType.DataProperty)
         {
+          if (model.SelectedDataObject == null || model.SelectedDataObject.DataProperty == null)
+          {
+            MessageBox.Show("Please select a data property to map", "MAP ROLE", MessageBoxButton.OK);
+            return;
+          }
+
           if (roleMap.DataType == null && !roleMap.DataType.StartsWith("xsd:"))
           {
-            if (model.SelectedDataObject == null || model.SelectedDataObject.DataProperty == null)
-            {
-              MessageBox.Show("Please select a property to map", "MAP ROLE", MessageBoxButton.OK);
-              return;
-            }
-
             roleMap.PropertyName =
                 string.Format("{0}.{1}", model.SelectedDataObject.DataObject.objectName, model.SelectedDataObject.DataProperty.propertyName);
             roleMap.ValueListName = String.Empty;
           }
           else if (roleMap.DataType != null || roleMap.DataType.StartsWith("xsd:"))
           {
+            DataObjectItem parentObject = (DataObjectItem)model.SelectedDataObject.Parent;
 
             if (!string.IsNullOrEmpty(parentObject.ParentObjectName))
             {
@@ -694,7 +715,7 @@ namespace org.iringtools.modules.memappingregion
           model.DetailProperties.Clear();
           Presenter.RefreshRoleMap(roleMap);
         }
-        else if (roleMap.Type == RoleType.Reference && templateMap.TemplateType == TemplateType.Definition)
+        else if (roleMap.Type == RoleType.ObjectProperty)
         {
           if (model.SelectedTreeItem == null || !(model.SelectedTreeItem is ClassTreeItem))
           {
@@ -702,12 +723,55 @@ namespace org.iringtools.modules.memappingregion
             return;
           }
           ClassDefinition selectedClass = ((ClassTreeItem)model.SelectedTreeItem).ClassDefinition;
+          roleMap.Type = RoleType.Reference;
           roleMap.Value = selectedClass.identifier.GetIdWithAliasFromUri();
           model.SelectedMappingItem.itemTextBlock.Text = model.SelectedMappingItem.itemTextBlock.Text.Replace(Presenter.unmappedToken, "");
           model.DetailProperties.Clear();
           Presenter.RefreshRoleMap(roleMap);
         }
-        else if (roleMap.Type == RoleType.Reference && templateMap.TemplateType == TemplateType.Qualification)
+
+        aggregator.GetEvent<NavigationEvent>().Publish(new NavigationEventArgs
+        {
+          DetailProcess = DetailType.Mapping,
+          SelectedNode = mappingItem,
+          Sender = this
+        });
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show("Failed to Map", "MAP", MessageBoxButton.OK);
+        Logger.Log(ex.ToString(), Category.Exception, Priority.Low);
+      }
+    }
+
+    public void btnMapClass_Click(object sender, RoutedEventArgs e)
+    {
+      try
+      {
+        if (model.SelectedRoleMap == null)
+        {
+          MessageBox.Show("Please select a role map", "MAP ROLE", MessageBoxButton.OK);
+          return;
+        }
+
+        MappingItem mappingItem = model.SelectedMappingItem;
+        MappingItem parent = (MappingItem)mappingItem.Parent;
+
+        TemplateMap templateMap = (TemplateMap)parent.Tag;
+
+        Presenter.ButtonCtrl("btnSave").IsEnabled = true;
+        Presenter.ButtonCtrl("btnSave").Background = new SolidColorBrush(Color.FromArgb(255, 255, 0, 0));
+        saveActive = true;
+
+        DataObjectItem selectedDataObject = (DataObjectItem)model.SelectedDataObject;
+        if (selectedDataObject == null || selectedDataObject.Parent.GetType() == typeof(TreeView))
+        {
+          MessageBox.Show("Please select a data property to map", "MAP ROLE", MessageBoxButton.OK);
+          return;
+        }
+        DataObjectItem parentObject = (DataObjectItem)selectedDataObject.Parent;
+        RoleMap roleMap = model.SelectedRoleMap;
+        if (roleMap.Type == RoleType.ObjectProperty)
         {
           if (model.SelectedTreeItem == null || !(model.SelectedTreeItem is ClassTreeItem))
           {
@@ -725,6 +789,8 @@ namespace org.iringtools.modules.memappingregion
 
           roleMap = model.SelectedRoleMap;
           TextBox txtLabel = sender as TextBox;
+
+          roleMap.Type = RoleType.Reference;
           roleMap.Value = Id;
           ClassMap classMap = new ClassMap
           {
@@ -773,7 +839,7 @@ namespace org.iringtools.modules.memappingregion
           MessageBox.Show("Please select a ValueList to map", "MAP ROLE", MessageBoxButton.OK);
           return;
         }
-        string valuelist = ((MappingItem)tvwValues.SelectedItem).itemTextBlock.Text;
+        string valuelistName = ((MappingItem)tvwValues.SelectedItem).itemTextBlock.Text;
 
         if (mappingItem.NodeType == NodeType.RoleMap)
         {
@@ -781,7 +847,7 @@ namespace org.iringtools.modules.memappingregion
           {
             MessageBox.Show("Please select a property to map", "MAP ROLE", MessageBoxButton.OK);
           }
-          else if (string.IsNullOrEmpty(valuelist))
+          else if (string.IsNullOrEmpty(valuelistName))
           {
             MessageBox.Show("Please select a value list", "MAP ROLE", MessageBoxButton.OK);
           }
@@ -791,15 +857,16 @@ namespace org.iringtools.modules.memappingregion
 
             if (roleMap.DataType != null || roleMap.DataType != "")
             {
-              roleMap.Type = RoleType.Property;
-              roleMap.ValueListName = valuelist;
-              if (valuelist == "")
+              roleMap.ValueListName = valuelistName;
+              if (valuelistName == "")
               {
+                //roleMap.type = RoleType.DataProperty;
                 roleMap.PropertyName = null;
                 model.SelectedMappingItem.itemTextBlock.Text += Presenter.unmappedToken;
               }
               else
               {
+                //roleMap.type = RoleType.ObjectProperty;
                 roleMap.PropertyName =
                 string.Format("{0}.{1}",
                     model.SelectedDataObject.DataObject.objectName,
@@ -865,7 +932,7 @@ namespace org.iringtools.modules.memappingregion
               MappingItem parent = (MappingItem)mappingItem.Parent;
               RoleMap roleMap = (RoleMap)mappingItem.Tag;
               if (roleMap.ClassMap != null)
-                mappingItem.GraphMap.DeleteRoleMap(mappingItem.TemplateMap, roleMap.ClassMap.ClassId);
+                mappingItem.GraphMap.DeleteRoleMap(mappingItem.TemplateMap, roleMap.RoleId);
 
               roleMap.PropertyName = string.Empty;
               roleMap.ValueListName = string.Empty;
@@ -873,6 +940,8 @@ namespace org.iringtools.modules.memappingregion
               mappingItem.Items.Clear();
               mappingItem.IsExpanded = false;
 
+              if (roleMap.Type == RoleType.Reference)
+                roleMap.Type = RoleType.ObjectProperty;
 
               if (!mappingItem.itemTextBlock.Text.EndsWith(Presenter.unmappedToken) && roleMap.IsMapped == false)
               {
@@ -929,8 +998,8 @@ namespace org.iringtools.modules.memappingregion
       {
         MessageBox.Show("Failed to Delete", "DELETE", MessageBoxButton.OK);
         Logger.Log(ex.ToString(), Category.Exception, Priority.Low);
-      } 
-    }    
+      }
+    }
 
     public void btnSave_Click(object sender, RoutedEventArgs e)
     {

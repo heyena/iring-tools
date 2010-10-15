@@ -161,27 +161,55 @@ namespace org.iringtools.modules.templateeditor.rolespopup
                 {
                     KeyValuePair<string, string> range = (KeyValuePair<string, string>)roleRange.SelectedItem;
 
-                    if (range.Value != null && range.Value.Equals("<Use Selected Item>"))
-                    {
-                        KeyValuePair<string, string> cmbItem = new KeyValuePair<string, string>(_rolesPopupModel.ModelSelectedIMLabel, _rolesPopupModel.ModelSelectedIMURI);
+                    //if (range.Value != null && range.Value.Equals("<Use Selected Item>"))
+                    //{
+                    //    KeyValuePair<string, string> cmbItem = new KeyValuePair<string, string>(_rolesPopupModel.ModelSelectedIMLabel, _rolesPopupModel.ModelSelectedIMURI);
 
-                        //GvR need to fix this issue of add already existing item
-                        var items = from query in _rolesPopupModel.Ranges 
-                                    where query.Key == cmbItem.Key
-                                    select query;
+                    //    //GvR need to fix this issue of add already existing item
+                    //    var items = from query in _rolesPopupModel.Ranges 
+                    //                where query.Key == cmbItem.Key
+                    //                select query;
 
-                        if (items.Count() == 0)
-                        {
-                            _rolesPopupModel.Ranges.Add(cmbItem);
-                            roleRange.SelectedItem = cmbItem;
-                        }
-                        else
-                        {
-                            roleRange.SelectedItem = items.FirstOrDefault();
-                        }
+                    //    if (items.Count() == 0)
+                    //    {
+                    //        _rolesPopupModel.Ranges.Add(cmbItem);
+                    //        roleRange.SelectedItem = cmbItem;
+                    //    }
+                    //    else
+                    //    {
+                    //        roleRange.SelectedItem = items.FirstOrDefault();
+                    //    }
 
-                    }
+                    //}
                 }
+            }
+            catch (Exception ex)
+            {
+                error.SetError(ex);
+            }
+        }
+
+        private void BtnUseSelectedItem_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                
+                KeyValuePair<string, string> cmbItem = new KeyValuePair<string, string>(_rolesPopupModel.ModelSelectedIMURI, _rolesPopupModel.ModelSelectedIMLabel);
+
+                //GvR need to fix this issue of add already existing item
+                var items = from query in _rolesPopupModel.Ranges
+                            where query.Key == cmbItem.Key
+                            select query;
+
+                if (items.Count() == 0)
+                {
+                    _rolesPopupModel.Ranges.Add(cmbItem);
+                    roleRange.SelectedItem = cmbItem;
+                }
+                else
+                {
+                    roleRange.SelectedItem = items.FirstOrDefault();
+                }                
             }
             catch (Exception ex)
             {

@@ -46,6 +46,7 @@ namespace org.iringtools.modules.memappingregion
     private Button btnAddTemplate { get { return ButtonCtrl("btnAddTemplate"); } }
     private Button btnAddGraph { get { return ButtonCtrl("btnAddGraph"); } }
     private Button btnMap { get { return ButtonCtrl("btnMap"); } }
+    private Button btnMapClass { get { return ButtonCtrl("btnMapClass"); } }
     private Button btnMakePossessor { get { return ButtonCtrl("btnMakePossessor"); } }
     private Button btnMapValueList { get { return ButtonCtrl("btnMapValueList"); } }
     private Button btnDelete { get { return ButtonCtrl("btnDelete"); } }
@@ -90,6 +91,7 @@ namespace org.iringtools.modules.memappingregion
         // note that we're sending in the txtLabel object as sender
         btnAddTemplate.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnAddTemplate_Click(txtLabel, e); };
         btnAddGraph.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnAddGraph_Click(txtLabel, e); };
+        btnMapClass.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnMapClass_Click(txtLabel, e); };
         btnMap.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnMap_Click(txtLabel, e); };
         btnMakePossessor.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnMakePossessor_Click(txtLabel, e); };
         btnMapValueList.Click += (object sender, RoutedEventArgs e) => { mappingCRUD.btnAddValueList(txtLabel, e); };
@@ -552,16 +554,18 @@ namespace org.iringtools.modules.memappingregion
 
         bool isProcessed = false;
 
-
         if (selectedNode.Tag is ClassMap)
         {
           {
             ClassMap selectedClassMap = (ClassMap)selectedNode.ClassMap;
             ClassTemplateMap classTemplateMap = selectedNode.GraphMap.GetClassTemplateMap(selectedClassMap.ClassId);
 
-            foreach (TemplateMap templateMap in classTemplateMap.TemplateMaps)
+            if (classTemplateMap.TemplateMaps != null)
             {
-              isProcessed = PopulateTemplateMap(selectedNode, templateMap);
+              foreach (TemplateMap templateMap in classTemplateMap.TemplateMaps)
+                {
+                    isProcessed = PopulateTemplateMap(selectedNode, templateMap);
+                }
             }
           }
         }
@@ -744,7 +748,11 @@ namespace org.iringtools.modules.memappingregion
       {
         string roleName = roleMap.Name;
 
-        if (!roleMap.IsMapped && (roleMap.Type == RoleType.Property))
+        if (!roleMap.IsMapped && (
+          roleMap.Type == RoleType.Property ||
+          roleMap.Type == RoleType.DataProperty ||
+          roleMap.Type == RoleType.ObjectProperty
+          ))
         {
           roleName += unmappedToken;
         }
@@ -834,18 +842,17 @@ namespace org.iringtools.modules.memappingregion
           btnvAddValueList.IsEnabled = enabled;
           btnvMoveDown.IsEnabled = enabled;
           btnvMoveUp.IsEnabled = enabled;
-          btnMapValueList.IsEnabled = true;
+          btnMapValueList.IsEnabled = enabled;
           txtLabel.IsEnabled = enabled;
           btnAddGraph.IsEnabled = enabled;
           tvwMapping.IsEnabled = enabled;
           btnAddTemplate.IsEnabled = enabled;
           btnMap.IsEnabled = enabled;
+          btnMapClass.IsEnabled = enabled;
           btnMakePossessor.IsEnabled = enabled;
           tvwMapping.IsEnabled = enabled;
           btnAddTemplate.IsEnabled = enabled;
-          btnMap.IsEnabled = enabled;
           btnMakePossessor.IsEnabled = enabled;
-
           btnDelete.IsEnabled = enabled;
         }
       }

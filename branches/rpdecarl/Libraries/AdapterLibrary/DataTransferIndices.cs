@@ -40,22 +40,13 @@ namespace org.iringtools.adapter
   [DataContract(Namespace = "http://iringtools.org/adapter/dti", Name = "dataTransferIndex")]
   public class DataTransferIndex
   {
-    [DataMember(Order = 0)]
-    public string identifier { get; set; }
+    [DataMember(Name = "identifier", Order = 0)]
+    public string Identifier { get; set; }
 
-    [DataMember(Order = 1)]
-    public string hashValue { get; set; }
+    [DataMember(Name = "hashValue", Order = 1)]
+    public string HashValue { get; set; }
 
-    [DataMember(Order = 2)]
-    public TransferType transferType { get; set; }
-  }
-
-  [DataContract]
-  public enum HashAlgorithm
-  {
-    [EnumMember]    
-    MD5,
-    [EnumMember]
-    SHA1,
+    [DataMember(Name = "transferType", Order = 2)]
+    public TransferType TransferType { get; set; }
   }
 }

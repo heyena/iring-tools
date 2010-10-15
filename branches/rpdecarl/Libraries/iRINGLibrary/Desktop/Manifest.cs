@@ -124,6 +124,12 @@ namespace org.iringtools.protocol.manifest
 
     [EnumMember]
     FixedValue,
+
+    [EnumMember]
+    DataProperty,
+
+    [EnumMember]
+    ObjectProperty,
   }
 
   [DataContract]

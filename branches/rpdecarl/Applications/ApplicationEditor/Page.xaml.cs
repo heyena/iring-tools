@@ -1097,7 +1097,8 @@ namespace ApplicationEditor
         biBusyWindow.IsBusy = true;
         TreeViewItem dbdictRoot = tvwItemDestinationRoot;
         DatabaseDictionary dbDict = dbdictRoot.Tag as DatabaseDictionary;
-        dbDict.dataObjects.Clear();
+        if (dbDict != null)
+            dbDict.dataObjects.Clear();
         foreach (TreeViewItem dataObjectItem in dbdictRoot.Items)
         {
           dbDict.dataObjects.Add(dataObjectItem.Tag as org.iringtools.library.DataObject);

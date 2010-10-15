@@ -16,10 +16,10 @@ namespace org.iringtools.modules.details.detailsregion
 
         public IPresentationModel Model { get; set; }
 
-        private void btnClipBoard_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
+        //private void btnClipBoard_Click(object sender, System.Windows.RoutedEventArgs e)
+        //{
 
-        }
+        //}
 
     }
 }

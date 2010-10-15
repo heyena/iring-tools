@@ -32,7 +32,7 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/version")]
     public string GetVersion()
     {
-      return _NHibernateProvider.GetType().Assembly.GetName().Version.ToString();
+      return new Version _NHibernateProvider.GetType().Assembly.GetName().Version.ToString();
     }
     #endregion
 

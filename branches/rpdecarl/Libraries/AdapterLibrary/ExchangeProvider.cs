@@ -33,13 +33,8 @@ namespace org.iringtools.exchange
     private List<ScopeProject> _scopes = null;
     private IDataLayer _dataLayer = null;
     private IProjectionLayer _projectionEngine = null;
-    //private DataDictionary _dataDictionary = null;
     private Mapping _mapping = null;
-    private Manifest _manifest = null;
-    private GraphMap _mappingGraph = null;
-    private Graph _manifestGraph = null;
     private GraphMap _graphMap = null;
-    private HashAlgorithm _hashAlgorithm;
 
     private IList<IDataObject> _dataObjects = new List<IDataObject>();
     private Dictionary<string, List<string>> _classIdentifiers = new Dictionary<string, List<string>>();
@@ -117,9 +112,9 @@ namespace org.iringtools.exchange
         {
           dataObjectsString = httpClient.GetMessage(@"/" + projectNameForPull + "/" + applicationNameForPull + "/" + graphNameForPull + "?format=dto");
         }
-        XElement xml = XElement.Parse(dataObjectsString);
+        XDocument xDocument = XDocument.Parse(dataObjectsString);
 
-        IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xml);
+        IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xDocument);
 
         _response.Append(_dataLayer.Post(dataObjects));
         status.Messages.Add(String.Format("Pull is successful from " + targetUri + "for Graph " + graphName));
@@ -182,11 +177,11 @@ namespace org.iringtools.exchange
         {
           WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
 
-          WebProxyCredentials proxyCrendentials = _settings.GetProxyCredentials();
+          WebProxyCredentials proxyCrendentials = _settings.GetWebProxyCredentials();
           if (proxyCrendentials != null)
           {
             endpoint.UseCredentialsForProxy = true;
-            webProxy.Credentials = proxyCrendentials.GetNetworkCredential();
+            webProxy.Credentials = _settings.GetProxyCredential();
           }
           endpoint.SetProxy(webProxy.Address);
           endpoint.SetProxyCredentials(proxyCrendentials.userName,proxyCrendentials.password);          
@@ -202,9 +197,9 @@ namespace org.iringtools.exchange
         TextWriter textWriter = new StringWriter(sb);
         VDS.RDF.Writing.FastRdfXmlWriter rdfWriter = new VDS.RDF.Writing.FastRdfXmlWriter();
         rdfWriter.Save(graph, textWriter);
-        XElement rdf = XElement.Parse(sb.ToString());
+        XDocument xDocument = XDocument.Parse(sb.ToString());
 
-        _dataObjects = _projectionEngine.ToDataObjects(graphName, ref rdf);
+        _dataObjects = _projectionEngine.ToDataObjects(graphName, ref xDocument);
 
         // post data objects to data layer
         _dataLayer.Post(_dataObjects);
@@ -272,11 +267,11 @@ namespace org.iringtools.exchange
           dataObjectList = _dataLayer.Get(_graphMap.DataObjectName, null);
         }
 
-        XElement xml = _projectionEngine.ToXml(graphName, ref dataObjectList);
+        XDocument xDocument = _projectionEngine.ToXml(graphName, ref dataObjectList);
 
         _isDataLayerInitialized = false;
         _isScopeInitialized = false;
-        Response localResponse = httpClient.Post<XElement, Response>(@"/" + projectNameForPush + "/" + applicationNameForPush + "/" + graphNameForPush + "?format=" + format, xml, true);
+        Response localResponse = httpClient.Post<XDocument, Response>(@"/" + projectNameForPush + "/" + applicationNameForPush + "/" + graphNameForPush + "?format=" + format, xDocument, true);
 
         _response.Append(localResponse);
 
@@ -311,186 +306,6 @@ namespace org.iringtools.exchange
 
       return _response;
     }
-
-    public XElement GetDtiList(string projectName, string applicationName, string graphName, DxRequest request)
-    {
-      XElement dtiListXml = null;
-
-      try
-      {
-        _manifest = request.Manifest;
-
-        InitializeScope(projectName, applicationName);
-        InitializeDataLayer();
-
-        string hashAlgorithm = request.HashAlgorithm;
-
-        if (String.IsNullOrEmpty(hashAlgorithm))
-        {
-          _hashAlgorithm = HashAlgorithm.MD5;
-        }
-        else
-        {
-          _hashAlgorithm = (HashAlgorithm)Enum.Parse(typeof(HashAlgorithm), hashAlgorithm);
-        }
-
-        BuildCrossedGraphMap(graphName);
-        PopulateClassIdentifiers(request.Identifiers);
-
-        DataTransferIndices dtiList = new DataTransferIndices();
-
-        for (int i = 0; i < _dataObjects.Count; i++)
-        {
-          DataTransferIndex dti = new DataTransferIndex();
-          dtiList.Add(dti);
-
-          bool firstClassMap = true;
-          StringBuilder propertyValues = new StringBuilder();
-
-          foreach (ClassTemplateMap classTemplateMap in _graphMap.ClassTemplateMaps)
-          {
-            ClassMap classMap = classTemplateMap.ClassMap;
-            List<TemplateMap> templateMaps = classTemplateMap.TemplateMaps;
-
-            if (firstClassMap)
-            {
-              dti.identifier = _classIdentifiers[classMap.ClassId][i];
-              firstClassMap = false;
-            }
-
-            foreach (TemplateMap templateMap in templateMaps)
-            {
-              foreach (RoleMap roleMap in templateMap.RoleMaps)
-              {
-                if (roleMap.Type == RoleType.Property)
-                {
-                  string propertyName = roleMap.PropertyName.Substring(_graphMap.DataObjectName.Length + 1);
-                  string value = Convert.ToString(_dataObjects[i].GetPropertyValue(propertyName));
-
-                  if (!String.IsNullOrEmpty(roleMap.ValueListName))
-                  {
-                    value = _mapping.ResolveValueList(roleMap.ValueListName, value);
-                  }
-
-                  propertyValues.Append(value);
-                }
-              }
-            }
-          }
-
-          string hashValue = String.Empty;
-
-          // TODO: Handle/implement more hash algorithms
-          switch (_hashAlgorithm)
-          {
-            default: // MD5
-              hashValue = Utility.MD5Hash(propertyValues.ToString());
-              break;
-          }
-
-          dti.hashValue = hashValue;
-        }
-
-        dtiListXml = SerializationExtensions.ToXml<DataTransferIndices>(dtiList);
-      }
-      catch (Exception ex)
-      {
-        _logger.Error("Error getting dti list: " + ex);
-      }
-
-      return dtiListXml;
-    }
-
-    public XElement GetDtoList(string projectName, string applicationName, string graphName, DxRequest request)
-    {
-      XElement dtoListXml = null;
-
-      try
-      {
-        _manifest = request.Manifest;
-        Identifiers identifiers = request.Identifiers;
-
-        InitializeScope(projectName, applicationName);
-        InitializeDataLayer();
-
-        BuildCrossedGraphMap(graphName);
-        PopulateClassIdentifiers(identifiers);
-
-        DataTransferObjects dtoList = new DataTransferObjects();
-
-        for (int i = 0; i < _dataObjects.Count; i++)
-        {
-          DataTransferObject dto = new DataTransferObject();
-          dtoList.Add(dto);
-
-          foreach (ClassTemplateMap classTemplateMap in _graphMap.ClassTemplateMaps)
-          {
-            ClassMap classMap = classTemplateMap.ClassMap;
-            List<TemplateMap> templateMaps = classTemplateMap.TemplateMaps;
-
-            ClassObject classObject = new ClassObject
-            {
-              classId = classMap.ClassId,
-              name = classMap.Name,
-              identifier = _classIdentifiers[classMap.ClassId][i],
-            };
-
-            dto.classObjects.Add(classObject);
-
-            foreach (TemplateMap templateMap in templateMaps)
-            {
-              TemplateObject templateObject = new TemplateObject
-              {
-                templateId = templateMap.TemplateId,
-                name = templateMap.Name,
-              };
-
-              classObject.templateObjects.Add(templateObject);
-
-              foreach (RoleMap roleMap in templateMap.RoleMaps)
-              {
-                RoleObject roleObject = new RoleObject
-                {
-                  type = roleMap.Type,
-                  roleId = roleMap.RoleId,
-                  name = roleMap.Name,
-                };
-
-                templateObject.roleObjects.Add(roleObject);
-                string value = roleMap.Value;
-
-                if (roleMap.Type == RoleType.Property)
-                {
-                  string propertyName = roleMap.PropertyName.Substring(_graphMap.DataObjectName.Length + 1);
-                  value = Convert.ToString(_dataObjects[i].GetPropertyValue(propertyName));
-
-                  if (!String.IsNullOrEmpty(roleMap.ValueListName))
-                  {
-                    value = _mapping.ResolveValueList(roleMap.ValueListName, value);
-                    value = value.Replace(RDL_NS.NamespaceName, "rdl:");
-                  }
-                }
-                else if (roleMap.ClassMap != null)
-                {
-                  value = "#" + _classIdentifiers[roleMap.ClassMap.ClassId][i];
-                }
-
-                roleObject.value = value;
-              }
-            }
-          }
-        }
-
-        dtoListXml = SerializationExtensions.ToXml<DataTransferObjects>(dtoList);
-      }
-      catch (Exception ex)
-      {
-        _logger.Error("Error getting dto list: " + ex);
-      }
-
-      return dtoListXml;
-    }
-
 
     #region helper methods
     private void InitializeScope(string projectName, string applicationName)
@@ -610,7 +425,6 @@ namespace org.iringtools.exchange
 
     private void PopulateClassIdentifiers(List<string> identifiers)
     {
-      _dataObjects = _dataLayer.Get(_graphMap.DataObjectName, identifiers);  
       _classIdentifiers.Clear();
 
       foreach (ClassTemplateMap classTemplateMap in _graphMap.ClassTemplateMaps)
@@ -634,7 +448,7 @@ namespace org.iringtools.exchange
               }
               else
               {
-                classIdentifiers[i] += classMap.IdentifierDelimeter + value;
+                classIdentifiers[i] += classMap.IdentifierDelimiter + value;
               }
             }
           }
@@ -656,7 +470,7 @@ namespace org.iringtools.exchange
                 }
                 else
                 {
-                  classIdentifiers[i] += classMap.IdentifierDelimeter + value;
+                  classIdentifiers[i] += classMap.IdentifierDelimiter + value;
                 }
               }
             }
@@ -667,129 +481,6 @@ namespace org.iringtools.exchange
       }
     }
 
-    private void BuildCrossedGraphMap(string graphName)
-    {
-      _mappingGraph = _mapping.FindGraphMap(graphName);
-      _manifestGraph = _manifest.FindGraph(graphName);      
-      
-      _graphMap = new GraphMap();
-      _graphMap.DataObjectName = _mappingGraph.DataObjectName;
-
-      ClassTemplates classTemplates = _manifestGraph.ClassTemplatesList.First();
-      Class manifestClass = classTemplates.Class;
-
-      if (classTemplates != null)
-      {
-        foreach (ClassTemplateMap classTemplatesMap in _mappingGraph.ClassTemplateMaps)
-        {
-          ClassMap classMap = classTemplatesMap.ClassMap;
-
-          if (classMap.ClassId == manifestClass.ClassId)
-          {
-            RecurBuildCrossedGraphMap(manifestClass, classMap);
-          }
-        }
-      }
-    }
-
-    private void RecurBuildCrossedGraphMap(Class manifestClass, ClassMap mappingClass)
-    {
-      List<Template> manifestTemplates = null;
-
-      // find manifest templates for the manifest class
-      foreach (ClassTemplates classTemplates in _manifestGraph.ClassTemplatesList)
-      {
-        if (classTemplates.Class.ClassId == manifestClass.ClassId)
-        {
-          manifestTemplates = classTemplates.Templates;
-        }
-      }
-
-      if (manifestTemplates != null)
-      {
-        // find mapping templates for the mapping class
-        foreach (ClassTemplateMap classTemplateMap in _mappingGraph.ClassTemplateMaps)
-        {
-          ClassMap localMappingClass = classTemplateMap.ClassMap;
-          List<TemplateMap> mappingTemplates = classTemplateMap.TemplateMaps;
-
-          if (localMappingClass.ClassId == manifestClass.ClassId)
-          {
-            ClassMap crossedClass = new ClassMap(localMappingClass);
-            List<TemplateMap> crossedTemplates = new List<TemplateMap>();
-
-            _graphMap.ClassTemplateMaps.Add(
-              new ClassTemplateMap { 
-                ClassMap = crossedClass, 
-                TemplateMaps = crossedTemplates 
-              }
-            );
-
-            foreach (Template manifestTemplate in manifestTemplates)
-            {
-              TemplateMap templateMap = null;
-              bool found = false;
-
-              foreach (TemplateMap mappingTemplate in mappingTemplates)
-              {
-                if (found) break;
-                
-                if (mappingTemplate.TemplateId == manifestTemplate.TemplateId)
-                {
-                  int rolesMatchedCount = 0;
-
-                  foreach (RoleMap roleMap in mappingTemplate.RoleMaps)
-                  {
-                    if (found) break;
-                      
-                    foreach (Role manifestRole in manifestTemplate.Roles)
-                    {
-                      if (manifestRole.RoleId == roleMap.RoleId)
-                      {
-                        if (roleMap.Type == RoleType.Reference && roleMap.ClassMap == null && roleMap.Value == manifestRole.Value)
-                        {
-                          templateMap = mappingTemplate;
-                          found = true;
-                        }
-
-                        rolesMatchedCount++;
-                        break;
-                      }
-                    }
-                  }
-
-                  if (rolesMatchedCount == manifestTemplate.Roles.Count)
-                  {
-                    templateMap = mappingTemplate;
-                  }
-                }                
-              }
-
-              if (templateMap != null)
-              {
-                TemplateMap crossedTemplateMap = new TemplateMap(templateMap);
-                crossedTemplates.Add(crossedTemplateMap);
-
-                // assume that all roles within a template are matched, thus only interested in classMap
-                foreach (Role manifestRole in manifestTemplate.Roles)
-                {
-                  if (manifestRole.Class != null)
-                  {
-                    foreach (RoleMap mappingRole in templateMap.RoleMaps)
-                    {
-                      if (mappingRole.ClassMap != null && mappingRole.ClassMap.ClassId == manifestRole.Class.ClassId)
-                      {
-                        RecurBuildCrossedGraphMap(manifestRole.Class, mappingRole.ClassMap);
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
     #endregion
   }
 }

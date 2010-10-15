@@ -134,8 +134,6 @@
     <Content Include="XML\Queries.xml">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="XML\Repositories.xml" />
-    <Content Include="XML\Scopes.xml" />
     <None Include="App_Data\config.ttl" />
     <None Include="App_Data\default.rq" />
     <None Include="Web.config">
@@ -146,6 +144,7 @@
     <Compile Include="..\AssemblyInfo.cs">
       <Link>AssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="DtoService.cs" />
     <Compile Include="ExchangeService.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -175,6 +174,10 @@
     <ProjectReference Include="..\Libraries\ReferenceDataLibrary\ReferenceDataLibrary.csproj">
       <Project>{F271963F-10B1-4495-B047-BD5A977ED187}</Project>
       <Name>ReferenceDataLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Libraries\UtilityLibrary\Desktop\UtilityLibrary.Desktop.csproj">
+      <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
+      <Name>UtilityLibrary.Desktop</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

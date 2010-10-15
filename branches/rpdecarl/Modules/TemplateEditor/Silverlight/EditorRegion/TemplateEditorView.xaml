@@ -204,7 +204,7 @@
 				        Grid.ColumnSpan="2"
                         Grid.Row="4" 
                         Height="21" 
-                        Width="60" 
+                        Width="45" 
 				        Margin="8,0,0,8" 
                         HorizontalAlignment="Left" 
                         VerticalAlignment="Bottom" 
@@ -216,9 +216,9 @@
 				        Grid.ColumnSpan="2"
                         Grid.Row="4" 
                         Height="21" 
-                        Width="60" 
-				        Margin="136,0,0,8" 
-                        HorizontalAlignment="Left" 
+                        Width="45" 
+				        Margin="0,0,110,8" 
+                        HorizontalAlignment="Right" 
                         VerticalAlignment="Bottom" 
                         IsEnabled="{Binding IsEnabled, Mode=OneWay}"
 				        Content="Add" />
@@ -228,9 +228,9 @@
                         Grid.ColumnSpan="2"
 				        Grid.Row="4" 
                         Height="21" 
-                        Width="60" 
-				        Margin="204,0,0,8" 
-                        HorizontalAlignment="Left" 
+                        Width="55" 
+				        Margin="0,0,50,8" 
+                        HorizontalAlignment="Right" 
                         VerticalAlignment="Bottom"
                         IsEnabled="{Binding IsEnabled, Mode=OneWay}"
 				        Content="Remove" />
@@ -240,9 +240,9 @@
 				        Grid.ColumnSpan="2"
                         Grid.Row="4" 
                         Height="21" 
-                        Width="60" 
-				        Margin="272,0,0,8" 
-                        HorizontalAlignment="Left" 
+                        Width="45" 
+				        Margin="0,0,0,8" 
+                        HorizontalAlignment="Right" 
                         VerticalAlignment="Bottom" 
                         IsEnabled="{Binding IsEnabled, Mode=OneWay}"
 				        Content="Apply" />
@@ -257,7 +257,7 @@
 				Content="{Binding Heading, Mode=OneWay}"/>
         
         <dataInput:Label Content="Target Repository : " Height="20" HorizontalAlignment="Left" Grid.Column="0" Grid.Row="5" />
-        <ComboBox x:Name="cmbRepositories" Grid.Row="5" Margin="0,0,250,0" Grid.Column="0" Grid.ColumnSpan="2" Height="21" FontSize="10" Width="255" HorizontalAlignment="Right"/>
+        <ComboBox x:Name="cmbRepositories" Grid.Row="5" Margin="110,0,0,0" Grid.Column="0" Grid.ColumnSpan="2" Height="21" FontSize="10" Width="200" HorizontalAlignment="Left"/>
         <Button x:Name="btnApply1" 
 			Grid.Column="1" Grid.Row="5" Height="21" Width="73"
 			Margin="0,0,8,0" VerticalAlignment="Center" HorizontalAlignment="Right"  

@@ -7,11 +7,11 @@ Ext.ns('iIRNGTools', 'iIRNGTools.AdapterManager');
 * @author by Gert Jansen van Rensburg
 */
 iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
-  labelWidth: 90, // label settings here cascade unless overridden  
+  labelWidth: 110, // label settings here cascade unless overridden  
   frame: true,
   bodyStyle: 'padding:5px 5px 0',
-  width: 350,
-  height: 260,
+  width: 390,
+  height: 290,
   defaults: { width: 230 },
   defaultType: 'textfield',
 
@@ -29,13 +29,174 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
       cancel: true
     });
 
+    var methodStore = new Ext.data.JsonStore({
+      // store configs
+      autoDestroy: true,
+      url: 'Exchange/Methods',
+      // reader configs
+      root: 'Items',
+      idProperty: 'Name',
+      fields: ['Name', 'Uri']
+    });
+
+    methodStore.load();
+
+    // create the combo instance
+    var cmbMethod = new Ext.form.ComboBox({
+      fieldLabel: 'Exchange Method',
+      name: 'cmbExchangeMethod',
+      typeAhead: true,
+      triggerAction: 'all',
+      lazyRender: true,
+      mode: 'local',
+      store: methodStore,
+      valueField: 'Uri',
+      displayField: 'Name',
+      listeners: {
+        select: function (combo, record, index) {
+          var servicesURI = Ext.getCmp('txtServiceURI').getValue();
+          var endPointURI = Ext.getCmp('txtEndPointURI');
+
+          if (servicesURI.substr(servicesURI.length, 1) != '/') {
+            servicesURI += '/';
+          }
+
+          endPointURI.setValue(servicesURI + record.data.Uri);
+        }
+      }
+    });
+
+    var scopesStore = new Ext.data.JsonStore({
+      // store configs
+      autoDestroy: true,
+      url: 'Scopes',
+      // reader configs
+      root: 'Items',
+      idProperty: 'Name',
+      fields: ['Name', 'Description', 'Applications']
+    });
+
+    var applicationStore = new Ext.data.ArrayStore({
+      // store configs
+      autoDestroy: true,
+      // reader configs
+      id: 0,
+      fields: ['Name', 'Description']
+    });
+
+    var graphsStore = new Ext.data.JsonStore({
+      // store configs
+      autoDestroy: true,
+      url: 'Scopes/Manifest',
+      // reader configs
+      root: 'Items',
+      idProperty: 'Name',
+      fields: ['Name']
+    });
+
+    // create the combo instance
+    var cmbMethod = new Ext.form.ComboBox({
+      fieldLabel: 'Exchange Method',
+      name: 'cmbExchangeMethod',
+      typeAhead: true,
+      triggerAction: 'all',
+      lazyRender: true,
+      mode: 'local',
+      store: methodStore,
+      valueField: 'Uri',
+      displayField: 'Name',
+      listeners: {
+
+        select: function (combo, record, index) {
+          var servicesURI = Ext.getCmp('txtServiceURI').getValue();
+          var endPointURI = Ext.getCmp('txtEndPointURI');
+
+          if (servicesURI.substr(servicesURI.length, 1) != '/') {
+            servicesURI += '/';
+          }
+
+          endPointURI.setValue(servicesURI + record.data.Uri);
+        }
+      }
+    });
+
+    // create the combo instance
+    var cmbScope = new Ext.form.ComboBox({
+      fieldLabel: 'Scope',
+      name: 'cmbScope',
+      typeAhead: true,
+      triggerAction: 'all',
+      lazyRender: true,
+      mode: 'local',
+      store: scopesStore,
+      valueField: 'Name',
+      displayField: 'Name',
+      listeners: {
+        select: function (combo, record, index) {
+          applicationStore.loadData(record.data.Applications);
+        }
+      }
+    });
+
+    // create the combo instance
+    var cmbApplication = new Ext.form.ComboBox({
+      fieldLabel: 'Application',
+      name: 'cmbApplication',
+      typeAhead: true,
+      triggerAction: 'all',
+      lazyRender: true,
+      mode: 'local',
+      store: applicationStore,
+      valueField: 'Name',
+      displayField: 'Name',
+      listeners: {
+        select: function (combo, record, index) {
+          var txt = Ext.getCmp('txtServicesURI');
+
+          graphsStore.load({
+            params: {
+              remote: txtServicesURI.value,
+              scope: cmbScope.value,
+              application: cmbApplication.value
+            }
+          });
+        }
+      }
+    });
+
+    // create the combo instance
+    var cmbGraph = new Ext.form.ComboBox({
+      fieldLabel: 'Graph',
+      name: 'cmbGraph',
+      typeAhead: true,
+      triggerAction: 'all',
+      lazyRender: true,
+      mode: 'local',
+      store: graphStore,
+      valueField: 'Name',
+      displayField: 'Name',
+      listeners: {
+        select: function (combo, record, index) {
+
+        }
+      }
+    });
+
     this.items = [
       {
-        fieldLabel: 'Graph',
-        name: 'graphName',
+        id: 'txtServicesURI',
+        fieldLabel: 'iRING Services URI',
+        name: 'iRINGServicesUri',
+        value: 'http://adcrdlweb/services',
         allowBlank: false
-      }, {
-        fieldLabel: 'Enpoint URI',
+      },
+      cmbMethod,
+      cmbScope,
+      cmbApplication,
+      cmbGraph,
+      {
+        id: 'txtEndPointURI',
+        fieldLabel: 'Endpoint URI',
         name: 'targetEndpointUri',
         allowBlank: false
       }, {
@@ -59,6 +220,7 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
           name: 'username'
         }, {
           fieldLabel: 'Password',
+          inputType: 'password',
           name: 'password'
         }]
       }
@@ -66,8 +228,18 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
 
     this.buttons = [
       {
-        text: 'Transfer',
-        handler: this.onPull,
+        text: 'Fetch',
+        handler: function (btn, ev) {
+          var txt = Ext.getCmp('txtServicesURI');
+
+          scopesStore.load({
+            params: { remote: txt.value }
+          });
+        },
+        scope: this
+      }, {
+        text: 'Exchange',
+        handler: this.onExchange,
         scope: this
       }, {
         text: 'Cancel',
@@ -80,12 +252,12 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
     iIRNGTools.AdapterManager.ExchangePanel.superclass.initComponent.call(this);
   },
 
-  onPull: function (btn, ev) {
-    this.fireEvent('pull', this, this.getForm());   
+  onExchange: function (btn, ev) {
+    this.fireEvent('exchange', this, this.getForm());
   },
 
   onCancel: function (btn, ev) {
-    this.fireEvent('cancel', this, this.getForm());       
+    this.fireEvent('cancel', this, this.getForm());
   }
 
 });

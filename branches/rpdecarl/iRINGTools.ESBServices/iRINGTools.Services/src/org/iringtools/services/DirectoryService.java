@@ -7,11 +7,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-
 import org.apache.log4j.Logger;
-import org.iringtools.exchange.DirectoryProvider;
 import org.iringtools.directory.Directory;
 import org.iringtools.directory.ExchangeDefinition;
+import org.iringtools.services.core.DirectoryProvider;
 
 @Path("/")
 @Produces("application/xml")
@@ -29,8 +28,8 @@ public class DirectoryService
   }
     
   @GET
-  @Path("/exchanges")
-  public Directory getExchangeList()
+  @Path("/directory")
+  public Directory getExchanges()
   {
     Directory directory = null;
     
@@ -38,7 +37,7 @@ public class DirectoryService
     {
       init();
       DirectoryProvider directoryProvider = new DirectoryProvider(settings);
-      directory = directoryProvider.getExchangeList();
+      directory = directoryProvider.getExchanges();
     }
     catch (Exception ex)
     {
@@ -49,8 +48,8 @@ public class DirectoryService
   }
   
   @GET
-  @Path("/exchanges/{id}")
-  public ExchangeDefinition getExchange(@PathParam("id") String id) 
+  @Path("/{scope}/exchanges/{exchangeId}")
+  public ExchangeDefinition getExchange(@PathParam("scope") String scope, @PathParam("exchangeId") String exchangeId) 
   {   
     ExchangeDefinition xDef = null;
     
@@ -58,11 +57,11 @@ public class DirectoryService
     {
       init();
       DirectoryProvider directoryProvider = new DirectoryProvider(settings);
-      xDef = directoryProvider.getExchangeDefinition(id);
+      xDef = directoryProvider.getExchangeDefinition(scope, exchangeId);
     }
     catch (Exception ex)
     {
-      logger.error("Error getting exchange definition for [" + id + "]: " + ex);
+      logger.error("Error getting exchange definition for [" + exchangeId + "]: " + ex);
     }
     
     return xDef;

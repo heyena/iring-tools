@@ -23,6 +23,7 @@ namespace AdapterService.Tests
   {
     private AdapterProvider _adapterProvider = null;
     private ExchangeProvider _exchangeProvider = null;
+    private DtoProvider _dtoProvider = null;
 
     [Dependency]
     public IError Error { get; set; }
@@ -32,8 +33,99 @@ namespace AdapterService.Tests
 
     public AdapterProxy()
     {
+      _dtoProvider = new DtoProvider(ConfigurationManager.AppSettings);
       _adapterProvider = new AdapterProvider(ConfigurationManager.AppSettings);
       _exchangeProvider = new ExchangeProvider(ConfigurationManager.AppSettings);
+    }
+
+    public XDocument GetXml(string projectName, string applicationName, string graphName, string format)
+    {
+      XDocument xDocument = null;
+      try
+      {
+        xDocument = _adapterProvider.GetProjection(projectName, applicationName, graphName, format);
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
+
+      return xDocument;
+    }
+
+    public Response PostXml(string projectName, string applicationName, string graphName, string format, XDocument xDocument)
+    {
+      Response response = null;
+      try
+      {
+        response = _adapterProvider.Post(projectName, applicationName, graphName, format, xDocument);
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
+
+      return response;
+    }
+
+    public XDocument GetIndividualXml(string projectName, string applicationName, string graphName, string identifier, string format)
+    {
+      XDocument xDocument = null;
+      try
+      {
+        xDocument = _adapterProvider.GetProjection(projectName, applicationName, graphName, identifier, format);
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
+
+      return xDocument;
+    }
+
+    public Response DeleteIndividualXml(string projectName, string applicationName, string graphName, string identifier)
+    {
+      Response response = null;
+      try
+      {
+        response = _adapterProvider.DeleteIndividual(projectName, applicationName, graphName, identifier);
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
+
+      return response;
+    }
+
+    public Response DeleteAll(string projectName, string applicationName)
+    {
+      Response response = null;
+      try
+      {
+        response = _adapterProvider.DeleteAll(projectName, applicationName);
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
+
+      return response;
+    }
+
+    public Response RefreshAll(string projectName, string applicationName)
+    {
+      Response response = null;
+      try
+      {
+        response = _adapterProvider.RefreshAll(projectName, applicationName);
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
+
+      return response;
     }
 
     public Mapping GetMapping(string projectName, string applicationName)
@@ -82,22 +174,7 @@ namespace AdapterService.Tests
       return response;
     }
 
-    public XElement GetXml(string projectName, string applicationName, string graphName, string format)
-    {
-      XElement xElement = null;
-      try
-      {
-        xElement = _adapterProvider.GetProjection(projectName, applicationName, graphName, format, null);
-      }
-      catch (Exception ex)
-      {
-        Error.SetError(ex);
-      }
-
-      return xElement;
-    }
-
-    public IList<IDataObject> GetDataObject(string projectName, string applicationName, string graphName, string format, XElement xml)
+    public IList<IDataObject> GetDataObject(string projectName, string applicationName, string graphName, string format, XDocument xml)
     {
       IList<IDataObject> dataObjects = null;
       try
@@ -112,42 +189,12 @@ namespace AdapterService.Tests
       return dataObjects;
     }
 
-    public Response ClearAll(string projectName, string applicationName)
-    {
-      Response response = null;
-      try
-      {
-        response = _adapterProvider.DeleteAll(projectName, applicationName);
-      }
-      catch (Exception ex)
-      {
-        Error.SetError(ex);
-      }
-
-      return response;
-    }
-
     public Response RefreshGraph(string projectName, string applicationName, string graphName)
     {
       Response response = null;
       try
       {
         response = _adapterProvider.Refresh(projectName, applicationName, graphName);
-      }
-      catch (Exception ex)
-      {
-        Error.SetError(ex);
-      }
-
-      return response;
-    }
-
-    public Response RefreshAll(string projectName, string applicationName)
-    {
-      Response response = null;
-      try
-      {
-        response = _adapterProvider.RefreshAll(projectName, applicationName);
       }
       catch (Exception ex)
       {
@@ -202,12 +249,12 @@ namespace AdapterService.Tests
       return response;
     }
 
-    public Response Post(string projectName, string applicationName, string graphName, string format, XElement xml)
+    public Response PostDTO(string projectName, string applicationName, string graphName, DataTransferObjects dto)
     {
       Response response = null;
       try
       {
-        response = _adapterProvider.Post(projectName, applicationName, graphName, format, xml);
+        response = _dtoProvider.PostDataTransferObjects(projectName, applicationName, graphName, dto);
       }
       catch (Exception ex)
       {
@@ -230,21 +277,6 @@ namespace AdapterService.Tests
       }
 
       return scopes;
-    }
-
-    public Manifest GetManifest(string projectName, string applicationName)
-    {
-      Manifest manifest = null;
-      try
-      {
-        manifest = _adapterProvider.GetManifest(projectName, applicationName);
-      }
-      catch (Exception ex)
-      {
-        Error.SetError(ex);
-      }
-
-      return manifest;
     }
   }
 }

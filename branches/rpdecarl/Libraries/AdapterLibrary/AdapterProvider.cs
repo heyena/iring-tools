@@ -45,6 +45,8 @@ using VDS.RDF.Query;
 using org.iringtools.adapter.projection;
 using org.iringtools.common.mapping;
 using org.iringtools.protocol.manifest;
+using System.ServiceModel;
+using System.Security.Principal;
 
 namespace org.iringtools.adapter
 {
@@ -85,6 +87,12 @@ namespace org.iringtools.adapter
 
       Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
 
+      if (ServiceSecurityContext.Current != null)
+      {
+          IIdentity identity = ServiceSecurityContext.Current.PrimaryIdentity;
+          _settings["UserName"] = identity.Name;
+      }
+
       #region initialize webHttpClient for converting old mapping
       string proxyHost = _settings["ProxyHost"];
       string proxyPort = _settings["ProxyPort"];
@@ -93,13 +101,9 @@ namespace org.iringtools.adapter
       if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
       {
         WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
-        WebProxyCredentials proxyCrendentials = _settings.GetProxyCredentials();
-
-        if (proxyCrendentials != null)
-        {
-          webProxy.Credentials = proxyCrendentials.GetNetworkCredential();
-        }
-
+        
+        webProxy.Credentials = _settings.GetProxyCredential();
+        
         _webHttpClient = new WebHttpClient(rdsUri, null, webProxy);
       }
       else
@@ -273,112 +277,7 @@ namespace org.iringtools.adapter
     }
     #endregion
 
-    #region adapter methods
-    public Manifest GetManifest(string projectName, string applicationName)
-    {
-      string path = string.Format("{0}Mapping.{1}.{2}.xml", _settings["XmlPath"], projectName, applicationName);
-
-      try
-      {
-        InitializeScope(projectName, applicationName);
-        Manifest manifest = new Manifest();
-        
-        if (File.Exists(path))
-        {
-          DataDictionary dataDictionary = GetDictionary(projectName, applicationName);
-
-          foreach (GraphMap graphMap in _mapping.GraphMaps)
-          {
-            Graph manifestGraph = new Graph { Name = graphMap.Name };
-            manifest.Graphs.Add(manifestGraph);
-
-            string dataObjectName = graphMap.DataObjectName;
-            DataObject dataObject = null;
-
-            foreach (DataObject dataObj in dataDictionary.dataObjects)
-            {
-              if (dataObj.objectName == dataObjectName)
-              {
-                dataObject = dataObj;
-                break;
-              }
-            }
-
-            if (dataObject != null)
-            {
-              foreach (ClassTemplateMap classTemplateMap in graphMap.ClassTemplateMaps)
-              {
-                ClassTemplates manifestClassTemplates = new ClassTemplates();
-                manifestGraph.ClassTemplatesList.Add(manifestClassTemplates);
-
-                ClassMap classMap = classTemplateMap.ClassMap;
-                List<TemplateMap> templateMaps = classTemplateMap.TemplateMaps;//.ToList<TemplateMap>();
-
-                Class manifestClass = new Class
-                {
-                  ClassId = classMap.ClassId,
-                  Name = classMap.Name,
-                };
-                manifestClassTemplates.Class = manifestClass;
-
-                foreach (TemplateMap templateMap in templateMaps)
-                {
-                  Template manifestTemplate = new Template 
-                  {
-                    TemplateId = templateMap.TemplateId,
-                    Name = templateMap.Name,
-                    TransferOption = TransferOption.Desired,
-                  };
-                  manifestClassTemplates.Templates.Add(manifestTemplate);
-
-                  foreach (RoleMap roleMap in templateMap.RoleMaps)
-                  {
-                    Role manifestRole = new Role
-                    {
-                      Type = roleMap.Type,
-                      RoleId = roleMap.RoleId,
-                      Name = roleMap.Name,
-                      DataType = roleMap.DataType,
-                      Value = roleMap.Value,
-                    };
-                    manifestTemplate.Roles.Add(manifestRole);
-
-                    if (roleMap.Type == RoleType.Property)
-                    {
-                      string[] property = roleMap.PropertyName.Split('.');
-                      string objectName = property[0].Trim();
-                      string propertyName = property[1].Trim();
-
-                      if (dataObject.isKeyProperty(propertyName))
-                      {
-                        manifestTemplate.TransferOption = TransferOption.Required;
-                      }
-                    }
-
-                    if (roleMap.ClassMap != null)
-                    {
-                      manifestRole.Class = new Class
-                      {
-                        ClassId = roleMap.ClassMap.ClassId,
-                        Name = roleMap.ClassMap.Name,
-                      };
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-        
-        return manifest;        
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(string.Format("Error in GetManifest: {0}", ex));
-        throw new Exception(string.Format("Error getting manifest from path [{0}: {1}", path, ex));
-      }
-    }
-
+    #region adapter methods    
     public DataDictionary GetDictionary(string projectName, string applicationName)
     {
       try
@@ -560,8 +459,7 @@ namespace org.iringtools.adapter
       return _response;
     }
 
-    public XElement GetProjection(string projectName, string applicationName, string graphName, string identifier, string format, 
-      NameValueCollection filterParams)
+    public XDocument GetProjection(string projectName, string applicationName, string graphName, string identifier, string format)
     {
       try
       {
@@ -590,14 +488,10 @@ namespace org.iringtools.adapter
       }
     }
 
-    public XElement GetProjection(
-      string projectName, string applicationName, string graphName, string format,
-      NameValueCollection filterParams)
+    public XDocument GetProjection(string projectName, string applicationName, string graphName, string format)
     {
       try
       {
-        _filterParams = filterParams;
-
         InitializeScope(projectName, applicationName);
         InitializeDataLayer();
 
@@ -620,7 +514,7 @@ namespace org.iringtools.adapter
       }
     }
 
-    public IList<IDataObject> GetDataObjects(string projectName, string applicationName, string graphName, string format, XElement xml)
+    public IList<IDataObject> GetDataObjects(string projectName, string applicationName, string graphName, string format, XDocument xDocument)
     {
         InitializeScope(projectName, applicationName);
         InitializeDataLayer();
@@ -634,7 +528,7 @@ namespace org.iringtools.adapter
             _projectionEngine = _kernel.Get<IProjectionLayer>(_settings["DefaultProjectionFormat"]);
         }
 
-        IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xml);
+        IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xDocument);
 
         return dataObjects;
     }
@@ -694,8 +588,7 @@ namespace org.iringtools.adapter
       return _response;
     }
 
-    // handle data exchange objects (data transfer objects with transfer types filled)
-    public Response Post(string projectName, string applicationName, string graphName, string format, XElement xml)
+    public Response Post(string projectName, string applicationName, string graphName, string format, XDocument xml)
     {
       Response response = null;
 
@@ -708,14 +601,44 @@ namespace org.iringtools.adapter
         IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xml);
         response = _dataLayer.Post(dataObjects);
 
-        if (format.ToLower() == "dxo")
+        response.DateTimeStamp = DateTime.Now;
+        response.Level = StatusLevel.Success;
+      }
+      catch (Exception ex)
+      {
+        if (response == null)
         {
-          GraphMap graphMap = _mapping.FindGraphMap(graphName);
-          
-          DxoProjectionEngine dxoProjectionEngine = ((DxoProjectionEngine)_projectionEngine);
-          IList<string> deletingIdentifiers = dxoProjectionEngine.GetDeletingIdentifiers(graphName, ref xml);
-          response.Append(_dataLayer.Delete(graphMap.DataObjectName, deletingIdentifiers));
+          response = new Response();
         }
+
+        Status status = new Status
+        {
+          Level = StatusLevel.Error,
+          Messages = new Messages { ex.Message },
+        };
+
+        response.DateTimeStamp = DateTime.Now;
+        response.Level = StatusLevel.Error;
+        response.StatusList.Add(status);
+      }
+
+      return response;
+    }
+
+
+    public Response DeleteIndividual(string projectName, string applicationName, string graphName, string identifier)
+    {
+      Response response = null;
+
+      try
+      {
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
+
+        GraphMap graphMap = _mapping.FindGraphMap(graphName);
+
+        string objectType = graphMap.DataObjectName;
+        response = _dataLayer.Delete(objectType, new List<String> { identifier });
 
         response.DateTimeStamp = DateTime.Now;
         response.Level = StatusLevel.Success;
@@ -752,11 +675,11 @@ namespace org.iringtools.adapter
           bool isScopeValid = false;
           foreach (ScopeProject project in _scopes)
           {
-            if (project.Name == projectName)
+            if (project.Name.ToUpper() == projectName.ToUpper())
             {
               foreach (ScopeApplication application in project.Applications)
               {
-                if (application.Name == applicationName)
+                if (application.Name.ToUpper() == applicationName.ToUpper())
                 {
                   isScopeValid = true;
                 }
@@ -866,7 +789,7 @@ namespace org.iringtools.adapter
 
       LoadDataObjectSet(graphName, null);
 
-      XElement rdf = _projectionEngine.ToXml(graphName, ref _dataObjects);
+      XDocument rdf = _projectionEngine.ToXml(graphName, ref _dataObjects);
 
       return _semanticEngine.Refresh(graphName, rdf);
     }
@@ -1117,30 +1040,31 @@ namespace org.iringtools.adapter
     //      newRoleMap.roleId = roleMap.Attribute("roleId").Value;
     //      newRoleMap.name = roles[newRoleMap.roleId];
 
-    //      if (!String.IsNullOrEmpty(value))
-    //      {
-    //        newRoleMap.type = RoleType.FixedValue;
-    //        newRoleMap.value = value;
-    //      }
-    //      else if (!String.IsNullOrEmpty(reference))
-    //      {
-    //        newRoleMap.type = RoleType.Reference;
-    //        newRoleMap.value = reference;
-    //      }
-    //      else if (!String.IsNullOrEmpty(propertyName))
-    //      {
-    //        newRoleMap.type = RoleType.Property;
-    //        newRoleMap.propertyName = dataObjectMap + "." + propertyName;
+          //if (!String.IsNullOrEmpty(value))
+          //{
+          //  newRoleMap.type = RoleType.FixedValue;
+          //  newRoleMap.value = value;
+          //}
+          //else if (!String.IsNullOrEmpty(reference))
+          //{
+          //  newRoleMap.type = RoleType.Reference;
+          //  newRoleMap.value = reference;
+          //}
+          //else if (!String.IsNullOrEmpty(propertyName))
+          //{
+          //  newRoleMap.propertyName = dataObjectMap + "." + propertyName;
 
-    //        if (!String.IsNullOrEmpty(valueList))
-    //        {
-    //          newRoleMap.valueList = valueList;
-    //        }
-    //        else
-    //        {
-    //          newRoleMap.dataType = roleMap.Attribute("dataType").Value;
-    //        }
-    //      }
+          //  if (!String.IsNullOrEmpty(valueList))
+          //  {
+          //    newRoleMap.type = RoleType.ObjectProperty;
+          //    newRoleMap.valueList = valueList;
+          //  }
+          //  else
+          //  {
+          //    newRoleMap.type = RoleType.DataProperty;
+          //    newRoleMap.dataType = roleMap.Attribute("dataType").Value;
+          //  }
+          //}
 
     //      if (roleMap.HasElements)
     //      {

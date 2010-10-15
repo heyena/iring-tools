@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using org.iringtools.utility;
+using System.Net;
 
 namespace org.iringtools.library
 {
@@ -26,7 +27,12 @@ namespace org.iringtools.library
       }
     }
 
-    public WebProxyCredentials GetProxyCredentials()
+    public NetworkCredential GetProxyCredential()
+    {
+      return GetWebProxyCredentials().GetNetworkCredential();
+    }
+
+    public WebProxyCredentials GetWebProxyCredentials()
     {
       WebProxyCredentials proxyCredentials = null;
 

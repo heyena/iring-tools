@@ -2,15 +2,15 @@
 <web-app>
   <context-param>
     <param-name>directoryServiceUri</param-name>
-    <param-value>http://localhost:8080/iringtools/services/dirsvc</param-value>
+    <param-value>http://localhost:8080/iringtools/services/dir</param-value>
   </context-param>
   <context-param>
     <param-name>differencingServiceUri</param-name>
-    <param-value>http://localhost:8080/iringtools/services/diffsvc</param-value>
+    <param-value>http://localhost:8080/iringtools/services/diff</param-value>
   </context-param>
   <context-param>
     <param-name>poolSize</param-name>
-    <param-value>1000</param-value>
+    <param-value>3</param-value>
   </context-param>
   <context-param>
     <param-name>contextConfigLocation</param-name>

@@ -3,7 +3,7 @@
            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
            xmlns:controls="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls"
            xmlns:dataInput="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Data.Input"
-           Width="300" Height="400" 
+           Width="600" Height="400" 
            Title="Role Range/Value and Restrictions">
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
@@ -44,11 +44,23 @@
                         Height="22"
                         Grid.Column="1" 
                         Grid.Row="0"
+                        Margin="0,0,112,0"
 		                VerticalAlignment="Center"                        
                         ItemsSource="{Binding Ranges, Mode=TwoWay}"
                         DisplayMemberPath="Value"                        
                         SelectedItem="{Binding RoleRange, Mode=TwoWay}"/>
                     <!--IsEnabled="{Binding HasRange}"-->
+
+                    <Button 
+                        x:Name="Btn_UseSelectedItem" 
+                        Grid.Column="1" 
+                        Grid.Row="0"
+                        Content="Use Selected Item" 
+                        Click="BtnUseSelectedItem_Click" 
+                        Width="110" 
+                        Height="22" 
+                        HorizontalAlignment="Right"                         
+                        />
 
                     <RadioButton
                         x:Name="radRoleValue"
@@ -136,7 +148,7 @@
                 <Grid Margin="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
 
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="90"/>
+                        <ColumnDefinition Width="100"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
@@ -168,7 +180,7 @@
                         Height="22"
                         Grid.Column="1" 
                         Grid.Row="2"
-		                VerticalAlignment="Center"                        
+                        VerticalAlignment="Center"                        
                         IsEnabled="{Binding IsBaseTemplate, Mode=OneWay}"
                         ItemsSource="{Binding RestrictionTypes, Mode=TwoWay}"
                         DisplayMemberPath="Value"
@@ -194,23 +206,21 @@
                         Grid.Row="4" 
                         Height="21" 
                         Width="60" 
-				        Margin="90,0,0,8" 
+				        Margin="100,0,0,8" 
                         HorizontalAlignment="Left"
                         VerticalAlignment="Bottom"
                         IsEnabled="{Binding IsBaseTemplate}"
 				        Content="Add" />
 
                     <Button 
-                        x:Name="removeRestriction" 
-                        Grid.ColumnSpan="2"
-				        Grid.Row="4" 
+                        x:Name="removeRestriction" Grid.Row="4" 
                         Height="21" 
                         Width="60" 
-				        Margin="150,0,0,8" 
-                        HorizontalAlignment="Left" 
+				        Margin="0,0,339,8" 
+                        HorizontalAlignment="Right" 
                         VerticalAlignment="Bottom"
                         IsEnabled="{Binding IsRestrictionSelected}"
-				        Content="Remove" />
+				        Content="Remove" Grid.Column="1" />
 
                 </Grid>
             </Border>

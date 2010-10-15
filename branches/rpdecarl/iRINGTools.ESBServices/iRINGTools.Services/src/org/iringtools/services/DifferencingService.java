@@ -1,6 +1,7 @@
 package org.iringtools.services;
 
 import java.util.Hashtable;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -9,9 +10,9 @@ import javax.ws.rs.Produces;
 import org.apache.log4j.Logger;
 import org.iringtools.adapter.dti.DataTransferIndices;
 import org.iringtools.adapter.dto.DataTransferObjects;
-import org.iringtools.exchange.DifferencingProvider;
-import org.iringtools.exchange.DxiRequest;
-import org.iringtools.exchange.DxoRequest;
+import org.iringtools.common.request.DiffDtiRequest;
+import org.iringtools.common.request.DiffDtoRequest;
+import org.iringtools.services.core.DifferencingProvider;
 
 @Path("/")
 @Produces("application/xml")
@@ -29,46 +30,46 @@ public class DifferencingService
   }
   
   @POST
-  @Path("/dxi")
-  public DataTransferIndices diff(DxiRequest dxiRequest)
+  @Path("/dti")
+  public DataTransferIndices diff(DiffDtiRequest diffDtiRequest)
   {
-    DataTransferIndices indices = null;
+    DataTransferIndices diffDtis = null;
     
     try
     {
-      DataTransferIndices sourceDtis = dxiRequest.getSourceDataTransferIndicies();
-      DataTransferIndices targetDtis = dxiRequest.getTargetDataTransferIndicies();
+      DataTransferIndices sourceDtis = diffDtiRequest.getSourceDataTransferIndicies();
+      DataTransferIndices targetDtis = diffDtiRequest.getTargetDataTransferIndicies();
       
       DifferencingProvider diffProvider = new DifferencingProvider(settings);
-      indices = diffProvider.diff(sourceDtis, targetDtis);
+      diffDtis = diffProvider.diff(sourceDtis, targetDtis);
     }
     catch (Exception ex)
     {
       logger.error("Error while comparing data transfer indices: " + ex);
     }
     
-    return indices;
+    return diffDtis;
   }
   
   @POST
-  @Path("/dxo")
-  public DataTransferObjects diff(DxoRequest dxoRequest)
+  @Path("/dto")
+  public DataTransferObjects diff(DiffDtoRequest diffDtoRequest)
   {
-    DataTransferObjects diffDtoList = null;
+    DataTransferObjects diffDtos = null;
     
     try
     {    
-      DataTransferObjects sourceDtos = dxoRequest.getSourceDataTransferObjects(); 
-      DataTransferObjects targetDtos = dxoRequest.getTargetDataTransferObjects();
+      DataTransferObjects sourceDtos = diffDtoRequest.getSourceDataTransferObjects(); 
+      DataTransferObjects targetDtos = diffDtoRequest.getTargetDataTransferObjects();
       
       DifferencingProvider diffProvider = new DifferencingProvider(settings);
-      diffDtoList = diffProvider.diff(sourceDtos, targetDtos);
+      diffDtos = diffProvider.diff(sourceDtos, targetDtos);
     }
     catch (Exception ex)
     {
       logger.error("Error while comparing data transfer objects: " + ex);
     }
     
-    return diffDtoList;
+    return diffDtos;
   }
 }

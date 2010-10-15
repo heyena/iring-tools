@@ -13,8 +13,6 @@ using org.iringtools.library.manifest;
 using org.iringtools.utility;
 using org.iringtools.client.Models;
 
-
-
 namespace org.iringtools.client.Controllers
 {
   public class ScopesController : Controller
@@ -35,130 +33,124 @@ namespace org.iringtools.client.Controllers
     
     public JsonResult Index()
     {
-      Uri address = new Uri(_adapterServiceURI + "/scopes");
+      string format = String.Empty;
+      string adapterServiceURI = _adapterServiceURI;
 
-      WebClient webClient = new WebClient();
-      string result = webClient.DownloadString(address);
+      if (Request.QueryString["format"] != null)
+        format = Request.QueryString["format"].ToUpper();
 
-      List<ScopeProject> scopes = result.DeserializeDataContract<List<ScopeProject>>();
+      if (Request.QueryString["remote"] != null)
+        adapterServiceURI = Request.QueryString["remote"];
 
-      List<ScopeTreeNode> nodes = new List<ScopeTreeNode>();
+      WebHttpClient client = new WebHttpClient(adapterServiceURI);
+      List<ScopeProject> scopes = client.Get<List<ScopeProject>>("/scopes");
 
-      foreach (ScopeProject scope in scopes)
+      switch (format)
       {
+        case "TREE":
+          {
+            List<ScopeTreeNode> nodes = new List<ScopeTreeNode>();
 
-        ScopeTreeNode nodeScope = new ScopeTreeNode(scope);
+            foreach (ScopeProject scope in scopes)
+            {
 
-        nodes.Add(nodeScope);
+              ScopeTreeNode nodeScope = new ScopeTreeNode(scope);
 
-        foreach (ScopeApplication app in scope.Applications)
-        {
-          ApplicationTreeNode nodeApp = new ApplicationTreeNode(app);
-          nodeScope.children.Add(nodeApp);
-        }
-      }
+              nodes.Add(nodeScope);
 
-      return Json(nodes, JsonRequestBehavior.AllowGet);    
-    }
+              foreach (ScopeApplication app in scope.Applications)
+              {
+                ApplicationTreeNode nodeApp = new ApplicationTreeNode(app);
+                nodeScope.children.Add(nodeApp);
+              }
+            }
 
-    //
-    // GET: /Scopes/Details/{scope}/{application}
-
-    public JsonResult Details(string scope, string application)
-    {
-      return Json(null, JsonRequestBehavior.AllowGet);
-    }    
-
-    //
-    // GET: /Scopes/Create
-    
-    public JsonResult Create()
-    {
-      return Json(null, JsonRequestBehavior.AllowGet);
-    }
-
-    //
-    // POST: /Scopes/Create
-
-    [HttpPost]
-    public JsonResult Create(FormCollection collection)
-    {
-      try
-      {
-        // TODO: Add insert logic here
-
-        //return RedirectToAction("Index");
-        return Json(null, JsonRequestBehavior.AllowGet);
-      }
-      catch
-      {
-        return Json(null, JsonRequestBehavior.AllowGet);
+            return Json(nodes, JsonRequestBehavior.AllowGet);
+          }
+        default:
+          {
+            JsonContainer<List<ScopeProject>> container = new JsonContainer<List<ScopeProject>>();
+            container.Items = scopes;
+            container.Total = scopes.Count;
+            container.Success = true;
+            return Json(container, JsonRequestBehavior.AllowGet);
+          }
       }
     }
 
     //
-    // GET: /Scopes/Edit/5
-    
-    public JsonResult Edit(int id)
+    // Get: Scopes/Binding?scope={scope}&application={application}
+
+    public ActionResult Binding()
     {
-      return Json(null, JsonRequestBehavior.AllowGet);
+      string scope = Request.QueryString["scope"];
+      string application = Request.QueryString["application"];
+            
+      WebClient client = new WebClient();
+      string request = client.DownloadString(String.Format(_adapterServiceURI+"/{0}/{1}/binding", scope, application));
+
+      return this.Content(request, "text/xml");
     }
+
 
     //
-    // POST: /Scopes/Edit/5
+    // Get: Scopes/Manifest?scope={scope}&application={application}
 
-    [HttpPost]
-    public JsonResult Edit(int id, FormCollection collection)
+    public JsonResult Manifest()
     {
-      try
-      {
-        // TODO: Add update logic here
+      string adapterServiceURI = _adapterServiceURI;
 
-        //return RedirectToAction("Index");
-        return Json(null, JsonRequestBehavior.AllowGet);
-      }
-      catch
-      {
-        return Json(null, JsonRequestBehavior.AllowGet);
-      }
-    }
+      if (Request.QueryString["remote"] != null)
+        adapterServiceURI = Request.QueryString["remote"];
 
-    //
-    // GET: /Scopes/Delete/5
+      string scope = Request.QueryString["scope"];
+      string application = Request.QueryString["application"];
 
-    public JsonResult Delete(int id)
-    {
-      return Json(null, JsonRequestBehavior.AllowGet);
-    }
+      JsonContainer<List<Graph>> container = new JsonContainer<List<Graph>>();
 
-    //
-    // POST: /Scopes/Delete/5
-
-    [HttpPost]
-    public JsonResult Delete(int id, FormCollection collection)
-    {
-      try
-      {
-        // TODO: Add delete logic here
-
-        //return RedirectToAction("Index");
-        return Json(null, JsonRequestBehavior.AllowGet);
-      }
-      catch
-      {
-        return Json(null, JsonRequestBehavior.AllowGet);
-      }
-    }
-
-    public JsonResult Graphs(string scope, string application)
-    {
-      JsonContainer<Graph> container = new JsonContainer<Graph>();
-
-      WebHttpClient client = new WebHttpClient(_adapterServiceURI);
+      WebHttpClient client = new WebHttpClient(adapterServiceURI);
       Manifest manifest = client.Get<Manifest>(String.Format("/{0}/{1}/manifest", scope, application));
-
+            
       container.Items = manifest.Graphs;
       container.Total = manifest.Graphs.Count;
+
+      return Json(container, JsonRequestBehavior.AllowGet);
+    }
+
+    //
+    // Get: Scopes/Mapping?scope={scope}&application={application}
+
+    public JsonResult Mapping()
+    {
+      string scope = Request.QueryString["scope"];
+      string application = Request.QueryString["application"];
+
+      JsonContainer<List<GraphMap>> container = new JsonContainer<List<GraphMap>>();
+
+      WebHttpClient client = new WebHttpClient(_adapterServiceURI);
+      Mapping mapping = client.Get<Mapping>(String.Format("/{0}/{1}/mapping", scope, application));
+            
+      container.Items = mapping.graphMaps;
+      container.Total = mapping.graphMaps.Count;
+
+      return Json(container, JsonRequestBehavior.AllowGet);
+    }
+
+    //
+    // Get: Scopes/Dictionary?scope={scope}&application={application}
+
+    public JsonResult Dictionary()
+    {
+      string scope = Request.QueryString["scope"];
+      string application = Request.QueryString["application"];
+
+      JsonContainer<List<DataObject>> container = new JsonContainer<List<DataObject>>();
+      
+      WebHttpClient client = new WebHttpClient(_adapterServiceURI);
+      DataDictionary dictionary = client.Get<DataDictionary>(String.Format("/{0}/{1}/dictionary", scope, application));
+                        
+      container.Items = dictionary.dataObjects;
+      container.Total = dictionary.dataObjects.Count;
 
       return Json(container, JsonRequestBehavior.AllowGet);
     }

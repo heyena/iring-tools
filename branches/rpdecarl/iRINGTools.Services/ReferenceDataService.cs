@@ -149,10 +149,10 @@ namespace org.iringtools.services
     /// </summary>
     //[XmlSerializerFormat]
     [Description("return class details")]
-    [WebGet(UriTemplate = "/classes/{id}")]
-    public QMXF GetClass(string id)
+    [WebGet(UriTemplate = "/classes/{id}?namespace={namespace}")]
+    public QMXF GetClass(string id, string @namespace)
     {
-      return _referenceDataProvider.GetClass(id);
+      return _referenceDataProvider.GetClass(id, @namespace);
     }
 
     /// <summary>

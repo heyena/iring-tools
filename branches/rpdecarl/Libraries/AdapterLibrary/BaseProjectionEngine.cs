@@ -86,26 +86,12 @@ namespace org.iringtools.adapter.projection
       _classIdentifiers = new Dictionary<string, List<string>>();
     }
 
-    public abstract XElement ToXml(string graphName, ref IList<IDataObject> dataObjects);
-    public abstract IList<IDataObject> ToDataObjects(string graphName, ref XElement xml);
+    public abstract XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects);
+    public abstract IList<IDataObject> ToDataObjects(string graphName, ref XDocument xDocument);
 
-    protected void SetClassIdentifiers(DataDirection direction)
-    {
-      switch (direction)
-      {
-        case DataDirection.Outbound:
-          SetOutboundClassIdentifiers();
-          break;
-
-        case DataDirection.InboundSparql:
-          SetInboundSparqlClassIdentifiers();
-          break;
-      }
-    }
-
+    //propertyPath = "Instrument.LineItems.Tag";
     protected List<IDataObject> GetRelatedObjects(string propertyPath, IDataObject dataObject)
     {
-      //propertyPath = "Instrument.LineItems.Tag";
       List<IDataObject> parentObjects = new List<IDataObject>();
       string[] objectPath = propertyPath.Split('.');
 
@@ -242,104 +228,21 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    protected void CreateDataObjects(string classId, string classInstance, int dataObjectIndex)
+    protected void SetClassIdentifiers(DataDirection direction)
     {
-      ClassTemplateMap classTemplateMap = _graphMap.GetClassTemplateMap(classId);
-      List<TemplateMap> templateMaps = classTemplateMap.TemplateMaps;
-
-      foreach (TemplateMap templateMap in templateMaps)
+      switch (direction)
       {
-        string possessorRoleId = String.Empty;
-        RoleMap referenceRole = null;
-        RoleMap classRole = null;
-        List<RoleMap> propertyRoleMaps = new List<RoleMap>();
+        case DataDirection.Outbound:
+          SetOutboundClassIdentifiers();
+          break;
 
-        // find property roleMaps
-        foreach (RoleMap roleMap in templateMap.RoleMaps)
-        {
-          switch (roleMap.Type)
-          {
-            case RoleType.Possessor:
-              possessorRoleId = roleMap.RoleId;
-              break;
+        case DataDirection.InboundSparql:
+          SetInboundSparqlClassIdentifiers();
+          break;
 
-            case RoleType.Reference:
-              if (roleMap.ClassMap != null)
-                classRole = roleMap;
-              else
-                referenceRole = roleMap;
-              break;
-
-            case RoleType.Property:
-              propertyRoleMaps.Add(roleMap);
-              break;
-          }
-        }
-
-        if (classRole != null)
-        {
-          string query = String.Format(SUBCLASS_INSTANCE_QUERY_TEMPLATE, _graphBaseUri, possessorRoleId, classInstance,
-              templateMap.TemplateId, referenceRole.RoleId, referenceRole.Value, classRole.RoleId);
-
-          object results = _memoryStore.ExecuteQuery(query);
-
-          if (results is SparqlResultSet)
-          {
-            SparqlResultSet resultSet = (SparqlResultSet)results;
-
-            foreach (SparqlResult result in resultSet)
-            {
-              string subclassInstance = result.ToString().Remove(0, ("?class = " + _graphBaseUri).Length);
-              CreateDataObjects(classRole.ClassMap.ClassId, subclassInstance, dataObjectIndex);
-              break;  // should be one result only
-            }
-          }
-        }
-        else // query for property roleMaps values
-        {
-          foreach (RoleMap roleMap in propertyRoleMaps)
-          {
-            string query = String.Format(LITERAL_QUERY_TEMPLATE, _graphBaseUri, possessorRoleId, classInstance,
-                templateMap.TemplateId, referenceRole.RoleId, referenceRole.Value, roleMap.RoleId);
-
-            object results = _memoryStore.ExecuteQuery(query);
-
-            if (results is SparqlResultSet)
-            {
-              string[] propertyPath = roleMap.PropertyName.Split('.');
-              string property = propertyPath[propertyPath.Length - 1].Trim();
-              List<string> values = new List<string>();
-
-              SparqlResultSet resultSet = (SparqlResultSet)results;
-
-              foreach (SparqlResult result in resultSet)
-              {
-                string value = Regex.Replace(result.ToString(), @".*= ", String.Empty);
-
-                if (value == RDF_NIL)
-                  value = String.Empty;
-                else if (value.Contains("^^"))
-                  value = value.Substring(0, value.IndexOf("^^"));
-                else if (!String.IsNullOrEmpty(roleMap.ValueListName))
-                  value = _mapping.ResolveValueMap(roleMap.ValueListName, value);
-
-                if (propertyPath.Length > 2)
-                {
-                  values.Add(value);
-                }
-                else
-                {
-                  _dataObjects[dataObjectIndex].SetPropertyValue(property, value);
-                }
-              }
-
-              if (propertyPath.Length > 2)
-              {
-                SetObjects(dataObjectIndex, roleMap.PropertyName, values);
-              }
-            }
-          }
-        }
+        case DataDirection.InboundDto:
+          SetInboundDtoClassIdentifiers();
+          break;
       }
     }
 
@@ -367,7 +270,7 @@ namespace org.iringtools.adapter.projection
               }
               else
               {
-                identifiers[i] += classMap.IdentifierDelimeter + value;
+                identifiers[i] += classMap.IdentifierDelimiter + value;
               }
             }
           }
@@ -389,7 +292,7 @@ namespace org.iringtools.adapter.projection
                 }
                 else
                 {
-                  identifiers[i] += classMap.IdentifierDelimeter + value;
+                  identifiers[i] += classMap.IdentifierDelimiter + value;
                 }
               }
             }
@@ -437,6 +340,64 @@ namespace org.iringtools.adapter.projection
             }
           }
         }
+      }
+    }
+
+    protected void SetInboundDtoClassIdentifiers()
+    {
+      _classIdentifiers.Clear();
+
+      foreach (ClassTemplateMap classTemplateMap in _graphMap.ClassTemplateMaps)
+      {
+        ClassMap classMap = classTemplateMap.ClassMap;
+
+        List<string> classIdentifiers = new List<string>();
+
+        foreach (string identifier in classMap.Identifiers)
+        {
+          // identifier is a fixed value
+          if (identifier.StartsWith("#") && identifier.EndsWith("#"))
+          {
+            string value = identifier.Substring(1, identifier.Length - 2);
+
+            for (int i = 0; i < _dataObjects.Count; i++)
+            {
+              if (classIdentifiers.Count == i)
+              {
+                classIdentifiers.Add(value);
+              }
+              else
+              {
+                classIdentifiers[i] += classMap.IdentifierDelimiter + value;
+              }
+            }
+          }
+          else  // identifier comes from a property
+          {
+            string[] property = identifier.Split('.');
+            string objectName = property[0].Trim();
+            string propertyName = property[1].Trim();
+
+            if (_dataObjects != null)
+            {
+              for (int i = 0; i < _dataObjects.Count; i++)
+              {
+                string value = Convert.ToString(_dataObjects[i].GetPropertyValue(propertyName));
+
+                if (classIdentifiers.Count == i)
+                {
+                  classIdentifiers.Add(value);
+                }
+                else
+                {
+                  classIdentifiers[i] += classMap.IdentifierDelimiter + value;
+                }
+              }
+            }
+          }
+        }
+
+        _classIdentifiers[classMap.ClassId] = classIdentifiers;
       }
     }
   }

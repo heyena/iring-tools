@@ -992,25 +992,21 @@ namespace org.iringtools.utility
       }
     }
 
-    private static string ByteArrayToString(byte[] source)
+    public static string MD5Hash(string input)
     {
-      StringBuilder result = new StringBuilder(source.Length);
+      // calculate MD5 hash from input
+      MD5 md5 = MD5.Create();
+      byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
+      byte[] hash = md5.ComputeHash(inputBytes);
 
-      for (int i = 0; i < source.Length - 1; i++)
+      // convert byte array to hex string
+      StringBuilder sb = new StringBuilder();
+      for (int i = 0; i < hash.Length; i++)
       {
-        result.Append(source[i].ToString("X2"));
+        sb.Append(hash[i].ToString("x2"));
       }
 
-      return result.ToString();
-    }
-
-    public static string MD5Hash(string source)
-    {
-      MD5CryptoServiceProvider hashProvider = new MD5CryptoServiceProvider();       
-      byte[] tmpSource = ASCIIEncoding.ASCII.GetBytes(source);
-      byte[] tmpHash = hashProvider.ComputeHash(tmpSource);
-
-      return ByteArrayToString(tmpHash);
+      return sb.ToString();
     }
 
     public static string ExtractId(string qualifiedId)
@@ -1035,6 +1031,15 @@ namespace org.iringtools.utility
       }
 
       return returnValue;
+    }
+
+    public static string ToXsdDateTime(string dateTime)
+    {
+      if (String.IsNullOrEmpty(dateTime)) 
+        return dateTime;
+
+      DateTime dt = DateTime.Parse(dateTime);
+      return dt.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffzzz");
     }
   }
 }

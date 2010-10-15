@@ -13,6 +13,7 @@ using VDS.RDF.Storage;
 using org.iringtools.utility;
 using org.iringtools.common.mapping;
 using org.iringtools.protocol.manifest;
+using System.Web;
 
 namespace org.iringtools.adapter.projection
 {
@@ -30,16 +31,16 @@ namespace org.iringtools.adapter.projection
       _mapping = mapping;
     }
     
-    public override XElement ToXml(string graphName, ref IList<IDataObject> dataObjects)
+    public override XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects)
     {
-      XElement xml = null;
+      XElement xElement = null;
 
       try
       {
         _appNamespace = String.Format("{0}{1}/{2}",
            _settings["GraphBaseUri"],
-           _settings["ProjectName"],
-           _settings["ApplicationName"]
+           HttpUtility.UrlEncode(_settings["ProjectName"]),
+           HttpUtility.UrlEncode(_settings["ApplicationName"])
          );
 
         _graphMap = _mapping.FindGraphMap(graphName);
@@ -52,7 +53,7 @@ namespace org.iringtools.adapter.projection
           SetClassIdentifiers(DataDirection.Outbound);
 
           //TODO: use entities for rdl & tpl instead of namespaces
-          xml = new XElement(_appNamespace + Utility.TitleCase(graphName),
+          xElement = new XElement(_appNamespace + Utility.TitleCase(graphName),
             new XAttribute(XNamespace.Xmlns + "i", XSI_NS),
             new XAttribute(XNamespace.Xmlns + "rdl", RDL_NS),
             new XAttribute(XNamespace.Xmlns + "tpl", TPL_NS));
@@ -60,7 +61,7 @@ namespace org.iringtools.adapter.projection
           ClassTemplateMap classTemplateMap = _graphMap.ClassTemplateMaps.First();          
           for (int i = 0; i < _dataObjects.Count; i++)
           {
-            CreateHierarchicalXml(xml, classTemplateMap, i);
+            CreateHierarchicalXml(xElement, classTemplateMap, i);
           }
         }
       }
@@ -69,10 +70,10 @@ namespace org.iringtools.adapter.projection
         throw ex;
       }
 
-      return xml;
+      return new XDocument(xElement);
     }
 
-    public override IList<IDataObject> ToDataObjects(string graphName, ref XElement xml)
+    public override IList<IDataObject> ToDataObjects(string graphName, ref XDocument xml)
     {
       throw new NotImplementedException();
     }
@@ -149,6 +150,8 @@ namespace org.iringtools.adapter.projection
                 break;
 
               case RoleType.Property:
+              case RoleType.DataProperty:
+              case RoleType.ObjectProperty:
                 propertyRoles.Add(roleMap);
                 break;
             }
@@ -206,13 +209,22 @@ namespace org.iringtools.adapter.projection
                   if (String.IsNullOrEmpty(value))
                     propertyElement.Add(new XAttribute("reference", RDF_NIL));
                   else
+                  {
+                    if (propertyRole.DataType.Contains("dateTime"))
+                      value = Utility.ToXsdDateTime(value);
+
                     propertyElement.Add(new XText(value));
+                  }
                 }
                 else // resolve value list to uri
                 {
                   value = _mapping.ResolveValueList(propertyRole.ValueListName, value);
-                  value = value.Replace(RDL_NS.NamespaceName, "rdl:");
-                  propertyElement.Add(new XAttribute("reference", value));
+
+                  if (value != null)
+                  {
+                    value = value.Replace(RDL_NS.NamespaceName, "rdl:");
+                    propertyElement.Add(new XAttribute("reference", value));
+                  }
                 }
               }
             }

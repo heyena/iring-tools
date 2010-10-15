@@ -240,7 +240,7 @@ namespace org.iringtools.common.mapping
     {
       ClassId = classMap.ClassId;
       Name = classMap.Name;
-      IdentifierDelimeter = String.Empty;
+      IdentifierDelimiter = String.Empty;
 
       foreach (string identifier in classMap.Identifiers)
       {
@@ -248,8 +248,8 @@ namespace org.iringtools.common.mapping
       }
     }
     
-    [DataMember(Name = "identifierDelimeter", EmitDefaultValue = false, Order = 2)]
-    public string IdentifierDelimeter { get; set; }
+    [DataMember(Name = "identifierDelimiter", EmitDefaultValue = false, Order = 2)]
+    public string IdentifierDelimiter { get; set; }
 
     [DataMember(Name = "identifiers", EmitDefaultValue = false, Order = 3)]
     public List<string> Identifiers { get; set; }
