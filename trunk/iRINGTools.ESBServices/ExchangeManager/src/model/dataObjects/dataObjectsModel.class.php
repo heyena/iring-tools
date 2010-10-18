@@ -10,7 +10,7 @@ class dataObjectsModel{
 	private $dtiUrl;
 	private $dtoUrl;
 	private $dtiXMLData;
-	private $nodeType,$uriParams;
+	private $nodeType,$uriParams,$cacheKey,$cacheDTI;
 
 	function __construct(){
 	}
@@ -19,16 +19,137 @@ class dataObjectsModel{
 		$this->nodeType=$params['nodetype'];
 		switch($this->nodeType){
 			case "exchanges":
+				if(isset($params['hasreviewed'])){
+					$append =isset($params['hasreviewed'])?'/submit':'';
+					$this->dtiSubmitUrl = DXI_REQUEST_URL.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'].$append;
+					//$this->dtiSubmitUrl = APP_REQUEST_URI;
+					
+				}
 				$this->dtiUrl = DXI_REQUEST_URL.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'];
 				$this->dtoUrl = DXO_REQUEST_URL.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'];
+				$this->cacheKey = $params['scope'].'_'.$params['nodetype'].'_'.$params['exchangeID'];
 				break;
 
 			case "graph":
 				$this->dtiUrl = APP_REQUEST_URI.'/'.$params['scope'].'/'.$params['applname'].'/'.$params['graphs'];
 				$this->dtoUrl = APP_REQUEST_URI.'/'.$params['scope'].'/'.$params['applname'].'/'.$params['graphs'].'/page';
+				$this->cacheKey = $params['scope'].'_'.$params['applname'].'_'.$params['graphs'];
 				break;
 		}
 	}
+
+	/*
+	get from cache
+	if its available & not empty then go for actual exchange
+	*/
+	function setDataObjects($params){
+		$this->buildWSUri($params);
+		$this->dtiXMLData = $this->getCacheData();
+		if(($this->dtiXMLData!=false)&&(!empty($this->dtiXMLData))){
+			$this->dtiXMLData = str_replace('<dataTransferIndices xmlns="http://iringtools.org/adapter/dti">','<xr:exchangeRequest xmlns="http://iringtools.org/adapter/dti" xmlns:xr="http://iringtools.org/common/request"><xr:dataTransferIndices>',$this->dtiXMLData);
+			$sendXmlData = str_replace("</dataTransferIndices>", "</xr:dataTransferIndices><xr:reviewed>".$params['hasreviewed']."</xr:reviewed></xr:exchangeRequest>", $this->dtiXMLData);
+
+			//echo $this->dtiSubmitUrl;
+			$curlObj = new curl($this->dtiSubmitUrl);
+			$curlObj->setopt(CURLOPT_POST, 1);
+			$curlObj->setopt(CURLOPT_HTTPHEADER, Array("Content-Type: application/xml"));
+			$curlObj->setopt(CURLOPT_POSTFIELDS,$sendXmlData);
+			$curlObj->setopt(CURLOPT_HEADER, false);
+			$fetchedData = $curlObj->exec();
+			$curlObj->close();
+
+			if(!empty($fetchedData)){
+				$this->removeDtiCache();
+				$resultArray = $this->getDataxchangeResult($fetchedData);
+
+				/*echo '<pre>';
+				print_r($resultArray);
+				exit;*/
+				$rowdataArray=array();
+				foreach($resultArray as $key =>$val){
+					$rowdataArray[]=array($key,$val);
+				}
+				$columnsDataArray = array(array('id'=>'Identifier','header'=>'Identifier','dataIndex'=>'Identifier'),array('id'=>'Message','header'=>'Message','sortable'=>'true','width'=>350,'dataIndex'=>'Message'));
+				$headerListDataArray=array(array('name'=>'Identifier'),array('name'=>'Message'));
+				echo json_encode(array("success"=>"true",
+									   "headersList"=>(json_encode($headerListDataArray)),
+									   "rowData"=>json_encode($rowdataArray),
+									   "columnsData"=>json_encode($columnsDataArray)));
+									   
+			}else{
+				echo json_encode(array("success"=>"false","response"=>"Server not responding"));
+			}
+		}else{
+			// when cache detsroyde and DTI not found from cache 
+			echo json_encode(array("success"=>"false","response"=>"Please Try again.. Cache destroyed"));
+		}
+	}
+
+
+	private function getDataxchangeResult($fetchedData){
+		$xmlIterator = new SimpleXMLIterator($fetchedData);
+		$resultArr=array();
+		$statusList = $xmlIterator->statusList;
+
+		foreach($statusList->status as $status)
+		{
+			//print_r($status);
+
+				$identifier = (string)$status->identifier;
+				
+				foreach($status->messages as $message)
+				{
+					//print_r($message);
+					$messagestr = (string)$message->message;
+					$resultArr[$identifier]=$messagestr;
+				}
+
+		}
+		return $resultArr;
+	}
+	
+	private function removeDtiCache(){
+		@session_start();
+
+		if(isset($_SESSION['dti_detail'][$this->cacheKey]))
+		{
+			/*echo '<pre>';
+			print_r($_SESSION);
+			echo '<pre>after<br>';
+			print_r($_SESSION);
+			*/
+			unset($_SESSION['dti_detail'][$this->cacheKey]);
+		}
+	}
+
+	private function cacheData($dtiXMLData){
+		@session_start();
+		//echo 'Session id: '.session_name();
+		if(!isset($_SESSION['dti_detail'][$this->cacheKey]))
+		{
+			$_SESSION['dti_detail'][$this->cacheKey] = $dtiXMLData;
+		}
+
+	}
+
+	function getCacheData(){
+		@session_start();
+		if(isset($_SESSION['dti_detail'][$this->cacheKey]))
+		{
+			return $_SESSION['dti_detail'][$this->cacheKey];
+		}
+	}
+
+	function checkCacheData(){
+		@session_start();
+		if(!isset($_SESSION['dti_detail'][$this->cacheKey]))
+		{
+			return false;
+		}else{
+			return true;
+		}
+	}
+	
 
 	/*
 	 * @params : exchangeID
@@ -39,11 +160,23 @@ class dataObjectsModel{
 	 /**
 	  * Will use the DXIObject to get the identifiers List with the particular exchangeID
 	 */
+		// This function generates the uri and assign the uniquie-key to store in cache
 		$this->buildWSUri($params);
-		$this->dtiXMLData = $this->getDtiInfo($params);
 
-		if(($this->dtiXMLData!=false)&&($this->dtiXMLData!='')){
-			
+			/* we will check the key's existence from
+				session and if its there then fetch from
+				session or else send the request to get the dti info
+			*/
+		if($this->checkCacheData()){
+			$this->cacheDTI = true;
+			$this->dtiXMLData = $this->getCacheData();
+		}else{
+			$this->dtiXMLData = $this->getDtiInfo($params);
+			// cache the data
+			if(($this->dtiXMLData!=false) && (!empty($this->dtiXMLData))) $this->cacheData($this->dtiXMLData);
+		}
+		
+		if(($this->dtiXMLData!=false)&&(!empty($this->dtiXMLData))){
 			$dxoResponse = $this->getDXOInfo($this->uriParams,$this->dtiXMLData);
 
 			if(($dxoResponse!=false) && ($dxoResponse!='')){
@@ -64,7 +197,7 @@ class dataObjectsModel{
 	private function getDtiInfo($params){
 		$curlObj = new curl($this->dtiUrl);
 		// will work on this
-		$curlObj->setopt(CURLOPT_USERPWD,"aknayak:povuxitu722S!");
+		$curlObj->setopt(CURLOPT_USERPWD,"aknayak:povuxitu789A!");
 		$fetchedData = $curlObj->exec();
 		$curlObj->close();
 		return $this->validateResponseCode($curlObj,$fetchedData);
@@ -94,7 +227,7 @@ class dataObjectsModel{
 		$curlObj->setopt(CURLOPT_POSTFIELDS,$postParams);
 		$curlObj->setopt(CURLOPT_HEADER, false);
 		// will work on this
-		$curlObj->setopt(CURLOPT_USERPWD,"aknayak:povuxitu722S!");
+		$curlObj->setopt(CURLOPT_USERPWD,"aknayak:povuxitu789A!");
 		$fetchedData = $curlObj->exec();
 		$curlObj->close();
 		return $this->validateResponseCode($curlObj,$fetchedData);
@@ -122,7 +255,8 @@ class dataObjectsModel{
 				// Main class object
 				if($i==1)
 				{
-                                    $classObjectName = (string)$classObject->name;
+					$classObjectName = (string)$classObject->name;
+					
 					// Traverse each templateObjects under the Main classObject
 					foreach($classObject->templateObjects->templateObject as $templateObject)
 					{
@@ -280,6 +414,7 @@ class dataObjectsModel{
 		if($this->nodeType=='exchanges'){
 		$headerListDataArray[]=array('name'=>'TransferType');
 		}
+		
 		foreach($headerArrayList as $key =>$val){
 			$headerListDataArray[]=array('name'=>str_replace(".", "_", $val));
 			$columnsDataArray[]=array('id'=>str_replace(".", "_", $val),'header'=>$val,'width'=>(strlen($val)<20)?100:strlen($val)+120,'sortable'=>'true','dataIndex'=>str_replace(".", "_", $val));
@@ -291,9 +426,7 @@ class dataObjectsModel{
 		exit;
 		*/
 
-		echo json_encode(array("success"=>"true","classObjName"=>$classObjectName,"rowData"=>json_encode($rowsDataArray),
-							   "columnsData"=>json_encode($columnsDataArray),
-							   "headersList"=>(json_encode($headerListDataArray))));
+		echo json_encode(array("classObjName"=>$classObjectName,"success"=>"true","cacheData"=>$this->cacheDTI,"rowData"=>json_encode($rowsDataArray),"columnsData"=>json_encode($columnsDataArray),"headersList"=>(json_encode($headerListDataArray))));
 		unset($jsonrowsArray);
 		unset($rowsArray);
 		unset($headerArrayList);
