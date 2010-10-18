@@ -51,8 +51,17 @@
 		echo ($headerArray);
 	}
 
-	function setReview($params){
+	function setDataObjects($params){
+		$urlParams = $this->urlParameters($params);
+		$urlParams['hasreviewed']=$_POST['hasreviewed'];
+
+		/*echo '<pre>';
+		print_r($urlParams);
+		exit;*/
+		$headerArray = $this->modelObj->setDataObjects($urlParams);
+		echo ($headerArray);
 	}
+	
 }
    
 ?>
