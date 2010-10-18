@@ -122,6 +122,7 @@ class dataObjectsModel{
 				// Main class object
 				if($i==1)
 				{
+                                    $classObjectName = (string)$classObject->name;
 					// Traverse each templateObjects under the Main classObject
 					foreach($classObject->templateObjects->templateObject as $templateObject)
 					{
@@ -289,7 +290,8 @@ class dataObjectsModel{
 		print_r($columnsDataArray);
 		exit;
 		*/
-		echo json_encode(array("success"=>"true","rowData"=>json_encode($rowsDataArray),
+
+		echo json_encode(array("success"=>"true","classObjName"=>$classObjectName,"rowData"=>json_encode($rowsDataArray),
 							   "columnsData"=>json_encode($columnsDataArray),
 							   "headersList"=>(json_encode($headerListDataArray))));
 		unset($jsonrowsArray);

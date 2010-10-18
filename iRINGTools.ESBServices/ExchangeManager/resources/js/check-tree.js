@@ -25,7 +25,7 @@ function showgrid(response, request,label){
 	var rowData = eval(jsonData.rowData);
 	var filedsVal = eval(jsonData.headersList);
 	var columnData = eval(jsonData.columnsData);
-
+        var classObjName = jsonData.classObjName;
 	// create the data store
 	var store = new Ext.data.ArrayStore({
 	fields: filedsVal
@@ -48,25 +48,19 @@ function showgrid(response, request,label){
 	frame:true,
 	autoSizeColumns: true,
 	autoSizeGrid: true,
-    AllowScroll : true,
+        AllowScroll : true,
 	minColumnWidth:100, 
 	columnLines: true,
+        classObjName:classObjName,
 	//autoWidth:true,
-    enableColumnMove:false,
+        enableColumnMove:false,
             listeners: {
 
                  cellclick:{
-                       fn:function(grid1,rowIndex,columnIndex,e){
-                        // obj = grid.attributes
-                            
-                           /* var record = grid1.getStore().getAt(rowIndex);  // Get the Record
-                            var fieldName = grid1.getColumnModel().getDataIndex(columnIndex); // Get field name
-                            var transferTypeIndex = grid1.getColumnModel().getDataIndex(0);
-                            var data = record.get(fieldName);
-                            var transferType = record.get(transferTypeIndex);
-                            alert(fieldName+':'+data)
-                            alert('Transfer Type :'+transferType)*/
-                           
+                       fn:function(grid,rowIndex,columnIndex,e){
+
+                          
+
                      }
                     }
                // cellclick : function( Grid this, Number rowIndex, Number columnIndex, Ext.EventObject e )
@@ -286,10 +280,10 @@ Ext.onReady(function(){
 	if((obj['node_type']=='exchanges' && obj['uid']!='')){
             eid = obj['uid']
             requestURL = 'dataObjects/getDataObjects/'+nodeType+'/'+scopeId+'/'+eid
-            label = tree.getSelectionModel().getSelectedNode().text
+            label = scopeId+':'+tree.getSelectionModel().getSelectedNode().text
             }else if(obj['node_type']=='graph'){
                     requestURL = 'dataObjects/getGraphObjects/'+nodeType+'/'+scopeId+'/'+node.parentNode.text+'/'+obj['text']
-                    label = node.parentNode.text+'->'+obj['text']
+                    label = scopeId+':'+node.parentNode.text+'->'+obj['text']
             }else{
 		  
                   Ext.MessageBox.show({
@@ -311,7 +305,7 @@ Ext.onReady(function(){
                    if(tree.getSelectionModel().getSelectedNode().id!=null)
                    {
                           Ext.getCmp('centerPanel').enable();
-                          sendAjaxRequest(requestURL,scopeId+':'+label);
+                          sendAjaxRequest(requestURL,label);
 
                           // check the current state of Detail Grid panel
                           if(Ext.getCmp('detail-grid').collapsed!=true){
@@ -340,7 +334,18 @@ Ext.onReady(function(){
 /* to maintain the state of the tree */
   var treeState = Ext.state.Manager.get("treestate");
   if (treeState){
-    tree.expandPath(treeState);
+    if(tree.expandPath(treeState)){ //check the
+        tree.expandPath(treeState);
+    }else{
+        Ext.state.Manager.clear("treestate");
+        tree.root.reload();
+    }
+
+
   }
 			
 });
+
+
+
+
