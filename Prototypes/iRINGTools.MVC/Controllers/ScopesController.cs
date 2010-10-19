@@ -78,6 +78,33 @@ namespace org.iringtools.client.Controllers
       }
     }
 
+    public JsonResult Applications()
+    {
+      string scope = String.Empty;
+      string adapterServiceURI = _adapterServiceURI;
+            
+      if (Request.QueryString["scope"] != null)
+        scope = Request.QueryString["scope"];
+
+      if (Request.QueryString["remote"] != null)
+        adapterServiceURI = Request.QueryString["remote"];
+
+      WebHttpClient client = new WebHttpClient(adapterServiceURI);
+      List<ScopeProject> scopes = client.Get<List<ScopeProject>>("/scopes");
+      ScopeProject scopePrj = scopes.FirstOrDefault<ScopeProject>(o=>o.Name == scope);
+            
+      JsonContainer<List<ScopeApplication>> container = new JsonContainer<List<ScopeApplication>>();
+
+      if (scopePrj != null)
+      {
+        container.Items = scopePrj.Applications;
+        container.Total = scopePrj.Applications.Count;
+        container.Success = true;
+      }
+
+      return Json(container, JsonRequestBehavior.AllowGet);            
+    }
+
     //
     // Get: Scopes/Binding?scope={scope}&application={application}
 
