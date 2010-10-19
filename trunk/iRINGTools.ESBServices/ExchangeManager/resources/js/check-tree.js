@@ -8,7 +8,7 @@
  * in the form of JSON String
  * 
  */
-var reviewed
+var reviewed,tree
 function showgrid(response, request,label){
 	reviewed=true
 	var jsonData = Ext.util.JSON.decode(response);
@@ -54,7 +54,19 @@ function showgrid(response, request,label){
 	columnLines: true,
 	classObjName:classObjName,
 	//autoWidth:true,
-    enableColumnMove:false
+    enableColumnMove:false,
+	tbar:new Ext.Toolbar({
+	xtype: "toolbar",
+	items:[{
+	xtype:"tbbutton",
+	icon:'resources/images/16x16/go-send.png',
+	tooltip:'Exchange Data',
+	disabled: false,
+	handler:function(){
+		  promptReviewAcceptance();
+	  }
+	   }]
+		   })
 	});
 
         //make the text selectable in cells of Grid
@@ -102,10 +114,10 @@ function sendAjaxRequest(requestURL,label){
 
 Ext.onReady(function(){
     Ext.QuickTips.init();
-
     var tBar = new Ext.Toolbar({
 	xtype: "toolbar",
-        items: [ {
+        items: [
+		   {
             xtype:"tbbutton",
             icon:'resources/images/16x16/view-refresh.png',
             tooltip:'Refresh',
@@ -115,14 +127,14 @@ Ext.onReady(function(){
                 Ext.state.Manager.clear("treestate");    
                 tree.root.reload();
             }
-        },{
+		   },
+		   {
             xtype:"tbbutton",
             icon:'resources/images/16x16/go-send.png',
-            qtip:'Exchange Data',
+            tooltip:'Exchange Data',
             disabled: false,
-            handler: function()
-                {
-                  //alert("Clicked on Exchange Data")
+            handler: function(){
+					  //alert("Clicked on Exchange Data")
 					  var treenode = tree.getSelectionModel().getSelectedNode();
 					  if(treenode!=null){
 
@@ -138,9 +150,9 @@ Ext.onReady(function(){
 							 requestURL = 'dataObjects/setGraphObjects/'+nodeType+'/'+scopeId+'/'+node.parentNode.text+'/'+obj['text']
 
 					  }
-					// alert('label '+label)
+							 
 					 if(!Ext.getCmp(label)){
-						 dataExchange();
+						 promptReviewAcceptance(requestURL);
 						}else{
 						Ext.Msg.show({
 						msg: 'Thanks for your review & acceptance. Want to transfer the data now?',
@@ -148,7 +160,7 @@ Ext.onReady(function(){
 						icon: Ext.Msg.QUESTION,//'profile', // &lt;- customized icon
 						fn: function(action){
 								 if(action=='yes'){
-									 submitDataExchange(requestURL,label);
+									 submitDataExchange(requestURL);
 								 }
 								 else if(action=='no')
 								 {
@@ -182,7 +194,7 @@ Ext.onReady(function(){
 
     ]});
 	
-  var tree = new Ext.tree.TreePanel({
+    tree = new Ext.tree.TreePanel({
     id:'directory-tree',
     renderTo:'tree-div',
     height: 494,
@@ -276,81 +288,6 @@ Ext.onReady(function(){
       );
   }
 
-  function dataExchange(){
-  Ext.Msg.show({
-        msg: 'Would you like to review the <br/>Data Exchange before starting?',
-        buttons: Ext.Msg.YESNO,
-        icon: Ext.Msg.QUESTION,//'profile', // &lt;- customized icon
-        fn: function(action){
-		   if(action=='yes'){
-			   var node = tree.getSelectionModel().getSelectedNode();
-			   showCentralGrid(node);
-		   }
-		   else if(action=='no')
-		   {
-			   reviewed=false;
-			   alert('You clicked on No');
-		   }
-	   }});
-	  }
-  
-  function showCentralGrid(node)
-    {
-          var obj = node.attributes
-          var eid
-          var label
-          var requestURL
-		  var scopeId  = obj['Scope']
-          var nodeType = obj['node_type']
-						 
-	if((obj['node_type']=='exchanges' && obj['uid']!='')){
-            eid = obj['uid']
-            requestURL = 'dataObjects/getDataObjects/'+nodeType+'/'+scopeId+'/'+eid
-            label = scopeId+'->'+node.text
-            }else if(obj['node_type']=='graph'){
-              requestURL = 'dataObjects/getGraphObjects/'+nodeType+'/'+scopeId+'/'+node.parentNode.text+'/'+obj['text']
-              label = scopeId+'->'+node.parentNode.text+'->'+obj['text']
-            }else{
-		  
-                  Ext.MessageBox.show({
-                        //title: '<font color=yellow>Warning</font>',
-                        msg: 'You can review only Data Exchange & Graphs in this Version<br/>',
-                        buttons: Ext.MessageBox.OK,
-                        icon: Ext.MessageBox.WARNING
-                  });
-                return false;
-						
-            }
-          
-
-          /*
-                 check the id of the tab
-                 if it's available then just display the tab & don't send ajax request
-          */
-
-	  if(!Ext.getCmp(label)){
-                   if(tree.getSelectionModel().getSelectedNode().id!=null)
-                   {
-                          Ext.getCmp('centerPanel').enable();
-                          sendAjaxRequest(requestURL,label);
-
-                          // check the current state of Detail Grid panel
-                          if(Ext.getCmp('detail-grid').collapsed!=true){
-                                          Ext.getCmp('detail-grid').collapse();
-
-                          }
-                   }
-	}else{
-		  Ext.getCmp('centerPanel').enable();
-		// collapse the detail Grid panel & show the tab
-		  if(Ext.getCmp('detail-grid').collapsed!=true){
-			  Ext.getCmp('detail-grid').collapse();
-		  }
-	  Ext.getCmp(label).show();
-  }
-			   
-  }
-
   /* to maintain the state of the tree */
   Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
   tree.on('contextmenu', function (node){
@@ -370,12 +307,30 @@ Ext.onReady(function(){
   }
 });
 
-function submitDataExchange(requestURL,label){
-//	var w = Ext.getCmp('centerPanel'+'__tab-'+label);
-	//w.getEl().mask();
-//	return false;
-//	Ext.getCmp(label).mask('Loading...');
+function promptReviewAcceptance(requestURL){
+	Ext.Msg.show({
+	msg: 'Would you like to review the <br/>Data Exchange before starting?',
+	buttons: Ext.Msg.YESNO,
+	icon: Ext.Msg.QUESTION,//'profile', // &lt;- customized icon
+	fn: function(action){
+		 if(action=='yes'){
+			 var node = tree.getSelectionModel().getSelectedNode();
+			 showCentralGrid(node);
+		 }
+		 else if(action=='no')
+		 {
+			 reviewed=false;
+			 //alert('You clicked on No');
+			 submitDataExchange(requestURL);
+		 }
+	 }});
+}
 
+function submitDataExchange(requestURL){
+	if(reviewed){
+		var w = Ext.getCmp('centerPanel').getActiveTab();
+		w.getEl().mask('Loading.....');
+	}
 	Ext.Ajax.request({
 	url : requestURL,
 	method: 'POST',
@@ -390,28 +345,25 @@ function submitDataExchange(requestURL,label){
 		  //alert(jsonData.response);
 
 		  if(eval(jsonData.success)==false){
-				  alert(jsonData.response);
+			  alert(jsonData.response);
 		  }else if(eval(jsonData.success)==true){
 			  showResultPanel(jsonData);
 		  }
 	  },
-failure: function ( result, request){ 
+	failure: function ( result, request){ 
 			alert(result.responseText); 
 	  },
-callback: function() {Ext.getBody().unmask();}
+	callback: function() {if(w){w.getEl().unmask();}}
 	})
 }
-
 
 function showResultPanel(jsonData){
 	var rowData = eval(jsonData.rowData);
 	var filedsVal = eval(jsonData.headersList);
-
 	var store = new Ext.data.ArrayStore({
 	fields: filedsVal
 	});
 	store.loadData(eval(rowData));
-
 	var columnData = eval(jsonData.columnsData);
 			var grid = new Ext.grid.GridPanel({
 			store: store,
@@ -430,21 +382,78 @@ function showResultPanel(jsonData){
 			enableColumnMove:false
 			});			   
 
-	var panel = new Ext.Panel({
-	frame:true,
-	width:500,
-	height:400,
-	layout:'border',
-	items: [grid]
-	});
-			 
-	//alert("aya"+label)
+			if(Ext.getCmp('centerPanel').findById('tabResult-'+label)){
+				//alert('aleready exists')
+				Ext.getCmp('centerPanel').remove(Ext.getCmp('centerPanel').findById('tabResult-'+label));
+				Ext.getCmp('centerPanel').add( 
+				Ext.apply(grid,{
+				id:'tabResult-'+label,
+				title: label+'(Result)',
+				closable:true
+				})).show();
+			}else
+			{
+
 	Ext.getCmp('centerPanel').add( 
 	Ext.apply(grid,{
 	id:'tabResult-'+label,
 	title: label+'(Result)',
 	closable:true
 	})).show();
+			}
 }
 
+function showCentralGrid(node)
+{
+	var obj = node.attributes
+			  var eid
+			  var label
+			  var requestURL
+			  var scopeId  = obj['Scope']
+			  var nodeType = obj['node_type']
+		if((obj['node_type']=='exchanges' && obj['uid']!='')){
+			  eid = obj['uid']
+			  requestURL = 'dataObjects/getDataObjects/'+nodeType+'/'+scopeId+'/'+eid
+			  label = scopeId+'->'+node.text
+		}else if(obj['node_type']=='graph'){
+				requestURL = 'dataObjects/getGraphObjects/'+nodeType+'/'+scopeId+'/'+node.parentNode.text+'/'+obj['text']
+				label = scopeId+'->'+node.parentNode.text+'->'+obj['text']
+		}else{
+
+			Ext.MessageBox.show({
+						//title: '<font color=yellow>Warning</font>',
+			msg: 'You can review only Data Exchange & Graphs in this Version<br/>',
+			buttons: Ext.MessageBox.OK,
+			icon: Ext.MessageBox.WARNING
+			});
+			return false;
+		}
+
+
+		  /*
+                 check the id of the tab
+                 if it's available then just display the tab & don't send ajax request
+          */
+
+		if(!Ext.getCmp(label)){
+			if(tree.getSelectionModel().getSelectedNode().id!=null)
+			{
+				Ext.getCmp('centerPanel').enable();
+				sendAjaxRequest(requestURL,label);
+				  // check the current state of Detail Grid panel
+				if(Ext.getCmp('detail-grid').collapsed!=true){
+					Ext.getCmp('detail-grid').collapse();
+
+				}
+			}
+		}else{
+			Ext.getCmp('centerPanel').enable();
+		// collapse the detail Grid panel & show the tab
+			if(Ext.getCmp('detail-grid').collapsed!=true){
+				Ext.getCmp('detail-grid').collapse();
+			}
+			Ext.getCmp(label).show();
+		}
+
+}
 
