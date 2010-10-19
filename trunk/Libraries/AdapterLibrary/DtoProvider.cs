@@ -167,7 +167,7 @@ namespace org.iringtools.adapter
         {
           if (dataTransferObjects[i].transferType == TransferType.Delete)
           {
-            deleteIdentifiers.Add(dataTransferObjects[i].Identifier);
+            deleteIdentifiers.Add(dataTransferObjects[i].identifier);
             dataTransferObjects.RemoveAt(i--);
           }
         }
@@ -611,8 +611,11 @@ namespace org.iringtools.adapter
       GraphMap mappingGraph = _mapping.FindGraphMap(graph);
       Graph manifestGraph = manifest.FindGraph(graph);
 
-      _graphMap = new GraphMap();
-      _graphMap.dataObjectMap = mappingGraph.dataObjectMap;
+      _graphMap = new GraphMap()
+      {
+        name = graph,
+        dataObjectMap = mappingGraph.dataObjectMap
+      };
 
       ClassTemplates manifestClassTemplatesMap = manifestGraph.ClassTemplatesList.First();
       Class manifestClass = manifestClassTemplatesMap.Class;
@@ -753,7 +756,7 @@ namespace org.iringtools.adapter
           {
             foreach (RoleMap roleMap in templateMap.roleMaps)
             {
-              if (roleMap.type == RoleType.Property)
+              if (roleMap.type == RoleType.Property || roleMap.type == RoleType.ObjectProperty || roleMap.type == RoleType.DataProperty)
               {
                 string propertyName = roleMap.propertyName.Substring(_graphMap.dataObjectMap.Length + 1);
                 string value = Convert.ToString(dataObjects[i].GetPropertyValue(propertyName));

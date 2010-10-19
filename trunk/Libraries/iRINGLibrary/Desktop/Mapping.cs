@@ -81,7 +81,7 @@ namespace org.iringtools.library
           {
             if (valueMap.internalValue == value)
             {
-              return valueMap.uri.Replace("rdl:", RDL_NS);
+              return valueMap.uri;
             }
           }
         }

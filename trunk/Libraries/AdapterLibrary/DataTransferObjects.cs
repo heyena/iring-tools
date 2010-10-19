@@ -46,23 +46,13 @@ namespace org.iringtools.adapter
     }
 
     [DataMember(Order = 0)]
+    public string identifier { get; set; }
+
+    [DataMember(Order = 1)]
     public List<ClassObject> classObjects { get; set; }
 
-    [DataMember(Order = 1, EmitDefaultValue = false)]
+    [DataMember(Order = 2, EmitDefaultValue = false)]
     public TransferType transferType { get; set; }
-
-    public string Identifier
-    {
-      get
-      {
-        if (classObjects.Count > 0)
-        {
-          return classObjects[0].identifier;
-        }
-
-        return String.Empty;
-      }
-    }
 
     public ClassObject GetClassObject(string classId)
     {
@@ -181,6 +171,9 @@ namespace org.iringtools.adapter
 
     [DataMember(Order = 5, EmitDefaultValue = false)]
     public string value { get; set; }
+
+    [DataMember(Order = 6, EmitDefaultValue = false)]
+    public string relatedClassName { get; set; }
   }
 
   [DataContract]
