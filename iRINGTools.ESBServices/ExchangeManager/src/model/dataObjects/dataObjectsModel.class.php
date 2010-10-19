@@ -49,8 +49,7 @@ class dataObjectsModel{
 		
 		if(($this->dtiXMLData!=false)&&(!empty($this->dtiXMLData))){
 			$replaceString = str_replace('<dataTransferIndices xmlns="http://iringtools.org/adapter/dti">','<xr:exchangeRequest xmlns="http://iringtools.org/adapter/dti" xmlns:xr="http://iringtools.org/common/request"><xr:dataTransferIndices>',$this->dtiXMLData);
-			$sendXmlData = str_replace("</dataTransferIndices>","</xr:dataTransferIndices><xr:reviewed>".$params['hasreviewed']."</xr:reviewed></xr:exchangeRequest>", $replaceString);
-
+			$sendXmlData = str_replace("</dataTransferIndices>","</xr:dataTransferIndices><xr:reviewed>".$params['hasreviewed']."</xr:reviewed></xr:exchangeRequest>", $this->dtiXMLData);
 			//echo $this->dtiSubmitUrl;
 			$curlObj = new curl($this->dtiSubmitUrl);
 			$curlObj->setopt(CURLOPT_POST, 1);
@@ -61,7 +60,7 @@ class dataObjectsModel{
 			$curlObj->close();
 
 			if(!empty($fetchedData)){
-				// $this->removeDtiCache();
+				$this->removeDtiCache();
 				$resultArray = $this->getDataxchangeResult($fetchedData);
 				$rowdataArray=array();
 
@@ -95,6 +94,9 @@ class dataObjectsModel{
 
 
 	private function getDataxchangeResult($fetchedData){
+
+		//echo $fetchedData;
+		
 		$xmlIterator = new SimpleXMLIterator($fetchedData);
 		$resultArr=array();
 		$statusList = $xmlIterator->statusList;
