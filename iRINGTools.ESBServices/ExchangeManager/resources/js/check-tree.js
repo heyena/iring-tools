@@ -58,15 +58,28 @@ function showgrid(response, request,label){
 	tbar:new Ext.Toolbar({
 	xtype: "toolbar",
 	items:[{
+		xtype:"tbbutton",
+		icon:'resources/images/16x16/go-send.png',
+		tooltip:'Exchange Data',
+		disabled: false,
+		handler:function(){
+	  //promptReviewAcceptance();
+	   makeLablenURI();		  
+	   submitDataExchange(globalReq);
+	  }
+	 }
+		   /*,
+	{
 	xtype:"tbbutton",
-	icon:'resources/images/16x16/go-send.png',
+	icon:'resources/images/16x16/view-refresh.png',
 	tooltip:'Exchange Data',
 	disabled: false,
 	handler:function(){
-		  promptReviewAcceptance();
+	  //promptReviewAcceptance();
+			  // send Request to destroy session
 	  }
-	   }]
-		   })
+	  }*/]
+	})
 	});
 
         //make the text selectable in cells of Grid
@@ -83,6 +96,7 @@ function showgrid(response, request,label){
 	Ext.getCmp('centerPanel').add( 
 	Ext.apply(grid,{
 	id:'tab-'+label,
+	text:label,
 	title: label,
 	closable:true
 	})).show();
@@ -134,23 +148,11 @@ Ext.onReady(function(){
             tooltip:'Exchange Data',
             disabled: false,
             handler: function(){
-					  //alert("Clicked on Exchange Data")
-					  var treenode = tree.getSelectionModel().getSelectedNode();
-					  if(treenode!=null){
-
-					  var obj = treenode.attributes				  
-					  var scopeId  = obj['Scope']
-					  var nodeType = obj['node_type']
-
-					 if((obj['node_type']=='exchanges' && obj['uid']!='')){
-							 requestURL = 'dataObjects/setDataObjects/'+nodeType+'/'+scopeId+'/'+obj['uid']
-							 label = scopeId+'->'+treenode.text
-					  }else if(obj['node_type']=='graph'){
-							 label = scopeId+'->'+treenode.parentNode.text+'->'+obj['text']
-							 requestURL = 'dataObjects/setGraphObjects/'+nodeType+'/'+scopeId+'/'+node.parentNode.text+'/'+obj['text']
-
-					  }
-							 
+					makeLablenURI();
+				    var treenode=  globalTreenode;
+				  	if(treenode!=null){
+					var label=  globalLabel;
+					var requestURL = globalReq;
 					 if(!Ext.getCmp(label)){
 						 promptReviewAcceptance(requestURL);
 						}else{
@@ -353,7 +355,10 @@ function submitDataExchange(requestURL){
 	failure: function ( result, request){ 
 			alert(result.responseText); 
 	  },
-	callback: function() {if(w){w.getEl().unmask();}}
+	callback: function() {if(w){
+		 w.getEl().unmask();
+	  }
+	  }
 	})
 }
 
@@ -364,6 +369,8 @@ function showResultPanel(jsonData){
 	fields: filedsVal
 	});
 	store.loadData(eval(rowData));
+	
+	var label=  globalLabel;
 	var columnData = eval(jsonData.columnsData);
 			var grid = new Ext.grid.GridPanel({
 			store: store,
@@ -456,4 +463,39 @@ function showCentralGrid(node)
 		}
 
 }
+
+var globalLabel,globalReq,globalTreenode
+
+function makeLablenURI(){
+
+	globalTreenode = tree.getSelectionModel().getSelectedNode();
+	
+	//alert(Ext.getCmp('centerPanel').getActiveTab().id+' ======= '+Ext.getCmp('centerPanel').getActiveTab().text)
+			
+	//var treeid = tree.getNodeById(tree.getSelectionModel().getSelectedNode().text)	
+	//alert(treeid)
+			
+	//tree.getSelectionModel().select(tree.getNodeById(treeid));
+	//return false
+
+	//var ob = Ext.getCmp('centerPanel').getActiveTab().attributes;
+	//alert(ob)
+			
+	if(globalTreenode!=null){
+		var obj = globalTreenode.attributes
+		var scopeId  = obj['Scope']
+		var nodeType = obj['node_type']
+		if((obj['node_type']=='exchanges' && obj['uid']!='')){
+		  globalReq = 'dataObjects/setDataObjects/'+nodeType+'/'+scopeId+'/'+obj['uid']
+		  globalLabel = scopeId+'->'+globalTreenode.text
+		}else if(obj['node_type']=='graph'){
+			globalLabel = scopeId+'->'+globalTreenode.parentNode.text+'->'+obj['text']
+			globalReq = 'dataObjects/setGraphObjects/'+nodeType+'/'+scopeId+'/'+node.parentNode.text+'/'+obj['text']
+
+		}
+	}
+}
+
+
+
 
