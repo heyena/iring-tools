@@ -89,6 +89,7 @@
   <ItemGroup>
     <Compile Include="Controllers\AdapterManagerController.cs" />
     <Compile Include="Controllers\ExchangeController.cs" />
+    <Compile Include="Controllers\ExchangeManagerController.cs" />
     <Compile Include="Controllers\ScopesController.cs" />
     <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Models\JsonArray.cs" />
@@ -997,6 +998,7 @@
     <Content Include="Scripts\iringtools\ActionPanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager.js" />
     <Content Include="Scripts\iringtools\DataObjectsPanel.js" />
+    <Content Include="Scripts\iringtools\ExchangeManager.js" />
     <Content Include="Scripts\iringtools\ExchangePanel.js" />
     <Content Include="Scripts\iringtools\MappingPanel.js" />
     <Content Include="Scripts\iringtools\NavigationPanel.js" />
@@ -1017,6 +1019,7 @@
     <Content Include="Content\img\iRINGTools_logo.png" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Views\ExchangeManager\Index.aspx" />
     <Content Include="Views\RefDataEditor\Index.aspx" />
     <Content Include="Scripts\ext-3.2.1\adapter\ext\ext-base-debug-w-comments.js" />
     <Content Include="Scripts\ext-3.2.1\adapter\ext\ext-base-debug.js" />
@@ -1161,7 +1164,6 @@
   <ItemGroup>
     <Folder Include="Scripts\ext-3.2.1\resources\images\vista\dd\" />
     <Folder Include="Scripts\ext-3.2.1\resources\images\vista\tree\" />
-    <Folder Include="Views\Exchange\" />
     <Folder Include="Views\Shared\" />
   </ItemGroup>
   <ItemGroup>

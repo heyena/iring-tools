@@ -40,51 +40,34 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
     });
 
     methodStore.load();
-
-    // create the combo instance
-    var cmbMethod = new Ext.form.ComboBox({
-      fieldLabel: 'Exchange Method',
-      name: 'cmbExchangeMethod',
-      typeAhead: true,
-      triggerAction: 'all',
-      lazyRender: true,
-      mode: 'local',
-      store: methodStore,
-      valueField: 'Uri',
-      displayField: 'Name',
-      listeners: {
-        select: function (combo, record, index) {
-          var servicesURI = Ext.getCmp('txtServiceURI').getValue();
-          var endPointURI = Ext.getCmp('txtEndPointURI');
-
-          if (servicesURI.substr(servicesURI.length, 1) != '/') {
-            servicesURI += '/';
-          }
-
-          endPointURI.setValue(servicesURI + record.data.Uri);
-        }
-      }
-    });
-
+        
     var scopesStore = new Ext.data.JsonStore({
       // store configs
       autoDestroy: true,
       url: 'Scopes',
+      baseParams: {
+        'remote': null
+      },
       // reader configs
       root: 'Items',
       idProperty: 'Name',
       fields: ['Name', 'Description', 'Applications']
     });
 
-    var applicationStore = new Ext.data.ArrayStore({
+    var applicationStore = new Ext.data.JsonStore({
       // store configs
       autoDestroy: true,
-      // reader configs
-      id: 0,
+      url: 'Scopes/Applications',
+      baseParams: {
+        'scope': '12345_000'
+      },
+      // reader configs      
+      root: 'Items',
+      idProperty: 'Name',
       fields: ['Name', 'Description']
     });
 
-    var graphsStore = new Ext.data.JsonStore({
+    var graphStore = new Ext.data.JsonStore({
       // store configs
       autoDestroy: true,
       url: 'Scopes/Manifest',
@@ -108,14 +91,14 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
       listeners: {
 
         select: function (combo, record, index) {
-          var servicesURI = Ext.getCmp('txtServiceURI').getValue();
+          var servicesURI = Ext.getCmp('txtServicesURI');
           var endPointURI = Ext.getCmp('txtEndPointURI');
 
-          if (servicesURI.substr(servicesURI.length, 1) != '/') {
-            servicesURI += '/';
-          }
+          var uri = servicesURI.getValue();
 
-          endPointURI.setValue(servicesURI + record.data.Uri);
+          if (uri.substr(uri.length, 1) != '/') uri += '/';
+
+          endPointURI.setValue(uri + record.data.Uri);
         }
       }
     });
@@ -133,7 +116,11 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
       displayField: 'Name',
       listeners: {
         select: function (combo, record, index) {
-          applicationStore.loadData(record.data.Applications);
+          applicationStore.load({
+            params: {
+              'scope': '12345_000'
+            }
+          });
         }
       }
     });
@@ -153,7 +140,7 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
         select: function (combo, record, index) {
           var txt = Ext.getCmp('txtServicesURI');
 
-          graphsStore.load({
+          graphStore.load({
             params: {
               remote: txtServicesURI.value,
               scope: cmbScope.value,
@@ -232,8 +219,10 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
         handler: function (btn, ev) {
           var txt = Ext.getCmp('txtServicesURI');
 
-          scopesStore.load({
-            params: { remote: txt.value }
+          scopesStore.load({ 
+            params: {
+              'remote': txt.value
+            } 
           });
         },
         scope: this

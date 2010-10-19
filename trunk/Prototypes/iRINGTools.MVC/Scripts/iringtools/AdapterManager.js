@@ -8,6 +8,7 @@ var iRINGTools = new Ext.iRINGTools({});
 Ext.onReady(function () {
   Ext.QuickTips.init();
 
+  /*
   var actionPanel = new iIRNGTools.AdapterManager.ActionPanel({
     id: 'action-panel',
     region: 'west',
@@ -17,6 +18,7 @@ Ext.onReady(function () {
     collapsible: true,
     collapsed: false
   });
+  */
 
   var searchPanel = new iIRNGTools.AdapterManager.SearchPanel({
     id: 'search-panel',
@@ -53,6 +55,7 @@ Ext.onReady(function () {
     collapsed: false,
 
     navigationUrl: 'Scopes?format=tree'
+    
   });
 
   navigationPanel.on('create', function (npanel) {
@@ -165,17 +168,9 @@ Ext.onReady(function () {
         border: false,
         height: 60
       },
-      actionPanel,
-      {
-        region: 'center',
-        layout: 'border',
-        border: false,
-        items: [
-          navigationPanel,
-          contentPanel,
-          searchPanel
-        ]
-      }
+      navigationPanel,
+      contentPanel,
+      searchPanel      
     ],
     listeners: {
       render: function () {
