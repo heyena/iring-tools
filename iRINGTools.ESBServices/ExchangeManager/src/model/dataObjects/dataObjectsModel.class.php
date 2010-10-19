@@ -20,7 +20,7 @@ class dataObjectsModel{
 		switch($this->nodeType){
 			case "exchanges":
 				if(isset($params['hasreviewed'])){
-					$append =isset($params['hasreviewed'])?'/submit':'';
+					$append ='/submit';
 					$this->dtiSubmitUrl = DXI_REQUEST_URL.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'].$append;
 					//$this->dtiSubmitUrl = APP_REQUEST_URI;
 					
@@ -45,9 +45,11 @@ class dataObjectsModel{
 	function setDataObjects($params){
 		$this->buildWSUri($params);
 		$this->dtiXMLData = $this->getCacheData();
+	
+		
 		if(($this->dtiXMLData!=false)&&(!empty($this->dtiXMLData))){
-			$this->dtiXMLData = str_replace('<dataTransferIndices xmlns="http://iringtools.org/adapter/dti">','<xr:exchangeRequest xmlns="http://iringtools.org/adapter/dti" xmlns:xr="http://iringtools.org/common/request"><xr:dataTransferIndices>',$this->dtiXMLData);
-			$sendXmlData = str_replace("</dataTransferIndices>", "</xr:dataTransferIndices><xr:reviewed>".$params['hasreviewed']."</xr:reviewed></xr:exchangeRequest>", $this->dtiXMLData);
+			$replaceString = str_replace('<dataTransferIndices xmlns="http://iringtools.org/adapter/dti">','<xr:exchangeRequest xmlns="http://iringtools.org/adapter/dti" xmlns:xr="http://iringtools.org/common/request"><xr:dataTransferIndices>',$this->dtiXMLData);
+			$sendXmlData = str_replace("</dataTransferIndices>","</xr:dataTransferIndices><xr:reviewed>".$params['hasreviewed']."</xr:reviewed></xr:exchangeRequest>", $replaceString);
 
 			//echo $this->dtiSubmitUrl;
 			$curlObj = new curl($this->dtiSubmitUrl);
@@ -59,16 +61,22 @@ class dataObjectsModel{
 			$curlObj->close();
 
 			if(!empty($fetchedData)){
-				$this->removeDtiCache();
+				// $this->removeDtiCache();
 				$resultArray = $this->getDataxchangeResult($fetchedData);
-
-				/*echo '<pre>';
-				print_r($resultArray);
-				exit;*/
 				$rowdataArray=array();
-				foreach($resultArray as $key =>$val){
-					$rowdataArray[]=array($key,$val);
+
+				// check the array is created and if its not that means some error was from WS & display the custom messgae in the grid
+				
+				if(!empty($resultArray)){
+					foreach($resultArray as $key =>$val){
+						$rowdataArray[]=array($key,$val);
+					}
+				}else{
+					$rowdataArray[] = array("<font color='green'><b>Error</b></font>","<font color='green'><b>Error</b></font>");
 				}
+
+				
+						
 				$columnsDataArray = array(array('id'=>'Identifier','header'=>'Identifier','dataIndex'=>'Identifier'),array('id'=>'Message','header'=>'Message','sortable'=>'true','width'=>350,'dataIndex'=>'Message'));
 				$headerListDataArray=array(array('name'=>'Identifier'),array('name'=>'Message'));
 				echo json_encode(array("success"=>"true",
@@ -91,6 +99,12 @@ class dataObjectsModel{
 		$resultArr=array();
 		$statusList = $xmlIterator->statusList;
 
+		// check the response level from ws it may be success/error
+		
+		/*$wsResponselevel = $xmlIterator->level;
+		if($wsResponselevel=='')
+		*/
+		
 		foreach($statusList->status as $status)
 		{
 			//print_r($status);
