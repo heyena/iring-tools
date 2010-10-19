@@ -73,13 +73,17 @@ namespace org.iringtools.adapter.projection
             {
               ClassMap classMap = pair.Key;
               List<TemplateMap> templateMaps = pair.Value;
+              string classIdentifier = _classIdentifiers[classMap.classId][i];
 
               ClassObject classObject = new ClassObject
               {
                 classId = classMap.classId,
                 name = classMap.name,
-                identifier = _classIdentifiers[classMap.classId][i],
+                identifier = classIdentifier,
               };
+
+              if (dto.classObjects.Count == 0)
+                dto.identifier = classIdentifier;
 
               dto.classObjects.Add(classObject);
 
@@ -118,9 +122,6 @@ namespace org.iringtools.adapter.projection
                     if (!String.IsNullOrEmpty(roleMap.valueList))
                     {
                       value = _mapping.ResolveValueList(roleMap.valueList, value);
-
-                      if (value != null)
-                        value = value.Replace(RDL_NS.NamespaceName, "rdl:");
                     }
                     else if (roleMap.dataType.Contains("dateTime"))
                     {
@@ -129,7 +130,10 @@ namespace org.iringtools.adapter.projection
                   }
                   else if (roleMap.classMap != null)
                   {
-                    value = "#" + _classIdentifiers[roleMap.classMap.classId][i];
+                    roleObject.relatedClassName = roleMap.classMap.name;
+
+                    if (!String.IsNullOrEmpty(_classIdentifiers[roleMap.classMap.classId][i]))
+                      value = "#" + _classIdentifiers[roleMap.classMap.classId][i];
                   }
 
                   roleObject.value = value;
