@@ -213,7 +213,7 @@ public class DifferencingProvider
         // assure target and source identifier are still the same
         if (j == 0 && !targetClassObject.getIdentifier().equalsIgnoreCase(sourceClassObject.getIdentifier()))
         {
-          throw new Exception(String.format("Identifiers out of sync - source identifier [%s], target identifier [%s]", 
+          throw new Exception(String.format("Identifiers are out of sync - source identifier [%s], target identifier [%s]", 
               sourceClassObject.getIdentifier(), targetClassObject.getIdentifier()));
         }
         

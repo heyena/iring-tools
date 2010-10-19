@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
+
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -14,33 +15,33 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.xml.bind.JAXBException;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
-import org.iringtools.adapter.dti.DataTransferIndices;
 import org.iringtools.adapter.dti.DataTransferIndex;
-import org.iringtools.adapter.dto.DataTransferObject;
+import org.iringtools.adapter.dti.DataTransferIndices;
+import org.iringtools.adapter.dti.TransferType;
 import org.iringtools.adapter.dto.ClassObject;
-import org.iringtools.adapter.dto.ClassObjects;
+import org.iringtools.adapter.dto.DataTransferObject;
+import org.iringtools.adapter.dto.DataTransferObjects;
 import org.iringtools.adapter.dto.RoleObject;
 import org.iringtools.adapter.dto.RoleType;
 import org.iringtools.adapter.dto.TemplateObject;
-import org.iringtools.adapter.dti.TransferType;
-import org.iringtools.adapter.dto.DataTransferObjects;
-import org.iringtools.protocol.manifest.Manifest;
-import org.iringtools.directory.Directory;
-import org.iringtools.directory.ExchangeDefinition;
-import org.iringtools.common.request.ExchangeRequest;
-import org.iringtools.common.request.DtoPageRequest;
 import org.iringtools.common.request.DiffDtiRequest;
 import org.iringtools.common.request.DiffDtoRequest;
+import org.iringtools.common.request.DtoPageRequest;
+import org.iringtools.common.request.ExchangeRequest;
+import org.iringtools.common.response.Level;
+import org.iringtools.common.response.Messages;
 import org.iringtools.common.response.Response;
 import org.iringtools.common.response.Status;
-import org.iringtools.common.response.Level;
 import org.iringtools.common.response.StatusList;
-import org.iringtools.common.response.Messages;
+import org.iringtools.directory.Directory;
+import org.iringtools.directory.ExchangeDefinition;
+import org.iringtools.protocol.manifest.Manifest;
 import org.iringtools.services.core.DataTransferObjectComparator;
-import org.iringtools.utility.NetUtil;
 import org.iringtools.utility.JaxbUtil;
+import org.iringtools.utility.NetUtil;
 
 @Path("/")
 @Consumes("application/xml")
@@ -197,11 +198,10 @@ public class ESBService
         for (int i = 0; i < sourceDtoList.size(); i++)
         {
           DataTransferObject sourceDto = sourceDtoList.get(i);
+          String sourceDtoIdentifier = sourceDto.getIdentifier();          
           
-          if (sourceDto.getClassObjects() != null && sourceDto.getClassObjects().getClassObjects().size() > 0)
+          if (sourceDto.getClassObjects() != null)
           {
-            String sourceDtoIdentifier = sourceDto.getClassObjects().getClassObjects().get(0).getIdentifier();
-  
             for (DataTransferIndex sourceDti : sourceDtiList)
             {
               if (sourceDtoIdentifier.equalsIgnoreCase(sourceDti.getIdentifier()))
@@ -246,11 +246,10 @@ public class ESBService
         for (int i = 0; i < targetDtoList.size(); i++)
         {
           DataTransferObject targetDto = targetDtoList.get(i);
+          String targetDtoIdentifier = targetDto.getIdentifier();          
           
-          if (targetDto.getClassObjects() != null && targetDto.getClassObjects().getClassObjects().size() > 0)
+          if (targetDto.getClassObjects() != null)
           {
-            String targetDtoIdentifier = targetDto.getClassObjects().getClassObjects().get(0).getIdentifier();
-  
             for (DataTransferIndex targetDti : targetDtiList)
             {
               if (targetDtoIdentifier.equalsIgnoreCase(targetDti.getIdentifier()))
@@ -301,6 +300,7 @@ public class ESBService
     Response response = new Response();
     StatusList statusList = new StatusList();
     response.setStatusList(statusList);
+    response.setLevel(Level.SUCCESS);
 
     try
     {
@@ -383,11 +383,10 @@ public class ESBService
         for (int j = 0; j < poolDtoList.size(); j++)
         {
           DataTransferObject sourceDto = poolDtoList.get(j);
+          String identifier = sourceDto.getIdentifier();          
           
-          if (sourceDto.getClassObjects() != null && sourceDto.getClassObjects().getClassObjects().size() > 0)
+          if (sourceDto.getClassObjects() != null)
           {
-            String identifier = sourceDto.getClassObjects().getClassObjects().get(0).getIdentifier();
-  
             for (DataTransferIndex dti : poolDtiList)
             {
               if (dti.getIdentifier().equals(identifier))
@@ -401,6 +400,10 @@ public class ESBService
                   {
                     Status status = createStatus(identifier, "DTO has changed.");
                     response.getStatusList().getStatuses().add(status);
+                    
+                    if (response.getLevel() != Level.ERROR)
+                      response.setLevel(Level.WARNING);
+                    
                     poolDtoList.remove(j--); 
                   }
                   else if (dti.getTransferType() == TransferType.SYNC)
@@ -417,13 +420,16 @@ public class ESBService
           }
         }
 
-        // report DTOs that were deleted during review and acceptance period
+        // report DTOs that were deleted during review and acceptance
         if (exchangeRequest.isReviewed() && sourcePoolDtiList.size() > 0)
         {
           for (DataTransferIndex sourceDti : sourcePoolDtiList)
           {
             Status status = createStatus(sourceDti.getIdentifier(), "DTO no longer exists.");
             response.getStatusList().getStatuses().add(status);
+            
+            if (response.getLevel() != Level.ERROR)
+              response.setLevel(Level.WARNING);
           }
         }
 
@@ -431,16 +437,8 @@ public class ESBService
         for (DataTransferIndex deleteDti : deleteDtiList)
         {
           DataTransferObject deleteDto = new DataTransferObject();
+          deleteDto.setIdentifier(deleteDti.getIdentifier());
           deleteDto.setTransferType(org.iringtools.adapter.dto.TransferType.DELETE);
-
-          ClassObjects classObjects = new ClassObjects();
-          deleteDto.setClassObjects(classObjects);
-
-          List<ClassObject> classObjectList = classObjects.getClassObjects();
-          ClassObject classObject = new ClassObject();
-          classObject.setIdentifier(deleteDti.getIdentifier());
-          classObjectList.add(classObject);
-
           poolDtoList.add(deleteDto);
         }
 
@@ -449,10 +447,18 @@ public class ESBService
         {
           Response poolResponse = NetUtil.post(Response.class, targetGraphUri, poolDtos);
           response.getStatusList().getStatuses().addAll(poolResponse.getStatusList().getStatuses());
+          
+          if (response.getLevel() != Level.ERROR || (response.getLevel() == Level.WARNING && poolResponse.getLevel() == Level.SUCCESS))
+            response.setLevel(poolResponse.getLevel());
         }
       }
-
-      response.setLevel(Level.SUCCESS);
+      
+      if (response.getStatusList().getStatuses().size() == 0)
+      {
+        Status status = createStatus("Overall", "No Add/Change/Delete DTOs are found!");
+        response.getStatusList().getStatuses().add(status);
+        response.setLevel(Level.WARNING);        
+      }
     }
     catch (Exception ex)
     {
@@ -515,12 +521,12 @@ public class ESBService
         List<RoleObject> roleObjects = templateObject.getRoleObjects().getRoleObjects();
         for (RoleObject roleObject : roleObjects)
         {
-          if (roleObject.getType() == RoleType.PROPERTY)
+          if (roleObject.getType() == RoleType.PROPERTY || roleObject.getType() == RoleType.OBJECT_PROPERTY || roleObject.getType() == RoleType.DATA_PROPERTY)
           {
             String value = roleObject.getValue();
-            if (value == null)
-              value = "";
-            values.append(value);
+            
+            if (value != null)
+              values.append(value);
           }
         }
       }

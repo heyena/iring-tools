@@ -21,6 +21,7 @@
 
   <xs:complexType name="DataTransferObject">
     <xs:sequence>
+      <xs:element name="identifier" type="xs:string"/>
       <xs:element name="classObjects" type="ClassObjects"/>
       <xs:element name="transferType" type="TransferType"/>
     </xs:sequence>
@@ -71,6 +72,7 @@
       <xs:element name="dataType" type="xs:string"/>
       <xs:element name="oldValue" type="xs:string"/>
       <xs:element name="value" type="xs:string"/>
+      <xs:element name="relatedClassName" type="xs:string"/>
     </xs:sequence>
   </xs:complexType>
 
@@ -89,6 +91,8 @@
       <xs:enumeration value="Reference"/>
       <xs:enumeration value="FixedValue"/>
       <xs:enumeration value="Property"/>
+      <xs:enumeration value="ObjectProperty"/>
+      <xs:enumeration value="DataProperty"/>
     </xs:restriction>
   </xs:simpleType>
 </xs:schema>
