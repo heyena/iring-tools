@@ -69,18 +69,21 @@ function showgrid(response, request,label,nodeid){
 	   makeLablenURI();
 	   submitDataExchange(globalReq);
 	  }
-	 }
-		   /*,
+	 },
 	{
 	xtype:"tbbutton",
 	icon:'resources/images/16x16/view-refresh.png',
-	tooltip:'Exchange Data',
+	tooltip:'Reload',
 	disabled: false,
 	handler:function(){
 	  //promptReviewAcceptance();
-			  // send Request to destroy session
+	  makeLablenURI_tabrefresh();
+	  //alert(globalLabel);
+	  //alert(globalReq+' '+globalTreenode);
+	  showCentralGrid(globalTreenode);
+	  // send Request to destroy session
 	  }
-	  }*/]
+	  }]
 	})
 	});
 
@@ -95,6 +98,11 @@ function showgrid(response, request,label,nodeid){
             }
         });
 
+		if(Ext.getCmp('centerPanel').findById('tab-'+label)){
+			Ext.getCmp('centerPanel').remove(Ext.getCmp('centerPanel').findById('tab-'+label));
+		}
+		
+		
 	Ext.getCmp('centerPanel').add( 
 	Ext.apply(grid,{
 	id:'tab-'+label,
@@ -429,21 +437,19 @@ function showCentralGrid(node)
 		}else{
 
 			Ext.MessageBox.show({
-						//title: '<font color=yellow>Warning</font>',
+			//title: '<font color=yellow>Warning</font>',
 			msg: 'You can review only Data Exchange & Graphs in this Version<br/>',
 			buttons: Ext.MessageBox.OK,
 			icon: Ext.MessageBox.WARNING
 			});
 			return false;
 		}
-
-
 		  /*
              check the id of the tab
              if it's available then just display the tab & don't send ajax request
           */
 
-		if(!Ext.getCmp(label)){
+		if((!Ext.getCmp(label))){
 			if(node.id!=null)
 			{
 				Ext.getCmp('centerPanel').enable();
@@ -454,6 +460,10 @@ function showCentralGrid(node)
 
 				}
 			}
+		}else if(Ext.getCmp(label)&&(Ext.getCmp('centerPanel').getActiveTab().id=='tab-'+label)){
+				//alert('send request')
+				//Ext.getCmp('centerPanel').remove(Ext.getCmp('centerPanel').findById('tabResult-'+label));
+				sendAjaxRequest(requestURL,label,node.id);
 		}else{
 			Ext.getCmp('centerPanel').enable();
 		// collapse the detail Grid panel & show the tab
@@ -468,6 +478,36 @@ function showCentralGrid(node)
 var globalLabel,globalReq,globalTreenode
 
 function makeLablenURI(){
+
+	// setting the node id in text of during the Result Grid creation
+
+	if(Ext.getCmp('centerPanel').getActiveTab()){
+		var nodeid = Ext.getCmp('centerPanel').getActiveTab().text;
+		if(nodeid){
+			tree.getSelectionModel().select(tree.getNodeById(nodeid));
+		}
+	}
+	
+	
+	globalTreenode = tree.getSelectionModel().getSelectedNode();
+	if(globalTreenode!=null){
+		var obj = globalTreenode.attributes
+		var scopeId  = obj['Scope']
+		var nodeType = obj['node_type']
+
+	    if((obj['node_type']=='exchanges' && obj['uid']!='')){
+		  globalReq = 'dataObjects/setDataObjects/'+nodeType+'/'+scopeId+'/'+obj['uid']
+		  globalLabel = scopeId+'->'+globalTreenode.text
+		}else if(obj['node_type']=='graph'){
+			globalLabel = scopeId+'->'+globalTreenode.parentNode.text+'->'+obj['text']
+			globalReq = 'dataObjects/setGraphObjects/'+nodeType+'/'+scopeId+'/'+globalTreenode.parentNode.text+'/'+obj['text']
+
+		}
+	}
+}
+
+function makeLablenURI_tabrefresh(){
+	//alert('tab id:'+Ext.getCmp('centerPanel').getActiveTab().id)
 	// setting the node id in text of during the Result Grid creation
 	var nodeid = Ext.getCmp('centerPanel').getActiveTab().text;
 	if(nodeid){
@@ -476,15 +516,15 @@ function makeLablenURI(){
 	globalTreenode = tree.getSelectionModel().getSelectedNode();
 	if(globalTreenode!=null){
 		var obj = globalTreenode.attributes
-		var scopeId  = obj['Scope']
+	    var scopeId  = obj['Scope']
 		var nodeType = obj['node_type']
+
 		if((obj['node_type']=='exchanges' && obj['uid']!='')){
-		  globalReq = 'dataObjects/setDataObjects/'+nodeType+'/'+scopeId+'/'+obj['uid']
-		  globalLabel = scopeId+'->'+globalTreenode.text
+			globalReq = 'dataObjects/getDataObjects/'+nodeType+'/'+scopeId+'/'+obj['uid']
+						globalLabel = scopeId+'->'+globalTreenode.text
 		}else if(obj['node_type']=='graph'){
 			globalLabel = scopeId+'->'+globalTreenode.parentNode.text+'->'+obj['text']
-			globalReq = 'dataObjects/setGraphObjects/'+nodeType+'/'+scopeId+'/'+node.parentNode.text+'/'+obj['text']
-
+			globalReq = 'dataObjects/getGraphObjects/'+nodeType+'/'+scopeId+'/'+globalTreenode.parentNode.text+'/'+obj['text']
 		}
 	}
 }
