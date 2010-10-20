@@ -7,12 +7,12 @@ Ext.ns('iIRNGTools', 'iIRNGTools.AdapterManager');
 * @author by Gert Jansen van Rensburg
 */
 iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
-  labelWidth: 110, // label settings here cascade unless overridden  
+  labelWidth: 130, // label settings here cascade unless overridden  
   frame: true,
   bodyStyle: 'padding:5px 5px 0',
-  width: 390,
-  height: 290,
-  defaults: { width: 230 },
+  width: 490,
+  height: 390,
+  defaults: { width: 290 },
   defaultType: 'textfield',
 
   scope: null,
@@ -47,12 +47,7 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
           url: 'scopes',
           method: 'GET'
         })
-      }//,
-      //      listeners: {
-      //        beforeload: function (proxy, params) {
-      //          iRINGTools.setAlert(true, params);
-      //        }
-      //      }
+      }
     });
 
     var scopesStore = new Ext.data.JsonStore({
@@ -66,19 +61,13 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
           })
         }
       }),
-      // url: 'scopes',
       baseParams: {
         'remote': null
       },
       // reader configs
       root: 'Items',
       idProperty: 'Name',
-      fields: ['Name', 'Description', 'Applications']//,
-      //      listeners: {
-      //        beforeload: function (store, options) {
-      //          iRINGTools.setAlert(true, options);
-      //        }
-      //      }
+      fields: ['Name', 'Description', 'Applications']
     });
 
     var applicationStore = new Ext.data.JsonStore({
@@ -220,7 +209,7 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
         id: 'txtServicesURI',
         fieldLabel: 'iRING Services URI',
         name: 'iRINGServicesUri',
-        value: 'http://adcrdlweb/services',
+        value: 'http://adcrdlweb/Services',
         allowBlank: false
       },
       cmbMethod,
@@ -242,7 +231,7 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
         checkboxToggle: true,
         autoHeight: true,
         autoWidth: true,
-        defaults: { width: 210 },
+        defaults: { width: 270 },
         defaultType: 'textfield',
         collapsed: true,
         items: [{

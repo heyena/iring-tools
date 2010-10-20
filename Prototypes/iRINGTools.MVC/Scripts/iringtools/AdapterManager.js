@@ -136,8 +136,8 @@ Ext.onReady(function () {
       var window = new Ext.Window({
         title: 'Exchange - ' + scope + '.' + application,
         labelWidth: 110, // label settings here cascade unless overridden                  
-        width: 390,
-        height: 290,
+        width: 490,
+        height: 390,
         layout: 'fit',
         modal: true,
         items: exhangePanel
