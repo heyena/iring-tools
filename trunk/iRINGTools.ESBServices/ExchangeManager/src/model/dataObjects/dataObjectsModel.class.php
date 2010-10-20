@@ -45,50 +45,49 @@ class dataObjectsModel{
 	function setDataObjects($params){
 		$this->buildWSUri($params);
 		$this->dtiXMLData = $this->getCacheData();
-	
-		
+		// checking the dti from cache
 		if(($this->dtiXMLData!=false)&&(!empty($this->dtiXMLData))){
-			$replaceString = str_replace('<dataTransferIndices xmlns="http://iringtools.org/adapter/dti">','<xr:exchangeRequest xmlns="http://iringtools.org/adapter/dti" xmlns:xr="http://iringtools.org/common/request"><xr:dataTransferIndices>',$this->dtiXMLData);
-			$sendXmlData = str_replace("</dataTransferIndices>","</xr:dataTransferIndices><xr:reviewed>".$params['hasreviewed']."</xr:reviewed></xr:exchangeRequest>", $replaceString);
-			//echo $this->dtiSubmitUrl;
-			$curlObj = new curl($this->dtiSubmitUrl);
-			$curlObj->setopt(CURLOPT_POST, 1);
-			$curlObj->setopt(CURLOPT_HTTPHEADER, Array("Content-Type: application/xml"));
-			$curlObj->setopt(CURLOPT_POSTFIELDS,$sendXmlData);
-			$curlObj->setopt(CURLOPT_HEADER, false);
-			$fetchedData = $curlObj->exec();
-			$curlObj->close();
+				$replaceString = str_replace('<dataTransferIndices xmlns="http://iringtools.org/adapter/dti">','<xr:exchangeRequest xmlns="http://iringtools.org/adapter/dti" xmlns:xr="http://iringtools.org/common/request"><xr:dataTransferIndices>',$this->dtiXMLData);
+				$sendXmlData = str_replace("</dataTransferIndices>","</xr:dataTransferIndices><xr:reviewed>".$params['hasreviewed']."</xr:reviewed></xr:exchangeRequest>", $replaceString);
+				//echo $this->dtiSubmitUrl;
+				$curlObj = new curl($this->dtiSubmitUrl);
+				$curlObj->setopt(CURLOPT_POST, 1);
+				$curlObj->setopt(CURLOPT_HTTPHEADER, Array("Content-Type: application/xml"));
+				$curlObj->setopt(CURLOPT_POSTFIELDS,$sendXmlData);
+				$curlObj->setopt(CURLOPT_HEADER, false);
+				$fetchedData = $curlObj->exec();
+				$curlObj->close();
+				if(!empty($fetchedData)){
+					// Removing the cache
+					$this->removeDtiCache();
+					$resultArray = $this->getDataxchangeResult($fetchedData);
+					$rowdataArray=array();
+					// check the array is created and if its not that means some error was from WS & display the custom messgae in the grid
 
-			if(!empty($fetchedData)){
-				$this->removeDtiCache();
-				$resultArray = $this->getDataxchangeResult($fetchedData);
-				$rowdataArray=array();
-
-				// check the array is created and if its not that means some error was from WS & display the custom messgae in the grid
-				
-				if(!empty($resultArray)){
-					foreach($resultArray as $key =>$val){
-						$rowdataArray[]=array($key,$val);
+					if(!empty($resultArray)){
+						foreach($resultArray as $key =>$val){
+							$rowdataArray[]=array($key,$val);
+						}
+					}else{
+						$rowdataArray[] = array("<font color='green'><b>Error</b></font>","<font color='green'><b>Error</b></font>");
 					}
+					$columnsDataArray = array(array('id'=>'Identifier','header'=>'Identifier','dataIndex'=>'Identifier'),array('id'=>'Message','header'=>'Message','sortable'=>'true','width'=>350,'dataIndex'=>'Message'));
+					$headerListDataArray=array(array('name'=>'Identifier'),array('name'=>'Message'));
+					echo json_encode(array("success"=>"true",
+										   "headersList"=>(json_encode($headerListDataArray)),
+										   "rowData"=>json_encode($rowdataArray),
+										   "columnsData"=>json_encode($columnsDataArray)));
 				}else{
-					$rowdataArray[] = array("<font color='green'><b>Error</b></font>","<font color='green'><b>Error</b></font>");
+					echo json_encode(array("success"=>"false","response"=>"Server not responding"));
 				}
-
-				
-						
-				$columnsDataArray = array(array('id'=>'Identifier','header'=>'Identifier','dataIndex'=>'Identifier'),array('id'=>'Message','header'=>'Message','sortable'=>'true','width'=>350,'dataIndex'=>'Message'));
-				$headerListDataArray=array(array('name'=>'Identifier'),array('name'=>'Message'));
-				echo json_encode(array("success"=>"true",
-									   "headersList"=>(json_encode($headerListDataArray)),
-									   "rowData"=>json_encode($rowdataArray),
-									   "columnsData"=>json_encode($columnsDataArray)));
-									   
-			}else{
-				echo json_encode(array("success"=>"false","response"=>"Server not responding"));
-			}
 		}else{
-			// when cache detsroyde and DTI not found from cache 
-			echo json_encode(array("success"=>"false","response"=>"Please Try again.. Cache destroyed"));
+			// when cache detsroyed and DTI not found from cache in that case we will agin send the request to get the latest dti
+			// & won't need to generate the DTO just submit this dti
+			// call getDataObjects($params,$dtoRequired=false)
+			$this->setDtitoCache($params);
+			$this->setDataObjects($params);
+			exit;
+			//*** echo json_encode(array("success"=>"false","response"=>"Please Try again.. Cache destroyed"));
 		}
 	}
 
@@ -162,24 +161,9 @@ class dataObjectsModel{
 			return true;
 		}
 	}
-	
 
-	/*
-	 * @params : exchangeID
-	 */
 
-	function getDataObjects($params)
-	{
-	 /**
-	  * Will use the DXIObject to get the identifiers List with the particular exchangeID
-	 */
-		// This function generates the uri and assign the uniquie-key to store in cache
-		$this->buildWSUri($params);
-
-			/* we will check the key's existence from
-				session and if its there then fetch from
-				session or else send the request to get the dti info
-			*/
+	private function setDtitoCache($params){
 		if($this->checkCacheData()){
 			$this->cacheDTI = true;
 			$this->dtiXMLData = $this->getCacheData();
@@ -188,10 +172,29 @@ class dataObjectsModel{
 			// cache the data
 			if(($this->dtiXMLData!=false) && (!empty($this->dtiXMLData))) $this->cacheData($this->dtiXMLData);
 		}
+	}
+
+	/*
+	 * @params : exchangeID
+	 */
+
+	function getDataObjects($params)
+	{
+
+	 /**
+	  * Will use the DXIObject to get the identifiers List with the particular exchangeID
+	 */
+		// This function generates the uri and assign the uniquie-key to store in cache
+		$this->buildWSUri($params);
+		$this->setDtitoCache($params);
+		
+			/* we will check the key's existence from
+				session and if its there then fetch from
+				session or else send the request to get the dti info
+			*/
 		
 		if(($this->dtiXMLData!=false)&&(!empty($this->dtiXMLData))){
 			$dxoResponse = $this->getDXOInfo($this->uriParams,$this->dtiXMLData);
-
 			if(($dxoResponse!=false) && ($dxoResponse!='')){
 				return json_encode($this->createJSONDataFormat($dxoResponse));
 			}else{
@@ -214,13 +217,6 @@ class dataObjectsModel{
 		$fetchedData = $curlObj->exec();
 		$curlObj->close();
 		return $this->validateResponseCode($curlObj,$fetchedData);
-
-		/*// check the response code for curl
-		if($this->validateResponseCode($curlObj)){
-			return $fetchedData;
-		}else{
-			return false;
-		}*/
 	}
 
 	// Function to validate the http_code
@@ -306,7 +302,7 @@ class dataObjectsModel{
 
 								// We are adding custom keys to the array
 								if($this->nodeType=='exchanges'){
-									$tempRoleValueArray['TransferType']='<span style="color:'.$spanColor.'">'.(string)$dataTransferObject->transferType.'</span>';
+									$tempRoleValueArray['TransferType']='<span style="cursor:pointer;color:'.$spanColor.'">'.(string)$dataTransferObject->transferType.'</span>';
 								}
 								
 									// condition to check if the transferType is change for role->type
@@ -326,7 +322,7 @@ class dataObjectsModel{
 									if($oldvalue!=$value){
 
 											//if($oldvalue!='' && $value!=''){
-										$tempRoleValueArray[$tempKey]='<span style="color:'.$spanColor.'">'.$oldvalue.'->'.$value.'</span>';
+										$tempRoleValueArray[$tempKey]='<span style="cursor:pointer;color:'.$spanColor.'">'.$oldvalue.'->'.$value.'</span>';
 											//}else{
 												//$tempRoleValueArray[$tempKey]='<span style="color:'.$spanColor.'">'.$oldvalue.$value.'</span>';
 											//}
@@ -336,7 +332,7 @@ class dataObjectsModel{
 										$tempRoleValueArray[$tempKey]=(string)$roleObject->oldValue;
 									}
 								}else{
-									$tempRoleValueArray[$tempKey]='<span style="color:'.$spanColor.'">'.(string)$roleObject->value.'</span>';
+									$tempRoleValueArray[$tempKey]='<span style="cursor:pointer;color:'.$spanColor.'">'.(string)$roleObject->value.'</span>';
 
 								}
 								unset($tempKey);
