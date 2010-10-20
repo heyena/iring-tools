@@ -97,6 +97,8 @@ namespace org.iringtools.client.Controllers
         //string result = webClient.UploadString(address, "POST", postData);         
 
         Response response = result.DeserializeDataContract<Response>();
+        container.Success = true;
+        container.Items = response.StatusList;
       }
 
       return Json(container, JsonRequestBehavior.AllowGet);
