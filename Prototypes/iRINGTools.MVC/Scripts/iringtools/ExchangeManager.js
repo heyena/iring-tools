@@ -44,6 +44,7 @@ Ext.onReady(function () {
     root: 'Items',
     idProperty: 'Name',
     fields: ['Name', 'Description']
+
   });
 
   var graphStore = new Ext.data.JsonStore({
@@ -147,7 +148,7 @@ Ext.onReady(function () {
       }
     }
   });
-  
+
   var exhangePanel = new Ext.FormPanel({
     region: 'center',
     labelWidth: 110, // label settings here cascade unless overridden  
@@ -207,10 +208,10 @@ Ext.onReady(function () {
         handler: function (btn, ev) {
           var txt = Ext.getCmp('txtServicesURI');
 
-          scopesStore.load({ 
+          scopesStore.load({
             params: {
               'remote': txt.value
-            } 
+            }
           });
         },
         scope: this
@@ -226,8 +227,8 @@ Ext.onReady(function () {
     ]
   });
 
-  
-      
+
+
   // Finally, build the main layout once all the pieces are ready.  This is also a good
   // example of putting together a full-screen BorderLayout within a Viewport.
   var viewPort = new Ext.Viewport({
@@ -236,7 +237,7 @@ Ext.onReady(function () {
     border: false,
     items: [
       exhangePanel
-    ],    
+    ],
     renderTo: Ext.getBody()
   });
 

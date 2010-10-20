@@ -40,7 +40,7 @@ namespace org.iringtools.client.Controllers
         format = Request.QueryString["format"].ToUpper();
 
       if (Request.QueryString["remote"] != null)
-        adapterServiceURI = Request.QueryString["remote"];
+        adapterServiceURI = Request.QueryString["remote"]+"/adapterservice";
 
       WebHttpClient client = new WebHttpClient(adapterServiceURI);
       List<ScopeProject> scopes = client.Get<List<ScopeProject>>("/scopes");
@@ -82,12 +82,12 @@ namespace org.iringtools.client.Controllers
     {
       string scope = String.Empty;
       string adapterServiceURI = _adapterServiceURI;
-            
+
       if (Request.QueryString["scope"] != null)
         scope = Request.QueryString["scope"];
 
       if (Request.QueryString["remote"] != null)
-        adapterServiceURI = Request.QueryString["remote"];
+        adapterServiceURI = Request.QueryString["remote"]+"/adapterservice";
 
       WebHttpClient client = new WebHttpClient(adapterServiceURI);
       List<ScopeProject> scopes = client.Get<List<ScopeProject>>("/scopes");
@@ -128,18 +128,18 @@ namespace org.iringtools.client.Controllers
       string adapterServiceURI = _adapterServiceURI;
 
       if (Request.QueryString["remote"] != null)
-        adapterServiceURI = Request.QueryString["remote"];
+        adapterServiceURI = Request.QueryString["remote"]+"/adapterservice";
 
       string scope = Request.QueryString["scope"];
       string application = Request.QueryString["application"];
 
-      JsonContainer<List<Graph>> container = new JsonContainer<List<Graph>>();
+      JsonContainer<List<GraphMap>> container = new JsonContainer<List<GraphMap>>();
 
       WebHttpClient client = new WebHttpClient(adapterServiceURI);
-      Manifest manifest = client.Get<Manifest>(String.Format("/{0}/{1}/manifest", scope, application));
-            
-      container.Items = manifest.Graphs;
-      container.Total = manifest.Graphs.Count;
+      Mapping mapping = client.Get<Mapping>(String.Format("/{0}/{1}/mapping", scope, application));
+
+      container.Items = mapping.graphMaps;
+      container.Total = mapping.graphMaps.Count;
 
       return Json(container, JsonRequestBehavior.AllowGet);
     }
@@ -149,12 +149,17 @@ namespace org.iringtools.client.Controllers
 
     public JsonResult Mapping()
     {
+      string adapterServiceURI = _adapterServiceURI;
+
+      if (Request.QueryString["remote"] != null)
+        adapterServiceURI = Request.QueryString["remote"] + "/adapterservice";
+
       string scope = Request.QueryString["scope"];
       string application = Request.QueryString["application"];
 
       JsonContainer<List<GraphMap>> container = new JsonContainer<List<GraphMap>>();
-
-      WebHttpClient client = new WebHttpClient(_adapterServiceURI);
+      
+      WebHttpClient client = new WebHttpClient(adapterServiceURI);
       Mapping mapping = client.Get<Mapping>(String.Format("/{0}/{1}/mapping", scope, application));
             
       container.Items = mapping.graphMaps;

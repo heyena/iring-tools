@@ -40,28 +40,59 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
     });
 
     methodStore.load();
-        
+
+    var scopesProxy = new Ext.data.HttpProxy({
+      api: {
+        read: new Ext.data.Connection({
+          url: 'scopes',
+          method: 'GET'
+        })
+      }//,
+      //      listeners: {
+      //        beforeload: function (proxy, params) {
+      //          iRINGTools.setAlert(true, params);
+      //        }
+      //      }
+    });
+
     var scopesStore = new Ext.data.JsonStore({
-      // store configs
+      // store config
       autoDestroy: true,
-      url: 'Scopes',
+      proxy: new Ext.data.HttpProxy({
+        api: {
+          read: new Ext.data.Connection({
+            url: 'Scopes',
+            method: 'GET'
+          })
+        }
+      }),
+      // url: 'scopes',
       baseParams: {
         'remote': null
       },
       // reader configs
       root: 'Items',
       idProperty: 'Name',
-      fields: ['Name', 'Description', 'Applications']
+      fields: ['Name', 'Description', 'Applications']//,
+      //      listeners: {
+      //        beforeload: function (store, options) {
+      //          iRINGTools.setAlert(true, options);
+      //        }
+      //      }
     });
 
     var applicationStore = new Ext.data.JsonStore({
       // store configs
       autoDestroy: true,
-      url: 'Scopes/Applications',
-      baseParams: {
-        'scope': '12345_000'
-      },
-      // reader configs      
+
+      proxy: new Ext.data.HttpProxy({
+        api: {
+          read: new Ext.data.Connection({
+            url: 'Scopes/Applications',
+            method: 'GET'
+          })
+        }
+      }),
       root: 'Items',
       idProperty: 'Name',
       fields: ['Name', 'Description']
@@ -70,11 +101,24 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
     var graphStore = new Ext.data.JsonStore({
       // store configs
       autoDestroy: true,
-      url: 'Scopes/Manifest',
+
+      proxy: new Ext.data.HttpProxy({
+        api: {
+          read: new Ext.data.Connection({
+            url: 'Scopes/Mapping',
+            method: 'GET'
+          })
+        }
+      }),
       // reader configs
       root: 'Items',
-      idProperty: 'Name',
-      fields: ['Name']
+      idProperty: 'dataObjectMap',
+      fields: [{ name: 'dataObjectMap'}],
+      listeners: {
+        load: function (store, records, options) {
+          iRINGTools.setAlert(true, records);
+        }
+      }
     });
 
     // create the combo instance
@@ -116,9 +160,11 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
       displayField: 'Name',
       listeners: {
         select: function (combo, record, index) {
+          var txt = Ext.getCmp('txtServicesURI');
           applicationStore.load({
             params: {
-              'scope': '12345_000'
+              'scope': record.data.Name,
+              'remote': txt.value
             }
           });
         }
@@ -219,10 +265,10 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
         handler: function (btn, ev) {
           var txt = Ext.getCmp('txtServicesURI');
 
-          scopesStore.load({ 
+          scopesStore.load({
             params: {
               'remote': txt.value
-            } 
+            }
           });
         },
         scope: this
