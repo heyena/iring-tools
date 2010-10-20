@@ -8,8 +8,10 @@
  * in the form of JSON String
  * 
  */
+
 var reviewed,tree
-function showgrid(response, request,label){
+   
+function showgrid(response, request,label,nodeid){
 	reviewed=true
 	var jsonData = Ext.util.JSON.decode(response);
 	if(eval(jsonData.success)==false)
@@ -64,7 +66,7 @@ function showgrid(response, request,label){
 		disabled: false,
 		handler:function(){
 	  //promptReviewAcceptance();
-	   makeLablenURI();		  
+	   makeLablenURI();
 	   submitDataExchange(globalReq);
 	  }
 	 }
@@ -96,14 +98,14 @@ function showgrid(response, request,label){
 	Ext.getCmp('centerPanel').add( 
 	Ext.apply(grid,{
 	id:'tab-'+label,
-	text:label,
+	text:nodeid,
 	title: label,
 	closable:true
 	})).show();
 }
 }
 
-function sendAjaxRequest(requestURL,label){
+function sendAjaxRequest(requestURL,label,nodeid){
 	Ext.getBody().mask('Loading...');
 	Ext.Ajax.request({
 		url : requestURL,
@@ -117,7 +119,7 @@ function sendAjaxRequest(requestURL,label){
 		},
 		success: function(result, request)
 		{ 
-			showgrid(result.responseText,request,label);
+			showgrid(result.responseText,request,label,nodeid);
 		},
 		failure: function ( result, request){ 
 			//alert(result.responseText); 
@@ -149,31 +151,28 @@ Ext.onReady(function(){
             disabled: false,
             handler: function(){
 					makeLablenURI();
-				    var treenode=  globalTreenode;
+					var treenode=  globalTreenode;
 				  	if(treenode!=null){
-					var label=  globalLabel;
-					var requestURL = globalReq;
-					 if(!Ext.getCmp(label)){
-						 promptReviewAcceptance(requestURL);
-						}else{
-						Ext.Msg.show({
-						msg: 'Thanks for your review & acceptance. Want to transfer the data now?',
-						buttons: Ext.Msg.YESNO,
-						icon: Ext.Msg.QUESTION,//'profile', // &lt;- customized icon
-						fn: function(action){
-								 if(action=='yes'){
-									 submitDataExchange(requestURL);
-								 }
-								 else if(action=='no')
-								 {
-									 alert('Not now');
-								 }
-							 }});
+						var label=  globalLabel;
+						var requestURL = globalReq;
 
-	 
-					 }
-							  
-					  }else{
+								if(!Ext.getCmp(label)){
+									promptReviewAcceptance(requestURL);
+								}else{
+											Ext.Msg.show({
+											msg: 'Thanks for your review & acceptance. Want to transfer the data now?',
+											buttons: Ext.Msg.YESNO,
+											icon: Ext.Msg.QUESTION,//'profile', // &lt;- customized icon
+											fn: function(action){
+													 if(action=='yes'){
+														 submitDataExchange(requestURL);
+													 }else if(action=='no'){
+														 alert('Not now');
+													 }
+												 }
+											});
+								}
+					}else{
 						  Ext.MessageBox.show({
 							msg: 'Please Select an Exchange First<br/>',
 							buttons: Ext.MessageBox.OK,
@@ -184,13 +183,14 @@ Ext.onReady(function(){
                 }
         },
         {
-            xtype:"tbbutton",
+			// For open button
+			xtype:"tbbutton",
             icon:'resources/images/16x16/document-open.png',
             id: 'headExchange',
             tooltip:'Open',
             disabled: false,
             handler: function(){
-                showCentralGrid(tree.getSelectionModel().getSelectedNode());
+					  showCentralGrid(tree.getSelectionModel().getSelectedNode());
             }
 	}
 
@@ -332,6 +332,9 @@ function submitDataExchange(requestURL){
 	if(reviewed){
 		var w = Ext.getCmp('centerPanel').getActiveTab();
 		w.getEl().mask('Loading.....');
+	}else{
+		Ext.getCmp('centerPanel').enable();
+		Ext.getCmp('centerPanel').getEl().mask('Loading.....');
 	}
 	Ext.Ajax.request({
 	url : requestURL,
@@ -342,10 +345,8 @@ function submitDataExchange(requestURL){
 	success: function(result, request)
 	  {
 		  //alert(result.responseText);
-
 		  var jsonData = Ext.util.JSON.decode(result.responseText);
 		  //alert(jsonData.response);
-
 		  if(eval(jsonData.success)==false){
 			  alert(jsonData.response);
 		  }else if(eval(jsonData.success)==true){
@@ -357,7 +358,8 @@ function submitDataExchange(requestURL){
 	  },
 	callback: function() {if(w){
 		 w.getEl().unmask();
-	  }
+	  }else{
+	  		Ext.getCmp('centerPanel').getEl().unmask();}
 	  }
 	})
 }
@@ -398,15 +400,14 @@ function showResultPanel(jsonData){
 				title: label+'(Result)',
 				closable:true
 				})).show();
-			}else
-			{
+			}else{
 
-	Ext.getCmp('centerPanel').add( 
-	Ext.apply(grid,{
-	id:'tabResult-'+label,
-	title: label+'(Result)',
-	closable:true
-	})).show();
+				Ext.getCmp('centerPanel').add( 
+				Ext.apply(grid,{
+				id:'tabResult-'+label,
+				title: label+'(Result)',
+				closable:true
+				})).show();
 			}
 }
 
@@ -438,15 +439,15 @@ function showCentralGrid(node)
 
 
 		  /*
-                 check the id of the tab
-                 if it's available then just display the tab & don't send ajax request
+             check the id of the tab
+             if it's available then just display the tab & don't send ajax request
           */
 
 		if(!Ext.getCmp(label)){
-			if(tree.getSelectionModel().getSelectedNode().id!=null)
+			if(node.id!=null)
 			{
 				Ext.getCmp('centerPanel').enable();
-				sendAjaxRequest(requestURL,label);
+				sendAjaxRequest(requestURL,label,node.id);
 				  // check the current state of Detail Grid panel
 				if(Ext.getCmp('detail-grid').collapsed!=true){
 					Ext.getCmp('detail-grid').collapse();
@@ -467,20 +468,12 @@ function showCentralGrid(node)
 var globalLabel,globalReq,globalTreenode
 
 function makeLablenURI(){
-
+	// setting the node id in text of during the Result Grid creation
+	var nodeid = Ext.getCmp('centerPanel').getActiveTab().text;
+	if(nodeid){
+		tree.getSelectionModel().select(tree.getNodeById(nodeid));
+	}
 	globalTreenode = tree.getSelectionModel().getSelectedNode();
-	
-	//alert(Ext.getCmp('centerPanel').getActiveTab().id+' ======= '+Ext.getCmp('centerPanel').getActiveTab().text)
-			
-	//var treeid = tree.getNodeById(tree.getSelectionModel().getSelectedNode().text)	
-	//alert(treeid)
-			
-	//tree.getSelectionModel().select(tree.getNodeById(treeid));
-	//return false
-
-	//var ob = Ext.getCmp('centerPanel').getActiveTab().attributes;
-	//alert(ob)
-			
 	if(globalTreenode!=null){
 		var obj = globalTreenode.attributes
 		var scopeId  = obj['Scope']
@@ -495,7 +488,3 @@ function makeLablenURI(){
 		}
 	}
 }
-
-
-
-
