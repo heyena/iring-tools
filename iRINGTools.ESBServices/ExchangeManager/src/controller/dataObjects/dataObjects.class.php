@@ -22,12 +22,24 @@
 		$this->modelObj = $this->useModel(get_class($this));
 	}
 
-	// This function will be called in AJAX Request like
 	function getDataObjects($params){
 		$urlParams = $this->urlParameters($params);
 		$headerArray = $this->modelObj->getDataObjects($urlParams);
 		echo ($headerArray);
 	}
+
+	function deleteDataObjects($params){
+		$urlParams = $this->urlParameters($params);
+		$headerArray = $this->modelObj->deleteDataObjects($urlParams);
+		echo ($headerArray);
+	}
+
+	function deleteGraphObjects($params){
+		$urlParams = $this->urlParameters($params);
+		$headerArray = $this->modelObj->deleteDataObjects($urlParams);
+		echo ($headerArray);
+	}
+
 
 	private function urlParameters($params){
 		switch($params[0]){
