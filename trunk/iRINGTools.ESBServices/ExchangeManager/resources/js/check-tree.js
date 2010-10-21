@@ -8,7 +8,6 @@
  * in the form of JSON String
  * 
  */
-
 var reviewed,tree
    
 function showgrid(response, request,label,nodeid){
@@ -86,23 +85,30 @@ function showgrid(response, request,label,nodeid){
                                    });
                                    pStore.loadData(prowData);
                                    showIndvidualClass(pStore,pColumnData)
-
                                    Ext.get('identifier-class-detail').dom.innerHTML = '<div style="float:left; width:110px;"><img src="resources/images/class-badge.png"/></div><div style="padding-top:20px;" id="identifier"><b>'+removeHTMLTags(IdentificationByTag_value)+'</b><br/>'+grid.classObjName+'<br/>Transfer Type : '+transferType_value+'</div>'
                                 }
+						  }
+						 },
+					 beforeclose:function(){
+					 makeLablenURIS('delete')
+					 //alert(globalReq)	 
 
-                     }
-                    }
+					sendCloseRequest(globalReq,globalLabel);
+				   // send request for delete cache 
+					 }
+
+		   
                // cellclick : function( Grid this, Number rowIndex, Number columnIndex, Ext.EventObject e )
-         },
+		   },
 	tbar:new Ext.Toolbar({
 	xtype: "toolbar",
 	items:[{
 		xtype:"tbbutton",
 		icon:'resources/images/16x16/go-send.png',
-		tooltip:'Exchange Data',
+		tooltip:'Exchange Data...........',
 		disabled: false,
 		handler:function(){
-                //promptReviewAcceptance();
+        //promptReviewAcceptance();
 	   makeLablenURI();
 	   submitDataExchange(globalReq);
 	  }
@@ -114,7 +120,7 @@ function showgrid(response, request,label,nodeid){
 	disabled: false,
 	handler:function(){
 	  //promptReviewAcceptance();
-	  makeLablenURI_tabrefresh();
+	  makeLablenURIS('get');
 	  //alert(globalLabel);
 	  //alert(globalReq+' '+globalTreenode);
 	  showCentralGrid(globalTreenode);
@@ -515,17 +521,13 @@ function showCentralGrid(node)
 var globalLabel,globalReq,globalTreenode
 
 function makeLablenURI(){
-
 	// setting the node id in text of during the Result Grid creation
-
 	if(Ext.getCmp('centerPanel').getActiveTab()){
 		var nodeid = Ext.getCmp('centerPanel').getActiveTab().text;
 		if(nodeid){
 			tree.getSelectionModel().select(tree.getNodeById(nodeid));
 		}
 	}
-	
-	
 	globalTreenode = tree.getSelectionModel().getSelectedNode();
 	if(globalTreenode!=null){
 		var obj = globalTreenode.attributes
@@ -543,7 +545,7 @@ function makeLablenURI(){
 	}
 }
 
-function makeLablenURI_tabrefresh(){
+function makeLablenURIS(type){
 	//alert('tab id:'+Ext.getCmp('centerPanel').getActiveTab().id)
 	// setting the node id in text of during the Result Grid creation
 	var nodeid = Ext.getCmp('centerPanel').getActiveTab().text;
@@ -557,11 +559,11 @@ function makeLablenURI_tabrefresh(){
 		var nodeType = obj['node_type']
 
 		if((obj['node_type']=='exchanges' && obj['uid']!='')){
-			globalReq = 'dataObjects/getDataObjects/'+nodeType+'/'+scopeId+'/'+obj['uid']
-						globalLabel = scopeId+'->'+globalTreenode.text
+			globalReq = 'dataObjects/'+type+'DataObjects/'+nodeType+'/'+scopeId+'/'+obj['uid']
+			globalLabel = scopeId+'->'+globalTreenode.text
 		}else if(obj['node_type']=='graph'){
 			globalLabel = scopeId+'->'+globalTreenode.parentNode.text+'->'+obj['text']
-			globalReq = 'dataObjects/getGraphObjects/'+nodeType+'/'+scopeId+'/'+globalTreenode.parentNode.text+'/'+obj['text']
+			globalReq = 'dataObjects/'+type+'GraphObjects/'+nodeType+'/'+scopeId+'/'+globalTreenode.parentNode.text+'/'+obj['text']
 		}
 	}
 }
@@ -685,4 +687,19 @@ function removeHTMLTags(strInputCode){
 
     return strTagStrippedText
 
+}
+function sendCloseRequest(requestURL,label){
+Ext.Ajax.request({
+url : requestURL,
+method: 'POST',
+//params: {},
+success: function(result, request)
+	  {
+		//alert(result.responseText)
+	  },
+failure: function ( result, request){ 
+		//	  alert(result.responseText); 
+		  },
+callback: function() {}
+	})
 }
