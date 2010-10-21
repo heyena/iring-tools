@@ -11,7 +11,7 @@ class dataObjectsModel{
 	private $dtoUrl;
 	private $dtiXMLData;
 	private $nodeType,$uriParams,$cacheKey,$cacheDTI;
-
+	private $rdlArray=array();
 	function __construct(){
 	}
 
@@ -307,6 +307,8 @@ class dataObjectsModel{
 								{
 									$value='';
 									$oldvalue='';
+									$convertedvalue='';
+									$convertedoldValue='';
 
 									if(isset($roleObject->value)){
 										$value=(string)$roleObject->value;
@@ -314,23 +316,26 @@ class dataObjectsModel{
 									if(isset($roleObject->oldValue)){
 										$oldvalue=(string)$roleObject->oldValue;
 									}
-										// if there is any difference between old and new then represent as old->new
 
-									if($oldvalue!=$value){
+									// call and store the rdl values by checking the value contains rdl:
+									$convertedvalue = (stristr($value,'rdl:')) ? $this->stroreRdlValues($value,substr($value,4)):$value;
+									$convertedoldValue = (stristr($oldvalue,'rdl:')) ? $this->stroreRdlValues($oldvalue,substr($oldvalue,4)):$oldvalue;
+									
+									// if there is any difference between old and new then represent as old->new
 
+									if($convertedoldValue!=$convertedvalue){
 											//if($oldvalue!='' && $value!=''){
-										$tempRoleValueArray[$tempKey]='<span style="cursor:pointer;color:'.$spanColor.'">'.$oldvalue.'->'.$value.'</span>';
+										$tempRoleValueArray[$tempKey]='<span style="cursor:pointer;color:'.$spanColor.'">'.$convertedoldValue.'->'.$convertedvalue.'</span>';
 											//}else{
 												//$tempRoleValueArray[$tempKey]='<span style="color:'.$spanColor.'">'.$oldvalue.$value.'</span>';
 											//}
 
-									}
-									else{
-										$tempRoleValueArray[$tempKey]=(string)$roleObject->oldValue;
+									}else{
+										$tempRoleValueArray[$tempKey]=$convertedoldValue;
 									}
 								}else{
-									$tempRoleValueArray[$tempKey]='<span style="cursor:pointer;color:'.$spanColor.'">'.(string)$roleObject->value.'</span>';
-
+									$convertedvalue = (stristr((string)$roleObject->value,'rdl:')) ? $this->stroreRdlValues((string)$roleObject->value,substr((string)$roleObject->value,4)):(string)$roleObject->value;
+									$tempRoleValueArray[$tempKey]='<span style="cursor:pointer;color:'.$spanColor.'">'.$convertedvalue.'</span>';
 								}
 								unset($tempKey);
 							}
@@ -449,5 +454,24 @@ class dataObjectsModel{
 			echo json_encode(array("success"=>"true"));
 		}
 	}
+
+	private function stroreRdlValues($originalvalue,$value){
+		if(array_key_exists($originalvalue,$this->rdlArray)){
+			return $this->rdlArray[$originalvalue];
+		}else{
+			$this->rdlArray[$originalvalue] = $this->getRdlValue($value);
+			return $this->rdlArray[$originalvalue];
+		}
+	}
+
+	private function getRdlValue($value){
+		$rdlUri = RDL_REQUEST_URI.'/'.$value.'/label';
+		$curlObj = new curl($rdlUri);
+		$curlObj->setopt(CURLOPT_USERPWD,"aknayak:povuxitu789A!");
+		$fetchedData = $curlObj->exec();
+		$curlObj->close();
+		return $this->validateResponseCode($curlObj,$fetchedData);
+	}
+	
 }
 ?>
