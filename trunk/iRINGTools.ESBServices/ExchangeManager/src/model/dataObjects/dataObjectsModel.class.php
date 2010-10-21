@@ -122,15 +122,12 @@ class dataObjectsModel{
 	
 	private function removeDtiCache(){
 		@session_start();
-
 		if(isset($_SESSION['dti_detail'][$this->cacheKey]))
 		{
-			/*echo '<pre>';
-			print_r($_SESSION);
-			echo '<pre>after<br>';
-			print_r($_SESSION);
-			*/
 			unset($_SESSION['dti_detail'][$this->cacheKey]);
+			return true;
+		}else{
+			return false;
 		}
 	}
 
@@ -441,6 +438,16 @@ class dataObjectsModel{
 		unset($headerArrayList);
 		exit;
 
+	}
+
+	function deleteDataObjects($params)
+	{
+		$this->buildWSUri($params);
+		if($this->removeDtiCache()!=true){
+			echo json_encode(array("success"=>"false"));
+		}else{
+			echo json_encode(array("success"=>"true"));
+		}
 	}
 }
 ?>
