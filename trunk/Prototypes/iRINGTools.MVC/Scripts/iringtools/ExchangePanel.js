@@ -87,7 +87,7 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
       fields: ['Name', 'Description']
     });
 
-    var graphStore = new Ext.data.JsonStore({
+    var graphStore = new Ext.data.XmlStore({
       // store configs
       autoDestroy: true,
 
@@ -100,9 +100,9 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
         }
       }),
       // reader configs
-      root: 'Items',
-      idProperty: 'dataObjectMap',
-      fields: [{ name: 'dataObjectMap'}],
+      record: 'GraphMap',
+      idPath: 'name',
+      fields: [{ name: 'Name', mapping: 'name'}],
       listeners: {
         load: function (store, records, options) {
           iRINGTools.setAlert(true, records);
@@ -113,7 +113,7 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
     // create the combo instance
     var cmbMethod = new Ext.form.ComboBox({
       fieldLabel: 'Exchange Method',
-      name: 'cmbExchangeMethod',
+      name: 'exchangemethod',
       typeAhead: true,
       triggerAction: 'all',
       lazyRender: true,
@@ -139,7 +139,7 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
     // create the combo instance
     var cmbScope = new Ext.form.ComboBox({
       fieldLabel: 'Scope',
-      name: 'cmbScope',
+      name: 'targetScope',
       typeAhead: true,
       triggerAction: 'all',
       lazyRender: true,
@@ -163,7 +163,7 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
     // create the combo instance
     var cmbApplication = new Ext.form.ComboBox({
       fieldLabel: 'Application',
-      name: 'cmbApplication',
+      name: 'targetApplication',
       typeAhead: true,
       triggerAction: 'all',
       lazyRender: true,
@@ -177,9 +177,9 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
 
           graphStore.load({
             params: {
-              remote: txtServicesURI.value,
+              remote: txt.value,
               scope: cmbScope.value,
-              application: cmbApplication.value
+              application: record.data.Name
             }
           });
         }
@@ -189,7 +189,7 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
     // create the combo instance
     var cmbGraph = new Ext.form.ComboBox({
       fieldLabel: 'Graph',
-      name: 'cmbGraph',
+      name: 'targetGraph',
       typeAhead: true,
       triggerAction: 'all',
       lazyRender: true,
@@ -199,7 +199,20 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
       displayField: 'Name',
       listeners: {
         select: function (combo, record, index) {
+          var txtServicesURI = Ext.getCmp('txtServicesURI');
+          var txtGraphBaseURI = Ext.getCmp('txtGraphBaseURI');
 
+          var uri = txtServicesURI.getValue();
+          if (uri.substr(uri.length, 1) != '/') uri += '/';
+
+          uri += "AdapterService/";
+          uri += cmbScope.getValue() + "/";
+          uri += cmbApplication.getValue() + "/";
+          uri += cmbGraph.getValue();
+
+          //http: //adcrdlweb/services/adapterservice/12345_000/EXCEL/Valves
+
+          txtGraphBaseURI.setValue(uri);
         }
       }
     });
@@ -208,7 +221,7 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
       {
         id: 'txtServicesURI',
         fieldLabel: 'iRING Services URI',
-        name: 'iRINGServicesUri',
+        name: 'targetServicesUri',
         value: 'http://adcrdlweb/Services',
         allowBlank: false
       },
@@ -222,6 +235,7 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
         name: 'targetEndpointUri',
         allowBlank: false
       }, {
+        id: 'txtGraphBaseURI',
         fieldLabel: 'Graph Base URI',
         name: 'targetGraphBaseUri',
         allowBlank: false

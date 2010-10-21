@@ -118,7 +118,7 @@ Ext.onReady(function () {
         }
 
         form.submit({
-          url: "exchange/" + panel.scope + "/" + panel.application + "/pull",
+          url: "exchange/pull?scope=" + panel.scope + "&application=" + panel.application,
           success: function (form, action) {
             iRINGTools.setAlert(true, 'got here');
           }
