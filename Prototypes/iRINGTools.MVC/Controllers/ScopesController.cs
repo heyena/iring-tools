@@ -13,7 +13,7 @@ using org.iringtools.library.manifest;
 using org.iringtools.utility;
 using org.iringtools.client.Models;
 using System.Runtime.Serialization;
-using org.iringtools.client.Contrib;
+//using org.iringtools.client.Contrib;
 using System.Xml.Serialization;
 using System.Runtime.Serialization;
 using System.Xml;
@@ -50,7 +50,7 @@ namespace org.iringtools.client.Controllers
 
       WebHttpClient client = new WebHttpClient(adapterServiceURI);
       List<ScopeProject> scopes = client.Get<List<ScopeProject>>("/scopes");
-
+      
       switch (format)
       {
         case "TREE":
@@ -68,6 +68,13 @@ namespace org.iringtools.client.Controllers
               {
                 ApplicationTreeNode nodeApp = new ApplicationTreeNode(app);
                 nodeScope.children.Add(nodeApp);
+                List<string> graphs = GetGraphs(scope.Name, app.Name);
+
+                foreach (string graph in graphs)
+                {
+                  GraphTreeNode nodeGraph = new GraphTreeNode(graph);
+                  nodeApp.children.Add(nodeGraph);
+                }
               }
             }
 
@@ -82,6 +89,17 @@ namespace org.iringtools.client.Controllers
             return Json(container, JsonRequestBehavior.AllowGet);
           }
       }
+    }
+    private List<string> GetGraphs(string scope, string application)
+    {
+      List<string> graphs = new List<string>();
+       WebHttpClient client = new WebHttpClient(_adapterServiceURI);
+       Mapping mapping = client.Get<Mapping>("/" + scope + "/" + application + "/mapping", true);
+       foreach (GraphMap graph in mapping.graphMaps)
+       {
+         graphs.Add(graph.name);
+       }
+       return graphs;
     }
 
     public JsonResult Applications()

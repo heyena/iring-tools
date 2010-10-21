@@ -7,7 +7,7 @@ using org.iringtools.client.Models.Ext;
 
 namespace org.iringtools.client.Models
 {
-  public class ApplicationTreeNode : TreeNode<ApplicationTreeNode>
+  public class ApplicationTreeNode : TreeNode<GraphTreeNode>
   {
     public ScopeApplication Application { get; set; }
 
@@ -35,7 +35,9 @@ namespace org.iringtools.client.Models
       this.Application = application;
       this.id = application.Name;
       this.icon = "Content/img/applications-internet.png";
-      this.leaf = true;
+      this.children = new List<GraphTreeNode>();
+      this.expanded = true;
+      this.leaf = false;
     }
   }
 }
