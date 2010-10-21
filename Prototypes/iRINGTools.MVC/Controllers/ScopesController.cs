@@ -13,6 +13,11 @@ using org.iringtools.library.manifest;
 using org.iringtools.utility;
 using org.iringtools.client.Models;
 using System.Runtime.Serialization;
+using org.iringtools.client.Contrib;
+using System.Xml.Serialization;
+using System.Runtime.Serialization;
+using System.Xml;
+using System.ServiceModel;
 
 namespace org.iringtools.client.Controllers
 {
@@ -145,10 +150,18 @@ namespace org.iringtools.client.Controllers
       return Json(container, JsonRequestBehavior.AllowGet);
     }
 
+
+    public ActionResult Test()
+    {
+      string request = System.Net.Dns.GetHostEntry("adcrdlweb").HostName;
+
+      return this.Content(request, "text/xml");
+    }
+
     //
     // Get: Scopes/Mapping?scope={scope}&application={application}
 
-    public JsonResult Mapping()
+    public ActionResult Mapping()
     {
       string adapterServiceURI = _adapterServiceURI;
 
@@ -157,16 +170,11 @@ namespace org.iringtools.client.Controllers
 
       string scope = Request.QueryString["scope"];
       string application = Request.QueryString["application"];
+                              
+      WebClient client = new WebClient();
+      string request = client.DownloadString(String.Format(_adapterServiceURI + "/{0}/{1}/mapping", scope, application));
 
-      JsonContainer<List<GraphMap>> container = new JsonContainer<List<GraphMap>>();
-      
-      WebHttpClient client = new WebHttpClient(adapterServiceURI);
-      Mapping mapping = client.Get<Mapping>(String.Format("/{0}/{1}/mapping", scope, application));
-            
-      container.Items = mapping.graphMaps;
-      container.Total = mapping.graphMaps.Count;
-
-      return Json(container, JsonRequestBehavior.AllowGet);
+      return this.Content(request, "text/xml");
     }
 
     //

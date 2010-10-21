@@ -47,12 +47,16 @@
     <Reference Include="Microsoft.ServiceModel.Web">
       <HintPath>..\..\ExternalBinaries\WCFRESTStarterKit\Microsoft.ServiceModel.Web.dll</HintPath>
     </Reference>
+    <Reference Include="MvcContrib">
+      <HintPath>..\..\ExternalBinaries\MVCContrib\MvcContrib.dll</HintPath>
+    </Reference>
     <Reference Include="RouteDebug">
       <HintPath>..\..\ExternalBinaries\RouteDebug\RouteDebug.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -87,6 +91,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Contrib\JsonResult.cs" />
+    <Compile Include="Contrib\XmlResult.cs" />
     <Compile Include="Controllers\AdapterManagerController.cs" />
     <Compile Include="Controllers\ExchangeController.cs" />
     <Compile Include="Controllers\ExchangeManagerController.cs" />

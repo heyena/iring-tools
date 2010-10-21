@@ -62,13 +62,12 @@ namespace org.iringtools.client.Controllers
 
     //
     // POST: Exchange/Pull?scope={scope}&application={application}
-
-    [HttpPost]
+        
     public JsonResult Pull(FormCollection collection)
     {
       string scope = Request.QueryString["scope"];
       string application = Request.QueryString["application"];
-      string graphName = collection["graph"];
+      string graphName = collection["targetGraph"];
 
       JsonContainer<List<Status>> container = new JsonContainer<List<Status>>();
 
