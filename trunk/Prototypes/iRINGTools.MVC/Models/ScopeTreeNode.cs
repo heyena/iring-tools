@@ -9,8 +9,8 @@ namespace org.iringtools.client.Models
 {
   public class ScopeTreeNode : TreeNode<ApplicationTreeNode>
   {
-    public ScopeProject Scope { get; set; }  
-
+    public ScopeProject Scope { get; set; }
+  
     public override string text
     {
       get
