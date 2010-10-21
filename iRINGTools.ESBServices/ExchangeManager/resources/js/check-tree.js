@@ -105,12 +105,13 @@ function showgrid(response, request,label,nodeid){
 	items:[{
 		xtype:"tbbutton",
 		icon:'resources/images/16x16/go-send.png',
-		tooltip:'Exchange Data...........',
+		tooltip:'Exchange Data',
 		disabled: false,
 		handler:function(){
         //promptReviewAcceptance();
 	   makeLablenURI();
 	   submitDataExchange(globalReq);
+
 	  }
 	 },
 	{
@@ -121,8 +122,6 @@ function showgrid(response, request,label,nodeid){
 	handler:function(){
 	  //promptReviewAcceptance();
 	  makeLablenURIS('get');
-	  //alert(globalLabel);
-	  //alert(globalReq+' '+globalTreenode);
 	  showCentralGrid(globalTreenode);
 	  // send Request to destroy session
 	  }
@@ -401,7 +400,9 @@ function submitDataExchange(requestURL){
 		  if(eval(jsonData.success)==false){
 			  alert(jsonData.response);
 		  }else if(eval(jsonData.success)==true){
-			  showResultPanel(jsonData);
+			   makeLablenURIS('get');
+			   showCentralGrid(globalTreenode);
+			   showResultPanel(jsonData);
 		  }
 	  },
 	failure: function ( result, request){ 
@@ -442,6 +443,8 @@ function showResultPanel(jsonData){
 			enableColumnMove:false
 			});			   
 
+			
+			
 			if(Ext.getCmp('centerPanel').findById('tabResult-'+label)){
 				//alert('aleready exists')
 				Ext.getCmp('centerPanel').remove(Ext.getCmp('centerPanel').findById('tabResult-'+label));
