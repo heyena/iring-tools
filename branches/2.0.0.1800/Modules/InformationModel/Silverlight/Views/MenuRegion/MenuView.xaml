@@ -1,0 +1,21 @@
+﻿<UserControl 
+	x:Class="InformationModel.Views.MenuRegion.MenuView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+    xmlns:Regions="clr-namespace:Microsoft.Practices.Composite.Presentation.Regions;assembly=Microsoft.Practices.Composite.Presentation"
+    Width="990" Height="30">
+    <Grid x:Name="LayoutRoot">
+    	<Grid.Background>
+    		<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+    			<GradientStop Color="#FF086BAA"/>
+        <GradientStop Color="#FFFFFFFF"  Offset="1"/>
+      </LinearGradientBrush>
+    	</Grid.Background>
+      <Image Height="26" HorizontalAlignment="Left" VerticalAlignment="Center" Width="295" Source="../../../Images/iRING.Small.png" Stretch="Fill"/>
+    	<!--<Button HorizontalAlignment="Left" Margin="4" Width="160" Content="Mapping Editor" x:Name="btnMappingEditor1" Tag="MappingEditorView1"/>
+    	<Button HorizontalAlignment="Left" Margin="166,4,0,4" Width="162" Content="RDS / WIP Editor" x:Name="btnRefDataEditor1" Tag="RefDataEditorView1"/>-->
+    <ItemsControl Height="30"  Margin="383,0,2,0" 
+    		Regions:RegionManager.RegionName="MenuRegionRight" Canvas.ZIndex="1"/>
+
+  </Grid>
+</UserControl>
