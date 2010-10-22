@@ -60,19 +60,19 @@ namespace org.iringtools.client.Controllers
             foreach (ScopeProject scope in scopes)
             {
 
-              ScopeTreeNode nodeScope = new ScopeTreeNode(scope);
+              ScopeTreeNode nodeScope = new ScopeTreeNode(scope,null,null);
 
               nodes.Add(nodeScope);
 
               foreach (ScopeApplication app in scope.Applications)
               {
-                ApplicationTreeNode nodeApp = new ApplicationTreeNode(app);
+                ApplicationTreeNode nodeApp = new ApplicationTreeNode(app, scope, null);
                 nodeScope.children.Add(nodeApp);
                 List<string> graphs = GetGraphs(scope.Name, app.Name);
 
                 foreach (string graph in graphs)
                 {
-                  GraphTreeNode nodeGraph = new GraphTreeNode(graph);
+                  GraphTreeNode nodeGraph = new GraphTreeNode(graph, scope, app);
                   nodeApp.children.Add(nodeGraph);
                 }
               }

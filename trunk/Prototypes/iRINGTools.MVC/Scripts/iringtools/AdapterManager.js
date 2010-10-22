@@ -48,7 +48,7 @@ Ext.onReady(function () {
     id: 'nav-panel',
     title: 'Directory',
     region: 'west',
-    width: 200,
+    width: 250,
 
     collapseMode: 'mini',
     collapsible: true,
@@ -146,7 +146,7 @@ Ext.onReady(function () {
       window.show();
 
     } else {
-      iRINGTools.setAlert(true, 'Select a application before continuing.');
+      iRINGTools.setAlert(true, '   Please select a application or graph before continuing.  ');
     }
 
   });
