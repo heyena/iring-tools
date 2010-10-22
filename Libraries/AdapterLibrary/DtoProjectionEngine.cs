@@ -189,7 +189,14 @@ namespace org.iringtools.adapter.projection
             DataTransferObject dataTransferObject = _dataTransferObjects[i];
             ClassObject classObject = dataTransferObject.GetClassObject(classMap.classId);
 
-            if (classObject != null)
+            // These should be the same, but if they are different then
+            // the sender has modified the DTO and intends for this to be
+            // used instead.
+            if (dataTransferObject.identifier != classObject.identifier)
+            {
+              identifiers.Add(dataTransferObject.identifier);
+            }
+            else if (classObject != null)
             {
               identifiers.Add(classObject.identifier);
             }

@@ -11,7 +11,7 @@ define('CONFIG_DIR', ROOT_DIR . 'config/');
 define('DIRECTORY_REQUEST_URL',
        'http://localhost:8080/iringtools/services/esb/directory');
 define('DXI_REQUEST_URL',
-       'http://localhost:8080/iringtools/services/esb/');
+       'http://localhost:8080/iringtools/services/esb');
 define('DXO_REQUEST_URL',
-       'http://localhost:8080/iringtools/services/esb/');
+       'http://localhost:8080/iringtools/services/esb');
 ?>
