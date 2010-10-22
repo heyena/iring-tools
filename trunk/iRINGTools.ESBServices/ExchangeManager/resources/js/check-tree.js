@@ -104,6 +104,17 @@ function showgrid(response, request,label,nodeid){
 	xtype: "toolbar",
 	items:[{
 		xtype:"tbbutton",
+		icon:'resources/images/16x16/view-refresh.png',
+		tooltip:'Reload',
+		disabled: false,
+		handler:function(){
+	  //promptReviewAcceptance();
+		  makeLablenURIS('get');
+		  showCentralGrid(globalTreenode);
+	  // send Request to destroy session
+	  }
+		   },{
+		xtype:"tbbutton",
 		icon:'resources/images/16x16/go-send.png',
 		tooltip:'Exchange Data',
 		disabled: false,
@@ -113,19 +124,8 @@ function showgrid(response, request,label,nodeid){
 	   submitDataExchange(globalReq);
 
 	  }
-	 },
-	{
-	xtype:"tbbutton",
-	icon:'resources/images/16x16/view-refresh.png',
-	tooltip:'Reload',
-	disabled: false,
-	handler:function(){
-	  //promptReviewAcceptance();
-	  makeLablenURIS('get');
-	  showCentralGrid(globalTreenode);
-	  // send Request to destroy session
-	  }
-	  }]
+	 }
+	]
 	})
 	});
 
@@ -156,7 +156,13 @@ function showgrid(response, request,label,nodeid){
 }
 
 function sendAjaxRequest(requestURL,label,nodeid){
-	Ext.getBody().mask('Loading...');
+	var w = Ext.getCmp('centerPanel').getActiveTab();
+	if(w){
+		w.getEl().mask('Loading.....')
+	}else{
+		Ext.getBody().mask('Loading...');
+	}
+	
 	Ext.Ajax.request({
 		url : requestURL,
 		method: 'POST',
@@ -174,7 +180,13 @@ function sendAjaxRequest(requestURL,label,nodeid){
 		failure: function ( result, request){ 
 			//alert(result.responseText); 
 		},
-		callback: function() {Ext.getBody().unmask();}
+		callback: function() {
+			if(w){
+				w.getEl().unmask()
+			}else{
+				Ext.getBody().unmask();
+			}
+		}
 	})
 }
 
@@ -193,6 +205,15 @@ Ext.onReady(function(){
                 Ext.state.Manager.clear("treestate");    
                 tree.root.reload();
             }
+		   },
+		   {
+			// For open button
+			xtype:"tbbutton",
+			icon:'resources/images/16x16/document-open.png',
+			id: 'headExchange',
+			tooltip:'Open',
+			disabled: false,
+			handler: function(){showCentralGrid(tree.getSelectionModel().getSelectedNode());}
 		   },
 		   {
             xtype:"tbbutton",
@@ -231,18 +252,8 @@ Ext.onReady(function(){
 						  return false;
 					  }
                 }
-        },
-        {
-			// For open button
-			xtype:"tbbutton",
-            icon:'resources/images/16x16/document-open.png',
-            id: 'headExchange',
-            tooltip:'Open',
-            disabled: false,
-            handler: function(){
-					  showCentralGrid(tree.getSelectionModel().getSelectedNode());
-            }
-	}
+        }
+        
 
     ]});
 	
@@ -503,12 +514,9 @@ function showCentralGrid(node)
 				  // check the current state of Detail Grid panel
 				if(Ext.getCmp('detail-grid').collapsed!=true){
 					Ext.getCmp('detail-grid').collapse();
-
 				}
 			}
 		}else if(Ext.getCmp(label)&&(Ext.getCmp('centerPanel').getActiveTab().id=='tab-'+label)){
-				//alert('send request')
-				//Ext.getCmp('centerPanel').remove(Ext.getCmp('centerPanel').findById('tabResult-'+label));
 				sendAjaxRequest(requestURL,label,node.id);
 		}else{
 			Ext.getCmp('centerPanel').enable();
