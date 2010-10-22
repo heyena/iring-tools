@@ -11,7 +11,9 @@ namespace org.iringtools.client.Models
   {
     public ScopeApplication Application { get; set; }
 
-    public string ScopeHeader { get; set; }
+    public ScopeProject Scope { get; set; }
+    public ScopeApplication _application { get; set; }
+    public string GraphName { get; set; }
     public string Configure { get; set; }
     public string Mapping { get; set; }
     
@@ -19,21 +21,23 @@ namespace org.iringtools.client.Models
     {
       get
       {
-        if (Application.Description != null && !Application.Description.Equals(String.Empty))
+        if (_application.Description != null && !_application.Description.Equals(String.Empty))
         {
-          return Application.Name + " [" + Application.Description + "]";
+          return _application.Name + " [" + _application.Description + "]";
         }
         else
         {
-          return Application.Name;
+          return _application.Name;
         }
       }      
     }
 
-    public ApplicationTreeNode(ScopeApplication application)
+    public ApplicationTreeNode(ScopeApplication application, ScopeProject scope, string graphName)
     {
-      this.Application = application;
-      this.id = application.Name;
+      Scope = scope;
+      _application = application;
+      GraphName = graphName;
+      this.id = Scope.Name + application.Name;
       this.icon = "Content/img/applications-internet.png";
       this.children = new List<GraphTreeNode>();
       this.expanded = true;

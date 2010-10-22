@@ -10,7 +10,8 @@ namespace org.iringtools.client.Models
   public class ScopeTreeNode : TreeNode<ApplicationTreeNode>
   {
     public ScopeProject Scope { get; set; }
-  
+    public ScopeApplication _application { get; set; }
+    public string GraphName { get; set; }
     public override string text
     {
       get
@@ -26,9 +27,11 @@ namespace org.iringtools.client.Models
       }      
     }
 
-    public ScopeTreeNode(ScopeProject scope)
+    public ScopeTreeNode(ScopeProject scope, ScopeApplication application, string graphName)
     {
-      this.Scope = scope;
+      Scope = scope;
+      _application = application;
+      GraphName = graphName;
       this.icon = "Content/img/system-file-manager.png";
       this.id = scope.Name;
       this.children = new List<ApplicationTreeNode>();
