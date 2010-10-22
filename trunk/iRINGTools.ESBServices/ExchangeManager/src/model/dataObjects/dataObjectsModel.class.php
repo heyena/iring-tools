@@ -275,6 +275,10 @@ class dataObjectsModel{
 						{
 
 							$tempKey='';
+								if(stristr((string)$roleObject->type,'Reference') && ((strpos($roleObject->value, '#'))===0))
+                                {
+                                  $classReferenceArray[(string)$dataTransferObject->identifier][(string)substr($roleObject->value, 1, -1)]=(string)$roleObject->relatedClassName;
+                                }
 							if(stristr($roleObject->type,'Property'))
 							{
 								$tempRoleObjectNameArray[]="$roleObject->name";
@@ -300,6 +304,9 @@ class dataObjectsModel{
 								// We are adding custom keys to the array
 								if($this->nodeType=='exchanges'){
 									$tempRoleValueArray['TransferType']='<span style="cursor:pointer;color:'.$spanColor.'">'.(string)$dataTransferObject->transferType.'</span>';
+                                                                        if((string)$dataTransferObject->identifier !='' ){
+									$tempRoleValueArray['Identifier']  ='<span style="color:'.$spanColor.';cursor: pointer;text-decoration: underline">'.(string)$dataTransferObject->identifier.'</span>';
+                                                                        }
 								}
 								
 									// condition to check if the transferType is change for role->type
@@ -385,7 +392,7 @@ class dataObjectsModel{
 		//echo '<pre>';
 
 		if($this->nodeType=='exchanges'){
-			$customListArray=array('TransferType');
+			$customListArray=array('TransferType','Identifier');
 		}else{
 			$customListArray=array();
 		}
@@ -423,7 +430,7 @@ class dataObjectsModel{
 
 
 		if($this->nodeType=='exchanges'){
-		$headerListDataArray[]=array('name'=>'TransferType');
+		$headerListDataArray[]=array('name'=>'Identifier','name'=>'TransferType');
 		}
 		
 		foreach($headerArrayList as $key =>$val){
