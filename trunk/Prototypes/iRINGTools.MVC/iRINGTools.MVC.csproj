@@ -47,9 +47,6 @@
     <Reference Include="Microsoft.ServiceModel.Web">
       <HintPath>..\..\ExternalBinaries\WCFRESTStarterKit\Microsoft.ServiceModel.Web.dll</HintPath>
     </Reference>
-    <Reference Include="RouteDebug">
-      <HintPath>..\..\ExternalBinaries\RouteDebug\RouteDebug.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -88,8 +85,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Contrib\JsonResult.cs" />
-    <Compile Include="Contrib\XmlResult.cs" />
     <Compile Include="Controllers\AdapterManagerController.cs" />
     <Compile Include="Controllers\ExchangeController.cs" />
     <Compile Include="Controllers\ExchangeManagerController.cs" />
@@ -1174,7 +1169,6 @@
     <Content Include="Views\Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
     <None Include="Scripts\ext-3.2.1\resources\images\access\form\clear-trigger.psd" />
     <None Include="Scripts\ext-3.2.1\resources\images\access\form\date-trigger.psd" />
     <None Include="Scripts\ext-3.2.1\resources\images\access\form\search-trigger.psd" />
