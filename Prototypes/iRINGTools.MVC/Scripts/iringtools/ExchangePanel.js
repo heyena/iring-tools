@@ -45,7 +45,9 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
       api: {
         read: new Ext.data.Connection({
           url: 'scopes',
-          method: 'GET'
+          method: 'GET',
+          timeout: 12000
+
         })
       }
     });
@@ -57,7 +59,8 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
         api: {
           read: new Ext.data.Connection({
             url: 'Scopes',
-            method: 'GET'
+            method: 'GET',
+            timeout: 12000
           })
         }
       }),
@@ -78,7 +81,8 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
         api: {
           read: new Ext.data.Connection({
             url: 'Scopes/Applications',
-            method: 'GET'
+            method: 'GET',
+            timeout: 12000
           })
         }
       }),
@@ -126,12 +130,25 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
         select: function (combo, record, index) {
           var servicesURI = Ext.getCmp('txtServicesURI');
           var endPointURI = Ext.getCmp('txtEndPointURI');
-
+          var txtGraphBaseURI = Ext.getCmp('txtGraphBaseURI');
           var uri = servicesURI.getValue();
 
           if (uri.substr(uri.length, 1) != '/') uri += '/';
 
           endPointURI.setValue(uri + record.data.Uri);
+
+
+
+          scopesStore.load({
+            params: {
+              'remote': servicesURI.value
+            }
+          });
+          applicationStore.removeAll(true);
+          graphStore.removeAll(true);
+          cmbApplication.setValue("");
+          cmbGraph.setValue("");
+          txtGraphBaseURI.setValue("");
         }
       }
     });
@@ -150,12 +167,17 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
       listeners: {
         select: function (combo, record, index) {
           var txt = Ext.getCmp('txtServicesURI');
+          var txtGraphBaseURI = Ext.getCmp('txtGraphBaseURI');
           applicationStore.load({
             params: {
               'scope': record.data.Name,
               'remote': txt.value
             }
           });
+          graphStore.removeAll(true);
+          cmbApplication.setValue("");
+          cmbGraph.setValue("");
+          txtGraphBaseURI.setValue("");
         }
       }
     });
@@ -174,7 +196,7 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
       listeners: {
         select: function (combo, record, index) {
           var txt = Ext.getCmp('txtServicesURI');
-
+          var txtGraphBaseURI = Ext.getCmp('txtGraphBaseURI');
           graphStore.load({
             params: {
               remote: txt.value,
@@ -182,6 +204,7 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
               application: record.data.Name
             }
           });
+          txtGraphBaseURI.setValue("");
         }
       }
     });
@@ -222,7 +245,7 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
         id: 'txtServicesURI',
         fieldLabel: 'iRING Services URI',
         name: 'targetServicesUri',
-        value: 'http://adcrdlweb/Services',
+        value: 'http://adcrdlweb.corp.hatchglobal.com/Services',
         allowBlank: false
       },
       cmbMethod,
@@ -263,27 +286,28 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
     ];
 
     this.buttons = [
-      {
-        text: 'Fetch',
-        handler: function (btn, ev) {
-          var txt = Ext.getCmp('txtServicesURI');
+    //      {
+    //        text: 'Fetch',
+    //        handler: function (btn, ev) {
+    //          var txt = Ext.getCmp('txtServicesURI');
 
-          scopesStore.load({
-            params: {
-              'remote': txt.value
-            }
-          });
-        },
-        scope: this
-      }, {
-        text: 'Exchange',
-        handler: this.onExchange,
-        scope: this
-      }, {
-        text: 'Cancel',
-        handler: this.onCancel,
-        scope: this
-      }
+    //          scopesStore.load({
+    //            params: {
+    //              'remote': txt.value
+    //            }
+    //          });
+    //        },
+    //        scope: this
+    //      }, 
+      {
+      text: 'Exchange',
+      handler: this.onExchange,
+      scope: this
+    }, {
+      text: 'Cancel',
+      handler: this.onCancel,
+      scope: this
+    }
     ];
 
     // super
