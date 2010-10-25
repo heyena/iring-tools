@@ -85,11 +85,11 @@ Ext.onReady(function () {
 
   });
 
-  navigationPanel.on('mapping', function (npanel, scope, application) {
+  navigationPanel.on('mapping', function (npanel, scope, application, graph) {
 
     if (application.length > 0) {
       var newTab = new iIRNGTools.AdapterManager.MappingPanel({
-        title: 'Mapping - ' + scope + '.' + application,
+        title: 'Mapping - ' + scope + '.' + application + '.' + graph,
         closable: true
       });
 
@@ -101,13 +101,14 @@ Ext.onReady(function () {
 
   });
 
-  navigationPanel.on('exchange', function (npanel, scope, application) {
+  navigationPanel.on('exchange', function (npanel, scope, application, graph) {
 
     if (application.length > 0) {
 
       var exhangePanel = new iIRNGTools.AdapterManager.ExchangePanel({
         scope: scope,
-        application: application
+        application: application,
+        graph: graph
       });
 
       exhangePanel.on('exchange', function (panel, form) {
@@ -118,7 +119,7 @@ Ext.onReady(function () {
         }
 
         form.submit({
-          url: "exchange/pull?scope=" + panel.scope + "&application=" + panel.application,
+          url: "exchange/pull?scope=" + panel.scope + "&application=" + panel.application + "&graph=" + panel.graph,
           success: function (form, action) {
             iRINGTools.setAlert(true, 'got here');
           }

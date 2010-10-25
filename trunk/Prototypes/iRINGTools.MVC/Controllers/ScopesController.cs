@@ -89,6 +89,7 @@ namespace org.iringtools.client.Controllers
           }
       }
     }
+
     private List<string> GetGraphs(string scope, string application)
     {
       List<string> graphs = new List<string>();
