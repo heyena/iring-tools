@@ -10,8 +10,8 @@ class dataObjectsModel{
 	private $dtiUrl;
 	private $dtoUrl;
 	private $dtiXMLData;
-	private $nodeType,$uriParams,$cacheKey,$cacheDTI;
-	private $rdlArray=array();
+	private $nodeType,$uriParams;
+
 	function __construct(){
 	}
 
@@ -19,155 +19,14 @@ class dataObjectsModel{
 		$this->nodeType=$params['nodetype'];
 		switch($this->nodeType){
 			case "exchanges":
-				if(isset($params['hasreviewed'])){
-					$append ='/submit';
-					$this->dtiSubmitUrl = DXI_REQUEST_URL.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'].$append;
-					//$this->dtiSubmitUrl = APP_REQUEST_URI;
-					
-				}
 				$this->dtiUrl = DXI_REQUEST_URL.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'];
 				$this->dtoUrl = DXO_REQUEST_URL.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'];
-				$this->cacheKey = $params['scope'].'_'.$params['nodetype'].'_'.$params['exchangeID'];
 				break;
 
 			case "graph":
 				$this->dtiUrl = APP_REQUEST_URI.'/'.$params['scope'].'/'.$params['applname'].'/'.$params['graphs'];
 				$this->dtoUrl = APP_REQUEST_URI.'/'.$params['scope'].'/'.$params['applname'].'/'.$params['graphs'].'/page';
-				$this->cacheKey = $params['scope'].'_'.$params['applname'].'_'.$params['graphs'];
 				break;
-		}
-	}
-
-	/*
-	get from cache
-	if its available & not empty then go for actual exchange
-	*/
-	function setDataObjects($params){
-		$this->buildWSUri($params);
-		$this->dtiXMLData = $this->getCacheData();
-		// checking the dti from cache
-		if(($this->dtiXMLData!=false)&&(!empty($this->dtiXMLData))){
-				$replaceString = str_replace('<dataTransferIndices xmlns="http://iringtools.org/adapter/dti">','<xr:exchangeRequest xmlns="http://iringtools.org/adapter/dti" xmlns:xr="http://iringtools.org/common/request"><xr:dataTransferIndices>',$this->dtiXMLData);
-				$sendXmlData = str_replace("</dataTransferIndices>","</xr:dataTransferIndices><xr:reviewed>".$params['hasreviewed']."</xr:reviewed></xr:exchangeRequest>", $replaceString);
-				//echo $this->dtiSubmitUrl;
-				$curlObj = new curl($this->dtiSubmitUrl);
-				$curlObj->setopt(CURLOPT_POST, 1);
-				$curlObj->setopt(CURLOPT_HTTPHEADER, Array("Content-Type: application/xml"));
-				$curlObj->setopt(CURLOPT_POSTFIELDS,$sendXmlData);
-				$curlObj->setopt(CURLOPT_HEADER, false);
-				$fetchedData = $curlObj->exec();
-				$curlObj->close();
-				if(!empty($fetchedData)){
-					// Removing the cache
-					$this->removeDtiCache();
-					$resultArray = $this->getDataxchangeResult($fetchedData);
-					$rowdataArray=array();
-					// check the array is created and if its not that means some error was from WS & display the custom messgae in the grid
-
-					if(!empty($resultArray)){
-						foreach($resultArray as $key =>$val){
-							$rowdataArray[]=array($key,$val);
-						}
-					}else{
-						$rowdataArray[] = array("<font color='green'><b>Error</b></font>","<font color='green'><b>Error</b></font>");
-					}
-					$columnsDataArray = array(array('id'=>'Identifier','header'=>'Identifier','dataIndex'=>'Identifier'),array('id'=>'Message','header'=>'Message','sortable'=>'true','width'=>350,'dataIndex'=>'Message'));
-					$headerListDataArray=array(array('name'=>'Identifier'),array('name'=>'Message'));
-					echo json_encode(array("success"=>"true",
-										   "headersList"=>(json_encode($headerListDataArray)),
-										   "rowData"=>json_encode($rowdataArray),
-										   "columnsData"=>json_encode($columnsDataArray)));
-				}else{
-					echo json_encode(array("success"=>"false","response"=>"Server not responding"));
-				}
-		}else{
-			// when cache detsroyed and DTI not found from cache in that case we will agin send the request to get the latest dti
-			// & won't need to generate the DTO just submit this dti
-			// call getDataObjects($params,$dtoRequired=false)
-			$this->setDtitoCache($params);
-			$this->setDataObjects($params);
-			exit;
-			//*** echo json_encode(array("success"=>"false","response"=>"Please Try again.. Cache destroyed"));
-		}
-	}
-
-
-	private function getDataxchangeResult($fetchedData){
-		$xmlIterator = new SimpleXMLIterator($fetchedData);
-		$resultArr=array();
-		$statusList = $xmlIterator->statusList;
-
-		// check the response level from ws it may be success/error
-		
-		/*$wsResponselevel = $xmlIterator->level;
-		if($wsResponselevel=='')
-		*/
-		
-		foreach($statusList->status as $status)
-		{
-			//print_r($status);
-
-				$identifier = (string)$status->identifier;
-				
-				foreach($status->messages as $message)
-				{
-					//print_r($message);
-					$messagestr = (string)$message->message;
-					$resultArr[$identifier]=$messagestr;
-				}
-
-		}
-		return $resultArr;
-	}
-	
-	private function removeDtiCache(){
-		@session_start();
-		if(isset($_SESSION['dti_detail'][$this->cacheKey]))
-		{
-			unset($_SESSION['dti_detail'][$this->cacheKey]);
-			return true;
-		}else{
-			return false;
-		}
-	}
-
-	private function cacheData($dtiXMLData){
-		@session_start();
-		//echo 'Session id: '.session_name();
-		if(!isset($_SESSION['dti_detail'][$this->cacheKey]))
-		{
-			$_SESSION['dti_detail'][$this->cacheKey] = $dtiXMLData;
-		}
-
-	}
-
-	function getCacheData(){
-		@session_start();
-		if(isset($_SESSION['dti_detail'][$this->cacheKey]))
-		{
-			return $_SESSION['dti_detail'][$this->cacheKey];
-		}
-	}
-
-	function checkCacheData(){
-		@session_start();
-		if(!isset($_SESSION['dti_detail'][$this->cacheKey]))
-		{
-			return false;
-		}else{
-			return true;
-		}
-	}
-
-
-	private function setDtitoCache($params){
-		if($this->checkCacheData()){
-			$this->cacheDTI = true;
-			$this->dtiXMLData = $this->getCacheData();
-		}else{
-			$this->dtiXMLData = $this->getDtiInfo($params);
-			// cache the data
-			if(($this->dtiXMLData!=false) && (!empty($this->dtiXMLData))) $this->cacheData($this->dtiXMLData);
 		}
 	}
 
@@ -177,21 +36,16 @@ class dataObjectsModel{
 
 	function getDataObjects($params)
 	{
-
 	 /**
 	  * Will use the DXIObject to get the identifiers List with the particular exchangeID
 	 */
-		// This function generates the uri and assign the uniquie-key to store in cache
 		$this->buildWSUri($params);
-		$this->setDtitoCache($params);
-		
-			/* we will check the key's existence from
-				session and if its there then fetch from
-				session or else send the request to get the dti info
-			*/
-		
-		if(($this->dtiXMLData!=false)&&(!empty($this->dtiXMLData))){
+		$this->dtiXMLData = $this->getDtiInfo($params);
+
+		if(($this->dtiXMLData!=false)&&($this->dtiXMLData!='')){
+			
 			$dxoResponse = $this->getDXOInfo($this->uriParams,$this->dtiXMLData);
+
 			if(($dxoResponse!=false) && ($dxoResponse!='')){
 				return json_encode($this->createJSONDataFormat($dxoResponse));
 			}else{
@@ -210,10 +64,17 @@ class dataObjectsModel{
 	private function getDtiInfo($params){
 		$curlObj = new curl($this->dtiUrl);
 		// will work on this
-		$curlObj->setopt(CURLOPT_USERPWD,"aknayak:povuxitu789A!");
+		$curlObj->setopt(CURLOPT_USERPWD,"aknayak:povuxitu722S!");
 		$fetchedData = $curlObj->exec();
 		$curlObj->close();
 		return $this->validateResponseCode($curlObj,$fetchedData);
+
+		/*// check the response code for curl
+		if($this->validateResponseCode($curlObj)){
+			return $fetchedData;
+		}else{
+			return false;
+		}*/
 	}
 
 	// Function to validate the http_code
@@ -233,7 +94,7 @@ class dataObjectsModel{
 		$curlObj->setopt(CURLOPT_POSTFIELDS,$postParams);
 		$curlObj->setopt(CURLOPT_HEADER, false);
 		// will work on this
-		$curlObj->setopt(CURLOPT_USERPWD,"aknayak:povuxitu789A!");
+		$curlObj->setopt(CURLOPT_USERPWD,"aknayak:povuxitu722S!");
 		$fetchedData = $curlObj->exec();
 		$curlObj->close();
 		return $this->validateResponseCode($curlObj,$fetchedData);
@@ -261,8 +122,6 @@ class dataObjectsModel{
 				// Main class object
 				if($i==1)
 				{
-					$classObjectName = (string)$classObject->name;
-					
 					// Traverse each templateObjects under the Main classObject
 					foreach($classObject->templateObjects->templateObject as $templateObject)
 					{
@@ -275,10 +134,6 @@ class dataObjectsModel{
 						{
 
 							$tempKey='';
-								if(stristr((string)$roleObject->type,'Reference') && ((strpos($roleObject->value, '#'))===0))
-                                {
-                                  $classReferenceArray[(string)$dataTransferObject->identifier][(string)substr($roleObject->value, 1, -1)]=(string)$roleObject->relatedClassName;
-                                }
 							if(stristr($roleObject->type,'Property'))
 							{
 								$tempRoleObjectNameArray[]="$roleObject->name";
@@ -303,10 +158,7 @@ class dataObjectsModel{
 
 								// We are adding custom keys to the array
 								if($this->nodeType=='exchanges'){
-									$tempRoleValueArray['TransferType']='<span style="cursor:pointer;color:'.$spanColor.'">'.(string)$dataTransferObject->transferType.'</span>';
-                                                                        if((string)$dataTransferObject->identifier !='' ){
-									$tempRoleValueArray['Identifier']  ='<span style="color:'.$spanColor.';cursor: pointer;text-decoration: underline">'.(string)$dataTransferObject->identifier.'</span>';
-                                                                        }
+									$tempRoleValueArray['TransferType']='<span style="color:'.$spanColor.'">'.(string)$dataTransferObject->transferType.'</span>';
 								}
 								
 									// condition to check if the transferType is change for role->type
@@ -314,8 +166,6 @@ class dataObjectsModel{
 								{
 									$value='';
 									$oldvalue='';
-									$convertedvalue='';
-									$convertedoldValue='';
 
 									if(isset($roleObject->value)){
 										$value=(string)$roleObject->value;
@@ -323,26 +173,23 @@ class dataObjectsModel{
 									if(isset($roleObject->oldValue)){
 										$oldvalue=(string)$roleObject->oldValue;
 									}
+										// if there is any difference between old and new then represent as old->new
 
-									// call and store the rdl values by checking the value contains rdl:
-									$convertedvalue = (stristr($value,'rdl:')) ? $this->stroreRdlValues($value,substr($value,4)):$value;
-									$convertedoldValue = (stristr($oldvalue,'rdl:')) ? $this->stroreRdlValues($oldvalue,substr($oldvalue,4)):$oldvalue;
-									
-									// if there is any difference between old and new then represent as old->new
+									if($oldvalue!=$value){
 
-									if($convertedoldValue!=$convertedvalue){
 											//if($oldvalue!='' && $value!=''){
-										$tempRoleValueArray[$tempKey]='<span style="cursor:pointer;color:'.$spanColor.'">'.$convertedoldValue.'->'.$convertedvalue.'</span>';
+										$tempRoleValueArray[$tempKey]='<span style="color:'.$spanColor.'">'.$oldvalue.'->'.$value.'</span>';
 											//}else{
 												//$tempRoleValueArray[$tempKey]='<span style="color:'.$spanColor.'">'.$oldvalue.$value.'</span>';
 											//}
 
-									}else{
-										$tempRoleValueArray[$tempKey]=$convertedoldValue;
+									}
+									else{
+										$tempRoleValueArray[$tempKey]=(string)$roleObject->oldValue;
 									}
 								}else{
-									$convertedvalue = (stristr((string)$roleObject->value,'rdl:')) ? $this->stroreRdlValues((string)$roleObject->value,substr((string)$roleObject->value,4)):(string)$roleObject->value;
-									$tempRoleValueArray[$tempKey]='<span style="cursor:pointer;color:'.$spanColor.'">'.$convertedvalue.'</span>';
+									$tempRoleValueArray[$tempKey]='<span style="color:'.$spanColor.'">'.(string)$roleObject->value.'</span>';
+
 								}
 								unset($tempKey);
 							}
@@ -392,7 +239,7 @@ class dataObjectsModel{
 		//echo '<pre>';
 
 		if($this->nodeType=='exchanges'){
-			$customListArray=array('TransferType','Identifier');
+			$customListArray=array('TransferType');
 		}else{
 			$customListArray=array();
 		}
@@ -430,9 +277,8 @@ class dataObjectsModel{
 
 
 		if($this->nodeType=='exchanges'){
-		$headerListDataArray[]=array('name'=>'Identifier','name'=>'TransferType');
+		$headerListDataArray[]=array('name'=>'TransferType');
 		}
-		
 		foreach($headerArrayList as $key =>$val){
 			$headerListDataArray[]=array('name'=>str_replace(".", "_", $val));
 			$columnsDataArray[]=array('id'=>str_replace(".", "_", $val),'header'=>$val,'width'=>(strlen($val)<20)?100:strlen($val)+120,'sortable'=>'true','dataIndex'=>str_replace(".", "_", $val));
@@ -443,42 +289,14 @@ class dataObjectsModel{
 		print_r($columnsDataArray);
 		exit;
 		*/
-
-		echo json_encode(array("classObjName"=>$classObjectName,"success"=>"true","cacheData"=>$this->cacheDTI,"rowData"=>json_encode($rowsDataArray),"columnsData"=>json_encode($columnsDataArray),"headersList"=>(json_encode($headerListDataArray))));
+		echo json_encode(array("success"=>"true","rowData"=>json_encode($rowsDataArray),
+							   "columnsData"=>json_encode($columnsDataArray),
+							   "headersList"=>(json_encode($headerListDataArray))));
 		unset($jsonrowsArray);
 		unset($rowsArray);
 		unset($headerArrayList);
 		exit;
 
 	}
-
-	function deleteDataObjects($params)
-	{
-		$this->buildWSUri($params);
-		if($this->removeDtiCache()!=true){
-			echo json_encode(array("success"=>"false"));
-		}else{
-			echo json_encode(array("success"=>"true"));
-		}
-	}
-
-	private function stroreRdlValues($originalvalue,$value){
-		if(array_key_exists($originalvalue,$this->rdlArray)){
-			return $this->rdlArray[$originalvalue];
-		}else{
-			$this->rdlArray[$originalvalue] = $this->getRdlValue($value);
-			return $this->rdlArray[$originalvalue];
-		}
-	}
-
-	private function getRdlValue($value){
-		$rdlUri = RDL_REQUEST_URI.'/'.$value.'/label';
-		$curlObj = new curl($rdlUri);
-		$curlObj->setopt(CURLOPT_USERPWD,"aknayak:povuxitu789A!");
-		$fetchedData = $curlObj->exec();
-		$curlObj->close();
-		return $this->validateResponseCode($curlObj,$fetchedData);
-	}
-	
 }
 ?>

@@ -12,11 +12,6 @@ using org.iringtools.library;
 using org.iringtools.library.manifest;
 using org.iringtools.utility;
 using org.iringtools.client.Models;
-using System.Runtime.Serialization;
-//using org.iringtools.client.Contrib;
-using System.Xml.Serialization;
-using System.Xml;
-using System.ServiceModel;
 
 namespace org.iringtools.client.Controllers
 {
@@ -45,11 +40,11 @@ namespace org.iringtools.client.Controllers
         format = Request.QueryString["format"].ToUpper();
 
       if (Request.QueryString["remote"] != null)
-        adapterServiceURI = Request.QueryString["remote"]+"/adapterservice";
+        adapterServiceURI = Request.QueryString["remote"];
 
       WebHttpClient client = new WebHttpClient(adapterServiceURI);
       List<ScopeProject> scopes = client.Get<List<ScopeProject>>("/scopes");
-      
+
       switch (format)
       {
         case "TREE":
@@ -59,21 +54,14 @@ namespace org.iringtools.client.Controllers
             foreach (ScopeProject scope in scopes)
             {
 
-              ScopeTreeNode nodeScope = new ScopeTreeNode(scope,null,null);
+              ScopeTreeNode nodeScope = new ScopeTreeNode(scope);
 
               nodes.Add(nodeScope);
 
               foreach (ScopeApplication app in scope.Applications)
               {
-                ApplicationTreeNode nodeApp = new ApplicationTreeNode(app, scope, null);
+                ApplicationTreeNode nodeApp = new ApplicationTreeNode(app);
                 nodeScope.children.Add(nodeApp);
-                List<string> graphs = GetGraphs(scope.Name, app.Name);
-
-                foreach (string graph in graphs)
-                {
-                  GraphTreeNode nodeGraph = new GraphTreeNode(graph, scope, app);
-                  nodeApp.children.Add(nodeGraph);
-                }
               }
             }
 
@@ -84,49 +72,10 @@ namespace org.iringtools.client.Controllers
             JsonContainer<List<ScopeProject>> container = new JsonContainer<List<ScopeProject>>();
             container.Items = scopes;
             container.Total = scopes.Count;
-            container.success = true;
+            container.Success = true;
             return Json(container, JsonRequestBehavior.AllowGet);
           }
       }
-    }
-
-    private List<string> GetGraphs(string scope, string application)
-    {
-      List<string> graphs = new List<string>();
-       WebHttpClient client = new WebHttpClient(_adapterServiceURI);
-       Mapping mapping = client.Get<Mapping>("/" + scope + "/" + application + "/mapping", true);
-       foreach (GraphMap graph in mapping.graphMaps)
-       {
-         graphs.Add(graph.name);
-       }
-       return graphs;
-    }
-
-    public JsonResult Applications()
-    {
-      string scope = String.Empty;
-      string adapterServiceURI = _adapterServiceURI;
-
-      if (Request.QueryString["scope"] != null)
-        scope = Request.QueryString["scope"];
-
-      if (Request.QueryString["remote"] != null)
-        adapterServiceURI = Request.QueryString["remote"]+"/adapterservice";
-
-      WebHttpClient client = new WebHttpClient(adapterServiceURI);
-      List<ScopeProject> scopes = client.Get<List<ScopeProject>>("/scopes");
-      ScopeProject scopePrj = scopes.FirstOrDefault<ScopeProject>(o=>o.Name == scope);
-            
-      JsonContainer<List<ScopeApplication>> container = new JsonContainer<List<ScopeApplication>>();
-
-      if (scopePrj != null)
-      {
-        container.Items = scopePrj.Applications;
-        container.Total = scopePrj.Applications.Count;
-        container.success = true;
-      }
-
-      return Json(container, JsonRequestBehavior.AllowGet);            
     }
 
     //
@@ -152,47 +101,39 @@ namespace org.iringtools.client.Controllers
       string adapterServiceURI = _adapterServiceURI;
 
       if (Request.QueryString["remote"] != null)
-        adapterServiceURI = Request.QueryString["remote"]+"/adapterservice";
+        adapterServiceURI = Request.QueryString["remote"];
 
       string scope = Request.QueryString["scope"];
       string application = Request.QueryString["application"];
 
-      JsonContainer<List<GraphMap>> container = new JsonContainer<List<GraphMap>>();
+      JsonContainer<List<Graph>> container = new JsonContainer<List<Graph>>();
 
       WebHttpClient client = new WebHttpClient(adapterServiceURI);
-      Mapping mapping = client.Get<Mapping>(String.Format("/{0}/{1}/mapping", scope, application));
-
-      container.Items = mapping.graphMaps;
-      container.Total = mapping.graphMaps.Count;
+      Manifest manifest = client.Get<Manifest>(String.Format("/{0}/{1}/manifest", scope, application));
+            
+      container.Items = manifest.Graphs;
+      container.Total = manifest.Graphs.Count;
 
       return Json(container, JsonRequestBehavior.AllowGet);
-    }
-
-
-    public ActionResult Test()
-    {
-      string request = System.Net.Dns.GetHostEntry("adcrdlweb").HostName;
-
-      return this.Content(request, "text/xml");
     }
 
     //
     // Get: Scopes/Mapping?scope={scope}&application={application}
 
-    public ActionResult Mapping()
+    public JsonResult Mapping()
     {
-      string adapterServiceURI = _adapterServiceURI;
-
-      if (Request.QueryString["remote"] != null)
-        adapterServiceURI = Request.QueryString["remote"] + "/adapterservice";
-
       string scope = Request.QueryString["scope"];
       string application = Request.QueryString["application"];
 
-      WebHttpClient client = new WebHttpClient(adapterServiceURI);
-      string request = Utility.Serialize<Mapping>(client.Get<Mapping>(string.Format("/{0}/{1}/mapping", scope, application)),true);
+      JsonContainer<List<GraphMap>> container = new JsonContainer<List<GraphMap>>();
 
-      return this.Content(request, "text/xml");
+      WebHttpClient client = new WebHttpClient(_adapterServiceURI);
+      Mapping mapping = client.Get<Mapping>(String.Format("/{0}/{1}/mapping", scope, application));
+            
+      container.Items = mapping.graphMaps;
+      container.Total = mapping.graphMaps.Count;
+
+      return Json(container, JsonRequestBehavior.AllowGet);
     }
 
     //
@@ -215,5 +156,4 @@ namespace org.iringtools.client.Controllers
     }
     
   }
-
 }

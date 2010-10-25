@@ -56,27 +56,26 @@ namespace org.iringtools.client.Controllers
       container.Items.Add(item2);
             
       container.Total = container.Items.Count();
-      container.success = true;
+
       return Json(container, JsonRequestBehavior.AllowGet);
     }
 
     //
     // POST: Exchange/Pull?scope={scope}&application={application}
-        
+
+    [HttpPost]
     public JsonResult Pull(FormCollection collection)
     {
-      string sourceScope = Request.QueryString["scope"];
-      string sourceApp = Request.QueryString["application"];
-      string sourceGraph = Request.QueryString["graph"];
-
-      //string targetScope = collection["targetScope"];
-      //string targetApp = collection["targetApplication"];
-      //string targetGraph = collection["targetGraph"];       
+      string scope = Request.QueryString["scope"];
+      string application = Request.QueryString["application"];
+      string graphName = collection["graph"];
 
       JsonContainer<List<Status>> container = new JsonContainer<List<Status>>();
 
       if (collection.Count > 0)
-      {        
+      {
+        Uri address = new Uri(String.Format(_adapterServiceURI + "/{0}/{1}/{2}/pull?method=sparql", scope, application, graphName));
+
         WebCredentials credentials = new WebCredentials() {
           domain = collection["domain"],
           userName = collection["username"],
@@ -92,20 +91,12 @@ namespace org.iringtools.client.Controllers
         string postData = Utility.Serialize<Request>(request, true);
 
         WebHttpClient client = new WebHttpClient(_adapterServiceURI);
-        string result = client.Post<Request>(String.Format("/{0}/{1}/{2}/pull?method=sparql", sourceScope, sourceApp, sourceGraph), request, true);
+        string result = client.Post<Request>(String.Format("/{0}/{1}/{2}/pull?method=sparql", scope, application, graphName), request, true);
 
         //WebClient webClient = new WebClient();
         //string result = webClient.UploadString(address, "POST", postData);         
 
         Response response = result.DeserializeDataContract<Response>();
-
-        foreach (Status stat in response.StatusList)
-        {
-
-          container.Message += String.Join(" ", stat.Messages.ToArray());
-        }
-        container.success = true;
-        container.Items = response.StatusList;
       }
 
       return Json(container, JsonRequestBehavior.AllowGet);

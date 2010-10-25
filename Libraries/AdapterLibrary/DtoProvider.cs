@@ -159,8 +159,8 @@ namespace org.iringtools.adapter
         InitializeScope(scope, app);
         InitializeDataLayer();
 
-        _graphMap = _mapping.FindGraphMap(graph);   
-     
+        _graphMap = _mapping.FindGraphMap(graph);
+
         // extract delete identifiers from data transfer objects
         List<string> deleteIdentifiers = new List<string>();
         for (int i = 0; i < dataTransferObjects.Count; i++)
@@ -180,7 +180,7 @@ namespace org.iringtools.adapter
 
         if (deleteIdentifiers.Count > 0)
           response.Append(_dataLayer.Delete(_graphMap.dataObjectMap, deleteIdentifiers));
-        
+
         response.Level = StatusLevel.Success;
       }
       catch (Exception ex)
@@ -201,7 +201,7 @@ namespace org.iringtools.adapter
 
       return response;
     }
-    
+
     // get single data transfer object (but wrap it in a list!)
     public DataTransferObjects GetDataTransferObject(string scope, string app, string graph, string id)
     {
@@ -295,7 +295,7 @@ namespace org.iringtools.adapter
         InitializeDataLayer();
 
         BuildCrossGraphMap(dtoPageRequest.Manifest, graph);
-        
+
         IList<string> identifiers = new List<string>();
         foreach (DataTransferIndex dti in dtoPageRequest.DataTransferIndices)
         {
@@ -324,7 +324,7 @@ namespace org.iringtools.adapter
       {
         InitializeScope(scope, app);
         InitializeDataLayer();
-        
+
         DataDictionary dataDictionary = _dataLayer.GetDictionary();
 
         foreach (GraphMap graphMap in _mapping.graphMaps)
@@ -363,7 +363,7 @@ namespace org.iringtools.adapter
 
               foreach (TemplateMap templateMap in templateMaps)
               {
-                Template manifestTemplate = new Template 
+                Template manifestTemplate = new Template
                 {
                   TemplateId = templateMap.templateId,
                   Name = templateMap.name,
@@ -408,7 +408,7 @@ namespace org.iringtools.adapter
             }
           }
         }
-      }     
+      }
       catch (Exception ex)
       {
         _logger.Error("Error getting manifest: " + ex);

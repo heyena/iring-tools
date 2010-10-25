@@ -47,10 +47,12 @@
     <Reference Include="Microsoft.ServiceModel.Web">
       <HintPath>..\..\ExternalBinaries\WCFRESTStarterKit\Microsoft.ServiceModel.Web.dll</HintPath>
     </Reference>
+    <Reference Include="RouteDebug">
+      <HintPath>..\..\ExternalBinaries\RouteDebug\RouteDebug.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -87,10 +89,8 @@
   <ItemGroup>
     <Compile Include="Controllers\AdapterManagerController.cs" />
     <Compile Include="Controllers\ExchangeController.cs" />
-    <Compile Include="Controllers\ExchangeManagerController.cs" />
     <Compile Include="Controllers\ScopesController.cs" />
     <Compile Include="Controllers\SearchController.cs" />
-    <Compile Include="Models\GraphTreeNode.cs" />
     <Compile Include="Models\JsonArray.cs" />
     <Compile Include="Models\JsonContainer.cs" />
     <Compile Include="Views\AppEditor\Index.aspx.cs">
@@ -997,7 +997,6 @@
     <Content Include="Scripts\iringtools\ActionPanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager.js" />
     <Content Include="Scripts\iringtools\DataObjectsPanel.js" />
-    <Content Include="Scripts\iringtools\ExchangeManager.js" />
     <Content Include="Scripts\iringtools\ExchangePanel.js" />
     <Content Include="Scripts\iringtools\MappingPanel.js" />
     <Content Include="Scripts\iringtools\NavigationPanel.js" />
@@ -1018,7 +1017,6 @@
     <Content Include="Content\img\iRINGTools_logo.png" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="Views\ExchangeManager\Index.aspx" />
     <Content Include="Views\RefDataEditor\Index.aspx" />
     <Content Include="Scripts\ext-3.2.1\adapter\ext\ext-base-debug-w-comments.js" />
     <Content Include="Scripts\ext-3.2.1\adapter\ext\ext-base-debug.js" />
@@ -1163,6 +1161,7 @@
   <ItemGroup>
     <Folder Include="Scripts\ext-3.2.1\resources\images\vista\dd\" />
     <Folder Include="Scripts\ext-3.2.1\resources\images\vista\tree\" />
+    <Folder Include="Views\Exchange\" />
     <Folder Include="Views\Shared\" />
   </ItemGroup>
   <ItemGroup>

@@ -6,12 +6,12 @@
 */
 iIRNGTools.AdapterManager.NavigationPanel = Ext.extend(Ext.Panel, {
   title: 'Directory',
-  width: 220,
+  width: 200,
 
   collapseMode: 'mini',
   collapsible: true,
   collapsed: false,
-
+  
   layout: 'border',
   border: true,
   split: true,
@@ -42,7 +42,7 @@ iIRNGTools.AdapterManager.NavigationPanel = Ext.extend(Ext.Panel, {
       layout: 'fit',
       border: false,
 
-      rootVisible: true,
+      rootVisible: true,      
       lines: true,
       //singleExpand: true,
       useArrows: true,
@@ -75,26 +75,26 @@ iIRNGTools.AdapterManager.NavigationPanel = Ext.extend(Ext.Panel, {
   getScope: function () {
     var scope = '';
     var node = this.navigationPanel.getSelectionModel().getSelectedNode();
-    scope = node.attributes.Scope.Name;
+
+    if (!node.isLeaf()) {
+      scope = node.attributes.Scope.Name;
+    } else {
+      var parentNode = node.parentNode;
+      scope = parentNode.attributes.Scope.Name;
+    }
+
     return scope;
   },
 
   getApplication: function () {
     var application = '';
     var node = this.navigationPanel.getSelectionModel().getSelectedNode();
-    if(node.allowChildren && node.attributes._application != null) {
-      application = node.attributes._application.Name;
-    }
-    return application;
-  },
 
-  getGraph: function () {
-    var graph = '';
-    var node = this.navigationPanel.getSelectionModel().getSelectedNode()
-    if(node.isLeaf()) {
-      graph = node.attributes.GraphName;
+    if (node.isLeaf()) {
+      application = node.attributes.Application.Name;
     }
-    return graph;
+
+    return application;
   },
 
   buildToolbar: function () {
@@ -141,15 +141,15 @@ iIRNGTools.AdapterManager.NavigationPanel = Ext.extend(Ext.Panel, {
   },
 
   onConfigure: function (btn, ev) {
-    this.fireEvent('configure', this, this.getScope(), this.getApplication(), this.getGraph());
+    this.fireEvent('configure', this, this.getScope(), this.getApplication());
   },
 
   onMapping: function (btn, ev) {
-    this.fireEvent('mapping', this, this.getScope(), this.getApplication(), this.getGraph());
+    this.fireEvent('mapping', this, this.getScope(), this.getApplication());
   },
 
   onExchange: function (btn, ev) {
-    this.fireEvent('exchange', this, this.getScope(), this.getApplication(), this.getGraph());
+    this.fireEvent('exchange', this, this.getScope(), this.getApplication());
   }
 
 });

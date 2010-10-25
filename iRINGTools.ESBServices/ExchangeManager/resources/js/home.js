@@ -104,15 +104,7 @@ Ext.onReady(function(){
           region: 'center',
           id:'centerPanel',
           xtype: 'tabpanel',
-		  listeners: {
-         'afterlayout': {
-            fn: function(p){
-                p.disable();
-            },
-            single: true // important, as many layouts can occur
-        }
-		},
-		//  disabled:true,
+          disabled:true,
           margins: '0 0 0 0',
 		  enableTabScroll:true,
 		  defaults:{layout:'fit'}

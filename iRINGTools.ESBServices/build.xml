@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project basedir="." default="build" name="iring-tools-esb">
-  <target name="build">
-	<ant dir="ExchangeManager"/>
-	<ant dir="iRINGTools.Services"/>
-  </target>
-</project>

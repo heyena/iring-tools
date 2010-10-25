@@ -8,17 +8,15 @@ var iRINGTools = new Ext.iRINGTools({});
 Ext.onReady(function () {
   Ext.QuickTips.init();
 
-  /*
   var actionPanel = new iIRNGTools.AdapterManager.ActionPanel({
-  id: 'action-panel',
-  region: 'west',
-  width: 200,
+    id: 'action-panel',
+    region: 'west',
+    width: 200,
 
-  collapseMode: 'mini',
-  collapsible: true,
-  collapsed: false
+    collapseMode: 'mini',
+    collapsible: true,
+    collapsed: false
   });
-  */
 
   var searchPanel = new iIRNGTools.AdapterManager.SearchPanel({
     id: 'search-panel',
@@ -48,14 +46,13 @@ Ext.onReady(function () {
     id: 'nav-panel',
     title: 'Directory',
     region: 'west',
-    width: 250,
+    width: 200,
 
     collapseMode: 'mini',
     collapsible: true,
     collapsed: false,
 
     navigationUrl: 'Scopes?format=tree'
-
   });
 
   navigationPanel.on('create', function (npanel) {
@@ -85,11 +82,11 @@ Ext.onReady(function () {
 
   });
 
-  navigationPanel.on('mapping', function (npanel, scope, application, graph) {
+  navigationPanel.on('mapping', function (npanel, scope, application) {
 
     if (application.length > 0) {
       var newTab = new iIRNGTools.AdapterManager.MappingPanel({
-        title: 'Mapping - ' + scope + '.' + application + '.' + graph,
+        title: 'Mapping - ' + scope + '.' + application,
         closable: true
       });
 
@@ -101,14 +98,13 @@ Ext.onReady(function () {
 
   });
 
-  navigationPanel.on('exchange', function (npanel, scope, application, graph) {
+  navigationPanel.on('exchange', function (npanel, scope, application) {
 
     if (application.length > 0) {
 
       var exhangePanel = new iIRNGTools.AdapterManager.ExchangePanel({
         scope: scope,
-        application: application,
-        graph: graph
+        application: application
       });
 
       exhangePanel.on('exchange', function (panel, form) {
@@ -119,10 +115,9 @@ Ext.onReady(function () {
         }
 
         form.submit({
-          url: "exchange/pull?scope=" + panel.scope + "&application=" + panel.application + "&graph=" + panel.graph,
-          timeout: 120000,
+          url: "exchange/" + panel.scope + "/" + panel.application + "/pull",
           success: function (form, action) {
-            Ext.Msg.alert("Exchange - " + form.scope + '.' + form.application + '.' + form.graph  , action.result.Message);
+            iRINGTools.setAlert(true, 'got here');
           }
         });
 
@@ -136,19 +131,19 @@ Ext.onReady(function () {
       });
 
       var window = new Ext.Window({
-        title: 'Exchange - ' + scope + '.' + application + '.' + graph,
+        title: 'Exchange - ' + scope + '.' + application,
         labelWidth: 110, // label settings here cascade unless overridden                  
-        width: 490,
-        height: 390,
+        width: 390,
+        height: 290,
         layout: 'fit',
         modal: true,
         items: exhangePanel
-      });
+      });            
 
       window.show();
 
     } else {
-      iRINGTools.setAlert(true, '   Please select a application or graph before continuing.  ');
+      iRINGTools.setAlert(true, 'Select a application before continuing.');
     }
 
   });
@@ -170,9 +165,17 @@ Ext.onReady(function () {
         border: false,
         height: 60
       },
-      navigationPanel,
-      contentPanel,
-      searchPanel
+      actionPanel,
+      {
+        region: 'center',
+        layout: 'border',
+        border: false,
+        items: [
+          navigationPanel,
+          contentPanel,
+          searchPanel
+        ]
+      }
     ],
     listeners: {
       render: function () {

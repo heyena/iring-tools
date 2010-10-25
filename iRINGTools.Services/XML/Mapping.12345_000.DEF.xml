@@ -104,17 +104,13 @@
                   <type>Possessor</type>
                   <roleId>tpl:R16314127825</roleId>
                   <name>hasPossessor</name>
-                  <dataType/>
-                  <propertyName/>
-                  <value/>
                 </RoleMap>
                 <RoleMap>
-                  <type>ObjectProperty</type>
+                  <type>Property</type>
                   <roleId>tpl:R93884193692</roleId>
                   <name>hasScale</name>
-                  <dataType>rdl:R67037145498</dataType>
+                  <dataType>xsd:string</dataType>
                   <propertyName>LINES.UOM_NOMDIAMETER</propertyName>
-                  <value/>
                   <valueList>Length</valueList>
                 </RoleMap>
                 <RoleMap>
@@ -124,7 +120,7 @@
                   <value>rdl:R17622148043</value>
                 </RoleMap>
                 <RoleMap>
-                  <type>DataProperty</type>
+                  <type>Property</type>
                   <roleId>tpl:R90688063648</roleId>
                   <name>valValue</name>
                   <dataType>xsd:double</dataType>
@@ -258,7 +254,7 @@
       <name>Length</name>
       <valueMaps>
         <ValueMap>
-          <internalValue>mm</internalValue>
+          <internalValue>METER</internalValue>
           <uri>rdl:R52054275374</uri>
         </ValueMap>
         <ValueMap>

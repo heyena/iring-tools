@@ -14,6 +14,18 @@
             <description>Line List</description>
             <commodity>PipingNetworkSystem</commodity>
           </graph>
+          <graph>
+            <id>2</id>
+            <name>Instruments</name>
+            <description>Instrument List</description>
+            <commodity>Instrument</commodity>
+          </graph>
+          <graph>
+            <id>4</id>
+            <name>Lines</name>
+            <description>Line List</description>
+            <commodity>PipingNetworkSystem</commodity>
+          </graph>
         </graphs>
       </application>
       <application>
@@ -22,10 +34,10 @@
         <description>Test Application</description>
         <graphs>
           <graph>
-            <id>2</id>
-            <name>Lines</name>
-            <description>Line List</description>
-            <commodity>PipingNetworksSystem</commodity>
+            <id>3</id>
+            <name>Instruments</name>
+            <description>Instrument List</description>
+            <commodity>Instrument</commodity>
           </graph>
         </graphs>
       </application>
@@ -36,124 +48,56 @@
         <exchanges>
           <exchange>
             <id>1</id>
-            <name>ABC.Lines -&gt; DEF.Lines</name>
-            <description>Line Exchange</description>
+            <name>12345_000.ABC.Lines -&gt; 12345_000.DEF.Lines</name>
+            <description>Synchronizing Line Lists</description>
           </exchange>
           <exchange>
-            <id>2</id>
-            <name>DEF.Lines -&gt; ABC.Lines</name>
-            <description>Line Exchange</description>
+            <id>4</id>
+            <name>12345_000.ABC.Lines -&gt; 54321_000.ABC.Lines</name>
+            <description>Synchronizing two projects Line Lists</description>
+          </exchange>
+        </exchanges>
+      </commodity>
+      <commodity>
+        <name>Instrument</name>
+        <exchanges>
+          <exchange>
+            <id>3</id>
+            <name>12345_000.ABC.Instruments -&gt; 12345_000.DEF.Insturments</name>
+            <description>Synchronizing Instrument Lists</description>
           </exchange>
         </exchanges>
       </commodity>
     </dataExchanges>
   </scope>
-	<scope>
-		<name>25027</name>
-		<applicationData>
-			<application>
-				<id>3</id>
-				<name>CM</name>
-				<description>ORACLE Completions Module</description>
-				<graphs>
-					<graph>
-						<id>3</id>
-						<name>Documents</name>
-						<description>Completions Documents</description>
-						<commodity>Document</commodity>
-					</graph>
-				</graphs>
-			</application>
-		</applicationData>
-	</scope>
-	<scope>
-		<name>44444</name>
-		<applicationData>
-			<application>
-				<id>5</id>
-				<name>CM</name>
-				<description>SQLServer Completions Module</description>
-				<graphs>
-					<graph>
-						<id>6</id>
-						<name>Documents</name>
-						<description>Completions Documents</description>
-						<commodity>Document</commodity>
-					</graph>
-				</graphs>
-			</application>
-		</applicationData>
-	</scope>
-	<scope>
-		<name>ComplianceWorks</name>
-		<applicationData>
-			<application>
-				<id>6</id>
-				<name>eForms</name>
-				<description>eForms</description>
-				<graphs>
-					<graph>
-						<id>7</id>
-						<name>Forms</name>
-						<description>eForms Document Types</description>
-						<commodity>DocumentType</commodity>
-					</graph>
-					<graph>
-						<id>8</id>
-						<name>Folders</name>
-						<description>eForms Project Hierarchy</description>
-						<commodity>DocumentFolder</commodity>
-					</graph>
-				</graphs>
-			</application>
-		</applicationData>
-	</scope>
-	<scope>
-		<name>Dulles</name>
-		<applicationData>
-			<application>
-				<id>7</id>
-				<name>eForms</name>
-				<description>eForms</description>
-				<graphs>
-					<graph>
-						<id>9</id>
-						<name>Forms</name>
-						<description>eForms Document Types</description>
-						<commodity>DocumentType</commodity>
-					</graph>
-					<graph>
-						<id>10</id>
-						<name>Folders</name>
-						<description>eForms Project Hierarchy</description>
-						<commodity>DocumentFolder</commodity>
-					</graph>
-				</graphs>
-			</application>
-		</applicationData>
-	</scope>
-	<scope>
-		<name>ServiceTest</name>
-		<applicationData>
-			<application>
-				<id>4</id>
-				<name>eForms</name>
-				<description>eForms</description>
-				<graphs>
-					<graph>
-						<id>4</id>
-						<name>Forms</name>
-						<description>eForms Document Types</description>
-						<commodity>DocumentType</commodity>
-					</graph>
-					<graph>
-						<id>5</id>
-						<name>Folders</name>
-						<description>eForms Project Hierarchy</description>
-						<commodity>DocumentFolder</commodity>
-					</graph>
-				</graphs>
-			</application>
-		</applicationData>
-	</scope>
+  <scope>
+    <name>54321_000</name>
+    <applicationData>
+      <application>
+        <id>2</id>
+        <name>ABC</name>
+        <description>Test Application</description>
+        <graphs>
+          <graph>
+            <id>4</id>
+            <name>Lines</name>
+            <description>Line List</description>
+            <commodity>PipingNetworkSystem</commodity>
+          </graph>
+        </graphs>
+      </application>
+    </applicationData>
+    <dataExchanges>
+      <commodity>
+        <name>PipingNetworkSystem</name>
+        <exchanges>
+          <exchange>
+            <id>2</id>
+            <name>12345_000.DEF.Lines -&gt; 12345_000.ABC.Lines</name>
+            <description>Synchronizing Line Lists</description>
+          </exchange>
+        </exchanges>
+      </commodity>
+    </dataExchanges>
+  </scope>
 </directory>

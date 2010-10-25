@@ -20,7 +20,7 @@ namespace iRINGTools.WebMVC.Controllers
     public ActionResult SPARQLQuery()
     {
       return View();
-    }    
+    }
 
   }
 }

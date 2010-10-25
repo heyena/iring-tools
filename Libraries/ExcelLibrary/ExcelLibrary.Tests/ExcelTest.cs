@@ -35,7 +35,7 @@ namespace org.iringtools.adapter.datalayer
       ExcelSettings ExcelSettings = new ExcelSettings();
       ExcelSettings.AppendSettings(settings);
 
-      _dataLayer = new ExcelDataLayer(adapterSettings);
+      _dataLayer = new ExcelDataLayer(adapterSettings);      
     }
 
     private TestContext testContextInstance;
@@ -56,7 +56,7 @@ namespace org.iringtools.adapter.datalayer
       }
     }
     
-    //[TestMethod]
+    [TestMethod]
     public void Create()
     {
       IList<string> identifiers = new List<string>() 
@@ -91,7 +91,7 @@ namespace org.iringtools.adapter.datalayer
       Assert.IsTrue(actual.Level == StatusLevel.Success);
     }
 
-    //[TestMethod]
+    [TestMethod]
     public void Read()
     {
       IList<string> identifiers = new List<string>() 
@@ -121,7 +121,7 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    //[TestMethod]
+    [TestMethod]
     public void Delete()
     {
       IList<string> identifiers = new List<string>() 

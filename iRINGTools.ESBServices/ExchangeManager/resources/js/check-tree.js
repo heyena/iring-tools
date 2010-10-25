@@ -8,10 +8,8 @@
  * in the form of JSON String
  * 
  */
-var reviewed,tree
-   
-function showgrid(response, request,label,nodeid){
-	reviewed=true
+
+function showgrid(response, request,label){
 	var jsonData = Ext.util.JSON.decode(response);
 	if(eval(jsonData.success)==false)
 	{
@@ -27,7 +25,7 @@ function showgrid(response, request,label,nodeid){
 	var rowData = eval(jsonData.rowData);
 	var filedsVal = eval(jsonData.headersList);
 	var columnData = eval(jsonData.columnsData);
-    var classObjName = jsonData.classObjName;
+
 	// create the data store
 	var store = new Ext.data.ArrayStore({
 	fields: filedsVal
@@ -50,83 +48,33 @@ function showgrid(response, request,label,nodeid){
 	frame:true,
 	autoSizeColumns: true,
 	autoSizeGrid: true,
-        AllowScroll : true,
+    AllowScroll : true,
 	minColumnWidth:100, 
 	columnLines: true,
-	classObjName:classObjName,
 	//autoWidth:true,
-        enableColumnMove:false,
-        listeners: {
+    enableColumnMove:false,
+            listeners: {
+
                  cellclick:{
-                       fn:function(grid,rowIndex,columnIndex,e){
-                           var cm    = this.colModel
-                           var record = grid.getStore().getAt(rowIndex);  // Get the Record
-                           var fieldName = grid.getColumnModel().getDataIndex(columnIndex); // Get field name
-                           if(fieldName=='IdentificationByTag'){
-                                var IdentificationByTag_value = record.get(fieldName);
-                                var transferType_value = record.get('TransferType');
-                                var rowDataArr = []
-                                 for(var i=2; i<cm.getColumnCount();i++){
-                                     fieldHeader= grid.getColumnModel().getColumnHeader(i); // Get field name
-                                     fieldValue= record.get(grid.getColumnModel().getDataIndex(i))
-
-                                     tempArr= Array(fieldHeader,fieldValue)
-                                     rowDataArr.push(tempArr)
-                                 }
-
-                                   var filedsVal_ = '[{"name":"Property"},{"name":"Value"}]'
-                                   var columnsData_='[{"id":"Property","header":"Property","width":144,"sortable":"true","dataIndex":"Property"},{"id":"Value","header":"Value","width":144,"sortable":"true","dataIndex":"Value"}]'
-                                   var prowData = eval(rowDataArr);
-                                   var pfiledsVal = eval(filedsVal_);
-                                   var pColumnData = eval(columnsData_);
-                                   // create the data store
-                                   var pStore = new Ext.data.ArrayStore({
-                                        fields: pfiledsVal
-                                   });
-                                   pStore.loadData(prowData);
-                                   showIndvidualClass(pStore,pColumnData)
-                                   Ext.get('identifier-class-detail').dom.innerHTML = '<div style="float:left; width:110px;"><img src="resources/images/class-badge.png"/></div><div style="padding-top:20px;" id="identifier"><b>'+removeHTMLTags(IdentificationByTag_value)+'</b><br/>'+grid.classObjName+'<br/>Transfer Type : '+transferType_value+'</div>'
-                                }
-						  }
-						 },
-					 beforeclose:function(){
-					 makeLablenURIS('delete')
-					 //alert(globalReq)	 
-
-					sendCloseRequest(globalReq,globalLabel);
-				   // send request for delete cache 
-					 }
-
-		   
+                       fn:function(grid1,rowIndex,columnIndex,e){
+                        // obj = grid.attributes
+                            
+                           /* var record = grid1.getStore().getAt(rowIndex);  // Get the Record
+                            var fieldName = grid1.getColumnModel().getDataIndex(columnIndex); // Get field name
+                            var transferTypeIndex = grid1.getColumnModel().getDataIndex(0);
+                            var data = record.get(fieldName);
+                            var transferType = record.get(transferTypeIndex);
+                            alert(fieldName+':'+data)
+                            alert('Transfer Type :'+transferType)*/
+                           
+                     }
+                    }
                // cellclick : function( Grid this, Number rowIndex, Number columnIndex, Ext.EventObject e )
-		   },
-	tbar:new Ext.Toolbar({
-	xtype: "toolbar",
-	items:[{
-		xtype:"tbbutton",
-		icon:'resources/images/16x16/view-refresh.png',
-		tooltip:'Reload',
-		disabled: false,
-		handler:function(){
-	  //promptReviewAcceptance();
-		  makeLablenURIS('get');
-		  showCentralGrid(globalTreenode);
-	  // send Request to destroy session
-	  }
-		   },{
-		xtype:"tbbutton",
-		icon:'resources/images/16x16/go-send.png',
-		tooltip:'Exchange Data',
-		disabled: false,
-		handler:function(){
-        //promptReviewAcceptance();
-	   makeLablenURI();
-	   submitDataExchange(globalReq);
+               
 
-	  }
-	 }
-	]
-	})
+              }
+
+
 	});
 
         //make the text selectable in cells of Grid
@@ -140,29 +88,18 @@ function showgrid(response, request,label,nodeid){
             }
         });
 
-        if(Ext.getCmp('centerPanel').findById('tab-'+label)){
-                Ext.getCmp('centerPanel').remove(Ext.getCmp('centerPanel').findById('tab-'+label));
-        }
-		
-		
 	Ext.getCmp('centerPanel').add( 
 	Ext.apply(grid,{
 	id:'tab-'+label,
-	text:nodeid,
 	title: label,
 	closable:true
 	})).show();
 }
 }
 
-function sendAjaxRequest(requestURL,label,nodeid){
-	var w = Ext.getCmp('centerPanel').getActiveTab();
-	if(w){
-		w.getEl().mask('Loading.....')
-	}else{
-		Ext.getBody().mask('Loading...');
-	}
-	
+function sendAjaxRequest(requestURL,label){
+	Ext.getBody().mask('Loading...');
+
 	Ext.Ajax.request({
 		url : requestURL,
 		method: 'POST',
@@ -175,89 +112,58 @@ function sendAjaxRequest(requestURL,label,nodeid){
 		},
 		success: function(result, request)
 		{ 
-			showgrid(result.responseText,request,label,nodeid);
+			showgrid(result.responseText, request,label);
 		},
 		failure: function ( result, request){ 
 			//alert(result.responseText); 
 		},
-		callback: function() {
-			if(w){
-				w.getEl().unmask()
-			}else{
-				Ext.getBody().unmask();
-			}
-		}
+		callback: function() {Ext.getBody().unmask();}
 	})
 }
 
 Ext.onReady(function(){
     Ext.QuickTips.init();
+
     var tBar = new Ext.Toolbar({
 	xtype: "toolbar",
-        items: [
-		   {
+        items: [ {
             xtype:"tbbutton",
             icon:'resources/images/16x16/view-refresh.png',
             tooltip:'Refresh',
             id: 'headRefresh', 
             disabled: false,
             handler: function(){
-                Ext.state.Manager.clear("treestate");    
+                   Ext.state.Manager.clear("treestate");    
                 tree.root.reload();
             }
-		   },
-		   {
-			// For open button
-			xtype:"tbbutton",
-			icon:'resources/images/16x16/document-open.png',
-			id: 'headExchange',
-			tooltip:'Open',
-			disabled: false,
-			handler: function(){showCentralGrid(tree.getSelectionModel().getSelectedNode());}
-		   },
-		   {
+        },
+        /*
+            Exchane Button hided
+            {
             xtype:"tbbutton",
             icon:'resources/images/16x16/go-send.png',
-            tooltip:'Exchange Data',
+            qtip:'Exchange Data',
+            disabled: false,
+            handler: function()
+                {
+                  //alert("Clicked on Exchange Data")
+                  dataExchange();
+                }
+        },*/
+        {
+            xtype:"tbbutton",
+            icon:'resources/images/16x16/document-open.png',
+            id: 'headExchange',
+            tooltip:'Open',
             disabled: false,
             handler: function(){
-					makeLablenURI();
-					var treenode=  globalTreenode;
-				  	if(treenode!=null){
-						var label=  globalLabel;
-						var requestURL = globalReq;
-
-								if(!Ext.getCmp(label)){
-									promptReviewAcceptance(requestURL);
-								}else{
-											Ext.Msg.show({
-											msg: 'Thanks for your review & acceptance. Want to transfer the data now?',
-											buttons: Ext.Msg.YESNO,
-											icon: Ext.Msg.QUESTION,//'profile', // &lt;- customized icon
-											fn: function(action){
-													 if(action=='yes'){
-														 submitDataExchange(requestURL);
-													 }else if(action=='no'){
-														 alert('Not now');
-													 }
-												 }
-											});
-								}
-					}else{
-						  Ext.MessageBox.show({
-							msg: 'Please Select an Exchange First<br/>',
-							buttons: Ext.MessageBox.OK,
-							icon: Ext.MessageBox.WARNING
-						  });
-						  return false;
-					  }
-                }
-        }
-        
+                showCentralGrid(tree.getSelectionModel().getSelectedNode());
+            }
+	}
 
     ]});
 	
-    tree = new Ext.tree.TreePanel({
+  var tree = new Ext.tree.TreePanel({
     id:'directory-tree',
     renderTo:'tree-div',
     height: 494,
@@ -351,6 +257,79 @@ Ext.onReady(function(){
       );
   }
 
+  function dataExchange(){
+  Ext.Msg.show({
+        msg: 'Would you like to review the <br/>Data Exchange before starting?',
+        buttons: Ext.Msg.YESNO,
+        icon: Ext.Msg.QUESTION,//'profile', // &lt;- customized icon
+        fn: function(action){
+		   if(action=='yes'){
+			   showCentralGrid();
+		   }
+		   else if(action=='no')
+		   {
+			       alert('You clicked on No');
+		   }
+	   }});
+	  }
+  
+  function showCentralGrid(node)
+    {
+
+          var obj = node.attributes
+          var eid
+          var label
+          var requestURL
+	  var scopeId  = obj['Scope']
+          var nodeType = obj['node_type']
+						 
+	if((obj['node_type']=='exchanges' && obj['uid']!='')){
+            eid = obj['uid']
+            requestURL = 'dataObjects/getDataObjects/'+nodeType+'/'+scopeId+'/'+eid
+            label = tree.getSelectionModel().getSelectedNode().text
+            }else if(obj['node_type']=='graph'){
+                    requestURL = 'dataObjects/getGraphObjects/'+nodeType+'/'+scopeId+'/'+node.parentNode.text+'/'+obj['text']
+                    label = node.parentNode.text+'->'+obj['text']
+            }else{
+		  
+                  Ext.MessageBox.show({
+                        //title: '<font color=yellow>Warning</font>',
+                        msg: 'You can review only Data Exchange & Graphs in this Version<br/>',
+                        buttons: Ext.MessageBox.OK,
+                        icon: Ext.MessageBox.WARNING
+                  });
+                return false;
+						
+            }
+          
+
+          /*
+                 check the id of the tab
+                 if it's available then just display the tab & don't send ajax request
+          */
+	  if(!Ext.getCmp(label)){
+                   if(tree.getSelectionModel().getSelectedNode().id!=null)
+                   {
+                          Ext.getCmp('centerPanel').enable();
+                          sendAjaxRequest(requestURL,scopeId+':'+label);
+
+                          // check the current state of Detail Grid panel
+                          if(Ext.getCmp('detail-grid').collapsed!=true){
+                                          Ext.getCmp('detail-grid').collapse();
+
+                          }
+                   }
+	}else{
+		  Ext.getCmp('centerPanel').enable();
+		// collapse the detail Grid panel & show the tab
+		  if(Ext.getCmp('detail-grid').collapsed!=true){
+			  Ext.getCmp('detail-grid').collapse();
+		  }
+	  Ext.getCmp(label).show();
+  }
+			   
+  }
+
   /* to maintain the state of the tree */
   Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
   tree.on('contextmenu', function (node){
@@ -361,356 +340,7 @@ Ext.onReady(function(){
 /* to maintain the state of the tree */
   var treeState = Ext.state.Manager.get("treestate");
   if (treeState){
-	  if(tree.expandPath(treeState)){ //check the
-		  tree.expandPath(treeState);
-	  }else{
-		  Ext.state.Manager.clear("treestate");
-		  tree.root.reload();
-	  }
+    tree.expandPath(treeState);
   }
+			
 });
-
-function promptReviewAcceptance(requestURL){
-	Ext.Msg.show({
-	msg: 'Would you like to review the <br/>Data Exchange before starting?',
-	buttons: Ext.Msg.YESNO,
-	icon: Ext.Msg.QUESTION,//'profile', // &lt;- customized icon
-	fn: function(action){
-		 if(action=='yes'){
-			 var node = tree.getSelectionModel().getSelectedNode();
-			 showCentralGrid(node);
-		 }
-		 else if(action=='no')
-		 {
-			 reviewed=false;
-			 //alert('You clicked on No');
-			 submitDataExchange(requestURL);
-		 }
-	 }});
-}
-
-function submitDataExchange(requestURL){
-	if(reviewed){
-		var w = Ext.getCmp('centerPanel').getActiveTab();
-		w.getEl().mask('Loading.....');
-	}else{
-		Ext.getCmp('centerPanel').enable();
-		Ext.getCmp('centerPanel').getEl().mask('Loading.....');
-	}
-	Ext.Ajax.request({
-	url : requestURL,
-	method: 'POST',
-	params: {
-		hasreviewed: reviewed
-	  },
-	success: function(result, request)
-	  {
-		  //alert(result.responseText);
-		  var jsonData = Ext.util.JSON.decode(result.responseText);
-		  //alert(jsonData.response);
-		  if(eval(jsonData.success)==false){
-			  alert(jsonData.response);
-		  }else if(eval(jsonData.success)==true){
-			   makeLablenURIS('get');
-			   showCentralGrid(globalTreenode);
-			   showResultPanel(jsonData);
-		  }
-	  },
-	failure: function ( result, request){ 
-			alert(result.responseText); 
-	  },
-	callback: function() {if(w){
-		 w.getEl().unmask();
-	  }else{
-	  		Ext.getCmp('centerPanel').getEl().unmask();}
-	  }
-	})
-}
-
-function showResultPanel(jsonData){
-	var rowData = eval(jsonData.rowData);
-	var filedsVal = eval(jsonData.headersList);
-	var store = new Ext.data.ArrayStore({
-	fields: filedsVal
-	});
-	store.loadData(eval(rowData));
-	
-	var label=  globalLabel;
-	var columnData = eval(jsonData.columnsData);
-			var grid = new Ext.grid.GridPanel({
-			store: store,
-			columns: columnData,
-			stripeRows: true,
-			id:'exchangeResultGrid_'+label,
-			loadMask: true,
-			layout:'fit',
-			frame:true,
-			autoSizeColumns: true,
-			autoSizeGrid: true,
-			AllowScroll : true,
-			minColumnWidth:100, 
-			columnLines: true,
-			autoWidth:true,
-			enableColumnMove:false
-			});			   
-
-			
-			
-			if(Ext.getCmp('centerPanel').findById('tabResult-'+label)){
-				//alert('aleready exists')
-				Ext.getCmp('centerPanel').remove(Ext.getCmp('centerPanel').findById('tabResult-'+label));
-				Ext.getCmp('centerPanel').add( 
-				Ext.apply(grid,{
-				id:'tabResult-'+label,
-				title: label+'(Result)',
-				closable:true
-				})).show();
-			}else{
-
-				Ext.getCmp('centerPanel').add( 
-				Ext.apply(grid,{
-				id:'tabResult-'+label,
-				title: label+'(Result)',
-				closable:true
-				})).show();
-			}
-}
-
-function showCentralGrid(node)
-{
-	var obj = node.attributes
-			  var eid
-			  var label
-			  var requestURL
-			  var scopeId  = obj['Scope']
-			  var nodeType = obj['node_type']
-		if((obj['node_type']=='exchanges' && obj['uid']!='')){
-			  eid = obj['uid']
-			  requestURL = 'dataObjects/getDataObjects/'+nodeType+'/'+scopeId+'/'+eid
-			  label = scopeId+'->'+node.text
-		}else if(obj['node_type']=='graph'){
-				requestURL = 'dataObjects/getGraphObjects/'+nodeType+'/'+scopeId+'/'+node.parentNode.text+'/'+obj['text']
-				label = scopeId+'->'+node.parentNode.text+'->'+obj['text']
-		}else{
-
-			Ext.MessageBox.show({
-			//title: '<font color=yellow>Warning</font>',
-			msg: 'You can review only Data Exchange & Graphs in this Version<br/>',
-			buttons: Ext.MessageBox.OK,
-			icon: Ext.MessageBox.WARNING
-			});
-			return false;
-		}
-		  /*
-             check the id of the tab
-             if it's available then just display the tab & don't send ajax request
-          */
-
-		if((!Ext.getCmp(label))){
-			if(node.id!=null)
-			{
-				Ext.getCmp('centerPanel').enable();
-				sendAjaxRequest(requestURL,label,node.id);
-				  // check the current state of Detail Grid panel
-				if(Ext.getCmp('detail-grid').collapsed!=true){
-					Ext.getCmp('detail-grid').collapse();
-				}
-			}
-		}else if(Ext.getCmp(label)&&(Ext.getCmp('centerPanel').getActiveTab().id=='tab-'+label)){
-				sendAjaxRequest(requestURL,label,node.id);
-		}else{
-			Ext.getCmp('centerPanel').enable();
-		// collapse the detail Grid panel & show the tab
-			if(Ext.getCmp('detail-grid').collapsed!=true){
-				Ext.getCmp('detail-grid').collapse();
-			}
-			Ext.getCmp(label).show();
-		}
-
-}
-
-var globalLabel,globalReq,globalTreenode
-
-function makeLablenURI(){
-	// setting the node id in text of during the Result Grid creation
-	if(Ext.getCmp('centerPanel').getActiveTab()){
-		var nodeid = Ext.getCmp('centerPanel').getActiveTab().text;
-		if(nodeid){
-			tree.getSelectionModel().select(tree.getNodeById(nodeid));
-		}
-	}
-	globalTreenode = tree.getSelectionModel().getSelectedNode();
-	if(globalTreenode!=null){
-		var obj = globalTreenode.attributes
-		var scopeId  = obj['Scope']
-		var nodeType = obj['node_type']
-
-	    if((obj['node_type']=='exchanges' && obj['uid']!='')){
-		  globalReq = 'dataObjects/setDataObjects/'+nodeType+'/'+scopeId+'/'+obj['uid']
-		  globalLabel = scopeId+'->'+globalTreenode.text
-		}else if(obj['node_type']=='graph'){
-			globalLabel = scopeId+'->'+globalTreenode.parentNode.text+'->'+obj['text']
-			globalReq = 'dataObjects/setGraphObjects/'+nodeType+'/'+scopeId+'/'+globalTreenode.parentNode.text+'/'+obj['text']
-
-		}
-	}
-}
-
-function makeLablenURIS(type){
-	//alert('tab id:'+Ext.getCmp('centerPanel').getActiveTab().id)
-	// setting the node id in text of during the Result Grid creation
-	var nodeid = Ext.getCmp('centerPanel').getActiveTab().text;
-	if(nodeid){
-		tree.getSelectionModel().select(tree.getNodeById(nodeid));
-	}
-	globalTreenode = tree.getSelectionModel().getSelectedNode();
-	if(globalTreenode!=null){
-		var obj = globalTreenode.attributes
-	    var scopeId  = obj['Scope']
-		var nodeType = obj['node_type']
-
-		if((obj['node_type']=='exchanges' && obj['uid']!='')){
-			globalReq = 'dataObjects/'+type+'DataObjects/'+nodeType+'/'+scopeId+'/'+obj['uid']
-			globalLabel = scopeId+'->'+globalTreenode.text
-		}else if(obj['node_type']=='graph'){
-			globalLabel = scopeId+'->'+globalTreenode.parentNode.text+'->'+obj['text']
-			globalReq = 'dataObjects/'+type+'GraphObjects/'+nodeType+'/'+scopeId+'/'+globalTreenode.parentNode.text+'/'+obj['text']
-		}
-	}
-}
-
-function showIndvidualClass(pStore,pColumnData){
-
-        if(grid_class_properties){
-		alert('Going to destroy...')
-		grid_class_properties.destroy();
-	}
-	// create the Grid
-	var grid_class_properties = new Ext.grid.GridPanel({
-	store: pStore,
-	columns: pColumnData,
-	stripeRows: true,
-	//viewConfig: {forceFit:true},
-	//id:label,
-	loadMask: true,
-	//layout:'fit',
-	//frame:true,
-        height:360,
-	autoSizeColumns: true,
-	autoSizeGrid: true,
-        AllowScroll : true,
-	minColumnWidth:100,
-	columnLines: true,
-
-	//autoWidth:true,
-        enableColumnMove:false
-	});
-
-
-        var item1 = new Ext.Panel({
-                title: '<img src="resources/images/16x16/class-badge.png"/>Accordion Item 1',
-                html: '<ul class="ja-col2"><li>item1</li><li>item2</li><li>item3</li></ul>',
-                //frame:true,
-                split:true,
-                cls:'empty'
-            });
-            var item2 = new Ext.Panel({
-                title: '<img src="resources/images/16x16/class-badge.png"/>Accordion Item2',
-                html: '<ul class="ja-col2"><li>item1</li><li>item2</li><li>item3</li><li>item4</li><li>item5</li><li>item6</li></ul>',
-                //frame:true,
-                cls:'empty'
-            });
-
- var internal_panel = new Ext.Panel({
-            layout :'border',
-           // layoutConfig: {columns:2},
-
-            items:[{
-                //title: 'Nested Layout',
-                layout: 'border',
-                border: false,
-                //margins: '15 15 15 15',
-                height: 100,
-                items: [{
-                    id:'identifier-class-detail',
-                    region: 'north',
-                    height: 100,
-                    split: true,
-                    html: 'Class Detail'
-                    },{
-                    region: 'center',
-                    layout: 'border',
-                    border: false,
-                    margins: '0 3 3 3',
-                        items: [{
-                            id:'identifier-class-properties',
-                            title: 'Properties',
-                            region:'west',
-                            split: true,
-                            margins: '0 1 3 3',
-                            width: 220,
-                            minSize: 100,
-                            items:[grid_class_properties]
-                        },{
-                            title: 'Related Items',
-                            layout:'accordion',
-                            split: true,
-                            region: 'center',
-                            margins: '0 3 3 0',
-                            defaults: {
-                                // applied to each contained panel
-                               // bodyStyle: 'margin:0 0 0 15'
-                            },
-                            layoutConfig: {
-                                // layout-specific configs go here
-                                animate: true,
-                                fill : false
-                            },
-                            items: [item1, item2]
-                        }]
-                    }]
-                }]
-
-
-        });
-        Ext.getCmp('centerPanel').add(
-	Ext.apply(internal_panel,{
-	id:'tab-test',
-	title: 'Indvidual Detail',
-	closable:true
-	})).show();
-
-
-}
-
-
-/* function to remove all html tags */
-function removeHTMLTags(strInputCode){
-
-    /*
-            This line is optional, it replaces escaped brackets with real ones,
-            i.e. < is replaced with < and > is replaced with >
-    */
-    strInputCode = strInputCode.replace(/&(lt|gt);/g, function (strMatch, p1){
-            return (p1 == "lt")? "<" : ">";
-    });
-    var strTagStrippedText = strInputCode.replace(/<\/?[^>]+(>|$)/g, "");
-
-    return strTagStrippedText
-
-}
-function sendCloseRequest(requestURL,label){
-Ext.Ajax.request({
-url : requestURL,
-method: 'POST',
-//params: {},
-success: function(result, request)
-	  {
-		//alert(result.responseText)
-	  },
-failure: function ( result, request){ 
-		//	  alert(result.responseText); 
-		  },
-callback: function() {}
-	})
-}
