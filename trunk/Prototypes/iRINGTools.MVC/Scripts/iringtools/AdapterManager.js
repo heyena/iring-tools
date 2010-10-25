@@ -10,13 +10,13 @@ Ext.onReady(function () {
 
   /*
   var actionPanel = new iIRNGTools.AdapterManager.ActionPanel({
-    id: 'action-panel',
-    region: 'west',
-    width: 200,
+  id: 'action-panel',
+  region: 'west',
+  width: 200,
 
-    collapseMode: 'mini',
-    collapsible: true,
-    collapsed: false
+  collapseMode: 'mini',
+  collapsible: true,
+  collapsed: false
   });
   */
 
@@ -55,7 +55,7 @@ Ext.onReady(function () {
     collapsed: false,
 
     navigationUrl: 'Scopes?format=tree'
-    
+
   });
 
   navigationPanel.on('create', function (npanel) {
@@ -120,8 +120,9 @@ Ext.onReady(function () {
 
         form.submit({
           url: "exchange/pull?scope=" + panel.scope + "&application=" + panel.application + "&graph=" + panel.graph,
+          timeout: 120000,
           success: function (form, action) {
-            iRINGTools.setAlert(true, 'got here');
+            Ext.Msg.alert("Exchange - " + form.scope + '.' + form.application + '.' + form.graph  , action.result.Message);
           }
         });
 
@@ -135,14 +136,14 @@ Ext.onReady(function () {
       });
 
       var window = new Ext.Window({
-        title: 'Exchange - ' + scope + '.' + application,
+        title: 'Exchange - ' + scope + '.' + application + '.' + graph,
         labelWidth: 110, // label settings here cascade unless overridden                  
         width: 490,
         height: 390,
         layout: 'fit',
         modal: true,
         items: exhangePanel
-      });            
+      });
 
       window.show();
 
@@ -171,7 +172,7 @@ Ext.onReady(function () {
       },
       navigationPanel,
       contentPanel,
-      searchPanel      
+      searchPanel
     ],
     listeners: {
       render: function () {

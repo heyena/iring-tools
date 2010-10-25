@@ -56,7 +56,7 @@ namespace org.iringtools.client.Controllers
       container.Items.Add(item2);
             
       container.Total = container.Items.Count();
-
+      container.success = true;
       return Json(container, JsonRequestBehavior.AllowGet);
     }
 
@@ -98,7 +98,13 @@ namespace org.iringtools.client.Controllers
         //string result = webClient.UploadString(address, "POST", postData);         
 
         Response response = result.DeserializeDataContract<Response>();
-        container.Success = true;
+
+        foreach (Status stat in response.StatusList)
+        {
+
+          container.Message += String.Join(" ", stat.Messages.ToArray());
+        }
+        container.success = true;
         container.Items = response.StatusList;
       }
 

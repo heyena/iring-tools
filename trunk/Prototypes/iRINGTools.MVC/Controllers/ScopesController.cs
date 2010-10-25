@@ -84,7 +84,7 @@ namespace org.iringtools.client.Controllers
             JsonContainer<List<ScopeProject>> container = new JsonContainer<List<ScopeProject>>();
             container.Items = scopes;
             container.Total = scopes.Count;
-            container.Success = true;
+            container.success = true;
             return Json(container, JsonRequestBehavior.AllowGet);
           }
       }
@@ -123,7 +123,7 @@ namespace org.iringtools.client.Controllers
       {
         container.Items = scopePrj.Applications;
         container.Total = scopePrj.Applications.Count;
-        container.Success = true;
+        container.success = true;
       }
 
       return Json(container, JsonRequestBehavior.AllowGet);            
@@ -188,9 +188,9 @@ namespace org.iringtools.client.Controllers
 
       string scope = Request.QueryString["scope"];
       string application = Request.QueryString["application"];
-                              
-      WebClient client = new WebClient();
-      string request = client.DownloadString(String.Format(_adapterServiceURI + "/{0}/{1}/mapping", scope, application));
+
+      WebHttpClient client = new WebHttpClient(adapterServiceURI);
+      string request = Utility.Serialize<Mapping>(client.Get<Mapping>(string.Format("/{0}/{1}/mapping", scope, application)),true);
 
       return this.Content(request, "text/xml");
     }
