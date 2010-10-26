@@ -207,7 +207,7 @@
     <Exec Condition="!Exists('$(ServicesDir)\XML\Repositories.xml')" 
           Command="Copy $(ServicesDir)\\XML\Repositories.Default.xml $(ServicesDir)\XML\Repositories.xml" />
 	<Exec Condition="!Exists('$(ServicesDir)\App_Data\config.ttl')" 
-          Command="Copy $(ServicesDir)\App_Data\config.Default.ttl $(ServicesDir)\App_Data\config.ttl" />
+          Command="Copy $(ServicesDir)\App_Data\config.Developer.ttl $(ServicesDir)\App_Data\config.ttl" />
     
     <Exec Condition="!Exists('$(ApplicationsDir)\Web.config')"
           Command="Copy $(ApplicationsDir)\Web.Default.config $(ApplicationsDir)\Web.config" />
