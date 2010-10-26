@@ -49,7 +49,8 @@ iIRNGTools.AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
         { name: 'repository', allowBlank: false }
       ],
       proxy: new Ext.data.HttpProxy({
-          url: this.searchUrl
+          url: this.searchUrl,
+          timeout: 12000
       }),
       baseParams: { limit: this.limit }
     });
