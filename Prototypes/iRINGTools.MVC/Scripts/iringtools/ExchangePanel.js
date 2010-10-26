@@ -14,7 +14,7 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
   height: 390,
   defaults: { width: 290 },
   defaultType: 'textfield',
-
+  waitMsgTarget: true,
   scope: null,
   application: null,
 
@@ -315,7 +315,7 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
   },
 
   onExchange: function (btn, ev) {
-    this.fireEvent('exchange', this, this.getForm());
+    this.fireEvent('exchange', this, this.getForm().submit({ waitMsg: 'Executing...'}));
   },
 
   onCancel: function (btn, ev) {
