@@ -22,6 +22,7 @@
 		$this->modelObj = $this->useModel(get_class($this));
 	}
 
+	// This function will be called in AJAX Request like
 	function getDataObjects($params){
 		$urlParams = $this->urlParameters($params);
 		$headerArray = $this->modelObj->getDataObjects($urlParams);
@@ -39,7 +40,6 @@
 		$headerArray = $this->modelObj->deleteDataObjects($urlParams);
 		echo ($headerArray);
 	}
-
 
 	private function urlParameters($params){
 		switch($params[0]){
@@ -73,7 +73,35 @@
 		$headerArray = $this->modelObj->setDataObjects($urlParams);
 		echo ($headerArray);
 	}
-	
+
+
+        /** This function used to show the Related Class Items Grid
+         *
+	 * @param FIVE [nodetype(exchanges),scope,exchangeID,dtoIdentifier,referenceClassIdentifier)]
+	 * @returns
+	 * @access public
+	 */
+        function getRelatedDataObjects($params)
+	{
+            	if(is_array($params)){
+
+                    $dtoIdentifier = $params[3];
+                    $referenceClassIdentifier = $params[4];
+                    unset($params[3]);
+                    unset($params[4]);
+                    $urlParams = $this->urlParameters($params);
+
+                    $urlParams['dtoIdentifier']=$dtoIdentifier;
+                    $urlParams['referenceClassIdentifier']=$referenceClassIdentifier;       // RelatedClass identifier value
+                    echo $this->modelObj->getRelatedDataObjects($urlParams);
+
+                        // it can be used in View
+                            //echo $this->modelObj->getRelatedItemsGridJSONData($identifier,$reference);
+		}
+	}
+
+	function setReview($params){
+	}
 }
    
 ?>
