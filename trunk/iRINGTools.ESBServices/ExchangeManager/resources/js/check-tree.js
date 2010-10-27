@@ -9,8 +9,10 @@
  * 
  */
 var reviewed,tree
-   
-function showgrid(response, request,label,nodeid){
+var relatedClassArr=new Array();
+
+function showgrid(response, request,label,nodeid,gridType){
+        
 	reviewed=true
 	var jsonData = Ext.util.JSON.decode(response);
 	if(eval(jsonData.success)==false)
@@ -27,8 +29,14 @@ function showgrid(response, request,label,nodeid){
 	var rowData = eval(jsonData.rowData);
 	var filedsVal = eval(jsonData.headersList);
 	var columnData = eval(jsonData.columnsData);
-    var classObjName = jsonData.classObjName;
-	// create the data store
+        var classObjName = jsonData.classObjName;
+
+	for(var i=0;i<jsonData.relatedClasses.length;i++){
+		var key = jsonData.relatedClasses[i].identifier;
+		var text = jsonData.relatedClasses[i].text;
+		relatedClassArr[i]=text;
+	}
+        
 	var store = new Ext.data.ArrayStore({
 	fields: filedsVal
 	});
@@ -61,12 +69,13 @@ function showgrid(response, request,label,nodeid){
                        fn:function(grid,rowIndex,columnIndex,e){
                            var cm    = this.colModel
                            var record = grid.getStore().getAt(rowIndex);  // Get the Record
+                           
                            var fieldName = grid.getColumnModel().getDataIndex(columnIndex); // Get field name
-                           if(fieldName=='IdentificationByTag'){
+                           if(fieldName=='Identifier' && record.get(fieldName)!=''){
                                 var IdentificationByTag_value = record.get(fieldName);
                                 var transferType_value = record.get('TransferType');
                                 var rowDataArr = []
-                                 for(var i=2; i<cm.getColumnCount();i++){
+                                 for(var i=3; i<cm.getColumnCount();i++){
                                      fieldHeader= grid.getColumnModel().getColumnHeader(i); // Get field name
                                      fieldValue= record.get(grid.getColumnModel().getDataIndex(i))
 
@@ -84,47 +93,62 @@ function showgrid(response, request,label,nodeid){
                                         fields: pfiledsVal
                                    });
                                    pStore.loadData(prowData);
-                                   showIndvidualClass(pStore,pColumnData)
+                                   showIndvidualClass(pStore,pColumnData,rowIndex)
                                    Ext.get('identifier-class-detail').dom.innerHTML = '<div style="float:left; width:110px;"><img src="resources/images/class-badge.png"/></div><div style="padding-top:20px;" id="identifier"><b>'+removeHTMLTags(IdentificationByTag_value)+'</b><br/>'+grid.classObjName+'<br/>Transfer Type : '+transferType_value+'</div>'
                                 }
 						  }
-						 },
-					 beforeclose:function(){
+						 }
+					 /*beforeclose:function(){
 					 makeLablenURIS('delete')
 					 //alert(globalReq)	 
 
 					sendCloseRequest(globalReq,globalLabel);
 				   // send request for delete cache 
-					 }
+					 }*/
 
 		   
                // cellclick : function( Grid this, Number rowIndex, Number columnIndex, Ext.EventObject e )
 		   },
-	tbar:new Ext.Toolbar({
+	tbar: new Ext.Toolbar({
 	xtype: "toolbar",
 	items:[{
 		xtype:"tbbutton",
+                id:'gridReload',
 		icon:'resources/images/16x16/view-refresh.png',
 		tooltip:'Reload',
 		disabled: false,
-		handler:function(){
-	  //promptReviewAcceptance();
+		handler:function(){	  
 		  makeLablenURIS('get');
 		  showCentralGrid(globalTreenode);
-	  // send Request to destroy session
-	  }
-		   },{
+                  // send Request to destroy session
+                }
+	   },{
 		xtype:"tbbutton",
+                id:'gridExchange',
 		icon:'resources/images/16x16/go-send.png',
 		tooltip:'Exchange Data',
 		disabled: false,
-		handler:function(){
-        //promptReviewAcceptance();
-	   makeLablenURI();
-	   submitDataExchange(globalReq);
-
-	  }
+		handler:function(){        
+                   makeLablenURI();
+                   submitDataExchange(globalReq);
+                }
+	 },
+         {
+		xtype:"panel",
+                id:'breadcrub',
+                split:true,
+                title:"Plant Area>>66015-O ",
+		//icon:'resources/images/16x16/go-send.png',
+		tooltip:'Exchange Data',
+		hidden: true
 	 }
+           /* {
+		xtype:"panel",
+                html:'Plant Area >> 6001-90 >> Plan',
+		icon:'resources/images/16x16/view-refresh.png',
+                title:'testing'
+            }*/
+                // {title:'testing'}
 	]
 	})
 	});
@@ -152,17 +176,25 @@ function showgrid(response, request,label,nodeid){
 	title: label,
 	closable:true
 	})).show();
-}
+
+     if(gridType=='relatedClass'){
+         Ext.getCmp('gridReload').hide()
+         Ext.getCmp('gridExchange').hide()
+         Ext.getCmp('breadcrub').show()
+    }else {}
 }
 
-function sendAjaxRequest(requestURL,label,nodeid){
+
+}
+
+function sendAjaxRequest(requestURL,label,nodeid,gridType){
 	var w = Ext.getCmp('centerPanel').getActiveTab();
 	if(w){
 		w.getEl().mask('Loading.....')
 	}else{
 		Ext.getBody().mask('Loading...');
 	}
-	
+        	
 	Ext.Ajax.request({
 		url : requestURL,
 		method: 'POST',
@@ -175,7 +207,7 @@ function sendAjaxRequest(requestURL,label,nodeid){
 		},
 		success: function(result, request)
 		{ 
-			showgrid(result.responseText,request,label,nodeid);
+			showgrid(result.responseText,request,label,nodeid,gridType);
 		},
 		failure: function ( result, request){ 
 			//alert(result.responseText); 
@@ -230,18 +262,18 @@ Ext.onReady(function(){
 								if(!Ext.getCmp(label)){
 									promptReviewAcceptance(requestURL);
 								}else{
-											Ext.Msg.show({
-											msg: 'Thanks for your review & acceptance. Want to transfer the data now?',
-											buttons: Ext.Msg.YESNO,
-											icon: Ext.Msg.QUESTION,//'profile', // &lt;- customized icon
-											fn: function(action){
-													 if(action=='yes'){
-														 submitDataExchange(requestURL);
-													 }else if(action=='no'){
-														 alert('Not now');
-													 }
-												 }
-											});
+                                                                        Ext.Msg.show({
+                                                                        msg: 'Thanks for your review & acceptance. Want to transfer the data now?',
+                                                                        buttons: Ext.Msg.YESNO,
+                                                                        icon: Ext.Msg.QUESTION,//'profile', // &lt;- customized icon
+                                                                        fn: function(action){
+                                                                                         if(action=='yes'){
+                                                                                                 submitDataExchange(requestURL);
+                                                                                         }else if(action=='no'){
+                                                                                                 alert('Not now');
+                                                                                         }
+                                                                                 }
+                                                                        });
 								}
 					}else{
 						  Ext.MessageBox.show({
@@ -405,9 +437,9 @@ function submitDataExchange(requestURL){
 	  },
 	success: function(result, request)
 	  {
-		  //alert(result.responseText);
+		  
 		  var jsonData = Ext.util.JSON.decode(result.responseText);
-		  //alert(jsonData.response);
+		  
 		  if(eval(jsonData.success)==false){
 			  alert(jsonData.response);
 		  }else if(eval(jsonData.success)==true){
@@ -452,9 +484,7 @@ function showResultPanel(jsonData){
 			columnLines: true,
 			autoWidth:true,
 			enableColumnMove:false
-			});			   
-
-			
+			});				
 			
 			if(Ext.getCmp('centerPanel').findById('tabResult-'+label)){
 				//alert('aleready exists')
@@ -579,7 +609,12 @@ function makeLablenURIS(type){
 	}
 }
 
-function showIndvidualClass(pStore,pColumnData){
+function showIndvidualClass(pStore,pColumnData,rowIndex){
+
+        var nodeid = Ext.getCmp('centerPanel').getActiveTab().text;
+        if(nodeid){
+                tree.getSelectionModel().select(tree.getNodeById(nodeid));
+        }
 
         if(grid_class_properties){
 		alert('Going to destroy...')
@@ -590,97 +625,69 @@ function showIndvidualClass(pStore,pColumnData){
 	store: pStore,
 	columns: pColumnData,
 	stripeRows: true,
-	//viewConfig: {forceFit:true},
-	//id:label,
 	loadMask: true,
-	//layout:'fit',
-	//frame:true,
         height:360,
 	autoSizeColumns: true,
 	autoSizeGrid: true,
         AllowScroll : true,
 	minColumnWidth:100,
 	columnLines: true,
-
-	//autoWidth:true,
         enableColumnMove:false
 	});
 
 
-        var item1 = new Ext.Panel({
-                title: '<img src="resources/images/16x16/class-badge.png"/>Accordion Item 1',
-                html: '<ul class="ja-col2"><li>item1</li><li>item2</li><li>item3</li></ul>',
-                //frame:true,
-                split:true,
-                cls:'empty'
-            });
-            var item2 = new Ext.Panel({
-                title: '<img src="resources/images/16x16/class-badge.png"/>Accordion Item2',
-                html: '<ul class="ja-col2"><li>item1</li><li>item2</li><li>item3</li><li>item4</li><li>item5</li><li>item6</li></ul>',
-                //frame:true,
-                cls:'empty'
-            });
+        Ext.getBody().mask();
+        var myWin = new Ext.Window({
+        title: 'Indvidual Class',
+        id:'indvidual-class',
+        closable:true,
+        width:560,
+        height:400,
+        layout: 'border',
+        listeners: {
+                    close:{
+                       fn:function(){
+                         Ext.getBody().unmask();
+                     }
+                    }
+               },
+        items: [{
+            id:'identifier-class-detail',
+            region: 'north',
+            split: true,
+            height:100,
+             html: 'Class Detail'
+            },{
+            id:'identifier-class-properties',
+                title: 'Properties',
+                region:'west',
+                split: true,
+                margins: '0 1 3 3',
+                width: 230,
+                minSize: 100,
+                items:[grid_class_properties]
+            },{
+                title: 'Related Items',
+                layout:'accordion',
+                split: true,
+                width: 220,
+                region: 'center',
+                margins: '0 3 3 0',
+                defaults: {
+                    // applied to each contained panel
+                   // bodyStyle: 'margin:0 0 0 15'
+                },
+                layoutConfig: {
+                    // layout-specific configs go here
+                    animate: true,
+                    fill : false
+                },
+                // html: '<div class="x-panel-header x-accordion-hd" style="cursor:pointer"><a href="#" onClick="displayRleatedClassGrid(\'90-AO567\',\'90011-O\')">Plant Area</a></div><div class="x-panel-header x-accordion-hd">P AND I Diagram</div>'
+                 html:relatedClassArr[rowIndex]
+            }]
+    });
 
- var internal_panel = new Ext.Panel({
-            layout :'border',
-           // layoutConfig: {columns:2},
-
-            items:[{
-                //title: 'Nested Layout',
-                layout: 'border',
-                border: false,
-                //margins: '15 15 15 15',
-                height: 100,
-                items: [{
-                    id:'identifier-class-detail',
-                    region: 'north',
-                    height: 100,
-                    split: true,
-                    html: 'Class Detail'
-                    },{
-                    region: 'center',
-                    layout: 'border',
-                    border: false,
-                    margins: '0 3 3 3',
-                        items: [{
-                            id:'identifier-class-properties',
-                            title: 'Properties',
-                            region:'west',
-                            split: true,
-                            margins: '0 1 3 3',
-                            width: 220,
-                            minSize: 100,
-                            items:[grid_class_properties]
-                        },{
-                            title: 'Related Items',
-                            layout:'accordion',
-                            split: true,
-                            region: 'center',
-                            margins: '0 3 3 0',
-                            defaults: {
-                                // applied to each contained panel
-                               // bodyStyle: 'margin:0 0 0 15'
-                            },
-                            layoutConfig: {
-                                // layout-specific configs go here
-                                animate: true,
-                                fill : false
-                            },
-                            items: [item1, item2]
-                        }]
-                    }]
-                }]
-
-
-        });
-        Ext.getCmp('centerPanel').add(
-	Ext.apply(internal_panel,{
-	id:'tab-test',
-	title: 'Indvidual Detail',
-	closable:true
-	})).show();
-
-
+    myWin.show();
 }
 
 
@@ -714,3 +721,23 @@ failure: function ( result, request){
 callback: function() {}
 	})
 }
+
+// Used to display the Related Class Grid
+function displayRleatedClassGrid(refClassIdentifier,dtoIdentifier,relatedClassName){
+    selTreenode = tree.getSelectionModel().getSelectedNode() 
+
+    if(selTreenode!=null){
+        var obj = selTreenode.attributes
+        var scopeId  = obj['Scope']
+        var nodeType = obj['node_type']
+        var exchangeId = obj['uid']
+    }
+
+    requestURL = 'dataObjects/getRelatedDataObjects/exchanges/'+scopeId+'/'+exchangeId+'/'+dtoIdentifier+'/'+refClassIdentifier
+    label = relatedClassName    
+    nodeid= tree.getSelectionModel().getSelectedNode()
+    Ext.getBody().unmask()    
+    Ext.getCmp('indvidual-class').close();
+    sendAjaxRequest(requestURL,label,nodeid,'relatedClass')
+}
+

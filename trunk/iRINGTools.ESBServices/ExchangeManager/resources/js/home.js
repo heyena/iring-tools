@@ -110,16 +110,16 @@ Ext.onReady(function(){
 				p.disable();
 			},
 			single: true // important, as many layouts can occur
-			},
+			}/*
 			'tabChange':{
 			fn: function(p){
 					var nodeid = Ext.getCmp('centerPanel').getActiveTab().text;
 					if(nodeid){
 						tree.getSelectionModel().select(tree.getNodeById(nodeid));
 					}
-				}
-				}
-				},
+                                    }
+				}*/
+			},
 			//  disabled:true,
 			margins: '0 0 0 0',
 			enableTabScroll:true,
