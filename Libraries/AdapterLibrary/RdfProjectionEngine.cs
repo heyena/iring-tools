@@ -381,6 +381,8 @@ namespace org.iringtools.adapter.projection
               break;
 
             case RoleType.Property:
+            case RoleType.DataProperty:
+            case RoleType.ObjectProperty:
               propertyRoleMaps.Add(roleMap);
               break;
           }
