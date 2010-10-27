@@ -100,23 +100,32 @@ Ext.onReady(function(){
             contentEl: 'directoryContent'
           }]
         },
-        {
-          region: 'center',
-          id:'centerPanel',
-          xtype: 'tabpanel',
-		  listeners: {
-         'afterlayout': {
-            fn: function(p){
-                p.disable();
-            },
-            single: true // important, as many layouts can occur
-        }
-		},
-		//  disabled:true,
-          margins: '0 0 0 0',
-		  enableTabScroll:true,
-		  defaults:{layout:'fit'}
-        }
+			{
+			region: 'center',
+			id:'centerPanel',
+			xtype: 'tabpanel',
+			listeners: {
+			'afterlayout': {
+			fn: function(p){
+				p.disable();
+			},
+			single: true // important, as many layouts can occur
+			},
+			'tabChange':{
+			fn: function(p){
+					var nodeid = Ext.getCmp('centerPanel').getActiveTab().text;
+					if(nodeid){
+						tree.getSelectionModel().select(tree.getNodeById(nodeid));
+					}
+				}
+				}
+				},
+			//  disabled:true,
+			margins: '0 0 0 0',
+			enableTabScroll:true,
+			defaults:{layout:'fit'}
+			}
+					   
     ]
 });
 
