@@ -26,9 +26,9 @@ class dataObjectsModel{
 					//$this->dtiSubmitUrl = APP_REQUEST_URI;
 					
 				}
-				$this->dtiUrl = DXI_REQUEST_URL;//.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'];
-				$this->dtoUrl = DXO_REQUEST_URL;//.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'];
-				$this->cacheKey = $params['scope'];//.'_'.$params['nodetype'].'_'.$params['exchangeID'];
+				$this->dtiUrl = DXI_REQUEST_URL.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'];
+				$this->dtoUrl = DXO_REQUEST_URL.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'];
+				$this->cacheKey = $params['scope'].'_'.$params['nodetype'].'_'.$params['exchangeID'];
 				break;
 
 			case "graph":
