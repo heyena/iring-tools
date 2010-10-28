@@ -102,6 +102,7 @@ namespace org.iringtools.adapter.projection
             string rootClassId = rootClassTemplatesMap.Key;
             List<string> rootClassInstances = rootClassTemplatesMap.Value;
             int classInstanceCount = rootClassInstances.Count;
+
             _dataObjects = _dataLayer.Create(_graphMap.dataObjectMap, new string[classInstanceCount]);
             _relatedObjects = new Dictionary<string, IList<IDataObject>>[classInstanceCount];
             _relatedObjectPaths = new List<string>();
@@ -379,6 +380,7 @@ namespace org.iringtools.adapter.projection
               else
                 referenceRole = roleMap;
               break;
+
             case RoleType.ObjectProperty:
             case RoleType.DataProperty:
             case RoleType.Property:
