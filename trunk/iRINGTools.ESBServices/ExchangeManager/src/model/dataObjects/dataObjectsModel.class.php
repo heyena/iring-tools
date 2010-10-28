@@ -37,6 +37,8 @@ class dataObjectsModel{
 				$this->cacheKey = $params['scope'].'_'.$params['applname'].'_'.$params['graphs'];
 				break;
 		}
+
+               
 	}
 
 	/*
@@ -46,11 +48,12 @@ class dataObjectsModel{
 	function setDataObjects($params){
 		$this->buildWSUri($params);
 		$this->dtiXMLData = $this->getCacheData();
+                
 		// checking the dti from cache
 		if(($this->dtiXMLData!=false)&&(!empty($this->dtiXMLData))){
 				$replaceString = str_replace('<dataTransferIndices xmlns="http://iringtools.org/adapter/dti">','<xr:exchangeRequest xmlns="http://iringtools.org/adapter/dti" xmlns:xr="http://iringtools.org/common/request"><xr:dataTransferIndices>',$this->dtiXMLData);
 				$sendXmlData = str_replace("</dataTransferIndices>","</xr:dataTransferIndices><xr:reviewed>".$params['hasreviewed']."</xr:reviewed></xr:exchangeRequest>", $replaceString);
-				//echo $this->dtiSubmitUrl;
+				
 				$curlObj = new curl($this->dtiSubmitUrl);
 				$curlObj->setopt(CURLOPT_POST, 1);
 				$curlObj->setopt(CURLOPT_HTTPHEADER, Array("Content-Type: application/xml"));
@@ -376,19 +379,9 @@ class dataObjectsModel{
                 
                 $this->buildWSUri($params);
 		
-                $this->dtiXMLData = $this->getCacheData();                
+                $this->dtiXMLData = $this->getCacheData();
 
                 $found =0;      // used to exit from the classObjects loop
-
-            $resultArray = array();
-            $curlObj     = new curl(DXO_REQUEST_URL);
-            $fetchedData = $curlObj->exec();
-            $xmlIterator = new SimpleXMLIterator($fetchedData);
-            
-            $dataTransferObjects = $xmlIterator->dataTransferObject;
-
-            // Total no of datatransferobject elements found
-		$dtoCounts  = count($dataTransferObjects);
 
 		$headerNamesArray=array();
 		$headerListDataArray = array();
