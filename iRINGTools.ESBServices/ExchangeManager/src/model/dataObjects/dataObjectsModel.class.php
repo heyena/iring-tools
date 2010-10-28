@@ -256,7 +256,7 @@ class dataObjectsModel{
 		$headerListDataArray = array();
 		$rowsArray=array();
 		$classReferenceArray=array();
-	
+                $classObjectName='';
 
 		foreach($dataTransferObjects as $dataTransferObject)
 		{
@@ -264,10 +264,11 @@ class dataObjectsModel{
 			foreach($dataTransferObject->classObjects->children() as $classObject)
 			{
 				$i++;
-                                $classObjectName = (string)$classObject->name;
+                                
 				// Main class object
 				if($i==1)
 				{
+                                    $classObjectName = (string)$classObject->name;
                                     $mainClassObject = 0;
                                     $returnArray = $this -> classObjectsTraverse($dataTransferObject,$classObject,$mainClassObject);
                                     $tempRoleValueArray = $returnArray['tempRoleValueArray'];
