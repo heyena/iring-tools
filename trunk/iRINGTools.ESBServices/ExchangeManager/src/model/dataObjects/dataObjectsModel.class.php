@@ -214,7 +214,7 @@ class dataObjectsModel{
 	private function getDtiInfo($params){
 		$curlObj = new curl($this->dtiUrl);
 		// will work on this
-		$curlObj->setopt(CURLOPT_USERPWD,"aknayak:povuxitu789A!");
+		$curlObj->setopt(CURLOPT_USERPWD,AUTH_USERID.":".AUTH_USERPWD);
 		$fetchedData = $curlObj->exec();
 		$curlObj->close();
 		return $this->validateResponseCode($curlObj,$fetchedData);
@@ -237,7 +237,7 @@ class dataObjectsModel{
 		$curlObj->setopt(CURLOPT_POSTFIELDS,$postParams);
 		$curlObj->setopt(CURLOPT_HEADER, false);
 		// will work on this
-		$curlObj->setopt(CURLOPT_USERPWD,"aknayak:povuxitu789A!");
+		$curlObj->setopt(CURLOPT_USERPWD,AUTH_USERID.":".AUTH_USERPWD);
 		$fetchedData = $curlObj->exec();
 		$curlObj->close();
 		return $this->validateResponseCode($curlObj,$fetchedData);
@@ -360,7 +360,7 @@ class dataObjectsModel{
 	private function getRdlValue($value){
 		$rdlUri = RDL_REQUEST_URI.'/'.$value.'/label';
 		$curlObj = new curl($rdlUri);
-		$curlObj->setopt(CURLOPT_USERPWD,"aknayak:povuxitu789A!");
+		$curlObj->setopt(CURLOPT_USERPWD,AUTH_USERID.":".AUTH_USERPWD);
 		$fetchedData = $curlObj->exec();
 		$curlObj->close();
 		return $this->validateResponseCode($curlObj,$fetchedData);
