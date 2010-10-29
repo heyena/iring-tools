@@ -97,23 +97,18 @@ function showgrid(response, request,label,nodeid,gridType){
                                    Ext.get('identifier-class-detail').dom.innerHTML = '<div style="float:left; width:110px;"><img src="resources/images/class-badge.png"/></div><div style="padding-top:20px;" id="identifier"><b>'+removeHTMLTags(IdentificationByTag_value)+'</b><br/>'+grid.classObjName+'<br/>Transfer Type : '+transferType_value+'</div>'
                                 }
 						  }
-						 }
-					 /*beforeclose:function(){
-					 makeLablenURIS('delete')
-					 //alert(globalReq)	 
-
-					sendCloseRequest(globalReq,globalLabel);
-				   // send request for delete cache 
-					 }*/
-
-		   
+						 },beforeclose:function(){
+							  makeLablenURIS('delete')
+							  sendCloseRequest(globalReq,globalLabel);
+							  // send request for delete cache 
+					 }
                // cellclick : function( Grid this, Number rowIndex, Number columnIndex, Ext.EventObject e )
 		   },
 	tbar: new Ext.Toolbar({
 	xtype: "toolbar",
 	items:[{
 		xtype:"tbbutton",
-                id:'gridReload',
+        id:'gridReload',
 		icon:'resources/images/16x16/view-refresh.png',
 		tooltip:'Reload',
 		disabled: false,
