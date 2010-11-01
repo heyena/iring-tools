@@ -95,20 +95,24 @@ function showgrid(response, request,label,nodeid,gridType){
                                    pStore.loadData(prowData);
                                    showIndvidualClass(pStore,pColumnData,rowIndex)
                                    Ext.get('identifier-class-detail').dom.innerHTML = '<div style="float:left; width:110px;"><img src="resources/images/class-badge.png"/></div><div style="padding-top:20px;" id="identifier"><b>'+removeHTMLTags(IdentificationByTag_value)+'</b><br/>'+grid.classObjName+'<br/>Transfer Type : '+transferType_value+'</div>'
+                            
+
                                 }
-						  }
-						 },beforeclose:function(){
-							  makeLablenURIS('delete')
-							  sendCloseRequest(globalReq,globalLabel);
-							  // send request for delete cache 
-					 }
-               // cellclick : function( Grid this, Number rowIndex, Number columnIndex, Ext.EventObject e )
-		   },
+			      }
+                             },
+                   beforeclose:function(){
+                         if(gridType!='relatedClass'){
+                          makeLablenURIS('delete')
+                          sendCloseRequest(globalReq,globalLabel);
+                         } // send request for delete cache
+		 }
+               },
+               
 	tbar: new Ext.Toolbar({
 	xtype: "toolbar",
 	items:[{
 		xtype:"tbbutton",
-        id:'gridReload',
+                id:'gridReload',
 		icon:'resources/images/16x16/view-refresh.png',
 		tooltip:'Reload',
 		disabled: false,
@@ -127,23 +131,7 @@ function showgrid(response, request,label,nodeid,gridType){
                    makeLablenURI();
                    submitDataExchange(globalReq);
                 }
-	 },
-         {
-		xtype:"panel",
-                id:'breadcrub',
-                split:true,
-                title:"Plant Area>>66015-O ",
-		//icon:'resources/images/16x16/go-send.png',
-		tooltip:'Exchange Data',
-		hidden: true
 	 }
-           /* {
-		xtype:"panel",
-                html:'Plant Area >> 6001-90 >> Plan',
-		icon:'resources/images/16x16/view-refresh.png',
-                title:'testing'
-            }*/
-                // {title:'testing'}
 	]
 	})
 	});
@@ -175,7 +163,7 @@ function showgrid(response, request,label,nodeid,gridType){
      if(gridType=='relatedClass'){
          Ext.getCmp('gridReload').hide()
          Ext.getCmp('gridExchange').hide()
-         Ext.getCmp('breadcrub').show()
+         
     }else {}
 }
 
@@ -431,8 +419,7 @@ function submitDataExchange(requestURL){
 		hasreviewed: reviewed
 	  },
 	success: function(result, request)
-	  {
-		  
+	  {		  
 		  var jsonData = Ext.util.JSON.decode(result.responseText);
 		  
 		  if(eval(jsonData.success)==false){
@@ -702,6 +689,7 @@ function removeHTMLTags(strInputCode){
 
 }
 function sendCloseRequest(requestURL,label){
+ 
 Ext.Ajax.request({
 url : requestURL,
 method: 'POST',
@@ -723,6 +711,7 @@ function displayRleatedClassGrid(refClassIdentifier,dtoIdentifier,relatedClassNa
 
     if(selTreenode!=null){
         var obj = selTreenode.attributes
+        var nId  = obj['id']
         var scopeId  = obj['Scope']
         var nodeType = obj['node_type']
         var exchangeId = obj['uid']
@@ -730,9 +719,9 @@ function displayRleatedClassGrid(refClassIdentifier,dtoIdentifier,relatedClassNa
 
     requestURL = 'dataObjects/getRelatedDataObjects/exchanges/'+scopeId+'/'+exchangeId+'/'+dtoIdentifier+'/'+refClassIdentifier
     label = relatedClassName    
-    nodeid= tree.getSelectionModel().getSelectedNode()
+    //nodeid= tree.getSelectionModel().getSelectedNode()
     Ext.getBody().unmask()    
     Ext.getCmp('indvidual-class').close();
-    sendAjaxRequest(requestURL,label,nodeid,'relatedClass')
+    sendAjaxRequest(requestURL,label,nId,'relatedClass')
 }
 
