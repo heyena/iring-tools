@@ -38,8 +38,8 @@ namespace org.iringtools.adapter.projection
       try
       {
         GraphMap graphMap = _mapping.FindGraphMap(graphName);
-        _dataTransferObjects = ToDataTransferObjects(graphMap, ref dataObjects);
-        string xml = Utility.SerializeDataContract<DataTransferObjects>(_dataTransferObjects);
+        DataTransferObjects dataTransferObjects = ToDataTransferObjects(graphMap, ref dataObjects);
+        string xml = Utility.SerializeDataContract<DataTransferObjects>(dataTransferObjects);
         XElement xElement = XElement.Parse(xml);
         xDocument = new XDocument(xElement);
       }
@@ -162,7 +162,7 @@ namespace org.iringtools.adapter.projection
         string xml = xDocument.Root.ToString();
         DataTransferObjects dataTransferObjects = Utility.DeserializeDataContract<DataTransferObjects>(xml);
 
-        dataObjects = ToDataObjects(graphMap, ref _dataTransferObjects);
+        dataObjects = ToDataObjects(graphMap, ref dataTransferObjects);
       }
       catch (Exception ex)
       {
