@@ -1,16 +1,19 @@
 <html>
   <head>
+
     <title>iRINGTools: Exchange Manager</title>
     <link rel="stylesheet" type="text/css" href="lib/ext-3.2.1/resources/css/ext-all.css" />
     <link rel="stylesheet" type="text/css" href="resources/css/index.css"/>
-	
+
     <!-- LIBS -->
     <script type="text/javascript" src="lib/ext-3.2.1/adapter/ext/ext-base.js"></script>
     <!-- ENDLIBS -->
     <script type="text/javascript" src="lib/ext-3.2.1/ext-all-debug.js"></script>
+     <script type="text/javascript" src="resources/js/check-tree.js"></script>
     <script type="text/javascript" src="resources/js/home.js"></script>
-    <script type="text/javascript" src="resources/js/check-tree.js"></script>
-    <!--<script type="text/javascript" src="resources/js/tag-nodes.js"></script>-->
+   
+    
+<!--<script type="text/javascript" src="resources/js/tag-nodes.js"></script>-->
 
       <!-- overwrite CSS style to change to enable text selection of Grid -->
       <style type="text/css">
@@ -28,9 +31,23 @@
         .x-toolbar-layout-ct{
             width:100% !important;
         }
-    </style>
+
+         #main-panel td {
+            padding:3px;
+        }
+
+        #grid-class-properties .x-grid3-hd-row { display:none; }
+
+        .ja-col2 ul li {
+            /*background:transparent url(../images/bullet.gif) no-repeat scroll 5px 50%;*/
+            margin:0 !important;
+            padding-left:15px !important;
+        }
 
 
+  
+
+</style>
   </head>
   <body>
     <div  id="myHeader">
