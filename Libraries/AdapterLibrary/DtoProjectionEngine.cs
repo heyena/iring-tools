@@ -38,8 +38,9 @@ namespace org.iringtools.adapter.projection
       try
       {
         GraphMap graphMap = _mapping.FindGraphMap(graphName);
-        _dataTransferObjects = ToDataTransferObjects(graphMap, ref dataObjects);
-        XElement xElement = SerializationExtensions.ToXml<DataTransferObjects>(_dataTransferObjects);
+        DataTransferObjects dataTransferObjects = ToDataTransferObjects(graphMap, ref dataObjects);
+        string xml = Utility.SerializeDataContract<DataTransferObjects>(dataTransferObjects);
+        XElement xElement = XElement.Parse(xml);
         xDocument = new XDocument(xElement);
       }
       catch (Exception ex)
@@ -158,9 +159,10 @@ namespace org.iringtools.adapter.projection
       try
       {
         GraphMap graphMap = _mapping.FindGraphMap(graphName);
-        _dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(xDocument.Root);
+        string xml = xDocument.Root.ToString();
+        DataTransferObjects dataTransferObjects = Utility.DeserializeDataContract<DataTransferObjects>(xml);
 
-        dataObjects = ToDataObjects(graphMap, ref _dataTransferObjects);
+        dataObjects = ToDataObjects(graphMap, ref dataTransferObjects);
       }
       catch (Exception ex)
       {
@@ -184,6 +186,7 @@ namespace org.iringtools.adapter.projection
         {
           ClassMap classMap = _graphMap.classTemplateListMaps.First().Key;
           List<string> identifiers = new List<string>();
+
           for (int i = 0; i < _dataTransferObjects.Count; i++)
           {
             DataTransferObject dataTransferObject = _dataTransferObjects[i];
@@ -203,6 +206,7 @@ namespace org.iringtools.adapter.projection
           }
 
           dataObjects = _dataLayer.Create(_graphMap.dataObjectMap, identifiers);
+          
           for (int dataTransferObjectIndex = 0; dataTransferObjectIndex < _dataTransferObjects.Count; dataTransferObjectIndex++)
           {
             IDataObject dataObject = dataObjects[dataTransferObjectIndex];
