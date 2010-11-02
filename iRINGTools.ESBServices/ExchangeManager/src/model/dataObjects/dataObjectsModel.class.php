@@ -326,7 +326,7 @@ class dataObjectsModel{
 		
 		foreach($headerArrayList as $key =>$val){
 			$headerListDataArray[]=array('name'=>str_replace(".", "_", $val));
-			$columnsDataArray[]=array('id'=>str_replace(".", "_", $val),'header'=>$val,'width'=>(strlen($val)<20)?100:strlen($val)+120,'sortable'=>'true','dataIndex'=>str_replace(".", "_", $val));
+			$columnsDataArray[]=array('id'=>str_replace(".", "_", $val),'header'=>$val,'width'=>(strlen($val)<20)?110:strlen($val)+130,'sortable'=>'true','dataIndex'=>str_replace(".", "_", $val));
 		}
 
                 //$relatedClasses = array('Listing'=>$classReferenceArray);
