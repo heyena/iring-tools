@@ -11,6 +11,39 @@
 var propsGrid,eastGrid;
 Ext.onReady(function(){
 
+// This is the Details panel that contains the description for each example layout.
+var detailsPanel = {
+    id: 'details-panel',
+    title: 'Details',
+    region: 'center',
+    bodyStyle: 'padding-bottom:15px;background:#eee;',
+    autoScroll: true,
+    
+    collapsible: true,
+    html: '<p class="details-info">When you select a layout from the tree, additional details will display here.</p>'
+};
+
+propsGrid = new Ext.grid.PropertyGrid({
+              id:'propGrid',
+              title: 'Details',
+              region:'center',
+              autoScroll:true,
+              margin:'10 0 0 0',
+              bodyStyle: 'padding-bottom:15px;background:#eee;',
+              //html: '<p class="details-info">When you select a layout from the tree, additional details will display here.</p>',
+              collapsible: true,
+              source:{},
+             
+              listeners: {
+              // to disable editable option of the property grid
+                beforeedit : function(e)
+                {
+                    e.cancel=true;
+                }
+     
+              }
+});
+
   var ab_button = Ext.get('show-about');
     ab_button.on('click', function(){
 	Ext.getBody().mask();
@@ -54,7 +87,7 @@ Ext.onReady(function(){
           height: 65, // give north and south regions a height
           margins: '-10 5 0 0',
           contentEl:'myHeader'
-        },
+        },/*
         {
           region: 'east',
           title: 'Detail Grid',
@@ -70,22 +103,12 @@ Ext.onReady(function(){
           margins: '0 5 0 0',
           layout: 'fit', // specify layout manager for items
           items: [
-              propsGrid = new Ext.grid.PropertyGrid({              
-              id:'propGrid',
-              source:{},
-              listeners: {
-              // to disable editable option of the property grid
-                beforeedit : function(e)
-                {               
-                    e.cancel=true;
-                }
-              
-              }
-            })
+             // propsGrid
             ]
-          },
+          },*/
        
         {
+            
           region: 'west',
           id: 'west-panel', // see Ext.getCmp() below
           title: 'Directory',
@@ -95,10 +118,12 @@ Ext.onReady(function(){
           maxSize: 500,
           collapsible: true,
           margins: '0 0 0 5',
-          layout: 'fit',
-          items: [{
-            contentEl: 'directoryContent'
-          }]
+          layout: 'border',
+          items: [
+            //contentEl: 'directoryContent'
+            tree, propsGrid
+
+          ]
         },
 			{
 			region: 'center',
@@ -121,7 +146,7 @@ Ext.onReady(function(){
 				}*/
 			},
 			//  disabled:true,
-			margins: '0 0 0 0',
+			margins: '0 5 0 0',
 			enableTabScroll:true,
 			defaults:{layout:'fit'}
 			}
@@ -129,5 +154,12 @@ Ext.onReady(function(){
     ]
 });
 
+tree.on('BeforeLoad', function (node){
+     Ext.getCmp('directory-tree').el.mask('Loading...', 'x-mask-loading')
+  });
+
+tree.on('Load', function (node){
+     Ext.getCmp('directory-tree').el.unmask()
+  });
 
 });
