@@ -124,8 +124,9 @@ function showgrid(response, request,label,nodeid,gridType){
 	   },{
 		xtype:"tbbutton",
                 id:'gridExchange',
+                text:'Exchange',
 		icon:'resources/images/16x16/go-send.png',
-		tooltip:'Exchange Data',
+		tooltip:'Exchange',
 		disabled: false,
 		handler:function(){        
                    makeLablenURI();
@@ -224,6 +225,7 @@ Ext.onReady(function(){
 		   {
 			// For open button
 			xtype:"tbbutton",
+                        text:'Open',
 			icon:'resources/images/16x16/document-open.png',
 			id: 'headExchange',
 			tooltip:'Open',
@@ -233,7 +235,8 @@ Ext.onReady(function(){
 		   {
             xtype:"tbbutton",
             icon:'resources/images/16x16/go-send.png',
-            tooltip:'Exchange Data',
+            tooltip:'Exchange',
+            text:'Exchange',
             disabled: false,
             handler: function(){
 					makeLablenURI();
@@ -273,10 +276,13 @@ Ext.onReady(function(){
     ]});
 	
     tree = new Ext.tree.TreePanel({
+        region:'north',
+        split:true,
+        
     id:'directory-tree',
-    renderTo:'tree-div',
-    height: 494,
-    baseCls : 'x-plain',
+    //renderTo:'tree-div',
+    //height: 494,
+    height:300,
     bodyBorder:false,
     border:false,
     hlColor:'C3DAF',
@@ -300,14 +306,16 @@ Ext.onReady(function(){
     listeners: {
         BeforeLoad:{
            fn:function(){
+                //*********** Disabled on 02 Nov **************
              // Basic mask:
-              Ext.getCmp('directory-tree').el.mask('Loading...', 'x-mask-loading')            
+            //Ext.getCmp('west-panel').el.mask('Loading...', 'x-mask-loading')
              }
            },
         load:{
            fn:function(){
+              //*********** Disabled on 02 Nov **************
              // Basic unmask:
-             Ext.getCmp('directory-tree').el.unmask()
+            // Ext.getCmp('west-panel').el.unmask()
            }
         },
         click: {
@@ -327,14 +335,17 @@ Ext.onReady(function(){
                 var propGrids = Ext.getCmp('propGrid');
                 // make sure the property grid exists
                 if (propGrids) {
+                    //Ext.get('propGrid').dom.innerHTML =''
+                   //propGrids.html=''
                   // populate the property grid with details_data
                   propGrids.setSource(details_data);
                 }
 
+              //*********** Disabled on 02 Nov **************
              // check the current state of Detail Grid panel
-             if(Ext.getCmp('detail-grid').collapsed==true){
+             /*if(Ext.getCmp('detail-grid').collapsed==true){
                  Ext.getCmp('detail-grid').expand();
-              }             
+              }  */
           }
         },
         dblclick :{
@@ -524,18 +535,18 @@ function showCentralGrid(node)
 				Ext.getCmp('centerPanel').enable();
 				sendAjaxRequest(requestURL,label,node.id);
 				  // check the current state of Detail Grid panel
-				if(Ext.getCmp('detail-grid').collapsed!=true){
+				/*if(Ext.getCmp('detail-grid').collapsed!=true){
 					Ext.getCmp('detail-grid').collapse();
-				}
+				}*/
 			}
 		}else if(Ext.getCmp(label)&&(Ext.getCmp('centerPanel').getActiveTab().id=='tab-'+label)){
 				sendAjaxRequest(requestURL,label,node.id);
 		}else{
 			Ext.getCmp('centerPanel').enable();
 		// collapse the detail Grid panel & show the tab
-			if(Ext.getCmp('detail-grid').collapsed!=true){
+			/*if(Ext.getCmp('detail-grid').collapsed!=true){
 				Ext.getCmp('detail-grid').collapse();
-			}
+			}*/
 			Ext.getCmp(label).show();
 		}
 
@@ -608,7 +619,7 @@ function showIndvidualClass(pStore,pColumnData,rowIndex){
 	columns: pColumnData,
 	stripeRows: true,
 	loadMask: true,
-        height:360,
+        height:460,
 	autoSizeColumns: true,
 	autoSizeGrid: true,
         AllowScroll : true,
@@ -617,16 +628,26 @@ function showIndvidualClass(pStore,pColumnData,rowIndex){
         enableColumnMove:false
 	});
 
-
-        Ext.getBody().mask();
+        // get the centerPanel x,y coordinates, used to set the position of Indvidual Class(PopUp window)
+        var strPositon = (Ext.getCmp('centerPanel').getPosition()).toString()        
+        var arrPositon=strPositon.split(",");
+     
         var myWin = new Ext.Window({
         title: 'Indvidual Class',
         id:'indvidual-class',
         closable:true,
-        width:560,
-        height:400,
+        x : arrPositon[0],
+        y : parseInt(arrPositon[1])+25,
+        
+        width:Ext.getCmp('centerPanel').getInnerWidth()-2,
+        height:Ext.getCmp('centerPanel').getInnerHeight(),
         layout: 'border',
         listeners: {
+                    beforerender:{
+                        fn : function(){
+                         Ext.getBody().mask();
+                        }
+                    },
                     close:{
                        fn:function(){
                          Ext.getBody().unmask();
@@ -645,7 +666,8 @@ function showIndvidualClass(pStore,pColumnData,rowIndex){
                 region:'west',
                 split: true,
                 margins: '0 1 3 3',
-                width: 230,
+                width: 250,
+                //height:900,
                 minSize: 100,
                 items:[grid_class_properties]
             },{
