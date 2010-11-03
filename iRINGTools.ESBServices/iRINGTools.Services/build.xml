@@ -100,6 +100,13 @@
 	<path id="jaxb.userclasspath">
     <pathelement location="../libraries/jaxb-ri-20100511/lib/jaxb-xjc.jar" />
     <pathelement location="../libraries/jaxb-ri-20100511/lib/collection-setter-injector.jar" />
+	</path> 
+  
+	<path id="httpcomponents-4.0.userclasspath">
+		<pathelement location="../libraries/apache-httpcomponents-4.0/httpclient-4.0.3.jar" />
+		<pathelement location="../libraries/apache-httpcomponents-4.0/httpcore-4.0.1.jar" />
+		<pathelement location="../libraries/apache-httpcomponents-4.0/httpcore-nio-4.0.1.jar" />
+		<pathelement location="../libraries/apache-httpcomponents-4.0/httpmime-4.0.3.jar" />
 	</path>
 
 	<target name="generate">
@@ -136,6 +143,7 @@
 			<classpath refid="gson-1.4.userclasspath" />
 			<classpath refid="log4j-1.2.16.userclasspath" />
 			<classpath refid="guice-2.0.userclasspath" />
+      <classpath refid="httpcomponents-4.0.userclasspath" />
 		</javac>
 		<copy todir="WebContent/WEB-INF/lib" flatten="true">
 			<path refid="cxf-2.2.9.userclasspath" />
@@ -143,6 +151,7 @@
 			<path refid="gson-1.4.userclasspath" />
 			<path refid="log4j-1.2.16.userclasspath" />
 			<path refid="guice-2.0.userclasspath" />
+			<path refid="httpcomponents-4.0.userclasspath" />
 		</copy>
 		<jar destfile="${ant.project.name}.war" basedir="WebContent" excludes="**/.svn/,WEB-INF/logs/*.*" />
 	</target>
