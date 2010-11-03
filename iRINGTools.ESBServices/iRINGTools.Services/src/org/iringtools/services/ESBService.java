@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
-
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -15,7 +14,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.xml.bind.JAXBException;
-
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
 import org.iringtools.adapter.dti.DataTransferIndex;
@@ -41,7 +39,8 @@ import org.iringtools.directory.ExchangeDefinition;
 import org.iringtools.protocol.manifest.Manifest;
 import org.iringtools.services.core.DataTransferObjectComparator;
 import org.iringtools.utility.JaxbUtil;
-import org.iringtools.utility.NetUtil;
+import org.iringtools.utility.WebClient;
+import org.iringtools.utility.WebClientException;
 
 @Path("/")
 @Consumes("application/xml")
@@ -70,8 +69,8 @@ public class ESBService
       init();
 
       // request directory service to get exchange definitions
-      String diffServiceUrl = settings.get("directoryServiceUri") + "/directory";
-      directory = NetUtil.get(Directory.class, diffServiceUrl);
+      WebClient webClient = new WebClient(settings.get("directoryServiceUri"));
+      directory = webClient.get(Directory.class, "/directory");
     }
     catch (Exception ex)
     {
@@ -93,23 +92,24 @@ public class ESBService
 
       // get exchange definition
       ExchangeDefinition xdef = getExchangeDefinition(scope, id);
+      WebClient sourceClient = new WebClient(xdef.getSourceUri());
+      WebClient targetClient = new WebClient(xdef.getTargetUri());
 
       // get target manifest
-      String targetManifestUrl = xdef.getTargetUri() + "/" + xdef.getTargetScope() + "/" + xdef.getTargetApp()
-          + "/manifest";
-      Manifest targetManifest = NetUtil.get(Manifest.class, targetManifestUrl);
+      String targetManifestUrl = "/" + xdef.getTargetScope() + "/" + xdef.getTargetApp() + "/manifest";
+      Manifest targetManifest = targetClient.get(Manifest.class, targetManifestUrl);
       if (targetManifest == null || targetManifest.getGraphs().getGraphs().size() == 0)
         return null;
 
       // get source dti
-      String sourceUrl = xdef.getSourceUri() + "/" + xdef.getSourceScope() + "/" + xdef.getSourceApp() + "/"
+      String sourceDtiUrl = "/" + xdef.getSourceScope() + "/" + xdef.getSourceApp() + "/"
           + xdef.getSourceGraph() + "/xfr?hashAlgorithm=" + xdef.getHashAlgorithm();
-      DataTransferIndices sourceDtis = NetUtil.post(DataTransferIndices.class, sourceUrl, targetManifest);
+      DataTransferIndices sourceDtis = sourceClient.post(DataTransferIndices.class, sourceDtiUrl, targetManifest);
 
       // get target dti
-      String targetUrl = xdef.getTargetUri() + "/" + xdef.getTargetScope() + "/" + xdef.getTargetApp() + "/"
+      String targetDtiUrl = "/" + xdef.getTargetScope() + "/" + xdef.getTargetApp() + "/"
           + xdef.getTargetGraph() + "/xfr?hashAlgorithm=" + xdef.getHashAlgorithm();
-      DataTransferIndices targetDtis = NetUtil.post(DataTransferIndices.class, targetUrl, targetManifest);
+      DataTransferIndices targetDtis = targetClient.post(DataTransferIndices.class, targetDtiUrl, targetManifest);
 
       // create dxi request to diff source and target dti
       DiffDtiRequest diffDtiRequest = new DiffDtiRequest();
@@ -117,8 +117,8 @@ public class ESBService
       diffDtiRequest.setTargetDataTransferIndicies(targetDtis);
 
       // request exchange service to diff the dti
-      String diffServiceUrl = settings.get("differencingServiceUri") + "/dti";
-      resultDtis = NetUtil.post(DataTransferIndices.class, diffServiceUrl, diffDtiRequest);
+      WebClient diffClient = new WebClient(settings.get("differencingServiceUri"));
+      resultDtis = diffClient.post(DataTransferIndices.class, "/dti", diffDtiRequest);
     }
     catch (Exception ex)
     {
@@ -149,11 +149,12 @@ public class ESBService
 
       // get exchange definition
       ExchangeDefinition xdef = getExchangeDefinition(scope, id);
+      WebClient sourceClient = new WebClient(xdef.getSourceUri());
+      WebClient targetClient = new WebClient(xdef.getTargetUri());
 
       // get target manifest
-      String targetManifestUrl = xdef.getTargetUri() + "/" + xdef.getTargetScope() + "/" + xdef.getTargetApp()
-          + "/manifest";
-      Manifest targetManifest = NetUtil.get(Manifest.class, targetManifestUrl);
+      String targetManifestUrl = "/" + xdef.getTargetScope() + "/" + xdef.getTargetApp() + "/manifest";
+      Manifest targetManifest = targetClient.get(Manifest.class, targetManifestUrl);
       if (targetManifest == null || targetManifest.getGraphs().getGraphs().size() == 0)
         return null;
 
@@ -189,9 +190,8 @@ public class ESBService
         sourceDataTransferIndices.setDataTransferIndices(sourceDtiList);
         sourceDtoPageRequest.setDataTransferIndices(sourceDataTransferIndices);
 
-        String sourceUrl = xdef.getSourceUri() + "/" + xdef.getSourceScope() + "/" + xdef.getSourceApp() + "/"
-            + xdef.getSourceGraph() + "/xfr/page";
-        sourceDtos = NetUtil.post(DataTransferObjects.class, sourceUrl, sourceDtoPageRequest);
+        String sourceDtoUrl = "/" + xdef.getSourceScope() + "/" + xdef.getSourceApp() + "/" + xdef.getSourceGraph() + "/xfr/page";
+        sourceDtos = sourceClient.post(DataTransferObjects.class, sourceDtoUrl, sourceDtoPageRequest);
         List<DataTransferObject> sourceDtoList = sourceDtos.getDataTransferObjects();
 
         // append add/sync DTOs to resultDtoList, leave change DTOs to send to differencing engine
@@ -237,9 +237,8 @@ public class ESBService
         targetDataTransferIndices.setDataTransferIndices(targetDtiList);
         targetDtoPageRequest.setDataTransferIndices(targetDataTransferIndices);
 
-        String targetUrl = xdef.getTargetUri() + "/" + xdef.getTargetScope() + "/" + xdef.getTargetApp() + "/"
-            + xdef.getTargetGraph() + "/xfr/page";
-        targetDtos = NetUtil.post(DataTransferObjects.class, targetUrl, targetDtoPageRequest);
+        String targetDtoUrl = "/" + xdef.getTargetScope() + "/" + xdef.getTargetApp() + "/" + xdef.getTargetGraph() + "/xfr/page";
+        targetDtos = targetClient.post(DataTransferObjects.class, targetDtoUrl, targetDtoPageRequest);
         List<DataTransferObject> targetDtoList = targetDtos.getDataTransferObjects();
 
         // append delete DTOs to resultDtoList, leave change DTOs to send to differencing engine
@@ -273,8 +272,9 @@ public class ESBService
         DiffDtoRequest diffDtoRequest = new DiffDtoRequest();
         diffDtoRequest.setSourceDataTransferObjects(sourceDtos);
         diffDtoRequest.setTargetDataTransferObjects(targetDtos);
-        String diffServiceUrl = settings.get("differencingServiceUri") + "/dto";
-        DataTransferObjects diffDtos = NetUtil.post(DataTransferObjects.class, diffServiceUrl, diffDtoRequest);
+
+        WebClient diffClient = new WebClient(settings.get("differencingServiceUri"));
+        DataTransferObjects diffDtos = diffClient.post(DataTransferObjects.class, "/dto", diffDtoRequest);
 
         // add diff DTOs to add/change/sync list
         if (diffDtos != null)
@@ -321,16 +321,18 @@ public class ESBService
 
       // get exchange definition
       ExchangeDefinition xdef = getExchangeDefinition(scope, id);
+      WebClient sourceClient = new WebClient(xdef.getSourceUri());
+      WebClient targetClient = new WebClient(xdef.getTargetUri());
 
       // get target application uri
-      String targetAppUri = xdef.getTargetUri() + "/" + xdef.getTargetScope() + "/" + xdef.getTargetApp();
-      String targetManifestUrl = targetAppUri + "/manifest";
-      String targetGraphUri = targetAppUri + "/" + xdef.getTargetGraph();
-      String sourceGraphUri = xdef.getSourceUri() + "/" + xdef.getSourceScope() + "/" + xdef.getSourceApp()
+      String targetAppUrl = "/" + xdef.getTargetScope() + "/" + xdef.getTargetApp();
+      String targetManifestUrl = targetAppUrl + "/manifest";
+      String targetGraphUrl = targetAppUrl + "/" + xdef.getTargetGraph();
+      String sourceGraphUrl = "/" + xdef.getSourceScope() + "/" + xdef.getSourceApp()
           + "/" + xdef.getSourceGraph();
 
       // get target manifest
-      Manifest targetManifest = NetUtil.get(Manifest.class, targetManifestUrl);
+      Manifest targetManifest = targetClient.get(Manifest.class, targetManifestUrl);
       if (targetManifest == null || targetManifest.getGraphs().getGraphs().size() == 0)
         return null;
 
@@ -374,8 +376,8 @@ public class ESBService
         poolDataTransferIndices.setDataTransferIndices(sourcePoolDtiList);
         poolDtosRequest.setDataTransferIndices(poolDataTransferIndices);
         
-        String sourceDtoUrl = sourceGraphUri + "/xfr/page";
-        DataTransferObjects poolDtos = NetUtil.post(DataTransferObjects.class, sourceDtoUrl, poolDtosRequest);
+        String sourceDtoUrl = sourceGraphUrl + "/xfr/page";
+        DataTransferObjects poolDtos = sourceClient.post(DataTransferObjects.class, sourceDtoUrl, poolDtosRequest);
         List<DataTransferObject> poolDtoList = poolDtos.getDataTransferObjects();
 
         // set transfer type for each DTO in poolDtoList and remove/report ones that have changed
@@ -445,7 +447,7 @@ public class ESBService
         // post add/change/delete DTOs to target endpoint
         if (poolDtoList.size() > 0)
         {
-          Response poolResponse = NetUtil.post(Response.class, targetGraphUri, poolDtos);
+          Response poolResponse = targetClient.post(Response.class, targetGraphUrl, poolDtos);
           response.getStatusList().getStatuses().addAll(poolResponse.getStatusList().getStatuses());
           
           if (response.getLevel() != Level.ERROR || (response.getLevel() == Level.WARNING && poolResponse.getLevel() == Level.SUCCESS))
@@ -489,10 +491,11 @@ public class ESBService
     settings.put("poolSize", poolSize);
   }
 
-  private ExchangeDefinition getExchangeDefinition(String scope, String id) throws JAXBException, IOException
+  private ExchangeDefinition getExchangeDefinition(String scope, String id) throws WebClientException
   {
-    String directoryServiceUrl = settings.get("directoryServiceUri") + "/" + scope + "/exchanges/" + id;
-    return NetUtil.get(ExchangeDefinition.class, directoryServiceUrl);
+    WebClient directoryClient = new WebClient(settings.get("directoryServiceUri"));
+    String directoryServiceUrl = "/" + scope + "/exchanges/" + id;
+    return directoryClient.get(ExchangeDefinition.class, directoryServiceUrl);
   }
 
   private Status createStatus(String identifier, String message)
