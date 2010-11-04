@@ -10,8 +10,8 @@ import javax.ws.rs.Produces;
 import org.apache.log4j.Logger;
 import org.iringtools.adapter.dti.DataTransferIndices;
 import org.iringtools.adapter.dto.DataTransferObjects;
-import org.iringtools.common.request.DiffDtiRequest;
-import org.iringtools.common.request.DiffDtoRequest;
+import org.iringtools.common.request.DxiRequest;
+import org.iringtools.common.request.DxoRequest;
 import org.iringtools.services.core.DifferencingProvider;
 
 @Path("/")
@@ -30,46 +30,40 @@ public class DifferencingService
   }
   
   @POST
-  @Path("/dti")
-  public DataTransferIndices diff(DiffDtiRequest diffDtiRequest)
+  @Path("/dxi")
+  public DataTransferIndices diff(DxiRequest dxiRequest)
   {
-    DataTransferIndices diffDtis = null;
+    DataTransferIndices dxis = null;
     
     try
     {
-      DataTransferIndices sourceDtis = diffDtiRequest.getSourceDataTransferIndicies();
-      DataTransferIndices targetDtis = diffDtiRequest.getTargetDataTransferIndicies();
-      
       DifferencingProvider diffProvider = new DifferencingProvider(settings);
-      diffDtis = diffProvider.diff(sourceDtis, targetDtis);
+      dxis = diffProvider.diff(dxiRequest);
     }
     catch (Exception ex)
     {
       logger.error("Error while comparing data transfer indices: " + ex);
     }
     
-    return diffDtis;
+    return dxis;
   }
   
   @POST
-  @Path("/dto")
-  public DataTransferObjects diff(DiffDtoRequest diffDtoRequest)
+  @Path("/dxo")
+  public DataTransferObjects diff(DxoRequest dxoRequest)
   {
-    DataTransferObjects diffDtos = null;
+    DataTransferObjects dxos = null;
     
     try
     {    
-      DataTransferObjects sourceDtos = diffDtoRequest.getSourceDataTransferObjects(); 
-      DataTransferObjects targetDtos = diffDtoRequest.getTargetDataTransferObjects();
-      
       DifferencingProvider diffProvider = new DifferencingProvider(settings);
-      diffDtos = diffProvider.diff(sourceDtos, targetDtos);
+      dxos = diffProvider.diff(dxoRequest);
     }
     catch (Exception ex)
     {
       logger.error("Error while comparing data transfer objects: " + ex);
     }
     
-    return diffDtos;
+    return dxos;
   }
 }

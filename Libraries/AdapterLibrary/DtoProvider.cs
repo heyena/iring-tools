@@ -131,7 +131,7 @@ namespace org.iringtools.adapter
         _graphMap = _mapping.FindGraphMap(graph);
 
         IList<string> identifiers = new List<string>();
-        foreach (DataTransferIndex dti in dataTransferIndices)
+        foreach (DataTransferIndex dti in dataTransferIndices.DataTransferIndexList)
         {
           identifiers.Add(dti.Identifier);
         }
@@ -163,12 +163,14 @@ namespace org.iringtools.adapter
      
         // extract delete identifiers from data transfer objects
         List<string> deleteIdentifiers = new List<string>();
-        for (int i = 0; i < dataTransferObjects.Count; i++)
+        List<DataTransferObject> dataTransferObjectList = dataTransferObjects.DataTransferObjectList;
+
+        for (int i = 0; i < dataTransferObjectList.Count; i++)
         {
-          if (dataTransferObjects[i].transferType == TransferType.Delete)
+          if (dataTransferObjectList[i].transferType == TransferType.Delete)
           {
-            deleteIdentifiers.Add(dataTransferObjects[i].identifier);
-            dataTransferObjects.RemoveAt(i--);
+            deleteIdentifiers.Add(dataTransferObjectList[i].identifier);
+            dataTransferObjectList.RemoveAt(i--);
           }
         }
 
@@ -297,7 +299,7 @@ namespace org.iringtools.adapter
         BuildCrossGraphMap(dtoPageRequest.Manifest, graph);
         
         IList<string> identifiers = new List<string>();
-        foreach (DataTransferIndex dti in dtoPageRequest.DataTransferIndices)
+        foreach (DataTransferIndex dti in dtoPageRequest.DataTransferIndices.DataTransferIndexList)
         {
           identifiers.Add(dti.Identifier);
         }
@@ -731,12 +733,16 @@ namespace org.iringtools.adapter
     //NOTE: only MD5 hash algorithm is supported at current
     private DataTransferIndices BuildDataTransferIndices(ref IList<IDataObject> dataObjects, ref Dictionary<string, List<string>> classIdentifiers, string hashAlgorithm)
     {
-      DataTransferIndices dataTransferIndices = new DataTransferIndices();
+      DataTransferIndices dataTransferIndices = new DataTransferIndices()
+      {
+        ScopeName = _settings["ProjectName"],
+        AppName = _settings["ApplicationName"],
+      };
 
       for (int i = 0; i < dataObjects.Count; i++)
       {
         DataTransferIndex dti = new DataTransferIndex();
-        dataTransferIndices.Add(dti);
+        dataTransferIndices.DataTransferIndexList.Add(dti);
 
         bool firstClassMap = true;
         StringBuilder propertyValues = new StringBuilder();

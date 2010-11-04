@@ -20,12 +20,17 @@ namespace org.iringtools.adapter.projection
     private static readonly ILog _logger = LogManager.GetLogger(typeof(DtoProjectionEngine));
 
     private DataTransferObjects _dataTransferObjects;
+    private string _scopeName;
+    private string _appName;
 
     [Inject]
     public DtoProjectionEngine(AdapterSettings settings, IDataLayer dataLayer, Mapping mapping)
     {
       _dataObjects = new List<IDataObject>();
       _classIdentifiers = new Dictionary<string, List<string>>();
+
+      _scopeName = settings["ProjectName"];
+      _appName = settings["ApplicationName"];
 
       _dataLayer = dataLayer;
       _mapping = mapping;
@@ -53,7 +58,11 @@ namespace org.iringtools.adapter.projection
 
     public DataTransferObjects ToDataTransferObjects(GraphMap graphMap, ref IList<IDataObject> dataObjects)
     {
-      _dataTransferObjects = new DataTransferObjects();
+      _dataTransferObjects = new DataTransferObjects()
+      {
+        ScopeName = _scopeName,
+        AppName = _appName,
+      };
 
       try
       {
@@ -68,7 +77,7 @@ namespace org.iringtools.adapter.projection
           for (int i = 0; i < _dataObjects.Count; i++)
           {
             DataTransferObject dto = new DataTransferObject();
-            _dataTransferObjects.Add(dto);
+            _dataTransferObjects.DataTransferObjectList.Add(dto);
 
             foreach (var pair in _graphMap.classTemplateListMaps)
             {
@@ -182,14 +191,14 @@ namespace org.iringtools.adapter.projection
         _dataTransferObjects = dataTransferObjects;
 
         if (_graphMap != null && _graphMap.classTemplateListMaps.Count > 0 &&
-          _dataTransferObjects != null && _dataTransferObjects.Count > 0)
+          _dataTransferObjects != null && _dataTransferObjects.DataTransferObjectList.Count > 0)
         {
           ClassMap classMap = _graphMap.classTemplateListMaps.First().Key;
           List<string> identifiers = new List<string>();
 
-          for (int i = 0; i < _dataTransferObjects.Count; i++)
+          for (int i = 0; i < _dataTransferObjects.DataTransferObjectList.Count; i++)
           {
-            DataTransferObject dataTransferObject = _dataTransferObjects[i];
+            DataTransferObject dataTransferObject = _dataTransferObjects.DataTransferObjectList[i];
             ClassObject classObject = dataTransferObject.GetClassObject(classMap.classId);
 
             // These should be the same, but if they are different then
@@ -206,8 +215,8 @@ namespace org.iringtools.adapter.projection
           }
 
           dataObjects = _dataLayer.Create(_graphMap.dataObjectMap, identifiers);
-          
-          for (int dataTransferObjectIndex = 0; dataTransferObjectIndex < _dataTransferObjects.Count; dataTransferObjectIndex++)
+
+          for (int dataTransferObjectIndex = 0; dataTransferObjectIndex < _dataTransferObjects.DataTransferObjectList.Count; dataTransferObjectIndex++)
           {
             IDataObject dataObject = dataObjects[dataTransferObjectIndex];
             CreateDataObjects(ref dataObject, classMap.classId, dataTransferObjectIndex);
@@ -228,7 +237,7 @@ namespace org.iringtools.adapter.projection
     {
       KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = _graphMap.GetClassTemplateListMap(classId);
       List<TemplateMap> templateMaps = classTemplateListMap.Value;
-      ClassObject classObject = _dataTransferObjects[dataTransferObjectIndex].GetClassObject(classId);
+      ClassObject classObject = _dataTransferObjects.DataTransferObjectList[dataTransferObjectIndex].GetClassObject(classId);
 
       foreach (TemplateMap templateMap in templateMaps)
       {

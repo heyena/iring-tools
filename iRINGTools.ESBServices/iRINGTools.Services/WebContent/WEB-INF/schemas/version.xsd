@@ -1,24 +1,24 @@
 <?xml version="1.0"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://iringtools.org/common"
-  targetNamespace="http://iringtools.org/common" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-  jaxb:version="2.0" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://iringtools.org/common" targetNamespace="http://iringtools.org/common"
+  elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.0"
+  xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc">
 
   <xs:annotation>
     <xs:appinfo>
       <jaxb:globalBindings>
-        <xjc:simple/>
+        <xjc:simple />
       </jaxb:globalBindings>
     </xs:appinfo>
   </xs:annotation>
 
-  <xs:element name="version" type="Version"/>
+  <xs:element name="version" type="Version" />
 
   <xs:complexType name="Version">
     <xs:sequence>
-      <xs:element name="major" type="xs:string"/>
-      <xs:element name="minor" type="xs:string"/>
-      <xs:element name="build" type="xs:string"/>
-      <xs:element name="revision" type="xs:string"/>
+      <xs:element name="major" type="xs:string" />
+      <xs:element name="minor" type="xs:string" />
+      <xs:element name="build" type="xs:string" />
+      <xs:element name="revision" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
 </xs:schema>
