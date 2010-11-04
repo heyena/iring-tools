@@ -6,33 +6,47 @@
   <xs:annotation>
     <xs:appinfo>
       <jaxb:globalBindings>
-        <xjc:simple/>
+        <xjc:simple />
       </jaxb:globalBindings>
     </xs:appinfo>
   </xs:annotation>
 
-  <xs:element name="dataTransferIndices" type="DataTransferIndices"/>
+  <xs:element name="dataTransferIndices" type="DataTransferIndices" />
 
   <xs:complexType name="DataTransferIndices">
     <xs:sequence>
-      <xs:element name="dataTransferIndex" type="DataTransferIndex" maxOccurs="unbounded"/>
+      <xs:element name="scopeName" type="xs:string" />
+      <xs:element name="appName" type="xs:string" />
+      <xs:element name="dataTransferIndexList" type="DataTransferIndexList" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="DataTransferIndexList">
+    <xs:sequence>
+      <xs:element name="dataTransferIndex" type="DataTransferIndex" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="dataTransferIndexListItems" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="DataTransferIndex">
     <xs:sequence>
-      <xs:element name="identifier" type="xs:string"/>
-      <xs:element name="hashValue" type="xs:string"/>
-      <xs:element name="transferType" type="TransferType"/>
+      <xs:element name="identifier" type="xs:string" />
+      <xs:element name="hashValue" type="xs:string" />
+      <xs:element name="transferType" type="TransferType" />
     </xs:sequence>
   </xs:complexType>
 
   <xs:simpleType name="TransferType">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="Sync"/>
-      <xs:enumeration value="Add"/>
-      <xs:enumeration value="Change"/>
-      <xs:enumeration value="Delete"/>
+      <xs:enumeration value="Sync" />
+      <xs:enumeration value="Add" />
+      <xs:enumeration value="Change" />
+      <xs:enumeration value="Delete" />
     </xs:restriction>
   </xs:simpleType>
 </xs:schema>

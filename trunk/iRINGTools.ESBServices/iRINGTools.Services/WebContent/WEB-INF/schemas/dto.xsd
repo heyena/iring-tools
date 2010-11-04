@@ -6,93 +6,107 @@
   <xs:annotation>
     <xs:appinfo>
       <jaxb:globalBindings>
-        <xjc:simple/>
+        <xjc:simple />
       </jaxb:globalBindings>
     </xs:appinfo>
   </xs:annotation>
 
-  <xs:element name="dataTransferObjects" type="DataTransferObjects"/>
+  <xs:element name="dataTransferObjects" type="DataTransferObjects" />
 
   <xs:complexType name="DataTransferObjects">
     <xs:sequence>
-      <xs:element name="dataTransferObject" type="DataTransferObject" maxOccurs="unbounded"/>
+      <xs:element name="scopeName" type="xs:string" />
+      <xs:element name="appName" type="xs:string" />
+      <xs:element name="dataTransferObjectList" type="DataTransferObjectList" />
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="DataTransferObjectList">
+    <xs:sequence>
+      <xs:element name="dataTransferObject" type="DataTransferObject" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="dataTransferObjectListItems" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="DataTransferObject">
     <xs:sequence>
-      <xs:element name="identifier" type="xs:string"/>
-      <xs:element name="classObjects" type="ClassObjects"/>
-      <xs:element name="transferType" type="TransferType"/>
+      <xs:element name="identifier" type="xs:string" />
+      <xs:element name="classObjects" type="ClassObjects" />
+      <xs:element name="transferType" type="TransferType" />
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="ClassObjects">
     <xs:sequence>
-      <xs:element name="classObject" type="ClassObject" maxOccurs="unbounded"/>
+      <xs:element name="classObject" type="ClassObject" maxOccurs="unbounded" />
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="ClassObject">
     <xs:sequence>
-      <xs:element name="classId" type="xs:string"/>
-      <xs:element name="name" type="xs:string"/>
-      <xs:element name="identifier" type="xs:string"/>
-      <xs:element name="templateObjects" type="TemplateObjects"/>
-      <xs:element name="transferType" type="TransferType"/>
+      <xs:element name="classId" type="xs:string" />
+      <xs:element name="name" type="xs:string" />
+      <xs:element name="identifier" type="xs:string" />
+      <xs:element name="templateObjects" type="TemplateObjects" />
+      <xs:element name="transferType" type="TransferType" />
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="TemplateObjects">
     <xs:sequence>
-      <xs:element name="templateObject" type="TemplateObject" maxOccurs="unbounded"/>
+      <xs:element name="templateObject" type="TemplateObject" maxOccurs="unbounded" />
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="TemplateObject">
     <xs:sequence>
-      <xs:element name="templateId" type="xs:string"/>
-      <xs:element name="name" type="xs:string"/>
-      <xs:element name="roleObjects" type="RoleObjects"/>
-      <xs:element name="transferType" type="TransferType"/>
+      <xs:element name="templateId" type="xs:string" />
+      <xs:element name="name" type="xs:string" />
+      <xs:element name="roleObjects" type="RoleObjects" />
+      <xs:element name="transferType" type="TransferType" />
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="RoleObjects">
     <xs:sequence>
-      <xs:element name="roleObject" type="RoleObject" maxOccurs="unbounded"/>
+      <xs:element name="roleObject" type="RoleObject" maxOccurs="unbounded" />
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="RoleObject">
     <xs:sequence>
-      <xs:element name="type" type="RoleType"/>
-      <xs:element name="roleId" type="xs:string"/>
-      <xs:element name="name" type="xs:string"/>
-      <xs:element name="dataType" type="xs:string"/>
-      <xs:element name="oldValue" type="xs:string"/>
-      <xs:element name="value" type="xs:string"/>
-      <xs:element name="relatedClassName" type="xs:string"/>
+      <xs:element name="type" type="RoleType" />
+      <xs:element name="roleId" type="xs:string" />
+      <xs:element name="name" type="xs:string" />
+      <xs:element name="dataType" type="xs:string" />
+      <xs:element name="oldValue" type="xs:string" />
+      <xs:element name="value" type="xs:string" />
+      <xs:element name="relatedClassName" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
 
   <xs:simpleType name="TransferType">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="Sync"/>
-      <xs:enumeration value="Add"/>
-      <xs:enumeration value="Change"/>
-      <xs:enumeration value="Delete"/>
+      <xs:enumeration value="Sync" />
+      <xs:enumeration value="Add" />
+      <xs:enumeration value="Change" />
+      <xs:enumeration value="Delete" />
     </xs:restriction>
   </xs:simpleType>
 
   <xs:simpleType name="RoleType">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="Possessor"/>
-      <xs:enumeration value="Reference"/>
-      <xs:enumeration value="FixedValue"/>
-      <xs:enumeration value="Property"/>
-      <xs:enumeration value="ObjectProperty"/>
-      <xs:enumeration value="DataProperty"/>
+      <xs:enumeration value="Possessor" />
+      <xs:enumeration value="Reference" />
+      <xs:enumeration value="FixedValue" />
+      <xs:enumeration value="Property" />
+      <xs:enumeration value="ObjectProperty" />
+      <xs:enumeration value="DataProperty" />
     </xs:restriction>
   </xs:simpleType>
 </xs:schema>

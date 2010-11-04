@@ -3,12 +3,12 @@
   <name>12345_000.DEF -> 12345_000.ABC</name>
   <description>Sending Line list from DEF to ABC</description>
   <sourceUri>http://localhost:54321/dto</sourceUri>
-  <sourceScope>12345_000</sourceScope>
-  <sourceApp>DEF</sourceApp>
-  <sourceGraph>LINES</sourceGraph>
+  <sourceScopeName>12345_000</sourceScopeName>
+  <sourceAppName>DEF</sourceAppName>
+  <sourceGraphName>LINES</sourceGraphName>
   <targetUri>http://localhost:54321/dto</targetUri>
-  <targetScope>12345_000</targetScope>
-  <targetApp>ABC</targetApp>
-  <targetGraph>LINES</targetGraph>
+  <targetScopeName>12345_000</targetScopeName>
+  <targetAppName>ABC</targetAppName>
+  <targetGraphName>LINES</targetGraphName>
   <hashAlgorithm>MD5</hashAlgorithm>
 </exchangeDefinition>

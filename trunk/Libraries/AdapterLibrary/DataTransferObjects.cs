@@ -34,8 +34,23 @@ using org.iringtools.library;
 
 namespace org.iringtools.adapter
 {
-  [CollectionDataContract(Namespace = "http://iringtools.org/adapter/dto", Name = "dataTransferObjects")]
-  public class DataTransferObjects : List<DataTransferObject> {}
+  [DataContract(Namespace = "http://iringtools.org/adapter/dto", Name = "dataTransferObjects")]
+  public class DataTransferObjects
+  {
+    public DataTransferObjects()
+    {
+      DataTransferObjectList = new List<DataTransferObject>();
+    }
+
+    [DataMember(Name = "scopeName", Order = 0, EmitDefaultValue = false)]
+    public string ScopeName { get; set; }
+
+    [DataMember(Name = "appName", Order = 1, EmitDefaultValue = false)]
+    public string AppName { get; set; }
+
+    [DataMember(Name = "dataTransferObjectList", Order = 2)]
+    public List<DataTransferObject> DataTransferObjectList { get; set; }
+  }
 
   [DataContract(Namespace = "http://iringtools.org/adapter/dto", Name = "dataTransferObject")]
   public class DataTransferObject

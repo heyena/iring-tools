@@ -19,13 +19,12 @@
   <!-- iringtools loggers -->
   <logger name="org.iringtools">
     <level value="INFO" />
-    <appender-ref ref="stdout" /> 
     <appender-ref ref="fileout" /> 
   </logger>
 
   <!-- all other loggers -->
   <root>
-    <level value="ERROR" /> 
+    <level value="WARN" /> 
     <appender-ref ref="stdout" /> 
     <appender-ref ref="fileout" /> 
   </root>

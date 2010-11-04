@@ -1,11 +1,9 @@
 <?xml version="1.0"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://iringtools.org/common/request"
-    targetNamespace="http://iringtools.org/common/request" xmlns:mnf="http://iringtools.org/protocol/manifest"
-    xmlns:dti="http://iringtools.org/adapter/dti" xmlns:dto="http://iringtools.org/adapter/dto"
-    elementFormDefault="qualified"
-    xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.0"
-    xmlns:xjc= "http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc">
-    
+  targetNamespace="http://iringtools.org/common/request" xmlns:mnf="http://iringtools.org/protocol/manifest" xmlns:dti="http://iringtools.org/adapter/dti"
+  xmlns:dto="http://iringtools.org/adapter/dto" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+  jaxb:version="2.0" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc">
+
   <xs:annotation>
     <xs:appinfo>
       <jaxb:globalBindings>
@@ -14,41 +12,47 @@
     </xs:appinfo>
   </xs:annotation>
 
-  <xs:import namespace="http://iringtools.org/protocol/manifest" schemaLocation="manifest.xsd"/>
-  <xs:import namespace="http://iringtools.org/adapter/dti" schemaLocation="dti.xsd"/>
-  <xs:import namespace="http://iringtools.org/adapter/dto" schemaLocation="dto.xsd"/>
+  <xs:import namespace="http://iringtools.org/protocol/manifest" schemaLocation="manifest.xsd" />
+  <xs:import namespace="http://iringtools.org/adapter/dti" schemaLocation="dti.xsd" />
+  <xs:import namespace="http://iringtools.org/adapter/dto" schemaLocation="dto.xsd" />
 
-  <xs:element name="dtoPageRequest" type="DtoPageRequest"/>
-  <xs:element name="diffDtiRequest" type="DiffDtiRequest"/>
-  <xs:element name="diffDtoRequest" type="DiffDtoRequest"/>
-  <xs:element name="exchangeRequest" type="ExchangeRequest"/>
+  <xs:element name="dtoPageRequest" type="DtoPageRequest" />
+  <xs:element name="dxiRequest" type="DxiRequest" />
+  <xs:element name="dxoRequest" type="DxoRequest" />
+  <xs:element name="exchangeRequest" type="ExchangeRequest" />
 
   <xs:complexType name="DtoPageRequest">
     <xs:sequence>
-      <xs:element name="manifest" type="mnf:Manifest"/>
-      <xs:element name="dataTransferIndices" type="dti:DataTransferIndices"/>
-      <xs:element name="hashAlgorithm" type="xs:string"/>
+      <xs:element name="manifest" type="mnf:Manifest" />
+      <xs:element name="dataTransferIndices" type="dti:DataTransferIndices" />
+      <xs:element name="hashAlgorithm" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="DiffDtiRequest">
+  <xs:complexType name="DxiRequest">
     <xs:sequence>
-      <xs:element name="sourceDataTransferIndicies" type="dti:DataTransferIndices"/>
-      <xs:element name="targetDataTransferIndicies" type="dti:DataTransferIndices"/>
+      <xs:element name="sourceScopeName" type="xs:string" />
+      <xs:element name="sourceAppName" type="xs:string" />
+      <xs:element name="targetScopeName" type="xs:string" />
+      <xs:element name="targetAppName" type="xs:string" />
+      <xs:element name="dataTransferIndicies" type="dti:DataTransferIndices" maxOccurs="2" />
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="DiffDtoRequest">
+  <xs:complexType name="DxoRequest">
     <xs:sequence>
-      <xs:element name="sourceDataTransferObjects" type="dto:DataTransferObjects"/>
-      <xs:element name="targetDataTransferObjects" type="dto:DataTransferObjects"/>
+      <xs:element name="sourceScopeName" type="xs:string" />
+      <xs:element name="sourceAppName" type="xs:string" />
+      <xs:element name="targetScopeName" type="xs:string" />
+      <xs:element name="targetAppName" type="xs:string" />
+      <xs:element name="dataTransferObjects" type="dto:DataTransferObjects" maxOccurs="2" />
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="ExchangeRequest">
     <xs:sequence>
-      <xs:element name="dataTransferIndices" type="dti:DataTransferIndices"/>
-      <xs:element name="reviewed" type="xs:boolean"/>
+      <xs:element name="dataTransferIndices" type="dti:DataTransferIndices" />
+      <xs:element name="reviewed" type="xs:boolean" />
     </xs:sequence>
   </xs:complexType>
 </xs:schema>
