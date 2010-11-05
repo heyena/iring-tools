@@ -34,8 +34,23 @@ using org.iringtools.library;
 
 namespace org.iringtools.adapter
 {
-  [CollectionDataContract(Namespace = "http://iringtools.org/adapter/dti", Name = "dataTransferIndices")]
-  public class DataTransferIndices : List<DataTransferIndex> {}
+  [DataContract(Namespace = "http://iringtools.org/adapter/dti", Name = "dataTransferIndices")]
+  public class DataTransferIndices
+  {
+    public DataTransferIndices()
+    {
+      DataTransferIndexList = new List<DataTransferIndex>();
+    }
+
+    [DataMember(Name = "scopeName", Order = 0, EmitDefaultValue = false)]
+    public string ScopeName { get; set; }
+
+    [DataMember(Name = "appName", Order = 1, EmitDefaultValue = false)]
+    public string AppName { get; set; }
+
+    [DataMember(Name = "dataTransferIndexList", Order = 2)]
+    public List<DataTransferIndex> DataTransferIndexList { get; set; }
+  }
 
   [DataContract(Namespace = "http://iringtools.org/adapter/dti", Name = "dataTransferIndex")]
   public class DataTransferIndex
