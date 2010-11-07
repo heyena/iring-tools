@@ -37,11 +37,14 @@ namespace org.iringtools.adapter.projection
     {
       XDocument xDocument = null;
 
+      List<DataTransferObject> dataTransferObjectList = _dataTransferObjects.DataTransferObjectList;
+
       try
       {
         GraphMap graphMap = _mapping.FindGraphMap(graphName);
-        _dataTransferObjects = ToDataTransferObjects(graphMap, ref dataObjects);
-        XElement xElement = SerializationExtensions.ToXml<DataTransferObjects>(_dataTransferObjects);
+        DataTransferObjects dataTransferObjects = ToDataTransferObjects(graphMap, ref dataObjects);
+        dataTransferObjectList = dataTransferObjects.DataTransferObjectList;
+        XElement xElement = SerializationExtensions.ToXml<DataTransferObjects>(dataTransferObjects);
         xDocument = new XDocument(xElement);
       }
       catch (Exception ex)
@@ -56,6 +59,8 @@ namespace org.iringtools.adapter.projection
     {
       _dataTransferObjects = new DataTransferObjects();
 
+      List<DataTransferObject> dataTransferObjectList = _dataTransferObjects.DataTransferObjectList;
+
       try
       {
         _graphMap = graphMap;
@@ -69,7 +74,7 @@ namespace org.iringtools.adapter.projection
           for (int i = 0; i < _dataObjects.Count; i++)
           {
             DataTransferObject dto = new DataTransferObject();
-            _dataTransferObjects.Add(dto);
+            dataTransferObjectList.Add(dto);
 
             foreach (ClassTemplateMap classTemplateMap in _graphMap.ClassTemplateMaps)
             {
@@ -146,6 +151,8 @@ namespace org.iringtools.adapter.projection
         _logger.Error("Error projecting data objects to data transfer objects." + ex);
       }
 
+      _dataTransferObjects.DataTransferObjectList = dataTransferObjectList;
+
       return _dataTransferObjects;
     }
     
@@ -176,15 +183,16 @@ namespace org.iringtools.adapter.projection
       {
         _graphMap = graphMap;
         _dataTransferObjects = dataTransferObjects;
+        List<DataTransferObject> dataTransferObjectList = _dataTransferObjects.DataTransferObjectList;
 
         if (_graphMap != null && _graphMap.ClassTemplateMaps.Count > 0 &&
-          _dataTransferObjects != null && _dataTransferObjects.Count > 0)
+          dataTransferObjectList != null && dataTransferObjectList.Count > 0)
         {
           ClassMap classMap = _graphMap.ClassTemplateMaps.First().ClassMap;
           List<string> identifiers = new List<string>();
-          for (int i = 0; i < _dataTransferObjects.Count; i++)
+          for (int i = 0; i < dataTransferObjectList.Count; i++)
           {
-            DataTransferObject dataTransferObject = _dataTransferObjects[i];
+            DataTransferObject dataTransferObject = dataTransferObjectList[i];
             ClassObject classObject = dataTransferObject.GetClassObject(classMap.ClassId);
 
             if (classObject != null)
@@ -194,7 +202,7 @@ namespace org.iringtools.adapter.projection
           }
 
           dataObjects = _dataLayer.Create(_graphMap.DataObjectName, identifiers);
-          for (int dataTransferObjectIndex = 0; dataTransferObjectIndex < _dataTransferObjects.Count; dataTransferObjectIndex++)
+          for (int dataTransferObjectIndex = 0; dataTransferObjectIndex < dataTransferObjectList.Count; dataTransferObjectIndex++)
           {
             IDataObject dataObject = dataObjects[dataTransferObjectIndex];
             CreateDataObjects(ref dataObject, classMap.ClassId, dataTransferObjectIndex);
@@ -213,9 +221,10 @@ namespace org.iringtools.adapter.projection
 
     private void CreateDataObjects(ref IDataObject dataObject, string classId, int dataTransferObjectIndex)
     {
+      List<DataTransferObject> dataTransferObjectList = _dataTransferObjects.DataTransferObjectList;
       ClassTemplateMap classTemplateListMap = _graphMap.GetClassTemplateMap(classId);
       List<TemplateMap> templateMaps = classTemplateListMap.TemplateMaps;
-      ClassObject classObject = _dataTransferObjects[dataTransferObjectIndex].GetClassObject(classId);
+      ClassObject classObject = dataTransferObjectList[dataTransferObjectIndex].GetClassObject(classId);
 
       foreach (TemplateMap templateMap in templateMaps)
       {

@@ -31,13 +31,28 @@ using System.Xml.Serialization;
 using System.ServiceModel;
 using System.Linq;
 using org.iringtools.library;
-using org.iringtools.common.mapping;
 using org.iringtools.protocol.manifest;
+using org.iringtools.common.mapping;
 
 namespace org.iringtools.adapter
 {
-  [CollectionDataContract(Namespace = "http://iringtools.org/adapter/dto", Name = "dataTransferObjects")]
-  public class DataTransferObjects : List<DataTransferObject> {}
+  [DataContract(Namespace = "http://iringtools.org/adapter/dto", Name = "dataTransferObjects")]
+  public class DataTransferObjects
+  {
+    public DataTransferObjects()
+    {
+      DataTransferObjectList = new List<DataTransferObject>();
+    }
+
+    [DataMember(Name = "scopeName", Order = 0, EmitDefaultValue = false)]
+    public string ScopeName { get; set; }
+
+    [DataMember(Name = "appName", Order = 1, EmitDefaultValue = false)]
+    public string AppName { get; set; }
+
+    [DataMember(Name = "dataTransferObjectList", Order = 2)]
+    public List<DataTransferObject> DataTransferObjectList { get; set; }
+  }
 
   [DataContract(Namespace = "http://iringtools.org/adapter/dto", Name = "dataTransferObject")]
   public class DataTransferObject
@@ -48,23 +63,13 @@ namespace org.iringtools.adapter
     }
 
     [DataMember(Order = 0)]
+    public string identifier { get; set; }
+
+    [DataMember(Order = 1)]
     public List<ClassObject> classObjects { get; set; }
 
-    [DataMember(Order = 1, EmitDefaultValue = false)]
+    [DataMember(Order = 2, EmitDefaultValue = false)]
     public TransferType transferType { get; set; }
-
-    public string Identifier
-    {
-      get
-      {
-        if (classObjects.Count > 0)
-        {
-          return classObjects[0].identifier;
-        }
-
-        return String.Empty;
-      }
-    }
 
     public ClassObject GetClassObject(string classId)
     {
@@ -183,6 +188,9 @@ namespace org.iringtools.adapter
 
     [DataMember(Order = 5, EmitDefaultValue = false)]
     public string value { get; set; }
+
+    [DataMember(Order = 6, EmitDefaultValue = false)]
+    public string relatedClassName { get; set; }
   }
 
   [DataContract]

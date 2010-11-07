@@ -109,7 +109,7 @@ namespace org.iringtools.services
 
     [Description("Gets dto provider version.")]
     [WebGet(UriTemplate = "/version")]
-    public Version GetVersion()
+    public VersionInfo GetVersion()
     {
       return _dtoProvider.GetVersion();
     }

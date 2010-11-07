@@ -57,7 +57,6 @@ namespace org.iringtools.adapter
     private Response _response = null;
     private IKernel _kernel = null;
     private AdapterSettings _settings = null;
-    private NameValueCollection _filterParams = null;
     private List<ScopeProject> _scopes = null;
     private IDataLayer _dataLayer = null;
     private ISemanticLayer _semanticEngine = null;
@@ -66,7 +65,6 @@ namespace org.iringtools.adapter
     private Mapping _mapping = null;
     private GraphMap _graphMap = null;
     private WebHttpClient _webHttpClient = null;  // for old mapping conversion
-    private Dictionary<string, KeyValuePair<string, Dictionary<string, string>>> _qmxfTemplateResultCache = null;
 
     //Projection specific stuff
     private IList<IDataObject> _dataObjects = new List<IDataObject>(); // dictionary of object names and list of data objects

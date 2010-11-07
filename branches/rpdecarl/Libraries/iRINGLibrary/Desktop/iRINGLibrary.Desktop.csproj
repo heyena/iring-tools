@@ -115,6 +115,9 @@
     <Compile Include="DatabaseDictionary.cs" />
     <Compile Include="DataDictionary.cs" />
     <Compile Include="DataFilter.cs" />
+    <Compile Include="DataObjects.cs" />
+    <Compile Include="DataProviders.cs" />
+    <Compile Include="DataRelationships.cs" />
     <Compile Include="IAdapter.cs" />
     <Compile Include="IDataLayer.cs" />
     <Compile Include="Manifest.cs" />

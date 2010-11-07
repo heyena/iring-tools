@@ -153,6 +153,7 @@ namespace org.iringtools.protocol.manifest
   }
 
   #region base classes
+  [DataContract]
   public abstract class RootBase
   {
     [DataMember(Name = "version", Order = 0, EmitDefaultValue = false)]

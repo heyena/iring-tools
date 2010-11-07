@@ -13,12 +13,12 @@ namespace org.iringtools.services
 {
   [ServiceContract]
   [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
-  public class NHibernateService
+  public class HibernateService
   {
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(NHibernateService));
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(HibernateService));
     private NHibernateProvider _NHibernateProvider = null;
-    
-    public NHibernateService()
+
+    public HibernateService()
     {
       _NHibernateProvider = new NHibernateProvider(WebConfigurationManager.AppSettings);
     }
@@ -30,9 +30,17 @@ namespace org.iringtools.services
     /// <returns>Returns the version as a string.</returns>
     [Description("Gets the version of the service.")]
     [WebGet(UriTemplate = "/version")]
-    public string GetVersion()
+    public VersionInfo GetVersion()
     {
-      return new Version _NHibernateProvider.GetType().Assembly.GetName().Version.ToString();
+      VersionInfo version = new  VersionInfo();
+      
+      Type type = typeof(NHibernateProvider);
+      version.Major = type.Assembly.GetName().Version.Major;
+      version.Minor = type.Assembly.GetName().Version.Minor;
+      version.Build = type.Assembly.GetName().Version.Build;
+      version.Revision = type.Assembly.GetName().Version.Revision;
+
+      return version;
     }
     #endregion
 
@@ -55,19 +63,19 @@ namespace org.iringtools.services
     }
 
     [WebGet(UriTemplate = "/providers")]
-    public List<String> GetProviders()
+    public DataProviders GetProviders()
     {
       return _NHibernateProvider.GetProviders();
     }
 
-    [WebGet(UriTemplate = "/relationship")]
-    public List<String> GetRelationships()
+    [WebGet(UriTemplate = "/relationships")]
+    public DataRelationships GetRelationships()
     {
       return _NHibernateProvider.GetRelationships();
     }
 
-    [WebGet(UriTemplate = "/{project}/{application}/schemaObjects")]
-    public List<String> GetSchemaObjects(string project, string application)
+    [WebGet(UriTemplate = "/{project}/{application}/objects")]
+    public DataObjects GetSchemaObjects(string project, string application)
     {
       return _NHibernateProvider.GetSchemaObjects(project, application);
     }
@@ -77,7 +85,6 @@ namespace org.iringtools.services
     {
       return _NHibernateProvider.GetSchemaObjectSchema(project, application, schemaObjectName);
     }
-        
 
 
 
@@ -93,5 +100,6 @@ namespace org.iringtools.services
 
 
 
-    }
+
+  }
 }

@@ -385,11 +385,11 @@ namespace org.iringtools.nhibernate
       }
     }
 
-    public List<string> GetRelationships()
+    public DataRelationships GetRelationships()
     {
       try
       {
-        return Enum.GetNames(typeof(RelationshipType)).ToList();
+        return new DataRelationships();
       }
       catch (Exception ex)
       {
@@ -398,11 +398,11 @@ namespace org.iringtools.nhibernate
       }
     }
 
-    public List<string> GetProviders()
+    public DataProviders GetProviders()
     {
       try
       {
-        return Enum.GetNames(typeof(Provider)).ToList();
+        return new DataProviders();
       }
       catch (Exception ex)
       {
@@ -411,9 +411,9 @@ namespace org.iringtools.nhibernate
       }
     }
 
-    public List<string> GetSchemaObjects(string projectName, string applicationName)
+    public DataObjects GetSchemaObjects(string projectName, string applicationName)
     {
-      List<string> tableNames = new List<string>();
+      DataObjects tableNames = new DataObjects();
       DatabaseDictionary dbDictionary = new DatabaseDictionary();
       try
       {
@@ -421,7 +421,7 @@ namespace org.iringtools.nhibernate
         if (File.Exists(_settings["DBDictionaryPath"]))
           dbDictionary = Utility.Read<DatabaseDictionary>(_settings["DBDictionaryPath"]);
         else
-          return null;
+          return tableNames;
 
         string connString = dbDictionary.connectionString;
         string dbProvider = dbDictionary.provider.ToString();
@@ -446,10 +446,14 @@ namespace org.iringtools.nhibernate
         ISession session = sessionFactory.OpenSession();
         ISQLQuery query = session.CreateSQLQuery(GetDatabaseMetaquery(dbProvider, parsedConnStr.Split(';')[1].Split('=')[1]));
 
-        IList<string> metadataList = query.List<string>();
+        DataObjects metadataList = new DataObjects();
+        foreach (string tableName in query.List<string>())
+        {
+          metadataList.Add(tableName);
+        }
         session.Close();
 
-        tableNames = metadataList as List<string>;
+        tableNames = metadataList;
         return tableNames;
       }
       catch (Exception)
