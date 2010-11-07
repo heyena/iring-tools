@@ -144,8 +144,10 @@
     <Compile Include="..\AssemblyInfo.cs">
       <Link>AssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="DtoService.cs" />
-    <Compile Include="ExchangeService.cs" />
+    <Compile Include="Sandbox.cs" />
+    <Compile Include="DataService.cs" />
+    <Compile Include="DataTransferService.cs" />
+    <Compile Include="Facade.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

@@ -315,14 +315,14 @@ namespace org.iringtools.adapter.datalayer
     {
       IList<IDataObject> relatedObjects;
       DataDictionary dictionary = GetDictionary();
-      DataObject dataObject = dictionary.dataObjects.First(c => c.objectName == sourceDataObject.GetType().Name);
-      DataRelationship dataRelationship = dataObject.dataRelationships.First(c => c.relationshipName == relatedObjectType);
+      DataObject dataObject = dictionary.DataObjects.First(c => c.ObjectName == sourceDataObject.GetType().Name);
+      DataRelationship dataRelationship = dataObject.DataRelationships.First(c => c.RelationshipName == relatedObjectType);
 
       StringBuilder sql = new StringBuilder();
-      sql.Append("from " + dataRelationship.relatedObjectName + " where ");
-      foreach (PropertyMap map in dataRelationship.propertyMaps)
+      sql.Append("from " + dataRelationship.RelatedObjectName + " where ");
+      foreach (PropertyMap map in dataRelationship.PropertyMaps)
       {
-        sql.Append(map.relatedPropertyName + " = '" + sourceDataObject.GetPropertyValue(map.dataPropertyName) + "' and ");
+        sql.Append(map.RelatedPropertyName + " = '" + sourceDataObject.GetPropertyValue(map.DataPropertyName) + "' and ");
       }
       sql.Remove(sql.Length - 4, 4);
 

@@ -188,16 +188,16 @@ namespace org.iringtools.nhibernate
           Utility.Write<DatabaseDictionary>(dbDictionary, _settings["DBDictionaryPath"], true);
           return dbDictionary;
         }
-        string connString = dbDictionary.connectionString;
-        string dbProvider = dbDictionary.provider.ToString();
+        string connString = dbDictionary.ConnectionString;
+        string dbProvider = dbDictionary.Provider.ToString();
         dbProvider = dbProvider.ToUpper();
         string parsedConnStr = ParseConnectionString(connString, dbProvider);
 
         dbDictionary = new DatabaseDictionary();
         Dictionary<string, string> properties = new Dictionary<string, string>();
         string metadataQuery = string.Empty;
-        dbDictionary.connectionString = parsedConnStr;
-        dbDictionary.dataObjects = new System.Collections.Generic.List<DataObject>();
+        dbDictionary.ConnectionString = parsedConnStr;
+        dbDictionary.DataObjects = new System.Collections.Generic.List<DataObject>();
 
         properties.Add("connection.provider", "NHibernate.Connection.DriverConnectionProvider");
         properties.Add("proxyfactory.factory_class", "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle");
@@ -219,17 +219,17 @@ namespace org.iringtools.nhibernate
           switch (dbProvider)
           {
             case "MSSQL2008":
-              dbDictionary.provider = Provider.MsSql2008;
+              dbDictionary.Provider = Provider.MsSql2008;
               properties.Add("dialect", "NHibernate.Dialect.MsSql2008Dialect");
               break;
 
             case "MSSQL2005":
-              dbDictionary.provider = Provider.MsSql2005;
+              dbDictionary.Provider = Provider.MsSql2005;
               properties.Add("dialect", "NHibernate.Dialect.MsSql2005Dialect");
               break;
 
             case "MSSQL2000":
-              dbDictionary.provider = Provider.MsSql2000;
+              dbDictionary.Provider = Provider.MsSql2000;
               properties.Add("dialect", "NHibernate.Dialect.MsSql2000Dialect");
               break;
 
@@ -251,22 +251,22 @@ namespace org.iringtools.nhibernate
           switch (dbProvider)
           {
             case "ORACLE10G":
-              dbDictionary.provider = Provider.Oracle10g;
+              dbDictionary.Provider = Provider.Oracle10g;
               properties.Add("dialect", "NHibernate.Dialect.Oracle10gDialect");
               break;
 
             case "ORACLE9I":
-              dbDictionary.provider = Provider.Oracle9i;
+              dbDictionary.Provider = Provider.Oracle9i;
               properties.Add("dialect", "NHibernate.Dialect.Oracle9iDialect");
               break;
 
             case "ORACLE8I":
-              dbDictionary.provider = Provider.Oracle8i;
+              dbDictionary.Provider = Provider.Oracle8i;
               properties.Add("dialect", "NHibernate.Dialect.Oracle8iDialect");
               break;
 
             case "ORACLELITE":
-              dbDictionary.provider = Provider.OracleLite;
+              dbDictionary.Provider = Provider.OracleLite;
               properties.Add("dialect", "NHibernate.Dialect.OracleLiteDialect");
               break;
 
@@ -284,15 +284,15 @@ namespace org.iringtools.nhibernate
           switch (dbProvider)
           {
             case "MYSQL3":
-              dbDictionary.provider = Provider.MySql3;
+              dbDictionary.Provider = Provider.MySql3;
               properties.Add("dialect", "NHibernate.Dialect.MySQLDialect");
               break;
             case "MYSQL4":
-              dbDictionary.provider = Provider.MySql4;
+              dbDictionary.Provider = Provider.MySql4;
               properties.Add("dialect", "NHibernate.Dialect.MySQLDialect");
               break;
             case "MYSQL5":
-              dbDictionary.provider = Provider.MySql5;
+              dbDictionary.Provider = Provider.MySql5;
               properties.Add("dialect", "NHibernate.Dialect.MySQL5Dialect");
               break;
           }
@@ -325,14 +325,14 @@ namespace org.iringtools.nhibernate
           {
             table = new DataObject()
             {
-              tableName = tableName,
-              dataProperties = new List<DataProperty>(),
-              keyProperties = new List<KeyProperty>(),
-              dataRelationships = new List<DataRelationship>(), // to be supported in the future
-              objectName = Utility.NameSafe(tableName)
+              TableName = tableName,
+              DataProperties = new List<DataProperty>(),
+              KeyProperties = new List<KeyProperty>(),
+              DataRelationships = new List<DataRelationship>(), // to be supported in the future
+              ObjectName = Utility.NameSafe(tableName)
             };
 
-            dbDictionary.dataObjects.Add(table);
+            dbDictionary.DataObjects.Add(table);
             prevTableName = tableName;
           }
 
@@ -340,15 +340,15 @@ namespace org.iringtools.nhibernate
           {
             DataProperty column = new DataProperty()
             {
-              columnName = columnName,
-              dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
+              ColumnName = columnName,
+              DataType = (DataType)Enum.Parse(typeof(DataType), dataType),
               // dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
-              dataLength = dataLength,
-              isNullable = isNullable,
-              propertyName = Utility.NameSafe(columnName)
+              DataLength = dataLength,
+              IsNullable = isNullable,
+              PropertyName = Utility.NameSafe(columnName)
             };
 
-            table.dataProperties.Add(column);
+            table.DataProperties.Add(column);
           }
           else // process keys
           {
@@ -365,15 +365,15 @@ namespace org.iringtools.nhibernate
 
             DataProperty key = new DataProperty()
             {
-              columnName = columnName,
-              dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
-              dataLength = dataLength,
-              isNullable = isNullable,
-              keyType = keyType,
-              propertyName = Utility.NameSafe(columnName),
+              ColumnName = columnName,
+              DataType = (DataType)Enum.Parse(typeof(DataType), dataType),
+              DataLength = dataLength,
+              IsNullable = isNullable,
+              KeyType = keyType,
+              PropertyName = Utility.NameSafe(columnName),
             };
 
-            table.addKeyProperty(key);
+            table.AddKeyProperty(key);
           }
         }
         return dbDictionary;
@@ -423,15 +423,15 @@ namespace org.iringtools.nhibernate
         else
           return tableNames;
 
-        string connString = dbDictionary.connectionString;
-        string dbProvider = dbDictionary.provider.ToString();
+        string connString = dbDictionary.ConnectionString;
+        string dbProvider = dbDictionary.Provider.ToString();
         dbProvider = dbProvider.ToUpper();
         string parsedConnStr = ParseConnectionString(connString, dbProvider);
 
         Dictionary<string, string> properties = new Dictionary<string, string>();
 
-        dbDictionary.connectionString = parsedConnStr;
-        dbDictionary.dataObjects = new System.Collections.Generic.List<DataObject>();
+        dbDictionary.ConnectionString = parsedConnStr;
+        dbDictionary.DataObjects = new System.Collections.Generic.List<DataObject>();
 
         properties.Add("connection.provider", "NHibernate.Connection.DriverConnectionProvider");
         properties.Add("proxyfactory.factory_class", "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle");
@@ -462,17 +462,17 @@ namespace org.iringtools.nhibernate
       }
     }
 
-    public org.iringtools.library.DataObject GetSchemaObjectSchema(string projectName, string applicationName, string schemaObjectName)
+    public DataObject GetSchemaObjectSchema(string projectName, string applicationName, string schemaObjectName)
     {
       List<string> tableNames = new List<string>();
       DatabaseDictionary dbDictionary = new DatabaseDictionary();
-      org.iringtools.library.DataObject dataObject = new org.iringtools.library.DataObject
+      DataObject dataObject = new DataObject
       {
-        tableName = schemaObjectName,
-        dataProperties = new List<DataProperty>(),
-        keyProperties = new List<KeyProperty>(),
-        dataRelationships = new List<DataRelationship>(),
-        objectName = Utility.NameSafe(schemaObjectName)
+        TableName = schemaObjectName,
+        DataProperties = new List<DataProperty>(),
+        KeyProperties = new List<KeyProperty>(),
+        DataRelationships = new List<DataRelationship>(),
+        ObjectName = Utility.NameSafe(schemaObjectName)
       };
       try
       {
@@ -481,15 +481,15 @@ namespace org.iringtools.nhibernate
         if (File.Exists(_settings["DBDictionaryPath"]))
           dbDictionary = Utility.Read<DatabaseDictionary>(_settings["DBDictionaryPath"]);
 
-        string connString = dbDictionary.connectionString;
-        string dbProvider = dbDictionary.provider.ToString();
+        string connString = dbDictionary.ConnectionString;
+        string dbProvider = dbDictionary.Provider.ToString();
         dbProvider = dbProvider.ToUpper();
         string parsedConnStr = ParseConnectionString(connString, dbProvider);
 
         Dictionary<string, string> properties = new Dictionary<string, string>();
 
-        dbDictionary.connectionString = parsedConnStr;
-        dbDictionary.dataObjects = new System.Collections.Generic.List<DataObject>();
+        dbDictionary.ConnectionString = parsedConnStr;
+        dbDictionary.DataObjects = new System.Collections.Generic.List<DataObject>();
 
         properties.Add("connection.provider", "NHibernate.Connection.DriverConnectionProvider");
         properties.Add("proxyfactory.factory_class", "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle");
@@ -522,14 +522,14 @@ namespace org.iringtools.nhibernate
           {
             DataProperty column = new DataProperty()
             {
-              columnName = columnName,
-              dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
-              dataLength = dataLength,
-              isNullable = isNullable,
-              propertyName = Utility.NameSafe(columnName)
+              ColumnName = columnName,
+              DataType = (DataType)Enum.Parse(typeof(DataType), dataType),
+              DataLength = dataLength,
+              IsNullable = isNullable,
+              PropertyName = Utility.NameSafe(columnName)
             };
 
-            dataObject.dataProperties.Add(column);
+            dataObject.DataProperties.Add(column);
           }
           else
           {
@@ -546,14 +546,14 @@ namespace org.iringtools.nhibernate
 
             DataProperty key = new DataProperty()
             {
-              columnName = columnName,
-              dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
-              dataLength = dataLength,
-              isNullable = isNullable,
-              keyType = keyType,
-              propertyName = Utility.NameSafe(columnName),
+              ColumnName = columnName,
+              DataType = (DataType)Enum.Parse(typeof(DataType), dataType),
+              DataLength = dataLength,
+              IsNullable = isNullable,
+              KeyType = keyType,
+              PropertyName = Utility.NameSafe(columnName),
             };
-            dataObject.addKeyProperty(key);
+            dataObject.AddKeyProperty(key);
           }
         }
         return dataObject;
@@ -766,20 +766,20 @@ namespace org.iringtools.nhibernate
       try
       {
         // Validate connection string
-        string connectionString = dbDictionary.connectionString;
+        string connectionString = dbDictionary.ConnectionString;
         NHibernate.Cfg.Configuration config = new NHibernate.Cfg.Configuration();
         Dictionary<string, string> properties = new Dictionary<string, string>();
 
         properties.Add("connection.provider", "NHibernate.Connection.DriverConnectionProvider");
-        properties.Add("connection.connection_string", dbDictionary.connectionString);
+        properties.Add("connection.connection_string", dbDictionary.ConnectionString);
         properties.Add("proxyfactory.factory_class", "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle");
-        properties.Add("dialect", "NHibernate.Dialect." + dbDictionary.provider + "Dialect");
+        properties.Add("dialect", "NHibernate.Dialect." + dbDictionary.Provider + "Dialect");
 
-        if (dbDictionary.provider.ToString().ToUpper().Contains("MSSQL"))
+        if (dbDictionary.Provider.ToString().ToUpper().Contains("MSSQL"))
         {
           properties.Add("connection.driver_class", "NHibernate.Driver.SqlClientDriver");
         }
-        else if (dbDictionary.provider.ToString().ToUpper().Contains("ORACLE"))
+        else if (dbDictionary.Provider.ToString().ToUpper().Contains("ORACLE"))
         {
           properties.Add("connection.driver_class", "NHibernate.Driver.OracleClientDriver");
         }
@@ -803,11 +803,11 @@ namespace org.iringtools.nhibernate
       }
 
       // Validate table key
-      foreach (DataObject dataObject in dbDictionary.dataObjects)
+      foreach (DataObject dataObject in dbDictionary.DataObjects)
       {
-        if (dataObject.keyProperties == null || dataObject.keyProperties.Count == 0)
+        if (dataObject.KeyProperties == null || dataObject.KeyProperties.Count == 0)
         {
-          throw new Exception(string.Format("Table \"{0}\" has no key.", dataObject.tableName));
+          throw new Exception(string.Format("Table \"{0}\" has no key.", dataObject.TableName));
         }
       }
 

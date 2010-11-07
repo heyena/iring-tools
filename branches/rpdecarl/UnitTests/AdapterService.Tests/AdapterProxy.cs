@@ -23,7 +23,7 @@ namespace AdapterService.Tests
   {
     private AdapterProvider _adapterProvider = null;
     private ExchangeProvider _exchangeProvider = null;
-    private DtoProvider _dtoProvider = null;
+    private DataTranferProvider _dtoProvider = null;
 
     [Dependency]
     public IError Error { get; set; }
@@ -33,7 +33,7 @@ namespace AdapterService.Tests
 
     public AdapterProxy()
     {
-      _dtoProvider = new DtoProvider(ConfigurationManager.AppSettings);
+      _dtoProvider = new DataTranferProvider(ConfigurationManager.AppSettings);
       _adapterProvider = new AdapterProvider(ConfigurationManager.AppSettings);
       _exchangeProvider = new ExchangeProvider(ConfigurationManager.AppSettings);
     }

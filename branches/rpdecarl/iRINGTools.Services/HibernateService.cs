@@ -80,10 +80,10 @@ namespace org.iringtools.services
       return _NHibernateProvider.GetSchemaObjects(project, application);
     }
 
-    [WebGet(UriTemplate = "/{project}/{application}/schemaObjects/{schemaObjectName}")]
-    public DataObject GetSchemaObjectSchema(string project, string application, string schemaObjectName)
+    [WebGet(UriTemplate = "/{project}/{application}/objects/{objectName}")]
+    public DataObject GetSchemaObjectSchema(string project, string application, string objectName)
     {
-      return _NHibernateProvider.GetSchemaObjectSchema(project, application, schemaObjectName);
+      return _NHibernateProvider.GetSchemaObjectSchema(project, application, objectName);
     }
 
 

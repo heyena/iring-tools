@@ -1,5 +1,5 @@
 @prefix dnr: <http://www.dotnetrdf.org/configuration#> .
-<dotnetrdf:/InterfaceService/*> a dnr:HttpHandler ;
+<dotnetrdf:/facade/*> a dnr:HttpHandler ;
         dnr:cacheDuration "0";
         dnr:queryProcessor _:qProc ;
         dnr:updateProcessor _:uProc ;
@@ -25,7 +25,7 @@ _:sqlServer a dnr:SqlIOManager ;
         dnr:database "InterfaceDb" ;
         dnr:user "dotNetRDF" ;
         dnr:password "dotNetRDF" .
-<dotnetrdf:/SandboxService/*> a dnr:HttpHandler ;
+<dotnetrdf:/sandbox/*> a dnr:HttpHandler ;
         dnr:cacheDuration "0";
         dnr:queryProcessor _:qProcS ;
         dnr:updateProcessor _:uProcS ;

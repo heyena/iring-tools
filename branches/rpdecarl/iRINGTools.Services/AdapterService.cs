@@ -77,9 +77,6 @@ namespace org.iringtools.services
     }
     #endregion
 
-    #region iRING Interface
-    // The iRING Interface is defined by the resources available on the endpoint.
-    // This information can be found in the SDK guide as a WADL file.
     #region GetScopes
     /// <summary>
     /// Gets the scopes (project and application combinations) available from the service.
@@ -90,100 +87,6 @@ namespace org.iringtools.services
     public List<ScopeProject> GetScopes()
     {
       return _adapterProvider.GetScopes();
-    }
-    #endregion
-
-    #region Get
-    /// <summary>
-    /// Gets an XML projection of the specified scope, graph and identifier in the format (xml, dto, rdf ...) specified.
-    /// </summary>
-    /// <param name="projectName">Project name</param>
-    /// <param name="applicationName">Application name</param>
-    /// <param name="graphName">Graph name</param>
-    /// <param name="identifier">Identifier</param>
-    /// <param name="format">Format to be returned (xml, dto, rdf ...)</param>
-    /// <returns>Returns an arbitrary XML</returns>
-    [Description("Gets an XML projection of the specified scope, graph and identifier in the format (xml, dto, rdf ...) specified.")]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}?format={format}")]
-    public XElement Get(string projectName, string applicationName, string graphName, string identifier, string format)
-    {
-      XDocument xDocument = _adapterProvider.GetProjection(projectName, applicationName, graphName, identifier, format);
-
-      return xDocument.Root;
-    }
-    #endregion
-
-    #region GetList
-    /// <summary>
-    /// Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.
-    /// </summary>
-    /// <param name="projectName">Project name</param>
-    /// <param name="applicationName">Application name</param>
-    /// <param name="graphName">Graph name</param>
-    /// <param name="format">Format to be returned (xml, dto, rdf ...)</param>
-    /// <returns>Returns an arbitrary XML</returns>
-    [Description("Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.")]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}")]
-    public XElement GetList(string projectName, string applicationName, string graphName, string format)
-    {
-      XDocument xDocument = _adapterProvider.GetProjection(projectName, applicationName, graphName, format);
-
-      return xDocument.Root;
-    }
-    #endregion
-
-    #region PostList
-    /// <summary>
-    /// Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified.
-    /// </summary>
-    /// <param name="projectName">Project name</param>
-    /// <param name="applicationName">Application name</param>
-    /// <param name="graphName">Graph name</param>
-    /// <param name="format">Format to be returned (xml, dto, rdf ...)</param>
-    /// <param name="xml">Arbitrary XML</param>
-    /// <returns>Returns a Response object</returns>
-    [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}")]
-    public Response PostList(string projectName, string applicationName, string graphName, string format, XElement xElement)
-    {
-      return _adapterProvider.Post(projectName, applicationName, graphName, format, new XDocument(xElement));
-    }
-    #endregion
-
-    #region Delete
-    /// <summary>
-    /// Deletes the specified individual based on scope, graph and identifier.
-    /// </summary>
-    /// <param name="projectName">Project name</param>
-    /// <param name="applicationName">Application name</param>
-    /// <param name="graphName">Graph name</param>
-    /// <param name="identifier">Identifier</param>
-    /// <returns>Returns an arbitrary XML</returns>
-    [Description("Deletes the specified individual based on scope, graph and identifier.")]
-    [WebInvoke(Method="DELETE", UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}")]
-    public Response Delete(string projectName, string applicationName, string graphName, string identifier)
-    {
-      return _adapterProvider.DeleteIndividual(projectName, applicationName, graphName, identifier);
-    }
-    #endregion
-    #endregion
-    #endregion
-
-    #region Facade-based Data Exchange (Part 9 Draft)
-    #region Pull
-    /// <summary>
-    /// Pulls the data from a triple store into legacy database
-    /// </summary>
-    /// <param name="projectName">project name</param>
-    /// <param name="applicationName">application name</param>
-    /// <param name="graphName">graph name</param>
-    /// <param name="request">request containing credentials and uri to pull rdf from</param>
-    /// <returns></returns>
-    [Description("Pull Style Facade-based data exchange using SPARQL query. Returns a response with status.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/pull?method=sparql")]
-    public Response Pull(string projectName, string applicationName, string graphName, Request request)
-    {
-      return _exchangeProvider.Pull(projectName, applicationName, graphName, request);
     }
     #endregion
     #endregion
@@ -275,68 +178,6 @@ namespace org.iringtools.services
     public Response UpdateMapping(string projectName, string applicationName, XElement mappingXml)
     {
       return _adapterProvider.UpdateMapping(projectName, applicationName, mappingXml);
-    }
-    #endregion
-
-    #region DeleteAll
-    /// <summary>
-    /// Clears all graphs in the specified scope from the Facade.
-    /// </summary>
-    /// <param name="projectName">Project name</param>
-    /// <param name="applicationName">Application name</param>
-    /// <returns>Returns a Response object.</returns>
-    [Description("Clears all graphs in the specified scope from the Facade. Returns a response with status.")]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/delete")]
-    public Response DeleteAll(string projectName, string applicationName)
-    {
-      return _adapterProvider.DeleteAll(projectName, applicationName);
-    }
-    #endregion
-
-    #region DeleteGraph
-    /// <summary>
-    /// Clears the specified graph in the scope from the Facade.
-    /// </summary>
-    /// <param name="projectName">Project name</param>
-    /// <param name="applicationName">Application name</param>
-    /// /// <param name="graphName">Graph name</param>
-    /// <returns>Returns a Response object.</returns>
-    [Description("Clear the specified graph in the scope from the Facade. Returns a response with status.")]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/delete")]
-    public Response DeleteGraph(string projectName, string applicationName, string graphName)
-    {
-      return _adapterProvider.Delete(projectName, applicationName, graphName);
-    }
-    #endregion
-
-    #region RefreshAll
-    /// <summary>
-    /// Re-publish all graphs in the specified scope to the Facade.
-    /// </summary>
-    /// <param name="projectName">Project name</param>
-    /// <param name="applicationName">Application name</param>
-    /// <returns>Returns a Response object.</returns>
-    [Description("Re-publish all graphs in the specified scope to the Facade. Returns a response with status.")]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/refresh")]
-    public Response RefreshAll(string projectName, string applicationName)
-    {
-      return _adapterProvider.RefreshAll(projectName, applicationName);
-    }
-    #endregion
-
-    #region RefreshGraph
-    /// <summary>
-    /// Re-publish the specified graph in the scope to the Facade.
-    /// </summary>
-    /// <param name="projectName">Project name</param>
-    /// <param name="applicationName">Application name</param>
-    /// /// <param name="graphName">Graph name</param>
-    /// <returns>Returns a Response object.</returns>
-    [Description("Re-publish the specified graph in the scope to the Facade. Returns a response with status.")]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/refresh")]
-    public Response RefreshGraph(string projectName, string applicationName, string graphName)
-    {
-      return _adapterProvider.Refresh(projectName, applicationName, graphName);
     }
     #endregion
 

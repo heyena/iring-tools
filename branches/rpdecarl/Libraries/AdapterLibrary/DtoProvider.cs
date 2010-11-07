@@ -49,9 +49,9 @@ using org.iringtools.protocol.manifest;
 
 namespace org.iringtools.adapter
 {
-  public class DtoProvider
+  public class DataTranferProvider
   {
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(DtoProvider));
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(DataTranferProvider));
 
     private IKernel _kernel = null;
     private AdapterSettings _settings = null;
@@ -64,7 +64,7 @@ namespace org.iringtools.adapter
     private bool _isDataLayerInitialized = false;
 
     [Inject]
-    public DtoProvider(NameValueCollection settings)
+    public DataTranferProvider(NameValueCollection settings)
     {
       var ninjectSettings = new NinjectSettings { LoadExtensions = false };
       _kernel = new StandardKernel(ninjectSettings, new AdapterModule());
@@ -341,9 +341,9 @@ namespace org.iringtools.adapter
           string dataObjectName = graphMap.DataObjectName;
           DataObject dataObject = null;
 
-          foreach (DataObject dataObj in dataDictionary.dataObjects)
+          foreach (DataObject dataObj in dataDictionary.DataObjects)
           {
-            if (dataObj.objectName == dataObjectName)
+            if (dataObj.ObjectName == dataObjectName)
             {
               dataObject = dataObj;
               break;
@@ -395,7 +395,7 @@ namespace org.iringtools.adapter
                     string objectName = property[0].Trim();
                     string propertyName = property[1].Trim();
 
-                    if (dataObject.isKeyProperty(propertyName))
+                    if (dataObject.IsKeyProperty(propertyName))
                     {
                       manifestTemplate.TransferOption = TransferOption.Required;
                     }

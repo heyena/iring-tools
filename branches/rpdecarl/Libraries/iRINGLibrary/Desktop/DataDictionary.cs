@@ -31,209 +31,209 @@ using System.Linq;
 
 namespace org.iringtools.library
 {
-    [DataContract(Namespace = "http://ns.iringtools.org/library")]
-    public class DataDictionary
+  [DataContract(Name = "dataDictionary", Namespace = "http://ns.iringtools.org/library")]
+  public class DataDictionary
+  {
+    public DataDictionary()
     {
-        public DataDictionary()
-        {
-            dataObjects = new List<DataObject>();
-        }
-
-        [DataMember]
-        public List<DataObject> dataObjects { get; set; }
+      DataObjects = new List<DataObject>();
     }
 
-    [DataContract(Namespace = "http://ns.iringtools.org/library")]
-    public class DataObject
+    [DataMember]
+    public List<DataObject> DataObjects { get; set; }
+  }
+
+  [DataContract(Name = "dataObject", Namespace = "http://ns.iringtools.org/library")]
+  public class DataObject
+  {
+    public DataObject()
     {
-        public DataObject()
-        {
-            keyProperties = new List<KeyProperty>();
-            dataProperties = new List<DataProperty>();
-            dataRelationships = new List<DataRelationship>();
-        }
+      KeyProperties = new List<KeyProperty>();
+      DataProperties = new List<DataProperty>();
+      DataRelationships = new List<DataRelationship>();
+    }
 
-        [DataMember(IsRequired = true, Order = 0)]
-        public string tableName { get; set; }
+    [DataMember(Name = "tableName", IsRequired = true, Order = 0)]
+    public string TableName { get; set; }
 
-        [DataMember(IsRequired = false, Order = 1, EmitDefaultValue = false)]
-        public string objectNamespace { get; set; }
+    [DataMember(Name = "objectNamespace", IsRequired = false, Order = 1, EmitDefaultValue = false)]
+    public string ObjectNamespace { get; set; }
 
-        [DataMember(IsRequired = true, Order = 2)]
-        public string objectName { get; set; }
+    [DataMember(Name = "objectName", IsRequired = true, Order = 2)]
+    public string ObjectName { get; set; }
 
-        [DataMember(IsRequired = false, Order = 3, EmitDefaultValue = false)]
-        public string keyDelimeter { get; set; }
+    [DataMember(Name = "keyDelimeter", IsRequired = false, Order = 3, EmitDefaultValue = false)]
+    public string KeyDelimeter { get; set; }
 
-        [DataMember(IsRequired = true, Order = 4)]
-        public List<KeyProperty> keyProperties { get; set; }
+    [DataMember(Name = "keyProperties", IsRequired = true, Order = 4)]
+    public List<KeyProperty> KeyProperties { get; set; }
 
-        [DataMember(IsRequired = true, Order = 5)]
-        public List<DataProperty> dataProperties { get; set; }
+    [DataMember(Name = "dataProperties", IsRequired = true, Order = 5)]
+    public List<DataProperty> DataProperties { get; set; }
 
-        [DataMember(IsRequired = false, Order = 6, EmitDefaultValue = false)]
-        public List<DataRelationship> dataRelationships { get; set; }
+    [DataMember(Name = "dataRelationships", IsRequired = false, Order = 6, EmitDefaultValue = false)]
+    public List<DataRelationship> DataRelationships { get; set; }
 
-        public bool isKeyProperty(string propertyName)
-        {
-            foreach (KeyProperty keyProperty in keyProperties)
-            {
-                if (keyProperty.keyPropertyName.ToLower() == propertyName.ToLower())
-                    return true;
-            }
-
-            return false;
-        }
-
-        public DataProperty getKeyProperty(string keyPropertyName) 
-        {
-          return dataProperties.FirstOrDefault(c => c.propertyName == keyPropertyName);
-        }
-
-        public bool deleteProperty(DataProperty dataProperty)
-        {
-          foreach (DataProperty property in dataProperties)
-          {
-            if (dataProperty == property)
-            {
-              dataProperties.Remove(dataProperty);
-              break;
-            }
-          }
-          foreach (KeyProperty keyProperty in keyProperties)
-          {
-            if (keyProperty.keyPropertyName.ToLower() == dataProperty.propertyName.ToLower())
-            {
-              keyProperties.Remove(keyProperty);
-              break;
-            }
-          }
-            return true;
-        }
-
-        public bool addKeyProperty(DataProperty keyProperty)
-        {
-          this.keyProperties.Add(new KeyProperty { keyPropertyName = keyProperty.propertyName });
-          this.dataProperties.Add(keyProperty);
+    public bool IsKeyProperty(string propertyName)
+    {
+      foreach (KeyProperty keyProperty in KeyProperties)
+      {
+        if (keyProperty.KeyPropertyName.ToLower() == propertyName.ToLower())
           return true;
-        }
+      }
 
+      return false;
     }
 
-    [DataContract(Namespace = "http://ns.iringtools.org/library")]
-    public class DataProperty
+    public DataProperty GetKeyProperty(string keyPropertyName)
     {
-        [DataMember(IsRequired = true, Order = 0)]
-        public string columnName { get; set; }
-
-        [DataMember(IsRequired = true, Order = 1)]
-        public string propertyName { get; set; }
-
-        [DataMember(IsRequired = true, Order = 2)]
-        public DataType dataType { get; set; }
-
-        [DataMember(IsRequired = true, Order = 3)]
-        public int dataLength { get; set; }
-
-        [DataMember(IsRequired = true, Order = 4)]
-        public bool isNullable { get; set; }
-
-        [DataMember(IsRequired = true, Order = 5)]
-        public KeyType keyType { get; set; }
+      return DataProperties.FirstOrDefault(c => c.PropertyName == keyPropertyName);
     }
 
-    [DataContract(Namespace = "http://ns.iringtools.org/library")]
-    public class KeyProperty
+    public bool DeleteProperty(DataProperty dataProperty)
     {
-        [DataMember(IsRequired = true)]
-        public string keyPropertyName { get; set; }
-    }
-
-    [DataContract(Namespace = "http://ns.iringtools.org/library")]
-    public enum RelationshipType
-    {
-        [EnumMember]
-        OneToOne,
-        [EnumMember]
-        OneToMany,
-        //[EnumMember]
-        //ManyToOne,
-        //[EnumMember]
-        //ManyToMany
-    }
-
-    [DataContract(Namespace = "http://ns.iringtools.org/library")]
-    public class PropertyMap
-    {        
-        [DataMember(IsRequired = true)]
-        public string dataPropertyName { get; set; }
-
-        [DataMember(IsRequired = true)]
-        public string relatedPropertyName { get; set; }
-    }
-
-    [DataContract(Namespace = "http://ns.iringtools.org/library")]
-    public class DataRelationship
-    {
-        [DataMember(IsRequired = true)]
-        public string relationshipName { get; set; }
-
-        [DataMember(IsRequired = true)]
-        public RelationshipType relationshipType { get; set; }
-
-        [DataMember(IsRequired = true)]
-        public string relatedObjectName { get; set; }
-
-        [DataMember(IsRequired = true)]
-        public List<PropertyMap> propertyMaps { get; set; }
-
-        public DataRelationship()
+      foreach (DataProperty property in DataProperties)
+      {
+        if (dataProperty == property)
         {
-          this.propertyMaps = new List<PropertyMap>();
+          DataProperties.Remove(dataProperty);
+          break;
         }
+      }
+      foreach (KeyProperty keyProperty in KeyProperties)
+      {
+        if (keyProperty.KeyPropertyName.ToLower() == dataProperty.PropertyName.ToLower())
+        {
+          KeyProperties.Remove(keyProperty);
+          break;
+        }
+      }
+      return true;
     }
 
-    [DataContract(Namespace = "http://ns.iringtools.org/library")]
-    public enum KeyType
+    public bool AddKeyProperty(DataProperty keyProperty)
     {
-        [EnumMember]
-        unassigned,
-        [EnumMember]
-        assigned,
-        [EnumMember]
-        foreign,
-        [EnumMember]
-        identity,
-        [EnumMember]
-        sequence
+      this.KeyProperties.Add(new KeyProperty { KeyPropertyName = keyProperty.PropertyName });
+      this.DataProperties.Add(keyProperty);
+      return true;
     }
 
-    [DataContract(Namespace = "http://ns.iringtools.org/library")]
-    public enum DataType
+  }
+
+  [DataContract(Name = "dataProperty", Namespace = "http://ns.iringtools.org/library")]
+  public class DataProperty
+  {
+    [DataMember(Name = "columnName", IsRequired = true, Order = 0)]
+    public string ColumnName { get; set; }
+
+    [DataMember(Name = "propertyName", IsRequired = true, Order = 1)]
+    public string PropertyName { get; set; }
+
+    [DataMember(Name = "dataType", IsRequired = true, Order = 2)]
+    public DataType DataType { get; set; }
+
+    [DataMember(Name = "dataLength", IsRequired = true, Order = 3)]
+    public int DataLength { get; set; }
+
+    [DataMember(Name = "isNullable", IsRequired = true, Order = 4)]
+    public bool IsNullable { get; set; }
+
+    [DataMember(Name = "keyType", IsRequired = true, Order = 5)]
+    public KeyType KeyType { get; set; }
+  }
+
+  [DataContract(Name = "keyProperty", Namespace = "http://ns.iringtools.org/library")]
+  public class KeyProperty
+  {
+    [DataMember(Name = "keyPropertyName", IsRequired = true)]
+    public string KeyPropertyName { get; set; }
+  }
+
+  [DataContract(Namespace = "http://ns.iringtools.org/library")]
+  public enum RelationshipType
+  {
+    [EnumMember]
+    OneToOne,
+    [EnumMember]
+    OneToMany,
+    //[EnumMember]
+    //ManyToOne,
+    //[EnumMember]
+    //ManyToMany
+  }
+
+  [DataContract(Name = "propertyMap", Namespace = "http://ns.iringtools.org/library")]
+  public class PropertyMap
+  {
+    [DataMember(Name = "dataPropertyName", IsRequired = true)]
+    public string DataPropertyName { get; set; }
+
+    [DataMember(Name = "relatedPropertyName", IsRequired = true)]
+    public string RelatedPropertyName { get; set; }
+  }
+
+  [DataContract(Name = "dataRelationship", Namespace = "http://ns.iringtools.org/library")]
+  public class DataRelationship
+  {
+    public DataRelationship()
     {
-        [EnumMember]
-        @Boolean,
-        [EnumMember]
-        @Byte,
-        [EnumMember]
-        @Char,
-        [EnumMember]
-        @DateTime,
-        [EnumMember]
-        @Decimal,
-        [EnumMember]
-        @Double,
-        [EnumMember]
-        @Int16,
-        [EnumMember]
-        @Int32,
-        [EnumMember]
-        @Int64,
-        [EnumMember]
-        @Single,
-        [EnumMember]
-        @String,
-        [EnumMember]
-        @TimeSpan,
+      this.PropertyMaps = new List<PropertyMap>();
     }
+
+    [DataMember(Name = "relationshipName", IsRequired = true)]
+    public string RelationshipName { get; set; }
+
+    [DataMember(Name = "relationshipType", IsRequired = true)]
+    public RelationshipType RelationshipType { get; set; }
+
+    [DataMember(Name = "relatedObjectName", IsRequired = true)]
+    public string RelatedObjectName { get; set; }
+
+    [DataMember(Name = "propertyMaps", IsRequired = true)]
+    public List<PropertyMap> PropertyMaps { get; set; }
+  }
+
+  [DataContract(Namespace = "http://ns.iringtools.org/library")]
+  public enum KeyType
+  {
+    [EnumMember]
+    unassigned,
+    [EnumMember]
+    assigned,
+    [EnumMember]
+    foreign,
+    [EnumMember]
+    identity,
+    [EnumMember]
+    sequence
+  }
+
+  [DataContract(Namespace = "http://ns.iringtools.org/library")]
+  public enum DataType
+  {
+    [EnumMember]
+    @Boolean,
+    [EnumMember]
+    @Byte,
+    [EnumMember]
+    @Char,
+    [EnumMember]
+    @DateTime,
+    [EnumMember]
+    @Decimal,
+    [EnumMember]
+    @Double,
+    [EnumMember]
+    @Int16,
+    [EnumMember]
+    @Int32,
+    [EnumMember]
+    @Int64,
+    [EnumMember]
+    @Single,
+    [EnumMember]
+    @String,
+    [EnumMember]
+    @TimeSpan,
+  }
 }

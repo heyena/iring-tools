@@ -31,14 +31,14 @@ using System.ComponentModel;
 
 namespace org.iringtools.library
 {
-  [DataContract(Namespace = "http://ns.iringtools.org/library")]
+  [DataContract(Name = "databaseDictionary", Namespace = "http://ns.iringtools.org/library")]
   public class DatabaseDictionary : DataDictionary
   {
-    [DataMember(IsRequired = true, Order = 0)]
-    public Provider provider { get; set; }
+    [DataMember(Name = "provider", IsRequired = true, Order = 0)]
+    public Provider Provider { get; set; }
 
-    [DataMember(IsRequired = true, Order = 1)]
-    public string connectionString { get; set; }
+    [DataMember(Name = "connectionString", IsRequired = true, Order = 1)]
+    public string ConnectionString { get; set; }
   }
 
   [DataContract(Namespace = "http://ns.iringtools.org/library")]
