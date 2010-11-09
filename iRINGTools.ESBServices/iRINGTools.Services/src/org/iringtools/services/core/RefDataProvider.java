@@ -1,6 +1,7 @@
 package org.iringtools.services.core;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Hashtable;
 import javax.xml.bind.JAXBException;
 
@@ -17,13 +18,13 @@ public class RefDataProvider
     this.settings = settings;
   }
 
-  public Query getQueryFileName() throws FileNotFoundException, JAXBException 
+  public Query getQueryFileName() throws JAXBException, IOException, FileNotFoundException
   {
     String path = settings.get("baseDirectory") + "/WEB-INF/data/Queries.xml";
     return JaxbUtil.read(Query.class, path);    
   }
 
-  public ExchangeDefinition getRepository() throws FileNotFoundException, JAXBException
+  public ExchangeDefinition getRepository() throws JAXBException, IOException, FileNotFoundException
   {
     String path = settings.get("baseDirectory") + "/WEB-INF/data/Repositories.xml";
     return JaxbUtil.read(ExchangeDefinition.class, path);
