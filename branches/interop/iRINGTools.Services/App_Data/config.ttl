@@ -4,6 +4,7 @@
         dnr:queryProcessor _:qProc ;
         dnr:updateProcessor _:uProc ;
         dnr:protocolProcessor _:pProc ;
+				dnr:stylesheet "../css/interface.css" ;
         dnr:introText "~/App_Data/InterfaceIntro.txt" ;
         dnr:type "VDS.RDF.Web.SparqlServer" ;
         dnr:defaultQueryFile "~/App_Data/default.rq" .						
@@ -21,7 +22,7 @@ _:sqlStore a dnr:TripleStore ;
         dnr:sqlManager _:sqlServer .	
 _:sqlServer a dnr:SqlIOManager ;
         dnr:type "VDS.RDF.Storage.MicrosoftSqlStoreManager" ;
-        dnr:server ".\SQLEXPRESS" ;
+        dnr:server "localhost" ;
         dnr:database "InterfaceDb" ;
         dnr:user "dotNetRDF" ;
         dnr:password "dotNetRDF" .
@@ -30,6 +31,7 @@ _:sqlServer a dnr:SqlIOManager ;
         dnr:queryProcessor _:qProcS ;
         dnr:updateProcessor _:uProcS ;
         dnr:protocolProcessor _:pProcS ;
+				dnr:stylesheet "../css/interface.css" ;
         dnr:introText "~/App_Data/SandboxIntro.txt" ;
         dnr:type "VDS.RDF.Web.SparqlServer" ;
         dnr:defaultQueryFile "~/App_Data/default.rq" .
@@ -47,7 +49,7 @@ _:sqlStoreS a dnr:TripleStore ;
         dnr:sqlManager _:sqlServerS .		
 _:sqlServerS a dnr:SqlIOManager ;
         dnr:type "VDS.RDF.Storage.MicrosoftSqlStoreManager" ;
-        dnr:server ".\SQLEXPRESS" ;
+        dnr:server "localhost" ;
         dnr:database "SandboxDb" ;
         dnr:user "dotNetRDF" ;
         dnr:password "dotNetRDF" .		

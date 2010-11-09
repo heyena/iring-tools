@@ -24,6 +24,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ////////////////////////////////////////////////////////////////////////////////
 
+
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
@@ -32,8 +33,9 @@ using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Xml.Linq;
 using log4net;
+using org.iringtools.common;
 using org.iringtools.library;
-using org.iringtools.protocol.manifest;
+//using org.iringtools.library.manifest;
 using org.iringtools.adapter;
 using org.iringtools.exchange;
 using System.Xml;
@@ -42,105 +44,38 @@ using System.IO;
 using System.Text;
 using System;
 using org.iringtools.utility;
-using org.iringtools.common.mapping;
+using org.iringtools.facade;
 
 namespace org.iringtools.services
 {
+
   [ServiceContract(Namespace = "http://ns.iringtools.org/protocol")]
   [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
-  public class Facade
+  public class FacadeService
   {
+
     private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterService));
-    private AdapterProvider _adapterProvider = null;
-    private ExchangeProvider _exchangeProvider = null;
+    private FacadeProvider _facadeProvider = null;
 
-    /// <summary>
-    /// Facade Constructor
-    /// </summary>
-    public Facade()
+    public FacadeService()
     {
-      _adapterProvider = new AdapterProvider(ConfigurationManager.AppSettings);
-      _exchangeProvider = new ExchangeProvider(ConfigurationManager.AppSettings);
+      _facadeProvider = new FacadeProvider(ConfigurationManager.AppSettings);
     }
 
-    #region Public Resources
-    #region GetVersion
-    /// <summary>
-    /// Gets the version of the service.
-    /// </summary>
-    /// <returns>Returns the version as a string.</returns>
-    [Description("Gets the version of the service.")]
-    [WebGet(UriTemplate = "/version")]
-    public string GetVersion()
-    {
-      return _adapterProvider.GetType().Assembly.GetName().Version.ToString();
-    }
-    #endregion
-    #endregion
-
-    #region Facade-based Data Exchange (Part 9 Draft)
     #region Pull
     /// <summary>
     /// Pulls the data from a triple store into legacy database
     /// </summary>
     /// <param name="projectName">project name</param>
-    /// <param name="applicationName">application name</param>
-    /// <param name="graphName">graph name</param>
+    /// <param name="app">application name</param>
+    /// <param name="graph">graph name</param>
     /// <param name="request">request containing credentials and uri to pull rdf from</param>
     /// <returns></returns>
     [Description("Pull Style Facade-based data exchange using SPARQL query. Returns a response with status.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/pull?method=sparql")]
-    public Response Pull(string projectName, string applicationName, string graphName, Request request)
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/pull")]
+    public Response Pull(string scope, string app, string graph, Request request)
     {
-      return _exchangeProvider.Pull(projectName, applicationName, graphName, request);
-    }
-    #endregion
-    #endregion
-
-    #region Private Resources
-    #region DeleteAll
-    /// <summary>
-    /// Clears all graphs in the specified scope from the Facade.
-    /// </summary>
-    /// <param name="projectName">Project name</param>
-    /// <param name="applicationName">Application name</param>
-    /// <returns>Returns a Response object.</returns>
-    [Description("Clears all graphs in the specified scope from the Facade. Returns a response with status.")]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/delete")]
-    public Response DeleteAll(string projectName, string applicationName)
-    {
-      return _adapterProvider.DeleteAll(projectName, applicationName);
-    }
-    #endregion
-
-    #region DeleteGraph
-    /// <summary>
-    /// Clears the specified graph in the scope from the Facade.
-    /// </summary>
-    /// <param name="projectName">Project name</param>
-    /// <param name="applicationName">Application name</param>
-    /// /// <param name="graphName">Graph name</param>
-    /// <returns>Returns a Response object.</returns>
-    [Description("Clear the specified graph in the scope from the Facade. Returns a response with status.")]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/delete")]
-    public Response DeleteGraph(string projectName, string applicationName, string graphName)
-    {
-      return _adapterProvider.Delete(projectName, applicationName, graphName);
-    }
-    #endregion
-
-    #region RefreshAll
-    /// <summary>
-    /// Re-publish all graphs in the specified scope to the Facade.
-    /// </summary>
-    /// <param name="projectName">Project name</param>
-    /// <param name="applicationName">Application name</param>
-    /// <returns>Returns a Response object.</returns>
-    [Description("Re-publish all graphs in the specified scope to the Facade. Returns a response with status.")]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/refresh")]
-    public Response RefreshAll(string projectName, string applicationName)
-    {
-      return _adapterProvider.RefreshAll(projectName, applicationName);
+      return _facadeProvider.Pull(scope, app, graph, request);
     }
     #endregion
 
@@ -148,17 +83,62 @@ namespace org.iringtools.services
     /// <summary>
     /// Re-publish the specified graph in the scope to the Facade.
     /// </summary>
-    /// <param name="projectName">Project name</param>
-    /// <param name="applicationName">Application name</param>
-    /// /// <param name="graphName">Graph name</param>
+    /// <param name="scope">Project name</param>
+    /// <param name="app">Application name</param>
+    /// /// <param name="graph">Graph name</param>
     /// <returns>Returns a Response object.</returns>
     [Description("Re-publish the specified graph in the scope to the Facade. Returns a response with status.")]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/refresh")]
-    public Response RefreshGraph(string projectName, string applicationName, string graphName)
+    [WebGet(UriTemplate = "/{scope}/{app}/{graph}/refresh")]
+    public Response RefreshGraph(string scope, string app, string graph)
     {
-      return _adapterProvider.Refresh(projectName, applicationName, graphName);
+      return _facadeProvider.Refresh(scope, app, graph);
     }
     #endregion
+
+    #region DeleteAll
+    /// <summary>
+    /// Clears all graphs in the specified scope from the Facade.
+    /// </summary>
+    /// <param name="scope">Project name</param>
+    /// <param name="app">Application name</param>
+    /// <returns>Returns a Response object.</returns>
+    [Description("Clears all graphs in the specified scope from the Facade. Returns a response with status.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/delete")]
+    public Response DeleteAll(string scope, string app)
+    {
+      return _facadeProvider.DeleteAll(scope, app);
+    }
+    #endregion
+
+    #region DeleteGraph
+    /// <summary>
+    /// Clears the specified graph in the scope from the Facade.
+    /// </summary>
+    /// <param name="scope">Project name</param>
+    /// <param name="app">Application name</param>
+    /// /// <param name="graph">Graph name</param>
+    /// <returns>Returns a Response object.</returns>
+    [Description("Clear the specified graph in the scope from the Facade. Returns a response with status.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/{graph}/delete")]
+    public Response DeleteGraph(string scope, string app, string graph)
+    {
+      return _facadeProvider.Delete(scope, app, graph);
+    }
+    #endregion
+
+
+    #region GetVersion
+    /// <summary>
+    /// Gets the version of the service.
+    /// </summary>
+    /// <returns>Returns the version as a string.</returns>
+    [Description("Gets the version of the service.")]
+    [WebGet(UriTemplate = "/version")]
+    public VersionInfo GetVersion()
+    {
+      
+      return _facadeProvider.GetVersion();
+    }
     #endregion
   }
 }
