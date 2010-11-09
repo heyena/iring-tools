@@ -53,7 +53,10 @@ namespace org.iringtools.referenceData
         private bool _useExampleRegistryBase = false;
 
         private WebCredentials _registryCredentials = null;
-
+        //registry
+        //wQTBnHuvNllpb3pnwLzrd2eZujrY2llSyGqMZdt0Uy5TBuilCAkkHHzf0zlPAZG/+0LOQeYq9IFtM1uM46I5EaKvNduyTlLFf8f89QDo/DE=
+        //proxy
+        //uU7DqlJEOXcNYltgwgq8DiNn0ufvjLbkxNo6GJDXIcLnvf/HC5vSDjeOAkROVk21V9+QslCiy2Z9lKbbAFqGFpP0vnxRKRV3LIc7TyCw4ew=
         private WebProxyCredentials _proxyCredentials = null;
 
         private List<Repository> _repositories = null;
@@ -1379,7 +1382,7 @@ namespace org.iringtools.referenceData
                             TemplateDefinition td = q.templateDefinitions[templateIndex];
                             string rName = string.Empty;
 
-                            sparql = sparql.Replace("INSERT DATA { ", "MODIFY DELETE { ");
+                            sparql = sparql.Replace("INSERT DATA { ", "DELETE DATA { ");
                             foreach (QMXFName name in td.name)
                             {
                                 ID = td.identifier;
@@ -1416,6 +1419,7 @@ namespace org.iringtools.referenceData
                                     }
                                 }
                                 nameSparql = nameSparql.Insert(nameSparql.LastIndexOf("."), "}").Remove(nameSparql.Length - 1);
+                                response = PostToRepository(source, nameSparql);
                                 //}
                             }
                             foreach (QMXFName name in template.name)
@@ -1425,7 +1429,8 @@ namespace org.iringtools.referenceData
                                 string roleID = string.Empty;
 
                                 label = name.value;
-                                nameSparql += " INSERT { " + ID + " rdfs:label \"" + label + "\"^^xsd:string ; ";
+                                sparql = sparql.Replace("DELETE DATA { ", "INSERT DATA { ");
+                                nameSparql = sparql + ID + " rdfs:label \"" + label + "\"^^xsd:string ; ";
                                 foreach (Description descr in template.description)
                                 {
                                     description = descr.value;
