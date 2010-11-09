@@ -31,6 +31,7 @@ import org.iringtools.common.request.DtoPageRequest;
 import org.iringtools.common.request.DxiRequest;
 import org.iringtools.common.request.DxoRequest;
 import org.iringtools.common.request.ExchangeRequest;
+import org.iringtools.common.response.ExchangeResponse;
 import org.iringtools.common.response.Level;
 import org.iringtools.common.response.Messages;
 import org.iringtools.common.response.Response;
@@ -55,16 +56,24 @@ public class ESBService
   private static final Logger logger = Logger.getLogger(ESBService.class);
   private static DatatypeFactory datatypeFactory = null;  
   
+  private String sourceUri = null;
   private String sourceScopeName = null;
   private String sourceAppName = null;
   private String sourceGraphName = null;
+  private String targetUri = null;
   private String targetScopeName = null;
   private String targetAppName = null;
   private String targetGraphName = null;
+  private String hashAlgorithm = null;
 
   @Context
   private ServletContext context;
   private Hashtable<String, String> settings;
+  
+//  @Context
+//  private javax.ws.rs.core.SecurityContext securityContext;
+//  @Context 
+//  private org.apache.cxf.jaxrs.ext.MessageContext messageContext;
 
   public ESBService() throws DatatypeConfigurationException
   {
@@ -104,10 +113,10 @@ public class ESBService
     {
       init();
 
-      // get exchange definition
-      ExchangeDefinition xdef = getExchangeDefinition(scope, id);
-      WebClient sourceClient = new WebClient(xdef.getSourceUri());
-      WebClient targetClient = new WebClient(xdef.getTargetUri());
+      // init exchange definition
+      initExchangeDefinition(scope, id);
+      WebClient sourceClient = new WebClient(sourceUri);
+      WebClient targetClient = new WebClient(targetUri);
 
       // get target manifest
       String targetManifestUrl = "/" + targetScopeName + "/" + targetAppName + "/manifest";
@@ -117,11 +126,11 @@ public class ESBService
         return null;
 
       // get source dti
-      String sourceDtiUrl = "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName + "/xfr?hashAlgorithm=" + xdef.getHashAlgorithm();
+      String sourceDtiUrl = "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName + "/xfr?hashAlgorithm=" + hashAlgorithm;
       DataTransferIndices sourceDtis = sourceClient.post(DataTransferIndices.class, sourceDtiUrl, targetManifest);
 
       // get target dti
-      String targetDtiUrl = "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName + "/xfr?hashAlgorithm=" + xdef.getHashAlgorithm();
+      String targetDtiUrl = "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName + "/xfr?hashAlgorithm=" + hashAlgorithm;
       DataTransferIndices targetDtis = targetClient.post(DataTransferIndices.class, targetDtiUrl, targetManifest);
 
       // create dxi request to diff source and target dti
@@ -164,10 +173,10 @@ public class ESBService
       resultDtos.setDataTransferObjectList(resultDtoList);
       List<DataTransferObject> resultDtoListItems = resultDtoList.getDataTransferObjectListItems();
 
-      // get exchange definition
-      ExchangeDefinition xdef = getExchangeDefinition(scope, id);
-      WebClient sourceClient = new WebClient(xdef.getSourceUri());
-      WebClient targetClient = new WebClient(xdef.getTargetUri());
+      // init exchange definition
+      initExchangeDefinition(scope, id);
+      WebClient sourceClient = new WebClient(sourceUri);
+      WebClient targetClient = new WebClient(targetUri);
       
       // get target manifest
       String targetManifestUrl = "/" + targetScopeName + "/" + targetAppName + "/manifest";
@@ -320,15 +329,15 @@ public class ESBService
 
   @POST
   @Path("/{scope}/exchanges/{id}/submit")
-  public Response submitExchange(@PathParam("scope") String scope, @PathParam("id") String id,
+  public ExchangeResponse submitExchange(@PathParam("scope") String scope, @PathParam("id") String id,
       ExchangeRequest exchangeRequest)
   {
-    Response response = new Response();
+    ExchangeResponse exchangeResponse = new ExchangeResponse();
     GregorianCalendar gcal = new GregorianCalendar();
-    response.setDateTimeStamp(datatypeFactory.newXMLGregorianCalendar(gcal));
+    exchangeResponse.setStartTimeStamp(datatypeFactory.newXMLGregorianCalendar(gcal));
     StatusList statusList = new StatusList();
-    response.setStatusList(statusList);
-    response.setLevel(Level.SUCCESS);
+    exchangeResponse.setStatusList(statusList);
+    exchangeResponse.setLevel(Level.SUCCESS);
 
     try
     {
@@ -349,10 +358,20 @@ public class ESBService
 
       init();
 
-      // get exchange definition
-      ExchangeDefinition xdef = getExchangeDefinition(scope, id);
-      WebClient sourceClient = new WebClient(xdef.getSourceUri());
-      WebClient targetClient = new WebClient(xdef.getTargetUri());
+      // init exchange definition
+      initExchangeDefinition(scope, id);
+      WebClient sourceClient = new WebClient(sourceUri);
+      WebClient targetClient = new WebClient(targetUri);
+      
+      // add exchange definition info to exchange response
+      exchangeResponse.setSenderUri(sourceUri);
+      exchangeResponse.setSenderScopeName(sourceScopeName);
+      exchangeResponse.setSenderAppName(sourceAppName);
+      exchangeResponse.setSenderGraphName(sourceGraphName);
+      exchangeResponse.setReceiverUri(targetUri);
+      exchangeResponse.setReceiverScopeName(targetScopeName);
+      exchangeResponse.setReceiverAppName(targetAppName);
+      exchangeResponse.setReceiverGraphName(targetGraphName);
 
       // get target application uri
       String targetAppUrl = "/" + targetScopeName + "/" + targetAppName;
@@ -433,10 +452,10 @@ public class ESBService
                   if (!hashValue.equalsIgnoreCase(dti.getHashValue()))
                   {
                     Status status = createStatus(identifier, "DTO has changed.");
-                    response.getStatusList().getStatuses().add(status);
+                    exchangeResponse.getStatusList().getStatuses().add(status);
                     
-                    if (response.getLevel() != Level.ERROR)
-                      response.setLevel(Level.WARNING);
+                    if (exchangeResponse.getLevel() != Level.ERROR)
+                      exchangeResponse.setLevel(Level.WARNING);
                     
                     poolDtoListItems.remove(j--); 
                   }
@@ -460,10 +479,10 @@ public class ESBService
           for (DataTransferIndex sourceDti : sourcePoolDtiList)
           {
             Status status = createStatus(sourceDti.getIdentifier(), "DTO no longer exists.");
-            response.getStatusList().getStatuses().add(status);
+            exchangeResponse.getStatusList().getStatuses().add(status);
             
-            if (response.getLevel() != Level.ERROR)
-              response.setLevel(Level.WARNING);
+            if (exchangeResponse.getLevel() != Level.ERROR)
+              exchangeResponse.setLevel(Level.WARNING);
           }
         }
 
@@ -480,27 +499,30 @@ public class ESBService
         if (poolDtoListItems.size() > 0)
         {
           Response poolResponse = targetClient.post(Response.class, targetGraphUrl, poolDtos);
-          response.getStatusList().getStatuses().addAll(poolResponse.getStatusList().getStatuses());
+          exchangeResponse.getStatusList().getStatuses().addAll(poolResponse.getStatusList().getStatuses());
           
-          if (response.getLevel() != Level.ERROR || (response.getLevel() == Level.WARNING && poolResponse.getLevel() == Level.SUCCESS))
-            response.setLevel(poolResponse.getLevel());
+          if (exchangeResponse.getLevel() != Level.ERROR || (exchangeResponse.getLevel() == Level.WARNING && poolResponse.getLevel() == Level.SUCCESS))
+            exchangeResponse.setLevel(poolResponse.getLevel());
         }
       }
       
-      if (response.getStatusList().getStatuses().size() == 0)
+      if (exchangeResponse.getStatusList().getStatuses().size() == 0)
       {
         Status status = createStatus("Overall", "No Add/Change/Delete DTOs are found!");
-        response.getStatusList().getStatuses().add(status);
-        response.setLevel(Level.WARNING);        
+        exchangeResponse.getStatusList().getStatuses().add(status);
+        exchangeResponse.setLevel(Level.WARNING);        
       }
     }
     catch (Exception ex)
     {
       logger.error("Error while posting DTOs: " + ex);
-      response.setLevel(Level.ERROR);
+      exchangeResponse.setLevel(Level.ERROR);
     }
+    
+    gcal = new GregorianCalendar();
+    exchangeResponse.setEndTimeStamp(datatypeFactory.newXMLGregorianCalendar(gcal));
 
-    return response;
+    return exchangeResponse;
   }
 
   private void init()
@@ -523,20 +545,22 @@ public class ESBService
     settings.put("poolSize", poolSize);
   }
 
-  private ExchangeDefinition getExchangeDefinition(String scope, String id) throws WebClientException
+  private void initExchangeDefinition(String scope, String id) throws WebClientException
   {
     WebClient directoryClient = new WebClient(settings.get("directoryServiceUri"));
     String directoryServiceUrl = "/" + scope + "/exchanges/" + id;
     ExchangeDefinition xdef = directoryClient.get(ExchangeDefinition.class, directoryServiceUrl);
     
+    sourceUri = xdef.getSourceUri();
     sourceScopeName = xdef.getSourceScopeName();
     sourceAppName = xdef.getSourceAppName();
     sourceGraphName = xdef.getSourceGraphName();
+    
+    targetUri = xdef.getTargetUri();
     targetScopeName = xdef.getTargetScopeName();
     targetAppName = xdef.getTargetAppName();     
     targetGraphName = xdef.getTargetGraphName();
-
-    return xdef;
+    hashAlgorithm = xdef.getHashAlgorithm();
   }
 
   private Status createStatus(String identifier, String message)
