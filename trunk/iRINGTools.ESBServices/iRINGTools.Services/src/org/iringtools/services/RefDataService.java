@@ -16,11 +16,9 @@ import javax.ws.rs.core.Context;
 import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Logger;
-import org.iringtools.adapter.reference.Query;
+import org.iringtools.sparql.Query;
 import org.iringtools.directory.Directory;
 import org.iringtools.services.core.RefDataProvider;
-import org.iringtools.utility.NetUtil;
-import org.iringtools.utility.SparqlUtil;
 
 @Path("/")
 @Consumes("application/xml")
