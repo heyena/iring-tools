@@ -43,6 +43,9 @@ import org.iringtools.services.core.DataTransferObjectComparator;
 import org.iringtools.utility.JaxbUtil;
 import org.iringtools.utility.WebClient;
 import org.iringtools.utility.WebClientException;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import java.util.GregorianCalendar;
 
 @Path("/")
 @Consumes("application/xml")
@@ -50,6 +53,7 @@ import org.iringtools.utility.WebClientException;
 public class ESBService
 {
   private static final Logger logger = Logger.getLogger(ESBService.class);
+  private static DatatypeFactory datatypeFactory = null;  
   
   private String sourceScopeName = null;
   private String sourceAppName = null;
@@ -62,9 +66,10 @@ public class ESBService
   private ServletContext context;
   private Hashtable<String, String> settings;
 
-  public ESBService()
+  public ESBService() throws DatatypeConfigurationException
   {
     settings = new Hashtable<String, String>();
+    datatypeFactory = DatatypeFactory.newInstance();
   }
 
   @GET
@@ -319,6 +324,8 @@ public class ESBService
       ExchangeRequest exchangeRequest)
   {
     Response response = new Response();
+    GregorianCalendar gcal = new GregorianCalendar();
+    response.setDateTimeStamp(datatypeFactory.newXMLGregorianCalendar(gcal));
     StatusList statusList = new StatusList();
     response.setStatusList(statusList);
     response.setLevel(Level.SUCCESS);
