@@ -33,11 +33,11 @@ using System;
 namespace org.iringtools.library
 {
     [XmlRoot]
-    [CollectionDataContract]
+    [CollectionDataContract(Namespace = "http://www.iringtools.org/library", Name = "scopeList", ItemName = "project")]
     public class ScopeList : List<ScopeProject>
     {
         [XmlElement]
-        [DataMember]
+        [DataMember(Name = "projects")]
         public List<ScopeProject> Projects { get; set; }
 
         public bool Append(ScopeProject project)

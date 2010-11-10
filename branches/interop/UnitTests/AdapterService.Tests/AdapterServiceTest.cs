@@ -76,18 +76,18 @@ namespace AdapterService.Tests
       Assert.AreNotEqual(0, actual.GraphMaps.Count);
     }
 
-    [TestMethod()]
-    public void ClearStoreTest_ABC()
-    {
-      AdapterProxy target = new AdapterProxy();
-      Response actual = target.DeleteAll("12345_000", "ABC");
-      if (!actual.ToString().Contains("has been deleted successfully."))
-      {
-        throw new AssertFailedException(Utility.SerializeDataContract<Response>(actual));
-      }
+    //[TestMethod()]
+    //public void ClearStoreTest_ABC()
+    //{
+    //  AdapterProxy target = new AdapterProxy();
+    //  Response actual = target.DeleteAll("12345_000", "ABC");
+    //  if (!actual.ToString().Contains("has been deleted successfully."))
+    //  {
+    //    throw new AssertFailedException(Utility.SerializeDataContract<Response>(actual));
+    //  }
 
-      Assert.IsTrue(actual.ToString().Contains("has been deleted successfully."));
-    }
+    //  Assert.IsTrue(actual.ToString().Contains("has been deleted successfully."));
+    //}
 
     [TestMethod()]
     public void RefreshTest_ABC()
@@ -103,19 +103,19 @@ namespace AdapterService.Tests
       Assert.IsFalse(actual.Level == StatusLevel.Error);
     }
 
-    [TestMethod()]
-    public void RefreshAllTest_ABC()
-    {
-      AdapterProxy target = new AdapterProxy();
-      Response actual = target.RefreshAll("12345_000", "ABC");
+    //[TestMethod()]
+    //public void RefreshAllTest_ABC()
+    //{
+    //  AdapterProxy target = new AdapterProxy();
+    //  Response actual = target.RefreshAll("12345_000", "ABC");
 
-      if (actual.Level == StatusLevel.Error)
-      {
-        throw new AssertFailedException(Utility.SerializeDataContract<Response>(actual));
-      }
+    //  if (actual.Level == StatusLevel.Error)
+    //  {
+    //    throw new AssertFailedException(Utility.SerializeDataContract<Response>(actual));
+    //  }
 
-      Assert.IsFalse(actual.Level == StatusLevel.Error);
-    }
+    //  Assert.IsFalse(actual.Level == StatusLevel.Error);
+    //}
 
     //[TestMethod()]
     //public void PullTest_ABC()

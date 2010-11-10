@@ -7,17 +7,17 @@ using System.Runtime.Serialization;
 
 namespace org.iringtools.library
 {
-  [CollectionDataContract]
+  [CollectionDataContract(Namespace = "http://www.iringtools.org/library", Name = "pushRequest")]
   public class PushRequest : Request
   {
-    [DataMember]
+    [DataMember(Name = "expectedResults")]
     public ExpectedResults ExpectedResults { get; set; }
   }
 
-  [CollectionDataContract]
+  [CollectionDataContract(Namespace = "http://www.iringtools.org/library", Name = "expectedResults")]
   public class ExpectedResults : Dictionary<string, string>
   {
-    [DataMember]
+    [DataMember(Name = "dataObjectName")]
     public string DataObjectName { get; set; }
   }
 }

@@ -5,34 +5,34 @@ using System;
 
 namespace org.iringtools.library
 {
-  [DataContract]
+  [DataContract(Namespace = "http://www.iringtools.org/library", Name = "repository")]
   public class Repository
   {
-    [DataMember]
-    public string name { get; set; }
+    [DataMember(Name="name")]
+    public string Name { get; set; }
 
-    [DataMember]
-    public string uri { get; set; }
+    [DataMember(Name="uri")]
+    public string Uri { get; set; }
 
-    [DataMember(EmitDefaultValue=false)]
-    public string updateUri { get; set; }
+    [DataMember(Name="updateUri", EmitDefaultValue=false)]
+    public string UpdateUri { get; set; }
 
-    [DataMember]
-    public string description { get; set; }
-    
-    [DataMember(EmitDefaultValue = false)]
-    public string encryptedCredentials { get; set; }
+    [DataMember(Name = "description")]
+    public string Description { get; set; }
 
-    [DataMember]
-    public bool isReadOnly { get; set; }
+    [DataMember(Name = "encryptedCredentials", EmitDefaultValue = false)]
+    public string EncryptedCredentials { get; set; }
 
-    [DataMember]
-    public RepositoryType repositoryType { get; set; }
+    [DataMember(Name = "isReadOnly")]
+    public bool IsReadOnly { get; set; }
+
+    [DataMember(Name = "repositoryType")]
+    public RepositoryType RepositoryType { get; set; }
 
   }
 
 
-  [DataContract]
+  [DataContract(Namespace = "http://www.iringtools.org/library", Name = "repositoryType")]
   public enum RepositoryType
   {
     [EnumMember]
@@ -43,44 +43,45 @@ namespace org.iringtools.library
     Part8,
   }
 
-  [CollectionDataContract(ValueName = "Query", ItemName = "QueryItem")]
+  [CollectionDataContract(Namespace = "http://www.iringtools.org/library", Name = "queries", ItemName = "queryItem")]
   public class Queries : Dictionary<string, Query>
   { }
 
-  [DataContract]
+  [DataContract(Namespace = "http://www.iringtools.org/library", Name = "query")]
   public class Query
   {
-    [DataMember]
-    public string fileName { get; set; }
+    [DataMember(Name="fileName")]
+    public string FileName { get; set; }
 
-    [DataMember]
-    public QueryBindings bindings { get; set; }
+    [DataMember(Name="bindings")]
+    public QueryBindings Bindings { get; set; }
   }
 
-  [CollectionDataContract]
+  [CollectionDataContract(Namespace = "http://www.iringtools.org/library", Name = "queryBindings", ItemName = "queryBinding")]
   public class QueryBindings : List<QueryBinding>
   { }
 
+  [DataContract(Namespace = "http://www.iringtools.org/library", Name = "queryBinding")]
   public class QueryBinding
   {
-    [DataMember]
-    public string name { get; set; }
+    [DataMember(Name="name")]
+    public string Name { get; set; }
 
-    [DataMember]
-    public SPARQLBindingType type { get; set; }
+    [DataMember(Name="type")]
+    public SPARQLBindingType Type { get; set; }
   }
 
-  [DataContract]
+  [DataContract(Namespace = "http://www.iringtools.org/library", Name = "entity")]
   public class Entity
   {
-    [DataMember]
-    public string uri { get; set; }
+    [DataMember(Name="uri")]
+    public string Uri { get; set; }
 
-    [DataMember]
-    public string label { get; set; }
+    [DataMember(Name="label")]
+    public string Label { get; set; }
 
-    [DataMember]
-    public string repository { get; set; }
+    [DataMember(Name="repository")]
+    public string Repository { get; set; }
 
     public static IComparer<Entity> sortAscending()
     {
@@ -91,7 +92,7 @@ namespace org.iringtools.library
     {
         int IComparer<Entity>.Compare(Entity e1, Entity e2)
         {
-            return string.Compare(e1.label, e2.label);
+            return string.Compare(e1.Label, e2.Label);
         }
     }
   }

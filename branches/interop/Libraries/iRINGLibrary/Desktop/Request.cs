@@ -29,7 +29,8 @@ using System.Runtime.Serialization;
 
 namespace org.iringtools.library
 {
-  [CollectionDataContract]
+  [CollectionDataContract(Namespace = "http://www.iringtools.org/library", Name = "request")]
   public class Request : Dictionary<string, string>
-  {}
+  {
+  }
 }

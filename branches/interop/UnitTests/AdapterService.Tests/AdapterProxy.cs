@@ -98,35 +98,35 @@ namespace AdapterService.Tests
       return response;
     }
 
-    public Response DeleteAll(string projectName, string applicationName)
-    {
-      Response response = null;
-      try
-      {
-        response = _adapterProvider.DeleteAll(projectName, applicationName);
-      }
-      catch (Exception ex)
-      {
-        Error.SetError(ex);
-      }
+    //public Response DeleteAll(string projectName, string applicationName)
+    //{
+    //  Response response = null;
+    //  try
+    //  {
+    //    response = _adapterProvider.DeleteAll(projectName, applicationName);
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    Error.SetError(ex);
+    //  }
 
-      return response;
-    }
+    //  return response;
+    //}
 
-    public Response RefreshAll(string projectName, string applicationName)
-    {
-      Response response = null;
-      try
-      {
-        response = _adapterProvider.RefreshAll(projectName, applicationName);
-      }
-      catch (Exception ex)
-      {
-        Error.SetError(ex);
-      }
+    //public Response RefreshAll(string projectName, string applicationName)
+    //{
+    //  Response response = null;
+    //  try
+    //  {
+    //    response = _adapterProvider.RefreshAll(projectName, applicationName);
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    Error.SetError(ex);
+    //  }
 
-      return response;
-    }
+    //  return response;
+    //}
 
     public Mapping GetMapping(string projectName, string applicationName)
     {

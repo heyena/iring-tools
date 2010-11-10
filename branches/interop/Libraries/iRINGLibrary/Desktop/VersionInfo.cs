@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 
 namespace org.iringtools.library
 {
-  [DataContract(Namespace = "http://iringtools.org/common", Name = "version")]
+  [DataContract(Namespace = "http://www.iringtools.org/library", Name = "version")]
   public class VersionInfo
   {
     [DataMember(Name = "major", Order = 0)]

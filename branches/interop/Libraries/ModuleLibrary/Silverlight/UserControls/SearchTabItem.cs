@@ -69,7 +69,7 @@ namespace org.iringtools.informationmodel.usercontrols
 
                     // Add first level Search result nodes
                     foreach (Entity entity in entities)
-                        ContentTree.Items.Add(AddTreeItem(entity.label, entity));
+                        ContentTree.Items.Add(AddTreeItem(entity.Label, entity));
                 }
                 else
                 {
@@ -83,13 +83,13 @@ namespace org.iringtools.informationmodel.usercontrols
                         int count = 0;
                         if (keyValuePair.Value != null)
                         {
-                            if (keyValuePair.Value.repository.ToUpper() != "REFERENCEDATA")
+                            if (keyValuePair.Value.Repository.ToUpper() != "REFERENCEDATA")
                             {
                                 var dups = from label in labels
-                                           where label.ToUpper() == keyValuePair.Value.label.ToUpper()
+                                           where label.ToUpper() == keyValuePair.Value.Label.ToUpper()
                                            select label;
                                 count = dups.Count();
-                                labels.Add(keyValuePair.Value.label.ToUpper());
+                                labels.Add(keyValuePair.Value.Label.ToUpper());
                             }
 
                             ContentTree.Items.Add(AddTreeItem(keyValuePair.Key, keyValuePair.Value, count > 0, count));

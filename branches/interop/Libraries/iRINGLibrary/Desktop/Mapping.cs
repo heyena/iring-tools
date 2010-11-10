@@ -35,7 +35,7 @@ using org.iringtools.protocol.manifest;
 
 namespace org.iringtools.common.mapping
 {
-  [DataContract(Namespace = "http://iringtools.org/common/mapping", Name = "mapping")]
+  [DataContract(Namespace = "http://www.iringtools.org/common/mapping", Name = "mapping")]
   public class Mapping : RootBase
   {
     private static readonly string RDL_NS = "http://rdl.rdlfacade.org/data#";
@@ -110,7 +110,7 @@ namespace org.iringtools.common.mapping
     }
   }
 
-  [DataContract(Namespace = "http://iringtools.org/common/mapping", Name = "graphMap")]
+  [DataContract(Namespace = "http://www.iringtools.org/common/mapping", Name = "graphMap")]
   public class GraphMap : GraphBase 
   {
     public GraphMap()
@@ -212,7 +212,7 @@ namespace org.iringtools.common.mapping
     }
   }
 
-  [DataContract(Namespace = "http://iringtools.org/common/mapping", Name = "classTemplateMap")]
+  [DataContract(Namespace = "http://www.iringtools.org/common/mapping", Name = "classTemplateMap")]
   public class ClassTemplateMap
   {
     public ClassTemplateMap()
@@ -227,7 +227,7 @@ namespace org.iringtools.common.mapping
     public List<TemplateMap> TemplateMaps { get; set; }
   }
 
-  [DataContract(Namespace = "http://iringtools.org/common/mapping", Name = "classMap")]
+  [DataContract(Namespace = "http://www.iringtools.org/common/mapping", Name = "classMap")]
   public class ClassMap : ClassBase
   {
     public ClassMap()
@@ -258,7 +258,7 @@ namespace org.iringtools.common.mapping
     public string IdentifierValue { get; set; }
   }
 
-  [DataContract(Namespace = "http://iringtools.org/common/mapping", Name = "templateMap")]
+  [DataContract(Namespace = "http://www.iringtools.org/common/mapping", Name = "templateMap")]
   public class TemplateMap : TemplateBase
   {
     public TemplateMap()
@@ -285,7 +285,7 @@ namespace org.iringtools.common.mapping
     public TemplateType TemplateType { get; set; }
   }
 
-  [DataContract(Namespace = "http://iringtools.org/common/mapping", Name = "roleMap")]
+  [DataContract(Namespace = "http://www.iringtools.org/common/mapping", Name = "roleMap")]
   public class RoleMap : RoleBase
   {
     public RoleMap() { }
@@ -320,7 +320,7 @@ namespace org.iringtools.common.mapping
     }
   }
 
-  [DataContract(Namespace = "http://iringtools.org/common/mapping", Name = "valueListMap")]
+  [DataContract(Namespace = "http://www.iringtools.org/common/mapping", Name = "valueListMap")]
   public class ValueListMap 
   {
     public ValueListMap()
@@ -335,7 +335,7 @@ namespace org.iringtools.common.mapping
     public List<ValueMap> ValueMaps { get; set; }
   }
 
-  [DataContract(Namespace = "http://iringtools.org/common/mapping", Name = "valueMap")]
+  [DataContract(Namespace = "http://www.iringtools.org/common/mapping", Name = "valueMap")]
   public class ValueMap
   {
     [DataMember(Name = "internalValue", EmitDefaultValue = false, Order = 0)]

@@ -81,10 +81,10 @@ namespace org.iringtools.informationmodel.usercontrols
 
                 PresentationModel.SelectedNodeType = NodeType.Class;
 
-                KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Repository", Entity.repository);
+                KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Repository", Entity.Repository);
                 PresentationModel.DetailProperties.Add(keyValuePair);
 
-                keyValuePair = new KeyValuePair<string, string>("URI", Entity.uri);
+                keyValuePair = new KeyValuePair<string, string>("URI", Entity.Uri);
                 PresentationModel.DetailProperties.Add(keyValuePair);
 
                 keyValuePair = new KeyValuePair<string, string>("QMXF Type", "Class Definition");
@@ -144,9 +144,9 @@ namespace org.iringtools.informationmodel.usercontrols
 
                 Entity entity = new Entity
                 {
-                    label = label ?? "[null]",
-                    repository = "UnKnown",
-                    uri = specialization.reference,
+                    Label = label ?? "[null]",
+                    Repository = "UnKnown",
+                    Uri = specialization.reference,
                 };
                 superclasses.Items.Add(AddTreeItem(label, entity));
             }
@@ -185,9 +185,9 @@ namespace org.iringtools.informationmodel.usercontrols
 
                 Entity entity = new Entity
                 {
-                    label = label ?? "[null]",
-                    repository = "UnKnown",
-                    uri = classificationDetails.reference,
+                    Label = label ?? "[null]",
+                    Repository = "UnKnown",
+                    Uri = classificationDetails.reference,
                 };
                 classifications.Items.Add(AddTreeItem(label, entity));
             }
@@ -271,7 +271,7 @@ namespace org.iringtools.informationmodel.usercontrols
                 List<Entity> entities = (List<Entity>)CompletedEventArgs.Data;
 
                 foreach (Entity entity in entities)
-                    subclasses.Items.Add(AddTreeItem(entity.label, entity));
+                    subclasses.Items.Add(AddTreeItem(entity.Label, entity));
 
                 subclasses.itemTextBlock.Text = "[Sub Classes] (" + entities.Count + ")";
                 subclasses.IsExpanded = false;
@@ -289,7 +289,7 @@ namespace org.iringtools.informationmodel.usercontrols
                 List<Entity> entities = (List<Entity>)CompletedEventArgs.Data;
 
                 foreach (Entity entity in entities)
-                    templates.Items.Add(AddTreeItem(entity.label, entity));
+                    templates.Items.Add(AddTreeItem(entity.Label, entity));
 
                 templates.itemTextBlock.Text = "[Templates] (" + entities.Count + ")";
                 templates.IsExpanded = false;

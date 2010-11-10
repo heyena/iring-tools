@@ -206,23 +206,23 @@ namespace org.iringtools.informationmodel.usercontrols
             try
             {
                 
-                switch (entity.uri.GetObjectTypeFromUri())
+                switch (entity.Uri.GetObjectTypeFromUri())
                 {
                     case SPARQLPrefix.ObjectType.Class:
                         {
                             item = Container.Resolve<ClassTreeItem>();
                             item.SetImageSource("class.png");
                             if (!isDuplicate)
-                                item.SetTextBlockText(entity.label + " (" + entity.repository + ")");
+                                item.SetTextBlockText(entity.Label + " (" + entity.Repository + ")");
                             else
                             {
                                 string s = duplicateCount > 1 ? " " + duplicateCount.ToString() : string.Empty;
-                                item.SetTextBlockText(entity.label + " (" + entity.repository + ")" + " [Duplicate" + s + "]");
+                                item.SetTextBlockText(entity.Label + " (" + entity.Repository + ")" + " [Duplicate" + s + "]");
                             }
-                            item.SetTooltipText("Class : " + entity.label);
+                            item.SetTooltipText("Class : " + entity.Label);
                             item.Entity = entity;
                             item.Tag = entity;
-                            item.id = entity.uri.GetIdFromUri();
+                            item.id = entity.Uri.GetIdFromUri();
                             break;
                         }
                     case SPARQLPrefix.ObjectType.Template:
@@ -230,39 +230,39 @@ namespace org.iringtools.informationmodel.usercontrols
                             item = Container.Resolve<TemplateTreeItem>();
                             item.SetImageSource("template.png");
                             if (!isDuplicate)
-                                item.SetTextBlockText(entity.label + " (" + entity.repository + ")");
+                                item.SetTextBlockText(entity.Label + " (" + entity.Repository + ")");
                             else
                             {
                                 string s = duplicateCount > 1 ? " " + duplicateCount.ToString() : string.Empty;
-                                item.SetTextBlockText(entity.label + " (" + entity.repository + ")" + " [Duplicate" + s + "]");
+                                item.SetTextBlockText(entity.Label + " (" + entity.Repository + ")" + " [Duplicate" + s + "]");
                             }
-                            item.SetTooltipText("Template : " + entity.label);
+                            item.SetTooltipText("Template : " + entity.Label);
                             item.Entity = entity;
                             item.Tag = entity;
-                            item.id = entity.uri.GetIdFromUri();
+                            item.id = entity.Uri.GetIdFromUri();
                             break;
                         }
                     case SPARQLPrefix.ObjectType.Role:
                         {
                             item = Container.Resolve<RoleTreeItem>();
                             item.SetImageSource("role.png");
-                            item.SetTextBlockText(entity.label);
-                            item.SetTooltipText("Role : " + entity.label);
+                            item.SetTextBlockText(entity.Label);
+                            item.SetTooltipText("Role : " + entity.Label);
                             item.Entity = entity;
                             item.Tag = entity;
 
-                            item.id = entity.uri.GetIdFromUri();
+                            item.id = entity.Uri.GetIdFromUri();
                             break;
                         }
                     default:
                         {
                             item = Container.Resolve<CustomTreeItem>();
                             item.SetImageSource("default.png");
-                            item.SetTextBlockText(entity.label);
-                            item.SetTooltipText("Unknown type : " + entity.label);
+                            item.SetTextBlockText(entity.Label);
+                            item.SetTooltipText("Unknown type : " + entity.Label);
                             item.Entity = entity;
                             item.Tag = entity;
-                            item.id = entity.uri.GetIdFromUri();
+                            item.id = entity.Uri.GetIdFromUri();
                             break;
                         }
                 }

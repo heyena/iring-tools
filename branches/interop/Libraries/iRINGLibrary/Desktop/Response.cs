@@ -34,7 +34,7 @@ using System;
 namespace org.iringtools.library
 {
   [XmlRoot]
-  [DataContract(Namespace = "http://iringtools.org/common/response", Name = "response")]
+  [DataContract(Namespace = "http://www.iringtools.org/library", Name = "response")]
   public class Response 
   {
     [XmlElement]
@@ -111,7 +111,7 @@ namespace org.iringtools.library
   }
 
   [XmlRoot]
-  [DataContract(Namespace = "http://iringtools.org/common/response", Name = "status")]
+  [DataContract(Namespace = "http://www.iringtools.org/library", Name = "status")]
   public class Status //: IXmlSerializable
   {
     [XmlElement]
@@ -138,15 +138,15 @@ namespace org.iringtools.library
   }
 
   [XmlRoot]
-  [CollectionDataContract(Namespace = "http://iringtools.org/common/response", Name = "results", ItemName="result", KeyName = "key", ValueName="value")]
+  [CollectionDataContract(Namespace = "http://www.iringtools.org/library", Name = "results", ItemName = "result", KeyName = "key", ValueName = "value")]
   public class Results : Dictionary<string, string> {}
    
   [XmlRoot]
-  [CollectionDataContract(Namespace = "http://iringtools.org/common/response", Name = "messages", ItemName = "message")]
+  [CollectionDataContract(Namespace = "http://www.iringtools.org/library", Name = "messages", ItemName = "message")]
   public class Messages : List<string> {}
 
   [XmlRoot]
-  [DataContract(Namespace = "http://iringtools.org/common/response", Name = "level")]
+  [DataContract(Namespace = "http://www.iringtools.org/library", Name = "level")]
   public enum StatusLevel
   {
     [XmlEnum]

@@ -120,7 +120,7 @@ namespace org.iringtools.referenceData
                 //Don't Expose Tokens
                 foreach (Repository repository in repositories)
                 {
-                    repository.encryptedCredentials = null;
+                    repository.EncryptedCredentials = null;
                 }
 
                 return repositories;
@@ -143,9 +143,9 @@ namespace org.iringtools.referenceData
                 string relativeUri = String.Empty;
 
                 Query queryExactSearch = _queries["ExactSearch"];
-                QueryBindings queryBindings = queryExactSearch.bindings;
+                QueryBindings queryBindings = queryExactSearch.Bindings;
 
-                sparql = ReadSPARQL(queryExactSearch.fileName);
+                sparql = ReadSPARQL(queryExactSearch.FileName);
 
                 sparql = sparql.Replace("param1", query);
 
@@ -160,9 +160,9 @@ namespace org.iringtools.referenceData
                     {
                         Entity resultEntity = new Entity
                         {
-                            uri = result["uri"],
-                            label = result["label"],
-                            repository = repository.name
+                            Uri = result["uri"],
+                            Label = result["label"],
+                            Repository = repository.Name
                         };
 
                         queryResult.Add(resultEntity);
@@ -211,15 +211,15 @@ namespace org.iringtools.referenceData
                         RefDataEntities resultEntities = new RefDataEntities();
 
                         Query queryContainsSearch = _queries["ContainsSearch"];
-                        QueryBindings queryBindings = queryContainsSearch.bindings;
+                        QueryBindings queryBindings = queryContainsSearch.Bindings;
 
                         Query queryTemplateContainsSearch = _queries["TemplateContainsSearch"];
-                        QueryBindings queryBindings2 = queryTemplateContainsSearch.bindings;
+                        QueryBindings queryBindings2 = queryTemplateContainsSearch.Bindings;
 
-                        sparql1 = ReadSPARQL(queryContainsSearch.fileName);
+                        sparql1 = ReadSPARQL(queryContainsSearch.FileName);
                         sparql1 = sparql1.Replace("param1", query);
 
-                        sparql2 = ReadSPARQL(queryTemplateContainsSearch.fileName);
+                        sparql2 = ReadSPARQL(queryTemplateContainsSearch.FileName);
                         sparql2 = sparql2.Replace("param1", query);
                         sparql2 = sparql2.Replace("param2", "0"); //TODO:Remove hard-coded OFFSET parameter
 
@@ -232,12 +232,12 @@ namespace org.iringtools.referenceData
                             {
                                 Entity resultEntity = new Entity
                                 {
-                                    uri = result["uri"],
-                                    label = result["label"],
-                                    repository = repository.name
+                                    Uri = result["uri"],
+                                    Label = result["label"],
+                                    Repository = repository.Name
                                 };
 
-                                string key = resultEntity.label;
+                                string key = resultEntity.Label;
 
                                 if (resultEntities.Entities.ContainsKey(key))
                                 {
@@ -249,7 +249,7 @@ namespace org.iringtools.referenceData
                             results.Clear();
 
                             //for Camelot repositories, search using "TemplateContainsSearch" too
-                            if (repository.repositoryType == RepositoryType.Camelot)
+                            if (repository.RepositoryType == RepositoryType.Camelot)
                             {
                                 sparqlResults = QueryFromRepository(repository, sparql2);
 
@@ -258,12 +258,12 @@ namespace org.iringtools.referenceData
                                 {
                                     Entity resultEntity = new Entity
                                     {
-                                        uri = result["uri"],
-                                        label = result["label"],
-                                        repository = repository.name
+                                        Uri = result["uri"],
+                                        Label = result["label"],
+                                        Repository = repository.Name
                                     };
 
-                                    string key = resultEntity.label;
+                                    string key = resultEntity.Label;
 
                                     if (resultEntities.Entities.ContainsKey(key))
                                     {
@@ -319,9 +319,9 @@ namespace org.iringtools.referenceData
                 string relativeUri = String.Empty;
 
                 Query query = _queries["GetLabel"];
-                QueryBindings queryBindings = query.bindings;
+                QueryBindings queryBindings = query.Bindings;
 
-                sparql = ReadSPARQL(query.fileName);
+                sparql = ReadSPARQL(query.FileName);
                 sparql = sparql.Replace("param1", uri);
 
                 foreach (Repository repository in _repositories)
@@ -361,9 +361,9 @@ namespace org.iringtools.referenceData
 
 
                 Query queryContainsSearch = _queries["GetClassification"];
-                QueryBindings queryBindings = queryContainsSearch.bindings;
+                QueryBindings queryBindings = queryContainsSearch.Bindings;
 
-                sparql = ReadSPARQL(queryContainsSearch.fileName);
+                sparql = ReadSPARQL(queryContainsSearch.FileName);
                 sparql = sparql.Replace("param1", id);
 
 
@@ -418,20 +418,20 @@ namespace org.iringtools.referenceData
                 List<Specialization> specializations = new List<Specialization>();
 
                 Query queryGetSpecialization = _queries["GetSpecialization"];
-                QueryBindings queryBindings = queryGetSpecialization.bindings;
+                QueryBindings queryBindings = queryGetSpecialization.Bindings;
 
-                sparql = ReadSPARQL(queryGetSpecialization.fileName);
+                sparql = ReadSPARQL(queryGetSpecialization.FileName);
                 sparql = sparql.Replace("param1", id);
 
                 Query queryGetSubClassOf = _queries["GetSubClassOf"];
-                QueryBindings queryBindingsPart8 = queryGetSubClassOf.bindings;
+                QueryBindings queryBindingsPart8 = queryGetSubClassOf.Bindings;
 
-                sparqlPart8 = ReadSPARQL(queryGetSubClassOf.fileName);
+                sparqlPart8 = ReadSPARQL(queryGetSubClassOf.FileName);
                 sparqlPart8 = sparqlPart8.Replace("param1", id);
 
                 foreach (Repository repository in _repositories)
                 {
-                    if (repository.repositoryType == RepositoryType.Part8)
+                    if (repository.RepositoryType == RepositoryType.Part8)
                     {
                         SPARQLResults sparqlResults = QueryFromRepository(repository, sparqlPart8);
 
@@ -534,9 +534,9 @@ namespace org.iringtools.referenceData
                 List<Entity> resultEnt = new List<Entity>();
 
                 Query queryContainsSearch = _queries["GetClass"];
-                QueryBindings queryBindings = queryContainsSearch.bindings;
+                QueryBindings queryBindings = queryContainsSearch.Bindings;
 
-                sparql = ReadSPARQL(queryContainsSearch.fileName);
+                sparql = ReadSPARQL(queryContainsSearch.FileName);
 
                 if (namespaceUrl == String.Empty || namespaceUrl == null)
                     namespaceUrl = @"http://rdl.rdlfacade.org/data";
@@ -559,7 +559,7 @@ namespace org.iringtools.referenceData
 
 
                         classDefinition.identifier = "http://rdl.rdlfacade.org/data#" + id;
-                        classDefinition.repositoryName = repository.name;
+                        classDefinition.repositoryName = repository.Name;
                         name = new QMXFName();
                         description = new Description();
                         status = new QMXFStatus();
@@ -637,8 +637,8 @@ namespace org.iringtools.referenceData
 
                     Entity resultEntity = new Entity
                     {
-                        uri = uri,
-                        label = label
+                        Uri = uri,
+                        Label = label
                     };
                     Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
                     //queryResult.Add(resultEntity);
@@ -682,15 +682,15 @@ namespace org.iringtools.referenceData
 
                     Entity resultEntity = new Entity
                     {
-                        uri = uri,
-                        label = label
+                        Uri = uri,
+                        Label = label
                     };
 
                     string trimmedUri = string.Empty;
                     bool found = false;
                     foreach (Entity entt in list)
                     {
-                        if (resultEntity.uri.Equals(entt.uri))
+                        if (resultEntity.Uri.Equals(entt.Uri))
                         {
                             found = true;
                         }
@@ -727,20 +727,20 @@ namespace org.iringtools.referenceData
                 string relativeUri = String.Empty;
 
                 Query queryGetSubClasses = _queries["GetSubClasses"];
-                QueryBindings queryBindings = queryGetSubClasses.bindings;
+                QueryBindings queryBindings = queryGetSubClasses.Bindings;
 
-                sparql = ReadSPARQL(queryGetSubClasses.fileName);
+                sparql = ReadSPARQL(queryGetSubClasses.FileName);
                 sparql = sparql.Replace("param1", id);
 
                 Query queryGetSubClassOfInverse = _queries["GetSubClassOfInverse"];
-                QueryBindings queryBindingsPart8 = queryGetSubClassOfInverse.bindings;
+                QueryBindings queryBindingsPart8 = queryGetSubClassOfInverse.Bindings;
 
-                sparqlPart8 = ReadSPARQL(queryGetSubClassOfInverse.fileName);
+                sparqlPart8 = ReadSPARQL(queryGetSubClassOfInverse.FileName);
                 sparqlPart8 = sparqlPart8.Replace("param1", id);
 
                 foreach (Repository repository in _repositories)
                 {
-                    if (repository.repositoryType == RepositoryType.Part8)
+                    if (repository.RepositoryType == RepositoryType.Part8)
                     {
                         SPARQLResults sparqlResults = QueryFromRepository(repository, sparqlPart8);
 
@@ -750,8 +750,8 @@ namespace org.iringtools.referenceData
                         {
                             Entity resultEntity = new Entity
                             {
-                                uri = result["uri"],
-                                label = result["label"],
+                                Uri = result["uri"],
+                                Label = result["label"],
                             };
                             Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
                             //queryResult.Add(resultEntity);
@@ -767,8 +767,8 @@ namespace org.iringtools.referenceData
                         {
                             Entity resultEntity = new Entity
                             {
-                                uri = result["uri"],
-                                label = result["label"],
+                                Uri = result["uri"],
+                                Label = result["label"],
                             };
                             Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
                             //queryResult.Add(resultEntity);
@@ -794,20 +794,20 @@ namespace org.iringtools.referenceData
                 string relativeUri = String.Empty;
 
                 Query queryGetClassTemplates = _queries["GetClassTemplates"];
-                QueryBindings queryBindingsGetClassTemplates = queryGetClassTemplates.bindings;
+                QueryBindings queryBindingsGetClassTemplates = queryGetClassTemplates.Bindings;
 
-                sparqlGetClassTemplates = ReadSPARQL(queryGetClassTemplates.fileName);
+                sparqlGetClassTemplates = ReadSPARQL(queryGetClassTemplates.FileName);
                 sparqlGetClassTemplates = sparqlGetClassTemplates.Replace("param1", id);
 
                 Query queryGetRelatedTemplates = _queries["GetRelatedTemplates"];
-                QueryBindings queryBindingsGetRelatedTemplates = queryGetRelatedTemplates.bindings;
+                QueryBindings queryBindingsGetRelatedTemplates = queryGetRelatedTemplates.Bindings;
 
-                sparqlGetRelatedTemplates = ReadSPARQL(queryGetRelatedTemplates.fileName);
+                sparqlGetRelatedTemplates = ReadSPARQL(queryGetRelatedTemplates.FileName);
                 sparqlGetRelatedTemplates = sparqlGetRelatedTemplates.Replace("param1", id);
 
                 foreach (Repository repository in _repositories)
                 {
-                    if (repository.repositoryType == RepositoryType.Part8)
+                    if (repository.RepositoryType == RepositoryType.Part8)
                     {
                         SPARQLResults sparqlResults = QueryFromRepository(repository, sparqlGetRelatedTemplates);
 
@@ -817,9 +817,9 @@ namespace org.iringtools.referenceData
                         {
                             Entity resultEntity = new Entity
                             {
-                                uri = result["uri"],
-                                label = result["label"],
-                                repository = repository.name,
+                                Uri = result["uri"],
+                                Label = result["label"],
+                                Repository = repository.Name,
                             };
                             Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
                             //queryResult.Add(resultEntity);                        
@@ -835,9 +835,9 @@ namespace org.iringtools.referenceData
                         {
                             Entity resultEntity = new Entity
                             {
-                                uri = result["uri"],
-                                label = result["label"],
-                                repository = repository.name,
+                                Uri = result["uri"],
+                                Label = result["label"],
+                                Repository = repository.Name,
                             };
                             Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
                             //queryResult.Add(resultEntity);
@@ -869,9 +869,9 @@ namespace org.iringtools.referenceData
                 RefDataEntities resultEntities = new RefDataEntities();
 
                 Query queryContainsSearch = _queries["GetRoles"];
-                QueryBindings queryBindings = queryContainsSearch.bindings;
+                QueryBindings queryBindings = queryContainsSearch.Bindings;
 
-                sparql = ReadSPARQL(queryContainsSearch.fileName);
+                sparql = ReadSPARQL(queryContainsSearch.FileName);
                 sparql = sparql.Replace("param1", id);
 
                 foreach (Repository repository in _repositories)
@@ -945,21 +945,21 @@ namespace org.iringtools.referenceData
                 RefDataEntities resultEntities2 = new RefDataEntities();
 
                 Query queryContainsSearch = _queries["GetRangeRestriction"];
-                QueryBindings queryBindings = queryContainsSearch.bindings;
+                QueryBindings queryBindings = queryContainsSearch.Bindings;
 
                 Query queryContainsSearch1 = _queries["GetReferenceRestriction"];
-                QueryBindings queryBindings1 = queryContainsSearch1.bindings;
+                QueryBindings queryBindings1 = queryContainsSearch1.Bindings;
 
                 Query queryContainsSearch2 = _queries["GetValueRestriction"];
-                QueryBindings queryBindings2 = queryContainsSearch2.bindings;
+                QueryBindings queryBindings2 = queryContainsSearch2.Bindings;
 
-                sparql = ReadSPARQL(queryContainsSearch.fileName);
+                sparql = ReadSPARQL(queryContainsSearch.FileName);
                 sparql = sparql.Replace("param1", id);
 
-                sparql1 = ReadSPARQL(queryContainsSearch1.fileName);
+                sparql1 = ReadSPARQL(queryContainsSearch1.FileName);
                 sparql1 = sparql1.Replace("param1", id);
 
-                sparql2 = ReadSPARQL(queryContainsSearch2.fileName);
+                sparql2 = ReadSPARQL(queryContainsSearch2.FileName);
                 sparql2 = sparql2.Replace("param1", id);
 
                 foreach (Repository repository in _repositories)
@@ -1068,9 +1068,9 @@ namespace org.iringtools.referenceData
                 RefDataEntities resultEntities = new RefDataEntities();
 
                 Query queryContainsSearch = _queries["GetTemplate"];
-                QueryBindings queryBindings = queryContainsSearch.bindings;
+                QueryBindings queryBindings = queryContainsSearch.Bindings;
 
-                sparql = ReadSPARQL(queryContainsSearch.fileName);
+                sparql = ReadSPARQL(queryContainsSearch.FileName);
                 sparql = sparql.Replace("param1", id);
 
 
@@ -1155,9 +1155,9 @@ namespace org.iringtools.referenceData
                 RefDataEntities resultEntities = new RefDataEntities();
 
                 Query queryContainsSearch = _queries["GetTemplateQualification"];
-                QueryBindings queryBindings = queryContainsSearch.bindings;
+                QueryBindings queryBindings = queryContainsSearch.Bindings;
 
-                sparql = ReadSPARQL(queryContainsSearch.fileName);
+                sparql = ReadSPARQL(queryContainsSearch.FileName);
                 sparql = sparql.Replace("param1", id);
 
 
@@ -1232,7 +1232,7 @@ namespace org.iringtools.referenceData
                 int repository = qmxf.targetRepository != null ? getIndexFromName(qmxf.targetRepository) : 0;
                 Repository source = _repositories[repository];
 
-                if (source.isReadOnly)
+                if (source.IsReadOnly)
                 {
                     status.Level = StatusLevel.Error;
                     status.Messages.Add("Repository is Read Only");
@@ -1821,7 +1821,7 @@ namespace org.iringtools.referenceData
                 int index = 0;
                 foreach (Repository repository in _repositories)
                 {
-                    if (repository.name.Equals(name))
+                    if (repository.Name.Equals(name))
                     {
                         index = _repositories.IndexOf(repository);
                         return index;
@@ -1829,7 +1829,7 @@ namespace org.iringtools.referenceData
                 }
                 foreach (Repository repository in _repositories)
                 {
-                    if (!repository.isReadOnly)
+                    if (!repository.IsReadOnly)
                     {
                         index = _repositories.IndexOf(repository);
                         return index;
@@ -1888,7 +1888,7 @@ namespace org.iringtools.referenceData
                     string className = string.Empty;
                     int classIndex = -1;
 
-                    if (source.isReadOnly)
+                    if (source.IsReadOnly)
                     {
                         status.Level = StatusLevel.Error;
                         status.Messages.Add("Repository is Read Only");
@@ -1908,7 +1908,7 @@ namespace org.iringtools.referenceData
                         foreach (ClassDefinition classFound in q.classDefinitions)
                         {
                             classIndex++;
-                            if (classFound.repositoryName.Equals(_repositories[repository].name))
+                            if (classFound.repositoryName.Equals(_repositories[repository].Name))
                             {
                                 ID = "<" + ID + ">";
                                 Utility.WriteString("Class found: " + q.classDefinitions[classIndex].name[0].value, "stats.log", true);
@@ -2196,13 +2196,13 @@ namespace org.iringtools.referenceData
             {
                 SPARQLResults sparqlResults;
 
-                string encryptedCredentials = repository.encryptedCredentials;
+                string encryptedCredentials = repository.EncryptedCredentials;
 
                 WebCredentials credentials = new WebCredentials(encryptedCredentials);
                 if (credentials.isEncrypted) credentials.Decrypt();
 
                 //sparqlResults = SPARQLClient.PostQuery(repository.uri, sparql, credentials, _proxyCredentials);
-                sparqlResults = SPARQLClient.Query(repository.uri, sparql, credentials, _proxyCredentials);
+                sparqlResults = SPARQLClient.Query(repository.Uri, sparql, credentials, _proxyCredentials);
 
                 return sparqlResults;
             }
@@ -2235,8 +2235,8 @@ namespace org.iringtools.referenceData
             {
                 Response response = new Response();
 
-                string encryptedCredentials = repository.encryptedCredentials;
-                string uri = string.IsNullOrEmpty(repository.updateUri) ? repository.uri : repository.updateUri;
+                string encryptedCredentials = repository.EncryptedCredentials;
+                string uri = string.IsNullOrEmpty(repository.UpdateUri) ? repository.Uri : repository.UpdateUri;
 
                 WebCredentials credentials = new WebCredentials(encryptedCredentials);
                 if (credentials.isEncrypted) credentials.Decrypt();
@@ -2267,17 +2267,17 @@ namespace org.iringtools.referenceData
                     {
                         foreach (QueryBinding queryBinding in queryBindings)
                         {
-                            if (queryBinding.name == sparqlBinding.name)
+                            if (queryBinding.Name == sparqlBinding.name)
                             {
-                                string key = queryBinding.name;
+                                string key = queryBinding.Name;
 
                                 string value = String.Empty;
                                 string dataType = String.Empty;
-                                if (queryBinding.type == SPARQLBindingType.Uri)
+                                if (queryBinding.Type == SPARQLBindingType.Uri)
                                 {
                                     value = sparqlBinding.uri;
                                 }
-                                else if (queryBinding.type == SPARQLBindingType.Literal)
+                                else if (queryBinding.Type == SPARQLBindingType.Literal)
                                 {
                                     value = sparqlBinding.literal.value;
                                     dataType = sparqlBinding.literal.datatype;
@@ -2389,9 +2389,9 @@ namespace org.iringtools.referenceData
 
 
                 Query queryContainsSearch = _queries["GetTemplateClassification"];
-                QueryBindings queryBindings = queryContainsSearch.bindings;
+                QueryBindings queryBindings = queryContainsSearch.Bindings;
 
-                sparql = ReadSPARQL(queryContainsSearch.fileName);
+                sparql = ReadSPARQL(queryContainsSearch.FileName);
                 sparql = sparql.Replace("param1", id);
 
 
@@ -2445,9 +2445,9 @@ namespace org.iringtools.referenceData
 
 
                 Query queryContainsSearch = _queries["GetTemplateSpecialization"];
-                QueryBindings queryBindings = queryContainsSearch.bindings;
+                QueryBindings queryBindings = queryContainsSearch.Bindings;
 
-                sparql = ReadSPARQL(queryContainsSearch.fileName);
+                sparql = ReadSPARQL(queryContainsSearch.FileName);
                 sparql = sparql.Replace("param1", id);
 
 
@@ -2519,9 +2519,9 @@ namespace org.iringtools.referenceData
                 RefDataEntities resultEntities = new RefDataEntities();
 
                 Query queryContainsSearch = _queries["GetPart8Template"];
-                QueryBindings queryBindings = queryContainsSearch.bindings;
+                QueryBindings queryBindings = queryContainsSearch.Bindings;
 
-                sparql = ReadSPARQL(queryContainsSearch.fileName);
+                sparql = ReadSPARQL(queryContainsSearch.FileName);
                 sparql = sparql.Replace("param1", id);
 
 
@@ -2579,9 +2579,9 @@ namespace org.iringtools.referenceData
                 RefDataEntities resultEntities = new RefDataEntities();
 
                 Query queryContainsSearch = _queries["GetPart8Roles"];
-                QueryBindings queryBindings = queryContainsSearch.bindings;
+                QueryBindings queryBindings = queryContainsSearch.Bindings;
 
-                sparql = ReadSPARQL(queryContainsSearch.fileName);
+                sparql = ReadSPARQL(queryContainsSearch.FileName);
                 sparql = sparql.Replace("param1", id);
 
                 foreach (Repository repository in _repositories)
@@ -2651,9 +2651,9 @@ namespace org.iringtools.referenceData
                 RefDataEntities resultEntities = new RefDataEntities();
 
                 Query queryContainsSearch = _queries["GetPart8RoleRestrictions"];
-                QueryBindings queryBindings = queryContainsSearch.bindings;
+                QueryBindings queryBindings = queryContainsSearch.Bindings;
 
-                sparql = ReadSPARQL(queryContainsSearch.fileName);
+                sparql = ReadSPARQL(queryContainsSearch.FileName);
                 sparql = sparql.Replace("param1", id);
 
                 foreach (Repository repository in _repositories)
@@ -2716,7 +2716,7 @@ namespace org.iringtools.referenceData
                 int repository = qmxf.targetRepository != null ? getIndexFromName(qmxf.targetRepository) : 0;
                 Repository source = _repositories[repository];
 
-                if (source.isReadOnly)
+                if (source.IsReadOnly)
                 {
                     status.Level = StatusLevel.Error;
                     status.Messages.Add("Repository is Read Only");
@@ -2875,27 +2875,27 @@ namespace org.iringtools.referenceData
                 string tempSparql = string.Empty;
 
                 Query query1 = _queries["PostPart8Template_1"];
-                string sparql1 = ReadSPARQL(query1.fileName);
+                string sparql1 = ReadSPARQL(query1.FileName);
 
                 Query query2 = _queries["PostPart8Template_2"];
-                string sparql2 = ReadSPARQL(query2.fileName);
+                string sparql2 = ReadSPARQL(query2.FileName);
 
                 Query query3 = _queries["PostPart8Template_3"];
-                string sparql3 = ReadSPARQL(query3.fileName);
+                string sparql3 = ReadSPARQL(query3.FileName);
 
                 Query query4 = _queries["PostPart8Template_4"];
-                string sparql4 = ReadSPARQL(query4.fileName);
+                string sparql4 = ReadSPARQL(query4.FileName);
 
                 Query query5_1 = _queries["PostPart8Template_5_1"];
-                string sparql5_1 = ReadSPARQL(query5_1.fileName);
+                string sparql5_1 = ReadSPARQL(query5_1.FileName);
 
                 Query query5_2 = _queries["PostPart8Template_5_2"];
-                string sparql5_2 = ReadSPARQL(query5_2.fileName);
+                string sparql5_2 = ReadSPARQL(query5_2.FileName);
 
                 int repository = qmxf.targetRepository != null ? getIndexFromName(qmxf.targetRepository) : 0;
                 Repository source = _repositories[repository];
 
-                if (source.isReadOnly)
+                if (source.IsReadOnly)
                 {
                     status.Level = StatusLevel.Error;
                     status.Messages.Add("Repository is Read Only");
@@ -3088,9 +3088,9 @@ namespace org.iringtools.referenceData
                 List<Entity> resultEnt = new List<Entity>();
 
                 Query queryContainsSearch = _queries["GetPart8Class"];
-                QueryBindings queryBindings = queryContainsSearch.bindings;
+                QueryBindings queryBindings = queryContainsSearch.Bindings;
 
-                sparql = ReadSPARQL(queryContainsSearch.fileName);
+                sparql = ReadSPARQL(queryContainsSearch.FileName);
                 sparql = sparql.Replace("param1", id);
 
                 foreach (Repository repository in _repositories)
@@ -3104,7 +3104,7 @@ namespace org.iringtools.referenceData
                     classDefinition = new ClassDefinition();
 
                     classDefinition.identifier = "http://rdl.rdlfacade.org/data#" + id;
-                    classDefinition.repositoryName = repository.name;
+                    classDefinition.repositoryName = repository.Name;
                     name = new QMXFName();
 
                     foreach (Dictionary<string, string> result in results)
@@ -3148,9 +3148,9 @@ namespace org.iringtools.referenceData
                 List<Specialization> specializations = new List<Specialization>();
 
                 Query queryContainsSearch = _queries["GetPart8Specialization"];
-                QueryBindings queryBindings = queryContainsSearch.bindings;
+                QueryBindings queryBindings = queryContainsSearch.Bindings;
 
-                sparql = ReadSPARQL(queryContainsSearch.fileName);
+                sparql = ReadSPARQL(queryContainsSearch.FileName);
                 sparql = sparql.Replace("param1", id);
 
                 foreach (Repository repository in _repositories)
@@ -3227,9 +3227,9 @@ namespace org.iringtools.referenceData
                         RefDataEntities resultEntities = new RefDataEntities();
 
                         Query queryContainsSearch = _queries["Part8ContainsSearch"];
-                        QueryBindings queryBindings = queryContainsSearch.bindings;
+                        QueryBindings queryBindings = queryContainsSearch.Bindings;
 
-                        sparql = ReadSPARQL(queryContainsSearch.fileName);
+                        sparql = ReadSPARQL(queryContainsSearch.FileName);
                         sparql = sparql.Replace("param1", query);
 
                         foreach (Repository repository in _repositories)
@@ -3242,12 +3242,12 @@ namespace org.iringtools.referenceData
                             {
                                 Entity resultEntity = new Entity
                                 {
-                                    uri = result["uri"],
-                                    label = result["label"],
-                                    repository = repository.name
+                                    Uri = result["uri"],
+                                    Label = result["label"],
+                                    Repository = repository.Name
                                 };
 
-                                string key = resultEntity.label;
+                                string key = resultEntity.Label;
 
                                 if (resultEntities.Entities.ContainsKey(key))
                                 {
@@ -3327,7 +3327,7 @@ namespace org.iringtools.referenceData
                     string className = string.Empty;
                     int classIndex = -1;
 
-                    if (source.isReadOnly)
+                    if (source.IsReadOnly)
                     {
                         status.Level = StatusLevel.Error;
                         status.Messages.Add("Repository is Read Only");
@@ -3347,7 +3347,7 @@ namespace org.iringtools.referenceData
                         foreach (ClassDefinition classFound in q.classDefinitions)
                         {
                             classIndex++;
-                            if (classFound.repositoryName.Equals(_repositories[repository].name))
+                            if (classFound.repositoryName.Equals(_repositories[repository].Name))
                             {
                                 ID = "<" + ID + ">";
                                 Utility.WriteString("Class found: " + q.classDefinitions[classIndex].name[0].value, "stats.log", true);

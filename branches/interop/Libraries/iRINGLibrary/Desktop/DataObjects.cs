@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 
 namespace org.iringtools.library
 {
-  [CollectionDataContract(Namespace = "http://iringtools.org/common", Name = "objects", ItemName = "object")]
+  [CollectionDataContract(Namespace = "http://www.iringtools.org/library", Name = "objects", ItemName = "object")]
   public class DataObjects : List<String>
   {
   }

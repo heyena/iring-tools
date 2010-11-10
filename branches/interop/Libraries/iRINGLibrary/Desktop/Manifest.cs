@@ -32,7 +32,7 @@ using org.iringtools.common.mapping;
 
 namespace org.iringtools.protocol.manifest
 {
-  [DataContract(Namespace = "http://iringtools.org/protocol/manifest", Name = "manifest")]
+  [DataContract(Namespace = "http://www.iringtools.org/protocol/manifest", Name = "manifest")]
   public class Manifest : RootBase 
   {
     public Manifest()
@@ -60,7 +60,7 @@ namespace org.iringtools.protocol.manifest
     }
   }
 
-  [DataContract(Namespace = "http://iringtools.org/protocol/manifest", Name = "graph")]
+  [DataContract(Namespace = "http://www.iringtools.org/protocol/manifest", Name = "graph")]
   public class Graph : GraphBase 
   {
     public Graph()
@@ -72,7 +72,7 @@ namespace org.iringtools.protocol.manifest
     public List<ClassTemplates> ClassTemplatesList { get; set; }
   }
 
-  [DataContract(Namespace = "http://iringtools.org/protocol/manifest", Name = "classTemplates")]
+  [DataContract(Namespace = "http://www.iringtools.org/protocol/manifest", Name = "classTemplates")]
   public class ClassTemplates
   { 
     public ClassTemplates()
@@ -87,10 +87,10 @@ namespace org.iringtools.protocol.manifest
     public List<Template> Templates { get; set; }
   }
 
-  [DataContract(Namespace = "http://iringtools.org/protocol/manifest", Name = "class")]
+  [DataContract(Namespace = "http://www.iringtools.org/protocol/manifest", Name = "class")]
   public class Class : ClassBase { }
 
-  [DataContract(Namespace = "http://iringtools.org/protocol/manifest", Name = "template")]
+  [DataContract(Namespace = "http://www.iringtools.org/protocol/manifest", Name = "template")]
   public class Template : TemplateBase 
   {
     public Template()
@@ -102,7 +102,7 @@ namespace org.iringtools.protocol.manifest
     public List<Role> Roles { get; set; }
   }
 
-  [DataContract(Namespace = "http://iringtools.org/protocol/manifest", Name = "role")]
+  [DataContract(Namespace = "http://www.iringtools.org/protocol/manifest", Name = "role")]
   public class Role : RoleBase 
   {
     [DataMember(Name = "class", Order = 5, EmitDefaultValue = false)]

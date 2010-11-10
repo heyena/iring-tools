@@ -159,8 +159,8 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
                    object obj = args.Data;
                    foreach (Repository repository in (List<Repository>)obj)
                    {
-                      string label = repository.name;
-                      if (repository.isReadOnly)
+                      string label = repository.Name;
+                      if (repository.IsReadOnly)
                       {
                         label += " (Read Only)";
                       }
@@ -233,7 +233,7 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
                     this.model.SelectedQMXF = new QMXF();
     
             Repository rep = cbi.Tag as Repository;
-                if (rep.isReadOnly == true)
+                if (rep.IsReadOnly == true)
                 {
                     btnOK.IsEnabled = false;
                     btnApply.IsEnabled = false;
@@ -244,7 +244,7 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
                     btnApply.IsEnabled = true;
                 }
                 if(_classBLL != null)
-                _classBLL.QMXF.targetRepository = rep.name;
+                _classBLL.QMXF.targetRepository = rep.Name;
             }
             catch (Exception ex)
             {

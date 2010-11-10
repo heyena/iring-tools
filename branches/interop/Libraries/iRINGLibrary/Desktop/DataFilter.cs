@@ -33,7 +33,7 @@ using System.Text;
 
 namespace org.iringtools.library
 {
-  [DataContract(Namespace = "http://ns.iringtools.org/library")]
+  [DataContract(Namespace = "http://www.iringtools.org/library")]
   public class DataFilter
   {
     [DataMember]
@@ -462,7 +462,7 @@ namespace org.iringtools.library
     }
   }
 
-  [DataContract(Namespace = "http://ns.iringtools.org/library")]
+  [DataContract(Namespace = "http://www.iringtools.org/library")]
   public class Expression
   {
     [DataMember(Order = 0, EmitDefaultValue = false)]
@@ -484,7 +484,7 @@ namespace org.iringtools.library
     public int CloseGroupCount { get; set; }
   }
 
-  [DataContract(Namespace = "http://ns.iringtools.org/library")]
+  [DataContract(Namespace = "http://www.iringtools.org/library")]
   public enum LogicalOperator
   {
     [EnumMember]
@@ -501,7 +501,7 @@ namespace org.iringtools.library
     OrNot,
   };
 
-  [DataContract(Namespace = "http://ns.iringtools.org/library")]
+  [DataContract(Namespace = "http://www.iringtools.org/library")]
   public enum RelationalOperator
   {
     [EnumMember]

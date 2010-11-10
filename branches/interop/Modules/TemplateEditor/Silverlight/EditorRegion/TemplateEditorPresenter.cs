@@ -331,7 +331,7 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 if (model.SelectedQMXF == null)
                     model.SelectedQMXF = new QMXF();
                 Repository rep = cbi.Tag as Repository;
-                if (rep.isReadOnly == true)
+                if (rep.IsReadOnly == true)
                 {
                     btnOK.IsEnabled = false;
                     btnApply.IsEnabled = false;
@@ -342,7 +342,7 @@ namespace org.iringtools.modules.templateeditor.editorregion
                     btnApply.IsEnabled = true;
                 }
                 if(_templateModel != null)
-                _templateModel.QMXF.targetRepository = rep.name;
+                _templateModel.QMXF.targetRepository = rep.Name;
             }
             catch (Exception ex)
             {
@@ -365,8 +365,8 @@ namespace org.iringtools.modules.templateeditor.editorregion
                     object obj = args.Data;
                     foreach (Repository repository in (List<Repository>)obj)
                     {
-                      string label = repository.name;
-                      if (repository.isReadOnly)
+                      string label = repository.Name;
+                      if (repository.IsReadOnly)
                       {
                         label += " (Read Only)";
                       }

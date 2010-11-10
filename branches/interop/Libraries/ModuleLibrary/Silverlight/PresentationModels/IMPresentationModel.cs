@@ -114,9 +114,9 @@ namespace org.iringtools.ontologyservice.presentation
 
         if (entity != null)
         {
-          SelectedIMLabel = entity.label;
-          SelectedIMRepository = entity.repository;
-          SelectedIMUri = entity.uri;
+          SelectedIMLabel = entity.Label;
+          SelectedIMRepository = entity.Repository;
+          SelectedIMUri = entity.Uri;
           SelectedInformationModelNode = entity;
         }
         OnPropertyChanged("SelectedTreeItem");
@@ -210,9 +210,9 @@ namespace org.iringtools.ontologyservice.presentation
 
         // Snapshot of individual fields (in case node tab is
         // closed and reference is lost)
-        this.SelectedIMLabel = value.label;
-        this.SelectedIMUri = value.uri;
-        this.SelectedIMRepository = value.repository;
+        this.SelectedIMLabel = value.Label;
+        this.SelectedIMUri = value.Uri;
+        this.SelectedIMRepository = value.Repository;
       }
     }
 

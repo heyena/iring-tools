@@ -31,7 +31,7 @@ using System.ComponentModel;
 
 namespace org.iringtools.library
 {
-  [DataContract(Name = "databaseDictionary", Namespace = "http://ns.iringtools.org/library")]
+  [DataContract(Name = "databaseDictionary", Namespace = "http://www.iringtools.org/library")]
   public class DatabaseDictionary : DataDictionary
   {
     [DataMember(Name = "provider", IsRequired = true, Order = 0)]
@@ -41,7 +41,7 @@ namespace org.iringtools.library
     public string ConnectionString { get; set; }
   }
 
-  [DataContract(Namespace = "http://ns.iringtools.org/library")]
+  [DataContract(Namespace = "http://www.iringtools.org/library")]
   public enum Provider
   {
     [EnumMember]

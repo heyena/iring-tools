@@ -103,7 +103,7 @@ namespace org.iringtools.informationmodel.usercontrols
         {
             if (!isProcessed)
             {
-                id = Entity.uri.GetIdFromUri();
+                id = Entity.Uri.GetIdFromUri();
 
                 ReferenceDataService.GetTemplate(id, this);
 
@@ -137,10 +137,10 @@ namespace org.iringtools.informationmodel.usercontrols
             }
             else
             {
-                KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Repository", Entity.repository);
+                KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Repository", Entity.Repository);
                 PresentationModel.DetailProperties.Add(keyValuePair);
 
-                keyValuePair = new KeyValuePair<string, string>("URI", Entity.uri);
+                keyValuePair = new KeyValuePair<string, string>("URI", Entity.Uri);
                 PresentationModel.DetailProperties.Add(keyValuePair);
 
                 if (Tag is TemplateDefinition)

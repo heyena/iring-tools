@@ -249,7 +249,7 @@ namespace org.iringtools.informationmodel.usercontrols
       {
           item.SetImageSource("role.png");
           item.SetTooltipText("Role : " + roleQualification.name[0].value);
-          item.SetTextBlockText(entity.label);
+          item.SetTextBlockText(entity.Label);
           item.Entity = entity;
           item.SetTextBlockText(roleQualification.name[0].value);
           item.Entity = entity;
@@ -270,38 +270,38 @@ namespace org.iringtools.informationmodel.usercontrols
 
       try
       {
-          switch (entity.uri.GetObjectTypeFromUri())
+          switch (entity.Uri.GetObjectTypeFromUri())
           {
               case SPARQLPrefix.ObjectType.Class:
                   item = Container.Resolve<ClassTreeItem>();
 
                   item.SetImageSource("class.png");
-                  item.SetTooltipText("Class : " + entity.label);
-                  item.SetTextBlockText(entity.label);
+                  item.SetTooltipText("Class : " + entity.Label);
+                  item.SetTextBlockText(entity.Label);
                   item.Entity = entity;
                   item.Tag = entity;
-                  item.id = entity.uri.GetIdFromUri();
+                  item.id = entity.Uri.GetIdFromUri();
                   item.PresentationModel.SelectedQMXF = this.PresentationModel.SelectedQMXF;
                   break;
 
               case SPARQLPrefix.ObjectType.Template:
                   item = Container.Resolve<TemplateTreeItem>();
                   item.SetImageSource("template.png");
-                  item.SetTooltipText("Template : " + entity.label);
-                  item.SetTextBlockText(entity.label);
+                  item.SetTooltipText("Template : " + entity.Label);
+                  item.SetTextBlockText(entity.Label);
                   item.Entity = entity;
                   item.Tag = entity;
-                  item.id = entity.uri.GetIdFromUri();
+                  item.id = entity.Uri.GetIdFromUri();
                   break;
 
               default:
                   item = Container.Resolve<CustomTreeItem>();
                   item.SetImageSource("default.png");
-                  item.SetTooltipText("Unknown : " + entity.label);
-                  item.SetTextBlockText(entity.label);
+                  item.SetTooltipText("Unknown : " + entity.Label);
+                  item.SetTextBlockText(entity.Label);
                   item.Entity = entity;
                   item.Tag = entity;
-                  item.id = entity.uri.GetIdFromUri();
+                  item.id = entity.Uri.GetIdFromUri();
                   break;
           }
       }

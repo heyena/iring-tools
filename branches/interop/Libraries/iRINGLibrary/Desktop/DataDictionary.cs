@@ -31,7 +31,7 @@ using System.Linq;
 
 namespace org.iringtools.library
 {
-  [DataContract(Name = "dataDictionary", Namespace = "http://ns.iringtools.org/library")]
+  [DataContract(Name = "dataDictionary", Namespace = "http://www.iringtools.org/library")]
   public class DataDictionary
   {
     public DataDictionary()
@@ -43,7 +43,7 @@ namespace org.iringtools.library
     public List<DataObject> DataObjects { get; set; }
   }
 
-  [DataContract(Name = "dataObject", Namespace = "http://ns.iringtools.org/library")]
+  [DataContract(Name = "dataObject", Namespace = "http://www.iringtools.org/library")]
   public class DataObject
   {
     public DataObject()

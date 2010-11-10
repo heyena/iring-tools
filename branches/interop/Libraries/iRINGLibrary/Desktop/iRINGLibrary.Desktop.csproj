@@ -139,7 +139,7 @@
     <Compile Include="SPARQLClient.cs" />
     <Compile Include="SPARQLQuery.cs" />
     <Compile Include="SPARQLResults.cs" />
-    <Compile Include="Version.cs" />
+    <Compile Include="VersionInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\UtilityLibrary\Desktop\UtilityLibrary.Desktop.csproj">

@@ -58,12 +58,12 @@ namespace org.iringtools.informationmodel.usercontrols
                 {
                     Entity entity = new Entity()
                     {
-                        label = classDefinition.name[0].value,
-                        repository = "UnKnown",
-                        uri = classDefinition.identifier
+                        Label = classDefinition.name[0].value,
+                        Repository = "UnKnown",
+                        Uri = classDefinition.identifier
                     };
 
-                    ClassTreeItem item = (ClassTreeItem)AddTreeItem(entity.label, entity);
+                    ClassTreeItem item = (ClassTreeItem)AddTreeItem(entity.Label, entity);
                     item.ProcessClassDefinition(classDefinition);
                     this.Items.Add(item);
                     _hasExecuted = true;
@@ -139,10 +139,10 @@ namespace org.iringtools.informationmodel.usercontrols
             }
             else
             {
-                KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Repository", Entity.repository);
+                KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Repository", Entity.Repository);
                 PresentationModel.DetailProperties.Add(keyValuePair);
 
-                keyValuePair = new KeyValuePair<string, string>("URI", Entity.uri);
+                keyValuePair = new KeyValuePair<string, string>("URI", Entity.Uri);
                 PresentationModel.DetailProperties.Add(keyValuePair);
 
                 if (Tag is RoleDefinition)

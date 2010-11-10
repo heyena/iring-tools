@@ -40,7 +40,7 @@ using org.ids_adi.qxf;
 namespace org.iringtools.library
 {
 #if !SILVERLIGHT
-  [ServiceContract(Namespace = "http://ns.iringtools.org/protocol")]
+  [ServiceContract(Namespace = "http://www.iringtools.org/library")]
 #endif
   public partial interface IAdapter
   {
