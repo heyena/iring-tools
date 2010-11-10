@@ -17,6 +17,7 @@ namespace ApplicationEditor
     private string _applicationServiceUri;
     private string _adapterServiceUri;
 
+
     public ApplicationDAL()
     {
       _applicationServiceUri = App.Current.Resources["NHibernateServiceURI"].ToString();
@@ -72,7 +73,7 @@ namespace ApplicationEditor
 
     public void GetSchemaObjects(string projectName, string applicationName)
     {
-      string relativeUri = String.Format("/{0}/{1}/schemaObjects",
+      string relativeUri = String.Format("/{0}/{1}/objects",
         projectName,
         applicationName
         );
@@ -85,7 +86,7 @@ namespace ApplicationEditor
 
     public void GetSchemaObjectsSchma(string projectName, string applicationName, string objectName)
     {
-        string relativeUri = String.Format("/{0}/{1}/schemaObjects/{2}",
+        string relativeUri = String.Format("/{0}/{1}/objects/{2}",
         projectName,
         applicationName,
         objectName
@@ -112,7 +113,7 @@ namespace ApplicationEditor
 
     public void GetRelationShipTypes()
     {
-      string relativeUri = "/relationship";
+      string relativeUri = "/relationships";
       Uri address = new Uri(_applicationServiceUri + relativeUri);
 
       WebClient webClient = new WebClient();
@@ -359,7 +360,7 @@ namespace ApplicationEditor
       try
       {
         string result = ((DownloadStringCompletedEventArgs)e).Result;
-        string[] providers = result.DeserializeDataContract<string[]>();
+        DataProviders providers = result.DeserializeDataContract<DataProviders>();
 
         // If the cast failed then return
         if (providers == null)
@@ -396,7 +397,7 @@ namespace ApplicationEditor
       try
       {
         string result = ((DownloadStringCompletedEventArgs)e).Result;
-        string[] relationships = result.DeserializeDataContract<string[]>();
+        DataRelationships relationships = result.DeserializeDataContract<DataRelationships>();
 
         if (relationships == null)
           return;
@@ -414,7 +415,7 @@ namespace ApplicationEditor
         args = new CompletedEventArgs
         {
           // Define your method in CompletedEventType and assign
-          CompletedType = CompletedEventType.GetProviders,
+          CompletedType = CompletedEventType.GetRelationships,
           Error = ex,
           FriendlyErrorMessage =
               ex.GetBaseException().Message.ToUpper().Contains("SECURITY ERROR") || ex.GetBaseException() is System.Net.WebException ?
@@ -529,13 +530,13 @@ namespace ApplicationEditor
     void OnGetSchemaObectsCompletedEvent(object sender, AsyncCompletedEventArgs e)
     {
       CompletedEventArgs args;
-      string[] schemaObjects = null;
+      DataObjects schemaObjects = null;
       try
       {
         string result = ((DownloadStringCompletedEventArgs)e).Result;
         if (result != string.Empty)
         {
-          schemaObjects = result.DeserializeDataContract<string[]>();
+          schemaObjects = result.DeserializeDataContract<DataObjects>();
         }
         else 
         {

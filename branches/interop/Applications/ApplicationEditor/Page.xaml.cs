@@ -329,7 +329,7 @@ namespace ApplicationEditor
           return;
         }
 
-        string[] schemaObjects = (string[])args.Data;
+        DataObjects schemaObjects = (DataObjects)args.Data;
         isFetched = true;
         tvwItemSourceRoot.Items.Clear();
 
@@ -364,7 +364,7 @@ namespace ApplicationEditor
           MessageBox.Show(args.FriendlyErrorMessage, "Get relationship types Error", MessageBoxButton.OK);
           return;
         }
-        relations.cbRelationType.ItemsSource = (string[])args.Data;
+        relations.cbRelationType.ItemsSource = ((DataRelationships)args.Data).ToList();
       }
       catch (Exception ex)
       {
@@ -565,7 +565,7 @@ namespace ApplicationEditor
           MessageBox.Show(args.FriendlyErrorMessage, "Get Providers Error", MessageBoxButton.OK);
           return;
         }
-        cbProvider.ItemsSource = (string[])args.Data;
+        cbProvider.ItemsSource = ((DataProviders)args.Data).ToList();
       }
       catch (Exception ex)
       {
