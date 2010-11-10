@@ -153,19 +153,21 @@ namespace org.iringtools.protocol.manifest
   }
 
   #region base classes
-  [DataContract]
+  [DataContract(Namespace = "http://www.iringtools.org/protocol/manifest", Name = "rootBase")]
   public abstract class RootBase
   {
     [DataMember(Name = "version", Order = 0, EmitDefaultValue = false)]
     public string Version { get; set; }
   }
 
+  [DataContract(Namespace = "http://www.iringtools.org/protocol/manifest", Name = "graphBase")]
   public abstract class GraphBase 
   {
     [DataMember(Name = "name", Order = 0, EmitDefaultValue = false)]
     public string Name { get; set; }
   }
 
+  [DataContract(Namespace = "http://www.iringtools.org/protocol/manifest", Name = "classBase")]
   public abstract class ClassBase
   {
     [DataMember(Name = "name", Order = 0, EmitDefaultValue = false)]
@@ -175,6 +177,7 @@ namespace org.iringtools.protocol.manifest
     public string ClassId { get; set; }
   }
 
+  [DataContract(Namespace = "http://www.iringtools.org/protocol/manifest", Name = "templateBase")]  
   public abstract class TemplateBase
   {
     [DataMember(Name = "name", Order = 0, EmitDefaultValue = false)]
@@ -187,6 +190,7 @@ namespace org.iringtools.protocol.manifest
     public TransferOption TransferOption { get; set; }
   }
 
+  [DataContract(Namespace = "http://www.iringtools.org/protocol/manifest", Name = "roleBase")]  
   public abstract class RoleBase
   {
     [DataMember(Name = "name", Order = 0, EmitDefaultValue = false)]
