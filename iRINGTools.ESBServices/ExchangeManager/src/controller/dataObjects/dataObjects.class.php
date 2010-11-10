@@ -90,7 +90,6 @@
                     unset($params[3]);
                     unset($params[4]);
                     $urlParams = $this->urlParameters($params);
-
                     $urlParams['dtoIdentifier']=$dtoIdentifier;
                     $urlParams['referenceClassIdentifier']=$referenceClassIdentifier;       // RelatedClass identifier value
                     echo $this->modelObj->getRelatedDataObjects($urlParams);
@@ -99,9 +98,27 @@
                             //echo $this->modelObj->getRelatedItemsGridJSONData($identifier,$reference);
 		}
 	}
+function getPageData($params){
+	$start = $this->parseInt($_POST['start']);
+	$limit = $this->parseInt($_POST['limit']);
 
-	function setReview($params){
+	$identifier = $_POST['identifier'];
+	$refClassIdentifier= $_POST['refClassIdentifier'];
+	unset($params[3]);
+	unset($params[4]);
+	
+	//echo '<pre>';
+	//print_r($params);
+
+	if(isset($start) && (isset($limit))){
+		$urlParams = $this->urlParameters($params);
+		// calculate Pageno
+		//$pageNo = ceil($start/$limit)+1;
+		$responseString = $this->modelObj->getPageData($urlParams,$start,$limit,$identifier,$refClassIdentifier);
+		echo $responseString;
 	}
+}
+
 }
    
 ?>
