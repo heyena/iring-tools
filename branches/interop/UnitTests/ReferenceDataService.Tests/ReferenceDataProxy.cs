@@ -11,7 +11,7 @@ using Microsoft.Practices.Unity;
 using org.iringtools.library;
 using System.Configuration;
 using System.Collections.Specialized;
-using org.iringtools.referenceData;
+using org.iringtools.refdata;
 
 namespace ReferenceDataService.Tests
 {

@@ -27,7 +27,7 @@
 using System;
 using org.iringtools.library;
 
-namespace org.iringtools.referenceData
+namespace org.iringtools.refdata
 {
   public class ReferenceDataSettings : ServiceSettings
   {

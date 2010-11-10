@@ -8,7 +8,7 @@
     <ProjectGuid>{F271963F-10B1-4495-B047-BD5A977ED187}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>org.iringtools.referenceData</RootNamespace>
+    <RootNamespace>org.iringtools.refdata</RootNamespace>
     <AssemblyName>ReferenceDataLibrary</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

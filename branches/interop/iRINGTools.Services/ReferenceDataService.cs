@@ -34,7 +34,7 @@ using System.ServiceModel.Web;
 using log4net;
 using org.ids_adi.qmxf;
 using org.iringtools.library;
-using org.iringtools.referenceData;
+using org.iringtools.refdata;
 
 namespace org.iringtools.services
 {
