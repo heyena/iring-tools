@@ -6,7 +6,7 @@ import java.util.Hashtable;
 import javax.xml.bind.JAXBException;
 
 import org.iringtools.directory.ExchangeDefinition;
-import org.iringtools.sparql.Query;
+import org.iringtools.refdata.queries.Query;
 import org.iringtools.utility.JaxbUtil;
 
 public class RefDataProvider

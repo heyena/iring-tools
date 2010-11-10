@@ -18,8 +18,8 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="identifier" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="results" type="{http://iringtools.org/common/response}Results"/>
- *         &lt;element name="messages" type="{http://iringtools.org/common/response}Messages"/>
+ *         &lt;element name="results" type="{http://www.iringtools.org/common/response}Results"/>
+ *         &lt;element name="messages" type="{http://www.iringtools.org/common/response}Messages"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>

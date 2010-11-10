@@ -20,7 +20,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="level" type="{http://iringtools.org/common/response}Level"/>
+ *         &lt;element name="level" type="{http://www.iringtools.org/common/response}Level"/>
  *         &lt;element name="startTimeStamp" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
  *         &lt;element name="endTimeStamp" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
  *         &lt;element name="senderUri" type="{http://www.w3.org/2001/XMLSchema}string"/>
@@ -31,7 +31,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         &lt;element name="receiverScopeName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="receiverAppName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="receiverGraphName" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="statusList" type="{http://iringtools.org/common/response}StatusList"/>
+ *         &lt;element name="statusList" type="{http://www.iringtools.org/common/response}StatusList"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>

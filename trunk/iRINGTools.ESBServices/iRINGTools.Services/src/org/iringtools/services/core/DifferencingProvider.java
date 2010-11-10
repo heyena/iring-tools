@@ -4,18 +4,18 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 
-import org.iringtools.adapter.dti.DataTransferIndex;
-import org.iringtools.adapter.dti.DataTransferIndexList;
-import org.iringtools.adapter.dti.DataTransferIndices;
-import org.iringtools.adapter.dti.TransferType;
-import org.iringtools.adapter.dto.ClassObject;
-import org.iringtools.adapter.dto.DataTransferObject;
-import org.iringtools.adapter.dto.DataTransferObjects;
-import org.iringtools.adapter.dto.RoleObject;
-import org.iringtools.adapter.dto.RoleType;
-import org.iringtools.adapter.dto.TemplateObject;
-import org.iringtools.common.request.DxiRequest;
-import org.iringtools.common.request.DxoRequest;
+import org.iringtools.dxfr.dti.DataTransferIndex;
+import org.iringtools.dxfr.dti.DataTransferIndexList;
+import org.iringtools.dxfr.dti.DataTransferIndices;
+import org.iringtools.dxfr.dti.TransferType;
+import org.iringtools.dxfr.dto.ClassObject;
+import org.iringtools.dxfr.dto.DataTransferObject;
+import org.iringtools.dxfr.dto.DataTransferObjects;
+import org.iringtools.dxfr.dto.RoleObject;
+import org.iringtools.dxfr.dto.RoleType;
+import org.iringtools.dxfr.dto.TemplateObject;
+import org.iringtools.dxfr.request.DxiRequest;
+import org.iringtools.dxfr.request.DxoRequest;
 
 public class DifferencingProvider
 {
@@ -246,7 +246,7 @@ public class DifferencingProvider
       DataTransferObject sourceDto = sourceDtoList.get(i);
       
       // sanity check see if the data transfer object might have SYNC'ed since DTI differencing occurs 
-      sourceDto.setTransferType(org.iringtools.adapter.dto.TransferType.SYNC);
+      sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC);
 
       List<ClassObject> targetClassObjectList = targetDto.getClassObjects().getClassObjects();
       List<ClassObject> sourceClassObjectList = sourceDto.getClassObjects().getClassObjects();
@@ -263,7 +263,7 @@ public class DifferencingProvider
               sourceClassObject.getIdentifier(), targetClassObject.getIdentifier()));
         }
         
-        sourceClassObject.setTransferType(org.iringtools.adapter.dto.TransferType.SYNC); // default SYNC first
+        sourceClassObject.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC); // default SYNC first
 
         List<TemplateObject> targetTemplateObjectList = targetClassObject.getTemplateObjects().getTemplateObjects();
         List<TemplateObject> sourceTemplateObjectList = sourceClassObject.getTemplateObjects().getTemplateObjects();
@@ -273,7 +273,7 @@ public class DifferencingProvider
           TemplateObject targetTemplateObject = targetTemplateObjectList.get(k);
           TemplateObject sourceTemplateObject = sourceTemplateObjectList.get(k);    
           
-          sourceTemplateObject.setTransferType(org.iringtools.adapter.dto.TransferType.SYNC); // default SYNC first
+          sourceTemplateObject.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC); // default SYNC first
           
           List<RoleObject> targetRoleObjectList = targetTemplateObject.getRoleObjects().getRoleObjects();
           List<RoleObject> sourceRoleObjectList = sourceTemplateObject.getRoleObjects().getRoleObjects();
@@ -297,9 +297,9 @@ public class DifferencingProvider
               
               if (!targetRoleValue.equals(sourceRoleValue))
               {
-                sourceTemplateObject.setTransferType(org.iringtools.adapter.dto.TransferType.CHANGE);
-                sourceClassObject.setTransferType(org.iringtools.adapter.dto.TransferType.CHANGE);
-                sourceDto.setTransferType(org.iringtools.adapter.dto.TransferType.CHANGE);
+                sourceTemplateObject.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
+                sourceClassObject.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
+                sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
               }
             }
           }

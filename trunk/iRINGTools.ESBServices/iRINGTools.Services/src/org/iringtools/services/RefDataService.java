@@ -16,7 +16,7 @@ import javax.ws.rs.core.Context;
 import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Logger;
-import org.iringtools.sparql.Query;
+import org.iringtools.refdata.queries.Query;
 import org.iringtools.directory.Directory;
 import org.iringtools.services.core.RefDataProvider;
 
