@@ -18,8 +18,8 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="applicationData" type="{http://iringtools.org/directory}ApplicationData"/>
- *         &lt;element name="dataExchanges" type="{http://iringtools.org/directory}DataExchanges"/>
+ *         &lt;element name="applicationData" type="{http://www.iringtools.org/directory}ApplicationData"/>
+ *         &lt;element name="dataExchanges" type="{http://www.iringtools.org/directory}DataExchanges"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>

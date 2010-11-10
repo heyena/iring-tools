@@ -20,9 +20,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="level" type="{http://iringtools.org/common/response}Level"/>
+ *         &lt;element name="level" type="{http://www.iringtools.org/common/response}Level"/>
  *         &lt;element name="dateTimeStamp" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
- *         &lt;element name="statusList" type="{http://iringtools.org/common/response}StatusList"/>
+ *         &lt;element name="statusList" type="{http://www.iringtools.org/common/response}StatusList"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>

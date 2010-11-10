@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="exchange" type="{http://iringtools.org/directory}Exchange" maxOccurs="unbounded"/>
+ *         &lt;element name="exchange" type="{http://www.iringtools.org/directory}Exchange" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>

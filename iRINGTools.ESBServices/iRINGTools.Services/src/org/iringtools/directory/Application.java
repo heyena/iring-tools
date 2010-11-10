@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="graphs" type="{http://iringtools.org/directory}Graphs"/>
+ *         &lt;element name="graphs" type="{http://www.iringtools.org/directory}Graphs"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>

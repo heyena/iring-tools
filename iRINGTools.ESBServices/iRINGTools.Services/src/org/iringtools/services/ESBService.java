@@ -16,21 +16,21 @@ import javax.ws.rs.core.Context;
 import javax.xml.bind.JAXBException;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
-import org.iringtools.adapter.dti.DataTransferIndex;
-import org.iringtools.adapter.dti.DataTransferIndexList;
-import org.iringtools.adapter.dti.DataTransferIndices;
-import org.iringtools.adapter.dti.TransferType;
-import org.iringtools.adapter.dto.ClassObject;
-import org.iringtools.adapter.dto.DataTransferObject;
-import org.iringtools.adapter.dto.DataTransferObjectList;
-import org.iringtools.adapter.dto.DataTransferObjects;
-import org.iringtools.adapter.dto.RoleObject;
-import org.iringtools.adapter.dto.RoleType;
-import org.iringtools.adapter.dto.TemplateObject;
-import org.iringtools.common.request.DtoPageRequest;
-import org.iringtools.common.request.DxiRequest;
-import org.iringtools.common.request.DxoRequest;
-import org.iringtools.common.request.ExchangeRequest;
+import org.iringtools.dxfr.dti.DataTransferIndex;
+import org.iringtools.dxfr.dti.DataTransferIndexList;
+import org.iringtools.dxfr.dti.DataTransferIndices;
+import org.iringtools.dxfr.dti.TransferType;
+import org.iringtools.dxfr.dto.ClassObject;
+import org.iringtools.dxfr.dto.DataTransferObject;
+import org.iringtools.dxfr.dto.DataTransferObjectList;
+import org.iringtools.dxfr.dto.DataTransferObjects;
+import org.iringtools.dxfr.dto.RoleObject;
+import org.iringtools.dxfr.dto.RoleType;
+import org.iringtools.dxfr.dto.TemplateObject;
+import org.iringtools.dxfr.request.DtoPageRequest;
+import org.iringtools.dxfr.request.DxiRequest;
+import org.iringtools.dxfr.request.DxoRequest;
+import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.common.response.ExchangeResponse;
 import org.iringtools.common.response.Level;
 import org.iringtools.common.response.Messages;
@@ -39,7 +39,7 @@ import org.iringtools.common.response.Status;
 import org.iringtools.common.response.StatusList;
 import org.iringtools.directory.Directory;
 import org.iringtools.directory.ExchangeDefinition;
-import org.iringtools.protocol.manifest.Manifest;
+import org.iringtools.dxfr.manifest.Manifest;
 import org.iringtools.services.core.DataTransferObjectComparator;
 import org.iringtools.utility.JaxbUtil;
 import org.iringtools.utility.WebClient;
@@ -240,14 +240,14 @@ public class ESBService
                 if (transferType == TransferType.ADD)
                 {
                   DataTransferObject addDto = sourceDtoListItems.remove(i--);
-                  addDto.setTransferType(org.iringtools.adapter.dto.TransferType.ADD);
+                  addDto.setTransferType(org.iringtools.dxfr.dto.TransferType.ADD);
                   resultDtoListItems.add(addDto);
                   break;
                 }
                 else if (transferType == TransferType.SYNC)
                 {
                   DataTransferObject syncDto = sourceDtoListItems.remove(i--);
-                  syncDto.setTransferType(org.iringtools.adapter.dto.TransferType.SYNC);
+                  syncDto.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC);
                   resultDtoListItems.add(syncDto);
                   break;
                 }
@@ -287,7 +287,7 @@ public class ESBService
                 if (targetDti.getTransferType() == TransferType.DELETE)
                 {
                   DataTransferObject deleteDto = targetDtoListItems.remove(i--);
-                  deleteDto.setTransferType(org.iringtools.adapter.dto.TransferType.DELETE);
+                  deleteDto.setTransferType(org.iringtools.dxfr.dto.TransferType.DELETE);
                   resultDtoListItems.add(deleteDto);
                   break;
                 }
@@ -462,10 +462,10 @@ public class ESBService
                   else if (dti.getTransferType() == TransferType.SYNC)
                     poolDtoListItems.remove(j--);  // exclude SYNC DTOs
                   else
-                    sourceDto.setTransferType(org.iringtools.adapter.dto.TransferType.valueOf(dti.getTransferType().toString()));
+                    sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.valueOf(dti.getTransferType().toString()));
                 }
                 else
-                  sourceDto.setTransferType(org.iringtools.adapter.dto.TransferType.valueOf(dti.getTransferType().toString()));
+                  sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.valueOf(dti.getTransferType().toString()));
   
                 break;
               }
@@ -491,7 +491,7 @@ public class ESBService
         {
           DataTransferObject deleteDto = new DataTransferObject();
           deleteDto.setIdentifier(deleteDti.getIdentifier());
-          deleteDto.setTransferType(org.iringtools.adapter.dto.TransferType.DELETE);
+          deleteDto.setTransferType(org.iringtools.dxfr.dto.TransferType.DELETE);
           poolDtoListItems.add(deleteDto);
         }
 

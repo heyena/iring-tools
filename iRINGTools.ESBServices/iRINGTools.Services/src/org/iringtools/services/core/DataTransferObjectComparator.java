@@ -2,7 +2,7 @@ package org.iringtools.services.core;
 
 import java.util.Comparator;
 
-import org.iringtools.adapter.dto.DataTransferObject;
+import org.iringtools.dxfr.dto.DataTransferObject;
 
 public class DataTransferObjectComparator implements Comparator<DataTransferObject>
 {
