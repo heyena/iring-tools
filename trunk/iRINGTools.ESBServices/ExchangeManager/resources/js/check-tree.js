@@ -9,12 +9,34 @@
  * 
  */
 var reviewed,tree
+var dtoIdentifierVal,refClassIdentifierVal;   
 var relatedClassArr=new Array();
-
+pageSize= 1
 function showgrid(response, request,label,nodeid,gridType){
-        
+var identifier=0;
+var refClassIdentifier=0;
+if(gridType=='relatedClass'){
+	identifier=dtoIdentifierVal;
+	refClassIdentifier=refClassIdentifierVal;
+}
+	globalTreenode = tree.getSelectionModel().getSelectedNode();
+	if(globalTreenode!=null){
+		var obj = globalTreenode.attributes
+		var scopeId  = obj['Scope']
+		var nodeType = obj['node_type']
+		if((obj['node_type']=='exchanges' && obj['uid']!='')){
+			globalReq = 'dataObjects/getPageData/'+nodeType+'/'+scopeId+'/'+obj['uid']+'/'+identifier+'/'+refClassIdentifier
+			//globalLabel = scopeId+'->'+globalTreenode.text
+		}else if(obj['node_type']=='graph'){
+			globalLabel = scopeId+'->'+globalTreenode.parentNode.text+'->'+obj['text']
+			globalReq = 'dataObjects/getPageData/'+nodeType+'/'+scopeId+'/'+globalTreenode.parentNode.text+'/'+obj['text']
+		}
+	}
+	
+	//makeLablenURIS('get');
 	reviewed=true
 	var jsonData = Ext.util.JSON.decode(response);
+	
 	if(eval(jsonData.success)==false)
 	{
 		Ext.getCmp('centerPanel').disable();
@@ -26,134 +48,143 @@ function showgrid(response, request,label,nodeid,gridType){
 		});
 		return false;
 	}else{
-	var rowData = eval(jsonData.rowData);
-	var filedsVal = eval(jsonData.headersList);
-	var columnData = eval(jsonData.columnsData);
-        var classObjName = jsonData.classObjName;
+		var rowData = eval(jsonData.rowData);
+		var fieldList = eval(jsonData.headersList);
+		var headerList = eval(jsonData.columnsData);
+		var classObjName = jsonData.classObjName;
+		if(jsonData.relatedClasses!=undefined){
+			for(var i=0;i<jsonData.relatedClasses.length;i++){
+				var key = jsonData.relatedClasses[i].identifier;
+				var text = jsonData.relatedClasses[i].text;
+				relatedClassArr[i]=text;
+			}
+		}
 
-	for(var i=0;i<jsonData.relatedClasses.length;i++){
-		var key = jsonData.relatedClasses[i].identifier;
-		var text = jsonData.relatedClasses[i].text;
-		relatedClassArr[i]=text;
-	}
-        
-	var store = new Ext.data.ArrayStore({
-	fields: filedsVal
-	});
-	store.loadData(rowData);
+	
+	// build the header first
+	// send the request to generate the arraystore
 
-	if(grid){
-		alert('Going to destroy...')
-		grid.destroy();                                  
-	}
-	// create the Grid
-	var grid = new Ext.grid.GridPanel({
-	store: store,
-	columns: columnData,
-	stripeRows: true,
-	//viewConfig: {forceFit:true},
-	id:label,
-	loadMask: true,
-	layout:'fit',
-	frame:true,
-	autoSizeColumns: true,
-	autoSizeGrid: true,
-        AllowScroll : true,
-	minColumnWidth:100, 
-	columnLines: true,
-	classObjName:classObjName,
-	//autoWidth:true,
-        enableColumnMove:false,
-        listeners: {
-                 cellclick:{
-                       fn:function(grid,rowIndex,columnIndex,e){
-                           var cm    = this.colModel
-                           var record = grid.getStore().getAt(rowIndex);  // Get the Record
-                           
-                           var fieldName = grid.getColumnModel().getDataIndex(columnIndex); // Get field name
-                           if(fieldName=='Identifier' && record.get(fieldName)!=''){
-                                var IdentificationByTag_value = record.get(fieldName);
-                                var transferType_value = record.get('TransferType');
-                                var rowDataArr = []
-                                 for(var i=3; i<cm.getColumnCount();i++){
-                                     fieldHeader= grid.getColumnModel().getColumnHeader(i); // Get field name
-                                     fieldValue= record.get(grid.getColumnModel().getDataIndex(i))
+//globalReq
+//alert(globalReq)
+var proxy = new Ext.data.HttpProxy({
+api: {
+		read: new Ext.data.Connection({ url: globalReq, method: 'POST', timeout: 120000 }),
+		create: null,
+		update: null,
+		destroy: null
+	 }
+});
 
-                                     tempArr= Array(fieldHeader,fieldValue)
-                                     rowDataArr.push(tempArr)
-                                 }
+var reader = new Ext.data.JsonReader({
+totalProperty: 'total',
+successProperty: 'success',
+root: 'data',
+fields:fieldList
+});
 
-                                   var filedsVal_ = '[{"name":"Property"},{"name":"Value"}]'
-                                   var columnsData_='[{"id":"Property","header":"Property","width":144,"sortable":"true","dataIndex":"Property"},{"id":"Value","header":"Value","width":144,"sortable":"true","dataIndex":"Value"}]'
-                                   var prowData = eval(rowDataArr);
-                                   var pfiledsVal = eval(filedsVal_);
-                                   var pColumnData = eval(columnsData_);
-                                   // create the data store
-                                   var pStore = new Ext.data.ArrayStore({
-                                        fields: pfiledsVal
-                                   });
-                                   pStore.loadData(prowData);
-                                   showIndvidualClass(pStore,pColumnData,rowIndex)
-                                   Ext.get('identifier-class-detail').dom.innerHTML = '<div style="float:left; width:110px;"><img src="resources/images/class-badge.png"/></div><div style="padding-top:20px;" id="identifier"><b>'+removeHTMLTags(IdentificationByTag_value)+'</b><br/>'+grid.classObjName+'<br/>Transfer Type : '+transferType_value+'</div>'
-                            
+var store = new Ext.data.Store({
+				//autoLoad:true,
+				proxy: proxy,
+				reader: reader,
+				//sortInfo: { field: 'slno', direction: "DESC" },
+				autoLoad: {params:{start:0, limit:pageSize,identifier:identifier,refClassIdentifier:refClassIdentifier}},
+				baseParams: {
+						   //'getData': 'true'
+							'identifier':identifier,'refClassIdentifier':refClassIdentifier
+				},
 
-                                }
-			      }
-                             },
-                   beforeclose:function(){
-                         if(gridType!='relatedClass'){
-                          makeLablenURIS('delete')
-                          sendCloseRequest(globalReq,globalLabel);
-                         } // send request for delete cache
-		 }
-               },
-               
-	tbar: new Ext.Toolbar({
-	xtype: "toolbar",
-	items:[{
-		xtype:"tbbutton",
-                id:'gridReload',
-		icon:'resources/images/16x16/view-refresh.png',
-		tooltip:'Reload',
-		disabled: false,
-		handler:function(){	  
+			});
+store.load();
+
+var grid = new Ext.grid.GridPanel({
+store: store,
+columns: headerList,
+stripeRows: true,
+id:label,
+loadMask: true,
+layout:'fit',
+frame:true,
+autoSizeColumns: true,
+autoSizeGrid: true,
+AllowScroll : true,
+minColumnWidth:100, 
+columnLines: true,
+classObjName:classObjName,
+enableColumnMove:false,
+listeners: {
+cellclick:{
+fn:function(grid,rowIndex,columnIndex,e){
+	   var cm    = this.colModel
+				   var record = grid.getStore().getAt(rowIndex);  // Get the Record
+	   var fieldName = grid.getColumnModel().getDataIndex(columnIndex); // Get field name
+	   if(fieldName=='Identifier' && record.get(fieldName)!=''){
+		   var IdentificationByTag_value = record.get(fieldName);
+		   var transferType_value = record.get('TransferType');
+		   var rowDataArr = []
+							for(var i=3; i<cm.getColumnCount();i++){
+			   fieldHeader= grid.getColumnModel().getColumnHeader(i); // Get field name
+			   fieldValue= record.get(grid.getColumnModel().getDataIndex(i))
+
+						   tempArr= Array(fieldHeader,fieldValue)
+									rowDataArr.push(tempArr)
+		   }
+		   var filedsVal_ = '[{"name":"Property"},{"name":"Value"}]'
+							var columnsData_='[{"id":"Property","header":"Property","width":144,"sortable":"true","dataIndex":"Property"},{"id":"Value","header":"Value","width":144,"sortable":"true","dataIndex":"Value"}]'
+											 var prowData = eval(rowDataArr);
+		   var pfiledsVal = eval(filedsVal_);
+		   var pColumnData = eval(columnsData_);
+								   // create the data store
+		   var pStore = new Ext.data.ArrayStore({
+fields: pfiledsVal
+		   });
+		   pStore.loadData(prowData);
+		   showIndvidualClass(pStore,pColumnData,rowIndex)
+				   Ext.get('identifier-class-detail').dom.innerHTML = '<div style="float:left; width:110px;"><img src="resources/images/class-badge.png"/></div><div style="padding-top:20px;" id="identifier"><b>'+removeHTMLTags(IdentificationByTag_value)+'</b><br/>'+grid.classObjName+'<br/>Transfer Type : '+transferType_value+'</div>'
+	   }}
+		  },
+beforeclose:function(){
+			  if(gridType!='relatedClass'){
+				  makeLablenURIS('delete')
+				  sendCloseRequest(globalReq,globalLabel);
+			  } // send request for delete cache
+		  }
+	   },
+tbar: new Ext.Toolbar({
+xtype: "toolbar",
+items:[{
+xtype:"tbbutton",
+id:'gridReload',
+icon:'resources/images/16x16/view-refresh.png',
+tooltip:'Reload',
+disabled: false,
+handler:function(){	  
 		  makeLablenURIS('get');
 		  showCentralGrid(globalTreenode);
-                  // send Request to destroy session
-                }
+				  // send Request to destroy session
+	  }
 	   },{
-		xtype:"tbbutton",
-                id:'gridExchange',
-                text:'Exchange',
-		icon:'resources/images/16x16/go-send.png',
-		tooltip:'Exchange',
-		disabled: false,
-		handler:function(){        
-                   makeLablenURI();
-                   submitDataExchange(globalReq);
-                }
-	 }
-	]
-	})
-	});
+xtype:"tbbutton",
+id:'gridExchange',
+text:'Exchange',
+icon:'resources/images/16x16/go-send.png',
+tooltip:'Exchange',
+disabled: false,
+handler:function(){        
+		  makeLablenURI();
+		  submitDataExchange(globalReq);
+	  }
+	   }
+	   ]
+	   }),	   
+bbar: new Ext.PagingToolbar({
+pageSize: pageSize,
+store: store,
+displayInfo:true,
+autoScroll :true
+   })
+});
 
-        //make the text selectable in cells of Grid
-        Ext.override(Ext.grid.GridView, {
-        templates: {
-        cell: new Ext.Template(
-            '<td class="x-grid3-col x-grid3-cell x-grid3-td-{id} {css}" style="{style}" tabIndex="0" {cellAttr}>',
-            '<div class="x-grid3-cell-inner x-grid3-col-{id}" {attr}>{value}</div>',
-            "</td>"
-            )
-            }
-        });
-
-        if(Ext.getCmp('centerPanel').findById('tab-'+label)){
-                Ext.getCmp('centerPanel').remove(Ext.getCmp('centerPanel').findById('tab-'+label));
-        }
-		
-		
-	Ext.getCmp('centerPanel').add( 
+Ext.getCmp('centerPanel').add(
 	Ext.apply(grid,{
 	id:'tab-'+label,
 	text:nodeid,
@@ -161,15 +192,15 @@ function showgrid(response, request,label,nodeid,gridType){
 	closable:true
 	})).show();
 
-     if(gridType=='relatedClass'){
-         Ext.getCmp('gridReload').hide()
-         Ext.getCmp('gridExchange').hide()
-         
-    }else {}
-}
+if(gridType=='relatedClass'){
+	Ext.getCmp('gridReload').hide()
+	Ext.getCmp('gridExchange').hide()
 
+}else {}
 
 }
+}
+
 
 function sendAjaxRequest(requestURL,label,nodeid,gridType){
 	var w = Ext.getCmp('centerPanel').getActiveTab();
@@ -183,14 +214,15 @@ function sendAjaxRequest(requestURL,label,nodeid,gridType){
 		url : requestURL,
 		method: 'POST',
 		params: {
-		/*nodeid: node.id,
+		limit: pageSize
+		/*limit: node.id,
 		newparentid: newParent.id,
 		oldparentid: oldParent.id,
 		dropindex: index
 		*/
 		},
 		success: function(result, request)
-		{ 
+		{
 			showgrid(result.responseText,request,label,nodeid,gridType);
 		},
 		failure: function ( result, request){ 
@@ -199,6 +231,8 @@ function sendAjaxRequest(requestURL,label,nodeid,gridType){
 		callback: function() {
 			if(w){
 				w.getEl().unmask()
+				//alert(w.getEl())
+				//alert('came here'+w)
 			}else{
 				Ext.getBody().unmask();
 			}
@@ -225,7 +259,7 @@ Ext.onReady(function(){
 		   {
 			// For open button
 			xtype:"tbbutton",
-                        text:'Open',
+            text:'Open',
 			icon:'resources/images/16x16/document-open.png',
 			id: 'headExchange',
 			tooltip:'Open',
@@ -499,8 +533,7 @@ function showResultPanel(jsonData){
 			}
 }
 
-function showCentralGrid(node)
-{
+function showCentralGrid(node){
 	var obj = node.attributes
 			  var eid
 			  var label
@@ -582,16 +615,17 @@ function makeLablenURI(){
 function makeLablenURIS(type){
 	//alert('tab id:'+Ext.getCmp('centerPanel').getActiveTab().id)
 	// setting the node id in text of during the Result Grid creation
-	var nodeid = Ext.getCmp('centerPanel').getActiveTab().text;
+	if(Ext.getCmp('centerPanel').getActiveTab()){
+		var nodeid = Ext.getCmp('centerPanel').getActiveTab().text;
 	if(nodeid){
 		tree.getSelectionModel().select(tree.getNodeById(nodeid));
+	}
 	}
 	globalTreenode = tree.getSelectionModel().getSelectedNode();
 	if(globalTreenode!=null){
 		var obj = globalTreenode.attributes
 	    var scopeId  = obj['Scope']
 		var nodeType = obj['node_type']
-
 		if((obj['node_type']=='exchanges' && obj['uid']!='')){
 			globalReq = 'dataObjects/'+type+'DataObjects/'+nodeType+'/'+scopeId+'/'+obj['uid']
 			globalLabel = scopeId+'->'+globalTreenode.text
@@ -710,27 +744,26 @@ function removeHTMLTags(strInputCode){
     return strTagStrippedText
 
 }
+
 function sendCloseRequest(requestURL,label){
- 
-Ext.Ajax.request({
-url : requestURL,
-method: 'POST',
-//params: {},
-success: function(result, request)
-	  {
-		//alert(result.responseText)
-	  },
-failure: function ( result, request){ 
-		//	  alert(result.responseText); 
-		  },
-callback: function() {}
-	})
+		Ext.Ajax.request({
+		url : requestURL,
+		method: 'POST',
+		//params: {},
+		success: function(result, request){
+				  //alert(result.responseText)
+			  },
+		failure: function ( result, request){ 
+				//	  alert(result.responseText);
+			  },
+		callback: function() {}
+		})
 }
+
 
 // Used to display the Related Class Grid
 function displayRleatedClassGrid(refClassIdentifier,dtoIdentifier,relatedClassName){
     selTreenode = tree.getSelectionModel().getSelectedNode() 
-
     if(selTreenode!=null){
         var obj = selTreenode.attributes
         var nId  = obj['id']
@@ -738,7 +771,8 @@ function displayRleatedClassGrid(refClassIdentifier,dtoIdentifier,relatedClassNa
         var nodeType = obj['node_type']
         var exchangeId = obj['uid']
     }
-
+	refClassIdentifierVal=refClassIdentifier
+	dtoIdentifierVal=dtoIdentifier
     requestURL = 'dataObjects/getRelatedDataObjects/exchanges/'+scopeId+'/'+exchangeId+'/'+dtoIdentifier+'/'+refClassIdentifier
     label = relatedClassName    
     //nodeid= tree.getSelectionModel().getSelectedNode()
@@ -746,4 +780,3 @@ function displayRleatedClassGrid(refClassIdentifier,dtoIdentifier,relatedClassNa
     Ext.getCmp('indvidual-class').close();
     sendAjaxRequest(requestURL,label,nId,'relatedClass')
 }
-
