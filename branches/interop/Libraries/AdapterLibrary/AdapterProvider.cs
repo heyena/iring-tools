@@ -318,7 +318,7 @@ namespace org.iringtools.adapter
       {
         status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
 
-        if (!mappingXml.Name.NamespaceName.Contains("schemas.datacontract.org"))
+        if (mappingXml.Name.NamespaceName.Contains("schemas.datacontract.org"))
         {
           status.Messages.Add("Detected old mapping. Attempting to convert it...");
 

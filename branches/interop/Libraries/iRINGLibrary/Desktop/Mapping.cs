@@ -138,6 +138,8 @@ namespace org.iringtools.common.mapping
     public void AddClassMap(RoleMap roleMap, ClassMap classMap)
     {
       ClassTemplateMap classTemplateListMap = GetClassTemplateMap(classMap.ClassId);
+      if (classTemplateListMap == null)
+        classTemplateListMap = new ClassTemplateMap();
 
       if (classTemplateListMap.ClassMap == null)
       {

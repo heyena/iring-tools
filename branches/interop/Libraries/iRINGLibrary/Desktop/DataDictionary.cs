@@ -39,7 +39,7 @@ namespace org.iringtools.library
       DataObjects = new List<DataObject>();
     }
 
-    [DataMember]
+    [DataMember(Name = "dataObjects")]
     public List<DataObject> DataObjects { get; set; }
   }
 
