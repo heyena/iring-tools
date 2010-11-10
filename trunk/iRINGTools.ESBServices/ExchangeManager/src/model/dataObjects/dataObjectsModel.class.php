@@ -10,31 +10,49 @@ class dataObjectsModel{
 	private $dtiUrl;
 	private $dtoUrl;
 	private $dtiXMLData;
-	private $nodeType,$uriParams,$cacheKey,$cacheDTI;
+	private $nodeType,$uriParams;
+	private $cacheKey,$dtocacheKey,$cacheDTI;
 	private $rdlArray=array();
 	function __construct(){
 	}
 
+	/* This function will assign different types of keys[e.g. $cacheKey,$dtocacheKey,$cacheDTI] depending on the nodetype
+	 * Call this function when we want to check the key of Particular type
+	 */
+	private function setCacheKey($params,$type=null){
+		$this->nodeType=$params['nodetype'];
+		switch($this->nodeType){
+			case "exchanges":
+				$this->cacheKey = $type.''.$params['scope'].'_'.$params['nodetype'].'_'.$params['exchangeID'];
+				$this->dtocacheKey = $type.''.'dto_'.$params['scope'].'_'.$params['nodetype'].'_'.$params['exchangeID'];
+				break;
+			case "graph":
+				$this->cacheKey = $type.''.$params['scope'].'_'.$params['applname'].'_'.$params['graphs'];
+				$this->dtocacheKey = $type.''.'dto_'.$params['scope'].'_'.$params['applname'].'_'.$params['graphs'];
+				break;
+		}
+
+	}
+	
 	private function buildWSUri($params){
-           
 		$this->nodeType=$params['nodetype'];
 		switch($this->nodeType){
 			case "exchanges":
 				if(isset($params['hasreviewed'])){
 					$append ='/submit';
 					$this->dtiSubmitUrl = DXI_REQUEST_URL.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'].$append;
-					//$this->dtiSubmitUrl = APP_REQUEST_URI;
+					//$this->dtiSubmitUrl = DXI_SUBMIT_REQUEST_URL;
 					
 				}
 				$this->dtiUrl = DXI_REQUEST_URL.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'];
 				$this->dtoUrl = DXO_REQUEST_URL.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'];
-				$this->cacheKey = $params['scope'].'_'.$params['nodetype'].'_'.$params['exchangeID'];
+				$this->setCacheKey($params);
 				break;
 
 			case "graph":
 				$this->dtiUrl = APP_REQUEST_URI.'/'.$params['scope'].'/'.$params['applname'].'/'.$params['graphs'];
 				$this->dtoUrl = APP_REQUEST_URI.'/'.$params['scope'].'/'.$params['applname'].'/'.$params['graphs'].'/page';
-				$this->cacheKey = $params['scope'].'_'.$params['applname'].'_'.$params['graphs'];
+				$this->setCacheKey($params);
 				break;
 		}
 
@@ -48,12 +66,12 @@ class dataObjectsModel{
 	function setDataObjects($params){
 		$this->buildWSUri($params);
 		$this->dtiXMLData = $this->getCacheData();
-                
+
 		// checking the dti from cache
 		if(($this->dtiXMLData!=false)&&(!empty($this->dtiXMLData))){
-				$replaceString = str_replace('<dataTransferIndices xmlns="http://iringtools.org/adapter/dti">','<xr:exchangeRequest xmlns="http://iringtools.org/adapter/dti" xmlns:xr="http://iringtools.org/common/request"><xr:dataTransferIndices>',$this->dtiXMLData);
+			//$replaceString = str_replace('<dataTransferIndices xmlns="http://iringtools.org/adapter/dti">','<xr:exchangeRequest xmlns="http://iringtools.org/adapter/dti" xmlns:xr="http://iringtools.org/common/request"><xr:dataTransferIndices>',$this->dtiXMLData);
+				$replaceString = str_replace('<dataTransferIndices xmlns="http://iringtools.org/adapter/dti">','<xr:exchangeRequest xmlns="http://www.iringtools.org/dxfr/dti" xmlns:xr="http://www.iringtools.org/dxfr/requests"><xr:dataTransferIndices>',$this->dtiXMLData);
 				$sendXmlData = str_replace("</dataTransferIndices>","</xr:dataTransferIndices><xr:reviewed>".$params['hasreviewed']."</xr:reviewed></xr:exchangeRequest>", $replaceString);
-				
 				$curlObj = new curl($this->dtiSubmitUrl);
 				$curlObj->setopt(CURLOPT_POST, 1);
 				$curlObj->setopt(CURLOPT_HTTPHEADER, Array("Content-Type: application/xml"));
@@ -94,8 +112,6 @@ class dataObjectsModel{
 			//*** echo json_encode(array("success"=>"false","response"=>"Please Try again.. Cache destroyed"));
 		}
 	}
-
-
 	private function getDataxchangeResult($fetchedData){
 		$xmlIterator = new SimpleXMLIterator($fetchedData);
 		$resultArr=array();
@@ -129,6 +145,8 @@ class dataObjectsModel{
 		if(isset($_SESSION['dti_detail'][$this->cacheKey]))
 		{
 			unset($_SESSION['dti_detail'][$this->cacheKey]);
+			unset($_SESSION[$this->dtocacheKey]);
+			unset($_SESSION[$this->dtocacheKey.'_dtoCounts']);
 			return true;
 		}else{
 			return false;
@@ -176,7 +194,7 @@ class dataObjectsModel{
 	}
 
 	/*
-	 * @params : exchangeID
+	 * @params : array of exchangeID,scopeid,nodetype,limit
 	 */
 
 	function getDataObjects($params)
@@ -193,7 +211,7 @@ class dataObjectsModel{
 				session and if its there then fetch from
 				session or else send the request to get the dti info
 			*/
-		
+
 		if(($this->dtiXMLData!=false)&&(!empty($this->dtiXMLData))){
 			$dxoResponse = $this->getDXOInfo($this->uriParams,$this->dtiXMLData);
 			if(($dxoResponse!=false) && ($dxoResponse!='')){
@@ -244,20 +262,173 @@ class dataObjectsModel{
 		
 	}
 
+
+	/**
+	 * This function used to traversing the Class Objects of a particular DataTransferObject
+	 *
+	 * @param three(Object,Object,Object)
+	 * @returns Array
+	 * @access public
+	 */
+	function classObjectsTraverse($dataTransferObject,$classObject,$mainClassObject){
+		$headerNamesArray=array();
+		$classReferenceArray=array();
+		$tempRoleValueArray=Array();
+		$tempClassReferenceArray=array();
+
+		// Traverse each templateObjects under the Main classObject
+		foreach($classObject->templateObjects->templateObject as $templateObject)
+		{
+
+					// iterate Role objects under each template
+			$tempRoleObjectNameArray = array();
+			foreach($templateObject->roleObjects->children() as $roleObject)
+			{
+				$tempKey='';
+				if(stristr((string)$roleObject->type,'Reference') && ((strpos($roleObject->value, '#'))===0))
+				{
+
+					$refClassIdentifier  = ltrim((string)$roleObject->value,'#');//(string)substr($roleObject->value, 1, -1);
+					$dtoIdentifier = (string)$dataTransferObject->identifier;
+					$relatedClassName = (string)$roleObject->relatedClassName;
+
+					$key = "'".$dtoIdentifier."'";
+					$value = '<div class="x-panel-header x-accordion-hd" style="cursor:pointer"><a href="#" style="cursor:pointer;text-decoration:none" onClick="displayRleatedClassGrid(\''.$refClassIdentifier.'\',\''.$dtoIdentifier.'\',\''.$relatedClassName.'\')">'.$relatedClassName.'</a></div>';
+					if(isset($tempClassReferenceArray[$key])){
+						$tempClassReferenceArray[$key] = ''.$value.''.$tempClassReferenceArray[$key];
+					}
+					else{
+						$tempClassReferenceArray[$key]=$value;
+					}
+				}
+				if(stristr($roleObject->type,'Property'))
+				{
+					$tempRoleObjectNameArray[]="$roleObject->name";
+					$tempKey = (string)$templateObject->name.'.'.(string)$roleObject->name;
+
+					$spanColor='';
+					switch (strtolower((string)$dataTransferObject->transferType))
+					{
+						case "add":
+							$spanColor='red';
+							break;
+						case "change":
+							$spanColor='blue';
+							break;
+						case "delete":
+							$spanColor='green';
+							break;
+						case "sync":
+							$spanColor='black';
+							break;
+					}
+
+									// We are adding custom keys to the array
+					if($this->nodeType=='exchanges'){
+						$tempRoleValueArray['TransferType']='<span style="cursor:pointer;color:'.$spanColor.'">'.(string)$dataTransferObject->transferType.'</span>';
+						$tempRoleValueArray['Identifier']  ='<span style="color:'.$spanColor.';cursor: pointer;text-decoration: underline">'.(string)$dataTransferObject->identifier.'</span>';
+					}
+
+											// condition to check if the transferType is change for role->type
+					if($dataTransferObject->transferType=='Change')
+					{
+						$value='';
+						$oldvalue='';
+						$convertedvalue='';
+						$convertedoldValue='';
+
+						if(isset($roleObject->value)){
+							$value=(string)$roleObject->value;
+						}
+						if(isset($roleObject->oldValue)){
+							$oldvalue=(string)$roleObject->oldValue;
+						}
+
+											// call and store the rdl values by checking the value contains rdl:
+						$convertedvalue = (stristr($value,'rdl:')) ? $this->stroreRdlValues($value,substr($value,4)):$value;
+						$convertedoldValue = (stristr($oldvalue,'rdl:')) ? $this->stroreRdlValues($oldvalue,substr($oldvalue,4)):$oldvalue;
+
+											// if there is any difference between old and new then represent as old->new
+
+						if($convertedoldValue!=$convertedvalue){
+															//if($oldvalue!='' && $value!=''){
+							$tempRoleValueArray[$tempKey]='<span style="cursor:pointer;color:'.$spanColor.'">'.$convertedoldValue.'->'.$convertedvalue.'</span>';
+															//}else{
+																	//$tempRoleValueArray[$tempKey]='<span style="color:'.$spanColor.'">'.$oldvalue.$value.'</span>';
+															//}
+
+						}else{
+							$tempRoleValueArray[$tempKey]=$convertedoldValue;
+						}
+					}else{
+						$convertedvalue = (stristr((string)$roleObject->value,'rdl:')) ? $this->stroreRdlValues((string)$roleObject->value,substr((string)$roleObject->value,4)):(string)$roleObject->value;
+						$tempRoleValueArray[$tempKey]='<span style="cursor:pointer;color:'.$spanColor.'">'.$convertedvalue.'</span>';
+					}
+					unset($tempKey);
+				}
+			}
+
+					// condition to make the Header & Row
+			if(count($tempRoleObjectNameArray)>1){
+				foreach($tempRoleObjectNameArray as $key=>$val){
+					$headerNamesArray[]=(string)$templateObject->name.'.'.$val;
+				}
+			}else if(count($tempRoleObjectNameArray)==1){
+
+				$headerNamesArray[]=(string)$templateObject->name;
+
+							/*
+                                    Check the $tempRoleValueArray that store the value of role with "concanated key"
+                                    We need to modify that "concanated key" with originalheader
+                             */
+				foreach($tempRoleObjectNameArray as $key=>$val){
+					$keyname = (string)$templateObject->name.'.'.$val;
+					if(array_key_exists($keyname,$tempRoleValueArray)){
+						$tempRoleValueArray["$templateObject->name"]=$tempRoleValueArray[$keyname];
+						unset($tempRoleValueArray[$keyname]);
+					}
+				}
+
+			}
+			unset($tempRoleObjectNameArray);
+		}
+
+
+		$key="'".(string)$dataTransferObject->identifier."'";
+		if(isset($tempClassReferenceArray["'".$dataTransferObject->identifier."'"])){
+			$classReferenceLabelArray=array("identifier"=>(string)$dataTransferObject->identifier,"text"=>$tempClassReferenceArray["'".$dataTransferObject->identifier."'"]);
+		}else{
+			$classReferenceLabelArray=array("identifier"=>(string)$dataTransferObject->identifier,"text"=>'');
+		}
+		$returnArray=array('headerNamesArray'=>$headerNamesArray,'tempRoleValueArray'=>$tempRoleValueArray,'classReferenceArray' =>$classReferenceLabelArray);
+
+		return $returnArray;
+	}
+	
 	private function createJSONDataFormat($fetchedData){
 		$xmlIterator = new SimpleXMLIterator($fetchedData);
 		$resultArr="";
-		$dataTransferObjects = $xmlIterator->dataTransferObject;
 
+		//echo '<pre>';
+		//print_r($xmlIterator);
+		
+		//$dataTransferObjects = $xmlIterator->dataTransferObject;
+		$dataTransferObjects = $xmlIterator->dataTransferObjectList->dataTransferObject;
 		// Total no of datatransferobject elements found
 		$dtoCounts  = count($dataTransferObjects);
 
 		$headerNamesArray=array();
 		$headerListDataArray = array();
 		$rowsArray=array();
+		
+		/* This array $gridRowsArray will store all rows of a dto-response
+		 * This will be stored as session variable
+		*/
+		$gridRowsArray = array();
 		$classReferenceArray=array();
-                $classObjectName='';
+        $classObjectName='';
 
+		$dtoCnter=0;
 		foreach($dataTransferObjects as $dataTransferObject)
 		{
 			$i=0;
@@ -270,7 +441,7 @@ class dataObjectsModel{
 				{
                                     $classObjectName = (string)$classObject->name;
                                     $mainClassObject = 0;
-                                    $returnArray = $this -> classObjectsTraverse($dataTransferObject,$classObject,$mainClassObject);
+                                    $returnArray = $this->classObjectsTraverse($dataTransferObject,$classObject,$mainClassObject);
                                     $tempRoleValueArray = $returnArray['tempRoleValueArray'];
                                     $headerNamesArray = $returnArray['headerNamesArray'];
                                     $classReferenceArray[] = $returnArray['classReferenceArray'];
@@ -286,51 +457,64 @@ class dataObjectsModel{
 			unset($tempRoleValueArray);
 		}
 
+		
 		if($this->nodeType=='exchanges'){
 			$customListArray=array('TransferType','Identifier');
 		}else{
 			$customListArray=array();
 		}
-
 		$headerArrayList = array_merge($customListArray,array_values((array_unique($headerNamesArray))));
-		
 		unset($customListArray);
 		unset($headerNamesArray);
-
 		$rowsDataArray = array();
 		$columnsDataArray = array();
 
 		/*
-		 Loop over each row to genrate the json format required to display rows in grid
+		 Loop over each row to genrate the json format required to display
+		 rows in grid
 		*/
-
 		
 		for($i=0;$i<count($rowsArray);$i++){
-
 			for($j=0;$j<count($headerArrayList);$j++){
 				$headerName = $headerArrayList[$j];
-
+				
 				if(array_key_exists($headerName,$rowsArray[$i])){
 					$rowsDataArray[$i][]=$rowsArray[$i][$headerName];
-				}else
-				{
+					/* The required format for JSON Reader is underscore supported so we are changing . with _ */
+					$gridRowsArray[$i][str_replace(".", "_", $headerName)]=$rowsArray[$i][$headerName];
+				}else{
 					$rowsDataArray[$i][]='';
+					/* The required format for JSON Reader is underscore supported so we are changing . with _ */
+					$gridRowsArray[$i][str_replace(".", "_", $headerName)]='';
 				}
+				
 			}
 		}
 
+		/* Store the $gridRowsArray that contains all rows for a dto inside session. This will be used to fetch the records page wise in getPageData() function  */
+		if(is_array($rowsDataArray) && !empty($rowsDataArray)){
+			@session_start();
+			//$_SESSION['Page_no']=$gridRowsArray;
+			//echo '<br>key:  '. $this->dtocacheKey;
+			
+			if(!isset($_SESSION[$this->dtocacheKey])){
+				$_SESSION[$this->dtocacheKey]=$gridRowsArray;
+				$_SESSION[$this->dtocacheKey.'_dtoCounts']=$dtoCounts;
+			}
+			unset($gridRowsArray);
+		}
+		
 
 		if($this->nodeType=='exchanges'){
-		$headerListDataArray[]=array('name'=>'Identifier','name'=>'TransferType');
+			$headerListDataArray[]=array('name'=>'Identifier','name'=>'TransferType');
 		}
 		
 		foreach($headerArrayList as $key =>$val){
 			$headerListDataArray[]=array('name'=>str_replace(".", "_", $val));
 			$columnsDataArray[]=array('id'=>str_replace(".", "_", $val),'header'=>$val,'width'=>(strlen($val)<20)?110:strlen($val)+130,'sortable'=>'true','dataIndex'=>str_replace(".", "_", $val));
 		}
-
-                //$relatedClasses = array('Listing'=>$classReferenceArray);
-		echo json_encode(array("classObjName"=>$classObjectName,'relatedClasses'=>$classReferenceArray,"success"=>"true","cacheData"=>$this->cacheDTI,"rowData"=>json_encode($rowsDataArray),"columnsData"=>json_encode($columnsDataArray),"headersList"=>(json_encode($headerListDataArray))));
+		//**** echo json_encode(array("classObjName"=>$classObjectName,'relatedClasses'=>$classReferenceArray,"success"=>"true","cacheData"=>$this->cacheDTI,"rowData"=>json_encode($rowsDataArray),"columnsData"=>json_encode($columnsDataArray),"headersList"=>(json_encode($headerListDataArray))));
+		echo json_encode(array("classObjName"=>$classObjectName,'relatedClasses'=>$classReferenceArray,"success"=>"true","cacheData"=>$this->cacheDTI,"columnsData"=>json_encode($columnsDataArray),"headersList"=>(json_encode($headerListDataArray))));
 		unset($jsonrowsArray);
 		unset($rowsArray);
 		unset($headerArrayList);
@@ -338,6 +522,45 @@ class dataObjectsModel{
 
 	}
 
+	/* This function is used to return the json formated data to generate the grid using start and limit for Pagingtool
+	 * We have already stored all records as an array inside session variables during the getDataObject() call.
+	 * Depending on the start and limit parameters we will fetch the records from the  array that already stored inside a session
+	 * As we have stored the records with unique key for each dto we should fetch the corresponding key and that can happen using  $this->setCacheKey($params) function
+	 * setCacheKey($params) function builds and assigns the key using @params 
+	 */
+
+	function getPageData($params,$start,$limit,$identifier,$refClassIdentifier){
+		// call the function  setCacheKey to get the dtocacheKey
+		$this->setCacheKey($params);
+		//echo '<br>key: '.$this->dtocacheKey;
+		@session_start();
+
+		//echo $identifier.'  =========== '.$refClassIdentifier;
+		
+		if($identifier!=0 && $refClassIdentifier!=0){
+			$gridArray = $_SESSION['rel_'.$this->dtocacheKey.'_'.$identifier.'_'.$refClassIdentifier];
+			$total = $_SESSION['rel_'.$this->dtocacheKey.'_'.$identifier.'_'.$refClassIdentifier.'_dtoCounts'];
+		}else{
+			$gridArray = $_SESSION[$this->dtocacheKey];
+			$total = $_SESSION[$this->dtocacheKey.'_dtoCounts'];
+		}
+
+		//echo '<pre>';
+		//print_r($gridArray);
+
+		if(is_array($gridArray)){
+			for($i=$start;$i<$start+$limit;$i++){
+				if(isset($gridArray[$i])){
+					$result[]=$gridArray[$i];
+				}
+			}
+			$responseArray = array("success"=>"true","total"=>$total,"data"=>$result);
+		}else{
+			$responseArray = array("success"=>"false");
+		}
+		return json_encode($responseArray);//strip_tags(json_encode($_SESSION['dto_detail']['Page_'.$pageno]));
+	}
+	
 	function deleteDataObjects($params)
 	{
 		$this->buildWSUri($params);
@@ -366,383 +589,247 @@ class dataObjectsModel{
 		return $this->validateResponseCode($curlObj,$fetchedData);
 	}
 
-        /**
+     /**
 	 * Convert XML to required JSON format for the Related Items Grid.
 	 *
 	 * @param two(String,String)
 	 * @returns JSON string
 	 * @access public
 	 */
-        function getRelatedDataObjects($params){
-
+    function getRelatedDataObjects($params){
                 $identifier=$params['dtoIdentifier'];
                 $reference =$params['referenceClassIdentifier'];
-                
                 $this->buildWSUri($params);
-		
                 $this->dtiXMLData = $this->getCacheData();
-
                 $found =0;      // used to exit from the classObjects loop
+				$headerNamesArray=array();
+				$headerListDataArray = array();
+				$rowsArray=array();
+				$gridRowsArray = array();
 
-		$headerNamesArray=array();
-		$headerListDataArray = array();
-		$rowsArray=array();
+                 /*
+				 * check the dto exists in cache
+                 */
 
-                /*
-		* check the dto exists in cache
-                */
-
-                if(($this->dtiXMLData!=false)&&(!empty($this->dtiXMLData))){
+            if(($this->dtiXMLData!=false)&&(!empty($this->dtiXMLData))){
 			$dxoResponse = $this->getDXOInfo($this->uriParams,$this->dtiXMLData);
 			if(($dxoResponse!=false) && ($dxoResponse!='')){
-				
-                            $xmlIterator = new SimpleXMLIterator($dxoResponse);
-                            $resultArr="";
-                            $dataTransferObjects = $xmlIterator->dataTransferObject;
 
-                                /*
-                                * start processing the xml file from cache
-                                * marchalling for generate the requiered grid.
-                                */
-                                foreach($dataTransferObjects as $dataTransferObject)
-                                {
-                                   if($found==1)  break; // if identifier of classObjects found then there is no need to traverse further
+		  $xmlIterator = new SimpleXMLIterator($dxoResponse);
+		  $resultArr="";
+		  $dataTransferObjects = $xmlIterator->dataTransferObjectList->dataTransferObject;
+		  $dtoCounts  = 1;//count($dataTransferObjects);
 
-                                    // pick the <datatransferobject> that has same $identifier
-                                    if($dataTransferObject->identifier == $identifier && $found==0){
+          /*
+          * start processing the xml file from cache
+          * marchalling for generate the requiered grid.
+          */
+          foreach($dataTransferObjects as $dataTransferObject)
+          {
+             if($found==1)  break; // if identifier of classObjects found then there is no need to traverse further
 
-
-                                        $i=0;
-                                        foreach($dataTransferObject->classObjects->children() as $classObject)
-                                        {
-                                            if($found==1)  break; // if identifier of classObjects found then there is no need to traverse further
-                                                $i++;
+              // pick the <datatransferobject> that has same $identifier
+              if($dataTransferObject->identifier == $identifier && $found==0){
 
 
-                                                if($i>1 && $classObject->identifier == $reference)
-                                                {
-
-                                                   $found=1;
-
-                                                    // Traverse each templateObjects under the classObject rather than Main
-                                                        foreach($classObject->templateObjects->templateObject as $templateObject)
-                                                        {
-
-                                                                // iterate Role objects under each template
-
-                                                                $tempRoleObjectNameArray = array();
-
-                                                                foreach($templateObject->roleObjects->children() as $roleObject)
-                                                                {
-
-                                                                        $tempKey='';
-
-                                                                        if(stristr($roleObject->type,'Property'))
-                                                                        {
-                                                                                $tempRoleObjectNameArray[]="$roleObject->name";
-                                                                                $tempKey = (string)$templateObject->name.'.'.(string)$roleObject->name;
-
-                                                                                $spanColor='';
-                                                                                switch (strtolower((string)$dataTransferObject->transferType))
-                                                                                {
-                                                                                        case "add":
-                                                                                                $spanColor='red';
-                                                                                                break;
-                                                                                        case "change":
-                                                                                                $spanColor='blue';
-                                                                                                break;
-                                                                                        case "delete":
-                                                                                                $spanColor='green';
-                                                                                                break;
-                                                                                        case "sync":
-                                                                                                $spanColor='black';
-                                                                                                break;
-                                                                                }
-
-                                                                                // We are adding custom keys to the array
-                                                                                if($this->nodeType=='exchanges'){
-                                                                                        $tempRoleValueArray['TransferType']='<span style="cursor:pointer;color:'.$spanColor.'">'.(string)$dataTransferObject->transferType.'</span>';
-                                                                                }
-
-                                                                                // condition to check if the transferType is change for role->type
-                                                                                if($dataTransferObject->transferType=='Change')
-                                                                                {
-                                                                                        $value='';
-                                                                                        $oldvalue='';
-                                                                                        $convertedvalue='';
-                                                                                        $convertedoldValue='';
-
-                                                                                        if(isset($roleObject->value)){
-                                                                                                $value=(string)$roleObject->value;
-                                                                                        }
-                                                                                        if(isset($roleObject->oldValue)){
-                                                                                                $oldvalue=(string)$roleObject->oldValue;
-                                                                                        }
-
-                                                                                        // call and store the rdl values by checking the value contains rdl:
-                                                                                        $convertedvalue = (stristr($value,'rdl:')) ? $this->stroreRdlValues($value,substr($value,4)):$value;
-                                                                                        $convertedoldValue = (stristr($oldvalue,'rdl:')) ? $this->stroreRdlValues($oldvalue,substr($oldvalue,4)):$oldvalue;
-
-                                                                                        // if there is any difference between old and new then represent as old->new
-
-                                                                                        if($convertedoldValue!=$convertedvalue){
-                                                                                                        //if($oldvalue!='' && $value!=''){
-                                                                                                $tempRoleValueArray[$tempKey]='<span style="cursor:pointer;color:'.$spanColor.'">'.$convertedoldValue.'->'.$convertedvalue.'</span>';
-                                                                                                        //}else{
-                                                                                                                //$tempRoleValueArray[$tempKey]='<span style="color:'.$spanColor.'">'.$oldvalue.$value.'</span>';
-                                                                                                        //}
-
-                                                                                        }else{
-                                                                                                $tempRoleValueArray[$tempKey]=$convertedoldValue;
-                                                                                        }
-                                                                                }else{
-                                                                                        $convertedvalue = (stristr((string)$roleObject->value,'rdl:')) ? $this->stroreRdlValues((string)$roleObject->value,substr((string)$roleObject->value,4)):(string)$roleObject->value;
-                                                                                        $tempRoleValueArray[$tempKey]='<span style="cursor:pointer;color:'.$spanColor.'">'.$convertedvalue.'</span>';
-                                                                                }
-                                                                                unset($tempKey);
-                                                                        }
-                                                                }
-
-                                                                // condition to make the Header & Row
-                                                                if(count($tempRoleObjectNameArray)>1){
-                                                                        foreach($tempRoleObjectNameArray as $key=>$val){
-                                                                                $headerNamesArray[]=(string)$templateObject->name.'.'.$val;
-                                                                        }
-                                                                }else if(count($tempRoleObjectNameArray)==1){
-
-                                                                        $headerNamesArray[]=(string)$templateObject->name;
-
-                                                                        /*
-                                                                                Check the $tempRoleValueArray that store the value of role with "concanated key"
-                                                                                We need to modify that "concanated key" with originalheader
-                                                                         */
-                                                                        foreach($tempRoleObjectNameArray as $key=>$val){
-                                                                                $keyname = (string)$templateObject->name.'.'.$val;
-                                                                                if(array_key_exists($keyname,$tempRoleValueArray)){
-                                                                                        $tempRoleValueArray["$templateObject->name"]=$tempRoleValueArray[$keyname];
-                                                                                        unset($tempRoleValueArray[$keyname]);
-                                                                                }
-                                                                        }
-
-                                                                }
-                                                                unset($tempRoleObjectNameArray);
-                                                        }
-
-                                                        $rowsArray[]=$tempRoleValueArray;
-                                                        unset($tempRoleValueArray);
-                                                        break;
-                                                }
-                                        }
-
-                                        //$rowsArray[]=$tempRoleValueArray;
-                                        //unset($tempRoleValueArray);
-
-                                    }
-                                }
-                                
-                                if($this->nodeType=='exchanges'){
-                                        $customListArray=array('TransferType');
-                                }else{
-                                        $customListArray=array();
-                                }
-
-                                $headerArrayList = array_merge($customListArray,array_values((array_unique($headerNamesArray))));
-                                
-                                unset($customListArray);
-                                unset($headerNamesArray);
-
-                                $rowsDataArray = array();
-                                $columnsDataArray = array();
-
-                                /*
-                                 * Loop over each row to genrate the json format required to display rows in grid
-                                */
-
-                                
-                                for($i=0;$i<count($rowsArray);$i++){
-
-                                        for($j=0;$j<count($headerArrayList);$j++){
-                                                $headerName = $headerArrayList[$j];
-
-                                                if(array_key_exists($headerName,$rowsArray[$i])){
-                                                        $rowsDataArray[$i][]=$rowsArray[$i][$headerName];
-                                                }else
-                                                {
-                                                        $rowsDataArray[$i][]='';
-                                                }
-                                        }
-                                }
+                  $i=0;
+                  foreach($dataTransferObject->classObjects->children() as $classObject)
+                  {
+					  if($found==1)  break; // if identifier of classObjects found then there is no need to traverse further
+					  $i++;
 
 
-                                if($this->nodeType=='exchanges'){
-                                $headerListDataArray[]=array('name'=>'TransferType');
-                                }
+					  if($i>1 && $classObject->identifier == $reference){
 
-                                foreach($headerArrayList as $key =>$val){
-                                        $headerListDataArray[]=array('name'=>str_replace(".", "_", $val));
-                                        $columnsDataArray[]=array('id'=>str_replace(".", "_", $val),'header'=>$val,'width'=>(strlen($val)<20)?100:strlen($val)+120,'sortable'=>'true','dataIndex'=>str_replace(".", "_", $val));
-                                }
+						  $found=1;
+
+                   // Traverse each templateObjects under the classObject rather than Main
+            foreach($classObject->templateObjects->templateObject as $templateObject)
+            {
+
+                    // iterate Role objects under each template
+
+                    $tempRoleObjectNameArray = array();
+
+                    foreach($templateObject->roleObjects->children() as $roleObject)
+                    {
+
+                 $tempKey='';
+
+                 if(stristr($roleObject->type,'Property'))
+                 {
+                         $tempRoleObjectNameArray[]="$roleObject->name";
+                         $tempKey = (string)$templateObject->name.'.'.(string)$roleObject->name;
+
+                         $spanColor='';
+                         switch (strtolower((string)$dataTransferObject->transferType))
+                         {
+                      case "add":
+                              $spanColor='red';
+                              break;
+                      case "change":
+                              $spanColor='blue';
+                              break;
+                      case "delete":
+                              $spanColor='green';
+                              break;
+                      case "sync":
+                              $spanColor='black';
+                              break;
+                         }
+
+                         // We are adding custom keys to the array
+                         if($this->nodeType=='exchanges'){
+                      $tempRoleValueArray['TransferType']='<span style="cursor:pointer;color:'.$spanColor.'">'.(string)$dataTransferObject->transferType.'</span>';
+                         }
+
+                         // condition to check if the transferType is change for role->type
+                         if($dataTransferObject->transferType=='Change')
+                         {
+                      $value='';
+                      $oldvalue='';
+                      $convertedvalue='';
+                      $convertedoldValue='';
+
+                      if(isset($roleObject->value)){
+                              $value=(string)$roleObject->value;
+                      }
+                      if(isset($roleObject->oldValue)){
+                              $oldvalue=(string)$roleObject->oldValue;
+                      }
+
+                      // call and store the rdl values by checking the value contains rdl:
+                      $convertedvalue = (stristr($value,'rdl:')) ? $this->stroreRdlValues($value,substr($value,4)):$value;
+                      $convertedoldValue = (stristr($oldvalue,'rdl:')) ? $this->stroreRdlValues($oldvalue,substr($oldvalue,4)):$oldvalue;
+
+                      // if there is any difference between old and new then represent as old->new
+
+                      if($convertedoldValue!=$convertedvalue){
+                           //if($oldvalue!='' && $value!=''){
+                              $tempRoleValueArray[$tempKey]='<span style="cursor:pointer;color:'.$spanColor.'">'.$convertedoldValue.'->'.$convertedvalue.'</span>';
+                           //}else{
+                        //$tempRoleValueArray[$tempKey]='<span style="color:'.$spanColor.'">'.$oldvalue.$value.'</span>';
+                           //}
+
+                      }else{
+                              $tempRoleValueArray[$tempKey]=$convertedoldValue;
+                      }
+                         }else{
+                      $convertedvalue = (stristr((string)$roleObject->value,'rdl:')) ? $this->stroreRdlValues((string)$roleObject->value,substr((string)$roleObject->value,4)):(string)$roleObject->value;
+                      $tempRoleValueArray[$tempKey]='<span style="cursor:pointer;color:'.$spanColor.'">'.$convertedvalue.'</span>';
+                         }
+                         unset($tempKey);
+                 }
+                    }
+
+                    // condition to make the Header & Row
+                    if(count($tempRoleObjectNameArray)>1){
+                 foreach($tempRoleObjectNameArray as $key=>$val){
+                         $headerNamesArray[]=(string)$templateObject->name.'.'.$val;
+                 }
+                    }else if(count($tempRoleObjectNameArray)==1){
+
+                 $headerNamesArray[]=(string)$templateObject->name;
+
+                 /*
+                         Check the $tempRoleValueArray that store the value of role with "concanated key"
+                         We need to modify that "concanated key" with originalheader
+                  */
+                 foreach($tempRoleObjectNameArray as $key=>$val){
+                         $keyname = (string)$templateObject->name.'.'.$val;
+                         if(array_key_exists($keyname,$tempRoleValueArray)){
+                      $tempRoleValueArray["$templateObject->name"]=$tempRoleValueArray[$keyname];
+                      unset($tempRoleValueArray[$keyname]);
+                         }
+                 }
+
+                    }
+                    unset($tempRoleObjectNameArray);
+            }
+            $rowsArray[]=$tempRoleValueArray;
+            unset($tempRoleValueArray);
+            break;
+               }
+                  }
+              }
+          }
+          
+          if($this->nodeType=='exchanges'){
+                  $customListArray=array('TransferType');
+          }else{
+                  $customListArray=array();
+          }
+
+          $headerArrayList = array_merge($customListArray,array_values((array_unique($headerNamesArray))));
+          
+          unset($customListArray);
+          unset($headerNamesArray);
+
+          $rowsDataArray = array();
+          $columnsDataArray = array();
+
+          /*
+           * Loop over each row to genrate the json format required to display rows in grid
+          */
+
+          
+          for($i=0;$i<count($rowsArray);$i++){
+                  for($j=0;$j<count($headerArrayList);$j++){
+               $headerName = $headerArrayList[$j];
+
+               if(array_key_exists($headerName,$rowsArray[$i])){
+                   $rowsDataArray[$i][]=$rowsArray[$i][$headerName];
+				   /* The required format for JSON Reader is underscore supported so we are changing . with _ */
+				   $gridRowsArray[$i][str_replace(".", "_", $headerName)]=$rowsArray[$i][$headerName];
+               }else{
+				   $rowsDataArray[$i][]='';
+				   /* The required format for JSON Reader is underscore supported so we are changing . with _ */
+				   $gridRowsArray[$i][str_replace(".", "_", $headerName)]='';
+														
+               }
+              }
+          }
+
+								/* Store the $gridRowsArray that contains all rows for a dto inside session. This will be used to fetch the records page wise in getPageData() function  */
+								if(is_array($rowsDataArray) && !empty($rowsDataArray)){
+									@session_start();
+									//$_SESSION['Page_no']=$gridRowsArray;
+									//echo '<br>key:  '. $this->dtocacheKey;
+									if(isset($_SESSION['rel_'.$this->dtocacheKey.'_'.$identifier.'_'.$reference])){
+									unset($_SESSION['rel_'.$this->dtocacheKey.'_'.$identifier.'_'.$reference]);
+									unset($_SESSION['rel_'.$this->dtocacheKey.'_'.$identifier.'_'.$reference.'_dtoCounts']);
+									}
+									
+									if(!isset($_SESSION['rel_'.$this->dtocacheKey.'_'.$identifier.'_'.$reference])){
+										$_SESSION['rel_'.$this->dtocacheKey.'_'.$identifier.'_'.$reference]=$gridRowsArray;
+										$_SESSION['rel_'.$this->dtocacheKey.'_'.$identifier.'_'.$reference.'_dtoCounts']=$dtoCounts;
+									}
+									unset($gridRowsArray);
+								}
+
+          if($this->nodeType=='exchanges'){
+          $headerListDataArray[]=array('name'=>'TransferType');
+          }
+
+          foreach($headerArrayList as $key =>$val){
+                  $headerListDataArray[]=array('name'=>str_replace(".", "_", $val));
+                  $columnsDataArray[]=array('id'=>str_replace(".", "_", $val),'header'=>$val,'width'=>(strlen($val)<20)?100:strlen($val)+120,'sortable'=>'true','dataIndex'=>str_replace(".", "_", $val));
+          }
 
 
-                                echo json_encode(array("success"=>"true","cacheData"=>$this->cacheDTI,"relatedClasses"=>"","rowData"=>json_encode($rowsDataArray),"columnsData"=>json_encode($columnsDataArray),"headersList"=>(json_encode($headerListDataArray))));
-                                unset($jsonrowsArray);
-                                unset($rowsArray);
-                                unset($headerArrayList);
-                                exit;
+          echo json_encode(array("success"=>"true","cacheData"=>$this->cacheDTI,"relatedClasses"=>"","columnsData"=>json_encode($columnsDataArray),"headersList"=>(json_encode($headerListDataArray))));
+          unset($jsonrowsArray);
+          unset($rowsArray);
+          unset($headerArrayList);
+          exit;
 			}else{
 				echo json_encode(array("success"=>"false"));
 			}
 		}else{
 			echo json_encode(array("success"=>"false"));
-		}                  
+		}       
 
         }
-
-
-         /**
-	 * This function used to traversing the Class Objects of a particular DataTransferObject
-	 *
-	 * @param three(Object,Object,Object)
-	 * @returns Array
-	 * @access public
-	 */
-        function classObjectsTraverse($dataTransferObject,$classObject,$mainClassObject){
-
-
-	$headerNamesArray=array();
-	$classReferenceArray=array();
-        $tempRoleValueArray=Array();
-
-        
-            $tempClassReferenceArray=array();
-            // Traverse each templateObjects under the Main classObject
-            foreach($classObject->templateObjects->templateObject as $templateObject)
-            {
-
-                    // iterate Role objects under each template
-                    $tempRoleObjectNameArray = array();
-
-                    foreach($templateObject->roleObjects->children() as $roleObject)
-                    {
-                            $tempKey='';
-                            if(stristr((string)$roleObject->type,'Reference') && ((strpos($roleObject->value, '#'))===0))
-                            {
-
-                                $refClassIdentifier  = ltrim((string)$roleObject->value,'#');//(string)substr($roleObject->value, 1, -1);
-                                $dtoIdentifier = (string)$dataTransferObject->identifier;
-                                $relatedClassName = (string)$roleObject->relatedClassName;
-
-                                     $key = "'".$dtoIdentifier."'";
-                                     $value = '<div class="x-panel-header x-accordion-hd" style="cursor:pointer"><a href="#" style="cursor:pointer;text-decoration:none" onClick="displayRleatedClassGrid(\''.$refClassIdentifier.'\',\''.$dtoIdentifier.'\',\''.$relatedClassName.'\')">'.$relatedClassName.'</a></div>';
-                                     if(isset($tempClassReferenceArray[$key])){
-                                        $tempClassReferenceArray[$key] = ''.$value.''.$tempClassReferenceArray[$key];
-                                     }
-                                     else{
-                                             $tempClassReferenceArray[$key]=$value;
-                                     }
-                             }
-                            if(stristr($roleObject->type,'Property'))
-                            {
-                                    $tempRoleObjectNameArray[]="$roleObject->name";
-                                    $tempKey = (string)$templateObject->name.'.'.(string)$roleObject->name;
-
-                                    $spanColor='';
-                                    switch (strtolower((string)$dataTransferObject->transferType))
-                                    {
-                                            case "add":
-                                                    $spanColor='red';
-                                                    break;
-                                            case "change":
-                                                    $spanColor='blue';
-                                                    break;
-                                            case "delete":
-                                                    $spanColor='green';
-                                                    break;
-                                            case "sync":
-                                                    $spanColor='black';
-                                                    break;
-                                    }
-
-                                    // We are adding custom keys to the array
-                                    if($this->nodeType=='exchanges'){
-                                            $tempRoleValueArray['TransferType']='<span style="cursor:pointer;color:'.$spanColor.'">'.(string)$dataTransferObject->transferType.'</span>';
-                                            $tempRoleValueArray['Identifier']  ='<span style="color:'.$spanColor.';cursor: pointer;text-decoration: underline">'.(string)$dataTransferObject->identifier.'</span>';
-                                    }
-
-                                            // condition to check if the transferType is change for role->type
-                                    if($dataTransferObject->transferType=='Change')
-                                    {
-                                            $value='';
-                                            $oldvalue='';
-                                            $convertedvalue='';
-                                            $convertedoldValue='';
-
-                                            if(isset($roleObject->value)){
-                                                    $value=(string)$roleObject->value;
-                                            }
-                                            if(isset($roleObject->oldValue)){
-                                                    $oldvalue=(string)$roleObject->oldValue;
-                                            }
-
-                                            // call and store the rdl values by checking the value contains rdl:
-                                            $convertedvalue = (stristr($value,'rdl:')) ? $this->stroreRdlValues($value,substr($value,4)):$value;
-                                            $convertedoldValue = (stristr($oldvalue,'rdl:')) ? $this->stroreRdlValues($oldvalue,substr($oldvalue,4)):$oldvalue;
-
-                                            // if there is any difference between old and new then represent as old->new
-
-                                            if($convertedoldValue!=$convertedvalue){
-                                                            //if($oldvalue!='' && $value!=''){
-                                                    $tempRoleValueArray[$tempKey]='<span style="cursor:pointer;color:'.$spanColor.'">'.$convertedoldValue.'->'.$convertedvalue.'</span>';
-                                                            //}else{
-                                                                    //$tempRoleValueArray[$tempKey]='<span style="color:'.$spanColor.'">'.$oldvalue.$value.'</span>';
-                                                            //}
-
-                                            }else{
-                                                    $tempRoleValueArray[$tempKey]=$convertedoldValue;
-                                            }
-                                    }else{
-                                            $convertedvalue = (stristr((string)$roleObject->value,'rdl:')) ? $this->stroreRdlValues((string)$roleObject->value,substr((string)$roleObject->value,4)):(string)$roleObject->value;
-                                            $tempRoleValueArray[$tempKey]='<span style="cursor:pointer;color:'.$spanColor.'">'.$convertedvalue.'</span>';
-                                    }
-                                    unset($tempKey);
-                            }
-                    }
-
-                    // condition to make the Header & Row
-                    if(count($tempRoleObjectNameArray)>1){
-                            foreach($tempRoleObjectNameArray as $key=>$val){
-                                    $headerNamesArray[]=(string)$templateObject->name.'.'.$val;
-                            }
-                    }else if(count($tempRoleObjectNameArray)==1){
-
-                            $headerNamesArray[]=(string)$templateObject->name;
-
-                            /*
-                                    Check the $tempRoleValueArray that store the value of role with "concanated key"
-                                    We need to modify that "concanated key" with originalheader
-                             */
-                            foreach($tempRoleObjectNameArray as $key=>$val){
-                                    $keyname = (string)$templateObject->name.'.'.$val;
-                                    if(array_key_exists($keyname,$tempRoleValueArray)){
-                                            $tempRoleValueArray["$templateObject->name"]=$tempRoleValueArray[$keyname];
-                                            unset($tempRoleValueArray[$keyname]);
-                                    }
-                            }
-
-                    }
-                    unset($tempRoleObjectNameArray);
-            }
-
-
-			$key="'".(string)$dataTransferObject->identifier."'";
-			if(isset($tempClassReferenceArray["'".$dataTransferObject->identifier."'"])){
-				$classReferenceLabelArray=array("identifier"=>(string)$dataTransferObject->identifier,"text"=>$tempClassReferenceArray["'".$dataTransferObject->identifier."'"]);
-			}else{
-				$classReferenceLabelArray=array("identifier"=>(string)$dataTransferObject->identifier,"text"=>'');
-			}
-			$returnArray=array('headerNamesArray'=>$headerNamesArray,'tempRoleValueArray'=>$tempRoleValueArray,'classReferenceArray' =>$classReferenceLabelArray);
-
-            return $returnArray;
-        }
+     
 }
 ?>
