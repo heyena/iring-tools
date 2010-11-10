@@ -104,8 +104,10 @@ function getPageData($params){
 
 	$identifier = $_POST['identifier'];
 	$refClassIdentifier= $_POST['refClassIdentifier'];
+	if($params[0]=='exchanges'){
 	unset($params[3]);
 	unset($params[4]);
+	}
 	
 	//echo '<pre>';
 	//print_r($params);
