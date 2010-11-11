@@ -30,35 +30,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Roles }
+     * Create an instance of {@link Graphs }
      * 
      */
-    public Roles createRoles() {
-        return new Roles();
-    }
-
-    /**
-     * Create an instance of {@link Manifest }
-     * 
-     */
-    public Manifest createManifest() {
-        return new Manifest();
-    }
-
-    /**
-     * Create an instance of {@link Graph }
-     * 
-     */
-    public Graph createGraph() {
-        return new Graph();
-    }
-
-    /**
-     * Create an instance of {@link Template }
-     * 
-     */
-    public Template createTemplate() {
-        return new Template();
+    public Graphs createGraphs() {
+        return new Graphs();
     }
 
     /**
@@ -86,19 +62,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Graphs }
+     * Create an instance of {@link Manifest }
      * 
      */
-    public Graphs createGraphs() {
-        return new Graphs();
+    public Manifest createManifest() {
+        return new Manifest();
     }
 
     /**
-     * Create an instance of {@link ClassTemplatesList }
+     * Create an instance of {@link Graph }
      * 
      */
-    public ClassTemplatesList createClassTemplatesList() {
-        return new ClassTemplatesList();
+    public Graph createGraph() {
+        return new Graph();
+    }
+
+    /**
+     * Create an instance of {@link Template }
+     * 
+     */
+    public Template createTemplate() {
+        return new Template();
     }
 
     /**
@@ -107,6 +91,22 @@ public class ObjectFactory {
      */
     public ClassTemplates createClassTemplates() {
         return new ClassTemplates();
+    }
+
+    /**
+     * Create an instance of {@link Roles }
+     * 
+     */
+    public Roles createRoles() {
+        return new Roles();
+    }
+
+    /**
+     * Create an instance of {@link ClassTemplatesList }
+     * 
+     */
+    public ClassTemplatesList createClassTemplatesList() {
+        return new ClassTemplatesList();
     }
 
 }

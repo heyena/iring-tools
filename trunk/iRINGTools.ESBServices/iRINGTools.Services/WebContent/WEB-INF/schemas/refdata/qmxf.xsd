@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://iringtools.org/qmxf"
-  targetNamespace="http://iringtools.org/qmxf" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://ns.ids-adi.org/qxf/model#"
+  targetNamespace="http://ns.ids-adi.org/qxf/model#" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
   jaxb:version="2.0" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc">
 
   <xs:annotation>
