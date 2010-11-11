@@ -12,7 +12,7 @@ var reviewed,tree
 var dtoIdentifierVal,refClassIdentifierVal;   
 var relatedClassArr=new Array();
 // configure no of records to display per page
-pageSize= 5
+pageSize= 20
 
 function showgrid(response, request,label,nodeid,gridType){
 var identifier=0;

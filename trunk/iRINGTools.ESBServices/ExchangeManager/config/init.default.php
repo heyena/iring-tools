@@ -13,7 +13,7 @@ define('DXO_REQUEST_URL', 'http://localhost:8080/iringtools/services/esb');
 define('APP_REQUEST_URI','http://localhost/Services/dto');
 define('DIRECTORY_REQUEST_URL','http://localhost:8080/iringtools/services/esb/directory');
 define('RDL_REQUEST_URI','http://localhost/Services/RefDataService/Classes');
-define('PAGESIZE','5');
+define('PAGESIZE','20');
 /* Put username & Password required for authentication*/
 define('AUTH_USERID','*******');
 define('AUTH_USERPWD','*******');
