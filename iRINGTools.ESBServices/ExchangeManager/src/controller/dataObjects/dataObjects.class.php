@@ -99,8 +99,14 @@
 		}
 	}
 function getPageData($params){
-	$start = $this->parseInt($_POST['start']);
-	$limit = $this->parseInt($_POST['limit']);
+	// collect request parameters
+	//$start = $this->parseInt($_POST['start']);
+	//$count = $this->parseInt($_POST['limit']);
+	$start  = isset($_REQUEST['start'])  ? $this->parseInt($_REQUEST['start'])  :  0;
+	$count  = isset($_REQUEST['limit'])  ? $this->parseInt($_REQUEST['limit'])  : PAGESIZE;
+	$sort   = isset($_REQUEST['sort'])   ? $_REQUEST['sort']   : '';
+	$dir    = isset($_REQUEST['dir'])    ? $_REQUEST['dir']    : 'ASC';
+	$filters = isset($_REQUEST['filter']) ? $_REQUEST['filter'] : null;
 
 	$identifier = $_POST['identifier'];
 	$refClassIdentifier= $_POST['refClassIdentifier'];
@@ -108,19 +114,12 @@ function getPageData($params){
 	unset($params[3]);
 	unset($params[4]);
 	}
-	
-	//echo '<pre>';
-	//print_r($params);
-
-	if(isset($start) && (isset($limit))){
+	if(isset($start) && (isset($count))){
 		$urlParams = $this->urlParameters($params);
-		// calculate Pageno
-		//$pageNo = ceil($start/$limit)+1;
-		$responseString = $this->modelObj->getPageData($urlParams,$start,$limit,$identifier,$refClassIdentifier);
+		$responseString = $this->modelObj->getPageData($urlParams,$start,$count,$identifier,$refClassIdentifier,$filters);
 		echo $responseString;
 	}
 }
-
 }
    
 ?>
