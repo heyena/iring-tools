@@ -13,6 +13,6 @@ A major release of iRINGTools 2.0.0 that includes major stabilty and speed impro
  * More Stable (No Code Generation)
  * More Complex Schemas
  * SDK Supports Generic Objects
- * dotNETRDF
+ * [http://www.dotnetrdf.org/ dotNETRDF] - Many thanks to Rob Vesse for his extraordinary support and interest in our project.
 
 Other Pages: [Components] | [RoadMap] | [ISO15926] | [Documentation] | [Contributors]
