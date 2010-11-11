@@ -34,7 +34,7 @@ using org.iringtools.library;
 
 namespace org.iringtools.adapter
 {
-  [DataContract(Namespace = "http://iringtools.org/adapter/dti", Name = "dataTransferIndices")]
+  [DataContract(Namespace = "http://www.iringtools.org/dxfr/dti", Name = "dataTransferIndices")]
   public class DataTransferIndices  
   {
     public DataTransferIndices()
@@ -52,7 +52,7 @@ namespace org.iringtools.adapter
     public List<DataTransferIndex> DataTransferIndexList { get; set; }
   }
 
-  [DataContract(Namespace = "http://iringtools.org/adapter/dti", Name = "dataTransferIndex")]
+  [DataContract(Namespace = "http://www.iringtools.org/dxfr/dti", Name = "dataTransferIndex")]
   public class DataTransferIndex
   {
     [DataMember(Name = "identifier", Order = 0)]
