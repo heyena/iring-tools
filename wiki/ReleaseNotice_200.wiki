@@ -1,0 +1,11 @@
+#labels Featured
+= *iRINGTools* 2.00.00.1960 =
+
+A major release of iRINGTools 2.0.0 that includes major stabilty and speed improvements.  The download is available [http://iring-tools.googlecode.com/files/iRINGTools-200.zip here]
+
+[http://iring-tools.googlecode.com/files/iRINGTools_Installation_Guide_v2.0.0.pdf Installation Guide]
+
+== New Features ==
+ * (Coming Soon)
+
+Other Pages: [Components] | [RoadMap] | [ISO15926] | [Documentation] | [Contributors]
