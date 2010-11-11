@@ -1,4 +1,4 @@
-<exchangeDefinition xmlns="http://iringtools.org/directory">
+<exchangeDefinition xmlns="http://www.iringtools.org/directory">
   <id>1</id>
   <name>12345_000.DEF -> 12345_000.ABC</name>
   <description>Sending Line list from DEF to ABC</description>

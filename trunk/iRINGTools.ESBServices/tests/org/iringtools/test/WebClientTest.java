@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Hashtable;
 
-import org.iringtools.adapter.dti.DataTransferIndices;
+import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.protocol.manifest.Manifest;
 import org.iringtools.utility.JaxbUtil;
 import org.iringtools.utility.WebClient;

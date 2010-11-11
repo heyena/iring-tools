@@ -30,9 +30,10 @@
     </jaxrs:serviceBeans>
   </jaxrs:server>
   
-  <jaxrs:server id="HistoryService" address="/history" >
+  <!--<jaxrs:server id="HistoryService" address="/history" >
     <jaxrs:serviceBeans>
       <bean class="org.iringtools.services.HistoryService" />
     </jaxrs:serviceBeans>
-  </jaxrs:server>
+  </jaxrs:server>-->
+  
 </beans>

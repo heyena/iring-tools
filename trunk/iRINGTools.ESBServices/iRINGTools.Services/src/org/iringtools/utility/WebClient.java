@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map.Entry;
+
 import javax.xml.bind.JAXBException;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -81,30 +83,9 @@ public class WebClient
     return response;
   }
 
-  public <T> T getMessage(Class<T> clazz, String relativeUri) throws WebClientException  
+  public String getMessage(String relativeUri) throws WebClientException  
   {
-    T response = null;
-    
-    try
-    {
-      HttpGet httpGet = new HttpGet(baseUri + relativeUri);
-      
-      httpClient = new DefaultHttpClient();
-      prepareCredentials();
-
-      HttpResponse httpResponse = httpClient.execute(httpGet);
-      response = getResponse(clazz, httpResponse);
-    }
-    catch (Exception ex)
-    {
-      throw new WebClientException(ex.getMessage());
-    }
-    finally
-    {
-      httpClient.getConnectionManager().shutdown();
-    }
-
-    return response;
+    return get(String.class, relativeUri);
   }
 
   public <T,R> R post(Class<R> clazz, String relativeUri, T requestEntity) throws WebClientException 
@@ -242,7 +223,7 @@ public class WebClient
     {
       httpClient.getCredentialsProvider().setCredentials(AuthScope.ANY, ntCredentials);
     }
-
+    
     if (webProxy != null)
     {
       UsernamePasswordCredentials proxyCredentials = new UsernamePasswordCredentials(webProxy.getUsername(), webProxy.getPassword());
