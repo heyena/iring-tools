@@ -55,7 +55,7 @@ namespace org.iringtools.utility
         private string _boundary = Guid.NewGuid().ToString().Replace("-", "");
         private string _baseUri = String.Empty;
         private NetworkCredential _credentials = null;
-        private WebProxy _proxy = null;
+        private IWebProxy _proxy = null;
 
         private const string NEW_LINE = "\r\n";
         private const int TIMEOUT = 300000;
@@ -117,7 +117,7 @@ namespace org.iringtools.utility
           }
         }
 
-        public WebHttpClient(string baseUri, NetworkCredential credentials, WebProxy webProxy)
+        public WebHttpClient(string baseUri, NetworkCredential credentials, IWebProxy webProxy)
         {
           _baseUri = baseUri;
 
