@@ -40,12 +40,12 @@ class dataObjectsModel{
 			case "exchanges":
 				if(isset($params['hasreviewed'])){
 					$append ='/submit';
-					//$this->dtiSubmitUrl = DXI_REQUEST_URL.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'].$append;
-					$this->dtiSubmitUrl = DXI_SUBMIT_REQUEST_URL;
+					$this->dtiSubmitUrl = DXI_REQUEST_URL.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'].$append;
+					//$this->dtiSubmitUrl = DXI_SUBMIT_REQUEST_URL;
 					
 				}
-				$this->dtiUrl = DXI_REQUEST_URL;//.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'];
-				$this->dtoUrl = DXO_REQUEST_URL;//.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'];
+				$this->dtiUrl = DXI_REQUEST_URL.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'];
+				$this->dtoUrl = DXO_REQUEST_URL.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'];
 				$this->setCacheKey($params);
 				break;
 
