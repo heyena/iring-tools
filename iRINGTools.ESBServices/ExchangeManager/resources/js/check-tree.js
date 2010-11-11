@@ -11,7 +11,9 @@
 var reviewed,tree
 var dtoIdentifierVal,refClassIdentifierVal;   
 var relatedClassArr=new Array();
-pageSize= 1
+// configure no of records to display per page
+pageSize= 5
+
 function showgrid(response, request,label,nodeid,gridType){
 var identifier=0;
 var refClassIdentifier=0;
@@ -52,6 +54,27 @@ if(gridType=='relatedClass'){
 		var fieldList = eval(jsonData.headersList);
 		var headerList = eval(jsonData.columnsData);
 		var classObjName = jsonData.classObjName;
+		var filterSet = eval(jsonData.filterSet);
+
+		// for this demo configure local and remote urls for demo purposes
+		var url = {
+		local:  '',  // static data file
+		remote: globalReq
+		};
+
+		// configure whether filter query is encoded or not (initially)
+		var encode = true;
+		// configure whether filtering is performed locally or remotely (initially)
+		var local = false;
+		
+		//var filt = filterSet;// 	[{type: 'string',dataIndex: 'IdentificationByTag'},			{type: 'string',dataIndex: 'TransferType',disabled: false}];
+		var filters = new Ext.ux.grid.GridFilters({
+		// encode and local configuration options defined previously for easier reuse
+		encode: encode, // json encode the filter query
+		local: local,   // defaults to false (remote filtering)
+		filters: filterSet
+		});
+
 		if(jsonData.relatedClasses!=undefined){
 			for(var i=0;i<jsonData.relatedClasses.length;i++){
 				var key = jsonData.relatedClasses[i].identifier;
@@ -92,9 +115,9 @@ var store = new Ext.data.Store({
 						   //'getData': 'true'
 							'identifier':identifier,'refClassIdentifier':refClassIdentifier
 				},
-
 			});
-store.load();
+//store.load();
+
 
 var grid = new Ext.grid.GridPanel({
 store: store,
@@ -102,6 +125,7 @@ columns: headerList,
 stripeRows: true,
 id:label,
 loadMask: true,
+plugins: [filters],
 layout:'fit',
 frame:true,
 autoSizeColumns: true,
@@ -112,6 +136,16 @@ columnLines: true,
 classObjName:classObjName,
 enableColumnMove:false,
 listeners: {
+render: {
+fn: function(){
+store.load({
+params: {
+start: 0,
+limit: pageSize
+		}
+		});
+	}
+		},		   
 cellclick:{
 fn:function(grid,rowIndex,columnIndex,e){
 	   var cm    = this.colModel
@@ -180,9 +214,67 @@ bbar: new Ext.PagingToolbar({
 pageSize: pageSize,
 store: store,
 displayInfo:true,
-autoScroll :true
+autoScroll :true,
+plugins: [filters]
+				  
    })
 });
+
+// add some buttons to bottom toolbar just for demonstration purposes
+grid.getBottomToolbar().add([
+'->',
+{
+		text: 'Encode: ' + (encode ? 'On' : 'Off'),
+		tooltip: 'Toggle Filter encoding on/off',
+		enableToggle: true,
+		handler: function (button, state) {
+		  var encode = (grid.filters.encode===true) ? false : true;
+		  var text = 'Encode: ' + (encode ? 'On' : 'Off'); 
+				// remove the prior parameters from the last load options
+		  grid.filters.cleanParams(grid.getStore().lastOptions.params);
+		  grid.filters.encode = encode;
+		  button.setText(text);
+		  grid.getStore().reload();
+	  } 
+},{
+		text: 'Local Filtering: ' + (local ? 'On' : 'Off'),
+		tooltip: 'Toggle Filtering between remote/local',
+		enableToggle: true,
+		handler: function (button, state) {
+		  var local = (grid.filters.local===true) ? false : true;
+		  var text = 'Local Filtering: ' + (local ? 'On' : 'Off');
+		  var newUrl = local ? url.local : url.remote;
+		  //alert(newUrl)
+
+				// update the GridFilter setting
+		  grid.filters.local = local;
+				// bind the store again so GridFilters is listening to appropriate store event
+		  grid.filters.bindStore(grid.getStore());
+				// update the url for the proxy
+		  grid.getStore().proxy.setApi('read', newUrl);
+		  button.setText(text);
+		  grid.getStore().reload();
+	  } 
+},{
+		text: 'All Filter Data',
+		tooltip: 'Get Filter Data for Grid',
+		handler: function () {
+		  var data = Ext.encode(grid.filters.getFilterData());
+		  Ext.Msg.alert('All Filter Data',data);
+	  } 
+},{
+			text: 'Clear Filter Data',
+			handler: function () {
+			grid.filters.clearFilters();
+	  } 
+},/*{
+			text: 'Reconfigure Grid',
+			handler: function () {
+			//grid.reconfigure(store, createColModel(6));
+			} 
+	}*/ 
+]);
+
 
 Ext.getCmp('centerPanel').add(
 	Ext.apply(grid,{
@@ -573,7 +665,8 @@ function showCentralGrid(node){
 				}*/
 			}
 		}else if(Ext.getCmp(label)&&(Ext.getCmp('centerPanel').getActiveTab().id=='tab-'+label)){
-				sendAjaxRequest(requestURL,label,node.id);
+			// When you click on exchange button with activetab
+			sendAjaxRequest(requestURL,label,node.id);
 		}else{
 			Ext.getCmp('centerPanel').enable();
 		// collapse the detail Grid panel & show the tab
