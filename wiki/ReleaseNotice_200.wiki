@@ -8,6 +8,11 @@ A major release of iRINGTools 2.0.0 that includes major stabilty and speed impro
 [http://iring-tools.googlecode.com/files/iRINGTools_Installation_Guide_v2.0.0.pdf Installation Guide]
 
 == New Features ==
- * (Coming Soon)
+ * Simpler Deployment
+ * More Performant
+ * More Stable (No Code Generation)
+ * More Complex Schemas
+ * SDK Supports Generic Objects
+ * dotNETRDF
 
 Other Pages: [Components] | [RoadMap] | [ISO15926] | [Documentation] | [Contributors]
