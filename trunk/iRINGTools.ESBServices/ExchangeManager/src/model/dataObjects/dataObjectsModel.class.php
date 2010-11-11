@@ -40,12 +40,12 @@ class dataObjectsModel{
 			case "exchanges":
 				if(isset($params['hasreviewed'])){
 					$append ='/submit';
-					$this->dtiSubmitUrl = DXI_REQUEST_URL.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'].$append;
-					//$this->dtiSubmitUrl = DXI_SUBMIT_REQUEST_URL;
+					//$this->dtiSubmitUrl = DXI_REQUEST_URL.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'].$append;
+					$this->dtiSubmitUrl = DXI_SUBMIT_REQUEST_URL;
 					
 				}
-				$this->dtiUrl = DXI_REQUEST_URL.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'];
-				$this->dtoUrl = DXO_REQUEST_URL.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'];
+				$this->dtiUrl = DXI_REQUEST_URL;//.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'];
+				$this->dtoUrl = DXO_REQUEST_URL;//.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'];
 				$this->setCacheKey($params);
 				break;
 
@@ -55,8 +55,6 @@ class dataObjectsModel{
 				$this->setCacheKey($params);
 				break;
 		}
-
-               
 	}
 
 	/*
@@ -66,11 +64,10 @@ class dataObjectsModel{
 	function setDataObjects($params){
 		$this->buildWSUri($params);
 		$this->dtiXMLData = $this->getCacheData();
-
 		// checking the dti from cache
 		if(($this->dtiXMLData!=false)&&(!empty($this->dtiXMLData))){
 			//$replaceString = str_replace('<dataTransferIndices xmlns="http://iringtools.org/adapter/dti">','<xr:exchangeRequest xmlns="http://iringtools.org/adapter/dti" xmlns:xr="http://iringtools.org/common/request"><xr:dataTransferIndices>',$this->dtiXMLData);
-				$replaceString = str_replace('<dataTransferIndices xmlns="http://iringtools.org/adapter/dti">','<xr:exchangeRequest xmlns="http://www.iringtools.org/dxfr/dti" xmlns:xr="http://www.iringtools.org/dxfr/requests"><xr:dataTransferIndices>',$this->dtiXMLData);
+				$replaceString = str_replace('<dataTransferIndices xmlns="http://iringtools.org/adapter/dti">','<xr:exchangeRequest xmlns="http://www.iringtools.org/dxfr/dti" xmlns:xr="http://www.iringtools.org/dxfr/request"><xr:dataTransferIndices>',$this->dtiXMLData);
 				$sendXmlData = str_replace("</dataTransferIndices>","</xr:dataTransferIndices><xr:reviewed>".$params['hasreviewed']."</xr:reviewed></xr:exchangeRequest>", $replaceString);
 				$curlObj = new curl($this->dtiSubmitUrl);
 				$curlObj->setopt(CURLOPT_POST, 1);
@@ -118,7 +115,6 @@ class dataObjectsModel{
 		$statusList = $xmlIterator->statusList;
 
 		// check the response level from ws it may be success/error
-		
 		/*$wsResponselevel = $xmlIterator->level;
 		if($wsResponselevel=='')
 		*/
@@ -425,6 +421,7 @@ class dataObjectsModel{
 		 * This will be stored as session variable
 		*/
 		$gridRowsArray = array();
+		$gridFilterArray = array();
 		$classReferenceArray=array();
         $classObjectName='';
 
@@ -482,6 +479,7 @@ class dataObjectsModel{
 					$rowsDataArray[$i][]=$rowsArray[$i][$headerName];
 					/* The required format for JSON Reader is underscore supported so we are changing . with _ */
 					$gridRowsArray[$i][str_replace(".", "_", $headerName)]=$rowsArray[$i][$headerName];
+
 				}else{
 					$rowsDataArray[$i][]='';
 					/* The required format for JSON Reader is underscore supported so we are changing . with _ */
@@ -504,7 +502,6 @@ class dataObjectsModel{
 			unset($gridRowsArray);
 		}
 		
-
 		if($this->nodeType=='exchanges'){
 			$headerListDataArray[]=array('name'=>'Identifier','name'=>'TransferType');
 		}
@@ -512,14 +509,140 @@ class dataObjectsModel{
 		foreach($headerArrayList as $key =>$val){
 			$headerListDataArray[]=array('name'=>str_replace(".", "_", $val));
 			$columnsDataArray[]=array('id'=>str_replace(".", "_", $val),'header'=>$val,'width'=>(strlen($val)<20)?110:strlen($val)+130,'sortable'=>'true','dataIndex'=>str_replace(".", "_", $val));
+			$gridFilterArray[]=array('type'=> 'string','dataIndex'=>str_replace(".", "_", $val));
 		}
+
 		//**** echo json_encode(array("classObjName"=>$classObjectName,'relatedClasses'=>$classReferenceArray,"success"=>"true","cacheData"=>$this->cacheDTI,"rowData"=>json_encode($rowsDataArray),"columnsData"=>json_encode($columnsDataArray),"headersList"=>(json_encode($headerListDataArray))));
-		echo json_encode(array("classObjName"=>$classObjectName,'relatedClasses'=>$classReferenceArray,"success"=>"true","cacheData"=>$this->cacheDTI,"columnsData"=>json_encode($columnsDataArray),"headersList"=>(json_encode($headerListDataArray))));
+		echo json_encode(array("filterSet"=>$gridFilterArray,"classObjName"=>$classObjectName,'relatedClasses'=>$classReferenceArray,"success"=>"true","cacheData"=>$this->cacheDTI,"columnsData"=>json_encode($columnsDataArray),"headersList"=>(json_encode($headerListDataArray))));
 		unset($jsonrowsArray);
 		unset($rowsArray);
 		unset($headerArrayList);
 		exit;
 
+	}
+
+	/* Filter function for Pageof Data
+	 * Marshall the dto array stored in session which is passed as parameter @$gridArray
+	 * Create the filter array based on @$filters passed 
+	 * Count the total rows matched
+	 * Make the grid in json format
+	 * send the response to CS 
+	 */
+	private function getFilterPageData($params,$start,$limit,$identifier,$refClassIdentifier,$gridArray,$filters){
+		if(is_array($gridArray)){
+			// GridFilters sends filters as an Array if not json encoded
+			if (is_array($filters)) {
+				$encoded = false;
+			} else {
+				$encoded = true;
+				$filters = json_decode($filters);
+			}
+
+			// initialize variables
+			//*** $filterQs = '';
+			//*** $qs = '';
+			//echo '<pre>';
+			//print_r($filters);
+
+			$filterFlag=0;
+			// loop through filters sent by client
+			if (is_array($filters)) {
+
+				$filterArray=array();
+
+				for ($i=0;$i<count($filters);$i++){
+					$filter = $filters[$i];
+					// assign filter data (location depends if encoded or not)
+					if ($encoded) {
+						$field = $filter->field;
+						$value = $filter->value;
+						$compare = isset($filter->comparison) ? $filter->comparison : null;
+						$filterType = $filter->type;
+					} else {
+						$field = $filter['field'];
+						$value = $filter['data']['value'];
+						$compare = isset($filter['data']['comparison']) ? $filter['data']['comparison'] : null;
+						$filterType = $filter['data']['type'];
+					}
+
+					switch($filterType){
+						  case 'string' :
+							  //*** $qs .= "/".$field."/".$value."";
+							  $filterArray[$field]=$value;
+							  Break;
+						/*case 'list' :
+							if (strstr($value,',')){
+								$fi = explode(',',$value);
+								for ($q=0;$q<count($fi);$q++){
+									$fi[$q] = "'".$fi[$q]."'";
+								}
+								$value = implode(',',$fi);
+								$qs .= " AND ".$field." IN (".$value.")";
+							}else{
+								$qs .= " AND ".$field." = '".$value."'";
+							}
+							Break;*/
+						/*case 'boolean' : $qs .= " AND ".$field." = ".($value); Break;
+						case 'numeric' :
+							switch ($compare) {
+								case 'eq' : $qs .= " AND ".$field." = ".$value; Break;
+								case 'lt' : $qs .= " AND ".$field." < ".$value; Break;
+								case 'gt' : $qs .= " AND ".$field." > ".$value; Break;
+							}
+							Break;
+						case 'date' :
+							switch ($compare) {
+								case 'eq' : $qs .= " AND ".$field." = '".date('Y-m-d',strtotime($value))."'"; Break;
+								case 'lt' : $qs .= " AND ".$field." < '".date('Y-m-d',strtotime($value))."'"; Break;
+								case 'gt' : $qs .= " AND ".$field." > '".date('Y-m-d',strtotime($value))."'"; Break;
+							}
+							Break;*/
+					}
+				}
+				//**** $filterQs .= $qs;
+			}
+
+			/*echo $filterQs.'<br/>';
+			echo '<pre>';
+			print_r($filterArray);
+			*/
+
+			$totalCnt=0;
+			foreach($gridArray as $gridValues){
+				$matchCntr=0;
+				foreach($gridValues as $key=>$val){
+					// checks matched key 
+					if(array_key_exists($key,$filterArray)){
+						$filterValue = $filterArray[$key];
+						$originalValue= strip_tags($val);
+						if(@stristr($filterValue,$originalValue)){
+							$matchCntr++;
+						}
+					}
+					
+				}
+				// when everything matched then store it for gridview
+				if($matchCntr==count($filterArray)){
+					$totalCnt++;
+					$gridResult[]=$gridValues;
+				}
+			}
+			for($i=$start;$i<$start+$limit;$i++){
+				if(isset($gridResult[$i])){
+					$result[]=$gridResult[$i];
+				}
+			}
+			//echo "<br>total count: ".$totalCnt;
+			//echo "<br>json format: ".json_encode($result);
+			$responseArray = array("success"=>"true","total"=>$totalCnt,"data"=>$result);
+
+			
+		}else{
+			// No dto stored in session variable
+			$responseArray = array("success"=>"false");
+		}
+
+		return json_encode($responseArray);
 	}
 
 	/* This function is used to return the json formated data to generate the grid using start and limit for Pagingtool
@@ -529,14 +652,12 @@ class dataObjectsModel{
 	 * setCacheKey($params) function builds and assigns the key using @params 
 	 */
 
-	function getPageData($params,$start,$limit,$identifier,$refClassIdentifier){
+	function getPageData($params,$start,$limit,$identifier,$refClassIdentifier,$filters){
 		// call the function  setCacheKey to get the dtocacheKey
 		$this->setCacheKey($params);
 		//echo '<br>key: '.$this->dtocacheKey;
 		@session_start();
 
-		//echo $identifier.'  =========== '.$refClassIdentifier;
-		
 		if($identifier!=0 && $refClassIdentifier!=0){
 			$gridArray = $_SESSION['rel_'.$this->dtocacheKey.'_'.$identifier.'_'.$refClassIdentifier];
 			$total = $_SESSION['rel_'.$this->dtocacheKey.'_'.$identifier.'_'.$refClassIdentifier.'_dtoCounts'];
@@ -545,9 +666,10 @@ class dataObjectsModel{
 			$total = $_SESSION[$this->dtocacheKey.'_dtoCounts'];
 		}
 
-		//echo '<pre>';
-		//print_r($gridArray);
-
+		// if there is some Filter parameters available then just call the getFilterPageData()
+		if($filters){
+			return $this->getFilterPageData($params,$start,$limit,$identifier,$refClassIdentifier,$gridArray,$filters);
+		}else{
 		if(is_array($gridArray)){
 			for($i=$start;$i<$start+$limit;$i++){
 				if(isset($gridArray[$i])){
@@ -559,6 +681,7 @@ class dataObjectsModel{
 			$responseArray = array("success"=>"false");
 		}
 		return json_encode($responseArray);//strip_tags(json_encode($_SESSION['dto_detail']['Page_'.$pageno]));
+		}
 	}
 	
 	function deleteDataObjects($params)
