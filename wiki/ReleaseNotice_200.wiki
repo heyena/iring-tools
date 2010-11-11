@@ -11,6 +11,7 @@ A major release of iRINGTools 2.0.0 that includes major stabilty and speed impro
  * Simpler Deployment
  * More Performant
  * More Stable (No Code Generation)
+ * Part 8 RDF (Reference Data still stored in Camelot format)
  * More Complex Schemas
  * SDK Supports Generic Objects
  * [http://www.dotnetrdf.org/ dotNETRDF] - Many thanks to Rob Vesse for his extraordinary support and interest in our project.
