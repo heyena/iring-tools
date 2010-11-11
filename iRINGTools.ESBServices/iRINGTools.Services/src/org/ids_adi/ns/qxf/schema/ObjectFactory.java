@@ -1,5 +1,5 @@
 
-package org.iringtools.refdata.queries;
+package org.ids_adi.ns.qxf.schema;
 
 import javax.xml.bind.annotation.XmlRegistry;
 
@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlRegistry;
 /**
  * This object contains factory methods for each 
  * Java content interface and Java element interface 
- * generated in the org.iringtools.refdata.queries package. 
+ * generated in the org.ids_adi.ns.qxf.schema package. 
  * <p>An ObjectFactory allows you to programatically 
  * construct new instances of the Java representation 
  * for XML content. The Java representation of XML 
@@ -23,34 +23,34 @@ public class ObjectFactory {
 
 
     /**
-     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.iringtools.refdata.queries
+     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.ids_adi.ns.qxf.schema
      * 
      */
     public ObjectFactory() {
     }
 
     /**
-     * Create an instance of {@link QueryBinding }
+     * Create an instance of {@link Relationship }
      * 
      */
-    public QueryBinding createQueryBinding() {
-        return new QueryBinding();
+    public Relationship createRelationship() {
+        return new Relationship();
     }
 
     /**
-     * Create an instance of {@link Query }
+     * Create an instance of {@link Qxf }
      * 
      */
-    public Query createQuery() {
-        return new Query();
+    public Qxf createQxf() {
+        return new Qxf();
     }
 
     /**
-     * Create an instance of {@link Queries }
+     * Create an instance of {@link Property }
      * 
      */
-    public Queries createQueries() {
-        return new Queries();
+    public Property createProperty() {
+        return new Property();
     }
 
 }
