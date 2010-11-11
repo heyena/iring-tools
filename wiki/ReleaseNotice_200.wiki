@@ -3,6 +3,8 @@
 
 A major release of iRINGTools 2.0.0 that includes major stabilty and speed improvements.  The download is available [http://iring-tools.googlecode.com/files/iRINGTools-200.zip here]
 
+[http://iring-tools.googlecode.com/files/iRINGTools_Overview_v2.0.0.pdf Overview Slideshow]
+
 [http://iring-tools.googlecode.com/files/iRINGTools_Installation_Guide_v2.0.0.pdf Installation Guide]
 
 == New Features ==
