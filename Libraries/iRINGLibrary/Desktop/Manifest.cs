@@ -31,7 +31,7 @@ using System;
 
 namespace org.iringtools.library.manifest
 {
-  [DataContract(Namespace = "http://iringtools.org/protocol/manifest", Name = "manifest")]
+  [DataContract(Namespace = "http://www.iringtools.org/dxfr/manifest", Name = "manifest")]
   public class Manifest
   {
     public Manifest()
@@ -62,7 +62,7 @@ namespace org.iringtools.library.manifest
     }
   }
 
-  [DataContract(Namespace = "http://iringtools.org/protocol/manifest", Name = "graph")]
+  [DataContract(Namespace = "http://www.iringtools.org/dxfr/manifest", Name = "graph")]
   public class Graph
   {
     public Graph()
@@ -77,7 +77,7 @@ namespace org.iringtools.library.manifest
     public List<ClassTemplates> ClassTemplatesList { get; set; }
   }
   
-  [DataContract(Namespace = "http://iringtools.org/protocol/manifest", Name = "classTemplates")]
+  [DataContract(Namespace = "http://www.iringtools.org/dxfr/manifest", Name = "classTemplates")]
   public class ClassTemplates
   {
     public ClassTemplates()
@@ -92,7 +92,7 @@ namespace org.iringtools.library.manifest
     public List<Template> Templates { get; set; }
   }
 
-  [DataContract(Namespace = "http://iringtools.org/protocol/manifest", Name = "class")]
+  [DataContract(Namespace = "http://www.iringtools.org/dxfr/manifest", Name = "class")]
   public class Class
   {
     [DataMember(Name = "classId", Order = 0, EmitDefaultValue = false)]
@@ -102,7 +102,7 @@ namespace org.iringtools.library.manifest
     public string Name { get; set; }
   }
 
-  [DataContract(Namespace = "http://iringtools.org/protocol/manifest", Name = "template")]
+  [DataContract(Namespace = "http://www.iringtools.org/dxfr/manifest", Name = "template")]
   public class Template
   {
     public Template()
@@ -123,7 +123,7 @@ namespace org.iringtools.library.manifest
     public TransferOption TransferOption { get; set; }
   }
 
-  [DataContract(Namespace = "http://iringtools.org/protocol/manifest", Name = "role")]
+  [DataContract(Namespace = "http://www.iringtools.org/dxfr/manifest", Name = "role")]
   public class Role
   {
     [DataMember(Name = "type", Order = 0, EmitDefaultValue = false)]

@@ -9,7 +9,7 @@ using org.iringtools.adapter;
 
 namespace org.iringtools.adapter
 {
-  [DataContract(Namespace = "http://iringtools.org/common/request", Name = "dtoPageRequest")]
+  [DataContract(Namespace = "http://www.iringtools.org/dxfr/request", Name = "dtoPageRequest")]
   public class DtoPageRequest
   {
     [DataMember(Name = "manifest", Order = 0)]
