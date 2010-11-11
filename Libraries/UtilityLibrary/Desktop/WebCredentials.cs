@@ -139,7 +139,7 @@ namespace org.iringtools.utility
             if (proxyHost != string.Empty)
                 webProxy = new WebProxy(proxyHost, proxyPort);
             else
-                webProxy = new WebProxy();
+        webProxy = WebRequest.GetSystemWebProxy();
 
             webProxy.Credentials = this.GetNetworkCredential();
 
