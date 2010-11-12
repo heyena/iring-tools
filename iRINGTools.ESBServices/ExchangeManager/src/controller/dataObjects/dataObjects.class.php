@@ -119,7 +119,21 @@ function getPageData($params){
 		$responseString = $this->modelObj->getPageData($urlParams,$start,$count,$identifier,$refClassIdentifier,$filters);
 		echo $responseString;
 	}
-}
+    }
+
+
+    function getHistory($params){
+        $urlParams = $this->urlParameters($params);
+        $urlParams['exchangeAction']='viewHistory';
+
+        /*echo '<pre>';
+        print_r($urlParams);
+        exit;*/
+        $historyArray = $this->modelObj->getHistory($urlParams);
+
+        echo ($historyArray);
+    }
+
 }
    
 ?>

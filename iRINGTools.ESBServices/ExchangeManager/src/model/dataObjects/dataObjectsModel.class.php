@@ -38,6 +38,7 @@ class dataObjectsModel{
 		$this->nodeType=$params['nodetype'];
 		switch($this->nodeType){
 			case "exchanges":
+                            if(!isset($params['exchangeAction'])){
 				if(isset($params['hasreviewed'])){
 					$append ='/submit';
 					$this->dtiSubmitUrl = DXI_REQUEST_URL.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'].$append;
@@ -47,7 +48,11 @@ class dataObjectsModel{
 				$this->dtiUrl = DXI_REQUEST_URL.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'];
 				$this->dtoUrl = DXO_REQUEST_URL.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'];
 				$this->setCacheKey($params);
-				break;
+                            }else if($params['exchangeAction']=='viewHistory'){
+                            $this->dtiHistoryUrl = EXCHANGE_HISTORY_URI;//.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'];
+                            $this->setCacheKey($params);
+                        }
+                        break;
 
 			case "graph":
 				$this->dtiUrl = APP_REQUEST_URI.'/'.$params['scope'].'/'.$params['applname'].'/'.$params['graphs'];
@@ -773,8 +778,8 @@ class dataObjectsModel{
 						  $found=1;
 
                    // Traverse each templateObjects under the classObject rather than Main
-            foreach($classObject->templateObjects->templateObject as $templateObject)
-            {
+                foreach($classObject->templateObjects->templateObject as $templateObject)
+                {
 
                     // iterate Role objects under each template
 
@@ -919,22 +924,22 @@ class dataObjectsModel{
               }
           }
 
-								/* Store the $gridRowsArray that contains all rows for a dto inside session. This will be used to fetch the records page wise in getPageData() function  */
-								if(is_array($rowsDataArray) && !empty($rowsDataArray)){
-									@session_start();
-									//$_SESSION['Page_no']=$gridRowsArray;
-									//echo '<br>key:  '. $this->dtocacheKey;
-									if(isset($_SESSION['rel_'.$this->dtocacheKey.'_'.$identifier.'_'.$reference])){
-									unset($_SESSION['rel_'.$this->dtocacheKey.'_'.$identifier.'_'.$reference]);
-									unset($_SESSION['rel_'.$this->dtocacheKey.'_'.$identifier.'_'.$reference.'_dtoCounts']);
-									}
-									
-									if(!isset($_SESSION['rel_'.$this->dtocacheKey.'_'.$identifier.'_'.$reference])){
-										$_SESSION['rel_'.$this->dtocacheKey.'_'.$identifier.'_'.$reference]=$gridRowsArray;
-										$_SESSION['rel_'.$this->dtocacheKey.'_'.$identifier.'_'.$reference.'_dtoCounts']=$dtoCounts;
-									}
-									unset($gridRowsArray);
-								}
+            /* Store the $gridRowsArray that contains all rows for a dto inside session. This will be used to fetch the records page wise in getPageData() function  */
+            if(is_array($rowsDataArray) && !empty($rowsDataArray)){
+                    @session_start();
+                    //$_SESSION['Page_no']=$gridRowsArray;
+                    //echo '<br>key:  '. $this->dtocacheKey;
+                    if(isset($_SESSION['rel_'.$this->dtocacheKey.'_'.$identifier.'_'.$reference])){
+                    unset($_SESSION['rel_'.$this->dtocacheKey.'_'.$identifier.'_'.$reference]);
+                    unset($_SESSION['rel_'.$this->dtocacheKey.'_'.$identifier.'_'.$reference.'_dtoCounts']);
+                    }
+
+                    if(!isset($_SESSION['rel_'.$this->dtocacheKey.'_'.$identifier.'_'.$reference])){
+                            $_SESSION['rel_'.$this->dtocacheKey.'_'.$identifier.'_'.$reference]=$gridRowsArray;
+                            $_SESSION['rel_'.$this->dtocacheKey.'_'.$identifier.'_'.$reference.'_dtoCounts']=$dtoCounts;
+                    }
+                    unset($gridRowsArray);
+            }
 
           if($this->nodeType=='exchanges'){
           $headerListDataArray[]=array('name'=>'TransferType');
@@ -959,6 +964,164 @@ class dataObjectsModel{
 		}       
 
         }
-     
+
+        /**
+	 * Send the xml request to Server and get the required xml resonse
+           * It will call 'getHistoryJSONData()' function to convert xml to JSON
+	 *
+	 * @param one(Associative Array[nodetype','scope','exchangeID,'exchangeAction'])
+	 * @returns JSON string
+	 * @access public
+	 */
+        function getHistory($params){
+
+            // Buid a WebService request URI($this->dtiHistoryUrl)
+                $this->buildWSUri($params);
+
+                $this->removeDtiCache();
+
+                // Make the DTI format that need to be post
+
+                // POST the History DTI to Server using CURL and get back the response in xml format
+
+                $curlObj = new curl($this->dtiHistoryUrl);
+                $fetchedData = $curlObj->exec();
+                $curlObj->close();
+                if(!empty($fetchedData)){
+                    echo $this->getHistoryJSONData($fetchedData);
+
+                }else{
+                     echo json_encode(array("success"=>"false","response"=>"Server not responding"));
+                }
+
+
+            // call getHistoryJSONData() function to get the JSON data
+
+            // return the JSON String
+            //$result = 'Done: Test getHistory() &' . $this->getHistoryJSONData($fetchedData);
+            //return $result;
+
+
+
+
+        }
+
+
+         /**
+	 * This function used to Marshalling the XML to JSON
+          * for exchange history grid.
+	 *
+	 * @param one(Object)
+	 * @returns JSON string
+	 * @access public
+	 */
+        function getHistoryJSONData($fetchedData){
+
+           // Marshalling XML data to JSON
+          // echo "<pre>";
+            $xmlIterator = new SimpleXMLIterator($fetchedData);
+            $resultArr=array();
+            $statusList = $xmlIterator->statusList;
+
+            $rowDataArr = array();
+            //print_r($xmlIterator);
+            $i=0;
+
+            foreach($xmlIterator->response as $response)
+            {
+                $spanColor='';
+                 switch ((string)$response->level)
+                 {
+                      case "Success":
+                              $spanColor='green';
+                              break;
+                      case "Error":
+                              $spanColor='red';
+                              break;
+                      case "Warning":
+                              $spanColor='orange';
+                              break;
+                  }
+
+                $level = '<span title="Click on row to see History Detail" style="cursor:pointer ;color:'.$spanColor.'">'.(string)$response->level.'</span>';
+                $rowDataArr[] = array(
+                                      'resId_'.$i,
+                                      $level,
+                                      (string)$response->startTimeStamp,
+                                      $response->statusList->status->count(),
+                                      (string)$response->senderUri,
+                                      (string)$response->receiverUri);
+               $i++;
+            }
+
+            $columnsDataArray = array(
+                                    array('id'=>'Level','header'=>'Level','dataIndex'=>'Level','sortable'=>'true'),
+                                    array('id'=>'startTimeStamp','header'=>'startTimeStamp','sortable'=>'true','dataIndex'=>'startTimeStamp'),
+                                    array('id'=>'rowCount','header'=>'rowCount','sortable'=>'true','dataIndex'=>'rowCount'),
+                                    array('id'=>'senderUri','header'=>'senderUri','sortable'=>'true','dataIndex'=>'senderUri'),
+                                    array('id'=>'receiverUri','header'=>'receiverUri','sortable'=>'true','dataIndex'=>'receiverUri')
+                                );
+            $headerListDataArray=array(
+                                    array('id'=>'id'),
+                                    array('name'=>'Level'),
+                                    array('name'=>'startTimeStamp'),
+                                    array('name'=>'rowCount'),
+                                    array('name'=>'senderUri'),
+                                    array('name'=>'receiverUri'),
+                );
+
+            if(!empty($rowDataArr)){
+                        $rowDataArr = $rowDataArr;
+            }else{
+                $rowDataArr = array("<font color='green'><b>Error</b></font>","<font color='green'><b>Error</b></font>");
+            }
+
+            return json_encode(array("success"=>"true",
+                                   "headersList"=>(json_encode($headerListDataArray)),
+                                   "rowData"=>json_encode($rowDataArr),
+                                   "columnsData"=>json_encode($columnsDataArray))
+                            );
+            /*$level = (string)$xmlIterator->level;
+            $startTimeStamp = (string)$xmlIterator->startTimeStamp;
+            $rowCount= $statusList->status->count();
+            $senderUri= (string)$xmlIterator->senderUri;
+            $receiverUri=(string)$xmlIterator->receiverUri;
+
+
+            foreach($statusList->status as $status)
+            {
+                $identifier = (string)$status->identifier;
+
+                foreach($status->messages as $message)
+                {
+                        $messagestr = (string)$message->message;
+                        $resultArr[$identifier]=$messagestr;
+                }
+
+            }
+
+            if(!empty($resultArr)){
+                foreach($resultArr as $key =>$val){
+                        $rowdataArray[]=array($key,$val);
+                 }
+            }else{
+                $rowdataArray[] = array("<font color='green'><b>Error</b></font>","<font color='green'><b>Error</b></font>");
+            }
+
+            $columnsDataArray = array(array('id'=>'Identifier','header'=>'Identifier','dataIndex'=>'Identifier'),array('id'=>'Message','header'=>'Message','sortable'=>'true','width'=>350,'dataIndex'=>'Message'));
+            $headerListDataArray=array(array('name'=>'Identifier'),array('name'=>'Message'));
+            return json_encode(array("success"=>"true",
+                                    "level" => $level,
+                                    "startTimeStamp"=> $startTimeStamp,
+                                    "rowCount"=> $rowCount,
+                                    "senderUri"=> $senderUri,
+                                    "receiverUri"=> $receiverUri,
+                                   "headersList"=>(json_encode($headerListDataArray)),
+                                   "rowData"=>json_encode($rowdataArray),
+                                   "columnsData"=>json_encode($columnsDataArray))
+                            );
+
+                */
+        }
 }
 ?>
