@@ -1,0 +1,125 @@
+<exchangeResponse xmlns="http://iringtools.org/common/response">
+  <response>
+    <level>Error</level>
+    <startTimeStamp>2010-11-09T17:26:02.430-05:00</startTimeStamp>
+    <endTimeStamp>2010-11-09T17:26:03.330-05:00</endTimeStamp>
+    <senderUri>http://localhost:54321/dto00 </senderUri>
+    <senderScopeName>12345_000</senderScopeName>
+    <senderAppName>ABC</senderAppName>
+    <senderGraphName>LINES</senderGraphName>
+    <receiverUri>http://localhost:54321/dto</receiverUri>
+    <receiverScopeName>12345_000</receiverScopeName>
+    <receiverAppName>DEF</receiverAppName>
+    <receiverGraphName>LINES</receiverGraphName>
+    <statusList>
+        <status>
+          <identifier>90009-O</identifier>
+          <results/>
+          <messages>
+            <message>Record [90009-O] have been saved successfully.</message>
+          </messages>
+        </status>
+        
+        <status>
+          <identifier>90012-O</identifier>
+          <results/>
+          <messages>
+            <message>Record [90012-O] have been saved successfully.</message>
+          </messages>
+        </status>
+        <status>
+          <identifier>90013-O</identifier>
+          <results/>
+          <messages>
+            <message>Record [90013-O] have been saved successfully.</message>
+          </messages>
+        </status>
+    </statusList>
+  </response>
+  <response>
+    <level>Success</level>
+    <startTimeStamp>2010-11-09T17:26:02.430-05:00</startTimeStamp>
+    <endTimeStamp>2010-11-09T17:26:03.330-05:00</endTimeStamp>
+    <senderUri>http://localhost:54321/dto</senderUri>
+    <senderScopeName>12345_000</senderScopeName>
+    <senderAppName>ABC</senderAppName>
+    <senderGraphName>LINES</senderGraphName>
+    <receiverUri>http://localhost:54321/dto</receiverUri>
+    <receiverScopeName>12345_000</receiverScopeName>
+    <receiverAppName>DEF</receiverAppName>
+    <receiverGraphName>LINES</receiverGraphName>
+    <statusList>
+      <status>
+        <identifier>90009-O</identifier>
+        <results/>
+        <messages>
+          <message>Record [90009-O] have been saved successfully.</message>
+        </messages>
+      </status>
+      <status>
+        <identifier>90011-O</identifier>
+        <results/>
+        <messages>
+          <message>Record [90011-O] have been saved successfully.</message>
+        </messages>
+      </status>
+      <status>
+        <identifier>90012-O</identifier>
+        <results/>
+        <messages>
+          <message>Record [90012-O] have been saved successfully.</message>
+        </messages>
+      </status>
+      <status>
+        <identifier>90013-O</identifier>
+        <results/>
+        <messages>
+          <message>Record [90013-O] have been saved successfully.</message>
+        </messages>
+      </status>
+    </statusList>
+  </response>
+  <response>
+    <level>Warning</level>
+    <startTimeStamp>2010-11-09T17:26:02.430-05:00</startTimeStamp>
+    <endTimeStamp>2010-11-09T17:26:03.330-05:00</endTimeStamp>
+    <senderUri>http://localhost:54321/dto</senderUri>
+    <senderScopeName>12345_000</senderScopeName>
+    <senderAppName>ABC</senderAppName>
+    <senderGraphName>LINES</senderGraphName>
+    <receiverUri>http://localhost:54321/dto</receiverUri>
+    <receiverScopeName>12345_000</receiverScopeName>
+    <receiverAppName>DEF</receiverAppName>
+    <receiverGraphName>LINES</receiverGraphName>
+    <statusList>
+      <status>
+        <identifier>90009-O</identifier>
+        <results/>
+        <messages>
+          <message>Record [90009-O] have been saved successfully.</message>
+        </messages>
+      </status>
+      <status>
+        <identifier>90011-O</identifier>
+        <results/>
+        <messages>
+          <message>Record [90011-O] have been saved successfully.</message>
+        </messages>
+      </status>
+      <status>
+        <identifier>90012-O</identifier>
+        <results/>
+        <messages>
+          <message>Record [90012-O] have been saved successfully.</message>
+        </messages>
+      </status>
+      <status>
+        <identifier>90013-O</identifier>
+        <results/>
+        <messages>
+          <message>Record [90013-O] have been saved successfully.</message>
+        </messages>
+      </status>
+    </statusList>
+  </response>
+</exchangeResponse>
