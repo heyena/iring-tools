@@ -2213,7 +2213,9 @@ namespace org.iringtools.referenceData
             }
             catch (Exception ex)
             {
-                throw ex;
+        _logger.Error(string.Format("Failed to read repository['{0}']", repository.Uri), ex);
+        return new SPARQLResults();
+//                throw ex;
             }
         }
 
