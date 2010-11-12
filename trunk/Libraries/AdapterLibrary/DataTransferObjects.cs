@@ -31,10 +31,12 @@ using System.Xml.Serialization;
 using System.ServiceModel;
 using System.Linq;
 using org.iringtools.library;
+using org.iringtools.library.manifest;
+using org.iringtools.common.mapping;
 
 namespace org.iringtools.adapter
 {
-  [DataContract(Namespace = "http://www.iringtools.org/dxfr/dto", Name = "dataTransferObjects")]
+  [DataContract(Namespace = "http://iringtools.org/adapter/dto", Name = "dataTransferObjects")]
   public class DataTransferObjects
   {
     public DataTransferObjects()
@@ -52,7 +54,7 @@ namespace org.iringtools.adapter
     public List<DataTransferObject> DataTransferObjectList { get; set; }
   }
 
-  [DataContract(Namespace = "http://www.iringtools.org/dxfr/dto", Name = "dataTransferObject")]
+  [DataContract(Namespace = "http://iringtools.org/adapter/dto", Name = "dataTransferObject")]
   public class DataTransferObject
   {
     public DataTransferObject()
@@ -83,7 +85,7 @@ namespace org.iringtools.adapter
     }
   }
 
-  [DataContract(Namespace = "http://www.iringtools.org/dxfr/dto", Name = "classObject")]
+  [DataContract(Namespace = "http://iringtools.org/adapter/dto", Name = "classObject")]
   public class ClassObject
   {
     public ClassObject()
@@ -114,17 +116,17 @@ namespace org.iringtools.adapter
       {
         foreach (TemplateObject templateObject in templateObjects)
         {
-          if (templateObject.templateId == templateMap.templateId)
+          if (templateObject.templateId == templateMap.TemplateId)
           {
             int roleIdsMatchedCount = 0;
 
-            foreach (RoleMap roleMap in templateMap.roleMaps)
+            foreach (RoleMap roleMap in templateMap.RoleMaps)
             {
               foreach (RoleObject roleObject in templateObject.roleObjects)
               {
-                if (roleObject.roleId == roleMap.roleId)
+                if (roleObject.roleId == roleMap.RoleId)
                 {
-                  if (roleMap.type == RoleType.Reference && roleMap.classMap == null && roleMap.value == roleObject.value)
+                  if (roleMap.Type == RoleType.Reference && roleMap.ClassMap == null && roleMap.Value == roleObject.value)
                     return templateObject;
 
                   roleIdsMatchedCount++;
@@ -133,7 +135,7 @@ namespace org.iringtools.adapter
               }
             }
 
-            if (roleIdsMatchedCount == templateMap.roleMaps.Count)
+            if (roleIdsMatchedCount == templateMap.RoleMaps.Count)
             {
               theTemplateObject = templateObject;
             }
@@ -145,7 +147,7 @@ namespace org.iringtools.adapter
     }
   }
 
-  [DataContract(Namespace = "http://www.iringtools.org/dxfr/dto", Name = "templateObject")]
+  [DataContract(Namespace = "http://iringtools.org/adapter/dto", Name = "templateObject")]
   public class TemplateObject
   {
     public TemplateObject()
@@ -166,7 +168,7 @@ namespace org.iringtools.adapter
     public TransferType transferType { get; set; }
   }
 
-  [DataContract(Namespace = "http://www.iringtools.org/dxfr/dto", Name = "roleObject")]
+  [DataContract(Namespace = "http://iringtools.org/adapter/dto", Name = "roleObject")]
   public class RoleObject
   {
     [DataMember(Order = 0)]

@@ -42,8 +42,8 @@ namespace org.iringtools.adapter.datalayer
       _dataDictionaryPath = string.Format("{0}DataDictionary.{1}.xml",
         _settings["XmlPath"],
         _settings["Scope"]
-      );      
-      
+      );
+
       _sessionFactory = new Configuration()
         .Configure(hibernateConfigPath)
         .AddFile(hibernateMappingPath)
@@ -52,14 +52,14 @@ namespace org.iringtools.adapter.datalayer
 
     private ISession OpenSession()
     {
-        try
-        {
-          return _sessionFactory.OpenSession();
-        }
-        catch (Exception ex)
-        {
-          _logger.Error(string.Format("Error in OpenSession: project[{0}] application[{1}] {2}", _settings["ProjectName"], _settings["ApplicationName"], ex));
-          throw new Exception("Error while openning nhibernate session " + ex);
+      try
+      {
+        return _sessionFactory.OpenSession();
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in OpenSession: project[{0}] application[{1}] {2}", _settings["ProjectName"], _settings["ApplicationName"], ex));
+        throw new Exception("Error while openning nhibernate session " + ex);
       }
     }
 
@@ -70,29 +70,15 @@ namespace org.iringtools.adapter.datalayer
         IList<IDataObject> dataObjects = new List<IDataObject>();
         Type type = Type.GetType("org.iringtools.adapter.datalayer.proj_" + _settings["Scope"] + "." + objectType + ", " + _settings["ExecutingAssemblyName"]);
 
-        if (identifiers != null)
+        if (identifiers != null && identifiers.Count > 0)
         {
-          ISession session = OpenSession();
-
           foreach (string identifier in identifiers)
           {
-            IDataObject dataObject = null;
+            IDataObject dataObject = (IDataObject)Activator.CreateInstance(type);
 
             if (!String.IsNullOrEmpty(identifier))
             {
-              IQuery query = session.CreateQuery("from " + objectType + " where Id = ?");
-              query.SetString(0, identifier);
-              dataObject = query.List<IDataObject>().FirstOrDefault<IDataObject>();
-
-              if (dataObject == null)
-              {
-                dataObject = (IDataObject)Activator.CreateInstance(type);
-                dataObject.SetPropertyValue("Id", identifier);
-              }
-            }
-            else
-            {
-              dataObject = (IDataObject)Activator.CreateInstance(type);
+              dataObject.SetPropertyValue("Id", identifier);
             }
 
             dataObjects.Add(dataObject);
@@ -143,7 +129,7 @@ namespace org.iringtools.adapter.datalayer
 
         if (identifiers != null && identifiers.Count > 0)
         {
-          queryString.Append(" where Id in ('" + String.Join("','", identifiers.ToArray())+ "')");
+          queryString.Append(" where Id in ('" + String.Join("','", identifiers.ToArray()) + "')");
         }
 
         using (ISession session = OpenSession())
@@ -206,7 +192,7 @@ namespace org.iringtools.adapter.datalayer
     public Response Post(IList<IDataObject> dataObjects)
     {
       Response response = new Response();
-      
+
       try
       {
         if (dataObjects != null && dataObjects.Count > 0)
@@ -220,7 +206,7 @@ namespace org.iringtools.adapter.datalayer
               Status status = new Status();
               status.Messages = new Messages();
               status.Identifier = identifier;
-              
+
               try
               {
                 session.SaveOrUpdate(dataObject);
@@ -247,7 +233,7 @@ namespace org.iringtools.adapter.datalayer
 
         object sample = dataObjects.FirstOrDefault();
         string objectType = (sample != null) ? sample.GetType().Name : String.Empty;
-        throw new Exception(string.Format("Error while posting data objects of type [{0}]. {1}", objectType,  ex));
+        throw new Exception(string.Format("Error while posting data objects of type [{0}]. {1}", objectType, ex));
       }
     }
 
@@ -329,14 +315,14 @@ namespace org.iringtools.adapter.datalayer
     {
       IList<IDataObject> relatedObjects;
       DataDictionary dictionary = GetDictionary();
-      DataObject dataObject = dictionary.dataObjects.First(c => c.objectName == sourceDataObject.GetType().Name);
-      DataRelationship dataRelationship = dataObject.dataRelationships.First(c => c.relationshipName == relatedObjectType);
+      DataObject dataObject = dictionary.DataObjects.First(c => c.ObjectName == sourceDataObject.GetType().Name);
+      DataRelationship dataRelationship = dataObject.DataRelationships.First(c => c.RelationshipName == relatedObjectType);
 
       StringBuilder sql = new StringBuilder();
-      sql.Append("from " + dataRelationship.relatedObjectName + " where ");
-      foreach (PropertyMap map in dataRelationship.propertyMaps)
+      sql.Append("from " + dataRelationship.RelatedObjectName + " where ");
+      foreach (PropertyMap map in dataRelationship.PropertyMaps)
       {
-        sql.Append(map.relatedPropertyName + " = '" + sourceDataObject.GetPropertyValue(map.dataPropertyName) + "' and ");
+        sql.Append(map.RelatedPropertyName + " = '" + sourceDataObject.GetPropertyValue(map.DataPropertyName) + "' and ");
       }
       sql.Remove(sql.Length - 4, 4);
 

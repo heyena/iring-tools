@@ -65,43 +65,43 @@ namespace org.iringtools.informationmodel.usercontrols
     /// </summary>
     public CustomTreeItem()
     {
-        try
+      try
+      {
+        itemStackPanel = new StackPanel();
+        //   itemCheckbox = new CheckBox();
+        itemStackPanel.Orientation = Orientation.Horizontal;
+        itemTextBlock = new TextBlock();
+        tooltipText = new TextBlock();
+        _qmxf = new QMXF();
+        ToolTipService.SetToolTip(this, tooltipText);
+        itemImage = new Image()
         {
-            itemStackPanel = new StackPanel();
-         //   itemCheckbox = new CheckBox();
-            itemStackPanel.Orientation = Orientation.Horizontal;
-            itemTextBlock = new TextBlock();
-            tooltipText = new TextBlock();
-            _qmxf = new QMXF();
-            ToolTipService.SetToolTip(this, tooltipText);
-            itemImage = new Image()
-            {
-                Height = 16,
-                Width = 16,
-                Stretch = Stretch.Uniform,
-                Visibility = Visibility.Visible
-            };
-            itemImage.ImageFailed += new EventHandler<ExceptionRoutedEventArgs>(img_ImageFailed);
+          Height = 16,
+          Width = 16,
+          Stretch = Stretch.Uniform,
+          Visibility = Visibility.Visible
+        };
+        itemImage.ImageFailed += new EventHandler<ExceptionRoutedEventArgs>(img_ImageFailed);
         //    itemStackPanel.Children.Add(itemCheckbox);
-            itemStackPanel.Children.Add(itemImage);
-            itemStackPanel.Children.Add(new TextBlock() { Text = " " });
-            itemStackPanel.Children.Add(itemTextBlock);
-            Header = itemStackPanel;
-            //Selected += nodeSelectedHandler;
-            MouseLeftButtonUp += nodeMouseLeftButtonUpHandler;
-            Expanded += nodeExpandedHandler;
-            Collapsed += nodeCollapsedHandler;
-            isProcessed = false;
+        itemStackPanel.Children.Add(itemImage);
+        itemStackPanel.Children.Add(new TextBlock() { Text = " " });
+        itemStackPanel.Children.Add(itemTextBlock);
+        Header = itemStackPanel;
+        //Selected += nodeSelectedHandler;
+        MouseLeftButtonUp += nodeMouseLeftButtonUpHandler;
+        Expanded += nodeExpandedHandler;
+        Collapsed += nodeCollapsedHandler;
+        isProcessed = false;
 
-            if (CanExecuteChanged != null)
-            {
-                CanExecuteChanged(this, new EventArgs());
-            }
-        }
-        catch (Exception ex)
+        if (CanExecuteChanged != null)
         {
-            Error.SetError(ex);
+          CanExecuteChanged(this, new EventArgs());
         }
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
     }
 
     public Entity Entity { get; set; }
@@ -126,68 +126,68 @@ namespace org.iringtools.informationmodel.usercontrols
 
     public void UpdateModel(QMXF qmxf)
     {
-        try
-        {
-            PresentationModel.SelectedTreeItem = this;
+      try
+      {
+        PresentationModel.SelectedTreeItem = this;
 
-            if (qmxf != null)
-            {
-                PresentationModel.SelectedQMXF = qmxf;
-                this._qmxf = qmxf;
-            }
-            else
-            {
-                PresentationModel.SelectedQMXF = this._qmxf;
-            }
-
-            Aggregator.GetEvent<NavigationEvent>().Publish(new NavigationEventArgs
-            {
-                SelectedNode = this,
-                DetailProcess = DetailType.InformationModel,
-                Sender = this
-            });
-        }
-        catch (Exception ex)
+        if (qmxf != null)
         {
-            Error.SetError(ex);
+          PresentationModel.SelectedQMXF = qmxf;
+          this._qmxf = qmxf;
         }
+        else
+        {
+          PresentationModel.SelectedQMXF = this._qmxf;
+        }
+
+        Aggregator.GetEvent<NavigationEvent>().Publish(new NavigationEventArgs
+        {
+          SelectedNode = this,
+          DetailProcess = DetailType.InformationModel,
+          Sender = this
+        });
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
     }
 
     public virtual void nodeCollapsedHandler(object sender, System.Windows.RoutedEventArgs e)
     {
-        try
+      try
+      {
+        if (IsExpanded.Equals(false) &
+          itemTextBlock.Text.Contains("[Classifications]") ||
+          itemTextBlock.Text.Contains("[Super Classes]") ||
+          itemTextBlock.Text.Contains("[Sub Classes]") ||
+          itemTextBlock.Text.Contains("[Templates]"))
         {
-            if (IsExpanded.Equals(false) &
-              itemTextBlock.Text.Contains("[Classifications]") ||
-              itemTextBlock.Text.Contains("[Super Classes]") ||
-              itemTextBlock.Text.Contains("[Sub Classes]") ||
-              itemTextBlock.Text.Contains("[Templates]"))
-            {
-                SetImageSource("folder.png");
-            }
+          SetImageSource("folder.png");
         }
-        catch (Exception ex)
-        {
-            Error.SetError(ex);
-        }
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
     }
 
     public virtual void nodeExpandedHandler(object sender, System.Windows.RoutedEventArgs e)
     {
-        try
+      try
+      {
+        if (itemTextBlock.Text.Contains("[Classifications]") ||
+          itemTextBlock.Text.Contains("[Super Classes]") ||
+          itemTextBlock.Text.Contains("[Sub Classes]") ||
+          itemTextBlock.Text.Contains("[Templates]"))
         {
-            if (itemTextBlock.Text.Contains("[Classifications]") ||
-              itemTextBlock.Text.Contains("[Super Classes]") ||
-              itemTextBlock.Text.Contains("[Sub Classes]") ||
-              itemTextBlock.Text.Contains("[Templates]"))
-            {
-                SetImageSource("folder-open.png");
-            }
+          SetImageSource("folder-open.png");
         }
-        catch (Exception ex)
-        {
-            Error.SetError(ex);
-        }
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
     }
 
     /// <summary>
@@ -197,49 +197,49 @@ namespace org.iringtools.informationmodel.usercontrols
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     public virtual void nodeSelectedHandler(object sender, RoutedEventArgs e)
     {
-        try
-        {
-            Logger.Log(string.Format("node_Selected in {0} : CustomTreeItem (baseclass)", sender.GetType().FullName),
-            Category.Debug, Priority.None);
-        }
-        catch (Exception ex)
-        {
-            Error.SetError(ex);
-        }
+      try
+      {
+        Logger.Log(string.Format("node_Selected in {0} : CustomTreeItem (baseclass)", sender.GetType().FullName),
+        Category.Debug, Priority.None);
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
     }
 
     public virtual void nodeMouseLeftButtonUpHandler(object sender, MouseButtonEventArgs e) { }
 
     void img_ImageFailed(object sender, ExceptionRoutedEventArgs e)
     {
-        try
-        {
-            Logger.Log(string.Format("Error {0} loading image ", e.ErrorException.Message),
-            Category.Exception, Priority.Low);
-        }
-        catch (Exception ex)
-        {
-            Error.SetError(ex);
-        }
+      try
+      {
+        Logger.Log(string.Format("Error {0} loading image ", e.ErrorException.Message),
+        Category.Exception, Priority.Low);
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
     }
 
     public RoleTreeItem AddRoleTreeItem(string header, Entity entity, RoleDefinition roleDefinition)
     {
-        RoleTreeItem item = Container.Resolve<RoleTreeItem>();
-        try
-        {
-            item.SetImageSource("role.png");
-            item.SetTooltipText("Role : " + roleDefinition.name[0].value);
-            item.SetTextBlockText(roleDefinition.name[0].value);
-            item.Entity = entity;
-            item.RoleDefinition = roleDefinition;
-            item.Tag = roleDefinition;            
-        }
-        catch (Exception ex)
-        {
-            Error.SetError(ex);
-        }
-        return item;
+      RoleTreeItem item = Container.Resolve<RoleTreeItem>();
+      try
+      {
+        item.SetImageSource("role.png");
+        item.SetTooltipText("Role : " + roleDefinition.name[0].value);
+        item.SetTextBlockText(roleDefinition.name[0].value);
+        item.Entity = entity;
+        item.RoleDefinition = roleDefinition;
+        item.Tag = roleDefinition;
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
+      return item;
     }
 
     public RoleTreeItem AddRoleTreeItem(string header, Entity entity, RoleQualification roleQualification)
@@ -247,18 +247,18 @@ namespace org.iringtools.informationmodel.usercontrols
       RoleTreeItem item = Container.Resolve<RoleTreeItem>();
       try
       {
-          item.SetImageSource("role.png");
-          item.SetTooltipText("Role : " + roleQualification.name[0].value);
-          item.SetTextBlockText(entity.label);
-          item.Entity = entity;
-          item.SetTextBlockText(roleQualification.name[0].value);
-          item.Entity = entity;
-          item.RoleQualification = roleQualification;
-          item.Tag = roleQualification;
+        item.SetImageSource("role.png");
+        item.SetTooltipText("Role : " + roleQualification.name[0].value);
+        item.SetTextBlockText(entity.Label);
+        item.Entity = entity;
+        item.SetTextBlockText(roleQualification.name[0].value);
+        item.Entity = entity;
+        item.RoleQualification = roleQualification;
+        item.Tag = roleQualification;
       }
       catch (Exception ex)
       {
-          Error.SetError(ex);
+        Error.SetError(ex);
       }
       return item;
     }
@@ -270,90 +270,90 @@ namespace org.iringtools.informationmodel.usercontrols
 
       try
       {
-          switch (entity.uri.GetObjectTypeFromUri())
-          {
-              case SPARQLPrefix.ObjectType.Class:
-                  item = Container.Resolve<ClassTreeItem>();
+        switch (entity.Uri.GetObjectTypeFromUri())
+        {
+          case SPARQLPrefix.ObjectType.Class:
+            item = Container.Resolve<ClassTreeItem>();
 
-                  item.SetImageSource("class.png");
-                  item.SetTooltipText("Class : " + entity.label);
-                  item.SetTextBlockText(entity.label);
-                  item.Entity = entity;
-                  item.Tag = entity;
-                  item.id = entity.uri.GetIdFromUri();
-                  item.PresentationModel.SelectedQMXF = this.PresentationModel.SelectedQMXF;
-                  break;
+            item.SetImageSource("class.png");
+            item.SetTooltipText("Class : " + entity.Label);
+            item.SetTextBlockText(entity.Label);
+            item.Entity = entity;
+            item.Tag = entity;
+            item.id = entity.Uri.GetIdFromUri();
+            item.PresentationModel.SelectedQMXF = this.PresentationModel.SelectedQMXF;
+            break;
 
-              case SPARQLPrefix.ObjectType.Template:
-                  item = Container.Resolve<TemplateTreeItem>();
-                  item.SetImageSource("template.png");
-                  item.SetTooltipText("Template : " + entity.label);
-                  item.SetTextBlockText(entity.label);
-                  item.Entity = entity;
-                  item.Tag = entity;
-                  item.id = entity.uri.GetIdFromUri();
-                  break;
+          case SPARQLPrefix.ObjectType.Template:
+            item = Container.Resolve<TemplateTreeItem>();
+            item.SetImageSource("template.png");
+            item.SetTooltipText("Template : " + entity.Label);
+            item.SetTextBlockText(entity.Label);
+            item.Entity = entity;
+            item.Tag = entity;
+            item.id = entity.Uri.GetIdFromUri();
+            break;
 
-              default:
-                  item = Container.Resolve<CustomTreeItem>();
-                  item.SetImageSource("default.png");
-                  item.SetTooltipText("Unknown : " + entity.label);
-                  item.SetTextBlockText(entity.label);
-                  item.Entity = entity;
-                  item.Tag = entity;
-                  item.id = entity.uri.GetIdFromUri();
-                  break;
-          }
+          default:
+            item = Container.Resolve<CustomTreeItem>();
+            item.SetImageSource("default.png");
+            item.SetTooltipText("Unknown : " + entity.Label);
+            item.SetTextBlockText(entity.Label);
+            item.Entity = entity;
+            item.Tag = entity;
+            item.id = entity.Uri.GetIdFromUri();
+            break;
+        }
       }
       catch (Exception ex)
       {
-          Error.SetError(ex);
+        Error.SetError(ex);
       }
 
       return item;
     }
-    
+
     public void GetClassLabel(string tag, string id)
     {
-        try
-        {
-            id = Utility.GetIdFromURI(id);
+      try
+      {
+        id = Utility.GetIdFromURI(id);
 
-            if (String.IsNullOrEmpty(id) || String.IsNullOrEmpty(tag))
-                return;
+        if (String.IsNullOrEmpty(id) || String.IsNullOrEmpty(tag))
+          return;
 
-            // check local cache see if the label has been resolved
-            if (PresentationModel.IdLabelDictionary.ContainsKey(id))
-            {
-                PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>(tag, PresentationModel.IdLabelDictionary[id]));
-            }
-            else
-            {
-                ReferenceDataService.GetClassLabel(tag, id, this);
-            }
-        }
-        catch (Exception ex)
+        // check local cache see if the label has been resolved
+        if (PresentationModel.IdLabelDictionary.ContainsKey(id))
         {
-            Error.SetError(ex);
+          PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>(tag, PresentationModel.IdLabelDictionary[id]));
         }
+        else
+        {
+          ReferenceDataService.GetClassLabel(tag, id, this);
+        }
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
     }
 
     public void DisplayAndSaveLabel(object completedEventArgsData)
     {
-        try
-        {
-            string[] data = (string[])completedEventArgsData;
-            string tag = data[0];
-            string id = data[1];
-            string label = data[2];
+      try
+      {
+        string[] data = (string[])completedEventArgsData;
+        string tag = data[0];
+        string id = data[1];
+        string label = data[2];
 
-            PresentationModel.IdLabelDictionary[id] = label;
-            PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>(tag, label));
-        }
-        catch (Exception ex)
-        {
-            Error.SetError(ex);
-        }
+        PresentationModel.IdLabelDictionary[id] = label;
+        PresentationModel.DetailProperties.Add(new KeyValuePair<string, string>(tag, label));
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
     }
 
     private BitmapImage GetImageSource(string iconName)
@@ -385,39 +385,39 @@ namespace org.iringtools.informationmodel.usercontrols
 
     public void SetImageSource(string iconName)
     {
-        try
-        {
-            itemImage.Source = new BitmapImage();
-            itemImage.Source = GetImageSource(iconName);
-        }
-        catch (Exception ex)
-        {
-            Error.SetError(ex);
-        }
+      try
+      {
+        itemImage.Source = new BitmapImage();
+        itemImage.Source = GetImageSource(iconName);
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
     }
 
     public void SetTextBlockText(string text)
     {
-        try
-        {
-            itemTextBlock.Text = text;
-        }
-        catch (Exception ex)
-        {
-            Error.SetError(ex);
-        }
+      try
+      {
+        itemTextBlock.Text = text;
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
     }
 
     public void SetTooltipText(string text)
     {
-        try
-        {
-            tooltipText.Text = text;
-        }
-        catch (Exception ex)
-        {
-            Error.SetError(ex);
-        }
+      try
+      {
+        tooltipText.Text = text;
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
     }
   }
 }

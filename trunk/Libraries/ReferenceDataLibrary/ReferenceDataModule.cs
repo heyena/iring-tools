@@ -26,7 +26,7 @@
 
 using Ninject.Modules;
 
-namespace org.iringtools.referenceData
+namespace org.iringtools.refdata
 {
     public class ReferenceDataModule : NinjectModule
     {

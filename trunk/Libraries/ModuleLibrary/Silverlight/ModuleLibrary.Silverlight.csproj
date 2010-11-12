@@ -147,9 +147,6 @@
     <Compile Include="..\..\..\Libraries\iRINGLibrary\Desktop\SPARQLResults.cs">
       <Link>Entities\SPARQLResults.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\Libraries\iRINGLibrary\Desktop\Query.cs">
-      <Link>LayerDAL\Query.cs</Link>
-    </Compile>
     <Compile Include="..\..\..\Libraries\iRINGLibrary\Desktop\RefDataEntities.cs">
       <Link>LayerDAL\RefDataEntities.cs</Link>
     </Compile>
@@ -158,6 +155,12 @@
     </Compile>
     <Compile Include="..\..\iRINGLibrary\Desktop\Manifest.cs">
       <Link>Entities\Manifest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\iRINGLibrary\Desktop\Queries.cs">
+      <Link>Entities\Queries.cs</Link>
+    </Compile>
+    <Compile Include="..\..\iRINGLibrary\Desktop\Repositories.cs">
+      <Link>Entities\Repositories.cs</Link>
     </Compile>
     <Compile Include="..\..\iRINGLibrary\Desktop\ScopeApplication.cs">
       <Link>Entities\ScopeApplication.cs</Link>

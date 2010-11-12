@@ -10,6 +10,7 @@ using org.iringtools.informationmodel.usercontrols;
 using System.Windows.Controls;
 using org.iringtools.modulelibrary.usercontrols;
 using org.iringtools.library;
+using org.iringtools.common.mapping;
 
 namespace org.iringtools.ontologyservice.presentation.presentationmodels
 {
@@ -23,7 +24,7 @@ namespace org.iringtools.ontologyservice.presentation.presentationmodels
     bool SelectedDataSourceIsPropertyKey { get; set; }
     bool SelectedDataSourceIsRequiredField { get; set; }
     string SelectedDataSourcePropertyName { get; set; }
-        
+
     Entity SelectedInformationModelNode { get; set; }
     string SelectedIMLabel { get; set; }
     string SelectedIMRepository { get; set; }

@@ -11,6 +11,10 @@ using System.IO;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using org.iringtools.exchange;
+using org.iringtools.common.mapping;
+using org.iringtools.library.manifest;
+using System.Collections.Specialized;
+using System.Web;
 
 namespace AdapterService.Tests
 {
@@ -19,7 +23,7 @@ namespace AdapterService.Tests
   {
     private AdapterProvider _adapterProvider = null;
     private ExchangeProvider _exchangeProvider = null;
-    private DtoProvider _dtoProvider = null;
+    private DataTranferProvider _dtoProvider = null;
 
     [Dependency]
     public IError Error { get; set; }
@@ -29,7 +33,7 @@ namespace AdapterService.Tests
 
     public AdapterProxy()
     {
-      _dtoProvider = new DtoProvider(ConfigurationManager.AppSettings);
+      _dtoProvider = new DataTranferProvider(ConfigurationManager.AppSettings);
       _adapterProvider = new AdapterProvider(ConfigurationManager.AppSettings);
       _exchangeProvider = new ExchangeProvider(ConfigurationManager.AppSettings);
     }
@@ -94,35 +98,35 @@ namespace AdapterService.Tests
       return response;
     }
 
-    public Response DeleteAll(string projectName, string applicationName)
-    {
-      Response response = null;
-      try
-      {
-        response = _adapterProvider.DeleteAll(projectName, applicationName);
-      }
-      catch (Exception ex)
-      {
-        Error.SetError(ex);
-      }
+    //public Response DeleteAll(string projectName, string applicationName)
+    //{
+    //  Response response = null;
+    //  try
+    //  {
+    //    response = _adapterProvider.DeleteAll(projectName, applicationName);
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    Error.SetError(ex);
+    //  }
 
-      return response;
-    }
+    //  return response;
+    //}
 
-    public Response RefreshAll(string projectName, string applicationName)
-    {
-      Response response = null;
-      try
-      {
-        response = _adapterProvider.RefreshAll(projectName, applicationName);
-      }
-      catch (Exception ex)
-      {
-        Error.SetError(ex);
-      }
+    //public Response RefreshAll(string projectName, string applicationName)
+    //{
+    //  Response response = null;
+    //  try
+    //  {
+    //    response = _adapterProvider.RefreshAll(projectName, applicationName);
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    Error.SetError(ex);
+    //  }
 
-      return response;
-    }
+    //  return response;
+    //}
 
     public Mapping GetMapping(string projectName, string applicationName)
     {

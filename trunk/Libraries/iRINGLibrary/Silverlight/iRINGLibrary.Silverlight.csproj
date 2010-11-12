@@ -100,6 +100,15 @@
     <Compile Include="..\Desktop\DataFilter.cs">
       <Link>DataFilter.cs</Link>
     </Compile>
+    <Compile Include="..\Desktop\DataObjects.cs">
+      <Link>DataObjects.cs</Link>
+    </Compile>
+    <Compile Include="..\Desktop\DataProviders.cs">
+      <Link>DataProviders.cs</Link>
+    </Compile>
+    <Compile Include="..\Desktop\DataRelationships.cs">
+      <Link>DataRelationships.cs</Link>
+    </Compile>
     <Compile Include="..\Desktop\IAdapter.cs">
       <Link>IAdapter.cs</Link>
     </Compile>
@@ -112,8 +121,8 @@
     <Compile Include="..\Desktop\QMXF.cs">
       <Link>QMXF.cs</Link>
     </Compile>
-    <Compile Include="..\Desktop\Query.cs">
-      <Link>Query.cs</Link>
+    <Compile Include="..\Desktop\Queries.cs">
+      <Link>Queries.cs</Link>
     </Compile>
     <Compile Include="..\Desktop\QXF.cs">
       <Link>QXF.cs</Link>

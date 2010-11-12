@@ -32,6 +32,9 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using System.Reflection;
+using System.Linq;
+using System.Collections.Generic;
 
 
 namespace org.iringtools.utility
@@ -274,5 +277,29 @@ namespace org.iringtools.utility
 
       return id;
     }
+
+    public static List<T> GetEnumValues<T>()
+    {
+      var type = typeof(T);
+      if (!type.IsEnum)
+        throw new ArgumentException("Type '" + type.Name + "' is not an enum");
+
+      return (
+        from field in type.GetFields(BindingFlags.Public | BindingFlags.Static)
+        where field.IsLiteral
+        select (T)field.GetValue(type)).ToList();
+    }
+
+    public static List<string> GetEnumStrings<T>()
+    {
+      var type = typeof(T);
+      if (!type.IsEnum)
+        throw new ArgumentException("Type '" + type.Name + "' is not an enum");
+
+      return (
+        from field in type.GetFields(BindingFlags.Public | BindingFlags.Static)
+        where field.IsLiteral
+        select field.Name).ToList();
+    } 
   }
 }

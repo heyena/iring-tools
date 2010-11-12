@@ -9,7 +9,7 @@ using Microsoft.Practices.Composite.Events;
 using org.iringtools.library.presentation.events;
 using org.iringtools.informationmodel.events;
 using org.iringtools.library;
-
+using org.iringtools.common.mapping;
 
 namespace org.iringtools.modulelibrary.layerbll
 {
@@ -104,8 +104,8 @@ namespace org.iringtools.modulelibrary.layerbll
 
       aggregator.GetEvent<SpinnerEvent>().Publish(new SpinnerEventArgs
       {
-          Active = SpinnerEventType.Stopped,
-          ActiveService = processType.ToString()
+        Active = SpinnerEventType.Stopped,
+        ActiveService = processType.ToString()
       });
     }
 
@@ -130,7 +130,7 @@ namespace org.iringtools.modulelibrary.layerbll
       aggregator.GetEvent<SpinnerEvent>().Publish(new SpinnerEventArgs
       {
         Active = SpinnerEventType.Started,
-        ActiveService =  serviceName
+        ActiveService = serviceName
       });
     }
 
@@ -151,7 +151,7 @@ namespace org.iringtools.modulelibrary.layerbll
       dal.GetUnitTestString(valueToReturn);
     }
 
-    
+
 
     /// <summary>
     /// Gets the mapping.
@@ -169,14 +169,14 @@ namespace org.iringtools.modulelibrary.layerbll
     public DataDictionary GetDictionary(string projectName, string applicationName)
     {
       StartService("GetDictionary");
-      return dal.GetDictionary(projectName,applicationName);
+      return dal.GetDictionary(projectName, applicationName);
     }
 
 
     public Response GetScopes()
     {
-        StartService("GetScopes");
-        return dal.GetScopes();
+      StartService("GetScopes");
+      return dal.GetScopes();
     }
     // THE FOLLOWING NOT IMPLEMENTED 
 
@@ -195,8 +195,8 @@ namespace org.iringtools.modulelibrary.layerbll
 
     public Response UpdateMapping(Mapping mapping)
     {
-        StartService("UpdateMapping");
-        return dal.UpdateMapping( mapping);
+      StartService("UpdateMapping");
+      return dal.UpdateMapping(mapping);
     }
 
     public Response RefreshAll(string projectName, string applicationName)
@@ -210,7 +210,7 @@ namespace org.iringtools.modulelibrary.layerbll
       return dal.RefreshAll(userState);
     }
 
-    
+
     public Response Generate(string projectName, string applicationName)
     {
       StartService("Generate");
@@ -224,7 +224,7 @@ namespace org.iringtools.modulelibrary.layerbll
     }
 
 
-    public Response RefreshGraph(string projectName, string applicationName,string graphName)
+    public Response RefreshGraph(string projectName, string applicationName, string graphName)
     {
       StartService("RefreshGraph");
       throw new NotImplementedException();
@@ -256,12 +256,12 @@ namespace org.iringtools.modulelibrary.layerbll
 
     public string GetAdapterServiceUri
     {
-        get { return dal.GetAdapterServiceUri; }
+      get { return dal.GetAdapterServiceUri; }
     }
 
     public string GetGraphBaseUri
     {
-        get { return dal.GetGraphBaseUri; }
+      get { return dal.GetGraphBaseUri; }
     }
     #endregion
   }

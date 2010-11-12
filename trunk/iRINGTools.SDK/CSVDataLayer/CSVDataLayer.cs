@@ -431,71 +431,71 @@ namespace Bechtel.CSVDataLayer.API
       // Create a DataDictionary instance
       DataDictionary dataDictionary = new DataDictionary()
       {
-        dataObjects = new List<DataObject>()
+        DataObjects = new List<DataObject>()
         {
           new DataObject()
           {
-            keyDelimeter = "",
-            keyProperties = new List<KeyProperty>()
+            KeyDelimeter = "",
+            KeyProperties = new List<KeyProperty>()
             {
               new KeyProperty()
               {
-                keyPropertyName = "Tag"
+                KeyPropertyName = "Tag"
               },
             },
-            dataProperties = new List<DataProperty>()
+            DataProperties = new List<DataProperty>()
             {
               new DataProperty()
               {
-                dataLength = 255,
-                dataType = DataType.String,
-                propertyName = "PumpType",
-                isNullable = true,
+                DataLength = 255,
+                DataType = DataType.String,
+                PropertyName = "PumpType",
+                IsNullable = true,
               },
               new DataProperty()
               {
-                dataLength = 255,
-                dataType = DataType.String,
-                propertyName = "PumpDriverType",
-                isNullable = true,
+                DataLength = 255,
+                DataType = DataType.String,
+                PropertyName = "PumpDriverType",
+                IsNullable = true,
               },
               new DataProperty()
               {
-                dataLength = 16,
-                dataType = DataType.Double,
-                propertyName = "DesignTemp",
-                isNullable = true,
+                DataLength = 16,
+                DataType = DataType.Double,
+                PropertyName = "DesignTemp",
+                IsNullable = true,
               },
               new DataProperty()
               {
-                dataLength = 16,
-                dataType = DataType.Double,
-                propertyName = "DesignPressure",
-                isNullable = true,
+                DataLength = 16,
+                DataType = DataType.Double,
+                PropertyName = "DesignPressure",
+                IsNullable = true,
               },
               new DataProperty()
               {
-                dataLength = 16,
-                dataType = DataType.Double,
-                propertyName = "Capacity",
-                isNullable = true,
+                DataLength = 16,
+                DataType = DataType.Double,
+                PropertyName = "Capacity",
+                IsNullable = true,
               },
               new DataProperty()
               {
-                dataLength = 16,
-                dataType = DataType.Double,
-                propertyName = "SpecificGravity",
-                isNullable = true,
+                DataLength = 16,
+                DataType = DataType.Double,
+                PropertyName = "SpecificGravity",
+                IsNullable = true,
               },
               new DataProperty()
               {
-                dataLength = 16,
-                dataType = DataType.Double,
-                propertyName = "DifferentialPressure",
-                isNullable = true,
+                DataLength = 16,
+                DataType = DataType.Double,
+                PropertyName = "DifferentialPressure",
+                IsNullable = true,
               },
             },
-          objectName = "Equipment",
+          ObjectName = "Equipment",
           }
         }
       };

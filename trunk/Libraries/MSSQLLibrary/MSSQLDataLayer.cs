@@ -48,7 +48,7 @@ namespace org.iringtools.library.mssql
         DataCRUD getData = new DataCRUD(sqlObject.ConnectionString);
         dataTable = getData.GetSqlTableSchema(sqlObject);
         dataTable.TableName = sqlObject.ObjectName;
-        _dataDictionary.dataObjects.Add(CreateDataObject(dataTable, sqlObject));
+        _dataDictionary.DataObjects.Add(CreateDataObject(dataTable, sqlObject));
       }
       return _dataDictionary;
     }
@@ -57,19 +57,19 @@ namespace org.iringtools.library.mssql
     {
       DataProperty dataProperty = null;
       string colName = string.Empty;
-      DataObject dataObject = new DataObject { tableName = dataTable.TableName, objectName = sqlObject.ObjectTypeName };
+      DataObject dataObject = new DataObject { TableName = dataTable.TableName, ObjectName = sqlObject.ObjectTypeName };
       if (sqlObject.IdentifierType == IdType.Foreign)
       {
         dataProperty = new DataProperty
         {
-          columnName = sqlObject.IdentifierProperty.Split('.')[1],
-          dataLength = 50,
-          dataType = DataType.String,
-          isNullable = false,
-          keyType = KeyType.assigned,
-          propertyName = sqlObject.IdentifierProperty.Split('.')[1]
+          ColumnName = sqlObject.IdentifierProperty.Split('.')[1],
+          DataLength = 50,
+          DataType = DataType.String,
+          IsNullable = false,
+          KeyType = KeyType.assigned,
+          PropertyName = sqlObject.IdentifierProperty.Split('.')[1]
         };
-        dataObject.addKeyProperty(dataProperty);
+        dataObject.AddKeyProperty(dataProperty);
       }
       foreach (DataRow dataField in dataTable.Rows)
       {
@@ -82,48 +82,48 @@ namespace org.iringtools.library.mssql
               break;
             case "ColumnName":
               colName = dataField[property].ToString();
-              dataProperty.columnName = colName;
-              dataProperty.propertyName = colName;
+              dataProperty.ColumnName = colName;
+              dataProperty.PropertyName = colName;
               break;
             case "ColumnSize":
-              dataProperty.dataLength = Convert.ToInt32(dataField[property].ToString());
+              dataProperty.DataLength = Convert.ToInt32(dataField[property].ToString());
               break;
             case "IsUnique":
               break;
             case "IsKey":
               if (Convert.ToBoolean(dataField[property]) == true)
               {
-                var key = dataObject.keyProperties.Where(c => c.keyPropertyName == colName).FirstOrDefault();
+                var key = dataObject.KeyProperties.Where(c => c.KeyPropertyName == colName).FirstOrDefault();
                 if (key == null)
                 {
-                  dataProperty.keyType = KeyType.assigned;
+                  dataProperty.KeyType = KeyType.assigned;
                 }
               }
               break;
             case "DataType":
-              dataProperty.dataType = (DataType)Enum.Parse(typeof(DataType), dataField[property].ToString().Split('.')[1]);
+              dataProperty.DataType = (DataType)Enum.Parse(typeof(DataType), dataField[property].ToString().Split('.')[1]);
               break;
             case "IsIdentity":
               break;
             case "DataTypeName":
               break;
             case "AllowDBNull":
-              dataProperty.isNullable = Convert.ToBoolean(dataField[property]);
+              dataProperty.IsNullable = Convert.ToBoolean(dataField[property]);
 
               break;
           }
         }
-        var exists = dataObject.dataProperties.Select(c => c.columnName == dataProperty.columnName).FirstOrDefault();
-        if (!exists && dataProperty.keyType == KeyType.unassigned)
+        var exists = dataObject.DataProperties.Select(c => c.ColumnName == dataProperty.ColumnName).FirstOrDefault();
+        if (!exists && dataProperty.KeyType == KeyType.unassigned)
         {
-          dataObject.dataProperties.Add(dataProperty);
+          dataObject.DataProperties.Add(dataProperty);
         }
-        else if (dataProperty.keyType != KeyType.unassigned)
+        else if (dataProperty.KeyType != KeyType.unassigned)
         {
-          if (sqlObject.IdentifierProperty.Contains(dataProperty.columnName) &&
-            !sqlObject.KeyProperties.Contains(dataProperty.columnName))
+          if (sqlObject.IdentifierProperty.Contains(dataProperty.ColumnName) &&
+            !sqlObject.KeyProperties.Contains(dataProperty.ColumnName))
           {
-            dataObject.addKeyProperty(dataProperty);
+            dataObject.AddKeyProperty(dataProperty);
           }
         }
       }

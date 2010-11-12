@@ -55,13 +55,13 @@ namespace org.iringtools.services
     }
 
     [WebGet(UriTemplate = "/providers")]
-    public List<String> GetProviders()
+    public DataProviders GetProviders()
     {
       return _NHibernateProvider.GetProviders();
     }
 
     [WebGet(UriTemplate = "/relationship")]
-    public List<String> GetRelationships()
+    public DataRelationships GetRelationships()
     {
       return _NHibernateProvider.GetRelationships();
     }

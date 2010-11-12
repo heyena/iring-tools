@@ -11,6 +11,7 @@ using org.ids_adi.qmxf;
 using org.iringtools.informationmodel.usercontrols;
 using org.iringtools.modulelibrary.usercontrols;
 using org.iringtools.library;
+using org.iringtools.common.mapping;
 
 
 namespace org.iringtools.ontologyservice.presentation
@@ -26,7 +27,7 @@ namespace org.iringtools.ontologyservice.presentation
 
 
 
-    #region SelectedDataObject 
+    #region SelectedDataObject
     private DataObjectItem _selectedDataObject;
     /// <summary>
     /// Currently Selected Data object (DataObjectItem)
@@ -40,7 +41,7 @@ namespace org.iringtools.ontologyservice.presentation
         OnPropertyChanged("SelectedDataObject");
       }
     }
-    
+
     #endregion
 
     private DataProperty _selectedDataSource;
@@ -55,11 +56,11 @@ namespace org.iringtools.ontologyservice.presentation
         //SelectedDataSourceDataTypeField = value.dataType;
         //SelectedDataSourceIsPropertyKey = value.isPropertyKey;
         //SelectedDataSourceIsRequiredField = value.isRequired;
-        SelectedDataSourcePropertyName = value.propertyName;
+        SelectedDataSourcePropertyName = value.PropertyName;
       }
     }
 
-      
+
     #region Snapshop of Selected Data Source
     private string _selectedDataSourceDataTypeField;
     public string SelectedDataSourceDataTypeField
@@ -113,9 +114,9 @@ namespace org.iringtools.ontologyservice.presentation
 
         if (entity != null)
         {
-          SelectedIMLabel = entity.label;
-          SelectedIMRepository = entity.repository;
-          SelectedIMUri = entity.uri;
+          SelectedIMLabel = entity.Label;
+          SelectedIMRepository = entity.Repository;
+          SelectedIMUri = entity.Uri;
           SelectedInformationModelNode = entity;
         }
         OnPropertyChanged("SelectedTreeItem");
@@ -126,74 +127,74 @@ namespace org.iringtools.ontologyservice.presentation
     private MappingItem _selectedMappingItem;
     public MappingItem SelectedMappingItem
     {
-        get { return _selectedMappingItem; }
-        set
-        {
-            _selectedMappingItem = value;
-            OnPropertyChanged("SelectedMappingItem");
+      get { return _selectedMappingItem; }
+      set
+      {
+        _selectedMappingItem = value;
+        OnPropertyChanged("SelectedMappingItem");
 
-            SelectedNodeType = value.NodeType;
-            SelectedGraphMap = value.GraphMap;
-            SelectedClassMap = value.ClassMap;
-            SelectedTemplateMap = value.TemplateMap;
-            SelectedRoleMap = value.RoleMap;
-        }
+        SelectedNodeType = value.NodeType;
+        SelectedGraphMap = value.GraphMap;
+        SelectedClassMap = value.ClassMap;
+        SelectedTemplateMap = value.TemplateMap;
+        SelectedRoleMap = value.RoleMap;
+      }
     }
 
     #region Snapshop of Selected Mapping Item
     private NodeType _selectedNodeType;
     public NodeType SelectedNodeType
     {
-        get { return _selectedNodeType; }
-        set
-        {
-            _selectedNodeType = value;
-            OnPropertyChanged("SelectedNodeType");
-        }
+      get { return _selectedNodeType; }
+      set
+      {
+        _selectedNodeType = value;
+        OnPropertyChanged("SelectedNodeType");
+      }
     }
 
     private GraphMap _selectedGraphMap;
     public GraphMap SelectedGraphMap
     {
-        get { return _selectedGraphMap; }
-        set
-        {
-            _selectedGraphMap = value;
-            OnPropertyChanged("SelectedGraphMap");
-        }
+      get { return _selectedGraphMap; }
+      set
+      {
+        _selectedGraphMap = value;
+        OnPropertyChanged("SelectedGraphMap");
+      }
     }
 
     private ClassMap _selectedClassMap;
     public ClassMap SelectedClassMap
     {
-        get { return _selectedClassMap; }
-        set
-        {
-            _selectedClassMap = value;
-            OnPropertyChanged("SelectedClassMap");
-        }
+      get { return _selectedClassMap; }
+      set
+      {
+        _selectedClassMap = value;
+        OnPropertyChanged("SelectedClassMap");
+      }
     }
 
     private TemplateMap _selectedTemplateMap;
     public TemplateMap SelectedTemplateMap
     {
-        get { return _selectedTemplateMap; }
-        set
-        {
-            _selectedTemplateMap = value;
-            OnPropertyChanged("SelectedTemplateMap");
-        }
+      get { return _selectedTemplateMap; }
+      set
+      {
+        _selectedTemplateMap = value;
+        OnPropertyChanged("SelectedTemplateMap");
+      }
     }
 
     private RoleMap _selectedRoleMap;
     public RoleMap SelectedRoleMap
     {
-        get { return _selectedRoleMap; }
-        set
-        {
-            _selectedRoleMap = value;
-            OnPropertyChanged("SelectedRoleMap");
-        }
+      get { return _selectedRoleMap; }
+      set
+      {
+        _selectedRoleMap = value;
+        OnPropertyChanged("SelectedRoleMap");
+      }
     }
 
     #endregion
@@ -209,9 +210,9 @@ namespace org.iringtools.ontologyservice.presentation
 
         // Snapshot of individual fields (in case node tab is
         // closed and reference is lost)
-        this.SelectedIMLabel = value.label;
-        this.SelectedIMUri = value.uri;
-        this.SelectedIMRepository = value.repository;
+        this.SelectedIMLabel = value.Label;
+        this.SelectedIMUri = value.Uri;
+        this.SelectedIMRepository = value.Repository;
       }
     }
 
@@ -252,56 +253,56 @@ namespace org.iringtools.ontologyservice.presentation
     private bool _selectedIsMappable;
     public bool SelectedIsMappable
     {
-        get { return _selectedIsMappable; }
-        set
-        {
-            _selectedIsMappable = value;
-            OnPropertyChanged("SelectedIsMappable");
-        }
+      get { return _selectedIsMappable; }
+      set
+      {
+        _selectedIsMappable = value;
+        OnPropertyChanged("SelectedIsMappable");
+      }
     }
 
     private QMXF _selectedQMXF;
     public QMXF SelectedQMXF
     {
-        get { return _selectedQMXF; }
-        set
-        {
-            _selectedQMXF = value;
-            OnPropertyChanged("SelectedQMXF");
-        }
+      get { return _selectedQMXF; }
+      set
+      {
+        _selectedQMXF = value;
+        OnPropertyChanged("SelectedQMXF");
+      }
     }
 
     private Entity _selectedEntity;
     public Entity SelectedEntity
     {
-        get { return _selectedEntity; }
-        set
-        {
-            _selectedEntity = value;
-            OnPropertyChanged("SelectedEntity");
-        }
+      get { return _selectedEntity; }
+      set
+      {
+        _selectedEntity = value;
+        OnPropertyChanged("SelectedEntity");
+      }
     }
 
     private Dictionary<string, QMXF> _classesHistory;
     public Dictionary<string, QMXF> ClassesHistory
     {
-        get { return _classesHistory; }
-        set
-        {
-            _classesHistory = value;
-            OnPropertyChanged("ClassesHistory");
-        }
+      get { return _classesHistory; }
+      set
+      {
+        _classesHistory = value;
+        OnPropertyChanged("ClassesHistory");
+      }
     }
 
     private Dictionary<string, QMXF> _templatesHistory;
     public Dictionary<string, QMXF> TemplatesHistory
     {
-        get { return _templatesHistory; }
-        set
-        {
-            _templatesHistory = value;
-            OnPropertyChanged("TemplatesHistory");
-        }
+      get { return _templatesHistory; }
+      set
+      {
+        _templatesHistory = value;
+        OnPropertyChanged("TemplatesHistory");
+      }
     }
     #endregion
 
