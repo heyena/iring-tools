@@ -94,7 +94,7 @@ namespace org.iringtools.refdata
         }
 
         _proxyCredentials = _settings.GetWebProxyCredentials();
-
+        
         string repositoriesPath = _settings["XmlPath"] + REPOSITORIES_FILE_NAME;
         _repositories = Utility.Read<List<Repository>>(repositoriesPath);
 
@@ -2199,7 +2199,7 @@ namespace org.iringtools.refdata
         SPARQLResults sparqlResults;
 
         string encryptedCredentials = repository.EncryptedCredentials;
-
+                
         WebCredentials credentials = new WebCredentials(encryptedCredentials);
         if (credentials.isEncrypted) credentials.Decrypt();
 
@@ -2209,8 +2209,9 @@ namespace org.iringtools.refdata
         return sparqlResults;
       }
       catch (Exception ex)
-      {
-        throw ex;
+      {        
+        _logger.Error(string.Format("Failed to read repository['{0}']", repository.Uri), ex);
+        return new SPARQLResults();
       }
     }
 
