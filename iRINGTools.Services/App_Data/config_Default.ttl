@@ -1,9 +1,10 @@
 @prefix dnr: <http://www.dotnetrdf.org/configuration#> .
-<dotnetrdf:/Services/InterfaceService/*> a dnr:HttpHandler ;
+<dotnetrdf:/facade/*> a dnr:HttpHandler ;
         dnr:cacheDuration "0";
         dnr:queryProcessor _:qProc ;
         dnr:updateProcessor _:uProc ;
         dnr:protocolProcessor _:pProc ;
+		dnr:stylesheet "../css/interface.css" ;		
         dnr:introText "~/App_Data/InterfaceIntro.txt" ;
         dnr:type "VDS.RDF.Web.SparqlServer" ;
         dnr:defaultQueryFile "~/App_Data/default.rq" .						
@@ -25,11 +26,12 @@ _:sqlServer a dnr:SqlIOManager ;
         dnr:database "InterfaceDb" ;
         dnr:user "dotNetRDF" ;
         dnr:password "dotNetRDF" .
-<dotnetrdf:/Services/SandboxService/*> a dnr:HttpHandler ;
+<dotnetrdf:/sandbox/*> a dnr:HttpHandler ;
         dnr:cacheDuration "0";
         dnr:queryProcessor _:qProcS ;
         dnr:updateProcessor _:uProcS ;
         dnr:protocolProcessor _:pProcS ;
+		dnr:stylesheet "../css/interface.css" ;		
         dnr:introText "~/App_Data/SandboxIntro.txt" ;
         dnr:type "VDS.RDF.Web.SparqlServer" ;
         dnr:defaultQueryFile "~/App_Data/default.rq" .

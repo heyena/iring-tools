@@ -5,6 +5,7 @@ using System.Text;
 using System.Xml.Linq;
 using org.iringtools.library;
 using org.iringtools.library.manifest;
+using org.iringtools.common.mapping;
 using org.iringtools.utility;
 using System.Collections.Specialized;
 using Ninject;
@@ -23,7 +24,7 @@ namespace org.iringtools.exchange
   {
     private static readonly XNamespace DTO_NS = "http://iringtools.org/adapter/library/dto";
     private static readonly XNamespace RDL_NS = "http://rdl.rdlfacade.org/data#";
-    
+
     private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterProvider));
 
     private Response _response = null;
@@ -183,7 +184,7 @@ namespace org.iringtools.exchange
             webProxy.Credentials = _settings.GetProxyCredential();
           }
           endpoint.SetProxy(webProxy.Address);
-          endpoint.SetProxyCredentials(proxyCrendentials.userName,proxyCrendentials.password);          
+          endpoint.SetProxyCredentials(proxyCrendentials.userName, proxyCrendentials.password);
         }
 
         VDS.RDF.Graph graph = endpoint.QueryWithResultGraph("CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o}");
@@ -259,11 +260,11 @@ namespace org.iringtools.exchange
         {
           IList<string> identifiers = new List<string>();
           identifiers.Add(filter);
-          dataObjectList = _dataLayer.Get(_graphMap.dataObjectMap, identifiers);
+          dataObjectList = _dataLayer.Get(_graphMap.DataObjectName, identifiers);
         }
         else
         {
-          dataObjectList = _dataLayer.Get(_graphMap.dataObjectMap, null);
+          dataObjectList = _dataLayer.Get(_graphMap.DataObjectName, null);
         }
 
         XDocument xDocument = _projectionEngine.ToXml(graphName, ref dataObjectList);
@@ -426,11 +427,13 @@ namespace org.iringtools.exchange
     {
       _classIdentifiers.Clear();
 
-      foreach (ClassMap classMap in _graphMap.classTemplateListMaps.Keys)
+      foreach (ClassTemplateMap classTemplateMap in _graphMap.ClassTemplateMaps)
       {
+        ClassMap classMap = classTemplateMap.ClassMap;
+
         List<string> classIdentifiers = new List<string>();
 
-        foreach (string identifier in classMap.identifiers)
+        foreach (string identifier in classMap.Identifiers)
         {
           // identifier is a fixed value
           if (identifier.StartsWith("#") && identifier.EndsWith("#"))
@@ -445,7 +448,7 @@ namespace org.iringtools.exchange
               }
               else
               {
-                classIdentifiers[i] += classMap.identifierDelimiter + value;
+                classIdentifiers[i] += classMap.IdentifierDelimiter + value;
               }
             }
           }
@@ -467,14 +470,14 @@ namespace org.iringtools.exchange
                 }
                 else
                 {
-                  classIdentifiers[i] += classMap.identifierDelimiter + value;
+                  classIdentifiers[i] += classMap.IdentifierDelimiter + value;
                 }
               }
             }
           }
         }
 
-        _classIdentifiers[classMap.classId] = classIdentifiers;
+        _classIdentifiers[classMap.ClassId] = classIdentifiers;
       }
     }
 

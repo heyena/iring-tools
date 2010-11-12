@@ -134,9 +134,9 @@ namespace org.iringtools.modules.medatasourceregion
         tvwDataDictionary.Items.Clear();
         tvwDataDictionary.Tag = dictionary;
         // Note that we only load first level nodes
-        foreach (org.iringtools.library.DataObject dataObject in dictionary.dataObjects)
+        foreach (org.iringtools.library.DataObject dataObject in dictionary.DataObjects)
         {
-          tvwDataDictionary.Items.Add(AddNode(dataObject.objectName, dataObject, tvwDataDictionary));
+          tvwDataDictionary.Items.Add(AddNode(dataObject.ObjectName, dataObject, tvwDataDictionary));
         }
       }
       catch (Exception ex)
@@ -185,7 +185,7 @@ namespace org.iringtools.modules.medatasourceregion
             DataProperty = (DataProperty)tag,
             Tag = tag,
           };
-          if (((DataProperty)tag).keyType != KeyType.unassigned)
+          if (((DataProperty)tag).KeyType != KeyType.unassigned)
           {
             node.SetImageSource("key.png");
             node.SetTooltipText("Key Property : " + header);
@@ -234,30 +234,30 @@ namespace org.iringtools.modules.medatasourceregion
 
         if (dataObject == null)
           return false;
-        if (dataObject.keyProperties != null && dataObject.keyProperties.Count > 0)
+        if (dataObject.KeyProperties != null && dataObject.KeyProperties.Count > 0)
         {
           item = new DataObjectItem();
           item.SetTextBlockText("Stub");
-          item.Tag = dataObject.keyProperties;
-          item.SetTooltipText("Keys : " + dataObject.keyProperties.ToString());
+          item.Tag = dataObject.KeyProperties;
+          item.SetTooltipText("Keys : " + dataObject.KeyProperties.ToString());
           node.Items.Add(item);
         }
 
-        if (dataObject.dataProperties != null && dataObject.dataProperties.Count > 0)
+        if (dataObject.DataProperties != null && dataObject.DataProperties.Count > 0)
         {
           item = new DataObjectItem();
           item.SetTextBlockText("Stub");
-          item.Tag = dataObject.dataProperties;
-          item.SetTooltipText("Object : " + dataObject.dataProperties.ToString());
+          item.Tag = dataObject.DataProperties;
+          item.SetTooltipText("Object : " + dataObject.DataProperties.ToString());
           node.Items.Add(item);
         }
 
-        if (dataObject.dataRelationships != null && dataObject.dataRelationships.Count > 0)
+        if (dataObject.DataRelationships != null && dataObject.DataRelationships.Count > 0)
         {
           item = new DataObjectItem();
           item.SetTextBlockText("Stub");
-          item.Tag = dataObject.dataRelationships;
-          item.SetTooltipText(dataObject.dataRelationships.ToString());
+          item.Tag = dataObject.DataRelationships;
+          item.SetTooltipText(dataObject.DataRelationships.ToString());
           node.Items.Add(item);
         }
 
@@ -281,7 +281,7 @@ namespace org.iringtools.modules.medatasourceregion
     {
       try
       {
-        DataObjectItem newNode = AddNode(dataObject.objectName, dataObject, node);
+        DataObjectItem newNode = AddNode(dataObject.ObjectName, dataObject, node);
         node.Items.Add(newNode);
         return true;
       }
@@ -301,7 +301,7 @@ namespace org.iringtools.modules.medatasourceregion
     {
       try
       {
-        DataObjectItem newNode = AddNode(keyProperty.propertyName, keyProperty, node);
+        DataObjectItem newNode = AddNode(keyProperty.PropertyName, keyProperty, node);
         node.Items.Add(newNode);
         return true;
       }
@@ -321,7 +321,7 @@ namespace org.iringtools.modules.medatasourceregion
     {
       try
       {
-        DataObjectItem newNode = AddNode(dataProperty.propertyName, dataProperty, node);
+        DataObjectItem newNode = AddNode(dataProperty.PropertyName, dataProperty, node);
         node.Items.Add(newNode);
         return true;
       }
@@ -342,7 +342,7 @@ namespace org.iringtools.modules.medatasourceregion
       try
       {
         DataObjectItem newNode = AddNode(relationshipName, dataObject, node);
-        newNode.ParentObjectName = node.DataObject.objectName;
+        newNode.ParentObjectName = node.DataObject.ObjectName;
         node.Items.Add(newNode);
         return true;
       }
@@ -368,32 +368,32 @@ namespace org.iringtools.modules.medatasourceregion
         if (selectedNode.Tag is org.iringtools.library.DataObject)
         {
           org.iringtools.library.DataObject dataObject = (org.iringtools.library.DataObject)selectedNode.Tag;
-          KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("DataObject Name", dataObject.objectName);
+          KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("DataObject Name", dataObject.ObjectName);
           model.DetailProperties.Add(keyValuePair);
         }
 
         if (selectedNode.Tag is DataProperty)
         {
           DataProperty dataProperty = (DataProperty)selectedNode.Tag;
-          KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Property Name", dataProperty.propertyName);
+          KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Property Name", dataProperty.PropertyName);
           model.DetailProperties.Add(keyValuePair);
-          keyValuePair = new KeyValuePair<string, string>("Datatype", dataProperty.dataType.ToString());
+          keyValuePair = new KeyValuePair<string, string>("Datatype", dataProperty.DataType.ToString());
           model.DetailProperties.Add(keyValuePair);
         }
 
         if (selectedNode.Tag is DataRelationship)
         {
           DataRelationship dataRelationship = (DataRelationship)selectedNode.Tag;
-          KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Related Object", dataRelationship.relatedObjectName);
+          KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Related Object", dataRelationship.RelatedObjectName);
           model.DetailProperties.Add(keyValuePair);
         }
 
         if (selectedNode.Tag is PropertyMap)
         {
           PropertyMap propertyMap = (PropertyMap)selectedNode.Tag;
-          KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Data Property", propertyMap.dataPropertyName);
+          KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Data Property", propertyMap.DataPropertyName);
           model.DetailProperties.Add(keyValuePair);
-          keyValuePair = new KeyValuePair<string, string>("Related Property", propertyMap.relatedPropertyName);
+          keyValuePair = new KeyValuePair<string, string>("Related Property", propertyMap.RelatedPropertyName);
           model.DetailProperties.Add(keyValuePair);
         }
 
@@ -432,7 +432,7 @@ namespace org.iringtools.modules.medatasourceregion
           }
           else if (dataObjectItem.Tag is List<DataRelationship>)
           {
-             dataRelationNode = dataObjectItem as DataObjectItem;
+            dataRelationNode = dataObjectItem as DataObjectItem;
           }
         }
 
@@ -472,9 +472,9 @@ namespace org.iringtools.modules.medatasourceregion
         if (dataRelationNode.Tag is List<DataRelationship>)
           foreach (DataRelationship dataRelationship in ((List<DataRelationship>)dataRelationNode.Tag))
           {
-            org.iringtools.library.DataObject dataObject = ((DataDictionary)tvwDataDictionary.Tag).dataObjects.First(c => c.objectName == dataRelationship.relatedObjectName);
-              if(dataObject != null)
-            isProcessed = PopulateDataRelationship(selectedNode, dataObject, dataRelationship.relationshipName);
+            org.iringtools.library.DataObject dataObject = ((DataDictionary)tvwDataDictionary.Tag).DataObjects.First(c => c.ObjectName == dataRelationship.RelatedObjectName);
+            if (dataObject != null)
+              isProcessed = PopulateDataRelationship(selectedNode, dataObject, dataRelationship.RelationshipName);
           }
       }
       catch (Exception ex)

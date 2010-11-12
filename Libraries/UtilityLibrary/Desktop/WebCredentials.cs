@@ -30,121 +30,121 @@ using System.Net;
 
 namespace org.iringtools.utility
 {
-    [DataContract]
-    public class WebCredentials
+  [DataContract]
+  public class WebCredentials
+  {
+    protected static string _delimiter = "{`|";
+    protected static string[] _delimiterArray = { _delimiter };
+
+    public WebCredentials()
     {
-        protected static string _delimiter = "{`|";
-        protected static string[] _delimiterArray = { _delimiter };
-
-        public WebCredentials()
-        {
-            isEncrypted = false;
-        }
-
-        public WebCredentials(string encryptedCredentials)
-        {
-          if (encryptedCredentials != String.Empty && encryptedCredentials != null)
-          {
-            encryptedToken = encryptedCredentials;
-            isEncrypted = true;
-          }
-          else
-          {
-            isEncrypted = false;
-          }
-        }
-
-        public virtual void Encrypt()
-        {
-            string credentials = userName + _delimiter + password + _delimiter + domain;
-            encryptedToken = Encryption.EncryptString(credentials);
-            userName = null;
-            password = null;
-            domain = null;
-            isEncrypted = true;
-        }
-
-        public virtual void Decrypt()
-        {
-            string credentials = Encryption.DecryptString(encryptedToken);
-            string[] credentialsArray = credentials.Split(_delimiterArray, StringSplitOptions.None);
-
-            userName = credentialsArray[0];
-            password = credentialsArray[1];
-            domain = credentialsArray[2];
-            encryptedToken = null;
-            isEncrypted = false;
-        }
-
-        public NetworkCredential GetNetworkCredential()
-        {
-            NetworkCredential credentials = null;
-
-            if (this.userName != string.Empty && this.userName != null)
-            {
-                credentials = new NetworkCredential(userName, password, domain);
-            }
-            else
-            {
-                credentials = CredentialCache.DefaultNetworkCredentials;
-            }
-
-            return credentials;
-        }
-
-        [DataMember(EmitDefaultValue = false)]
-        public bool isEncrypted { get; set; }
-
-        [DataMember(EmitDefaultValue = false)]
-        public string userName { get; set; }
-
-        [DataMember(EmitDefaultValue = false)]
-        public string password { get; set; }
-
-        [DataMember(EmitDefaultValue = false)]
-        public string domain { get; set; }
-
-        [DataMember(EmitDefaultValue = false)]
-        public string encryptedToken { get; set; }
+      isEncrypted = false;
     }
 
-    [DataContract]
-    public class WebProxyCredentials
-      : WebCredentials
+    public WebCredentials(string encryptedCredentials)
     {
-        public WebProxyCredentials()
-            : base()
-        {
-            this.proxyHost = string.Empty;
-            this.proxyPort = 0;
-        }
+      if (encryptedCredentials != String.Empty && encryptedCredentials != null)
+      {
+        encryptedToken = encryptedCredentials;
+        isEncrypted = true;
+      }
+      else
+      {
+        isEncrypted = false;
+      }
+    }
 
-        public WebProxyCredentials(string encryptedCredentials, string hostName, int port)
-            : base(encryptedCredentials)
-        {
-            this.proxyHost = hostName;
-            this.proxyPort = port;
-        }
+    public virtual void Encrypt()
+    {
+      string credentials = userName + _delimiter + password + _delimiter + domain;
+      encryptedToken = Encryption.EncryptString(credentials);
+      userName = null;
+      password = null;
+      domain = null;
+      isEncrypted = true;
+    }
 
-        [DataMember(EmitDefaultValue = false)]
-        public string proxyHost { get; set; }
+    public virtual void Decrypt()
+    {
+      string credentials = Encryption.DecryptString(encryptedToken);
+      string[] credentialsArray = credentials.Split(_delimiterArray, StringSplitOptions.None);
 
-        [DataMember(EmitDefaultValue = false)]
-        public int proxyPort { get; set; }
+      userName = credentialsArray[0];
+      password = credentialsArray[1];
+      domain = credentialsArray[2];
+      encryptedToken = null;
+      isEncrypted = false;
+    }
 
-        public WebProxy GetWebProxy()
-        {
-            WebProxy webProxy = null;
+    public NetworkCredential GetNetworkCredential()
+    {
+      NetworkCredential credentials = null;
 
-            if (proxyHost != string.Empty)
-                webProxy = new WebProxy(proxyHost, proxyPort);
-            else
+      if (this.userName != string.Empty && this.userName != null)
+      {
+        credentials = new NetworkCredential(userName, password, domain);
+      }
+      else
+      {
+        credentials = CredentialCache.DefaultNetworkCredentials;
+      }
+
+      return credentials;
+    }
+
+    [DataMember(EmitDefaultValue = false)]
+    public bool isEncrypted { get; set; }
+
+    [DataMember(EmitDefaultValue = false)]
+    public string userName { get; set; }
+
+    [DataMember(EmitDefaultValue = false)]
+    public string password { get; set; }
+
+    [DataMember(EmitDefaultValue = false)]
+    public string domain { get; set; }
+
+    [DataMember(EmitDefaultValue = false)]
+    public string encryptedToken { get; set; }
+  }
+
+  [DataContract]
+  public class WebProxyCredentials
+    : WebCredentials
+  {
+    public WebProxyCredentials()
+      : base()
+    {
+      this.proxyHost = string.Empty;
+      this.proxyPort = 0;      
+    }
+
+    public WebProxyCredentials(string encryptedCredentials, string hostName, int port)
+      : base(encryptedCredentials)
+    { 
+        this.proxyHost = hostName;
+        this.proxyPort = port;     
+    }
+
+    [DataMember(EmitDefaultValue = false)]
+    public string proxyHost { get; set; }
+
+    [DataMember(EmitDefaultValue = false)]
+    public int proxyPort { get; set; }
+
+        public IWebProxy GetWebProxy()
+    {
+            IWebProxy webProxy = null;
+
+      if (proxyHost != string.Empty)
+        webProxy = new WebProxy(proxyHost, proxyPort);
+      else
         webProxy = WebRequest.GetSystemWebProxy();
 
-            webProxy.Credentials = this.GetNetworkCredential();
+      webProxy.Credentials = this.GetNetworkCredential();
 
-            return webProxy;
-        }
-
+      return webProxy;
     }
+
+  }
 }

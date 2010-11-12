@@ -39,12 +39,14 @@ using Ninject.Extensions.Xml;
 using org.ids_adi.qmxf;
 using org.iringtools.library;
 using org.iringtools.utility;
+using org.iringtools.common.mapping;
 using StaticDust.Configuration;
 using VDS.RDF;
 using VDS.RDF.Query;
 using org.iringtools.adapter.projection;
 using System.ServiceModel;
 using System.Security.Principal;
+using org.iringtools.library.manifest;
 
 namespace org.iringtools.adapter
 {
@@ -86,21 +88,21 @@ namespace org.iringtools.adapter
 
       if (ServiceSecurityContext.Current != null)
       {
-          IIdentity identity = ServiceSecurityContext.Current.PrimaryIdentity;
-          _settings["UserName"] = identity.Name;
+        IIdentity identity = ServiceSecurityContext.Current.PrimaryIdentity;
+        _settings["UserName"] = identity.Name;
       }
 
       #region initialize webHttpClient for converting old mapping
       string proxyHost = _settings["ProxyHost"];
       string proxyPort = _settings["ProxyPort"];
       string rdsUri = _settings["ReferenceDataServiceUri"];
-     
+
       if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
       {
         WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
-        
+
         webProxy.Credentials = _settings.GetProxyCredential();
-        
+
         _webHttpClient = new WebHttpClient(rdsUri, null, webProxy);
       }
       else
@@ -126,7 +128,7 @@ namespace org.iringtools.adapter
       _response.StatusList = new List<Status>();
       _kernel.Bind<Response>().ToConstant(_response);
     }
-    
+
     #region application methods
     public List<ScopeProject> GetScopes()
     {
@@ -139,7 +141,7 @@ namespace org.iringtools.adapter
         _logger.Error(string.Format("Error in GetScopes: {0}", ex));
         throw new Exception(string.Format("Error getting the list of scopes: {0}", ex));
       }
-    }    
+    }
 
     public Response UpdateScopes(List<ScopeProject> scopes)
     {
@@ -148,7 +150,7 @@ namespace org.iringtools.adapter
       try
       {
         //_scopes = scopes;
-                
+
         foreach (ScopeProject project in scopes)
         {
           ScopeProject findProject = _scopes.FirstOrDefault<ScopeProject>(o => o.Name == project.Name);
@@ -175,7 +177,7 @@ namespace org.iringtools.adapter
               }
 
             }
-                        
+
           }
           else
           {
@@ -274,7 +276,7 @@ namespace org.iringtools.adapter
     }
     #endregion
 
-    #region adapter methods    
+    #region adapter methods
     public DataDictionary GetDictionary(string projectName, string applicationName)
     {
       try
@@ -316,7 +318,7 @@ namespace org.iringtools.adapter
       {
         status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
 
-        if (!mappingXml.Name.NamespaceName.Contains("schemas.datacontract.org"))
+        if (mappingXml.Name.NamespaceName.Contains("schemas.datacontract.org"))
         {
           status.Messages.Add("Detected old mapping. Attempting to convert it...");
 
@@ -327,52 +329,52 @@ namespace org.iringtools.adapter
           IEnumerable<XElement> graphMaps = mappingXml.Element("GraphMaps").Elements("GraphMap");
           foreach (XElement graphMap in graphMaps)
           {
-            string dataObjectMap = graphMap.Element("DataObjectMaps").Element("DataObjectMap").Attribute("name").Value;
+            string dataObjectName = graphMap.Element("DataObjectMaps").Element("DataObjectMap").Attribute("name").Value;
             RoleMap roleMap = null;
 
             GraphMap newGraphMap = new GraphMap();
-            newGraphMap.name = graphMap.Attribute("name").Value;
-            newGraphMap.dataObjectMap = dataObjectMap;
-            mapping.graphMaps.Add(newGraphMap);
+            newGraphMap.Name = graphMap.Attribute("Name").Value;
+            newGraphMap.DataObjectName = dataObjectName;
+            mapping.GraphMaps.Add(newGraphMap);
 
-            ConvertClassMap(ref newGraphMap, ref roleMap, graphMap, dataObjectMap);
+            ConvertClassMap(ref newGraphMap, ref roleMap, graphMap, dataObjectName);
           }
           #endregion
 
           #region convert valueMaps
           IEnumerable<XElement> valueMaps = mappingXml.Element("ValueMaps").Elements("ValueMap");
           string previousValueList = String.Empty;
-          ValueList newValueList = null;
-          
+          ValueListMap newValueList = null;
+
           foreach (XElement valueMap in valueMaps)
           {
             string valueList = valueMap.Attribute("valueList").Value;
             ValueMap newValueMap = new ValueMap
             {
-               internalValue = valueMap.Attribute("internalValue").Value,
-               uri = valueMap.Attribute("modelURI").Value
+              InternalValue = valueMap.Attribute("internalValue").Value,
+              Uri = valueMap.Attribute("modelURI").Value
             };
 
             if (valueList != previousValueList)
             {
-              newValueList = new ValueList
+              newValueList = new ValueListMap
               {
-                name = valueList,
-                valueMaps = { newValueMap }
+                Name = valueList,
+                ValueMaps = { newValueMap }
               };
-              mapping.valueLists.Add(newValueList);
-              
+              mapping.ValueListMaps.Add(newValueList);
+
               previousValueList = valueList;
             }
             else
             {
-              newValueList.valueMaps.Add(newValueMap);
+              newValueList.ValueMaps.Add(newValueMap);
             }
           }
           #endregion
 
           status.Messages.Add("Old mapping has been converted sucessfully.");
-          
+
           Utility.Write<Mapping>(mapping, path, true);
         }
         else
@@ -390,46 +392,46 @@ namespace org.iringtools.adapter
         status.Level = StatusLevel.Error;
         status.Messages.Add(string.Format("Error saving mapping file to path [{0}]: {1}", path, ex));
       }
-      
-      _response.Append(status);
-      return _response;
-    }
-
-    public Response RefreshAll(string projectName, string applicationName)
-    {
-      Status status = new Status();
-      status.Messages = new Messages();
-      try
-      {
-        status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
-
-        InitializeScope(projectName, applicationName);
-        InitializeDataLayer();
-
-        DateTime start = DateTime.Now;
-
-        foreach (GraphMap graphMap in _mapping.graphMaps)
-        {
-          _response.Append(Refresh(graphMap.name));
-        }
-
-        DateTime end = DateTime.Now;
-        TimeSpan duration = end.Subtract(start);
-
-        status.Messages.Add(String.Format("RefreshAll() completed in [{0}:{1}.{2}] minutes.",
-          duration.Minutes, duration.Seconds, duration.Milliseconds));
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(string.Format("Error in RefreshAll: {0}", ex));
-
-        status.Level = StatusLevel.Error;
-        status.Messages.Add(string.Format("Error refreshing all graphs: {0}", ex));
-      }
 
       _response.Append(status);
       return _response;
     }
+
+    //public Response RefreshAll(string projectName, string applicationName)
+    //{
+    //  Status status = new Status();
+    //  status.Messages = new Messages();
+    //  try
+    //  {
+    //    status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
+
+    //    InitializeScope(projectName, applicationName);
+    //    InitializeDataLayer();
+
+    //    DateTime start = DateTime.Now;
+
+    //    foreach (GraphMap graphMap in _mapping.graphMaps)
+    //    {
+    //      _response.Append(Refresh(graphMap.name));
+    //    }
+
+    //    DateTime end = DateTime.Now;
+    //    TimeSpan duration = end.Subtract(start);
+
+    //    status.Messages.Add(String.Format("RefreshAll() completed in [{0}:{1}.{2}] minutes.",
+    //      duration.Minutes, duration.Seconds, duration.Milliseconds));
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    _logger.Error(string.Format("Error in RefreshAll: {0}", ex));
+
+    //    status.Level = StatusLevel.Error;
+    //    status.Messages.Add(string.Format("Error refreshing all graphs: {0}", ex));
+    //  }
+
+    //  _response.Append(status);
+    //  return _response;
+    //}
 
     public Response Refresh(string projectName, string applicationName, string graphName)
     {
@@ -513,51 +515,51 @@ namespace org.iringtools.adapter
 
     public IList<IDataObject> GetDataObjects(string projectName, string applicationName, string graphName, string format, XDocument xDocument)
     {
-        InitializeScope(projectName, applicationName);
-        InitializeDataLayer();
+      InitializeScope(projectName, applicationName);
+      InitializeDataLayer();
 
-        if (format != null)
-        {
-            _projectionEngine = _kernel.Get<IProjectionLayer>(format);
-        }
-        else
-        {
-            _projectionEngine = _kernel.Get<IProjectionLayer>(_settings["DefaultProjectionFormat"]);
-        }
-
-        IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xDocument);
-
-        return dataObjects;
-    }
-
-    public Response DeleteAll(string projectName, string applicationName)
-    {
-      Status status = new Status();
-      status.Messages = new Messages();
-      try
+      if (format != null)
       {
-        status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
-
-        InitializeScope(projectName, applicationName);
-
-        _semanticEngine = _kernel.Get<ISemanticLayer>("dotNetRDF");
-
-        foreach (GraphMap graphMap in _mapping.graphMaps)
-        {
-          _response.Append(_semanticEngine.Delete(graphMap.name));
-        }
+        _projectionEngine = _kernel.Get<IProjectionLayer>(format);
       }
-      catch (Exception ex)
+      else
       {
-        _logger.Error(string.Format("Error deleting all graphs: {0}", ex));
-
-        status.Level = StatusLevel.Error;
-        status.Messages.Add(string.Format("Error deleting all graphs: {0}", ex));
+        _projectionEngine = _kernel.Get<IProjectionLayer>(_settings["DefaultProjectionFormat"]);
       }
 
-      _response.Append(status);
-      return _response;
+      IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xDocument);
+
+      return dataObjects;
     }
+
+    //public Response DeleteAll(string projectName, string applicationName)
+    //{
+    //  Status status = new Status();
+    //  status.Messages = new Messages();
+    //  try
+    //  {
+    //    status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
+
+    //    InitializeScope(projectName, applicationName);
+
+    //    _semanticEngine = _kernel.Get<ISemanticLayer>("dotNetRDF");
+
+    //    foreach (GraphMap graphMap in _mapping.graphMaps)
+    //    {
+    //      _response.Append(_semanticEngine.Delete(graphMap.name));
+    //    }
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    _logger.Error(string.Format("Error deleting all graphs: {0}", ex));
+
+    //    status.Level = StatusLevel.Error;
+    //    status.Messages.Add(string.Format("Error deleting all graphs: {0}", ex));
+    //  }
+
+    //  _response.Append(status);
+    //  return _response;
+    //}
 
     public Response Delete(string projectName, string applicationName, string graphName)
     {
@@ -568,7 +570,7 @@ namespace org.iringtools.adapter
         status.Identifier = String.Format("{0}.{1}.{2}", projectName, applicationName, graphName);
 
         InitializeScope(projectName, applicationName);
-      
+
         _semanticEngine = _kernel.Get<ISemanticLayer>("dotNetRDF");
 
         _response.Append(_semanticEngine.Delete(graphName));
@@ -634,7 +636,7 @@ namespace org.iringtools.adapter
 
         GraphMap graphMap = _mapping.FindGraphMap(graphName);
 
-        string objectType = graphMap.dataObjectMap;
+        string objectType = graphMap.DataObjectName;
         response = _dataLayer.Delete(objectType, new List<String> { identifier });
 
         response.DateTimeStamp = DateTime.Now;
@@ -688,11 +690,11 @@ namespace org.iringtools.adapter
 
           if (!isScopeValid) throw new Exception(String.Format("Invalid scope [{0}].", scope));
 
-          _settings.Add("ProjectName",              projectName);
-          _settings.Add("ApplicationName",          applicationName);
+          _settings.Add("ProjectName", projectName);
+          _settings.Add("ApplicationName", applicationName);
           _settings.Add("Scope", scope);
 
-          string appSettingsPath = String.Format("{0}{1}.config", 
+          string appSettingsPath = String.Format("{0}{1}.config",
             _settings["XmlPath"],
             scope
           );
@@ -709,7 +711,7 @@ namespace org.iringtools.adapter
 
           //Ninject Extension requires fully qualified path.
           string bindingConfigurationPath = Path.Combine(
-            _settings["BaseDirectoryPath"], 
+            _settings["BaseDirectoryPath"],
             relativePath
           );
 
@@ -756,7 +758,7 @@ namespace org.iringtools.adapter
         throw new Exception(string.Format("Error initializing application: {0})", ex));
       }
     }
-    
+
     private void InitializeDataLayer()
     {
       try
@@ -796,11 +798,11 @@ namespace org.iringtools.adapter
       _graphMap = _mapping.FindGraphMap(graphName);
 
       _dataObjects.Clear();
-            
+
       if (identifiers != null)
-        _dataObjects =_dataLayer.Get(_graphMap.dataObjectMap, identifiers);
+        _dataObjects = _dataLayer.Get(_graphMap.DataObjectName, identifiers);
       else
-        _dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, null);
+        _dataObjects = _dataLayer.Get(_graphMap.DataObjectName, null);
     }
 
     private void UpdateScopes(string projectName, string projectDescription, string applicationName, string applicationDescription)
@@ -946,21 +948,21 @@ namespace org.iringtools.adapter
       string classId = classMap.Attribute("classId").Value;
 
       ClassMap newClassMap = new ClassMap();
-      newClassMap.classId = classId;
-      newClassMap.identifiers.Add(dataObjectMap + "." + classMap.Attribute("identifier").Value);
+      newClassMap.ClassId = classId;
+      newClassMap.Identifiers.Add(dataObjectMap + "." + classMap.Attribute("identifier").Value);
 
       if (parentRoleMap == null)
       {
-        newClassMap.name = GetClassName(classId);
+        newClassMap.Name = GetClassName(classId);
       }
       else
       {
-        newClassMap.name = classMap.Attribute("name").Value;
-        parentRoleMap.classMap = newClassMap;
+        newClassMap.Name = classMap.Attribute("name").Value;
+        parentRoleMap.ClassMap = newClassMap;
       }
 
-      List<TemplateMap> newTemplateMaps = new List<TemplateMap>();
-      newGraphMap.classTemplateListMaps.Add(newClassMap, newTemplateMaps);
+      ClassTemplateMap newTemplateMaps = new ClassTemplateMap();
+      newGraphMap.ClassTemplateMaps.Add(newTemplateMaps);
 
       IEnumerable<XElement> templateMaps = classMap.Element("TemplateMaps").Elements("TemplateMap");
       KeyValuePair<string, Dictionary<string, string>> templateNameRolesPair;
@@ -982,8 +984,8 @@ namespace org.iringtools.adapter
         string templateId = templateMap.Attribute("templateId").Value;
 
         TemplateMap newTemplateMap = new TemplateMap();
-        newTemplateMap.templateId = templateId;
-        newTemplateMaps.Add(newTemplateMap);
+        newTemplateMap.TemplateId = templateId;
+        newTemplateMaps.TemplateMaps.Add(newTemplateMap);
 
         if (_qmxfTemplateResultCache.ContainsKey(templateId))
         {
@@ -995,15 +997,15 @@ namespace org.iringtools.adapter
           _qmxfTemplateResultCache[templateId] = templateNameRolesPair;
         }
 
-        newTemplateMap.name = templateNameRolesPair.Key;
+        newTemplateMap.Name = templateNameRolesPair.Key;
 
         RoleMap newClassRoleMap = new RoleMap();
-        newClassRoleMap.type = RoleType.Possessor;
-        newTemplateMap.roleMaps.Add(newClassRoleMap);
-        newClassRoleMap.roleId = classRoleId;
+        newClassRoleMap.Type = RoleType.Possessor;
+        newTemplateMap.RoleMaps.Add(newClassRoleMap);
+        newClassRoleMap.RoleId = classRoleId;
 
         Dictionary<string, string> roles = templateNameRolesPair.Value;
-        newClassRoleMap.name = roles[classRoleId];
+        newClassRoleMap.Name = roles[classRoleId];
 
         for (int i = 0; i < roleMaps.Count(); i++)
         {
@@ -1026,40 +1028,40 @@ namespace org.iringtools.adapter
           catch (Exception) { }
 
           RoleMap newRoleMap = new RoleMap();
-          newTemplateMap.roleMaps.Add(newRoleMap);
-          newRoleMap.roleId = roleMap.Attribute("roleId").Value;
-          newRoleMap.name = roles[newRoleMap.roleId];
+          newTemplateMap.RoleMaps.Add(newRoleMap);
+          newRoleMap.RoleId = roleMap.Attribute("roleId").Value;
+          newRoleMap.Name = roles[newRoleMap.RoleId];
 
           if (!String.IsNullOrEmpty(value))
           {
-            newRoleMap.type = RoleType.FixedValue;
-            newRoleMap.value = value;
+            newRoleMap.Type = RoleType.FixedValue;
+            newRoleMap.Value = value;
           }
           else if (!String.IsNullOrEmpty(reference))
           {
-            newRoleMap.type = RoleType.Reference;
-            newRoleMap.value = reference;
+            newRoleMap.Type = RoleType.Reference;
+            newRoleMap.Value = reference;
           }
           else if (!String.IsNullOrEmpty(propertyName))
           {
-            newRoleMap.propertyName = dataObjectMap + "." + propertyName;
+            newRoleMap.PropertyName = dataObjectMap + "." + propertyName;
 
             if (!String.IsNullOrEmpty(valueList))
             {
-              newRoleMap.type = RoleType.ObjectProperty;
-              newRoleMap.valueList = valueList;
+              newRoleMap.Type = RoleType.ObjectProperty;
+              newRoleMap.ValueListName = valueList;
             }
             else
             {
-              newRoleMap.type = RoleType.DataProperty;
-              newRoleMap.dataType = roleMap.Attribute("dataType").Value;
+              newRoleMap.Type = RoleType.DataProperty;
+              newRoleMap.DataType = roleMap.Attribute("dataType").Value;
             }
           }
 
           if (roleMap.HasElements)
           {
-            newRoleMap.type = RoleType.Reference;
-            newRoleMap.value = roleMap.Attribute("dataType").Value;
+            newRoleMap.Type = RoleType.Reference;
+            newRoleMap.Value = roleMap.Attribute("dataType").Value;
 
             ConvertClassMap(ref newGraphMap, ref newRoleMap, roleMap.Element("ClassMap"), dataObjectMap);
           }
@@ -1119,14 +1121,14 @@ namespace org.iringtools.adapter
               }
             }
           }
-        }        
+        }
       }
-      catch(Exception ex)
+      catch (Exception ex)
       {
         _logger.Error(string.Format("Error in GetDataLayers: {0}", ex), ex);
       }
-      
-      return asemblies;      
+
+      return asemblies;
     }
 
   }

@@ -8,6 +8,8 @@ using org.iringtools.library;
 using VDS.RDF.Query;
 using VDS.RDF;
 using System.Text.RegularExpressions;
+using org.iringtools.common.mapping;
+using org.iringtools.library.manifest;
 
 namespace org.iringtools.adapter.projection
 {
@@ -209,14 +211,14 @@ namespace org.iringtools.adapter.projection
 
               foreach (IDataObject parentObject in parentObjects)
               {
-                DataObject dataObject = dictionary.dataObjects.First(c => c.objectName == parentObjectType);
-                DataRelationship dataRelationship = dataObject.dataRelationships.First(c => c.relationshipName == relatedObjectType);
+                DataObject dataObject = dictionary.DataObjects.First(c => c.ObjectName == parentObjectType);
+                DataRelationship dataRelationship = dataObject.DataRelationships.First(c => c.RelationshipName == relatedObjectType);
 
                 foreach (IDataObject relatedObject in relatedObjects)
                 {
-                  foreach (PropertyMap map in dataRelationship.propertyMaps)
+                  foreach (PropertyMap map in dataRelationship.PropertyMaps)
                   {
-                    relatedObject.SetPropertyValue(map.relatedPropertyName, parentObject.GetPropertyValue(map.dataPropertyName));
+                    relatedObject.SetPropertyValue(map.RelatedPropertyName, parentObject.GetPropertyValue(map.DataPropertyName));
                   }
                 }
               }
@@ -248,11 +250,12 @@ namespace org.iringtools.adapter.projection
     {
       _classIdentifiers.Clear();
 
-      foreach (ClassMap classMap in _graphMap.classTemplateListMaps.Keys)
+      foreach (ClassTemplateMap classTemplateMap in _graphMap.ClassTemplateMaps)
       {
+        ClassMap classMap = classTemplateMap.ClassMap;
         List<string> identifiers = new List<string>();
 
-        foreach (string identifier in classMap.identifiers)
+        foreach (string identifier in classMap.Identifiers)
         {
           // identifier is a fixed value
           if (identifier.StartsWith("#") && identifier.EndsWith("#"))
@@ -267,7 +270,7 @@ namespace org.iringtools.adapter.projection
               }
               else
               {
-                identifiers[i] += classMap.identifierDelimiter + value;
+                identifiers[i] += classMap.IdentifierDelimiter + value;
               }
             }
           }
@@ -289,14 +292,14 @@ namespace org.iringtools.adapter.projection
                 }
                 else
                 {
-                  identifiers[i] += classMap.identifierDelimiter + value;
+                  identifiers[i] += classMap.IdentifierDelimiter + value;
                 }
               }
             }
           }
         }
 
-        _classIdentifiers[classMap.classId] = identifiers;
+        _classIdentifiers[classMap.ClassId] = identifiers;
       }
     }
 
@@ -306,8 +309,8 @@ namespace org.iringtools.adapter.projection
 
       if (_memoryStore != null)
       {
-        var pair = _graphMap.classTemplateListMaps.First();
-        string classId = pair.Key.classId;
+        ClassTemplateMap classTemplateMap = _graphMap.ClassTemplateMaps.First();
+        string classId = classTemplateMap.ClassMap.ClassId;
 
         string query = String.Format(CLASS_INSTANCE_QUERY_TEMPLATE, classId);
         object results = _memoryStore.ExecuteQuery(query);
@@ -344,11 +347,13 @@ namespace org.iringtools.adapter.projection
     {
       _classIdentifiers.Clear();
 
-      foreach (ClassMap classMap in _graphMap.classTemplateListMaps.Keys)
+      foreach (ClassTemplateMap classTemplateMap in _graphMap.ClassTemplateMaps)
       {
+        ClassMap classMap = classTemplateMap.ClassMap;
+
         List<string> classIdentifiers = new List<string>();
 
-        foreach (string identifier in classMap.identifiers)
+        foreach (string identifier in classMap.Identifiers)
         {
           // identifier is a fixed value
           if (identifier.StartsWith("#") && identifier.EndsWith("#"))
@@ -363,7 +368,7 @@ namespace org.iringtools.adapter.projection
               }
               else
               {
-                classIdentifiers[i] += classMap.identifierDelimiter + value;
+                classIdentifiers[i] += classMap.IdentifierDelimiter + value;
               }
             }
           }
@@ -385,14 +390,14 @@ namespace org.iringtools.adapter.projection
                 }
                 else
                 {
-                  classIdentifiers[i] += classMap.identifierDelimiter + value;
+                  classIdentifiers[i] += classMap.IdentifierDelimiter + value;
                 }
               }
             }
           }
         }
 
-        _classIdentifiers[classMap.classId] = classIdentifiers;
+        _classIdentifiers[classMap.ClassId] = classIdentifiers;
       }
     }
   }

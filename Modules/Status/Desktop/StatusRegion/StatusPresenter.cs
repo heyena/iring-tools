@@ -14,6 +14,7 @@ using org.iringtools.ontologyservice.presentation.presentationmodels;
 
 using org.ids_adi.qmxf;
 using org.iringtools.library;
+using org.iringtools.common.mapping;
 
 namespace org.iringtools.modules.status.statusregion
 {
@@ -64,37 +65,37 @@ namespace org.iringtools.modules.status.statusregion
 
     public void NavigationEventHandler(NavigationEventArgs e)
     {
-        try
-        {
-            Logger.Log(string.Format("{0} handled {1} event", ModuleFullName, e.DetailProcess),
-              Category.Debug, Priority.None);
+      try
+      {
+        Logger.Log(string.Format("{0} handled {1} event", ModuleFullName, e.DetailProcess),
+          Category.Debug, Priority.None);
 
-            //if (e.DetailProcess == DetailType.DataSource && e.SelectedNode.Tag is DataObject)
-            //{
-            //    StatusEventHandler(new StatusEventArgs
-            //    {
-            //        Message = string.Format("{0}", ""),                   
-            //        StatusPanel = StatusType.Left
-            //    });
-            //}
+        //if (e.DetailProcess == DetailType.DataSource && e.SelectedNode.Tag is DataObject)
+        //{
+        //    StatusEventHandler(new StatusEventArgs
+        //    {
+        //        Message = string.Format("{0}", ""),                   
+        //        StatusPanel = StatusType.Left
+        //    });
+        //}
 
-            if (e.DetailProcess == DetailType.Mapping && e.SelectedNode.Tag is GraphMap)
-            {
-                GraphMap selectedMappingNode = (GraphMap)e.SelectedNode.Tag;
-            }
-            else if (e.DetailProcess == DetailType.Mapping && e.SelectedNode.Tag is TemplateMap)
-            {
-                TemplateMap selectedMappingNode = (TemplateMap)e.SelectedNode.Tag;
-            }
-            else if (e.DetailProcess == DetailType.Mapping && e.SelectedNode.Tag is RoleMap)
-            {
-                RoleMap selectedMappingNode = (RoleMap)e.SelectedNode.Tag;
-            }
-        }
-        catch (Exception ex)
+        if (e.DetailProcess == DetailType.Mapping && e.SelectedNode.Tag is GraphMap)
         {
-            Error.SetError(ex);
+          GraphMap selectedMappingNode = (GraphMap)e.SelectedNode.Tag;
         }
+        else if (e.DetailProcess == DetailType.Mapping && e.SelectedNode.Tag is TemplateMap)
+        {
+          TemplateMap selectedMappingNode = (TemplateMap)e.SelectedNode.Tag;
+        }
+        else if (e.DetailProcess == DetailType.Mapping && e.SelectedNode.Tag is RoleMap)
+        {
+          RoleMap selectedMappingNode = (RoleMap)e.SelectedNode.Tag;
+        }
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
     }
   }
 }

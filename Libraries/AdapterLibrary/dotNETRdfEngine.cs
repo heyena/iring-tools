@@ -21,6 +21,7 @@ using System.Xml.Linq;
 using Microsoft.ServiceModel.Web;
 using System.Text.RegularExpressions;
 using org.w3.sparql_results;
+using org.iringtools.common.mapping;
 
 namespace org.iringtools.adapter.semantic
 {
@@ -42,7 +43,7 @@ namespace org.iringtools.adapter.semantic
     private static readonly XName RDF_RESOURCE = RDF_NS + "resource";
     private static readonly XName RDF_DATATYPE = RDF_NS + "datatype";
 
-    private static readonly string RDF_PREFIX = "rdf:";    
+    private static readonly string RDF_PREFIX = "rdf:";
     private static readonly string RDF_NIL = RDF_PREFIX + "nil";
 
     private static readonly ILog _logger = LogManager.GetLogger(typeof(dotNetRDFEngine));
@@ -77,8 +78,8 @@ namespace org.iringtools.adapter.semantic
         _settings["ApplicationName"]
         );
 
-      _dataObjectNs = String.Format("{0}.proj_{1}", 
-        DATALAYER_NS, 
+      _dataObjectNs = String.Format("{0}.proj_{1}",
+        DATALAYER_NS,
         _settings["Scope"]
       );
 
@@ -94,12 +95,12 @@ namespace org.iringtools.adapter.semantic
       status.Messages = new Messages();
 
       try
-      {  
+      {
         status.Identifier = graphName;
 
         DateTime startTime = DateTime.Now;
         _graphMap = _mapping.FindGraphMap(graphName);
-        
+
         // create xdoc from rdf xelement
         Uri graphUri = new Uri(_graphNs.NamespaceName + graphName);
         XmlDocument xmlDocument = new XmlDocument();
@@ -123,8 +124,8 @@ namespace org.iringtools.adapter.semantic
         status.Messages.Add("Graph [" + graphName + "] has been refreshed in triple store successfully.");
         status.Messages.Add(
           String.Format("Execution time [{0}:{1}.{2}] minutes.",
-            duration.Minutes, 
-            duration.Seconds, 
+            duration.Minutes,
+            duration.Seconds,
             duration.Milliseconds
           )
         );
@@ -136,7 +137,7 @@ namespace org.iringtools.adapter.semantic
         status.Level = StatusLevel.Error;
         status.Messages.Add(String.Format("Error refreshing graph [{0}]. {1}", graphName, ex));
       }
-      
+
       response.Append(status);
       return response;
     }
@@ -150,11 +151,11 @@ namespace org.iringtools.adapter.semantic
     #region helper methods
     private Response DeleteGraph(Uri graphUri)
     {
-        Response response = new Response();
-        response.StatusList = new List<Status>();
+      Response response = new Response();
+      response.StatusList = new List<Status>();
 
-        Status status = new Status();
-        status.Messages = new Messages();
+      Status status = new Status();
+      status.Messages = new Messages();
       try
       {
         status.Identifier = graphUri.ToString();

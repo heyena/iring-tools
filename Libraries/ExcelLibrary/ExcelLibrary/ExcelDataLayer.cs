@@ -13,8 +13,9 @@ using org.iringtools.utility;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace org.iringtools.adapter.datalayer
-{  
-  public class ExcelDataObject : IDataObject {
+{
+  public class ExcelDataObject : IDataObject
+  {
 
     private Dictionary<string, object> Row { get; set; }
 
@@ -45,36 +46,36 @@ namespace org.iringtools.adapter.datalayer
         default:
           throw new Exception("Related object [" + relatedObjectType + "] does not exist.");
       }
-    }    
+    }
 
     public void SetPropertyValue(string propertyName, object value)
-    {      
+    {
       Row[propertyName] = value;
-    }    
+    }
   }
 
   public class ExcelDataLayer : IDataLayer
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(ExcelDataLayer));
     private AdapterSettings _settings = null;
-    private string _configurationPath = String.Empty;    
+    private string _configurationPath = String.Empty;
     private ExcelConfiguration _configuration = null;
     private Dictionary<string, Type> _dynamicTypes = new Dictionary<string, Type>();
-    
+
     [Inject]
     public ExcelDataLayer(AdapterSettings settings)
     {
       try
       {
         _settings = settings;
-                
+
         _configurationPath = _settings["XmlPath"] + "excel-configuration." + _settings["ProjectName"] + "." + _settings["ApplicationName"] + ".xml";
         _configuration = ProcessExcelConfig(_configurationPath);
 
       }
       catch (Exception e)
       {
-        _logger.Error("Error in processing the Configuration File ["+ _configurationPath +"].", e);
+        _logger.Error("Error in processing the Configuration File [" + _configurationPath + "].", e);
       }
     }
 
@@ -85,7 +86,7 @@ namespace org.iringtools.adapter.datalayer
         ExcelWorksheet cfWorksheet = _configuration.Worksheets.FirstOrDefault<ExcelWorksheet>(o => o.Name == objectType);
 
         IList<IDataObject> dataObjects = new List<IDataObject>();
-        
+
         objectType = objectType.Substring(objectType.LastIndexOf('.') + 1);
         //Type type = this.GetType(_settings["projectName"], _settings["applicationName"], objectType);
 
@@ -100,8 +101,8 @@ namespace org.iringtools.adapter.datalayer
 
             if (!String.IsNullOrEmpty(identifier))
             {
-              dataObject.SetPropertyValue(cfWorksheet.Identifier, identifier);              
-            }            
+              dataObject.SetPropertyValue(cfWorksheet.Identifier, identifier);
+            }
 
             dataObjects.Add(dataObject);
           }
@@ -163,14 +164,14 @@ namespace org.iringtools.adapter.datalayer
         Excel.Worksheet xlWorksheet = GetWorkSheet(objectType, xlWorkBook, cfWorksheet);
 
         IList<IDataObject> dataObjects = new List<IDataObject>();
-        
+
         if (identifiers != null && identifiers.Count > 0)
         {
           foreach (string identifier in identifiers)
           {
             Status status = new Status();
             status.Identifier = identifier;
-            
+
             int row = GetRowIndex(xlWorksheet, cfWorksheet, identifier);
 
             try
@@ -185,12 +186,12 @@ namespace org.iringtools.adapter.datalayer
               status.Messages.Add("Error while deleting data object [" + identifier + "]." + ex);
             }
 
-            response.Append(status);            
+            response.Append(status);
           }
         }
 
         System.Runtime.InteropServices.Marshal.ReleaseComObject(xlWorksheet);
-        xlWorksheet = null;        
+        xlWorksheet = null;
 
         return response;
       }
@@ -234,27 +235,27 @@ namespace org.iringtools.adapter.datalayer
 
         List<IDataObject> dataObjects = new List<IDataObject>();
         //Type type = this.GetType(_settings["projectName"], _settings["applicationName"], objectType);
-        
+
         Excel.Range usedRange = xlWorksheet.UsedRange;
 
-        for (int row = cfWorksheet.DataIdx; row <= usedRange.Rows.Count; row++)
+        for (int row = 2; row <= usedRange.Rows.Count; row++)
         {
           //IDataObject dataObject = (IDataObject)Activator.CreateInstance(type);
           ExcelDataObject dataObject = new ExcelDataObject()
           {
             SheetName = objectType
           };
-          
+
           foreach (ExcelColumn column in cfWorksheet.Columns)
           {
             dataObject.SetPropertyValue(column.Name, xlWorksheet.Cells[row, column.Index].Value2);
           }
 
           dataObjects.Add(dataObject);
-        }        
+        }
 
         System.Runtime.InteropServices.Marshal.ReleaseComObject(xlWorksheet);
-        xlWorksheet = null;         
+        xlWorksheet = null;
 
         // Apply filter
         if (filter != null && filter.Expressions.Count > 0)
@@ -262,7 +263,7 @@ namespace org.iringtools.adapter.datalayer
           string variable = "dataObject";
           string linqExpression = string.Empty;
           switch (objectType)
-          { 
+          {
             default:
               linqExpression = filter.ToLinqExpression<IDataObject>(variable);
               break;
@@ -378,7 +379,7 @@ namespace org.iringtools.adapter.datalayer
             {
               SheetName = objectType
             };
-                        
+
             foreach (ExcelColumn column in cfWorksheet.Columns)
             {
               dataObject.SetPropertyValue(column.Name, xlWorksheet.Cells[row, column.Index].Value2);
@@ -424,37 +425,37 @@ namespace org.iringtools.adapter.datalayer
       {
         DataDictionary dataDictionary = new DataDictionary()
         {
-          dataObjects = new List<DataObject>()          
+          DataObjects = new List<DataObject>()
         };
-                
+
         foreach (ExcelWorksheet worksheet in _configuration.Worksheets)
         {
           DataObject dataObject = new DataObject()
           {
-            objectName = worksheet.Name,            
-            dataProperties = new List<DataProperty>()            
+            ObjectName = worksheet.Name,
+            DataProperties = new List<DataProperty>()
           };
 
-          dataDictionary.dataObjects.Add(dataObject);
+          dataDictionary.DataObjects.Add(dataObject);
 
           foreach (ExcelColumn column in worksheet.Columns)
           {
             DataProperty dataProperty = new DataProperty()
             {
-              propertyName = column.Name,
-              dataType = column.DataType
+              PropertyName = column.Name,
+              DataType = column.DataType
             };
 
             if (worksheet.Identifier == column.Name)
             {
-              dataObject.addKeyProperty(dataProperty);
+              dataObject.AddKeyProperty(dataProperty);
             }
             else
             {
-              dataObject.dataProperties.Add(dataProperty);
+              dataObject.DataProperties.Add(dataProperty);
             }
-          }          
-        }        
+          }
+        }
 
         return dataDictionary;
       }
@@ -471,7 +472,7 @@ namespace org.iringtools.adapter.datalayer
         ExcelWorksheet cfWorkSheet = GetConfigWorkSheet(objectType);
 
         List<string> identifiers = new List<string>();
-        IList<IDataObject> dataObjects = Get(objectType, filter, 0, 0);     
+        IList<IDataObject> dataObjects = Get(objectType, filter, 0, 0);
 
         foreach (IDataObject dataObject in dataObjects)
         {
@@ -485,7 +486,7 @@ namespace org.iringtools.adapter.datalayer
         _logger.Error("Error in GetIdentifiers: " + ex);
         throw new Exception("Error while getting a list of identifiers of type [" + objectType + "].", ex);
       }
-    }   
+    }
 
     private Excel.Worksheet GetWorkSheet(string objectType, Excel.Workbook xlWorkBook, ExcelWorksheet cfWorksheet)
     {
@@ -563,14 +564,14 @@ namespace org.iringtools.adapter.datalayer
       {
         xlApplication = new Excel.Application();
         xlWorkBook = xlApplication.Workbooks.Open(_configuration.Location, 0, false, 5, "", "", true, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
-         
-        foreach(IDataObject dataObject in dataObjects)
+
+        foreach (IDataObject dataObject in dataObjects)
         {
           string objectType = ((ExcelDataObject)dataObject).SheetName;
           ExcelWorksheet cfWorksheet = GetConfigWorkSheet(objectType);
 
           Excel.Worksheet xlWorksheet = GetWorkSheet(objectType, xlWorkBook, cfWorksheet);
-                    
+
           string identifier = dataObject.GetPropertyValue(cfWorksheet.Identifier).ToString();
 
           int row = GetRowIndex(xlWorksheet, cfWorksheet, identifier);
@@ -581,8 +582,8 @@ namespace org.iringtools.adapter.datalayer
           }
 
           System.Runtime.InteropServices.Marshal.ReleaseComObject(xlWorksheet);
-          xlWorksheet = null;          
-        }  
+          xlWorksheet = null;
+        }
 
         return response;
       }
@@ -614,7 +615,7 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    private List<ExcelColumn> CreateConfigColumns(Excel.Worksheet xlWorkSheet, ExcelWorksheet cfWorkSheet) 
+    private List<ExcelColumn> CreateConfigColumns(Excel.Worksheet xlWorkSheet, ExcelWorksheet cfWorkSheet)
     {
       List<ExcelColumn> columns = new List<ExcelColumn>();
 
@@ -660,7 +661,7 @@ namespace org.iringtools.adapter.datalayer
 
       try
       {
-        config = Utility.Read<ExcelConfiguration>(_configurationPath, true);        
+        config = Utility.Read<ExcelConfiguration>(_configurationPath, true);
 
         xlApplication = new Excel.Application();
         xlWorkBook = xlApplication.Workbooks.Open(config.Location, 0, true, 5, "", "", true, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
@@ -675,7 +676,7 @@ namespace org.iringtools.adapter.datalayer
             {
               Name = xlWorkSheet.Name,
               HeaderIdx = 1,
-              DataIdx = 2              
+              DataIdx = 2
             };
 
             cfWorkSheet.Columns = CreateConfigColumns(xlWorkSheet, cfWorkSheet);
@@ -738,9 +739,9 @@ namespace org.iringtools.adapter.datalayer
           xlApplication = null;
         }
 
-        GC.Collect();        
-      }     
-      
+        GC.Collect();
+      }
+
     }
 
     //private Type GetType(string projectName, string applicationName, string className)
@@ -760,24 +761,24 @@ namespace org.iringtools.adapter.datalayer
 
     //    // Create a new module within this assembly
     //    ModuleBuilder moduleBuilder = assemBuilder.DefineDynamicModule("Model_" + projectName + "_" + applicationName);
-        
+
     //    // Create a new type within the module
     //    TypeBuilder typeBuilder = moduleBuilder.DefineType(className, TypeAttributes.Public, typeof(ExcelDataObject));
-                
+
     //    // Create a type.
     //    return typeBuilder.CreateType();
     //  }
     //}  
 
     #region IDataLayer Members
-    
+
     public IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType)
     {
-      return new List<IDataObject>(); 
+      return new List<IDataObject>();
     }
 
-    #endregion    
+    #endregion
 
-  }  
-          
+  }
+
 }

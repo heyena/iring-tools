@@ -12,13 +12,14 @@ using System.Linq;
 using System.Xml.Linq;
 using System;
 using System.Configuration;
+using org.iringtools.common.mapping;
 
 namespace AdapterService.Tests
 {
-   /// <summary>
-   ///This is a test class for AdapterServiceTest and is intended
-   ///to contain all AdapterServiceTest Unit Tests
-   ///</summary>
+  /// <summary>
+  ///This is a test class for AdapterServiceTest and is intended
+  ///to contain all AdapterServiceTest Unit Tests
+  ///</summary>
   [TestClass()]
   public class AdapterServiceTest
   {
@@ -64,7 +65,7 @@ namespace AdapterService.Tests
     {
       AdapterProxy target = new AdapterProxy();
       DataDictionary actual = target.GetDictionary("12345_000", "ABC");
-      Assert.AreEqual(1, actual.dataObjects.Count);
+      Assert.AreEqual(1, actual.DataObjects.Count);
     }
 
     [TestMethod()]
@@ -72,21 +73,21 @@ namespace AdapterService.Tests
     {
       AdapterProxy target = new AdapterProxy();
       Mapping actual = target.GetMapping("12345_000", "ABC");
-      Assert.AreNotEqual(0, actual.graphMaps.Count);
+      Assert.AreNotEqual(0, actual.GraphMaps.Count);
     }
 
-    [TestMethod()]
-    public void ClearStoreTest_ABC()
-    {
-      AdapterProxy target = new AdapterProxy();
-      Response actual = target.DeleteAll("12345_000", "ABC");
-      if (!actual.ToString().Contains("has been deleted successfully."))
-      {
-        throw new AssertFailedException(Utility.SerializeDataContract<Response>(actual));
-      }
+    //[TestMethod()]
+    //public void ClearStoreTest_ABC()
+    //{
+    //  AdapterProxy target = new AdapterProxy();
+    //  Response actual = target.DeleteAll("12345_000", "ABC");
+    //  if (!actual.ToString().Contains("has been deleted successfully."))
+    //  {
+    //    throw new AssertFailedException(Utility.SerializeDataContract<Response>(actual));
+    //  }
 
-      Assert.IsTrue(actual.ToString().Contains("has been deleted successfully."));
-    }
+    //  Assert.IsTrue(actual.ToString().Contains("has been deleted successfully."));
+    //}
 
     [TestMethod()]
     public void RefreshTest_ABC()
@@ -102,19 +103,19 @@ namespace AdapterService.Tests
       Assert.IsFalse(actual.Level == StatusLevel.Error);
     }
 
-    [TestMethod()]
-    public void RefreshAllTest_ABC()
-    {
-      AdapterProxy target = new AdapterProxy();
-      Response actual = target.RefreshAll("12345_000", "ABC");
+    //[TestMethod()]
+    //public void RefreshAllTest_ABC()
+    //{
+    //  AdapterProxy target = new AdapterProxy();
+    //  Response actual = target.RefreshAll("12345_000", "ABC");
 
-      if (actual.Level == StatusLevel.Error)
-      {
-        throw new AssertFailedException(Utility.SerializeDataContract<Response>(actual));
-      }
+    //  if (actual.Level == StatusLevel.Error)
+    //  {
+    //    throw new AssertFailedException(Utility.SerializeDataContract<Response>(actual));
+    //  }
 
-      Assert.IsFalse(actual.Level == StatusLevel.Error);
-    }
+    //  Assert.IsFalse(actual.Level == StatusLevel.Error);
+    //}
 
     //[TestMethod()]
     //public void PullTest_ABC()
@@ -147,8 +148,8 @@ namespace AdapterService.Tests
 
       Request request = new Request
       {
-        {"targetEndpointUri", "http://localhost:54321/InterfaceService/query"},
-        {"targetGraphBaseUri", "http://localhost:54321/AdapterService/12345_000/XYZ/LINES"},
+        {"targetEndpointUri", "http://localhost:54321/facade/query"},
+        {"targetGraphBaseUri", "http://localhost:54321/adapter/12345_000/XYZ/LINES"},
       };
 
       Response setup = target.RefreshGraph("12345_000", "XYZ", "LINES");
@@ -165,7 +166,7 @@ namespace AdapterService.Tests
     {
       string mapping = Utility.ReadString(_settings["XmlPath"] + "Mapping.12345_000.ABC.xml");
       XElement mappingXml = XElement.Parse(mapping);
-      
+
       AdapterProxy target = new AdapterProxy();
       Response actual = target.UpdateMapping("12345_000", "ABC", mappingXml);
 
@@ -188,7 +189,7 @@ namespace AdapterService.Tests
     //  Assert.AreNotEqual(0, manifest.Graphs.Count);
     //}
 
-   
+
 
     //[TestMethod()]
     //public void PullDTO()
@@ -211,35 +212,35 @@ namespace AdapterService.Tests
     //    Assert.IsFalse(actual.Level == StatusLevel.Error);
     //}
 
-    
+
 
     [TestMethod]
     public void GetDataObjects()
     {
-        AdapterProxy target = new AdapterProxy();
-        XDocument xDocument = target.GetXml("12345_000", "ABC", "Lines", "dto");
-        IList<IDataObject> dataObjects = target.GetDataObject("12345_000", "ABC", "Lines", "dto", xDocument);
-        Assert.AreNotEqual(0, dataObjects.Count);
+      AdapterProxy target = new AdapterProxy();
+      XDocument xDocument = target.GetXml("12345_000", "ABC", "Lines", "dto");
+      IList<IDataObject> dataObjects = target.GetDataObject("12345_000", "ABC", "Lines", "dto", xDocument);
+      Assert.AreNotEqual(0, dataObjects.Count);
     }
 
     [TestMethod]
     public void Push()
     {
-        AdapterProxy target = new AdapterProxy();
-        PushRequest request = new PushRequest();
-        WebCredentials targetCredentials = new WebCredentials();
-        string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
-        string adapterServiceUri = System.Configuration.ConfigurationManager.AppSettings["AdapterServiceUri"].ToString();
-        request.Add("targetUri", adapterServiceUri);
-        request.Add("targetCredentials", targetCredentialsXML);
-        request.Add("filter", "Tag-2");
-        request.Add("targetProjectName", "12345_000");
-        request.Add("targetApplicationName", "ABC");
-        request.Add("targetGraphName", "Lines");
-        request.Add("format", "dto");
+      AdapterProxy target = new AdapterProxy();
+      PushRequest request = new PushRequest();
+      WebCredentials targetCredentials = new WebCredentials();
+      string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
+      string adapterServiceUri = System.Configuration.ConfigurationManager.AppSettings["AdapterServiceUri"].ToString();
+      request.Add("targetUri", adapterServiceUri);
+      request.Add("targetCredentials", targetCredentialsXML);
+      request.Add("filter", "Tag-2");
+      request.Add("targetProjectName", "12345_000");
+      request.Add("targetApplicationName", "ABC");
+      request.Add("targetGraphName", "Lines");
+      request.Add("format", "dto");
 
-        Response actual = target.Push("12345_000", "DEF", "LinesGraph", request);
-        Assert.IsFalse(actual.Level == StatusLevel.Error);
+      Response actual = target.Push("12345_000", "DEF", "LinesGraph", request);
+      Assert.IsFalse(actual.Level == StatusLevel.Error);
     }
 
 
@@ -253,7 +254,7 @@ namespace AdapterService.Tests
       Response actual = target.PostDTO("12345_000", "ABC", "Lines", dto);
       Assert.IsFalse(actual.Level == StatusLevel.Error);
     }
-    
+
     private TestContext testContextInstance;
 
     /// <summary>
@@ -270,6 +271,6 @@ namespace AdapterService.Tests
       {
         testContextInstance = value;
       }
-    }      
+    }
   }
 }
