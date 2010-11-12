@@ -114,7 +114,7 @@ var store = new Ext.data.Store({
 				baseParams: {
 						   //'getData': 'true'
 							'identifier':identifier,'refClassIdentifier':refClassIdentifier
-				},
+				}
 			});
 //store.load();
 
@@ -149,7 +149,7 @@ limit: pageSize
 cellclick:{
 fn:function(grid,rowIndex,columnIndex,e){
 	   var cm    = this.colModel
-				   var record = grid.getStore().getAt(rowIndex);  // Get the Record
+	   var record = grid.getStore().getAt(rowIndex);  // Get the Record
 	   var fieldName = grid.getColumnModel().getDataIndex(columnIndex); // Get field name
 	   if(fieldName=='Identifier' && record.get(fieldName)!=''){
 		   var IdentificationByTag_value = record.get(fieldName);
@@ -163,8 +163,8 @@ fn:function(grid,rowIndex,columnIndex,e){
 									rowDataArr.push(tempArr)
 		   }
 		   var filedsVal_ = '[{"name":"Property"},{"name":"Value"}]'
-							var columnsData_='[{"id":"Property","header":"Property","width":144,"sortable":"true","dataIndex":"Property"},{"id":"Value","header":"Value","width":144,"sortable":"true","dataIndex":"Value"}]'
-											 var prowData = eval(rowDataArr);
+		   var columnsData_='[{"id":"Property","header":"Property","width":144,"sortable":"true","dataIndex":"Property"},{"id":"Value","header":"Value","width":144,"sortable":"true","dataIndex":"Value"}]'
+		   var prowData = eval(rowDataArr);
 		   var pfiledsVal = eval(filedsVal_);
 		   var pColumnData = eval(columnsData_);
 								   // create the data store
