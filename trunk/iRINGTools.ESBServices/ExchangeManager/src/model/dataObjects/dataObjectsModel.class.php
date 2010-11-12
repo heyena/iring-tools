@@ -64,11 +64,17 @@ class dataObjectsModel{
 	function setDataObjects($params){
 		$this->buildWSUri($params);
 		$this->dtiXMLData = $this->getCacheData();
+		
 		// checking the dti from cache
 		if(($this->dtiXMLData!=false)&&(!empty($this->dtiXMLData))){
 			//$replaceString = str_replace('<dataTransferIndices xmlns="http://iringtools.org/adapter/dti">','<xr:exchangeRequest xmlns="http://iringtools.org/adapter/dti" xmlns:xr="http://iringtools.org/common/request"><xr:dataTransferIndices>',$this->dtiXMLData);
+				//****$replaceString = str_replace('<dataTransferIndices xmlns="http://www.iringtools.org/dxfr/dti">','<xr:exchangeRequest xmlns="http://www.iringtools.org/dxfr/dti" xmlns:xr="http://www.iringtools.org/dxfr/request"><xr:dataTransferIndices>',$this->dtiXMLData);
+
 				$replaceString = str_replace('<dataTransferIndices xmlns="http://www.iringtools.org/dxfr/dti">','<xr:exchangeRequest xmlns="http://www.iringtools.org/dxfr/dti" xmlns:xr="http://www.iringtools.org/dxfr/request"><xr:dataTransferIndices>',$this->dtiXMLData);
+				//*** $sendXmlData = str_replace("</dataTransferIndices>","</xr:dataTransferIndices><xr:reviewed>".$params['hasreviewed']."</xr:reviewed></xr:exchangeRequest>", $replaceString);
 				$sendXmlData = str_replace("</dataTransferIndices>","</xr:dataTransferIndices><xr:reviewed>".$params['hasreviewed']."</xr:reviewed></xr:exchangeRequest>", $replaceString);
+				
+				
 				$curlObj = new curl($this->dtiSubmitUrl);
 				$curlObj->setopt(CURLOPT_POST, 1);
 				$curlObj->setopt(CURLOPT_HTTPHEADER, Array("Content-Type: application/xml"));
