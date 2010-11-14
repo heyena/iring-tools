@@ -1,5 +1,6 @@
 <?php
-    require_once(CONTROLLER_DIR."BaseController.php");
+    $path = CONTROLLER_DIR."BaseController.php";
+    require_once($path);
 	/** Controller with capabilities :
 	to generate the tree for Review & Acceptance
 	to send the data of Review & Acceptance for Exchange

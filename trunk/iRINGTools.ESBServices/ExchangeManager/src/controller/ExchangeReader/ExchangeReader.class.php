@@ -2,7 +2,8 @@
 /**
  * @author Aswini Nayak (aknayak@bechtel.com)
 */
-   require_once('/controller/BaseController.php');   
+   $path = CONTROLLER_DIR."BaseController.php";
+    require_once($path);
 
 class ExchangeReader extends BaseController{
 	private $modelObj;

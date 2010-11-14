@@ -30,7 +30,7 @@
 	}
         
         /*** set the file path ***/
-        $path = 'controller/'.$controller.'/';
+        $path = "controller/".$controller.'/';
 
         /*** check if path i sa directory ***/
 	if (is_dir($path) == false)

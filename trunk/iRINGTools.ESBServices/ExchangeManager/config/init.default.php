@@ -18,6 +18,6 @@ define('PAGESIZE','20');
 define('EXCHANGE_HISTORY_URI','http://localhost:8888/projects/iRINGTools.ESBServices/ExchangeManager/exchangeResponse.xml');
 
 /* Put username & Password required for authentication*/
-define('AUTH_USERID','*******');
-define('AUTH_USERPWD','*******');
+define('AUTH_USERID','');
+define('AUTH_USERPWD','');
 ?>
