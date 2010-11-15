@@ -12,26 +12,8 @@
     </xs:appinfo>
   </xs:annotation>
 
-  <xs:element name="exchangeResponse" type="ExchangeResponse" />
   <xs:element name="response" type="Response" />
   
-  <xs:complexType name="ExchangeResponse">
-    <xs:sequence>
-      <xs:element name="level" type="Level" />
-      <xs:element name="startTimeStamp" type="xs:dateTime" />
-      <xs:element name="endTimeStamp" type="xs:dateTime" />
-      <xs:element name="senderUri" type="xs:string"/>
-      <xs:element name="senderScopeName" type="xs:string"/>
-      <xs:element name="senderAppName" type="xs:string"/>
-      <xs:element name="senderGraphName" type="xs:string"/>
-      <xs:element name="receiverUri" type="xs:string"/>
-      <xs:element name="receiverScopeName" type="xs:string"/>
-      <xs:element name="receiverAppName" type="xs:string"/>
-      <xs:element name="receiverGraphName" type="xs:string"/>
-      <xs:element name="statusList" type="StatusList" />
-    </xs:sequence>
-  </xs:complexType>  
-
   <xs:complexType name="Response">
     <xs:sequence>
       <xs:element name="level" type="Level" />

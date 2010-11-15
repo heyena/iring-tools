@@ -3,7 +3,7 @@ package org.iringtools.test;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-import org.iringtools.common.response.ExchangeResponse;
+import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.directory.Directory;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dto.DataTransferObjects;
