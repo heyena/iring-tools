@@ -31,7 +31,7 @@ import org.iringtools.dxfr.request.DtoPageRequest;
 import org.iringtools.dxfr.request.DxiRequest;
 import org.iringtools.dxfr.request.DxoRequest;
 import org.iringtools.dxfr.request.ExchangeRequest;
-import org.iringtools.common.response.ExchangeResponse;
+import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.common.response.Level;
 import org.iringtools.common.response.Messages;
 import org.iringtools.common.response.Response;
