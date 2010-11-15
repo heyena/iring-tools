@@ -18,7 +18,7 @@ import javax.xml.bind.JAXBException;
 import org.apache.log4j.Logger;
 
 
-import org.iringtools.federation.Federation;
+import org.iringtools.refdata.federation.Federation;
 import org.iringtools.refdata.queries.Queries;
 import org.iringtools.refdata.queries.Query;
 import org.iringtools.refdata.queries.QueryItem;

@@ -1,5 +1,5 @@
 
-package org.iringtools.federation;
+package org.iringtools.refdata.federation;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -8,20 +8,19 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for Namespace complex type.
+ * <p>Java class for IDGenerator complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Namespace">
+ * &lt;complexType name="IDGenerator">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="uri" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="alias" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="isWritable" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="idGenerator" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -31,23 +30,37 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Namespace", propOrder = {
+@XmlType(name = "IDGenerator", propOrder = {
+    "id",
     "uri",
-    "alias",
-    "isWritable",
-    "description",
-    "idGenerator"
+    "name",
+    "description"
 })
-public class Namespace {
+public class IDGenerator {
 
+    protected int id;
     @XmlElement(required = true)
     protected String uri;
     @XmlElement(required = true)
-    protected String alias;
-    protected boolean isWritable;
+    protected String name;
     @XmlElement(required = true)
     protected String description;
-    protected int idGenerator;
+
+    /**
+     * Gets the value of the id property.
+     * 
+     */
+    public int getId() {
+        return id;
+    }
+
+    /**
+     * Sets the value of the id property.
+     * 
+     */
+    public void setId(int value) {
+        this.id = value;
+    }
 
     /**
      * Gets the value of the uri property.
@@ -74,43 +87,27 @@ public class Namespace {
     }
 
     /**
-     * Gets the value of the alias property.
+     * Gets the value of the name property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getAlias() {
-        return alias;
+    public String getName() {
+        return name;
     }
 
     /**
-     * Sets the value of the alias property.
+     * Sets the value of the name property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setAlias(String value) {
-        this.alias = value;
-    }
-
-    /**
-     * Gets the value of the isWritable property.
-     * 
-     */
-    public boolean isIsWritable() {
-        return isWritable;
-    }
-
-    /**
-     * Sets the value of the isWritable property.
-     * 
-     */
-    public void setIsWritable(boolean value) {
-        this.isWritable = value;
+    public void setName(String value) {
+        this.name = value;
     }
 
     /**
@@ -135,22 +132,6 @@ public class Namespace {
      */
     public void setDescription(String value) {
         this.description = value;
-    }
-
-    /**
-     * Gets the value of the idGenerator property.
-     * 
-     */
-    public int getIdGenerator() {
-        return idGenerator;
-    }
-
-    /**
-     * Sets the value of the idGenerator property.
-     * 
-     */
-    public void setIdGenerator(int value) {
-        this.idGenerator = value;
     }
 
 }

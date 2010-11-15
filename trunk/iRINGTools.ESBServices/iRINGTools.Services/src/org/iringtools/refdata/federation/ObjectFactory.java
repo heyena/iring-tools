@@ -1,5 +1,5 @@
 
-package org.iringtools.federation;
+package org.iringtools.refdata.federation;
 
 import javax.xml.bind.annotation.XmlRegistry;
 
@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlRegistry;
 /**
  * This object contains factory methods for each 
  * Java content interface and Java element interface 
- * generated in the org.iringtools.federation package. 
+ * generated in the org.iringtools.refdata.federation package. 
  * <p>An ObjectFactory allows you to programatically 
  * construct new instances of the Java representation 
  * for XML content. The Java representation of XML 
@@ -23,26 +23,10 @@ public class ObjectFactory {
 
 
     /**
-     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.iringtools.federation
+     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.iringtools.refdata.federation
      * 
      */
     public ObjectFactory() {
-    }
-
-    /**
-     * Create an instance of {@link IDGenerator }
-     * 
-     */
-    public IDGenerator createIDGenerator() {
-        return new IDGenerator();
-    }
-
-    /**
-     * Create an instance of {@link RepoNamespaces }
-     * 
-     */
-    public RepoNamespaces createRepoNamespaces() {
-        return new RepoNamespaces();
     }
 
     /**
@@ -54,19 +38,35 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Repository }
-     * 
-     */
-    public Repository createRepository() {
-        return new Repository();
-    }
-
-    /**
      * Create an instance of {@link Namespace }
      * 
      */
     public Namespace createNamespace() {
         return new Namespace();
+    }
+
+    /**
+     * Create an instance of {@link NamespaceList }
+     * 
+     */
+    public NamespaceList createNamespaceList() {
+        return new NamespaceList();
+    }
+
+    /**
+     * Create an instance of {@link Namespaces }
+     * 
+     */
+    public Namespaces createNamespaces() {
+        return new Namespaces();
+    }
+
+    /**
+     * Create an instance of {@link IDGenerator }
+     * 
+     */
+    public IDGenerator createIDGenerator() {
+        return new IDGenerator();
     }
 
     /**
@@ -78,11 +78,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Namespaces }
+     * Create an instance of {@link Repository }
      * 
      */
-    public Namespaces createNamespaces() {
-        return new Namespaces();
+    public Repository createRepository() {
+        return new Repository();
     }
 
     /**
