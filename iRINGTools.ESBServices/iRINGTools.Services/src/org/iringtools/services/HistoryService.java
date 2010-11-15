@@ -8,7 +8,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import org.apache.log4j.Logger;
-import org.iringtools.directory.Directory;
 import org.iringtools.history.History;
 import org.iringtools.services.core.HistoryProvider;
 
