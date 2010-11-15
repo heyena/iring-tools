@@ -20,11 +20,15 @@ class dataObjectsModel{
 	 * Call this function when we want to check the key of Particular type
 	 */
 	private function setCacheKey($params,$type=null){
+            
 		$this->nodeType=$params['nodetype'];
 		switch($this->nodeType){
 			case "exchanges":
 				$this->cacheKey = $type.''.$params['scope'].'_'.$params['nodetype'].'_'.$params['exchangeID'];
 				$this->dtocacheKey = $type.''.'dto_'.$params['scope'].'_'.$params['nodetype'].'_'.$params['exchangeID'];
+                                if(isset($params['exchangeAction']) && $params['exchangeAction']=="viewHistory"){
+                                    $this->historyCacheKey = 'hst_'.$type.''.$params['scope'].'_'.$params['nodetype'].'_'.$params['exchangeID'];
+                                }
 				break;
 			case "graph":
 				$this->cacheKey = $type.''.$params['scope'].'_'.$params['applname'].'_'.$params['graphs'];
@@ -1018,17 +1022,19 @@ class dataObjectsModel{
         function getHistoryJSONData($fetchedData){
 
            // Marshalling XML data to JSON
-          // echo "<pre>";
+          //echo "<pre>";
             $xmlIterator = new SimpleXMLIterator($fetchedData);
             $resultArr=array();
+            $statusListArray = array();
             $statusList = $xmlIterator->statusList;
 
             $rowDataArr = array();
             //print_r($xmlIterator);
             $i=0;
-
+            $hst_ID='';
             foreach($xmlIterator->response as $response)
             {
+                $hst_ID= 'hstID_'.$i;
                 $spanColor='';
                  switch ((string)$response->level)
                  {
@@ -1045,16 +1051,48 @@ class dataObjectsModel{
 
                 $level = '<span title="Click on row to see History Detail" style="cursor:pointer ;color:'.$spanColor.'">'.(string)$response->level.'</span>';
                 $rowDataArr[] = array(
-                                      'resId_'.$i,
+                                      $hst_ID,
                                       $level,
                                       (string)$response->startTimeStamp,
                                       $response->statusList->status->count(),
                                       (string)$response->senderUri,
                                       (string)$response->receiverUri);
-               $i++;
+
+
+                foreach($response->statusList->children() as $status)
+                {
+                    $identifier = (string)$status->identifier;
+                    $messagestr='';
+                        
+                        foreach($status->messages as $message)
+                        {
+                            $messagestr = (string)$message->message;
+                            $statusListArray[]=array($identifier,$messagestr);
+                        }
+                }
+
+                /* Store the history $statusListArray to SESSION. This will be used to display grid  function  */
+                if(is_array($statusListArray) && !empty($statusListArray)){
+                    @session_start();
+                    //echo '<br>key:  '. $this->historyCacheKey;
+                    if(isset($_SESSION[$hst_ID][$this->historyCacheKey])){
+                        unset($_SESSION[$hst_ID][$this->historyCacheKey]);
+                    }
+
+                    if(!isset($_SESSION[$hst_ID][$this->historyCacheKey])){
+                            $_SESSION[$hst_ID][$this->historyCacheKey]=$statusListArray;
+                   }
+                    unset($gridRowsArray);
             }
 
+
+               $i++;
+            }
+//print_r($statusListArray);
+             
+
             $columnsDataArray = array(
+                                    array('id'=>'hstID','header'=>'hstID','dataIndex'=>'hstID','hidden'=>'true'),
                                     array('id'=>'Level','header'=>'Level','dataIndex'=>'Level','sortable'=>'true'),
                                     array('id'=>'startTimeStamp','header'=>'startTimeStamp','sortable'=>'true','dataIndex'=>'startTimeStamp'),
                                     array('id'=>'rowCount','header'=>'rowCount','sortable'=>'true','dataIndex'=>'rowCount'),
@@ -1062,24 +1100,25 @@ class dataObjectsModel{
                                     array('id'=>'receiverUri','header'=>'receiverUri','sortable'=>'true','dataIndex'=>'receiverUri')
                                 );
             $headerListDataArray=array(
-                                    array('id'=>'id'),
+                                    array('name'=>'hstID'),
                                     array('name'=>'Level'),
                                     array('name'=>'startTimeStamp'),
                                     array('name'=>'rowCount'),
                                     array('name'=>'senderUri'),
-                                    array('name'=>'receiverUri'),
+                                    array('name'=>'receiverUri')
                 );
 
             if(!empty($rowDataArr)){
                         $rowDataArr = $rowDataArr;
             }else{
                 $rowDataArr = array("<font color='green'><b>Error</b></font>","<font color='green'><b>Error</b></font>");
-            }
-
+            }           
+            
             return json_encode(array("success"=>"true",
                                    "headersList"=>(json_encode($headerListDataArray)),
                                    "rowData"=>json_encode($rowDataArr),
-                                   "columnsData"=>json_encode($columnsDataArray))
+                                   "columnsData"=>json_encode($columnsDataArray),
+                                   "historyCacheKey"=>$this->historyCacheKey)
                             );
             /*$level = (string)$xmlIterator->level;
             $startTimeStamp = (string)$xmlIterator->startTimeStamp;
@@ -1122,6 +1161,49 @@ class dataObjectsModel{
                             );
 
                 */
+            
+        }
+
+         /**
+	 * This function used to get the data form SESSION
+          * for display status-list grid in history detail pop-up box.
+	 *
+	 * @param one(string)
+	 * @returns JSON string
+	 * @access public
+	 */
+        function getHistoryStatusListData($params){
+             @session_start();
+            $historyCacheKey = $params['historyCacheKey'];
+            $hstID           = $params['hstID'];
+
+            $rowdataArray = $_SESSION[$hstID][$historyCacheKey];
+
+            $columnsDataArray = array(array(
+                                            'id'=>'Identifier',
+                                            'header'=>'Identifier',
+                                            'sortable'=>'true',
+                                            'width'=>'300',
+                                            'dataIndex'=>'Identifier'
+                                      ),array(
+                                            'id'=>'Message',
+                                            'header'=>'Message',
+                                            'sortable'=>'true',
+                                            'width'=>'100%',
+                                            'dataIndex'=>'Message')
+                                 );
+            $headerListDataArray=array(array(
+                                            'name'=>'Identifier'
+                                            ),
+                                        array(
+                                            'name'=>'Message')
+                                );
+            
+            return json_encode(array("success"=>"true",
+                                   "headersList"=>(json_encode($headerListDataArray)),
+                                   "rowData"=>json_encode($rowdataArray),
+                                   "columnsData"=>json_encode($columnsDataArray))
+                            );
         }
 }
 ?>
