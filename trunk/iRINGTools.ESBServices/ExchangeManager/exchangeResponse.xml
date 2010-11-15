@@ -18,6 +18,9 @@
           <messages>
             <message>Record [90009-O] have been saved successfully.</message>
           </messages>
+          <messages>
+            <message>Record [90009-O] has been Not been saved.</message>
+          </messages>
         </status>
         
         <status>

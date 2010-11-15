@@ -135,6 +135,16 @@ function getPageData($params){
         echo ($historyArray);
     }
 
+      function getHistoryStatusListData($params){
+
+        $urlParams['historyCacheKey']=$params[0];
+        $urlParams['hstID']=$params[1];
+
+        $historyStatusListArray = $this->modelObj->getHistoryStatusListData($urlParams);
+
+        echo ($historyStatusListArray);
+    }
+
 }
    
 ?>

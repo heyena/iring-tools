@@ -1002,6 +1002,8 @@ if(eval(jsonData.success)==false)
 		var fieldList = eval(jsonData.headersList);
 		var columnData = eval(jsonData.columnsData);
 		var statusList = jsonData.statusList;
+                var historyCacheKey = jsonData.historyCacheKey;
+                
                 // set the ArrayStore to use in Grid
                 var hstStore = new Ext.data.ArrayStore({
                     fields: fieldList
@@ -1032,12 +1034,17 @@ if(eval(jsonData.success)==false)
                                        var cm    = this.colModel
                                        var record = hstGrid.getStore().getAt(rowIndex);  // Get the Record
                                             var str_history_header=''
+                                            hstID = record.get(hstGrid.getColumnModel().getDataIndex(0))
+                                            
                                              for(var i=0; i<cm.getColumnCount();i++){
                                                  fieldHeader= hstGrid.getColumnModel().getColumnHeader(i); // Get field name
                                                  fieldValue= record.get(hstGrid.getColumnModel().getDataIndex(i))
-                                                 str_history_header = str_history_header +'<b>'+fieldHeader+' : </b>'+fieldValue+ '<br/>'
+                                                 if(fieldHeader != 'hstID'){
+                                                     str_history_header = str_history_header +'<b>'+fieldHeader+' : </b>'+fieldValue+ '<br/>'
+                                                 }
+                                                 
                                              }
-                                             showHistoryPopup()
+                                             showHistoryPopup(hstID,historyCacheKey)
                                              Ext.get('history-header').dom.innerHTML = '<div style="padding:10 5 0 10">'+str_history_header+"</div>"
                                    }
                              }
@@ -1051,11 +1058,40 @@ if(eval(jsonData.success)==false)
         }
 }
 
-function showHistoryPopup(){
+function showHistoryPopup(hstID,historyCacheKey){
 
+    // Send the request to controller for get rowData form session
+    Ext.Ajax.request({
+       url :  uri= 'dataObjects/getHistoryStatusListData/'+historyCacheKey+'/'+hstID,
+            method: 'POST',
+            params: {
+                    //hasreviewed: reviewed
+              },
+            success: function(result, request)
+               {
+                   var responseTxt = result.responseText
+                   showHistoryStatusListGrid(responseTxt)
+              },
+            failure: function ( result, request){
+                            alert(result.responseText);
+              }
+        });
     // get the centerPanel x,y coordinates, used to set the position of Indvidual Class(PopUp window)
         var strPositon = (Ext.getCmp('centerPanel').getPosition()).toString()
         var arrPositon=strPositon.split(",");
+
+         history_statuslist = new Ext.Panel({
+		title: 'Status List',
+                region:'center',
+                split: true,
+                margins: '0 1 3 3',
+                width: 250,
+                //minSize: 100,
+                height:400,
+                layout :'fit'
+                //collapsible: true
+                //html:'Status List Grid will be displayed here'
+            });
 
         var hstPopup = new Ext.Window({
         title: 'History Detail',
@@ -1086,17 +1122,64 @@ function showHistoryPopup(){
             frame:true,
             height:80,
              html: 'Class Detail'
-            },{
-            id:'history-statuslist',
-                title: 'Status List',
-                region:'center',
-                split: true,
-                margins: '0 1 3 3',
-                width: 250,
-                minSize: 100,
-                html:'Status List Grid will be displayed here'
-                //items:[]   // Status list Grid will be bind here
-            }]
+            },history_statuslist]
     });
     hstPopup.show();
+}
+
+function showHistoryStatusListGrid(response){
+
+var jsonData = Ext.util.JSON.decode(response)
+
+if(eval(jsonData.success)==false)
+	{
+		Ext.MessageBox.show({
+		title: '<font color=red>Error</font>',
+		msg: 'No History Result found for:<br/>'+label,
+		buttons: Ext.MessageBox.OK,
+		icon: Ext.MessageBox.ERROR
+		});
+		return false;
+	}else{
+		var rowData = eval(jsonData.rowData);
+		var fieldList = eval(jsonData.headersList);
+		var columnData = eval(jsonData.columnsData);
+
+                // shared reader
+                var gp_reader = new Ext.data.ArrayReader({},fieldList);
+
+                var gp_store = new Ext.data.GroupingStore({
+                    reader: gp_reader,
+                    data: rowData,
+                    sortInfo:{field: 'Identifier', direction: "ASC"},
+                    groupField:'Identifier'
+                });
+                
+
+                // create the Grid
+                var hstStatusListGrid = new Ext.grid.GridPanel({
+                        store: gp_store,
+                        columns: columnData,
+                        stripeRows: true,
+                        layout:'fit',
+                        autoSizeColumns: true,
+                        autoSizeGrid: true,
+                        AllowScroll : true,
+                        minColumnWidth:100,
+                        columnLines: true,
+                        enableColumnMove:false,
+                        //view: new Ext.grid.GroupingView()
+                        view: new Ext.grid.GroupingView({
+                        forceFit:true,
+                        groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})'
+                    })
+
+                });
+
+            // add 'hstGrid' as items to 'history_panel'
+            history_statuslist.add(hstStatusListGrid);
+            history_statuslist.doLayout();
+
+        }
+    
 }
