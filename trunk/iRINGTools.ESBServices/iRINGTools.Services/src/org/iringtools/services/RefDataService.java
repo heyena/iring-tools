@@ -33,7 +33,7 @@ public class RefDataService
 
   @Context
   private ServletContext context;
-  private Query queries = null;
+  //private Query queries = null;
   private Hashtable<String, String> settings;
   private void init()
   {

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-modules id="moduleCoreId" project-version="1.5.0">
-    <wb-module deploy-name="FederationManager">
+    <wb-module deploy-name="iRINGTools.Apps">
         <wb-resource deploy-path="/" source-path="/WebContent"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-        <property name="context-root" value="FederationManager"/>
         <property name="java-output-path" value="/FederationManager/FederationManager/WebContent/WEB-INF/classes"/>
+        <property name="context-root" value="iRINGTools.Apps"/>
     </wb-module>
 </project-modules>

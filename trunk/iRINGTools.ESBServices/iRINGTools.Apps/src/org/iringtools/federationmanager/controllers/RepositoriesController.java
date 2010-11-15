@@ -1,6 +1,6 @@
 package org.iringtools.federationmanager.controllers;
 
-import com.opensymphony.xwork2.ActionSupport;
+//import com.opensymphony.xwork2.ActionSupport;
 
 /*public class repositoriesController extends ActionSupport {
 
@@ -38,7 +38,7 @@ public class RepositoriesController{
 	private Map<String, String> maps = new HashMap<String, String>();
  
 	//no getter method, will not include in the JSON
-	private String string2 = "B";
+	//private String string2 = "B";
 	
 	public RepositoriesController(){
 		lists.add("list1");
