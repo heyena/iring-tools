@@ -1,5 +1,5 @@
 
-package org.iringtools.protocol.manifest;
+package org.iringtools.refdata.federation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,16 +10,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for Graphs complex type.
+ * <p>Java class for Repositories complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Graphs">
+ * &lt;complexType name="Repositories">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="graph" type="{http://iringtools.org/protocol/manifest}Graph" maxOccurs="unbounded"/>
+ *         &lt;element name="repository" type="{http://www.iringtools.org/refdata/federation}Repository" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,53 +29,53 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Graphs", propOrder = {
-    "graphs"
+@XmlType(name = "Repositories", propOrder = {
+    "repositories"
 })
-public class Graphs {
+public class Repositories {
 
-    @XmlElement(name = "graph", required = true)
-    protected List<Graph> graphs;
+    @XmlElement(name = "repository", required = true)
+    protected List<Repository> repositories;
 
     /**
-     * Gets the value of the graphs property.
+     * Gets the value of the repositories property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the graphs property.
+     * This is why there is not a <CODE>set</CODE> method for the repositories property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getGraphs().add(newItem);
+     *    getRepositories().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Graph }
+     * {@link Repository }
      * 
      * 
      */
-    public List<Graph> getGraphs() {
-        if (graphs == null) {
-            graphs = new ArrayList<Graph>();
+    public List<Repository> getRepositories() {
+        if (repositories == null) {
+            repositories = new ArrayList<Repository>();
         }
-        return this.graphs;
+        return this.repositories;
     }
 
     /**
-     * Sets the value of the graphs property.
+     * Sets the value of the repositories property.
      * 
-     * @param graphs
+     * @param repositories
      *     allowed object is
-     *     {@link Graph }
+     *     {@link Repository }
      *     
      */
-    public void setGraphs(List<Graph> graphs) {
-        this.graphs = graphs;
+    public void setRepositories(List<Repository> repositories) {
+        this.repositories = repositories;
     }
 
 }

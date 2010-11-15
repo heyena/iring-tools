@@ -1,5 +1,5 @@
 
-package org.iringtools.federation;
+package org.iringtools.refdata.federation;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="repositoryType" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="uri" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="updateUri" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="namespaces" type="{http://iringtools.org/federation}RepoNamespaces"/>
+ *         &lt;element name="namespaces" type="{http://www.iringtools.org/refdata/federation}NamespaceList"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -56,7 +56,7 @@ public class Repository {
     @XmlElement(required = true)
     protected String updateUri;
     @XmlElement(required = true)
-    protected RepoNamespaces namespaces;
+    protected NamespaceList namespaces;
 
     /**
      * Gets the value of the description property.
@@ -199,10 +199,10 @@ public class Repository {
      * 
      * @return
      *     possible object is
-     *     {@link RepoNamespaces }
+     *     {@link NamespaceList }
      *     
      */
-    public RepoNamespaces getNamespaces() {
+    public NamespaceList getNamespaces() {
         return namespaces;
     }
 
@@ -211,10 +211,10 @@ public class Repository {
      * 
      * @param value
      *     allowed object is
-     *     {@link RepoNamespaces }
+     *     {@link NamespaceList }
      *     
      */
-    public void setNamespaces(RepoNamespaces value) {
+    public void setNamespaces(NamespaceList value) {
         this.namespaces = value;
     }
 

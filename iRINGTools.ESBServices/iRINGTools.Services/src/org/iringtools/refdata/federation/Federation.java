@@ -1,5 +1,5 @@
 
-package org.iringtools.federation;
+package org.iringtools.refdata.federation;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -18,9 +18,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="iDGenerators" type="{http://iringtools.org/federation}IDGenerators"/>
- *         &lt;element name="namespaces" type="{http://iringtools.org/federation}Namespaces"/>
- *         &lt;element name="repositories" type="{http://iringtools.org/federation}Repositories"/>
+ *         &lt;element name="idGenerators" type="{http://www.iringtools.org/refdata/federation}IDGenerators"/>
+ *         &lt;element name="namespaces" type="{http://www.iringtools.org/refdata/federation}Namespaces"/>
+ *         &lt;element name="repositories" type="{http://www.iringtools.org/refdata/federation}Repositories"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -38,7 +38,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "federation")
 public class Federation {
 
-    @XmlElement(name = "iDGenerators", required = true)
+    @XmlElement(required = true)
     protected IDGenerators idGenerators;
     @XmlElement(required = true)
     protected Namespaces namespaces;
@@ -53,7 +53,7 @@ public class Federation {
      *     {@link IDGenerators }
      *     
      */
-    public IDGenerators getIDGenerators() {
+    public IDGenerators getIdGenerators() {
         return idGenerators;
     }
 
@@ -65,7 +65,7 @@ public class Federation {
      *     {@link IDGenerators }
      *     
      */
-    public void setIDGenerators(IDGenerators value) {
+    public void setIdGenerators(IDGenerators value) {
         this.idGenerators = value;
     }
 

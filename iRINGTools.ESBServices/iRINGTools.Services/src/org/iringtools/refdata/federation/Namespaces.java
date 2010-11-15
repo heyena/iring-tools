@@ -1,5 +1,5 @@
 
-package org.iringtools.federation;
+package org.iringtools.refdata.federation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,16 +10,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for RepoNamespaces complex type.
+ * <p>Java class for Namespaces complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="RepoNamespaces">
+ * &lt;complexType name="Namespaces">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="namespaceAlias" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded"/>
+ *         &lt;element name="namespace" type="{http://www.iringtools.org/refdata/federation}Namespace" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,53 +29,53 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "RepoNamespaces", propOrder = {
-    "namespaceAlias"
+@XmlType(name = "Namespaces", propOrder = {
+    "namespaces"
 })
-public class RepoNamespaces {
+public class Namespaces {
 
-    @XmlElement(required = true)
-    protected List<String> namespaceAlias;
+    @XmlElement(name = "namespace", required = true)
+    protected List<Namespace> namespaces;
 
     /**
-     * Gets the value of the namespaceAlias property.
+     * Gets the value of the namespaces property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the namespaceAlias property.
+     * This is why there is not a <CODE>set</CODE> method for the namespaces property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getNamespaceAlias().add(newItem);
+     *    getNamespaces().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link String }
+     * {@link Namespace }
      * 
      * 
      */
-    public List<String> getNamespaceAlias() {
-        if (namespaceAlias == null) {
-            namespaceAlias = new ArrayList<String>();
+    public List<Namespace> getNamespaces() {
+        if (namespaces == null) {
+            namespaces = new ArrayList<Namespace>();
         }
-        return this.namespaceAlias;
+        return this.namespaces;
     }
 
     /**
-     * Sets the value of the namespaceAlias property.
+     * Sets the value of the namespaces property.
      * 
-     * @param namespaceAlias
+     * @param namespaces
      *     allowed object is
-     *     {@link String }
+     *     {@link Namespace }
      *     
      */
-    public void setNamespaceAlias(List<String> namespaceAlias) {
-        this.namespaceAlias = namespaceAlias;
+    public void setNamespaces(List<Namespace> namespaces) {
+        this.namespaces = namespaces;
     }
 
 }
