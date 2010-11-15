@@ -30,11 +30,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ClassTemplatesList }
+     * Create an instance of {@link Templates }
      * 
      */
-    public ClassTemplatesList createClassTemplatesList() {
-        return new ClassTemplatesList();
+    public Templates createTemplates() {
+        return new Templates();
+    }
+
+    /**
+     * Create an instance of {@link Graph }
+     * 
+     */
+    public Graph createGraph() {
+        return new Graph();
     }
 
     /**
@@ -46,6 +54,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Graphs }
+     * 
+     */
+    public Graphs createGraphs() {
+        return new Graphs();
+    }
+
+    /**
      * Create an instance of {@link Template }
      * 
      */
@@ -54,19 +70,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Templates }
+     * Create an instance of {@link ClassTemplatesList }
      * 
      */
-    public Templates createTemplates() {
-        return new Templates();
+    public ClassTemplatesList createClassTemplatesList() {
+        return new ClassTemplatesList();
     }
 
     /**
-     * Create an instance of {@link Graphs }
+     * Create an instance of {@link Roles }
      * 
      */
-    public Graphs createGraphs() {
-        return new Graphs();
+    public Roles createRoles() {
+        return new Roles();
+    }
+
+    /**
+     * Create an instance of {@link Class }
+     * 
+     */
+    public Class createClass() {
+        return new Class();
     }
 
     /**
@@ -83,30 +107,6 @@ public class ObjectFactory {
      */
     public Manifest createManifest() {
         return new Manifest();
-    }
-
-    /**
-     * Create an instance of {@link Class }
-     * 
-     */
-    public Class createClass() {
-        return new Class();
-    }
-
-    /**
-     * Create an instance of {@link Roles }
-     * 
-     */
-    public Roles createRoles() {
-        return new Roles();
-    }
-
-    /**
-     * Create an instance of {@link Graph }
-     * 
-     */
-    public Graph createGraph() {
-        return new Graph();
     }
 
 }

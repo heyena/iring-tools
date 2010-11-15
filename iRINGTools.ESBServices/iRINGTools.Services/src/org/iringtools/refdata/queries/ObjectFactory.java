@@ -38,14 +38,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Query }
-     * 
-     */
-    public Query createQuery() {
-        return new Query();
-    }
-
-    /**
      * Create an instance of {@link QueryBindings }
      * 
      */
@@ -67,6 +59,14 @@ public class ObjectFactory {
      */
     public QueryItem createQueryItem() {
         return new QueryItem();
+    }
+
+    /**
+     * Create an instance of {@link Query }
+     * 
+     */
+    public Query createQuery() {
+        return new Query();
     }
 
 }
