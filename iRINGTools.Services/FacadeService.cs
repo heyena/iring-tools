@@ -78,6 +78,21 @@ namespace org.iringtools.services
     }
     #endregion
 
+    #region RefreshAll
+    /// <summary>
+    /// Re-publish the specified graphs in the scope to the Facade.
+    /// </summary>
+    /// <param name="scope">Project name</param>
+    /// <param name="app">Application name</param>
+    /// <returns>Returns a Response object.</returns>
+    [Description("Re-publish the graphs in the scope to the Facade. Returns a response with status.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/refresh")]
+    public Response RefreshAll(string scope, string app)
+    {
+      return _facadeProvider.RefreshAll(scope, app);
+    }
+    #endregion
+
     #region RefreshGraph
     /// <summary>
     /// Re-publish the specified graph in the scope to the Facade.
