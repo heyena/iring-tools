@@ -30,19 +30,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link TemplateObjects }
+     * Create an instance of {@link DataTransferObject }
      * 
      */
-    public TemplateObjects createTemplateObjects() {
-        return new TemplateObjects();
-    }
-
-    /**
-     * Create an instance of {@link DataTransferObjects }
-     * 
-     */
-    public DataTransferObjects createDataTransferObjects() {
-        return new DataTransferObjects();
+    public DataTransferObject createDataTransferObject() {
+        return new DataTransferObject();
     }
 
     /**
@@ -70,11 +62,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ClassObjects }
+     * Create an instance of {@link TemplateObject }
      * 
      */
-    public ClassObjects createClassObjects() {
-        return new ClassObjects();
+    public TemplateObject createTemplateObject() {
+        return new TemplateObject();
     }
 
     /**
@@ -86,19 +78,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link TemplateObject }
+     * Create an instance of {@link DataTransferObjects }
      * 
      */
-    public TemplateObject createTemplateObject() {
-        return new TemplateObject();
+    public DataTransferObjects createDataTransferObjects() {
+        return new DataTransferObjects();
     }
 
     /**
-     * Create an instance of {@link DataTransferObject }
+     * Create an instance of {@link ClassObjects }
      * 
      */
-    public DataTransferObject createDataTransferObject() {
-        return new DataTransferObject();
+    public ClassObjects createClassObjects() {
+        return new ClassObjects();
+    }
+
+    /**
+     * Create an instance of {@link TemplateObjects }
+     * 
+     */
+    public TemplateObjects createTemplateObjects() {
+        return new TemplateObjects();
     }
 
 }

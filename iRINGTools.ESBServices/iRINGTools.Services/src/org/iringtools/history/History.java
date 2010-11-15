@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.iringtools.common.response.Response;
+import org.iringtools.dxfr.response.ExchangeResponse;
 
 
 /**
@@ -21,7 +21,7 @@ import org.iringtools.common.response.Response;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="response" type="{http://www.iringtools.org/common/response}Response" maxOccurs="unbounded"/>
+ *         &lt;element name="response" type="{http://www.iringtools.org/dxfr/response}ExchangeResponse" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -38,7 +38,7 @@ import org.iringtools.common.response.Response;
 public class History {
 
     @XmlElement(name = "response", required = true)
-    protected List<Response> responses;
+    protected List<ExchangeResponse> responses;
 
     /**
      * Gets the value of the responses property.
@@ -58,13 +58,13 @@ public class History {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Response }
+     * {@link ExchangeResponse }
      * 
      * 
      */
-    public List<Response> getResponses() {
+    public List<ExchangeResponse> getResponses() {
         if (responses == null) {
-            responses = new ArrayList<Response>();
+            responses = new ArrayList<ExchangeResponse>();
         }
         return this.responses;
     }
@@ -74,10 +74,10 @@ public class History {
      * 
      * @param responses
      *     allowed object is
-     *     {@link Response }
+     *     {@link ExchangeResponse }
      *     
      */
-    public void setResponses(List<Response> responses) {
+    public void setResponses(List<ExchangeResponse> responses) {
         this.responses = responses;
     }
 
