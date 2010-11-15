@@ -30,19 +30,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Classification }
+     * Create an instance of {@link LicenseText }
      * 
      */
-    public Classification createClassification() {
-        return new Classification();
+    public LicenseText createLicenseText() {
+        return new LicenseText();
     }
 
     /**
-     * Create an instance of {@link License }
+     * Create an instance of {@link Qmxf }
      * 
      */
-    public License createLicense() {
-        return new License();
+    public Qmxf createQmxf() {
+        return new Qmxf();
     }
 
     /**
@@ -54,43 +54,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Description }
+     * Create an instance of {@link Name }
      * 
      */
-    public Description createDescription() {
-        return new Description();
-    }
-
-    /**
-     * Create an instance of {@link TemplateDefinition }
-     * 
-     */
-    public TemplateDefinition createTemplateDefinition() {
-        return new TemplateDefinition();
-    }
-
-    /**
-     * Create an instance of {@link LicenseText }
-     * 
-     */
-    public LicenseText createLicenseText() {
-        return new LicenseText();
-    }
-
-    /**
-     * Create an instance of {@link Specialization }
-     * 
-     */
-    public Specialization createSpecialization() {
-        return new Specialization();
-    }
-
-    /**
-     * Create an instance of {@link Value }
-     * 
-     */
-    public Value createValue() {
-        return new Value();
+    public Name createName() {
+        return new Name();
     }
 
     /**
@@ -102,19 +70,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ClassDefinition }
+     * Create an instance of {@link Value }
      * 
      */
-    public ClassDefinition createClassDefinition() {
-        return new ClassDefinition();
-    }
-
-    /**
-     * Create an instance of {@link Status }
-     * 
-     */
-    public Status createStatus() {
-        return new Status();
+    public Value createValue() {
+        return new Value();
     }
 
     /**
@@ -126,6 +86,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Specialization }
+     * 
+     */
+    public Specialization createSpecialization() {
+        return new Specialization();
+    }
+
+    /**
      * Create an instance of {@link RoleDefinition }
      * 
      */
@@ -134,27 +102,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link LicenseTerm }
+     * Create an instance of {@link Classification }
      * 
      */
-    public LicenseTerm createLicenseTerm() {
-        return new LicenseTerm();
-    }
-
-    /**
-     * Create an instance of {@link Name }
-     * 
-     */
-    public Name createName() {
-        return new Name();
-    }
-
-    /**
-     * Create an instance of {@link EntityType }
-     * 
-     */
-    public EntityType createEntityType() {
-        return new EntityType();
+    public Classification createClassification() {
+        return new Classification();
     }
 
     /**
@@ -166,11 +118,59 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Qmxf }
+     * Create an instance of {@link Status }
      * 
      */
-    public Qmxf createQmxf() {
-        return new Qmxf();
+    public Status createStatus() {
+        return new Status();
+    }
+
+    /**
+     * Create an instance of {@link EntityType }
+     * 
+     */
+    public EntityType createEntityType() {
+        return new EntityType();
+    }
+
+    /**
+     * Create an instance of {@link TemplateDefinition }
+     * 
+     */
+    public TemplateDefinition createTemplateDefinition() {
+        return new TemplateDefinition();
+    }
+
+    /**
+     * Create an instance of {@link Description }
+     * 
+     */
+    public Description createDescription() {
+        return new Description();
+    }
+
+    /**
+     * Create an instance of {@link ClassDefinition }
+     * 
+     */
+    public ClassDefinition createClassDefinition() {
+        return new ClassDefinition();
+    }
+
+    /**
+     * Create an instance of {@link LicenseTerm }
+     * 
+     */
+    public LicenseTerm createLicenseTerm() {
+        return new LicenseTerm();
+    }
+
+    /**
+     * Create an instance of {@link License }
+     * 
+     */
+    public License createLicense() {
+        return new License();
     }
 
 }

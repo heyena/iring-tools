@@ -114,7 +114,7 @@
 			<classpath refid="jaxb.userclasspath" />
 		</taskdef>		
 		<xjc destdir="src" extension="true" removeOldOutput="yes" >
-			<schema dir="WebContent/WEB-INF/schemas" includes="*/*.xsd" />
+			<schema dir="WebContent/WEB-INF/schemas" includes="**.xsd" />
       <arg value="-no-header" />
       <arg value="-Xcollection-setter-injector" />
 		</xjc>

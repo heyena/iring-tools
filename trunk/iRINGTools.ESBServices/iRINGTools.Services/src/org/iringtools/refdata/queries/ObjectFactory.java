@@ -30,11 +30,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Queries }
+     * Create an instance of {@link QueryItem }
      * 
      */
-    public Queries createQueries() {
-        return new Queries();
+    public QueryItem createQueryItem() {
+        return new QueryItem();
     }
 
     /**
@@ -54,11 +54,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link QueryItem }
+     * Create an instance of {@link Queries }
      * 
      */
-    public QueryItem createQueryItem() {
-        return new QueryItem();
+    public Queries createQueries() {
+        return new Queries();
     }
 
     /**
