@@ -5,7 +5,7 @@ import java.io.InputStreamReader;
 import java.util.Hashtable;
 
 import org.iringtools.dxfr.dti.DataTransferIndices;
-import org.iringtools.protocol.manifest.Manifest;
+import org.iringtools.dxfr.manifest.Manifest;
 import org.iringtools.utility.JaxbUtil;
 import org.iringtools.utility.WebClient;
 
