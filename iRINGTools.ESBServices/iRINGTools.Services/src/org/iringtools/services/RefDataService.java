@@ -18,6 +18,7 @@ import javax.xml.bind.JAXBException;
 import org.apache.log4j.Logger;
 
 
+import org.iringtools.federation.Federation;
 import org.iringtools.refdata.queries.Queries;
 import org.iringtools.refdata.queries.Query;
 import org.iringtools.refdata.queries.QueryItem;
@@ -42,6 +43,47 @@ public class RefDataService
   public RefDataService()
   {
     settings = new Hashtable<String, String>();
+  }
+  
+  @GET
+  @Path("/federation")
+  public Federation getFederation() throws JAXBException, IOException
+  {
+	  Federation federation = null;
+	    
+	    try
+	    {
+	      init();
+	      RefDataProvider refDataProvider = new RefDataProvider(settings);
+	      federation = refDataProvider.getFederation();
+	    }
+	    catch (Exception ex)
+	    {
+	      logger.error("Error getting federation information: " + ex);
+	    }
+	    
+	    return federation;
+  }
+  
+  ////TODO: Remove this method; was added for testing getQueries
+  @GET
+  @Path("/queries")
+  public Queries getQueries() throws JAXBException, IOException
+  {
+	  Queries queries = null;
+	    
+	    try
+	    {
+	      init();
+	      RefDataProvider refDataProvider = new RefDataProvider(settings);
+	      queries = refDataProvider.getQueries();
+	    }
+	    catch (Exception ex)
+	    {
+	      logger.error("Error getting queries xml: " + ex);
+	    }
+	    
+	    return queries;
   }
   
   @GET
@@ -1204,9 +1246,9 @@ public class RefDataService
           
           System.out.println("Calling RefDataProvider");
           RefDataProvider refDataProvider = new RefDataProvider(settings);
-          Queries query = (Queries)refDataProvider.getQueryFileName();
+          Queries queries = (Queries)refDataProvider.getQueries();
           List<QueryItem> queryItems = new ArrayList<QueryItem>();
-          queryItems=query.getQueryItems();
+          queryItems=queries.getQueryItems();
           for(int i =0;i<queryItems.size();i++){
         	  QueryItem qi = (QueryItem)queryItems.get(i);
         	  System.out.println("Key :"+i+":"+qi.getKey());

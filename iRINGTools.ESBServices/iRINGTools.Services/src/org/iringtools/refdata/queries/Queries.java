@@ -20,8 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="key" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="queryItems" type="{http://www.iringtools.org/refdata/queries}Query" maxOccurs="unbounded"/>
+ *         &lt;element name="queryItem" type="{http://www.iringtools.org/refdata/queries}QueryItem" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -32,40 +31,13 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Queries", propOrder = {
-    "key",
     "queryItems"
 })
 @XmlRootElement(name = "queries")
 public class Queries {
 
-    @XmlElement(required = true)
-    protected String key;
-    @XmlElement(required = true)
-    protected List<Query> queryItems;
-
-    /**
-     * Gets the value of the key property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getKey() {
-        return key;
-    }
-
-    /**
-     * Sets the value of the key property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setKey(String value) {
-        this.key = value;
-    }
+    @XmlElement(name = "queryItem", required = true)
+    protected List<QueryItem> queryItems;
 
     /**
      * Gets the value of the queryItems property.
@@ -85,13 +57,13 @@ public class Queries {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Query }
+     * {@link QueryItem }
      * 
      * 
      */
-    public List<Query> getQueryItems() {
+    public List<QueryItem> getQueryItems() {
         if (queryItems == null) {
-            queryItems = new ArrayList<Query>();
+            queryItems = new ArrayList<QueryItem>();
         }
         return this.queryItems;
     }
@@ -101,10 +73,10 @@ public class Queries {
      * 
      * @param queryItems
      *     allowed object is
-     *     {@link Query }
+     *     {@link QueryItem }
      *     
      */
-    public void setQueryItems(List<Query> queryItems) {
+    public void setQueryItems(List<QueryItem> queryItems) {
         this.queryItems = queryItems;
     }
 

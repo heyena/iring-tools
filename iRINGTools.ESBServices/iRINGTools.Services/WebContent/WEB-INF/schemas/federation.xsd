@@ -15,30 +15,30 @@
 
   <xs:complexType name="Federation">
     <xs:sequence>
-      <xs:element name="iDGenerators" type="IDGenerators" maxOccurs="unbounded"/>
-      <xs:element name="namespaces" type="Namespaces" maxOccurs="unbounded"/>
-      <xs:element name="repositories" type="Repositories" maxOccurs="unbounded"/>
+      <xs:element name="iDGenerators" type="IDGenerators" />
+      <xs:element name="namespaces" type="Namespaces" />
+      <xs:element name="repositories" type="Repositories" />
     </xs:sequence>
   </xs:complexType>
-  
+
   <xs:complexType name="IDGenerators">
     <xs:sequence>
-      <xs:element name="iDGenerator" type="IDGenerator" />
+      <xs:element name="iDGenerator" type="IDGenerator" maxOccurs="unbounded" />
     </xs:sequence>
   </xs:complexType>
-  
+
   <xs:complexType name="Namespaces">
     <xs:sequence>
-      <xs:element name="namespace" type="Namespace" />
+      <xs:element name="namespace" type="Namespace" maxOccurs="unbounded" />
     </xs:sequence>
   </xs:complexType>
-  
+
   <xs:complexType name="Repositories">
     <xs:sequence>
-      <xs:element name="repository" type="Repository" />
+      <xs:element name="repository" type="Repository" maxOccurs="unbounded" />
     </xs:sequence>
   </xs:complexType>
-  
+
 
   <xs:complexType name="IDGenerator">
     <xs:sequence>
@@ -48,7 +48,7 @@
       <xs:element name="description" type="xs:string"/>
     </xs:sequence>
   </xs:complexType>
-  
+
   <xs:complexType name="Namespace">
     <xs:sequence>
       <xs:element name="uri" type="xs:string"/>
@@ -58,7 +58,7 @@
       <xs:element name="idGenerator" type="xs:int"/>
     </xs:sequence>
   </xs:complexType>
-  
+
   <xs:complexType name="Repository">
     <xs:sequence>
       <xs:element name="description" type="xs:string"/>
@@ -70,13 +70,13 @@
       <xs:element name="namespaces" type="RepoNamespaces"/>
     </xs:sequence>
   </xs:complexType>
-  
-  
-   <xs:simpleType name="RepoNamespaces">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="NamespaceAlias"/>
-    </xs:restriction>
-  </xs:simpleType>
 
-  
+
+  <xs:complexType name="RepoNamespaces">
+    <xs:sequence>
+      <xs:element name="namespaceAlias" type="xs:string" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+
 </xs:schema>

@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="type" type="{http://www.iringtools.org/refdata/queries}BindingType"/>
+ *         &lt;element name="type" type="{http://www.iringtools.org/refdata/queries}SPARQLBindingType"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -37,7 +37,7 @@ public class QueryBinding {
     @XmlElement(required = true)
     protected String name;
     @XmlElement(required = true)
-    protected BindingType type;
+    protected SPARQLBindingType type;
 
     /**
      * Gets the value of the name property.
@@ -68,10 +68,10 @@ public class QueryBinding {
      * 
      * @return
      *     possible object is
-     *     {@link BindingType }
+     *     {@link SPARQLBindingType }
      *     
      */
-    public BindingType getType() {
+    public SPARQLBindingType getType() {
         return type;
     }
 
@@ -80,10 +80,10 @@ public class QueryBinding {
      * 
      * @param value
      *     allowed object is
-     *     {@link BindingType }
+     *     {@link SPARQLBindingType }
      *     
      */
-    public void setType(BindingType value) {
+    public void setType(SPARQLBindingType value) {
         this.type = value;
     }
 
