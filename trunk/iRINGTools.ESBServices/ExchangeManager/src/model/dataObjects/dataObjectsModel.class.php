@@ -1082,7 +1082,7 @@ class dataObjectsModel{
                     if(!isset($_SESSION[$hst_ID][$this->historyCacheKey])){
                             $_SESSION[$hst_ID][$this->historyCacheKey]=$statusListArray;
                    }
-                    unset($gridRowsArray);
+                    unset($statusListArray);
             }
 
 
@@ -1113,7 +1113,7 @@ class dataObjectsModel{
             }else{
                 $rowDataArr = array("<font color='green'><b>Error</b></font>","<font color='green'><b>Error</b></font>");
             }           
-            
+           // echo "<pre>"; print_r($_SESSION);
             return json_encode(array("success"=>"true",
                                    "headersList"=>(json_encode($headerListDataArray)),
                                    "rowData"=>json_encode($rowDataArr),
@@ -1178,7 +1178,7 @@ class dataObjectsModel{
             $hstID           = $params['hstID'];
 
             $rowdataArray = $_SESSION[$hstID][$historyCacheKey];
-
+//echo "<pre>"; print_r($_SESSION);
             $columnsDataArray = array(array(
                                             'id'=>'Identifier',
                                             'header'=>'Identifier',

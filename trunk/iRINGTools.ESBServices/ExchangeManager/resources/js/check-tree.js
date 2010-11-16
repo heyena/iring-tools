@@ -269,7 +269,7 @@ if(gridType=='relatedClass'){
 			handler: function () {
 			grid.filters.clearFilters();
                       }
-            },/*{
+            }/*{
 			text: 'Reconfigure Grid',
 			handler: function () {
 			//grid.reconfigure(store, createColModel(6));
