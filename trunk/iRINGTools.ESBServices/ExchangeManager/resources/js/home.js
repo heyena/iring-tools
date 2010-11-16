@@ -11,18 +11,7 @@
 var propsGrid,eastGrid;
 Ext.onReady(function(){
 
-// This is the Details panel that contains the description for each example layout.
-var detailsPanel = {
-    id: 'details-panel',
-    title: 'Details',
-    region: 'center',
-    bodyStyle: 'padding-bottom:15px;background:#eee;',
-    autoScroll: true,
-    
-    collapsible: true,
-    html: '<p class="details-info">When you select a layout from the tree, additional details will display here.</p>'
-};
-
+// This is the Details panel that contains the description for each tree node
 propsGrid = new Ext.grid.PropertyGrid({
               id:'propGrid',
               title: 'Details',
@@ -31,7 +20,7 @@ propsGrid = new Ext.grid.PropertyGrid({
               margin:'10 0 0 0',
               bodyStyle: 'padding-bottom:15px;background:#eee;',
               //html: '<p class="details-info">When you select a layout from the tree, additional details will display here.</p>',
-              collapsible: true,
+              //collapsible: true,
               source:{},
              
               listeners: {
