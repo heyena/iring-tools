@@ -29,7 +29,7 @@ public class DirectoryService
     
   @GET
   @Path("/directory")
-  public Directory getExchanges()
+  public Directory getDirectory()
   {
     Directory directory = null;
     
@@ -51,20 +51,20 @@ public class DirectoryService
   @Path("/{scope}/exchanges/{exchangeId}")
   public ExchangeDefinition getExchange(@PathParam("scope") String scope, @PathParam("exchangeId") String exchangeId) 
   {   
-    ExchangeDefinition xDef = null;
+    ExchangeDefinition xdef = null;
     
     try
     {
       init();
       DirectoryProvider directoryProvider = new DirectoryProvider(settings);
-      xDef = directoryProvider.getExchangeDefinition(scope, exchangeId);
+      xdef = directoryProvider.getExchangeDefinition(scope, exchangeId);
     }
     catch (Exception ex)
     {
       logger.error("Error getting exchange definition for [" + exchangeId + "]: " + ex);
     }
     
-    return xDef;
+    return xdef;
   }
   
   private void init()
