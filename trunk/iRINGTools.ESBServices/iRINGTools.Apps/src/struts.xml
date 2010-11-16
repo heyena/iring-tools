@@ -11,7 +11,7 @@
 	</package>
 	
 	<package name="jsontest" extends="json-default">
-	  <action name="repositories" class="org.iringtools.federationmanager.controllers.RepositoriesController" method="execute">
+	  <action name="federation" class="org.iringtools.federationmanager.controllers.FederationController" method="execute">
 	    <result type="json" />
 	  </action>
 	</package>
