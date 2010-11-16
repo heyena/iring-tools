@@ -5,18 +5,35 @@
  *
  * This file intended to make Layout of Exchange Manager
  * It split the entire window in different panels, manages window resizing, scrolling etc.
- * It also used to display Detail panel that is binded with Directory panel
+ * It also used to display Detail panel that is binded with Federation panel
  *
  */
 var propsGrid,eastGrid;
 Ext.onReady(function(){
 
+    // This is the Details panel that contains the description for each tree node
+    propsGrid = new Ext.grid.PropertyGrid({
+              id:'propGrid',
+              title: 'Details',
+              region:'center',
+              autoScroll:true,
+              margin:'10 0 0 0',
+              source:{},
+              listeners: {
+              // to disable editable option of the property grid
+                beforeedit : function(e)
+                {
+                    e.cancel=true;
+                }
+
+              }
+    });    
+    
   var ab_button = Ext.get('show-about');
     ab_button.on('click', function(){
-	
-		alert('Right now the Content for this page is not available')
-		return false;
-		Ext.getBody().mask();
+            alert('Right now the Content for this page is not available')
+            return false;
+            Ext.getBody().mask();
             win = new Ext.Window({
 		
                 title : 'About',
@@ -48,9 +65,9 @@ Ext.onReady(function(){
 
   Ext.BLANK_IMAGE_URL = 'resources/images/s.gif'; 
 
-  var viewport = new Ext.Viewport({
+ var viewport = new Ext.Viewport({
     layout: 'border',
-    items: [    
+    items: [
         { region: 'north',
           baseCls : 'x-plain',
           height: 65, // give north and south regions a height
@@ -58,61 +75,49 @@ Ext.onReady(function(){
           contentEl:'myHeader'
         },
         {
-          region: 'east',
-          title: 'Details',
-          id:'detail-grid',
-          collapsible: true,
-          collapsed:true,
-          hideCollapseTool:false,
-          hideParent :true,
-          titleCollapse:true,
-          split: true,
-          width: 225, // give east and west regions a width
-         
-          margins: '0 5 0 0',
-          layout: 'fit', // specify layout manager for items
-          items: [
-              propsGrid = new Ext.grid.PropertyGrid({              
-              id:'propGrid',
-              source:{},
-              listeners: {
-              // to disable editable option of the property grid
-                beforeedit : function(e)
-                {               
-                    e.cancel=true;
-                }
-              
-              }
-            })
-            ]
-          },
-       
-        {
           region: 'west',
           id: 'west-panel', // see Ext.getCmp() below
-          title: 'Directory',
+          title: 'Federation',
           split: true,
-          width: 250,
+          width: 450,
           minSize: 175,
           maxSize: 500,
           collapsible: true,
           margins: '0 0 0 5',
-          layout: 'fit',
-          items: [{
-            contentEl: 'directoryContent'
-          }]
+          layout: 'border',
+          items: [
+            //contentEl: 'federationContent'
+            tree, propsGrid
+
+          ]
         },
-        {
-          region: 'center',
-          id:'centerPanel',
-          xtype: 'tabpanel',
-          disabled:true,
-          margins: '0 0 0 0',
-		  enableTabScroll:true,
-		  defaults:{layout:'fit'}
-        }
+			{
+			region: 'center',
+			id:'centerPanel',
+			xtype: 'tabpanel',
+			listeners: {
+			'afterlayout': {
+			fn: function(p){
+				p.disable();
+			},
+			single: true // important, as many layouts can occur
+			}
+			},
+			//  disabled:true,
+			margins: '0 5 0 0',
+			enableTabScroll:true,
+			defaults:{layout:'fit'}
+			}
+
     ]
 });
 
+tree.on('BeforeLoad', function (node){
+     Ext.getCmp('federation-tree').el.mask('Loading...', 'x-mask-loading')
+  });
+
+tree.on('Load', function (node){
+     Ext.getCmp('federation-tree').el.unmask()
+  });
 
 });

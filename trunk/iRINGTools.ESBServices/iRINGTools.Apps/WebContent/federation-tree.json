@@ -1,0 +1,69 @@
+[{
+    text: 'ID Generators',    
+    Description:'Description of ID Generators',
+    Name: 'ID Generators',
+    cls: 'folder',
+    children: [{
+        text: 'IdGenerator1',
+        Name:'IdGenerator1',
+        Description:'Description of IdGenerator1',
+        leaf: true
+    },{
+        text: 'IdGenerator2',
+        Name:'IdGenerator2',
+        Description:'Description of IdGenerator2',
+        leaf: true
+    },{
+        text: 'IdGenerator3',
+        Name:'ID Generator3',
+        Description:'Description of IdGenerator3',
+        leaf: true
+    }]
+},{
+    text: 'Namespaces',
+    Name:'Namespaces',
+    Description:'Description of Namespaces',
+    cls: 'folder',
+    children: [{
+        text: 'Sample namespace 1',
+        Name:'namespace 1',
+        Description:'Description of namespace 1',
+        leaf: true
+    },{
+        text: 'Sample namespace 2',
+        Name:'namespace 2',
+        Description:'Description of namespace 2',
+        leaf: true
+    },{
+        text: 'Sample namespace 3',
+        Name:'namespace 3',
+        Description:'Description of namespace 3',
+        leaf: true
+    },{
+        text: 'Sample namespace 4',
+        Name:'namespace 4',
+        Description:'Description of namespace 4',
+        cls: 'folder'        
+    }]
+},{
+    text: 'Repositories',
+    Name:'Repositories',
+    Description:'Description of Repositories',
+    cls: 'folder',
+    children: [{
+        text: 'iRING Sandbox',
+        Name:'iRING Sandbox',
+        Description:'Description of iRING Sandbox',
+        leaf: true
+    },{
+        text: 'ReferenceData',
+        Name:'ID Generators',
+        Description:'Description of ReferenceData',
+        leaf: true
+    },{
+        text: 'Templates',
+        Name:'ID Generators',
+        Description:'Description of Templates',
+        leaf: true
+    }]
+}]
