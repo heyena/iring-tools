@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <title>iRINGTools: Federation Manager</title>
+    <link rel="stylesheet" type="text/css" href="./resources/js/ext-js/resources/css/ext-all.css" />
+    <link rel="stylesheet" type="text/css" href="resources/css/index.css"/>
+	
+    <!-- LIBS -->
+    <script type="text/javascript" src="./resources/js/ext-js/adapter/ext/ext-base.js"></script>
+    <!-- ENDLIBS -->
+    <script type="text/javascript" src="./resources/js/ext-js/ext-all-debug.js"></script>
+    <!-- repository-tree.js should be include before home.js -->
+     <script type="text/javascript" src="./resources/js/repository-tree.js"></script>
+    <script type="text/javascript" src="./resources/js/home.js"></script>
+  </head>
+  <body>
+    <div  id="myHeader">
+     <div>
+         <div style="float:left"><img src="./resources/images/iringlogo.png" style="margin:10px;" /></div>
+         
+         <div style="margin-right:330px;margin-top:35px;float:left;border: 0px solid blue;">
+             <font size="5px" style="font-family:Arial, Helvetica, Sans-Serif">Federation Manager
+             </font>
+         </div>
+         <div style="margin-right:30px;margin-top:35px;float:right;border: 0px solid red;">
+        <a href="http://iringug.org/wiki/index.php?title=ESBUsersGuide" target="_blank"class="headerLnk">Help</a>&nbsp;&nbsp;&nbsp;
+        <a href="#" id="show-about" class="headerLnk">About</a>
+        </div>
+     </div>
+     </div>
+    <div id="federationContent" class="x-hide-display">
+      <div id='tree-div'></div>
+    </div>
+    <div id="props-panel" class="x-hide-display" style="width:200px;height:200px;overflow:hidden;">
+    </div>
+    <div id="south" class="x-hide-display"></div>
+  </body>
+</html>
+

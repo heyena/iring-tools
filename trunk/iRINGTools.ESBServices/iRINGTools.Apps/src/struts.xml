@@ -5,8 +5,8 @@
 	<constant name="struts.devMode" value="false" />
 	
 	<package name="basicstruts2" extends="struts-default">
-	    <action name="index">
-	      <result>/index.jsp</result>
+	    <action name="federationManager">
+	      <result>/federationManager.html</result>
 	    </action>
 	</package>
 	
