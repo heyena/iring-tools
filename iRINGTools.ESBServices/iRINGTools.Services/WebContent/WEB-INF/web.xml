@@ -2,11 +2,11 @@
 <web-app>
   <context-param>
     <param-name>directoryServiceUri</param-name>
-    <param-value>http://localhost:8080/iringtools/services/dir</param-value>
+    <param-value>http://localhost:8080/services/dir</param-value>
   </context-param>
   <context-param>
     <param-name>differencingServiceUri</param-name>
-    <param-value>http://localhost:8080/iringtools/services/diff</param-value>
+    <param-value>http://localhost:8080/services/diff</param-value>
   </context-param>
   <context-param>
     <param-name>poolSize</param-name>
@@ -26,6 +26,6 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>CXFServlet</servlet-name>
-    <url-pattern>/services/*</url-pattern>
+    <url-pattern>/*</url-pattern>
   </servlet-mapping>
 </web-app>
