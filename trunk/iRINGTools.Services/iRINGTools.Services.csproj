@@ -79,18 +79,15 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\InterfaceIntro.txt" />
+    <Content Include="App_Data\FacadeIntro.txt" />
     <Content Include="App_Data\SandboxIntro.txt" />
-    <Content Include="css\interface.css" />
+    <Content Include="css\sparql-query.css" />
     <Content Include="css\iring-tools.css" />
     <Content Include="css\reset.css" />
-    <Content Include="css\sparql.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="img\blue-fade.png" />
-    <Content Include="img\fade.png" />
     <Content Include="img\iring-tools-logo.png" />
-    <Content Include="img\iRINGTools_logo.png" />
     <Content Include="index.html" />
     <Content Include="SPARQL\ClassRelations.txt" />
     <Content Include="SPARQL\ContainsSearch.txt" />
