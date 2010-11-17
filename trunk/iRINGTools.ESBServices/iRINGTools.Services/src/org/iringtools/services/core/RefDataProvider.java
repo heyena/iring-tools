@@ -8,7 +8,6 @@ import javax.xml.bind.JAXBException;
 import org.iringtools.directory.ExchangeDefinition;
 import org.iringtools.refdata.federation.Federation;
 import org.iringtools.refdata.queries.Queries;
-import org.iringtools.refdata.queries.Query;
 import org.iringtools.utility.IOUtil;
 import org.iringtools.utility.JaxbUtil;
 
