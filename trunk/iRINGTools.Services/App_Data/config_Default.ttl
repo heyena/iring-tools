@@ -52,4 +52,4 @@ _:sqlServerS a dnr:SqlIOManager ;
         dnr:server ".\SQLEXPRESS" ;
         dnr:database "SandboxDb" ;
         dnr:user "dotNetRDF" ;
-        dnr:password "dotNetRDF" .		
+        dnr:password "dotNetRDF" . 		
