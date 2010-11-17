@@ -1,2 +1,0 @@
-﻿<img src="../img/iring-tools-logo.png" width="130" height="40" />     <b>Facade</b>
-<br />

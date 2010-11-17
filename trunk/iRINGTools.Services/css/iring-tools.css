@@ -31,20 +31,6 @@ div.main {
   width: 662px;
 }
 
-form {
-  margin-top: 10px;
-  width: 662px;
-  text-align: right;
-}
-
-textarea {
-  padding: 8px;
-}
-
-input.button {
-  margin: 8px 0px 0px auto;
-}
-
 a {
   color: #3E62A6;
 }

@@ -29,6 +29,12 @@ div.main {
 }
 
 li {
+  list-style:none;
+  text-align:left;
+  margin-left:2em;
+}
+
+li.bullets {
   list-style:disc;
   text-align:left;
   margin-left:2em;
