@@ -23,7 +23,7 @@ Ext.onReady(function(){
               icon: 'resources/images/16x16/internet-web-browser.png',
               text: 'Federation'
             },
-            dataUrl: 'federation-tree.json',
+            dataUrl: 'federationTree',
 
             listeners: {
                 click: {

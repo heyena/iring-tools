@@ -9,6 +9,7 @@ import org.iringtools.directory.ExchangeDefinition;
 import org.iringtools.refdata.federation.Federation;
 import org.iringtools.refdata.queries.Queries;
 import org.iringtools.refdata.queries.Query;
+import org.iringtools.utility.IOUtil;
 import org.iringtools.utility.JaxbUtil;
 
 public class RefDataProvider
@@ -36,5 +37,21 @@ public class RefDataProvider
   {
     String path = settings.get("baseDirectory") + "/WEB-INF/data/Repositories.xml";
     return JaxbUtil.read(ExchangeDefinition.class, path);
+  }
+  
+  public String ReadSPARQL(String queryName) throws Exception
+  {
+      try
+      {
+          String path = settings.get("baseDirectory") + "/WEB-INF/data/Sparqls/";
+
+          String query = IOUtil.readString(path + queryName);
+
+          return query;
+      }
+      catch (Exception ex)
+      {
+          throw ex;
+      }
   }
 }
