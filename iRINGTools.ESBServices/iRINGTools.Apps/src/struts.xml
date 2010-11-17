@@ -11,9 +11,31 @@
 	</package>
 	
 	<package name="jsontest" extends="json-default">
-	  <action name="federation" class="org.iringtools.federationmanager.controllers.FederationController" method="execute">
-	    <result type="json" />
+	  <action name="federationTree" class="org.iringtools.federationmanager.controllers.FederationController" method="execute">
+	    <result type="json">
+	    	<param name="root">federationTree</param>
+	    </result>
 	  </action>
+	  <action name="federation" class="org.iringtools.federationmanager.controllers.FederationController" method="execute">
+	    <result type="json">
+	    	<param name="root">federation</param>
+	    </result>
+	  </action>
+	  <action name="repositories" class="org.iringtools.federationmanager.controllers.FederationController" method="execute">
+	    <result type="json">
+	    	<param name="root">repositories</param>
+	    </result>
+	  </action>
+	  <action name="idgenerators" class="org.iringtools.federationmanager.controllers.FederationController" method="execute">
+	    <result type="json">
+	    	<param name="root">idGenerators</param>
+	    </result>
+	  </action>
+	  <action name="namespaces" class="org.iringtools.federationmanager.controllers.FederationController" method="execute">
+	    <result type="json">
+	    	<param name="root">namespaces</param>
+	    </result>
+	  </action>	  
 	</package>
 		
 </struts>
