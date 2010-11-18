@@ -22,7 +22,7 @@ public class RESTCalloutMediator extends AbstractMediator implements ManagedLife
   private String axis2ConfigFile = null;
   private String serviceURL = "http://";
   private String method = "GET";
-  private String contentType = "application/xml";
+  private String contentType = HTTPConstants.MEDIA_TYPE_APPLICATION_XML;
 
   public boolean mediate(MessageContext mc)
   {
@@ -79,11 +79,11 @@ public class RESTCalloutMediator extends AbstractMediator implements ManagedLife
       }
 
       serviceClient.setOptions(options);
-
+      
       // send message to serviceURL
       SOAPBody soapBody = mc.getEnvelope().getBody();
       OMElement payload = soapBody.getFirstElement();
-      OMElement result = serviceClient.sendReceive(payload);
+      OMElement result = serviceClient.sendReceive(payload);      
       
       if (payload != null)
         payload.discard();

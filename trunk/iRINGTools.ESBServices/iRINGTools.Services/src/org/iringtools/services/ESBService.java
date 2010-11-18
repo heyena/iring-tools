@@ -48,7 +48,6 @@ import javax.xml.datatype.DatatypeFactory;
 import java.util.GregorianCalendar;
 
 @Path("/")
-@Consumes("application/xml")
 @Produces("application/xml")
 public class ESBService
 {
@@ -152,6 +151,7 @@ public class ESBService
 
   @POST
   @Path("/{scope}/exchanges/{id}")
+  @Consumes("application/xml")
   public DataTransferObjects getDataTransferObjects(@PathParam("scope") String scope, @PathParam("id") String id,
       DataTransferIndices dataTransferIndices)
   {
@@ -323,6 +323,7 @@ public class ESBService
 
   @POST
   @Path("/{scope}/exchanges/{id}/submit")
+  @Consumes("application/xml")
   public ExchangeResponse submitExchange(@PathParam("scope") String scope, @PathParam("id") String id,
       ExchangeRequest exchangeRequest)
   {
