@@ -5,12 +5,12 @@
 * http://www.extjs.com/license
 */
 /**
-* Ext.iRINGTools
+* Ext.App
 * @extends Ext.util.Observable
 * @author Chris Scott
 * @modified by Gert Jansen van Rensburg
 */
-Ext.iRINGTools = function (config) {
+Ext.App = function (config) {
 
     // set up StateProvider
     this.initStateProvider();
@@ -24,9 +24,9 @@ Ext.iRINGTools = function (config) {
     // init when onReady fires.
     Ext.onReady(this.onReady, this);
 
-    Ext.iRINGTools.superclass.constructor.apply(this, arguments);
+    Ext.App.superclass.constructor.apply(this, arguments);
 }
-Ext.extend(Ext.iRINGTools, Ext.util.Observable, {
+Ext.extend(Ext.App, Ext.util.Observable, {
 
     /***
     * response status codes.
