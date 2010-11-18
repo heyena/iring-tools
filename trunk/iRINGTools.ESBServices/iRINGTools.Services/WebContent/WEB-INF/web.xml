@@ -5,10 +5,6 @@
     <param-value>http://localhost:8080/services/dir</param-value>
   </context-param>
   <context-param>
-    <param-name>differencingServiceUri</param-name>
-    <param-value>http://localhost:8080/services/diff</param-value>
-  </context-param>
-  <context-param>
     <param-name>poolSize</param-name>
     <param-value>3</param-value>
   </context-param>

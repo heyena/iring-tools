@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<proxy xmlns="http://ws.apache.org/ns/synapse" xmlns:dir="http://www.iringtools.org/directory" name="test" transports="https http" startOnLoad="true" trace="disable">
+<proxy xmlns="http://ws.apache.org/ns/synapse" xmlns:dir="http://www.iringtools.org/directory" name="dxi" transports="https http" startOnLoad="true" trace="disable">
     <target>
         <inSequence>
-            <header name="To" expression="fn:concat('http://localhost:8080/iringtools/services/dir/', fn:substring-after(get-property('To'), 'test/'))"/>
+            <header name="To" expression="fn:concat('http://localhost:8080/iringtools/dir/', fn:substring-after(get-property('To'), 'dxi/'))"/>
             <class name="org.iringtools.mediators.RESTCalloutMediator">
                 <property name="serviceURL" value=""/>
                 <property name="method" value=""/>

@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<proxy xmlns="http://ws.apache.org/ns/synapse" name="cloneAggregate" transports="https http" startOnLoad="true" trace="disable">
+<proxy xmlns="http://ws.apache.org/ns/synapse" name="dtiAggregation" transports="https http" startOnLoad="true" trace="disable">
   <target>
     <inSequence>
-      <log level="full"><property name="HERE" expression="get-property('targetUri')"/></log>
+      <property name="endpointURLs" expression="fn:substring-after(get-property('To'), '?')" scope="default" type="STRING"/>
       <property name="DISABLE_CHUNKING" value="true" scope="axis2" type="BOOLEAN"/>
+      
       <clone>
         <target>
           <sequence>
-            <header name="To" value="http://localhost:54321/dto/12345_000/ABC/Lines/xfr"/>
+            <header name="To" expression="fn:substring-before(fn:substring-after(get-property('endpointURLs'), 'sourceURL='), '&amp;')"/>
             <send/>
           </sequence>
         </target>
         <target>
           <sequence>
-            <header name="To" value="http://localhost:54321/dto/12345_000/DEF/Lines/xfr"/>
+            <header name="To" expression="fn:substring-after(get-property('endpointURLs'), 'targetURL=')"/>
             <send/>
           </sequence>
         </target>
