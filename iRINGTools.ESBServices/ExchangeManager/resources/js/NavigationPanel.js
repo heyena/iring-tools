@@ -1,10 +1,10 @@
-Ext.ns('iRINGTools', 'iRINGTools.ExchangeManager');
+Ext.ns('ExchangeManager');
 /**
-* @class iRINGTools.ExchangeManager.NavigationPanel
+* @class ExchangeManager.NavigationPanel
 * @extends Panel
 * @author by Gert Jansen van Rensburg
 */
-iRINGTools.ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
+ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
   title: 'Directory',
   
   layout: 'border',
@@ -80,7 +80,7 @@ iRINGTools.ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
     this.navigationPanel.on('click', this.onClick, this);
 
     // super
-    iRINGTools.ExchangeManager.NavigationPanel.superclass.initComponent.call(this);
+    ExchangeManager.NavigationPanel.superclass.initComponent.call(this);
   },
 
   buildToolbar: function () {
@@ -109,7 +109,7 @@ iRINGTools.ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
 		}]
   },
   
-  getSelectedNode() {
+  getSelectedNode: function() {
   	return this.navigationPanel.getSelectionModel().getSelectedNode();
   },
   
@@ -134,7 +134,7 @@ iRINGTools.ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
   
   onExpand: function(node) {		  	
 		Ext.state.Manager.set('navigation-state', node.getPath());
-		this.fireEvent('refresh', this);		
+		this.fireEvent('refresh', this, this.getSelectedNode());		
 	},
 
   onRefresh: function (btn, ev) {  	

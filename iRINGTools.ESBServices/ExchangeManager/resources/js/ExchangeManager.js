@@ -3,7 +3,7 @@ Ext.onReady(function () {
 	Ext.BLANK_IMAGE_URL = 'resources/images/s.gif';
 	Ext.QuickTips.init();
 	
-	var navigationPanel = new iRINGTools.ExchangeManager.NavigationPanel({
+	var navigationPanel = new ExchangeManager.NavigationPanel({
 		id:'navigation-panel',
 		region:'west',
 		
