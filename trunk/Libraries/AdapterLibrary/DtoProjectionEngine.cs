@@ -37,13 +37,13 @@ namespace org.iringtools.adapter.projection
     {
       XDocument xDocument = null;
 
-      List<DataTransferObject> dataTransferObjectList = _dataTransferObjects.DataTransferObjectList;
+      //List<DataTransferObject> dataTransferObjectList = _dataTransferObjects.DataTransferObjectList;
 
       try
       {
         GraphMap graphMap = _mapping.FindGraphMap(graphName);
         DataTransferObjects dataTransferObjects = ToDataTransferObjects(graphMap, ref dataObjects);
-        dataTransferObjectList = dataTransferObjects.DataTransferObjectList;
+        //List<DataTransferObject> dataTransferObjectList = dataTransferObjects.DataTransferObjectList;
         XElement xElement = SerializationExtensions.ToXml<DataTransferObjects>(dataTransferObjects);
         xDocument = new XDocument(xElement);
       }
