@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <eclipse-userlibraries version="2">
     <library name="axiom-1.2.8" systemlibrary="false">
-        <archive path="C:/iring-tools-trunk/iRINGTools.ESBServices/libraries/axiom-1.2.8/axiom.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/axiom-1.2.8/axiom.jar"/>
     </library>
-	<library name="axis2-kernel-1.5.1" systemlibrary="false">
+    <library name="axis2-kernel-1.5.1" systemlibrary="false">
         <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/axis2-kernel-1.5.1/axis2-kernel-1.5.1.jar"/>
     </library>
     <library name="common-codec-1.4" systemlibrary="false">
         <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-commons-codec-1.4/commons-codec-1.4.jar"/>
+    </library>
+    <library name="commons-logging-1.1.1" systemlibrary="false">
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/commons-logging-1.1.1/commons-logging-1.1.1.jar"/>
     </library>
     <library name="cxf-2.3.0" systemlibrary="false">
         <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/antlr-2.7.7.jar"/>
@@ -105,22 +108,7 @@
     <library name="log4j-1.2.16" systemlibrary="false">
         <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-log4j-1.2.16/log4j-1.2.16.jar"/>
     </library>
-	<library name="struts2-2.2.1" systemlibrary="false">
-        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/struts2-2.2.1/commons-fileupload-1.2.1.jar"/>
-        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/struts2-2.2.1/commons-io-1.3.2.jar"/>
-        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/struts2-2.2.1/commons-logging-1.0.4.jar"/>
-        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/struts2-2.2.1/commons-logging-api-1.1.jar"/>
-        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/struts2-2.2.1/commons-validator-1.3.1.jar"/>
-        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/struts2-2.2.1/freemarker-2.3.16.jar"/>
-        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/struts2-2.2.1/javassist-3.7.ga.jar"/>
-        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/struts2-2.2.1/ognl-3.0.jar"/>
-        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/struts2-2.2.1/struts2-core-2.2.1.jar"/>
-        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/struts2-2.2.1/struts2-dojo-plugin-2.2.1.jar"/>
-        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/struts2-2.2.1/struts2-jquery-plugin-2.4.1.jar"/>
-        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/struts2-2.2.1/struts2-json-plugin-2.2.1.jar"/>
-        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/struts2-2.2.1/xwork-core-2.2.1.jar"/>
-    </library>
-	<library name="synapse-core-1.4.0" systemlibrary="false">
+    <library name="synapse-core-1.4.0" systemlibrary="false">
         <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/synapse-core-1.4.0/synapse-core-1.4.0.wso2v2.jar"/>
     </library>
 </eclipse-userlibraries>
