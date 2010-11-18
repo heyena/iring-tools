@@ -15,14 +15,6 @@
         <Name>XYZ</Name>
         <Description i:nil="true"/>
       </ScopeApplication>
-      <ScopeApplication>
-        <Name>FDS</Name>
-        <Description i:nil="true"/>
-      </ScopeApplication>
-      <ScopeApplication>
-        <Name>EPCW</Name>
-        <Description i:nil="true"/>
-      </ScopeApplication>
     </Applications>
   </ScopeProject>
 </ArrayOfScopeProject>

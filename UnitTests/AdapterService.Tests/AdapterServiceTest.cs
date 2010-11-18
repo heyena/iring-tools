@@ -65,7 +65,7 @@ namespace AdapterService.Tests
     {
       AdapterProxy target = new AdapterProxy();
       DataDictionary actual = target.GetDictionary("12345_000", "ABC");
-      Assert.AreEqual(1, actual.DataObjects.Count);
+      Assert.AreEqual(4, actual.DataObjects.Count);
     }
 
     [TestMethod()]

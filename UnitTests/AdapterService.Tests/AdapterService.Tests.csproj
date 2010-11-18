@@ -162,10 +162,7 @@
     <Compile Include="AdapterServiceTest.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="App_Code\Model.12345_000.ABC.cs">
-      <SubType>
-      </SubType>
-    </Compile>
+    <Compile Include="App_Code\Model.12345_000.ABC.cs" />
     <Compile Include="App_Code\Model.12345_000.DEF.cs" />
     <Compile Include="App_Code\Model.12345_000.XYZ.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -197,40 +194,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Transforms\dto2qxf.xsl" />
-    <Content Include="Transforms\qxf2rdf.xsl" />
-    <Content Include="XML\BindingConfiguration.12345_000.ABC.xml">
-    </Content>
-    <Content Include="XML\BindingConfiguration.12345_000.ABC.Test.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XML\BindingConfiguration.12345_000.DEF.Test.xml" />
-    <Content Include="XML\BindingConfiguration.12345_000.DEF.xml" />
-    <Content Include="XML\DatabaseDictionary.12345_000.DEF.xml" />
-    <Content Include="XML\DataDictionary.12345_000.DEF.xml" />
-    <Content Include="XML\DTO.12345_000.ABC.Lines.xml" />
-    <Content Include="XML\Mapping.12345_000.DEF.xml" />
-    <Content Include="XML\nh-configuration.12345_000.DEF.xml" />
-    <Content Include="XML\nh-mapping.12345_000.ABC.xml">
-    </Content>
-    <Content Include="XML\DatabaseDictionary.12345_000.ABC.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XML\DataDictionary.12345_000.ABC.xml">
-    </Content>
-    <Content Include="XML\Mapping.12345_000.ABC.xml">
-    </Content>
-    <Content Include="XML\nh-configuration.12345_000.ABC.xml">
-    </Content>
-    <Content Include="XML\nh-mapping.12345_000.ABC.Test.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="XML\nh-mapping.12345_000.DEF.Test.xml" />
-    <Content Include="XML\nh-mapping.12345_000.DEF.xml" />
-    <Content Include="XML\Scopes.xml">
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
@@ -251,6 +214,36 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="XML\BindingConfiguration.12345_000.ABC.Test.xml" />
+    <Content Include="XML\BindingConfiguration.12345_000.ABC.xml" />
+    <Content Include="XML\BindingConfiguration.12345_000.DEF.Test.xml" />
+    <Content Include="XML\BindingConfiguration.12345_000.DEF.xml" />
+    <Content Include="XML\BindingConfiguration.12345_000.XYZ.xml" />
+    <Content Include="XML\DataDictionary.12345_000.XYZ.xml" />
+    <Content Include="XML\Mapping.12345_000.XYZ.xml" />
+    <Content Include="XML\DatabaseDictionary.12345_000.ABC.xml" />
+    <Content Include="XML\DatabaseDictionary.12345_000.DEF.xml" />
+    <Content Include="XML\DatabaseDictionary.12345_000.XYZ.xml" />
+    <Content Include="XML\DataDictionary.12345_000.ABC.xml" />
+    <Content Include="XML\DataDictionary.12345_000.DEF.xml" />
+    <Content Include="XML\DTO.12345_000.ABC.Lines.xml" />
+    <Content Include="XML\Mapping.12345_000.ABC.old.xml" />
+    <Content Include="XML\Mapping.12345_000.ABC.xml" />
+    <Content Include="XML\Mapping.12345_000.DEF.old.xml" />
+    <Content Include="XML\Mapping.12345_000.DEF.xml" />
+    <Content Include="XML\Mapping.12345_000.XYZ.old.xml" />
+    <Content Include="XML\nh-configuration.12345_000.ABC.xml" />
+    <Content Include="XML\nh-configuration.12345_000.DEF.xml" />
+    <Content Include="XML\nh-configuration.12345_000.XYZ.xml" />
+    <Content Include="XML\nh-mapping.12345_000.ABC.Test.xml" />
+    <Content Include="XML\nh-mapping.12345_000.ABC.xml" />
+    <Content Include="XML\nh-mapping.12345_000.DEF.Test.xml" />
+    <Content Include="XML\nh-mapping.12345_000.DEF.xml" />
+    <Content Include="XML\nh-mapping.12345_000.XYZ.xml" />
+    <Content Include="XML\Scopes.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
