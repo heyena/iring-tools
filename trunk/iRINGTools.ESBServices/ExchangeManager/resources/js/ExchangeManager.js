@@ -3,12 +3,13 @@ Ext.onReady(function () {
 	Ext.BLANK_IMAGE_URL = 'resources/images/s.gif';
 	Ext.QuickTips.init();
 	
-	var navigationPanel = new ExchangeManager.NavigationPanel({
+	Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
+  
+	var directoryPanel = new ExchangeManager.DirectoryPanel({
 		id:'navigation-panel',
 		region:'west',
 		
-		//collapseMode: 'mini',
-	  collapsible: true,
+		collapsible: true,
 	  collapsed: false,
 	  
 	  border: true,
@@ -17,7 +18,7 @@ Ext.onReady(function () {
 		width: 250,
   	minSize: 175,
   	maxSize: 500,
-		navigationUrl: 'exchangereader/exchnagelist/1',		
+		url: 'exchangereader/exchnagelist/1',		
 	});
 	
 	var contentPanel = new Ext.TabPanel({
@@ -30,6 +31,19 @@ Ext.onReady(function () {
 			layout: 'fit'
 		}
 	});
+	
+	directoryPanel.on('open', function(panel, node, label, url) {
+		
+		var newTab = new ExchangeManager.NavigationPanel({
+			title: label,
+			url: url,
+			closable: true
+		});
+		
+		contentPanel.add(newTab);
+    contentPanel.activate(newTab);
+		
+	}, this);
 
 	var viewport = new Ext.Viewport({
 		layout: 'border',
@@ -41,7 +55,7 @@ Ext.onReady(function () {
 				margins: '-10 5 0 0',
 				contentEl:'header'
 			},
-			navigationPanel,
+			directoryPanel,
 			contentPanel
 		]
 	});	
