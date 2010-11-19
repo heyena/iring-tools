@@ -54,10 +54,7 @@ namespace org.iringtools.refdata
         private bool _useExampleRegistryBase = false;
 
         private WebCredentials _registryCredentials = null;
-        //registry
-        //wQTBnHuvNllpb3pnwLzrd2eZujrY2llSyGqMZdt0Uy5TBuilCAkkHHzf0zlPAZG/+0LOQeYq9IFtM1uM46I5EaKvNduyTlLFf8f89QDo/DE=
-        //proxy
-        //uU7DqlJEOXcNYltgwgq8DiNn0ufvjLbkxNo6GJDXIcLnvf/HC5vSDjeOAkROVk21V9+QslCiy2Z9lKbbAFqGFpP0vnxRKRV3LIc7TyCw4ew=
+        
         private WebProxyCredentials _proxyCredentials = null;
 
         private List<Repository> _repositories = null;
@@ -2784,6 +2781,7 @@ namespace org.iringtools.refdata
                                 ID = "<" + generatedTempId + ">";
                                 Utility.WriteString("\n" + ID + "\t" + label, "TempDef IDs.log", true);
 
+                                #region Restrictions
                                 sparql += ID + " rdf:type owl:class ; ";
                                 //append description to sparql query
                                 int descrCount = template.description.Count;
@@ -2804,8 +2802,17 @@ namespace org.iringtools.refdata
                                     else
                                         sparql += " rdfs:comment \"" + description + "\"^^xsd:string . ";
                                 }
+                                #endregion Restrictions
 
-                                #region roles
+                                #region Specialization Description
+                                //nothing here yet
+                                #endregion Specialization Description
+
+                                #region Template Description
+                                //nothing here yet
+                                #endregion Template Description
+
+                                #region Role Descriptions
                                 foreach (RoleDefinition role in template.roleDefinition)
                                 {
                                     string roleID = string.Empty;
@@ -2852,7 +2859,7 @@ namespace org.iringtools.refdata
                                                     "owl:" + restriction.type + " " + restriction.value + " . ";
                                     }
                                 }
-                                #endregion roles
+                                #endregion Role Descriptions
 
                                 sparql = sparql.Insert(sparql.LastIndexOf("."), "}").Remove(sparql.Length - 1);
                                 response = PostToRepository(source, sparql);
