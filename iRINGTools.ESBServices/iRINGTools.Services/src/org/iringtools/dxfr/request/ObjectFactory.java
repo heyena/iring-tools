@@ -30,6 +30,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link DxiRequest }
+     * 
+     */
+    public DxiRequest createDxiRequest() {
+        return new DxiRequest();
+    }
+
+    /**
      * Create an instance of {@link DxoRequest }
      * 
      */
@@ -43,14 +51,6 @@ public class ObjectFactory {
      */
     public ExchangeRequest createExchangeRequest() {
         return new ExchangeRequest();
-    }
-
-    /**
-     * Create an instance of {@link DxiRequest }
-     * 
-     */
-    public DxiRequest createDxiRequest() {
-        return new DxiRequest();
     }
 
     /**
