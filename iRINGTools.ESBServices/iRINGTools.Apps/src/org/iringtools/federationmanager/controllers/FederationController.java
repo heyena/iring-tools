@@ -1,79 +1,115 @@
 package org.iringtools.federationmanager.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.iringtools.federationmanager.ext.ParentTreeNode;
+import org.iringtools.federationmanager.ext.TreeNode;
 import org.iringtools.federationmanager.models.FederationModel;
-import org.iringtools.refdata.federation.Federation;
-import org.iringtools.refdata.federation.IDGenerators;
-import org.iringtools.refdata.federation.Namespaces;
-import org.iringtools.refdata.federation.Repositories;
+import org.iringtools.refdata.federation.IDGenerator;
+import org.iringtools.refdata.federation.Namespace;
+import org.iringtools.refdata.federation.Repository;
 
 import com.opensymphony.xwork2.Action;
 
 public class FederationController {
 	
-	private FederationModel model;
-	
-	private Federation federation;
-	private Repositories repositories;
-	private Namespaces namespaces;
-	private IDGenerators idGenerators;
+	private FederationModel federation;
 	private List<ParentTreeNode> federationTree;
-	
 	
 	public FederationController()
 	{
-		model = new FederationModel();
-		federation = model.getFederation();
-		federationTree = model.getFederationTree();
-		
-		repositories = federation.getRepositories();
-		namespaces = federation.getNamespaces();
-		idGenerators = federation.getIdGenerators();
+		federation = new FederationModel();
 	}
 	
-	public String execute() {
-        return Action.SUCCESS;
-	}
-
-	public Federation getFederation() {
-		return federation;
-	}
-
-	public void setFederation(Federation federation) {
-		this.federation = federation;
-	}
-
-	public Repositories getRepositories() {
-		return repositories;
-	}
-
-	public void setRepositories(Repositories repositories) {
-		this.repositories = repositories;
-	}
-
-	public Namespaces getNamespaces() {
-		return namespaces;
-	}
-
-	public void setNamespaces(Namespaces namespaces) {
-		this.namespaces = namespaces;
-	}
-
-	public IDGenerators getIdGenerators() {
-		return idGenerators;
-	}
-
-	public void setIdGenerators(IDGenerators idGenerators) {
-		this.idGenerators = idGenerators;
+	public void setFederationTree(List<ParentTreeNode> federationTree) {
+		this.federationTree = federationTree;
 	}
 
 	public List<ParentTreeNode> getFederationTree() {
 		return federationTree;
 	}
 
-	public void setFederationTree(List<ParentTreeNode> federationTree) {
-		this.federationTree = federationTree;
+	public String getFederation() {
+		federation.populate();
+		generateFederationTree();
+        return Action.SUCCESS;
 	}
+	
+	public String postFederation() {		
+		readFederationTree();
+		federation.save();
+        return Action.SUCCESS;
+	}
+
+	private void generateFederationTree()
+	{
+		List<ParentTreeNode> tree = new ArrayList<ParentTreeNode>();
+		TreeNode node = new TreeNode();
+		//IDGenerators
+		ParentTreeNode idGenTreeNode = new ParentTreeNode();
+		idGenTreeNode.setId("IDGenerators");
+		idGenTreeNode.setText("ID Generators");
+		idGenTreeNode.setIcon("");
+		idGenTreeNode.setExpanded(true);
+
+		List<TreeNode> children = new ArrayList<TreeNode>();
+
+		for (IDGenerator idgenerator : federation.getIdGenerators().getIdGenerators())
+		{
+			TreeNode childNode;
+			childNode = node.setIdGenDetails(idgenerator);
+			
+			children.add(childNode);
+		}
+		idGenTreeNode.setChildren(children);
+		
+		//Namespaces
+		ParentTreeNode namespaceTreeNode = new ParentTreeNode();
+		namespaceTreeNode.setId("Namespaces");
+		namespaceTreeNode.setText("Namespaces");
+		namespaceTreeNode.setIcon("");
+		namespaceTreeNode.setExpanded(true);
+		
+
+		children = new ArrayList<TreeNode>();
+
+		for (Namespace namespace : federation.getNamespaces().getNamespaces())
+		{
+			TreeNode childNode;
+			childNode = node.setNameSpaceDet(namespace);
+			children.add(childNode);
+		}
+		namespaceTreeNode.setChildren(children);
+		
+		//Repositories
+		ParentTreeNode repoTreeNode = new ParentTreeNode();
+		repoTreeNode.setId("Repositories");
+		repoTreeNode.setText("Repositories");
+		repoTreeNode.setIcon("");
+		repoTreeNode.setExpanded(true);
+
+		children = new ArrayList<TreeNode>();
+
+		for (Repository repository : federation.getRepositories().getRepositories())
+		{
+			TreeNode childNode;
+			childNode = node.setRepositoryDetails(repository);
+			children.add(childNode);
+		}
+		repoTreeNode.setChildren(children);
+		
+		//Final Tree
+		tree.add(idGenTreeNode);
+		tree.add(namespaceTreeNode);
+		tree.add(repoTreeNode);
+		
+		setFederationTree(tree);		
+	}
+
+	private void readFederationTree()
+	{
+		//TODO: Read FederationTree and fill model.
+	}
+
 }
