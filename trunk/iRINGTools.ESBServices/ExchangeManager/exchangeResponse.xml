@@ -1,5 +1,5 @@
-<exchangeResponse xmlns="http://iringtools.org/common/response">
-  <response>
+<ns3:history xmlns="http://www.iringtools.org/dxfr/response" xmlns:ns2="http://www.iringtools.org/common/response" xmlns:ns3="http://www.iringtools.org/history">
+  <ns3:response>
     <level>Error</level>
     <startTimeStamp>2010-11-09T17:26:02.430-05:00</startTimeStamp>
     <endTimeStamp>2010-11-09T17:26:03.330-05:00</endTimeStamp>
@@ -38,8 +38,8 @@
           </messages>
         </status>
     </statusList>
-  </response>
-  <response>
+  </ns3:response>
+  <ns3:response>
     <level>Success</level>
     <startTimeStamp>2010-11-09T17:26:02.430-05:00</startTimeStamp>
     <endTimeStamp>2010-11-09T17:26:03.330-05:00</endTimeStamp>
@@ -81,8 +81,8 @@
         </messages>
       </status>
     </statusList>
-  </response>
-  <response>
+  </ns3:response>
+  <ns3:response>
     <level>Warning</level>
     <startTimeStamp>2010-11-09T17:26:02.430-05:00</startTimeStamp>
     <endTimeStamp>2010-11-09T17:26:03.330-05:00</endTimeStamp>
@@ -124,5 +124,5 @@
         </messages>
       </status>
     </statusList>
-  </response>
-</exchangeResponse>
+  </ns3:response>
+</ns3:history>
