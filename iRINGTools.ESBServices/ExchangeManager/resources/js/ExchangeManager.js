@@ -36,6 +36,8 @@ Ext.onReady(function () {
 		
 		var newTab = new ExchangeManager.NavigationPanel({
 			title: label,
+			layout: 'card',
+			activeItem: 0,
 			url: url,
 			closable: true
 		});
