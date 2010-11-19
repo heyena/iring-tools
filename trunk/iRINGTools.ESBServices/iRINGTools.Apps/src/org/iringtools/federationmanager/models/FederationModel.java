@@ -16,7 +16,7 @@ public class FederationModel {
 	
 	public Federation getFederation()
 	  {
-		String URI="http://10.206.120.188:8080/services/refdata";
+		String URI="http://localhost:8080/services/refdata";
 		Federation federation = null;
 		try{
 			WebClient webclient = new WebClient(URI);
