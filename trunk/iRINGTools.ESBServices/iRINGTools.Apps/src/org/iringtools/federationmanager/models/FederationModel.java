@@ -1,101 +1,63 @@
 package org.iringtools.federationmanager.models;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.iringtools.federationmanager.ext.ParentTreeNode;
-import org.iringtools.federationmanager.ext.TreeNode;
+import org.iringtools.common.response.Response;
 import org.iringtools.refdata.federation.Federation;
-import org.iringtools.refdata.federation.IDGenerator;
-import org.iringtools.refdata.federation.Namespace;
-import org.iringtools.refdata.federation.Repository;
+import org.iringtools.refdata.federation.IDGenerators;
+import org.iringtools.refdata.federation.Namespaces;
+import org.iringtools.refdata.federation.Repositories;
 import org.iringtools.utility.WebClient;
 import org.iringtools.utility.WebClientException;
 
 public class FederationModel {
+
+	private Federation federation;
+
+	public FederationModel() {
+		//TODO: Perform local initialization.
+	}
 	
-	public Federation getFederation()
-	  {
-		String URI="http://localhost:8080/services/refdata";
-		Federation federation = null;
-		try{
+	public void populate() {
+		//TODO: Get this from a configuration xml
+		String URI = "http://localhost:8080/services/refdata";
+		federation = null;
+
+		try {
 			WebClient webclient = new WebClient(URI);
-			federation = webclient.get(Federation.class, "/federation");			
-		}catch(WebClientException wce)
-		{
-			System.out.println("WebClientException :"+wce);
-		}catch(Exception e)
-		{
-			System.out.println("Exception :"+e);
+			federation = webclient.get(Federation.class, "/federation");
+		} catch (WebClientException wce) {
+			System.out.println("WebClientException :" + wce);
+		} catch (Exception e) {
+			System.out.println("Exception :" + e);
 		}
-		return federation;
-	  }
+	}
 	
-	public List<ParentTreeNode> getFederationTree()
-	{
-		Federation federation = getFederation();
-		
-		List<ParentTreeNode> tree = new ArrayList<ParentTreeNode>();
-		TreeNode node = new TreeNode();
-		//IDGenerators
-		ParentTreeNode idGenTreeNode = new ParentTreeNode();
-		idGenTreeNode.setId("IDGenerators");
-		idGenTreeNode.setText("ID Generators");
-		idGenTreeNode.setIcon("");
-		idGenTreeNode.setExpanded(true);
+	public void save() {
+		//TODO: Get this from private member which is populated in constructor.
+		String URI = "http://localhost:8080/services/refdata";
+		federation = null;
 
-		List<TreeNode> children = new ArrayList<TreeNode>();
-
-		for (IDGenerator idgenerator : federation.getIdGenerators().getIdGenerators())
-		{
-			TreeNode childNode;
-			childNode = node.setIdGenDetails(idgenerator);
+		try {
+			WebClient webclient = new WebClient(URI);
+			Response response = webclient.post(Response.class, "/federation", federation);
 			
-			children.add(childNode);
+			//TODO: Check response for errors/warnings
+			
+		} catch (WebClientException wce) {
+			System.out.println("WebClientException :" + wce);
+		} catch (Exception e) {
+			System.out.println("Exception :" + e);
 		}
-		idGenTreeNode.setChildren(children);
-		
-		//Namespaces
-		ParentTreeNode namespaceTreeNode = new ParentTreeNode();
-		namespaceTreeNode.setId("Namespaces");
-		namespaceTreeNode.setText("Namespaces");
-		namespaceTreeNode.setIcon("");
-		namespaceTreeNode.setExpanded(true);
-		
-
-		children = new ArrayList<TreeNode>();
-
-		for (Namespace namespace : federation.getNamespaces().getNamespaces())
-		{
-			TreeNode childNode;
-			childNode = node.setNameSpaceDet(namespace);
-			children.add(childNode);
-		}
-		namespaceTreeNode.setChildren(children);
-		
-		//Repositories
-		ParentTreeNode repoTreeNode = new ParentTreeNode();
-		repoTreeNode.setId("Repositories");
-		repoTreeNode.setText("Repositories");
-		repoTreeNode.setIcon("");
-		repoTreeNode.setExpanded(true);
-
-		children = new ArrayList<TreeNode>();
-
-		for (Repository repository : federation.getRepositories().getRepositories())
-		{
-			TreeNode childNode;
-			childNode = node.setRepositoryDetails(repository);
-			children.add(childNode);
-		}
-		repoTreeNode.setChildren(children);
-		
-		//Final Tree
-		tree.add(idGenTreeNode);
-		tree.add(namespaceTreeNode);
-		tree.add(repoTreeNode);
-		
-		return tree;		
 	}
 
+	public IDGenerators getIdGenerators() {
+		return federation.getIdGenerators();
+	}
+
+	public Namespaces getNamespaces() {
+		return federation.getNamespaces();
+	}
+
+	public Repositories getRepositories() {
+		return federation.getRepositories();
+	}
 }
