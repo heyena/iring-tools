@@ -3,6 +3,7 @@ package org.iringtools.utility;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -12,6 +13,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import javax.xml.stream.FactoryConfigurationError;
@@ -80,5 +83,22 @@ public class IOUtil
     props.load(fis);
     fis.close();
     return props;
+  }
+  
+  public static List<String> filesInFolder(String path) throws IOException
+  {
+	  File folder = new File(path);
+	  File[] listOfFiles = folder.listFiles();
+	  List<String> files = new ArrayList<String>();
+
+      for (int i = 0; i < listOfFiles.length; i++) 
+	  {
+    	  if (listOfFiles[i].isFile()) 
+    	  {
+    		  files.add(listOfFiles[i].getName()); 
+    	  }
+	  }
+      
+      return files;
   }
 }
