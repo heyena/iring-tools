@@ -1,26 +1,26 @@
 
-package org.iringtools.dxfr.manifest;
+package org.iringtools.mapping;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.iringtools.mapping.TransferOption;
 
 
 /**
- * <p>Java class for Template complex type.
+ * <p>Java class for TemplateMap complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Template">
+ * &lt;complexType name="TemplateMap">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="templateId" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="templateType" type="{http://www.iringtools.org/mapping}TemplateType"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="roles" type="{http://www.iringtools.org/dxfr/manifest}Roles"/>
+ *         &lt;element name="roleMaps" type="{http://www.iringtools.org/mapping}RoleMaps"/>
  *         &lt;element name="transferOption" type="{http://www.iringtools.org/mapping}TransferOption"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -31,20 +31,23 @@ import org.iringtools.mapping.TransferOption;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Template", propOrder = {
+@XmlType(name = "TemplateMap", propOrder = {
     "templateId",
+    "templateType",
     "name",
-    "roles",
+    "roleMaps",
     "transferOption"
 })
-public class Template {
+public class TemplateMap {
 
     @XmlElement(required = true)
     protected String templateId;
     @XmlElement(required = true)
+    protected TemplateType templateType;
+    @XmlElement(required = true)
     protected String name;
     @XmlElement(required = true)
-    protected Roles roles;
+    protected RoleMaps roleMaps;
     @XmlElement(required = true, defaultValue = "Desired")
     protected TransferOption transferOption;
 
@@ -73,6 +76,30 @@ public class Template {
     }
 
     /**
+     * Gets the value of the templateType property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link TemplateType }
+     *     
+     */
+    public TemplateType getTemplateType() {
+        return templateType;
+    }
+
+    /**
+     * Sets the value of the templateType property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link TemplateType }
+     *     
+     */
+    public void setTemplateType(TemplateType value) {
+        this.templateType = value;
+    }
+
+    /**
      * Gets the value of the name property.
      * 
      * @return
@@ -97,27 +124,27 @@ public class Template {
     }
 
     /**
-     * Gets the value of the roles property.
+     * Gets the value of the roleMaps property.
      * 
      * @return
      *     possible object is
-     *     {@link Roles }
+     *     {@link RoleMaps }
      *     
      */
-    public Roles getRoles() {
-        return roles;
+    public RoleMaps getRoleMaps() {
+        return roleMaps;
     }
 
     /**
-     * Sets the value of the roles property.
+     * Sets the value of the roleMaps property.
      * 
      * @param value
      *     allowed object is
-     *     {@link Roles }
+     *     {@link RoleMaps }
      *     
      */
-    public void setRoles(Roles value) {
-        this.roles = value;
+    public void setRoleMaps(RoleMaps value) {
+        this.roleMaps = value;
     }
 
     /**

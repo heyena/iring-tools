@@ -36,19 +36,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Head }
+     * Create an instance of {@link Link }
      * 
      */
-    public Head createHead() {
-        return new Head();
+    public Link createLink() {
+        return new Link();
     }
 
     /**
-     * Create an instance of {@link Results }
+     * Create an instance of {@link Variable }
      * 
      */
-    public Results createResults() {
-        return new Results();
+    public Variable createVariable() {
+        return new Variable();
+    }
+
+    /**
+     * Create an instance of {@link Sparql }
+     * 
+     */
+    public Sparql createSparql() {
+        return new Sparql();
     }
 
     /**
@@ -76,27 +84,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Variable }
+     * Create an instance of {@link Results }
      * 
      */
-    public Variable createVariable() {
-        return new Variable();
+    public Results createResults() {
+        return new Results();
     }
 
     /**
-     * Create an instance of {@link Link }
+     * Create an instance of {@link Head }
      * 
      */
-    public Link createLink() {
-        return new Link();
-    }
-
-    /**
-     * Create an instance of {@link Sparql }
-     * 
-     */
-    public Sparql createSparql() {
-        return new Sparql();
+    public Head createHead() {
+        return new Head();
     }
 
     /**

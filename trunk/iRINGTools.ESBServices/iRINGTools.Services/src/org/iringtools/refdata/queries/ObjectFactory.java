@@ -30,22 +30,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link QueryItem }
-     * 
-     */
-    public QueryItem createQueryItem() {
-        return new QueryItem();
-    }
-
-    /**
-     * Create an instance of {@link QueryBindings }
-     * 
-     */
-    public QueryBindings createQueryBindings() {
-        return new QueryBindings();
-    }
-
-    /**
      * Create an instance of {@link QueryBinding }
      * 
      */
@@ -67,6 +51,22 @@ public class ObjectFactory {
      */
     public Query createQuery() {
         return new Query();
+    }
+
+    /**
+     * Create an instance of {@link QueryItem }
+     * 
+     */
+    public QueryItem createQueryItem() {
+        return new QueryItem();
+    }
+
+    /**
+     * Create an instance of {@link QueryBindings }
+     * 
+     */
+    public QueryBindings createQueryBindings() {
+        return new QueryBindings();
     }
 
 }

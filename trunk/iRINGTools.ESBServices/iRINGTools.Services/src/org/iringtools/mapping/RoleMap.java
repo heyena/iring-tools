@@ -1,20 +1,19 @@
 
-package org.iringtools.dxfr.manifest;
+package org.iringtools.mapping;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.iringtools.mapping.RoleType;
 
 
 /**
- * <p>Java class for Role complex type.
+ * <p>Java class for RoleMap complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Role">
+ * &lt;complexType name="RoleMap">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -23,7 +22,9 @@ import org.iringtools.mapping.RoleType;
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="dataType" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="class" type="{http://www.iringtools.org/dxfr/manifest}Class"/>
+ *         &lt;element name="propertyName" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="valueListName" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="classMap" type="{http://www.iringtools.org/mapping}ClassMap"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -33,15 +34,17 @@ import org.iringtools.mapping.RoleType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Role", propOrder = {
+@XmlType(name = "RoleMap", propOrder = {
     "type",
     "roleId",
     "name",
     "dataType",
     "value",
-    "clazz"
+    "propertyName",
+    "valueListName",
+    "classMap"
 })
-public class Role {
+public class RoleMap {
 
     @XmlElement(required = true)
     protected RoleType type;
@@ -53,8 +56,12 @@ public class Role {
     protected String dataType;
     @XmlElement(required = true)
     protected String value;
-    @XmlElement(name = "class", required = true)
-    protected Class clazz;
+    @XmlElement(required = true)
+    protected String propertyName;
+    @XmlElement(required = true)
+    protected String valueListName;
+    @XmlElement(required = true)
+    protected ClassMap classMap;
 
     /**
      * Gets the value of the type property.
@@ -177,27 +184,75 @@ public class Role {
     }
 
     /**
-     * Gets the value of the clazz property.
+     * Gets the value of the propertyName property.
      * 
      * @return
      *     possible object is
-     *     {@link Class }
+     *     {@link String }
      *     
      */
-    public Class getClazz() {
-        return clazz;
+    public String getPropertyName() {
+        return propertyName;
     }
 
     /**
-     * Sets the value of the clazz property.
+     * Sets the value of the propertyName property.
      * 
      * @param value
      *     allowed object is
-     *     {@link Class }
+     *     {@link String }
      *     
      */
-    public void setClazz(Class value) {
-        this.clazz = value;
+    public void setPropertyName(String value) {
+        this.propertyName = value;
+    }
+
+    /**
+     * Gets the value of the valueListName property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getValueListName() {
+        return valueListName;
+    }
+
+    /**
+     * Sets the value of the valueListName property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setValueListName(String value) {
+        this.valueListName = value;
+    }
+
+    /**
+     * Gets the value of the classMap property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link ClassMap }
+     *     
+     */
+    public ClassMap getClassMap() {
+        return classMap;
+    }
+
+    /**
+     * Sets the value of the classMap property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link ClassMap }
+     *     
+     */
+    public void setClassMap(ClassMap value) {
+        this.classMap = value;
     }
 
 }

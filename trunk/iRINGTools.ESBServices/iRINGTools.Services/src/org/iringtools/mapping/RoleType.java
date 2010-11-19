@@ -1,5 +1,5 @@
 
-package org.iringtools.dxfr.manifest;
+package org.iringtools.mapping;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
