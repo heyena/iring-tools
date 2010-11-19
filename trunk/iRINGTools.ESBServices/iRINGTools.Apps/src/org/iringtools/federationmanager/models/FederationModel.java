@@ -10,19 +10,23 @@ import org.iringtools.refdata.federation.IDGenerator;
 import org.iringtools.refdata.federation.Namespace;
 import org.iringtools.refdata.federation.Repository;
 import org.iringtools.utility.WebClient;
+import org.iringtools.utility.WebClientException;
 
 public class FederationModel {
 	
 	public Federation getFederation()
 	  {
-		String URI="http://localhost:8080/services/refdata";
+		String URI="http://10.206.120.188:8080/services/refdata";
 		Federation federation = null;
 		try{
 			WebClient webclient = new WebClient(URI);
 			federation = webclient.get(Federation.class, "/federation");			
+		}catch(WebClientException wce)
+		{
+			System.out.println("WebClientException :"+wce);
 		}catch(Exception e)
 		{
-			System.out.println("#### :"+e);
+			System.out.println("Exception :"+e);
 		}
 		return federation;
 	  }
@@ -32,7 +36,7 @@ public class FederationModel {
 		Federation federation = getFederation();
 		
 		List<ParentTreeNode> tree = new ArrayList<ParentTreeNode>();
-		
+		TreeNode node = new TreeNode();
 		//IDGenerators
 		ParentTreeNode idGenTreeNode = new ParentTreeNode();
 		idGenTreeNode.setId("IDGenerators");
@@ -44,13 +48,10 @@ public class FederationModel {
 
 		for (IDGenerator idgenerator : federation.getIdGenerators().getIdGenerators())
 		{
-			TreeNode node = new TreeNode();
-			node.setId(Integer.toString(idgenerator.getId()));
-			node.setText(idgenerator.getName());
-			node.setIcon("");
-			node.setLeaf(true);
+			TreeNode childNode;
+			childNode = node.setIdGenDetails(idgenerator);
 			
-			children.add(node);
+			children.add(childNode);
 		}
 		idGenTreeNode.setChildren(children);
 		
@@ -60,18 +61,15 @@ public class FederationModel {
 		namespaceTreeNode.setText("Namespaces");
 		namespaceTreeNode.setIcon("");
 		namespaceTreeNode.setExpanded(true);
+		
 
 		children = new ArrayList<TreeNode>();
 
 		for (Namespace namespace : federation.getNamespaces().getNamespaces())
 		{
-			TreeNode node = new TreeNode();
-			node.setId(namespace.getAlias());
-			node.setText(namespace.getAlias());
-			node.setIcon("");
-			node.setLeaf(true);
-			
-			children.add(node);
+			TreeNode childNode;
+			childNode = node.setNameSpaceDet(namespace);
+			children.add(childNode);
 		}
 		namespaceTreeNode.setChildren(children);
 		
@@ -86,13 +84,9 @@ public class FederationModel {
 
 		for (Repository repository : federation.getRepositories().getRepositories())
 		{
-			TreeNode node = new TreeNode();
-			node.setId(repository.getName());
-			node.setText(repository.getName());
-			node.setIcon("");
-			node.setLeaf(true);
-			
-			children.add(node);
+			TreeNode childNode;
+			childNode = node.setRepositoryDetails(repository);
+			children.add(childNode);
 		}
 		repoTreeNode.setChildren(children);
 		
