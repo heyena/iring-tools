@@ -325,7 +325,7 @@ public class ESBService
   @Path("/{scope}/exchanges/{id}/submit")
   @Consumes("application/xml")
   public ExchangeResponse submitExchange(@PathParam("scope") String scope, @PathParam("id") String id,
-      ExchangeRequest exchangeRequest)
+      ExchangeRequest exchangeRequest) throws IOException, JAXBException
   {
     ExchangeResponse exchangeResponse = new ExchangeResponse();
     GregorianCalendar gcal = new GregorianCalendar();
@@ -514,6 +514,13 @@ public class ESBService
     
     gcal = new GregorianCalendar();
     exchangeResponse.setEndTimeStamp(datatypeFactory.newXMLGregorianCalendar(gcal));
+    
+    //Store the exchange response in history	
+    String timestamp = 
+    	datatypeFactory.newXMLGregorianCalendar(gcal).toString().replace(":", ".");
+    String path = 
+    	settings.get("baseDirectory") + "/WEB-INF/logs/" + scope + "/exchanges/" + id + "/" + timestamp + ".xml";
+    JaxbUtil.write(exchangeResponse, path, true);
 
     return exchangeResponse;
   }
