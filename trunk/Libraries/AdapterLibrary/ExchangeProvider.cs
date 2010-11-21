@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using org.iringtools.library;
-using org.iringtools.library.manifest;
-using org.iringtools.common.mapping;
+using org.iringtools.dxfr.manifest;
+using org.iringtools.mapping;
 using org.iringtools.utility;
 using System.Collections.Specialized;
 using Ninject;
@@ -260,11 +260,11 @@ namespace org.iringtools.exchange
         {
           IList<string> identifiers = new List<string>();
           identifiers.Add(filter);
-          dataObjectList = _dataLayer.Get(_graphMap.DataObjectName, identifiers);
+          dataObjectList = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
         }
         else
         {
-          dataObjectList = _dataLayer.Get(_graphMap.DataObjectName, null);
+          dataObjectList = _dataLayer.Get(_graphMap.dataObjectName, null);
         }
 
         XDocument xDocument = _projectionEngine.ToXml(graphName, ref dataObjectList);
@@ -427,13 +427,13 @@ namespace org.iringtools.exchange
     {
       _classIdentifiers.Clear();
 
-      foreach (ClassTemplateMap classTemplateMap in _graphMap.ClassTemplateMaps)
+      foreach (ClassTemplateMap classTemplateMap in _graphMap.classTemplateMaps)
       {
-        ClassMap classMap = classTemplateMap.ClassMap;
+        ClassMap classMap = classTemplateMap.classMap;
 
         List<string> classIdentifiers = new List<string>();
 
-        foreach (string identifier in classMap.Identifiers)
+        foreach (string identifier in classMap.identifiers)
         {
           // identifier is a fixed value
           if (identifier.StartsWith("#") && identifier.EndsWith("#"))
@@ -448,7 +448,7 @@ namespace org.iringtools.exchange
               }
               else
               {
-                classIdentifiers[i] += classMap.IdentifierDelimiter + value;
+                classIdentifiers[i] += classMap.identifierDelimiter + value;
               }
             }
           }
@@ -470,14 +470,14 @@ namespace org.iringtools.exchange
                 }
                 else
                 {
-                  classIdentifiers[i] += classMap.IdentifierDelimiter + value;
+                  classIdentifiers[i] += classMap.identifierDelimiter + value;
                 }
               }
             }
           }
         }
 
-        _classIdentifiers[classMap.ClassId] = classIdentifiers;
+        _classIdentifiers[classMap.classId] = classIdentifiers;
       }
     }
 

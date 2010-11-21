@@ -35,7 +35,7 @@ using log4net;
 using org.iringtools.library;
 using org.iringtools.adapter;
 using org.iringtools.exchange;
-using org.iringtools.library.manifest;
+using org.iringtools.dxfr.manifest;
 
 namespace org.iringtools.services
 {
@@ -63,6 +63,13 @@ namespace org.iringtools.services
     public DataTransferObjects GetDataTransferObjects(string scope, string app, string graph, DataTransferIndices dataTransferIndices)
     {
       return _dxfrProvider.GetDataTransferObjects(scope, app, graph, dataTransferIndices);
+    }
+
+    [Description("Gets data transfer objects.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/{graph}")]
+    public DataTransferObjects GetDataTransferObjectsFull(string scope, string app, string graph)
+    {
+      return _dxfrProvider.GetDataTransferObjects(scope, app, graph);
     }
 
     [Description("Posts data transfer objects to add/update/delete.")]

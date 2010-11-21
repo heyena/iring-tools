@@ -44,8 +44,8 @@ using org.iringtools.adapter.projection;
 using System.ServiceModel;
 using System.Security.Principal;
 using System.Text;
-using org.iringtools.common.mapping;
-using org.iringtools.library.manifest;
+using org.iringtools.mapping;
+using org.iringtools.dxfr.manifest;
 
 namespace org.iringtools.adapter
 {
@@ -106,7 +106,7 @@ namespace org.iringtools.adapter
 
         _graphMap = _mapping.FindGraphMap(graph);
 
-        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.DataObjectName, null);
+        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, null);
         Dictionary<string, List<string>> classIdentifiers = GetClassIdentifiers(ref dataObjects);
 
         dataTransferIndices = BuildDataTransferIndices(ref dataObjects, ref classIdentifiers, hashAlogrithm);
@@ -139,7 +139,32 @@ namespace org.iringtools.adapter
           identifiers.Add(dti.Identifier);
         }
 
-        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.DataObjectName, identifiers);
+        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
+        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+
+        dataTransferObjects = dtoProjectionEngine.ToDataTransferObjects(_graphMap, ref dataObjects);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting data transfer objects: " + ex);
+      }
+
+      return dataTransferObjects;
+    }
+
+    // get list (page) of data transfer objects per data transfer indicies
+    public DataTransferObjects GetDataTransferObjects(string scope, string app, string graph)
+    {
+      DataTransferObjects dataTransferObjects = null;
+
+      try
+      {
+        InitializeScope(scope, app);
+        InitializeDataLayer();
+
+        _graphMap = _mapping.FindGraphMap(graph);
+
+        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, null);
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
 
         dataTransferObjects = dtoProjectionEngine.ToDataTransferObjects(_graphMap, ref dataObjects);
@@ -183,7 +208,7 @@ namespace org.iringtools.adapter
           response.Append(_dataLayer.Post(dataObjects));  // add/change/sync data objects
 
         if (deleteIdentifiers.Count > 0)
-          response.Append(_dataLayer.Delete(_graphMap.DataObjectName, deleteIdentifiers));
+          response.Append(_dataLayer.Delete(_graphMap.dataObjectName, deleteIdentifiers));
 
         response.Level = StatusLevel.Success;
       }
@@ -219,7 +244,7 @@ namespace org.iringtools.adapter
         _graphMap = _mapping.FindGraphMap(graph);
 
         IList<string> identifiers = new List<string> { id };
-        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.DataObjectName, identifiers);
+        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
 
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
         dataTransferObjects = dtoProjectionEngine.ToDataTransferObjects(_graphMap, ref dataObjects);
@@ -244,7 +269,7 @@ namespace org.iringtools.adapter
         _graphMap = _mapping.FindGraphMap(graph);
 
         IList<string> identifiers = new List<string> { id };
-        response.Append(_dataLayer.Delete(_graphMap.DataObjectName, identifiers));
+        response.Append(_dataLayer.Delete(_graphMap.dataObjectName, identifiers));
       }
       catch (Exception ex)
       {
@@ -275,7 +300,7 @@ namespace org.iringtools.adapter
 
         BuildCrossGraphMap(manifest, graph);
 
-        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.DataObjectName, null);
+        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, null);
         Dictionary<string, List<string>> classIdentifiers = GetClassIdentifiers(ref dataObjects);
 
         dataTransferIndices = BuildDataTransferIndices(ref dataObjects, ref classIdentifiers, hashAlgorithm);
@@ -308,7 +333,7 @@ namespace org.iringtools.adapter
           identifiers.Add(dti.Identifier);
         }
 
-        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.DataObjectName, identifiers);
+        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
         Dictionary<string, List<string>> classIdentifiers = GetClassIdentifiers(ref dataObjects);
 
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
@@ -333,12 +358,12 @@ namespace org.iringtools.adapter
 
         DataDictionary dataDictionary = _dataLayer.GetDictionary();
 
-        foreach (GraphMap graphMap in _mapping.GraphMaps)
+        foreach (GraphMap graphMap in _mapping.graphMaps)
         {
-          Graph manifestGraph = new Graph { Name = graphMap.Name };
-          manifest.Graphs.Add(manifestGraph);
+          Graph manifestGraph = new Graph { name = graphMap.name };
+          manifest.graphs.Add(manifestGraph);
 
-          string dataObjectName = graphMap.DataObjectName;
+          string dataObjectName = graphMap.dataObjectName;
           DataObject dataObject = null;
 
           foreach (DataObject dataObj in dataDictionary.DataObjects)
@@ -352,61 +377,61 @@ namespace org.iringtools.adapter
 
           if (dataObject != null)
           {
-            foreach (var classTemplateListMap in graphMap.ClassTemplateMaps)
+            foreach (var classTemplateListMap in graphMap.classTemplateMaps)
             {
               ClassTemplates manifestClassTemplatesMap = new ClassTemplates();
-              manifestGraph.ClassTemplatesList.Add(manifestClassTemplatesMap);
+              manifestGraph.classTemplatesList.Add(manifestClassTemplatesMap);
 
-              ClassMap classMap = classTemplateListMap.ClassMap;
-              List<TemplateMap> templateMaps = classTemplateListMap.TemplateMaps;
+              ClassMap classMap = classTemplateListMap.classMap;
+              List<TemplateMap> templateMaps = classTemplateListMap.templateMaps;
 
               Class manifestClass = new Class
               {
-                ClassId = classMap.ClassId,
-                Name = classMap.Name,
+                classId = classMap.classId,
+                name = classMap.name,
               };
-              manifestClassTemplatesMap.Class = manifestClass;
+              manifestClassTemplatesMap.@class = manifestClass;
 
               foreach (TemplateMap templateMap in templateMaps)
               {
                 Template manifestTemplate = new Template
                 {
-                  TemplateId = templateMap.TemplateId,
-                  Name = templateMap.Name,
-                  TransferOption = TransferOption.Desired,
+                  templateId = templateMap.templateId,
+                  name = templateMap.name,
+                  transferOption = TransferOption.Desired,
                 };
-                manifestClassTemplatesMap.Templates.Add(manifestTemplate);
+                manifestClassTemplatesMap.templates.Add(manifestTemplate);
 
-                foreach (RoleMap roleMap in templateMap.RoleMaps)
+                foreach (RoleMap roleMap in templateMap.roleMaps)
                 {
                   Role manifestRole = new Role
                   {
-                    Type = roleMap.Type,
-                    RoleId = roleMap.RoleId,
-                    Name = roleMap.Name,
-                    DataType = roleMap.DataType,
-                    Value = roleMap.Value,
+                    type = roleMap.type,
+                    roleId = roleMap.roleId,
+                    name = roleMap.name,
+                    dataType = roleMap.dataType,
+                    value = roleMap.value,
                   };
-                  manifestTemplate.Roles.Add(manifestRole);
+                  manifestTemplate.roles.Add(manifestRole);
 
-                  if (roleMap.Type == RoleType.Property)
+                  if (roleMap.type == RoleType.Property)
                   {
-                    string[] property = roleMap.PropertyName.Split('.');
+                    string[] property = roleMap.propertyName.Split('.');
                     string objectName = property[0].Trim();
                     string propertyName = property[1].Trim();
 
                     if (dataObject.IsKeyProperty(propertyName))
                     {
-                      manifestTemplate.TransferOption = TransferOption.Required;
+                      manifestTemplate.transferOption = TransferOption.Required;
                     }
                   }
 
-                  if (roleMap.ClassMap != null)
+                  if (roleMap.classMap != null)
                   {
-                    manifestRole.Class = new Class
+                    manifestRole.@class = new Class
                     {
-                      ClassId = roleMap.ClassMap.ClassId,
-                      Name = roleMap.ClassMap.Name,
+                      classId = roleMap.classMap.classId,
+                      name = roleMap.classMap.name,
                     };
                   }
                 }
@@ -557,13 +582,13 @@ namespace org.iringtools.adapter
     {
       Dictionary<string, List<string>> classIdentifiers = new Dictionary<string, List<string>>();
 
-      foreach (ClassTemplateMap classTemplateMap in _graphMap.ClassTemplateMaps)
+      foreach (ClassTemplateMap classTemplateMap in _graphMap.classTemplateMaps)
       {
-        ClassMap classMap = classTemplateMap.ClassMap;
+        ClassMap classMap = classTemplateMap.classMap;
 
         List<string> identifiers = new List<string>();
 
-        foreach (string identifier in classMap.Identifiers)
+        foreach (string identifier in classMap.identifiers)
         {
           // identifier is a fixed value
           if (identifier.StartsWith("#") && identifier.EndsWith("#"))
@@ -578,7 +603,7 @@ namespace org.iringtools.adapter
               }
               else
               {
-                identifiers[i] += classMap.IdentifierDelimiter + value;
+                identifiers[i] += classMap.identifierDelimiter + value;
               }
             }
           }
@@ -600,14 +625,14 @@ namespace org.iringtools.adapter
                 }
                 else
                 {
-                  identifiers[i] += classMap.IdentifierDelimiter + value;
+                  identifiers[i] += classMap.identifierDelimiter + value;
                 }
               }
             }
           }
         }
 
-        classIdentifiers[classMap.ClassId] = identifiers;
+        classIdentifiers[classMap.classId] = identifiers;
       }
 
       return classIdentifiers;
@@ -620,18 +645,18 @@ namespace org.iringtools.adapter
       Graph manifestGraph = manifest.FindGraph(graph);
 
       _graphMap = new GraphMap();
-      _graphMap.DataObjectName = mappingGraph.DataObjectName;
+      _graphMap.dataObjectName = mappingGraph.dataObjectName;
 
-      ClassTemplates manifestClassTemplatesMap = manifestGraph.ClassTemplatesList.First();
-      Class manifestClass = manifestClassTemplatesMap.Class;
+      ClassTemplates manifestClassTemplatesMap = manifestGraph.classTemplatesList.First();
+      Class manifestClass = manifestClassTemplatesMap.@class;
 
       if (manifestClassTemplatesMap != null)
       {
-        foreach (var mappingClassTemplatesMap in mappingGraph.ClassTemplateMaps)
+        foreach (var mappingClassTemplatesMap in mappingGraph.classTemplateMaps)
         {
-          ClassMap mappingClass = mappingClassTemplatesMap.ClassMap;
+          ClassMap mappingClass = mappingClassTemplatesMap.classMap;
 
-          if (mappingClass.ClassId == manifestClass.ClassId)
+          if (mappingClass.classId == manifestClass.classId)
           {
             RecurBuildCrossGraphMap(ref manifestGraph, manifestClass, mappingGraph, mappingClass);
           }
@@ -644,28 +669,28 @@ namespace org.iringtools.adapter
       List<Template> manifestTemplates = null;
 
       // find manifest templates for the manifest class
-      foreach (ClassTemplates manifestClassTemplates in manifestGraph.ClassTemplatesList)
+      foreach (ClassTemplates manifestClassTemplates in manifestGraph.classTemplatesList)
       {
-        if (manifestClassTemplates.Class.ClassId == manifestClass.ClassId)
+        if (manifestClassTemplates.@class.classId == manifestClass.classId)
         {
-          manifestTemplates = manifestClassTemplates.Templates;
+          manifestTemplates = manifestClassTemplates.templates;
         }
       }
 
       if (manifestTemplates != null)
       {
         // find mapping templates for the mapping class
-        foreach (var pair in mappingGraph.ClassTemplateMaps)
+        foreach (var pair in mappingGraph.classTemplateMaps)
         {
-          ClassMap localMappingClass = pair.ClassMap;
-          List<TemplateMap> mappingTemplates = pair.TemplateMaps;
+          ClassMap localMappingClass = pair.classMap;
+          List<TemplateMap> mappingTemplates = pair.templateMaps;
 
-          if (localMappingClass.ClassId == manifestClass.ClassId)
+          if (localMappingClass.classId == manifestClass.classId)
           {
-            ClassMap crossedClass = new ClassMap(localMappingClass);
-            List<TemplateMap> crossedTemplates = new List<TemplateMap>();
+            ClassMap crossedClass = localMappingClass.Clone();
+            TemplateMaps crossedTemplates = new TemplateMaps();
 
-            _graphMap.ClassTemplateMaps.Add(new ClassTemplateMap { ClassMap = crossedClass, TemplateMaps = crossedTemplates });
+            _graphMap.classTemplateMaps.Add(new ClassTemplateMap { classMap = crossedClass, templateMaps = crossedTemplates });
 
             foreach (Template manifestTemplate in manifestTemplates)
             {
@@ -676,19 +701,19 @@ namespace org.iringtools.adapter
               {
                 if (found) break;
 
-                if (mappingTemplate.TemplateId == manifestTemplate.TemplateId)
+                if (mappingTemplate.templateId == manifestTemplate.templateId)
                 {
                   int rolesMatchedCount = 0;
 
-                  foreach (RoleMap roleMap in mappingTemplate.RoleMaps)
+                  foreach (RoleMap roleMap in mappingTemplate.roleMaps)
                   {
                     if (found) break;
 
-                    foreach (Role manifestRole in manifestTemplate.Roles)
+                    foreach (Role manifestRole in manifestTemplate.roles)
                     {
-                      if (manifestRole.RoleId == roleMap.RoleId)
+                      if (manifestRole.roleId == roleMap.roleId)
                       {
-                        if (roleMap.Type == RoleType.Reference && roleMap.ClassMap == null && roleMap.Value == manifestRole.Value)
+                        if (roleMap.type == RoleType.Reference && roleMap.classMap == null && roleMap.value == manifestRole.value)
                         {
                           theMappingTemplate = mappingTemplate;
                           found = true;
@@ -700,7 +725,7 @@ namespace org.iringtools.adapter
                     }
                   }
 
-                  if (rolesMatchedCount == manifestTemplate.Roles.Count)
+                  if (rolesMatchedCount == manifestTemplate.roles.Count)
                   {
                     theMappingTemplate = mappingTemplate;
                   }
@@ -709,19 +734,19 @@ namespace org.iringtools.adapter
 
               if (theMappingTemplate != null)
               {
-                TemplateMap crossedTemplateMap = new TemplateMap(theMappingTemplate);
+                TemplateMap crossedTemplateMap = theMappingTemplate.Clone();
                 crossedTemplates.Add(crossedTemplateMap);
 
                 // assume that all roles within a template are matched, thus only interested in classMap
-                foreach (Role manifestRole in manifestTemplate.Roles)
+                foreach (Role manifestRole in manifestTemplate.roles)
                 {
-                  if (manifestRole.Class != null)
+                  if (manifestRole.@class != null)
                   {
-                    foreach (RoleMap mappingRole in theMappingTemplate.RoleMaps)
+                    foreach (RoleMap mappingRole in theMappingTemplate.roleMaps)
                     {
-                      if (mappingRole.ClassMap != null && mappingRole.ClassMap.ClassId == manifestRole.Class.ClassId)
+                      if (mappingRole.classMap != null && mappingRole.classMap.classId == manifestRole.@class.classId)
                       {
-                        RecurBuildCrossGraphMap(ref manifestGraph, manifestRole.Class, mappingGraph, mappingRole.ClassMap);
+                        RecurBuildCrossGraphMap(ref manifestGraph, manifestRole.@class, mappingGraph, mappingRole.classMap);
                       }
                     }
                   }
@@ -746,29 +771,29 @@ namespace org.iringtools.adapter
         bool firstClassMap = true;
         StringBuilder propertyValues = new StringBuilder();
 
-        foreach (var pair in _graphMap.ClassTemplateMaps)
+        foreach (var pair in _graphMap.classTemplateMaps)
         {
-          ClassMap classMap = pair.ClassMap;
-          List<TemplateMap> templateMaps = pair.TemplateMaps;
+          ClassMap classMap = pair.classMap;
+          List<TemplateMap> templateMaps = pair.templateMaps;
 
           if (firstClassMap)
           {
-            dti.Identifier = classIdentifiers[classMap.ClassId][i];
+            dti.Identifier = classIdentifiers[classMap.classId][i];
             firstClassMap = false;
           }
 
           foreach (TemplateMap templateMap in templateMaps)
           {
-            foreach (RoleMap roleMap in templateMap.RoleMaps)
+            foreach (RoleMap roleMap in templateMap.roleMaps)
             {
-              if (roleMap.Type == RoleType.Property)
+              if (roleMap.type == RoleType.Property)
               {
-                string propertyName = roleMap.PropertyName.Substring(_graphMap.DataObjectName.Length + 1);
+                string propertyName = roleMap.propertyName.Substring(_graphMap.dataObjectName.Length + 1);
                 string value = Convert.ToString(dataObjects[i].GetPropertyValue(propertyName));
 
-                if (!String.IsNullOrEmpty(roleMap.ValueListName))
+                if (!String.IsNullOrEmpty(roleMap.valueListName))
                 {
-                  value = _mapping.ResolveValueList(roleMap.ValueListName, value);
+                  value = _mapping.ResolveValueList(roleMap.valueListName, value);
                 }
 
                 propertyValues.Append(value);

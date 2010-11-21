@@ -39,14 +39,14 @@ using Ninject.Extensions.Xml;
 using org.ids_adi.qmxf;
 using org.iringtools.library;
 using org.iringtools.utility;
-using org.iringtools.common.mapping;
+using org.iringtools.mapping;
 using StaticDust.Configuration;
 using VDS.RDF;
 using VDS.RDF.Query;
 using org.iringtools.adapter.projection;
 using System.ServiceModel;
 using System.Security.Principal;
-using org.iringtools.library.manifest;
+using org.iringtools.dxfr.manifest;
 
 namespace org.iringtools.adapter
 {
@@ -333,9 +333,9 @@ namespace org.iringtools.adapter
             RoleMap roleMap = null;
 
             GraphMap newGraphMap = new GraphMap();
-            newGraphMap.Name = graphMap.Attribute("Name").Value;
-            newGraphMap.DataObjectName = dataObjectName;
-            mapping.GraphMaps.Add(newGraphMap);
+            newGraphMap.name = graphMap.Attribute("Name").Value;
+            newGraphMap.dataObjectName = dataObjectName;
+            mapping.graphMaps.Add(newGraphMap);
 
             ConvertClassMap(ref newGraphMap, ref roleMap, graphMap, dataObjectName);
           }
@@ -351,24 +351,24 @@ namespace org.iringtools.adapter
             string valueList = valueMap.Attribute("valueList").Value;
             ValueMap newValueMap = new ValueMap
             {
-              InternalValue = valueMap.Attribute("internalValue").Value,
-              Uri = valueMap.Attribute("modelURI").Value
+              internalValue = valueMap.Attribute("internalValue").Value,
+              uri = valueMap.Attribute("modelURI").Value
             };
 
             if (valueList != previousValueList)
             {
               newValueList = new ValueListMap
               {
-                Name = valueList,
-                ValueMaps = { newValueMap }
+                name = valueList,
+                valueMaps = { newValueMap }
               };
-              mapping.ValueListMaps.Add(newValueList);
+              mapping.valueListMaps.Add(newValueList);
 
               previousValueList = valueList;
             }
             else
             {
-              newValueList.ValueMaps.Add(newValueMap);
+              newValueList.valueMaps.Add(newValueMap);
             }
           }
           #endregion
@@ -636,7 +636,7 @@ namespace org.iringtools.adapter
 
         GraphMap graphMap = _mapping.FindGraphMap(graphName);
 
-        string objectType = graphMap.DataObjectName;
+        string objectType = graphMap.dataObjectName;
         response = _dataLayer.Delete(objectType, new List<String> { identifier });
 
         response.DateTimeStamp = DateTime.Now;
@@ -800,9 +800,9 @@ namespace org.iringtools.adapter
       _dataObjects.Clear();
 
       if (identifiers != null)
-        _dataObjects = _dataLayer.Get(_graphMap.DataObjectName, identifiers);
+        _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
       else
-        _dataObjects = _dataLayer.Get(_graphMap.DataObjectName, null);
+        _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, null);
     }
 
     private void UpdateScopes(string projectName, string projectDescription, string applicationName, string applicationDescription)
@@ -948,21 +948,21 @@ namespace org.iringtools.adapter
       string classId = classMap.Attribute("classId").Value;
 
       ClassMap newClassMap = new ClassMap();
-      newClassMap.ClassId = classId;
-      newClassMap.Identifiers.Add(dataObjectMap + "." + classMap.Attribute("identifier").Value);
+      newClassMap.classId = classId;
+      newClassMap.identifiers.Add(dataObjectMap + "." + classMap.Attribute("identifier").Value);
 
       if (parentRoleMap == null)
       {
-        newClassMap.Name = GetClassName(classId);
+        newClassMap.name = GetClassName(classId);
       }
       else
       {
-        newClassMap.Name = classMap.Attribute("name").Value;
-        parentRoleMap.ClassMap = newClassMap;
+        newClassMap.name = classMap.Attribute("name").Value;
+        parentRoleMap.classMap = newClassMap;
       }
 
       ClassTemplateMap newTemplateMaps = new ClassTemplateMap();
-      newGraphMap.ClassTemplateMaps.Add(newTemplateMaps);
+      newGraphMap.classTemplateMaps.Add(newTemplateMaps);
 
       IEnumerable<XElement> templateMaps = classMap.Element("TemplateMaps").Elements("TemplateMap");
       KeyValuePair<string, Dictionary<string, string>> templateNameRolesPair;
@@ -984,8 +984,8 @@ namespace org.iringtools.adapter
         string templateId = templateMap.Attribute("templateId").Value;
 
         TemplateMap newTemplateMap = new TemplateMap();
-        newTemplateMap.TemplateId = templateId;
-        newTemplateMaps.TemplateMaps.Add(newTemplateMap);
+        newTemplateMap.templateId = templateId;
+        newTemplateMaps.templateMaps.Add(newTemplateMap);
 
         if (_qmxfTemplateResultCache.ContainsKey(templateId))
         {
@@ -997,15 +997,15 @@ namespace org.iringtools.adapter
           _qmxfTemplateResultCache[templateId] = templateNameRolesPair;
         }
 
-        newTemplateMap.Name = templateNameRolesPair.Key;
+        newTemplateMap.name = templateNameRolesPair.Key;
 
         RoleMap newClassRoleMap = new RoleMap();
-        newClassRoleMap.Type = RoleType.Possessor;
-        newTemplateMap.RoleMaps.Add(newClassRoleMap);
-        newClassRoleMap.RoleId = classRoleId;
+        newClassRoleMap.type = RoleType.Possessor;
+        newTemplateMap.roleMaps.Add(newClassRoleMap);
+        newClassRoleMap.roleId = classRoleId;
 
         Dictionary<string, string> roles = templateNameRolesPair.Value;
-        newClassRoleMap.Name = roles[classRoleId];
+        newClassRoleMap.name = roles[classRoleId];
 
         for (int i = 0; i < roleMaps.Count(); i++)
         {
@@ -1028,40 +1028,40 @@ namespace org.iringtools.adapter
           catch (Exception) { }
 
           RoleMap newRoleMap = new RoleMap();
-          newTemplateMap.RoleMaps.Add(newRoleMap);
-          newRoleMap.RoleId = roleMap.Attribute("roleId").Value;
-          newRoleMap.Name = roles[newRoleMap.RoleId];
+          newTemplateMap.roleMaps.Add(newRoleMap);
+          newRoleMap.roleId = roleMap.Attribute("roleId").Value;
+          newRoleMap.name = roles[newRoleMap.roleId];
 
           if (!String.IsNullOrEmpty(value))
           {
-            newRoleMap.Type = RoleType.FixedValue;
-            newRoleMap.Value = value;
+            newRoleMap.type = RoleType.FixedValue;
+            newRoleMap.value = value;
           }
           else if (!String.IsNullOrEmpty(reference))
           {
-            newRoleMap.Type = RoleType.Reference;
-            newRoleMap.Value = reference;
+            newRoleMap.type = RoleType.Reference;
+            newRoleMap.value = reference;
           }
           else if (!String.IsNullOrEmpty(propertyName))
           {
-            newRoleMap.PropertyName = dataObjectMap + "." + propertyName;
+            newRoleMap.propertyName = dataObjectMap + "." + propertyName;
 
             if (!String.IsNullOrEmpty(valueList))
             {
-              newRoleMap.Type = RoleType.ObjectProperty;
-              newRoleMap.ValueListName = valueList;
+              newRoleMap.type = RoleType.ObjectProperty;
+              newRoleMap.valueListName = valueList;
             }
             else
             {
-              newRoleMap.Type = RoleType.DataProperty;
-              newRoleMap.DataType = roleMap.Attribute("dataType").Value;
+              newRoleMap.type = RoleType.DataProperty;
+              newRoleMap.dataType = roleMap.Attribute("dataType").Value;
             }
           }
 
           if (roleMap.HasElements)
           {
-            newRoleMap.Type = RoleType.Reference;
-            newRoleMap.Value = roleMap.Attribute("dataType").Value;
+            newRoleMap.type = RoleType.Reference;
+            newRoleMap.value = roleMap.Attribute("dataType").Value;
 
             ConvertClassMap(ref newGraphMap, ref newRoleMap, roleMap.Element("ClassMap"), dataObjectMap);
           }

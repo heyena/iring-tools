@@ -12,7 +12,7 @@ using System.Linq;
 using System.Xml.Linq;
 using System;
 using System.Configuration;
-using org.iringtools.common.mapping;
+using org.iringtools.mapping;
 
 namespace AdapterService.Tests
 {
@@ -73,7 +73,7 @@ namespace AdapterService.Tests
     {
       AdapterProxy target = new AdapterProxy();
       Mapping actual = target.GetMapping("12345_000", "ABC");
-      Assert.AreNotEqual(0, actual.GraphMaps.Count);
+      Assert.AreNotEqual(0, actual.graphMaps.Count);
     }
 
     //[TestMethod()]
@@ -185,7 +185,7 @@ namespace AdapterService.Tests
     //public void GetManifest()
     //{
     //  AdapterProxy target = new AdapterProxy();
-    //  org.iringtools.library.manifest.Manifest manifest = target.GetManifest("12345_000", "ABC");
+    //  org.iringtools.dxfr.manifest.Manifest manifest = target.GetManifest("12345_000", "ABC");
     //  Assert.AreNotEqual(0, manifest.Graphs.Count);
     //}
 

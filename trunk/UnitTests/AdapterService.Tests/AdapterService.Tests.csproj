@@ -231,7 +231,9 @@
     <Content Include="XML\DataDictionary.12345_000.DEF.xml" />
     <Content Include="XML\DTO.12345_000.ABC.Lines.xml" />
     <Content Include="XML\Mapping.12345_000.ABC.old.xml" />
-    <Content Include="XML\Mapping.12345_000.ABC.xml" />
+    <Content Include="XML\Mapping.12345_000.ABC.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="XML\Mapping.12345_000.DEF.old.xml" />
     <Content Include="XML\Mapping.12345_000.DEF.xml" />
     <Content Include="XML\Mapping.12345_000.XYZ.old.xml" />

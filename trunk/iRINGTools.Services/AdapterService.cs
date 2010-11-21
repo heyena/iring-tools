@@ -33,7 +33,7 @@ using System.ServiceModel.Web;
 using System.Xml.Linq;
 using log4net;
 using org.iringtools.library;
-using org.iringtools.library.manifest;
+using org.iringtools.dxfr.manifest;
 using org.iringtools.adapter;
 using org.iringtools.exchange;
 using System.Xml;
@@ -42,7 +42,7 @@ using System.IO;
 using System.Text;
 using System;
 using org.iringtools.utility;
-using org.iringtools.common.mapping;
+using org.iringtools.mapping;
 
 namespace org.iringtools.services
 {

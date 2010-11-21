@@ -14,7 +14,7 @@ using org.iringtools.ontologyservice.presentation.presentationmodels;
 
 using org.ids_adi.qmxf;
 using org.iringtools.library;
-using org.iringtools.common.mapping;
+using org.iringtools.mapping;
 
 namespace org.iringtools.modules.status.statusregion
 {

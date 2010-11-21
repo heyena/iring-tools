@@ -1,1 +1,49 @@
-<mapping xmlns="http://www.iringtools.org/common/mapping" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><graphMaps><graphMap><name xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.library.manifest">Lines</name><classTemplateMaps><classTemplateMap><classMap><name xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.library.manifest">PIPING NETWORK SYSTEM</name><classId xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.library.manifest">rdl:R19192462550</classId><identifiers xmlns:a="http://schemas.microsoft.com/2003/10/Serialization/Arrays"><a:string>LINES.TAG</a:string></identifiers></classMap><templateMaps><templateMap><name xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.library.manifest">IdentificationByTag</name><templateId xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.library.manifest">tpl:R66921101783</templateId><transferOption xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.library.manifest">Desired</transferOption><roleMaps><roleMap><name xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.library.manifest">hasIdentificationType</name><type xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.library.manifest">Reference</type><roleId xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.library.manifest">tpl:R30790108016</roleId><value xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.library.manifest">rdl:R40471041754</value></roleMap><roleMap><name xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.library.manifest">hasObject</name><type xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.library.manifest">Possessor</type><roleId xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.library.manifest">tpl:R44537504070</roleId><dataType xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.library.manifest"/><value xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.library.manifest"/><propertyName/></roleMap><roleMap><name xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.library.manifest">valIdentifier</name><type xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.library.manifest">DataProperty</type><roleId xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.library.manifest">tpl:R22674749688</roleId><dataType xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.library.manifest">xsd:string</dataType><propertyName>LINES.TAG</propertyName></roleMap></roleMaps></templateMap></templateMaps></classTemplateMap></classTemplateMaps><dataObjectName>LINES</dataObjectName></graphMap></graphMaps><valueListMaps/></mapping>
+<mapping xmlns="http://www.iringtools.org/mapping" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <graphMaps>
+    <graphMap>
+      <name>Lines</name>
+      <classTemplateMaps>
+        <classTemplateMap>
+          <classMap>
+            <name>PIPING NETWORK SYSTEM</name>
+            <classId>rdl:R19192462550</classId>
+            <identifiers>
+              <identifier>LINES.TAG</identifier>
+            </identifiers>
+          </classMap>
+          <templateMaps>
+            <templateMap>
+              <templateId>tpl:R66921101783</templateId>
+              <templateType>Qualification</templateType>
+              <name>IdentificationByTag</name>
+              <roleMaps>
+                <roleMap>
+                  <type>Reference</type>
+                  <roleId>tpl:R30790108016</roleId>
+                  <name>hasIdentificationType</name>
+                  <value>rdl:R40471041754</value>
+                </roleMap>
+                <roleMap>
+                  <type>Possessor</type>
+                  <roleId>tpl:R44537504070</roleId>
+                  <name>hasObject</name>
+                </roleMap>
+                <roleMap>
+                  <type>DataProperty</type>
+                  <roleId>tpl:R22674749688</roleId>
+                  <name>valIdentifier</name>
+                  <dataType>xsd:string</dataType>
+                  <propertyName>LINES.TAG</propertyName>
+                </roleMap>
+              </roleMaps>
+              <transferOption>Desired</transferOption>
+            </templateMap>
+          </templateMaps>
+        </classTemplateMap>
+      </classTemplateMaps>
+      <dataObjectName>LINES</dataObjectName>
+    </graphMap>
+  </graphMaps>
+  <valueListMaps/>
+  <version>2.01.00</version>
+</mapping>

@@ -30,8 +30,8 @@ using org.iringtools.utility;
 using System.Text.RegularExpressions;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
-using org.iringtools.common.mapping;
-using org.iringtools.library.manifest;
+using org.iringtools.mapping;
+using org.iringtools.dxfr.manifest;
 
 namespace org.iringtools.modules.memappingregion
 {
@@ -126,11 +126,11 @@ namespace org.iringtools.modules.memappingregion
               itemMap.Focus();
             }
 
-            idx = valueListMap.ValueMaps.IndexOf(valueMap);
-            if (idx != valueListMap.ValueMaps.Count - 1)
+            idx = valueListMap.valueMaps.IndexOf(valueMap);
+            if (idx != valueListMap.valueMaps.Count - 1)
             {
-              valueListMap.ValueMaps.Remove(valueMap);
-              valueListMap.ValueMaps.Insert(idx + 1, valueMap);
+              valueListMap.valueMaps.Remove(valueMap);
+              valueListMap.valueMaps.Insert(idx + 1, valueMap);
             }
             Presenter.ButtonCtrl("btnSave").IsEnabled = true;
             Presenter.ButtonCtrl("btnSave").Background = new SolidColorBrush(Color.FromArgb(255, 255, 0, 0));
@@ -172,11 +172,11 @@ namespace org.iringtools.modules.memappingregion
               itemMap.Focus();
             }
 
-            idx = valueListMap.ValueMaps.IndexOf(valueMap);
+            idx = valueListMap.valueMaps.IndexOf(valueMap);
             if (idx > 0)
             {
-              valueListMap.ValueMaps.Remove(valueMap);
-              valueListMap.ValueMaps.Insert(idx - 1, valueMap);
+              valueListMap.valueMaps.Remove(valueMap);
+              valueListMap.valueMaps.Insert(idx - 1, valueMap);
             }
             Presenter.ButtonCtrl("btnSave").IsEnabled = true;
             Presenter.ButtonCtrl("btnSave").Background = new SolidColorBrush(Color.FromArgb(255, 255, 0, 0));
@@ -204,9 +204,9 @@ namespace org.iringtools.modules.memappingregion
 
           item.SetTextBlockText(item.itemTextBlock.Text.Replace(Presenter.unmappedToken, ""));
           RoleMap roleMap = (RoleMap)model.SelectedMappingItem.Tag;
-          roleMap.Type = RoleType.Possessor;
-          roleMap.Value = string.Empty;
-          roleMap.DataType = string.Empty;
+          roleMap.type = RoleType.Possessor;
+          roleMap.value = string.Empty;
+          roleMap.dataType = string.Empty;
           Presenter.ButtonCtrl("btnSave").IsEnabled = true;
           Presenter.ButtonCtrl("btnSave").Background = new SolidColorBrush(Color.FromArgb(255, 255, 0, 0));
           Presenter.RefreshRoleMap(roleMap);
@@ -239,8 +239,8 @@ namespace org.iringtools.modules.memappingregion
 
           MappingItem item = model.SelectedMappingItem;
           ValueMap valueMap = (ValueMap)model.SelectedMappingItem.Tag;
-          string id = Utility.GetIdFromURI(valueMap.Uri);
-          valueMap.InternalValue = internalValue;
+          string id = Utility.GetIdFromURI(valueMap.uri);
+          valueMap.internalValue = internalValue;
           item.SetTextBlockText(model.IdLabelDictionary[id] + "[" + internalValue + "]");
           Presenter.ButtonCtrl("btnSave").IsEnabled = true;
           Presenter.ButtonCtrl("btnSave").Background = new SolidColorBrush(Color.FromArgb(255, 255, 0, 0));
@@ -271,8 +271,8 @@ namespace org.iringtools.modules.memappingregion
 
           else
           {
-            ValueListMap valueList = new ValueListMap { Name = valueListName, ValueMaps = new List<ValueMap>() };
-            mapping.ValueListMaps.Add(valueList);
+            ValueListMap valueList = new ValueListMap { name = valueListName, valueMaps = new ValueMaps() };
+            mapping.valueListMaps.Add(valueList);
             tvwValues.Items.Add(Presenter.AddNode(valueListName, valueList, null));
             Presenter.ButtonCtrl("btnSave").IsEnabled = true;
             Presenter.ButtonCtrl("btnSave").Background = new SolidColorBrush(Color.FromArgb(255, 255, 0, 0));
@@ -315,8 +315,8 @@ namespace org.iringtools.modules.memappingregion
             ValueListMap valueList = (ValueListMap)model.SelectedMappingItem.Tag;
             String uri = Regex.Replace(model.SelectedIMUri, ".*#", "rdl:");
 
-            ValueMap valueMap = new ValueMap { InternalValue = internalValue, Uri = uri };
-            valueList.ValueMaps.Add(valueMap);
+            ValueMap valueMap = new ValueMap { internalValue = internalValue, uri = uri };
+            valueList.valueMaps.Add(valueMap);
             model.SelectedMappingItem.Items.Add(Presenter.AddNode(uri, valueMap, model.SelectedMappingItem));
             Presenter.RefreshValueMap(valueMap, model.SelectedMappingItem);
             Presenter.ButtonCtrl("btnSave").IsEnabled = true;
@@ -355,24 +355,24 @@ namespace org.iringtools.modules.memappingregion
         else
         {
           GraphMap graphMap = new GraphMap();
-          graphMap.Name = graphName;
+          graphMap.name = graphName;
 
           string dataObjectName = model.SelectedDataObject.DataObject.ObjectName;
           ClassMap classMap = new ClassMap
           {
-            Name = model.SelectedIMLabel,
-            ClassId = SPARQLExtensions.GetIdWithAliasFromUri(model.SelectedIMUri)
+            name = model.SelectedIMLabel,
+            classId = SPARQLExtensions.GetIdWithAliasFromUri(model.SelectedIMUri)
           };
 
-          classMap.Identifiers.Add(string.Format("{0}.{1}", dataObjectName, model.SelectedDataObject.DataProperty.PropertyName));
+          classMap.identifiers.Add(string.Format("{0}.{1}", dataObjectName, model.SelectedDataObject.DataProperty.PropertyName));
 
           graphMap.AddClassMap(null, classMap);
 
-          if (String.IsNullOrEmpty(graphMap.DataObjectName))
-            graphMap.DataObjectName = dataObjectName;
+          if (String.IsNullOrEmpty(graphMap.dataObjectName))
+            graphMap.dataObjectName = dataObjectName;
 
-          mapping.GraphMaps.Add(graphMap);
-          tvwMapping.Items.Add(Presenter.AddNode(graphMap.Name, graphMap, null));
+          mapping.graphMaps.Add(graphMap);
+          tvwMapping.Items.Add(Presenter.AddNode(graphMap.name, graphMap, null));
           Presenter.ButtonCtrl("btnSave").IsEnabled = true;
           Presenter.ButtonCtrl("btnSave").Background = new SolidColorBrush(Color.FromArgb(255, 255, 0, 0));
 
@@ -393,7 +393,7 @@ namespace org.iringtools.modules.memappingregion
         string tplName = utility.Utility.NameSafe(templateName);
 
 
-        //if (mappingItem.ClassMap != null && mappingItem.TemplateMap != null)
+        //if (mappingItem.classMap != null && mappingItem.TemplateMap != null)
         //{
         //  int lastSeqNum = 0;
 
@@ -472,7 +472,7 @@ namespace org.iringtools.modules.memappingregion
         {
           if (model.SelectedMappingItem.NodeType == NodeType.GraphMap)
           {
-            selectedClassMap = model.SelectedGraphMap.ClassTemplateMaps.FirstOrDefault().ClassMap;
+            selectedClassMap = model.SelectedGraphMap.classTemplateMaps.FirstOrDefault().classMap;
           }
           else if (model.SelectedMappingItem.NodeType == NodeType.ClassMap)
           {
@@ -485,8 +485,8 @@ namespace org.iringtools.modules.memappingregion
           TemplateMap templateMap = new TemplateMap();
 
           //templateMap.name = AdjustTemplateName(mappingItem, model.SelectedIMLabel);
-          templateMap.Name = GetTemplateName(mappingItem, model.SelectedIMLabel);
-          templateMap.TemplateId = SPARQLExtensions.GetIdWithAliasFromUri(model.SelectedIMUri);
+          templateMap.name = GetTemplateName(mappingItem, model.SelectedIMLabel);
+          templateMap.templateId = SPARQLExtensions.GetIdWithAliasFromUri(model.SelectedIMUri);
           TemplateTreeItem node = null;
           if (model.SelectedTreeItem is TemplateTreeItem)
           {
@@ -510,9 +510,9 @@ namespace org.iringtools.modules.memappingregion
             template = templateQualification;
             templateType = TemplateType.Qualification;
           }
-          templateMap.TemplateType = templateType;
+          templateMap.templateType = templateType;
 
-          GetRoleMaps(selectedClassMap.ClassId, template, templateMap);
+          GetRoleMaps(selectedClassMap.classId, template, templateMap);
 
           if (mappingItem.TemplateMap == null)
             mappingItem.TemplateMap = new TemplateMap();
@@ -545,8 +545,8 @@ namespace org.iringtools.modules.memappingregion
 
     private void GetRoleMaps(string classId, object template, TemplateMap currentTemplateMap)
     {
-      if (currentTemplateMap.RoleMaps == null)
-        currentTemplateMap.RoleMaps = new List<RoleMap>();
+      if (currentTemplateMap.roleMaps == null)
+        currentTemplateMap.roleMaps = new RoleMaps();
 
       if (template is TemplateDefinition)
       {
@@ -559,33 +559,33 @@ namespace org.iringtools.modules.memappingregion
           RoleMap roleMap = new RoleMap();
           if (range != classId && range.StartsWith("xsd:"))
           {
-            roleMap.Type = RoleType.DataProperty;
-            roleMap.Name = utility.Utility.NameSafe(roleDefinition.name.FirstOrDefault().value);
-            roleMap.DataType = range;
-            roleMap.PropertyName = string.Empty;
-            roleMap.RoleId = roleDefinition.identifier.GetIdWithAliasFromUri();
+            roleMap.type = RoleType.DataProperty;
+            roleMap.name = utility.Utility.NameSafe(roleDefinition.name.FirstOrDefault().value);
+            roleMap.dataType = range;
+            roleMap.propertyName = string.Empty;
+            roleMap.roleId = roleDefinition.identifier.GetIdWithAliasFromUri();
 
-            currentTemplateMap.RoleMaps.Add(roleMap);
+            currentTemplateMap.roleMaps.Add(roleMap);
           }
           else if (range != classId && !range.StartsWith("xsd:"))
           {
 
-            roleMap.Type = RoleType.ObjectProperty;
-            roleMap.Name = utility.Utility.NameSafe(roleDefinition.name.FirstOrDefault().value);
+            roleMap.type = RoleType.ObjectProperty;
+            roleMap.name = utility.Utility.NameSafe(roleDefinition.name.FirstOrDefault().value);
 
-            roleMap.DataType = range;
-            roleMap.PropertyName = string.Empty;
-            roleMap.RoleId = roleDefinition.identifier.GetIdWithAliasFromUri();
-            currentTemplateMap.RoleMaps.Add(roleMap);
+            roleMap.dataType = range;
+            roleMap.propertyName = string.Empty;
+            roleMap.roleId = roleDefinition.identifier.GetIdWithAliasFromUri();
+            currentTemplateMap.roleMaps.Add(roleMap);
           }
           else if (range == classId)
           {
-            roleMap.Type = RoleType.Possessor;
-            roleMap.Name = utility.Utility.NameSafe(roleDefinition.name.FirstOrDefault().value);
-            roleMap.DataType = range;
-            roleMap.PropertyName = string.Empty;
-            roleMap.RoleId = roleDefinition.identifier.GetIdWithAliasFromUri();
-            currentTemplateMap.RoleMaps.Add(roleMap);
+            roleMap.type = RoleType.Possessor;
+            roleMap.name = utility.Utility.NameSafe(roleDefinition.name.FirstOrDefault().value);
+            roleMap.dataType = range;
+            roleMap.propertyName = string.Empty;
+            roleMap.roleId = roleDefinition.identifier.GetIdWithAliasFromUri();
+            currentTemplateMap.roleMaps.Add(roleMap);
           }
         }
       }
@@ -599,47 +599,47 @@ namespace org.iringtools.modules.memappingregion
           string range = roleQualification.range.GetIdWithAliasFromUri();
           RoleMap roleMap = new RoleMap();
 
-          roleMap.Name = utility.Utility.NameSafe(roleQualification.name.FirstOrDefault().value);
-          roleMap.RoleId = roleQualification.qualifies.GetIdWithAliasFromUri();
+          roleMap.name = utility.Utility.NameSafe(roleQualification.name.FirstOrDefault().value);
+          roleMap.roleId = roleQualification.qualifies.GetIdWithAliasFromUri();
 
           if (roleQualification.value != null)  // fixed role
           {
             if (!String.IsNullOrEmpty(roleQualification.value.reference))
             {
-              roleMap.Type = RoleType.Reference;
-              roleMap.Value = roleQualification.value.reference.GetIdWithAliasFromUri();
+              roleMap.type = RoleType.Reference;
+              roleMap.value = roleQualification.value.reference.GetIdWithAliasFromUri();
             }
             else if (!String.IsNullOrEmpty(roleQualification.value.text))  // fixed role is a literal
             {
-              roleMap.Type = RoleType.FixedValue;
-              roleMap.Value = roleQualification.value.text;
-              roleMap.DataType = roleQualification.value.As;
+              roleMap.type = RoleType.FixedValue;
+              roleMap.value = roleQualification.value.text;
+              roleMap.dataType = roleQualification.value.As;
             }
 
-            currentTemplateMap.RoleMaps.Add(roleMap);
+            currentTemplateMap.roleMaps.Add(roleMap);
           }
           else if (range != classId && range.StartsWith("xsd:")) // property role
           {
-            roleMap.Type = RoleType.DataProperty;
-            roleMap.DataType = range;
-            roleMap.PropertyName = String.Empty;
-            currentTemplateMap.RoleMaps.Add(roleMap);
+            roleMap.type = RoleType.DataProperty;
+            roleMap.dataType = range;
+            roleMap.propertyName = String.Empty;
+            currentTemplateMap.roleMaps.Add(roleMap);
           }
           else if (range != classId && !range.StartsWith("xsd:"))
           {
-            roleMap.Type = RoleType.ObjectProperty;
+            roleMap.type = RoleType.ObjectProperty;
 
-            roleMap.DataType = range;
-            roleMap.PropertyName = String.Empty;
-            currentTemplateMap.RoleMaps.Add(roleMap);
+            roleMap.dataType = range;
+            roleMap.propertyName = String.Empty;
+            currentTemplateMap.roleMaps.Add(roleMap);
           }
 
           else if (range == classId)    // class role
           {
-            roleMap.Type = RoleType.Possessor;
+            roleMap.type = RoleType.Possessor;
 
-            roleMap.DataType = range;
-            currentTemplateMap.RoleMaps.Add(roleMap);
+            roleMap.dataType = range;
+            currentTemplateMap.roleMaps.Add(roleMap);
           }
         }
       }
@@ -667,8 +667,8 @@ namespace org.iringtools.modules.memappingregion
 
         RoleMap roleMap = model.SelectedRoleMap;
         if (
-          roleMap.Type == RoleType.Property ||
-          roleMap.Type == RoleType.DataProperty)
+          roleMap.type == RoleType.Property ||
+          roleMap.type == RoleType.DataProperty)
         {
           if (model.SelectedDataObject == null || model.SelectedDataObject.DataProperty == null)
           {
@@ -676,19 +676,19 @@ namespace org.iringtools.modules.memappingregion
             return;
           }
 
-          if (roleMap.DataType == null && !roleMap.DataType.StartsWith("xsd:"))
+          if (roleMap.dataType == null && !roleMap.dataType.StartsWith("xsd:"))
           {
-            roleMap.PropertyName =
+            roleMap.propertyName =
                 string.Format("{0}.{1}", model.SelectedDataObject.DataObject.ObjectName, model.SelectedDataObject.DataProperty.PropertyName);
-            roleMap.ValueListName = String.Empty;
+            roleMap.valueListName = String.Empty;
           }
-          else if (roleMap.DataType != null || roleMap.DataType.StartsWith("xsd:"))
+          else if (roleMap.dataType != null || roleMap.dataType.StartsWith("xsd:"))
           {
             DataObjectItem parentObject = (DataObjectItem)model.SelectedDataObject.Parent;
 
             if (!string.IsNullOrEmpty(parentObject.ParentObjectName))
             {
-              roleMap.PropertyName = string.Format("{0}.{1}.{2}",
+              roleMap.propertyName = string.Format("{0}.{1}.{2}",
                 parentObject.ParentObjectName,
                 parentObject.RelationshipName,
                 //              model.SelectedDataObject.DataObject.ObjectName,
@@ -696,7 +696,7 @@ namespace org.iringtools.modules.memappingregion
             }
             else
             {
-              roleMap.PropertyName =
+              roleMap.propertyName =
                   string.Format("{0}.{1}", model.SelectedDataObject.DataObject.ObjectName, model.SelectedDataObject.DataProperty.PropertyName);
             }
           }
@@ -704,9 +704,9 @@ namespace org.iringtools.modules.memappingregion
           {
             ClassDefinition selectedClass = ((ClassTreeItem)model.SelectedTreeItem).ClassDefinition;
             //roleMap.dataType = String.Empty;
-            roleMap.PropertyName = String.Empty;
-            roleMap.DataType = selectedClass.identifier.GetIdWithAliasFromUri();
-            roleMap.ValueListName = String.Empty;
+            roleMap.propertyName = String.Empty;
+            roleMap.dataType = selectedClass.identifier.GetIdWithAliasFromUri();
+            roleMap.valueListName = String.Empty;
 
           }
 
@@ -715,7 +715,7 @@ namespace org.iringtools.modules.memappingregion
           model.DetailProperties.Clear();
           Presenter.RefreshRoleMap(roleMap);
         }
-        else if (roleMap.Type == RoleType.ObjectProperty)
+        else if (roleMap.type == RoleType.ObjectProperty)
         {
           if (model.SelectedTreeItem == null || !(model.SelectedTreeItem is ClassTreeItem))
           {
@@ -723,8 +723,8 @@ namespace org.iringtools.modules.memappingregion
             return;
           }
           ClassDefinition selectedClass = ((ClassTreeItem)model.SelectedTreeItem).ClassDefinition;
-          roleMap.Type = RoleType.Reference;
-          roleMap.Value = selectedClass.identifier.GetIdWithAliasFromUri();
+          roleMap.type = RoleType.Reference;
+          roleMap.value = selectedClass.identifier.GetIdWithAliasFromUri();
           model.SelectedMappingItem.itemTextBlock.Text = model.SelectedMappingItem.itemTextBlock.Text.Replace(Presenter.unmappedToken, "");
           model.DetailProperties.Clear();
           Presenter.RefreshRoleMap(roleMap);
@@ -771,7 +771,7 @@ namespace org.iringtools.modules.memappingregion
         }
         DataObjectItem parentObject = (DataObjectItem)selectedDataObject.Parent;
         RoleMap roleMap = model.SelectedRoleMap;
-        if (roleMap.Type == RoleType.ObjectProperty)
+        if (roleMap.type == RoleType.ObjectProperty)
         {
           if (model.SelectedTreeItem == null || !(model.SelectedTreeItem is ClassTreeItem))
           {
@@ -790,20 +790,20 @@ namespace org.iringtools.modules.memappingregion
           roleMap = model.SelectedRoleMap;
           TextBox txtLabel = sender as TextBox;
 
-          roleMap.Type = RoleType.Reference;
-          roleMap.Value = Id;
+          roleMap.type = RoleType.Reference;
+          roleMap.value = Id;
           ClassMap classMap = new ClassMap
           {
-            Name = utility.Utility.NameSafe(txtLabel.Text),
-            ClassId = Id
+            name = utility.Utility.NameSafe(txtLabel.Text),
+            classId = Id
           };
-          classMap.Identifiers = new List<string>();
-          classMap.Identifiers
+          classMap.identifiers = new Identifiers();
+          classMap.identifiers
               .Add(string.Format("{0}.{1}", model.SelectedDataObject.DataObject.ObjectName, model.SelectedDataObject.DataProperty.PropertyName));
 
           model.SelectedGraphMap.AddClassMap(roleMap, classMap);
 
-          roleMap.ClassMap = classMap;
+          roleMap.classMap = classMap;
 
           model.SelectedMappingItem.itemTextBlock.Text = model.SelectedMappingItem.itemTextBlock.Text.Replace(Presenter.unmappedToken, "");
 
@@ -855,19 +855,19 @@ namespace org.iringtools.modules.memappingregion
           {
             RoleMap roleMap = mappingItem.RoleMap;
 
-            if (roleMap.DataType != null || roleMap.DataType != "")
+            if (roleMap.dataType != null || roleMap.dataType != "")
             {
-              roleMap.ValueListName = valuelistName;
+              roleMap.valueListName = valuelistName;
               if (valuelistName == "")
               {
                 //roleMap.type = RoleType.DataProperty;
-                roleMap.PropertyName = null;
+                roleMap.propertyName = null;
                 model.SelectedMappingItem.itemTextBlock.Text += Presenter.unmappedToken;
               }
               else
               {
                 //roleMap.type = RoleType.ObjectProperty;
-                roleMap.PropertyName =
+                roleMap.propertyName =
                 string.Format("{0}.{1}",
                     model.SelectedDataObject.DataObject.ObjectName,
                     model.SelectedDataObject.DataProperty.PropertyName);
@@ -910,7 +910,7 @@ namespace org.iringtools.modules.memappingregion
             {
               TreeView parent = (TreeView)mappingItem.Parent;
 
-              mapping.GraphMaps.Remove(mappingItem.GraphMap);
+              mapping.graphMaps.Remove(mappingItem.GraphMap);
               tvwMapping.Items.Remove(mappingItem);
               break;
             }
@@ -919,7 +919,7 @@ namespace org.iringtools.modules.memappingregion
               MappingItem parent = (MappingItem)mappingItem.Parent;
               TemplateMap templateMap = (TemplateMap)mappingItem.Tag;
 
-              model.SelectedGraphMap.DeleteTemplateMap(parent.ClassMap.ClassId, templateMap.TemplateId);
+              model.SelectedGraphMap.DeleteTemplateMap(parent.ClassMap.classId, templateMap.templateId);
 
               parent.Items.Remove(mappingItem);
 
@@ -931,19 +931,19 @@ namespace org.iringtools.modules.memappingregion
             {
               MappingItem parent = (MappingItem)mappingItem.Parent;
               RoleMap roleMap = (RoleMap)mappingItem.Tag;
-              if (roleMap.ClassMap != null)
-                mappingItem.GraphMap.DeleteRoleMap(mappingItem.TemplateMap, roleMap.RoleId);
+              if (roleMap.classMap != null)
+                mappingItem.GraphMap.DeleteRoleMap(mappingItem.TemplateMap, roleMap.roleId);
 
-              roleMap.PropertyName = string.Empty;
-              roleMap.ValueListName = string.Empty;
-              roleMap.Value = string.Empty;
+              roleMap.propertyName = string.Empty;
+              roleMap.valueListName = string.Empty;
+              roleMap.value = string.Empty;
               mappingItem.Items.Clear();
               mappingItem.IsExpanded = false;
 
-              if (roleMap.Type == RoleType.Reference)
-                roleMap.Type = RoleType.ObjectProperty;
+              if (roleMap.type == RoleType.Reference)
+                roleMap.type = RoleType.ObjectProperty;
 
-              if (!mappingItem.itemTextBlock.Text.EndsWith(Presenter.unmappedToken) && roleMap.IsMapped == false)
+              if (!mappingItem.itemTextBlock.Text.EndsWith(Presenter.unmappedToken) && roleMap.IsMapped() == false)
               {
                 mappingItem.itemTextBlock.Text += Presenter.unmappedToken;
               }
@@ -954,13 +954,13 @@ namespace org.iringtools.modules.memappingregion
             {
               MappingItem parent = (MappingItem)mappingItem.Parent;
               RoleMap roleMap = (RoleMap)parent.Tag;
-              mappingItem.GraphMap.DeleteRoleMap(mappingItem.TemplateMap, roleMap.RoleId);
+              mappingItem.GraphMap.DeleteRoleMap(mappingItem.TemplateMap, roleMap.roleId);
 
               parent.Items.Clear();
               parent.IsExpanded = false;
               mappingItem.ClassMap = null;
 
-              if (!parent.itemTextBlock.Text.EndsWith(Presenter.unmappedToken) && roleMap.Value == string.Empty)
+              if (!parent.itemTextBlock.Text.EndsWith(Presenter.unmappedToken) && roleMap.value == string.Empty)
               {
                 parent.itemTextBlock.Text += Presenter.unmappedToken;
               }
@@ -969,7 +969,7 @@ namespace org.iringtools.modules.memappingregion
           case NodeType.ValueList:
             {
               ValueListMap valueListMap = (ValueListMap)mappingItem.Tag;
-              mapping.ValueListMaps.Remove(valueListMap);
+              mapping.valueListMaps.Remove(valueListMap);
               tvwValues.Items.Remove(mappingItem);
               break;
             }
@@ -980,7 +980,7 @@ namespace org.iringtools.modules.memappingregion
               ValueMap valueMap = (ValueMap)mappingItem.Tag;
               ValueListMap valueListMap = (ValueListMap)parentMap.Tag;
 
-              valueListMap.ValueMaps.Remove(valueMap);
+              valueListMap.valueMaps.Remove(valueMap);
               parentMap.Items.Remove(mappingItem);
               break;
             }

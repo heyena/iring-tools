@@ -31,8 +31,8 @@ using System.Xml.Serialization;
 using System.ServiceModel;
 using System.Linq;
 using org.iringtools.library;
-using org.iringtools.library.manifest;
-using org.iringtools.common.mapping;
+using org.iringtools.dxfr.manifest;
+using org.iringtools.mapping;
 
 namespace org.iringtools.adapter
 {
@@ -116,17 +116,17 @@ namespace org.iringtools.adapter
       {
         foreach (TemplateObject templateObject in templateObjects)
         {
-          if (templateObject.templateId == templateMap.TemplateId)
+          if (templateObject.templateId == templateMap.templateId)
           {
             int roleIdsMatchedCount = 0;
 
-            foreach (RoleMap roleMap in templateMap.RoleMaps)
+            foreach (RoleMap roleMap in templateMap.roleMaps)
             {
               foreach (RoleObject roleObject in templateObject.roleObjects)
               {
-                if (roleObject.roleId == roleMap.RoleId)
+                if (roleObject.roleId == roleMap.roleId)
                 {
-                  if (roleMap.Type == RoleType.Reference && roleMap.ClassMap == null && roleMap.Value == roleObject.value)
+                  if (roleMap.type == RoleType.Reference && roleMap.classMap == null && roleMap.value == roleObject.value)
                     return templateObject;
 
                   roleIdsMatchedCount++;
@@ -135,7 +135,7 @@ namespace org.iringtools.adapter
               }
             }
 
-            if (roleIdsMatchedCount == templateMap.RoleMaps.Count)
+            if (roleIdsMatchedCount == templateMap.roleMaps.Count)
             {
               theTemplateObject = templateObject;
             }

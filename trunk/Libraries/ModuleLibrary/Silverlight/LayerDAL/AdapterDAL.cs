@@ -13,7 +13,7 @@ using org.ids_adi.qxf;
 using System.IO;
 using System.ComponentModel;
 using org.iringtools.library;
-using org.iringtools.common.mapping;
+using org.iringtools.mapping;
 
 namespace org.iringtools.modulelibrary.layerdal
 {
