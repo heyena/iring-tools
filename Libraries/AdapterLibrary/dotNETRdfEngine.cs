@@ -21,7 +21,7 @@ using System.Xml.Linq;
 using Microsoft.ServiceModel.Web;
 using System.Text.RegularExpressions;
 using org.w3.sparql_results;
-using org.iringtools.common.mapping;
+using org.iringtools.mapping;
 
 namespace org.iringtools.adapter.semantic
 {

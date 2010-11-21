@@ -11,8 +11,8 @@ using System.IO;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using org.iringtools.exchange;
-using org.iringtools.common.mapping;
-using org.iringtools.library.manifest;
+using org.iringtools.mapping;
+using org.iringtools.dxfr.manifest;
 using System.Collections.Specialized;
 using System.Web;
 

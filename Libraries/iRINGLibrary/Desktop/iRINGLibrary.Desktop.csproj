@@ -112,6 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdapterSettings.cs" />
+    <Compile Include="MappingExtensions.cs" />
     <Compile Include="DataObjects.cs" />
     <Compile Include="DataProviders.cs" />
     <Compile Include="DataRelationships.cs" />
@@ -125,7 +126,6 @@
     <Compile Include="PushRequest.cs" />
     <Compile Include="Queries.cs" />
     <Compile Include="ScopeApplication.cs" />
-    <Compile Include="Mapping.cs" />
     <Compile Include="ScopeProject.cs" />
     <Compile Include="ScopeList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

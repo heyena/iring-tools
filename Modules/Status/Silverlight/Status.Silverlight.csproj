@@ -102,6 +102,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\ExternalBinaries\CompositeApplicationLibrary\Silverlight\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows" />
     <Reference Include="mscorlib" />
     <Reference Include="system" />
@@ -181,7 +182,7 @@
       <FlavorProperties GUID="{A1591282-1198-4647-A2B1-27E5FF5F6F3B}">
         <SilverlightProjectProperties />
       </FlavorProperties>
-      <UserProperties ProjectLinkReference="ca67d2a8-6e80-44b4-a331-78577278ba9e" ProjectLinkerExcludeFilter="\\?desktop(\\.*)?$;\\?silverlight(\\.*)?$;\.desktop;\.silverlight;\.xaml;^service references(\\.*)?$;\.clientconfig;^web references(\\.*)?$" />
+      <UserProperties ProjectLinkerExcludeFilter="\\?desktop(\\.*)?$;\\?silverlight(\\.*)?$;\.desktop;\.silverlight;\.xaml;^service references(\\.*)?$;\.clientconfig;^web references(\\.*)?$" ProjectLinkReference="ca67d2a8-6e80-44b4-a331-78577278ba9e" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

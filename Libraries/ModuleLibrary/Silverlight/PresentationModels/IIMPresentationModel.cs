@@ -10,7 +10,7 @@ using org.iringtools.informationmodel.usercontrols;
 using System.Windows.Controls;
 using org.iringtools.modulelibrary.usercontrols;
 using org.iringtools.library;
-using org.iringtools.common.mapping;
+using org.iringtools.mapping;
 
 namespace org.iringtools.ontologyservice.presentation.presentationmodels
 {

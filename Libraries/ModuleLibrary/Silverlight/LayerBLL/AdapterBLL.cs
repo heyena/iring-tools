@@ -9,7 +9,7 @@ using Microsoft.Practices.Composite.Events;
 using org.iringtools.library.presentation.events;
 using org.iringtools.informationmodel.events;
 using org.iringtools.library;
-using org.iringtools.common.mapping;
+using org.iringtools.mapping;
 
 namespace org.iringtools.modulelibrary.layerbll
 {

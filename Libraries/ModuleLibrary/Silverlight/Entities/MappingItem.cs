@@ -3,7 +3,7 @@ using System.Windows;
 using org.iringtools.informationmodel.usercontrols;
 using org.iringtools.modulelibrary.types;
 using org.iringtools.library;
-using org.iringtools.common.mapping;
+using org.iringtools.mapping;
 
 namespace org.iringtools.modulelibrary.entities
 {

@@ -22,8 +22,8 @@ using org.iringtools.library;
 #if SILVERLIGHT
 using System.Windows.Input;
 using org.iringtools.utility;
-using org.iringtools.common.mapping;
-using org.iringtools.library.manifest;
+using org.iringtools.mapping;
+using org.iringtools.dxfr.manifest;
 #else
 #endif
 
@@ -188,23 +188,23 @@ namespace org.iringtools.modules.memappingregion
     internal void PopulateTreeViewMapping(Mapping mapping)
     {
       tvwMapping.Items.Clear();
-      foreach (GraphMap graphMap in mapping.GraphMaps)
+      foreach (GraphMap graphMap in mapping.graphMaps)
       {
-        tvwMapping.Items.Add(AddNode(graphMap.Name, graphMap, null));
+        tvwMapping.Items.Add(AddNode(graphMap.name, graphMap, null));
       }
     }
 
     internal void PopulateTreeViewValueLists(Mapping mapping)
     {
       tvwValues.Items.Clear();
-      foreach (ValueListMap valueListMap in mapping.ValueListMaps)
+      foreach (ValueListMap valueListMap in mapping.valueListMaps)
       {
-        MappingItem nodeValueList = AddNode(valueListMap.Name, valueListMap, null);
+        MappingItem nodeValueList = AddNode(valueListMap.name, valueListMap, null);
         tvwValues.Items.Add(nodeValueList);
 
-        foreach (ValueMap valueMap in valueListMap.ValueMaps)
+        foreach (ValueMap valueMap in valueListMap.valueMaps)
         {
-          nodeValueList.Items.Add(AddNode(valueMap.Uri, valueMap, nodeValueList));
+          nodeValueList.Items.Add(AddNode(valueMap.uri, valueMap, nodeValueList));
         }
       }
     }
@@ -227,7 +227,7 @@ namespace org.iringtools.modules.memappingregion
           MappingItem mappingItem = (MappingItem)e.UserState;
           ValueMap valueMap = (ValueMap)mappingItem.Tag;
 
-          mappingItem.SetTextBlockText(label + " [" + valueMap.InternalValue + "]");
+          mappingItem.SetTextBlockText(label + " [" + valueMap.internalValue + "]");
         }
         else
         {
@@ -268,10 +268,10 @@ namespace org.iringtools.modules.memappingregion
         {
           GraphMap graph = (GraphMap)selectedNode.Tag;
 
-          KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Graph Name", graph.Name);
+          KeyValuePair<string, string> keyValuePair = new KeyValuePair<string, string>("Graph Name", graph.name);
           model.DetailProperties.Add(keyValuePair);
 
-          keyValuePair = new KeyValuePair<string, string>("DataObject Name", graph.DataObjectName);
+          keyValuePair = new KeyValuePair<string, string>("DataObject Name", graph.dataObjectName);
           model.DetailProperties.Add(keyValuePair);
           //}
         }
@@ -311,14 +311,14 @@ namespace org.iringtools.modules.memappingregion
       {
         KeyValuePair<string, string> keyValuePair;
 
-        keyValuePair = new KeyValuePair<string, string>("Class Id", classMap.ClassId);
+        keyValuePair = new KeyValuePair<string, string>("Class Id", classMap.classId);
         model.DetailProperties.Add(keyValuePair);
-        foreach (string identifier in classMap.Identifiers)
+        foreach (string identifier in classMap.identifiers)
         {
           keyValuePair = new KeyValuePair<string, string>("Identifier", identifier);
           model.DetailProperties.Add(keyValuePair);
         }
-        string id = Utility.GetIdFromURI(classMap.ClassId);
+        string id = Utility.GetIdFromURI(classMap.classId);
         if (model.IdLabelDictionary.ContainsKey(id))
         {
           model.DetailProperties.Add(new KeyValuePair<string, string>("Class Name", model.IdLabelDictionary[id]));
@@ -341,11 +341,11 @@ namespace org.iringtools.modules.memappingregion
       {
         KeyValuePair<string, string> keyValuePair;
 
-        keyValuePair = new KeyValuePair<string, string>("Template Name", templateMap.Name);
+        keyValuePair = new KeyValuePair<string, string>("Template Name", templateMap.name);
         model.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("Template Id", templateMap.TemplateId);
+        keyValuePair = new KeyValuePair<string, string>("Template Id", templateMap.templateId);
         model.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("Template Type", templateMap.TemplateType.ToString());
+        keyValuePair = new KeyValuePair<string, string>("Template Type", templateMap.templateType.ToString());
         model.DetailProperties.Add(keyValuePair);
       }
       catch (Exception ex)
@@ -362,17 +362,17 @@ namespace org.iringtools.modules.memappingregion
         model.DetailProperties.Clear();
 
         KeyValuePair<string, string> keyValuePair;
-        keyValuePair = new KeyValuePair<string, string>("Role Type", roleMap.Type.ToString());
+        keyValuePair = new KeyValuePair<string, string>("Role Type", roleMap.type.ToString());
         model.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("Role Name", roleMap.Name);
+        keyValuePair = new KeyValuePair<string, string>("Role Name", roleMap.name);
         model.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("Role Id", roleMap.RoleId);
+        keyValuePair = new KeyValuePair<string, string>("Role Id", roleMap.roleId);
         model.DetailProperties.Add(keyValuePair);
 
-        string referenceId = (roleMap.Value != null ? roleMap.Value : string.Empty);
+        string referenceId = (roleMap.value != null ? roleMap.value : string.Empty);
         keyValuePair = new KeyValuePair<string, string>("Reference Id", referenceId);
         model.DetailProperties.Add(keyValuePair);
-        if (roleMap.Type == RoleType.Reference)
+        if (roleMap.type == RoleType.Reference)
         {
 
           string id = Utility.GetIdFromURI(referenceId);
@@ -385,11 +385,11 @@ namespace org.iringtools.modules.memappingregion
             referenceDataService.GetClassLabel("Reference Name", id, this);
           }
         }
-        keyValuePair = new KeyValuePair<string, string>("Property Name", roleMap.PropertyName);
+        keyValuePair = new KeyValuePair<string, string>("Property Name", roleMap.propertyName);
         model.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("Datatype", roleMap.DataType);
+        keyValuePair = new KeyValuePair<string, string>("Datatype", roleMap.dataType);
         model.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("ValueList Name", roleMap.ValueListName);
+        keyValuePair = new KeyValuePair<string, string>("ValueList Name", roleMap.valueListName);
         model.DetailProperties.Add(keyValuePair);
 
       }
@@ -404,12 +404,12 @@ namespace org.iringtools.modules.memappingregion
     {
       model.DetailProperties.Clear();
       KeyValuePair<string, string> keyValuePair;
-      keyValuePair = new KeyValuePair<string, string>("Internal Value", valueMap.InternalValue);
+      keyValuePair = new KeyValuePair<string, string>("Internal Value", valueMap.internalValue);
       model.DetailProperties.Add(keyValuePair);
-      keyValuePair = new KeyValuePair<string, string>("Referenace Id", valueMap.Uri);
+      keyValuePair = new KeyValuePair<string, string>("Referenace Id", valueMap.uri);
       model.DetailProperties.Add(keyValuePair);
 
-      string id = Utility.GetIdFromURI(valueMap.Uri);
+      string id = Utility.GetIdFromURI(valueMap.uri);
       if (model.IdLabelDictionary.ContainsKey(id))
       {
         model.DetailProperties.Add(new KeyValuePair<string, string>("Reference Class", model.IdLabelDictionary[id]));
@@ -450,13 +450,13 @@ namespace org.iringtools.modules.memappingregion
           GraphMap graphMap = (GraphMap)tag;
           node.NodeType = NodeType.GraphMap;
           node.GraphMap = graphMap;
-          foreach (ClassTemplateMap classTemplateMap in graphMap.ClassTemplateMaps)
+          foreach (ClassTemplateMap classTemplateMap in graphMap.classTemplateMaps)
           {
-            node.ClassMap = classTemplateMap.ClassMap;
+            node.ClassMap = classTemplateMap.classMap;
             break;
           }
           node.SetImageSource("graph-map.png");
-          node.SetTooltipText("Graph : " + node.GraphMap.Name);
+          node.SetTooltipText("Graph : " + node.GraphMap.name);
           isProcessed = PopulateGraphNode(node, graphMap);
         }
         else if (tag is TemplateMap)
@@ -472,7 +472,7 @@ namespace org.iringtools.modules.memappingregion
           }
           node.TemplateMap = (TemplateMap)tag;
           node.SetImageSource("template-map.png");
-          node.SetTooltipText("Template : " + node.TemplateMap.Name);
+          node.SetTooltipText("Template : " + node.TemplateMap.name);
           isProcessed = PopulateTemplateNode(node, (TemplateMap)tag);
         }
         else if (tag is RoleMap)
@@ -483,7 +483,7 @@ namespace org.iringtools.modules.memappingregion
           node.TemplateMap = (TemplateMap)parent.Tag;
           node.RoleMap = roleMap;
           node.SetImageSource("role-map.png");
-          node.SetTooltipText("Role : " + node.RoleMap.Name);
+          node.SetTooltipText("Role : " + node.RoleMap.name);
           isProcessed = PopulateRoleNode(node, roleMap);
         }
         // ClassMap is the base for the above so we'll
@@ -497,21 +497,21 @@ namespace org.iringtools.modules.memappingregion
           node.TemplateMap = parent.TemplateMap;
           node.RoleMap = (RoleMap)parent.Tag;
           node.SetImageSource("class-map.png");
-          node.SetTooltipText("Class : " + node.ClassMap.Name);
+          node.SetTooltipText("Class : " + node.ClassMap.name);
           PopulateClassNode(node, (ClassMap)tag);
         }
         else if (tag is ValueMap)
         {
           node.NodeType = NodeType.ValueMap;
           node.SetImageSource("value.png");
-          node.SetTooltipText("Value : " + ((ValueMap)tag).InternalValue);
+          node.SetTooltipText("Value : " + ((ValueMap)tag).internalValue);
           isProcessed = PopulateValueNode(node, (ValueMap)tag);
         }
         else if (tag is ValueListMap)
         {
           node.NodeType = NodeType.ValueList;
           node.SetImageSource("valuelist.png");
-          node.SetTooltipText("ValueList : " + ((ValueListMap)tag).Name);
+          node.SetTooltipText("ValueList : " + ((ValueListMap)tag).name);
         }
       }
       catch (Exception ex)
@@ -558,11 +558,11 @@ namespace org.iringtools.modules.memappingregion
         {
           {
             ClassMap selectedClassMap = (ClassMap)selectedNode.ClassMap;
-            ClassTemplateMap classTemplateMap = selectedNode.GraphMap.GetClassTemplateMap(selectedClassMap.ClassId);
+            ClassTemplateMap classTemplateMap = selectedNode.GraphMap.GetClassTemplateMap(selectedClassMap.classId);
 
-            if (classTemplateMap.TemplateMaps != null)
+            if (classTemplateMap.templateMaps != null)
             {
-              foreach (TemplateMap templateMap in classTemplateMap.TemplateMaps)
+              foreach (TemplateMap templateMap in classTemplateMap.templateMaps)
               {
                 isProcessed = PopulateTemplateMap(selectedNode, templateMap);
               }
@@ -579,9 +579,9 @@ namespace org.iringtools.modules.memappingregion
           {
             GraphMap selectedGraphMap = (GraphMap)selectedNode.Tag;
 
-            ClassTemplateMap classTemplateMap = selectedGraphMap.GetClassTemplateMap(selectedNode.ClassMap.ClassId);
+            ClassTemplateMap classTemplateMap = selectedGraphMap.GetClassTemplateMap(selectedNode.ClassMap.classId);
 
-            foreach (TemplateMap templateMap in classTemplateMap.TemplateMaps)
+            foreach (TemplateMap templateMap in classTemplateMap.templateMaps)
             {
               isProcessed = PopulateTemplateMap(selectedNode, templateMap);
             }
@@ -615,10 +615,10 @@ namespace org.iringtools.modules.memappingregion
     {
       try
       {
-        if (graphMap.ClassTemplateMaps != null && graphMap.ClassTemplateMaps.Count > 0)
+        if (graphMap.classTemplateMaps != null && graphMap.classTemplateMaps.Count > 0)
         {
           MappingItem map = new MappingItem();
-          map.Tag = graphMap.ClassTemplateMaps;
+          map.Tag = graphMap.classTemplateMaps;
           map.SetTextBlockText("Stub");
           node.Items.Add(map);
         }
@@ -643,10 +643,10 @@ namespace org.iringtools.modules.memappingregion
     {
       try
       {
-        if (templateMap.RoleMaps != null && templateMap.RoleMaps.Count > 0)
+        if (templateMap.roleMaps != null && templateMap.roleMaps.Count > 0)
         {
           MappingItem map = new MappingItem();
-          map.Tag = templateMap.RoleMaps;
+          map.Tag = templateMap.roleMaps;
           map.SetTextBlockText("Stub");
           node.Items.Add(map);
         }
@@ -670,10 +670,10 @@ namespace org.iringtools.modules.memappingregion
     {
       try
       {
-        if (roleMap.ClassMap != null)
+        if (roleMap.classMap != null)
         {
           MappingItem map = new MappingItem();
-          map.Tag = roleMap.ClassMap;
+          map.Tag = roleMap.classMap;
           map.SetTextBlockText("Stub");
           node.Items.Add(map);
         }
@@ -697,10 +697,10 @@ namespace org.iringtools.modules.memappingregion
     {
       try
       {
-        if (classMap.Identifiers != null && classMap.Identifiers.Count > 0)
+        if (classMap.identifiers != null && classMap.identifiers.Count > 0)
         {
           MappingItem map = new MappingItem();
-          map.Tag = classMap.Identifiers;
+          map.Tag = classMap.identifiers;
           map.SetTextBlockText("Stub");
           node.Items.Add(map);
         }
@@ -724,7 +724,7 @@ namespace org.iringtools.modules.memappingregion
     {
       try
       {
-        MappingItem newNode = AddNode(templateMap.Name, templateMap, node);
+        MappingItem newNode = AddNode(templateMap.name, templateMap, node);
         node.Items.Add(newNode);
         return true;
       }
@@ -746,17 +746,17 @@ namespace org.iringtools.modules.memappingregion
     {
       try
       {
-        string roleName = roleMap.Name;
+        string roleName = roleMap.name;
 
-        if (!roleMap.IsMapped && (
-          roleMap.Type == RoleType.Property ||
-          roleMap.Type == RoleType.DataProperty ||
-          roleMap.Type == RoleType.ObjectProperty
+        if (!roleMap.IsMapped() && (
+          roleMap.type == RoleType.Property ||
+          roleMap.type == RoleType.DataProperty ||
+          roleMap.type == RoleType.ObjectProperty
           ))
         {
           roleName += unmappedToken;
         }
-        else if (!roleMap.IsMapped && (roleMap.Type == RoleType.Reference))
+        else if (!roleMap.IsMapped() && (roleMap.type == RoleType.Reference))
         {
           roleName += unmappedToken;
         }
@@ -781,7 +781,7 @@ namespace org.iringtools.modules.memappingregion
     /// <returns></returns>
     private bool PopulateValueNode(MappingItem node, ValueMap valueMap)
     {
-      referenceDataService.GetClassLabel("Update Text", valueMap.Uri, node);
+      referenceDataService.GetClassLabel("Update Text", valueMap.uri, node);
 
       return true;
     }
@@ -796,7 +796,7 @@ namespace org.iringtools.modules.memappingregion
     {
       try
       {
-        MappingItem newNode = AddNode(classMap.Name, classMap, node);
+        MappingItem newNode = AddNode(classMap.name, classMap, node);
         node.Items.Add(newNode);
         return true;
       }

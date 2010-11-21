@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010, ids-adi.org /////////////////////////////////////////////
+﻿// Copyright (c) 2009, ids-adi.org /////////////////////////////////////////////
 // All rights reserved.
 //------------------------------------------------------------------------------
 // Redistribution and use in source and binary forms, with or without
@@ -25,188 +25,886 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 using System.Runtime.Serialization;
-using System.Collections.ObjectModel;
-using System.Collections.Generic;
-using System;
-using org.iringtools.common.mapping;
 
-namespace org.iringtools.library.manifest
+namespace org.iringtools.dxfr.manifest
 {
-  [DataContract(Namespace = "http://www.iringtools.org/protocol/manifest", Name = "manifest")]
-  public class Manifest : RootBase
+  [System.Runtime.Serialization.DataContractAttribute(Name = "manifest", Namespace = "http://www.iringtools.org/dxfr/manifest")]
+  public partial class Manifest
   {
-    public Manifest()
-    {
-      Graphs = new List<Graph>();
-    }
+    private org.iringtools.dxfr.manifest.Graphs graphsField;
 
-    [DataMember(Name = "graphs", Order = 1, EmitDefaultValue = false)]
-    public List<Graph> Graphs { get; set; }
+    private string versionField;
 
-    public Graph FindGraph(string graphName)
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    public org.iringtools.dxfr.manifest.Graphs graphs
     {
-      foreach (Graph graph in Graphs)
+      get
       {
-        if (graph.Name.ToLower() == graphName.ToLower())
-        {
-          if (graph.ClassTemplatesList.Count == 0)
-            throw new Exception("Graph [" + graphName + "] is empty.");
-
-          return graph;
-        }
+        return this.graphsField;
       }
-
-      throw new Exception("Graph [" + graphName + "] does not exist.");
+      set
+      {
+        this.graphsField = value;
+      }
     }
-  }
 
-  [DataContract(Namespace = "http://www.iringtools.org/protocol/manifest", Name = "graph")]
-  public class Graph : GraphBase
-  {
-    public Graph()
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    public string version
     {
-      ClassTemplatesList = new List<ClassTemplates>();
+      get
+      {
+        return this.versionField;
+      }
+      set
+      {
+        this.versionField = value;
+      }
     }
-
-    [DataMember(Name = "classTemplateList", Order = 1, EmitDefaultValue = false)]
-    public List<ClassTemplates> ClassTemplatesList { get; set; }
   }
 
-  [DataContract(Namespace = "http://www.iringtools.org/protocol/manifest", Name = "classTemplates")]
-  public class ClassTemplates
+  [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "graphs", Namespace = "http://www.iringtools.org/dxfr/manifest", ItemName = "graph")]
+  public class Graphs : System.Collections.Generic.List<org.iringtools.dxfr.manifest.Graph>
   {
-    public ClassTemplates()
+  }
+
+  [System.Runtime.Serialization.DataContractAttribute(Name = "graph", Namespace = "http://www.iringtools.org/dxfr/manifest")]
+  public partial class Graph
+  {
+    private string nameField;
+
+    private org.iringtools.dxfr.manifest.ClassTemplatesList classTemplatesListField;
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    public string name
     {
-      Templates = new List<Template>();
+      get
+      {
+        return this.nameField;
+      }
+      set
+      {
+        this.nameField = value;
+      }
     }
 
-    [DataMember(Name = "class", Order = 0, EmitDefaultValue = false)]
-    public Class Class { get; set; }
-
-    [DataMember(Name = "templates", Order = 1, EmitDefaultValue = false)]
-    public List<Template> Templates { get; set; }
-  }
-
-  [DataContract(Namespace = "http://www.iringtools.org/protocol/manifest", Name = "class")]
-  public class Class : ClassBase { }
-
-  [DataContract(Namespace = "http://www.iringtools.org/protocol/manifest", Name = "template")]
-  public class Template : TemplateBase
-  {
-    public Template()
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 1)]
+    public org.iringtools.dxfr.manifest.ClassTemplatesList classTemplatesList
     {
-      Roles = new List<Role>();
+      get
+      {
+        return this.classTemplatesListField;
+      }
+      set
+      {
+        this.classTemplatesListField = value;
+      }
+    }
+  }
+
+  [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "classTemplatesList", Namespace = "http://www.iringtools.org/dxfr/manifest", ItemName = "classTemplates")]
+  public class ClassTemplatesList : System.Collections.Generic.List<org.iringtools.dxfr.manifest.ClassTemplates>
+  {
+  }
+
+  [System.Runtime.Serialization.DataContractAttribute(Name = "classTemplates", Namespace = "http://www.iringtools.org/dxfr/manifest")]
+  public partial class ClassTemplates
+  {
+    private org.iringtools.dxfr.manifest.Class classField;
+
+    private org.iringtools.dxfr.manifest.Templates templatesField;
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    public org.iringtools.dxfr.manifest.Class @class
+    {
+      get
+      {
+        return this.classField;
+      }
+      set
+      {
+        this.classField = value;
+      }
     }
 
-    [DataMember(Name = "roles", Order = 1, EmitDefaultValue = false)]
-    public List<Role> Roles { get; set; }
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    public org.iringtools.dxfr.manifest.Templates templates
+    {
+      get
+      {
+        return this.templatesField;
+      }
+      set
+      {
+        this.templatesField = value;
+      }
+    }
   }
 
-  [DataContract(Namespace = "http://www.iringtools.org/protocol/manifest", Name = "role")]
-  public class Role : RoleBase
+  [System.Runtime.Serialization.DataContractAttribute(Name = "class", Namespace = "http://www.iringtools.org/dxfr/manifest")]
+  public partial class Class
   {
-    [DataMember(Name = "class", Order = 5, EmitDefaultValue = false)]
-    public Class Class { get; set; }
+    private string classIdField;
+
+    private string nameField;
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    public string classId
+    {
+      get
+      {
+        return this.classIdField;
+      }
+      set
+      {
+        this.classIdField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    public string name
+    {
+      get
+      {
+        return this.nameField;
+      }
+      set
+      {
+        this.nameField = value;
+      }
+    }
   }
 
-  [DataContract]
-  public enum RoleType
+  [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "templates", Namespace = "http://www.iringtools.org/dxfr/manifest", ItemName = "template")]
+  public class Templates : System.Collections.Generic.List<org.iringtools.dxfr.manifest.Template>
   {
-
-    [EnumMember]
-    Property,
-
-    [EnumMember]
-    Reference,
-
-    [EnumMember]
-    Possessor,
-
-    [EnumMember]
-    FixedValue,
-
-    [EnumMember]
-    DataProperty,
-
-    [EnumMember]
-    ObjectProperty,
   }
 
-  [DataContract]
-  public enum TemplateType
+  [System.Runtime.Serialization.DataContractAttribute(Name = "template", Namespace = "http://www.iringtools.org/dxfr/manifest")]
+  public partial class Template
   {
-    [EnumMember]
-    Qualification,
+    private string templateIdField;
 
-    [EnumMember]
-    Definition
+    private string nameField;
+
+    private org.iringtools.dxfr.manifest.Roles rolesField;
+
+    private org.iringtools.mapping.TransferOption transferOptionField;
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    public string templateId
+    {
+      get
+      {
+        return this.templateIdField;
+      }
+      set
+      {
+        this.templateIdField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 1)]
+    public string name
+    {
+      get
+      {
+        return this.nameField;
+      }
+      set
+      {
+        this.nameField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 2)]
+    public org.iringtools.dxfr.manifest.Roles roles
+    {
+      get
+      {
+        return this.rolesField;
+      }
+      set
+      {
+        this.rolesField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 3)]
+    public org.iringtools.mapping.TransferOption transferOption
+    {
+      get
+      {
+        return this.transferOptionField;
+      }
+      set
+      {
+        this.transferOptionField = value;
+      }
+    }
   }
 
-  [DataContract]
+  [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "roles", Namespace = "http://www.iringtools.org/dxfr/manifest", ItemName = "role")]
+  public class Roles : System.Collections.Generic.List<org.iringtools.dxfr.manifest.Role>
+  {
+  }
+
+  [System.Runtime.Serialization.DataContractAttribute(Name = "role", Namespace = "http://www.iringtools.org/dxfr/manifest")]
+  public partial class Role
+  {
+    private org.iringtools.mapping.RoleType typeField;
+
+    private string roleIdField;
+
+    private string nameField;
+
+    private string dataTypeField;
+
+    private string valueField;
+
+    private org.iringtools.dxfr.manifest.Class classField;
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true)]
+    public org.iringtools.mapping.RoleType type
+    {
+      get
+      {
+        return this.typeField;
+      }
+      set
+      {
+        this.typeField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 1)]
+    public string roleId
+    {
+      get
+      {
+        return this.roleIdField;
+      }
+      set
+      {
+        this.roleIdField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 2)]
+    public string name
+    {
+      get
+      {
+        return this.nameField;
+      }
+      set
+      {
+        this.nameField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 3)]
+    public string dataType
+    {
+      get
+      {
+        return this.dataTypeField;
+      }
+      set
+      {
+        this.dataTypeField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 4)]
+    public string value
+    {
+      get
+      {
+        return this.valueField;
+      }
+      set
+      {
+        this.valueField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 5)]
+    public org.iringtools.dxfr.manifest.Class @class
+    {
+      get
+      {
+        return this.classField;
+      }
+      set
+      {
+        this.classField = value;
+      }
+    }
+  }
+}
+namespace org.iringtools.mapping
+{
+  using System.Runtime.Serialization;
+
+
+  [System.Runtime.Serialization.DataContractAttribute(Name = "transferOption", Namespace = "http://www.iringtools.org/mapping")]
   public enum TransferOption
   {
-    [EnumMember]
+
+    [System.Runtime.Serialization.EnumMemberAttribute()]
     Desired,
 
-    [EnumMember]
+    [System.Runtime.Serialization.EnumMemberAttribute()]
     Required,
   }
 
-  #region base classes
-  [DataContract]
-  public abstract class RootBase
+  [System.Runtime.Serialization.DataContractAttribute(Name = "roleType", Namespace = "http://www.iringtools.org/mapping")]
+  public enum RoleType
   {
-    [DataMember(Name = "version", Order = 0, EmitDefaultValue = false)]
-    public string Version { get; set; }
+    [System.Runtime.Serialization.EnumMemberAttribute()]
+    Property,
+
+    [System.Runtime.Serialization.EnumMemberAttribute()]
+    Possessor,
+
+    [System.Runtime.Serialization.EnumMemberAttribute()]
+    Reference,
+
+    [System.Runtime.Serialization.EnumMemberAttribute()]
+    FixedValue,
+
+    [System.Runtime.Serialization.EnumMemberAttribute()]
+    DataProperty,
+
+    [System.Runtime.Serialization.EnumMemberAttribute()]
+    ObjectProperty,
   }
 
-  [DataContract]
-  public abstract class GraphBase
+  [System.Runtime.Serialization.DataContractAttribute(Name = "mapping", Namespace = "http://www.iringtools.org/mapping")]
+  public partial class Mapping
   {
-    [DataMember(Name = "name", Order = 0, EmitDefaultValue = false)]
-    public string Name { get; set; }
+    private org.iringtools.mapping.GraphMaps graphMapsField;
+
+    private org.iringtools.mapping.ValueListMaps valueListMapsField;
+
+    private string versionField;
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    public org.iringtools.mapping.GraphMaps graphMaps
+    {
+      get
+      {
+        return this.graphMapsField;
+      }
+      set
+      {
+        this.graphMapsField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    public org.iringtools.mapping.ValueListMaps valueListMaps
+    {
+      get
+      {
+        return this.valueListMapsField;
+      }
+      set
+      {
+        this.valueListMapsField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    public string version
+    {
+      get
+      {
+        return this.versionField;
+      }
+      set
+      {
+        this.versionField = value;
+      }
+    }
   }
 
-  [DataContract]
-  public abstract class ClassBase
+  [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "graphMaps", Namespace = "http://www.iringtools.org/mapping", ItemName = "graphMap")]
+  public class GraphMaps : System.Collections.Generic.List<org.iringtools.mapping.GraphMap>
   {
-    [DataMember(Name = "name", Order = 0, EmitDefaultValue = false)]
-    public string Name { get; set; }
-
-    [DataMember(Name = "classId", Order = 1, EmitDefaultValue = false)]
-    public string ClassId { get; set; }
   }
 
-  [DataContract]
-  public abstract class TemplateBase
+  [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "valueListMaps", Namespace = "http://www.iringtools.org/mapping", ItemName = "valueListMaps")]
+  public class ValueListMaps : System.Collections.Generic.List<org.iringtools.mapping.ValueListMap>
   {
-    [DataMember(Name = "name", Order = 0, EmitDefaultValue = false)]
-    public string Name { get; set; }
-
-    [DataMember(Name = "templateId", Order = 1, EmitDefaultValue = false)]
-    public string TemplateId { get; set; }
-
-    [DataMember(Name = "transferOption", Order = 2)]
-    public TransferOption TransferOption { get; set; }
   }
 
-  [DataContract]
-  public abstract class RoleBase
+  [System.Runtime.Serialization.DataContractAttribute(Name = "graphMap", Namespace = "http://www.iringtools.org/mapping")]
+  public partial class GraphMap
   {
-    [DataMember(Name = "name", Order = 0, EmitDefaultValue = false)]
-    public string Name { get; set; }
+    private string nameField;
 
-    [DataMember(Name = "type", Order = 1, EmitDefaultValue = false)]
-    public RoleType Type { get; set; }
+    private org.iringtools.mapping.ClassTemplateMapList classTemplateMapsField;
 
-    [DataMember(Name = "roleId", Order = 2, EmitDefaultValue = false)]
-    public string RoleId { get; set; }
+    private string dataObjectNameField;
 
-    [DataMember(Name = "dataType", Order = 3, EmitDefaultValue = false)]
-    public string DataType { get; set; }
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    public string name
+    {
+      get
+      {
+        return this.nameField;
+      }
+      set
+      {
+        this.nameField = value;
+      }
+    }
 
-    [DataMember(Name = "value", Order = 4, EmitDefaultValue = false)]
-    public string Value { get; set; }
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 1)]
+    public org.iringtools.mapping.ClassTemplateMapList classTemplateMaps
+    {
+      get
+      {
+        return this.classTemplateMapsField;
+      }
+      set
+      {
+        this.classTemplateMapsField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 2)]
+    public string dataObjectName
+    {
+      get
+      {
+        return this.dataObjectNameField;
+      }
+      set
+      {
+        this.dataObjectNameField = value;
+      }
+    }
   }
-  #endregion
+
+  [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "classTemplateMaps", Namespace = "http://www.iringtools.org/mapping", ItemName = "classTemplateMap")]
+  public class ClassTemplateMapList : System.Collections.Generic.List<org.iringtools.mapping.ClassTemplateMap>
+  {
+  }
+
+  [System.Runtime.Serialization.DataContractAttribute(Name = "classTemplateMap", Namespace = "http://www.iringtools.org/mapping")]
+  public partial class ClassTemplateMap
+  {
+    private org.iringtools.mapping.ClassMap classMapField;
+
+    private org.iringtools.mapping.TemplateMaps templateMapsField;
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    public org.iringtools.mapping.ClassMap classMap
+    {
+      get
+      {
+        return this.classMapField;
+      }
+      set
+      {
+        this.classMapField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    public org.iringtools.mapping.TemplateMaps templateMaps
+    {
+      get
+      {
+        return this.templateMapsField;
+      }
+      set
+      {
+        this.templateMapsField = value;
+      }
+    }
+  }
+
+  [System.Runtime.Serialization.DataContractAttribute(Name = "classMap", Namespace = "http://www.iringtools.org/mapping")]
+  public partial class ClassMap
+  {
+    private string nameField;
+
+    private string classIdField;
+
+    private string identifierDelimiterField;
+
+    private org.iringtools.mapping.Identifiers identifiersField;
+
+    private string identifierValueField;
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    public string name
+    {
+      get
+      {
+        return this.nameField;
+      }
+      set
+      {
+        this.nameField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 1)]
+    public string classId
+    {
+      get
+      {
+        return this.classIdField;
+      }
+      set
+      {
+        this.classIdField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 2)]
+    public string identifierDelimiter
+    {
+      get
+      {
+        return this.identifierDelimiterField;
+      }
+      set
+      {
+        this.identifierDelimiterField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 3)]
+    public org.iringtools.mapping.Identifiers identifiers
+    {
+      get
+      {
+        return this.identifiersField;
+      }
+      set
+      {
+        this.identifiersField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 4)]
+    public string identifierValue
+    {
+      get
+      {
+        return this.identifierValueField;
+      }
+      set
+      {
+        this.identifierValueField = value;
+      }
+    }
+  }
+
+  [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "templateMaps", Namespace = "http://www.iringtools.org/mapping", ItemName = "templateMap")]
+  public class TemplateMaps : System.Collections.Generic.List<org.iringtools.mapping.TemplateMap>
+  {
+  }
+
+  [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "identifiers", Namespace = "http://www.iringtools.org/mapping", ItemName = "identifier")]
+  public class Identifiers : System.Collections.Generic.List<string>
+  {
+  }
+
+  [System.Runtime.Serialization.DataContractAttribute(Name = "templateMap", Namespace = "http://www.iringtools.org/mapping")]
+  public partial class TemplateMap
+  {
+    private string templateIdField;
+
+    private org.iringtools.mapping.TemplateType templateTypeField;
+
+    private string nameField;
+
+    private org.iringtools.mapping.RoleMaps roleMapsField;
+
+    private org.iringtools.mapping.TransferOption transferOptionField;
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    public string templateId
+    {
+      get
+      {
+        return this.templateIdField;
+      }
+      set
+      {
+        this.templateIdField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true)]
+    public org.iringtools.mapping.TemplateType templateType
+    {
+      get
+      {
+        return this.templateTypeField;
+      }
+      set
+      {
+        this.templateTypeField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 2)]
+    public string name
+    {
+      get
+      {
+        return this.nameField;
+      }
+      set
+      {
+        this.nameField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 3)]
+    public org.iringtools.mapping.RoleMaps roleMaps
+    {
+      get
+      {
+        return this.roleMapsField;
+      }
+      set
+      {
+        this.roleMapsField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 4)]
+    public org.iringtools.mapping.TransferOption transferOption
+    {
+      get
+      {
+        return this.transferOptionField;
+      }
+      set
+      {
+        this.transferOptionField = value;
+      }
+    }
+  }
+
+  [System.Runtime.Serialization.DataContractAttribute(Name = "TemplateType", Namespace = "http://www.iringtools.org/mapping")]
+  public enum TemplateType
+  {
+
+    [System.Runtime.Serialization.EnumMemberAttribute()]
+    Qualification,
+
+    [System.Runtime.Serialization.EnumMemberAttribute()]
+    Definition,
+  }
+
+  [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "roleMaps", Namespace = "http://www.iringtools.org/mapping", ItemName = "roleMap")]
+  public class RoleMaps : System.Collections.Generic.List<org.iringtools.mapping.RoleMap>
+  {
+  }
+
+  [System.Runtime.Serialization.DataContractAttribute(Name = "roleMap", Namespace = "http://www.iringtools.org/mapping")]
+  public partial class RoleMap
+  {
+    private org.iringtools.mapping.RoleType typeField;
+
+    private string roleIdField;
+
+    private string nameField;
+
+    private string dataTypeField;
+
+    private string valueField;
+
+    private string propertyNameField;
+
+    private string valueListNameField;
+
+    private org.iringtools.mapping.ClassMap classMapField;
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true)]
+    public org.iringtools.mapping.RoleType type
+    {
+      get
+      {
+        return this.typeField;
+      }
+      set
+      {
+        this.typeField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 1)]
+    public string roleId
+    {
+      get
+      {
+        return this.roleIdField;
+      }
+      set
+      {
+        this.roleIdField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 2)]
+    public string name
+    {
+      get
+      {
+        return this.nameField;
+      }
+      set
+      {
+        this.nameField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 3)]
+    public string dataType
+    {
+      get
+      {
+        return this.dataTypeField;
+      }
+      set
+      {
+        this.dataTypeField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 4)]
+    public string value
+    {
+      get
+      {
+        return this.valueField;
+      }
+      set
+      {
+        this.valueField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 5)]
+    public string propertyName
+    {
+      get
+      {
+        return this.propertyNameField;
+      }
+      set
+      {
+        this.propertyNameField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 6)]
+    public string valueListName
+    {
+      get
+      {
+        return this.valueListNameField;
+      }
+      set
+      {
+        this.valueListNameField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 7)]
+    public org.iringtools.mapping.ClassMap classMap
+    {
+      get
+      {
+        return this.classMapField;
+      }
+      set
+      {
+        this.classMapField = value;
+      }
+    }
+  }
+
+  [System.Runtime.Serialization.DataContractAttribute(Name = "valueListMap", Namespace = "http://www.iringtools.org/mapping")]
+  public partial class ValueListMap
+  {
+    private string nameField;
+
+    private org.iringtools.mapping.ValueMaps valueMapsField;
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    public string name
+    {
+      get
+      {
+        return this.nameField;
+      }
+      set
+      {
+        this.nameField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    public org.iringtools.mapping.ValueMaps valueMaps
+    {
+      get
+      {
+        return this.valueMapsField;
+      }
+      set
+      {
+        this.valueMapsField = value;
+      }
+    }
+  }
+
+  [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "valueMaps", Namespace = "http://www.iringtools.org/mapping", ItemName = "valueMap")]
+  public class ValueMaps : System.Collections.Generic.List<org.iringtools.mapping.ValueMap>
+  {
+  }
+
+  [System.Runtime.Serialization.DataContractAttribute(Name = "valueMap", Namespace = "http://www.iringtools.org/mapping")]
+  public partial class ValueMap
+  {
+    private string internalValueField;
+
+    private string uriField;
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    public string internalValue
+    {
+      get
+      {
+        return this.internalValueField;
+      }
+      set
+      {
+        this.internalValueField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    public string uri
+    {
+      get
+      {
+        return this.uriField;
+      }
+      set
+      {
+        this.uriField = value;
+      }
+    }
+  }
 }

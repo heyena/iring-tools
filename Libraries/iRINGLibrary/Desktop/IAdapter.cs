@@ -29,7 +29,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
-using org.iringtools.common.mapping;
+using org.iringtools.mapping;
 
 #if !SILVERLIGHT
 using System.ServiceModel.Web;

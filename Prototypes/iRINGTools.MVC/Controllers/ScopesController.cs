@@ -9,7 +9,7 @@ using System.Configuration;
 using System.Collections.Specialized;
 
 using org.iringtools.library;
-using org.iringtools.library.manifest;
+//using org.iringtools.library.manifest;
 using org.iringtools.utility;
 using org.iringtools.client.Models;
 using System.Runtime.Serialization;
@@ -17,6 +17,7 @@ using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using System.Xml;
 using System.ServiceModel;
+using org.iringtools.mapping;
 
 namespace org.iringtools.client.Controllers
 {

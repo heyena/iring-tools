@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
 using org.iringtools.library;
-using org.iringtools.library.manifest;
+using org.iringtools.dxfr.manifest;
 using org.iringtools.adapter;
 
 namespace org.iringtools.adapter

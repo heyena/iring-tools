@@ -38,7 +38,7 @@ using org.iringtools.utility;
 using org.iringtools.adapter;
 using StaticDust.Configuration;
 using VDS.RDF.Query;
-using org.iringtools.common.mapping;
+using org.iringtools.mapping;
 using System.ServiceModel;
 using System.Security.Principal;
 
@@ -398,9 +398,9 @@ namespace org.iringtools.facade
 
         DateTime start = DateTime.Now;
 
-        foreach (GraphMap graphMap in _mapping.GraphMaps)
+        foreach (GraphMap graphMap in _mapping.graphMaps)
         {
-          _response.Append(Refresh(graphMap.Name));
+          _response.Append(Refresh(graphMap.name));
         }
 
         DateTime end = DateTime.Now;
@@ -428,9 +428,9 @@ namespace org.iringtools.facade
       _dataObjects.Clear();
 
       if (identifiers != null)
-        _dataObjects = _dataLayer.Get(_graphMap.DataObjectName, identifiers);
+        _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
       else
-        _dataObjects = _dataLayer.Get(_graphMap.DataObjectName, null);
+        _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, null);
     }
 
     public Response DeleteAll(string projectName, string applicationName)
@@ -445,9 +445,9 @@ namespace org.iringtools.facade
 
         _semanticEngine = _kernel.Get<ISemanticLayer>("dotNetRDF");
 
-        foreach (GraphMap graphMap in _mapping.GraphMaps)
+        foreach (GraphMap graphMap in _mapping.graphMaps)
         {
-          _response.Append(_semanticEngine.Delete(graphMap.Name));
+          _response.Append(_semanticEngine.Delete(graphMap.name));
         }
       }
       catch (Exception ex)

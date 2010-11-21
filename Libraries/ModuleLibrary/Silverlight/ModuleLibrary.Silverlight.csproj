@@ -129,9 +129,6 @@
     <Compile Include="..\..\..\Libraries\iRINGLibrary\Desktop\DataDictionary.cs">
       <Link>Entities\DataDictionary.cs</Link>
     </Compile>
-    <Compile Include="..\..\..\Libraries\iRINGLibrary\Desktop\Mapping.cs">
-      <Link>Entities\Mapping.cs</Link>
-    </Compile>
     <Compile Include="..\..\..\Libraries\iRINGLibrary\Desktop\QMXF.cs">
       <Link>Entities\QMXF.cs</Link>
     </Compile>
@@ -155,6 +152,9 @@
     </Compile>
     <Compile Include="..\..\iRINGLibrary\Desktop\Manifest.cs">
       <Link>Entities\Manifest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\iRINGLibrary\Desktop\MappingExtensions.cs">
+      <Link>Extensions\MappingExtensions.cs</Link>
     </Compile>
     <Compile Include="..\..\iRINGLibrary\Desktop\Queries.cs">
       <Link>Entities\Queries.cs</Link>

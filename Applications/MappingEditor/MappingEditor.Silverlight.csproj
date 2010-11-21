@@ -76,6 +76,7 @@
       <HintPath>..\..\ExternalBinaries\CompositeApplicationLibrary\Silverlight\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows" />
     <Reference Include="system" />
     <Reference Include="System.Core" />

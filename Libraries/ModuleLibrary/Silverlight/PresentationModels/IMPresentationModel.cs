@@ -11,7 +11,7 @@ using org.ids_adi.qmxf;
 using org.iringtools.informationmodel.usercontrols;
 using org.iringtools.modulelibrary.usercontrols;
 using org.iringtools.library;
-using org.iringtools.common.mapping;
+using org.iringtools.mapping;
 
 
 namespace org.iringtools.ontologyservice.presentation
