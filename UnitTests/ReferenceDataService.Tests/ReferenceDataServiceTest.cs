@@ -40,7 +40,7 @@ namespace ReferenceDataService.Tests
     public void GetRepositoriesTest()
     {
       ReferenceDataProxy target = new ReferenceDataProxy();
-      List<Repository> actual = target.GetRepositories();
+      Repositories actual = target.GetRepositories();
       Assert.AreNotEqual(0, actual.Count);
     }
 

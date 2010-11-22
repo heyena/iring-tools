@@ -116,7 +116,8 @@ namespace RdfImportExport
 
       Graph workGraph = new Graph();
       FileLoader.Load(workGraph, rdfFullFilename);
-      workGraph.BaseUri = new Uri(graphUri);
+      if (graphUri != null && graphUri != String.Empty)
+        workGraph.BaseUri = new Uri(graphUri);
 
       msStore.SaveGraph(workGraph);
       msStore.Dispose();

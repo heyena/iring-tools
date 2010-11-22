@@ -157,7 +157,7 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
             return;
           }
           object obj = args.Data;
-          foreach (Repository repository in (List<Repository>)obj)
+          foreach (Repository repository in (Repositories)obj)
           {
             string label = repository.Name;
             if (repository.IsReadOnly)

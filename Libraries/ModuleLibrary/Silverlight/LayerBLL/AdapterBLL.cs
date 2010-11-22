@@ -259,9 +259,9 @@ namespace org.iringtools.modulelibrary.layerbll
       get { return dal.GetAdapterServiceUri; }
     }
 
-    public string GetGraphBaseUri
+    public string GetBaseAddress
     {
-      get { return dal.GetGraphBaseUri; }
+      get { return dal.GetBaseAddress; }
     }
     #endregion
   }

@@ -57,7 +57,7 @@ namespace org.iringtools.refdata
         
         private WebProxyCredentials _proxyCredentials = null;
 
-        private List<Repository> _repositories = null;
+        private Repositories _repositories = null;
 
         private Queries _queries = null;
 
@@ -99,7 +99,7 @@ namespace org.iringtools.refdata
                 _queries = Utility.Read<Queries>(queriesPath);
 
                 string repositoriesPath = _settings["XmlPath"] + REPOSITORIES_FILE_NAME;
-                _repositories = Utility.Read<List<Repository>>(repositoriesPath);
+                _repositories = Utility.Read<Repositories>(repositoriesPath);
 
                 _response = new Response();
                 _kernel.Bind<Response>().ToConstant(_response);
@@ -110,11 +110,11 @@ namespace org.iringtools.refdata
             }
         }
 
-        public List<Repository> GetRepositories()
+        public Repositories GetRepositories()
         {
             try
             {
-                List<Repository> repositories;
+                Repositories repositories;
 
                 repositories = _repositories;
 

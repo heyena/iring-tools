@@ -131,6 +131,7 @@
     <Content Include="XML\Queries.xml">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="XML\Repositories_Default.xml" />
     <None Include="App_Data\config.ttl" />
     <None Include="App_Data\default.rq" />
     <None Include="Web.config">
