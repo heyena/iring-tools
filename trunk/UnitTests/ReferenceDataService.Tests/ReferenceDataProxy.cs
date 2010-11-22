@@ -39,7 +39,7 @@ namespace ReferenceDataService.Tests
       _referenceDataServiceProvider = new ReferenceDataProvider(settings);
     }
 
-    public List<Repository> GetRepositories()
+    public Repositories GetRepositories()
     {
       return _referenceDataServiceProvider.GetRepositories();
     }

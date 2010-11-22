@@ -5,6 +5,11 @@ using System;
 
 namespace org.iringtools.library
 {
+  [CollectionDataContract(Namespace = "http://www.iringtools.org/library", Name = "repositories", ItemName = "repository")]
+  public class Repositories : List<Repository>
+  {
+  }
+
   [DataContract(Namespace = "http://www.iringtools.org/library", Name = "repository")]
   public class Repository
   {

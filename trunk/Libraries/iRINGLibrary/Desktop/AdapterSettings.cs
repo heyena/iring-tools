@@ -20,20 +20,6 @@ namespace org.iringtools.adapter
       this.Add("dotNetRDFPassword", "dotNetRDF");
       this.Add("TrimData", "False");
       this.Add("ExecutingAssemblyName", "App_Code");
-
-      if (OperationContext.Current != null)
-      {
-        string baseAddress = OperationContext.Current.Host.BaseAddresses[0].ToString();
-
-        if (!baseAddress.EndsWith("/"))
-            baseAddress = baseAddress + "/";
-
-        this.Add("GraphBaseUri", baseAddress);
-      }
-      else
-      {
-        this.Add("GraphBaseUri", @"http://yourcompany.com/");
-      }
     }
 
     //Append Scope specific {projectName}.{appName}.config settings.
@@ -41,7 +27,7 @@ namespace org.iringtools.adapter
     {
       foreach (string key in settings.Keys)
       {
-        if (key.Equals("GraphBaseUri"))
+        if (key.Equals("BaseAddress"))
         {
           string baseAddress = settings[key].ToString();
           

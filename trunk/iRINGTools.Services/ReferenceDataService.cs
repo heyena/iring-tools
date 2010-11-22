@@ -69,7 +69,7 @@ namespace org.iringtools.services
     /// </summary>
     [Description("Gets configured repositories.")]
     [WebGet(UriTemplate = "/repositories")]
-    public List<Repository> GetRepositories()
+    public Repositories GetRepositories()
     {
       return _referenceDataProvider.GetRepositories();
     }

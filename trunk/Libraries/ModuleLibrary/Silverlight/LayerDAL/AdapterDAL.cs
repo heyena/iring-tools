@@ -66,7 +66,7 @@ namespace org.iringtools.modulelibrary.layerdal
       {
 
         _adapterServiceUri = config.AdapterServiceUri;
-        _graphBaseUri = config.GraphBaseUri;
+        _graphBaseUri = config.BaseAddress;
 
         // Instantiate Adapter Service using baseclass 
         // properties
@@ -506,6 +506,6 @@ namespace org.iringtools.modulelibrary.layerdal
 
     public string GetAdapterServiceUri { get { return _adapterServiceUri; } }
 
-    public string GetGraphBaseUri { get { return _graphBaseUri; } }
+    public string GetBaseAddress { get { return _graphBaseUri; } }
   }
 }

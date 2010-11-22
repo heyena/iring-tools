@@ -38,7 +38,7 @@ namespace org.iringtools.adapter.projection
       try
       {
         _appNamespace = String.Format("{0}{1}/{2}",
-           _settings["GraphBaseUri"],
+           _settings["BaseAddress"],
            HttpUtility.UrlEncode(_settings["ProjectName"]),
            HttpUtility.UrlEncode(_settings["ApplicationName"])
          );

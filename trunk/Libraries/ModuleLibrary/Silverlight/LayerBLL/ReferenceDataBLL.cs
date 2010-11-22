@@ -166,7 +166,7 @@ namespace org.iringtools.modulelibrary.layerbll
     /// get configured repositories
     /// </summary>
     /// <returns></returns>
-    public List<Repository> GetRepositories()
+    public Repositories GetRepositories()
     {        
        StartService("GetRepositories");
        return dal.GetRepositories();

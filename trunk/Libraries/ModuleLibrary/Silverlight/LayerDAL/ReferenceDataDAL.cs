@@ -143,7 +143,7 @@ namespace org.iringtools.modulelibrary.layerdal
               try
               {
                   string result = ((DownloadStringCompletedEventArgs)e).Result;
-                  List<Repository> repositories = result.DeserializeDataContract<List<Repository>>();
+                  Repositories repositories = result.DeserializeDataContract<Repositories>();
 
                   if (repositories == null)
                       return;
@@ -624,7 +624,7 @@ namespace org.iringtools.modulelibrary.layerdal
         //:::::[  ASYNC METHOD CALLS ]::::::::::::::::::::::::::::::::::::::
         #region IReferenceDataService Members
 
-        public List<Repository> GetRepositories()
+        public Repositories GetRepositories()
         {
             _getRepositoriesClient.DownloadStringAsync(new Uri(_referenceDataServiceUri + "/repositories"));
             return null;
