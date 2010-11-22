@@ -95,11 +95,11 @@ namespace org.iringtools.refdata
 
                 _proxyCredentials = _settings.GetWebProxyCredentials();
 
-                string repositoriesPath = _settings["XmlPath"] + REPOSITORIES_FILE_NAME;
-                _repositories = Utility.Read<List<Repository>>(repositoriesPath);
-
                 string queriesPath = _settings["XmlPath"] + QUERIES_FILE_NAME;
                 _queries = Utility.Read<Queries>(queriesPath);
+
+                string repositoriesPath = _settings["XmlPath"] + REPOSITORIES_FILE_NAME;
+                _repositories = Utility.Read<List<Repository>>(repositoriesPath);
 
                 _response = new Response();
                 _kernel.Bind<Response>().ToConstant(_response);
@@ -2809,7 +2809,26 @@ namespace org.iringtools.refdata
                                 #endregion Specialization Description
 
                                 #region Template Description
-                                //nothing here yet
+                                /*sparql += ID + " rdf:type owl:class ; ";
+                                //append description to sparql query
+                                int descrCount = template.description.Count;
+                                if (descrCount == 0)
+                                {
+                                    sparql += " rdfs:label \"" + label + "\"^^xsd:string . ";
+                                }
+                                else
+                                {
+                                    sparql += " rdfs:label \"" + label + "\"^^xsd:string ; ";
+                                }
+                                foreach (Description descr in template.description)
+                                {
+                                    description = descr.value;
+
+                                    if (--descrCount > 0)
+                                        sparql += " rdfs:comment \"" + description + "\"^^xsd:string ; ";
+                                    else
+                                        sparql += " rdfs:comment \"" + description + "\"^^xsd:string . ";
+                                }*/
                                 #endregion Template Description
 
                                 #region Role Descriptions
