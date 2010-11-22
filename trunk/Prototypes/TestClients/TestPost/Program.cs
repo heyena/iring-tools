@@ -33,12 +33,12 @@ namespace TestPost
           Console.ReadKey();
           */
 
-          
-          string qmxfPath = @"..\..\testing-QMXF.xml";
+
+            string qmxfPath = @"..\..\part8QMXF.xml";
           QMXF qmxf = Utility.Read<QMXF>(qmxfPath, true);
 
-          string baseUri = "http://localhost:62460/";
-          string relativeUri = "part8/templates";
+          string baseUri = "http://localhost:54321/refdata/";
+          string relativeUri = "templates";
           WebHttpClient client = new WebHttpClient(baseUri);
           Response response = client.Post<QMXF, Response>(relativeUri, qmxf, true);
 
