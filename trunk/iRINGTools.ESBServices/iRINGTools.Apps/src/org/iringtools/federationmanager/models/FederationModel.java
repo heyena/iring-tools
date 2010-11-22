@@ -1,5 +1,6 @@
 package org.iringtools.federationmanager.models;
 
+
 import org.iringtools.common.response.Response;
 import org.iringtools.refdata.federation.Federation;
 import org.iringtools.refdata.federation.IDGenerators;
@@ -8,18 +9,25 @@ import org.iringtools.refdata.federation.Repositories;
 import org.iringtools.utility.WebClient;
 import org.iringtools.utility.WebClientException;
 
+import com.opensymphony.xwork2.ActionContext;
+
+
+
 public class FederationModel {
 
-	private Federation federation;
+	private Federation federation=null;
+	private String URI;
 
 	public FederationModel() {
-		//TODO: Perform local initialization.
+		try{
+			URI = ActionContext.getContext().getApplication().get("RefDataServiceUri").toString();
+		}catch(Exception e){
+			System.out.println("Exception in RefDataServiceUri :"+e);
+		}
+		federation=null;
 	}
 	
 	public void populate() {
-		//TODO: Get this from a configuration xml
-		String URI = "http://localhost:8080/services/refdata";
-		federation = null;
 
 		try {
 			WebClient webclient = new WebClient(URI);
@@ -32,15 +40,15 @@ public class FederationModel {
 	}
 	
 	public void save() {
-		//TODO: Get this from private member which is populated in constructor.
-		String URI = "http://localhost:8080/services/refdata";
-		federation = null;
-
+		
 		try {
 			WebClient webclient = new WebClient(URI);
 			Response response = webclient.post(Response.class, "/federation", federation);
 			
 			//TODO: Check response for errors/warnings
+			if(response==null){
+				throw new WebClientException("Respose Null");
+			}
 			
 		} catch (WebClientException wce) {
 			System.out.println("WebClientException :" + wce);
