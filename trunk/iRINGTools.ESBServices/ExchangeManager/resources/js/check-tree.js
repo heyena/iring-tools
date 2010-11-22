@@ -338,7 +338,14 @@ function showgrid(response, request,label,nodeid,gridType) {
         	border:false,
         	items:[grid]
         },history_panel]
-    	}]
+    	}],
+		listeners: {
+		beforeclose:function(){
+				if(gridType!='relatedClass'){
+					makeLablenURIS('delete')
+					sendCloseRequest(globalReq,globalLabel);
+				} // send request for delete cache
+		}}
     });
         
     if(gridType=='relatedClass'){
