@@ -15,17 +15,20 @@ import com.opensymphony.xwork2.Action;
 public class FederationController {
 	
 	private FederationModel federation;
+	//TODO: Change this to a Tree
 	private List<ParentTreeNode> federationTree;
 	
 	public FederationController()
 	{
 		federation = new FederationModel();
 	}
-	
+
+	//TODO: Change this to a Tree
 	public void setFederationTree(List<ParentTreeNode> federationTree) {
 		this.federationTree = federationTree;
 	}
 
+	//TODO: Change this to a Tree
 	public List<ParentTreeNode> getFederationTree() {
 		return federationTree;
 	}
@@ -44,6 +47,8 @@ public class FederationController {
 
 	private void generateFederationTree()
 	{
+		//TODO: Add another method to WidgetsUtil to convert Federation to Tree
+		
 		List<ParentTreeNode> tree = new ArrayList<ParentTreeNode>();
 		TreeNode node = new TreeNode();
 		//IDGenerators
@@ -109,7 +114,7 @@ public class FederationController {
 
 	private void readFederationTree()
 	{
-		//TODO: Read FederationTree and fill model.
+		//TODO: Add another method (ToFederation) to WidgetsUtil to convert Tree to Federation
 	}
 
 }
