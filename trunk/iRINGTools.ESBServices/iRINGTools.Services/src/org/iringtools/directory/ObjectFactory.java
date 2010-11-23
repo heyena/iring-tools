@@ -30,35 +30,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Directory }
+     * Create an instance of {@link Graphs }
      * 
      */
-    public Directory createDirectory() {
-        return new Directory();
-    }
-
-    /**
-     * Create an instance of {@link Application }
-     * 
-     */
-    public Application createApplication() {
-        return new Application();
-    }
-
-    /**
-     * Create an instance of {@link ExchangeDefinition }
-     * 
-     */
-    public ExchangeDefinition createExchangeDefinition() {
-        return new ExchangeDefinition();
-    }
-
-    /**
-     * Create an instance of {@link Commodity }
-     * 
-     */
-    public Commodity createCommodity() {
-        return new Commodity();
+    public Graphs createGraphs() {
+        return new Graphs();
     }
 
     /**
@@ -70,27 +46,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Exchanges }
+     * Create an instance of {@link Application }
      * 
      */
-    public Exchanges createExchanges() {
-        return new Exchanges();
-    }
-
-    /**
-     * Create an instance of {@link ApplicationData }
-     * 
-     */
-    public ApplicationData createApplicationData() {
-        return new ApplicationData();
-    }
-
-    /**
-     * Create an instance of {@link DataExchanges }
-     * 
-     */
-    public DataExchanges createDataExchanges() {
-        return new DataExchanges();
+    public Application createApplication() {
+        return new Application();
     }
 
     /**
@@ -102,6 +62,46 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Commodity }
+     * 
+     */
+    public Commodity createCommodity() {
+        return new Commodity();
+    }
+
+    /**
+     * Create an instance of {@link Exchanges }
+     * 
+     */
+    public Exchanges createExchanges() {
+        return new Exchanges();
+    }
+
+    /**
+     * Create an instance of {@link ExchangeDefinition }
+     * 
+     */
+    public ExchangeDefinition createExchangeDefinition() {
+        return new ExchangeDefinition();
+    }
+
+    /**
+     * Create an instance of {@link DataExchanges }
+     * 
+     */
+    public DataExchanges createDataExchanges() {
+        return new DataExchanges();
+    }
+
+    /**
+     * Create an instance of {@link ApplicationData }
+     * 
+     */
+    public ApplicationData createApplicationData() {
+        return new ApplicationData();
+    }
+
+    /**
      * Create an instance of {@link Scope }
      * 
      */
@@ -110,11 +110,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Graphs }
+     * Create an instance of {@link Directory }
      * 
      */
-    public Graphs createGraphs() {
-        return new Graphs();
+    public Directory createDirectory() {
+        return new Directory();
     }
 
 }

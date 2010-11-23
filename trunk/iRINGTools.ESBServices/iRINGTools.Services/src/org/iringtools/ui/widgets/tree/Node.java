@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="cls" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="text" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="icon" type="{http://www.w3.org/2001/XMLSchema}string"/>
@@ -34,6 +35,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Node", propOrder = {
+    "cls",
     "text",
     "id",
     "icon",
@@ -45,6 +47,8 @@ import javax.xml.bind.annotation.XmlType;
 })
 public abstract class Node {
 
+    @XmlElement(required = true, defaultValue = "folder")
+    protected String cls;
     @XmlElement(required = true)
     protected String text;
     @XmlElement(required = true)
@@ -53,6 +57,30 @@ public abstract class Node {
     protected String icon;
     @XmlElement(required = true)
     protected List<Property> properties;
+
+    /**
+     * Gets the value of the cls property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCls() {
+        return cls;
+    }
+
+    /**
+     * Sets the value of the cls property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCls(String value) {
+        this.cls = value;
+    }
 
     /**
      * Gets the value of the text property.

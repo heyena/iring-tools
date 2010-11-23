@@ -30,26 +30,26 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "IDGenerators", propOrder = {
-    "idGenerators"
+    "items"
 })
 public class IDGenerators {
 
     @XmlElement(name = "idGenerator", required = true)
-    protected List<IDGenerator> idGenerators;
+    protected List<IDGenerator> items;
 
     /**
-     * Gets the value of the idGenerators property.
+     * Gets the value of the items property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the idGenerators property.
+     * This is why there is not a <CODE>set</CODE> method for the items property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getIdGenerators().add(newItem);
+     *    getItems().add(newItem);
      * </pre>
      * 
      * 
@@ -59,23 +59,23 @@ public class IDGenerators {
      * 
      * 
      */
-    public List<IDGenerator> getIdGenerators() {
-        if (idGenerators == null) {
-            idGenerators = new ArrayList<IDGenerator>();
+    public List<IDGenerator> getItems() {
+        if (items == null) {
+            items = new ArrayList<IDGenerator>();
         }
-        return this.idGenerators;
+        return this.items;
     }
 
     /**
-     * Sets the value of the idGenerators property.
+     * Sets the value of the items property.
      * 
-     * @param idGenerators
+     * @param items
      *     allowed object is
      *     {@link IDGenerator }
      *     
      */
-    public void setIdGenerators(List<IDGenerator> idGenerators) {
-        this.idGenerators = idGenerators;
+    public void setItems(List<IDGenerator> items) {
+        this.items = items;
     }
 
 }

@@ -30,26 +30,26 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Exchanges", propOrder = {
-    "exchanges"
+    "items"
 })
 public class Exchanges {
 
     @XmlElement(name = "exchange", required = true)
-    protected List<Exchange> exchanges;
+    protected List<Exchange> items;
 
     /**
-     * Gets the value of the exchanges property.
+     * Gets the value of the items property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the exchanges property.
+     * This is why there is not a <CODE>set</CODE> method for the items property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getExchanges().add(newItem);
+     *    getItems().add(newItem);
      * </pre>
      * 
      * 
@@ -59,23 +59,23 @@ public class Exchanges {
      * 
      * 
      */
-    public List<Exchange> getExchanges() {
-        if (exchanges == null) {
-            exchanges = new ArrayList<Exchange>();
+    public List<Exchange> getItems() {
+        if (items == null) {
+            items = new ArrayList<Exchange>();
         }
-        return this.exchanges;
+        return this.items;
     }
 
     /**
-     * Sets the value of the exchanges property.
+     * Sets the value of the items property.
      * 
-     * @param exchanges
+     * @param items
      *     allowed object is
      *     {@link Exchange }
      *     
      */
-    public void setExchanges(List<Exchange> exchanges) {
-        this.exchanges = exchanges;
+    public void setItems(List<Exchange> items) {
+        this.items = items;
     }
 
 }
