@@ -19,7 +19,7 @@ public class DirectoryTreeController extends ActionSupport
     try
     {
       // Directory directory = NetUtil.get(Directory.class, directoryURL));
-      Directory directory = JaxbUtil.read(Directory.class, "C:\\Development\\java\\struts2demo\\WebContent\\WEB-INF\\data\\directory.xml");
+      Directory directory = JaxbUtil.read(Directory.class, "C:\\Users\\rpdecarl\\iring-tools\\Prototypes\\struts2demo\\WebContent\\WEB-INF\\data\\directory.xml");
       directoryTree = WidgetsUtil.toTree(directory);
     }
     catch (Exception ex)

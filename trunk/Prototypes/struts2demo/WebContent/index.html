@@ -27,7 +27,6 @@ var dataPane = null;
 
 function loadDirectoryTree() {
   directoryTreePane = new Ext.tree.TreePanel({
-    title: 'Directory',
     region:'center',
     width: 800,
     height: 600,
@@ -149,7 +148,7 @@ Ext.onReady(function(){
       headerPane, {
         region: 'west',
         id: 'west-panel',
-        title: 'Navigation',
+        title: 'Directory',
         split: true,
         width: 260,
         minSize: 175,
