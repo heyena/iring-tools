@@ -12,10 +12,16 @@
   </package>
   
   <package name="jsontest" extends="json-default">
-	  <action name="dti" class="org.iringtools.controllers.DtiGridController" method="execute">
-	    <result type="json">
-	       <param name="root">dtiList</param>
-		  </result>
-	  </action>
+    <action name="directory" class="org.iringtools.controllers.DirectoryTreeController" method="execute">
+      <result type="json">
+        <param name="root">directoryTree.treeNodes</param>
+      </result>
+    </action>
+    
+    <action name="dti" class="org.iringtools.controllers.DtiGridController" method="execute">
+      <result type="json">
+         <param name="root">dtiList</param>
+      </result>
+    </action>
 	</package>
 </struts>
