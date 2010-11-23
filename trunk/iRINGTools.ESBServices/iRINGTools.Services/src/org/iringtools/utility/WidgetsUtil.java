@@ -1,5 +1,6 @@
 package org.iringtools.utility;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.iringtools.directory.Application;
@@ -10,6 +11,10 @@ import org.iringtools.directory.Directory;
 import org.iringtools.directory.Exchange;
 import org.iringtools.directory.Graph;
 import org.iringtools.directory.Scope;
+import org.iringtools.refdata.federation.Federation;
+import org.iringtools.refdata.federation.IDGenerator;
+import org.iringtools.refdata.federation.Namespace;
+import org.iringtools.refdata.federation.Repository;
 import org.iringtools.ui.widgets.tree.LeafNode;
 import org.iringtools.ui.widgets.tree.Node;
 import org.iringtools.ui.widgets.tree.Property;
@@ -119,4 +124,103 @@ public class WidgetsUtil
     
     return tree;
   }
+
+  public static List<Node> federationToTree(Federation federation){
+	  
+	  Tree tree = new Tree();
+	  //List<Tree> tree = new ArrayList<Tree>();
+	  List<Node> treeNodes = tree.getTreeNodes();
+	  WidgetsUtil wdu = new WidgetsUtil();
+	  
+	  TreeNode node = new TreeNode();
+		//IDGenerators
+		node.setId("IDGenerators");
+		node.setText("ID Generators");
+		node.setIcon("");
+		List<Node> children = new ArrayList<Node>();
+		for (IDGenerator idgenerator : federation.getIdGenerators().getIdGenerators())
+		{
+			LeafNode childNode = new LeafNode();
+			childNode.setId(Integer.toString(idgenerator.getId()));
+			childNode.setText(idgenerator.getName());
+			childNode.setIcon("");
+			childNode.setLeaf(true);
+			List<Property> properties = new ArrayList<Property>();
+			properties.add(wdu.setProperty("Name", idgenerator.getName()));
+			properties.add(wdu.setProperty("URI", idgenerator.getUri()));
+			properties.add(wdu.setProperty("Description", idgenerator.getDescription()));
+			
+			childNode.setProperties(properties);
+						
+			children.add(childNode);
+		}
+		node.setChildren(children);
+		treeNodes.add(node);
+		
+		//Namespaces
+		node = new TreeNode();
+		node.setId("Namespaces");
+		node.setText("Namespaces");
+		node.setIcon("");
+		children = new ArrayList<Node>();
+		for (Namespace namespace : federation.getNamespaces().getNamespaces())
+		{
+			LeafNode childNode = new LeafNode();
+			childNode.setId(namespace.getAlias());
+			childNode.setText(namespace.getAlias());
+			childNode.setIcon("");
+			childNode.setLeaf(true);
+			List<Property> properties = new ArrayList<Property>();
+			properties.add(wdu.setProperty("Alias", namespace.getAlias()));
+			properties.add(wdu.setProperty("URI", namespace.getUri()));
+			properties.add(wdu.setProperty("Description", namespace.getDescription()));
+			properties.add(wdu.setProperty("Writable", String.valueOf(namespace.isIsWritable())));
+			properties.add(wdu.setProperty("Id", String.valueOf(namespace.getIdGenerator())));
+						
+			childNode.setProperties(properties);
+						
+			children.add(childNode);
+		}
+		node.setChildren(children);
+		treeNodes.add(node);
+		
+		//Repositories
+		node = new TreeNode();
+		node.setId("Repositories");
+		node.setText("Repositories");
+		node.setIcon("");
+		children = new ArrayList<Node>();
+
+		for (Repository repository : federation.getRepositories().getRepositories())
+		{
+			LeafNode childNode = new LeafNode();
+			childNode.setId(repository.getName());
+			childNode.setText(repository.getName());
+			childNode.setIcon("");
+			childNode.setLeaf(true);
+			List<Property> properties = new ArrayList<Property>();
+			properties.add(wdu.setProperty("URI", repository.getUri()));
+			properties.add(wdu.setProperty("Description", repository.getDescription()));
+			properties.add(wdu.setProperty("Read Only", String.valueOf(repository.isIsReadOnly())));
+			properties.add(wdu.setProperty("Repository Type", repository.getRepositoryType()));
+			properties.add(wdu.setProperty("Update URI", repository.getUpdateUri()));
+			
+			childNode.setProperties(properties);
+						
+			children.add(childNode);
+		}
+		node.setChildren(children);
+		treeNodes.add(node);
+		
+		return treeNodes;
+	  //return tree;
+	  
+  }
+  public Property setProperty(String name, String value){
+		Property prop = new Property();
+		prop.setName(name);
+		prop.setValue(value);
+		return prop;
+	}
+
 }
