@@ -68,4 +68,8 @@ public class FederationModel {
 	public Repositories getRepositories() {
 		return federation.getRepositories();
 	}
+	
+	public Federation getFederation() {
+		return federation;
+	}
 }
