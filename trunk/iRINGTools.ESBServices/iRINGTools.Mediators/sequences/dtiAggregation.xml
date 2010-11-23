@@ -3,8 +3,7 @@
   <target>
     <inSequence>
       <property name="endpointURLs" expression="fn:substring-after(get-property('To'), '?')" scope="default" type="STRING"/>
-      <property name="DISABLE_CHUNKING" value="true" scope="axis2" type="BOOLEAN"/>
-      
+      <property name="DISABLE_CHUNKING" value="true" scope="axis2" type="BOOLEAN"/>      
       <clone>
         <target>
           <sequence>
@@ -25,14 +24,14 @@
         <completeCondition>
           <messageCount min="-1" max="-1"/>
         </completeCondition>
-        <onComplete xmlns:ns2="http://org.apache.synapse/xsd" xmlns:ns="http://org.apache.synapse/xsd" xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope" xmlns:dti="http://www.iringtools.org/dxfr/dti" expression="//dti:dataTransferIndices">
+        <onComplete xmlns:dti="http://www.iringtools.org/dxfr/dti" expression="//dti:dataTransferIndices">
           <script language="js"><![CDATA[
             var soapenv = new Namespace("http://schemas.xmlsoap.org/soap/envelope/");
             var payload = mc.getEnvelopeXML().soapenv::Body.*;                   
             mc.setPayloadXML(
-              <m:dxiRequest xmlns:m="http://www.iringtools.org/dxfr/request">
-               {payload}
-              </m:dxiRequest>);
+              <m:dtiAggrResponse xmlns:m="http://wso2.org/response">
+                {payload}
+              </m:dtiAggrResponse>);
           ]]></script> 
           <send/>
         </onComplete>
