@@ -30,26 +30,26 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Graphs", propOrder = {
-    "graphs"
+    "items"
 })
 public class Graphs {
 
     @XmlElement(name = "graph", required = true)
-    protected List<Graph> graphs;
+    protected List<Graph> items;
 
     /**
-     * Gets the value of the graphs property.
+     * Gets the value of the items property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the graphs property.
+     * This is why there is not a <CODE>set</CODE> method for the items property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getGraphs().add(newItem);
+     *    getItems().add(newItem);
      * </pre>
      * 
      * 
@@ -59,23 +59,23 @@ public class Graphs {
      * 
      * 
      */
-    public List<Graph> getGraphs() {
-        if (graphs == null) {
-            graphs = new ArrayList<Graph>();
+    public List<Graph> getItems() {
+        if (items == null) {
+            items = new ArrayList<Graph>();
         }
-        return this.graphs;
+        return this.items;
     }
 
     /**
-     * Sets the value of the graphs property.
+     * Sets the value of the items property.
      * 
-     * @param graphs
+     * @param items
      *     allowed object is
      *     {@link Graph }
      *     
      */
-    public void setGraphs(List<Graph> graphs) {
-        this.graphs = graphs;
+    public void setItems(List<Graph> items) {
+        this.items = items;
     }
 
 }

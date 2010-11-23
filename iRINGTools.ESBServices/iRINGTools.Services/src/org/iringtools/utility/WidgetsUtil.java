@@ -21,206 +21,212 @@ import org.iringtools.ui.widgets.tree.Property;
 import org.iringtools.ui.widgets.tree.Tree;
 import org.iringtools.ui.widgets.tree.TreeNode;
 
-public class WidgetsUtil
-{
-  public static Tree toTree(Directory directory)
-  {
-    Tree tree = new Tree();
-    List<Node> scopeNodes = tree.getTreeNodes();
+public class WidgetsUtil {
+	
+	private static Property createProperty(String name, String value) {
+		Property property = new Property();
+		property.setName(name);
+		property.setValue(value);
+		return property;
+	}
+	
+	public static Tree toTree(Directory directory) {
+		Tree tree = new Tree();
+		List<Node> scopeNodes = tree.getTreeNodes();
 
-    for (Scope scope : directory.getScopes())
-    {
-      TreeNode scopeNode = new TreeNode();
-      scopeNode.setText(scope.getName());
-      scopeNodes.add(scopeNode);
+		for (Scope scope : directory.getScopes()) {
+			TreeNode scopeNode = new TreeNode();
+			scopeNode.setText(scope.getName());
+			scopeNode.setCls("scope");
 
-      List<Node> scopeNodeList = scopeNode.getChildren();
-      ApplicationData appData = scope.getApplicationData();
+			scopeNodes.add(scopeNode);
 
-      if (appData != null)
-      {
-        TreeNode appDataNode = new TreeNode();
-        appDataNode.setText("Application Data");
-        scopeNodeList.add(appDataNode);
+			List<Node> scopeChildren = scopeNode.getChildren();
 
-        List<Node> appDataNodeList = appDataNode.getChildren();
+			ApplicationData appData = scope.getApplicationData();
 
-        for (Application app : appData.getApplications())
-        {
-          TreeNode appNode = new TreeNode();
-          appNode.setText(app.getName());
-          appDataNodeList.add(appNode);
+			if (appData != null) {
+				TreeNode appDataNode = new TreeNode();
+				appDataNode.setText("Application Data");
+				appDataNode.setCls("folder");
 
-          List<Node> appNodeList = appNode.getChildren();
+				scopeChildren.add(appDataNode);
 
-          for (Graph graph : app.getGraphs().getGraphs())
-          {
-            LeafNode graphNode = new LeafNode();
-            graphNode.setId(graph.getId());
-            graphNode.setText(graph.getName());
-            graphNode.setLeaf(true);
-            appNodeList.add(graphNode);
-            
-            List<Property> properties = graphNode.getProperties();
-            Property prop1 = new Property();
-            prop1.setName("Name");
-            prop1.setValue(graph.getName());
-            properties.add(prop1);
-            Property prop2 = new Property();
-            prop2.setName("Description");
-            prop2.setValue(graph.getDescription());
-            properties.add(prop2);
-            Property prop3 = new Property();
-            prop3.setName("Commodity");
-            prop3.setValue(graph.getCommodity());
-            properties.add(prop3);
-          }
-        }
-      }
+				List<Node> applicationNodes = appDataNode.getChildren();
 
-      DataExchanges exchangeData = scope.getDataExchanges();
+				for (Application app : appData.getApplications()) {
+					TreeNode appNode = new TreeNode();
+					appNode.setText(app.getName());
+					appNode.setCls("application");
 
-      if (exchangeData != null)
-      {
-        TreeNode exchangeDataNode = new TreeNode();
-        exchangeDataNode.setText("Exchange Data");
-        scopeNodeList.add(exchangeDataNode);
+					applicationNodes.add(appNode);
 
-        List<Node> exchangeDataNodeList = exchangeDataNode.getChildren();
+					List<Node> graphNodes = appNode.getChildren();
 
-        for (Commodity commodity : exchangeData.getCommodities())
-        {
-          TreeNode commodityNode = new TreeNode();
-          commodityNode.setText(commodity.getName());
-          exchangeDataNodeList.add(commodityNode);
+					for (Graph graph : app.getGraphs().getItems()) {
+						LeafNode graphNode = new LeafNode();
+						graphNode.setId(graph.getId());
+						graphNode.setText(graph.getName());
+						graphNode.setCls("file-table");
+						graphNode.setLeaf(true);
 
-          List<Node> commodityNodeList = commodityNode.getChildren();
+						List<Property> properties = graphNode.getProperties();
+						properties.add(createProperty("Name", graph.getName()));
+						properties.add(createProperty("Description",
+								graph.getDescription()));
+						properties.add(createProperty("Commodity",
+								graph.getCommodity()));
 
-          for (Exchange exchange : commodity.getExchanges().getExchanges())
-          {
-            LeafNode exchangeNode = new LeafNode();
-            exchangeNode.setId(exchange.getId());
-            exchangeNode.setText(exchange.getName());
-            exchangeNode.setLeaf(true);
-            
-            List<Property> properties = exchangeNode.getProperties();
-            Property prop1 = new Property();
-            prop1.setName("Id");
-            prop1.setValue(exchange.getId());
-            properties.add(prop1);
-            Property prop2 = new Property();
-            prop2.setName("Name");
-            prop2.setValue(exchange.getName());
-            properties.add(prop2);
-            Property prop3 = new Property();
-            prop3.setName("Description");
-            prop3.setValue(exchange.getDescription());
-            properties.add(prop3);
-            commodityNodeList.add(exchangeNode);
-          }
-        }
-      }
-    }
-    
-    return tree;
-  }
+						graphNodes.add(graphNode);
+					}
+				}
+			}
 
-  public static List<Node> federationToTree(Federation federation){
-	  
-	  Tree tree = new Tree();
-	  //List<Tree> tree = new ArrayList<Tree>();
-	  List<Node> treeNodes = tree.getTreeNodes();
-	  WidgetsUtil wdu = new WidgetsUtil();
-	  
-	  TreeNode node = new TreeNode();
-		//IDGenerators
-		node.setId("IDGenerators");
-		node.setText("ID Generators");
-		node.setIcon("");
-		List<Node> children = new ArrayList<Node>();
-		for (IDGenerator idgenerator : federation.getIdGenerators().getIdGenerators())
-		{
-			LeafNode childNode = new LeafNode();
-			childNode.setId(Integer.toString(idgenerator.getId()));
-			childNode.setText(idgenerator.getName());
-			childNode.setIcon("");
-			childNode.setLeaf(true);
-			List<Property> properties = new ArrayList<Property>();
-			properties.add(wdu.setProperty("Name", idgenerator.getName()));
-			properties.add(wdu.setProperty("URI", idgenerator.getUri()));
-			properties.add(wdu.setProperty("Description", idgenerator.getDescription()));
-			
-			childNode.setProperties(properties);
-						
-			children.add(childNode);
+			DataExchanges exchangeData = scope.getDataExchanges();
+
+			if (exchangeData != null) {
+				TreeNode exchangeDataNode = new TreeNode();
+				exchangeDataNode.setText("Exchange Data");
+				exchangeDataNode.setCls("folder");
+
+				scopeChildren.add(exchangeDataNode);
+
+				List<Node> commodityNodes = exchangeDataNode.getChildren();
+
+				for (Commodity commodity : exchangeData.getCommodities()) {
+					TreeNode commodityNode = new TreeNode();
+					commodityNode.setText(commodity.getName());
+					commodityNode.setCls("commodity");
+
+					commodityNodes.add(commodityNode);
+
+					List<Node> exchangeNodes = commodityNode.getChildren();
+
+					for (Exchange exchange : commodity.getExchanges().getItems()) {
+						LeafNode exchangeNode = new LeafNode();
+						exchangeNode.setId(exchange.getId());
+						exchangeNode.setText(exchange.getName());
+						exchangeNode.setCls("file-table-diff");
+						exchangeNode.setLeaf(true);
+
+						List<Property> properties = exchangeNode
+								.getProperties();
+						properties.add(createProperty("Id", exchange.getId()));
+						properties.add(createProperty("Name",
+								exchange.getName()));
+						properties.add(createProperty("Description",
+								exchange.getDescription()));
+
+						exchangeNodes.add(exchangeNode);
+					}
+				}
+			}
 		}
-		node.setChildren(children);
-		treeNodes.add(node);
-		
-		//Namespaces
-		node = new TreeNode();
-		node.setId("Namespaces");
-		node.setText("Namespaces");
-		node.setIcon("");
-		children = new ArrayList<Node>();
-		for (Namespace namespace : federation.getNamespaces().getNamespaces())
-		{
-			LeafNode childNode = new LeafNode();
-			childNode.setId(namespace.getAlias());
-			childNode.setText(namespace.getAlias());
-			childNode.setIcon("");
-			childNode.setLeaf(true);
-			List<Property> properties = new ArrayList<Property>();
-			properties.add(wdu.setProperty("Alias", namespace.getAlias()));
-			properties.add(wdu.setProperty("URI", namespace.getUri()));
-			properties.add(wdu.setProperty("Description", namespace.getDescription()));
-			properties.add(wdu.setProperty("Writable", String.valueOf(namespace.isIsWritable())));
-			properties.add(wdu.setProperty("Id", String.valueOf(namespace.getIdGenerator())));
-						
-			childNode.setProperties(properties);
-						
-			children.add(childNode);
-		}
-		node.setChildren(children);
-		treeNodes.add(node);
-		
-		//Repositories
-		node = new TreeNode();
-		node.setId("Repositories");
-		node.setText("Repositories");
-		node.setIcon("");
-		children = new ArrayList<Node>();
 
-		for (Repository repository : federation.getRepositories().getRepositories())
-		{
-			LeafNode childNode = new LeafNode();
-			childNode.setId(repository.getName());
-			childNode.setText(repository.getName());
-			childNode.setIcon("");
-			childNode.setLeaf(true);
-			List<Property> properties = new ArrayList<Property>();
-			properties.add(wdu.setProperty("URI", repository.getUri()));
-			properties.add(wdu.setProperty("Description", repository.getDescription()));
-			properties.add(wdu.setProperty("Read Only", String.valueOf(repository.isIsReadOnly())));
-			properties.add(wdu.setProperty("Repository Type", repository.getRepositoryType()));
-			properties.add(wdu.setProperty("Update URI", repository.getUpdateUri()));
-			
-			childNode.setProperties(properties);
-						
-			children.add(childNode);
-		}
-		node.setChildren(children);
-		treeNodes.add(node);
-		
-		return treeNodes;
-	  //return tree;
-	  
-  }
-  public Property setProperty(String name, String value){
-		Property prop = new Property();
-		prop.setName(name);
-		prop.setValue(value);
-		return prop;
+		return tree;
 	}
 
+	// TODO: Review this code, and ask questions.
+	// Basically, the TreePanel will handle a generic JSON.
+	// So, make a generic JSON and get rid of old way
+	// Used above as a guide...
+	// SetCls is used to set the CSS class that should be setup.
+	// Use the objects... working with references.
+	public static Tree federationToTree(Federation federation) {
+
+		Tree tree = new Tree();
+		List<Node> treeNodes = tree.getTreeNodes();
+
+		TreeNode generatorsNode = new TreeNode();
+		generatorsNode.setText("ID Generators");
+		generatorsNode.setCls("folder");
+		treeNodes.add(generatorsNode);
+
+		List<Node> generatorNodes = generatorsNode.getChildren();
+
+		for (IDGenerator idgenerator : federation.getIdGenerators().getItems()) {
+			LeafNode generatorNode = new LeafNode();
+			generatorNode.setId(Integer.toString(idgenerator.getId()));
+			generatorNode.setText(idgenerator.getName());
+			generatorNode.setCls("generator");
+			generatorNode.setLeaf(true);
+
+			List<Property> properties = generatorNode.getProperties();
+			properties.add(createProperty("Name", idgenerator.getName()));
+			properties.add(createProperty("URI", idgenerator.getUri()));
+			properties.add(createProperty("Description",
+					idgenerator.getDescription()));
+
+			generatorNodes.add(generatorNode);
+		}
+
+		// Namespaces
+		TreeNode namespacesNode = new TreeNode();
+		namespacesNode.setText("Namespaces");
+		namespacesNode.setCls("folder");
+		treeNodes.add(namespacesNode);
+		
+		List<Node> namespaceNodes = namespacesNode.getChildren();
+
+		for (Namespace namespace : federation.getNamespaces().getItems()) {
+			LeafNode namespaceNode = new LeafNode();
+			namespaceNode.setId(Integer.toString(namespace.getId()));
+			namespaceNode.setText(namespace.getAlias());
+			namespaceNode.setCls("namespace");
+			namespaceNode.setLeaf(true);
+
+			List<Property> properties = namespaceNode.getProperties();
+			properties.add(createProperty("Alias", namespace.getAlias()));
+			properties.add(createProperty("URI", namespace.getUri()));
+			properties.add(createProperty("Description",
+					namespace.getDescription()));
+			properties.add(createProperty("Writable",
+					String.valueOf(namespace.isIsWritable())));
+			properties.add(createProperty("Id",
+					String.valueOf(namespace.getIdGenerator())));
+
+			namespaceNodes.add(namespaceNode);
+		}
+
+		// Repositories
+		//TODO: Complete this...
+		
+//		TreeNode repositoriesNode = new TreeNode();
+//		repositoriesNode.setText("Repositories");
+//		treeNodes.add(repositoriesNode);
+//
+//		node = new TreeNode();
+//		node.setId("Repositories");
+//		node.setText("Repositories");
+//		node.setIcon("");
+//		children = new ArrayList<Node>();
+//
+//		for (Repository repository : federation.getRepositories()
+//				.getRepositories()) {
+//			LeafNode childNode = new LeafNode();
+//			childNode.setId(repository.getName());
+//			childNode.setText(repository.getName());
+//			childNode.setIcon("");
+//			childNode.setLeaf(true);
+//			List<Property> properties = new ArrayList<Property>();
+//			properties.add(wdu.setProperty("URI", repository.getUri()));
+//			properties.add(wdu.setProperty("Description",
+//					repository.getDescription()));
+//			properties.add(wdu.setProperty("Read Only",
+//					String.valueOf(repository.isIsReadOnly())));
+//			properties.add(wdu.setProperty("Repository Type",
+//					repository.getRepositoryType()));
+//			properties.add(wdu.setProperty("Update URI",
+//					repository.getUpdateUri()));
+//
+//			childNode.setProperties(properties);
+//
+//			children.add(childNode);
+//		}
+//		node.setChildren(children);
+//		treeNodes.add(node);
+
+		return tree;
+
+	}
 }

@@ -30,26 +30,26 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Repositories", propOrder = {
-    "repositories"
+    "items"
 })
 public class Repositories {
 
     @XmlElement(name = "repository", required = true)
-    protected List<Repository> repositories;
+    protected List<Repository> items;
 
     /**
-     * Gets the value of the repositories property.
+     * Gets the value of the items property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the repositories property.
+     * This is why there is not a <CODE>set</CODE> method for the items property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getRepositories().add(newItem);
+     *    getItems().add(newItem);
      * </pre>
      * 
      * 
@@ -59,23 +59,23 @@ public class Repositories {
      * 
      * 
      */
-    public List<Repository> getRepositories() {
-        if (repositories == null) {
-            repositories = new ArrayList<Repository>();
+    public List<Repository> getItems() {
+        if (items == null) {
+            items = new ArrayList<Repository>();
         }
-        return this.repositories;
+        return this.items;
     }
 
     /**
-     * Sets the value of the repositories property.
+     * Sets the value of the items property.
      * 
-     * @param repositories
+     * @param items
      *     allowed object is
      *     {@link Repository }
      *     
      */
-    public void setRepositories(List<Repository> repositories) {
-        this.repositories = repositories;
+    public void setItems(List<Repository> items) {
+        this.items = items;
     }
 
 }

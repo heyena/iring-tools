@@ -21,6 +21,7 @@
 
   <xs:complexType name="Node" abstract="true">
     <xs:sequence>
+      <xs:element name="cls" type="xs:string" default="folder" />
       <xs:element name="text" type="xs:string" />
       <xs:element name="id" type="xs:string" />
       <xs:element name="icon" type="xs:string" />
@@ -39,7 +40,6 @@
   <xs:complexContent>
     <xs:extension base="Node">
       <xs:sequence>
-        <xs:element name="cls" type="xs:string" default="folder" />
         <xs:element name="children" type="Node" maxOccurs="unbounded">
 	        <xs:annotation>
 	          <xs:appinfo>
