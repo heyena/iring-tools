@@ -9,6 +9,9 @@ import org.iringtools.federationmanager.models.FederationModel;
 import org.iringtools.refdata.federation.IDGenerator;
 import org.iringtools.refdata.federation.Namespace;
 import org.iringtools.refdata.federation.Repository;
+import org.iringtools.ui.widgets.tree.Node;
+import org.iringtools.ui.widgets.tree.Tree;
+import org.iringtools.utility.WidgetsUtil;
 
 import com.opensymphony.xwork2.Action;
 
@@ -16,7 +19,7 @@ public class FederationController {
 	
 	private FederationModel federation;
 	//TODO: Change this to a Tree
-	private List<ParentTreeNode> federationTree;
+	private List<Node> federationTree;
 	
 	public FederationController()
 	{
@@ -24,12 +27,12 @@ public class FederationController {
 	}
 
 	//TODO: Change this to a Tree
-	public void setFederationTree(List<ParentTreeNode> federationTree) {
+	public void setFederationTree(List<Node> federationTree) {
 		this.federationTree = federationTree;
 	}
 
 	//TODO: Change this to a Tree
-	public List<ParentTreeNode> getFederationTree() {
+	public List<Node> getFederationTree() {
 		return federationTree;
 	}
 
@@ -46,6 +49,11 @@ public class FederationController {
 	}
 
 	private void generateFederationTree()
+	{
+		federationTree = WidgetsUtil.federationToTree(federation.getFederation());
+	}
+	
+	private void generateFederationTree(int i)
 	{
 		//TODO: Add another method to WidgetsUtil to convert Federation to Tree
 		
@@ -109,7 +117,7 @@ public class FederationController {
 		tree.add(namespaceTreeNode);
 		tree.add(repoTreeNode);
 		
-		setFederationTree(tree);		
+		//setFederationTree(tree);		
 	}
 
 	private void readFederationTree()
