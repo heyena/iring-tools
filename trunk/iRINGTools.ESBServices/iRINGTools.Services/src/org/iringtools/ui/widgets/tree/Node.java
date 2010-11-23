@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="text" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="icon" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="properties" type="{http://www.iringtools.org/ui/widgets/tree}Property" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -35,6 +36,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "Node", propOrder = {
     "text",
     "id",
+    "icon",
     "properties"
 })
 @XmlSeeAlso({
@@ -47,6 +49,8 @@ public abstract class Node {
     protected String text;
     @XmlElement(required = true)
     protected String id;
+    @XmlElement(required = true)
+    protected String icon;
     @XmlElement(required = true)
     protected List<Property> properties;
 
@@ -96,6 +100,30 @@ public abstract class Node {
      */
     public void setId(String value) {
         this.id = value;
+    }
+
+    /**
+     * Gets the value of the icon property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getIcon() {
+        return icon;
+    }
+
+    /**
+     * Sets the value of the icon property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setIcon(String value) {
+        this.icon = value;
     }
 
     /**
