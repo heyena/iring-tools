@@ -26,18 +26,13 @@ Ext.onReady(function () {
 		id: 'content-panel',
 		xtype: 'tabpanel',			
 		margins: '0 5 0 0',
-		enableTabScroll: true,
-		defaults: {
-			layout: 'fit'
-		}
+		enableTabScroll: true
 	});
 	
-	directoryPanel.on('open', function(panel, node, label, url) {
-		
-		var newTab = new ExchangeManager.NavigationPanel({
-			title: label,
-			layout: 'card',
-			activeItem: 0,
+	directoryPanel.on('open', function(panel, node, label, url) {	
+				
+		var newTab = new ExchangeManager.NavigationPanel({		
+			title: label,			
 			url: url,
 			closable: true
 		});
@@ -45,7 +40,7 @@ Ext.onReady(function () {
 		contentPanel.add(newTab);
     contentPanel.activate(newTab);
 		
-	}, this);
+	});
 
 	var viewport = new Ext.Viewport({
 		layout: 'border',

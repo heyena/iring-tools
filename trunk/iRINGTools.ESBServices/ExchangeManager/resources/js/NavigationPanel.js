@@ -5,32 +5,60 @@ Ext.ns('ExchangeManager');
 * @author by Gert Jansen van Rensburg
 */
 ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
-  title: 'Navigation',
-  layout: 'card',
-  
+	title: 'NavigationPanel',
+	layout: 'card',			
+	activeItem: 0,
+	
   /**
   * initComponent
   * @protected
   */
   initComponent: function () {
-  	  	
+  	  	  	  	
   	this.addEvents({
       next: true,
       prev: true
     });
-    
-    this.items = [{
-    	id: 'card-0',
-    	html: '<h1>Welcome to the Demo Wizard!</h1><p>Step 1 of 3</p><p>Please click the "Next" button to continue...</p>'
-    },{
-    	id: 'card-1',
-    	html: '<p>Step 2 of 3</p><p>Almost there. Please click the "Next" button to continue...</p>'
-    },{
-    	id: 'card-2',
-    	html: '<h1>Congratulations!</h1><p>Step 3 of 3 - Complete</p>'
-    }];
-    
-    //this.getLayout().setActiveItem(0);
+  	
+  	// build the header first
+  	// send the request to generate the arraystore
+		var proxy = new Ext.data.HttpProxy({
+			api: {
+				read: new Ext.data.Connection({ url: globalReq, method: 'POST', timeout: 120000 }),
+        create: null,
+        update: null,
+        destroy: null
+      }
+		});
+
+		var reader = new Ext.data.JsonReader({
+			totalProperty: 'total',
+			successProperty: 'success',
+			root: 'data',
+      fields: fieldList
+		});
+
+    var store = new Ext.data.Store({
+    	//autoLoad:true,
+      proxy: proxy,
+      reader: reader,
+      //sortInfo: { field: 'slno', direction: "DESC" },
+      autoLoad: {
+      	params: {
+      		start:0, 
+      		limit:pageSize,
+      		identifier:identifier,
+      		refClassIdentifier:refClassIdentifier
+      	}
+      },
+      baseParams: {
+        'identifier':identifier,
+        'refClassIdentifier':refClassIdentifier
+      }
+    });
+  	
+  	this.items = [{
+  	}]
     
     this.tbar = this.buildToolbar();
         
@@ -46,39 +74,33 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
 			tooltip:'Crum 1',
 			text:'1...',			
 			disabled: false,
-			handler: this.onNext,
-			scope: this
-		},{
-			id: "card-prev",
-			xtype:"tbbutton",
-			tooltip:'Crum 2',
-			text:'2...',			
-			disabled: false,
-			handler: this.onPrev,
+			handler: this.onOpen,
 			scope: this
 		}]
   },
   
-  onNext: function (btn, ev) {
+  onOpen: function (btn, ev) {  	  	  	
   	var l = this.getLayout();
   	var i = l.activeItem.id.split('card-')[1]; 
   	var next = parseInt(i, 10) + 1;
-  	this.setActiveItem(next);
-  	Ext.getCmp('card-prev').setDisabled(next==0);
-  	Ext.getCmp('card-next').setDisabled(next==2);
+  	l.setActiveItem(next);
   	
-    this.fireEvent('next', this, index);
-  },
+  	var t = this.getTopToolbar(); 
+  	
+  	t.add([{
+			id: "card-btn-"+i,
+			xtype: "tbbutton",
+			tooltip: 'Crum '+i,
+			text: i+'...',		
+			disabled: false,
+			handler: this.onOpen,
+			scope: this
+		}]);
+  	
+  	t.doLayout();
+  	
+    this.fireEvent('next', this, i);
+  }  
   
-  onPrev: function (btn, ev) {
-  	var l = this.getLayout();
-  	var i = l.activeItem.id.split('card-')[1]; 
-  	var next = parseInt(i, 10) - 1;
-  	this.setActiveItem(next);
-  	Ext.getCmp('card-prev').setDisabled(next==0);
-  	Ext.getCmp('card-next').setDisabled(next==2);
-  	
-    this.fireEvent('prev', this, index);
-  }
 
 });
