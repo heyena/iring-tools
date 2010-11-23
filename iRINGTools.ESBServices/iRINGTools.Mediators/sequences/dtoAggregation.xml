@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<proxy xmlns="http://ws.apache.org/ns/synapse" name="dtoAggregation" transports="https http" startOnLoad="true" trace="disable">
+    <target>
+        <inSequence>
+            <!--<log level="custom"><property name="DTO_AGG_IN" expression="*"/></log>-->
+            <property name="sourceUrl" expression="//req:sourceUrl" xmlns:req="http://wso2.org/request"/>
+            <property name="targetUrl" expression="//req:targetUrl" xmlns:req="http://wso2.org/request"/>
+            <property name="DISABLE_CHUNKING" value="true" scope="axis2" type="BOOLEAN"/>
+            <clone>
+                <target>
+                    <sequence> 
+                        <script language="js"><![CDATA[
+                          var req = new Namespace("http://wso2.org/request");
+                          var payload = mc.getPayloadXML();
+                          var manifest = payload.req::manifest.*;
+                          var sourceDti = payload.req::dxi.dataTransferIndices.source.*;
+                          mc.setPayloadXML(
+                            <req:dtoPageRequest xmlns:req="http://www.iringtools.org/dxfr/request">
+                              <req:manifest xmlns="http://www.iringtools.org/dxfr/manifest">{manifest}</req:manifest>
+                              <req:dataTransferIndices xmlns="http://www.iringtools.org/dxfr/dti"><dataTransferIndexList>{sourceDti}</dataTransferIndexList></req:dataTransferIndices>                  
+                            </req:dtoPageRequest>);
+                        ]]></script>   
+                        <!--<log level="custom"><property name="SOURCE" expression="*"/></log>-->
+                        <property name="REST_URL_POSTFIX" expression="get-property('sourceUrl')" scope="axis2"/> 
+                        <send>
+                          <endpoint>
+                            <address uri="" format="rest"/>
+                          </endpoint>
+                        </send>
+                    </sequence>
+                </target>
+                <target> 
+                    <sequence>
+                        <script language="js"><![CDATA[
+                          var req = new Namespace("http://wso2.org/request");
+                          var payload = mc.getPayloadXML();
+                          var manifest = payload.req::manifest.*;
+                          var targetDti = payload.req::dxi.dataTransferIndices.target.*;
+                          mc.setPayloadXML(
+                            <req:dtoPageRequest xmlns:req="http://www.iringtools.org/dxfr/request">
+                              <req:manifest xmlns="http://www.iringtools.org/dxfr/manifest">{manifest}</req:manifest>
+                              <req:dataTransferIndices xmlns="http://www.iringtools.org/dxfr/dti"><dataTransferIndexList>{targetDti}</dataTransferIndexList></req:dataTransferIndices>                  
+                            </req:dtoPageRequest>);
+                        ]]></script>   
+                        <!--<log level="custom"><property name="TARGET" expression="*"/></log>-->
+                        <property name="REST_URL_POSTFIX" expression="get-property('targetUrl')" scope="axis2"/> 
+                        <send>
+                          <endpoint>
+                            <address uri="" format="rest"/>
+                          </endpoint>
+                        </send>
+                    </sequence>
+                </target>
+            </clone>
+        </inSequence>
+        <outSequence>
+            <aggregate>
+                <completeCondition>
+                    <messageCount min="-1" max="-1"/>
+                </completeCondition>
+                <onComplete xmlns:dto="http://www.iringtools.org/dxfr/dto" expression="//dto:dataTransferObjects">
+                    <script language="js"><![CDATA[
+                      var soapenv = new Namespace("http://schemas.xmlsoap.org/soap/envelope/");
+                      var payload = mc.getEnvelopeXML().soapenv::Body.*;                   
+                      mc.setPayloadXML(
+                        <m:dtoAggrResponse xmlns:m="http://wso2.org/response">
+                         {payload}
+                        </m:dtoAggrResponse>);
+                    ]]></script>
+                    <send/>
+                </onComplete>
+            </aggregate>
+        </outSequence>
+    </target>
+</proxy>

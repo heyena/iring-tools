@@ -2,6 +2,7 @@
 <proxy xmlns="http://ws.apache.org/ns/synapse" xmlns:dir="http://www.iringtools.org/directory" name="dxi" transports="https http" startOnLoad="true" trace="disable">
     <target>
         <inSequence>
+            <log level="custom"><property name="DXI_IN" expression="get-property('To')"/></log>
             <header name="To" expression="fn:concat('http://localhost:8080/iringtools/dir/', fn:substring-after(get-property('To'), 'dxi/'))"/>
             <class name="org.iringtools.mediators.RESTCalloutMediator">
                 <property name="serviceURL" value=""/>
@@ -36,7 +37,7 @@
                 <property name="contentType" value=""/>
             </class>
             
-            <class name="org.iringtools.mediators.DiffMediator"/>
+            <class name="org.iringtools.mediators.DtiDiffMediator"/>
             
             <property name="NO_ENTITY_BODY" action="remove" scope="axis2"/>
             <property name="RESPONSE" value="true"/>
