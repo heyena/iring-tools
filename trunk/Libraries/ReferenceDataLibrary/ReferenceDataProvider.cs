@@ -2741,11 +2741,10 @@ namespace org.iringtools.refdata
                         string generatedTempId = string.Empty;
                         string templateName = string.Empty;
                         string roleDefinition = string.Empty;
-                        string nameSparql = string.Empty;
-                        string specSparql = string.Empty;
-                        string classSparql = string.Empty;
+                        string prefix = sparql;
                         int templateIndex = -1;
-
+                        int roleCount = 0;
+                        
                         ID = template.identifier;
 
                         QMXF q = new QMXF();
@@ -2782,17 +2781,17 @@ namespace org.iringtools.refdata
                                 Utility.WriteString("\n" + ID + "\t" + label, "TempDef IDs.log", true);
 
                                 #region Restrictions
-                                sparql += ID + " rdf:type owl:class ; ";
+                                sparql = prefix + ID + " rdf:type owl:class ; ";
                                 //append description to sparql query
                                 int descrCount = template.description.Count;
-                                if (descrCount == 0)
-                                {
-                                    sparql += " rdfs:label \"" + label + "\"^^xsd:string . ";
-                                }
-                                else
-                                {
+                                //if (descrCount == 0)
+                                //{
+                                //    sparql += " rdfs:label \"" + label + "\"^^xsd:string . ";
+                                //}
+                                //else
+                                //{
                                     sparql += " rdfs:label \"" + label + "\"^^xsd:string ; ";
-                                }
+                                //}
                                 foreach (Description descr in template.description)
                                 {
                                     description = descr.value;
@@ -2804,35 +2803,11 @@ namespace org.iringtools.refdata
                                 }
                                 #endregion Restrictions
 
-                                #region Specialization Description
-                                //nothing here yet
-                                #endregion Specialization Description
+                                sparql = sparql.Insert(sparql.LastIndexOf("."), "}").Remove(sparql.Length - 1);
+                                response = PostToRepository(source, sparql);
 
-                                #region Template Description
-                                /*sparql += ID + " rdf:type owl:class ; ";
-                                //append description to sparql query
-                                int descrCount = template.description.Count;
-                                if (descrCount == 0)
-                                {
-                                    sparql += " rdfs:label \"" + label + "\"^^xsd:string . ";
-                                }
-                                else
-                                {
-                                    sparql += " rdfs:label \"" + label + "\"^^xsd:string ; ";
-                                }
-                                foreach (Description descr in template.description)
-                                {
-                                    description = descr.value;
-
-                                    if (--descrCount > 0)
-                                        sparql += " rdfs:comment \"" + description + "\"^^xsd:string ; ";
-                                    else
-                                        sparql += " rdfs:comment \"" + description + "\"^^xsd:string . ";
-                                }*/
-                                #endregion Template Description
-
-                                #region Role Descriptions
-                                foreach (RoleDefinition role in template.roleDefinition)
+                                #region Role Restrictions
+                                /*    foreach (RoleDefinition role in template.roleDefinition)
                                 {
                                     string roleID = string.Empty;
                                     string roleLabel = string.Empty;
@@ -2840,6 +2815,7 @@ namespace org.iringtools.refdata
                                     string generatedId = string.Empty;
                                     string genName = string.Empty;
                                     int blankNodeCount = 0;
+                                    roleCount++;
 
                                     //ID generator
                                     genName = "Role definition " + roleLabel;
@@ -2859,9 +2835,9 @@ namespace org.iringtools.refdata
                                         Utility.WriteString("\n" + roleID + "\t" + roleLabel, "RoleDef IDs.log", true);
                                     }
                                     //append role to sparql query
-                                    sparql += roleID + "rdfs:subClassOf _:b"+ blankNodeCount +" . " +
+                                    sparql += roleID + "rdfs:subClassOf _:b" + blankNodeCount + " . " +
                                               "_:b" + blankNodeCount++ + " owl:type owl:Class ; " +
-                                                   "owl:intersectionOf _:b" + blankNodeCount + " . " ;
+                                                   "owl:intersectionOf _:b" + blankNodeCount + " . ";
 
                                     int restrictionCount = role.restrictions.Count;
                                     foreach(PropertyRestriction restriction in role.restrictions)
@@ -2877,12 +2853,122 @@ namespace org.iringtools.refdata
                                                     "owl:onProperty " + roleID + " ; " +
                                                     "owl:" + restriction.type + " " + restriction.value + " . ";
                                     }
+                                }*/
+                                #endregion Role Restrictions
+
+                                #region Specialization Description
+                                foreach (Specialization spec in template.specialization)
+                                {
+                                    string specialization = String.Empty;
+
+                                    specialization = spec.reference;
+                                    sparql = prefix + "tpl:TemplateSpecialization_of_" + specialization + "_to_" + label + " rdf:type p8:TemplateSpecialization ; "
+                                        //+ "rdf:type owl:Thing ; "
+                                        + "rdfs:label TemplateSpecialization_of_" + specialization + "_to_" + label + " ; "
+                                        + "p8:hasSuperTemplate" + specialization + " ; " //could get roleCount from QMXF?
+                                        + "p8:hasSubTemplate " + ID + " . ";
+
+                                    sparql = sparql.Insert(sparql.LastIndexOf("."), "}").Remove(sparql.Length - 1);
+                                    response = PostToRepository(source, sparql);
+                                }
+                                #endregion Specialization Description
+
+                                #region Role Descriptions
+                                foreach (RoleDefinition role in template.roleDefinition)
+                                {
+                                    string roleLabel = string.Empty;
+                                    string roleID = string.Empty;
+                                    string generatedId = string.Empty;
+                                    string genName = string.Empty;
+
+                                    //ID generator
+                                    genName = "Role definition " + roleLabel;
+
+                                    if (_useExampleRegistryBase)
+                                        generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], genName);
+                                    else
+                                        generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], genName);
+
+                                    roleID = "<" + generatedId + ">";
+
+                                    sparql = prefix + "tpl:TemplateRoleDescription_of_" + label + "_" + ++roleCount + " rdf:type p8:TemplateRoleDescription ; "// could get roleIndex from QMXF?
+                                        //+ "rdf:type owl:Thing ; "
+                                            + "rdfs:label TemplateRoleDescription_of_" + label + "_" + roleCount + " ; "
+                                            + "p8:valRoleIndex" + roleCount + " ; " //could get roleCount from QMXF?
+                                            + "p8:hasTemplate " + ID + " ; "
+                                        //+ "p8:hasRoleFillerType  ; " get from qmxf?
+                                            + "p8:hasRole " + roleID + " . ";
+
+                                    sparql = sparql.Insert(sparql.LastIndexOf("."), "}").Remove(sparql.Length - 1);
+                                    response = PostToRepository(source, sparql);
                                 }
                                 #endregion Role Descriptions
+
+                                #region Template Description
+                                sparql = prefix + "tpl:TemplateDescription_of_" + label + " rdf:type p8:TemplateDescription ; "
+                                    //+ "rdf:type owl:Thing ; "
+                                        + "rdfs:label TemplateDescription_of_" + label + " ; "
+                                        + "p8:valNumberOfRoles" + roleCount + " ; " //could get roleCount from QMXF?
+                                        + "p8:hasTemplate " + ID + " . ";
+                                #endregion Template Description
 
                                 sparql = sparql.Insert(sparql.LastIndexOf("."), "}").Remove(sparql.Length - 1);
                                 response = PostToRepository(source, sparql);
                             }
+                        }
+                        //else edit template
+                        else
+                        {
+                            string identifier = string.Empty;
+                            roleCount = 0;
+
+                            TemplateDefinition td = q.templateDefinitions[templateIndex];
+                            string rName = string.Empty;
+
+                            sparql = prefix.Replace("INSERT DATA { ", "DELETE WHERE { ");
+                            prefix = sparql;
+
+                            identifier = td.identifier;
+
+                            #region delete_restrictions
+                            sparql = prefix + identifier + " rdf:type owl:class ; "
+                                                 + " ?property ?value } ";
+                            response = PostToRepository(source, sparql);
+                            #endregion delete_restrictions
+
+                            #region delete_template_description
+                            sparql = prefix + "tpl:TemplateDescription_of_" + label + " rdf:type p8:TemplateDescription ; "
+                                            + " ?property ?vlaue } ";
+                            response = PostToRepository(source, sparql);
+                            #endregion delete_template_description
+
+                            #region delete_role_description
+                            foreach (RoleDefinition role in template.roleDefinition)
+                            {        
+                                string roleID = role.identifier;
+                                sparql = prefix + "tpl:TemplateRoleDescription_of_" + label + "_" + ++roleCount + " p8:hasRole " + roleID + " ; "// could get roleIndex from QMXF?      
+                                                + "?property ?value } ";
+                                        
+                                response = PostToRepository(source, sparql);
+                            }
+                            #endregion delete_role_description
+
+                            #region delete_role_description
+                            foreach (Specialization spec in template.specialization)
+                            {
+                                string specialization = String.Empty;
+
+                                specialization = spec.reference;
+                                sparql = prefix + "tpl:TemplateSpecialization_of_" + specialization + "_to_" + label + " rdf:type p8:TemplateSpecialization ; "
+                                    //+ "rdf:type owl:Thing ; "
+                                    + "rdfs:label TemplateSpecialization_of_" + specialization + "_to_" + label + " ; "
+                                    + "p8:hasSuperTemplate" + specialization + " ; " //could get roleCount from QMXF?
+                                    + "p8:hasSubTemplate " + ID + " . ";
+
+                                sparql = sparql.Insert(sparql.LastIndexOf("."), "}").Remove(sparql.Length - 1);
+                                response = PostToRepository(source, sparql);
+                            }
+                            #endregion delete_role_description
                         }
                     }
                 }
@@ -3444,6 +3530,7 @@ namespace org.iringtools.refdata
                             _response = PostToRepository(source, sparql);
                         }
                     }
+                    //else edit the class
                 }
 
                 Utility.WriteString("Insertion Done", "stats.log", true);

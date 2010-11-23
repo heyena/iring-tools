@@ -88,6 +88,7 @@ namespace org.ids_adi.qmxf
             this.textualDefinition = new List<TextualDefinition>();
             this.roleDefinition = new List<RoleDefinition>();
             this.repositoryName = string.Empty;
+            this.specialization = new List<Specialization>();
         }
 
         [DataMember(Name = "repository", EmitDefaultValue = false)]
@@ -125,6 +126,10 @@ namespace org.ids_adi.qmxf
         [DataMember(Name = "role-definition", EmitDefaultValue = false)]
         [XmlElement(ElementName = "role-definition")]
         public List<RoleDefinition> roleDefinition { get; set; }
+
+        [DataMember(Name = "specialization", EmitDefaultValue = false)]
+        [XmlElement(ElementName = "specialization")]
+        public List<Specialization> specialization { get; set; }
     }
 
     [DataContract]
