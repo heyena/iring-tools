@@ -2,8 +2,9 @@
 <proxy xmlns="http://ws.apache.org/ns/synapse" xmlns:dir="http://www.iringtools.org/directory" name="dxo" transports="https http" startOnLoad="true" trace="disable">
     <target>
         <inSequence>
+            <log level="custom"><property name="DXO_IN" expression="*"/></log>
             <xslt key="dtiSplit"/>
-            <property name="dxi" expression="//dataTransferIndices" type="OM"/>
+            <property name="dxi" expression="//dti:dxi" type="OM" xmlns:dti="http://www.iringtools.org/dxfr/dti"/>
             
             <header name="To" expression="fn:concat('http://localhost:8080/iringtools/dir/', fn:substring-after(get-property('To'), 'dxo/'))"/>
             <class name="org.iringtools.mediators.RESTCalloutMediator">
@@ -41,7 +42,7 @@
                   <req:sourceUrl>{sourceUrl}</req:sourceUrl>
                   <req:targetUrl>{targetUrl}</req:targetUrl>
                   <req:manifest xmlns="http://www.iringtools.org/dxfr/manifest">{manifest}</req:manifest>
-                  <req:dxi>{dxi}</req:dxi>
+                  <req:dxi>{dxi.*}</req:dxi>
                 </req:dtoAggregationRequest>);
             ]]></script>      
 
@@ -53,13 +54,13 @@
                         xmlns:s12="http://www.w3.org/2003/05/soap-envelope"
                         xpath="s11:Body/child::*[fn:position()=1] | s12:Body/child::*[fn:position()=1]"/>
             </callout>        
-            <!--<log level="custom"><property name="DTO_AGGR_RESULT" expression="*"/></log>-->
             
             <class name="org.iringtools.mediators.DtoDiffMediator"/>
             
             <property name="NO_ENTITY_BODY" scope="axis2" action="remove"/>
             <property name="RESPONSE" value="true"/>
-            <header name="To" action="remove"/>
+            <header name="To" action="remove"/>            
+            <log level="custom"><property name="DXO_OUT" expression="*"/></log>
             <send/>
         </inSequence>
         <outSequence>
