@@ -13,7 +13,7 @@
 	<package name="jsontest" extends="json-default">
 	  <action name="federationTree" class="org.iringtools.federationmanager.controllers.FederationController" method="getFederation">
 	    <result type="json">
-	    	<param name="root">federationTree</param>
+	    	<param name="root">federationTree.treeNodes</param>
 	    </result>
 	  </action>
 	</package>
