@@ -1,6 +1,5 @@
 package org.iringtools.utility;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.iringtools.directory.Application;
@@ -189,42 +188,35 @@ public class WidgetsUtil {
 		}
 
 		// Repositories
-		//TODO: Complete this...
 		
-//		TreeNode repositoriesNode = new TreeNode();
-//		repositoriesNode.setText("Repositories");
-//		treeNodes.add(repositoriesNode);
-//
-//		node = new TreeNode();
-//		node.setId("Repositories");
-//		node.setText("Repositories");
-//		node.setIcon("");
-//		children = new ArrayList<Node>();
-//
-//		for (Repository repository : federation.getRepositories()
-//				.getRepositories()) {
-//			LeafNode childNode = new LeafNode();
-//			childNode.setId(repository.getName());
-//			childNode.setText(repository.getName());
-//			childNode.setIcon("");
-//			childNode.setLeaf(true);
-//			List<Property> properties = new ArrayList<Property>();
-//			properties.add(wdu.setProperty("URI", repository.getUri()));
-//			properties.add(wdu.setProperty("Description",
-//					repository.getDescription()));
-//			properties.add(wdu.setProperty("Read Only",
-//					String.valueOf(repository.isIsReadOnly())));
-//			properties.add(wdu.setProperty("Repository Type",
-//					repository.getRepositoryType()));
-//			properties.add(wdu.setProperty("Update URI",
-//					repository.getUpdateUri()));
-//
-//			childNode.setProperties(properties);
-//
-//			children.add(childNode);
-//		}
-//		node.setChildren(children);
-//		treeNodes.add(node);
+		TreeNode repositoriesNode = new TreeNode();
+		repositoriesNode.setText("Repositories");
+		repositoriesNode.setCls("folder");
+		treeNodes.add(repositoriesNode);
+
+		List<Node> repositoryNodes = repositoriesNode.getChildren();
+
+		for (Repository repository : federation.getRepositories().getItems()){
+			LeafNode repositoryNode = new LeafNode();
+			repositoryNode.setId(repository.getName());
+			repositoryNode.setText(repository.getName());
+			repositoryNode.setCls("repository");
+			repositoryNode.setLeaf(true);
+			
+			List<Property> properties = repositoryNode.getProperties();
+			properties.add(createProperty("URI", repository.getUri()));
+			properties.add(createProperty("Description",
+					repository.getDescription()));
+			properties.add(createProperty("Read Only",
+					String.valueOf(repository.isIsReadOnly())));
+			properties.add(createProperty("Repository Type",
+					repository.getRepositoryType()));
+			properties.add(createProperty("Update URI",
+					repository.getUpdateUri()));
+
+
+			repositoryNodes.add(repositoryNode);
+		}
 
 		return tree;
 
