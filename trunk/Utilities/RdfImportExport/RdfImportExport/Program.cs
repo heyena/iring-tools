@@ -114,10 +114,9 @@ namespace RdfImportExport
           else
               throw new Exception(graphUri + " does not exist in Sql store ...");
       }
-     
-      rdfXmlWriter.Save(sqlGraph, rdfFullFilename);
-
-      Console.WriteLine("Graph[" + sqlGraph.BaseUri.ToString() + "] written to " + rdfFullFilename);
+      sqlGraph.SaveToFile(rdfFullFilename, rdfXmlWriter);
+      if (graphUri == string.Empty) graphUri = "dotnetrf:default-graph";
+      Console.WriteLine("Graph[" + graphUri + "] written to " + rdfFullFilename);
       Console.WriteLine("Press any key to continue....");
       Console.ReadKey();
 
@@ -147,16 +146,9 @@ namespace RdfImportExport
           sqlGraph.Clear();
       }
       sqlGraph.LoadFromFile(rdfFullFilename);
-      Graph workGraph = new Graph();
-      //load graph from file
-      FileLoader.Load(workGraph, rdfFullFilename);
-      //load triples into sql graph
-      foreach (Triple t in workGraph.Triples)
-      {
-          sqlGraph.Assert(t);
-      }
-      sqlGraph.Refresh();
+      sqlGraph.Manager.Flush();
 
+      if (graphUri == string.Empty) graphUri = "dotnetrf:default-graph";
       Console.WriteLine("Graph[" + graphUri + "] imported from " + rdfFullFilename);
       Console.ReadKey();
     }
