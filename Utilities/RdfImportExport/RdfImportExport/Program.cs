@@ -20,7 +20,7 @@ namespace RdfImportExport
     private static string dbPassword = string.Empty;
     private static string rdfFullFilename = string.Empty;
     private static string graphUri = string.Empty;
-
+    private static bool clearBeforeImport = false;
     static void Main(string[] args)
     {
       try
@@ -30,7 +30,7 @@ namespace RdfImportExport
         {
           method = args[0];
           {
-            if (args.Length >= 7)
+            if (args.Length >= 8)
             {
               dbServer = args[1];
               dbName = args[2];
@@ -38,14 +38,15 @@ namespace RdfImportExport
               dbPassword = args[4];
               rdfFullFilename = args[5];
               graphUri = args[6];
+              clearBeforeImport = Convert.ToBoolean(args[7]);
             }
             if (method.ToUpper() == "IMPORT")
             {
-              DoImport(dbServer, dbName, dbUser, dbPassword, rdfFullFilename, graphUri);
+              DoImport();
             }
             else if (method.ToUpper() == "EXPORT")
             {
-              DoExport(dbServer, dbName, dbUser, dbPassword, rdfFullFilename, graphUri);
+              DoExport();
             }
             else
             {
@@ -60,12 +61,12 @@ namespace RdfImportExport
           if (method.ToUpper() == "IMPORT")
           {
             GetAppSettings();
-            DoImport(dbServer, dbName, dbUser, dbPassword, rdfFullFilename, graphUri);
+            DoImport();
           }
           else
           {
             GetAppSettings();
-            DoExport(dbServer, dbName, dbUser, dbPassword, rdfFullFilename, graphUri);
+            DoExport();
           }
         }
       }
@@ -82,45 +83,72 @@ namespace RdfImportExport
       dbName = ConfigurationManager.AppSettings["DBName"];
       dbUser = ConfigurationManager.AppSettings["DBUser"];
       dbPassword = ConfigurationManager.AppSettings["DBPassword"];
-
+      clearBeforeImport = Convert.ToBoolean(ConfigurationManager.AppSettings["ClearBeforeImport"]);
       if (method.ToUpper() == "IMPORT")
-        rdfFullFilename = ConfigurationManager.AppSettings["RdfImportFullFilename"];
+      {
+          rdfFullFilename = ConfigurationManager.AppSettings["RdfImportFullFilename"];
+      }
       else
-        rdfFullFilename = ConfigurationManager.AppSettings["RdfExportFullFilename"];
+      {
+          rdfFullFilename = ConfigurationManager.AppSettings["RdfExportFullFilename"];
+      }
       graphUri = ConfigurationManager.AppSettings["GraphUri"];
     }
 
-    private static void DoExport(string dbServer, string dbName, string dbUser, string dbPassword, string rdfFullFilename, string graphUri)
+    private static void DoExport()
     {
       MicrosoftSqlStoreManager msStore = new MicrosoftSqlStoreManager(dbServer, dbName, dbUser, dbPassword);
-      msStore.Open(false);
+      SqlGraph sqlGraph = null;
+      List<Uri> graphUris = msStore.GetGraphUris();
       FastRdfXmlWriter rdfXmlWriter = new FastRdfXmlWriter();
-      //            RdfXmlTreeWriter rdfXmlWriter = new RdfXmlTreeWriter();
 
-      Graph workGraph = new Graph();
-      msStore.LoadGraph(workGraph, graphUri);
-
-      rdfXmlWriter.Save(workGraph, rdfFullFilename);
-      msStore.Dispose();
-
+      if (graphUri == null || graphUri == string.Empty)
+      {
+          sqlGraph = new SqlGraph(graphUris[0], msStore);
+      }
+      else
+      {
+          bool exist = msStore.Exists(new Uri(graphUri));
+          if (exist)
+              sqlGraph = new SqlGraph(new Uri(graphUri), msStore);
+          else
+              throw new Exception(graphUri + " does not exist in Sql store ...");
+      }
+      sqlGraph.SaveToFile(rdfFullFilename, rdfXmlWriter);
+      if (graphUri == string.Empty) graphUri = "dotnetrf:default-graph";
       Console.WriteLine("Graph[" + graphUri + "] written to " + rdfFullFilename);
       Console.WriteLine("Press any key to continue....");
       Console.ReadKey();
 
     }
 
-    private static void DoImport(string dbServer, string dbName, string dbUser, string dbPassword, string rdfFullFilename, string graphUri)
+    private static void DoImport()
     {
       MicrosoftSqlStoreManager msStore = new MicrosoftSqlStoreManager(dbServer, dbName, dbUser, dbPassword);
-      msStore.Open(false);
+      List<Uri> graphUris = msStore.GetGraphUris();
+      SqlGraph sqlGraph = null;
+        // let's load the existing graph
+      if (graphUri == null || graphUri == string.Empty)
+      {
+         sqlGraph  = new SqlGraph(graphUris[0], msStore);
+      }
+      else
+      {
+          bool uriExist = msStore.Exists(new Uri(graphUri));
+          if (uriExist)
+          sqlGraph = new SqlGraph(new Uri(graphUri), msStore);
+          else 
+              throw new Exception(graphUri + " does not exists in Sql Store ... ");
+      }
+        // do we need to clear it first?
+      if (clearBeforeImport)
+      {
+          sqlGraph.Clear();
+      }
+      sqlGraph.LoadFromFile(rdfFullFilename);
+      sqlGraph.Manager.Flush();
 
-      Graph workGraph = new Graph();
-      FileLoader.Load(workGraph, rdfFullFilename);
-      workGraph.BaseUri = new Uri(graphUri);
-
-      msStore.SaveGraph(workGraph);
-      msStore.Dispose();
-
+      if (graphUri == string.Empty) graphUri = "dotnetrf:default-graph";
       Console.WriteLine("Graph[" + graphUri + "] imported from " + rdfFullFilename);
       Console.ReadKey();
     }
@@ -128,7 +156,7 @@ namespace RdfImportExport
     static void PrintUsage()
     {
       Console.WriteLine("Usage:");
-      Console.WriteLine("\\n\\RdfImportExport.exe Import DbServer DbName DbUser DbPassword RdfImportFullFilename GraphUri\\n");
+      Console.WriteLine("\\n\\RdfImportImport.exe Import DbServer DbName DbUser DbPassword RdfImportFullFilename GraphUri ClearBeforeImport\\n");
       Console.WriteLine("\\n\\RdfImportExport.exe Export DbServer DbName DbUser DbPassword RdfExportFullFilename GraphUri\\n");
       Console.ReadKey();
     }
