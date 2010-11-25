@@ -146,7 +146,7 @@ namespace RdfImportExport
       {
           sqlGraph.Clear();
       }
-
+      sqlGraph.LoadFromFile(rdfFullFilename);
       Graph workGraph = new Graph();
       //load graph from file
       FileLoader.Load(workGraph, rdfFullFilename);
@@ -155,6 +155,7 @@ namespace RdfImportExport
       {
           sqlGraph.Assert(t);
       }
+      sqlGraph.Refresh();
 
       Console.WriteLine("Graph[" + graphUri + "] imported from " + rdfFullFilename);
       Console.ReadKey();
