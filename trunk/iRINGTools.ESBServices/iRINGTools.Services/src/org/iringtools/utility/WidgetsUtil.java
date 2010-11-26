@@ -10,10 +10,6 @@ import org.iringtools.directory.Directory;
 import org.iringtools.directory.Exchange;
 import org.iringtools.directory.Graph;
 import org.iringtools.directory.Scope;
-import org.iringtools.refdata.federation.Federation;
-import org.iringtools.refdata.federation.IDGenerator;
-import org.iringtools.refdata.federation.Namespace;
-import org.iringtools.refdata.federation.Repository;
 import org.iringtools.ui.widgets.tree.LeafNode;
 import org.iringtools.ui.widgets.tree.Node;
 import org.iringtools.ui.widgets.tree.Property;
@@ -22,7 +18,7 @@ import org.iringtools.ui.widgets.tree.TreeNode;
 
 public class WidgetsUtil {
 	
-	private static Property createProperty(String name, String value) {
+	public static Property createProperty(String name, String value) {
 		Property property = new Property();
 		property.setName(name);
 		property.setValue(value);
@@ -125,100 +121,4 @@ public class WidgetsUtil {
 		return tree;
 	}
 
-	// TODO: Review this code, and ask questions.
-	// Basically, the TreePanel will handle a generic JSON.
-	// So, make a generic JSON and get rid of old way
-	// Used above as a guide...
-	// SetCls is used to set the CSS class that should be setup.
-	// Use the objects... working with references.
-	public static Tree federationToTree(Federation federation) {
-
-		Tree tree = new Tree();
-		List<Node> treeNodes = tree.getTreeNodes();
-
-		TreeNode generatorsNode = new TreeNode();
-		generatorsNode.setText("ID Generators");
-		generatorsNode.setCls("folder");
-		treeNodes.add(generatorsNode);
-
-		List<Node> generatorNodes = generatorsNode.getChildren();
-
-		for (IDGenerator idgenerator : federation.getIdGenerators().getItems()) {
-			LeafNode generatorNode = new LeafNode();
-			generatorNode.setId(Integer.toString(idgenerator.getId()));
-			generatorNode.setText(idgenerator.getName());
-			generatorNode.setCls("generator");
-			generatorNode.setLeaf(true);
-
-			List<Property> properties = generatorNode.getProperties();
-			properties.add(createProperty("Name", idgenerator.getName()));
-			properties.add(createProperty("URI", idgenerator.getUri()));
-			properties.add(createProperty("Description",
-					idgenerator.getDescription()));
-
-			generatorNodes.add(generatorNode);
-		}
-
-		// Namespaces
-		TreeNode namespacesNode = new TreeNode();
-		namespacesNode.setText("Namespaces");
-		namespacesNode.setCls("folder");
-		treeNodes.add(namespacesNode);
-		
-		List<Node> namespaceNodes = namespacesNode.getChildren();
-
-		for (Namespace namespace : federation.getNamespaces().getItems()) {
-			LeafNode namespaceNode = new LeafNode();
-			namespaceNode.setId(Integer.toString(namespace.getId()));
-			namespaceNode.setText(namespace.getAlias());
-			namespaceNode.setCls("namespace");
-			namespaceNode.setLeaf(true);
-
-			List<Property> properties = namespaceNode.getProperties();
-			properties.add(createProperty("Alias", namespace.getAlias()));
-			properties.add(createProperty("URI", namespace.getUri()));
-			properties.add(createProperty("Description",
-					namespace.getDescription()));
-			properties.add(createProperty("Writable",
-					String.valueOf(namespace.isIsWritable())));
-			properties.add(createProperty("Id",
-					String.valueOf(namespace.getIdGenerator())));
-
-			namespaceNodes.add(namespaceNode);
-		}
-
-		// Repositories
-		
-		TreeNode repositoriesNode = new TreeNode();
-		repositoriesNode.setText("Repositories");
-		repositoriesNode.setCls("folder");
-		treeNodes.add(repositoriesNode);
-
-		List<Node> repositoryNodes = repositoriesNode.getChildren();
-
-		for (Repository repository : federation.getRepositories().getItems()){
-			LeafNode repositoryNode = new LeafNode();
-			repositoryNode.setId(repository.getName());
-			repositoryNode.setText(repository.getName());
-			repositoryNode.setCls("repository");
-			repositoryNode.setLeaf(true);
-			
-			List<Property> properties = repositoryNode.getProperties();
-			properties.add(createProperty("URI", repository.getUri()));
-			properties.add(createProperty("Description",
-					repository.getDescription()));
-			properties.add(createProperty("Read Only",
-					String.valueOf(repository.isIsReadOnly())));
-			properties.add(createProperty("Repository Type",
-					repository.getRepositoryType()));
-			properties.add(createProperty("Update URI",
-					repository.getUpdateUri()));
-
-
-			repositoryNodes.add(repositoryNode);
-		}
-
-		return tree;
-
-	}
 }

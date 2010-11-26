@@ -2,13 +2,11 @@
 <federation xmlns="http://www.iringtools.org/refdata/federation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://iringtools.org/federation ../schemas/refdata/federation.xsd ">
   <idGenerators>
     <idGenerator>
-      <id>1</id>
       <uri>http://org.iringtools.com/idgen1</uri>
       <name>IdGenerator1</name>
       <description>Sample ID Generator 1</description>
     </idGenerator>
     <idGenerator>
-      <id>2</id>
       <uri>http://org.iringtools.com/idgen2</uri>
       <name>IdGenerator2</name>
       <description>Sample ID Generator 2</description>
@@ -20,14 +18,14 @@
       <alias>namespace1</alias>
       <isWritable>true</isWritable>
       <description>Sample namespace 1</description>
-      <idGenerator>1</idGenerator>
+      <idGenerator>IdGenerator1</idGenerator>
     </namespace>
     <namespace>
       <uri>http://org.iringtool.com/namespace2</uri>
       <alias>namespace2</alias>
       <isWritable>true</isWritable>
       <description>Sample namespace 2</description>
-      <idGenerator>2</idGenerator>
+      <idGenerator>IdGenerator2</idGenerator>
     </namespace>
   </namespaces>
   <repositories>
