@@ -114,7 +114,9 @@ namespace RdfImportExport
           else
               throw new Exception(graphUri + " does not exist in Sql store ...");
       }
-      sqlGraph.SaveToFile(rdfFullFilename, rdfXmlWriter);
+
+      rdfXmlWriter.Save(sqlGraph, rdfFullFilename);
+
       if (graphUri == string.Empty) graphUri = "dotnetrf:default-graph";
       Console.WriteLine("Graph[" + graphUri + "] written to " + rdfFullFilename);
       Console.WriteLine("Press any key to continue....");
@@ -125,6 +127,7 @@ namespace RdfImportExport
     private static void DoImport()
     {
       MicrosoftSqlStoreManager msStore = new MicrosoftSqlStoreManager(dbServer, dbName, dbUser, dbPassword);
+      
       List<Uri> graphUris = msStore.GetGraphUris();
       SqlGraph sqlGraph = null;
         // let's load the existing graph
@@ -145,7 +148,13 @@ namespace RdfImportExport
       {
           sqlGraph.Clear();
       }
-      sqlGraph.LoadFromFile(rdfFullFilename);
+      Graph g = new Graph();
+      FileLoader.Load(g, rdfFullFilename);
+      foreach (Triple t in g.Triples)
+      {
+          sqlGraph.Assert(t);
+      }
+
       sqlGraph.Manager.Flush();
 
       if (graphUri == string.Empty) graphUri = "dotnetrf:default-graph";
