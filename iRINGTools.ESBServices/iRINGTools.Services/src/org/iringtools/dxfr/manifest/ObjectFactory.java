@@ -30,11 +30,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Role }
+     * Create an instance of {@link Class }
      * 
      */
-    public Role createRole() {
-        return new Role();
+    public Class createClass() {
+        return new Class();
+    }
+
+    /**
+     * Create an instance of {@link Roles }
+     * 
+     */
+    public Roles createRoles() {
+        return new Roles();
+    }
+
+    /**
+     * Create an instance of {@link ClassTemplates }
+     * 
+     */
+    public ClassTemplates createClassTemplates() {
+        return new ClassTemplates();
     }
 
     /**
@@ -54,43 +70,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ClassTemplates }
-     * 
-     */
-    public ClassTemplates createClassTemplates() {
-        return new ClassTemplates();
-    }
-
-    /**
-     * Create an instance of {@link Class }
-     * 
-     */
-    public Class createClass() {
-        return new Class();
-    }
-
-    /**
-     * Create an instance of {@link ClassTemplatesList }
-     * 
-     */
-    public ClassTemplatesList createClassTemplatesList() {
-        return new ClassTemplatesList();
-    }
-
-    /**
-     * Create an instance of {@link Roles }
-     * 
-     */
-    public Roles createRoles() {
-        return new Roles();
-    }
-
-    /**
      * Create an instance of {@link Manifest }
      * 
      */
     public Manifest createManifest() {
         return new Manifest();
+    }
+
+    /**
+     * Create an instance of {@link Role }
+     * 
+     */
+    public Role createRole() {
+        return new Role();
     }
 
     /**
@@ -107,6 +99,14 @@ public class ObjectFactory {
      */
     public Graph createGraph() {
         return new Graph();
+    }
+
+    /**
+     * Create an instance of {@link ClassTemplatesList }
+     * 
+     */
+    public ClassTemplatesList createClassTemplatesList() {
+        return new ClassTemplatesList();
     }
 
 }
