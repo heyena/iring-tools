@@ -1,79 +1,75 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project basedir="." default="build" name="iringtools">
+<project basedir="." default="build" name="iRINGTools.Services">
 	<property name="debuglevel" value="source,lines,vars" />
 	<property name="target" value="1.6" />
 	<property name="source" value="1.6" />
 
 	<path id="cxf-2.3.0.userclasspath">
-		<pathelement location="../libraries/apache-cxf-2.3.0/lib/antlr-2.7.7.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/aopalliance-1.0.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/asm-3.3.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/bcprov-jdk15-1.43.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/commons-collections-3.2.1.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/commons-lang-2.5.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/commons-logging-1.1.1.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/commons-pool-1.5.2.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/cxf-2.3.0.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/cxf-manifest.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/cxf-xjc-boolean-2.3.0.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/cxf-xjc-bug671-2.3.0.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/cxf-xjc-dv-2.3.0.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/cxf-xjc-ts-2.3.0.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/FastInfoset-1.2.8.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/geronimo-activation_1.1_spec-1.1.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/geronimo-annotation_1.0_spec-1.1.1.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/geronimo-javamail_1.4_spec-1.7.1.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/geronimo-jaxws_2.2_spec-1.0.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/geronimo-jms_1.1_spec-1.1.1.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/geronimo-servlet_3.0_spec-1.0.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/geronimo-stax-api_1.0_spec-1.0.1.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/geronimo-ws-metadata_2.0_spec-1.1.3.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/jaxb-api-2.2.1.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/jaxb-impl-2.2.1.1.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/jaxb-xjc-2.2.1.1.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/jettison-1.2.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/jetty-continuation-7.1.6.v20100715.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/jetty-http-7.1.6.v20100715.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/jetty-io-7.1.6.v20100715.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/jetty-server-7.1.6.v20100715.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/jetty-util-7.1.6.v20100715.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/jra-1.0-alpha-4.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/js-1.7R1.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/jsr311-api-1.1.1.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/neethi-2.0.4.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/oro-2.0.8.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/saaj-api-1.3.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/saaj-impl-1.3.2.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/serializer-2.7.1.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/slf4j-api-1.6.1.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/slf4j-jdk14-1.6.1.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/spring-aop-3.0.4.RELEASE.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/spring-asm-3.0.4.RELEASE.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/spring-beans-3.0.4.RELEASE.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/spring-context-3.0.4.RELEASE.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/spring-core-3.0.4.RELEASE.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/spring-expression-3.0.4.RELEASE.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/spring-jms-3.0.4.RELEASE.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/spring-tx-3.0.4.RELEASE.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/spring-web-3.0.4.RELEASE.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/stax2-api-3.0.2.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/velocity-1.6.4.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/woodstox-core-asl-4.0.8.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/wsdl4j-1.6.2.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/wss4j-1.5.9.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/xalan-2.7.1.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/xml-resolver-1.2.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/xmlbeans-2.4.0.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/XmlSchema-1.4.7.jar"/>
-        <pathelement location="../libraries/apache-cxf-2.3.0/lib/xmlsec-1.4.3.jar"/>
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/antlr-2.7.7.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/aopalliance-1.0.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/asm-3.3.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/bcprov-jdk15-1.43.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/commons-collections-3.2.1.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/commons-lang-2.5.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/commons-logging-1.1.1.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/commons-pool-1.5.2.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/cxf-2.3.0.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/cxf-manifest.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/cxf-xjc-boolean-2.3.0.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/cxf-xjc-bug671-2.3.0.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/cxf-xjc-dv-2.3.0.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/cxf-xjc-ts-2.3.0.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/FastInfoset-1.2.8.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/geronimo-activation_1.1_spec-1.1.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/geronimo-annotation_1.0_spec-1.1.1.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/geronimo-javamail_1.4_spec-1.7.1.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/geronimo-jaxws_2.2_spec-1.0.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/geronimo-jms_1.1_spec-1.1.1.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/geronimo-servlet_3.0_spec-1.0.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/geronimo-stax-api_1.0_spec-1.0.1.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/geronimo-ws-metadata_2.0_spec-1.1.3.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/jaxb-api-2.2.1.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/jaxb-impl-2.2.1.1.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/jaxb-xjc-2.2.1.1.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/jettison-1.2.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/jetty-continuation-7.1.6.v20100715.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/jetty-http-7.1.6.v20100715.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/jetty-io-7.1.6.v20100715.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/jetty-server-7.1.6.v20100715.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/jetty-util-7.1.6.v20100715.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/jra-1.0-alpha-4.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/js-1.7R1.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/jsr311-api-1.1.1.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/neethi-2.0.4.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/oro-2.0.8.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/saaj-api-1.3.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/saaj-impl-1.3.2.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/serializer-2.7.1.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/slf4j-api-1.6.1.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/slf4j-jdk14-1.6.1.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/spring-aop-3.0.4.RELEASE.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/spring-asm-3.0.4.RELEASE.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/spring-beans-3.0.4.RELEASE.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/spring-context-3.0.4.RELEASE.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/spring-core-3.0.4.RELEASE.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/spring-expression-3.0.4.RELEASE.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/spring-jms-3.0.4.RELEASE.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/spring-tx-3.0.4.RELEASE.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/spring-web-3.0.4.RELEASE.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/stax2-api-3.0.2.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/velocity-1.6.4.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/woodstox-core-asl-4.0.8.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/wsdl4j-1.6.2.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/wss4j-1.5.9.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/xalan-2.7.1.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/xml-resolver-1.2.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/xmlbeans-2.4.0.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/XmlSchema-1.4.7.jar" />
+		<pathelement location="../libraries/apache-cxf-2.3.0/lib/xmlsec-1.4.3.jar" />
 	</path>
 
 	<path id="jsr311-api.userclasspath">
 		<pathelement location="../libraries/jsr311-api/jsr311-api.jar" />
-	</path>
-
-	<path id="gson-1.4.userclasspath">
-		<pathelement location="../libraries/google-gson-1.4/gson-1.4.jar" />
 	</path>
 
 	<path id="log4j-1.2.16.userclasspath">
@@ -93,28 +89,22 @@
 		<pathelement location="../libraries/guice-2.0/guice-throwingproviders-2.0.jar" />
 	</path>
 
-	<path id="jaxb.userclasspath">
-    <pathelement location="../libraries/jaxb-ri-20100511/lib/jaxb-xjc.jar" />
-    <pathelement location="../libraries/jaxb-ri-20100511/lib/collection-setter-injector.jar" />
-	</path> 
-  
+	<path id="jaxb-ri-20100511.userclasspath">
+		<pathelement location="../libraries/jaxb-ri-20100511/lib/activation.jar" />
+		<pathelement location="../libraries/jaxb-ri-20100511/lib/collection-setter-injector.jar" />
+		<pathelement location="../libraries/jaxb-ri-20100511/lib/jaxb1-impl.jar" />
+		<pathelement location="../libraries/jaxb-ri-20100511/lib/jaxb-api.jar" />
+		<pathelement location="../libraries/jaxb-ri-20100511/lib/jaxb-impl.jar" />
+		<pathelement location="../libraries/jaxb-ri-20100511/lib/jaxb-xjc.jar" />
+		<pathelement location="../libraries/jaxb-ri-20100511/lib/jsr173_1.0_api.jar" />
+	</path>
+
 	<path id="httpcomponents-4.0.userclasspath">
 		<pathelement location="../libraries/apache-httpcomponents-4.0/httpclient-4.0.3.jar" />
 		<pathelement location="../libraries/apache-httpcomponents-4.0/httpcore-4.0.1.jar" />
 		<pathelement location="../libraries/apache-httpcomponents-4.0/httpcore-nio-4.0.1.jar" />
 		<pathelement location="../libraries/apache-httpcomponents-4.0/httpmime-4.0.3.jar" />
 	</path>
-
-	<target name="generate">
-		<taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask" >
-			<classpath refid="jaxb.userclasspath" />
-		</taskdef>		
-		<xjc destdir="src" extension="true" removeOldOutput="yes" >
-			<schema dir="WebContent/WEB-INF/schemas" includes="**/*.xsd" />
-      <arg value="-no-header" />
-      <arg value="-Xcollection-setter-injector" />
-		</xjc>
-	</target>
 
 	<target name="clean">
 		<delete dir="WebContent/WEB-INF/classes" />
@@ -137,19 +127,21 @@
 			<src path="src" />
 			<classpath refid="cxf-2.3.0.userclasspath" />
 			<classpath refid="jsr311-api.userclasspath" />
-			<classpath refid="gson-1.4.userclasspath" />
 			<classpath refid="log4j-1.2.16.userclasspath" />
 			<classpath refid="guice-2.0.userclasspath" />
-      <classpath refid="httpcomponents-4.0.userclasspath" />
+			<classpath refid="httpcomponents-4.0.userclasspath" />
 		</javac>
+	</target>
+
+	<target name="dist" depends="build">
+		<mkdir dir="dist" />
 		<copy todir="WebContent/WEB-INF/lib" flatten="true">
 			<path refid="cxf-2.3.0.userclasspath" />
 			<path refid="jsr311-api.userclasspath" />
-			<path refid="gson-1.4.userclasspath" />
 			<path refid="log4j-1.2.16.userclasspath" />
 			<path refid="guice-2.0.userclasspath" />
 			<path refid="httpcomponents-4.0.userclasspath" />
 		</copy>
-		<jar destfile="${ant.project.name}.war" basedir="WebContent" excludes="**/.svn/,WEB-INF/logs/*.*" />
+		<jar destfile="dist/${ant.project.name}.war" basedir="WebContent" excludes="**/.svn/,WEB-INF/logs/*.*" />
 	</target>
 </project>

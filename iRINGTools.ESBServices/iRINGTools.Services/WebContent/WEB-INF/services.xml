@@ -24,6 +24,12 @@
     </jaxrs:serviceBeans>
   </jaxrs:server>
   
+  <jaxrs:server id="DifferencingService" address="/diff" >
+    <jaxrs:serviceBeans>
+      <bean class="org.iringtools.services.DifferencingService" />
+    </jaxrs:serviceBeans>
+  </jaxrs:server>
+  
   <jaxrs:server id="RefDataService" address="/refdata" >
     <jaxrs:serviceBeans>
       <bean class="org.iringtools.services.RefDataService" />
