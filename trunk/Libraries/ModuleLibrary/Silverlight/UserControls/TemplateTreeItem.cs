@@ -52,9 +52,9 @@ namespace org.iringtools.informationmodel.usercontrols
           }
 
           QMXF qmxf = (QMXF)CompletedEventArgs.Data;
-
-          TemplateDefinition = qmxf.templateDefinitions.FirstOrDefault();
-          TemplateQualification = qmxf.templateQualifications.FirstOrDefault();
+          qmxf.sourceRepository = this.Entity.Repository;
+          TemplateDefinition = qmxf.templateDefinitions.Where(c=>c.repositoryName == qmxf.sourceRepository).FirstOrDefault();
+          TemplateQualification = qmxf.templateQualifications.Where(c => c.repositoryName == qmxf.sourceRepository).FirstOrDefault();
 
           if (TemplateDefinition != null)
           {

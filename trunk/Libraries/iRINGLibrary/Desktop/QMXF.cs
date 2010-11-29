@@ -73,6 +73,9 @@ namespace org.ids_adi.qmxf
         [XmlAttribute(AttributeName = "targetRepository")]
         public string targetRepository { get; set; }
 
+        [DataMember(Name = "sourceRepository", EmitDefaultValue = false)]
+        [XmlAttribute(AttributeName = "sourceRepository")]
+        public string sourceRepository { get; set; }
 
     }
 
