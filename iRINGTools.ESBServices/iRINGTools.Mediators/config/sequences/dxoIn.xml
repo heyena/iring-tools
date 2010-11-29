@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence xmlns="http://ws.apache.org/ns/synapse" xmlns:dir="http://www.iringtools.org/directory"
+	name="dxoIn">
+	<log level="custom">
+		<property name="DXO_IN" expression="*" />
+	</log>
+	<xslt key="dxiSplit" />
+	<property name="dxi" expression="//dti:dxi" type="OM"
+		xmlns:dti="http://www.iringtools.org/dxfr/dti" />
+
+	<header name="To"
+		expression="fn:concat('http://localhost:8080/iringtools/dir/', fn:substring-after(get-property('To'), 'dxo/'))" />
+	<class name="org.iringtools.mediators.RESTCalloutMediator">
+		<axis2ns238:property xmlns:axis2ns238="http://ws.apache.org/ns/synapse"
+			name="serviceURL" value="" />
+		<axis2ns239:property xmlns:axis2ns239="http://ws.apache.org/ns/synapse"
+			name="axis2ConfigFile" value="" />
+		<axis2ns240:property xmlns:axis2ns240="http://ws.apache.org/ns/synapse"
+			name="method" value="" />
+		<axis2ns241:property xmlns:axis2ns241="http://ws.apache.org/ns/synapse"
+			name="contentType" value="" />
+	</class>
+
+	<property name="sourceUri" expression="//dir:exchangeDefinition/dir:sourceUri"
+		scope="default" type="STRING" />
+	<property name="sourceScopeName" expression="//dir:exchangeDefinition/dir:sourceScopeName"
+		scope="default" type="STRING" />
+	<property name="sourceAppName" expression="//dir:exchangeDefinition/dir:sourceAppName"
+		scope="default" type="STRING" />
+	<property name="sourceGraphName" expression="//dir:exchangeDefinition/dir:sourceGraphName"
+		scope="default" type="STRING" />
+	<property name="targetUri" expression="//dir:exchangeDefinition/dir:targetUri"
+		scope="default" type="STRING" />
+	<property name="targetScopeName" expression="//dir:exchangeDefinition/dir:targetScopeName"
+		scope="default" type="STRING" />
+	<property name="targetAppName" expression="//dir:exchangeDefinition/dir:targetAppName"
+		scope="default" type="STRING" />
+	<property name="targetGraphName" expression="//dir:exchangeDefinition/dir:targetGraphName"
+		scope="default" type="STRING" />
+	<property name="hashAlgorithm" expression="//dir:exchangeDefinition/dir:hashAlgorithm"
+		scope="default" type="STRING" />
+
+	<header name="To"
+		expression="fn:concat(get-property('targetUri'), '/', get-property('targetScopeName'), '/', get-property('targetAppName'), '/manifest')" />
+	<class name="org.iringtools.mediators.RESTCalloutMediator">
+		<axis2ns243:property xmlns:axis2ns243="http://ws.apache.org/ns/synapse"
+			name="serviceURL" value="" />
+		<axis2ns244:property xmlns:axis2ns244="http://ws.apache.org/ns/synapse"
+			name="axis2ConfigFile" value="" />
+		<axis2ns245:property xmlns:axis2ns245="http://ws.apache.org/ns/synapse"
+			name="method" value="" />
+		<axis2ns246:property xmlns:axis2ns246="http://ws.apache.org/ns/synapse"
+			name="contentType" value="" />
+	</class>
+
+	<script language="js"><![CDATA[
+              var sourceUrl = mc.getProperty('sourceUri') + '/' + mc.getProperty('sourceScopeName') + '/' + mc.getProperty('sourceAppName') + '/' + mc.getProperty('sourceGraphName') + '/xfr/page';
+              var targetUrl = mc.getProperty('targetUri') + '/' + mc.getProperty('targetScopeName') + '/' + mc.getProperty('targetAppName') + '/' + mc.getProperty('targetGraphName') + '/xfr/page';
+              var dxi = new XML(mc.getProperty('dxi'));
+              var manifest = mc.getPayloadXML().*;
+              mc.setPayloadXML(
+                <req:dtoAggregationRequest xmlns:req="http://wso2.org/request">
+                  <req:sourceUrl>{sourceUrl}</req:sourceUrl>
+                  <req:targetUrl>{targetUrl}</req:targetUrl>
+                  <req:manifest xmlns="http://www.iringtools.org/dxfr/manifest">{manifest}</req:manifest>
+                  <req:dxi>{dxi.*}</req:dxi>
+                </req:dtoAggregationRequest>);
+            ]]></script>
+
+	<callout serviceURL="http://localhost:8280/services/dxoAggr">
+		<source xmlns:s11="http://schemas.xmlsoap.org/soap/envelope/"
+			xmlns:s12="http://www.w3.org/2003/05/soap-envelope"
+			xpath="s11:Body/child::*[fn:position()=1] | s12:Body/child::*[fn:position()=1]" />
+		<target xmlns:s11="http://schemas.xmlsoap.org/soap/envelope/"
+			xmlns:s12="http://www.w3.org/2003/05/soap-envelope"
+			xpath="s11:Body/child::*[fn:position()=1] | s12:Body/child::*[fn:position()=1]" />
+	</callout>
+
+	<class name="org.iringtools.mediators.DtoDiffMediator" />
+
+	<property name="NO_ENTITY_BODY" scope="axis2" action="remove" />
+	<property name="RESPONSE" value="true" />
+	<header name="To" action="remove" />
+	<send />
+</sequence>
