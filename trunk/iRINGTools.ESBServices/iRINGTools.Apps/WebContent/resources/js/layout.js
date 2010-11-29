@@ -18,6 +18,7 @@ Ext.onReady(function(){
               region:'center',
               autoScroll:true,
               margin:'10 0 0 0',
+              collapsible: true,
               source:{},
               listeners: {
               // to disable editable option of the property grid
