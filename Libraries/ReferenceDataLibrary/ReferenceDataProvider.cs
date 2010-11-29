@@ -868,7 +868,70 @@ namespace org.iringtools.refdata
             return queryResult;
         }
 
-        private List<RoleDefinition> GetRoleDefintion(string id)
+        private List<RoleDefinition> GetRoleDefinition(string id, Repository repository)
+        {
+            try
+            {
+                string sparql = String.Empty;
+                string relativeUri = String.Empty;
+
+                Description description = new Description();
+                QMXFStatus status = new QMXFStatus();
+
+                List<RoleDefinition> roleDefinitions = new List<RoleDefinition>();
+
+                RefDataEntities resultEntities = new RefDataEntities();
+
+                Query queryContainsSearch = (Query)_queries.FirstOrDefault(c => c.Key == "GetRoles").Query;
+                QueryBindings queryBindings = queryContainsSearch.Bindings;
+
+                sparql = ReadSPARQL(queryContainsSearch.FileName);
+                sparql = sparql.Replace("param1", id);
+
+                SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
+
+                List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+
+                foreach (Dictionary<string, string> result in results)
+                {
+
+                    RoleDefinition roleDefinition = new RoleDefinition();
+                    QMXFName name = new QMXFName();
+
+                    if (result.ContainsKey("label"))
+                    {
+                        name.value = result["label"];
+                    }
+                    if (result.ContainsKey("role"))
+                    {
+                        roleDefinition.identifier = result["role"];
+                    }
+                    if (result.ContainsKey("comment"))
+                    {
+                        roleDefinition.description.value = result["comment"];
+                    }
+                    if (result.ContainsKey("index"))
+                    {
+                        roleDefinition.description.value = result["index"].ToString();
+                    }
+                    if (result.ContainsKey("type"))
+                    {
+                        roleDefinition.range = result["type"];
+                    }
+                    roleDefinition.name.Add(name);
+                    Utility.SearchAndInsert(roleDefinitions, roleDefinition, RoleDefinition.sortAscending());
+                }
+
+                return roleDefinitions;
+            }
+            catch (Exception e)
+            {
+                _logger.Error("Error in GetRoleDefinition: " + e);
+                throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
+            }
+        }
+
+        private List<RoleDefinition> GetRoleDefinition(string id)
         {
             try
             {
@@ -1122,7 +1185,7 @@ namespace org.iringtools.refdata
                         templateDefinition.description.Add(description);
                         templateDefinition.status.Add(status);
 
-                        templateDefinition.roleDefinition = GetRoleDefintion(id);
+                        templateDefinition.roleDefinition = GetRoleDefinition(id, repository);
                         templateDefinitionList.Add(templateDefinition);
                     }
                 }
@@ -1227,7 +1290,7 @@ namespace org.iringtools.refdata
                         Description description = new Description();
                         QMXFStatus status = new QMXFStatus();
                         QMXFName name = new QMXFName();
-                        
+
                         templateQualification.repositoryName = repository.Name;
 
                         if (result.ContainsKey("name"))
@@ -2830,7 +2893,8 @@ namespace org.iringtools.refdata
                                         generatedTempId = CreateIdsAdiId(_settings["ExampleRegistryBase"], templateName);
                                     else
                                         generatedTempId = CreateIdsAdiId(_settings["TemplateRegistryBase"], templateName);
-                                    ID = "<" + generatedTempId + ">";
+                                    ID = Utility.GetIdFromURI(generatedTempId);
+                                    //ID = "<" + generatedTempId + ">";
                                     Utility.WriteString("\n" + ID + "\t" + label, "TempDef IDs.log", true);
                                 }
 
@@ -2896,11 +2960,11 @@ namespace org.iringtools.refdata
                                         else
                                             generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], genName);
 
-                                        roleID = "<" + generatedId + ">";
+                                        roleID = Utility.GetIdFromURI(generatedId);
                                     }
                                     else
                                     {
-                                        roleID = "<" + role.identifier + ">";
+                                        roleID = Utility.GetIdFromURI(role.identifier);
                                     }
 
                                     sparqlStr = new StringBuilder();
@@ -2911,13 +2975,11 @@ namespace org.iringtools.refdata
                                     sparqlStr.AppendLine("  p8:valRoleIndex " + roleCount + " ;");
                                     sparqlStr.AppendLine("  p8:hasTemplate tpl:" + ID + " ;");
                                     //  sparql.AppendLine("  rdf:type owl:Thing ;");
-                                    sparqlStr.AppendLine("  p8:hasRole " + roleID + " .");
+                                    sparqlStr.AppendLine("  p8:hasRole tpl:" + roleID + " .");
                                     sparqlStr.AppendLine("}");
 
                                     response = PostToRepository(target, sparqlStr.ToString());
                                 }
-
-                                //response = PostToRepository(target, sparqlStr.ToString());
                             }
                         }
                         //else edit template
@@ -2938,15 +3000,11 @@ namespace org.iringtools.refdata
                             sparqlStr.AppendLine(identifier + " rdf:type owl:class ;");
                             sparqlStr.AppendLine(" ?property ?value . ");
 
-                            //response = PostToRepository(target, sparqlStr.ToString());
+
                             label = td.name[0].value;
-                            //sparqlStr = new StringBuilder();
-                            //sparqlStr.Append(prefix);
-                            //sparqlStr.AppendLine(delWhere);
+
                             sparqlStr.AppendLine(" tpl:TemplateDescription_of_" + label + " rdf:type p8:TemplateDescription ;");
                             sparqlStr.AppendLine(" ?property ?value . ");
-
-                            //response = PostToRepository(target, sparqlStr.ToString());
 
                             foreach (RoleDefinition role in td.roleDefinition)
                             {
@@ -2956,8 +3014,6 @@ namespace org.iringtools.refdata
                                 sparqlStr.AppendLine(delWhere);
                                 sparqlStr.AppendLine(" tpl:TemplateRoleDescription_of_" + label + "_" + ++roleCount + " p8:hasRole " + roleID + " ;");
                                 sparqlStr.AppendLine(" ?property ?value . ");
-
-                                //response = PostToRepository(target, sparqlStr.ToString());
                             }
 
                             sparqlStr = sparqlStr.AppendLine("}");
@@ -2980,7 +3036,9 @@ namespace org.iringtools.refdata
                                         generatedTempId = CreateIdsAdiId(_settings["ExampleRegistryBase"], templateName);
                                     else
                                         generatedTempId = CreateIdsAdiId(_settings["TemplateRegistryBase"], templateName);
-                                    ID = "<" + generatedTempId + ">";
+
+                                    ID = Utility.GetIdFromURI(generatedTempId);
+
                                     Utility.WriteString("\n" + ID + "\t" + label, "TempDef IDs.log", true);
                                 }
 
@@ -3047,11 +3105,11 @@ namespace org.iringtools.refdata
                                         else
                                             generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], genName);
 
-                                        roleID = "<" + generatedId + ">";
+                                        roleID = Utility.GetIdFromURI(generatedId);
                                     }
                                     else
                                     {
-                                        roleID = "<" + role.identifier + ">";
+                                        roleID = Utility.GetIdFromURI(role.identifier);
                                     }
 
                                     sparqlStr = new StringBuilder();
@@ -3062,7 +3120,7 @@ namespace org.iringtools.refdata
                                     sparqlStr.AppendLine("  p8:valRoleIndex " + roleCount + " ;");
                                     sparqlStr.AppendLine("  p8:hasTemplate tpl:" + ID + " ;");
                                     //  sparql.AppendLine("  rdf:type owl:Thing ;");
-                                    sparqlStr.AppendLine("  p8:hasRole " + roleID + " .");
+                                    sparqlStr.AppendLine("  p8:hasRole rdl:" + roleID + " .");
                                     sparqlStr.AppendLine("}");
 
                                     response = PostToRepository(target, sparqlStr.ToString());
@@ -3149,6 +3207,10 @@ namespace org.iringtools.refdata
                                 sparqlStr = new StringBuilder();
 
                             }
+                        }
+                        else  //does not exist
+                        {
+
                         }
 
                     }
