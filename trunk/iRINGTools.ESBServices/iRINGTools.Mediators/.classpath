@@ -8,5 +8,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/synapse-core-1.4.0"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/commons-logging-1.1.1"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jaxen-1.1.3"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/iRINGTools.Common"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

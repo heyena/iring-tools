@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="build" name="iRINGTools.Apps">
+	<property name="debuglevel" value="source,lines,vars" />
+	<property name="target" value="1.6" />
+	<property name="source" value="1.6" />
+	<property name="iRINGTools.Common.location" value="../iRINGTools.Common" />
+
+	<path id="axiom-1.2.8.userclasspath">
+		<pathelement location="../libraries/axiom-1.2.8/axiom.jar" />
+	</path>
+
+	<path id="commons-logging-1.1.1.userclasspath">
+		<pathelement location="../libraries/commons-logging-1.1.1/commons-logging-1.1.1.jar" />
+	</path>
+
+	<path id="httpcomponents-4.0.3.userclasspath">
+		<pathelement location="../libraries/apache-httpcomponents-4.0/httpclient-4.0.3.jar" />
+		<pathelement location="../libraries/apache-httpcomponents-4.0/httpcore-4.0.1.jar" />
+		<pathelement location="../libraries/apache-httpcomponents-4.0/httpcore-nio-4.0.1.jar" />
+		<pathelement location="../libraries/apache-httpcomponents-4.0/httpmime-4.0.3.jar" />
+	</path>
+
+	<path id="jaxb-ri-20100511.userclasspath">
+		<pathelement location="../libraries/jaxb-ri-20100511/lib/activation.jar" />
+		<pathelement location="../libraries/jaxb-ri-20100511/lib/collection-setter-injector.jar" />
+		<pathelement location="../libraries/jaxb-ri-20100511/lib/jaxb1-impl.jar" />
+		<pathelement location="../libraries/jaxb-ri-20100511/lib/jaxb-api.jar" />
+		<pathelement location="../libraries/jaxb-ri-20100511/lib/jaxb-impl.jar" />
+		<pathelement location="../libraries/jaxb-ri-20100511/lib/jaxb-xjc.jar" />
+		<pathelement location="../libraries/jaxb-ri-20100511/lib/jsr173_1.0_api.jar" />
+	</path>
+
+	<path id="gson-1.4.userclasspath">
+		<pathelement location="../libraries/google-gson-1.4/gson-1.4.jar" />
+	</path>
+
+	<path id="log4j-1.2.16.userclasspath">
+		<pathelement location="../libraries/apache-log4j-1.2.16/log4j-1.2.16.jar" />
+	</path>
+
+	<path id="struts2-2.2.1.userclasspath">
+		<pathelement location="../libraries/struts2-2.2.1/commons-fileupload-1.2.1.jar" />
+		<pathelement location="../libraries/struts2-2.2.1/commons-io-1.3.2.jar" />
+		<pathelement location="../libraries/struts2-2.2.1/commons-logging-1.0.4.jar" />
+		<pathelement location="../libraries/struts2-2.2.1/commons-logging-api-1.1.jar" />
+		<pathelement location="../libraries/struts2-2.2.1/commons-validator-1.3.1.jar" />
+		<pathelement location="../libraries/struts2-2.2.1/freemarker-2.3.16.jar" />
+		<pathelement location="../libraries/struts2-2.2.1/javassist-3.7.ga.jar" />
+		<pathelement location="../libraries/struts2-2.2.1/ognl-3.0.jar" />
+		<pathelement location="../libraries/struts2-2.2.1/struts2-core-2.2.1.jar" />
+		<pathelement location="../libraries/struts2-2.2.1/struts2-dojo-plugin-2.2.1.jar" />
+		<pathelement location="../libraries/struts2-2.2.1/struts2-jquery-plugin-2.4.1.jar" />
+		<pathelement location="../libraries/struts2-2.2.1/struts2-json-plugin-2.2.1.jar" />
+		<pathelement location="../libraries/struts2-2.2.1/xwork-core-2.2.1.jar" />
+	</path>
+
+	<path id="iRINGTools.Common.classpath">
+		<pathelement location="${iRINGTools.Common.location}/bin" />
+		<path refid="axiom-1.2.8.userclasspath" />
+		<path refid="commons-logging-1.1.1.userclasspath" />
+		<path refid="httpcomponents-4.0.3.userclasspath" />
+		<path refid="jaxb-ri-20100511.userclasspath" />
+		<path refid="log4j-1.2.16.userclasspath" />
+		<path refid="gson-1.4.userclasspath" />
+	</path>
+
+	<target name="clean">
+		<delete dir="WebContent/WEB-INF/classes" />
+	</target>
+
+	<target name="init" depends="clean">
+		<mkdir dir="WebContent/WEB-INF/classes" />
+		<copy includeemptydirs="false" todir="WebContent/WEB-INF/classes">
+			<fileset dir="src">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.java" />
+				<exclude name="**/.svn/" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="build-subprojects">
+		<ant antfile="build.xml" dir="${iRINGTools.Common.location}" inheritAll="false" target="build">
+			<propertyset>
+				<propertyref name="build.compiler" />
+			</propertyset>
+		</ant>
+	</target>
+
+	<target name="dist-subprojects">
+		<ant antfile="build.xml" dir="${iRINGTools.Common.location}" inheritAll="false" target="dist">
+			<propertyset>
+				<propertyref name="build.compiler" />
+			</propertyset>
+		</ant>
+	</target>
+
+	<target name="build" depends="init, build-subprojects">
+		<echo message="${ant.project.name}: ${ant.file}" />
+		<javac debug="true" debuglevel="${debuglevel}" destdir="WebContent/WEB-INF/classes" source="${source}" target="${target}">
+			<src path="src" />
+			<exclude name="**/.svn/" />
+			<classpath refid="iRINGTools.Common.classpath" />
+			<classpath refid="struts2-2.2.1.userclasspath" />
+		</javac>
+	</target>
+
+	<target name="dist" depends="build, dist-subprojects">
+		<mkdir dir="dist" />
+		<delete includeemptydirs="true">
+			<fileset dir="dist" includes="**/*" />
+		</delete>
+		<copy todir="WebContent/WEB-INF/lib" flatten="true">
+			<path refid="struts2-2.2.1.userclasspath" />
+			<fileset dir="${iRINGTools.Common.location}/dist"/>
+		</copy>
+		<jar destfile="dist/${ant.project.name}.war" basedir="WebContent" excludes="**/.svn/,WEB-INF/logs/*.*,WEB-INF/lib/bin/" />
+	</target>
+</project>
