@@ -205,7 +205,12 @@ namespace org.ids_adi.qmxf
           this.status = new List<QMXFStatus>();
           this.textualDefinition = new List<TextualDefinition>();
           this.roleQualification = new List<RoleQualification>();
+          this.repositoryName = string.Empty;
         }
+
+        [DataMember(Name = "repository", EmitDefaultValue = false)]
+        [XmlElement(ElementName = "repository")]
+        public string repositoryName { get; set; }
 
         [DataMember(Name = "suggested-designation", EmitDefaultValue = false)]
         [XmlElement(ElementName = "suggested-designation")]
