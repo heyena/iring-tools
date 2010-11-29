@@ -37,6 +37,7 @@ using org.iringtools.library;
 using org.iringtools.utility;
 using org.w3.sparql_results;
 using System.Text;
+using VDS.RDF.Update;
 
 namespace org.iringtools.refdata
 {
@@ -2938,7 +2939,7 @@ namespace org.iringtools.refdata
                             sparqlStr.AppendLine(" ?property ?value . ");
 
                             //response = PostToRepository(target, sparqlStr.ToString());
-
+                            label = td.name[0].value;
                             //sparqlStr = new StringBuilder();
                             //sparqlStr.Append(prefix);
                             //sparqlStr.AppendLine(delWhere);
@@ -2962,7 +2963,8 @@ namespace org.iringtools.refdata
                             sparqlStr = sparqlStr.AppendLine("}");
                             response = PostToRepository(target, sparqlStr.ToString());
 
-                            //Now Insert the modified template
+                            sparqlStr = new StringBuilder();
+                            sparqlStr.Append(prefix);
                             sparqlStr.AppendLine(insertData);
 
                             foreach (QMXFName name in template.name)
@@ -3122,6 +3124,30 @@ namespace org.iringtools.refdata
                                     Utility.WriteString("Template found: " + q.templateDefinitions[templateIndex].name[0].value, "stats.log", true);
                                     break;
                                 }
+                            }
+                        }
+
+                        if (!existInTarget)
+                        {
+                            foreach (QMXFName name in template.name)
+                            {
+                                label = name.value;
+                                templateName = "Template qualification " + label;
+
+                                if (ID == null || ID == string.Empty) ;
+                                {
+                                    if (_useExampleRegistryBase)
+                                        generatedTempId = CreateIdsAdiId(_settings["ExampleRegistryBase"], templateName);
+                                    else
+                                        generatedTempId = CreateIdsAdiId(_settings["TemplateRegistryBase"], templateName);
+                                    ID = "<" + generatedTempId + ">";
+                                    Utility.WriteString("\n" + ID + "\t" + label, "TempQual IDs.log", true);
+                                }
+
+                                specialization = template.qualifies;
+
+                                sparqlStr = new StringBuilder();
+
                             }
                         }
 
