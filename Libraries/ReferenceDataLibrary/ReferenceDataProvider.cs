@@ -37,7 +37,6 @@ using org.iringtools.library;
 using org.iringtools.utility;
 using org.w3.sparql_results;
 using System.Text;
-using VDS.RDF.Update;
 
 namespace org.iringtools.refdata
 {
