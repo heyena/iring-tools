@@ -6,61 +6,45 @@
 	<property name="iRINGTools.Common.location" value="../iRINGTools.Common" />
 
 	<path id="axiom-1.2.8.userclasspath">
-		<pathelement location="../libraries/axiom-1.2.8/axiom.jar" />
+		<fileset dir="../libraries/axiom-1.2.8">
+      <include name="**/*.jar"/>
+    </fileset>
 	</path>
 
 	<path id="commons-logging-1.1.1.userclasspath">
-		<pathelement
-			location="../libraries/commons-logging-1.1.1/commons-logging-1.1.1.jar" />
+		<fileset dir="../libraries/commons-logging-1.1.1">
+      <include name="**/*.jar"/>
+    </fileset>
 	</path>
 
 	<path id="httpcomponents-4.0.3.userclasspath">
-		<pathelement
-			location="../libraries/apache-httpcomponents-4.0/httpclient-4.0.3.jar" />
-		<pathelement
-			location="../libraries/apache-httpcomponents-4.0/httpcore-4.0.1.jar" />
-		<pathelement
-			location="../libraries/apache-httpcomponents-4.0/httpcore-nio-4.0.1.jar" />
-		<pathelement
-			location="../libraries/apache-httpcomponents-4.0/httpmime-4.0.3.jar" />
+    <fileset dir="../libraries/apache-httpcomponents-4.0">
+      <include name="**/*.jar"/>
+    </fileset>
 	</path>
 
 	<path id="jaxb-ri-20100511.userclasspath">
-		<pathelement location="../libraries/jaxb-ri-20100511/lib/activation.jar" />
-		<pathelement
-			location="../libraries/jaxb-ri-20100511/lib/collection-setter-injector.jar" />
-		<pathelement location="../libraries/jaxb-ri-20100511/lib/jaxb1-impl.jar" />
-		<pathelement location="../libraries/jaxb-ri-20100511/lib/jaxb-api.jar" />
-		<pathelement location="../libraries/jaxb-ri-20100511/lib/jaxb-impl.jar" />
-		<pathelement location="../libraries/jaxb-ri-20100511/lib/jaxb-xjc.jar" />
-		<pathelement location="../libraries/jaxb-ri-20100511/lib/jsr173_1.0_api.jar" />
+    <fileset dir="../libraries/jaxb-ri-20100511/lib">
+      <include name="**/*.jar"/>
+    </fileset>
 	</path>
 
 	<path id="gson-1.4.userclasspath">
-		<pathelement location="../libraries/google-gson-1.4/gson-1.4.jar" />
+		<fileset dir="../libraries/google-gson-1.4">
+      <include name="**/*.jar"/>
+    </fileset>
 	</path>
 
 	<path id="log4j-1.2.16.userclasspath">
-		<pathelement location="../libraries/apache-log4j-1.2.16/log4j-1.2.16.jar" />
+		<fileset dir="../libraries/apache-log4j-1.2.16">
+      <include name="**/*.jar"/>
+    </fileset>
 	</path>
 
 	<path id="struts2-2.2.1.userclasspath">
-		<pathelement location="../libraries/struts2-2.2.1/commons-fileupload-1.2.1.jar" />
-		<pathelement location="../libraries/struts2-2.2.1/commons-io-1.3.2.jar" />
-		<pathelement location="../libraries/struts2-2.2.1/commons-logging-1.0.4.jar" />
-		<pathelement location="../libraries/struts2-2.2.1/commons-logging-api-1.1.jar" />
-		<pathelement location="../libraries/struts2-2.2.1/commons-validator-1.3.1.jar" />
-		<pathelement location="../libraries/struts2-2.2.1/freemarker-2.3.16.jar" />
-		<pathelement location="../libraries/struts2-2.2.1/javassist-3.7.ga.jar" />
-		<pathelement location="../libraries/struts2-2.2.1/ognl-3.0.jar" />
-		<pathelement location="../libraries/struts2-2.2.1/struts2-core-2.2.1.jar" />
-		<pathelement
-			location="../libraries/struts2-2.2.1/struts2-dojo-plugin-2.2.1.jar" />
-		<pathelement
-			location="../libraries/struts2-2.2.1/struts2-jquery-plugin-2.4.1.jar" />
-		<pathelement
-			location="../libraries/struts2-2.2.1/struts2-json-plugin-2.2.1.jar" />
-		<pathelement location="../libraries/struts2-2.2.1/xwork-core-2.2.1.jar" />
+    <fileset dir="../libraries/struts2-2.2.1">
+      <include name="**/*.jar"/>
+    </fileset>
 	</path>
 
 	<path id="iRINGTools.Common.classpath">
