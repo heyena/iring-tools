@@ -3114,7 +3114,6 @@ namespace org.iringtools.refdata
 
                                 response = PostToRepository(target, sparqlStr.ToString());
                             }
-
                         }
                     }
                 }
@@ -3302,9 +3301,6 @@ namespace org.iringtools.refdata
                                 sparqlStr.AppendLine(" ?property ?value . ");
                             }
 
-                            sparqlStr = sparqlStr.AppendLine("}");
-                            response = PostToRepository(target, sparqlStr.ToString());
-
                             foreach (Specialization spec in template.specialization)
                             {
                                 specialization = String.Empty;
@@ -3316,10 +3312,10 @@ namespace org.iringtools.refdata
 
                                 sparqlStr.AppendLine("  p8:hasSubTemplate tpl:" + identifier + " ;");
                                 sparqlStr.AppendLine(" ?property ?value . ");
-                                sparqlStr.AppendLine("}");
-
-                                response = PostToRepository(target, sparqlStr.ToString());
                             }
+
+                            sparqlStr = sparqlStr.AppendLine("}");
+                            response = PostToRepository(target, sparqlStr.ToString());
 
                             sparqlStr = new StringBuilder();
                             sparqlStr.Append(prefix);
@@ -3369,8 +3365,6 @@ namespace org.iringtools.refdata
                                 sparqlStr.AppendLine("  p8:hasTemplate tpl:" + ID + " .");
 
                                 sparqlStr.AppendLine("}");
-
-
                                 response = PostToRepository(target, sparqlStr.ToString());
 
                                 foreach (Specialization spec in template.specialization)
@@ -3426,12 +3420,8 @@ namespace org.iringtools.refdata
 
                                     response = PostToRepository(target, sparqlStr.ToString());
                                 }
-
-                                response = PostToRepository(target, sparqlStr.ToString());
                             }
-
                         }
-
                     }
                 }
                 #endregion
@@ -3971,7 +3961,102 @@ namespace org.iringtools.refdata
                             _response = PostToRepository(target, sparqlStr.ToString());
                         }
                     }
-                    //else edit the class
+                    else //edit the class
+                    {
+                        ClassDefinition cd = q.classDefinitions[classIndex];
+
+                        foreach (QMXFName name in cd.name)
+                        {
+                            sparqlStr = new StringBuilder();
+                            sparqlStr.Append(prefix);
+                            sparqlStr.AppendLine(delWhere);
+
+                            label = name.value;
+                            sparqlStr.AppendLine(ID + " rdfs:label \"" + label + "\"^^xsd:string ; ");
+                            sparqlStr.AppendLine(" ?property ?value . ");
+
+                            sparqlStr = sparqlStr.AppendLine("}");
+                            _response = PostToRepository(target, sparqlStr.ToString());
+
+                            foreach (Classification classif in cd.classification)
+                            {
+                                sparqlStr = new StringBuilder();
+                                sparqlStr.Append(prefix);
+                                sparqlStr.AppendLine(delWhere);
+
+                                classification = classif.reference;
+                                classSparql += " ?a rdf:type dm:Classification . "
+                                      + " ?a dm:hasClassifier <" + classification + "> . "
+                                      + " ?a dm:hasClassified  " + ID + "  . } ";
+
+                                _response = PostToRepository(target, sparqlStr.ToString());
+                            }
+                            
+                            foreach (Specialization spec in cd.specialization)
+                            {
+                                sparqlStr = new StringBuilder();
+                                sparqlStr.Append(prefix);
+                                sparqlStr.AppendLine(delWhere);
+
+                                specialization = spec.reference;
+                                specSparql += " ?a rdf:type dm:Specialization . "
+                                      + " ?a dm:hasSuperclass <" + specialization + "> . "
+                                      + " ?a dm:hasSubclass " + ID + " . } ";
+
+                                _response = PostToRepository(target, sparqlStr.ToString());
+                            }
+                        }
+
+                        sparqlStr = new StringBuilder();
+                        sparqlStr.Append(prefix);
+                        sparqlStr.AppendLine(insertData);
+
+                        foreach (QMXFName name in Class.name)
+                        {
+                            label = name.value;
+                            count++;
+                            Utility.WriteString("Inserting : " + label, "stats.log", true);
+
+                            className = "Class definition " + label;
+                            if (ID == null || ID == string.Empty)
+                            {
+                                if (_useExampleRegistryBase)
+                                    generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], className);
+                                else
+                                    generatedId = CreateIdsAdiId(_settings["ClassRegistryBase"], className);
+
+                                ID = "<" + generatedId + ">";
+
+                                Utility.WriteString("\n" + ID + "\t" + label, "Class IDs.log", true);
+                            }
+                            sparqlStr.AppendLine("  " + ID + " rdf:type owl:Class ;");
+
+                            foreach (Description descr in Class.description)
+                            {
+                                description = descr.value;
+                                sparqlStr.AppendLine("  rdfs:comment \"" + description + "\"^^xsd:string ;");
+                            }
+                            int specCount = Class.specialization.Count;
+                            //append Specialization to sparql query
+                            foreach (Specialization spec in Class.specialization)
+                            {
+                                /// Note: QMXF contains only superclass info while qxf and rdf contain superclass and subclass info
+                                specialization = spec.reference;
+                                if (--specCount > 0)
+                                    sparqlStr.AppendLine("  rdfs:subClassOf " + specialization + " ;");
+                                else
+                                    sparqlStr.AppendLine("  rdfs:subClassOf " + specialization + " .");
+                            }
+
+                            sparqlStr.AppendLine("}");
+
+                            if (!label.Equals(String.Empty))
+                            {
+                                Reset(label);
+                            }
+                            _response = PostToRepository(target, sparqlStr.ToString());
+                        }
+                    }
                 }
 
                 Utility.WriteString("Insertion Done", "stats.log", true);
@@ -3991,324 +4076,3 @@ namespace org.iringtools.refdata
         #endregion Part8
     }
 }
-
-
-//   foreach (TemplateQualification template in qmxf.templateQualifications)
-//        {
-//            string ID = string.Empty;
-//            string id = string.Empty;
-//            string label = string.Empty;
-//            string description = string.Empty;
-//            //ID = template.identifier.Remove(0, 1);
-//            string generatedTempId = string.Empty;
-//            string templateName = string.Empty;
-//            string roleDefinition = string.Empty;
-//            string specialization = string.Empty;
-//            string nameSparql = string.Empty;
-//            string specSparql = string.Empty;
-//            string classSparql = string.Empty;
-//            int templateIndex = -1;
-//            int roleCount = 0;
-//            ID = template.identifier;
-
-//            QMXF q = new QMXF();
-//            if (ID != null)
-//            {
-//                id = ID.Substring((ID.LastIndexOf("#") + 1), ID.Length - (ID.LastIndexOf("#") + 1));
-//                q = GetTemplate(id);
-//                ID = "tpl:" + template.identifier;
-//            }
-
-//            if (q.templateQualifications.Count == 0)
-//            {
-//                foreach (QMXFName name in template.name)
-//                {
-//                    label = name.value;
-
-//                    //ID generator
-//                    templateName = "Template qualification " + label;
-//                    /// TODO: change to class registry base
-//                    if (id == null || id == string.Empty)
-//                    {
-//                    if (_useExampleRegistryBase)
-//                        generatedTempId = CreateIdsAdiId(_settings["ExampleRegistryBase"], templateName);
-//                    else
-//                        generatedTempId = CreateIdsAdiId(_settings["TemplateRegistryBase"], templateName);
-//                    ID = "<" + generatedTempId + ">";
-
-//                    Utility.WriteString("\n" + ID + "\t" + label, "TempQual IDs.log", true);
-//                    }
-//                    specialization = template.qualifies;
-//                    sparql = new StringBuilder();
-//                    sparql.Append(prefix);
-//                    sparql.AppendLine(" _:spec rdf:type dm:Specialization ;")
-//                            + "dm:hasSuperclass <" + specialization + "> ; "
-//                            + "dm:hasSubclass " + ID + " . ";
-
-//                    //sparql += ID + " rdfs:label \"" + label + "\"^^xsd:string . ";
-//                    if (template.description.Count == 0)
-//                    {
-//                        sparql += ID + " rdfs:label \"" + label + "\"^^xsd:string . ";
-//                    }
-//                    else
-//                    {
-//                        sparql += ID + " rdfs:label \"" + label + "\"^^xsd:string ; ";
-//                    }
-//                    foreach (Description descr in template.description)
-//                    {
-//                        description = descr.value;
-//                        sparql += " rdfs:comment \"" + description + "\"^^xsd:string . ";
-//                    }
-
-//                    int i = 0;
-//                    foreach (RoleQualification role in template.roleQualification)
-//                    {
-
-//                        string roleID = string.Empty;
-//                        string roleLabel = string.Empty;
-//                        string roleDescription = string.Empty;
-//                        string generatedId = string.Empty;
-//                        string genName = string.Empty;
-
-//                        //ID generator
-//                        genName = "Role definition " + roleLabel;
-//                        /// TODO: change to template registry base
-//                        //if (_useExampleRegistryBase)
-//                        //    generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], genName);
-//                        //else
-//                        //    generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], genName);
-//                        roleID = "<" + generatedId + ">";
-
-//                        //roleID = role.identifier;
-//                        foreach (QMXFName roleName in role.name)
-//                        {
-//                            roleLabel = roleName.value;
-//                            Utility.WriteString("\n" + roleID + "\t" + roleLabel, "RoleQual IDs.log", true);
-//                            foreach (Description desc in role.description)
-//                            {
-//                                roleDescription = desc.value;
-//                            }
-//                        }
-//                        //append role to sparql query
-//                        //value restriction
-//                        if (role.value != null && !String.IsNullOrEmpty(role.value.text))
-//                        {
-//                            string roleValueAs = role.value.As;
-//                            if (role.value.As.StartsWith(@"http://www.w3.org/2001/XMLSchema#"))
-//                            {
-//                                roleValueAs = role.value.As.Replace(@"http://www.w3.org/2001/XMLSchema#", string.Empty);
-//                            }
-
-//                            sparql += "_:role" + i + " rdf:type tpl:R67036823327 ; "
-//                                  + " tpl:R56456315674 " + ID + " ; "
-//                                  + " tpl:R89867215482 <" + role.qualifies + "> ; "
-//                                  + " tpl:R29577887690 '" + role.value.text + "'^^xsd:" + roleValueAs + " . ";
-
-//                            i++;
-//                        }
-
-//                        else if (role.value != null && !String.IsNullOrEmpty(role.value.reference))
-//                        {
-//                            //reference restriction
-//                            sparql += "<" + role.qualifies + "> rdf:type tpl:R40103148466 ; "
-//                                  + " tpl:R49267603385 " + ID + " ; "
-//                                  + " tpl:R30741601855 <" + role.qualifies + "> ; "
-//                                  + " tpl:R21129944603 <" + role.value.reference + "> . ";
-//                        }
-//                        else if (!String.IsNullOrEmpty(role.range))
-//                        {
-//                            //range restriction
-//                            sparql += "<" + role.qualifies + "> rdf:type tpl:R76288246068 ; "
-//                                    + " tpl:R99672026745 " + ID + " ; "
-//                                    + " tpl:R91125890543 <" + role.qualifies + "> ; "
-//                                    + " tpl:R98983340497 <" + role.range + "> . ";
-//                        }
-
-//                    }
-//                    //status
-//                    sparql += "_:status rdf:type tpl:R20247551573 ; "
-//                              + "tpl:R64574858717 " + ID + " ; "
-//                              + "tpl:R56599656536 rdl:R6569332477 ; "
-//                              + "tpl:R61794465713 rdl:R3732211754 . ";
-
-//                    sparql = sparql.Insert(sparql.LastIndexOf("."), "}").Remove(sparql.Length - 1);
-//                    response = PostToRepository(source, sparql);
-//                }
-//            }
-//            else
-//            {
-//                string roleID = string.Empty;
-//                string roleLabel = string.Empty;
-//                string roleDescription = string.Empty;
-//                string generatedId = string.Empty;
-//                string genName = string.Empty;
-//                int i = 0;
-
-//                TemplateQualification td = q.templateQualifications[0];
-//                string rName = string.Empty;
-
-//                sparql = sparql.Replace("INSERT DATA { ", "MODIFY DELETE { ");
-//                foreach (QMXFName name in td.name)
-//                {
-//                    specialization = td.qualifies;
-//                    nameSparql = sparql + "?a rdf:type dm:Specialization . "
-//                          + " ?b dm:hasSuperclass <" + specialization + "> . "
-//                          + " ?c dm:hasSubclass " + ID + " . ";
-
-//                    label = name.value;
-//                    if (td.description.Count == 0)
-//                    {
-//                        nameSparql += ID + " rdfs:label \"" + label + "\"^^xsd:string . ";
-//                    }
-//                    else
-//                    {
-//                        nameSparql += ID + " rdfs:label \"" + label + "\"^^xsd:string ; ";
-//                    }
-
-//                    foreach (Description descr in td.description)
-//                    {
-//                        description = descr.value;
-//                        nameSparql += "rdfs:comment \"" + description + "\"^^xsd:string . ";
-//                    }
-
-//                    foreach (RoleQualification rd in td.roleQualification)
-//                    {
-
-//                        foreach (QMXFName roleName in rd.name)
-//                        {
-//                            roleLabel = roleName.value;
-//                            foreach (Description desc in rd.description)
-//                            {
-//                                roleDescription = desc.value;
-//                            }
-//                        }
-//                        //append role to sparql query
-//                        //value restriction
-//                        if (rd.value != null)
-//                        {
-//                            if (!String.IsNullOrEmpty(rd.value.text))
-//                            {
-//                                string roleValueAs = rd.value.As;
-//                                if (rd.value.As.StartsWith(@"http://www.w3.org/2001/XMLSchema#"))
-//                                {
-//                                    roleValueAs = rd.value.As.Replace(@"http://www.w3.org/2001/XMLSchema#", string.Empty);
-//                                }
-
-//                                nameSparql += "_:role" + i + " rdf:type tpl:R67036823327 ; "
-//                                      + " tpl:R56456315674 " + ID + " ; "
-//                                      + " tpl:R89867215482 <" + rd.qualifies + "> ; "
-//                                      + " tpl:R29577887690 '" + rd.value.text + "'^^xsd:" + roleValueAs + " . ";
-
-//                                i++;
-//                            }
-//                            else if (!String.IsNullOrEmpty(rd.value.reference))
-//                            {
-//                                //reference restriction                                                
-//                                nameSparql += "<" + rd.qualifies + "> rdf:type tpl:R40103148466 ; "
-//                                        + " tpl:R49267603385 " + ID + " ; "
-//                                        + " tpl:R30741601855 <" + rd.qualifies + "> ; "
-//                                        + " tpl:R21129944603 <" + rd.value.reference + "> . ";
-//                            }
-//                            else if (!String.IsNullOrEmpty(rd.range))
-//                            {
-//                                //range restriction
-//                                nameSparql += "<" + rd.qualifies + "> rdf:type tpl:R76288246068 ; "
-//                                        + " tpl:R99672026745 " + ID + " ; "
-//                                        + " tpl:R91125890543 <" + rd.qualifies + "> ; "
-//                                        + " tpl:R98983340497 <" + rd.range + "> . ";
-//                            }
-//                        }
-//                        else if (!String.IsNullOrEmpty(rd.range))
-//                        {
-//                            //range restriction
-//                            nameSparql += "<" + rd.qualifies + "> rdf:type tpl:R76288246068 ; "
-//                                    + " tpl:R99672026745 " + ID + " ; "
-//                                    + " tpl:R91125890543 <" + rd.qualifies + "> ; "
-//                                    + " tpl:R98983340497 <" + rd.range + "> . ";
-//                        }
-//                    }
-//                    nameSparql = nameSparql.Insert(nameSparql.LastIndexOf("."), "}").Remove(nameSparql.Length - 1);
-//                }
-//                foreach (QMXFName name in template.name)
-//                {
-//                    specialization = template.qualifies;
-//                    nameSparql += " INSERT { _:spec rdf:type dm:Specialization ; "
-//                          + " dm:hasSuperclass <" + specialization + "> ; "
-//                          + " dm:hasSubclass " + ID + " . ";
-
-//                    label = name.value;
-
-
-//                    if (template.description.Count == 0)
-//                    {
-//                        nameSparql += ID + " rdfs:label \"" + label + "\"^^xsd:string . ";
-//                    }
-//                    else
-//                    {
-//                        nameSparql += ID + " rdfs:label \"" + label + "\"^^xsd:string ; ";
-//                    }
-
-//                    foreach (Description descr in template.description)
-//                    {
-//                        description = descr.value;
-//                        nameSparql += "rdfs:comment \"" + description + "\"^^xsd:string . ";
-//                    }
-
-//                    i = 0;
-//                    foreach (RoleQualification rd in template.roleQualification)
-//                    {
-//                        foreach (QMXFName roleName in rd.name)
-//                        {
-//                            roleLabel = roleName.value;
-//                            foreach (Description desc in rd.description)
-//                            {
-//                                roleDescription = desc.value;
-//                            }
-//                        }
-//                        //append role to sparql query
-//                        //value restriction
-//                        if (rd.value != null)
-//                        {
-//                            if (!String.IsNullOrEmpty(rd.value.text))
-//                            {
-//                                string roleValueAs = rd.value.As;
-//                                if (rd.value.As.StartsWith(@"http://www.w3.org/2001/XMLSchema#"))
-//                                {
-//                                    roleValueAs = rd.value.As.Replace(@"http://www.w3.org/2001/XMLSchema#", string.Empty);
-//                                }
-
-//                                nameSparql += "_:role" + i + " rdf:type tpl:R67036823327 ; "
-//                                      + " tpl:R56456315674 " + ID + " ; "
-//                                      + " tpl:R89867215482 <" + rd.qualifies + "> ; "
-//                                      + " tpl:R29577887690 '" + rd.value.text + "'^^xsd:" + roleValueAs + " . ";
-
-//                                i++;
-//                            }
-//                            else if (!String.IsNullOrEmpty(rd.value.reference))
-//                            {
-//                                //reference restriction
-//                                nameSparql += "<" + rd.qualifies + "> rdf:type tpl:R40103148466 ; "
-//                                        + " tpl:R49267603385 " + ID + " ; "
-//                                        + " tpl:R30741601855 <" + rd.qualifies + "> ; "
-//                                        + " tpl:R21129944603 <" + rd.value.reference + "> . ";
-//                            }
-//                            else if (!String.IsNullOrEmpty(rd.range))
-//                            {
-//                                //range restriction
-//                                nameSparql += "<" + rd.qualifies + "> rdf:type tpl:R76288246068 ; "
-//                                        + " tpl:R99672026745 " + ID + " ; "
-//                                        + " tpl:R91125890543 <" + rd.qualifies + "> ; "
-//                                        + " tpl:R98983340497 <" + rd.range + "> . ";
-//                            }
-//                        }
-//                        else if (!String.IsNullOrEmpty(rd.range))
-//                        {
-//                            //range restriction
-//                            nameSparql += "<" + rd.qualifies + "> rdf:type tpl:R76288246068 ; "
-//                                    + " tpl:R99672026745 " + ID + " ; "
-//                                    + " tpl:R91125890543 <" + rd.qualifies + "> ; "
-//                                    + " tpl:R98983340497 <" + rd.range + "> . ";
-//                        }
-//                    }
-//                    nameSparql = nameSparql.Insert(nameSparql.LastIndexOf("."), "}").Remove(nameSparql.Length - 1);
-//                }
