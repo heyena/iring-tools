@@ -208,6 +208,7 @@ namespace org.ids_adi.qmxf
           this.status = new List<QMXFStatus>();
           this.textualDefinition = new List<TextualDefinition>();
           this.roleQualification = new List<RoleQualification>();
+          this.specialization = new List<Specialization>();
           this.repositoryName = string.Empty;
         }
 
@@ -218,6 +219,10 @@ namespace org.ids_adi.qmxf
         [DataMember(Name = "suggested-designation", EmitDefaultValue = false)]
         [XmlElement(ElementName = "suggested-designation")]
         public List<SuggestedDesignation> suggestedDesignation { get; set; }
+
+        [DataMember(Name = "specialization", EmitDefaultValue = false)]
+        [XmlElement(ElementName = "specialization")]
+        public List<Specialization> specialization { get; set; }
 
         [DataMember(Name = "designation", EmitDefaultValue = false)]
         [XmlElement(ElementName = "designation")]
@@ -584,6 +589,10 @@ namespace org.ids_adi.qmxf
         [DataMember(Name = "name", EmitDefaultValue = false)]
         [XmlElement(ElementName = "name")]
         public List<QMXFName> name { get; set; }
+
+        [DataMember(Name = "id", EmitDefaultValue = false)]
+        [XmlAttribute(AttributeName = "id")]
+        public string identifier { get; set; }
 
         [DataMember(Name = "value", EmitDefaultValue = false)]
         [XmlElement(ElementName = "value")]

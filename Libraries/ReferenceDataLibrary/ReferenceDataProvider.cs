@@ -2931,25 +2931,6 @@ namespace org.iringtools.refdata
 
                                 response = PostToRepository(target, sparqlStr.ToString());
 
-                                foreach (Specialization spec in template.specialization)
-                                {
-                                    string specialization = String.Empty;
-
-                                    sparqlStr = new StringBuilder();
-                                    specialization = spec.reference;
-                                    sparqlStr.Append(prefix);
-                                    sparqlStr.AppendLine(insertData);
-
-                                    sparqlStr.AppendLine("  tpl:TemplateSpecialization_of_" + specialization + "_to_" + label + " rdf:type p8:TemplateSpecialization ;");
-
-                                    sparqlStr.AppendLine("  rdfs:label \"TemplateSpecialization_of_" + specialization + "_to_" + label + "\"^^xds:string ;");
-                                    sparqlStr.AppendLine("  p8:hasSuperTemplate " + specialization + " ;");
-                                    sparqlStr.AppendLine("  p8:hasSubTemplate tpl:" + ID + " .");
-                                    sparqlStr.AppendLine("}");
-
-                                    response = PostToRepository(target, sparqlStr.ToString());
-                                }
-
                                 foreach (RoleDefinition role in template.roleDefinition)
                                 {
                                     string roleLabel = string.Empty;
@@ -3196,19 +3177,258 @@ namespace org.iringtools.refdata
                                     Utility.WriteString("\n" + ID + "\t" + label, "TempQual IDs.log", true);
                                 }
 
-                                specialization = Utility.GetIdFromURI(template.qualifies);
+                                /*specialization = Utility.GetIdFromURI(template.qualifies);
 
                                 sparqlStr = new StringBuilder();
                                 sparqlStr.Append(prefix);
                                 sparqlStr.AppendLine(insertData);
                                 sparqlStr.AppendLine("  _:spec rdf:type p8:TemplateSpecialization ;");
-                                //sparqlStr.AppendLine("  
+                                //sparqlStr.AppendLine("  */
 
+                                sparqlStr.AppendLine("  tpl:" + ID + " rdf:type owl:class ;");
 
+                                int descrCount = template.description.Count;
+
+                                sparqlStr.AppendLine("  rdfs:label \"" + label + "\"^^xsd:string ;");
+                                //sparqlStr.AppendLine("  rdfs:subClassOf " + template.qualifies + " ;");
+                                // sparql.AppendLine(" rdf:type owl:Thing ;");
+                                sparqlStr.AppendLine("  rdf:type p8:Template ;");
+                                foreach (Description descr in template.description)
+                                {
+                                    description = descr.value;
+
+                                    if (--descrCount > 0)
+                                        sparqlStr.AppendLine("  rdfs:comment \"" + description + "\"^^xsd:string ;");
+                                    else
+                                        sparqlStr.AppendLine("  rdfs:comment \"" + description + "\"^^xsd:string .");
+                                }
+
+                                sparqlStr.AppendLine("  tpl:TemplateDescription_of_" + label + " rdf:type p8:TemplateDescription ;");
+                                // sparql.AppendLine(" rdf:type owl:thing ;");
+                                sparqlStr.AppendLine("  rdfs:label \"TemplateDescription_of_" + label + "\"^^xsd:string ;");
+                                sparqlStr.AppendLine("  p8:valNumberOfRoles " + template.roleQualification.Count + " ;");
+                                sparqlStr.AppendLine("  p8:hasTemplate tpl:" + ID + " .");
+
+                                sparqlStr.AppendLine("}");
+
+                                response = PostToRepository(target, sparqlStr.ToString());
+
+                                foreach (Specialization spec in template.specialization)
+                                {
+                                    sparqlStr = new StringBuilder();
+                                    specialization = spec.reference;
+                                    sparqlStr.Append(prefix);
+                                    sparqlStr.AppendLine(insertData);
+
+                                    sparqlStr.AppendLine("  tpl:" + ID + " rdfs:subClassOf " + specialization + " ;");
+
+                                    sparqlStr.AppendLine("  tpl:TemplateSpecialization_of_" + spec.label + "_to_" + label + " rdf:type p8:TemplateSpecialization ;");
+                                    sparqlStr.AppendLine("  rdfs:label \"TemplateSpecialization_of_" + spec.label + "_to_" + label + "\"^^xds:string ;");
+                                    sparqlStr.AppendLine("  p8:hasSuperTemplate " + specialization + " ;");
+                                    sparqlStr.AppendLine("  p8:hasSubTemplate tpl:" + ID + " .");
+                                    sparqlStr.AppendLine("}");
+
+                                    response = PostToRepository(target, sparqlStr.ToString());
+                                }
+
+                                foreach (RoleQualification role in template.roleQualification)
+                                {
+                                    string roleLabel = string.Empty;
+                                    string roleID = string.Empty;
+                                    string generatedId = string.Empty;
+                                    string genName = string.Empty;
+
+                                    genName = "Role qualification " + roleLabel;
+                                    if (role.identifier == null || role.identifier == string.Empty)
+                                    {
+                                        if (_useExampleRegistryBase)
+                                            generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], genName);
+                                        else
+                                            generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], genName);
+
+                                        roleID = Utility.GetIdFromURI(generatedId);
+                                    }
+                                    else
+                                    {
+                                        roleID = Utility.GetIdFromURI(role.identifier);
+                                    }
+
+                                    sparqlStr = new StringBuilder();
+                                    sparqlStr.Append(prefix);
+                                    sparqlStr.AppendLine(insertData);
+                                    sparqlStr.AppendLine("  tpl:TemplateRoleDescription_of_" + label + "_" + ++roleCount + " rdf:type p8:TemplateRoleDescription ;");// could get roleIndex from QMXF?
+                                    sparqlStr.AppendLine("  rdfs:label \"TemplateRoleDescription_of_" + label + "_" + roleCount + "\"^^xsd:string ;");
+                                    sparqlStr.AppendLine("  p8:valRoleIndex " + roleCount + " ;");
+                                    sparqlStr.AppendLine("  p8:hasTemplate tpl:" + ID + " ;");
+                                    //  sparql.AppendLine("  rdf:type owl:Thing ;");
+                                    sparqlStr.AppendLine("  p8:hasRole tpl:" + roleID + " .");
+                                    sparqlStr.AppendLine("}");
+
+                                    response = PostToRepository(target, sparqlStr.ToString());
+                                }
                             }
                         }
-                        else  //does not exist
+                        //else edit template
+                        else
                         {
+                            string identifier = string.Empty;
+                            roleCount = 0;
+
+                            TemplateDefinition td = q.templateDefinitions[templateIndex];
+                            string rName = string.Empty;
+
+                            sparqlStr = new StringBuilder();
+                            sparqlStr.Append(prefix);
+                            sparqlStr.AppendLine(delWhere);
+
+                            identifier = td.identifier;
+
+                            sparqlStr.AppendLine(identifier + " rdf:type owl:class ;");
+                            sparqlStr.AppendLine(" ?property ?value . ");
+
+
+                            label = td.name[0].value;
+
+                            sparqlStr.AppendLine(" tpl:TemplateDescription_of_" + label + " rdf:type p8:TemplateDescription ;");
+                            sparqlStr.AppendLine(" ?property ?value . ");
+
+                            foreach (RoleDefinition role in td.roleDefinition)
+                            {
+                                string roleID = role.identifier;
+                                sparqlStr = new StringBuilder();
+                                sparqlStr.Append(prefix);
+                                sparqlStr.AppendLine(delWhere);
+                                sparqlStr.AppendLine(" tpl:TemplateRoleDescription_of_" + label + "_" + ++roleCount + " p8:hasRole " + roleID + " ;");
+                                sparqlStr.AppendLine(" ?property ?value . ");
+                            }
+
+                            sparqlStr = sparqlStr.AppendLine("}");
+                            response = PostToRepository(target, sparqlStr.ToString());
+
+                            foreach (Specialization spec in template.specialization)
+                            {
+                                specialization = String.Empty;
+
+                                sparqlStr = new StringBuilder();
+                                specialization = spec.reference;
+                                sparqlStr.Append(prefix);
+                                sparqlStr.AppendLine(delWhere);
+
+                                sparqlStr.AppendLine("  p8:hasSubTemplate tpl:" + identifier + " ;");
+                                sparqlStr.AppendLine(" ?property ?value . ");
+                                sparqlStr.AppendLine("}");
+
+                                response = PostToRepository(target, sparqlStr.ToString());
+                            }
+
+                            sparqlStr = new StringBuilder();
+                            sparqlStr.Append(prefix);
+                            sparqlStr.AppendLine(insertData);
+
+                            foreach (QMXFName name in template.name)
+                            {
+                                label = name.value;
+                                ID = template.identifier;
+                                ID = Utility.GetIdFromURI(ID);
+                                //ID generator
+                                templateName = "Template definition " + label;
+                                if (ID == null || ID == string.Empty)
+                                {
+                                    if (_useExampleRegistryBase)
+                                        generatedTempId = CreateIdsAdiId(_settings["ExampleRegistryBase"], templateName);
+                                    else
+                                        generatedTempId = CreateIdsAdiId(_settings["TemplateRegistryBase"], templateName);
+
+                                    ID = Utility.GetIdFromURI(generatedTempId);
+
+                                    Utility.WriteString("\n" + ID + "\t" + label, "TempDef IDs.log", true);
+                                }
+
+                                sparqlStr.AppendLine("  tpl:" + ID + " rdf:type owl:class ; ");
+
+                                int descrCount = template.description.Count;
+
+                                sparqlStr.AppendLine("  rdfs:label \"" + label + "\"^^xsd:string ;");
+                                sparqlStr.AppendLine("  rdfs:subClassOf " + template.qualifies + " ;");
+                                // sparql.AppendLine(" rdf:type owl:Thing ;");
+                                sparqlStr.AppendLine("  rdf:type p8:Template ;");
+                                foreach (Description descr in template.description)
+                                {
+                                    description = descr.value;
+
+                                    if (--descrCount > 0)
+                                        sparqlStr.AppendLine("  rdfs:comment \"" + description + "\"^^xsd:string ;");
+                                    else
+                                        sparqlStr.AppendLine("  rdfs:comment \"" + description + "\"^^xsd:string .");
+                                }
+
+                                sparqlStr.AppendLine("  tpl:TemplateDescription_of_" + label + " rdf:type p8:TemplateDescription ;");
+                                // sparql.AppendLine(" rdf:type owl:thing ;");
+                                sparqlStr.AppendLine("  rdfs:label \"TemplateDescription_of_" + label + "\"^^xsd:string ;");
+                                sparqlStr.AppendLine("  p8:valNumberOfRoles " + template.roleQualification.Count + " ;");
+                                sparqlStr.AppendLine("  p8:hasTemplate tpl:" + ID + " .");
+
+                                sparqlStr.AppendLine("}");
+
+
+                                response = PostToRepository(target, sparqlStr.ToString());
+
+                                foreach (Specialization spec in template.specialization)
+                                {
+                                    sparqlStr = new StringBuilder();
+                                    specialization = spec.reference;
+                                    sparqlStr.Append(prefix);
+                                    sparqlStr.AppendLine(insertData);
+
+                                    sparqlStr.AppendLine("  tpl:" + ID + " rdfs:subClassOf " + specialization + " ;");
+
+                                    sparqlStr.AppendLine("  tpl:TemplateSpecialization_of_" + spec.label + "_to_" + label + " rdf:type p8:TemplateSpecialization ;");
+                                    sparqlStr.AppendLine("  rdfs:label \"TemplateSpecialization_of_" + spec.label + "_to_" + label + "\"^^xds:string ;");
+                                    sparqlStr.AppendLine("  p8:hasSuperTemplate " + specialization + " ;");
+                                    sparqlStr.AppendLine("  p8:hasSubTemplate tpl:" + ID + " .");
+                                    sparqlStr.AppendLine("}");
+
+                                    response = PostToRepository(target, sparqlStr.ToString());
+                                }
+
+                                foreach (RoleQualification role in template.roleQualification)
+                                {
+                                    string roleLabel = string.Empty;
+                                    string roleID = string.Empty;
+                                    string generatedId = string.Empty;
+                                    string genName = string.Empty;
+
+                                    genName = "Role definition " + roleLabel;
+                                    if (role.identifier == null || role.identifier == string.Empty)
+                                    {
+                                        if (_useExampleRegistryBase)
+                                            generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], genName);
+                                        else
+                                            generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], genName);
+
+                                        roleID = Utility.GetIdFromURI(generatedId);
+                                    }
+                                    else
+                                    {
+                                        roleID = Utility.GetIdFromURI(role.identifier);
+                                    }
+
+                                    sparqlStr = new StringBuilder();
+                                    sparqlStr.Append(prefix);
+                                    sparqlStr.AppendLine(insertData);
+                                    sparqlStr.AppendLine("  tpl:TemplateRoleDescription_of_" + label + "_" + ++roleCount + " rdf:type p8:TemplateRoleDescription ;");// could get roleIndex from QMXF?
+                                    sparqlStr.AppendLine("  rdfs:label \"TemplateRoleDescription_of_" + label + "_" + roleCount + "\"^^xsd:string ;");
+                                    sparqlStr.AppendLine("  p8:valRoleIndex " + roleCount + " ;");
+                                    sparqlStr.AppendLine("  p8:hasTemplate tpl:" + ID + " ;");
+                                    //  sparql.AppendLine("  rdf:type owl:Thing ;");
+                                    sparqlStr.AppendLine("  p8:hasRole rdl:" + roleID + " .");
+                                    sparqlStr.AppendLine("}");
+
+                                    response = PostToRepository(target, sparqlStr.ToString());
+                                }
+
+                                response = PostToRepository(target, sparqlStr.ToString());
+                            }
 
                         }
 
