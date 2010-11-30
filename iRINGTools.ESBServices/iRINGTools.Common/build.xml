@@ -1,89 +1,87 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="build" name="iRINGTools.Common">
-    <property name="debuglevel" value="source,lines,vars" />
-    <property name="target" value="1.6" />
-    <property name="source" value="1.6" />
+  <property name="debuglevel" value="source,lines,vars" />
+  <property name="target" value="1.6" />
+  <property name="source" value="1.6" />
 
-    <path id="axiom-1.2.8.userclasspath">
-        <pathelement location="../libraries/axiom-1.2.8/axiom.jar" />
-    </path>
+  <path id="axiom-1.2.8.userclasspath">
+    <fileset dir="../libraries/axiom-1.2.8">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
 
-    <path id="commons-logging-1.1.1.userclasspath">
-        <pathelement location="../libraries/commons-logging-1.1.1/commons-logging-1.1.1.jar" />
-    </path>
+  <path id="commons-logging-1.1.1.userclasspath">
+		<fileset dir="../libraries/commons-logging-1.1.1">
+      <include name="**/*.jar"/>
+    </fileset>
+	</path>
 
-    <path id="gson-1.4.userclasspath">
-        <pathelement location="../libraries/google-gson-1.4/gson-1.4.jar" />
-    </path>
+  <path id="gson-1.4.userclasspath">
+    <fileset dir="../libraries/google-gson-1.4">
+    <include name="**/*.jar"/>
+    </fileset>
+  </path>
 
-    <path id="httpcomponents-4.0.3.userclasspath">
-        <pathelement location="../libraries/apache-httpcomponents-4.0/httpclient-4.0.3.jar" />
-        <pathelement location="../libraries/apache-httpcomponents-4.0/httpcore-4.0.1.jar" />
-        <pathelement location="../libraries/apache-httpcomponents-4.0/httpcore-nio-4.0.1.jar" />
-        <pathelement location="../libraries/apache-httpcomponents-4.0/httpmime-4.0.3.jar" />
-    </path>
+  <path id="httpcomponents-4.0.3.userclasspath">
+    <fileset dir="../libraries/apache-httpcomponents-4.0">
+      <include name="**/*.jar"/>
+    </fileset>
+	</path>
 
-    <path id="jaxb-ri-20100511.userclasspath">
-        <pathelement location="../libraries/jaxb-ri-20100511/lib/activation.jar" />
-        <pathelement location="../libraries/jaxb-ri-20100511/lib/collection-setter-injector.jar" />
-        <pathelement location="../libraries/jaxb-ri-20100511/lib/jaxb1-impl.jar" />
-        <pathelement location="../libraries/jaxb-ri-20100511/lib/jaxb-api.jar" />
-        <pathelement location="../libraries/jaxb-ri-20100511/lib/jaxb-impl.jar" />
-        <pathelement location="../libraries/jaxb-ri-20100511/lib/jaxb-xjc.jar" />
-        <pathelement location="../libraries/jaxb-ri-20100511/lib/jsr173_1.0_api.jar" />
-    </path>
+  <path id="jaxb-ri-20100511.userclasspath">
+    <fileset dir="../libraries/jaxb-ri-20100511/lib">
+      <include name="**/*.jar"/>
+    </fileset>
+	</path>
 
-    <path id="log4j-1.2.16.userclasspath">
-        <pathelement location="../libraries/apache-log4j-1.2.16/log4j-1.2.16.jar" />
-    </path>
+  <path id="log4j-1.2.16.userclasspath">
+		<fileset dir="../libraries/apache-log4j-1.2.16">
+      <include name="**/*.jar"/>
+    </fileset>
+	</path>
+  
+  <target name="generate">
+    <taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
+      <classpath refid="jaxb-ri-20100511.userclasspath" />
+    </taskdef>
+    <xjc destdir="src" extension="true">
+      <schema dir="schemas" includes="**/*.xsd" />
+      <arg value="-no-header" />
+      <arg value="-Xcollection-setter-injector" />
+    </xjc>
+  </target>
 
-    <path id="jaxb.userclasspath">
-        <pathelement location="../libraries/jaxb-ri-20100511/lib/jaxb-xjc.jar" />
-        <pathelement location="../libraries/jaxb-ri-20100511/lib/collection-setter-injector.jar" />
-    </path>
+  <target name="clean">
+    <delete dir="bin" />
+  </target>
 
-    <target name="generate">
-        <taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
-            <classpath refid="jaxb.userclasspath" />
-        </taskdef>
-        <xjc destdir="src" extension="true">
-            <schema dir="schemas" includes="**/*.xsd" />
-            <arg value="-no-header" />
-            <arg value="-Xcollection-setter-injector" />
-        </xjc>
-    </target>
+  <target name="init" depends="clean">
+    <mkdir dir="bin" />
+    <copy includeemptydirs="false" todir="bin">
+      <fileset dir="src">
+        <exclude name="**/*.launch" />
+        <exclude name="**/*.java" />
+        <exclude name="**/.svn/" />
+      </fileset>
+    </copy>
+  </target>
 
-    <target name="clean">
-        <delete dir="bin" />
-    </target>
+  <target name="build" depends="init">
+    <echo message="${ant.project.name}: ${ant.file}" />
+    <javac debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}">
+      <src path="src" />
+      <exclude name="**/.svn/" />
+      <classpath refid="axiom-1.2.8.userclasspath" />
+      <classpath refid="commons-logging-1.1.1.userclasspath" />
+      <classpath refid="log4j-1.2.16.userclasspath" />
+      <classpath refid="gson-1.4.userclasspath" />
+      <classpath refid="httpcomponents-4.0.3.userclasspath" />
+      <classpath refid="jaxb-ri-20100511.userclasspath" />
+    </javac>
+  </target>
 
-    <target name="init" depends="clean">
-        <mkdir dir="bin" />
-        <copy includeemptydirs="false" todir="bin">
-            <fileset dir="src">
-                <exclude name="**/*.launch" />
-                <exclude name="**/*.java" />
-                <exclude name="**/.svn/" />
-            </fileset>
-        </copy>
-    </target>
-
-    <target name="build" depends="init">
-        <echo message="${ant.project.name}: ${ant.file}" />
-        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}">
-            <src path="src" />
-            <exclude name="**/.svn/" />
-            <classpath refid="axiom-1.2.8.userclasspath" />
-            <classpath refid="commons-logging-1.1.1.userclasspath" />
-            <classpath refid="log4j-1.2.16.userclasspath" />
-            <classpath refid="gson-1.4.userclasspath" />
-            <classpath refid="httpcomponents-4.0.3.userclasspath" />
-            <classpath refid="jaxb-ri-20100511.userclasspath" />
-        </javac>
-    </target>
-
-    <target name="dist" depends="build">
-        <mkdir dir="dist" />
-        <jar destfile="dist/${ant.project.name}.jar" basedir="bin" excludes="**/.svn/" />
-    </target>
+  <target name="dist" depends="build">
+    <mkdir dir="dist" />
+    <jar destfile="dist/${ant.project.name}.jar" basedir="bin" excludes="**/.svn/" />
+  </target>
 </project>

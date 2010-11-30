@@ -4,12 +4,13 @@ set basedir=%~dp0
 set javabasedir=%basedir%iRINGTools.ESBServices\
 set deploymentdir=%basedir%deployment\
 
-mkdir %deploymentdir%
-del /q %deploymentdir%*.*
-
 echo Getting most recent updates ...
 cd %basedir%
 svn update
+
+echo Cleaning up deployment directory ...
+if exist %deploymentdir% del /q %deploymentdir%*.*
+if not exist %deploymentdir% mkdir %deploymentdir%
 
 echo Building CSharp solution ...
 call "%VS100COMNTOOLS%\vsvars32.bat"
