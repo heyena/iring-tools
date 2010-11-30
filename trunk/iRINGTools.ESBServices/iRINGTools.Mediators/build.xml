@@ -97,11 +97,8 @@
 		<delete includeemptydirs="true">
 			<fileset dir="dist" includes="**/*" />
 		</delete>
-		<copy todir="WebContent/WEB-INF/lib" flatten="true">
+		<copy todir="dist" flatten="true">
 			<fileset dir="${iRINGTools.Common.location}/dist" />
-			<path refid="synapse-core.1.4.0.userclasspath" />
-			<path refid="jaxen-1.1.3.userclasspath" />
-			<path refid="axis2-kernel-1.5.1.userclasspath" />
 		</copy>
 		<jar destfile="dist/${ant.project.name}.jar" basedir="bin" excludes="**/.svn/" />
 	</target>
