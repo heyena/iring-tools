@@ -3027,7 +3027,7 @@ namespace org.iringtools.refdata
                             {
                                 label = name.value;
                                 ID = template.identifier;
-
+                                ID = Utility.GetIdFromURI(ID);
                                 //ID generator
                                 templateName = "Template definition " + label;
                                 if (ID == null || ID == string.Empty)
@@ -3129,21 +3129,6 @@ namespace org.iringtools.refdata
                                 response = PostToRepository(target, sparqlStr.ToString());
                             }
 
-                            /*foreach (Specialization spec in template.specialization)
-                            {
-                                string specialization = String.Empty;
-                                sparqlStr = new StringBuilder();
-                                sparqlStr.Append(prefix);
-                                sparqlStr.AppendLine(delWhere);
-                                specialization = spec.reference;
-                                sparqlStr.AppendLine("  tpl:TemplateSpecialization_of_" + specialization + "_to_" + label + " rdf:type p8:TemplateSpecialization ;");
-                                sparqlStr.AppendLine("  rdfs:label TemplateSpecialization_of_" + specialization + "_to_" + label + " ;");
-                                sparqlStr.AppendLine("  p8:hasSuperTemplate " + specialization + " ;");
-                                sparqlStr.AppendLine("  p8:hasSubTemplate tpl:" + ID + " .");
-                                sparqlStr.AppendLine("}");
-
-                                response = PostToRepository(target, sparqlStr.ToString());
-                            }*/
                         }
                     }
                 }

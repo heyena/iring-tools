@@ -226,6 +226,8 @@ namespace org.iringtools.modules.templateeditor.editorregion
           if (model.SelectedIMLabel != null)
           {
             QMXF qmxf = new QMXF();
+            qmxf.sourceRepository = model.SelectedIMRepository;
+
             if (model.SelectedNodeType == NodeType.TemplateQualification)
             {
               foreach (TemplateQualification templateQualification in model.SelectedQMXF.templateQualifications)
@@ -233,6 +235,8 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 TemplateQualification template = new TemplateQualification();
                 template.description = templateQualification.description;
                 template.qualifies = model.SelectedIMUri;
+                template.repositoryName = model.SelectedIMRepository;
+                 
                 foreach (RoleQualification roleQualification in templateQualification.roleQualification)
                 {
                   RoleQualification role = new RoleQualification();
@@ -415,6 +419,7 @@ namespace org.iringtools.modules.templateeditor.editorregion
       {
         _editorMode = editorMode;
         _templateModel = null;
+        
 
         if (qmxf != null) //edit mode, disable the other template type
         {
