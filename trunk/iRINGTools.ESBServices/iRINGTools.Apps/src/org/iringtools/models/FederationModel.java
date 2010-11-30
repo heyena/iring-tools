@@ -55,10 +55,12 @@ public class FederationModel {
 			Response response = webclient.post(Response.class, "/federation",
 					federation);
 
-			// TODO: Check response for errors/warnings using statusLevel.
-			if (response == null) {
-				throw new WebClientException("Respose Null");
+			if (response.getLevel().value().equalsIgnoreCase("Error")) {
+				throw new WebClientException("Response Error");
+			}else if (response.getLevel().value().equalsIgnoreCase("Warning")) {
+				throw new WebClientException("Response Warning");
 			}
+			System.out.println("response.getLevel().value() :"+response.getLevel().value());
 
 		} catch (WebClientException wce) {
 			System.out.println("WebClientException :" + wce);
