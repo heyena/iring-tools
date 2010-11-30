@@ -1,9 +1,11 @@
 @echo off
 setlocal
-set basedir=%~dp0%
-set javabasedir=%basedir%iRINGTools.ESBServices\iRINGTools.Services\
-set phpbasedir=%basedir%iRINGTools.ESBServices\ExchangeManager\
+set basedir=%~dp0
+set javabasedir=%basedir%iRINGTools.ESBServices\
 set deploymentdir=%basedir%deployment\
+
+mkdir %deploymentdir%
+del /q %deploymentdir%*.*
 
 echo Getting most recent updates ...
 cd %basedir%
@@ -19,11 +21,6 @@ taskkill /IM WebDev.WebServer40.exe
 echo Building java project ...
 cd %javabasedir%
 call ant
-copy %javabasedir%*.war %deploymentdir%
-
-echo Building exchange mananger project ...
-cd %phpbasedir%
-call ant
-copy %phpbasedir%*.zip %deploymentdir%
+if %ERRORLEVEL% equ 0 copy /y %javabasedir%dist\*.* %deploymentdir%
 
 pause

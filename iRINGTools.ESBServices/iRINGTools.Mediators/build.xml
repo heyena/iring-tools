@@ -38,8 +38,8 @@
 		<pathelement location="../libraries/apache-log4j-1.2.16/log4j-1.2.16.jar" />
 	</path>
 
-	<path id="synapse-core.1.4.0.userclasspath">
-		<pathelement location="../libraries/synapse-core.1.4.0/synapse-core-1.4.0.wso2v2.jar" />
+	<path id="synapse-core-1.4.0.userclasspath">
+		<pathelement location="../libraries/synapse-core-1.4.0/synapse-core-1.4.0.wso2v2.jar" />
 	</path>
 
 	<path id="iRINGTools.Common.classpath">
@@ -47,7 +47,7 @@
 	</path>
 
 	<target name="clean">
-		<delete dir="WebContent/WEB-INF/classes" />
+		<delete dir="bin" />
 	</target>
 
 	<target name="init" depends="clean">
@@ -86,7 +86,9 @@
 			<src path="src" />
 			<exclude name="**/.svn/" />
 			<classpath refid="iRINGTools.Common.classpath" />
-			<classpath refid="synapse-core.1.4.0.userclasspath" />
+			<classpath refid="axiom-1.2.8.userclasspath" />
+			<classpath refid="commons-logging-1.1.1.userclasspath" />      
+			<classpath refid="synapse-core-1.4.0.userclasspath" />
 			<classpath refid="jaxen-1.1.3.userclasspath" />
 			<classpath refid="axis2-kernel-1.5.1.userclasspath" />
 		</javac>
@@ -97,8 +99,8 @@
 		<delete includeemptydirs="true">
 			<fileset dir="dist" includes="**/*" />
 		</delete>
-		<copy todir="dist" flatten="true">
-			<fileset dir="${iRINGTools.Common.location}/dist" />
+		<copy todir="bin" flatten="false">
+			<fileset dir="${iRINGTools.Common.location}/bin" />
 		</copy>
 		<jar destfile="dist/${ant.project.name}.jar" basedir="bin" excludes="**/.svn/" />
 	</target>
