@@ -263,6 +263,7 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 TemplateQualification template = new TemplateQualification();
                 template.description = templateDefinition.description;
                 template.qualifies = model.SelectedIMUri;
+                template.repositoryName = model.SelectedIMRepository;
                 foreach (RoleDefinition roleDefinition in templateDefinition.roleDefinition)
                 {
                   RoleQualification role = new RoleQualification();

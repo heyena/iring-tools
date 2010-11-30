@@ -50,6 +50,10 @@ namespace org.iringtools.refdata
 
         private const string REPOSITORIES_FILE_NAME = "Repositories.xml";
         private const string QUERIES_FILE_NAME = "Queries.xml";
+
+        private const string rdlUri = "http://rdl.rdlfacade.org/data#";
+        private const string tplUri = "http://tpl.rdlfacade.org/data#";
+
         private const string egPrefix = "PREFIX eg: <http://example.org/data#>";
         private const string rdlPrefix = "PREFIX rdl: <http://rdl.rdlfacade.org/data#>";
         private const string tplPrefix = "PREFIX tpl: <http://tpl.rdlfacade.org/data#>";
@@ -521,7 +525,7 @@ namespace org.iringtools.refdata
 
         public string GetClassLabel(string id)
         {
-            return GetLabel("http://rdl.rdlfacade.org/data#" + id);
+            return GetLabel(rdlUri + id);
         }
 
         public QMXF GetClass(string id)
@@ -573,7 +577,7 @@ namespace org.iringtools.refdata
                         classDefinition = new ClassDefinition();
 
 
-                        classDefinition.identifier = "http://rdl.rdlfacade.org/data#" + id;
+                        classDefinition.identifier = rdlUri + id;
                         classDefinition.repositoryName = repository.Name;
                         name = new QMXFName();
                         description = new Description();
@@ -1392,7 +1396,7 @@ namespace org.iringtools.refdata
                             else
                             {
                                 id = ID.Substring(4, (ID.Length - 4));
-                                ID = "http://tpl.rdlfacade.org/data#" + ID;
+                                ID = tplUri + ID;
                             }
                             q = GetTemplate(id, "Definition");
                             foreach (TemplateDefinition templateFound in q.templateDefinitions)
@@ -2893,8 +2897,9 @@ namespace org.iringtools.refdata
                                         generatedTempId = CreateIdsAdiId(_settings["ExampleRegistryBase"], templateName);
                                     else
                                         generatedTempId = CreateIdsAdiId(_settings["TemplateRegistryBase"], templateName);
+                                   
                                     ID = Utility.GetIdFromURI(generatedTempId);
-                                    //ID = "<" + generatedTempId + ">";
+                                   
                                     Utility.WriteString("\n" + ID + "\t" + label, "TempDef IDs.log", true);
                                 }
 
@@ -3157,6 +3162,8 @@ namespace org.iringtools.refdata
                         if (ID != null)
                         {
                             id = Utility.GetIdFromURI(ID);
+                            ID = id;
+
                             q = GetTemplate(id, "Qualification");
                             foreach (TemplateQualification templateFound in q.templateQualifications)
                             {
@@ -3177,19 +3184,26 @@ namespace org.iringtools.refdata
                                 label = name.value;
                                 templateName = "Template qualification " + label;
 
-                                if (ID == null || ID == string.Empty) ;
+                                if (ID == null || ID == string.Empty) 
                                 {
                                     if (_useExampleRegistryBase)
                                         generatedTempId = CreateIdsAdiId(_settings["ExampleRegistryBase"], templateName);
                                     else
                                         generatedTempId = CreateIdsAdiId(_settings["TemplateRegistryBase"], templateName);
-                                    ID = "<" + generatedTempId + ">";
+
+                                    ID = Utility.GetIdFromURI(generatedTempId);
+
                                     Utility.WriteString("\n" + ID + "\t" + label, "TempQual IDs.log", true);
                                 }
 
-                                specialization = template.qualifies;
+                                specialization = Utility.GetIdFromURI(template.qualifies);
 
                                 sparqlStr = new StringBuilder();
+                                sparqlStr.Append(prefix);
+                                sparqlStr.AppendLine(insertData);
+                                sparqlStr.AppendLine("  _:spec rdf:type p8:TemplateSpecialization ;");
+                                //sparqlStr.AppendLine("  
+
 
                             }
                         }
@@ -3450,7 +3464,7 @@ namespace org.iringtools.refdata
 
                     classDefinition = new ClassDefinition();
 
-                    classDefinition.identifier = "http://rdl.rdlfacade.org/data#" + id;
+                    classDefinition.identifier = tplUri + id;
                     classDefinition.repositoryName = repository.Name;
                     name = new QMXFName();
 
