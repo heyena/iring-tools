@@ -38,6 +38,7 @@ using org.iringtools.utility;
 using org.w3.sparql_results;
 using System.Text;
 
+
 namespace org.iringtools.refdata
 {
     // NOTE: If you change the class name "Service" here, you must also update the reference to "Service" in Web.config and in the associated .svc file.
@@ -1060,11 +1061,14 @@ namespace org.iringtools.refdata
 
                         RoleQualification roleQualification = new RoleQualification();
 
+                        
+
                         string uri = String.Empty;
                         if (result.ContainsKey("qualifies"))
                         {
                             uri = result["qualifies"];
                             roleQualification.qualifies = uri;
+                            roleQualification.identifier = Utility.GetIdFromURI(uri);
                         }
                         if (result.ContainsKey("name"))
                         {
@@ -3182,7 +3186,7 @@ namespace org.iringtools.refdata
                                 sparqlStr.AppendLine(insertData);
                                 sparqlStr.AppendLine("  _:spec rdf:type p8:TemplateSpecialization ;");
                                 //sparqlStr.AppendLine("  */
-
+                                sparqlStr.AppendLine(insertData);
                                 sparqlStr.AppendLine("  tpl:" + ID + " rdf:type owl:class ;");
 
                                 int descrCount = template.description.Count;
@@ -3191,9 +3195,12 @@ namespace org.iringtools.refdata
                                 //sparqlStr.AppendLine("  rdfs:subClassOf " + template.qualifies + " ;");
                                 // sparql.AppendLine(" rdf:type owl:Thing ;");
                                 sparqlStr.AppendLine("  rdf:type p8:Template ;");
+                               
                                 foreach (Description descr in template.description)
                                 {
                                     description = descr.value;
+                                    if (description == null) 
+                                        continue;
 
                                     if (--descrCount > 0)
                                         sparqlStr.AppendLine("  rdfs:comment \"" + description + "\"^^xsd:string ;");
