@@ -6,7 +6,7 @@
  * This file intended to make Federation Tree using JSON data string
  * It contains different event handlers functions to perform particular action at each time
  * It also used to display Detail panel that is binded with Federation panel
- * Anf it generate Forms to display and edit the properties of Tree node in a Tab panel
+ * And it generate Forms to display and edit the properties of Tree node in a Tab panel
  *
  */
 
@@ -42,7 +42,8 @@ Ext.onReady(function() {
 			icon : 'resources/images/16x16/internet-web-browser.png',
 			text : 'Federation'
 		},
-		dataUrl : 'federation',
+		//dataUrl : 'federation',
+                dataUrl : 'federation-tree.json',
 		tbar : new Ext.Toolbar({
 			xtype : "toolbar",
 			items : [
@@ -146,45 +147,44 @@ Ext.onReady(function() {
 
 	function showCentralEditForms(node) {
 		var obj = node.attributes
+                var properties = node.attributes.properties
 		var nId = obj['id']
 
-		if ('children' in obj != true) { // restrict to generate form those
-											// have children
+		if ('children' in obj != true) { // restrict to generate form those have children
 
 			/*
 			 * Generate the fields items dynamically
 			 */
-			var list_items = ''
-			for ( var key in obj) {
-				// restrict some of the properties to be displayed
-				if (key != 'nodeType' && key != 'cls' && key != 'id'
-						&& key != 'text' && key != 'icon' && key != 'children'
-						&& key != 'loader' && key != 'leaf'
-						&& key != 'applicationId') {
+                        var list_items = ''
+                        for ( var i = 0; i < properties.length; i++) {
+                                        
+                            if (list_items != '') {
+                                list_items = list_items + ',{' + 'fieldLabel:"' + properties[i].name
+                                            + '",name:"' + properties[i].name
+                                            + '",allowBlank:false,value:"'+properties[i].value+'"  }'
+                            } else {
+                                    list_items = '{' + 'fieldLabel:"' + properties[i].name
+                                                     + '",name:"'
+                                                     + properties[i].name
+                                                     + '",allowBlank:false, value:"'
+                                                     +properties[i].value+'"}'
+                                }
 
-					if (list_items != '') {
-						list_items = list_items + ',{' + 'fieldLabel:"' + key
-								+ '",name:"' + key + '",allowBlank:false}'
-					} else {
-						list_items = '{' + 'fieldLabel:"' + key + '",name:"'
-								+ key + '",allowBlank:false}'
-					}
-				}
-			}
+                       }
+
 			list_items = eval('[' + list_items + ']')
 
 			// generate form for editing purpose
 			var edit_form = new Ext.FormPanel({
-				labelWidth : 75, // label settings here cascade unless
-									// overridden
+				labelWidth : 100, // label settings here cascade unless
 				// url:'save-form.php',
 				// url: BASE_URL + 'user/ext_login', method: 'POST', id:
 				// 'frmLogin',
 				border : false, // removing the border of the form
-				// renderTo:'centerPanel',
-				id : 'frm_' + nId,
+				renderTo:'centerPanel',				
 				// renderTo:document.body,
-				renderTo : Ext.getBody(),
+				//renderTo : Ext.getBody(),
+                                id : 'frm_' + nId,
 				frame : true,
 				bodyStyle : 'padding:5px 5px 0',
 				width : 350,
@@ -193,7 +193,7 @@ Ext.onReady(function() {
 					width : 230
 				},
 				defaultType : 'textfield',
-				items : list_items, // binding with the fields list
+				items : list_items,     // binding with the fields list
 				buttonAlign : 'left', // buttons aligned to the left
 				buttons : [ {
 					text : 'Save'
@@ -206,7 +206,7 @@ Ext.onReady(function() {
 			});
 
 			// fill the data in all fields of form
-			edit_form.getForm().setValues(node.attributes);
+			//edit_form.getForm().setValues(node.attributes.properties);
 
 			// display the form in the center panel as a tab
 			Ext.getCmp('centerPanel').enable();
