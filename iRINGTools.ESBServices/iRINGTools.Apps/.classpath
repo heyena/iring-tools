@@ -20,7 +20,7 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="/iRINGTools.Common/bin">
 		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/classes"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
