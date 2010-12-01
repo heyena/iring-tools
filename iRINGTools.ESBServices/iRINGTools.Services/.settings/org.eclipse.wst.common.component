@@ -3,6 +3,9 @@
     <wb-module deploy-name="iringtools">
         <wb-resource deploy-path="/" source-path="/WebContent"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <dependent-module deploy-path="/" handle="org.eclipse.jst.j2ee.componentcore.util.ClasspathDependencies">
+            <dependency-type>consumes</dependency-type>
+        </dependent-module>
         <property name="java-output-path" value="/iringtools/WebContent/WEB-INF/classes"/>
         <property name="context-root" value="services"/>
     </wb-module>
