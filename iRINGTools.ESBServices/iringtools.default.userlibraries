@@ -131,5 +131,6 @@
     </library>
     <library name="synapse-core-1.4.0" systemlibrary="false">
         <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/synapse-core-1.4.0/synapse-core-1.4.0.wso2v2.jar"/>
+				<archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/synapse-core-1.4.0/synapse-nhttp-transport-1.4.0.wso2v2.jar"/>
     </library>
 </eclipse-userlibraries>
