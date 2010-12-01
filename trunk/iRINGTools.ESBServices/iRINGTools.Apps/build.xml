@@ -104,7 +104,7 @@
 			<path refid="struts2-2.2.1.userclasspath" />
 			<fileset dir="${iRINGTools.Common.location}/dist" />
 		</copy>
-		<jar destfile="dist/${ant.project.name}.war" basedir="WebContent"
+		<jar destfile="dist/apps.war" basedir="WebContent"
 			excludes="**/.svn/,WEB-INF/logs/*.*,WEB-INF/lib/bin/" />
 	</target>
 </project>

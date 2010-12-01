@@ -121,6 +121,6 @@
 			<path refid="guice-2.0.userclasspath" />
 			<path refid="httpcomponents-4.0.3.userclasspath" />
 		</copy>
-		<jar destfile="dist/${ant.project.name}.war" basedir="WebContent" excludes="**/.svn/,WEB-INF/logs/*.*" />
+		<jar destfile="dist/services.war" basedir="WebContent" excludes="**/.svn/,WEB-INF/logs/*.*" />
 	</target>
 </project>
