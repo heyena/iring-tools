@@ -3,7 +3,6 @@
 	<name>iRINGTools.Apps</name>
 	<comment></comment>
 	<projects>
-		<project>iRINGTools.Common</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

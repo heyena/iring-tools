@@ -3,6 +3,7 @@
 	<name>iRINGTools.Services</name>
 	<comment></comment>
 	<projects>
+		<project>iRINGTools.Services</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
