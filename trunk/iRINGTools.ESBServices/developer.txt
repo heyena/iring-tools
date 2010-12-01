@@ -1,23 +1,13 @@
 ==Java Development Environment Configuration==
- * Checkout from svn
- * Run eclipse using /iRINGTools.ESB as the workspace.
+ * Do SVN checkout/update
+ * Start Eclipse
  * Import user libraries 
-  * search and replace in iringtools.userlibraries to match your svn checkout.
-  * Window - Preferences - Java - Build Path - User Libraries - iringtools.userlibraries
- * Import preferences
-  * File - Import - General - Preferences - preferences.epf
+  * Make copy iringtools.default.userlibraries and replace library paths to match your "libraries" directory path.
+  * Window - Preferences - Java - Build Path - User Libraries - <your copy of iringtools userlibraries>
+ * Delete projects (without deleting the contents)
  * Import projects into workspace
   * File - Import - General - Existing Projects into Workspace - select root(workspace) folder
  * Create Tomcat server instance in eclipse
   * Right click an empty spot in Servers tab - New - Server - Apache - Tomcat 6.0 - Next - 
     select tomcat home directory
-  * Right click ExchangeService - Refresh
- * Run ExchangeService
-  * Select Tomcat Server under Servers tab - click on Run (the player) button
-  * Navigate using web browser to...
-    http://localhost:8080/ExchangeService/12345_000/ABC/Lines/diff
-    Result is the difference of two RDF files
- * Deploying ExchangeService to Tomcat Server in operation
-  * Copy ExchangeService\ExchangeService.war to TOMCAT_HOME\webapps\ folder
-  * Restart Tomcat Service
   
