@@ -1,6 +1,9 @@
 package org.iringtools.mediators;
 
+import javax.xml.namespace.QName;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.impl.llom.OMElementImpl;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
@@ -10,17 +13,18 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.synapse.ManagedLifecycle;
 import org.apache.synapse.MessageContext;
 import org.apache.synapse.core.SynapseEnvironment;
 import org.apache.synapse.mediators.AbstractMediator;
+import org.apache.synapse.transport.nhttp.NhttpConstants;
 
 public class RESTCalloutMediator extends AbstractMediator implements ManagedLifecycle
 {
   private ServiceClient serviceClient = null;
   private String axis2ConfigFile = null;
   private String serviceURL = "http://";
+  private String endpointEntry = null;
   private String method = "GET";
   private String contentType = HTTPConstants.MEDIA_TYPE_APPLICATION_XML;
 
@@ -42,8 +46,30 @@ public class RESTCalloutMediator extends AbstractMediator implements ManagedLife
       
       serviceClient = new ServiceClient(cfgCtx, null);
       
-      EndpointReference endpointReference = (serviceURL == null || serviceURL.length() == 0) 
-        ? mc.getTo() : new EndpointReference(serviceURL);
+      EndpointReference endpointReference = null;
+        
+      if (serviceURL != null && serviceURL.length() > 0)
+      {
+        endpointReference = new EndpointReference(serviceURL);
+      }
+      else if (endpointEntry != null && endpointEntry.length() > 0)
+      {
+        OMElementImpl endpointOM = (OMElementImpl)mc.getEntry(endpointEntry);
+        OMElement addressOM = (OMElement)endpointOM.getChildrenWithLocalName("address").next();
+        String addressUri = addressOM.getAttribute(new QName(null, "uri")).getAttributeValue();
+        
+        String endpointPostfix = (String)mc.getProperty(NhttpConstants.REST_URL_POSTFIX);        
+        if (endpointPostfix != null && endpointPostfix.length() > 0)
+        {
+          addressUri += endpointPostfix;
+        }
+        
+        endpointReference = new EndpointReference(addressUri);
+      }
+      else
+      {
+        endpointReference = mc.getTo();
+      }
       
       // initialize serviceClient options
       Options options = new Options();
@@ -148,5 +174,15 @@ public class RESTCalloutMediator extends AbstractMediator implements ManagedLife
   public String getAxis2ConfigFile()
   {
     return axis2ConfigFile;
+  }
+
+  public void setEndpointEntry(String endpointEntry)
+  {
+    this.endpointEntry = endpointEntry;
+  }
+
+  public String getEndpointEntry()
+  {
+    return endpointEntry;
   }
 }

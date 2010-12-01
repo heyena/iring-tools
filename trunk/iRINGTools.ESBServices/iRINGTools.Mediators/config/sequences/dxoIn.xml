@@ -5,20 +5,15 @@
 		<property name="DXO_IN" expression="*" />
 	</log>
 	<xslt key="dxiSplit" />
-	<property name="dxi" expression="//dti:dxi" type="OM"
-		xmlns:dti="http://www.iringtools.org/dxfr/dti" />
-
-	<header name="To"
-		expression="fn:concat('http://localhost:8080/iringtools/dir/', fn:substring-after(get-property('To'), 'dxo/'))" />
-	<class name="org.iringtools.mediators.RESTCalloutMediator">
-		<axis2ns238:property xmlns:axis2ns238="http://ws.apache.org/ns/synapse"
-			name="serviceURL" value="" />
-		<axis2ns239:property xmlns:axis2ns239="http://ws.apache.org/ns/synapse"
-			name="axis2ConfigFile" value="" />
-		<axis2ns240:property xmlns:axis2ns240="http://ws.apache.org/ns/synapse"
-			name="method" value="" />
-		<axis2ns241:property xmlns:axis2ns241="http://ws.apache.org/ns/synapse"
-			name="contentType" value="" />
+	<property name="dxi" expression="//dti:dxi" type="OM" xmlns:dti="http://www.iringtools.org/dxfr/dti" />
+  
+  <property name="REST_URL_POSTFIX" expression="fn:substring-after(get-property('To'), 'dxo/')" />
+  <class name="org.iringtools.mediators.RESTCalloutMediator">
+    <property name="endpointEntry" value="conf:/repository/synapse/endpoints/directoryService"/>
+		<property name="serviceURL" value="" />
+		<property name="method" value="" />
+		<property name="axis2ConfigFile" value="" />
+		<property name="contentType" value="" />    
 	</class>
 
 	<property name="sourceUri" expression="//dir:exchangeDefinition/dir:sourceUri"

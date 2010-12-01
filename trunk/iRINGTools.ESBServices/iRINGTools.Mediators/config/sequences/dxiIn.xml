@@ -4,13 +4,13 @@
 	<log level="custom">
 		<property name="DXI_IN" expression="*" />
 	</log>
-	<header name="To"
-		expression="fn:concat('http://localhost:8080/iringtools/dir/', fn:substring-after(get-property('To'), 'dxi/'))" />
-	<class name="org.iringtools.mediators.RESTCalloutMediator">
+	<property name="REST_URL_POSTFIX" expression="fn:substring-after(get-property('To'), 'dxi/')" />
+  <class name="org.iringtools.mediators.RESTCalloutMediator">
+    <property name="endpointEntry" value="conf:/repository/synapse/endpoints/directoryService"/>
 		<property name="serviceURL" value="" />
 		<property name="method" value="" />
 		<property name="axis2ConfigFile" value="" />
-		<property name="contentType" value="" />
+		<property name="contentType" value="" />    
 	</class>
 	<property name="sourceUri" expression="//dir:exchangeDefinition/dir:sourceUri"
 		scope="default" type="STRING" />
