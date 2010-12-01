@@ -18,7 +18,6 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;extension base="{http://www.iringtools.org/ui/widgets/tree}Node">
  *       &lt;sequence>
  *         &lt;element name="leaf" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
- *         &lt;element name="checked" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/extension>
  *   &lt;/complexContent>
@@ -29,8 +28,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LeafNode", propOrder = {
-    "leaf",
-    "checked"
+    "leaf"
 })
 public class LeafNode
     extends Node
@@ -38,8 +36,6 @@ public class LeafNode
 
     @XmlElement(defaultValue = "true")
     protected boolean leaf;
-    @XmlElement(defaultValue = "false")
-    protected boolean checked;
 
     /**
      * Gets the value of the leaf property.
@@ -55,22 +51,6 @@ public class LeafNode
      */
     public void setLeaf(boolean value) {
         this.leaf = value;
-    }
-
-    /**
-     * Gets the value of the checked property.
-     * 
-     */
-    public boolean isChecked() {
-        return checked;
-    }
-
-    /**
-     * Sets the value of the checked property.
-     * 
-     */
-    public void setChecked(boolean value) {
-        this.checked = value;
     }
 
 }
