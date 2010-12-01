@@ -101,8 +101,14 @@
 			<fileset dir="dist" includes="**/*" />
 		</delete>
 		<copy todir="WebContent/WEB-INF/lib" flatten="true">
-			<path refid="struts2-2.2.1.userclasspath" />
 			<fileset dir="${iRINGTools.Common.location}/dist" />
+      <path refid="struts2-2.2.1.userclasspath" />
+			<path refid="axiom-1.2.8.userclasspath" />
+			<path refid="commons-logging-1.1.1.userclasspath" />
+			<path refid="log4j-1.2.16.userclasspath" />
+			<path refid="jaxb-ri-20100511.userclasspath" />
+			<path refid="httpcomponents-4.0.3.userclasspath" />
+			<path refid="gson-1.4.userclasspath" />      
 		</copy>
 		<jar destfile="dist/apps.war" basedir="WebContent"
 			excludes="**/.svn/,WEB-INF/logs/*.*,WEB-INF/lib/bin/" />
