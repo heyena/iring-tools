@@ -230,7 +230,7 @@ namespace org.iringtools.modules.memappingregion
         {
           MessageBox.Show("Please select a ValueMap", "EDIT VALUEMAP", MessageBoxButton.OK);
         }
-        else if (!Regex.IsMatch(internalValue, @"^[A-Za-z_]+\w*$"))
+        else if (!Regex.IsMatch(internalValue, @"^[A-za-z][\w ]*[^\W_][\w ]*$"))
         {
           MessageBox.Show("ValueMap internal value is invalid", "EDIT VALUEMAP", MessageBoxButton.OK);
         }
@@ -264,7 +264,7 @@ namespace org.iringtools.modules.memappingregion
 
         if (mapping != null)
         {
-          if (!Regex.IsMatch(valueListName, @"^[A-Za-z_]+\w*$"))
+          if (!Regex.IsMatch(valueListName, @"^[A-za-z][\w ]*[^\W_][\w ]*$"))
           {
             MessageBox.Show("ValueList value is invalid", "ADD VALUELIST", MessageBoxButton.OK);
           }
@@ -297,7 +297,7 @@ namespace org.iringtools.modules.memappingregion
 
         if (mapping != null)
         {
-          if (!Regex.IsMatch(internalValue, @"^[A-Za-z_]+\w*$"))
+          if (!Regex.IsMatch(internalValue, @"^[A-za-z][\w ]*[^\W_][\w ]*$"))
           {
             MessageBox.Show("ValueMap internal value is invalid", "ADD VALUEMAP", MessageBoxButton.OK);
           }
