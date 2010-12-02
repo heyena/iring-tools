@@ -69,11 +69,14 @@ function showgrid(response, request,label,nodeid,gridType) {
 		var encode = true;
 		// configure whether filtering is performed locally or remotely (initially)
 		var local = false;
+		// configure whether sorting is performed locally or remotely (initially)
+		var remotesort = true;
 		
 		//var filt = filterSet;// 	[{type: 'string',dataIndex: 'IdentificationByTag'},			{type: 'string',dataIndex: 'TransferType',disabled: false}];
 		var filters = new Ext.ux.grid.GridFilters({
 			// encode and local configuration options defined previously for easier reuse
 			encode: encode, // json encode the filter query
+			remotesort: remotesort, // json encode the filter query
 			local: local,   // defaults to false (remote filtering)
 			filters: filterSet
 		});
@@ -105,11 +108,12 @@ function showgrid(response, request,label,nodeid,gridType) {
       fields:fieldList
 		});
 
-    var store = new Ext.data.Store({
-    	//autoLoad:true,
+	var store = new Ext.data.Store({
+      //autoLoad:true,
       proxy: proxy,
+	  remoteSort: remotesort,
       reader: reader,
-      //sortInfo: { field: 'slno', direction: "DESC" },
+      sortInfo: { field: 'TransferType', direction: "ASC" },
       autoLoad: {
       	params: {
       		start:0, 
@@ -125,8 +129,30 @@ function showgrid(response, request,label,nodeid,gridType) {
       }
     });
 
-    var grid = new Ext.grid.GridPanel({
-    	store: store,
+	// custom renderer function that will be called for each header
+	function applyStyle(val){
+		switch(val.toLowerCase())
+		{
+			case "add":
+				spanColor='red';
+				break;
+			case "change":
+				spanColor='blue';
+				break;
+			case "delete":
+				spanColor='green';
+				break;
+			case "sync":
+				spanColor='black';
+				break;
+		}
+
+			return '<span style="color:'+spanColor+';">' + val + '</span>';
+	}
+
+
+	var grid = new Ext.grid.GridPanel({
+   	  store: store,
       columns: headerList,
       stripeRows: true,
       id:label,
@@ -142,11 +168,19 @@ function showgrid(response, request,label,nodeid,gridType) {
       classObjName: classObjName,
       enableColumnMove: false,
       listeners: {
+		beforerender: {
+		fn: function(){
+				var colmodel = this.getColumnModel();
+				for(var i=0; i<colmodel.getColumnCount();i++){
+					colmodel.setRenderer(i,applyStyle);
+				}
+		}
+		},		 
       	render: {
       		fn: function(){
       			store.load({
-      				params: {
-      					start: 0,
+      			params: {
+      			start: 0,
                 limit: pageSize
               }
             });
@@ -155,7 +189,7 @@ function showgrid(response, request,label,nodeid,gridType) {
         cellclick:{
         	fn: function(grid,rowIndex,columnIndex,e) {
         		var cm = this.colModel
-            var record = grid.getStore().getAt(rowIndex);  // Get the Record
+				var record = grid.getStore().getAt(rowIndex);  // Get the Record
         		var fieldName = grid.getColumnModel().getDataIndex(columnIndex); // Get field name
             
         		if (fieldName=='Identifier' && record.get(fieldName)!='') {
@@ -270,6 +304,22 @@ function showgrid(response, request,label,nodeid,gridType) {
 					 button.setText(text);
 					 grid.getStore().reload();
 				 }
+			 },{
+				text: 'Local Sorting: ' + (store.remoteSort ? 'On' : 'Off'),
+				tooltip: 'Toggle Sorting on/off',
+				enableToggle: true,
+				handler: function (button, state) {
+
+						  //alert(store.remoteSort);
+						  var localsort = (store.remoteSort===true) ? true : false;
+						  var remotesort = (store.remoteSort===true) ? false : true;
+						  var text = 'Local Sorting: ' + (localsort ? 'Off' : 'On');
+						  store.remoteSort=remotesort;
+						  //remove the prior parameters from the last load options
+						  //grid.filters.cleanParams(grid.getStore().lastOptions.params);
+						  button.setText(text);
+						  grid.getStore().reload();
+			 }
 			 },{
 				 text: 'All Filter Data',
 				 tooltip: 'Get Filter Data for Grid',
