@@ -2,7 +2,11 @@
 <web-app id="iRINGTools.Apps">
   <context-param>
     <param-name>RefDataServiceUri</param-name>
-    <param-value>http://localhost:8080/services/refdata</param-value>
+    <param-value>http://localhost:8081/services/refdata</param-value>
+  </context-param>
+   <context-param>
+    <param-name>DirectoryServiceUri</param-name>
+    <param-value>http://localhost:8081/services/dir</param-value>
   </context-param>
   <display-name>iRINGTools Apps</display-name>
   <welcome-file-list>

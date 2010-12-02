@@ -10,12 +10,21 @@
 	    </action>
 	</package>
 	
+	
+	
 	<package name="jsontest" extends="json-default">
 	  <action name="federation" class="org.iringtools.controllers.FederationController" method="getFederation">
 	    <result type="json">
 	    	<param name="root">tree.treeNodes</param>
 	    </result>
 	  </action>
+	  <action name="directory" class="org.iringtools.controllers.DirectoryController" method="getDirectory">
+	    <result type="json">
+	    	<param name="root">tree.treeNodes</param>
+	    </result>
+	  </action>
 	</package>
+	
+	
 		
 </struts>
