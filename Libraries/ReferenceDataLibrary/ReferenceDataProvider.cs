@@ -552,10 +552,10 @@ namespace org.iringtools.refdata
                 RefDataEntities resultEntities = new RefDataEntities();
                 List<Entity> resultEnt = new List<Entity>();
 
-                Query queryContainsSearch = (Query)_queries.FirstOrDefault(c => c.Key == "GetClass").Query;
-                QueryBindings queryBindings = queryContainsSearch.Bindings;
+                Query queryGetClass = (Query)_queries.FirstOrDefault(c => c.Key == "GetClass").Query;
+                QueryBindings queryBindings = queryGetClass.Bindings;
 
-                sparql = ReadSPARQL(queryContainsSearch.FileName);
+                sparql = ReadSPARQL(queryGetClass.FileName);
 
                 if (namespaceUrl == String.Empty || namespaceUrl == null)
                     namespaceUrl = @"http://rdl.rdlfacade.org/data";
@@ -3664,10 +3664,10 @@ namespace org.iringtools.refdata
                 RefDataEntities resultEntities = new RefDataEntities();
                 List<Entity> resultEnt = new List<Entity>();
 
-                Query queryContainsSearch = (Query)_queries.FirstOrDefault(c => c.Key == "GetPart8Class").Query;
-                QueryBindings queryBindings = queryContainsSearch.Bindings;
+                Query queryGetPart8Class = (Query)_queries.FirstOrDefault(c => c.Key == "GetPart8Class").Query;
+                QueryBindings queryBindings = queryGetPart8Class.Bindings;
 
-                sparql = ReadSPARQL(queryContainsSearch.FileName);
+                sparql = ReadSPARQL(queryGetPart8Class.FileName);
                 sparql = sparql.Replace("param1", id);
 
                 foreach (Repository repository in _repositories)
