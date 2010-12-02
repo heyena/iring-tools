@@ -64,11 +64,6 @@ namespace ReferenceDataService.Tests
       return _referenceDataServiceProvider.SearchPageReset(query, start, limit);
     }
 
-    public List<Entity> Find(string query)
-    {
-      return _referenceDataServiceProvider.Find(query);
-    }
-
     public QMXF GetClass(string id)
     {
       return _referenceDataServiceProvider.GetClass(id);

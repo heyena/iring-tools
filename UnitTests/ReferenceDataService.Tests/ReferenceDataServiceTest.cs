@@ -60,13 +60,6 @@ namespace ReferenceDataService.Tests
       Assert.AreEqual(74, actual.Entities.Count);
     }
 
-    [TestMethod()]
-    public void FindTest()
-    {
-      ReferenceDataProxy target = new ReferenceDataProxy();
-      List<Entity> actual = target.Find("transmitter");
-      Assert.AreEqual(1, actual.Count);
-    }
 
     [TestMethod()]
     public void GetClassTest()
