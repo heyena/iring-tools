@@ -340,7 +340,7 @@ class dataObjectsModel{
 						$tempRoleValueArray['Identifier']  ='<span style="color:'.$spanColor.';cursor: pointer;text-decoration: underline">'.(string)$dataTransferObject->identifier.'</span>';
 					}
 
-											// condition to check if the transferType is change for role->type
+					// condition to check if the transferType is change for role->type
 					if($dataTransferObject->transferType=='Change')
 					{
 						$value='';
@@ -355,14 +355,13 @@ class dataObjectsModel{
 							$oldvalue=(string)$roleObject->oldValue;
 						}
 
-											// call and store the rdl values by checking the value contains rdl:
+						// call and store the rdl values by checking the value contains rdl:
 						$convertedvalue = (stristr($value,'rdl:')) ? $this->stroreRdlValues($value,substr($value,4)):$value;
 						$convertedoldValue = (stristr($oldvalue,'rdl:')) ? $this->stroreRdlValues($oldvalue,substr($oldvalue,4)):$oldvalue;
 
-											// if there is any difference between old and new then represent as old->new
-
+						// if there is any difference between old and new then represent as old->new
 						if($convertedoldValue!=$convertedvalue){
-															//if($oldvalue!='' && $value!=''){
+							//if($oldvalue!='' && $value!=''){
 							$tempRoleValueArray[$tempKey]='<span style="cursor:pointer;color:'.$spanColor.'">'.$convertedoldValue.'->'.$convertedvalue.'</span>';
 															//}else{
 																	//$tempRoleValueArray[$tempKey]='<span style="color:'.$spanColor.'">'.$oldvalue.$value.'</span>';
@@ -493,8 +492,8 @@ class dataObjectsModel{
 				if(array_key_exists($headerName,$rowsArray[$i])){
 					$rowsDataArray[$i][]=$rowsArray[$i][$headerName];
 					/* The required format for JSON Reader is underscore supported so we are changing . with _ */
-					$gridRowsArray[$i][str_replace(".", "_", $headerName)]=$rowsArray[$i][$headerName];
-
+					/* We are striping as we need it for sorting purpose*/
+					$gridRowsArray[$i][str_replace(".", "_", $headerName)]=strip_tags(trim($rowsArray[$i][$headerName]));
 				}else{
 					$rowsDataArray[$i][]='';
 					/* The required format for JSON Reader is underscore supported so we are changing . with _ */
@@ -523,6 +522,7 @@ class dataObjectsModel{
 		
 		foreach($headerArrayList as $key =>$val){
 			$headerListDataArray[]=array('name'=>str_replace(".", "_", $val));
+			//*** $columnsDataArray[]=array('id'=>str_replace(".", "_", $val),'header'=>$val,'width'=>(strlen($val)<20)?110:strlen($val)+130,"renderer"=>"genre_name",'sortable'=>'true','dataIndex'=>str_replace(".", "_", $val));
 			$columnsDataArray[]=array('id'=>str_replace(".", "_", $val),'header'=>$val,'width'=>(strlen($val)<20)?110:strlen($val)+130,'sortable'=>'true','dataIndex'=>str_replace(".", "_", $val));
 			$gridFilterArray[]=array('type'=> 'string','dataIndex'=>str_replace(".", "_", $val));
 		}
@@ -667,7 +667,7 @@ class dataObjectsModel{
 	 * setCacheKey($params) function builds and assigns the key using @params 
 	 */
 
-	function getPageData($params,$start,$limit,$identifier,$refClassIdentifier,$filters){
+	function getPageData($params,$start,$limit,$identifier,$refClassIdentifier,$filters,$sortfield,$dir){
 		// call the function  setCacheKey to get the dtocacheKey
 		$this->setCacheKey($params);
 		//echo '<br>key: '.$this->dtocacheKey;
@@ -686,6 +686,22 @@ class dataObjectsModel{
 			return $this->getFilterPageData($params,$start,$limit,$identifier,$refClassIdentifier,$gridArray,$filters);
 		}else{
 		if(is_array($gridArray)){
+
+			/*  Sorting started */
+			foreach($gridArray as $key => $row){
+				if(isset($sortfield)&&($sortfield!='')){
+					$sortArray[$key]  = $row[$sortfield];
+				}
+			}
+
+			if(isset($sortArray)){
+				if($dir=='ASC'){
+					array_multisort($sortArray, SORT_ASC, $gridArray);
+				}else if($dir=='DESC'){
+					array_multisort($sortArray, SORT_DESC,SORT_STRING, $gridArray);
+				}
+			}
+			/*  Sorting end */
 			for($i=$start;$i<$start+$limit;$i++){
 				if(isset($gridArray[$i])){
 					$result[]=$gridArray[$i];
