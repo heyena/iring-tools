@@ -183,7 +183,6 @@ namespace org.iringtools.exchange
           WebProxyCredentials proxyCrendentials = _settings.GetWebProxyCredentials();
           if (proxyCrendentials != null)
           {
-            endpoint.UseCredentialsForProxy = true;
             webProxy.Credentials = _settings.GetProxyCredential();
           }
       
