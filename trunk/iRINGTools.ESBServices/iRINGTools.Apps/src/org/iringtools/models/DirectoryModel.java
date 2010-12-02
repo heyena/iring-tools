@@ -83,10 +83,12 @@ public class DirectoryModel {
 		Tree tree = new Tree();
 	    List<Node> scopeNodes = tree.getTreeNodes();
 
+	    
 	    for (Scope scope : directory.getScopes())
 	    {
 	      TreeNode scopeNode = new TreeNode();
 	      scopeNode.setText(scope.getName());
+	      scopeNode.setCls("Scope");
 	      scopeNodes.add(scopeNode);
 
 	      List<Node> scopeNodeList = scopeNode.getChildren();
@@ -96,6 +98,7 @@ public class DirectoryModel {
 	      {
 	        TreeNode appDataNode = new TreeNode();
 	        appDataNode.setText("Application Data");
+	        appDataNode.setCls("Folder");
 	        scopeNodeList.add(appDataNode);
 
 	        List<Node> appDataNodeList = appDataNode.getChildren();
@@ -104,6 +107,8 @@ public class DirectoryModel {
 	        {
 	          TreeNode appNode = new TreeNode();
 	          appNode.setText(app.getName());
+	          appNode.setId(app.getId());
+	          appNode.setCls("Application");
 	          appDataNodeList.add(appNode);
 
 	          List<Node> appNodeList = appNode.getChildren();
@@ -113,6 +118,7 @@ public class DirectoryModel {
 	            LeafNode graphNode = new LeafNode();
 	            graphNode.setId(graph.getId());
 	            graphNode.setText(graph.getName());
+	            graphNode.setCls("Graph");
 	            graphNode.setLeaf(true);
 	            appNodeList.add(graphNode);
 	            
@@ -138,7 +144,8 @@ public class DirectoryModel {
 	      if (exchangeData != null)
 	      {
 	        TreeNode exchangeDataNode = new TreeNode();
-	        exchangeDataNode.setText("Exchange Data");
+	        exchangeDataNode.setText("Data exchanges");
+	        exchangeDataNode.setCls("Floder");
 	        scopeNodeList.add(exchangeDataNode);
 
 	        List<Node> exchangeDataNodeList = exchangeDataNode.getChildren();
@@ -147,15 +154,24 @@ public class DirectoryModel {
 	        {
 	          TreeNode commodityNode = new TreeNode();
 	          commodityNode.setText(commodity.getName());
+	          commodityNode.setCls("Commodity");
 	          exchangeDataNodeList.add(commodityNode);
 
 	          List<Node> commodityNodeList = commodityNode.getChildren();
 
+	          TreeNode exchangesNode = new TreeNode();
+	          exchangesNode.setText("Exchanges");
+	          exchangesNode.setCls("Folder");
+	          commodityNodeList.add(exchangesNode);
+	          
+	          List<Node> exchangesNodeList = exchangesNode.getChildren();
+	          
 	          for (Exchange exchange : commodity.getExchanges().getItems())
 	          {
 	            LeafNode exchangeNode = new LeafNode();
 	            exchangeNode.setId(exchange.getId());
 	            exchangeNode.setText(exchange.getName());
+	            exchangeNode.setCls("Exchange");
 	            exchangeNode.setLeaf(true);
 	            
 	            List<Property> properties = exchangeNode.getProperties();
@@ -171,7 +187,7 @@ public class DirectoryModel {
 	            prop3.setName("Description");
 	            prop3.setValue(exchange.getDescription());
 	            properties.add(prop3);
-	            commodityNodeList.add(exchangeNode);
+	            exchangesNodeList.add(exchangeNode);
 	          }
 	        }
 	      }
