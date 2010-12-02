@@ -3,22 +3,18 @@
 	<log level="custom">
 		<property name="DXI_AGGR_IN" expression="*" />
 	</log>
-	<property name="endpointURLs" expression="fn:substring-after(get-property('To'), '?')"
-		scope="default" type="STRING" />
-	<property name="DISABLE_CHUNKING" value="true" scope="axis2"
-		type="BOOLEAN" />
+	<property name="endpointURLs" expression="fn:substring-after(get-property('To'), '?')" scope="default" type="STRING" />
+	<property name="DISABLE_CHUNKING" value="true" scope="axis2" type="BOOLEAN" />
 	<clone>
 		<target>
 			<sequence>
-				<header name="To"
-					expression="fn:substring-before(fn:substring-after(get-property('endpointURLs'), 'sourceURL='), '&amp;')" />
+				<header name="To" expression="fn:substring-before(fn:substring-after(get-property('endpointURLs'), 'sourceURL='), '&amp;')" />
 				<send />
 			</sequence>
 		</target>
 		<target>
 			<sequence>
-				<header name="To"
-					expression="fn:substring-after(get-property('endpointURLs'), 'targetURL=')" />
+				<header name="To" expression="fn:substring-after(get-property('endpointURLs'), 'targetURL=')" />
 				<send />
 			</sequence>
 		</target>

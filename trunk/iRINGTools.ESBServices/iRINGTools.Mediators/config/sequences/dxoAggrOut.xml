@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sequence xmlns="http://ws.apache.org/ns/synapse" xmlns:dto="http://www.iringtools.org/dxfr/dto"
-	name="dxoAggrOut">
+<sequence xmlns="http://ws.apache.org/ns/synapse" xmlns:dto="http://www.iringtools.org/dxfr/dto" name="dxoAggrOut">
 	<aggregate>
 		<correlateOn expression="//dto:dataTransferObjects" />
 		<completeCondition>
@@ -8,13 +7,13 @@
 		</completeCondition>
 		<onComplete expression="//dto:dataTransferObjects">
 			<script language="js"><![CDATA[
-                      var soapenv = new Namespace("http://schemas.xmlsoap.org/soap/envelope/");
-                      var payload = mc.getEnvelopeXML().soapenv::Body.*;                   
-                      mc.setPayloadXML(
-                        <resp:dtoAggrResponse xmlns:resp="http://wso2.org/response">
-                         {payload}
-                        </resp:dtoAggrResponse>);
-                    ]]></script>
+        var soapenv = new Namespace("http://schemas.xmlsoap.org/soap/envelope/");
+        var payload = mc.getEnvelopeXML().soapenv::Body.*;                   
+        mc.setPayloadXML(
+          <resp:dtoAggrResponse xmlns:resp="http://wso2.org/response">
+           {payload}
+          </resp:dtoAggrResponse>);
+      ]]></script>
 			<log level="custom">
 				<property name="DXO_AGGR_OUT" expression="*" />
 			</log>

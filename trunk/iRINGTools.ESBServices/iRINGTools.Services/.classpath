@@ -49,7 +49,7 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/iRINGTools.Common/bin">
+	<classpathentry kind="lib" path="/iRINGTools.Common/bin" sourcepath="/iRINGTools.Common/src">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/classes"/>
 		</attributes>
