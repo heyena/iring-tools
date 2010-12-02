@@ -138,6 +138,7 @@ namespace org.iringtools.informationmodel.usercontrols
         else
         {
           PresentationModel.SelectedQMXF = this._qmxf;
+          PresentationModel.SelectedQMXF.sourceRepository = this.Entity.Repository;
         }
 
         Aggregator.GetEvent<NavigationEvent>().Publish(new NavigationEventArgs

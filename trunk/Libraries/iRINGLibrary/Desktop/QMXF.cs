@@ -33,7 +33,7 @@ using System.Text;
 
 namespace org.ids_adi.qmxf
 {
-    [DataContract(Name="qmxf")]
+    [DataContract(Name = "qmxf")]
     [XmlRoot(ElementName = "qmxf", Namespace = "http://ns.ids-adi.org/qxf/model#")]
     public class QMXF
     {
@@ -140,14 +140,14 @@ namespace org.ids_adi.qmxf
     {
         public ClassDefinition()
         {
-          this.name = new List<QMXFName>();
-          this.description = new List<Description>();
-          this.classification = new List<Classification>();
-          this.specialization = new List<Specialization>();
-          this.status = new List<QMXFStatus>();
-          this.suggestedDesignation = new List<SuggestedDesignation>();
-          this.textualDefinition = new List<TextualDefinition>();
-          this.repositoryName = string.Empty;
+            this.name = new List<QMXFName>();
+            this.description = new List<Description>();
+            this.classification = new List<Classification>();
+            this.specialization = new List<Specialization>();
+            this.status = new List<QMXFStatus>();
+            this.suggestedDesignation = new List<SuggestedDesignation>();
+            this.textualDefinition = new List<TextualDefinition>();
+            this.repositoryName = string.Empty;
         }
 
         [DataMember(Name = "repository", EmitDefaultValue = false)]
@@ -201,15 +201,15 @@ namespace org.ids_adi.qmxf
     {
         public TemplateQualification()
         {
-          this.name = new List<QMXFName>();
-          this.description = new List<Description>();
-          this.suggestedDesignation = new List<SuggestedDesignation>();
-          this.designation = new List<Designation>();
-          this.status = new List<QMXFStatus>();
-          this.textualDefinition = new List<TextualDefinition>();
-          this.roleQualification = new List<RoleQualification>();
-          this.specialization = new List<Specialization>();
-          this.repositoryName = string.Empty;
+            this.name = new List<QMXFName>();
+            this.description = new List<Description>();
+            this.suggestedDesignation = new List<SuggestedDesignation>();
+            this.designation = new List<Designation>();
+            this.status = new List<QMXFStatus>();
+            this.textualDefinition = new List<TextualDefinition>();
+            this.roleQualification = new List<RoleQualification>();
+            this.specialization = new List<Specialization>();
+            this.repositoryName = string.Empty;
         }
 
         [DataMember(Name = "repository", EmitDefaultValue = false)]
@@ -371,16 +371,16 @@ namespace org.ids_adi.qmxf
     [DataContract]
     public class SuggestedDesignation
     {
-      [DataMember(EmitDefaultValue = false)]
-      [XmlText]
-      public string value { get; set; }
+        [DataMember(EmitDefaultValue = false)]
+        [XmlText]
+        public string value { get; set; }
     }
 
     [DataContract]
     public class QMXFName
     {
         //TODO: Ignore for now
-        [DataMember(EmitDefaultValue = false)]  
+        [DataMember(EmitDefaultValue = false)]
         [XmlAttribute]
         public string lang { get; set; }
 
@@ -482,16 +482,16 @@ namespace org.ids_adi.qmxf
     {
         public RoleDefinition()
         {
-          this.name = new List<QMXFName>();
-          this.suggestedDesignation = new List<SuggestedDesignation>();
-          this.restrictions = new List<PropertyRestriction>();
-          //this.designation = new Designation();
-          this.description = new Description();
-          //this.range = "http://www.w3.org/2000/01/rdf-schema#Class";
-          //this.minimum = "1";
-          //this.maximum = "1";
-          //this.inverseMinimum = "0";
-          //this.inverseMaximum = "unbounded";
+            this.name = new List<QMXFName>();
+            this.suggestedDesignation = new List<SuggestedDesignation>();
+            this.restrictions = new List<PropertyRestriction>();
+            //this.designation = new Designation();
+            this.description = new Description();
+            //this.range = "http://www.w3.org/2000/01/rdf-schema#Class";
+            //this.minimum = "1";
+            //this.maximum = "1";
+            //this.inverseMinimum = "0";
+            //this.inverseMaximum = "unbounded";
         }
 
         [DataMember(Name = "restriction", EmitDefaultValue = false)]
@@ -517,7 +517,7 @@ namespace org.ids_adi.qmxf
         [DataMember(Name = "id", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "id")]
         public string identifier { get; set; }
-       
+
         [DataMember(Name = "range", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "range")]
         public string range { get; set; }
@@ -558,7 +558,7 @@ namespace org.ids_adi.qmxf
         [DataMember(EmitDefaultValue = false)]
         [XmlText]
         public string text { get; set; }
-        
+
         [DataMember(EmitDefaultValue = false)]
         [XmlAttribute]
         public string lang { get; set; }
@@ -577,13 +577,13 @@ namespace org.ids_adi.qmxf
     {
         public RoleQualification()
         {
-          this.name = new List<QMXFName>();
-          this.description = new List<Description>();
-          //this.value = new Value();
-          //this.minimum = "1";
-          //this.maximum = "1";
-          //this.inverseMinimum = "0";
-          //this.inverseMaximum = "unbounded";
+            this.name = new List<QMXFName>();
+            this.description = new List<Description>();
+            //this.value = new Value();
+            //this.minimum = "1";
+            //this.maximum = "1";
+            //this.inverseMinimum = "0";
+            //this.inverseMaximum = "unbounded";
         }
 
         [DataMember(Name = "name", EmitDefaultValue = false)]
@@ -621,7 +621,7 @@ namespace org.ids_adi.qmxf
         [DataMember(Name = "inverse-minimum", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "inverse-minimum")]
         public string inverseMinimum { get; set; }
-      
+
         [DataMember(Name = "inverse-maximum", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "inverse-maximum")]
         public string inverseMaximum { get; set; }
@@ -666,4 +666,16 @@ namespace org.ids_adi.qmxf
         public string to { get; set; }
     }
 
+    [DataContract]
+    public enum templateType
+    {
+        [EnumMember(Value = "qualification")]
+        [XmlElement(ElementName = "qualification")]
+        Qualification,
+
+        [EnumMember(Value = "definition")]
+        [XmlElement(ElementName = "definition")]
+        Definition
+
+    }
 }
