@@ -74,15 +74,6 @@ namespace org.iringtools.services
       return _referenceDataProvider.GetRepositories();
     }
 
-    /// <summary>
-    /// Finds a specific item by label and returns a list of Entity objects.
-    /// </summary>
-    [Description("Finds a specific item by label and returns a list of Entity objects.")]
-    [WebGet(UriTemplate = "/find/{query}")]
-    public List<Entity> Find(string query)
-    {
-      return _referenceDataProvider.Find(query);
-    }
 
     /// <summary>
     /// Does a fuzzy search by label and returns a list of Entity objects.
@@ -152,7 +143,7 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/classes/{id}?namespace={namespace}")]
     public QMXF GetClass(string id, string @namespace)
     {
-      return _referenceDataProvider.GetClass(id, @namespace);
+      return _referenceDataProvider.GetClass(id, @namespace, null);
     }
 
     /// <summary>
@@ -225,7 +216,7 @@ namespace org.iringtools.services
     [WebInvoke(UriTemplate = "/classes")]
     public Response PostClass(QMXF qmxf)
     {
-      return _referenceDataProvider.PostClass(qmxf);
+      return _referenceDataProvider.PostPart8Class(qmxf);
     }
   }
 }

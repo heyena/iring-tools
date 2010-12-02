@@ -10,8 +10,8 @@ namespace org.iringtools.adapter
   {
     public AdapterSettings() : base()
     {
-      this.Add("InterfaceService", @"http://localhost/Services/InterfaceService/query");
-      this.Add("ReferenceDataServiceUri", @"http://localhost/Services/RefDataService");
+      this.Add("InterfaceService", @"http://localhost:54321/facade/query");
+      this.Add("ReferenceDataServiceUri", @"http://localhost:54321/refdata");
       this.Add("DefaultProjectionFormat", "xml");
       this.Add("EndpointTimeout", "30000");
       this.Add("dotNetRDFServer", @".\SQLEXPRESS");
