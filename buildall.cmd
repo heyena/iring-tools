@@ -19,6 +19,8 @@ start /B WebDev.WebServer40 /port:54321 /path:%basedir%iRINGTools.Services
 msbuild build.xml /v:n /t:all /fileLogger /flp:errorsonly;logfile=msbuild.error.log /fileLogger /flp1:warningsonly;logfile=msbuild.warning.log
 taskkill /IM WebDev.WebServer40.exe
 
+pause
+
 echo Building java project ...
 cd %javabasedir%
 call ant
