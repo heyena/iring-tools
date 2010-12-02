@@ -159,12 +159,6 @@ public class DirectoryModel {
 
 	          List<Node> commodityNodeList = commodityNode.getChildren();
 
-	          TreeNode exchangesNode = new TreeNode();
-	          exchangesNode.setText("Exchanges");
-	          exchangesNode.setCls("Folder");
-	          commodityNodeList.add(exchangesNode);
-	          
-	          List<Node> exchangesNodeList = exchangesNode.getChildren();
 	          
 	          for (Exchange exchange : commodity.getExchanges().getItems())
 	          {
@@ -187,7 +181,7 @@ public class DirectoryModel {
 	            prop3.setName("Description");
 	            prop3.setValue(exchange.getDescription());
 	            properties.add(prop3);
-	            exchangesNodeList.add(exchangeNode);
+	            commodityNodeList.add(exchangeNode);
 	          }
 	        }
 	      }
