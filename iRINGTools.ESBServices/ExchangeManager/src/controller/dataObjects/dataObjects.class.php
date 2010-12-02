@@ -117,7 +117,7 @@ function getPageData($params){
 	}
 	if(isset($start) && (isset($count))){
 		$urlParams = $this->urlParameters($params);
-		$responseString = $this->modelObj->getPageData($urlParams,$start,$count,$identifier,$refClassIdentifier,$filters);
+		$responseString = $this->modelObj->getPageData($urlParams,$start,$count,$identifier,$refClassIdentifier,$filters,$sort,$dir);
 		echo $responseString;
 	}
     }
