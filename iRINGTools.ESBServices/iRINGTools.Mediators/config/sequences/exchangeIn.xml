@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence xmlns="http://ws.apache.org/ns/synapse" name="exchangeIn">
+  <log level="custom">
+    <property name="EXCHANGE_IN" expression="*"/>
+  </log>
+  
+  <!--<property xmlns:xreq="http://www.iringtools.org/dxfr/request" name="exchangeRequest" expression="//xreq:exchangeRequest" type="OM"/>-->
+  <property name="REST_URL_POSTFIX" expression="fn:substring-after(get-property('To'), 'exchange/')"/>
+  <sequence key="conf:/repository/synapse/sequences/exchangeDefinition"/>
+  
+  <header name="To" expression="fn:concat(get-property('targetUri'), '/', get-property('targetScopeName'), '/', get-property('targetAppName'), '/manifest')" />
+	<class name="org.iringtools.mediators.RESTCalloutMediator">
+    <property name="endpointEntry" value=""/>
+    <property name="serviceURL" value="" />
+    <property name="method" value="" />
+    <property name="axis2ConfigFile" value="" />
+    <property name="contentType" value="" />    
+  </class>
+
+	<sequence key="conf:/repository/synapse/sequences/restRespone"/>
+</sequence>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sequence xmlns="http://ws.apache.org/ns/synapse" xmlns:dti="http://www.iringtools.org/dxfr/dti"
-	name="dxiAggrOut">
+<sequence xmlns="http://ws.apache.org/ns/synapse" xmlns:dti="http://www.iringtools.org/dxfr/dti" name="dxiAggrOut">
 	<aggregate>
 		<correlateOn expression="//dti:dataTransferObjects" />
 		<completeCondition>

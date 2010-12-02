@@ -1,54 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sequence xmlns="http://ws.apache.org/ns/synapse" xmlns:dir="http://www.iringtools.org/directory"
-	name="dxiIn">
+<sequence xmlns="http://ws.apache.org/ns/synapse" xmlns:dir="http://www.iringtools.org/directory" name="dxiIn">
 	<log level="custom">
 		<property name="DXI_IN" expression="*" />
 	</log>
-	<property name="REST_URL_POSTFIX" expression="fn:substring-after(get-property('To'), 'dxi/')" />
+	
+  <property name="REST_URL_POSTFIX" expression="fn:substring-after(get-property('To'), 'dxi/')"/>
+  <sequence key="conf:/repository/synapse/sequences/exchangeDefinition"/>
+
+	<header name="To" expression="fn:concat(get-property('targetUri'), '/', get-property('targetScopeName'), '/', get-property('targetAppName'), '/manifest')" />
   <class name="org.iringtools.mediators.RESTCalloutMediator">
-    <property name="endpointEntry" value="conf:/repository/synapse/endpoints/directoryService"/>
-		<property name="serviceURL" value="" />
-		<property name="method" value="" />
-		<property name="axis2ConfigFile" value="" />
-		<property name="contentType" value="" />    
-	</class>
-	<property name="sourceUri" expression="//dir:exchangeDefinition/dir:sourceUri"
-		scope="default" type="STRING" />
-	<property name="sourceScopeName" expression="//dir:exchangeDefinition/dir:sourceScopeName"
-		scope="default" type="STRING" />
-	<property name="sourceAppName" expression="//dir:exchangeDefinition/dir:sourceAppName"
-		scope="default" type="STRING" />
-	<property name="sourceGraphName" expression="//dir:exchangeDefinition/dir:sourceGraphName"
-		scope="default" type="STRING" />
-	<property name="targetUri" expression="//dir:exchangeDefinition/dir:targetUri"
-		scope="default" type="STRING" />
-	<property name="targetScopeName" expression="//dir:exchangeDefinition/dir:targetScopeName"
-		scope="default" type="STRING" />
-	<property name="targetAppName" expression="//dir:exchangeDefinition/dir:targetAppName"
-		scope="default" type="STRING" />
-	<property name="targetGraphName" expression="//dir:exchangeDefinition/dir:targetGraphName"
-		scope="default" type="STRING" />
-	<property name="hashAlgorithm" expression="//dir:exchangeDefinition/dir:hashAlgorithm"
-		scope="default" type="STRING" />
-	<header name="To"
-		expression="fn:concat(get-property('targetUri'), '/', get-property('targetScopeName'), '/', get-property('targetAppName'), '/manifest')" />
+    <property name="endpointEntry" value=""/>
+    <property name="serviceURL" value="" />
+    <property name="method" value="" />
+    <property name="axis2ConfigFile" value="" />
+    <property name="contentType" value="" />    
+  </class>
+	
+  <header name="To" expression="fn:concat('http://localhost:8280/services/dxiAggr?sourceURL=', get-property('sourceUri'), '/', get-property('sourceScopeName'), '/', get-property('sourceAppName'), '/', get-property('sourceGraphName'), '/xfr', '&amp;targetURL=', get-property('targetUri'), '/', get-property('targetScopeName'), '/', get-property('targetAppName'), '/', get-property('targetGraphName'), '/xfr')" />
 	<class name="org.iringtools.mediators.RESTCalloutMediator">
-		<property name="serviceURL" value="" />
-		<property name="method" value="" />
-		<property name="axis2ConfigFile" value="" />
-		<property name="contentType" value="" />
-	</class>
-	<header name="To"
-		expression="fn:concat('http://localhost:8280/services/dxiAggr?sourceURL=', get-property('sourceUri'), '/', get-property('sourceScopeName'), '/', get-property('sourceAppName'), '/', get-property('sourceGraphName'), '/xfr', '&amp;targetURL=', get-property('targetUri'), '/', get-property('targetScopeName'), '/', get-property('targetAppName'), '/', get-property('targetGraphName'), '/xfr')" />
-	<class name="org.iringtools.mediators.RESTCalloutMediator">
-		<property name="serviceURL" value="" />
-		<property name="method" value="POST" />
-		<property name="axis2ConfigFile" value="" />
-		<property name="contentType" value="" />
-	</class>
-	<class name="org.iringtools.mediators.DtiDiffMediator" />
-	<property name="NO_ENTITY_BODY" scope="axis2" action="remove" />
-	<property name="RESPONSE" value="true" />
-	<header name="To" action="remove" />
-	<send />
+    <property name="endpointEntry" value=""/>
+    <property name="serviceURL" value="" />
+    <property name="method" value="POST" />
+    <property name="axis2ConfigFile" value="" />
+    <property name="contentType" value="" />    
+  </class>
+	
+  <class name="org.iringtools.mediators.DtiDiffMediator"/>  
+	<sequence key="conf:/repository/synapse/sequences/restRespone"/>
 </sequence>

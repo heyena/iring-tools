@@ -107,6 +107,6 @@
 		<copy todir="bin" flatten="false">
 			<fileset dir="${iRINGTools.Common.location}/bin" />
 		</copy>
-		<jar destfile="dist/mediators.jar" basedir="bin" excludes="**/.svn/" />
+		<jar destfile="dist/iringtools-mediators.jar" basedir="bin" excludes="**/.svn/" />
 	</target>
 </project>
