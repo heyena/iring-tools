@@ -245,10 +245,8 @@
           DestinationFiles="@(ServicesDeployment ->'$(ServicesDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Exec Command="Move /Y $(ServicesDeploymentDir)\Web_Default.config $(ServicesDeploymentDir)\Web.config" />
     <Exec Command="Move /Y $(ServicesDeploymentDir)\XML\Repositories_Default.xml $(ServicesDeploymentDir)\XML\Repositories.xml" />
-	<Exec Command="Move /Y $(ServicesDeploymentDir)\App_Data\Config_Default.ttl $(ServicesDeploymentDir)\App_Data\Config.ttl" />
-	<Exec Command="Move /Y $(ServicesDeploymentDir)\App_Data\InterfaceIntro_Default.txt $(ServicesDeploymentDir)\App_Data\InterfaceIntro.txt" />
-	<Exec Command="Move /Y $(ServicesDeploymentDir)\App_Data\SandboxIntro_Default.txt $(ServicesDeploymentDir)\App_Data\SandboxIntro.txt" />
-    <Exec Command="Mkdir $(ServicesDeploymentDir)\Logs" />
+	  <Exec Command="Move /Y $(ServicesDeploymentDir)\App_Data\Config_Default.ttl $(ServicesDeploymentDir)\App_Data\Config.ttl" />
+	  <Exec Command="Mkdir $(ServicesDeploymentDir)\Logs" />
     <Exec Command="Mkdir $(ServicesDeploymentDir)\App_Code"/>
 
     <Message Text="Creating Applications deployment ..." />
