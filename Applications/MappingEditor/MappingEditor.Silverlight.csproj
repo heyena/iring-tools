@@ -136,6 +136,10 @@
       <Project>{E27058A1-26FF-49A7-AF8B-408B9F18ED16}</Project>
       <Name>Details.Silverlight</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Modules\Mapping\Silverlight\Mapping.Silverlight.csproj">
+      <Project>{76CA1820-6E1C-4C70-8EDF-0559DA07EE54}</Project>
+      <Name>Mapping.Silverlight</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Modules\Menu\Silverlight\Menu.Silverlight.csproj">
       <Project>{021999F9-1E99-401B-9C7C-21C331434F02}</Project>
       <Name>Menu.Silverlight</Name>
