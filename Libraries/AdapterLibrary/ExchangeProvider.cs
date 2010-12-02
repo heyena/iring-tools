@@ -179,11 +179,10 @@ namespace org.iringtools.exchange
           WebProxyCredentials proxyCrendentials = _settings.GetWebProxyCredentials();
           if (proxyCrendentials != null)
           {
-            endpoint.UseCredentialsForProxy = true;
-            webProxy.Credentials = _settings.GetProxyCredential();
+             webProxy.Credentials = _settings.GetProxyCredential();
           }
           endpoint.SetProxy(webProxy.Address);
-          endpoint.SetProxyCredentials(proxyCrendentials.userName,proxyCrendentials.password);          
+          endpoint.SetProxyCredentials(proxyCrendentials.userName,proxyCrendentials.password);
         }
 
         VDS.RDF.Graph graph = endpoint.QueryWithResultGraph("CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o}");
