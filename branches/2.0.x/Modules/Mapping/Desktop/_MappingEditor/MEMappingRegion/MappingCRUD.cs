@@ -228,13 +228,12 @@ namespace org.iringtools.modules.memappingregion
                 {
                     MessageBox.Show("Please select a ValueMap", "EDIT VALUEMAP", MessageBoxButton.OK);
                 }
-                else if (!Regex.IsMatch(internalValue, @"^[A-Za-z_]+\w*$"))
+                else if (String.IsNullOrEmpty(internalValue))
                 {
                     MessageBox.Show("ValueMap internal value is invalid", "EDIT VALUEMAP", MessageBoxButton.OK);
                 }
                 else
                 {
-
                     MappingItem item = model.SelectedMappingItem;
                     ValueMap valueMap = (ValueMap)model.SelectedMappingItem.Tag;
                     string id = Utility.GetIdFromURI(valueMap.uri);
@@ -262,11 +261,10 @@ namespace org.iringtools.modules.memappingregion
 
                 if (mapping != null)
                 {
-                    if (!Regex.IsMatch(valueListName, @"^[A-Za-z_]+\w*$"))
+                    if (String.IsNullOrEmpty(valueListName))
                     {
                         MessageBox.Show("ValueList value is invalid", "ADD VALUELIST", MessageBoxButton.OK);
                     }
-
                     else
                     {
                         ValueList valueList = new ValueList { name = valueListName, valueMaps = new List<ValueMap>() };
@@ -295,12 +293,11 @@ namespace org.iringtools.modules.memappingregion
 
                 if (mapping != null)
                 {
-                    if (!Regex.IsMatch(internalValue, @"^[A-Za-z_]+\w*$"))
+                    if (String.IsNullOrEmpty(internalValue))
                     {
                         MessageBox.Show("ValueMap internal value is invalid", "ADD VALUEMAP", MessageBoxButton.OK);
                     }
-                    else if (model.SelectedIMUri == null ||
-                    SPARQLExtensions.GetObjectTypeFromUri(model.SelectedIMUri) != SPARQLPrefix.ObjectType.Class)
+                    else if (model.SelectedIMUri == null || SPARQLExtensions.GetObjectTypeFromUri(model.SelectedIMUri) != SPARQLPrefix.ObjectType.Class)
                     {
                         MessageBox.Show("Please select a valid class", "ADD VALUEMAP", MessageBoxButton.OK);
                     }
@@ -337,7 +334,7 @@ namespace org.iringtools.modules.memappingregion
                 TextBox txtLabel = sender as TextBox;
                 string graphName = txtLabel.Text;
 
-                if (!Regex.IsMatch(graphName, @"^[A-Za-z_]+\w*$"))
+                if (String.IsNullOrEmpty(graphName))
                 {
                     MessageBox.Show("Graph name is invalid", "ADD GRAPH", MessageBoxButton.OK);
                 }
