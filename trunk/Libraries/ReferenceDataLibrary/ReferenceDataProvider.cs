@@ -1368,7 +1368,7 @@ namespace org.iringtools.refdata
             }
         }
 
-        public Response PostTemplate(QMXF qmxf)
+        /*public Response PostTemplate(QMXF qmxf)
         {
             Status status = new Status();
 
@@ -1970,7 +1970,7 @@ namespace org.iringtools.refdata
                 _logger.Error("Error in PostTemplate: " + ex);
                 throw ex;
             }
-        }
+        } */
 
         private int getIndexFromName(string name)
         {
@@ -2339,9 +2339,6 @@ namespace org.iringtools.refdata
             }
         }
 
-        /// <summary>
-        /// Read query from file
-        /// </summary>
         private string ReadSPARQL(string queryName)
         {
             try
@@ -2730,7 +2727,7 @@ namespace org.iringtools.refdata
                 throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
             }
         }
-
+                
         private List<PropertyRestriction> GetPart8RoleRestrictions(string id)
         {
             try
@@ -2788,7 +2785,7 @@ namespace org.iringtools.refdata
             }
         }
 
-        public Response PostPart8Template(QMXF qmxf)
+        public Response PostTemplate(QMXF qmxf)
         {
             Status status = new Status();
             bool existInTarget = false;
