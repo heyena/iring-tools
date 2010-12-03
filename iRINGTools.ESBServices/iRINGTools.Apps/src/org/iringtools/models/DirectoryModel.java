@@ -83,12 +83,15 @@ public class DirectoryModel {
 		Tree tree = new Tree();
 	    List<Node> scopeNodes = tree.getTreeNodes();
 
+	    int ci=1, si=1, ei=1, adi=1;
 	    
 	    for (Scope scope : directory.getScopes())
 	    {
 	      TreeNode scopeNode = new TreeNode();
 	      scopeNode.setText(scope.getName());
-	      scopeNode.setCls("Scope");
+	      scopeNode.setIconCls("scope");
+	      scopeNode.setId("scope" + si);
+	      si++;
 	      scopeNodes.add(scopeNode);
 
 	      List<Node> scopeNodeList = scopeNode.getChildren();
@@ -97,8 +100,10 @@ public class DirectoryModel {
 	      if (appData != null)
 	      {
 	        TreeNode appDataNode = new TreeNode();
-	        appDataNode.setText("Application Data");
-	        appDataNode.setCls("Folder");
+	        appDataNode.setText("application data");
+	        appDataNode.setIconCls("folder");
+	        appDataNode.setId("application data" + adi);
+	        adi++;
 	        scopeNodeList.add(appDataNode);
 
 	        List<Node> appDataNodeList = appDataNode.getChildren();
@@ -107,8 +112,8 @@ public class DirectoryModel {
 	        {
 	          TreeNode appNode = new TreeNode();
 	          appNode.setText(app.getName());
-	          appNode.setId(app.getId());
-	          appNode.setCls("Application");
+	          appNode.setId(app.getName()+ app.getId());
+	          appNode.setIconCls("application");
 	          appDataNodeList.add(appNode);
 
 	          List<Node> appNodeList = appNode.getChildren();
@@ -116,9 +121,9 @@ public class DirectoryModel {
 	          for (Graph graph : app.getGraphs().getItems())
 	          {
 	            LeafNode graphNode = new LeafNode();
-	            graphNode.setId(graph.getId());
+	            graphNode.setId(graph.getName() + graph.getId());
 	            graphNode.setText(graph.getName());
-	            graphNode.setCls("Graph");
+	            graphNode.setIconCls("graph");
 	            graphNode.setLeaf(true);
 	            appNodeList.add(graphNode);
 	            
@@ -144,17 +149,22 @@ public class DirectoryModel {
 	      if (exchangeData != null)
 	      {
 	        TreeNode exchangeDataNode = new TreeNode();
-	        exchangeDataNode.setText("Data exchanges");
-	        exchangeDataNode.setCls("Floder");
+	        exchangeDataNode.setText("data exchanges");
+	        exchangeDataNode.setId("data exchanges" + ei);
+	        ei++;
+	        exchangeDataNode.setIconCls("folder");
 	        scopeNodeList.add(exchangeDataNode);
 
+	        
 	        List<Node> exchangeDataNodeList = exchangeDataNode.getChildren();
 
 	        for (Commodity commodity : exchangeData.getCommodities())
-	        {
+	        {	        	
 	          TreeNode commodityNode = new TreeNode();
 	          commodityNode.setText(commodity.getName());
-	          commodityNode.setCls("Commodity");
+	          commodityNode.setId("commodity"+ci);
+	          ci++;
+	          commodityNode.setIconCls("commodity");
 	          exchangeDataNodeList.add(commodityNode);
 
 	          List<Node> commodityNodeList = commodityNode.getChildren();
@@ -163,9 +173,9 @@ public class DirectoryModel {
 	          for (Exchange exchange : commodity.getExchanges().getItems())
 	          {
 	            LeafNode exchangeNode = new LeafNode();
-	            exchangeNode.setId(exchange.getId());
+	            exchangeNode.setId(exchange.getName()+ exchange.getId());
 	            exchangeNode.setText(exchange.getName());
-	            exchangeNode.setCls("Exchange");
+	            exchangeNode.setIconCls("exchange");
 	            exchangeNode.setLeaf(true);
 	            
 	            List<Property> properties = exchangeNode.getProperties();
