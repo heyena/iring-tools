@@ -1,4 +1,6 @@
-﻿ html, body {
+        
+  
+  html, body {
         font:normal 12px verdana;
         margin:0;
         padding:0;
@@ -8,6 +10,24 @@
       }
       p {
         margin:5px;
+      }
+      .x-tree-node .scope {
+      	background-image:url(../images/16x16/system-file-manager.png);
+      }
+      .x-tree-node .folder {
+      	background-image:url(../images/16x16/folder.png);
+      }
+      
+      .x-tree-node .application {
+      	background-image:url(../images/16x16/applications-internet.png);
+      }
+      
+      .x-tree-node .graph {
+      	background-image:url(../images/16x16/file-table.png);
+      }
+      
+      .x-tree-node .commodity {
+      	background-image:url(../images/16x16/class-badge.png);
       }
       .settings {
         background-image:url(../lib/ext-3.2.1/resources/images/folder_wrench.png);
@@ -26,6 +46,6 @@
         color:#4784B6;
       }
 
-      /*.x-tree-node .x-tree-node-over {
-			//background-color: #fff;
-      }*/
+      //.x-tree-node .x-tree-node-over {
+		//	background-color: #fff;
+      //}
