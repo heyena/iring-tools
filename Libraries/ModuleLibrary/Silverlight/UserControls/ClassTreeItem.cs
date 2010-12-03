@@ -248,7 +248,8 @@ namespace org.iringtools.informationmodel.usercontrols
           }
 
           QMXF qmxf = (QMXF)CompletedEventArgs.Data;
-          ClassDefinition classDefinition = qmxf.classDefinitions.FirstOrDefault();
+          qmxf.sourceRepository = this.Entity.Repository;
+          ClassDefinition classDefinition = qmxf.classDefinitions.Where(c => c.repositoryName == qmxf.sourceRepository).FirstOrDefault();
 
           ProcessClassDefinition(classDefinition);
 

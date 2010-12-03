@@ -112,19 +112,9 @@ namespace ReferenceDataService.Tests
 
     #region Part8
 
-    public QMXF GetPart8Template(string id)
-    {
-        return _referenceDataServiceProvider.GetPart8Template(id);
-    }
-
     public List<Classification> GetPart8TemplateClassif(string id)
     {
         return _referenceDataServiceProvider.GetPart8TemplateClassif(id);
-    }
-
-    public List<Specialization> GetPart8TemplateSpec(string id)
-    {
-        return _referenceDataServiceProvider.GetPart8TemplateSpec(id);
     }
 
     public Response PostPart8Template(QMXF qmxf)
@@ -132,15 +122,6 @@ namespace ReferenceDataService.Tests
         return _referenceDataServiceProvider.PostPart8Template(qmxf);
     }
 
-    public QMXF GetPart8Class(string id)
-    {
-        return _referenceDataServiceProvider.GetPart8Class(id);
-    }
-
-    public RefDataEntities Part8Search(string query)
-    {
-        return _referenceDataServiceProvider.Part8Search(query);
-    }
 
     public Response PostPart8Class(QMXF qmxf)
     {
