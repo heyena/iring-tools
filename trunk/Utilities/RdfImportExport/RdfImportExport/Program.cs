@@ -92,7 +92,12 @@ namespace RdfImportExport
       {
           rdfFullFilename = ConfigurationManager.AppSettings["RdfExportFullFilename"];
       }
+
       graphUri = ConfigurationManager.AppSettings["GraphUri"];
+      if (String.IsNullOrEmpty(graphUri))
+      {
+        graphUri = "dotnetrdf:default-graph";
+      }
     }
 
     private static void DoExport()
