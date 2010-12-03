@@ -209,8 +209,8 @@ namespace org.iringtools.client.Controllers
       WebHttpClient client = new WebHttpClient(_adapterServiceURI);
       DataDictionary dictionary = client.Get<DataDictionary>(String.Format("/{0}/{1}/dictionary", scope, application));
                         
-      container.Items = dictionary.dataObjects;
-      container.Total = dictionary.dataObjects.Count;
+      container.Items = dictionary.DataObjects;
+      container.Total = dictionary.DataObjects.Count;
 
       return Json(container, JsonRequestBehavior.AllowGet);
     }
