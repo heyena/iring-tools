@@ -228,6 +228,34 @@
     </query>
   </queryItem>
   <queryItem>
+    <key>GetPart8Roles</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>comment</name>
+          <type>Literal</type>
+        </queryBinding>
+        <queryBinding>
+          <name>type</name>
+          <type>Uri</type>
+        </queryBinding>
+        <queryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </queryBinding>
+        <queryBinding>
+          <name>index</name>
+          <type>Literal</type>
+        </queryBinding>
+        <queryBinding>
+          <name>role</name>
+          <type>Uri</type>
+        </queryBinding>
+      </bindings>
+      <fileName>GetPart8Roles.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
     <key>GetRangeRestriction</key>
     <query>
       <bindings>
