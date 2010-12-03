@@ -205,7 +205,7 @@ namespace org.iringtools.services
     [WebInvoke(UriTemplate = "/templates")]
     public Response PostTemplate(QMXF qmxf)
     {
-        return _referenceDataProvider.PostPart8Template(qmxf);
+        return _referenceDataProvider.PostTemplate(qmxf);
     }
 
     ///<summary>

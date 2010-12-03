@@ -102,7 +102,7 @@ namespace ReferenceDataService.Tests
 
     public Response PostTemplate(QMXF template)
     {
-      throw new NotImplementedException();
+        return _referenceDataServiceProvider.PostTemplate(template);
     }
 
     public Response PostClass(QMXF @class)
@@ -117,10 +117,10 @@ namespace ReferenceDataService.Tests
         return _referenceDataServiceProvider.GetPart8TemplateClassif(id);
     }
 
-    public Response PostPart8Template(QMXF qmxf)
+    /*public Response PostPart8Template(QMXF qmxf)
     {
         return _referenceDataServiceProvider.PostPart8Template(qmxf);
-    }
+    }*/
 
 
     public Response PostPart8Class(QMXF qmxf)
