@@ -7,7 +7,7 @@ h3 {
 
 body {
   margin-left: 10px;
-  background: #3C78AC url(../img/blue-fade.png) repeat-x;
+  background: #f0f0f0 url(../img/blue-fade.png) repeat-x;
   font-family: Arial, Helvetica, Sans-Serif;
   font-size: 12;
   color: #30332D;
@@ -23,7 +23,7 @@ h1 {
 }
 
 img {
-  vertical-align: -55%;
+  vertical-align: text-bottom;
 }
 
 a {

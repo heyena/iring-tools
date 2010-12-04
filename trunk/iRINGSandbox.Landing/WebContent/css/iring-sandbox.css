@@ -1,7 +1,7 @@
 @import "reset.css";
 
 body {
-  background: #79A734 url(../img/green-fade.png) repeat-x;
+  background: #f0f0f0 url(../img/green-fade.png) repeat-x;
   font-family: Arial, Helvetica, sans-serif;
   font-size: small;
   color: #30332D;
