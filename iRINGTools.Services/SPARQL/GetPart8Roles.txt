@@ -1,11 +1,14 @@
 PREFIX tpl: <http://tpl.rdlfacade.org/data#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX p8: <http://standards.tc184-sc4.org/iso/15926/-8/template-model#>
-SELECT ?role ?index ?label ?type ?comment
-WHERE {	?role a tpl:R74478971040 .
-        ?role rdfs:label ?label . 
-        ?role tpl:R97483568938 ?index .
-        ?type p8:hasRole ?role .
-       OPTIONAL  { ?role rdfs:comment ?comment }
-OPTIONAL  { ?role rdfs:range  ?type }
-      }
+select ?role ?index ?label ?type ?comment
+where {
+   ?subject rdf:type p8:TemplateRoleDescription .
+   ?subject p8:hasTemplate tpl:param1 .
+   ?subject p8:hasRole ?role .
+   ?subject p8:valRoleIndex ?index .
+   ?subject rdfs:label ?label .
+  OPTIONAL  { ?subject p8:hasRoleFillerType ?type }
+  OPTIONAL  { ?role rdfs:comment ?comment }
+}
