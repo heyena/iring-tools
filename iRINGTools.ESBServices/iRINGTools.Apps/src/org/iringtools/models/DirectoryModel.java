@@ -100,7 +100,7 @@ public class DirectoryModel {
 	      if (appData != null)
 	      {
 	        TreeNode appDataNode = new TreeNode();
-	        appDataNode.setText("application data");
+	        appDataNode.setText("Application Data");
 	        appDataNode.setIconCls("folder");
 	        appDataNode.setId("application data" + adi);
 	        adi++;
@@ -149,7 +149,7 @@ public class DirectoryModel {
 	      if (exchangeData != null)
 	      {
 	        TreeNode exchangeDataNode = new TreeNode();
-	        exchangeDataNode.setText("data exchanges");
+	        exchangeDataNode.setText("Data Exchanges");
 	        exchangeDataNode.setId("data exchanges" + ei);
 	        ei++;
 	        exchangeDataNode.setIconCls("folder");
