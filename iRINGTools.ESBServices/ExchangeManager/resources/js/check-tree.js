@@ -145,6 +145,8 @@ function showgrid(response, request,label,nodeid,gridType) {
 			case "sync":
 				spanColor='black';
 				break;
+			default:
+				spanColor='black';
 		}
 
 			return '<span style="color:'+spanColor+';">' + val + '</span>';
