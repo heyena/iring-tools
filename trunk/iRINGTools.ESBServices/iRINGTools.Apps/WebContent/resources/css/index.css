@@ -11,13 +11,25 @@
       p {
         margin:5px;
       }
-      .x-tree-node .scope {
+      
+    
+     
+      
+     
+      
+     
+	  .x-tree-node .scope {      	
       	background-image:url(../images/16x16/system-file-manager.png);
       }
-      .x-tree-node .folder {
+      .x-tree-node-collapsed .folder {
       	background-image:url(../images/16x16/folder.png);
       }
-      
+      .x-tree-node-expanded .folder {
+	    background-image:url(../images/16x16/folder-open.png);
+      }
+      .x-tree-node .exchange {
+      	background-image:url(../images/16x16/file-table-diff.png);
+      }
       .x-tree-node .application {
       	background-image:url(../images/16x16/applications-internet.png);
       }
@@ -46,6 +58,10 @@
         color:#4784B6;
       }
 
+      .x-tree .x-panel-body {
+        background-color: #FFFFFF;
+      }
+      
       //.x-tree-node .x-tree-node-over {
 		//	background-color: #fff;
       //}
