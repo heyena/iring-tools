@@ -4,8 +4,14 @@
     <property name="EXCHANGE_IN" expression="*"/>
   </log>
   
-  <!--<property xmlns:xreq="http://www.iringtools.org/dxfr/request" name="exchangeRequest" expression="//xreq:exchangeRequest" type="OM"/>-->
-  <property name="REST_URL_POSTFIX" expression="fn:substring-after(get-property('To'), 'exchange/')"/>
+  <property xmlns:xreq="http://www.iringtools.org/dxfr/request" name="exchangeRequest" expression="//xreq:exchangeRequest" type="OM"/>
+  <log level="custom">
+    <property name="EXCHANGE_REQUEST" expression="get-property('exchangeRequest')"/>
+  </log>
+  
+  <property name="relativeUri" expression="fn:substring-after(get-property('To'), 'exchange/')"/>
+  <property name="scope" expression="fn:substring-before(get-property('relativeUri'), '/')"/>
+  <property name="exchangeId" expression="fn:substring-after(get-property('relativeUri'), '/')"/>    
   <sequence key="conf:/repository/synapse/sequences/exchangeDefinition"/>
   
   <header name="To" expression="fn:concat(get-property('targetUri'), '/', get-property('targetScopeName'), '/', get-property('targetAppName'), '/manifest')" />

@@ -121,6 +121,10 @@
 			<path refid="guice-2.0.userclasspath" />
 			<path refid="httpcomponents-4.0.3.userclasspath" />
 		</copy>
-		<jar destfile="dist/services.war" basedir="WebContent" excludes="**/.svn/,WEB-INF/logs/*.*" />
+		<jar destfile="dist/iringtools-services.war" basedir="WebContent" excludes="**/.svn/,WEB-INF/logs/*.*" />
+    <!-- clean up WEB-INF/lib to prevent eclipse jar and classes reference conflict -->
+    <delete>
+			<fileset dir="WebContent/WEB-INF/lib" includes="*.jar" />
+		</delete>
 	</target>
 </project>
