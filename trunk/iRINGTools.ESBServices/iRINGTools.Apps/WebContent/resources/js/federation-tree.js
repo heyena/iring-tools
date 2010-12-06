@@ -155,20 +155,32 @@ Ext.onReady(function() {
 			/*
 			 * Generate the fields items dynamically
 			 */
-                        var list_items = ''
+                        var list_items = '{'
+                             +'xtype:"hidden",'//<--hidden field
+                             +'name:"h-type",' //name of the field sent to the server
+                             +'value:"'+node.parentNode.text + '_' + obj['text']+'"'//value of the field
+                             +'}'
+                         
                         for ( var i = 0; i < properties.length; i++) {
+                            var fname=properties[i].name
+                            var xtype
+                            switch(fname){
+                                case "Description":
+                                    xtype= 'xtype : "textarea"'
+                                    break;
+                                 case "Read Only" :
+                                 case "Writable": 
+                                     xtype= 'xtype : "combo",triggerAction: "all", mode: "local", store: ["true","false"],  displayField:"'+properties[i].value+'", width: 120'
+                                     break;
+                                 default:
+                                    xtype= 'xtype : "textfield"'
+                            }
                                         
-                            if (list_items != '') {
-                                list_items = list_items + ',{' + 'fieldLabel:"' + properties[i].name
-                                            + '",name:"' + properties[i].name
-                                            + '",allowBlank:false,value:"'+properties[i].value+'"  }'
-                            } else {
-                                    list_items = '{' + 'fieldLabel:"' + properties[i].name
-                                                     + '",name:"'
-                                                     + properties[i].name
-                                                     + '",allowBlank:false, value:"'
-                                                     +properties[i].value+'"}'
-                                }
+                             list_items = list_items+',{'+xtype+',' + 'fieldLabel:"' + properties[i].name
+                             + '",name:"'
+                             + properties[i].name
+                             + '",allowBlank:false, value:"'
+                             +properties[i].value+'"}'
 
                        }
 
@@ -177,32 +189,50 @@ Ext.onReady(function() {
 			// generate form for editing purpose
 			var edit_form = new Ext.FormPanel({
 				labelWidth : 100, // label settings here cascade unless
-				// url:'save-form.php',
-				// url: BASE_URL + 'user/ext_login', method: 'POST', id:
-				// 'frmLogin',
+                                url:'save-form', // file which will be used to interact with server
+                                method: 'POST',
 				border : false, // removing the border of the form
-				renderTo:'centerPanel',				
+				renderTo:'centerPanel',
 				// renderTo:document.body,
 				//renderTo : Ext.getBody(),
-                                id : 'frm_' + nId,
+                                id : 'frmEdit' + nId,
 				frame : true,
+                                //items: { xtype: 'component', autoEl: 'span' },
+
 				bodyStyle : 'padding:5px 5px 0',
 				width : 350,
 				closable : true,
 				defaults : {
-					width : 230
+                                    width : 230
 				},
 				defaultType : 'textfield',
 				items : list_items,     // binding with the fields list
 				buttonAlign : 'left', // buttons aligned to the left
 				buttons : [ {
-					text : 'Save'
+					text : 'Save',
+                                        handler: function(){
+                                            edit_form.getForm().submit({
+                                                success: function(f,a){
+                                                    Ext.Msg.alert('Success', 'It worked');
+                                                },
+                                                failure: function(f,a){
+                                                    Ext.Msg.alert('Warning', 'Error');
+                                                }
+                                            });
+                                        }
 				}, {
-					text : 'Cancel'
-				} /*
-					 * { text: 'Reset', handler: function() {
-					 * formLogin.getForm().reset(); }
-					 */]
+					text: 'Reset',
+                                        handler: function(){
+                                            edit_form.getForm().reset();
+                                        }
+				} ],
+                               autoDestroy:false,
+                               listeners: {
+                                    close: function(){
+                                       // edit_form.destroy()
+                                        //tabsPanel.doLayout();
+                                    }
+                                }
 			});
 
 			// fill the data in all fields of form
@@ -212,9 +242,15 @@ Ext.onReady(function() {
 			Ext.getCmp('centerPanel').enable();
 			Ext.getCmp('centerPanel').add(Ext.apply(edit_form, {
 				id : 'tab-' + obj['id'],
+                                 deferredRender: false,
 				title : node.parentNode.text + ' : ' + obj['text'],
 				closable : true
 			})).show();
+                 /*  tabPanel.add({
+                        title: tabTitle,
+                        iconCls: 'tabs',
+                        closable:true
+                    }).show();*/
 
 		}// end of if
 	}
