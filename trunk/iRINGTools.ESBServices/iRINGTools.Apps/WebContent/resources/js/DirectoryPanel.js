@@ -23,30 +23,7 @@ function loadDirectoryTree() {
       icon: 'resources/images/16x16/internet-web-browser.png'
     },
     
-    tbar: [{    	  
-    	icon: 'resources/images/16x16/view-refresh.png',
-    	xtype: 'tbbutton',
-    	tooltip: 'Refresh',
-    	disabled: false,
-    	handler: this.onReresh,
-    	scope: this    		
-    },{ 
-    	text: 'Open',  
-    	xtype: 'tbbutton',
-    	tooltip: 'Open',
-    	disabled: false,
-    	handler: this.onOpen,
-    	scope: this,
-    	icon: 'resources/images/16x16/document-open.png' 
-    },{  
-    	text: 'Exchange', 
-    	xtype: 'tbbutton',
-    	tooltip: 'Exchange',
-    	disabled: false,
-    	handler: this.onExchange,
-    	scope: this,
-    	icon: 'resources/images/16x16/go-send.png' 
-    }],  
+    
  
 
     
@@ -164,6 +141,30 @@ Ext.onReady(function(){
         collapsible: true,
         margins: '0 0 0 4',
         layout: 'border',
+        tbar: [{    	  
+        	icon: 'resources/images/16x16/view-refresh.png',
+        	xtype: 'tbbutton',
+        	tooltip: 'Refresh',
+        	disabled: false,
+        	handler: this.onReresh,
+        	scope: this    		
+        },{ 
+        	text: 'Open',  
+        	xtype: 'tbbutton',
+        	tooltip: 'Open',
+        	disabled: false,
+        	handler: this.onOpen,
+        	scope: this,
+        	icon: 'resources/images/16x16/document-open.png' 
+        },{  
+        	text: 'Exchange', 
+        	xtype: 'tbbutton',
+        	tooltip: 'Exchange',
+        	disabled: false,
+        	handler: this.onExchange,
+        	scope: this,
+        	icon: 'resources/images/16x16/go-send.png' 
+        }],  
         items: [
           directoryTreePane, 
           propertyGridPane
