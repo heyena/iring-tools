@@ -92,7 +92,7 @@ public class FederationModel {
 
 		TreeNode generatorsNode = new TreeNode();
 		generatorsNode.setText("ID Generators");
-		generatorsNode.setCls("folder");
+		generatorsNode.setIconCls("folder");
 		treeNodes.add(generatorsNode);
 
 		List<Node> generatorNodes = generatorsNode.getChildren();
@@ -101,7 +101,7 @@ public class FederationModel {
 			LeafNode generatorNode = new LeafNode();
 			generatorNode.setId(idgenerator.getName());
 			generatorNode.setText(idgenerator.getName());
-			generatorNode.setCls("generator");
+			generatorNode.setIconCls("generator");
 			generatorNode.setLeaf(true);
 
 			List<Property> properties = generatorNode.getProperties();
@@ -118,7 +118,7 @@ public class FederationModel {
 		// Namespaces
 		TreeNode namespacesNode = new TreeNode();
 		namespacesNode.setText("Namespaces");
-		namespacesNode.setCls("folder");
+		namespacesNode.setIconCls("folder");
 		treeNodes.add(namespacesNode);
 
 		List<Node> namespaceNodes = namespacesNode.getChildren();
@@ -127,7 +127,7 @@ public class FederationModel {
 			LeafNode namespaceNode = new LeafNode();
 			namespaceNode.setId(namespace.getAlias());
 			namespaceNode.setText(namespace.getAlias());
-			namespaceNode.setCls("namespace");
+			namespaceNode.setIconCls("namespace");
 			namespaceNode.setLeaf(true);
 
 			List<Property> properties = namespaceNode.getProperties();
@@ -147,7 +147,7 @@ public class FederationModel {
 
 		TreeNode repositoriesNode = new TreeNode();
 		repositoriesNode.setText("Repositories");
-		repositoriesNode.setCls("folder");
+		repositoriesNode.setIconCls("folder");
 		treeNodes.add(repositoriesNode);
 
 		List<Node> repositoryNodes = repositoriesNode.getChildren();
@@ -156,7 +156,7 @@ public class FederationModel {
 			LeafNode repositoryNode = new LeafNode();
 			repositoryNode.setId(repository.getName());
 			repositoryNode.setText(repository.getName());
-			repositoryNode.setCls("repository");
+			repositoryNode.setIconCls("repository");
 			repositoryNode.setLeaf(true);
 
 			List<Property> properties = repositoryNode.getProperties();
