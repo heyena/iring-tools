@@ -20,10 +20,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="cls" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="iconCls" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="text" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="icon" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="properties" type="{http://www.iringtools.org/ui/widgets/tree}Property" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -35,10 +34,9 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Node", propOrder = {
-    "cls",
+    "iconCls",
     "text",
     "id",
-    "icon",
     "properties"
 })
 @XmlSeeAlso({
@@ -48,38 +46,36 @@ import javax.xml.bind.annotation.XmlType;
 public abstract class Node {
 
     @XmlElement(required = true, defaultValue = "folder")
-    protected String cls;
+    protected String iconCls;
     @XmlElement(required = true)
     protected String text;
     @XmlElement(required = true)
     protected String id;
     @XmlElement(required = true)
-    protected String icon;
-    @XmlElement(required = true)
     protected List<Property> properties;
 
     /**
-     * Gets the value of the cls property.
+     * Gets the value of the iconCls property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getCls() {
-        return cls;
+    public String getIconCls() {
+        return iconCls;
     }
 
     /**
-     * Sets the value of the cls property.
+     * Sets the value of the iconCls property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setCls(String value) {
-        this.cls = value;
+    public void setIconCls(String value) {
+        this.iconCls = value;
     }
 
     /**
@@ -128,30 +124,6 @@ public abstract class Node {
      */
     public void setId(String value) {
         this.id = value;
-    }
-
-    /**
-     * Gets the value of the icon property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getIcon() {
-        return icon;
-    }
-
-    /**
-     * Sets the value of the icon property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setIcon(String value) {
-        this.icon = value;
     }
 
     /**
