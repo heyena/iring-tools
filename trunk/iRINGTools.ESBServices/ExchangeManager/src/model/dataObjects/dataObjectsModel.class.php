@@ -59,7 +59,7 @@ class dataObjectsModel{
                         break;
 
 			case "graph":
-				$this->dtiUrl = APP_REQUEST_URI.'/'.$params['scope'].'/'.$params['applname'].'/'.$params['graphs'];
+				$this->dtiUrl = APP_REQUEST_URI.'/'.$params['scope'].'/'.$params['applname'].'/'.$params['graphs'].'?hashAlgorithm=MD5';
 				$this->dtoUrl = APP_REQUEST_URI.'/'.$params['scope'].'/'.$params['applname'].'/'.$params['graphs'].'/page';
 				$this->setCacheKey($params);
 				break;
@@ -194,14 +194,14 @@ class dataObjectsModel{
 
 
 	private function setDtitoCache($params){
-		if($this->checkCacheData()){
-			$this->cacheDTI = true;
-			$this->dtiXMLData = $this->getCacheData();
-		}else{
+		//if($this->checkCacheData()){
+		//	$this->cacheDTI = true;
+		//	$this->dtiXMLData = $this->getCacheData();
+		//}else{
 			$this->dtiXMLData = $this->getDtiInfo($params);
 			// cache the data
 			if(($this->dtiXMLData!=false) && (!empty($this->dtiXMLData))) $this->cacheData($this->dtiXMLData);
-		}
+		//}
 	}
 
 	/*
