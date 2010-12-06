@@ -6,6 +6,7 @@ function loadDirectoryTree() {
   directoryTreePane = new Ext.tree.TreePanel({
     region:'center',    
     split : true,
+    height : 300,
     bodyBorder : false,
 	border : false,
 	layout : 'fit',
@@ -26,14 +27,40 @@ function loadDirectoryTree() {
     
     dataUrl: 'directory',
     
+    tbar: new Ext.Toolbar({
+	xtype : "toolbar",
+	items : [{    	
+    	xtype: 'tbbutton',
+    	icon: 'resources/images/16x16/view-refresh.png',
+    	tooltip: 'Refresh',
+    	disabled: false,
+    	handler: this.onReresh
+    },{     	
+    	xtype: 'tbbutton',
+    	text: 'Open',  
+    	icon: 'resources/images/16x16/document-open.png',
+    	tooltip: 'Open',
+    	disabled: false,
+    	handler: this.onOpen
+    	 
+    },{     	 
+    	xtype: 'tbbutton',
+    	text: 'Exchange',
+    	icon: 'resources/images/16x16/go-send.png',
+    	tooltip: 'Exchange',
+    	disabled: false,
+    	handler: this.onExchange    	 
+	}]
+}),
+    
     listeners: { 
       click: function(node, event){ 
     	  var dataTypeNode = node.parentNode.parentNode;
 
-        if (dataTypeNode.attributes['text'] == 'application data') {
+        if (dataTypeNode.attributes['text'] == 'Application Data') {
           populatePropertyGrid(node.attributes['properties']);
         }
-        else if (dataTypeNode.attributes['text'] == 'data exchanges') {
+        else if (dataTypeNode.attributes['text'] == 'Data Exchanges') {
           populatePropertyGrid(node.attributes['properties']);
         }
       },
@@ -41,7 +68,7 @@ function loadDirectoryTree() {
       dblclick: function(node, event){
     	  var dataTypeNode = node.parentNode.parentNode;
         
-        if (dataTypeNode.attributes['text'] == 'application data') {
+        if (dataTypeNode.attributes['text'] == 'Application Data') {
         	var graphNode = node.parentNode;
 
         	populatePropertyGrid(node.attributes['properties']);
@@ -64,7 +91,7 @@ function initPropertyGrid() {
 	propertyGridPane = new Ext.grid.PropertyGrid({
       id: 'propertyGridPane',
       region: 'south',
-      height: 260,
+      height: 160,
       title: 'Details',
       collapsible: true,
       border: false,
@@ -137,31 +164,7 @@ Ext.onReady(function(){
         maxSize: 400,
         collapsible: true,
         margins: '0 0 0 4',
-        layout: 'border',
-        tbar: [{    	  
-        	icon: 'resources/images/16x16/view-refresh.png',
-        	xtype: 'tbbutton',
-        	tooltip: 'Refresh',
-        	disabled: false,
-        	handler: this.onReresh,
-        	scope: this    		
-        },{ 
-        	text: 'Open',  
-        	xtype: 'tbbutton',
-        	tooltip: 'Open',
-        	disabled: false,
-        	handler: this.onOpen,
-        	scope: this,
-        	icon: 'resources/images/16x16/document-open.png' 
-        },{  
-        	text: 'Exchange', 
-        	xtype: 'tbbutton',
-        	tooltip: 'Exchange',
-        	disabled: false,
-        	handler: this.onExchange,
-        	scope: this,
-        	icon: 'resources/images/16x16/go-send.png' 
-        }],  
+        layout: 'border',        
         items: [
           directoryTreePane, 
           propertyGridPane
