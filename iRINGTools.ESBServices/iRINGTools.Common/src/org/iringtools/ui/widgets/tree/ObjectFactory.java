@@ -30,11 +30,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Property }
+     * Create an instance of {@link LeafNode }
      * 
      */
-    public Property createProperty() {
-        return new Property();
+    public LeafNode createLeafNode() {
+        return new LeafNode();
     }
 
     /**
@@ -46,11 +46,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link LeafNode }
+     * Create an instance of {@link Property }
      * 
      */
-    public LeafNode createLeafNode() {
-        return new LeafNode();
+    public Property createProperty() {
+        return new Property();
     }
 
     /**

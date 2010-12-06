@@ -32,7 +32,7 @@ public class WidgetsUtil {
 		for (Scope scope : directory.getScopes()) {
 			TreeNode scopeNode = new TreeNode();
 			scopeNode.setText(scope.getName());
-			scopeNode.setCls("scope");
+			scopeNode.setIconCls("scope");
 
 			scopeNodes.add(scopeNode);
 
@@ -43,7 +43,7 @@ public class WidgetsUtil {
 			if (appData != null) {
 				TreeNode appDataNode = new TreeNode();
 				appDataNode.setText("Application Data");
-				appDataNode.setCls("folder");
+				appDataNode.setIconCls("folder");
 
 				scopeChildren.add(appDataNode);
 
@@ -52,7 +52,7 @@ public class WidgetsUtil {
 				for (Application app : appData.getApplications()) {
 					TreeNode appNode = new TreeNode();
 					appNode.setText(app.getName());
-					appNode.setCls("application");
+					appNode.setIconCls("application");
 
 					applicationNodes.add(appNode);
 
@@ -62,7 +62,7 @@ public class WidgetsUtil {
 						LeafNode graphNode = new LeafNode();
 						graphNode.setId(graph.getId());
 						graphNode.setText(graph.getName());
-						graphNode.setCls("file-table");
+						graphNode.setIconCls("file-table");
 						graphNode.setLeaf(true);
 
 						List<Property> properties = graphNode.getProperties();
@@ -82,7 +82,7 @@ public class WidgetsUtil {
 			if (exchangeData != null) {
 				TreeNode exchangeDataNode = new TreeNode();
 				exchangeDataNode.setText("Exchange Data");
-				exchangeDataNode.setCls("folder");
+				exchangeDataNode.setIconCls("folder");
 
 				scopeChildren.add(exchangeDataNode);
 
@@ -91,7 +91,7 @@ public class WidgetsUtil {
 				for (Commodity commodity : exchangeData.getCommodities()) {
 					TreeNode commodityNode = new TreeNode();
 					commodityNode.setText(commodity.getName());
-					commodityNode.setCls("commodity");
+					commodityNode.setIconCls("commodity");
 
 					commodityNodes.add(commodityNode);
 
@@ -101,7 +101,7 @@ public class WidgetsUtil {
 						LeafNode exchangeNode = new LeafNode();
 						exchangeNode.setId(exchange.getId());
 						exchangeNode.setText(exchange.getName());
-						exchangeNode.setCls("file-table-diff");
+						exchangeNode.setIconCls("file-table-diff");
 						exchangeNode.setLeaf(true);
 
 						List<Property> properties = exchangeNode
