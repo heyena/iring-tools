@@ -1,7 +1,10 @@
-[{
+[{"children":[{"iconCls":"generator","id":"IdGenerator1","leaf":true,"properties":[{"name":"Name","value":"IdGenerator1"},{"name":"URI","value":"http:\/\/org.iringtools.com\/idgen1"},{"name":"Description","value":"Sample ID Generator 1"}],"text":"IdGenerator1"},{"iconCls":"generator","id":"IdGenerator2","leaf":true,"properties":[{"name":"Name","value":"IdGenerator2"},{"name":"URI","value":"http:\/\/org.iringtools.com\/idgen2"},{"name":"Description","value":"Sample ID Generator 2"}],"text":"IdGenerator2"}],"iconCls":"folder","id":null,"properties":[],"text":"ID Generators"},{"children":[{"iconCls":"namespace","id":"namespace1","leaf":true,"properties":[{"name":"Alias","value":"namespace1"},{"name":"URI","value":"http:\/\/org.iringtool.com\/namespace1"},{"name":"Description","value":"Sample namespace 1"},{"name":"Writable","value":"true"}],"text":"namespace1"},{"iconCls":"namespace","id":"namespace2","leaf":true,"properties":[{"name":"Alias","value":"namespace2"},{"name":"URI","value":"http:\/\/org.iringtool.com\/namespace2"},{"name":"Description","value":"Sample namespace 2"},{"name":"Writable","value":"true"}],"text":"namespace2"}],"iconCls":"folder","id":null,"properties":[],"text":"Namespaces"},{"children":[{"iconCls":"repository","id":"LocalSandbox","leaf":true,"properties":[{"name":"URI","value":"http:\/\/localhost:2020\/sandbox"},{"name":"Description","value":"LocalSandbox"},{"name":"Read Only","value":"false"},{"name":"Repository Type","value":"Part8"},{"name":"Update URI","value":"updateUri"}],"text":"LocalSandbox"},{"iconCls":"repository","id":"iRING Sandbox","leaf":true,"properties":[{"name":"URI","value":"http:\/\/www.iringsandbox.org\/SandboxService\/sparql"},{"name":"Description","value":"iRING Sandbox"},{"name":"Read Only","value":"true"},{"name":"Repository Type","value":"Camelot"},{"name":"Update URI","value":"updateUri"}],"text":"iRING Sandbox"},{"iconCls":"repository","id":"ReferenceData","leaf":true,"properties":[{"name":"URI","value":"http:\/\/rdl.rdlfacade.org\/data"},{"name":"Description","value":"RDS\/WIP Part 4 Reference Data Library"},{"name":"Read Only","value":"true"},{"name":"Repository Type","value":"Camelot"},{"name":"Update URI","value":"updateUri"}],"text":"ReferenceData"},{"iconCls":"repository","id":"Templates","leaf":true,"properties":[{"name":"URI","value":"http:\/\/tpl.rdlfacade.org\/data"},{"name":"Description","value":"RDS\/WIP Part 7 Template Library"},{"name":"Read Only","value":"true"},{"name":"Repository Type","value":"Camelot"},{"name":"Update URI","value":"updateUri"}],"text":"Templates"}],"iconCls":"folder","id":null,"properties":[],"text":"Repositories"}]
+
+//[{"children":[{"checked":false,"cls":"generator","icon":null,"id":"IdGenerator1","leaf":true,"properties":[{"name":"Name","value":"IdGenerator1"},{"name":"URI","value":"http:\/\/org.iringtools.com\/idgen1"},{"name":"Description","value":"Sample ID Generator 1"}],"text":"IdGenerator1"},{"checked":false,"cls":"generator","icon":null,"id":"IdGenerator2","leaf":true,"properties":[{"name":"Name","value":"IdGenerator2"},{"name":"URI","value":"http:\/\/org.iringtools.com\/idgen2"},{"name":"Description","value":"Sample ID Generator 2"}],"text":"IdGenerator2"}],"cls":"folder","icon":null,"id":null,"properties":[],"text":"ID Generators"},{"children":[{"checked":false,"cls":"namespace","icon":null,"id":"namespace1","leaf":true,"properties":[{"name":"Alias","value":"namespace1"},{"name":"URI","value":"http:\/\/org.iringtool.com\/namespace1"},{"name":"Description","value":"Sample namespace 1"},{"name":"Writable","value":"true"}],"text":"namespace1"},{"checked":false,"cls":"namespace","icon":null,"id":"namespace2","leaf":true,"properties":[{"name":"Alias","value":"namespace2"},{"name":"URI","value":"http:\/\/org.iringtool.com\/namespace2"},{"name":"Description","value":"Sample namespace 2"},{"name":"Writable","value":"true"}],"text":"namespace2"}],"cls":"folder","icon":null,"id":null,"properties":[],"text":"Namespaces"},{"children":[{"checked":false,"cls":"repository","icon":null,"id":"LocalSandbox","leaf":true,"properties":[{"name":"URI","value":"http:\/\/localhost:2020\/sandbox"},{"name":"Description","value":"LocalSandbox"},{"name":"Read Only","value":"false"},{"name":"Repository Type","value":"Part8"},{"name":"Update URI","value":"updateUri"}],"text":"LocalSandbox"},{"checked":false,"cls":"repository","icon":null,"id":"iRING Sandbox","leaf":true,"properties":[{"name":"URI","value":"http:\/\/www.iringsandbox.org\/SandboxService\/sparql"},{"name":"Description","value":"iRING Sandbox"},{"name":"Read Only","value":"true"},{"name":"Repository Type","value":"Camelot"},{"name":"Update URI","value":"updateUri"}],"text":"iRING Sandbox"},{"checked":false,"cls":"repository","icon":null,"id":"ReferenceData","leaf":true,"properties":[{"name":"URI","value":"http:\/\/rdl.rdlfacade.org\/data"},{"name":"Description","value":"RDS\/WIP Part 4 Reference Data Library"},{"name":"Read Only","value":"true"},{"name":"Repository Type","value":"Camelot"},{"name":"Update URI","value":"updateUri"}],"text":"ReferenceData"},{"checked":false,"cls":"repository","icon":null,"id":"Templates","leaf":true,"properties":[{"name":"URI","value":"http:\/\/tpl.rdlfacade.org\/data"},{"name":"Description","value":"RDS\/WIP Part 7 Template Library"},{"name":"Read Only","value":"true"},{"name":"Repository Type","value":"Camelot"},{"name":"Update URI","value":"updateUri"}],"text":"Templates"}],"cls":"folder","icon":null,"id":null,"properties":[],"text":"Repositories"}]
+
+/*[{
     text: 'ID Generators',    
     Description:'Description of ID Generators',
-    Name: 'ID Generators',
     cls: 'folder',
     children: [{
         text: 'IdGenerator1',
@@ -11,10 +14,12 @@
     },{
         text: 'IdGenerator2',
         Name:'IdGenerator2',
+        uri:'http://localhost:2020/sandbox',
         Description:'Description of IdGenerator2',
         leaf: true
     },{
         text: 'IdGenerator3',
+         uri:'http://localhost:2020/sandbox',
         Name:'ID Generator3',
         Description:'Description of IdGenerator3',
         leaf: true
@@ -66,4 +71,4 @@
         Description:'Description of Templates',
         leaf: true
     }]
-}]
+}]*/
