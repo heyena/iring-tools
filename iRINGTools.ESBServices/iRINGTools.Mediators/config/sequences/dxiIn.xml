@@ -4,7 +4,9 @@
 		<property name="DXI_IN" expression="*" />
 	</log>
 	
-  <property name="REST_URL_POSTFIX" expression="fn:substring-after(get-property('To'), 'dxi/')"/>
+  <property name="relativeUri" expression="fn:substring-after(get-property('To'), 'dxi/')"/>
+  <property name="scope" expression="fn:substring-before(get-property('relativeUri'), '/')"/>
+  <property name="exchangeId" expression="fn:substring-after(get-property('relativeUri'), '/')"/>
   <sequence key="conf:/repository/synapse/sequences/exchangeDefinition"/>
 
 	<header name="To" expression="fn:concat(get-property('targetUri'), '/', get-property('targetScopeName'), '/', get-property('targetAppName'), '/manifest')" />
@@ -16,9 +18,9 @@
     <property name="contentType" value="" />    
   </class>
 	
-  <header name="To" expression="fn:concat('http://localhost:8280/services/dxiAggr?sourceURL=', get-property('sourceUri'), '/', get-property('sourceScopeName'), '/', get-property('sourceAppName'), '/', get-property('sourceGraphName'), '/xfr', '&amp;targetURL=', get-property('targetUri'), '/', get-property('targetScopeName'), '/', get-property('targetAppName'), '/', get-property('targetGraphName'), '/xfr')" />
+  <property name="REST_URL_POSTFIX" expression="fn:concat('dxiAggr?sourceURL=', get-property('sourceUri'), '/', get-property('sourceScopeName'), '/', get-property('sourceAppName'), '/', get-property('sourceGraphName'), '/xfr', '&amp;targetURL=', get-property('targetUri'), '/', get-property('targetScopeName'), '/', get-property('targetAppName'), '/', get-property('targetGraphName'), '/xfr')" />
 	<class name="org.iringtools.mediators.RESTCalloutMediator">
-    <property name="endpointEntry" value=""/>
+    <property name="endpointEntry" value="conf:/repository/synapse/endpoints/axis2Service"/>
     <property name="serviceURL" value="" />
     <property name="method" value="POST" />
     <property name="axis2ConfigFile" value="" />

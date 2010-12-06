@@ -110,7 +110,10 @@
 			<path refid="httpcomponents-4.0.3.userclasspath" />
 			<path refid="gson-1.4.userclasspath" />      
 		</copy>
-		<jar destfile="dist/apps.war" basedir="WebContent"
-			excludes="**/.svn/,WEB-INF/logs/*.*,WEB-INF/lib/bin/" />
+		<jar destfile="dist/iringtools-apps.war" basedir="WebContent" excludes="**/.svn/,WEB-INF/logs/*.*" />
+    <!-- clean up WEB-INF/lib to prevent eclipse jar and classes reference conflict -->
+    <delete>
+			<fileset dir="WebContent/WEB-INF/lib" includes="*.jar" />
+		</delete>
 	</target>
 </project>

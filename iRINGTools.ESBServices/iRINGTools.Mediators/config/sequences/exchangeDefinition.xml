@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sequence xmlns="http://ws.apache.org/ns/synapse" xmlns:dir="http://www.iringtools.org/directory" name="exchangeDefinition">
-  <log level="custom">
-		<property name="EXCHANGE_DEFINITION" expression="get-property('REST_URL_POSTFIX')" />
-	</log>
-  
+  <property name="REST_URL_POSTFIX" expression="fn:concat(get-property('scope'), '/exchanges/', get-property('exchangeId'))"/>
   <class name="org.iringtools.mediators.RESTCalloutMediator">
     <property name="endpointEntry" value="conf:/repository/synapse/endpoints/directoryService"/>
     <property name="serviceURL" value="" />

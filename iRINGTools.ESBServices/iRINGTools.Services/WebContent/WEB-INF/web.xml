@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app>
+  <display-name>iRINGTools Services</display-name>
   <context-param>
     <param-name>directoryServiceUri</param-name>
     <param-value>http://localhost:8080/iringtools/dir</param-value>
