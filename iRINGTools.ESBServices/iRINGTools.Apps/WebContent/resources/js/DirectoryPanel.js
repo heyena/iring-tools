@@ -4,17 +4,18 @@ var dataPane = null;
 
 function loadDirectoryTree() {
   directoryTreePane = new Ext.tree.TreePanel({
-    region:'center',   
-    useArrows:true,
-    line:true,
+    region:'center',    
+    split : true,
+    bodyBorder : false,
+	border : false,
+	layout : 'fit',
+	useArrows : false,    
     autoScroll:true,
     animate:true,
-    enableDD:true,
-    border: false,
-    containerScroll: true, 
-    split: true,
-    rootVisible: true,    
-    frame: true,
+    margins : '0 0 0 0',
+	lines : true,
+	containerScroll : true,
+	rootVisible : true,
     root: {
       nodeType: 'async',
       text: 'Directory',
@@ -22,10 +23,6 @@ function loadDirectoryTree() {
       draggable: false,
       icon: 'resources/images/16x16/internet-web-browser.png'
     },
-    
-    
- 
-
     
     dataUrl: 'directory',
     
@@ -60,7 +57,7 @@ function loadDirectoryTree() {
     }
   });
 
-  directoryTreePane.getRootNode().expand(false);
+  directoryTreePane.getRootNode().expand(false,false);
 }
 
 function initPropertyGrid() {
