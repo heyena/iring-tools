@@ -32,6 +32,8 @@ namespace org.iringtools.adapter.projection
     protected static readonly string RDL_PREFIX = "rdl:";
     protected static readonly string TPL_PREFIX = "tpl:";
     protected static readonly string RDF_NIL = RDF_PREFIX + "nil";
+    protected static readonly string BLANK_NODE = "?bnode";
+    protected static readonly string END_STATEMENT = ".";
 
     protected static readonly string CLASS_INSTANCE_QUERY_TEMPLATE = String.Format(@"
       PREFIX rdf: <{0}>
@@ -44,28 +46,26 @@ namespace org.iringtools.adapter.projection
     protected static readonly string SUBCLASS_INSTANCE_QUERY_TEMPLATE = String.Format(@"
       PREFIX rdf: <{0}>
       PREFIX rdl: <{1}> 
-      PREFIX tpl: <{2}> 
-      PREFIX g:   <{{0}}>
+      PREFIX tpl: <{2}>
       SELECT ?class 
       WHERE {{{{
-	      ?bnode {{1}} g:{{2}} . 
-	      ?bnode rdf:type {{3}} . 
-	      ?bnode {{4}} {{5}} . 
-	      ?bnode {{6}} ?class 
-      }}}}", RDF_NS.NamespaceName, RDL_NS.NamespaceName, TPL_NS.NamespaceName);
+	      {3} {{0}} <{{1}}> . 
+	      {3} rdf:type {{2}} . 
+	      {{3}} {{4}} {{5}} {{6}}
+	      {3} {{7}} ?class 
+      }}}}", RDF_NS.NamespaceName, RDL_NS.NamespaceName, TPL_NS.NamespaceName, BLANK_NODE);
 
     protected static readonly string LITERAL_QUERY_TEMPLATE = String.Format(@"
       PREFIX rdf: <{0}>
       PREFIX rdl: <{1}> 
-      PREFIX tpl: <{2}> 
-      PREFIX i:   <{{0}}>
+      PREFIX tpl: <{2}>
       SELECT ?literals 
       WHERE {{{{
-	      ?bnode {{1}} i:{{2}} . 
-	      ?bnode rdf:type {{3}} . 
-	      ?bnode {{4}} {{5}} . 
-	      ?bnode {{6}} ?literals 
-      }}}}", RDF_NS.NamespaceName, RDL_NS.NamespaceName, TPL_NS.NamespaceName);
+	      {3} {{0}} <{{1}}> . 
+	      {3} rdf:type {{2}} . 
+	      {{3}} {{4}} {{5}} {{6}}
+	      {3} {{7}} ?literals 
+      }}}}", RDF_NS.NamespaceName, RDL_NS.NamespaceName, TPL_NS.NamespaceName, BLANK_NODE);
 
     protected AdapterSettings _settings = null;
     protected Mapping _mapping = null;

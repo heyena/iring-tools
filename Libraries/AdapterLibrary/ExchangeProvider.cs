@@ -145,7 +145,6 @@ namespace org.iringtools.exchange
 
         DateTime startTime = DateTime.Now;
 
-        #region move this portion to dotNetRdfEngine?
         if (!request.ContainsKey("targetEndpointUri"))
           throw new Exception("Target Endpoint Uri is required");
 
@@ -167,7 +166,10 @@ namespace org.iringtools.exchange
           if (targetCredentials.isEncrypted)
             targetCredentials.Decrypt();
 
-          endpoint.SetCredentials(targetCredentials.GetNetworkCredential().UserName, targetCredentials.GetNetworkCredential().Password, targetCredentials.GetNetworkCredential().Domain);
+          endpoint.SetCredentials(
+            targetCredentials.GetNetworkCredential().UserName, 
+            targetCredentials.GetNetworkCredential().Password, 
+            targetCredentials.GetNetworkCredential().Domain);
         }
 
         string proxyHost = _settings["ProxyHost"];
@@ -185,11 +187,8 @@ namespace org.iringtools.exchange
           endpoint.SetProxyCredentials(proxyCrendentials.userName,proxyCrendentials.password);
         }
 
-        VDS.RDF.Graph graph = endpoint.QueryWithResultGraph("CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o}");
-        #endregion
-
-        // call RdfProjectionEngine to fill data objects from a given graph
-        _projectionEngine = _kernel.Get<IProjectionLayer>("rdf");
+        String query = "CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o}";
+        VDS.RDF.Graph graph = endpoint.QueryWithResultGraph(query);
 
         System.Text.StringBuilder sb = new System.Text.StringBuilder();
         TextWriter textWriter = new StringWriter(sb);
@@ -197,6 +196,8 @@ namespace org.iringtools.exchange
         rdfWriter.Save(graph, textWriter);
         XDocument xDocument = XDocument.Parse(sb.ToString());
 
+        // call RdfProjectionEngine to fill data objects from a given graph
+        _projectionEngine = _kernel.Get<IProjectionLayer>("rdf");
         _dataObjects = _projectionEngine.ToDataObjects(graphName, ref xDocument);
 
         // post data objects to data layer
