@@ -71,9 +71,6 @@ namespace org.iringtools.adapter.projection
 
       try
       {
-        _graphBaseUri = _settings["TargetGraphBaseUri"];
-        if (!_graphBaseUri.EndsWith("/")) _graphBaseUri += "/";
-
         _graphMap = _mapping.FindGraphMap(graphName);
 
         if (_graphMap != null && _graphMap.classTemplateMaps.Count > 0 && xDocument != null)
@@ -388,10 +385,23 @@ namespace org.iringtools.adapter.projection
           }
         }
 
+        string referenceVariable = String.Empty;
+        string referenceRoleId = String.Empty;
+        string referenceRoleValue = String.Empty;
+        string referenceEndStmt = String.Empty;
+
+        if (referenceRole != null)
+        {
+          referenceVariable = BLANK_NODE;
+          referenceRoleId = referenceRole.roleId;
+          referenceRoleValue = referenceRole.value;
+          referenceEndStmt = END_STATEMENT;
+        }
+
         if (classRole != null)
         {
-          string query = String.Format(SUBCLASS_INSTANCE_QUERY_TEMPLATE, _graphBaseUri, possessorRoleId, classInstance,
-              templateMap.templateId, referenceRole.roleId, referenceRole.value, classRole.roleId);
+          string query = String.Format(SUBCLASS_INSTANCE_QUERY_TEMPLATE, possessorRoleId, classInstance,
+              templateMap.templateId, referenceVariable, referenceRoleId, referenceRoleValue, referenceEndStmt, classRole.roleId);
 
           object results = _memoryStore.ExecuteQuery(query);
 
@@ -401,7 +411,7 @@ namespace org.iringtools.adapter.projection
 
             foreach (SparqlResult result in resultSet)
             {
-              string subclassInstance = result.ToString().Remove(0, ("?class = " + _graphBaseUri).Length);
+              string subclassInstance = result.ToString().Remove(0, ("?class = ").Length);
               CreateDataObjects(classRole.classMap.classId, subclassInstance, dataObjectIndex);
               break;  // should be one result only
             }
@@ -411,8 +421,8 @@ namespace org.iringtools.adapter.projection
         {
           foreach (RoleMap roleMap in propertyRoleMaps)
           {
-            string query = String.Format(LITERAL_QUERY_TEMPLATE, _graphBaseUri, possessorRoleId, classInstance,
-                templateMap.templateId, referenceRole.roleId, referenceRole.value, roleMap.roleId);
+            string query = String.Format(LITERAL_QUERY_TEMPLATE, possessorRoleId, classInstance,
+                 templateMap.templateId, referenceVariable, referenceRoleId, referenceRoleValue, referenceEndStmt, roleMap.roleId);
 
             object results = _memoryStore.ExecuteQuery(query);
 
