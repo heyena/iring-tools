@@ -11,24 +11,24 @@ function showCentralEditForms(node) {
   /* 01. Start The Edit Form Component */
 
   // 01. Edit Form
-  
+        
         var obj = node.attributes
         var properties = node.attributes.properties
         var nId = obj['id']
 
         if ('children' in obj != true) { // restrict to generate form those have children
 
-                /*
-                 * Generate the fields items dynamically
-                 */
                 var list_items = '{'
                      +'xtype:"hidden",'//<--hidden field
                      +'name:"nodeID",' //name of the field sent to the server
                      +'value:"'+obj['id']+'"' //value of the field
-                     //+'value:"'+node.parentNode.id + '_' + obj['id']+'"'//value of the field
                      +'}'
 
+                /*
+                 * Generate the fields items dynamically
+                 */
                 for ( var i = 0; i < properties.length; i++) {
+
                     var fname=properties[i].name
                     var xtype=''
                     var vtype=''
@@ -43,13 +43,13 @@ function showCentralEditForms(node) {
                              break;
                          default:
                             xtype= 'xtype : "textfield"'
-                            //vtype= 'vtype : '+uniquename+',' // custom validation
+                            //vtype= 'vtype : "uniquename",' // custom validation
                     }
 
                      list_items = list_items+',{'+xtype+',' +vtype + 'fieldLabel:"' + properties[i].name
                      + '",name:"'
                      + properties[i].name
-                     + '",allowBlank:false, value:"'
+                     + '",allowBlank:false, blankText:"This Field is required !", value:"'
                      +properties[i].value+'"}'
 
                }
@@ -59,24 +59,19 @@ function showCentralEditForms(node) {
                 // generate form for editing purpose
                 var edit_form = new Ext.FormPanel({
                         labelWidth : 100, // label settings here cascade unless
-                        //url:'save-form.php', // file which will be used to interact with server
-                        url:'edit/'+node.parentNode.id+'/', // it will be used to interact with server
+                        url:'save-form.php', // file which will be used to interact with server
+                        //url:'edit/'+node.parentNode.id+'/', // it will be used to interact with server
                         method: 'POST',
                         border : false, // removing the border of the form
-                        renderTo:'centerPanel',
-                        // renderTo:document.body,
-                        //renderTo : Ext.getBody(),
                         id : 'frmEdit' + nId,
                         frame : true,
-                        //items: { xtype: 'component', autoEl: 'span' },
-
-                        bodyStyle : 'padding:5px 5px 0',
-                        width : 350,
+                        //bodyStyle : 'padding:5px 5px 0',
+                        //width : 350,
                         closable : true,
                         defaults : {
-                            width : 230
+                          width : 230
                         },
-                        defaultType : 'textfield',
+                        //defaultType : 'textfield',
                         items : list_items,     // binding with the fields list
                         buttonAlign : 'left', // buttons aligned to the left
                         buttons : [ {
@@ -99,9 +94,11 @@ function showCentralEditForms(node) {
                         } ],
                        autoDestroy:false,
                        listeners: {
-                            close: function(){
-                               // edit_form.destroy()
-                                //tabsPanel.doLayout();
+                        close: function(){
+                            // check number of tabs in panel to make disabled the centerPanel if its the last tab has been closed.
+                            if((Ext.getCmp('centerPanel').items.length) ==1){
+                                Ext.getCmp('centerPanel').disable();                                
+                             }
                             }
                         }
                 });
@@ -115,14 +112,9 @@ function showCentralEditForms(node) {
                         id : 'tab-' + obj['id'],
                          deferredRender: false,
                         title : node.parentNode.text + ' : ' + obj['text'],
-                        closable : true
+                        closable : true,
+                        layout:'form'
                 })).show();
-         /*  tabPanel.add({
-                title: tabTitle,
-                iconCls: 'tabs',
-                closable:true
-            }).show();*/
-
         }// end of if
 }
 

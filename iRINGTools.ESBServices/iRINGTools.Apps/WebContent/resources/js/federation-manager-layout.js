@@ -107,9 +107,16 @@ Ext.onReady(function(){
 			//  disabled:true,
 			margins: '0 5 0 0',
 			enableTabScroll:true,
-			defaults:{layout:'fit'}
-			}
+                        
+			defaults:{
+					 layout:'form'
+					,labelWidth:100
 
+					// as we use deferredRender:false we mustn't
+					// render tabs into display:none containers
+					,hideMode:'offsets'
+				}
+			}
     ]
 });
 
