@@ -24,6 +24,7 @@ html, body {
 var directoryTreePane = null;
 var propertyGridPane = null;
 var dataPane = null;
+var dtiGridPane = null;
 
 function loadDirectoryTree() {
   directoryTreePane = new Ext.tree.TreePanel({
@@ -35,13 +36,14 @@ function loadDirectoryTree() {
     animate:true,
     enableDD:true,
     containerScroll: true,
-    rootVisible: false,
+    rootVisible: true,
     frame: true,
     root: {
-      nodeType: 'async'
+      nodeType: 'async',
+      text: 'Directory'
     },
     
-    dataUrl: 'directory',
+    dataUrl: 'directory?directoryURL=http://174.129.203.205:8080/iringtools/services/dir/directory',
     
     listeners: { 
       click: function(node, event){ 
@@ -63,7 +65,7 @@ function loadDirectoryTree() {
 
         	populatePropertyGrid(node.attributes['properties']);
           loadAppData(dataTypeNode.parentNode.attributes['text'],  graphNode.attributes['text'], node.attributes['text']);
-          //dataPane = appDataPane;    
+          //dataPane = dtiGridPane;    
         } 
         else if (dataTypeNode.attributes['text'] == 'Exchange Data') {
         	populatePropertyGrid(node.attributes['properties']);
@@ -102,32 +104,32 @@ function populatePropertyGrid(properties) {
 }
 
 function loadAppData(scope, app, graph) {
-	alert('Loading app data: /' + scope + '/' + app + '/' + graph);
-}
-
-function loadExchangeData(scope, exchangeId) {
-	alert('Loading exchange data: /' + scope + '/exchanges/' + exchangeId);
-  var store = new Ext.data.Store({
+	alert('Loading app data: /' + scope + '/' + app + '/' + graph);  
+	var store = new Ext.data.Store({
     reader: new Ext.data.JsonReader({
       fields: ['identifier', 'hashValue', 'transferType']
     }),
     proxy: new Ext.data.HttpProxy({
-      url: 'dti'
+      url: 'dti?scopeName=' + scope + '&appName=' + app + '&graphName=' + graph
     }),
     autoLoad: true
   });
   
-  var dtiGridPane = new Ext.grid.GridPanel({
-    store: store,
+  dtiGridPane = new Ext.grid.GridPanel({
+	  store: store,
     columns: [
       {header: "Identifier", width: 100, dataIndex: 'identifier', sortable: true},
       {header: "HashValue", width: 260, dataIndex: 'hashValue', sortable: true},
       {header: "TransferType", width: 100, dataIndex: 'transferType', sortable: true}
     ],
-    renderTo: 'data-div',
+    renderTo: 'center',
     width: 600,
     height: 300
-  }); 
+  });
+}
+
+function loadExchangeData(scope, app, graph) {
+	alert('Loading exchange data: /' + scope + '/exchanges/' + exchangeId);   
 }
 
 Ext.onReady(function(){
@@ -171,7 +173,8 @@ Ext.onReady(function(){
           title: 'Center Panel',
           autoScroll: true
       }]
-    })]
+    })    
+    ]
   });
    
   Ext.get("hideit").on('click', function(){
@@ -185,7 +188,6 @@ Ext.onReady(function(){
 <body>
 <div id="header"><img src="resources/iringtools.png" style="margin:2px 0 2px 4px;height:40px;vertical-align:-25%;"><span style="color:#666;margin:0 0 0 10px;font-size:24px;font-weight:bold;font-style:italic">Exchange Manager</span></div>
 <div id="center" class="x-hide-display"></div>
-<div id="data-div" class="x-hide-display"></div>
 </body>
 
 </html>
