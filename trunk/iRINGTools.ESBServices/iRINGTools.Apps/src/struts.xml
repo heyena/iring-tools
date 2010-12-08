@@ -18,6 +18,13 @@
 	    	<param name="root">tree.treeNodes</param>
 	    </result>
 	  </action>
+	  
+	  <action name="postFederation" class="org.iringtools.controllers.FederationController" 
+	  method="postFederation">
+	    <result type="json">
+	    	<param name="root">success</param>
+	    </result>
+	  </action>
 	  <action name="directory" class="org.iringtools.controllers.DirectoryController" method="getDirectory">
 	    <result type="json">
 	    	<param name="root">tree.treeNodes</param>
