@@ -43,7 +43,7 @@ function showCentralEditForms(node) {
                              break;
                          default:
                             xtype= 'xtype : "textfield"'
-                            //vtype= 'vtype : "uniquename",' // custom validation
+                            vtype= 'vtype : "uniquename",' // custom validation
                     }
 
                      list_items = list_items+',{'+xtype+',' +vtype + 'fieldLabel:"' + properties[i].name
@@ -59,17 +59,17 @@ function showCentralEditForms(node) {
                 // generate form for editing purpose
                 var edit_form = new Ext.FormPanel({
                         labelWidth : 100, // label settings here cascade unless
-                        url:'save-form.php', // file which will be used to interact with server
-                        //url:'edit/'+node.parentNode.id+'/', // it will be used to interact with server
+                        url:'edit/'+node.parentNode.id+'/', // it will be used to interact with server
                         method: 'POST',
                         border : false, // removing the border of the form
                         id : 'frmEdit' + nId,
                         frame : true,
-                        //bodyStyle : 'padding:5px 5px 0',
-                        //width : 350,
+                        //autoHeight: true,
+                        layout:'fit',
                         closable : true,
                         defaults : {
                           width : 230
+                          //msgTarget: 'under'
                         },
                         //defaultType : 'textfield',
                         items : list_items,     // binding with the fields list
