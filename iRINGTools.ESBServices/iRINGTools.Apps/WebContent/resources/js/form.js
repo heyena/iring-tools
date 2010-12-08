@@ -22,7 +22,12 @@ function showCentralEditForms(node) {
                      +'xtype:"hidden",'//<--hidden field
                      +'name:"nodeID",' //name of the field sent to the server
                      +'value:"'+obj['id']+'"' //value of the field
-                     +'}'
+                     +'},'
+                     +'{'
+                     +'xtype:"hidden",'//<--hidden field
+                     +'name:"parentNodeID",' //parent node id
+                     +'value:"'+node.parentNode.id+'"' //value of the field
+                     +'}';
 
                 /*
                  * Generate the fields items dynamically
@@ -59,7 +64,7 @@ function showCentralEditForms(node) {
                 // generate form for editing purpose
                 var edit_form = new Ext.FormPanel({
                         labelWidth : 100, // label settings here cascade unless
-                        url:'edit/'+node.parentNode.id+'/', // it will be used to interact with server
+                        url:'postFederation',
                         method: 'POST',
                         border : false, // removing the border of the form
                         id : 'frmEdit' + nId,
