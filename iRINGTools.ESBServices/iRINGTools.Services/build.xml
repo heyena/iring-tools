@@ -18,19 +18,13 @@
 	</path>
 
 	<path id="commons-codec-1.4.userclasspath">
-    <fileset dir="../libraries/apache-commons-codec-1.4">
+    <fileset dir="../libraries/commons-codec-1.4">
       <include name="**/*.jar"/>
     </fileset>
 	</path>
 
 	<path id="commons-logging-1.1.1.userclasspath">
 		<fileset dir="../libraries/commons-logging-1.1.1">
-      <include name="**/*.jar"/>
-    </fileset>
-	</path>
-
-	<path id="httpcomponents-4.0.3.userclasspath">
-    <fileset dir="../libraries/apache-httpcomponents-4.0">
       <include name="**/*.jar"/>
     </fileset>
 	</path>
@@ -104,7 +98,6 @@
 			<classpath refid="log4j-1.2.16.userclasspath" />
 			<classpath refid="commons-codec-1.4.userclasspath" />
 			<classpath refid="guice-2.0.userclasspath" />
-			<classpath refid="httpcomponents-4.0.3.userclasspath" />
 		</javac>
 	</target>
 
@@ -119,7 +112,6 @@
 			<path refid="commons-codec-1.4.userclasspath" />
 			<path refid="log4j-1.2.16.userclasspath" />
 			<path refid="guice-2.0.userclasspath" />
-			<path refid="httpcomponents-4.0.3.userclasspath" />
 		</copy>
 		<jar destfile="dist/iringtools-services.war" basedir="WebContent" excludes="**/.svn/,WEB-INF/logs/*.*" />
     <!-- clean up WEB-INF/lib to prevent eclipse jar and classes reference conflict -->
