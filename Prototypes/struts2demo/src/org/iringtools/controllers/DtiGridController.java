@@ -1,11 +1,9 @@
 package org.iringtools.controllers;
 
 import java.util.List;
-
 import org.iringtools.dxfr.dti.DataTransferIndex;
 import org.iringtools.dxfr.dti.DataTransferIndices;
-import org.iringtools.utility.WebClient;
-
+import org.iringtools.utility.HttpClient;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -19,9 +17,9 @@ public class DtiGridController extends ActionSupport
   
   public String execute() throws Exception 
   {
-    String serviceURL = ActionContext.getContext().getApplication().get("AdapterServiceUri").toString();
-    WebClient webClient = new WebClient(serviceURL);
-    DataTransferIndices dti = webClient.get(DataTransferIndices.class, "/" + scopeName + "/" + appName + "/" + graphName);
+    String adapterServiceUri = ActionContext.getContext().getApplication().get("AdapterServiceUri").toString();
+    HttpClient httpClient = new HttpClient(adapterServiceUri);
+    DataTransferIndices dti = httpClient.get(DataTransferIndices.class, "/" + scopeName + "/" + appName + "/" + graphName);
     setDtiList(dti.getDataTransferIndexList().getDataTransferIndexListItems());
     
     return SUCCESS;

@@ -15,7 +15,7 @@ import org.iringtools.ui.widgets.tree.Node;
 import org.iringtools.ui.widgets.tree.Property;
 import org.iringtools.ui.widgets.tree.Tree;
 import org.iringtools.ui.widgets.tree.TreeNode;
-import org.iringtools.utility.NetUtil;
+import org.iringtools.utility.HttpClient;
 
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -30,7 +30,8 @@ public class DirectoryTreeController extends ActionSupport
   {
     try
     {
-      Directory directory = NetUtil.get(Directory.class, directoryURL);
+      HttpClient httpClient = new HttpClient();
+      Directory directory = httpClient.get(Directory.class, directoryURL);
       directoryTree = toTree(directory);
     }
     catch (Exception ex)
