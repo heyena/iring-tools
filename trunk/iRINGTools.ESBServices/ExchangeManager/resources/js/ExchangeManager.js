@@ -55,11 +55,9 @@ Ext.onReady(function () {
 					pageURL = 'dataObjects/getPageData/'+ nodeType + '/' + scopeId + '/' + node.parentNode.text + '/' + nodeText;
 				}
 				
-				var jsonData = Ext.util.JSON.decode(result.responseText);
+				var responseData = Ext.util.JSON.decode(result.responseText);
 				
-				if (eval(jsonData.success)==false) {		
-					
-					Ext.getCmp('centerPanel').disable();
+				if (eval(responseData.success)==false) {		
 					
 					Ext.MessageBox.show({
 						title: '<font color=red>Error</font>',
@@ -68,99 +66,21 @@ Ext.onReady(function () {
 						icon: Ext.MessageBox.ERROR
 					});
 					
-					return false;					
+					return false;
+					
+				} else {
+					
+					var newTab = new ExchangeManager.NavigationPanel({		
+						title: label,					
+						configData: responseData,
+						url: pageURL,
+						pageSize: 20,
+						closable: true
+					});
+					
+					contentPanel.add(newTab);
+					contentPanel.activate(newTab);
 				}
-							  
-				var relatedClassArr = new Array();
-				
-				var rowData = eval(jsonData.rowData);
-				var fieldList = eval(jsonData.headersList);
-				var headerList = eval(jsonData.columnsData);
-				var classObjName = jsonData.classObjName;
-				var filterSet = eval(jsonData.filterSet);
-				
-				// for this demo configure local and remote urls for demo purposes
-				var url = {				
-					local:  '',  // static data file
-					remote: pageURL
-				};
-
-				// configure whether filter query is encoded or not (initially)
-				var encode = true;
-				// configure whether filtering is performed locally or remotely (initially)
-				var local = false;
-				// configure whether sorting is performed locally or remotely (initially)
-				var remotesort = true;
-				
-				//var filt = filterSet;// 	[{type: 'string',dataIndex: 'IdentificationByTag'},			{type: 'string',dataIndex: 'TransferType',disabled: false}];
-				var filters = new Ext.ux.grid.GridFilters({
-					// encode and local configuration options defined previously for easier reuse
-					encode: encode, // json encode the filter query
-					remotesort: remotesort, // json encode the filter query
-					local: local,   // defaults to false (remote filtering)
-					filters: filterSet
-				});
-
-				if (jsonData.relatedClasses != undefined) {			
-					for(var i=0; i < jsonData.relatedClasses.length; i++) {
-						var key = jsonData.relatedClasses[i].identifier;
-						var text = jsonData.relatedClasses[i].text;
-						relatedClassArr[i] = text;
-					}
-				}
-				
-				// build the header first
-		  	// send the request to generate the arraystore
-				var proxy = new Ext.data.HttpProxy({
-					api: {
-						read: new Ext.data.Connection({ url: pageURL, method: 'POST', timeout: 120000 }),
-		        create: null,
-		        update: null,
-		        destroy: null
-		      }
-				});
-
-				var reader = new Ext.data.JsonReader({
-					totalProperty: 'total',
-					successProperty: 'success',
-					root: 'data',
-					fields: fieldList
-				});
-
-				var store = new Ext.data.Store({
-		      //autoLoad:true,
-		      proxy: proxy,
-		      remoteSort: remotesort,
-		      reader: reader,
-		      sortInfo: { field: 'TransferType', direction: "ASC" },
-		      autoLoad: {
-		      	params: {
-		      		start:0, 
-		      		limit:pageSize/*,
-		      		identifier:identifier,
-		      		refClassIdentifier:refClassIdentifier
-		      		*/
-		      	}
-		      },
-		      baseParams: {
-		      	/*
-		        'identifier':identifier,
-		        'refClassIdentifier':refClassIdentifier
-		        */
-		      }
-		    });
-				
-				var newTab = new ExchangeManager.NavigationPanel({		
-					title: label,
-					headerList: headerList,
-					store: store,
-					closable: true
-				});
-				
-				store.load();
-				
-				contentPanel.add(newTab);
-				contentPanel.activate(newTab);
 				
 			},
 			failure: function ( result, request) { 

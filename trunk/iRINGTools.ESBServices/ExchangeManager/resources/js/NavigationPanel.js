@@ -9,9 +9,10 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
 	layout: 'card',			
 	activeItem: 0,
 	
-	headerList: null,
-	store: null,
+	configData: null,
 	dataGrid: null,
+	url: null,
+	pageSize: 20,
 	
   /**
   * initComponent
@@ -24,24 +25,91 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
       prev: true
     });
   	
+  	var rowData = eval(this.configData.rowData);
+		var fieldList = eval(this.configData.headersList);
+		var headerList = eval(this.configData.columnsData);
+		var classObjName = this.configData.classObjName;
+		var filterSet = eval(this.configData.filterSet);
+		
+		var filters = new Ext.ux.grid.GridFilters({
+			// encode and local configuration options defined previously for easier reuse
+			encode: true, // json encode the filter query
+			remotesort: true, // json encode the filter query
+			local: false,   // defaults to false (remote filtering)
+			filters: filterSet
+		});
+
+		var relatedClassArr = new Array();
+		
+		if (this.configData.relatedClasses != undefined) {			
+			for(var i=0; i < this.configData.relatedClasses.length; i++) {
+				var key = this.configData.relatedClasses[i].identifier;
+				var text = this.configData.relatedClasses[i].text;
+				relatedClassArr[i] = text;
+			}
+		}
+		
+		// build the header first
+  	// send the request to generate the arraystore
+		var proxy = new Ext.data.HttpProxy({
+			api: {
+				read: new Ext.data.Connection({ url: this.url, method: 'POST', timeout: 120000 }),
+        create: null,
+        update: null,
+        destroy: null
+      }
+		});
+
+		var reader = new Ext.data.JsonReader({
+			totalProperty: 'total',
+			successProperty: 'success',
+			root: 'data',
+			fields: fieldList
+		});
+
+		var store = new Ext.data.Store({
+      autoLoad:true,
+      proxy: proxy,
+      remoteSort: true,
+      reader: reader,
+      sortInfo: { field: 'TransferType', direction: "ASC" },
+      autoLoad: {
+      	params: {
+      		start: 0, 
+      		limit: this.pageSize/*,
+      		identifier:identifier,
+      		refClassIdentifier:refClassIdentifier
+      		*/
+      	}
+      },
+      baseParams: {
+      	/*
+        'identifier':identifier,
+        'refClassIdentifier':refClassIdentifier
+        */
+      }
+    });
+  	
   	this.dataGrid = new Ext.grid.GridPanel({
-   	  store: this.store,
-      columns: this.headerList,
+  		store: store,
+      columns: headerList,
       stripeRows: true,      
       loadMask: true,
+      plugins: [filters],
       layout: 'fit',
-      frame: true,
+      frame:true,
       autoSizeColumns: true,
       autoSizeGrid: true,
       AllowScroll : true,
       minColumnWidth: 100,
-      columnLines: true,      
+      columnLines: true,
+      classObjName: classObjName,
       enableColumnMove: false
   	});
   	
   	this.items = [
   		this.dataGrid
-  	]  	
+  	];
     
     this.tbar = this.buildToolbar();
         
