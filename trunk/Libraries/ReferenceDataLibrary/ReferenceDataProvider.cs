@@ -175,8 +175,7 @@ namespace org.iringtools.refdata
 
             try
             {
-                string sparql1 = String.Empty;
-                string sparql2 = String.Empty;
+                string sparql = String.Empty;
                 string relativeUri = String.Empty;
 
                 //Check the search History for Optimization
@@ -191,19 +190,12 @@ namespace org.iringtools.refdata
                     Query queryContainsSearch = (Query)_queries.FirstOrDefault(c => c.Key == "ContainsSearch").Query;
                     QueryBindings queryBindings = queryContainsSearch.Bindings;
 
-                    Query queryTemplateContainsSearch = (Query)_queries.FirstOrDefault(c => c.Key == "TemplateContainsSearch").Query;
-                    QueryBindings queryBindings2 = queryTemplateContainsSearch.Bindings;
-
-                    sparql1 = ReadSPARQL(queryContainsSearch.FileName);
-                    sparql1 = sparql1.Replace("param1", query);
-
-                    sparql2 = ReadSPARQL(queryTemplateContainsSearch.FileName);
-                    sparql2 = sparql2.Replace("param1", query);
-                    sparql2 = sparql2.Replace("param2", "0"); //TODO:Remove hard-coded OFFSET parameter
+                    sparql = ReadSPARQL(queryContainsSearch.FileName);
+                    sparql = sparql.Replace("param1", query);
 
                     foreach (Repository repository in _repositories)
                     {
-                        SPARQLResults sparqlResults = QueryFromRepository(repository, sparql1);
+                        SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
                         List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
                         foreach (Dictionary<string, string> result in results)
@@ -225,33 +217,6 @@ namespace org.iringtools.refdata
                             resultEntities.Entities.Add(key, resultEntity);
                         }
                         results.Clear();
-
-                        //for Camelot repositories, search using "TemplateContainsSearch" too
-                        if (repository.RepositoryType == RepositoryType.Camelot)
-                        {
-                            sparqlResults = QueryFromRepository(repository, sparql2);
-
-                            results = BindQueryResults(queryBindings, sparqlResults);
-                            foreach (Dictionary<string, string> result in results)
-                            {
-                                Entity resultEntity = new Entity
-                                {
-                                    Uri = result["uri"],
-                                    Label = result["label"],
-                                    Repository = repository.Name
-                                };
-
-                                string key = resultEntity.Label;
-
-                                if (resultEntities.Entities.ContainsKey(key))
-                                {
-                                    key += ++counter;
-                                }
-
-                                resultEntities.Entities.Add(key, resultEntity);
-                            }
-                            results.Clear();
-                        }
                     }
 
                     _searchHistory.Add(query, resultEntities);
