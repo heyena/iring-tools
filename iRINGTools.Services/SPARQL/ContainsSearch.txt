@@ -11,7 +11,6 @@ PREFIX rds: <http://rds.posccaesar.org/2008/06/OWL/RDL#>
 SELECT ?uri ?label
 WHERE { 
   ?uri rdfs:label ?label .
-  OPTIONAL { ?uri tpl:R97483568938 ?index }
-  FILTER (isLiteral(?label) && regex(str(?label),'param1','i') && !Bound(?index))
+  FILTER (isLiteral(?label) && regex(str(?label),'param1','i'))
 }
 ORDER BY ?label
