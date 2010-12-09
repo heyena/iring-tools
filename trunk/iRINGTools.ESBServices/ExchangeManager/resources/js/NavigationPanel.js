@@ -9,6 +9,10 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
 	layout: 'card',			
 	activeItem: 0,
 	
+	headerList: null,
+	store: null,
+	dataGrid: null,
+	
   /**
   * initComponent
   * @protected
@@ -20,45 +24,24 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
       prev: true
     });
   	
-  	// build the header first
-  	// send the request to generate the arraystore
-		var proxy = new Ext.data.HttpProxy({
-			api: {
-				read: new Ext.data.Connection({ url: globalReq, method: 'POST', timeout: 120000 }),
-        create: null,
-        update: null,
-        destroy: null
-      }
-		});
-
-		var reader = new Ext.data.JsonReader({
-			totalProperty: 'total',
-			successProperty: 'success',
-			root: 'data',
-      fields: fieldList
-		});
-
-    var store = new Ext.data.Store({
-    	//autoLoad:true,
-      proxy: proxy,
-      reader: reader,
-      //sortInfo: { field: 'slno', direction: "DESC" },
-      autoLoad: {
-      	params: {
-      		start:0, 
-      		limit:pageSize,
-      		identifier:identifier,
-      		refClassIdentifier:refClassIdentifier
-      	}
-      },
-      baseParams: {
-        'identifier':identifier,
-        'refClassIdentifier':refClassIdentifier
-      }
-    });
+  	this.dataGrid = new Ext.grid.GridPanel({
+   	  store: this.store,
+      columns: this.headerList,
+      stripeRows: true,      
+      loadMask: true,
+      layout: 'fit',
+      frame: true,
+      autoSizeColumns: true,
+      autoSizeGrid: true,
+      AllowScroll : true,
+      minColumnWidth: 100,
+      columnLines: true,      
+      enableColumnMove: false
+  	});
   	
-  	this.items = [{
-  	}]
+  	this.items = [
+  		this.dataGrid
+  	]  	
     
     this.tbar = this.buildToolbar();
         
@@ -69,7 +52,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
 
   buildToolbar: function () {
     return [{
-			id: "card-next",
+			id: "card-1",
     	xtype:"tbbutton",
 			tooltip:'Crum 1',
 			text:'1...',			

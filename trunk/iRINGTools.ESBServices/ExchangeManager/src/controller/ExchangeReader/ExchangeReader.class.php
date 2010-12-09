@@ -20,7 +20,7 @@ class ExchangeReader extends BaseController{
 		}
 	}
 
-	function exchnageList($params)
+	function exchangeList($params)
 	{
             	if(is_array($params)){
                     // it can be used in View
