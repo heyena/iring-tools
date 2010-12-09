@@ -554,7 +554,7 @@ Ext.onReady(function() {
       text: 'Directory'
     },
     // auto create TreeLoader
-    dataUrl: 'ExchangeReader/exchnageList/1',
+    dataUrl: 'ExchangeReader/exchangeList/1',
     tbar:tBar,
     listeners: {
     	BeforeLoad:{
