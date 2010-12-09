@@ -168,6 +168,6 @@ public class HttpClient
       creds = domain + "\\\\" + creds;
     }
     
-    return Base64.encodeBase64String(creds.getBytes());
+    return new String(Base64.encodeBase64(creds.getBytes()));
   }
 }
