@@ -1,10 +1,7 @@
 
 package org.iringtools.common.response;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
-import javax.xml.namespace.QName;
 
 
 /**
@@ -24,45 +21,12 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _Response_QNAME = new QName("http://www.iringtools.org/common/response", "response");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.iringtools.common.response
      * 
      */
     public ObjectFactory() {
-    }
-
-    /**
-     * Create an instance of {@link Result }
-     * 
-     */
-    public Result createResult() {
-        return new Result();
-    }
-
-    /**
-     * Create an instance of {@link StatusList }
-     * 
-     */
-    public StatusList createStatusList() {
-        return new StatusList();
-    }
-
-    /**
-     * Create an instance of {@link Messages }
-     * 
-     */
-    public Messages createMessages() {
-        return new Messages();
-    }
-
-    /**
-     * Create an instance of {@link Results }
-     * 
-     */
-    public Results createResults() {
-        return new Results();
     }
 
     /**
@@ -82,12 +46,35 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Response }{@code >}}
+     * Create an instance of {@link Messages }
      * 
      */
-    @XmlElementDecl(namespace = "http://www.iringtools.org/common/response", name = "response")
-    public JAXBElement<Response> createResponse(Response value) {
-        return new JAXBElement<Response>(_Response_QNAME, Response.class, null, value);
+    public Messages createMessages() {
+        return new Messages();
+    }
+
+    /**
+     * Create an instance of {@link StatusList }
+     * 
+     */
+    public StatusList createStatusList() {
+        return new StatusList();
+    }
+
+    /**
+     * Create an instance of {@link Result }
+     * 
+     */
+    public Result createResult() {
+        return new Result();
+    }
+
+    /**
+     * Create an instance of {@link Results }
+     * 
+     */
+    public Results createResults() {
+        return new Results();
     }
 
 }

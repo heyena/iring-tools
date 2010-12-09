@@ -16,7 +16,6 @@
   <xs:import namespace="http://www.iringtools.org/common/response" schemaLocation="../common/response.xsd" />
 
   <xs:element name="exchangeResponse" type="ExchangeResponse" />
-  <xs:element name="response" type="res:Response" />
   
   <xs:complexType name="ExchangeResponse">
     <xs:sequence>

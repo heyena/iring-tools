@@ -90,11 +90,9 @@ namespace org.iringtools.nhibernate
         }
         else if (ValidateDatabaseDictionary(dbDictionary))
         {
-
           EntityGenerator generator = _kernel.Get<EntityGenerator>();
           _response.Append(generator.Generate(dbDictionary, projectName, applicationName));
-
-
+          
           // Update binding configuration
           XElement binding = new XElement("module",
             new XAttribute("name", _settings["Scope"]),
