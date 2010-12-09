@@ -42,7 +42,7 @@ import org.iringtools.directory.ExchangeDefinition;
 import org.iringtools.dxfr.manifest.Manifest;
 import org.iringtools.services.core.DataTransferObjectComparator;
 import org.iringtools.utility.JaxbUtil;
-import org.iringtools.utility.NetUtil;
+import org.iringtools.utility.HttpClient;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import java.util.GregorianCalendar;
@@ -52,7 +52,8 @@ import java.util.GregorianCalendar;
 public class ESBService
 {
   private static final Logger logger = Logger.getLogger(ESBService.class);
-  private static DatatypeFactory datatypeFactory = null;  
+  private static DatatypeFactory datatypeFactory = null;   
+  private HttpClient httpClient = null; 
   
   private String sourceUri = null;
   private String sourceScopeName = null;
@@ -77,6 +78,7 @@ public class ESBService
   {
     settings = new Hashtable<String, String>();
     datatypeFactory = DatatypeFactory.newInstance();
+    httpClient = new HttpClient();
   }
 
   @GET
@@ -90,7 +92,7 @@ public class ESBService
       init();
 
       // request directory service to get exchange definitions
-      directory = NetUtil.get(Directory.class, settings.get("directoryServiceUri") + "/directory");
+      directory = httpClient.get(Directory.class, settings.get("directoryServiceUri") + "/directory");
     }
     catch (Exception ex)
     {
@@ -115,18 +117,18 @@ public class ESBService
 
       // get target manifest
       String targetManifestUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/manifest";
-      Manifest targetManifest = NetUtil.get(Manifest.class, targetManifestUrl);
+      Manifest targetManifest = httpClient.get(Manifest.class, targetManifestUrl);
       
       if (targetManifest == null || targetManifest.getGraphs().getGraphs().size() == 0)
         return null;
 
       // get source dti
       String sourceDtiUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName + "/xfr?hashAlgorithm=" + hashAlgorithm;
-      DataTransferIndices sourceDtis = NetUtil.post(DataTransferIndices.class, sourceDtiUrl, targetManifest);
+      DataTransferIndices sourceDtis = httpClient.post(DataTransferIndices.class, sourceDtiUrl, targetManifest);
 
       // get target dti
       String targetDtiUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName + "/xfr?hashAlgorithm=" + hashAlgorithm;
-      DataTransferIndices targetDtis = NetUtil.post(DataTransferIndices.class, targetDtiUrl, targetManifest);
+      DataTransferIndices targetDtis = httpClient.post(DataTransferIndices.class, targetDtiUrl, targetManifest);
 
       // create dxi request to diff source and target dti
       DxiRequest dxiRequest = new DxiRequest();
@@ -139,7 +141,7 @@ public class ESBService
 
       // request exchange service to diff the dti
       String dxiUrl = settings.get("differencingServiceUri") + "/dxi";
-      dxiList = NetUtil.post(DataTransferIndices.class, dxiUrl, dxiRequest);
+      dxiList = httpClient.post(DataTransferIndices.class, dxiUrl, dxiRequest);
     }
     catch (Exception ex)
     {
@@ -174,7 +176,7 @@ public class ESBService
       
       // get target manifest
       String targetManifestUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/manifest";
-      Manifest targetManifest = NetUtil.get(Manifest.class, targetManifestUrl);
+      Manifest targetManifest = httpClient.get(Manifest.class, targetManifestUrl);
       
       if (targetManifest == null || targetManifest.getGraphs().getGraphs().size() == 0)
         return null;
@@ -214,7 +216,7 @@ public class ESBService
         sourceDtoPageRequest.setDataTransferIndices(sourceDataTransferIndices);
 
         String sourceDtoUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName + "/xfr/page";
-        sourceDtos = NetUtil.post(DataTransferObjects.class, sourceDtoUrl, sourceDtoPageRequest);
+        sourceDtos = httpClient.post(DataTransferObjects.class, sourceDtoUrl, sourceDtoPageRequest);
         List<DataTransferObject> sourceDtoListItems = sourceDtos.getDataTransferObjectList().getDataTransferObjectListItems();
 
         // append add/sync DTOs to resultDtoList, leave change DTOs to send to differencing engine
@@ -263,7 +265,7 @@ public class ESBService
         targetDtoPageRequest.setDataTransferIndices(targetDataTransferIndices);
 
         String targetDtoUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName + "/xfr/page";
-        targetDtos = NetUtil.post(DataTransferObjects.class, targetDtoUrl, targetDtoPageRequest);
+        targetDtos = httpClient.post(DataTransferObjects.class, targetDtoUrl, targetDtoPageRequest);
         List<DataTransferObject> targetDtoListItems = targetDtos.getDataTransferObjectList().getDataTransferObjectListItems();
 
         // append delete DTOs to resultDtoList, leave change DTOs to send to differencing engine
@@ -303,7 +305,7 @@ public class ESBService
         dxoRequest.getDataTransferObjects().add(targetDtos);
 
         String dxoUrl = settings.get("differencingServiceUri") + "/dxo";
-        DataTransferObjects dxoList = NetUtil.post(DataTransferObjects.class, dxoUrl, dxoRequest);
+        DataTransferObjects dxoList = httpClient.post(DataTransferObjects.class, dxoUrl, dxoRequest);
 
         // add diff DTOs to add/change/sync list
         if (dxoList != null)
@@ -373,7 +375,7 @@ public class ESBService
       String sourceGraphUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName;
 
       // get target manifest
-      Manifest targetManifest = NetUtil.get(Manifest.class, targetManifestUrl);
+      Manifest targetManifest = httpClient.get(Manifest.class, targetManifestUrl);
       
       if (targetManifest == null || targetManifest.getGraphs().getGraphs().size() == 0)
         return null;
@@ -421,7 +423,7 @@ public class ESBService
         poolDtosRequest.setDataTransferIndices(poolDataTransferIndices);
         
         String sourceDtoUrl = sourceGraphUrl + "/xfr/page";
-        DataTransferObjects poolDtos = NetUtil.post(DataTransferObjects.class, sourceDtoUrl, poolDtosRequest);
+        DataTransferObjects poolDtos = httpClient.post(DataTransferObjects.class, sourceDtoUrl, poolDtosRequest);
         List<DataTransferObject> poolDtoListItems = poolDtos.getDataTransferObjectList().getDataTransferObjectListItems();
 
         // set transfer type for each DTO in poolDtoList and remove/report ones that have changed
@@ -491,7 +493,7 @@ public class ESBService
         // post add/change/delete DTOs to target endpoint
         if (poolDtoListItems.size() > 0)
         {
-          Response poolResponse = NetUtil.post(Response.class, targetGraphUrl, poolDtos);
+          Response poolResponse = httpClient.post(Response.class, targetGraphUrl, poolDtos);
           exchangeResponse.getStatusList().getStatuses().addAll(poolResponse.getStatusList().getStatuses());
           
           if (exchangeResponse.getLevel() != Level.ERROR || (exchangeResponse.getLevel() == Level.WARNING && poolResponse.getLevel() == Level.SUCCESS))
@@ -548,7 +550,7 @@ public class ESBService
   private void initExchangeDefinition(String scope, String id) throws JAXBException, IOException 
   {
     String directoryServiceUrl = settings.get("directoryServiceUri") + "/" + scope + "/exchanges/" + id;
-    ExchangeDefinition xdef = NetUtil.get(ExchangeDefinition.class, directoryServiceUrl);
+    ExchangeDefinition xdef = httpClient.get(ExchangeDefinition.class, directoryServiceUrl);
     
     sourceUri = xdef.getSourceUri();
     sourceScopeName = xdef.getSourceScopeName();

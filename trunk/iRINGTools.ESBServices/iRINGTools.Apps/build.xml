@@ -7,44 +7,44 @@
 
 	<path id="axiom-1.2.8.userclasspath">
 		<fileset dir="../libraries/axiom-1.2.8">
-      <include name="**/*.jar"/>
-    </fileset>
+			<include name="**/*.jar" />
+		</fileset>
 	</path>
 
 	<path id="commons-logging-1.1.1.userclasspath">
 		<fileset dir="../libraries/commons-logging-1.1.1">
-      <include name="**/*.jar"/>
-    </fileset>
+			<include name="**/*.jar" />
+		</fileset>
 	</path>
 
-	<path id="httpcomponents-4.0.3.userclasspath">
-    <fileset dir="../libraries/apache-httpcomponents-4.0">
-      <include name="**/*.jar"/>
-    </fileset>
+	<path id="commons-codec-1.4.userclasspath">
+		<fileset dir="../libraries/commons-codec-1.4">
+			<include name="**/*.jar" />
+		</fileset>
 	</path>
 
 	<path id="jaxb-ri-20100511.userclasspath">
-    <fileset dir="../libraries/jaxb-ri-20100511/lib">
-      <include name="**/*.jar"/>
-    </fileset>
+		<fileset dir="../libraries/jaxb-ri-20100511/lib">
+			<include name="**/*.jar" />
+		</fileset>
 	</path>
 
 	<path id="gson-1.4.userclasspath">
 		<fileset dir="../libraries/google-gson-1.4">
-      <include name="**/*.jar"/>
-    </fileset>
+			<include name="**/*.jar" />
+		</fileset>
 	</path>
 
 	<path id="log4j-1.2.16.userclasspath">
 		<fileset dir="../libraries/apache-log4j-1.2.16">
-      <include name="**/*.jar"/>
-    </fileset>
+			<include name="**/*.jar" />
+		</fileset>
 	</path>
 
 	<path id="struts2-2.2.1.userclasspath">
-    <fileset dir="../libraries/struts2-2.2.1">
-      <include name="**/*.jar"/>
-    </fileset>
+		<fileset dir="../libraries/struts2-2.2.1">
+			<include name="**/*.jar" />
+		</fileset>
 	</path>
 
 	<path id="iRINGTools.Common.classpath">
@@ -67,8 +67,7 @@
 	</target>
 
 	<target name="build-subprojects">
-		<ant antfile="build.xml" dir="${iRINGTools.Common.location}"
-			inheritAll="false" target="build">
+		<ant antfile="build.xml" dir="${iRINGTools.Common.location}" inheritAll="false" target="build">
 			<propertyset>
 				<propertyref name="build.compiler" />
 			</propertyset>
@@ -76,8 +75,7 @@
 	</target>
 
 	<target name="dist-subprojects">
-		<ant antfile="build.xml" dir="${iRINGTools.Common.location}"
-			inheritAll="false" target="dist">
+		<ant antfile="build.xml" dir="${iRINGTools.Common.location}" inheritAll="false" target="dist">
 			<propertyset>
 				<propertyref name="build.compiler" />
 			</propertyset>
@@ -86,8 +84,7 @@
 
 	<target name="build" depends="init, build-subprojects">
 		<echo message="${ant.project.name}: ${ant.file}" />
-		<javac debug="true" debuglevel="${debuglevel}" destdir="WebContent/WEB-INF/classes"
-			source="${source}" target="${target}">
+		<javac debug="true" debuglevel="${debuglevel}" destdir="WebContent/WEB-INF/classes" source="${source}" target="${target}">
 			<src path="src" />
 			<exclude name="**/.svn/" />
 			<classpath refid="iRINGTools.Common.classpath" />
@@ -102,17 +99,17 @@
 		</delete>
 		<copy todir="WebContent/WEB-INF/lib" flatten="true">
 			<fileset dir="${iRINGTools.Common.location}/dist" />
-      <path refid="struts2-2.2.1.userclasspath" />
+			<path refid="struts2-2.2.1.userclasspath" />
 			<path refid="axiom-1.2.8.userclasspath" />
 			<path refid="commons-logging-1.1.1.userclasspath" />
+			<path refid="commons-codec-1.4.userclasspath" />
 			<path refid="log4j-1.2.16.userclasspath" />
 			<path refid="jaxb-ri-20100511.userclasspath" />
-			<path refid="httpcomponents-4.0.3.userclasspath" />
-			<path refid="gson-1.4.userclasspath" />      
+			<path refid="gson-1.4.userclasspath" />
 		</copy>
 		<jar destfile="dist/iringtools-apps.war" basedir="WebContent" excludes="**/.svn/,WEB-INF/logs/*.*" />
-    <!-- clean up WEB-INF/lib to prevent eclipse jar and classes reference conflict -->
-    <delete>
+		<!-- clean up WEB-INF/lib to prevent eclipse jar and classes reference conflict -->
+		<delete>
 			<fileset dir="WebContent/WEB-INF/lib" includes="*.jar" />
 		</delete>
 	</target>

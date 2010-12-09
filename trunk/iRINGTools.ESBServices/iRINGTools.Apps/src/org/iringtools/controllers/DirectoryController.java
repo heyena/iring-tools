@@ -1,5 +1,9 @@
 package org.iringtools.controllers;
 
+import java.io.IOException;
+
+import javax.xml.bind.JAXBException;
+
 import org.iringtools.models.DirectoryModel;
 import org.iringtools.ui.widgets.tree.Tree;
 import com.opensymphony.xwork2.Action;
@@ -28,7 +32,7 @@ public class DirectoryController {
         return Action.SUCCESS;
 	}
 	
-	public String postDirectory() {		
+	public String postDirectory() throws IOException, JAXBException {		
 		directory.readTree(tree);
 		directory.save();
         return Action.SUCCESS;
