@@ -456,7 +456,16 @@ namespace org.iringtools.nhibernate
         {
           if (!dataObject.IsKeyProperty(dataProperty.PropertyName))
           {
-            _dataObjectWriter.WriteLine("public virtual {0} {1} {{ get; set; }}", dataProperty.DataType, dataProperty.PropertyName);
+            bool isNullableType = (dataProperty.DataType != DataType.String && dataProperty.IsNullable == true);
+            if (isNullableType)
+            {
+              _dataObjectWriter.WriteLine("public virtual {0}? {1} {{ get; set; }}", dataProperty.DataType, dataProperty.PropertyName);
+            }
+            else
+            {
+              _dataObjectWriter.WriteLine("public virtual {0} {1} {{ get; set; }}", dataProperty.DataType, dataProperty.PropertyName);
+            }  
+
             _mappingWriter.WriteStartElement("property");
             _mappingWriter.WriteAttributeString("name", dataProperty.PropertyName);
             _mappingWriter.WriteAttributeString("column", "\"" + dataProperty.ColumnName + "\"");
@@ -538,15 +547,15 @@ namespace org.iringtools.nhibernate
           _dataObjectWriter.WriteLine("case \"{0}\":", dataProperty.PropertyName);
           _dataObjectWriter.Indent++;
 
-          bool isNullableType = (dataProperty.DataType != DataType.String && dataProperty.IsNullable == true);
-          if (isNullableType)
+          bool isDataPropertyNullable = (dataProperty.DataType == DataType.String || dataProperty.IsNullable == true);
+          if (isDataPropertyNullable)
           {
-            _dataObjectWriter.WriteLine("public virtual {0}? {1} {{ get; set; }}", dataProperty.DataType, dataProperty.PropertyName);
+            _dataObjectWriter.WriteLine("if (value != null) {0} = Convert.To{1}(value);", dataProperty.PropertyName, dataProperty.DataType);
           }
           else
           {
-            _dataObjectWriter.WriteLine("public virtual {0} {1} {{ get; set; }}", dataProperty.DataType, dataProperty.PropertyName);
-          } 
+            _dataObjectWriter.WriteLine("{0} = (value != null) ? Convert.To{1}(value) : default({1});", dataProperty.PropertyName, dataProperty.DataType);
+          }
 
           _dataObjectWriter.WriteLine("break;");
           _dataObjectWriter.Indent--;
