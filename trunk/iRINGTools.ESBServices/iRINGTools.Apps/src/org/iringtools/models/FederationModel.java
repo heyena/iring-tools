@@ -1,6 +1,9 @@
 package org.iringtools.models;
 
+import java.util.Enumeration;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.iringtools.common.response.Response;
 import org.iringtools.refdata.federation.Federation;
@@ -46,7 +49,8 @@ public class FederationModel
     }
     catch (Exception e)
     {
-      System.out.println("Exception :" + e);
+    	System.out.println("Exception in populate");
+      	e.printStackTrace();
     }
   }
 
@@ -91,6 +95,7 @@ public class FederationModel
 
     TreeNode generatorsNode = new TreeNode();
     generatorsNode.setText("ID Generators");
+    generatorsNode.setId("idGenerator");
     generatorsNode.setIconCls("folder");
     treeNodes.add(generatorsNode);
 
@@ -115,6 +120,7 @@ public class FederationModel
     // Namespaces
     TreeNode namespacesNode = new TreeNode();
     namespacesNode.setText("Namespaces");
+    namespacesNode.setId("namespace");
     namespacesNode.setIconCls("folder");
     treeNodes.add(namespacesNode);
 
@@ -141,6 +147,7 @@ public class FederationModel
 
     TreeNode repositoriesNode = new TreeNode();
     repositoriesNode.setText("Repositories");
+    repositoriesNode.setId("repository");
     repositoriesNode.setIconCls("folder");
     treeNodes.add(repositoriesNode);
 
@@ -168,8 +175,45 @@ public class FederationModel
 
   }
 
-  public void readTree(Tree tree)
+  public void readTree(HttpServletRequest httpRequest)
   {
-    // TODO: Read the tree!
+		try{
+				//String method = httpRequest.getMethod() ; 
+				//System.out.println("Request reaching here :"+ method);
+				//String ParameterNames = "";
+				IDGenerator idgenerator;
+				Namespace namespace;
+				Repository repository;
+				
+				
+				/*for(Enumeration e = httpRequest.getParameterNames();e.hasMoreElements();){
+					ParameterNames = (String)e.nextElement();
+					System.out.println(ParameterNames+":"+httpRequest.getParameter("ParameterNames"));
+				}*/
+				System.out.println("###"+httpRequest.getParameter("parentNodeID")+"###");
+				if("idGenerator".equalsIgnoreCase(httpRequest.getParameter("parentNodeID"))){
+					idgenerator = new IDGenerator();
+					idgenerator.setName(httpRequest.getParameter("Name"));
+					idgenerator.setUri(httpRequest.getParameter("URI"));
+					idgenerator.setDescription(httpRequest.getParameter("Description"));
+				}else if("namespace".equalsIgnoreCase(httpRequest.getParameter("parentNodeID"))){
+					namespace = new Namespace();
+					namespace.setUri(httpRequest.getParameter("URI"));
+					namespace.setAlias(httpRequest.getParameter("Alias"));
+					namespace.setIsWritable(Boolean.parseBoolean(httpRequest.getParameter("Writable")));
+					namespace.setDescription(httpRequest.getParameter("Description"));
+				}else if("repository".equalsIgnoreCase(httpRequest.getParameter("parentNodeID"))){
+					repository = new Repository();
+					repository.setDescription(httpRequest.getParameter("Description"));
+					repository.setUri(httpRequest.getParameter("URI"));
+					repository.setRepositoryType(httpRequest.getParameter("Repository Type"));
+					repository.setUpdateUri(httpRequest.getParameter("Update URI"));
+					repository.setIsReadOnly(Boolean.parseBoolean(httpRequest.getParameter("Read Only")));
+
+				}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+   
   }
 }
