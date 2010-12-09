@@ -519,8 +519,8 @@ namespace org.iringtools.nhibernate
           _dataObjectWriter.WriteLine("case \"{0}\":", keyProperty.propertyName);
           _dataObjectWriter.Indent++;
 
-          bool isColumnNullable = (keyProperty.dataType == DataType.String || keyProperty.isNullable == true);
-          if (isColumnNullable)
+          bool isDataPropertyNullable = (keyProperty.dataType == DataType.String || keyProperty.isNullable == true);
+          if (isDataPropertyNullable)
           {
             _dataObjectWriter.WriteLine("if (value != null) {0} = Convert.To{1}(value);", keyProperty.propertyName, keyProperty.dataType);
           }
@@ -538,15 +538,15 @@ namespace org.iringtools.nhibernate
           _dataObjectWriter.WriteLine("case \"{0}\":", dataProperty.PropertyName);
           _dataObjectWriter.Indent++;
 
-          bool isColumnNullable = (dataProperty.DataType == DataType.String || dataProperty.IsNullable == true);
-          if (isColumnNullable)
+          bool isNullableType = (dataProperty.DataType != DataType.String && dataProperty.IsNullable == true);
+          if (isNullableType)
           {
-            _dataObjectWriter.WriteLine("if (value != null) {0} = Convert.To{1}(value);", dataProperty.PropertyName, dataProperty.DataType);
+            _dataObjectWriter.WriteLine("public virtual {0}? {1} {{ get; set; }}", dataProperty.DataType, dataProperty.PropertyName);
           }
           else
           {
-            _dataObjectWriter.WriteLine("{0} = (value != null) ? Convert.To{1}(value) : default({1});", dataProperty.PropertyName, dataProperty.DataType);
-          }
+            _dataObjectWriter.WriteLine("public virtual {0} {1} {{ get; set; }}", dataProperty.DataType, dataProperty.PropertyName);
+          } 
 
           _dataObjectWriter.WriteLine("break;");
           _dataObjectWriter.Indent--;

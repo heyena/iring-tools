@@ -30,11 +30,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DtoPageRequest }
+     * Create an instance of {@link DxiRequest }
      * 
      */
-    public DtoPageRequest createDtoPageRequest() {
-        return new DtoPageRequest();
+    public DxiRequest createDxiRequest() {
+        return new DxiRequest();
     }
 
     /**
@@ -54,11 +54,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DxiRequest }
+     * Create an instance of {@link DtoPageRequest }
      * 
      */
-    public DxiRequest createDxiRequest() {
-        return new DxiRequest();
+    public DtoPageRequest createDtoPageRequest() {
+        return new DtoPageRequest();
     }
 
 }
