@@ -452,11 +452,20 @@ namespace org.iringtools.nhibernate
       #region Process columns
       if (dataObject.dataProperties != null)
       {
-        foreach (DataProperty dataProperty in dataObject.dataProperties)
+       foreach (DataProperty dataProperty in dataObject.dataProperties)
         {
           if (!dataObject.isKeyProperty(dataProperty.propertyName))
           {
-            _dataObjectWriter.WriteLine("public virtual {0} {1} {{ get; set; }}", dataProperty.dataType, dataProperty.propertyName);
+            bool isNullableType = (dataProperty.dataType != DataType.String && dataProperty.isNullable == true);
+            if (isNullableType)
+            {
+              _dataObjectWriter.WriteLine("public virtual {0}? {1} {{ get; set; }}", dataProperty.dataType, dataProperty.propertyName);
+            }
+            else
+            {
+              _dataObjectWriter.WriteLine("public virtual {0} {1} {{ get; set; }}", dataProperty.dataType, dataProperty.propertyName);
+            }            
+
             _mappingWriter.WriteStartElement("property");
             _mappingWriter.WriteAttributeString("name", dataProperty.propertyName);
             _mappingWriter.WriteAttributeString("column", "\"" + dataProperty.columnName + "\"");
@@ -519,8 +528,8 @@ namespace org.iringtools.nhibernate
           _dataObjectWriter.WriteLine("case \"{0}\":", keyProperty.propertyName);
           _dataObjectWriter.Indent++;
 
-          bool isColumnNullable = (keyProperty.dataType == DataType.String || keyProperty.isNullable == true);
-          if (isColumnNullable)
+          bool isDataPropertyNullable = (keyProperty.dataType == DataType.String || keyProperty.isNullable == true);
+          if (isDataPropertyNullable)
           {
             _dataObjectWriter.WriteLine("if (value != null) {0} = Convert.To{1}(value);", keyProperty.propertyName, keyProperty.dataType);
           }
@@ -538,8 +547,8 @@ namespace org.iringtools.nhibernate
           _dataObjectWriter.WriteLine("case \"{0}\":", dataProperty.propertyName);
           _dataObjectWriter.Indent++;
 
-          bool isColumnNullable = (dataProperty.dataType == DataType.String || dataProperty.isNullable == true);
-          if (isColumnNullable)
+          bool isDataPropertyNullable = (dataProperty.dataType == DataType.String || dataProperty.isNullable == true);
+          if (isDataPropertyNullable)
           {
             _dataObjectWriter.WriteLine("if (value != null) {0} = Convert.To{1}(value);", dataProperty.propertyName, dataProperty.dataType);
           }
