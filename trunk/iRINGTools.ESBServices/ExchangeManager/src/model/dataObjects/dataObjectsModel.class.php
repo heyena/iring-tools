@@ -42,7 +42,7 @@ class dataObjectsModel{
 		$this->nodeType=$params['nodetype'];
 		switch($this->nodeType){
 			case "exchanges":
-                            if(!isset($params['exchangeAction'])){
+             if(!isset($params['exchangeAction'])){
 				if(isset($params['hasreviewed'])){
 					$append ='/submit';
 					$this->dtiSubmitUrl = DXI_REQUEST_URL.'/'.$params['scope'].'/'.$params['nodetype'].'/'.$params['exchangeID'].$append;
@@ -194,14 +194,14 @@ class dataObjectsModel{
 
 
 	private function setDtitoCache($params){
-		//if($this->checkCacheData()){
-		//	$this->cacheDTI = true;
-		//	$this->dtiXMLData = $this->getCacheData();
-		//}else{
+		if($this->checkCacheData()){
+			$this->cacheDTI = true;
+			$this->dtiXMLData = $this->getCacheData();
+		}else{
 			$this->dtiXMLData = $this->getDtiInfo($params);
 			// cache the data
 			if(($this->dtiXMLData!=false) && (!empty($this->dtiXMLData))) $this->cacheData($this->dtiXMLData);
-		//}
+		}
 	}
 
 	/*
@@ -222,7 +222,6 @@ class dataObjectsModel{
 				session and if its there then fetch from
 				session or else send the request to get the dti info
 			*/
-
 		if(($this->dtiXMLData!=false)&&(!empty($this->dtiXMLData))){
 			$dxoResponse = $this->getDXOInfo($this->uriParams,$this->dtiXMLData);
 			if(($dxoResponse!=false) && ($dxoResponse!='')){
@@ -416,6 +415,7 @@ class dataObjectsModel{
 	}
 	
 	private function createJSONDataFormat($fetchedData){
+	
 		$xmlIterator = new SimpleXMLIterator($fetchedData);
 		$resultArr="";
 
@@ -528,7 +528,8 @@ class dataObjectsModel{
 		}
 
 		//**** echo json_encode(array("classObjName"=>$classObjectName,'relatedClasses'=>$classReferenceArray,"success"=>"true","cacheData"=>$this->cacheDTI,"rowData"=>json_encode($rowsDataArray),"columnsData"=>json_encode($columnsDataArray),"headersList"=>(json_encode($headerListDataArray))));
-		echo json_encode(array("filterSet"=>$gridFilterArray,"classObjName"=>$classObjectName,'relatedClasses'=>$classReferenceArray,"success"=>"true","cacheData"=>$this->cacheDTI,"columnsData"=>json_encode($columnsDataArray),"headersList"=>(json_encode($headerListDataArray))));
+
+		echo json_encode(array("pageSize"=>PAGESIZE,"filterSet"=>$gridFilterArray,"classObjName"=>$classObjectName,'relatedClasses'=>$classReferenceArray,"success"=>"true","cacheData"=>$this->cacheDTI,"columnsData"=>json_encode($columnsDataArray),"headersList"=>(json_encode($headerListDataArray))));
 		unset($jsonrowsArray);
 		unset($rowsArray);
 		unset($headerArrayList);
