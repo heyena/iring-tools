@@ -9,6 +9,7 @@ import java.util.Hashtable;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 //import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -16,7 +17,11 @@ import javax.ws.rs.core.Context;
 import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Logger;
+import org.iringtools.common.response.Response;
 import org.iringtools.refdata.federation.Federation;
+import org.iringtools.refdata.federation.IDGenerator;
+import org.iringtools.refdata.federation.Namespace;
+import org.iringtools.refdata.federation.Repository;
 //import org.iringtools.refdata.queries.Queries;
 //import org.iringtools.refdata.queries.Query;
 //import org.iringtools.refdata.queries.QueryBindings;
@@ -70,4 +75,81 @@ public class RefDataService
 	    
 	    return federation;
   }
+  
+  @POST
+  @Path("/federation")
+  public Response saveFederation(Federation federation)
+  {
+	  Response response = null;
+	  try
+	  {
+	    init();
+	    RefDataProvider refDataProvider = new RefDataProvider(settings);
+	    response = refDataProvider.saveFederation(federation);
+	  }
+	  catch (Exception ex)
+	  {
+	    logger.error("Error while saving federation xml: " + ex);
+	  }
+	  
+	  return response;
+  }
+  
+  @POST
+  @Path("/namespace")
+  public Response saveNamespace(Namespace namespace)
+  {
+	  Response response = null;
+	  try
+	  {
+	    init();
+	    RefDataProvider refDataProvider = new RefDataProvider(settings);
+	    response = refDataProvider.saveNamespace(namespace);
+	  }
+	  catch (Exception ex)
+	  {
+	    logger.error("Error while saving namespace: " + ex);
+	  }
+	  
+	  return response;
+  }
+  
+  @POST
+  @Path("/idgenerator")
+  public Response saveIDGenerator(IDGenerator idgenerator)
+  {
+	  Response response = null;
+	  try
+	  {
+	    init();
+	    RefDataProvider refDataProvider = new RefDataProvider(settings);
+	    response = refDataProvider.saveIdGenerator(idgenerator);
+	  }
+	  catch (Exception ex)
+	  {
+	    logger.error("Error while saving ID Generator: " + ex);
+	  }
+	  
+	  return response;
+  }
+  
+  @POST
+  @Path("/repository")
+  public Response saveRepository(Repository repository)
+  {
+	  Response response = null;
+	  try
+	  {
+	    init();
+	    RefDataProvider refDataProvider = new RefDataProvider(settings);
+	    response = refDataProvider.saveRepository(repository);
+	  }
+	  catch (Exception ex)
+	  {
+	    logger.error("Error while saving Repository: " + ex);
+	  }
+	  
+	  return response;
+  }
+  
 }

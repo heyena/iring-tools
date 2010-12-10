@@ -4,6 +4,7 @@ package org.iringtools.refdata.federation;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -38,6 +39,7 @@ import javax.xml.bind.annotation.XmlType;
     "description",
     "idGenerator"
 })
+@XmlRootElement(name = "namespace")
 public class Namespace {
 
     @XmlElement(required = true)
@@ -152,5 +154,10 @@ public class Namespace {
     public void setIdGenerator(int value) {
         this.idGenerator = value;
     }
-
+    
+    @Override
+    public boolean equals(Object o)
+    {	if(((Namespace) o).getAlias()==alias) return true;
+    else return false;
+    }
 }
