@@ -108,9 +108,8 @@ function getPageData($params){
 	$sort   = isset($_REQUEST['sort'])   ? $_REQUEST['sort']   : '';
 	$dir    = isset($_REQUEST['dir'])    ? $_REQUEST['dir']    : 'ASC';
 	$filters = isset($_REQUEST['filter']) ? $_REQUEST['filter'] : null;
-
-	$identifier = $_POST['identifier'];
-	$refClassIdentifier= $_POST['refClassIdentifier'];
+	$identifier = isset($_REQUEST['identifier'])?$_REQUEST['identifier']:0 ;
+	$refClassIdentifier= isset($_REQUEST['refClassIdentifier'])?$_REQUEST['refClassIdentifier']:0;
 	if($params[0]=='exchanges'){
 	unset($params[3]);
 	unset($params[4]);
