@@ -8,11 +8,9 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
 	title: 'NavigationPanel',
 	layout: 'card',			
 	activeItem: 0,
-	
 	configData: null,
 	dataGrid: null,
 	url: null,
-	pageSize: 20,
 	
   /**
   * initComponent
@@ -30,6 +28,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
 		var headerList = eval(this.configData.columnsData);
 		var classObjName = this.configData.classObjName;
 		var filterSet = eval(this.configData.filterSet);
+		var pageSize = this.configData.pageSize;
 		
 		var filters = new Ext.ux.grid.GridFilters({
 			// encode and local configuration options defined previously for easier reuse
@@ -67,7 +66,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
 			fields: fieldList
 		});
 
-		var store = new Ext.data.Store({
+	  var store = new Ext.data.Store({
       autoLoad:true,
       proxy: proxy,
       remoteSort: true,
@@ -76,7 +75,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
       autoLoad: {
       	params: {
       		start: 0, 
-      		limit: this.pageSize/*,
+      		limit: pageSize/*,
       		identifier:identifier,
       		refClassIdentifier:refClassIdentifier
       		*/
@@ -91,7 +90,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
     });
   	
   	this.dataGrid = new Ext.grid.GridPanel({
-  		store: store,
+	  store: store,
       columns: headerList,
       stripeRows: true,      
       loadMask: true,
@@ -104,7 +103,15 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
       minColumnWidth: 100,
       columnLines: true,
       classObjName: classObjName,
-      enableColumnMove: false
+      enableColumnMove: false,
+      bbar: new Ext.PagingToolbar({
+        	pageSize: 20,
+        	store: store,
+        	displayInfo: true,
+        	autoScroll: true,
+        	plugins: [filters]
+        })
+
   	});
   	
   	this.items = [
