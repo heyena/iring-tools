@@ -1,7 +1,4 @@
 Ext.onReady(function () {
-
-	var pageSize = 20;
-	
 	Ext.BLANK_IMAGE_URL = 'resources/images/s.gif';
 	Ext.QuickTips.init();
 	
@@ -32,25 +29,26 @@ Ext.onReady(function () {
 	});
 	
 	directoryPanel.on('open', function(panel, node, label, url) {	
-		      	
+
 		Ext.Ajax.request({
 			url: url,
 			method: 'POST',
 			params: {
-				limit: pageSize				
+				//*** limit: pageSize				
 			},
 			success: function(result, request) {
-				
 				var obj = node.attributes;
 				var scopeId = obj['Scope'];
 				var nodeType = obj['node_type'];
 				var nodeText = obj['text'];
 				var uid = obj['uid'];
-				
 				var pageURL = null;
 				
 				if ((nodeType == 'exchanges' && uid != '')) {
-					pageURL = 'dataObjects/getPageData/' + nodeType + '/' + scopeId + '/' + uid + '/' + identifier + '/' + refClassIdentifier					
+
+//					pageURL = 'dataObjects/getPageData/' + nodeType + '/' + scopeId + '/' + uid + '/' + identifier + '/' + refClassIdentifier
+					pageURL = 'dataObjects/getPageData/' + nodeType + '/' + scopeId + '/' + uid
+
 				} else if (nodeType == 'graph') {					
 					pageURL = 'dataObjects/getPageData/'+ nodeType + '/' + scopeId + '/' + node.parentNode.text + '/' + nodeText;
 				}
@@ -74,7 +72,6 @@ Ext.onReady(function () {
 						title: label,					
 						configData: responseData,
 						url: pageURL,
-						pageSize: 20,
 						closable: true
 					});
 					
