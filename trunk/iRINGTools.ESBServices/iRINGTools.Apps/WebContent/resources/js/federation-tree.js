@@ -42,8 +42,8 @@ Ext.onReady(function() {
 			icon : 'resources/images/16x16/internet-web-browser.png',
 			text : 'Federation'
 		},
-		//dataUrl : 'federation',
-                dataUrl : 'federation-tree.json',
+		dataUrl : 'federation',
+                //dataUrl : 'federation-tree.json',
 		tbar : new Ext.Toolbar({
 			xtype : "toolbar",
 			items : [
