@@ -238,7 +238,7 @@ namespace AdapterService.Tests
         request.Add("targetGraphName", "Lines");
         request.Add("format", "dto");
 
-        Response actual = target.Push("12345_000", "DEF", "LinesGraph", request);
+        Response actual = target.Push("12345_000", "DEF", "Lines", request);
         Assert.IsFalse(actual.Level == StatusLevel.Error);
     }
 

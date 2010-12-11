@@ -403,6 +403,8 @@ namespace org.iringtools.adapter.projection
           string query = String.Format(SUBCLASS_INSTANCE_QUERY_TEMPLATE, possessorRoleId, classInstance,
               templateMap.templateId, referenceVariable, referenceRoleId, referenceRoleValue, referenceEndStmt, classRole.roleId);
 
+          Utility.WriteString(query, "./Logs/Sparql.log", true);
+
           object results = _memoryStore.ExecuteQuery(query);
 
           if (results is SparqlResultSet)
@@ -423,6 +425,8 @@ namespace org.iringtools.adapter.projection
           {
             string query = String.Format(LITERAL_QUERY_TEMPLATE, possessorRoleId, classInstance,
                 templateMap.templateId, referenceVariable, referenceRoleId, referenceRoleValue, referenceEndStmt, roleMap.roleId);
+
+            Utility.WriteString(query, "./Logs/Sparql.log", true);
 
             object results = _memoryStore.ExecuteQuery(query);
 

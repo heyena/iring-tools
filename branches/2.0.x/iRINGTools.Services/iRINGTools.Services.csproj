@@ -81,6 +81,7 @@
   <ItemGroup>
     <Content Include="App_Data\InterfaceIntro.txt" />
     <Content Include="App_Data\SandboxIntro.txt" />
+    <Content Include="ClientAccessPolicy.xml" />
     <Content Include="css\interface.css" />
     <Content Include="css\iring-tools.css" />
     <Content Include="css\reset.css" />

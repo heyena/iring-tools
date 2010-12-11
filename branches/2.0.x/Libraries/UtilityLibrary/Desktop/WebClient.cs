@@ -424,10 +424,12 @@ namespace org.iringtools.utility
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 stream.Close();
 
-                //TODO: return based on http response status
-                if (response.StatusCode.ToString().Equals("OK"))
-                {
+                string message = Utility.SerializeFromStream(response.GetResponseStream());
 
+                //Handle the fact that dotNetRDF return 200 for parsing errors.
+                if (response.StatusCode == HttpStatusCode.OK && message.StartsWith("Parsing Error"))
+                {
+                  throw new Exception(message);
                 }
             }
             catch (Exception exception)

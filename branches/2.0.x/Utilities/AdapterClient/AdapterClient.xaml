@@ -1,15 +1,19 @@
 ﻿<Window x:Class="IDS_ADI.iRING.Adapter.AdapterClient"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="iRING Adapter Client" Height="468" Width="783" FontSize="12" FontFamily="Segue UI" Icon="iRING.ico">
-    <Grid>
-        <Grid.Background>
+    Title="iRING Adapter Client" Height="454" Width="776" FontSize="12" FontFamily="Segue UI" Icon="iRING.ico" Background="{x:Null}" AllowsTransparency="True">
+    <Grid Height="416" Width="754">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="377*" />
+      <ColumnDefinition Width="377*" />
+    </Grid.ColumnDefinitions>
+    <Grid.Background>
       <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-        <GradientStop Color="#FFFFFFFF"/>
-        <GradientStop Color="#FF3C78AC" Offset="1"/>
+        <GradientStop Color="#FFF0F0F0" Offset="0.134" />
+        <GradientStop Color="#FF3C78AC" Offset="0"/>
       </LinearGradientBrush>
     </Grid.Background>
-    <Border Margin="12,152,12,12" Name="border1" BorderThickness="1" BorderBrush="#FF3C78AC">
+    <Border Margin="12,0,12,12" Name="border1" BorderThickness="1" BorderBrush="Black" Height="208" VerticalAlignment="Bottom" Grid.ColumnSpan="2">
       <ListBox Margin="8,8,8,8" Name="listBoxResults" Foreground="Black" Background="White">
         <ListBox.ItemTemplate>
           <DataTemplate>
@@ -21,26 +25,27 @@
         </ListBox.ItemTemplate>
       </ListBox>
     </Border>
-    <Label Height="28" Margin="12,8,0,0" Name="labelAdapterURL" VerticalAlignment="Top" HorizontalContentAlignment="Right" HorizontalAlignment="Left" Width="80" VerticalContentAlignment="Center">Adapter URL:</Label>
-    <TextBox Margin="98,10,117,0" Name="textBoxAdapterURL" Height="28" VerticalAlignment="Top" VerticalContentAlignment="Center">http://localhost:52786</TextBox>
-    <Button Height="28" HorizontalAlignment="Right" Margin="0,10,11,0" Name="buttonRefresh" VerticalAlignment="Top" Width="100" Click="buttonRefresh_Click" IsEnabled="False">Refresh</Button>
+    <Label Height="28" Margin="12,56,0,0" Name="labelAdapterURL" VerticalAlignment="Top" HorizontalContentAlignment="Right" HorizontalAlignment="Left" Width="80" VerticalContentAlignment="Center">Adapter URL:</Label>
+    <TextBox Margin="98,58,117,0" Name="textBoxAdapterURL" Height="28" VerticalAlignment="Top" VerticalContentAlignment="Center" Grid.ColumnSpan="2">http://localhost:52786</TextBox>
+    <Button Height="28" HorizontalAlignment="Right" Margin="0,92,12,0" Name="buttonRefresh" VerticalAlignment="Top" Width="100" Click="buttonRefresh_Click" IsEnabled="False" Grid.Column="1">Refresh</Button>
       
-    <Label Height="28" Width="90" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Margin="2,45,0,0" Name="labelProjectName" VerticalAlignment="Top" VerticalContentAlignment="Center">Project Name:</Label>
-    <ComboBox Height="28" Width="180"  HorizontalAlignment="Left" Margin="98,44,0,0" Name="comboBoxProjectName" VerticalAlignment="Top" VerticalContentAlignment="Center"></ComboBox>
-    <Label Height="28" Width="170" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Margin="280,45,0,0" Name="labelApplicationName" VerticalAlignment="Top" VerticalContentAlignment="Center" >Application Name:</Label>
-    <ComboBox Height="28" Width="180" Margin="462,44,120,0" Name="comboBoxAppName" VerticalAlignment="Top" VerticalContentAlignment="Center"></ComboBox>
-    <Button Height="28" Margin="0,44,12,0" Name="buttonGetScopes" VerticalAlignment="Top" HorizontalAlignment="Right" Width="100" Click="buttonGetScopes_Click" IsDefault="True">Get Scopes</Button>
+    <Label Height="28" Width="90" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Margin="2,93,0,0" Name="labelProjectName" VerticalAlignment="Top" VerticalContentAlignment="Center">Project Name:</Label>
+    <ComboBox Height="28" Width="218"  HorizontalAlignment="Left" Margin="98,92,0,0" Name="comboBoxProjectName" VerticalAlignment="Top" VerticalContentAlignment="Center" IsEnabled="False"></ComboBox>
+    <Label Height="28" Width="112" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Margin="322,93,0,0" Name="labelApplicationName" VerticalAlignment="Top" VerticalContentAlignment="Center" Grid.ColumnSpan="2">Application Name:</Label>
+    <ComboBox Height="28" Margin="63,92,117,0" Name="comboBoxAppName" VerticalAlignment="Top" VerticalContentAlignment="Center" Grid.Column="1" IsEnabled="False"></ComboBox>
+    <Button Height="28" Margin="0,58,12,0" Name="buttonGetScopes" VerticalAlignment="Top" HorizontalAlignment="Right" Width="100" Click="buttonGetScopes_Click" IsDefault="True" Grid.Column="1">Get Scopes</Button>
 
-    <Label Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Margin="12,79,0,0" Name="labelTargetURL" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="80">Target URL:</Label>
-    <TextBox Height="28" Margin="98,78,224,0" Name="textBoxTargetURL" VerticalAlignment="Top" VerticalContentAlignment="Center">http://localhost/InterfaceService/</TextBox>
-    <Button Height="28" Margin="0,78,12,0" Name="buttonPull" VerticalAlignment="Top" HorizontalAlignment="Right" Width="100" Click="buttonPull_Click" IsDefault="True">Pull</Button>
-    <Label Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Margin="12,113,0,0" Name="labelGraphName" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="80">Graph Name:</Label>
-    <TextBox Height="28" Margin="98,112,0,0" Name="textBoxGraphName" VerticalAlignment="Top" VerticalContentAlignment="Center" HorizontalAlignment="Left" Width="150">Equipment</TextBox>
+    <Label Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Margin="12,127,0,0" Name="labelTargetURL" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="80">Target URL:</Label>
+    <TextBox Height="28" Margin="98,126,12,0" Name="textBoxTargetURL" VerticalAlignment="Top" VerticalContentAlignment="Center" Grid.ColumnSpan="2">http://localhost/InterfaceService/</TextBox>
+    <Button Height="28" Margin="0,160,119,0" Name="buttonPull" VerticalAlignment="Top" HorizontalAlignment="Right" Width="100" Click="buttonPull_Click" IsDefault="True" Grid.Column="1" IsEnabled="False">Pull</Button>
+    <Label Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Margin="12,161,0,0" Name="labelGraphName" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="80">Graph Name:</Label>
+    <TextBox Height="28" Margin="98,160,0,0" Name="textBoxGraphName" VerticalAlignment="Top" VerticalContentAlignment="Center" HorizontalAlignment="Left" Width="431" Grid.ColumnSpan="2" TextChanged="textBoxGraphName_TextChanged">Equipment</TextBox>
     <!--<Button Height="28" Margin="0,78,11,0" Name="buttonDictionaryGenerate" VerticalAlignment="Top" HorizontalAlignment="Right" Width="100" Click="buttonDictionaryGenerate_Click" IsDefault="True" Grid.ColumnSpan="2">Generate Dictionary</Button>-->
-    <Button HorizontalAlignment="Right" Margin="0,112,118,0" Name="buttonClear" Width="100" Height="28" VerticalAlignment="Top" Click="buttonClear_Click">Clear Triplestore</Button>
-    <Button HorizontalAlignment="Right" Margin="0,112,12,0" Name="buttonClearLog" Width="100" Height="28" VerticalAlignment="Top" Click="buttonClearLog_Click">Clear Logs</Button>
-        <Button Content="Push" Height="28" HorizontalAlignment="Right" IsDefault="True" Margin="0,79,119,0" Name="buttonPush" VerticalAlignment="Top" Width="100" Click="buttonPush_Click" />
-        <Label Content="Data Object Name:" Height="28" HorizontalAlignment="Left" HorizontalContentAlignment="Right" Margin="268,113,0,0" Name="label1" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="113" />
-        <TextBox Height="28" Margin="0,113,224,0" Name="textBoxDataObjectName" Text="Equipment" VerticalAlignment="Top" VerticalContentAlignment="Center" HorizontalAlignment="Right" Width="150" />
-    </Grid>
+    <Button HorizontalAlignment="Right" Margin="0,160,12,0" Name="buttonClearLog" Width="100" Height="28" VerticalAlignment="Top" Click="buttonClearLog_Click" Grid.Column="1">Clear Logs</Button>
+    <Image HorizontalAlignment="Center" Margin="10,10,244,366" Name="image1" OpacityMask="White">
+      <Image.Source>
+        <BitmapImage UriSource="/ProxyConfig;component/Images/iRINGTools.jpg" />
+      </Image.Source>
+    </Image>
+  </Grid>
 </Window>

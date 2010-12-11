@@ -8,6 +8,7 @@ using org.iringtools.library;
 using VDS.RDF.Query;
 using VDS.RDF;
 using System.Text.RegularExpressions;
+using org.iringtools.utility;
 
 namespace org.iringtools.adapter.projection
 {
@@ -310,6 +311,9 @@ namespace org.iringtools.adapter.projection
         string classId = pair.Key.classId;
 
         string query = String.Format(CLASS_INSTANCE_QUERY_TEMPLATE, classId);
+
+        Utility.WriteString(query, "./Logs/Sparql.log", true);
+
         object results = _memoryStore.ExecuteQuery(query);
 
         if (results != null)

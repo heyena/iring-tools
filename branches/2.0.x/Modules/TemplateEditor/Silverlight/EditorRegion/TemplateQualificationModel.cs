@@ -401,7 +401,7 @@ namespace org.iringtools.modules.templateeditor.editorregion
             {
                 if (_selectedRole != null)
                 {
-                    selectedRole.range = value.Value;
+                    selectedRole.range = value.Key;
 
                     RaisePropertyChanged(this, "SelectedRoleRange");
                 }
