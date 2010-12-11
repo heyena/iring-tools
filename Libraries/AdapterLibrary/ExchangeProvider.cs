@@ -138,6 +138,8 @@ namespace org.iringtools.exchange
 
       try
       {
+        Utility.WriteString("SPARQLs will go here:", "./Logs/Sparql.log", true);
+
         status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
 
         InitializeScope(projectName, applicationName);

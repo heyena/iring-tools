@@ -198,13 +198,18 @@ namespace IDS_ADI.iRING.Adapter
       request.Add("format", "dto");
 
       ExpectedResults expectedResults = new ExpectedResults();
-      expectedResults.DataObjectName = textBoxDataObjectName.Text;
+      //expectedResults.DataObjectName = textBoxDataObjectName.Text;
       expectedResults.Add("ResultTag", "TargetTag");
       request.ExpectedResults = expectedResults;
 
       string message = Utility.SerializeDataContract<PushRequest>(request);
 
       client.UploadStringAsync(pushURI, message);
+    }
+
+    private void textBoxGraphName_TextChanged(object sender, TextChangedEventArgs e)
+    {
+
     }
 
 

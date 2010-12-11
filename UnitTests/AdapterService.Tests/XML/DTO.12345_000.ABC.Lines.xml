@@ -1,4 +1,4 @@
-<dataTransferObjects xmlns="http://iringtools.org/adapter/dto" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+<dataTransferObjects xmlns="http://www.iringtools.org/dxfr/dto" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
   <scopeName>12345_000</scopeName>
   <appName>ABC</appName>
   <dataTransferObjectList>
