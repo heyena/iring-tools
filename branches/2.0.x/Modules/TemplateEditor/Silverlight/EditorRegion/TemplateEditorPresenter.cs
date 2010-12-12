@@ -459,6 +459,9 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 ButtonCtrl("removeRole1").DataContext = _templateModel;
                 ButtonCtrl("applyRole1").DataContext = _templateModel;
                 ButtonCtrl("editRole").DataContext = _templateModel;
+
+                //TODO: The Issue is that the name has been mangled so they dont match
+                //ComboBoxCtrl("cmbRepositories").SelectedValue = _templateModel.QMXF.targetRepository;
             }
             catch (Exception ex)
             {
