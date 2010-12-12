@@ -499,6 +499,10 @@ namespace org.ids_adi.qmxf
         [DataMember(Name = "id", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "id")]
         public string identifier { get; set; }
+
+        [DataMember(Name = "index", EmitDefaultValue = false)]
+        [XmlAttribute(AttributeName = "index")]
+        public string index { get; set; }
        
         [DataMember(Name = "range", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "range")]
