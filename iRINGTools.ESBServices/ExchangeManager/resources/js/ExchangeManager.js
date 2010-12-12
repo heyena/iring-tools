@@ -33,9 +33,7 @@ Ext.onReady(function () {
 		Ext.Ajax.request({
 			url: url,
 			method: 'POST',
-			params: {
-				//*** limit: pageSize				
-			},
+			params: {},
 			success: function(result, request) {
 				var obj = node.attributes;
 				var scopeId = obj['Scope'];
@@ -46,7 +44,7 @@ Ext.onReady(function () {
 				
 				if ((nodeType == 'exchanges' && uid != '')) {
 
-//					pageURL = 'dataObjects/getPageData/' + nodeType + '/' + scopeId + '/' + uid + '/' + identifier + '/' + refClassIdentifier
+					//pageURL = 'dataObjects/getPageData/' + nodeType + '/' + scopeId + '/' + uid + '/' + identifier + '/' + refClassIdentifier
 					pageURL = 'dataObjects/getPageData/' + nodeType + '/' + scopeId + '/' + uid
 
 				} else if (nodeType == 'graph') {					
@@ -71,7 +69,7 @@ Ext.onReady(function () {
 					var newTab = new ExchangeManager.NavigationPanel({		
 						title: label,					
 						configData: responseData,
-						url: pageURL,
+						url: pageURL,						
 						closable: true
 					});
 					

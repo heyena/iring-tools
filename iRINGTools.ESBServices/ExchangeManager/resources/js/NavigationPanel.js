@@ -10,7 +10,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
 	activeItem: 0,
 	configData: null,
 	dataGrid: null,
-	url: null,
+	url: null,	
 	
   /**
   * initComponent
@@ -28,7 +28,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
 		var headerList = eval(this.configData.columnsData);
 		var classObjName = this.configData.classObjName;
 		var filterSet = eval(this.configData.filterSet);
-		var pageSize = this.configData.pageSize;
+		var pageSize = this.configData.pageSize; 
 		
 		var filters = new Ext.ux.grid.GridFilters({
 			// encode and local configuration options defined previously for easier reuse
@@ -67,7 +67,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
 		});
 
 	  var store = new Ext.data.Store({
-      autoLoad:true,
+      autoLoad: true,
       proxy: proxy,
       remoteSort: true,
       reader: reader,
