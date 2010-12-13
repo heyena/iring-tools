@@ -57,7 +57,7 @@ namespace org.iringtools.adapter
     private Response _response = null;
     private IKernel _kernel = null;
     private AdapterSettings _settings = null;
-    private List<ScopeProject> _scopes = null;
+    private ScopeProjects _scopes = null;
     private IDataLayer _dataLayer = null;
     private ISemanticLayer _semanticEngine = null;
     private IProjectionLayer _projectionEngine = null;
@@ -116,12 +116,12 @@ namespace org.iringtools.adapter
 
       if (File.Exists(scopesPath))
       {
-        _scopes = Utility.Read<List<ScopeProject>>(scopesPath);
+        _scopes = Utility.Read<ScopeProjects>(scopesPath);
       }
       else
       {
-        _scopes = new List<ScopeProject>();
-        Utility.Write<List<ScopeProject>>(_scopes, scopesPath);
+        _scopes = new ScopeProjects();
+        Utility.Write<ScopeProjects>(_scopes, scopesPath);
       }
 
       _response = new Response();
@@ -130,7 +130,7 @@ namespace org.iringtools.adapter
     }
 
     #region application methods
-    public List<ScopeProject> GetScopes()
+    public ScopeProjects GetScopes()
     {
       try
       {
@@ -839,7 +839,7 @@ namespace org.iringtools.adapter
           {
             Name = projectName,
             Description = projectDescription,
-            Applications = new List<ScopeApplication>()
+            Applications = new ScopeApplications()
             {
               new ScopeApplication()
               {
@@ -1131,5 +1131,17 @@ namespace org.iringtools.adapter
       return asemblies;
     }
 
+    public org.iringtools.library.VersionInfo GetVersion()
+    {
+      System.Version version = this.GetType().Assembly.GetName().Version;
+
+      return new org.iringtools.library.VersionInfo()
+      {
+        Major = version.Major,
+        Minor = version.Minor,
+        Build = version.Build,
+        Revision = version.Revision
+      };
+    }
   }
 }

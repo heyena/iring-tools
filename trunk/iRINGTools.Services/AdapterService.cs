@@ -71,9 +71,9 @@ namespace org.iringtools.services
     /// <returns>Returns the version as a string.</returns>
     [Description("Gets the version of the service.")]
     [WebGet(UriTemplate = "/version")]
-    public string GetVersion()
+    public VersionInfo GetVersion()
     {
-      return _adapterProvider.GetType().Assembly.GetName().Version.ToString();
+      return _adapterProvider.GetVersion();
     }
     #endregion
 
@@ -84,7 +84,7 @@ namespace org.iringtools.services
     /// <returns>Returns a list of ScopeProject objects.</returns>
     [Description("Gets the scopes (project and application combinations) available from the service.")]
     [WebGet(UriTemplate = "/scopes")]
-    public List<ScopeProject> GetScopes()
+    public ScopeProjects GetScopes()
     {
       return _adapterProvider.GetScopes();
     }

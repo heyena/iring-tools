@@ -125,9 +125,7 @@
     <Compile Include="Manifest.cs" />
     <Compile Include="PushRequest.cs" />
     <Compile Include="Queries.cs" />
-    <Compile Include="ScopeApplication.cs" />
-    <Compile Include="ScopeProject.cs" />
-    <Compile Include="ScopeList.cs" />
+    <Compile Include="Scopes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\..\..\AssemblyInfo.cs" />
     <Compile Include="QMXF.cs" />
