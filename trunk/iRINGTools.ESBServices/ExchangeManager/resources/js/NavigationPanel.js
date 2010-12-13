@@ -29,6 +29,8 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
 		var classObjName = this.configData.classObjName;
 		var filterSet = eval(this.configData.filterSet);
 		var pageSize = this.configData.pageSize; 
+		var sortBy = this.configData.sortBy
+		var sortOrder = this.configData.sortOrder
 		
 		var filters = new Ext.ux.grid.GridFilters({
 			// encode and local configuration options defined previously for easier reuse
@@ -52,7 +54,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
   	// send the request to generate the arraystore
 		var proxy = new Ext.data.HttpProxy({
 			api: {
-				read: new Ext.data.Connection({ url: this.url, method: 'POST', timeout: 120000 }),
+		read: new Ext.data.Connection({ url: this.url, method: 'POST', timeout: 120000 }),
         create: null,
         update: null,
         destroy: null
@@ -71,7 +73,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
       proxy: proxy,
       remoteSort: true,
       reader: reader,
-      sortInfo: { field: 'TransferType', direction: "ASC" },
+	  sortInfo: { field: sortBy, direction: sortOrder },
       autoLoad: {
       	params: {
       		start: 0, 
@@ -110,8 +112,35 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
         	displayInfo: true,
         	autoScroll: true,
         	plugins: [filters]
-        })
-
+        }),
+	listeners: {
+	beforerender: {
+		fn: function(){
+				var colmodel = this.getColumnModel();
+				for(var i=0; i<colmodel.getColumnCount();i++){
+					colmodel.setRenderer(i,function(val){
+						switch(val.toLowerCase())
+						{
+							case "add":
+								spanColor='red';
+								break;
+							case "change":
+								spanColor='blue';
+								break;
+							case "delete":
+								spanColor='green';
+								break;
+							case "sync":
+								spanColor='black';
+								break;
+							default:
+								spanColor='black';
+						}
+						return '<span style="color:'+spanColor+';">' + val + '</span>';
+					});
+				}
+			}
+		}}
   	});
   	
   	this.items = [
