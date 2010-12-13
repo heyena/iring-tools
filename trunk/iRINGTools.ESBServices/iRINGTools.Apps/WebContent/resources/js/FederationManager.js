@@ -26,6 +26,7 @@ Ext.onReady(function () {
 		region: 'center',
 		id: 'contentPanel',
 		margins: '0 5 0 0',
+                disabled:true,
 		enableTabScroll: true                
 	});
 
@@ -49,12 +50,12 @@ Ext.onReady(function () {
                                 deferredRender: false
                         }                        
                 });
-
+                Ext.getCmp('contentPanel').enable()
                 contentPanel.add(newTab);
-                contentPanel.activate(newTab);			
+                contentPanel.activate(newTab); 
 
 	});
-
+      
 	var viewport = new Ext.Viewport({
 		layout: 'border',
 		renderTo: Ext.getBody(),

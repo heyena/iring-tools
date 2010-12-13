@@ -61,22 +61,24 @@ FederationManager.ContentPanel = Ext.extend(Ext.Panel, {
                         edit_form.getForm().reset();
                     }
             } ],
-           autoDestroy:false,
-           listeners: {
-            close: function(){ alert('ddddd')
-                // check number of tabs in panel to make disabled the centerPanel if its the last tab has been closed.
-                if((Ext.getCmp('centerPanel').items.length) ==1){
-                    Ext.getCmp('centerPanel').disable();
-                 }
-                }
-            }
+           autoDestroy:false
+           
   	});
 
   	this.items = [
   		this.dataForm
   	];
 
+      this.on('close', this.onCloseTab, this);
+
     // super
     FederationManager.ContentPanel.superclass.initComponent.call(this);
+  },
+  onCloseTab: function(node) {
+      // check number of tabs in panel to make disabled the centerPanel if its the last tab has been closed.
+        if((Ext.getCmp('contentPanel').items.length) ==1){
+              Ext.getCmp('contentPanel').disable();
+         }
+  
   }
 });
