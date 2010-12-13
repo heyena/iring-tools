@@ -177,7 +177,7 @@ namespace AdapterService.Tests
     public void GetScopes()
     {
       AdapterProxy target = new AdapterProxy();
-      List<ScopeProject> scopes = target.GetScopes();
+      ScopeProjects scopes = target.GetScopes();
       Assert.AreNotEqual(0, scopes.Count);
     }
 

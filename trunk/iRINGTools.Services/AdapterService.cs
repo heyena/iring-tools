@@ -100,7 +100,7 @@ namespace org.iringtools.services
     /// <returns>Returns a Response object.</returns>
     [Description("Replaces the available scopes with the posted scopes.")]
     [WebInvoke(Method = "POST", UriTemplate = "/scopes")]
-    public Response UpdateScopes(List<ScopeProject> scopes)
+    public Response UpdateScopes(ScopeProjects scopes)
     {
       return _adapterProvider.UpdateScopes(scopes);
     }
@@ -184,7 +184,7 @@ namespace org.iringtools.services
     #region GetDataLayers
     [Description("Get a list of Data Layers available from the service.")]
     [WebGet(UriTemplate = "/datalayers")]
-    public List<string> GetDatalayers()
+    public DataLayers GetDatalayers()
     {
       return _adapterProvider.GetDataLayers();
     }

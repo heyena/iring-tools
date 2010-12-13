@@ -53,7 +53,7 @@ namespace org.iringtools.facade
     private AdapterSettings _settings = null;
     private IDataLayer _dataLayer = null;
     private ISemanticLayer _semanticEngine = null;
-    private List<ScopeProject> _scopes = null;
+    private ScopeProjects _scopes = null;
     private Mapping _mapping = null;
     private GraphMap _graphMap = null;
     private WebHttpClient _webHttpClient = null;
@@ -106,12 +106,12 @@ namespace org.iringtools.facade
 
       if (File.Exists(scopesPath))
       {
-        _scopes = Utility.Read<List<ScopeProject>>(scopesPath);
+        _scopes = Utility.Read<ScopeProjects>(scopesPath);
       }
       else
       {
-        _scopes = new List<ScopeProject>();
-        Utility.Write<List<ScopeProject>>(_scopes, scopesPath);
+        _scopes = new ScopeProjects();
+        Utility.Write<ScopeProjects>(_scopes, scopesPath);
       }
 
       _response = new Response();

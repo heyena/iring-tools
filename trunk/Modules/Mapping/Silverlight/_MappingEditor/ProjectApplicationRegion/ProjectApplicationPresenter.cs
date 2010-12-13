@@ -27,7 +27,7 @@ namespace org.iringtools.modules.projectapplicationregion
 {
   public class ProjectApplicationPresenter : PresenterBase<ProjectApplicationView>
   {
-    private List<ScopeProject> _projects = null;
+    private ScopeProjects _scopes = null;
     private IEventAggregator _aggregator = null;
     private IAdapter _adapterProxy = null;
     private IIMPresentationModel _model = null;
@@ -109,9 +109,9 @@ namespace org.iringtools.modules.projectapplicationregion
                     return;
                 }
 
-                _projects = (List<ScopeProject>)args.Data;
+                _scopes = (ScopeProjects)args.Data;
 
-                foreach (ScopeProject project in _projects)
+                foreach (ScopeProject project in _scopes)
                 {
                     prjCB.Items.Add(project.Name);
                 }
@@ -198,7 +198,7 @@ namespace org.iringtools.modules.projectapplicationregion
         {
             ComboBox prjCB = (ComboBox)sender;
 
-            foreach (ScopeProject project in _projects)
+            foreach (ScopeProject project in _scopes)
             {
                 if (project.Name == (string)prjCB.SelectedItem)
                 {
