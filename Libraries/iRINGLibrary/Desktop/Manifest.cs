@@ -35,7 +35,7 @@ namespace org.iringtools.dxfr.manifest
 
     private string versionField;
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true)]
     public org.iringtools.dxfr.manifest.Graphs graphs
     {
       get
@@ -48,7 +48,7 @@ namespace org.iringtools.dxfr.manifest
       }
     }
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true)]
     public string version
     {
       get
@@ -74,7 +74,7 @@ namespace org.iringtools.dxfr.manifest
 
     private org.iringtools.dxfr.manifest.ClassTemplatesList classTemplatesListField;
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true)]
     public string name
     {
       get
@@ -87,7 +87,7 @@ namespace org.iringtools.dxfr.manifest
       }
     }
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 1)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 1)]
     public org.iringtools.dxfr.manifest.ClassTemplatesList classTemplatesList
     {
       get
@@ -113,7 +113,7 @@ namespace org.iringtools.dxfr.manifest
 
     private org.iringtools.dxfr.manifest.Templates templatesField;
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true)]
     public org.iringtools.dxfr.manifest.Class @class
     {
       get
@@ -126,7 +126,7 @@ namespace org.iringtools.dxfr.manifest
       }
     }
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true)]
     public org.iringtools.dxfr.manifest.Templates templates
     {
       get
@@ -147,7 +147,7 @@ namespace org.iringtools.dxfr.manifest
 
     private string nameField;
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true)]
     public string classId
     {
       get
@@ -160,7 +160,7 @@ namespace org.iringtools.dxfr.manifest
       }
     }
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true)]
     public string name
     {
       get
@@ -190,7 +190,7 @@ namespace org.iringtools.dxfr.manifest
 
     private org.iringtools.mapping.TransferOption transferOptionField;
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true)]
     public string templateId
     {
       get
@@ -203,7 +203,7 @@ namespace org.iringtools.dxfr.manifest
       }
     }
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 1)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 1)]
     public string name
     {
       get
@@ -216,7 +216,7 @@ namespace org.iringtools.dxfr.manifest
       }
     }
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 2)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 2)]
     public org.iringtools.dxfr.manifest.Roles roles
     {
       get
@@ -276,7 +276,7 @@ namespace org.iringtools.dxfr.manifest
       }
     }
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 1)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 1)]
     public string roleId
     {
       get
@@ -289,7 +289,7 @@ namespace org.iringtools.dxfr.manifest
       }
     }
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 2)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 2)]
     public string name
     {
       get
@@ -302,7 +302,7 @@ namespace org.iringtools.dxfr.manifest
       }
     }
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 3)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 3)]
     public string dataType
     {
       get
@@ -315,7 +315,7 @@ namespace org.iringtools.dxfr.manifest
       }
     }
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 4)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 4)]
     public string value
     {
       get
@@ -328,7 +328,7 @@ namespace org.iringtools.dxfr.manifest
       }
     }
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 5)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 5)]
     public org.iringtools.dxfr.manifest.Class @class
     {
       get
@@ -389,7 +389,7 @@ namespace org.iringtools.mapping
 
     private string versionField;
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true)]
     public org.iringtools.mapping.GraphMaps graphMaps
     {
       get
@@ -402,7 +402,7 @@ namespace org.iringtools.mapping
       }
     }
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true)]
     public org.iringtools.mapping.ValueListMaps valueListMaps
     {
       get
@@ -415,7 +415,7 @@ namespace org.iringtools.mapping
       }
     }
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true)]
     public string version
     {
       get
@@ -444,11 +444,11 @@ namespace org.iringtools.mapping
   {
     private string nameField;
 
-    private org.iringtools.mapping.ClassTemplateMapList classTemplateMapsField;
+    private org.iringtools.mapping.ClassTemplateMaps classTemplateMapsField;
 
     private string dataObjectNameField;
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true)]
     public string name
     {
       get
@@ -461,8 +461,8 @@ namespace org.iringtools.mapping
       }
     }
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 1)]
-    public org.iringtools.mapping.ClassTemplateMapList classTemplateMaps
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 1)]
+    public org.iringtools.mapping.ClassTemplateMaps classTemplateMaps
     {
       get
       {
@@ -474,7 +474,7 @@ namespace org.iringtools.mapping
       }
     }
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 2)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 2)]
     public string dataObjectName
     {
       get
@@ -489,7 +489,7 @@ namespace org.iringtools.mapping
   }
 
   [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "classTemplateMaps", Namespace = "http://www.iringtools.org/mapping", ItemName = "classTemplateMap")]
-  public class ClassTemplateMapList : System.Collections.Generic.List<org.iringtools.mapping.ClassTemplateMap>
+  public class ClassTemplateMaps : System.Collections.Generic.List<org.iringtools.mapping.ClassTemplateMap>
   {
   }
 
@@ -500,7 +500,7 @@ namespace org.iringtools.mapping
 
     private org.iringtools.mapping.TemplateMaps templateMapsField;
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true)]
     public org.iringtools.mapping.ClassMap classMap
     {
       get
@@ -513,7 +513,7 @@ namespace org.iringtools.mapping
       }
     }
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true)]
     public org.iringtools.mapping.TemplateMaps templateMaps
     {
       get
@@ -540,7 +540,7 @@ namespace org.iringtools.mapping
 
     private string identifierValueField;
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true)]
     public string name
     {
       get
@@ -553,7 +553,7 @@ namespace org.iringtools.mapping
       }
     }
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 1)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 1)]
     public string classId
     {
       get
@@ -579,7 +579,7 @@ namespace org.iringtools.mapping
       }
     }
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 3)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 3)]
     public org.iringtools.mapping.Identifiers identifiers
     {
       get
@@ -629,7 +629,7 @@ namespace org.iringtools.mapping
 
     private org.iringtools.mapping.TransferOption transferOptionField;
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true)]
     public string templateId
     {
       get
@@ -655,7 +655,7 @@ namespace org.iringtools.mapping
       }
     }
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 2)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 2)]
     public string name
     {
       get
@@ -668,7 +668,7 @@ namespace org.iringtools.mapping
       }
     }
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 3)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 3)]
     public org.iringtools.mapping.RoleMaps roleMaps
     {
       get
@@ -743,7 +743,7 @@ namespace org.iringtools.mapping
       }
     }
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 1)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 1)]
     public string roleId
     {
       get
@@ -756,7 +756,7 @@ namespace org.iringtools.mapping
       }
     }
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false, Order = 2)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, Order = 2)]
     public string name
     {
       get
@@ -842,7 +842,7 @@ namespace org.iringtools.mapping
 
     private org.iringtools.mapping.ValueMaps valueMapsField;
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true)]
     public string name
     {
       get
@@ -855,7 +855,7 @@ namespace org.iringtools.mapping
       }
     }
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true)]
     public org.iringtools.mapping.ValueMaps valueMaps
     {
       get
@@ -881,7 +881,7 @@ namespace org.iringtools.mapping
 
     private string uriField;
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true)]
     public string internalValue
     {
       get
@@ -894,7 +894,7 @@ namespace org.iringtools.mapping
       }
     }
 
-    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true, EmitDefaultValue = false)]
+    [System.Runtime.Serialization.DataMemberAttribute(IsRequired = true)]
     public string uri
     {
       get

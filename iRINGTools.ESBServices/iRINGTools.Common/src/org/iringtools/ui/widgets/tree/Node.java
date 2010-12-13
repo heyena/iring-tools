@@ -37,7 +37,7 @@ import javax.xml.bind.annotation.XmlType;
     "iconCls",
     "text",
     "id",
-    "properties"
+    "items"
 })
 @XmlSeeAlso({
     TreeNode.class,
@@ -51,8 +51,8 @@ public abstract class Node {
     protected String text;
     @XmlElement(required = true)
     protected String id;
-    @XmlElement(required = true)
-    protected List<Property> properties;
+    @XmlElement(name = "properties", required = true)
+    protected List<Property> items;
 
     /**
      * Gets the value of the iconCls property.
@@ -127,18 +127,18 @@ public abstract class Node {
     }
 
     /**
-     * Gets the value of the properties property.
+     * Gets the value of the items property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the properties property.
+     * This is why there is not a <CODE>set</CODE> method for the items property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getProperties().add(newItem);
+     *    getItems().add(newItem);
      * </pre>
      * 
      * 
@@ -148,23 +148,23 @@ public abstract class Node {
      * 
      * 
      */
-    public List<Property> getProperties() {
-        if (properties == null) {
-            properties = new ArrayList<Property>();
+    public List<Property> getItems() {
+        if (items == null) {
+            items = new ArrayList<Property>();
         }
-        return this.properties;
+        return this.items;
     }
 
     /**
-     * Sets the value of the properties property.
+     * Sets the value of the items property.
      * 
-     * @param properties
+     * @param items
      *     allowed object is
      *     {@link Property }
      *     
      */
-    public void setProperties(List<Property> properties) {
-        this.properties = properties;
+    public void setItems(List<Property> items) {
+        this.items = items;
     }
 
 }

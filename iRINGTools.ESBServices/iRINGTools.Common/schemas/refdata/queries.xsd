@@ -13,10 +13,15 @@
 
   <xs:element name="queries" type="Queries"/>
 
-
   <xs:complexType name="Queries">
     <xs:sequence>
-      <xs:element name="queryItem" type="QueryItem" maxOccurs="unbounded"/>
+      <xs:element name="queryItem" type="QueryItem" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 
@@ -36,7 +41,13 @@
 
   <xs:complexType name="QueryBindings">
     <xs:sequence>
-      <xs:element name="queryBinding" type="QueryBinding" maxOccurs="unbounded"/>
+      <xs:element name="queryBinding" type="QueryBinding" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 
@@ -53,7 +64,4 @@
       <xs:enumeration value="Literal"/>
     </xs:restriction>
   </xs:simpleType>
-
-
-
 </xs:schema>

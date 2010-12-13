@@ -119,7 +119,7 @@ public class ESBService
       String targetManifestUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/manifest";
       Manifest targetManifest = httpClient.get(Manifest.class, targetManifestUrl);
       
-      if (targetManifest == null || targetManifest.getGraphs().getGraphs().size() == 0)
+      if (targetManifest == null || targetManifest.getGraphs().getItems().size() == 0)
         return null;
 
       // get source dti
@@ -169,7 +169,7 @@ public class ESBService
 
       DataTransferObjectList resultDtoList = new DataTransferObjectList();
       resultDtos.setDataTransferObjectList(resultDtoList);
-      List<DataTransferObject> resultDtoListItems = resultDtoList.getDataTransferObjectListItems();
+      List<DataTransferObject> resultDtoListItems = resultDtoList.getItems();
 
       // init exchange definition
       initExchangeDefinition(scope, id);
@@ -178,13 +178,13 @@ public class ESBService
       String targetManifestUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/manifest";
       Manifest targetManifest = httpClient.get(Manifest.class, targetManifestUrl);
       
-      if (targetManifest == null || targetManifest.getGraphs().getGraphs().size() == 0)
+      if (targetManifest == null || targetManifest.getGraphs().getItems().size() == 0)
         return null;
 
       List<DataTransferIndex> sourceDtiListItems = new ArrayList<DataTransferIndex>();
       List<DataTransferIndex> targetDtiListItems = new ArrayList<DataTransferIndex>();
 
-      for (DataTransferIndex dti : dataTransferIndices.getDataTransferIndexList().getDataTransferIndexListItems())
+      for (DataTransferIndex dti : dataTransferIndices.getDataTransferIndexList().getItems())
       {
         switch (dti.getTransferType())
         {
@@ -210,14 +210,13 @@ public class ESBService
         DtoPageRequest sourceDtoPageRequest = new DtoPageRequest();
         sourceDtoPageRequest.setManifest(targetManifest);
         DataTransferIndices sourceDataTransferIndices = new DataTransferIndices();
-        DataTransferIndexList sourceDtiList = new DataTransferIndexList();
-        sourceDtiList.setDataTransferIndexListItems(sourceDtiListItems);
-        sourceDataTransferIndices.setDataTransferIndexList(sourceDtiList);
+        DataTransferIndexList sourceDtiList = sourceDataTransferIndices.getDataTransferIndexList();
+        sourceDtiList.setItems(sourceDtiListItems);
         sourceDtoPageRequest.setDataTransferIndices(sourceDataTransferIndices);
 
         String sourceDtoUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName + "/xfr/page";
         sourceDtos = httpClient.post(DataTransferObjects.class, sourceDtoUrl, sourceDtoPageRequest);
-        List<DataTransferObject> sourceDtoListItems = sourceDtos.getDataTransferObjectList().getDataTransferObjectListItems();
+        List<DataTransferObject> sourceDtoListItems = sourceDtos.getDataTransferObjectList().getItems();
 
         // append add/sync DTOs to resultDtoList, leave change DTOs to send to differencing engine
         for (int i = 0; i < sourceDtoListItems.size(); i++)
@@ -259,14 +258,14 @@ public class ESBService
         DtoPageRequest targetDtoPageRequest = new DtoPageRequest();
         targetDtoPageRequest.setManifest(targetManifest);
         DataTransferIndices targetDataTransferIndices = new DataTransferIndices();
-        DataTransferIndexList targetDtiList = new DataTransferIndexList();
-        targetDtiList.setDataTransferIndexListItems(targetDtiListItems);
+        DataTransferIndexList targetDtiList = targetDataTransferIndices.getDataTransferIndexList();
+        targetDtiList.setItems(targetDtiListItems);
         targetDataTransferIndices.setDataTransferIndexList(targetDtiList);
         targetDtoPageRequest.setDataTransferIndices(targetDataTransferIndices);
 
         String targetDtoUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName + "/xfr/page";
         targetDtos = httpClient.post(DataTransferObjects.class, targetDtoUrl, targetDtoPageRequest);
-        List<DataTransferObject> targetDtoListItems = targetDtos.getDataTransferObjectList().getDataTransferObjectListItems();
+        List<DataTransferObject> targetDtoListItems = targetDtos.getDataTransferObjectList().getItems();
 
         // append delete DTOs to resultDtoList, leave change DTOs to send to differencing engine
         for (int i = 0; i < targetDtoListItems.size(); i++)
@@ -309,7 +308,7 @@ public class ESBService
 
         // add diff DTOs to add/change/sync list
         if (dxoList != null)
-          resultDtoListItems.addAll(dxoList.getDataTransferObjectList().getDataTransferObjectListItems());
+          resultDtoListItems.addAll(dxoList.getDataTransferObjectList().getItems());
       }
 
       DataTransferObjectComparator dtoc = new DataTransferObjectComparator();
@@ -348,7 +347,7 @@ public class ESBService
       if (dtis == null)
         return null;
 
-      List<DataTransferIndex> dtiList = dtis.getDataTransferIndexList().getDataTransferIndexListItems();
+      List<DataTransferIndex> dtiList = dtis.getDataTransferIndexList().getItems();
       
       if (dtiList.size() == 0)
         return null;
@@ -377,7 +376,7 @@ public class ESBService
       // get target manifest
       Manifest targetManifest = httpClient.get(Manifest.class, targetManifestUrl);
       
-      if (targetManifest == null || targetManifest.getGraphs().getGraphs().size() == 0)
+      if (targetManifest == null || targetManifest.getGraphs().getItems().size() == 0)
         return null;
 
       // create a pool (page) DTOs to send to target endpoint
@@ -417,14 +416,14 @@ public class ESBService
         DtoPageRequest poolDtosRequest = new DtoPageRequest();
         poolDtosRequest.setManifest(targetManifest);
         DataTransferIndices poolDataTransferIndices = new DataTransferIndices();
-        DataTransferIndexList poolDtiList = new DataTransferIndexList();
-        poolDtiList.setDataTransferIndexListItems(sourcePoolDtiList);
+        DataTransferIndexList poolDtiList = poolDataTransferIndices.getDataTransferIndexList();
+        poolDtiList.setItems(sourcePoolDtiList);
         poolDataTransferIndices.setDataTransferIndexList(poolDtiList);
         poolDtosRequest.setDataTransferIndices(poolDataTransferIndices);
         
         String sourceDtoUrl = sourceGraphUrl + "/xfr/page";
         DataTransferObjects poolDtos = httpClient.post(DataTransferObjects.class, sourceDtoUrl, poolDtosRequest);
-        List<DataTransferObject> poolDtoListItems = poolDtos.getDataTransferObjectList().getDataTransferObjectListItems();
+        List<DataTransferObject> poolDtoListItems = poolDtos.getDataTransferObjectList().getItems();
 
         // set transfer type for each DTO in poolDtoList and remove/report ones that have changed
         // and deleted during review and acceptance period
@@ -447,7 +446,7 @@ public class ESBService
                   if (!hashValue.equalsIgnoreCase(dti.getHashValue()))
                   {
                     Status status = createStatus(identifier, "DTO has changed.");
-                    exchangeResponse.getStatusList().getStatuses().add(status);
+                    exchangeResponse.getStatusList().getItems().add(status);
                     
                     if (exchangeResponse.getLevel() != Level.ERROR)
                       exchangeResponse.setLevel(Level.WARNING);
@@ -474,7 +473,7 @@ public class ESBService
           for (DataTransferIndex sourceDti : sourcePoolDtiList)
           {
             Status status = createStatus(sourceDti.getIdentifier(), "DTO no longer exists.");
-            exchangeResponse.getStatusList().getStatuses().add(status);
+            exchangeResponse.getStatusList().getItems().add(status);
             
             if (exchangeResponse.getLevel() != Level.ERROR)
               exchangeResponse.setLevel(Level.WARNING);
@@ -494,17 +493,17 @@ public class ESBService
         if (poolDtoListItems.size() > 0)
         {
           Response poolResponse = httpClient.post(Response.class, targetGraphUrl, poolDtos);
-          exchangeResponse.getStatusList().getStatuses().addAll(poolResponse.getStatusList().getStatuses());
+          exchangeResponse.getStatusList().getItems().addAll(poolResponse.getStatusList().getItems());
           
           if (exchangeResponse.getLevel() != Level.ERROR || (exchangeResponse.getLevel() == Level.WARNING && poolResponse.getLevel() == Level.SUCCESS))
             exchangeResponse.setLevel(poolResponse.getLevel());
         }
       }
       
-      if (exchangeResponse.getStatusList().getStatuses().size() == 0)
+      if (exchangeResponse.getStatusList().getItems().size() == 0)
       {
         Status status = createStatus("Overall", "No Add/Change/Delete DTOs are found!");
-        exchangeResponse.getStatusList().getStatuses().add(status);
+        exchangeResponse.getStatusList().getItems().add(status);
         exchangeResponse.setLevel(Level.WARNING);        
       }
     }
@@ -567,7 +566,7 @@ public class ESBService
   private Status createStatus(String identifier, String message)
   {
     Messages messages = new Messages();
-    List<String> messageList = messages.getMessages();
+    List<String> messageList = messages.getItems();
     messageList.add(message);
 
     Status status = new Status();
@@ -581,13 +580,13 @@ public class ESBService
   {
     StringBuilder values = new StringBuilder();
 
-    List<ClassObject> classObjects = dataTransferObject.getClassObjects().getClassObjects();
+    List<ClassObject> classObjects = dataTransferObject.getClassObjects().getItems();
     for (ClassObject classObject : classObjects)
     {
-      List<TemplateObject> templateObjects = classObject.getTemplateObjects().getTemplateObjects();
+      List<TemplateObject> templateObjects = classObject.getTemplateObjects().getItems();
       for (TemplateObject templateObject : templateObjects)
       {
-        List<RoleObject> roleObjects = templateObject.getRoleObjects().getRoleObjects();
+        List<RoleObject> roleObjects = templateObject.getRoleObjects().getItems();
         for (RoleObject roleObject : roleObjects)
         {
           if (roleObject.getType() == RoleType.PROPERTY || roleObject.getType() == RoleType.OBJECT_PROPERTY || roleObject.getType() == RoleType.DATA_PROPERTY)

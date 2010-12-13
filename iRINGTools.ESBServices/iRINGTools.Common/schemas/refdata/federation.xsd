@@ -60,7 +60,6 @@
 		</xs:sequence>
 	</xs:complexType>
 
-
 	<xs:complexType name="IDGenerator">
 		<xs:sequence>
 			<xs:element name="uri" type="xs:string" />
@@ -91,13 +90,15 @@
 		</xs:sequence>
 	</xs:complexType>
 
-
 	<xs:complexType name="NamespaceList">
 		<xs:sequence>
-			<xs:element name="namespaceAlias" type="xs:string"
-				maxOccurs="unbounded" />
+			<xs:element name="namespaceAlias" type="xs:string" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
 		</xs:sequence>
 	</xs:complexType>
-
-
 </xs:schema>

@@ -24,14 +24,26 @@
 
   <xs:complexType name="ValueListMaps">
     <xs:sequence>
-      <xs:element name="valueListMaps" type="ValueListMap" maxOccurs="unbounded" />
+      <xs:element name="valueListMaps" type="ValueListMap" maxOccurs="unbounded">
+      <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="ValueListMap">
     <xs:sequence>
       <xs:element name="name" type="xs:string" />
-      <xs:element name="valueMap" type="ValueMap" maxOccurs="unbounded" />
+      <xs:element name="valueMap" type="ValueMap" maxOccurs="unbounded">
+      <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
   
@@ -44,21 +56,33 @@
 
   <xs:complexType name="GraphMaps">
     <xs:sequence>
-      <xs:element name="graphMap" type="GraphMap" maxOccurs="unbounded" />
+      <xs:element name="graphMap" type="GraphMap" maxOccurs="unbounded">
+      <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="GraphMap">
     <xs:sequence>
       <xs:element name="name" type="xs:string" />
-      <xs:element name="classTemplateMaps" type="ClassTemplateMapList" />
+      <xs:element name="classTemplateMaps" type="ClassTemplateMaps" />
       <xs:element name="dataObjectName" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="ClassTemplateMapList">
+  <xs:complexType name="ClassTemplateMaps">
     <xs:sequence>
-      <xs:element name="classTemplateMaps" type="ClassTemplateMap" maxOccurs="unbounded" />
+      <xs:element name="classTemplateMaps" type="ClassTemplateMap" maxOccurs="unbounded">
+      <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 
@@ -85,7 +109,13 @@
 
   <xs:complexType name="TemplateMaps">
     <xs:sequence>
-      <xs:element name="templateMap" type="TemplateMap" maxOccurs="unbounded" />
+      <xs:element name="templateMap" type="TemplateMap" maxOccurs="unbounded">
+      <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 
@@ -101,7 +131,13 @@
 
   <xs:complexType name="RoleMaps">
     <xs:sequence>
-      <xs:element name="roleMap" type="RoleMap" maxOccurs="unbounded" />
+      <xs:element name="roleMap" type="RoleMap" maxOccurs="unbounded">
+      <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 

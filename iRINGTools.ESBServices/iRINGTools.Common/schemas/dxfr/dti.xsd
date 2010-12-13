@@ -26,7 +26,7 @@
       <xs:element name="dataTransferIndex" type="DataTransferIndex" maxOccurs="unbounded">
         <xs:annotation>
           <xs:appinfo>
-            <jaxb:property name="dataTransferIndexListItems" />
+            <jaxb:property name="items" />
           </xs:appinfo>
         </xs:annotation>
       </xs:element>

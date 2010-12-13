@@ -31,27 +31,27 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Tree", propOrder = {
-    "treeNodes"
+    "items"
 })
 @XmlRootElement(name = "tree")
 public class Tree {
 
     @XmlElement(name = "treeNode", required = true)
-    protected List<Node> treeNodes;
+    protected List<Node> items;
 
     /**
-     * Gets the value of the treeNodes property.
+     * Gets the value of the items property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the treeNodes property.
+     * This is why there is not a <CODE>set</CODE> method for the items property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getTreeNodes().add(newItem);
+     *    getItems().add(newItem);
      * </pre>
      * 
      * 
@@ -61,23 +61,23 @@ public class Tree {
      * 
      * 
      */
-    public List<Node> getTreeNodes() {
-        if (treeNodes == null) {
-            treeNodes = new ArrayList<Node>();
+    public List<Node> getItems() {
+        if (items == null) {
+            items = new ArrayList<Node>();
         }
-        return this.treeNodes;
+        return this.items;
     }
 
     /**
-     * Sets the value of the treeNodes property.
+     * Sets the value of the items property.
      * 
-     * @param treeNodes
+     * @param items
      *     allowed object is
      *     {@link Node }
      *     
      */
-    public void setTreeNodes(List<Node> treeNodes) {
-        this.treeNodes = treeNodes;
+    public void setItems(List<Node> items) {
+        this.items = items;
     }
 
 }

@@ -30,26 +30,26 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ClassTemplatesList", propOrder = {
-    "classTemplates"
+    "items"
 })
 public class ClassTemplatesList {
 
-    @XmlElement(required = true)
-    protected List<ClassTemplates> classTemplates;
+    @XmlElement(name = "classTemplates", required = true)
+    protected List<ClassTemplates> items;
 
     /**
-     * Gets the value of the classTemplates property.
+     * Gets the value of the items property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the classTemplates property.
+     * This is why there is not a <CODE>set</CODE> method for the items property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getClassTemplates().add(newItem);
+     *    getItems().add(newItem);
      * </pre>
      * 
      * 
@@ -59,23 +59,23 @@ public class ClassTemplatesList {
      * 
      * 
      */
-    public List<ClassTemplates> getClassTemplates() {
-        if (classTemplates == null) {
-            classTemplates = new ArrayList<ClassTemplates>();
+    public List<ClassTemplates> getItems() {
+        if (items == null) {
+            items = new ArrayList<ClassTemplates>();
         }
-        return this.classTemplates;
+        return this.items;
     }
 
     /**
-     * Sets the value of the classTemplates property.
+     * Sets the value of the items property.
      * 
-     * @param classTemplates
+     * @param items
      *     allowed object is
      *     {@link ClassTemplates }
      *     
      */
-    public void setClassTemplates(List<ClassTemplates> classTemplates) {
-        this.classTemplates = classTemplates;
+    public void setItems(List<ClassTemplates> items) {
+        this.items = items;
     }
 
 }

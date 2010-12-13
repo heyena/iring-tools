@@ -30,26 +30,26 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DataExchanges", propOrder = {
-    "commodities"
+    "items"
 })
 public class DataExchanges {
 
     @XmlElement(name = "commodity", required = true)
-    protected List<Commodity> commodities;
+    protected List<Commodity> items;
 
     /**
-     * Gets the value of the commodities property.
+     * Gets the value of the items property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the commodities property.
+     * This is why there is not a <CODE>set</CODE> method for the items property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getCommodities().add(newItem);
+     *    getItems().add(newItem);
      * </pre>
      * 
      * 
@@ -59,23 +59,23 @@ public class DataExchanges {
      * 
      * 
      */
-    public List<Commodity> getCommodities() {
-        if (commodities == null) {
-            commodities = new ArrayList<Commodity>();
+    public List<Commodity> getItems() {
+        if (items == null) {
+            items = new ArrayList<Commodity>();
         }
-        return this.commodities;
+        return this.items;
     }
 
     /**
-     * Sets the value of the commodities property.
+     * Sets the value of the items property.
      * 
-     * @param commodities
+     * @param items
      *     allowed object is
      *     {@link Commodity }
      *     
      */
-    public void setCommodities(List<Commodity> commodities) {
-        this.commodities = commodities;
+    public void setItems(List<Commodity> items) {
+        this.items = items;
     }
 
 }

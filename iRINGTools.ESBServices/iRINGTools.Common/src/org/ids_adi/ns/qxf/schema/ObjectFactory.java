@@ -38,19 +38,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Property }
-     * 
-     */
-    public Property createProperty() {
-        return new Property();
-    }
-
-    /**
      * Create an instance of {@link Relationship }
      * 
      */
     public Relationship createRelationship() {
         return new Relationship();
+    }
+
+    /**
+     * Create an instance of {@link Property }
+     * 
+     */
+    public Property createProperty() {
+        return new Property();
     }
 
 }

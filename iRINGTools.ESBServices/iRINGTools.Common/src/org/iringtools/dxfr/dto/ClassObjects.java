@@ -30,26 +30,26 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ClassObjects", propOrder = {
-    "classObjects"
+    "items"
 })
 public class ClassObjects {
 
     @XmlElement(name = "classObject", required = true)
-    protected List<ClassObject> classObjects;
+    protected List<ClassObject> items;
 
     /**
-     * Gets the value of the classObjects property.
+     * Gets the value of the items property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the classObjects property.
+     * This is why there is not a <CODE>set</CODE> method for the items property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getClassObjects().add(newItem);
+     *    getItems().add(newItem);
      * </pre>
      * 
      * 
@@ -59,23 +59,23 @@ public class ClassObjects {
      * 
      * 
      */
-    public List<ClassObject> getClassObjects() {
-        if (classObjects == null) {
-            classObjects = new ArrayList<ClassObject>();
+    public List<ClassObject> getItems() {
+        if (items == null) {
+            items = new ArrayList<ClassObject>();
         }
-        return this.classObjects;
+        return this.items;
     }
 
     /**
-     * Sets the value of the classObjects property.
+     * Sets the value of the items property.
      * 
-     * @param classObjects
+     * @param items
      *     allowed object is
      *     {@link ClassObject }
      *     
      */
-    public void setClassObjects(List<ClassObject> classObjects) {
-        this.classObjects = classObjects;
+    public void setItems(List<ClassObject> items) {
+        this.items = items;
     }
 
 }

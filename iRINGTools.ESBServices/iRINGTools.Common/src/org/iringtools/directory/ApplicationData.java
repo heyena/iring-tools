@@ -30,26 +30,26 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ApplicationData", propOrder = {
-    "applications"
+    "items"
 })
 public class ApplicationData {
 
     @XmlElement(name = "application", required = true)
-    protected List<Application> applications;
+    protected List<Application> items;
 
     /**
-     * Gets the value of the applications property.
+     * Gets the value of the items property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the applications property.
+     * This is why there is not a <CODE>set</CODE> method for the items property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getApplications().add(newItem);
+     *    getItems().add(newItem);
      * </pre>
      * 
      * 
@@ -59,23 +59,23 @@ public class ApplicationData {
      * 
      * 
      */
-    public List<Application> getApplications() {
-        if (applications == null) {
-            applications = new ArrayList<Application>();
+    public List<Application> getItems() {
+        if (items == null) {
+            items = new ArrayList<Application>();
         }
-        return this.applications;
+        return this.items;
     }
 
     /**
-     * Sets the value of the applications property.
+     * Sets the value of the items property.
      * 
-     * @param applications
+     * @param items
      *     allowed object is
      *     {@link Application }
      *     
      */
-    public void setApplications(List<Application> applications) {
-        this.applications = applications;
+    public void setItems(List<Application> items) {
+        this.items = items;
     }
 
 }

@@ -31,27 +31,27 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Directory", propOrder = {
-    "scopes"
+    "items"
 })
 @XmlRootElement(name = "directory")
 public class Directory {
 
     @XmlElement(name = "scope", required = true)
-    protected List<Scope> scopes;
+    protected List<Scope> items;
 
     /**
-     * Gets the value of the scopes property.
+     * Gets the value of the items property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the scopes property.
+     * This is why there is not a <CODE>set</CODE> method for the items property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getScopes().add(newItem);
+     *    getItems().add(newItem);
      * </pre>
      * 
      * 
@@ -61,23 +61,23 @@ public class Directory {
      * 
      * 
      */
-    public List<Scope> getScopes() {
-        if (scopes == null) {
-            scopes = new ArrayList<Scope>();
+    public List<Scope> getItems() {
+        if (items == null) {
+            items = new ArrayList<Scope>();
         }
-        return this.scopes;
+        return this.items;
     }
 
     /**
-     * Sets the value of the scopes property.
+     * Sets the value of the items property.
      * 
-     * @param scopes
+     * @param items
      *     allowed object is
      *     {@link Scope }
      *     
      */
-    public void setScopes(List<Scope> scopes) {
-        this.scopes = scopes;
+    public void setItems(List<Scope> items) {
+        this.items = items;
     }
 
 }

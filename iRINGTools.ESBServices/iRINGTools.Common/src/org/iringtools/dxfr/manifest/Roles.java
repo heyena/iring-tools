@@ -30,26 +30,26 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Roles", propOrder = {
-    "roles"
+    "items"
 })
 public class Roles {
 
     @XmlElement(name = "role", required = true)
-    protected List<Role> roles;
+    protected List<Role> items;
 
     /**
-     * Gets the value of the roles property.
+     * Gets the value of the items property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the roles property.
+     * This is why there is not a <CODE>set</CODE> method for the items property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getRoles().add(newItem);
+     *    getItems().add(newItem);
      * </pre>
      * 
      * 
@@ -59,23 +59,23 @@ public class Roles {
      * 
      * 
      */
-    public List<Role> getRoles() {
-        if (roles == null) {
-            roles = new ArrayList<Role>();
+    public List<Role> getItems() {
+        if (items == null) {
+            items = new ArrayList<Role>();
         }
-        return this.roles;
+        return this.items;
     }
 
     /**
-     * Sets the value of the roles property.
+     * Sets the value of the items property.
      * 
-     * @param roles
+     * @param items
      *     allowed object is
      *     {@link Role }
      *     
      */
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
+    public void setItems(List<Role> items) {
+        this.items = items;
     }
 
 }

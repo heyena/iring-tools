@@ -32,14 +32,14 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ValueListMap", propOrder = {
     "name",
-    "valueMaps"
+    "items"
 })
 public class ValueListMap {
 
     @XmlElement(required = true)
     protected String name;
     @XmlElement(name = "valueMap", required = true)
-    protected List<ValueMap> valueMaps;
+    protected List<ValueMap> items;
 
     /**
      * Gets the value of the name property.
@@ -66,18 +66,18 @@ public class ValueListMap {
     }
 
     /**
-     * Gets the value of the valueMaps property.
+     * Gets the value of the items property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the valueMaps property.
+     * This is why there is not a <CODE>set</CODE> method for the items property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getValueMaps().add(newItem);
+     *    getItems().add(newItem);
      * </pre>
      * 
      * 
@@ -87,23 +87,23 @@ public class ValueListMap {
      * 
      * 
      */
-    public List<ValueMap> getValueMaps() {
-        if (valueMaps == null) {
-            valueMaps = new ArrayList<ValueMap>();
+    public List<ValueMap> getItems() {
+        if (items == null) {
+            items = new ArrayList<ValueMap>();
         }
-        return this.valueMaps;
+        return this.items;
     }
 
     /**
-     * Sets the value of the valueMaps property.
+     * Sets the value of the items property.
      * 
-     * @param valueMaps
+     * @param items
      *     allowed object is
      *     {@link ValueMap }
      *     
      */
-    public void setValueMaps(List<ValueMap> valueMaps) {
-        this.valueMaps = valueMaps;
+    public void setItems(List<ValueMap> items) {
+        this.items = items;
     }
 
 }
