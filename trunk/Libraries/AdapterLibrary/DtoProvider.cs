@@ -153,29 +153,29 @@ namespace org.iringtools.adapter
     }
 
     // get list (page) of data transfer objects per data transfer indicies
-    public DataTransferObjects GetDataTransferObjects(string scope, string app, string graph)
-    {
-      DataTransferObjects dataTransferObjects = null;
+    //public DataTransferObjects GetDataTransferObjects(string scope, string app, string graph)
+    //{
+    //  DataTransferObjects dataTransferObjects = null;
 
-      try
-      {
-        InitializeScope(scope, app);
-        InitializeDataLayer();
+    //  try
+    //  {
+    //    InitializeScope(scope, app);
+    //    InitializeDataLayer();
 
-        _graphMap = _mapping.FindGraphMap(graph);
+    //    _graphMap = _mapping.FindGraphMap(graph);
 
-        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, null);
-        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+    //    IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, null);
+    //    DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
 
-        dataTransferObjects = dtoProjectionEngine.ToDataTransferObjects(_graphMap, ref dataObjects);
-      }
-      catch (Exception ex)
-      {
-        _logger.Error("Error getting data transfer objects: " + ex);
-      }
+    //    dataTransferObjects = dtoProjectionEngine.ToDataTransferObjects(_graphMap, ref dataObjects);
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    _logger.Error("Error getting data transfer objects: " + ex);
+    //  }
 
-      return dataTransferObjects;
-    }
+    //  return dataTransferObjects;
+    //}
 
     public Response PostDataTransferObjects(string scope, string app, string graph, DataTransferObjects dataTransferObjects)
     {

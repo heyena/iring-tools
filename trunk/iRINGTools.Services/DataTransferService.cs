@@ -65,12 +65,12 @@ namespace org.iringtools.services
       return _dxfrProvider.GetDataTransferObjects(scope, app, graph, dataTransferIndices);
     }
 
-    [Description("Gets data transfer objects.")]
-    [WebGet(UriTemplate = "/{scope}/{app}/{graph}")]
-    public DataTransferObjects GetDataTransferObjectsFull(string scope, string app, string graph)
-    {
-      return _dxfrProvider.GetDataTransferObjects(scope, app, graph);
-    }
+    //[Description("Gets data transfer objects.")]
+    //[WebGet(UriTemplate = "/{scope}/{app}/{graph}")]
+    //public DataTransferObjects GetDataTransferObjectsFull(string scope, string app, string graph)
+    //{
+    //  return _dxfrProvider.GetDataTransferObjects(scope, app, graph);
+    //}
 
     [Description("Posts data transfer objects to add/update/delete.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}")]

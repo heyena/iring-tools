@@ -69,9 +69,9 @@ namespace org.iringtools.services
     /// <returns>Returns the version as a string.</returns>
     [Description("Gets the version of the service.")]
     [WebGet(UriTemplate = "/version")]
-    public string GetVersion()
+    public VersionInfo GetVersion()
     {
-      return _adapterProvider.GetType().Assembly.GetName().Version.ToString();
+      return _adapterProvider.GetVersion();
     }
     #endregion
 
