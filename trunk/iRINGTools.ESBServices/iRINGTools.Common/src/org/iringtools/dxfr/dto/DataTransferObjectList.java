@@ -30,26 +30,26 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DataTransferObjectList", propOrder = {
-    "dataTransferObjectListItems"
+    "items"
 })
 public class DataTransferObjectList {
 
     @XmlElement(name = "dataTransferObject", required = true)
-    protected List<DataTransferObject> dataTransferObjectListItems;
+    protected List<DataTransferObject> items;
 
     /**
-     * Gets the value of the dataTransferObjectListItems property.
+     * Gets the value of the items property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the dataTransferObjectListItems property.
+     * This is why there is not a <CODE>set</CODE> method for the items property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getDataTransferObjectListItems().add(newItem);
+     *    getItems().add(newItem);
      * </pre>
      * 
      * 
@@ -59,23 +59,23 @@ public class DataTransferObjectList {
      * 
      * 
      */
-    public List<DataTransferObject> getDataTransferObjectListItems() {
-        if (dataTransferObjectListItems == null) {
-            dataTransferObjectListItems = new ArrayList<DataTransferObject>();
+    public List<DataTransferObject> getItems() {
+        if (items == null) {
+            items = new ArrayList<DataTransferObject>();
         }
-        return this.dataTransferObjectListItems;
+        return this.items;
     }
 
     /**
-     * Sets the value of the dataTransferObjectListItems property.
+     * Sets the value of the items property.
      * 
-     * @param dataTransferObjectListItems
+     * @param items
      *     allowed object is
      *     {@link DataTransferObject }
      *     
      */
-    public void setDataTransferObjectListItems(List<DataTransferObject> dataTransferObjectListItems) {
-        this.dataTransferObjectListItems = dataTransferObjectListItems;
+    public void setItems(List<DataTransferObject> items) {
+        this.items = items;
     }
 
 }

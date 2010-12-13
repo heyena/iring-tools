@@ -20,7 +20,7 @@ public class DtiGridController extends ActionSupport
     String adapterServiceUri = ActionContext.getContext().getApplication().get("AdapterServiceUri").toString();
     HttpClient httpClient = new HttpClient(adapterServiceUri);
     DataTransferIndices dti = httpClient.get(DataTransferIndices.class, "/" + scopeName + "/" + appName + "/" + graphName);
-    setDtiList(dti.getDataTransferIndexList().getDataTransferIndexListItems());
+    setDtiList(dti.getDataTransferIndexList().getItems());
     
     return SUCCESS;
   }

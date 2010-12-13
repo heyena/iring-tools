@@ -44,6 +44,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Head }
+     * 
+     */
+    public Head createHead() {
+        return new Head();
+    }
+
+    /**
      * Create an instance of {@link Link }
      * 
      */
@@ -60,11 +68,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Head }
+     * Create an instance of {@link Variable }
      * 
      */
-    public Head createHead() {
-        return new Head();
+    public Variable createVariable() {
+        return new Variable();
     }
 
     /**
@@ -89,14 +97,6 @@ public class ObjectFactory {
      */
     public Binding createBinding() {
         return new Binding();
-    }
-
-    /**
-     * Create an instance of {@link Variable }
-     * 
-     */
-    public Variable createVariable() {
-        return new Variable();
     }
 
     /**

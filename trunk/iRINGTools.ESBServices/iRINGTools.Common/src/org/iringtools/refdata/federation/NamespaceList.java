@@ -30,26 +30,26 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "NamespaceList", propOrder = {
-    "namespaceAlias"
+    "items"
 })
 public class NamespaceList {
 
-    @XmlElement(required = true)
-    protected List<String> namespaceAlias;
+    @XmlElement(name = "namespaceAlias", required = true)
+    protected List<String> items;
 
     /**
-     * Gets the value of the namespaceAlias property.
+     * Gets the value of the items property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the namespaceAlias property.
+     * This is why there is not a <CODE>set</CODE> method for the items property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getNamespaceAlias().add(newItem);
+     *    getItems().add(newItem);
      * </pre>
      * 
      * 
@@ -59,23 +59,23 @@ public class NamespaceList {
      * 
      * 
      */
-    public List<String> getNamespaceAlias() {
-        if (namespaceAlias == null) {
-            namespaceAlias = new ArrayList<String>();
+    public List<String> getItems() {
+        if (items == null) {
+            items = new ArrayList<String>();
         }
-        return this.namespaceAlias;
+        return this.items;
     }
 
     /**
-     * Sets the value of the namespaceAlias property.
+     * Sets the value of the items property.
      * 
-     * @param namespaceAlias
+     * @param items
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setNamespaceAlias(List<String> namespaceAlias) {
-        this.namespaceAlias = namespaceAlias;
+    public void setItems(List<String> items) {
+        this.items = items;
     }
 
 }

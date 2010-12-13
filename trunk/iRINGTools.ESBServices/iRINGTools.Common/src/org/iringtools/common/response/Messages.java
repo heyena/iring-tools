@@ -30,26 +30,26 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Messages", propOrder = {
-    "messages"
+    "items"
 })
 public class Messages {
 
     @XmlElement(name = "message", required = true)
-    protected List<String> messages;
+    protected List<String> items;
 
     /**
-     * Gets the value of the messages property.
+     * Gets the value of the items property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the messages property.
+     * This is why there is not a <CODE>set</CODE> method for the items property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getMessages().add(newItem);
+     *    getItems().add(newItem);
      * </pre>
      * 
      * 
@@ -59,23 +59,23 @@ public class Messages {
      * 
      * 
      */
-    public List<String> getMessages() {
-        if (messages == null) {
-            messages = new ArrayList<String>();
+    public List<String> getItems() {
+        if (items == null) {
+            items = new ArrayList<String>();
         }
-        return this.messages;
+        return this.items;
     }
 
     /**
-     * Sets the value of the messages property.
+     * Sets the value of the items property.
      * 
-     * @param messages
+     * @param items
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setMessages(List<String> messages) {
-        this.messages = messages;
+    public void setItems(List<String> items) {
+        this.items = items;
     }
 
 }

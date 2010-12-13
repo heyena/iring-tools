@@ -30,26 +30,26 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "QueryBindings", propOrder = {
-    "queryBindings"
+    "items"
 })
 public class QueryBindings {
 
     @XmlElement(name = "queryBinding", required = true)
-    protected List<QueryBinding> queryBindings;
+    protected List<QueryBinding> items;
 
     /**
-     * Gets the value of the queryBindings property.
+     * Gets the value of the items property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the queryBindings property.
+     * This is why there is not a <CODE>set</CODE> method for the items property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getQueryBindings().add(newItem);
+     *    getItems().add(newItem);
      * </pre>
      * 
      * 
@@ -59,23 +59,23 @@ public class QueryBindings {
      * 
      * 
      */
-    public List<QueryBinding> getQueryBindings() {
-        if (queryBindings == null) {
-            queryBindings = new ArrayList<QueryBinding>();
+    public List<QueryBinding> getItems() {
+        if (items == null) {
+            items = new ArrayList<QueryBinding>();
         }
-        return this.queryBindings;
+        return this.items;
     }
 
     /**
-     * Sets the value of the queryBindings property.
+     * Sets the value of the items property.
      * 
-     * @param queryBindings
+     * @param items
      *     allowed object is
      *     {@link QueryBinding }
      *     
      */
-    public void setQueryBindings(List<QueryBinding> queryBindings) {
-        this.queryBindings = queryBindings;
+    public void setItems(List<QueryBinding> items) {
+        this.items = items;
     }
 
 }

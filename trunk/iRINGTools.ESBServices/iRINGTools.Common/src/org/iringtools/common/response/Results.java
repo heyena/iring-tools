@@ -30,26 +30,26 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Results", propOrder = {
-    "results"
+    "items"
 })
 public class Results {
 
     @XmlElement(name = "result", required = true)
-    protected List<Result> results;
+    protected List<Result> items;
 
     /**
-     * Gets the value of the results property.
+     * Gets the value of the items property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the results property.
+     * This is why there is not a <CODE>set</CODE> method for the items property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getResults().add(newItem);
+     *    getItems().add(newItem);
      * </pre>
      * 
      * 
@@ -59,23 +59,23 @@ public class Results {
      * 
      * 
      */
-    public List<Result> getResults() {
-        if (results == null) {
-            results = new ArrayList<Result>();
+    public List<Result> getItems() {
+        if (items == null) {
+            items = new ArrayList<Result>();
         }
-        return this.results;
+        return this.items;
     }
 
     /**
-     * Sets the value of the results property.
+     * Sets the value of the items property.
      * 
-     * @param results
+     * @param items
      *     allowed object is
      *     {@link Result }
      *     
      */
-    public void setResults(List<Result> results) {
-        this.results = results;
+    public void setItems(List<Result> items) {
+        this.items = items;
     }
 
 }

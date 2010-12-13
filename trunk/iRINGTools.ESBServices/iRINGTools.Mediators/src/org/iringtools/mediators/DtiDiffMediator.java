@@ -97,18 +97,18 @@ public class DtiDiffMediator extends AbstractMediator implements ManagedLifecycl
     DataTransferIndices resultDtis = new DataTransferIndices();
     DataTransferIndexList resultDtiList = new DataTransferIndexList();
     resultDtis.setDataTransferIndexList(resultDtiList);
-    List<DataTransferIndex> resultDtiListItems = resultDtiList.getDataTransferIndexListItems();
+    List<DataTransferIndex> resultDtiListItems = resultDtiList.getItems();
 
     /*
      * Case 1:
      * 
      * Source DTIs: Target DTIs: x x x x
      */
-    if (sourceDtis == null || sourceDtis.getDataTransferIndexList().getDataTransferIndexListItems().size() == 0)
+    if (sourceDtis == null || sourceDtis.getDataTransferIndexList().getItems().size() == 0)
     {
       if (targetDtis != null)
       {
-        for (DataTransferIndex dti : targetDtis.getDataTransferIndexList().getDataTransferIndexListItems())
+        for (DataTransferIndex dti : targetDtis.getDataTransferIndexList().getItems())
         {
           dti.setTransferType(TransferType.DELETE);
           dti.setHashValue(null);
@@ -123,11 +123,11 @@ public class DtiDiffMediator extends AbstractMediator implements ManagedLifecycl
      * 
      * Source DTIs: x x x x Target DTIs:
      */
-    if (targetDtis == null || targetDtis.getDataTransferIndexList().getDataTransferIndexListItems().size() == 0)
+    if (targetDtis == null || targetDtis.getDataTransferIndexList().getItems().size() == 0)
     {
       if (sourceDtis != null)
       {
-        for (DataTransferIndex dti : sourceDtis.getDataTransferIndexList().getDataTransferIndexListItems())
+        for (DataTransferIndex dti : sourceDtis.getDataTransferIndexList().getItems())
         {
           dti.setTransferType(TransferType.ADD);
         }
@@ -136,8 +136,8 @@ public class DtiDiffMediator extends AbstractMediator implements ManagedLifecycl
       return sourceDtis;
     }
 
-    List<DataTransferIndex> sourceDtiList = sourceDtis.getDataTransferIndexList().getDataTransferIndexListItems();
-    List<DataTransferIndex> targetDtiList = targetDtis.getDataTransferIndexList().getDataTransferIndexListItems();
+    List<DataTransferIndex> sourceDtiList = sourceDtis.getDataTransferIndexList().getItems();
+    List<DataTransferIndex> targetDtiList = targetDtis.getDataTransferIndexList().getItems();
     IdentifierComparator identifierComparator = new IdentifierComparator();
 
     Collections.sort(sourceDtiList, identifierComparator);
@@ -184,9 +184,9 @@ public class DtiDiffMediator extends AbstractMediator implements ManagedLifecycl
 
     while (sourceIndex < sourceDtiList.size() && targetIndex < targetDtiList.size())
     {
-      DataTransferIndex sourceDti = sourceDtis.getDataTransferIndexList().getDataTransferIndexListItems()
+      DataTransferIndex sourceDti = sourceDtis.getDataTransferIndexList().getItems()
           .get(sourceIndex);
-      DataTransferIndex targetDti = targetDtis.getDataTransferIndexList().getDataTransferIndexListItems()
+      DataTransferIndex targetDti = targetDtis.getDataTransferIndexList().getItems()
           .get(targetIndex);
 
       int value = sourceDti.getIdentifier().compareTo(targetDti.getIdentifier());
@@ -231,7 +231,7 @@ public class DtiDiffMediator extends AbstractMediator implements ManagedLifecycl
     {
       for (int i = sourceIndex; i < sourceDtiList.size(); i++)
       {
-        DataTransferIndex sourceDti = sourceDtis.getDataTransferIndexList().getDataTransferIndexListItems().get(i);
+        DataTransferIndex sourceDti = sourceDtis.getDataTransferIndexList().getItems().get(i);
         sourceDti.setTransferType(TransferType.ADD);
         resultDtiListItems.add(sourceDti);
       }
@@ -240,7 +240,7 @@ public class DtiDiffMediator extends AbstractMediator implements ManagedLifecycl
     {
       for (int i = targetIndex; i < targetDtiList.size(); i++)
       {
-        DataTransferIndex targetDti = targetDtis.getDataTransferIndexList().getDataTransferIndexListItems().get(i);
+        DataTransferIndex targetDti = targetDtis.getDataTransferIndexList().getItems().get(i);
         targetDti.setTransferType(TransferType.DELETE);
         targetDti.setHashValue(null);
         resultDtiListItems.add(targetDti);

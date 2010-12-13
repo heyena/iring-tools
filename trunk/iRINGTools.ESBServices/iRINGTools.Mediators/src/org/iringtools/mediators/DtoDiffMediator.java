@@ -80,7 +80,7 @@ public class DtoDiffMediator extends AbstractMediator implements ManagedLifecycl
       DataTransferObjects resultDtos = new DataTransferObjects();
       DataTransferObjectList resultDtoList = new DataTransferObjectList();
       resultDtos.setDataTransferObjectList(resultDtoList);
-      List<DataTransferObject> resultDtoListItems = resultDtoList.getDataTransferObjectListItems();
+      List<DataTransferObject> resultDtoListItems = resultDtoList.getItems();
       
       // set scope and app name
       if (!sourceScopeName.equalsIgnoreCase(targetScopeName))
@@ -90,8 +90,8 @@ public class DtoDiffMediator extends AbstractMediator implements ManagedLifecycl
 
       resultDtos.setAppName(sourceAppName + " -> " + targetAppName);
       
-      List<DataTransferObject> sourceDtoListItems = sourceDtos.getDataTransferObjectList().getDataTransferObjectListItems();
-      List<DataTransferObject> targetDtoListItems = targetDtos.getDataTransferObjectList().getDataTransferObjectListItems();
+      List<DataTransferObject> sourceDtoListItems = sourceDtos.getDataTransferObjectList().getItems();
+      List<DataTransferObject> targetDtoListItems = targetDtos.getDataTransferObjectList().getItems();
       
       // extract add/sync DTOs from source, leave change ones to diff later
       for (int i = 0; i < sourceDtoListItems.size(); i++)
@@ -100,7 +100,7 @@ public class DtoDiffMediator extends AbstractMediator implements ManagedLifecycl
         
         if (dto.getClassObjects() != null)
         {
-          List<DataTransferIndex> dtiListItems = sourceDxfrIndices.getDataTransferIndexList().getDataTransferIndexListItems();
+          List<DataTransferIndex> dtiListItems = sourceDxfrIndices.getDataTransferIndexList().getItems();
           
           for (DataTransferIndex dti : dtiListItems)
           {
@@ -134,7 +134,7 @@ public class DtoDiffMediator extends AbstractMediator implements ManagedLifecycl
         
         if (dto.getClassObjects() != null)
         {
-          List<DataTransferIndex> dtiListItems = targetDxfrIndices.getDataTransferIndexList().getDataTransferIndexListItems();
+          List<DataTransferIndex> dtiListItems = targetDxfrIndices.getDataTransferIndexList().getItems();
           
           for (DataTransferIndex dti : dtiListItems)
           {
@@ -156,7 +156,7 @@ public class DtoDiffMediator extends AbstractMediator implements ManagedLifecycl
       DataTransferObjects dxos = diff(sourceDtos, targetDtos);
       
       if (dxos != null)
-        resultDtoListItems.addAll(dxos.getDataTransferObjectList().getDataTransferObjectListItems());
+        resultDtoListItems.addAll(dxos.getDataTransferObjectList().getItems());
 
       // set result DTOs to be message payload
       resultPayload = AXIOMUtil.stringToOM(JaxbUtil.toXml(resultDtos, false));
@@ -185,8 +185,8 @@ public class DtoDiffMediator extends AbstractMediator implements ManagedLifecycl
     if (sourceDtos == null || targetDtos == null)
       return null;
 
-    List<DataTransferObject> targetDtoList = targetDtos.getDataTransferObjectList().getDataTransferObjectListItems();
-    List<DataTransferObject> sourceDtoList = sourceDtos.getDataTransferObjectList().getDataTransferObjectListItems();
+    List<DataTransferObject> targetDtoList = targetDtos.getDataTransferObjectList().getItems();
+    List<DataTransferObject> sourceDtoList = sourceDtos.getDataTransferObjectList().getItems();
 
     if (sourceDtoList.size() == 0 || targetDtoList.size() == 0)
       return null;
@@ -203,8 +203,8 @@ public class DtoDiffMediator extends AbstractMediator implements ManagedLifecycl
       // sanity check see if the data transfer object might have SYNC'ed since DTI differencing occurs
       sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC);
 
-      List<ClassObject> targetClassObjectList = targetDto.getClassObjects().getClassObjects();
-      List<ClassObject> sourceClassObjectList = sourceDto.getClassObjects().getClassObjects();
+      List<ClassObject> targetClassObjectList = targetDto.getClassObjects().getItems();
+      List<ClassObject> sourceClassObjectList = sourceDto.getClassObjects().getItems();
 
       for (int j = 0; j < targetClassObjectList.size(); j++)
       {
@@ -221,8 +221,8 @@ public class DtoDiffMediator extends AbstractMediator implements ManagedLifecycl
 
         sourceClassObject.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC); // default SYNC first
 
-        List<TemplateObject> targetTemplateObjectList = targetClassObject.getTemplateObjects().getTemplateObjects();
-        List<TemplateObject> sourceTemplateObjectList = sourceClassObject.getTemplateObjects().getTemplateObjects();
+        List<TemplateObject> targetTemplateObjectList = targetClassObject.getTemplateObjects().getItems();
+        List<TemplateObject> sourceTemplateObjectList = sourceClassObject.getTemplateObjects().getItems();
 
         for (int k = 0; k < targetTemplateObjectList.size(); k++)
         {
@@ -231,8 +231,8 @@ public class DtoDiffMediator extends AbstractMediator implements ManagedLifecycl
 
           sourceTemplateObject.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC); // default SYNC first
 
-          List<RoleObject> targetRoleObjectList = targetTemplateObject.getRoleObjects().getRoleObjects();
-          List<RoleObject> sourceRoleObjectList = sourceTemplateObject.getRoleObjects().getRoleObjects();
+          List<RoleObject> targetRoleObjectList = targetTemplateObject.getRoleObjects().getItems();
+          List<RoleObject> sourceRoleObjectList = sourceTemplateObject.getRoleObjects().getItems();
 
           // find and set old value for roles that are changed
           for (int l = 0; l < targetRoleObjectList.size(); l++)

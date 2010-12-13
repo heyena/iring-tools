@@ -13,7 +13,7 @@
     </xs:appinfo>
   </xs:annotation>
 
-<xs:import namespace="http://www.iringtools.org/mapping" schemaLocation="../mapping/mapping.xsd" />
+  <xs:import namespace="http://www.iringtools.org/mapping" schemaLocation="../mapping/mapping.xsd" />
 
   <xs:element name="manifest" type="Manifest" />
 
@@ -26,7 +26,13 @@
 
   <xs:complexType name="Graphs">
     <xs:sequence>
-      <xs:element name="graph" type="Graph" maxOccurs="unbounded" />
+      <xs:element name="graph" type="Graph" maxOccurs="unbounded">
+      <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 
@@ -39,7 +45,13 @@
 
   <xs:complexType name="ClassTemplatesList">
     <xs:sequence>
-      <xs:element name="classTemplates" type="ClassTemplates" maxOccurs="unbounded" />
+      <xs:element name="classTemplates" type="ClassTemplates" maxOccurs="unbounded">
+      <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 
@@ -59,7 +71,13 @@
 
   <xs:complexType name="Templates">
     <xs:sequence>
-      <xs:element name="template" type="Template" maxOccurs="unbounded" />
+      <xs:element name="template" type="Template" maxOccurs="unbounded">
+      <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 
@@ -74,7 +92,13 @@
 
   <xs:complexType name="Roles">
     <xs:sequence>
-      <xs:element name="role" type="Role" maxOccurs="unbounded" />
+      <xs:element name="role" type="Role" maxOccurs="unbounded">
+      <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 

@@ -18,7 +18,13 @@
 
 	<xs:complexType name="Directory">
 		<xs:sequence>
-			<xs:element name="scope" type="Scope" maxOccurs="unbounded" />
+			<xs:element name="scope" type="Scope" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
 		</xs:sequence>
 	</xs:complexType>
 
@@ -32,8 +38,13 @@
 
 	<xs:complexType name="ApplicationData">
 		<xs:sequence>
-			<xs:element name="application" type="Application"
-				maxOccurs="unbounded" />
+			<xs:element name="application" type="Application" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
 		</xs:sequence>
 	</xs:complexType>
 
@@ -69,7 +80,13 @@
 
 	<xs:complexType name="DataExchanges">
 		<xs:sequence>
-			<xs:element name="commodity" type="Commodity" maxOccurs="unbounded" />
+			<xs:element name="commodity" type="Commodity" maxOccurs="unbounded" >
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
 		</xs:sequence>
 	</xs:complexType>
 

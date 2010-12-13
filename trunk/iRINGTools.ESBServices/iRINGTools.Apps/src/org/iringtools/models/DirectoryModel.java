@@ -60,7 +60,7 @@ public class DirectoryModel
 
   public List<Scope> getScopes()
   {
-    return directory.getScopes();
+    return directory.getItems();
   }
 
   public Directory getDirectory()
@@ -72,11 +72,11 @@ public class DirectoryModel
   {
 
     Tree tree = new Tree();
-    List<Node> scopeNodes = tree.getTreeNodes();
+    List<Node> scopeNodes = tree.getItems();
 
     int ci = 1, si = 1, ei = 1, adi = 1;
 
-    for (Scope scope : directory.getScopes())
+    for (Scope scope : directory.getItems())
     {
       TreeNode scopeNode = new TreeNode();
       scopeNode.setText(scope.getName());
@@ -99,7 +99,7 @@ public class DirectoryModel
 
         List<Node> appDataNodeList = appDataNode.getChildren();
 
-        for (Application app : appData.getApplications())
+        for (Application app : appData.getItems())
         {
           TreeNode appNode = new TreeNode();
           appNode.setText(app.getName());
@@ -118,7 +118,7 @@ public class DirectoryModel
             graphNode.setLeaf(true);
             appNodeList.add(graphNode);
 
-            List<Property> properties = graphNode.getProperties();
+            List<Property> properties = graphNode.getItems();
             Property prop1 = new Property();
             prop1.setName("Name");
             prop1.setValue(graph.getName());
@@ -148,7 +148,7 @@ public class DirectoryModel
 
         List<Node> exchangeDataNodeList = exchangeDataNode.getChildren();
 
-        for (Commodity commodity : exchangeData.getCommodities())
+        for (Commodity commodity : exchangeData.getItems())
         {
           TreeNode commodityNode = new TreeNode();
           commodityNode.setText(commodity.getName());
@@ -167,7 +167,7 @@ public class DirectoryModel
             exchangeNode.setIconCls("exchange");
             exchangeNode.setLeaf(true);
 
-            List<Property> properties = exchangeNode.getProperties();
+            List<Property> properties = exchangeNode.getItems();
             Property prop1 = new Property();
             prop1.setName("Id");
             prop1.setValue(exchange.getId());

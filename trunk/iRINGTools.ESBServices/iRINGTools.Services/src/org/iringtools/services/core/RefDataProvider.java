@@ -98,10 +98,10 @@ public class RefDataProvider
 		response.setLevel(Level.ERROR);		  
 	  }
 	  
-	  messages.setMessages(msgs);
+	  messages.setItems(msgs);
 	  status.setMessages(messages);
 	  statuses.add(status);
-	  sl.setStatuses(statuses);
+	  sl.setItems(statuses);
 	  response.setStatusList(sl);
 	  return response;
   }
@@ -144,10 +144,10 @@ public class RefDataProvider
 		response.setLevel(Level.ERROR);		  
 	  }
 	  
-	  messages.setMessages(msgs);
+	  messages.setItems(msgs);
 	  status.setMessages(messages);
 	  statuses.add(status);
-	  sl.setStatuses(statuses);
+	  sl.setItems(statuses);
 	  response.setStatusList(sl);
 	  return response;
   }
@@ -190,10 +190,10 @@ public class RefDataProvider
 		response.setLevel(Level.ERROR);		  
 	  }
 	  
-	  messages.setMessages(msgs);
+	  messages.setItems(msgs);
 	  status.setMessages(messages);
 	  statuses.add(status);
-	  sl.setStatuses(statuses);
+	  sl.setItems(statuses);
 	  response.setStatusList(sl);
 	  return response;
   }

@@ -30,26 +30,26 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ValueListMaps", propOrder = {
-    "valueListMaps"
+    "items"
 })
 public class ValueListMaps {
 
-    @XmlElement(required = true)
-    protected List<ValueListMap> valueListMaps;
+    @XmlElement(name = "valueListMaps", required = true)
+    protected List<ValueListMap> items;
 
     /**
-     * Gets the value of the valueListMaps property.
+     * Gets the value of the items property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the valueListMaps property.
+     * This is why there is not a <CODE>set</CODE> method for the items property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getValueListMaps().add(newItem);
+     *    getItems().add(newItem);
      * </pre>
      * 
      * 
@@ -59,23 +59,23 @@ public class ValueListMaps {
      * 
      * 
      */
-    public List<ValueListMap> getValueListMaps() {
-        if (valueListMaps == null) {
-            valueListMaps = new ArrayList<ValueListMap>();
+    public List<ValueListMap> getItems() {
+        if (items == null) {
+            items = new ArrayList<ValueListMap>();
         }
-        return this.valueListMaps;
+        return this.items;
     }
 
     /**
-     * Sets the value of the valueListMaps property.
+     * Sets the value of the items property.
      * 
-     * @param valueListMaps
+     * @param items
      *     allowed object is
      *     {@link ValueListMap }
      *     
      */
-    public void setValueListMaps(List<ValueListMap> valueListMaps) {
-        this.valueListMaps = valueListMaps;
+    public void setItems(List<ValueListMap> items) {
+        this.items = items;
     }
 
 }

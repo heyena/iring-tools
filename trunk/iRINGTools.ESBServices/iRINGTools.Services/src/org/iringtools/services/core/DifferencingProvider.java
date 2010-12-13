@@ -31,7 +31,7 @@ public class DifferencingProvider
     DataTransferIndices resultDtis = new DataTransferIndices();
     DataTransferIndexList resultDtiList = new DataTransferIndexList();
     resultDtis.setDataTransferIndexList(resultDtiList);
-    List<DataTransferIndex> resultDtiListItems = resultDtiList.getDataTransferIndexListItems();
+    List<DataTransferIndex> resultDtiListItems = resultDtiList.getItems();
     
     DataTransferIndices sourceDtis = null;
     DataTransferIndices targetDtis = null;
@@ -60,11 +60,11 @@ public class DifferencingProvider
      *    Source DTIs:
      *    Target DTIs: x x x x 
      */
-    if (sourceDtis == null || sourceDtis.getDataTransferIndexList().getDataTransferIndexListItems().size() == 0)
+    if (sourceDtis == null || sourceDtis.getDataTransferIndexList().getItems().size() == 0)
     {
       if (targetDtis != null)
       {
-        for (DataTransferIndex dti : targetDtis.getDataTransferIndexList().getDataTransferIndexListItems())
+        for (DataTransferIndex dti : targetDtis.getDataTransferIndexList().getItems())
         {
           dti.setTransferType(TransferType.DELETE);
           dti.setHashValue(null);
@@ -80,11 +80,11 @@ public class DifferencingProvider
      *    Source DTIs: x x x x
      *    Target DTIs: 
      */
-    if (targetDtis == null || targetDtis.getDataTransferIndexList().getDataTransferIndexListItems().size() == 0)
+    if (targetDtis == null || targetDtis.getDataTransferIndexList().getItems().size() == 0)
     {
       if (sourceDtis != null)
       {
-        for (DataTransferIndex dti : sourceDtis.getDataTransferIndexList().getDataTransferIndexListItems())
+        for (DataTransferIndex dti : sourceDtis.getDataTransferIndexList().getItems())
         {
           dti.setTransferType(TransferType.ADD);
         }
@@ -93,8 +93,8 @@ public class DifferencingProvider
       return sourceDtis;
     }
 
-    List<DataTransferIndex> sourceDtiList = sourceDtis.getDataTransferIndexList().getDataTransferIndexListItems();
-    List<DataTransferIndex> targetDtiList = targetDtis.getDataTransferIndexList().getDataTransferIndexListItems();      
+    List<DataTransferIndex> sourceDtiList = sourceDtis.getDataTransferIndexList().getItems();
+    List<DataTransferIndex> targetDtiList = targetDtis.getDataTransferIndexList().getItems();      
     IdentifierComparator identifierComparator = new IdentifierComparator();
     
     Collections.sort(sourceDtiList, identifierComparator);
@@ -146,8 +146,8 @@ public class DifferencingProvider
     
     while (sourceIndex < sourceDtiList.size() && targetIndex < targetDtiList.size())
     {
-      DataTransferIndex sourceDti = sourceDtis.getDataTransferIndexList().getDataTransferIndexListItems().get(sourceIndex);
-      DataTransferIndex targetDti = targetDtis.getDataTransferIndexList().getDataTransferIndexListItems().get(targetIndex);
+      DataTransferIndex sourceDti = sourceDtis.getDataTransferIndexList().getItems().get(sourceIndex);
+      DataTransferIndex targetDti = targetDtis.getDataTransferIndexList().getItems().get(targetIndex);
       
       int value = sourceDti.getIdentifier().compareTo(targetDti.getIdentifier());
       
@@ -187,7 +187,7 @@ public class DifferencingProvider
     {
       for (int i = sourceIndex; i < sourceDtiList.size(); i++)
       {
-        DataTransferIndex sourceDti = sourceDtis.getDataTransferIndexList().getDataTransferIndexListItems().get(i);
+        DataTransferIndex sourceDti = sourceDtis.getDataTransferIndexList().getItems().get(i);
         sourceDti.setTransferType(TransferType.ADD);
         resultDtiListItems.add(sourceDti);
       }
@@ -196,7 +196,7 @@ public class DifferencingProvider
     {
       for (int i = targetIndex; i < targetDtiList.size(); i++)
       {
-        DataTransferIndex targetDti = targetDtis.getDataTransferIndexList().getDataTransferIndexListItems().get(i);
+        DataTransferIndex targetDti = targetDtis.getDataTransferIndexList().getItems().get(i);
         targetDti.setTransferType(TransferType.DELETE);
         targetDti.setHashValue(null);
         resultDtiListItems.add(targetDti);
@@ -231,8 +231,8 @@ public class DifferencingProvider
     
     if (sourceDtos == null || targetDtos == null) return null;
     
-    List<DataTransferObject> targetDtoList = targetDtos.getDataTransferObjectList().getDataTransferObjectListItems();
-    List<DataTransferObject> sourceDtoList = sourceDtos.getDataTransferObjectList().getDataTransferObjectListItems();
+    List<DataTransferObject> targetDtoList = targetDtos.getDataTransferObjectList().getItems();
+    List<DataTransferObject> sourceDtoList = sourceDtos.getDataTransferObjectList().getItems();
     
     if (sourceDtoList.size() == 0 || targetDtoList.size() == 0) return null;
   
@@ -248,8 +248,8 @@ public class DifferencingProvider
       // sanity check see if the data transfer object might have SYNC'ed since DTI differencing occurs 
       sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC);
 
-      List<ClassObject> targetClassObjectList = targetDto.getClassObjects().getClassObjects();
-      List<ClassObject> sourceClassObjectList = sourceDto.getClassObjects().getClassObjects();
+      List<ClassObject> targetClassObjectList = targetDto.getClassObjects().getItems();
+      List<ClassObject> sourceClassObjectList = sourceDto.getClassObjects().getItems();
       
       for (int j = 0; j < targetClassObjectList.size(); j++)
       {
@@ -265,8 +265,8 @@ public class DifferencingProvider
         
         sourceClassObject.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC); // default SYNC first
 
-        List<TemplateObject> targetTemplateObjectList = targetClassObject.getTemplateObjects().getTemplateObjects();
-        List<TemplateObject> sourceTemplateObjectList = sourceClassObject.getTemplateObjects().getTemplateObjects();
+        List<TemplateObject> targetTemplateObjectList = targetClassObject.getTemplateObjects().getItems();
+        List<TemplateObject> sourceTemplateObjectList = sourceClassObject.getTemplateObjects().getItems();
         
         for (int k = 0; k < targetTemplateObjectList.size(); k++)
         {
@@ -275,8 +275,8 @@ public class DifferencingProvider
           
           sourceTemplateObject.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC); // default SYNC first
           
-          List<RoleObject> targetRoleObjectList = targetTemplateObject.getRoleObjects().getRoleObjects();
-          List<RoleObject> sourceRoleObjectList = sourceTemplateObject.getRoleObjects().getRoleObjects();
+          List<RoleObject> targetRoleObjectList = targetTemplateObject.getRoleObjects().getItems();
+          List<RoleObject> sourceRoleObjectList = sourceTemplateObject.getRoleObjects().getItems();
           
           // find and set old value for roles that are changed
           for (int l = 0; l < targetRoleObjectList.size(); l++)

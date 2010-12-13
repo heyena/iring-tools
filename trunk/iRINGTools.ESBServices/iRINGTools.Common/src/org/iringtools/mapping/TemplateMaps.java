@@ -30,26 +30,26 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TemplateMaps", propOrder = {
-    "templateMaps"
+    "items"
 })
 public class TemplateMaps {
 
     @XmlElement(name = "templateMap", required = true)
-    protected List<TemplateMap> templateMaps;
+    protected List<TemplateMap> items;
 
     /**
-     * Gets the value of the templateMaps property.
+     * Gets the value of the items property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the templateMaps property.
+     * This is why there is not a <CODE>set</CODE> method for the items property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getTemplateMaps().add(newItem);
+     *    getItems().add(newItem);
      * </pre>
      * 
      * 
@@ -59,23 +59,23 @@ public class TemplateMaps {
      * 
      * 
      */
-    public List<TemplateMap> getTemplateMaps() {
-        if (templateMaps == null) {
-            templateMaps = new ArrayList<TemplateMap>();
+    public List<TemplateMap> getItems() {
+        if (items == null) {
+            items = new ArrayList<TemplateMap>();
         }
-        return this.templateMaps;
+        return this.items;
     }
 
     /**
-     * Sets the value of the templateMaps property.
+     * Sets the value of the items property.
      * 
-     * @param templateMaps
+     * @param items
      *     allowed object is
      *     {@link TemplateMap }
      *     
      */
-    public void setTemplateMaps(List<TemplateMap> templateMaps) {
-        this.templateMaps = templateMaps;
+    public void setItems(List<TemplateMap> items) {
+        this.items = items;
     }
 
 }

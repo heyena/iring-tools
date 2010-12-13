@@ -89,7 +89,7 @@ public class FederationModel
   {
 
     Tree tree = new Tree();
-    List<Node> treeNodes = tree.getTreeNodes();
+    List<Node> treeNodes = tree.getItems();
     
     TreeNode generatorsNode = new TreeNode();
     generatorsNode.setText("ID Generators");
@@ -107,7 +107,7 @@ public class FederationModel
       generatorNode.setIconCls("generator");
       generatorNode.setLeaf(true);
 
-      List<Property> properties = generatorNode.getProperties();
+      List<Property> properties = generatorNode.getItems();
       properties.add(WidgetUtil.createProperty("Name", idgenerator.getName()));
       properties.add(WidgetUtil.createProperty("URI", idgenerator.getUri()));
       properties.add(WidgetUtil.createProperty("Description", idgenerator.getDescription()));
@@ -132,7 +132,7 @@ public class FederationModel
       namespaceNode.setIconCls("namespace");
       namespaceNode.setLeaf(true);
 
-      List<Property> properties = namespaceNode.getProperties();
+      List<Property> properties = namespaceNode.getItems();
       properties.add(WidgetUtil.createProperty("Alias", namespace.getAlias()));
       properties.add(WidgetUtil.createProperty("URI", namespace.getUri()));
       properties.add(WidgetUtil.createProperty("Description", namespace.getDescription()));
@@ -159,7 +159,7 @@ public class FederationModel
       repositoryNode.setIconCls("repository");
       repositoryNode.setLeaf(true);
 
-      List<Property> properties = repositoryNode.getProperties();
+      List<Property> properties = repositoryNode.getItems();
 
       properties.add(WidgetUtil.createProperty("URI", repository.getUri()));
       properties.add(WidgetUtil.createProperty("Name", repository.getName()));

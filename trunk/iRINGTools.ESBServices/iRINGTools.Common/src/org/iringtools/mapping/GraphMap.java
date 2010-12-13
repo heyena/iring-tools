@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="classTemplateMaps" type="{http://www.iringtools.org/mapping}ClassTemplateMapList"/>
+ *         &lt;element name="classTemplateMaps" type="{http://www.iringtools.org/mapping}ClassTemplateMaps"/>
  *         &lt;element name="dataObjectName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -39,7 +39,7 @@ public class GraphMap {
     @XmlElement(required = true)
     protected String name;
     @XmlElement(required = true)
-    protected ClassTemplateMapList classTemplateMaps;
+    protected ClassTemplateMaps classTemplateMaps;
     @XmlElement(required = true)
     protected String dataObjectName;
 
@@ -72,10 +72,10 @@ public class GraphMap {
      * 
      * @return
      *     possible object is
-     *     {@link ClassTemplateMapList }
+     *     {@link ClassTemplateMaps }
      *     
      */
-    public ClassTemplateMapList getClassTemplateMaps() {
+    public ClassTemplateMaps getClassTemplateMaps() {
         return classTemplateMaps;
     }
 
@@ -84,10 +84,10 @@ public class GraphMap {
      * 
      * @param value
      *     allowed object is
-     *     {@link ClassTemplateMapList }
+     *     {@link ClassTemplateMaps }
      *     
      */
-    public void setClassTemplateMaps(ClassTemplateMapList value) {
+    public void setClassTemplateMaps(ClassTemplateMaps value) {
         this.classTemplateMaps = value;
     }
 

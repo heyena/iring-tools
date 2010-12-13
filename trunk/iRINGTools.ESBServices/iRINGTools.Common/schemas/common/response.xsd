@@ -32,7 +32,13 @@
 
   <xs:complexType name="StatusList">
     <xs:sequence>
-      <xs:element name="status" type="Status" maxOccurs="unbounded" />
+      <xs:element name="status" type="Status" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 
@@ -46,7 +52,13 @@
 
   <xs:complexType name="Results">
     <xs:sequence>
-      <xs:element name="result" type="Result" maxOccurs="unbounded" />
+      <xs:element name="result" type="Result" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 
@@ -59,7 +71,13 @@
 
   <xs:complexType name="Messages">
     <xs:sequence>
-      <xs:element name="message" type="xs:string" maxOccurs="unbounded" />
+      <xs:element name="message" type="xs:string" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 </xs:schema>
