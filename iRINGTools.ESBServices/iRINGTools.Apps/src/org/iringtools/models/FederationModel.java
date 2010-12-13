@@ -1,9 +1,6 @@
 package org.iringtools.models;
 
-import java.lang.reflect.Method;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import org.iringtools.common.response.Response;
@@ -19,7 +16,6 @@ import org.iringtools.ui.widgets.tree.Node;
 import org.iringtools.ui.widgets.tree.Property;
 import org.iringtools.ui.widgets.tree.Tree;
 import org.iringtools.ui.widgets.tree.TreeNode;
-import org.iringtools.utility.CommonUtility;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.WidgetUtil;
 import com.opensymphony.xwork2.ActionContext;
@@ -94,7 +90,6 @@ public class FederationModel
 
     Tree tree = new Tree();
     List<Node> treeNodes = tree.getTreeNodes();
-    //CommonUtility commUtil = new CommonUtility();
     
     TreeNode generatorsNode = new TreeNode();
     generatorsNode.setText("ID Generators");
@@ -165,18 +160,7 @@ public class FederationModel
       repositoryNode.setLeaf(true);
 
       List<Property> properties = repositoryNode.getProperties();
-      /*Map map = commUtil.getRepoGetterMap();
-	  Iterator iterator = map.keySet().iterator();
-	  try{
-	      while(iterator.hasNext()){   
-	    	  String key = iterator.next().toString();
-	          properties.add(WidgetUtil.createProperty(key, 
-	        		  String.valueOf(commUtil.executeString(repository,(String) map.get(key)))));
-	      	}
-      }
-      catch(Exception e){
-    	  
-      }*/
+
       properties.add(WidgetUtil.createProperty("URI", repository.getUri()));
       properties.add(WidgetUtil.createProperty("Description", repository.getDescription()));
       properties.add(WidgetUtil.createProperty("Read Only", String.valueOf(repository.isIsReadOnly())));
@@ -193,18 +177,9 @@ public class FederationModel
   public void readTree(HttpServletRequest httpRequest)
   {
 		try{
-				//String method = httpRequest.getMethod() ; 
-				//System.out.println("Request reaching here :"+ method);
-				//String ParameterNames = "";
-				//IDGenerator idgenerator;
-				//Namespace namespace;
-				//Repository repository;
 				
 				Response response=null;
-				/*for(Enumeration e = httpRequest.getParameterNames();e.hasMoreElements();){
-					ParameterNames = (String)e.nextElement();
-					System.out.println(ParameterNames+":"+httpRequest.getParameter("ParameterNames"));
-				}*/
+
 				System.out.println("###"+httpRequest.getParameter("parentNodeID")+"###");
 				if("idGenerator".equalsIgnoreCase(httpRequest.getParameter("parentNodeID"))){
 					IDGenerator idgenerator = new IDGenerator();
@@ -246,29 +221,4 @@ public class FederationModel
    
   }
   
-  private String hello="rashmi";
-/*  public String hello(){
-	  System.out.println("hello");
-	  return "elkdjdf";
-  }
-  
-  public static void main(String args[]) throws Exception{
-	  CommonUtility c = new CommonUtility();
-	  Map map = c.getRepoGetterMap();
-	  Iterator iterator = map.keySet().iterator();
-      while(iterator.hasNext()){   
-    	  String key = iterator.next().toString();
-          System.out.println(key+":"+(String) map.get(key));
-          properties.add(WidgetUtil.createProperty(key, (String) map.get(key)));
-      }
-
-	 }*/
-
-public String getHello() {
-	return hello;
-}
-
-public void setHello(String hello) {
-	this.hello = hello;
-}
 }
