@@ -162,6 +162,7 @@ public class FederationModel
       List<Property> properties = repositoryNode.getProperties();
 
       properties.add(WidgetUtil.createProperty("URI", repository.getUri()));
+      properties.add(WidgetUtil.createProperty("Name", repository.getName()));
       properties.add(WidgetUtil.createProperty("Description", repository.getDescription()));
       properties.add(WidgetUtil.createProperty("Read Only", String.valueOf(repository.isIsReadOnly())));
       properties.add(WidgetUtil.createProperty("Repository Type", repository.getRepositoryType()));
@@ -202,6 +203,7 @@ public class FederationModel
 					Repository repository = new Repository();
 					repository.setDescription(httpRequest.getParameter("Description"));
 					repository.setUri(httpRequest.getParameter("URI"));
+					repository.setName(httpRequest.getParameter("Name"));
 					repository.setRepositoryType(httpRequest.getParameter("Repository Type"));
 					repository.setUpdateUri(httpRequest.getParameter("Update URI"));
 					repository.setIsReadOnly(Boolean.parseBoolean(httpRequest.getParameter("Read Only")));
