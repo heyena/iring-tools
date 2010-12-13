@@ -349,7 +349,12 @@ namespace org.iringtools.adapter
 
     public Manifest GetManifest(string scope, string app)
     {
-      Manifest manifest = new Manifest();
+      Manifest manifest = new Manifest()
+      {
+        graphs = new Graphs(),
+        version = ""
+      };
+      
 
       try
       {
@@ -360,7 +365,10 @@ namespace org.iringtools.adapter
 
         foreach (GraphMap graphMap in _mapping.graphMaps)
         {
-          Graph manifestGraph = new Graph { name = graphMap.name };
+          Graph manifestGraph = new Graph { 
+            classTemplatesList = new ClassTemplatesList(),
+            name = graphMap.name             
+          };
           manifest.graphs.Add(manifestGraph);
 
           string dataObjectName = graphMap.dataObjectName;
@@ -379,7 +387,10 @@ namespace org.iringtools.adapter
           {
             foreach (var classTemplateListMap in graphMap.classTemplateMaps)
             {
-              ClassTemplates manifestClassTemplatesMap = new ClassTemplates();
+              ClassTemplates manifestClassTemplatesMap = new ClassTemplates()
+              {
+                templates = new Templates()
+              };
               manifestGraph.classTemplatesList.Add(manifestClassTemplatesMap);
 
               ClassMap classMap = classTemplateListMap.classMap;
@@ -396,6 +407,7 @@ namespace org.iringtools.adapter
               {
                 Template manifestTemplate = new Template
                 {
+                  roles = new Roles(),
                   templateId = templateMap.templateId,
                   name = templateMap.name,
                   transferOption = TransferOption.Desired,
@@ -405,7 +417,7 @@ namespace org.iringtools.adapter
                 foreach (RoleMap roleMap in templateMap.roleMaps)
                 {
                   Role manifestRole = new Role
-                  {
+                  { 
                     type = roleMap.type,
                     roleId = roleMap.roleId,
                     name = roleMap.name,
