@@ -210,7 +210,7 @@ class dataObjectsModel{
 
 	function getDataObjects($params)
 	{
-
+		
 	 /**
 	  * Will use the DXIObject to get the identifiers List with the particular exchangeID
 	 */
@@ -415,7 +415,6 @@ class dataObjectsModel{
 	}
 	
 	private function createJSONDataFormat($fetchedData){
-	
 		$xmlIterator = new SimpleXMLIterator($fetchedData);
 		$resultArr="";
 
@@ -471,8 +470,10 @@ class dataObjectsModel{
 		
 		if($this->nodeType=='exchanges'){
 			$customListArray=array('TransferType','Identifier');
+			$sortBy="TransferType";
 		}else{
 			$customListArray=array();
+			$sortBy=DEFAULT_SORT_COLUMN;
 		}
 		$headerArrayList = array_merge($customListArray,array_values((array_unique($headerNamesArray))));
 		unset($customListArray);
@@ -518,6 +519,7 @@ class dataObjectsModel{
 		
 		if($this->nodeType=='exchanges'){
 			$headerListDataArray[]=array('name'=>'Identifier','name'=>'TransferType');
+
 		}
 		
 		foreach($headerArrayList as $key =>$val){
@@ -529,7 +531,7 @@ class dataObjectsModel{
 
 		//**** echo json_encode(array("classObjName"=>$classObjectName,'relatedClasses'=>$classReferenceArray,"success"=>"true","cacheData"=>$this->cacheDTI,"rowData"=>json_encode($rowsDataArray),"columnsData"=>json_encode($columnsDataArray),"headersList"=>(json_encode($headerListDataArray))));
 
-		echo json_encode(array("pageSize"=>PAGESIZE,"filterSet"=>$gridFilterArray,"classObjName"=>$classObjectName,'relatedClasses'=>$classReferenceArray,"success"=>"true","cacheData"=>$this->cacheDTI,"columnsData"=>json_encode($columnsDataArray),"headersList"=>(json_encode($headerListDataArray))));
+		echo json_encode(array("sortBy"=>$sortBy,"sortOrder"=>DEFAULT_SORT_ORDER,"pageSize"=>PAGESIZE,"filterSet"=>$gridFilterArray,"classObjName"=>$classObjectName,'relatedClasses'=>$classReferenceArray,"success"=>"true","cacheData"=>$this->cacheDTI,"columnsData"=>json_encode($columnsDataArray),"headersList"=>(json_encode($headerListDataArray))));
 		unset($jsonrowsArray);
 		unset($rowsArray);
 		unset($headerArrayList);
