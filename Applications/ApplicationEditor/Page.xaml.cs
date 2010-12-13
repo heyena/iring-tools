@@ -1406,7 +1406,7 @@ namespace ApplicationEditor
 
           if (tvwPrj == null)
           {
-            ScopeProject project = new ScopeProject { Name = tbNewPrjName.Text, Description = tbNewPrjDesc.Text, Applications = new List<ScopeApplication>() };
+            ScopeProject project = new ScopeProject { Name = tbNewPrjName.Text, Description = tbNewPrjDesc.Text, Applications = new ScopeApplications() };
             tvwPrj = new TreeViewItem { Header = tbNewPrjName.Text, Tag = project };
             _scopes.Add(project);
             tvwScopesItemRoot.Items.Add(tvwPrj);
