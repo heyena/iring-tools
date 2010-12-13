@@ -143,7 +143,7 @@ namespace org.iringtools.adapter
       }
     }
 
-    public Response UpdateScopes(List<ScopeProject> scopes)
+    public Response UpdateScopes(ScopeProjects scopes)
     {
       Status status = new Status();
       status.Messages = new Messages();
@@ -186,7 +186,7 @@ namespace org.iringtools.adapter
 
         }
 
-        Utility.Write<List<ScopeProject>>(_scopes, _settings["ScopesPath"], true);
+        Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
 
         status.Messages.Add("Scopes have been updated successfully.");
       }
@@ -862,7 +862,7 @@ namespace org.iringtools.adapter
           );
         }
 
-        Utility.Write<List<ScopeProject>>(_scopes, _settings["ScopesPath"], true);
+        Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
       }
       catch (Exception ex)
       {
@@ -893,7 +893,7 @@ namespace org.iringtools.adapter
         }
 
         //Save ScopeList
-        Utility.Write<List<ScopeProject>>(_scopes, _settings["ScopesPath"], true);
+        Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
 
         //BindingConfig
         File.Delete(_settings["BindingConfigurationPath"]);
@@ -1100,9 +1100,9 @@ namespace org.iringtools.adapter
 
     #endregion
 
-    public List<string> GetDataLayers()
+    public DataLayers GetDataLayers()
     {
-      List<string> asemblies = new List<string>();
+      DataLayers dataLayerAssemblies = new DataLayers();
 
       try
       {
@@ -1117,7 +1117,7 @@ namespace org.iringtools.adapter
             {
               if (!t.IsInterface && ti.IsAssignableFrom(t))
               {
-                asemblies.Add(t.FullName + ", " + asm.FullName.Split(',')[0]);
+                dataLayerAssemblies.Add(t.FullName + ", " + asm.FullName.Split(',')[0]);
               }
             }
           }
@@ -1128,7 +1128,7 @@ namespace org.iringtools.adapter
         _logger.Error(string.Format("Error in GetDataLayers: {0}", ex), ex);
       }
 
-      return asemblies;
+      return dataLayerAssemblies;
     }
 
     public org.iringtools.library.VersionInfo GetVersion()

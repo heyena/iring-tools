@@ -112,6 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdapterSettings.cs" />
+    <Compile Include="DataLayers.cs" />
     <Compile Include="MappingExtensions.cs" />
     <Compile Include="DataObjects.cs" />
     <Compile Include="DataProviders.cs" />

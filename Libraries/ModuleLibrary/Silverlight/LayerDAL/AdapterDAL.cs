@@ -138,7 +138,7 @@ namespace org.iringtools.modulelibrary.layerdal
         {
           string result = ((DownloadStringCompletedEventArgs)e).Result;
 
-          List<ScopeProject> scopes = result.DeserializeDataContract<List<ScopeProject>>();
+          ScopeProjects scopes = result.DeserializeDataContract<ScopeProjects>();
 
           // If the cast failed then return
           if (scopes == null)

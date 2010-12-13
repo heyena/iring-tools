@@ -55,7 +55,7 @@ namespace org.iringtools.adapter
 
     private IKernel _kernel = null;
     private AdapterSettings _settings = null;
-    private List<ScopeProject> _scopes = null;
+    private ScopeProjects _scopes = null;
     private IDataLayer _dataLayer = null;
     private DataDictionary _dataDictionary = null;
     private Mapping _mapping = null;
@@ -86,12 +86,12 @@ namespace org.iringtools.adapter
 
       if (File.Exists(scopesPath))
       {
-        _scopes = Utility.Read<List<ScopeProject>>(scopesPath);
+        _scopes = Utility.Read<ScopeProjects>(scopesPath);
       }
       else
       {
-        _scopes = new List<ScopeProject>();
-        Utility.Write<List<ScopeProject>>(_scopes, scopesPath);
+        _scopes = new ScopeProjects();
+        Utility.Write<ScopeProjects>(_scopes, scopesPath);
       }
     }
 

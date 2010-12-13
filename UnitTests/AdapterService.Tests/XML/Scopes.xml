@@ -1,20 +1,20 @@
-<ArrayOfScopeProject xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.library" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
-  <ScopeProject>
-    <Name>12345_000</Name>
-    <Description i:nil="true"/>
-    <Applications>
-      <ScopeApplication>
-        <Name>ABC</Name>
-        <Description i:nil="true"/>
-      </ScopeApplication>
-      <ScopeApplication>
-        <Name>DEF</Name>
-        <Description i:nil="true"/>
-      </ScopeApplication>
-      <ScopeApplication>
-        <Name>XYZ</Name>
-        <Description i:nil="true"/>
-      </ScopeApplication>
-    </Applications>
-  </ScopeProject>
-</ArrayOfScopeProject>
+<scopes xmlns="http://www.iringtools.org/library">
+  <scope>
+    <name>12345_000</name>
+    <description/>
+    <applications>
+      <application>
+        <name>ABC</name>
+        <description/>
+      </application>
+      <application>
+        <name>DEF</name>
+        <description/>
+      </application>
+      <application>
+        <name>XYZ</name>
+        <description/>
+      </application>
+    </applications>
+  </scope>
+</scopes>

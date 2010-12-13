@@ -31,7 +31,7 @@ namespace org.iringtools.library
     /// The description of the project
     /// </summary>
     /// <returns>a string</returns>
-    [DataMember(Name = "description", Order = 1)]
+    [DataMember(Name = "description", Order = 1, EmitDefaultValue = false)]
     public string Description { get; set; }
 
     /// <summary>
@@ -56,7 +56,7 @@ namespace org.iringtools.library
     /// The description of the application represented by this instance
     /// </summary>
     /// <returns>A string of the Description of the application</returns>
-    [DataMember(Name = "description", Order = 1)]
+    [DataMember(Name = "description", Order = 1, EmitDefaultValue = false)]
     public string Description { get; set; }
   }
 }

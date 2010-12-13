@@ -264,9 +264,10 @@ namespace AdapterService.Tests
       return response;
     }
 
-    public List<ScopeProject> GetScopes()
+    public ScopeProjects GetScopes()
     {
-      List<ScopeProject> scopes = null;
+      ScopeProjects scopes = null;
+
       try
       {
         scopes = _adapterProvider.GetScopes();
