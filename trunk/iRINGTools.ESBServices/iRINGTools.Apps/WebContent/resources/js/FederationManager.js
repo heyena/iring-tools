@@ -25,18 +25,8 @@ Ext.onReady(function () {
 	var contentPanel = new Ext.TabPanel({
 		region: 'center',
 		id: 'contentPanel',
-		xtype: 'tabpanel',
 		margins: '0 5 0 0',
-		enableTabScroll: true,
-                single: true, // important, as many layouts can occur
-                defaults:{
-                        //layout:'form',
-                        labelWidth:100
-
-                        // as we use deferredRender:false we mustn't
-                        // render tabs into display:none containers
-                        ,hideMode:'offsets'
-                }
+		enableTabScroll: true                
 	});
 
 	federationPanel.on('open', function(panel, node, label, formData) {
@@ -44,16 +34,24 @@ Ext.onReady(function () {
                 var newTab = new FederationManager.ContentPanel({
                         title: label,
                         configData: formData,
+                        nId:node.id,
                         url: 'postFederation',
-                        closable: true
-                         //deferredRender: false
-                        //layout:'form'
-                        
+                        single: true, // important, as many layouts can occur
+                        layout:'fit',
+                        closable: true,
+                        defaults:{
+                                layout:'form',
+                                labelWidth:100,
+
+                                // as we use deferredRender:false we mustn't
+                                // render tabs into display:none containers
+                                hideMode:'offsets',                                
+                                deferredRender: false
+                        }                        
                 });
 
                 contentPanel.add(newTab);
-                contentPanel.activate(newTab);
-			
+                contentPanel.activate(newTab);			
 
 	});
 

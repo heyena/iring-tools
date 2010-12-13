@@ -6,7 +6,6 @@ Ext.ns('FederationManager');
 */
 FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
   title: 'Federation',
-
   layout: 'border',
   url: null,
 
@@ -22,8 +21,8 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
     this.addEvents({
     	click: true,
     	refresh: true,
-      open: true,
-      addnew: true
+        open: true,
+        addnew: true
     });
 
     this.tbar = this.buildToolbar();
@@ -55,21 +54,21 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
     });
 
     this.propertyPanel = new Ext.grid.PropertyGrid({
-  		id:'property-panel',
-  		title: 'Details',
-  		region:'center',
-  		layout: 'fit',
-  		autoScroll:true,
-  		margin:'10 0 0 0',
-  		bodyStyle: 'padding-bottom:15px;background:#eee;',
-  		source:{},
-  		listeners: {
-  			// to disable editable option of the property grid
-  			beforeedit : function(e) {
-  				e.cancel=true;
-  			}
-  		}
-  	});
+            id:'property-panel',
+            title: 'Details',
+            region:'center',
+            layout: 'fit',
+            autoScroll:true,
+            margin:'10 0 0 0',
+            bodyStyle: 'padding-bottom:15px;background:#eee;',
+            source:{},
+            listeners: {
+                    // to disable editable option of the property grid
+                    beforeedit : function(e) {
+                            e.cancel=true;
+                    }
+            }
+    });
 
     this.items = [
       this.federationPanel,
