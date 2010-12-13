@@ -10,12 +10,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for ClassTemplateMapList complex type.
+ * <p>Java class for ClassTemplateMaps complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ClassTemplateMapList">
+ * &lt;complexType name="ClassTemplateMaps">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -29,27 +29,27 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ClassTemplateMapList", propOrder = {
-    "classTemplateMaps"
+@XmlType(name = "ClassTemplateMaps", propOrder = {
+    "items"
 })
-public class ClassTemplateMapList {
+public class ClassTemplateMaps {
 
-    @XmlElement(required = true)
-    protected List<ClassTemplateMap> classTemplateMaps;
+    @XmlElement(name = "classTemplateMaps", required = true)
+    protected List<ClassTemplateMap> items;
 
     /**
-     * Gets the value of the classTemplateMaps property.
+     * Gets the value of the items property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the classTemplateMaps property.
+     * This is why there is not a <CODE>set</CODE> method for the items property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getClassTemplateMaps().add(newItem);
+     *    getItems().add(newItem);
      * </pre>
      * 
      * 
@@ -59,23 +59,23 @@ public class ClassTemplateMapList {
      * 
      * 
      */
-    public List<ClassTemplateMap> getClassTemplateMaps() {
-        if (classTemplateMaps == null) {
-            classTemplateMaps = new ArrayList<ClassTemplateMap>();
+    public List<ClassTemplateMap> getItems() {
+        if (items == null) {
+            items = new ArrayList<ClassTemplateMap>();
         }
-        return this.classTemplateMaps;
+        return this.items;
     }
 
     /**
-     * Sets the value of the classTemplateMaps property.
+     * Sets the value of the items property.
      * 
-     * @param classTemplateMaps
+     * @param items
      *     allowed object is
      *     {@link ClassTemplateMap }
      *     
      */
-    public void setClassTemplateMaps(List<ClassTemplateMap> classTemplateMaps) {
-        this.classTemplateMaps = classTemplateMaps;
+    public void setItems(List<ClassTemplateMap> items) {
+        this.items = items;
     }
 
 }
