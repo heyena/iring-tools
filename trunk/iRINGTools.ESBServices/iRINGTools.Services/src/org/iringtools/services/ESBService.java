@@ -125,10 +125,22 @@ public class ESBService
       // get source dti
       String sourceDtiUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName + "/dxi?hashAlgorithm=" + hashAlgorithm;
       DataTransferIndices sourceDtis = httpClient.post(DataTransferIndices.class, sourceDtiUrl, targetManifest);
+      
+      if (sourceDtis != null)
+      {
+        sourceDtis.setScopeName(sourceScopeName);
+        sourceDtis.setAppName(sourceAppName);
+      }      
 
       // get target dti
       String targetDtiUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName + "/dxi?hashAlgorithm=" + hashAlgorithm;
       DataTransferIndices targetDtis = httpClient.post(DataTransferIndices.class, targetDtiUrl, targetManifest);
+      
+      if (targetDtis != null)
+      {
+        targetDtis.setScopeName(targetScopeName);
+        targetDtis.setAppName(targetAppName);
+      }
 
       // create dxi request to diff source and target dti
       DxiRequest dxiRequest = new DxiRequest();
