@@ -50,7 +50,7 @@ namespace org.iringtools.services
   [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
   public class SandboxService
   {
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterService));
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(SandboxService));
     private AdapterProvider _adapterProvider = null;
 
     /// <summary>
@@ -58,7 +58,7 @@ namespace org.iringtools.services
     /// </summary>
     public SandboxService()
     {
-      //do something
+      _adapterProvider = new AdapterProvider(ConfigurationManager.AppSettings);
     }
 
     #region Public Resources
@@ -69,9 +69,9 @@ namespace org.iringtools.services
     /// <returns>Returns the version as a string.</returns>
     [Description("Gets the version of the service.")]
     [WebGet(UriTemplate = "/version")]
-    public string GetVersion()
+    public VersionInfo GetVersion()
     {
-      return _adapterProvider.GetType().Assembly.GetName().Version.ToString();
+      return _adapterProvider.GetVersion();
     }
     #endregion
     #endregion

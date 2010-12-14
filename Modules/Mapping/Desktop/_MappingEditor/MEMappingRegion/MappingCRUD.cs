@@ -22,7 +22,6 @@ using org.iringtools.ontologyservice.presentation.presentationmodels;
 
 using org.ids_adi.qmxf;
 
-
 using org.iringtools.informationmodel.usercontrols;
 using org.iringtools.library;
 using org.iringtools.library.configuration;

@@ -38,6 +38,12 @@ namespace org.iringtools.adapter.projection
     {
       XDocument rdfXml = null;
 
+      _rdfXml = new XElement(RDF_NS + "RDF",
+            new XAttribute(XNamespace.Xmlns + "rdf", RDF_NS),
+            new XAttribute(XNamespace.Xmlns + "owl", OWL_NS),
+            new XAttribute(XNamespace.Xmlns + "xsd", XSD_NS),
+            new XAttribute(XNamespace.Xmlns + "tpl", TPL_NS));
+
       try
       {
         _graphBaseUri = String.Format("{0}{1}/{2}/{3}/",
@@ -55,6 +61,10 @@ namespace org.iringtools.adapter.projection
         {
           SetClassIdentifiers(DataDirection.Outbound);
           rdfXml = new XDocument(BuildRdfXml());
+        }
+        else
+        {
+          rdfXml = new XDocument(_rdfXml);
         }
       }
       catch (Exception ex)
@@ -145,12 +155,6 @@ namespace org.iringtools.adapter.projection
     private XElement BuildRdfXml()
     {
       Dictionary<string, List<string>> classInstancesCache = new Dictionary<string, List<string>>();
-
-      _rdfXml = new XElement(RDF_NS + "RDF",
-        new XAttribute(XNamespace.Xmlns + "rdf", RDF_NS),
-        new XAttribute(XNamespace.Xmlns + "owl", OWL_NS),
-        new XAttribute(XNamespace.Xmlns + "xsd", XSD_NS),
-        new XAttribute(XNamespace.Xmlns + "tpl", TPL_NS));
 
       foreach (ClassTemplateMap classTemplateMap in _graphMap.classTemplateMaps)
       {
