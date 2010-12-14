@@ -1,37 +1,51 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
 <struts>
-	<constant name="struts.enable.DynamicMethodInvocation" value="false" />
-	<constant name="struts.devMode" value="false" />
-	
-	<package name="basicstruts2" extends="struts-default">
-	    <action name="federationManager">
-	      <result>/federationManager.html</result>
-	    </action>
-	</package>
-	
-	
-	
-	<package name="jsontest" extends="json-default">
-	  <action name="federation" class="org.iringtools.controllers.FederationController" method="getFederation">
-	    <result type="json">
-	    	<param name="root">tree.items</param>
-	    </result>
-	  </action>
-	  
-	  <action name="postFederation" class="org.iringtools.controllers.FederationController" 
-	  method="postFederation">
-	    <result type="json">
-	    	<param name="root">success</param>
-	    </result>
-	  </action>
-	  <action name="directory" class="org.iringtools.controllers.DirectoryController" method="getDirectory">
-	    <result type="json">
-	    	<param name="root">tree.items</param>
-	    </result>
-	  </action>
-	</package>
-	
-	
-		
+  <constant name="struts.enable.DynamicMethodInvocation" value="false" />
+  <constant name="struts.devMode" value="false" />
+  
+  <package name="basicstruts2" extends="struts-default">
+      <action name="federationManager">
+        <result>/federationManager.html</result>
+      </action>
+      
+      <action name="exchangeManager">
+        <result>/exchangeManager.html</result>
+      </action>
+  </package>
+
+  
+  <package name="jsontest" extends="json-default">
+    <action name="federation" class="org.iringtools.controllers.FederationController" method="getFederation">
+      <result type="json">
+        <param name="root">tree.items</param>
+      </result>
+    </action>
+    
+    <action name="postFederation" class="org.iringtools.controllers.FederationController" 
+    method="postFederation">
+      <result type="json">
+        <param name="root">success</param>
+      </result>
+    </action>
+    
+    <action name="directory" class="org.iringtools.controllers.DirectoryController" method="getDirectory">
+      <result type="json">
+        <param name="root">tree.items</param>
+      </result>
+    </action>
+    
+    <action name="appDataGrid" class="org.iringtools.controllers.AppdataController" method="getAppDataGrid">
+      <result type="json">
+        <param name="root">grid</param>
+      </result>
+    </action>
+    
+    <action name="appDataRows" class="org.iringtools.controllers.AppdataController" method="getAppDataRows">
+      <result type="json">
+        <param name="root">rows</param>
+      </result>
+    </action>
+  </package>
+    
 </struts>
