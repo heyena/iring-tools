@@ -28,8 +28,7 @@
 
 	<xs:complexType name="IDGenerators">
 		<xs:sequence>
-			<xs:element name="idGenerator" type="IDGenerator"
-				maxOccurs="unbounded">
+			<xs:element name="idGenerator" type="IDGenerator" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:appinfo>
 						<jaxb:property name="items" />

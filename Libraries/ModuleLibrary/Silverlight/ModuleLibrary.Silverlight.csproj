@@ -162,6 +162,9 @@
     <Compile Include="..\..\iRINGLibrary\Desktop\Repositories.cs">
       <Link>Entities\Repositories.cs</Link>
     </Compile>
+    <Compile Include="..\..\iRINGLibrary\Desktop\Scopes.cs">
+      <Link>Entities\Scopes.cs</Link>
+    </Compile>
     <Compile Include="..\..\iRINGLibrary\Desktop\SPARQLQuery.cs">
       <Link>Entities\SPARQLQuery.cs</Link>
     </Compile>
@@ -173,7 +176,6 @@
     <Compile Include="Configuration\IServerConfiguration.cs" />
     <Compile Include="Configuration\ServerConfigurations.cs" />
     <Compile Include="Entities\MappingItem.cs" />
-    <Compile Include="Entities\Scopes.cs" />
     <Compile Include="Events\ButtonEvent.cs" />
     <Compile Include="Events\ButtonEventArgs.cs" />
     <Compile Include="Events\CustomTabEvent.cs" />
