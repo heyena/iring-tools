@@ -36,7 +36,7 @@ using org.iringtools.mapping;
 
 namespace org.iringtools.adapter
 {
-  [DataContract(Namespace = "http://iringtools.org/adapter/dto", Name = "dataTransferObjects")]
+  [DataContract(Namespace = "http://www.iringtools.org/dxfr/dto", Name = "dataTransferObjects")]
   public class DataTransferObjects
   {
     public DataTransferObjects()
@@ -54,7 +54,7 @@ namespace org.iringtools.adapter
     public List<DataTransferObject> DataTransferObjectList { get; set; }
   }
 
-  [DataContract(Namespace = "http://iringtools.org/adapter/dto", Name = "dataTransferObject")]
+  [DataContract(Namespace = "http://www.iringtools.org/dxfr/dto", Name = "dataTransferObject")]
   public class DataTransferObject
   {
     public DataTransferObject()
@@ -85,7 +85,7 @@ namespace org.iringtools.adapter
     }
   }
 
-  [DataContract(Namespace = "http://iringtools.org/adapter/dto", Name = "classObject")]
+  [DataContract(Namespace = "http://www.iringtools.org/dxfr/dto", Name = "classObject")]
   public class ClassObject
   {
     public ClassObject()
@@ -147,7 +147,7 @@ namespace org.iringtools.adapter
     }
   }
 
-  [DataContract(Namespace = "http://iringtools.org/adapter/dto", Name = "templateObject")]
+  [DataContract(Namespace = "http://www.iringtools.org/dxfr/dto", Name = "templateObject")]
   public class TemplateObject
   {
     public TemplateObject()
@@ -168,7 +168,7 @@ namespace org.iringtools.adapter
     public TransferType transferType { get; set; }
   }
 
-  [DataContract(Namespace = "http://iringtools.org/adapter/dto", Name = "roleObject")]
+  [DataContract(Namespace = "http://www.iringtools.org/dxfr/dto", Name = "roleObject")]
   public class RoleObject
   {
     [DataMember(Order = 0)]

@@ -222,81 +222,94 @@ public class ESBService
         DtoPageRequest sourceDtoPageRequest = new DtoPageRequest();
         sourceDtoPageRequest.setManifest(targetManifest);
         DataTransferIndices sourceDataTransferIndices = new DataTransferIndices();
-        DataTransferIndexList sourceDtiList = sourceDataTransferIndices.getDataTransferIndexList();
+        DataTransferIndexList sourceDtiList = new DataTransferIndexList();        
         sourceDtiList.setItems(sourceDtiListItems);
+        sourceDataTransferIndices.setDataTransferIndexList(sourceDtiList);
         sourceDtoPageRequest.setDataTransferIndices(sourceDataTransferIndices);
 
         String sourceDtoUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName + "/dxo";
         sourceDtos = httpClient.post(DataTransferObjects.class, sourceDtoUrl, sourceDtoPageRequest);
-        List<DataTransferObject> sourceDtoListItems = sourceDtos.getDataTransferObjectList().getItems();
-
-        // append add/sync DTOs to resultDtoList, leave change DTOs to send to differencing engine
-        for (int i = 0; i < sourceDtoListItems.size(); i++)
+        
+        if (sourceDtos != null)
         {
-          DataTransferObject sourceDto = sourceDtoListItems.get(i);
-          String sourceDtoIdentifier = sourceDto.getIdentifier();          
-          
-          if (sourceDto.getClassObjects() != null)
+          sourceDtos.setScopeName(sourceScopeName);
+          sourceDtos.setAppName(sourceAppName);
+          List<DataTransferObject> sourceDtoListItems = sourceDtos.getDataTransferObjectList().getItems();
+  
+          // append add/sync DTOs to resultDtoList, leave change DTOs to send to differencing engine
+          for (int i = 0; i < sourceDtoListItems.size(); i++)
           {
-            for (DataTransferIndex sourceDti : sourceDtiListItems)
+            DataTransferObject sourceDto = sourceDtoListItems.get(i);
+            String sourceDtoIdentifier = sourceDto.getIdentifier();          
+            
+            if (sourceDto.getClassObjects() != null)
             {
-              if (sourceDtoIdentifier.equalsIgnoreCase(sourceDti.getIdentifier()))
+              for (DataTransferIndex sourceDti : sourceDtiListItems)
               {
-                TransferType transferType = sourceDti.getTransferType();
-                
-                if (transferType == TransferType.ADD)
+                if (sourceDtoIdentifier.equalsIgnoreCase(sourceDti.getIdentifier()))
                 {
-                  DataTransferObject addDto = sourceDtoListItems.remove(i--);
-                  addDto.setTransferType(org.iringtools.dxfr.dto.TransferType.ADD);
-                  resultDtoListItems.add(addDto);
-                  break;
-                }
-                else if (transferType == TransferType.SYNC)
-                {
-                  DataTransferObject syncDto = sourceDtoListItems.remove(i--);
-                  syncDto.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC);
-                  resultDtoListItems.add(syncDto);
-                  break;
+                  TransferType transferType = sourceDti.getTransferType();
+                  
+                  if (transferType == TransferType.ADD)
+                  {
+                    DataTransferObject addDto = sourceDtoListItems.remove(i--);
+                    addDto.setTransferType(org.iringtools.dxfr.dto.TransferType.ADD);
+                    resultDtoListItems.add(addDto);
+                    break;
+                  }
+                  else if (transferType == TransferType.SYNC)
+                  {
+                    DataTransferObject syncDto = sourceDtoListItems.remove(i--);
+                    syncDto.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC);
+                    resultDtoListItems.add(syncDto);
+                    break;
+                  }
                 }
               }
             }
           }
         }
       }
-
+      
       // get target DTOs
       if (targetDtiListItems.size() > 0)
       {
         DtoPageRequest targetDtoPageRequest = new DtoPageRequest();
         targetDtoPageRequest.setManifest(targetManifest);
         DataTransferIndices targetDataTransferIndices = new DataTransferIndices();
-        DataTransferIndexList targetDtiList = targetDataTransferIndices.getDataTransferIndexList();
+        DataTransferIndexList targetDtiList = new DataTransferIndexList();
         targetDtiList.setItems(targetDtiListItems);
         targetDataTransferIndices.setDataTransferIndexList(targetDtiList);
         targetDtoPageRequest.setDataTransferIndices(targetDataTransferIndices);
 
         String targetDtoUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName + "/dxo";
         targetDtos = httpClient.post(DataTransferObjects.class, targetDtoUrl, targetDtoPageRequest);
-        List<DataTransferObject> targetDtoListItems = targetDtos.getDataTransferObjectList().getItems();
-
-        // append delete DTOs to resultDtoList, leave change DTOs to send to differencing engine
-        for (int i = 0; i < targetDtoListItems.size(); i++)
+        
+        if (targetDtos != null)
         {
-          DataTransferObject targetDto = targetDtoListItems.get(i);
-          String targetDtoIdentifier = targetDto.getIdentifier();          
-          
-          if (targetDto.getClassObjects() != null)
+          targetDtos.setScopeName(targetScopeName);
+          targetDtos.setAppName(targetAppName);
+          List<DataTransferObject> targetDtoListItems = targetDtos.getDataTransferObjectList().getItems();
+        
+          // append delete DTOs to resultDtoList, leave change DTOs to send to differencing engine
+          for (int i = 0; i < targetDtoListItems.size(); i++)
           {
-            for (DataTransferIndex targetDti : targetDtiListItems)
+            DataTransferObject targetDto = targetDtoListItems.get(i);
+            String targetDtoIdentifier = targetDto.getIdentifier();          
+            
+            if (targetDto.getClassObjects() != null)
             {
-              if (targetDtoIdentifier.equalsIgnoreCase(targetDti.getIdentifier()))
+              for (DataTransferIndex targetDti : targetDtiListItems)
               {
-                if (targetDti.getTransferType() == TransferType.DELETE)
+                if (targetDtoIdentifier.equalsIgnoreCase(targetDti.getIdentifier()))
                 {
-                  DataTransferObject deleteDto = targetDtoListItems.remove(i--);
-                  deleteDto.setTransferType(org.iringtools.dxfr.dto.TransferType.DELETE);
-                  resultDtoListItems.add(deleteDto);
-                  break;
+                  if (targetDti.getTransferType() == TransferType.DELETE)
+                  {
+                    DataTransferObject deleteDto = targetDtoListItems.remove(i--);
+                    deleteDto.setTransferType(org.iringtools.dxfr.dto.TransferType.DELETE);
+                    resultDtoListItems.add(deleteDto);
+                    break;
+                  }
                 }
               }
             }

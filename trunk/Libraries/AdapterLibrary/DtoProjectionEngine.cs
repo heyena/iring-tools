@@ -74,13 +74,17 @@ namespace org.iringtools.adapter.projection
             {
               ClassMap classMap = classTemplateMap.classMap;
               List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
+              string classIdentifier = _classIdentifiers[classMap.classId][i];
 
               ClassObject classObject = new ClassObject
               {
                 classId = classMap.classId,
                 name = classMap.name,
-                identifier = _classIdentifiers[classMap.classId][i],
+                identifier = classIdentifier,
               };
+
+              if (dto.classObjects.Count == 0)
+                dto.identifier = classIdentifier;
 
               dto.classObjects.Add(classObject);
 
