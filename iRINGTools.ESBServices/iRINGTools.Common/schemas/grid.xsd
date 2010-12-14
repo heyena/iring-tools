@@ -17,14 +17,11 @@
 
 	<xs:complexType name="Grid">
 		<xs:sequence>
-			<xs:element name="headerList" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
-			<xs:element name="columnData" type="ColumnData" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="headerList" type="xs:string"/>			
+			<xs:element name="relatedItemList" type="xs:string"/>	
+			<xs:element name="ColumnData" type="xs:string"/>			
 		</xs:sequence>
-	</xs:complexType>	
-
-	<xs:complexType name="ColumnData">
-		<xs:sequence>			
-			<xs:element name="rowData" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>			
-		</xs:sequence>
-	</xs:complexType>	
+	</xs:complexType>	  
+	
+	
 </xs:schema>
