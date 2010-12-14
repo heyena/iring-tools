@@ -253,8 +253,48 @@ namespace org.iringtools.refdata
       return SearchPage(query, start, limit);
     }
 
-    private string GetLabel(string uri)
+    //private string GetLabel(string uri)
+    //{
+    //  try
+    //  {
+    //    string label = String.Empty;
+    //    string sparql = String.Empty;
+    //    string relativeUri = String.Empty;
+
+    //    Query query = (Query)_queries.FirstOrDefault(c => c.Key == "GetLabel").Query;
+    //    QueryBindings queryBindings = query.Bindings;
+
+    //    sparql = ReadSPARQL(query.FileName);
+    //    sparql = sparql.Replace("param1", uri);
+
+    //    foreach (Repository repository in _repositories)
+    //    {
+    //      SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
+
+    //      List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+
+    //      foreach (Dictionary<string, string> result in results)
+    //      {
+    //        if (result.ContainsKey("label"))
+    //        {
+    //          label = result["label"];
+    //        }
+    //      }
+    //    }
+
+    //    return label;
+    //  }
+    //  catch (Exception e)
+    //  {
+    //    _logger.Error("Error in GetLabel: " + e);
+    //    throw new Exception("Error while Getting Label for " + uri + ".\n" + e.ToString(), e);
+    //  }
+    //}
+
+    private Entity GetLabel(string uri)
     {
+      Entity labelEntity = new Entity();
+
       try
       {
         string label = String.Empty;
@@ -277,12 +317,15 @@ namespace org.iringtools.refdata
           {
             if (result.ContainsKey("label"))
             {
-              label = result["label"];
+              labelEntity.Label = result["label"];
+              labelEntity.Repository = repository.Name;
+              labelEntity.Uri = repository.Uri;
+              break;
             }
           }
         }
 
-        return label;
+        return labelEntity;
       }
       catch (Exception e)
       {
@@ -353,7 +396,7 @@ namespace org.iringtools.refdata
         if (result.ContainsKey("label"))
           label = result["label"];
         else
-          label = GetLabel(uri);
+          label = GetLabel(uri).Label;
 
         classification.label = label;
         Utility.SearchAndInsert(classifications, classification, Classification.sortAscending());
@@ -361,8 +404,6 @@ namespace org.iringtools.refdata
 
       return classifications;
     }
-
-
 
     private List<Specialization> GetSpecializations(string id, Repository rep)
     {
@@ -414,7 +455,7 @@ namespace org.iringtools.refdata
               }
               else
               {
-                label = GetLabel(uri);
+                label = GetLabel(uri).Label;
               }
 
               specialization.label = label;
@@ -445,7 +486,7 @@ namespace org.iringtools.refdata
               }
               else
               {
-                label = GetLabel(uri);
+                label = GetLabel(uri).Label;
               }
 
               specialization.label = label;
@@ -464,7 +505,7 @@ namespace org.iringtools.refdata
       }
     }
 
-    public string GetClassLabel(string id)
+    public Entity GetClassLabel(string id)
     {
       return GetLabel(rdlUri + id);
     }
@@ -598,7 +639,7 @@ namespace org.iringtools.refdata
           string label = specialization.label;
 
           if (label == null)
-            label = GetLabel(uri);
+            label = GetLabel(uri).Label;
 
           Entity resultEntity = new Entity
           {
@@ -643,7 +684,7 @@ namespace org.iringtools.refdata
           string label = specialization.label;
 
           if (label == null)
-            label = GetLabel(uri);
+            label = GetLabel(uri).Label;
 
           Entity resultEntity = new Entity
           {
@@ -1050,7 +1091,7 @@ namespace org.iringtools.refdata
 
               if (nameValue == null)
               {
-                nameValue = GetLabel(uri);
+                nameValue = GetLabel(uri).Label;
               }
 
               QMXFName name = new QMXFName
@@ -1062,7 +1103,7 @@ namespace org.iringtools.refdata
             }
             else
             {
-              string nameValue = GetLabel(uri);
+              string nameValue = GetLabel(uri).Label;
 
               if (nameValue == String.Empty)
                 nameValue = "tpl:" + Utility.GetIdFromURI(uri);
@@ -2977,7 +3018,7 @@ namespace org.iringtools.refdata
             }
             else
             {
-              label = GetLabel(uri);
+              label = GetLabel(uri).Label;
             }
 
             specialization.label = label;

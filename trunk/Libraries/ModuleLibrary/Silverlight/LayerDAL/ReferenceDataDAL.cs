@@ -524,7 +524,8 @@ namespace org.iringtools.modulelibrary.layerdal
             try
             {
                 result = ((DownloadStringCompletedEventArgs)e).Result;
-                label = result.DeserializeDataContract<string>();
+                Entity entity = result.DeserializeDataContract<Entity>();
+                label = entity.Label;                
             }
             catch (Exception ex)
             {

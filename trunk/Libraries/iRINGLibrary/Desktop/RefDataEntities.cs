@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 
 namespace org.iringtools.library
 {
-  [DataContract(Namespace = "http://www.iringtools.org/refdata", Name = "response")]
+  [DataContract(Namespace = "http://www.iringtools.org/refdata/response", Name = "response")]
   public class RefDataEntities
   {
     public RefDataEntities()
@@ -21,17 +21,17 @@ namespace org.iringtools.library
     public int Total { get; set; }
   }
 
-  [CollectionDataContract(Namespace = "http://www.iringtools.org/refdata", Name = "entities", ItemName = "entity", KeyName = "key", ValueName = "value")]
+  [CollectionDataContract(Namespace = "http://www.iringtools.org/refdata/response", Name = "entities", ItemName = "entity", KeyName = "key", ValueName = "value")]
   public class SortedEntities : SortedList<string, Entity>
   {
   }
 
-  [CollectionDataContract(Namespace = "http://www.iringtools.org/refdata", Name = "entities", ItemName = "entity")]
+  [CollectionDataContract(Namespace = "http://www.iringtools.org/refdata/response", Name = "entities", ItemName = "entity")]
   public class Entities : List<Entity>
   {
   }
 
-  [DataContract(Namespace = "http://www.iringtools.org/refdata", Name = "entity")]
+  [DataContract(Namespace = "http://www.iringtools.org/refdata/response", Name = "entity")]
   public class Entity
   {
     [DataMember(Name = "uri")]
