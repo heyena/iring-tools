@@ -44,7 +44,7 @@ public class RefDataProvider
     return JaxbUtil.read(Federation.class, path);    
   }
   
-  public Response saveFederation(Federation federation) 
+  public Response saveFederation(Federation federation) throws Exception
   {
 	  Response response = new Response();
 	  try
@@ -55,12 +55,13 @@ public class RefDataProvider
 	  }
 	  catch(Exception ex)
 	  {
-		response.setLevel(Level.ERROR);		  
+		response.setLevel(Level.ERROR);
+		throw ex;
 	  }
 	  return response;
   }
   
-  public Response saveNamespace(Namespace namespace) 
+  public Response saveNamespace(Namespace namespace) throws Exception 
   {
 	  Response response = new Response();
 	  StatusList sl = new StatusList();
@@ -75,7 +76,7 @@ public class RefDataProvider
 		  Federation federation = getFederation();
 		  for(Namespace ns : federation.getNamespaces().getItems())
 		  {
-			  if (ns.getAlias().equalsIgnoreCase(namespace.getAlias()))
+			  if (ns.getId().equalsIgnoreCase(namespace.getId()))
 			  {
 				  index = federation.getNamespaces().getItems().indexOf(ns);
 				  namespaceExist = true;
@@ -95,7 +96,8 @@ public class RefDataProvider
 	  catch(Exception ex)
 	  {
 		msgs.add("Error while saving namespace.");
-		response.setLevel(Level.ERROR);		  
+		response.setLevel(Level.ERROR);
+		throw ex;
 	  }
 	  
 	  messages.setItems(msgs);
@@ -106,7 +108,7 @@ public class RefDataProvider
 	  return response;
   }
 
-  public Response saveIdGenerator(IDGenerator idgenerator) 
+  public Response saveIdGenerator(IDGenerator idgenerator) throws Exception 
   {
 	  Response response = new Response();
 	  StatusList sl = new StatusList();
@@ -121,7 +123,7 @@ public class RefDataProvider
 		  Federation federation = getFederation();
 		  for(IDGenerator idg : federation.getIdGenerators().getItems())
 		  {
-			  if (idg.getName().equalsIgnoreCase(idgenerator.getName()))
+			  if (idg.getId().equalsIgnoreCase(idgenerator.getId()))
 			  {
 				  index = federation.getIdGenerators().getItems().indexOf(idg);
 				  idgenExist = true;
@@ -141,7 +143,8 @@ public class RefDataProvider
 	  catch(Exception ex)
 	  {
 		msgs.add("Error while saving ID Generator.");
-		response.setLevel(Level.ERROR);		  
+		response.setLevel(Level.ERROR);
+		throw ex;
 	  }
 	  
 	  messages.setItems(msgs);
@@ -152,7 +155,7 @@ public class RefDataProvider
 	  return response;
   }
   
-  public Response saveRepository(Repository repository) 
+  public Response saveRepository(Repository repository) throws Exception 
   {
 	  Response response = new Response();
 	  StatusList sl = new StatusList();
@@ -167,7 +170,7 @@ public class RefDataProvider
 		  Federation federation = getFederation();
 		  for(Repository repo : federation.getRepositories().getItems())
 		  {
-			  if (repo.getName().equalsIgnoreCase(repository.getName()))
+			  if (repo.getId().equalsIgnoreCase(repository.getId()))
 			  {
 				  index = federation.getRepositories().getItems().indexOf(repo);
 				  repositoryExist = true;
@@ -187,7 +190,8 @@ public class RefDataProvider
 	  catch(Exception ex)
 	  {
 		msgs.add("Error while saving Repository.");
-		response.setLevel(Level.ERROR);		  
+		response.setLevel(Level.ERROR);
+		throw ex;
 	  }
 	  
 	  messages.setItems(msgs);
