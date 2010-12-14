@@ -6,18 +6,18 @@ Ext.onReady(function () {
 	Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
   
 	var directoryPanel = new ExchangeManager.DirectoryPanel({
-		id:'navigation-panel',
-		region:'west',
-		
-		collapsible: true,
-	  collapsed: false,
-	  
-	  border: true,
-	  split: true,
-	  
-		width: 250,
-  	minSize: 175,
-  	maxSize: 500,
+                id:'navigation-panel',
+                region:'west',
+
+                collapsible: true,
+                collapsed: false,
+
+                border: true,
+                split: true,
+
+                width: 250,
+                minSize: 175,
+                maxSize: 500,
 		url: 'exchangereader/exchangelist/1'		
 	});
 	
