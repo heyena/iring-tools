@@ -1,6 +1,8 @@
 
 package org.iringtools.grid;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -18,9 +20,14 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="headerList" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="filterSet" type="{http://www.iringtools.org/grid}filter" maxOccurs="unbounded"/>
+ *         &lt;element name="headerList" type="{http://www.iringtools.org/grid}header" maxOccurs="unbounded"/>
  *         &lt;element name="relatedItemList" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="ColumnData" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="ColumnData" type="{http://www.iringtools.org/grid}column" maxOccurs="unbounded"/>
+ *         &lt;element name="ClassObjName" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="success" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="cacheData" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="pageSize" type="{http://www.w3.org/2001/XMLSchema}double"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -31,42 +38,90 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Grid", propOrder = {
-    "headerList",
+    "filterSets",
+    "headerLists",
     "relatedItemList",
-    "columnData"
+    "columnDatas",
+    "classObjName",
+    "success",
+    "cacheData",
+    "pageSize"
 })
 @XmlRootElement(name = "grid")
 public class Grid {
 
-    @XmlElement(required = true)
-    protected String headerList;
+    @XmlElement(name = "filterSet", required = true)
+    protected List<Filter> filterSets;
+    @XmlElement(name = "headerList", required = true)
+    protected List<Header> headerLists;
     @XmlElement(required = true)
     protected String relatedItemList;
     @XmlElement(name = "ColumnData", required = true)
-    protected String columnData;
+    protected List<Column> columnDatas;
+    @XmlElement(name = "ClassObjName", required = true)
+    protected String classObjName;
+    @XmlElement(required = true)
+    protected String success;
+    @XmlElement(required = true)
+    protected String cacheData;
+    protected double pageSize;
 
     /**
-     * Gets the value of the headerList property.
+     * Gets the value of the filterSets property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the filterSets property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getFilterSets().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Filter }
+     * 
+     * 
      */
-    public String getHeaderList() {
-        return headerList;
+    public List<Filter> getFilterSets() {
+        if (filterSets == null) {
+            filterSets = new ArrayList<Filter>();
+        }
+        return this.filterSets;
     }
 
     /**
-     * Sets the value of the headerList property.
+     * Gets the value of the headerLists property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the headerLists property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getHeaderLists().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Header }
+     * 
+     * 
      */
-    public void setHeaderList(String value) {
-        this.headerList = value;
+    public List<Header> getHeaderLists() {
+        if (headerLists == null) {
+            headerLists = new ArrayList<Header>();
+        }
+        return this.headerLists;
     }
 
     /**
@@ -94,27 +149,156 @@ public class Grid {
     }
 
     /**
-     * Gets the value of the columnData property.
+     * Gets the value of the columnDatas property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the columnDatas property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getColumnDatas().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Column }
+     * 
+     * 
+     */
+    public List<Column> getColumnDatas() {
+        if (columnDatas == null) {
+            columnDatas = new ArrayList<Column>();
+        }
+        return this.columnDatas;
+    }
+
+    /**
+     * Gets the value of the classObjName property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getColumnData() {
-        return columnData;
+    public String getClassObjName() {
+        return classObjName;
     }
 
     /**
-     * Sets the value of the columnData property.
+     * Sets the value of the classObjName property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setColumnData(String value) {
-        this.columnData = value;
+    public void setClassObjName(String value) {
+        this.classObjName = value;
+    }
+
+    /**
+     * Gets the value of the success property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSuccess() {
+        return success;
+    }
+
+    /**
+     * Sets the value of the success property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSuccess(String value) {
+        this.success = value;
+    }
+
+    /**
+     * Gets the value of the cacheData property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCacheData() {
+        return cacheData;
+    }
+
+    /**
+     * Sets the value of the cacheData property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCacheData(String value) {
+        this.cacheData = value;
+    }
+
+    /**
+     * Gets the value of the pageSize property.
+     * 
+     */
+    public double getPageSize() {
+        return pageSize;
+    }
+
+    /**
+     * Sets the value of the pageSize property.
+     * 
+     */
+    public void setPageSize(double value) {
+        this.pageSize = value;
+    }
+
+    /**
+     * Sets the value of the filterSets property.
+     * 
+     * @param filterSets
+     *     allowed object is
+     *     {@link Filter }
+     *     
+     */
+    public void setFilterSets(List<Filter> filterSets) {
+        this.filterSets = filterSets;
+    }
+
+    /**
+     * Sets the value of the headerLists property.
+     * 
+     * @param headerLists
+     *     allowed object is
+     *     {@link Header }
+     *     
+     */
+    public void setHeaderLists(List<Header> headerLists) {
+        this.headerLists = headerLists;
+    }
+
+    /**
+     * Sets the value of the columnDatas property.
+     * 
+     * @param columnDatas
+     *     allowed object is
+     *     {@link Column }
+     *     
+     */
+    public void setColumnDatas(List<Column> columnDatas) {
+        this.columnDatas = columnDatas;
     }
 
 }

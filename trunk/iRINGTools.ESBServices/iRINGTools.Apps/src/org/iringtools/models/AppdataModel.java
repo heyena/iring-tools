@@ -1,9 +1,5 @@
 package org.iringtools.models;
 
-
-
-
-
 import java.util.List;
 import org.iringtools.grid.Grid;
 import org.iringtools.grid.Rows;
@@ -103,7 +99,8 @@ public class AppdataModel {
 	      dtoCtr.fillRow();	    
 	    }		
 	    //dtoCtr.setLists(grid);
-	    dtoCtr.setGridColumnHeader(grid);
+	    dtoCtr.setGridList(grid);
+	    
 		return grid;
 	}
 	
