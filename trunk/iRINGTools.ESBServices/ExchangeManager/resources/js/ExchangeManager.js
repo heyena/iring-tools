@@ -29,7 +29,6 @@ Ext.onReady(function () {
 	});
 	
 	directoryPanel.on('open', function(panel, node, label, url) {	
-
 		Ext.Ajax.request({
 			url: url,
 			method: 'POST',
@@ -75,9 +74,25 @@ Ext.onReady(function () {
 					
 					contentPanel.add(newTab);
 					contentPanel.activate(newTab);
-				}
-				
-			},
+
+					newTab.on('beforeclose',function(newTab) {
+					var deleteReqURL=null
+					if ((nodeType == 'exchanges' && uid != '')) {
+					    deleteReqURL = 'dataObjects/deleteDataObjects/'+nodeType+'/'+scopeId+'/'+uid
+					} else if (nodeType == 'graph') {
+						deleteReqURL = 'dataObjects/deleteGraphObjects/'+nodeType+'/'+scopeId+'/'+node.parentNode.text+'/'+nodeText
+					}
+					if(deleteReqURL!=null){
+						Ext.Ajax.request({
+						url: deleteReqURL,
+						method: 'POST',
+						params: {},
+						success: function(result, request) {
+								console.log('delete response for ' +url+' : '+ eval(Ext.util.JSON.decode(result.responseText).success));
+						}});
+					}
+				});
+				}},
 			failure: function ( result, request) { 
 				//alert(result.responseText); 
 			}
