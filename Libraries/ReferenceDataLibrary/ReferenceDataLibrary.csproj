@@ -51,6 +51,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\AssemblyInfo.cs">
+      <Link>AssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="ReferenceDataModule.cs" />
     <Compile Include="ReferenceDataProvider.cs" />
     <Compile Include="ReferenceDataSettings.cs" />

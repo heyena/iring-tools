@@ -30,19 +30,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DataTransferObjects }
+     * Create an instance of {@link DataTransferObjectList }
      * 
      */
-    public DataTransferObjects createDataTransferObjects() {
-        return new DataTransferObjects();
+    public DataTransferObjectList createDataTransferObjectList() {
+        return new DataTransferObjectList();
     }
 
     /**
-     * Create an instance of {@link TemplateObjects }
+     * Create an instance of {@link ClassObjects }
      * 
      */
-    public TemplateObjects createTemplateObjects() {
-        return new TemplateObjects();
+    public ClassObjects createClassObjects() {
+        return new ClassObjects();
     }
 
     /**
@@ -62,19 +62,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ClassObjects }
-     * 
-     */
-    public ClassObjects createClassObjects() {
-        return new ClassObjects();
-    }
-
-    /**
      * Create an instance of {@link ClassObject }
      * 
      */
     public ClassObject createClassObject() {
         return new ClassObject();
+    }
+
+    /**
+     * Create an instance of {@link DataTransferObject }
+     * 
+     */
+    public DataTransferObject createDataTransferObject() {
+        return new DataTransferObject();
+    }
+
+    /**
+     * Create an instance of {@link DataTransferObjects }
+     * 
+     */
+    public DataTransferObjects createDataTransferObjects() {
+        return new DataTransferObjects();
     }
 
     /**
@@ -86,19 +94,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DataTransferObjectList }
+     * Create an instance of {@link TemplateObjects }
      * 
      */
-    public DataTransferObjectList createDataTransferObjectList() {
-        return new DataTransferObjectList();
-    }
-
-    /**
-     * Create an instance of {@link DataTransferObject }
-     * 
-     */
-    public DataTransferObject createDataTransferObject() {
-        return new DataTransferObject();
+    public TemplateObjects createTemplateObjects() {
+        return new TemplateObjects();
     }
 
 }

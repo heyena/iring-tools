@@ -567,8 +567,8 @@ namespace org.ids_adi.qmxf
     [XmlAttribute]
     public string reference { get; set; }
 
-    [DataMember(EmitDefaultValue = false)]
-    [XmlAttribute]
+    [DataMember(Name = "as", EmitDefaultValue = false)]
+    [XmlAttribute(AttributeName = "as")]
     public string As { get; set; }
   }
 

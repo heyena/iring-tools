@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;attribute name="lang" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="reference" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="As" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="as" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -34,7 +34,7 @@ public class Value {
     protected String lang;
     @XmlAttribute(name = "reference")
     protected String reference;
-    @XmlAttribute(name = "As")
+    @XmlAttribute(name = "as")
     protected String as;
 
     /**
