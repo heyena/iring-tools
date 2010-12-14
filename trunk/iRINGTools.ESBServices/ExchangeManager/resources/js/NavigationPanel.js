@@ -28,7 +28,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
 		var headerList = eval(this.configData.columnsData);
 		var classObjName = this.configData.classObjName;
 		var filterSet = eval(this.configData.filterSet);
-		var pageSize = this.configData.pageSize; 
+		var pageSize = parseInt(this.configData.pageSize); 
 		var sortBy = this.configData.sortBy
 		var sortOrder = this.configData.sortOrder
 		
@@ -107,51 +107,142 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
       classObjName: classObjName,
       enableColumnMove: false,
       bbar: new Ext.PagingToolbar({
-        	pageSize: 20,
+        	pageSize: pageSize,
         	store: store,
         	displayInfo: true,
         	autoScroll: true,
         	plugins: [filters]
-        }),
-	listeners: {
-		beforeclose: function(){
-						 alert('close')
-								 // send the request to delete the cache
-				 /*if (gridType != 'relatedClass') {
-					 makeLablenURIS('delete')
-							 sendCloseRequest(globalReq,globalLabel);
-				 } // send request for delete cache*/
-				 
-			 },						  
-	beforerender: {
-		fn: function(){
-				var colmodel = this.getColumnModel();
-				for(var i=0; i<colmodel.getColumnCount();i++){
-					colmodel.setRenderer(i,function(val){
-						switch(val.toLowerCase())
-						{
-							case "add":
-								spanColor='red';
-								break;
-							case "change":
-								spanColor='blue';
-								break;
-							case "delete":
-								spanColor='green';
-								break;
-							case "sync":
-								spanColor='black';
-								break;
-							default:
-								spanColor='black';
-						}
-						return '<span style="color:'+spanColor+';">' + val + '</span>';
-					});
-				}
-			}
-		}}
+        })
   	});
-  	
+
+	this.dataGrid.on('beforerender',function(){
+		var colmodel = this.getColumnModel();
+		for(var i=0; i<colmodel.getColumnCount();i++){
+			colmodel.setRenderer(i,function(val){
+				switch(val.toLowerCase())
+				{
+					case "add":
+						spanColor='red';
+						break;
+					case "change":
+						spanColor='blue';
+						break;
+					case "delete":
+						spanColor='green';
+						break;
+					case "sync":
+						spanColor='black';
+						break;
+					default:
+						spanColor='black';
+				}
+				return '<span style="color:'+spanColor+';">' + val + '</span>';
+			});
+		}
+	});
+	
+	this.dataGrid.on('cellclick',function(grid,rowIndex,columnIndex,e){
+		var cm = this.colModel
+		var record = grid.getStore().getAt(rowIndex);  // Get the Record
+		var fieldName = grid.getColumnModel().getDataIndex(columnIndex); // Get field name
+		if (fieldName=='Identifier' && record.get(fieldName)!='')
+		{
+			var IdentificationByTag_value = record.get(fieldName);
+			var transferType_value = record.get('TransferType');
+			var rowDataArr = [];
+			for(var i=3; i<cm.getColumnCount();i++){
+				fieldHeader= grid.getColumnModel().getColumnHeader(i); // Get field name
+				fieldValue= record.get(grid.getColumnModel().getDataIndex(i))
+				tempArr= Array(fieldHeader,fieldValue)
+				rowDataArr.push(tempArr)
+			}
+			var filedsVal_ = '[{"name":"Property"},{"name":"Value"}]';
+			var columnsData_ ='[{"id":"Property","header":"Property","width":144,"sortable":"true","dataIndex":"Property"},{"id":"Value","header":"Value","width":144,"sortable":"true","dataIndex":"Value"}]';
+			var prowData = eval(rowDataArr);
+			var pfiledsVal = eval(filedsVal_);
+			var pColumnData = eval(columnsData_);
+			  // create the data store
+			var pStore = new Ext.data.ArrayStore({
+			fields: pfiledsVal
+			});
+			pStore.loadData(prowData);
+
+			// create the Grid
+			var grid_class_properties = new Ext.grid.GridPanel({
+			store: pStore,
+			columns: pColumnData,
+			stripeRows: true,
+			loadMask: true,
+			height: 460,
+			autoSizeColumns: true,
+			autoSizeGrid: true,
+			AllowScroll : true,
+			minColumnWidth: 100,
+			columnLines: true,
+			enableColumnMove: false
+			});
+			
+			// get the centerPanel x,y coordinates, used to set the position of Indvidual Class(PopUp window)
+//			var strPositon = (Ext.getCmp('centerPanel').getPosition()).toString();
+//			var arrPositon = strPositon.split(",");
+
+				var myWin = new Ext.Window({
+				title: 'Indvidual Class[ '+IdentificationByTag_value+' ]',
+				id:'indvidual-class',
+				closable:true,
+				x: 10,
+				y: parseInt(10)+25,
+
+				//width:Ext.getCmp('centerPanel').getInnerWidth()-2,
+				//height:Ext.getCmp('centerPanel').getInnerHeight(),
+				layout: 'border',
+				listeners: {
+				beforerender: {
+				fn : function(){
+					 Ext.getBody().mask();
+				}},
+				close:{
+				fn:function(){
+					   Ext.getBody().unmask();
+				}}},
+				items: [{
+				id:'identifier-class-detail',
+				region: 'north',
+				split: true,
+				height:100,
+				html: 'Class Detail'
+				},
+				{
+				id:'identifier-class-properties',
+				title: 'Properties',
+				region:'west',
+				split: true,
+				margins: '0 1 3 3',
+				width: 250,
+				height:900,
+				minSize: 100,
+				items:[grid_class_properties]
+				},
+				{
+				title: 'Related Items',
+				layout:'accordion',
+				split: true,
+				width: 220,
+				region: 'center',
+				margins: '0 3 3 0',
+				layoutConfig: {
+				animate: true,
+				fill : false
+				},
+				html:relatedClassArr[rowIndex]
+				}]
+			});
+				myWin.show();
+				Ext.get('identifier-class-detail').dom.innerHTML = '<div style="float:left; width:110px;"><img src="resources/images/class-badge.png"/></div><div style="padding-top:20px;" id="identifier"><b>'+IdentificationByTag_value+'</b><br/>'+grid.classObjName+'<br/>Transfer Type : '+transferType_value+'</div>'
+				// this window should add into the crums
+		}
+	});
+	
   	this.items = [
   		this.dataGrid
   	];
@@ -160,13 +251,12 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
         
     // super
     ExchangeManager.NavigationPanel.superclass.initComponent.call(this);
-    
   },
 
   buildToolbar: function () {
     return [{
 			id: "card-1",
-    	xtype:"tbbutton",
+			xtype:"tbbutton",
 			tooltip:'Crum 1',
 			text:'1...',			
 			disabled: false,
@@ -180,7 +270,6 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
   	var i = l.activeItem.id.split('card-')[1]; 
   	var next = parseInt(i, 10) + 1;
   	l.setActiveItem(next);
-  	
   	var t = this.getTopToolbar(); 
   	
   	t.add([{
@@ -194,7 +283,6 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
 		}]);
   	
   	t.doLayout();
-  	
     this.fireEvent('next', this, i);
   }  
   
