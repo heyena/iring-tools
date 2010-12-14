@@ -30,43 +30,19 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link RoleObjects }
+     * 
+     */
+    public RoleObjects createRoleObjects() {
+        return new RoleObjects();
+    }
+
+    /**
      * Create an instance of {@link ClassObjects }
      * 
      */
     public ClassObjects createClassObjects() {
         return new ClassObjects();
-    }
-
-    /**
-     * Create an instance of {@link TemplateObjects }
-     * 
-     */
-    public TemplateObjects createTemplateObjects() {
-        return new TemplateObjects();
-    }
-
-    /**
-     * Create an instance of {@link DataTransferObjectList }
-     * 
-     */
-    public DataTransferObjectList createDataTransferObjectList() {
-        return new DataTransferObjectList();
-    }
-
-    /**
-     * Create an instance of {@link DataTransferObjects }
-     * 
-     */
-    public DataTransferObjects createDataTransferObjects() {
-        return new DataTransferObjects();
-    }
-
-    /**
-     * Create an instance of {@link DataTransferObject }
-     * 
-     */
-    public DataTransferObject createDataTransferObject() {
-        return new DataTransferObject();
     }
 
     /**
@@ -86,6 +62,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link DataTransferObjectList }
+     * 
+     */
+    public DataTransferObjectList createDataTransferObjectList() {
+        return new DataTransferObjectList();
+    }
+
+    /**
      * Create an instance of {@link TemplateObject }
      * 
      */
@@ -94,11 +78,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link RoleObjects }
+     * Create an instance of {@link DataTransferObjects }
      * 
      */
-    public RoleObjects createRoleObjects() {
-        return new RoleObjects();
+    public DataTransferObjects createDataTransferObjects() {
+        return new DataTransferObjects();
+    }
+
+    /**
+     * Create an instance of {@link TemplateObjects }
+     * 
+     */
+    public TemplateObjects createTemplateObjects() {
+        return new TemplateObjects();
+    }
+
+    /**
+     * Create an instance of {@link DataTransferObject }
+     * 
+     */
+    public DataTransferObject createDataTransferObject() {
+        return new DataTransferObject();
     }
 
 }
