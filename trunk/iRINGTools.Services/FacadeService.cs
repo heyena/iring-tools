@@ -52,7 +52,7 @@ namespace org.iringtools.services
   public class FacadeService
   {
 
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterService));
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(FacadeService));
     private FacadeProvider _facadeProvider = null;
 
     public FacadeService()

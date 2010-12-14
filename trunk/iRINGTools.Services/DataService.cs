@@ -50,7 +50,7 @@ namespace org.iringtools.services
   [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
   public class DataService
   {
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterService));
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(DataService));
     private AdapterProvider _adapterProvider = null;
 
     /// <summary>

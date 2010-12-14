@@ -1182,14 +1182,14 @@ namespace org.iringtools.refdata
             }
         }
 
-        public QMXF GetTemplate(string id, templateType templateType, Repository rep)
+        public QMXF GetTemplate(string id, QMXFType templateType, Repository rep)
         {
             QMXF qmxf = new QMXF();
             List<TemplateQualification> templateQualification = null;
             List<TemplateDefinition> templateDefinition = null;
             try
             {
-                if (templateType == templateType.Qualification)
+                if (templateType == QMXFType.Qualification)
                 {
                     templateQualification = GetTemplateQualification(id, rep);
                 }
@@ -2266,7 +2266,7 @@ namespace org.iringtools.refdata
                         {
                             ID = Utility.ExtractId(ID);
 
-                            q = GetTemplate(ID, templateType.Definition, target);
+                            q = GetTemplate(ID, QMXFType.Definition, target);
 
                             foreach (TemplateDefinition templateFound in q.templateDefinitions)
                             {
@@ -2563,7 +2563,7 @@ namespace org.iringtools.refdata
                             id = Utility.GetIdFromURI(ID);
                             ID = id;
 
-                            q = GetTemplate(id, templateType.Qualification, target);
+                            q = GetTemplate(id, QMXFType.Qualification, target);
                             foreach (TemplateQualification templateFound in q.templateQualifications)
                             {
                                 templateIndex++;
