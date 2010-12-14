@@ -14,6 +14,9 @@
 	</xs:annotation>
 
 	<xs:element name="federation" type="Federation" />
+	<xs:element name="namespace" type="Namespace" />
+	<xs:element name="IDGenerator" type="IDGenerator" />
+	<xs:element name="repository" type="Repository" />
 
 	<xs:complexType name="Federation">
 		<xs:sequence>
