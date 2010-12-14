@@ -185,6 +185,7 @@ public class FederationModel
 				System.out.println("###"+httpRequest.getParameter("parentNodeID")+"###");
 				if("idGenerator".equalsIgnoreCase(httpRequest.getParameter("parentNodeID"))){
 					IDGenerator idgenerator = new IDGenerator();
+					idgenerator.setId(httpRequest.getParameter("nodeID"));
 					idgenerator.setName(httpRequest.getParameter("Name"));
 					idgenerator.setUri(httpRequest.getParameter("URI"));
 					idgenerator.setDescription(httpRequest.getParameter("Description"));
@@ -193,6 +194,7 @@ public class FederationModel
 					
 				}else if("namespace".equalsIgnoreCase(httpRequest.getParameter("parentNodeID"))){
 					Namespace namespace = new Namespace();
+					namespace.setId(httpRequest.getParameter("nodeID"));
 					namespace.setUri(httpRequest.getParameter("URI"));
 					namespace.setAlias(httpRequest.getParameter("Alias"));
 					namespace.setIsWritable(Boolean.parseBoolean(httpRequest.getParameter("Writable")));
@@ -202,6 +204,7 @@ public class FederationModel
 					
 				}else if("repository".equalsIgnoreCase(httpRequest.getParameter("parentNodeID"))){
 					Repository repository = new Repository();
+					repository.setId(httpRequest.getParameter("nodeID"));
 					repository.setDescription(httpRequest.getParameter("Description"));
 					repository.setUri(httpRequest.getParameter("URI"));
 					repository.setName(httpRequest.getParameter("Name"));
@@ -223,5 +226,6 @@ public class FederationModel
 		}
    
   }
+  
 
 }
