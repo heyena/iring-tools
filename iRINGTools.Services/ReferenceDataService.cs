@@ -130,7 +130,7 @@ namespace org.iringtools.services
     /// </summary>
     [Description("return class label")]
     [WebGet(UriTemplate = "/classes/{id}/label")]
-    public string GetClassLabel(string id)
+    public Entity GetClassLabel(string id)
     {
       return _referenceDataProvider.GetClassLabel(id);
     }

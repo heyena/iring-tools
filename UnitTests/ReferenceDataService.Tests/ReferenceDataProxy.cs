@@ -71,7 +71,7 @@ namespace ReferenceDataService.Tests
 
     public string GetClassLabel(string id)
     {
-      return _referenceDataServiceProvider.GetClassLabel(id);
+      return _referenceDataServiceProvider.GetClassLabel(id).Label;
     }
 
     public List<Entity> GetSuperClasses(string id)

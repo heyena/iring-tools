@@ -1,5 +1,5 @@
 
-package org.iringtools.common.response;
+package org.iringtools.refdata.response;
 
 import javax.xml.bind.annotation.XmlRegistry;
 
@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlRegistry;
 /**
  * This object contains factory methods for each 
  * Java content interface and Java element interface 
- * generated in the org.iringtools.common.response package. 
+ * generated in the org.iringtools.refdata.response package. 
  * <p>An ObjectFactory allows you to programatically 
  * construct new instances of the Java representation 
  * for XML content. The Java representation of XML 
@@ -23,26 +23,18 @@ public class ObjectFactory {
 
 
     /**
-     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.iringtools.common.response
+     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.iringtools.refdata.response
      * 
      */
     public ObjectFactory() {
     }
 
     /**
-     * Create an instance of {@link Results }
+     * Create an instance of {@link Value }
      * 
      */
-    public Results createResults() {
-        return new Results();
-    }
-
-    /**
-     * Create an instance of {@link Result }
-     * 
-     */
-    public Result createResult() {
-        return new Result();
+    public Value createValue() {
+        return new Value();
     }
 
     /**
@@ -54,27 +46,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link StatusList }
+     * Create an instance of {@link Entities }
      * 
      */
-    public StatusList createStatusList() {
-        return new StatusList();
+    public Entities createEntities() {
+        return new Entities();
     }
 
     /**
-     * Create an instance of {@link Status }
+     * Create an instance of {@link Entity }
      * 
      */
-    public Status createStatus() {
-        return new Status();
-    }
-
-    /**
-     * Create an instance of {@link Messages }
-     * 
-     */
-    public Messages createMessages() {
-        return new Messages();
+    public Entity createEntity() {
+        return new Entity();
     }
 
 }
