@@ -23,5 +23,12 @@
 		</xs:sequence>
 	</xs:complexType>	  
 	
+	 <xs:element name="rows" type="Rows" />  
+
+  <xs:complexType name="Rows">
+    <xs:sequence>
+      <xs:element name="row" type="xs:string" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>  
 	
 </xs:schema>

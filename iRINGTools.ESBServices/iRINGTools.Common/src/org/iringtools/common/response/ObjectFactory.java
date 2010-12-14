@@ -30,11 +30,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Messages }
+     * Create an instance of {@link Result }
      * 
      */
-    public Messages createMessages() {
-        return new Messages();
+    public Result createResult() {
+        return new Result();
+    }
+
+    /**
+     * Create an instance of {@link Response }
+     * 
+     */
+    public Response createResponse() {
+        return new Response();
     }
 
     /**
@@ -46,22 +54,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Result }
-     * 
-     */
-    public Result createResult() {
-        return new Result();
-    }
-
-    /**
-     * Create an instance of {@link Status }
-     * 
-     */
-    public Status createStatus() {
-        return new Status();
-    }
-
-    /**
      * Create an instance of {@link StatusList }
      * 
      */
@@ -70,11 +62,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Response }
+     * Create an instance of {@link Messages }
      * 
      */
-    public Response createResponse() {
-        return new Response();
+    public Messages createMessages() {
+        return new Messages();
+    }
+
+    /**
+     * Create an instance of {@link Status }
+     * 
+     */
+    public Status createStatus() {
+        return new Status();
     }
 
 }
