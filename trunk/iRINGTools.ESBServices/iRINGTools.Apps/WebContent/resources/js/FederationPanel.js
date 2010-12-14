@@ -21,7 +21,7 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
     this.addEvents({
     	click: true,
     	refresh: true,
-        open: true,
+        edit: true,
         addnew: true
     });
 
@@ -102,11 +102,11 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
 			scope: this
 		},{
 			xtype:"tbbutton",
-			text:'Open',
+			text:'Edit',
 			icon:'resources/images/16x16/document-open.png',
-			tooltip:'Open',
+			tooltip:'Edit',
 			disabled: false,
-			handler: this.onOpen,
+			handler: this.onEdit,
 			scope: this
 		},{xtype:"tbbutton",
 			icon:'resources/images/16x16/document-new.png',
@@ -129,7 +129,7 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
         // 01. Edit Form
 
         var obj = node.attributes
-        var properties = node.attributes.properties
+        var properties = node.attributes.items
         var nId = obj['id']
 
         if ('children' in obj != true) { // restrict to generate form those have children
@@ -157,6 +157,10 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
                         case "Description":
                             xtype= 'xtype : "textarea"'
                             break;
+                         case "URI":
+                             xtype= 'xtype : "textfield"'
+                            vtype= 'vtype : "url",'  // comma is required
+                            break;
                          case "Read Only" :
                          case "Writable":
                              xtype= 'xtype : "combo",triggerAction: "all", mode: "local", store: ["true","false"],  displayField:"'+properties[i].value+'", width: 120'
@@ -164,7 +168,7 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
                              break;
                          default:
                             xtype= 'xtype : "textfield"'
-                            //vtype= 'vtype : "uniquename",' // custom validation
+                            vtype= 'vtype : "uniquename",' // custom validation
                     }
 
                      list_items = list_items+',{'+xtype+',' +vtype + 'fieldLabel:"' + properties[i].name
@@ -179,7 +183,7 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
 
                 label = node.parentNode.text + ' : ' + obj['text']
 
-                this.fireEvent('open', this, node, label, list_tems)
+                this.fireEvent('edit', this, node, label, list_tems)
 			
   	}
       }
@@ -188,7 +192,7 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
 
   onClick: function(node) {
       // get all the attributes of node
-        var properties = node.attributes.properties;
+        var properties = node.attributes.items;
 
         var gridSource = new Array();
 
@@ -215,7 +219,7 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
 		this.federationPanel.root.reload();
   },
 
-  onOpen: function (btn, ev) {
+  onEdit: function (btn, ev) {
   	this.openTab(this.getSelectedNode());
   },
 

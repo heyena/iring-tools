@@ -2,6 +2,7 @@
  * @File Name : form_validation.js
  * @Path : resources/js
  * @Using Lib : Ext JS Library 3.2.1(lib/ext-3.2.1)
+ * @author by Ritu Garg
  *
  * This file intended to implement custom validation on form
  * It contains different kinds of rules those can be apply on form fields
@@ -51,7 +52,7 @@ function resetNameValidator(is_error) {
                 return false;
             } else {
                 Ext.Ajax.request({
-                    url: 'validate-form',
+                    url: 'save-form.php',
                     method: 'POST',
                     params: 'name=' + val,
                     success: function(o) {

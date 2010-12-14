@@ -1,3 +1,14 @@
+/*
+ * @File Name : FederationManager.js
+ * @Path : resources/js
+ * @Using Lib : Ext JS Library 3.2.1(lib/ext-3.2.1)
+ * @author by Ritu Garg
+ *
+ * This file intended to make Layout of Federation Manager
+ * by using different Extjs custom classes
+ *
+ */
+
 Ext.onReady(function () {
 
 	Ext.BLANK_IMAGE_URL = 'resources/images/s.gif';
@@ -18,8 +29,8 @@ Ext.onReady(function () {
 	  width: 350,
   	  minSize: 175,
   	  maxSize: 500,
-	  //url: 'federation'
-          url:'federation-tree.json'
+	  url: 'federation'
+          //url:'federation-tree.json'
 	});
 
 	var contentPanel = new Ext.TabPanel({
@@ -30,7 +41,7 @@ Ext.onReady(function () {
 		enableTabScroll: true                
 	});
 
-	federationPanel.on('open', function(panel, node, label, formData) {
+	federationPanel.on('edit', function(panel, node, label, formData) {
 
                 var newTab = new FederationManager.ContentPanel({
                         title: label,
@@ -39,6 +50,7 @@ Ext.onReady(function () {
                         url: 'postFederation',
                         single: true, // important, as many layouts can occur
                         layout:'fit',
+                        
                         closable: true,
                         defaults:{
                                 layout:'form',
