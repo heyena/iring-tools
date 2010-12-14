@@ -28,6 +28,14 @@ public class AppdataController {
 		return grid;
 	}
 	
+	public void setRows(Rows rows) {
+		this.rows = rows;
+	}
+
+	public Rows getRows() {
+		return rows;
+	}
+	
 	public void setPageName(String pageName) {
 		this.pageName = pageName;
 	}
@@ -60,17 +68,22 @@ public class AppdataController {
 		return graphName;
 	}	
 	
-	public String getAppdataModel() {
+	public String getAppDataGrid() {
 		appdata.populate(scopeName, appName, graphName);
-		if (pageName.equals(""))
-			grid = appdata.toGrid();
-		else
-			rows = appdata.toRows();
-        return Action.SUCCESS;
+		grid = appdata.toGrid();
+		return Action.SUCCESS;
 	}
 	
-	public String postAppdataModel() {		
-		appdata.readGrid(grid);		
-        return Action.SUCCESS;
+	public String getAppDataRows() {
+		appdata.populate(scopeName, appName, graphName);
+		rows = appdata.toRows();
+		return Action.SUCCESS;
 	}
+	
+	
+	
+//	public String postAppDataGrid() {		
+//		appdata.readGrid(grid);		
+//        return Action.SUCCESS;
+//	}
 }

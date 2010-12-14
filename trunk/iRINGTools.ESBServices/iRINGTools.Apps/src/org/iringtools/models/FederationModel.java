@@ -1,7 +1,6 @@
 package org.iringtools.models;
 
 import java.util.List;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import org.iringtools.common.response.Response;
