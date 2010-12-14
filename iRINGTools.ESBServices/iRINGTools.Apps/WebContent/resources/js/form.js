@@ -13,7 +13,7 @@ function showCentralEditForms(node) {
   // 01. Edit Form
         
         var obj = node.attributes
-        var properties = node.attributes.properties
+        var properties = node.attributes.items
         var nId = obj['id']
 
         if ('children' in obj != true) { // restrict to generate form those have children
