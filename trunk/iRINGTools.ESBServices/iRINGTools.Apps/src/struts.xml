@@ -15,7 +15,7 @@
 	<package name="jsontest" extends="json-default">
 	  <action name="federation" class="org.iringtools.controllers.FederationController" method="getFederation">
 	    <result type="json">
-	    	<param name="root">tree.treeNodes</param>
+	    	<param name="root">tree.items</param>
 	    </result>
 	  </action>
 	  
@@ -27,7 +27,7 @@
 	  </action>
 	  <action name="directory" class="org.iringtools.controllers.DirectoryController" method="getDirectory">
 	    <result type="json">
-	    	<param name="root">tree.treeNodes</param>
+	    	<param name="root">tree.items</param>
 	    </result>
 	  </action>
 	</package>

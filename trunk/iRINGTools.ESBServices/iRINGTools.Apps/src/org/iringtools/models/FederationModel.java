@@ -1,6 +1,7 @@
 package org.iringtools.models;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import org.iringtools.common.response.Response;
@@ -102,7 +103,7 @@ public class FederationModel
     for (IDGenerator idgenerator : federation.getIdGenerators().getItems())
     {
       LeafNode generatorNode = new LeafNode();
-      generatorNode.setId(idgenerator.getName());
+      generatorNode.setId(idgenerator.getId());
       generatorNode.setText(idgenerator.getName());
       generatorNode.setIconCls("generator");
       generatorNode.setLeaf(true);
@@ -127,7 +128,7 @@ public class FederationModel
     for (Namespace namespace : federation.getNamespaces().getItems())
     {
       LeafNode namespaceNode = new LeafNode();
-      namespaceNode.setId(namespace.getAlias());
+      namespaceNode.setId(namespace.getId());
       namespaceNode.setText(namespace.getAlias());
       namespaceNode.setIconCls("namespace");
       namespaceNode.setLeaf(true);
@@ -154,7 +155,7 @@ public class FederationModel
     for (Repository repository : federation.getRepositories().getItems())
     {
       LeafNode repositoryNode = new LeafNode();
-      repositoryNode.setId(repository.getName());
+      repositoryNode.setId(repository.getId());
       repositoryNode.setText(repository.getName());
       repositoryNode.setIconCls("repository");
       repositoryNode.setLeaf(true);
@@ -222,5 +223,5 @@ public class FederationModel
 		}
    
   }
-  
+
 }

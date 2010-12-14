@@ -84,7 +84,7 @@ Ext.onReady(function() {
 			click : {
 				fn : function(node) {
 					// get all the attributes of node
-					var properties = node.attributes.properties;
+					var properties = node.attributes.items;
 
 					var gridSource = new Array();
 

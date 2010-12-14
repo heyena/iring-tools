@@ -47,9 +47,9 @@ public class FederationController  implements ServletRequestAware{
 	}
 	
 	public String postFederation() {		
-		System.out.println("Reaching post Fedraion");
+		System.out.println("Reaching post Federation");
 		federation.readTree(httpRequest);
-		federation.save();
+		//federation.save();
         return Action.SUCCESS;
 	}
 }
