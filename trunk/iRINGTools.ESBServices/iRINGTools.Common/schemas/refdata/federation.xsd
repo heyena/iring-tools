@@ -62,6 +62,7 @@
 
 	<xs:complexType name="IDGenerator">
 		<xs:sequence>
+			<xs:element name="id" type="xs:string" />
 			<xs:element name="uri" type="xs:string" />
 			<xs:element name="name" type="xs:string" />
 			<xs:element name="description" type="xs:string" />
@@ -70,6 +71,7 @@
 
 	<xs:complexType name="Namespace">
 		<xs:sequence>
+			<xs:element name="id" type="xs:string" />
 			<xs:element name="uri" type="xs:string" />
 			<xs:element name="alias" type="xs:string" />
 			<xs:element name="isWritable" type="xs:boolean" />
@@ -80,6 +82,7 @@
 
 	<xs:complexType name="Repository">
 		<xs:sequence>
+			<xs:element name="id" type="xs:string" />
 			<xs:element name="description" type="xs:string" />
 			<xs:element name="isReadOnly" type="xs:boolean" />
 			<xs:element name="name" type="xs:string" />
