@@ -114,6 +114,15 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
         	plugins: [filters]
         }),
 	listeners: {
+		beforeclose: function(){
+						 alert('close')
+								 // send the request to delete the cache
+				 /*if (gridType != 'relatedClass') {
+					 makeLablenURIS('delete')
+							 sendCloseRequest(globalReq,globalLabel);
+				 } // send request for delete cache*/
+				 
+			 },						  
 	beforerender: {
 		fn: function(){
 				var colmodel = this.getColumnModel();
