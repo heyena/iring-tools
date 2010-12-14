@@ -13,7 +13,7 @@ import org.iringtools.dxfr.dto.DataTransferObjects;
 import org.iringtools.dxfr.dto.RoleObject;
 import org.iringtools.dxfr.dto.TemplateObject;
 
-import org.iringtools.rows.Rows;
+import org.iringtools.grid.Rows;
 import org.iringtools.utility.HttpClient;
 
 public class DtoContainer {
@@ -45,7 +45,7 @@ public class DtoContainer {
 		try {
 			HttpClient httpClient = new HttpClient(URI);			
 			DataTransferObjects dto = httpClient.get(DataTransferObjects.class, dtoUrl);
-			setDtoList(dto.getDataTransferObjectList().getDataTransferObjectListItems());
+			setDtoList(dto.getDataTransferObjectList().getItems());
 		} catch (Exception e) {
 			System.out.println("Exception :" + e);
 		}
@@ -325,15 +325,15 @@ public class DtoContainer {
 		
 	    for (DataTransferObject dto : dtoList)
 	    {
-	      setClaList(dto.getClassObjects().getClassObjects());
+	      setClaList(dto.getClassObjects().getItems());
 	      for (ClassObject clo : claList)
 	      {
 	    	  
-	    	  setTObjList(clo.getTemplateObjects().getTemplateObjects());
+	    	  setTObjList(clo.getTemplateObjects().getItems());
 	    	  for (TemplateObject tObj : tObjList)
 	    	  {
 	    		  setTName(tObj.getName());
-	    		  setRoList(tObj.getRoleObjects().getRoleObjects());
+	    		  setRoList(tObj.getRoleObjects().getItems());
 	    		  for (RoleObject rObj : roList)
 	    		  {	    			  
 	    			  setRType(rObj.getType().toString());

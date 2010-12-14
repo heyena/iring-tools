@@ -6,7 +6,7 @@ package org.iringtools.models;
 
 import java.util.List;
 import org.iringtools.grid.Grid;
-import org.iringtools.rows.Rows;
+import org.iringtools.grid.Rows;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dti.DataTransferIndex;
@@ -36,7 +36,7 @@ public class AppdataModel {
 		try {
 			HttpClient httpClient = new HttpClient(URI);			
 			DataTransferIndices dti = httpClient.get(DataTransferIndices.class, "/" + scopeName + "/" + appName + "/" + graphName);
-			setDtiList(dti.getDataTransferIndexList().getDataTransferIndexListItems());
+			setDtiList(dti.getDataTransferIndexList().getItems());
 			setDtoUrl ("/" + scopeName + "/" + appName + "/" + graphName);
 		} catch (Exception e) {
 			System.out.println("Exception :" + e);
