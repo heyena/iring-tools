@@ -30,59 +30,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Qmxf }
+     * Create an instance of {@link TextualDefinition }
      * 
      */
-    public Qmxf createQmxf() {
-        return new Qmxf();
+    public TextualDefinition createTextualDefinition() {
+        return new TextualDefinition();
     }
 
     /**
-     * Create an instance of {@link Specialization }
+     * Create an instance of {@link LicenseTerm }
      * 
      */
-    public Specialization createSpecialization() {
-        return new Specialization();
+    public LicenseTerm createLicenseTerm() {
+        return new LicenseTerm();
     }
 
     /**
-     * Create an instance of {@link ClassDefinition }
+     * Create an instance of {@link RoleQualification }
      * 
      */
-    public ClassDefinition createClassDefinition() {
-        return new ClassDefinition();
-    }
-
-    /**
-     * Create an instance of {@link TemplateQualification }
-     * 
-     */
-    public TemplateQualification createTemplateQualification() {
-        return new TemplateQualification();
-    }
-
-    /**
-     * Create an instance of {@link TemplateDefinition }
-     * 
-     */
-    public TemplateDefinition createTemplateDefinition() {
-        return new TemplateDefinition();
-    }
-
-    /**
-     * Create an instance of {@link EntityType }
-     * 
-     */
-    public EntityType createEntityType() {
-        return new EntityType();
-    }
-
-    /**
-     * Create an instance of {@link Restriction }
-     * 
-     */
-    public Restriction createRestriction() {
-        return new Restriction();
+    public RoleQualification createRoleQualification() {
+        return new RoleQualification();
     }
 
     /**
@@ -94,19 +62,67 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link RoleDefinition }
+     * Create an instance of {@link Description }
      * 
      */
-    public RoleDefinition createRoleDefinition() {
-        return new RoleDefinition();
+    public Description createDescription() {
+        return new Description();
     }
 
     /**
-     * Create an instance of {@link License }
+     * Create an instance of {@link Name }
      * 
      */
-    public License createLicense() {
-        return new License();
+    public Name createName() {
+        return new Name();
+    }
+
+    /**
+     * Create an instance of {@link Restriction }
+     * 
+     */
+    public Restriction createRestriction() {
+        return new Restriction();
+    }
+
+    /**
+     * Create an instance of {@link TemplateDefinition }
+     * 
+     */
+    public TemplateDefinition createTemplateDefinition() {
+        return new TemplateDefinition();
+    }
+
+    /**
+     * Create an instance of {@link ClassDefinition }
+     * 
+     */
+    public ClassDefinition createClassDefinition() {
+        return new ClassDefinition();
+    }
+
+    /**
+     * Create an instance of {@link Qmxf }
+     * 
+     */
+    public Qmxf createQmxf() {
+        return new Qmxf();
+    }
+
+    /**
+     * Create an instance of {@link EntityType }
+     * 
+     */
+    public EntityType createEntityType() {
+        return new EntityType();
+    }
+
+    /**
+     * Create an instance of {@link TemplateQualification }
+     * 
+     */
+    public TemplateQualification createTemplateQualification() {
+        return new TemplateQualification();
     }
 
     /**
@@ -126,30 +142,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link TextualDefinition }
-     * 
-     */
-    public TextualDefinition createTextualDefinition() {
-        return new TextualDefinition();
-    }
-
-    /**
-     * Create an instance of {@link Name }
-     * 
-     */
-    public Name createName() {
-        return new Name();
-    }
-
-    /**
-     * Create an instance of {@link Description }
-     * 
-     */
-    public Description createDescription() {
-        return new Description();
-    }
-
-    /**
      * Create an instance of {@link LicenseText }
      * 
      */
@@ -158,19 +150,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link LicenseTerm }
+     * Create an instance of {@link License }
      * 
      */
-    public LicenseTerm createLicenseTerm() {
-        return new LicenseTerm();
+    public License createLicense() {
+        return new License();
     }
 
     /**
-     * Create an instance of {@link RoleQualification }
+     * Create an instance of {@link RoleDefinition }
      * 
      */
-    public RoleQualification createRoleQualification() {
-        return new RoleQualification();
+    public RoleDefinition createRoleDefinition() {
+        return new RoleDefinition();
+    }
+
+    /**
+     * Create an instance of {@link Specialization }
+     * 
+     */
+    public Specialization createSpecialization() {
+        return new Specialization();
     }
 
 }

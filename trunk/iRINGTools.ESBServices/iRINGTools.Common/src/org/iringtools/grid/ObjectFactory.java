@@ -37,4 +37,12 @@ public class ObjectFactory {
         return new Grid();
     }
 
+    /**
+     * Create an instance of {@link Rows }
+     * 
+     */
+    public Rows createRows() {
+        return new Rows();
+    }
+
 }

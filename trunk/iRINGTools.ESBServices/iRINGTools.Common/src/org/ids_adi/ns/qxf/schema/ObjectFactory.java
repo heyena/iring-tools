@@ -30,11 +30,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Property }
+     * Create an instance of {@link Relationship }
      * 
      */
-    public Property createProperty() {
-        return new Property();
+    public Relationship createRelationship() {
+        return new Relationship();
     }
 
     /**
@@ -46,11 +46,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Relationship }
+     * Create an instance of {@link Property }
      * 
      */
-    public Relationship createRelationship() {
-        return new Relationship();
+    public Property createProperty() {
+        return new Property();
     }
 
 }
