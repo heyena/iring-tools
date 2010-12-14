@@ -14,7 +14,8 @@ define('APP_REQUEST_URI','http://localhost:54321/dxfr');
 define('DIRECTORY_REQUEST_URL','http://localhost:8080/services/esb/directory');
 define('RDL_REQUEST_URI','http://localhost:54321/refdata/classes');
 define('PAGESIZE','20');
-
+define('DEFAULT_SORT_COLUMN','IdentificationByTag');
+define('DEFAULT_SORT_ORDER','ASC');
 define('EXCHANGE_HISTORY_URI','http://localhost:8888/projects/iRINGTools.ESBServices/ExchangeManager/exchangeResponse.xml');
 
 /* Put username & Password required for authentication*/
