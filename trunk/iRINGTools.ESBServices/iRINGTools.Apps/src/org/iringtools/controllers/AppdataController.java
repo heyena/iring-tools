@@ -2,7 +2,7 @@ package org.iringtools.controllers;
 
 import org.iringtools.models.AppdataModel;
 import org.iringtools.grid.Grid;
-import org.iringtools.rows.Rows;
+import org.iringtools.grid.Rows;
 import com.opensymphony.xwork2.Action;
 
 public class AppdataController {
