@@ -1,10 +1,13 @@
 package org.iringtools.services;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.List;
+
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -14,8 +17,19 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.xml.bind.JAXBException;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
+import org.iringtools.common.response.Level;
+import org.iringtools.common.response.Messages;
+import org.iringtools.common.response.Response;
+import org.iringtools.common.response.Status;
+import org.iringtools.common.response.StatusList;
+import org.iringtools.directory.Directory;
+import org.iringtools.directory.ExchangeDefinition;
 import org.iringtools.dxfr.dti.DataTransferIndex;
 import org.iringtools.dxfr.dti.DataTransferIndexList;
 import org.iringtools.dxfr.dti.DataTransferIndices;
@@ -27,25 +41,15 @@ import org.iringtools.dxfr.dto.DataTransferObjects;
 import org.iringtools.dxfr.dto.RoleObject;
 import org.iringtools.dxfr.dto.RoleType;
 import org.iringtools.dxfr.dto.TemplateObject;
+import org.iringtools.dxfr.manifest.Manifest;
 import org.iringtools.dxfr.request.DtoPageRequest;
 import org.iringtools.dxfr.request.DxiRequest;
 import org.iringtools.dxfr.request.DxoRequest;
 import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
-import org.iringtools.common.response.Level;
-import org.iringtools.common.response.Messages;
-import org.iringtools.common.response.Response;
-import org.iringtools.common.response.Status;
-import org.iringtools.common.response.StatusList;
-import org.iringtools.directory.Directory;
-import org.iringtools.directory.ExchangeDefinition;
-import org.iringtools.dxfr.manifest.Manifest;
 import org.iringtools.services.core.DataTransferObjectComparator;
-import org.iringtools.utility.JaxbUtil;
 import org.iringtools.utility.HttpClient;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import java.util.GregorianCalendar;
+import org.iringtools.utility.JaxbUtil;
 
 @Path("/")
 @Produces("application/xml")
@@ -90,6 +94,7 @@ public class ESBService
     try
     {
       init();
+      logger.debug("getExchanges()");
 
       // request directory service to get exchange definitions
       directory = httpClient.get(Directory.class, settings.get("directoryServiceUri") + "/directory");
@@ -110,6 +115,7 @@ public class ESBService
 
     try
     {
+      logger.debug("getDataTransferIndices(" + scope + "," + id + ")");
       init();
 
       // init exchange definition
@@ -175,7 +181,7 @@ public class ESBService
 
     try
     {
-      logger.info("ExchangeRequest: " + JaxbUtil.toXml(dataTransferIndices, true));
+      logger.debug("ExchangeRequest(" + scope + "," + id + "," + JaxbUtil.toXml(dataTransferIndices, true) + ")");
       
       init();
 
@@ -362,7 +368,7 @@ public class ESBService
 
     try
     {
-      logger.info("ExchangeRequest: " + JaxbUtil.toXml(exchangeRequest, true));
+      logger.debug("submitExchange(" + scope + "," + id + "," + JaxbUtil.toXml(exchangeRequest, true) + ")");
       
       if (exchangeRequest == null)
         return null;
@@ -441,7 +447,7 @@ public class ESBService
         DtoPageRequest poolDtosRequest = new DtoPageRequest();
         poolDtosRequest.setManifest(targetManifest);
         DataTransferIndices poolDataTransferIndices = new DataTransferIndices();
-        DataTransferIndexList poolDtiList = poolDataTransferIndices.getDataTransferIndexList();
+        DataTransferIndexList poolDtiList = new DataTransferIndexList();
         poolDtiList.setItems(sourcePoolDtiList);
         poolDataTransferIndices.setDataTransferIndexList(poolDtiList);
         poolDtosRequest.setDataTransferIndices(poolDataTransferIndices);
@@ -474,18 +480,26 @@ public class ESBService
                     exchangeResponse.getStatusList().getItems().add(status);
                     
                     if (exchangeResponse.getLevel() != Level.ERROR)
+                    {
                       exchangeResponse.setLevel(Level.WARNING);
+                    }
                     
                     poolDtoListItems.remove(j--); 
                   }
                   else if (dti.getTransferType() == TransferType.SYNC)
+                  {
                     poolDtoListItems.remove(j--);  // exclude SYNC DTOs
+                  }
                   else
+                  {
                     sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.valueOf(dti.getTransferType().toString()));
+                  }
                 }
                 else
+                {
                   sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.valueOf(dti.getTransferType().toString()));
-  
+                }
+                
                 break;
               }
             }
@@ -538,15 +552,20 @@ public class ESBService
       exchangeResponse.setLevel(Level.ERROR);
     }
     
-    gcal = new GregorianCalendar();
-    exchangeResponse.setEndTimeStamp(datatypeFactory.newXMLGregorianCalendar(gcal));
+    XMLGregorianCalendar timestamp = datatypeFactory.newXMLGregorianCalendar(new GregorianCalendar());
+    exchangeResponse.setEndTimeStamp(timestamp);
     
     //Store the exchange response in history	
-    String timestamp = 
-    	datatypeFactory.newXMLGregorianCalendar(gcal).toString().replace(":", ".");
-    String path = 
-    	settings.get("baseDirectory") + "/WEB-INF/logs/" + scope + "/exchanges/" + id + "/" + timestamp + ".xml";
-    JaxbUtil.write(exchangeResponse, path, true);
+    String path = settings.get("baseDirectory") + "/WEB-INF/logs/" + scope + "/exchanges/" + id;
+    File dirPath = new File(path);
+    
+    if (!dirPath.exists())
+    {
+      dirPath.mkdirs();
+    }
+    
+    String file = path + "/" + timestamp.toString().replace(":", ".") + ".xml";
+    JaxbUtil.write(exchangeResponse, file, true);
 
     return exchangeResponse;
   }

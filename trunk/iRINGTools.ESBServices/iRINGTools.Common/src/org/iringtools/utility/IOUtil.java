@@ -55,7 +55,8 @@ public class IOUtil
     out.close();
   }
 
-  public static OMElement readXml(String filePath) throws FileNotFoundException, XMLStreamException, FactoryConfigurationError
+  public static OMElement readXml(String filePath) throws FileNotFoundException, XMLStreamException,
+      FactoryConfigurationError
   {
     XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileInputStream(filePath));
     StAXOMBuilder builder = new StAXOMBuilder(parser);
@@ -69,7 +70,8 @@ public class IOUtil
     return builder.getDocumentElement();
   }
 
-  public static void writeXml(OMElement xml, String filePath) throws FileNotFoundException, XMLStreamException, FactoryConfigurationError
+  public static void writeXml(OMElement xml, String filePath) throws FileNotFoundException, XMLStreamException,
+      FactoryConfigurationError
   {
     XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(new FileOutputStream(filePath));
     xml.serialize(writer);
@@ -84,21 +86,20 @@ public class IOUtil
     fis.close();
     return props;
   }
-  
-  public static List<String> filesInFolder(String path) throws IOException
-  {
-	  File folder = new File(path);
-	  File[] listOfFiles = folder.listFiles();
-	  List<String> files = new ArrayList<String>();
 
-      for (int i = 0; i < listOfFiles.length; i++) 
-	  {
-    	  if (listOfFiles[i].isFile()) 
-    	  {
-    		  files.add(listOfFiles[i].getName()); 
-    	  }
-	  }
-      
-      return files;
+  public static List<String> getFiles(String directory) throws IOException
+  {
+    File[] files = new File(directory).listFiles();
+    List<String> fileNames = new ArrayList<String>();
+
+    for (File file : files)
+    {
+      if (file.isFile())
+      {
+        fileNames.add(file.getName());
+      }
+    }
+
+    return fileNames;
   }
 }

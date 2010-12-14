@@ -34,7 +34,7 @@ public class HistoryProvider
 	List<ExchangeResponse> responses = new ArrayList<ExchangeResponse>();
 	ExchangeResponse response = null;
 	
-	List<String> filesInFolder = IOUtil.filesInFolder(path);
+	List<String> filesInFolder = IOUtil.getFiles(path);
 	
 	for (int i = 0; i < filesInFolder.size(); i++) 
     {
