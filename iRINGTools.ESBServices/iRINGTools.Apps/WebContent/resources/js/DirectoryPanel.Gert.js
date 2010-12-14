@@ -30,45 +30,46 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     
     this.directoryPanel = new Ext.tree.TreePanel({
       region: 'north',
-      collapseMode: 'mini',
-      height: 300,
-      layout: 'fit',
-      border: false,
-
-      rootVisible: true,
-      lines: true,
-      //singleExpand: true,
-      useArrows: true,
-
-      loader: new Ext.tree.TreeLoader({
-        dataUrl: this.url
-      }),
-
-      root: {
-        nodeType: 'async',
-        text: 'Directory',
-        expanded: true,
-        draggable: false,
-        icon: 'resources/images/16x16/internet-web-browser.png'        
-      }
+      split : true,
+		height : 300,
+		bodyBorder : false,
+		border : false,
+		layout : 'fit',
+		useArrows : false,
+		autoScroll : true,
+		animate : true,
+		margins : '0 0 0 0',
+		lines : true,
+		containerScroll : true,
+		rootVisible : true,
+		root : {
+			nodeType : 'async',
+			text : 'Directory',
+			expended : true,
+			draggable : false,
+			icon : 'resources/images/16x16/internet-web-browser.png'
+		},
+		dataUrl : 'directory'
+     
     
     });
     
     this.propertyPanel = new Ext.grid.PropertyGrid({
-  		id:'property-panel',
-  		title: 'Details',
-  		region:'center',
-  		layout: 'fit',
-  		autoScroll:true,
-  		margin:'10 0 0 0',
-  		bodyStyle: 'padding-bottom:15px;background:#eee;',
-  		source:{},             
+    	id : 'propertyGridPane',
+		region : 'center',
+		height : 160,
+		title : 'Details',
+		collapsible : true,
+		border : false,
+		split : true,
+		autoScroll : true,
+		source : {}/* 
   		listeners: {
   			// to disable editable option of the property grid
   			beforeedit : function(e) {
   				e.cancel=true;
   			}
-  		}
+  		}*/
   	});
 
     this.items = [
@@ -124,26 +125,35 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   },
   
   openTab: function(node) {
+	  
+	  var dataTypeNode = node.parentNode.parentNode;
+	  var graphNode = node.parentNode;	
+	  /*	loadAppData(dataTypeNode.parentNode.attributes['text'],  graphNode.attributes['text'], node.attributes['text']);
+	function loadAppData(scope, app, graph)
+	*/
   	if (node != null) {
 	  	var obj = node.attributes;  		
-			var uid = obj['uid'];
+			var uid = obj['id'];
 			var label = '';
 			var requestURL = '';
-			var scopeId  = obj['Scope'];
+			var scope  = dataTypeNode.parentNode.attributes['text'];
+			var app = graphNode.attributes['text'];
 			var nodeType = obj['iconCls'];
-			var nodeText = obj['text']; 
+			var graph = obj['text']; 
 			
 			if ((nodeType == 'exchanges' && uid != '')) {
 				
-				requestURL = 'dataObjects/getDataObjects/' + nodeType + '/' + scopeId + '/' + uid;
-				label = scopeId + '->' + node.text;
+				//requestURL = 'dataObjects/getDataObjects/' + nodeType + '/' + scopeId + '/' + uid;
+				requestURL = 'appdata?scopeName=' + scope + '&appName=' + app + '&graphName=' + graph,
+				label = scope + '->' + graph;
 				
 				this.fireEvent('open', this, node, label, requestURL);
 				
 			} else if (nodeType == 'graph') {
 				
-				requestURL = 'dataObjects/getGraphObjects/' + nodeType + '/' + scopeId + '/' + node.parentNode.text+'/' + nodeText;
-				label = scopeId + '->' + node.parentNode.text + '->' + nodeText;
+				//requestURL = 'dataObjects/getGraphObjects/' + nodeType + '/' + scopeId + '/' + node.parentNode.text+'/' + nodeText;
+				requestURL = 'appDataGrid?scopeName=' + scope + '&appName=' + app + '&graphName=' + graph,
+				label = scope + '->' + graphNode.text + '->' + graph;
 				
 				this.fireEvent('open', this, node, label, requestURL);				
 			}
@@ -151,17 +161,39 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   },
   
   onClick: function(node) {
-  	obj = node.attributes;
-		var details_data = [];
+  	//obj = node.attributes;
+  	//properties = node.attributes['items'];
+  	
+  	
+  	
+  	var dataTypeNode = node.parentNode.parentNode;
+	
+	if (dataTypeNode.attributes['text'] == 'Application Data') {
+		var graphNode = node.parentNode;							
+		this.populatePropertyGrid(node.attributes['items']);
+		//this.openTab(node);
+	} else if (dataTypeNode.attributes['text'] == 'Data Exchanges') {
+		this.populatePropertyGrid(node.attributes['items']);
+		//this.openTab(node);
+	}
+		/*var details_data = [];
 		
 		for (var key in obj) {
 			// restrict some of the properties to be displayed
 			if (key!='node_type' && key!='uid' && key!='id' && key!='text' && key!='icon' && key!='children' && key!='loader' && key!='leaf' && key!='applicationId') {
 				details_data[key] = obj[key];
 			}
-		}
+		}*/
 		
-		this.propertyPanel.setSource(details_data);
+	/*	var gridSource = new Array();
+
+		for ( var i = 0; i < properties.length; i++) {
+			gridSource[properties[i].name] = properties[i].value;
+		}
+
+		this.propertyPanel.setSource(gridSource);*/
+		
+		//this.propertyPanel.setSource(details_data);
 		this.fireEvent('click', this, node);
   },
   
@@ -187,6 +219,19 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   	node = this.getSelectedNode();
   	if (node != null)
   		this.fireEvent('exchange', this, node);
-  }
+  },
+  
+  populatePropertyGrid: function (properties) {
+		var gridSource = new Array();
+
+		for ( var i = 0; i < properties.length; i++) {
+			gridSource[properties[i].name] = properties[i].value;
+		}
+
+		this.propertyPanel.setSource(gridSource);
+		//this.propertyPanel.setSource(gridSource);
+	}
 
 });
+
+

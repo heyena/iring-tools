@@ -30,11 +30,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Grid }
+     * Create an instance of {@link Column }
      * 
      */
-    public Grid createGrid() {
-        return new Grid();
+    public Column createColumn() {
+        return new Column();
     }
 
     /**
@@ -43,6 +43,30 @@ public class ObjectFactory {
      */
     public Rows createRows() {
         return new Rows();
+    }
+
+    /**
+     * Create an instance of {@link Filter }
+     * 
+     */
+    public Filter createFilter() {
+        return new Filter();
+    }
+
+    /**
+     * Create an instance of {@link Header }
+     * 
+     */
+    public Header createHeader() {
+        return new Header();
+    }
+
+    /**
+     * Create an instance of {@link Grid }
+     * 
+     */
+    public Grid createGrid() {
+        return new Grid();
     }
 
 }

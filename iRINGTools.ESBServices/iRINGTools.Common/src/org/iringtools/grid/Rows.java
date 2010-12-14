@@ -1,6 +1,7 @@
 
 package org.iringtools.grid;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -20,7 +21,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="row" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded"/>
+ *         &lt;element name="success" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="total" type="{http://www.w3.org/2001/XMLSchema}integer"/>
+ *         &lt;element name="data" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -31,27 +34,81 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Rows", propOrder = {
-    "rows"
+    "success",
+    "total",
+    "datas"
 })
 @XmlRootElement(name = "rows")
 public class Rows {
 
-    @XmlElement(name = "row", required = true)
-    protected List<String> rows;
+    @XmlElement(required = true)
+    protected String success;
+    @XmlElement(required = true)
+    protected BigInteger total;
+    @XmlElement(name = "data", required = true)
+    protected List<String> datas;
 
     /**
-     * Gets the value of the rows property.
+     * Gets the value of the success property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSuccess() {
+        return success;
+    }
+
+    /**
+     * Sets the value of the success property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSuccess(String value) {
+        this.success = value;
+    }
+
+    /**
+     * Gets the value of the total property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link BigInteger }
+     *     
+     */
+    public BigInteger getTotal() {
+        return total;
+    }
+
+    /**
+     * Sets the value of the total property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link BigInteger }
+     *     
+     */
+    public void setTotal(BigInteger value) {
+        this.total = value;
+    }
+
+    /**
+     * Gets the value of the datas property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the rows property.
+     * This is why there is not a <CODE>set</CODE> method for the datas property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getRows().add(newItem);
+     *    getDatas().add(newItem);
      * </pre>
      * 
      * 
@@ -61,23 +118,23 @@ public class Rows {
      * 
      * 
      */
-    public List<String> getRows() {
-        if (rows == null) {
-            rows = new ArrayList<String>();
+    public List<String> getDatas() {
+        if (datas == null) {
+            datas = new ArrayList<String>();
         }
-        return this.rows;
+        return this.datas;
     }
 
     /**
-     * Sets the value of the rows property.
+     * Sets the value of the datas property.
      * 
-     * @param rows
+     * @param datas
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setRows(List<String> rows) {
-        this.rows = rows;
+    public void setDatas(List<String> datas) {
+        this.datas = datas;
     }
 
 }

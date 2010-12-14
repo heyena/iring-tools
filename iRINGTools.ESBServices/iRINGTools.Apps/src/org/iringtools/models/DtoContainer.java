@@ -7,11 +7,15 @@ import java.util.List;
 import java.util.ArrayList;
 
 import org.iringtools.grid.Grid;
+import org.iringtools.grid.Filter;
+import org.iringtools.grid.Column;
+import org.iringtools.grid.Header;
 import org.iringtools.dxfr.dto.ClassObject;
 import org.iringtools.dxfr.dto.DataTransferObject;
 import org.iringtools.dxfr.dto.DataTransferObjects;
 import org.iringtools.dxfr.dto.RoleObject;
 import org.iringtools.dxfr.dto.TemplateObject;
+import java.math.BigInteger;
 
 import org.iringtools.grid.Rows;
 import org.iringtools.utility.HttpClient;
@@ -30,14 +34,17 @@ public class DtoContainer {
 	private RoleObject roObj;
 	private List<DataTransferObject> dtoList;
 	private List<String> hList = new ArrayList<String>(); 
-	private String ghList = "[";	  //list of headers
+	private List<Header> ghList = new ArrayList<Header>();	  //list of headers
 	private List<String> rowList = new ArrayList<String>();
+	private List<Filter> filterList = new ArrayList<Filter>();
 	private String relateList = "[";   //list of related object
-	private String cList = "[";   //list of column description
+	private List<Column> cList = new ArrayList<Column>();   //list of column description
 	private String rlData = "";	  //related class object
 	private String row = "";      //row data in grid	
-	private String chData = ""; //column description or headerList data
-	private String identifier = "", tempName = "";
+	private String identifier = "", tempName = "", clsName; 
+	private Filter filter;
+	private Column column;
+	private Header header;
 	private int ind=1;
 	
 		
@@ -56,22 +63,22 @@ public class DtoContainer {
 	    this.dtoUrl = url + "/" + identifier;
 	  }
 	
-	public void setGhList(String ghList)
+	public void setGhList(List<Header> ghList)
 	  {
 	    this.ghList = ghList;
 	  }
 
-	public String getGhList()
+	public List<Header> getGhList()
 	  {
 	    return ghList;
 	  }
 	
-	public void setCList(String cList)
+	public void setCList(List<Column> cList)
 	  {
 	    this.cList = cList;
 	  }
 
-	public String getCList()
+	public List<Column> getCList()
 	  {
 	    return cList;
 	  }
@@ -104,6 +111,11 @@ public class DtoContainer {
 	public void setRcName(String rcName)
 	  {
 	    this.rcName = rcName;
+	  }
+	
+	public void setClsName(String clsName)
+	  {
+	    this.clsName = clsName;
 	  }
 
 	public String getRcName()
@@ -219,20 +231,14 @@ public class DtoContainer {
 		return false;		
 	}
 	
-	public void setChData (String cd)
-	{
-		this.chData = cd;
-	}
+	
 	
 	public void setRowList(List<String> rowList)
 	{
 		this.rowList = rowList;
 	}
 	
-	public void setColumnList(String colList)
-	{
-		this.cList = colList;
-	}
+	
 	
 	public void setRelateList(String reList)
 	{
@@ -248,7 +254,7 @@ public class DtoContainer {
 	}
 	public void setRowsList(Rows rows)
 	{
-		rows.setRows(rowList);
+		rows.setDatas(rowList);
 	}
 	
 	public void setLists (Grid grid)
@@ -266,28 +272,44 @@ public class DtoContainer {
 		return list;
 	}
 	 
-	public void setGridColumnHeader(Grid grid)
+	public void setGridList(Grid grid)
 	{		
 		String head; 
+		
 		for (int i = 0; i < hList.size(); i++)
 		{	
-			head = hList.get(i);			
-			chData = "{id:" + head + ",header:" + head + ","
-			           + "width:" + 440 + ",sortable:true,dataIndex:" + head + "}";
+			head = hList.get(i);
+			column = new Column();
+			column.setDataIndex(head);
+			column.setHeader(head);
+			column.setId(head);
+			column.setSortable("true");
+			column.setWidth(440);
 			
-			cList = addComma(cList); 
-			cList = cList+chData;
-			setChData("");
-			chData = "{name:" + head + "}";
-			ghList = addComma(ghList);
-			ghList = ghList+chData;
-			setChData("");
+			cList.add(column);
+			
+			header = new Header();
+			header.setName(head);
+			ghList.add(header);
+			
+			filter = new Filter();
+			filter.setType("string");
+			filter.setDataIndex(head);
+			filterList.add(filter);
 		}
 
-		cList = addEnd(cList);
-		ghList = addEnd(ghList); 
-		grid.setColumnData(cList);		
-		grid.setHeaderList(ghList);
+		
+		
+		
+		grid.setFilterSets(filterList);
+		grid.setColumnDatas(cList);
+		grid.setHeaderLists(ghList);
+		
+		grid.setCacheData("true"); //Add rules in the future
+		grid.setSuccess("true");
+		
+		grid.setPageSize(20);
+		grid.setClassObjName(clsName);
 	}
 	
 	public void addToGrid(String name)
@@ -296,19 +318,27 @@ public class DtoContainer {
 		if(rType.equals("OBJECT_PROPERTY") || rType.equals("DATA_PROPERTY"))
 			tempName = tName + '.' + name;
 		else
+		{
 			tempName = name;
+		}
 		
 		if (!row.equals(""))
 			row = row + ",{";
 		else
 			row = row + "{";
 		
+		
 		row = row + tempName + ":" + rValue + "}";
 		
 		if (!hListHas())
 		{			
+			
 			hList.add(tempName);
-		}		
+			
+		}	
+		
+		
+		
 	}
 	
 	public void addRList(int ri)
@@ -339,6 +369,7 @@ public class DtoContainer {
 	    			  setRType(rObj.getType().toString());
 	    			  if (ti < 1 && rType.equals("PROPERTY"))
 	    			  {
+	    				  setClsName(clo.getName());
 	    				  setRoObj(rObj);
 	    				  setIdentifier(rObj.getValue());
 	    				  addToGrid(tName);	    				  
