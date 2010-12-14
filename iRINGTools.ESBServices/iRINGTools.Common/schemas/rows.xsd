@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.iringtools.org/rows"
+	targetNamespace="http://www.iringtools.org/rows"
+	elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	jaxb:version="2.0" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+	jaxb:extensionBindingPrefixes="xjc">
+
+	<xs:annotation>
+		<xs:appinfo>
+			<jaxb:globalBindings>
+				<xjc:simple />
+			</jaxb:globalBindings>
+		</xs:appinfo>
+	</xs:annotation>
+
+	<xs:element name="rows" type="Rows" />	
+
+	<xs:complexType name="Rows">
+		<xs:sequence>
+			<xs:element name="row" type="xs:string" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>	  
+	
+	
+</xs:schema>
