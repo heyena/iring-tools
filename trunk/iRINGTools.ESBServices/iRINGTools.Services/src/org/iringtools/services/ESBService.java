@@ -123,11 +123,11 @@ public class ESBService
         return null;
 
       // get source dti
-      String sourceDtiUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName + "/xfr?hashAlgorithm=" + hashAlgorithm;
+      String sourceDtiUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName + "/dxi?hashAlgorithm=" + hashAlgorithm;
       DataTransferIndices sourceDtis = httpClient.post(DataTransferIndices.class, sourceDtiUrl, targetManifest);
 
       // get target dti
-      String targetDtiUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName + "/xfr?hashAlgorithm=" + hashAlgorithm;
+      String targetDtiUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName + "/dxi?hashAlgorithm=" + hashAlgorithm;
       DataTransferIndices targetDtis = httpClient.post(DataTransferIndices.class, targetDtiUrl, targetManifest);
 
       // create dxi request to diff source and target dti
@@ -214,7 +214,7 @@ public class ESBService
         sourceDtiList.setItems(sourceDtiListItems);
         sourceDtoPageRequest.setDataTransferIndices(sourceDataTransferIndices);
 
-        String sourceDtoUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName + "/xfr/page";
+        String sourceDtoUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName + "/dxo";
         sourceDtos = httpClient.post(DataTransferObjects.class, sourceDtoUrl, sourceDtoPageRequest);
         List<DataTransferObject> sourceDtoListItems = sourceDtos.getDataTransferObjectList().getItems();
 
@@ -263,7 +263,7 @@ public class ESBService
         targetDataTransferIndices.setDataTransferIndexList(targetDtiList);
         targetDtoPageRequest.setDataTransferIndices(targetDataTransferIndices);
 
-        String targetDtoUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName + "/xfr/page";
+        String targetDtoUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName + "/dxo";
         targetDtos = httpClient.post(DataTransferObjects.class, targetDtoUrl, targetDtoPageRequest);
         List<DataTransferObject> targetDtoListItems = targetDtos.getDataTransferObjectList().getItems();
 
@@ -421,7 +421,7 @@ public class ESBService
         poolDataTransferIndices.setDataTransferIndexList(poolDtiList);
         poolDtosRequest.setDataTransferIndices(poolDataTransferIndices);
         
-        String sourceDtoUrl = sourceGraphUrl + "/xfr/page";
+        String sourceDtoUrl = sourceGraphUrl + "/dxo";
         DataTransferObjects poolDtos = httpClient.post(DataTransferObjects.class, sourceDtoUrl, poolDtosRequest);
         List<DataTransferObject> poolDtoListItems = poolDtos.getDataTransferObjectList().getItems();
 

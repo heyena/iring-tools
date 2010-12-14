@@ -16,7 +16,7 @@ public class ServiceTest
   public static void main(String[] args) 
   {
     BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-    String esbServiceUri = "http://localhost:8080/iringtools/esb";
+    String esbServiceUri = "http://localhost:8080/services/esb";
     HttpClient httpClient = new HttpClient(esbServiceUri);
     
     try
