@@ -30,14 +30,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DataTransferIndices }
-     * 
-     */
-    public DataTransferIndices createDataTransferIndices() {
-        return new DataTransferIndices();
-    }
-
-    /**
      * Create an instance of {@link DataTransferIndexList }
      * 
      */
@@ -51,6 +43,14 @@ public class ObjectFactory {
      */
     public DataTransferIndex createDataTransferIndex() {
         return new DataTransferIndex();
+    }
+
+    /**
+     * Create an instance of {@link DataTransferIndices }
+     * 
+     */
+    public DataTransferIndices createDataTransferIndices() {
+        return new DataTransferIndices();
     }
 
 }

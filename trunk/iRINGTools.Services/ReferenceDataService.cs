@@ -58,9 +58,9 @@ namespace org.iringtools.services
     /// <returns>Returns the version as a string.</returns>
     [Description("Gets the version of the service.")]
     [WebGet(UriTemplate = "/version")]
-    public string GetVersion()
+    public VersionInfo GetVersion()
     {
-      return _referenceDataProvider.GetType().Assembly.GetName().Version.ToString();
+      return _referenceDataProvider.GetVersion();
     }
     #endregion
 
@@ -151,7 +151,7 @@ namespace org.iringtools.services
     /// </summary>
     [Description("return immediate superclasses of specified class")]
     [WebGet(UriTemplate = "/classes/{id}/superclasses")]
-    public List<Entity> GetSuperClasses(string id)
+    public Entities GetSuperClasses(string id)
     {
       return _referenceDataProvider.GetSuperClasses(id);
     }
@@ -161,7 +161,7 @@ namespace org.iringtools.services
     /// </summary>
     [Description("return all superclasses of specified class")]
     [WebGet(UriTemplate = "/classes/{id}/allsuperclasses")]
-    public List<Entity> GetAllSuperClasses(string id)
+    public Entities GetAllSuperClasses(string id)
     {
         return _referenceDataProvider.GetAllSuperClasses(id);
     }
@@ -171,7 +171,7 @@ namespace org.iringtools.services
     /// </summary>
     [Description("return immediate subclasses of specified class")]
     [WebGet(UriTemplate = "/classes/{id}/subclasses")]
-    public List<Entity> GetSubClasses(string id)
+    public Entities GetSubClasses(string id)
     {
       return _referenceDataProvider.GetSubClasses(id);
     }
@@ -181,7 +181,7 @@ namespace org.iringtools.services
     /// </summary>
     [Description("templates on a class")]
     [WebGet(UriTemplate = "/classes/{id}/templates")]
-    public List<Entity> GetClassTemplates(string id)
+    public Entities GetClassTemplates(string id)
     {
       return _referenceDataProvider.GetClassTemplates(id);
     }

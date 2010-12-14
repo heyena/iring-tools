@@ -30,11 +30,35 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ExchangeDefinition }
+     * Create an instance of {@link DataExchanges }
      * 
      */
-    public ExchangeDefinition createExchangeDefinition() {
-        return new ExchangeDefinition();
+    public DataExchanges createDataExchanges() {
+        return new DataExchanges();
+    }
+
+    /**
+     * Create an instance of {@link Graph }
+     * 
+     */
+    public Graph createGraph() {
+        return new Graph();
+    }
+
+    /**
+     * Create an instance of {@link Exchange }
+     * 
+     */
+    public Exchange createExchange() {
+        return new Exchange();
+    }
+
+    /**
+     * Create an instance of {@link ApplicationData }
+     * 
+     */
+    public ApplicationData createApplicationData() {
+        return new ApplicationData();
     }
 
     /**
@@ -54,19 +78,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Exchange }
+     * Create an instance of {@link Directory }
      * 
      */
-    public Exchange createExchange() {
-        return new Exchange();
-    }
-
-    /**
-     * Create an instance of {@link Scope }
-     * 
-     */
-    public Scope createScope() {
-        return new Scope();
+    public Directory createDirectory() {
+        return new Directory();
     }
 
     /**
@@ -78,35 +94,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DataExchanges }
+     * Create an instance of {@link Scope }
      * 
      */
-    public DataExchanges createDataExchanges() {
-        return new DataExchanges();
-    }
-
-    /**
-     * Create an instance of {@link Graph }
-     * 
-     */
-    public Graph createGraph() {
-        return new Graph();
-    }
-
-    /**
-     * Create an instance of {@link ApplicationData }
-     * 
-     */
-    public ApplicationData createApplicationData() {
-        return new ApplicationData();
-    }
-
-    /**
-     * Create an instance of {@link Directory }
-     * 
-     */
-    public Directory createDirectory() {
-        return new Directory();
+    public Scope createScope() {
+        return new Scope();
     }
 
     /**
@@ -115,6 +107,14 @@ public class ObjectFactory {
      */
     public Application createApplication() {
         return new Application();
+    }
+
+    /**
+     * Create an instance of {@link ExchangeDefinition }
+     * 
+     */
+    public ExchangeDefinition createExchangeDefinition() {
+        return new ExchangeDefinition();
     }
 
 }

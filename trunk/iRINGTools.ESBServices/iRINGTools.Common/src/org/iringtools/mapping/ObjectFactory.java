@@ -30,11 +30,43 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GraphMap }
+     * Create an instance of {@link RoleMaps }
      * 
      */
-    public GraphMap createGraphMap() {
-        return new GraphMap();
+    public RoleMaps createRoleMaps() {
+        return new RoleMaps();
+    }
+
+    /**
+     * Create an instance of {@link ClassTemplateMaps }
+     * 
+     */
+    public ClassTemplateMaps createClassTemplateMaps() {
+        return new ClassTemplateMaps();
+    }
+
+    /**
+     * Create an instance of {@link Mapping }
+     * 
+     */
+    public Mapping createMapping() {
+        return new Mapping();
+    }
+
+    /**
+     * Create an instance of {@link ClassMap }
+     * 
+     */
+    public ClassMap createClassMap() {
+        return new ClassMap();
+    }
+
+    /**
+     * Create an instance of {@link TemplateMap }
+     * 
+     */
+    public TemplateMap createTemplateMap() {
+        return new TemplateMap();
     }
 
     /**
@@ -54,43 +86,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ValueListMap }
+     * Create an instance of {@link GraphMaps }
      * 
      */
-    public ValueListMap createValueListMap() {
-        return new ValueListMap();
-    }
-
-    /**
-     * Create an instance of {@link TemplateMap }
-     * 
-     */
-    public TemplateMap createTemplateMap() {
-        return new TemplateMap();
-    }
-
-    /**
-     * Create an instance of {@link Mapping }
-     * 
-     */
-    public Mapping createMapping() {
-        return new Mapping();
-    }
-
-    /**
-     * Create an instance of {@link RoleMaps }
-     * 
-     */
-    public RoleMaps createRoleMaps() {
-        return new RoleMaps();
-    }
-
-    /**
-     * Create an instance of {@link ValueListMaps }
-     * 
-     */
-    public ValueListMaps createValueListMaps() {
-        return new ValueListMaps();
+    public GraphMaps createGraphMaps() {
+        return new GraphMaps();
     }
 
     /**
@@ -102,35 +102,35 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ClassTemplateMaps }
-     * 
-     */
-    public ClassTemplateMaps createClassTemplateMaps() {
-        return new ClassTemplateMaps();
-    }
-
-    /**
-     * Create an instance of {@link ClassMap }
-     * 
-     */
-    public ClassMap createClassMap() {
-        return new ClassMap();
-    }
-
-    /**
-     * Create an instance of {@link GraphMaps }
-     * 
-     */
-    public GraphMaps createGraphMaps() {
-        return new GraphMaps();
-    }
-
-    /**
      * Create an instance of {@link TemplateMaps }
      * 
      */
     public TemplateMaps createTemplateMaps() {
         return new TemplateMaps();
+    }
+
+    /**
+     * Create an instance of {@link ValueListMap }
+     * 
+     */
+    public ValueListMap createValueListMap() {
+        return new ValueListMap();
+    }
+
+    /**
+     * Create an instance of {@link GraphMap }
+     * 
+     */
+    public GraphMap createGraphMap() {
+        return new GraphMap();
+    }
+
+    /**
+     * Create an instance of {@link ValueListMaps }
+     * 
+     */
+    public ValueListMaps createValueListMaps() {
+        return new ValueListMaps();
     }
 
 }
