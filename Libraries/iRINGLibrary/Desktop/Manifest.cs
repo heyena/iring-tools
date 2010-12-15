@@ -203,7 +203,7 @@ namespace org.iringtools.dxfr.manifest
 
     private org.iringtools.dxfr.manifest.Roles rolesField;
 
-    private org.iringtools.mapping.TransferOption transferOptionField;
+    private TransferOption transferOptionField;
 
     public Template()
     {
@@ -250,7 +250,7 @@ namespace org.iringtools.dxfr.manifest
     }
 
     [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 3)]
-    public org.iringtools.mapping.TransferOption transferOption
+    public TransferOption transferOption
     {
       get
       {
@@ -361,13 +361,8 @@ namespace org.iringtools.dxfr.manifest
       }
     }
   }
-}
-namespace org.iringtools.mapping
-{
-  using System.Runtime.Serialization;
 
-
-  [System.Runtime.Serialization.DataContractAttribute(Name = "transferOption", Namespace = "http://www.iringtools.org/mapping")]
+  [System.Runtime.Serialization.DataContractAttribute(Name = "transferOption", Namespace = "http://www.iringtools.org/dxfr/manifest")]
   public enum TransferOption
   {
 
@@ -377,6 +372,10 @@ namespace org.iringtools.mapping
     [System.Runtime.Serialization.EnumMemberAttribute()]
     Required,
   }
+}
+namespace org.iringtools.mapping
+{
+  using System.Runtime.Serialization;
 
   [System.Runtime.Serialization.DataContractAttribute(Name = "roleType", Namespace = "http://www.iringtools.org/mapping")]
   public enum RoleType
@@ -668,8 +667,6 @@ namespace org.iringtools.mapping
 
     private org.iringtools.mapping.RoleMaps roleMapsField;
 
-    private org.iringtools.mapping.TransferOption transferOptionField;
-
     public TemplateMap()
     {
       roleMaps = new RoleMaps();
@@ -724,19 +721,6 @@ namespace org.iringtools.mapping
       set
       {
         this.roleMapsField = value;
-      }
-    }
-
-    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 4)]
-    public org.iringtools.mapping.TransferOption transferOption
-    {
-      get
-      {
-        return this.transferOptionField;
-      }
-      set
-      {
-        this.transferOptionField = value;
       }
     }
   }

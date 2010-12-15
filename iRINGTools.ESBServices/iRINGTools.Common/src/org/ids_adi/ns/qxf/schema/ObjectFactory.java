@@ -30,11 +30,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Relationship }
+     * Create an instance of {@link Qxf }
      * 
      */
-    public Relationship createRelationship() {
-        return new Relationship();
+    public Qxf createQxf() {
+        return new Qxf();
     }
 
     /**
@@ -46,11 +46,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Qxf }
+     * Create an instance of {@link Relationship }
      * 
      */
-    public Qxf createQxf() {
-        return new Qxf();
+    public Relationship createRelationship() {
+        return new Relationship();
     }
 
 }

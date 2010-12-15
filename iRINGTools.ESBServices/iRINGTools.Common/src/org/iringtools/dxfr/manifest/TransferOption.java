@@ -1,5 +1,5 @@
 
-package org.iringtools.dxfr.dti;
+package org.iringtools.dxfr.manifest;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
@@ -14,10 +14,8 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;simpleType name="TransferOption">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="Sync"/>
- *     &lt;enumeration value="Add"/>
- *     &lt;enumeration value="Change"/>
- *     &lt;enumeration value="Delete"/>
+ *     &lt;enumeration value="Desired"/>
+ *     &lt;enumeration value="Required"/>
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
@@ -27,14 +25,10 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum TransferOption {
 
-    @XmlEnumValue("Sync")
-    SYNC("Sync"),
-    @XmlEnumValue("Add")
-    ADD("Add"),
-    @XmlEnumValue("Change")
-    CHANGE("Change"),
-    @XmlEnumValue("Delete")
-    DELETE("Delete");
+    @XmlEnumValue("Desired")
+    DESIRED("Desired"),
+    @XmlEnumValue("Required")
+    REQUIRED("Required");
     private final String value;
 
     TransferOption(String v) {

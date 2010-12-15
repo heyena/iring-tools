@@ -125,7 +125,6 @@
       <xs:element name="templateType" type="TemplateType" />
       <xs:element name="name" type="xs:string" />
       <xs:element name="roleMaps" type="RoleMaps" />
-      <xs:element name="transferOption" type="TransferOption" default="Desired" />
     </xs:sequence>
   </xs:complexType>
 
@@ -160,13 +159,6 @@
       <xs:enumeration value="Reference" />
       <xs:enumeration value="FixedValue" />
       <xs:enumeration value="Property" />
-    </xs:restriction>
-  </xs:simpleType>
-
-  <xs:simpleType name="TransferOption">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="Desired" />
-      <xs:enumeration value="Required" />
     </xs:restriction>
   </xs:simpleType>
   

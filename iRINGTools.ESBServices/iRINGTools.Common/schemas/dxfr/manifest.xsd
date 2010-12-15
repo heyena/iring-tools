@@ -86,7 +86,7 @@
       <xs:element name="templateId" type="xs:string" />
       <xs:element name="name" type="xs:string" />
       <xs:element name="roles" type="Roles" />
-      <xs:element name="transferOption" type="map:TransferOption" default="Desired" />
+      <xs:element name="transferOption" type="TransferOption" default="Desired" />
     </xs:sequence>
   </xs:complexType>
 
@@ -112,5 +112,11 @@
       <xs:element name="class" type="Class" />
     </xs:sequence>
   </xs:complexType>
-
+  
+  <xs:simpleType name="TransferOption">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Desired" />
+      <xs:enumeration value="Required" />
+    </xs:restriction>
+  </xs:simpleType>
 </xs:schema>

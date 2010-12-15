@@ -42,6 +42,7 @@ public class DifferencingService
     catch (Exception ex)
     {
       logger.error("Error while comparing data transfer indices: " + ex);
+      dxis = null;
     }
     
     return dxis;
@@ -49,7 +50,7 @@ public class DifferencingService
   
   @POST
   @Path("/dxo")
-  public DataTransferObjects diff(DxoRequest dxoRequest)
+  public DataTransferObjects diff(DxoRequest dxoRequest) 
   {
     DataTransferObjects dxos = null;
     
@@ -61,6 +62,7 @@ public class DifferencingService
     catch (Exception ex)
     {
       logger.error("Error while comparing data transfer objects: " + ex);
+      dxos = null;
     }
     
     return dxos;

@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="templateType" type="{http://www.iringtools.org/mapping}TemplateType"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="roleMaps" type="{http://www.iringtools.org/mapping}RoleMaps"/>
- *         &lt;element name="transferOption" type="{http://www.iringtools.org/mapping}TransferOption"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -35,8 +34,7 @@ import javax.xml.bind.annotation.XmlType;
     "templateId",
     "templateType",
     "name",
-    "roleMaps",
-    "transferOption"
+    "roleMaps"
 })
 public class TemplateMap {
 
@@ -48,8 +46,6 @@ public class TemplateMap {
     protected String name;
     @XmlElement(required = true)
     protected RoleMaps roleMaps;
-    @XmlElement(required = true, defaultValue = "Desired")
-    protected TransferOption transferOption;
 
     /**
      * Gets the value of the templateId property.
@@ -145,30 +141,6 @@ public class TemplateMap {
      */
     public void setRoleMaps(RoleMaps value) {
         this.roleMaps = value;
-    }
-
-    /**
-     * Gets the value of the transferOption property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link TransferOption }
-     *     
-     */
-    public TransferOption getTransferOption() {
-        return transferOption;
-    }
-
-    /**
-     * Sets the value of the transferOption property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link TransferOption }
-     *     
-     */
-    public void setTransferOption(TransferOption value) {
-        this.transferOption = value;
     }
 
 }
