@@ -14,9 +14,10 @@ public class AppdataModel {
 	private String URI;	
 	private String identifier;
 	private String dtoUrl;
-	private List<DataTransferIndex> dtiList;
+	private List<DataTransferIndex> dtiList, dtiPage;
 	private DtoContainer dtoCtr;
 	private int rInd=0;
+	private int page = 20;
 	
 	public AppdataModel() {
 		try {
@@ -89,15 +90,15 @@ public class AppdataModel {
 	
     public Grid toGrid() {		
     	grid = new Grid();    	
-		dtoCtr = new DtoContainer();
-		/*dtoCtr.setLists(grid);*/	
-	    for (DataTransferIndex dti : dtiList)
-	    {
-	      setIdentifier(dti.getIdentifier());
-	      dtoCtr.setUrl(dtoUrl, identifier);
-	      dtoCtr.populate(URI);	      
-	      dtoCtr.fillRow();	    
-	    }		
+		dtoCtr = new DtoContainer();		
+	   // for (DataTransferIndex dti : dtiList)
+	   // {
+		DataTransferIndex dti = dtiList.get(0);
+	    setIdentifier(dti.getIdentifier());
+	    dtoCtr.setUrl(dtoUrl, identifier);
+	    dtoCtr.populate(URI);	      
+	    dtoCtr.fillRow();	    
+	   // }		
 	    //dtoCtr.setLists(grid);
 	    dtoCtr.setGridList(grid);
 	    
@@ -105,7 +106,12 @@ public class AppdataModel {
 	}
 	
     public Rows toRows() {	
+    	dtiPage = dtiList.subList(0, page);
     	Rows rows = new Rows();
+    	dtoCtr = new DtoContainer();
+    	dtoCtr.setUrl(dtoUrl, "page");
+    	dtoCtr.populatePage(URI, dtiPage);	
+    	dtoCtr.fillPage();	
     	dtoCtr.setRowsList(rows);
     	return rows;
     }
