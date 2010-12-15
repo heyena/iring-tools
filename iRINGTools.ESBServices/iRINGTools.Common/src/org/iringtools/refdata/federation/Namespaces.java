@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="sequenceId" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="namespace" type="{http://www.iringtools.org/refdata/federation}Namespace" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -30,12 +31,30 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Namespaces", propOrder = {
+    "sequenceId",
     "items"
 })
 public class Namespaces {
 
+    protected int sequenceId;
     @XmlElement(name = "namespace", required = true)
     protected List<Namespace> items;
+
+    /**
+     * Gets the value of the sequenceId property.
+     * 
+     */
+    public int getSequenceId() {
+        return sequenceId;
+    }
+
+    /**
+     * Sets the value of the sequenceId property.
+     * 
+     */
+    public void setSequenceId(int value) {
+        this.sequenceId = value;
+    }
 
     /**
      * Gets the value of the items property.

@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="namespaceAlias" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded"/>
+ *         &lt;element name="namespaceId" type="{http://www.w3.org/2001/XMLSchema}int" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -34,8 +34,8 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class NamespaceList {
 
-    @XmlElement(name = "namespaceAlias", required = true)
-    protected List<String> items;
+    @XmlElement(name = "namespaceId", type = Integer.class)
+    protected List<Integer> items;
 
     /**
      * Gets the value of the items property.
@@ -55,13 +55,13 @@ public class NamespaceList {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link String }
+     * {@link Integer }
      * 
      * 
      */
-    public List<String> getItems() {
+    public List<Integer> getItems() {
         if (items == null) {
-            items = new ArrayList<String>();
+            items = new ArrayList<Integer>();
         }
         return this.items;
     }
@@ -71,10 +71,10 @@ public class NamespaceList {
      * 
      * @param items
      *     allowed object is
-     *     {@link String }
+     *     {@link Integer }
      *     
      */
-    public void setItems(List<String> items) {
+    public void setItems(List<Integer> items) {
         this.items = items;
     }
 
