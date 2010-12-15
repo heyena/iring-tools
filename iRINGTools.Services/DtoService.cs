@@ -90,12 +90,9 @@ namespace org.iringtools.services
     }
 
     [Description("Gets data transfer indices according to manifest request.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxi&hashAlgorithm={hashAlgorithm}")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxi?hashAlgorithm={hashAlgorithm}")]
     public DataTransferIndices GetDataTransferIndicesWithManifest(string scope, string app, string graph, string hashAlgorithm, Manifest manifest)
     {
-      if (hashAlgorithm == null)
-        hashAlgorithm = "MD5";
-
       return _dtoProvider.GetDataTransferIndicesWithManifest(scope, app, graph, hashAlgorithm, manifest);
     }
 

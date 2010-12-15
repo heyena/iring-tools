@@ -1,7 +1,7 @@
 <Mapping xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.library" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
   <graphMaps>
     <GraphMap>
-      <name>LinesGraph</name>
+      <name>Lines</name>
       <baseUri>http://example.com/12345_000/DEF/LinesGraph</baseUri>
       <classTemplateListMaps xmlns:a="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
         <a:KeyValueOfClassMapArrayOfTemplateMap5KeNI5sr>
@@ -9,7 +9,7 @@
             <classId>rdl:R19192462550</classId>
             <name>PIPING NETWORK SYSTEM</name>
             <identifiers>
-              <a:string>Lines.Tag</a:string>
+              <a:string>LINES.TAG</a:string>
             </identifiers>
           </a:Key>
           <a:Value>
@@ -33,7 +33,7 @@
                   <roleId>tpl:R22674749688</roleId>
                   <name>valIdentifier</name>
                   <dataType>xsd:string</dataType>
-                  <propertyName>Lines.Tag</propertyName>
+                  <propertyName>LINES.TAG</propertyName>
                 </RoleMap>
               </roleMaps>
             </TemplateMap>
@@ -61,7 +61,7 @@
                     <classId>rdl:R49658319833</classId>
                     <name>PLANT AREA</name>
                     <identifiers>
-                      <a:string>Lines.PlantArea</a:string>
+                      <a:string>LINES.AREA</a:string>
                     </identifiers>
                   </classMap>
                 </RoleMap>
@@ -91,7 +91,7 @@
                     <classId>rdl:R16348302781</classId>
                     <name>SYSTEM</name>
                     <identifiers>
-                      <a:string>Lines.System</a:string>
+                      <a:string>LINES.SYSTEM</a:string>
                     </identifiers>
                   </classMap>
                 </RoleMap>
@@ -121,71 +121,9 @@
                     <classId>rdl:R99486931975</classId>
                     <name>P AND I DIAGRAM</name>
                     <identifiers>
-                      <a:string>Lines.PID</a:string>
+                      <a:string>LINES.PIDNUMBER</a:string>
                     </identifiers>
                   </classMap>
-                </RoleMap>
-              </roleMaps>
-            </TemplateMap>
-            <TemplateMap>
-              <templateId>tpl:R57134263926</templateId>
-              <name>PlantHasPlantObject</name>
-              <roleMaps>
-                <RoleMap>
-                  <type>Possessor</type>
-                  <roleId>tpl:R77585325576</roleId>
-                  <name>part</name>
-                </RoleMap>
-                <RoleMap>
-                  <type>Reference</type>
-                  <roleId>tpl:R62157498012</roleId>
-                  <name>assemblyType</name>
-                  <value>rdl:R77617601895</value>
-                </RoleMap>
-                <RoleMap>
-                  <type>Reference</type>
-                  <roleId>tpl:R62348020201</roleId>
-                  <name>whole</name>
-                  <value>rdl:R49658319833</value>
-                  <classMap>
-                    <classId>rdl:R81260076611</classId>
-                    <name>PLANT</name>
-                    <identifiers>
-                      <a:string>Lines.Plant</a:string>
-                    </identifiers>
-                  </classMap>
-                </RoleMap>
-              </roleMaps>
-            </TemplateMap>
-            <TemplateMap>
-              <templateId>tpl:R30736898138</templateId>
-              <name>Length</name>
-              <roleMaps>
-                <RoleMap>
-                  <type>Possessor</type>
-                  <roleId>tpl:R16314127825</roleId>
-                  <name>hasPossessor</name>
-                </RoleMap>
-                <RoleMap>
-                  <type>Property</type>
-                  <roleId>tpl:R93884193692</roleId>
-                  <name>hasScale</name>
-                  <dataType>xsd:string</dataType>
-                  <propertyName>Lines.LengthUOM</propertyName>
-                  <valueList>Length</valueList>
-                </RoleMap>
-                <RoleMap>
-                  <type>Reference</type>
-                  <roleId>tpl:R59896853239</roleId>
-                  <name>hasType</name>
-                  <value>rdl:R32277183282</value>
-                </RoleMap>
-                <RoleMap>
-                  <type>Property</type>
-                  <roleId>tpl:R90688063648</roleId>
-                  <name>valValue</name>
-                  <dataType>xsd:double</dataType>
-                  <propertyName>Lines.Length</propertyName>
                 </RoleMap>
               </roleMaps>
             </TemplateMap>
@@ -203,7 +141,7 @@
                   <roleId>tpl:R93884193692</roleId>
                   <name>hasScale</name>
                   <dataType>xsd:string</dataType>
-                  <propertyName>Lines.DiameterUOM</propertyName>
+                  <propertyName>LINES.UOM_NOMDIAMETER</propertyName>
                   <valueList>Length</valueList>
                 </RoleMap>
                 <RoleMap>
@@ -217,37 +155,7 @@
                   <roleId>tpl:R90688063648</roleId>
                   <name>valValue</name>
                   <dataType>xsd:double</dataType>
-                  <propertyName>Lines.Diameter</propertyName>
-                </RoleMap>
-              </roleMaps>
-            </TemplateMap>
-            <TemplateMap>
-              <templateId>tpl:R64160344395</templateId>
-              <name>PipingFluidContainment</name>
-              <roleMaps>
-                <RoleMap>
-                  <type>Possessor</type>
-                  <roleId>tpl:R22381561900</roleId>
-                  <name>container</name>
-                </RoleMap>
-                <RoleMap>
-                  <type>Reference</type>
-                  <roleId>tpl:R35530988154</roleId>
-                  <name>containmentType</name>
-                  <value>rdl:R77375873644</value>
-                </RoleMap>
-                <RoleMap>
-                  <type>Reference</type>
-                  <roleId>tpl:R38033821577</roleId>
-                  <name>contained</name>
-                  <value>rdl:R35385587762</value>
-                  <classMap>
-                    <classId>rdl:R35385587762</classId>
-                    <name>FLUID STREAM</name>
-                    <identifiers>
-                      <a:string>Lines.Fluid</a:string>
-                    </identifiers>
-                  </classMap>
+                  <propertyName>LINES.NOMDIAMETER</propertyName>
                 </RoleMap>
               </roleMaps>
             </TemplateMap>
@@ -258,7 +166,7 @@
             <classId>rdl:R49658319833</classId>
             <name>PLANT AREA</name>
             <identifiers>
-              <a:string>Lines.PlantArea</a:string>
+              <a:string>LINES.AREA</a:string>
             </identifiers>
           </a:Key>
           <a:Value>
@@ -282,7 +190,7 @@
                   <roleId>tpl:R22674749688</roleId>
                   <name>valIdentifier</name>
                   <dataType>xsd:string</dataType>
-                  <propertyName>Lines.PlantArea</propertyName>
+                  <propertyName>LINES.AREA</propertyName>
                 </RoleMap>
               </roleMaps>
             </TemplateMap>
@@ -293,7 +201,7 @@
             <classId>rdl:R16348302781</classId>
             <name>SYSTEM</name>
             <identifiers>
-              <a:string>Lines.System</a:string>
+              <a:string>LINES.SYSTEM</a:string>
             </identifiers>
           </a:Key>
           <a:Value>
@@ -317,141 +225,7 @@
                   <roleId>tpl:R22674749688</roleId>
                   <name>valIdentifier</name>
                   <dataType>xsd:string</dataType>
-                  <propertyName>Lines.System</propertyName>
-                </RoleMap>
-              </roleMaps>
-            </TemplateMap>
-          </a:Value>
-        </a:KeyValueOfClassMapArrayOfTemplateMap5KeNI5sr>
-        <a:KeyValueOfClassMapArrayOfTemplateMap5KeNI5sr>
-          <a:Key>
-            <classId>rdl:R35385587762</classId>
-            <name>FLUID STREAM</name>
-            <identifiers>
-              <a:string>Lines.Fluid</a:string>
-            </identifiers>
-          </a:Key>
-          <a:Value>
-            <TemplateMap>
-              <templateId>tpl:R76242742365</templateId>
-              <name>FluidStreamFluidCompound</name>
-              <roleMaps>
-                <RoleMap>
-                  <type>Possessor</type>
-                  <roleId>tpl:R44710169867</roleId>
-                  <name>object</name>
-                </RoleMap>
-                <RoleMap>
-                  <type>Reference</type>
-                  <roleId>tpl:R71512319901</roleId>
-                  <name>material</name>
-                  <value>rdl:R94068452432</value>
-                  <classMap>
-                    <classId>rdl:R94068452432</classId>
-                    <name>FLUID COMPOUND</name>
-                    <identifiers>
-                      <a:string>Lines.Fluid</a:string>
-                    </identifiers>
-                  </classMap>
-                </RoleMap>
-              </roleMaps>
-            </TemplateMap>
-            <TemplateMap>
-              <templateId>tpl:R74424074375</templateId>
-              <name>DesignTemperature</name>
-              <roleMaps>
-                <RoleMap>
-                  <type>Possessor</type>
-                  <roleId>tpl:R11450580697</roleId>
-                  <name>hasPossessor</name>
-                </RoleMap>
-                <RoleMap>
-                  <type>Property</type>
-                  <roleId>tpl:R10528152386</roleId>
-                  <name>hasScale</name>
-                  <dataType>xsd:string</dataType>
-                  <propertyName>Lines.TempUOM</propertyName>
-                  <valueList>Temperature</valueList>
-                </RoleMap>
-                <RoleMap>
-                  <type>Reference</type>
-                  <roleId>tpl:R56806886394</roleId>
-                  <name>hasType</name>
-                  <value>rdl:R21210571481</value>
-                </RoleMap>
-                <RoleMap>
-                  <type>Property</type>
-                  <roleId>tpl:R65789235245</roleId>
-                  <name>valValue</name>
-                  <dataType>xsd:double</dataType>
-                  <propertyName>Lines.DesignTemperature</propertyName>
-                </RoleMap>
-              </roleMaps>
-            </TemplateMap>
-            <TemplateMap>
-              <templateId>tpl:R78223214188</templateId>
-              <name>OperatingTemperature</name>
-              <roleMaps>
-                <RoleMap>
-                  <type>Possessor</type>
-                  <roleId>tpl:R11450580697</roleId>
-                  <name>hasPossessor</name>
-                </RoleMap>
-                <RoleMap>
-                  <type>Property</type>
-                  <roleId>tpl:R10528152386</roleId>
-                  <name>hasScale</name>
-                  <dataType>xsd:string</dataType>
-                  <propertyName>Lines.TempUOM</propertyName>
-                  <valueList>Temperature</valueList>
-                </RoleMap>
-                <RoleMap>
-                  <type>Reference</type>
-                  <roleId>tpl:R56806886394</roleId>
-                  <name>hasType</name>
-                  <value>rdl:R98733065502</value>
-                </RoleMap>
-                <RoleMap>
-                  <type>Property</type>
-                  <roleId>tpl:R65789235245</roleId>
-                  <name>valValue</name>
-                  <dataType>xsd:double</dataType>
-                  <propertyName>Lines.OperatingTemperature</propertyName>
-                </RoleMap>
-              </roleMaps>
-            </TemplateMap>
-          </a:Value>
-        </a:KeyValueOfClassMapArrayOfTemplateMap5KeNI5sr>
-        <a:KeyValueOfClassMapArrayOfTemplateMap5KeNI5sr>
-          <a:Key>
-            <classId>rdl:R94068452432</classId>
-            <name>FLUID COMPOUND</name>
-            <identifiers>
-              <a:string>Lines.Fluid</a:string>
-            </identifiers>
-          </a:Key>
-          <a:Value>
-            <TemplateMap>
-              <templateId>tpl:R30193386273</templateId>
-              <name>ClassifiedIdentification</name>
-              <roleMaps>
-                <RoleMap>
-                  <type>Possessor</type>
-                  <roleId>tpl:R44537504070</roleId>
-                  <name>hasObject</name>
-                </RoleMap>
-                <RoleMap>
-                  <type>Reference</type>
-                  <roleId>tpl:R30790108016</roleId>
-                  <name>hasIdentificationType</name>
-                  <value>rdl:R52602833166</value>
-                </RoleMap>
-                <RoleMap>
-                  <type>Property</type>
-                  <roleId>tpl:R22674749688</roleId>
-                  <name>valIdentifier</name>
-                  <dataType>xsd:string</dataType>
-                  <propertyName>Lines.Fluid</propertyName>
+                  <propertyName>LINES.SYSTEM</propertyName>
                 </RoleMap>
               </roleMaps>
             </TemplateMap>
@@ -462,7 +236,7 @@
             <classId>rdl:R99486931975</classId>
             <name>P AND I DIAGRAM</name>
             <identifiers>
-              <a:string>Lines.PID</a:string>
+              <a:string>LINES.PIDNUMBER</a:string>
             </identifiers>
           </a:Key>
           <a:Value>
@@ -486,66 +260,7 @@
                   <roleId>tpl:R22674749688</roleId>
                   <name>valIdentifier</name>
                   <dataType>xsd:string</dataType>
-                  <propertyName>Lines.PID</propertyName>
-                </RoleMap>
-              </roleMaps>
-            </TemplateMap>
-            <TemplateMap>
-              <templateId>tpl:R30193386273</templateId>
-              <name>ClassifiedIdentification</name>
-              <roleMaps>
-                <RoleMap>
-                  <type>Possessor</type>
-                  <roleId>tpl:R44537504070</roleId>
-                  <name>hasObject</name>
-                </RoleMap>
-                <RoleMap>
-                  <type>Reference</type>
-                  <roleId>tpl:R30790108016</roleId>
-                  <name>hasIdentificationType</name>
-                  <value>rdl:R86464765280</value>
-                </RoleMap>
-                <RoleMap>
-                  <type>Property</type>
-                  <roleId>tpl:R22674749688</roleId>
-                  <name>valIdentifier</name>
-                  <dataType>xsd:string</dataType>
-                  <propertyName>Lines.PIDRev</propertyName>
-                </RoleMap>
-              </roleMaps>
-            </TemplateMap>
-          </a:Value>
-        </a:KeyValueOfClassMapArrayOfTemplateMap5KeNI5sr>
-        <a:KeyValueOfClassMapArrayOfTemplateMap5KeNI5sr>
-          <a:Key>
-            <classId>rdl:R81260076611</classId>
-            <name>PLANT</name>
-            <identifiers>
-              <a:string>Lines.Plant</a:string>
-            </identifiers>
-          </a:Key>
-          <a:Value>
-            <TemplateMap>
-              <templateId>tpl:R66921101783</templateId>
-              <name>IdentificationByTag</name>
-              <roleMaps>
-                <RoleMap>
-                  <type>Possessor</type>
-                  <roleId>tpl:R44537504070</roleId>
-                  <name>hasObject</name>
-                </RoleMap>
-                <RoleMap>
-                  <type>Reference</type>
-                  <roleId>tpl:R30790108016</roleId>
-                  <name>hasIdentificationType</name>
-                  <value>rdl:R40471041754</value>
-                </RoleMap>
-                <RoleMap>
-                  <type>Property</type>
-                  <roleId>tpl:R22674749688</roleId>
-                  <name>valIdentifier</name>
-                  <dataType>xsd:string</dataType>
-                  <propertyName>Lines.Plant</propertyName>
+                  <propertyName>LINES.PIDNUMBER</propertyName>
                 </RoleMap>
               </roleMaps>
             </TemplateMap>
@@ -556,44 +271,44 @@
     </GraphMap>
   </graphMaps>
   <valueLists>
-    <ValueList>
+    <valueList>
       <name>Length</name>
       <valueMaps>
-        <ValueMap>
+        <valueMap>
           <internalValue>METER</internalValue>
           <uri>rdl:R52054275374</uri>
-        </ValueMap>
-        <ValueMap>
+        </valueMap>
+        <valueMap>
           <internalValue>INCH</internalValue>
           <uri>rdl:R34755432270</uri>
-        </ValueMap>
+        </valueMap>
       </valueMaps>
-    </ValueList>
-    <ValueList>
+    </valueList>
+    <valueList>
       <name>Temperature</name>
       <valueMaps>
-        <ValueMap>
+        <valueMap>
           <internalValue>degC</internalValue>
           <uri>rdl:R74877992703</uri>
-        </ValueMap>
-        <ValueMap>
+        </valueMap>
+        <valueMap>
           <internalValue>degK</internalValue>
           <uri>rdl:R53109662405</uri>
-        </ValueMap>
+        </valueMap>
       </valueMaps>
-    </ValueList>
-    <ValueList>
+    </valueList>
+    <valueList>
       <name>Pressure</name>
       <valueMaps>
-        <ValueMap>
+        <valueMap>
           <internalValue>PASCAL</internalValue>
           <uri>rdl:R98787754267</uri>
-        </ValueMap>
-        <ValueMap>
+        </valueMap>
+        <valueMap>
           <internalValue>BAR</internalValue>
           <uri>rdl:R83490506551</uri>
-        </ValueMap>
+        </valueMap>
       </valueMaps>
-    </ValueList>
+    </valueList>
   </valueLists>
 </Mapping>
