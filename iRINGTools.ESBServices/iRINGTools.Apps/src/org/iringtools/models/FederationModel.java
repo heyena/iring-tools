@@ -175,13 +175,13 @@ public class FederationModel
 
   }
 
-  public void readTree(HttpServletRequest httpRequest)
+  public boolean readTree(HttpServletRequest httpRequest)
   {
 		try{
 				
 				Response response=null;
 
-				System.out.println("###"+httpRequest.getParameter("parentNodeID")+"###");
+				System.out.println("###"+httpRequest.getParameter("parentNodeID")+"### ---"+httpRequest.getParameter("nodeID"));
 				if("idGenerator".equalsIgnoreCase(httpRequest.getParameter("parentNodeID"))){
 					IDGenerator idgenerator = new IDGenerator();
 					idgenerator.setId(httpRequest.getParameter("nodeID"));
@@ -216,15 +216,41 @@ public class FederationModel
 				}
 				if(response!=null){
 					System.out.println("response.getLevel().value() :" + response.getLevel().value());
+					if("success".equalsIgnoreCase(response.getLevel().value())){
+						return true;
+					}else
+						return false;
 				}else{
 					System.out.println("response.getLevel().value() : null");
+					return false;
 				}
 		}catch(Exception e){
 			e.printStackTrace();
+			return false;
 			
 		}
    
   }
   
+  /*public static void main(String args[]){
+	  String uniqueID = UUID.randomUUID().toString();
+	  System.out.println(uniqueID);
+	  System.out.println(UUID.randomUUID().toString());
+	  System.out.println(UUID.randomUUID().toString());
+	  System.out.println(UUID.randomUUID().toString());
+	  System.out.println(UUID.randomUUID().toString());
+	  System.out.println(UUID.randomUUID().toString());
+	  System.out.println(UUID.randomUUID().toString());
+	  System.out.println(UUID.randomUUID().toString());
+	  System.out.println(UUID.randomUUID().toString());
+	  System.out.println(UUID.randomUUID().toString());
+	  System.out.println(UUID.randomUUID().toString());
+	  System.out.println(UUID.randomUUID().toString());
+	  //System.out.println(get());
+  }
+  static long current= System.currentTimeMillis();
+  static public synchronized long get(){
+    return current++;
+    }*/
 
 }

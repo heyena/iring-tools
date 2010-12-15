@@ -25,7 +25,7 @@
     <action name="postFederation" class="org.iringtools.controllers.FederationController" 
     method="postFederation">
       <result type="json">
-        <param name="root">success</param>
+        <param name="root">result</param>
       </result>
     </action>
     

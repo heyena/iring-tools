@@ -3,6 +3,7 @@ package org.iringtools.controllers;
 import javax.servlet.http.HttpServletRequest;
 
 import org.iringtools.models.FederationModel;
+import org.iringtools.models.Result;
 import org.iringtools.ui.widgets.tree.Tree;
 import com.opensymphony.xwork2.Action;
 import org.apache.struts2.interceptor.ServletRequestAware;
@@ -13,7 +14,7 @@ public class FederationController  implements ServletRequestAware{
 	private FederationModel federation;
 	private Tree tree;
 	private HttpServletRequest httpRequest = null;
-	private String success;
+	private Result result=new Result();
 	
 	public FederationController()
 	{
@@ -28,12 +29,12 @@ public class FederationController  implements ServletRequestAware{
 		return tree;
 	}
 	
-	public String getSuccess() {
-		return success;
+	public Result getResult() {
+		return result;
 	}
 
-	public void setSuccess(String success) {
-		this.success = success;
+	public void setResult(Result result) {
+		this.result = result;
 	}
 
 	public void setServletRequest(HttpServletRequest request) {
@@ -48,7 +49,9 @@ public class FederationController  implements ServletRequestAware{
 	
 	public String postFederation() {		
 		System.out.println("Reaching post Federation");
-		federation.readTree(httpRequest);
+		boolean successStatus = federation.readTree(httpRequest);
+		result.setSuccess(successStatus);
+		//result.setMessage("Details Successfully saved!");
 		//federation.save();
         return Action.SUCCESS;
 	}
