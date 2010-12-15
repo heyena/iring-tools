@@ -84,8 +84,16 @@ public class RefDataProvider
 			  }			  
 		  }
 		  if (namespaceExist)
+		  {
 			  federation.getNamespaces().getItems().remove(index);
-			  
+		  }
+		  else
+		  {
+			  int sequenceId = federation.getNamespaces().getSequenceId();
+			  namespace.setId(Integer.toString(++sequenceId));
+			  federation.getNamespaces().setSequenceId(sequenceId);
+		  }
+		  
 		  federation.getNamespaces().getItems().add(namespace);
 		  String path = settings.get("baseDirectory") + "/WEB-INF/data/federation.xml";
 		  JaxbUtil.write(federation, path, true);
@@ -131,7 +139,15 @@ public class RefDataProvider
 			  }			  
 		  }
 		  if (idgenExist)
+		  {
 			  federation.getIdGenerators().getItems().remove(index);
+		  }
+		  else
+		  {
+			  int sequenceId = federation.getIdGenerators().getSequenceId();
+			  idgenerator.setId(Integer.toString(++sequenceId));
+			  federation.getIdGenerators().setSequenceId(sequenceId);
+		  }
 			  
 		  federation.getIdGenerators().getItems().add(idgenerator);
 		  String path = settings.get("baseDirectory") + "/WEB-INF/data/federation.xml";
@@ -178,7 +194,15 @@ public class RefDataProvider
 			  }			  
 		  }
 		  if (repositoryExist)
+		  {
 			  federation.getRepositories().getItems().remove(index);
+		  }
+		  else
+		  {
+			  int sequenceId = federation.getRepositories().getSequenceId();
+			  repository.setId(Integer.toString(++sequenceId));
+			  federation.getRepositories().setSequenceId(sequenceId);
+		  }
 			  
 		  federation.getRepositories().getItems().add(repository);
 		  String path = settings.get("baseDirectory") + "/WEB-INF/data/federation.xml";
