@@ -28,6 +28,7 @@
 
 	<xs:complexType name="IDGenerators">
 		<xs:sequence>
+			<xs:element name="sequenceId" type="xs:int" />
 			<xs:element name="idGenerator" type="IDGenerator" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:appinfo>
@@ -40,6 +41,7 @@
 
 	<xs:complexType name="Namespaces">
 		<xs:sequence>
+			<xs:element name="sequenceId" type="xs:int" />
 			<xs:element name="namespace" type="Namespace" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:appinfo>
@@ -52,6 +54,7 @@
 
 	<xs:complexType name="Repositories">
 		<xs:sequence>
+			<xs:element name="sequenceId" type="xs:int" />
 			<xs:element name="repository" type="Repository" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:appinfo>
@@ -97,7 +100,7 @@
 
 	<xs:complexType name="NamespaceList">
 		<xs:sequence>
-			<xs:element name="namespaceAlias" type="xs:string" maxOccurs="unbounded">
+			<xs:element name="namespaceId" type="xs:int" maxOccurs="unbounded">
         <xs:annotation>
           <xs:appinfo>
             <jaxb:property name="items" />
