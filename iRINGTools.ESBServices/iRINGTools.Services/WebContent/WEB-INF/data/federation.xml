@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <federation xmlns="http://www.iringtools.org/refdata/federation">
     <idGenerators>
+    	<sequenceId>2</sequenceId>
         <idGenerator>
-        	<id>e02fada0-89e8-4419-ae3a-2858db67588b</id>
+            <id>1</id>
             <uri>http://org.iringtools.com/idgen1</uri>
             <name>IdGenerator1</name>
             <description>Sample ID Generator 1</description>
         </idGenerator>
         <idGenerator>
-        	<id>4ee57694-96e3-4fc4-98e1-cdf4a7b4e446</id>
+            <id>2</id>
             <uri>http://org.iringtools.com/idgen2</uri>
             <name>IdGenerator2</name>
             <description>Sample ID Generator 2</description>
         </idGenerator>
     </idGenerators>
     <namespaces>
+    	<sequenceId>2</sequenceId>
         <namespace>
-        	<id>b4d0f33e-5251-439e-86bf-04a94d320e60</id>
+            <id>1</id>
             <uri>http://org.iringtool.com/namespace1</uri>
             <alias>namespace1</alias>
             <isWritable>true</isWritable>
@@ -24,7 +26,7 @@
             <idGenerator>0</idGenerator>
         </namespace>
         <namespace>
-        	<id>e8607fc3-e37f-48e6-99cc-3f156a9354a3</id>
+            <id>2</id>
             <uri>http://org.iringtool.com/namespace2</uri>
             <alias>namespace2</alias>
             <isWritable>true</isWritable>
@@ -33,8 +35,9 @@
         </namespace>
     </namespaces>
     <repositories>
+    	<sequenceId>4</sequenceId>
         <repository>
-        	<id>881ef4f8-5560-4de5-b554-b5996eac80d6</id>
+            <id>1</id>
             <description>LocalSandbox</description>
             <isReadOnly>false</isReadOnly>
             <name>LocalSandbox</name>
@@ -42,42 +45,35 @@
             <uri>http://localhost:2020/sandbox</uri>
             <updateUri>updateUri</updateUri>
             <namespaces>
-                <namespaceAlias>namespace1</namespaceAlias>
-                <namespaceAlias>namespace2</namespaceAlias>
+                <namespaceId>1</namespaceId>
+                <namespaceId>2</namespaceId>
             </namespaces>
         </repository>
         <repository>
-        	<id>57964c38-b7bd-44fe-ad64-8debbb447316</id>
-            <description>iRING Sandbox</description>
+            <id>2</id>
+            <description>RDS/WIP Part 4 Reference Data Library</description>
             <isReadOnly>true</isReadOnly>
-            <name>iRING Sandbox</name>
+            <name>ReferenceData</name>
             <repositoryType>Camelot</repositoryType>
-            <uri>http://www.iringsandbox.org/SandboxService/sparql</uri>
+            <uri>http://rdl.rdlfacade.org/data</uri>
             <updateUri>updateUri</updateUri>
-            <namespaces>
-                <namespaceAlias>namespace1</namespaceAlias>
-            </namespaces>
         </repository>
         <repository>
-        	<id>295eb61c-8645-49e8-b868-abdc42ccd2b3</id>
+            <id>3</id>
             <description>RDS/WIP Part 7 Template Library</description>
             <isReadOnly>true</isReadOnly>
             <name>Templates</name>
             <repositoryType>Camelot</repositoryType>
             <uri>http://tpl.rdlfacade.org/data</uri>
             <updateUri>updateUri</updateUri>
-            <namespaces>
-                <namespaceAlias>namespace1</namespaceAlias>
-                <namespaceAlias>namespace2</namespaceAlias>
-            </namespaces>
         </repository>
         <repository>
-        	<id>305e03c9-3ddd-4357-ba7b-e9074277fb5a</id>
-            <description>RDS/WIP Part 4 Reference Data Library</description>
+            <id>4</id>
+            <description>iRING Sandbox</description>
             <isReadOnly>true</isReadOnly>
-            <name>ReferenceData</name>
-            <repositoryType>Camelot rashmi</repositoryType>
-            <uri>http://rdl.rdlfacade.org/data</uri>
+            <name>iRING Sandbox</name>
+            <repositoryType>Camelot</repositoryType>
+            <uri>http://www.iringsandbox.org/SandboxService/sparql</uri>
             <updateUri>updateUri</updateUri>
         </repository>
     </repositories>
