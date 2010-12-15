@@ -30,14 +30,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Column }
-     * 
-     */
-    public Column createColumn() {
-        return new Column();
-    }
-
-    /**
      * Create an instance of {@link Rows }
      * 
      */
@@ -54,6 +46,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Grid }
+     * 
+     */
+    public Grid createGrid() {
+        return new Grid();
+    }
+
+    /**
      * Create an instance of {@link Header }
      * 
      */
@@ -62,11 +62,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Grid }
+     * Create an instance of {@link Column }
      * 
      */
-    public Grid createGrid() {
-        return new Grid();
+    public Column createColumn() {
+        return new Column();
     }
 
 }

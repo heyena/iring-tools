@@ -37,11 +37,11 @@
     <xs:sequence>
       <xs:element name="identifier" type="xs:string" />
       <xs:element name="hashValue" type="xs:string" />
-      <xs:element name="transferType" type="TransferType" />
+      <xs:element name="transferOption" type="TransferOption" />
     </xs:sequence>
   </xs:complexType>
 
-  <xs:simpleType name="TransferType">
+  <xs:simpleType name="TransferOption">
     <xs:restriction base="xs:string">
       <xs:enumeration value="Sync" />
       <xs:enumeration value="Add" />

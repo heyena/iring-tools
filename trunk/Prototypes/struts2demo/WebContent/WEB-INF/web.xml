@@ -6,7 +6,7 @@
   <display-name>Struts2 Demo</display-name>
   <context-param>
     <param-name>AdapterServiceUri</param-name>
-    <param-value>http://75.101.140.62/services/dto</param-value>
+    <param-value>http://localhost:54321/dxfr</param-value>
   </context-param>
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>

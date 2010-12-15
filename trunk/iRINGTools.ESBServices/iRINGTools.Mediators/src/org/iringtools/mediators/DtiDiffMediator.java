@@ -14,7 +14,7 @@ import org.apache.synapse.mediators.AbstractMediator;
 import org.iringtools.dxfr.dti.DataTransferIndex;
 import org.iringtools.dxfr.dti.DataTransferIndexList;
 import org.iringtools.dxfr.dti.DataTransferIndices;
-import org.iringtools.dxfr.dti.TransferType;
+import org.iringtools.dxfr.dti.TransferOption;
 import org.iringtools.utility.JaxbUtil;
 
 public class DtiDiffMediator extends AbstractMediator implements ManagedLifecycle
@@ -110,7 +110,7 @@ public class DtiDiffMediator extends AbstractMediator implements ManagedLifecycl
       {
         for (DataTransferIndex dti : targetDtis.getDataTransferIndexList().getItems())
         {
-          dti.setTransferType(TransferType.DELETE);
+          dti.setTransferOption(TransferOption.DELETE);
           dti.setHashValue(null);
         }
       }
@@ -129,7 +129,7 @@ public class DtiDiffMediator extends AbstractMediator implements ManagedLifecycl
       {
         for (DataTransferIndex dti : sourceDtis.getDataTransferIndexList().getItems())
         {
-          dti.setTransferType(TransferType.ADD);
+          dti.setTransferOption(TransferOption.ADD);
         }
       }
 
@@ -155,12 +155,12 @@ public class DtiDiffMediator extends AbstractMediator implements ManagedLifecycl
     {
       for (DataTransferIndex dti : sourceDtiList)
       {
-        dti.setTransferType(TransferType.ADD);
+        dti.setTransferOption(TransferOption.ADD);
       }
 
       for (DataTransferIndex dti : targetDtiList)
       {
-        dti.setTransferType(TransferType.DELETE);
+        dti.setTransferOption(TransferOption.DELETE);
         dti.setHashValue(null);
       }
 
@@ -193,7 +193,7 @@ public class DtiDiffMediator extends AbstractMediator implements ManagedLifecycl
 
       if (value < 0)
       {
-        sourceDti.setTransferType(TransferType.ADD);
+        sourceDti.setTransferOption(TransferOption.ADD);
         resultDtiListItems.add(sourceDti);
 
         if (sourceIndex < sourceDtiList.size())
@@ -202,10 +202,10 @@ public class DtiDiffMediator extends AbstractMediator implements ManagedLifecycl
       else if (value == 0)
       {
         if (sourceDti.getHashValue().compareTo(targetDti.getHashValue()) == 0)
-          targetDti.setTransferType(TransferType.SYNC);
+          targetDti.setTransferOption(TransferOption.SYNC);
         else
         {
-          targetDti.setTransferType(TransferType.CHANGE);
+          targetDti.setTransferOption(TransferOption.CHANGE);
           targetDti.setHashValue(sourceDti.getHashValue()); // only store source hash value
         }
 
@@ -218,7 +218,7 @@ public class DtiDiffMediator extends AbstractMediator implements ManagedLifecycl
       }
       else
       {
-        targetDti.setTransferType(TransferType.DELETE);
+        targetDti.setTransferOption(TransferOption.DELETE);
         targetDti.setHashValue(null);
         resultDtiListItems.add(targetDti);
 
@@ -232,7 +232,7 @@ public class DtiDiffMediator extends AbstractMediator implements ManagedLifecycl
       for (int i = sourceIndex; i < sourceDtiList.size(); i++)
       {
         DataTransferIndex sourceDti = sourceDtis.getDataTransferIndexList().getItems().get(i);
-        sourceDti.setTransferType(TransferType.ADD);
+        sourceDti.setTransferOption(TransferOption.ADD);
         resultDtiListItems.add(sourceDti);
       }
     }
@@ -241,7 +241,7 @@ public class DtiDiffMediator extends AbstractMediator implements ManagedLifecycl
       for (int i = targetIndex; i < targetDtiList.size(); i++)
       {
         DataTransferIndex targetDti = targetDtis.getDataTransferIndexList().getItems().get(i);
-        targetDti.setTransferType(TransferType.DELETE);
+        targetDti.setTransferOption(TransferOption.DELETE);
         targetDti.setHashValue(null);
         resultDtiListItems.add(targetDti);
       }
