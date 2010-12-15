@@ -20,7 +20,7 @@ namespace org.iringtools.adapter
       RouteTable.Routes.Add(new ServiceRoute("ExchangeService", new WebServiceHostFactory(), typeof(org.iringtools.services.ExchangeService)));
       RouteTable.Routes.Add(new ServiceRoute("NHibernateService", new WebServiceHostFactory(), typeof(org.iringtools.services.NHibernateService)));
       RouteTable.Routes.Add(new ServiceRoute("RefDataService", new WebServiceHostFactory(), typeof(org.iringtools.services.ReferenceDataService)));
-      RouteTable.Routes.Add(new ServiceRoute("dto", new WebServiceHostFactory(), typeof(org.iringtools.services.DtoService)));
+      RouteTable.Routes.Add(new ServiceRoute("dxfr", new WebServiceHostFactory(), typeof(org.iringtools.services.DtoService)));
     }
   }
 }

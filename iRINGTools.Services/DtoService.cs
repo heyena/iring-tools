@@ -55,6 +55,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{scope}/{app}/{graph}?hashAlgorithm={hashAlgorithm}")]
     public DataTransferIndices GetDataTransferIndices(string scope, string app, string graph, string hashAlgorithm)
     {
+      if (hashAlgorithm == null)
+        hashAlgorithm = "MD5";
+
       return _dtoProvider.GetDataTransferIndices(scope, app, graph, hashAlgorithm);
     }
 
@@ -87,14 +90,17 @@ namespace org.iringtools.services
     }
 
     [Description("Gets data transfer indices according to manifest request.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/xfr?hashAlgorithm={hashAlgorithm}")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxi&hashAlgorithm={hashAlgorithm}")]
     public DataTransferIndices GetDataTransferIndicesWithManifest(string scope, string app, string graph, string hashAlgorithm, Manifest manifest)
     {
+      if (hashAlgorithm == null)
+        hashAlgorithm = "MD5";
+
       return _dtoProvider.GetDataTransferIndicesWithManifest(scope, app, graph, hashAlgorithm, manifest);
     }
 
     [Description("Gets data transfer objects according to manifest and dti request.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/xfr/page")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxo")]
     public DataTransferObjects GetDataTransferObjectsWithManifest(string scope, string app, string graph, DtoPageRequest dtoPageRequest)
     {
       return _dtoProvider.GetDataTransferObjects(scope, app, graph, dtoPageRequest);
