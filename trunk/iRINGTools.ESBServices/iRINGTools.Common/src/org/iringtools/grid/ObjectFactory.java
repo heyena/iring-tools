@@ -30,14 +30,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Rows }
-     * 
-     */
-    public Rows createRows() {
-        return new Rows();
-    }
-
-    /**
      * Create an instance of {@link Filter }
      * 
      */
@@ -54,6 +46,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Column }
+     * 
+     */
+    public Column createColumn() {
+        return new Column();
+    }
+
+    /**
      * Create an instance of {@link Header }
      * 
      */
@@ -62,11 +62,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Column }
+     * Create an instance of {@link Rows }
      * 
      */
-    public Column createColumn() {
-        return new Column();
+    public Rows createRows() {
+        return new Rows();
     }
 
 }

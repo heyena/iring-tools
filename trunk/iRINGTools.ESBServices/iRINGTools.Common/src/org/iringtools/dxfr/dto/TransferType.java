@@ -1,5 +1,5 @@
 
-package org.iringtools.mapping;
+package org.iringtools.dxfr.dto;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
@@ -7,31 +7,37 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for TransferOption.
+ * <p>Java class for TransferType.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="TransferOption">
+ * &lt;simpleType name="TransferType">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="Desired"/>
- *     &lt;enumeration value="Required"/>
+ *     &lt;enumeration value="Sync"/>
+ *     &lt;enumeration value="Add"/>
+ *     &lt;enumeration value="Change"/>
+ *     &lt;enumeration value="Delete"/>
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
  * 
  */
-@XmlType(name = "TransferOption")
+@XmlType(name = "TransferType")
 @XmlEnum
-public enum TransferOption {
+public enum TransferType {
 
-    @XmlEnumValue("Desired")
-    DESIRED("Desired"),
-    @XmlEnumValue("Required")
-    REQUIRED("Required");
+    @XmlEnumValue("Sync")
+    SYNC("Sync"),
+    @XmlEnumValue("Add")
+    ADD("Add"),
+    @XmlEnumValue("Change")
+    CHANGE("Change"),
+    @XmlEnumValue("Delete")
+    DELETE("Delete");
     private final String value;
 
-    TransferOption(String v) {
+    TransferType(String v) {
         value = v;
     }
 
@@ -39,8 +45,8 @@ public enum TransferOption {
         return value;
     }
 
-    public static TransferOption fromValue(String v) {
-        for (TransferOption c: TransferOption.values()) {
+    public static TransferType fromValue(String v) {
+        for (TransferType c: TransferType.values()) {
             if (c.value.equals(v)) {
                 return c;
             }

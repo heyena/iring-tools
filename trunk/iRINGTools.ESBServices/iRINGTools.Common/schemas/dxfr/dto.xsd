@@ -38,7 +38,7 @@
     <xs:sequence>
       <xs:element name="identifier" type="xs:string" />
       <xs:element name="classObjects" type="ClassObjects" />
-      <xs:element name="transferOption" type="TransferOption" />
+      <xs:element name="transferType" type="TransferType" />
     </xs:sequence>
   </xs:complexType>
 
@@ -60,7 +60,7 @@
       <xs:element name="name" type="xs:string" />
       <xs:element name="identifier" type="xs:string" />
       <xs:element name="templateObjects" type="TemplateObjects" />
-      <xs:element name="transferOption" type="TransferOption" />
+      <xs:element name="transferType" type="TransferType" />
     </xs:sequence>
   </xs:complexType>
 
@@ -81,7 +81,7 @@
       <xs:element name="templateId" type="xs:string" />
       <xs:element name="name" type="xs:string" />
       <xs:element name="roleObjects" type="RoleObjects" />
-      <xs:element name="transferOption" type="TransferOption" />
+      <xs:element name="transferType" type="TransferType" />
     </xs:sequence>
   </xs:complexType>
 
@@ -109,7 +109,7 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:simpleType name="TransferOption">
+  <xs:simpleType name="TransferType">
     <xs:restriction base="xs:string">
       <xs:enumeration value="Sync" />
       <xs:enumeration value="Add" />

@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="identifier" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="templateObjects" type="{http://www.iringtools.org/dxfr/dto}TemplateObjects"/>
- *         &lt;element name="transferOption" type="{http://www.iringtools.org/dxfr/dto}TransferOption"/>
+ *         &lt;element name="transferType" type="{http://www.iringtools.org/dxfr/dto}TransferType"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -36,7 +36,7 @@ import javax.xml.bind.annotation.XmlType;
     "name",
     "identifier",
     "templateObjects",
-    "transferOption"
+    "transferType"
 })
 public class ClassObject {
 
@@ -49,7 +49,7 @@ public class ClassObject {
     @XmlElement(required = true)
     protected TemplateObjects templateObjects;
     @XmlElement(required = true)
-    protected TransferOption transferOption;
+    protected TransferType transferType;
 
     /**
      * Gets the value of the classId property.
@@ -148,27 +148,27 @@ public class ClassObject {
     }
 
     /**
-     * Gets the value of the transferOption property.
+     * Gets the value of the transferType property.
      * 
      * @return
      *     possible object is
-     *     {@link TransferOption }
+     *     {@link TransferType }
      *     
      */
-    public TransferOption getTransferOption() {
-        return transferOption;
+    public TransferType getTransferType() {
+        return transferType;
     }
 
     /**
-     * Sets the value of the transferOption property.
+     * Sets the value of the transferType property.
      * 
      * @param value
      *     allowed object is
-     *     {@link TransferOption }
+     *     {@link TransferType }
      *     
      */
-    public void setTransferOption(TransferOption value) {
-        this.transferOption = value;
+    public void setTransferType(TransferType value) {
+        this.transferType = value;
     }
 
 }

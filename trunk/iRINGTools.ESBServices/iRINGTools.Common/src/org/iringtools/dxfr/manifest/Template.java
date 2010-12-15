@@ -5,7 +5,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.iringtools.mapping.TransferOption;
 
 
 /**
@@ -21,7 +20,7 @@ import org.iringtools.mapping.TransferOption;
  *         &lt;element name="templateId" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="roles" type="{http://www.iringtools.org/dxfr/manifest}Roles"/>
- *         &lt;element name="transferOption" type="{http://www.iringtools.org/mapping}TransferOption"/>
+ *         &lt;element name="transferOption" type="{http://www.iringtools.org/dxfr/manifest}TransferOption"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>

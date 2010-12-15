@@ -38,27 +38,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DataTransferObjectList }
+     * Create an instance of {@link TemplateObject }
      * 
      */
-    public DataTransferObjectList createDataTransferObjectList() {
-        return new DataTransferObjectList();
-    }
-
-    /**
-     * Create an instance of {@link DataTransferObjects }
-     * 
-     */
-    public DataTransferObjects createDataTransferObjects() {
-        return new DataTransferObjects();
-    }
-
-    /**
-     * Create an instance of {@link ClassObjects }
-     * 
-     */
-    public ClassObjects createClassObjects() {
-        return new ClassObjects();
+    public TemplateObject createTemplateObject() {
+        return new TemplateObject();
     }
 
     /**
@@ -70,11 +54,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DataTransferObject }
+     * Create an instance of {@link DataTransferObjects }
      * 
      */
-    public DataTransferObject createDataTransferObject() {
-        return new DataTransferObject();
+    public DataTransferObjects createDataTransferObjects() {
+        return new DataTransferObjects();
+    }
+
+    /**
+     * Create an instance of {@link DataTransferObjectList }
+     * 
+     */
+    public DataTransferObjectList createDataTransferObjectList() {
+        return new DataTransferObjectList();
     }
 
     /**
@@ -86,19 +78,27 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link DataTransferObject }
+     * 
+     */
+    public DataTransferObject createDataTransferObject() {
+        return new DataTransferObject();
+    }
+
+    /**
+     * Create an instance of {@link ClassObjects }
+     * 
+     */
+    public ClassObjects createClassObjects() {
+        return new ClassObjects();
+    }
+
+    /**
      * Create an instance of {@link ClassObject }
      * 
      */
     public ClassObject createClassObject() {
         return new ClassObject();
-    }
-
-    /**
-     * Create an instance of {@link TemplateObject }
-     * 
-     */
-    public TemplateObject createTemplateObject() {
-        return new TemplateObject();
     }
 
 }

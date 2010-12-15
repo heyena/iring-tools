@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="templateId" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="roleObjects" type="{http://www.iringtools.org/dxfr/dto}RoleObjects"/>
- *         &lt;element name="transferOption" type="{http://www.iringtools.org/dxfr/dto}TransferOption"/>
+ *         &lt;element name="transferType" type="{http://www.iringtools.org/dxfr/dto}TransferType"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlType;
     "templateId",
     "name",
     "roleObjects",
-    "transferOption"
+    "transferType"
 })
 public class TemplateObject {
 
@@ -45,7 +45,7 @@ public class TemplateObject {
     @XmlElement(required = true)
     protected RoleObjects roleObjects;
     @XmlElement(required = true)
-    protected TransferOption transferOption;
+    protected TransferType transferType;
 
     /**
      * Gets the value of the templateId property.
@@ -120,27 +120,27 @@ public class TemplateObject {
     }
 
     /**
-     * Gets the value of the transferOption property.
+     * Gets the value of the transferType property.
      * 
      * @return
      *     possible object is
-     *     {@link TransferOption }
+     *     {@link TransferType }
      *     
      */
-    public TransferOption getTransferOption() {
-        return transferOption;
+    public TransferType getTransferType() {
+        return transferType;
     }
 
     /**
-     * Sets the value of the transferOption property.
+     * Sets the value of the transferType property.
      * 
      * @param value
      *     allowed object is
-     *     {@link TransferOption }
+     *     {@link TransferType }
      *     
      */
-    public void setTransferOption(TransferOption value) {
-        this.transferOption = value;
+    public void setTransferType(TransferType value) {
+        this.transferType = value;
     }
 
 }
