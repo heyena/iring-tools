@@ -81,10 +81,10 @@ FederationManager.ContentPanel = Ext.extend(Ext.Panel, {
   onSave:function(){
         this.data_form.getForm().submit({
             success: function(f,a){
-                Ext.Msg.alert('Success', 'It worked')
+                Ext.Msg.alert('Success', 'Changes saved successfully!')
             },
             failure: function(f,a){
-                Ext.Msg.alert('Warning', 'Error')
+                Ext.Msg.alert('Warning', 'Error saving changes!')
             }
         });
 
