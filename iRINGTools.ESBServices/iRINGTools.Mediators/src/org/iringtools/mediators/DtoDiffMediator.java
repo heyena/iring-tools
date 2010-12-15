@@ -15,7 +15,7 @@ import org.apache.synapse.core.SynapseEnvironment;
 import org.apache.synapse.mediators.AbstractMediator;
 import org.iringtools.dxfr.dti.DataTransferIndex;
 import org.iringtools.dxfr.dti.DataTransferIndices;
-import org.iringtools.dxfr.dti.TransferType;
+import org.iringtools.dxfr.dti.TransferOption;
 import org.iringtools.dxfr.dto.ClassObject;
 import org.iringtools.dxfr.dto.DataTransferObject;
 import org.iringtools.dxfr.dto.DataTransferObjectList;
@@ -106,19 +106,19 @@ public class DtoDiffMediator extends AbstractMediator implements ManagedLifecycl
           {
             if (dto.getIdentifier().equalsIgnoreCase(dti.getIdentifier()))
             {
-              TransferType transferType = dti.getTransferType();
+              TransferOption transferType = dti.getTransferOption();
               
-              if (transferType == TransferType.ADD)
+              if (transferType == TransferOption.ADD)
               {
                 DataTransferObject addDto = sourceDtoListItems.remove(i--);
-                addDto.setTransferType(org.iringtools.dxfr.dto.TransferType.ADD);
+                addDto.setTransferOption(org.iringtools.dxfr.dto.TransferOption.ADD);
                 resultDtoListItems.add(addDto);
                 break;
               }
-              else if (transferType == TransferType.SYNC)
+              else if (transferType == TransferOption.SYNC)
               {
                 DataTransferObject syncDto = sourceDtoListItems.remove(i--);
-                syncDto.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC);
+                syncDto.setTransferOption(org.iringtools.dxfr.dto.TransferOption.SYNC);
                 resultDtoListItems.add(syncDto);
                 break;
               }
@@ -140,10 +140,10 @@ public class DtoDiffMediator extends AbstractMediator implements ManagedLifecycl
           {
             if (dto.getIdentifier().equalsIgnoreCase(dti.getIdentifier()))
             {
-              if (dti.getTransferType() == TransferType.DELETE)
+              if (dti.getTransferOption() == TransferOption.DELETE)
               {
                 DataTransferObject deleteDto = targetDtoListItems.remove(i--);
-                deleteDto.setTransferType(org.iringtools.dxfr.dto.TransferType.DELETE);
+                deleteDto.setTransferOption(org.iringtools.dxfr.dto.TransferOption.DELETE);
                 resultDtoListItems.add(deleteDto);
                 break;
               }
@@ -201,7 +201,7 @@ public class DtoDiffMediator extends AbstractMediator implements ManagedLifecycl
       DataTransferObject sourceDto = sourceDtoList.get(i);
 
       // sanity check see if the data transfer object might have SYNC'ed since DTI differencing occurs
-      sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC);
+      sourceDto.setTransferOption(org.iringtools.dxfr.dto.TransferOption.SYNC);
 
       List<ClassObject> targetClassObjectList = targetDto.getClassObjects().getItems();
       List<ClassObject> sourceClassObjectList = sourceDto.getClassObjects().getItems();
@@ -219,7 +219,7 @@ public class DtoDiffMediator extends AbstractMediator implements ManagedLifecycl
               sourceClassObject.getIdentifier(), targetClassObject.getIdentifier()));
         }
 
-        sourceClassObject.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC); // default SYNC first
+        sourceClassObject.setTransferOption(org.iringtools.dxfr.dto.TransferOption.SYNC); // default SYNC first
 
         List<TemplateObject> targetTemplateObjectList = targetClassObject.getTemplateObjects().getItems();
         List<TemplateObject> sourceTemplateObjectList = sourceClassObject.getTemplateObjects().getItems();
@@ -229,7 +229,7 @@ public class DtoDiffMediator extends AbstractMediator implements ManagedLifecycl
           TemplateObject targetTemplateObject = targetTemplateObjectList.get(k);
           TemplateObject sourceTemplateObject = sourceTemplateObjectList.get(k);
 
-          sourceTemplateObject.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC); // default SYNC first
+          sourceTemplateObject.setTransferOption(org.iringtools.dxfr.dto.TransferOption.SYNC); // default SYNC first
 
           List<RoleObject> targetRoleObjectList = targetTemplateObject.getRoleObjects().getItems();
           List<RoleObject> sourceRoleObjectList = sourceTemplateObject.getRoleObjects().getItems();
@@ -255,9 +255,9 @@ public class DtoDiffMediator extends AbstractMediator implements ManagedLifecycl
 
               if (!targetRoleValue.equals(sourceRoleValue))
               {
-                sourceTemplateObject.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
-                sourceClassObject.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
-                sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
+                sourceTemplateObject.setTransferOption(org.iringtools.dxfr.dto.TransferOption.CHANGE);
+                sourceClassObject.setTransferOption(org.iringtools.dxfr.dto.TransferOption.CHANGE);
+                sourceDto.setTransferOption(org.iringtools.dxfr.dto.TransferOption.CHANGE);
               }
             }
           }

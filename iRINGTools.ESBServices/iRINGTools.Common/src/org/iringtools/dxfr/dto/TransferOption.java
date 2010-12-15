@@ -1,5 +1,5 @@
 
-package org.iringtools.dxfr.dti;
+package org.iringtools.dxfr.dto;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
@@ -7,12 +7,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for TransferType.
+ * <p>Java class for TransferOption.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="TransferType">
+ * &lt;simpleType name="TransferOption">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
  *     &lt;enumeration value="Sync"/>
  *     &lt;enumeration value="Add"/>
@@ -23,9 +23,9 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  * 
  */
-@XmlType(name = "TransferType")
+@XmlType(name = "TransferOption")
 @XmlEnum
-public enum TransferType {
+public enum TransferOption {
 
     @XmlEnumValue("Sync")
     SYNC("Sync"),
@@ -37,7 +37,7 @@ public enum TransferType {
     DELETE("Delete");
     private final String value;
 
-    TransferType(String v) {
+    TransferOption(String v) {
         value = v;
     }
 
@@ -45,8 +45,8 @@ public enum TransferType {
         return value;
     }
 
-    public static TransferType fromValue(String v) {
-        for (TransferType c: TransferType.values()) {
+    public static TransferOption fromValue(String v) {
+        for (TransferOption c: TransferOption.values()) {
             if (c.value.equals(v)) {
                 return c;
             }

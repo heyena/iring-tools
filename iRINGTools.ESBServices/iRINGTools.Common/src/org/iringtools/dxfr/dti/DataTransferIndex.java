@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="identifier" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="hashValue" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="transferType" type="{http://www.iringtools.org/dxfr/dti}TransferType"/>
+ *         &lt;element name="transferOption" type="{http://www.iringtools.org/dxfr/dti}TransferOption"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "DataTransferIndex", propOrder = {
     "identifier",
     "hashValue",
-    "transferType"
+    "transferOption"
 })
 public class DataTransferIndex {
 
@@ -41,7 +41,7 @@ public class DataTransferIndex {
     @XmlElement(required = true)
     protected String hashValue;
     @XmlElement(required = true)
-    protected TransferType transferType;
+    protected TransferOption transferOption;
 
     /**
      * Gets the value of the identifier property.
@@ -92,27 +92,27 @@ public class DataTransferIndex {
     }
 
     /**
-     * Gets the value of the transferType property.
+     * Gets the value of the transferOption property.
      * 
      * @return
      *     possible object is
-     *     {@link TransferType }
+     *     {@link TransferOption }
      *     
      */
-    public TransferType getTransferType() {
-        return transferType;
+    public TransferOption getTransferOption() {
+        return transferOption;
     }
 
     /**
-     * Sets the value of the transferType property.
+     * Sets the value of the transferOption property.
      * 
      * @param value
      *     allowed object is
-     *     {@link TransferType }
+     *     {@link TransferOption }
      *     
      */
-    public void setTransferType(TransferType value) {
-        this.transferType = value;
+    public void setTransferOption(TransferOption value) {
+        this.transferOption = value;
     }
 
 }

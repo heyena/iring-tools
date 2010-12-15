@@ -33,7 +33,7 @@ import org.iringtools.directory.ExchangeDefinition;
 import org.iringtools.dxfr.dti.DataTransferIndex;
 import org.iringtools.dxfr.dti.DataTransferIndexList;
 import org.iringtools.dxfr.dti.DataTransferIndices;
-import org.iringtools.dxfr.dti.TransferType;
+import org.iringtools.dxfr.dti.TransferOption;
 import org.iringtools.dxfr.dto.ClassObject;
 import org.iringtools.dxfr.dto.DataTransferObject;
 import org.iringtools.dxfr.dto.DataTransferObjectList;
@@ -204,7 +204,7 @@ public class ESBService
 
       for (DataTransferIndex dti : dataTransferIndices.getDataTransferIndexList().getItems())
       {
-        switch (dti.getTransferType())
+        switch (dti.getTransferOption())
         {
         case ADD:
           sourceDtiListItems.add(dti);
@@ -254,19 +254,19 @@ public class ESBService
               {
                 if (sourceDtoIdentifier.equalsIgnoreCase(sourceDti.getIdentifier()))
                 {
-                  TransferType transferType = sourceDti.getTransferType();
+                  TransferOption transferOption = sourceDti.getTransferOption();
                   
-                  if (transferType == TransferType.ADD)
+                  if (transferOption == TransferOption.ADD)
                   {
                     DataTransferObject addDto = sourceDtoListItems.remove(i--);
-                    addDto.setTransferType(org.iringtools.dxfr.dto.TransferType.ADD);
+                    addDto.setTransferOption(org.iringtools.dxfr.dto.TransferOption.ADD);
                     resultDtoListItems.add(addDto);
                     break;
                   }
-                  else if (transferType == TransferType.SYNC)
+                  else if (transferOption == TransferOption.SYNC)
                   {
                     DataTransferObject syncDto = sourceDtoListItems.remove(i--);
-                    syncDto.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC);
+                    syncDto.setTransferOption(org.iringtools.dxfr.dto.TransferOption.SYNC);
                     resultDtoListItems.add(syncDto);
                     break;
                   }
@@ -309,10 +309,10 @@ public class ESBService
               {
                 if (targetDtoIdentifier.equalsIgnoreCase(targetDti.getIdentifier()))
                 {
-                  if (targetDti.getTransferType() == TransferType.DELETE)
+                  if (targetDti.getTransferOption() == TransferOption.DELETE)
                   {
                     DataTransferObject deleteDto = targetDtoListItems.remove(i--);
-                    deleteDto.setTransferType(org.iringtools.dxfr.dto.TransferType.DELETE);
+                    deleteDto.setTransferOption(org.iringtools.dxfr.dto.TransferOption.DELETE);
                     resultDtoListItems.add(deleteDto);
                     break;
                   }
@@ -425,7 +425,7 @@ public class ESBService
 
         for (DataTransferIndex poolDti : poolDtiListItems)
         {
-          switch (poolDti.getTransferType())
+          switch (poolDti.getTransferOption())
           {
           case SYNC:
             syncDtiList.add(poolDti);
@@ -486,18 +486,18 @@ public class ESBService
                     
                     poolDtoListItems.remove(j--); 
                   }
-                  else if (dti.getTransferType() == TransferType.SYNC)
+                  else if (dti.getTransferOption() == TransferOption.SYNC)
                   {
                     poolDtoListItems.remove(j--);  // exclude SYNC DTOs
                   }
                   else
                   {
-                    sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.valueOf(dti.getTransferType().toString()));
+                    sourceDto.setTransferOption(org.iringtools.dxfr.dto.TransferOption.valueOf(dti.getTransferOption().toString()));
                   }
                 }
                 else
                 {
-                  sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.valueOf(dti.getTransferType().toString()));
+                  sourceDto.setTransferOption(org.iringtools.dxfr.dto.TransferOption.valueOf(dti.getTransferOption().toString()));
                 }
                 
                 break;
@@ -524,7 +524,7 @@ public class ESBService
         {
           DataTransferObject deleteDto = new DataTransferObject();
           deleteDto.setIdentifier(deleteDti.getIdentifier());
-          deleteDto.setTransferType(org.iringtools.dxfr.dto.TransferType.DELETE);
+          deleteDto.setTransferOption(org.iringtools.dxfr.dto.TransferOption.DELETE);
           poolDtoListItems.add(deleteDto);
         }
 

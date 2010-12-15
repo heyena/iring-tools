@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="identifier" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="classObjects" type="{http://www.iringtools.org/dxfr/dto}ClassObjects"/>
- *         &lt;element name="transferType" type="{http://www.iringtools.org/dxfr/dto}TransferType"/>
+ *         &lt;element name="transferOption" type="{http://www.iringtools.org/dxfr/dto}TransferOption"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "DataTransferObject", propOrder = {
     "identifier",
     "classObjects",
-    "transferType"
+    "transferOption"
 })
 public class DataTransferObject {
 
@@ -41,7 +41,7 @@ public class DataTransferObject {
     @XmlElement(required = true)
     protected ClassObjects classObjects;
     @XmlElement(required = true)
-    protected TransferType transferType;
+    protected TransferOption transferOption;
 
     /**
      * Gets the value of the identifier property.
@@ -92,27 +92,27 @@ public class DataTransferObject {
     }
 
     /**
-     * Gets the value of the transferType property.
+     * Gets the value of the transferOption property.
      * 
      * @return
      *     possible object is
-     *     {@link TransferType }
+     *     {@link TransferOption }
      *     
      */
-    public TransferType getTransferType() {
-        return transferType;
+    public TransferOption getTransferOption() {
+        return transferOption;
     }
 
     /**
-     * Sets the value of the transferType property.
+     * Sets the value of the transferOption property.
      * 
      * @param value
      *     allowed object is
-     *     {@link TransferType }
+     *     {@link TransferOption }
      *     
      */
-    public void setTransferType(TransferType value) {
-        this.transferType = value;
+    public void setTransferOption(TransferOption value) {
+        this.transferOption = value;
     }
 
 }
