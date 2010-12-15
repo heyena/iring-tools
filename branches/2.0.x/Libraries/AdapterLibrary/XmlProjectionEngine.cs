@@ -44,17 +44,16 @@ namespace org.iringtools.adapter.projection
         _graphMap = _mapping.FindGraphMap(graphName);
         _dataObjects = dataObjects;
 
+        xElement = new XElement(_appNamespace + Utility.TitleCase(graphName),
+                   new XAttribute(XNamespace.Xmlns + "i", XSI_NS),
+                   new XAttribute(XNamespace.Xmlns + "rdl", RDL_NS),
+                   new XAttribute(XNamespace.Xmlns + "tpl", TPL_NS));
+
         if (_graphMap != null && _graphMap.classTemplateListMaps.Count > 0 &&
           _dataObjects != null && _dataObjects.Count > 0)
         {
           _classIdentifiersCache = new Dictionary<string, List<string>>();
           SetClassIdentifiers(DataDirection.Outbound);
-
-          //TODO: use entities for rdl & tpl instead of namespaces
-          xElement = new XElement(_appNamespace + Utility.TitleCase(graphName),
-            new XAttribute(XNamespace.Xmlns + "i", XSI_NS),
-            new XAttribute(XNamespace.Xmlns + "rdl", RDL_NS),
-            new XAttribute(XNamespace.Xmlns + "tpl", TPL_NS));
 
           var pair = _graphMap.classTemplateListMaps.First();          
           for (int i = 0; i < _dataObjects.Count; i++)
