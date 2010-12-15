@@ -145,6 +145,7 @@
     <Compile Include="..\AssemblyInfo.cs">
       <Link>AssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="DataService.cs" />
     <Compile Include="DtoService.cs" />
     <Compile Include="ExchangeService.cs" />
     <Compile Include="Global.asax.cs">

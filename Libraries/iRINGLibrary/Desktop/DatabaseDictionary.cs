@@ -39,6 +39,9 @@ namespace org.iringtools.library
 
     [DataMember(IsRequired = true, Order = 1)]
     public string connectionString { get; set; }
+
+    [DataMember(IsRequired = true, Order = 1)]
+    public string schemaName { get; set; }
   }
 
   [DataContract(Namespace = "http://ns.iringtools.org/library")]

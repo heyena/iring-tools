@@ -590,6 +590,7 @@ namespace ApplicationEditor
         {
           connectionString = connectionstring,
           provider = (Provider)Enum.Parse(typeof(Provider), newProvider, true),
+          schemaName = tbSchemaName.Text,
           dataObjects = new List<org.iringtools.library.DataObject>()
         };
 
@@ -700,6 +701,7 @@ namespace ApplicationEditor
             tbUserID.Text,
             tbPassword.Password);
           databaseDictionary.provider = (Provider)Enum.Parse(typeof(Provider), cbProvider.SelectedItem.ToString(), true);
+          databaseDictionary.schemaName = tbSchemaName.Text;
           _dal.SaveDatabaseDictionary(databaseDictionary, _currentProject.Name, _currentApplication.Name);
 
           if (!isFetched)
@@ -762,6 +764,8 @@ namespace ApplicationEditor
           }
         }
         cbProvider.SelectedItem = dict.provider.ToString();
+        tbSchemaName.Text = dict.schemaName;
+
         string project = string.Empty;
         string application = string.Empty;
 
@@ -1847,7 +1851,8 @@ namespace ApplicationEditor
          dict = new DatabaseDictionary
           {
             connectionString = connString,
-            provider = (Provider)Enum.Parse(typeof(Provider), cbProvider.SelectedItem.ToString(), true)
+            provider = (Provider)Enum.Parse(typeof(Provider), cbProvider.SelectedItem.ToString(), true),
+            schemaName = tbSchemaName.Text,
           };
          tvwItemDestinationRoot.Tag = dict;
       }

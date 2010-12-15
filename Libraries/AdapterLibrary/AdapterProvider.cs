@@ -456,6 +456,61 @@ namespace org.iringtools.adapter
       return _response;
     }
 
+    public XDocument GetDataProjection(string projectName, string applicationName, string graphName, string identifier, string format)
+    {
+      try
+      {
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
+
+        IList<string> identifiers = new List<string>() { identifier };
+
+        if (format != null)
+        {
+          _projectionEngine = _kernel.Get<IProjectionLayer>(format);
+        }
+        else
+        {
+          _projectionEngine = _kernel.Get<IProjectionLayer>("data");
+        }
+
+        _dataObjects = _dataLayer.Get(graphName, identifiers);
+
+        return _projectionEngine.ToXml(graphName, ref _dataObjects);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in GetProjection: {0}", ex));
+        throw ex;
+      }
+    }
+
+    public XDocument GetDataProjection(string projectName, string applicationName, string graphName, string format)
+    {
+      try
+      {
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
+
+        if (format != null)
+        {
+          _projectionEngine = _kernel.Get<IProjectionLayer>(format);
+        }
+        else
+        {
+          _projectionEngine = _kernel.Get<IProjectionLayer>("data");
+        }
+
+        _dataObjects = _dataLayer.Get(graphName, null);
+        return _projectionEngine.ToXml(graphName, ref _dataObjects);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in GetProjection: {0}", ex));
+        throw ex;
+      }
+    }
+
     public XDocument GetProjection(string projectName, string applicationName, string graphName, string identifier, string format)
     {
       try
@@ -796,7 +851,7 @@ namespace org.iringtools.adapter
       _graphMap = _mapping.FindGraphMap(graphName);
 
       _dataObjects.Clear();
-            
+
       if (identifiers != null)
         _dataObjects =_dataLayer.Get(_graphMap.dataObjectMap, identifiers);
       else
