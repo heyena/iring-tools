@@ -98,9 +98,7 @@ namespace ApplicationEditor
       webClient.DownloadStringAsync(address);
 
     }
-
-
-
+    
     public void GetProviders()
     {
       string relativeUri = "/providers";
@@ -111,7 +109,7 @@ namespace ApplicationEditor
       webClient.DownloadStringAsync(address);
     }
 
-    public void GetRelationShipTypes()
+    public void GetRelationshipTypes()
     {
       string relativeUri = "/relationships";
       Uri address = new Uri(_applicationServiceUri + relativeUri);
