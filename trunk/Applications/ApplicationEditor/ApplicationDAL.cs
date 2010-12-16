@@ -80,7 +80,7 @@ namespace ApplicationEditor
       Uri address = new Uri(_applicationServiceUri + relativeUri);
 
       WebClient webClient = new WebClient();
-      webClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnGetSchemaObectsCompletedEvent);
+      webClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnGetSchemaObjectsCompletedEvent);
       webClient.DownloadStringAsync(address);
     }
 
@@ -525,7 +525,7 @@ namespace ApplicationEditor
       OnDataArrived(sender, args);
     }
 
-    void OnGetSchemaObectsCompletedEvent(object sender, AsyncCompletedEventArgs e)
+    void OnGetSchemaObjectsCompletedEvent(object sender, AsyncCompletedEventArgs e)
     {
       CompletedEventArgs args;
       DataObjects schemaObjects = null;
