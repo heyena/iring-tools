@@ -33,7 +33,7 @@ Ext.onReady(function () {
 		Ext.Ajax.request({
 			url: url,
 			method: 'GET',
-			params: {},
+			//params: {},
 			success: function(result, request) {
 				alert('grid definition: ' + result.responseText);
 				var dataTypeNode = node.parentNode.parentNode;

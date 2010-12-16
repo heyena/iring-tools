@@ -1,9 +1,9 @@
 
 package org.iringtools.grid;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -22,8 +22,8 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="success" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="total" type="{http://www.w3.org/2001/XMLSchema}integer"/>
- *         &lt;element name="data" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded"/>
+ *         &lt;element name="total" type="{http://www.w3.org/2001/XMLSchema}double"/>
+ *         &lt;element name="data" type="{http://www.iringtools.org/grid}Data" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -43,10 +43,9 @@ public class Rows {
 
     @XmlElement(required = true)
     protected String success;
-    @XmlElement(required = true)
-    protected BigInteger total;
+    protected double total;
     @XmlElement(name = "data", required = true)
-    protected List<String> datas;
+    protected List<HashMap> datas;
 
     /**
      * Gets the value of the success property.
@@ -75,24 +74,16 @@ public class Rows {
     /**
      * Gets the value of the total property.
      * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
      */
-    public BigInteger getTotal() {
+    public double getTotal() {
         return total;
     }
 
     /**
      * Sets the value of the total property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
      */
-    public void setTotal(BigInteger value) {
+    public void setTotal(double value) {
         this.total = value;
     }
 
@@ -114,13 +105,13 @@ public class Rows {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link String }
+     * {@link Data }
      * 
      * 
      */
-    public List<String> getDatas() {
+    public List<HashMap> getDatas() {
         if (datas == null) {
-            datas = new ArrayList<String>();
+            datas = new ArrayList<HashMap>();
         }
         return this.datas;
     }
@@ -130,10 +121,10 @@ public class Rows {
      * 
      * @param datas
      *     allowed object is
-     *     {@link String }
+     *     {@link Data }
      *     
      */
-    public void setDatas(List<String> datas) {
+    public void setDatas(List<HashMap> datas) {
         this.datas = datas;
     }
 

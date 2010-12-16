@@ -91,22 +91,20 @@ public class AppdataModel {
     public Grid toGrid() {		
     	grid = new Grid();    	
 		dtoCtr = new DtoContainer();		
-	   // for (DataTransferIndex dti : dtiList)
-	   // {
+	  
 		DataTransferIndex dti = dtiList.get(0);
 	    setIdentifier(dti.getIdentifier());
 	    dtoCtr.setUrl(dtoUrl, identifier);
 	    dtoCtr.populate(URI);	      
 	    dtoCtr.fillRow();	    
-	   // }		
-	    //dtoCtr.setLists(grid);
+	   
 	    dtoCtr.setGridList(grid);
 	    
 		return grid;
 	}
 	
     public Rows toRows() {	
-    	dtiPage = dtiList.subList(0, page);
+    	dtiPage = dtiList.subList(0, Math.min(page, dtiList.size()));
     	Rows rows = new Rows();
     	dtoCtr = new DtoContainer();
     	dtoCtr.setUrl(dtoUrl, "page");
