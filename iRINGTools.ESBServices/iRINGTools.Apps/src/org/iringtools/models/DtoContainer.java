@@ -6,10 +6,13 @@ package org.iringtools.models;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.w3c.dom.Element;
+
 import org.iringtools.grid.Grid;
 import org.iringtools.grid.Filter;
 import org.iringtools.grid.Column;
 import org.iringtools.grid.Header;
+import java.util.HashMap;
 import org.iringtools.dxfr.dti.DataTransferIndex;
 import org.iringtools.dxfr.dti.DataTransferIndexList;
 import org.iringtools.dxfr.dti.DataTransferIndices;
@@ -18,9 +21,11 @@ import org.iringtools.dxfr.dto.DataTransferObject;
 import org.iringtools.dxfr.dto.DataTransferObjects;
 import org.iringtools.dxfr.dto.RoleObject;
 import org.iringtools.dxfr.dto.TemplateObject;
-import java.math.BigInteger;
+
 
 import org.iringtools.grid.Rows;
+import org.iringtools.grid.Data;
+import org.iringtools.grid.*;
 import org.iringtools.utility.HttpClient;
 
 public class DtoContainer {
@@ -34,11 +39,12 @@ public class DtoContainer {
 	private List<TemplateObject> tObjList;
 	private List<RoleObject> roList;
 	private List<ClassObject> claList;
-	private RoleObject roObj;
-	private List<DataTransferObject> dtoList;
+	private RoleObject roObj;	
+	private List<DataTransferObject> dtoList;	
+	private List<HashMap> dataList = new  ArrayList<HashMap>();
+	private HashMap data;
 	private List<String> hList = new ArrayList<String>(); 
 	private List<Header> ghList = new ArrayList<Header>();	  //list of headers
-	private List<String> rowList = new ArrayList<String>();
 	private List<Filter> filterList = new ArrayList<Filter>();
 	private String relateList = "[";   //list of related object
 	private List<Column> cList = new ArrayList<Column>();   //list of column description
@@ -48,7 +54,7 @@ public class DtoContainer {
 	private Filter filter;
 	private Column column;
 	private Header header;
-	private int ind=1;
+	private int ind=1, page = 20;
 	
 		
 	public void populate(String URI) {
@@ -250,11 +256,7 @@ public class DtoContainer {
 	
 	
 	
-	public void setRowList(List<String> rowList)
-	{
-		this.rowList = rowList;
-	}
-	
+
 	
 	
 	public void setRelateList(String reList)
@@ -299,17 +301,7 @@ public class DtoContainer {
 			}
 		}
 
-		/*
-		 * if(!rowList.equals("[")) rowList = rowList+",";
-		 * if(!relateList.equals("[")) relateList = relateList+",";
-		 */
-		row = row + "}";
-		rowList.add(row);
-		rlData = rlData + "}";
-		// rowList=rowList+row;
-		// relateList=relateList+rlData;
-		setRow("");
-		setRlData("");
+		
 		ind++;
 
 	}
@@ -323,7 +315,7 @@ public class DtoContainer {
 	}
 	public void setRowsList(Rows rows)
 	{		
-		rows.setDatas(rowList);
+		rows.setDatas(dataList);
 		rows.setSuccess("true");
 		rows.setTotal((double)(dtoList.size()));
 	}
@@ -367,43 +359,38 @@ public class DtoContainer {
 			filter.setType("string");
 			filter.setDataIndex(head);
 			filterList.add(filter);
-		}
-
-		
-		
-		
+		}		
 		grid.setFilterSets(filterList);
 		grid.setColumnDatas(cList);
 		grid.setHeaderLists(ghList);
 		
 		grid.setCacheData("true"); //Add rules in the future
-		grid.setSuccess("true");
-		
-		grid.setPageSize(20);
+		if (filterList.size()>0 && cList.size()>0 && ghList.size()>0)
+			grid.setSuccess("true");		
+		grid.setPageSize(page);
 		grid.setClassObjName(clsName);
 	}
 	
-	public void addToRow(String name)
-	{		
-		setRValue(roObj.getValue());
+	public void setTempName(String name)
+	{
 		if(rType.equals("OBJECT_PROPERTY") || rType.equals("DATA_PROPERTY"))
 			tempName = tName + '_' + name;
 		else
 		{
 			tempName = name;
 		}
-		
-		if (row.equals(""))
-			row = row + "{";
-		else 
-			row = row + ",";
+	}
 	
-		row = row + "\"" + tempName + "\":\"" + rValue + "\"";
+	public void addToRow(String name)
+	{		
+		setRValue(roObj.getValue());
+		setTempName(name);		
+		data.put(tempName, rValue);
 	}
 	
 	public void addToGrid(String name)
 	{		
-		addToRow(name);		
+		setTempName(name);		
 		if (!hListHas())
 		{
 			hList.add(tempName);
@@ -427,6 +414,7 @@ public class DtoContainer {
 		
 	    for (DataTransferObject dto : dtoList)
 	    {
+	      data = new HashMap();
 	      setClaList(dto.getClassObjects().getItems());
 	      for (ClassObject clo : claList)
 	      {
@@ -440,8 +428,7 @@ public class DtoContainer {
 	    		  {	    			  
 	    			  setRType(rObj.getType().toString());
 	    			  if (ti < 1 && rType.equals("PROPERTY"))
-	    			  {
-	    				 // setClsName(clo.getName());
+	    			  {	    				 
 	    				  setRoObj(rObj);
 	    				  setIdentifier(rObj.getValue());
 	    				  addToRow(tName);	    				  
@@ -451,24 +438,14 @@ public class DtoContainer {
 	    				  setRoObj(rObj);  				  
 	    				  addToRow(rObj.getName());	    				 
 	    			  }
-	    			 /* else if (rType.equals("REFERENCE"))
-	    			  {	    				  
-	    				  setRcName(rObj.getRelatedClassName());
-	    				  if(rcName != null)
-	    				  {
-	    					  addRList(ri);
-	    					  ri++;
-	    				  }
-	    			  }*/
+	    			 
 	    		  }
 	    		  if (ti<1)  
 	    			  ti++;
 	    	  }
 	    	  
-	      }
-	      row = row + "}";
-	      rowList.add(row);
-	      setRow("");
+	      }	
+	      dataList.add(data);	     
 	      ti = 0;
 	    }
 	}
