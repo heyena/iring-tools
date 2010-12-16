@@ -74,7 +74,7 @@ namespace ApplicationEditor
         biBusyWindow.IsBusy = true;
         _dal.GetScopes();
         _dal.GetProviders();
-        _dal.GetRelationShipTypes();
+        _dal.GetRelationshipTypes();
         isPosting = false;
         isFetched = false;
       }
@@ -268,7 +268,7 @@ namespace ApplicationEditor
             break;
 
           case CompletedEventType.GetRelationships:
-            getRelationShipTypesCompeted(args);
+            getRelationshipTypesCompeted(args);
             break;
 
           default:
@@ -355,7 +355,7 @@ namespace ApplicationEditor
       }
     }
 
-    private void getRelationShipTypesCompeted(CompletedEventArgs args)
+    private void getRelationshipTypesCompeted(CompletedEventArgs args)
     {
       try
       {
