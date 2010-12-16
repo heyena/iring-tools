@@ -23,7 +23,7 @@ namespace ApplicationEditor
     private EditTreeNode editTreeNode;
     private CompositeKeys compositeKeys;
     private Relations relations;
-    Collection<ScopeProject> _scopes;
+    ScopeProjects _scopes;
 
     TreeViewItem _editProject;
     TreeViewItem _editApplication;
@@ -971,7 +971,7 @@ namespace ApplicationEditor
         if (args != null && args.Data != null)
         {
 
-          _scopes = (Collection<ScopeProject>)args.Data;
+          _scopes = (ScopeProjects)args.Data;
 
           tvwScopesItemRoot.Tag = null;
 

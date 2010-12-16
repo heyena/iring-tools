@@ -146,11 +146,11 @@ namespace ApplicationEditor
 
     }
 
-    public void UpdateScopes(Collection<ScopeProject> scopes)
+    public void UpdateScopes(ScopeProjects scopes)
     {
       string relativeUri = String.Format("/scopes");
       Uri address = new Uri(_adapterServiceUri + relativeUri);
-      string data = Utility.SerializeDataContract<Collection<ScopeProject>>(scopes);
+      string data = Utility.SerializeDataContract<ScopeProjects>(scopes);
 
       WebClient webClient = new WebClient();
       webClient.UploadStringCompleted += new UploadStringCompletedEventHandler(OnUpdateScopesCompletedEvent);
@@ -162,7 +162,7 @@ namespace ApplicationEditor
     void OnGetScopesCompletedEvent(object sender, AsyncCompletedEventArgs e)
     {
       string result = ((DownloadStringCompletedEventArgs)e).Result;
-      Collection<ScopeProject> scopes = result.DeserializeDataContract<Collection<ScopeProject>>();
+      ScopeProjects scopes = result.DeserializeDataContract<ScopeProjects>();
 
       // If the cast failed then return
       if (scopes == null)

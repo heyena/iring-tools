@@ -59,6 +59,11 @@ namespace org.iringtools.library.configuration
           get { return GetParameter("AdapterServiceUri"); }
         }
 
+        public string FacadeServiceUri
+        {
+            get { return GetParameter("FacadeServiceUri"); }
+        }
+
         public string BaseAddress
         {
             get { return GetParameter("BaseAddress"); }

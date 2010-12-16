@@ -13,6 +13,7 @@ namespace org.iringtools.library.presentation.configuration
 
         string AdapterServiceUri { get; }
         string ReferenceDataServiceUri { get; }
+        string FacadeServiceUri { get; }
 
         string BaseAddress { get; }
     }
