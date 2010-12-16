@@ -148,10 +148,9 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 				 //this.dataGrid
 
 				 {
-title:'Parent',
+title:'Detail Grid View',
 items:[this.dataGrid],
-layout:'fit',
-closable:true
+layout:'fit'
 	}
   	];
     
