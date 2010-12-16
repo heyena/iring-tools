@@ -116,43 +116,13 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
   	});
 
 	this.dataGrid.on('beforerender',this.beforeRender,this);
-	/*this.dataGrid.on('beforerender',function(){
-		var colmodel = this.getColumnModel();
-		for(var i=0; i<colmodel.getColumnCount();i++){
-			colmodel.setRenderer(i,function(val){
-				switch(val.toLowerCase())
-				{
-					case "add":
-						spanColor='red';
-						break;
-					case "change":
-						spanColor='blue';
-						break;
-					case "delete":
-						spanColor='green';
-						break;
-					case "sync":
-						spanColor='black';
-						break;
-					default:
-						spanColor='black';
-				}
-				return '<span style="color:'+spanColor+';">' + val + '</span>';
-			});
-		}
-	});*/
 	this.dataGrid.on('cellclick',this.onCellClick,this);
 	
-	
-  	this.items = [
-				 //this.dataGrid
-
-				 {
-title:'Detail Grid View',
-items:[this.dataGrid],
-layout:'fit'
-	}
-  	];
+  	this.items = [{
+					title:'Detail Grid View',
+					items:[this.dataGrid],
+					layout:'fit'
+				}];
     
     //this.tbar = this.buildToolbar();
         
@@ -226,70 +196,64 @@ onCellClick: function (grid,rowIndex,columnIndex,e) {
 
 
 
-var classPanel = new Ext.Panel({
-autoWidth: true,
-height: 500,
-forceFit:true,
-layout: 'border',
-defaults: {
-collapsible: true,
-split: true
-	   },
-items: [
-{
-height:100,				 
-region: 'north',
-collapsible: false,
-split: true,
-html:'<div style="float:left; width:110px;"><img src="resources/images/class-badge.png"/></div><div style="padding-top:20px;" id="identifier"><b>'+IdentificationByTag_value+'</b><br/>'+grid.classObjName+'<br/>Transfer Type : '+transferType_value+'</div>'
-},{
-title: 'Properties',
-region:'west',
-split: true,
-margins: '0 1 3 3',
-width: 250,
-height:900,
-minSize: 100,
-items:[grid_class_properties]
-},{
-title: 'Related Items',
-layout:'accordion',
-split: true,
-width: 220,
-region: 'center',
-margins: '0 3 3 0',
-layoutConfig: {
-animate: true,
-fill : false
-	   },
-html:this.relatedClassArr[rowIndex]
-				 
-	   }]
-});
+			var classPanel = new Ext.Panel({
+			autoWidth: true,
+			height: 500,
+			forceFit:true,
+			layout: 'border',
+			defaults: {
+			collapsible: true,
+			split: true
+			},
+			items: [
+			{
+			height:100,				 
+			region: 'north',
+			collapsible: false,
+			split: true,
+			html:'<div style="float:left; width:110px;"><img src="resources/images/class-badge.png"/></div><div style="padding-top:20px;" id="identifier"><b>'+IdentificationByTag_value+'</b><br/>'+grid.classObjName+'<br/>Transfer Type : '+transferType_value+'</div>'
+			},{
+			title: 'Properties',
+			region:'west',
+			split: true,
+			margins: '0 1 3 3',
+			width: 250,
+			height:900,
+			minSize: 100,
+			items:[grid_class_properties]
+			},{
+			title: 'Related Items',
+			layout:'accordion',
+			split: true,
+			width: 220,
+			region: 'center',
+			margins: '0 3 3 0',
+			layoutConfig: {animate: true,fill : false},
+			html:this.relatedClassArr[rowIndex]
+			}]
+			});
 
+			var newTab = {
+				title: IdentificationByTag_value,
+				items:[classPanel],
+				closable : true
+			};
+			this.add(newTab);
+			this.setActiveTab(this.items.length-1);
 
-var newTab = {
-title: IdentificationByTag_value,
-items:[classPanel],
-closable : true
-};
-
-this.add(newTab);
-this.setActiveTab(this.items.length-1)
-}
-  },
-
+	  }
+},
 buildToolbar: function () {
-return [{
-id: "card-1",
-xtype:"tbbutton",
-tooltip:'Crum 1',
-text:'1...',			
-disabled: false,
-handler: this.onOpen,
-scope: this
-	  }]
-  },
+	return [{
+	id: "card-1",
+	xtype:"tbbutton",
+	tooltip:'Crum 1',
+	text:'1...',			
+	disabled: false,
+	handler: this.onOpen,
+	scope: this
+	}]
+},
 onOpen: function (btn, ev) {  	  	  	
 		var l = this.getLayout();
 		var i = l.activeItem.id.split('card-')[1]; 
@@ -298,17 +262,16 @@ onOpen: function (btn, ev) {
 		var t = this.getTopToolbar(); 
 
 		t.add([{
-id: "card-btn-"+i,
-xtype: "tbbutton",
-tooltip: 'Crum '+i,
-text: i+'...',		
-disabled: false,
-handler: this.onOpen,
-scope: this
+			id: "card-btn-"+i,
+			xtype: "tbbutton",
+			tooltip: 'Crum '+i,
+			text: i+'...',		
+			disabled: false,
+			handler: this.onOpen,
+			scope: this
 		}]);
 
 		t.doLayout();
 		this.fireEvent('next', this, i);
 	}  
-
 });
