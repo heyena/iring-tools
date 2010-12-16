@@ -9,7 +9,8 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 	activeItem: 0,
 	configData: null,
 	dataGrid: null,
-	url: null,	
+	url: null,
+	relatedClassArr:null,
 	
   /**
   * initComponent
@@ -39,13 +40,13 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 			filters: filterSet
 		});
 
-		var relatedClassArr = new Array();
+		this.relatedClassArr = new Array();
 		
 		if (this.configData.relatedClasses != undefined) {			
 			for(var i=0; i < this.configData.relatedClasses.length; i++) {
 				var key = this.configData.relatedClasses[i].identifier;
 				var text = this.configData.relatedClasses[i].text;
-				relatedClassArr[i] = text;
+				this.relatedClassArr[i] = text;
 			}
 		}
 		
@@ -225,9 +226,48 @@ onCellClick: function (grid,rowIndex,columnIndex,e) {
 		});
 
 
+
 var classPanel = new Ext.Panel({
+autoWidth: true,
+height: 500,
+forceFit:true,
+layout: 'border',
+defaults: {
+collapsible: true,
+split: true
+	   },
+items: [
+{
+height:100,				 
+region: 'north',
+collapsible: false,
+split: true,
+html:'<div style="float:left; width:110px;"><img src="resources/images/class-badge.png"/></div><div style="padding-top:20px;" id="identifier"><b>'+IdentificationByTag_value+'</b><br/>'+grid.classObjName+'<br/>Transfer Type : '+transferType_value+'</div>'
+},{
+title: 'Properties',
+region:'west',
+split: true,
+margins: '0 1 3 3',
+width: 250,
+height:900,
+minSize: 100,
 items:[grid_class_properties]
+},{
+title: 'Related Items',
+layout:'accordion',
+split: true,
+width: 220,
+region: 'center',
+margins: '0 3 3 0',
+layoutConfig: {
+animate: true,
+fill : false
+	   },
+html:this.relatedClassArr[rowIndex]
+				 
+	   }]
 });
+
 
 var newTab = {
 title: IdentificationByTag_value,
