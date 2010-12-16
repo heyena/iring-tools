@@ -40,7 +40,7 @@ namespace org.iringtools.library
     [DataMember(IsRequired = true, Order = 1)]
     public string connectionString { get; set; }
 
-    [DataMember(IsRequired = true, Order = 1)]
+    [DataMember(IsRequired = true, Order = 2)]
     public string schemaName { get; set; }
   }
 
