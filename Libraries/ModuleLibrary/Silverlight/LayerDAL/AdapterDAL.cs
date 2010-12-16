@@ -52,6 +52,7 @@ namespace org.iringtools.modulelibrary.layerdal
 
     private string _adapterServiceUri;
     private string _graphBaseUri;
+    private string _facadeServiceUri;
 
 
     #region Configure WebClient (client)
@@ -67,6 +68,7 @@ namespace org.iringtools.modulelibrary.layerdal
 
         _adapterServiceUri = config.AdapterServiceUri;
         _graphBaseUri = config.BaseAddress;
+        _facadeServiceUri = config.FacadeServiceUri;
 
         // Instantiate Adapter Service using baseclass 
         // properties
@@ -445,7 +447,7 @@ namespace org.iringtools.modulelibrary.layerdal
     public Response RefreshAll(string projectName, string applicationName)
     {
       StringBuilder sb = new StringBuilder();
-      sb.Append(_adapterServiceUri);
+      sb.Append(_facadeServiceUri);
       sb.Append("/");
       sb.Append(projectName);
       sb.Append("/");
