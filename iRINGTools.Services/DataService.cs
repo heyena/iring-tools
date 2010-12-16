@@ -24,7 +24,6 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ////////////////////////////////////////////////////////////////////////////////
 
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.ServiceModel;
@@ -33,16 +32,8 @@ using System.ServiceModel.Web;
 using System.Xml.Linq;
 using log4net;
 using org.iringtools.library;
-using org.iringtools.dxfr.manifest;
-using org.iringtools.adapter;
-using org.iringtools.exchange;
-using System.Xml;
-using System.ServiceModel.Channels;
-using System.IO;
-using System.Text;
-using System;
 using org.iringtools.utility;
-using org.iringtools.mapping;
+using org.iringtools.adapter;
 
 namespace org.iringtools.services
 {
@@ -50,7 +41,7 @@ namespace org.iringtools.services
   [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
   public class DataService
   {
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(DataService));
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterService));
     private AdapterProvider _adapterProvider = null;
 
     /// <summary>
@@ -69,9 +60,12 @@ namespace org.iringtools.services
     /// <returns>Returns the version as a string.</returns>
     [Description("Gets the version of the service.")]
     [WebGet(UriTemplate = "/version")]
-    public VersionInfo GetVersion()
+    public string GetVersion()
     {
-      return _adapterProvider.GetVersion();
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _adapterProvider.GetType().Assembly.GetName().Version.ToString();
     }
     #endregion
 
@@ -89,7 +83,10 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}?format={format}")]
     public XElement Get(string projectName, string applicationName, string graphName, string identifier, string format)
     {
-      XDocument xDocument = _adapterProvider.GetProjection(projectName, applicationName, graphName, identifier, format);
+      XDocument xDocument = _adapterProvider.GetDataProjection(projectName, applicationName, graphName, identifier, format);
+
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
 
       return xDocument.Root;
     }
@@ -108,7 +105,10 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}")]
     public XElement GetList(string projectName, string applicationName, string graphName, string format)
     {
-      XDocument xDocument = _adapterProvider.GetProjection(projectName, applicationName, graphName, format);
+      XDocument xDocument = _adapterProvider.GetDataProjection(projectName, applicationName, graphName, format);
+
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
 
       return xDocument.Root;
     }
@@ -128,6 +128,9 @@ namespace org.iringtools.services
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}")]
     public Response PostList(string projectName, string applicationName, string graphName, string format, XElement xElement)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _adapterProvider.Post(projectName, applicationName, graphName, format, new XDocument(xElement));
     }
     #endregion
@@ -145,6 +148,9 @@ namespace org.iringtools.services
     [WebInvoke(Method = "DELETE", UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}")]
     public Response Delete(string projectName, string applicationName, string graphName, string identifier)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _adapterProvider.DeleteIndividual(projectName, applicationName, graphName, identifier);
     }
     #endregion

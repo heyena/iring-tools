@@ -422,8 +422,8 @@ namespace org.iringtools.nhibernate
           return tableNames;
 
         string connString = dbDictionary.ConnectionString;
-        string dbProvider = dbDictionary.Provider.ToString();
-        dbProvider = dbProvider.ToUpper();
+        string dbProvider = dbDictionary.Provider.ToString().ToUpper();
+        string schemaName = dbDictionary.SchemaName;
         string parsedConnStr = ParseConnectionString(connString, dbProvider);
 
         Dictionary<string, string> properties = new Dictionary<string, string>();
@@ -442,7 +442,8 @@ namespace org.iringtools.nhibernate
 
         ISessionFactory sessionFactory = config.BuildSessionFactory();
         ISession session = sessionFactory.OpenSession();
-        ISQLQuery query = session.CreateSQLQuery(GetDatabaseMetaquery(dbProvider, parsedConnStr.Split(';')[1].Split('=')[1]));
+        string sql = GetDatabaseMetaquery(dbProvider, parsedConnStr.Split(';')[1].Split('=')[1], schemaName);
+        ISQLQuery query = session.CreateSQLQuery(sql);
 
         DataObjects metadataList = new DataObjects();
         foreach (string tableName in query.List<string>())
@@ -480,8 +481,8 @@ namespace org.iringtools.nhibernate
           dbDictionary = Utility.Read<DatabaseDictionary>(_settings["DBDictionaryPath"]);
 
         string connString = dbDictionary.ConnectionString;
-        string dbProvider = dbDictionary.Provider.ToString();
-        dbProvider = dbProvider.ToUpper();
+        string dbProvider = dbDictionary.Provider.ToString().ToUpper();
+        string schemaName = dbDictionary.SchemaName;
         string parsedConnStr = ParseConnectionString(connString, dbProvider);
 
         Dictionary<string, string> properties = new Dictionary<string, string>();
@@ -500,11 +501,9 @@ namespace org.iringtools.nhibernate
 
         ISessionFactory sessionFactory = config.BuildSessionFactory();
         ISession session = sessionFactory.OpenSession();
-
-        ISQLQuery query = session.CreateSQLQuery(GetTableMetaQuery(dbProvider, parsedConnStr.Split(';')[1].Split('=')[1], schemaObjectName));
-        IList<object[]> metadataList = query.List<object[]>();
+        ISQLQuery query = session.CreateSQLQuery(GetTableMetaQuery(dbProvider, parsedConnStr.Split(';')[1].Split('=')[1], schemaName, schemaObjectName));
+        IList<object[]> metadataList = query.List<object[]>();        
         session.Close();
-
 
         foreach (object[] metadata in metadataList)
         {
@@ -560,40 +559,43 @@ namespace org.iringtools.nhibernate
       {
         return dataObject;
       }
-    }
-
-
+    }    
     #endregion
 
     #region private methods
-
-    private string GetTableMetaQuery(string dbProvider, string databaseName, string objectName)
+    private string GetTableMetaQuery(string dbProvider, string databaseName, string schemaName, string objectName)
     {
       string tableQuery = string.Empty;
 
       if (dbProvider.ToUpper().Contains("MSSQL"))
       {
-        tableQuery = string.Format("SELECT t1.COLUMN_NAME, t1.DATA_TYPE, t2.max_length, t2.is_identity, t2.is_nullable, t5.CONSTRAINT_TYPE " +
-                                   " FROM INFORMATION_SCHEMA.COLUMNS AS t1 INNER JOIN sys.columns AS t2 ON t2.name = t1.COLUMN_NAME INNER JOIN " +
-                                   " sys.tables AS t3 ON t3.name = t1.TABLE_NAME AND t3.object_id = t2.object_id LEFT OUTER JOIN " +
-                                   " INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS t4 ON t4.TABLE_NAME = t1.TABLE_NAME AND t4.COLUMN_NAME = t1.COLUMN_NAME LEFT OUTER JOIN " +
-                                   " INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS t5 ON t5.CONSTRAINT_NAME = t4.CONSTRAINT_NAME " +
-                                   " WHERE (t1.DATA_TYPE NOT IN ('image')) AND (t1.TABLE_CATALOG = '{0}') AND (t1.TABLE_NAME = '{1}') "
-                                   , databaseName
-                                   , objectName);
+        tableQuery = string.Format(
+          "SELECT t1.COLUMN_NAME, t1.DATA_TYPE, t2.max_length, t2.is_identity, t2.is_nullable, t5.CONSTRAINT_TYPE " +
+          "FROM INFORMATION_SCHEMA.COLUMNS AS t1 INNER JOIN sys.columns AS t2 ON t2.name = t1.COLUMN_NAME INNER JOIN  sys.schemas AS ts ON " +
+          "ts.name = t1.TABLE_SCHEMA INNER JOIN  sys.tables AS t3 ON t3.schema_id = ts.schema_id AND t3.name = t1.TABLE_NAME AND " +
+          "t3.object_id = t2.object_id LEFT OUTER JOIN  INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS t4 ON t4.TABLE_SCHEMA = t1.TABLE_SCHEMA AND " +
+          "t4.TABLE_NAME = t1.TABLE_NAME AND t4.COLUMN_NAME = t1.COLUMN_NAME LEFT OUTER JOIN  INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS t5 ON " +
+          "t5.CONSTRAINT_NAME = t4.CONSTRAINT_NAME AND t5.CONSTRAINT_SCHEMA = t4.TABLE_SCHEMA WHERE (t1.DATA_TYPE NOT IN ('image')) AND " +
+          "(t1.TABLE_CATALOG = '{0}') AND (t1.TABLE_SCHEMA = '{1}') AND (t1.TABLE_NAME = '{2}')",
+          databaseName,
+          schemaName,
+          objectName
+        );
       }
       else if (dbProvider.ToUpper().Contains("MYSQL"))
       {
-        tableQuery = string.Format("select t1.COLUMN_NAME, t1.DATA_TYPE, t1.CHARACTER_MAXIMUM_LENGTH, t1.COLUMN_KEY, t1.IS_NULLABLE, c1.CONSTRAINT_TYPE " +
-                                   " from INFORMATION_SCHEMA.COLUMNS t1 join KEY_COLUMN_USAGE u1 on u1.TABLE_NAME = t1.TABLE_NAME and u1.TABLE_SCHEMA = t1.TABLE_SCHEMA and " +
-                                   " t1.COLUMN_NAME = u1.COLUMN_NAME join INFORMATION_SCHEMA.TABLE_CONSTRAINTS c1 on u1.CONSTRAINT_NAME = c1.CONSTRAINT_NAME and u1.TABLE_NAME = c1.TABLE_NAME " +
-                                   " where t1.TABLE_SCHEMA = '{0}' and t1.TABLE_NAME = '{1}'"
-                                   , databaseName
-                                   , objectName
-                                   );
+        tableQuery = string.Format(
+          "select t1.COLUMN_NAME, t1.DATA_TYPE, t1.CHARACTER_MAXIMUM_LENGTH, t1.COLUMN_KEY, t1.IS_NULLABLE, c1.CONSTRAINT_TYPE " +
+          " from INFORMATION_SCHEMA.COLUMNS t1 join KEY_COLUMN_USAGE u1 on u1.TABLE_NAME = t1.TABLE_NAME and u1.TABLE_SCHEMA = t1.TABLE_SCHEMA and " +
+          " t1.COLUMN_NAME = u1.COLUMN_NAME join INFORMATION_SCHEMA.TABLE_CONSTRAINTS c1 on u1.CONSTRAINT_NAME = c1.CONSTRAINT_NAME and u1.TABLE_NAME = c1.TABLE_NAME " +
+          " where t1.TABLE_SCHEMA = '{0}' and t1.TABLE_NAME = '{1}'",
+          schemaName,
+          objectName
+        );
       }
       else if (dbProvider.ToUpper().Contains("ORACLE"))
       {
+        //TODO: FIX THIS!
         tableQuery = string.Format(" select t2.column_name, t2.data_type, t2.data_length, 0 as is_sequence, t2.nullable, t4.constraint_type " +
                                    " from user_objects t1 inner join all_tab_cols t2 on t2.table_name = t1.object_name " +
                                    " left join all_cons_columns t3 on t3.table_name = t2.table_name and t3.column_name = t2.column_name " +
@@ -606,27 +608,30 @@ namespace org.iringtools.nhibernate
       return tableQuery;
     }
 
-    private string GetDatabaseMetaquery(string dbProvider, string database)
+    private string GetDatabaseMetaquery(string dbProvider, string database, string schemaName)
     {
+      string metaQuery = String.Empty;
+
       if (dbProvider.ToUpper().Contains("MSSQL"))
       {
-        return "select table_name from INFORMATION_SCHEMA.TABLES order by table_name";
+        metaQuery = String.Format("select table_name from INFORMATION_SCHEMA.TABLES WHERE table_schema = '{0}' order by table_name", schemaName);
       }
       else if (dbProvider.ToUpper().Contains("MYSQL"))
       {
-        return string.Format("select table_name from INFORMATION_SCHEMA.TABLES where table_schema = '{0}' order by table_name;", database);
+        metaQuery = String.Format("select table_name from INFORMATION_SCHEMA.TABLES where table_schema = '{0}' order by table_name;", schemaName);
       }
       else if (dbProvider.ToUpper().Contains("ORACLE"))
       {
-        return "select object_name from user_objects where object_type = 'TABLE' order by object_name";
+        metaQuery = String.Format("select object_name from user_objects where object_type = 'TABLE' and owner = '{0}' order by object_name", schemaName);
       }
       else
         throw new Exception(string.Format("Database provider {0} not supported.", dbProvider));
+
+      return metaQuery;
     }
 
     private string GetDatabaseDialect(string dbProvider)
     {
-
       switch (dbProvider.ToUpper())
       {
         case "MSSQL2008":
@@ -659,7 +664,6 @@ namespace org.iringtools.nhibernate
           throw new Exception(string.Format("Database provider {0} not supported.", dbProvider));
       }
     }
-
 
     private string GetConnectionDriver(string dbProvider)
     {
@@ -771,6 +775,7 @@ namespace org.iringtools.nhibernate
         properties.Add("connection.provider", "NHibernate.Connection.DriverConnectionProvider");
         properties.Add("connection.connection_string", dbDictionary.ConnectionString);
         properties.Add("proxyfactory.factory_class", "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle");
+        properties.Add("default_schema", dbDictionary.SchemaName);
         properties.Add("dialect", "NHibernate.Dialect." + dbDictionary.Provider + "Dialect");
 
         if (dbDictionary.Provider.ToString().ToUpper().Contains("MSSQL"))

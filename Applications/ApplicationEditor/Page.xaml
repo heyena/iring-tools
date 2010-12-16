@@ -123,6 +123,8 @@
                                 <TextBox x:Name="tbNewDataSource" Width="110" Height="22" Margin="5,5,5,0"/>
                                 <TextBlock Text="Database Name:" FontSize="11" Margin="5,5,5,0"/>
                                 <TextBox x:Name="tbNewDatabase" Width="110" Height="22" Margin="5,5,5,0"/>
+                                <TextBlock Text="Schema Name:" FontSize="11" Margin="5,5,5,0"/>
+                                <TextBox x:Name="tbSchemaName" Width="110" Height="22" Margin="5,5,5,0"/>
                                 <TextBlock Text="User ID:" FontSize="11" Margin="5,5,5,0"/>
                                 <TextBox x:Name="tbUserID" Width="110" Height="22" Margin="5,5,5,0"/>
                                 <TextBlock Text="Password:" FontSize="11" Margin="5,5,5,0"/>
