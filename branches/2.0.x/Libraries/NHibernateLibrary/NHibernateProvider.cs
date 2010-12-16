@@ -422,9 +422,8 @@ namespace org.iringtools.nhibernate
           return null;
 
         string connString = dbDictionary.connectionString;
-        string dbProvider = dbDictionary.provider.ToString();
+        string dbProvider = dbDictionary.provider.ToString().ToUpper();
         string schemaName = dbDictionary.schemaName;
-        dbProvider = dbProvider.ToUpper();
         string parsedConnStr = ParseConnectionString(connString, dbProvider);
 
         Dictionary<string, string> properties = new Dictionary<string, string>();
@@ -478,9 +477,8 @@ namespace org.iringtools.nhibernate
           dbDictionary = Utility.Read<DatabaseDictionary>(_settings["DBDictionaryPath"]);
 
         string connString = dbDictionary.connectionString;
-        string dbProvider = dbDictionary.provider.ToString();
+        string dbProvider = dbDictionary.provider.ToString().ToUpper();
         string schemaName = dbDictionary.schemaName;
-        dbProvider = dbProvider.ToUpper();
         string parsedConnStr = ParseConnectionString(connString, dbProvider);
 
         Dictionary<string, string> properties = new Dictionary<string, string>();
@@ -499,12 +497,10 @@ namespace org.iringtools.nhibernate
 
         ISessionFactory sessionFactory = config.BuildSessionFactory();
         ISession session = sessionFactory.OpenSession();
-
         ISQLQuery query = session.CreateSQLQuery(GetTableMetaQuery(dbProvider, parsedConnStr.Split(';')[1].Split('=')[1], schemaName, schemaObjectName));
         IList<object[]> metadataList = query.List<object[]>();
         session.Close();
-
-
+        
         foreach (object[] metadata in metadataList)
         {
           string columnName = Convert.ToString(metadata[0]);
@@ -635,7 +631,6 @@ namespace org.iringtools.nhibernate
 
     private string GetDatabaseDialect(string dbProvider)
     {
-
       switch (dbProvider.ToUpper())
       {
         case "MSSQL2008":
@@ -668,8 +663,7 @@ namespace org.iringtools.nhibernate
           throw new Exception(string.Format("Database provider {0} not supported.", dbProvider));
       }
     }
-
-
+    
     private string GetConnectionDriver(string dbProvider)
     {
       if (dbProvider.ToUpper().Contains("MSSQL"))
