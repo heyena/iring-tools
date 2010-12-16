@@ -953,6 +953,23 @@ namespace org.iringtools.utility
 
     }
 
+    public static string GetQNameFromUri(String uri)
+    {
+        Uri u;
+        if (uri.StartsWith("http"))
+        {
+            u = new Uri(uri);
+            if (uri.Contains("XMLSchema"))
+                return "xsd:" + u.Fragment.Substring(1);
+            else
+                return u.Authority.Split('.')[0] + ":" + u.Fragment.Substring(1);
+        }
+        else
+        {
+            throw new Exception(uri + " is not a valid Uri");
+        }
+    }
+
     public static string GetIdFromURI(string uri)
     {
       string id = uri;
