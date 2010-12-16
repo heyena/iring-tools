@@ -780,6 +780,7 @@ namespace org.iringtools.nhibernate
         properties.Add("connection.provider", "NHibernate.Connection.DriverConnectionProvider");
         properties.Add("connection.connection_string", dbDictionary.connectionString);
         properties.Add("proxyfactory.factory_class", "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle");
+        properties.Add("default_schema", dbDictionary.schemaName);
         properties.Add("dialect", "NHibernate.Dialect." + dbDictionary.provider + "Dialect");
 
         if (dbDictionary.provider.ToString().ToUpper().Contains("MSSQL"))
