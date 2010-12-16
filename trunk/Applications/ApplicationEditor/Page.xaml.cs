@@ -329,7 +329,7 @@ namespace ApplicationEditor
           return;
         }
 
-        DataObjects schemaObjects = (DataObjects)args.Data;
+        string[] schemaObjects = (string[])args.Data;
         isFetched = true;
         tvwItemSourceRoot.Items.Clear();
 
@@ -364,7 +364,7 @@ namespace ApplicationEditor
           MessageBox.Show(args.FriendlyErrorMessage, "Get relationship types Error", MessageBoxButton.OK);
           return;
         }
-        relations.cbRelationType.ItemsSource = ((DataRelationships)args.Data).ToList();
+        relations.cbRelationType.ItemsSource = (string[])args.Data;
       }
       catch (Exception ex)
       {
@@ -565,7 +565,7 @@ namespace ApplicationEditor
           MessageBox.Show(args.FriendlyErrorMessage, "Get Providers Error", MessageBoxButton.OK);
           return;
         }
-        cbProvider.ItemsSource = ((DataProviders)args.Data).ToList();
+        cbProvider.ItemsSource = (string[])args.Data;
       }
       catch (Exception ex)
       {
@@ -590,6 +590,7 @@ namespace ApplicationEditor
         {
           ConnectionString = connectionstring,
           Provider = (Provider)Enum.Parse(typeof(Provider), newProvider, true),
+          SchemaName = tbSchemaName.Text,
           DataObjects = new List<org.iringtools.library.DataObject>()
         };
 
@@ -700,6 +701,7 @@ namespace ApplicationEditor
             tbUserID.Text,
             tbPassword.Password);
           databaseDictionary.Provider = (Provider)Enum.Parse(typeof(Provider), cbProvider.SelectedItem.ToString(), true);
+          databaseDictionary.SchemaName = tbSchemaName.Text;
           _dal.SaveDatabaseDictionary(databaseDictionary, _currentProject.Name, _currentApplication.Name);
 
           if (!isFetched)
@@ -762,6 +764,8 @@ namespace ApplicationEditor
           }
         }
         cbProvider.SelectedItem = dict.Provider.ToString();
+        tbSchemaName.Text = dict.SchemaName;
+
         string project = string.Empty;
         string application = string.Empty;
 
@@ -1847,7 +1851,8 @@ namespace ApplicationEditor
         dict = new DatabaseDictionary
         {
           ConnectionString = connString,
-          Provider = (Provider)Enum.Parse(typeof(Provider), cbProvider.SelectedItem.ToString(), true)
+          Provider = (Provider)Enum.Parse(typeof(Provider), cbProvider.SelectedItem.ToString(), true),
+          SchemaName = tbSchemaName.Text,
         };
         tvwItemDestinationRoot.Tag = dict;
       }

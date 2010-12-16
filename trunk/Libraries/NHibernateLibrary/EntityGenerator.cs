@@ -134,7 +134,7 @@ namespace org.iringtools.nhibernate
           #endregion Compile entities
 
           #region Writing memory data to disk
-          string hibernateConfig = CreateConfiguration(dbSchema.Provider, dbSchema.ConnectionString);
+          string hibernateConfig = CreateConfiguration(dbSchema.Provider, dbSchema.ConnectionString, dbSchema.SchemaName);
           Utility.WriteString(hibernateConfig, _settings["XmlPath"] + "nh-configuration." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
           Utility.WriteString(mappingXml, _settings["XmlPath"] + "nh-mapping." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
           Utility.WriteString(sourceCode, _settings["CodePath"] + "Model." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
@@ -614,7 +614,7 @@ namespace org.iringtools.nhibernate
       }
     }
 
-    private string CreateConfiguration(Provider provider, string connectionString)
+    private string CreateConfiguration(Provider provider, string connectionString, String defaultSchema)
     {
       string driver = String.Empty;
       string dialect = String.Empty;
@@ -711,6 +711,10 @@ namespace org.iringtools.nhibernate
         configWriter.WriteStartElement("property");
         configWriter.WriteAttributeString("name", "proxyfactory.factory_class");
         configWriter.WriteString("NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle");
+        configWriter.WriteEndElement(); // end property element
+        configWriter.WriteStartElement("property");
+        configWriter.WriteAttributeString("name", "default_schema");
+        configWriter.WriteString(defaultSchema);
         configWriter.WriteEndElement(); // end property element
         configWriter.WriteStartElement("property");
         configWriter.WriteAttributeString("name", "dialect");
