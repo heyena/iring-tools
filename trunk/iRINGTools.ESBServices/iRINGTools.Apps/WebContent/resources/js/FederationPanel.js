@@ -78,6 +78,7 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
     this.federationPanel.on('click', this.onClick, this);
     this.federationPanel.on('dblclick', this.onDblClick, this);
     this.federationPanel.on('expandnode', this.onExpand, this);
+    this.federationPanel.on('refresh', this.onRefresh, this);
 
     var state = Ext.state.Manager.get("federation-state");
 
@@ -214,7 +215,8 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
 		//this.fireEvent('refresh', this, this.getSelectedNode());
 	},
 
-  onRefresh: function (btn, ev) {
+  onRefresh: function (node) {
+	  alert('onRefresh');
   	Ext.state.Manager.clear('federation-state');
 		this.federationPanel.root.reload();
   },
