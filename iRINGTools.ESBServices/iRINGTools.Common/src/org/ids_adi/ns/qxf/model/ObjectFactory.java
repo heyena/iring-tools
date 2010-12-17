@@ -30,75 +30,19 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Restriction }
+     * 
+     */
+    public Restriction createRestriction() {
+        return new Restriction();
+    }
+
+    /**
      * Create an instance of {@link ClassDefinition }
      * 
      */
     public ClassDefinition createClassDefinition() {
         return new ClassDefinition();
-    }
-
-    /**
-     * Create an instance of {@link Value }
-     * 
-     */
-    public Value createValue() {
-        return new Value();
-    }
-
-    /**
-     * Create an instance of {@link EntityType }
-     * 
-     */
-    public EntityType createEntityType() {
-        return new EntityType();
-    }
-
-    /**
-     * Create an instance of {@link TextualDefinition }
-     * 
-     */
-    public TextualDefinition createTextualDefinition() {
-        return new TextualDefinition();
-    }
-
-    /**
-     * Create an instance of {@link License }
-     * 
-     */
-    public License createLicense() {
-        return new License();
-    }
-
-    /**
-     * Create an instance of {@link LicenseText }
-     * 
-     */
-    public LicenseText createLicenseText() {
-        return new LicenseText();
-    }
-
-    /**
-     * Create an instance of {@link RoleDefinition }
-     * 
-     */
-    public RoleDefinition createRoleDefinition() {
-        return new RoleDefinition();
-    }
-
-    /**
-     * Create an instance of {@link Name }
-     * 
-     */
-    public Name createName() {
-        return new Name();
-    }
-
-    /**
-     * Create an instance of {@link Specialization }
-     * 
-     */
-    public Specialization createSpecialization() {
-        return new Specialization();
     }
 
     /**
@@ -110,43 +54,35 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link TemplateDefinition }
+     * Create an instance of {@link RoleQualification }
      * 
      */
-    public TemplateDefinition createTemplateDefinition() {
-        return new TemplateDefinition();
+    public RoleQualification createRoleQualification() {
+        return new RoleQualification();
     }
 
     /**
-     * Create an instance of {@link Classification }
+     * Create an instance of {@link Specialization }
      * 
      */
-    public Classification createClassification() {
-        return new Classification();
+    public Specialization createSpecialization() {
+        return new Specialization();
     }
 
     /**
-     * Create an instance of {@link Qmxf }
+     * Create an instance of {@link Value }
      * 
      */
-    public Qmxf createQmxf() {
-        return new Qmxf();
+    public Value createValue() {
+        return new Value();
     }
 
     /**
-     * Create an instance of {@link Restriction }
+     * Create an instance of {@link RoleDefinition }
      * 
      */
-    public Restriction createRestriction() {
-        return new Restriction();
-    }
-
-    /**
-     * Create an instance of {@link Description }
-     * 
-     */
-    public Description createDescription() {
-        return new Description();
+    public RoleDefinition createRoleDefinition() {
+        return new RoleDefinition();
     }
 
     /**
@@ -166,11 +102,75 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link RoleQualification }
+     * Create an instance of {@link License }
      * 
      */
-    public RoleQualification createRoleQualification() {
-        return new RoleQualification();
+    public License createLicense() {
+        return new License();
+    }
+
+    /**
+     * Create an instance of {@link EntityType }
+     * 
+     */
+    public EntityType createEntityType() {
+        return new EntityType();
+    }
+
+    /**
+     * Create an instance of {@link TemplateDefinition }
+     * 
+     */
+    public TemplateDefinition createTemplateDefinition() {
+        return new TemplateDefinition();
+    }
+
+    /**
+     * Create an instance of {@link Description }
+     * 
+     */
+    public Description createDescription() {
+        return new Description();
+    }
+
+    /**
+     * Create an instance of {@link Classification }
+     * 
+     */
+    public Classification createClassification() {
+        return new Classification();
+    }
+
+    /**
+     * Create an instance of {@link TextualDefinition }
+     * 
+     */
+    public TextualDefinition createTextualDefinition() {
+        return new TextualDefinition();
+    }
+
+    /**
+     * Create an instance of {@link Qmxf }
+     * 
+     */
+    public Qmxf createQmxf() {
+        return new Qmxf();
+    }
+
+    /**
+     * Create an instance of {@link Name }
+     * 
+     */
+    public Name createName() {
+        return new Name();
+    }
+
+    /**
+     * Create an instance of {@link LicenseText }
+     * 
+     */
+    public LicenseText createLicenseText() {
+        return new LicenseText();
     }
 
 }

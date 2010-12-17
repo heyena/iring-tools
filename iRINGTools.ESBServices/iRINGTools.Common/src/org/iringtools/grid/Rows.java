@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="success" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="total" type="{http://www.w3.org/2001/XMLSchema}double"/>
- *         &lt;element name="data" type="{http://www.iringtools.org/grid}Data" maxOccurs="unbounded"/>
+ *         &lt;element name="data" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -105,7 +105,7 @@ public class Rows {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Data }
+     * {@link String }
      * 
      * 
      */
@@ -121,7 +121,7 @@ public class Rows {
      * 
      * @param datas
      *     allowed object is
-     *     {@link Data }
+     *     {@link String }
      *     
      */
     public void setDatas(List<HashMap> datas) {

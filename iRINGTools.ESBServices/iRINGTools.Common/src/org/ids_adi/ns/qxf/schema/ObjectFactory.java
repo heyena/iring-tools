@@ -30,19 +30,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Qxf }
-     * 
-     */
-    public Qxf createQxf() {
-        return new Qxf();
-    }
-
-    /**
      * Create an instance of {@link Property }
      * 
      */
     public Property createProperty() {
         return new Property();
+    }
+
+    /**
+     * Create an instance of {@link Qxf }
+     * 
+     */
+    public Qxf createQxf() {
+        return new Qxf();
     }
 
     /**
