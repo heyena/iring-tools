@@ -9,6 +9,8 @@
  *
  */
 
+var federationPanel;
+
 Ext.onReady(function () {
 
 	Ext.BLANK_IMAGE_URL = 'resources/images/s.gif';
@@ -16,7 +18,7 @@ Ext.onReady(function () {
 
 	Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 
-	var federationPanel = new FederationManager.FederationPanel({
+	federationPanel = new FederationManager.FederationPanel({
 	  id:'federation-panel',
 	  region:'west',
 
@@ -33,7 +35,7 @@ Ext.onReady(function () {
           //url:'federation-tree.json'
 	});
 
-	var contentPanel = new Ext.TabPanel({
+	var tabPanel = new Ext.TabPanel({
 		region: 'center',
 		id: 'contentPanel',
 		margins: '0 5 0 0',
@@ -63,8 +65,8 @@ Ext.onReady(function () {
                         }                        
                 });
                 Ext.getCmp('contentPanel').enable()
-                contentPanel.add(newTab);
-                contentPanel.activate(newTab); 
+                tabPanel.add(newTab);
+                tabPanel.activate(newTab); 
 
 	});
       
@@ -79,7 +81,7 @@ Ext.onReady(function () {
 				contentEl:'header'
 			},
 			federationPanel,
-			contentPanel
+			tabPanel
 		]
 	});
 

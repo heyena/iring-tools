@@ -25,7 +25,7 @@ FederationManager.ContentPanel = Ext.extend(Ext.Panel, {
           validate:true
         });
   	
-      this.data_form = new Ext.FormPanel({
+      this.data_form = new Ext.FormPanel({    	  
             labelWidth : 100, // label settings here cascade unless
             url:this.url,
             method: 'POST',
@@ -67,11 +67,12 @@ FederationManager.ContentPanel = Ext.extend(Ext.Panel, {
   },
   
   onCloseTab: function(node) {
+	  alert('close it')
       // check number of tabs in panel to make disabled the centerPanel if its the last tab has been closed.
         if((Ext.getCmp('contentPanel').items.length) ==1){
               Ext.getCmp('contentPanel').disable()
          }
-  
+	  federationPanel.onRefresh(node);
   },
 
   onReset: function(){
@@ -79,14 +80,19 @@ FederationManager.ContentPanel = Ext.extend(Ext.Panel, {
   },
 
   onSave:function(){
+	  var that = this;
         this.data_form.getForm().submit({
             success: function(f,a){
-                Ext.Msg.alert('Success', 'Changes saved successfully!')
+            	that.fireEvent('close');
+            	Ext.Msg.alert('Success', 'Changes saved successfully!')
+                
             },
             failure: function(f,a){
                 Ext.Msg.alert('Warning', 'Error saving changes!')
             }
+        	
         });
 
+        
   }
 });
