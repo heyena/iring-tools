@@ -30,14 +30,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Filter }
-     * 
-     */
-    public Filter createFilter() {
-        return new Filter();
-    }
-
-    /**
      * Create an instance of {@link Grid }
      * 
      */
@@ -46,11 +38,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Column }
+     * Create an instance of {@link Filter }
      * 
      */
-    public Column createColumn() {
-        return new Column();
+    public Filter createFilter() {
+        return new Filter();
+    }
+
+    /**
+     * Create an instance of {@link Rows }
+     * 
+     */
+    public Rows createRows() {
+        return new Rows();
     }
 
     /**
@@ -62,11 +62,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Rows }
+     * Create an instance of {@link Column }
      * 
      */
-    public Rows createRows() {
-        return new Rows();
+    public Column createColumn() {
+        return new Column();
     }
 
 }

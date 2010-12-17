@@ -30,6 +30,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Property }
+     * 
+     */
+    public Property createProperty() {
+        return new Property();
+    }
+
+    /**
      * Create an instance of {@link TreeNode }
      * 
      */
@@ -43,14 +51,6 @@ public class ObjectFactory {
      */
     public Tree createTree() {
         return new Tree();
-    }
-
-    /**
-     * Create an instance of {@link Property }
-     * 
-     */
-    public Property createProperty() {
-        return new Property();
     }
 
     /**
