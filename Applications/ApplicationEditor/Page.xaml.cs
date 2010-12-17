@@ -45,6 +45,8 @@ namespace ApplicationEditor
     private bool isFetched = false;
     private ApplicationDAL _dal;
 
+    private List<string> _selectedDatabaseSchema = new List<string>();
+
     //public event System.EventHandler<System.EventArgs> OnDataArrived;
 
     public Page()
@@ -336,7 +338,15 @@ namespace ApplicationEditor
         foreach (string schemaObject in schemaObjects)
         {
           StackPanel sp = new StackPanel { Orientation = Orientation.Horizontal };
-          sp.Children.Add(new CheckBox());
+          CheckBox _Cbox = new CheckBox();
+          for (int i = 0; i < _selectedDatabaseSchema.Count(); i++)
+          {
+              if (schemaObject.ToUpper() == _selectedDatabaseSchema[i].ToUpper())
+              {
+                  _Cbox.IsChecked = true;
+              }
+          }
+          sp.Children.Add(_Cbox);
           sp.Children.Add(new TextBlock { Text = schemaObject });
           TreeViewItem item = new TreeViewItem { Header = sp };
           tvwItemSourceRoot.Items.Add(item);
@@ -1159,22 +1169,50 @@ namespace ApplicationEditor
         TreeViewItem destRoot = tvwItemDestinationRoot;
         TreeViewItem tableItem = new TreeViewItem();
 
+        List<string> _DestinationItems = new List<string>();
+        List<string> _SourceItems = new List<string>();
+
         for (int i = 0; i < sourceRoot.Items.Count; i++)
         {
-          tableItem = (TreeViewItem)sourceRoot.Items[i];
-          TreeViewItem parent = tableItem.Parent as TreeViewItem;
-          if (((CheckBox)((StackPanel)tableItem.Header).Children[0]).IsChecked.Value.Equals(true))
-          {
-            if (!parent.Header.ToString().Equals("Available Database Schema Items"))
+            tableItem = (TreeViewItem)sourceRoot.Items[i];
+            TreeViewItem parent = tableItem.Parent as TreeViewItem;
+            if (((CheckBox)((StackPanel)((HeaderedItemsControl)sourceRoot.Items[i]).Header).Children[0]).IsChecked.Value.Equals(true))
             {
-              TreeViewItem parentParent = parent.Parent as TreeViewItem;
-              parentParent.Items.Add(parent);
+                if (!parent.Header.ToString().Equals("Available Database Schema Items"))
+                {
+                    TreeViewItem parentParent = parent.Parent as TreeViewItem;
+                    parentParent.Items.Add(parent);
+                }
+                _SourceItems.Add(((TextBlock)((StackPanel)((HeaderedItemsControl)(sourceRoot.Items[i])).Header).Children[1]).Text);
             }
-            _dal.GetSchemaObjectsSchma(_currentProject.Name, _currentApplication.Name, ((TextBlock)((StackPanel)tableItem.Header).Children[1]).Text);
-            //constructObjectTree(tableItem, destRoot);
-          }
-
         }
+
+        for (int i = 0; i < tvwItemDestinationRoot.Items.Count; i++)
+        {
+            _DestinationItems.Add(((TextBlock)((StackPanel)((HeaderedItemsControl)(tvwItemDestinationRoot.Items[i])).Header).Children[1]).Text);
+        }
+
+        var commonItemsinDictionary = _SourceItems.Intersect(_DestinationItems);
+        var leftItemsinDatabaseSchema = _SourceItems.Except(_DestinationItems);
+
+        foreach (var Value in commonItemsinDictionary)
+        {
+            MessageBox.Show("Data object: " + Value.ToUpper() + " already in Dictionary", "ADD DATA OBJECT", MessageBoxButton.OK);
+        }
+
+        if (tvwItemDestinationRoot.Items.Count > 0)
+        {
+            foreach (var _dicValue in leftItemsinDatabaseSchema)
+            {
+                _dal.GetSchemaObjectsSchma(_currentProject.Name, _currentApplication.Name, _dicValue.ToUpper());
+            }
+        }
+        else
+        {
+            for (int i = 0; i < _SourceItems.Count; i++)
+                _dal.GetSchemaObjectsSchma(_currentProject.Name, _currentApplication.Name, _SourceItems[i].ToUpper());
+        }
+
       }
       catch (Exception ex)
       {
