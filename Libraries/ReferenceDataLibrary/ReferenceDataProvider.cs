@@ -890,14 +890,14 @@ namespace org.iringtools.referenceData
     {
       try
       {
-        string sparql = String.Empty;
-        string relativeUri = String.Empty;
+        string rangeSparql = String.Empty;
+        string rangeRelativeUri = String.Empty;
 
-        string sparql1 = String.Empty;
-        string relativeUri1 = String.Empty;
+        string referenceSparql = String.Empty;
+        string referenceRelativeUri = String.Empty;
 
-        string sparql2 = String.Empty;
-        string relativeUri2 = String.Empty;
+        string valueSparql = String.Empty;
+        string valueRelativeUri = String.Empty;
 
         Description description = new Description();
         QMXFStatus status = new QMXFStatus();
@@ -905,39 +905,39 @@ namespace org.iringtools.referenceData
 
         List<RoleQualification> roleQualifications = new List<RoleQualification>();
 
-        RefDataEntities resultEntities = new RefDataEntities();
-        RefDataEntities resultEntities1 = new RefDataEntities();
-        RefDataEntities resultEntities2 = new RefDataEntities();
+        RefDataEntities rangeResultEntities = new RefDataEntities();
+        RefDataEntities referenceResultEntities = new RefDataEntities();
+        RefDataEntities valueResultEntities = new RefDataEntities();
 
-        Query queryContainsSearch = _queries["GetRangeRestriction"];
-        QueryBindings queryBindings = queryContainsSearch.bindings;
+        Query getRangeRestriction = _queries["GetRangeRestriction"];
+        QueryBindings rangeRestrictionQueryBindings = getRangeRestriction.bindings;
 
-        Query queryContainsSearch1 = _queries["GetReferenceRestriction"];
-        QueryBindings queryBindings1 = queryContainsSearch1.bindings;
+        Query getReferenceRestriction = _queries["GetReferenceRestriction"];
+        QueryBindings getReferenceRestrictionQueryBindings = getReferenceRestriction.bindings;
 
-        Query queryContainsSearch2 = _queries["GetValueRestriction"];
-        QueryBindings queryBindings2 = queryContainsSearch2.bindings;
+        Query getValueRestriction = _queries["GetValueRestriction"];
+        QueryBindings getValueRestrictionQueryBinding = getValueRestriction.bindings;
 
-        sparql = ReadSPARQL(queryContainsSearch.fileName);
-        sparql = sparql.Replace("param1", id);
+        rangeSparql = ReadSPARQL(getRangeRestriction.fileName);
+        rangeSparql = rangeSparql.Replace("param1", id);
 
-        sparql1 = ReadSPARQL(queryContainsSearch1.fileName);
-        sparql1 = sparql1.Replace("param1", id);
+        referenceSparql = ReadSPARQL(getReferenceRestriction.fileName);
+        referenceSparql = referenceSparql.Replace("param1", id);
 
-        sparql2 = ReadSPARQL(queryContainsSearch2.fileName);
-        sparql2 = sparql2.Replace("param1", id);
+        valueSparql = ReadSPARQL(getValueRestriction.fileName);
+        valueSparql = valueSparql.Replace("param1", id);
 
         foreach (Repository repository in _repositories)
         {
-          SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
-          SPARQLResults sparqlResults1 = QueryFromRepository(repository, sparql1);
-          SPARQLResults sparqlResults2 = QueryFromRepository(repository, sparql2);
+          SPARQLResults rangeSparqlResults = QueryFromRepository(repository, rangeSparql);
+          SPARQLResults referenceSparqlResults = QueryFromRepository(repository, referenceSparql);
+          SPARQLResults valueSparqlResults = QueryFromRepository(repository, valueSparql);
 
-          List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
-          List<Dictionary<string, string>> results1 = BindQueryResults(queryBindings1, sparqlResults1);
-          List<Dictionary<string, string>> results2 = BindQueryResults(queryBindings2, sparqlResults2);
+          List<Dictionary<string, string>> rangeResults = BindQueryResults(rangeRestrictionQueryBindings, rangeSparqlResults);
+          List<Dictionary<string, string>> referenceResults = BindQueryResults(getReferenceRestrictionQueryBindings, referenceSparqlResults);
+          List<Dictionary<string, string>> valueResults = BindQueryResults(getValueRestrictionQueryBinding, valueSparqlResults);
 
-          List<Dictionary<string, string>> combinedResults = MergeLists(MergeLists(results, results1), results2);
+          List<Dictionary<string, string>> combinedResults = MergeLists(MergeLists(rangeResults, referenceResults), valueResults);
 
           foreach (Dictionary<string, string> result in combinedResults)
           {
@@ -1838,10 +1838,10 @@ namespace org.iringtools.referenceData
                     //ID generator
                     genName = "Role definition " + roleLabel;
                     /// TODO: change to template registry base
-                    //if (_useExampleRegistryBase)
-                    //    generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], genName);
-                    //else
-                    //    generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], genName);
+                    if (_useExampleRegistryBase)
+                        generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], genName);
+                    else
+                        generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], genName);
                     roleID =  Utility.GetQNameFromUri(generatedId);
 
                     //roleID = role.identifier;
@@ -1878,7 +1878,7 @@ namespace org.iringtools.referenceData
                       sparql += roleID + " rdf:type tpl:R40103148466 ;\n"
                             + " tpl:R49267603385 " + ID + " ;\n"
                             + " tpl:R30741601855 " + roleID + " ;\n"
-                            + " tpl:R21129944603 <" + role.value.reference + "> .\n";
+                            + " tpl:R21129944603 " + Utility.GetQNameFromUri(role.value.reference) + " .\n";
                     }
                     else if (!String.IsNullOrEmpty(role.range))
                     {
@@ -1917,20 +1917,20 @@ namespace org.iringtools.referenceData
 
                 foreach (QMXFName name in td.name)
                 {
-                  specialization = td.qualifies;
+                  specialization = Utility.GetQNameFromUri(td.qualifies);
                   nameSparql = sparql + "?a rdf:type dm:Specialization .\n"
                         + " ?b dm:hasSuperclass " + specialization + " .\n"
                         + " ?c dm:hasSubclass " + ID + " .\n";
 
                   label = name.value;
-                  if (td.description.Count == 0)
-                  {
+                  //if (td.description.Count == 0)
+                  //{
                     nameSparql += ID + " rdfs:label \"" + label + "\"^^xsd:string .\n";
-                  }
-                  else
-                  {
-                    nameSparql += ID + " rdfs:label \"" + label + "\"^^xsd:string ;\n";
-                  }
+                  //}
+                  //else
+                  //{
+                    //nameSparql += ID + " rdfs:label \"" + label + "\"^^xsd:string ;\n";
+                  //}
 
                   foreach (Description descr in td.description)
                   {
@@ -1945,11 +1945,15 @@ namespace org.iringtools.referenceData
                     foreach (QMXFName roleName in rd.name)
                     {
                       roleLabel = roleName.value;
-                      foreach (Description desc in rd.description)
-                      {
-                        roleDescription = desc.value;
-                      }
+                      nameSparql += roleID + " rdfs:label \"" + roleLabel + "\"^^xsd:string .\n";
                     }
+                    foreach (Description desc in rd.description)
+                    {
+                        roleDescription = desc.value;
+                        if (string.IsNullOrEmpty(roleDescription)) continue;
+                        nameSparql += roleID + " rdfs:comment \"" + roleDescription + "\"^^xsd:string .\n";
+                    }
+
                     //append role to sparql query
                     //value restriction
                     if (rd.value != null)
@@ -1989,18 +1993,20 @@ namespace org.iringtools.referenceData
                     else if (!String.IsNullOrEmpty(rd.range))
                     {
                       //range restriction
-                      nameSparql +=  roleID + "> rdf:type tpl:R76288246068 ;\n"
+                      nameSparql +=  roleID + " rdf:type tpl:R76288246068 ;\n"
                               + " tpl:R99672026745 " + ID + " ;\n"
                               + " tpl:R91125890543 " + roleID + " ;\n"
                               + " tpl:R98983340497 " + Utility.GetQNameFromUri(rd.range) + " .\n";
                     }
                   }
                   nameSparql += "}";
+                  response = PostToRepository(source, nameSparql);
 //                  nameSparql = nameSparql.Insert(nameSparql.LastIndexOf("."), "}").Remove(nameSparql.Length - 1);
                 }
                 foreach (QMXFName name in template.name)
                 {
                   specialization = Utility.GetQNameFromUri(template.qualifies);
+                  nameSparql = prefixSparql;
                   nameSparql += " INSERT DATA {\n";
                   nameSparql += "_:spec rdf:type dm:Specialization ;\n"
                         + " dm:hasSuperclass " + specialization + " ;\n"
@@ -2009,14 +2015,14 @@ namespace org.iringtools.referenceData
                   label = name.value;
 
 
-                  if (template.description.Count == 0)
-                  {
+                  //if (template.description.Count == 0)
+                  //{
                     nameSparql += ID + " rdfs:label \"" + label + "\"^^xsd:string .\n";
-                  }
-                  else
-                  {
-                    nameSparql += ID + " rdfs:label \"" + label + "\"^^xsd:string ;\n";
-                  }
+                  //}
+                  //else
+                  //{
+                  //  nameSparql += ID + " rdfs:label \"" + label + "\"^^xsd:string ;\n";
+                  //}
 
                   foreach (Description descr in template.description)
                   {
@@ -2031,9 +2037,13 @@ namespace org.iringtools.referenceData
                     foreach (QMXFName roleName in rd.name)
                     {
                       roleLabel = roleName.value;
+                      nameSparql += roleID + " rdfs:label \"" + roleLabel + "\"^^xsd:string .\n";
+
                       foreach (Description desc in rd.description)
                       {
                         roleDescription = desc.value;
+                        if (string.IsNullOrEmpty(roleDescription)) continue;
+                          nameSparql += roleID + " rdfs.comment \"" + roleDescription + "\"^^xsd:string .\n"; 
                       }
                     }
                     //append role to sparql query
@@ -2086,6 +2096,7 @@ namespace org.iringtools.referenceData
                 }
 
                 response = PostToRepository(source, nameSparql);
+                _response.Append(response);
               }
             }
           }
@@ -2102,10 +2113,8 @@ namespace org.iringtools.referenceData
         };
 
         status.Messages.Add(ex.ToString());
+        _response.Append(status);
       }
-
-      _response.Append(status);
-
       return _response;
     }
 
