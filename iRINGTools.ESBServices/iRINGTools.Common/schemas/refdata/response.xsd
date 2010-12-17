@@ -14,6 +14,8 @@
 	</xs:annotation>
 
 	<xs:element name="response" type="Response" />
+  <xs:element name="entities" type="Entities" />
+  <xs:element name="entity" type="Entity" />
 
 	<xs:complexType name="Response">
 		<xs:sequence>

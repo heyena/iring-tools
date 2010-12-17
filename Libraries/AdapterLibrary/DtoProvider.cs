@@ -353,8 +353,7 @@ namespace org.iringtools.adapter
       {
         graphs = new Graphs(),
         version = ""
-      };
-      
+      };      
 
       try
       {

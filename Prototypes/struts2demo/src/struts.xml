@@ -14,7 +14,7 @@
   <package name="jsontest" extends="json-default">
     <action name="directory" class="org.iringtools.controllers.DirectoryTreeController" method="execute">
       <result type="json">
-        <param name="root">directoryTree.treeNodes</param>
+        <param name="root">directoryTree.items</param>
       </result>
     </action>
     
