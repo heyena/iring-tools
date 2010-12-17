@@ -11,6 +11,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 	dataGrid: null,
 	url: null,
 	relatedClassArr:null,
+	enableTabScroll: true,
 	
   /**
   * initComponent
@@ -41,13 +42,13 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 		});
 
 		this.relatedClassArr = new Array();
-		
+
 		if (this.configData.relatedClasses != undefined) {			
 			for(var i=0; i < this.configData.relatedClasses.length; i++) {
 				var key = this.configData.relatedClasses[i].identifier;
 				var text = this.configData.relatedClasses[i].text;
 				this.relatedClassArr[i] = text;
-			}
+				}
 		}
 		
 		// build the header first
@@ -115,6 +116,18 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
         })
   	});
 
+
+	/*this.dataGrid.on({
+		'cellclick' : {
+		fn: this.onCellClick,
+		scope: this
+		}, 
+		'beforerender' : {
+		fn: this.beforerender,
+		scope: this
+		}
+	});*/
+	
 	this.dataGrid.on('beforerender',this.beforeRender,this);
 	this.dataGrid.on('cellclick',this.onCellClick,this);
 	
@@ -166,8 +179,8 @@ onCellClick: function (grid,rowIndex,columnIndex,e) {
 		  for(var i=3; i<cm.getColumnCount();i++){
 			  fieldHeader= grid.getColumnModel().getColumnHeader(i); // Get field name
 			  fieldValue= record.get(grid.getColumnModel().getDataIndex(i))
-						  tempArr= Array(fieldHeader,fieldValue)
-								   rowDataArr.push(tempArr)
+			  tempArr= Array(fieldHeader,fieldValue)
+			  rowDataArr.push(tempArr)
 		  }
 		  var filedsVal_ = '[{"name":"Property"},{"name":"Value"}]';
 		  var columnsData_ ='[{"id":"Property","header":"Property","width":144,"sortable":"true","dataIndex":"Property"},{"id":"Value","header":"Value","width":144,"sortable":"true","dataIndex":"Value"}]';
@@ -194,8 +207,6 @@ onCellClick: function (grid,rowIndex,columnIndex,e) {
 		enableColumnMove: false
 		});
 
-
-
 			var classPanel = new Ext.Panel({
 			autoWidth: true,
 			height: 500,
@@ -206,40 +217,47 @@ onCellClick: function (grid,rowIndex,columnIndex,e) {
 			split: true
 			},
 			items: [
-			{
-			height:100,				 
-			region: 'north',
-			collapsible: false,
-			split: true,
-			html:'<div style="float:left; width:110px;"><img src="resources/images/class-badge.png"/></div><div style="padding-top:20px;" id="identifier"><b>'+IdentificationByTag_value+'</b><br/>'+grid.classObjName+'<br/>Transfer Type : '+transferType_value+'</div>'
-			},{
-			title: 'Properties',
-			region:'west',
-			split: true,
-			margins: '0 1 3 3',
-			width: 250,
-			height:900,
-			minSize: 100,
-			items:[grid_class_properties]
-			},{
-			title: 'Related Items',
-			layout:'accordion',
-			split: true,
-			width: 220,
-			region: 'center',
-			margins: '0 3 3 0',
-			layoutConfig: {animate: true,fill : false},
-			html:this.relatedClassArr[rowIndex]
-			}]
+					{
+					height:100,				 
+					region: 'north',
+					collapsible: false,
+					split: true,
+					html:'<div style="float:left; width:110px;"><img src="resources/images/class-badge.png"/></div><div style="padding-top:20px;" id="identifier"><b>'+this.removeHTMLTags(IdentificationByTag_value)+'</b><br/>'+grid.classObjName+'<br/>Transfer Type : '+transferType_value+'</div>'
+					},{
+					title: 'Properties',
+					region:'west',
+					split: true,
+					margins: '0 1 3 3',
+					width: 250,
+					height:900,
+					minSize: 100,
+					items:[grid_class_properties]
+					},{
+					title: 'Related Items',
+					layout:'accordion',
+					split: true,
+					width: 220,
+					region: 'center',
+					margins: '0 3 3 0',
+					layoutConfig: {animate: true,fill : false},
+					html:this.relatedClassArr[rowIndex]
+					}
+				  ]
 			});
-
 			var newTab = {
 				title: IdentificationByTag_value,
+				id:this.title+'_'+IdentificationByTag_value,
 				items:[classPanel],
 				closable : true
 			};
-			this.add(newTab);
-			this.setActiveTab(this.items.length-1);
+
+			if(this.get(newTab.id)==undefined){
+				this.add(newTab);
+				this.setActiveTab(this.items.length-1);
+			}else{
+				this.setActiveTab(newTab.id);
+			}
+
 
 	  }
 },
@@ -254,6 +272,19 @@ buildToolbar: function () {
 	scope: this
 	}]
 },
+removeHTMLTags:function(strInputCode) {
+  /*
+	This line is optional, it replaces escaped brackets with real ones,
+  i.e. < is replaced with < and > is replaced with >
+  */
+			strInputCode = strInputCode.replace(/&(lt|gt);/g, function (strMatch, p1){
+				return (p1 == "lt")? "<" : ">";
+			});
+
+			var strTagStrippedText = strInputCode.replace(/<\/?[^>]+(>|$)/g, "");
+
+			return strTagStrippedText;
+		},
 onOpen: function (btn, ev) {  	  	  	
 		var l = this.getLayout();
 		var i = l.activeItem.id.split('card-')[1]; 
