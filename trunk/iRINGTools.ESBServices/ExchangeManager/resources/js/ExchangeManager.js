@@ -7,7 +7,6 @@ Ext.onReady(function () {
 	var directoryPanel = new ExchangeManager.DirectoryPanel({
 	  id:'navigation-panel',
 	  region:'west',
-		
 	  collapsible: true,
 	  collapsed: false,
 	  
@@ -28,7 +27,9 @@ Ext.onReady(function () {
 		enableTabScroll: true
 	});
 	
-	directoryPanel.on('open', function(panel, node, label, url) {	
+	directoryPanel.on('open', function(panel, node, label, url) {
+
+		if(contentPanel.get('tab_'+label)==undefined){
 		Ext.Ajax.request({
 			url: url,
 			method: 'POST',
@@ -66,7 +67,8 @@ Ext.onReady(function () {
 				} else {
 					
 					var newTab = new ExchangeManager.NavigationPanel({		
-						title: label,					
+						title: label,
+						id:'tab_'+label,
 						configData: responseData,
 						url: pageURL,						
 						closable: true
@@ -97,7 +99,9 @@ Ext.onReady(function () {
 				//alert(result.responseText); 
 			}
 		});
-		
+		}else{
+			contentPanel.setActiveTab('tab_'+label);
+		}
 	});
 
 	var viewport = new Ext.Viewport({
