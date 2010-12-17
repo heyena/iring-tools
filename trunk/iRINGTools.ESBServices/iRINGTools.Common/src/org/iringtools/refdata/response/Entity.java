@@ -4,6 +4,7 @@ package org.iringtools.refdata.response;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -32,6 +33,7 @@ import javax.xml.bind.annotation.XmlType;
     "key",
     "value"
 })
+@XmlRootElement(name = "entity")
 public class Entity {
 
     @XmlElement(required = true)

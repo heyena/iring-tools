@@ -3,7 +3,6 @@ package org.iringtools.grid;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.HashMap;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -45,7 +44,7 @@ public class Rows {
     protected String success;
     protected double total;
     @XmlElement(name = "data", required = true)
-    protected List<HashMap> datas;
+    protected List<String> datas;
 
     /**
      * Gets the value of the success property.
@@ -109,9 +108,9 @@ public class Rows {
      * 
      * 
      */
-    public List<HashMap> getDatas() {
+    public List<String> getDatas() {
         if (datas == null) {
-            datas = new ArrayList<HashMap>();
+            datas = new ArrayList<String>();
         }
         return this.datas;
     }
@@ -124,7 +123,7 @@ public class Rows {
      *     {@link String }
      *     
      */
-    public void setDatas(List<HashMap> datas) {
+    public void setDatas(List<String> datas) {
         this.datas = datas;
     }
 
