@@ -29,12 +29,18 @@ Ext.onReady(function () {
 	
 	directoryPanel.on('open', function(panel, node, label, url) {
 
+		
 		if(contentPanel.get('tab_'+label)==undefined){
-		Ext.Ajax.request({
+			//contentPanel
+			//var w = Ext.getCmp(contentPanel).getActiveTab();
+			contentPanel.getEl().mask('<span><img src="resources/images/ajax-spinner.gif"/><font color="#ff8800">Loading.....</font></span>')
+					
+			Ext.Ajax.request({
 			url: url,
 			method: 'POST',
 			params: {},
 			success: function(result, request) {
+				contentPanel.getEl().unmask()
 				var obj = node.attributes;
 				var scopeId = obj['Scope'];
 				var nodeType = obj['node_type'];
