@@ -3,6 +3,7 @@ package org.iringtools.grid;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -22,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="success" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="total" type="{http://www.w3.org/2001/XMLSchema}double"/>
- *         &lt;element name="data" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded"/>
+ *         &lt;element name="data" type="{http://www.iringtools.org/grid}Data" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -44,7 +45,7 @@ public class Rows {
     protected String success;
     protected double total;
     @XmlElement(name = "data", required = true)
-    protected List<String> datas;
+    protected List<HashMap<String, String>> datas;
 
     /**
      * Gets the value of the success property.
@@ -104,13 +105,13 @@ public class Rows {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link String }
+     * {@link Data }
      * 
      * 
      */
-    public List<String> getDatas() {
+    public List<HashMap<String, String>> getDatas() {
         if (datas == null) {
-            datas = new ArrayList<String>();
+            datas = new ArrayList<HashMap<String, String>>();
         }
         return this.datas;
     }
@@ -120,10 +121,10 @@ public class Rows {
      * 
      * @param datas
      *     allowed object is
-     *     {@link String }
+     *     {@link Data }
      *     
      */
-    public void setDatas(List<String> datas) {
+    public void setDatas(List<HashMap<String, String>> datas) {
         this.datas = datas;
     }
 
