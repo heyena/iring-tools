@@ -40,16 +40,25 @@ Ext.onReady(function () {
 		id: 'contentPanel',
 		margins: '0 5 0 0',
                 disabled:true,
-		enableTabScroll: true                
+		enableTabScroll: true  
 	});
+
+        tabPanel.on('tabChange', function(p){
+            var nodeObj = federationPanel.getNodeBySelectedTab(Ext.getCmp('contentPanel').getActiveTab())
+            if(nodeObj){
+                federationPanel.selectNode(nodeObj)
+            }
+        });
 
 	federationPanel.on('edit', function(panel, node, label, formData) {
 
                 var newTab = new FederationManager.ContentPanel({
+                        id:'tab-' + node.id,
                         title: label,
                         configData: formData,
                         nId:node.id,
                         url: 'postFederation',
+                        //url:'save-form.php',
                         single: true, // important, as many layouts can occur
                         layout:'fit',
                         
@@ -66,8 +75,7 @@ Ext.onReady(function () {
                 });
                 Ext.getCmp('contentPanel').enable()
                 tabPanel.add(newTab);
-                tabPanel.activate(newTab); 
-
+                //tabPanel.activate(newTab);
 	});
       
 	var viewport = new Ext.Viewport({

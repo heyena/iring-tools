@@ -119,10 +119,28 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
 		}]
   },
 
+  getNodeBySelectedTab: function(tab) {
+        var tabid = tab.id;
+        nodeId = tabid.substr(4,tabid.length)  // tabid is "tab-jf23dfj-sd3fas-df33s-s3df"
+        return this.getNodeById(nodeId)        // get the NODE using nodeid
+  },
+
+  getNodeById: function(nodeId) {
+  	return this.federationPanel.getNodeById(nodeId)
+  },
   getSelectedNode: function() {
   	return this.federationPanel.getSelectionModel().getSelectedNode();
   },
 
+  selectNode:function(node){
+      this.expandNode(node);
+      this.federationPanel.getSelectionModel().select(node);      
+  },
+  
+  expandNode:function(node){
+      this.federationPanel.expandPath(node.getPath())
+  },
+  
   openTab: function(node) {
     if (node != null) {
 	/* 01. Start The Edit Form Component */
@@ -211,14 +229,13 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
   },
 
   onExpand: function(node) {
-		//Ext.state.Manager.set('federation-state', node.getPath());
-		//this.fireEvent('refresh', this, this.getSelectedNode());
-	},
+      Ext.state.Manager.set('federation-state', node.getPath());
+      this.fireEvent('refresh', this, this.getSelectedNode());
+  },
 
   onRefresh: function (node) {
-	  alert('onRefresh');
   	Ext.state.Manager.clear('federation-state');
-		this.federationPanel.root.reload();
+	this.federationPanel.root.reload();
   },
 
   onEdit: function (btn, ev) {

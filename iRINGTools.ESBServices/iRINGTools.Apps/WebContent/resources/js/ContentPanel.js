@@ -22,7 +22,8 @@ FederationManager.ContentPanel = Ext.extend(Ext.Panel, {
           close:true,
           save: true,
           reset: true,
-          validate:true
+          validate:true,
+          tabChange:true
         });
   	
       this.data_form = new Ext.FormPanel({    	  
@@ -60,19 +61,22 @@ FederationManager.ContentPanel = Ext.extend(Ext.Panel, {
   		this.data_form
   	];
 
-      this.on('close', this.onCloseTab, this)
+      this.on('close', this.onCloseTab, this)      
 
     // super
     FederationManager.ContentPanel.superclass.initComponent.call(this)
   },
-  
+
+  getActiveTab: function() {
+        return Ext.getCmp('contentPanel').getActiveTab();
+  },
+
   onCloseTab: function(node) {
-	  alert('close it')
       // check number of tabs in panel to make disabled the centerPanel if its the last tab has been closed.
         if((Ext.getCmp('contentPanel').items.length) ==1){
               Ext.getCmp('contentPanel').disable()
          }
-	  federationPanel.onRefresh(node);
+	 //federationPanel.onRefresh(node);
   },
 
   onReset: function(){
@@ -80,11 +84,16 @@ FederationManager.ContentPanel = Ext.extend(Ext.Panel, {
   },
 
   onSave:function(){
-	  var that = this;
+	var that = this;    // consists the main/previous class object
         this.data_form.getForm().submit({
             success: function(f,a){
-            	that.fireEvent('close');
+
+                var node = federationPanel.getNodeBySelectedTab(that.getActiveTab())
             	Ext.Msg.alert('Success', 'Changes saved successfully!')
+                federationPanel.onRefresh(node); 
+                //federationPanel.expandNode(node) // pending
+                //federationPanel.selectNode(node) // pending
+            	
                 
             },
             failure: function(f,a){
@@ -92,7 +101,6 @@ FederationManager.ContentPanel = Ext.extend(Ext.Panel, {
             }
         	
         });
-
-        
   }
+   
 });
