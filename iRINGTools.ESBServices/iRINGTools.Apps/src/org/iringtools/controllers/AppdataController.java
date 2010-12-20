@@ -5,6 +5,8 @@ import org.iringtools.grid.Grid;
 import org.iringtools.grid.Rows;
 import com.opensymphony.xwork2.Action;
 
+import java.util.HashMap;
+
 public class AppdataController {
 	
 	private AppdataModel appdata;
@@ -14,6 +16,10 @@ public class AppdataController {
 	private String appName;
 	private String graphName;
 	private String pageName;
+	private int start;
+	private int limit;
+	static private HashMap<String,Rows> rowsMap = null;
+	
 	
 	public AppdataController()
 	{
@@ -68,6 +74,22 @@ public class AppdataController {
 		return graphName;
 	}	
 	
+	public void setStart(int start) {
+		this.start = start;
+	}
+
+	public int getStart() {
+		return start;
+	}	
+	
+	public void setLimit(int limit) {
+		this.limit = limit;
+	}
+
+	public int getLimit() {
+		return limit;
+	}	
+	
 	public String getAppDataGrid() {
 		appdata.populate(scopeName, appName, graphName);
 		grid = appdata.toGrid();
@@ -75,11 +97,22 @@ public class AppdataController {
 	}
 	
 	public String getAppDataRows() {
-		appdata.populate(scopeName, appName, graphName);
-		rows = appdata.toRows();
+		if (rowsMap == null)
+			rowsMap = new HashMap<String,Rows>();
+		if (rowsMap.size()<= start/limit) {
+			appdata.populate(scopeName, appName, graphName);
+			rows = appdata.toRows(start, limit);
+			rowsMap.put(String.valueOf(start), rows);			
+		}else {
+			rows = rowsMap.get(String.valueOf(start));
+		}
 		return Action.SUCCESS;
 	}
 	
+	public String cleanHashMap() {
+		rowsMap.clear();
+		return Action.SUCCESS;
+	}
 	
 	
 //	public String postAppDataGrid() {		

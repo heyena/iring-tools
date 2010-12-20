@@ -6,7 +6,7 @@ package org.iringtools.models;
 import java.util.List;
 import java.util.ArrayList;
 
-import org.w3c.dom.Element;
+
 
 import org.iringtools.grid.Grid;
 import org.iringtools.grid.Filter;
@@ -24,14 +24,14 @@ import org.iringtools.dxfr.dto.TemplateObject;
 
 
 import org.iringtools.grid.Rows;
-import org.iringtools.grid.*;
+
 import org.iringtools.utility.HttpClient;
 
 public class DtoContainer {
 
 	private String rType = "";    //role type
 	private String tName = "";    //template name
-	private String rName = "";    //role name
+
 	private String rcName = "";   //related class name
 	private String rValue = "";   //role value
 	private String dtoUrl = "";
@@ -40,21 +40,22 @@ public class DtoContainer {
 	private List<ClassObject> claList;
 	private RoleObject roObj;	
 	private List<DataTransferObject> dtoList;	
-	private List<HashMap> dataList = new  ArrayList<HashMap>();
-	private HashMap data;
+	private List<HashMap<String,String>> dataList = new  ArrayList<HashMap<String,String>>();
+	private HashMap<String,String> data;
 	private List<String> hList = new ArrayList<String>(); 
 	private List<Header> ghList = new ArrayList<Header>();	  //list of headers
 	private List<Filter> filterList = new ArrayList<Filter>();
 	private String relateList = "[";   //list of related object
 	private List<Column> cList = new ArrayList<Column>();   //list of column description
 	private String rlData = "";	  //related class object
-	private String row = "";      //row data in grid	
+
 	private String identifier = "", tempName = "", clsName; 
 	private Filter filter;
 	private Column column;
 	private Header header;
 	private int ind=1, page = 20;
 	
+	private static int total;
 		
 	public void populate(String URI) {
 		try {
@@ -85,50 +86,6 @@ public class DtoContainer {
 	    this.dtoUrl = url + "/" + identifier;
 	  }
 	
-	public void setGhList(List<Header> ghList)
-	  {
-	    this.ghList = ghList;
-	  }
-
-	public List<Header> getGhList()
-	  {
-	    return ghList;
-	  }
-	
-	public void setCList(List<Column> cList)
-	  {
-	    this.cList = cList;
-	  }
-
-	public List<Column> getCList()
-	  {
-	    return cList;
-	  }
-	
-	public void setRow(String row)
-	  {
-	    this.row = row;
-	  }
-
-	public void setRlData(String rlData)
-	{
-		this.rlData = rlData;
-	}
-	
-	public String getRow()
-	  {
-	    return row;
-	  }
-	
-	public void setDtoUrl(String dtoUrl)
-	  {
-	    this.dtoUrl = dtoUrl;
-	  }
-
-	public String getDtoUrl()
-	  {
-	    return dtoUrl;
-	  }
 	
 	public void setRcName(String rcName)
 	  {
@@ -140,10 +97,7 @@ public class DtoContainer {
 	    this.clsName = clsName;
 	  }
 
-	public String getRcName()
-	  {
-	    return rcName;
-	  }
+
 	
 	public void setRoObj(RoleObject roObj)
 	  {
@@ -155,59 +109,24 @@ public class DtoContainer {
 	    this.identifier = identifier;
 	  }
 
-	public String getIdentifier()
-	  {
-	    return identifier;
-	  }
-		
-	public void setRName(String rName)
-	  {
-	    this.rName = rName;
-	  }
-
-	public String getRName()
-	  {
-	    return rName;
-	  }
-	
 	public void setRType(String rType)
 	  {
 	    this.rType = rType.toUpperCase();
 	  }
 
-	public String getRType()
-	  {
-	    return rType;
-	  }
-	
 	public void setTName(String tName)
 	  {
 	    this.tName = tName;
 	  }
-
-	public String getTName()
-	  {
-	    return tName;
-	  }
-
+	
 	public void setRValue(String rValue)
 	  {
 	    this.rValue = rValue;
 	  }
 
-	public String getRValue()
-	  {
-	    return rValue;
-	  }
-
 	public void setClaList(List<ClassObject> claList)
 	  {
 	    this.claList = claList;
-	  }
-
-	public List<ClassObject> getClaList()
-	  {
-	    return claList;
 	  }
 	
 	public void setRoList(List<RoleObject> roList)
@@ -224,23 +143,12 @@ public class DtoContainer {
 	  {
 	    this.tObjList = tObjList;
 	  }
-
-	public List<TemplateObject> getTObjList()
-	  {
-	    return tObjList;
-	  }
-
 	
 	public void setDtoList(List<DataTransferObject> dtoList)
 	  {
 	    this.dtoList = dtoList;
 	  }
-
-	public List<DataTransferObject> getDtoList()
-	  {
-	    return dtoList;
-	  }	    
-
+	
 	public boolean hListHas ()
 	{
 		String head;
@@ -251,16 +159,6 @@ public class DtoContainer {
 				return true;			
 		}
 		return false;		
-	}
-	
-	
-	
-
-	
-	
-	public void setRelateList(String reList)
-	{
-		this.relateList = reList;
 	}
 	
 	public void fillRow() {
@@ -300,9 +198,7 @@ public class DtoContainer {
 			}
 		}
 
-		
 		ind++;
-
 	}
 
 	public String addEnd (String list)
@@ -312,11 +208,17 @@ public class DtoContainer {
 		return list;
 	
 	}
+	
+	public void setTotal(int total)
+	{
+		DtoContainer.total = total;
+	}
+	
 	public void setRowsList(Rows rows)
 	{		
 		rows.setDatas(dataList);
 		rows.setSuccess("true");
-		rows.setTotal((double)(dtoList.size()));
+		rows.setTotal(total);
 	}
 	
 	public void setLists (Grid grid)
@@ -404,16 +306,13 @@ public class DtoContainer {
 			rlData = rlData + "{\"id\":" + ind + "," + "\"identifier\":\"" + identifier + "\",\"text" + ri + "\":\"" + rcName + "\"";
 	}
 	
-   
-    
-	
     public void fillPage()
     {   
     	int ti = 0;   	
 		
 	    for (DataTransferObject dto : dtoList)
 	    {
-	      data = new HashMap();
+	      data = new HashMap<String,String>();
 	      setClaList(dto.getClassObjects().getItems());
 	      for (ClassObject clo : claList)
 	      {
@@ -441,14 +340,12 @@ public class DtoContainer {
 	    		  }
 	    		  if (ti<1)  
 	    			  ti++;
-	    	  }
-	    	  
+	    	  }	    	  
 	      }	
 	      dataList.add(data);	     
 	      ti = 0;
 	    }
 	}
-    
     
 	public void readGrid(Grid grid) {
 		//TODO: Read the grid!

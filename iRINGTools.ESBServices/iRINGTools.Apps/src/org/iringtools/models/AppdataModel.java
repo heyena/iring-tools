@@ -91,7 +91,7 @@ public class AppdataModel {
     public Grid toGrid() {		
     	grid = new Grid();    	
 		dtoCtr = new DtoContainer();		
-	  
+	    dtoCtr.setTotal(dtiList.size());
 		DataTransferIndex dti = dtiList.get(0);
 	    setIdentifier(dti.getIdentifier());
 	    dtoCtr.setUrl(dtoUrl, identifier);
@@ -103,8 +103,8 @@ public class AppdataModel {
 		return grid;
 	}
 	
-    public Rows toRows() {	
-    	dtiPage = dtiList.subList(0, Math.min(page, dtiList.size()));
+    public Rows toRows(int start, int limit) {	
+    	dtiPage = dtiList.subList(start, Math.min(limit+start, dtiList.size()-1));
     	Rows rows = new Rows();
     	dtoCtr = new DtoContainer();
     	dtoCtr.setUrl(dtoUrl, "page");

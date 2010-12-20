@@ -75,15 +75,15 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.Panel, {
       remoteSort: true,
       reader: reader,
 	  //sortInfo: { field: sortBy, direction: sortOrder },
-      /*autoLoad: {
+      autoLoad: {
       	params: {
       		start: 0, 
-      		limit: pageSize,
-      		identifier:identifier,
-      		refClassIdentifier:refClassIdentifier
+      		limit: pageSize//,
+      		//identifier:identifier,
+      		//refClassIdentifier:refClassIdentifier
       		
       	}
-      },*/
+      },
       baseParams: {
       	/*
         'identifier':identifier,

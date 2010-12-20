@@ -85,7 +85,9 @@ Ext.onReady(function () {
 					if ((nodeType == 'exchanges' && uid != '')) {
 					    deleteReqURL = 'dataObjects/deleteDataObjects/'+nodeType+'/'+scopeId+'/'+uid
 					} else if (nodeType == 'graph') {
-						deleteReqURL = 'dataObjects/deleteGraphObjects/'+nodeType+'/'+scopeId+'/'+node.parentNode.text+'/'+nodeText
+						//deleteReqURL = 'dataObjects/deleteGraphObjects/'+nodeType+'/'+scopeId+'/'+node.parentNode.text+'/'+nodeText
+						deleteReqURL = 'cleanDataRows';
+						//pageURL = 'appDataRows?scopeName=' + scope + '&appName=' + app + '&graphName=' + graph;
 					}
 					if(deleteReqURL!=null){
 						Ext.Ajax.request({
@@ -93,7 +95,7 @@ Ext.onReady(function () {
 						method: 'POST',
 						params: {},
 						success: function(result, request) {
-								console.log('delete response for ' +url+' : '+ eval(Ext.util.JSON.decode(result.responseText).success));
+								//console.log('delete response for ' +url+' : '+ eval(Ext.util.JSON.decode(result.responseText).success));
 						}});
 					}
 				});
