@@ -76,7 +76,6 @@ FederationManager.ContentPanel = Ext.extend(Ext.Panel, {
         if((Ext.getCmp('contentPanel').items.length) ==1){
               Ext.getCmp('contentPanel').disable()
          }
-	 //federationPanel.onRefresh(node);
   },
 
   onReset: function(){
@@ -91,9 +90,6 @@ FederationManager.ContentPanel = Ext.extend(Ext.Panel, {
                 var node = federationPanel.getNodeBySelectedTab(that.getActiveTab())
             	Ext.Msg.alert('Success', 'Changes saved successfully!')
                 federationPanel.onRefresh(node); 
-                //federationPanel.expandNode(node) // pending
-                //federationPanel.selectNode(node) // pending
-            	
                 
             },
             failure: function(f,a){
