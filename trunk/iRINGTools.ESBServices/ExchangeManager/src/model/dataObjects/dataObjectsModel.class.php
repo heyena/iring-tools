@@ -290,7 +290,7 @@ class dataObjectsModel{
 		foreach($classObject->templateObjects->templateObject as $templateObject)
 		{
 
-					// iterate Role objects under each template
+			// iterate Role objects under each template
 			$tempRoleObjectNameArray = array();
 			foreach($templateObject->roleObjects->children() as $roleObject)
 			{
@@ -303,12 +303,19 @@ class dataObjectsModel{
 					$relatedClassName = (string)$roleObject->relatedClassName;
 
 					$key = "'".$dtoIdentifier."'";
-					$value = '<div class="x-panel-header x-accordion-hd" style="cursor:pointer"><a href="#" style="cursor:pointer;text-decoration:none" onClick="displayRleatedClassGrid(\''.$refClassIdentifier.'\',\''.$dtoIdentifier.'\',\''.$relatedClassName.'\')">'.$relatedClassName.'</a></div>';
+	//				$value = '<div class="x-panel-header x-accordion-hd" style="cursor:pointer"><a href="#" style="cursor:pointer;text-decoration:none" onClick=this.displayRleatedClassGrid(\''.$refClassIdentifier.'\',\''.$dtoIdentifier.'\',\''.$relatedClassName.'\')>'.$relatedClassName.'</a></div>';
+
+					//$value = '<span href="#" style="cursor:pointer;text-decoration:none">'.$relatedClassName.'</span>';
+					
+					$value = $relatedClassName;
 					if(isset($tempClassReferenceArray[$key])){
 						$tempClassReferenceArray[$key] = ''.$value.''.$tempClassReferenceArray[$key];
+						$relatedClassList[]=array("name"=>$value,"reference"=>$refClassIdentifier,'identifier'=>$key);
 					}
 					else{
 						$tempClassReferenceArray[$key]=$value;
+						$relatedClassList[]=array("name"=>$value,"reference"=>$refClassIdentifier,'identifier'=>$key);
+
 					}
 				}
 				if(stristr($roleObject->type,'Property'))
@@ -404,11 +411,21 @@ class dataObjectsModel{
 
 
 		$key="'".(string)$dataTransferObject->identifier."'";
+
+		
+		
 		if(isset($tempClassReferenceArray["'".$dataTransferObject->identifier."'"])){
-			$classReferenceLabelArray=array("identifier"=>(string)$dataTransferObject->identifier,"text"=>$tempClassReferenceArray["'".$dataTransferObject->identifier."'"]);
+			$classReferenceLabelArray=array("identifier"=>(string)$dataTransferObject->identifier,
+											"label"=>json_encode($relatedClassList),
+											"text"=>$tempClassReferenceArray["'".$dataTransferObject->identifier."'"]);
 		}else{
-			$classReferenceLabelArray=array("identifier"=>(string)$dataTransferObject->identifier,"text"=>'');
+			$classReferenceLabelArray=array("identifier"=>(string)$dataTransferObject->identifier,
+											"label"=>json_encode($relatedClassList),
+											"text"=>'');
 		}
+
+		//"label":"{\"'90002-RV'\":[\"PLANT AREA\",\"P AND I DIAGRAM\"]}",
+		
 		$returnArray=array('headerNamesArray'=>$headerNamesArray,'tempRoleValueArray'=>$tempRoleValueArray,'classReferenceArray' =>$classReferenceLabelArray);
 
 		return $returnArray;
