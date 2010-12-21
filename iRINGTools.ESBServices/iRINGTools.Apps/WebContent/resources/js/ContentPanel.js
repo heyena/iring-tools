@@ -26,7 +26,7 @@ FederationManager.ContentPanel = Ext.extend(Ext.Panel, {
           tabChange:true
         });
   	
-      this.data_form = new Ext.FormPanel({    	  
+      this.data_form = new Ext.FormPanel({
             labelWidth : 100, // label settings here cascade unless
             url:this.url,
             method: 'POST',
@@ -61,7 +61,7 @@ FederationManager.ContentPanel = Ext.extend(Ext.Panel, {
   		this.data_form
   	];
 
-      this.on('close', this.onCloseTab, this)      
+      this.on('close', this.onCloseTab, this)
 
     // super
     FederationManager.ContentPanel.superclass.initComponent.call(this)
@@ -76,6 +76,7 @@ FederationManager.ContentPanel = Ext.extend(Ext.Panel, {
         if((Ext.getCmp('contentPanel').items.length) ==1){
               Ext.getCmp('contentPanel').disable()
          }
+  
   },
 
   onReset: function(){
@@ -90,13 +91,15 @@ FederationManager.ContentPanel = Ext.extend(Ext.Panel, {
                 var node = federationPanel.getNodeBySelectedTab(that.getActiveTab())
             	Ext.Msg.alert('Success', 'Changes saved successfully!')
                 federationPanel.onRefresh(node); 
+                //federationPanel.expandNode(node) // pending
+                //federationPanel.selectNode(node) // pending
+            	
                 
             },
             failure: function(f,a){
                 Ext.Msg.alert('Warning', 'Error saving changes!')
             }
-        	
         });
+
   }
-   
 });
