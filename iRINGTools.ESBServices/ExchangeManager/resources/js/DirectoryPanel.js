@@ -6,7 +6,6 @@ Ext.ns('ExchangeManager');
 */
 ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   title: 'Directory',
-  
   layout: 'border',
   url: null,
   
@@ -39,7 +38,7 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       lines: true,
       //singleExpand: true,
       useArrows: true,
-
+	  autoScroll:true,
       loader: new Ext.tree.TreeLoader({
         dataUrl: this.url
       }),
