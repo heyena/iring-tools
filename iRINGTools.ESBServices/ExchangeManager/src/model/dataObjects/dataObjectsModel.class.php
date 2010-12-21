@@ -11,7 +11,7 @@ class dataObjectsModel{
 	private $dtoUrl;
 	private $dtiXMLData;
 	private $nodeType,$uriParams;
-	private $cacheKey,$dtocacheKey,$cacheDTI;
+	private $cacheKey,$dtocacheKey,$cacheDTI,$scopeid,$exchangeID;
 	private $rdlArray=array();
 	function __construct(){
 	}
@@ -22,8 +22,13 @@ class dataObjectsModel{
 	private function setCacheKey($params,$type=null){
             
 		$this->nodeType=$params['nodetype'];
+		$this->scopeid=$params['scope'];
+
+		
+		
 		switch($this->nodeType){
 			case "exchanges":
+				$this->exchangeID=$params['exchangeID'];
 				$this->cacheKey = $type.''.$params['scope'].'_'.$params['nodetype'].'_'.$params['exchangeID'];
 				$this->dtocacheKey = $type.''.'dto_'.$params['scope'].'_'.$params['nodetype'].'_'.$params['exchangeID'];
                                 if(isset($params['exchangeAction']) && $params['exchangeAction']=="viewHistory"){
@@ -31,6 +36,7 @@ class dataObjectsModel{
                                 }
 				break;
 			case "graph":
+				$this->exchangeID=$params['graphs'];
 				$this->cacheKey = $type.''.$params['scope'].'_'.$params['applname'].'_'.$params['graphs'];
 				$this->dtocacheKey = $type.''.'dto_'.$params['scope'].'_'.$params['applname'].'_'.$params['graphs'];
 				break;
@@ -303,18 +309,20 @@ class dataObjectsModel{
 					$relatedClassName = (string)$roleObject->relatedClassName;
 
 					$key = "'".$dtoIdentifier."'";
+
 	//				$value = '<div class="x-panel-header x-accordion-hd" style="cursor:pointer"><a href="#" style="cursor:pointer;text-decoration:none" onClick=this.displayRleatedClassGrid(\''.$refClassIdentifier.'\',\''.$dtoIdentifier.'\',\''.$relatedClassName.'\')>'.$relatedClassName.'</a></div>';
 
 					//$value = '<span href="#" style="cursor:pointer;text-decoration:none">'.$relatedClassName.'</span>';
 					
 					$value = $relatedClassName;
+
 					if(isset($tempClassReferenceArray[$key])){
 						$tempClassReferenceArray[$key] = ''.$value.''.$tempClassReferenceArray[$key];
-						$relatedClassList[]=array("name"=>$value,"reference"=>$refClassIdentifier,'identifier'=>$key);
+						$relatedClassList[]=array("name"=>$value,"reference"=>$refClassIdentifier,'identifier'=>$dtoIdentifier,'scopeId'=>$this->scopeid,'exchangeID'=>$this->exchangeID);
 					}
 					else{
 						$tempClassReferenceArray[$key]=$value;
-						$relatedClassList[]=array("name"=>$value,"reference"=>$refClassIdentifier,'identifier'=>$key);
+						$relatedClassList[]=array("name"=>$value,"reference"=>$refClassIdentifier,'identifier'=>$dtoIdentifier,'scopeId'=>$this->scopeid,'exchangeID'=>$this->exchangeID);
 
 					}
 				}
@@ -991,7 +999,7 @@ class dataObjectsModel{
           }
 
 
-          echo json_encode(array("success"=>"true","cacheData"=>$this->cacheDTI,"relatedClasses"=>"","columnsData"=>json_encode($columnsDataArray),"headersList"=>(json_encode($headerListDataArray))));
+          echo json_encode(array("pageSize"=>PAGESIZE,"success"=>"true","cacheData"=>$this->cacheDTI,"relatedClasses"=>"","columnsData"=>json_encode($columnsDataArray),"headersList"=>(json_encode($headerListDataArray))));
           unset($jsonrowsArray);
           unset($rowsArray);
           unset($headerArrayList);
