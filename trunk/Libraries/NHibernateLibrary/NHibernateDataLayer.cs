@@ -70,15 +70,29 @@ namespace org.iringtools.adapter.datalayer
         IList<IDataObject> dataObjects = new List<IDataObject>();
         Type type = Type.GetType("org.iringtools.adapter.datalayer.proj_" + _settings["Scope"] + "." + objectType + ", " + _settings["ExecutingAssemblyName"]);
 
-        if (identifiers != null && identifiers.Count > 0)
+        if (identifiers != null)
         {
+          ISession session = OpenSession();
+
           foreach (string identifier in identifiers)
           {
-            IDataObject dataObject = (IDataObject)Activator.CreateInstance(type);
+            IDataObject dataObject = null;
 
             if (!String.IsNullOrEmpty(identifier))
             {
-              dataObject.SetPropertyValue("Id", identifier);
+              IQuery query = session.CreateQuery("from " + objectType + " where Id = ?");
+              query.SetString(0, identifier);
+              dataObject = query.List<IDataObject>().FirstOrDefault<IDataObject>();
+
+              if (dataObject == null)
+              {
+                dataObject = (IDataObject)Activator.CreateInstance(type);
+                dataObject.SetPropertyValue("Id", identifier);
+              }
+            }
+            else
+            {
+              dataObject = (IDataObject)Activator.CreateInstance(type);
             }
 
             dataObjects.Add(dataObject);
