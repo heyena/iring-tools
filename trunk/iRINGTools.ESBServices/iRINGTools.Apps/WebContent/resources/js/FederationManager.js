@@ -8,9 +8,7 @@
  * by using different Extjs custom classes
  *
  */
-
-var federationPanel;
-
+var federationPanel
 Ext.onReady(function () {
 
 	Ext.BLANK_IMAGE_URL = 'resources/images/s.gif';
@@ -18,7 +16,7 @@ Ext.onReady(function () {
 
 	Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 
-	federationPanel = new FederationManager.FederationPanel({
+	 federationPanel = new FederationManager.FederationPanel({
 	  id:'federation-panel',
 	  region:'west',
 
@@ -40,20 +38,12 @@ Ext.onReady(function () {
 		id: 'contentPanel',
 		margins: '0 5 0 0',
                 disabled:true,
-		enableTabScroll: true  
+		enableTabScroll: true                
 	});
-
-        tabPanel.on('tabChange', function(p){
-            var nodeObj = federationPanel.getNodeBySelectedTab(Ext.getCmp('contentPanel').getActiveTab())
-            if(nodeObj){
-                federationPanel.selectNode(nodeObj)
-            }
-        });
 
 	federationPanel.on('edit', function(panel, node, label, formData) {
 
                 var newTab = new FederationManager.ContentPanel({
-                        id:'tab-' + node.id,
                         title: label,
                         configData: formData,
                         nId:node.id,
@@ -75,7 +65,8 @@ Ext.onReady(function () {
                 });
                 Ext.getCmp('contentPanel').enable()
                 tabPanel.add(newTab);
-                //tabPanel.activate(newTab);
+                tabPanel.activate(newTab); 
+
 	});
       
 	var viewport = new Ext.Viewport({

@@ -22,7 +22,8 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
     	click: true,
     	refresh: true,
         edit: true,
-        addnew: true
+        addnew: true,
+        selectionchange:true
     });
 
     this.tbar = this.buildToolbar();
@@ -79,6 +80,7 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
     this.federationPanel.on('dblclick', this.onDblClick, this);
     this.federationPanel.on('expandnode', this.onExpand, this);
     this.federationPanel.on('refresh', this.onRefresh, this);
+    this.federationPanel.getSelectionModel().on('selectionchange',this.onSelectionChange,this,this);
 
     var state = Ext.state.Manager.get("federation-state");
 
@@ -119,7 +121,7 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
 		}]
   },
 
-  getNodeBySelectedTab: function(tab) {
+ getNodeBySelectedTab: function(tab) {
         var tabid = tab.id;
         nodeId = tabid.substr(4,tabid.length)  // tabid is "tab-jf23dfj-sd3fas-df33s-s3df"
         return this.getNodeById(nodeId)        // get the NODE using nodeid
@@ -134,13 +136,17 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
 
   selectNode:function(node){
       this.expandNode(node);
-      this.federationPanel.getSelectionModel().select(node);      
+      this.federationPanel.getSelectionModel().select(node);
   },
-  
+
   expandNode:function(node){
       this.federationPanel.expandPath(node.getPath())
   },
-  
+
+ onSelectionChange:function(sm,node){
+    this.onClick(node)
+ },
+ 
   openTab: function(node) {
     if (node != null) {
 	/* 01. Start The Edit Form Component */
@@ -229,13 +235,14 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
   },
 
   onExpand: function(node) {
-      Ext.state.Manager.set('federation-state', node.getPath());
-      this.fireEvent('refresh', this, this.getSelectedNode());
-  },
+		//Ext.state.Manager.set('federation-state', node.getPath());
+		//this.fireEvent('refresh', this, this.getSelectedNode());
+	},
 
   onRefresh: function (node) {
+	  //alert('onRefresh');
   	Ext.state.Manager.clear('federation-state');
-	this.federationPanel.root.reload();
+		this.federationPanel.root.reload();
   },
 
   onEdit: function (btn, ev) {
