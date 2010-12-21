@@ -29,8 +29,7 @@ Ext.onReady(function () {
 	  width: 350,
   	  minSize: 175,
   	  maxSize: 500,
-	  //url: 'federation'
-          url:'federation-tree.json'
+	  url: 'federation'
 	});
 
 	var tabPanel = new Ext.TabPanel({
@@ -59,8 +58,7 @@ Ext.onReady(function () {
                         id:'tab-' + node.id,
                         configData: formData,
                         nId:node.id,
-                        //url: 'postFederation',
-                        url:'save-form.php',
+                        url: 'postFederation',
                         single: true, // important, as many layouts can occur
                         layout:'fit',
                         
