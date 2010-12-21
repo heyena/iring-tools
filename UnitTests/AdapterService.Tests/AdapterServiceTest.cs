@@ -147,8 +147,8 @@ namespace AdapterService.Tests
 
       Request request = new Request
       {
-        {"targetEndpointUri", "http://localhost:54321/InterfaceService/query"},
-        {"targetGraphBaseUri", "http://localhost:54321/AdapterService/12345_000/XYZ/LINES"},
+        {"targetUri", "http://localhost:65432/InterfaceService/query"},
+        {"targetGraphBaseUri", "http://localhost:65432/AdapterService/12345_000/XYZ/LINES"},
       };
 
       Response setup = target.RefreshGraph("12345_000", "XYZ", "LINES");
@@ -222,37 +222,37 @@ namespace AdapterService.Tests
         Assert.AreNotEqual(0, dataObjects.Count);
     }
 
-    [TestMethod]
-    public void Push()
-    {
-        AdapterProxy target = new AdapterProxy();
-        PushRequest request = new PushRequest();
-        WebCredentials targetCredentials = new WebCredentials();
-        string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
-        string adapterServiceUri = System.Configuration.ConfigurationManager.AppSettings["AdapterServiceUri"].ToString();
-        request.Add("targetUri", adapterServiceUri);
-        request.Add("targetCredentials", targetCredentialsXML);
-        request.Add("filter", "Tag-2");
-        request.Add("targetProjectName", "12345_000");
-        request.Add("targetApplicationName", "ABC");
-        request.Add("targetGraphName", "Lines");
-        request.Add("format", "dto");
+    //[TestMethod]
+    //public void Push()
+    //{
+        //AdapterProxy target = new AdapterProxy();
+        //PushRequest request = new PushRequest();
+        //WebCredentials targetCredentials = new WebCredentials();
+        //string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
+        //string adapterServiceUri = System.Configuration.ConfigurationManager.AppSettings["AdapterServiceUri"].ToString();
+        //request.Add("targetUri", adapterServiceUri);
+        //request.Add("targetCredentials", targetCredentialsXML);
+        //request.Add("filter", "Tag-2");
+        //request.Add("targetProjectName", "12345_000");
+        //request.Add("targetApplicationName", "ABC");
+        //request.Add("targetGraphName", "Lines");
+        //request.Add("format", "dto");
 
-        Response actual = target.Push("12345_000", "DEF", "Lines", request);
-        Assert.IsFalse(actual.Level == StatusLevel.Error);
-    }
+        //Response actual = target.Push("12345_000", "DEF", "Lines", request);
+        //Assert.IsFalse(actual.Level == StatusLevel.Error);
+    //}
 
 
 
-    [TestMethod]
-    public void PostDTOTest()
-    {
-      AdapterProxy target = new AdapterProxy();
-      DataTransferObjects dto = Utility.Read<DataTransferObjects>(_settings["XmlPath"] + "DTO.12345_000.ABC.Lines.xml");
+    //[TestMethod]
+    //public void PostDTOTest()
+    //{
+    //  AdapterProxy target = new AdapterProxy();
+    //  DataTransferObjects dto = Utility.Read<DataTransferObjects>(_settings["XmlPath"] + "DTO.12345_000.ABC.Lines.xml");
 
-      Response actual = target.PostDTO("12345_000", "ABC", "Lines", dto);
-      Assert.IsFalse(actual.Level == StatusLevel.Error);
-    }
+    //  Response actual = target.PostDTO("12345_000", "ABC", "Lines", dto);
+    //  Assert.IsFalse(actual.Level == StatusLevel.Error);
+    //}
     
     private TestContext testContextInstance;
 

@@ -66,41 +66,41 @@ namespace org.iringtools.services
 
     #region Adapter-based Data Exchange
     #region PullDTO
-    /// <summary>
-    /// Pull Style Adapter-based data exchange.
-    /// </summary>
-    /// <param name="projectName">Project name</param>
-    /// <param name="applicationName">Application name</param>
-    /// <param name="request">
-    /// Request object containing the following: targetUri, targetCredentials, graphName, targetGraphName, filter, projectName, applicationName.
-    /// </param>
-    /// <returns>Returns a Response object.</returns>
-    [Description("Pull Style Adapter-based data exchange. Returns a response with status. Request should include: " +
-      "targetUri, targetCredentials, graphName, targetGraphName, filter, projectName, applicationName.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/pull")]
-    public Response PullDTO(string projectName, string applicationName, string graphName, Request request)
-    {
-      return _exchangeProvider.PullDTO(projectName, applicationName, graphName, request);
-    }
+    ///// <summary>
+    ///// Pull Style Adapter-based data exchange.
+    ///// </summary>
+    ///// <param name="projectName">Project name</param>
+    ///// <param name="applicationName">Application name</param>
+    ///// <param name="request">
+    ///// Request object containing the following: targetUri, targetCredentials, graphName, targetGraphName, filter, projectName, applicationName.
+    ///// </param>
+    ///// <returns>Returns a Response object.</returns>
+    //[Description("Pull Style Adapter-based data exchange. Returns a response with status. Request should include: " +
+    //  "targetUri, targetCredentials, graphName, targetGraphName, filter, projectName, applicationName.")]
+    //[WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/pull")]
+    //public Response PullDTO(string projectName, string applicationName, string graphName, Request request)
+    //{
+    //  return _exchangeProvider.PullDTO(projectName, applicationName, graphName, request);
+    //}
     #endregion
 
     #region PushDTO
-    /// <summary>
-    /// Push Style Adapter-based data exchange.
-    /// </summary>
-    /// <param name="projectName">Project name</param>
-    /// <param name="applicationName">Application name</param>
-    /// <param name="request">
-    /// PushRequest object containing the following: targetUri, targetCredentials, graphName, targetGraphName, filter, projectName, applicationName.
-    /// </param>
-    /// <returns>Returns a Response object.</returns>
-    [Description("Push Style Adapter-based data exchange. Returns a response with status. PushRequest should include: " +
-      "targetUri, targetCredentials, graphName, targetGraphName, filter, projectName, applicationName.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/push")]
-    public Response PushDTO(string projectName, string applicationName, string graphName, PushRequest request)
-    {
-      return _exchangeProvider.Push(projectName, applicationName, graphName, request);
-    }
+    ///// <summary>
+    ///// Push Style Adapter-based data exchange.
+    ///// </summary>
+    ///// <param name="projectName">Project name</param>
+    ///// <param name="applicationName">Application name</param>
+    ///// <param name="request">
+    ///// PushRequest object containing the following: targetUri, targetCredentials, graphName, targetGraphName, filter, projectName, applicationName.
+    ///// </param>
+    ///// <returns>Returns a Response object.</returns>
+    //[Description("Push Style Adapter-based data exchange. Returns a response with status. PushRequest should include: " +
+    //  "targetUri, targetCredentials, graphName, targetGraphName, filter, projectName, applicationName.")]
+    //[WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/push")]
+    //public Response PushDTO(string projectName, string applicationName, string graphName, PushRequest request)
+    //{
+    //  return _exchangeProvider.Push(projectName, applicationName, graphName, request);
+    //}
     #endregion
     #endregion
   }

@@ -70,9 +70,12 @@ namespace org.iringtools.services
     /// <returns>Returns the version as a string.</returns>
     [Description("Gets the version of the service.")]
     [WebGet(UriTemplate = "/version")]
-    public string GetVersion()
+    public VersionInfo GetVersion()
     {
-      return _adapterProvider.GetType().Assembly.GetName().Version.ToString();
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _adapterProvider.GetVersion();
     }
     #endregion
 
@@ -88,6 +91,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/scopes")]
     public List<ScopeProject> GetScopes()
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _adapterProvider.GetScopes();
     }
     #endregion
@@ -125,6 +131,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}")]
     public XElement GetList(string projectName, string applicationName, string graphName, string format)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       XDocument xDocument = _adapterProvider.GetProjection(projectName, applicationName, graphName, format);
 
       return xDocument.Root;
@@ -145,6 +154,9 @@ namespace org.iringtools.services
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}")]
     public Response PostList(string projectName, string applicationName, string graphName, string format, XElement xElement)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _adapterProvider.Post(projectName, applicationName, graphName, format, new XDocument(xElement));
     }
     #endregion
@@ -162,6 +174,9 @@ namespace org.iringtools.services
     [WebInvoke(Method="DELETE", UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}")]
     public Response Delete(string projectName, string applicationName, string graphName, string identifier)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _adapterProvider.DeleteIndividual(projectName, applicationName, graphName, identifier);
     }
     #endregion
@@ -179,9 +194,12 @@ namespace org.iringtools.services
     /// <param name="request">request containing credentials and uri to pull rdf from</param>
     /// <returns></returns>
     [Description("Pull Style Facade-based data exchange using SPARQL query. Returns a response with status.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/pull?method=sparql")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/pull")]
     public Response Pull(string projectName, string applicationName, string graphName, Request request)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _exchangeProvider.Pull(projectName, applicationName, graphName, request);
     }
     #endregion
@@ -198,6 +216,9 @@ namespace org.iringtools.services
     [WebInvoke(Method = "POST", UriTemplate = "/scopes")]
     public Response UpdateScopes(List<ScopeProject> scopes)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _adapterProvider.UpdateScopes(scopes);
     }
     #endregion
@@ -213,6 +234,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/binding")]
     public XElement GetBinding(string projectName, string applicationName)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _adapterProvider.GetBinding(projectName, applicationName);
     }
     #endregion
@@ -229,6 +253,9 @@ namespace org.iringtools.services
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/binding")]
     public Response UpdateBinding(string projectName, string applicationName, XElement binding)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _adapterProvider.UpdateBinding(projectName, applicationName, binding);
     }
     #endregion
@@ -244,6 +271,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/dictionary")]
     public DataDictionary GetDictionary(string projectName, string applicationName)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _adapterProvider.GetDictionary(projectName, applicationName);
     }
     #endregion
@@ -259,6 +289,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/mapping")]
     public Mapping GetMapping(string projectName, string applicationName)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _adapterProvider.GetMapping(projectName, applicationName);
     }
     #endregion
@@ -273,6 +306,9 @@ namespace org.iringtools.services
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/mapping")]
     public Response UpdateMapping(string projectName, string applicationName, XElement mappingXml)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _adapterProvider.UpdateMapping(projectName, applicationName, mappingXml);
     }
     #endregion
@@ -288,6 +324,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/delete")]
     public Response DeleteAll(string projectName, string applicationName)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _adapterProvider.DeleteAll(projectName, applicationName);
     }
     #endregion
@@ -304,6 +343,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/delete")]
     public Response DeleteGraph(string projectName, string applicationName, string graphName)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _adapterProvider.Delete(projectName, applicationName, graphName);
     }
     #endregion
@@ -319,6 +361,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/refresh")]
     public Response RefreshAll(string projectName, string applicationName)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _adapterProvider.RefreshAll(projectName, applicationName);
     }
     #endregion
@@ -335,6 +380,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/refresh")]
     public Response RefreshGraph(string projectName, string applicationName, string graphName)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _adapterProvider.Refresh(projectName, applicationName, graphName);
     }
     #endregion
@@ -344,6 +392,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/datalayers")]
     public List<string> GetDatalayers()
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _adapterProvider.GetDataLayers();      
     }
     #endregion

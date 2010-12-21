@@ -1,1 +1,28 @@
-<ArrayOfScopeProject xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.library" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><ScopeProject><Name>12345_000</Name><Description>Test Project</Description><Applications><ScopeApplication><Name>ABC</Name><Description>Test App</Description></ScopeApplication><ScopeApplication><Name>DEF</Name><Description>Test App</Description></ScopeApplication><ScopeApplication><Name>GeometryApp</Name><Description>Test Geometry App</Description></ScopeApplication></Applications></ScopeProject><ScopeProject><Name>BentleyEquipTest</Name><Description>BentleyEquipTest</Description><Applications><ScopeApplication><Name>BentGraph</Name><Description>BentleyEquipTest</Description></ScopeApplication><ScopeApplication><Name>BechGraph</Name><Description>BentleyEquipTest</Description></ScopeApplication></Applications></ScopeProject><ScopeProject><Name>25247</Name><Description>TEAMWorks Testing</Description><Applications><ScopeApplication><Name>TW</Name><Description>TEAMWorks</Description></ScopeApplication></Applications></ScopeProject></ArrayOfScopeProject>
+<ArrayOfScopeProject xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.library" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <ScopeProject>
+    <Name>12345_000</Name>
+    <Description i:nil="true"/>
+    <Applications>
+      <ScopeApplication>
+        <Name>ABC</Name>
+        <Description i:nil="true"/>
+      </ScopeApplication>
+      <ScopeApplication>
+        <Name>DEF</Name>
+        <Description i:nil="true"/>
+      </ScopeApplication>
+      <ScopeApplication>
+        <Name>XYZ</Name>
+        <Description i:nil="true"/>
+      </ScopeApplication>
+      <ScopeApplication>
+        <Name>FDS</Name>
+        <Description i:nil="true"/>
+      </ScopeApplication>
+      <ScopeApplication>
+        <Name>EPCW</Name>
+        <Description i:nil="true"/>
+      </ScopeApplication>
+    </Applications>
+  </ScopeProject>
+</ArrayOfScopeProject>

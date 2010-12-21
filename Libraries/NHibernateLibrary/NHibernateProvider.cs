@@ -557,6 +557,18 @@ namespace org.iringtools.nhibernate
       }
     }
 
+    public VersionInfo GetVersion()
+    {
+      Version version = this.GetType().Assembly.GetName().Version;
+
+      return new VersionInfo()
+      {
+        Major = version.Major,
+        Minor = version.Minor,
+        Build = version.Build,
+        Revision = version.Revision
+      };
+    }
 
     #endregion
 

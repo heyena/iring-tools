@@ -71,66 +71,6 @@ namespace org.iringtools.exchange
       _kernel.Bind<Response>().ToConstant(_response);
     }
 
-    public Response PullDTO(string projectName, string applicationName, string graphName, Request request)
-    {
-      String targetUri = String.Empty;
-      String targetCredentialsXML = String.Empty;
-      String filter = String.Empty;
-      String projectNameForPull = String.Empty;
-      String applicationNameForPull = String.Empty;
-      String graphNameForPull = String.Empty;
-      String dataObjectsString = String.Empty;
-      Status status = new Status();
-      status.Messages = new Messages();
-
-      try
-      {
-        status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
-
-        InitializeScope(projectName, applicationName);
-        InitializeDataLayer();
-
-        _projectionEngine = _kernel.Get<IProjectionLayer>("dto");
-
-        targetUri = request["targetUri"];
-        targetCredentialsXML = request["targetCredentials"];
-        graphNameForPull = request["targetGraphName"];
-        filter = request["filter"];
-        projectNameForPull = request["projectName"];
-        applicationNameForPull = request["applicationName"];
-
-        WebCredentials targetCredentials = Utility.Deserialize<WebCredentials>(targetCredentialsXML, true);
-        if (targetCredentials.isEncrypted) targetCredentials.Decrypt();
-
-        WebHttpClient httpClient = new WebHttpClient(targetUri);
-        if (filter != String.Empty)
-        {
-          dataObjectsString = httpClient.GetMessage(@"/" + projectNameForPull + "/" + applicationNameForPull + "/" + graphNameForPull + "/" + filter + "?format=dto");
-        }
-        else
-        {
-          dataObjectsString = httpClient.GetMessage(@"/" + projectNameForPull + "/" + applicationNameForPull + "/" + graphNameForPull + "?format=dto");
-        }
-        XDocument xDocument = XDocument.Parse(dataObjectsString);
-
-        IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xDocument);
-
-        _response.Append(_dataLayer.Post(dataObjects));
-        status.Messages.Add(String.Format("Pull is successful from " + targetUri + "for Graph " + graphName));
-      }
-      catch (Exception ex)
-      {
-        _logger.Error("Error in PullDTO: " + ex);
-
-        status.Level = StatusLevel.Error;
-        status.Messages.Add("Error while pulling " + graphName + " data from " + targetUri + " as " + targetUri + " data with filter " + filter + ".\r\n");
-        status.Messages.Add(ex.ToString());
-      }
-
-      _response.Append(status);
-      return _response;
-    }
-
     public Response Pull(string projectName, string applicationName, string graphName, Request request)
     {
       Status status = new Status();
@@ -147,15 +87,16 @@ namespace org.iringtools.exchange
 
         DateTime startTime = DateTime.Now;
 
-        if (!request.ContainsKey("targetEndpointUri"))
-          throw new Exception("Target Endpoint Uri is required");
+        if (!request.ContainsKey("targetUri"))
+          throw new Exception("Target Uri is required");
 
-        string targetEndpointUri = request["targetEndpointUri"];
+        string targetEndpointUri = request["targetUri"];
 
-        if (!request.ContainsKey("targetGraphBaseUri"))
-          throw new Exception("Target graph uri is required");
-
-        string targetGraphBaseUri = request["targetGraphBaseUri"];
+        string targetGraphBaseUri = String.Empty;
+        if (request.ContainsKey("targetGraphBaseUri"))
+        {
+          targetGraphBaseUri = request["targetGraphBaseUri"];
+        }
         _settings.Add("TargetGraphBaseUri", targetGraphBaseUri);
 
         SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(targetEndpointUri), targetGraphBaseUri);
@@ -225,88 +166,149 @@ namespace org.iringtools.exchange
       return _response;
     }
 
-    //Gets from datalayer and send it to another endpoint
-    public Response Push(string projectName, string applicationName, string graphName, PushRequest request)
-    {
-      Status status = new Status();
-      status.Messages = new Messages();
+    //public Response PullDTO(string projectName, string applicationName, string graphName, Request request)
+    //{
+    //  String targetUri = String.Empty;
+    //  String targetCredentialsXML = String.Empty;
+    //  String filter = String.Empty;
+    //  String projectNameForPull = String.Empty;
+    //  String applicationNameForPull = String.Empty;
+    //  String graphNameForPull = String.Empty;
+    //  String dataObjectsString = String.Empty;
+    //  Status status = new Status();
+    //  status.Messages = new Messages();
 
-      try
-      {
-        String targetUri = String.Empty;
-        String targetCredentialsXML = String.Empty;
-        String filter = String.Empty;
-        String projectNameForPush = String.Empty;
-        String applicationNameForPush = String.Empty;
-        String graphNameForPush = String.Empty;
-        String format = String.Empty;
-        targetUri = request["targetUri"];
-        targetCredentialsXML = request["targetCredentials"];
-        filter = request["filter"];
-        projectNameForPush = request["targetProjectName"];
-        applicationNameForPush = request["targetApplicationName"];
-        graphNameForPush = request["targetGraphName"];
-        format = request["format"];
+    //  try
+    //  {
+    //    status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
 
-        WebHttpClient httpClient = new WebHttpClient(targetUri);
+    //    InitializeScope(projectName, applicationName);
+    //    InitializeDataLayer();
 
-        InitializeScope(projectName, applicationName);
-        InitializeDataLayer();
+    //    _projectionEngine = _kernel.Get<IProjectionLayer>("dto");
 
-        _graphMap = _mapping.FindGraphMap(graphName);
+    //    targetUri = request["targetUri"];
+    //    targetCredentialsXML = request["targetCredentials"];
+    //    graphNameForPull = request["targetGraphName"];
+    //    filter = request["filter"];
+    //    projectNameForPull = request["projectName"];
+    //    applicationNameForPull = request["applicationName"];
 
-        _projectionEngine = _kernel.Get<IProjectionLayer>(format);
-        IList<IDataObject> dataObjectList;
-        if (filter != String.Empty)
-        {
-          IList<string> identifiers = new List<string>();
-          identifiers.Add(filter);
-          dataObjectList = _dataLayer.Get(_graphMap.dataObjectMap, identifiers);
-        }
-        else
-        {
-          dataObjectList = _dataLayer.Get(_graphMap.dataObjectMap, null);
-        }
+    //    WebCredentials targetCredentials = Utility.Deserialize<WebCredentials>(targetCredentialsXML, true);
+    //    if (targetCredentials.isEncrypted) targetCredentials.Decrypt();
 
-        XDocument xDocument = _projectionEngine.ToXml(graphName, ref dataObjectList);
+    //    WebHttpClient httpClient = new WebHttpClient(targetUri);
+    //    if (filter != String.Empty)
+    //    {
+    //      dataObjectsString = httpClient.GetMessage(@"/" + projectNameForPull + "/" + applicationNameForPull + "/" + graphNameForPull + "/" + filter + "?format=dto");
+    //    }
+    //    else
+    //    {
+    //      dataObjectsString = httpClient.GetMessage(@"/" + projectNameForPull + "/" + applicationNameForPull + "/" + graphNameForPull + "?format=dto");
+    //    }
+    //    XDocument xDocument = XDocument.Parse(dataObjectsString);
 
-        _isDataLayerInitialized = false;
-        _isScopeInitialized = false;
-        Response localResponse = httpClient.Post<XDocument, Response>(@"/" + projectNameForPush + "/" + applicationNameForPush + "/" + graphNameForPush + "?format=" + format, xDocument, true);
+    //    IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xDocument);
 
-        _response.Append(localResponse);
+    //    _response.Append(_dataLayer.Post(dataObjects));
+    //    status.Messages.Add(String.Format("Pull is successful from " + targetUri + "for Graph " + graphName));
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    _logger.Error("Error in PullDTO: " + ex);
 
-        if (request.ExpectedResults != null)
-        {
-          foreach (Status responseStatus in localResponse.StatusList)
-          {
-            string dataObjectName = request.ExpectedResults.DataObjectName;
+    //    status.Level = StatusLevel.Error;
+    //    status.Messages.Add("Error while pulling " + graphName + " data from " + targetUri + " as " + targetUri + " data with filter " + filter + ".\r\n");
+    //    status.Messages.Add(ex.ToString());
+    //  }
 
-            IList<IDataObject> dataObjects = _dataLayer.Get(
-              dataObjectName, new List<string> { responseStatus.Identifier });
+    //  _response.Append(status);
+    //  return _response;
+    //}
 
-            foreach (var resultMap in request.ExpectedResults)
-            {
-              string propertyValue = responseStatus.Results[resultMap.Key];
-              string dataPropertyName = resultMap.Value;
 
-              dataObjects[0].SetPropertyValue(dataPropertyName, propertyValue);
-            }
+    ////Gets from datalayer and send it to another endpoint
+    //public Response Push(string projectName, string applicationName, string graphName, PushRequest request)
+    //{
+    //  Status status = new Status();
+    //  status.Messages = new Messages();
 
-            _response.Append(_dataLayer.Post(dataObjects));
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(string.Format("Error in pushing data", ex));
+    //  try
+    //  {
+    //    String targetUri = String.Empty;
+    //    String targetCredentialsXML = String.Empty;
+    //    String filter = String.Empty;
+    //    String projectNameForPush = String.Empty;
+    //    String applicationNameForPush = String.Empty;
+    //    String graphNameForPush = String.Empty;
+    //    String format = String.Empty;
+    //    targetUri = request["targetUri"];
+    //    targetCredentialsXML = request["targetCredentials"];
+    //    filter = request["filter"];
+    //    projectNameForPush = request["targetProjectName"];
+    //    applicationNameForPush = request["targetApplicationName"];
+    //    graphNameForPush = request["targetGraphName"];
+    //    format = request["format"];
 
-        status.Level = StatusLevel.Error;
-        status.Messages.Add(string.Format("Error in pushing data: {0}", ex));
-      }
+    //    WebHttpClient httpClient = new WebHttpClient(targetUri);
 
-      return _response;
-    }
+    //    InitializeScope(projectName, applicationName);
+    //    InitializeDataLayer();
+
+    //    _graphMap = _mapping.FindGraphMap(graphName);
+
+    //    _projectionEngine = _kernel.Get<IProjectionLayer>(format);
+    //    IList<IDataObject> dataObjectList;
+    //    if (filter != String.Empty)
+    //    {
+    //      IList<string> identifiers = new List<string>();
+    //      identifiers.Add(filter);
+    //      dataObjectList = _dataLayer.Get(_graphMap.dataObjectMap, identifiers);
+    //    }
+    //    else
+    //    {
+    //      dataObjectList = _dataLayer.Get(_graphMap.dataObjectMap, null);
+    //    }
+
+    //    XDocument xDocument = _projectionEngine.ToXml(graphName, ref dataObjectList);
+
+    //    _isDataLayerInitialized = false;
+    //    _isScopeInitialized = false;
+    //    Response localResponse = httpClient.Post<XDocument, Response>(@"/" + projectNameForPush + "/" + applicationNameForPush + "/" + graphNameForPush + "?format=" + format, xDocument, true);
+
+    //    _response.Append(localResponse);
+
+    //    if (request.ExpectedResults != null)
+    //    {
+    //      foreach (Status responseStatus in localResponse.StatusList)
+    //      {
+    //        string dataObjectName = request.ExpectedResults.DataObjectName;
+
+    //        IList<IDataObject> dataObjects = _dataLayer.Get(
+    //          dataObjectName, new List<string> { responseStatus.Identifier });
+
+    //        foreach (var resultMap in request.ExpectedResults)
+    //        {
+    //          string propertyValue = responseStatus.Results[resultMap.Key];
+    //          string dataPropertyName = resultMap.Value;
+
+    //          dataObjects[0].SetPropertyValue(dataPropertyName, propertyValue);
+    //        }
+
+    //        _response.Append(_dataLayer.Post(dataObjects));
+    //      }
+    //    }
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    _logger.Error(string.Format("Error in pushing data", ex));
+
+    //    status.Level = StatusLevel.Error;
+    //    status.Messages.Add(string.Format("Error in pushing data: {0}", ex));
+    //  }
+
+    //  return _response;
+    //}
 
     #region helper methods
     private void InitializeScope(string projectName, string applicationName)

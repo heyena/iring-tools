@@ -215,35 +215,35 @@ namespace AdapterService.Tests
       return response;
     }
 
-    public Response PullDTO(string projectName, string applicationName, string graphName, Request request)
-    {
-      Response response = null;
-      try
-      {
-        response = _exchangeProvider.PullDTO(projectName, applicationName, graphName, request);
-      }
-      catch (Exception ex)
-      {
-        Error.SetError(ex);
-      }
+    //public Response PullDTO(string projectName, string applicationName, string graphName, Request request)
+    //{
+    //  Response response = null;
+    //  try
+    //  {
+    //    response = _exchangeProvider.PullDTO(projectName, applicationName, graphName, request);
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    Error.SetError(ex);
+    //  }
 
-      return response;
-    }
+    //  return response;
+    //}
 
-    public Response Push(string projectName, string applicationName, string graphName, PushRequest request)
-    {
-      Response response = null;
-      try
-      {
-        response = _exchangeProvider.Push(projectName, applicationName, graphName, request);
-      }
-      catch (Exception ex)
-      {
-        Error.SetError(ex);
-      }
+    //public Response Push(string projectName, string applicationName, string graphName, PushRequest request)
+    //{
+    //  Response response = null;
+    //  try
+    //  {
+    //    response = _exchangeProvider.Push(projectName, applicationName, graphName, request);
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    Error.SetError(ex);
+    //  }
 
-      return response;
-    }
+    //  return response;
+    //}
 
     public Response PostDTO(string projectName, string applicationName, string graphName, DataTransferObjects dto)
     {

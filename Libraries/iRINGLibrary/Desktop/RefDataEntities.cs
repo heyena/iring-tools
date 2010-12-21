@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 
 namespace org.iringtools.library
 {
-  [DataContract]
+  [DataContract(Namespace = "http://www.iringtools.org/refdata/response")]
   public class RefDataEntities
   {
     public RefDataEntities()
@@ -20,4 +20,6 @@ namespace org.iringtools.library
     [DataMember]
     public int Total { get; set; }
   }
+
+
 }
