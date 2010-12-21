@@ -34,6 +34,7 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
       height: 300,
       layout: 'fit',
       border: false,
+      split: true,
 
       rootVisible: false,
       lines: true,
@@ -133,7 +134,7 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
   getSelectedNode: function() {
   	return this.federationPanel.getSelectionModel().getSelectedNode();
   },
-
+  
   selectNode:function(node){
       this.expandNode(node);
       this.federationPanel.getSelectionModel().select(node);
@@ -144,7 +145,9 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
   },
 
  onSelectionChange:function(sm,node){
-    this.onClick(node)
+     if(node != null){
+        this.onClick(node)
+     }
  },
  
   openTab: function(node) {
