@@ -95,6 +95,11 @@ public class FederationModel
     generatorsNode.setText("ID Generators");
     generatorsNode.setId("idGenerator");
     generatorsNode.setIconCls("folder");
+    List<Property> idNodeProperties = generatorsNode.getItems();
+    idNodeProperties.add(WidgetUtil.createProperty("Name", ""));
+    idNodeProperties.add(WidgetUtil.createProperty("URI", ""));
+    idNodeProperties.add(WidgetUtil.createProperty("Description", ""));
+
     treeNodes.add(generatorsNode);
 
     List<Node> generatorNodes = generatorsNode.getChildren();
@@ -120,6 +125,12 @@ public class FederationModel
     namespacesNode.setText("Namespaces");
     namespacesNode.setId("namespace");
     namespacesNode.setIconCls("folder");
+    List<Property> nsNodeProperties = namespacesNode.getItems();
+    nsNodeProperties.add(WidgetUtil.createProperty("Alias", ""));
+    nsNodeProperties.add(WidgetUtil.createProperty("URI", ""));
+    nsNodeProperties.add(WidgetUtil.createProperty("Description", ""));
+    nsNodeProperties.add(WidgetUtil.createProperty("Writable", ""));
+
     treeNodes.add(namespacesNode);
 
     List<Node> namespaceNodes = namespacesNode.getChildren();
@@ -147,6 +158,14 @@ public class FederationModel
     repositoriesNode.setText("Repositories");
     repositoriesNode.setId("repository");
     repositoriesNode.setIconCls("folder");
+    List<Property> repoNodeProperties = repositoriesNode.getItems();
+    repoNodeProperties.add(WidgetUtil.createProperty("URI", ""));
+    repoNodeProperties.add(WidgetUtil.createProperty("Name", ""));
+    repoNodeProperties.add(WidgetUtil.createProperty("Description", ""));
+    repoNodeProperties.add(WidgetUtil.createProperty("Read Only", ""));
+    repoNodeProperties.add(WidgetUtil.createProperty("Repository Type", ""));
+    repoNodeProperties.add(WidgetUtil.createProperty("Update URI", ""));
+
     treeNodes.add(repositoriesNode);
 
     List<Node> repositoryNodes = repositoriesNode.getChildren();
@@ -235,17 +254,6 @@ public class FederationModel
   /*public static void main(String args[]){
 	  String uniqueID = UUID.randomUUID().toString();
 	  System.out.println(uniqueID);
-	  System.out.println(UUID.randomUUID().toString());
-	  System.out.println(UUID.randomUUID().toString());
-	  System.out.println(UUID.randomUUID().toString());
-	  System.out.println(UUID.randomUUID().toString());
-	  System.out.println(UUID.randomUUID().toString());
-	  System.out.println(UUID.randomUUID().toString());
-	  System.out.println(UUID.randomUUID().toString());
-	  System.out.println(UUID.randomUUID().toString());
-	  System.out.println(UUID.randomUUID().toString());
-	  System.out.println(UUID.randomUUID().toString());
-	  System.out.println(UUID.randomUUID().toString());
 	  //System.out.println(get());
   }
   static long current= System.currentTimeMillis();
