@@ -139,7 +139,20 @@ namespace org.iringtools.adapter
         _logger.Error(string.Format("Error in GetScopes: {0}", ex));
         throw new Exception(string.Format("Error getting the list of scopes: {0}", ex));
       }
-    }    
+    }
+
+    public VersionInfo GetVersion()
+    {
+      Version version = this.GetType().Assembly.GetName().Version;
+
+      return new VersionInfo()
+      {
+        Major = version.Major,
+        Minor = version.Minor,
+        Build = version.Build,
+        Revision = version.Revision
+      };
+    }
 
     public Response UpdateScopes(List<ScopeProject> scopes)
     {

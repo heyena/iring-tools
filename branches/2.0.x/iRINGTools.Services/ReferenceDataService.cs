@@ -58,9 +58,12 @@ namespace org.iringtools.services
     /// <returns>Returns the version as a string.</returns>
     [Description("Gets the version of the service.")]
     [WebGet(UriTemplate = "/version")]
-    public string GetVersion()
+    public VersionInfo GetVersion()
     {
-      return _referenceDataProvider.GetType().Assembly.GetName().Version.ToString();
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _referenceDataProvider.GetVersion();
     }
     #endregion
 
@@ -71,6 +74,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/repositories")]
     public List<Repository> GetRepositories()
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _referenceDataProvider.GetRepositories();
     }
 
@@ -81,6 +87,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/find/{query}")]
     public List<Entity> Find(string query)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _referenceDataProvider.Find(query);
     }
 
@@ -91,6 +100,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/search/{query}")]
     public RefDataEntities Search(string query)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _referenceDataProvider.Search(query);
     }
 
@@ -101,6 +113,10 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/search/{query}/{start}/{limit}")]
     public RefDataEntities SearchPage(string query, string start, string limit)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+
       int startIdx = 0;
       int pageLimit = 0;
       int.TryParse(start, out startIdx);
@@ -116,6 +132,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/search/{query}/reset")]
     public RefDataEntities SearchReset(string query)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _referenceDataProvider.SearchReset(query);
     }
 
@@ -126,6 +145,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/search/{query}/{start}/{limit}/reset")]
     public RefDataEntities SearchPageReset(string query, string start, string limit)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       int startIdx = 0;
       int pageLimit = 0;
       int.TryParse(start, out startIdx);
@@ -141,6 +163,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/classes/{id}/label")]
     public string GetClassLabel(string id)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _referenceDataProvider.GetClassLabel(id);
     }
 
@@ -152,6 +177,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/classes/{id}?namespace={namespace}")]
     public QMXF GetClass(string id, string @namespace)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _referenceDataProvider.GetClass(id, @namespace);
     }
 
@@ -162,6 +190,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/classes/{id}/superclasses")]
     public List<Entity> GetSuperClasses(string id)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _referenceDataProvider.GetSuperClasses(id);
     }
 
@@ -172,6 +203,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/classes/{id}/allsuperclasses")]
     public List<Entity> GetAllSuperClasses(string id)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
         return _referenceDataProvider.GetAllSuperClasses(id);
     }
 
@@ -182,6 +216,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/classes/{id}/subclasses")]
     public List<Entity> GetSubClasses(string id)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _referenceDataProvider.GetSubClasses(id);
     }
 
@@ -192,6 +229,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/classes/{id}/templates")]
     public List<Entity> GetClassTemplates(string id)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _referenceDataProvider.GetClassTemplates(id);
     }
 
@@ -203,6 +243,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/templates/{id}")]
     public QMXF GetTemplate(string id)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _referenceDataProvider.GetTemplate(id);
     }
 
@@ -214,6 +257,9 @@ namespace org.iringtools.services
     [WebInvoke(UriTemplate = "/templates")]
     public Response PostTemplate(QMXF qmxf)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _referenceDataProvider.PostTemplate(qmxf);                
     }
 
@@ -225,6 +271,9 @@ namespace org.iringtools.services
     [WebInvoke(UriTemplate = "/classes")]
     public Response PostClass(QMXF qmxf)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _referenceDataProvider.PostClass(qmxf);
     }
   }

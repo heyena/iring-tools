@@ -347,6 +347,51 @@ namespace org.iringtools.utility
             }
         }
 
+        public string PostMessage(string relativeUri, string requestMessage, bool useDataContractSerializer)
+        {
+          try
+          {
+            string uri = _baseUri + relativeUri; // GetUri(relativeUri);
+            MemoryStream stream = new MemoryStream();
+            StreamWriter writer = new StreamWriter(stream);
+            writer.Write(requestMessage);
+            writer.Flush();
+            byte[] bytes = stream.ToArray();
+
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+
+            PrepareCredentials(request);
+
+            request.Timeout = TIMEOUT;
+            request.Method = "POST";
+            request.ContentType = "application/x-www-form-urlencoded";
+            request.ContentLength = bytes.Length;
+
+            System.Net.ServicePointManager.Expect100Continue = false;
+
+            // allows for validation of SSL conversations
+            ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
+              ValidateRemoteCertificate
+            );
+
+            Stream requestStream = request.GetRequestStream();
+            requestStream.Write(bytes, 0, bytes.Length);
+            requestStream.Flush();
+
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+            string responseMessage = Utility.SerializeFromStream(response.GetResponseStream());
+
+            return responseMessage;
+          }
+          catch (Exception exception)
+          {
+            string uri = _baseUri + relativeUri;
+
+            throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
+          }
+        }
+
         public R PutMessage<T, R>(string relativeUri, T requestEntity, bool useDataContractSerializer)
         {
             try

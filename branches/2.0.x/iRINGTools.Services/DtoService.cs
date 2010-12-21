@@ -55,6 +55,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{scope}/{app}/{graph}?hashAlgorithm={hashAlgorithm}")]
     public DataTransferIndices GetDataTransferIndices(string scope, string app, string graph, string hashAlgorithm)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       if (hashAlgorithm == null)
         hashAlgorithm = "MD5";
 
@@ -65,6 +68,9 @@ namespace org.iringtools.services
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/page")]
     public DataTransferObjects GetDataTransferObjects(string scope, string app, string graph, DataTransferIndices dataTransferIndices)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _dtoProvider.GetDataTransferObjects(scope, app, graph, dataTransferIndices);
     }
 
@@ -72,6 +78,9 @@ namespace org.iringtools.services
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}")]
     public Response PostDataTransferObjects(string scope, string app, string graph, DataTransferObjects dataTransferObjects)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _dtoProvider.PostDataTransferObjects(scope, app, graph, dataTransferObjects);
     }
 
@@ -79,6 +88,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{scope}/{app}/{graph}/{id}")]
     public DataTransferObjects GetDataTransferObject(string scope, string app, string graph, string id)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _dtoProvider.GetDataTransferObject(scope, app, graph, id);
     }
 
@@ -86,6 +98,9 @@ namespace org.iringtools.services
     [WebInvoke(Method = "DELETE", UriTemplate = "/{scope}/{app}/{graph}/{id}")]
     public Response DeletetDataTransferObject(string scope, string app, string graph, string id)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _dtoProvider.DeleteDataTransferObject(scope, app, graph, id);
     }
 
@@ -93,6 +108,9 @@ namespace org.iringtools.services
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxi?hashAlgorithm={hashAlgorithm}")]
     public DataTransferIndices GetDataTransferIndicesWithManifest(string scope, string app, string graph, string hashAlgorithm, Manifest manifest)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _dtoProvider.GetDataTransferIndicesWithManifest(scope, app, graph, hashAlgorithm, manifest);
     }
 
@@ -100,6 +118,9 @@ namespace org.iringtools.services
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxo")]
     public DataTransferObjects GetDataTransferObjectsWithManifest(string scope, string app, string graph, DtoPageRequest dtoPageRequest)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _dtoProvider.GetDataTransferObjects(scope, app, graph, dtoPageRequest);
     }
 
@@ -107,13 +128,19 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{scope}/{app}/manifest")]
     public Manifest GetManifest(string scope, string app)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _dtoProvider.GetManifest(scope, app);
     }
 
     [Description("Gets dto provider version.")]
     [WebGet(UriTemplate = "/version")]
-    public Version GetVersion()
+    public VersionInfo GetVersion()
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _dtoProvider.GetVersion();
     }
   }

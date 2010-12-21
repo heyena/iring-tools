@@ -28,10 +28,11 @@ namespace org.iringtools.adapter.projection
 
       try
       {
-        _appNamespace = String.Format("{0}{1}/{2}",
+        _appNamespace = String.Format("{0}{1}/{2}/{3}",
            _settings["GraphBaseUri"],
            HttpUtility.UrlEncode(_settings["ProjectName"]),
-           HttpUtility.UrlEncode(_settings["ApplicationName"])
+           HttpUtility.UrlEncode(_settings["ApplicationName"]),
+           HttpUtility.UrlEncode(graphName)
          );
 
         _dictionary = _dataLayer.GetDictionary();
@@ -39,8 +40,7 @@ namespace org.iringtools.adapter.projection
 
         if (_dataObjects != null && _dataObjects.Count == 1)
         {
-          xElement = new XElement(_appNamespace + Utility.TitleCase(graphName) + "List",
-            new XAttribute(XNamespace.Xmlns + "i", XSI_NS));
+          xElement = new XElement(_appNamespace + Utility.TitleCase(graphName) + "List");
 
           DataObject dataObject = FindGraphDataObject(graphName);
 
@@ -53,8 +53,7 @@ namespace org.iringtools.adapter.projection
         }
         if (_dataObjects != null && _dataObjects.Count > 1)
         {
-          xElement = new XElement(_appNamespace + Utility.TitleCase(graphName) + "List",
-           new XAttribute(XNamespace.Xmlns + "i", XSI_NS));
+          xElement = new XElement(_appNamespace + Utility.TitleCase(graphName) + "List");
 
           DataObject dataObject = FindGraphDataObject(graphName);
 
@@ -103,18 +102,18 @@ namespace org.iringtools.adapter.projection
 
     private void CreateIndexXml(XElement parentElement, DataObject dataObject, int dataObjectIndex)
     {
+      string uri = _appNamespace.ToString() + "/";
+
       foreach (KeyProperty keyProperty in dataObject.keyProperties)
       {
         DataProperty dataProperty = dataObject.dataProperties.Find(dp => dp.propertyName == keyProperty.keyPropertyName);
 
-        XElement propertyElement = new XElement(_appNamespace + Utility.TitleCase(dataProperty.propertyName));
-        propertyElement.Add(new XAttribute("dataType", dataProperty.dataType));
         var value = _dataObjects[dataObjectIndex].GetPropertyValue(dataProperty.propertyName);
         if (value != null)
-          propertyElement.Value = value.ToString();
-
-        parentElement.Add(propertyElement);
+          uri += dataObject.keyDelimeter + value;
       }
+
+      parentElement.Value = uri;
     }
 
     public DataObject FindGraphDataObject(string graphName)

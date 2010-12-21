@@ -419,11 +419,11 @@ namespace org.iringtools.adapter
       return manifest;
     }
 
-    public org.iringtools.library.Version GetVersion()
+    public org.iringtools.library.VersionInfo GetVersion()
     {
       System.Version version = this.GetType().Assembly.GetName().Version;
 
-      return new org.iringtools.library.Version()
+      return new org.iringtools.library.VersionInfo()
       {
         Major = version.Major,
         Minor = version.Minor,
