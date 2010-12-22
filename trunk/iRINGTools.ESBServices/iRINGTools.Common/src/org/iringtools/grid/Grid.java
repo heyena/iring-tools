@@ -40,7 +40,6 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "Grid", propOrder = {
     "filterSets",
     "headerLists",
-    "relatedItemList",
     "columnDatas",
     "classObjName",
     "success",
@@ -54,8 +53,6 @@ public class Grid {
     protected List<Filter> filterSets;
     @XmlElement(name = "headerList", required = true)
     protected List<Header> headerLists;
-    @XmlElement(required = true)
-    protected String relatedItemList;
     @XmlElement(name = "ColumnData", required = true)
     protected List<Column> columnDatas;
     @XmlElement(name = "ClassObjName", required = true)
@@ -124,29 +121,8 @@ public class Grid {
         return this.headerLists;
     }
 
-    /**
-     * Gets the value of the relatedItemList property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getRelatedItemList() {
-        return relatedItemList;
-    }
+   
 
-    /**
-     * Sets the value of the relatedItemList property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setRelatedItemList(String value) {
-        this.relatedItemList = value;
-    }
 
     /**
      * Gets the value of the columnDatas property.

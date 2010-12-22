@@ -19,7 +19,6 @@
 		<xs:sequence>
 			<xs:element name="filterSet" type="filter" maxOccurs="unbounded"/>	
 			<xs:element name="headerList" type="header" maxOccurs="unbounded"/>			
-			<xs:element name="relatedItemList" type="xs:string"/>	
 			<xs:element name="ColumnData" type="column" maxOccurs="unbounded"/>
 			<xs:element name="ClassObjName" type="xs:string"/>	
 			<xs:element name="success" type="xs:string"/>	
@@ -56,8 +55,10 @@
     <xs:sequence>
       <xs:element name="success" type="xs:string"/>	
       <xs:element name="total" type="xs:double"/>	
-      <xs:element name="data" type="xs:string" maxOccurs="unbounded"/>
+      <xs:element name="data" type="xs:HashMap" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>  
-	
+ 
+  
+ 
 </xs:schema>

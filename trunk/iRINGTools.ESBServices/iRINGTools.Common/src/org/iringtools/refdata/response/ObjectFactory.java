@@ -46,14 +46,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Value }
-     * 
-     */
-    public Value createValue() {
-        return new Value();
-    }
-
-    /**
      * Create an instance of {@link Entities }
      * 
      */

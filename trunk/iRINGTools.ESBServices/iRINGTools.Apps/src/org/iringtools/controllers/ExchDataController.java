@@ -1,27 +1,26 @@
 package org.iringtools.controllers;
 
-import org.iringtools.models.AppdataModel;
+import org.iringtools.models.ExchDataModel;
 import org.iringtools.grid.Grid;
 import org.iringtools.grid.Rows;
 import com.opensymphony.xwork2.Action;
 
 import java.util.HashMap;
 
-public class AppdataController {
+public class ExchDataController {
 
-	private AppdataModel appdata;
+	private ExchDataModel exchdata;
 	private Grid grid;
 	private Rows rows;
 	private String scopeName;
-	private String appName;
-	private String graphName;
-	private String pageName;
+	private String idName;
+
 	private int start=0;
 	private int limit=20;
 	private HashMap<String, Rows> rowsMap = null;
 
-	public AppdataController() {
-		appdata = new AppdataModel();
+	public ExchDataController() {
+		exchdata = new ExchDataModel();
 	}
 
 	public void setGrid(Grid grid) {
@@ -40,13 +39,7 @@ public class AppdataController {
 		return rows;
 	}
 
-	public void setPageName(String pageName) {
-		this.pageName = pageName;
-	}
 
-	public String getPageName() {
-		return pageName;
-	}
 
 	public void setScopeName(String scopeName) {
 		this.scopeName = scopeName;
@@ -56,20 +49,14 @@ public class AppdataController {
 		return scopeName;
 	}
 
-	public void setAppName(String appName) {
-		this.appName = appName;
+	
+
+	public void setIdName(String idName) {
+		this.idName = idName;
 	}
 
-	public String getAppName() {
-		return appName;
-	}
-
-	public void setGraphName(String graphName) {
-		this.graphName = graphName;
-	}
-
-	public String getGraphName() {
-		return graphName;
+	public String getIdName() {
+		return idName;
 	}
 
 	public void setStart(int start) {
@@ -88,18 +75,18 @@ public class AppdataController {
 		return limit;
 	}
 
-	public String getAppDataGrid() {
-		appdata.populate(scopeName, appName, graphName);
-		grid = appdata.toGrid();
+	public String getExchDataGrid() {
+		exchdata.populate(scopeName, idName);
+		grid = exchdata.toGrid();
 		return Action.SUCCESS;
 	}
 
-	public String getAppDataRows() {
+	public String getExchDataRows() {
 		if (rowsMap == null)
 			rowsMap = new HashMap<String, Rows>();
 		if (rowsMap.size() <= start / limit) {
-			appdata.populate(scopeName, appName, graphName);
-			rows = appdata.toRows(start, limit);
+			exchdata.populate(scopeName, idName);
+			rows = exchdata.toRows(start, limit);
 			rowsMap.put(String.valueOf(start), rows);
 		} else {
 			rows = rowsMap.get(String.valueOf(start));
@@ -108,13 +95,14 @@ public class AppdataController {
 	}
 
 	public String cleanHashMap() {
-		rowsMap.clear();
-		AppdataModel.setURI("");		
+		if (rowsMap != null)
+			rowsMap.clear();
+		ExchDataModel.setURI("");		
 		return Action.SUCCESS;
 	}
 
-	// public String postAppDataGrid() {
-	// appdata.readGrid(grid);
+	// public String postexchdataGrid() {
+	// exchdata.readGrid(grid);
 	// return Action.SUCCESS;
 	// }
 }

@@ -8,7 +8,7 @@ import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dti.DataTransferIndex;
 import com.opensymphony.xwork2.ActionContext;
 
-public class AppdataModel {
+public class ExchDataModel {
 
 	private Grid grid = null;
 	private static String URI="";	
@@ -19,32 +19,32 @@ public class AppdataModel {
 	private DtoContainer dtoCtr;
 	private int rInd=0;
 	
-	public AppdataModel() {
+	public ExchDataModel() {
 		if (URI.equals("")) {
 			try {
 				URI = ActionContext.getContext().getApplication()
-						.get("AppDataServiceUri").toString();
+						.get("ExchangeDataServiceUri").toString();
 			} catch (Exception e) {
-				System.out.println("Exception in AppDataServiceUri :" + e);
+				System.out.println("Exception in ExchangeDataServiceUri :" + e);
 			}
 			grid = null;
 		}
 	}	
 	
-	public void populate(String scopeName, String appName, String graphName) {
+	public void populate(String scopeName, String id) {
 		try {
 			HttpClient httpClient = new HttpClient(URI);
 			DataTransferIndices dti = httpClient.get(DataTransferIndices.class,
-					"/" + scopeName + "/" + appName + "/" + graphName);
+					"/" + scopeName + "/exchanges/" + id);
 			setDtiList(dti.getDataTransferIndexList().getItems());
-			setDtoUrl("/" + scopeName + "/" + appName + "/" + graphName);
+			setDtoUrl("/" + scopeName + "/exchanges/" + id);
 		} catch (Exception e) {
 			System.out.println("Exception :" + e);
 		}
 	}
 
 	public static void setURI (String uri) {
-		AppdataModel.URI = uri;
+		ExchDataModel.URI = uri;
 	}
 	
 	public List<DataTransferIndex> getDtiList()
@@ -102,10 +102,11 @@ public class AppdataModel {
 		dtoCtr = new DtoContainer();		
 	    dtoCtr.setTotal(dtiList.size());
 		DataTransferIndex dti = dtiList.get(0);
+		dtiPage = dtiList.subList(0,1);
 	    setIdentifier(dti.getIdentifier());
-	    dtoCtr.setUrl(dtoUrl, identifier);
-	    dtoCtr.populate(URI);	      
-	    dtoCtr.fillConfig();	    
+	    dtoCtr.setUrl(dtoUrl);
+	    dtoCtr.populatePage(URI, dtiPage);	      
+	    dtoCtr.fillExchConfig();	    
 	   
 	    dtoCtr.setGridList(grid);
 	    
@@ -116,9 +117,9 @@ public class AppdataModel {
     	dtiPage = dtiList.subList(start, Math.min(limit+start, dtiList.size()-1));
     	Rows rows = new Rows();
     	dtoCtr = new DtoContainer();
-    	dtoCtr.setUrl(dtoUrl, "page");
+    	dtoCtr.setUrl(dtoUrl);
     	dtoCtr.populatePage(URI, dtiPage);	
-    	dtoCtr.fillPage();	
+    	dtoCtr.fillExchPage();	
     	dtoCtr.setRowsList(rows);
     	return rows;
     }
