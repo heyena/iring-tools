@@ -1,12 +1,10 @@
 package org.iringtools.services;
 
-import java.util.Hashtable;
-import javax.servlet.ServletContext;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
+
 import org.apache.log4j.Logger;
 import org.iringtools.directory.Directory;
 import org.iringtools.directory.ExchangeDefinition;
@@ -14,19 +12,10 @@ import org.iringtools.services.core.DirectoryProvider;
 
 @Path("/")
 @Produces("application/xml")
-public class DirectoryService
+public class DirectoryService extends AbstractService
 {
   private static final Logger logger = Logger.getLogger(DirectoryService.class);
   
-  @Context 
-  private ServletContext context;
-  private Hashtable<String, String> settings;
-  
-  public DirectoryService()
-  {
-    settings = new Hashtable<String, String>();
-  }
-    
   @GET
   @Path("/directory")
   public Directory getDirectory()
@@ -35,7 +24,7 @@ public class DirectoryService
     
     try
     {
-      init();
+      initService();
       DirectoryProvider directoryProvider = new DirectoryProvider(settings);
       directory = directoryProvider.getExchanges();
     }
@@ -55,7 +44,7 @@ public class DirectoryService
     
     try
     {
-      init();
+      initService();
       DirectoryProvider directoryProvider = new DirectoryProvider(settings);
       xdef = directoryProvider.getExchangeDefinition(scope, exchangeId);
     }
@@ -65,10 +54,5 @@ public class DirectoryService
     }
     
     return xdef;
-  }
-  
-  private void init()
-  {
-    settings.put("baseDirectory", context.getRealPath("/"));
   }
 }

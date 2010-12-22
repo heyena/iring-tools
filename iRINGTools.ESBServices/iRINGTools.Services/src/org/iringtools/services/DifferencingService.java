@@ -1,11 +1,10 @@
 package org.iringtools.services;
 
-import java.util.Hashtable;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+
 import org.apache.log4j.Logger;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dto.DataTransferObjects;
@@ -16,17 +15,9 @@ import org.iringtools.services.core.DifferencingProvider;
 @Path("/")
 @Produces("application/xml")
 @Consumes("application/xml")
-public class DifferencingService
+public class DifferencingService extends AbstractService
 {
   private static final Logger logger = Logger.getLogger(DifferencingService.class);
-  
-  //@Context private ServletContext context;
-  private Hashtable<String, String> settings;
-  
-  public DifferencingService()
-  {
-    settings = new Hashtable<String, String>();
-  }
   
   @POST
   @Path("/dxi")
@@ -36,6 +27,7 @@ public class DifferencingService
     
     try
     {
+      initService();
       DifferencingProvider diffProvider = new DifferencingProvider(settings);
       dxis = diffProvider.diff(dxiRequest);
     }
@@ -56,6 +48,7 @@ public class DifferencingService
     
     try
     {    
+      initService();
       DifferencingProvider diffProvider = new DifferencingProvider(settings);
       dxos = diffProvider.diff(dxoRequest);
     }

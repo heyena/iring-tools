@@ -1,16 +1,13 @@
 package org.iringtools.services;
 
 import java.io.IOException;
-import java.util.Hashtable;
 
-import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Logger;
@@ -23,23 +20,9 @@ import org.iringtools.services.core.ESBServiceProvider;
 
 @Path("/")
 @Produces("application/xml")
-public class ESBService
+public class ESBService extends AbstractService
 {
   private static final Logger logger = Logger.getLogger(ESBService.class);
-  
-  @Context
-  private ServletContext context;
-  private Hashtable<String, String> settings;
-  
-//  @Context
-//  private javax.ws.rs.core.SecurityContext securityContext;
-//  @Context 
-//  private org.apache.cxf.jaxrs.ext.MessageContext messageContext;
-
-  public ESBService()
-  {
-    settings = new Hashtable<String, String>();
-  }
 
   @GET
   @Path("/directory")
@@ -49,7 +32,7 @@ public class ESBService
     
     try
     {
-      init();
+      initService();
       ESBServiceProvider serviceProvider = new ESBServiceProvider(settings);
       directory = serviceProvider.getDirectory();
     }
@@ -69,7 +52,7 @@ public class ESBService
     
     try
     {
-      init();
+      initService();
       ESBServiceProvider serviceProvider = new ESBServiceProvider(settings);
       dataTransferIndices = serviceProvider.getDataTransferIndices(scope, id);
     }
@@ -91,7 +74,7 @@ public class ESBService
     
     try
     {
-      init();
+      initService();
       ESBServiceProvider serviceProvider = new ESBServiceProvider(settings);
       dataTransferObjects = serviceProvider.getDataTransferObjects(scope, id, dataTransferIndices);
     }
@@ -113,7 +96,7 @@ public class ESBService
   
     try
     {
-      init();
+      initService();
       ESBServiceProvider serviceProvider = new ESBServiceProvider(settings);
       exchangeResponse = serviceProvider.submitExchange(scope, id, exchangeRequest);
     }
@@ -123,25 +106,5 @@ public class ESBService
     }
     
     return exchangeResponse;
-  }
-  
-  private void init()
-  {
-    settings.put("baseDirectory", context.getRealPath("/"));
-
-    String directoryServiceUri = context.getInitParameter("directoryServiceUri");
-    if (directoryServiceUri == null || directoryServiceUri.equals(""))
-      directoryServiceUri = "http://localhost:8080/iringtools/services/dirsvc";
-    settings.put("directoryServiceUri", directoryServiceUri);
-
-    String differencingServiceUri = context.getInitParameter("differencingServiceUri");
-    if (differencingServiceUri == null || differencingServiceUri.equals(""))
-      differencingServiceUri = "http://localhost:8080/iringtools/services/diffsvc";
-    settings.put("differencingServiceUri", differencingServiceUri);
-
-    String poolSize = context.getInitParameter("poolSize");
-    if (poolSize == null || poolSize.equals(""))
-      poolSize = "50";
-    settings.put("poolSize", poolSize);
   }
 }
