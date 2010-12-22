@@ -41,16 +41,17 @@
       <HintPath>..\..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Office.Interop.Excel, Version=12.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+    <Reference Include="Microsoft.Office.Interop.Excel">
+      <HintPath>..\..\..\ExternalBinaries\Microsoft.Office.Interop.Excel.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Ninject">
       <HintPath>..\..\..\ExternalBinaries\Ninject2\Ninject.dll</HintPath>
     </Reference>
-    <Reference Include="Office, Version=12.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+    <Reference Include="Office, Version=11.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+      <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>True</EmbedInteropTypes>
-      <Private>True</Private>
+      <HintPath>..\..\..\ExternalBinaries\Office.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

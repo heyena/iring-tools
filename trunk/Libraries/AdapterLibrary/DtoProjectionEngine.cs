@@ -105,6 +105,7 @@ namespace org.iringtools.adapter.projection
                     type = roleMap.type,
                     roleId = roleMap.roleId,
                     name = roleMap.name,
+                    relatedClassName = roleMap.classMap.name,
                     dataType = roleMap.dataType
                   };
 
