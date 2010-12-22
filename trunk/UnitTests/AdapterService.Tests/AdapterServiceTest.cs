@@ -149,7 +149,7 @@ namespace AdapterService.Tests
       Request request = new Request
       {
         {"targetEndpointUri", "http://localhost:54321/facade/query"},
-        {"targetGraphBaseUri", "http://localhost:54321/adapter/12345_000/XYZ/LINES"},
+        {"targetGraphBaseUri", "http://www.example.com/12345_000/XYZ/LINES"},
       };
 
       Response setup = target.RefreshGraph("12345_000", "XYZ", "LINES");

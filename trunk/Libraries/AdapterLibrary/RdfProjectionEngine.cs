@@ -415,7 +415,7 @@ namespace org.iringtools.adapter.projection
 
             foreach (SparqlResult result in resultSet)
             {
-              string subclassInstance = result.ToString().Remove(0, ("?class = ").Length);
+              string subclassInstance = result.Value(CLASS_VARIABLE).ToString();
               CreateDataObjects(classRole.classMap.classId, subclassInstance, dataObjectIndex);
               break;  // should be one result only
             }
@@ -440,7 +440,7 @@ namespace org.iringtools.adapter.projection
 
               foreach (SparqlResult result in resultSet)
               {
-                string value = Regex.Replace(result.ToString(), @".*= ", String.Empty);
+                string value = result.Value(LITERAL_VARIABLE).ToString();
 
                 if (value == RDF_NIL)
                   value = String.Empty;
