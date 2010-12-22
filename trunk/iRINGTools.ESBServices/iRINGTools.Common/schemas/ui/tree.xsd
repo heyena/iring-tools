@@ -45,7 +45,7 @@
 	<xs:complexType name="Property">
 		<xs:sequence>
 			<xs:element name="name" type="xs:string" />
-			<xs:element name="value" type="xs:string" />
+			<xs:element name="value" />
 		</xs:sequence>
 	</xs:complexType>
 
