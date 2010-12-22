@@ -6,7 +6,7 @@
   <sourceScopeName>12345_000</sourceScopeName>
   <sourceAppName>ABC</sourceAppName>
   <sourceGraphName>LINES</sourceGraphName>
-  <targetUri>http://localhost:65432/dxfr</targetUri>
+  <targetUri>http://localhost:54321/dxfr</targetUri>
   <targetScopeName>12345_000</targetScopeName>
   <targetAppName>DEF</targetAppName>
   <targetGraphName>LINES</targetGraphName>

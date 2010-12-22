@@ -38,16 +38,11 @@
 
   <xs:complexType name="Entity">
     <xs:sequence>
-      <xs:element name="key" type="xs:string" />
-      <xs:element name="value" type="Value" />
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="Value">
-    <xs:sequence>
-      <xs:element name="label" type="xs:string" />
+     <xs:element name="label" type="xs:string" />
       <xs:element name="repository" type="xs:string" />
       <xs:element name="uri" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
+
+
 </xs:schema>
