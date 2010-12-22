@@ -132,8 +132,9 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 	function loadAppData(scope, app, graph)
 	*/
   	if (node != null) {
-	  	var obj = node.attributes;  		
-			var uid = obj['id'];
+	  	var obj = node.attributes;  
+	  	var item = node.attributes['items'];
+			var uid = item[0].value;
 			var label = '';
 			var requestURL = '';
 			var scope  = dataTypeNode.parentNode.attributes['text'];
@@ -141,10 +142,10 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			var nodeType = obj['iconCls'];
 			var graph = obj['text']; 
 			
-			if ((nodeType == 'exchanges' && uid != '')) {
+			if ((nodeType == 'exchange' && uid != '')) {
 				
 				//requestURL = 'dataObjects/getDataObjects/' + nodeType + '/' + scopeId + '/' + uid;
-				requestURL = 'appdata?scopeName=' + scope + '&appName=' + app + '&graphName=' + graph,
+				requestURL = 'exchDataGrid?scopeName=' + scope + '&idName='+ uid;
 				label = scope + '->' + graph;
 				
 				this.fireEvent('open', this, node, label, requestURL);
@@ -218,7 +219,7 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   onExchange: function (btn, ev) {
   	node = this.getSelectedNode();
   	if (node != null)
-  		this.fireEvent('exchange', this, node);
+  		this.openTab(this.getSelectedNode());
   },
   
   populatePropertyGrid: function (properties) {

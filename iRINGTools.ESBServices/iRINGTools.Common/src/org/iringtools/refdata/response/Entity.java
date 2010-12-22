@@ -18,8 +18,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="key" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="value" type="{http://www.iringtools.org/refdata/response}Value"/>
+ *         &lt;element name="label" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="repository" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="uri" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -30,63 +31,90 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Entity", propOrder = {
-    "key",
-    "value"
+    "label",
+    "repository",
+    "uri"
 })
 @XmlRootElement(name = "entity")
 public class Entity {
 
     @XmlElement(required = true)
-    protected String key;
+    protected String label;
     @XmlElement(required = true)
-    protected Value value;
+    protected String repository;
+    @XmlElement(required = true)
+    protected String uri;
 
     /**
-     * Gets the value of the key property.
+     * Gets the value of the label property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getKey() {
-        return key;
+    public String getLabel() {
+        return label;
     }
 
     /**
-     * Sets the value of the key property.
+     * Sets the value of the label property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setKey(String value) {
-        this.key = value;
+    public void setLabel(String value) {
+        this.label = value;
     }
 
     /**
-     * Gets the value of the value property.
+     * Gets the value of the repository property.
      * 
      * @return
      *     possible object is
-     *     {@link Value }
+     *     {@link String }
      *     
      */
-    public Value getValue() {
-        return value;
+    public String getRepository() {
+        return repository;
     }
 
     /**
-     * Sets the value of the value property.
+     * Sets the value of the repository property.
      * 
      * @param value
      *     allowed object is
-     *     {@link Value }
+     *     {@link String }
      *     
      */
-    public void setValue(Value value) {
-        this.value = value;
+    public void setRepository(String value) {
+        this.repository = value;
+    }
+
+    /**
+     * Gets the value of the uri property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getUri() {
+        return uri;
+    }
+
+    /**
+     * Sets the value of the uri property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setUri(String value) {
+        this.uri = value;
     }
 
 }
