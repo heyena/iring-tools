@@ -1,5 +1,6 @@
 package org.iringtools.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -130,6 +131,7 @@ public class FederationModel
     nsNodeProperties.add(WidgetUtil.createProperty("URI", ""));
     nsNodeProperties.add(WidgetUtil.createProperty("Description", ""));
     nsNodeProperties.add(WidgetUtil.createProperty("Writable", ""));
+    nsNodeProperties.add(WidgetUtil.createProperty("ID Generator", ""));
 
     treeNodes.add(namespacesNode);
 
@@ -148,6 +150,7 @@ public class FederationModel
       properties.add(WidgetUtil.createProperty("URI", namespace.getUri()));
       properties.add(WidgetUtil.createProperty("Description", namespace.getDescription()));
       properties.add(WidgetUtil.createProperty("Writable", String.valueOf(namespace.isIsWritable())));
+      properties.add(WidgetUtil.createProperty("ID Generator", String.valueOf(namespace.getIdGenerator())));
 
       namespaceNodes.add(namespaceNode);
     }
@@ -165,6 +168,7 @@ public class FederationModel
     repoNodeProperties.add(WidgetUtil.createProperty("Read Only", ""));
     repoNodeProperties.add(WidgetUtil.createProperty("Repository Type", ""));
     repoNodeProperties.add(WidgetUtil.createProperty("Update URI", ""));
+    repoNodeProperties.add(WidgetUtil.createProperty("Namespace List", ""));
 
     treeNodes.add(repositoriesNode);
 
@@ -186,7 +190,12 @@ public class FederationModel
       properties.add(WidgetUtil.createProperty("Read Only", String.valueOf(repository.isIsReadOnly())));
       properties.add(WidgetUtil.createProperty("Repository Type", repository.getRepositoryType()));
       properties.add(WidgetUtil.createProperty("Update URI", repository.getUpdateUri()));
-
+      if(repository.getNamespaces()!=null){
+	      properties.add(WidgetUtil.createProperty("Namespace List", repository.getNamespaces()));
+	    		  //WidgetUtil.createNameSpaceList(federation.getNamespaces(),repository.getNamespaces())));
+      }else{
+    	  properties.add(WidgetUtil.createProperty("Namespace List", null));
+      }
       repositoryNodes.add(repositoryNode);
     }
 
@@ -217,6 +226,7 @@ public class FederationModel
 					namespace.setAlias(httpRequest.getParameter("Alias"));
 					namespace.setIsWritable(Boolean.parseBoolean(httpRequest.getParameter("Writable")));
 					namespace.setDescription(httpRequest.getParameter("Description"));
+					namespace.setIdGenerator(Integer.parseInt(httpRequest.getParameter("ID Generator")));
 					
 					response = httpClient.post(Response.class, "/namespace", namespace);
 					
@@ -250,15 +260,5 @@ public class FederationModel
 		}
    
   }
-  
-  /*public static void main(String args[]){
-	  String uniqueID = UUID.randomUUID().toString();
-	  System.out.println(uniqueID);
-	  //System.out.println(get());
-  }
-  static long current= System.currentTimeMillis();
-  static public synchronized long get(){
-    return current++;
-    }*/
 
 }
