@@ -68,7 +68,12 @@ FederationManager.ContentPanel = Ext.extend(Ext.Panel, {
   },
 
   getActiveTab: function() {
+      if(Ext.getCmp('contentPanel').items.length !=0){ // check is there any tab in contentPanel
         return Ext.getCmp('contentPanel').getActiveTab();
+      }
+      else{
+          return false;
+      }
   },
 
   onCloseTab: function(node) {
@@ -86,14 +91,15 @@ FederationManager.ContentPanel = Ext.extend(Ext.Panel, {
   onSave:function(){
 	var that = this;    // consists the main/previous class object
         this.data_form.getForm().submit({
+            waitMsg: 'Saving Data...',
             success: function(f,a){
-
-                var node = federationPanel.getNodeBySelectedTab(that.getActiveTab())
-            	Ext.Msg.alert('Success', 'Changes saved successfully!')
-                federationPanel.onRefresh(node); 
-                //federationPanel.expandNode(node) // pending
-                //federationPanel.selectNode(node) // pending
-            	
+                if(that.getActiveTab()){
+                    var node = federationPanel.getNodeBySelectedTab(that.getActiveTab())
+                    Ext.Msg.alert('Success', 'Changes saved successfully!')
+                    federationPanel.onRefresh(node);
+                    //federationPanel.expandNode(node) // pending
+                    //federationPanel.selectNode(node) // pending
+                }
                 
             },
             failure: function(f,a){

@@ -29,20 +29,21 @@ Ext.onReady(function () {
 	  width: 350,
   	  minSize: 175,
   	  maxSize: 500,
-	  url: 'federation'
+	  //url: 'federation'
+          url:'federation-tree.json'
 	});
 
 	var tabPanel = new Ext.TabPanel({
 		region: 'center',
-		id: 'contentPanel',
+		id: 'contentPanel',     // used in FederationManager.js
 		margins: '0 5 0 0',
                 disabled:true,
 		enableTabScroll: true                
 	});
 
-         tabPanel.on('tabChange', function(p){
-           if(Ext.getCmp('contentPanel').items.length !=0){ // check is there any tab in contentPanel
-            var nodeObj = federationPanel.getNodeBySelectedTab(Ext.getCmp('contentPanel').getActiveTab())
+         tabPanel.on('tabChange', function(tabContainer){
+            if(tabContainer.items.length !=0){ // check is there any tab
+            var nodeObj = federationPanel.getNodeBySelectedTab(tabContainer.getActiveTab())
             if(nodeObj){
                 federationPanel.selectNode(nodeObj)
             }
@@ -58,7 +59,8 @@ Ext.onReady(function () {
                         id:'tab-' + node.id,
                         configData: formData,
                         nId:node.id,
-                        url: 'postFederation',
+                        //url: 'postFederation',
+                        url:'save-form.php',
                         single: true, // important, as many layouts can occur
                         layout:'fit',
                         
