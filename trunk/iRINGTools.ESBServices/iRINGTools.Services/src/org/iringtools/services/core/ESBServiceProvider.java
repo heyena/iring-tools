@@ -34,12 +34,11 @@ import org.iringtools.dxfr.dto.RoleObject;
 import org.iringtools.dxfr.dto.RoleType;
 import org.iringtools.dxfr.dto.TemplateObject;
 import org.iringtools.dxfr.manifest.ClassTemplates;
-import org.iringtools.dxfr.manifest.ClassTemplatesList;
 import org.iringtools.dxfr.manifest.Graph;
 import org.iringtools.dxfr.manifest.Manifest;
 import org.iringtools.dxfr.manifest.Role;
 import org.iringtools.dxfr.manifest.Template;
-import org.iringtools.dxfr.manifest.Templates;
+import org.iringtools.dxfr.manifest.TransferOption;
 import org.iringtools.dxfr.request.DtoPageRequest;
 import org.iringtools.dxfr.request.DxiRequest;
 import org.iringtools.dxfr.request.DxoRequest;
@@ -100,7 +99,7 @@ public class ESBServiceProvider
       // init exchange definition
       initExchangeDefinition(scope, id);
 
-      Manifest crossedManifest = createCrossedManifest();
+      Manifest crossedManifest = getCrossedManifest();
       
       // get source dti
       String sourceDtiUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName + "/dxi?hashAlgorithm=" + hashAlgorithm;
@@ -160,7 +159,7 @@ public class ESBServiceProvider
       // init exchange definition
       initExchangeDefinition(scope, id);
       
-      Manifest crossedManifest = createCrossedManifest();
+      Manifest crossedManifest = getCrossedManifest();
       
       List<DataTransferIndex> sourceDtiListItems = new ArrayList<DataTransferIndex>();
       List<DataTransferIndex> targetDtiListItems = new ArrayList<DataTransferIndex>();
@@ -360,7 +359,7 @@ public class ESBServiceProvider
       String targetGraphUrl = targetAppUrl + "/" + targetGraphName;
       String sourceGraphUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName;
 
-      Manifest crossedManifest = createCrossedManifest();
+      Manifest crossedManifest = getCrossedManifest();
       
       // create a pool (page) DTOs to send to target endpoint
       int dtiSize = dtiList.size();
@@ -579,7 +578,7 @@ public class ESBServiceProvider
     return DigestUtils.md5Hex(values.toString());
   }
   
-  private Manifest createCrossedManifest() throws JAXBException, IOException
+  private Manifest getCrossedManifest() throws Exception
   {
     // get source manifest
     String sourceManifestUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/manifest";
@@ -595,122 +594,95 @@ public class ESBServiceProvider
     if (targetManifest == null || targetManifest.getGraphs().getItems().size() == 0)
       return null;
     
-    // temporary
-    return targetManifest; 
-    
-    //TODO: build crossed manifest of source and target endpoint
-    /*Manifest crossedManifest = new Manifest();
-    
     Graph sourceGraph = sourceManifest.getGraphs().getItems().get(0);
     Graph targetGraph = targetManifest.getGraphs().getItems().get(0);
-    
-    for (ClassTemplates targetClassTemplates : targetGraph.getClassTemplatesList().getItems())
+    List<ClassTemplates> sourceClassTemplatesList = sourceGraph.getClassTemplatesList().getItems();
+    List<ClassTemplates> targetClassTemplatesList = targetGraph.getClassTemplatesList().getItems();
+            
+    for (int i = 0; i < targetClassTemplatesList.size(); i++)
     {
-      org.iringtools.dxfr.manifest.Class targetClass = targetClassTemplates.getClazz();
-      org.iringtools.dxfr.manifest.Class sourceClass = getClass(sourceGraph, targetClass.getClassId());
-
-      if (sourceClass != null)
+      org.iringtools.dxfr.manifest.Class targetClass = targetClassTemplatesList.get(i).getClazz();
+      ClassTemplates sourceClassTemplates = getClassTemplates(sourceClassTemplatesList, targetClass.getClassId());
+      
+      if (sourceClassTemplates != null)
       {
-        //recurCreateCrossedManifest(sourceGraph, sourceClass, targetGraph, targetClass);
-      }
-    }
-
-    return crossedManifest;*/
-  }
-
-  /*private void recurCreateCrossedManifest(Graph sourceGraph, org.iringtools.dxfr.manifest.Class sourceClass, 
-      Graph targetGraph, org.iringtools.dxfr.manifest.Class targetClass)
-  {
-    //List<Template> sourceTemplates = null;
-
-    for (ClassTemplates targetClassTemplates : targetGraph.getClassTemplatesList().getItems())
-    {
-      //org.iringtools.dxfr.manifest.Class localMappingClass = targetClassTemplates.getClazz();
-      List<Template> targetTemplates = targetClassTemplates.getTemplates().getItems();
-
-      if (localMappingClass.getClassId() == sourceClass.getClassId())
-      {
-        //org.iringtools.dxfr.manifest.Class crossedClass = localMappingClass.Clone();
-        //Templates crossedTemplates = new Templates();
-
-        //_graphMap.targetClassTemplates.Add(new ClassTemplate { classMap = crossedClass, templateMaps = crossedTemplates });
-
-        for (Template sourceTemplate : sourceTemplates)
+        List<Template> targetTemplates = targetClassTemplatesList.get(i).getTemplates().getItems();
+        List<Template> sourceTemplates = sourceClassTemplates.getTemplates().getItems();
+        
+        for (int j = 0; j < targetTemplates.size(); j++)
         {
-          Template crossedTemplate = null;
-          boolean found = false;
-
-          for (Template targetTemplate : targetTemplates)
+          Template targetTemplate = targetTemplates.get(j);
+          Template sourceTemplate = getTemplate(sourceTemplates, targetTemplate.getTemplateId());
+          
+          if (sourceTemplate == null)
           {
-            if (found) break;
-
-            if (targetTemplate.getTemplateId() == sourceTemplate.getTemplateId())
+            if (targetTemplate.getTransferOption() == TransferOption.REQUIRED)
             {
-              int rolesMatchedCount = 0;
-
-              for (Role targetRole : targetTemplate.getRoles().getItems())
-              {
-                if (found) break;
-
-                for (Role sourceRole : sourceTemplate.getRoles().getItems())
-                {
-                  if (sourceRole.getRoleId() == targetRole.getRoleId())
-                  {
-                    if (targetRole.getType() == RoleType.REFERENCE && targetRole.getClazz() == null && 
-                        targetRole.getValue() == sourceRole.getValue())
-                    {
-                      crossedTemplate = targetTemplate;
-                      found = true;
-                    }
-
-                    rolesMatchedCount++;
-                    break;
-                  }
-                }
-              }
-
-              if (rolesMatchedCount == sourceTemplate.getRoles().getItems().size())
-              {
-                crossedTemplate = targetTemplate;
-              }
+              throw new Exception("Required template [" + targetTemplate.getTemplateId() + "] not found");
+            }
+            else
+            {
+              targetTemplates.remove(j--);
             }
           }
-
-          if (crossedTemplate != null)
+          else
           {
-            //Template crossedTemplate = crossedTemplate.Clone();
-            //crossedTemplates.Add(crossedTemplate);
-
-            // assume that all roles within a template are matched, thus only interested : classMap
-            for (Role sourceRole : sourceTemplate.getRoles().getItems())
+            List<Role> targetRoles = targetTemplate.getRoles().getItems();
+            List<Role> sourceRoles = sourceTemplate.getRoles().getItems();
+            
+            for (int k = 0; k < targetRoles.size(); k++)
             {
-              if (sourceRole.getClazz() != null)
+              Role sourceRole = getRole(sourceRoles, targetRoles.get(k).getRoleId());
+              
+              if (sourceRole == null)
               {
-                for (Role mappingRole : crossedTemplate.getRoles().getItems())
-                {
-                  if (mappingRole.getClazz() != null && mappingRole.getClazz().getClassId() == sourceRole.getClazz().getClassId())
-                  {
-                    recurCreateCrossedManifest(sourceGraph, sourceRole.getClazz(), targetGraph, mappingRole.getClazz());
-                  }
-                }
+                targetRoles.remove(k--);
               }
             }
           }
         }
       }
+      else
+      {
+        targetClassTemplatesList.remove(i--);
+      }      
     }
-  }*/
+    
+    return targetManifest;
+  }
 
-  private org.iringtools.dxfr.manifest.Class getClass(Graph graph, String classId)
+  private ClassTemplates getClassTemplates(List<ClassTemplates> classTemplatesList, String classId)
   {
-    for (ClassTemplates classTemplates : graph.getClassTemplatesList().getItems())
+    for (ClassTemplates classTemplates : classTemplatesList)
     {
       org.iringtools.dxfr.manifest.Class clazz = classTemplates.getClazz();
 
       if (clazz.getClassId().equalsIgnoreCase(classId))
       {
-        return clazz;
+        return classTemplates;
       }
+    }
+    
+    return null;
+  }
+  
+  private Template getTemplate(List<Template> templates, String templateId)
+  {
+    for (Template template : templates)
+    {
+      if (template.getTemplateId().equals(templateId))
+        return template;
+    }
+    
+    return null;
+  }
+  
+  private Role getRole(List<Role> roles, String roleId)
+  {
+    for (Role role : roles)
+    {
+      if (role.getRoleId().equals(roleId))
+        return role;
     }
     
     return null;
