@@ -46,6 +46,28 @@
         <param name="root">rows</param>
       </result>
     </action>
+    
+    <action name="cleanAppDataRows" class="org.iringtools.controllers.AppdataController" method="cleanHashMap">
+      <result type="json">
+        <param name="root">rows</param>
+      </result>
+    </action>
+    <action name="exchDataGrid" class="org.iringtools.controllers.ExchDataController" method="getExchDataGrid">
+      <result type="json">
+        <param name="root">grid</param>
+      </result>
+    </action>
+    <action name="exchDataRows" class="org.iringtools.controllers.ExchDataController" method="getExchDataRows">
+      <result type="json">
+        <param name="root">rows</param>
+      </result>
+    </action>
+     <action name="cleanExchDataRows" class="org.iringtools.controllers.ExchDataController" method="cleanHashMap">
+      <result type="json">
+        <param name="root">rows</param>
+      </result>
+    </action>
+    
   </package>
     
 </struts>
