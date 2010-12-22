@@ -53,7 +53,6 @@
       Exclude="$(ServicesDir).Tests\**;
                $(ServicesDir)\App_Code\**;
                $(ServicesDir)\bin\*.pdb;
-               $(ServicesDir)\bin\*.xml;
                $(ServicesDir)\obj\**;
                $(ServicesDir)\Properties\**;
                $(ServicesDir)\Logs\**;
@@ -92,7 +91,6 @@
     <AppsDeployment
       Include="$(ApplicationsDir)\**"
       Exclude="$(ApplicationsDir)\bin\*.pdb;
-               $(ApplicationsDir)\bin\*.xml;
                $(ApplicationsDir)\obj\**;
                $(ApplicationsDir)\Properties\**;
                $(ApplicationsDir)\*.cs;
