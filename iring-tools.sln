@@ -17,7 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		AdapterService.testrunconfig = AdapterService.testrunconfig
 		build.xml = build.xml
-		iring-tools2.vsmdi = iring-tools2.vsmdi
+		iring-tools4.vsmdi = iring-tools4.vsmdi
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "QMXFTransforms", "QMXFTransforms", "{0A204D3D-73E9-4C85-A601-D91282B4CA16}"
@@ -105,12 +105,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mapping.Silverlight", "Modules\Mapping\Silverlight\Mapping.Silverlight.csproj", "{76CA1820-6E1C-4C70-8EDF-0559DA07EE54}"
 EndProject
 Global
-	GlobalSection(SubversionScc) = preSolution
-		Svn-Managed = True
-		Manager = AnkhSVN - Subversion Support for Visual Studio
-	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = iring-tools2.vsmdi
+		CategoryFile = iring-tools4.vsmdi
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1020,5 +1016,9 @@ Global
 		{748B993D-4F65-4A39-B865-6A7D5412C4BA} = {270F5203-FE58-480F-AF4B-C38D4461FEEC}
 		{04C08B97-3D9E-4BB4-B0EC-6AE035105BF8} = {05A05970-7324-4D5A-9B69-4BF1542676F3}
 		{1A611244-54BE-4F12-AA34-12F54A2B07E6} = {05A05970-7324-4D5A-9B69-4BF1542676F3}
+	EndGlobalSection
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
 	EndGlobalSection
 EndGlobal

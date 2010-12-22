@@ -105,7 +105,6 @@ namespace org.iringtools.adapter.projection
                     type = roleMap.type,
                     roleId = roleMap.roleId,
                     name = roleMap.name,
-                    relatedClassName = roleMap.classMap.name,
                     dataType = roleMap.dataType
                   };
 
@@ -135,7 +134,10 @@ namespace org.iringtools.adapter.projection
                   }
                   else if (roleMap.classMap != null)
                   {
-                    value = "#" + _classIdentifiers[roleMap.classMap.classId][i];
+                    roleObject.relatedClassName = roleMap.classMap.name;
+
+                    if (!String.IsNullOrEmpty(_classIdentifiers[roleMap.classMap.classId][i]))
+                      value = "#" + _classIdentifiers[roleMap.classMap.classId][i];
                   }
 
                   roleObject.value = value;
