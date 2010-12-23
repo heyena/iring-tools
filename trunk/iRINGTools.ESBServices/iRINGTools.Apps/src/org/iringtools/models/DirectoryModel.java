@@ -72,7 +72,7 @@ public class DirectoryModel
   {
 
     Tree tree = new Tree();
-    List<Node> scopeNodes = tree.getItems();
+    List<Node> scopeNodes = tree.getNodes();
 
     int ci = 1, si = 1, ei = 1, adi = 1;
 
@@ -118,7 +118,7 @@ public class DirectoryModel
             graphNode.setLeaf(true);
             appNodeList.add(graphNode);
 
-            List<Property> properties = graphNode.getItems();
+            List<Property> properties = graphNode.getProperties();
             Property prop1 = new Property();
             prop1.setName("Name");
             prop1.setValue(graph.getName());
@@ -167,7 +167,7 @@ public class DirectoryModel
             exchangeNode.setIconCls("exchange");
             exchangeNode.setLeaf(true);
 
-            List<Property> properties = exchangeNode.getItems();
+            List<Property> properties = exchangeNode.getProperties();
             Property prop1 = new Property();
             prop1.setName("Id");
             prop1.setValue(exchange.getId());

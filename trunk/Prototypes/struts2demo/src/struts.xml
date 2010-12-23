@@ -5,16 +5,16 @@
 <struts>
 	<constant name="struts.devMode" value="true" />
 
-  <package name="basicstruts2" extends="struts-default">
+  <package name="basic" extends="struts-default">
     <action name="index">
       <result>/index.jsp</result>
     </action>
   </package>
   
-  <package name="jsontest" extends="json-default">
+  <package name="json" extends="json-default">
     <action name="directory" class="org.iringtools.controllers.DirectoryTreeController" method="execute">
       <result type="json">
-        <param name="root">directoryTree.items</param>
+        <param name="root">directoryTree.nodes</param>
       </result>
     </action>
     

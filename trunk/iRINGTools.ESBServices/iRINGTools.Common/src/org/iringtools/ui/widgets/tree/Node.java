@@ -20,9 +20,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="iconCls" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="text" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="text" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="iconCls" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="properties" type="{http://www.iringtools.org/ui/widgets/tree}Property" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -34,10 +34,10 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Node", propOrder = {
-    "iconCls",
-    "text",
     "id",
-    "items"
+    "text",
+    "iconCls",
+    "properties"
 })
 @XmlSeeAlso({
     TreeNode.class,
@@ -45,37 +45,37 @@ import javax.xml.bind.annotation.XmlType;
 })
 public abstract class Node {
 
+    @XmlElement(required = true)
+    protected String id;
+    @XmlElement(required = true)
+    protected String text;
     @XmlElement(required = true, defaultValue = "folder")
     protected String iconCls;
     @XmlElement(required = true)
-    protected String text;
-    @XmlElement(required = true)
-    protected String id;
-    @XmlElement(name = "properties", required = true)
-    protected List<Property> items;
+    protected List<Property> properties;
 
     /**
-     * Gets the value of the iconCls property.
+     * Gets the value of the id property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getIconCls() {
-        return iconCls;
+    public String getId() {
+        return id;
     }
 
     /**
-     * Sets the value of the iconCls property.
+     * Sets the value of the id property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setIconCls(String value) {
-        this.iconCls = value;
+    public void setId(String value) {
+        this.id = value;
     }
 
     /**
@@ -103,42 +103,42 @@ public abstract class Node {
     }
 
     /**
-     * Gets the value of the id property.
+     * Gets the value of the iconCls property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getId() {
-        return id;
+    public String getIconCls() {
+        return iconCls;
     }
 
     /**
-     * Sets the value of the id property.
+     * Sets the value of the iconCls property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setId(String value) {
-        this.id = value;
+    public void setIconCls(String value) {
+        this.iconCls = value;
     }
 
     /**
-     * Gets the value of the items property.
+     * Gets the value of the properties property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the items property.
+     * This is why there is not a <CODE>set</CODE> method for the properties property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getItems().add(newItem);
+     *    getProperties().add(newItem);
      * </pre>
      * 
      * 
@@ -148,23 +148,23 @@ public abstract class Node {
      * 
      * 
      */
-    public List<Property> getItems() {
-        if (items == null) {
-            items = new ArrayList<Property>();
+    public List<Property> getProperties() {
+        if (properties == null) {
+            properties = new ArrayList<Property>();
         }
-        return this.items;
+        return this.properties;
     }
 
     /**
-     * Sets the value of the items property.
+     * Sets the value of the properties property.
      * 
-     * @param items
+     * @param properties
      *     allowed object is
      *     {@link Property }
      *     
      */
-    public void setItems(List<Property> items) {
-        this.items = items;
+    public void setProperties(List<Property> properties) {
+        this.properties = properties;
     }
 
 }

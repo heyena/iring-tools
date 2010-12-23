@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}anyType"/>
+ *         &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -37,7 +37,7 @@ public class Property {
     @XmlElement(required = true)
     protected String name;
     @XmlElement(required = true)
-    protected Object value;
+    protected String value;
 
     /**
      * Gets the value of the name property.
@@ -68,10 +68,10 @@ public class Property {
      * 
      * @return
      *     possible object is
-     *     {@link Object }
+     *     {@link String }
      *     
      */
-    public Object getValue() {
+    public String getValue() {
         return value;
     }
 
@@ -80,10 +80,10 @@ public class Property {
      * 
      * @param value
      *     allowed object is
-     *     {@link Object }
+     *     {@link String }
      *     
      */
-    public void setValue(Object value) {
+    public void setValue(String value) {
         this.value = value;
     }
 
