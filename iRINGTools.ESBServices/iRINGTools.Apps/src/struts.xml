@@ -4,7 +4,7 @@
   <constant name="struts.enable.DynamicMethodInvocation" value="false" />
   <constant name="struts.devMode" value="false" />
   
-  <package name="basicstruts2" extends="struts-default">
+  <package name="default" extends="struts-default">
       <action name="federationManager">
         <result>/federationManager.html</result>
       </action>
@@ -13,12 +13,11 @@
         <result>/exchangeManager.html</result>
       </action>
   </package>
-
   
   <package name="jsontest" extends="json-default">
     <action name="federation" class="org.iringtools.controllers.FederationController" method="getFederation">
       <result type="json">
-        <param name="root">tree.items</param>
+        <param name="root">tree.nodes</param>
       </result>
     </action>
     
@@ -31,7 +30,7 @@
     
     <action name="directory" class="org.iringtools.controllers.DirectoryController" method="getDirectory">
       <result type="json">
-        <param name="root">tree.items</param>
+        <param name="root">tree.nodes</param>
       </result>
     </action>
     
@@ -68,6 +67,5 @@
       </result>
     </action>
     
-  </package>
-    
+  </package>    
 </struts>

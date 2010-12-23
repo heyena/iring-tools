@@ -65,7 +65,7 @@ public class DirectoryTreeController extends ActionSupport
   private Tree toTree(Directory directory)
   {
     Tree tree = new Tree();
-    List<Node> scopeNodes = tree.getItems();
+    List<Node> scopeNodes = tree.getNodes();
 
     for (Scope scope : directory.getItems())
     {
@@ -100,7 +100,7 @@ public class DirectoryTreeController extends ActionSupport
             graphNode.setLeaf(true);
             appNodeList.add(graphNode);
             
-            List<Property> properties = graphNode.getItems();
+            List<Property> properties = graphNode.getProperties();
             Property prop1 = new Property();
             prop1.setName("Name");
             prop1.setValue(graph.getName());
@@ -142,7 +142,7 @@ public class DirectoryTreeController extends ActionSupport
             exchangeNode.setText(exchange.getName());
             exchangeNode.setLeaf(true);
             
-            List<Property> properties = exchangeNode.getItems();
+            List<Property> properties = exchangeNode.getProperties();
             Property prop1 = new Property();
             prop1.setName("Id");
             prop1.setValue(exchange.getId());

@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="treeNode" type="{http://www.iringtools.org/ui/widgets/tree}Node" maxOccurs="unbounded"/>
+ *         &lt;element name="node" type="{http://www.iringtools.org/ui/widgets/tree}Node" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -31,27 +31,27 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Tree", propOrder = {
-    "items"
+    "nodes"
 })
 @XmlRootElement(name = "tree")
 public class Tree {
 
-    @XmlElement(name = "treeNode", required = true)
-    protected List<Node> items;
+    @XmlElement(name = "node", required = true)
+    protected List<Node> nodes;
 
     /**
-     * Gets the value of the items property.
+     * Gets the value of the nodes property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the items property.
+     * This is why there is not a <CODE>set</CODE> method for the nodes property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getItems().add(newItem);
+     *    getNodes().add(newItem);
      * </pre>
      * 
      * 
@@ -61,23 +61,23 @@ public class Tree {
      * 
      * 
      */
-    public List<Node> getItems() {
-        if (items == null) {
-            items = new ArrayList<Node>();
+    public List<Node> getNodes() {
+        if (nodes == null) {
+            nodes = new ArrayList<Node>();
         }
-        return this.items;
+        return this.nodes;
     }
 
     /**
-     * Sets the value of the items property.
+     * Sets the value of the nodes property.
      * 
-     * @param items
+     * @param nodes
      *     allowed object is
      *     {@link Node }
      *     
      */
-    public void setItems(List<Node> items) {
-        this.items = items;
+    public void setNodes(List<Node> nodes) {
+        this.nodes = nodes;
     }
 
 }

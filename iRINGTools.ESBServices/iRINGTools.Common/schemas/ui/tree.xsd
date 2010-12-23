@@ -17,35 +17,23 @@
 
 	<xs:complexType name="Tree">
 		<xs:sequence>
-			<xs:element name="treeNode" type="Node" maxOccurs="unbounded">
-				<xs:annotation>
-					<xs:appinfo>
-						<jaxb:property name="items" />
-					</xs:appinfo>
-				</xs:annotation>
-			</xs:element>
+			<xs:element name="node" type="Node" maxOccurs="unbounded"/>
 		</xs:sequence>
 	</xs:complexType>
 
 	<xs:complexType name="Node" abstract="true">
 		<xs:sequence>
-			<xs:element name="iconCls" type="xs:string" default="folder" />
-			<xs:element name="text" type="xs:string" />
 			<xs:element name="id" type="xs:string" />
-			<xs:element name="properties" type="Property" maxOccurs="unbounded">
-				<xs:annotation>
-					<xs:appinfo>
-						<jaxb:property name="items" />
-					</xs:appinfo>
-				</xs:annotation>
-			</xs:element>
+			<xs:element name="text" type="xs:string" />
+			<xs:element name="iconCls" type="xs:string" default="folder" />
+			<xs:element name="properties" type="Property" maxOccurs="unbounded" />
 		</xs:sequence>
 	</xs:complexType>
 
 	<xs:complexType name="Property">
 		<xs:sequence>
 			<xs:element name="name" type="xs:string" />
-			<xs:element name="value" />
+			<xs:element name="value" type="xs:string" />
 		</xs:sequence>
 	</xs:complexType>
 

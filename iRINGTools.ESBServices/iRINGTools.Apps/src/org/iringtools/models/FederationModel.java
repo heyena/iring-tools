@@ -92,13 +92,13 @@ public class FederationModel
   {
 
     Tree tree = new Tree();
-    List<Node> treeNodes = tree.getItems();
+    List<Node> treeNodes = tree.getNodes();
     
     TreeNode generatorsNode = new TreeNode();
     generatorsNode.setText("ID Generators");
     generatorsNode.setId("idGenerator");
     generatorsNode.setIconCls("folder");
-    List<Property> idNodeProperties = generatorsNode.getItems();
+    List<Property> idNodeProperties = generatorsNode.getProperties();
     idNodeProperties.add(WidgetUtil.createProperty("Name", ""));
     idNodeProperties.add(WidgetUtil.createProperty("URI", ""));
     idNodeProperties.add(WidgetUtil.createProperty("Description", ""));
@@ -115,7 +115,7 @@ public class FederationModel
       generatorNode.setIconCls("generator");
       generatorNode.setLeaf(true);
 
-      List<Property> properties = generatorNode.getItems();
+      List<Property> properties = generatorNode.getProperties();
       properties.add(WidgetUtil.createProperty("Name", idgenerator.getName()));
       properties.add(WidgetUtil.createProperty("URI", idgenerator.getUri()));
       properties.add(WidgetUtil.createProperty("Description", idgenerator.getDescription()));
@@ -128,7 +128,7 @@ public class FederationModel
     namespacesNode.setText("Namespaces");
     namespacesNode.setId("namespace");
     namespacesNode.setIconCls("folder");
-    List<Property> nsNodeProperties = namespacesNode.getItems();
+    List<Property> nsNodeProperties = namespacesNode.getProperties();
     nsNodeProperties.add(WidgetUtil.createProperty("Alias", ""));
     nsNodeProperties.add(WidgetUtil.createProperty("URI", ""));
     nsNodeProperties.add(WidgetUtil.createProperty("Description", ""));
@@ -147,7 +147,7 @@ public class FederationModel
       namespaceNode.setIconCls("namespace");
       namespaceNode.setLeaf(true);
 
-      List<Property> properties = namespaceNode.getItems();
+      List<Property> properties = namespaceNode.getProperties();
       properties.add(WidgetUtil.createProperty("Alias", namespace.getAlias()));
       properties.add(WidgetUtil.createProperty("URI", namespace.getUri()));
       properties.add(WidgetUtil.createProperty("Description", namespace.getDescription()));
@@ -163,7 +163,7 @@ public class FederationModel
     repositoriesNode.setText("Repositories");
     repositoriesNode.setId("repository");
     repositoriesNode.setIconCls("folder");
-    List<Property> repoNodeProperties = repositoriesNode.getItems();
+    List<Property> repoNodeProperties = repositoriesNode.getProperties();
     repoNodeProperties.add(WidgetUtil.createProperty("URI", ""));
     repoNodeProperties.add(WidgetUtil.createProperty("Name", ""));
     repoNodeProperties.add(WidgetUtil.createProperty("Description", ""));
@@ -184,7 +184,7 @@ public class FederationModel
       repositoryNode.setIconCls("repository");
       repositoryNode.setLeaf(true);
 
-      List<Property> properties = repositoryNode.getItems();
+      List<Property> properties = repositoryNode.getProperties();
 
       properties.add(WidgetUtil.createProperty("URI", repository.getUri()));
       properties.add(WidgetUtil.createProperty("Name", repository.getName()));

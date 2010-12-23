@@ -27,10 +27,10 @@ function loadDirectoryTree() {
     	  var dataTypeNode = node.parentNode.parentNode;
 
         if (dataTypeNode.attributes['text'] == 'Application Data') {
-          populatePropertyGrid(node.attributes['items']);
+          populatePropertyGrid(node.attributes.properties);
         }
         else if (dataTypeNode.attributes['text'] == 'Exchange Data') {
-          populatePropertyGrid(node.attributes['items']);
+          populatePropertyGrid(node.attributes.properties);
         }
       },
 
@@ -40,12 +40,12 @@ function loadDirectoryTree() {
         if (dataTypeNode.attributes['text'] == 'Application Data') {
         	var graphNode = node.parentNode;
 
-        	populatePropertyGrid(node.attributes['items']);
+        	populatePropertyGrid(node.attributes.properties);
           loadAppData(dataTypeNode.parentNode.attributes['text'],  graphNode.attributes['text'], node.attributes['text']);
           //dataPane = dtiGridPane;    
         } 
         else if (dataTypeNode.attributes['text'] == 'Exchange Data') {
-        	populatePropertyGrid(node.attributes['items']);
+        	populatePropertyGrid(node.attributes.properties);
           loadExchangeData(dataTypeNode.parentNode.attributes['text'], node.attributes['id']);
           //dataPane = exchangeDataPane;
         }
@@ -105,7 +105,7 @@ function loadAppData(scope, app, graph) {
   });
 }
 
-function loadExchangeData(scope, app, graph) {
+function loadExchangeData(scope, exchangeId) {
 	alert('Loading exchange data: /' + scope + '/exchanges/' + exchangeId);   
 }
 

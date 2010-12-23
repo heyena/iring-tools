@@ -157,7 +157,7 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
         // 01. Edit Form
 
         var obj = node.attributes
-        var properties = node.attributes.items
+        var properties = node.attributes.properties
         var nId = obj['id']
 
         if ('children' in obj != true) { // restrict to generate form those have children

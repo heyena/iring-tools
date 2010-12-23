@@ -133,7 +133,7 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 	*/
   	if (node != null) {
 	  	var obj = node.attributes;  
-	  	var item = node.attributes['items'];
+	  	var item = node.attributes['properties'];
 			var uid = item[0].value;
 			var label = '';
 			var requestURL = '';
@@ -163,7 +163,7 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   
   onClick: function(node) {
   	//obj = node.attributes;
-  	//properties = node.attributes['items'];
+  	//properties = node.attributes['properties'];
   	
   	
   	
@@ -171,10 +171,10 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 	
 	if (dataTypeNode.attributes['text'] == 'Application Data') {
 		var graphNode = node.parentNode;							
-		this.populatePropertyGrid(node.attributes['items']);
+		this.populatePropertyGrid(node.attributes['properties']);
 		//this.openTab(node);
 	} else if (dataTypeNode.attributes['text'] == 'Data Exchanges') {
-		this.populatePropertyGrid(node.attributes['items']);
+		this.populatePropertyGrid(node.attributes['properties']);
 		//this.openTab(node);
 	}
 		/*var details_data = [];
