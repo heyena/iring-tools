@@ -1,6 +1,7 @@
 package org.iringtools.utility;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 
 import javax.xml.bind.JAXBException;
 import com.google.gson.Gson;
@@ -29,4 +30,11 @@ public class JsonUtil
 		Gson gson = new Gson();
 		return (T)gson.fromJson(json, clazz);
 	}
+  
+  @SuppressWarnings("unchecked")
+  public static <T> T deserialize(Type typeOfT, String json)
+  {
+    Gson gson = new Gson();
+    return (T)gson.fromJson(json, typeOfT);
+  }
 }
