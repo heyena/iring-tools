@@ -20,8 +20,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="classId" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="identifierDelimiter" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="identifiers" type="{http://www.iringtools.org/mapping}Identifiers"/>
  *         &lt;element name="identifierValue" type="{http://www.w3.org/2001/XMLSchema}string"/>
@@ -35,8 +35,8 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ClassMap", propOrder = {
+    "id",
     "name",
-    "classId",
     "identifierDelimiter",
     "identifiers",
     "identifierValue"
@@ -44,9 +44,9 @@ import javax.xml.bind.annotation.XmlType;
 public class ClassMap {
 
     @XmlElement(required = true)
-    protected String name;
+    protected String id;
     @XmlElement(required = true)
-    protected String classId;
+    protected String name;
     @XmlElement(required = true)
     protected String identifierDelimiter;
     @XmlList
@@ -54,6 +54,30 @@ public class ClassMap {
     protected List<String> identifiers;
     @XmlElement(required = true)
     protected String identifierValue;
+
+    /**
+     * Gets the value of the id property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Sets the value of the id property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setId(String value) {
+        this.id = value;
+    }
 
     /**
      * Gets the value of the name property.
@@ -77,30 +101,6 @@ public class ClassMap {
      */
     public void setName(String value) {
         this.name = value;
-    }
-
-    /**
-     * Gets the value of the classId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getClassId() {
-        return classId;
-    }
-
-    /**
-     * Sets the value of the classId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setClassId(String value) {
-        this.classId = value;
     }
 
     /**

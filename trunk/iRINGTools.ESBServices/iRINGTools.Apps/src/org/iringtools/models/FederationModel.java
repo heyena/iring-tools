@@ -1,9 +1,9 @@
 package org.iringtools.models;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+
 import org.iringtools.common.response.Response;
 import org.iringtools.refdata.federation.Federation;
 import org.iringtools.refdata.federation.IDGenerator;
@@ -19,6 +19,7 @@ import org.iringtools.ui.widgets.tree.Tree;
 import org.iringtools.ui.widgets.tree.TreeNode;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.WidgetUtil;
+
 import com.opensymphony.xwork2.ActionContext;
 
 public class FederationModel
@@ -191,7 +192,7 @@ public class FederationModel
       properties.add(WidgetUtil.createProperty("Repository Type", repository.getRepositoryType()));
       properties.add(WidgetUtil.createProperty("Update URI", repository.getUpdateUri()));
       if(repository.getNamespaces()!=null){
-	      properties.add(WidgetUtil.createProperty("Namespace List", repository.getNamespaces()));
+	      //properties.add(WidgetUtil.createProperty("Namespace List", repository.getNamespaces()));
 	    		  //WidgetUtil.createNameSpaceList(federation.getNamespaces(),repository.getNamespaces())));
       }else{
     	  properties.add(WidgetUtil.createProperty("Namespace List", null));

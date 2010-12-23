@@ -602,7 +602,7 @@ public class ESBServiceProvider
     for (int i = 0; i < targetClassTemplatesList.size(); i++)
     {
       org.iringtools.dxfr.manifest.Class targetClass = targetClassTemplatesList.get(i).getClazz();
-      ClassTemplates sourceClassTemplates = getClassTemplates(sourceClassTemplatesList, targetClass.getClassId());
+      ClassTemplates sourceClassTemplates = getClassTemplates(sourceClassTemplatesList, targetClass.getId());
       
       if (sourceClassTemplates != null)
       {
@@ -612,13 +612,13 @@ public class ESBServiceProvider
         for (int j = 0; j < targetTemplates.size(); j++)
         {
           Template targetTemplate = targetTemplates.get(j);
-          Template sourceTemplate = getTemplate(sourceTemplates, targetTemplate.getTemplateId());
+          Template sourceTemplate = getTemplate(sourceTemplates, targetTemplate.getId());
           
           if (sourceTemplate == null)
           {
             if (targetTemplate.getTransferOption() == TransferOption.REQUIRED)
             {
-              throw new Exception("Required template [" + targetTemplate.getTemplateId() + "] not found");
+              throw new Exception("Required template [" + targetTemplate.getId() + "] not found");
             }
             else
             {
@@ -632,7 +632,7 @@ public class ESBServiceProvider
             
             for (int k = 0; k < targetRoles.size(); k++)
             {
-              Role sourceRole = getRole(sourceRoles, targetRoles.get(k).getRoleId());
+              Role sourceRole = getRole(sourceRoles, targetRoles.get(k).getId());
               
               if (sourceRole == null)
               {
@@ -657,7 +657,7 @@ public class ESBServiceProvider
     {
       org.iringtools.dxfr.manifest.Class clazz = classTemplates.getClazz();
 
-      if (clazz.getClassId().equalsIgnoreCase(classId))
+      if (clazz.getId().equalsIgnoreCase(classId))
       {
         return classTemplates;
       }
@@ -670,7 +670,7 @@ public class ESBServiceProvider
   {
     for (Template template : templates)
     {
-      if (template.getTemplateId().equals(templateId))
+      if (template.getId().equals(templateId))
         return template;
     }
     
@@ -681,7 +681,7 @@ public class ESBServiceProvider
   {
     for (Role role : roles)
     {
-      if (role.getRoleId().equals(roleId))
+      if (role.getId().equals(roleId))
         return role;
     }
     

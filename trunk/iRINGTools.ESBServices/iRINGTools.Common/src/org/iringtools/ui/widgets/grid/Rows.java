@@ -1,9 +1,8 @@
 
-package org.iringtools.grid;
+package org.iringtools.ui.widgets.grid;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.HashMap;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -23,7 +22,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="success" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="total" type="{http://www.w3.org/2001/XMLSchema}double"/>
- *         &lt;element name="data" type="{http://www.iringtools.org/grid}Data" maxOccurs="unbounded"/>
+ *         &lt;element name="data" type="{http://www.iringtools.org/ui/widgets/grid}HashMap" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -36,7 +35,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "Rows", propOrder = {
     "success",
     "total",
-    "datas"
+    "data"
 })
 @XmlRootElement(name = "rows")
 public class Rows {
@@ -44,8 +43,8 @@ public class Rows {
     @XmlElement(required = true)
     protected String success;
     protected double total;
-    @XmlElement(name = "data", required = true)
-    protected List<HashMap<String, String>> datas;
+    @XmlElement(required = true)
+    protected List<java.util.HashMap<String, String>> data;
 
     /**
      * Gets the value of the success property.
@@ -88,44 +87,44 @@ public class Rows {
     }
 
     /**
-     * Gets the value of the datas property.
+     * Gets the value of the data property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the datas property.
+     * This is why there is not a <CODE>set</CODE> method for the data property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getDatas().add(newItem);
+     *    getData().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Data }
+     * {@link HashMap }
      * 
      * 
      */
-    public List<HashMap<String, String>> getDatas() {
-        if (datas == null) {
-            datas = new ArrayList<HashMap<String, String>>();
+    public List<java.util.HashMap<String, String>> getData() {
+        if (data == null) {
+            data = new ArrayList<java.util.HashMap<String, String>>();
         }
-        return this.datas;
+        return this.data;
     }
 
     /**
-     * Sets the value of the datas property.
+     * Sets the value of the data property.
      * 
-     * @param datas
+     * @param data
      *     allowed object is
-     *     {@link Data }
+     *     {@link HashMap }
      *     
      */
-    public void setDatas(List<HashMap<String, String>> datas) {
-        this.datas = datas;
+    public void setData(List<java.util.HashMap<String, String>> data) {
+        this.data = data;
     }
 
 }

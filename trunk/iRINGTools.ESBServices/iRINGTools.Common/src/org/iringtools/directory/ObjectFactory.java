@@ -30,6 +30,38 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Graphs }
+     * 
+     */
+    public Graphs createGraphs() {
+        return new Graphs();
+    }
+
+    /**
+     * Create an instance of {@link Directory }
+     * 
+     */
+    public Directory createDirectory() {
+        return new Directory();
+    }
+
+    /**
+     * Create an instance of {@link Graph }
+     * 
+     */
+    public Graph createGraph() {
+        return new Graph();
+    }
+
+    /**
+     * Create an instance of {@link Commodity }
+     * 
+     */
+    public Commodity createCommodity() {
+        return new Commodity();
+    }
+
+    /**
      * Create an instance of {@link Scope }
      * 
      */
@@ -43,46 +75,6 @@ public class ObjectFactory {
      */
     public Exchange createExchange() {
         return new Exchange();
-    }
-
-    /**
-     * Create an instance of {@link ApplicationData }
-     * 
-     */
-    public ApplicationData createApplicationData() {
-        return new ApplicationData();
-    }
-
-    /**
-     * Create an instance of {@link Exchanges }
-     * 
-     */
-    public Exchanges createExchanges() {
-        return new Exchanges();
-    }
-
-    /**
-     * Create an instance of {@link Directory }
-     * 
-     */
-    public Directory createDirectory() {
-        return new Directory();
-    }
-
-    /**
-     * Create an instance of {@link Application }
-     * 
-     */
-    public Application createApplication() {
-        return new Application();
-    }
-
-    /**
-     * Create an instance of {@link Graphs }
-     * 
-     */
-    public Graphs createGraphs() {
-        return new Graphs();
     }
 
     /**
@@ -102,19 +94,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Graph }
+     * Create an instance of {@link Application }
      * 
      */
-    public Graph createGraph() {
-        return new Graph();
+    public Application createApplication() {
+        return new Application();
     }
 
     /**
-     * Create an instance of {@link Commodity }
+     * Create an instance of {@link Exchanges }
      * 
      */
-    public Commodity createCommodity() {
-        return new Commodity();
+    public Exchanges createExchanges() {
+        return new Exchanges();
+    }
+
+    /**
+     * Create an instance of {@link ApplicationData }
+     * 
+     */
+    public ApplicationData createApplicationData() {
+        return new ApplicationData();
     }
 
 }

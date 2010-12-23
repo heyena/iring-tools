@@ -74,12 +74,12 @@ namespace org.iringtools.mapping
 
     public static void DeleteRoleMap(this GraphMap graphMap, TemplateMap templateMap, string roleId)
     {
-      RoleMap roleMap = templateMap.roleMaps.Where(c => c.roleId == roleId).FirstOrDefault();
+      RoleMap roleMap = templateMap.roleMaps.Where(c => c.id == roleId).FirstOrDefault();
       if (roleMap != null)
       {
         if (roleMap.classMap != null)
         {
-          graphMap.DeleteClassMap(roleMap.classMap.classId);
+          graphMap.DeleteClassMap(roleMap.classMap.id);
           roleMap.classMap = null;
         }
       }
@@ -97,7 +97,7 @@ namespace org.iringtools.mapping
           RoleMap classRole = templateMap.roleMaps.Where(c => c.classMap != null).FirstOrDefault();
           if (classRole != null)
           {
-            graphMap.DeleteClassMap(classRole.classMap.classId);
+            graphMap.DeleteClassMap(classRole.classMap.id);
             classRole.classMap = null;
           }
         }
@@ -110,7 +110,7 @@ namespace org.iringtools.mapping
     {
       foreach (ClassTemplateMap classTemplateMap in graphMap.classTemplateMaps)
       {
-        if (classTemplateMap.classMap.classId == classId)
+        if (classTemplateMap.classMap.id == classId)
           return classTemplateMap;
       }
 
@@ -119,7 +119,7 @@ namespace org.iringtools.mapping
 
     public static void AddClassMap(this GraphMap graphMap, RoleMap roleMap, ClassMap classMap)
     {
-      ClassTemplateMap classTemplateListMap = graphMap.GetClassTemplateMap(classMap.classId);
+      ClassTemplateMap classTemplateListMap = graphMap.GetClassTemplateMap(classMap.id);
       if (classTemplateListMap == null)
         classTemplateListMap = new ClassTemplateMap();
 
@@ -141,7 +141,7 @@ namespace org.iringtools.mapping
     public static void AddTemplateMap(this GraphMap graphMap, ClassMap classMap, TemplateMap templateMap)
     {
       graphMap.AddClassMap(null, classMap);
-      ClassTemplateMap classTemplateMap = graphMap.classTemplateMaps.Where(c => c.classMap.classId == classMap.classId).FirstOrDefault();
+      ClassTemplateMap classTemplateMap = graphMap.classTemplateMaps.Where(c => c.classMap.id == classMap.id).FirstOrDefault();
       if (classTemplateMap.classMap != null)
         classTemplateMap.templateMaps.Add(templateMap);
     }
@@ -152,10 +152,10 @@ namespace org.iringtools.mapping
       if (classTemplateMap.classMap != null)
       {
         List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
-        TemplateMap templateMap = classTemplateMap.templateMaps.Where(c => c.templateId == templateId).FirstOrDefault();
+        TemplateMap templateMap = classTemplateMap.templateMaps.Where(c => c.id == templateId).FirstOrDefault();
         RoleMap classRole = templateMap.roleMaps.Where(c => c.classMap != null).FirstOrDefault();
         if (classRole != null)
-          graphMap.DeleteClassMap(classRole.classMap.classId);
+          graphMap.DeleteClassMap(classRole.classMap.id);
 
         templateMaps.Remove(templateMap);
       }
@@ -210,7 +210,7 @@ namespace org.iringtools.mapping
       {
         ClassMap clone = new ClassMap
         {
-          classId = classMap.classId,
+          id = classMap.id,
           name = classMap.name,
           identifierDelimiter = String.Empty,
           identifiers = new Identifiers(),
@@ -228,7 +228,7 @@ namespace org.iringtools.mapping
       {
         TemplateMap clone = new TemplateMap
         {
-          templateId = templateMap.templateId,
+          id = templateMap.id,
           name = templateMap.name,
           roleMaps = new RoleMaps(),
         };
@@ -246,7 +246,7 @@ namespace org.iringtools.mapping
         RoleMap clone = new RoleMap
         {
           type = roleMap.type,
-          roleId = roleMap.roleId,
+          id = roleMap.id,
           name = roleMap.name,
           dataType = roleMap.dataType,
           propertyName = roleMap.propertyName,

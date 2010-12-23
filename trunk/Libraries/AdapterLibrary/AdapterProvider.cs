@@ -1004,7 +1004,7 @@ namespace org.iringtools.adapter
       string classId = classMap.Attribute("classId").Value;
 
       ClassMap newClassMap = new ClassMap();
-      newClassMap.classId = classId;
+      newClassMap.id = classId;
       newClassMap.identifiers.Add(dataObjectMap + "." + classMap.Attribute("identifier").Value);
 
       if (parentRoleMap == null)
@@ -1040,7 +1040,7 @@ namespace org.iringtools.adapter
         string templateId = templateMap.Attribute("templateId").Value;
 
         TemplateMap newTemplateMap = new TemplateMap();
-        newTemplateMap.templateId = templateId;
+        newTemplateMap.id = templateId;
         newTemplateMaps.templateMaps.Add(newTemplateMap);
 
         if (_qmxfTemplateResultCache.ContainsKey(templateId))
@@ -1058,7 +1058,7 @@ namespace org.iringtools.adapter
         RoleMap newClassRoleMap = new RoleMap();
         newClassRoleMap.type = RoleType.Possessor;
         newTemplateMap.roleMaps.Add(newClassRoleMap);
-        newClassRoleMap.roleId = classRoleId;
+        newClassRoleMap.id = classRoleId;
 
         Dictionary<string, string> roles = templateNameRolesPair.Value;
         newClassRoleMap.name = roles[classRoleId];
@@ -1085,8 +1085,8 @@ namespace org.iringtools.adapter
 
           RoleMap newRoleMap = new RoleMap();
           newTemplateMap.roleMaps.Add(newRoleMap);
-          newRoleMap.roleId = roleMap.Attribute("roleId").Value;
-          newRoleMap.name = roles[newRoleMap.roleId];
+          newRoleMap.id = roleMap.Attribute("roleId").Value;
+          newRoleMap.name = roles[newRoleMap.id];
 
           if (!String.IsNullOrEmpty(value))
           {

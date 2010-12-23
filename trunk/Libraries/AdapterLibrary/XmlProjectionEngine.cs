@@ -83,16 +83,16 @@ namespace org.iringtools.adapter.projection
     {
       ClassMap classMap = classTemplateMap.classMap;
       List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
-      string classIdentifier = _classIdentifiers[classMap.classId][dataObjectIndex];
+      string classIdentifier = _classIdentifiers[classMap.id][dataObjectIndex];
 
       XElement classElement = new XElement(_appNamespace + Utility.TitleCase(classMap.name));
-      classElement.Add(new XAttribute("rdlUri", classMap.classId));
+      classElement.Add(new XAttribute("rdlUri", classMap.id));
       parentElement.Add(classElement);
       bool classExists = false;
 
-      if (_classIdentifiersCache.ContainsKey(classMap.classId))
+      if (_classIdentifiersCache.ContainsKey(classMap.id))
       {
-        List<string> classIdentifiers = _classIdentifiersCache[classMap.classId];
+        List<string> classIdentifiers = _classIdentifiersCache[classMap.id];
 
         if (!classIdentifiers.Contains(classIdentifier))
         {
@@ -107,7 +107,7 @@ namespace org.iringtools.adapter.projection
       }
       else
       {
-        _classIdentifiersCache[classMap.classId] = new List<string> { classIdentifier };
+        _classIdentifiersCache[classMap.id] = new List<string> { classIdentifier };
         classElement.Add(new XAttribute("id", classIdentifier));
       }
 
@@ -120,7 +120,7 @@ namespace org.iringtools.adapter.projection
           RoleMap classRole = null;
 
           XElement baseTemplateElement = new XElement(_appNamespace + templateMap.name);
-          baseTemplateElement.Add(new XAttribute("rdlUri", templateMap.templateId));
+          baseTemplateElement.Add(new XAttribute("rdlUri", templateMap.id));
 
           foreach (RoleMap roleMap in templateMap.roleMaps)
           {
@@ -129,7 +129,7 @@ namespace org.iringtools.adapter.projection
             switch (roleMap.type)
             {
               case RoleType.Possessor:
-                baseTemplateElement.Add(new XAttribute("possessorRole", roleMap.roleId));
+                baseTemplateElement.Add(new XAttribute("possessorRole", roleMap.id));
                 break;
 
               case RoleType.Reference:
@@ -137,14 +137,14 @@ namespace org.iringtools.adapter.projection
                   classRole = roleMap;
                 else
                 {
-                  roleElement.Add(new XAttribute("rdlUri", roleMap.roleId));
+                  roleElement.Add(new XAttribute("rdlUri", roleMap.id));
                   roleElement.Add(new XAttribute("reference", roleMap.value));
                   baseTemplateElement.Add(roleElement);
                 }
                 break;
 
               case RoleType.FixedValue:
-                roleElement.Add(new XAttribute("rdlUri", roleMap.roleId));
+                roleElement.Add(new XAttribute("rdlUri", roleMap.id));
                 roleElement.Add(new XText(roleMap.value));
                 baseTemplateElement.Add(roleElement);
                 break;
@@ -160,11 +160,11 @@ namespace org.iringtools.adapter.projection
           if (classRole != null)
           {
             XElement roleElement = new XElement(_appNamespace + classRole.name);
-            roleElement.Add(new XAttribute("rdlUri", classRole.roleId));
+            roleElement.Add(new XAttribute("rdlUri", classRole.id));
             baseTemplateElement.Add(roleElement);
             classElement.Add(baseTemplateElement);
 
-            string classId = classRole.classMap.classId;
+            string classId = classRole.classMap.id;
             ClassTemplateMap subClassTemplateMap = _graphMap.GetClassTemplateMap(classId);
             CreateHierarchicalXml(roleElement, subClassTemplateMap, dataObjectIndex);
           }
@@ -201,7 +201,7 @@ namespace org.iringtools.adapter.projection
                 string value = Convert.ToString(valueObject.GetPropertyValue(propertyName));
 
                 XElement propertyElement = new XElement(_appNamespace + propertyRole.name);
-                propertyElement.Add(new XAttribute("rdlUri", propertyRole.roleId));
+                propertyElement.Add(new XAttribute("rdlUri", propertyRole.id));
                 propertyElements.Add(propertyElement);
 
                 if (String.IsNullOrEmpty(propertyRole.valueListName))

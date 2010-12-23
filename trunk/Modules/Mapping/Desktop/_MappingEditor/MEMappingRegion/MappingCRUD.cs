@@ -359,7 +359,7 @@ namespace org.iringtools.modules.memappingregion
           ClassMap classMap = new ClassMap
           {
             name = model.SelectedIMLabel,
-            classId = SPARQLExtensions.GetIdWithAliasFromUri(model.SelectedIMUri)
+            id = SPARQLExtensions.GetIdWithAliasFromUri(model.SelectedIMUri)
           };
 
           classMap.identifiers.Add(string.Format("{0}.{1}", dataObjectName, model.SelectedDataObject.DataProperty.PropertyName));
@@ -484,7 +484,7 @@ namespace org.iringtools.modules.memappingregion
 
           //templateMap.name = AdjustTemplateName(mappingItem, model.SelectedIMLabel);
           templateMap.name = GetTemplateName(mappingItem, model.SelectedIMLabel);
-          templateMap.templateId = SPARQLExtensions.GetIdWithAliasFromUri(model.SelectedIMUri);
+          templateMap.id = SPARQLExtensions.GetIdWithAliasFromUri(model.SelectedIMUri);
           TemplateTreeItem node = null;
           if (model.SelectedTreeItem is TemplateTreeItem)
           {
@@ -508,9 +508,9 @@ namespace org.iringtools.modules.memappingregion
             template = templateQualification;
             templateType = TemplateType.Qualification;
           }
-          templateMap.templateType = templateType;
+          templateMap.type = templateType;
 
-          GetRoleMaps(selectedClassMap.classId, template, templateMap);
+          GetRoleMaps(selectedClassMap.id, template, templateMap);
 
           if (mappingItem.TemplateMap == null)
             mappingItem.TemplateMap = new TemplateMap();
@@ -561,7 +561,7 @@ namespace org.iringtools.modules.memappingregion
             roleMap.name = utility.Utility.NameSafe(roleDefinition.name.FirstOrDefault().value);
             roleMap.dataType = range;
             roleMap.propertyName = string.Empty;
-            roleMap.roleId = roleDefinition.identifier.GetIdWithAliasFromUri();
+            roleMap.id = roleDefinition.identifier.GetIdWithAliasFromUri();
 
             currentTemplateMap.roleMaps.Add(roleMap);
           }
@@ -573,7 +573,7 @@ namespace org.iringtools.modules.memappingregion
 
             roleMap.dataType = range;
             roleMap.propertyName = string.Empty;
-            roleMap.roleId = roleDefinition.identifier.GetIdWithAliasFromUri();
+            roleMap.id = roleDefinition.identifier.GetIdWithAliasFromUri();
             currentTemplateMap.roleMaps.Add(roleMap);
           }
           else if (range == classId)
@@ -582,7 +582,7 @@ namespace org.iringtools.modules.memappingregion
             roleMap.name = utility.Utility.NameSafe(roleDefinition.name.FirstOrDefault().value);
             roleMap.dataType = range;
             roleMap.propertyName = string.Empty;
-            roleMap.roleId = roleDefinition.identifier.GetIdWithAliasFromUri();
+            roleMap.id = roleDefinition.identifier.GetIdWithAliasFromUri();
             currentTemplateMap.roleMaps.Add(roleMap);
           }
         }
@@ -598,7 +598,7 @@ namespace org.iringtools.modules.memappingregion
           RoleMap roleMap = new RoleMap();
 
           roleMap.name = utility.Utility.NameSafe(roleQualification.name.FirstOrDefault().value);
-          roleMap.roleId = roleQualification.qualifies.GetIdWithAliasFromUri();
+          roleMap.id = roleQualification.qualifies.GetIdWithAliasFromUri();
 
           if (roleQualification.value != null)  // fixed role
           {
@@ -793,7 +793,7 @@ namespace org.iringtools.modules.memappingregion
           ClassMap classMap = new ClassMap
           {
             name = utility.Utility.NameSafe(txtLabel.Text),
-            classId = Id
+            id = Id
           };
           classMap.identifiers = new Identifiers();
           classMap.identifiers
@@ -917,7 +917,7 @@ namespace org.iringtools.modules.memappingregion
               MappingItem parent = (MappingItem)mappingItem.Parent;
               TemplateMap templateMap = (TemplateMap)mappingItem.Tag;
 
-              model.SelectedGraphMap.DeleteTemplateMap(parent.ClassMap.classId, templateMap.templateId);
+              model.SelectedGraphMap.DeleteTemplateMap(parent.ClassMap.id, templateMap.id);
 
               parent.Items.Remove(mappingItem);
 
@@ -930,7 +930,7 @@ namespace org.iringtools.modules.memappingregion
               MappingItem parent = (MappingItem)mappingItem.Parent;
               RoleMap roleMap = (RoleMap)mappingItem.Tag;
               if (roleMap.classMap != null)
-                mappingItem.GraphMap.DeleteRoleMap(mappingItem.TemplateMap, roleMap.roleId);
+                mappingItem.GraphMap.DeleteRoleMap(mappingItem.TemplateMap, roleMap.id);
 
               roleMap.propertyName = string.Empty;
               roleMap.valueListName = string.Empty;
@@ -952,7 +952,7 @@ namespace org.iringtools.modules.memappingregion
             {
               MappingItem parent = (MappingItem)mappingItem.Parent;
               RoleMap roleMap = (RoleMap)parent.Tag;
-              mappingItem.GraphMap.DeleteRoleMap(mappingItem.TemplateMap, roleMap.roleId);
+              mappingItem.GraphMap.DeleteRoleMap(mappingItem.TemplateMap, roleMap.id);
 
               parent.Items.Clear();
               parent.IsExpanded = false;

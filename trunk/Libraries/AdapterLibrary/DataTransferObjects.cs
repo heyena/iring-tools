@@ -116,7 +116,7 @@ namespace org.iringtools.adapter
       {
         foreach (TemplateObject templateObject in templateObjects)
         {
-          if (templateObject.templateId == templateMap.templateId)
+          if (templateObject.templateId == templateMap.id)
           {
             int roleIdsMatchedCount = 0;
 
@@ -124,7 +124,7 @@ namespace org.iringtools.adapter
             {
               foreach (RoleObject roleObject in templateObject.roleObjects)
               {
-                if (roleObject.roleId == roleMap.roleId)
+                if (roleObject.roleId == roleMap.id)
                 {
                   if (roleMap.type == RoleType.Reference && roleMap.classMap == null && roleMap.value == roleObject.value)
                     return templateObject;

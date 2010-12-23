@@ -162,8 +162,8 @@ namespace org.iringtools.adapter.projection
 
         for (int i = 0; i < _dataObjects.Count; i++)
         {
-          string classId = classMap.classId.Substring(classMap.classId.IndexOf(":") + 1);
-          string classInstance = _graphBaseUri + _classIdentifiers[classMap.classId][i];
+          string classId = classMap.id.Substring(classMap.id.IndexOf(":") + 1);
+          string classInstance = _graphBaseUri + _classIdentifiers[classMap.id][i];
           bool classExists = true;
 
           _relatedObjectsCache = new Dictionary<string, List<IDataObject>>();
@@ -203,7 +203,7 @@ namespace org.iringtools.adapter.projection
     private void AddRdfTemplateElements(string classInstance, TemplateMap templateMap, int dataObjectIndex)
     {
       IDataObject dataObject = _dataObjects[dataObjectIndex];
-      string templateId = templateMap.templateId.Replace(TPL_PREFIX, TPL_NS.NamespaceName);
+      string templateId = templateMap.id.Replace(TPL_PREFIX, TPL_NS.NamespaceName);
 
       List<RoleMap> propertyRoles = new List<RoleMap>();
       XElement baseTemplateElement = new XElement(OWL_THING);
@@ -213,7 +213,7 @@ namespace org.iringtools.adapter.projection
 
       foreach (RoleMap roleMap in templateMap.roleMaps)
       {
-        string roleId = roleMap.roleId.Substring(roleMap.roleId.IndexOf(":") + 1);
+        string roleId = roleMap.id.Substring(roleMap.id.IndexOf(":") + 1);
         XElement roleElement = new XElement(TPL_NS + roleId);
 
         switch (roleMap.type)
@@ -253,13 +253,13 @@ namespace org.iringtools.adapter.projection
 
       if (classRole != null)
       {
-        string identifier = _classIdentifiers[classRole.classMap.classId][dataObjectIndex];
+        string identifier = _classIdentifiers[classRole.classMap.id][dataObjectIndex];
         baseValues.Append(identifier);
 
         string hashCode = Utility.MD5Hash(templateId + baseValues.ToString());
         baseTemplateElement.Add(new XAttribute(RDF_ABOUT, hashCode));
 
-        string roleId = classRole.roleId.Substring(classRole.roleId.IndexOf(":") + 1);
+        string roleId = classRole.id.Substring(classRole.id.IndexOf(":") + 1);
         XElement roleElement = new XElement(TPL_NS + roleId);
         roleElement.Add(new XAttribute(RDF_RESOURCE, _graphBaseUri + identifier));
         baseTemplateElement.Add(roleElement);
@@ -298,7 +298,7 @@ namespace org.iringtools.adapter.projection
           {
             string value = Convert.ToString(valueObject.GetPropertyValue(propertyName));
 
-            XElement propertyElement = new XElement(TPL_NS + propertyRole.roleId.Replace(TPL_PREFIX, String.Empty));
+            XElement propertyElement = new XElement(TPL_NS + propertyRole.id.Replace(TPL_PREFIX, String.Empty));
             propertyElements.Add(propertyElement);
 
             if (String.IsNullOrEmpty(propertyRole.valueListName))
@@ -371,7 +371,7 @@ namespace org.iringtools.adapter.projection
           switch (roleMap.type)
           {
             case RoleType.Possessor:
-              possessorRoleId = roleMap.roleId;
+              possessorRoleId = roleMap.id;
               break;
 
             case RoleType.Reference:
@@ -397,7 +397,7 @@ namespace org.iringtools.adapter.projection
         if (referenceRole != null)
         {
           referenceVariable = BLANK_NODE;
-          referenceRoleId = referenceRole.roleId;
+          referenceRoleId = referenceRole.id;
           referenceRoleValue = referenceRole.value;
           referenceEndStmt = END_STATEMENT;
         }
@@ -405,7 +405,7 @@ namespace org.iringtools.adapter.projection
         if (classRole != null)
         {
           string query = String.Format(SUBCLASS_INSTANCE_QUERY_TEMPLATE, possessorRoleId, classInstance,
-              templateMap.templateId, referenceVariable, referenceRoleId, referenceRoleValue, referenceEndStmt, classRole.roleId);
+              templateMap.id, referenceVariable, referenceRoleId, referenceRoleValue, referenceEndStmt, classRole.id);
 
           object results = _memoryStore.ExecuteQuery(query);
 
@@ -416,7 +416,7 @@ namespace org.iringtools.adapter.projection
             foreach (SparqlResult result in resultSet)
             {
               string subclassInstance = result.Value(CLASS_VARIABLE).ToString();
-              CreateDataObjects(classRole.classMap.classId, subclassInstance, dataObjectIndex);
+              CreateDataObjects(classRole.classMap.id, subclassInstance, dataObjectIndex);
               break;  // should be one result only
             }
           }
@@ -426,7 +426,7 @@ namespace org.iringtools.adapter.projection
           foreach (RoleMap roleMap in propertyRoleMaps)
           {
             string query = String.Format(LITERAL_QUERY_TEMPLATE, possessorRoleId, classInstance,
-                 templateMap.templateId, referenceVariable, referenceRoleId, referenceRoleValue, referenceEndStmt, roleMap.roleId);
+                 templateMap.id, referenceVariable, referenceRoleId, referenceRoleValue, referenceEndStmt, roleMap.id);
 
             object results = _memoryStore.ExecuteQuery(query);
 

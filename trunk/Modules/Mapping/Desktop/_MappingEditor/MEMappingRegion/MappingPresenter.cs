@@ -311,14 +311,14 @@ namespace org.iringtools.modules.memappingregion
       {
         KeyValuePair<string, string> keyValuePair;
 
-        keyValuePair = new KeyValuePair<string, string>("Class Id", classMap.classId);
+        keyValuePair = new KeyValuePair<string, string>("Class Id", classMap.id);
         model.DetailProperties.Add(keyValuePair);
         foreach (string identifier in classMap.identifiers)
         {
           keyValuePair = new KeyValuePair<string, string>("Identifier", identifier);
           model.DetailProperties.Add(keyValuePair);
         }
-        string id = Utility.GetIdFromURI(classMap.classId);
+        string id = Utility.GetIdFromURI(classMap.id);
         if (model.IdLabelDictionary.ContainsKey(id))
         {
           model.DetailProperties.Add(new KeyValuePair<string, string>("Class Name", model.IdLabelDictionary[id]));
@@ -343,9 +343,9 @@ namespace org.iringtools.modules.memappingregion
 
         keyValuePair = new KeyValuePair<string, string>("Template Name", templateMap.name);
         model.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("Template Id", templateMap.templateId);
+        keyValuePair = new KeyValuePair<string, string>("Template Id", templateMap.id);
         model.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("Template Type", templateMap.templateType.ToString());
+        keyValuePair = new KeyValuePair<string, string>("Template Type", templateMap.type.ToString());
         model.DetailProperties.Add(keyValuePair);
       }
       catch (Exception ex)
@@ -366,7 +366,7 @@ namespace org.iringtools.modules.memappingregion
         model.DetailProperties.Add(keyValuePair);
         keyValuePair = new KeyValuePair<string, string>("Role Name", roleMap.name);
         model.DetailProperties.Add(keyValuePair);
-        keyValuePair = new KeyValuePair<string, string>("Role Id", roleMap.roleId);
+        keyValuePair = new KeyValuePair<string, string>("Role Id", roleMap.id);
         model.DetailProperties.Add(keyValuePair);
 
         string referenceId = (roleMap.value != null ? roleMap.value : string.Empty);
@@ -558,7 +558,7 @@ namespace org.iringtools.modules.memappingregion
         {
           {
             ClassMap selectedClassMap = (ClassMap)selectedNode.ClassMap;
-            ClassTemplateMap classTemplateMap = selectedNode.GraphMap.GetClassTemplateMap(selectedClassMap.classId);
+            ClassTemplateMap classTemplateMap = selectedNode.GraphMap.GetClassTemplateMap(selectedClassMap.id);
 
             if (classTemplateMap.templateMaps != null)
             {
@@ -579,7 +579,7 @@ namespace org.iringtools.modules.memappingregion
           {
             GraphMap selectedGraphMap = (GraphMap)selectedNode.Tag;
 
-            ClassTemplateMap classTemplateMap = selectedGraphMap.GetClassTemplateMap(selectedNode.ClassMap.classId);
+            ClassTemplateMap classTemplateMap = selectedGraphMap.GetClassTemplateMap(selectedNode.ClassMap.id);
 
             foreach (TemplateMap templateMap in classTemplateMap.templateMaps)
             {

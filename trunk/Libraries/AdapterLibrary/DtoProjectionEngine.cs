@@ -74,11 +74,11 @@ namespace org.iringtools.adapter.projection
             {
               ClassMap classMap = classTemplateMap.classMap;
               List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
-              string classIdentifier = _classIdentifiers[classMap.classId][i];
+              string classIdentifier = _classIdentifiers[classMap.id][i];
 
               ClassObject classObject = new ClassObject
               {
-                classId = classMap.classId,
+                classId = classMap.id,
                 name = classMap.name,
                 identifier = classIdentifier,
               };
@@ -92,7 +92,7 @@ namespace org.iringtools.adapter.projection
               {
                 TemplateObject templateObject = new TemplateObject
                 {
-                  templateId = templateMap.templateId,
+                  templateId = templateMap.id,
                   name = templateMap.name,
                 };
 
@@ -103,7 +103,7 @@ namespace org.iringtools.adapter.projection
                   RoleObject roleObject = new RoleObject
                   {
                     type = roleMap.type,
-                    roleId = roleMap.roleId,
+                    roleId = roleMap.id,
                     name = roleMap.name,
                     dataType = roleMap.dataType
                   };
@@ -136,8 +136,8 @@ namespace org.iringtools.adapter.projection
                   {
                     roleObject.relatedClassName = roleMap.classMap.name;
 
-                    if (!String.IsNullOrEmpty(_classIdentifiers[roleMap.classMap.classId][i]))
-                      value = "#" + _classIdentifiers[roleMap.classMap.classId][i];
+                    if (!String.IsNullOrEmpty(_classIdentifiers[roleMap.classMap.id][i]))
+                      value = "#" + _classIdentifiers[roleMap.classMap.id][i];
                   }
 
                   roleObject.value = value;
@@ -194,7 +194,7 @@ namespace org.iringtools.adapter.projection
           for (int i = 0; i < dataTransferObjectList.Count; i++)
           {
             DataTransferObject dataTransferObject = dataTransferObjectList[i];
-            ClassObject classObject = dataTransferObject.GetClassObject(classMap.classId);
+            ClassObject classObject = dataTransferObject.GetClassObject(classMap.id);
 
             if (classObject != null)
             {
@@ -206,7 +206,7 @@ namespace org.iringtools.adapter.projection
           for (int dataTransferObjectIndex = 0; dataTransferObjectIndex < dataTransferObjectList.Count; dataTransferObjectIndex++)
           {
             IDataObject dataObject = dataObjects[dataTransferObjectIndex];
-            CreateDataObjects(ref dataObject, classMap.classId, dataTransferObjectIndex);
+            CreateDataObjects(ref dataObject, classMap.id, dataTransferObjectIndex);
           }
 
           return dataObjects;
@@ -245,7 +245,7 @@ namespace org.iringtools.adapter.projection
 
               foreach (RoleObject roleObject in templateObject.roleObjects)
               {
-                if (roleObject.roleId == roleMap.roleId)
+                if (roleObject.roleId == roleMap.id)
                 {
                   string value = roleObject.value;
 
@@ -261,7 +261,7 @@ namespace org.iringtools.adapter.projection
 
             if (roleMap.classMap != null)
             {
-              CreateDataObjects(ref dataObject, roleMap.classMap.classId, dataTransferObjectIndex);
+              CreateDataObjects(ref dataObject, roleMap.classMap.id, dataTransferObjectIndex);
             }
           }
         }

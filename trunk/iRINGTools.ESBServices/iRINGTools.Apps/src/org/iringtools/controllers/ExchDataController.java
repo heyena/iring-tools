@@ -1,8 +1,8 @@
 package org.iringtools.controllers;
 
 import org.iringtools.models.ExchDataModel;
-import org.iringtools.grid.Grid;
-import org.iringtools.grid.Rows;
+import org.iringtools.ui.widgets.grid.Grid;
+import org.iringtools.ui.widgets.grid.Rows;
 import com.opensymphony.xwork2.Action;
 
 import java.util.HashMap;

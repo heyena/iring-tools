@@ -397,7 +397,7 @@ namespace org.iringtools.adapter
 
               Class manifestClass = new Class
               {
-                classId = classMap.classId,
+                id = classMap.id,
                 name = classMap.name,
               };
               manifestClassTemplatesMap.@class = manifestClass;
@@ -407,7 +407,7 @@ namespace org.iringtools.adapter
                 Template manifestTemplate = new Template
                 {
                   roles = new Roles(),
-                  templateId = templateMap.templateId,
+                  id = templateMap.id,
                   name = templateMap.name,
                   transferOption = TransferOption.Desired,
                 };
@@ -418,7 +418,7 @@ namespace org.iringtools.adapter
                   Role manifestRole = new Role
                   { 
                     type = roleMap.type,
-                    roleId = roleMap.roleId,
+                    id = roleMap.id,
                     name = roleMap.name,
                     dataType = roleMap.dataType,
                     value = roleMap.value,
@@ -441,7 +441,7 @@ namespace org.iringtools.adapter
                   {
                     manifestRole.@class = new Class
                     {
-                      classId = roleMap.classMap.classId,
+                      id = roleMap.classMap.id,
                       name = roleMap.classMap.name,
                     };
                   }
@@ -643,7 +643,7 @@ namespace org.iringtools.adapter
           }
         }
 
-        classIdentifiers[classMap.classId] = identifiers;
+        classIdentifiers[classMap.id] = identifiers;
       }
 
       return classIdentifiers;
@@ -667,7 +667,7 @@ namespace org.iringtools.adapter
         {
           ClassMap mappingClass = mappingClassTemplatesMap.classMap;
 
-          if (mappingClass.classId == manifestClass.classId)
+          if (mappingClass.id == manifestClass.id)
           {
             RecurBuildCrossGraphMap(ref manifestGraph, manifestClass, mappingGraph, mappingClass);
           }
@@ -682,7 +682,7 @@ namespace org.iringtools.adapter
       // find manifest templates for the manifest class
       foreach (ClassTemplates manifestClassTemplates in manifestGraph.classTemplatesList)
       {
-        if (manifestClassTemplates.@class.classId == manifestClass.classId)
+        if (manifestClassTemplates.@class.id == manifestClass.id)
         {
           manifestTemplates = manifestClassTemplates.templates;
         }
@@ -696,7 +696,7 @@ namespace org.iringtools.adapter
           ClassMap localMappingClass = pair.classMap;
           List<TemplateMap> mappingTemplates = pair.templateMaps;
 
-          if (localMappingClass.classId == manifestClass.classId)
+          if (localMappingClass.id == manifestClass.id)
           {
             ClassMap crossedClass = localMappingClass.Clone();
             TemplateMaps crossedTemplates = new TemplateMaps();
@@ -712,7 +712,7 @@ namespace org.iringtools.adapter
               {
                 if (found) break;
 
-                if (mappingTemplate.templateId == manifestTemplate.templateId)
+                if (mappingTemplate.id == manifestTemplate.id)
                 {
                   int rolesMatchedCount = 0;
 
@@ -722,7 +722,7 @@ namespace org.iringtools.adapter
 
                     foreach (Role manifestRole in manifestTemplate.roles)
                     {
-                      if (manifestRole.roleId == roleMap.roleId)
+                      if (manifestRole.id == roleMap.id)
                       {
                         if (roleMap.type == RoleType.Reference && roleMap.classMap == null && roleMap.value == manifestRole.value)
                         {
@@ -755,7 +755,7 @@ namespace org.iringtools.adapter
                   {
                     foreach (RoleMap mappingRole in theMappingTemplate.roleMaps)
                     {
-                      if (mappingRole.classMap != null && mappingRole.classMap.classId == manifestRole.@class.classId)
+                      if (mappingRole.classMap != null && mappingRole.classMap.id == manifestRole.@class.id)
                       {
                         RecurBuildCrossGraphMap(ref manifestGraph, manifestRole.@class, mappingGraph, mappingRole.classMap);
                       }
@@ -789,7 +789,7 @@ namespace org.iringtools.adapter
 
           if (firstClassMap)
           {
-            dti.Identifier = classIdentifiers[classMap.classId][i];
+            dti.Identifier = classIdentifiers[classMap.id][i];
             firstClassMap = false;
           }
 

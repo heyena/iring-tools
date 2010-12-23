@@ -30,6 +30,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link TemplateObjects }
+     * 
+     */
+    public TemplateObjects createTemplateObjects() {
+        return new TemplateObjects();
+    }
+
+    /**
      * Create an instance of {@link TemplateObject }
      * 
      */
@@ -38,19 +46,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DataTransferObjects }
+     * Create an instance of {@link RoleObject }
      * 
      */
-    public DataTransferObjects createDataTransferObjects() {
-        return new DataTransferObjects();
+    public RoleObject createRoleObject() {
+        return new RoleObject();
     }
 
     /**
-     * Create an instance of {@link RoleObjects }
+     * Create an instance of {@link ClassObjects }
      * 
      */
-    public RoleObjects createRoleObjects() {
-        return new RoleObjects();
+    public ClassObjects createClassObjects() {
+        return new ClassObjects();
     }
 
     /**
@@ -62,11 +70,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link RoleObject }
+     * Create an instance of {@link DataTransferObjects }
      * 
      */
-    public RoleObject createRoleObject() {
-        return new RoleObject();
+    public DataTransferObjects createDataTransferObjects() {
+        return new DataTransferObjects();
     }
 
     /**
@@ -86,19 +94,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ClassObjects }
+     * Create an instance of {@link RoleObjects }
      * 
      */
-    public ClassObjects createClassObjects() {
-        return new ClassObjects();
-    }
-
-    /**
-     * Create an instance of {@link TemplateObjects }
-     * 
-     */
-    public TemplateObjects createTemplateObjects() {
-        return new TemplateObjects();
+    public RoleObjects createRoleObjects() {
+        return new RoleObjects();
     }
 
 }

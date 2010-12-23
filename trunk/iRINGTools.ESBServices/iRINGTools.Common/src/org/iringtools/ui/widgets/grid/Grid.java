@@ -1,5 +1,5 @@
 
-package org.iringtools.grid;
+package org.iringtools.ui.widgets.grid;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,10 +20,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="filterSet" type="{http://www.iringtools.org/grid}filter" maxOccurs="unbounded"/>
- *         &lt;element name="headerList" type="{http://www.iringtools.org/grid}header" maxOccurs="unbounded"/>
- *         &lt;element name="relatedItemList" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="ColumnData" type="{http://www.iringtools.org/grid}column" maxOccurs="unbounded"/>
+ *         &lt;element name="filterSet" type="{http://www.iringtools.org/ui/widgets/grid}filter" maxOccurs="unbounded"/>
+ *         &lt;element name="headerList" type="{http://www.iringtools.org/ui/widgets/grid}header" maxOccurs="unbounded"/>
+ *         &lt;element name="ColumnData" type="{http://www.iringtools.org/ui/widgets/grid}column" maxOccurs="unbounded"/>
  *         &lt;element name="ClassObjName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="success" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="cacheData" type="{http://www.w3.org/2001/XMLSchema}string"/>
@@ -120,9 +119,6 @@ public class Grid {
         }
         return this.headerLists;
     }
-
-   
-
 
     /**
      * Gets the value of the columnDatas property.

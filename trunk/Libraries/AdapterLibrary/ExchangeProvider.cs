@@ -478,7 +478,7 @@ namespace org.iringtools.exchange
           }
         }
 
-        _classIdentifiers[classMap.classId] = classIdentifiers;
+        _classIdentifiers[classMap.id] = classIdentifiers;
       }
     }
 
