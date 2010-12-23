@@ -15,6 +15,7 @@ namespace org.iringtools.library
       this.Add("ProxyHost", String.Empty);
       this.Add("ProxyPort", String.Empty);
       this.Add("IgnoreSslErrors", "True");
+      this.Add("DumpSettings", "False");
     }
 
     //Append Web.config settings
