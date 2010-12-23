@@ -89,6 +89,10 @@ namespace org.iringtools.adapter
           IIdentity identity = ServiceSecurityContext.Current.PrimaryIdentity;
           _settings["UserName"] = identity.Name;
       }
+      else
+      {
+          _settings["UserName"] = String.Empty;
+      }
 
       #region initialize webHttpClient for converting old mapping
       string proxyHost = _settings["ProxyHost"];
@@ -831,6 +835,17 @@ namespace org.iringtools.adapter
       {
         if (!_isDataLayerInitialized)
         {
+          if (_settings["DumpSettings"].ToLower() == "true")
+          {
+            Dictionary<string, string> settingsDictionary = new Dictionary<string, string>();
+            foreach (string key in _settings.AllKeys)
+            {
+              settingsDictionary.Add(key, _settings[key]);
+            }
+
+            Utility.Write<Dictionary<string, string>>(settingsDictionary, @"AdapterSettings.xml");
+          }
+
           _dataLayer = _kernel.Get<IDataLayer>("DataLayer");
 
           _dataDictionary = _dataLayer.GetDictionary();
