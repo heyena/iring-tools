@@ -178,16 +178,15 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
                  */
                 for ( var i = 0; i < properties.length; i++) {
 
-                    var fname=properties[i].name
-                    var xtype=''
-                    var vtype=''
+                    var fname=properties[i].name;
+                    var xtype='';
+                    var vtype='';
                     switch(fname){
                         case "Description":
-                            xtype= 'xtype : "textarea"'
+                            xtype= 'xtype : "textarea"';
                             break;
                          case "URI":
-                             xtype= 'xtype : "textfield"'
-                            vtype= 'vtype : "url",'  // comma is required
+                             xtype= 'xtype : "textfield"';
                             break;
                          case "Read Only" :
                          case "Writable":
@@ -195,15 +194,14 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
 
                              break;
                          default:
-                            xtype= 'xtype : "textfield"'
-                            vtype= 'vtype : "uniquename",' // custom validation
+                            xtype= 'xtype : "textfield"';
                     }
 
                      list_items = list_items+',{'+xtype+',' +vtype + 'fieldLabel:"' + properties[i].name
                      + '",name:"'
                      + properties[i].name
                      + '",allowBlank:false, blankText:"This Field is required !", value:"'
-                     +properties[i].value+'"}'
+                     +properties[i].value+'"}';
 
                }
 
