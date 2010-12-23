@@ -5,7 +5,7 @@
       <classTemplateMaps>
         <classTemplateMap>
           <classMap>
-            <classId>rdl:R19192462550</classId>
+            <id>rdl:R19192462550</id>
             <name>PIPING NETWORK SYSTEM</name>
             <identifiers>
               <identifier>LINES.TAG</identifier>
@@ -13,23 +13,23 @@
           </classMap>
           <templateMaps>
             <templateMap>
-              <templateId>tpl:R66921101783</templateId>
+              <id>tpl:R66921101783</id>
               <name>IdentificationByTag</name>
               <roleMaps>
                 <roleMap>
                   <type>Possessor</type>
-                  <roleId>tpl:R44537504070</roleId>
+                  <id>tpl:R44537504070</id>
                   <name>hasObject</name>
                 </roleMap>
                 <roleMap>
                   <type>Reference</type>
-                  <roleId>tpl:R30790108016</roleId>
+                  <id>tpl:R30790108016</id>
                   <name>hasIdentificationType</name>
                   <value>rdl:R40471041754</value>
                 </roleMap>
                 <roleMap>
                   <type>Property</type>
-                  <roleId>tpl:R22674749688</roleId>
+                  <id>tpl:R22674749688</id>
                   <name>valIdentifier</name>
                   <dataType>xsd:string</dataType>
                   <propertyName>LINES.TAG</propertyName>
@@ -37,27 +37,27 @@
               </roleMaps>
             </templateMap>
             <templateMap>
-              <templateId>tpl:R41248767846</templateId>
+              <id>tpl:R41248767846</id>
               <name>PlantAreaHasPlantObject</name>
               <roleMaps>
                 <roleMap>
                   <type>Possessor</type>
-                  <roleId>tpl:R77585325576</roleId>
+                  <id>tpl:R77585325576</id>
                   <name>part</name>
                 </roleMap>
                 <roleMap>
                   <type>Reference</type>
-                  <roleId>tpl:R62157498012</roleId>
+                  <id>tpl:R62157498012</id>
                   <name>assemblyType</name>
                   <value>rdl:R30942378492</value>
                 </roleMap>
                 <roleMap>
                   <type>Reference</type>
-                  <roleId>tpl:R62348020201</roleId>
+                  <id>tpl:R62348020201</id>
                   <name>whole</name>
                   <value>rdl:R49658319833</value>
                   <classMap>
-                    <classId>rdl:R49658319833</classId>
+                    <id>rdl:R49658319833</id>
                     <name>PLANT AREA</name>
                     <identifiers>
                       <identifier>LINES.AREA</identifier>
@@ -67,27 +67,27 @@
               </roleMaps>
             </templateMap>
             <templateMap>
-              <templateId>tpl:R11327281485</templateId>
+              <id>tpl:R11327281485</id>
               <name>PAndIDRepresentation</name>
               <roleMaps>
                 <roleMap>
                   <type>Possessor</type>
-                  <roleId>tpl:R22715013877</roleId>
+                  <id>tpl:R22715013877</id>
                   <name>object</name>
                 </roleMap>
                 <roleMap>
                   <type>Reference</type>
-                  <roleId>tpl:R35290929175</roleId>
+                  <id>tpl:R35290929175</id>
                   <name>representationType</name>
                   <value>rdl:R99486931975</value>
                 </roleMap>
                 <roleMap>
                   <type>Reference</type>
-                  <roleId>tpl:R74328815710</roleId>
+                  <id>tpl:R74328815710</id>
                   <name>representation</name>
                   <value>rdl:R99486931975</value>
                   <classMap>
-                    <classId>rdl:R99486931975</classId>
+                    <id>rdl:R99486931975</id>
                     <name>P AND I DIAGRAM</name>
                     <identifiers>
                       <identifier>LINES.PIDNUMBER</identifier>
@@ -97,17 +97,17 @@
               </roleMaps>
             </templateMap>
             <templateMap>
-              <templateId>tpl:R77443358818</templateId>
+              <id>tpl:R77443358818</id>
               <name>NominalDiameter</name>
               <roleMaps>
                 <roleMap>
                   <type>Possessor</type>
-                  <roleId>tpl:R16314127825</roleId>
+                  <id>tpl:R16314127825</id>
                   <name>hasPossessor</name>
                 </roleMap>
                 <roleMap>
                   <type>Property</type>
-                  <roleId>tpl:R93884193692</roleId>
+                  <id>tpl:R93884193692</id>
                   <name>hasScale</name>
                   <dataType>xsd:string</dataType>
                   <propertyName>LINES.UOM_NOMDIAMETER</propertyName>
@@ -115,13 +115,13 @@
                 </roleMap>
                 <roleMap>
                   <type>Reference</type>
-                  <roleId>tpl:R59896853239</roleId>
+                  <id>tpl:R59896853239</id>
                   <name>hasType</name>
                   <value>rdl:R17622148043</value>
                 </roleMap>
                 <roleMap>
                   <type>Property</type>
-                  <roleId>tpl:R90688063648</roleId>
+                  <id>tpl:R90688063648</id>
                   <name>valValue</name>
                   <dataType>xsd:double</dataType>
                   <propertyName>LINES.NOMDIAMETER</propertyName>
@@ -132,7 +132,7 @@
         </classTemplateMap>
         <classTemplateMap>
           <classMap>
-            <classId>rdl:R49658319833</classId>
+            <id>rdl:R49658319833</id>
             <name>PLANT AREA</name>
             <identifiers>
               <identifier>LINES.AREA</identifier>
@@ -140,23 +140,23 @@
           </classMap>
           <templateMaps>
             <templateMap>
-              <templateId>tpl:R66921101783</templateId>
+              <id>tpl:R66921101783</id>
               <name>IdentificationByTag</name>
               <roleMaps>
                 <roleMap>
                   <type>Possessor</type>
-                  <roleId>tpl:R44537504070</roleId>
+                  <id>tpl:R44537504070</id>
                   <name>hasObject</name>
                 </roleMap>
                 <roleMap>
                   <type>Reference</type>
-                  <roleId>tpl:R30790108016</roleId>
+                  <id>tpl:R30790108016</id>
                   <name>hasIdentificationType</name>
                   <value>rdl:R40471041754</value>
                 </roleMap>
                 <roleMap>
                   <type>Property</type>
-                  <roleId>tpl:R22674749688</roleId>
+                  <id>tpl:R22674749688</id>
                   <name>valIdentifier</name>
                   <dataType>xsd:string</dataType>
                   <propertyName>LINES.AREA</propertyName>
@@ -167,7 +167,7 @@
         </classTemplateMap>
         <classTemplateMap>
           <classMap>
-            <classId>rdl:R99486931975</classId>
+            <id>rdl:R99486931975</id>
             <name>P AND I DIAGRAM</name>
             <identifiers>
               <identifier>LINES.PIDNUMBER</identifier>
@@ -175,23 +175,23 @@
           </classMap>
           <templateMaps>
             <templateMap>
-              <templateId>tpl:R30193386273</templateId>
+              <id>tpl:R30193386273</id>
               <name>ClassifiedIdentification1</name>
               <roleMaps>
                 <roleMap>
                   <type>Possessor</type>
-                  <roleId>tpl:R44537504070</roleId>
+                  <id>tpl:R44537504070</id>
                   <name>hasObject</name>
                 </roleMap>
                 <roleMap>
                   <type>Reference</type>
-                  <roleId>tpl:R30790108016</roleId>
+                  <id>tpl:R30790108016</id>
                   <name>hasIdentificationType</name>
                   <value>rdl:R16893283050</value>
                 </roleMap>
                 <roleMap>
                   <type>Property</type>
-                  <roleId>tpl:R22674749688</roleId>
+                  <id>tpl:R22674749688</id>
                   <name>valIdentifier</name>
                   <dataType>xsd:string</dataType>
                   <propertyName>LINES.PIDNUMBER</propertyName>

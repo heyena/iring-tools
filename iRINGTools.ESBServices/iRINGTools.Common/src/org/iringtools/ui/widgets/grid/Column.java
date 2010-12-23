@@ -1,5 +1,5 @@
 
-package org.iringtools.grid;
+package org.iringtools.ui.widgets.grid;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

@@ -99,8 +99,8 @@
   
   <xs:complexType name="ClassMap">
     <xs:sequence>
+      <xs:element name="id" type="xs:string" />
       <xs:element name="name" type="xs:string" />
-      <xs:element name="classId" type="xs:string" />
       <xs:element name="identifierDelimiter" type="xs:string" />
       <xs:element name="identifiers" type="Identifiers"/>
       <xs:element name="identifierValue" type="xs:string" />
@@ -121,8 +121,8 @@
 
   <xs:complexType name="TemplateMap">
     <xs:sequence>
-      <xs:element name="templateId" type="xs:string" />
-      <xs:element name="templateType" type="TemplateType" />
+      <xs:element name="type" type="TemplateType" />
+      <xs:element name="id" type="xs:string" />
       <xs:element name="name" type="xs:string" />
       <xs:element name="roleMaps" type="RoleMaps" />
     </xs:sequence>
@@ -143,7 +143,7 @@
   <xs:complexType name="RoleMap">
     <xs:sequence>
       <xs:element name="type" type="RoleType" />
-      <xs:element name="roleId" type="xs:string" />
+      <xs:element name="id" type="xs:string" />
       <xs:element name="name" type="xs:string" />
       <xs:element name="dataType" type="xs:string" />
       <xs:element name="value" type="xs:string" />

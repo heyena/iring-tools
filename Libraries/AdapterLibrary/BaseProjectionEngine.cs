@@ -302,7 +302,7 @@ namespace org.iringtools.adapter.projection
           }
         }
 
-        _classIdentifiers[classMap.classId] = identifiers;
+        _classIdentifiers[classMap.id] = identifiers;
       }
     }
 
@@ -313,7 +313,7 @@ namespace org.iringtools.adapter.projection
       if (_memoryStore != null)
       {
         ClassTemplateMap classTemplateMap = _graphMap.classTemplateMaps.First();
-        string classId = classTemplateMap.classMap.classId;
+        string classId = classTemplateMap.classMap.id;
 
         string query = String.Format(CLASS_INSTANCE_QUERY_TEMPLATE, classId);
         object results = _memoryStore.ExecuteQuery(query);
@@ -400,7 +400,7 @@ namespace org.iringtools.adapter.projection
           }
         }
 
-        _classIdentifiers[classMap.classId] = classIdentifiers;
+        _classIdentifiers[classMap.id] = classIdentifiers;
       }
     }
   }

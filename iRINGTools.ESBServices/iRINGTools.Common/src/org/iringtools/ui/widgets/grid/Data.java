@@ -1,5 +1,5 @@
 
-package org.iringtools.grid;
+package org.iringtools.ui.widgets.grid;
 
 import java.util.ArrayList;
 import java.util.List;

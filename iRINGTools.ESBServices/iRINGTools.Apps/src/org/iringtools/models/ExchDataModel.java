@@ -1,8 +1,8 @@
 package org.iringtools.models;
 
 import java.util.List;
-import org.iringtools.grid.Grid;
-import org.iringtools.grid.Rows;
+import org.iringtools.ui.widgets.grid.Grid;
+import org.iringtools.ui.widgets.grid.Rows;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dti.DataTransferIndex;

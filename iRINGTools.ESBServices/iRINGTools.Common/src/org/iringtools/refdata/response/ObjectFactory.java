@@ -30,11 +30,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Entity }
+     * Create an instance of {@link Entities }
      * 
      */
-    public Entity createEntity() {
-        return new Entity();
+    public Entities createEntities() {
+        return new Entities();
     }
 
     /**
@@ -46,11 +46,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Entities }
+     * Create an instance of {@link Entity }
      * 
      */
-    public Entities createEntities() {
-        return new Entities();
+    public Entity createEntity() {
+        return new Entity();
     }
 
 }
