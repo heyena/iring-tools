@@ -91,12 +91,20 @@
 			<xs:element name="description" type="xs:string" />
 			<xs:element name="isReadOnly" type="xs:boolean" />
 			<xs:element name="name" type="xs:string" />
-			<xs:element name="repositoryType" type="xs:string" />
+			<xs:element name="repositoryType" type="RepositoryType" />
 			<xs:element name="uri" type="xs:string" />
 			<xs:element name="updateUri" type="xs:string" />
 			<xs:element name="namespaces" type="NamespaceList" />
 		</xs:sequence>
 	</xs:complexType>
+	
+	  <xs:simpleType name="RepositoryType">
+	    <xs:restriction base="xs:string">
+	      <xs:enumeration value="Part8" />
+	      <xs:enumeration value="RDSWIP" />
+	      <xs:enumeration value="Camelot" />
+	    </xs:restriction>
+	  </xs:simpleType>
 
 	<xs:complexType name="NamespaceList">
 		<xs:sequence>
