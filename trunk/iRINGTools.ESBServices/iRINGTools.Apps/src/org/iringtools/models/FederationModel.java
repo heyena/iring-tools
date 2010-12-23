@@ -11,6 +11,7 @@ import org.iringtools.refdata.federation.IDGenerators;
 import org.iringtools.refdata.federation.Namespace;
 import org.iringtools.refdata.federation.Namespaces;
 import org.iringtools.refdata.federation.Repositories;
+import org.iringtools.refdata.federation.RepositoryType;
 import org.iringtools.refdata.federation.Repository;
 import org.iringtools.ui.widgets.tree.LeafNode;
 import org.iringtools.ui.widgets.tree.Node;
@@ -189,7 +190,7 @@ public class FederationModel
       properties.add(WidgetUtil.createProperty("Name", repository.getName()));
       properties.add(WidgetUtil.createProperty("Description", repository.getDescription()));
       properties.add(WidgetUtil.createProperty("Read Only", String.valueOf(repository.isIsReadOnly())));
-      properties.add(WidgetUtil.createProperty("Repository Type", repository.getRepositoryType()));
+      properties.add(WidgetUtil.createProperty("Repository Type", repository.getRepositoryType().value()));
       properties.add(WidgetUtil.createProperty("Update URI", repository.getUpdateUri()));
       if(repository.getNamespaces()!=null){
 	      //properties.add(WidgetUtil.createProperty("Namespace List", repository.getNamespaces()));
@@ -237,7 +238,7 @@ public class FederationModel
 					repository.setDescription(httpRequest.getParameter("Description"));
 					repository.setUri(httpRequest.getParameter("URI"));
 					repository.setName(httpRequest.getParameter("Name"));
-					repository.setRepositoryType(httpRequest.getParameter("Repository Type"));
+					repository.setRepositoryType(RepositoryType.fromValue(httpRequest.getParameter("Repository Type")));
 					repository.setUpdateUri(httpRequest.getParameter("Update URI"));
 					repository.setIsReadOnly(Boolean.parseBoolean(httpRequest.getParameter("Read Only")));
 					
