@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="isReadOnly" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="repositoryType" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="repositoryType" type="{http://www.iringtools.org/refdata/federation}RepositoryType"/>
  *         &lt;element name="uri" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="updateUri" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="namespaces" type="{http://www.iringtools.org/refdata/federation}NamespaceList"/>
@@ -56,7 +56,7 @@ public class Repository {
     @XmlElement(required = true)
     protected String name;
     @XmlElement(required = true)
-    protected String repositoryType;
+    protected RepositoryType repositoryType;
     @XmlElement(required = true)
     protected String uri;
     @XmlElement(required = true)
@@ -157,10 +157,10 @@ public class Repository {
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link RepositoryType }
      *     
      */
-    public String getRepositoryType() {
+    public RepositoryType getRepositoryType() {
         return repositoryType;
     }
 
@@ -169,10 +169,10 @@ public class Repository {
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link RepositoryType }
      *     
      */
-    public void setRepositoryType(String value) {
+    public void setRepositoryType(RepositoryType value) {
         this.repositoryType = value;
     }
 
