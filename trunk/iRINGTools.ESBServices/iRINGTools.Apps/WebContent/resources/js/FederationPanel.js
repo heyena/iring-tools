@@ -218,7 +218,7 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
 
   onClick: function(node) {
       // get all the attributes of node
-        var properties = node.attributes.items;
+        var properties = node.attributes.properties;
 
         var gridSource = new Array();
 
