@@ -24,7 +24,6 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
         edit: true,
         addnew: true,
         opentab:true,
-        generateform:true,
         selectionchange:true
     });
 
@@ -83,7 +82,7 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
     this.federationPanel.on('click', this.onClick, this);
     this.federationPanel.on('dblclick', this.onDblClick, this);
     //this.federationPanel.on('expandnode', this.onExpand, this);
-    this.federationPanel.on('expandnode', this.select_node, this);
+    //this.federationPanel.on('expandnode', this.select_node, this);
     this.federationPanel.on('refresh', this.onRefresh, this);
     this.federationPanel.getSelectionModel().on('selectionchange',this.onSelectionChange,this,this);
 
@@ -185,19 +184,19 @@ generateForm:function(formType){
         var nId = obj['id']
 
          var list_items = '{'
-                     +'xtype:"hidden",'//hidden field
+                     +'xtype : "hidden",'//hidden field
                      +'name:"formType",' // it will contain 'editForm/newForm'
                      +'value:"'+formType+'"' //value of the field
                      +'},';
         if(formType=='newForm'){
-                list_items = '{'
+                list_items = list_items+'{'
                      +'xtype:"hidden",'//hidden field
                      +'name:"parentNodeID",' //it will contain "ID Generators||Namespaces||Repositories
                      +'value:"'+obj['text']+'"' //value of the field
                      +'}';
          }
          if(formType=='editForm'){
-                list_items = '{'
+                list_items = list_items+'{'
                      +'xtype:"hidden",'//hidden field
                      +'name:"nodeID",' //name of the field sent to the server
                      +'value:"'+obj['id']+'"' //value of the field
@@ -263,13 +262,14 @@ generateForm:function(formType){
         var properties = node.attributes.properties;
 
         var gridSource = new Array();
-
-        for ( var i = 0; i < properties.length; i++) {
-                gridSource[properties[i].name] = properties[i].value;
+        if(!node.hasChildNodes()){
+            for ( var i = 0; i < properties.length; i++) {
+                    gridSource[properties[i].name] = properties[i].value;
+            }
         }
-
         // populate the property grid with gridSource
         this.propertyPanel.setSource(gridSource);
+    
         this.fireEvent('click', this, node);
   },
 
