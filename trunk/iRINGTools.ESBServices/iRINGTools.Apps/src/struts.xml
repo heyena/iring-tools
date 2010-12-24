@@ -27,6 +27,12 @@
         <param name="root">result</param>
       </result>
     </action>
+
+    <action name="deleteNode" class="org.iringtools.controllers.FederationController" method="deleteNode">
+      <result type="json">
+        <param name="root">result</param>
+      </result>
+    </action>
     
     <action name="directory" class="org.iringtools.controllers.DirectoryController" method="getDirectory">
       <result type="json">

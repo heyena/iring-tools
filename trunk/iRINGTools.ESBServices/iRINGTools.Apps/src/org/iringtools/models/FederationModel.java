@@ -214,7 +214,7 @@ public class FederationModel
 				System.out.println("###"+httpRequest.getParameter("parentNodeID")+"### ---"+httpRequest.getParameter("nodeID"));
 				if("idGenerator".equalsIgnoreCase(httpRequest.getParameter("parentNodeID"))){
 					IDGenerator idgenerator = new IDGenerator();
-					idgenerator.setId(httpRequest.getParameter("nodeID").replaceFirst("idgenerator", ""));
+					idgenerator.setId(httpRequest.getParameter("nodeID"));
 					idgenerator.setName(httpRequest.getParameter("Name"));
 					idgenerator.setUri(httpRequest.getParameter("URI"));
 					idgenerator.setDescription(httpRequest.getParameter("Description"));
@@ -223,7 +223,7 @@ public class FederationModel
 					
 				}else if("namespace".equalsIgnoreCase(httpRequest.getParameter("parentNodeID"))){
 					Namespace namespace = new Namespace();
-					namespace.setId(httpRequest.getParameter("nodeID").replaceFirst("namespace", ""));
+					namespace.setId(httpRequest.getParameter("nodeID"));
 					namespace.setUri(httpRequest.getParameter("URI"));
 					namespace.setAlias(httpRequest.getParameter("Alias"));
 					namespace.setIsWritable(Boolean.parseBoolean(httpRequest.getParameter("Writable")));
@@ -234,7 +234,8 @@ public class FederationModel
 					
 				}else if("repository".equalsIgnoreCase(httpRequest.getParameter("parentNodeID"))){
 					Repository repository = new Repository();
-					repository.setId(httpRequest.getParameter("nodeID").replaceFirst("repository", ""));
+					repository.setId(httpRequest.getParameter("nodeID"));
+					System.out.println("Description :"+httpRequest.getParameter("Description"));
 					repository.setDescription(httpRequest.getParameter("Description"));
 					repository.setUri(httpRequest.getParameter("URI"));
 					repository.setName(httpRequest.getParameter("Name"));
@@ -256,11 +257,27 @@ public class FederationModel
 					return false;
 				}
 		}catch(Exception e){
+			System.out.println("Error Occured");
 			e.printStackTrace();
 			return false;
 			
 		}
    
+  }
+  
+  public boolean deleteNode(HttpServletRequest httpRequest){
+	  try{
+		  Response response=null;
+		  System.out.println("parentNodeId :" + httpRequest.getParameter("parentNodeID"));
+		  System.out.println("NodeId :" + httpRequest.getParameter("nodeID"));
+		  
+		  //service Call
+	  }catch(Exception e){
+			e.printStackTrace();
+			return false;
+			
+		}
+	  return false; 
   }
 
 }
