@@ -96,6 +96,11 @@ FederationManager.ContentPanel = Ext.extend(Ext.Panel, {
                 if(that.getActiveTab()){
                     var node = federationPanel.getNodeBySelectedTab(that.getActiveTab())
                     Ext.Msg.alert('Success', 'Changes saved successfully!')
+                    var formType = that.data_form.getForm().findField('formType').getValue();
+                    if(formType=='newForm'){ // in case of newForm close the newTab
+                        Ext.getCmp('contentPanel').remove(that.getActiveTab(), true);
+                    }
+
                     federationPanel.onRefresh(node);
                     //federationPanel.expandNode(node) // pending
                     //federationPanel.selectNode(node) // pending
