@@ -55,4 +55,10 @@ public class FederationController  implements ServletRequestAware{
 		//federation.save();
         return Action.SUCCESS;
 	}
+	public String deleteNode() {		
+		System.out.println("Reaching deleteNode");
+		boolean successStatus = federation.deleteNode(httpRequest);
+		result.setSuccess(successStatus);
+        return Action.SUCCESS;
+	}
 }
