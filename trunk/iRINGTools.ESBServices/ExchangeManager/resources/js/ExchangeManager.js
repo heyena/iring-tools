@@ -49,16 +49,17 @@ Ext.onReady(function () {
 				var pageURL = null;
 				
 				if ((nodeType == 'exchanges' && uid != '')) {
-
-					//pageURL = 'dataObjects/getPageData/' + nodeType + '/' + scopeId + '/' + uid + '/' + identifier + '/' + refClassIdentifier
-					pageURL = 'dataObjects/getPageData/' + nodeType + '/' + scopeId + '/' + uid
+					//pageURL = 'dataObjects/getPageData/' + nodeType + '/' + scopeId + '/' + uid
+					pageURL ="exchnageData_rows.json";
 
 				} else if (nodeType == 'graph') {					
-					pageURL = 'dataObjects/getPageData/'+ nodeType + '/' + scopeId + '/' + node.parentNode.text + '/' + nodeText;
+					//pageURL = 'dataObjects/getPageData/'+ nodeType + '/' + scopeId + '/' + node.parentNode.text + '/' + nodeText;
+					pageURL ="appData_rows_json.json";
 				}
 				
 				var responseData = Ext.util.JSON.decode(result.responseText);
-				
+
+				//alert(responseData)
 				if (eval(responseData.success)==false) {		
 					
 					Ext.MessageBox.show({
@@ -71,8 +72,8 @@ Ext.onReady(function () {
 					return false;
 					
 				} else {
-					
-					var newTab = new ExchangeManager.NavigationPanel({		
+
+					var newTab = new ExchangeManager.NavigationPanel({
 						title: label,
 						id:'tab_'+label,
 						configData: responseData,

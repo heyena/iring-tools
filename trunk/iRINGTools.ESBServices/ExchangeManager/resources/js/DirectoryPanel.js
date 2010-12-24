@@ -134,14 +134,16 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			
 			if ((nodeType == 'exchanges' && uid != '')) {
 				
-				requestURL = 'dataObjects/getDataObjects/' + nodeType + '/' + scopeId + '/' + uid;
+				requestURL ='exchnageData_grid.json'
+				//***requestURL = 'dataObjects/getDataObjects/' + nodeType + '/' + scopeId + '/' + uid;
 				label = scopeId + '->' + node.text;
 				
 				this.fireEvent('open', this, node, label, requestURL);
 				
 			} else if (nodeType == 'graph') {
-				
-				requestURL = 'dataObjects/getGraphObjects/' + nodeType + '/' + scopeId + '/' + node.parentNode.text+'/' + nodeText;
+
+				requestURL = 'appData_grid_json.json';
+				//requestURL = 'dataObjects/getGraphObjects/' + nodeType + '/' + scopeId + '/' + node.parentNode.text+'/' + nodeText;
 				label = scopeId + '->' + node.parentNode.text + '->' + nodeText;
 				
 				this.fireEvent('open', this, node, label, requestURL);				

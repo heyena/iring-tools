@@ -10,10 +10,10 @@ activeItem: 0,
 configData: null,
 dataGrid: null,
 url: null,
-relatedClassArr:null,
 enableTabScroll: true,
 identifier:0,
 refClassIdentifier:0,
+
   /**
   * initComponent
   * @protected
@@ -40,18 +40,10 @@ prev: true
 			filters: filterSet
 		   });
 
-		   /*
-		   this.relatedClassArr = new Array();
-		   if (this.configData.relatedClasses != undefined) {			
-			   for(var i=0; i < this.configData.relatedClasses.length; i++) {
-				   var key = this.configData.relatedClasses[i].identifier;
-				   var text = this.configData.relatedClasses[i].text;
-				   this.relatedClassArr[i] = text;
-			   }
-		   }*/
 
 		// build the header first
 // send the request to generate the arraystore
+ //alert(this.url)
 var proxy = new Ext.data.HttpProxy({
 api: {
 read: new Ext.data.Connection({ url: this.url, method: 'POST', timeout: 120000 }),
@@ -112,30 +104,13 @@ plugins: [filters]
 });
 
 
-/*if(!this.dataGrid.getBottomToolbar()){
-var ptb = new Ext.PagingToolbar({
-pageSize: pageSize,
-store: store,
-displayInfo: true,
-autoScroll: true,
-plugins: [filters]
-});
-this.dataGrid.add(ptb);
-this.dataGrid.doLayout();
-}else{
-	alert(1)
-			
-	this.dataGrid.remove(this.dataGrid.bbar);
-			
-}
-*/
 
    this.dataGrid.on('beforerender',this.beforeRender,this);
    this.dataGrid.on('cellclick',this.onCellClick,this);
    //alert(this.dataGrid.classObjName)
 // for related items we don't require the bbar
    if(this.identifier!=0 && this.refClassIdentifier!=0){
-	   this.dataGrid.getBottomToolbar().hide();
+	 //*****  this.dataGrid.getBottomToolbar().hide();
 	   //this.dataGrid.classObjName=this.identifier;
    }
 this.items = [{
@@ -185,6 +160,7 @@ onCellClick: function (grid,rowIndex,columnIndex,e) {
 		   {
 			   var IdentificationByTag_value = record.get(fieldName);
 			   var transferType_value = record.get('TransferType');
+			   
 			   var rowDataArr = [];
 			   for(var i=3; i<cm.getColumnCount();i++){
 				   fieldHeader= grid.getColumnModel().getColumnHeader(i); // Get field name
@@ -197,7 +173,7 @@ onCellClick: function (grid,rowIndex,columnIndex,e) {
 			   var prowData = eval(rowDataArr);
 			   var pfiledsVal = eval(filedsVal_);
 			   var pColumnData = eval(columnsData_);
-		  // create the data store
+			   // create the data store
 			   var pStore = new Ext.data.ArrayStore({
 				fields: pfiledsVal
 			   });
@@ -218,134 +194,139 @@ onCellClick: function (grid,rowIndex,columnIndex,e) {
 				});
 
 
+				/*startttttttttt*/
+				var navPanel = this;
+				Ext.Ajax.request({
+				url: "exchangeData_relations.json",
+				method: 'POST',
+				params: {},
+				success: function(result, request) {
+				responseData = Ext.util.JSON.decode(result.responseText);
 
-			var store = new Ext.data.JsonStore({
-			data: eval(this.configData.relatedClasses[rowIndex].label),
-			fields: ['name','reference','identifier','scopeId','exchangeID']
-			});
-
-			var navPanel = this;
-			var listView = new Ext.list.ListView({
-				store: store,
-				hideHeaders:true,
-				singleSelect: true,
-				emptyText: 'No Items to display',
-				reserveScrollOffset: true,
-				columns: [{header: 'Class Name',dataIndex:'name'},{header: 'reference',hidden: true},{header: 'scopeId',hidden:true},{header: 'identifier',hidden:true},{header: 'exchangeID',hidden:true}]
-			});
-
-			listView.on('click', function( dataView, index, node, e ) {
-
-			//**** alert(this.configData.relatedClasses[rowIndex].identifier)
-			var dtoIdentifier = dataView.store.data.items[index].data.identifier;
-			var refClassIdentifier = dataView.store.data.items[index].data.reference;
-			var relatedClassName = dataView.store.data.items[index].data.name;
-			var scopeId = dataView.store.data.items[index].data.scopeId;
-			var exchangeId = dataView.store.data.items[index].data.exchangeID;
-
-			/*
-				check-tree.js file: function displayRleatedClassGrid(refClassIdentifier,dtoIdentifier,relatedClassName) {}
-				built the URI http://localhost:8888/dataObjects/getRelatedDataObjects/exchanges/12345_000/1/90003-SL/90
-				Send the request to get the grid details
-				built the gridPanel
-				add this gp to new Panel
-				add this Panel to the new tab
-			*/
-			var requestURL = 'dataObjects/getRelatedDataObjects/exchanges/'+scopeId+'/'+exchangeId+'/'+dtoIdentifier+'/'+refClassIdentifier;
-
-			//alert('Get related list '+requestURL)
-			Ext.Ajax.request({
-			url: requestURL,
-			method: 'POST',
-			params: {},
-			success: function(result, request) {
-					var responseData = Ext.util.JSON.decode(result.responseText);
-					var pageURL='/dataObjects/getPageData/exchanges/'+scopeId+'/'+exchangeId+'/'+dtoIdentifier+'/'+refClassIdentifier;
-					//alert(refClassIdentifier+'_'+relatedClassName+'      '+dtoIdentifier)
-
-					var newTab = new ExchangeManager.NavigationPanel({
-					title: relatedClassName,
-					id:'tab_'+dtoIdentifier,
-					configData: responseData,
-					url: pageURL,
-					closable: true,
-					identifier:dtoIdentifier,
-					refClassIdentifier:refClassIdentifier
+				if (eval(responseData.success)==true) {
+					var store = new Ext.data.JsonStore({
+					data: responseData.classes,
+					//url:"exchangeData_relations.json",
+					fields: ['id','label']
 					});
 
-					if(navPanel.get(newTab.id)==undefined){
-					navPanel.add(newTab);
-					navPanel.setActiveTab(navPanel.items.length-1);
-					}else{
-						navPanel.setActiveTab(navPanel.items.length-1);
-					}
-				 }});
-			
-	var newRelatedClassTab = {
-			title: relatedClassName,
-			//items:[classPanel],
-			html:'aaaaaaaa',
-			closable : true
-			};
-		//navPanel.add(newRelatedClassTab);
-	 });
 
+					var listView = new Ext.list.ListView({
+					store: store,
+					hideHeaders:true,
+					singleSelect: true,
+					emptyText: 'No Items to display',
+					reserveScrollOffset: true,
+					columns: [{header: 'Class Name',dataIndex:'label'},{header: 'id',hidden: true}]
+					});
+					
+					listView.on('click', function( dataView, index, node, e ) {
+					 //**** alert(this.configData.relatedClasses[rowIndex].identifier)
+						var dtoIdentifier = navPanel.removeHTMLTags(IdentificationByTag_value);
+						var refClassIdentifier = dataView.store.data.items[index].data.reference;
+						var relatedClassName = dataView.store.data.items[index].data.name;
+						var scopeId = dataView.store.data.items[index].data.scopeId;
+						var exchangeId = dataView.store.data.items[index].data.exchangeID;
 
+						/*
+						check-tree.js file: function displayRleatedClassGrid(refClassIdentifier,dtoIdentifier,relatedClassName) {}
+						built the URI http://localhost:8888/dataObjects/getRelatedDataObjects/exchanges/12345_000/1/90003-SL/90
+						Send the request to get the grid details
+						built the gridPanel
+						add this gp to new Panel
+						add this Panel to the new tab
+						*/
+						var requestURL = 'exchangesubgrid_grid.json';
+						Ext.Ajax.request({
+						url: requestURL,
+						method: 'POST',
+						params: {},
+						success: function(result, request) {
+								 var responseData = Ext.util.JSON.decode(result.responseText);
+								 var pageURL='exchangesubgrid_rows.json';
 
+								 var newTab = new ExchangeManager.NavigationPanel({
+									title: dataView.store.data.items[index].data.label,
+									id:'tab_'+navPanel.removeHTMLTags(IdentificationByTag_value),
+									configData: responseData,
+									url: pageURL,
+									closable: true,
+									identifier:dtoIdentifier,
+									refClassIdentifier:refClassIdentifier
+								 });
 
-	var classPanel = new Ext.Panel({
-	autoWidth: true,
-	height: 500,
-	forceFit:true,
-	layout: 'border',
-	defaults: {
-				collapsible: true,
-				split: true
-	},
-	items: [
-				{
-				height:100,				 
-				region: 'north',
-				collapsible: false,
-				split: true,
-				html:'<div style="float:left; width:110px;"><img src="resources/images/class-badge.png"/></div><div style="padding-top:20px;" id="identifier"><b>'+this.removeHTMLTags(IdentificationByTag_value)+'</b><br/>'+grid.classObjName+'<br/>Transfer Type : '+transferType_value+'</div>'
-				},{
-				title: 'Properties',
-				region:'west',
-				split: true,
-				margins: '0 1 3 3',
-				width: 250,
-				height:900,
-				minSize: 100,
-				items:[grid_class_properties]
-				},{
-				title: 'Related Items',
-				layout:'fit',
-				collapsible: false,
-				split: true,
-				width: 220,
-				region: 'center',
-				margins: '0 3 3 0',
-				layoutConfig: {animate: true,fill : false},
-				items:listView
+								 if(navPanel.get(newTab.id)==undefined){
+									 navPanel.add(newTab);
+									 navPanel.setActiveTab(navPanel.items.length-1);
+								 }else{
+									 navPanel.setActiveTab(navPanel.items.length-1);
+								 }
+							 }});
+					});
+
+					var classPanel = new Ext.Panel({
+									autoWidth: true,
+									height: 500,
+									forceFit:true,
+									layout: 'border',
+									defaults: {
+									collapsible: true,
+									split: true
+									},
+									items: [{
+									height:100,				 
+									region: 'north',
+									collapsible: false,
+									split: true,
+									html:'<div style="float:left; width:110px;"><img src="resources/images/class-badge.png"/></div><div style="padding-top:20px;" id="identifier"><b>'+navPanel.removeHTMLTags(IdentificationByTag_value)+'</b><br/>'+grid.classObjName+'<br/>Transfer Type : '+transferType_value+'</div>'
+												 },{
+									title: 'Properties',
+									region:'west',
+									split: true,
+									margins: '0 1 3 3',
+									width: 250,
+									height:900,
+									minSize: 100,
+									items:[grid_class_properties]
+												 },{
+									title: 'Related Items',
+									layout:'fit',
+									collapsible: false,
+									split: true,
+									width: 220,
+									region: 'center',
+									margins: '0 3 3 0',
+									layoutConfig: {animate: true,fill : false},
+									items:listView
+											//html:'aaaaaaaaaaaa'
+										   }]
+							});
+
+							var newTab = {
+							title: IdentificationByTag_value,
+							id:this.title+'_'+IdentificationByTag_value,
+							items:[classPanel],
+							closable : true
+							};
+
+							if(navPanel.get(newTab.id)==undefined){
+								navPanel.add(newTab);
+								navPanel.setActiveTab(navPanel.items.length-1);
+							}else{
+								navPanel.setActiveTab(newTab.id);
+							}
+				}else if(eval(responseData.success)==false){
+
+					Ext.MessageBox.show({
+					title: '<font color=red>Error</font>',
+					msg: 'No Exchange Results found for:<br/>'+label,
+					buttons: Ext.MessageBox.OK,
+					icon: Ext.MessageBox.ERROR
+					});
+					return false;
 				}
-		   ]
-	   });
-
-		var newTab = {
-						title: IdentificationByTag_value,
-						id:this.title+'_'+IdentificationByTag_value,
-						items:[classPanel],
-						closable : true
-					};
-
-			   if(this.get(newTab.id)==undefined){
-				   this.add(newTab);
-				   this.setActiveTab(this.items.length-1);
-			   }else{
-				   this.setActiveTab(newTab.id);
-			   }
-		   }
+					}});
+	}
 	   },
 buildToolbar: function () {
 return [{
