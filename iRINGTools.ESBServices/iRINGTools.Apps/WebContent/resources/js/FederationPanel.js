@@ -192,7 +192,7 @@ generateForm:function(formType){
                 list_items = list_items+'{'
                      +'xtype:"hidden",'//hidden field
                      +'name:"parentNodeID",' //it will contain "ID Generators||Namespaces||Repositories
-                     +'value:"'+obj['text']+'"' //value of the field
+                     +'value:"'+obj['id']+'"' //value of the field
                      +'}';
          }
          if(formType=='editForm'){
@@ -208,8 +208,7 @@ generateForm:function(formType){
                      +'}';
         }
         
-	/* 01. Start The New/Edit Form Component Items*/
-
+	/* 01. Start The New/Edit Form Component Items*/          
 
                 /*
                  * Generate the fields items dynamically
@@ -228,11 +227,11 @@ generateForm:function(formType){
                             break;
                          case "Read Only" :
                          case "Writable":
-                             xtype= 'xtype : "combo",triggerAction: "all", mode: "local", store: ["true","false"],  displayField:"'+properties[i].value+'", width: 120'
+                             xtype= 'xtype : "combo",triggerAction: "all", editable : false, mode: "local", store: ["true","false"],  displayField:"'+properties[i].value+'", width: 120'
                              break;
                          case 'Repository Type':
-                             xtype= 'xtype : "combo",triggerAction: "all", mode: "local", store: ["RDS/WIP", "Camelot", "Part 8"],  displayField:"'+properties[i].value+'", width: 120'
-                         break;
+                             xtype= 'xtype : "combo",triggerAction: "all", editable : false, mode: "local", store: ["RDS/WIP", "Camelot", "Part 8"],  displayField:"'+properties[i].value+'", width: 120'
+                         break;                        
                          default:
                             xtype= 'xtype : "textfield"'
                     }
@@ -251,7 +250,7 @@ generateForm:function(formType){
                }
 
                 list_tems = eval('[' + list_items + ']')
-               
+               //list_tems = eval('[' + list_items + ']')
                 label = node.parentNode.text + ' : ' + obj['text']+'('+formType+')'
                 this.fireEvent('opentab', this, node, label, list_tems)
  },
