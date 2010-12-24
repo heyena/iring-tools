@@ -30,19 +30,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link TreeNode }
-     * 
-     */
-    public TreeNode createTreeNode() {
-        return new TreeNode();
-    }
-
-    /**
      * Create an instance of {@link Tree }
      * 
      */
     public Tree createTree() {
         return new Tree();
+    }
+
+    /**
+     * Create an instance of {@link LeafNode }
+     * 
+     */
+    public LeafNode createLeafNode() {
+        return new LeafNode();
     }
 
     /**
@@ -54,11 +54,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link LeafNode }
+     * Create an instance of {@link TreeNode }
      * 
      */
-    public LeafNode createLeafNode() {
-        return new LeafNode();
+    public TreeNode createTreeNode() {
+        return new TreeNode();
     }
 
 }

@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlType;
  * &lt;simpleType name="RepositoryType">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
  *     &lt;enumeration value="Part8"/>
- *     &lt;enumeration value="RDSWIP"/>
+ *     &lt;enumeration value="RDS/WIP"/>
  *     &lt;enumeration value="Camelot"/>
  *   &lt;/restriction>
  * &lt;/simpleType>
@@ -28,7 +28,8 @@ public enum RepositoryType {
 
     @XmlEnumValue("Part8")
     PART_8("Part8"),
-    RDSWIP("RDSWIP"),
+    @XmlEnumValue("RDS/WIP")
+    RDS_WIP("RDS/WIP"),
     @XmlEnumValue("Camelot")
     CAMELOT("Camelot");
     private final String value;

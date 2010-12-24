@@ -4,7 +4,7 @@ import org.iringtools.ui.widgets.tree.Property;
 
 public class WidgetUtil
 {
-  public static Property createProperty(String name, String value)
+  public static Property createProperty(String name, Object value)
   {
     Property property = new Property();
     property.setName(name);
