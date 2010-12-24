@@ -191,8 +191,10 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
                          case "Read Only" :
                          case "Writable":
                              xtype= 'xtype : "combo",triggerAction: "all", mode: "local", store: ["true","false"],  displayField:"'+properties[i].value+'", width: 120'
-
                              break;
+                         case 'Repository Type':
+                             xtype= 'xtype : "combo",triggerAction: "all", mode: "local", store: ["RDS/WIP", "Camelot", "Part 8"],  displayField:"'+properties[i].value+'", width: 120'
+                         break;
                          default:
                             xtype= 'xtype : "textfield"';
                     }
