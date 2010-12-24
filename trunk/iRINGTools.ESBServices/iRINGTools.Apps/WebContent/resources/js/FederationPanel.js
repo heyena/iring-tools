@@ -23,6 +23,8 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
     	refresh: true,
         edit: true,
         addnew: true,
+        opentab:true,
+        generateform:true,
         selectionchange:true
     });
 
@@ -35,12 +37,13 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
       layout: 'fit',
       border: false,
       split: true,
-
+      expandAll:true,
+      
       rootVisible: false,
       lines: true,
       //singleExpand: true,
       useArrows: true,
-
+      autoScroll:true,
       loader: new Ext.tree.TreeLoader({
         dataUrl: this.url
       }),
@@ -79,7 +82,8 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
 
     this.federationPanel.on('click', this.onClick, this);
     this.federationPanel.on('dblclick', this.onDblClick, this);
-    this.federationPanel.on('expandnode', this.onExpand, this);
+    //this.federationPanel.on('expandnode', this.onExpand, this);
+    this.federationPanel.on('expandnode', this.select_node, this);
     this.federationPanel.on('refresh', this.onRefresh, this);
     this.federationPanel.getSelectionModel().on('selectionchange',this.onSelectionChange,this,this);
 
@@ -149,44 +153,79 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
         this.onClick(node)
      }
  },
- 
-  openTab: function(node) {
-    if (node != null) {
-	/* 01. Start The Edit Form Component */
+generateForm:function(formType){
+    node = this.getSelectedNode();
+    if (node != null){
+            if( (node.hasChildNodes() && formType =='newForm')|| (!node.hasChildNodes() && formType =='editForm')){
+  		 this.openTab(node,formType);
+            }else if(!node.hasChildNodes() && formType =='newForm'){
+                this.openTab(node.parentNode,formType);
+            }else{
+                  Ext.MessageBox.show({
+                        title: '<font color=red></font>',
+                        msg: 'Please select a child node to edit.',
+                        buttons: Ext.MessageBox.OK,
+                        icon: Ext.MessageBox.INFO
+                });
+            }
+        }else{
+          Ext.MessageBox.show({
+                title: '<font color=red></font>',
+                msg: 'Please select a node.',
+                buttons: Ext.MessageBox.OK,
+                icon: Ext.MessageBox.INFO
+        });
+        }
+   
+},
 
-        // 01. Edit Form
-
-        var obj = node.attributes
+  openTab: function(node,formType) {
+     var obj = node.attributes
         var properties = node.attributes.properties
         var nId = obj['id']
 
-        if ('children' in obj != true) { // restrict to generate form those have children
-
-                var list_items = '{'
-                     +'xtype:"hidden",'//<--hidden field
+         var list_items = '{'
+                     +'xtype:"hidden",'//hidden field
+                     +'name:"formType",' // it will contain 'editForm/newForm'
+                     +'value:"'+formType+'"' //value of the field
+                     +'},';
+        if(formType=='newForm'){
+                list_items = '{'
+                     +'xtype:"hidden",'//hidden field
+                     +'name:"parentNodeID",' //it will contain "ID Generators||Namespaces||Repositories
+                     +'value:"'+obj['text']+'"' //value of the field
+                     +'}';
+         }
+         if(formType=='editForm'){
+                list_items = '{'
+                     +'xtype:"hidden",'//hidden field
                      +'name:"nodeID",' //name of the field sent to the server
                      +'value:"'+obj['id']+'"' //value of the field
                      +'},'
                      +'{'
-                     +'xtype:"hidden",'//<--hidden field
-                     +'name:"parentNodeID",' //parent node id
+                     +'xtype:"hidden",'//hidden field
+                     +'name:"parentNodeID",' //it will contain "ID Generators||Namespaces||Repositories
                      +'value:"'+node.parentNode.id+'"' //value of the field
                      +'}';
+        }
+        
+	/* 01. Start The New/Edit Form Component Items*/
+
 
                 /*
                  * Generate the fields items dynamically
                  */
                 for ( var i = 0; i < properties.length; i++) {
 
-                    var fname=properties[i].name;
-                    var xtype='';
-                    var vtype='';
+                    var fname=properties[i].name
+                    var value=''
+                    var xtype=''
                     switch(fname){
                         case "Description":
-                            xtype= 'xtype : "textarea"';
+                            xtype= 'xtype : "textarea"'
                             break;
                          case "URI":
-                             xtype= 'xtype : "textfield"';
+                             xtype= 'xtype : "textfield"'
                             break;
                          case "Read Only" :
                          case "Writable":
@@ -196,26 +235,27 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
                              xtype= 'xtype : "combo",triggerAction: "all", mode: "local", store: ["RDS/WIP", "Camelot", "Part 8"],  displayField:"'+properties[i].value+'", width: 120'
                          break;
                          default:
-                            xtype= 'xtype : "textfield"';
+                            xtype= 'xtype : "textfield"'
                     }
 
-                     list_items = list_items+',{'+xtype+',' +vtype + 'fieldLabel:"' + properties[i].name
+
+
+                     if(formType=='editForm'){
+                         value = properties[i].value
+                     }
+                     list_items = list_items+',{'+xtype+', fieldLabel:"' + properties[i].name
                      + '",name:"'
                      + properties[i].name
                      + '",allowBlank:false, blankText:"This Field is required !", value:"'
-                     +properties[i].value+'"}';
+                     +value+'"}'
 
                }
 
                 list_tems = eval('[' + list_items + ']')
-
-                label = node.parentNode.text + ' : ' + obj['text']
-
-                this.fireEvent('edit', this, node, label, list_tems)
-			
-  	}
-      }
-    },
+               
+                label = node.parentNode.text + ' : ' + obj['text']+'('+formType+')'
+                this.fireEvent('opentab', this, node, label, list_tems)
+ },
 
 
   onClick: function(node) {
@@ -234,7 +274,7 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
   },
 
   onDblClick: function(node) {
-  	this.openTab(node);
+      this.generateForm('editForm')
   },
 
   onExpand: function(node) {
@@ -243,19 +283,16 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
 	},
 
   onRefresh: function (node) {
-	  //alert('onRefresh');
-  	Ext.state.Manager.clear('federation-state');
-		this.federationPanel.root.reload();
+      Ext.state.Manager.clear('federation-state');
+      this.federationPanel.root.reload();
   },
 
   onEdit: function (btn, ev) {
-  	this.openTab(this.getSelectedNode());
+      this.generateForm('editForm')
   },
 
   onAddnew: function (btn, ev) {
-  	node = this.getSelectedNode();
-  	if (node != null)
-  		this.fireEvent('addnew', this, node);
+     this.generateForm('newForm')
+        
   }
-
 });

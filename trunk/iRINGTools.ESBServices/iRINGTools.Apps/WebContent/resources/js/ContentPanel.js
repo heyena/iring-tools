@@ -31,7 +31,7 @@ FederationManager.ContentPanel = Ext.extend(Ext.Panel, {
             url:this.url,
             method: 'POST',
             border : false, // removing the border of the form
-            id : 'frmEdit' + this.nId,
+           // id : 'frmEdit' + this.nId,
             frame : true,
             //autoHeight: true,
             layout:'fit',
