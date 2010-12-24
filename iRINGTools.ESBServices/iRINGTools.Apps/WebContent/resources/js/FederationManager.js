@@ -30,6 +30,7 @@ Ext.onReady(function () {
   	  minSize: 175,
   	  maxSize: 500,
 	  url: 'federation'
+          
 	});
 
 	var tabPanel = new Ext.TabPanel({
@@ -51,7 +52,7 @@ Ext.onReady(function () {
            }
         });
         
-	federationPanel.on('edit', function(panel, node, label, formData) {
+	federationPanel.on('opentab', function(panel, node, label, formData) {
 
                 var newTab = new FederationManager.ContentPanel({
                         title: label,
@@ -73,6 +74,7 @@ Ext.onReady(function () {
                                 deferredRender: false
                         }                        
                 });
+
                 Ext.getCmp('contentPanel').enable()
                 tabPanel.add(newTab);
                 tabPanel.activate(newTab); 
