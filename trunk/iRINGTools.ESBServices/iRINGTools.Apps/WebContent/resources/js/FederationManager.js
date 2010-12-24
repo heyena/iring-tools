@@ -30,7 +30,6 @@ Ext.onReady(function () {
   	  minSize: 175,
   	  maxSize: 500,
 	  url: 'federation'
-          
 	});
 
 	var tabPanel = new Ext.TabPanel({
