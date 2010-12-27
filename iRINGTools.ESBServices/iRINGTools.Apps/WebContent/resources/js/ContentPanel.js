@@ -37,7 +37,7 @@ FederationManager.ContentPanel = Ext.extend(Ext.Panel, {
             layout:'fit',
             closable : true,
             defaults : {
-              width : 230,
+              //width : 230,
               msgTarget: 'under'
             },
             defaultType : 'textfield',
