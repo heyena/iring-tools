@@ -177,8 +177,25 @@ generateForm:function(formType){
         }
    
 },
+ getAllChildNodes:function(parentNode){
+    var kids = parentNode.childNodes;   // Get the list of children
+    var numkids = kids.length; // Figure out how many there are
 
-  openTab: function(node,formType) {
+    var childNodeStr=''
+    //find child
+    for(var i = 0, len = numkids; i < len; i++) {
+         if(childNodeStr!=''){
+            childNodeStr= childNodeStr + ',["'+kids[i].attributes.id+'","'+kids[i].attributes.text+'"]';
+          } else{
+              childNodeStr=  '["'+kids[i].attributes.id+'","'+kids[i].attributes.text+'"]';
+          }
+    }
+    return '['+childNodeStr+']';
+ },
+openTab: function(node,formType) {
+ // get all the namespances
+ var allNameSpaces = this.getAllChildNodes(this.federationPanel.getRootNode().findChild('id','namespace'))
+ 
      var obj = node.attributes
         var properties = node.attributes.properties
         var nId = obj['id']
@@ -210,49 +227,57 @@ generateForm:function(formType){
         
 	/* 01. Start The New/Edit Form Component Items*/          
 
-                /*
-                 * Generate the fields items dynamically
-                 */
-                for ( var i = 0; i < properties.length; i++) {
+        /*
+         * Generate the fields items dynamically
+         */
 
-                    var fname=properties[i].name
-                    var value=''
-                    var xtype=''
-                    switch(fname){
-                        case "Description":
-                            xtype= 'xtype : "textarea"'
-                            break;
-                         case "URI":
-                             xtype= 'xtype : "textfield"'
-                            break;
-                         case "Read Only" :
-                         case "Writable":
-                             xtype= 'xtype : "combo",triggerAction: "all", editable : false, mode: "local", store: ["true","false"],  displayField:"'+properties[i].value+'", width: 120'
-                             break;
-                         case 'Repository Type':
-                             xtype= 'xtype : "combo",triggerAction: "all", editable : false, mode: "local", store: ["RDS/WIP", "Camelot", "Part 8"],  displayField:"'+properties[i].value+'", width: 120'
-                         break;                        
-                         default:
-                            xtype= 'xtype : "textfield"'
-                    }
+        for ( var i = 0; i < properties.length; i++) {
+
+            var fname=properties[i].name
+            var value=''
+            var xtype=''
+            switch(fname){
+                case "Description":
+                    xtype= 'xtype : "textarea", width : 230'
+                    break;
+                 case "URI":
+                     xtype= 'xtype : "textfield", width : 230'
+                    break;
+                 case "Read Only" :
+                 case "Writable":
+                     xtype= 'xtype : "combo", width : 230, triggerAction: "all", editable : false, mode: "local", store: ["true","false"],  displayField:"'+properties[i].value+'", width: 120'
+                     break;
+                 case 'Repository Type':
+                     xtype= 'xtype : "combo",width : 230, triggerAction: "all", editable : false, mode: "local", store: ["RDS/WIP", "Camelot", "Part 8"],  displayField:"'+properties[i].value+'", width: 120'
+                 break;
+                 case 'Namespace List':
+                     imgPath='./resources/js/external/ux/images/'
+                     selNameSpaces='['+properties[i].value.properties+']'
+                     xtype='xtype : "itemselector", fieldLabel: "Namespace List",name: "itemselector",'
+                         +'imagePath: "'+imgPath+'", '
+                         +'multiselects: [{ width: 250,height: 200,displayField: "text", valueField: "value",'
+                         +'store:'+allNameSpaces+'},{ width: 250,height: 200, store: '+selNameSpaces+'}]';
+
+                 break;
+                 default:
+                    xtype= 'xtype : "textfield", width : 230'
+            }
 
 
 
-                     if(formType=='editForm'){
-                         value = properties[i].value
-                     }
-                     list_items = list_items+',{'+xtype+', fieldLabel:"' + properties[i].name
-                     + '",name:"'
-                     + properties[i].name
-                     + '",allowBlank:false, blankText:"This Field is required !", value:"'
-                     +value+'"}'
+             if(formType=='editForm'){
+                 value = properties[i].value
+             }
+             list_items = list_items+',{'+xtype+', fieldLabel:"' + properties[i].name
+             + '",name:"'
+             + properties[i].name
+             + '",allowBlank:false, blankText:"This Field is required !", value:"'
+             +value+'"}'
 
-               }
-
-                list_tems = eval('[' + list_items + ']')
-               //list_tems = eval('[' + list_items + ']')
-                label = node.parentNode.text + ' : ' + obj['text']+'('+formType+')'
-                this.fireEvent('opentab', this, node, label, list_tems)
+       }
+        list_tems = eval('[' + list_items + ']')
+        label = node.parentNode.text + ' : ' + obj['text']+'('+formType+')'
+        this.fireEvent('opentab', this, node, label, list_tems)
  },
 
 
