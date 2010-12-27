@@ -1769,7 +1769,7 @@ namespace org.iringtools.referenceData
             }
           }
         }
-        #endregion
+        #endregion Template Definitions
 
         #region Template Qualifications
         else//template qualification
@@ -1781,31 +1781,34 @@ namespace org.iringtools.referenceData
               string ID = string.Empty;
               string id = string.Empty;
               string label = string.Empty;
-              string description = string.Empty;
+           //   string description = string.Empty;
               //ID = template.identifier.Remove(0, 1);
               string generatedTempId = string.Empty;
               string templateName = string.Empty;
               string roleDefinition = string.Empty;
               string specialization = string.Empty;
-              string nameSparql = string.Empty;
-              string specSparql = string.Empty;
-              string classSparql = string.Empty;
-              
-              ID = template.identifier;
+              string deleteSparql = string.Empty;
+              string insertSparql = string.Empty;
+              string whereSparql = string.Empty;
+              int index;
 
+              ID = template.identifier;
+              
               string sparql = prefixSparql;
               sparql += "INSERT DATA }\n";
-              QMXF q = new QMXF();
+              QMXF existingQmxf = new QMXF();
               if (ID != null)
               {
                 id = ID.Substring((ID.LastIndexOf("#") + 1), ID.Length - (ID.LastIndexOf("#") + 1));
-                q = GetTemplate(id);
+                existingQmxf = GetTemplate(id);
                 ID = "tpl:" + template.identifier;
               }
 
-              if (q.templateQualifications.Count == 0)
+              String identifier = ID;
+              if (existingQmxf.templateQualifications.Count == 0)
               {
-                foreach (QMXFName name in template.name)
+                  #region Form Insert SPARQL
+                  foreach (QMXFName name in template.name)
                 {
                   label = name.value;
 
@@ -1862,10 +1865,9 @@ namespace org.iringtools.referenceData
                     {
                       roleLabel = roleName.value;
                       Utility.WriteString("\n" + roleID + "\t" + roleLabel, "RoleQual IDs.log", true);
-                      foreach (Description desc in role.description)
-                      {
-                        roleDescription = desc.value;
-                      }
+                     
+                          roleDescription = role.description.value;
+                     
                     }
                     //append role to sparql query
                     //value restriction
@@ -1913,9 +1915,364 @@ namespace org.iringtools.referenceData
                   response = PostToRepository(source, prefixSparql);
                 }
               }
+              #endregion Form Insert SPARQL
               else
               {
-                string roleID = string.Empty;
+                  bool hasInserts = false;
+              bool hasDeletes = false;
+
+              TemplateQualification existingTemplate = existingQmxf.templateQualifications[0];
+
+              //start each block
+              deleteSparql += "DELETE { ";
+              insertSparql += "INSERT { ";
+              whereSparql += "WHERE { ";
+
+              //start template statement in each block
+              string deleteTemplateSparql = identifier + " ";
+              string insertTemplateSparql = identifier + " ";
+              string whereTemplateSparql = identifier + " ?p ?o . ";
+
+              //append changing labels to each block
+              foreach (QMXFName name in template.name)
+              {
+                QMXFName existingName = existingTemplate.name.Find(n => n.lang == name.lang);
+
+                if (existingName != null)
+                {
+
+                  if (existingName.value.ToUpper() != name.value.ToUpper())
+                  {
+                    hasDeletes = hasInserts = true;
+
+                    deleteTemplateSparql += "rdfs:label \"" + existingName.value + "\"^^xsd:string ; ";
+                    insertTemplateSparql += "rdfs:label \"" + name.value + "\"^^xsd:string ; ";
+                  }
+                }
+                else
+                {
+                  hasInserts = true;
+
+                  insertTemplateSparql += "rdfs:label \"" + name.value + "\"^^xsd:string ; ";
+                }
+              }
+
+              //append changing descriptions to each block
+              foreach (Description description in template.description)
+              {
+                Description existingDescription = existingTemplate.description.Find(d => d.lang == description.lang);
+
+                if (existingDescription != null)
+                {
+                  if (existingDescription.value.ToUpper() != description.value.ToUpper())
+                  {
+                    hasDeletes = hasInserts = true;
+
+                    deleteTemplateSparql += "rdfs:comment \"" + existingDescription.value + "\"^^xsd:string ; ";
+                    insertTemplateSparql += "rdfs:comment \"" + description.value + "\"^^xsd:string ; ";
+                  }
+                }
+                else
+                {
+                  hasInserts = true;
+
+                  insertTemplateSparql += "rdfs:comment \"" + description.value + "\"^^xsd:string ; ";
+                }
+              }
+
+              //append changing role count to each block
+              if (existingTemplate.roleQualification.Count != template.roleQualification.Count)
+              {
+                hasDeletes = hasInserts = true;
+
+                deleteTemplateSparql += "tpl:R35529169909 \"" + existingTemplate.roleQualification.Count + "\"^^xsd:int ; ";
+                insertTemplateSparql += "tpl:R35529169909 \"" + template.roleQualification.Count + "\"^^xsd:int ; ";
+              }
+
+              //close template statements and append to each block if needed.
+              if (hasDeletes)
+              {
+                deleteTemplateSparql = deleteTemplateSparql.Insert(deleteTemplateSparql.LastIndexOf(";"), ". ");
+                deleteTemplateSparql = deleteTemplateSparql.Remove(deleteTemplateSparql.LastIndexOf(";"));
+                deleteSparql += deleteTemplateSparql;
+                whereSparql += whereTemplateSparql;
+              }
+
+              if (hasInserts)
+              {
+                insertTemplateSparql = insertTemplateSparql.Insert(insertTemplateSparql.LastIndexOf(";"), ". ");
+                insertTemplateSparql = insertTemplateSparql.Remove(insertTemplateSparql.LastIndexOf(";"));
+                insertSparql += insertTemplateSparql;
+              }
+              
+              index = 1;
+              foreach (RoleQualification role in template.roleQualification)
+              {
+                string roleIdentifier = "<" + role.qualifies + ">";
+
+                hasDeletes = hasInserts = false;
+
+                //get existing role if it exists
+                RoleQualification existingRole =
+                  existingTemplate.roleQualification.Find(r => r.qualifies == role.qualifies);
+
+                //remove existing role from existing template, leftovers will be deleted later
+                existingTemplate.roleQualification.Remove(existingRole);
+
+                if (existingRole != null)
+                {
+                  #region Process Changing Role
+                  
+                  //add the role to each block
+                  string deleteRoleSparql = roleIdentifier + " ";
+                  string insertRoleSparql = roleIdentifier + " ";
+                  string whereRoleSparql = roleIdentifier + " ?p" + index + " ?o" + index + " . ";
+
+                  //append changing labels to each block
+                  label = String.Empty;
+                  foreach (QMXFName name in role.name)
+                  {
+                    QMXFName existingName = existingRole.name.Find(n => n.lang == name.lang);
+
+                    if (existingName != null)
+                    {
+                      if (existingName.value.ToUpper() != name.value.ToUpper())
+                      {
+                        hasDeletes = hasInserts = true;
+
+                        deleteRoleSparql += "rdfs:label \"" + existingName.value + "\"^^xsd:string ; ";
+                        insertRoleSparql += "rdfs:label \"" + name.value + "\"^^xsd:string ; ";
+                      }
+                    }
+                    else
+                    {
+                      hasInserts = true;
+
+                      insertRoleSparql += "rdfs:label \"" + name.value + "\"^^xsd:string ; ";
+                    }
+                  }
+
+                  //append changing description to each block
+                  Description existingDescription = existingRole.description;
+
+                  if (existingDescription.value.ToUpper() != role.description.value.ToUpper())
+                  {
+                    hasDeletes = hasInserts = true;
+
+                    deleteRoleSparql += "rdfs:comment \"" + existingDescription.value + "\"^^xsd:string ; ";
+                    insertRoleSparql += "rdfs:comment \"" + role.description.value + "\"^^xsd:string ; ";
+                  }
+
+                  //append changing range to each block
+                  if (existingRole.range != role.range)
+                  {
+                    hasDeletes = hasInserts = true;
+
+                    if (existingRole.range.StartsWith("http://www.w3.org/2000/01/rdf-schema#")
+                    || existingRole.range.StartsWith("http://www.w3.org/2001/XMLSchema"))
+                    {
+                      deleteRoleSparql += " rdf:type owl:DataTypeProperty ; ";
+                    }
+                    else
+                    {
+                      deleteRoleSparql += " rdf:type owl:ObjectProperty ; "
+                              + " rdf:type owl:FunctionalProperty ; ";
+                    }
+
+                    deleteRoleSparql += "rdfs:range <" + existingRole.range + "> ; ";
+
+                    if (role.range != null && role.range != String.Empty)
+                    {
+                      if (role.range.StartsWith("http://www.w3.org/2000/01/rdf-schema#")
+                      || role.range.StartsWith("http://www.w3.org/2001/XMLSchema"))
+                      {
+                        insertRoleSparql += " rdf:type owl:DataTypeProperty ; ";
+                      }
+                      else
+                      {
+                        insertRoleSparql += " rdf:type owl:ObjectProperty ; "
+                                + " rdf:type owl:FunctionalProperty ; ";
+                      }
+
+                      insertRoleSparql += "rdfs:range <" + role.range + "> ; ";
+                    }
+                  }
+                  
+                  //append changing index to each block
+                  if (existingRole.index != index.ToString())
+                  {
+                    deleteRoleSparql += " tpl:R97483568938 \"" + existingRole.index + "\"^^xsd:int ; ";
+                    insertRoleSparql += " tpl:R97483568938 \"" + index + "\"^^xsd:int ; ";
+                  }
+
+                  //close role statements and append to each block if needed.
+                  if (hasDeletes)
+                  {
+                    deleteRoleSparql = deleteRoleSparql.Insert(deleteRoleSparql.LastIndexOf(";"), ". ");
+                    deleteRoleSparql = deleteRoleSparql.Remove(deleteRoleSparql.LastIndexOf(";"));
+                    deleteSparql += deleteRoleSparql;
+                    whereSparql += whereRoleSparql;
+                  }
+
+                  if (hasInserts)
+                  {
+                    insertRoleSparql = insertRoleSparql.Insert(insertRoleSparql.LastIndexOf(";"), ". ");
+                    insertRoleSparql = insertRoleSparql.Remove(insertRoleSparql.LastIndexOf(";"));
+                    insertSparql += insertRoleSparql;
+                  }
+                  #endregion
+                }
+                else
+                {
+                  #region Insert New Role
+
+                  string roleLabel = String.Empty;
+                  string roleDescription = String.Empty;
+
+                  //form labels and comments (meta data)
+                  string metaSparql = String.Empty;
+                  foreach (QMXFName roleName in role.name)
+                  {
+                    roleLabel = roleName.value;
+                    metaSparql += " rdfs:label \"" + roleLabel + "\"^^xsd:string ; ";
+                  }
+
+                  if (role.description != null)
+                  {
+                    roleDescription = role.description.value;
+                    metaSparql += " rdfs:comment \"" + roleDescription + "\"^^xsd:string ; ";
+                  }
+
+                  //genertate new role id if needed.
+                  if (role.qualifies == null || role.qualifies == String.Empty)
+                  {
+                    string generatedId = string.Empty;
+
+                    string genName = "Role definition " + roleLabel;
+
+                    if (_useExampleRegistryBase)
+                      generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], genName);
+                    else
+                      generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], genName);
+
+                    role.qualifies = generatedId;
+                  }
+
+                  roleIdentifier = "<" + role.qualifies + ">";
+
+                  //add role to block
+                  insertSparql += roleIdentifier + " ";
+
+                  //role template
+                  insertSparql += " rdf:type tpl:R74478971040 ; ";
+
+                  //add type to block
+                  if (role.range.StartsWith("http://www.w3.org/2000/01/rdf-schema#")
+                    || role.range.StartsWith("http://www.w3.org/2001/XMLSchema"))
+                  {
+                    insertSparql += " rdf:type owl:DataTypeProperty ; ";
+                  }
+                  else
+                  {
+                    insertSparql += " rdf:type owl:ObjectProperty ; "
+                            + " rdf:type owl:FunctionalProperty ; ";
+                  }
+
+                  //add metaData to block
+                  insertSparql += metaSparql;
+
+                  //add template possessor role to block
+                  insertSparql += " rdfs:domain " + identifier + " ; ";
+
+                  //add range to block
+                  insertSparql += "rdfs:range <" + role.range + "> ; ";
+                  
+                  //add role index to block
+                  insertSparql += "tpl:R97483568938 \"" + index + "\"^^xsd:int ; ";
+
+                  //close role statement.
+                  insertSparql = insertSparql.Insert(insertSparql.LastIndexOf(";"), ".");
+                  insertSparql = insertSparql.Remove(insertSparql.LastIndexOf(";"));
+                  #endregion
+                }
+
+                index++;
+              }
+              
+              foreach (RoleQualification role in existingTemplate.roleQualification)
+              {
+                #region Delete Leftover Roles
+                string roleIdentifier = "<" + role.qualifies + ">";
+
+                string deleteRoleSparql = roleIdentifier + " ";
+                string whereRoleSparql = roleIdentifier + " ?px" + role.index + " ?ox" + role.index + " . ";
+
+                label = String.Empty;
+                foreach (QMXFName name in role.name)
+                {
+                  label = name.value; //the last label will be used.
+
+                  deleteRoleSparql += "rdfs:label \"" + label + "\"^^xsd:string ; ";
+                }
+
+                if (role.range.StartsWith("http://www.w3.org/2000/01/rdf-schema#")
+                  || role.range.StartsWith("http://www.w3.org/2001/XMLSchema"))
+                {
+                  deleteRoleSparql += " rdf:type owl:DataTypeProperty ; ";
+                }
+                else
+                {
+                  deleteRoleSparql += " rdf:type owl:ObjectProperty ; "
+                          + " rdf:type owl:FunctionalProperty ; ";
+                }
+
+                deleteRoleSparql += " rdfs:domain " + identifier + " ; ";
+
+                deleteRoleSparql += "rdfs:range <" + role.range + "> ; "
+                  + " tpl:R97483568938 \"" + role.index + "\"^^xsd:int ; ";
+
+                deleteRoleSparql = deleteRoleSparql.Insert(deleteRoleSparql.LastIndexOf(";"), ".");
+                deleteRoleSparql = deleteRoleSparql.Remove(deleteRoleSparql.LastIndexOf(";"));
+                
+                deleteSparql += deleteRoleSparql;
+                whereSparql += whereRoleSparql;
+
+                #endregion
+              }
+
+              deleteSparql += "}";
+              insertSparql += "}";
+              whereSparql += "}";
+
+              if (deleteSparql != "DELETE { }")
+              {
+                sparql += deleteSparql;
+                sparql += insertSparql;
+                sparql += whereSparql;
+              }
+              else
+              {
+                sparql += insertSparql;
+                sparql = sparql.Replace("INSERT {", "INSERT DATA {");
+              }
+
+              //post sparql
+              response = PostToRepository(source, sparql);
+              
+              _response.Append(response);
+              if (response.Level == StatusLevel.Error)
+              {
+                throw new Exception("Error while Updating an existing template.");
+              }
+
+              status = new Status
+              {
+                Level = StatusLevel.Success,
+              };
+
+              status.Messages.Add("Successfully updated template in repository, " + source.name + ".");
+                  #region Form Delete/Insert SPARQL OLD
+             /*   string roleID = string.Empty;
                 string roleLabel = string.Empty;
                 string roleDescription = string.Empty;
                 string generatedId = string.Empty;
@@ -2110,11 +2467,13 @@ namespace org.iringtools.referenceData
 
                 response = PostToRepository(source, nameSparql);
                 _response.Append(response);
-              }
+              } */
+                #endregion Form Delete/Insert SPARQL OLD
             }
           }
         }
-        #endregion
+      }
+           #endregion Template Qualifications
       }
       catch (Exception ex)
       {
