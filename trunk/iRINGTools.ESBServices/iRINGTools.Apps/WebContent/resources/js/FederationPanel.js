@@ -122,8 +122,57 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
 			disabled: false,
 			handler: this.onAddnew,
 			scope: this
+		},{xtype:"tbbutton",
+			icon:'resources/images/16x16/delete-icon.png',
+			tooltip:'Delete',
+			text:'Delete',
+			disabled: false,
+			handler: this.onDelete,
+			scope: this
 		}]
   },
+  
+onDelete:function(){
+    that = this;
+    var node = this.getSelectedNode();
+     if(node.hasChildNodes()){
+          Ext.MessageBox.show({
+                title: '<font color=red></font>',
+                msg: 'Please select a child node to delete.',
+                buttons: Ext.MessageBox.OK,
+                icon: Ext.MessageBox.INFO
+        });
+    }else if(node==null){
+        Ext.Msg.alert('Warning', 'Please select a node.')
+    }else{
+    Ext.Msg.show({
+        msg: 'All the tabs will be closed. Do you want to delete this node?',
+        buttons: Ext.Msg.YESNO,
+        icon: Ext.Msg.QUESTION,
+        fn: function(action){
+                if(action=='yes'){
+                     Ext.getCmp('contentPanel').removeAll(true); // it will be removed in future
+                     Ext.getCmp('contentPanel').disable(); // it will be removed in future
+                        //send ajax request
+                        Ext.Ajax.request({
+                                    url: 'save-form.php',
+                                    method: 'GET',
+                                    params: 'nodeId=' + node.id,
+                                    success: function(o) {
+                                        that.onRefresh();
+                                        Ext.Msg.alert('Sucess', 'Node has been deleted')
+                                        },
+                                    failure: function(f,a){
+                                        Ext.Msg.alert('Warning', 'Error!!!')
+                                    }
+                                });
+                }else if (action == 'no'){
+                        Ext.Msg.alert('Error!!', 'Not now');
+                }
+        }
+    });
+    }
+},
 
  getNodeBySelectedTab: function(tab) {
         var tabid = tab.id;
@@ -259,18 +308,19 @@ openTab: function(node,formType) {
                  break;
                  case 'Namespace List':
                      var imgPath='./resources/js/external/ux/images/'
-                     var selNameSpacesArr = new Array()
+                     var selNameSpaceIDsArr = new Array()
                      if(properties[i].value !=null){
                          var selNameSpaces=properties[i].value.items;
-                         selNameSpacesArr= (selNameSpaces.toString()).split(',');
+                         selNameSpaceIDsArr= (selNameSpaces.toString()).split(',');
+                         
                      }
                      // get all the namespances
-                     var filteredNameSpaces = this.getAllChildNodes(this.federationPanel.getRootNode().findChild('id','namespace'),selNameSpacesArr)
+                     var filteredNameSpaces = this.getAllChildNodes(this.federationPanel.getRootNode().findChild('id','namespace'),selNameSpaceIDsArr)
 
                      xtype='xtype : "itemselector", fieldLabel: "Namespace List",name: "itemselector",'
                          +'imagePath: "'+imgPath+'", '
                          +'multiselects: [{ width: 200,height: 150,displayField: "text", valueField: "value",'
-                         +'store:'+filteredNameSpaces+'},{ width: 200,height: 150, store: '+Ext.util.JSON.encode(selNameSpacesArr)+'}]';
+                         +'store:'+filteredNameSpaces+'},{ width: 200,height: 150, store: '+Ext.util.JSON.encode(selNameSpaceIDsArr)+'}]';
 
                  break;
                  default:
