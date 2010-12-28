@@ -196,6 +196,9 @@ openTab: function(node,formType) {
  // get all the namespances
  var allNameSpaces = this.getAllChildNodes(this.federationPanel.getRootNode().findChild('id','namespace'))
  
+ // get all the IDGenerators
+ var allIDGenerators = this.getAllChildNodes(this.federationPanel.getRootNode().findChild('id','idGenerator'))
+ 
      var obj = node.attributes
         var properties = node.attributes.properties
         var nId = obj['id']
@@ -249,6 +252,9 @@ openTab: function(node,formType) {
                      break;
                  case 'Repository Type':
                      xtype= 'xtype : "combo",width : 230, triggerAction: "all", editable : false, mode: "local", store: ["RDS/WIP", "Camelot", "Part 8"],  displayField:"'+properties[i].value+'", width: 120'
+                 break;
+                 case 'ID Generator':
+                     xtype= 'xtype : "combo",width : 230, triggerAction: "all", editable : false, mode: "local", store: '+allIDGenerators+',  displayField:"'+properties[i].value+'", width: 120'
                  break;
                  case 'Namespace List':
                      imgPath='./resources/js/external/ux/images/'
