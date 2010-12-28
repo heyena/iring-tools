@@ -177,24 +177,25 @@ generateForm:function(formType){
         }
    
 },
- getAllChildNodes:function(parentNode){
+
+getAllChildNodes:function(parentNode,skippedIDs){
+    var mainArr = new Array()
     var kids = parentNode.childNodes;   // Get the list of children
     var numkids = kids.length; // Figure out how many there are
 
-    var childNodeStr=''
     //find child
     for(var i = 0, len = numkids; i < len; i++) {
-         if(childNodeStr!=''){
-            childNodeStr= childNodeStr + ',["'+kids[i].attributes.id+'","'+kids[i].attributes.text+'"]';
-          } else{
-              childNodeStr=  '["'+kids[i].attributes.id+'","'+kids[i].attributes.text+'"]';
-          }
-    }
-    return '['+childNodeStr+']';
+        if((typeof(skippedIDs) != 'undefined') && skippedIDs.indexOf(kids[i].attributes.id)<0){
+        subArr = new Array()
+        subArr[0] =kids[i].attributes.id
+        subArr[1] =kids[i].attributes.text
+        mainArr.push(subArr)
+        }
+    } 
+    return Ext.util.JSON.encode(mainArr);
  },
+
 openTab: function(node,formType) {
- // get all the namespances
- var allNameSpaces = this.getAllChildNodes(this.federationPanel.getRootNode().findChild('id','namespace'))
  
  // get all the IDGenerators
  var allIDGenerators = this.getAllChildNodes(this.federationPanel.getRootNode().findChild('id','idGenerator'))
@@ -257,12 +258,19 @@ openTab: function(node,formType) {
                      xtype= 'xtype : "combo",width : 230, triggerAction: "all", editable : false, mode: "local", store: '+allIDGenerators+',  displayField:"'+properties[i].value+'", width: 120'
                  break;
                  case 'Namespace List':
-                     imgPath='./resources/js/external/ux/images/'
-                     selNameSpaces='['+properties[i].value.properties+']'
+                     var imgPath='./resources/js/external/ux/images/'
+                     var selNameSpacesArr = new Array()
+                     if(properties[i].value !=null){
+                         var selNameSpaces=properties[i].value.items;
+                         selNameSpacesArr= (selNameSpaces.toString()).split(',');
+                     }
+                     // get all the namespances
+                     var filteredNameSpaces = this.getAllChildNodes(this.federationPanel.getRootNode().findChild('id','namespace'),selNameSpacesArr)
+
                      xtype='xtype : "itemselector", fieldLabel: "Namespace List",name: "itemselector",'
                          +'imagePath: "'+imgPath+'", '
-                         +'multiselects: [{ width: 250,height: 200,displayField: "text", valueField: "value",'
-                         +'store:'+allNameSpaces+'},{ width: 250,height: 200, store: '+selNameSpaces+'}]';
+                         +'multiselects: [{ width: 200,height: 150,displayField: "text", valueField: "value",'
+                         +'store:'+filteredNameSpaces+'},{ width: 200,height: 150, store: '+Ext.util.JSON.encode(selNameSpacesArr)+'}]';
 
                  break;
                  default:
