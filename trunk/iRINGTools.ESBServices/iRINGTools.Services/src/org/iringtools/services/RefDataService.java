@@ -123,4 +123,64 @@ public class RefDataService extends AbstractService
 
     return response;
   }
+  
+  @POST
+  @Path("/namespace/delete")
+  public Response deleteNamespace(Namespace namespace)
+  {
+    Response response = null;
+    
+    try
+    {
+      initService();
+      RefDataProvider refDataProvider = new RefDataProvider(settings);
+      response = refDataProvider.saveNamespace(namespace, true);
+    }
+    catch (Exception ex)
+    {
+      logger.error("Error while saving namespace: " + ex);
+    }
+
+    return response;
+  }
+
+  @POST
+  @Path("/idgenerator/delete")
+  public Response deleteIDGenerator(IDGenerator idgenerator)
+  {
+    Response response = null;
+    
+    try
+    {
+      initService();
+      RefDataProvider refDataProvider = new RefDataProvider(settings);
+      response = refDataProvider.saveIdGenerator(idgenerator, true);
+    }
+    catch (Exception ex)
+    {
+      logger.error("Error while saving ID Generator: " + ex);
+    }
+
+    return response;
+  }
+
+  @POST
+  @Path("/repository/delete")
+  public Response deleteRepository(Repository repository)
+  {
+    Response response = null;
+    
+    try
+    {
+      initService();
+      RefDataProvider refDataProvider = new RefDataProvider(settings);
+      response = refDataProvider.saveRepository(repository, true);
+    }
+    catch (Exception ex)
+    {
+      logger.error("Error while saving Repository: " + ex);
+    }
+
+    return response;
+  }
 }
