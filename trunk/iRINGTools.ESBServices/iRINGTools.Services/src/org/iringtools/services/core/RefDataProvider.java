@@ -41,7 +41,7 @@ public class RefDataProvider
   public Federation getFederation() throws JAXBException, IOException 
   {
     String path = settings.get("baseDirectory") + "/WEB-INF/data/federation.xml";
-    return JaxbUtil.read(Federation.class, path);    
+	return JaxbUtil.read(Federation.class, path);    
   }
   
   public Response saveFederation(Federation federation) throws Exception
@@ -85,6 +85,18 @@ public class RefDataProvider
 		  }
 		  if (namespaceExist)
 		  {
+			  if(deleteFlag)
+			  {
+				//find out the repositories that use this namespace and remove the namespace
+				  Integer nsID = Integer.parseInt(namespace.getId());
+				  for(Repository repo : federation.getRepositories().getItems())
+				  {
+					  if(repo.getNamespaces() != null && repo.getNamespaces().getItems().contains(nsID))
+						  repo.getNamespaces().getItems().remove(nsID);				  
+				  }				  
+			  }
+			  
+			  //now remove the namespace
 			  federation.getNamespaces().getItems().remove(index);
 		  }
 		  else
@@ -96,6 +108,7 @@ public class RefDataProvider
 		  if(!deleteFlag){
 			  federation.getNamespaces().getItems().add(namespace);
 		  }
+		  
 		  String path = settings.get("baseDirectory") + "/WEB-INF/data/federation.xml";
 		  JaxbUtil.write(federation, path, true);
 		 
@@ -141,6 +154,15 @@ public class RefDataProvider
 		  }
 		  if (idgenExist)
 		  {
+			  //find out the namespaces that use this idGenerator and remove the idGenerator
+			  Integer nsID = Integer.parseInt(idgenerator.getId());
+			  for(Namespace ns : federation.getNamespaces().getItems())
+			  {
+				  if(ns.getIdGenerator() == nsID)
+					  ns.setIdGenerator(0);				  
+			  }
+			  
+			  //now remove the namespace
 			  federation.getIdGenerators().getItems().remove(index);
 		  }
 		  else
@@ -152,6 +174,7 @@ public class RefDataProvider
 		  if(!deleteFlag){
 			  federation.getIdGenerators().getItems().add(idgenerator);
 		  }
+		  
 		  String path = settings.get("baseDirectory") + "/WEB-INF/data/federation.xml";
 		  JaxbUtil.write(federation, path, true);
 		 
