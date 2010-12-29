@@ -34,6 +34,12 @@
       </result>
     </action>
     
+    <action name="repositoryTypes" class="org.iringtools.controllers.FederationController" method="getRepoTypes">
+      <result type="json">
+        <param name="root">repositoryTypes</param>
+      </result>
+    </action>
+    
     <action name="directory" class="org.iringtools.controllers.DirectoryController" method="getDirectory">
       <result type="json">
         <param name="root">tree.nodes</param>
