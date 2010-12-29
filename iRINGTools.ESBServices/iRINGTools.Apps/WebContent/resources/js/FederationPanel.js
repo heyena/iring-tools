@@ -150,24 +150,30 @@ onDelete:function(){
         buttons: Ext.Msg.YESNO,
         icon: Ext.Msg.QUESTION,
         fn: function(action){
-                if(action=='yes'){
-                     Ext.getCmp('contentPanel').removeAll(true); // it will be removed in future
-                     Ext.getCmp('contentPanel').disable(); // it will be removed in future
-                        //send ajax request
-                        Ext.Ajax.request({
-                                    url: 'deleteNode',
-                                    method: 'GET',
-                                    params: 'nodeId=' + node.id,
-                                    success: function(o) {
-                                        that.onRefresh();
-                                        Ext.Msg.alert('Sucess', 'Node has been deleted')
-                                        },
-                                    failure: function(f,a){
-                                        Ext.Msg.alert('Warning', 'Error!!!')
-                                    }
-                                });
+                if(action=='yes'){                    
+                //send ajax request
+                Ext.Ajax.request({
+                            url: 'deleteNode',
+                            method: 'GET',
+                            params: {'nodeId' : node.id, 'parentNodeID':node.parentNode.id},
+                            success: function(o) {
+                                // remove all tabs form tabpanel
+                                Ext.getCmp('contentPanel').removeAll(true); // it will be removed in future
+                                Ext.getCmp('contentPanel').disable(); // it will be removed in future
+                                
+                                // remove the node form tree
+                                that.federationPanel.selModel.selNode.parentNode.removeChild(node);
+
+                                // fire event so that the Details panel will be changed accordingly
+                                that.fireEvent('selectionchange',this)
+                                Ext.Msg.alert('Sucess', 'Node has been deleted')
+                                },
+                            failure: function(f,a){
+                                Ext.Msg.alert('Warning', 'Error!!!')
+                            }
+                        });
                 }else if (action == 'no'){
-                        Ext.Msg.alert('Error!!', 'Not now');
+                        Ext.Msg.alert('Info', 'Not now');
                 }
         }
     });
@@ -197,9 +203,7 @@ onDelete:function(){
   },
 
  onSelectionChange:function(sm,node){
-     if(node != null){
-        this.onClick(node)
-     }
+     this.onClick(node)
  },
 generateForm:function(formType){
     node = this.getSelectedNode();
@@ -345,12 +349,12 @@ openTab: function(node,formType) {
  },
 
 
-  onClick: function(node) {
-      // get all the attributes of node
-        var properties = node.attributes.properties;
+  onClick: function(node) {      
 
         var gridSource = new Array();
-        if(!node.hasChildNodes()){
+        if(node!=undefined && node!=null && !node.hasChildNodes()){
+            // get all the attributes of node
+            var properties = node.attributes.properties;
             for ( var i = 0; i < properties.length; i++) {
                     gridSource[properties[i].name] = properties[i].value;
             }
