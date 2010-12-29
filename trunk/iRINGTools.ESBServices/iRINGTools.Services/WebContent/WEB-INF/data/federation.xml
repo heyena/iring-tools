@@ -23,7 +23,7 @@
             <alias>namespace1</alias>
             <isWritable>true</isWritable>
             <description>Sample namespace 1</description>
-            <idGenerator>0</idGenerator>
+            <idGenerator>1</idGenerator>
         </namespace>
         <namespace>
             <id>2</id>
@@ -31,7 +31,7 @@
             <alias>namespace2</alias>
             <isWritable>true</isWritable>
             <description>Sample namespace 2</description>
-            <idGenerator>0</idGenerator>
+            <idGenerator>2</idGenerator>
         </namespace>
     </namespaces>
     <repositories>
@@ -57,6 +57,9 @@
             <repositoryType>Camelot</repositoryType>
             <uri>http://rdl.rdlfacade.org/data</uri>
             <updateUri>updateUri</updateUri>
+			<namespaces>
+                <namespaceId>1</namespaceId>                
+            </namespaces>
         </repository>
         <repository>
             <id>3</id>
@@ -66,6 +69,9 @@
             <repositoryType>Camelot</repositoryType>
             <uri>http://tpl.rdlfacade.org/data</uri>
             <updateUri>updateUri</updateUri>
+			<namespaces>
+                <namespaceId>2</namespaceId>                
+            </namespaces>
         </repository>
         <repository>
             <id>4</id>
@@ -75,6 +81,7 @@
             <repositoryType>Camelot</repositoryType>
             <uri>http://www.iringsandbox.org/SandboxService/sparql</uri>
             <updateUri>updateUri</updateUri>
+			<namespaces/>
         </repository>
     </repositories>
 </federation>
