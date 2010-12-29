@@ -155,7 +155,7 @@ onDelete:function(){
                      Ext.getCmp('contentPanel').disable(); // it will be removed in future
                         //send ajax request
                         Ext.Ajax.request({
-                                    url: 'save-form.php',
+                                    url: 'deleteNode',
                                     method: 'GET',
                                     params: 'nodeId=' + node.id,
                                     success: function(o) {
