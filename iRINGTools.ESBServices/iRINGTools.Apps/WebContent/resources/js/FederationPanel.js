@@ -24,6 +24,8 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
         edit: true,
         addnew: true,
         opentab:true,
+        load:true,
+        beforeload:true,
         selectionchange:true
     });
 
@@ -80,6 +82,8 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
     ];
 
     this.federationPanel.on('click', this.onClick, this);
+    this.federationPanel.on('load', this.onLoad, this);
+    this.federationPanel.on('beforeload', this.onBeforeLoad, this);
     this.federationPanel.on('dblclick', this.onDblClick, this);
     //this.federationPanel.on('expandnode', this.onExpand, this);
     //this.federationPanel.on('expandnode', this.select_node, this);
@@ -386,5 +390,14 @@ openTab: function(node,formType) {
   onAddnew: function (btn, ev) {
      this.generateForm('newForm')
         
+  },
+  
+  onLoad: function () {
+      this.federationPanel.body.unmask();
+  },
+  
+  onBeforeLoad: function () {
+      this.federationPanel.body.mask('Loading...', 'x-mask-loading')
   }
+
 });
