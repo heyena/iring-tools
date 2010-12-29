@@ -74,7 +74,7 @@ public class RefDataService extends AbstractService
     {
       initService();
       RefDataProvider refDataProvider = new RefDataProvider(settings);
-      response = refDataProvider.saveNamespace(namespace);
+      response = refDataProvider.saveNamespace(namespace, false);
     }
     catch (Exception ex)
     {
@@ -94,7 +94,7 @@ public class RefDataService extends AbstractService
     {
       initService();
       RefDataProvider refDataProvider = new RefDataProvider(settings);
-      response = refDataProvider.saveIdGenerator(idgenerator);
+      response = refDataProvider.saveIdGenerator(idgenerator, false);
     }
     catch (Exception ex)
     {
@@ -114,7 +114,7 @@ public class RefDataService extends AbstractService
     {
       initService();
       RefDataProvider refDataProvider = new RefDataProvider(settings);
-      response = refDataProvider.saveRepository(repository);
+      response = refDataProvider.saveRepository(repository, false);
     }
     catch (Exception ex)
     {

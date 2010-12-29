@@ -61,7 +61,7 @@ public class RefDataProvider
 	  return response;
   }
   
-  public Response saveNamespace(Namespace namespace) throws Exception 
+  public Response saveNamespace(Namespace namespace, boolean deleteFlag) throws Exception 
   {
 	  Response response = new Response();
 	  StatusList sl = new StatusList();
@@ -93,8 +93,9 @@ public class RefDataProvider
 			  namespace.setId(Integer.toString(++sequenceId));
 			  federation.getNamespaces().setSequenceId(sequenceId);
 		  }
-		  
-		  federation.getNamespaces().getItems().add(namespace);
+		  if(!deleteFlag){
+			  federation.getNamespaces().getItems().add(namespace);
+		  }
 		  String path = settings.get("baseDirectory") + "/WEB-INF/data/federation.xml";
 		  JaxbUtil.write(federation, path, true);
 		 
@@ -116,7 +117,7 @@ public class RefDataProvider
 	  return response;
   }
 
-  public Response saveIdGenerator(IDGenerator idgenerator) throws Exception 
+  public Response saveIdGenerator(IDGenerator idgenerator, boolean deleteFlag) throws Exception 
   {
 	  Response response = new Response();
 	  StatusList sl = new StatusList();
@@ -148,8 +149,9 @@ public class RefDataProvider
 			  idgenerator.setId(Integer.toString(++sequenceId));
 			  federation.getIdGenerators().setSequenceId(sequenceId);
 		  }
-			  
-		  federation.getIdGenerators().getItems().add(idgenerator);
+		  if(!deleteFlag){
+			  federation.getIdGenerators().getItems().add(idgenerator);
+		  }
 		  String path = settings.get("baseDirectory") + "/WEB-INF/data/federation.xml";
 		  JaxbUtil.write(federation, path, true);
 		 
@@ -171,7 +173,7 @@ public class RefDataProvider
 	  return response;
   }
   
-  public Response saveRepository(Repository repository) throws Exception 
+  public Response saveRepository(Repository repository, boolean deleteFlag) throws Exception 
   {
 	  Response response = new Response();
 	  StatusList sl = new StatusList();
@@ -203,8 +205,9 @@ public class RefDataProvider
 			  repository.setId(Integer.toString(++sequenceId));
 			  federation.getRepositories().setSequenceId(sequenceId);
 		  }
-			  
-		  federation.getRepositories().getItems().add(repository);
+		  if(!deleteFlag){
+			  federation.getRepositories().getItems().add(repository);
+		  }	  
 		  String path = settings.get("baseDirectory") + "/WEB-INF/data/federation.xml";
 		  JaxbUtil.write(federation, path, true);
 		 
