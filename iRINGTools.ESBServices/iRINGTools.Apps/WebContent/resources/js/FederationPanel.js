@@ -191,7 +191,11 @@ onDelete:function(){
   },
 
   getNodeById: function(nodeId) {
-  	return this.federationPanel.getNodeById(nodeId)
+      if(this.federationPanel.getNodeById(nodeId)){ //if nodeID exists it will find out NODE
+          return this.federationPanel.getNodeById(nodeId)
+      }else{
+          return false;
+      }
   },
   getSelectedNode: function() {
   	return this.federationPanel.getSelectionModel().getSelectedNode();
@@ -251,6 +255,10 @@ getAllChildNodes:function(parentNode,skippedIDs){
     } 
     return Ext.util.JSON.encode(mainArr);
  },
+
+getNodesIDTitleByID:function(){
+
+},
 
 openTab: function(node,formType) {
  
@@ -317,25 +325,38 @@ openTab: function(node,formType) {
                  case 'Namespace List':
                      var imgPath='./resources/js/external/ux/images/'
                      var selNameSpaceIDsArr = new Array()
+                     var nodeIDTitleArr = new Array()
+                     
                      if(properties[i].value !=null){
                          var selNameSpaces=properties[i].value.items;
                          selNameSpaceIDsArr= (selNameSpaces.toString()).split(',');
+
+                        // nodeIDTitleArr = this.getNodesIDTitleByID(selNameSpaceIDsArr)                        
                          
+                         for(var j=0;j < selNameSpaceIDsArr.length; j++ ){
+                            
+                            subArr = new Array()
+                            subArr[0] =selNameSpaceIDsArr[j]                // contains nameSpaceID
+                            subArr[1] =this.getNodeById(subArr[0]).text     // contains nameSpaceTitle
+                            
+                             if(subArr[0]!='' && subArr[1]!=undefined){
+                                  nodeIDTitleArr.push(subArr)
+                             }
+                         }    
                      }
+                     
                      // get all the namespances
                      var filteredNameSpaces = this.getAllChildNodes(this.federationPanel.getRootNode().findChild('id','namespace'),selNameSpaceIDsArr)
 
                      xtype='xtype : "itemselector", fieldLabel: "Namespace List",name: "itemselector",'
                          +'imagePath: "'+imgPath+'", '
                          +'multiselects: [{ width: 200,height: 150,displayField: "text", valueField: "value",'
-                         +'store:'+filteredNameSpaces+'},{ width: 200,height: 150, store: '+Ext.util.JSON.encode(selNameSpaceIDsArr)+'}]';
+                         +'store:'+filteredNameSpaces+'},{ width: 200,height: 150, store: '+Ext.util.JSON.encode(nodeIDTitleArr)+'}]';
 
                  break;
                  default:
                     xtype= 'xtype : "textfield", width : 230'
             }
-
-
 
              if(formType=='editForm'){
                  value = properties[i].value
