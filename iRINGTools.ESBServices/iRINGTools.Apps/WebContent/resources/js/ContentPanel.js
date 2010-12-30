@@ -25,11 +25,14 @@ FederationManager.ContentPanel = Ext.extend(Ext.Panel, {
           validate:true,
           tabChange:true
         });
-  	
+      this.tbar = this.buildToolbar();
       this.data_form = new Ext.FormPanel({
             labelWidth : 100, // label settings here cascade unless
             url:this.url,
-            method: 'POST',
+            method: 'POST',           
+            bodyStyle:'padding:10px 5px 0',
+
+
             border : false, // removing the border of the form
            // id : 'frmEdit' + this.nId,
             frame : true,
@@ -43,16 +46,7 @@ FederationManager.ContentPanel = Ext.extend(Ext.Panel, {
             defaultType : 'textfield',
 
             items : this.configData,     // binding with the fields list
-            buttonAlign : 'left', // buttons aligned to the left
-            buttons : [ {
-                    text : 'Save',
-                    handler: this.onSave,
-                    scope:this
-            }, {
-                    text: 'Reset',
-                    handler: this.onReset,
-                    scope: this
-            } ],
+            buttonAlign : 'left', // buttons aligned to the left            
            autoDestroy:false
            
   	});
@@ -67,6 +61,25 @@ FederationManager.ContentPanel = Ext.extend(Ext.Panel, {
     FederationManager.ContentPanel.superclass.initComponent.call(this)
   },
 
+buildToolbar: function () {
+    return [{
+			xtype:"tbbutton",
+                        text:'Save',
+			icon:'resources/images/16x16/save-icon.png',
+			tooltip:'Save',
+			disabled: false,
+			handler: this.onSave,
+			scope: this
+		},{
+			xtype:"tbbutton",
+			text:'Reset',
+			icon:'resources/images/16x16/reset-icon.png',
+			tooltip:'Reset',
+			disabled: false,
+			handler: this.onReset,
+			scope: this
+		}]
+  },
   getActiveTab: function() {
       if(Ext.getCmp('contentPanel').items.length !=0){ // check is there any tab in contentPanel
         return Ext.getCmp('contentPanel').getActiveTab();
