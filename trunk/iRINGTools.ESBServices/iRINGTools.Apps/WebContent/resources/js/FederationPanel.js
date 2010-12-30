@@ -246,11 +246,13 @@ getAllChildNodes:function(parentNode,skippedIDs){
 
     //find child
     for(var i = 0, len = numkids; i < len; i++) {
-        if((typeof(skippedIDs) != 'undefined') && skippedIDs.indexOf(kids[i].attributes.id)<0){
         subArr = new Array()
         subArr[0] =kids[i].attributes.id
         subArr[1] =kids[i].attributes.text
+        if((typeof(skippedIDs) != 'undefined') && skippedIDs.indexOf(kids[i].attributes.id)<0){        
         mainArr.push(subArr)
+        }else if((typeof(skippedIDs) == 'undefined')){
+            mainArr.push(subArr)
         }
     } 
     return Ext.util.JSON.encode(mainArr);
@@ -261,9 +263,6 @@ getNodesIDTitleByID:function(){
 },
 
 openTab: function(node,formType) {
- 
- // get all the IDGenerators
- var allIDGenerators = this.getAllChildNodes(this.federationPanel.getRootNode().findChild('id','idGenerator'))
  
      var obj = node.attributes
         var properties = node.attributes.properties
@@ -320,6 +319,8 @@ openTab: function(node,formType) {
                      xtype= 'xtype : "combo",width : 230, triggerAction: "all", editable : false, mode: "local", store: ["RDS/WIP", "Camelot", "Part 8"],  displayField:"'+properties[i].value+'", width: 120'
                  break;
                  case 'ID Generator':
+                     // get all the IDGenerators
+                     var allIDGenerators = this.getAllChildNodes(this.federationPanel.getRootNode().findChild('id','idGenerator'))
                      xtype= 'xtype : "combo",width : 230, triggerAction: "all", editable : false, mode: "local", store: '+allIDGenerators+',  displayField:"'+properties[i].value+'", width: 120'
                  break;
                  case 'Namespace List':
