@@ -327,8 +327,7 @@ openTab: function(node,formType) {
                      var imgPath='./resources/js/external/ux/images/'
                      var selNameSpaceIDsArr = new Array()
                      var nodeIDTitleArr = new Array()
-                     
-                     if(properties[i].value !=null){
+                     if(properties[i].value !=null && properties[i].value!=''){
                          var selNameSpaces=properties[i].value.items;
                          selNameSpaceIDsArr= (selNameSpaces.toString()).split(',');
 
