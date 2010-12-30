@@ -17,6 +17,8 @@ public class FederationController  implements ServletRequestAware{
 	private HttpServletRequest httpRequest = null;
 	private Result result=new Result();
 	private String[] repositoryTypes;
+	private String nodeId;
+	private String parentNodeID;
 	
 	public FederationController()
 	{
@@ -51,6 +53,23 @@ public class FederationController  implements ServletRequestAware{
 		this.repositoryTypes = repositoryTypes;
 	}
 
+	public String getNodeId() {
+		return nodeId;
+	}
+
+	public void setNodeId(String nodeId) {
+		this.nodeId = nodeId;
+	}
+
+	public String getParentNodeID() {
+		return parentNodeID;
+	}
+
+	public void setParentNodeID(String parentNodeID) {
+		this.parentNodeID = parentNodeID;
+	}
+
+
 	public String getFederation() {
 		federation.populate();
 		tree = federation.toTree();
@@ -65,9 +84,11 @@ public class FederationController  implements ServletRequestAware{
 		//federation.save();
         return Action.SUCCESS;
 	}
+
 	public String deleteNode() {		
 		System.out.println("Reaching deleteNode");
-		boolean successStatus = federation.deleteNode(httpRequest);
+		boolean successStatus = federation.deleteNode(nodeId,parentNodeID);
+		System.out.println("deleteNode executed :"+successStatus);
 		result.setSuccess(successStatus);
         return Action.SUCCESS;
 	}

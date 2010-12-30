@@ -1,5 +1,6 @@
 package org.iringtools.models;
 
+import java.util.Enumeration;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -214,7 +215,7 @@ public class FederationModel
 				System.out.println("###"+httpRequest.getParameter("parentNodeID")+"### ---"+httpRequest.getParameter("nodeID"));
 				if("idGenerator".equalsIgnoreCase(httpRequest.getParameter("parentNodeID"))){
 					IDGenerator idgenerator = new IDGenerator();
-					idgenerator.setId(httpRequest.getParameter("nodeID"));
+					idgenerator.setId(httpRequest.getParameter("nodeID").replaceFirst("idgenerator", ""));
 					idgenerator.setName(httpRequest.getParameter("Name"));
 					idgenerator.setUri(httpRequest.getParameter("URI"));
 					idgenerator.setDescription(httpRequest.getParameter("Description"));
@@ -223,7 +224,7 @@ public class FederationModel
 					
 				}else if("namespace".equalsIgnoreCase(httpRequest.getParameter("parentNodeID"))){
 					Namespace namespace = new Namespace();
-					namespace.setId(httpRequest.getParameter("nodeID"));
+					namespace.setId(httpRequest.getParameter("nodeID").replaceFirst("namespace", ""));
 					namespace.setUri(httpRequest.getParameter("URI"));
 					namespace.setAlias(httpRequest.getParameter("Alias"));
 					namespace.setIsWritable(Boolean.parseBoolean(httpRequest.getParameter("Writable")));
@@ -234,7 +235,7 @@ public class FederationModel
 					
 				}else if("repository".equalsIgnoreCase(httpRequest.getParameter("parentNodeID"))){
 					Repository repository = new Repository();
-					repository.setId(httpRequest.getParameter("nodeID"));
+					repository.setId(httpRequest.getParameter("nodeID").replaceFirst("repository", ""));
 					System.out.println("Description :"+httpRequest.getParameter("Description"));
 					repository.setDescription(httpRequest.getParameter("Description"));
 					repository.setUri(httpRequest.getParameter("URI"));
@@ -242,7 +243,7 @@ public class FederationModel
 					repository.setRepositoryType(RepositoryType.fromValue(httpRequest.getParameter("Repository Type")));
 					repository.setUpdateUri(httpRequest.getParameter("Update URI"));
 					repository.setIsReadOnly(Boolean.parseBoolean(httpRequest.getParameter("Read Only")));
-					
+					System.out.println("Namespace List :"+httpRequest.getParameter("Namespace List"));
 					response = httpClient.post(Response.class, "/repository", repository);
 
 				}
@@ -265,19 +266,44 @@ public class FederationModel
    
   }
   
-  public boolean deleteNode(HttpServletRequest httpRequest){
+  public boolean deleteNode(String nodeId, String parentNodeID){
 	  try{
 		  Response response=null;
-		  System.out.println("parentNodeId :" + httpRequest.getParameter("parentNodeID"));
-		  System.out.println("NodeId :" + httpRequest.getParameter("nodeID"));
+		  if("idGenerator".equalsIgnoreCase(parentNodeID)){
+				IDGenerator idgenerator = new IDGenerator();
+				idgenerator.setId(nodeId.replaceFirst("idgenerator", ""));
+				
+				response = httpClient.post(Response.class, "/idgenerator/delete", idgenerator);
+				
+			}else if("namespace".equalsIgnoreCase(parentNodeID)){
+				Namespace namespace = new Namespace();
+				namespace.setId(nodeId.replaceFirst("namespace", ""));
+				
+				response = httpClient.post(Response.class, "/namespace/delete", namespace);
+				
+			}else if("repository".equalsIgnoreCase(parentNodeID)){
+				Repository repository = new Repository();
+				repository.setId(nodeId.replaceFirst("repository", ""));
+				
+				response = httpClient.post(Response.class, "/repository/delete", repository);
+
+			}
 		  
-		  //service Call
+		  if(response!=null){
+				System.out.println("response.getLevel().value() :" + response.getLevel().value());
+				if("success".equalsIgnoreCase(response.getLevel().value())){
+					return true;
+				}else
+					return false;
+			}else{
+				System.out.println("response.getLevel().value() : null");
+				return false;
+			}
 	  }catch(Exception e){
 			e.printStackTrace();
 			return false;
 			
 		}
-	  return false; 
   }
 
 }
