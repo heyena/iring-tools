@@ -99,30 +99,94 @@ public class ExchDataModel {
 	
     public Grid toGrid() {		
     	grid = new Grid();    	
-		dtoCtr = new DtoContainer();		
-	    dtoCtr.setTotal(dtiList.size());
-		DataTransferIndex dti = dtiList.get(0);
+		dtoCtr = new DtoContainer();	    
+		//DataTransferIndex dti = dtiList.get(0);
 		dtiPage = dtiList.subList(0,1);
-	    setIdentifier(dti.getIdentifier());
+	    //setIdentifier(dti.getIdentifier());
 	    dtoCtr.setUrl(dtoUrl);
 	    dtoCtr.populatePage(URI, dtiPage);	      
-	    dtoCtr.fillExchConfig();	    
-	   
+	    dtoCtr.fillExchConfig();
 	    dtoCtr.setGridList(grid);
-	    
 		return grid;
 	}
 	
     public Rows toRows(int start, int limit) {	
-    	dtiPage = dtiList.subList(start, Math.min(limit+start, dtiList.size()-1));
-    	Rows rows = new Rows();
     	dtoCtr = new DtoContainer();
+    	dtoCtr.setTotal(dtiList.size());
+    	dtiPage = dtiList.subList(start, Math.min(limit+start, dtiList.size()-1));
+    	Rows rows = new Rows();    	
     	dtoCtr.setUrl(dtoUrl);
     	dtoCtr.populatePage(URI, dtiPage);	
     	dtoCtr.fillExchPage();	
     	dtoCtr.setRowsList(rows);
     	return rows;
     }
+    
+   
+    
+    public Grid toRelGrid(String id) {    	
+    	grid = new Grid();    	
+		dtoCtr = new DtoContainer();
+		dtiPage = dtiList.subList(0,1);
+		dtoCtr.setUrl(dtoUrl);
+		dtoCtr.populatePage(URI, dtiPage);	            
+	    dtoCtr.fillRelConfig();	   
+	    dtoCtr.setGridList(grid);
+    	return grid;
+    }
+    
+    
+    public int getDti(String id) {
+    	for (DataTransferIndex dti : dtiList) {
+    		if (dti.getIdentifier().equals(id))
+    			return dtiList.indexOf(dti);
+    	}
+    	return -1;
+    }
+    
+    public void SetDtiPage(String id) {
+    	int ind;
+    	ind = getDti(id);
+		dtiPage = dtiList.subList(ind, ind+1);  
+    }
+    
+    public Rows toRelRows(int start, int limit, String id) {	
+    	Rows rows = new Rows();
+    	dtoCtr = new DtoContainer();    	
+		SetDtiPage(id);	
+    	dtoCtr.setUrl(dtoUrl);
+    	dtoCtr.populatePage(URI, dtiPage);
+    	dtoCtr.fillExchRelPage();	
+    	dtoCtr.setRowsList(rows);
+    	return rows;
+    }
+    
+    
+    public Grid toDetailRelGrid(String id, String classId) {
+    	grid = new Grid();    	
+		dtoCtr = new DtoContainer();	
+		SetDtiPage(id);	
+	    dtoCtr.setUrl(dtoUrl);
+	    dtoCtr.populatePage(URI, dtiPage);
+	    dtoCtr.setClassId(classId);
+	    dtoCtr.fillExchDetailRelConfig();	   
+	    dtoCtr.setGridList(grid);
+    	return grid;
+    }
+    
+    public Rows toDetailRelRows(String id, String classId) {
+    	Rows rows = new Rows();
+    	dtoCtr = new DtoContainer();
+    	SetDtiPage(id);	
+    	dtoCtr.setUrl(dtoUrl);
+    	dtoCtr.populatePage(URI, dtiPage);
+    	dtoCtr.setClassId(classId);
+    	dtoCtr.fillExchDetailRelPage();	
+    	dtoCtr.setRowsList(rows);
+    	return rows;
+    }
+    
+   
     
 	public void readGrid(Grid grid) {
 		//TODO: Read the grid!

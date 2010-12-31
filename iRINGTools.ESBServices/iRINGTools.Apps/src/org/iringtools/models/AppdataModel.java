@@ -11,8 +11,7 @@ import com.opensymphony.xwork2.ActionContext;
 public class AppdataModel {
 
 	private Grid grid = null;
-	private static String URI="";	
-	private String identifier;
+	private static String URI="";		
 	private String dtoUrl;
 	private List<DataTransferIndex> dtiList=null;
 	private List<DataTransferIndex> dtiPage;
@@ -47,10 +46,7 @@ public class AppdataModel {
 		AppdataModel.URI = uri;
 	}
 	
-	public List<DataTransferIndex> getDtiList()
-	  {
-	    return dtiList;
-	  }	
+
 	
 	public void setDtiList(List<DataTransferIndex> dtiList)
 	  {
@@ -67,16 +63,6 @@ public class AppdataModel {
 	public String getDtoUrl()
 	  {
 	    return dtoUrl;
-	  }
-	
-	public void setIdentifier(String identifier)
-	  {
-	    this.identifier = identifier;
-	  }
-
-	public String getIdentifier()
-	  {
-	    return identifier;
 	  }
 	
 	public void setRInd(int rInd)
@@ -101,9 +87,8 @@ public class AppdataModel {
     	grid = new Grid();    	
 		dtoCtr = new DtoContainer();		
 	    dtoCtr.setTotal(dtiList.size());
-		DataTransferIndex dti = dtiList.get(0);
-	    setIdentifier(dti.getIdentifier());
-	    dtoCtr.setUrl(dtoUrl, identifier);
+		DataTransferIndex dti = dtiList.get(0);	    
+	    dtoCtr.setUrl(dtoUrl, dti.getIdentifier());
 	    dtoCtr.populate(URI);	      
 	    dtoCtr.fillConfig();	    
 	   
@@ -122,6 +107,50 @@ public class AppdataModel {
     	dtoCtr.setRowsList(rows);
     	return rows;
     }
+    
+    public Grid toRelGrid() {
+    	grid = new Grid();    	
+		dtoCtr = new DtoContainer();
+		DataTransferIndex dti = dtiList.get(0);	  
+	    dtoCtr.setUrl(dtoUrl, dti.getIdentifier());
+	    dtoCtr.populate(URI);	      
+	    dtoCtr.fillRelConfig();	   
+	    dtoCtr.setGridList(grid);
+    	return grid;
+    }
+    
+    public Grid toDetailRelGrid(String id, String classId) {
+    	grid = new Grid();    	
+		dtoCtr = new DtoContainer();		
+	    dtoCtr.setUrl(dtoUrl, id);
+	    dtoCtr.populate(URI);	  
+	    dtoCtr.setClassId(classId);
+	    dtoCtr.fillDetailRelConfig();	   
+	    dtoCtr.setGridList(grid);
+    	return grid;
+    }
+    
+    public Rows toDetailRelRows(String id, String classId) {
+    	Rows rows = new Rows();
+    	dtoCtr = new DtoContainer();
+    	dtoCtr.setUrl(dtoUrl, id);
+    	dtoCtr.populate(URI);	
+    	dtoCtr.setClassId(classId);
+    	dtoCtr.fillDetailRelPage();	
+    	dtoCtr.setRowsList(rows);
+    	return rows;
+    }
+    
+    public Rows toRelRows(int start, int limit, String id) {	
+    	Rows rows = new Rows();
+    	dtoCtr = new DtoContainer();
+    	dtoCtr.setUrl(dtoUrl, id);
+    	dtoCtr.populate(URI);	
+    	dtoCtr.fillRelPage();	
+    	dtoCtr.setRowsList(rows);
+    	return rows;
+    }
+    
     
 	public void readGrid(Grid grid) {
 		//TODO: Read the grid!

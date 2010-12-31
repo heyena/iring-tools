@@ -14,6 +14,8 @@ public class ExchDataController {
 	private Rows rows;
 	private String scopeName;
 	private String idName;
+	private String id;
+	private String classId;
 
 	private int start=0;
 	private int limit=20;
@@ -58,6 +60,22 @@ public class ExchDataController {
 	public String getIdName() {
 		return idName;
 	}
+	
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getId() {
+		return id;
+	}
+	
+	public void setClassId(String classId) {
+		this.classId = classId;
+	}
+
+	public String gettClassId() {
+		return classId;
+	}
 
 	public void setStart(int start) {
 		this.start = start;
@@ -101,8 +119,34 @@ public class ExchDataController {
 		return Action.SUCCESS;
 	}
 
-	// public String postexchdataGrid() {
-	// exchdata.readGrid(grid);
-	// return Action.SUCCESS;
-	// }
+	public String getRelatedExchGrid() {
+		exchdata.populate(scopeName, idName);
+		grid = exchdata.toRelGrid(id);
+		return Action.SUCCESS;
+	}
+	
+	public String getRelatedExchRows() {
+		if (rowsMap == null)
+			rowsMap = new HashMap<String, Rows>();
+		if (rowsMap.size() <= start / limit) {
+			exchdata.populate(scopeName, idName);
+			rows = exchdata.toRelRows(start, limit, id);
+			rowsMap.put(String.valueOf(start), rows);
+		} else {
+			rows = rowsMap.get(String.valueOf(start));
+		}
+		return Action.SUCCESS;
+	}
+
+	public String getDetailExchGrid() {
+		exchdata.populate(scopeName, idName);
+		grid = exchdata.toDetailRelGrid(id, classId);
+		return Action.SUCCESS;
+	}
+	
+	public String getDetailExchRows() {
+		exchdata.populate(scopeName, idName);
+		rows = exchdata.toDetailRelRows(id, classId);
+		return Action.SUCCESS;
+	}
 }
