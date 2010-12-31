@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-
+import java.util.HashMap;
 /**
  * <p>Java class for Rows complex type.
  * 
@@ -44,7 +44,7 @@ public class Rows {
     protected String success;
     protected double total;
     @XmlElement(required = true)
-    protected List<java.util.HashMap<String, String>> data;
+    protected List<HashMap<String,String>> data;
 
     /**
      * Gets the value of the success property.
@@ -108,9 +108,9 @@ public class Rows {
      * 
      * 
      */
-    public List<java.util.HashMap<String, String>> getData() {
+    public List<HashMap<String,String>> getData() {
         if (data == null) {
-            data = new ArrayList<java.util.HashMap<String, String>>();
+            data = new ArrayList<HashMap<String,String>>();
         }
         return this.data;
     }
@@ -123,7 +123,7 @@ public class Rows {
      *     {@link HashMap }
      *     
      */
-    public void setData(List<java.util.HashMap<String, String>> data) {
+    public void setData(List<HashMap<String,String>> data) {
         this.data = data;
     }
 

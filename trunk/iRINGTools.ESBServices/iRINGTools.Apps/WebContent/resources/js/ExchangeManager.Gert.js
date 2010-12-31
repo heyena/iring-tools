@@ -6,8 +6,7 @@ Ext.onReady(function () {
   
 	var directoryPanel = new ExchangeManager.DirectoryPanel({
 	  id:'navigation-panel',
-	  region:'west',
-		
+	  region:'west',		
 	  collapsible: true,
 	  collapsed: false,
 	  
@@ -30,12 +29,12 @@ Ext.onReady(function () {
 	
 	directoryPanel.on('open', function(panel, node, label, url) {
 		alert('getting grid definition: ' + url);
-		
+		if(contentPanel.get('tab_'+label)==undefined){
 		
 		var dataTypeNode = node.parentNode.parentNode;
 		var graphNode = node.parentNode;
-		var obj = node.attributes;
-		var item = node.attributes['items'];
+		var obj = node.attributes;	
+		var item = node.attributes['properties'];
 		var uid = item[0].value;
 		var scope = dataTypeNode.parentNode.attributes['text'];
 		var app = graphNode.attributes['text'];
@@ -66,6 +65,7 @@ Ext.onReady(function () {
 				
 				if ((nodeType == 'exchange' && uid != '')) {
 
+					
 					//pageURL = 'dataObjects/getPageData/' + nodeType + '/' + scopeId + '/' + uid + '/' + identifier + '/' + refClassIdentifier
 					//pageURL = 'dataObjects/getPageData/' + nodType + '/' + scopeId + '/' + uid
 					pageURL = 'exchDataRows?scopeName=' + scope + '&idName=' + uid;
@@ -74,6 +74,7 @@ Ext.onReady(function () {
 				} else if (nodeType == 'graph') {
 					//pageURL = 'dataObjects/getPageData/'+ nodeType + '/' + scopeId + '/' + node.parentNode.text + '/' + nodeText;
 					pageURL = 'appDataRows?scopeName=' + scope + '&appName=' + app + '&graphName=' + graph;
+					alert("graph--pageURL: /" + pageURL);
 				}
 				
 				var responseData = Ext.util.JSON.decode(result.responseText);
@@ -91,7 +92,8 @@ Ext.onReady(function () {
 					
 				} else {
 					var newTab = new ExchangeManager.NavigationPanel({		
-						title: label,					
+						title: label,	
+						id:'tab_'+label,
 						configData: responseData,
 						url: pageURL,						
 						closable: true
@@ -124,6 +126,9 @@ Ext.onReady(function () {
 				alert('error: ' + result.responseText); 
 			}
 		});
+	}else{
+		contentPanel.setActiveTab('tab_'+label);
+	}
 		
 	});
 

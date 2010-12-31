@@ -30,6 +30,38 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link HashMap }
+     * 
+     */
+    public HashMap createHashMap() {
+        return new HashMap();
+    }
+
+    /**
+     * Create an instance of {@link Grid }
+     * 
+     */
+    public Grid createGrid() {
+        return new Grid();
+    }
+
+    /**
+     * Create an instance of {@link Filter }
+     * 
+     */
+    public Filter createFilter() {
+        return new Filter();
+    }
+
+    /**
+     * Create an instance of {@link Header }
+     * 
+     */
+    public Header createHeader() {
+        return new Header();
+    }
+
+    /**
      * Create an instance of {@link Rows }
      * 
      */
@@ -43,38 +75,6 @@ public class ObjectFactory {
      */
     public Column createColumn() {
         return new Column();
-    }
-
-    /**
-     * Create an instance of {@link Header }
-     * 
-     */
-    public Header createHeader() {
-        return new Header();
-    }
-
-    /**
-     * Create an instance of {@link Filter }
-     * 
-     */
-    public Filter createFilter() {
-        return new Filter();
-    }
-
-    /**
-     * Create an instance of {@link Grid }
-     * 
-     */
-    public Grid createGrid() {
-        return new Grid();
-    }
-
-    /**
-     * Create an instance of {@link HashMap }
-     * 
-     */
-    public HashMap createHashMap() {
-        return new HashMap();
     }
 
 }

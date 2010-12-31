@@ -73,11 +73,53 @@
         <param name="root">rows</param>
       </result>
     </action>
-     <action name="cleanExchDataRows" class="org.iringtools.controllers.ExchDataController" method="cleanHashMap">
+    <action name="cleanExchDataRows" class="org.iringtools.controllers.ExchDataController" method="cleanHashMap">
+      <result type="json">
+        <param name="root">rows</param>
+      </result>
+    </action>
+    <action name="appDataRelatedGrid" class="org.iringtools.controllers.AppdataController" method="getRelatedAppGrid">
+      <result type="json">
+        <param name="root">grid</param>
+      </result>
+    </action>
+     <action name="appDataRelatedRows" class="org.iringtools.controllers.AppdataController" method="getRelatedAppRows">
+      <result type="json">
+        <param name="root">rows</param>
+      </result>
+    </action>
+    <action name="relatedAppDataGrid" class="org.iringtools.controllers.AppdataController" method="getDetailRelAppGrid">
+      <result type="json">
+        <param name="root">grid</param>
+      </result>
+    </action>
+     <action name="relatedAppDataRows" class="org.iringtools.controllers.AppdataController" method="getDetailRelAppRows">
+      <result type="json">
+        <param name="root">rows</param>
+      </result>
+    </action>
+    <action name="exchangeDataRelatedGrid" class="org.iringtools.controllers.ExchDataController" method="getRelatedExchGrid">
+      <result type="json">
+        <param name="root">grid</param>
+      </result>
+    </action>
+    <action name="exchangeDataRelatedRows" class="org.iringtools.controllers.ExchDataController" method="getRelatedExchRows">
+      <result type="json">
+        <param name="root">rows</param>
+      </result>
+    </action>
+    <action name="relatedDataGrid" class="org.iringtools.controllers.ExchDataController" method="getDetailExchGrid">
+      <result type="json">
+        <param name="root">grid</param>
+      </result>
+    </action>
+    
+     <action name="relatedDataRows" class="org.iringtools.controllers.ExchDataController" method="getDetailExchRows">
       <result type="json">
         <param name="root">rows</param>
       </result>
     </action>
     
+ 
   </package>    
 </struts>

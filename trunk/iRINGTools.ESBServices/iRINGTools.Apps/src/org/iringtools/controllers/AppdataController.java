@@ -16,6 +16,8 @@ public class AppdataController {
 	private String appName;
 	private String graphName;
 	private String pageName;
+	private String id;
+	private String classId;
 	private int start=0;
 	private int limit=20;
 	private HashMap<String, Rows> rowsMap = null;
@@ -47,6 +49,14 @@ public class AppdataController {
 	public String getPageName() {
 		return pageName;
 	}
+	
+	public void setClassId(String classId) {
+		this.classId = classId;
+	}
+
+	public String getClassId() {
+		return classId;
+	}
 
 	public void setScopeName(String scopeName) {
 		this.scopeName = scopeName;
@@ -70,6 +80,14 @@ public class AppdataController {
 
 	public String getGraphName() {
 		return graphName;
+	}
+	
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getId() {
+		return id;
 	}
 
 	public void setStart(int start) {
@@ -112,9 +130,35 @@ public class AppdataController {
 		AppdataModel.setURI("");		
 		return Action.SUCCESS;
 	}
+	
+	public String getRelatedAppGrid() {
+		appdata.populate(scopeName, appName, graphName);
+		grid = appdata.toRelGrid();
+		return Action.SUCCESS;
+	}
+	
+	public String getRelatedAppRows() {
+		if (rowsMap == null)
+			rowsMap = new HashMap<String, Rows>();
+		if (rowsMap.size() <= start / limit) {
+			appdata.populate(scopeName, appName, graphName);
+			rows = appdata.toRelRows(start, limit, id);
+			rowsMap.put(String.valueOf(start), rows);
+		} else {
+			rows = rowsMap.get(String.valueOf(start));
+		}
+		return Action.SUCCESS;
+	}
 
-	// public String postAppDataGrid() {
-	// appdata.readGrid(grid);
-	// return Action.SUCCESS;
-	// }
+	public String getDetailRelAppGrid() {
+		appdata.populate(scopeName, appName, graphName);
+		grid = appdata.toDetailRelGrid(id, classId);
+		return Action.SUCCESS;
+	}
+	
+	public String getDetailRelAppRows() {
+		appdata.populate(scopeName, appName, graphName);
+		rows = appdata.toDetailRelRows(id, classId);
+		return Action.SUCCESS;
+	}
 }

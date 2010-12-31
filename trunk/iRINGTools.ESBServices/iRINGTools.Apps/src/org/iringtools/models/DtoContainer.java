@@ -39,16 +39,16 @@ public class DtoContainer {
 	private List<String> hList = new ArrayList<String>();
 	private List<Header> ghList = new ArrayList<Header>(); // list of headers
 	private List<Filter> filterList = new ArrayList<Filter>();
-	private String relateList = "["; // list of related object
+	
 	private List<Column> cList = new ArrayList<Column>(); // list of column
 															// description
-	private String rlData = ""; // related class object
+	private String classId = ""; // role id of the related object
 
 	private String identifier = "", tempName = "", clsName;
 	private Filter filter;
 	private Column column;
 	private Header header;
-	private int ind = 1, page = 20;
+	private int page = 20;
 
 	private static int total;
 	private static HashMap<String, String> dunit;
@@ -95,6 +95,10 @@ public class DtoContainer {
 	public void setClsName(String clsName) {
 		this.clsName = clsName;
 	}
+	
+	public void setClassId(String classId) {
+		this.classId = classId;
+	}
 
 	public void setRoObj(RoleObject roObj) {
 		this.roObj = roObj;
@@ -107,10 +111,12 @@ public class DtoContainer {
 			hList.add(tempName);
 	}
 	
-	public boolean hListHas() {
-		String head;
-		for (int i = 0; i < hList.size(); i++) {
-			head = hList.get(i);
+	public String getIdentifier(){
+		return identifier;
+	}
+	
+	public boolean hListHas() {		
+		for (String head : hList) {			
 			if (head.equals(tempName))
 				return true;
 		}
@@ -130,7 +136,7 @@ public class DtoContainer {
 	}
 
 	public void fillExchConfig() {
-		int ti = 0, ri = 1;
+		int ti = 0;
 
 		for (DataTransferObject dto : dtoList) {
 			setClaList(dto.getClassObjects().getItems());
@@ -152,13 +158,7 @@ public class DtoContainer {
 								|| rType.equals("DATA_PROPERTY")) {
 							setRoObj(rObj);
 							addToGrid(rObj.getName());
-						} else if (rType.equals("REFERENCE")) {
-							setRcName(rObj.getRelatedClassName());
-							if (rcName != null) {
-								addRList(ri);
-								ri++;
-							}
-						}
+						} 
 					}
 					if (ti < 1)
 						ti++;
@@ -167,7 +167,7 @@ public class DtoContainer {
 			}
 		}
 
-		ind++;
+		
 	}
 	
 	public void setRType(String rType) {
@@ -184,6 +184,66 @@ public class DtoContainer {
 		data.put(tempName, rValue);
 	}
 
+	public void fillExchRelPage()  {		
+		total = 0;		
+		for (DataTransferObject dto : dtoList) {
+			data = new HashMap<String, String>();
+			data.put("TransferType", dto.getTransferType().value());
+			setClaList(dto.getClassObjects().getItems());
+			for (ClassObject clo : claList) {
+				if (hList.size()>0) {
+					if (hList.size() > dataList.size()) {
+						setClsName(clo.getName());	
+						for (String head : hList) {						
+							if (clsName.equals(head)) {
+								setClassId(clo.getClassId());
+								addRelRow(head);						
+							}	
+						}
+					} else {
+						return;
+					}
+				}
+				setTObjList(clo.getTemplateObjects().getItems());
+				for (TemplateObject tObj : tObjList) {
+					setTName(tObj.getName());
+					setRoList(tObj.getRoleObjects().getItems());
+					for (RoleObject rObj : roList) {
+						setRType(rObj.getType().toString());
+						if (rType.equals("REFERENCE")) {
+							setRcName(rObj.getRelatedClassName());
+							if (rcName != null) {								
+								addToGrid(rcName);
+							}
+						}
+					}
+					
+				}
+			}
+			
+			
+		}
+	}
+	
+	
+	public void fillExchDetailRelPage() {		
+		for (DataTransferObject dto : dtoList) {
+			data = new HashMap<String, String>();
+			data.put("TransferType", dto.getTransferType().value());
+			setClaList(dto.getClassObjects().getItems());
+			for (ClassObject clo : claList) {
+				if (!clo.getClassId().equals(classId)) 
+					continue;
+				setTObjList(clo.getTemplateObjects().getItems());
+				TemplateObject tObj = tObjList.get(0);
+				addToGrid(tObj.getName());
+				addDetailRelRow(tObj.getName(), clo.getIdentifier());
+				return;
+			}
+		}		
+	}	
+	
+	
 	public void fillExchPage() {
 		int ti = 0;
 
@@ -227,7 +287,7 @@ public class DtoContainer {
 	}
 
 	public void setRValue(String rval) {
-		if (rType.equals("OBJECT_PROPERTY")) {
+	/*	if (rType.equals("OBJECT_PROPERTY")) {
 			if (dunit == null) {
 				dunit = new HashMap<String, String>();
 				retriveRValue(rval.substring(4));
@@ -241,7 +301,7 @@ public class DtoContainer {
 				}
 
 			}
-		}
+		}*/
 		this.rValue = rval;
 	}
 	
@@ -302,7 +362,7 @@ public class DtoContainer {
 	
 
 	public void fillConfig() {
-		int ti = 0, ri = 1;
+		int ti = 0;
 
 		for (DataTransferObject dto : dtoList) {
 			setClaList(dto.getClassObjects().getItems());
@@ -323,13 +383,7 @@ public class DtoContainer {
 								|| rType.equals("DATA_PROPERTY")) {
 							setRoObj(rObj);
 							addToGrid(rObj.getName());
-						} else if (rType.equals("REFERENCE")) {
-							setRcName(rObj.getRelatedClassName());
-							if (rcName != null) {
-								addRList(ri);
-								ri++;
-							}
-						}
+						} 
 					}
 					if (ti < 1)
 						ti++;
@@ -338,14 +392,134 @@ public class DtoContainer {
 			}
 		}
 
-		ind++;
+		
 	}
 
-	public String addEnd(String list) {
-		if (!list.equals("["))
-			list = list + "]";
-		return list;
+	
+	public void fillExchDetailRelConfig() {
+		addToGrid("TransferType");
+		fillDetailRelConfig();	
+	}
+	
+	public void fillDetailRelConfig() {
+		//addToGrid("Related_Items");
+		for (DataTransferObject dto : dtoList) {
+			setClaList(dto.getClassObjects().getItems());
+			for (ClassObject clo : claList) {
+				if (!clo.getClassId().equals(classId)) 
+					continue;
+				setTObjList(clo.getTemplateObjects().getItems());
+				TemplateObject tObj = tObjList.get(0);
+				addToGrid(tObj.getName());
+				return;
+			}
+		}		
+	}
+	
+	
+	
+	
+	public void fillDetailRelPage() {
+		//addToGrid("Related_Items");
+		for (DataTransferObject dto : dtoList) {
+			setClaList(dto.getClassObjects().getItems());
+			for (ClassObject clo : claList) {
+				if (!clo.getClassId().equals(classId)) 
+					continue;
+				setTObjList(clo.getTemplateObjects().getItems());
+				TemplateObject tObj = tObjList.get(0);
+				addToGrid(tObj.getName());
+				data = new HashMap<String, String>();		
+				addDetailRelRow(tObj.getName(), clo.getIdentifier());
+				return;
+			}
+		}		
+	}	
+		
+	public void addDetailRelRow(String x, String y) {		
+		data.put(x, y);		
+		dataList.add(data);
+		total++;
+	}
+	
+	public void fillRelConfig () {
+		int ti = 0;
 
+		addToGrid("Related_Items");
+		for (DataTransferObject dto : dtoList) {
+			setClaList(dto.getClassObjects().getItems());
+			for (ClassObject clo : claList) {
+
+				setTObjList(clo.getTemplateObjects().getItems());
+				for (TemplateObject tObj : tObjList) {
+					setTName(tObj.getName());
+					setRoList(tObj.getRoleObjects().getItems());
+					for (RoleObject rObj : roList) {
+						setRType(rObj.getType().toString());
+						if (ti < 1 && rType.equals("PROPERTY")) {
+							setClsName(clo.getName());	
+							return;
+						} 
+					}
+					if (ti < 1)
+						ti++;
+				}
+
+			}
+		}		
+	}
+	
+	
+	
+	public void fillRelPage() {		
+		total = 0;		
+		for (DataTransferObject dto : dtoList) {			
+			setClaList(dto.getClassObjects().getItems());
+			for (ClassObject clo : claList) {
+				if (hList.size()>0) {
+					if (hList.size() > dataList.size()) {
+						setClsName(clo.getName());	
+						for (String head : hList) {						
+							if (clsName.equals(head)) {
+								setClassId(clo.getClassId());
+								addRelRow(head);						
+							}	
+						}
+					} else {
+						return;
+					}
+				}
+				setTObjList(clo.getTemplateObjects().getItems());
+				for (TemplateObject tObj : tObjList) {
+					setTName(tObj.getName());
+					setRoList(tObj.getRoleObjects().getItems());
+					for (RoleObject rObj : roList) {
+						setRType(rObj.getType().toString());
+						if (rType.equals("REFERENCE")) {
+							setRcName(rObj.getRelatedClassName());
+							if (rcName != null) {								
+								addToGrid(rcName);
+							}
+						}
+					}
+					
+				}
+			}
+			
+			
+		}
+	}
+	
+	
+	
+
+	
+	public void addRelRow(String head) {
+		data = new HashMap<String, String>();		
+		data.put("id", classId);
+		data.put("label", head);
+		dataList.add(data);
+		total++;
 	}
 
 	public void setTotal(int total) {
@@ -357,32 +531,17 @@ public class DtoContainer {
 		rows.setSuccess("true");
 		rows.setTotal(total);
 	}
-
-	public void setLists(Grid grid) {
-		// rowList=addEnd(rowList);
-		relateList = addEnd(relateList);
-		// grid.setRows(rowList);
-		// grid.setRelatedItemList(relateList);
-	}
-
-	public String addComma(String list) {
-		if (!list.equals("["))
-			list = list + ",";
-		return list;
-	}
-
+	
 	public void setGridList(Grid grid) {
-		String head;
-
-		for (int i = 0; i < hList.size(); i++) {
-			head = hList.get(i);
+	
+		for (String head : hList) {			
 			column = new Column();
 			column.setDataIndex(head);
-			column.setHeader(head.replace('_', '.'));
+			column.setHeader(head.replace('_', ' '));
 			column.setId(head);
 			column.setSortable("true");
-			column.setWidth(6.8 * head.length());
-
+			column.setWidth(Math.ceil(6.8 * head.length()));			
+			
 			cList.add(column);
 
 			header = new Header();
@@ -411,19 +570,7 @@ public class DtoContainer {
 		else {
 			tempName = name;
 		}
-	}
-
-	
-
-	public void addRList(int ri) {
-		if (!rlData.equals(""))
-			rlData = rlData + ",\"text" + ri + "\":\"" + rcName + "\"";
-		else
-			rlData = rlData + "{\"id\":" + ind + "," + "\"identifier\":\""
-					+ identifier + "\",\"text" + ri + "\":\"" + rcName + "\"";
-	}
-
-	
+	}	
 
 	public void readGrid(Grid grid) {
 		// TODO: Read the grid!

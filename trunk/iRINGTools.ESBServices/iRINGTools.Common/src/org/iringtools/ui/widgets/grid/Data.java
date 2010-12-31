@@ -1,8 +1,7 @@
 
 package org.iringtools.ui.widgets.grid;
 
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.HashMap;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -36,9 +35,9 @@ import org.w3c.dom.Element;
 })
 public class Data {
 
-    @SuppressWarnings("rawtypes")
+
 	@XmlAnyElement
-    protected HashMap hdata;
+    protected HashMap<String, String> hdata;
 
     /**
      * Gets the value of the anies property.
@@ -62,9 +61,9 @@ public class Data {
      * 
      * 
      */
-    public HashMap getHdata() {
+    public HashMap<String, String> getHdata() {
         if (hdata == null) {
-        	hdata = new HashMap();
+        	hdata = new HashMap<String, String>();
         }
         return this.hdata;
     }
@@ -77,7 +76,7 @@ public class Data {
      *     {@link Element }
      *     
      */
-    public void setHdata(HashMap hdata) {
+    public void setHdata(HashMap<String, String> hdata) {
         this.hdata = hdata;
     }
 
