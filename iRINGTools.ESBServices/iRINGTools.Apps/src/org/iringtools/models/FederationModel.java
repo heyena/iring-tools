@@ -2,6 +2,7 @@ package org.iringtools.models;
 
 import java.util.Enumeration;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -10,6 +11,7 @@ import org.iringtools.refdata.federation.Federation;
 import org.iringtools.refdata.federation.IDGenerator;
 import org.iringtools.refdata.federation.IDGenerators;
 import org.iringtools.refdata.federation.Namespace;
+import org.iringtools.refdata.federation.NamespaceList;
 import org.iringtools.refdata.federation.Namespaces;
 import org.iringtools.refdata.federation.Repositories;
 import org.iringtools.refdata.federation.RepositoryType;
@@ -107,7 +109,16 @@ public class FederationModel
     treeNodes.add(generatorsNode);
 
     List<Node> generatorNodes = generatorsNode.getChildren();
-
+    
+    //Default Node
+    LeafNode generatorNodeDef = new LeafNode();
+    generatorNodeDef.setId("idgenerator0");
+    generatorNodeDef.setText("None");
+    generatorNodeDef.setIconCls("generator");
+    generatorNodeDef.setHidden(true);
+    generatorNodeDef.setLeaf(true);
+    generatorNodes.add(generatorNodeDef);
+    
     for (IDGenerator idgenerator : federation.getIdGenerators().getItems())
     {
       LeafNode generatorNode = new LeafNode();
@@ -153,7 +164,9 @@ public class FederationModel
       properties.add(WidgetUtil.createProperty("URI", namespace.getUri()));
       properties.add(WidgetUtil.createProperty("Description", namespace.getDescription()));
       properties.add(WidgetUtil.createProperty("Writable", String.valueOf(namespace.isIsWritable())));
-      properties.add(WidgetUtil.createProperty("ID Generator", String.valueOf(namespace.getIdGenerator())));
+      if(namespace.getIdGenerator()!=null){
+    	  properties.add(WidgetUtil.createProperty("ID Generator", "idgenerator"+namespace.getIdGenerator()));
+      }
 
       namespaceNodes.add(namespaceNode);
     }
@@ -194,8 +207,12 @@ public class FederationModel
       properties.add(WidgetUtil.createProperty("Update URI", repository.getUpdateUri()));
       properties.add(WidgetUtil.createProperty("URI", repository.getUri()));
       if(repository.getNamespaces()!=null){
-	      properties.add(WidgetUtil.createProperty("Namespace List", repository.getNamespaces()));
-	    		  //WidgetUtil.createNameSpaceList(federation.getNamespaces(),repository.getNamespaces())));
+    	  NamespaceList namespaces = new NamespaceList();
+    	  List<String> namespaceList = namespaces.getItems();
+    	  for (String namespaceItem : repository.getNamespaces().getItems()){
+    		  namespaceList.add("namespace"+namespaceItem);
+    	  }
+	      properties.add(WidgetUtil.createProperty("Namespace List", namespaces));
       }else{
     	  properties.add(WidgetUtil.createProperty("Namespace List", null));
       }
@@ -231,7 +248,7 @@ public class FederationModel
 					namespace.setAlias(httpRequest.getParameter("Alias"));
 					namespace.setIsWritable(Boolean.parseBoolean(httpRequest.getParameter("Writable")));
 					namespace.setDescription(httpRequest.getParameter("Description"));
-					namespace.setIdGenerator(Integer.parseInt(httpRequest.getParameter("ID Generator")));
+					namespace.setIdGenerator(httpRequest.getParameter("ID Generator").replaceFirst("idgenerator", ""));
 					
 					response = httpClient.post(Response.class, "/namespace", namespace);
 					
@@ -246,7 +263,16 @@ public class FederationModel
 					repository.setRepositoryType(RepositoryType.fromValue(httpRequest.getParameter("Repository Type")));
 					repository.setUpdateUri(httpRequest.getParameter("Update URI"));
 					repository.setIsReadOnly(Boolean.parseBoolean(httpRequest.getParameter("Read Only")));
-					System.out.println("Namespace List :"+httpRequest.getParameter("Namespace List"));
+					if(httpRequest.getParameter("Namespace List")!=null){
+						StringTokenizer st = new StringTokenizer(httpRequest.getParameter("Namespace List"), ","); 
+						NamespaceList namespaceList = new NamespaceList();
+						List<String> namespaceItem = namespaceList.getItems();
+						while(st.hasMoreTokens()) {
+							namespaceItem.add(st.nextToken().replaceFirst("namespace", "")); 
+						}
+						repository.setNamespaces(namespaceList);
+						System.out.println("Namespace List :"+namespaceList.getItems());
+					}
 					response = httpClient.post(Response.class, "/repository", repository);
 
 				}
