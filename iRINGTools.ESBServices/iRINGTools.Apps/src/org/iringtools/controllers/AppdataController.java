@@ -161,4 +161,6 @@ public class AppdataController {
 		rows = appdata.toDetailRelRows(id, classId);
 		return Action.SUCCESS;
 	}
+	
+
 }

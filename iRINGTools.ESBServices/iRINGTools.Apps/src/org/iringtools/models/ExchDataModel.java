@@ -11,6 +11,7 @@ import com.opensymphony.xwork2.ActionContext;
 public class ExchDataModel {
 
 	private Grid grid = null;
+	private Rows rows = null;
 	private static String URI="";	
 	private String identifier;
 	private String dtoUrl;
@@ -104,7 +105,8 @@ public class ExchDataModel {
 		dtiPage = dtiList.subList(0,1);
 	    //setIdentifier(dti.getIdentifier());
 	    dtoCtr.setUrl(dtoUrl);
-	    dtoCtr.populatePage(URI, dtiPage);	      
+	    dtoCtr.populatePage(URI, dtiPage);	 
+	    dtoCtr.initialHList();
 	    dtoCtr.fillExchConfig();
 	    dtoCtr.setGridList(grid);
 		return grid;
@@ -114,9 +116,10 @@ public class ExchDataModel {
     	dtoCtr = new DtoContainer();
     	dtoCtr.setTotal(dtiList.size());
     	dtiPage = dtiList.subList(start, Math.min(limit+start, dtiList.size()-1));
-    	Rows rows = new Rows();    	
+    	rows = new Rows();    	
     	dtoCtr.setUrl(dtoUrl);
-    	dtoCtr.populatePage(URI, dtiPage);	
+    	dtoCtr.populatePage(URI, dtiPage);
+    	dtoCtr.initialDataList();
     	dtoCtr.fillExchPage();	
     	dtoCtr.setRowsList(rows);
     	return rows;
@@ -151,11 +154,7 @@ public class ExchDataModel {
     }
     
     public Rows toRelRows(int start, int limit, String id) {	
-    	Rows rows = new Rows();
-    	dtoCtr = new DtoContainer();    	
-		SetDtiPage(id);	
-    	dtoCtr.setUrl(dtoUrl);
-    	dtoCtr.populatePage(URI, dtiPage);
+    	prepareRows(id);
     	dtoCtr.fillExchRelPage();	
     	dtoCtr.setRowsList(rows);
     	return rows;
@@ -163,11 +162,7 @@ public class ExchDataModel {
     
     
     public Grid toDetailRelGrid(String id, String classId) {
-    	grid = new Grid();    	
-		dtoCtr = new DtoContainer();	
-		SetDtiPage(id);	
-	    dtoCtr.setUrl(dtoUrl);
-	    dtoCtr.populatePage(URI, dtiPage);
+    	prepareGrid(id);
 	    dtoCtr.setClassId(classId);
 	    dtoCtr.fillExchDetailRelConfig();	   
 	    dtoCtr.setGridList(grid);
@@ -175,18 +170,33 @@ public class ExchDataModel {
     }
     
     public Rows toDetailRelRows(String id, String classId) {
-    	Rows rows = new Rows();
-    	dtoCtr = new DtoContainer();
-    	SetDtiPage(id);	
-    	dtoCtr.setUrl(dtoUrl);
-    	dtoCtr.populatePage(URI, dtiPage);
+    	prepareRows(id);
     	dtoCtr.setClassId(classId);
+    	dtoCtr.initialHList();
     	dtoCtr.fillExchDetailRelPage();	
     	dtoCtr.setRowsList(rows);
     	return rows;
     }
     
-   
+    public void prepareGrid(String id) {
+    	grid = new Grid();    	
+		dtoCtr = new DtoContainer();	
+		SetDtiPage(id);	
+	    dtoCtr.setUrl(dtoUrl);
+	    dtoCtr.populatePage(URI, dtiPage);
+	    dtoCtr.initialHList();
+    }
+    
+    public void prepareRows(String id) {
+    	rows = new Rows();
+    	dtoCtr = new DtoContainer();
+    	SetDtiPage(id);	
+    	dtoCtr.setUrl(dtoUrl);
+    	dtoCtr.populatePage(URI, dtiPage);
+    	dtoCtr.initialDataList();
+    }
+    
+ 
     
 	public void readGrid(Grid grid) {
 		//TODO: Read the grid!

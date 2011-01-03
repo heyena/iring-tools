@@ -15,12 +15,14 @@ public class ServiceTest
 {
   public static void main(String[] args) 
   {
-    BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-    String esbServiceUri = "http://localhost:8080/services/esb";
+	BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+    String esbServiceUri = "http://localhost:8081/services/esb";
     HttpClient httpClient = new HttpClient(esbServiceUri);
     
     try
     {     
+      JaxbUtil.read(DataTransferIndices.class, "C:\\Documents and Settings\\fwei\\Desktop\\dti.xml");
+    	
       System.out.println("Getting exchange definitions ...");
       Directory directory = httpClient.get(Directory.class, "/directory");
       System.out.println(JaxbUtil.toXml(directory, true));      

@@ -149,4 +149,6 @@ public class ExchDataController {
 		rows = exchdata.toDetailRelRows(id, classId);
 		return Action.SUCCESS;
 	}
+	
+	
 }
