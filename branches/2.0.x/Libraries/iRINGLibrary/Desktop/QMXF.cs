@@ -72,8 +72,6 @@ namespace org.ids_adi.qmxf
         [DataMember(Name = "targetRepository", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "targetRepository")]
         public string targetRepository { get; set; }
-
-
     }
 
     [DataContract]
