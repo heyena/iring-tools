@@ -15,13 +15,15 @@
         <Name>XYZ</Name>
         <Description i:nil="true"/>
       </ScopeApplication>
+    </Applications>
+  </ScopeProject>
+	<ScopeProject>
+    <Name>44444</Name>
+    <Description>Completions Test</Description>
+    <Applications>
       <ScopeApplication>
-        <Name>FDS</Name>
-        <Description i:nil="true"/>
-      </ScopeApplication>
-      <ScopeApplication>
-        <Name>EPCW</Name>
-        <Description i:nil="true"/>
+        <Name>CM</Name>
+        <Description>Completions Module</Description>
       </ScopeApplication>
     </Applications>
   </ScopeProject>

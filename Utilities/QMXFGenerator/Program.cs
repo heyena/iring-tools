@@ -708,11 +708,9 @@ namespace QMXFGenerator
                 value = description.ToString(),
               };
 
-              roleQualification.description = new Description
+              roleQualification.description = new List<Description>
               {
-                  lang = "EN-US",
-                  value = description.ToString(),
-                //englishUSDescription
+                englishUSDescription
               };
             }
 

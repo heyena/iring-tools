@@ -200,12 +200,7 @@ namespace org.ids_adi.qmxf
           this.status = new List<QMXFStatus>();
           this.textualDefinition = new List<TextualDefinition>();
           this.roleQualification = new List<RoleQualification>();
-          this.repositoryName = string.Empty;
         }
-
-        [DataMember(Name = "repository", EmitDefaultValue = false)]
-        [XmlElement(ElementName = "repository")]
-        public string repositoryName { get; set; }
 
         [DataMember(Name = "suggested-designation", EmitDefaultValue = false)]
         [XmlElement(ElementName = "suggested-designation")]
@@ -569,7 +564,7 @@ namespace org.ids_adi.qmxf
         public RoleQualification()
         {
           this.name = new List<QMXFName>();
-          this.description = new Description();
+          this.description = new List<Description>();
           //this.value = new Value();
           //this.minimum = "1";
           //this.maximum = "1";
@@ -587,7 +582,7 @@ namespace org.ids_adi.qmxf
 
         [DataMember(Name = "description", EmitDefaultValue = false)]
         [XmlElement(ElementName = "description")]
-        public Description description { get; set; }
+        public List<Description> description { get; set; }
 
         [DataMember(Name = "qualifies", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "qualifies")]
@@ -596,10 +591,6 @@ namespace org.ids_adi.qmxf
         [DataMember(Name = "range", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "range")]
         public string range { get; set; }
-
-        [DataMember(Name = "index", EmitDefaultValue = false)]
-        [XmlAttribute(AttributeName = "index")]
-        public string index { get; set; }
 
         [DataMember(Name = "minimum", EmitDefaultValue = false)]
         [XmlAttribute(AttributeName = "minimum")]
