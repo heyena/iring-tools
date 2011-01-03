@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="name" type="{http://ns.ids-adi.org/qxf/model#}Name" maxOccurs="unbounded"/>
  *         &lt;element name="suggested-designation" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded"/>
  *         &lt;element name="designation" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="description" type="{http://ns.ids-adi.org/qxf/model#}Description"/>
+ *         &lt;element name="description" type="{http://ns.ids-adi.org/qxf/model#}Description" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="range" type="{http://www.w3.org/2001/XMLSchema}string" />
@@ -45,7 +45,7 @@ import javax.xml.bind.annotation.XmlType;
     "names",
     "suggestedDesignations",
     "designation",
-    "description"
+    "descriptions"
 })
 public class RoleDefinition {
 
@@ -57,8 +57,8 @@ public class RoleDefinition {
     protected List<String> suggestedDesignations;
     @XmlElement(required = true)
     protected String designation;
-    @XmlElement(required = true)
-    protected Description description;
+    @XmlElement(name = "description", required = true)
+    protected List<Description> descriptions;
     @XmlAttribute(name = "id")
     protected String id;
     @XmlAttribute(name = "range")
@@ -184,27 +184,32 @@ public class RoleDefinition {
     }
 
     /**
-     * Gets the value of the description property.
+     * Gets the value of the descriptions property.
      * 
-     * @return
-     *     possible object is
-     *     {@link Description }
-     *     
-     */
-    public Description getDescription() {
-        return description;
-    }
-
-    /**
-     * Sets the value of the description property.
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the descriptions property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link Description }
-     *     
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getDescriptions().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Description }
+     * 
+     * 
      */
-    public void setDescription(Description value) {
-        this.description = value;
+    public List<Description> getDescriptions() {
+        if (descriptions == null) {
+            descriptions = new ArrayList<Description>();
+        }
+        return this.descriptions;
     }
 
     /**
@@ -385,6 +390,18 @@ public class RoleDefinition {
      */
     public void setSuggestedDesignations(List<String> suggestedDesignations) {
         this.suggestedDesignations = suggestedDesignations;
+    }
+
+    /**
+     * Sets the value of the descriptions property.
+     * 
+     * @param descriptions
+     *     allowed object is
+     *     {@link Description }
+     *     
+     */
+    public void setDescriptions(List<Description> descriptions) {
+        this.descriptions = descriptions;
     }
 
 }
