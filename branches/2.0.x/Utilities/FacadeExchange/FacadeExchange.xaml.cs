@@ -165,6 +165,7 @@ namespace org.iringtools.utils.exchange
         Uri scopesURI = new Uri(textBoxAdapterURL.Text + "/scopes");
 
         WebClient client = new WebClient();
+
         client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(client_GetScopesCompleted);
 
         client.DownloadStringAsync(scopesURI);
