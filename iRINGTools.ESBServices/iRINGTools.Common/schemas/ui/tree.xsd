@@ -26,6 +26,7 @@
 			<xs:element name="id" type="xs:string" />
 			<xs:element name="text" type="xs:string" />
 			<xs:element name="iconCls" type="xs:string" default="folder" />
+			<xs:element name="hidden" type="xs:boolean" default="false" />
 			<xs:element name="properties" type="Property" maxOccurs="unbounded" />
 		</xs:sequence>
 	</xs:complexType>

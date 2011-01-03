@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="alias" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="isWritable" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="idGenerator" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="idGenerator" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -53,7 +53,8 @@ public class Namespace {
     protected boolean isWritable;
     @XmlElement(required = true)
     protected String description;
-    protected int idGenerator;
+    @XmlElement(required = true)
+    protected String idGenerator;
 
     /**
      * Gets the value of the id property.
@@ -170,16 +171,24 @@ public class Namespace {
     /**
      * Gets the value of the idGenerator property.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public int getIdGenerator() {
+    public String getIdGenerator() {
         return idGenerator;
     }
 
     /**
      * Sets the value of the idGenerator property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setIdGenerator(int value) {
+    public void setIdGenerator(String value) {
         this.idGenerator = value;
     }
 

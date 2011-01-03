@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="text" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="iconCls" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="hidden" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="properties" type="{http://www.iringtools.org/ui/widgets/tree}Property" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -37,6 +38,7 @@ import javax.xml.bind.annotation.XmlType;
     "id",
     "text",
     "iconCls",
+    "hidden",
     "properties"
 })
 @XmlSeeAlso({
@@ -51,6 +53,8 @@ public abstract class Node {
     protected String text;
     @XmlElement(required = true, defaultValue = "folder")
     protected String iconCls;
+    @XmlElement(defaultValue = "false")
+    protected boolean hidden;
     @XmlElement(required = true)
     protected List<Property> properties;
 
@@ -124,6 +128,22 @@ public abstract class Node {
      */
     public void setIconCls(String value) {
         this.iconCls = value;
+    }
+
+    /**
+     * Gets the value of the hidden property.
+     * 
+     */
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    /**
+     * Sets the value of the hidden property.
+     * 
+     */
+    public void setHidden(boolean value) {
+        this.hidden = value;
     }
 
     /**
