@@ -81,7 +81,7 @@
 			<xs:element name="alias" type="xs:string" />
 			<xs:element name="isWritable" type="xs:boolean" />
 			<xs:element name="description" type="xs:string" />
-			<xs:element name="idGenerator" type="xs:int" />
+			<xs:element name="idGenerator" type="xs:string" />
 		</xs:sequence>
 	</xs:complexType>
 
@@ -108,7 +108,7 @@
 
 	<xs:complexType name="NamespaceList">
 		<xs:sequence>
-			<xs:element name="namespaceId" type="xs:int" maxOccurs="unbounded">
+			<xs:element name="namespaceId" type="xs:string" maxOccurs="unbounded">
         <xs:annotation>
           <xs:appinfo>
             <jaxb:property name="items" />
