@@ -30,19 +30,19 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link TemplateDefinition }
+     * 
+     */
+    public TemplateDefinition createTemplateDefinition() {
+        return new TemplateDefinition();
+    }
+
+    /**
      * Create an instance of {@link TextualDefinition }
      * 
      */
     public TextualDefinition createTextualDefinition() {
         return new TextualDefinition();
-    }
-
-    /**
-     * Create an instance of {@link TemplateQualification }
-     * 
-     */
-    public TemplateQualification createTemplateQualification() {
-        return new TemplateQualification();
     }
 
     /**
@@ -54,14 +54,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Classification }
-     * 
-     */
-    public Classification createClassification() {
-        return new Classification();
-    }
-
-    /**
      * Create an instance of {@link RoleQualification }
      * 
      */
@@ -70,11 +62,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link License }
+     * Create an instance of {@link Specialization }
      * 
      */
-    public License createLicense() {
-        return new License();
+    public Specialization createSpecialization() {
+        return new Specialization();
     }
 
     /**
@@ -86,14 +78,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Restriction }
-     * 
-     */
-    public Restriction createRestriction() {
-        return new Restriction();
-    }
-
-    /**
      * Create an instance of {@link RoleDefinition }
      * 
      */
@@ -102,19 +86,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Name }
+     * Create an instance of {@link TemplateQualification }
      * 
      */
-    public Name createName() {
-        return new Name();
+    public TemplateQualification createTemplateQualification() {
+        return new TemplateQualification();
     }
 
     /**
-     * Create an instance of {@link Qmxf }
+     * Create an instance of {@link Restriction }
      * 
      */
-    public Qmxf createQmxf() {
-        return new Qmxf();
+    public Restriction createRestriction() {
+        return new Restriction();
     }
 
     /**
@@ -134,11 +118,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Specialization }
+     * Create an instance of {@link Qmxf }
      * 
      */
-    public Specialization createSpecialization() {
-        return new Specialization();
+    public Qmxf createQmxf() {
+        return new Qmxf();
+    }
+
+    /**
+     * Create an instance of {@link License }
+     * 
+     */
+    public License createLicense() {
+        return new License();
+    }
+
+    /**
+     * Create an instance of {@link Name }
+     * 
+     */
+    public Name createName() {
+        return new Name();
     }
 
     /**
@@ -158,11 +158,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link TemplateDefinition }
+     * Create an instance of {@link Classification }
      * 
      */
-    public TemplateDefinition createTemplateDefinition() {
-        return new TemplateDefinition();
+    public Classification createClassification() {
+        return new Classification();
     }
 
     /**

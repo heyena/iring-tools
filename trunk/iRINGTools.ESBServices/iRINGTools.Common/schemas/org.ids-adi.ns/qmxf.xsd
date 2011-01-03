@@ -81,7 +81,7 @@
       <xs:element name="name" type="Name" maxOccurs="unbounded"/>
       <xs:element name="suggested-designation" type="xs:string" maxOccurs="unbounded"/>
       <xs:element name="designation" type="xs:string"/>
-      <xs:element name="description" type="Description"/>
+      <xs:element name="description" type="Description" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:attribute name="id" type="xs:string"/>
     <xs:attribute name="range" type="xs:string"/>
