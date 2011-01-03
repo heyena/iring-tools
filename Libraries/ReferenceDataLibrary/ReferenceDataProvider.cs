@@ -1866,7 +1866,8 @@ namespace org.iringtools.referenceData
                       roleLabel = roleName.value;
                       Utility.WriteString("\n" + roleID + "\t" + roleLabel, "RoleQual IDs.log", true);
 
-                      roleDescription = role.description.value;
+                      //roleDescription = role.description.value;
+                      roleDescription = String.Join(" ", role.description);
                     }
                     //append role to sparql query
                     //value restriction
@@ -2053,14 +2054,15 @@ namespace org.iringtools.referenceData
                     }
 
                     //append changing description to each block
-                    Description existingDescription = existingRole.description;
-
-                    if (existingDescription.value.ToUpper() != role.description.value.ToUpper())
+                    for (int i = 0; i < existingRole.description.Count; i++)
                     {
-                      hasDeletes = hasInserts = true;
+                     if (existingRole.description[i].value.ToUpper() != role.description[i].value.ToUpper())
+                      {
+                        hasDeletes = hasInserts = true;
 
-                      deleteRoleSparql += "rdfs:comment \"" + existingDescription.value + "\"^^xsd:string ; ";
-                      insertRoleSparql += "rdfs:comment \"" + role.description.value + "\"^^xsd:string ; ";
+                        deleteRoleSparql += "rdfs:comment \"" + existingRole.description[i].value + "\"^^xsd:string ; ";
+                        insertRoleSparql += "rdfs:comment \"" + role.description[i].value + "\"^^xsd:string ; ";
+                      }
                     }
 
                     //append changing range to each block
@@ -2099,11 +2101,11 @@ namespace org.iringtools.referenceData
                     }
 
                     //append changing index to each block
-                    if (existingRole.index != index.ToString())
-                    {
-                      deleteRoleSparql += " tpl:R97483568938 \"" + existingRole.index + "\"^^xsd:int ; ";
-                      insertRoleSparql += " tpl:R97483568938 \"" + index + "\"^^xsd:int ; ";
-                    }
+                    //if (existingRole.index != index.ToString())
+                    //{
+                    //  deleteRoleSparql += " tpl:R97483568938 \"" + existingRole.index + "\"^^xsd:int ; ";
+                    //  insertRoleSparql += " tpl:R97483568938 \"" + index + "\"^^xsd:int ; ";
+                    //}
 
                     //close role statements and append to each block if needed.
                     if (hasDeletes)
@@ -2136,10 +2138,10 @@ namespace org.iringtools.referenceData
                       roleLabel = roleName.value;
                       metaSparql += " rdfs:label \"" + roleLabel + "\"^^xsd:string ; ";
                     }
-
-                    if (role.description != null)
+                                        
+                    if (role.description != null && role.description.Count > 0)
                     {
-                      roleDescription = role.description.value;
+                      roleDescription = role.description[0].value;
                       metaSparql += " rdfs:comment \"" + roleDescription + "\"^^xsd:string ; ";
                     }
 
@@ -2205,7 +2207,7 @@ namespace org.iringtools.referenceData
                   string roleIdentifier = "<" + role.qualifies + ">";
 
                   string deleteRoleSparql = roleIdentifier + " ";
-                  string whereRoleSparql = roleIdentifier + " ?px" + role.index + " ?ox" + role.index + " . ";
+                  //string whereRoleSparql = roleIdentifier + " ?px" + role.index + " ?ox" + role.index + " . ";
 
                   label = String.Empty;
                   foreach (QMXFName name in role.name)
@@ -2228,14 +2230,13 @@ namespace org.iringtools.referenceData
 
                   deleteRoleSparql += " rdfs:domain " + identifier + " ; ";
 
-                  deleteRoleSparql += "rdfs:range <" + role.range + "> ; "
-                    + " tpl:R97483568938 \"" + role.index + "\"^^xsd:int ; ";
+                  //deleteRoleSparql += "rdfs:range <" + role.range + "> ; " + " tpl:R97483568938 \"" + role.index + "\"^^xsd:int ; ";
 
                   deleteRoleSparql = deleteRoleSparql.Insert(deleteRoleSparql.LastIndexOf(";"), ".");
                   deleteRoleSparql = deleteRoleSparql.Remove(deleteRoleSparql.LastIndexOf(";"));
 
                   deleteSparql += deleteRoleSparql;
-                  whereSparql += whereRoleSparql;
+                  //whereSparql += whereRoleSparql;
 
                   #endregion
                 }
