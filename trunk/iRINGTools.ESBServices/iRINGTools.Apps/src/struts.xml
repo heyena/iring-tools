@@ -83,7 +83,7 @@
         <param name="root">grid</param>
       </result>
     </action>
-     <action name="appDataRelatedRows" class="org.iringtools.controllers.AppdataController" method="getRelatedAppRows">
+    <action name="appDataRelatedRows" class="org.iringtools.controllers.AppdataController" method="getRelatedAppRows">
       <result type="json">
         <param name="root">rows</param>
       </result>
@@ -118,8 +118,29 @@
       <result type="json">
         <param name="root">rows</param>
       </result>
+    </action>  
+    
+    <action name="relatedAppDataRelationsGrid" class="org.iringtools.controllers.AppdataController" method="getRelatedAppGrid">
+      <result type="json">
+        <param name="root">grid</param>
+      </result>
     </action>
     
- 
+    <action name="relatedAppDataRelationsRows" class="org.iringtools.controllers.AppdataController" method="getRelatedAppRows">
+      <result type="json">
+        <param name="root">rows</param>
+      </result>
+    </action>
+    
+    <action name="relatedDataRelationsGrid" class="org.iringtools.controllers.ExchDataController" method="getRelatedExchGrid">
+      <result type="json">
+        <param name="root">grid</param>
+      </result>
+    </action>
+    <action name="relatedDataRelationsRows" class="org.iringtools.controllers.ExchDataController" method="getRelatedExchRows">
+      <result type="json">
+        <param name="root">rows</param>
+      </result>
+    </action>
   </package>    
 </struts>
