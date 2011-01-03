@@ -123,22 +123,8 @@ public class ExchDataModel {
     	dtoCtr.fillExchPage();	
     	dtoCtr.setRowsList(rows);
     	return rows;
-    }
-    
-   
-    
-    public Grid toRelGrid(String id) {    	
-    	grid = new Grid();    	
-		dtoCtr = new DtoContainer();
-		dtiPage = dtiList.subList(0,1);
-		dtoCtr.setUrl(dtoUrl);
-		dtoCtr.populatePage(URI, dtiPage);	            
-	    dtoCtr.fillRelConfig();	   
-	    dtoCtr.setGridList(grid);
-    	return grid;
-    }
-    
-    
+    }    
+  
     public int getDti(String id) {
     	for (DataTransferIndex dti : dtiList) {
     		if (dti.getIdentifier().equals(id))
@@ -153,7 +139,7 @@ public class ExchDataModel {
 		dtiPage = dtiList.subList(ind, ind+1);  
     }
     
-    public Rows toRelRows(int start, int limit, String id) {	
+    public Rows toRelRows(String id) {	
     	prepareRows(id);
     	dtoCtr.fillExchRelPage();	
     	dtoCtr.setRowsList(rows);

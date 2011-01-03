@@ -368,7 +368,7 @@ public class DtoContainer {
 	}
 	
 	public void fillDetailRelConfig() {
-		//addToGrid("Related_Items");
+		
 		for (DataTransferObject dto : dtoList) {
 			setClaList(dto.getClassObjects().getItems());
 			for (ClassObject clo : claList) {
@@ -386,7 +386,7 @@ public class DtoContainer {
 	
 	
 	public void fillDetailRelPage() {
-		//addToGrid("Related_Items");
+		
 		for (DataTransferObject dto : dtoList) {
 			setClaList(dto.getClassObjects().getItems());
 			for (ClassObject clo : claList) {
@@ -431,13 +431,7 @@ public class DtoContainer {
 
 			}
 		}		
-	}
-	public void fillRelConfig () {
-		initialHList();
-		addToGrid("Related_Items");
-		getClassName();
-	}
-	
+	}	
 	
 	public void fillExchRelPage()  {	
 		initialHList();
@@ -491,10 +485,6 @@ public class DtoContainer {
 			getRelatedItems();			
 		}
 	}
-	
-	
-	
-
 	
 	public void addRelRow(String head) {
 		data = new HashMap<String, String>();		

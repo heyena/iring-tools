@@ -119,22 +119,11 @@ public class ExchDataController {
 		return Action.SUCCESS;
 	}
 
-	public String getRelatedExchGrid() {
-		exchdata.populate(scopeName, idName);
-		grid = exchdata.toRelGrid(id);
-		return Action.SUCCESS;
-	}
+
 	
-	public String getRelatedExchRows() {
-		if (rowsMap == null)
-			rowsMap = new HashMap<String, Rows>();
-		if (rowsMap.size() <= start / limit) {
-			exchdata.populate(scopeName, idName);
-			rows = exchdata.toRelRows(start, limit, id);
-			rowsMap.put(String.valueOf(start), rows);
-		} else {
-			rows = rowsMap.get(String.valueOf(start));
-		}
+	public String getRelatedExchRows() {		
+		exchdata.populate(scopeName, idName);
+		rows = exchdata.toRelRows(id);		
 		return Action.SUCCESS;
 	}
 

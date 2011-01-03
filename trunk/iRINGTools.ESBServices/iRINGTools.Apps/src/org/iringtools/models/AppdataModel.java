@@ -109,18 +109,7 @@ public class AppdataModel {
     	dtoCtr.fillPage();	
     	dtoCtr.setRowsList(rows);
     	return rows;
-    }
-    
-    public Grid toRelGrid() {
-    	grid = new Grid();    	
-		dtoCtr = new DtoContainer();
-		DataTransferIndex dti = dtiList.get(0);	  
-	    dtoCtr.setUrl(dtoUrl, dti.getIdentifier());
-	    dtoCtr.populate(URI);	      
-	    dtoCtr.fillRelConfig();	   
-	    dtoCtr.setGridList(grid);
-    	return grid;
-    }
+    }  
     
     public Grid toDetailRelGrid(String id, String classId) {
     	prepareGrid(id);	  
@@ -139,7 +128,7 @@ public class AppdataModel {
     	return rows;
     }
     
-    public Rows toRelRows(int start, int limit, String id) {	
+    public Rows toRelRows(String id) {	
     	prepareRows(id);	
     	dtoCtr.fillRelPage();	
     	dtoCtr.setRowsList(rows);
