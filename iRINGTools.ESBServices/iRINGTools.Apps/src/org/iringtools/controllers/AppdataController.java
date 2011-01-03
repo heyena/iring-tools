@@ -131,22 +131,9 @@ public class AppdataController {
 		return Action.SUCCESS;
 	}
 	
-	public String getRelatedAppGrid() {
+	public String getRelatedAppRows() {		
 		appdata.populate(scopeName, appName, graphName);
-		grid = appdata.toRelGrid();
-		return Action.SUCCESS;
-	}
-	
-	public String getRelatedAppRows() {
-		if (rowsMap == null)
-			rowsMap = new HashMap<String, Rows>();
-		if (rowsMap.size() <= start / limit) {
-			appdata.populate(scopeName, appName, graphName);
-			rows = appdata.toRelRows(start, limit, id);
-			rowsMap.put(String.valueOf(start), rows);
-		} else {
-			rows = rowsMap.get(String.valueOf(start));
-		}
+		rows = appdata.toRelRows(id);		
 		return Action.SUCCESS;
 	}
 

@@ -77,13 +77,8 @@
       <result type="json">
         <param name="root">rows</param>
       </result>
-    </action>
-    <action name="appDataRelatedGrid" class="org.iringtools.controllers.AppdataController" method="getRelatedAppGrid">
-      <result type="json">
-        <param name="root">grid</param>
-      </result>
-    </action>
-    <action name="appDataRelatedRows" class="org.iringtools.controllers.AppdataController" method="getRelatedAppRows">
+    </action>   
+    <action name="appDataRelations" class="org.iringtools.controllers.AppdataController" method="getRelatedAppRows">
       <result type="json">
         <param name="root">rows</param>
       </result>
@@ -98,12 +93,8 @@
         <param name="root">rows</param>
       </result>
     </action>
-    <action name="exchangeDataRelatedGrid" class="org.iringtools.controllers.ExchDataController" method="getRelatedExchGrid">
-      <result type="json">
-        <param name="root">grid</param>
-      </result>
-    </action>
-    <action name="exchangeDataRelatedRows" class="org.iringtools.controllers.ExchDataController" method="getRelatedExchRows">
+    
+    <action name="exchangeDataRelations" class="org.iringtools.controllers.ExchDataController" method="getRelatedExchRows">
       <result type="json">
         <param name="root">rows</param>
       </result>
@@ -118,25 +109,14 @@
       <result type="json">
         <param name="root">rows</param>
       </result>
-    </action>  
-    
-    <action name="relatedAppDataRelationsGrid" class="org.iringtools.controllers.AppdataController" method="getRelatedAppGrid">
-      <result type="json">
-        <param name="root">grid</param>
-      </result>
-    </action>
+    </action>     
     
     <action name="relatedAppDataRelationsRows" class="org.iringtools.controllers.AppdataController" method="getRelatedAppRows">
       <result type="json">
         <param name="root">rows</param>
       </result>
-    </action>
+    </action>    
     
-    <action name="relatedDataRelationsGrid" class="org.iringtools.controllers.ExchDataController" method="getRelatedExchGrid">
-      <result type="json">
-        <param name="root">grid</param>
-      </result>
-    </action>
     <action name="relatedDataRelationsRows" class="org.iringtools.controllers.ExchDataController" method="getRelatedExchRows">
       <result type="json">
         <param name="root">rows</param>
