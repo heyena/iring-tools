@@ -158,8 +158,8 @@ public class RefDataProvider
 			  Integer nsID = Integer.parseInt(idgenerator.getId());
 			  for(Namespace ns : federation.getNamespaces().getItems())
 			  {
-				  if(ns.getIdGenerator() == nsID)
-					  ns.setIdGenerator(0);				  
+				  if(ns.getIdGenerator().equalsIgnoreCase(nsID.toString()))
+					  ns.setIdGenerator("0");				  
 			  }
 			  
 			  //now remove the namespace
