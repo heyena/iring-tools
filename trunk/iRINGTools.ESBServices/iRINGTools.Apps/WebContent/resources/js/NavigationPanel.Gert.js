@@ -30,7 +30,7 @@ ExchangeManager.NavigationPanel = Ext
 
 						// var rowData = eval(this.configData.rowData);
 						var fieldList = eval(this.configData.headerLists);
-						var headerList = eval(this.configData.columnDatas);
+						var headerList = eval(this.configData.columnData);
 						var classObjName = this.configData.classObjName;
 						var filterSet = eval(this.configData.filterSets);
 						var pageSize = parseInt(this.configData.pageSize);
