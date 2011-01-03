@@ -540,7 +540,7 @@ public class DtoContainer {
 			filterList.add(filter);
 		}
 		grid.setFilterSets(filterList);
-		grid.setColumnDatas(cList);
+		grid.setColumnData(cList);
 		grid.setHeaderLists(ghList);
 
 		grid.setCacheData("true"); // Add rules in the future
