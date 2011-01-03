@@ -50,6 +50,9 @@ namespace org.iringtools.utils.exchange
         _messages.Add(new StatusMessage { Message = "Pulling Graph from remote Façade...", ImageName = "Resources/info_22.png" });
 
         WebClient client = new WebClient();
+
+        client.Proxy.Credentials = CredentialCache.DefaultCredentials;
+
         client.UploadStringCompleted += new UploadStringCompletedEventHandler(client_UploadStringCompleted);
         client.Headers["Content-type"] = "application/xml";
         client.Encoding = Encoding.UTF8;
@@ -90,6 +93,13 @@ namespace org.iringtools.utils.exchange
         _messages.Add(new StatusMessage { Message = "Publishing Graph to own Façade...", ImageName = "Resources/info_22.png" });
 
         WebClient client = new WebClient();
+
+        client.Proxy.Credentials = CredentialCache.DefaultCredentials;
+
+        WebProxy proxy = new WebProxy();
+        proxy.UseDefaultCredentials = true;
+        client.Proxy = proxy;
+
         client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(client_DownloadStringCompleted);
 
         Uri refreshURI = new Uri(textBoxAdapterURL.Text + "/" + _project.Name + "/" + _application.Name + "/" + comboBoxGraphName.Text + "/refresh");
@@ -165,6 +175,8 @@ namespace org.iringtools.utils.exchange
         Uri scopesURI = new Uri(textBoxAdapterURL.Text + "/scopes");
 
         WebClient client = new WebClient();
+
+        client.Proxy.Credentials = CredentialCache.DefaultCredentials;
 
         client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(client_GetScopesCompleted);
 
@@ -262,9 +274,12 @@ namespace org.iringtools.utils.exchange
       {
         _application = (ScopeApplication)comboBoxAppName.SelectedItem;
 
-        if (_application != null)
+        if (_application != null && _application.Name != null && _application.Name != String.Empty)
         {
           WebClient client = new WebClient();
+
+          client.Proxy.Credentials = CredentialCache.DefaultCredentials;
+
           client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(client_GetMappingCompleted);
 
           Uri mappingURI = new Uri(textBoxAdapterURL.Text + "/" + _project.Name + "/" + _application.Name + "/mapping");
