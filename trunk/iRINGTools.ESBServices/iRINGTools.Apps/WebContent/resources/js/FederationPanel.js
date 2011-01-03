@@ -414,6 +414,7 @@ openTab: function(node,formType) {
   },
   
   onLoad: function () {
+      this.federationPanel.getRootNode().expand(true);
       this.federationPanel.body.unmask();
   },
   
