@@ -316,7 +316,7 @@ openTab: function(node,formType) {
                      xtype= 'xtype : "combo", width : 230, triggerAction: "all", editable : false, mode: "local", store: ["true","false"],  displayField:"'+properties[i].value+'", width: 120'
                      break;
                  case 'Repository Type':
-                     xtype= 'xtype : "combo",width : 230, triggerAction: "all", editable : false, mode: "local", store: ["RDS/WIP", "Camelot", "Part 8"],  displayField:"'+properties[i].value+'", width: 120'
+                     xtype= 'xtype : "combo",width : 230, triggerAction: "all", editable : false, mode: "local", store: ["RDS/WIP", "Camelot", "Part8"],  displayField:"'+properties[i].value+'", width: 120'
                  break;
                  case 'ID Generator':
                      // get all the IDGenerators
