@@ -88,7 +88,8 @@ Ext.onReady(function () {
 						url: pageURL,						
 						closable: true,
 						nodeDisplay: commodity,
-						
+						scopeName:scopeId,
+						idName:uid
 					});
 					
 					contentPanel.add(newTab);
