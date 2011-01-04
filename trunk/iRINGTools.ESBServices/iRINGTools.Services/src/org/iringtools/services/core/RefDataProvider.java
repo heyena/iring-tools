@@ -159,7 +159,7 @@ public class RefDataProvider
 			  for(Namespace ns : federation.getNamespaces().getItems())
 			  {
 				  if(ns.getIdGenerator().equalsIgnoreCase(nsID.toString()))
-					  ns.setIdGenerator("0");				  
+					  ns.setIdGenerator("");
 			  }
 			  
 			  //now remove the namespace
