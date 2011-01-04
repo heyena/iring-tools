@@ -51,6 +51,8 @@ namespace org.iringtools.utils.exchange
 
         WebClient client = new WebClient();
 
+        client.Credentials = CredentialCache.DefaultCredentials;
+
         client.Proxy.Credentials = CredentialCache.DefaultCredentials;
 
         client.UploadStringCompleted += new UploadStringCompletedEventHandler(client_UploadStringCompleted);
@@ -93,6 +95,8 @@ namespace org.iringtools.utils.exchange
         _messages.Add(new StatusMessage { Message = "Publishing Graph to own Façade...", ImageName = "Resources/info_22.png" });
 
         WebClient client = new WebClient();
+
+        client.Credentials = CredentialCache.DefaultCredentials;
 
         client.Proxy.Credentials = CredentialCache.DefaultCredentials;
 
@@ -175,6 +179,8 @@ namespace org.iringtools.utils.exchange
         Uri scopesURI = new Uri(textBoxAdapterURL.Text + "/scopes");
 
         WebClient client = new WebClient();
+
+        client.Credentials = CredentialCache.DefaultCredentials;
 
         client.Proxy.Credentials = CredentialCache.DefaultCredentials;
 
@@ -277,6 +283,8 @@ namespace org.iringtools.utils.exchange
         if (_application != null && _application.Name != null && _application.Name != String.Empty)
         {
           WebClient client = new WebClient();
+
+          client.Credentials = CredentialCache.DefaultCredentials;
 
           client.Proxy.Credentials = CredentialCache.DefaultCredentials;
 
