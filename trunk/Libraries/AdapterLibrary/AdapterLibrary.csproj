@@ -121,6 +121,9 @@
     <Compile Include="AdapterModule.cs" />
     <Compile Include="BaseDataProjectionEngine.cs" />
     <Compile Include="BaseProjectionEngine.cs" />
+    <Compile Include="STSProvider.cs" />
+    <Compile Include="WindowsAuthenticationProvider.cs" />
+    <Compile Include="IIdentityLayer.cs" />
     <Compile Include="DataProjectionEngine.cs" />
     <Compile Include="DtoPageRequest.cs" />
     <Compile Include="DtoProvider.cs" />
