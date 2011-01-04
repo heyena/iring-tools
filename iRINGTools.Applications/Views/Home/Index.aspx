@@ -3,11 +3,11 @@
   <head>
     <meta http-equiv="cache-control" content="no-cache"/>
     <link rel="stylesheet" type="text/css" href="../../Content/css/iring-tools.css"/>
-    <title>iRINGTools Version 2.00.00</title>
+    <title>iRINGTools Version 2.01.00</title>
   </head>
   <body>
     <div class="banner">
-      <h1><img src="../../Content/img/iring-tools-logo.png" />&nbsp; Version 2.00.00</h1>
+      <h1><img src="../../Content/img/iring-tools-logo.png" />&nbsp; Version 2.01.00</h1>
     </div>      
     <div class="main">
       <p>iRINGTools is a set of free, public domain, open source (BSD 3 license) software applications and utilities that 

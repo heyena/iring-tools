@@ -3,11 +3,11 @@
   <display-name>iRINGTools Services</display-name>
   <context-param>
     <param-name>directoryServiceUri</param-name>
-    <param-value>http://localhost:8081/services/dir</param-value>
+    <param-value>http://localhost:8080/services/dir</param-value>
   </context-param>
   <context-param>
     <param-name>differencingServiceUri</param-name>
-    <param-value>http://localhost:8081/services/diff</param-value>
+    <param-value>http://localhost:8080/services/diff</param-value>
   </context-param>
   <context-param>
     <param-name>poolSize</param-name>
