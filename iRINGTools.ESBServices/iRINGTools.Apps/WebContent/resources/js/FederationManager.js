@@ -52,7 +52,15 @@ Ext.onReady(function () {
         });
         
 	federationPanel.on('opentab', function(panel, node, label, formData) {
-
+			var tabIconClass;
+			if(node.parentNode.text == 'ID Generators'){
+				tabIconClass = 'tabsIdGen';
+			}else if(node.parentNode.text == 'Namespaces'){
+				tabIconClass = 'tabsNameSpace';
+			}else if(node.parentNode.text == 'Repositories'){
+				tabIconClass = 'tabsRepository';
+			}
+			alert(node.parentNode.text);
                 var newTab = new FederationManager.ContentPanel({
                         title: label,
                         id:'tab-' + node.id,
@@ -61,7 +69,7 @@ Ext.onReady(function () {
                         url: 'postFederation',
                         single: true, // important, as many layouts can occur
                         layout:'fit',
-                        
+                        iconCls: tabIconClass,
                         closable: true,
                         defaults:{
                                 layout:'form',

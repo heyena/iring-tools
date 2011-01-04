@@ -50,7 +50,17 @@
       .profile{
         background:transparent url(../lib/ext-3.2.1/resources/images/folder_go.png) no-repeat;
       }
-
+      .x-tree-node .generator {
+      	background-image:url(../images/16x16/application-x-executable.png);
+      }
+      
+      .x-tree-node .namespace {
+      	background-image:url(../images/16x16/namespace.png);
+      }
+      
+      .x-tree-node .repository {
+      	background-image:url(../images/16x16/applications-database.png);
+      }
       .headerLnk{
         font-family:Calibri, Arial;
         font-size:18;

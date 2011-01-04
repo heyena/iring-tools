@@ -1663,3 +1663,15 @@ body.x-body-masked .x-window-plain .x-window-mc {
 .x-window-dlg .ext-mb-error {
     background-image:url(../images/gray/window/icon-error.gif);
 }
+.tabs {
+    background-image:url(../images/default/tree/leaf.gif) !important;
+}
+.tabsIdGen {
+    background-image:url(../images/default/tree/application-x-executable.png) !important;
+}
+.tabsNameSpace {
+    background-image:url(../images/default/tree/namespace.png) !important;
+}
+.tabsRepository {
+    background-image:url(../images/default/tree/applications-database.png) !important;
+}
