@@ -1,16 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app id="iRINGTools.Apps">
   <context-param>
-    <param-name>RefDataServiceUri</param-name>
-    <param-value>http://localhost:8080/services/refdata</param-value>
+    <param-name>ExchangeDataServiceUri</param-name>
+    <param-value>http://localhost:8081/services/esb</param-value>
   </context-param>
-   <context-param>
+  <context-param>
+    <param-name>RefDataServiceUri</param-name>
+    <param-value>http://localhost:8081/services/refdata</param-value>
+  </context-param>
+  <context-param>
     <param-name>DirectoryServiceUri</param-name>
-    <param-value>http://localhost:8080/services/dir</param-value>
+    <param-value>http://localhost:8081/services/dir</param-value>
   </context-param>
   <context-param>
     <param-name>AppDataServiceUri</param-name>
-    <param-value>http://localhost:54321/adapter</param-value>
+    <param-value>http://localhost:54321/dxfr</param-value><!--
+    http://75.101.140.62/Services/dto
+    http://localhost:54321/dxfr
+  --></context-param>
+  <context-param>
+    <param-name>RefServiceUri</param-name>
+    <param-value>http://localhost:54321/refdata</param-value>
   </context-param>
   <display-name>iRINGTools Apps</display-name>
   <welcome-file-list>
