@@ -57,6 +57,13 @@
         text-decoration:none;
         color:#4784B6;
       }
+      
+      .headerLnkBlack{
+        font-family:Calibri, Arial;
+        font-size:18;
+        text-decoration:none;
+        color:#000000;
+      }
 
       .x-tree .x-panel-body {
         background-color: #FFFFFF;
