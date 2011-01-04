@@ -18,7 +18,7 @@ Ext.onReady(function () {
 	  width: 250,
   	  minSize: 175,
   	  maxSize: 500,
-	  url: 'exchangereader/exchangelist/1',
+	  url: 'exchangereader/exchangelist/1'
 	});
 	
 	var contentPanel = new Ext.TabPanel({
