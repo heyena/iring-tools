@@ -36,14 +36,16 @@ next: true,
 prev: true
 		   });
 
-		   var rowData = eval(this.configData.rowData);
-		   var fieldList = eval(this.configData.headersList);
-		   var headerList = eval(this.configData.columnsData);
+		   //var rowData = eval(this.configData.Data);
+		   var fieldList = eval(this.configData.headerLists);
+		   var headerList = eval(this.configData.columnData);
 		   var classObjName = this.configData.classObjName;
-		   var filterSet = eval(this.configData.filterSet);
+		   var filterSet = eval(this.configData.filterSets);
 		   var pageSize = parseInt(this.configData.pageSize); 
-		   var sortBy = this.configData.sortBy
-		   var sortOrder = this.configData.sortOrder
+		  // var sortBy = this.configData.sortBy;
+		   var sortBy = 'IdentificationByTag';
+		  // var sortOrder = this.configData.sortOrder
+		   var sortOrder = 'DESC';
 		   var filters = new Ext.ux.grid.GridFilters({
 			// encode and local configuration options defined previously for easier reuse
 			encode: true, // json encode the filter query
@@ -58,7 +60,7 @@ prev: true
  //alert(this.url)
 var proxy = new Ext.data.HttpProxy({
 api: {
-read: new Ext.data.Connection({ url: this.url, method: 'POST', timeout: 120000 }),
+read: new Ext.data.Connection({ url: this.url, method: 'GET', timeout: 120000 }),
 create: null,
 update: null,
 destroy: null
@@ -178,7 +180,8 @@ onCellClick: function (grid,rowIndex,columnIndex,e) {
 			   var transferType_value = record.get('TransferType');
 			   
 			   var rowDataArr = [];
-			   for(var i=3; i<cm.getColumnCount();i++){
+			   var abc = cm.getColumnCount();
+			   for(var i=0; i<cm.getColumnCount();i++){
 				   fieldHeader= grid.getColumnModel().getColumnHeader(i); // Get field name
 				   fieldValue= record.get(grid.getColumnModel().getDataIndex(i))
 				   tempArr= Array(fieldHeader,fieldValue)
@@ -226,14 +229,14 @@ onCellClick: function (grid,rowIndex,columnIndex,e) {
 				var navPanel = this;
 				Ext.Ajax.request({
 				url: xchangeDataRelated_URI,
-				method: 'POST',
+				method: 'GET',
 				params: {},
 				success: function(result, request) {
 				responseData = Ext.util.JSON.decode(result.responseText);
 
 				if (eval(responseData.success)==true) {
 					var store = new Ext.data.JsonStore({
-					data: responseData.classes,
+					data: responseData.data,
 					//url:"exchangeData_relations.json",
 					fields: ['id','label']
 					});
@@ -283,21 +286,22 @@ onCellClick: function (grid,rowIndex,columnIndex,e) {
 						//**** var relatedDataRows_URI = 'exchangesubgrid_rows.json';
 						Ext.Ajax.request({
 						url: relatedDataGrid_URI,
-						method: 'POST',
+						method: 'GET',
 						params: {},
 						success: function(result, request) {
 								 var responseData = Ext.util.JSON.decode(result.responseText);
 								 var pageURL=relatedDataRows_URI;
-
+								 var a = dataView.store.data.items[index].data.label;
+								 var b = navPanel.removeHTMLTags(IdentificationByTag_value);
 								 var newTab = new ExchangeManager.NavigationPanel({
 									title: dataView.store.data.items[index].data.label,
 									id:'tab_'+navPanel.removeHTMLTags(IdentificationByTag_value),
 									configData: responseData,
 									url: pageURL,
-									closable: true,
+									closable: false,
 									identifier:dtoIdentifier,
-									refClassIdentifier:refClassIdentifier,
-									nodeDisplay:navPanel.nodeDisplay
+									refClassIdentifier:refClassIdentifier
+									//nodeDisplay:navPanel.nodeDisplay
 								 });
 
 								 if(navPanel.get(newTab.id)==undefined){
@@ -315,7 +319,7 @@ onCellClick: function (grid,rowIndex,columnIndex,e) {
 									forceFit:true,
 									layout: 'border',
 									defaults: {
-									collapsible: true,
+									collapsible: false,
 									split: true
 									},
 									items: [{
@@ -351,7 +355,7 @@ onCellClick: function (grid,rowIndex,columnIndex,e) {
 							title: IdentificationByTag_value,
 							id:this.title+'_'+IdentificationByTag_value,
 							items:[classPanel],
-							closable : true
+							closable : false
 							};
 
 							if(navPanel.get(newTab.id)==undefined){

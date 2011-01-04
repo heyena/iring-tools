@@ -94,7 +94,7 @@
       </result>
     </action>
     
-    <action name="exchangeDataRelations" class="org.iringtools.controllers.ExchDataController" method="getRelatedExchRows">
+    <action name="exchangeDataRelatedRows" class="org.iringtools.controllers.ExchDataController" method="getRelatedExchRows">
       <result type="json">
         <param name="root">rows</param>
       </result>

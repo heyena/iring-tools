@@ -36,38 +36,43 @@ Ext.onReady(function () {
 			//contentPanel
 			//var w = Ext.getCmp(contentPanel).getActiveTab();
 			contentPanel.getEl().mask('<span><img src="resources/images/ajax-spinner.gif"/><font color="#ff8800">Loading.....</font></span>')
-					
+				//alert(url);
+			var dataTypeNode = node.parentNode.parentNode;
+				var obj = node.attributes;
+				var item = node.attributes['properties'];
+				var scopeId = dataTypeNode.parentNode.attributes['text'];
+				var nodeType = obj['iconCls'];
+				var nodeText = obj['text'];
+				var uid = item[0].value;
+				var commodity = obj['Commodity'];
+				var commodity = 'PIPING NETWORK SYSTEM';
+				var pageURL = null;
+				
 			Ext.Ajax.request({
 			url: url,
-			method: 'POST',
+			method: 'GET',
 			params: {},
 			success: function(result, request) {
 				contentPanel.getEl().unmask()
-				var obj = node.attributes;
-				var scopeId = obj['Scope'];
-				var nodeType = obj['node_type'];
-				var nodeText = obj['text'];
-				var uid = obj['uid'];
-				var commodity = obj['Commodity'];
-				var pageURL = null;
 				
-				if ((nodeType == 'exchanges' && uid != '')) {
+				
+				if ((nodeType == 'exchange' && uid != '')) {
 					//pageURL = 'dataObjects/getPageData/' + nodeType + '/' + scopeId + '/' + uid
 					// static pageURL ="exchnageData_rows.json";
 					// exchDataRows?scopeName=12345_000&idName=1
 					pageURL = 'exchDataRows?scopeName=' + scopeId + '&idName=' + uid;
-					alert("Exchange DataRows URI: "+pageURL);
+					//alert("Exchange DataRows URI: "+pageURL);
 
 				} else if (nodeType == 'graph') {					
 					//pageURL = 'dataObjects/getPageData/'+ nodeType + '/' + scopeId + '/' + node.parentNode.text + '/' + nodeText;
 					//pageURL ="appData_rows_json.json";
 					pageURL = 'appDataRows?scopeName=' + scopeId + '&appName=' + node.parentNode.text + '&graphName=' + nodeText;
-					alert("Application DataRows URI: "+pageURL);
+					//alert("Application DataRows URI: "+pageURL);
 				}
 				
 				var responseData = Ext.util.JSON.decode(result.responseText);
 
-				//alert(responseData)
+				//alert(pageURL)
 				if (eval(responseData.success)==false) {		
 					
 					Ext.MessageBox.show({
@@ -107,7 +112,7 @@ Ext.onReady(function () {
 					if(deleteReqURL!=null){
 						Ext.Ajax.request({
 						url: deleteReqURL,
-						method: 'POST',
+						method: 'GET',
 						params: {},
 						success: function(result, request) {
 								//console.log('delete response for ' +url+' : '+ eval(Ext.util.JSON.decode(result.responseText).success));
