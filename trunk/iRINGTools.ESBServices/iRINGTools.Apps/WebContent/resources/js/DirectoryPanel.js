@@ -125,27 +125,36 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   },
   
   openTab: function(node) {
-	  	if (node != null) {
-			var obj = node.attributes;  		
-			var uid = obj['uid'];
+	  
+	  var dataTypeNode = node.parentNode.parentNode;
+	  var graphNode = node.parentNode;	
+	  /*	loadAppData(dataTypeNode.parentNode.attributes['text'],  graphNode.attributes['text'], node.attributes['text']);
+	function loadAppData(scope, app, graph)
+	*/
+  	if (node != null) {
+	  	var obj = node.attributes;  
+	  	var item = node.attributes['properties'];
+			var uid = item[0].value;
 			var label = '';
 			var requestURL = '';
-			var scopeId  = obj['Scope'];
-			var nodeType = obj['node_type'];
-			var nodeText = obj['text']; 
+			var scope  = dataTypeNode.parentNode.attributes['text'];
+			var app = graphNode.attributes['text'];
+			var nodeType = obj['iconCls'];
+			var graph = obj['text']; 
 			
 			if ((nodeType == 'exchange' && uid != '')) {
 				
 				//requestURL = 'dataObjects/getDataObjects/' + nodeType + '/' + scopeId + '/' + uid;
-				requestURL = 'exchDataGrid?scopeName=' + scopeId + '&idName='+ uid;
-				label = scopeId + '->' + node.text;
+				requestURL = 'exchDataGrid?scopeName=' + scope + '&idName='+ uid;
+				label = scope + '->' + graph;
+				
 				this.fireEvent('open', this, node, label, requestURL);
 				
 			} else if (nodeType == 'graph') {
 				
 				//requestURL = 'dataObjects/getGraphObjects/' + nodeType + '/' + scopeId + '/' + node.parentNode.text+'/' + nodeText;
-				requestURL = 'appDataGrid?scopeName=' + scopeId + '&appName=' + node.parentNode.text + '&graphName=' + nodeText,
-				label = scopeId + '->' + node.parentNode.text + '->' + nodeText;
+				requestURL = 'appDataGrid?scopeName=' + scope + '&appName=' + app + '&graphName=' + graph,
+				label = scope + '->' + graphNode.text + '->' + graph;
 				
 				this.fireEvent('open', this, node, label, requestURL);				
 			}
