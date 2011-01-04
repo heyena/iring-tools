@@ -55,6 +55,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{scope}/{app}/{graph}?hashAlgorithm={hashAlgorithm}")]
     public DataTransferIndices GetDataTransferIndices(string scope, string app, string graph, string hashAlgorithm)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _dxfrProvider.GetDataTransferIndices(scope, app, graph, hashAlgorithm);
     }
 
@@ -62,6 +65,9 @@ namespace org.iringtools.services
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/page")]
     public DataTransferObjects GetDataTransferObjects(string scope, string app, string graph, DataTransferIndices dataTransferIndices)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _dxfrProvider.GetDataTransferObjects(scope, app, graph, dataTransferIndices);
     }
 
@@ -76,6 +82,9 @@ namespace org.iringtools.services
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}")]
     public Response PostDataTransferObjects(string scope, string app, string graph, DataTransferObjects dataTransferObjects)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _dxfrProvider.PostDataTransferObjects(scope, app, graph, dataTransferObjects);
     }
 
@@ -83,6 +92,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{scope}/{app}/{graph}/{id}")]
     public DataTransferObjects GetDataTransferObject(string scope, string app, string graph, string id)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _dxfrProvider.GetDataTransferObject(scope, app, graph, id);
     }
 
@@ -90,6 +102,9 @@ namespace org.iringtools.services
     [WebInvoke(Method = "DELETE", UriTemplate = "/{scope}/{app}/{graph}/{id}")]
     public Response DeletetDataTransferObject(string scope, string app, string graph, string id)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _dxfrProvider.DeleteDataTransferObject(scope, app, graph, id);
     }
 
@@ -97,6 +112,9 @@ namespace org.iringtools.services
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxi?hashAlgorithm={hashAlgorithm}")]
     public DataTransferIndices GetDataTransferIndicesWithManifest(string scope, string app, string graph, Manifest manifest, string hashAlgorithm)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _dxfrProvider.GetDataTransferIndicesWithManifest(scope, app, graph, hashAlgorithm, manifest);
     }
 
@@ -104,6 +122,9 @@ namespace org.iringtools.services
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxo")]
     public DataTransferObjects GetDataTransferObjectsWithManifest(string scope, string app, string graph, DtoPageRequest dtoPageRequest)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _dxfrProvider.GetDataTransferObjects(scope, app, graph, dtoPageRequest);
     }
 
@@ -111,6 +132,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{scope}/{app}/manifest")]
     public Manifest GetManifest(string scope, string app)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _dxfrProvider.GetManifest(scope, app);
     }
 
@@ -118,6 +142,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/version")]
     public VersionInfo GetVersion()
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _dxfrProvider.GetVersion();
     }
   }

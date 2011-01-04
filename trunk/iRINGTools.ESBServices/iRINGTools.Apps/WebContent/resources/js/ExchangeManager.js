@@ -35,7 +35,7 @@ Ext.onReady(function () {
 		if(contentPanel.get('tab_'+label)==undefined){
 			//contentPanel
 			//var w = Ext.getCmp(contentPanel).getActiveTab();
-			contentPanel.getEl().mask('<span><img src="resources/images/ajax-spinner.gif"/><font color="#ff8800">Loading.....</font></span>')
+			contentPanel.getEl().mask('<span><img src="resources/js/ext-js/resources/images/default/grid/loading.gif"/> Loading.....</span>')
 				//alert(url);
 			var dataTypeNode = node.parentNode.parentNode;
 				var obj = node.attributes;
@@ -94,7 +94,10 @@ Ext.onReady(function () {
 						closable: true,
 						nodeDisplay: commodity,
 						scopeName:scopeId,
-						idName:uid
+						idName:uid,
+						appName:node.parentNode.text,
+						graphName:nodeText,
+						nodeType:nodeType
 					});
 					
 					contentPanel.add(newTab);

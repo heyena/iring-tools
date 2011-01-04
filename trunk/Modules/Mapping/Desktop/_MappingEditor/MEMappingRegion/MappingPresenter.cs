@@ -197,14 +197,17 @@ namespace org.iringtools.modules.memappingregion
     internal void PopulateTreeViewValueLists(Mapping mapping)
     {
       tvwValues.Items.Clear();
-      foreach (ValueListMap valueListMap in mapping.valueListMaps)
+      if (mapping.valueListMaps != null)
       {
-        MappingItem nodeValueList = AddNode(valueListMap.name, valueListMap, null);
-        tvwValues.Items.Add(nodeValueList);
-
-        foreach (ValueMap valueMap in valueListMap.valueMaps)
+        foreach (ValueListMap valueListMap in mapping.valueListMaps)
         {
-          nodeValueList.Items.Add(AddNode(valueMap.uri, valueMap, nodeValueList));
+          MappingItem nodeValueList = AddNode(valueListMap.name, valueListMap, null);
+          tvwValues.Items.Add(nodeValueList);
+
+          foreach (ValueMap valueMap in valueListMap.valueMaps)
+          {
+            nodeValueList.Items.Add(AddNode(valueMap.uri, valueMap, nodeValueList));
+          }
         }
       }
     }
@@ -592,7 +595,7 @@ namespace org.iringtools.modules.memappingregion
           isProcessed = PopulateClassMap(selectedNode, (ClassMap)childNode.Tag);
 
         if (childNode.Tag is List<RoleMap>)
-          foreach (RoleMap roleMap in ((List<RoleMap>)childNode.Tag))
+          foreach (RoleMap roleMap in ((RoleMaps)childNode.Tag))
             isProcessed = PopulateRoleMap(selectedNode, roleMap);
       }
       catch (Exception ex)

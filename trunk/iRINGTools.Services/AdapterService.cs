@@ -86,6 +86,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/scopes")]
     public ScopeProjects GetScopes()
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _adapterProvider.GetScopes();
     }
     #endregion
@@ -148,6 +151,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/dictionary")]
     public DataDictionary GetDictionary(string projectName, string applicationName)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _adapterProvider.GetDictionary(projectName, applicationName);
     }
     #endregion
