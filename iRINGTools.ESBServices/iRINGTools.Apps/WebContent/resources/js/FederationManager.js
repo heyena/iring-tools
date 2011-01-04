@@ -85,7 +85,7 @@ Ext.onReady(function () {
 		renderTo: Ext.getBody(),
 		items: [{
 				region: 'north',
-				baseCls : 'x-plain',
+				//baseCls : 'x-plain',
 				height: 65, // give north and south regions a height
 				margins: '-10 5 0 0',
 				contentEl:'header'
