@@ -60,7 +60,6 @@ Ext.onReady(function () {
 			}else if(node.parentNode.text == 'Repositories'){
 				tabIconClass = 'tabsRepository';
 			}
-			alert(node.parentNode.text);
                 var newTab = new FederationManager.ContentPanel({
                         title: label,
                         id:'tab-' + node.id,
