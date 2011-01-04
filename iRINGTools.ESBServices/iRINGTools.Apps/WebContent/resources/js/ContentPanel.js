@@ -64,17 +64,17 @@ FederationManager.ContentPanel = Ext.extend(Ext.Panel, {
 buildToolbar: function () {
     return [{
 			xtype:"tbbutton",
-                        text:'Save',
-			icon:'resources/images/16x16/save-icon.png',
+            text:'Save',
+			icon:'resources/images/16x16/document-save.png',
 			tooltip:'Save',
 			disabled: false,
 			handler: this.onSave,
 			scope: this
 		},{
 			xtype:"tbbutton",
-			text:'Reset',
-			icon:'resources/images/16x16/reset-icon.png',
-			tooltip:'Reset',
+			text:'Clear',
+			icon:'resources/images/16x16/edit-clear.png',
+			tooltip:'Clear',
 			disabled: false,
 			handler: this.onReset,
 			scope: this

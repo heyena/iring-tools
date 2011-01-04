@@ -113,21 +113,21 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
 			scope: this
 		},{
 			xtype:"tbbutton",
-			text:'Edit',
+			text:'Open',
 			icon:'resources/images/16x16/document-open.png',
-			tooltip:'Edit',
+			tooltip:'Open',
 			disabled: false,
 			handler: this.onEdit,
 			scope: this
 		},{xtype:"tbbutton",
 			icon:'resources/images/16x16/document-new.png',
-			tooltip:'Add New',
-			text:'Add New',
+			tooltip:'New',
+			text:'New',
 			disabled: false,
 			handler: this.onAddnew,
 			scope: this
 		},{xtype:"tbbutton",
-			icon:'resources/images/16x16/delete-icon.png',
+			icon:'resources/images/16x16/edit-delete.png',
 			tooltip:'Delete',
 			text:'Delete',
 			disabled: false,
@@ -359,7 +359,10 @@ openTab: function(node,formType) {
             }
 
              if(formType=='editForm'){
-                 value = properties[i].value
+                 value = properties[i].value;
+            	 label = node.parentNode.text + ' : ' + obj['text'];
+             }else{
+            	 label = obj['text']+':(New)';
              }
              list_items = list_items+',{'+xtype+', fieldLabel:"' + properties[i].name
              + '",name:"'
@@ -369,7 +372,7 @@ openTab: function(node,formType) {
 
        }
         list_tems = eval('[' + list_items + ']')
-        label = node.parentNode.text + ' : ' + obj['text']+'('+formType+')'
+        //label = node.parentNode.text + ' : ' + obj['text']+'('+formType+')'
         this.fireEvent('opentab', this, node, label, list_tems)
  },
 
