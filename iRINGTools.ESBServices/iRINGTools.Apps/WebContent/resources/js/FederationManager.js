@@ -20,7 +20,7 @@ Ext.onReady(function () {
 	  id:'federation-panel',
 	  region:'west',
 
-	  collapsible: true,
+	  collapsible: false,
 	  collapsed: false,
 
 	  border: true,
@@ -52,20 +52,21 @@ Ext.onReady(function () {
         });
         
 	federationPanel.on('opentab', function(panel, node, label, formData) {
-			var tabIconClass;
-			if(node.parentNode.text == 'ID Generators'){
-				tabIconClass = 'tabsIdGen';
-			}else if(node.parentNode.text == 'Namespaces'){
-				tabIconClass = 'tabsNameSpace';
-			}else if(node.parentNode.text == 'Repositories'){
-				tabIconClass = 'tabsRepository';
-			}
+                var tabIconClass;
+                
+                if(node.parentNode.text == 'ID Generators'|| node.text == 'ID Generators'){
+                        tabIconClass = 'tabsIdGen';
+                }else if(node.parentNode.text == 'Namespaces'|| node.text == 'Namespaces'){
+                        tabIconClass = 'tabsNameSpace';
+                }else if(node.parentNode.text == 'Repositories' || node.text == 'Repositories'){
+                        tabIconClass = 'tabsRepository';
+                }
                 var newTab = new FederationManager.ContentPanel({
                         title: label,
                         id:'tab-' + node.id,
                         configData: formData,
                         nId:node.id,
-                        url: 'postFederation',
+                        url: 'postFederation',                        
                         single: true, // important, as many layouts can occur
                         layout:'fit',
                         iconCls: tabIconClass,
