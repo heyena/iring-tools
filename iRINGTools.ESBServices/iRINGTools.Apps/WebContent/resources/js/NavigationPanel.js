@@ -456,7 +456,7 @@ ExchangeManager.NavigationPanel = Ext
 
 																					var newTab = new ExchangeManager.NavigationPanel(
 																							{
-																								title : dataView.store.data.items[index].data.label,
+																								title : navPanel.removeHTMLTags(dataView.store.data.items[index].data.label),
 																								id : 'tab_'
 																										+ navPanel
 																												.removeHTMLTags(IdentificationByTag_value),
@@ -537,7 +537,7 @@ ExchangeManager.NavigationPanel = Ext
 														});
 
 												var newTab = {
-													title : IdentificationByTag_value,
+													title : navPanel.removeHTMLTags(IdentificationByTag_value),
 													id : this.title
 															+ '_'
 															+ IdentificationByTag_value,
