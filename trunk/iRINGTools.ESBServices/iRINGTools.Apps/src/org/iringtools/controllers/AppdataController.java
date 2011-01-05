@@ -18,6 +18,7 @@ public class AppdataController {
 	private String pageName;
 	private String id;
 	private String classId;
+	private String relatedId;
 	private int start=0;
 	private int limit=20;
 	private HashMap<String, Rows> rowsMap = null;
@@ -56,6 +57,14 @@ public class AppdataController {
 
 	public String getClassId() {
 		return classId;
+	}
+	
+	public void setRelatedId(String relatedId) {
+		this.relatedId = relatedId;
+	}
+
+	public String getRelatedId() {
+		return relatedId;
 	}
 
 	public void setScopeName(String scopeName) {
@@ -149,5 +158,10 @@ public class AppdataController {
 		return Action.SUCCESS;
 	}
 	
+	public String getRelRelationAppRows() {
+		appdata.populate(scopeName, appName, graphName);
+		rows = appdata.toRelRelationRows(id, classId, relatedId);
+		return Action.SUCCESS;
+	}
 
 }

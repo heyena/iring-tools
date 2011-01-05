@@ -39,13 +39,13 @@ Ext.onReady(function () {
 				//alert(url);
 			var dataTypeNode = node.parentNode.parentNode;
 				var obj = node.attributes;
-				var item = node.attributes['properties'];
+				var item = obj['properties'];
 				var scopeId = dataTypeNode.parentNode.attributes['text'];
 				var nodeType = obj['iconCls'];
 				var nodeText = obj['text'];
 				var uid = item[0].value;
-				var commodity = obj['Commodity'];
-				var commodity = 'PIPING NETWORK SYSTEM';
+				
+				var commodity = node.parentNode.text;
 				var pageURL = null;
 				
 			Ext.Ajax.request({
@@ -57,16 +57,19 @@ Ext.onReady(function () {
 				
 				
 				if ((nodeType == 'exchange' && uid != '')) {
+					
 					//pageURL = 'dataObjects/getPageData/' + nodeType + '/' + scopeId + '/' + uid
 					// static pageURL ="exchnageData_rows.json";
 					// exchDataRows?scopeName=12345_000&idName=1
 					pageURL = 'exchDataRows?scopeName=' + scopeId + '&idName=' + uid;
 					//alert("Exchange DataRows URI: "+pageURL);
 
-				} else if (nodeType == 'graph') {					
+				} else if (nodeType == 'graph') {
+					var appName = commodity;
+					
 					//pageURL = 'dataObjects/getPageData/'+ nodeType + '/' + scopeId + '/' + node.parentNode.text + '/' + nodeText;
 					//pageURL ="appData_rows_json.json";
-					pageURL = 'appDataRows?scopeName=' + scopeId + '&appName=' + node.parentNode.text + '&graphName=' + nodeText;
+					pageURL = 'appDataRows?scopeName=' + scopeId + '&appName=' + appName + '&graphName=' + nodeText;
 					//alert("Application DataRows URI: "+pageURL);
 				}
 				
@@ -95,7 +98,7 @@ Ext.onReady(function () {
 						nodeDisplay: commodity,
 						scopeName:scopeId,
 						idName:uid,
-						appName:node.parentNode.text,
+						appName:appName,
 						graphName:nodeText,
 						nodeType:nodeType
 					});

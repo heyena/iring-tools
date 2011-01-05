@@ -111,13 +111,13 @@
       </result>
     </action>     
     
-    <action name="relatedAppDataRelationsRows" class="org.iringtools.controllers.AppdataController" method="getRelatedAppRows">
+    <action name="relatedAppDataRelationsRows" class="org.iringtools.controllers.AppdataController" method="getRelRelationAppRows">
       <result type="json">
         <param name="root">rows</param>
       </result>
     </action>    
     
-    <action name="relatedDataRelationsRows" class="org.iringtools.controllers.ExchDataController" method="getRelatedExchRows">
+    <action name="relatedDataRelationsRows" class="org.iringtools.controllers.ExchDataController" method="getRelRelationExchRows">
       <result type="json">
         <param name="root">rows</param>
       </result>
