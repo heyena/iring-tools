@@ -9,8 +9,14 @@
  ******************************************
  */
  
-.banner_div_fade_bg{
-	background-image:url('../../../../images/blue-fade-inverted.png');
+.exchange_banner{
+	background-image:url('../../../../images/blue-fade-small.png');
+	background-repeat:repeat-x;
+	height: 65px;
+}
+
+.refdata_banner{
+	background-image:url('../../../../images/green-fade-small.png');
 	background-repeat:repeat-x;
 	height: 65px;
 }

@@ -26,7 +26,7 @@ Ext.onReady(function () {
 	  border: true,
 	  split: true,
 
-	  width: 350,
+	  width: 250,
   	  minSize: 175,
   	  maxSize: 500,
 	  url: 'federation'

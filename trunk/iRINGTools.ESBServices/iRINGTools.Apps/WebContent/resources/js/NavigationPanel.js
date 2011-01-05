@@ -46,6 +46,14 @@ ExchangeManager.NavigationPanel = Ext
 						var fieldList = eval(this.configData.headerLists);
 						var headerList = eval(this.configData.columnData);
 						var classObjName = this.configData.classObjName;
+						
+						if (classObjName == null){
+							this.nodeDisplay = "Related Items"	
+						}
+						else{
+							this.nodeDisplay = classObjName	
+						}
+						
 						var filterSet = eval(this.configData.filterSets);
 						var pageSize = parseInt(this.configData.pageSize);
 						var sortBy = this.configData.sortBy;
@@ -146,8 +154,7 @@ ExchangeManager.NavigationPanel = Ext
 							// this.dataGrid.classObjName=this.identifier;
 						}
 						this.items = [ {
-							title : this.nodeDisplay,
-							// title:'Detail Grid View',
+							 title: this.nodeDisplay,
 							items : [ this.dataGrid ],
 							layout : 'fit'
 						} ];
@@ -184,7 +191,7 @@ ExchangeManager.NavigationPanel = Ext
 						}
 					},
 					onCellClick : function(grid, rowIndex, columnIndex, e) {
-						grid.getEl().mask('Loading.....');
+						grid.getEl().mask('<span><img src="resources/js/ext-js/resources/images/default/grid/loading.gif"/> Loading.....</span>');
 
 						// alert('scope id passed from exchangemanager:
 						// '+this.scopeName)
@@ -467,10 +474,7 @@ ExchangeManager.NavigationPanel = Ext
 																								url : pageURL,
 																								closable : false,
 																								identifier : dtoIdentifier,
-																								refClassIdentifier : refClassIdentifier,
-																								//nodeDisplay : 'Detail Grid'
-																								nodeDisplay:navPanel.nodeDisplay
-
+																								refClassIdentifier : refClassIdentifier
 																							});
 
 																					if (navPanel
