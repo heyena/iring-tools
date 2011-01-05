@@ -49,11 +49,11 @@ ExchangeManager.NavigationPanel = Ext
 						var filterSet = eval(this.configData.filterSets);
 						var pageSize = parseInt(this.configData.pageSize);
 						var sortBy = this.configData.sortBy;
-						//var sortBy = 'IdentificationByTag';
-						alert('sortBy /' + sortBy);
+						// var sortBy = 'IdentificationByTag';
+						// alert('sortBy /' + sortBy);
 						var sortOrder = this.configData.sortOrder
-						//var sortOrder = 'DESC';
-						alert('sortOrder /' + sortOrder);
+						// var sortOrder = 'DESC';
+						// alert('sortOrder /' + sortOrder);
 						var filters = new Ext.ux.grid.GridFilters({
 							// encode and local configuration options defined
 							// previously for easier reuse
@@ -248,30 +248,28 @@ ExchangeManager.NavigationPanel = Ext
 							 */
 
 							if (this.nodeType == "exchange") {
-							
+
 								var xchangeDataRelated_URI = 'exchangeDataRelatedRows?scopeName='
-									+ this.scopeName
-									+ '&idName='
-									+ this.idName
-									+ '&id='
-									+ this
-											.removeHTMLTags(IdentificationByTag_value);
-							}
-							else
-							{
+										+ this.scopeName
+										+ '&idName='
+										+ this.idName
+										+ '&id='
+										+ this
+												.removeHTMLTags(IdentificationByTag_value);
+							} else {
 								var xchangeDataRelated_URI = 'appDataRelations?scopeName='
-									+ this.scopeName
-									+ '&appName='
-									+ this.appName
-									+ '&graphName='
-									+ this.graphName
-									+ '&id='
-									+ this
-									.removeHTMLTags(IdentificationByTag_value);
-					
+										+ this.scopeName
+										+ '&appName='
+										+ this.appName
+										+ '&graphName='
+										+ this.graphName
+										+ '&id='
+										+ this
+												.removeHTMLTags(IdentificationByTag_value);
+
 							}
-							
-							 alert(xchangeDataRelated_URI)
+
+							// alert(xchangeDataRelated_URI)
 							// exchangeDataRelatedRows?scopeName=54321_000&idName=2&id=90004-SC
 							// exchangeDataRelatedRows?scopeName=12345_000&idName=1&id=90003-SL
 							// exchangeDataRelatedRows?scopeName=12345_000&idName=4&id=90012-O
@@ -375,9 +373,9 @@ ExchangeManager.NavigationPanel = Ext
 																				+ '&classId='
 																				+ classId;
 																	} else {
-																		//relatedAppDataGrid?scopeName=12345_000&appName=abc&
-																		//graphName=lines&id=90002-RV&classId=rdl:R49658319833
-																		
+																		// relatedAppDataGrid?scopeName=12345_000&appName=abc&
+																		// graphName=lines&id=90002-RV&classId=rdl:R49658319833
+
 																		var relatedDataGrid_URI = 'relatedAppDataGrid?scopeName='
 																				+ navPanel.scopeName
 																				+ '&appName='
@@ -389,48 +387,49 @@ ExchangeManager.NavigationPanel = Ext
 																				+ '&classId='
 																				+ classId;
 																	}
-																	alert(relatedDataGrid_URI)
-																	
+																	// alert(relatedDataGrid_URI)
+
 																	/*
-																	+ this.scopeName
-									+ '&appName='
-									+ this.appName
-									+ '&graphName='
-									+ this.graphName
-									+ '&id='
-									+ this
-									.removeHTMLTags(IdentificationByTag_value);
+																	 * +
+																	 * this.scopeName +
+																	 * '&appName=' +
+																	 * this.appName +
+																	 * '&graphName=' +
+																	 * this.graphName +
+																	 * '&id=' +
+																	 * this
+																	 * .removeHTMLTags(IdentificationByTag_value);
 																	 */
 																	// relatedDataGrid?scopeName=12345_000&idName=1&id=90003-V&classId=R3847624234
 																	// relatedDataGrid?scopeName=12345_000&idName=1&id=90003-V&classId=rdl:R3847624234
 																	// alert(relatedDataGrid_URI)
 																	if (navPanel.nodeType == "exchange") {
-																	var relatedDataRows_URI = 'relatedDataRows?scopeName='
-																			+ navPanel.scopeName
-																			+ '&idName='
-																			+ navPanel.idName
-																			+ '&id='
-																			+ dtoIdentifier
-																			+ '&classId='
-																			+ classId;
+																		var relatedDataRows_URI = 'relatedDataRows?scopeName='
+																				+ navPanel.scopeName
+																				+ '&idName='
+																				+ navPanel.idName
+																				+ '&id='
+																				+ dtoIdentifier
+																				+ '&classId='
+																				+ classId;
 																	} else {
-																		//relatedAppDataRows?scopeName=12345_000&appName=abc&
-																		//graphName=lines&id=90002-RV&classId=rdl:R49658319833
-																		 
+																		// relatedAppDataRows?scopeName=12345_000&appName=abc&
+																		// graphName=lines&id=90002-RV&classId=rdl:R49658319833
+
 																		var relatedDataRows_URI = 'relatedAppDataRows?scopeName='
-																			+ navPanel.scopeName
-																			+ '&appName='
-																			+ navPanel.appName
-																			+ '&graphName='
-																			+ navPanel.graphName
-																			+ '&id='
-																			+ dtoIdentifier
-																			+ '&classId='
-																			+ classId;
-																		
+																				+ navPanel.scopeName
+																				+ '&appName='
+																				+ navPanel.appName
+																				+ '&graphName='
+																				+ navPanel.graphName
+																				+ '&id='
+																				+ dtoIdentifier
+																				+ '&classId='
+																				+ classId;
+
 																	}
-																	
-																	alert(relatedDataRows_URI)
+
+																	// alert(relatedDataRows_URI)
 
 																	// *** var
 																	// relatedDataGrid_URI
@@ -449,11 +448,11 @@ ExchangeManager.NavigationPanel = Ext
 																				success : function(
 																						result,
 																						request) {
-																					
+
 																					var responseData = Ext.util.JSON
 																							.decode(result.responseText);
 																					var pageURL = relatedDataRows_URI;
-																					
+
 																					var newTab = new ExchangeManager.NavigationPanel(
 																							{
 																								title : dataView.store.data.items[index].data.label,
@@ -465,8 +464,8 @@ ExchangeManager.NavigationPanel = Ext
 																								closable : false,
 																								identifier : dtoIdentifier,
 																								refClassIdentifier : refClassIdentifier,
-																							    nodeDisplay: 'Detail Grid'
-																							    	
+																								nodeDisplay : 'Detail Grid'
+
 																							});
 
 																					if (navPanel
@@ -595,7 +594,7 @@ ExchangeManager.NavigationPanel = Ext
 
 						return strTagStrippedText;
 					},
-					
+
 					onOpen : function(btn, ev) {
 						var l = this.getLayout();
 						var i = l.activeItem.id.split('card-')[1];
@@ -616,29 +615,26 @@ ExchangeManager.NavigationPanel = Ext
 						t.doLayout();
 						this.fireEvent('next', this, i);
 					},
-					
-					listeners: {
-		                'tabchange': closeChildTabs
-		            }
-					
-		         
-					
+
+					listeners : {
+						'tabchange' : closeChildTabs
+					}
+
 				});
 
- function  closeChildTabs (tp, newTab) {
-	 var len = tp.items.length;
-	 if (len <= 1)
-			return;
-		 
-	 var tab = tp.items.items;
-	 var len = tab.length;		
-	 
-	 var found = 0;
+function closeChildTabs(tp, newTab) {
+	var len = tp.items.length;
+	if (len <= 1)
+		return;
 
-		 
-	 for ( var i = 0; i < tab.length; i++) {
+	var tab = tp.items.items;
+	var len = tab.length;
+
+	var found = 0;
+
+	for ( var i = 0; i < tab.length; i++) {
 		tb = tab[i];
-		if (found) {			
+		if (found) {
 			tb.destroy();
 			i--;
 		} else if (tb == newTab) {
@@ -646,5 +642,5 @@ ExchangeManager.NavigationPanel = Ext
 		}
 
 	}
-	
+
 }

@@ -11,7 +11,7 @@ Ext.onReady(function () {
 	var directoryPanel = new ExchangeManager.DirectoryPanel({
 	  id:'navigation-panel',
 	  region:'west',
-	  collapsible: true,
+	  collapsible: false,
 	  collapsed: false,
 	  border: true,
 	  split: true,
