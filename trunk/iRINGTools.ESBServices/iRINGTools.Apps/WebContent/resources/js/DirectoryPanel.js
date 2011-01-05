@@ -29,20 +29,20 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     this.directoryPanel = new Ext.tree.TreePanel({
       region: 'north',
       split : true,
-		collapseMode: 'mini',
-		height: 300,
-		bodyBorder : false,
-		border : false,
-		layout : 'fit',
-		useArrows : false,
-		autoScroll : true,
-		animate : true,
-		margins : '0 0 0 0',
-		lines : true,
-		containerScroll : true,
-		rootVisible : true,
-		loader: new Ext.tree.TreeLoader({dataUrl: this.url}),
-		root : {
+	  //collapseMode: 'mini',
+	  height: 300,
+	  bodyBorder : false,
+	  border : false,
+	  layout : 'fit',
+	  useArrows : false,
+	  autoScroll : true,
+	  animate : true,
+	  margins : '0 0 0 0',
+	  lines : true,
+	  containerScroll : true,
+	  rootVisible : true,
+	  loader: new Ext.tree.TreeLoader({dataUrl: this.url}),
+	  root : {
 			nodeType : 'async',
 			text : 'Directory',
 			expended : true,
@@ -117,7 +117,7 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			disabled: false,
 			handler: this.onExchange,
 			scope: this
-		}]
+		}];
   },
   
   getSelectedNode: function() {
@@ -162,19 +162,15 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   },
   
   onClick: function(node) {
-	  obj = node.attributes;
-	  var details_data = [];
-
-	  for (var key in obj) {
-			// restrict some of the properties to be displayed
-		  if (key!='node_type' && key!='uid' && key!='id' && key!='text' && key!='icon' && key!='children' && key!='loader' && key!='leaf' && key!='applicationId') {
-			  details_data[key] = obj[key];
-				//alert(key)
-		  }
-	  }
-
-	  this.propertyPanel.setSource(details_data);
-	  this.fireEvent('click', this, node);
+	  var dataTypeNode = node.parentNode.parentNode;
+		
+		if (dataTypeNode.attributes['text'] == 'Application Data') {
+			var graphNode = node.parentNode;							
+			this.populatePropertyGrid(node.attributes['properties']);
+		} else if (dataTypeNode.attributes['text'] == 'Data Exchanges') {
+			this.populatePropertyGrid(node.attributes['properties']);
+		}
+		this.fireEvent('click', this, node);
   },
   
   onDblClick: function(node) {
@@ -199,5 +195,16 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   	node = this.getSelectedNode();
   	if (node != null)
 		this.fireEvent('exchange', this, node);
-  }
+  },
+  
+  populatePropertyGrid: function (properties) {
+		var gridSource = new Array();
+
+		for ( var i = 0; i < properties.length; i++) {
+			gridSource[properties[i].name] = properties[i].value;
+		}
+
+		this.propertyPanel.setSource(gridSource);
+		
+	}
 });
