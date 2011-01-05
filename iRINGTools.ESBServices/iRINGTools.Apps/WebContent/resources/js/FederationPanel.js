@@ -166,8 +166,9 @@ onDelete:function(){
                                 Ext.getCmp('contentPanel').disable(); // it will be removed in future
                                 
                                 // remove the node form tree
-                                that.federationPanel.selModel.selNode.parentNode.removeChild(node);
-
+                                //that.federationPanel.selModel.selNode.parentNode.removeChild(node);
+                                //Tree Reload
+                                that.federationPanel.root.reload();
                                 // fire event so that the Details panel will be changed accordingly
                                 that.fireEvent('selectionchange',this)
                                 Ext.Msg.alert('Sucess', 'Node has been deleted')
