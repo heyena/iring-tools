@@ -359,7 +359,7 @@ openTab: function(node,formType) {
             }
 
              if(formType=='editForm'){
-                 value = properties[i].value;
+                 value = ', value:"'+ properties[i].value+'"';
             	 label = node.parentNode.text + ' : ' + obj['text'];
              }else{
             	 label = obj['text']+':(New)';
@@ -367,8 +367,8 @@ openTab: function(node,formType) {
              list_items = list_items+',{'+xtype+', fieldLabel:"' + properties[i].name
              + '",name:"'
              + properties[i].name
-             + '",allowBlank:false, blankText:"This Field is required !", value:"'
-             +value+'"}'
+             + '",allowBlank:false, blankText:"This Field is required !"'
+             +value+'}'
 
        }
         list_tems = eval('[' + list_items + ']')
