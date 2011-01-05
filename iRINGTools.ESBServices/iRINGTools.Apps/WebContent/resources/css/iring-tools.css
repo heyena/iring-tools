@@ -2,7 +2,7 @@
 
 body {
   margin-left: 10px;
-  background: #3C78AC url(../images/blue-fade.png) repeat-x;
+  background: #f0f0f0 url(../images/blue-fade.png) repeat-x;
   font-family: Arial, Helvetica, Sans-Serif;
   font-size: 12;
   color: #30332D;
@@ -23,7 +23,7 @@ div.banner {
 }
 
 div.banner h1 img {
-  vertical-align: -55%;
+  vertical-align: text-bottom;
 }
 
 div.main {

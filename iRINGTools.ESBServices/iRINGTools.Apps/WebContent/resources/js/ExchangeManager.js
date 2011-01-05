@@ -35,7 +35,7 @@ Ext.onReady(function () {
 		if(contentPanel.get('tab_'+label)==undefined){
 			//contentPanel
 			//var w = Ext.getCmp(contentPanel).getActiveTab();
-			contentPanel.getEl().mask();
+			contentPanel.getEl().mask('<span><img src="resources/js/ext-js/resources/images/default/grid/loading.gif"/> Loading.....</span>');
 				//alert(url);
 			var dataTypeNode = node.parentNode.parentNode;
 				var obj = node.attributes;
@@ -45,7 +45,7 @@ Ext.onReady(function () {
 				var nodeText = obj['text'];
 				var uid = item[0].value;
 				
-				var commodity = node.parentNode.text;
+				var parentName = node.parentNode.text;
 				var pageURL = null;
 				
 			Ext.Ajax.request({
@@ -65,7 +65,7 @@ Ext.onReady(function () {
 					//alert("Exchange DataRows URI: "+pageURL);
 
 				} else if (nodeType == 'graph') {
-					var appName = commodity;
+					var appName = parentName;
 					
 					//pageURL = 'dataObjects/getPageData/'+ nodeType + '/' + scopeId + '/' + node.parentNode.text + '/' + nodeText;
 					//pageURL ="appData_rows_json.json";
@@ -95,7 +95,7 @@ Ext.onReady(function () {
 						configData: responseData,
 						url: pageURL,						
 						closable: true,
-						nodeDisplay: commodity,
+						nodeDisplay: "...",
 						scopeName:scopeId,
 						idName:uid,
 						appName:appName,
@@ -140,7 +140,7 @@ Ext.onReady(function () {
 		renderTo: Ext.getBody(), 
 		items: [{ 
 				region: 'north',
-				baseCls : 'x-plain',
+				//baseCls : 'x-plain',
 				height: 65, // give north and south regions a height
 				margins: '-10 5 0 0',
 				contentEl:'header'
