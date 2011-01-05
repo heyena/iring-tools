@@ -831,7 +831,7 @@ namespace org.iringtools.referenceData
       return queryResult;
     }
 
-    private List<RoleDefinition> GetRoleDefintion(string id)
+    private List<RoleDefinition> GetRoleDefinition(string id, Repository repository)
     {
       try
       {
@@ -851,43 +851,39 @@ namespace org.iringtools.referenceData
 
         sparql = ReadSPARQL(queryContainsSearch.fileName);
         sparql = sparql.Replace("param1", id);
+                
+        SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
+        List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
 
-        foreach (Repository repository in _repositories)
+        foreach (Dictionary<string, string> result in results)
         {
-          SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
 
-          List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+          RoleDefinition roleDefinition = new RoleDefinition();
+          QMXFName name = new QMXFName();
 
-          foreach (Dictionary<string, string> result in results)
+          if (result.ContainsKey("label"))
           {
-
-            RoleDefinition roleDefinition = new RoleDefinition();
-            QMXFName name = new QMXFName();
-
-            if (result.ContainsKey("label"))
-            {
-              name.value = result["label"];
-            }
-            if (result.ContainsKey("role"))
-            {
-              roleDefinition.identifier = result["role"];
-            }
-            if (result.ContainsKey("comment"))
-            {
-              roleDefinition.description.value = result["comment"];
-            }
-            if (result.ContainsKey("index"))
-            {
-              roleDefinition.index = result["index"].ToString();
-            }
-            if (result.ContainsKey("type"))
-            {
-              roleDefinition.range = result["type"];
-            }
-            roleDefinition.name.Add(name);
-            Utility.SearchAndInsert(roleDefinitions, roleDefinition, RoleDefinition.sortAscending());
-            //roleDefinitions.Add(roleDefinition);
+            name.value = result["label"];
           }
+          if (result.ContainsKey("role"))
+          {
+            roleDefinition.identifier = result["role"];
+          }
+          if (result.ContainsKey("comment"))
+          {
+            roleDefinition.description.value = result["comment"];
+          }
+          if (result.ContainsKey("index"))
+          {
+            roleDefinition.index = result["index"].ToString();
+          }
+          if (result.ContainsKey("type"))
+          {
+            roleDefinition.range = result["type"];
+          }
+          roleDefinition.name.Add(name);
+          Utility.SearchAndInsert(roleDefinitions, roleDefinition, RoleDefinition.sortAscending());
+          //roleDefinitions.Add(roleDefinition);          
         }
 
         return roleDefinitions;
@@ -899,7 +895,7 @@ namespace org.iringtools.referenceData
       }
     }
 
-    private List<RoleQualification> GetRoleQualification(string id)
+    private List<RoleQualification> GetRoleQualification(string id, Repository repository)
     {
       try
       {
@@ -939,87 +935,83 @@ namespace org.iringtools.referenceData
 
         valueSparql = ReadSPARQL(getValueRestriction.fileName);
         valueSparql = valueSparql.Replace("param1", id);
+                
+        SPARQLResults rangeSparqlResults = QueryFromRepository(repository, rangeSparql);
+        SPARQLResults referenceSparqlResults = QueryFromRepository(repository, referenceSparql);
+        SPARQLResults valueSparqlResults = QueryFromRepository(repository, valueSparql);
 
-        foreach (Repository repository in _repositories)
+        List<Dictionary<string, string>> rangeResults = BindQueryResults(rangeRestrictionQueryBindings, rangeSparqlResults);
+        List<Dictionary<string, string>> referenceResults = BindQueryResults(getReferenceRestrictionQueryBindings, referenceSparqlResults);
+        List<Dictionary<string, string>> valueResults = BindQueryResults(getValueRestrictionQueryBinding, valueSparqlResults);
+
+        List<Dictionary<string, string>> combinedResults = MergeLists(MergeLists(rangeResults, referenceResults), valueResults);
+
+        foreach (Dictionary<string, string> result in combinedResults)
         {
-          SPARQLResults rangeSparqlResults = QueryFromRepository(repository, rangeSparql);
-          SPARQLResults referenceSparqlResults = QueryFromRepository(repository, referenceSparql);
-          SPARQLResults valueSparqlResults = QueryFromRepository(repository, valueSparql);
+          RoleQualification roleQualification = new RoleQualification();
 
-          List<Dictionary<string, string>> rangeResults = BindQueryResults(rangeRestrictionQueryBindings, rangeSparqlResults);
-          List<Dictionary<string, string>> referenceResults = BindQueryResults(getReferenceRestrictionQueryBindings, referenceSparqlResults);
-          List<Dictionary<string, string>> valueResults = BindQueryResults(getValueRestrictionQueryBinding, valueSparqlResults);
-
-          List<Dictionary<string, string>> combinedResults = MergeLists(MergeLists(rangeResults, referenceResults), valueResults);
-
-          foreach (Dictionary<string, string> result in combinedResults)
+          string uri = String.Empty;
+          if (result.ContainsKey("qualifies"))
           {
+            uri = result["qualifies"];
+            roleQualification.qualifies = uri;
+          }
+          if (result.ContainsKey("name"))
+          {
+            string nameValue = result["name"];
 
-            RoleQualification roleQualification = new RoleQualification();
-
-            string uri = String.Empty;
-            if (result.ContainsKey("qualifies"))
+            if (nameValue == null)
             {
-              uri = result["qualifies"];
-              roleQualification.qualifies = uri;
+              nameValue = GetLabel(uri);
             }
-            if (result.ContainsKey("name"))
+
+            QMXFName name = new QMXFName
             {
-              string nameValue = result["name"];
+              value = nameValue
+            };
 
-              if (nameValue == null)
-              {
-                nameValue = GetLabel(uri);
-              }
+            roleQualification.name.Add(name);
+          }
+          else
+          {
+            string nameValue = GetLabel(uri);
 
-              QMXFName name = new QMXFName
-              {
-                value = nameValue
-              };
+            if (nameValue == String.Empty)
+              nameValue = "tpl:" + Utility.GetIdFromURI(uri);
 
-              roleQualification.name.Add(name);
-            }
-            else
+            QMXFName name = new QMXFName
             {
-              string nameValue = GetLabel(uri);
+              value = nameValue
+            };
 
-              if (nameValue == String.Empty)
-                nameValue = "tpl:" + Utility.GetIdFromURI(uri);
-
-              QMXFName name = new QMXFName
-              {
-                value = nameValue
-              };
-
-              roleQualification.name.Add(name);
-            }
-            if (result.ContainsKey("range"))
+            roleQualification.name.Add(name);
+          }
+          if (result.ContainsKey("range"))
+          {
+            roleQualification.range = result["range"];
+          }
+          if (result.ContainsKey("reference"))
+          {
+            QMXFValue value = new QMXFValue
             {
-              roleQualification.range = result["range"];
-            }
-            if (result.ContainsKey("reference"))
-            {
-              QMXFValue value = new QMXFValue
-              {
-                reference = result["reference"]
-              };
+              reference = result["reference"]
+            };
 
-              roleQualification.value = value;
-            }
-            if (result.ContainsKey("value"))
+            roleQualification.value = value;
+          }
+          if (result.ContainsKey("value"))
+          {
+            QMXFValue value = new QMXFValue
             {
-              QMXFValue value = new QMXFValue
-              {
-                text = result["value"],
-                As = result["value_dataType"]
-              };
+              text = result["value"],
+              As = result["value_dataType"]
+            };
 
-              roleQualification.value = value;
-            }
-            Utility.SearchAndInsert(roleQualifications, roleQualification, RoleQualification.sortAscending());
-            //roleQualifications.Add(roleQualification);
+            roleQualification.value = value;
           }
 
+          Utility.SearchAndInsert(roleQualifications, roleQualification, RoleQualification.sortAscending());
+          //roleQualifications.Add(roleQualification);
         }
 
         return roleQualifications;
@@ -1079,7 +1071,7 @@ namespace org.iringtools.referenceData
           templateDefinition.status.Add(status);
           templateDefinition.repositoryName = repository.name;
 
-          templateDefinition.roleDefinition = GetRoleDefintion(id);
+          templateDefinition.roleDefinition = GetRoleDefinition(id, repository);
         }
 
         return templateDefinition;
@@ -1200,7 +1192,7 @@ namespace org.iringtools.referenceData
           templateQualification.status.Add(status);
           //templateQualification.repositoryName = repository.name;
 
-          templateQualification.roleQualification = GetRoleQualification(id);
+          templateQualification.roleQualification = GetRoleQualification(id, repository);
         }
 
         return templateQualification;
@@ -1453,8 +1445,7 @@ namespace org.iringtools.referenceData
 
                 if (existingName != null)
                 {
-
-                  if (existingName.value.ToUpper() != name.value.ToUpper())
+                  if (String.Compare(existingName.value, name.value, true) != 0)
                   {
                     hasDeletes = hasInserts = true;
 
@@ -1477,7 +1468,7 @@ namespace org.iringtools.referenceData
 
                 if (existingDescription != null)
                 {
-                  if (existingDescription.value.ToUpper() != description.value.ToUpper())
+                  if (String.Compare(existingDescription.value, description.value, true) != 0)
                   {
                     hasDeletes = hasInserts = true;
 
@@ -1549,7 +1540,7 @@ namespace org.iringtools.referenceData
 
                     if (existingName != null)
                     {
-                      if (existingName.value.ToUpper() != name.value.ToUpper())
+                      if (String.Compare(existingName.value, name.value, true) != 0)
                       {
                         hasDeletes = hasInserts = true;
 
@@ -1568,7 +1559,7 @@ namespace org.iringtools.referenceData
                   //append changing description to each block
                   Description existingDescription = existingRole.description;
 
-                  if (existingDescription.value.ToUpper() != role.description.value.ToUpper())
+                  if (String.Compare(existingDescription.value, role.description.value, true) != 0)
                   {
                     hasDeletes = hasInserts = true;
 
@@ -1588,13 +1579,12 @@ namespace org.iringtools.referenceData
                     }
                     else
                     {
-                      deleteRoleSparql += " rdf:type owl:ObjectProperty ; "
-                              + " rdf:type owl:FunctionalProperty ; ";
+                      deleteRoleSparql += " rdf:type owl:ObjectProperty ; rdf:type owl:FunctionalProperty ; ";
                     }
 
                     deleteRoleSparql += "rdfs:range <" + existingRole.range + "> ; ";
 
-                    if (role.range != null && role.range != String.Empty)
+                    if (!String.IsNullOrEmpty(role.range))
                     {
                       if (role.range.StartsWith("http://www.w3.org/2000/01/rdf-schema#")
                       || role.range.StartsWith("http://www.w3.org/2001/XMLSchema"))
@@ -1810,8 +1800,7 @@ namespace org.iringtools.referenceData
 
             ID = template.identifier;
 
-            string sparql = prefixSparql;
-            //sparql += "INSERT DATA }\n";
+            string sparql = prefixSparql;            
             QMXF existingQmxf = new QMXF();
 
             if (ID != null)
@@ -1861,7 +1850,6 @@ namespace org.iringtools.referenceData
                 int i = 0;
                 foreach (RoleQualification role in template.roleQualification)
                 {
-
                   string roleID = Utility.GetQNameFromUri(role.qualifies);
                   string roleLabel = string.Empty;
                   string roleDescription = string.Empty;
@@ -1928,7 +1916,7 @@ namespace org.iringtools.referenceData
                           + "tpl:R56599656536 rdl:R6569332477 ;\n"
                           + "tpl:R61794465713 rdl:R3732211754 .\n";
                 sparql += "}";
-                //                  prefixSparql = prefixSparql.Insert(prefixSparql.LastIndexOf("."), "}").Remove(prefixSparql.Length - 1);
+                //prefixSparql = prefixSparql.Insert(prefixSparql.LastIndexOf("."), "}").Remove(prefixSparql.Length - 1);
                 response = PostToRepository(repository, prefixSparql);
               }
             }
@@ -1958,8 +1946,7 @@ namespace org.iringtools.referenceData
 
                 if (existingName != null)
                 {
-
-                  if (existingName.value.ToUpper() != name.value.ToUpper())
+                  if (String.Compare(existingName.value, name.value, true) != 0)
                   {
                     hasDeletes = hasInserts = true;
 
@@ -1980,9 +1967,9 @@ namespace org.iringtools.referenceData
               {
                 Description existingDescription = existingTemplate.description.Find(d => d.lang == description.lang);
 
-                if (existingDescription != null && !String.IsNullOrEmpty(existingDescription.value))
+                if (existingDescription != null)
                 {
-                  if (existingDescription.value.ToUpper() != description.value.ToUpper())
+                  if (String.Compare(existingDescription.value, description.value, true) != 0)
                   {
                     hasDeletes = hasInserts = true;
 
@@ -2054,7 +2041,7 @@ namespace org.iringtools.referenceData
 
                     if (existingName != null)
                     {
-                      if (existingName.value.ToUpper() != name.value.ToUpper())
+                      if (String.Compare(existingName.value, name.value, true) != 0)
                       {
                         hasDeletes = hasInserts = true;
 
@@ -2073,7 +2060,7 @@ namespace org.iringtools.referenceData
                   //append changing description to each block
                   for (int i = 0; i < existingRole.description.Count; i++)
                   {
-                    if (existingRole.description[i].value.ToUpper() != role.description[i].value.ToUpper())
+                    if (String.Compare(existingRole.description[i].value, role.description[i].value, true) != 0)
                     {
                       hasDeletes = hasInserts = true;
 
@@ -2094,13 +2081,12 @@ namespace org.iringtools.referenceData
                     }
                     else
                     {
-                      deleteRoleSparql += " rdf:type owl:ObjectProperty ; "
-                              + " rdf:type owl:FunctionalProperty ; ";
+                      deleteRoleSparql += " rdf:type owl:ObjectProperty ; rdf:type owl:FunctionalProperty ; ";
                     }
 
                     deleteRoleSparql += "rdfs:range <" + existingRole.range + "> ; ";
 
-                    if (role.range != null && role.range != String.Empty)
+                    if (!String.IsNullOrEmpty(role.range))
                     {
                       if (role.range.StartsWith("http://www.w3.org/2000/01/rdf-schema#")
                       || role.range.StartsWith("http://www.w3.org/2001/XMLSchema"))
@@ -2109,8 +2095,7 @@ namespace org.iringtools.referenceData
                       }
                       else
                       {
-                        insertRoleSparql += " rdf:type owl:ObjectProperty ; "
-                                + " rdf:type owl:FunctionalProperty ; ";
+                        insertRoleSparql += " rdf:type owl:ObjectProperty ; rdf:type owl:FunctionalProperty ; ";
                       }
 
                       insertRoleSparql += "rdfs:range <" + role.range + "> ; ";
@@ -2163,7 +2148,7 @@ namespace org.iringtools.referenceData
                   }
 
                   //genertate new role id if needed.
-                  if (role.qualifies == null || role.qualifies == String.Empty)
+                  if (String.IsNullOrEmpty(role.qualifies))
                   {
                     string generatedId = string.Empty;
 
@@ -2241,8 +2226,7 @@ namespace org.iringtools.referenceData
                 }
                 else
                 {
-                  deleteRoleSparql += " rdf:type owl:ObjectProperty ; "
-                          + " rdf:type owl:FunctionalProperty ; ";
+                  deleteRoleSparql += " rdf:type owl:ObjectProperty ; rdf:type owl:FunctionalProperty ; ";
                 }
 
                 deleteRoleSparql += " rdfs:domain " + identifier + " ; ";
@@ -2628,7 +2612,7 @@ namespace org.iringtools.referenceData
     private string CreateIdsAdiId(string RegistryBase, string name)
     {
       string baseServiceUrl = "https://secure.ids-adi.org/registry?registry-op=acquire&registry-base=" +
-                              HttpUtility.UrlEncode(RegistryBase) + "&registry-comment=";
+      HttpUtility.UrlEncode(RegistryBase) + "&registry-comment=";
       string serviceUrl = baseServiceUrl + HttpUtility.UrlEncode(name);
       string idsAdiId = "";
 
