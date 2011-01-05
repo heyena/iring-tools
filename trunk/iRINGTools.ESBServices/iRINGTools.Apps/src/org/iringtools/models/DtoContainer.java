@@ -121,8 +121,16 @@ public class DtoContainer {
 		return false;
 	}
 
-	public void setRIdentifier(String identifier) {
-		this.identifier = identifier;
+	public void setRIdentifier(String identif) {
+		this.identifier = "<span onMouseOver=\"javascript:this.style.textDecoration=\'underline\'\" onMouseOut=\"javascript:this.style.textDecoration=\'none\'\">"
+			+ identif
+			+ "</span>";
+
+
+		/*
+		 <span onMouseOver="javascript:this.style.textDecoration=\'underline\'">RV-101010</span>
+
+		 */
 		data.put("Identifier", identifier);
 	}
 
@@ -442,7 +450,7 @@ public class DtoContainer {
 		DtoContainer.total = total;
 	}
 
-	public void setRowsList(Rows rows) {
+	public void setRowsList(Rows rows) {		
 		rows.setData(dataList);
 		rows.setSuccess("true");
 		rows.setTotal(total);
