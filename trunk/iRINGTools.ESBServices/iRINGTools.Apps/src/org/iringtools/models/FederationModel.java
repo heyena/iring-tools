@@ -164,7 +164,7 @@ public class FederationModel
       properties.add(WidgetUtil.createProperty("Description", namespace.getDescription()));
       properties.add(WidgetUtil.createProperty("Writable", String.valueOf(namespace.isIsWritable())));
       if(namespace.getIdGenerator()!=null){
-    	  properties.add(WidgetUtil.createProperty("ID Generator", "idgenerator"+namespace.getIdGenerator()));
+    	  properties.add(WidgetUtil.createProperty("ID Generator", ResolveIDGeneratorFromId(namespace.getIdGenerator())));
       }
 
       namespaceNodes.add(namespaceNode);
@@ -209,7 +209,7 @@ public class FederationModel
     	  NamespaceList namespaces = new NamespaceList();
     	  List<String> namespaceList = namespaces.getItems();
     	  for (String namespaceItem : repository.getNamespaces().getItems()){
-    		  namespaceList.add("namespace"+namespaceItem);
+    		  namespaceList.add(ResolveNamespaceFromId(namespaceItem));
     	  }
 	      properties.add(WidgetUtil.createProperty("Namespace List", namespaces));
       }else{
@@ -247,7 +247,7 @@ public class FederationModel
 					namespace.setAlias(httpRequest.getParameter("Alias"));
 					namespace.setIsWritable(Boolean.parseBoolean(httpRequest.getParameter("Writable")));
 					namespace.setDescription(httpRequest.getParameter("Description"));
-					namespace.setIdGenerator(httpRequest.getParameter("ID Generator").replaceFirst("idgenerator", ""));
+					namespace.setIdGenerator(ResolveIdFromIDGenerator(httpRequest.getParameter("ID Generator")));
 					
 					response = httpClient.post(Response.class, "/namespace", namespace);
 					
@@ -267,7 +267,7 @@ public class FederationModel
 						NamespaceList namespaceList = new NamespaceList();
 						List<String> namespaceItem = namespaceList.getItems();
 						while(st.hasMoreTokens()) {
-							namespaceItem.add(st.nextToken().replaceFirst("namespace", "")); 
+							namespaceItem.add(ResolveIdFromNamespace(st.nextToken())); 
 						}
 						repository.setNamespaces(namespaceList);
 						System.out.println("Namespace List :"+namespaceList.getItems());
@@ -332,6 +332,58 @@ public class FederationModel
 			return false;
 			
 		}
+  }
+  
+  private String ResolveIDGeneratorFromId(String id)
+  {
+	  for (IDGenerator idgenerator : federation.getIdGenerators().getItems())
+	  {
+		  if(idgenerator.getId().equalsIgnoreCase(id))
+		  {
+			return idgenerator.getName();
+		  }		  
+	  }
+	  return "";
+  }
+  
+  private String ResolveNamespaceFromId(String id)
+  {
+	  for (Namespace namespace : federation.getNamespaces().getItems())
+	  {
+		  if(namespace.getId().equalsIgnoreCase(id))
+		  {
+			return namespace.getAlias();
+		  }		  
+	  }
+	  return "";
+  }
+  
+  private String ResolveIdFromIDGenerator(String idgeneratorName)
+  {
+	  if (federation == null) populate();
+	  
+	  for (IDGenerator idgenerator : federation.getIdGenerators().getItems())
+	  {
+		  if(idgenerator.getName().equalsIgnoreCase(idgeneratorName))
+		  {
+			return idgenerator.getId();
+		  }		  
+	  }
+	  return "";
+  }
+  
+  private String ResolveIdFromNamespace(String namespaceAlias)
+  {
+	  if (federation == null) populate();
+	  
+	  for (Namespace namespace : federation.getNamespaces().getItems())
+	  {
+		  if(namespace.getAlias().equalsIgnoreCase(namespaceAlias))
+		  {
+			return namespace.getId();
+		  }		  
+	  }
+	  return "";
   }
 
 }
