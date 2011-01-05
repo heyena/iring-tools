@@ -154,12 +154,15 @@ public class RefDataProvider
 		  }
 		  if (idgenExist)
 		  {
-			  //find out the namespaces that use this idGenerator and remove the idGenerator
-			  Integer nsID = Integer.parseInt(idgenerator.getId());
-			  for(Namespace ns : federation.getNamespaces().getItems())
+			  if(deleteFlag)
 			  {
-				  if(ns.getIdGenerator().equalsIgnoreCase(nsID.toString()))
-					  ns.setIdGenerator("");
+				  //find out the namespaces that use this idGenerator and remove the idGenerator
+				  String nsID = idgenerator.getId();
+				  for(Namespace ns : federation.getNamespaces().getItems())
+				  {
+					  if(ns.getIdGenerator().equalsIgnoreCase(nsID))
+						  ns.setIdGenerator("");					    
+				  }
 			  }
 			  
 			  //now remove the namespace
