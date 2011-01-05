@@ -160,8 +160,9 @@ public class RefDataProvider
 				  String nsID = idgenerator.getId();
 				  for(Namespace ns : federation.getNamespaces().getItems())
 				  {
-					  if(ns.getIdGenerator().equalsIgnoreCase(nsID))
-						  ns.setIdGenerator("");					    
+					  if(ns.getIdGenerator().equalsIgnoreCase(nsID)){
+						  ns.setIdGenerator("0");
+					  }
 				  }
 			  }
 			  
