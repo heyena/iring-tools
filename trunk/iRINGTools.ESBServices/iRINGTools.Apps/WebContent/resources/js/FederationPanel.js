@@ -385,7 +385,11 @@ openTab: function(node,formType) {
             // get all the attributes of node
             var properties = node.attributes.properties;
             for ( var i = 0; i < properties.length; i++) {
-                    gridSource[properties[i].name] = properties[i].value;
+            	 if(properties[i].name == 'ID Generator'){
+                     gridSource[properties[i].name] = this.getNodeById(properties[i].value).text;     // contains IDGenerator Title
+                 }else{
+                      gridSource[properties[i].name] = properties[i].value;
+                 }
             }
         }
         // populate the property grid with gridSource
