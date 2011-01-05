@@ -168,7 +168,7 @@ onDelete:function(){
                                 // remove the node form tree
                                 //that.federationPanel.selModel.selNode.parentNode.removeChild(node);
                                 //Tree Reload
-                                that.federationPanel.root.reload();
+                                that.onRefresh();
                                 // fire event so that the Details panel will be changed accordingly
                                 that.fireEvent('selectionchange',this)
                                 Ext.Msg.alert('Sucess', 'Node has been deleted')
