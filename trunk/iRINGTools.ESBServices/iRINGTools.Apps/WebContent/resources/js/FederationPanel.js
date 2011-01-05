@@ -321,7 +321,7 @@ openTab: function(node,formType) {
                  case 'ID Generator':
                      // get all the IDGenerators
                      var allIDGenerators = this.getAllChildNodes(this.federationPanel.getRootNode().findChild('id','idGenerator'))
-                     xtype= 'xtype : "combo",width : 230, triggerAction: "all", editable : false, mode: "local", store: '+allIDGenerators+',  displayField:"'+properties[i].value+'", width: 120'
+                     xtype= 'xtype : "combo",hiddenName:"ID Generator", width : 230, triggerAction: "all", editable : false, mode: "local", store: '+allIDGenerators+',  displayField:"'+properties[i].value+'", width: 120'
                  break;
                  case 'Namespace List':
                      var imgPath='./resources/js/external/ux/images/'
