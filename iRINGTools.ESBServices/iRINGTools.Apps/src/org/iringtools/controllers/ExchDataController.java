@@ -16,7 +16,7 @@ public class ExchDataController {
 	private String idName;
 	private String id;
 	private String classId;
-
+    private String relatedId;
 	private int start=0;
 	private int limit=20;
 	private HashMap<String, Rows> rowsMap = null;
@@ -77,6 +77,13 @@ public class ExchDataController {
 		return classId;
 	}
 
+	public void setRelatedId(String relatedId) {
+		this.relatedId = relatedId;
+	}
+
+	public String getRelatedId() {
+		return relatedId;
+	}
 	public void setStart(int start) {
 		this.start = start;
 	}
@@ -139,5 +146,10 @@ public class ExchDataController {
 		return Action.SUCCESS;
 	}
 	
+	public String getRelRelationExchRows() {
+		exchdata.populate(scopeName, idName);
+		rows = exchdata.toDetailRelRows(id, classId, relatedId);
+		return Action.SUCCESS;
+	}
 	
 }

@@ -37,7 +37,7 @@ public class DtoContainer {
 	private List<HashMap<String, String>> dataList;
 	private HashMap<String, String> data;
 	private List<String> hList; // description
-	private String classId = ""; // role id of the related object
+	private String classId = "", relatedId = ""; 
 
 	private String identifier = "", tempName = "", clsName;
 	private Filter filter;
@@ -92,6 +92,10 @@ public class DtoContainer {
 
 	public void setClassId(String classId) {
 		this.classId = classId;
+	}
+	
+	public void setRelatedId(String relatedId) {
+		this.relatedId = relatedId;
 	}
 
 	public void setRoObj(RoleObject roObj) {
@@ -276,6 +280,7 @@ public class DtoContainer {
 	}
 
 	public void fillDetailRelConfig() {
+		setIdentifier("Identifier");
 		for (DataTransferObject dto : dtoList) {
 			setClaList(dto.getClassObjects().getItems());
 			for (ClassObject clo : claList) {
@@ -296,7 +301,8 @@ public class DtoContainer {
 			setTObjList(clo.getTemplateObjects().getItems());
 			tObj = tObjList.get(0);
 			addToGrid(tObj.getName());
-			addDetailRelRow(tObj.getName(), clo.getIdentifier());
+			setRIdentifier(clo.getIdentifier());			
+			addDetailRelRow(tObj.getName(), identifier);
 			return;
 		}
 	}
@@ -348,16 +354,7 @@ public class DtoContainer {
 		}
 	}
 
-	public void fillExchRelPage() {
-		initialHList();
-		total = 0;
-		for (DataTransferObject dto : dtoList) {
-			data = new HashMap<String, String>();
-			data.put("TransferType", dto.getTransferType().value());
-			setClaList(dto.getClassObjects().getItems());
-			getRelatedItems();
-		}
-	}
+	
 
 	public void getRelatedItems() {
 		for (ClassObject clo : claList) {
@@ -391,7 +388,7 @@ public class DtoContainer {
 			}
 		}
 	}
-
+	
 	public void fillRelPage() {
 		total = 0;
 		initialHList();
@@ -400,7 +397,39 @@ public class DtoContainer {
 			getRelatedItems();
 		}
 	}
+	
+	
+	
+	public void fillRelRelationPage() {
+		total = 0;
+		initialHList();
+		for (DataTransferObject dto : dtoList) {
+			setClaList(dto.getClassObjects().getItems());
+			getRelatedRelationItems();
+		}
+	}
 
+	public void getRelatedRelationItems() {
+		for (ClassObject clo : claList) {
+			if (clo.getClassId().equals(classId) && clo.getIdentifier().equals(relatedId)) {
+				setTObjList(clo.getTemplateObjects().getItems());
+				for (TemplateObject tObj : tObjList) {
+					setTName(tObj.getName());
+					setRoList(tObj.getRoleObjects().getItems());
+					for (RoleObject rObj : roList) {
+						setRType(rObj.getType().toString());
+						if (rType.equals("REFERENCE")) {
+							setRcName(rObj.getRelatedClassName());
+							if (rcName != null) {
+								addRelRow(rcName);
+							}
+						}
+					}
+
+				}
+			}
+		}
+	}
 	public void addRelRow(String head) {
 		data = new HashMap<String, String>();
 		data.put("id", classId);
@@ -429,7 +458,7 @@ public class DtoContainer {
 			column.setHeader(head.replace('_', ' '));
 			column.setId(head);
 			column.setSortable("true");
-			column.setWidth(Math.ceil(6.8 * head.length()));
+			column.setWidth(Math.ceil(7.1 * head.length()));
 			cList.add(column);
 			header = new Header();
 			header.setName(head);
@@ -443,6 +472,8 @@ public class DtoContainer {
 		grid.setColumnData(cList);
 		grid.setHeaderLists(ghList);
 		grid.setCacheData("true"); // Add rules in the future
+		grid.setSortBy(hList.get(0));
+		grid.setSortOrder("DESC");
 		if (filterList.size() > 0 && cList.size() > 0 && ghList.size() > 0)
 			grid.setSuccess("true");
 		grid.setPageSize(page);

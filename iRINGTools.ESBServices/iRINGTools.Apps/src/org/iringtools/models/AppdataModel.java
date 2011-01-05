@@ -151,6 +151,14 @@ public class AppdataModel {
     }
     
  
+    public Rows toRelRelationRows(String id, String classId, String relatedId) {
+    	prepareRows(id);	
+    	dtoCtr.setClassId(classId);
+    	dtoCtr.setRelatedId(relatedId);
+    	dtoCtr.fillRelRelationPage();	
+    	dtoCtr.setRowsList(rows);
+    	return rows;
+    }
     
 	public void readGrid(Grid grid) {
 		//TODO: Read the grid!

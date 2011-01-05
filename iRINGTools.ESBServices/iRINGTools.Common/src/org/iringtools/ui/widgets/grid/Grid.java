@@ -11,6 +11,8 @@ public class Grid
   protected String classObjName;
   protected String success;
   protected String cacheData;
+  protected String sortBy;
+  protected String sortOrder;
   protected double pageSize;
 
   public List<Filter> getFilterSets()
@@ -70,6 +72,27 @@ public class Grid
   {
     this.cacheData = value;
   }
+  
+  public String getSortBy()
+  {
+    return sortBy;
+  }
+
+  public void setSortBy(String value)
+  {
+    this.sortBy = value;
+  }
+  
+  public String getSortOrder()
+  {
+    return sortOrder;
+  }
+
+  public void setSortOrder(String value)
+  {
+    this.sortOrder = value;
+  }
+
 
   public double getPageSize()
   {

@@ -141,7 +141,7 @@ public class ExchDataModel {
     
     public Rows toRelRows(String id) {	
     	prepareRows(id);
-    	dtoCtr.fillExchRelPage();	
+    	dtoCtr.fillRelPage();	
     	dtoCtr.setRowsList(rows);
     	return rows;
     }
@@ -182,7 +182,14 @@ public class ExchDataModel {
     	dtoCtr.initialDataList();
     }
     
- 
+    public Rows toDetailRelRows(String id, String classId, String relatedId) {
+    	prepareRows(id);	
+    	dtoCtr.setClassId(classId);
+    	dtoCtr.setRelatedId(relatedId);
+    	dtoCtr.fillRelRelationPage();	
+    	dtoCtr.setRowsList(rows);
+    	return rows;
+    }
     
 	public void readGrid(Grid grid) {
 		//TODO: Read the grid!
