@@ -184,6 +184,7 @@ ExchangeManager.NavigationPanel = Ext
 						}
 					},
 					onCellClick : function(grid, rowIndex, columnIndex, e) {
+						grid.getEl().mask('<span><img src="resources/images/ajax-spinner.gif"/><font color="#ff8800">Loading.....</font></span>');
 						// alert('scope id passed from exchangemanager:
 						// '+this.scopeName)
 						// alert(this.ActiveTab)
@@ -464,7 +465,8 @@ ExchangeManager.NavigationPanel = Ext
 																								closable : false,
 																								identifier : dtoIdentifier,
 																								refClassIdentifier : refClassIdentifier,
-																								nodeDisplay : 'Detail Grid'
+																								//nodeDisplay : 'Detail Grid'
+																								nodeDisplay:navPanel.nodeDisplay
 
 																							});
 
@@ -543,6 +545,8 @@ ExchangeManager.NavigationPanel = Ext
 													closable : false
 												};
 
+												navPanel.dataGrid.getEl().unmask();
+												
 												if (navPanel.get(newTab.id) == undefined) {
 													navPanel.add(newTab);
 													navPanel
