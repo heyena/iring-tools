@@ -43,7 +43,7 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
       rootVisible: false,
       lines: true,
       //singleExpand: true,
-      useArrows: true,
+      useArrows: false,
       autoScroll:true,
       loader: new Ext.tree.TreeLoader({
         dataUrl: this.url
