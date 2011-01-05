@@ -184,7 +184,8 @@ ExchangeManager.NavigationPanel = Ext
 						}
 					},
 					onCellClick : function(grid, rowIndex, columnIndex, e) {
-						grid.getEl().mask('<span><img src="resources/images/ajax-spinner.gif"/><font color="#ff8800">Loading.....</font></span>');
+						grid.getEl().mask('Loading.....');
+
 						// alert('scope id passed from exchangemanager:
 						// '+this.scopeName)
 						// alert(this.ActiveTab)
@@ -201,6 +202,7 @@ ExchangeManager.NavigationPanel = Ext
 								&& record.get(fieldName) != '') {
 							var IdentificationByTag_value = record
 									.get(fieldName);
+							//alert('204--IdentificationByTag_value /'+ IdentificationByTag_value)
 							var transferType_value = record.get('TransferType');
 
 							var rowDataArr = [];
@@ -454,6 +456,7 @@ ExchangeManager.NavigationPanel = Ext
 																							.decode(result.responseText);
 																					var pageURL = relatedDataRows_URI;
 
+																					//alert('458--IdentificationByTag_value /'+ navPanel.removeHTMLTags(IdentificationByTag_value))
 																					var newTab = new ExchangeManager.NavigationPanel(
 																							{
 																								title : navPanel.removeHTMLTags(dataView.store.data.items[index].data.label),
@@ -536,11 +539,12 @@ ExchangeManager.NavigationPanel = Ext
 																	} ]
 														});
 
+												//alert('541--IdentificationByTag_value /'+ navPanel.removeHTMLTags(IdentificationByTag_value))
 												var newTab = {
 													title : navPanel.removeHTMLTags(IdentificationByTag_value),
 													id : this.title
 															+ '_'
-															+ IdentificationByTag_value,
+															+ navPanel.removeHTMLTags(IdentificationByTag_value),
 													items : [ classPanel ],
 													closable : false
 												};
