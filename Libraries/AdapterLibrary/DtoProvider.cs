@@ -425,7 +425,9 @@ namespace org.iringtools.adapter
                   };
                   manifestTemplate.roles.Add(manifestRole);
 
-                  if (roleMap.type == RoleType.Property)
+                  if (roleMap.type == RoleType.Property ||
+                      roleMap.type == RoleType.DataProperty ||
+                      roleMap.type == RoleType.ObjectProperty)
                   {
                     string[] property = roleMap.propertyName.Split('.');
                     string objectName = property[0].Trim();
@@ -797,7 +799,9 @@ namespace org.iringtools.adapter
           {
             foreach (RoleMap roleMap in templateMap.roleMaps)
             {
-              if (roleMap.type == RoleType.Property)
+              if (roleMap.type == RoleType.Property ||
+                  roleMap.type == RoleType.DataProperty ||
+                  roleMap.type == RoleType.ObjectProperty)
               {
                 string propertyName = roleMap.propertyName.Substring(_graphMap.dataObjectName.Length + 1);
                 string value = Convert.ToString(dataObjects[i].GetPropertyValue(propertyName));
