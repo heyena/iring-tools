@@ -29,6 +29,20 @@ Ext.onReady(function () {
 		enableTabScroll: true
 	});
 	
+	directoryPanel.on('exchange', function(panel, node, exchangeURI) {
+		//alert("exchangeURI"+exchangeURI);
+		Ext.Ajax.request({
+			url: exchangeURI,
+			method: 'GET',
+			params: {},
+			success: function(result, request) {
+				alert(result.responseText);
+					//console.log('delete response for ' +url+' : '+ eval(Ext.util.JSON.decode(result.responseText).success));
+				// open the new result tab and refresh the actual tab
+			}});
+		
+	});
+	
 	directoryPanel.on('open', function(panel, node, label, url) {
 
 		
