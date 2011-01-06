@@ -193,8 +193,32 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   
   onExchange: function (btn, ev) {
   	node = this.getSelectedNode();
-  	if (node != null)
-		this.fireEvent('exchange', this, node);
+	if (node != null){
+	  var dataTypeNode = node.parentNode.parentNode;
+		var obj = node.attributes;
+		var item = obj['properties'];
+		var nodeType = obj['iconCls'];
+		if(nodeType=='exchange'){
+		var scopeId = dataTypeNode.parentNode.attributes['text'];
+			var nodeText = obj['text'];
+			var uid = item[0].value;
+			//alert(' scopeId: '+scopeId+' nodeType:'+nodeType+' eid: '+uid);
+			var exchangeURI='setExchangeData?scopeName='+scopeId+'idName='+uid;
+			//alert('exchangeURI : '+exchangeURI);
+			this.fireEvent('exchange', this, node,exchangeURI);
+		}else{
+			//alert('nodeType: '+nodeType); // graph
+			/*Ext.MessageBox.show({
+				title: '<font color=red>Error</font>',
+				msg: 'Please Select an exchange node:<br/>'+label,
+				buttons: Ext.MessageBox.OK,
+				icon: Ext.MessageBox.ERROR
+			});*/
+			return false;
+		}
+  }
+	  /*	if (node != null)
+		this.fireEvent('exchange', this, node);*/
   },
   
   populatePropertyGrid: function (properties) {
