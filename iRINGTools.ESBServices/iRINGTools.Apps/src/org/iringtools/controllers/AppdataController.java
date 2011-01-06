@@ -1,5 +1,6 @@
 package org.iringtools.controllers;
 
+import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.models.AppdataModel;
 import org.iringtools.ui.widgets.grid.Grid;
 import org.iringtools.ui.widgets.grid.Rows;
@@ -19,9 +20,10 @@ public class AppdataController {
 	private String id;
 	private String classId;
 	private String relatedId;
+	private String key;
 	private int start=0;
 	private int limit=20;
-	private HashMap<String, Rows> rowsMap = null;
+	static private HashMap<String, DataTransferIndices> dtiMap = null;
 
 	public AppdataController() {
 		appdata = new AppdataModel();
@@ -115,28 +117,34 @@ public class AppdataController {
 		return limit;
 	}
 
+	public void getExchDtiList() {
+		key = scopeName + appName + graphName;
+		if (dtiMap == null)
+			dtiMap = new HashMap<String, DataTransferIndices>();
+		if (dtiMap.get(key) == null)
+			dtiMap.put(key, appdata.populate(scopeName, appName, graphName));
+		else {
+			appdata.setDtiList(dtiMap.get(key).getDataTransferIndexList().getItems());
+			appdata.setDtoUrl("/" + scopeName + "/" + appName + "/" + graphName);
+		}
+	}
+	
 	public String getAppDataGrid() {
-		appdata.populate(scopeName, appName, graphName);
+		getExchDtiList();
 		grid = appdata.toGrid();
 		return Action.SUCCESS;
 	}
 
 	public String getAppDataRows() {
-		if (rowsMap == null)
-			rowsMap = new HashMap<String, Rows>();
-		if (rowsMap.size() <= start / limit) {
-			appdata.populate(scopeName, appName, graphName);
-			rows = appdata.toRows(start, limit);
-			rowsMap.put(String.valueOf(start), rows);
-		} else {
-			rows = rowsMap.get(String.valueOf(start));
-		}
+		getExchDtiList();
+		rows = appdata.toRows(start, limit);		
 		return Action.SUCCESS;
 	}
 
 	public String cleanHashMap() {
-		rowsMap.clear();
-		AppdataModel.setURI("");		
+		dtiMap.put(key, null);
+		AppdataModel.setURI("");
+		rows = null;
 		return Action.SUCCESS;
 	}
 	

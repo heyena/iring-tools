@@ -122,5 +122,19 @@
         <param name="root">rows</param>
       </result>
     </action>
+    
+    <action name="exchangeResponse" class="org.iringtools.controllers.ExchDataController" method="setExchangeData">
+      <result type="json">
+        <param name="root">exchangeResponse</param>
+      </result>
+    </action>
+    
+    <action name="exchangeHistory" class="org.iringtools.controllers.ExchDataController" method="getExchangeHistory">
+      <result type="json">
+        <param name="root">history</param>
+      </result>
+    </action>
+    
+    
   </package>    
 </struts>

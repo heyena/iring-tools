@@ -117,7 +117,15 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			disabled: false,
 			handler: this.onExchange,
 			scope: this
-		}];
+		},{xtype:"tbbutton",
+			icon:'resources/images/16x16/go-send.png',
+			tooltip:'Logs',
+			text:'Logs',
+			disabled: false,
+			handler: this.onHistory,
+			scope: this
+		}
+		];
   },
   
   getSelectedNode: function() {
@@ -203,7 +211,7 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			var nodeText = obj['text'];
 			var uid = item[0].value;
 			//alert(' scopeId: '+scopeId+' nodeType:'+nodeType+' eid: '+uid);
-			var exchangeURI='setExchangeData?scopeName='+scopeId+'idName='+uid;
+			var exchangeURI='exchangeResponse?scopeName='+scopeId+'idName='+uid;
 			//alert('exchangeURI : '+exchangeURI);
 			this.fireEvent('exchange', this, node,exchangeURI);
 		}else{
