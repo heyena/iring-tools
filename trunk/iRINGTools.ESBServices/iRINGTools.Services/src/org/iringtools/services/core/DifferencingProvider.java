@@ -284,8 +284,11 @@ public class DifferencingProvider
           for (int l = 0; l < targetRoleObjectList.size(); l++)
           {
             RoleObject targetRoleObject = targetRoleObjectList.get(l);
+            RoleType targetRoleType = targetRoleObject.getType();
 
-            if (targetRoleObject.getType() == RoleType.PROPERTY)
+            if (targetRoleType == RoleType.PROPERTY ||
+                targetRoleType == RoleType.DATA_PROPERTY ||
+                targetRoleType == RoleType.OBJECT_PROPERTY)
             {
               RoleObject sourceRoleObject = sourceRoleObjectList.get(l);
 
