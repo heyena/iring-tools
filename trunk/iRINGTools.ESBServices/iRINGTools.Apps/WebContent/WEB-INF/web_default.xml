@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app id="iRINGTools.Apps">
-  <context-param>
+   <context-param>
     <param-name>ExchangeDataServiceUri</param-name>
     <param-value>http://localhost:8080/services/esb</param-value>
+  </context-param>
+  <context-param>
+    <param-name>HistoryServiceUri</param-name>
+    <param-value>http://localhost:8080/services/history</param-value>
   </context-param>
   <context-param>
     <param-name>RefDataServiceUri</param-name>

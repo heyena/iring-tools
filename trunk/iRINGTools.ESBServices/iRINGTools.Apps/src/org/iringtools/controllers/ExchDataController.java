@@ -1,5 +1,8 @@
 package org.iringtools.controllers;
 
+import org.iringtools.dxfr.dti.DataTransferIndices;
+import org.iringtools.dxfr.response.ExchangeResponse;
+import org.iringtools.history.History;
 import org.iringtools.models.ExchDataModel;
 import org.iringtools.ui.widgets.grid.Grid;
 import org.iringtools.ui.widgets.grid.Rows;
@@ -12,6 +15,8 @@ public class ExchDataController {
 	private ExchDataModel exchdata;
 	private Grid grid;
 	private Rows rows;
+	private ExchangeResponse exchangeResponse;
+	private History history;
 	private String scopeName;
 	private String idName;
 	private String id;
@@ -19,7 +24,11 @@ public class ExchDataController {
     private String relatedId;
 	private int start=0;
 	private int limit=20;
-	private HashMap<String, Rows> rowsMap = null;
+	private String key;
+	private String hasReviewed;
+	
+	static private HashMap<String, DataTransferIndices> dtiMap = null;
+	static private HashMap<String, DataTransferIndices> dtoMap = null;
 
 	public ExchDataController() {
 		exchdata = new ExchDataModel();
@@ -40,7 +49,22 @@ public class ExchDataController {
 	public Rows getRows() {
 		return rows;
 	}
+	
+	public void setExchangeResponse(ExchangeResponse exchangeResponse) {
+		this.exchangeResponse = exchangeResponse;
+	}
 
+	public ExchangeResponse getExchangeResponse() {
+		return exchangeResponse;
+	}
+
+	public void setHistory(History history) {
+		this.history = history;
+	}
+
+	public History getHistory() {
+		return history;
+	}
 
 
 	public void setScopeName(String scopeName) {
@@ -67,6 +91,14 @@ public class ExchDataController {
 
 	public String getId() {
 		return id;
+	}
+	
+	public void setHasReviewed(String val) {
+		this.hasReviewed = val;
+	}
+
+	public String getHasReviewed() {
+		return hasReviewed;
 	}
 	
 	public void setClassId(String classId) {
@@ -100,56 +132,70 @@ public class ExchDataController {
 		return limit;
 	}
 
+	public void getExchDtiList() {
+		key = scopeName + idName;
+		if (dtiMap == null)
+			dtiMap = new HashMap<String, DataTransferIndices>();
+		if (dtiMap.get(key) == null)
+			dtiMap.put(key, exchdata.populate(scopeName, idName));
+		else {
+			exchdata.setDtiList(dtiMap.get(key).getDataTransferIndexList().getItems());
+			exchdata.setDtoUrl("/" + scopeName + "/exchanges/" + idName);
+		}
+	}
 	public String getExchDataGrid() {
-		exchdata.populate(scopeName, idName);
+		getExchDtiList();
 		grid = exchdata.toGrid();
 		return Action.SUCCESS;
 	}
 
 	public String getExchDataRows() {
-		if (rowsMap == null)
-			rowsMap = new HashMap<String, Rows>();
-		if (rowsMap.size() <= start / limit) {
-			exchdata.populate(scopeName, idName);
-			rows = exchdata.toRows(start, limit);
-			rowsMap.put(String.valueOf(start), rows);
-		} else {
-			rows = rowsMap.get(String.valueOf(start));
-		}
+		getExchDtiList();		
+		rows = exchdata.toRows(start, limit);		
 		return Action.SUCCESS;
 	}
 
-	public String cleanHashMap() {
-		if (rowsMap != null)
-			rowsMap.clear();
-		ExchDataModel.setURI("");		
+	public String cleanHashMap() {			
+		dtiMap.put(key, null);		
+		rows = null;
 		return Action.SUCCESS;
 	}
-
-
 	
 	public String getRelatedExchRows() {		
-		exchdata.populate(scopeName, idName);
+		getExchDtiList();
 		rows = exchdata.toRelRows(id);		
 		return Action.SUCCESS;
 	}
 
 	public String getDetailExchGrid() {
-		exchdata.populate(scopeName, idName);
+		getExchDtiList();
 		grid = exchdata.toDetailRelGrid(id, classId);
 		return Action.SUCCESS;
 	}
 	
 	public String getDetailExchRows() {
-		exchdata.populate(scopeName, idName);
+		getExchDtiList();
 		rows = exchdata.toDetailRelRows(id, classId);
 		return Action.SUCCESS;
 	}
 	
 	public String getRelRelationExchRows() {
-		exchdata.populate(scopeName, idName);
+		getExchDtiList();
 		rows = exchdata.toDetailRelRows(id, classId, relatedId);
 		return Action.SUCCESS;
 	}
 	
+	public String setExchangeData() {
+		getExchDtiList();
+		exchangeResponse = exchdata.toExResponse(hasReviewed);
+		dtiMap.put(key, null);
+		return Action.SUCCESS;
+	}
+	
+	public String getExchangeHistory() {
+		exchdata.getHistoryUrl();
+		exchdata.setDtoUrl("/" + scopeName + "/exchanges/" + idName);
+		history = exchdata.getExchHistory();
+		return Action.SUCCESS;
+	}
 }

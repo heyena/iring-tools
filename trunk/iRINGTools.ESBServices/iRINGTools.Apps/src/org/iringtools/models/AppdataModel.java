@@ -31,16 +31,18 @@ public class AppdataModel {
 		}
 	}	
 	
-	public void populate(String scopeName, String appName, String graphName) {
+	public DataTransferIndices populate(String scopeName, String appName, String graphName) {
+		DataTransferIndices dti = null;
 		try {
 			HttpClient httpClient = new HttpClient(URI);
-			DataTransferIndices dti = httpClient.get(DataTransferIndices.class,
+			dti = httpClient.get(DataTransferIndices.class,
 					"/" + scopeName + "/" + appName + "/" + graphName);
 			setDtiList(dti.getDataTransferIndexList().getItems());
 			setDtoUrl("/" + scopeName + "/" + appName + "/" + graphName);
 		} catch (Exception e) {
 			System.out.println("Exception :" + e);
 		}
+		return dti;
 	}
 
 	public static void setURI (String uri) {
