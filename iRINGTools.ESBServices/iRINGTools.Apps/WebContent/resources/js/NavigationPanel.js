@@ -219,7 +219,7 @@ ExchangeManager.NavigationPanel = Ext
 								// name
 								fieldValue = record.get(grid.getColumnModel()
 										.getDataIndex(i))
-								tempArr = Array(fieldHeader, fieldValue)
+								tempArr = Array(fieldHeader, this.removeHTMLTags(fieldValue))
 								rowDataArr.push(tempArr)
 							}
 							var filedsVal_ = '[{"name":"Property"},{"name":"Value"}]';
@@ -511,8 +511,6 @@ ExchangeManager.NavigationPanel = Ext
 																						.removeHTMLTags(IdentificationByTag_value)
 																				+ '</b><br/>'
 																				+ grid.classObjName
-																				+ '<br/>Transfer Type : '
-																				+ transferType_value
 																				+ '</div>'
 																	},
 																	{
