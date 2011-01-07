@@ -20,7 +20,7 @@ public class ExchDataModel {
 	private List<DataTransferIndex> dtiList = null;
 	private List<DataTransferIndex> dtiPage = null;
 	private DtoContainer dtoContainer;
-	private ResponseContainer responseContainer;
+	private ExchResponseContainer exchResponseContainer;
 	private HistoryContainer historyContainer;
 	private int rInd = 0;
 
@@ -194,11 +194,11 @@ public class ExchDataModel {
 	}
 
 	public ExchangeResponse toExResponse(String hasReviewed) {
-		responseContainer = new ResponseContainer();
-		responseContainer.setResponseUrl(dtoUrl + "/submit");
-		responseContainer.setExchangeRequest(dtiList, hasReviewed);
-		responseContainer.populateResponse(URI);
-		return responseContainer.getExchangeResponse();
+		exchResponseContainer = new ExchResponseContainer();
+		exchResponseContainer.setResponseUrl(dtoUrl + "/submit");
+		exchResponseContainer.setExchangeRequest(dtiList, hasReviewed);
+		exchResponseContainer.populateResponse(URI);
+		return exchResponseContainer.getExchangeResponse();
 	}
 
 	public History getExchHistory() {
