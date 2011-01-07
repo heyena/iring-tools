@@ -131,7 +131,7 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   	return this.directoryPanel.getSelectionModel().getSelectedNode();
   },
   
-  openTab: function(node) {
+  openTab: function(node,isReloadable) {
 	  var dataTypeNode = node.parentNode.parentNode;
 	  var graphNode = node.parentNode;	
 	  /*	loadAppData(dataTypeNode.parentNode.attributes['text'],  graphNode.attributes['text'], node.attributes['text']);
@@ -147,22 +147,20 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			var app = graphNode.attributes['text'];
 			var nodeType = obj['iconCls'];
 			var graph = obj['text']; 
-			
 			if ((nodeType == 'exchange' && uid != '')) {
 				
 				//requestURL = 'dataObjects/getDataObjects/' + nodeType + '/' + scopeId + '/' + uid;
 				requestURL = 'exchDataGrid?scopeName=' + scope + '&idName='+ uid;
 				//requestURL = 'exchnageData_grid.json';
 				label = scope + '->' + graph;
-				this.fireEvent('open', this, node, label, requestURL);
+				this.fireEvent('open', this, node, label, requestURL,isReloadable);
 				
 			} else if (nodeType == 'graph') {
-				
 				//requestURL = 'dataObjects/getGraphObjects/' + nodeType + '/' + scopeId + '/' + node.parentNode.text+'/' + nodeText;
 				requestURL = 'appDataGrid?scopeName=' + scope + '&appName=' + app + '&graphName=' + graph,
 				//requestURL = 'appData_grid_json.json';
 				label = scope + '->' + graphNode.text + '->' + graph;
-				this.fireEvent('open', this, node, label, requestURL);
+				this.fireEvent('open', this, node, label, requestURL,isReloadable);
 			}
   	}
   },
@@ -180,7 +178,7 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   },
   
   onDblClick: function(node) {
-  	this.openTab(node);
+  	this.openTab(node,'false');
   },
   
   onExpand: function(node) {		  	
@@ -194,7 +192,7 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   },
   
   onOpen: function (btn, ev) {
-  	this.openTab(this.getSelectedNode());  	
+  	this.openTab(this.getSelectedNode(),'false');
   },
   
   onExchange: function (btn, ev) {
@@ -224,12 +222,14 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 				fn: function(action){
 					if(action=='yes'){
 					 hasreviewed=true;
-					 directoryPan.openTab(node);
+					 directoryPan.openTab(node,'false');
 				 }else if(action=='no'){
 					 hasreviewed=false;
 					 contentPanel.setActiveTab(tabid);
 					 var exchangeURI='exchangeResponse?scopeName='+scopeId+'idName='+uid+'&hasreviewed='+hasreviewed;
+					 //var exchangeURI='exchangeResponse.json';
 					 directoryPan.fireEvent('exchange', this, node,exchangeURI,tablabel);
+					 directoryPan.openTab(node,'true');
 				 }
 				}
 				});
