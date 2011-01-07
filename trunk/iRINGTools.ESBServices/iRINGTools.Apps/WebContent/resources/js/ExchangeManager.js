@@ -19,6 +19,7 @@ Ext.onReady(function () {
   	  minSize: 175,
   	  maxSize: 500,
 	  url: 'directory'
+
 	});
 	
 	var contentPanel = new Ext.TabPanel({
@@ -84,12 +85,12 @@ Ext.onReady(function () {
 						closable:true
 						})).show();
 					}
-					directoryPanel.openTab(node);
+					directoryPanel.openTab(directoryPanel.getSelectedNode(),'true');
 				}
 			}});
 	});
-	directoryPanel.on('open', function(panel, node, label, url) {
-		if(contentPanel.get('tab_'+label)==undefined){
+	directoryPanel.on('open', function(panel, node, label, url,reload) {
+		if((contentPanel.get('tab_'+label)==undefined)||(reload=='true')){
 			//contentPanel
 			//var w = Ext.getCmp(contentPanel).getActiveTab();
 			contentPanel.getEl().mask('<span><img src="resources/js/ext-js/resources/images/default/grid/loading.gif"/> Loading.....</span>');
@@ -111,18 +112,11 @@ Ext.onReady(function () {
 			success: function(result, request) {
 				contentPanel.getEl().unmask()
 				if ((nodeType == 'exchange' && uid != '')) {
-					
-					//pageURL = 'dataObjects/getPageData/' + nodeType + '/' + scopeId + '/' + uid
-					// static pageURL ="exchnageData_rows.json";
-					// exchDataRows?scopeName=12345_000&idName=1
 					pageURL = 'exchDataRows?scopeName=' + scopeId + '&idName=' + uid;
 					//pageURL ="exchnageData_rows.json";
 
 				} else if (nodeType == 'graph') {
 					var appName = parentName;
-					
-					//pageURL = 'dataObjects/getPageData/'+ nodeType + '/' + scopeId + '/' + node.parentNode.text + '/' + nodeText;
-					//pageURL ="appData_rows_json.json";
 					pageURL = 'appDataRows?scopeName=' + scopeId + '&appName=' + appName + '&graphName=' + nodeText;
 					//pageURL ="appData_rows_json.json";
 					//alert("Application DataRows URI: "+pageURL);
