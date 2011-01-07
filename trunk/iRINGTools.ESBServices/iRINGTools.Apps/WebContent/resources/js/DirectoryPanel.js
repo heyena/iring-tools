@@ -124,8 +124,7 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			disabled: false,
 			handler: this.onHistory,
 			scope: this
-		}
-		];
+		}];
   },
   
   getSelectedNode: function() {
@@ -133,7 +132,6 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   },
   
   openTab: function(node) {
-	  
 	  var dataTypeNode = node.parentNode.parentNode;
 	  var graphNode = node.parentNode;	
 	  /*	loadAppData(dataTypeNode.parentNode.attributes['text'],  graphNode.attributes['text'], node.attributes['text']);
@@ -154,17 +152,17 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 				
 				//requestURL = 'dataObjects/getDataObjects/' + nodeType + '/' + scopeId + '/' + uid;
 				requestURL = 'exchDataGrid?scopeName=' + scope + '&idName='+ uid;
+				//requestURL = 'exchnageData_grid.json';
 				label = scope + '->' + graph;
-				
 				this.fireEvent('open', this, node, label, requestURL);
 				
 			} else if (nodeType == 'graph') {
 				
 				//requestURL = 'dataObjects/getGraphObjects/' + nodeType + '/' + scopeId + '/' + node.parentNode.text+'/' + nodeText;
 				requestURL = 'appDataGrid?scopeName=' + scope + '&appName=' + app + '&graphName=' + graph,
+				//requestURL = 'appData_grid_json.json';
 				label = scope + '->' + graphNode.text + '->' + graph;
-				
-				this.fireEvent('open', this, node, label, requestURL);				
+				this.fireEvent('open', this, node, label, requestURL);
 			}
   	}
   },
@@ -195,7 +193,7 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 		this.directoryPanel.root.reload();  	
   },
   
-  onOpen: function (btn, ev) {  	
+  onOpen: function (btn, ev) {
   	this.openTab(this.getSelectedNode());  	
   },
   
@@ -206,27 +204,57 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 		var obj = node.attributes;
 		var item = obj['properties'];
 		var nodeType = obj['iconCls'];
+		
 		if(nodeType=='exchange'){
 		var scopeId = dataTypeNode.parentNode.attributes['text'];
 			var nodeText = obj['text'];
 			var uid = item[0].value;
-			//alert(' scopeId: '+scopeId+' nodeType:'+nodeType+' eid: '+uid);
-			var exchangeURI='exchangeResponse?scopeName='+scopeId+'idName='+uid;
-			//alert('exchangeURI : '+exchangeURI);
-			this.fireEvent('exchange', this, node,exchangeURI);
+			var contentPanel= Ext.getCmp('content-panel');
+			var hasreviewed;
+			var directoryPan=this;
+			var tablabel=scopeId+'->'+nodeText;
+			var tabid='tab_'+scopeId+'->'+nodeText;
+			
+			if(contentPanel.get(tabid)==undefined){
+				// condition when the tabPanel is not open and user clicks the exchange button directly
+				Ext.Msg.show({
+				msg: 'Would you like to review the <br/>Data Exchange before starting?',
+				buttons: Ext.Msg.YESNO,
+				icon: Ext.Msg.QUESTION,//'profile', // &lt;- customized icon
+				fn: function(action){
+					if(action=='yes'){
+					 hasreviewed=true;
+					 directoryPan.openTab(node);
+				 }else if(action=='no'){
+					 hasreviewed=false;
+					 contentPanel.setActiveTab(tabid);
+					 var exchangeURI='exchangeResponse?scopeName='+scopeId+'idName='+uid+'&hasreviewed='+hasreviewed;
+					 directoryPan.fireEvent('exchange', this, node,exchangeURI,tablabel);
+				 }
+				}
+				});
+				// 
+			}else{
+				// condition when the tabPanel is open and user clicks the exchange button
+				hasreviewed=true;
+				contentPanel.setActiveTab(tabid);
+				var exchangeURI='exchangeResponse?scopeName='+scopeId+'idName='+uid+'&hasreviewed='+hasreviewed;
+				//alert('Original exchangeURI : '+exchangeURI);
+				//var exchangeURI='exchangeResponse.json';
+				this.fireEvent('exchange', this, node,exchangeURI,tablabel);
+			}
+			
 		}else{
 			//alert('nodeType: '+nodeType); // graph
-			/*Ext.MessageBox.show({
+			Ext.Msg.show({
 				title: '<font color=red>Error</font>',
-				msg: 'Please Select an exchange node:<br/>'+label,
+				msg: 'Please Select an exchange node under Data Exchange:<br/>',
 				buttons: Ext.MessageBox.OK,
 				icon: Ext.MessageBox.ERROR
-			});*/
+			});
 			return false;
 		}
   }
-	  /*	if (node != null)
-		this.fireEvent('exchange', this, node);*/
   },
   
   populatePropertyGrid: function (properties) {
