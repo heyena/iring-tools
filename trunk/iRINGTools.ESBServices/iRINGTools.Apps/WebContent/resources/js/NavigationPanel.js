@@ -191,8 +191,6 @@ ExchangeManager.NavigationPanel = Ext
 						}
 					},
 					onCellClick : function(grid, rowIndex, columnIndex, e) {
-						grid.getEl().mask('<span><img src="resources/js/ext-js/resources/images/default/grid/loading.gif"/> Loading.....</span>');
-
 						// alert('scope id passed from exchangemanager:
 						// '+this.scopeName)
 						// alert(this.ActiveTab)
@@ -207,6 +205,7 @@ ExchangeManager.NavigationPanel = Ext
 						/* Related Items and new classwindow code starts */
 						if (fieldName == 'Identifier'
 								&& record.get(fieldName) != '') {
+							grid.getEl().mask('<span><img src="resources/js/ext-js/resources/images/default/grid/loading.gif"/> Loading.....</span>');
 							var IdentificationByTag_value = record
 									.get(fieldName);
 							//alert('204--IdentificationByTag_value /'+ IdentificationByTag_value)
