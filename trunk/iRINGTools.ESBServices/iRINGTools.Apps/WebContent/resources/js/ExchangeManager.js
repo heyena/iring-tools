@@ -28,29 +28,71 @@ Ext.onReady(function () {
 		margins: '0 5 0 0',
 		enableTabScroll: true
 	});
-	
-	directoryPanel.on('exchange', function(panel, node, exchangeURI) {
-		//alert("exchangeURI"+exchangeURI);
+	directoryPanel.on('exchange', function(panel, node, exchangeURI,tablabel){
 		Ext.Ajax.request({
 			url: exchangeURI,
 			method: 'GET',
 			params: {},
 			success: function(result, request) {
-				alert(result.responseText);
-					//console.log('delete response for ' +url+' : '+ eval(Ext.util.JSON.decode(result.responseText).success));
-				// open the new result tab and refresh the actual tab
-			}});
-		
-	});
-	
-	directoryPanel.on('open', function(panel, node, label, url) {
+				var jsonData = Ext.util.JSON.decode(result.responseText);
+				
+				if (eval(jsonData.success)==false) {
+					alert("Fail to get the Json Response after submission: "+jsonData.response);
+				} else if(eval(jsonData.success)==true) {
+					//alert(result.responseText);
+					//open the new result tab and refresh the actual tab
+					var rowData = eval(jsonData.rowData);
+					var filedsVal = eval(jsonData.headersList);
+					var store = new Ext.data.ArrayStore({
+					fields: filedsVal
+					});
+					store.loadData(eval(rowData));
 
-		
+					var label = tablabel;
+					var columnData = eval(jsonData.columnsData);
+					var grid = new Ext.grid.GridPanel({
+					store: store,
+					columns: columnData,
+					stripeRows: true,
+					id:'exchangeResultGrid_'+label,
+					loadMask: true,
+					layout:'fit',
+					frame:true,
+					autoSizeColumns: true,
+					autoSizeGrid: true,
+					AllowScroll : true,
+					minColumnWidth:100, 
+					columnLines: true,
+					autoWidth:true,
+					enableColumnMove:false
+					});				
+
+					if (Ext.getCmp('content-panel').findById('tabResult-'+label)){
+					//alert('aleready exists')
+						Ext.getCmp('content-panel').remove(Ext.getCmp('content-panel').findById('tabResult-'+label));
+						Ext.getCmp('content-panel').add( 
+							Ext.apply(grid,{
+							id:'tabResult-'+label,
+							title: label+'(Result)',
+							closable:true
+						})).show();
+					}else {
+						Ext.getCmp('content-panel').add(
+						Ext.apply(grid,{
+						id:'tabResult-'+label,
+						title: label+'(Result)',
+						closable:true
+						})).show();
+					}
+					directoryPanel.openTab(node);
+				}
+			}});
+	});
+	directoryPanel.on('open', function(panel, node, label, url) {
 		if(contentPanel.get('tab_'+label)==undefined){
 			//contentPanel
 			//var w = Ext.getCmp(contentPanel).getActiveTab();
 			contentPanel.getEl().mask('<span><img src="resources/js/ext-js/resources/images/default/grid/loading.gif"/> Loading.....</span>');
-				//alert(url);
 			var dataTypeNode = node.parentNode.parentNode;
 				var obj = node.attributes;
 				var item = obj['properties'];
@@ -68,15 +110,13 @@ Ext.onReady(function () {
 			params: {},
 			success: function(result, request) {
 				contentPanel.getEl().unmask()
-				
-				
 				if ((nodeType == 'exchange' && uid != '')) {
 					
 					//pageURL = 'dataObjects/getPageData/' + nodeType + '/' + scopeId + '/' + uid
 					// static pageURL ="exchnageData_rows.json";
 					// exchDataRows?scopeName=12345_000&idName=1
 					pageURL = 'exchDataRows?scopeName=' + scopeId + '&idName=' + uid;
-					//alert("Exchange DataRows URI: "+pageURL);
+					//pageURL ="exchnageData_rows.json";
 
 				} else if (nodeType == 'graph') {
 					var appName = parentName;
@@ -84,6 +124,7 @@ Ext.onReady(function () {
 					//pageURL = 'dataObjects/getPageData/'+ nodeType + '/' + scopeId + '/' + node.parentNode.text + '/' + nodeText;
 					//pageURL ="appData_rows_json.json";
 					pageURL = 'appDataRows?scopeName=' + scopeId + '&appName=' + appName + '&graphName=' + nodeText;
+					//pageURL ="appData_rows_json.json";
 					//alert("Application DataRows URI: "+pageURL);
 				}
 				
@@ -102,7 +143,7 @@ Ext.onReady(function () {
 					return false;
 					
 				} else {
-
+					
 					var newTab = new ExchangeManager.NavigationPanel({
 						title: label,
 						id:'tab_'+label,
