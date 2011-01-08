@@ -95,6 +95,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="BindingConfiguration.12345_000.API.xml" />
+    <Content Include="DataDictionary.xml" />
     <Content Include="Equipment.12345_000.API.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -113,6 +115,13 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="12345_000.API.config" />
+    <None Include="CSVDataLayer.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Equipment.12345_000.API\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

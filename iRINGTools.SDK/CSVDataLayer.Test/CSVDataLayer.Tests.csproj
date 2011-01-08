@@ -8,7 +8,7 @@
     <ProjectGuid>{C3AEEECD-E521-414B-9E36-D1E9440091D6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CSVDataLayer.Test</RootNamespace>
+    <RootNamespace>org.iringtools.adapter.datalayer.csv.test</RootNamespace>
     <AssemblyName>CSVDataLayer.Test</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

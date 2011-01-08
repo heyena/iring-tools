@@ -1,30 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using org.iringtools.library;
+using System.Xml.Linq;
+using Ciloci.Flee;
 using log4net;
 using Ninject;
-using org.iringtools.utility;
-using System.Xml.Linq;
-using System.IO;
-using Ciloci.Flee;
-using org.iringtools.adapter;
+using org.iringtools.library;
 
-namespace Bechtel.CSVDataLayer.API
+namespace org.iringtools.adapter.datalayer.csv
 {
   //NOTE: This CSVDataLayer assumes that property "Tag" is identifier of data objects
-  public class CSVDataLayer : IDataLayer
+  public class CustomDataLayer : IDataLayer
   {
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(CSVDataLayer));
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(CustomDataLayer));
     private AdapterSettings _settings = null;
     private string _dataDictionaryPath = String.Empty;
 
     [Inject]
-    public CSVDataLayer(AdapterSettings settings)
+    public CustomDataLayer(AdapterSettings settings)
     {
-      _dataDictionaryPath = _settings["XmlPath"] + "DataDictionary." + _settings["ProjectName"] + "." + _settings["ApplicationName"] + ".xml";
       _settings = settings;
+      _dataDictionaryPath = _settings["XmlPath"] + "DataDictionary." + _settings["ProjectName"] + "." + _settings["ApplicationName"] + ".xml";
     }
 
     public IList<IDataObject> Create(string objectType, IList<string> identifiers)
@@ -32,7 +29,7 @@ namespace Bechtel.CSVDataLayer.API
       try
       {
         IList<IDataObject> dataObjects = new List<IDataObject>();
-        Type type = Type.GetType("Bechtel.CSVDataLayer.API." + objectType + "DataObject");
+        Type type = Type.GetType("org.iringtools.adapter.datalayer.csv." + objectType + "DataObject");
 
         objectType = objectType.Substring(objectType.LastIndexOf('.') + 1);
 
@@ -220,7 +217,7 @@ namespace Bechtel.CSVDataLayer.API
         List<IDataObject> dataObjects = new List<IDataObject>();
         objectType = objectType.Substring(objectType.LastIndexOf('.') + 1);
         string dataObjectType = objectType + "DataObject";
-        Type type = Type.GetType("Bechtel.CSVDataLayer.API." + objectType + "DataObject");
+        Type type = Type.GetType("org.iringtools.adapter.datalayer.csv." + objectType + "DataObject");
 
         // Load config xml 
         string configFile = _settings["XmlPath"] + objectType + "." + _settings["ProjectName"] + "." + _settings["ApplicationName"] + ".xml";
