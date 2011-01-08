@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using org.iringtools.library;
-using System.Xml.Serialization;
 
-namespace Bechtel.CSVDataLayer.API
+namespace org.iringtools.adapter.datalayer.csv
 {
   public class Equipment
   {

@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Text;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Specialized;
-using org.iringtools.adapter;
 using org.iringtools.library;
 using org.iringtools.utility;
 
-namespace Bechtel.CSVDataLayer.API
+namespace org.iringtools.adapter.datalayer.csv.test
 {
   /// <summary>
   /// Summary description for UnitTest1
@@ -16,13 +14,13 @@ namespace Bechtel.CSVDataLayer.API
   [TestClass]
   public class CSVDataLayerTest
   {
-    private CSVDataLayer _csvDataLayer;
+    private CustomDataLayer _csvDataLayer;
 
     public CSVDataLayerTest()
     {
       NameValueCollection settings = new NameValueCollection();
       settings["BaseDirectoryPath"] = String.Empty;
-      settings["XmlPath"] = @"C:\iring-tools\CSVDataLayer\CSVDataLayer\";
+      settings["XmlPath"] = @"C:\Users\rpdecarl\iring-tools-2.0.x\iRINGTools.SDK\CSVDataLayer\";
       settings["ProxyCredentialToken"] = String.Empty;
       settings["ProxyHost"] = String.Empty;
       settings["ProxyPort"] = String.Empty;
@@ -34,11 +32,13 @@ namespace Bechtel.CSVDataLayer.API
       settings["TrimData"] = "False";
       settings["BinaryPath"] = String.Empty;
       settings["CodePath"] = String.Empty;
+      settings["ProjectName"] = "12345_000";
+      settings["ApplicationName"] = "API";
 
       AdapterSettings adapterSettings = new AdapterSettings();
       adapterSettings.AppendSettings(settings);
 
-      _csvDataLayer = new CSVDataLayer(adapterSettings);
+      _csvDataLayer = new CustomDataLayer(adapterSettings);
     }
 
     private TestContext testContextInstance;
@@ -130,7 +130,7 @@ namespace Bechtel.CSVDataLayer.API
 
       Assert.IsNotNull(dictionary);
 
-      Utility.Write<DataDictionary>(dictionary, @"C:\iring-tools\Adapter\CSVDataLayer.Test\DataDictionary.xml", true);
+      Utility.Write<DataDictionary>(dictionary, @"C:\Users\rpdecarl\iring-tools-2.0.x\iRINGTools.SDK\CSVDataLayer\DataDictionary.xml", true);
     }
   }
 }
