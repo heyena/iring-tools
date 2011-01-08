@@ -110,7 +110,7 @@ Ext.onReady(function () {
 			method: 'GET',
 			params: {},
 			success: function(result, request) {
-				contentPanel.getEl().unmask()
+				contentPanel.getEl().unmask();
 				if ((nodeType == 'exchange' && uid != '')) {
 					pageURL = 'exchDataRows?scopeName=' + scopeId + '&idName=' + uid;
 					//pageURL ="exchnageData_rows.json";
@@ -156,7 +156,7 @@ Ext.onReady(function () {
 					contentPanel.activate(newTab);
 
 					newTab.on('beforeclose',function(newTab) {
-					var deleteReqURL=null
+					var deleteReqURL=null;
 					if ((nodeType == 'exchanges' && uid != '')) {
 					    //deleteReqURL = 'dataObjects/deleteDataObjects/'+nodeType+'/'+scopeId+'/'+uid
 						deleteReqURL = 'cleanExchDataRows';
