@@ -90,6 +90,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\AssemblyInfo.cs">
+      <Link>AssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="CSVDataLayer.cs" />
     <Compile Include="DataObjects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
