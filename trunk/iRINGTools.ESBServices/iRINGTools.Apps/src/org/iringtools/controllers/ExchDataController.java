@@ -28,7 +28,6 @@ public class ExchDataController {
 	private String hasReviewed;
 	
 	static private HashMap<String, DataTransferIndices> dtiMap = null;
-	static private HashMap<String, DataTransferIndices> dtoMap = null;
 
 	public ExchDataController() {
 		exchdata = new ExchDataModel();
@@ -187,7 +186,7 @@ public class ExchDataController {
 	
 	public String setExchangeData() {
 		getExchDtiList();
-		exchangeResponse = exchdata.toExResponse(hasReviewed);
+		rows = exchdata.toExResponse(hasReviewed);
 		dtiMap.put(key, null);
 		return Action.SUCCESS;
 	}
@@ -195,7 +194,14 @@ public class ExchDataController {
 	public String getExchangeHistory() {
 		exchdata.getHistoryUrl();
 		exchdata.setDtoUrl("/" + scopeName + "/exchanges/" + idName);
-		history = exchdata.getExchHistory();
+		rows = exchdata.getExchHistory();
+		return Action.SUCCESS;
+	}
+	
+	public String showExchangeHistory() {
+		exchdata.getHistoryUrl();
+		exchdata.setDtoUrl("/" + scopeName + "/exchanges/" + idName);
+		history = exchdata.showExchHistory();
 		return Action.SUCCESS;
 	}
 }

@@ -48,10 +48,10 @@ ExchangeManager.NavigationPanel = Ext
 						var classObjName = this.configData.classObjName;
 						
 						if (classObjName == null){
-							this.nodeDisplay = "Related Items"	
+							this.nodeDisplay = "Related Items";	
 						}
 						else{
-							this.nodeDisplay = classObjName	
+							this.nodeDisplay = classObjName;	
 						}
 						
 						var filterSet = eval(this.configData.filterSets);
@@ -218,9 +218,9 @@ ExchangeManager.NavigationPanel = Ext
 										.getColumnHeader(i); // Get field
 								// name
 								fieldValue = record.get(grid.getColumnModel()
-										.getDataIndex(i))
-								tempArr = Array(fieldHeader, this.removeHTMLTags(fieldValue))
-								rowDataArr.push(tempArr)
+										.getDataIndex(i));
+								tempArr = Array(fieldHeader, this.removeHTMLTags(fieldValue));
+								rowDataArr.push(tempArr);
 							}
 							var filedsVal_ = '[{"name":"Property"},{"name":"Value"}]';
 							var columnsData_ = '[{"id":"Property","header":"Property","width":144,"sortable":"true","dataIndex":"Property"},{"id":"Value","header":"Value","width":144,"sortable":"true","dataIndex":"Value"}]';

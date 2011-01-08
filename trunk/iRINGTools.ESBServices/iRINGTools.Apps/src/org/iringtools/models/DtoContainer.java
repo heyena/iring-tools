@@ -35,19 +35,17 @@ public class DtoContainer {
 	private RoleObject roObj;
 	private List<DataTransferObject> dtoList;
 	private List<HashMap<String, String>> dataList;
-	private HashMap<String, String> data;
-	private List<String> hList; // description
+	private HashMap<String, String> data; 
+	private List<String> hList, roleNameList; 
 	private String classId = "", relatedId = "";
 
 	private String identifier = "", tempName = "", clsName;
-	private Filter filter;
-	private Column column;
-	private Header header;
-	private int page = 20, ti = 0;
-	private TemplateObject tObj;
+	
+	private int page = 20, ti = 0, roleNum = 0;
+	private TemplateObject tObj;	
 	private static int total;
-	private static HashMap<String, String> dunit;
-
+	private static HashMap<String, String> dunit;	
+	
 	public void populate(String URI) {
 		try {
 			HttpClient httpClient = new HttpClient(URI);
@@ -120,16 +118,28 @@ public class DtoContainer {
 		}
 		return false;
 	}
+	
+	public boolean roleNameListHas() {
+		for (String head : roleNameList) {
+			if (head.equals(tempName))
+				return true;
+		}
+		return false;
+	}
 
 	public void setRIdentifier(String identif) {
-		this.identifier = "<span onMouseOver=\"javascript:this.style.textDecoration=\'underline\'\" onMouseOut=\"javascript:this.style.textDecoration=\'none\'\">"
+		this.identifier = "<span class=\"underLineLink\">"
 				+ identif + "</span>";
 
 		/*
-		 * <span
-		 * onMouseOver="javascript:this.style.textDecoration=\'underline\'"
-		 * >RV-101010</span>
+		 this.identifier = "<span onMouseOver=\"javascript:this.style.textDecoration=\'underline\'\" onMouseOut=\"javascript:this.style.textDecoration=\'none\'\">"
+				+ identif + "</span>";
 		 */
+		data.put("Identifier", identifier);
+	}
+	
+	public void setNoHtmlIdentifier(String value) {
+		this.identifier = value;
 		data.put("Identifier", identifier);
 	}
 
@@ -140,6 +150,40 @@ public class DtoContainer {
 		}
 	}
 
+	public void setTempName(String name) {
+		if (rType.equals("OBJECT_PROPERTY") || rType.equals("DATA_PROPERTY")) {
+			tempName = tName + '_' + name;
+		}
+		else {
+			tempName = name;
+		}
+	}
+	
+	public void addToRoleNameList(String name) {		
+		tempName = tName + '_' + name;
+		if (!roleNameListHas())
+			roleNameList.add(tempName);
+	}
+	
+	public void addHList(String name) {
+		tempName = name;
+		if (!hListHas())
+			hList.add(tempName);
+	}
+	
+	public void addRoleNameToHList() {
+		if (roleNameList.size() > 0) {
+			if (roleNameList.size() > 1)
+				for (String str : roleNameList)
+					addHList(str);
+			else {
+				String columnName = roleNameList.get(0);				
+				tempName = columnName.substring(0, columnName.indexOf("_"));
+				addHList(tempName);
+			}
+		}
+	}
+	
 	public void setRType(String rType) {
 		this.rType = rType.toUpperCase();
 	}
@@ -151,7 +195,7 @@ public class DtoContainer {
 	public void addToRow(String name) {
 		if (roObj.getOldValue() != null
 				&& !roObj.getOldValue().equals(roObj.getValue())) {
-			setRValue("<span style=\"color:blue\">" + roObj.getOldValue()
+			setRValue("<span class=\"highLightChange\">" + roObj.getOldValue()
 					+ " -> " + roObj.getValue() + "</span>");
 		} else {
 			setRValue(roObj.getValue());
@@ -260,6 +304,7 @@ public class DtoContainer {
 	}
 
 	public void fillConfig() {
+		roleNameList = new ArrayList<String>();		
 		for (DataTransferObject dto : dtoList) {
 			setclassObjectList(dto.getClassObjects().getItems());
 			for (ClassObject clo : classObjectList) {
@@ -276,10 +321,12 @@ public class DtoContainer {
 							addToGrid(tName);
 						} else if (rType.equals("OBJECT_PROPERTY")
 								|| rType.equals("DATA_PROPERTY")) {
+							roleNum++;
 							setRoObj(rObj);
-							addToGrid(rObj.getName());
+							addToRoleNameList(rObj.getName());
 						}
 					}
+					addRoleNameToHList();
 					if (ti < 1)
 						ti++;
 				}
@@ -314,8 +361,9 @@ public class DtoContainer {
 			settemplatObjectList(clo.getTemplateObjects().getItems());
 			tObj = templatObjectList.get(0);
 			addToGrid(tObj.getName());
-			setRIdentifier(clo.getIdentifier());
-			addDetailRelRow(tObj.getName(), identifier);
+			tName = clo.getIdentifier();
+			setRIdentifier(tName);
+			addDetailRelRow(tObj.getName(), tName);
 			return;
 		}
 	}
@@ -457,19 +505,23 @@ public class DtoContainer {
 		List<Header> ghList = new ArrayList<Header>(); // list of headers
 		List<Filter> filterList = new ArrayList<Filter>();
 		List<Column> cList = new ArrayList<Column>(); // list of column
-		double wid;
+		Filter filter;
+		Column column;
+		Header header;
+		double width;
+		
 		for (String head : hList) {
 			column = new Column();
 			column.setDataIndex(head);
-			column.setHeader(head.replace('_', ' '));
+			column.setHeader(head.replace('_', '.'));
 			column.setId(head);
 			column.setSortable("true");
-			wid = head.length();
-			if (wid < 20)
-				wid = 110;
+			width = head.length();
+			if (width < 20)
+				width = 110;
 			else
-				wid = wid + 130;
-			column.setWidth(wid);
+				width = width + 130;
+			column.setWidth(width);
 			cList.add(column);
 			header = new Header();
 			header.setName(head);
@@ -497,13 +549,7 @@ public class DtoContainer {
 		rows.setTotal(total);
 	}
 
-	public void setTempName(String name) {
-		if (rType.equals("OBJECT_PROPERTY") || rType.equals("DATA_PROPERTY"))
-			tempName = tName + '_' + name;
-		else {
-			tempName = name;
-		}
-	}
+	
 
 	public void readGrid(Grid grid) {
 		// TODO: Read the grid!

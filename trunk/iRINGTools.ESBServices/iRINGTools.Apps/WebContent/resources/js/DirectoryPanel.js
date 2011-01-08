@@ -226,7 +226,7 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 				 }else if(action=='no'){
 					 hasreviewed=false;
 					 contentPanel.setActiveTab(tabid);
-					 var exchangeURI='exchangeResponse?scopeName='+scopeId+'idName='+uid+'&hasreviewed='+hasreviewed;
+					 var exchangeURI='exchangeResponse?scopeName='+scopeId+'&idName='+uid+'&hasReviewed='+hasreviewed;
 					 //var exchangeURI='exchangeResponse.json';
 					 directoryPan.fireEvent('exchange', this, node,exchangeURI,tablabel);
 					 directoryPan.openTab(node,'true');
@@ -238,7 +238,7 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 				// condition when the tabPanel is open and user clicks the exchange button
 				hasreviewed=true;
 				contentPanel.setActiveTab(tabid);
-				var exchangeURI='exchangeResponse?scopeName='+scopeId+'idName='+uid+'&hasreviewed='+hasreviewed;
+				var exchangeURI='exchangeResponse?scopeName='+scopeId+'&idName='+uid+'&hasReviewed='+hasreviewed;
 				//alert('Original exchangeURI : '+exchangeURI);
 				//var exchangeURI='exchangeResponse.json';
 				this.fireEvent('exchange', this, node,exchangeURI,tablabel);
