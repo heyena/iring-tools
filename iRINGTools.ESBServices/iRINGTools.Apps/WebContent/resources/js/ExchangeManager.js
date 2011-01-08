@@ -30,6 +30,7 @@ Ext.onReady(function () {
 		enableTabScroll: true
 	});
 	directoryPanel.on('exchange', function(panel, node, exchangeURI,tablabel){
+		alert("exchangeURI /" + exchangeURI)
 		Ext.Ajax.request({
 			url: exchangeURI,
 			method: 'GET',
@@ -40,20 +41,29 @@ Ext.onReady(function () {
 				if (eval(jsonData.success)==false) {
 					alert("Fail to get the Json Response after submission: "+jsonData.response);
 				} else if(eval(jsonData.success)==true) {
-					//alert(result.responseText);
+					alert(result.responseText);
 					//open the new result tab and refresh the actual tab
-					var rowData = eval(jsonData.rowData);
-					var filedsVal = eval(jsonData.headersList);
+					var rowData = eval(jsonData.data);
+					alert(rowData);
+					//var filedsVal = eval(jsonData.headersList);
 					var store = new Ext.data.ArrayStore({
-					fields: filedsVal
+					fields: [ 'Identifier',
+							'Message' ]
 					});
-					store.loadData(eval(rowData));
+					store.loadData(rowData);
 
 					var label = tablabel;
-					var columnData = eval(jsonData.columnsData);
+					//var columnData = eval(jsonData.columnsData);
 					var grid = new Ext.grid.GridPanel({
 					store: store,
-					columns: columnData,
+					columns: 	[{
+						header : 'Identifier',
+						dataIndex : 'Identifier'
+					},
+					{
+						header : 'Message',
+						dataIndex : 'Message'
+					}],
 					stripeRows: true,
 					id:'exchangeResultGrid_'+label,
 					loadMask: true,
@@ -89,6 +99,7 @@ Ext.onReady(function () {
 				}
 			}});
 	});
+	
 	directoryPanel.on('open', function(panel, node, label, url,reload) {
 		if((contentPanel.get('tab_'+label)==undefined)||(reload=='true')){
 			//contentPanel

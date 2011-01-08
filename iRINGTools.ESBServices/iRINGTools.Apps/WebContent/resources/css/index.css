@@ -61,6 +61,15 @@
       .x-tree-node .repository {
       	background-image:url(../images/16x16/applications-database.png);
       }
+      
+      .highLightChange {
+		color:blue
+	  }
+
+	  .underLineLink {
+	  	text-decoration:underline;	
+	  }
+	  
       .headerLnk{
         font-family:Calibri, Arial;
         font-size:18;

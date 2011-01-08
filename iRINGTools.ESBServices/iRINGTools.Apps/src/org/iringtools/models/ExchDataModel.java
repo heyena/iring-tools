@@ -6,7 +6,6 @@ import org.iringtools.ui.widgets.grid.Rows;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dti.DataTransferIndex;
-import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.history.History;
 
 import com.opensymphony.xwork2.ActionContext;
@@ -183,7 +182,7 @@ public class ExchDataModel {
 		dtoContainer.populatePage(URI, dtiPage);
 		dtoContainer.initialDataList();
 	}
-
+	            
 	public Rows toDetailRelRows(String id, String classId, String relatedId) {
 		prepareRows(id);
 		dtoContainer.setClassId(classId);
@@ -193,21 +192,32 @@ public class ExchDataModel {
 		return rows;
 	}
 
-	public ExchangeResponse toExResponse(String hasReviewed) {
+	public Rows toExResponse(String hasReviewed) {
+		rows = new Rows();		
 		exchResponseContainer = new ExchResponseContainer();
 		exchResponseContainer.setResponseUrl(dtoUrl + "/submit");
 		exchResponseContainer.setExchangeRequest(dtiList, hasReviewed);
 		exchResponseContainer.populateResponse(URI);
-		return exchResponseContainer.getExchangeResponse();
+		exchResponseContainer.setRows(rows);
+		return rows;
 	}
 
-	public History getExchHistory() {
+	public Rows getExchHistory() {
+		rows = new Rows();		
+		historyContainer = new HistoryContainer();
+		historyContainer.setHistoryUrl(dtoUrl);
+		historyContainer.populateHistory(historyURI);
+		historyContainer.setRows(rows);		
+		return rows;
+	}
+
+	public History showExchHistory() {
 		historyContainer = new HistoryContainer();
 		historyContainer.setHistoryUrl(dtoUrl);
 		historyContainer.populateHistory(historyURI);
 		return historyContainer.getHistory();
 	}
-
+	
 	public void readGrid(Grid grid) {
 		// TODO: Read the grid!
 
