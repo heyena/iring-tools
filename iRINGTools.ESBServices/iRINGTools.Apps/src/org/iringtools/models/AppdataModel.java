@@ -107,7 +107,7 @@ public class AppdataModel {
     	dtoCtr = new DtoContainer();
     	dtoCtr.setUrl(dtoUrl, "page");
     	dtoCtr.populatePage(URI, dtiPage);	
-    	dtoCtr.initialDataList();
+    	dtoCtr.initialDataList();    	
     	dtoCtr.fillPage();	
     	dtoCtr.setRowsList(rows);
     	return rows;
