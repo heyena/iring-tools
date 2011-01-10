@@ -35,16 +35,17 @@ public class DtoContainer {
 	private RoleObject roObj;
 	private List<DataTransferObject> dtoList;
 	private List<HashMap<String, String>> dataList;
-	private HashMap<String, String> data; 
+	private HashMap<String, String> data, roleNameMap; 
 	private List<String> hList, roleNameList; 
 	private String classId = "", relatedId = "";
 
 	private String identifier = "", tempName = "", clsName;
 	
-	private int page = 20, ti = 0, roleNum = 0;
+	private int page = 20, ti = 0, roleNumber = 0;
 	private TemplateObject tObj;	
 	private static int total;
 	private static HashMap<String, String> dunit;	
+	
 	
 	public void populate(String URI) {
 		try {
@@ -163,11 +164,7 @@ public class DtoContainer {
 		}
 	}
 	
-	public void addToRoleNameList(String name) {		
-		tempName = tName + '_' + name;
-		if (!roleNameListHas())
-			roleNameList.add(tempName);
-	}
+	
 	
 	public void addHList(String name) {
 		tempName = name;
@@ -186,6 +183,8 @@ public class DtoContainer {
 				addHList(tempName);
 			}
 		}
+		roleNameList.clear();
+		roleNumber = 0;
 	}
 	
 	public void setRType(String rType) {
@@ -197,21 +196,31 @@ public class DtoContainer {
 	}
 
 	public void addToRow(String name) {
-		if (roObj.getOldValue() != null
-				&& !roObj.getOldValue().equals(roObj.getValue())) {
-			setRValue("<span class=\"highLightChange\">" + roObj.getOldValue()
-					+ " -> " + roObj.getValue() + "</span>");
+		String value, oldValue;
+		value = roObj.getValue();
+		oldValue = roObj.getOldValue();		
+		if (oldValue != null
+				&& !oldValue.equals(value)) {
+			setRValue("<span class=\"highLightChange\">" + oldValue
+					+ " -> " + value + "</span>");
 		} else {
-			setRValue(roObj.getValue());
+			setRValue(value);
 		}
 		setTempName(name);
+		if (roleNameMap.containsKey(tempName))
+			tempName = roleNameMap.get(tempName);
 		data.put(tempName, rValue);
 	}
 
 	public void initialDataList() {
-		dataList = new ArrayList<HashMap<String, String>>();
+		dataList = new ArrayList<HashMap<String, String>>();		
 	}
 
+	public void initialRoleNameList() {
+		roleNameMap = new HashMap<String, String>();
+		roleNameList = new ArrayList<String>();
+	}
+	
 	public void initialHList() {
 		hList = new ArrayList<String>();
 	}
@@ -236,47 +245,78 @@ public class DtoContainer {
 		this.rValue = rval;
 	}
 
-	public void getObjectDataProperty() {
-		for (ClassObject clo : classObjectList) {
-			settemplatObjectList(clo.getTemplateObjects().getItems());
-			for (TemplateObject tObj : templatObjectList) {
-				setTName(tObj.getName());
-				setroleObjectList(tObj.getRoleObjects().getItems());
-				for (RoleObject rObj : roleObjectList) {
-					setRType(rObj.getType().toString());
-					if (ti < 1 && rType.equals("PROPERTY")) {
-						setRoObj(rObj);
-						setRIdentifier(rObj.getValue());
-						addToRow(tName);
-					} else if (rType.equals("OBJECT_PROPERTY")
-							|| rType.equals("DATA_PROPERTY")) {
-						setRoObj(rObj);
-						addToRow(rObj.getName());
-					}
-
-				}
-				if (ti < 1)
-					ti++;
+	public void addRoleNameToMap() {
+		if (roleNameList.size() > 0) {
+			if (roleNameList.size() == 1) {				
+				String columnName = roleNameList.get(0);				
+				if (!roleNameMap.containsKey(tempName))
+					roleNameMap.put(tempName, columnName.substring(0, columnName.indexOf("_")));
 			}
 		}
+		roleNameList.clear();
+		roleNumber = 0;
+	}
+	
+	public void addToRoleNameList(String name) {		
+		tempName = tName + '_' + name;
+		if (!roleNameListHas())
+			roleNameList.add(tempName);
+	}
+	
+	public void findColumnName() {
+		for (RoleObject rObj : roleObjectList) {
+			setRType(rObj.getType().toString());
+			if (rType.equals("OBJECT_PROPERTY")
+					|| rType.equals("DATA_PROPERTY") || rType.equals("PROPERTY")) {
+				roleNumber++;				
+				addToRoleNameList(rObj.getName());
+			}
+		}
+		addRoleNameToMap();
+	}
+	public void getObjectDataProperty(DataTransferObject dto) {
+		ClassObject classObject;
+		classObject = dto.getClassObjects().getItems().get(0);
+		settemplatObjectList(classObject.getTemplateObjects().getItems());
+		for (TemplateObject tObj : templatObjectList) {
+			setTName(tObj.getName());
+			setroleObjectList(tObj.getRoleObjects().getItems());
+			findColumnName();
+			for (RoleObject rObj : roleObjectList) {
+				setRType(rObj.getType().toString());
+				if (ti < 1 && rType.equals("PROPERTY")) {
+					setRoObj(rObj);
+					setRIdentifier(rObj.getValue());
+					addToRow(tName);
+				} else if (rType.equals("OBJECT_PROPERTY")
+						|| rType.equals("DATA_PROPERTY") || rType.equals("PROPERTY")) {
+					setRoObj(rObj);					
+					addToRow(rObj.getName());
+				}
+
+			}
+			if (ti < 1)
+				ti++;
+		}
+
 	}
 
-	public void fillExchPage() {
+	public void fillExchPage() {	
+		initialRoleNameList();
 		for (DataTransferObject dto : dtoList) {
 			data = new HashMap<String, String>();
 			data.put("TransferType", dto.getTransferType().value());
-			setclassObjectList(dto.getClassObjects().getItems());
-			getObjectDataProperty();
+			getObjectDataProperty(dto);
 			dataList.add(data);
 			ti = 0;
 		}
 	}
 
-	public void fillPage() {
+	public void fillPage() {	
+		initialRoleNameList();
 		for (DataTransferObject dto : dtoList) {
-			data = new HashMap<String, String>();
-			setclassObjectList(dto.getClassObjects().getItems());
-			getObjectDataProperty();
+			data = new HashMap<String, String>();				
+			getObjectDataProperty(dto);
 			dataList.add(data);
 			ti = 0;
 		}
@@ -308,33 +348,33 @@ public class DtoContainer {
 	}
 
 	public void fillConfig() {
-		roleNameList = new ArrayList<String>();		
+		roleNameList = new ArrayList<String>();
+		ClassObject classObject;
 		for (DataTransferObject dto : dtoList) {
-			setclassObjectList(dto.getClassObjects().getItems());
-			for (ClassObject clo : classObjectList) {
-				settemplatObjectList(clo.getTemplateObjects().getItems());
-				for (TemplateObject tObj : templatObjectList) {
-					setTName(tObj.getName());
-					setroleObjectList(tObj.getRoleObjects().getItems());
-					for (RoleObject rObj : roleObjectList) {
-						setRType(rObj.getType().toString());
-						if (ti < 1 && rType.equals("PROPERTY")) {
-							setClsName(clo.getName());
-							setRoObj(rObj);
-							setIdentifier(rObj.getValue());
-							addToGrid(tName);
-						} else if (rType.equals("OBJECT_PROPERTY")
-								|| rType.equals("DATA_PROPERTY")) {
-							roleNum++;
-							setRoObj(rObj);
-							addToRoleNameList(rObj.getName());
-						}
+			classObject = dto.getClassObjects().getItems().get(0);
+			settemplatObjectList(classObject.getTemplateObjects().getItems());
+			for (TemplateObject tObj : templatObjectList) {
+				setTName(tObj.getName());
+				setroleObjectList(tObj.getRoleObjects().getItems());
+				for (RoleObject rObj : roleObjectList) {
+					setRType(rObj.getType().toString());
+					if (ti < 1 && rType.equals("PROPERTY")) {
+						setClsName(classObject.getName());
+						setRoObj(rObj);
+						setIdentifier(rObj.getValue());
+						addToGrid(tName);
+					} else if (rType.equals("OBJECT_PROPERTY")
+							|| rType.equals("DATA_PROPERTY") || rType.equals("PROPERTY")) {
+						roleNumber++;
+						setRoObj(rObj);
+						addToRoleNameList(rObj.getName());
 					}
-					addRoleNameToHList();
-					if (ti < 1)
-						ti++;
 				}
+				addRoleNameToHList();
+				if (ti < 1)
+					ti++;
 			}
+
 		}
 	}
 
@@ -524,7 +564,7 @@ public class DtoContainer {
 			if (width < 20)
 				width = 110;
 			else
-				width = width + 130;
+				width = width + 150;
 			column.setWidth(width);
 			cList.add(column);
 			header = new Header();
