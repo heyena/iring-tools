@@ -127,9 +127,13 @@ public class DtoContainer {
 		return false;
 	}
 
+	public String addHtmlUnderLine(String name) {
+		return "<span class=\"underLineLink\">"
+		+ name + "</span>";
+	}
+	
 	public void setRIdentifier(String identif) {
-		this.identifier = "<span class=\"underLineLink\">"
-				+ identif + "</span>";
+		this.identifier = addHtmlUnderLine(identif);;
 
 		/*
 		 this.identifier = "<span onMouseOver=\"javascript:this.style.textDecoration=\'underline\'\" onMouseOut=\"javascript:this.style.textDecoration=\'none\'\">"
@@ -492,7 +496,7 @@ public class DtoContainer {
 	public void addRelRow(String head) {
 		data = new HashMap<String, String>();
 		data.put("id", classId);
-		data.put("label", head);
+		data.put("label", addHtmlUnderLine(head));
 		dataList.add(data);
 		total++;
 	}

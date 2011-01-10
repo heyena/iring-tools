@@ -84,7 +84,7 @@ Ext.onReady(function () {
 					var arrPositon = strPositon.split(",");
 					
 					var myResultWin = new Ext.Window({
-									title: 'Exchange Result [ '+label+' ]',
+									title: 'Exchange Result ( '+label+' )',
 									id:'label_'+label,
 									x: arrPositon[0],
 									y: parseInt(arrPositon[1])+25,
