@@ -2,6 +2,7 @@ package org.iringtools.models;
 
 import java.util.List;
 import org.iringtools.ui.widgets.grid.Grid;
+import org.iringtools.ui.widgets.grid.GridAndRows;
 import org.iringtools.ui.widgets.grid.Rows;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.dxfr.dti.DataTransferIndices;
@@ -13,6 +14,7 @@ import com.opensymphony.xwork2.ActionContext;
 public class ExchDataModel {
 	private Grid grid = null;
 	private Rows rows = null;
+	private GridAndRows gridAndRows = null;
 	private String URI = "", historyURI = "";
 	private String identifier;
 	private String dtoUrl;
@@ -202,15 +204,30 @@ public class ExchDataModel {
 		return rows;
 	}
 
-	public Rows getExchHistory() {
-		rows = new Rows();		
+	public void prepareHistory() {
+		gridAndRows = new GridAndRows();		
 		historyContainer = new HistoryContainer();
 		historyContainer.setHistoryUrl(dtoUrl);
 		historyContainer.populateHistory(historyURI);
-		historyContainer.setRows(rows);		
-		return rows;
+		historyContainer.initialList();
+	}
+	
+	public GridAndRows getExchHistory() {
+		prepareHistory();
+		historyContainer.setHeaderList();
+		historyContainer.setGridList(gridAndRows, false);
+		historyContainer.setGridAndRows(gridAndRows);		
+		return gridAndRows;
 	}
 
+	public GridAndRows getExchHistoryDetail(String historyId) {
+		prepareHistory();
+		historyContainer.setDetailHeaderList();
+		historyContainer.setGridList(gridAndRows, true);
+		historyContainer.setDetailGridAndRows(gridAndRows, historyId);		
+		return gridAndRows;
+	}
+	
 	public History showExchHistory() {
 		historyContainer = new HistoryContainer();
 		historyContainer.setHistoryUrl(dtoUrl);

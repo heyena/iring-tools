@@ -7,7 +7,9 @@ import java.util.List;
 import org.iringtools.common.response.Status;
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.history.History;
-import org.iringtools.ui.widgets.grid.Rows;
+import org.iringtools.ui.widgets.grid.Column;
+import org.iringtools.ui.widgets.grid.GridAndRows;
+import org.iringtools.ui.widgets.grid.Header;
 import org.iringtools.utility.HttpClient;
 
 public class HistoryContainer {
@@ -16,6 +18,12 @@ public class HistoryContainer {
 	private String historyUrl = "";
 	private HashMap<String, String> data = null;
 	private List<HashMap<String, String>> dataList = null;
+	private List<String> headerList;
+	private List<Header> gridHeaderList; // list of headers
+	private List<Column> columnList;
+	private Column column;
+	private Header header;
+	double width;		
 
 	public void populateHistory(String URI) {
 		try {
@@ -39,41 +47,106 @@ public class HistoryContainer {
 		return history;
 	}
 
-	public void initialDataList() {
+	public void initialList() {
 		dataList = new ArrayList<HashMap<String, String>>();
+		gridHeaderList = new ArrayList<Header>(); // list of headers
+		columnList = new ArrayList<Column>();
+		headerList = new ArrayList<String>();
 	}
 	
-	public void setRows(Rows rows) {
-		String msg = "";
-		int total = 0;
-		
-		initialDataList();
-		List<ExchangeResponse> exchangeResponseList = history.getResponses();
-
-		for (ExchangeResponse exchangeResponse : exchangeResponseList) {
-			List<Status> statusList = exchangeResponse.getStatusList()
+	public void setGridAndRows(GridAndRows gridAndRows) {
+		List<Status> statusList;
+		for (ExchangeResponse exchangeResponse : history.getResponses()) {
+			statusList = exchangeResponse.getStatusList()
 					.getItems();
 			data = new HashMap<String, String>();
-			for (Status status : statusList) {				
+			data.put("Level", exchangeResponse.getLevel().name());
+			data.put("StartTimeStamp", exchangeResponse.getStartTimeStamp().toString());
+			data.put("RowCount", String.valueOf(statusList.size()));
+			data.put("SenderUri", exchangeResponse.getSenderUri());
+			data.put("ReceiverUri", exchangeResponse.getReceiverUri());
+			dataList.add(data);			
+		}		
+		gridAndRows.setRowData(dataList);		
+		gridAndRows.setSuccess("true");
+	}
+
+	public void setDetailGridAndRows(GridAndRows gridAndRows, String historyId) {
+		List<String> messageList;
+		String msg = "";
+		List<Status> statusList;
+
+		ExchangeResponse exchangeResponse;
+		exchangeResponse = history.getResponses().get(
+				Integer.parseInt(historyId));
+		statusList = exchangeResponse.getStatusList().getItems();
+
+		if (statusList.size() > 0) {
+			for (Status status : exchangeResponse.getStatusList().getItems()) {
+				data = new HashMap<String, String>();
 				data.put("Identifier", status.getIdentifier());
-				List<String> messageList = status.getMessages().getItems();
-				
+				messageList = status.getMessages().getItems();
 				for (String message : messageList) {
 					msg = msg + message;
 				}
-				data.put("Status", msg);
+				data.put("Message", msg);				
+				dataList.add(data);
 				msg = "";
 			}
-			data.put("Start Time", exchangeResponse.getStartTimeStamp()
-					.toString());
-			data.put("End Time", exchangeResponse.getEndTimeStamp().toString());
-			dataList.add(data);
-			total++;
+			
+		}
+		gridAndRows.setRowData(dataList);
+		gridAndRows.setSuccess("true");
+
+	}
+	
+	
+	public void setHeaderList() {		
+		headerList.add("Level");
+		headerList.add("StartTimeStamp");
+		headerList.add("RowCount");
+		headerList.add("SenderUri");
+		headerList.add("ReceiverUri");
+	}
+	
+	public void setDetailHeaderList() {		
+		headerList.add("Identifier");
+		headerList.add("Message");		
+	}
+	
+	public void setColumnWidth(boolean ifDetail) {
+		if (ifDetail)
+			if (width < 8)
+				width = 600;
+			else
+				width = 110;			
+		else
+			if (width < 9)
+				width = 110;
+			else
+				width = 600;			
+	}
+
+	public void setGridList(GridAndRows gridAndRows, boolean ifDetail) {
+
+		
+		for (String head : headerList) {
+			column = new Column();
+			column.setDataIndex(head);
+			column.setHeader(head);
+			column.setId(head);
+			column.setSortable("true");
+			width = head.length();
+			setColumnWidth(ifDetail);
+			column.setWidth(width);
+			columnList.add(column);
+			header = new Header();
+			header.setName(head);
+			gridHeaderList.add(header);			
 		}
 		
-		rows.setData(dataList);
-		rows.setTotal(total);
-		rows.setSuccess("true");
-
+		gridAndRows.setColumnData(columnList);
+		gridAndRows.setHeaderLists(gridHeaderList);		
+		
 	}
 }
