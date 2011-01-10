@@ -154,6 +154,7 @@ public class ExchDataController {
 			exchdata.setDtoUrl("/" + scopeName + "/exchanges/" + idName);
 		}
 	}
+	
 	public String getExchDataGrid() {
 		getExchDtiList();
 		grid = exchdata.toGrid();
@@ -218,13 +219,10 @@ public class ExchDataController {
 		prePareHistory();
 		gridAndRows = exchdata.getExchHistoryDetail(historyId);
 		return Action.SUCCESS;
-	}
-	
-	
+	}	
 	
 	public String showExchangeHistory() {
-		exchdata.getHistoryUrl();
-		exchdata.setDtoUrl("/" + scopeName + "/exchanges/" + idName);
+		prePareHistory();
 		history = exchdata.showExchHistory();
 		return Action.SUCCESS;
 	}

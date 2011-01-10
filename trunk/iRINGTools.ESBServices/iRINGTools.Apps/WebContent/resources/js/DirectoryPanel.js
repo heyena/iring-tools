@@ -152,14 +152,14 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 				//requestURL = 'dataObjects/getDataObjects/' + nodeType + '/' + scopeId + '/' + uid;
 				requestURL = 'exchDataGrid?scopeName=' + scope + '&idName='+ uid;
 				//requestURL = 'exchnageData_grid.json';
-				label = scope + '->' + graph;
+				label = scope + ' [' + graph + ']';
 				this.fireEvent('open', this, node, label, requestURL,isReloadable);
 				
 			} else if (nodeType == 'graph') {
 				//requestURL = 'dataObjects/getGraphObjects/' + nodeType + '/' + scopeId + '/' + node.parentNode.text+'/' + nodeText;
 				requestURL = 'appDataGrid?scopeName=' + scope + '&appName=' + app + '&graphName=' + graph,
 				//requestURL = 'appData_grid_json.json';
-				label = scope + '->' + graphNode.text + '->' + graph;
+				label = scope + '/' + graphNode.text + '/' + graph;
 				this.fireEvent('open', this, node, label, requestURL,isReloadable);
 			}
   	}
@@ -267,7 +267,7 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			var contentPanel= Ext.getCmp('content-panel');
 			var hasreviewed;
 			var directoryPan=this;
-			var tablabel=scopeId+'->'+nodeText;
+			var tablabel=scopeId+' ['+nodeText+']';
 			var tabid='tab_'+scopeId+'->'+nodeText;
 			
 			if(contentPanel.get(tabid)==undefined){
