@@ -195,6 +195,63 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   	this.openTab(this.getSelectedNode(),'false');
   },
   
+  onHistory: function (btn, ev) {
+  	node = this.getSelectedNode();
+	if (node != null){
+	  var dataTypeNode = node.parentNode.parentNode;
+		var obj = node.attributes;
+		var item = obj['properties'];
+		var nodeType = obj['iconCls'];
+		
+		if(nodeType=='exchange'){
+		var scopeId = dataTypeNode.parentNode.attributes['text'];
+			var nodeText = obj['text'];
+			var uid = item[0].value;
+			var contentPanel= Ext.getCmp('content-panel');
+			var directoryPan=this;
+
+			var tabid='Historytab_'+scopeId;
+			
+			if(contentPanel.get(tabid)==undefined){
+				var exchangeHistoryURI='exchangeHistory?scopeName='+scopeId+'&idName='+uid;
+				alert(exchangeHistoryURI)
+						
+				/*var exchangeHistoryURI='exchangeHistory.json?scopeName='+scopeId+'&idName='+uid;
+				alert(exchangeHistoryURI)
+				directoryPan.fireEvent('history', this, node,exchangeHistoryURI,scopeId,uid);*/
+
+				
+				// 
+			}else{
+				// condition when the tabPanel is open and user clicks the log button
+				contentPanel.setActiveTab(tabid);
+				var exchangeHistoryURI='exchangeHistory?scopeName='+scopeId+'&idName='+uid;
+
+				/*var exchangeHistoryURI='exchangeHistory.json?scopeName='+scopeId+'&idName='+uid;
+				this.fireEvent('history', this, node,exchangeHistoryURI,scopeId,uid);*/
+			}
+			
+		}else{
+			//alert('nodeType: '+nodeType); // graph
+			Ext.Msg.show({
+				title: '<font color=blue>Warning</font>',
+				msg: 'Please Select an exchange node under Data Exchange:<br/>',
+				buttons: Ext.MessageBox.OK,
+				icon: Ext.MessageBox.ERROR
+			});
+			return false;
+		}
+	}else {
+	  Ext.Msg.show({
+			title: '<font color=blue>Warning</font>',
+			msg: 'Please Select an exchange node under Data Exchange:<br/>',
+			buttons: Ext.MessageBox.OK,
+			icon: Ext.MessageBox.ERROR
+		});
+		return false;
+	  
+  }
+  },
   onExchange: function (btn, ev) {
   	node = this.getSelectedNode();
 	if (node != null){
@@ -227,9 +284,9 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 					 hasreviewed=false;
 					 contentPanel.setActiveTab(tabid);
 					 var exchangeURI='exchangeResponse?scopeName='+scopeId+'&idName='+uid+'&hasReviewed='+hasreviewed;
-					 //var exchangeURI='exchangeResponse.json';
+					 //*** var exchangeURI='exchangeResponse.json';
 					 directoryPan.fireEvent('exchange', this, node,exchangeURI,tablabel);
-					 directoryPan.openTab(node,'true');
+					 //****directoryPan.openTab(node,'true');
 				 }
 				}
 				});
@@ -240,7 +297,7 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 				contentPanel.setActiveTab(tabid);
 				var exchangeURI='exchangeResponse?scopeName='+scopeId+'&idName='+uid+'&hasReviewed='+hasreviewed;
 				//alert('Original exchangeURI : '+exchangeURI);
-				//var exchangeURI='exchangeResponse.json';
+				//*** var exchangeURI='exchangeResponse.json';
 				this.fireEvent('exchange', this, node,exchangeURI,tablabel);
 			}
 			
@@ -254,7 +311,7 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			});
 			return false;
 		}
-  }	else {
+	}	else {
 	  Ext.Msg.show({
 			title: '<font color=blue>Warning</font>',
 			msg: 'Please Select an exchange node under Data Exchange:<br/>',
