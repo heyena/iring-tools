@@ -29,8 +29,9 @@ Ext.onReady(function () {
 		margins: '0 5 0 0',
 		enableTabScroll: true
 	});
+	
 	directoryPanel.on('exchange', function(panel, node, exchangeURI,tablabel){
-		alert("exchangeURI /" + exchangeURI)
+		//alert("exchangeURI /" + exchangeURI)
 		Ext.Ajax.request({
 			url: exchangeURI,
 			method: 'GET',
@@ -41,10 +42,9 @@ Ext.onReady(function () {
 				if (eval(jsonData.success)==false) {
 					alert("Fail to get the Json Response after submission: "+jsonData.response);
 				} else if(eval(jsonData.success)==true) {
-					alert(result.responseText);
+					//alert(result.responseText);
 					//open the new result tab and refresh the actual tab
 					var rowData = eval(jsonData.data);
-					alert(rowData);
 					//var filedsVal = eval(jsonData.headersList);
 					var store = new Ext.data.ArrayStore({
 					fields: [ 'Identifier',
@@ -78,7 +78,45 @@ Ext.onReady(function () {
 					enableColumnMove:false
 					});				
 
-					if (Ext.getCmp('content-panel').findById('tabResult-'+label)){
+
+					/* After exchnage the Result Grid displayed in a new Window starts */
+					var strPositon = (Ext.getCmp('content-panel').getPosition()).toString();
+					var arrPositon = strPositon.split(",");
+					
+					var myResultWin = new Ext.Window({
+									title: 'Exchange Result [ '+label+' ]',
+									id:'label_'+label,
+									x: arrPositon[0],
+									y: parseInt(arrPositon[1])+25,
+									
+									closable:true,
+									width:Ext.getCmp('content-panel').getInnerWidth()-2,
+									height:Ext.getCmp('content-panel').getInnerHeight(),
+									forceFit : true,
+									layout: 'border',
+									listeners: {
+									beforerender: {
+									fn : function(){Ext.getBody().mask();}},
+									close:{
+									fn:function(){
+										   Ext.getBody().unmask();
+										   directoryPanel.openTab(directoryPanel.getSelectedNode(),'true');
+									   }}},
+									items: [{
+									region: 'center',
+									layout : 'fit',
+									collapsible : false,
+									margins: '0 3 3 0',
+									layoutConfig : {animate : true,fill : false},
+									split: true,
+									items: grid
+								}]});
+
+							myResultWin.show();
+						/* After exchnage the Result Grid displayed in a new Window ends*/
+
+
+					/*if (Ext.getCmp('content-panel').findById('tabResult-'+label)){
 					//alert('aleready exists')
 						Ext.getCmp('content-panel').remove(Ext.getCmp('content-panel').findById('tabResult-'+label));
 						Ext.getCmp('content-panel').add( 
@@ -94,11 +132,27 @@ Ext.onReady(function () {
 						title: label+'(Result)',
 						closable:true
 						})).show();
-					}
-					directoryPanel.openTab(directoryPanel.getSelectedNode(),'true');
+					}*/
+					//directoryPanel.openTab(directoryPanel.getSelectedNode(),'true');
 				}
 			}});
 	});
+
+	directoryPanel.on('history', function(panel, node, exchangeURI,scopeId,uid){
+		//alert("History  exchangeURI: /" + exchangeURI)
+				Ext.Ajax.request({
+				url: exchangeURI,
+				method: 'GET',
+				params: {},
+				success: function(result, request) {
+				 var jsonData = Ext.util.JSON.decode(result.responseText);
+				 if (eval(jsonData.success)==false) {
+					 alert("Fail to get the Json Response after submission: "+jsonData.response);
+				 } else if(eval(jsonData.success)==true){
+					 alert('History Response:'+result.responseText);
+				 }
+				}});
+	});	
 	
 	directoryPanel.on('open', function(panel, node, label, url,reload) {
 		if((contentPanel.get('tab_'+label)==undefined)||(reload=='true')){
