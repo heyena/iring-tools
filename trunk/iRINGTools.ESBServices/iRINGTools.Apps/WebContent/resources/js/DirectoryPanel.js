@@ -247,13 +247,22 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 		}else{
 			//alert('nodeType: '+nodeType); // graph
 			Ext.Msg.show({
-				title: '<font color=red>Error</font>',
+				title: '<font color=blue>Warning</font>',
 				msg: 'Please Select an exchange node under Data Exchange:<br/>',
 				buttons: Ext.MessageBox.OK,
 				icon: Ext.MessageBox.ERROR
 			});
 			return false;
 		}
+  }	else {
+	  Ext.Msg.show({
+			title: '<font color=blue>Warning</font>',
+			msg: 'Please Select an exchange node under Data Exchange:<br/>',
+			buttons: Ext.MessageBox.OK,
+			icon: Ext.MessageBox.ERROR
+		});
+		return false;
+	  
   }
   },
   
