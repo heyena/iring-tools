@@ -131,7 +131,13 @@
     
     <action name="exchangeHistory" class="org.iringtools.controllers.ExchDataController" method="getExchangeHistory">
       <result type="json">
-        <param name="root">rows</param>
+        <param name="root">gridAndRows</param>
+      </result>
+    </action>
+    
+    <action name="exchangeHistoryDetail" class="org.iringtools.controllers.ExchDataController" method="getExchangeHistoryDetail">
+      <result type="json">
+        <param name="root">gridAndRows</param>
       </result>
     </action>
     

@@ -5,6 +5,7 @@ import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.history.History;
 import org.iringtools.models.ExchDataModel;
 import org.iringtools.ui.widgets.grid.Grid;
+import org.iringtools.ui.widgets.grid.GridAndRows;
 import org.iringtools.ui.widgets.grid.Rows;
 import com.opensymphony.xwork2.Action;
 
@@ -15,7 +16,9 @@ public class ExchDataController {
 	private ExchDataModel exchdata;
 	private Grid grid;
 	private Rows rows;
-	private ExchangeResponse exchangeResponse;
+	private GridAndRows gridAndRows;
+	
+	
 	private History history;
 	private String scopeName;
 	private String idName;
@@ -26,6 +29,7 @@ public class ExchDataController {
 	private int limit=20;
 	private String key;
 	private String hasReviewed;
+	private String historyId;
 	
 	static private HashMap<String, DataTransferIndices> dtiMap = null;
 
@@ -49,12 +53,12 @@ public class ExchDataController {
 		return rows;
 	}
 	
-	public void setExchangeResponse(ExchangeResponse exchangeResponse) {
-		this.exchangeResponse = exchangeResponse;
+	public void setGridAndRows(GridAndRows value) {
+		this.gridAndRows = value;
 	}
 
-	public ExchangeResponse getExchangeResponse() {
-		return exchangeResponse;
+	public GridAndRows getGridAndRows() {
+		return gridAndRows;
 	}
 
 	public void setHistory(History history) {
@@ -90,6 +94,14 @@ public class ExchDataController {
 
 	public String getId() {
 		return id;
+	}
+	
+	public void setHistoryId(String value) {
+		this.historyId = value;
+	}
+
+	public String getHistoryId() {
+		return historyId;
 	}
 	
 	public void setHasReviewed(String val) {
@@ -191,12 +203,24 @@ public class ExchDataController {
 		return Action.SUCCESS;
 	}
 	
-	public String getExchangeHistory() {
+	public void prePareHistory() {
 		exchdata.getHistoryUrl();
 		exchdata.setDtoUrl("/" + scopeName + "/exchanges/" + idName);
-		rows = exchdata.getExchHistory();
+	}
+	
+	public String getExchangeHistory() {
+		prePareHistory();
+		gridAndRows = exchdata.getExchHistory();
 		return Action.SUCCESS;
 	}
+	
+	public String getExchangeHistoryDetail() {
+		prePareHistory();
+		gridAndRows = exchdata.getExchHistoryDetail(historyId);
+		return Action.SUCCESS;
+	}
+	
+	
 	
 	public String showExchangeHistory() {
 		exchdata.getHistoryUrl();
