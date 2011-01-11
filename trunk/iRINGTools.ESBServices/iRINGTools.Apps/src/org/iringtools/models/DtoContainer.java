@@ -156,8 +156,11 @@ public class DtoContainer {
 	}
 
 	public void setTempName(String name) {
-		if (rType.equals("OBJECT_PROPERTY") || rType.equals("DATA_PROPERTY")) {
-			tempName = tName + '_' + name;
+		if (rType.equals("OBJECT_PROPERTY") || rType.equals("DATA_PROPERTY") || rType.equals("PROPERTY")) {
+			if (!name.toLowerCase().equals("identificationbytag"))
+				tempName = tName + '_' + name;
+			else
+				tempName = name;
 		}
 		else {
 			tempName = name;
@@ -253,8 +256,8 @@ public class DtoContainer {
 			setRType(rObj.getType().toString());
 			if (rType.equals("OBJECT_PROPERTY")
 					|| rType.equals("DATA_PROPERTY") || rType.equals("PROPERTY")) {
-				roleNumber++;				
-				addToRoleNameList(rObj.getName());
+				if (!tName.toLowerCase().equals("identificationbytag")) 	
+					addToRoleNameList(rObj.getName());
 			}
 		}
 		addRoleNameToMap();
@@ -351,9 +354,10 @@ public class DtoContainer {
 						addToGrid(tName);
 					} else if (rType.equals("OBJECT_PROPERTY")
 							|| rType.equals("DATA_PROPERTY") || rType.equals("PROPERTY")) {
-						roleNumber++;
-						setRoObj(rObj);
-						addToRoleNameList(rObj.getName());
+						if (!tName.toLowerCase().equals("identificationbytag")) {
+							setRoObj(rObj);
+							addToRoleNameList(rObj.getName());
+						}
 					}
 				}
 				addRoleNameToHList();
