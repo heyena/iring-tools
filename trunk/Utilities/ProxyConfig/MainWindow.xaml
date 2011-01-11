@@ -3,15 +3,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:ProxyConfig.ViewModel"
         xmlns:vw="clr-namespace:ProxyConfig.View"
-        Title="Proxy Configuration" Height="350" Width="575" Icon="/ProxyConfig;component/Images/iRING.ico" WindowStartupLocation="CenterScreen">
+        Title="Proxy Configuration" Height="310" Width="480" Icon="/ProxyConfig;component/Images/iRING.ico" WindowStartupLocation="CenterScreen">
   <Window.Resources>
     <DataTemplate DataType="{x:Type vm:ProxyParamsViewModel}">
       <vw:ProxyParamsView />
     </DataTemplate>
   </Window.Resources>
-  <Grid Margin="4">
-    <Border Background="GhostWhite" BorderBrush="LightGray" BorderThickness="1" CornerRadius="5">
-      <ItemsControl ItemsSource="{Binding ViewModels}" Margin="4" />
+  <Grid Margin="0">
+        <Border Background="#FFF0F0F0" BorderBrush="#FFF0F0F0" BorderThickness="0" CornerRadius="0">
+      <ItemsControl ItemsSource="{Binding ViewModels}" Margin="0" />
     </Border>
   </Grid>
 </Window>
