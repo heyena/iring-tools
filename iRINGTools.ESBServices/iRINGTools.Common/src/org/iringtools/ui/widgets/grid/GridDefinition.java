@@ -3,7 +3,7 @@ package org.iringtools.ui.widgets.grid;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GridAndRows
+public class GridDefinition
 {
   protected List<Header> headersList;
   protected List<Column> columnsData;

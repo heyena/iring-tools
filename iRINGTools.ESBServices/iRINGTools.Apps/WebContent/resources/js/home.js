@@ -44,7 +44,7 @@ Ext.onReady(function(){
 	});
 
   
-
+	Ext.BLANK_IMAGE_URL = 'resources/images/s.gif'; 
   
   
 });

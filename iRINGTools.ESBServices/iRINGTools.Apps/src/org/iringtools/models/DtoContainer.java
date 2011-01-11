@@ -610,7 +610,7 @@ public class DtoContainer {
 			if (width < 20)
 				width = 110;
 			else
-				width = width + 150;
+				width = width + 130;
 			column.setWidth(width);
 			cList.add(column);
 			header = new Header();

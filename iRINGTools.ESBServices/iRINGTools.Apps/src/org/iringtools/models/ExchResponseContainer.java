@@ -70,25 +70,30 @@ public class ExchResponseContainer {
 	public void setRows(Rows rows) {
 		String msg = "";
 		int total = 0;
-		
+
 		initialDataList();
+
 		List<Status> statusList = exchangeResponse.getStatusList().getItems();
-		for (Status status : statusList) {
-			data = new HashMap<String,String>();
-			data.put("Identifier", status.getIdentifier());
-			List<String> messageList = status.getMessages().getItems();
-			
-			for (String message : messageList) {
-				msg = msg + message;
+		if (statusList.size() > 0) {
+			for (Status status : statusList) {
+				data = new HashMap<String, String>();
+				data.put("Identifier", status.getIdentifier());
+				List<String> messageList = status.getMessages().getItems();
+
+				for (String message : messageList) {
+					msg = msg + message;
+				}
+				data.put("Message", msg);
+				dataList.add(data);
+				total++;
+				msg = "";
 			}
-			data.put("Message", msg);
-			dataList.add(data);
-			total++;
-			msg = "";
-		}		
-		rows.setData(dataList);
-		rows.setTotal(total);
-		rows.setSuccess("true");
+			rows.setData(dataList);
+			rows.setTotal(total);
+			rows.setSuccess("true");
+		} else {
+			rows.setSuccess("false");
+		}
 	}
-	
+
 }
