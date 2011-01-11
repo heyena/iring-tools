@@ -13,9 +13,7 @@ Ext.ns('ExchangeManager');
  * @extends Panel
  * @author by Gert Jansen van Rensburg
  */
-ExchangeManager.NavigationPanel = Ext
-		.extend(
-				Ext.TabPanel,
+ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel,
 				{
 					title : 'NavigationPanel',
 					activeItem : 0,
@@ -143,27 +141,104 @@ ExchangeManager.NavigationPanel = Ext
 							})
 						});
 
-						this.dataGrid.on('beforerender', this.beforeRender,
-								this);
+
+						if (this.nodeType == "exchange"){
+							this.tbar = this.buildToolbar();
+						}
+						
+						this.dataGrid.on('beforerender', this.beforeRender,this);
 						this.dataGrid.on('cellclick', this.onCellClick, this);
 						// alert(this.dataGrid.classObjName)
 						// for related items we don't require the bbar
-						if (this.identifier != 0
-								&& this.refClassIdentifier != 0) {
+						if (this.identifier != 0 && this.refClassIdentifier != 0) {
 							// ***** this.dataGrid.getBottomToolbar().hide();
 							// this.dataGrid.classObjName=this.identifier;
 						}
 						this.items = [ {
-							 title: this.nodeDisplay,
-							items : [ this.dataGrid ],
+							title: this.nodeDisplay,
+							//items : [ this.dataGrid ],
+							items : [ this.buildContetpanel() ],
 							layout : 'fit'
 						} ];
 
 						// this.tbar = this.buildToolbar();
+						
 
 						// super
-						ExchangeManager.NavigationPanel.superclass.initComponent
-								.call(this);
+						ExchangeManager.NavigationPanel.superclass.initComponent.call(this);
+					},
+					buildContetpanel: function(){
+						//alert(this.idName)
+						var Contetpanel = new Ext.Panel({
+						layout: 'border',
+						split: true,
+						autoScroll:true,
+						containerScroll: true,
+						items: [
+								{
+								region:'center',
+								layout :'fit',
+								height:'700',
+								boxMinHeight:'300',
+								bodyBorder:false,
+								border:false,
+								items:[this.dataGrid]
+								}]
+						});
+
+						if (this.nodeType == "exchange"){
+							
+						var history_panel = new Ext.Panel({
+						id:'hst-'+this.scopeName+'_'+this.idName,	
+						title: 'History',
+						split: true,
+						layout :'fit',
+						collapsed: true,
+						collapsible: true,
+						region: 'south',
+						height : '250',
+						AllowScroll : true,
+						forceFit:true,
+						tbar: new Ext.Toolbar({
+						xtype: "toolbar",
+						items:[{
+						xtype: "tbbutton",
+						text: 'Hide History',
+						icon: 'resources/images/16x16/document-new.png',
+						tooltip:'Show Grid',
+						disabled: false,
+						handler:function() {
+								   history_panel.collapse();
+							   }
+							   }]
+						   })
+
+						});
+						
+
+						Contetpanel.add(history_panel);
+
+						}
+						return Contetpanel;
+						
+					},
+					buildToolbar: function() {
+					var np = this;
+					var tbar = new Ext.Toolbar({
+					xtype: "toolbar",
+					items: [{
+					xtype: "tbbutton",
+					id: 'gridHistory',
+					text: 'History',
+					icon: 'resources/images/16x16/edit-find.png',
+					tooltip: 'History',
+					disabled: false,
+					handler : function() {
+							   np.exchangeHistory(np.scopeName,np.idName,np);
+						   }
+						   }]
+					});
+					return tbar;
 					},
 					beforeRender : function(grid) {
 						var colmodel = grid.getColumnModel();
@@ -190,6 +265,127 @@ ExchangeManager.NavigationPanel = Ext
 							});
 						}
 					},
+					openHistoryWin: function(hstGridPanel, rowIndex, columnIndex, e) {
+						var cm    = hstGridPanel.getColumnModel();
+						var record = hstGridPanel.getStore().getAt(rowIndex);  // Get the Record
+						var str_history_header='';
+						hstID = record.get(hstGridPanel.getColumnModel().getDataIndex(0));
+								
+						for(var i=0; i<cm.getColumnCount();i++) {
+							fieldHeader= hstGridPanel.getColumnModel().getColumnHeader(i); // Get field name
+							fieldValue= record.get(hstGridPanel.getColumnModel().getDataIndex(i));
+							
+							if(fieldHeader != 'hstID'){
+								str_history_header = str_history_header +'<b>'+fieldHeader+' : </b>'+fieldValue+ '<br/>'
+							}
+						}
+					   //showHistoryPopup(hstID,historyCacheKey);
+						//alert(hstID+' '+str_history_header);
+
+						var historyDetailUri = 'exchangeHistoryDetail?scopeName='+this.scopeName+'&idName='+this.idName+'&historyId=0';
+						//alert(historyDetailUri)
+						//var historyDetailUri ='exchangehistory_detail.json';
+
+						
+Ext.Ajax.request({
+url : historyDetailUri,
+method: 'GET',
+success: function(result, request) {
+		 var responseTxt = result.responseText
+		var jsonData = Ext.util.JSON.decode(result.responseText);
+
+if (eval(jsonData.success) == false) {
+Ext.MessageBox.show({
+title: '<font color=red>Error</font>',
+msg: 'No History Result found for this<br/>',
+buttons: Ext.MessageBox.OK,
+icon: Ext.MessageBox.ERROR
+});
+return false;
+} else {
+			   var rowData = eval(jsonData.rowData);
+			   var fieldList = eval(jsonData.headerLists);
+			   var columnData = eval(jsonData.columnData);
+
+		// shared reader
+			   var gp_reader = new Ext.data.ArrayReader({},fieldList);
+			   var gp_store = new Ext.data.GroupingStore({
+				reader: gp_reader,
+				data: rowData,
+				//sortInfo:{field: 'Identifier', direction: "ASC"},
+				groupField:'Identifier'
+			   });
+
+			   // create the Grid
+var statusListGridPanel = new Ext.grid.GridPanel({
+store: gp_store,
+columns: columnData,
+stripeRows: true,
+layout:'fit',
+autoSizeColumns: true,
+autoSizeGrid: true,
+AllowScroll : true,
+minColumnWidth:100,
+columnLines: true,
+enableColumnMove:false,
+//view: new Ext.grid.GroupingView()
+view: new Ext.grid.GroupingView({
+forceFit:true,
+groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})'
+	   })
+});
+
+// get the centerPanel x,y coordinates, used to set the position of Indvidual Class(PopUp window)
+var strPositon = (Ext.getCmp('content-panel').getPosition()).toString()
+var arrPositon=strPositon.split(",");
+statuslistPanel = new Ext.Panel({
+title: 'Status List',
+region:'center',
+split: true,
+margins: '0 1 3 3',
+width: 250,
+height:400,
+layout :'fit'
+});
+
+statuslistPanel.add(statusListGridPanel);
+var hstPopup = new Ext.Window({
+title: 'History Detail',
+id:'history-popup',
+closable:true,
+x : arrPositon[0],
+y : parseInt(arrPositon[1])+25,
+width:Ext.getCmp('content-panel').getInnerWidth()-2,
+height:Ext.getCmp('content-panel').getInnerHeight(),
+layout: 'border',
+listeners: {
+beforerender:{
+fn : function() {
+Ext.getBody().mask();
+}},
+close:{
+fn:function(){Ext.getBody().unmask();}
+}},
+items: [{
+id:'history-header',
+region: 'north',
+split: true,
+frame:true,
+height:80,
+html: 'Class Detail'
+},statuslistPanel]
+});
+hstPopup.show();
+Ext.get('history-header').dom.innerHTML = '<div style="padding:10 5 0 10">'+str_history_header+"</div>";
+
+
+				 }// end of else
+},
+failure: function ( result, request){
+			   alert(result.responseText);
+		   }
+			});
+},
 					onCellClick : function(grid, rowIndex, columnIndex, e) {
 						// alert('scope id passed from exchangemanager:
 						// '+this.scopeName)
@@ -283,8 +479,7 @@ ExchangeManager.NavigationPanel = Ext
 							// exchangeDataRelatedRows?scopeName=12345_000&idName=1&id=90003-SL
 							// exchangeDataRelatedRows?scopeName=12345_000&idName=4&id=90012-O
 
-							// **** var
-							// xchangeDataRelated_URI="exchangeData_relations.json";
+							//var xchangeDataRelated_URI="exchangeData_relations.json";
 
 							/* startttttttttt */
 							var navPanel = this;
@@ -440,15 +635,11 @@ ExchangeManager.NavigationPanel = Ext
 
 																	// alert(relatedDataRows_URI)
 
-																	// *** var
-																	// relatedDataGrid_URI
+																//var relatedDataGrid_URI="exchangesubgrid_grid.json";
 																	// =
 																	// 'exchangesubgrid_grid.json';
 																	// alert(dtoIdentifier);
-																	// **** var
-																	// relatedDataRows_URI
-																	// =
-																	// 'exchangesubgrid_rows.json';
+																	//var relatedDataRows_URI= 'exchangesubgrid_rows.json';
 																	Ext.Ajax
 																			.request({
 																				url : relatedDataGrid_URI,
@@ -576,7 +767,7 @@ ExchangeManager.NavigationPanel = Ext
 									});
 						}/* Related Items and new classwindow code ends */
 					},
-					buildToolbar : function() {
+					/*buildToolbar : function() {
 						return [ {
 							id : "card-1",
 							xtype : "tbbutton",
@@ -586,7 +777,7 @@ ExchangeManager.NavigationPanel = Ext
 							handler : this.onOpen,
 							scope : this
 						} ]
-					},
+					},*/
 					removeHTMLTags : function(strInputCode) {
 						/*
 						 * This line is optional, it replaces escaped brackets
@@ -602,6 +793,75 @@ ExchangeManager.NavigationPanel = Ext
 								/<\/?[^>]+(>|$)/g, "");
 
 						return strTagStrippedText;
+					},
+				exchangeHistory: function(scopeName,idName,np){
+					//np.
+					var historyURI= 'exchangeHistory?scopeName='+scopeName+'&idName='+idName;
+					//var historyURI= 'exchangeHistory.json?scopeName='+scopeName+'&idName='+idName;
+					//alert('historyURI '+ historyURI)						
+					Ext.Ajax.request({
+					url : historyURI, 
+					method: 'GET',
+					success: function(result, request) {
+							  var jsonData = Ext.util.JSON.decode(result.responseText);
+							   if (eval(jsonData.success) == false) {
+								   Ext.MessageBox.show({
+									title: '<font color=red>Error</font>',
+									msg: 'No History Result found for this Exchange<br/>',
+									buttons: Ext.MessageBox.OK,
+									icon: Ext.MessageBox.ERROR
+								   });
+								   return false;
+							   } else {
+								   var rowData = eval(jsonData.rowData);
+								   var fieldList = eval(jsonData.headerLists);
+								   var columnData = eval(jsonData.columnData);
+
+								   // set the ArrayStore to use in Grid
+								   var hstStore = new Ext.data.ArrayStore({
+								    fields: fieldList
+								   });
+								   hstStore.loadData(rowData);
+
+								   // id of the HistoryPanel 'hst-'+scopeName+'_'+idName;
+								   var hstId = 'hst-'+scopeName+'_'+idName;
+								   
+								   if (Ext.getCmp('hstGrid'+scopeName+'_'+idName)){
+									   //Ext.getCmp(hstId).expand();
+									   //Ext.getCmp(hstId).getEl().mask('Loading...');
+									   Ext.getCmp('hstGrid'+scopeName+'_'+idName).destroy();
+								   }
+
+								 // create the Grid
+								   var hstGridPanel = new Ext.grid.GridPanel({
+													store: hstStore,
+													id:'hstGrid'+scopeName+'_'+idName,
+													columns: columnData,
+													stripeRows: true,
+													loadMask: true,
+													autoSizeColumns: true,
+													autoSizeGrid: true,
+													AllowScroll: true,
+													minColumnWidth:100,
+													columnLines: true,
+													enableColumnMove:true
+								   });
+								   	hstGridPanel.on('cellclick', np.openHistoryWin, np);
+
+								   // add the GridPanel to HistoryPanel
+								   Ext.getCmp(hstId).add(hstGridPanel);
+								   Ext.getCmp(hstId).doLayout();
+
+								   if (Ext.getCmp(hstId).collapsed == true) {
+									   Ext.getCmp(hstId).expand();
+								   }
+								   //Ext.getCmp(hstId).getEl().unmask();
+							   }
+					},
+					failure: function ( result, request){
+							   alert(result.responseText);
+					}
+					});
 					},
 
 					onOpen : function(btn, ev) {
