@@ -1,7 +1,6 @@
 package org.iringtools.ui.widgets.grid;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class GridAndRows
@@ -9,21 +8,22 @@ public class GridAndRows
   protected List<Header> headersList;
   protected List<Column> columnsData;
   protected String success;
-  protected List<HashMap<String, String>> rowData;
+  protected List<ArrayList<String>> rowData;
 
-  public List<HashMap<String, String>> getRowData()
+  public List<ArrayList<String>> getRowData()
   {
     if (rowData == null)
-    {
-    	rowData = new ArrayList<HashMap<String, String>>();
+    {    	
+    	rowData = new ArrayList<ArrayList<String>>();
     }
     return this.rowData;
   }
 
-  public void setRowData(List<HashMap<String, String>> data)
+  public void setRowData(List<ArrayList<String>> data)
   {
     this.rowData = data;
   }
+  
   public List<Column> getColumnData()
   {
     if (columnsData == null)
