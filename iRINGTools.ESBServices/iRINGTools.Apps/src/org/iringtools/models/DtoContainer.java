@@ -37,9 +37,9 @@ public class DtoContainer {
 	private List<HashMap<String, String>> dataList;
 	private HashMap<String, String> data, roleNameMap; 
 	private List<String> hList, roleNameList; 
-	private String classId = "", relatedId = "";
+	private String classId = "", relatedId = "", roleValue = "", oldRoleValue = "";
 
-	private String identifier = "", tempName = "", clsName;
+	private String identifier = "", tempName = "", clsName, transferType = "";
 	
 	private int page = 20, ti = 0, roleNumber = 0;
 	private TemplateObject tObj;	
@@ -195,22 +195,7 @@ public class DtoContainer {
 		this.tName = tName;
 	}
 
-	public void addToRow(String name) {
-		String value, oldValue;
-		value = roObj.getValue();
-		oldValue = roObj.getOldValue();		
-		if (oldValue != null
-				&& !oldValue.equals(value)) {
-			setRValue("<span class=\"highLightChange\">" + oldValue
-					+ " -> " + value + "</span>");
-		} else {
-			setRValue(value);
-		}
-		setTempName(name);
-		if (roleNameMap.containsKey(tempName))
-			tempName = roleNameMap.get(tempName);
-		data.put(tempName, rValue);
-	}
+	
 
 	public void initialDataList() {
 		dataList = new ArrayList<HashMap<String, String>>();		
@@ -305,7 +290,8 @@ public class DtoContainer {
 		initialRoleNameList();
 		for (DataTransferObject dto : dtoList) {
 			data = new HashMap<String, String>();
-			data.put("TransferType", dto.getTransferType().value());
+			transferType = dto.getTransferType().value();
+			data.put("TransferType", transferType);
 			getObjectDataProperty(dto);
 			dataList.add(data);
 			ti = 0;
@@ -406,18 +392,74 @@ public class DtoContainer {
 			tObj = templatObjectList.get(0);
 			addToGrid(tObj.getName());
 			tName = clo.getIdentifier();
-			setRIdentifier(tName);
+			setRIdentifier(tName);			
 			addDetailRelRow(tObj.getName(), tName);
 			return;
 		}
 	}
+	
+	public void setExchangeRoleValue() {
+		roleValue = roObj.getValue();
+		oldRoleValue = roObj.getOldValue();		
+		if (oldRoleValue != null
+				&& !oldRoleValue.equals(roleValue)) {
+			setRValue("<span class=\"highLightChange\">" + oldRoleValue
+					+ " -> " + roleValue + "</span>");
+		} else {
+			setRValue(roleValue);
+		}
+	}
+	
+	public void addToRow(String name) {
+		
+		if (!transferType.toLowerCase().equals("sync"))
+			setExchangeRoleValue();
+		else
+			setRValue(roObj.getValue());
+		setTempName(name);
+		if (roleNameMap.containsKey(tempName))
+			tempName = roleNameMap.get(tempName);
+		data.put(tempName, rValue);
+	}
+	
+	public void getExchRelatedItemsDetails() {
+		for (ClassObject clo : classObjectList) {
+			if (!clo.getClassId().equals(classId))
+				continue;
+			settemplatObjectList(clo.getTemplateObjects().getItems());
+			tObj = templatObjectList.get(0);
+			if (tObj.getTransferType() == null)
+				transferType = "sync";
+			else
+				transferType = tObj.getTransferType().value();
+			data.put("TransferType", transferType);
+			for (RoleObject roleObject : tObj.getRoleObjects().getItems()) {
+				rType = roleObject.getType().toString();
+				if (!(rType.equals("OBJECT_PROPERTY")
+						|| rType.equals("DATA_PROPERTY") || rType
+						.equals("PROPERTY")))
+					continue;				
+
+				setRoObj(roleObject);
+				tName = roleObject.getValue();
+				if (!transferType.toLowerCase().equals("sync")) {
+					setExchangeRoleValue();
+				}else
+					setRValue(tName);
+				data.put("Identifier", addHtmlUnderLine(tName));
+				addDetailRelRow(tObj.getName(), rValue);
+				return;
+			}
+		}
+	}
+	
+	
 
 	public void fillExchDetailRelPage() {
 		for (DataTransferObject dto : dtoList) {
-			data = new HashMap<String, String>();
-			data.put("TransferType", dto.getTransferType().value());
+			data = new HashMap<String, String>();			
 			setclassObjectList(dto.getClassObjects().getItems());
-			getRelatedItemsDetails();
+			getExchRelatedItemsDetails();
 		}
 	}
 
