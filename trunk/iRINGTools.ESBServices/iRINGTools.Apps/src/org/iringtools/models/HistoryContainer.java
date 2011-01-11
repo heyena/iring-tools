@@ -8,8 +8,9 @@ import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.history.History;
 import org.iringtools.ui.widgets.grid.Column;
 
-import org.iringtools.ui.widgets.grid.GridAndRows;
+
 import org.iringtools.ui.widgets.grid.Header;
+import org.iringtools.ui.widgets.grid.GridDefinition;
 import org.iringtools.utility.HttpClient;
 
 public class HistoryContainer {
@@ -47,33 +48,34 @@ public class HistoryContainer {
 		return history;
 	}
 
-	public void initialList(GridAndRows gridAndRows) {
-		dataStringList = gridAndRows.getRowData();		
+	public void initialList(GridDefinition gridDefinition) {
+		dataStringList = gridDefinition.getRowData();		
 		gridHeaderList = new ArrayList<Header>(); // list of headers
 		columnList = new ArrayList<Column>();
 		headerList = new ArrayList<String>();
 	}
 	
-	public void setGridAndRows(GridAndRows gridAndRows) {
+	public void setGridAndRows(GridDefinition gridDefinition) {
 		List<Status> statusList;
-		for (ExchangeResponse exchangeResponse : history.getResponses()) {
-			statusList = exchangeResponse.getStatusList()
-					.getItems();
-			
-			data = new ArrayList<String>();
-			data.add(exchangeResponse.getLevel().name());
-			data.add(exchangeResponse.getStartTimeStamp().toString());
-			data.add(String.valueOf(statusList.size()));
-			data.add(exchangeResponse.getSenderUri());
-			data.add(exchangeResponse.getReceiverUri());
-			
-			dataStringList.add(data);			
-		}		
+		if (history != null) {
+			for (ExchangeResponse exchangeResponse : history.getResponses()) {
+				statusList = exchangeResponse.getStatusList().getItems();
+				data = new ArrayList<String>();
+				data.add(exchangeResponse.getLevel().name());
+				data.add(exchangeResponse.getStartTimeStamp().toString());
+				data.add(String.valueOf(statusList.size()));
+				data.add(exchangeResponse.getSenderUri());
+				data.add(exchangeResponse.getReceiverUri());
+				dataStringList.add(data);
+			}
+			gridDefinition.setSuccess("true");
+		} else
 		
-		gridAndRows.setSuccess("true");
+			gridDefinition.setSuccess("false");
 	}
 
-	public void setDetailGridAndRows(GridAndRows gridAndRows, String historyId) {
+	public void setDetailGridAndRows(GridDefinition gridDefinition,
+			String historyId) {
 		List<String> messageList;
 		String msg = "";
 		List<Status> statusList;
@@ -81,26 +83,30 @@ public class HistoryContainer {
 		ExchangeResponse exchangeResponse;
 		exchangeResponse = history.getResponses().get(
 				Integer.parseInt(historyId));
-		statusList = exchangeResponse.getStatusList().getItems();
 
-		if (statusList.size() > 0) {
-			for (Status status : exchangeResponse.getStatusList().getItems()) {
-				
-				data = new ArrayList<String>();
-				data.add(status.getIdentifier());
-				messageList = status.getMessages().getItems();
-				for (String message : messageList) {
-					msg = msg + message;
+		if (exchangeResponse != null) {
+			statusList = exchangeResponse.getStatusList().getItems();
+
+			if (statusList.size() > 0) {
+				for (Status status : exchangeResponse.getStatusList()
+						.getItems()) {
+
+					data = new ArrayList<String>();
+					data.add(status.getIdentifier());
+					messageList = status.getMessages().getItems();
+					for (String message : messageList) {
+						msg = msg + message;
+					}
+					data.add(msg);
+
+					dataStringList.add(data);
+					msg = "";
 				}
-				data.add(msg);	
-				
-				dataStringList.add(data);	
-				msg = "";
+
 			}
-			
 		}
-		
-		gridAndRows.setSuccess("true");
+
+		gridDefinition.setSuccess("true");
 
 	}
 	
@@ -118,20 +124,29 @@ public class HistoryContainer {
 		headerList.add("Message");		
 	}
 	
-	public void setColumnWidth(boolean ifDetail) {
+	public void setColumnWidth(boolean ifDetail) {		
+			
 		if (ifDetail)
 			if (width < 8)
 				width = 300;
 			else
-				width = 110;			
-		else
+				width = 80;			
+		else {
+			if (dataStringList.size() == 0) {
+				if (width < 20)
+					width = 110;
+				else
+					width = width + 130;
+			} else {
 			if (width < 9)
 				width = 110;
 			else
-				width = 300;			
+				width = 170;	
+			}
+		}
 	}
 
-	public void setGridList(GridAndRows gridAndRows, boolean ifDetail) {
+	public void setGridList(GridDefinition gridDefinition, boolean ifDetail) {
 
 		
 		for (String head : headerList) {
@@ -149,8 +164,8 @@ public class HistoryContainer {
 			gridHeaderList.add(header);			
 		}
 		
-		gridAndRows.setColumnData(columnList);
-		gridAndRows.setHeaderLists(gridHeaderList);		
+		gridDefinition.setColumnData(columnList);
+		gridDefinition.setHeaderLists(gridHeaderList);		
 		
 	}
 }

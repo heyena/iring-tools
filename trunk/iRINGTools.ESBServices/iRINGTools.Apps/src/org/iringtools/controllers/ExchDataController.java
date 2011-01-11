@@ -1,12 +1,13 @@
 package org.iringtools.controllers;
 
 import org.iringtools.dxfr.dti.DataTransferIndices;
-import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.history.History;
 import org.iringtools.models.ExchDataModel;
 import org.iringtools.ui.widgets.grid.Grid;
-import org.iringtools.ui.widgets.grid.GridAndRows;
+
 import org.iringtools.ui.widgets.grid.Rows;
+import org.iringtools.ui.widgets.grid.GridDefinition;
+
 import com.opensymphony.xwork2.Action;
 
 import java.util.HashMap;
@@ -16,7 +17,7 @@ public class ExchDataController {
 	private ExchDataModel exchdata;
 	private Grid grid;
 	private Rows rows;
-	private GridAndRows gridAndRows;
+	private GridDefinition gridDefinition;
 	
 	
 	private History history;
@@ -53,12 +54,12 @@ public class ExchDataController {
 		return rows;
 	}
 	
-	public void setGridAndRows(GridAndRows value) {
-		this.gridAndRows = value;
+	public void setGridDefinition(GridDefinition value) {
+		this.gridDefinition = value;
 	}
 
-	public GridAndRows getGridAndRows() {
-		return gridAndRows;
+	public GridDefinition getGridDefinition() {
+		return gridDefinition;
 	}
 
 	public void setHistory(History history) {
@@ -146,7 +147,7 @@ public class ExchDataController {
 	public void getExchDtiList() {
 		key = scopeName + idName;
 		if (dtiMap == null)
-			dtiMap = new HashMap<String, DataTransferIndices>();
+ 			dtiMap = new HashMap<String, DataTransferIndices>();
 		if (dtiMap.get(key) == null)
 			dtiMap.put(key, exchdata.populate(scopeName, idName));
 		else {
@@ -211,13 +212,13 @@ public class ExchDataController {
 	
 	public String getExchangeHistory() {
 		prePareHistory();
-		gridAndRows = exchdata.getExchHistory();
+		gridDefinition = exchdata.getExchHistory();
 		return Action.SUCCESS;
 	}
 	
 	public String getExchangeHistoryDetail() {
 		prePareHistory();
-		gridAndRows = exchdata.getExchHistoryDetail(historyId);
+		gridDefinition = exchdata.getExchHistoryDetail(historyId);
 		return Action.SUCCESS;
 	}	
 	

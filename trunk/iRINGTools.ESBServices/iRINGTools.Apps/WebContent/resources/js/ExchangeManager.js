@@ -40,15 +40,21 @@ Ext.onReady(function () {
 				var jsonData = Ext.util.JSON.decode(result.responseText);
 				
 				if (eval(jsonData.success)==false) {
-					alert("Fail to get the Json Response after submission: "+jsonData.response);
+					Ext.MessageBox
+					.show({
+						title: '<font color=red></font>',
+						msg : 'Data is synchronized and no exchange happened',
+						buttons : Ext.MessageBox.OK,
+						icon : Ext.MessageBox.INFO
+					});
 				} else if(eval(jsonData.success)==true) {
 					//alert(result.responseText);
 					//open the new result tab and refresh the actual tab
 					var rowData = eval(jsonData.data);
 					//var filedsVal = eval(jsonData.headersList);
+					alert ('rowData =' + rowData)
 					var store = new Ext.data.ArrayStore({
-					fields: [ 'Identifier',
-							'Message' ]
+					fields: ['Identifier', 'Message']
 					});
 					store.loadData(rowData);
 
@@ -56,14 +62,11 @@ Ext.onReady(function () {
 					//var columnData = eval(jsonData.columnsData);
 					var grid = new Ext.grid.GridPanel({
 					store: store,
-					columns: 	[{
-						header : 'Identifier',
-						dataIndex : 'Identifier'
-					},
-					{
-						header : 'Message',
-						dataIndex : 'Message'
-					}],
+					columns: 	[
+					   {header : 'Identifier', width: 100, dataIndex: 'Identifier', sortable: true},
+					   {header : 'Message',width: 200, dataIndex : 'Message', sortable: true}
+						],
+					
 					stripeRows: true,
 					id:'exchangeResultGrid_'+label,
 					loadMask: true,
@@ -222,7 +225,7 @@ Ext.onReady(function () {
 
 					newTab.on('beforeclose',function(newTab) {
 					var deleteReqURL=null;
-					if ((nodeType == 'exchanges' && uid != '')) {
+					if ((nodeType == 'exchange' && uid != '')) {
 					    //deleteReqURL = 'dataObjects/deleteDataObjects/'+nodeType+'/'+scopeId+'/'+uid
 						deleteReqURL = 'cleanExchDataRows';
 					} else if (nodeType == 'graph') {

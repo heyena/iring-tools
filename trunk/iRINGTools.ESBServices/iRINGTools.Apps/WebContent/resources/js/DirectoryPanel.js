@@ -117,13 +117,6 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			disabled: false,
 			handler: this.onExchange,
 			scope: this
-		},{xtype:"tbbutton",
-			icon:'resources/images/16x16/go-send.png',
-			tooltip:'Logs',
-			text:'Logs',
-			disabled: false,
-			handler: this.onHistory,
-			scope: this
 		}];
   },
   
