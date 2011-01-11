@@ -209,7 +209,7 @@ public class ExchDataModel {
 		historyContainer = new HistoryContainer();
 		historyContainer.setHistoryUrl(dtoUrl);
 		historyContainer.populateHistory(historyURI);
-		historyContainer.initialList();
+		historyContainer.initialList(gridAndRows);
 	}
 	
 	public GridAndRows getExchHistory() {

@@ -41,7 +41,7 @@ public class DtoContainer {
 
 	private String identifier = "", tempName = "", clsName, transferType = "";
 	
-	private int page = 20, ti = 0, roleNumber = 0;
+	private int page = 20, ti = 0;
 	private TemplateObject tObj;	
 	private static int total;
 	private static HashMap<String, String> dunit;	
@@ -187,7 +187,7 @@ public class DtoContainer {
 			}
 		}
 		roleNameList.clear();
-		roleNumber = 0;
+		
 	}
 	
 	public void setRType(String rType) {
@@ -242,7 +242,7 @@ public class DtoContainer {
 			}
 		}
 		roleNameList.clear();
-		roleNumber = 0;
+		
 	}
 	
 	public void addToRoleNameList(String name) {		
