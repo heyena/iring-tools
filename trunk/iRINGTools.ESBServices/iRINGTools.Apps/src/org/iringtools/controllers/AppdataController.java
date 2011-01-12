@@ -1,15 +1,20 @@
 package org.iringtools.controllers;
 
+import java.util.Map;
+
+import org.apache.struts2.interceptor.SessionAware;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.models.AppdataModel;
 import org.iringtools.ui.widgets.grid.Grid;
 import org.iringtools.ui.widgets.grid.Rows;
+
 import com.opensymphony.xwork2.Action;
+import com.opensymphony.xwork2.ActionSupport;
 
-import java.util.HashMap;
-
-public class AppdataController {
-
+public class AppdataController extends ActionSupport implements SessionAware 
+{	
+	private static final long serialVersionUID = 1L;
+	private Map<String, Object> session;
 	private AppdataModel appdata;
 	private Grid grid;
 	private Rows rows;
@@ -23,7 +28,7 @@ public class AppdataController {
 	private String key;
 	private int start=0;
 	private int limit=20;
-	static private HashMap<String, DataTransferIndices> dtiMap = null;
+
 
 	public AppdataController() {
 		appdata = new AppdataModel();
@@ -118,13 +123,12 @@ public class AppdataController {
 	}
 
 	public void getExchDtiList() {
-		key = scopeName + appName + graphName;
-		if (dtiMap == null)
-			dtiMap = new HashMap<String, DataTransferIndices>();
-		if (dtiMap.get(key) == null)
-			dtiMap.put(key, appdata.populate(scopeName, appName, graphName));
+		key = scopeName + appName + graphName;		
+		
+		if (session.get(key) == null)
+			session.put(key, appdata.populate(scopeName, appName, graphName));
 		else {
-			appdata.setDtiList(dtiMap.get(key).getDataTransferIndexList().getItems());
+			appdata.setDtiList(((DataTransferIndices)session.get(key)).getDataTransferIndexList().getItems());
 			appdata.setDtoUrl("/" + scopeName + "/" + appName + "/" + graphName);
 		}
 	}
@@ -142,12 +146,9 @@ public class AppdataController {
 	}
 
 	public void CleanDtiMap() {
-		dtiMap.remove(key);
-		if (dtiMap.size() == 0) {			
-			dtiMap = null;
-		}
-	}
-	
+		session.remove(key);
+	}	
+
 	public String cleanHashMap() {
 		key = scopeName + appName + graphName;
 		CleanDtiMap();
@@ -179,4 +180,8 @@ public class AppdataController {
 		return Action.SUCCESS;
 	}
 
+	@Override
+	public void setSession(Map<String, Object> session) {
+		this.session = session;		
+	}
 }

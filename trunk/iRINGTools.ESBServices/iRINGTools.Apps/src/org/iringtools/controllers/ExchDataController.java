@@ -1,19 +1,23 @@
 package org.iringtools.controllers;
 
+import org.apache.struts2.interceptor.SessionAware;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.history.History;
 import org.iringtools.models.ExchDataModel;
 import org.iringtools.ui.widgets.grid.Grid;
-
 import org.iringtools.ui.widgets.grid.Rows;
 import org.iringtools.ui.widgets.grid.GridDefinition;
-
 import com.opensymphony.xwork2.Action;
+import com.opensymphony.xwork2.ActionSupport;
 
-import java.util.HashMap;
+import java.util.Map;
 
-public class ExchDataController {
+public class ExchDataController extends ActionSupport implements SessionAware 
+{
+	private static final long serialVersionUID = 1L;
 
+	private Map<String, Object> session;
+	
 	private ExchDataModel exchdata;
 	private Grid grid;
 	private Rows rows;
@@ -32,8 +36,6 @@ public class ExchDataController {
 	private String hasReviewed;
 	private String historyId;
 	
-	static private HashMap<String, DataTransferIndices> dtiMap = null;
-
 	public ExchDataController() {
 		exchdata = new ExchDataModel();
 	}
@@ -145,13 +147,12 @@ public class ExchDataController {
 	}
 
 	public void getExchDtiList() {
-		key = scopeName + idName;
-		if (dtiMap == null)
- 			dtiMap = new HashMap<String, DataTransferIndices>();
-		if (dtiMap.get(key) == null)
-			dtiMap.put(key, exchdata.populate(scopeName, idName));
+		key = scopeName + idName;		
+		
+		if (session.get(key) == null)
+			session.put(key, exchdata.populate(scopeName, idName));
 		else {
-			exchdata.setDtiList(dtiMap.get(key).getDataTransferIndexList().getItems());
+			exchdata.setDtiList(((DataTransferIndices)session.get(key)).getDataTransferIndexList().getItems());
 			exchdata.setDtoUrl("/" + scopeName + "/exchanges/" + idName);
 		}
 	}
@@ -168,6 +169,10 @@ public class ExchDataController {
 		return Action.SUCCESS;
 	}
 
+	public void CleanDtiMap() {
+		session.remove(key);
+	}
+	
 	public String cleanHashMap() {	
 		key = scopeName + idName;
 		CleanDtiMap();		
@@ -199,12 +204,7 @@ public class ExchDataController {
 		return Action.SUCCESS;
 	}
 	
-	public void CleanDtiMap() {
-		dtiMap.remove(key);
-		if (dtiMap.size() == 0) {			
-			dtiMap = null;
-		}
-	}
+	
 	
 	public String setExchangeData() {
 		getExchDtiList();
@@ -231,8 +231,14 @@ public class ExchDataController {
 	}	
 	
 	public String showExchangeHistory() {
+		
 		prePareHistory();
 		history = exchdata.showExchHistory();
 		return Action.SUCCESS;
+	}
+
+	@Override
+	public void setSession(Map<String, Object> session) {
+		this.session = session;		
 	}
 }
