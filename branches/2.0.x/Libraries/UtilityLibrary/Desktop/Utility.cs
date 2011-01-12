@@ -928,7 +928,7 @@ namespace org.iringtools.utility
         case "bigint": return "Int64";
         case "smallint": return "Int16";
         case "tinyint": return "Int16";
-        case "number": return "Int32";
+        case "number": return "Decimal";
         case "long": return "Int64";
         case "clob": return "String";
         case "blob": return "String";
