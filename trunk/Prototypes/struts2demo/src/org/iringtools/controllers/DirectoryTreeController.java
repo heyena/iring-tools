@@ -17,22 +17,22 @@ import org.iringtools.ui.widgets.tree.Tree;
 import org.iringtools.ui.widgets.tree.TreeNode;
 import org.iringtools.utility.HttpClient;
 
+import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
 public class DirectoryTreeController extends ActionSupport
 {
   private static final long serialVersionUID = 1L;
-
-  private String directoryURL;
   private Tree directoryTree;
 
   public String execute() throws Exception
   {
     try
     {
-      HttpClient httpClient = new HttpClient();
-      Directory directory = httpClient.get(Directory.class, directoryURL);
-      directoryTree = toTree(directory);
+      String serviceUri = ActionContext.getContext().getApplication().get("ExchangeServiceUri").toString();
+      HttpClient httpClient = new HttpClient(serviceUri);
+      Directory directory = httpClient.get(Directory.class, "/directory");
+      directoryTree = setDirectoryTree(directory);
     }
     catch (Exception ex)
     {
@@ -41,28 +41,13 @@ public class DirectoryTreeController extends ActionSupport
 
     return SUCCESS;
   }
-  
-  public void setDirectoryURL(String directoryURL)
-  {
-    this.directoryURL = directoryURL;
-  }
-
-  public String getDirectoryURL()
-  {
-    return directoryURL;
-  }
-
-  public void setDirectoryTree(Tree directoryTree)
-  {
-    this.directoryTree = directoryTree;
-  }
 
   public Tree getDirectoryTree()
   {
     return directoryTree;
   }
   
-  private Tree toTree(Directory directory)
+  private Tree setDirectoryTree(Directory directory)
   {
     Tree tree = new Tree();
     List<Node> scopeNodes = tree.getNodes();
@@ -95,7 +80,6 @@ public class DirectoryTreeController extends ActionSupport
           for (Graph graph : app.getGraphs().getItems())
           {
             LeafNode graphNode = new LeafNode();
-            graphNode.setId(graph.getId());
             graphNode.setText(graph.getName());
             graphNode.setLeaf(true);
             appNodeList.add(graphNode);
@@ -138,7 +122,6 @@ public class DirectoryTreeController extends ActionSupport
           for (Exchange exchange : commodity.getExchanges().getItems())
           {
             LeafNode exchangeNode = new LeafNode();
-            exchangeNode.setId(exchange.getId());
             exchangeNode.setText(exchange.getName());
             exchangeNode.setLeaf(true);
             

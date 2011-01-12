@@ -32,10 +32,10 @@ ExchangeManager.NavigationPanel = Ext
 					graphName : null,
 					nodeType : null,
 					/**
-					 * initComponent
-					 * 
-					 * @protected
-					 */
+           * initComponent
+           * 
+           * @protected
+           */
 					initComponent : function() {
 						this.addEvents({
 							next : true,
@@ -58,7 +58,7 @@ ExchangeManager.NavigationPanel = Ext
 						var sortBy = this.configData.sortBy;
 						// var sortBy = 'IdentificationByTag';
 						// alert('sortBy /' + sortBy);
-						var sortOrder = this.configData.sortOrder
+						var sortOrder = this.configData.sortOrder;
 						// var sortOrder = 'DESC';
 						// alert('sortOrder /' + sortOrder);
 						var filters = new Ext.ux.grid.GridFilters({
@@ -239,7 +239,6 @@ ExchangeManager.NavigationPanel = Ext
 								tooltip : 'Open History',
 								disabled : false,
 								handler : function() {
-									alert("Click open history")
 									exchangeHistory(np.scopeName, np.idName,
 											np);
 								}
@@ -288,7 +287,7 @@ ExchangeManager.NavigationPanel = Ext
 							if (fieldHeader != 'hstID') {
 								str_history_header = str_history_header + '<b>'
 										+ fieldHeader + ' : </b>' + fieldValue
-										+ '<br/>'
+										+ '<br/>';
 							}
 						}
 						// showHistoryPopup(hstID,historyCacheKey);
@@ -298,8 +297,8 @@ ExchangeManager.NavigationPanel = Ext
 								+ this.scopeName
 								+ '&idName='
 								+ this.idName
-								+ '&historyId=
-								+ rowIndex';
+								+ '&historyId='
+								+ rowIndex;
 						// alert(historyDetailUri)
 						// var historyDetailUri ='exchangehistory_detail.json';
 
@@ -308,7 +307,7 @@ ExchangeManager.NavigationPanel = Ext
 									url : historyDetailUri,
 									method : 'GET',
 									success : function(result, request) {
-										var responseTxt = result.responseText
+										var responseTxt = result.responseText;
 										var jsonData = Ext.util.JSON
 												.decode(result.responseText);
 
@@ -367,7 +366,7 @@ ExchangeManager.NavigationPanel = Ext
 											// window)
 											var strPositon = (Ext
 													.getCmp('content-panel')
-													.getPosition()).toString()
+													.getPosition()).toString();
 											var arrPositon = strPositon
 													.split(",");
 											statuslistPanel = new Ext.Panel({
@@ -492,22 +491,19 @@ ExchangeManager.NavigationPanel = Ext
 										store : pStore,
 										columns : pColumnData,
 										stripeRows : true,
-										height : 460,
 										autoSizeColumns : true,
 										autoSizeGrid : true,
 										AllowScroll : true,
-										minColumnWidth : 100,
 										columnLines : true,
 										enableColumnMove : false
 									});
 
 							/*
-							 * alert('scope id passed from exchangemanager:
-							 * '+this.scopeName) alert('exchangeid passed from
-							 * exchange manager: : '+this.idName); alert('get
-							 * from the Grid on
-							 * wThanags(IdentificationByTag_value));
-							 */
+               * alert('scope id passed from exchangemanager: '+this.scopeName)
+               * alert('exchangeid passed from exchange manager: :
+               * '+this.idName); alert('get from the Grid on
+               * wThanags(IdentificationByTag_value));
+               */
 
 							if (this.nodeType == "exchange") {
 
@@ -595,28 +591,14 @@ ExchangeManager.NavigationPanel = Ext
 																	var exchangeId = dataView.store.data.items[index].data.exchangeID;
 
 																	/*
-																	 * check-tree.js
-																	 * file:
-																	 * function
-																	 * displayRleatedClassGrid(refClassIdentifier,dtoIdentifier,relatedClassName) {}
-																	 * built the
-																	 * URI
-																	 * http://localhost:8888/dataObjects/getRelatedDataObjects/exchanges/12345_000/1/90003-SL/90
-																	 * Send the
-																	 * request
-																	 * to get
-																	 * the grid
-																	 * details
-																	 * built the
-																	 * gridPanel
-																	 * add this
-																	 * gp to new
-																	 * Panel add
-																	 * this
-																	 * Panel to
-																	 * the new
-																	 * tab
-																	 */
+                                   * check-tree.js file: function
+                                   * displayRleatedClassGrid(refClassIdentifier,dtoIdentifier,relatedClassName) {}
+                                   * built the URI
+                                   * http://localhost:8888/dataObjects/getRelatedDataObjects/exchanges/12345_000/1/90003-SL/90
+                                   * Send the request to get the grid details
+                                   * built the gridPanel add this gp to new
+                                   * Panel add this Panel to the new tab
+                                   */
 
 																	// relatedDataGrid?scopeName=12345_000&idName=1&id=90002-RV&classId=rdl:R49658319833
 																	// original
@@ -652,16 +634,11 @@ ExchangeManager.NavigationPanel = Ext
 																	// alert(relatedDataGrid_URI)
 
 																	/*
-																	 * +
-																	 * this.scopeName +
-																	 * '&appName=' +
-																	 * this.appName +
-																	 * '&graphName=' +
-																	 * this.graphName +
-																	 * '&id=' +
-																	 * this
-																	 * .removeHTMLTags(IdentificationByTag_value);
-																	 */
+                                   * + this.scopeName + '&appName=' +
+                                   * this.appName + '&graphName=' +
+                                   * this.graphName + '&id=' + this
+                                   * .removeHTMLTags(IdentificationByTag_value);
+                                   */
 																	// relatedDataGrid?scopeName=12345_000&idName=1&id=90003-V&classId=R3847624234
 																	// relatedDataGrid?scopeName=12345_000&idName=1&id=90003-V&classId=rdl:R3847624234
 																	// alert(relatedDataGrid_URI)
@@ -724,6 +701,9 @@ ExchangeManager.NavigationPanel = Ext
 																								id : 'tab_'
 																										+ navPanel
 																												.removeHTMLTags(IdentificationByTag_value),
+																								scopeName : navPanel.scopeName,
+								                                appName : navPanel.appName,
+								                                graphName : navPanel.graphName,
 																								configData : responseData,
 																								url : pageURL,
 																								closable : false,
@@ -748,7 +728,6 @@ ExchangeManager.NavigationPanel = Ext
 												var classPanel = new Ext.Panel(
 														{
 															autoWidth : true,
-															height : 500,
 															forceFit : true,
 															layout : 'border',
 															defaults : {
@@ -757,33 +736,28 @@ ExchangeManager.NavigationPanel = Ext
 															},
 															items : [
 																	{
-																		height : 100,
+																		height : 50,
 																		region : 'north',
 																		collapsible : false,
 																		split : true,
-																		html : '<div style="float:left; width:110px;"><img src="resources/images/class-badge.png"/></div><div style="padding-top:20px;" id="identifier"><b>'
-																				+ navPanel
-																						.removeHTMLTags(IdentificationByTag_value)
-																				+ '</b><br/>'
-																				+ grid.classObjName
-																				+ '</div>'
+                                    html : '<div style="background-color:#eee; float:left; width:60px"><img src="resources/images/class-badge.png" style="margin:2 4 4 4; height:46px"/></div><div style="background-color:#eee; width:100%; height:100%; padding-top:10px;"><b>'
+                                      + navPanel.removeHTMLTags(IdentificationByTag_value)
+                                      + '</b><br/>'
+                                      + grid.classObjName + '</div>'
 																	},
 																	{
 																		title : 'Properties',
 																		region : 'west',
 																		split : true,
 																		margins : '0 1 3 3',
-																		width : 250,
-																		height : 900,
-																		minSize : 100,
+																		width : 300,
+																		layout : 'fit',
 																		items : [ grid_class_properties ]
 																	},
 																	{
 																		title : 'Related Items',
-																		layout : 'fit',
 																		collapsible : false,
 																		split : true,
-																		width : 220,
 																		region : 'center',
 																		margins : '0 3 3 0',
 																		layoutConfig : {
@@ -799,6 +773,7 @@ ExchangeManager.NavigationPanel = Ext
 												// /'+
 												// navPanel.removeHTMLTags(IdentificationByTag_value))
 												var newTab = {
+												  layout : 'fit',
 													title : navPanel
 															.removeHTMLTags(IdentificationByTag_value),
 													id : this.title
@@ -837,16 +812,15 @@ ExchangeManager.NavigationPanel = Ext
 						}/* Related Items and new classwindow code ends */
 					},
 					/*
-					 * buildToolbar : function() { return [ { id : "card-1",
-					 * xtype : "tbbutton", tooltip : 'Crum 1', text : '1...',
-					 * disabled : false, handler : this.onOpen, scope : this } ] },
-					 */
+           * buildToolbar : function() { return [ { id : "card-1", xtype :
+           * "tbbutton", tooltip : 'Crum 1', text : '1...', disabled : false,
+           * handler : this.onOpen, scope : this } ] },
+           */
 					removeHTMLTags : function(strInputCode) {
 						/*
-						 * This line is optional, it replaces escaped brackets
-						 * with real ones, i.e. < is replaced with < and > is
-						 * replaced with >
-						 */
+             * This line is optional, it replaces escaped brackets with real
+             * ones, i.e. < is replaced with < and > is replaced with >
+             */
 						strInputCode = strInputCode.replace(/&(lt|gt);/g,
 								function(strMatch, p1) {
 									return (p1 == "lt") ? "<" : ">";
@@ -892,7 +866,6 @@ function exchangeHistory (scopeName, idName, np) {
 			+ scopeName + '&idName=' + idName;
 	// var historyURI=
 	// 'exchangeHistory.json?scopeName='+scopeName+'&idName='+idName;
-	alert('historyURI ' + historyURI)
 	Ext.Ajax
 			.request({
 				url : historyURI,

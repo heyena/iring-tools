@@ -10,8 +10,8 @@
         <graphs>
           <graph>
             <id>1</id>
-            <name>Lines</name>
-            <description>Line List</description>
+            <name>LINES</name>
+            <description>ABC Line List</description>
             <commodity>PipingNetworkSystem</commodity>
           </graph>
         </graphs>
@@ -23,8 +23,8 @@
         <graphs>
           <graph>
             <id>2</id>
-            <name>Lines</name>
-            <description>Line List</description>
+            <name>LINES</name>
+            <description>DEF Line List</description>
             <commodity>PipingNetworksSystem</commodity>
           </graph>
         </graphs>
@@ -36,12 +36,12 @@
         <exchanges>
           <exchange>
             <id>1</id>
-            <name>ABC.Lines -&gt; DEF.Lines</name>
+            <name>ABC.LINES -&gt; DEF.LINES</name>
             <description>Line Exchange</description>
           </exchange>
           <exchange>
             <id>2</id>
-            <name>DEF.Lines -&gt; ABC.Lines</name>
+            <name>DEF.LINES -&gt; ABC.LINES</name>
             <description>Line Exchange</description>
           </exchange>
         </exchanges>
