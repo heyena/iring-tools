@@ -11,15 +11,14 @@ public class DtiGridController extends ActionSupport
 {
   private static final long serialVersionUID = 1L;
   private String scopeName;
-  private String appName;
-  private String graphName;  
+  private String exchangeId;
   private List<DataTransferIndex> dtiList;
   
   public String execute() throws Exception 
   {
-    String adapterServiceUri = ActionContext.getContext().getApplication().get("AdapterServiceUri").toString();
-    HttpClient httpClient = new HttpClient(adapterServiceUri);
-    DataTransferIndices dti = httpClient.get(DataTransferIndices.class, "/" + scopeName + "/" + appName + "/" + graphName);
+    String serviceUri = ActionContext.getContext().getApplication().get("ExchangeServiceUri").toString();
+    HttpClient httpClient = new HttpClient(serviceUri);
+    DataTransferIndices dti = httpClient.get(DataTransferIndices.class, "/" + scopeName + "/exchanges/" + exchangeId);
     setDtiList(dti.getDataTransferIndexList().getItems());
     
     return SUCCESS;
@@ -45,23 +44,13 @@ public class DtiGridController extends ActionSupport
     return scopeName;
   }
 
-  public void setAppName(String appName)
+  public void setExchangeId(String exchangeId)
   {
-    this.appName = appName;
+    this.exchangeId = exchangeId;
   }
 
-  public String getAppName()
+  public String getExchangeId()
   {
-    return appName;
-  }
-
-  public void setGraphName(String graphName)
-  {
-    this.graphName = graphName;
-  }
-
-  public String getGraphName()
-  {
-    return graphName;
+    return exchangeId;
   }
 }

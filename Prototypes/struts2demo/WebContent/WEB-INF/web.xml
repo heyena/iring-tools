@@ -6,7 +6,11 @@
   <display-name>Struts2 Demo</display-name>
   <context-param>
     <param-name>AdapterServiceUri</param-name>
-    <param-value>http://localhost:54321/dxfr</param-value>
+    <param-value>http://localhost:54321/data</param-value>
+  </context-param>
+  <context-param>
+    <param-name>ExchangeServiceUri</param-name>
+    <param-value>http://localhost:8080/services/esb</param-value>
   </context-param>
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
