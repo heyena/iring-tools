@@ -331,12 +331,21 @@ Ext
 																				// deleteReqURL
 																				// =
 																				// 'dataObjects/deleteDataObjects/'+nodeType+'/'+scopeId+'/'+uid
-																				deleteReqURL = 'cleanExchDataRows';
+																				deleteReqURL = 'cleanExchDataRows?scopeName='
+																					+ scopeId
+																					+ '&idName='
+																					+ uid;
+																				
 																			} else if (nodeType == 'graph') {
 																				// deleteReqURL
 																				// =
 																				// 'dataObjects/deleteGraphObjects/'+nodeType+'/'+scopeId+'/'+node.parentNode.text+'/'+nodeText
-																				deleteReqURL = 'cleanAppDataRows';
+																				deleteReqURL = 'cleanAppDataRows?scopeName='
+																					+ scopeId
+																					+ '&appName='
+																					+ appName
+																					+ '&graphName='
+																					+ nodeText;
 																			}
 																			if (deleteReqURL != null) {
 																				Ext.Ajax
