@@ -152,7 +152,7 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 				//requestURL = 'dataObjects/getGraphObjects/' + nodeType + '/' + scopeId + '/' + node.parentNode.text+'/' + nodeText;
 				requestURL = 'appDataGrid?scopeName=' + scope + '&appName=' + app + '&graphName=' + graph,
 				//requestURL = 'appData_grid_json.json';
-				label = scope + '/' + graphNode.text + '/' + graph;
+				label = scope + ' [' + graphNode.text + '.' + graph + ']';
 				this.fireEvent('open', this, node, label, requestURL,isReloadable);
 			}
   	}

@@ -12,7 +12,7 @@ public class AppdataModel {
 
 	private Grid grid = null;
 	private Rows rows = null;
-	private static String URI="";		
+	private String URI="";		
 	private String dtoUrl;
 	private List<DataTransferIndex> dtiList=null;
 	private List<DataTransferIndex> dtiPage;
@@ -20,16 +20,16 @@ public class AppdataModel {
 	private int rInd=0;
 	
 	public AppdataModel() {
-		if (URI.equals("")) {
-			try {
-				URI = ActionContext.getContext().getApplication()
-						.get("AppDataServiceUri").toString();
-			} catch (Exception e) {
-				System.out.println("Exception in AppDataServiceUri :" + e);
-			}
-			grid = null;
+
+		try {
+			URI = ActionContext.getContext().getApplication()
+					.get("AppDataServiceUri").toString();
+		} catch (Exception e) {
+			System.out.println("Exception in AppDataServiceUri :" + e);
 		}
-	}	
+		grid = null;
+
+	}
 	
 	public DataTransferIndices populate(String scopeName, String appName, String graphName) {
 		DataTransferIndices dti = null;
@@ -45,8 +45,8 @@ public class AppdataModel {
 		return dti;
 	}
 
-	public static void setURI (String uri) {
-		AppdataModel.URI = uri;
+	public void setURI (String uri) {
+		this.URI = uri;
 	}
 	
 
