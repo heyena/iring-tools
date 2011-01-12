@@ -169,7 +169,7 @@ public class ExchDataController {
 	}
 
 	public String cleanHashMap() {			
-		dtiMap.put(key, null);		
+		CleanDtiMap();		
 		rows = null;
 		return Action.SUCCESS;
 	}
@@ -198,10 +198,17 @@ public class ExchDataController {
 		return Action.SUCCESS;
 	}
 	
+	public void CleanDtiMap() {
+		dtiMap.remove(key);
+		if (dtiMap.size() == 0) {			
+			dtiMap = null;
+		}
+	}
+	
 	public String setExchangeData() {
 		getExchDtiList();
-		rows = exchdata.toExResponse(hasReviewed);
-		dtiMap.put(key, null);
+		rows = exchdata.toExResponse(hasReviewed);		
+		CleanDtiMap();		
 		return Action.SUCCESS;
 	}
 	

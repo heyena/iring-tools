@@ -141,9 +141,15 @@ public class AppdataController {
 		return Action.SUCCESS;
 	}
 
+	public void CleanDtiMap() {
+		dtiMap.remove(key);
+		if (dtiMap.size() == 0) {			
+			dtiMap = null;
+		}
+	}
+	
 	public String cleanHashMap() {
-		dtiMap.put(key, null);
-		AppdataModel.setURI("");
+		CleanDtiMap();
 		rows = null;
 		return Action.SUCCESS;
 	}

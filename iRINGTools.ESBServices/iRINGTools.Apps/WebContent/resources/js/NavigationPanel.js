@@ -32,10 +32,10 @@ ExchangeManager.NavigationPanel = Ext
 					graphName : null,
 					nodeType : null,
 					/**
-           * initComponent
-           * 
-           * @protected
-           */
+					 * initComponent
+					 * 
+					 * @protected
+					 */
 					initComponent : function() {
 						this.addEvents({
 							next : true,
@@ -208,7 +208,7 @@ ExchangeManager.NavigationPanel = Ext
 													xtype : "toolbar",
 													items : [ {
 														xtype : "tbbutton",
-														text : 'Close History',
+														text : 'Close Exchange Logs',
 														icon : 'resources/images/16x16/document-new.png',
 														tooltip : 'Show Grid',
 														disabled : false,
@@ -229,21 +229,22 @@ ExchangeManager.NavigationPanel = Ext
 					},
 					buildToolbar : function() {
 						var np = this;
-						var tbar = new Ext.Toolbar({
-							xtype : "toolbar",
-							items : [ {
-								xtype : "tbbutton",
-								id : 'gridHistory',
-								text : 'Open History',
-								icon : 'resources/images/16x16/edit-find.png',
-								tooltip : 'Open History',
-								disabled : false,
-								handler : function() {
-									exchangeHistory(np.scopeName, np.idName,
-											np);
-								}
-							} ]
-						});
+						var tbar = new Ext.Toolbar(
+								{
+									xtype : "toolbar",
+									items : [ {
+										xtype : "tbbutton",
+										id : 'gridHistory',
+										text : 'Open Exchange Logs',
+										icon : 'resources/images/16x16/edit-find.png',
+										tooltip : 'Open History',
+										disabled : false,
+										handler : function() {
+											exchangeHistory(np.scopeName,
+													np.idName, np);
+										}
+									} ]
+								});
 						return tbar;
 					},
 					beforeRender : function(grid) {
@@ -281,7 +282,8 @@ ExchangeManager.NavigationPanel = Ext
 						hstID = record.get(cm.getDataIndex(0));
 
 						for ( var i = 0; i < cm.getColumnCount(); i++) {
-							fieldHeader = cm.getColumnHeader(i); // Get field name
+							fieldHeader = cm.getColumnHeader(i); // Get field
+							// name
 							fieldValue = record.get(cm.getDataIndex(i));
 
 							if (fieldHeader != 'hstID') {
@@ -297,8 +299,7 @@ ExchangeManager.NavigationPanel = Ext
 								+ this.scopeName
 								+ '&idName='
 								+ this.idName
-								+ '&historyId='
-								+ rowIndex;
+								+ '&historyId=' + rowIndex;
 						// alert(historyDetailUri)
 						// var historyDetailUri ='exchangehistory_detail.json';
 
@@ -499,11 +500,12 @@ ExchangeManager.NavigationPanel = Ext
 									});
 
 							/*
-               * alert('scope id passed from exchangemanager: '+this.scopeName)
-               * alert('exchangeid passed from exchange manager: :
-               * '+this.idName); alert('get from the Grid on
-               * wThanags(IdentificationByTag_value));
-               */
+							 * alert('scope id passed from exchangemanager:
+							 * '+this.scopeName) alert('exchangeid passed from
+							 * exchange manager: : '+this.idName); alert('get
+							 * from the Grid on
+							 * wThanags(IdentificationByTag_value));
+							 */
 
 							if (this.nodeType == "exchange") {
 
@@ -591,14 +593,28 @@ ExchangeManager.NavigationPanel = Ext
 																	var exchangeId = dataView.store.data.items[index].data.exchangeID;
 
 																	/*
-                                   * check-tree.js file: function
-                                   * displayRleatedClassGrid(refClassIdentifier,dtoIdentifier,relatedClassName) {}
-                                   * built the URI
-                                   * http://localhost:8888/dataObjects/getRelatedDataObjects/exchanges/12345_000/1/90003-SL/90
-                                   * Send the request to get the grid details
-                                   * built the gridPanel add this gp to new
-                                   * Panel add this Panel to the new tab
-                                   */
+																	 * check-tree.js
+																	 * file:
+																	 * function
+																	 * displayRleatedClassGrid(refClassIdentifier,dtoIdentifier,relatedClassName) {}
+																	 * built the
+																	 * URI
+																	 * http://localhost:8888/dataObjects/getRelatedDataObjects/exchanges/12345_000/1/90003-SL/90
+																	 * Send the
+																	 * request
+																	 * to get
+																	 * the grid
+																	 * details
+																	 * built the
+																	 * gridPanel
+																	 * add this
+																	 * gp to new
+																	 * Panel add
+																	 * this
+																	 * Panel to
+																	 * the new
+																	 * tab
+																	 */
 
 																	// relatedDataGrid?scopeName=12345_000&idName=1&id=90002-RV&classId=rdl:R49658319833
 																	// original
@@ -634,11 +650,16 @@ ExchangeManager.NavigationPanel = Ext
 																	// alert(relatedDataGrid_URI)
 
 																	/*
-                                   * + this.scopeName + '&appName=' +
-                                   * this.appName + '&graphName=' +
-                                   * this.graphName + '&id=' + this
-                                   * .removeHTMLTags(IdentificationByTag_value);
-                                   */
+																	 * +
+																	 * this.scopeName +
+																	 * '&appName=' +
+																	 * this.appName +
+																	 * '&graphName=' +
+																	 * this.graphName +
+																	 * '&id=' +
+																	 * this
+																	 * .removeHTMLTags(IdentificationByTag_value);
+																	 */
 																	// relatedDataGrid?scopeName=12345_000&idName=1&id=90003-V&classId=R3847624234
 																	// relatedDataGrid?scopeName=12345_000&idName=1&id=90003-V&classId=rdl:R3847624234
 																	// alert(relatedDataGrid_URI)
@@ -702,8 +723,8 @@ ExchangeManager.NavigationPanel = Ext
 																										+ navPanel
 																												.removeHTMLTags(IdentificationByTag_value),
 																								scopeName : navPanel.scopeName,
-								                                appName : navPanel.appName,
-								                                graphName : navPanel.graphName,
+																								appName : navPanel.appName,
+																								graphName : navPanel.graphName,
 																								configData : responseData,
 																								url : pageURL,
 																								closable : false,
@@ -740,10 +761,12 @@ ExchangeManager.NavigationPanel = Ext
 																		region : 'north',
 																		collapsible : false,
 																		split : true,
-                                    html : '<div style="background-color:#eee; float:left; width:60px"><img src="resources/images/class-badge.png" style="margin:2 4 4 4; height:46px"/></div><div style="background-color:#eee; width:100%; height:100%; padding-top:10px;"><b>'
-                                      + navPanel.removeHTMLTags(IdentificationByTag_value)
-                                      + '</b><br/>'
-                                      + grid.classObjName + '</div>'
+																		html : '<div style="background-color:#eee; float:left; width:60px"><img src="resources/images/class-badge.png" style="margin:2 4 4 4; height:46px"/></div><div style="background-color:#eee; width:100%; height:100%; padding-top:10px;"><b>'
+																				+ navPanel
+																						.removeHTMLTags(IdentificationByTag_value)
+																				+ '</b><br/>'
+																				+ grid.classObjName
+																				+ '</div>'
 																	},
 																	{
 																		title : 'Properties',
@@ -773,7 +796,7 @@ ExchangeManager.NavigationPanel = Ext
 												// /'+
 												// navPanel.removeHTMLTags(IdentificationByTag_value))
 												var newTab = {
-												  layout : 'fit',
+													layout : 'fit',
 													title : navPanel
 															.removeHTMLTags(IdentificationByTag_value),
 													id : this.title
@@ -812,15 +835,16 @@ ExchangeManager.NavigationPanel = Ext
 						}/* Related Items and new classwindow code ends */
 					},
 					/*
-           * buildToolbar : function() { return [ { id : "card-1", xtype :
-           * "tbbutton", tooltip : 'Crum 1', text : '1...', disabled : false,
-           * handler : this.onOpen, scope : this } ] },
-           */
+					 * buildToolbar : function() { return [ { id : "card-1",
+					 * xtype : "tbbutton", tooltip : 'Crum 1', text : '1...',
+					 * disabled : false, handler : this.onOpen, scope : this } ] },
+					 */
 					removeHTMLTags : function(strInputCode) {
 						/*
-             * This line is optional, it replaces escaped brackets with real
-             * ones, i.e. < is replaced with < and > is replaced with >
-             */
+						 * This line is optional, it replaces escaped brackets
+						 * with real ones, i.e. < is replaced with < and > is
+						 * replaced with >
+						 */
 						strInputCode = strInputCode.replace(/&(lt|gt);/g,
 								function(strMatch, p1) {
 									return (p1 == "lt") ? "<" : ">";
@@ -831,7 +855,6 @@ ExchangeManager.NavigationPanel = Ext
 
 						return strTagStrippedText;
 					},
-					
 
 					onOpen : function(btn, ev) {
 						var l = this.getLayout();
@@ -860,91 +883,78 @@ ExchangeManager.NavigationPanel = Ext
 
 				});
 
-function exchangeHistory (scopeName, idName, np) {
+function exchangeHistory(scopeName, idName, np) {
 	// np.
-	var historyURI = 'exchangeHistory?scopeName='
-			+ scopeName + '&idName=' + idName;
+	var historyURI = 'exchangeHistory?scopeName=' + scopeName + '&idName='
+			+ idName;
 	// var historyURI=
 	// 'exchangeHistory.json?scopeName='+scopeName+'&idName='+idName;
-	Ext.Ajax
-			.request({
-				url : historyURI,
-				method : 'GET',
-				success : function(result, request) {
-					var jsonData = Ext.util.JSON
-							.decode(result.responseText);
-					if (eval(jsonData.success) == false) {
-						
-						Ext.MessageBox
-								.show({
-									title: '<font color=red></font>',
-									msg : 'No History Result found for this Exchange',
-									buttons : Ext.MessageBox.OK,
-									icon : Ext.MessageBox.INFO
-								});
-						
-						return false;
-					} else {
-						var rowData = eval(jsonData.rowData);
-						var fieldList = eval(jsonData.headerLists);
-						var columnData = eval(jsonData.columnData);
+	Ext.Ajax.request({
+		url : historyURI,
+		method : 'GET',
+		success : function(result, request) {
+			var jsonData = Ext.util.JSON.decode(result.responseText);
+			if (eval(jsonData.success) == false) {
 
-						// set the ArrayStore to use in Grid
-						var hstStore = new Ext.data.ArrayStore(
-								{
-									fields : fieldList
-								});
-						hstStore.loadData(rowData);
+				Ext.MessageBox.show({
+					title : '<font color=red></font>',
+					msg : 'No History Result found for this Exchange',
+					buttons : Ext.MessageBox.OK,
+					icon : Ext.MessageBox.INFO
+				});
 
-						// id of the HistoryPanel
-						// 'hst-'+scopeName+'_'+idName;
-						var hstId = 'hst-' + scopeName
-								+ '_' + idName;
+				return false;
+			} else {
+				var rowData = eval(jsonData.rowData);
+				var fieldList = eval(jsonData.headerLists);
+				var columnData = eval(jsonData.columnData);
 
-						if (Ext.getCmp('hstGrid'
-								+ scopeName + '_' + idName)) {
-							// Ext.getCmp(hstId).expand();
-							// Ext.getCmp(hstId).getEl().mask('Loading...');
-							Ext.getCmp(
-									'hstGrid' + scopeName
-											+ '_' + idName)
-									.destroy();
-						}
+				// set the ArrayStore to use in Grid
+				var hstStore = new Ext.data.ArrayStore({
+					fields : fieldList
+				});
+				hstStore.loadData(rowData);
 
-						// create the Grid
-						var hstGridPanel = new Ext.grid.GridPanel(
-								{
-									store : hstStore,
-									id : 'hstGrid'
-											+ scopeName
-											+ '_' + idName,
-									columns : columnData,
-									stripeRows : true,
-									loadMask : true,
-									autoSizeColumns : true,
-									autoSizeGrid : true,
-									AllowScroll : true,
-									minColumnWidth : 100,
-									columnLines : true,
-									enableColumnMove : true
-								});
-						hstGridPanel.on('cellclick',
-								np.openHistoryWin, np);
+				// id of the HistoryPanel
+				// 'hst-'+scopeName+'_'+idName;
+				var hstId = 'hst-' + scopeName + '_' + idName;
 
-						// add the GridPanel to HistoryPanel
-						Ext.getCmp(hstId).add(hstGridPanel);
-						Ext.getCmp(hstId).doLayout();
-
-						if (Ext.getCmp(hstId).collapsed == true) {
-							Ext.getCmp(hstId).expand();
-						}
-						// Ext.getCmp(hstId).getEl().unmask();
-					}
-				},
-				failure : function(result, request) {
-					alert(result.responseText);
+				if (Ext.getCmp('hstGrid' + scopeName + '_' + idName)) {
+					// Ext.getCmp(hstId).expand();
+					// Ext.getCmp(hstId).getEl().mask('Loading...');
+					Ext.getCmp('hstGrid' + scopeName + '_' + idName).destroy();
 				}
-			});
+
+				// create the Grid
+				var hstGridPanel = new Ext.grid.GridPanel({
+					store : hstStore,
+					id : 'hstGrid' + scopeName + '_' + idName,
+					columns : columnData,
+					stripeRows : true,
+					loadMask : true,
+					autoSizeColumns : true,
+					autoSizeGrid : true,
+					AllowScroll : true,
+					minColumnWidth : 100,
+					columnLines : true,
+					enableColumnMove : true
+				});
+				hstGridPanel.on('cellclick', np.openHistoryWin, np);
+
+				// add the GridPanel to HistoryPanel
+				Ext.getCmp(hstId).add(hstGridPanel);
+				Ext.getCmp(hstId).doLayout();
+
+				if (Ext.getCmp(hstId).collapsed == true) {
+					Ext.getCmp(hstId).expand();
+				}
+				// Ext.getCmp(hstId).getEl().unmask();
+			}
+		},
+		failure : function(result, request) {
+			alert(result.responseText);
+		}
+	});
 }
 
 function closeChildTabs(tp, newTab) {
