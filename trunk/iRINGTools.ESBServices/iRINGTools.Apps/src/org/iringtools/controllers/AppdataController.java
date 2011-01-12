@@ -149,6 +149,7 @@ public class AppdataController {
 	}
 	
 	public String cleanHashMap() {
+		key = scopeName + appName + graphName;
 		CleanDtiMap();
 		rows = null;
 		return Action.SUCCESS;

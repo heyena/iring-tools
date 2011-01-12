@@ -168,7 +168,8 @@ public class ExchDataController {
 		return Action.SUCCESS;
 	}
 
-	public String cleanHashMap() {			
+	public String cleanHashMap() {	
+		key = scopeName + idName;
 		CleanDtiMap();		
 		rows = null;
 		return Action.SUCCESS;
