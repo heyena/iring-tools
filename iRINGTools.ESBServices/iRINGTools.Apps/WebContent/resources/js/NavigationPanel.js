@@ -47,14 +47,15 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 		// var rowData = eval(this.configData.Data);
 		var fieldList = eval(this.configData.headerLists);
 		var headerList = eval(this.configData.columnData);
-		var classObjName = this.configData.classObjName;
+		var classObjectName = this.configData.classObjName;
 
-		if (classObjName == null) {
+		if (classObjectName == null) {
 			this.nodeDisplay = "Related Items";
 		} else {
-			this.nodeDisplay = classObjName;
+			this.nodeDisplay = classObjectName;
 		}
-
+		
+		
 		var filterSet = eval(this.configData.filterSets);
 		var pageSize = parseInt(this.configData.pageSize);
 		var sortBy = this.configData.sortBy;
@@ -133,7 +134,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 			height : 250,
 			minColumnWidth : 100,
 			columnLines : true,
-			classObjName : classObjName,
+			classObjName : classObjectName,
 			enableColumnMove : false,
 			bbar : new Ext.PagingToolbar({
 				pageSize : pageSize,
@@ -148,7 +149,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 			buildToolbar(this);
 		}
 		
-		alert("after buildToolbar")
+		
 		this.dataGrid.on('beforerender', this.beforeRender,
 				this);
 		this.dataGrid.on('cellclick', this.onCellClick, this);
@@ -166,14 +167,16 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 			layout : 'fit'
 		} ];
 
-		// this.tbar = this.buildToolbar();
-
-		// super
+		 var hstId = 'hst-' + this.scopeName + '_' + this.idName;
+         var historyPanel = Ext.getCmp(hstId);
+         if (historyPanel != undefined)
+        	 historyPanel.collapsed = 'true';
 		
 		ExchangeManager.NavigationPanel.superclass.initComponent.call(this);
 	},
+	
 	buildContetpanel : function() {
-		// alert(this.idName)
+		
 		var Contetpanel = new Ext.Panel({
 			layout : 'border',
 			split : true,
@@ -563,14 +566,15 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 									success : function(result, request) {
 										var responseData = Ext.util.JSON.decode(result.responseText);
 										var pageURL = relatedDataRows_URI;
-
+										var tabTitle = removeHTMLTags(dataView.store.data.items[index].data.label);
 										var newTab = new ExchangeManager.NavigationPanel({
-											title : removeHTMLTags(dataView.store.data.items[index].data.label),
-											id : 'tab_' + removeHTMLTags(IdentificationByTag_value),
+											title : tabTitle,
+											id : 'tab_' + tabTitle,
 											scopeName : navPanel.scopeName,
 											appName : navPanel.appName,
 											graphName : navPanel.graphName,
 											configData : responseData,
+											classObjName : navPanel.classObjName,
 											url : pageURL,
 											closable : false,
 											identifier : dtoIdentifier,
@@ -591,6 +595,9 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 							}
 						);
 
+    				
+    				var thisGrid = grid;
+    				var classObjectName = thisGrid.classObjName;
   					var classPanel = new Ext.Panel({
   						autoWidth : true,
   						forceFit : true,
@@ -646,7 +653,8 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 					var topNavPanel = Ext.getCmp('content-panel').getActiveTab();
 					var displayTab = topNavPanel.getItem(newTab.id);
           
-					hideToolBarLogButton(topNavPanel);
+					if (topNavPanel.nodeType == "exchange")
+						hideToolBarLogButton(topNavPanel);
 					
 					
 					if (displayTab == undefined) {						
@@ -840,8 +848,11 @@ function closeChildTabs(tp, newTab) {
 		}
 	}
 	
-	if (tab.length == 1) {
-		Ext.getCmp('content-panel').getActiveTab().tbar.setDisplayed(true);
+	if (tab.length == 1 ) {
+		var thisTab = Ext.getCmp('content-panel').getActiveTab();
+		var nodeType = thisTab.nodeType;
+		if (nodeType == 'exchange')			
+			Ext.getCmp('content-panel').getActiveTab().tbar.setDisplayed(true);
 		
 	}
 	

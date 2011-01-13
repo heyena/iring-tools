@@ -380,6 +380,7 @@ public class DtoContainer {
 			for (ClassObject clo : classObjectList) {
 				if (!clo.getClassId().equals(classId))
 					continue;
+				setClsName(clo.getName());
 				settemplatObjectList(clo.getTemplateObjects().getItems());
 				tObj = templatObjectList.get(0);
 				addToGrid(tObj.getName());

@@ -132,6 +132,8 @@ Ext.extend(Ext.App, Ext.util.Observable, {
     * @param {Bool} status
     */
     addMessage: function (status, msg) {
+    	if (msg.length > 1024)
+    		msg = msg.substring(0, 1024);
         var delay = 3;    // <-- default delay of msg box is 1 second.
         if (status == false) {
             delay = 5;    // <-- when status is error, msg box delay is 3 seconds.

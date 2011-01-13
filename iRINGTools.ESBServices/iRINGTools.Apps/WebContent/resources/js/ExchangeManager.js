@@ -161,7 +161,7 @@ Ext.onReady(function() {
     });
   });
 
-  directoryPanel.on('history', function(panel, node, exchangeURI, scopeId, uid) {
+ /* directoryPanel.on('history', function(panel, node, exchangeURI, scopeId, uid) {
     // alert("History exchangeURI: /" + exchangeURI)
     Ext.Ajax.request( {
       url : exchangeURI,
@@ -177,7 +177,7 @@ Ext.onReady(function() {
         }
       }
     });
-  });
+  });*/
 
   directoryPanel.on('open', function(panel, node, label, url, reload) {
     if ((contentPanel.get('tab_' + label) == undefined) || (reload == 'true')) {
@@ -236,6 +236,7 @@ Ext.onReady(function() {
           }
           else {
 
+        	
             var newTab = new ExchangeManager.NavigationPanel( {
               title : label,
               id : 'tab_' + label,
@@ -248,6 +249,7 @@ Ext.onReady(function() {
               appName : appName,
               graphName : nodeText,
               nodeType : nodeType
+              
             });
 
             contentPanel.add(newTab);
@@ -260,7 +262,8 @@ Ext.onReady(function() {
                 // =
                 // 'dataObjects/deleteDataObjects/'+nodeType+'/'+scopeId+'/'+uid
                 deleteReqURL = 'cleanExchDataRows?scopeName=' + scopeId + '&idName=' + uid;
-
+                
+               
               }
               else if (nodeType == 'graph') {
                 // deleteReqURL
@@ -285,6 +288,10 @@ Ext.onReady(function() {
                   }
                 });
               }
+              
+             
+              
+              
             });
           }
         },
