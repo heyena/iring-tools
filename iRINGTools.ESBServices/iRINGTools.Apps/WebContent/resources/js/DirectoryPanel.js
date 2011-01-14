@@ -207,7 +207,7 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			
 			if(contentPanel.get(tabid)==undefined){
 				var exchangeHistoryURI='exchangeHistory?scopeName='+scopeId+'&idName='+uid;
-				alert(exchangeHistoryURI)
+				//alert(exchangeHistoryURI)
 						
 				/*var exchangeHistoryURI='exchangeHistory.json?scopeName='+scopeId+'&idName='+uid;
 				alert(exchangeHistoryURI)
@@ -261,7 +261,7 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			var hasreviewed;
 			var directoryPan=this;
 			var tablabel=scopeId+' ['+nodeText+']';
-			var tabid='tab_'+scopeId+'->'+nodeText;
+			var tabid='tab_'+tablabel;
 			
 			if(contentPanel.get(tabid)==undefined){
 				// condition when the tabPanel is not open and user clicks the exchange button directly
