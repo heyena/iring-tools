@@ -13,16 +13,7 @@ Ext.onReady(function() {
 
   directoryPanel = new ExchangeManager.DirectoryPanel( {
     id : 'navigation-panel',
-    region : 'west',
-    collapsible : false,
-    collapsed : false,
-    border : true,
-    split : true,
-    width : 250,
-    minSize : 175,
-    maxSize : 500,
     url : 'directory'
-
   });
 
   var contentPanel = new Ext.TabPanel( {
@@ -34,8 +25,6 @@ Ext.onReady(function() {
   });
 
   directoryPanel.on('exchange', function(panel, node, exchangeURI, tablabel) {
-    // alert("exchangeURI /" + exchangeURI)
-    
 	  Ext.Ajax.request( {
       url : exchangeURI,
       method : 'GET',
@@ -298,10 +287,6 @@ Ext.onReady(function() {
                   }
                 });
               }
-              
-             
-              
-              
             });
           }
         },
@@ -326,5 +311,4 @@ Ext.onReady(function() {
       contentEl : 'header'
     }, directoryPanel, contentPanel ]
   });
-
 });
