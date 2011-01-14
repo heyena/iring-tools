@@ -232,7 +232,7 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
                 if (this.model.SelectedQMXF == null)
                     this.model.SelectedQMXF = new QMXF();
     
-            Repository rep = cbi.Tag as Repository;
+                Repository rep = cbi.Tag as Repository;
                 if (rep.isReadOnly == true)
                 {
                     btnOK.IsEnabled = false;
@@ -243,8 +243,9 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
                     btnOK.IsEnabled = true;
                     btnApply.IsEnabled = true;
                 }
+
                 if(_classBLL != null)
-                _classBLL.QMXF.targetRepository = rep.name;
+                  _classBLL.QMXF.targetRepository = rep.name;
             }
             catch (Exception ex)
             {
@@ -338,6 +339,13 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
                 if (_clickedButton == "btnOK1")
                 {
                     QMXF @qmxf = _classBLL.QMXF;
+
+                    // set target repository
+                    ComboBox cb = cmbRepositories;
+                    ComboBoxItem cbi = cb.SelectedItem as ComboBoxItem;
+                    Repository repository = cbi.Tag as Repository;
+                    _classBLL.QMXF.targetRepository = repository.name;
+
                     referenceDataService.PostClass(@qmxf); 
                 }
                 else if (_clickedButton == "btnCancel1")
