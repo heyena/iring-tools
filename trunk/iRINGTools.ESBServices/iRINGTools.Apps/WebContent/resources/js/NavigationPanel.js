@@ -33,6 +33,10 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 	appName : null,
 	graphName : null,
 	nodeType : null,
+	firstTabId : null,
+	classId : null,
+	dtoIdentifier : null,
+	
 	/**
 	 * initComponent
 	 * 
@@ -59,11 +63,11 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 		var filterSet = eval(this.configData.filterSets);
 		var pageSize = parseInt(this.configData.pageSize);
 		var sortBy = this.configData.sortBy;
-		// var sortBy = 'IdentificationByTag';
-		// alert('sortBy /' + sortBy);
+		
+		
 		var sortOrder = this.configData.sortOrder;
-		// var sortOrder = 'DESC';
-		// alert('sortOrder /' + sortOrder);
+		
+		
 		var filters = new Ext.ux.grid.GridFilters({
 			// encode and local configuration options defined
 			// previously for easier reuse
@@ -76,7 +80,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 
 		// build the header first
 		// send the request to generate the arraystore
-		// alert(this.url)
+		
 		var proxy = new Ext.data.HttpProxy({
 			api : {
 				read : new Ext.data.Connection({
@@ -153,7 +157,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 		this.dataGrid.on('beforerender', this.beforeRender,
 				this);
 		this.dataGrid.on('cellclick', this.onCellClick, this);
-		// alert(this.dataGrid.classObjName)
+		
 		// for related items we don't require the bbar
 		if (this.identifier != 0
 				&& this.refClassIdentifier != 0) {
@@ -167,10 +171,14 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 			layout : 'fit'
 		} ];
 
-		 var hstId = 'hst-' + this.scopeName + '_' + this.idName;
-         var historyPanel = Ext.getCmp(hstId);
-         if (historyPanel != undefined)
-        	 historyPanel.collapsed = 'true';
+		
+         var historyPanel = Ext.getCmp('hst-' + this.scopeName + '_' + this.idName);
+         
+         if (historyPanel != undefined) {
+        	 
+        	 historyPanel.destroy();
+        	 
+         }
 		
 		ExchangeManager.NavigationPanel.superclass.initComponent.call(this);
 	},
@@ -193,6 +201,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 			} ]
 		});
 
+		
 		if (this.nodeType == "exchange") {
 			var history_panel = new Ext.Panel({
 				id : 'hst-' + this.scopeName + '_' + this.idName,
@@ -254,6 +263,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 	},
 	openHistoryWin : function(hstGridPanel, rowIndex,
 			columnIndex, e) {
+		
 		var cm = hstGridPanel.getColumnModel();
 		var record = hstGridPanel.getStore().getAt(rowIndex); // Get
 		// the
@@ -273,14 +283,14 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 			}
 		}
 		// showHistoryPopup(hstID,historyCacheKey);
-		// alert(hstID+' '+str_history_header);
+		
 
 		var historyDetailUri = 'exchangeHistoryDetail?scopeName='
 				+ this.scopeName
 				+ '&idName='
 				+ this.idName
 				+ '&historyId=' + rowIndex;
-		// alert(historyDetailUri)
+		
 		// var historyDetailUri ='exchangehistory_detail.json';
 
 		Ext.Ajax.request({
@@ -404,8 +414,8 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 
 				}// end of else
 			},
-			failure : function(result, request) {
-				alert(result.responseText);
+			failure : function(result, request) {				
+				app.setAlert('false', 'History Details', result.responseText);
 			}
 		});
 	},
@@ -450,16 +460,17 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 				enableColumnMove : false
 			});
 
-			if (this.nodeType == "exchange") {
-				var xchangeDataRelated_URI = 'exchangeDataRelatedRows?scopeName='
+			if (this.firstTabId == this.id) {
+				if (this.nodeType == "exchange") {
+					var xchangeDataRelated_URI = 'exchangeDataRelatedRows?scopeName='
 						+ this.scopeName
 						+ '&idName='
 						+ this.idName
 						+ '&id='
 						+ removeHTMLTags(IdentificationByTag_value);
-			} 
-			else {
-				var xchangeDataRelated_URI = 'appDataRelations?scopeName='
+				} 
+				else {
+					var xchangeDataRelated_URI = 'appDataRelations?scopeName='
 						+ this.scopeName
 						+ '&appName='
 						+ this.appName
@@ -468,9 +479,38 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 						+ '&id='
 						+ removeHTMLTags(IdentificationByTag_value);
 
+				}
+			} else {
+				if (this.nodeType == "exchange") {
+					var xchangeDataRelated_URI = 'relatedDataRelationsRows?scopeName='
+						+ this.scopeName
+						+ '&idName='
+						+ this.idName
+						+ '&id='
+						+ this.dtoIdentifier
+						+ '&classId='
+						+ this.classId
+						+ '&relatedId='
+						+ removeHTMLTags(IdentificationByTag_value);
+				} 
+				else {
+					var xchangeDataRelated_URI = 'relatedAppDataRelationsRows?scopeName='
+						+ this.scopeName
+						+ '&appName='
+						+ this.appName
+						+ '&graphName='
+						+ this.graphName
+						+ '&id='
+						+ this.dtoIdentifier
+						+ '&classId='
+						+ this.classId
+						+ '&relatedId='
+						+ removeHTMLTags(IdentificationByTag_value);
+				}
 			}
 
 			var navPanel = this;
+			
 			Ext.Ajax.request({
     		url : xchangeDataRelated_URI,
     		method : 'GET',
@@ -567,6 +607,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 										var responseData = Ext.util.JSON.decode(result.responseText);
 										var pageURL = relatedDataRows_URI;
 										var tabTitle = removeHTMLTags(dataView.store.data.items[index].data.label);
+										
 										var newTab = new ExchangeManager.NavigationPanel({
 											title : tabTitle,
 											id : 'tab_' + tabTitle,
@@ -575,10 +616,15 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 											graphName : navPanel.graphName,
 											configData : responseData,
 											classObjName : navPanel.classObjName,
+											idName : navPanel.idName,
+											nodeType : navPanel.nodeType,
 											url : pageURL,
 											closable : false,
 											identifier : dtoIdentifier,
-											refClassIdentifier : refClassIdentifier
+											refClassIdentifier : refClassIdentifier,
+											firstTabId : navPanel.firstTabId,
+											classId : classId,
+											dtoIdentifier : dtoIdentifier
 										});
 
 										var topNavPanel = Ext.getCmp('content-panel').getActiveTab();
@@ -826,8 +872,8 @@ function exchangeHistory(scopeName, idName, np) {
 				// Ext.getCmp(hstId).getEl().unmask();
 			}
 		},
-		failure : function(result, request) {
-			alert(result.responseText);
+		failure : function(result, request) {			
+			app.setAlert('false', 'History List', result.responseText);
 		}
 	});
 }
@@ -868,7 +914,7 @@ function closeChildTabs(tp, newTab) {
 }
 
 function showExchangeResponseWindow(scopeName, idName, np) {
-    // alert("exchangeURI /" + exchangeURI)
+    
 	var exchangeURI='exchangeResponse?scopeName='+scopeName+'&idName='+idName+'&hasReviewed=true';
 	  
 	Ext.Ajax.request( {
@@ -934,8 +980,7 @@ function showExchangeResponseWindow(scopeName, idName, np) {
           var strPositon = (Ext.getCmp('content-panel').getPosition()).toString();
           var arrPositon = strPositon.split(",");
 
-          //alert('arrPositon[0] = ' + arrPositon[0]);
-          //alert('arrPositon[1] = ' + arrPositon[1]);
+        
           
           var myResultWin = new Ext.Window({
             title : 'Exchange Result ( ' + label + ' )',
