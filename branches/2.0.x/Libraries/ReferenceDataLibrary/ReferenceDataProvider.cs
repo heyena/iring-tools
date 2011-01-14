@@ -36,7 +36,6 @@ using org.ids_adi.qmxf;
 using org.iringtools.library;
 using org.iringtools.utility;
 using org.w3.sparql_results;
-using System.Text.RegularExpressions;
 
 namespace org.iringtools.referenceData
 {
@@ -2352,6 +2351,7 @@ namespace org.iringtools.referenceData
     public Response PostClass(QMXF qmxf)
     {
       Response response = new Response();
+      response.Level = StatusLevel.Success;
 
       try
       {
@@ -2372,7 +2372,8 @@ namespace org.iringtools.referenceData
         else
         {
           string registry = _useExampleRegistryBase ? _settings["ExampleRegistryBase"] : _settings["ClassRegistryBase"];
-              
+          StringBuilder sparqlDelete = new StringBuilder();
+               
           foreach (ClassDefinition clsDef in qmxf.classDefinitions)
           {
             string clsId = clsDef.identifier;
@@ -2386,7 +2387,7 @@ namespace org.iringtools.referenceData
             // delete class
             if (existingQmxf.classDefinitions.Count > 0)
             {
-              StringBuilder triples = new StringBuilder();
+              StringBuilder sparqlStmts = new StringBuilder();
               int count = 0;
               
               clsId = "<" + clsId + ">";
@@ -2398,19 +2399,19 @@ namespace org.iringtools.referenceData
                   string clsLabel = clsName.value;
 
                   // delete label, entity type, and description
-                  triples.Append(clsId + " ?p ?o . ");
+                  sparqlStmts.Append(clsId + " ?p ?o . ");
 
                   // delete specialization
                   foreach (Specialization spec in existingClsDef.specialization)
                   {
                     string specVariable = "?v" + count++;
 
-                    triples.Append(specVariable + " rdf:type dm:Specialization . ");
+                    sparqlStmts.Append(specVariable + " rdf:type dm:Specialization . ");
 
                     if (spec != null && spec.reference != null)
-                      triples.Append(specVariable + " dm:hasSuperclass <" + spec.reference + "> . ");
+                      sparqlStmts.Append(specVariable + " dm:hasSuperclass <" + spec.reference + "> . ");
 
-                    triples.Append(specVariable + " dm:hasSubclass " + clsId + " . ");
+                    sparqlStmts.Append(specVariable + " dm:hasSubclass " + clsId + " . ");
                   }
 
                   // delete classification
@@ -2418,61 +2419,59 @@ namespace org.iringtools.referenceData
                   {
                     string clsifVariable = "?v" + count++;
 
-                    triples.Append(clsifVariable + " rdf:type dm:Classification . ");
+                    sparqlStmts.Append(clsifVariable + " rdf:type dm:Classification . ");
 
                     if (clsif != null && clsif.reference != null)
-                      triples.Append(clsifVariable + " dm:hasClassifier <" + clsif.reference + "> . ");
+                      sparqlStmts.Append(clsifVariable + " dm:hasClassifier <" + clsif.reference + "> . ");
 
-                    triples.Append(clsifVariable + " dm:hasClassified  " + clsId + " . ");
+                    sparqlStmts.Append(clsifVariable + " dm:hasClassified  " + clsId + " . ");
                   }
 
                   // delete status
                   string statusVariable = "?v" + count++;
 
-                  triples.Append(statusVariable + " rdf:type tpl:R20247551573 . ");
-                  triples.Append(statusVariable + " tpl:R64574858717 " + clsId + " . ");
-                  triples.Append(statusVariable + " tpl:R56599656536 rdl:R6569332477 . ");
-                  triples.Append(statusVariable + " tpl:R61794465713 rdl:R3732211754 . ");
+                  sparqlStmts.Append(statusVariable + " rdf:type tpl:R20247551573 . " +
+                                     statusVariable + " tpl:R64574858717 " + clsId + " . " +
+                                     statusVariable + " tpl:R56599656536 rdl:R6569332477 . " +
+                                     statusVariable + " tpl:R61794465713 rdl:R3732211754 . ");
                 }
               }
 
-              StringBuilder sparqlDelete = new StringBuilder(SPARQL_PREFIXES);
-
               sparqlDelete.Append(" DELETE { ");
-              sparqlDelete.Append(triples);
+              sparqlDelete.Append(sparqlStmts);
               sparqlDelete.Append(" } ");
 
               sparqlDelete.Append(" WHERE { ");
-              sparqlDelete.Append(triples);
-              sparqlDelete.Append(" } ");
-
-              string sparql = Regex.Replace(sparqlDelete.ToString(), @"\s", " ");
-              Response postResponse = PostToRepository(repository, sparql);
-              response.Append(postResponse);
+              sparqlDelete.Append(sparqlStmts);
+              sparqlDelete.Append(" }; ");
             }
             
             // add class
-            StringBuilder sparqlAdd = new StringBuilder(SPARQL_PREFIXES);
+            StringBuilder sparqlAdd = new StringBuilder();
             sparqlAdd.Append(" INSERT DATA { ");
 
             foreach (QMXFName clsName in clsDef.name)
             {
               string clsLabel = clsName.value;
-              string newClsName = "Class definition " + clsLabel;
-              string newClsId = "<" + CreateIdsAdiId(registry, newClsName) + ">";
+
+              if (String.IsNullOrEmpty(clsId) || !(clsId.StartsWith("<") && clsId.EndsWith(">")))
+              {
+                string newClsName = "Class definition " + clsLabel;
+                clsId = "<" + CreateIdsAdiId(registry, newClsName) + ">";
+              }
 
               // append label
-              sparqlAdd.Append(newClsId + " rdfs:label \"" + clsLabel + "\"^^xsd:string . ");
+              sparqlAdd.Append(clsId + " rdfs:label \"" + clsLabel + "\"^^xsd:string . ");
 
               // append entity type
               if (clsDef.entityType != null && !String.IsNullOrEmpty(clsDef.entityType.reference))
-                sparqlAdd.Append(newClsId + " rdf:type <" + clsDef.entityType.reference + "> . ");
+                sparqlAdd.Append(clsId + " rdf:type <" + clsDef.entityType.reference + "> . ");
 
               // append description
               foreach (Description desc in clsDef.description)
               {
                 if (!String.IsNullOrEmpty(desc.value))
-                  sparqlAdd.Append(newClsId + " rdfs:comment \"" + desc.value + "\"^^xsd:string . ");
+                  sparqlAdd.Append(clsId + " rdfs:comment \"" + desc.value + "\"^^xsd:string . ");
               }
 
               // append specialization
@@ -2484,7 +2483,7 @@ namespace org.iringtools.referenceData
                 if (!String.IsNullOrEmpty(spec.reference))
                   sparqlAdd.Append("dm:hasSuperclass <" + spec.reference + "> ; ");
 
-                sparqlAdd.Append("dm:hasSubclass " + newClsId + " . ");
+                sparqlAdd.Append("dm:hasSubclass " + clsId + " . ");
               }
 
               // append classification
@@ -2496,30 +2495,34 @@ namespace org.iringtools.referenceData
                 if (!String.IsNullOrEmpty(clsif.reference))
                   sparqlAdd.Append("dm:hasClassifier <" + clsif.reference + "> ; ");
 
-                sparqlAdd.Append("dm:hasClassified  " + newClsId + "  . ");
+                sparqlAdd.Append("dm:hasClassified  " + clsId + "  . ");
               }
 
               // append status
               sparqlAdd.Append("_:status rdf:type tpl:R20247551573 ; " +
-                               "tpl:R64574858717 " + newClsId + " ; " +
+                               "tpl:R64574858717 " + clsId + " ; " +
                                "tpl:R56599656536 rdl:R6569332477 ; " +
                                "tpl:R61794465713 rdl:R3732211754 . ");
 
               sparqlAdd.Append("}");
-
-              string sparql = Regex.Replace(sparqlAdd.ToString(), @"\s", " ");
-              Response postResponse = PostToRepository(repository, sparql);
-              response.Append(postResponse);
             }
+
+            StringBuilder sparqlBuilder = new StringBuilder(SPARQL_PREFIXES);
+            sparqlBuilder.Append(sparqlDelete);
+            sparqlBuilder.Append(sparqlAdd);
+
+            string sparql = sparqlBuilder.ToString();
+            Response postResponse = PostToRepository(repository, sparql);
+            response.Append(postResponse);
           }
         }
       }
       catch (Exception ex)
       {
         string errMsg = "Error in PostClass: " + ex;
-        
         Status status = new Status();
-        status.Level = StatusLevel.Error;
+        
+        response.Level = StatusLevel.Error;
         status.Messages.Add(errMsg);
         response.Append(status);
 
