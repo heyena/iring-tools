@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -143,6 +144,20 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
             }
         }
 
+        void showResponse(string title, Response response)
+        {
+          StringBuilder message = new StringBuilder();
+          
+          foreach (Status status in response.StatusList)
+          {
+            foreach (string msg in status.Messages)
+            {
+              message.AppendLine(msg);
+            }
+          }
+
+          MessageBox.Show(message.ToString(), title, MessageBoxButton.OK);
+        }
 
         void OnDataArrivedHandler(object sender, System.EventArgs e)
         {
@@ -196,7 +211,7 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
                         MessageBox.Show(args.FriendlyErrorMessage, "Post Class Error", MessageBoxButton.OK);
                         return;
                     }
-                    MessageBox.Show("Class posted successfully", "Post Class", MessageBoxButton.OK);
+                    showResponse("Post Class Response", (Response)args.Data);
 
                     if (_clickedButton == "btnOK1")
                     {
