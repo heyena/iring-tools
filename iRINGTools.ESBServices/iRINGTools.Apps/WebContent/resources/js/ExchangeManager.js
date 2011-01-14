@@ -2,6 +2,7 @@
 exchnageData_rows.json
 appData_rows_json.json
  */
+var app = new Ext.App();
 var directoryPanel;
 var newTab;
 
@@ -235,10 +236,10 @@ Ext.onReady(function() {
           }
           else {
 
-        	
+        	var tabId = 'tab_' + label;
            newTab = new ExchangeManager.NavigationPanel( {
               title : label,
-              id : 'tab_' + label,
+              id : tabId,
               configData : responseData,
               url : pageURL,
               closable : true,
@@ -247,7 +248,10 @@ Ext.onReady(function() {
               idName : uid,
               appName : appName,
               graphName : nodeText,
-              nodeType : nodeType
+              nodeType : nodeType,
+              firstTabId : tabId,
+              classId : "...",
+              dtoIdentifier : "..."
               
             });
 
@@ -291,7 +295,8 @@ Ext.onReady(function() {
           }
         },
         failure : function(result, request) {
-          alert('error: ' + result.responseText);
+        	contentPanel.getEl().unmask();
+        	app.setAlert('false', 'Exchange Data Rows', result.responseText);
         }
       });
     }
