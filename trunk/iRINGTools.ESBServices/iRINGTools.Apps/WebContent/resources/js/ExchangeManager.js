@@ -2,6 +2,8 @@
 exchnageData_rows.json
 appData_rows_json.json
  */
+var directoryPanel;
+var newTab;
 
 Ext.onReady(function() {
   Ext.BLANK_IMAGE_URL = 'resources/images/s.gif';
@@ -9,7 +11,7 @@ Ext.onReady(function() {
 
   Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 
-  var directoryPanel = new ExchangeManager.DirectoryPanel( {
+  directoryPanel = new ExchangeManager.DirectoryPanel( {
     id : 'navigation-panel',
     region : 'west',
     collapsible : false,
@@ -33,7 +35,8 @@ Ext.onReady(function() {
 
   directoryPanel.on('exchange', function(panel, node, exchangeURI, tablabel) {
     // alert("exchangeURI /" + exchangeURI)
-    Ext.Ajax.request( {
+    
+	  Ext.Ajax.request( {
       url : exchangeURI,
       method : 'GET',
       params : {},
@@ -72,12 +75,12 @@ Ext.onReady(function() {
             store : store,
             columns : [ {
               header : 'Identifier',
-              width : 100,
+              width : 80,
               dataIndex : 'Identifier',
               sortable : true
             }, {
               header : 'Message',
-              width : 150,
+              width : 300,
               dataIndex : 'Message',
               sortable : true
             } ],
@@ -102,6 +105,9 @@ Ext.onReady(function() {
           var strPositon = (Ext.getCmp('content-panel').getPosition()).toString();
           var arrPositon = strPositon.split(",");
 
+          //alert('arrPositon[0] = ' + arrPositon[0]);
+         // alert('arrPositon[1] = ' + arrPositon[1]);
+          
           var myResultWin = new Ext.Window( {
             title : 'Exchange Result ( ' + label + ' )',
             id : 'label_' + label,
@@ -121,7 +127,11 @@ Ext.onReady(function() {
               },
               close : {
                 fn : function() {
-                  Ext.getBody().unmask();
+                  Ext.getBody().unmask(); 
+                  
+                  if (newTab != undefined){
+                	  Ext.getCmp('content-panel').getItem(newTab.id).destroy();
+                  }
                   directoryPanel.openTab(directoryPanel.getSelectedNode(), 'true');
                 }
               }
@@ -237,7 +247,7 @@ Ext.onReady(function() {
           else {
 
         	
-            var newTab = new ExchangeManager.NavigationPanel( {
+           newTab = new ExchangeManager.NavigationPanel( {
               title : label,
               id : 'tab_' + label,
               configData : responseData,
