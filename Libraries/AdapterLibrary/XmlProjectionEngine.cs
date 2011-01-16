@@ -19,13 +19,15 @@ namespace org.iringtools.adapter.projection
   {    
     private static readonly ILog _logger = LogManager.GetLogger(typeof(XmlProjectionEngine));
     private Dictionary<string, List<string>> _classIdentifiersCache = null;
+    private DataDictionary _dictionary = null;
     private XNamespace _appNamespace = null;
     
     [Inject]
-    public XmlProjectionEngine(AdapterSettings settings, IDataLayer dataLayer, Mapping mapping)
+    public XmlProjectionEngine(AdapterSettings settings, IDataLayer dataLayer, Mapping mapping, DataDictionary dictionary)
     {
       _settings = settings;
       _dataLayer = dataLayer;
+      _dictionary = dictionary;
       _mapping = mapping;
     }
     
@@ -50,7 +52,7 @@ namespace org.iringtools.adapter.projection
                    new XAttribute(XNamespace.Xmlns + "tpl", TPL_NS));
 
         if (_graphMap != null && _graphMap.classTemplateListMaps.Count > 0 &&
-          _dataObjects != null && _dataObjects.Count > 0)
+          _dataObjects != null && _dataObjects.Count == 1)
         {
           _classIdentifiersCache = new Dictionary<string, List<string>>();
           SetClassIdentifiers(DataDirection.Outbound);
@@ -59,6 +61,19 @@ namespace org.iringtools.adapter.projection
           for (int i = 0; i < _dataObjects.Count; i++)
           {
             CreateHierarchicalXml(xElement, pair, i);
+          }
+        }
+        if (_dataObjects != null && _dataObjects.Count > 1)
+        {
+          xElement = new XElement(_appNamespace + Utility.TitleCase(graphName));
+
+          var pair = _graphMap.classTemplateListMaps.First(); 
+
+          for (int i = 0; i < _dataObjects.Count; i++)
+          {
+            XElement rowElement = new XElement(_appNamespace + Utility.TitleCase(pair.Key.name));
+            CreateIndexXml(rowElement, pair, i);
+            xElement.Add(rowElement);
           }
         }
       }
@@ -76,6 +91,42 @@ namespace org.iringtools.adapter.projection
     }
 
     #region helper methods
+    private void CreateIndexXml(XElement parentElement, KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap, int dataObjectIndex)
+    {
+      string uri = _appNamespace.ToString() + "/";
+
+      foreach (string keyPropertyName in classTemplateListMap.Key.identifiers)
+      {
+        RoleMap roleMap = null;
+        foreach(TemplateMap templateMap in classTemplateListMap.Value)
+        {
+          roleMap = templateMap.roleMaps.Find(rm => rm.propertyName == keyPropertyName);
+          if (roleMap != null) break;
+        }
+
+        if (roleMap != null)
+        {
+          string[] propertyNameParts = roleMap.propertyName.Split('.');
+          string propertyName = String.Empty;
+
+          if (propertyNameParts.Count() > 1)
+          {
+            propertyName = propertyNameParts[1];
+          }
+          else
+          {
+            propertyName = propertyNameParts[0];
+          }
+
+          var value = _dataObjects[dataObjectIndex].GetPropertyValue(propertyName);
+          if (value != null)
+            uri += classTemplateListMap.Key.identifierDelimiter + value;
+        }        
+      }
+
+      parentElement.Value = uri;
+    }
+
     private void CreateHierarchicalXml(XElement parentElement, KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap, int dataObjectIndex)
     {
       ClassMap classMap = classTemplateListMap.Key;
@@ -241,6 +292,19 @@ namespace org.iringtools.adapter.projection
           }
         }
       }
+    }
+
+    public DataObject FindGraphDataObject(string dataObjectName)
+    {
+      foreach (DataObject dataObject in _dictionary.dataObjects)
+      {
+        if (dataObject.objectName.ToLower() == dataObjectName.ToLower())
+        {
+          return dataObject;
+        }
+      }
+
+      throw new Exception("DataObject [" + dataObjectName + "] does not exist.");
     }
     #endregion
   }

@@ -34,6 +34,7 @@ using log4net;
 using org.iringtools.library;
 using org.iringtools.utility;
 using org.iringtools.adapter;
+using System.Collections.Specialized;
 
 namespace org.iringtools.services
 {
@@ -105,7 +106,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}")]
     public XElement GetList(string projectName, string applicationName, string graphName, string format)
     {
-      XDocument xDocument = _adapterProvider.GetDataProjection(projectName, applicationName, graphName, format);
+      NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+
+      XDocument xDocument = _adapterProvider.GetDataProjection(projectName, applicationName, graphName, format, parameters);
 
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";

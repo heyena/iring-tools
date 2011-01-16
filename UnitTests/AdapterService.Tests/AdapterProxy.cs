@@ -11,6 +11,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using org.iringtools.exchange;
+using System.Collections.Specialized;
 
 namespace AdapterService.Tests
 {
@@ -36,10 +37,12 @@ namespace AdapterService.Tests
 
     public XDocument GetXml(string projectName, string applicationName, string graphName, string format)
     {
+      NameValueCollection parameters = null;
+
       XDocument xDocument = null;
       try
       {
-        xDocument = _adapterProvider.GetProjection(projectName, applicationName, graphName, format);
+        xDocument = _adapterProvider.GetProjection(projectName, applicationName, graphName, format, parameters);
       }
       catch (Exception ex)
       {

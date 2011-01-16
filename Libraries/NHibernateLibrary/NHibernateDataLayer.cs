@@ -21,6 +21,7 @@ namespace org.iringtools.adapter.datalayer
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(NHibernateDataLayer));
     private string _dataDictionaryPath = String.Empty;
+    private DataDictionary _dataDictionary;
     private AdapterSettings _settings = null;
     private ISessionFactory _sessionFactory;
 
@@ -42,8 +43,8 @@ namespace org.iringtools.adapter.datalayer
       _dataDictionaryPath = string.Format("{0}DataDictionary.{1}.xml",
         _settings["XmlPath"],
         _settings["Scope"]
-      );      
-      
+      );
+
       _sessionFactory = new Configuration()
         .Configure(hibernateConfigPath)
         .AddFile(hibernateMappingPath)
@@ -52,14 +53,14 @@ namespace org.iringtools.adapter.datalayer
 
     private ISession OpenSession()
     {
-        try
-        {
-          return _sessionFactory.OpenSession();
-        }
-        catch (Exception ex)
-        {
-          _logger.Error(string.Format("Error in OpenSession: project[{0}] application[{1}] {2}", _settings["ProjectName"], _settings["ApplicationName"], ex));
-          throw new Exception("Error while openning nhibernate session " + ex);
+      try
+      {
+        return _sessionFactory.OpenSession();
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in OpenSession: project[{0}] application[{1}] {2}", _settings["ProjectName"], _settings["ApplicationName"], ex));
+        throw new Exception("Error while openning nhibernate session " + ex);
       }
     }
 
@@ -143,7 +144,7 @@ namespace org.iringtools.adapter.datalayer
 
         if (identifiers != null && identifiers.Count > 0)
         {
-          queryString.Append(" where Id in ('" + String.Join("','", identifiers.ToArray())+ "')");
+          queryString.Append(" where Id in ('" + String.Join("','", identifiers.ToArray()) + "')");
         }
 
         using (ISession session = OpenSession())
@@ -159,16 +160,62 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int pageNumber)
+    public IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex)
     {
       try
       {
+        bool filterByIdentity = false;
+        bool.TryParse(_settings["FilterByIdentity"], out filterByIdentity);
+
+        if (filterByIdentity)
+        {
+          #region FilterByIdentity
+          DataObject dataObject = _dataDictionary.dataObjects.Find(d => d.objectName == objectType);
+          DataProperty dataProperty = dataObject.dataProperties.Find(p => p.isIdentity == true);
+
+          if (dataProperty != null)
+          {
+            if (filter == null)
+            {
+              filter = new DataFilter();
+            }
+
+            if (filter.Expressions == null)
+            {
+              filter.Expressions = new List<Expression>();
+            }
+            else if (filter.Expressions.Count > 0)
+            {
+              Expression firstExpression = filter.Expressions.First();
+              Expression lastExpression = filter.Expressions.Last();
+              firstExpression.OpenGroupCount++;
+              lastExpression.CloseGroupCount++;
+              lastExpression.LogicalOperator = LogicalOperator.And;
+            }
+
+            string[] userNameParts = _settings["UserName"].Split('\\');
+
+            Expression expression = new Expression
+            {
+              PropertyName = dataProperty.propertyName,
+              RelationalOperator = RelationalOperator.EqualTo,
+              Values = new List<string>
+              {
+                userNameParts[1].ToUpper()
+              }
+            };
+
+            filter.Expressions.Add(expression);
+          }
+          #endregion
+        }
+
         StringBuilder queryString = new StringBuilder();
         queryString.Append("from " + objectType);
 
-        if (filter != null && filter.Expressions.Count > 0)
+        if (filter != null && filter.Expressions != null && filter.Expressions.Count > 0)
         {
-          string whereClause = filter.ToSqlWhereClause(objectType, null);
+          string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectType, null);
           queryString.Append(whereClause);
         }
 
@@ -177,20 +224,19 @@ namespace org.iringtools.adapter.datalayer
           IQuery query = session.CreateQuery(queryString.ToString());
           IList<IDataObject> dataObjects = query.List<IDataObject>();
 
-          if (pageSize > 0 && pageNumber > 0)
+          if (startIndex + pageSize <= dataObjects.Count)
           {
-            if (dataObjects.Count > (pageSize * (pageNumber - 1) + pageSize))
-            {
-              dataObjects = dataObjects.ToList().GetRange(pageSize * (pageNumber - 1), pageSize);
-            }
-            else if (pageSize * (pageNumber - 1) > dataObjects.Count)
-            {
-              dataObjects = dataObjects.ToList().GetRange(pageSize * (pageNumber - 1), dataObjects.Count);
-            }
-            else
-            {
-              return null;
-            }
+            dataObjects = dataObjects.ToList().GetRange(startIndex, pageSize);
+          }
+          else if (startIndex <= dataObjects.Count)
+          {
+            int rowsRemaining = dataObjects.Count - startIndex;
+
+            dataObjects = dataObjects.ToList().GetRange(startIndex, rowsRemaining);
+          }
+          else
+          {
+            dataObjects = new List<IDataObject>();
           }
 
           return dataObjects;
@@ -206,7 +252,7 @@ namespace org.iringtools.adapter.datalayer
     public Response Post(IList<IDataObject> dataObjects)
     {
       Response response = new Response();
-      
+
       try
       {
         if (dataObjects != null && dataObjects.Count > 0)
@@ -220,7 +266,7 @@ namespace org.iringtools.adapter.datalayer
               Status status = new Status();
               status.Messages = new Messages();
               status.Identifier = identifier;
-              
+
               try
               {
                 session.SaveOrUpdate(dataObject);
@@ -247,7 +293,7 @@ namespace org.iringtools.adapter.datalayer
 
         object sample = dataObjects.FirstOrDefault();
         string objectType = (sample != null) ? sample.GetType().Name : String.Empty;
-        throw new Exception(string.Format("Error while posting data objects of type [{0}]. {1}", objectType,  ex));
+        throw new Exception(string.Format("Error while posting data objects of type [{0}]. {1}", objectType, ex));
       }
     }
 
@@ -322,7 +368,8 @@ namespace org.iringtools.adapter.datalayer
 
     public DataDictionary GetDictionary()
     {
-      return Utility.Read<DataDictionary>(_dataDictionaryPath);
+      _dataDictionary = Utility.Read<DataDictionary>(_dataDictionaryPath);
+      return _dataDictionary;
     }
 
     public IList<IDataObject> GetRelatedObjects(IDataObject sourceDataObject, string relatedObjectType)
