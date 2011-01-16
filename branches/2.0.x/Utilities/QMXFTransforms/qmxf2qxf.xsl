@@ -169,7 +169,7 @@
 				</qxl:list>
 			</qxf:property>
 		</qxf:relationship>
-		<xsl:call-template name="common"/>
+	<xsl:call-template name="common"/>
 		<xsl:variable name="count" select="count(qmxf:role-definition)"/>
 		<xsl:for-each select="qmxf:role-definition">
 			<xsl:variable name="index" select="position()"/>

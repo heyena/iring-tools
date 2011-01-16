@@ -50,7 +50,7 @@ namespace org.iringtools.library
 
     IList<IDataObject> Get(string objectType, IList<string> identifiers);
 
-    IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int pageNumber);
+    IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex);
 
     Response Post(IList<IDataObject> dataObjects);
 

@@ -42,6 +42,7 @@ using System.IO;
 using System.Text;
 using System;
 using org.iringtools.utility;
+using System.Collections.Specialized;
 
 namespace org.iringtools.services
 {
@@ -131,10 +132,12 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}")]
     public XElement GetList(string projectName, string applicationName, string graphName, string format)
     {
+      NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
 
-      XDocument xDocument = _adapterProvider.GetProjection(projectName, applicationName, graphName, format);
+      XDocument xDocument = _adapterProvider.GetProjection(projectName, applicationName, graphName, format, parameters);
 
       return xDocument.Root;
     }

@@ -502,7 +502,8 @@ namespace org.iringtools.adapter
       }
     }
 
-    public XDocument GetDataProjection(string projectName, string applicationName, string graphName, string format)
+    public XDocument GetDataProjection(string projectName, string applicationName, string graphName, string format, 
+      NameValueCollection parameters)
     {
       try
       {
@@ -518,7 +519,45 @@ namespace org.iringtools.adapter
           _projectionEngine = _kernel.Get<IProjectionLayer>("data");
         }
 
-        _dataObjects = _dataLayer.Get(graphName, null);
+        if (parameters != null)
+        {
+          int start = 0;
+          int limit = 100;
+
+          DataFilter filter = new DataFilter();
+          List<Expression> expressions = new List<Expression>();
+          foreach (string key in parameters.AllKeys)
+          {
+            if (key != "format" && key != "start" && key != "limit")
+            {
+              string value = parameters[key];
+
+              Expression expression = new Expression
+              {
+                PropertyName = key,
+                RelationalOperator = library.RelationalOperator.EqualTo,
+                Values = new List<string> { value },
+              };
+
+              expressions.Add(expression);
+            }
+          }
+          filter.Expressions = expressions;
+
+          string startValue = parameters["start"];
+          if (!String.IsNullOrEmpty(startValue))
+            int.TryParse(startValue, out start);
+
+          string limitValue = parameters["limit"];
+          if (!String.IsNullOrEmpty(limitValue))
+            int.TryParse(limitValue, out limit);
+
+          _dataObjects = _dataLayer.Get(graphName, filter, limit, start);
+        }
+        else
+        {
+          _dataObjects = _dataLayer.Get(graphName, null);
+        }
         return _projectionEngine.ToXml(graphName, ref _dataObjects);
       }
       catch (Exception ex)
@@ -557,7 +596,7 @@ namespace org.iringtools.adapter
       }
     }
 
-    public XDocument GetProjection(string projectName, string applicationName, string graphName, string format)
+    public XDocument GetProjection(string projectName, string applicationName, string graphName, string format, NameValueCollection parameters)
     {
       try
       {
@@ -573,7 +612,41 @@ namespace org.iringtools.adapter
           _projectionEngine = _kernel.Get<IProjectionLayer>(_settings["DefaultProjectionFormat"]);
         }
 
-        LoadDataObjectSet(graphName, null);
+        DataFilter filter = new DataFilter();
+        int start = 0;
+        int limit = 100;
+
+        if (parameters != null)
+        {
+          List<Expression> expressions = new List<Expression>();
+          foreach (string key in parameters.AllKeys)
+          {
+            if (key != "format" && key != "start" && key != "limit" )
+            {
+              string value = parameters[key];
+
+              Expression expression = new Expression
+              {
+                PropertyName = key,
+                RelationalOperator = library.RelationalOperator.EqualTo,
+                Values = new List<string> { value },
+              };
+              
+              expressions.Add(expression);
+            }
+          }
+          filter.Expressions = expressions;
+
+          string startValue = parameters["start"];
+          if (!String.IsNullOrEmpty(startValue))
+            int.TryParse(startValue, out start);
+
+          string limitValue = parameters["limit"];
+          if (!String.IsNullOrEmpty(limitValue))
+            int.TryParse(limitValue, out limit);
+        }
+
+        LoadDataObjectSet(graphName, filter, start, limit);
         return _projectionEngine.ToXml(graphName, ref _dataObjects);
       }
       catch (Exception ex)
@@ -882,6 +955,18 @@ namespace org.iringtools.adapter
 
       if (identifiers != null)
         _dataObjects =_dataLayer.Get(_graphMap.dataObjectMap, identifiers);
+      else
+        _dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, null);
+    }
+
+    private void LoadDataObjectSet(string graphName, DataFilter dataFilter, int start, int limit)
+    {
+      _graphMap = _mapping.FindGraphMap(graphName);
+
+      _dataObjects.Clear();
+
+      if (dataFilter != null)
+        _dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, dataFilter, limit, start);
       else
         _dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, null);
     }

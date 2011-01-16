@@ -116,17 +116,17 @@ namespace org.iringtools.adapter.projection
       parentElement.Value = uri;
     }
 
-    public DataObject FindGraphDataObject(string graphName)
+    public DataObject FindGraphDataObject(string dataObjectName)
     {
       foreach (DataObject dataObject in _dictionary.dataObjects)
       {
-        if (dataObject.objectName.ToLower() == graphName.ToLower())
+        if (dataObject.objectName.ToLower() == dataObjectName.ToLower())
         {
           return dataObject;
         }
       }
 
-      throw new Exception("Graph [" + graphName + "] does not exist.");
+      throw new Exception("DataObject [" + dataObjectName + "] does not exist.");
     }
     #endregion
   }
