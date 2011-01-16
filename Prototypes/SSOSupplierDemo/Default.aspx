@@ -31,18 +31,6 @@
 		
 	<div id="header-photo"></div>		
 		
-	<!-- navigation starts-->	
-	<div  id="nav">
-		<ul>
-			<li id="current"><a href="Default.aspx">Home</a></li>
-			<li><a href="Page2.aspx">Archives</a></li>
-			<li><a href="Page2.aspx">Downloads</a></li>
-			<li><a href="Page2.aspx">Services</a></li>
-			<li><a href="Page2.aspx">Support</a></li>
-			<li><a href="Page2.aspx">About</a></li>		
-		</ul>
-	<!-- navigation ends-->	
-	</div>					
 			
 	<!-- content-wrap starts -->
 	<div id="content-wrap">
@@ -52,7 +40,9 @@
     <h3><asp:Label ID="lblInfo" runat="server" Text=""></asp:Label></h3>
     <asp:ListBox ID="lbInfo"
             runat="server" Width="400px"></asp:ListBox>
-    
+            
+            <div id="oauthwrapper" style="width: 200px">
+    OAuth Header:<div id="oauthheader"><asp:Literal ID="litOAuthHeader" runat="server"></asp:Literal></div></div>
         </form>
         
         This is the home page.
