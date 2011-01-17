@@ -46,10 +46,10 @@ namespace org.iringtools.client.Controllers
         format = Request.QueryString["format"].ToUpper();
 
       if (Request.QueryString["remote"] != null)
-        adapterServiceURI = Request.QueryString["remote"]+"/adapterservice";
+        adapterServiceURI = Request.QueryString["remote"]+"/adapter";
 
       WebHttpClient client = new WebHttpClient(adapterServiceURI);
-      List<ScopeProject> scopes = client.Get<List<ScopeProject>>("/scopes");
+      ScopeProjects scopes = client.Get<ScopeProjects>("/scopes");
       
       switch (format)
       {
@@ -112,7 +112,7 @@ namespace org.iringtools.client.Controllers
         scope = Request.QueryString["scope"];
 
       if (Request.QueryString["remote"] != null)
-        adapterServiceURI = Request.QueryString["remote"]+"/adapterservice";
+        adapterServiceURI = Request.QueryString["remote"]+"/adapter";
 
       WebHttpClient client = new WebHttpClient(adapterServiceURI);
       List<ScopeProject> scopes = client.Get<List<ScopeProject>>("/scopes");
@@ -153,7 +153,7 @@ namespace org.iringtools.client.Controllers
       string adapterServiceURI = _adapterServiceURI;
 
       if (Request.QueryString["remote"] != null)
-        adapterServiceURI = Request.QueryString["remote"]+"/adapterservice";
+        adapterServiceURI = Request.QueryString["remote"]+"/adapter";
 
       string scope = Request.QueryString["scope"];
       string application = Request.QueryString["application"];
@@ -185,7 +185,7 @@ namespace org.iringtools.client.Controllers
       string adapterServiceURI = _adapterServiceURI;
 
       if (Request.QueryString["remote"] != null)
-        adapterServiceURI = Request.QueryString["remote"] + "/adapterservice";
+        adapterServiceURI = Request.QueryString["remote"] + "/adapter";
 
       string scope = Request.QueryString["scope"];
       string application = Request.QueryString["application"];
