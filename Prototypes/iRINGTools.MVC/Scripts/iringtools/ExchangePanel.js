@@ -228,7 +228,7 @@ iIRNGTools.AdapterManager.ExchangePanel = Ext.extend(Ext.FormPanel, {
           var uri = txtServicesURI.getValue();
           if (uri.substr(uri.length, 1) != '/') uri += '/';
 
-          uri += "AdapterService/";
+          uri += "adapter/";
           uri += cmbScope.getValue() + "/";
           uri += cmbApplication.getValue() + "/";
           uri += cmbGraph.getValue();
