@@ -5,19 +5,14 @@ exchangesubgrid_grid.json relatedDataGrid_URI
 relatedDataGrid?scopeName=12345_000&idName=1&id=66015-O&classId=rdl:R3847624234
 exchangesubgrid_rows.json relatedDataRows_URI
 relatedDataRows?scopeName=12345_000&idName=1&id=66015-O&classId=rdl:R3847624234
- */
-
-
-
+*/
 Ext.ns('ExchangeManager');
+
 /**
  * @class ExchangeManager.NavigationPanel
  * @extends Panel
  * @author by Gert Jansen van Rensburg
  */
-
-
-
 ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 	title : 'NavigationPanel',
 	activeItem : 0,
@@ -587,7 +582,6 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 											+ dtoIdentifier
 											+ '&classId='
 											+ classId;
-
 								}
 
 								navPanel.getEl().mask('<span><img src="resources/js/ext-js/resources/images/default/grid/loading.gif"/> Loading.....</span>');
@@ -641,19 +635,13 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
     				
     				var thisGrid = grid;
     				var classObjectName = thisGrid.classObjName;
+    				
   					var classPanel = new Ext.Panel({
   						autoWidth : true,
-  						forceFit : true,
   						layout : 'border',
-  						defaults : {
-  							collapsible : false,
-  							split : true
-  						},
   						items : [{
   							height : 50,
   							region : 'north',
-  							collapsible : false,
-  							split : true,
   							html : '<div style="background-color:#eee; float:left; width:60px"><img src="resources/images/class-badge.png" style="margin:2 4 4 4; height:46px"/></div><div style="background-color:#eee; width:100%; height:100%; padding-top:10px;"><b>'
   									+ removeHTMLTags(IdentificationByTag_value)
   									+ '</b><br/>'
@@ -661,68 +649,61 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
   									+ '</div>'
   						},
   						{
-							title : 'Properties',
-							region : 'west',
-							split : true,
-							margins : '0 1 3 3',
-							width : 300,
-							layout : 'fit',
-							items : [ grid_class_properties ]
-						},
-						{
-							title : 'Related Items',
-							collapsible : false,
-							split : true,
-							region : 'center',
-							margins : '0 3 3 0',
-							layoutConfig : {
-								animate : true,
-								fill : false
-							},
-							items : listView
-						}]
-					});
+  							title : 'Properties',
+  							region : 'west',
+  							split : true,
+  							width : 300,
+  							layout : 'fit',
+  							items : [ grid_class_properties ]
+  						},
+  						{
+  							title : 'Related Items',
+  							split : true,
+  							region : 'center',
+  							layout : 'fit',
+  							items : listView
+  						}]
+  					});
 
-					var newTab = {
-						layout : 'fit',
-						title : removeHTMLTags(IdentificationByTag_value),
-						id : 'right_tab_' + removeHTMLTags(IdentificationByTag_value),
-						items : [ classPanel ],
-						closable : false
-					};
-
-					navPanel.dataGrid.getEl().unmask();
-
-					var topNavPanel = Ext.getCmp('content-panel').getActiveTab();
-					var displayTab = topNavPanel.getItem(newTab.id);
-          
-					if (topNavPanel.nodeType == "exchange")
-						hideToolBarLogButton(topNavPanel);
-					
-					
-					if (displayTab == undefined) {						
-						
-						topNavPanel.add(newTab).show();
-					} 
-					else {
-						displayTab.show();
-					}
-				} 
+  					var newTab = {
+					    id : 'right_tab_' + removeHTMLTags(IdentificationByTag_value),
+              title : removeHTMLTags(IdentificationByTag_value),
+              layout : 'fit',
+  						forceFit : true,
+  						items : [ classPanel ],
+  						closable : false
+  					};
+  
+  					navPanel.dataGrid.getEl().unmask();
+  
+  					var topNavPanel = Ext.getCmp('content-panel').getActiveTab();
+  					var displayTab = topNavPanel.getItem(newTab.id);
+            
+  					if (topNavPanel.nodeType == "exchange")
+  						hideToolBarLogButton(topNavPanel);
+  					  					
+  					if (displayTab == undefined) {						
+  						
+  						topNavPanel.add(newTab).show();
+  					} 
+  					else {
+  						displayTab.show();
+  					}
+  				} 
     			else if (eval(responseData.success) == false) {
-					Ext.MessageBox.show({
-						title : '<font color=red></font>',
-						msg : 'No Exchange Results found for:<br/>'
-								+ label,
-						buttons : Ext.MessageBox.OK,
-						icon : Ext.MessageBox.INFO
-					});
-					return false;
-				}
-			}
-		});
+  					Ext.MessageBox.show({
+  						title : '<font color=red></font>',
+  						msg : 'No Exchange Results found for:<br/>'
+  								+ label,
+  						buttons : Ext.MessageBox.OK,
+  						icon : Ext.MessageBox.INFO
+  					});
+  					return false;
+  				}
+  			}
+  		});
 		}/* Related Items and new classwindow code ends */
 	},
-	
 
 	onOpen : function(btn, ev) {
 		var l = this.getLayout();
@@ -750,9 +731,6 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 	}
 });
 
-var superClass = ExchangeManager.NavigationPanel.superclass;
-
-
 function buildToolbar(np) {
 	var tbar = new Ext.Toolbar({
 		xtype : "toolbar",
@@ -779,7 +757,6 @@ function buildToolbar(np) {
 		}]
 	});
 	np.tbar = tbar;	
-	//
 }
 
 /*
