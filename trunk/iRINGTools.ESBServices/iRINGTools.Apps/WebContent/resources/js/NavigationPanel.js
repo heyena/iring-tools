@@ -61,7 +61,8 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 		
 		
 		var filterSet = eval(this.configData.filterSets);
-		var pageSize = parseInt(this.configData.pageSize);
+		//var pageSize = parseInt(this.configData.pageSize);
+		var pageSize = 25;
 		var sortBy = this.configData.sortBy;
 		
 		
@@ -145,7 +146,10 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 				store : store,
 				displayInfo : true,
 				autoScroll : true,
-				plugins : [ filters ]
+				plugins : [ filters, new Ext.ux.plugin.PagingToolbarResizer({
+          displayText: 'Page Size',
+          options: [25, 50, 100, 200, 500], 
+          prependCombo: true})]
 			})
 		});
 
@@ -933,8 +937,6 @@ function showExchangeResponseWindow(scopeName, idName, np) {
           });
         }
         else if (eval(jsonData.success) == true) {
-        
-
           var store = new Ext.data.JsonStore( {
             data : jsonData.data,
             fields : [ 'Identifier', 'Message' ]
