@@ -56,8 +56,10 @@ Ext.extend(Ext.App, Ext.util.Observable, {
         // create the msgBox container.  used for App.setAlert
         this.msgCt = Ext.DomHelper.insertFirst(document.body, { id: 'msg-div' }, true);
         this.msgCt.setStyle('position', 'absolute');
+ 
         this.msgCt.setStyle('z-index', 9999);
-        this.msgCt.setWidth(300);
+       
+        this.msgCt.setWidth(860);
     },
 
     initStateProvider: function () {
@@ -122,8 +124,8 @@ Ext.extend(Ext.App, Ext.util.Observable, {
     * @param {String} msg
     * @param {Bool} status
     */
-    setAlert: function (status, msg) {
-        this.addMessage(status, msg);
+    setAlert: function (state, title, msg) {
+        this.addMessage(state, title, msg);
     },
 
     /***
@@ -131,11 +133,9 @@ Ext.extend(Ext.App, Ext.util.Observable, {
     * @param {String} msg
     * @param {Bool} status
     */
-    addMessage: function (status, msg) {
-    	if (msg.length > 1024)
-    		msg = msg.substring(0, 1024);
+    addMessage: function (state, title, msg) {
         var delay = 3;    // <-- default delay of msg box is 1 second.
-        if (status == false) {
+        if (state == false) {
             delay = 5;    // <-- when status is error, msg box delay is 3 seconds.
         }
         // add some smarts to msg's duration (div by 13.3 between 3 & 9 seconds)
@@ -144,34 +144,54 @@ Ext.extend(Ext.App, Ext.util.Observable, {
             delay = 3;
         }
         else if (delay > 9) {
-            delay = 9;
+            delay = 59;
         }
 
         this.msgCt.alignTo(document, 't-t');
-        Ext.DomHelper.append(this.msgCt, { html: this.buildMessageBox(status, String.format.apply(String, Array.prototype.slice.call(arguments, 1))) }, true).slideIn('t').pause(delay).ghost("t", { remove: true });
+        Ext.DomHelper.append(this.msgCt, { html: this.buildMessageBox(state, title, String.format.apply(String, Array.prototype.slice.call(arguments, 2))) }, true).slideIn('t').pause(delay).ghost("t", { remove: true });
     },
 
     /***
     * buildMessageBox
     */
-    buildMessageBox: function (title, msg) {
-        switch (title) {
+    buildMessageBox: function (state, title, msg) {
+    	var status;
+    	
+    	if (msg.length > 2000) {
+    		msg = msg.substring(0, 2000);
+    		msg = msg.substring(0, msg.lastIndexOf(')')+1);
+    	}
+    	
+        switch (state) {
             case true:
-                title = this.STATUS_OK;
+                status = this.STATUS_OK;
                 break;
             case false:
-                title = this.STATUS_ERROR;
+            	status = this.STATUS_ERROR;
                 break;
         }
         return [
             '<div class="app-msg">',
             '<div class="x-box-tl"><div class="x-box-tr"><div class="x-box-tc"></div></div></div>',
-            '<div class="x-box-ml"><div class="x-box-mr"><div class="x-box-mc"><h3 class="x-icon-text icon-status-' + title + '">', title, '</h3>', msg, '</div></div></div>',
+            '<div class="x-box-ml">'
+            	+ '<div class="x-box-mr">'
+            		+ '<div class="x-box-mc">'
+            			+ '<h3 class="x-icon-text icon-status-' + status + '">', title, '</h3>', msg,
+            			'<div style=""><button id="closeButton" type="button" onclick="javascript:Ext.App.closeDomHelper()">Close</button></div>',
+            		+ '</div>'
+            	+ '</div>'
+            + '</div>',
+            
             '<div class="x-box-bl"><div class="x-box-br"><div class="x-box-bc"></div></div></div>',
             '</div>'
         ].join('');
     },
 
+    closeDomHelper : function () {
+    	alert("here");
+    	Ext.DomHelper.append(this.msgCt, true).slideIn('t').ghost("t", { remove: true });
+    },
+    
     /**
     * decodeStatusIcon
     * @param {Object} status
