@@ -14,6 +14,7 @@ using Ninject;
 using log4net;
 using System.Reflection;
 using System.Collections.Specialized;
+using System.Collections;
 
 namespace org.iringtools.adapter.datalayer
 {
@@ -22,13 +23,17 @@ namespace org.iringtools.adapter.datalayer
     private static readonly ILog _logger = LogManager.GetLogger(typeof(NHibernateDataLayer));
     private string _dataDictionaryPath = String.Empty;
     private DataDictionary _dataDictionary;
+    private DatabaseDictionary _databaseDictionary;
     private AdapterSettings _settings = null;
+    private IDictionary _keyRing = null;
     private ISessionFactory _sessionFactory;
 
     [Inject]
-    public NHibernateDataLayer(AdapterSettings settings)
+    public NHibernateDataLayer(AdapterSettings settings, IDictionary keyRing)
     {
       _settings = settings;
+
+      _keyRing = keyRing;
 
       string hibernateConfigPath = string.Format("{0}nh-configuration.{1}.xml",
         _settings["XmlPath"],
@@ -44,6 +49,13 @@ namespace org.iringtools.adapter.datalayer
         _settings["XmlPath"],
         _settings["Scope"]
       );
+
+      string databaseDictionaryPath = string.Format("{0}DatabaseDictionary.{1}.xml",
+        _settings["XmlPath"],
+        _settings["Scope"]
+      );
+
+      _databaseDictionary = Utility.Read<DatabaseDictionary>(databaseDictionaryPath);
 
       _sessionFactory = new Configuration()
         .Configure(hibernateConfigPath)
@@ -164,50 +176,52 @@ namespace org.iringtools.adapter.datalayer
     {
       try
       {
-        bool filterByIdentity = false;
-        bool.TryParse(_settings["FilterByIdentity"], out filterByIdentity);
-
-        if (filterByIdentity)
+        if (_databaseDictionary.IdentityConfiguration != null)
         {
-          #region FilterByIdentity
-          DataObject dataObject = _dataDictionary.dataObjects.Find(d => d.objectName == objectType);
-          DataProperty dataProperty = dataObject.dataProperties.Find(p => p.isIdentity == true);
+          IdentityProperties identityProperties = _databaseDictionary.IdentityConfiguration[objectType];
 
-          if (dataProperty != null)
+          if (identityProperties.UseIdentityFilter)
           {
-            if (filter == null)
-            {
-              filter = new DataFilter();
-            }
+            #region FilterByIdentity
+            DataObject dataObject = _databaseDictionary.dataObjects.Find(d => d.objectName == objectType);
+            DataProperty dataProperty = dataObject.dataProperties.Find(p => p.columnName == identityProperties.IdentityProperty);
 
-            if (filter.Expressions == null)
+            if (dataProperty != null)
             {
-              filter.Expressions = new List<Expression>();
-            }
-            else if (filter.Expressions.Count > 0)
-            {
-              Expression firstExpression = filter.Expressions.First();
-              Expression lastExpression = filter.Expressions.Last();
-              firstExpression.OpenGroupCount++;
-              lastExpression.CloseGroupCount++;
-              lastExpression.LogicalOperator = LogicalOperator.And;
-            }
-
-            string[] userNameParts = _settings["UserName"].Split('\\');
-
-            Expression expression = new Expression
-            {
-              PropertyName = dataProperty.propertyName,
-              RelationalOperator = RelationalOperator.EqualTo,
-              Values = new List<string>
+              if (filter == null)
               {
-                userNameParts[1].ToUpper()
+                filter = new DataFilter();
               }
-            };
 
-            filter.Expressions.Add(expression);
+              if (filter.Expressions == null)
+              {
+                filter.Expressions = new List<Expression>();
+              }
+              else if (filter.Expressions.Count > 0)
+              {
+                Expression firstExpression = filter.Expressions.First();
+                Expression lastExpression = filter.Expressions.Last();
+                firstExpression.OpenGroupCount++;
+                lastExpression.CloseGroupCount++;
+                lastExpression.LogicalOperator = LogicalOperator.And;
+              }
+
+              string identityValue = _keyRing[identityProperties.KeyRingProperty].ToString();
+
+              Expression expression = new Expression
+              {
+                PropertyName = dataProperty.propertyName,
+                RelationalOperator = RelationalOperator.EqualTo,
+                Values = new List<string>
+              {
+                identityValue,
+              }
+              };
+
+              filter.Expressions.Add(expression);
+            }
+            #endregion
           }
-          #endregion
         }
 
         StringBuilder queryString = new StringBuilder();

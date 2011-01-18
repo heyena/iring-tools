@@ -45,6 +45,7 @@ using VDS.RDF.Query;
 using org.iringtools.adapter.projection;
 using System.ServiceModel;
 using System.Security.Principal;
+using org.iringtools.adapter.identity;
 
 namespace org.iringtools.adapter
 {
@@ -57,6 +58,8 @@ namespace org.iringtools.adapter
     private AdapterSettings _settings = null;
     private List<ScopeProject> _scopes = null;
     private IDataLayer _dataLayer = null;
+    private IIdentityLayer _identityLayer = null;
+    private IDictionary _keyRing = null;
     private ISemanticLayer _semanticEngine = null;
     private IProjectionLayer _projectionEngine = null;
     private DataDictionary _dataDictionary = null;
@@ -84,15 +87,6 @@ namespace org.iringtools.adapter
 
       Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
 
-      if (ServiceSecurityContext.Current != null)
-      {
-          IIdentity identity = ServiceSecurityContext.Current.PrimaryIdentity;
-          _settings["UserName"] = identity.Name;
-      }
-      else
-      {
-          _settings["UserName"] = String.Empty;
-      }
 
       #region initialize webHttpClient for converting old mapping
       string proxyHost = _settings["ProxyHost"];
@@ -129,6 +123,15 @@ namespace org.iringtools.adapter
       _response = new Response();
       _response.StatusList = new List<Status>();
       _kernel.Bind<Response>().ToConstant(_response);
+      string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml",
+            _settings["XmlPath"]
+          );
+      string bindingConfigurationPath = Path.Combine(
+        _settings["BaseDirectoryPath"],
+        relativePath
+      );
+      _kernel.Load(bindingConfigurationPath);
+      InitializeIdentity();
     }
     
     #region application methods
@@ -931,6 +934,29 @@ namespace org.iringtools.adapter
       {
         _logger.Error(string.Format("Error initializing application: {0}", ex));
         throw new Exception(string.Format("Error initializing application: {0})", ex));
+      }
+    }
+    private void InitializeIdentity()
+    {
+      try
+      {
+        _identityLayer = _kernel.Get<IIdentityLayer>("IdentityLayer");
+        _keyRing = _identityLayer.GetKeyRing();
+        _kernel.Bind<IDictionary>().ToConstant(_keyRing).Named("KeyRing");
+
+        if (_keyRing.Count > 0)
+        {  
+          if (_keyRing["Provider"].ToString() == "WindowsAuthenticationProvider")
+          {
+            string userName = _keyRing["Name"].ToString();
+            _settings.Add("UserName", userName);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error initializing identity: {0}", ex));
+        throw new Exception(string.Format("Error initializing identity: {0})", ex));
       }
     }
 

@@ -431,4 +431,5 @@
   </dataObjects>
   <provider>MsSql2008</provider>
   <connectionString>Data Source=.\SQLEXPRESS;Initial Catalog=XYZ;User ID=xyz;Password=xyz;</connectionString>
+  <schemaName>dbo</schemaName>
 </DatabaseDictionary>
