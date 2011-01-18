@@ -873,7 +873,7 @@ function exchangeHistory(scopeName, idName, np) {
 			}
 		},
 		failure : function(result, request) {			
-			app.setAlert('false', 'History List', result.responseText);
+			app.setAlert(false, 'History List', result.responseText);
 		}
 	});
 }

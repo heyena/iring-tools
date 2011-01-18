@@ -296,7 +296,7 @@ Ext.onReady(function() {
         },
         failure : function(result, request) {
         	contentPanel.getEl().unmask();
-        	app.setAlert('false', 'Exchange Data Rows', result.responseText);
+          app.setAlert(false, 'Exchange Data Rows', result.responseText);
         }
       });
     }

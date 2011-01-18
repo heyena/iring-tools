@@ -96,4 +96,10 @@ p {
 	background-color: #fff;
 	//
 }
+
+.dialog-textbox {
+  width: 450px;
+  height: 250px;
+  border: 0 none;
+  overflow: auto
 }

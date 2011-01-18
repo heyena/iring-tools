@@ -35,7 +35,6 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 
     this.directoryPanel = new Ext.tree.TreePanel( {
       region : 'center',
-      frame : true,
       bodyBorder : false,
       border : false,
       useArrows : false,

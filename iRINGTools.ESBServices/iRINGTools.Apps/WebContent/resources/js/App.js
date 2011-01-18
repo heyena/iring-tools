@@ -147,8 +147,13 @@ Ext.extend(Ext.App, Ext.util.Observable, {
             delay = 59;
         }
 
-        this.msgCt.alignTo(document, 't-t');
-        Ext.DomHelper.append(this.msgCt, { html: this.buildMessageBox(state, title, String.format.apply(String, Array.prototype.slice.call(arguments, 2))) }, true).slideIn('t').pause(delay).ghost("t", { remove: true });
+        //this.msgCt.alignTo(document, 't-t');
+        //Ext.DomHelper.append(this.msgCt, { html: this.buildMessageBox(state, title, String.format.apply(String, Array.prototype.slice.call(arguments, 2))) }, true).slideIn('t').pause(delay).ghost("t", { remove: true });
+        Ext.Msg.show({
+          title: title,
+          msg: '<textarea class="dialog-textbox" readonly="yes">' + msg + '</textarea>',
+          buttons: Ext.Msg.OK
+        });
     },
 
     /***
