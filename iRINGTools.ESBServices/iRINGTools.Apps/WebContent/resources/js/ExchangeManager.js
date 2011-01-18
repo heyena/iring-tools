@@ -77,7 +77,7 @@ Ext.onReady(function() {
 
             stripeRows : true,
             id : 'exchangeResultGrid_' + label,
-            loadMask : true,
+            //loadMask : true,
             layout : 'fit',
             frame : true,
             autoSizeColumns : true,
@@ -112,12 +112,12 @@ Ext.onReady(function() {
             listeners : {
               beforerender : {
                 fn : function() {
-                  Ext.getBody().mask();
+                  //Ext.getBody().mask();
                 }
               },
               close : {
                 fn : function() {
-                  Ext.getBody().unmask(); 
+                  //Ext.getBody().unmask(); 
                   
                   if (newTab != undefined){
                 	  Ext.getCmp('content-panel').getItem(newTab.id).destroy();
@@ -232,12 +232,10 @@ Ext.onReady(function() {
             });
 
             return false;
-
           }
           else {
-
-        	var tabId = 'tab_' + label;
-           newTab = new ExchangeManager.NavigationPanel( {
+          	var tabId = 'tab_' + label;
+            newTab = new ExchangeManager.NavigationPanel( {
               title : label,
               id : tabId,
               configData : responseData,

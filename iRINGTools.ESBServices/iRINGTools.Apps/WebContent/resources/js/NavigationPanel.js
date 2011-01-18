@@ -129,7 +129,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 			store : store,
 			columns : headerList,
 			stripeRows : true,
-			loadMask : true,
+			//loadMask : true,
 			plugins : [ filters ],
 			layout : 'fit',
 			frame : true,
@@ -302,8 +302,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 			method : 'GET',
 			success : function(result, request) {
 				var responseTxt = result.responseText;
-				var jsonData = Ext.util.JSON
-						.decode(result.responseText);
+				var jsonData = Ext.util.JSON.decode(result.responseText);
 
 				if (eval(jsonData.success) == false) {
 					Ext.MessageBox
@@ -345,10 +344,10 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 						// view: new
 						// Ext.grid.GroupingView()
 						view : new Ext.grid.GroupingView(
-								{
-									forceFit : true,
-									groupTextTpl : '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})'
-								})
+						{
+							forceFit : true,
+							groupTextTpl : '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})'
+						})
 					});
 
 					// get the centerPanel x,y
@@ -375,41 +374,30 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 						closable : true,
 						x : arrPositon[0],
 						y : parseInt(arrPositon[1]) + 25,
-						width : Ext
-								.getCmp(
-										'content-panel')
-								.getInnerWidth() - 2,
-						height : Ext
-								.getCmp(
-										'content-panel')
-								.getInnerHeight(),
+						width : Ext.getCmp('content-panel').getInnerWidth() - 2,
+						height : Ext.getCmp('content-panel').getInnerHeight(),
 						layout : 'border',
 						listeners : {
 							beforerender : {
 								fn : function() {
-									Ext
-											.getBody()
-											.mask();
+									//Ext.getBody().mask();
 								}
 							},
 							close : {
 								fn : function() {
-									Ext
-											.getBody()
-											.unmask();
+									//Ext.getBody().unmask();
 								}
 							}
 						},
-						items : [
-								{
-									id : 'history-header',
-									region : 'north',
-									split : true,
-									frame : true,
-									height : 80,
-									html : 'Class Detail'
-								},
-								statuslistPanel ]
+						items : [{
+							id : 'history-header',
+							region : 'north',
+							split : true,
+							frame : true,
+							height : 80,
+							html : 'Class Detail'
+						},
+						statuslistPanel ]
 					});
 					hstPopup.show();
 					Ext.get('history-header').dom.innerHTML = '<div style="padding:10 5 0 10">'
@@ -525,8 +513,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
     			if (eval(responseData.success) == true) {
     				var store = new Ext.data.JsonStore({
 							data : responseData.data,
-							fields : [ 'id',
-									'label' ]
+							fields : [ 'id', 'label' ]
 						});
     
     				var listView = new Ext.list.ListView({
@@ -548,7 +535,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
     				listView.on(
 							'click',
 							function (dataView, index, node, e) {
-								var dtoIdentifier = removeHTMLTags(IdentificationByTag_value);
+							  var dtoIdentifier = removeHTMLTags(IdentificationByTag_value);
 								var refClassIdentifier = dataView.store.data.items[index].data.reference;
 								var classId = dataView.store.data.items[index].data.id;
 								var relatedClassName = dataView.store.data.items[index].data.name;
@@ -603,11 +590,14 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 
 								}
 
+								navPanel.getEl().mask('<span><img src="resources/js/ext-js/resources/images/default/grid/loading.gif"/> Loading.....</span>');
+                
 								Ext.Ajax.request({
 									url : relatedDataGrid_URI,
 									method : 'GET',
-									params : {},
+									params : {},									
 									success : function(result, request) {
+									  navPanel.getEl().unmask();
 										var responseData = Ext.util.JSON.decode(result.responseText);
 										var pageURL = relatedDataRows_URI;
 										var tabTitle = removeHTMLTags(dataView.store.data.items[index].data.label);
@@ -640,11 +630,14 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 										else {
 											displayTab.show();
 										}
-									}
+									},
+									failure: function(result, request) {     
+									  navPanel.getEl().unmask();
+							      app.setAlert(false, 'Related Items', result.responseText);
+							    }
 								});
 							}
 						);
-
     				
     				var thisGrid = grid;
     				var classObjectName = thisGrid.classObjName;
@@ -856,7 +849,7 @@ function exchangeHistory(scopeName, idName, np) {
 					id : 'hstGrid' + scopeName + '_' + idName,
 					columns : columnData,
 					stripeRows : true,
-					loadMask : true,
+					//loadMask : true,
 					autoSizeColumns : true,
 					autoSizeGrid : true,
 					AllowScroll : true,
@@ -964,7 +957,7 @@ function showExchangeResponseWindow(scopeName, idName, np) {
 
             stripeRows : true,
             id : 'exchangeResultGrid_' + label,
-            loadMask : true,
+            //loadMask : true,
             layout : 'fit',
             frame : true,
             autoSizeColumns : true,
@@ -981,8 +974,6 @@ function showExchangeResponseWindow(scopeName, idName, np) {
            */
           var strPositon = (Ext.getCmp('content-panel').getPosition()).toString();
           var arrPositon = strPositon.split(",");
-
-        
           
           var myResultWin = new Ext.Window({
             title : 'Exchange Result ( ' + label + ' )',
@@ -998,12 +989,12 @@ function showExchangeResponseWindow(scopeName, idName, np) {
             listeners : {
               beforerender : {
                 fn : function() {
-                  Ext.getBody().mask();
+                  //Ext.getBody().mask();
                 }
               },
               close : {
                 fn : function() {
-                  Ext.getBody().unmask();
+                  //Ext.getBody().unmask();
                   Ext.getCmp('content-panel').getItem(newTab.id).destroy();
                   directoryPanel.openTab(directoryPanel.getSelectedNode(), 'true');
                 }
