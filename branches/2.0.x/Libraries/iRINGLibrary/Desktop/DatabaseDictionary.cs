@@ -28,6 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.ComponentModel;
+using System.Collections;
 
 namespace org.iringtools.library
 {
@@ -42,6 +43,27 @@ namespace org.iringtools.library
 
     [DataMember(IsRequired = true, Order = 2)]
     public string schemaName { get; set; }
+
+    [DataMember(EmitDefaultValue = false, Order = 3)]
+    public IdentityConfiguration IdentityConfiguration { get; set; }
+  }
+
+  [CollectionDataContract(Namespace = "http://ns.iringtools.org/library", ItemName = "ObjectConfiguration",
+    KeyName = "ObjectName", ValueName = "IdentityProperties")]
+  public class IdentityConfiguration : Dictionary<string, IdentityProperties>
+  {}
+
+  [DataContract(Namespace = "http://ns.iringtools.org/library")]
+  public class IdentityProperties
+  {
+    [DataMember(IsRequired = true, Order = 0)]
+    public bool UseIdentityFilter { get; set; }
+
+    [DataMember(IsRequired = true, Order = 1)]
+    public string IdentityProperty { get; set; }
+
+    [DataMember(IsRequired = true, Order = 2)]
+    public string KeyRingProperty { get; set; }
   }
 
   [DataContract(Namespace = "http://ns.iringtools.org/library")]

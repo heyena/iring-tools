@@ -130,11 +130,14 @@
     <Compile Include="AdapterProvider.cs" />
     <Compile Include="DtoProjectionEngine.cs" />
     <Compile Include="ExchangeProvider.cs" />
+    <Compile Include="IIdentityLayer.cs" />
     <Compile Include="IProjectionLayer.cs" />
     <Compile Include="ISemanticLayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\..\AssemblyInfo.cs" />
     <Compile Include="RdfProjectionEngine.cs" />
+    <Compile Include="STSProvider.cs" />
+    <Compile Include="WindowsAuthenticationProvider.cs" />
     <Compile Include="XmlProjectionEngine.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -16,6 +16,8 @@ using StaticDust.Configuration;
 using org.iringtools.adapter;
 using VDS.RDF.Query;
 using System.Net;
+using org.iringtools.adapter.identity;
+using System.Collections;
 
 namespace org.iringtools.exchange
 {
@@ -30,6 +32,8 @@ namespace org.iringtools.exchange
     private IKernel _kernel = null;
     private AdapterSettings _settings = null;
     private List<ScopeProject> _scopes = null;
+    private IIdentityLayer _identityLayer = null;
+    private IDictionary _keyRing = null;
     private IDataLayer _dataLayer = null;
     private IProjectionLayer _projectionEngine = null;
     private Mapping _mapping = null;
@@ -69,6 +73,40 @@ namespace org.iringtools.exchange
       _response = new Response();
       _response.StatusList = new List<Status>();
       _kernel.Bind<Response>().ToConstant(_response);
+
+      string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml",
+            _settings["XmlPath"]
+          );
+      string bindingConfigurationPath = Path.Combine(
+        _settings["BaseDirectoryPath"],
+        relativePath
+      );
+      _kernel.Load(bindingConfigurationPath);
+      InitializeIdentity();
+    }
+
+    private void InitializeIdentity()
+    {
+      try
+      {
+        _identityLayer = _kernel.Get<IIdentityLayer>("IdentityLayer");
+        _keyRing = _identityLayer.GetKeyRing();
+        _kernel.Bind<IDictionary>().ToConstant(_keyRing).Named("KeyRing");
+
+        if (_keyRing.Count > 0)
+        {
+          if (_keyRing["Provider"].ToString() == "WindowsAuthenticationProvider")
+          {
+            string userName = _keyRing["Name"].ToString();
+            _settings.Add("UserName", userName);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error initializing identity: {0}", ex));
+        throw new Exception(string.Format("Error initializing identity: {0})", ex));
+      }
     }
 
     public Response Pull(string projectName, string applicationName, string graphName, Request request)

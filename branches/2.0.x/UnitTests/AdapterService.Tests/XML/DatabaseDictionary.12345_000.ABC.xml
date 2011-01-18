@@ -127,4 +127,5 @@
   </dataObjects>
   <provider>MsSql2008</provider>
   <connectionString>Data Source=.\SQLEXPRESS;Initial Catalog=ABC;User ID=abc;Password=abc;</connectionString>
+  <schemaName>dbo</schemaName>
 </DatabaseDictionary>
