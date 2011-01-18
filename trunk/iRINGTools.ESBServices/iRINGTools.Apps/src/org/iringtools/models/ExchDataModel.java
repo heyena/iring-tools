@@ -129,7 +129,7 @@ public class ExchDataModel {
 		return rows;
 	}
 
-	public int getDti(String id) {
+	public int getDti(String id) {		
 		for (DataTransferIndex dti : dtiList) {
 			if (dti.getIdentifier().equals(id))
 				return dtiList.indexOf(dti);
@@ -140,7 +140,10 @@ public class ExchDataModel {
 	public void SetDtiPage(String id) {
 		int ind;
 		ind = getDti(id);
-		dtiPage = dtiList.subList(ind, ind + 1);
+		if (ind < 0)
+			dtiPage = dtiList;
+		else
+			dtiPage = dtiList.subList(ind, ind + 1);
 	}
 
 	public Rows toRelRows(String id) {
