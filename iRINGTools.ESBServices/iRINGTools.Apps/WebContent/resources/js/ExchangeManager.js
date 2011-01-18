@@ -1,10 +1,5 @@
-/*
-exchnageData_rows.json
-appData_rows_json.json
- */
 var app = new Ext.App();
 var directoryPanel;
-var newTab;
 
 Ext.onReady(function() {
   Ext.BLANK_IMAGE_URL = 'resources/images/s.gif';
@@ -42,14 +37,6 @@ Ext.onReady(function() {
           });
         }
         else if (eval(jsonData.success) == true) {
-          // alert(result.responseText);
-          // open the new result tab
-          // and refresh the actual
-          // tab
-          // var rowData = eval(jsonData.data);
-          // var filedsVal =
-          // eval(jsonData.headersList);
-
           var store = new Ext.data.JsonStore( {
             data : jsonData.data,
             fields : [ 'Identifier', 'Message' ]
@@ -94,11 +81,8 @@ Ext.onReady(function() {
            */
           var strPositon = (Ext.getCmp('content-panel').getPosition()).toString();
           var arrPositon = strPositon.split(",");
-
-          //alert('arrPositon[0] = ' + arrPositon[0]);
-         // alert('arrPositon[1] = ' + arrPositon[1]);
           
-          var myResultWin = new Ext.Window( {
+          var myResultWin = new Ext.Window({
             title : 'Exchange Result ( ' + label + ' )',
             id : 'label_' + label,
             x : arrPositon[0],
@@ -119,9 +103,9 @@ Ext.onReady(function() {
                 fn : function() {
                   //Ext.getBody().unmask(); 
                   
-                  if (newTab != undefined){
+                  /*if (newTab != undefined){
                 	  Ext.getCmp('content-panel').getItem(newTab.id).destroy();
-                  }
+                  }*/
                   directoryPanel.openTab(directoryPanel.getSelectedNode(), 'true');
                 }
               }
@@ -205,18 +189,10 @@ Ext.onReady(function() {
           contentPanel.getEl().unmask();
           if ((nodeType == 'exchange' && uid != '')) {
             pageURL = 'exchDataRows?scopeName=' + scopeId + '&idName=' + uid;
-            // pageURL
-            // ="exchnageData_rows.json";
-
           }
           else if (nodeType == 'graph') {
             var appName = parentName;
             pageURL = 'appDataRows?scopeName=' + scopeId + '&appName=' + appName + '&graphName=' + nodeText;
-            // pageURL
-            // ="appData_rows_json.json";
-            // alert("Application
-            // DataRows URI:
-            // "+pageURL);
           }
 
           var responseData = Ext.util.JSON.decode(result.responseText);
@@ -235,7 +211,7 @@ Ext.onReady(function() {
           }
           else {
           	var tabId = 'tab_' + label;
-            newTab = new ExchangeManager.NavigationPanel( {
+            var newTab = new ExchangeManager.NavigationPanel( {
               title : label,
               id : tabId,
               configData : responseData,
@@ -249,8 +225,7 @@ Ext.onReady(function() {
               nodeType : nodeType,
               firstTabId : tabId,
               classId : "...",
-              dtoIdentifier : "..."
-              
+              dtoIdentifier : "..."              
             });
 
             contentPanel.add(newTab);
@@ -259,17 +234,9 @@ Ext.onReady(function() {
             newTab.on('beforeclose', function(newTab) {
               var deleteReqURL = null;
               if ((nodeType == 'exchange' && uid != '')) {
-                // deleteReqURL
-                // =
-                // 'dataObjects/deleteDataObjects/'+nodeType+'/'+scopeId+'/'+uid
                 deleteReqURL = 'cleanExchDataRows?scopeName=' + scopeId + '&idName=' + uid;
-                
-               
               }
               else if (nodeType == 'graph') {
-                // deleteReqURL
-                // =
-                // 'dataObjects/deleteGraphObjects/'+nodeType+'/'+scopeId+'/'+node.parentNode.text+'/'+nodeText
                 deleteReqURL = 'cleanAppDataRows?scopeName=' + scopeId + '&appName=' + appName + '&graphName='
                     + nodeText;
               }
@@ -279,13 +246,7 @@ Ext.onReady(function() {
                   method : 'GET',
                   params : {},
                   success : function(result, request) {
-                    // console.log('delete
-                    // response
-                    // for
-                    // '
-                    // +url+'
-                    // : '+
-                    // eval(Ext.util.JSON.decode(result.responseText).success));
+                    //do something
                   }
                 });
               }
