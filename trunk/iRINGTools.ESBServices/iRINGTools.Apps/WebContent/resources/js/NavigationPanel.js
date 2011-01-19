@@ -148,7 +148,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 			})
 		});
 
-		if (this.nodeType == "exchange") {
+		if (this.nodeType == "exchange" && this.id == this.firstTabId) {
 			buildToolbar(this);
 		}
 		
@@ -163,26 +163,31 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 			// ***** this.dataGrid.getBottomToolbar().hide();
 			// this.dataGrid.classObjName=this.identifier;
 		}
+		
+		if (this.id != this.firstTabId)
+			var thiscontentPanel = this.buildContetpanel(false);
+		else 
+			var thiscontentPanel = this.buildContetpanel(true);
 		this.items = [ {
 			title : this.nodeDisplay,
 			// items : [ this.dataGrid ],
-			items : [ this.buildContetpanel() ],
+			items : [ thiscontentPanel ],
 			layout : 'fit'
 		} ];
 
 		
-         var historyPanel = Ext.getCmp('hst-' + this.scopeName + '_' + this.idName);
-         
-         if (historyPanel != undefined) {
-        	 
-        	 historyPanel.destroy();
-        	 
-         }
+		var hstId = 'hst-' + this.scopeName + '_' + this.idName;
+        var historyPanel = Ext.getCmp(hstId);
+        if (historyPanel != undefined)
+       	 historyPanel.collapsed = 'true';
+        	//historyPanel.collapsed = true;
+        
 		
+         
 		ExchangeManager.NavigationPanel.superclass.initComponent.call(this);
 	},
 	
-	buildContetpanel : function() {
+	buildContetpanel : function(ifBuildHistoryPanel) {
 		
 		var Contetpanel = new Ext.Panel({
 			layout : 'border',
@@ -229,7 +234,8 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 				})
 			});
 
-			Contetpanel.add(history_panel);
+			if (ifBuildHistoryPanel == true)
+				Contetpanel.add(history_panel);
 
 		}
 		return Contetpanel;
@@ -837,11 +843,15 @@ function exchangeHistory(scopeName, idName, np) {
 				hstGridPanel.on('cellclick', np.openHistoryWin, np);
 
 				// add the GridPanel to HistoryPanel
-				Ext.getCmp(hstId).add(hstGridPanel);
-				Ext.getCmp(hstId).doLayout();
+				var historyPanel = Ext.getCmp(hstId);
+				if (historyPanel != undefined && hstGridPanel != undefined) {
+					historyPanel.add(hstGridPanel);
+					historyPanel.doLayout();
 
-				if (Ext.getCmp(hstId).collapsed == true) {
-					Ext.getCmp(hstId).expand();
+					if (historyPanel.collapsed == true || historyPanel.collapsed == 'true') {
+						historyPanel.expand();
+						historyPanel.collapsed = false;
+					}
 				}
 				// Ext.getCmp(hstId).getEl().unmask();
 			}
@@ -857,7 +867,7 @@ function hideToolBarLogButton(topNavPanel) {
 	thisbar.setDisplayed(false);
 }
 
-function closeChildTabs(tp, newTab) {
+function closeChildTabs(tp, activeTab) {
 	var len = tp.items.length;
 	
 	if (len <= 1)
@@ -872,16 +882,19 @@ function closeChildTabs(tp, newTab) {
 			tb.destroy();
 			i--;
 		} 
-		else if (tb == newTab) {
+		else if (tb == activeTab) {
 			found = 1;
 		}
 	}
 	
 	if (tab.length == 1 ) {
-		var thisTab = Ext.getCmp('content-panel').getActiveTab();
+		
+		Ext.getCmp('content-panel').getItem(globalPanel.id).destroy();
+        directoryPanel.openTab(directoryPanel.getSelectedNode(), 'true');
+		/*var thisTab = Ext.getCmp('content-panel').getActiveTab();
 		var nodeType = thisTab.nodeType;
 		if (nodeType == 'exchange')			
-			Ext.getCmp('content-panel').getActiveTab().tbar.setDisplayed(true);
+			Ext.getCmp('content-panel').getActiveTab().tbar.setDisplayed(true);*/
 		
 	}
 	
@@ -966,13 +979,13 @@ function showExchangeResponseWindow(scopeName, idName, np) {
             listeners : {
               beforerender : {
                 fn : function() {
-                  //Ext.getBody().mask();
+                  Ext.getBody().mask();
                 }
               },
               close : {
                 fn : function() {
-                  //Ext.getBody().unmask();
-                  Ext.getCmp('content-panel').getItem(newTab.id).destroy();
+                  Ext.getBody().unmask();
+                  Ext.getCmp('content-panel').getItem(globalPanel.id).destroy();
                   directoryPanel.openTab(directoryPanel.getSelectedNode(), 'true');
                 }
               }
