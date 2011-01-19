@@ -889,8 +889,7 @@ function closeChildTabs(tp, activeTab) {
 	
 	if (tab.length == 1 ) {
 		
-		Ext.getCmp('content-panel').getItem(globalPanel.id).destroy();
-        directoryPanel.openTab(directoryPanel.getSelectedNode(), 'true');
+		reloadPanel();
 		/*var thisTab = Ext.getCmp('content-panel').getActiveTab();
 		var nodeType = thisTab.nodeType;
 		if (nodeType == 'exchange')			
@@ -898,6 +897,15 @@ function closeChildTabs(tp, activeTab) {
 		
 	}
 	
+}
+
+function reloadPanel() {
+	 var contentPanel = Ext.getCmp('content-panel');
+     var topNavPanel = contentPanel.getActiveTab();
+     if (topNavPanel != undefined){
+   	  contentPanel.getItem(topNavPanel.id).destroy();
+   	  directoryPanel.openTab(directoryPanel.getSelectedNode(), 'true');
+     }
 }
 
 function showExchangeResponseWindow(scopeName, idName, np) {
@@ -985,9 +993,8 @@ function showExchangeResponseWindow(scopeName, idName, np) {
               close : {
                 fn : function() {
                   Ext.getBody().unmask();
-                  Ext.getCmp('content-panel').getItem(globalPanel.id).destroy();
-                  directoryPanel.openTab(directoryPanel.getSelectedNode(), 'true');
-                }
+                  reloadPanel();
+                 }
               }
             },
             items : [{
