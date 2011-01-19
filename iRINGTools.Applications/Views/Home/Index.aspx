@@ -23,6 +23,7 @@
 		    <li><a href="RefDataEditor">Reference Data Editor</a></li>        
 		    <li><a href="AppEditor">Application Editor</a></li>
         <li><a href="MappingEditor">Mapping Editor</a></li>
+         <li><a href="AdapterManager">Adapter Manager</a></li>
 	    </ul>
     </div>
   </body>
