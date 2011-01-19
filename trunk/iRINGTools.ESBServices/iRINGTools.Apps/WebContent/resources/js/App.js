@@ -125,6 +125,8 @@ Ext.extend(Ext.App, Ext.util.Observable, {
     * @param {Bool} status
     */
     setAlert: function (state, title, msg) {
+    	if (msg == null)
+    		msg = "";
         this.addMessage(state, title, msg);
     },
 
