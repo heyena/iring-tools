@@ -1,6 +1,6 @@
 var app = new Ext.App();
 var directoryPanel;
-var globalPanel;
+
 Ext.onReady(function() {
   Ext.BLANK_IMAGE_URL = 'resources/images/s.gif';
   Ext.QuickTips.init();
@@ -102,10 +102,7 @@ Ext.onReady(function() {
               close : {
                 fn : function() {
                   Ext.getBody().unmask(); 
-                  
-                  if (globalPanel != undefined){
-                	  Ext.getCmp('content-panel').getItem(globalPanel.id).destroy();
-                  }
+                  reloadPanel();
                   directoryPanel.openTab(directoryPanel.getSelectedNode(), 'true');
                 }
               }
