@@ -216,7 +216,7 @@ namespace org.iringtools.services
     [WebInvoke(UriTemplate = "/classes")]
     public Response PostClass(QMXF qmxf)
     {
-      return _referenceDataProvider.PostPart8Class(qmxf);
+      return _referenceDataProvider.PostClass(qmxf);
     }
   }
 }
