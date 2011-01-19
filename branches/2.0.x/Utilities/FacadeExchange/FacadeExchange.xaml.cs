@@ -361,6 +361,15 @@ namespace org.iringtools.utils.exchange
 
         SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(textBoxTargetURL.Text), "");
 
+        WebProxy webproxy = new WebProxy("tcsproxy", 8080);
+        webproxy.Credentials = CredentialCache.DefaultCredentials;
+        endpoint.Proxy = webproxy;
+        
+        endpoint.Credentials = new NetworkCredential();
+        endpoint.Credentials.Domain = "MyDOMAIN";
+        endpoint.Credentials.UserName = "MyUsername";
+        endpoint.Credentials.Password = "MyPassword";
+
         SparqlResultSet results = endpoint.QueryWithResultSet(sparql);
 
         _graphUris = new List<string>();
