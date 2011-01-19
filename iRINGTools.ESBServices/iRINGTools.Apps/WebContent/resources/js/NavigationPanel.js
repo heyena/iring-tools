@@ -7,7 +7,21 @@ exchangesubgrid_rows.json relatedDataRows_URI
 relatedDataRows?scopeName=12345_000&idName=1&id=66015-O&classId=rdl:R3847624234
 */
 Ext.ns('ExchangeManager');
+var globalHistoryPanel;
 
+
+
+var hash = function(obj){
+	// some cool hashing   
+	return obj.id; 
+	// just an example 
+};  
+var globalHistoryPanel = {};  
+
+
+
+	
+	
 /**
  * @class ExchangeManager.NavigationPanel
  * @extends Panel
@@ -178,8 +192,14 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 		
 		var hstId = 'hst-' + this.scopeName + '_' + this.idName;
         var historyPanel = Ext.getCmp(hstId);
-        if (historyPanel != undefined)
-       	 historyPanel.collapsed = 'true';
+        
+        
+
+        var key = hash(this);
+        if (this.id == this.firstTabId && this.nodeType == 'exchange')
+        	globalHistoryPanel[key] = historyPanel;
+        if (globalHistoryPanel[key] != undefined)
+        	globalHistoryPanel[key].collapsed = 'true';
         	//historyPanel.collapsed = true;
         
 		
@@ -843,7 +863,16 @@ function exchangeHistory(scopeName, idName, np) {
 				hstGridPanel.on('cellclick', np.openHistoryWin, np);
 
 				// add the GridPanel to HistoryPanel
-				var historyPanel = Ext.getCmp(hstId);
+				//var historyPanel = Ext.getCmp(hstId);
+				
+				
+		        
+		        var contentPanel = Ext.getCmp('content-panel');
+		        var topNavPanel = contentPanel.getActiveTab();
+		        var key = topNavPanel.id;
+		        
+				var historyPanel = globalHistoryPanel[key];
+				
 				if (historyPanel != undefined && hstGridPanel != undefined) {
 					historyPanel.add(hstGridPanel);
 					historyPanel.doLayout();
@@ -852,6 +881,9 @@ function exchangeHistory(scopeName, idName, np) {
 						historyPanel.expand();
 						historyPanel.collapsed = false;
 					}
+					
+					
+					
 				}
 				// Ext.getCmp(hstId).getEl().unmask();
 			}
@@ -889,11 +921,11 @@ function closeChildTabs(tp, activeTab) {
 	
 	if (tab.length == 1 ) {
 		
-		reloadPanel();
-		/*var thisTab = Ext.getCmp('content-panel').getActiveTab();
+		//reloadPanel();
+		var thisTab = Ext.getCmp('content-panel').getActiveTab();
 		var nodeType = thisTab.nodeType;
 		if (nodeType == 'exchange')			
-			Ext.getCmp('content-panel').getActiveTab().tbar.setDisplayed(true);*/
+			Ext.getCmp('content-panel').getActiveTab().tbar.setDisplayed(true);
 		
 	}
 	
