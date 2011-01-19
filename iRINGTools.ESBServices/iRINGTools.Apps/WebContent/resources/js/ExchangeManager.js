@@ -1,6 +1,6 @@
 var app = new Ext.App();
 var directoryPanel;
-
+var globalPanel;
 Ext.onReady(function() {
   Ext.BLANK_IMAGE_URL = 'resources/images/s.gif';
   Ext.QuickTips.init();
@@ -96,16 +96,16 @@ Ext.onReady(function() {
             listeners : {
               beforerender : {
                 fn : function() {
-                  //Ext.getBody().mask();
+                  Ext.getBody().mask();
                 }
               },
               close : {
                 fn : function() {
-                  //Ext.getBody().unmask(); 
+                  Ext.getBody().unmask(); 
                   
-                  /*if (newTab != undefined){
-                	  Ext.getCmp('content-panel').getItem(newTab.id).destroy();
-                  }*/
+                  if (globalPanel != undefined){
+                	  Ext.getCmp('content-panel').getItem(globalPanel.id).destroy();
+                  }
                   directoryPanel.openTab(directoryPanel.getSelectedNode(), 'true');
                 }
               }
@@ -228,6 +228,7 @@ Ext.onReady(function() {
               dtoIdentifier : "..."              
             });
 
+            globalPanel = newTab;
             contentPanel.add(newTab);
             contentPanel.activate(newTab);
 
