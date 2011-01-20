@@ -41,12 +41,28 @@ a:active {color: black}
 }
 
 .x-tree-node .commodity {
-  background-image: url(images/class-badge.png);
+  background-image: url(images/class-badge-small.png);
 }
 
 .blue-fade {
   background-image: url(images/blue-fade.png);
   background-repeat: repeat-x
+}
+
+.sync {
+	color: #000000;
+}
+
+.add {
+	color: #bf0000;
+}
+
+.change {
+	color: #0000bf;
+}
+
+.delete {
+	color: #00bf00;
 }
 
 .dialog-textbox {

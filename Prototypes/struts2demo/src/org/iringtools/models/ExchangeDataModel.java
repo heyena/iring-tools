@@ -62,8 +62,11 @@ public class ExchangeDataModel
     
     for (DataTransferObject dto : dtoList)
     {
-      List<String> row = new ArrayList<String>();      
-      row.add(dto.getTransferType().toString());
+      List<String> row = new ArrayList<String>();  
+      
+      String transferType = dto.getTransferType().toString(); 
+      String transferCls = transferType.toLowerCase();
+      row.add("<span class=\"" + transferCls + "\">" + transferType + "</span>");
       
       for (ClassObject classObject : dto.getClassObjects().getItems())
       {        
@@ -83,7 +86,10 @@ public class ExchangeDataModel
                 fields.add(otherField);
               }
               
-              row.add(roleObject.getValue());
+              if (roleObject.getOldValue() == null || roleObject.getOldValue().equals(roleObject.getValue()))
+                row.add(roleObject.getValue());
+              else
+                row.add("<span class=\"change\">" + roleObject.getOldValue() + " -> " + roleObject.getValue() + "</span>");
             }
           }
         }
