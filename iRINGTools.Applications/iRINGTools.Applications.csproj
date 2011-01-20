@@ -78,10 +78,10 @@
     <Compile Include="ConfigFile.cs" />
     <Compile Include="Controllers\AdapterManagerController.cs" />
     <Compile Include="Controllers\AppEditorController.cs" />
+    <Compile Include="Controllers\DirectoryController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MappingEditorController.cs" />
     <Compile Include="Controllers\RefDataEditorController.cs" />
-    <Compile Include="Controllers\ScopeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -4634,8 +4634,8 @@
     <Content Include="Scripts\iringtools\AdapterManager\ActionPanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager\AdapterManager.js" />
     <Content Include="Scripts\iringtools\AdapterManager\App.js" />
+    <Content Include="Scripts\iringtools\AdapterManager\DirectoryPanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager\MappingPanel.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\NavigationPanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager\ScopePanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager\SearchPanel.js" />
     <Content Include="Scripts\Silverlight.js" />

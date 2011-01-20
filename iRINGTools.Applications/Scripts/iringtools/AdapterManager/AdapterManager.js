@@ -54,7 +54,7 @@ Ext.onReady(function () {
         collapsible: true,
         collapsed: false,
 
-        navigationUrl: 'Scopes?format=tree'
+        navigationUrl: 'directory?format=tree'
 
     });
 

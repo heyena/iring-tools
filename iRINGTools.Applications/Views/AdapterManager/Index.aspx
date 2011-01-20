@@ -15,7 +15,7 @@
     <!-- extensions -->    
     <script src="../../Scripts/iringtools/adaptermanager/App.js" type="text/javascript"></script>    
     <script src="../../Scripts/iringtools/adaptermanager/ActionPanel.js" type="text/javascript"></script>
-    <script src="../../Scripts/iringtools/adaptermanager/NavigationPanel.js" type="text/javascript"></script>
+    <script src="../../Scripts/iringtools/adaptermanager/DirectoryPanel.js" type="text/javascript"></script>
     <script src="../../Scripts/iringtools/adaptermanager/MappingPanel.js" type="text/javascript"></script>
     <script src="../../Scripts/iringtools/adaptermanager/SearchPanel.js" type="text/javascript"></script>
     <script src="../../Scripts/iringtools/adaptermanager/ScopePanel.js" type="text/javascript"></script>    
