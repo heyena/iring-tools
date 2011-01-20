@@ -9,24 +9,25 @@ relatedDataRows?scopeName=12345_000&idName=1&id=66015-O&classId=rdl:R3847624234
 Ext.ns('ExchangeManager');
 var globalHistoryPanel;
 
-
-
-var hash = function(obj){
-	// some cool hashing   
-	return obj.id; 
-	// just an example 
+var hash = function(obj){	
+	return obj.id; 	
 };  
-var globalHistoryPanel = {};  
-
-
-
-	
+var globalHistoryPanel = {}; 	
+var exTopNavPanel = {};
+var appTopNavPanel = {};
+var exSubNavPanel = {};
+var appSubNavPanel = {};
+var exClassPanel = {};
+var appClassPanel = {};
+var exListView = {};
+var appListView = {};
 	
 /**
  * @class ExchangeManager.NavigationPanel
  * @extends Panel
  * @author by Gert Jansen van Rensburg
  */
+
 ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 	title : 'NavigationPanel',
 	activeItem : 0,
@@ -45,6 +46,8 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 	firstTabId : null,
 	classId : null,
 	dtoIdentifier : null,
+	key : null,
+	node : null,
 	
 	/**
 	 * initComponent
@@ -162,9 +165,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 			})
 		});
 
-		if (this.nodeType == "exchange" && this.id == this.firstTabId) {
-			buildToolbar(this);
-		}
+		
 		
 		
 		this.dataGrid.on('beforerender', this.beforeRender,
@@ -178,10 +179,12 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 			// this.dataGrid.classObjName=this.identifier;
 		}
 		
-		if (this.id != this.firstTabId)
+		if (this.id != this.firstTabId) {
 			var thiscontentPanel = this.buildContetpanel(false);
-		else 
+			
+		}else 
 			var thiscontentPanel = this.buildContetpanel(true);
+		
 		this.items = [ {
 			title : this.nodeDisplay,
 			// items : [ this.dataGrid ],
@@ -189,22 +192,32 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 			layout : 'fit'
 		} ];
 
+		if (this.nodeType == "exchange" && this.id == this.firstTabId) {
+			buildToolbar(this);
+		}
 		
-		var hstId = 'hst-' + this.scopeName + '_' + this.idName;
-        var historyPanel = Ext.getCmp(hstId);
+        var hisotyrPanelkey = hash(this);
+       
+        if (hisotyrPanelkey == this.firstTabId) {
+        	var rootThisTab = this;
+	        rootThisTab.key = this.key + this.nodeDisplay;
+        }
         
-        
-
-        var key = hash(this);
-        if (this.id == this.firstTabId && this.nodeType == 'exchange')
-        	globalHistoryPanel[key] = historyPanel;
-        if (globalHistoryPanel[key] != undefined)
-        	globalHistoryPanel[key].collapsed = 'true';
+        if (hisotyrPanelkey == this.firstTabId && this.nodeType == 'exchange') {
+        	var hstId = 'hst-' + this.scopeName + '_' + this.idName;
+            var historyPanel = Ext.getCmp(hstId);
+        	globalHistoryPanel[hisotyrPanelkey] = historyPanel;
+        	
+        }
+        if (globalHistoryPanel[hisotyrPanelkey] != undefined)
+        	globalHistoryPanel[hisotyrPanelkey].collapsed = 'true';
         	//historyPanel.collapsed = true;
-        
 		
          
 		ExchangeManager.NavigationPanel.superclass.initComponent.call(this);
+		
+		
+		
 	},
 	
 	buildContetpanel : function(ifBuildHistoryPanel) {
@@ -433,12 +446,31 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 		});
 	},
 	onCellClick : function(grid, rowIndex, columnIndex, e) {
+		
+		
+        
+        var contentPan = Ext.getCmp('content-panel');
+        var topNavPan = contentPan.getActiveTab();
+       
+
+        var key = hash(topNavPan);
+        if (key == topNavPan.firstTabId && topNavPan.nodeType == 'graph')
+        	appTopNavPanel[key] = topNavPan;
+        if (key == topNavPan.firstTabId && topNavPan.nodeType == 'exchange') {
+        	
+        	exTopNavPanel[key] = topNavPan;
+        }
+      
+		
+		
 		var cm = grid.getColumnModel();
 		var record = grid.getStore().getAt(rowIndex); 
 		var fieldName = cm.getDataIndex(columnIndex); 
 		if (fieldName == 'Identifier' && record.get(fieldName) != '') {
 			grid.getEl().mask('<span><img src="resources/js/ext-js/resources/images/default/grid/loading.gif"/> Loading.....</span>');
-			var IdentificationByTag_value = record.get(fieldName);			
+			var IdentificationByTag_value = record.get(fieldName);	
+			var identityNoHtml = removeHTMLTags(IdentificationByTag_value);
+			
 			var transferType_value = record.get('TransferType');
 
 			var rowDataArr = [];
@@ -473,6 +505,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 				enableColumnMove : false
 			});
 
+			
 			if (this.firstTabId == this.id) {
 				if (this.nodeType == "exchange") {
 					var xchangeDataRelated_URI = 'exchangeDataRelatedRows?scopeName='
@@ -480,7 +513,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 						+ '&idName='
 						+ this.idName
 						+ '&id='
-						+ removeHTMLTags(IdentificationByTag_value);
+						+ identityNoHtml;
 				} 
 				else {
 					var xchangeDataRelated_URI = 'appDataRelations?scopeName='
@@ -490,7 +523,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 						+ '&graphName='
 						+ this.graphName
 						+ '&id='
-						+ removeHTMLTags(IdentificationByTag_value);
+						+ identityNoHtml;
 
 				}
 			} else {
@@ -504,7 +537,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 						+ '&classId='
 						+ this.classId
 						+ '&relatedId='
-						+ removeHTMLTags(IdentificationByTag_value);
+						+ identityNoHtml;
 				} 
 				else {
 					var xchangeDataRelated_URI = 'relatedAppDataRelationsRows?scopeName='
@@ -518,7 +551,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 						+ '&classId='
 						+ this.classId
 						+ '&relatedId='
-						+ removeHTMLTags(IdentificationByTag_value);
+						+ identityNoHtml;
 				}
 			}
 
@@ -537,7 +570,19 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 							fields : [ 'id', 'label' ]
 						});
     
-    				var listView = new Ext.list.ListView({
+    				var contentPanel0 = Ext.getCmp('content-panel');
+			        var topNavPanel0 = contentPanel0.getActiveTab();
+			        var thisTab = topNavPanel0.getActiveTab();
+			        var key0 = thisTab.key;
+			        
+			        if (key0 == undefined)
+			        	key0 = topNavPanel0.key;
+			       
+			        var keys0 = key0 + identityNoHtml;
+			        var nodeType0 = topNavPanel0.nodeType;
+			        
+			        if (nodeType0 == 'exchange') {
+			        	exListView[keys0] = new Ext.list.ListView({
 							store : store,
 							hideHeaders : true,
 							singleSelect : true,
@@ -552,168 +597,160 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 								hidden : true
 							}]
 						});
-    
-    				listView.on(
-							'click',
-							function (dataView, index, node, e) {
-							  var dtoIdentifier = removeHTMLTags(IdentificationByTag_value);
-								var refClassIdentifier = dataView.store.data.items[index].data.reference;
-								var classId = dataView.store.data.items[index].data.id;
-								var relatedClassName = dataView.store.data.items[index].data.name;
-								var scopeId = dataView.store.data.items[index].data.scopeId;
-								var exchangeId = dataView.store.data.items[index].data.exchangeID;
-								var ntyp = navPanel.nodeType;
+			        	exListView[keys0].on(
+								'click', 
+								clickListViewItem, this
 								
-								if (navPanel.nodeType == "exchange") {
-									var relatedDataGrid_URI = 'relatedDataGrid?scopeName='
-											+ navPanel.scopeName
-											+ '&idName='
-											+ navPanel.idName
-											+ '&id='
-											+ dtoIdentifier
-											+ '&classId='
-											+ classId;
-								} 
-								else {
-									var relatedDataGrid_URI = 'relatedAppDataGrid?scopeName='
-											+ navPanel.scopeName
-											+ '&appName='
-											+ navPanel.appName
-											+ '&graphName='
-											+ navPanel.graphName
-											+ '&id='
-											+ dtoIdentifier
-											+ '&classId='
-											+ classId;
-								}
+							);
+			        } else if (nodeType0 == 'graph') {
+			        	appListView[keys0] = new Ext.list.ListView({
+							store : store,
+							hideHeaders : true,
+							singleSelect : true,
+							emptyText : 'No Items to display',
+							reserveScrollOffset : true,
+							columns : [{
+								header : 'Class Name',
+								dataIndex : 'label'
+							},
+							{
+								header : 'id',
+								hidden : true
+							}]
+						});
+			        	appListView[keys0].on(
+								'click', 
+								clickListViewItem, this
 								
-								if (navPanel.nodeType == "exchange") {
-									var relatedDataRows_URI = 'relatedDataRows?scopeName='
-											+ navPanel.scopeName
-											+ '&idName='
-											+ navPanel.idName
-											+ '&id='
-											+ dtoIdentifier
-											+ '&classId='
-											+ classId;
-								} 
-								else {    
-									var relatedDataRows_URI = 'relatedAppDataRows?scopeName='
-											+ navPanel.scopeName
-											+ '&appName='
-											+ navPanel.appName
-											+ '&graphName='
-											+ navPanel.graphName
-											+ '&id='
-											+ dtoIdentifier
-											+ '&classId='
-											+ classId;
-								}
-
-								navPanel.getEl().mask('<span><img src="resources/js/ext-js/resources/images/default/grid/loading.gif"/> Loading.....</span>');
-                
-								Ext.Ajax.request({
-									url : relatedDataGrid_URI,
-									method : 'GET',
-									params : {},									
-									success : function(result, request) {
-									  navPanel.getEl().unmask();
-										var responseData = Ext.util.JSON.decode(result.responseText);
-										var pageURL = relatedDataRows_URI;
-										var tabTitle = removeHTMLTags(dataView.store.data.items[index].data.label);
-										
-										var newTab = new ExchangeManager.NavigationPanel({
-											title : tabTitle,
-											id : 'tab_' + tabTitle,
-											scopeName : navPanel.scopeName,
-											appName : navPanel.appName,
-											graphName : navPanel.graphName,
-											configData : responseData,
-											classObjName : navPanel.classObjName,
-											idName : navPanel.idName,
-											nodeType : navPanel.nodeType,
-											url : pageURL,
-											closable : false,
-											identifier : dtoIdentifier,
-											refClassIdentifier : refClassIdentifier,
-											firstTabId : navPanel.firstTabId,
-											classId : classId,
-											dtoIdentifier : dtoIdentifier
-										});
-
-										var topNavPanel = Ext.getCmp('content-panel').getActiveTab();
-										var displayTab = topNavPanel.getItem(newTab.id);
-										
-										if (displayTab == undefined) {
-											topNavPanel.add(newTab).show();
-										} 
-										else {
-											displayTab.show();
-										}
-									},
-									failure: function(result, request) {     
-									  navPanel.getEl().unmask();
-							      app.setAlert(false, 'Related Items', result.responseText);
-							    }
-								});
-							}
-						);
+							);
+			        }	        
     				
     				var thisGrid = grid;
     				var classObjectName = thisGrid.classObjName;
     				
-  					var classPanel = new Ext.Panel({
-  						autoWidth : true,
-  						layout : 'border',
-  						items : [{
-  							height : 50,
-  							region : 'north',
-  							html : '<div style="background-color:#eee; float:left; width:60px"><img src="resources/images/class-badge.png" style="margin:2 4 4 4; height:46px"/></div><div style="background-color:#eee; width:100%; height:100%; padding-top:10px;"><b>'
-  									+ removeHTMLTags(IdentificationByTag_value)
+    				var contentPanel2 = Ext.getCmp('content-panel');
+			        var topNavPanel2 = contentPanel2.getActiveTab();
+			        var thisTab = topNavPanel2.getActiveTab();
+			        var topNavPanelId2 = topNavPanel2.id;
+			        if (thisTab.key != undefined)
+			        	var key2 = thisTab.key;
+			        else
+			        	var key2 = topNavPanel2.key;
+    				var nodeType2 = topNavPanel2.nodeType;
+			        var tabId2 = identityNoHtml;
+			        var title2 = identityNoHtml;
+			        var keys2 = key2 + tabId2;
+			        
+			        if (nodeType2 == 'exchange') {
+			        	exClassPanel[keys2] = new Ext.Panel({
+			        		autoWidth : true,
+			        		layout : 'border',
+			        		items : [{
+			        			height : 50,
+			        			region : 'north',
+			        			html : '<div style="background-color:#eee; float:left; width:60px"><img src="resources/images/class-badge.png" style="margin:2 4 4 4; height:46px"/></div><div style="background-color:#eee; width:100%; height:100%; padding-top:10px;"><b>'
+  									+ title2
   									+ '</b><br/>'
   									+ grid.classObjName
   									+ '</div>'
-  						},
-  						{
-  							title : 'Properties',
-  							region : 'west',
-  							split : true,
-  							width : 300,
-  							layout : 'fit',
-  							items : [ grid_class_properties ]
-  						},
-  						{
-  							title : 'Related Items',
-  							split : true,
-  							region : 'center',
-  							layout : 'fit',
-  							items : listView
-  						}]
-  					});
+			        		},
+			        		{
+			        			title : 'Properties',
+			        			region : 'west',
+			        			split : true,
+			        			width : 300,
+			        			layout : 'fit',
+			        			items : [ grid_class_properties ]
+			        		},
+			        		{
+			        			title : 'Related Items',
+			        			split : true,
+			        			region : 'center',
+			        			layout : 'fit',
+			        			items : exListView[keys2]
+			        		}]
+			        	});
 
-  					var newTab = {
-					    id : 'right_tab_' + removeHTMLTags(IdentificationByTag_value),
-              title : removeHTMLTags(IdentificationByTag_value),
-              layout : 'fit',
-  						forceFit : true,
-  						items : [ classPanel ],
-  						closable : false
-  					};
+			        	exSubNavPanel[keys2] = {
+			        		id : tabId2,
+			        		title : title2,
+			        		layout : 'fit',
+			        		key : keys2,
+			        		forceFit : true,
+			        		items : [ exClassPanel[keys2] ],
+			        		closable : false,
+			        		listeners : {
+			        			'tabchange' : closeChildTabs
+			        		}
+			        	};
+			        	
+			        	var thisTopNavPanel2 = exTopNavPanel[topNavPanelId2];
+			        	
+			        } else if (nodeType2 == 'graph') {
+			        	appClassPanel[keys2] = new Ext.Panel({
+			        		autoWidth : true,
+			        		layout : 'border',
+			        		items : [{
+			        			height : 50,
+			        			region : 'north',
+			        			html : '<div style="background-color:#eee; float:left; width:60px"><img src="resources/images/class-badge.png" style="margin:2 4 4 4; height:46px"/></div><div style="background-color:#eee; width:100%; height:100%; padding-top:10px;"><b>'
+  									+ title2
+  									+ '</b><br/>'
+  									+ grid.classObjName
+  									+ '</div>'
+			        		},
+			        		{
+			        			title : 'Properties',
+			        			region : 'west',
+			        			split : true,
+			        			width : 300,
+			        			layout : 'fit',
+			        			items : [ grid_class_properties ]
+			        		},
+			        		{
+			        			title : 'Related Items',
+			        			split : true,
+			        			region : 'center',
+			        			layout : 'fit',
+			        			items : appListView[keys2]
+			        		}]
+			        	});
+
+			        	appSubNavPanel[keys2] = {
+			        		id : tabId2,
+			        		title : title2,
+			        		layout : 'fit',
+			        		key : keys2,
+			        		forceFit : true,
+			        		items : [ appClassPanel[keys2] ],
+			        		closable : false,
+			        		listeners : {
+			        			'tabchange' : closeChildTabs
+			        		}
+			        	};
+			        	
+			        	var thisTopNavPanel2 = appTopNavPanel[topNavPanelId2]; 
+			        	
+			        }
   
-  					navPanel.dataGrid.getEl().unmask();
-  
-  					var topNavPanel = Ext.getCmp('content-panel').getActiveTab();
-  					var displayTab = topNavPanel.getItem(newTab.id);
+			        if (thisTab.dataGrid == undefined)
+			        	thisTopNavPanel2.dataGrid.getEl().unmask();
+			        else
+			        	thisTab.dataGrid.getEl().unmask();
+  					
+  					var displayTab2 = thisTopNavPanel2.getItem(tabId2);
             
-  					if (topNavPanel.nodeType == "exchange")
-  						hideToolBarLogButton(topNavPanel);
+  					if (nodeType2 == "exchange")
+  						hideToolBarButton(topNavPanel2);
   					  					
-  					if (displayTab == undefined) {						
-  						
-  						topNavPanel.add(newTab).show();
+  					if (displayTab2 == undefined) {						
+  						if (nodeType2 == 'exchange')
+  							thisTopNavPanel2.add(exSubNavPanel[keys2]).show();
+  						else if (nodeType2 == 'graph')
+  							thisTopNavPanel2.add(appSubNavPanel[keys2]).show();
   					} 
   					else {
-  						displayTab.show();
+  						displayTab2.show();
   					}
   				} 
     			else if (eval(responseData.success) == false) {
@@ -758,7 +795,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 });
 
 function buildToolbar(np) {
-	var tbar = new Ext.Toolbar({
+	np.tbar = new Ext.Toolbar({
 		xtype : "toolbar",
 		items : [{
 			xtype : "tbbutton",
@@ -782,7 +819,7 @@ function buildToolbar(np) {
 			}
 		}]
 	});
-	np.tbar = tbar;	
+	
 }
 
 /*
@@ -867,11 +904,11 @@ function exchangeHistory(scopeName, idName, np) {
 				
 				
 		        
-		        var contentPanel = Ext.getCmp('content-panel');
-		        var topNavPanel = contentPanel.getActiveTab();
-		        var key = topNavPanel.id;
+		        var contentPanel3 = Ext.getCmp('content-panel');
+		        var topNavPanel3 = contentPanel3.getActiveTab();
+		        var key3 = topNavPanel3.id;
 		        
-				var historyPanel = globalHistoryPanel[key];
+				var historyPanel = globalHistoryPanel[key3];
 				
 				if (historyPanel != undefined && hstGridPanel != undefined) {
 					historyPanel.add(hstGridPanel);
@@ -894,7 +931,159 @@ function exchangeHistory(scopeName, idName, np) {
 	});
 }
 
-function hideToolBarLogButton(topNavPanel) {
+function clickListViewItem(dataView, index, node, e) {
+	
+	var refClassIdentifier = dataView.store.data.items[index].data.reference;
+	var classId = dataView.store.data.items[index].data.id;
+	var relatedClassName = dataView.store.data.items[index].data.name;
+	var scopeId = dataView.store.data.items[index].data.scopeId;
+	var exchangeId = dataView.store.data.items[index].data.exchangeID;
+		
+	var contentPanel0 = Ext.getCmp('content-panel');
+    var topNavPanel0 = contentPanel0.getActiveTab();
+    var thisTab = topNavPanel0.getActiveTab();
+    
+    var dtoIdentifier = thisTab.title;
+	var ntyp = topNavPanel0.nodeType;
+		
+	if (ntyp == "exchange") {
+		var relatedDataGrid_URI = 'relatedDataGrid?scopeName='
+				+ topNavPanel0.scopeName
+				+ '&idName='
+				+ topNavPanel0.idName
+				+ '&id='
+				+ dtoIdentifier
+				+ '&classId='
+				+ classId;
+	} 
+	else {
+		var relatedDataGrid_URI = 'relatedAppDataGrid?scopeName='
+				+ topNavPanel0.scopeName
+				+ '&appName='
+				+ topNavPanel0.appName
+				+ '&graphName='
+				+ topNavPanel0.graphName
+				+ '&id='
+				+ dtoIdentifier
+				+ '&classId='
+				+ classId;
+	}
+		
+	if (ntyp == "exchange") {
+		var relatedDataRows_URI = 'relatedDataRows?scopeName='
+			+ topNavPanel0.scopeName
+			+ '&idName='
+			+ topNavPanel0.idName
+			+ '&id='
+			+ dtoIdentifier
+			+ '&classId='
+			+ classId;
+	} 
+	else {    
+		var relatedDataRows_URI = 'relatedAppDataRows?scopeName='
+			+ topNavPanel0.scopeName
+			+ '&appName='
+			+ topNavPanel0.appName
+			+ '&graphName='
+			+ topNavPanel0.graphName
+			+ '&id='
+			+ dtoIdentifier
+			+ '&classId='
+			+ classId;
+	}
+
+	topNavPanel0.getEl().mask('<span><img src="resources/js/ext-js/resources/images/default/grid/loading.gif"/> Loading.....</span>');
+	Ext.Ajax.request({
+		url : relatedDataGrid_URI,
+		method : 'GET',
+		params : {},									
+		success : function(result, request) {
+			topNavPanel0.getEl().unmask();
+			var responseData = Ext.util.JSON.decode(result.responseText);
+			var pageURL = relatedDataRows_URI;
+			var tabTitle1 = removeHTMLTags(dataView.store.data.items[index].data.label);
+			var contentPanel1 = Ext.getCmp('content-panel');
+	        var topNavPanel1 = contentPanel1.getActiveTab();
+	        var thisTab1 = topNavPanel1.getActiveTab();
+	        var topNavPanelId1 = topNavPanel1.id;
+	        var key1 = thisTab1.key;
+	        var tabId1 = tabTitle1;
+	        var keys1 = key1 + tabId1;
+	        var nodeType1 = topNavPanel1.nodeType;
+		        
+	        if (nodeType1 == 'exchange') {
+	        	exSubNavPanel[keys1] = new ExchangeManager.NavigationPanel({
+	        		title : tabTitle1,
+	        		id : tabId1,
+	        		scopeName : topNavPanel1.scopeName,								        						        		
+	        		configData : responseData,
+	        		classObjName : topNavPanel1.classObjName,
+	        		idName : topNavPanel1.idName,
+	        		nodeType : nodeType1,
+	        		url : pageURL,
+	        		closable : false,        		
+	        		identifier : dtoIdentifier,
+	        		refClassIdentifier : refClassIdentifier,
+	        		firstTabId : topNavPanel1.firstTabId,
+	        		classId : classId,
+	        		dtoIdentifier : dtoIdentifier,
+	        		key : keys1,
+	        		listeners : {
+	        			'tabchange' : closeChildTabs
+	        		}
+	        	});
+		        	
+		        var thisTopNavPanel1 = exTopNavPanel[topNavPanelId1];
+		        	
+		    } else if (nodeType1 == 'graph') {
+	        	appSubNavPanel[keys1] = new ExchangeManager.NavigationPanel({
+	        		title : tabTitle1,
+		       		id : tabId1,
+		       		scopeName : topNavPanel1.scopeName,
+		       		appName : topNavPanel1.appName,
+		       		graphName : topNavPanel1.graphName,
+	        		configData : responseData,
+	        		classObjName : topNavPanel1.classObjName,
+		       		idName : topNavPanel1.idName,
+		       		nodeType : nodeType1,
+		       		url : pageURL,
+		       		closable : false,
+		       		identifier : dtoIdentifier,
+		       		refClassIdentifier : refClassIdentifier,
+		       		firstTabId : topNavPanel1.firstTabId,
+		       		classId : classId,
+		       		dtoIdentifier : dtoIdentifier,
+		       		key : keys1,
+		       		listeners : {
+		       			'tabchange' : closeChildTabs
+		       		}
+		       	});
+		        	
+		       	var thisTopNavPanel1 = appTopNavPanel[topNavPanelId1];
+		        	
+   	        }
+		        
+			var displayTab1 = thisTopNavPanel1.getItem(tabId1);
+				
+			if (displayTab1 == undefined) {
+				if (nodeType1 == 'exchange')
+					thisTopNavPanel1.add(exSubNavPanel[keys1]).show();
+				else if (nodeType1 == 'graph')
+					thisTopNavPanel1.add(appSubNavPanel[keys1]).show();
+			} 
+			else {
+				displayTab1.show();
+			}
+		},
+		failure: function(result, request) {     
+			thisTopNavPanel1.getEl().unmask();
+		  app.setAlert(false, 'Related Items', result.responseText);
+		}
+	});
+}
+
+
+function hideToolBarButton(topNavPanel) {
 	var thisbar = topNavPanel.tbar;	
 	thisbar.setDisplayed(false);
 }
@@ -905,40 +1094,69 @@ function closeChildTabs(tp, activeTab) {
 	if (len <= 1)
 		return;
 
-	var tab = tp.items.items;	
-	var found = 0;
 
-	for ( var i = 0; i < tab.length; i++) {
-		tb = tab[i];
-		if (found) {
-			tb.destroy();
-			i--;
-		} 
-		else if (tb == activeTab) {
-			found = 1;
-		}
-	}
+	
+    
+    var contPan = Ext.getCmp('content-panel');
+    var topNPan = contPan.getActiveTab();
+    var k = topNPan.id;
+
+    var nodeType = topNPan.nodeType;
+    
+    var tab = tp.items.items;	
+	var found = 0;
+	var destroyTab;
+	var keys;
+	
+    if (nodeType == 'exchange') {
+    	var thisTopNavPan = exTopNavPanel[k];
+    	for ( var i = 0; i < tab.length; i++) {
+    		tb = tab[i];
+    		if (found) {
+    			tb.destroy();
+    			//destroyTab.destroy();
+    			i--;
+    		} 
+    		else if (tb == activeTab) {
+    			found = 1;
+    		}
+    	}
+    }
+    else if (nodeType == 'graph') {
+    	var thisTopNavPan = appTopNavPanel[k];
+    	for ( var i = 0; i < tab.length; i++) {
+    		tb = tab[i];
+    		if (found) {
+    			
+    			tb.destroy();
+    			//destroyTab.destroy();
+    			i--;
+    		} 
+    		else if (tb == activeTab) {
+    			found = 1;
+    		}
+    	}
+    }	
 	
 	if (tab.length == 1 ) {
 		
 		//reloadPanel();
-		var thisTab = Ext.getCmp('content-panel').getActiveTab();
-		var nodeType = thisTab.nodeType;
+		
 		if (nodeType == 'exchange')			
-			Ext.getCmp('content-panel').getActiveTab().tbar.setDisplayed(true);
+			thisTopNavPan.tbar.setDisplayed(true);
 		
 	}
 	
 }
 
-function reloadPanel() {
-	 var contentPanel = Ext.getCmp('content-panel');
-     var topNavPanel = contentPanel.getActiveTab();
-     if (topNavPanel != undefined){
-   	  contentPanel.getItem(topNavPanel.id).destroy();
+/*function reloadPanel() {
+	 var contentP = Ext.getCmp('content-panel');
+     var topNavP = contentP.getActiveTab();
+     if (topNavP != undefined){
+   	  contentP.getItem(topNavP.id).destroy();
    	  directoryPanel.openTab(directoryPanel.getSelectedNode(), 'true');
      }
-}
+}*/
 
 function showExchangeResponseWindow(scopeName, idName, np) {
     
@@ -973,17 +1191,17 @@ function showExchangeResponseWindow(scopeName, idName, np) {
           // eval(jsonData.columnsData);
           var grid = new Ext.grid.GridPanel( {
             store : store,
-            columns : [ {
+            columns : [{
               header : 'Identifier',
               width : 80,
               dataIndex : 'Identifier',
               sortable : true
-            }, {
+            },{
               header : 'Message',
               width : 300,
               dataIndex : 'Message',
               sortable : true
-            } ],
+            }],
 
             stripeRows : true,
             id : 'exchangeResultGrid_' + label,
@@ -1025,7 +1243,12 @@ function showExchangeResponseWindow(scopeName, idName, np) {
               close : {
                 fn : function() {
                   Ext.getBody().unmask();
-                  reloadPanel();
+                  var contentP = Ext.getCmp('content-panel');
+                  var topNavP = contentP.getActiveTab();
+                  if (topNavP != undefined){
+                	  //contentP.getItem(topNavP.id).destroy();
+                	  directoryPanel.openTab(np.node, 'true');
+                  }
                  }
               }
             },
