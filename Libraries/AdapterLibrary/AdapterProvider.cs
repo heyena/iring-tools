@@ -513,6 +513,8 @@ namespace org.iringtools.adapter
         InitializeScope(projectName, applicationName);
         InitializeDataLayer();
 
+        IList<string> index = new List<string>();
+
         if (format != null)
         {
           _projectionEngine = _kernel.Get<IProjectionLayer>(format);
@@ -531,7 +533,7 @@ namespace org.iringtools.adapter
           List<Expression> expressions = new List<Expression>();
           foreach (string key in parameters.AllKeys)
           {
-            if (key != "format" && key != "start" && key != "limit")
+            if (key != "format" && key != "start" && key != "limit" && key != "sortBy" && key != "sortOrder")
             {
               string value = parameters[key];
 
@@ -539,7 +541,8 @@ namespace org.iringtools.adapter
               {
                 PropertyName = key,
                 RelationalOperator = library.RelationalOperator.EqualTo,
-                Values = new List<string> { value },
+                Values = new Values { value },
+                IsCaseSensitive = false,
               };
 
               expressions.Add(expression);
@@ -555,12 +558,42 @@ namespace org.iringtools.adapter
           if (!String.IsNullOrEmpty(limitValue))
             int.TryParse(limitValue, out limit);
 
+          string sortOrder = parameters["sortOrder"];
+
+          string sortBy = parameters["sortBy"];
+
+          if (!String.IsNullOrEmpty(sortBy))
+          {
+            OrderBy orderBy = new OrderBy
+            {
+              PropertyName = sortBy,
+            };
+
+            if (String.Compare(SortOrder.Desc.ToString(), sortOrder, true) == 0)
+            {
+              orderBy.SortOrder = SortOrder.Desc;
+            }
+            else
+            {
+              orderBy.SortOrder = SortOrder.Asc;
+            }
+
+            filter.OrderByList.Add(orderBy);
+          }
+
           _dataObjects = _dataLayer.Get(graphName, filter, limit, start);
+
+          index = _dataLayer.GetIdentifiers(graphName, filter);
         }
         else
         {
           _dataObjects = _dataLayer.Get(graphName, null);
+
+          index = _dataLayer.GetIdentifiers(graphName, null);
         }
+
+        _projectionEngine.Count = index.Count;
+
         return _projectionEngine.ToXml(graphName, ref _dataObjects);
       }
       catch (Exception ex)
@@ -624,7 +657,7 @@ namespace org.iringtools.adapter
           List<Expression> expressions = new List<Expression>();
           foreach (string key in parameters.AllKeys)
           {
-            if (key != "format" && key != "start" && key != "limit" )
+            if (key != "format" && key != "start" && key != "limit" && key != "sortBy" && key != "sortOrder" )
             {
               string value = parameters[key];
 
@@ -632,7 +665,7 @@ namespace org.iringtools.adapter
               {
                 PropertyName = key,
                 RelationalOperator = library.RelationalOperator.EqualTo,
-                Values = new List<string> { value },
+                Values = new Values { value },
               };
               
               expressions.Add(expression);
@@ -647,9 +680,33 @@ namespace org.iringtools.adapter
           string limitValue = parameters["limit"];
           if (!String.IsNullOrEmpty(limitValue))
             int.TryParse(limitValue, out limit);
+
+          string sortOrder = parameters["sortOrder"];
+
+          string sortBy = parameters["sortBy"];
+
+          if (!String.IsNullOrEmpty(sortBy))
+          {
+            OrderBy orderBy = new OrderBy
+            {
+              PropertyName = sortBy,
+            };
+
+            if (String.Compare(SortOrder.Desc.ToString(), sortOrder, true) == 0)
+            {
+              orderBy.SortOrder = SortOrder.Desc;
+            }
+            else
+            {
+              orderBy.SortOrder = SortOrder.Asc;
+            }
+
+            filter.OrderByList.Add(orderBy);
+          }
         }
 
-        LoadDataObjectSet(graphName, filter, start, limit);
+        _projectionEngine.Count = LoadDataObjectSet(graphName, filter, start, limit);
+
         return _projectionEngine.ToXml(graphName, ref _dataObjects);
       }
       catch (Exception ex)
@@ -920,6 +977,8 @@ namespace org.iringtools.adapter
             }
 
             Utility.Write<Dictionary<string, string>>(settingsDictionary, @"AdapterSettings.xml");
+
+            Utility.Write<IDictionary>(_keyRing, @"KeyRing.xml");
           }
 
           _dataLayer = _kernel.Get<IDataLayer>("DataLayer");
@@ -985,9 +1044,12 @@ namespace org.iringtools.adapter
         _dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, null);
     }
 
-    private void LoadDataObjectSet(string graphName, DataFilter dataFilter, int start, int limit)
+    private long LoadDataObjectSet(string graphName, DataFilter dataFilter, int start, int limit)
     {
       _graphMap = _mapping.FindGraphMap(graphName);
+
+      IList<string> index = _dataLayer.GetIdentifiers(_graphMap.dataObjectMap, dataFilter);
+      long totalCount = index.Count;
 
       _dataObjects.Clear();
 
@@ -995,6 +1057,8 @@ namespace org.iringtools.adapter
         _dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, dataFilter, limit, start);
       else
         _dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, null);
+
+      return totalCount;
     }
 
     private void UpdateScopes(string projectName, string projectDescription, string applicationName, string applicationDescription)

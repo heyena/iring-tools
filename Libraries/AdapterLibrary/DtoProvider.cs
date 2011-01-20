@@ -105,7 +105,7 @@ namespace org.iringtools.adapter
 
         _graphMap = _mapping.FindGraphMap(graph);
 
-        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, null);
+        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, null, 0, 0);
         Dictionary<string, List<string>> classIdentifiers = GetClassIdentifiers(ref dataObjects);
 
         dataTransferIndices = BuildDataTransferIndices(ref dataObjects, ref classIdentifiers, hashAlogrithm);
@@ -273,7 +273,7 @@ namespace org.iringtools.adapter
 
         BuildCrossGraphMap(manifest, graph);
 
-        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, null);
+        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, null, 0, 0);
         Dictionary<string, List<string>> classIdentifiers = GetClassIdentifiers(ref dataObjects);
 
         dataTransferIndices = BuildDataTransferIndices(ref dataObjects, ref classIdentifiers, hashAlgorithm);

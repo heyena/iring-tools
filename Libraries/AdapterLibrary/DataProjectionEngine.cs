@@ -51,9 +51,12 @@ namespace org.iringtools.adapter.projection
             xElement.Add(rowElement);
           }
         }
-        if (_dataObjects != null && _dataObjects.Count > 1)
+        if (_dataObjects != null && (_dataObjects.Count > 1 || _dataObjects.Count == 0))
         {
           xElement = new XElement(_appNamespace + Utility.TitleCase(graphName) + "List");
+
+          XAttribute total = new XAttribute("total", this.Count);
+          xElement.Add(total);
 
           DataObject dataObject = FindGraphDataObject(graphName);
 
@@ -110,10 +113,28 @@ namespace org.iringtools.adapter.projection
 
         var value = _dataObjects[dataObjectIndex].GetPropertyValue(dataProperty.propertyName);
         if (value != null)
-          uri += dataObject.keyDelimeter + value;
+        {
+          XElement propertyElement = new XElement(dataProperty.propertyName, value);
+          parentElement.Add(propertyElement);
+
+          uri += value;
+        }
       }
 
-      parentElement.Value = uri;
+      List<DataProperty> indexProperties = dataObject.dataProperties.FindAll(dp => dp.showOnIndex == true);
+
+      foreach (DataProperty indexProperty in indexProperties)
+      {
+        var value = _dataObjects[dataObjectIndex].GetPropertyValue(indexProperty.propertyName);
+        if (value != null)
+        {
+          XElement propertyElement = new XElement(indexProperty.propertyName, value);
+          parentElement.Add(propertyElement);
+        }
+      }
+
+      XAttribute uriAttribute = new XAttribute("uri", uri);
+      parentElement.Add(uriAttribute);
     }
 
     public DataObject FindGraphDataObject(string dataObjectName)
