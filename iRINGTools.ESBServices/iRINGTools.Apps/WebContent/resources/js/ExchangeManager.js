@@ -1,5 +1,7 @@
 var app = new Ext.App();
 var directoryPanel;
+var appNewTabMap = {};
+var exNewTabMap = {};
 
 Ext.onReady(function() {
   Ext.BLANK_IMAGE_URL = 'resources/images/s.gif';
@@ -102,7 +104,7 @@ Ext.onReady(function() {
               close : {
                 fn : function() {
                   Ext.getBody().unmask(); 
-                  reloadPanel();
+                  //reloadPanel();
                   directoryPanel.openTab(directoryPanel.getSelectedNode(), 'true');
                 }
               }
@@ -161,7 +163,7 @@ Ext.onReady(function() {
   });*/
 
   directoryPanel.on('open', function(panel, node, label, url, reload) {
-    if ((contentPanel.get('tab_' + label) == undefined) || (reload == 'true')) {
+    if ((contentPanel.get(label) == undefined) || (reload == 'true')) {
       // contentPanel
       // var w =
       // Ext.getCmp(contentPanel).getActiveTab();
@@ -207,29 +209,54 @@ Ext.onReady(function() {
             return false;
           }
           else {
-          	var tabId = 'tab_' + label;
-            var newTab = new ExchangeManager.NavigationPanel( {
-              title : label,
-              id : tabId,
-              configData : responseData,
-              url : pageURL,
-              closable : true,
-              nodeDisplay : "...",
-              scopeName : scopeId,
-              idName : uid,
-              appName : appName,
-              graphName : nodeText,
-              nodeType : nodeType,
-              firstTabId : tabId,
-              classId : "...",
-              dtoIdentifier : "..."              
-            });
-
-            globalPanel = newTab;
-            contentPanel.add(newTab);
-            contentPanel.activate(newTab);
-
-            newTab.on('beforeclose', function(newTab) {
+          	var tabId = label;
+          	
+          	if (nodeType == 'exchange') {
+          		exNewTabMap[tabId] = new ExchangeManager.NavigationPanel( {
+                    title : label,
+                    id : tabId,
+                    configData : responseData,
+                    url : pageURL,
+                    closable : true,
+                    nodeDisplay : "...",
+                    scopeName : scopeId,
+                    idName : uid,             
+                    nodeType : nodeType,
+                    firstTabId : tabId,
+                    classId : "...",
+                    dtoIdentifier : "...",
+                    key : tabId,
+                    node : node
+                  });
+          		
+          		contentPanel.add(exNewTabMap[tabId]);
+                contentPanel.activate(exNewTabMap[tabId]);
+                var ntab = exNewTabMap[tabId];
+          	}
+          	else if (nodeType == 'graph') {
+          		appNewTabMap[tabId] = new ExchangeManager.NavigationPanel( {
+                    title : label,
+                    id : tabId,
+                    configData : responseData,
+                    url : pageURL,
+                    closable : true,
+                    nodeDisplay : "...",
+                    scopeName : scopeId,                    
+                    appName : appName,
+                    graphName : nodeText,
+                    nodeType : nodeType,
+                    firstTabId : tabId,
+                    classId : "...",
+                    dtoIdentifier : "...",
+                    key : tabId,
+                    node : node
+                  });
+          		contentPanel.add(appNewTabMap[tabId]);
+                contentPanel.activate(appNewTabMap[tabId]);
+                var ntab = appNewTabMap[tabId];
+          	}
+            
+            ntab.on('beforeclose', function(ntab) {
               var deleteReqURL = null;
               if ((nodeType == 'exchange' && uid != '')) {
                 deleteReqURL = 'cleanExchDataRows?scopeName=' + scopeId + '&idName=' + uid;
@@ -258,7 +285,7 @@ Ext.onReady(function() {
       });
     }
     else {
-      contentPanel.setActiveTab('tab_' + label);
+      contentPanel.setActiveTab(label);
     }
   });
 
