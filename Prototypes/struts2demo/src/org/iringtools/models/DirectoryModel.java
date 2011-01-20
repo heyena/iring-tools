@@ -1,6 +1,10 @@
-package org.iringtools.controllers;
+package org.iringtools.models;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+
+import javax.xml.bind.JAXBException;
 
 import org.iringtools.directory.Application;
 import org.iringtools.directory.ApplicationData;
@@ -10,44 +14,32 @@ import org.iringtools.directory.Directory;
 import org.iringtools.directory.Exchange;
 import org.iringtools.directory.Graph;
 import org.iringtools.directory.Scope;
-import org.iringtools.ui.widgets.tree.LeafNode;
-import org.iringtools.ui.widgets.tree.Node;
-import org.iringtools.ui.widgets.tree.Property;
-import org.iringtools.ui.widgets.tree.Tree;
-import org.iringtools.ui.widgets.tree.TreeNode;
 import org.iringtools.utility.HttpClient;
+import org.iringtools.widgets.tree.LeafNode;
+import org.iringtools.widgets.tree.Node;
+import org.iringtools.widgets.tree.Tree;
+import org.iringtools.widgets.tree.TreeNode;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionSupport;
-
-public class DirectoryTreeController extends ActionSupport
+public class DirectoryModel 
 {
-  private static final long serialVersionUID = 1L;
-  private Tree directoryTree;
-
-  public String execute() throws Exception
+  private HashMap<String, String> settings;
+  
+  public DirectoryModel(HashMap<String, String> settings)
   {
-    try
-    {
-      String serviceUri = ActionContext.getContext().getApplication().get("ExchangeServiceUri").toString();
-      HttpClient httpClient = new HttpClient(serviceUri);
-      Directory directory = httpClient.get(Directory.class, "/directory");
-      directoryTree = setDirectoryTree(directory);
-    }
-    catch (Exception ex)
-    {
-      throw ex;
-    }
-
-    return SUCCESS;
+    this.settings = settings;
   }
-
-  public Tree getDirectoryTree()
+  
+  public Tree createDirectoryTree() throws JAXBException, IOException
   {
+    String serviceUri = settings.get("ESBServiceUri");
+    HttpClient httpClient = new HttpClient(serviceUri);
+    Directory directory = httpClient.get(Directory.class, "/directory");
+    Tree directoryTree = directoryToTree(directory);
+    
     return directoryTree;
   }
   
-  private Tree setDirectoryTree(Directory directory)
+  private Tree directoryToTree(Directory directory)
   {
     Tree tree = new Tree();
     List<Node> scopeNodes = tree.getNodes();
@@ -56,6 +48,7 @@ public class DirectoryTreeController extends ActionSupport
     {
       TreeNode scopeNode = new TreeNode();
       scopeNode.setText(scope.getName());
+      scopeNode.setIconCls("scope");
       scopeNodes.add(scopeNode);
 
       List<Node> scopeNodeList = scopeNode.getChildren();
@@ -65,6 +58,7 @@ public class DirectoryTreeController extends ActionSupport
       {
         TreeNode appDataNode = new TreeNode();
         appDataNode.setText("Application Data");
+        appDataNode.setIconCls("folder");
         scopeNodeList.add(appDataNode);
 
         List<Node> appDataNodeList = appDataNode.getChildren();
@@ -73,6 +67,7 @@ public class DirectoryTreeController extends ActionSupport
         {
           TreeNode appNode = new TreeNode();
           appNode.setText(app.getName());
+          appNode.setIconCls("application");
           appDataNodeList.add(appNode);
 
           List<Node> appNodeList = appNode.getChildren();
@@ -81,22 +76,14 @@ public class DirectoryTreeController extends ActionSupport
           {
             LeafNode graphNode = new LeafNode();
             graphNode.setText(graph.getName());
+            graphNode.setIconCls("graph");
             graphNode.setLeaf(true);
             appNodeList.add(graphNode);
             
-            List<Property> properties = graphNode.getProperties();
-            Property prop1 = new Property();
-            prop1.setName("Name");
-            prop1.setValue(graph.getName());
-            properties.add(prop1);
-            Property prop2 = new Property();
-            prop2.setName("Description");
-            prop2.setValue(graph.getDescription());
-            properties.add(prop2);
-            Property prop3 = new Property();
-            prop3.setName("Commodity");
-            prop3.setValue(graph.getCommodity());
-            properties.add(prop3);
+            HashMap<String, String> properties = graphNode.getProperties();
+            properties.put("Name", graph.getName());
+            properties.put("Description", graph.getDescription());
+            properties.put("Commodity", graph.getCommodity());
           }
         }
       }
@@ -107,6 +94,7 @@ public class DirectoryTreeController extends ActionSupport
       {
         TreeNode exchangeDataNode = new TreeNode();
         exchangeDataNode.setText("Exchange Data");
+        exchangeDataNode.setIconCls("folder");
         scopeNodeList.add(exchangeDataNode);
 
         List<Node> exchangeDataNodeList = exchangeDataNode.getChildren();
@@ -115,6 +103,7 @@ public class DirectoryTreeController extends ActionSupport
         {
           TreeNode commodityNode = new TreeNode();
           commodityNode.setText(commodity.getName());
+          commodityNode.setIconCls("commodity");
           exchangeDataNodeList.add(commodityNode);
 
           List<Node> commodityNodeList = commodityNode.getChildren();
@@ -123,27 +112,19 @@ public class DirectoryTreeController extends ActionSupport
           {
             LeafNode exchangeNode = new LeafNode();
             exchangeNode.setText(exchange.getName());
+            exchangeNode.setIconCls("exchange");
             exchangeNode.setLeaf(true);
-            
-            List<Property> properties = exchangeNode.getProperties();
-            Property prop1 = new Property();
-            prop1.setName("Id");
-            prop1.setValue(exchange.getId());
-            properties.add(prop1);
-            Property prop2 = new Property();
-            prop2.setName("Name");
-            prop2.setValue(exchange.getName());
-            properties.add(prop2);
-            Property prop3 = new Property();
-            prop3.setName("Description");
-            prop3.setValue(exchange.getDescription());
-            properties.add(prop3);
             commodityNodeList.add(exchangeNode);
+            
+            HashMap<String, String> properties = exchangeNode.getProperties();            
+            properties.put("Id", exchange.getId());
+            properties.put("Name", exchange.getName());
+            properties.put("Description", exchange.getDescription());
           }
         }
       }
     }
     
     return tree;
-  }
+  } 
 }
