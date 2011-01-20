@@ -35,6 +35,9 @@ public class ExchDataController extends ActionSupport implements SessionAware
 	private String key;
 	private String hasReviewed;
 	private String historyId;
+	private String filter;
+	private String sortBy;
+	private String sortOrder;
 	
 	public ExchDataController() {
 		exchdata = new ExchDataModel();
@@ -123,6 +126,36 @@ public class ExchDataController extends ActionSupport implements SessionAware
 		return classId;
 	}
 
+public void setFilter(String filter) {
+		
+		this.filter = filter;
+		
+	}
+
+	public String getFilter() {
+		return filter;
+	}	
+	
+	public void setSortOrder(String sortOrder) {
+		
+		this.sortOrder = sortOrder;
+		
+	}
+
+	public String getSortOrder() {
+		return sortOrder;
+	}
+	
+	public void setSortBy(String sortBy) {
+		
+		this.sortOrder = sortBy;
+		
+	}
+
+	public String getSortBy() {
+		return sortBy;
+	}
+	
 	public void setRelatedId(String relatedId) {
 		this.relatedId = relatedId;
 	}
@@ -157,6 +190,17 @@ public class ExchDataController extends ActionSupport implements SessionAware
 		}
 	}
 	
+	public void getExchFilterDtiList() {
+		key = scopeName + idName + filter + sortOrder + sortBy;		
+		
+		if (session.get(key) == null)
+			session.put(key, exchdata.populateFilter(scopeName, idName, filter, sortOrder, sortBy));
+		else {
+			exchdata.setDtiList(((DataTransferIndices)session.get(key)).getDataTransferIndexList().getItems());
+			exchdata.setDtoUrl("/" + scopeName + "/exchanges/" + idName);
+		}
+	}
+	
 	public String getExchDataGrid() {
 		getExchDtiList();
 		grid = exchdata.toGrid();
@@ -164,7 +208,10 @@ public class ExchDataController extends ActionSupport implements SessionAware
 	}
 
 	public String getExchDataRows() {
-		getExchDtiList();		
+		if (filter == null && sortOrder == null && sortBy == null)
+			getExchDtiList();
+		else
+			getExchFilterDtiList();
 		rows = exchdata.toRows(start, limit);		
 		return Action.SUCCESS;
 	}

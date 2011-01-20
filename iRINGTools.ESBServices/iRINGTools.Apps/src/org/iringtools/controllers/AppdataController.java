@@ -1,5 +1,6 @@
 package org.iringtools.controllers;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.struts2.interceptor.SessionAware;
@@ -7,6 +8,7 @@ import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.models.AppdataModel;
 import org.iringtools.ui.widgets.grid.Grid;
 import org.iringtools.ui.widgets.grid.Rows;
+import org.iringtools.utility.JsonUtil;
 
 import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionSupport;
@@ -28,6 +30,11 @@ public class AppdataController extends ActionSupport implements SessionAware
 	private String key;
 	private int start=0;
 	private int limit=20;
+	private String filter; 
+	private String sortBy;
+	private String sortOrder;
+	
+	
 
 
 	public AppdataController() {
@@ -64,6 +71,36 @@ public class AppdataController extends ActionSupport implements SessionAware
 
 	public String getClassId() {
 		return classId;
+	}
+	
+	public void setFilter(String filter) {
+		
+		this.filter = filter;
+		
+	}
+
+	public String getFilter() {
+		return filter;
+	}	
+	
+	public void setSortOrder(String sortOrder) {
+		
+		this.sortOrder = sortOrder;
+		
+	}
+
+	public String getSortOrder() {
+		return sortOrder;
+	}
+	
+	public void setSortBy(String sortBy) {
+		
+		this.sortOrder = sortBy;
+		
+	}
+
+	public String getSortBy() {
+		return sortBy;
 	}
 	
 	public void setRelatedId(String relatedId) {
@@ -133,6 +170,18 @@ public class AppdataController extends ActionSupport implements SessionAware
 		}
 	}
 	
+	
+	public void getExchFilterDtiList() {
+		key = scopeName + appName + graphName + filter + sortOrder + sortBy;		
+		
+		if (session.get(key) == null)
+			session.put(key, appdata.populateFilter(scopeName, appName, graphName, filter, sortOrder, sortBy));
+		else {
+			appdata.setDtiList(((DataTransferIndices)session.get(key)).getDataTransferIndexList().getItems());
+			appdata.setDtoUrl("/" + scopeName + "/" + appName + "/" + graphName);
+		}
+	}
+	
 	public String getAppDataGrid() {
 		getExchDtiList();
 		grid = appdata.toGrid();
@@ -140,7 +189,10 @@ public class AppdataController extends ActionSupport implements SessionAware
 	}
 
 	public String getAppDataRows() {
-		getExchDtiList();
+		if (filter == null && sortOrder == null && sortBy == null)
+			getExchDtiList();
+		else
+			getExchFilterDtiList();
 		rows = appdata.toRows(start, limit);		
 		return Action.SUCCESS;
 	}
