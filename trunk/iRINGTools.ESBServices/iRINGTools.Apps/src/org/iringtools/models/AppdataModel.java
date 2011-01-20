@@ -13,10 +13,11 @@ public class AppdataModel {
 	private Grid grid = null;
 	private Rows rows = null;
 	private String URI="";		
-	private String dtoUrl;
+	private String dtoUrl;	
 	private List<DataTransferIndex> dtiList=null;
-	private List<DataTransferIndex> dtiPage;
-	private DtoContainer dtoCtr;
+	private List<DataTransferIndex> dtiPage=null;
+	
+	private DtoContainer dtoCtr=null;
 	private int rInd=0;
 	
 	public AppdataModel() {
@@ -45,6 +46,23 @@ public class AppdataModel {
 		return dti;
 	}
 
+	
+	public DataTransferIndices populateFilter(String scopeName, String appName, String graphName, 
+			                                  String filter, String sortOrder, String sortBy) {
+		DataTransferIndices dti = null;
+		try {
+			HttpClient httpClient = new HttpClient(URI);
+			dti = httpClient.get(DataTransferIndices.class,
+					"/" + scopeName + "/" + appName + "/" + graphName + "/" + filter + "/" + sortOrder+ "/" + sortBy);
+			setDtiList(dti.getDataTransferIndexList().getItems());
+			setDtoUrl("/" + scopeName + "/" + appName + "/" + graphName);
+		} catch (Exception e) {
+			System.out.println("Exception :" + e);
+		}
+		return dti;
+	}
+	
+	
 	public void setURI (String uri) {
 		this.URI = uri;
 	}
@@ -100,6 +118,8 @@ public class AppdataModel {
 	    
 		return grid;
 	}
+    
+    
 	
     public Rows toRows(int start, int limit) {	
     	dtiPage = dtiList.subList(start, Math.min(limit+start, dtiList.size()-1));

@@ -56,6 +56,21 @@ public class ExchDataModel {
 		}
 		return dti;
 	}
+	
+	public DataTransferIndices populateFilter(String scopeName, String id, String filter, String sortOrder, String sortBy) {
+		DataTransferIndices dti = null;
+		try {
+			HttpClient httpClient = new HttpClient(URI);
+			dti = httpClient.get(DataTransferIndices.class, "/" + scopeName
+					+ "/exchanges/" + id + "/" + filter + "/"
+					+ sortOrder + "/" + sortBy);
+			setDtiList(dti.getDataTransferIndexList().getItems());
+			setDtoUrl("/" + scopeName + "/exchanges/" + id);
+		} catch (Exception e) {
+			System.out.println("Exception :" + e);
+		}
+		return dti;
+	}
 
 	public void setURI(String uri) {
 		this.URI = uri;
