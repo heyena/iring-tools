@@ -6,34 +6,31 @@ using org.iringtools.library;
 
 namespace iRINGTools.Web.Models
 {
-  public class GraphTreeNode : TreeNode<GraphTreeNode>
+  public class GraphTreeNode : TreeNode<String>
   {
-    public ScopeProject Scope { get; set; }
-    public ScopeApplication _application { get; set; }
-    public string GraphName {get; set; }
+    private String GraphMap = null;
 
     public override string text
     {
       get
       {
-        if (!string.IsNullOrEmpty(GraphName))
+        if (!string.IsNullOrEmpty(GraphMap))
         {
-          return GraphName;
+          return GraphMap;
         }
         else
         {
-          return GraphName;
+          return GraphMap;
         }
       }      
     }
 
-    public GraphTreeNode(string graphMap, ScopeProject scope, ScopeApplication application)
-    {
-      Scope = scope;
-      _application = application;
-      this.GraphName = graphMap;
-      this.id = Scope.Name + _application.Name + GraphName;
+    public GraphTreeNode(string graphMap)
+    { 
+      this.GraphMap = graphMap;      
       this.icon = "Content/img/applications-internet.png";
+      this.children = new List<String>();      
+      this.children.Add("Mapping");
       this.leaf = true;
     }
   }
