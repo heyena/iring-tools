@@ -1,7 +1,6 @@
 Ext.ns('exchange-manager');
 
-function loadExchangeData(scope, exchangeId) {
-  var label = scope + '.' + exchangeId;
+function loadExchangeData(label, scope, exchangeId) {
   var url = 'xdata?scope=' + scope + '&exchangeId=' + exchangeId;
   loadDtoPage(label, url);
 }
@@ -40,7 +39,7 @@ function loadDtoPage(label, url) {
         region: 'north',
         height: 26,
         padding: '5',
-        bodyStyle: 'background-color:#eef',
+        bodyStyle: 'background-color:#fcfcff',
         items: [{
           xtype: 'box',
           autoEl: {tag: 'a', href: 'javascript:alert(\'loadRelatedItem\')', html: 'PIPING NETWORK SYSTEM'},
@@ -50,7 +49,6 @@ function loadDtoPage(label, url) {
           xtype: 'box',
           autoEl: {tag: 'img', src: 'resources/images/breadcrumb.png'},
           cls: 'breadcrumb-img'
-          //autoEl: {tag: 'span', html: '&raquo;'}
         },{
           xtype: 'box',
           autoEl: {tag: 'a', href: 'javascript:alert(\'loadRelatedItem\')', html: '66015-O'},
@@ -91,7 +89,6 @@ function loadDtoPage(label, url) {
         })
       });
       
-      //TODO: call load populate grid data
       var dtoLogPane = new Ext.grid.GridPanel({
         id: 'log_' + label,
         title: 'Exchange Logs',
@@ -158,7 +155,6 @@ Ext.onReady(function() {
   
   var headerPane = new Ext.BoxComponent({
     region: 'north',
-    height: 46,
     cls: 'blue-fade',
     contentEl: 'header'
   });
@@ -191,7 +187,7 @@ Ext.onReady(function() {
       },{
         xtype: 'button',
         icon: 'resources/images/exchange-log.png',
-        text: 'Logs',
+        text: 'XLogs',
         handler: function() {  
           var logPane = Ext.getCmp('log_12345_000.ABC.LINES');
           
@@ -227,8 +223,8 @@ Ext.onReady(function() {
             var graphNode = node.parentNode;
             loadAppData(dataTypeNode.parentNode.attributes['text'], graphNode.attributes['text'], node.attributes['text']);
           }
-          else if (dataTypeNode.attributes['text'] == 'Exchange Data') {
-            loadExchangeData(dataTypeNode.parentNode.attributes['text'], properties['Id']);
+          else if (dataTypeNode.attributes['text'] == 'Data Exchanges') {
+            loadExchangeData(node.text, dataTypeNode.parentNode.attributes['text'], properties['Id']);
           }
         }
       }

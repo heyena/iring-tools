@@ -93,7 +93,7 @@ public class DirectoryModel
       if (exchangeData != null)
       {
         TreeNode exchangeDataNode = new TreeNode();
-        exchangeDataNode.setText("Exchange Data");
+        exchangeDataNode.setText("Data Exchanges");
         exchangeDataNode.setIconCls("folder");
         scopeNodeList.add(exchangeDataNode);
 
