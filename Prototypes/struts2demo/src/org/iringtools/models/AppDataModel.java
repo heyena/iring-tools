@@ -57,15 +57,21 @@ public class AppDataModel
     List<List<String>> gridData = new ArrayList<List<String>>();  
     pageDtoGrid.setData(gridData);
     
-    List<Field> fields = new ArrayList<Field>();    
+    List<Field> fields = new ArrayList<Field>();
     boolean firstDto = true;
     
     for (DataTransferObject dto : dtoList)
     {
       List<String> row = new ArrayList<String>();
+      ClassObject firstClassObject = null;
       
       for (ClassObject classObject : dto.getClassObjects().getItems())
-      {        
+      {
+        if (firstClassObject == null) {
+          pageDtoGrid.setType(classObject.getName());
+          firstClassObject = classObject;
+        }
+        
         for (TemplateObject templateObject : classObject.getTemplateObjects().getItems())
         {
           for (RoleObject roleObject : templateObject.getRoleObjects().getItems())
@@ -77,7 +83,7 @@ public class AppDataModel
               if (firstDto)
               {
                 Field field = new Field();
-                field.setName(classObject.getName() + "." + roleObject.getName());                
+                field.setName((classObject.getName() + "." + roleObject.getName()).toUpperCase());                
                 field.setType(roleObject.getDataType().replace("xsd:", "")); 
                 fields.add(field);
               }
@@ -88,10 +94,18 @@ public class AppDataModel
         }
       }
       
+      row.add(0, "<input type=\"image\" src=\"resources/images/info-small.png\" onClick=\"javascript:getRelatedItems('" + firstClassObject.getClassId() + "','" + dto.getIdentifier() + "')\">");      
       gridData.add(row);
 
       if (firstDto)
-      {
+      {        
+        Field infoField = new Field();
+        infoField.setName("&nbsp;");                
+        infoField.setType("string"); 
+        infoField.setWidth(28);
+        infoField.setFixed(true);
+        fields.add(0, infoField); 
+        
         pageDtoGrid.setFields(fields);
         firstDto = false;
       }

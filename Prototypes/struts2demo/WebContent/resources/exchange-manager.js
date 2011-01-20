@@ -1,20 +1,20 @@
 Ext.ns('exchange-manager');
 
-function loadExchangeData(label, scope, exchangeId) {
+function loadExchangeData(label, scope, exchangeId){
   var url = 'xdata?scope=' + scope + '&exchangeId=' + exchangeId;
   loadDtoPage(label, url);
 }
 
-function loadAppData(scope, app, graph) {
+function loadAppData(scope, app, graph){
   var label = scope + '.' + app + '.' + graph;
   var url = 'adata?scope=' + scope + '&app=' + app + '&graph=' + graph;
   loadDtoPage(label, url);
 }
 
-function loadDtoPage(label, url) {
+function loadDtoPage(label, url){
   var tab = Ext.getCmp('content-pane').getItem(label);
   
-  if (tab != null) {
+  if (tab != null){
     tab.show();
   }
   else {  
@@ -30,9 +30,8 @@ function loadDtoPage(label, url) {
     
     var pageSize = 25;      
     
-    store.on('load', function() {
+    store.on('load', function(){
       store.recordType = store.reader.recordType;
-      store.fields = store.recordType.prototype.fields;
       
       var dtoNavPane = new Ext.Panel({
         id: 'nav_' + label,
@@ -40,7 +39,7 @@ function loadDtoPage(label, url) {
         height: 26,
         padding: '5',
         bodyStyle: 'background-color:#fcfcff',
-        items: [{
+        items: [/*{
           xtype: 'box',
           autoEl: {tag: 'a', href: 'javascript:alert(\'loadRelatedItem\')', html: 'PIPING NETWORK SYSTEM'},
           cls: 'breadcrumb',
@@ -58,9 +57,9 @@ function loadDtoPage(label, url) {
           xtype: 'box',
           autoEl: {tag: 'img', src: 'resources/images/breadcrumb.png'},
           cls: 'breadcrumb-img'
-        },{
+        },*/{
           xtype: 'box',
-          autoEl: {tag: 'a', href: 'javascript:alert(\'loadRelatedItem\')', html: 'PLANT AREA'},
+          autoEl: {tag: 'a', href: 'javascript:alert(\'show this tab and remove items on the right\')', html: store.reader.type},
           cls: 'breadcrumb',
           overCls: 'breadcrumb-hover'            
         }]
@@ -137,24 +136,25 @@ function loadDtoPage(label, url) {
   }
 }
 
-function processResult(answer) {
-  alert(answer);
+function getRelatedItems(classId, classInstance){
+  alert('getting related items of :' + classId + ',' + classInstance);
 }
 
-function showDialog(title, message) {
+function showDialog(title, message, resultCallback){
   Ext.Msg.show({
     title: title,
     msg: '<textarea class="dialog-textbox" readonly="yes">' + message + '</textarea>',
     buttons: Ext.Msg.OKCANCEL,
-    fn: processResult
+    fn: resultCallback
   });
 }
 
-Ext.onReady(function() {
+Ext.onReady(function(){
   Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
   
   var headerPane = new Ext.BoxComponent({
     region: 'north',
+    height: 46,
     cls: 'blue-fade',
     contentEl: 'header'
   });
@@ -188,10 +188,10 @@ Ext.onReady(function() {
         xtype: 'button',
         icon: 'resources/images/exchange-log.png',
         text: 'XLogs',
-        handler: function() {  
+        handler: function(){  
           var logPane = Ext.getCmp('log_12345_000.ABC.LINES');
           
-          if (logPane.hidden == true) { 
+          if (logPane.hidden == true){ 
             alert('show log');
             //logPane.show();
             logPane.setVisible(true);
@@ -210,20 +210,20 @@ Ext.onReady(function() {
       icon: 'resources/images/directory.png'
     },
     listeners: {
-      click: function(node, event) {
+      click: function(node, event){
         Ext.getCmp('properties-pane').setSource(node.attributes.properties);
       },
-      dblclick: function(node, event) {
+      dblclick: function(node, event){
         var dataTypeNode = node.parentNode.parentNode;
         var properties = node.attributes.properties;
         Ext.getCmp('properties-pane').setSource(node.attributes.properties);
         
-        if (dataTypeNode != null) {          
-          if (dataTypeNode.attributes['text'] == 'Application Data') {
+        if (dataTypeNode != null){          
+          if (dataTypeNode.attributes['text'] == 'Application Data'){
             var graphNode = node.parentNode;
             loadAppData(dataTypeNode.parentNode.attributes['text'], graphNode.attributes['text'], node.attributes['text']);
           }
-          else if (dataTypeNode.attributes['text'] == 'Data Exchanges') {
+          else if (dataTypeNode.attributes['text'] == 'Data Exchanges'){
             loadExchangeData(node.text, dataTypeNode.parentNode.attributes['text'], properties['Id']);
           }
         }
@@ -242,7 +242,7 @@ Ext.onReady(function() {
     autoScroll: true,
     source: {},
     listeners: {
-      beforeedit : function(e) {
+      beforeedit : function(e){
         e.cancel = true;
       }
     }
@@ -278,7 +278,7 @@ Ext.onReady(function() {
   
   directoryTreePane.getRootNode().expand(false);
   
-  Ext.get('about-link').on('click', function() {
+  Ext.get('about-link').on('click', function(){
     var win = new Ext.Window({    
       title: 'About Exchange Manager',
       bodyStyle: 'background-color:white;padding:5px',
