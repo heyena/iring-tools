@@ -18,6 +18,7 @@ using org.iringtools.library;
 using org.w3.sparql_results;
 using System.Threading;
 using VDS.RDF.Query;
+using System.Configuration;
 
 namespace org.iringtools.utils.exchange
 {
@@ -34,11 +35,19 @@ namespace org.iringtools.utils.exchange
     List<string> _graphUris = null;
     string _graphUri = String.Empty;
 
+    string _proxyHost = String.Empty;
+    string _proxyPort = String.Empty;
+    string _proxyCredentialToken = String.Empty;
+    
     public FacadeExchange()
     {
       InitializeComponent();
 
       listBoxResults.ItemsSource = _messages;
+
+      _proxyHost = ConfigurationManager.AppSettings["ProxyHost"];
+      _proxyPort = ConfigurationManager.AppSettings["ProxyPort"];
+      _proxyCredentialToken = ConfigurationManager.AppSettings["ProxyCredentialToken"];
     }
 
     private void buttonPull_Click(object sender, RoutedEventArgs e)
@@ -98,10 +107,10 @@ namespace org.iringtools.utils.exchange
 
         client.Credentials = CredentialCache.DefaultCredentials;
 
-        client.Proxy.Credentials = CredentialCache.DefaultCredentials;
+        //client.Proxy.Credentials = CredentialCache.DefaultCredentials;
 
-        WebProxy proxy = new WebProxy();
-        proxy.UseDefaultCredentials = true;
+        WebProxy proxy = new WebProxy(_proxyHost, Convert.ToInt16(_proxyPort));
+        proxy.Credentials = CredentialCache.DefaultCredentials;
         client.Proxy = proxy;
 
         client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(client_DownloadStringCompleted);
@@ -355,51 +364,58 @@ namespace org.iringtools.utils.exchange
       {
         _messages.Clear();
 
-        _messages.Add(new StatusMessage { Message = "Fetching graphs from Façade...", ImageName = "Resources/info_22.png" });
+        Login login = new Login();
+        login.Owner = this;
+        login.ShowDialog();
 
-        string sparql = "SELECT DISTINCT ?g WHERE { GRAPH ?g { ?s ?p ?o } }";
-
-        SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(textBoxTargetURL.Text), "");
-
-        WebProxy webproxy = new WebProxy("tcsproxy", 8080);
-        webproxy.Credentials = CredentialCache.DefaultCredentials;
-        endpoint.Proxy = webproxy;
-        
-        endpoint.Credentials = new NetworkCredential();
-        endpoint.Credentials.Domain = "MyDOMAIN";
-        endpoint.Credentials.UserName = "MyUsername";
-        endpoint.Credentials.Password = "MyPassword";
-
-        SparqlResultSet results = endpoint.QueryWithResultSet(sparql);
-
-        _graphUris = new List<string>();
-        _graphUris.Add("[Default Graph]");
-        foreach (SparqlResult result in results.Results)
+        if (login.DialogResult == true)
         {
-          string uri = result.Value("g").ToString();
+            _messages.Add(new StatusMessage { Message = "Fetching graphs from Façade...", ImageName = "Resources/info_22.png" });
 
-          if (uri != null)
-          {
-            if (!uri.StartsWith("_:"))
+            string sparql = "SELECT DISTINCT ?g WHERE { GRAPH ?g { ?s ?p ?o } }";
+
+            SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(textBoxTargetURL.Text), "");
+
+            WebProxy proxy = new WebProxy(_proxyHost, Convert.ToInt16(_proxyPort));
+            proxy.Credentials = CredentialCache.DefaultCredentials;
+            endpoint.Proxy = proxy;
+
+            endpoint.Credentials = new NetworkCredential();
+            endpoint.Credentials.Domain = login.textBoxDomain.Text;
+            endpoint.Credentials.UserName = login.textBoxUsername.Text;
+            endpoint.Credentials.Password = login.textBoxPassword.Password;
+
+            SparqlResultSet results = endpoint.QueryWithResultSet(sparql);
+
+            _graphUris = new List<string>();
+            _graphUris.Add("[Default Graph]");
+            foreach (SparqlResult result in results.Results)
             {
-              _graphUris.Add(uri);
+                string uri = result.Value("g").ToString();
+
+                if (uri != null)
+                {
+                    if (!uri.StartsWith("_:"))
+                    {
+                        _graphUris.Add(uri);
+                    }
+                }
             }
-          }
+
+            comboBoxGraphUri.ItemsSource = _graphUris;
+            comboBoxGraphUri.SelectionChanged += new SelectionChangedEventHandler(comboBoxGraphUri_SelectionChanged);
+            comboBoxGraphUri.SelectedIndex = 0;
+            comboBoxGraphUri.IsEnabled = true;
+
+            _messages.Add(new StatusMessage
+            {
+                Message = "Successfully fetched " + _graphUris.Count +
+                  " graphs from Façade.",
+                ImageName = "Resources/success_22.png"
+            });
+
+            listBoxResults.ScrollIntoView(listBoxResults.Items[listBoxResults.Items.Count - 1]);
         }
-
-        comboBoxGraphUri.ItemsSource = _graphUris;
-        comboBoxGraphUri.SelectionChanged += new SelectionChangedEventHandler(comboBoxGraphUri_SelectionChanged);
-        comboBoxGraphUri.SelectedIndex = 0;
-        comboBoxGraphUri.IsEnabled = true;
-
-        _messages.Add(new StatusMessage
-        {
-          Message = "Successfully fetched " + _graphUris.Count +
-            " graphs from Façade.",
-          ImageName = "Resources/success_22.png"
-        });
-
-        listBoxResults.ScrollIntoView(listBoxResults.Items[listBoxResults.Items.Count - 1]);
       }
       catch (Exception ex)
       {
@@ -407,12 +423,14 @@ namespace org.iringtools.utils.exchange
 
         _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "Resources/error_22.png" });
       }
-    }
+    }    
 
     public class StatusMessage
     {
       public string ImageName { get; set; }
       public string Message { get; set; }
     }
+
+
   }
 }
