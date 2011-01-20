@@ -140,6 +140,9 @@ namespace org.iringtools.library
 
         [DataMember(IsRequired = true, Order = 5)]
         public KeyType keyType { get; set; }
+
+        [DataMember(EmitDefaultValue = false, Order = 6)]
+        public bool showOnIndex { get; set; }
     }
 
     [DataContract(Namespace = "http://ns.iringtools.org/library")]

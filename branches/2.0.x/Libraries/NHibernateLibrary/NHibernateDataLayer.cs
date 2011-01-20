@@ -125,12 +125,22 @@ namespace org.iringtools.adapter.datalayer
     {
       try
       {
+        if (_databaseDictionary.IdentityConfiguration != null)
+        {
+          IdentityProperties identityProperties = _databaseDictionary.IdentityConfiguration[objectType];
+
+          if (identityProperties.UseIdentityFilter)
+          {
+            filter = FilterByIdentity(objectType, filter, identityProperties);
+          }
+        }
+
         StringBuilder queryString = new StringBuilder();
         queryString.Append("select Id from " + objectType);
 
         if (filter != null && filter.Expressions.Count > 0)
         {
-          string whereClause = filter.ToSqlWhereClause(objectType, null);
+          string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectType, null);
           queryString.Append(whereClause);
         }
 
@@ -182,45 +192,7 @@ namespace org.iringtools.adapter.datalayer
 
           if (identityProperties.UseIdentityFilter)
           {
-            #region FilterByIdentity
-            DataObject dataObject = _databaseDictionary.dataObjects.Find(d => d.objectName == objectType);
-            DataProperty dataProperty = dataObject.dataProperties.Find(p => p.columnName == identityProperties.IdentityProperty);
-
-            if (dataProperty != null)
-            {
-              if (filter == null)
-              {
-                filter = new DataFilter();
-              }
-
-              if (filter.Expressions == null)
-              {
-                filter.Expressions = new List<Expression>();
-              }
-              else if (filter.Expressions.Count > 0)
-              {
-                Expression firstExpression = filter.Expressions.First();
-                Expression lastExpression = filter.Expressions.Last();
-                firstExpression.OpenGroupCount++;
-                lastExpression.CloseGroupCount++;
-                lastExpression.LogicalOperator = LogicalOperator.And;
-              }
-
-              string identityValue = _keyRing[identityProperties.KeyRingProperty].ToString();
-
-              Expression expression = new Expression
-              {
-                PropertyName = dataProperty.propertyName,
-                RelationalOperator = RelationalOperator.EqualTo,
-                Values = new List<string>
-              {
-                identityValue,
-              }
-              };
-
-              filter.Expressions.Add(expression);
-            }
-            #endregion
+            filter = FilterByIdentity(objectType, filter, identityProperties);
           }
         }
 
@@ -238,7 +210,11 @@ namespace org.iringtools.adapter.datalayer
           IQuery query = session.CreateQuery(queryString.ToString());
           IList<IDataObject> dataObjects = query.List<IDataObject>();
 
-          if (startIndex + pageSize <= dataObjects.Count)
+          if (pageSize == 0)
+          {
+            dataObjects = dataObjects.ToList();
+          }
+          else if (startIndex + pageSize <= dataObjects.Count)
           {
             dataObjects = dataObjects.ToList().GetRange(startIndex, pageSize);
           }
@@ -261,6 +237,50 @@ namespace org.iringtools.adapter.datalayer
         _logger.Error("Error in Get: " + ex);
         throw new Exception(string.Format("Error while getting a list of data objects of type [{0}]. {1}", objectType, ex));
       }
+    }
+
+    private DataFilter FilterByIdentity(string objectType, DataFilter filter, IdentityProperties identityProperties)
+    {
+      DataObject dataObject = _databaseDictionary.dataObjects.Find(d => d.objectName == objectType);
+      DataProperty dataProperty = dataObject.dataProperties.Find(p => p.columnName == identityProperties.IdentityProperty);
+
+      if (dataProperty != null)
+      {
+        if (filter == null)
+        {
+          filter = new DataFilter();
+        }
+
+        if (filter.Expressions == null)
+        {
+          filter.Expressions = new List<Expression>();
+        }
+        else if (filter.Expressions.Count > 0)
+        {
+          Expression firstExpression = filter.Expressions.First();
+          Expression lastExpression = filter.Expressions.Last();
+          firstExpression.OpenGroupCount++;
+          lastExpression.CloseGroupCount++;
+          lastExpression.LogicalOperator = LogicalOperator.And;
+        }
+
+        string identityValue = _keyRing[identityProperties.KeyRingProperty].ToString();
+
+        Expression expression = new Expression
+        {
+          PropertyName = dataProperty.propertyName,
+          RelationalOperator = RelationalOperator.EqualTo,
+          Values = new Values
+          {
+            identityValue,
+          },
+          IsCaseSensitive = identityProperties.IsCaseSensitive
+        };
+
+        filter.Expressions.Add(expression);
+      }
+
+      return filter;
     }
 
     public Response Post(IList<IDataObject> dataObjects)
@@ -350,6 +370,16 @@ namespace org.iringtools.adapter.datalayer
 
       try
       {
+        if (_databaseDictionary.IdentityConfiguration != null)
+        {
+          IdentityProperties identityProperties = _databaseDictionary.IdentityConfiguration[objectType];
+
+          if (identityProperties.UseIdentityFilter)
+          {
+            filter = FilterByIdentity(objectType, filter, identityProperties);
+          }
+        }
+
         status.Identifier = objectType;
 
         StringBuilder queryString = new StringBuilder();
@@ -357,7 +387,7 @@ namespace org.iringtools.adapter.datalayer
 
         if (filter.Expressions.Count > 0)
         {
-          string whereClause = filter.ToSqlWhereClause(objectType, null);
+          string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectType, null);
           queryString.Append(whereClause);
         }
 

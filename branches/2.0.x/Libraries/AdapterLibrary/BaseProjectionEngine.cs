@@ -79,6 +79,8 @@ namespace org.iringtools.adapter.projection
     protected Dictionary<string, IList<IDataObject>>[] _relatedObjects = null;
     protected TripleStore _memoryStore = null;
 
+    public long Count { get; set; }
+
     public BaseProjectionEngine()
     {
       _dataObjects = new List<IDataObject>();

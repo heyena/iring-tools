@@ -64,6 +64,9 @@ namespace org.iringtools.library
 
     [DataMember(IsRequired = true, Order = 2)]
     public string KeyRingProperty { get; set; }
+
+    [DataMember(Order = 3, EmitDefaultValue = false)]
+    public bool IsCaseSensitive { get; set; }
   }
 
   [DataContract(Namespace = "http://ns.iringtools.org/library")]

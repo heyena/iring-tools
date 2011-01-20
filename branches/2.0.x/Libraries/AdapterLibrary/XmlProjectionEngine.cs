@@ -30,7 +30,7 @@ namespace org.iringtools.adapter.projection
       _dictionary = dictionary;
       _mapping = mapping;
     }
-    
+
     public override XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects)
     {
       XElement xElement = null;
@@ -75,6 +75,9 @@ namespace org.iringtools.adapter.projection
             CreateIndexXml(rowElement, pair, i);
             xElement.Add(rowElement);
           }
+
+          XAttribute total = new XAttribute("total", this.Count);
+          xElement.Add(total);
         }
       }
       catch (Exception ex)
@@ -93,7 +96,7 @@ namespace org.iringtools.adapter.projection
     #region helper methods
     private void CreateIndexXml(XElement parentElement, KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap, int dataObjectIndex)
     {
-      string uri = _appNamespace.ToString() + "/";
+      string uri = _appNamespace.ToString() + "/" + _graphMap.name + "/";
 
       foreach (string keyPropertyName in classTemplateListMap.Key.identifiers)
       {

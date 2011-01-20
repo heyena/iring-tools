@@ -7,6 +7,7 @@ using System.Text;
 using System.Web;
 using Ninject;
 using System.Collections;
+using System;
 
 namespace org.iringtools.adapter.identity
 {
@@ -31,26 +32,37 @@ namespace org.iringtools.adapter.identity
 
     public IDictionary GetKeyRing()
     {
-      IDictionary keyRing = new Dictionary<string, string>();
+      string url = String.Empty;
 
-      HttpContext context = System.Web.HttpContext.Current;
+      try
+      {
 
-      string header = context.Request.Headers["Authorization"];
-      string restTokenAddress = _settings["STSAddress"];
+        IDictionary keyRing = new Dictionary<string, string>();
 
-      DataContractJsonSerializer dictionarySerializer = new DataContractJsonSerializer(typeof(Dictionary<string, string>));
-      WebClient client = new WebClient();
-      client.UseDefaultCredentials = true;
+        HttpContext context = System.Web.HttpContext.Current;
 
-      string xmlToken = client.DownloadString(restTokenAddress + "/JSON/DecodeOAuthHeader?header=" + header);
-      MemoryStream str = new MemoryStream(Encoding.Unicode.GetBytes(xmlToken));
-      str.Position = 0;
+        string header = context.Request.Headers["Authorization"];
+        string restTokenAddress = _settings["STSAddress"];
 
-      keyRing = (IDictionary)dictionarySerializer.ReadObject(str);
+        DataContractJsonSerializer dictionarySerializer = new DataContractJsonSerializer(typeof(Dictionary<string, string>));
+        WebClient client = new WebClient();
+        client.UseDefaultCredentials = true;
 
-      keyRing.Add("Provider", "SecureTokenProvider");
+        url = restTokenAddress + "/JSON/DecodeOAuthHeader?header=" + header;
+        string xmlToken = client.DownloadString(url);
+        MemoryStream str = new MemoryStream(Encoding.Unicode.GetBytes(xmlToken));
+        str.Position = 0;
 
-      return keyRing;
+        keyRing = (IDictionary)dictionarySerializer.ReadObject(str);
+
+        keyRing.Add("Provider", "SecureTokenProvider");
+
+        return keyRing;
+      }
+      catch (Exception ex)
+      {
+        throw new Exception("Error while trying to get the KeyRing from: " + url, ex);
+      }
     }
   }
 }

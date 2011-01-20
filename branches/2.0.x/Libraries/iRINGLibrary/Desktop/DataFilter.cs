@@ -33,49 +33,58 @@ using System.Text;
 
 namespace org.iringtools.library
 {
-  [DataContract(Namespace = "http://ns.iringtools.org/library")]
+  [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "dataFilter")]
   public class DataFilter
   {
-    [DataMember]
+    public DataFilter()
+    {
+      Expressions = new List<Expression>();
+      OrderByList = new List<OrderBy>();
+    }
+
+    [DataMember(Name = "expressions", Order = 0, EmitDefaultValue = false)]
     public List<Expression> Expressions { get; set; }
 
-    public string ToSqlWhereClause(Type type, string objectAlias)
-    {
-        if (this == null || this.Expressions.Count == 0)
-            return String.Empty;
+    [DataMember(Name = "orderByList", Order = 1, EmitDefaultValue = false)]
+    public List<OrderBy> OrderByList { get; set; }
 
-        if (!String.IsNullOrEmpty(objectAlias)) objectAlias += ".";
-        else objectAlias = String.Empty;
+    //public string ToSqlWhereClause(Type type, string objectAlias)
+    //{
+    //  if (this == null || this.Expressions.Count == 0)
+    //    return String.Empty;
 
-        try
-        {
-            StringBuilder whereClause = new StringBuilder();
-            whereClause.Append(" WHERE ");
+    //  if (!String.IsNullOrEmpty(objectAlias)) objectAlias += ".";
+    //  else objectAlias = String.Empty;
 
-            foreach (Expression expression in this.Expressions)
-            {
+    //  try
+    //  {
+    //    StringBuilder whereClause = new StringBuilder();
+    //    whereClause.Append(" WHERE ");
 
-                string sqlExpression = ResolveSqlExpression(type, expression, objectAlias);
-                whereClause.Append(sqlExpression);
-            }
+    //    foreach (Expression expression in this.Expressions)
+    //    {
 
-            return whereClause.ToString();
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("Error while generating SQLWhereClause.", ex);
-        }
-    }
+    //      string sqlExpression = ResolveSqlExpression(type, expression, objectAlias);
+    //      whereClause.Append(sqlExpression);
+    //    }
 
-    public string ToSqlWhereClause<T>(string objectAlias)
-    {
-        return ToSqlWhereClause(typeof(T), objectAlias);
-    }
+    //    return whereClause.ToString();
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    throw new Exception("Error while generating SQLWhereClause.", ex);
+    //  }
+    //}
 
-    public string ToSqlWhereClause(string objectType, string objectAlias)
-    {
-      return ToSqlWhereClause(Type.GetType(objectType), objectAlias);
-    }
+    //public string ToSqlWhereClause<T>(string objectAlias)
+    //{
+    //  return ToSqlWhereClause(typeof(T), objectAlias);
+    //}
+
+    //public string ToSqlWhereClause(string objectType, string objectAlias)
+    //{
+    //  return ToSqlWhereClause(Type.GetType(objectType), objectAlias);
+    //}
 
     public string ToSqlWhereClause(DataDictionary dataDictionary, string objectType, string objectAlias)
     {
@@ -97,6 +106,12 @@ namespace org.iringtools.library
           whereClause.Append(sqlExpression);
         }
 
+        foreach (OrderBy orderBy in this.OrderByList)
+        {
+          string orderByStatement = ResolveOrderBy(dataDictionary, objectType, orderBy, objectAlias);
+          whereClause.Append(orderByStatement);
+        }
+
         return whereClause.ToString();
       }
       catch (Exception ex)
@@ -107,137 +122,280 @@ namespace org.iringtools.library
 
     public string ToLinqExpression(Type type, string objectVariable)
     {
-        if (this == null || this.Expressions.Count == 0)
-            return String.Empty;
+      if (this == null || this.Expressions.Count == 0)
+        return String.Empty;
 
-        if (!String.IsNullOrEmpty(objectVariable)) objectVariable += ".";
-        else throw new Exception("Object variable can not be null or empty.");
+      if (!String.IsNullOrEmpty(objectVariable)) objectVariable += ".";
+      else throw new Exception("Object variable can not be null or empty.");
 
-        try
+      try
+      {
+        StringBuilder linqExpression = new StringBuilder();
+
+        foreach (Expression expression in this.Expressions)
         {
-            StringBuilder linqExpression = new StringBuilder();
-
-            foreach (Expression expression in this.Expressions)
-            {
-                string exp = ResolveLinqExpression(type, expression, objectVariable);
-                linqExpression.Append(exp);
-            }
-
-            return linqExpression.ToString();
+          string exp = ResolveLinqExpression(type, expression, objectVariable);
+          linqExpression.Append(exp);
         }
-        catch (Exception ex)
-        {
-            throw new Exception("Error while generating LINQ expression.", ex);
-        }
+
+        return linqExpression.ToString();
+      }
+      catch (Exception ex)
+      {
+        throw new Exception("Error while generating LINQ expression.", ex);
+      }
     }
 
     public string ToLinqExpression<T>(string objectVariable)
     {
-        return ToLinqExpression(typeof(T), objectVariable);
+      return ToLinqExpression(typeof(T), objectVariable);
     }
 
     public string ToLinqExpression(string objectType, string objectVariable)
     {
-        return ToLinqExpression(Type.GetType(objectType), objectVariable);
+      return ToLinqExpression(Type.GetType(objectType), objectVariable);
     }
 
     private string ResolveSqlExpression(Type type, Expression expression, string objectAlias)
     {
-        string propertyName = expression.PropertyName;
-        string qualifiedPropertyName = objectAlias + propertyName;
-        Type propertyType = type.GetProperty(propertyName).PropertyType;
-        bool isString = propertyType == typeof(string);
-        StringBuilder sqlExpression = new StringBuilder();
+      string propertyName = expression.PropertyName;
 
-        if (expression.LogicalOperator != LogicalOperator.None)
-        {
-            string logicalOperator = ResolveLogicalOperator(expression.LogicalOperator);
-            sqlExpression.Append(" " + logicalOperator + " ");
-        }
+      string qualifiedPropertyName = String.Empty;
+      if (expression.IsCaseSensitive)
+      {
+        qualifiedPropertyName = objectAlias + propertyName;
+      }
+      else
+      {
+        qualifiedPropertyName = "UPPER(" + objectAlias + propertyName + ")";
+      }
 
-        for (int i = 0; i < expression.OpenGroupCount; i++)
-            sqlExpression.Append("(");
+      Type propertyType = type.GetProperty(propertyName).PropertyType;
+      bool isString = propertyType == typeof(string);
+      StringBuilder sqlExpression = new StringBuilder();
 
-        switch (expression.RelationalOperator)
-        {
-            case RelationalOperator.StartsWith:
-                if (!isString) throw new Exception("StartsWith operator used with non-string property");
-                sqlExpression.Append(qualifiedPropertyName + " LIKE '" + expression.Values.FirstOrDefault() + "%'");
-                break;
+      if (expression.LogicalOperator != LogicalOperator.None)
+      {
+        string logicalOperator = ResolveLogicalOperator(expression.LogicalOperator);
+        sqlExpression.Append(" " + logicalOperator + " ");
+      }
 
-            case RelationalOperator.Contains:
-                if (!isString) throw new Exception("Contains operator used with non-string property");
-                sqlExpression.Append(qualifiedPropertyName + " LIKE '%" + expression.Values.FirstOrDefault() + "%'");
-                break;
+      for (int i = 0; i < expression.OpenGroupCount; i++)
+        sqlExpression.Append("(");
 
-            case RelationalOperator.EndsWith:
-                if (!isString) throw new Exception("EndsWith operator used with non-string property");
-                sqlExpression.Append(qualifiedPropertyName + " LIKE '%" + expression.Values.FirstOrDefault() + "'");
-                break;
+      string value = String.Empty;
+      switch (expression.RelationalOperator)
+      {
+        case RelationalOperator.StartsWith:
+          if (!isString) throw new Exception("StartsWith operator used with non-string property");
 
-            case RelationalOperator.In:
-                if (isString)
-                    sqlExpression.Append(qualifiedPropertyName + " IN ('" + String.Join("','", expression.Values.ToArray()) + "')");
-                else
-                    sqlExpression.Append(qualifiedPropertyName + " IN (" + String.Join(",", expression.Values.ToArray()) + ")");
-                break;
+          if (expression.IsCaseSensitive)
+          {
+            value = expression.Values.FirstOrDefault();
+          }
+          else
+          {
+            value = expression.Values.FirstOrDefault().ToUpper();
+          }
 
-            case RelationalOperator.EqualTo:
-                if (isString)
-                    sqlExpression.Append(qualifiedPropertyName + "='" + expression.Values.FirstOrDefault() + "'");
-                else
-                    sqlExpression.Append(qualifiedPropertyName + "=" + expression.Values.FirstOrDefault() + "");
-                break;
+          sqlExpression.Append(qualifiedPropertyName + " LIKE '" + value + "%'");
 
-            case RelationalOperator.NotEqualTo:
-                if (isString)
-                    sqlExpression.Append(qualifiedPropertyName + "<>'" + expression.Values.FirstOrDefault() + "'");
-                else
-                    sqlExpression.Append(qualifiedPropertyName + "<>" + expression.Values.FirstOrDefault() + "");
-                break;
+          break;
 
-            case RelationalOperator.GreaterThan:
-                if (isString)
-                    sqlExpression.Append(qualifiedPropertyName + ">'" + expression.Values.FirstOrDefault() + "'");
-                else
-                    sqlExpression.Append(qualifiedPropertyName + ">" + expression.Values.FirstOrDefault());
-                break;
+        case RelationalOperator.Contains:
+          if (!isString) throw new Exception("Contains operator used with non-string property");
 
-            case RelationalOperator.GreaterThanOrEqual:
-                if (isString)
-                    sqlExpression.Append(qualifiedPropertyName + ">='" + expression.Values.FirstOrDefault() + "'");
-                else
-                    sqlExpression.Append(qualifiedPropertyName + ">=" + expression.Values.FirstOrDefault());
-                break;
+          if (expression.IsCaseSensitive)
+          {
+            value = expression.Values.FirstOrDefault();
+          }
+          else
+          {
+            value = expression.Values.FirstOrDefault().ToUpper();
+          }
 
-            case RelationalOperator.LesserThan:
-                if (isString)
-                    sqlExpression.Append(qualifiedPropertyName + "<'" + expression.Values.FirstOrDefault() + "'");
-                else
-                    sqlExpression.Append(qualifiedPropertyName + "<" + expression.Values.FirstOrDefault());
-                break;
+          sqlExpression.Append(qualifiedPropertyName + " LIKE '%" + value + "%'");
 
-            case RelationalOperator.LesserThanOrEqual:
-                if (isString)
-                    sqlExpression.Append(qualifiedPropertyName + "<='" + expression.Values.FirstOrDefault() + "'");
-                else
-                    sqlExpression.Append(qualifiedPropertyName + "<=" + expression.Values.FirstOrDefault());
-                break;
+          break;
 
-            default:
-                throw new Exception("Relational operator does not exist.");
-        }
+        case RelationalOperator.EndsWith:
+          if (!isString) throw new Exception("EndsWith operator used with non-string property");
 
-        for (int i = 0; i < expression.CloseGroupCount; i++)
-            sqlExpression.Append(")");
+          if (expression.IsCaseSensitive)
+          {
+            value = expression.Values.FirstOrDefault();
+          }
+          else
+          {
+            value = expression.Values.FirstOrDefault().ToUpper();
+          }
 
-        return sqlExpression.ToString();
+          sqlExpression.Append(qualifiedPropertyName + " LIKE '%" + value + "'");
+          break;
+
+        case RelationalOperator.In:
+          if (isString)
+          {
+            if (expression.IsCaseSensitive)
+            {
+              value = String.Join("','", expression.Values.ToArray());
+            }
+            else
+            {
+              value = String.Join("','", expression.Values.ToArray()).ToUpper();
+            }
+
+            sqlExpression.Append(qualifiedPropertyName + " IN ('" + value + "')");
+          }
+          else
+          {
+            sqlExpression.Append(qualifiedPropertyName + " IN (" + String.Join(",", expression.Values.ToArray()) + ")");
+          }
+          break;
+
+        case RelationalOperator.EqualTo:
+          if (isString)
+          {
+            if (expression.IsCaseSensitive)
+            {
+              value = expression.Values.FirstOrDefault();
+            }
+            else
+            {
+              value = expression.Values.FirstOrDefault().ToUpper();
+            }
+
+            sqlExpression.Append(qualifiedPropertyName + "='" + value + "'");
+          }
+          else
+          {
+            sqlExpression.Append(qualifiedPropertyName + "=" + expression.Values.FirstOrDefault() + "");
+          }
+          break;
+
+        case RelationalOperator.NotEqualTo:
+          if (isString)
+          {
+            if (expression.IsCaseSensitive)
+            {
+              value = expression.Values.FirstOrDefault();
+            }
+            else
+            {
+              value = expression.Values.FirstOrDefault().ToUpper();
+            }
+
+            sqlExpression.Append(qualifiedPropertyName + "<>'" + value + "'");
+          }
+          else
+          {
+            sqlExpression.Append(qualifiedPropertyName + "<>" + expression.Values.FirstOrDefault() + "");
+          }
+          break;
+
+        case RelationalOperator.GreaterThan:
+          if (isString)
+          {
+            if (expression.IsCaseSensitive)
+            {
+              value = expression.Values.FirstOrDefault();
+            }
+            else
+            {
+              value = expression.Values.FirstOrDefault().ToUpper();
+            }
+
+            sqlExpression.Append(qualifiedPropertyName + ">'" + value + "'");
+          }
+          else
+          {
+            sqlExpression.Append(qualifiedPropertyName + ">" + expression.Values.FirstOrDefault());
+          }
+          break;
+
+        case RelationalOperator.GreaterThanOrEqual:
+          if (isString)
+          {
+            if (expression.IsCaseSensitive)
+            {
+              value = expression.Values.FirstOrDefault();
+            }
+            else
+            {
+              value = expression.Values.FirstOrDefault().ToUpper();
+            }
+
+            sqlExpression.Append(qualifiedPropertyName + ">='" + value + "'");
+          }
+          else
+          {
+            sqlExpression.Append(qualifiedPropertyName + ">=" + expression.Values.FirstOrDefault());
+          }
+          break;
+
+        case RelationalOperator.LesserThan:
+          if (isString)
+          {
+            if (expression.IsCaseSensitive)
+            {
+              value = expression.Values.FirstOrDefault();
+            }
+            else
+            {
+              value = expression.Values.FirstOrDefault().ToUpper();
+            }
+
+            sqlExpression.Append(qualifiedPropertyName + "<'" + value + "'");
+          }
+          else
+          {
+            sqlExpression.Append(qualifiedPropertyName + "<" + expression.Values.FirstOrDefault());
+          }
+          break;
+
+        case RelationalOperator.LesserThanOrEqual:
+          if (isString)
+          {
+            if (expression.IsCaseSensitive)
+            {
+              value = expression.Values.FirstOrDefault();
+            }
+            else
+            {
+              value = expression.Values.FirstOrDefault().ToUpper();
+            }
+
+            sqlExpression.Append(qualifiedPropertyName + "<='" + value + "'");
+          }
+          else
+          {
+            sqlExpression.Append(qualifiedPropertyName + "<=" + expression.Values.FirstOrDefault());
+          }
+          break;
+
+        default:
+          throw new Exception("Relational operator does not exist.");
+      }
+
+      for (int i = 0; i < expression.CloseGroupCount; i++)
+        sqlExpression.Append(")");
+
+      return sqlExpression.ToString();
     }
 
     private string ResolveSqlExpression(DataDictionary dataDictionary, string objectType, Expression expression, string objectAlias)
     {
       string propertyName = expression.PropertyName;
-      string qualifiedPropertyName = objectAlias + propertyName;
+
+      string qualifiedPropertyName = String.Empty;
+      if (expression.IsCaseSensitive)
+      {
+        qualifiedPropertyName = objectAlias + propertyName;
+      }
+      else
+      {
+        qualifiedPropertyName = "UPPER(" + objectAlias + propertyName + ")";
+      }
 
       //TODO: Is it better to default to string or non-string?
       DataType propertyType = DataType.String;
@@ -268,70 +426,194 @@ namespace org.iringtools.library
       for (int i = 0; i < expression.OpenGroupCount; i++)
         sqlExpression.Append("(");
 
+      string value = String.Empty;
       switch (expression.RelationalOperator)
       {
         case RelationalOperator.StartsWith:
           if (!isString) throw new Exception("StartsWith operator used with non-string property");
-          sqlExpression.Append(qualifiedPropertyName + " LIKE '" + expression.Values.FirstOrDefault() + "%'");
+
+          if (expression.IsCaseSensitive)
+          {
+            value = expression.Values.FirstOrDefault();
+          }
+          else
+          {
+            value = expression.Values.FirstOrDefault().ToUpper();
+          }
+
+          sqlExpression.Append(qualifiedPropertyName + " LIKE '" + value + "%'");
+
           break;
 
         case RelationalOperator.Contains:
           if (!isString) throw new Exception("Contains operator used with non-string property");
-          sqlExpression.Append(qualifiedPropertyName + " LIKE '%" + expression.Values.FirstOrDefault() + "%'");
+
+          if (expression.IsCaseSensitive)
+          {
+            value = expression.Values.FirstOrDefault();
+          }
+          else
+          {
+            value = expression.Values.FirstOrDefault().ToUpper();
+          }
+
+          sqlExpression.Append(qualifiedPropertyName + " LIKE '%" + value + "%'");
+
           break;
 
         case RelationalOperator.EndsWith:
           if (!isString) throw new Exception("EndsWith operator used with non-string property");
-          sqlExpression.Append(qualifiedPropertyName + " LIKE '%" + expression.Values.FirstOrDefault() + "'");
+
+          if (expression.IsCaseSensitive)
+          {
+            value = expression.Values.FirstOrDefault();
+          }
+          else
+          {
+            value = expression.Values.FirstOrDefault().ToUpper();
+          }
+
+          sqlExpression.Append(qualifiedPropertyName + " LIKE '%" + value + "'");
           break;
 
         case RelationalOperator.In:
           if (isString)
-            sqlExpression.Append(qualifiedPropertyName + " IN ('" + String.Join("','", expression.Values.ToArray()) + "')");
+          {
+            if (expression.IsCaseSensitive)
+            {
+              value = String.Join("','", expression.Values.ToArray());
+            }
+            else
+            {
+              value = String.Join("','", expression.Values.ToArray()).ToUpper();
+            }
+
+            sqlExpression.Append(qualifiedPropertyName + " IN ('" + value + "')");
+          }
           else
+          {
             sqlExpression.Append(qualifiedPropertyName + " IN (" + String.Join(",", expression.Values.ToArray()) + ")");
+          }
           break;
 
         case RelationalOperator.EqualTo:
           if (isString)
-            sqlExpression.Append(qualifiedPropertyName + "='" + expression.Values.FirstOrDefault() + "'");
+          {
+            if (expression.IsCaseSensitive)
+            {
+              value = expression.Values.FirstOrDefault();
+            }
+            else
+            {
+              value = expression.Values.FirstOrDefault().ToUpper();
+            }
+
+            sqlExpression.Append(qualifiedPropertyName + "='" + value + "'");
+          }
           else
+          {
             sqlExpression.Append(qualifiedPropertyName + "=" + expression.Values.FirstOrDefault() + "");
+          }
           break;
 
         case RelationalOperator.NotEqualTo:
           if (isString)
-            sqlExpression.Append(qualifiedPropertyName + "<>'" + expression.Values.FirstOrDefault() + "'");
+          {
+            if (expression.IsCaseSensitive)
+            {
+              value = expression.Values.FirstOrDefault();
+            }
+            else
+            {
+              value = expression.Values.FirstOrDefault().ToUpper();
+            }
+
+            sqlExpression.Append(qualifiedPropertyName + "<>'" + value + "'");
+          }
           else
+          {
             sqlExpression.Append(qualifiedPropertyName + "<>" + expression.Values.FirstOrDefault() + "");
+          }
           break;
 
         case RelationalOperator.GreaterThan:
           if (isString)
-            sqlExpression.Append(qualifiedPropertyName + ">'" + expression.Values.FirstOrDefault() + "'");
+          {
+            if (expression.IsCaseSensitive)
+            {
+              value = expression.Values.FirstOrDefault();
+            }
+            else
+            {
+              value = expression.Values.FirstOrDefault().ToUpper();
+            }
+
+            sqlExpression.Append(qualifiedPropertyName + ">'" + value + "'");
+          }
           else
+          {
             sqlExpression.Append(qualifiedPropertyName + ">" + expression.Values.FirstOrDefault());
+          }
           break;
 
         case RelationalOperator.GreaterThanOrEqual:
           if (isString)
-            sqlExpression.Append(qualifiedPropertyName + ">='" + expression.Values.FirstOrDefault() + "'");
+          {
+            if (expression.IsCaseSensitive)
+            {
+              value = expression.Values.FirstOrDefault();
+            }
+            else
+            {
+              value = expression.Values.FirstOrDefault().ToUpper();
+            }
+
+            sqlExpression.Append(qualifiedPropertyName + ">='" + value + "'");
+          }
           else
+          {
             sqlExpression.Append(qualifiedPropertyName + ">=" + expression.Values.FirstOrDefault());
+          }
           break;
 
         case RelationalOperator.LesserThan:
           if (isString)
-            sqlExpression.Append(qualifiedPropertyName + "<'" + expression.Values.FirstOrDefault() + "'");
+          {
+            if (expression.IsCaseSensitive)
+            {
+              value = expression.Values.FirstOrDefault();
+            }
+            else
+            {
+              value = expression.Values.FirstOrDefault().ToUpper();
+            }
+
+            sqlExpression.Append(qualifiedPropertyName + "<'" + value + "'");
+          }
           else
+          {
             sqlExpression.Append(qualifiedPropertyName + "<" + expression.Values.FirstOrDefault());
+          }
           break;
 
         case RelationalOperator.LesserThanOrEqual:
           if (isString)
-            sqlExpression.Append(qualifiedPropertyName + "<='" + expression.Values.FirstOrDefault() + "'");
+          {
+            if (expression.IsCaseSensitive)
+            {
+              value = expression.Values.FirstOrDefault();
+            }
+            else
+            {
+              value = expression.Values.FirstOrDefault().ToUpper();
+            }
+
+            sqlExpression.Append(qualifiedPropertyName + "<='" + value + "'");
+          }
           else
+          {
             sqlExpression.Append(qualifiedPropertyName + "<=" + expression.Values.FirstOrDefault());
+          }
           break;
 
         default:
@@ -343,7 +625,33 @@ namespace org.iringtools.library
 
       return sqlExpression.ToString();
     }
-          
+
+    private string ResolveOrderBy(DataDictionary dataDictionary, string objectType, OrderBy orderBy, string objectAlias)
+    {
+      string propertyName = orderBy.PropertyName;
+
+      string  qualifiedPropertyName = objectAlias + propertyName;
+
+      StringBuilder sqlExpression = new StringBuilder();
+      sqlExpression.Append("ORDER BY ");
+
+      switch (orderBy.SortOrder)
+      {
+        case SortOrder.Asc:
+          sqlExpression.Append(qualifiedPropertyName + " ASC");
+          break;
+
+        case SortOrder.Desc:
+          sqlExpression.Append(qualifiedPropertyName + " DESC");
+          break;
+
+        default:
+          throw new Exception("Sort order is not specified.");
+      }
+
+      return sqlExpression.ToString();
+    }
+
     private string ResolveLinqExpression(Type type, Expression expression, string objectVariable)
     {
       string propertyName = expression.PropertyName;
@@ -462,29 +770,45 @@ namespace org.iringtools.library
     }
   }
 
-  [DataContract(Namespace = "http://ns.iringtools.org/library")]
+  [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "expression")]
   public class Expression
   {
-    [DataMember(Order = 0, EmitDefaultValue = false)]
+    [DataMember(Name = "openGroupCount", Order = 0, EmitDefaultValue = false)]
     public int OpenGroupCount { get; set; }
 
-    [DataMember(Order = 1)]
+    [DataMember(Name = "propertyName", Order = 1, IsRequired = true)]
     public string PropertyName { get; set; }
 
-    [DataMember(Order = 2)]
+    [DataMember(Name = "relationalOperator", Order = 2, IsRequired = true)]
     public RelationalOperator RelationalOperator { get; set; }
 
-    [DataMember(Order = 3)]
-    public List<string> Values { get; set; }
+    [DataMember(Name = "values", Order = 3, IsRequired = true)]
+    public Values Values { get; set; }
 
-    [DataMember(Order = 4, EmitDefaultValue = false)]
+    [DataMember(Name = "logicalOperator", Order = 4, EmitDefaultValue = false)]
     public LogicalOperator LogicalOperator { get; set; }
 
-    [DataMember(Order = 5, EmitDefaultValue = false)]
+    [DataMember(Name = "closeGroupCount", Order = 5, EmitDefaultValue = false)]
     public int CloseGroupCount { get; set; }
+
+    [DataMember(Name = "isCaseSensitive", Order = 6, EmitDefaultValue = false)]
+    public bool IsCaseSensitive { get; set; }
   }
 
-  [DataContract(Namespace = "http://ns.iringtools.org/library")]
+  [CollectionDataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "values", ItemName = "value")]
+  public class Values : List<string> { }
+
+  [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "orderBy")]
+  public class OrderBy
+  {
+    [DataMember(Name = "propertyName", Order = 0, IsRequired = true)]
+    public string PropertyName { get; set; }
+
+    [DataMember(Name = "sortOrder", Order = 1, EmitDefaultValue = false)]
+    public SortOrder SortOrder { get; set; }
+  }
+
+  [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "logicalOperator")]
   public enum LogicalOperator
   {
     [EnumMember]
@@ -501,7 +825,7 @@ namespace org.iringtools.library
     OrNot,
   };
 
-  [DataContract(Namespace = "http://ns.iringtools.org/library")]
+  [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "relationalOperator")]
   public enum RelationalOperator
   {
     [EnumMember]
@@ -524,5 +848,14 @@ namespace org.iringtools.library
     LesserThan,
     [EnumMember]
     LesserThanOrEqual,
+  };
+
+  [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "sortOrder")]
+  public enum SortOrder
+  {
+    [EnumMember]
+    Asc,
+    [EnumMember]
+    Desc,
   };
 }
