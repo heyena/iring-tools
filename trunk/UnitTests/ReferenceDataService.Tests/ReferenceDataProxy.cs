@@ -119,13 +119,13 @@ namespace ReferenceDataService.Tests
 
     /*public Response PostPart8Template(QMXF qmxf)
     {
-        return _referenceDataServiceProvider.PostPart8Template(qmxf);
+        return _referenceDataServiceProvider.PostTemplate(qmxf);
     }*/
 
 
     public Response PostPart8Class(QMXF qmxf)
     {
-        return _referenceDataServiceProvider.PostPart8Class(qmxf);
+        return _referenceDataServiceProvider.PostClass(qmxf);
     }
 
     #endregion Part8
