@@ -54,15 +54,15 @@ a:active {color: black}
 }
 
 .add {
-	color: #bf0000;
+	color: #df0000;
 }
 
 .change {
-	color: #0000bf;
+	color: #0000df;
 }
 
 .delete {
-	color: #00bf00;
+	color: #00df00;
 }
 
 .dialog-textbox {

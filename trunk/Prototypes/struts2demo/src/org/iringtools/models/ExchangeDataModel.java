@@ -62,14 +62,19 @@ public class ExchangeDataModel
     
     for (DataTransferObject dto : dtoList)
     {
-      List<String> row = new ArrayList<String>();  
+      List<String> row = new ArrayList<String>();      
+      ClassObject firstClassObject = null;
       
       String transferType = dto.getTransferType().toString(); 
-      String transferCls = transferType.toLowerCase();
-      row.add("<span class=\"" + transferCls + "\">" + transferType + "</span>");
+      row.add("<span class=\"" + transferType.toLowerCase() + "\">" + transferType + "</span>");
       
       for (ClassObject classObject : dto.getClassObjects().getItems())
       {        
+        if (firstClassObject == null) {
+          pageDtoGrid.setType(classObject.getName());
+          firstClassObject = classObject;
+        }
+        
         for (TemplateObject templateObject : classObject.getTemplateObjects().getItems())
         {
           for (RoleObject roleObject : templateObject.getRoleObjects().getItems())
@@ -81,7 +86,7 @@ public class ExchangeDataModel
               if (firstDto)
               {
                 Field otherField = new Field();
-                otherField.setName(classObject.getName() + "." + roleObject.getName());                
+                otherField.setName((classObject.getName() + "." + roleObject.getName()).toUpperCase());                
                 otherField.setType(roleObject.getDataType().replace("xsd:", "")); 
                 fields.add(otherField);
               }
@@ -95,14 +100,22 @@ public class ExchangeDataModel
         }
       }
       
+      row.add(0, "<input type=\"image\" src=\"resources/images/info-small.png\" onClick=\"javascript:getRelatedItems('" + firstClassObject.getClassId() + "','" + dto.getIdentifier() + "')\">");
       gridData.add(row);     
 
       if (firstDto)
       {
         Field transferTypeField = new Field();
-        transferTypeField.setName("Transfer Type");                
+        transferTypeField.setName("TRANSFER TYPE");                
         transferTypeField.setType("string"); 
         fields.add(0, transferTypeField);
+        
+        Field infoField = new Field();
+        infoField.setName("&nbsp;");                
+        infoField.setType("string"); 
+        infoField.setWidth(28);
+        infoField.setFixed(true);
+        fields.add(0, infoField);        
         
         pageDtoGrid.setFields(fields);
         firstDto = false;
