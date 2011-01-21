@@ -1,17 +1,6 @@
 Ext.ns('exchange-manager');
 
-function loadExchangeData(label, scope, exchangeId){
-  var url = 'xdata?scope=' + scope + '&exchangeId=' + exchangeId;
-  loadDtoPage(label, url);
-}
-
-function loadAppData(scope, app, graph){
-  var label = scope + '.' + app + '.' + graph;
-  var url = 'adata?scope=' + scope + '&app=' + app + '&graph=' + graph;
-  loadDtoPage(label, url);
-}
-
-function loadDtoPage(label, url){
+function loadPageDto(label, url){
   var tab = Ext.getCmp('content-pane').getItem(label);
   
   if (tab != null){
@@ -32,20 +21,19 @@ function loadDtoPage(label, url){
     
     store.on('load', function(){
       store.recordType = store.reader.recordType;      
-      var classObject = store.reader.type;
+      var className = store.reader.type;
       
       var dtoNavPane = new Ext.Panel({
         id: 'nav-' + label,
         region: 'north',
-        layout: 'hbox',
         height: 26,
         padding: '5',
         bodyStyle: 'background-color:#fcfcff',
         items: [{
           xtype: 'box',
-          autoEl: {tag: 'a', href: 'javascript:alert(\'show this tab and remove items on the right\')', html: classObject},
+          autoEl: {tag: 'a', href: 'javascript:navigate(0)', html: className},
           cls: 'breadcrumb',
-          overCls: 'breadcrumb-hover'            
+          overCls: 'breadcrumb-hover'
         }]
       });
 
@@ -111,14 +99,14 @@ function loadDtoPage(label, url){
   }
 }
 
-function showIndividualInfo(className, classId, individual){
+function showIndividualInfo(className, classId, classInstance){
   var dtoTab = Ext.getCmp('content-pane').getActiveTab();
   var label = dtoTab.id.substring(4);
   var dtoNavPane = dtoTab.items.map['nav-' + label];
   var dtoContentPane = dtoTab.items.map['content-' + label];
   var dtoGrid = dtoContentPane.items.map['grid-' + label];  
   
-  var classObjectPane = new Ext.Panel({
+  var classItemPane = new Ext.Panel({
     region: 'north',
     layout: 'fit',
     height: 46,
@@ -130,6 +118,10 @@ function showIndividualInfo(className, classId, individual){
   var rowData = dtoGrid.selModel.selections.map[dtoGrid.selModel.last].data;
   delete rowData['&nbsp;'];  // remove info field
   
+  var parsedRowData = {};
+  for (var colData in rowData)
+    parsedRowData[colData] = rowData[colData].replace(/<\/?[^>]+(>|$)/g, '');
+  
   var propertyGrid = new Ext.grid.PropertyGrid({
     region: 'west',
     title: 'Properties',
@@ -137,7 +129,7 @@ function showIndividualInfo(className, classId, individual){
     split: true,
     stripeRows: true,
     autoScroll: true,
-    source: rowData,
+    source: parsedRowData,
     listeners: {
       beforeedit: function(e){
         e.cancel = true;
@@ -145,7 +137,7 @@ function showIndividualInfo(className, classId, individual){
     }
   });
   
-  var relatedItemsPane = new Ext.Panel({
+  var relatedItemPane = new Ext.Panel({
     title: 'Related Items',
     region: 'center',
     layout: 'vbox',
@@ -155,9 +147,9 @@ function showIndividualInfo(className, classId, individual){
   });
   
   for (var property in dtoGrid.properties) {
-    relatedItemsPane.add({
+    relatedItemPane.add({
       xtype: 'box',
-      autoEl: {tag: 'a', href: 'javascript:alert(\'loadRelatedItem\')', html: dtoGrid.properties[property]},
+      autoEl: {tag: 'a', href: 'javascript:alert(\'loading /' + classId + '/' + classInstance + '/' + property + '\')', html: dtoGrid.properties[property]},
       style: {width: '100%'},
       cls: 'breadcrumb',
       overCls: 'breadcrumb-hover'
@@ -168,7 +160,7 @@ function showIndividualInfo(className, classId, individual){
     autoWidth: true,
     layout: 'border',
     border: false,
-    items: [classObjectPane, propertyGrid, relatedItemsPane]
+    items: [classItemPane, propertyGrid, relatedItemPane]
   });
 
   dtoContentPane.add(individualInfoPane);
@@ -178,15 +170,33 @@ function showIndividualInfo(className, classId, individual){
     xtype: 'box',
     autoEl: {tag: 'img', src: 'resources/images/breadcrumb.png'},
     cls: 'breadcrumb-img'
-  });
-  
-  dtoNavPane.add({
+  },{
     xtype: 'box',
-    autoEl: {tag: 'a', href: 'javascript:alert(\'loadRelatedItem\')', html: className},
+    autoEl: {tag: 'a', href: 'javascript:navigate(' + (dtoNavPane.items.length + 1) + ')', html: classInstance},
     cls: 'breadcrumb',
     overCls: 'breadcrumb-hover'
-  });
+  });  
   
+  dtoNavPane.doLayout();
+}
+
+function navigate(navItemIndex){
+  var dtoTab = Ext.getCmp('content-pane').getActiveTab();
+  var label = dtoTab.id.substring(4);
+  var dtoNavPane = dtoTab.items.map['nav-' + label];
+  var dtoContentPane = dtoTab.items.map['content-' + label];  
+  
+  // remove items on the right from nav pane
+  while (navItemIndex < dtoNavPane.items.items.length - 1){
+    dtoNavPane.items.items[navItemIndex + 1].destroy();
+  }
+  
+  // remove items on the right from dto content pane
+  var contentItemIndex = navItemIndex / 2;
+  while (contentItemIndex < dtoContentPane.items.items.length - 1){
+    dtoContentPane.items.items[contentItemIndex + 1].destroy();
+  }
+  dtoContentPane.getLayout().setActiveItem(contentItemIndex);
 }
 
 function showDialog(title, message, processResult){
@@ -259,10 +269,18 @@ Ext.onReady(function(){
         if (dataTypeNode != null){          
           if (dataTypeNode.attributes['text'] == 'Application Data'){
             var graphNode = node.parentNode;
-            loadAppData(dataTypeNode.parentNode.attributes['text'], graphNode.attributes['text'], node.attributes['text']);
+            var scope = dataTypeNode.parentNode.attributes['text'];
+            var app = graphNode.attributes['text'];
+            var graph = node.attributes['text'];
+            var label = scope + '.' + app + '.' + graph;
+            var url = 'adata?scope=' + scope + '&app=' + app + '&graph=' + graph;
+            loadPageDto(label, url);
           }
           else if (dataTypeNode.attributes['text'] == 'Data Exchanges'){
-            loadExchangeData(node.text, dataTypeNode.parentNode.attributes['text'], properties['Id']);
+            var scope = dataTypeNode.parentNode.attributes['text'];
+            var exchangeId = properties['Id'];
+            var url = 'xdata?scope=' + scope + '&exchangeId=' + exchangeId;
+            loadPageDto(node.text, url);
           }
         }
       }
