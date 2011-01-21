@@ -21,4 +21,14 @@ namespace org.iringtools.adapter
     [DataMember(Name = "hashAlgorithm", Order = 2)]
     public String HashAlgorithm { get; set; }
   }
+
+  [DataContract(Namespace = "http://www.iringtools.org/dxfr/request", Name = "dtoPageRequest")]
+  public class DtiRequest
+  {
+    [DataMember(Name = "manifest", Order = 0)]
+    public Manifest Manifest { get; set; }
+
+    [DataMember(Name = "dataTransferIndices", Order = 1)]
+    public DataFilter DataFilter { get; set; }
+  }
 }
