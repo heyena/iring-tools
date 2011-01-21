@@ -12,9 +12,9 @@
         Width="537">
   <Grid>
     <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="122" />
-      <ColumnDefinition Width="520*" />
-      <ColumnDefinition Width="112" />
+      <ColumnDefinition Width="91" />
+      <ColumnDefinition Width="150*" />
+      <ColumnDefinition Width="274" />
     </Grid.ColumnDefinitions>
     <Grid.Background>
       <SolidColorBrush Color="#FFF0F0F0"/>
@@ -30,10 +30,21 @@
                  Margin="10,10,0,10" Height="29" />
     </StackPanel>
 
-    <Label Name="labelAdapterURL" 
+        <Label Name="labelAskCredentials" 
            Height="28"   
-           Width="104" 
-           Margin="18,60,0,0" 
+           Width="121" 
+           Margin="-4,59,0,0" 
+           HorizontalAlignment="Left" 
+           VerticalAlignment="Top" 
+           HorizontalContentAlignment="Right" 
+           VerticalContentAlignment="Center" Grid.ColumnSpan="2">
+            Ask Credentials For:
+        </Label>
+
+        <Label Name="labelAdapterURL" 
+           Height="28"   
+           Width="83" 
+           Margin="0,92,0,0" 
            HorizontalAlignment="Left" 
            VerticalAlignment="Top" 
            HorizontalContentAlignment="Right" 
@@ -41,15 +52,22 @@
       Adapter URL:
     </Label>
     <TextBox Name="textBoxAdapterURL" Height="28" 
-             Margin="0,60,6,0" 
+             Margin="84,93,89,0" 
              VerticalAlignment="Top" 
              VerticalContentAlignment="Center"
-             Text="http://localhost:65432/AdapterService" Grid.Column="1" />
-    <Button Name="buttonConnect"  
+             Text="http://localhost:65432/AdapterService" Grid.ColumnSpan="3" />
+        <CheckBox Name="chkboxAdapterCredentials" 
+             Content="Adapter Service"
+             Height="18" Margin="39,66,0,0" 
+             Grid.Column="1" 
+             Grid.ColumnSpan="2"
+             VerticalAlignment="Top" 
+             HorizontalAlignment="Left" Width="112" />
+        <Button Name="buttonConnect"  
             Grid.Column="2"
             Height="28" 
-            Width="100" 
-            Margin="0,60,12,0" 
+            Width="75" 
+            Margin="0,93,8,0" 
             VerticalAlignment="Top"
             HorizontalAlignment="Right" 
             Click="buttonConnect_Click" FontSize="12">
@@ -57,38 +75,38 @@
     </Button>
 
     <Label Height="28" 
-           Width="109" 
+           Width="85" 
            HorizontalAlignment="Left" 
            HorizontalContentAlignment="Right" 
-           Margin="13,93,0,0" 
+           Margin="-2,127,0,0" 
            Name="labelProjectName" 
            VerticalAlignment="Top" 
            VerticalContentAlignment="Center">
       Project Name:
     </Label>
-    <ComboBox Height="28" Margin="0,93,6,0" 
+    <ComboBox Height="28" Margin="84,127,0,0" 
               Name="comboBoxProjectName" 
               VerticalAlignment="Top" 
               VerticalContentAlignment="Center" 
-              IsEnabled="False" Grid.Column="1" />
+              IsEnabled="False" Grid.ColumnSpan="3" HorizontalAlignment="Left" Width="168" />
     <Label Width="109" 
            HorizontalAlignment="Left" 
            HorizontalContentAlignment="Right" 
-           Margin="13,130,0,0" 
-           Name="labelApplicationName" VerticalContentAlignment="Center" Height="28" VerticalAlignment="Top">
+           Margin="7,127,0,0" 
+           Name="labelApplicationName" VerticalContentAlignment="Center" Height="28" VerticalAlignment="Top" Grid.Column="2">
       Application Name:
     </Label>
     <ComboBox Height="28" 
-              Margin="0,127,6,0" 
+              Margin="112,127,5,0" 
               Name="comboBoxAppName" 
               VerticalAlignment="Top" 
-              VerticalContentAlignment="Center" IsEnabled="False" Grid.Column="1" />
+              VerticalContentAlignment="Center" IsEnabled="False" Grid.Column="2" />
     <Button Height="28" 
             HorizontalAlignment="Right" 
-            Margin="0,161,12,0"
+            Margin="0,161,8,0"
             Name="buttonPublish" 
             VerticalAlignment="Top" 
-            Width="100" 
+            Width="75" 
             Click="buttonPublish_Click" 
             IsEnabled="False" FontSize="12" Grid.Column="2">
       Publish
@@ -96,20 +114,18 @@
 
     <Label HorizontalAlignment="Left" 
            HorizontalContentAlignment="Right" 
-           Margin="13,161,0,0" 
+           Margin="0,159,0,0" 
            Name="labelGraphName" 
            VerticalContentAlignment="Center" 
-           Width="109" Height="31" VerticalAlignment="Top">
+           Width="83" Height="31" VerticalAlignment="Top">
       Graph Name:
     </Label>
     <ComboBox Name="comboBoxGraphName" 
               Height="28" 
               IsEnabled="False" 
-              Margin="0,161,6,0" 
+              Margin="84,161,88,0" 
               VerticalAlignment="Top" 
-              VerticalContentAlignment="Center" 
-              Grid.Column="1" 
-              SelectionChanged="comboBoxGraphName_SelectionChanged" />
+              VerticalContentAlignment="Center" SelectionChanged="comboBoxGraphName_SelectionChanged" Grid.ColumnSpan="3" />
 
     <TextBlock Text="Pull From Façade" 
                Margin="24,195,0,0"
@@ -117,56 +133,60 @@
                VerticalAlignment="Top"
                HorizontalAlignment="Left"
                Padding="4"
-               Background="#FFF0F0F0" Panel.ZIndex="1" Foreground="Black" />
+               Background="#FFF0F0F0" Panel.ZIndex="1" Foreground="Black" Grid.ColumnSpan="2" />
     <Border Name="sparlPull" 
-            Grid.ColumnSpan="3" Margin="11,205,13,0" BorderThickness="1" 
+            Grid.ColumnSpan="3" Margin="10,205,5,0" BorderThickness="1" 
             BorderBrush="Black" Height="84" VerticalAlignment="Top">
       <Grid>
         <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="110" />
-          <ColumnDefinition Width="513*" />
-          <ColumnDefinition Width="104" />
+          <ColumnDefinition Width="2" />
+                    <ColumnDefinition Width="96" />
+                    <ColumnDefinition Width="0*" />
+                    <ColumnDefinition Width="296*" />
+                    <ColumnDefinition Width="104" />
         </Grid.ColumnDefinitions>
         <Label Height="28" 
                HorizontalAlignment="Left" 
                HorizontalContentAlignment="Right" 
-               Margin="12,13,0,0" 
+               Margin="-1,13,0,0" 
                Name="labelTargetURL" 
                VerticalAlignment="Top" 
-               VerticalContentAlignment="Center" Width="98" 
+               VerticalContentAlignment="Center" Width="73" 
                Content="Façade URL:" 
-               Foreground="Black"></Label>
+               Foreground="Black" Grid.ColumnSpan="2"></Label>
         <TextBox Height="28" 
-                  Margin="0,13,0,0" 
+                  Margin="78,13,83,0" 
                   Name="textBoxTargetURL"
                   Grid.Column="1" VerticalAlignment="Top" 
                   VerticalContentAlignment="Center" 
-                  Text="http://localhost:65432/InterfaceService/query" />
-        <Button Content="Connect" Height="28" 
+                  Text="http://localhost:65432/InterfaceService/query" Grid.ColumnSpan="4" />
+        <Button Content="Connect" Height="28"
+                Width="75"
                 VerticalAlignment="Top"
-                Margin="6,12,6,0" 
+                Margin="25,12,4,0" 
                 Name="buttonFacadeConnect" 
-                Grid.Column="2" FontSize="12" 
+                Grid.Column="4" FontSize="12" 
                 Click="buttonFacadeConnect_Click" />
         <Label Height="28" 
                HorizontalContentAlignment="Right" 
-               Margin="12,46,0,0" 
+               Margin="-1,46,26,0" 
                Name="labelGraphUri" 
-               VerticalContentAlignment="Center" 
-               Width="98" Content="Graph URI:" 
-               Foreground="Black" VerticalAlignment="Top"></Label>
+               VerticalContentAlignment="Center" Content="Graph URI:" 
+               Foreground="Black" VerticalAlignment="Top" Grid.ColumnSpan="2"></Label>
         <ComboBox Name="comboBoxGraphUri" 
                   Height="28" 
-                  Margin="0,40,0,0" IsEnabled="False" 
-                  VerticalContentAlignment="Center" Grid.Column="1" />
+                  Margin="78,40,82,0" IsEnabled="False"
+                  IsEditable="True"
+                  VerticalContentAlignment="Center" Grid.Column="1" Grid.ColumnSpan="4" />
         <!--SelectionChanged="comboBoxGraphUri_SelectionChanged" -->
         <Button Content="Pull" Height="28" 
+                Width="75"
                 IsDefault="True" 
                 IsEnabled="False" 
                 Name="buttonPull"
-                Margin="7,40,8,0" Grid.Column="2" FontSize="12" 
+                Margin="25,46,4,8" Grid.Column="4" FontSize="12" 
                 Click="buttonPull_Click" />
-      </Grid>
+            </Grid>
     </Border>
 
     <TextBlock Background="#FFF0F0F0" 
@@ -198,6 +218,7 @@
         </ListBox.ItemTemplate>
       </ListBox>
     </Border>
-    <Button Content="Exit" Height="28" HorizontalAlignment="Right" Margin="0,0,11,12" Name="buttonExit" VerticalAlignment="Bottom" Width="100" Grid.Column="2" Click="buttonExit_Click" />
-  </Grid>
+    <Button Content="Exit" Height="28" HorizontalAlignment="Right" Margin="0,0,11,12" Name="buttonExit" VerticalAlignment="Bottom" Width="100" Grid.Column="1" Click="buttonExit_Click" Grid.ColumnSpan="2" />
+        <CheckBox Content="Façade Service" Name="chkboxFacadeCredentials" Height="18" Margin="150,66,0,0" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" VerticalAlignment="Top" />
+    </Grid>
 </Window>
