@@ -60,6 +60,9 @@ public class AppDataModel
     List<Field> fields = new ArrayList<Field>();
     boolean firstDto = true;
     
+    HashMap<String, String> properties = new HashMap<String, String>();
+    pageDtoGrid.setProperties(properties);
+    
     for (DataTransferObject dto : dtoList)
     {
       List<String> row = new ArrayList<String>();
@@ -70,6 +73,9 @@ public class AppDataModel
         if (firstClassObject == null) {
           pageDtoGrid.setType(classObject.getName());
           firstClassObject = classObject;
+        }
+        else if (firstDto) {
+          properties.put(classObject.getClassId(), classObject.getName());
         }
         
         for (TemplateObject templateObject : classObject.getTemplateObjects().getItems())
@@ -94,7 +100,7 @@ public class AppDataModel
         }
       }
       
-      row.add(0, "<input type=\"image\" src=\"resources/images/info-small.png\" onClick=\"javascript:getRelatedItems('" + firstClassObject.getClassId() + "','" + dto.getIdentifier() + "')\">");      
+      row.add(0, "<input type=\"image\" src=\"resources/images/info-small.png\" onClick=\"javascript:showIndividualInfo('" + firstClassObject.getName() + "','" + firstClassObject.getClassId() + "','" + dto.getIdentifier() + "')\">");      
       gridData.add(row);
 
       if (firstDto)
