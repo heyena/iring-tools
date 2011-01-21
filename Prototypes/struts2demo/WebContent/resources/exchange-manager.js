@@ -141,7 +141,7 @@ function showIndividualInfo(className, classId, classInstance){
     title: 'Related Items',
     region: 'center',
     layout: 'vbox',
-    padding: '5',
+    padding: '0 5 5 5',
     split: true,
     autoScroll: true
   });
