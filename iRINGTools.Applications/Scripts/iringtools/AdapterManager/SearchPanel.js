@@ -4,6 +4,7 @@
 * @extends TreePanel
 * @author by Gert Jansen van Rensburg
 */
+
 //image path
 var IMG_CLASS = 'Content/img/class.png';
 var IMG_TEMPLATE = 'Content/img/template.png';
@@ -11,14 +12,13 @@ var IMG_TEMPLATE = 'Content/img/template.png';
 function renderIcon(value, p, record) {
     var label = null;
 
-    if (record.data.uri.indexOf("tpl") != -1) {
+    if (record.data.Uri.indexOf("tpl") != -1) {
         label = '<img src="' + IMG_TEMPLATE + '" align="top"> ' + value;
     } else {
         label = '<img src="' + IMG_CLASS + '" align="top"> ' + value;
     }
     return label;
 }
-
 
 AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
     title: 'Reference Data Search',
@@ -40,14 +40,14 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
     initComponent: function () {
 
         this.searchStore = new Ext.data.JsonStore({
-            root: 'Items',
-            totalProperty: 'Total',
+            root: 'items',
+            totalProperty: 'total',
             idProperty: 'label',
             fields: [
-        { name: 'uri', allowBlank: false },
-        { name: 'label', allowBlank: false },
-        { name: 'repository', allowBlank: false }
-      ],
+              { name: 'Uri', allowBlank: false },
+              { name: 'Label', allowBlank: false },
+              { name: 'Repository', allowBlank: false }
+            ],
             proxy: new Ext.data.HttpProxy({
                 url: this.searchUrl,
                 timeout: 12000
@@ -55,20 +55,24 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
             baseParams: { limit: this.limit }
         });
 
-        this.searchExpander = new Ext.ux.grid.RowExpander({
+        this.searchExpander = new AdapterManager.AjaxRowExpander({
             tpl: new Ext.Template(
-        '<p><b>Uri:</b> {uri}</p><br>',
-        '<p><b>Description:</b> {desc}</p>'
-      )
+            '<p><b>Uri:</b> {Uri}</p><br>',
+            '<p><b>Description:</b> {Desc}</p>'
+          )
+        },'');
+
+        this.searchExpander.on('beforeexpand', function (record, body, rowIndex) {
+            alert(record);
         });
 
         this.tbar = [
-      'Search: ', ' ',
-      new Ext.ux.form.SearchField({
-          store: this.searchStore,
-          width: 320
-      }, ' ', { text: '' })
-    ];
+          'Search: ', ' ',
+          new Ext.ux.form.SearchField({
+              store: this.searchStore,
+              width: 320
+          }, ' ', { text: '' })
+        ];
 
         this.bbar = new Ext.PagingToolbar({
             store: this.searchStore,
@@ -84,9 +88,9 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
             plugins: this.searchExpander,
             cm: new Ext.grid.ColumnModel([
         this.searchExpander,
-        { header: "Label", width: 400, sortable: true, dataIndex: 'label', renderer: renderIcon },
-        { header: "Repository", width: 150, sortable: true, dataIndex: 'repository' },
-        { header: "Uri", width: 400, sortable: true, dataIndex: 'uri', hidden: true }
+        { header: "Label", width: 400, sortable: true, dataIndex: 'Label', renderer: renderIcon },
+        { header: "Repository", width: 150, sortable: true, dataIndex: 'Repository' },
+        { header: "Uri", width: 400, sortable: true, dataIndex: 'Uri', hidden: true }
       ])
         });
 

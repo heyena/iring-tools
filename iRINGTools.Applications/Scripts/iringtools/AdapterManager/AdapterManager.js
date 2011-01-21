@@ -30,7 +30,7 @@ Ext.onReady(function () {
         collapsible: true,
         collapsed: false,
 
-        searchUrl: 'Search',
+        searchUrl: 'refdata',
         limit: 100
     });
 
@@ -44,7 +44,7 @@ Ext.onReady(function () {
         split: true
     });
 
-    var navigationPanel = new AdapterManager.NavigationPanel({
+    var directoryPanel = new AdapterManager.DirectoryPanel({
         id: 'nav-panel',
         title: 'Directory',
         region: 'west',
@@ -58,7 +58,7 @@ Ext.onReady(function () {
 
     });
 
-    navigationPanel.on('create', function (npanel) {
+    directoryPanel.on('create', function (npanel) {
 
         var newTab = new AdapterManager.ScopePanel();
 
@@ -67,7 +67,7 @@ Ext.onReady(function () {
 
     });
 
-    navigationPanel.on('update', function (npanel) {
+    directoryPanel.on('update', function (npanel) {
 
         var window = new Ext.Window({
             title: 'Scope Details',
@@ -79,13 +79,13 @@ Ext.onReady(function () {
 
     });
 
-    navigationPanel.on('configure', function (npanel, scope, application) {
+    directoryPanel.on('configure', function (npanel, scope, application) {
 
         iRINGTools.setAlert(true, scope + '.' + application);
 
     });
 
-    navigationPanel.on('mapping', function (npanel, scope, application, graph) {
+    directoryPanel.on('mapping', function (npanel, scope, application, graph) {
 
         if (application.length > 0) {
             var newTab = new AdapterManager.MappingPanel({
@@ -101,7 +101,7 @@ Ext.onReady(function () {
 
     });
 
-    navigationPanel.on('exchange', function (npanel, scope, application, graph) {
+    directoryPanel.on('exchange', function (npanel, scope, application, graph) {
 
         if (application.length > 0) {
 
@@ -170,7 +170,7 @@ Ext.onReady(function () {
           border: false,
           height: 60
       },
-      navigationPanel,
+      directoryPanel,
       contentPanel,
       searchPanel
     ],

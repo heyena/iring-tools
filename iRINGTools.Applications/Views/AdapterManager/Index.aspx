@@ -11,15 +11,16 @@
     
     <!-- ExtJS library: all widgets -->
     <script src="../../Scripts/ext-3.3.1/ext-all.js" type="text/javascript"></script>
+    <script src="../../Scripts/ext-3.3.1/examples/ux/ux-all.js" type="text/javascript"></script>
     
-    <!-- extensions -->    
+    <!-- extensions -->
     <script src="../../Scripts/iringtools/adaptermanager/App.js" type="text/javascript"></script>    
     <script src="../../Scripts/iringtools/adaptermanager/ActionPanel.js" type="text/javascript"></script>
     <script src="../../Scripts/iringtools/adaptermanager/DirectoryPanel.js" type="text/javascript"></script>
     <script src="../../Scripts/iringtools/adaptermanager/MappingPanel.js" type="text/javascript"></script>
     <script src="../../Scripts/iringtools/adaptermanager/SearchPanel.js" type="text/javascript"></script>
-    <script src="../../Scripts/iringtools/adaptermanager/ScopePanel.js" type="text/javascript"></script>    
-    <script src="../../Scripts/ext-3.3.1/examples/ux/ux-all.js" type="text/javascript"></script>    
+    <script src="../../Scripts/iringtools/adaptermanager/ScopePanel.js" type="text/javascript"></script>        
+    <script src="../../Scripts/iringtools/adaptermanager/AjaxRowExpander.js" type="text/javascript"></script>    
 
     <!-- page specific -->    
     <script src="../../Scripts/iringtools/adaptermanager/AdapterManager.js" type="text/javascript"></script>    
