@@ -70,40 +70,81 @@ namespace org.iringtools.utils.exchange
             _messages.Add(new StatusMessage { Message = "Pulling Graph from remote Façade...", ImageName = "Resources/info_22.png" });
 
             WebClient client = new WebClient();
+            bool adapterConnect;
+            bool facadeConnect;
 
-            client.Credentials = CredentialCache.DefaultCredentials;
+            if (chkboxAdapterCredentials.IsChecked == true)
+                adapterConnect = ShowLoginDialog(CredentialType.Adapter) == true;
+            else
+                adapterConnect = true;
 
-            client.Proxy.Credentials = CredentialCache.DefaultCredentials;
-
-            client.UploadStringCompleted += new UploadStringCompletedEventHandler(client_UploadStringCompleted);
-            client.Headers["Content-type"] = "application/xml";
-            client.Encoding = Encoding.UTF8;
-
-            Uri pullURI = new Uri(
-                textBoxAdapterURL.Text + "/" +
-                _project.Name + "/" +
-                _application.Name + "/" +
-                _graph.name + "/pull");
-
-            Request request = new Request();
-            WebCredentials targetCredentials = new WebCredentials();
             if (chkboxFacadeCredentials.IsChecked == true)
+                facadeConnect = ShowLoginDialog(CredentialType.Facade) == true;
+            else
+                facadeConnect = true;
+
+            if (adapterConnect && facadeConnect)
             {
-                targetCredentials.domain = _facadeCredentialDomain;
-                targetCredentials.userName = _facadeCredentialUsername;
-                targetCredentials.password = _facadeCredentialPassword;
-                targetCredentials.Encrypt();
+                #region Prepare proxy and facade credentials if required
+                if (_proxyHost != String.Empty && _proxyPort != String.Empty)
+                {
+                    WebProxy proxy = new WebProxy(_proxyHost, Convert.ToInt16(_proxyPort));
+                    proxy.Credentials = CredentialCache.DefaultCredentials;
+                    client.Proxy = proxy;
+                }
+                else
+                {
+                    client.Proxy.Credentials = CredentialCache.DefaultCredentials;
+                }
+                if (chkboxAdapterCredentials.IsChecked == true)
+                {
+                    NetworkCredential credential = new NetworkCredential(_adapterCredentialUsername, _adapterCredentialPassword, _adapterCredentialDomain);
+                    client.Credentials = credential;
+                }
+                else
+                {
+                    client.Credentials = CredentialCache.DefaultCredentials;
+                }
+                #endregion
+
+                //client.Credentials = CredentialCache.DefaultCredentials;
+
+                //client.Proxy.Credentials = CredentialCache.DefaultCredentials;
+
+                client.UploadStringCompleted += new UploadStringCompletedEventHandler(client_UploadStringCompleted);
+                client.Headers["Content-type"] = "application/xml";
+                client.Encoding = Encoding.UTF8;
+
+                Uri pullURI = new Uri(
+                    textBoxAdapterURL.Text + "/" +
+                    _project.Name + "/" +
+                    _application.Name + "/" +
+                    _graph.name + "/pull");
+
+                Request request = new Request();
+                WebCredentials targetCredentials = new WebCredentials();
+                if (chkboxFacadeCredentials.IsChecked == true)
+                {
+                    targetCredentials.domain = _facadeCredentialDomain;
+                    targetCredentials.userName = _facadeCredentialUsername;
+                    targetCredentials.password = _facadeCredentialPassword;
+                    targetCredentials.Encrypt();
+                }
+                string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
+                request.Add("targetUri", textBoxTargetURL.Text);
+                request.Add("targetCredentials", targetCredentialsXML);
+                request.Add("targetGraphBaseUri", comboBoxGraphUri.Text);
+                request.Add("graphName", comboBoxGraphName.Text);
+                request.Add("filter", "");
+
+                string message = Utility.SerializeDataContract<Request>(request);
+
+                client.UploadStringAsync(pullURI, message);
             }
-            string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
-            request.Add("targetUri", textBoxTargetURL.Text);
-            request.Add("targetCredentials", targetCredentialsXML);
-            request.Add("targetGraphBaseUri", comboBoxGraphUri.Text);
-            request.Add("graphName", comboBoxGraphName.Text);
-            request.Add("filter", "");
-
-            string message = Utility.SerializeDataContract<Request>(request);
-
-            client.UploadStringAsync(pullURI, message);                     
+            else
+            {
+                _messages.Add(new StatusMessage { Message = "User cancelled operation.", ImageName = "Resources/info_22.png" });
+            }
         }
         catch (Exception ex)
         {
@@ -374,10 +415,27 @@ namespace org.iringtools.utils.exchange
             if (_application != null && _application.Name != null && _application.Name != String.Empty)
             {
                 WebClient client = new WebClient();
-
-                client.Credentials = CredentialCache.DefaultCredentials;
-
-                client.Proxy.Credentials = CredentialCache.DefaultCredentials;
+                #region Prepare proxy and facade credentials if required
+                if (_proxyHost != String.Empty && _proxyPort != String.Empty)
+                {
+                    WebProxy proxy = new WebProxy(_proxyHost, Convert.ToInt16(_proxyPort));
+                    proxy.Credentials = CredentialCache.DefaultCredentials;
+                    client.Proxy = proxy;
+                }
+                else
+                {
+                    client.Proxy.Credentials = CredentialCache.DefaultCredentials;
+                }
+                if (chkboxAdapterCredentials.IsChecked == true)
+                {
+                    NetworkCredential credential = new NetworkCredential(_adapterCredentialUsername, _adapterCredentialPassword, _adapterCredentialDomain);
+                    client.Credentials = credential;
+                }
+                else
+                {
+                    client.Credentials = CredentialCache.DefaultCredentials;
+                }
+                #endregion
 
                 client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(client_GetMappingCompleted);
 
