@@ -3437,6 +3437,8 @@ namespace org.iringtools.refdata
                             }
                             sparqlStr.AppendLine(string.Format("  rdl:{0} rdf:type owl:Class ;", ID));
 
+                            sparqlStr.AppendLine(string.Format("  rdfs:label \"{0}{1}\"^^xsd:string ;", label, language));
+
                             foreach (Description descr in Class.description)
                             {
                                 if (string.IsNullOrEmpty(descr.value))
@@ -3451,7 +3453,13 @@ namespace org.iringtools.refdata
 
                                 sparqlStr.AppendLine(string.Format("  rdfs:comment \"{0}{1}\"^^xsd:string ;", description, language));
                             }
+
+                            qn = nsMap.ReduceToQName(Class.entityType.reference, out qName);
+                            if (qn)
+                                sparqlStr.AppendLine(string.Format("  rdf:type {0} ;", qName));
+
                             int specCount = Class.specialization.Count;
+
                             //append Specialization to sparql query
                             foreach (Specialization spec in Class.specialization)
                             {
