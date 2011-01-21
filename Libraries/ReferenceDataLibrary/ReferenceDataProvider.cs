@@ -1398,343 +1398,348 @@ namespace org.iringtools.refdata
             }
         }
 
-        public Response PostClass(QMXF qmxf)
-        {
-            Status status = new Status();
+        //public Response PostClass(QMXF qmxf)
+        //{
+        //    Status status = new Status();
 
-            try
-            {
-                int count = 0;
-                sparqlStr = new StringBuilder();
-                sparqlStr.Append(prefix);
-                sparqlStr.AppendLine(insertData);
-                StringBuilder nameSparql = null;
-                StringBuilder specSparql = null;
-                StringBuilder classSparql = null;
+        //    try
+        //    {
+        //        int count = 0;
+        //        sparqlStr = new StringBuilder();
+        //        sparqlStr.Append(prefix);
+        //        sparqlStr.AppendLine(insertData);
+        //        StringBuilder nameSparql = new StringBuilder();
+        //        StringBuilder specSparql = new StringBuilder();
+        //        StringBuilder classSparql = new StringBuilder();
 
-                int repository = qmxf.targetRepository != null ? getIndexFromName(qmxf.targetRepository) : 0;
-                Repository target = _repositories[repository];
+        //        int repository = qmxf.targetRepository != null ? getIndexFromName(qmxf.targetRepository) : 0;
+        //        Repository target = _repositories[repository];
 
-                Utility.WriteString("Number of classes to insert: " + qmxf.classDefinitions.Count.ToString(), "stats.log", true);
-                foreach (ClassDefinition Class in qmxf.classDefinitions)
-                {
+        //        Utility.WriteString("Number of classes to insert: " + qmxf.classDefinitions.Count.ToString(), "stats.log", true);
+        //        foreach (ClassDefinition Class in qmxf.classDefinitions)
+        //        {
 
-                    string ID = string.Empty;
-                    string label = string.Empty;
-                    string language = string.Empty;
-                    string qName = string.Empty;
-                    string specialization = string.Empty;
-                    string classification = string.Empty;
-                    string generatedId = string.Empty;
-                    string serviceUrl = string.Empty;
-                    string className = string.Empty;
-                    int classIndex = -1;
-                    bool existInTarget = false;
-                    bool qn = false;
-                    if (target.IsReadOnly)
-                    {
-                        status.Level = StatusLevel.Error;
-                        status.Messages.Add("Repository is Read Only");
-                        _response.Append(status);
-                        return _response;
-                    }
+        //            string ID = string.Empty;
+        //            string label = string.Empty;
+        //            string language = string.Empty;
+        //            string qName = string.Empty;
+        //            string specialization = string.Empty;
+        //            string classification = string.Empty;
+        //            string generatedId = string.Empty;
+        //            string serviceUrl = string.Empty;
+        //            string className = string.Empty;
+        //            int classIndex = -1;
+        //            bool existInTarget = false;
+        //            bool qn = false;
+        //            if (target.IsReadOnly)
+        //            {
+        //                status.Level = StatusLevel.Error;
+        //                status.Messages.Add("Repository is Read Only");
+        //                _response.Append(status);
+        //                return _response;
+        //            }
 
-                    ID = Utility.GetIdFromURI(Class.identifier);
+        //            ID = Utility.GetIdFromURI(Class.identifier);
 
-                    QMXF q = new QMXF();
-                    if (ID != null)
-                    {
+        //            QMXF q = new QMXF();
+        //            if (ID != null)
+        //            {
 
-                        q = GetClass(ID, null, target);
+        //                q = GetClass(ID, null, target);
 
-                        foreach (ClassDefinition classFound in q.classDefinitions)
-                        {
-                            classIndex++;
-                            if (classFound.repositoryName.Equals(_repositories[repository].Name))
-                            {
-                                existInTarget = true;
-                                Utility.WriteString("Class found: " + q.classDefinitions[classIndex].name[0].value, "stats.log", true);
-                                break;
-                            }
-                        }
-                    }
+        //                foreach (ClassDefinition classFound in q.classDefinitions)
+        //                {
+        //                    classIndex++;
+        //                    if (classFound.repositoryName.Equals(_repositories[repository].Name))
+        //                    {
+        //                        existInTarget = true;
+        //                        Utility.WriteString("Class found: " + q.classDefinitions[classIndex].name[0].value, "stats.log", true);
+        //                        break;
+        //                    }
+        //                }
+        //            }
 
-                    if (!existInTarget)
-                    {
-                        //add the class
-                        foreach (QMXFName name in Class.name)
-                        {
-                            //label = name.value;
-                            count++;
-                            Utility.WriteString("Inserting : " + label, "stats.log", true);
+        //            if (!existInTarget)
+        //            {
+        //                //add the class
+        //                foreach (QMXFName name in Class.name)
+        //                {
+        //                    //label = name.value;
+        //                    count++;
+        //                    Utility.WriteString("Inserting : " + label, "stats.log", true);
 
-                            className = "Class definition " + label;
-                            if (string.IsNullOrEmpty(ID))
-                            {
-                                if (_useExampleRegistryBase)
-                                    generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], className);
-                                else
-                                    generatedId = CreateIdsAdiId(_settings["ClassRegistryBase"], className);
+        //                    className = "Class definition " + label;
+        //                    if (string.IsNullOrEmpty(ID))
+        //                    {
+        //                        if (_useExampleRegistryBase)
+        //                            generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], className);
+        //                        else
+        //                            generatedId = CreateIdsAdiId(_settings["ClassRegistryBase"], className);
 
-                                ID = nsMap.ResolveQName(generatedId, nsMap, null);
-                            }
-                            Utility.WriteString("\n" + ID + "\t" + label, "Class IDs.log", true);
-                            //ID = Class.identifier.Remove(0, 1);
-                            qn = nsMap.ReduceToQName(Class.entityType.reference, out qName);
-                            if (Class.entityType != null && qn)
-                                sparqlStr.AppendLine(string.Format("  rdl:{0} rdf:type {1} .",ID, qName));
+        //                        ID = nsMap.ResolveQName(generatedId, nsMap, null);
+        //                    }
+        //                    Utility.WriteString("\n" + ID + "\t" + label, "Class IDs.log", true);
+        //                    //ID = Class.identifier.Remove(0, 1);
+        //                    qn = nsMap.ReduceToQName(Class.entityType.reference, out qName);
+        //                    if (Class.entityType != null && qn)
+        //                        sparqlStr.AppendLine(string.Format("  rdl:{0} rdf:type {1} .",ID, qName));
 
-                            if (string.IsNullOrEmpty(name.lang))
-                                language = defaultLanguage;
-                            else
-                                language = "@" + name.lang;
+        //                    if (string.IsNullOrEmpty(name.lang))
+        //                        language = defaultLanguage;
+        //                    else
+        //                        language = "@" + name.lang;
 
-                            sparqlStr.AppendLine(string.Format("  rdl:{0} rdfs:label \"{1}{2}\"^^xsd:string .", ID, name.value.Split('@')[0], language));
+        //                    sparqlStr.AppendLine(string.Format("  rdl:{0} rdfs:label \"{1}{2}\"^^xsd:string .", ID, name.value.Split('@')[0], language));
 
-                            foreach (Description descr in Class.description)
-                            {
-                                if (string.IsNullOrEmpty(descr.value))
-                                    continue;
-                                else
-                                {
-                                    if (string.IsNullOrEmpty(descr.lang))
-                                        language = defaultLanguage;
-                                    else
-                                        language = "@" + descr.lang;
+        //                    foreach (Description descr in Class.description)
+        //                    {
+        //                        if (string.IsNullOrEmpty(descr.value))
+        //                            continue;
+        //                        else
+        //                        {
+        //                            if (string.IsNullOrEmpty(descr.lang))
+        //                                language = defaultLanguage;
+        //                            else
+        //                                language = "@" + descr.lang;
 
-                                    sparqlStr.AppendLine(string.Format("  rdl:{0} rdfs:comment \"{1}{2}\"^^xsd:string .", ID, descr.value.Split('@')[0], language));
-                                }
-                            }
+        //                            sparqlStr.AppendLine(string.Format("  rdl:{0} rdfs:comment \"{1}{2}\"^^xsd:string .", ID, descr.value.Split('@')[0], language));
+        //                        }
+        //                    }
 
 
-                            /// TODO: fix the type
+        //                    /// TODO: fix the type
 
-                            foreach (Specialization spec in Class.specialization)
-                            {
-                                /// Note: QMXF contains only superclass info while qxf and rdf contain superclass and subclass info
-                                qn = nsMap.ReduceToQName(spec.reference, out qName);
-                                if (string.IsNullOrEmpty(spec.reference) && qn)
-                                    continue;
-                                else
-                                {
-                                    sparqlStr.AppendLine("  _:spec rdf:type dm:Specialization ;");
-                                    sparqlStr.AppendLine(string.Format("  dm:hasSuperclass {0} ;", qName));
-                                    sparqlStr.AppendLine(string.Format("  dm:hasSubclass rdl:{0} .", ID));
-                                }
-                            }
+        //                    foreach (Specialization spec in Class.specialization)
+        //                    {
+        //                        /// Note: QMXF contains only superclass info while qxf and rdf contain superclass and subclass info
+        //                        qn = nsMap.ReduceToQName(spec.reference, out qName);
+        //                        if (string.IsNullOrEmpty(spec.reference))
+        //                            continue;
+        //                        else if(qn)
+        //                        {
+        //                            sparqlStr.AppendLine("  _:spec rdf:type dm:Specialization ;");
+        //                            sparqlStr.AppendLine(string.Format("  dm:hasSuperclass {0} ;", qName));
+        //                            sparqlStr.AppendLine(string.Format("  dm:hasSubclass rdl:{0} .", ID));
+        //                        }
+        //                    }
 
-                            //append Classification to sparql query
-                            foreach (Classification classif in Class.classification)
-                            {
-                                /// Note: QMXF contains only classifier info while rdf contain classifier and classified info
-                                
-                                if (string.IsNullOrEmpty(classif.reference) && nsMap.ReduceToQName(classif.reference, out qName))
-                                    continue;
-                                else
-                                {
+        //                    //append Classification to sparql query
+        //                    foreach (Classification classif in Class.classification)
+        //                    {
+        //                        /// Note: QMXF contains only classifier info while rdf contain classifier and classified info
+        //                        qn = nsMap.ReduceToQName(classif.reference, out qName);
+        //                        if (string.IsNullOrEmpty(classif.reference))
+        //                            continue;
+        //                        else if(qn)
+        //                        {
+        //                            sparqlStr.AppendLine("  _:classif rdf:type dm:Classification ;");
+        //                            sparqlStr.AppendLine(string.Format("  dm:hasClassifier {0} ;",qName));
+        //                            sparqlStr.AppendLine(string.Format("  dm:hasClassified  rdl:{0} .",ID));
+        //                        }
+        //                    }
 
-                                }
-                                sparqlStr.AppendLine("  _:classif rdf:type dm:Classification ;");
-                                sparqlStr.AppendLine(string.Format("  dm:hasClassifier {0} ;",qName));
-                                sparqlStr.AppendLine(string.Format("  dm:hasClassified  rdl:{0} .",ID));
-                            }
+        //                    //append Status to sparql query
 
-                            //append Status to sparql query
+        //                    sparqlStr.AppendLine("  _:status rdf:type tpl:R20247551573 ;");
+        //                    sparqlStr.AppendLine(string.Format("    tpl:R64574858717 tpl:{0} ;", ID));
+        //                    sparqlStr.AppendLine("    tpl:R56599656536 rdl:R6569332477 ;");
+        //                    sparqlStr.AppendLine("    tpl:R61794465713 rdl:R3732211754 .");
+        //                    sparqlStr.AppendLine("}");
 
-                            sparqlStr.AppendLine("  _:status rdf:type tpl:R20247551573 ;");
-                            sparqlStr.AppendLine(string.Format("    tpl:R64574858717 tpl:{0} ;", ID));
-                            sparqlStr.AppendLine("    tpl:R56599656536 rdl:R6569332477 ;");
-                            sparqlStr.AppendLine("    tpl:R61794465713 rdl:R3732211754 .");
-                            sparqlStr.AppendLine("}");
+        //                    if (!label.Equals(String.Empty))
+        //                    {
+        //                        Reset(label);
+        //                    }
+        //                    _response = PostToRepository(target, sparqlStr.ToString());
+        //                }
+        //            }
+        //            else
+        //            {
+        //                ClassDefinition cd = q.classDefinitions[classIndex];
+        //                //sparqlStr = new StringBuilder();
+        //                //sparqlStr.Append(prefix);
+        //                //sparqlStr.AppendLine(insertData);
 
-                            if (!label.Equals(String.Empty))
-                            {
-                                Reset(label);
-                            }
-                            _response = PostToRepository(target, sparqlStr.ToString());
-                        }
-                    }
-                    else
-                    {
-                        ClassDefinition cd = q.classDefinitions[classIndex];
-                        sparqlStr = new StringBuilder();
-                        sparqlStr.Append(prefix);
-                        sparqlStr.AppendLine(insertData);
+        //                foreach (QMXFName name in cd.name)
+        //                {
+        //                    label = name.value.Split('@')[0];
+        //                    if (string.IsNullOrEmpty(name.lang))
+        //                        language = defaultLanguage;
+        //                    else
+        //                        language = "@" + name.lang;
 
-                        foreach (QMXFName name in cd.name)
-                        {
-                            label = name.value.Split('@')[0];
-                            if (string.IsNullOrEmpty(name.lang))
-                                language = defaultLanguage;
-                            else
-                                language = "@" + name.lang;
+        //                    nameSparql.Append(prefix);
+        //                    nameSparql.AppendLine(insertData);
 
-                            nameSparql = sparqlStr;
-                            nameSparql.AppendLine(string.Format(" rdl:{0} rdfs:label \"{1}{2}\"^^xsd:string ;", ID, label, language));
-                            foreach (Description descr in cd.description)
-                            {
+        //                    nameSparql.AppendLine(string.Format(" rdl:{0} rdfs:label \"{1}{2}\"^^xsd:string ;", ID, label, language));
+        //                    foreach (Description descr in cd.description)
+        //                    {
 
-                                if (string.IsNullOrEmpty(descr.value))
-                                    continue;
-                                else
-                                {
-                                    if (string.IsNullOrEmpty(descr.lang))
-                                        language = defaultLanguage;
-                                    else
-                                        language = "@" + descr.lang;
+        //                        if (string.IsNullOrEmpty(descr.value))
+        //                            continue;
+        //                        else
+        //                        {
+        //                            if (string.IsNullOrEmpty(descr.lang))
+        //                                language = defaultLanguage;
+        //                            else
+        //                                language = "@" + descr.lang;
 
-                                    nameSparql.AppendLine(string.Format("  rdfs:comment \"{0}{1}\"^^xsd:string . ", descr.value.Split('@')[0], language));
-                                }
-                            }
-                            classSparql = sparqlStr;
-                            foreach (Classification classif in cd.classification)
-                            {
-                                qn = nsMap.ReduceToQName(classif.reference, out qName);
-                                if (string.IsNullOrEmpty(classif.reference))
-                                    continue;
-                                else if(qn)
-                                {
-                                    classSparql.AppendLine("  ?a rdf:type dm:Classification .");
-                                    classSparql.AppendLine(string.Format("  ?a dm:hasClassifier {0} .", qName));
-                                    classSparql.AppendLine(string.Format("  ?a dm:hasClassified  tpl:{0} . ", ID));
-                                }
-                            }
+        //                            nameSparql.AppendLine(string.Format("  rdfs:comment \"{0}{1}\"^^xsd:string . ", descr.value.Split('@')[0], language));
+        //                        }
+        //                    }
+        //                    classSparql.Append(prefix);
+        //                    classSparql.AppendLine(insertData);
 
-                            specSparql = sparqlStr;
-                            foreach (Specialization spec in cd.specialization)
-                            {
-                                qn = nsMap.ReduceToQName(spec.reference, out qName);
-                                if (string.IsNullOrEmpty(spec.reference))
-                                    continue;
-                                else if (qn)
-                                {
-                                    specSparql.AppendLine("  ?a rdf:type dm:Specialization .");
-                                    specSparql.AppendLine(string.Format("  ?a dm:hasSuperclass {0} .", qName));
-                                    specSparql.AppendLine(string.Format("  ?a dm:hasSubclass tpl:{0} . ", ID));
-                                }
-                            }
+        //                    foreach (Classification classif in cd.classification)
+        //                    {
+        //                        qn = nsMap.ReduceToQName(classif.reference, out qName);
+        //                        if (string.IsNullOrEmpty(classif.reference))
+        //                            continue;
+        //                        else if(qn)
+        //                        {
+        //                            classSparql.AppendLine("  ?a rdf:type dm:Classification .");
+        //                            classSparql.AppendLine(string.Format("  ?a dm:hasClassifier {0} .", qName));
+        //                            classSparql.AppendLine(string.Format("  ?a dm:hasClassified  tpl:{0} . ", ID));
+        //                        }
+        //                    }
 
-                        }
-                        foreach (QMXFName name in Class.name)
-                        {
+        //                    specSparql.Append(prefix);
+        //                    specSparql.AppendLine(insertData);
+
+        //                    foreach (Specialization spec in cd.specialization)
+        //                    {
+        //                        qn = nsMap.ReduceToQName(spec.reference, out qName);
+        //                        if (string.IsNullOrEmpty(spec.reference))
+        //                            continue;
+        //                        else if (qn)
+        //                        {
+        //                            specSparql.AppendLine("  ?a rdf:type dm:Specialization .");
+        //                            specSparql.AppendLine(string.Format("  ?a dm:hasSuperclass {0} .", qName));
+        //                            specSparql.AppendLine(string.Format("  ?a dm:hasSubclass tpl:{0} . ", ID));
+        //                        }
+        //                    }
+
+        //                }
+        //                foreach (QMXFName name in Class.name)
+        //                {
                           
-                            if (string.IsNullOrEmpty(name.lang))
-                                language = defaultLanguage;
-                            else
-                                language = "@" + name.lang;
+        //                    if (string.IsNullOrEmpty(name.lang))
+        //                        language = defaultLanguage;
+        //                    else
+        //                        language = "@" + name.lang;
 
-                            nameSparql.AppendLine(string.Format("  rdl:{0}  rdfs:label \"{1}{2}\"^^xsd:string ;", ID, name.value.Split('@')[0], language));
+        //                    nameSparql.AppendLine(string.Format("  rdl:{0}  rdfs:label \"{1}{2}\"^^xsd:string ;", ID, name.value.Split('@')[0], language));
 
-                            foreach (Description descr in Class.description)
-                            {
-                                if (string.IsNullOrEmpty(descr.value))
-                                    continue;
-                                else
-                                {
-                                    if (string.IsNullOrEmpty(descr.lang))
-                                        language = defaultLanguage;
-                                    else
-                                        language = "@" + descr.lang;
+        //                    foreach (Description descr in Class.description)
+        //                    {
+        //                        if (string.IsNullOrEmpty(descr.value))
+        //                            continue;
+        //                        else
+        //                        {
+        //                            if (string.IsNullOrEmpty(descr.lang))
+        //                                language = defaultLanguage;
+        //                            else
+        //                                language = "@" + descr.lang;
 
-                                    nameSparql.AppendLine(string.Format("  rdfs:comment \"{0}{1}\"^^xsd:string . ", descr.value.Split('@')[0], language));
-                                }
-                            }
+        //                            nameSparql.AppendLine(string.Format("  rdfs:comment \"{0}{1}\"^^xsd:string . ", descr.value.Split('@')[0], language));
+        //                        }
+        //                    }
 
-                            string oldClass = classification;
-                            if (Class.classification.Count == 0 && classSparql.Length > 0 && oldClass.Length > 0)
-                            {
-                                classSparql = sparqlStr;
-                                classSparql.AppendLine(deleteWhere);
-                                classSparql.AppendLine("  ?a rdf:type dm:Classification .");
-                                classSparql.AppendLine(string.Format("  ?a dm:hasClassifier  rdl:{0} .", ID));
-                                classSparql.AppendLine(string.Format("  ?a dm:hasClassified  rdl:{0} . }", ID));
-                            }
-                            if (Class.classification.Count == 0 && oldClass.Length == 0)
-                            {
-                                classSparql = new StringBuilder();
-                            }
-                            foreach (Classification classif in Class.classification)
-                            {
-                                classification = classif.reference;
-                                if (oldClass.Length > 0)
-                                {
-                                    //classSparql += "INSERT { _:classif rdf:type dm:Classification ; "
-                                    //        + "dm:hasClassifier <" + classification + "> ; "
-                                    //        + "dm:hasClassified  " + ID + "  . } "
-                                    //    /*+ "WHERE { ?c dm:hasClassified " + ID + " . "
-                                    //    + " ?b dm:hasClassifier ?o . "
-                                    //    + " ?a rdf:type dm:Classification . } ";*/
-                                    //        + "WHERE { ?a rdf:type dm:Classification . "
-                                    //        + " ?a dm:hasClassifier <" + oldClass + "> . "
-                                    //        + " ?a dm:hasClassified  " + ID + "  . } ";
-                                }
-                                else
-                                {
-                                    //classSparql = classSparql.Replace("MODIFY DELETE { ", "INSERT { ");
-                                    //classSparql += "_:classif rdf:type dm:Classification ; "
-                                    //        + "dm:hasClassifier <" + classification + "> ; "
-                                    //        + "dm:hasClassified  " + ID + "  . } ";
-                                }
-                            }
-                            string oldSpec = specialization;
-                            if (Class.specialization.Count == 0 && specSparql.Length > 0 && oldSpec.Length > 0)
-                            {
-                                //specSparql = specSparql.Replace("MODIFY DELETE { ", "DELETE {");
-                                //specSparql += "WHERE { ?a rdf:type dm:Specialization . "
-                                //        + " ?a dm:hasSuperclass <" + oldSpec + "> . "
-                                //        + " ?a dm:hasSubclass " + ID + " . } ";
-                            }
-                            if (Class.specialization.Count == 0 && oldSpec.Length == 0)
-                            {
-                                //specSparql = "";
-                            }
-                            foreach (Specialization spec in Class.specialization)
-                            {
-                                specialization = spec.reference;
-                                if (oldSpec.Length > 0)
-                                {
-                                    //specSparql += "INSERT { _:spec rdf:type dm:Specialization ; "
-                                    //        + "dm:hasSuperclass <" + specialization + "> ; "
-                                    //        + "dm:hasSubclass " + ID + " . } "
-                                    //    /*+ "WHERE { ?c dm:hasSubclass " + ID + " . "
-                                    //    + " ?b dm:hasSuperclass ?o . "
-                                    //    + " ?a rdf:type dm:Specialization . } ";*/
-                                    //        + "WHERE { ?a rdf:type dm:Specialization . "
-                                    //        + " ?a dm:hasSuperclass <" + oldSpec + "> . "
-                                    //        + " ?a dm:hasSubclass " + ID + " . } ";
-                                }
-                                else
-                                {
-                                    //specSparql = specSparql.Replace("MODIFY DELETE { ", "INSERT { ");
-                                    //specSparql += "_:spec rdf:type dm:Specialization ; "
-                                    //        + "dm:hasSuperclass <" + specialization + "> ; "
-                                    //        + "dm:hasSubclass " + ID + " . } ";
-                                }
-                            }
-                        }
-                        if (!label.Equals(String.Empty))
-                        {
-                            Reset(label);
-                        }
-                        _response = PostToRepository(target, nameSparql.ToString());
-                        _response = PostToRepository(target, classSparql.ToString());
-                        _response = PostToRepository(target, specSparql.ToString());
-                    }
-                }
+        //                    string oldClass = classification;
+        //                    if (Class.classification.Count == 0 && classSparql.Length > 0 && oldClass.Length > 0)
+        //                    {
+        //                        classSparql.Append(prefix);
+        //                        classSparql.AppendLine(deleteWhere);
+        //                        classSparql.AppendLine("  ?a rdf:type dm:Classification .");
+        //                        classSparql.AppendLine(string.Format("  ?a dm:hasClassifier  rdl:{0} .", ID));
+        //                        classSparql.AppendLine(string.Format("  ?a dm:hasClassified  rdl:{0} . }", ID));
+        //                    }
+        //                    if (Class.classification.Count == 0 && oldClass.Length == 0)
+        //                    {
+        //                        classSparql = new StringBuilder();
+        //                    }
+        //                    foreach (Classification classif in Class.classification)
+        //                    {
+        //                        classification = classif.reference;
+        //                        if (oldClass.Length > 0)
+        //                        {
+        //                            //classSparql += "INSERT { _:classif rdf:type dm:Classification ; "
+        //                            //        + "dm:hasClassifier <" + classification + "> ; "
+        //                            //        + "dm:hasClassified  " + ID + "  . } "
+        //                            //    /*+ "WHERE { ?c dm:hasClassified " + ID + " . "
+        //                            //    + " ?b dm:hasClassifier ?o . "
+        //                            //    + " ?a rdf:type dm:Classification . } ";*/
+        //                            //        + "WHERE { ?a rdf:type dm:Classification . "
+        //                            //        + " ?a dm:hasClassifier <" + oldClass + "> . "
+        //                            //        + " ?a dm:hasClassified  " + ID + "  . } ";
+        //                        }
+        //                        else
+        //                        {
+        //                            //classSparql = classSparql.Replace("MODIFY DELETE { ", "INSERT { ");
+        //                            //classSparql += "_:classif rdf:type dm:Classification ; "
+        //                            //        + "dm:hasClassifier <" + classification + "> ; "
+        //                            //        + "dm:hasClassified  " + ID + "  . } ";
+        //                        }
+        //                    }
+        //                    string oldSpec = specialization;
+        //                    if (Class.specialization.Count == 0 && specSparql.Length > 0 && oldSpec.Length > 0)
+        //                    {
+        //                        //specSparql = specSparql.Replace("MODIFY DELETE { ", "DELETE {");
+        //                        //specSparql += "WHERE { ?a rdf:type dm:Specialization . "
+        //                        //        + " ?a dm:hasSuperclass <" + oldSpec + "> . "
+        //                        //        + " ?a dm:hasSubclass " + ID + " . } ";
+        //                    }
+        //                    if (Class.specialization.Count == 0 && oldSpec.Length == 0)
+        //                    {
+        //                        //specSparql = "";
+        //                    }
+        //                    foreach (Specialization spec in Class.specialization)
+        //                    {
+        //                        specialization = spec.reference;
+        //                        if (oldSpec.Length > 0)
+        //                        {
+        //                            //specSparql += "INSERT { _:spec rdf:type dm:Specialization ; "
+        //                            //        + "dm:hasSuperclass <" + specialization + "> ; "
+        //                            //        + "dm:hasSubclass " + ID + " . } "
+        //                            //    /*+ "WHERE { ?c dm:hasSubclass " + ID + " . "
+        //                            //    + " ?b dm:hasSuperclass ?o . "
+        //                            //    + " ?a rdf:type dm:Specialization . } ";*/
+        //                            //        + "WHERE { ?a rdf:type dm:Specialization . "
+        //                            //        + " ?a dm:hasSuperclass <" + oldSpec + "> . "
+        //                            //        + " ?a dm:hasSubclass " + ID + " . } ";
+        //                        }
+        //                        else
+        //                        {
+        //                            //specSparql = specSparql.Replace("MODIFY DELETE { ", "INSERT { ");
+        //                            //specSparql += "_:spec rdf:type dm:Specialization ; "
+        //                            //        + "dm:hasSuperclass <" + specialization + "> ; "
+        //                            //        + "dm:hasSubclass " + ID + " . } ";
+        //                        }
+        //                    }
+        //                }
+        //                if (!label.Equals(String.Empty))
+        //                {
+        //                    Reset(label);
+        //                }
+        //                _response = PostToRepository(target, nameSparql.ToString());
+        //                _response = PostToRepository(target, classSparql.ToString());
+        //                _response = PostToRepository(target, specSparql.ToString());
+        //            }
+        //        }
 
-                Utility.WriteString("Insertion Done", "stats.log", true);
-                Utility.WriteString("Total classes inserted: " + count, "stats.log", true);
+        //        Utility.WriteString("Insertion Done", "stats.log", true);
+        //        Utility.WriteString("Total classes inserted: " + count, "stats.log", true);
 
-                return _response;
-            }
+        //        return _response;
+        //    }
 
-            catch (Exception e)
-            {
-                Utility.WriteString(e.ToString(), "error.log");
-                _logger.Error("Error in PostClass: " + e);
-                throw e;
-            }
-        }
+        //    catch (Exception e)
+        //    {
+        //        Utility.WriteString(e.ToString(), "error.log");
+        //        _logger.Error("Error in PostClass: " + e);
+        //        throw e;
+        //    }
+        //}
 
         private string CreateIdsAdiId(string RegistryBase, string name)
         {
@@ -3203,241 +3208,290 @@ namespace org.iringtools.refdata
         //    }
         //}
 
-        //public Response PostPart8Class(QMXF qmxf)
-        //{
-        //    Status status = new Status();
+        public Response PostClass(QMXF qmxf)
+        {
+            Status status = new Status();
 
-        //    try
-        //    {
-        //        int count = 0;
-        //        sparqlStr = new StringBuilder();
-        //        sparqlStr.Append(prefix);
+            try
+            {
+                int count = 0;
+                sparqlStr = new StringBuilder();
+                sparqlStr.Append(prefix);
 
-        //        string nameSparql = string.Empty;
-        //        string specSparql = string.Empty;
-        //        string classSparql = string.Empty;
+                string nameSparql = string.Empty;
+                string specSparql = string.Empty;
+                string classSparql = string.Empty;
 
-        //        int repository = qmxf.targetRepository != null ? getIndexFromName(qmxf.targetRepository) : 0;
-        //        Repository target = _repositories[repository];
+                int repository = qmxf.targetRepository != null ? getIndexFromName(qmxf.targetRepository) : 0;
+                Repository target = _repositories[repository];
 
-        //        Utility.WriteString("Number of classes to insert: " + qmxf.classDefinitions.Count.ToString(), "stats.log", true);
-        //        foreach (ClassDefinition Class in qmxf.classDefinitions)
-        //        {
-        //            bool existInTarget = false;
-        //            string ID = string.Empty;
-        //            string id = string.Empty;
-        //            string label = string.Empty;
-        //            string description = string.Empty;
-        //            string specialization = string.Empty;
-        //            string classification = string.Empty;
-        //            string generatedId = string.Empty;
-        //            string serviceUrl = string.Empty;
-        //            string className = string.Empty;
-        //            int classIndex = -1;
+                Utility.WriteString("Number of classes to insert: " + qmxf.classDefinitions.Count.ToString(), "stats.log", true);
+                foreach (ClassDefinition Class in qmxf.classDefinitions)
+                {
+                    bool existInTarget = false;
+                    string ID = string.Empty;
+                    string id = string.Empty;
+                    string label = string.Empty;
+                    string description = string.Empty;
+                    string specialization = string.Empty;
+                    string classification = string.Empty;
+                    string generatedId = string.Empty;
+                    string serviceUrl = string.Empty;
+                    string className = string.Empty;
+                    int classIndex = -1;
 
-        //            if (target.IsReadOnly)
-        //            {
-        //                status.Level = StatusLevel.Error;
-        //                status.Messages.Add("Repository is Read Only");
-        //                _response.Append(status);
-        //                return _response;
-        //            }
+                    string language = string.Empty;
+                    bool qn = false;
+                    string qName = string.Empty;
 
-        //            ID = Utility.GetIdFromURI(Class.identifier);
+                    if (target.IsReadOnly)
+                    {
+                        status.Level = StatusLevel.Error;
+                        status.Messages.Add("Repository is Read Only");
+                        _response.Append(status);
+                        return _response;
+                    }
 
-        //            QMXF q = new QMXF();
-        //            if (ID != null)
-        //            {
-        //                id = Utility.GetIdFromURI(ID);
+                    ID = Utility.GetIdFromURI(Class.identifier);
 
-        //                q = GetClass(id, null, target);
+                    QMXF q = new QMXF();
+                    if (ID != null)
+                    {
+                        id = Utility.GetIdFromURI(ID);
 
-        //                foreach (ClassDefinition classFound in q.classDefinitions)
-        //                {
-        //                    classIndex++;
-        //                    if (classFound.repositoryName.Equals(_repositories[repository].Name))
-        //                    {
-        //                        existInTarget = true;
-        //                        Utility.WriteString("Class found: " + q.classDefinitions[classIndex].name[0].value, "stats.log", true);
-        //                        break;
-        //                    }
-        //                }
-        //            }
-        //            #region !existInTarget
-        //            if (!existInTarget)
-        //            {
-        //                sparqlStr.AppendLine(insertData);
-        //                //add the class
-        //                foreach (QMXFName name in Class.name)
-        //                {
-        //                    label = name.value;
-        //                    count++;
-        //                    Utility.WriteString("Inserting : " + label, "stats.log", true);
+                        q = GetClass(id, null, target);
 
-        //                    className = "Class definition " + label;
-        //                    if (ID == null || ID == string.Empty)
-        //                    {
-        //                        if (_useExampleRegistryBase)
-        //                            generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], className);
-        //                        else
-        //                            generatedId = CreateIdsAdiId(_settings["ClassRegistryBase"], className);
+                        foreach (ClassDefinition classFound in q.classDefinitions)
+                        {
+                            classIndex++;
+                            if (classFound.repositoryName.Equals(_repositories[repository].Name))
+                            {
+                                existInTarget = true;
+                                Utility.WriteString("Class found: " + q.classDefinitions[classIndex].name[0].value, "stats.log", true);
+                                break;
+                            }
+                        }
+                    }
+                    #region !existInTarget
+                    if (!existInTarget)
+                    {
+                        sparqlStr.AppendLine(insertData);
+                        //add the class
+                        foreach (QMXFName name in Class.name)
+                        {
+                            label = name.value.Split('@')[0];
 
-        //                        ID = Utility.GetIdFromURI(generatedId);
+                            if (string.IsNullOrEmpty(name.lang))
+                                language = defaultLanguage;
+                            else
+                                language = name.lang;
 
-        //                        Utility.WriteString("\n" + ID + "\t" + label, "Class IDs.log", true);
-        //                    }
-        //                    sparqlStr.AppendLine("  rdl:" + ID + " rdf:type owl:Class ;");
+                            count++;
+                            Utility.WriteString("Inserting : " + label, "stats.log", true);
 
-        //                    foreach (Description descr in Class.description)
-        //                    {
-        //                        description = descr.value;
-        //                        sparqlStr.AppendLine("  rdfs:comment \"" + description + "\"^^xsd:string ;");
-        //                    }
-        //                    int specCount = Class.specialization.Count;
-        //                    //append Specialization to sparql query
-        //                    foreach (Specialization spec in Class.specialization)
-        //                    {
-        //                        specialization = spec.reference;
-        //                        if (spec.reference == null || spec.reference == string.Empty)
-        //                            continue;
+                            className = "Class definition " + label;
+                            if (string.IsNullOrEmpty(ID))
+                            {
+                                if (_useExampleRegistryBase)
+                                    generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], className);
+                                else
+                                    generatedId = CreateIdsAdiId(_settings["ClassRegistryBase"], className);
 
-        //                        if (--specCount > 0)
-        //                            sparqlStr.AppendLine("  rdfs:subClassOf " + specialization + " ;");
-        //                        else
-        //                            sparqlStr.AppendLine("  rdfs:subClassOf " + specialization + " .");
-        //                    }
+                                ID = Utility.GetIdFromURI(generatedId);
 
-        //                    sparqlStr.AppendLine("}");
+                                Utility.WriteString("\n" + ID + "\t" + label, "Class IDs.log", true);
+                            }
+                            sparqlStr.AppendLine(string.Format("  rdl:{0} rdf:type owl:Class ;", ID));
 
-        //                    if (!label.Equals(String.Empty))
-        //                    {
-        //                        Reset(label);
-        //                    }
-        //                    _response = PostToRepository(target, sparqlStr.ToString());
-        //                }
-        //            }
-        //            #endregion !existInTarget
-        //            #region existInTarget
-        //            else if (existInTarget)
-        //            {
-        //                ClassDefinition cd = q.classDefinitions[classIndex];
+                            sparqlStr.AppendLine(string.Format("  rdfs:label \"{0}{1}\"^^xsd:string ;",label , language));
 
-        //                foreach (QMXFName name in cd.name)
-        //                {
-        //                    sparqlStr = new StringBuilder();
-        //                    sparqlStr.Append(prefix);
-        //                    sparqlStr.AppendLine(deleteWhere);
+                            foreach (Description descr in Class.description)
+                            {
+                                if (string.IsNullOrEmpty(descr.value))
+                                    continue;
+                                else
+                                {
+                                    if (string.IsNullOrEmpty(descr.lang))
+                                        language = defaultLanguage;
+                                    else
+                                        language = descr.lang;
 
-        //                    label = name.value;
-        //                    sparqlStr.AppendLine("  rdl:" + ID + " rdfs:label \"" + label + "\"^^xsd:string ; ");
-        //                    sparqlStr.AppendLine("  ?property ?value . ");
-        //                    sparqlStr = sparqlStr.AppendLine("}");
+                                    description = descr.value.Split('@')[0];
 
-        //                    _response = PostToRepository(target, sparqlStr.ToString());
+                                    sparqlStr.AppendLine(string.Format("  rdfs:comment \"{0}{1}\"^^xsd:string ;",description, language));
+                                }
+                            }
 
-        //                    foreach (Classification classif in cd.classification)
-        //                    {
-        //                        sparqlStr = new StringBuilder();
-        //                        sparqlStr.Append(prefix);
-        //                        sparqlStr.AppendLine(deleteWhere);
+                           qn = nsMap.ReduceToQName(Class.entityType.reference, out qName);
+                           if (qn)
+                               sparqlStr.AppendLine(string.Format("  rdf:type {0} ;", qName));
 
-        //                        classification = classif.reference;
-        //                        sparqlStr.AppendLine("  ?a rdf:type dm:Classification .");
-        //                        sparqlStr.AppendLine("  ?a dm:hasClassifier <" + classification + "> .");
-        //                        sparqlStr.AppendLine("  ?a dm:hasClassified  rdl:" + ID + "  .");
-        //                        sparqlStr.AppendLine("}");
+                            int specCount = Class.specialization.Count;
+                            //append Specialization to sparql query
+                            foreach (Specialization spec in Class.specialization)
+                            {
+                                if (string.IsNullOrEmpty(spec.reference))
+                                    continue;
 
-        //                        _response = PostToRepository(target, sparqlStr.ToString());
-        //                    }
+                                qn = nsMap.ReduceToQName(spec.reference, out qName);
+                                if (--specCount > 0)
+                                    sparqlStr.AppendLine(string.Format("  rdfs:subClassOf {0} ;", qName));
+                                else
+                                    sparqlStr.AppendLine(string.Format("  rdfs:subClassOf {0} .",qName));
+                            }
 
-        //                    foreach (Specialization spec in cd.specialization)
-        //                    {
-        //                        sparqlStr = new StringBuilder();
-        //                        sparqlStr.Append(prefix);
-        //                        sparqlStr.AppendLine(deleteWhere);
 
-        //                        specialization = spec.reference;
-        //                        sparqlStr.AppendLine("  ?a rdf:type dm:Specialization .");
-        //                        sparqlStr.AppendLine("  ?a dm:hasSuperclass <" + specialization + "> .");
-        //                        sparqlStr.AppendLine("  ?a dm:hasSubclass rdl:" + ID + " .");
-        //                        sparqlStr.AppendLine("}");
+                            sparqlStr.AppendLine("}");
 
-        //                        _response = PostToRepository(target, sparqlStr.ToString());
-        //                    }
-        //                }
+                            if (!label.Equals(String.Empty))
+                            {
+                                Reset(label);
+                            }
+                            _response = PostToRepository(target, sparqlStr.ToString());
+                        }
+                    }
+                    #endregion !existInTarget
+                    #region existInTarget
+                    else if (existInTarget)
+                    {
+                        ClassDefinition cd = q.classDefinitions[classIndex];
 
-        //                sparqlStr = new StringBuilder();
-        //                sparqlStr.Append(prefix);
-        //                sparqlStr.AppendLine(insertData);
+                        foreach (QMXFName name in cd.name)
+                        {
+                            sparqlStr = new StringBuilder();
+                            sparqlStr.Append(prefix);
+                            sparqlStr.AppendLine(deleteWhere);
 
-        //                foreach (QMXFName name in Class.name)
-        //                {
-        //                    label = name.value;
-        //                    count++;
-        //                    Utility.WriteString("Inserting : " + label, "stats.log", true);
+                            if (string.IsNullOrEmpty(name.lang))
+                                language = defaultLanguage;
+                            else
+                                language = name.lang;
 
-        //                    className = "Class definition " + label;
-        //                    if (ID == null || ID == string.Empty)
-        //                    {
-        //                        if (_useExampleRegistryBase)
-        //                            generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], className);
-        //                        else
-        //                            generatedId = CreateIdsAdiId(_settings["ClassRegistryBase"], className);
+                            label = name.value.Split('@')[0];
 
-        //                        ID = Utility.GetIdFromURI(generatedId);
+                            sparqlStr.AppendLine(string.Format("  rdl:{0} rdfs:label \"{1}{2}\"^^xsd:string ; ", ID, label, language));
+                            sparqlStr.AppendLine("  ?property ?value . ");
+                            sparqlStr = sparqlStr.AppendLine("}");
 
-        //                        Utility.WriteString("\n" + ID + "\t" + label, "Class IDs.log", true);
-        //                    }
-        //                    sparqlStr.AppendLine("  rdl:" + ID + " rdf:type owl:Class ;");
+                            _response = PostToRepository(target, sparqlStr.ToString());
 
-        //                    foreach (Description descr in Class.description)
-        //                    {
-        //                        description = descr.value;
-        //                        if (description == null || description == string.Empty)
-        //                            continue;
+                            foreach (Classification classif in cd.classification)
+                            {
+                                sparqlStr = new StringBuilder();
+                                sparqlStr.Append(prefix);
+                                sparqlStr.AppendLine(deleteWhere);
+                                
+                                qn = nsMap.ReduceToQName(classif.reference, out qName);
 
-        //                        sparqlStr.AppendLine("  rdfs:comment \"" + description + "\"^^xsd:string ;");
-        //                    }
-        //                    int specCount = Class.specialization.Count;
-        //                    //append Specialization to sparql query
-        //                    foreach (Specialization spec in Class.specialization)
-        //                    {
-        //                        /// Note: QMXF contains only superclass info while qxf and rdf contain superclass and subclass info
-        //                        specialization = spec.reference;
-        //                        if (specialization == null || specialization == string.Empty)
-        //                            continue;
+                                sparqlStr.AppendLine("  ?a rdf:type dm:Classification .");
+                                sparqlStr.AppendLine(string.Format("  ?a dm:hasClassifier {0} .", qName));
+                                sparqlStr.AppendLine(string.Format("  ?a dm:hasClassified  rdl:{0} .", ID));
+                                sparqlStr.AppendLine("}");
 
-        //                        if (--specCount > 0)
-        //                            sparqlStr.AppendLine("  rdfs:subClassOf " + specialization + " ;");
-        //                        else
-        //                            sparqlStr.AppendLine("  rdfs:subClassOf " + specialization + " .");
-        //                    }
+                                _response = PostToRepository(target, sparqlStr.ToString());
+                            }
 
-        //                    sparqlStr.AppendLine("}");
+                            foreach (Specialization spec in cd.specialization)
+                            {
+                                sparqlStr = new StringBuilder();
+                                sparqlStr.Append(prefix);
+                                sparqlStr.AppendLine(deleteWhere);
 
-        //                    if (!label.Equals(String.Empty))
-        //                    {
-        //                        Reset(label);
-        //                    }
-        //                    _response = PostToRepository(target, sparqlStr.ToString());
-        //                }
-        //            }
-        //            #endregion existInTarget
-        //        }
+                                qn = nsMap.ReduceToQName(spec.reference, out qName);
 
-        //        Utility.WriteString("Insertion Done", "stats.log", true);
-        //        Utility.WriteString("Total classes inserted: " + count, "stats.log", true);
+                                sparqlStr.AppendLine("  ?a rdf:type dm:Specialization .");
+                                sparqlStr.AppendLine(string.Format("  ?a dm:hasSuperclass {0} .", qName));
+                                sparqlStr.AppendLine(string.Format("  ?a dm:hasSubclass rdl:{0} .", ID));
+                                sparqlStr.AppendLine("}");
 
-        //        return _response;
-        //    }
+                                _response = PostToRepository(target, sparqlStr.ToString());
+                            }
+                        }
 
-        //    catch (Exception e)
-        //    {
-        //        Utility.WriteString(e.ToString(), "error.log");
-        //        _logger.Error("Error in PostClass: " + e);
-        //        throw e;
-        //    }
-        //}
+                        sparqlStr = new StringBuilder();
+                        sparqlStr.Append(prefix);
+                        sparqlStr.AppendLine(insertData);
+
+                        foreach (QMXFName name in Class.name)
+                        {
+                            if (string.IsNullOrEmpty(name.lang))
+                                language = defaultLanguage;
+                            else
+                                language = name.lang;
+
+                            label = name.value.Split('@')[0];
+                            count++;
+                            Utility.WriteString("Inserting : " + label, "stats.log", true);
+
+                            className = "Class definition " + label;
+                            if (ID == null || ID == string.Empty)
+                            {
+                                if (_useExampleRegistryBase)
+                                    generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], className);
+                                else
+                                    generatedId = CreateIdsAdiId(_settings["ClassRegistryBase"], className);
+
+                                ID = Utility.GetIdFromURI(generatedId);
+
+                                Utility.WriteString("\n" + ID + "\t" + label, "Class IDs.log", true);
+                            }
+                            sparqlStr.AppendLine(string.Format("  rdl:{0} rdf:type owl:Class ;", ID));
+
+                            foreach (Description descr in Class.description)
+                            {
+                                if (string.IsNullOrEmpty(descr.value))
+                                    continue;
+
+                                if (string.IsNullOrEmpty(descr.lang))
+                                    language = defaultLanguage;
+                                else
+                                    language = descr.lang;
+
+                                description = descr.value.Split('@')[0];
+
+                                sparqlStr.AppendLine(string.Format("  rdfs:comment \"{0}{1}\"^^xsd:string ;", description, language));
+                            }
+                            int specCount = Class.specialization.Count;
+                            //append Specialization to sparql query
+                            foreach (Specialization spec in Class.specialization)
+                            {
+                                if (string.IsNullOrEmpty(spec.reference))
+                                    continue;
+
+                                /// Note: QMXF contains only superclass info while qxf and rdf contain superclass and subclass info
+                                qn = nsMap.ReduceToQName(spec.reference, out qName);
+
+                                if (--specCount > 0)
+                                    sparqlStr.AppendLine(string.Format("  rdfs:subClassOf {0} ;",qName));
+                                else
+                                    sparqlStr.AppendLine(string.Format("  rdfs:subClassOf {0} .", qName));
+                            }
+
+                            sparqlStr.AppendLine("}");
+
+                            if (!label.Equals(String.Empty))
+                            {
+                                Reset(label);
+                            }
+                            _response = PostToRepository(target, sparqlStr.ToString());
+                        }
+                    }
+                    #endregion existInTarget
+                }
+
+                Utility.WriteString("Insertion Done", "stats.log", true);
+                Utility.WriteString("Total classes inserted: " + count, "stats.log", true);
+
+                return _response;
+            }
+
+            catch (Exception e)
+            {
+                Utility.WriteString(e.ToString(), "error.log");
+                _logger.Error("Error in PostClass: " + e);
+                throw e;
+            }
+        }
 
         #endregion Part8
 
