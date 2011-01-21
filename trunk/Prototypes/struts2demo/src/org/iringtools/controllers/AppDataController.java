@@ -1,12 +1,12 @@
 package org.iringtools.controllers;
 
-import java.util.HashMap;
+import java.util.HashMap; 
 import java.util.List;
 import java.util.Map;
 
 import org.apache.struts2.interceptor.SessionAware;
 import org.iringtools.dxfr.dti.DataTransferIndex;
-import org.iringtools.dxfr.dti.DataTransferIndices;
+import org.iringtools.dxfr.dti.DataTransferIndices; 
 import org.iringtools.models.AppDataModel;
 import org.iringtools.widgets.grid.Grid;
 

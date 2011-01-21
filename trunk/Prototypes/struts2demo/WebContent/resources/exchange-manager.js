@@ -31,36 +31,17 @@ function loadDtoPage(label, url){
     var pageSize = 25;      
     
     store.on('load', function(){
-      store.recordType = store.reader.recordType;
-      
+      store.recordType = store.reader.recordType;      
       var classObject = store.reader.type;
-      var columnModel = new Ext.grid.DynamicColumnModel(store);
       
       var dtoNavPane = new Ext.Panel({
         id: 'nav-' + label,
         region: 'north',
+        layout: 'hbox',
         height: 26,
         padding: '5',
         bodyStyle: 'background-color:#fcfcff',
-        items: [/*{
-          xtype: 'box',
-          autoEl: {tag: 'a', href: 'javascript:alert(\'loadRelatedItem\')', html: 'PIPING NETWORK SYSTEM'},
-          cls: 'breadcrumb',
-          overCls: 'breadcrumb-hover'
-        },{
-          xtype: 'box',
-          autoEl: {tag: 'img', src: 'resources/images/breadcrumb.png'},
-          cls: 'breadcrumb-img'
-        },{
-          xtype: 'box',
-          autoEl: {tag: 'a', href: 'javascript:alert(\'loadRelatedItem\')', html: '66015-O'},
-          cls: 'breadcrumb',
-          overCls: 'breadcrumb-hover'
-        },{
-          xtype: 'box',
-          autoEl: {tag: 'img', src: 'resources/images/breadcrumb.png'},
-          cls: 'breadcrumb-img'
-        },*/{
+        items: [{
           xtype: 'box',
           autoEl: {tag: 'a', href: 'javascript:alert(\'show this tab and remove items on the right\')', html: classObject},
           cls: 'breadcrumb',
@@ -71,7 +52,8 @@ function loadDtoPage(label, url){
       var dtoGridPane = new Ext.grid.GridPanel({
         id: 'grid-' + label,
         store: store,
-        cm: columnModel,
+        stripeRows: true,
+        cm: new Ext.grid.DynamicColumnModel(store),
         properties: store.reader.properties,
         selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
         enableColLock: true,
@@ -95,35 +77,17 @@ function loadDtoPage(label, url){
         id: 'content-' + label,
         region: 'center',
         layout: 'card',
+        border: false,
         activeItem: 0,
         items: [dtoGridPane]
       });
       
-      var dtoLogPane = new Ext.grid.GridPanel({
+      var dtoLogPane = new Ext.Panel({
         id: 'log-' + label,
         title: 'Exchange Logs',
         region: 'south',
-        store: store,
-        height: 300,
         split: true,
-        hidden: true,
-        cm: columnModel,
-        selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
-        enableColLock: true,
-        viewConfig: {
-          forceFit: true
-        },
-        bbar: new Ext.PagingToolbar({
-          store: store,
-          pageSize: pageSize,
-          displayInfo: true,
-          autoScroll: true,
-          plugins: [new Ext.ux.plugin.PagingToolbarResizer({
-            displayText: 'Page Size',
-            options: [25, 50, 100, 200, 500], 
-            prependCombo: true})
-          ]
-        })
+        hidden: true
       });
       
       var dtoTab = new Ext.Panel({
@@ -154,11 +118,13 @@ function showIndividualInfo(className, classId, individual){
   var dtoContentPane = dtoTab.items.map['content-' + label];
   var dtoGrid = dtoContentPane.items.map['grid-' + label];  
   
-  var highlightPane = new Ext.Panel({
+  var classObjectPane = new Ext.Panel({
     region: 'north',
-    height: 50,
-    html: '<div style="background-color:#eee; float:left; width:60px"><img src="resources/images/class-badge-large.png"/></div><div style="background-color:#eee; width:100%; height:100%; padding-top:10px;"><b>'
-        + classId + '</b><br/>' + className + '</div>'
+    layout: 'fit',
+    height: 46,
+    bodyStyle: 'background-color:#eef',
+    html: '<div style="width:60px;float:left"><img style="margin:2px 15px 2px 5px" src="resources/images/class-badge-large.png"/></div>' +
+          '<div style="width:100%;height:100%;padding-top:8px">' + classId + '<br/>' + className + '</div>'
   });
   
   var rowData = dtoGrid.selModel.selections.map[dtoGrid.selModel.last].data;
@@ -167,9 +133,9 @@ function showIndividualInfo(className, classId, individual){
   var propertyGrid = new Ext.grid.PropertyGrid({
     region: 'west',
     title: 'Properties',
-    height: 50,
+    width: 500,
     split: true,
-    layout: 'fit',
+    stripeRows: true,
     autoScroll: true,
     source: rowData,
     listeners: {
@@ -179,32 +145,30 @@ function showIndividualInfo(className, classId, individual){
     }
   });
   
-  var store = new Ext.data.JsonStore({
-    data: dtoGrid.properties,
-    fields: [ 'RelatedClassId', 'RelatedClassName' ]
+  var relatedItemsPane = new Ext.Panel({
+    title: 'Related Items',
+    region: 'center',
+    layout: 'vbox',
+    padding: '5',
+    split: true,
+    autoScroll: true
   });
   
-  var listView = new Ext.list.ListView({
-    region: 'center',
-    layout: 'fit',
-    store: store,
-    hideHeaders: true,
-    singleSelect: true,
-    reserveScrollOffset: true,
-    split: true,
-    width: 300,
-    columns: [{
-      dataIndex: 'RelatedClassName'
-    }, {
-      dataIndex: 'RelatedClassId',
-      hidden: true
-    }]
-  });
+  for (var property in dtoGrid.properties) {
+    relatedItemsPane.add({
+      xtype: 'box',
+      autoEl: {tag: 'a', href: 'javascript:alert(\'loadRelatedItem\')', html: dtoGrid.properties[property]},
+      style: {width: '100%'},
+      cls: 'breadcrumb',
+      overCls: 'breadcrumb-hover'
+    });
+  }
   
   var individualInfoPane = new Ext.Panel({
     autoWidth: true,
     layout: 'border',
-    items: [highlightPane, propertyGrid, listView]
+    border: false,
+    items: [classObjectPane, propertyGrid, relatedItemsPane]
   });
 
   dtoContentPane.add(individualInfoPane);
@@ -214,14 +178,15 @@ function showIndividualInfo(className, classId, individual){
     xtype: 'box',
     autoEl: {tag: 'img', src: 'resources/images/breadcrumb.png'},
     cls: 'breadcrumb-img'
-  }/*,{
+  });
+  
+  dtoNavPane.add({
     xtype: 'box',
     autoEl: {tag: 'a', href: 'javascript:alert(\'loadRelatedItem\')', html: className},
     cls: 'breadcrumb',
     overCls: 'breadcrumb-hover'
-  }*/);
+  });
   
-  dtoNavPane.getLayout().setActiveItem(dtoNavPane.items.length-1);
 }
 
 function showDialog(title, message, processResult){
@@ -273,18 +238,7 @@ Ext.onReady(function(){
         icon: 'resources/images/exchange-log.png',
         text: 'XLogs',
         handler: function(){  
-          var logPane = Ext.getCmp('log_12345_000.ABC.LINES');
-          
-          if (logPane.hidden == true){ 
-            alert('show log');
-            //logPane.show();
-            logPane.setVisible(true);
-          }
-          else {
-            alert('collapse log');
-            //logPane.collapse();
-            logPane.collapse(true);
-          }
+          alert('Show exchange log');
         }
       }]
     }),
@@ -317,13 +271,14 @@ Ext.onReady(function(){
   
   var propertyPane = new Ext.grid.PropertyGrid({
     id: 'property-pane',
+    title: 'Details',
     region: 'south',
     height: 300,
-    title: 'Details',
     collapsible: true,
+    stripeRows: true,
+    autoScroll: true,
     border: false,
     split: true,
-    autoScroll: true,
     source: {},
     listeners: {
       beforeedit: function(e){
