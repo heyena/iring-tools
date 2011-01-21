@@ -39,14 +39,14 @@ namespace org.iringtools.library
     public DataFilter()
     {
       Expressions = new List<Expression>();
-      OrderByList = new List<OrderBy>();
+      OrderExpressions = new List<OrderExpression>();
     }
 
     [DataMember(Name = "expressions", Order = 0, EmitDefaultValue = false)]
     public List<Expression> Expressions { get; set; }
 
-    [DataMember(Name = "orderByList", Order = 1, EmitDefaultValue = false)]
-    public List<OrderBy> OrderByList { get; set; }
+    [DataMember(Name = "orderExpressions", Order = 1, EmitDefaultValue = false)]
+    public List<OrderExpression> OrderExpressions { get; set; }
 
     //public string ToSqlWhereClause(Type type, string objectAlias)
     //{
@@ -106,10 +106,10 @@ namespace org.iringtools.library
           whereClause.Append(sqlExpression);
         }
 
-        foreach (OrderBy orderBy in this.OrderByList)
+        foreach (OrderExpression orderExpression in this.OrderExpressions)
         {
-          string orderByStatement = ResolveOrderBy(dataDictionary, objectType, orderBy, objectAlias);
-          whereClause.Append(orderByStatement);
+          string orderStatement = ResolveOrderExpression(dataDictionary, objectType, orderExpression, objectAlias);
+          whereClause.Append(orderStatement);
         }
 
         return whereClause.ToString();
@@ -626,16 +626,16 @@ namespace org.iringtools.library
       return sqlExpression.ToString();
     }
 
-    private string ResolveOrderBy(DataDictionary dataDictionary, string objectType, OrderBy orderBy, string objectAlias)
+    private string ResolveOrderExpression(DataDictionary dataDictionary, string objectType, OrderExpression orderExpression, string objectAlias)
     {
-      string propertyName = orderBy.PropertyName;
+      string propertyName = orderExpression.PropertyName;
 
       string  qualifiedPropertyName = objectAlias + propertyName;
 
       StringBuilder sqlExpression = new StringBuilder();
       sqlExpression.Append("ORDER BY ");
 
-      switch (orderBy.SortOrder)
+      switch (orderExpression.SortOrder)
       {
         case SortOrder.Asc:
           sqlExpression.Append(qualifiedPropertyName + " ASC");
@@ -798,8 +798,8 @@ namespace org.iringtools.library
   [CollectionDataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "values", ItemName = "value")]
   public class Values : List<string> { }
 
-  [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "orderBy")]
-  public class OrderBy
+  [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "orderExpression")]
+  public class OrderExpression
   {
     [DataMember(Name = "propertyName", Order = 0, IsRequired = true)]
     public string PropertyName { get; set; }

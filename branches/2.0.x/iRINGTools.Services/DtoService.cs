@@ -106,12 +106,12 @@ namespace org.iringtools.services
 
     [Description("Gets data transfer indices according to manifest request.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxi?hashAlgorithm={hashAlgorithm}")]
-    public DataTransferIndices GetDataTransferIndicesWithManifest(string scope, string app, string graph, string hashAlgorithm, Manifest manifest)
+    public DataTransferIndices GetDataTransferIndicesByRequest(string scope, string app, string graph, string hashAlgorithm, DtiRequest request)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
 
-      return _dtoProvider.GetDataTransferIndicesWithManifest(scope, app, graph, hashAlgorithm, manifest);
+      return _dtoProvider.GetDataTransferIndicesByRequest(scope, app, graph, hashAlgorithm, request);
     }
 
     [Description("Gets data transfer objects according to manifest and dti request.")]

@@ -120,7 +120,7 @@
   <ItemGroup>
     <Compile Include="AdapterModule.cs" />
     <Compile Include="BaseDataProjectionEngine.cs" />
-    <Compile Include="BaseProjectionEngine.cs" />
+    <Compile Include="BasePart7ProjectionEngine.cs" />
     <Compile Include="DataProjectionEngine.cs" />
     <Compile Include="DtoPageRequest.cs" />
     <Compile Include="DtoProvider.cs" />
