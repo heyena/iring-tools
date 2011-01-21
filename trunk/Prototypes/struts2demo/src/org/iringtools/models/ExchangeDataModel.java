@@ -60,6 +60,9 @@ public class ExchangeDataModel
     List<Field> fields = new ArrayList<Field>();    
     boolean firstDto = true;
     
+    HashMap<String, String> properties = new HashMap<String, String>();
+    pageDtoGrid.setProperties(properties);
+    
     for (DataTransferObject dto : dtoList)
     {
       List<String> row = new ArrayList<String>();      
@@ -67,9 +70,6 @@ public class ExchangeDataModel
       
       String transferType = dto.getTransferType().toString(); 
       row.add("<span class=\"" + transferType.toLowerCase() + "\">" + transferType + "</span>");
-      
-      HashMap<String, String> properties = new HashMap<String, String>();
-      pageDtoGrid.setProperties(properties);
       
       for (ClassObject classObject : dto.getClassObjects().getItems())
       {        
