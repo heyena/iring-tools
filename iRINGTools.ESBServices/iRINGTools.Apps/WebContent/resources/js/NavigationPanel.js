@@ -649,11 +649,11 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 			        		items : [{
 			        			height : 50,
 			        			region : 'north',
-			        			html : '<div style="background-color:#eee; float:left; width:60px"><img src="resources/images/class-badge.png" style="margin:2 4 4 4; height:46px"/></div><div style="background-color:#eee; width:100%; height:100%; padding-top:10px;"><b>'
+			        			html : '<div style="background-color:#eee;"><div style=" float:left; width:60px"><img src="resources/images/class-badge.png" style="margin:2 4 4 4; height:46px"/></div><div style="background-color:#eee; width:100%; height:100%; padding-top:10px;"><b>'
   									+ title2
-  									+ '</b><br/>'
+  									+ '</b><br>'
   									+ grid.classObjName
-  									+ '</div>'
+  									+ '<br>&nbsp;</div></div>'
 			        		},
 			        		{
 			        			title : 'Properties',
@@ -694,11 +694,11 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 			        		items : [{
 			        			height : 50,
 			        			region : 'north',
-			        			html : '<div style="background-color:#eee; float:left; width:60px"><img src="resources/images/class-badge.png" style="margin:2 4 4 4; height:46px"/></div><div style="background-color:#eee; width:100%; height:100%; padding-top:10px;"><b>'
+			        			html : '<div style="background-color:#eee;"><div style="float:left; width:60px"><img src="resources/images/class-badge.png" style="margin:2 4 4 4; height:46px"/></div><div style="background-color:#eee; width:100%; height:100%; padding-top:10px;"><b>'
   									+ title2
-  									+ '</b><br/>'
+  									+ '</b><br>'
   									+ grid.classObjName
-  									+ '</div>'
+  									+ '<br>&nbsp;</div></div>'
 			        		},
 			        		{
 			        			title : 'Properties',
