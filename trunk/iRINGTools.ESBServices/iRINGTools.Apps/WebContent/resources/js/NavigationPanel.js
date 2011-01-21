@@ -1111,15 +1111,17 @@ function closeChildTabs(tp, activeTab) {
 	
    
     var thisTopNavPan = exTopNavPanel[k];
+    
+    
     for ( var i = 0; i < tab.length; i++) {
     	tb = tab[i];
     	if (found) {
-    		//var theTab = topNPan.getItem(tb.id);
+    		destroyTab = thisTopNavPan.getItem(tb.id);
     		//theTab.hideTabStripItem();
-    		thisTopNavPan.hideTabStripItem(tb.id);
+    		//thisTopNavPan.hideTabStripItem(tb.id);
     		//this.dom.style.display = 'none';
     		//tb.hide();
-    		//destroyTab.destroy();
+    		destroyTab.destroy();
     		//i--;
     	} 
     	else if (tb == activeTab) {
