@@ -276,7 +276,7 @@ ExchangeManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         var hasreviewed;
         var directoryPan = this;
         var tablabel = scopeId + ' [' + nodeText + ']';
-        var tabid = 'tab_' + tablabel;
+        var tabid = tablabel;
 
         if (contentPanel.get(tabid) == undefined) {
           // condition when the tabPanel is not open and user clicks the
