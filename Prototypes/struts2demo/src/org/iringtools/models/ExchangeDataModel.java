@@ -68,11 +68,17 @@ public class ExchangeDataModel
       String transferType = dto.getTransferType().toString(); 
       row.add("<span class=\"" + transferType.toLowerCase() + "\">" + transferType + "</span>");
       
+      HashMap<String, String> properties = new HashMap<String, String>();
+      pageDtoGrid.setProperties(properties);
+      
       for (ClassObject classObject : dto.getClassObjects().getItems())
       {        
         if (firstClassObject == null) {
           pageDtoGrid.setType(classObject.getName());
           firstClassObject = classObject;
+        }
+        else if (firstDto) {
+          properties.put(classObject.getClassId(), classObject.getName());
         }
         
         for (TemplateObject templateObject : classObject.getTemplateObjects().getItems())
@@ -100,7 +106,7 @@ public class ExchangeDataModel
         }
       }
       
-      row.add(0, "<input type=\"image\" src=\"resources/images/info-small.png\" onClick=\"javascript:getRelatedItems('" + firstClassObject.getClassId() + "','" + dto.getIdentifier() + "')\">");
+      row.add(0, "<input type=\"image\" src=\"resources/images/info-small.png\" onClick=\"javascript:showIndividualInfo('" + firstClassObject.getName() + "','" + firstClassObject.getClassId() + "','" + dto.getIdentifier() + "')\">");
       gridData.add(row);     
 
       if (firstDto)

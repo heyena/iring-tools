@@ -33,8 +33,11 @@ function loadDtoPage(label, url){
     store.on('load', function(){
       store.recordType = store.reader.recordType;
       
+      var classObject = store.reader.type;
+      var columnModel = new Ext.grid.DynamicColumnModel(store);
+      
       var dtoNavPane = new Ext.Panel({
-        id: 'nav_' + label,
+        id: 'nav-' + label,
         region: 'north',
         height: 26,
         padding: '5',
@@ -59,17 +62,17 @@ function loadDtoPage(label, url){
           cls: 'breadcrumb-img'
         },*/{
           xtype: 'box',
-          autoEl: {tag: 'a', href: 'javascript:alert(\'show this tab and remove items on the right\')', html: store.reader.type},
+          autoEl: {tag: 'a', href: 'javascript:alert(\'show this tab and remove items on the right\')', html: classObject},
           cls: 'breadcrumb',
           overCls: 'breadcrumb-hover'            
         }]
       });
 
-      //TODO: wrap dto grid panes with 'card' layout panel to show only one grid at a time
       var dtoGridPane = new Ext.grid.GridPanel({
-        region: 'center',
+        id: 'grid-' + label,
         store: store,
-        cm: new Ext.grid.DynamicColumnModel(store),
+        cm: columnModel,
+        properties: store.reader.properties,
         selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
         enableColLock: true,
         viewConfig: {
@@ -80,34 +83,7 @@ function loadDtoPage(label, url){
           pageSize: pageSize,
           displayInfo: true,
           autoScroll: true,
-          plugins : [new Ext.ux.plugin.PagingToolbarResizer({
-            displayText: 'Page Size',
-            options: [25, 50, 100, 200, 500], 
-            prependCombo: true})
-          ]
-        })
-      });
-      
-      var dtoLogPane = new Ext.grid.GridPanel({
-        id: 'log_' + label,
-        title: 'Exchange Logs',
-        region: 'south',
-        store: store,
-        height: 300,
-        split: true,
-        hidden: true,
-        cm: new Ext.grid.DynamicColumnModel(store),
-        selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
-        enableColLock: true,
-        viewConfig: {
-          forceFit: true
-        },
-        bbar: new Ext.PagingToolbar({
-          store: store,
-          pageSize: pageSize,
-          displayInfo: true,
-          autoScroll: true,
-          plugins : [new Ext.ux.plugin.PagingToolbarResizer({
+          plugins: [new Ext.ux.plugin.PagingToolbarResizer({
             displayText: 'Page Size',
             options: [25, 50, 100, 200, 500], 
             prependCombo: true})
@@ -116,14 +92,49 @@ function loadDtoPage(label, url){
       });
       
       var dtoContentPane = new Ext.Panel({
-        id: label,
+        id: 'content-' + label,
+        region: 'center',
+        layout: 'card',
+        activeItem: 0,
+        items: [dtoGridPane]
+      });
+      
+      var dtoLogPane = new Ext.grid.GridPanel({
+        id: 'log-' + label,
+        title: 'Exchange Logs',
+        region: 'south',
+        store: store,
+        height: 300,
+        split: true,
+        hidden: true,
+        cm: columnModel,
+        selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
+        enableColLock: true,
+        viewConfig: {
+          forceFit: true
+        },
+        bbar: new Ext.PagingToolbar({
+          store: store,
+          pageSize: pageSize,
+          displayInfo: true,
+          autoScroll: true,
+          plugins: [new Ext.ux.plugin.PagingToolbarResizer({
+            displayText: 'Page Size',
+            options: [25, 50, 100, 200, 500], 
+            prependCombo: true})
+          ]
+        })
+      });
+      
+      var dtoTab = new Ext.Panel({
+        id: 'tab-' + label,
         title: label,
         layout: 'border',
         closable: true,
-        items: [dtoNavPane, dtoGridPane, dtoLogPane]
+        items: [dtoNavPane, dtoContentPane, dtoLogPane]
       });
       
-      Ext.getCmp('content-pane').add(dtoContentPane).show();
+      Ext.getCmp('content-pane').add(dtoTab).show();
       Ext.getBody().unmask();
     });
     
@@ -136,16 +147,89 @@ function loadDtoPage(label, url){
   }
 }
 
-function getRelatedItems(classId, classInstance){
-  alert('getting related items of :' + classId + ',' + classInstance);
+function showIndividualInfo(className, classId, individual){
+  var dtoTab = Ext.getCmp('content-pane').getActiveTab();
+  var label = dtoTab.id.substring(4);
+  var dtoNavPane = dtoTab.items.map['nav-' + label];
+  var dtoContentPane = dtoTab.items.map['content-' + label];
+  var dtoGrid = dtoContentPane.items.map['grid-' + label];  
+  
+  var highlightPane = new Ext.Panel({
+    region: 'north',
+    height: 50,
+    html: '<div style="background-color:#eee; float:left; width:60px"><img src="resources/images/class-badge-large.png"/></div><div style="background-color:#eee; width:100%; height:100%; padding-top:10px;"><b>'
+        + classId + '</b><br/>' + className + '</div>'
+  });
+  
+  var rowData = dtoGrid.selModel.selections.map[dtoGrid.selModel.last].data;
+  delete rowData['&nbsp;'];  // remove info field
+  
+  var propertyGrid = new Ext.grid.PropertyGrid({
+    region: 'west',
+    title: 'Properties',
+    height: 50,
+    split: true,
+    layout: 'fit',
+    autoScroll: true,
+    source: rowData,
+    listeners: {
+      beforeedit: function(e){
+        e.cancel = true;
+      }
+    }
+  });
+  
+  var store = new Ext.data.JsonStore({
+    data: dtoGrid.properties,
+    fields: [ 'RelatedClassId', 'RelatedClassName' ]
+  });
+  
+  var listView = new Ext.list.ListView({
+    region: 'center',
+    layout: 'fit',
+    store: store,
+    hideHeaders: true,
+    singleSelect: true,
+    reserveScrollOffset: true,
+    split: true,
+    width: 300,
+    columns: [{
+      dataIndex: 'RelatedClassName'
+    }, {
+      dataIndex: 'RelatedClassId',
+      hidden: true
+    }]
+  });
+  
+  var individualInfoPane = new Ext.Panel({
+    autoWidth: true,
+    layout: 'border',
+    items: [highlightPane, propertyGrid, listView]
+  });
+
+  dtoContentPane.add(individualInfoPane);
+  dtoContentPane.getLayout().setActiveItem(dtoContentPane.items.length-1);
+  
+  dtoNavPane.add({
+    xtype: 'box',
+    autoEl: {tag: 'img', src: 'resources/images/breadcrumb.png'},
+    cls: 'breadcrumb-img'
+  }/*,{
+    xtype: 'box',
+    autoEl: {tag: 'a', href: 'javascript:alert(\'loadRelatedItem\')', html: className},
+    cls: 'breadcrumb',
+    overCls: 'breadcrumb-hover'
+  }*/);
+  
+  dtoNavPane.getLayout().setActiveItem(dtoNavPane.items.length-1);
 }
 
-function showDialog(title, message, resultCallback){
+function showDialog(title, message, processResult){
   Ext.Msg.show({
     title: title,
     msg: '<textarea class="dialog-textbox" readonly="yes">' + message + '</textarea>',
     buttons: Ext.Msg.OKCANCEL,
-    fn: resultCallback
+    fn: processResult
   });
 }
 
@@ -163,7 +247,7 @@ Ext.onReady(function(){
     region: 'center',
     dataUrl: 'directory',
     width: 800,
-    lines : true,
+    lines: true,
     autoScroll: true,
     animate: true,
     enableDD: false,
@@ -211,12 +295,12 @@ Ext.onReady(function(){
     },
     listeners: {
       click: function(node, event){
-        Ext.getCmp('properties-pane').setSource(node.attributes.properties);
+        Ext.getCmp('property-pane').setSource(node.attributes.properties);
       },
       dblclick: function(node, event){
         var dataTypeNode = node.parentNode.parentNode;
         var properties = node.attributes.properties;
-        Ext.getCmp('properties-pane').setSource(node.attributes.properties);
+        Ext.getCmp('property-pane').setSource(node.attributes.properties);
         
         if (dataTypeNode != null){          
           if (dataTypeNode.attributes['text'] == 'Application Data'){
@@ -231,8 +315,8 @@ Ext.onReady(function(){
     }
   });
   
-  var propertiesPane = new Ext.grid.PropertyGrid({
-    id: 'properties-pane',
+  var propertyPane = new Ext.grid.PropertyGrid({
+    id: 'property-pane',
     region: 'south',
     height: 300,
     title: 'Details',
@@ -242,7 +326,7 @@ Ext.onReady(function(){
     autoScroll: true,
     source: {},
     listeners: {
-      beforeedit : function(e){
+      beforeedit: function(e){
         e.cancel = true;
       }
     }
@@ -260,7 +344,7 @@ Ext.onReady(function(){
     collapsible: true,
     margins: '0 0 0 4',
     layout: 'border',
-    items: [ directoryTreePane, propertiesPane ]
+    items: [ directoryTreePane, propertyPane ]
   });
   
   var contentPane = new Ext.TabPanel({

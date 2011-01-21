@@ -1,13 +1,15 @@
 package org.iringtools.widgets.grid;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class Grid
 {
   protected String type;
+  protected int total;
   protected List<Field> fields;
   protected List<List<String>> data;
-  protected int total;
+  protected HashMap<String, String> properties;
   
   public String getType()
   {
@@ -17,6 +19,16 @@ public class Grid
   public void setType(String type)
   {
     this.type= type;
+  }
+  
+  public int getTotal()
+  {
+    return total;
+  }
+  
+  public void setTotal(int total)
+  {
+    this.total = total;
   }
   
   public List<Field> getFields()
@@ -39,13 +51,15 @@ public class Grid
     this.data = data;
   }
   
-  public int getTotal()
+  public HashMap<String, String> getProperties()
   {
-    return total;
+    return properties;
   }
   
-  public void setTotal(int total)
+  public void setProperties(HashMap<String, String> properties)
   {
-    this.total = total;
+    this.properties = properties;
   }
+  
+  
 }
