@@ -103,8 +103,7 @@ Ext.onReady(function() {
               },
               close : {
                 fn : function() {
-                  Ext.getBody().unmask(); 
-                  //reloadPanel();
+                  Ext.getBody().unmask();                   
                   directoryPanel.openTab(directoryPanel.getSelectedNode(), 'true');
                 }
               }
@@ -248,8 +247,7 @@ Ext.onReady(function() {
                     firstTabId : tabId,
                     classId : "...",
                     dtoIdentifier : "...",
-                    key : tabId,
-                    node : node
+                    key : tabId
                   });
           		contentPanel.add(appNewTabMap[tabId]);
                 contentPanel.activate(appNewTabMap[tabId]);

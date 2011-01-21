@@ -5,6 +5,7 @@ public class Filter
   protected String type;
   protected String dataIndex;
 
+
   public String getType()
   {
     return type;
@@ -24,4 +25,6 @@ public class Filter
   {
     this.dataIndex = value;
   }
+  
+
 }

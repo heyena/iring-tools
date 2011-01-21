@@ -75,7 +75,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 		var filterSet = eval(this.configData.filterSets);
 		//var pageSize = parseInt(this.configData.pageSize);
 		var pageSize = 25;
-		var sortBy = this.configData.sortBy;
+		var sortBy = classObjectName + '.' + this.configData.sortBy;
 		
 		
 		var sortOrder = this.configData.sortOrder;
@@ -88,7 +88,8 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 			remotesort : true, // json encode the filter query
 			local : false, // defaults to false (remote
 			// filtering)
-			filters : filterSet
+			filters : filterSet,
+			className : classObjectName
 		});
 
 		// build the header first
@@ -1108,35 +1109,25 @@ function closeChildTabs(tp, activeTab) {
 	var destroyTab;
 	var keys;
 	
-    if (nodeType == 'exchange') {
-    	var thisTopNavPan = exTopNavPanel[k];
-    	for ( var i = 0; i < tab.length; i++) {
-    		tb = tab[i];
-    		if (found) {
-    			tb.destroy();
-    			//destroyTab.destroy();
-    			i--;
-    		} 
-    		else if (tb == activeTab) {
-    			found = 1;
-    		}
+   
+    var thisTopNavPan = exTopNavPanel[k];
+    for ( var i = 0; i < tab.length; i++) {
+    	tb = tab[i];
+    	if (found) {
+    		//var theTab = topNPan.getItem(tb.id);
+    		//theTab.hideTabStripItem();
+    		thisTopNavPan.hideTabStripItem(tb.id);
+    		//this.dom.style.display = 'none';
+    		//tb.hide();
+    		//destroyTab.destroy();
+    		//i--;
+    	} 
+    	else if (tb == activeTab) {
+    		found = 1;
     	}
     }
-    else if (nodeType == 'graph') {
-    	var thisTopNavPan = appTopNavPanel[k];
-    	for ( var i = 0; i < tab.length; i++) {
-    		tb = tab[i];
-    		if (found) {
-    			
-    			tb.destroy();
-    			//destroyTab.destroy();
-    			i--;
-    		} 
-    		else if (tb == activeTab) {
-    			found = 1;
-    		}
-    	}
-    }	
+    
+   
 	
 	if (tab.length == 1 ) {
 		
@@ -1149,7 +1140,15 @@ function closeChildTabs(tp, activeTab) {
 	
 }
 
-/*function reloadPanel() {
+/*
+ * Ext.getCmp(tabpanel_id).hideTabStripItem(tabitem_id);
+ * Ext.getCmp('slip_box_1').hide();
+ * 
+ * Ext.getCmp('slip_box_1').hide();
+    slip_box.getTabEl('slip_box_1').dom.style.display = 'none';
+ * 
+ * 
+ * function reloadPanel() {
 	 var contentP = Ext.getCmp('content-panel');
      var topNavP = contentP.getActiveTab();
      if (topNavP != undefined){
@@ -1245,8 +1244,7 @@ function showExchangeResponseWindow(scopeName, idName, np) {
                   Ext.getBody().unmask();
                   var contentP = Ext.getCmp('content-panel');
                   var topNavP = contentP.getActiveTab();
-                  if (topNavP != undefined){
-                	  //contentP.getItem(topNavP.id).destroy();
+                  if (topNavP != undefined){                	  
                 	  directoryPanel.openTab(np.node, 'true');
                   }
                  }
