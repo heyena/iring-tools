@@ -119,6 +119,30 @@ namespace org.iringtools.services
     }
     #endregion
 
+    #region GetListWithFilter
+    /// <summary>
+    /// Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.
+    /// </summary>
+    /// <param name="projectName">Project name</param>
+    /// <param name="applicationName">Application name</param>
+    /// <param name="graphName">Graph name</param>
+    /// <param name="format">Format to be returned (xml, dto, rdf ...)</param>
+    /// <returns>Returns an arbitrary XML</returns>
+    [Description("Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/filter?format={format}")]
+    public XElement GetListWithFilter(string projectName, string applicationName, string graphName, string format, DataFilter filter)
+    {
+      NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      XDocument xDocument = _adapterProvider.GetProjection(projectName, applicationName, graphName, format, filter, parameters);
+
+      return xDocument.Root;
+    }
+    #endregion
+
     #region GetList
     /// <summary>
     /// Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.

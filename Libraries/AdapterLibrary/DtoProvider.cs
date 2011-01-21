@@ -59,6 +59,8 @@ namespace org.iringtools.adapter
     private DataDictionary _dataDictionary = null;
     private Mapping _mapping = null;
     private GraphMap _graphMap = null;
+    private DataObject _dataObject = null;
+    private DataFilter _dataFilter = null;
     private bool _isScopeInitialized = false;
     private bool _isDataLayerInitialized = false;
 
@@ -262,7 +264,7 @@ namespace org.iringtools.adapter
       return response;
     }
 
-    public DataTransferIndices GetDataTransferIndicesWithManifest(string scope, string app, string graph, string hashAlgorithm, Manifest manifest)
+    public DataTransferIndices GetDataTransferIndicesByRequest(string scope, string app, string graph, string hashAlgorithm, DtiRequest request)
     {
       DataTransferIndices dataTransferIndices = null;
 
@@ -271,9 +273,14 @@ namespace org.iringtools.adapter
         InitializeScope(scope, app);
         InitializeDataLayer();
 
-        BuildCrossGraphMap(manifest, graph);
+        BuildCrossGraphMap(request.Manifest, graph);
 
-        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, null, 0, 0);
+        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+        
+        DataFilter filter = request.DataFilter;
+        dtoProjectionEngine.ProjectDataFilter(_dataDictionary, ref filter, graph);
+
+        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, filter, 0, 0);
         Dictionary<string, List<string>> classIdentifiers = GetClassIdentifiers(ref dataObjects);
 
         dataTransferIndices = BuildDataTransferIndices(ref dataObjects, ref classIdentifiers, hashAlgorithm);

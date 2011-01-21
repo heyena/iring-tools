@@ -18,7 +18,7 @@ using System.Web;
 
 namespace org.iringtools.adapter.projection
 {
-  public class RdfProjectionEngine : BaseProjectionEngine
+  public class RdfProjectionEngine : BasePart7ProjectionEngine
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(RdfProjectionEngine));
     private Dictionary<string, List<IDataObject>> _relatedObjectsCache = null;

@@ -15,7 +15,7 @@ using System.Xml.Serialization;
 
 namespace org.iringtools.adapter.projection
 {
-  public class DtoProjectionEngine : BaseProjectionEngine
+  public class DtoProjectionEngine : BasePart7ProjectionEngine
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(DtoProjectionEngine));
 

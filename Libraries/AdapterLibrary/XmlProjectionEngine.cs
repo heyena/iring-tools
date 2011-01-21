@@ -15,7 +15,7 @@ using System.Web;
 
 namespace org.iringtools.adapter.projection
 {
-  public class XmlProjectionEngine : BaseProjectionEngine
+  public class XmlProjectionEngine : BasePart7ProjectionEngine
   {    
     private static readonly ILog _logger = LogManager.GetLogger(typeof(XmlProjectionEngine));
     private Dictionary<string, List<string>> _classIdentifiersCache = null;
