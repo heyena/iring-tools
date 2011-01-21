@@ -616,7 +616,7 @@ TODO: lazy rendering
                 var d = [].concat(f.serialize());
                 for (i = 0, len = d.length; i < len; i++) {
                     filters.push({
-                        field: f.dataIndex,
+                        field: this.className + '.' + f.dataIndex,
                         data: d[i]
                     });
                 }
@@ -721,10 +721,12 @@ filters[0][data][value]="someValue3"&
     getFilterClass : function (type) {
         // map the supported Ext.data.Field type values into a supported filter
         switch(type) {
+            case 'string':
             case 'auto':
               type = 'string';
               break;
             case 'int':
+            case 'double':
             case 'float':
               type = 'numeric';
               break;
@@ -732,6 +734,8 @@ filters[0][data][value]="someValue3"&
               type = 'boolean';
               break;
         }
+        if (type == null)
+        	type = 'string';
         return Ext.ux.grid.filter[type.substr(0, 1).toUpperCase() + type.substr(1) + 'Filter'];
     }
 });
