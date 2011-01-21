@@ -97,6 +97,7 @@ namespace org.iringtools.utils.exchange
             string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
             request.Add("targetUri", textBoxTargetURL.Text);
             request.Add("targetCredentials", targetCredentialsXML);
+            request.Add("targetGraphBaseUri", comboBoxGraphUri.Text);
             request.Add("graphName", comboBoxGraphName.Text);
             request.Add("filter", "");
 
