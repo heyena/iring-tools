@@ -1,12 +1,12 @@
-Ext.ns('exchange-manager');
+Ext.ns('iringtools.org');
 
-function loadPageDto(label, url){
-  var tab = Ext.getCmp('content-pane').getItem(label);
+function loadPageDto(type, label, url){
+  var tab = Ext.getCmp('content-pane').getItem('tab-' + label);
   
   if (tab != null){
     tab.show();
   }
-  else {  
+  else { 
     Ext.getBody().mask("Loading...", "x-mask-loading");
     
     var store = new Ext.data.Store({
@@ -39,6 +39,7 @@ function loadPageDto(label, url){
 
       var dtoGridPane = new Ext.grid.GridPanel({
         id: 'grid-' + label,
+        layout: 'fit',
         store: store,
         stripeRows: true,
         cm: new Ext.grid.DynamicColumnModel(store),
@@ -70,24 +71,26 @@ function loadPageDto(label, url){
         items: [dtoGridPane]
       });
       
-      var dtoLogPane = new Ext.Panel({
-        id: 'log-' + label,
-        title: 'Exchange Logs',
-        region: 'south',
-        split: true,
-        hidden: true
-      });
-      
       var dtoTab = new Ext.Panel({
         id: 'tab-' + label,
         title: label,
         layout: 'border',
         closable: true,
-        items: [dtoNavPane, dtoContentPane, dtoLogPane]
+        items: [dtoNavPane, dtoContentPane]
       });
       
+      if (type == 'exchange'){
+        dtoTab.add(new Ext.Panel({
+          id: 'log-' + label,
+          title: 'Exchange Logs',
+          region: 'south',
+          split: true,
+          height: 200,
+          hidden: true
+        }));
+      }
+      
       Ext.getCmp('content-pane').add(dtoTab).show();
-      Ext.getBody().unmask();
     });
     
     store.load({
@@ -274,13 +277,13 @@ Ext.onReady(function(){
             var graph = node.attributes['text'];
             var label = scope + '.' + app + '.' + graph;
             var url = 'adata?scope=' + scope + '&app=' + app + '&graph=' + graph;
-            loadPageDto(label, url);
+            loadPageDto('app', label, url);
           }
           else if (dataTypeNode.attributes['text'] == 'Data Exchanges'){
             var scope = dataTypeNode.parentNode.attributes['text'];
             var exchangeId = properties['Id'];
             var url = 'xdata?scope=' + scope + '&exchangeId=' + exchangeId;
-            loadPageDto(node.text, url);
+            loadPageDto('exchange', node.text, url);
           }
         }
       }
@@ -325,7 +328,12 @@ Ext.onReady(function(){
     region: 'center',
     deferredRender: false,
     enableTabScroll: true,
-    activeTab: 0
+    activeTab: 0,
+    listeners: {
+      afterlayout: function(pane){
+        Ext.getBody().unmask();
+      }
+    }
   });
 
   var viewport = new Ext.Viewport({

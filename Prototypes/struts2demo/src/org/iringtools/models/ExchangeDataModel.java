@@ -91,10 +91,10 @@ public class ExchangeDataModel
             {
               if (firstDto)
               {
-                Field otherField = new Field();
-                otherField.setName((classObject.getName() + "." + roleObject.getName()).toUpperCase());                
-                otherField.setType(roleObject.getDataType().replace("xsd:", "")); 
-                fields.add(otherField);
+                Field field = new Field();
+                field.setName((classObject.getName() + "." + roleObject.getName()).toUpperCase());                
+                field.setType(roleObject.getDataType().replace("xsd:", "")); 
+                fields.add(field);
               }
               
               if (roleObject.getOldValue() == null || roleObject.getOldValue().equals(roleObject.getValue()))
