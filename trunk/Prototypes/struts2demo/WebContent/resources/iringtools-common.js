@@ -1,4 +1,4 @@
-Ext.ns('iringtools');
+Ext.ns('iringtools.org');
 
 Ext.data.DynamicGridReader = Ext.extend(Ext.data.JsonReader, {
   constructor: function(config) {
@@ -60,9 +60,9 @@ Ext.grid.DynamicColumnModel = Ext.extend(Ext.grid.ColumnModel, {
       columns[i] = {
         header: field.name,
         dataIndex: field.name,
+        sortable: true,
         renderer: renderer,
-        align: align,
-        sortable: true
+        align: align
       };
       
       if (field.fixed) {
