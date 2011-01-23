@@ -36,7 +36,7 @@ public class ExchangeDataModel
     return httpClient.get(DataTransferIndices.class, "/" + scope + "/exchanges/" + exchangeId);
   }
   
-  public Grid getPageDto(List<DataTransferIndex> dtiPage, String scope, int exchangeId) throws JAXBException, IOException
+  public Grid getPageDto(String scope, int exchangeId, List<DataTransferIndex> dtiPage) throws JAXBException, IOException
   { 
     DataTransferIndices dti = new DataTransferIndices();
     DataTransferIndexList dtiList = new DataTransferIndexList();
@@ -47,72 +47,78 @@ public class ExchangeDataModel
     HttpClient httpClient = new HttpClient(serviceUri);
     String relativePath = "/" + scope + "/exchanges/" + exchangeId;    
     DataTransferObjects dto = httpClient.post(DataTransferObjects.class, relativePath, dti);     
-    return dtoToGrid(dto.getDataTransferObjectList().getItems());
+    return dtoToGrid(scope, exchangeId, dto.getDataTransferObjectList().getItems());
   }
   
-  public Grid dtoToGrid(List<DataTransferObject> dtoList)
+  public Grid dtoToGrid(String scope, int exchangeId, List<DataTransferObject> dtoList)
   {
     Grid pageDtoGrid = new Grid();
     
     List<List<String>> gridData = new ArrayList<List<String>>();
     pageDtoGrid.setData(gridData); 
     
+    HashMap<String, String> relatedClasses = new HashMap<String, String>();
+    pageDtoGrid.setProperties(relatedClasses);
+    
     List<Field> fields = new ArrayList<Field>();    
     boolean firstDto = true;
-    
-    HashMap<String, String> properties = new HashMap<String, String>();
-    pageDtoGrid.setProperties(properties);
     
     for (DataTransferObject dto : dtoList)
     {
       List<String> row = new ArrayList<String>();      
-      ClassObject firstClassObject = null;
+      boolean firstClass = true;
       
       String transferType = dto.getTransferType().toString(); 
       row.add("<span class=\"" + transferType.toLowerCase() + "\">" + transferType + "</span>");
       
       for (ClassObject classObject : dto.getClassObjects().getItems())
       {        
-        if (firstClassObject == null) {
+        if (firstClass) {
           pageDtoGrid.setType(classObject.getName());
-          firstClassObject = classObject;
-        }
-        else if (firstDto) {
-          properties.put(classObject.getClassId(), classObject.getName());
-        }
-        
-        for (TemplateObject templateObject : classObject.getTemplateObjects().getItems())
-        {
-          for (RoleObject roleObject : templateObject.getRoleObjects().getItems())
+          
+          row.add(0, "<input type=\"image\" src=\"resources/images/info-small.png\" " +
+              "onClick=\"javascript:showIndividualInfo('" + classObject.getName() + "','" + 
+              classObject.getClassId() + "','" + dto.getIdentifier() + "')\">");
+          
+          for (TemplateObject templateObject : classObject.getTemplateObjects().getItems())
           {
-            if (roleObject.getType() == RoleType.PROPERTY ||
-                roleObject.getType() == RoleType.DATA_PROPERTY ||
-                roleObject.getType() == RoleType.OBJECT_PROPERTY)
+            for (RoleObject roleObject : templateObject.getRoleObjects().getItems())
             {
-              if (firstDto)
+              if (roleObject.getType() == RoleType.PROPERTY ||
+                  roleObject.getType() == RoleType.DATA_PROPERTY ||
+                  roleObject.getType() == RoleType.OBJECT_PROPERTY)
               {
-                Field field = new Field();
-                field.setName((classObject.getName() + "." + roleObject.getName()).toUpperCase());                
-                field.setType(roleObject.getDataType().replace("xsd:", "")); 
-                fields.add(field);
+                if (firstDto)
+                {
+                  Field field = new Field();
+                  field.setName(templateObject.getName() + "." + roleObject.getName());                
+                  field.setType(roleObject.getDataType().replace("xsd:", "")); 
+                  fields.add(field);
+                }
+                
+                if (roleObject.getOldValue() == null || roleObject.getOldValue().equals(roleObject.getValue()))
+                  row.add(roleObject.getValue());
+                else
+                  row.add("<span class=\"change\">" + roleObject.getOldValue() + " -> " + roleObject.getValue() + "</span>");
               }
-              
-              if (roleObject.getOldValue() == null || roleObject.getOldValue().equals(roleObject.getValue()))
-                row.add(roleObject.getValue());
-              else
-                row.add("<span class=\"change\">" + roleObject.getOldValue() + " -> " + roleObject.getValue() + "</span>");
+              else if (firstDto && roleObject.getRelatedClassId() != null && 
+                       roleObject.getRelatedClassId().length() > 0)
+              {
+                relatedClasses.put(roleObject.getRelatedClassId(), roleObject.getRelatedClassName());
+              }
             }
           }
+          
+          firstClass = false;
         }
       }
       
-      row.add(0, "<input type=\"image\" src=\"resources/images/info-small.png\" onClick=\"javascript:showIndividualInfo('" + firstClassObject.getName() + "','" + firstClassObject.getClassId() + "','" + dto.getIdentifier() + "')\">");
       gridData.add(row);     
 
       if (firstDto)
       {
         Field transferTypeField = new Field();
-        transferTypeField.setName("TRANSFER TYPE");                
+        transferTypeField.setName("Transfer Type");                
         transferTypeField.setType("string"); 
         fields.add(0, transferTypeField);
         

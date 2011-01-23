@@ -1,5 +1,43 @@
 Ext.ns('iringtools.org');
 
+function createGridStore(url){
+  var store = new Ext.data.Store({
+    proxy: new Ext.data.HttpProxy({
+      url: url
+    }),
+    reader: new Ext.data.DynamicGridReader({}),
+    remoteSort: false
+  });
+  return store;
+}
+
+function createGridPane(store, pageSize){
+  var gridPane = new Ext.grid.GridPanel({
+    layout: 'fit',
+    store: store,
+    stripeRows: true,
+    cm: new Ext.grid.DynamicColumnModel(store),
+    properties: store.reader.properties,
+    selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
+    enableColLock: true,
+    viewConfig: {
+      forceFit: true
+    },
+    bbar: new Ext.PagingToolbar({
+      store: store,
+      pageSize: pageSize,
+      displayInfo: true,
+      autoScroll: true,
+      plugins: [new Ext.ux.plugin.PagingToolbarResizer({
+        displayText: 'Page Size',
+        options: [25, 50, 100, 200, 500], 
+        prependCombo: true})
+      ]
+    })
+  });
+  return gridPane;
+}
+
 function loadPageDto(type, label, url){
   var tab = Ext.getCmp('content-pane').getItem('tab-' + label);
   
@@ -7,17 +45,10 @@ function loadPageDto(type, label, url){
     tab.show();
   }
   else { 
-    Ext.getBody().mask("Loading...", "x-mask-loading");
+    Ext.getBody().mask("Loading...", "x-mask-loading");    
     
-    var store = new Ext.data.Store({
-      proxy: new Ext.data.HttpProxy({
-        url: url
-      }),
-      reader: new Ext.data.DynamicGridReader({}),
-      remoteSort: false
-    });
-    
-    var pageSize = 25;      
+    var store = createGridStore(url);
+    var pageSize = 25; 
     
     store.on('load', function(){
       store.recordType = store.reader.recordType;      
@@ -36,31 +67,6 @@ function loadPageDto(type, label, url){
           overCls: 'breadcrumb-hover'
         }]
       });
-
-      var dtoGridPane = new Ext.grid.GridPanel({
-        id: 'grid-' + label,
-        layout: 'fit',
-        store: store,
-        stripeRows: true,
-        cm: new Ext.grid.DynamicColumnModel(store),
-        properties: store.reader.properties,
-        selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
-        enableColLock: true,
-        viewConfig: {
-          forceFit: true
-        },
-        bbar: new Ext.PagingToolbar({
-          store: store,
-          pageSize: pageSize,
-          displayInfo: true,
-          autoScroll: true,
-          plugins: [new Ext.ux.plugin.PagingToolbarResizer({
-            displayText: 'Page Size',
-            options: [25, 50, 100, 200, 500], 
-            prependCombo: true})
-          ]
-        })
-      });
       
       var dtoContentPane = new Ext.Panel({
         id: 'content-' + label,
@@ -68,7 +74,12 @@ function loadPageDto(type, label, url){
         layout: 'card',
         border: false,
         activeItem: 0,
-        items: [dtoGridPane]
+        items: [createGridPane(store, pageSize)],
+        listeners: {
+          afterlayout: function(pane){
+            Ext.getBody().unmask();
+          }
+        }
       });
       
       var dtoTab = new Ext.Panel({
@@ -102,12 +113,20 @@ function loadPageDto(type, label, url){
   }
 }
 
+function loadRelatedClass(classId, classInstance, relatedClassId){
+  alert('load loadRelatedClass' + classId + '/' + classInstance + '/' + relatedClassId);
+}
+
+function loadRelatedClassItems(classId, classInstance, relatedClassId, relatedClassInstance){
+  alert('load loadRelatedClassItems ' + classId + '/' + classInstance + '/' + relatedClassId);  
+}
+
 function showIndividualInfo(className, classId, classInstance){
   var dtoTab = Ext.getCmp('content-pane').getActiveTab();
   var label = dtoTab.id.substring(4);
   var dtoNavPane = dtoTab.items.map['nav-' + label];
   var dtoContentPane = dtoTab.items.map['content-' + label];
-  var dtoGrid = dtoContentPane.items.map['grid-' + label];  
+  var dtoGrid = dtoContentPane.getLayout().activeItem;
   
   var classItemPane = new Ext.Panel({
     region: 'north',
@@ -150,9 +169,12 @@ function showIndividualInfo(className, classId, classInstance){
   });
   
   for (var property in dtoGrid.properties) {
+    var relatedClassId = property;
+    var relatedClassName = dtoGrid.properties[property];
+    
     relatedItemPane.add({
       xtype: 'box',
-      autoEl: {tag: 'a', href: 'javascript:alert(\'loading /' + classId + '/' + classInstance + '/' + property + '\')', html: dtoGrid.properties[property]},
+      autoEl: {tag: 'a', href: 'javascript:loadRelatedClass(\'' + classId + '\',\'' + classInstance + '\',\'' + relatedClassId + '\')', html: relatedClassName},
       style: {width: '100%'},
       cls: 'breadcrumb',
       overCls: 'breadcrumb-hover'
@@ -282,7 +304,7 @@ Ext.onReady(function(){
           else if (dataTypeNode.attributes['text'] == 'Data Exchanges'){
             var scope = dataTypeNode.parentNode.attributes['text'];
             var exchangeId = properties['Id'];
-            var url = 'xdata?scope=' + scope + '&exchangeId=' + exchangeId;
+            var url = 'xdata?scope=' + scope + '&xid=' + exchangeId;
             loadPageDto('exchange', node.text, url);
           }
         }
@@ -294,7 +316,7 @@ Ext.onReady(function(){
     id: 'property-pane',
     title: 'Details',
     region: 'south',
-    height: 300,
+    height: 250,
     collapsible: true,
     stripeRows: true,
     autoScroll: true,
@@ -328,12 +350,7 @@ Ext.onReady(function(){
     region: 'center',
     deferredRender: false,
     enableTabScroll: true,
-    activeTab: 0,
-    listeners: {
-      afterlayout: function(pane){
-        Ext.getBody().unmask();
-      }
-    }
+    activeTab: 0
   });
 
   var viewport = new Ext.Viewport({

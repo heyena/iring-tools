@@ -20,7 +20,7 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   private ExchangeDataModel exchangeDataModel;
   private Grid pageDtoGrid;
   private String scope;
-  private int exchangeId;
+  private int xid;
   private int start;
   private int limit;
   
@@ -33,7 +33,7 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   
   public String getPageDto() throws Exception 
   {
-    String dtiKey = scope + "-" + exchangeId;    
+    String dtiKey = scope + "-" + xid;    
     String pageDtoKey = dtiKey + "-" + start + "-" + limit;    
     DataTransferIndices dti = null;
     
@@ -41,7 +41,7 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
       dti = (DataTransferIndices)session.get(dtiKey);
     }
     else {
-      dti = exchangeDataModel.getDti(scope, exchangeId);
+      dti = exchangeDataModel.getDti(scope, xid);
       session.put(dtiKey, dti);
     }
     
@@ -53,7 +53,7 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
       int actualLimit = Math.min(start + limit, dtiList.size());
       List<DataTransferIndex> pageDti = dti.getDataTransferIndexList().getItems().subList(start, actualLimit);
       
-      pageDtoGrid = exchangeDataModel.getPageDto(pageDti, scope, exchangeId); 
+      pageDtoGrid = exchangeDataModel.getPageDto(scope, xid, pageDti); 
       session.put(pageDtoKey, pageDtoGrid);      
     }    
     
@@ -77,14 +77,14 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
     return scope;
   }
 
-  public void setExchangeId(int exchangeId)
+  public void setXid(int xid)
   {
-    this.exchangeId = exchangeId;
+    this.xid = xid;
   }
 
-  public int getExchangeId()
+  public int getXid()
   {
-    return exchangeId;
+    return xid;
   }
 
   public void setStart(int start)

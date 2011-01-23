@@ -49,6 +49,16 @@ a:active {color: black}
   background-repeat: repeat-x
 }
 
+/* change default property grid */
+.x-grid3-row td {
+  font-family: tahoma;
+}
+
+/* change default tree node */
+.x-tree-node {
+  font-family: tahoma;
+}
+
 .sync {
 	color: #000000;
 }
