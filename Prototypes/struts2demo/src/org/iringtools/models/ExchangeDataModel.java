@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.struts2.json.JSONException;
+import org.apache.struts2.json.JSONUtil;
 import org.iringtools.dxfr.dti.DataTransferIndex;
 import org.iringtools.dxfr.dti.DataTransferIndexList;
 import org.iringtools.dxfr.dti.DataTransferIndices;
@@ -19,6 +21,7 @@ import org.iringtools.dxfr.dto.TemplateObject;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.widgets.grid.Field;
 import org.iringtools.widgets.grid.Grid;
+import org.iringtools.widgets.grid.RelatedClass;
 
 public class ExchangeDataModel
 {
@@ -57,61 +60,72 @@ public class ExchangeDataModel
     List<List<String>> gridData = new ArrayList<List<String>>();
     pageDtoGrid.setData(gridData); 
     
-    HashMap<String, String> relatedClasses = new HashMap<String, String>();
-    pageDtoGrid.setProperties(relatedClasses);
-    
     List<Field> fields = new ArrayList<Field>();    
     boolean firstDto = true;
     
     for (DataTransferObject dto : dtoList)
     {
       List<String> row = new ArrayList<String>();      
-      boolean firstClass = true;
+      List<RelatedClass> relatedClasses = new ArrayList<RelatedClass>();
       
       String transferType = dto.getTransferType().toString(); 
       row.add("<span class=\"" + transferType.toLowerCase() + "\">" + transferType + "</span>");
       
-      for (ClassObject classObject : dto.getClassObjects().getItems())
-      {        
-        if (firstClass) {
-          pageDtoGrid.setType(classObject.getName());
-          
-          row.add(0, "<input type=\"image\" src=\"resources/images/info-small.png\" " +
-              "onClick=\"javascript:showIndividualInfo('" + classObject.getName() + "','" + 
-              classObject.getClassId() + "','" + dto.getIdentifier() + "')\">");
-          
-          for (TemplateObject templateObject : classObject.getTemplateObjects().getItems())
+      if (dto.getClassObjects().getItems().size() > 0)
+      {
+        ClassObject classObject = dto.getClassObjects().getItems().get(0);
+        pageDtoGrid.setLabel(classObject.getClassId());
+        pageDtoGrid.setDescription(classObject.getName());
+        
+        for (TemplateObject templateObject : classObject.getTemplateObjects().getItems())
+        {
+          for (RoleObject roleObject : templateObject.getRoleObjects().getItems())
           {
-            for (RoleObject roleObject : templateObject.getRoleObjects().getItems())
+            if (roleObject.getType() == RoleType.PROPERTY ||
+                roleObject.getType() == RoleType.DATA_PROPERTY ||
+                roleObject.getType() == RoleType.OBJECT_PROPERTY)
             {
-              if (roleObject.getType() == RoleType.PROPERTY ||
-                  roleObject.getType() == RoleType.DATA_PROPERTY ||
-                  roleObject.getType() == RoleType.OBJECT_PROPERTY)
+              if (firstDto)
               {
-                if (firstDto)
-                {
-                  Field field = new Field();
-                  field.setName(templateObject.getName() + "." + roleObject.getName());                
-                  field.setType(roleObject.getDataType().replace("xsd:", "")); 
-                  fields.add(field);
-                }
-                
-                if (roleObject.getOldValue() == null || roleObject.getOldValue().equals(roleObject.getValue()))
-                  row.add(roleObject.getValue());
-                else
-                  row.add("<span class=\"change\">" + roleObject.getOldValue() + " -> " + roleObject.getValue() + "</span>");
+                Field field = new Field();
+                field.setName(templateObject.getName() + "." + roleObject.getName());                
+                field.setType(roleObject.getDataType().replace("xsd:", "")); 
+                fields.add(field);
               }
-              else if (firstDto && roleObject.getRelatedClassId() != null && 
-                       roleObject.getRelatedClassId().length() > 0)
-              {
-                relatedClasses.put(roleObject.getRelatedClassId(), roleObject.getRelatedClassName());
-              }
+              
+              if (roleObject.getOldValue() == null || roleObject.getOldValue().equals(roleObject.getValue()))
+                row.add(roleObject.getValue());
+              else
+                row.add("<span class=\"change\">" + roleObject.getOldValue() + " -> " + roleObject.getValue() + "</span>");
+            }
+            else if (roleObject.getRelatedClassName() != null && 
+                roleObject.getRelatedClassName().length() > 0 &&
+                roleObject.getValue() != null &&
+                roleObject.getValue().length() > 0)
+            {
+              RelatedClass relatedClass = new RelatedClass();
+              relatedClass.setId(roleObject.getRelatedClassId());
+              relatedClass.setName(roleObject.getRelatedClassName());
+              relatedClass.setIdentifier(roleObject.getValue().substring(1));
+              relatedClasses.add(relatedClass);
             }
           }
-          
-          firstClass = false;
         }
       }
+      
+      String relatedClassesJson;
+      
+      try
+      {
+        relatedClassesJson = JSONUtil.serialize(relatedClasses);
+      }
+      catch (JSONException ex)
+      {
+        relatedClassesJson = "[]";
+      }
+      
+      row.add(0, "<input type=\"image\" src=\"resources/images/info-small.png\" " +
+          "onClick='javascript:showIndividualInfo(\"" + dto.getIdentifier() + "\"," + relatedClassesJson + ")'>");
       
       gridData.add(row);     
 

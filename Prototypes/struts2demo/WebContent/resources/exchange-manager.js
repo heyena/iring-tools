@@ -13,11 +13,12 @@ function createGridStore(url){
 
 function createGridPane(store, pageSize){
   var gridPane = new Ext.grid.GridPanel({
+    label: store.reader.label,
+    description: store.reader.description,
     layout: 'fit',
     store: store,
     stripeRows: true,
     cm: new Ext.grid.DynamicColumnModel(store),
-    properties: store.reader.properties,
     selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
     enableColLock: true,
     viewConfig: {
@@ -52,7 +53,6 @@ function loadPageDto(type, label, url){
     
     store.on('load', function(){
       store.recordType = store.reader.recordType;      
-      var className = store.reader.type;
       
       var dtoNavPane = new Ext.Panel({
         id: 'nav-' + label,
@@ -62,14 +62,14 @@ function loadPageDto(type, label, url){
         bodyStyle: 'background-color:#fcfcff',
         items: [{
           xtype: 'box',
-          autoEl: {tag: 'a', href: 'javascript:navigate(0)', html: className},
+          autoEl: {tag: 'a', href: 'javascript:navigate(0)', html: store.reader.description},
           cls: 'breadcrumb',
           overCls: 'breadcrumb-hover'
         }]
       });
       
       var dtoContentPane = new Ext.Panel({
-        id: 'content-' + label,
+        id: 'dto-' + label,
         region: 'center',
         layout: 'card',
         border: false,
@@ -114,18 +114,18 @@ function loadPageDto(type, label, url){
 }
 
 function loadRelatedClass(classId, classInstance, relatedClassId){
-  alert('load loadRelatedClass' + classId + '/' + classInstance + '/' + relatedClassId);
+  alert('loadRelatedClass ' + classId + '/' + classInstance + '/' + relatedClassId);
 }
 
 function loadRelatedClassItems(classId, classInstance, relatedClassId, relatedClassInstance){
-  alert('load loadRelatedClassItems ' + classId + '/' + classInstance + '/' + relatedClassId);  
+  alert('loadRelatedClassItems ' + classId + '/' + classInstance + '/' + relatedClassId);  
 }
 
-function showIndividualInfo(className, classId, classInstance){
+function showIndividualInfo(individual, relatedClasses){
   var dtoTab = Ext.getCmp('content-pane').getActiveTab();
   var label = dtoTab.id.substring(4);
   var dtoNavPane = dtoTab.items.map['nav-' + label];
-  var dtoContentPane = dtoTab.items.map['content-' + label];
+  var dtoContentPane = dtoTab.items.map['dto-' + label];
   var dtoGrid = dtoContentPane.getLayout().activeItem;
   
   var classItemPane = new Ext.Panel({
@@ -134,7 +134,7 @@ function showIndividualInfo(className, classId, classInstance){
     height: 46,
     bodyStyle: 'background-color:#eef',
     html: '<div style="width:60px;float:left"><img style="margin:2px 15px 2px 5px" src="resources/images/class-badge-large.png"/></div>' +
-          '<div style="width:100%;height:100%;padding-top:8px">' + classId + '<br/>' + className + '</div>'
+          '<div style="width:100%;height:100%;padding-top:8px">' + dtoGrid.label + '<br/>' + dtoGrid.description + '</div>'
   });
   
   var rowData = dtoGrid.selModel.selections.map[dtoGrid.selModel.last].data;
@@ -168,13 +168,13 @@ function showIndividualInfo(className, classId, classInstance){
     autoScroll: true
   });
   
-  for (var property in dtoGrid.properties) {
-    var relatedClassId = property;
-    var relatedClassName = dtoGrid.properties[property];
-    
+  for (var i = 0; i < relatedClasses.length; i++) {
     relatedItemPane.add({
       xtype: 'box',
-      autoEl: {tag: 'a', href: 'javascript:loadRelatedClass(\'' + classId + '\',\'' + classInstance + '\',\'' + relatedClassId + '\')', html: relatedClassName},
+      autoEl: {
+        tag: 'a', href: 'javascript:loadRelatedClass(\'' + individual + '\',\'' + 
+        relatedClasses[i].id + '\',\'' + relatedClasses[i].identifier + '\')', html: relatedClasses[i].name
+      },
       style: {width: '100%'},
       cls: 'breadcrumb',
       overCls: 'breadcrumb-hover'
@@ -197,7 +197,7 @@ function showIndividualInfo(className, classId, classInstance){
     cls: 'breadcrumb-img'
   },{
     xtype: 'box',
-    autoEl: {tag: 'a', href: 'javascript:navigate(' + (dtoNavPane.items.length + 1) + ')', html: classInstance},
+    autoEl: {tag: 'a', href: 'javascript:navigate(' + (dtoNavPane.items.length + 1) + ')', html: individual},
     cls: 'breadcrumb',
     overCls: 'breadcrumb-hover'
   });  
@@ -209,7 +209,7 @@ function navigate(navItemIndex){
   var dtoTab = Ext.getCmp('content-pane').getActiveTab();
   var label = dtoTab.id.substring(4);
   var dtoNavPane = dtoTab.items.map['nav-' + label];
-  var dtoContentPane = dtoTab.items.map['content-' + label];  
+  var dtoContentPane = dtoTab.items.map['dto-' + label];  
   
   // remove items on the right from nav pane
   while (navItemIndex < dtoNavPane.items.items.length - 1){
