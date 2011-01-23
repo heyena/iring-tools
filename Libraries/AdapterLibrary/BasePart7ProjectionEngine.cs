@@ -407,40 +407,63 @@ namespace org.iringtools.adapter.projection
     //resolve the dataFilter into data object terms
     public void ProjectDataFilter(DataDictionary dictionary, ref DataFilter filter, string graph)
     {
-      _graphMap = _mapping.FindGraphMap(graph);
-
-      DataObject _dataObject = dictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectMap);
-
-      foreach (Expression expression in filter.Expressions)
+      try
       {
-        string[] propertyNameParts = expression.PropertyName.Split('.');
-        expression.PropertyName = ProjectPropertyName(propertyNameParts, 0, null);
-        if (_roleType == RoleType.ObjectProperty)
+        if (filter == null || filter.Expressions == null || filter.OrderExpressions == null)
+          throw new Exception("Invalid DataFilter.");
+
+        _graphMap = _mapping.FindGraphMap(graph);
+
+        DataObject _dataObject = dictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectMap);
+
+        foreach (Expression expression in filter.Expressions)
         {
-          if (expression.RelationalOperator == RelationalOperator.EqualTo)
+          string[] propertyNameParts = expression.PropertyName.Split('.');
+          string dataPropertyName = ProjectPropertyName(propertyNameParts, 0, null);
+          expression.PropertyName = RemoveDataPropertyAlias(dataPropertyName);
+          if (_roleType == RoleType.ObjectProperty)
           {
-            expression.Values = ProjectPropertValues(expression.Values);
-            expression.RelationalOperator = RelationalOperator.In;
-          }
-          else if (expression.RelationalOperator == RelationalOperator.In)
-          {
-            expression.Values = ProjectPropertValues(expression.Values);
-          }
-          else
-          {
-            throw new Exception(
-              "Invalid Expression in DataFilter. " +
-              "Object Property Roles can only use EqualTo and In in the expression."
-            );
+            if (expression.RelationalOperator == RelationalOperator.EqualTo)
+            {
+              expression.Values = ProjectPropertValues(expression.Values);
+              expression.RelationalOperator = RelationalOperator.In;
+            }
+            else if (expression.RelationalOperator == RelationalOperator.In)
+            {
+              expression.Values = ProjectPropertValues(expression.Values);
+            }
+            else
+            {
+              throw new Exception(
+                "Invalid Expression in DataFilter. " +
+                "Object Property Roles can only use EqualTo and In in the expression."
+              );
+            }
           }
         }
-      }
 
-      foreach (OrderExpression orderExpression in filter.OrderExpressions)
-      {
-        string[] propertyNameParts = orderExpression.PropertyName.Split('.');
-        orderExpression.PropertyName = ProjectPropertyName(propertyNameParts, 0, null);
+        foreach (OrderExpression orderExpression in filter.OrderExpressions)
+        {
+          string[] propertyNameParts = orderExpression.PropertyName.Split('.');
+          string dataPropertyName = ProjectPropertyName(propertyNameParts, 0, null);
+          orderExpression.PropertyName = RemoveDataPropertyAlias(dataPropertyName);
+        }
       }
+      catch (Exception ex)
+      {
+        throw new Exception("Error while projecting a DataFilter for use with DataLayer.", ex);
+      }
+    }
+
+    public string RemoveDataPropertyAlias(string dataPropertyName)
+    {
+      char[] dot = { '.' };
+      string[] dataPropertyNameParts = dataPropertyName.Split(dot, 2);
+
+      if (dataPropertyNameParts.Count() > 1)
+        return dataPropertyNameParts[1];
+      else
+        return dataPropertyNameParts[0];
     }
 
     public Values ProjectPropertValues(Values values)
@@ -540,9 +563,6 @@ namespace org.iringtools.adapter.projection
             if (String.IsNullOrEmpty(roleMap.valueList))
             {
               dataPropertyName = roleMap.propertyName;
-              char[] dot = { '.' };
-              string[] dataPropertyNameParts = dataPropertyName.Split(dot, 2);
-              dataPropertyName = dataPropertyNameParts[1];
               _roleType = RoleType.DataProperty;
               _valueListName = null;
             }

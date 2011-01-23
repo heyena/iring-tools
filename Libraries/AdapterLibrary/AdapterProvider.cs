@@ -476,8 +476,7 @@ namespace org.iringtools.adapter
       return _response;
     }
 
-    public XDocument GetDataProjection(string projectName, string applicationName, string graphName, string format, DataFilter filter,
-      NameValueCollection parameters)
+    public XDocument GetDataProjection(string projectName, string applicationName, string graphName, DataFilter filter, string format, int start, int limit)
     {
       try
       {
@@ -495,19 +494,8 @@ namespace org.iringtools.adapter
           _projectionEngine = _kernel.Get<IProjectionLayer>("data");
         }
 
-        int start = 0;
-        int limit = 100;
-
-        if (parameters != null)
-        {
-          string startValue = parameters["start"];
-          if (!String.IsNullOrEmpty(startValue))
-            int.TryParse(startValue, out start);
-
-          string limitValue = parameters["limit"];
-          if (!String.IsNullOrEmpty(limitValue))
-            int.TryParse(limitValue, out limit);
-        }
+        if (limit == 0)
+          limit = 100;
 
         _dataObjects = _dataLayer.Get(graphName, filter, limit, start);
 
@@ -551,7 +539,9 @@ namespace org.iringtools.adapter
       }
     }
 
-    public XDocument GetDataProjection(string projectName, string applicationName, string graphName, string format, 
+    public XDocument GetDataProjection(
+      string projectName, string applicationName, string graphName,
+      string format, int start, int limit, string sortOrder, string sortBy, 
       NameValueCollection parameters)
     {
       try
@@ -570,16 +560,25 @@ namespace org.iringtools.adapter
           _projectionEngine = _kernel.Get<IProjectionLayer>("data");
         }
 
-        DataFilter filter = new DataFilter();
-        int start = 0;
-        int limit = 100;
+        if (limit == 0)
+          limit = 100;
 
+        DataFilter filter = new DataFilter();
+        
         if (parameters != null)
         {
           List<Expression> expressions = new List<Expression>();
           foreach (string key in parameters.AllKeys)
           {
-            if (key != "format" && key != "start" && key != "limit" && key != "sortBy" && key != "sortOrder")
+            string[] expectedParameters = { 
+              "format", 
+              "start", 
+              "limit", 
+              "sortBy", 
+              "sortOrder" 
+            };
+
+            if (!expectedParameters.Contains(key, StringComparer.CurrentCultureIgnoreCase))
             {
               string value = parameters[key];
 
@@ -595,18 +594,6 @@ namespace org.iringtools.adapter
             }
           }
           filter.Expressions = expressions;
-
-          string startValue = parameters["start"];
-          if (!String.IsNullOrEmpty(startValue))
-            int.TryParse(startValue, out start);
-
-          string limitValue = parameters["limit"];
-          if (!String.IsNullOrEmpty(limitValue))
-            int.TryParse(limitValue, out limit);
-
-          string sortOrder = parameters["sortOrder"];
-
-          string sortBy = parameters["sortBy"];
 
           if (!String.IsNullOrEmpty(sortBy))
           {
@@ -676,8 +663,7 @@ namespace org.iringtools.adapter
       }
     }
 
-    public XDocument GetProjection(string projectName, string applicationName, string graphName, string format, DataFilter filter,
-      NameValueCollection parameters)
+    public XDocument GetProjection(string projectName, string applicationName, string graphName, DataFilter filter, string format, int start, int limit)
     {
       try
       {
@@ -693,19 +679,8 @@ namespace org.iringtools.adapter
           _projectionEngine = _kernel.Get<IProjectionLayer>(_settings["DefaultProjectionFormat"]);
         }
 
-        int start = 0;
-        int limit = 100;
-
-        if (parameters != null)
-        {
-          string startValue = parameters["start"];
-          if (!String.IsNullOrEmpty(startValue))
-            int.TryParse(startValue, out start);
-
-          string limitValue = parameters["limit"];
-          if (!String.IsNullOrEmpty(limitValue))
-            int.TryParse(limitValue, out limit);
-        }
+        if (limit == 0)
+          limit = 100;
 
         if (_projectionEngine.GetType().BaseType == typeof(BasePart7ProjectionEngine))
         {
@@ -742,7 +717,10 @@ namespace org.iringtools.adapter
       return dataObjects;
     }
 
-    public XDocument GetProjection(string projectName, string applicationName, string graphName, string format, NameValueCollection parameters)
+    public XDocument GetProjection(
+      string projectName, string applicationName, string graphName, 
+      string format, int start, int limit, string sortOrder, string sortBy,
+      NameValueCollection parameters)
     {
       try
       {
@@ -758,16 +736,25 @@ namespace org.iringtools.adapter
           _projectionEngine = _kernel.Get<IProjectionLayer>(_settings["DefaultProjectionFormat"]);
         }
 
-        DataFilter filter = new DataFilter();
-        int start = 0;
-        int limit = 100;
+        if (limit == 0)
+          limit = 100;
 
+        DataFilter filter = new DataFilter();
+        
         if (parameters != null)
         {
           List<Expression> expressions = new List<Expression>();
           foreach (string key in parameters.AllKeys)
           {
-            if (key != "format" && key != "start" && key != "limit" && key != "sortBy" && key != "sortOrder")
+            string[] expectedParameters = { 
+              "format", 
+              "start", 
+              "limit", 
+              "sortBy", 
+              "sortOrder" 
+            };
+
+            if (!expectedParameters.Contains(key, StringComparer.CurrentCultureIgnoreCase))
             {
               string value = parameters[key];
 
@@ -782,18 +769,6 @@ namespace org.iringtools.adapter
             }
           }
           filter.Expressions = expressions;
-
-          string startValue = parameters["start"];
-          if (!String.IsNullOrEmpty(startValue))
-            int.TryParse(startValue, out start);
-
-          string limitValue = parameters["limit"];
-          if (!String.IsNullOrEmpty(limitValue))
-            int.TryParse(limitValue, out limit);
-
-          string sortOrder = parameters["sortOrder"];
-
-          string sortBy = parameters["sortBy"];
 
           if (!String.IsNullOrEmpty(sortBy))
           {

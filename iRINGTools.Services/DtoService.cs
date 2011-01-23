@@ -51,6 +51,26 @@ namespace org.iringtools.services
       _dtoProvider = new DtoProvider(ConfigurationManager.AppSettings);
     }
 
+    [Description("Gets dto provider version.")]
+    [WebGet(UriTemplate = "/version")]
+    public VersionInfo GetVersion()
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _dtoProvider.GetVersion();
+    }
+
+    [Description("Gets manifest for an application.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/manifest")]
+    public Manifest GetManifest(string scope, string app)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _dtoProvider.GetManifest(scope, app);
+    }
+
     [Description("Gets data transfer objects for a particular graph.")]
     [WebGet(UriTemplate = "/{scope}/{app}/{graph}?hashAlgorithm={hashAlgorithm}")]
     public DataTransferIndices GetDataTransferIndices(string scope, string app, string graph, string hashAlgorithm)
@@ -64,7 +84,37 @@ namespace org.iringtools.services
       return _dtoProvider.GetDataTransferIndices(scope, app, graph, hashAlgorithm);
     }
 
-    [Description("Gets data transfer objects according to dti request.")]
+    [Description("Gets data transfer indices according to data filter.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/filter?hashAlgorithm={hashAlgorithm}")]
+    public DataTransferIndices GetDataTransferIndicesWithFilter(string scope, string app, string graph, string hashAlgorithm, DataFilter filter)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _dtoProvider.GetDataTransferIndicesWithFilter(scope, app, graph, hashAlgorithm, filter);
+    }
+
+    [Description("Gets data transfer indices according to manifest.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxi?hashAlgorithm={hashAlgorithm}")]
+    public DataTransferIndices GetDataTransferIndicesWithManifest(string scope, string app, string graph, string hashAlgorithm, Manifest manifest)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _dtoProvider.GetDataTransferIndicesWithManifest(scope, app, graph, hashAlgorithm, manifest);
+    }
+
+    [Description("Gets data transfer indices according to manifest and filter request.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxi/filter?hashAlgorithm={hashAlgorithm}")]
+    public DataTransferIndices GetDataTransferIndicesByRequest(string scope, string app, string graph, string hashAlgorithm, DxiRequest request)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _dtoProvider.GetDataTransferIndicesByRequest(scope, app, graph, hashAlgorithm, request);
+    }
+
+    [Description("Gets data transfer objects according to dti.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/page")]
     public DataTransferObjects GetDataTransferObjects(string scope, string app, string graph, DataTransferIndices dataTransferIndices)
     {
@@ -74,14 +124,14 @@ namespace org.iringtools.services
       return _dtoProvider.GetDataTransferObjects(scope, app, graph, dataTransferIndices);
     }
 
-    [Description("Posts data transfer objects to add/update/delete.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}")]
-    public Response PostDataTransferObjects(string scope, string app, string graph, DataTransferObjects dataTransferObjects)
+    [Description("Gets data transfer objects according to manifest and dti request.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxo")]
+    public DataTransferObjects GetDataTransferObjectsWithManifest(string scope, string app, string graph, DxoRequest dtoPageRequest)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
 
-      return _dtoProvider.PostDataTransferObjects(scope, app, graph, dataTransferObjects);
+      return _dtoProvider.GetDataTransferObjects(scope, app, graph, dtoPageRequest);
     }
 
     [Description("Gets single data transfer object by id.")]
@@ -94,6 +144,16 @@ namespace org.iringtools.services
       return _dtoProvider.GetDataTransferObject(scope, app, graph, id);
     }
 
+    [Description("Posts data transfer objects to add/update/delete.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}")]
+    public Response PostDataTransferObjects(string scope, string app, string graph, DataTransferObjects dataTransferObjects)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _dtoProvider.PostDataTransferObjects(scope, app, graph, dataTransferObjects);
+    }
+
     [Description("Deletes a data transfer object by id.")]
     [WebInvoke(Method = "DELETE", UriTemplate = "/{scope}/{app}/{graph}/{id}")]
     public Response DeletetDataTransferObject(string scope, string app, string graph, string id)
@@ -102,46 +162,6 @@ namespace org.iringtools.services
       context.ContentType = "application/xml";
 
       return _dtoProvider.DeleteDataTransferObject(scope, app, graph, id);
-    }
-
-    [Description("Gets data transfer indices according to manifest request.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxi?hashAlgorithm={hashAlgorithm}")]
-    public DataTransferIndices GetDataTransferIndicesByRequest(string scope, string app, string graph, string hashAlgorithm, DtiRequest request)
-    {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
-
-      return _dtoProvider.GetDataTransferIndicesByRequest(scope, app, graph, hashAlgorithm, request);
-    }
-
-    [Description("Gets data transfer objects according to manifest and dti request.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxo")]
-    public DataTransferObjects GetDataTransferObjectsWithManifest(string scope, string app, string graph, DtoPageRequest dtoPageRequest)
-    {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
-
-      return _dtoProvider.GetDataTransferObjects(scope, app, graph, dtoPageRequest);
-    }
-
-    [Description("Gets manifest for an application.")]
-    [WebGet(UriTemplate = "/{scope}/{app}/manifest")]
-    public Manifest GetManifest(string scope, string app)
-    {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
-
-      return _dtoProvider.GetManifest(scope, app);
-    }
-
-    [Description("Gets dto provider version.")]
-    [WebGet(UriTemplate = "/version")]
-    public VersionInfo GetVersion()
-    {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
-
-      return _dtoProvider.GetVersion();
     }
   }
 }

@@ -24,10 +24,11 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ////////////////////////////////////////////////////////////////////////////////
 
-using System.Runtime.Serialization;
-using System.Collections.ObjectModel;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using System.Runtime.Serialization;
 
 namespace org.iringtools.library.manifest
 {
@@ -60,6 +61,24 @@ namespace org.iringtools.library.manifest
 
       throw new Exception("Graph [" + graphName + "] does not exist.");
     }
+
+#if !SILVERLIGHT
+    public Graph FindFirstGraphByClassId(string classId)
+    {
+      try
+      {
+        Graph graph = Graphs.Find(g => g.ClassTemplatesList.FirstOrDefault().Class.ClassId == classId);
+        if (graph != null)
+          return graph;
+        else
+          throw new Exception("Class [" + classId + "] does not exist.");
+      }
+      catch (Exception ex)
+      {
+        throw new Exception("Error while finding an appropriate graph map in a manifest.", ex);
+      }
+    }
+#endif
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/dxfr/manifest", Name = "graph")]
@@ -76,7 +95,7 @@ namespace org.iringtools.library.manifest
     [DataMember(Name = "classTemplatesList", Order = 1, EmitDefaultValue = false)]
     public List<ClassTemplates> ClassTemplatesList { get; set; }
   }
-  
+
   [DataContract(Namespace = "http://www.iringtools.org/dxfr/manifest", Name = "classTemplates")]
   public class ClassTemplates
   {
