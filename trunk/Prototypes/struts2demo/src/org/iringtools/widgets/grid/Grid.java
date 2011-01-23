@@ -1,24 +1,33 @@
 package org.iringtools.widgets.grid;
 
-import java.util.HashMap;
 import java.util.List;
 
 public class Grid
 {
-  protected String type;
+  protected String label;
+  protected String description;
   protected int total;
   protected List<Field> fields;
   protected List<List<String>> data;
-  protected HashMap<String, String> properties;
   
-  public String getType()
+  public String getLabel()
   {
-    return type;    
+    return label;    
   }
   
-  public void setType(String type)
+  public void setLabel(String label)
   {
-    this.type= type;
+    this.label= label;
+  }
+  
+  public String getDescription()
+  {
+    return description;    
+  }
+  
+  public void setDescription(String description)
+  {
+    this.description= description;
   }
   
   public int getTotal()
@@ -50,16 +59,4 @@ public class Grid
   {
     this.data = data;
   }
-  
-  public HashMap<String, String> getProperties()
-  {
-    return properties;
-  }
-  
-  public void setProperties(HashMap<String, String> properties)
-  {
-    this.properties = properties;
-  }
-  
-  
 }
