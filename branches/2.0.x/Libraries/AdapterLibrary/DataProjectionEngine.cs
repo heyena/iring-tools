@@ -114,7 +114,7 @@ namespace org.iringtools.adapter.projection
         var value = _dataObjects[dataObjectIndex].GetPropertyValue(dataProperty.propertyName);
         if (value != null)
         {
-          XElement propertyElement = new XElement(dataProperty.propertyName, value);
+          XElement propertyElement = new XElement(_appNamespace + dataProperty.propertyName, value);
           parentElement.Add(propertyElement);
 
           uri += value;
@@ -128,7 +128,7 @@ namespace org.iringtools.adapter.projection
         var value = _dataObjects[dataObjectIndex].GetPropertyValue(indexProperty.propertyName);
         if (value != null)
         {
-          XElement propertyElement = new XElement(indexProperty.propertyName, value);
+          XElement propertyElement = new XElement(_appNamespace + indexProperty.propertyName, value);
           parentElement.Add(propertyElement);
         }
       }

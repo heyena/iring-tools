@@ -45,6 +45,7 @@ using System.ServiceModel;
 using System.Security.Principal;
 using org.iringtools.library.manifest;
 using System.Text;
+using org.iringtools.adapter.identity;
 
 namespace org.iringtools.adapter
 {
@@ -57,10 +58,10 @@ namespace org.iringtools.adapter
     private List<ScopeProject> _scopes = null;
     private IDataLayer _dataLayer = null;
     private DataDictionary _dataDictionary = null;
+    private IIdentityLayer _identityLayer = null;
+    private IDictionary _keyRing = null;
     private Mapping _mapping = null;
     private GraphMap _graphMap = null;
-    private DataObject _dataObject = null;
-    private DataFilter _dataFilter = null;
     private bool _isScopeInitialized = false;
     private bool _isDataLayerInitialized = false;
 
@@ -94,6 +95,133 @@ namespace org.iringtools.adapter
         _scopes = new List<ScopeProject>();
         Utility.Write<List<ScopeProject>>(_scopes, scopesPath);
       }
+
+      string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml",
+            _settings["XmlPath"]
+          );
+      string bindingConfigurationPath = Path.Combine(
+        _settings["BaseDirectoryPath"],
+        relativePath
+      );
+      _kernel.Load(bindingConfigurationPath);
+
+      InitializeIdentity();
+    }
+
+    public VersionInfo GetVersion()
+    {
+      System.Version version = this.GetType().Assembly.GetName().Version;
+
+      return new org.iringtools.library.VersionInfo()
+      {
+        Major = version.Major,
+        Minor = version.Minor,
+        Build = version.Build,
+        Revision = version.Revision
+      };
+    }
+
+    public Manifest GetManifest(string scope, string app)
+    {
+      Manifest manifest = new Manifest();
+
+      try
+      {
+        InitializeScope(scope, app);
+        InitializeDataLayer();
+
+        DataDictionary dataDictionary = _dataLayer.GetDictionary();
+
+        foreach (GraphMap graphMap in _mapping.graphMaps)
+        {
+          Graph manifestGraph = new Graph { Name = graphMap.name };
+          manifest.Graphs.Add(manifestGraph);
+
+          string dataObjectMap = graphMap.dataObjectMap;
+          DataObject dataObject = null;
+
+          foreach (DataObject dataObj in dataDictionary.dataObjects)
+          {
+            if (dataObj.objectName == dataObjectMap)
+            {
+              dataObject = dataObj;
+              break;
+            }
+          }
+
+          if (dataObject != null)
+          {
+            foreach (var classTemplateListMap in graphMap.classTemplateListMaps)
+            {
+              ClassTemplates manifestClassTemplatesMap = new ClassTemplates();
+              manifestGraph.ClassTemplatesList.Add(manifestClassTemplatesMap);
+
+              ClassMap classMap = classTemplateListMap.Key;
+              List<TemplateMap> templateMaps = classTemplateListMap.Value;
+
+              Class manifestClass = new Class
+              {
+                ClassId = classMap.classId,
+                Name = classMap.name,
+              };
+              manifestClassTemplatesMap.Class = manifestClass;
+
+              foreach (TemplateMap templateMap in templateMaps)
+              {
+                Template manifestTemplate = new Template
+                {
+                  TemplateId = templateMap.templateId,
+                  Name = templateMap.name,
+                  TransferOption = TransferOption.Desired,
+                };
+                manifestClassTemplatesMap.Templates.Add(manifestTemplate);
+
+                foreach (RoleMap roleMap in templateMap.roleMaps)
+                {
+                  Role manifestRole = new Role
+                  {
+                    Type = roleMap.type,
+                    RoleId = roleMap.roleId,
+                    Name = roleMap.name,
+                    DataType = roleMap.dataType,
+                    Value = roleMap.value,
+                  };
+                  manifestTemplate.Roles.Add(manifestRole);
+
+                  if (roleMap.type == RoleType.Property ||
+                      roleMap.type == RoleType.DataProperty ||
+                      roleMap.type == RoleType.ObjectProperty)
+                  {
+                    string[] property = roleMap.propertyName.Split('.');
+                    string objectName = property[0].Trim();
+                    string propertyName = property[1].Trim();
+
+                    if (dataObject.isKeyProperty(propertyName))
+                    {
+                      manifestTemplate.TransferOption = TransferOption.Required;
+                    }
+                  }
+
+                  if (roleMap.classMap != null)
+                  {
+                    manifestRole.Class = new Class
+                    {
+                      ClassId = roleMap.classMap.classId,
+                      Name = roleMap.classMap.name,
+                    };
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting manifest: " + ex);
+      }
+
+      return manifest;
     }
 
     public DataTransferIndices GetDataTransferIndices(string scope, string app, string graph, string hashAlogrithm)
@@ -111,6 +239,87 @@ namespace org.iringtools.adapter
         Dictionary<string, List<string>> classIdentifiers = GetClassIdentifiers(ref dataObjects);
 
         dataTransferIndices = BuildDataTransferIndices(ref dataObjects, ref classIdentifiers, hashAlogrithm);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting data transfer indices: " + ex);
+      }
+
+      return dataTransferIndices;
+    }
+
+    public DataTransferIndices GetDataTransferIndicesWithFilter(string scope, string app, string graph, string hashAlogrithm, DataFilter filter)
+    {
+      DataTransferIndices dataTransferIndices = null;
+
+      try
+      {
+        InitializeScope(scope, app);
+        InitializeDataLayer();
+
+        _graphMap = _mapping.FindGraphMap(graph);
+
+        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+
+        dtoProjectionEngine.ProjectDataFilter(_dataDictionary, ref filter, graph);
+
+        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, filter, 0, 0);
+        Dictionary<string, List<string>> classIdentifiers = GetClassIdentifiers(ref dataObjects);
+
+        dataTransferIndices = BuildDataTransferIndices(ref dataObjects, ref classIdentifiers, hashAlogrithm);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting data transfer indices: " + ex);
+      }
+
+      return dataTransferIndices;
+    }
+
+    public DataTransferIndices GetDataTransferIndicesWithManifest(string scope, string app, string graph, string hashAlgorithm, Manifest manifest)
+    {
+      DataTransferIndices dataTransferIndices = null;
+
+      try
+      {
+        InitializeScope(scope, app);
+        InitializeDataLayer();
+
+        BuildCrossGraphMap(manifest, graph);
+
+        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, null, 0, 0);
+        Dictionary<string, List<string>> classIdentifiers = GetClassIdentifiers(ref dataObjects);
+
+        dataTransferIndices = BuildDataTransferIndices(ref dataObjects, ref classIdentifiers, hashAlgorithm);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting data transfer indices: " + ex);
+      }
+
+      return dataTransferIndices;
+    }
+
+    public DataTransferIndices GetDataTransferIndicesByRequest(string scope, string app, string graph, string hashAlgorithm, DxiRequest request)
+    {
+      DataTransferIndices dataTransferIndices = null;
+
+      try
+      {
+        InitializeScope(scope, app);
+        InitializeDataLayer();
+
+        BuildCrossGraphMap(request.Manifest, graph);
+
+        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+
+        DataFilter filter = request.DataFilter;
+        dtoProjectionEngine.ProjectDataFilter(_dataDictionary, ref filter, graph);
+
+        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, filter, 0, 0);
+        Dictionary<string, List<string>> classIdentifiers = GetClassIdentifiers(ref dataObjects);
+
+        dataTransferIndices = BuildDataTransferIndices(ref dataObjects, ref classIdentifiers, hashAlgorithm);
       }
       catch (Exception ex)
       {
@@ -264,37 +473,8 @@ namespace org.iringtools.adapter
       return response;
     }
 
-    public DataTransferIndices GetDataTransferIndicesByRequest(string scope, string app, string graph, string hashAlgorithm, DtiRequest request)
-    {
-      DataTransferIndices dataTransferIndices = null;
-
-      try
-      {
-        InitializeScope(scope, app);
-        InitializeDataLayer();
-
-        BuildCrossGraphMap(request.Manifest, graph);
-
-        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-        
-        DataFilter filter = request.DataFilter;
-        dtoProjectionEngine.ProjectDataFilter(_dataDictionary, ref filter, graph);
-
-        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, filter, 0, 0);
-        Dictionary<string, List<string>> classIdentifiers = GetClassIdentifiers(ref dataObjects);
-
-        dataTransferIndices = BuildDataTransferIndices(ref dataObjects, ref classIdentifiers, hashAlgorithm);
-      }
-      catch (Exception ex)
-      {
-        _logger.Error("Error getting data transfer indices: " + ex);
-      }
-
-      return dataTransferIndices;
-    }
-
     // get list (page) of data transfer objects per dto page request
-    public DataTransferObjects GetDataTransferObjects(string scope, string app, string graph, DtoPageRequest dtoPageRequest)
+    public DataTransferObjects GetDataTransferObjects(string scope, string app, string graph, DxoRequest dtoPageRequest)
     {
       DataTransferObjects dataTransferObjects = null;
 
@@ -323,122 +503,6 @@ namespace org.iringtools.adapter
       }
 
       return dataTransferObjects;
-    }
-
-    public Manifest GetManifest(string scope, string app)
-    {
-      Manifest manifest = new Manifest();
-
-      try
-      {
-        InitializeScope(scope, app);
-        InitializeDataLayer();
-
-        DataDictionary dataDictionary = _dataLayer.GetDictionary();
-
-        foreach (GraphMap graphMap in _mapping.graphMaps)
-        {
-          Graph manifestGraph = new Graph { Name = graphMap.name };
-          manifest.Graphs.Add(manifestGraph);
-
-          string dataObjectMap = graphMap.dataObjectMap;
-          DataObject dataObject = null;
-
-          foreach (DataObject dataObj in dataDictionary.dataObjects)
-          {
-            if (dataObj.objectName == dataObjectMap)
-            {
-              dataObject = dataObj;
-              break;
-            }
-          }
-
-          if (dataObject != null)
-          {
-            foreach (var classTemplateListMap in graphMap.classTemplateListMaps)
-            {
-              ClassTemplates manifestClassTemplatesMap = new ClassTemplates();
-              manifestGraph.ClassTemplatesList.Add(manifestClassTemplatesMap);
-
-              ClassMap classMap = classTemplateListMap.Key;
-              List<TemplateMap> templateMaps = classTemplateListMap.Value;
-
-              Class manifestClass = new Class
-              {
-                ClassId = classMap.classId,
-                Name = classMap.name,
-              };
-              manifestClassTemplatesMap.Class = manifestClass;
-
-              foreach (TemplateMap templateMap in templateMaps)
-              {
-                Template manifestTemplate = new Template
-                {
-                  TemplateId = templateMap.templateId,
-                  Name = templateMap.name,
-                  TransferOption = TransferOption.Desired,
-                };
-                manifestClassTemplatesMap.Templates.Add(manifestTemplate);
-
-                foreach (RoleMap roleMap in templateMap.roleMaps)
-                {
-                  Role manifestRole = new Role
-                  {
-                    Type = roleMap.type,
-                    RoleId = roleMap.roleId,
-                    Name = roleMap.name,
-                    DataType = roleMap.dataType,
-                    Value = roleMap.value,
-                  };
-                  manifestTemplate.Roles.Add(manifestRole);
-
-                  if (roleMap.type == RoleType.Property || 
-                      roleMap.type == RoleType.DataProperty || 
-                      roleMap.type == RoleType.ObjectProperty)
-                  {
-                    string[] property = roleMap.propertyName.Split('.');
-                    string objectName = property[0].Trim();
-                    string propertyName = property[1].Trim();
-
-                    if (dataObject.isKeyProperty(propertyName))
-                    {
-                      manifestTemplate.TransferOption = TransferOption.Required;
-                    }
-                  }
-
-                  if (roleMap.classMap != null)
-                  {
-                    manifestRole.Class = new Class
-                    {
-                      ClassId = roleMap.classMap.classId,
-                      Name = roleMap.classMap.name,
-                    };
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        _logger.Error("Error getting manifest: " + ex);
-      }
-
-      return manifest;
-    }
-
-    public org.iringtools.library.VersionInfo GetVersion()
-    {
-      System.Version version = this.GetType().Assembly.GetName().Version;
-
-      return new org.iringtools.library.VersionInfo()
-      {
-        Major = version.Major,
-        Minor = version.Minor,
-        Build = version.Build,
-        Revision = version.Revision
-      };
     }
 
     private void InitializeScope(string projectName, string applicationName)
@@ -558,6 +622,30 @@ namespace org.iringtools.adapter
       }
     }
 
+    private void InitializeIdentity()
+    {
+      try
+      {
+        _identityLayer = _kernel.Get<IIdentityLayer>("IdentityLayer");
+        _keyRing = _identityLayer.GetKeyRing();
+        _kernel.Bind<IDictionary>().ToConstant(_keyRing).Named("KeyRing");
+
+        if (_keyRing.Count > 0)
+        {
+          if (_keyRing["Provider"].ToString() == "WindowsAuthenticationProvider")
+          {
+            string userName = _keyRing["Name"].ToString();
+            _settings.Add("UserName", userName);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error initializing identity: {0}", ex));
+        throw new Exception(string.Format("Error initializing identity: {0})", ex));
+      }
+    }
+
     private Dictionary<string, List<string>> GetClassIdentifiers(ref IList<IDataObject> dataObjects)
     {
       Dictionary<string, List<string>> classIdentifiers = new Dictionary<string, List<string>>();
@@ -620,7 +708,10 @@ namespace org.iringtools.adapter
     private void BuildCrossGraphMap(Manifest manifest, string graph)
     {
       GraphMap mappingGraph = _mapping.FindGraphMap(graph);
-      Graph manifestGraph = manifest.FindGraph(graph);
+
+      string classId = mappingGraph.classTemplateListMaps.First().Key.classId;
+
+      Graph manifestGraph = manifest.FindFirstGraphByClassId(classId);
 
       _graphMap = new GraphMap()
       {

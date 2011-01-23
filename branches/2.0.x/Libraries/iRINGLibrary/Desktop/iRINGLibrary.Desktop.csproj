@@ -79,6 +79,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\ExternalBinaries\dotnetRDF\dotNetRDF.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="StaticDust.Configuration">
       <HintPath>..\..\..\ExternalBinaries\Configuration\StaticDust.Configuration.dll</HintPath>
     </Reference>

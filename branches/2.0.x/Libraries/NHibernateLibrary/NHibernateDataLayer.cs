@@ -1,20 +1,20 @@
 ﻿using System;
-using System.Collections.ObjectModel;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Text;
 using System.Web;
-using org.iringtools.library;
+using log4net;
 using NHibernate;
 using NHibernate.Cfg;
-using System.IO;
-using org.iringtools.utility;
-using org.iringtools.adapter;
-using System.Text;
 using Ninject;
-using log4net;
-using System.Reflection;
-using System.Collections.Specialized;
-using System.Collections;
+using org.iringtools.adapter;
+using org.iringtools.library;
+using org.iringtools.utility;
 
 namespace org.iringtools.adapter.datalayer
 {
@@ -199,7 +199,7 @@ namespace org.iringtools.adapter.datalayer
         StringBuilder queryString = new StringBuilder();
         queryString.Append("from " + objectType);
 
-        if (filter != null && filter.Expressions != null && filter.Expressions.Count > 0)
+        if (filter != null && filter.Expressions != null && (filter.Expressions.Count > 0 || filter.OrderExpressions.Count > 0))
         {
           string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectType, null);
           queryString.Append(whereClause);

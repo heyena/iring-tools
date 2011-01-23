@@ -109,17 +109,7 @@ namespace org.iringtools.adapter.projection
 
         if (roleMap != null)
         {
-          string[] propertyNameParts = roleMap.propertyName.Split('.');
-          string propertyName = String.Empty;
-
-          if (propertyNameParts.Count() > 1)
-          {
-            propertyName = propertyNameParts[1];
-          }
-          else
-          {
-            propertyName = propertyNameParts[0];
-          }
+          string propertyName = RemoveDataPropertyAlias(roleMap.propertyName);
 
           var value = _dataObjects[dataObjectIndex].GetPropertyValue(propertyName);
           if (value != null)

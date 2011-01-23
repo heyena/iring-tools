@@ -88,7 +88,7 @@ namespace org.iringtools.library
 
     public string ToSqlWhereClause(DataDictionary dataDictionary, string objectType, string objectAlias)
     {
-      if (this == null || this.Expressions.Count == 0)
+      if (this == null || (this.Expressions.Count == 0 && this.OrderExpressions.Count == 0))
         return String.Empty;
 
       if (!String.IsNullOrEmpty(objectAlias)) objectAlias += ".";
@@ -97,19 +97,26 @@ namespace org.iringtools.library
       try
       {
         StringBuilder whereClause = new StringBuilder();
-        whereClause.Append(" WHERE ");
-
-        foreach (Expression expression in this.Expressions)
+        if (Expressions.Count > 0)
         {
+          whereClause.Append(" WHERE ");
 
-          string sqlExpression = ResolveSqlExpression(dataDictionary, objectType, expression, objectAlias);
-          whereClause.Append(sqlExpression);
+          foreach (Expression expression in this.Expressions)
+          {
+            string sqlExpression = ResolveSqlExpression(dataDictionary, objectType, expression, objectAlias);
+            whereClause.Append(sqlExpression);
+          }
         }
 
-        foreach (OrderExpression orderExpression in this.OrderExpressions)
+        if (OrderExpressions.Count > 0)
         {
-          string orderStatement = ResolveOrderExpression(dataDictionary, objectType, orderExpression, objectAlias);
-          whereClause.Append(orderStatement);
+          whereClause.Append(" ORDER BY ");
+
+          foreach (OrderExpression orderExpression in this.OrderExpressions)
+          {
+            string orderStatement = ResolveOrderExpression(dataDictionary, objectType, orderExpression, objectAlias);
+            whereClause.Append(orderStatement);
+          }
         }
 
         return whereClause.ToString();
@@ -633,7 +640,6 @@ namespace org.iringtools.library
       string  qualifiedPropertyName = objectAlias + propertyName;
 
       StringBuilder sqlExpression = new StringBuilder();
-      sqlExpression.Append("ORDER BY ");
 
       switch (orderExpression.SortOrder)
       {
