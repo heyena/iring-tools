@@ -134,6 +134,7 @@ namespace org.iringtools.adapter.projection
                   }
                   else if (roleMap.classMap != null)
                   {
+                    roleObject.relatedClassId = roleMap.classMap.id;
                     roleObject.relatedClassName = roleMap.classMap.name;
 
                     if (!String.IsNullOrEmpty(_classIdentifiers[roleMap.classMap.id][i]))

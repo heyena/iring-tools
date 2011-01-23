@@ -105,6 +105,7 @@
       <xs:element name="dataType" type="xs:string" />
       <xs:element name="oldValue" type="xs:string" />
       <xs:element name="value" type="xs:string" />
+      <xs:element name="relatedClassId" type="xs:string" />
       <xs:element name="relatedClassName" type="xs:string" />
     </xs:sequence>
   </xs:complexType>

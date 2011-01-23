@@ -55,7 +55,38 @@ public class AppDataController extends ActionSupport implements SessionAware
       int actualLimit = Math.min(start + limit, dtiList.size());
     
       List<DataTransferIndex> pageDti = dti.getDataTransferIndexList().getItems().subList(start, actualLimit);
-      pageDtoGrid = appDataModel.getPageDto(pageDti, scope, app, graph); 
+      pageDtoGrid = appDataModel.getPageDto(scope, app, graph, pageDti); 
+      session.put(pageDtoKey, pageDtoGrid);      
+    }
+    
+    pageDtoGrid.setTotal(dti.getDataTransferIndexList().getItems().size());
+    
+    return SUCCESS;
+  }
+
+  public String getRelatedIndividual() throws Exception 
+  {
+    String dtiKey = scope + "-" + app + "-" + graph;    
+    String pageDtoKey = dtiKey + "-" + start + "-" + limit;    
+    DataTransferIndices dti = null;
+    
+    if (session.containsKey(dtiKey)) {
+      dti = (DataTransferIndices)session.get(dtiKey);
+    }
+    else {
+      dti = appDataModel.getDti(scope, app, graph);
+      session.put(dtiKey, dti);
+    }
+    
+    if (session.containsKey(pageDtoKey)) {
+      pageDtoGrid = (Grid)session.get(pageDtoKey);
+    }
+    else {
+      List<DataTransferIndex> dtiList = dti.getDataTransferIndexList().getItems();
+      int actualLimit = Math.min(start + limit, dtiList.size());
+    
+      List<DataTransferIndex> pageDti = dti.getDataTransferIndexList().getItems().subList(start, actualLimit);
+      pageDtoGrid = appDataModel.getPageDto(scope, app, graph, pageDti); 
       session.put(pageDtoKey, pageDtoGrid);      
     }
     

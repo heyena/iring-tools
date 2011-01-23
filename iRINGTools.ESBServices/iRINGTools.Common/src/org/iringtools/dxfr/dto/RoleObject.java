@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="dataType" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="oldValue" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="relatedClassId" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="relatedClassName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -40,6 +41,7 @@ import javax.xml.bind.annotation.XmlType;
     "dataType",
     "oldValue",
     "value",
+    "relatedClassId",
     "relatedClassName"
 })
 public class RoleObject {
@@ -56,6 +58,8 @@ public class RoleObject {
     protected String oldValue;
     @XmlElement(required = true)
     protected String value;
+    @XmlElement(required = true)
+    protected String relatedClassId;
     @XmlElement(required = true)
     protected String relatedClassName;
 
@@ -201,6 +205,30 @@ public class RoleObject {
      */
     public void setValue(String value) {
         this.value = value;
+    }
+
+    /**
+     * Gets the value of the relatedClassId property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getRelatedClassId() {
+        return relatedClassId;
+    }
+
+    /**
+     * Sets the value of the relatedClassId property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setRelatedClassId(String value) {
+        this.relatedClassId = value;
     }
 
     /**
