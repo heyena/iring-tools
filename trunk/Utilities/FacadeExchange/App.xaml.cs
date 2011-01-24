@@ -5,7 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Windows;
 
-namespace AdapterClient
+namespace org.iringtools.utils.exchange
 {
   /// <summary>
   /// Interaction logic for App.xaml

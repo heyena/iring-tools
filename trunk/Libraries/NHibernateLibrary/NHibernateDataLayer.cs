@@ -1,19 +1,20 @@
 ﻿using System;
-using System.Collections.ObjectModel;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Text;
 using System.Web;
-using org.iringtools.library;
+using log4net;
 using NHibernate;
 using NHibernate.Cfg;
-using System.IO;
-using org.iringtools.utility;
-using org.iringtools.adapter;
-using System.Text;
 using Ninject;
-using log4net;
-using System.Reflection;
-using System.Collections.Specialized;
+using org.iringtools.adapter;
+using org.iringtools.library;
+using org.iringtools.utility;
 
 namespace org.iringtools.adapter.datalayer
 {
@@ -21,13 +22,17 @@ namespace org.iringtools.adapter.datalayer
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(NHibernateDataLayer));
     private string _dataDictionaryPath = String.Empty;
+    private DataDictionary _dataDictionary;
+    private DatabaseDictionary _databaseDictionary;
     private AdapterSettings _settings = null;
+    private IDictionary _keyRing = null;
     private ISessionFactory _sessionFactory;
 
     [Inject]
-    public NHibernateDataLayer(AdapterSettings settings)
+    public NHibernateDataLayer(AdapterSettings settings, IDictionary keyRing)
     {
       _settings = settings;
+      _keyRing = keyRing;
 
       string hibernateConfigPath = string.Format("{0}nh-configuration.{1}.xml",
         _settings["XmlPath"],
@@ -43,6 +48,11 @@ namespace org.iringtools.adapter.datalayer
         _settings["XmlPath"],
         _settings["Scope"]
       );
+      string databaseDictionaryPath = string.Format("{0}DatabaseDictionary.{1}.xml",
+        _settings["XmlPath"],
+        _settings["Scope"]
+      );
+      _databaseDictionary = Utility.Read<DatabaseDictionary>(databaseDictionaryPath);
 
       _sessionFactory = new Configuration()
         .Configure(hibernateConfigPath)
@@ -112,12 +122,20 @@ namespace org.iringtools.adapter.datalayer
     {
       try
       {
+        if (_databaseDictionary.IdentityConfiguration != null)
+        {
+          IdentityProperties identityProperties = _databaseDictionary.IdentityConfiguration[objectType];
+          if (identityProperties.UseIdentityFilter)
+          {
+            filter = FilterByIdentity(objectType, filter, identityProperties);
+          }
+        }
         StringBuilder queryString = new StringBuilder();
         queryString.Append("select Id from " + objectType);
 
         if (filter != null && filter.Expressions.Count > 0)
         {
-          string whereClause = filter.ToSqlWhereClause(objectType, null);
+          string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectType, null);
           queryString.Append(whereClause);
         }
 
@@ -159,16 +177,24 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int pageNumber)
+    public IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex)
     {
       try
       {
+        if (_databaseDictionary.IdentityConfiguration != null)
+        {
+          IdentityProperties identityProperties = _databaseDictionary.IdentityConfiguration[objectType];
+          if (identityProperties.UseIdentityFilter)
+          {
+            filter = FilterByIdentity(objectType, filter, identityProperties);
+          }
+        }
         StringBuilder queryString = new StringBuilder();
         queryString.Append("from " + objectType);
 
-        if (filter != null && filter.Expressions.Count > 0)
+        if (filter != null && filter.Expressions != null && (filter.Expressions.Count > 0 || filter.OrderExpressions.Count > 0))
         {
-          string whereClause = filter.ToSqlWhereClause(objectType, null);
+          string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectType, null);
           queryString.Append(whereClause);
         }
 
@@ -177,20 +203,23 @@ namespace org.iringtools.adapter.datalayer
           IQuery query = session.CreateQuery(queryString.ToString());
           IList<IDataObject> dataObjects = query.List<IDataObject>();
 
-          if (pageSize > 0 && pageNumber > 0)
+          if (pageSize == 0)
           {
-            if (dataObjects.Count > (pageSize * (pageNumber - 1) + pageSize))
-            {
-              dataObjects = dataObjects.ToList().GetRange(pageSize * (pageNumber - 1), pageSize);
-            }
-            else if (pageSize * (pageNumber - 1) > dataObjects.Count)
-            {
-              dataObjects = dataObjects.ToList().GetRange(pageSize * (pageNumber - 1), dataObjects.Count);
-            }
-            else
-            {
-              return null;
-            }
+            dataObjects = dataObjects.ToList();
+          }
+          else if (startIndex + pageSize <= dataObjects.Count)
+          {
+            dataObjects = dataObjects.ToList().GetRange(startIndex, pageSize);
+          }
+          else if (startIndex <= dataObjects.Count)
+          {
+            int rowsRemaining = dataObjects.Count - startIndex;
+
+            dataObjects = dataObjects.ToList().GetRange(startIndex, rowsRemaining);
+          }
+          else
+          {
+            dataObjects = new List<IDataObject>();
           }
 
           return dataObjects;
@@ -201,6 +230,43 @@ namespace org.iringtools.adapter.datalayer
         _logger.Error("Error in Get: " + ex);
         throw new Exception(string.Format("Error while getting a list of data objects of type [{0}]. {1}", objectType, ex));
       }
+    }
+    private DataFilter FilterByIdentity(string objectType, DataFilter filter, IdentityProperties identityProperties)
+    {
+      DataObject dataObject = _databaseDictionary.dataObjects.Find(d => d.objectName == objectType);
+      DataProperty dataProperty = dataObject.dataProperties.Find(p => p.columnName == identityProperties.IdentityProperty);
+      if (dataProperty != null)
+      {
+        if (filter == null)
+        {
+          filter = new DataFilter();
+        }
+        if (filter.Expressions == null)
+        {
+          filter.Expressions = new List<Expression>();
+        }
+        else if (filter.Expressions.Count > 0)
+        {
+          Expression firstExpression = filter.Expressions.First();
+          Expression lastExpression = filter.Expressions.Last();
+          firstExpression.OpenGroupCount++;
+          lastExpression.CloseGroupCount++;
+          lastExpression.LogicalOperator = LogicalOperator.And;
+        }
+        string identityValue = _keyRing[identityProperties.KeyRingProperty].ToString();
+        Expression expression = new Expression
+        {
+          PropertyName = dataProperty.propertyName,
+          RelationalOperator = RelationalOperator.EqualTo,
+          Values = new Values
+          {
+            identityValue,
+          },
+          IsCaseSensitive = identityProperties.IsCaseSensitive
+        };
+        filter.Expressions.Add(expression);
+      }
+      return filter;
     }
 
     public Response Post(IList<IDataObject> dataObjects)
@@ -290,6 +356,14 @@ namespace org.iringtools.adapter.datalayer
 
       try
       {
+        if (_databaseDictionary.IdentityConfiguration != null)
+        {
+          IdentityProperties identityProperties = _databaseDictionary.IdentityConfiguration[objectType];
+          if (identityProperties.UseIdentityFilter)
+          {
+            filter = FilterByIdentity(objectType, filter, identityProperties);
+          }
+        }
         status.Identifier = objectType;
 
         StringBuilder queryString = new StringBuilder();
@@ -297,7 +371,7 @@ namespace org.iringtools.adapter.datalayer
 
         if (filter.Expressions.Count > 0)
         {
-          string whereClause = filter.ToSqlWhereClause(objectType, null);
+          string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectType, null);
           queryString.Append(whereClause);
         }
 
@@ -322,7 +396,8 @@ namespace org.iringtools.adapter.datalayer
 
     public DataDictionary GetDictionary()
     {
-      return Utility.Read<DataDictionary>(_dataDictionaryPath);
+      _dataDictionary = Utility.Read<DataDictionary>(_dataDictionaryPath);
+      return _dataDictionary;
     }
 
     public IList<IDataObject> GetRelatedObjects(IDataObject sourceDataObject, string relatedObjectType)

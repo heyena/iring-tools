@@ -70,7 +70,7 @@ namespace org.iringtools.library
     public SPARQLBindingType type { get; set; }
   }
 
-  [DataContract]
+  [DataContract(Namespace = "http://www.iringtools.org/refdata/response", Name = "entity")]
   public class Entity
   {
     [DataMember]

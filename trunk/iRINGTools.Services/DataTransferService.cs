@@ -33,9 +33,9 @@ using System.ServiceModel.Web;
 using System.Xml.Linq;
 using log4net;
 using org.iringtools.library;
+using org.iringtools.dxfr.manifest;
 using org.iringtools.adapter;
 using org.iringtools.exchange;
-using org.iringtools.dxfr.manifest;
 
 namespace org.iringtools.services
 {
@@ -51,81 +51,14 @@ namespace org.iringtools.services
       _dxfrProvider = new DataTranferProvider(ConfigurationManager.AppSettings);
     }
 
-    [Description("Gets data transfer indices for a particular graph.")]
-    [WebGet(UriTemplate = "/{scope}/{app}/{graph}?hashAlgorithm={hashAlgorithm}")]
-    public DataTransferIndices GetDataTransferIndices(string scope, string app, string graph, string hashAlgorithm)
+    [Description("Gets dto provider version.")]
+    [WebGet(UriTemplate = "/version")]
+    public VersionInfo GetVersion()
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
 
-      return _dxfrProvider.GetDataTransferIndices(scope, app, graph, hashAlgorithm);
-    }
-
-    [Description("Gets data transfer objects according to the posted data transfer indices.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/page")]
-    public DataTransferObjects GetDataTransferObjects(string scope, string app, string graph, DataTransferIndices dataTransferIndices)
-    {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
-
-      return _dxfrProvider.GetDataTransferObjects(scope, app, graph, dataTransferIndices);
-    }
-
-    //[Description("Gets data transfer objects.")]
-    //[WebGet(UriTemplate = "/{scope}/{app}/{graph}")]
-    //public DataTransferObjects GetDataTransferObjectsFull(string scope, string app, string graph)
-    //{
-    //  return _dxfrProvider.GetDataTransferObjects(scope, app, graph);
-    //}
-
-    [Description("Posts data transfer objects to add/update/delete to data layer.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}")]
-    public Response PostDataTransferObjects(string scope, string app, string graph, DataTransferObjects dataTransferObjects)
-    {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
-
-      return _dxfrProvider.PostDataTransferObjects(scope, app, graph, dataTransferObjects);
-    }
-
-    [Description("Gets single data transfer object by id.")]
-    [WebGet(UriTemplate = "/{scope}/{app}/{graph}/{id}")]
-    public DataTransferObjects GetDataTransferObject(string scope, string app, string graph, string id)
-    {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
-
-      return _dxfrProvider.GetDataTransferObject(scope, app, graph, id);
-    }
-
-    [Description("Deletes a data transfer object by id.")]
-    [WebInvoke(Method = "DELETE", UriTemplate = "/{scope}/{app}/{graph}/{id}")]
-    public Response DeletetDataTransferObject(string scope, string app, string graph, string id)
-    {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
-
-      return _dxfrProvider.DeleteDataTransferObject(scope, app, graph, id);
-    }
-
-    [Description("Gets data transfer indices according to the posted manifest.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxi?hashAlgorithm={hashAlgorithm}")]
-    public DataTransferIndices GetDataTransferIndicesWithManifest(string scope, string app, string graph, Manifest manifest, string hashAlgorithm)
-    {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
-
-      return _dxfrProvider.GetDataTransferIndicesWithManifest(scope, app, graph, hashAlgorithm, manifest);
-    }
-
-    [Description("Gets data transfer objects according to the posted manifest and data transfer indices.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxo")]
-    public DataTransferObjects GetDataTransferObjectsWithManifest(string scope, string app, string graph, DtoPageRequest dtoPageRequest)
-    {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
-
-      return _dxfrProvider.GetDataTransferObjects(scope, app, graph, dtoPageRequest);
+      return _dxfrProvider.GetVersion();
     }
 
     [Description("Gets manifest for an application.")]
@@ -138,14 +71,90 @@ namespace org.iringtools.services
       return _dxfrProvider.GetManifest(scope, app);
     }
 
-    [Description("Gets dto provider version.")]
-    [WebGet(UriTemplate = "/version")]
-    public VersionInfo GetVersion()
+    [Description("Gets data transfer indices for a particular graph.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/{graph}?hashAlgorithm={hashAlgorithm}")]
+    public DataTransferIndices GetDataTransferIndices(string scope, string app, string graph, string hashAlgorithm)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
 
-      return _dxfrProvider.GetVersion();
+      if (hashAlgorithm == null)
+        hashAlgorithm = "MD5";
+      return _dxfrProvider.GetDataTransferIndices(scope, app, graph, hashAlgorithm);
     }
+
+    [Description("Gets data transfer indices according to data filter.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/filter?hashAlgorithm={hashAlgorithm}")]
+    public DataTransferIndices GetDataTransferIndicesWithFilter(string scope, string app, string graph, string hashAlgorithm, DataFilter filter)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+      return _dtoProvider.GetDataTransferIndicesWithFilter(scope, app, graph, hashAlgorithm, filter);
+    }
+    [Description("Gets data transfer indices according to the posted manifest.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxi?hashAlgorithm={hashAlgorithm}")]
+    public DataTransferIndices GetDataTransferIndicesWithManifest(string scope, string app, string graph, Manifest manifest, string hashAlgorithm)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _dxfrProvider.GetDataTransferIndicesWithManifest(scope, app, graph, hashAlgorithm, manifest);
+    }
+    [Description("Gets data transfer indices according to manifest and filter request.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxi/filter?hashAlgorithm={hashAlgorithm}")]
+    public DataTransferIndices GetDataTransferIndicesByRequest(string scope, string app, string graph, string hashAlgorithm, DxiRequest request)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+      return _dtoProvider.GetDataTransferIndicesByRequest(scope, app, graph, hashAlgorithm, request);
+    }
+    [Description("Gets data transfer objects according to the posted data transfer indices.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/page")]
+    public DataTransferObjects GetDataTransferObjects(string scope, string app, string graph, DataTransferIndices dataTransferIndices)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _dxfrProvider.GetDataTransferObjects(scope, app, graph, dataTransferIndices);
+    }
+    [Description("Gets data transfer objects according to the posted manifest and data transfer indices.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxo")]
+    public DataTransferObjects GetDataTransferObjectsWithManifest(string scope, string app, string graph, DtoPageRequest dtoPageRequest)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _dxfrProvider.GetDataTransferObjects(scope, app, graph, dtoPageRequest);
+    }
+    [Description("Gets single data transfer object by id.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/{graph}/{id}")]
+    public DataTransferObjects GetDataTransferObject(string scope, string app, string graph, string id)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _dxfrProvider.GetDataTransferObject(scope, app, graph, id);
+    }
+    [Description("Posts data transfer objects to add/update/delete to data layer.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}")]
+    public Response PostDataTransferObjects(string scope, string app, string graph, DataTransferObjects dataTransferObjects)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _dxfrProvider.PostDataTransferObjects(scope, app, graph, dataTransferObjects);
+    }
+    [Description("Deletes a data transfer object by id.")]
+    [WebInvoke(Method = "DELETE", UriTemplate = "/{scope}/{app}/{graph}/{id}")]
+    public Response DeletetDataTransferObject(string scope, string app, string graph, string id)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _dxfrProvider.DeleteDataTransferObject(scope, app, graph, id);
+    }
+
+
+
   }
 }
