@@ -9,7 +9,6 @@ import java.net.URLEncoder;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Map.Entry;
-import javax.xml.bind.JAXBException;
 import org.apache.commons.codec.binary.Base64;
 
 public class HttpClient
@@ -45,52 +44,83 @@ public class HttpClient
     setNetworkCredentials(networkCredentials);
   }
   
-  public <T> T get(Class<T> responseClass, String relativeUri) throws JAXBException, IOException 
+  public <T> T get(Class<T> responseClass, String relativeUri) throws HttpClientException 
   {    
-    URLConnection conn = getConnection(GET, relativeUri);
-    InputStream responseStream = conn.getInputStream();    
-    return JaxbUtil.toObject(responseClass, responseStream);
-  }
-  
-  public <T,R> R post(Class<R> responseClass, String relativeUri, T requestEntity) throws IOException, JAXBException 
-  {    
-    String content = JaxbUtil.toXml(requestEntity, false);
-    
-    URLConnection conn = getConnection(POST, relativeUri);    
-    conn.setRequestProperty("Content-Type", "application/xml");
-    conn.setRequestProperty("Content-Length", String.valueOf(content.length()));
-    
-    DataOutputStream requestStream = new DataOutputStream(conn.getOutputStream());    
-    requestStream.writeBytes(content);        
-    requestStream.flush();
-    requestStream.close();
-    
-    InputStream responseStream = conn.getInputStream();   
-    return JaxbUtil.toObject(responseClass, responseStream);
-  }
-  
-  public <T> T post(Class<T> responseClass, String relativeUri, Hashtable<String,String> formData) throws IOException, JAXBException
-  {
-    URLConnection conn = getConnection(POST, relativeUri);
-    conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-  
-    StringBuilder requestEntity = new StringBuilder();
-    for (Entry<String,String> pair : formData.entrySet())
+    try
     {
-      if (requestEntity.length() > 0)
-      {
-        requestEntity.append('&');
-      }      
-      requestEntity.append(pair.getKey() + "=" + URLEncoder.encode(pair.getValue(), "UTF-8"));
+      URLConnection conn = getConnection(GET, relativeUri);
+      InputStream responseStream = conn.getInputStream();    
+      return JaxbUtil.toObject(responseClass, responseStream);
     }
+    catch (Exception ex)
+    {
+      throw new HttpClientException(ex.toString());
+    }
+  }
+  
+  public <T> T get(Class<T> responseClass) throws HttpClientException 
+  { 
+    return get(responseClass, "");
+  }
+  
+  public <T,R> R post(Class<R> responseClass, String relativeUri, T requestEntity) throws HttpClientException 
+  {    
+    try 
+    {
+      String content = JaxbUtil.toXml(requestEntity, false);
+      
+      URLConnection conn = getConnection(POST, relativeUri);    
+      conn.setRequestProperty("Content-Type", "application/xml");
+      conn.setRequestProperty("Content-Length", String.valueOf(content.length()));
+      
+      DataOutputStream requestStream = new DataOutputStream(conn.getOutputStream());    
+      requestStream.writeBytes(content);        
+      requestStream.flush();
+      requestStream.close();
+      
+      InputStream responseStream = conn.getInputStream();   
+      return JaxbUtil.toObject(responseClass, responseStream);
+    }
+    catch (Exception ex)
+    {
+      throw new HttpClientException(ex.toString());
+    }
+  }
+  
+  public <T,R> R post(Class<R> responseClass, T requestEntity) throws HttpClientException 
+  { 
+    return post(responseClass, "", requestEntity);
+  }
+  
+  public <T> T post(Class<T> responseClass, String relativeUri, Hashtable<String,String> formData) throws HttpClientException
+  {
+    try
+    {
+      URLConnection conn = getConnection(POST, relativeUri);
+      conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
     
-    DataOutputStream requestStream = new DataOutputStream(conn.getOutputStream());    
-    requestStream.writeBytes(requestEntity.toString());        
-    requestStream.flush();
-    requestStream.close();
-    
-    InputStream responseStream = conn.getInputStream();   
-    return JaxbUtil.toObject(responseClass, responseStream);
+      StringBuilder requestEntity = new StringBuilder();
+      for (Entry<String,String> pair : formData.entrySet())
+      {
+        if (requestEntity.length() > 0)
+        {
+          requestEntity.append('&');
+        }      
+        requestEntity.append(pair.getKey() + "=" + URLEncoder.encode(pair.getValue(), "UTF-8"));
+      }
+      
+      DataOutputStream requestStream = new DataOutputStream(conn.getOutputStream());    
+      requestStream.writeBytes(requestEntity.toString());        
+      requestStream.flush();
+      requestStream.close();
+      
+      InputStream responseStream = conn.getInputStream();   
+      return JaxbUtil.toObject(responseClass, responseStream);
+    }
+    catch (Exception ex)
+    {
+      throw new HttpClientException(ex.toString());
+    }
   }
   
   public void setBaseUri(String baseUri)

@@ -12,17 +12,27 @@
   </package>
   
   <package name="app-data" extends="json-default">
-    <action name="adata" class="org.iringtools.controllers.AppDataController" method="getPageDto">
+    <action name="adata" class="org.iringtools.controllers.AppDataController" method="getPageDtos">
       <result type="json">
          <param name="root">pageDtoGrid</param>
+      </result>
+    </action>
+    <action name="radata" class="org.iringtools.controllers.AppDataController" method="getPageRelatedItems">
+      <result type="json">
+         <param name="root">pageRelatedItemGrid</param>
       </result>
     </action>
   </package>
    
   <package name="exchange-data" extends="json-default">
-    <action name="xdata" class="org.iringtools.controllers.ExchangeDataController" method="getPageDto">
+    <action name="xdata" class="org.iringtools.controllers.ExchangeDataController" method="getPageDtos">
       <result type="json">
          <param name="root">pageDtoGrid</param>
+      </result>
+    </action>
+    <action name="rxdata" class="org.iringtools.controllers.ExchangeDataController" method="getPageRelatedItems">
+      <result type="json">
+         <param name="root">pageRelatedItemGrid</param>
       </result>
     </action>
 	</package>

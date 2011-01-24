@@ -1,13 +1,10 @@
 package org.iringtools.controllers;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.struts2.interceptor.SessionAware;
-import org.iringtools.dxfr.dti.DataTransferIndex;
-import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.models.ExchangeDataModel;
+import org.iringtools.utility.HttpClientException;
 import org.iringtools.widgets.grid.Grid;
 
 import com.opensymphony.xwork2.ActionContext;
@@ -16,57 +13,66 @@ import com.opensymphony.xwork2.ActionSupport;
 public class ExchangeDataController extends ActionSupport implements SessionAware
 {
   private static final long serialVersionUID = 1L;
-  private Map<String, Object> session;
   private ExchangeDataModel exchangeDataModel;
+  private String esbServiceUri;
   private Grid pageDtoGrid;
+  private Grid pageRelatedItemGrid;
+  
   private String scope;
-  private int xid;
+  private String xid;
+  private String individual;
+  private String classId;
+  private String classIdentifier;
   private int start;
   private int limit;
   
   public ExchangeDataController() 
-  {
-    HashMap<String, String> settings = new HashMap<String, String>();
-    settings.put("ESBServiceUri", ActionContext.getContext().getApplication().get("ESBServiceUri").toString());
-    exchangeDataModel = new ExchangeDataModel(settings);
+  {    
+    esbServiceUri = ActionContext.getContext().getApplication().get("ESBServiceUri").toString();
+    exchangeDataModel = new ExchangeDataModel();
   }
   
-  public String getPageDto() throws Exception 
+  @Override
+  public void setSession(Map<String, Object> session)
   {
-    String dtiKey = scope + "-" + xid;    
-    String pageDtoKey = dtiKey + "-" + start + "-" + limit;    
-    DataTransferIndices dti = null;
-    
-    if (session.containsKey(dtiKey)) {
-      dti = (DataTransferIndices)session.get(dtiKey);
-    }
-    else {
-      dti = exchangeDataModel.getDti(scope, xid);
-      session.put(dtiKey, dti);
-    }
-    
-    if (session.containsKey(pageDtoKey)) {
-      pageDtoGrid = (Grid)session.get(pageDtoKey);
-    }
-    else {
-      List<DataTransferIndex> dtiList = dti.getDataTransferIndexList().getItems();
-      int actualLimit = Math.min(start + limit, dtiList.size());
-      List<DataTransferIndex> pageDti = dti.getDataTransferIndexList().getItems().subList(start, actualLimit);
-      
-      pageDtoGrid = exchangeDataModel.getPageDto(scope, xid, pageDti); 
-      session.put(pageDtoKey, pageDtoGrid);      
-    }    
-    
-    pageDtoGrid.setTotal(dti.getDataTransferIndexList().getItems().size());
-    
+    exchangeDataModel.setSession(session);
+  } 
+  
+  //-------------------------------------
+  // get a page of data transfer objects 
+  // ------------------------------------
+  public String getPageDtos() throws HttpClientException
+  {
+    String dtiUrl = esbServiceUri + "/" + scope + "/exchanges/" + xid;
+    String dtoUrl = dtiUrl;    
+    pageDtoGrid = exchangeDataModel.getDtoGrid(dtiUrl, dtoUrl, start, limit);    
     return SUCCESS;
   }
-
+  
   public Grid getPageDtoGrid()
   {
     return pageDtoGrid;
   }
+  
+  //-----------------------------
+  // get a page of related items
+  // ----------------------------
+  public String getPageRelatedItems() throws HttpClientException 
+  {
+    String dtiUrl = esbServiceUri + "/" + scope + "/exchanges/" + xid;
+    String dtoUrl = dtiUrl;    
+    pageRelatedItemGrid = exchangeDataModel.getRelatedItemGrid(dtiUrl, dtoUrl, individual, classId, classIdentifier, start, limit);
+    return SUCCESS;
+  }
 
+  public Grid getPageRelatedItemGrid()
+  {
+    return pageRelatedItemGrid;
+  }
+  
+  // --------------------------
+  // getter and setter methods
+  // --------------------------
   public void setScope(String scope)
   {
     this.scope = scope;
@@ -77,14 +83,44 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
     return scope;
   }
 
-  public void setXid(int xid)
+  public void setXid(String xid)
   {
     this.xid = xid;
   }
 
-  public int getXid()
+  public String getXid()
   {
     return xid;
+  }
+  
+  public void setIndividual(String individual)
+  {
+    this.individual = individual;
+  }
+
+  public String getIndividual()
+  {
+    return individual;
+  }
+  
+  public void setClassId(String classId)
+  {
+    this.classId = classId;
+  }
+
+  public String getClassId()
+  {
+    return classId;
+  }
+  
+  public void setClassIdentifier(String classIdentifier)
+  {
+    this.classIdentifier = classIdentifier;
+  }
+
+  public String getClassIdentifier()
+  {
+    return classIdentifier;
   }
 
   public void setStart(int start)
@@ -105,11 +141,5 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   public int getLimit()
   {
     return limit;
-  }
-  
-  @Override
-  public void setSession(Map<String, Object> session)
-  {
-    this.session = session;
   } 
 }

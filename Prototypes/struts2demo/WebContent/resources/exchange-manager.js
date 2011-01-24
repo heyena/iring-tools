@@ -39,7 +39,7 @@ function createGridPane(store, pageSize){
   return gridPane;
 }
 
-function loadPageDto(type, label, url){
+function loadPageDto(type, action, context, label){
   var tab = Ext.getCmp('content-pane').getItem('tab-' + label);
   
   if (tab != null){
@@ -48,6 +48,7 @@ function loadPageDto(type, label, url){
   else { 
     Ext.getBody().mask("Loading...", "x-mask-loading");    
     
+    var url = action + context;
     var store = createGridStore(url);
     var pageSize = 25; 
     
@@ -85,12 +86,14 @@ function loadPageDto(type, label, url){
       var dtoTab = new Ext.Panel({
         id: 'tab-' + label,
         title: label,
+        type: type,
+        context: context,
         layout: 'border',
         closable: true,
         items: [dtoNavPane, dtoContentPane]
       });
       
-      if (type == 'exchange'){
+      if (type == 'exchange'){         
         dtoTab.add(new Ext.Panel({
           id: 'log-' + label,
           title: 'Exchange Logs',
@@ -113,12 +116,49 @@ function loadPageDto(type, label, url){
   }
 }
 
-function loadRelatedClass(classId, classInstance, relatedClassId){
-  alert('loadRelatedClass ' + classId + '/' + classInstance + '/' + relatedClassId);
-}
-
-function loadRelatedClassItems(classId, classInstance, relatedClassId, relatedClassInstance){
-  alert('loadRelatedClassItems ' + classId + '/' + classInstance + '/' + relatedClassId);  
+function loadRelatedItem(type, context, individual, classId, className, classIdentifier){
+  Ext.getBody().mask("Loading...", "x-mask-loading");    
+  
+  var url = context + '&individual=' + individual + '&classId=' + classId + '&classIdentifier=' + classIdentifier;
+  if (type == 'app'){
+    url = 'radata' + url;
+  }
+  else {
+    url = 'rxdata' + url;
+  }
+  
+  var store = createGridStore(url);
+  var pageSize = 25; 
+  
+  store.on('load', function(){
+    var dtoTab = Ext.getCmp('content-pane').getActiveTab();
+    var label = dtoTab.id.substring(4);
+    var dtoNavPane = dtoTab.items.map['nav-' + label];
+    var dtoContentPane = dtoTab.items.map['dto-' + label];    
+    
+    dtoNavPane.add({
+      xtype: 'box',
+      autoEl: {tag: 'img', src: 'resources/images/breadcrumb.png'},
+      cls: 'breadcrumb-img'
+    },{
+      xtype: 'box',
+      autoEl: {tag: 'a', href: 'javascript:navigate(' + (dtoNavPane.items.length + 1) + ')', html: className},
+      cls: 'breadcrumb',
+      overCls: 'breadcrumb-hover'
+    });    
+    dtoNavPane.doLayout();
+    
+    store.recordType = store.reader.recordType;  
+    dtoContentPane.add(createGridPane(store, pageSize));
+    dtoContentPane.getLayout().setActiveItem(dtoContentPane.items.length-1);
+  });
+  
+  store.load({
+    params: {
+      start: 0,          
+      limit: pageSize
+    }
+  });
 }
 
 function showIndividualInfo(individual, relatedClasses){
@@ -172,8 +212,10 @@ function showIndividualInfo(individual, relatedClasses){
     relatedItemPane.add({
       xtype: 'box',
       autoEl: {
-        tag: 'a', href: 'javascript:loadRelatedClass(\'' + individual + '\',\'' + 
-        relatedClasses[i].id + '\',\'' + relatedClasses[i].identifier + '\')', html: relatedClasses[i].name
+        tag: 'a', href: 'javascript:loadRelatedItem(\'' + dtoTab.type + '\',\'' + 
+        dtoTab.context + '\',\'' + individual + '\',\'' + relatedClasses[i].id + '\',\'' + 
+        relatedClasses[i].name + '\',\'' + relatedClasses[i].identifier + '\')', 
+        html: relatedClasses[i].name
       },
       style: {width: '100%'},
       cls: 'breadcrumb',
@@ -187,9 +229,6 @@ function showIndividualInfo(individual, relatedClasses){
     border: false,
     items: [classItemPane, propertyGrid, relatedItemPane]
   });
-
-  dtoContentPane.add(individualInfoPane);
-  dtoContentPane.getLayout().setActiveItem(dtoContentPane.items.length-1);
   
   dtoNavPane.add({
     xtype: 'box',
@@ -200,9 +239,11 @@ function showIndividualInfo(individual, relatedClasses){
     autoEl: {tag: 'a', href: 'javascript:navigate(' + (dtoNavPane.items.length + 1) + ')', html: individual},
     cls: 'breadcrumb',
     overCls: 'breadcrumb-hover'
-  });  
-  
+  });
   dtoNavPane.doLayout();
+
+  dtoContentPane.add(individualInfoPane);
+  dtoContentPane.getLayout().setActiveItem(dtoContentPane.items.length-1);
 }
 
 function navigate(navItemIndex){
@@ -298,14 +339,14 @@ Ext.onReady(function(){
             var app = graphNode.attributes['text'];
             var graph = node.attributes['text'];
             var label = scope + '.' + app + '.' + graph;
-            var url = 'adata?scope=' + scope + '&app=' + app + '&graph=' + graph;
-            loadPageDto('app', label, url);
+            var context = '?scope=' + scope + '&app=' + app + '&graph=' + graph;
+            loadPageDto('app', 'adata', context, label);
           }
           else if (dataTypeNode.attributes['text'] == 'Data Exchanges'){
             var scope = dataTypeNode.parentNode.attributes['text'];
             var exchangeId = properties['Id'];
-            var url = 'xdata?scope=' + scope + '&xid=' + exchangeId;
-            loadPageDto('exchange', node.text, url);
+            var context = '?scope=' + scope + '&xid=' + exchangeId;
+            loadPageDto('exchange', 'xdata', context, node.text);
           }
         }
       }
