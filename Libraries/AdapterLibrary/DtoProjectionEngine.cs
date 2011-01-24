@@ -132,6 +132,8 @@ namespace org.iringtools.adapter.projection
                     if (!String.IsNullOrEmpty(roleMap.valueList))
                     {
                       value = _mapping.ResolveValueList(roleMap.valueList, value);
+                      if (value != null)
+                        value = value.Replace(RDL_NS.NamespaceName, "rdl:");
                     }
                     else if (roleMap.dataType.Contains("dateTime"))
                     {
@@ -140,6 +142,7 @@ namespace org.iringtools.adapter.projection
                   }
                   else if (roleMap.classMap != null)
                   {
+                    roleObject.relatedClassId = roleMap.classMap.classId;
                     roleObject.relatedClassName = roleMap.classMap.name;
 
                     if (!String.IsNullOrEmpty(_classIdentifiers[roleMap.classMap.classId][i]))

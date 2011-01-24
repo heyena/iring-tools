@@ -188,6 +188,8 @@ namespace org.iringtools.adapter
     public string value { get; set; }
 
     [DataMember(Order = 6, EmitDefaultValue = false)]
+    public string relatedClassId { get; set; }
+    [DataMember(Order = 7, EmitDefaultValue = false)]
     public string relatedClassName { get; set; }
   }
 

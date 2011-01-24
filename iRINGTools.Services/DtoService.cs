@@ -71,7 +71,7 @@ namespace org.iringtools.services
       return _dtoProvider.GetManifest(scope, app);
     }
 
-    [Description("Gets data transfer objects for a particular graph.")]
+    [Description("Gets data transfer indices for a particular graph.")]
     [WebGet(UriTemplate = "/{scope}/{app}/{graph}?hashAlgorithm={hashAlgorithm}")]
     public DataTransferIndices GetDataTransferIndices(string scope, string app, string graph, string hashAlgorithm)
     {
@@ -94,7 +94,7 @@ namespace org.iringtools.services
       return _dtoProvider.GetDataTransferIndicesWithFilter(scope, app, graph, hashAlgorithm, filter);
     }
 
-    [Description("Gets data transfer indices according to manifest.")]
+    [Description("Gets data transfer indices according to the posted manifest.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxi?hashAlgorithm={hashAlgorithm}")]
     public DataTransferIndices GetDataTransferIndicesWithManifest(string scope, string app, string graph, string hashAlgorithm, Manifest manifest)
     {
@@ -114,7 +114,7 @@ namespace org.iringtools.services
       return _dtoProvider.GetDataTransferIndicesByRequest(scope, app, graph, hashAlgorithm, request);
     }
 
-    [Description("Gets data transfer objects according to dti.")]
+    [Description("Gets data transfer objects according to the posted data transfer indices.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/page")]
     public DataTransferObjects GetDataTransferObjects(string scope, string app, string graph, DataTransferIndices dataTransferIndices)
     {
@@ -124,7 +124,7 @@ namespace org.iringtools.services
       return _dtoProvider.GetDataTransferObjects(scope, app, graph, dataTransferIndices);
     }
 
-    [Description("Gets data transfer objects according to manifest and dti request.")]
+    [Description("Gets data transfer objects according to the posted manifest and data transfer indices.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxo")]
     public DataTransferObjects GetDataTransferObjectsWithManifest(string scope, string app, string graph, DxoRequest dtoPageRequest)
     {
@@ -144,7 +144,7 @@ namespace org.iringtools.services
       return _dtoProvider.GetDataTransferObject(scope, app, graph, id);
     }
 
-    [Description("Posts data transfer objects to add/update/delete.")]
+    [Description("Posts data transfer objects to add/update/delete to data layer.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}")]
     public Response PostDataTransferObjects(string scope, string app, string graph, DataTransferObjects dataTransferObjects)
     {
