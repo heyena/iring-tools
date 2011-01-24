@@ -1043,7 +1043,7 @@ namespace org.iringtools.adapter
       {
         if (!_isDataLayerInitialized)
         {
-          if (_settings["DumpSettings"].ToLower() == "true")
+          if (_settings["DumpSettings"] == "True")
           {
             Dictionary<string, string> settingsDictionary = new Dictionary<string, string>();
             foreach (string key in _settings.AllKeys)

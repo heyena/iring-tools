@@ -19,6 +19,7 @@ namespace org.iringtools.adapter
       this.Add("dotNetRDFUser", "dotNetRDF");
       this.Add("dotNetRDFPassword", "dotNetRDF");
       this.Add("TrimData", "False");
+      this.Add("DumpSettings", "False");
       this.Add("ExecutingAssemblyName", "App_Code");
 
       if (OperationContext.Current != null)
