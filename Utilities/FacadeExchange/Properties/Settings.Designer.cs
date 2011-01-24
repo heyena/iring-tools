@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace IDS_ASI.iRING.Adapter.Properties {
+namespace org.iringtools.utils.exchange.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

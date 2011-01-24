@@ -34,6 +34,7 @@ using log4net;
 using org.iringtools.library;
 using org.iringtools.utility;
 using org.iringtools.adapter;
+using System.Collections.Specialized;
 
 namespace org.iringtools.services
 {
@@ -60,12 +61,12 @@ namespace org.iringtools.services
     /// <returns>Returns the version as a string.</returns>
     [Description("Gets the version of the service.")]
     [WebGet(UriTemplate = "/version")]
-    public string GetVersion()
+    public VersionInfo GetVersion()
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
 
-      return _adapterProvider.GetType().Assembly.GetName().Version.ToString();
+      return _adapterProvider.GetVersion();
     }
     #endregion
 
@@ -92,6 +93,27 @@ namespace org.iringtools.services
     }
     #endregion
 
+    #region GetListWithFilter
+    /// <summary>
+    /// Gets an XML projection of the specified scope and graph.
+    /// </summary>
+    /// <param name="projectName">Project name</param>
+    /// <param name="applicationName">Application name</param>
+    /// <param name="graphName">Graph name</param>
+    /// <param name="format">Format to be returned (xml, dto, rdf ...)</param>
+    /// <returns>Returns an arbitrary XML</returns>
+    [Description("Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/filter?format={format}&start={start}&limit={limit}")]
+    public XElement GetListWithFilter(string projectName, string applicationName, string graphName, DataFilter filter, string format, int start, int limit)
+    {
+      XDocument xDocument = _adapterProvider.GetDataProjection(projectName, applicationName, graphName, filter, format, start, limit);
+
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return xDocument.Root;
+    }
+    #endregion
     #region GetList
     /// <summary>
     /// Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.
@@ -102,10 +124,13 @@ namespace org.iringtools.services
     /// <param name="format">Format to be returned (xml, dto, rdf ...)</param>
     /// <returns>Returns an arbitrary XML</returns>
     [Description("Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.")]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}")]
-    public XElement GetList(string projectName, string applicationName, string graphName, string format)
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}")]
+    public XElement GetList(string projectName, string applicationName, string graphName, string format, int start, int limit, string sortOrder, string sortBy)
     {
-      XDocument xDocument = _adapterProvider.GetDataProjection(projectName, applicationName, graphName, format);
+
+      NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+
+      XDocument xDocument = _adapterProvider.GetDataProjection(projectName, applicationName, graphName, format, start, limit, sortOrder, sortBy, parameters);
 
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";

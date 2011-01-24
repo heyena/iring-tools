@@ -20,7 +20,7 @@ using System.Web;
 
 namespace org.iringtools.adapter.projection
 {
-  public class RdfProjectionEngine : BaseProjectionEngine
+  public class RdfProjectionEngine : BasePart7ProjectionEngine
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(RdfProjectionEngine));
     private Dictionary<string, List<IDataObject>> _relatedObjectsCache = null;
@@ -415,7 +415,7 @@ namespace org.iringtools.adapter.projection
 
             foreach (SparqlResult result in resultSet)
             {
-              string subclassInstance = result.Value(CLASS_VARIABLE).ToString();
+              string subclassInstance = result.Value(CLASS_VARIABLE).ToString().Remove(0, ("?class = ").Length);
               CreateDataObjects(classRole.classMap.id, subclassInstance, dataObjectIndex);
               break;  // should be one result only
             }
@@ -440,7 +440,7 @@ namespace org.iringtools.adapter.projection
 
               foreach (SparqlResult result in resultSet)
               {
-                string value = result.Value(LITERAL_VARIABLE).ToString();
+                string value = Regex.Replace(result.Value(LITERAL_VARIABLE).ToString(), @".*= ", String.Empty);
 
                 if (value == RDF_NIL)
                   value = String.Empty;

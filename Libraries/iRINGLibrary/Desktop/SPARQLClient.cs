@@ -83,5 +83,20 @@ namespace org.iringtools.library
         throw exception;
       }
     }
+    public static string Update(string baseUri, string sparql, WebCredentials targetCredentials, WebProxyCredentials proxyCredentials)
+    {
+      try
+      {
+        string message = String.Empty;
+        string relativeUri = "?update=" + HttpUtility.UrlEncode(sparql);
+        WebHttpClient webClient = new WebHttpClient(baseUri, targetCredentials.GetNetworkCredential(), proxyCredentials.GetWebProxy());
+        message = webClient.GetMessage(relativeUri);
+        return message;
+      }
+      catch (Exception exception)
+      {
+        throw exception;
+      }
+    }
   }
 }

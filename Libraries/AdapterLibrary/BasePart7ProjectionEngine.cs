@@ -8,12 +8,11 @@ using org.iringtools.library;
 using VDS.RDF.Query;
 using VDS.RDF;
 using System.Text.RegularExpressions;
-using org.iringtools.mapping;
-using org.iringtools.dxfr.manifest;
+using org.iringtools.utility;
 
 namespace org.iringtools.adapter.projection
 {
-  public abstract class BaseProjectionEngine : IProjectionLayer
+  public abstract class BasePart7ProjectionEngine : IProjectionLayer
   {
     protected static readonly XNamespace RDF_NS = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
     protected static readonly XNamespace OWL_NS = "http://www.w3.org/2002/07/owl#";
@@ -34,44 +33,41 @@ namespace org.iringtools.adapter.projection
     protected static readonly string RDL_PREFIX = "rdl:";
     protected static readonly string TPL_PREFIX = "tpl:";
     protected static readonly string RDF_NIL = RDF_PREFIX + "nil";
-
-    protected static readonly string CLASS_VARIABLE = "class";
-    protected static readonly string LITERAL_VARIABLE = "literal";
     protected static readonly string BLANK_NODE = "?bnode";
     protected static readonly string END_STATEMENT = ".";
 
     protected static readonly string CLASS_INSTANCE_QUERY_TEMPLATE = String.Format(@"
       PREFIX rdf: <{0}>
       PREFIX rdl: <{1}> 
-      SELECT ?{2}
+      SELECT ?class
       WHERE {{{{ 
         ?class rdf:type {{0}} . 
-      }}}}", RDF_NS.NamespaceName, RDL_NS.NamespaceName, CLASS_VARIABLE);
+      }}}}", RDF_NS.NamespaceName, RDL_NS.NamespaceName);
 
     protected static readonly string SUBCLASS_INSTANCE_QUERY_TEMPLATE = String.Format(@"
       PREFIX rdf: <{0}>
       PREFIX rdl: <{1}> 
       PREFIX tpl: <{2}>
-      SELECT ?{3} 
+      SELECT ?class 
       WHERE {{{{
-	      {4} {{0}} <{{1}}> . 
-	      {4} rdf:type {{2}} . 
+	      {3} {{0}} <{{1}}> . 
+	      {3} rdf:type {{2}} . 
 	      {{3}} {{4}} {{5}} {{6}}
-	      {4} {{7}} ?{3} 
-      }}}}", RDF_NS.NamespaceName, RDL_NS.NamespaceName, TPL_NS.NamespaceName, CLASS_VARIABLE, BLANK_NODE);
+	      {3} {{7}} ?class 
+      }}}}", RDF_NS.NamespaceName, RDL_NS.NamespaceName, TPL_NS.NamespaceName, BLANK_NODE);
 
     protected static readonly string LITERAL_QUERY_TEMPLATE = String.Format(@"
       PREFIX rdf: <{0}>
       PREFIX rdl: <{1}> 
       PREFIX tpl: <{2}>
-      SELECT ?{3} 
+      SELECT ?literals 
       WHERE {{{{
-	      {4} {{0}} <{{1}}> . 
-	      {4} rdf:type {{2}} . 
+	      {3} {{0}} <{{1}}> . 
+	      {3} rdf:type {{2}} . 
 	      {{3}} {{4}} {{5}} {{6}}
-	      {4} {{7}} ?{3} 
-      }}}}", RDF_NS.NamespaceName, RDL_NS.NamespaceName, TPL_NS.NamespaceName, LITERAL_VARIABLE, BLANK_NODE);
-    
+	      {3} {{7}} ?literals 
+      }}}}", RDF_NS.NamespaceName, RDL_NS.NamespaceName, TPL_NS.NamespaceName, BLANK_NODE);
+
     protected AdapterSettings _settings = null;
     protected Mapping _mapping = null;
     protected GraphMap _graphMap = null;
@@ -82,8 +78,12 @@ namespace org.iringtools.adapter.projection
     protected List<string> _relatedObjectPaths = null;
     protected Dictionary<string, IList<IDataObject>>[] _relatedObjects = null;
     protected TripleStore _memoryStore = null;
+    private RoleType _roleType = RoleType.Property;
+    private string _valueListName = null;
 
-    public BaseProjectionEngine()
+    public long Count { get; set; }
+
+    public BasePart7ProjectionEngine()
     {
       _dataObjects = new List<IDataObject>();
       _classIdentifiers = new Dictionary<string, List<string>>();
@@ -214,14 +214,14 @@ namespace org.iringtools.adapter.projection
 
               foreach (IDataObject parentObject in parentObjects)
               {
-                DataObject dataObject = dictionary.DataObjects.First(c => c.ObjectName == parentObjectType);
-                DataRelationship dataRelationship = dataObject.DataRelationships.First(c => c.RelationshipName == relatedObjectType);
+                DataObject dataObject = dictionary.dataObjects.First(c => c.objectName == parentObjectType);
+                DataRelationship dataRelationship = dataObject.dataRelationships.First(c => c.relationshipName == relatedObjectType);
 
                 foreach (IDataObject relatedObject in relatedObjects)
                 {
-                  foreach (PropertyMap map in dataRelationship.PropertyMaps)
+                  foreach (PropertyMap map in dataRelationship.propertyMaps)
                   {
-                    relatedObject.SetPropertyValue(map.RelatedPropertyName, parentObject.GetPropertyValue(map.DataPropertyName));
+                    relatedObject.SetPropertyValue(map.relatedPropertyName, parentObject.GetPropertyValue(map.dataPropertyName));
                   }
                 }
               }
@@ -253,9 +253,8 @@ namespace org.iringtools.adapter.projection
     {
       _classIdentifiers.Clear();
 
-      foreach (ClassTemplateMap classTemplateMap in _graphMap.classTemplateMaps)
+      foreach (ClassMap classMap in _graphMap.classTemplateListMaps.Keys)
       {
-        ClassMap classMap = classTemplateMap.classMap;
         List<string> identifiers = new List<string>();
 
         foreach (string identifier in classMap.identifiers)
@@ -302,7 +301,7 @@ namespace org.iringtools.adapter.projection
           }
         }
 
-        _classIdentifiers[classMap.id] = identifiers;
+        _classIdentifiers[classMap.classId] = identifiers;
       }
     }
 
@@ -312,10 +311,13 @@ namespace org.iringtools.adapter.projection
 
       if (_memoryStore != null)
       {
-        ClassTemplateMap classTemplateMap = _graphMap.classTemplateMaps.First();
-        string classId = classTemplateMap.classMap.id;
+        var pair = _graphMap.classTemplateListMaps.First();
+        string classId = pair.Key.classId;
 
         string query = String.Format(CLASS_INSTANCE_QUERY_TEMPLATE, classId);
+
+        Utility.WriteString(query, "./Logs/Sparql.log", true);
+
         object results = _memoryStore.ExecuteQuery(query);
 
         if (results != null)
@@ -324,7 +326,7 @@ namespace org.iringtools.adapter.projection
 
           foreach (SparqlResult result in resultSet)
           {
-            string classInstance = result.Value(CLASS_VARIABLE).ToString();
+            string classInstance = result.ToString().Remove(0, ("?class = " + _graphBaseUri).Length);
 
             if (!String.IsNullOrEmpty(classInstance))
             {
@@ -350,10 +352,8 @@ namespace org.iringtools.adapter.projection
     {
       _classIdentifiers.Clear();
 
-      foreach (ClassTemplateMap classTemplateMap in _graphMap.classTemplateMaps)
+      foreach (ClassMap classMap in _graphMap.classTemplateListMaps.Keys)
       {
-        ClassMap classMap = classTemplateMap.classMap;
-
         List<string> classIdentifiers = new List<string>();
 
         foreach (string identifier in classMap.identifiers)
@@ -400,8 +400,206 @@ namespace org.iringtools.adapter.projection
           }
         }
 
-        _classIdentifiers[classMap.id] = classIdentifiers;
+        _classIdentifiers[classMap.classId] = classIdentifiers;
       }
+    }
+
+    //resolve the dataFilter into data object terms
+    public void ProjectDataFilter(DataDictionary dictionary, ref DataFilter filter, string graph)
+    {
+      try
+      {
+        if (filter == null || filter.Expressions == null || filter.OrderExpressions == null)
+          throw new Exception("Invalid DataFilter.");
+
+        _graphMap = _mapping.FindGraphMap(graph);
+
+        DataObject _dataObject = dictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectMap);
+
+        foreach (Expression expression in filter.Expressions)
+        {
+          string[] propertyNameParts = expression.PropertyName.Split('.');
+          string dataPropertyName = ProjectPropertyName(propertyNameParts, 0, null);
+          expression.PropertyName = RemoveDataPropertyAlias(dataPropertyName);
+          if (_roleType == RoleType.ObjectProperty)
+          {
+            if (expression.RelationalOperator == RelationalOperator.EqualTo)
+            {
+              expression.Values = ProjectPropertValues(expression.Values);
+              expression.RelationalOperator = RelationalOperator.In;
+            }
+            else if (expression.RelationalOperator == RelationalOperator.In)
+            {
+              expression.Values = ProjectPropertValues(expression.Values);
+            }
+            else
+            {
+              throw new Exception(
+                "Invalid Expression in DataFilter. " +
+                "Object Property Roles can only use EqualTo and In in the expression."
+              );
+            }
+          }
+        }
+
+        foreach (OrderExpression orderExpression in filter.OrderExpressions)
+        {
+          string[] propertyNameParts = orderExpression.PropertyName.Split('.');
+          string dataPropertyName = ProjectPropertyName(propertyNameParts, 0, null);
+          orderExpression.PropertyName = RemoveDataPropertyAlias(dataPropertyName);
+        }
+      }
+      catch (Exception ex)
+      {
+        throw new Exception("Error while projecting a DataFilter for use with DataLayer.", ex);
+      }
+    }
+
+    public string RemoveDataPropertyAlias(string dataPropertyName)
+    {
+      char[] dot = { '.' };
+      string[] dataPropertyNameParts = dataPropertyName.Split(dot, 2);
+
+      if (dataPropertyNameParts.Count() > 1)
+        return dataPropertyNameParts[1];
+      else
+        return dataPropertyNameParts[0];
+    }
+
+    public Values ProjectPropertValues(Values values)
+    {
+      Values dataValues = new Values();
+
+      ValueList valueList = _mapping.valueLists.Find(vl => vl.name == _valueListName);
+
+      foreach (string value in values)
+      {
+        List<ValueMap> valueMaps = valueList.valueMaps.FindAll(vm => vm.uri == value);
+        foreach (ValueMap valueMap in valueMaps)
+        {
+          string dataValue = valueMap.internalValue;
+          dataValues.Add(dataValue);
+        }
+      }
+
+      return dataValues;
+    }
+
+    //resolve the propertyName expression into data object propertyName
+    public string ProjectPropertyName(string[] propertyNameParts, int index, string classId)
+    {
+      string dataPropertyName = String.Empty;
+
+      string templateName = propertyNameParts[index];
+      string roleName = propertyNameParts[index + 1];
+
+      List<TemplateMap> templateMaps = null;
+      if (!String.IsNullOrEmpty(classId))
+      {
+        templateMaps = _graphMap.GetClassTemplateListMap(classId).Value;
+      }
+      else
+      {
+        templateMaps = _graphMap.classTemplateListMaps.First().Value;
+      }
+
+      TemplateMap templateMap = templateMaps.Find(tm => tm.name == templateName);
+      RoleMap roleMap = templateMap.roleMaps.Find(rm => rm.name == roleName);
+
+      switch (roleMap.type)
+      {
+        case RoleType.DataProperty:
+          //if last part...
+          if (propertyNameParts.Count() == index + 2)
+          {
+            dataPropertyName = roleMap.propertyName;
+            _roleType = RoleType.DataProperty;
+            _valueListName = null;
+          }
+          else
+          {
+            throw new Exception(String.Format(
+              "Invalid PropertyName Expression in DataFilter.  Data Property Role ({0}) must be the last role in the expression.",
+              roleName)
+            );
+          }
+          break;
+
+        case RoleType.FixedValue:
+          throw new Exception(String.Format(
+            "Invalid PropertyName Expression in DataFilter.  Fixed Value Role ({0}) is not allowed in the expression.",
+            roleName)
+           );
+
+        case RoleType.ObjectProperty:
+          //if last part...
+          if (propertyNameParts.Count() == index + 2)
+          {
+            dataPropertyName = roleMap.propertyName;
+            _roleType = RoleType.ObjectProperty;
+            _valueListName = roleMap.valueList;
+          }
+          else
+          {
+            throw new Exception(String.Format(
+              "Invalid PropertyName Expression in DataFilter.  Data Property Role ({0}) must be the last role in the expression.",
+              roleName)
+            );
+          }
+          break;
+
+        case RoleType.Possessor:
+          throw new Exception(String.Format(
+            "Invalid PropertyName Expression in DataFilter.  Possessor Role ({0}) is not allowed in the expression.",
+            roleName)
+            );
+
+        case RoleType.Property:
+          //if last part...
+          if (propertyNameParts.Count() == index + 2)
+          {
+            dataPropertyName = roleMap.propertyName;
+
+            if (String.IsNullOrEmpty(roleMap.valueList))
+            {
+              dataPropertyName = roleMap.propertyName;
+              _roleType = RoleType.DataProperty;
+              _valueListName = null;
+            }
+            else
+            {
+              dataPropertyName = roleMap.propertyName;
+              _roleType = RoleType.ObjectProperty;
+              _valueListName = roleMap.valueList;
+            }
+          }
+          else
+          {
+            throw new Exception(String.Format(
+              "Invalid PropertyName Expression in DataFilter.  Data Property Role ({0}) must be the last role in the expression.",
+              roleName)
+            );
+          }
+          break;
+
+        case RoleType.Reference:
+          //call self recursively
+          if (roleMap.classMap != null)
+          {
+            string relatedClassId = roleMap.classMap.classId;
+            dataPropertyName = ProjectPropertyName(propertyNameParts, index + 2, relatedClassId);
+          }
+          else
+          {
+            throw new Exception(String.Format(
+              "Invalid PropertyName Expression in DataFilter.  Reference Role ({0}) must lead to a ClassMap.",
+              roleName)
+            );
+          }
+          break;
+      }
+
+      return dataPropertyName;
     }
   }
 

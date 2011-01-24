@@ -32,7 +32,10 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/version")]
     public VersionInfo GetVersion()
     {
-      VersionInfo version = new  VersionInfo();
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+	  
+	  VersionInfo version = new  VersionInfo();
       
       Type type = typeof(NHibernateProvider);
       version.Major = type.Assembly.GetName().Version.Major;
@@ -47,42 +50,56 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{project}/{application}/dictionary")]
     public DatabaseDictionary GetDictionary(string project, string application)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
       return _NHibernateProvider.GetDictionary(project, application);
     }
 
     [WebInvoke(Method = "POST", UriTemplate = "/{project}/{application}/dictionary")]
     public Response PostDictionary(string project, string application, DatabaseDictionary dictionary)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
       return _NHibernateProvider.PostDictionary(project, application, dictionary);
     }
 
     [WebGet(UriTemplate = "/{project}/{application}/generate")]
     public Response Generate(string project, string application)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
       return _NHibernateProvider.Generate(project, application);
     }
 
     [WebGet(UriTemplate = "/providers")]
     public DataProviders GetProviders()
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
       return _NHibernateProvider.GetProviders();
     }
 
     [WebGet(UriTemplate = "/relationships")]
     public DataRelationships GetRelationships()
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
       return _NHibernateProvider.GetRelationships();
     }
 
     [WebGet(UriTemplate = "/{project}/{application}/objects")]
     public DataObjects GetSchemaObjects(string project, string application)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
       return _NHibernateProvider.GetSchemaObjects(project, application);
     }
 
     [WebGet(UriTemplate = "/{project}/{application}/objects/{objectName}")]
     public DataObject GetSchemaObjectSchema(string project, string application, string objectName)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
       return _NHibernateProvider.GetSchemaObjectSchema(project, application, objectName);
     }
 

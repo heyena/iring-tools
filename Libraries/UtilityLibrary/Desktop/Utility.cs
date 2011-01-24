@@ -928,7 +928,7 @@ namespace org.iringtools.utility
         case "bigint": return "Int64";
         case "smallint": return "Int16";
         case "tinyint": return "Int16";
-        case "number": return "Int32";
+        case "number": return "Decimal";
         case "long": return "Int64";
         case "clob": return "String";
         case "blob": return "String";
@@ -951,6 +951,23 @@ namespace org.iringtools.utility
             list.Insert(~index, element);
         }
 
+    }
+
+    public static string GetQNameFromUri(String uri)
+    {
+        Uri u;
+        if (uri.StartsWith("http"))
+        {
+            u = new Uri(uri);
+            if (uri.Contains("XMLSchema"))
+                return "xsd:" + u.Fragment.Substring(1);
+            else
+                return u.Authority.Split('.')[0] + ":" + u.Fragment.Substring(1);
+        }
+        else
+        {
+            throw new Exception(uri + " is not a valid Uri");
+        }
     }
 
     public static string GetIdFromURI(string uri)

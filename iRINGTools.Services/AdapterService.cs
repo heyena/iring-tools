@@ -73,6 +73,8 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/version")]
     public VersionInfo GetVersion()
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
       return _adapterProvider.GetVersion();
     }
     #endregion

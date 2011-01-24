@@ -28,10 +28,11 @@ namespace org.iringtools.adapter.projection
 
       try
       {
-        _appNamespace = String.Format("{0}{1}/{2}",
+        _appNamespace = String.Format("{0}{1}/{2}/{3}",
            _settings["GraphBaseUri"],
            HttpUtility.UrlEncode(_settings["ProjectName"]),
-           HttpUtility.UrlEncode(_settings["ApplicationName"])
+           HttpUtility.UrlEncode(_settings["ApplicationName"]),
+           HttpUtility.UrlEncode(graphName)
          );
 
         _dictionary = _dataLayer.GetDictionary();
@@ -39,8 +40,7 @@ namespace org.iringtools.adapter.projection
 
         if (_dataObjects != null && _dataObjects.Count == 1)
         {
-          xElement = new XElement(_appNamespace + Utility.TitleCase(graphName) + "List",
-            new XAttribute(XNamespace.Xmlns + "i", XSI_NS));
+          xElement = new XElement(_appNamespace + Utility.TitleCase(graphName) + "List");
 
           DataObject dataObject = FindGraphDataObject(graphName);
 
@@ -51,10 +51,12 @@ namespace org.iringtools.adapter.projection
             xElement.Add(rowElement);
           }
         }
-        if (_dataObjects != null && _dataObjects.Count > 1)
+        if (_dataObjects != null && (_dataObjects.Count > 1 || _dataObjects.Count == 0))
         {
-          xElement = new XElement(_appNamespace + Utility.TitleCase(graphName) + "List",
-           new XAttribute(XNamespace.Xmlns + "i", XSI_NS));
+          xElement = new XElement(_appNamespace + Utility.TitleCase(graphName) + "List");
+
+          XAttribute total = new XAttribute("total", this.Count);
+          xElement.Add(total);
 
           DataObject dataObject = FindGraphDataObject(graphName);
 
@@ -103,31 +105,44 @@ namespace org.iringtools.adapter.projection
 
     private void CreateIndexXml(XElement parentElement, DataObject dataObject, int dataObjectIndex)
     {
+      string uri = _appNamespace.ToString() + "/";
       foreach (KeyProperty keyProperty in dataObject.KeyProperties)
       {
         DataProperty dataProperty = dataObject.DataProperties.Find(dp => dp.PropertyName == keyProperty.KeyPropertyName);
 
-        XElement propertyElement = new XElement(_appNamespace + Utility.TitleCase(dataProperty.PropertyName));
-        propertyElement.Add(new XAttribute("dataType", dataProperty.DataType));
-        var value = _dataObjects[dataObjectIndex].GetPropertyValue(dataProperty.PropertyName);
+        var value = _dataObjects[dataObjectIndex].GetPropertyValue(dataProperty.propertyName);
         if (value != null)
-          propertyElement.Value = value.ToString();
-
-        parentElement.Add(propertyElement);
+        {
+          XElement propertyElement = new XElement(_appNamespace + dataProperty.propertyName, value);
+          parentElement.Add(propertyElement);
+          uri += value;
+        }
       }
+      List<DataProperty> indexProperties = dataObject.dataProperties.FindAll(dp => dp.showOnIndex == true);
+      foreach (DataProperty indexProperty in indexProperties)
+      {
+        var value = _dataObjects[dataObjectIndex].GetPropertyValue(indexProperty.propertyName);
+        if (value != null)
+        {
+          XElement propertyElement = new XElement(_appNamespace + indexProperty.propertyName, value);
+        parentElement.Add(propertyElement);
+        }
+      }
+      XAttribute uriAttribute = new XAttribute("uri", uri);
+      parentElement.Add(uriAttribute);
     }
 
-    public DataObject FindGraphDataObject(string graphName)
+    public DataObject FindGraphDataObject(string dataObjectName)
     {
       foreach (DataObject dataObject in _dictionary.DataObjects)
       {
-        if (dataObject.ObjectName.ToLower() == graphName.ToLower())
+        if (dataObject.objectName.ToLower() == dataObjectName.ToLower())
         {
           return dataObject;
         }
       }
 
-      throw new Exception("Graph [" + graphName + "] does not exist.");
+      throw new Exception("DataObject [" + dataObjectName + "] does not exist.");
     }
     #endregion
   }
