@@ -2,6 +2,7 @@
 using System.Collections.Specialized;
 using org.iringtools.utility;
 using System.Net;
+using System.ServiceModel;
 
 namespace org.iringtools.library
 {
@@ -15,7 +16,17 @@ namespace org.iringtools.library
       this.Add("ProxyHost", String.Empty);
       this.Add("ProxyPort", String.Empty);
       this.Add("IgnoreSslErrors", "True");
-      this.Add("DumpSettings", "False");
+      if (OperationContext.Current != null)
+      {
+        string baseAddress = OperationContext.Current.Host.BaseAddresses[0].ToString();
+        if (!baseAddress.EndsWith("/"))
+          baseAddress = baseAddress + "/";
+        this.Add("BaseAddress", baseAddress);
+      }
+      else
+      {
+        this.Add("BaseAddress", @"http://www.example.com/");
+      }
     }
 
     //Append Web.config settings

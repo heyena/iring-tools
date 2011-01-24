@@ -28,8 +28,9 @@ namespace org.iringtools.library
         string message = "query=" + HttpUtility.UrlEncode(sparql);
 
         WebHttpClient webClient = new WebHttpClient(baseUri, targetCredentials.GetNetworkCredential(), proxyCredentials.GetWebProxy());
-        string xml = webClient.PostMessage("", message, false);
-        //sparqlResults = webClient.PostMessage<SPARQLResults>("", message, false);
+        
+		//string xml = webClient.PostMessage("", message, false);
+        sparqlResults = webClient.PostMessage<SPARQLResults>("", message, false);
 
         return sparqlResults;
       }
