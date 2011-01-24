@@ -1,10 +1,7 @@
 package org.iringtools.models;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-
-import javax.xml.bind.JAXBException;
 
 import org.iringtools.directory.Application;
 import org.iringtools.directory.ApplicationData;
@@ -15,6 +12,7 @@ import org.iringtools.directory.Exchange;
 import org.iringtools.directory.Graph;
 import org.iringtools.directory.Scope;
 import org.iringtools.utility.HttpClient;
+import org.iringtools.utility.HttpClientException;
 import org.iringtools.widgets.tree.LeafNode;
 import org.iringtools.widgets.tree.Node;
 import org.iringtools.widgets.tree.Tree;
@@ -29,7 +27,7 @@ public class DirectoryModel
     this.settings = settings;
   }
   
-  public Tree createDirectoryTree() throws JAXBException, IOException
+  public Tree createDirectoryTree() throws HttpClientException
   {
     String serviceUri = settings.get("ESBServiceUri");
     HttpClient httpClient = new HttpClient(serviceUri);

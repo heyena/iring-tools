@@ -45,6 +45,7 @@ import org.iringtools.dxfr.request.DxoRequest;
 import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.utility.HttpClient;
+import org.iringtools.utility.HttpClientException;
 import org.iringtools.utility.JaxbUtil;
 
 public class ESBServiceProvider
@@ -521,7 +522,7 @@ public class ESBServiceProvider
     return exchangeResponse;
   }
 
-  private void initExchangeDefinition(String scope, String id) throws JAXBException, IOException 
+  private void initExchangeDefinition(String scope, String id) throws HttpClientException 
   {
     String directoryServiceUrl = settings.get("directoryServiceUri") + "/" + scope + "/exchanges/" + id;
     ExchangeDefinition xdef = httpClient.get(ExchangeDefinition.class, directoryServiceUrl);
