@@ -30,5 +30,12 @@ namespace iRINGTools.Web.Models
     public bool leaf { get; set; }
     public bool expanded { get; set; }
     public List<T> children { get; set; }
+    public virtual string type
+    {
+      get
+      {
+        return "Treenode";
+      }
+    }
   }
 }

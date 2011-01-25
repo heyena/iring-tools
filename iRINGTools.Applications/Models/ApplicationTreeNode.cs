@@ -9,7 +9,15 @@ namespace iRINGTools.Web.Models
   public class ApplicationTreeNode : TreeNode<GraphTreeNode>
   {
     public ScopeApplication ScopeApplication { get; set; }
-    
+
+    public override string type
+    {
+      get
+      {
+        return "Application";
+      }
+    }
+
     public override string text
     {
       get

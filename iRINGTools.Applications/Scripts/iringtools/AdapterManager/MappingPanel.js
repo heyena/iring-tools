@@ -14,8 +14,9 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
 
     autoScroll: true,
     layout: 'border',
-    frame: true,
+    
     split: true,
+    closable: true,
 
     /**
     * initComponent

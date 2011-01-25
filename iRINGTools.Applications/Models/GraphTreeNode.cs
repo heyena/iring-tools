@@ -10,6 +10,14 @@ namespace iRINGTools.Web.Models
   {
     private String GraphMap = null;
 
+    public override string type
+    {
+      get
+      {
+        return "Graph";
+      }
+    }
+
     public override string text
     {
       get
@@ -29,8 +37,7 @@ namespace iRINGTools.Web.Models
     { 
       this.GraphMap = graphMap;      
       this.icon = "Content/img/applications-internet.png";
-      this.children = new List<String>();      
-      this.children.Add("Mapping");
+      this.children = null;      
       this.leaf = true;
     }
   }

@@ -60,15 +60,6 @@ Ext.onReady(function () {
 
     directoryPanel.on('create', function (npanel) {
 
-        var newTab = new AdapterManager.ScopePanel();
-
-        contentPanel.add(newTab);
-        contentPanel.activate(newTab);
-
-    });
-
-    directoryPanel.on('update', function (npanel) {
-
         var window = new Ext.Window({
             title: 'Scope Details',
             width: 300,
@@ -79,79 +70,49 @@ Ext.onReady(function () {
 
     });
 
-    directoryPanel.on('configure', function (npanel, scope, application) {
+    directoryPanel.on('open', function (npanel, node) {
 
-        iRINGTools.setAlert(true, scope + '.' + application);
+        if (node.attributes.type == "Scope") {
 
-    });
-
-    directoryPanel.on('mapping', function (npanel, scope, application, graph) {
-
-        if (application.length > 0) {
-            var newTab = new AdapterManager.MappingPanel({
-                title: 'Mapping - ' + scope + '.' + application + '.' + graph,
-                closable: true
+            var newTab = new AdapterManager.ScopePanel({
+                title: 'Scope - ' + node.text
             });
 
             contentPanel.add(newTab);
             contentPanel.activate(newTab);
-        } else {
-            iRINGTools.setAlert(true, 'Select a application before continuing.');
+
+        } else if (node.attributes.type == "Application") {
+
+            var scope = node.parentNode;
+
+            var newTab = new AdapterManager.ScopePanel({
+                title: 'Application - ' + scope.text + '.' + node.text
+            });
+
+            contentPanel.add(newTab);
+            contentPanel.activate(newTab);
+
+        } else if (node.attributes.type == "Graph") {
+
+            var application = node.parentNode;
+            var scope = application.parentNode;
+
+            var newTab = new AdapterManager.MappingPanel({
+                title: 'Mapping - ' + scope.text + '.' + application.text + '.' + node.text
+            });
+
+            contentPanel.add(newTab);
+            contentPanel.activate(newTab);
+
         }
 
     });
 
-    directoryPanel.on('exchange', function (npanel, scope, application, graph) {
+    directoryPanel.on('remove', function (npanel, node) {
 
-        if (application.length > 0) {
+        App.setAlert(true, scope + '.' + application);
 
-            var exhangePanel = new AdapterManager.ExchangePanel({
-                scope: scope,
-                application: application,
-                graph: graph
-            });
-
-            exhangePanel.on('exchange', function (panel, form) {
-
-                if (!form.isValid()) {
-                    iRINGTools.setAlert(false, "Information is invalid.");
-                    return false;
-                }
-
-                form.submit({
-                    url: "exchange/pull?scope=" + panel.scope + "&application=" + panel.application + "&graph=" + panel.graph,
-                    timeout: 120000,
-                    success: function (form, action) {
-                        Ext.Msg.alert("Exchange - " + form.scope + '.' + form.application + '.' + form.graph, action.result.Message);
-                    }
-                });
-
-            });
-
-            exhangePanel.on('cancel', function (panel) {
-                var win = panel.findParentByType('window');
-                if (win) {
-                    win.close();
-                }
-            });
-
-            var window = new Ext.Window({
-                title: 'Exchange - ' + scope + '.' + application + '.' + graph,
-                labelWidth: 110, // label settings here cascade unless overridden                  
-                width: 490,
-                height: 390,
-                layout: 'fit',
-                modal: true,
-                items: exhangePanel
-            });
-
-            window.show();
-
-        } else {
-            iRINGTools.setAlert(true, '   Please select a application or graph before continuing.  ');
-        }
-
-    });
+    });    
 
     // Load Stores
     searchPanel.load();
