@@ -31,10 +31,11 @@ public class DataModel
 
   private static final Logger logger = Logger.getLogger(DataModel.class);
   protected Map<String, Object> session;
-  protected DataTransferIndices dtis;
-
-  private void getDtis(String dtiUrl)
+  
+  private DataTransferIndices getDtis(String dtiUrl)
   {
+    DataTransferIndices dtis = new DataTransferIndices();
+
     try
     {
       if (session.containsKey(dtiUrl))
@@ -52,6 +53,8 @@ public class DataModel
     {
       logger.error(ex);
     }
+    
+    return dtis;
   }
 
   private DataTransferObjects getDtos(String dtoUrl, List<DataTransferIndex> dtiList)
@@ -87,7 +90,7 @@ public class DataModel
     }
     else
     {
-      getDtis(dtiUrl);
+      DataTransferIndices dtis = getDtis(dtiUrl);
       
       List<DataTransferIndex> dtiList = dtis.getDataTransferIndexList().getItems();
       int actualLimit = Math.min(start + limit, dtiList.size());
