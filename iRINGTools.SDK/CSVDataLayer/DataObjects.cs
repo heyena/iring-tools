@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using org.iringtools.library;
 
-namespace org.iringtools.adapter.datalayer.csv
+namespace iRINGTools.SDK.CSVDataLayer
 {
   public class Equipment
   {

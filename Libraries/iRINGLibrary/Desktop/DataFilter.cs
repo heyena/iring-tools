@@ -114,7 +114,7 @@ namespace org.iringtools.library
 
           foreach (OrderExpression orderExpression in this.OrderExpressions)
           {
-            string orderStatement = ResolveOrderExpression(dataDictionary, objectType, orderExpression, objectAlias);
+            string orderStatement = ResolveOrderExpression(orderExpression, objectAlias);
             whereClause.Append(orderStatement);
           }
         }
@@ -126,6 +126,32 @@ namespace org.iringtools.library
         throw new Exception("Error while geerating SQLWhereClause.", ex);
       }
     }
+
+    //public string ToLinqOrderBy()
+    //{
+    //  if (this == null || this.OrderExpressions.Count == 0)
+    //    return String.Empty;
+
+    //  try
+    //  {
+    //    StringBuilder linqOrderBy = new StringBuilder();
+
+    //    foreach (OrderExpression orderExpression in this.OrderExpressions)
+    //    {
+    //      if (linqOrderBy.Length != 0)
+    //        linqOrderBy.Append(", ");
+
+    //      string orderBy = ResolveLinqOrderExpression(orderExpression);
+    //      linqOrderBy.Append(orderBy);
+    //    }
+
+    //    return linqOrderBy.ToString();
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    throw new Exception("Error while generating LINQ orderBy.", ex);
+    //  }
+    //}
 
     public string ToLinqExpression(Type type, string objectVariable)
     {
@@ -633,7 +659,7 @@ namespace org.iringtools.library
       return sqlExpression.ToString();
     }
 
-    private string ResolveOrderExpression(DataDictionary dataDictionary, string objectType, OrderExpression orderExpression, string objectAlias)
+    private string ResolveOrderExpression(OrderExpression orderExpression, string objectAlias)
     {
       string propertyName = orderExpression.PropertyName;
 
@@ -657,6 +683,31 @@ namespace org.iringtools.library
 
       return sqlExpression.ToString();
     }
+
+    //private string ResolveLinqOrderExpression(OrderExpression orderExpression)
+    //{
+    //  string propertyName = orderExpression.PropertyName;
+
+    //  string qualifiedPropertyName = propertyName;
+
+    //  StringBuilder linqOrderBy = new StringBuilder();
+
+    //  switch (orderExpression.SortOrder)
+    //  {
+    //    case SortOrder.Asc:
+    //      linqOrderBy.Append(qualifiedPropertyName);
+    //      break;
+
+    //    case SortOrder.Desc:
+    //      linqOrderBy.Append(qualifiedPropertyName + " DESC");
+    //      break;
+
+    //    default:
+    //      throw new Exception("Sort order is not specified.");
+    //  }
+
+    //  return linqOrderBy.ToString();
+    //}
 
     private string ResolveLinqExpression(Type type, Expression expression, string objectVariable)
     {

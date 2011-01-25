@@ -624,7 +624,7 @@ namespace org.iringtools.adapter
         {
           _dataObjects = _dataLayer.Get(graphName, null);
 
-          _projectionEngine.Count = _dataLayer.GetCount(graphName, null).Count;
+          _projectionEngine.Count = _dataLayer.GetCount(graphName, null);
         }
 
         return _projectionEngine.ToXml(graphName, ref _dataObjects);
@@ -990,6 +990,7 @@ namespace org.iringtools.adapter
             AppSettingsReader appSettings = new AppSettingsReader(appSettingsPath);
             _settings.AppendSettings(appSettings);
           }
+
           string relativePath = String.Format("{0}BindingConfiguration.{1}.xml",
             _settings["XmlPath"],
             scope
@@ -1133,7 +1134,7 @@ namespace org.iringtools.adapter
     {
       _graphMap = _mapping.FindGraphMap(graphName);
 
-      IList<string> index = _dataLayer.GetCount(_graphMap.dataObjectMap, dataFilter);
+      long count = _dataLayer.GetCount(_graphMap.dataObjectMap, dataFilter);
 
       _dataObjects.Clear();
 
@@ -1142,7 +1143,7 @@ namespace org.iringtools.adapter
       else
         _dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, null);
 
-      return index.Count;
+      return count;
     }
 
     private void UpdateScopes(string projectName, string projectDescription, string applicationName, string applicationDescription)

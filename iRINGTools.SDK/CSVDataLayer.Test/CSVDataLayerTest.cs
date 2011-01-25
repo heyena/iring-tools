@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using iRINGTools.SDK.CSVDataLayer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using org.iringtools.library;
 using org.iringtools.utility;
+using System.IO;
+using StaticDust.Configuration;
 
 namespace org.iringtools.adapter.datalayer.csv.test
 {
-  /// <summary>
-  /// Summary description for UnitTest1
-  /// </summary>
   [TestClass]
   public class CSVDataLayerTest
   {
@@ -19,24 +19,23 @@ namespace org.iringtools.adapter.datalayer.csv.test
     public CSVDataLayerTest()
     {
       NameValueCollection settings = new NameValueCollection();
-      settings["BaseDirectoryPath"] = String.Empty;
+      settings["BaseDirectoryPath"] = AppDomain.CurrentDomain.BaseDirectory;
       settings["XmlPath"] = @"C:\Users\rpdecarl\iring-tools-2.0.x\iRINGTools.SDK\CSVDataLayer\";
-      settings["ProxyCredentialToken"] = String.Empty;
-      settings["ProxyHost"] = String.Empty;
-      settings["ProxyPort"] = String.Empty;
-      settings["UseSemweb"] = "False";
-      settings["TripleStoreConnectionString"] = String.Empty;
-      settings["InterfaceService"] = String.Empty;
-      settings["InterfaceServicePath"] = String.Empty;
-      settings["TargetCredentialToken"] = String.Empty;
-      settings["TrimData"] = "False";
-      settings["BinaryPath"] = String.Empty;
-      settings["CodePath"] = String.Empty;
       settings["ProjectName"] = "12345_000";
-      settings["ApplicationName"] = "API";
+      settings["ApplicationName"] = "CSV";
 
       AdapterSettings adapterSettings = new AdapterSettings();
       adapterSettings.AppendSettings(settings);
+
+      string appSettingsPath = String.Format("{0}12345_000.CSV.config",
+            adapterSettings["XmlPath"]
+          );
+
+      if (File.Exists(appSettingsPath))
+      {
+        AppSettingsReader appSettings = new AppSettingsReader(appSettingsPath);
+        adapterSettings.AppendSettings(appSettings);
+      }
 
       _csvDataLayer = new CustomDataLayer(adapterSettings);
     }
@@ -115,6 +114,46 @@ namespace org.iringtools.adapter.datalayer.csv.test
       {
         Assert.IsNotNull(dataObject.GetPropertyValue("PumpType"));
         Assert.IsNotNull(dataObject.GetPropertyValue("PumpDriverType"));
+        Assert.IsNotNull(dataObject.GetPropertyValue("DesignTemp"));
+        Assert.IsNotNull(dataObject.GetPropertyValue("DesignPressure"));
+        Assert.IsNotNull(dataObject.GetPropertyValue("Capacity"));
+        Assert.IsNotNull(dataObject.GetPropertyValue("SpecificGravity"));
+        Assert.IsNotNull(dataObject.GetPropertyValue("DifferentialPressure"));
+      }
+    }
+
+    [TestMethod]
+    public void ReadWithFilter()
+    {
+      DataFilter dataFilter = new DataFilter
+      {
+        Expressions = new List<Expression>
+        {
+          new Expression
+          {
+            PropertyName = "PumpDriverType",
+            RelationalOperator = RelationalOperator.EqualTo,
+            Values = new Values
+            {
+              "PDT-8",
+            }
+          }
+        }
+      };
+
+      IList<IDataObject> dataObjects = _csvDataLayer.Get("Equipment", dataFilter, 2, 0);
+      
+      if (!(dataObjects.Count() > 0))
+      {
+        throw new AssertFailedException("No Rows returned.");
+      }
+
+      Assert.AreEqual(dataObjects.Count(), 2);
+
+      foreach (IDataObject dataObject in dataObjects)
+      {
+        Assert.IsNotNull(dataObject.GetPropertyValue("PumpType"));
+        Assert.AreEqual(dataObject.GetPropertyValue("PumpDriverType"), "PDT-8");
         Assert.IsNotNull(dataObject.GetPropertyValue("DesignTemp"));
         Assert.IsNotNull(dataObject.GetPropertyValue("DesignPressure"));
         Assert.IsNotNull(dataObject.GetPropertyValue("Capacity"));

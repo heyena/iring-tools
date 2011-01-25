@@ -3,10 +3,10 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyCompany("iringug.org")]
-[assembly: AssemblyProduct("iRINGTools")]
+[assembly: AssemblyProduct("iRINGTools SDK")]
 [assembly: AssemblyCopyright("Copyright © 2011, iringug.org")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyVersion("2.0.1.2495")]
-[assembly: AssemblyFileVersion("2.0.1.2495")]
+[assembly: AssemblyVersion("2.0.1.2544")]
+[assembly: AssemblyFileVersion("2.0.1.2544")]

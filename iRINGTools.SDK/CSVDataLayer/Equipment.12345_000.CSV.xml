@@ -1,8 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <commodity>
   <name>Equipment</name>
-  <location>C:\Users\rpdecarl\iring-tools-2.0.x\iRINGTools.SDK\CSVDataLayer\Equipment.12345_000.API</location>
-  <attributesSequence>
+  <attributes>
     <attribute name="Tag" dataType="String"/>
     <attribute name="PumpType" dataType="String"/>
     <attribute name="PumpDriverType" dataType="String"/>
@@ -11,5 +10,5 @@
     <attribute name="Capacity" dataType="Double"/>
     <attribute name="SpecificGravity" dataType="Double"/>
     <attribute name="DifferentialPressure" dataType="Double"/>
-  </attributesSequence>
+  </attributes>
 </commodity>
