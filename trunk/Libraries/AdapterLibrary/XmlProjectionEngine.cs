@@ -69,11 +69,11 @@ namespace org.iringtools.adapter.projection
         if (_dataObjects != null && _dataObjects.Count > 1)
         {
           xElement = new XElement(_appNamespace + Utility.TitleCase(graphName));
-          var pair = _graphMap.classTemplateListMaps.First(); 
+          ClassTemplateMap classTemplateMap = _graphMap.classTemplateMaps.First(); 
           for (int i = 0; i < _dataObjects.Count; i++)
           {
-            XElement rowElement = new XElement(_appNamespace + Utility.TitleCase(pair.Key.name));
-            CreateIndexXml(rowElement, pair, i);
+            XElement rowElement = new XElement(_appNamespace + Utility.TitleCase(classTemplateMap.classMap.name));
+            CreateIndexXml(rowElement, classTemplateMap, i);
             xElement.Add(rowElement);
           }
           XAttribute total = new XAttribute("total", this.Count);
@@ -94,13 +94,13 @@ namespace org.iringtools.adapter.projection
     }
 
     #region helper methods
-    private void CreateIndexXml(XElement parentElement, KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap, int dataObjectIndex)
+    private void CreateIndexXml(XElement parentElement, ClassTemplateMap classTemplateMap, int dataObjectIndex)
     {
       string uri = _appNamespace.ToString() + "/" + _graphMap.name + "/";
-      foreach (string keyPropertyName in classTemplateListMap.Key.identifiers)
+      foreach (string keyPropertyName in classTemplateMap.classMap.identifiers)
       {
         RoleMap roleMap = null;
-        foreach(TemplateMap templateMap in classTemplateListMap.Value)
+        foreach(TemplateMap templateMap in classTemplateMap.templateMaps)
         {
           roleMap = templateMap.roleMaps.Find(rm => rm.propertyName == keyPropertyName);
           if (roleMap != null) break;
@@ -110,7 +110,7 @@ namespace org.iringtools.adapter.projection
           string propertyName = RemoveDataPropertyAlias(roleMap.propertyName);
           var value = _dataObjects[dataObjectIndex].GetPropertyValue(propertyName);
           if (value != null)
-            uri += classTemplateListMap.Key.identifierDelimiter + value;
+            uri += classTemplateMap.classMap.identifierDelimiter + value;
         }        
       }
       parentElement.Value = uri;
@@ -284,9 +284,9 @@ namespace org.iringtools.adapter.projection
     }
     public DataObject FindGraphDataObject(string dataObjectName)
     {
-      foreach (DataObject dataObject in _dictionary.dataObjects)
+      foreach (DataObject dataObject in _dictionary.DataObjects)
       {
-        if (dataObject.objectName.ToLower() == dataObjectName.ToLower())
+        if (dataObject.ObjectName.ToLower() == dataObjectName.ToLower())
         {
           return dataObject;
         }

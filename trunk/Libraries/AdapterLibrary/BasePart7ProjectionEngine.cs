@@ -9,6 +9,7 @@ using VDS.RDF.Query;
 using VDS.RDF;
 using System.Text.RegularExpressions;
 using org.iringtools.utility;
+using org.iringtools.mapping;
 
 namespace org.iringtools.adapter.projection
 {
@@ -214,14 +215,14 @@ namespace org.iringtools.adapter.projection
 
               foreach (IDataObject parentObject in parentObjects)
               {
-                DataObject dataObject = dictionary.dataObjects.First(c => c.objectName == parentObjectType);
-                DataRelationship dataRelationship = dataObject.dataRelationships.First(c => c.relationshipName == relatedObjectType);
+                DataObject dataObject = dictionary.DataObjects.First(c => c.ObjectName == parentObjectType);
+                DataRelationship dataRelationship = dataObject.DataRelationships.First(c => c.RelationshipName == relatedObjectType);
 
                 foreach (IDataObject relatedObject in relatedObjects)
                 {
-                  foreach (PropertyMap map in dataRelationship.propertyMaps)
+                  foreach (PropertyMap map in dataRelationship.PropertyMaps)
                   {
-                    relatedObject.SetPropertyValue(map.relatedPropertyName, parentObject.GetPropertyValue(map.dataPropertyName));
+                    relatedObject.SetPropertyValue(map.RelatedPropertyName, parentObject.GetPropertyValue(map.DataPropertyName));
                   }
                 }
               }
@@ -253,9 +254,11 @@ namespace org.iringtools.adapter.projection
     {
       _classIdentifiers.Clear();
 
-      foreach (ClassMap classMap in _graphMap.classTemplateListMaps.Keys)
+      foreach (ClassTemplateMap classTemplateMap in _graphMap.classTemplateMaps)
       {
         List<string> identifiers = new List<string>();
+
+        ClassMap classMap = classTemplateMap.classMap;
 
         foreach (string identifier in classMap.identifiers)
         {
@@ -279,7 +282,7 @@ namespace org.iringtools.adapter.projection
           else  // identifier comes from a property
           {
             string[] property = identifier.Split('.');
-            string objectName = property[0].Trim();
+            string ObjectName = property[0].Trim();
             string propertyName = property[1].Trim();
 
             if (_dataObjects != null)
@@ -301,7 +304,7 @@ namespace org.iringtools.adapter.projection
           }
         }
 
-        _classIdentifiers[classMap.classId] = identifiers;
+        _classIdentifiers[classMap.id] = identifiers;
       }
     }
 
@@ -311,8 +314,8 @@ namespace org.iringtools.adapter.projection
 
       if (_memoryStore != null)
       {
-        var pair = _graphMap.classTemplateListMaps.First();
-        string classId = pair.Key.classId;
+        ClassTemplateMap classTemplateMap = _graphMap.classTemplateMaps.First();
+        string classId = classTemplateMap.classMap.id;
 
         string query = String.Format(CLASS_INSTANCE_QUERY_TEMPLATE, classId);
 
@@ -352,8 +355,10 @@ namespace org.iringtools.adapter.projection
     {
       _classIdentifiers.Clear();
 
-      foreach (ClassMap classMap in _graphMap.classTemplateListMaps.Keys)
+      foreach (ClassTemplateMap classTemplateMap in _graphMap.classTemplateMaps)
       {
+        ClassMap classMap = classTemplateMap.classMap;
+
         List<string> classIdentifiers = new List<string>();
 
         foreach (string identifier in classMap.identifiers)
@@ -378,7 +383,7 @@ namespace org.iringtools.adapter.projection
           else  // identifier comes from a property
           {
             string[] property = identifier.Split('.');
-            string objectName = property[0].Trim();
+            string ObjectName = property[0].Trim();
             string propertyName = property[1].Trim();
 
             if (_dataObjects != null)
@@ -400,7 +405,7 @@ namespace org.iringtools.adapter.projection
           }
         }
 
-        _classIdentifiers[classMap.classId] = classIdentifiers;
+        _classIdentifiers[classMap.id] = classIdentifiers;
       }
     }
 
@@ -414,7 +419,7 @@ namespace org.iringtools.adapter.projection
 
         _graphMap = _mapping.FindGraphMap(graph);
 
-        DataObject _dataObject = dictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectMap);
+        DataObject _dataObject = dictionary.DataObjects.Find(o => o.ObjectName == _graphMap.dataObjectName);
 
         foreach (Expression expression in filter.Expressions)
         {
@@ -470,7 +475,7 @@ namespace org.iringtools.adapter.projection
     {
       Values dataValues = new Values();
 
-      ValueList valueList = _mapping.valueLists.Find(vl => vl.name == _valueListName);
+      ValueListMap valueList = _mapping.valueListMaps.Find(vl => vl.name == _valueListName);
 
       foreach (string value in values)
       {
@@ -496,11 +501,11 @@ namespace org.iringtools.adapter.projection
       List<TemplateMap> templateMaps = null;
       if (!String.IsNullOrEmpty(classId))
       {
-        templateMaps = _graphMap.GetClassTemplateListMap(classId).Value;
+        templateMaps = _graphMap.classTemplateMaps.Find(ctm => ctm.classMap.id == classId).templateMaps;
       }
       else
       {
-        templateMaps = _graphMap.classTemplateListMaps.First().Value;
+        templateMaps = _graphMap.classTemplateMaps.First().templateMaps;
       }
 
       TemplateMap templateMap = templateMaps.Find(tm => tm.name == templateName);
@@ -537,7 +542,7 @@ namespace org.iringtools.adapter.projection
           {
             dataPropertyName = roleMap.propertyName;
             _roleType = RoleType.ObjectProperty;
-            _valueListName = roleMap.valueList;
+            _valueListName = roleMap.valueListName;
           }
           else
           {
@@ -560,7 +565,7 @@ namespace org.iringtools.adapter.projection
           {
             dataPropertyName = roleMap.propertyName;
 
-            if (String.IsNullOrEmpty(roleMap.valueList))
+            if (String.IsNullOrEmpty(roleMap.valueListName))
             {
               dataPropertyName = roleMap.propertyName;
               _roleType = RoleType.DataProperty;
@@ -570,7 +575,7 @@ namespace org.iringtools.adapter.projection
             {
               dataPropertyName = roleMap.propertyName;
               _roleType = RoleType.ObjectProperty;
-              _valueListName = roleMap.valueList;
+              _valueListName = roleMap.valueListName;
             }
           }
           else
@@ -586,7 +591,7 @@ namespace org.iringtools.adapter.projection
           //call self recursively
           if (roleMap.classMap != null)
           {
-            string relatedClassId = roleMap.classMap.classId;
+            string relatedClassId = roleMap.classMap.id;
             dataPropertyName = ProjectPropertyName(propertyNameParts, index + 2, relatedClassId);
           }
           else

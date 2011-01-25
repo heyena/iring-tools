@@ -233,8 +233,8 @@ namespace org.iringtools.adapter.datalayer
     }
     private DataFilter FilterByIdentity(string objectType, DataFilter filter, IdentityProperties identityProperties)
     {
-      DataObject dataObject = _databaseDictionary.dataObjects.Find(d => d.objectName == objectType);
-      DataProperty dataProperty = dataObject.dataProperties.Find(p => p.columnName == identityProperties.IdentityProperty);
+      DataObject dataObject = _databaseDictionary.DataObjects.Find(d => d.ObjectName == objectType);
+      DataProperty dataProperty = dataObject.DataProperties.Find(p => p.ColumnName == identityProperties.IdentityProperty);
       if (dataProperty != null)
       {
         if (filter == null)
@@ -256,7 +256,7 @@ namespace org.iringtools.adapter.datalayer
         string identityValue = _keyRing[identityProperties.KeyRingProperty].ToString();
         Expression expression = new Expression
         {
-          PropertyName = dataProperty.propertyName,
+          PropertyName = dataProperty.PropertyName,
           RelationalOperator = RelationalOperator.EqualTo,
           Values = new Values
           {

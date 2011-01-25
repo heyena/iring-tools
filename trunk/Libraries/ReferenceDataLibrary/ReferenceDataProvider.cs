@@ -2334,7 +2334,6 @@ namespace org.iringtools.refdata
                         string ID = string.Empty;
                         string id = string.Empty;
                         string language = string.Empty;
-                        bool qn = false;
                         string label = string.Empty;
                         string generatedTempId = string.Empty;
                         string templateName = string.Empty;
@@ -2646,7 +2645,6 @@ namespace org.iringtools.refdata
                         string label = string.Empty;
                         string language = string.Empty;
                         string qName = string.Empty;
-                        bool qn = false;
                         //string description = string.Empty;
                         string generatedTempId = string.Empty;
                         string templateName = string.Empty;

@@ -110,21 +110,21 @@ namespace org.iringtools.adapter.projection
       {
         DataProperty dataProperty = dataObject.DataProperties.Find(dp => dp.PropertyName == keyProperty.KeyPropertyName);
 
-        var value = _dataObjects[dataObjectIndex].GetPropertyValue(dataProperty.propertyName);
+        var value = _dataObjects[dataObjectIndex].GetPropertyValue(dataProperty.PropertyName);
         if (value != null)
         {
-          XElement propertyElement = new XElement(_appNamespace + dataProperty.propertyName, value);
+          XElement propertyElement = new XElement(_appNamespace + dataProperty.PropertyName, value);
           parentElement.Add(propertyElement);
           uri += value;
         }
       }
-      List<DataProperty> indexProperties = dataObject.dataProperties.FindAll(dp => dp.showOnIndex == true);
+      List<DataProperty> indexProperties = dataObject.DataProperties.FindAll(dp => dp.ShowOnIndex == true);
       foreach (DataProperty indexProperty in indexProperties)
       {
-        var value = _dataObjects[dataObjectIndex].GetPropertyValue(indexProperty.propertyName);
+        var value = _dataObjects[dataObjectIndex].GetPropertyValue(indexProperty.PropertyName);
         if (value != null)
         {
-          XElement propertyElement = new XElement(_appNamespace + indexProperty.propertyName, value);
+          XElement propertyElement = new XElement(_appNamespace + indexProperty.PropertyName, value);
         parentElement.Add(propertyElement);
         }
       }
@@ -136,7 +136,7 @@ namespace org.iringtools.adapter.projection
     {
       foreach (DataObject dataObject in _dictionary.DataObjects)
       {
-        if (dataObject.objectName.ToLower() == dataObjectName.ToLower())
+        if (dataObject.ObjectName.ToLower() == dataObjectName.ToLower())
         {
           return dataObject;
         }
