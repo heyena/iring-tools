@@ -46,6 +46,8 @@ namespace org.iringtools.library
   {
     IList<IDataObject> Create(string objectType, IList<string> identifiers);
 
+    long GetCount(string objectType, DataFilter filter);
+
     IList<string> GetIdentifiers(string objectType, DataFilter filter);
 
     IList<IDataObject> Get(string objectType, IList<string> identifiers);

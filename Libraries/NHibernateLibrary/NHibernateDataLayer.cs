@@ -118,6 +118,44 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
+    public long GetCount(string objectType, DataFilter filter)
+    {
+      try
+      {
+        if (_databaseDictionary.IdentityConfiguration != null)
+        {
+          IdentityProperties identityProperties = _databaseDictionary.IdentityConfiguration[objectType];
+
+          if (identityProperties.UseIdentityFilter)
+          {
+            filter = FilterByIdentity(objectType, filter, identityProperties);
+          }
+        }
+
+        StringBuilder queryString = new StringBuilder();
+        queryString.Append("select count(*) from " + objectType);
+
+        if (filter != null && filter.Expressions.Count > 0)
+        {
+          string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectType, null);
+          queryString.Append(whereClause);
+        }
+
+        using (ISession session = OpenSession())
+        {
+          IQuery query = session.CreateQuery(queryString.ToString());
+
+          long count = query.List<long>().First();
+
+          return count;
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in GetIdentifiers: " + ex);
+        throw new Exception(string.Format("Error while getting a list of identifiers of type [{0}]. {1}", objectType, ex));
+      }
+    }
     public IList<string> GetIdentifiers(string objectType, DataFilter filter)
     {
       try
@@ -241,6 +279,7 @@ namespace org.iringtools.adapter.datalayer
         {
           filter = new DataFilter();
         }
+        bool hasExistingExpression = false;
         if (filter.Expressions == null)
         {
           filter.Expressions = new List<Expression>();
@@ -251,7 +290,7 @@ namespace org.iringtools.adapter.datalayer
           Expression lastExpression = filter.Expressions.Last();
           firstExpression.OpenGroupCount++;
           lastExpression.CloseGroupCount++;
-          lastExpression.LogicalOperator = LogicalOperator.And;
+          hasExistingExpression = true;
         }
         string identityValue = _keyRing[identityProperties.KeyRingProperty].ToString();
         Expression expression = new Expression
@@ -264,6 +303,8 @@ namespace org.iringtools.adapter.datalayer
           },
           IsCaseSensitive = identityProperties.IsCaseSensitive
         };
+        if (hasExistingExpression)
+          expression.LogicalOperator = LogicalOperator.And;
         filter.Expressions.Add(expression);
       }
       return filter;

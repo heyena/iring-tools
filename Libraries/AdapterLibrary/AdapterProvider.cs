@@ -507,7 +507,7 @@ namespace org.iringtools.adapter
 
         _dataObjects = _dataLayer.Get(graphName, filter, limit, start);
 
-        _projectionEngine.Count = _dataLayer.GetIdentifiers(graphName, filter).Count;
+        _projectionEngine.Count = _dataLayer.GetCount(graphName, filter);
 
         return _projectionEngine.ToXml(graphName, ref _dataObjects);
       }
@@ -623,13 +623,13 @@ namespace org.iringtools.adapter
 
           _dataObjects = _dataLayer.Get(graphName, filter, limit, start);
 
-          _projectionEngine.Count = _dataLayer.GetIdentifiers(graphName, filter).Count;
+          _projectionEngine.Count = _dataLayer.GetCount(graphName, filter);
         }
         else
         {
           _dataObjects = _dataLayer.Get(graphName, null);
 
-          _projectionEngine.Count = _dataLayer.GetIdentifiers(graphName, null).Count;
+          _projectionEngine.Count = _dataLayer.GetCount(graphName, null).Count;
         }
 
         return _projectionEngine.ToXml(graphName, ref _dataObjects);
@@ -1133,7 +1133,7 @@ namespace org.iringtools.adapter
     private long LoadDataObjectSet(string graphName, DataFilter dataFilter, int start, int limit)
     {
       _graphMap = _mapping.FindGraphMap(graphName);
-      IList<string> index = _dataLayer.GetIdentifiers(_graphMap.dataObjectName, dataFilter);
+      IList<string> index = _dataLayer.GetCount(_graphMap.dataObjectMap, dataFilter);
       _dataObjects.Clear();
       if (dataFilter != null)
         _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, dataFilter, limit, start);
