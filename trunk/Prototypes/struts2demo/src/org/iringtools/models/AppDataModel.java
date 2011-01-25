@@ -3,6 +3,7 @@ package org.iringtools.models;
 import java.util.Map;
 
 import org.iringtools.widgets.grid.Grid;
+import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dto.DataTransferObjects;
 
 public class AppDataModel extends DataModel
@@ -16,6 +17,7 @@ public class AppDataModel extends DataModel
   {
     DataTransferObjects pageDtos = getPageDtos(dtiUrl, dtoUrl, start, limit);
     Grid pageDtoGrid = getDtoGrid(DataType.APP, pageDtos);
+    DataTransferIndices dtis = (DataTransferIndices)session.get(dtiUrl);
     pageDtoGrid.setTotal(dtis.getDataTransferIndexList().getItems().size());      
     return pageDtoGrid;
   }
