@@ -7,13 +7,11 @@ using System.Xml.Linq;
 using log4net;
 using Microsoft.ServiceModel.Web;
 using Ninject;
-using log4net;
 using System.Text.RegularExpressions;
 using VDS.RDF;
 using VDS.RDF.Storage;
 using org.iringtools.utility;
-using Microsoft.ServiceModel.Web;
-using System.Xml.Serialization;
+using org.iringtools.mapping;
 
 namespace org.iringtools.adapter.projection
 {

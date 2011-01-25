@@ -165,19 +165,19 @@ namespace org.iringtools.library
 
     private string ResolveSqlExpression(Type type, Expression expression, string objectAlias)
     {
-      string propertyName = expression.PropertyName;
+      string PropertyName = expression.PropertyName;
 
       string qualifiedPropertyName = String.Empty;
       if (expression.IsCaseSensitive)
       {
-        qualifiedPropertyName = objectAlias + propertyName;
+        qualifiedPropertyName = objectAlias + PropertyName;
       }
       else
       {
-        qualifiedPropertyName = "UPPER(" + objectAlias + propertyName + ")";
+        qualifiedPropertyName = "UPPER(" + objectAlias + PropertyName + ")";
       }
 
-      Type propertyType = type.GetProperty(propertyName).PropertyType;
+      Type propertyType = type.GetProperty(PropertyName).PropertyType;
       bool isString = propertyType == typeof(string);
       StringBuilder sqlExpression = new StringBuilder();
 
@@ -392,29 +392,29 @@ namespace org.iringtools.library
 
     private string ResolveSqlExpression(DataDictionary dataDictionary, string objectType, Expression expression, string objectAlias)
     {
-      string propertyName = expression.PropertyName;
+      string PropertyName = expression.PropertyName;
 
       string qualifiedPropertyName = String.Empty;
       if (expression.IsCaseSensitive)
       {
-        qualifiedPropertyName = objectAlias + propertyName;
+        qualifiedPropertyName = objectAlias + PropertyName;
       }
       else
       {
-        qualifiedPropertyName = "UPPER(" + objectAlias + propertyName + ")";
+        qualifiedPropertyName = "UPPER(" + objectAlias + PropertyName + ")";
       }
 
       //TODO: Is it better to default to string or non-string?
       DataType propertyType = DataType.String;
-      foreach (DataObject dataObject in dataDictionary.dataObjects)
+      foreach (DataObject dataObject in dataDictionary.DataObjects)
       {
-        if (dataObject.objectName == objectType)
+        if (dataObject.ObjectName == objectType)
         {
-          foreach (DataProperty dataProperty in dataObject.dataProperties)
+          foreach (DataProperty dataProperty in dataObject.DataProperties)
           {
-            if (dataProperty.propertyName == propertyName)
+            if (dataProperty.PropertyName == PropertyName)
             {
-              propertyType = dataProperty.dataType;
+              propertyType = dataProperty.DataType;
               break;
             }
           }
@@ -635,9 +635,9 @@ namespace org.iringtools.library
 
     private string ResolveOrderExpression(DataDictionary dataDictionary, string objectType, OrderExpression orderExpression, string objectAlias)
     {
-      string propertyName = orderExpression.PropertyName;
+      string PropertyName = orderExpression.PropertyName;
 
-      string  qualifiedPropertyName = objectAlias + propertyName;
+      string  qualifiedPropertyName = objectAlias + PropertyName;
 
       StringBuilder sqlExpression = new StringBuilder();
 
@@ -660,9 +660,9 @@ namespace org.iringtools.library
 
     private string ResolveLinqExpression(Type type, Expression expression, string objectVariable)
     {
-      string propertyName = expression.PropertyName;
-      string qualifiedPropertyName = objectVariable + propertyName;
-      Type propertyType = type.GetProperty(propertyName).PropertyType;
+      string PropertyName = expression.PropertyName;
+      string qualifiedPropertyName = objectVariable + PropertyName;
+      Type propertyType = type.GetProperty(PropertyName).PropertyType;
       bool isString = (propertyType == typeof(string));
       StringBuilder linqExpression = new StringBuilder();
 
@@ -782,7 +782,7 @@ namespace org.iringtools.library
     [DataMember(Name = "openGroupCount", Order = 0, EmitDefaultValue = false)]
     public int OpenGroupCount { get; set; }
 
-    [DataMember(Name = "propertyName", Order = 1, IsRequired = true)]
+    [DataMember(Name = "PropertyName", Order = 1, IsRequired = true)]
     public string PropertyName { get; set; }
 
     [DataMember(Name = "relationalOperator", Order = 2, IsRequired = true)]
@@ -807,7 +807,7 @@ namespace org.iringtools.library
   [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "orderExpression")]
   public class OrderExpression
   {
-    [DataMember(Name = "propertyName", Order = 0, IsRequired = true)]
+    [DataMember(Name = "PropertyName", Order = 0, IsRequired = true)]
     public string PropertyName { get; set; }
 
     [DataMember(Name = "sortOrder", Order = 1, EmitDefaultValue = false)]

@@ -43,7 +43,7 @@ namespace AdapterService.Tests
       XDocument xDocument = null;
       try
       {
-        xDocument = _adapterProvider.GetProjection(projectName, applicationName, graphName, format);
+        xDocument = _adapterProvider.GetProjection(projectName, applicationName, graphName, format, 0, 100, null, null, new NameValueCollection());
       }
       catch (Exception ex)
       {

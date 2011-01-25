@@ -131,6 +131,7 @@
     <Compile Include="AdapterProvider.cs" />
     <Compile Include="DtoProjectionEngine.cs" />
     <Compile Include="ExchangeProvider.cs" />
+    <Compile Include="FacadeProvider.cs" />
     <Compile Include="IIdentityLayer.cs" />
     <Compile Include="IProjectionLayer.cs" />
     <Compile Include="ISemanticLayer.cs" />

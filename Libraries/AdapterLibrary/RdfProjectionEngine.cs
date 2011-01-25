@@ -26,6 +26,9 @@ namespace org.iringtools.adapter.projection
     private Dictionary<string, List<IDataObject>> _relatedObjectsCache = null;
     private XElement _rdfXml = null;
 
+    protected static readonly string CLASS_VARIABLE = "class";
+    protected static readonly string LITERAL_VARIABLE = "literal";
+
     [Inject]
     public RdfProjectionEngine(AdapterSettings settings, IDataLayer dataLayer, Mapping mapping)
     {

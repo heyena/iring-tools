@@ -140,6 +140,9 @@ namespace org.iringtools.library
 
     [DataMember(Name = "keyType", IsRequired = true, Order = 5)]
     public KeyType KeyType { get; set; }
+
+    [DataMember(Name = "showOnIndex", EmitDefaultValue = false, Order = 6)]
+    public bool ShowOnIndex { get; set; }
   }
 
   [DataContract(Name = "keyProperty", Namespace = "http://www.iringtools.org/library")]

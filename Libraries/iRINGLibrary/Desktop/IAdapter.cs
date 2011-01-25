@@ -35,6 +35,7 @@ using System.ServiceModel.Web;
 #endif
 using System.Text;
 using org.ids_adi.qxf;
+using org.iringtools.mapping;
 
 namespace org.iringtools.library
 {

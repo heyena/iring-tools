@@ -89,7 +89,7 @@ namespace org.iringtools.services
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
-      return _dtoProvider.GetDataTransferIndicesWithFilter(scope, app, graph, hashAlgorithm, filter);
+      return _dxfrProvider.GetDataTransferIndicesWithFilter(scope, app, graph, hashAlgorithm, filter);
     }
     [Description("Gets data transfer indices according to the posted manifest.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxi?hashAlgorithm={hashAlgorithm}")]
@@ -106,7 +106,7 @@ namespace org.iringtools.services
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
-      return _dtoProvider.GetDataTransferIndicesByRequest(scope, app, graph, hashAlgorithm, request);
+      return _dxfrProvider.GetDataTransferIndicesByRequest(scope, app, graph, hashAlgorithm, request);
     }
     [Description("Gets data transfer objects according to the posted data transfer indices.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/page")]
@@ -119,12 +119,12 @@ namespace org.iringtools.services
     }
     [Description("Gets data transfer objects according to the posted manifest and data transfer indices.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxo")]
-    public DataTransferObjects GetDataTransferObjectsWithManifest(string scope, string app, string graph, DtoPageRequest dtoPageRequest)
+    public DataTransferObjects GetDataTransferObjectsWithManifest(string scope, string app, string graph, DxoRequest dxoRequest)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
 
-      return _dxfrProvider.GetDataTransferObjects(scope, app, graph, dtoPageRequest);
+      return _dxfrProvider.GetDataTransferObjects(scope, app, graph, dxoRequest);
     }
     [Description("Gets single data transfer object by id.")]
     [WebGet(UriTemplate = "/{scope}/{app}/{graph}/{id}")]

@@ -42,8 +42,29 @@ namespace org.iringtools.library
 
     [DataMember(Name = "schemaName", IsRequired = true, Order = 2)]
     public string SchemaName { get; set; }
+    [DataMember(EmitDefaultValue = false, Order = 3)]
+    public IdentityConfiguration IdentityConfiguration { get; set; }
   }
 
+  [CollectionDataContract(Namespace = "http://www.iringtools.org/library", ItemName = "objectConfiguration",
+    KeyName = "objectName", ValueName = "identityProperties")]
+  public class IdentityConfiguration : Dictionary<string, IdentityProperties>
+  {}
+  [DataContract(Name = "identityProperties", Namespace = "http://www.iringtools.org/library")]
+  public class IdentityProperties
+  {
+    [DataMember(Name = "useIdentityFilter", IsRequired = true, Order = 0)]
+    public bool UseIdentityFilter { get; set; }
+
+    [DataMember(Name = "identityProperty", IsRequired = true, Order = 1)]
+    public string IdentityProperty { get; set; }
+
+    [DataMember(Name = "keyRingProperty", IsRequired = true, Order = 2)]
+    public string KeyRingProperty { get; set; }
+
+    [DataMember(Name = "isCaseSensitive", Order = 3, EmitDefaultValue = false)]
+    public bool IsCaseSensitive { get; set; }
+  }
   [DataContract(Namespace = "http://www.iringtools.org/library")]
   public enum Provider
   {
