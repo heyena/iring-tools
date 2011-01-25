@@ -6,22 +6,33 @@ using System.Xml.Linq;
 using Ciloci.Flee;
 using log4net;
 using Ninject;
+using org.iringtools.adapter;
 using org.iringtools.library;
 
-namespace org.iringtools.adapter.datalayer.csv
+namespace iRINGTools.SDK.CSVDataLayer
 {
-  //NOTE: This CSVDataLayer assumes that property "Tag" is identifier of data objects
+  //NOTE: This DataLayer assumes that property "Tag" is identifier of data objects
   public class CustomDataLayer : IDataLayer
   {
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(CustomDataLayer));
     private AdapterSettings _settings = null;
     private string _dataDictionaryPath = String.Empty;
 
+    //NOTE: This will enable logging.
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(CustomDataLayer));
+
+    //NOTE: This is required to deliver settings to constructor.
+    //NOTE: Other objects could be requested on an as needed basis.
     [Inject]
     public CustomDataLayer(AdapterSettings settings)
     {
       _settings = settings;
-      _dataDictionaryPath = _settings["XmlPath"] + "DataDictionary." + _settings["ProjectName"] + "." + _settings["ApplicationName"] + ".xml";
+      
+      _dataDictionaryPath = String.Format(
+        "{0}DataDictionary.{1}.{2}.xml",
+        _settings["XmlPath"],
+        _settings["ProjectName"],
+        _settings["ApplicationName"]
+      );
     }
 
     public IList<IDataObject> Create(string objectType, IList<string> identifiers)
@@ -29,14 +40,20 @@ namespace org.iringtools.adapter.datalayer.csv
       try
       {
         IList<IDataObject> dataObjects = new List<IDataObject>();
-        Type type = Type.GetType("org.iringtools.adapter.datalayer.csv." + objectType + "DataObject");
 
-        objectType = objectType.Substring(objectType.LastIndexOf('.') + 1);
+        //This may not be neccessary here, but is useful with generic APIs
+        string typeName = String.Format(
+          "iRINGTools.SDK.CSVDataLayer.{0}DataObject",
+          objectType
+        );
 
-        if (identifiers != null && identifiers.Count > 0)
+        Type type = Type.GetType(typeName);
+
+        if (identifiers != null)
         {
           foreach (string identifier in identifiers)
           {
+            //Again, reflection is not neccessary with hard coded classes.
             IDataObject dataObject = (IDataObject)Activator.CreateInstance(type);
 
             if (!String.IsNullOrEmpty(identifier))
@@ -52,8 +69,32 @@ namespace org.iringtools.adapter.datalayer.csv
       }
       catch (Exception ex)
       {
-        _logger.Error("Error in CreateList: " + ex);
-        throw new Exception("Error while creating a list of data objects of type [" + objectType + "].", ex);
+        _logger.Error("Error in Create: " + ex);
+
+        throw new Exception(
+          "Error while creating a list of data objects of type [" + objectType + "].", 
+          ex
+        );
+      }
+    }
+
+    public long GetCount(string objectType, DataFilter filter)
+    {
+      try
+      {
+        //NOTE: pageSize of 0 indicates that all rows should be returned.
+        IList<IDataObject> dataObjects = Get(objectType, filter, 0, 0);
+
+        return dataObjects.Count();
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in GetIdentifiers: " + ex);
+        
+        throw new Exception(
+          "Error while getting a count of type [" + objectType + "].", 
+          ex
+        );
       }
     }
 
@@ -62,6 +103,8 @@ namespace org.iringtools.adapter.datalayer.csv
       try
       {
         List<string> identifiers = new List<string>();
+
+        //NOTE: pageSize of 0 indicates that all rows should be returned.
         IList<IDataObject> dataObjects = Get(objectType, filter, 0, 0);
 
         foreach (IDataObject dataObject in dataObjects)
@@ -74,25 +117,46 @@ namespace org.iringtools.adapter.datalayer.csv
       catch (Exception ex)
       {
         _logger.Error("Error in GetIdentifiers: " + ex);
-        throw new Exception("Error while getting a list of identifiers of type [" + objectType + "].", ex);
+
+        throw new Exception(
+          "Error while getting a list of identifiers of type [" + objectType + "].", 
+          ex
+        );
       }
     }
 
-    public IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int pageNumber)
+    public IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex)
     {
       try
       {
         List<IDataObject> dataObjects = new List<IDataObject>();
-        string dataObjectType = objectType + "DataObject";
-        Type type = Type.GetType("Bechtel.CSVDataLayer.API." + objectType + "DataObject");
 
-        // Load config xml 
-        string configFile = _settings["XmlPath"] + objectType + "." + _settings["ProjectName"] + "." + _settings["ApplicationName"] + ".xml";
-        XDocument configDoc = XDocument.Load(configFile);
-        XElement configRootElement = configDoc.Element("commodity");
+        //This may not be neccessary here, but is useful with generic APIs
+        string typeName = String.Format(
+          "iRINGTools.SDK.CSVDataLayer.{0}DataObject",
+          objectType
+        );
 
-        // Get path
-        string dataObjectPath = GetDataObjectPath(objectType);
+        Type type = Type.GetType(typeName);
+
+        // Load Internal Config xml 
+        string uri = String.Format(
+          "{0}{1}.{2}.{3}.xml",
+          _settings["XmlPath"],
+          objectType,
+          _settings["ProjectName"],
+          _settings["ApplicationName"]
+        );
+
+        XDocument configDocument = XDocument.Load(uri);
+        XElement commodityElement = configDocument.Element("commodity");
+        
+        //Get Path from Scope.config ({project}.{app}.config)
+        string dataObjectPath = String.Format(
+          "{0}\\{1}",
+          _settings["CSVFolderPath"],
+          objectType
+        );
 
         // Read all files (commodity rows) from commodity path of the application
         DirectoryInfo directory = new DirectoryInfo(dataObjectPath);
@@ -100,73 +164,23 @@ namespace org.iringtools.adapter.datalayer.csv
 
         foreach (FileInfo file in files)
         {
-          TextReader reader = new StreamReader(dataObjectPath + file.Name);
+          TextReader reader = new StreamReader(file.FullName);
           string csvRow = reader.ReadLine();
           reader.Close();
 
-          if (!String.IsNullOrEmpty(csvRow))
-          {
-            // Create an instance of IDataObject
-            IDataObject dataObject = (IDataObject)Activator.CreateInstance(type);
+          IDataObject dataObject = FormDataObject(commodityElement, type, csvRow);
 
-            IEnumerable<XElement> attrs = configRootElement.Element("attributesSequence").Elements("attribute");
-            string[] csvValues = csvRow.Split(',');
-            int index = 0;
-
-            foreach (var attr in attrs)
-            {
-              string attrName = attr.Attribute("name").Value;
-              string attrDataType = attr.Attribute("dataType").Value.ToLower();
-              string csvValue = csvValues[index++].Trim();
-
-              // if data type is not nullable, make sure it has a value
-              if (!(attrDataType.EndsWith("?") && csvValue == String.Empty))
-              {
-                if (attrDataType.Contains("bool"))
-                {
-                  if (csvValue == "true" || csvValue == "yes")
-                  {
-                    csvValue = "1";
-                  }
-                  else
-                  {
-                    csvValue = "0";
-                  }
-                }
-                else if (csvValue == String.Empty && (
-                         attrDataType.StartsWith("int") ||
-                         attrDataType == "double" ||
-                         attrDataType == "single" ||
-                         attrDataType == "float" ||
-                         attrDataType == "decimal"))
-                {
-                  csvValue = "0";
-                }
-              }
-
-              dataObject.SetPropertyValue(attrName, csvValue);
-            }
-
+          if (dataObject != null)
             dataObjects.Add(dataObject);
-          }
         }
 
         // Apply filter
-        if (filter != null && filter.Expressions.Count > 0)
+        if (filter != null && filter.Expressions !=null && filter.Expressions.Count > 0)
         {
           string variable = "dataObject";
-          string linqExpression = string.Empty;
-          switch (objectType)
-            {
-            case "Equipment":
-                linqExpression = filter.ToLinqExpression<Equipment>(variable);
-                break;
-              default:
-                linqExpression = string.Empty;
-                break;
-            }
-
-
+          
+          string linqExpression = filter.ToLinqExpression(type, variable);
+          
           if (linqExpression != String.Empty)
           {
             ExpressionContext context = new ExpressionContext();
@@ -184,29 +198,24 @@ namespace org.iringtools.adapter.datalayer.csv
           }
         }
 
-        // Apply paging
-        if (pageSize > 0 && pageNumber > 0)
+        if (filter != null && filter.OrderExpressions != null && filter.OrderExpressions.Count > 0)
         {
-          if (dataObjects.Count > (pageSize * (pageNumber - 1) + pageSize))
-          {
-            dataObjects = dataObjects.GetRange(pageSize * (pageNumber - 1), pageSize);
-          }
-          else if (pageSize * (pageNumber - 1) > dataObjects.Count)
-          {
-            dataObjects = dataObjects.GetRange(pageSize * (pageNumber - 1), dataObjects.Count);
-          }
-          else
-          {
-            return null;
-          }
+          throw new NotImplementedException("OrderExpressions are not supported by the CSV DataLayer.");
         }
+
+        //Page and Sort The Data
+        dataObjects = dataObjects.GetRange(startIndex, pageSize);
 
         return dataObjects;
       }
       catch (Exception ex)
       {
         _logger.Error("Error in GetList: " + ex);
-        throw new Exception("Error while getting a list of data objects of type [" + objectType + "].", ex);
+
+        throw new Exception(
+          "Error while getting a list of data objects of type [" + objectType + "].", 
+          ex
+        );
       }
     }
     
@@ -215,69 +224,50 @@ namespace org.iringtools.adapter.datalayer.csv
       try
       {
         List<IDataObject> dataObjects = new List<IDataObject>();
-        objectType = objectType.Substring(objectType.LastIndexOf('.') + 1);
-        string dataObjectType = objectType + "DataObject";
-        Type type = Type.GetType("org.iringtools.adapter.datalayer.csv." + objectType + "DataObject");
 
-        // Load config xml 
-        string configFile = _settings["XmlPath"] + objectType + "." + _settings["ProjectName"] + "." + _settings["ApplicationName"] + ".xml";
-        XDocument configDoc = XDocument.Load(configFile);
-        XElement configRootElement = configDoc.Element("commodity");
+        //This may not be neccessary here, but is useful with generic APIs
+        string typeName = String.Format(
+          "iRINGTools.SDK.CSVDataLayer.{0}DataObject",
+          objectType
+        );
 
-        // Get path
-        string dataObjectPath = GetDataObjectPath(objectType);
+        Type type = Type.GetType(typeName);
+
+        // Load Internal Config xml 
+        string uri = String.Format(
+          "{0}{1}.{2}.{3}.xml",
+          _settings["XmlPath"],
+          objectType,
+          _settings["ProjectName"],
+          _settings["ApplicationName"]
+        );
+
+        XDocument configDocument = XDocument.Load(uri);
+        XElement commodityElement = configDocument.Element("commodity");
+
+        //Get Path from Scope.config ({project}.{app}.config)
+        string dataObjectPath = String.Format(
+          "{0}\\{1}",
+          _settings["CSVFolderPath"],
+          objectType
+        );
 
         foreach (string identifier in identifiers)
         {
-          TextReader reader = new StreamReader(dataObjectPath + identifier + ".csv");
+          string path = String.Format(
+            "{0}\\{1}.csv",
+            dataObjectPath,
+            identifier
+          );
+
+          TextReader reader = new StreamReader(path);
           string csvRow = reader.ReadLine();
           reader.Close();
 
-          if (!String.IsNullOrEmpty(csvRow))
-          {
-            // Create an instance of IDataObject
-            IDataObject dataObject = (IDataObject)Activator.CreateInstance(type);
+          IDataObject dataObject = FormDataObject(commodityElement, type, csvRow);
 
-            IEnumerable<XElement> attrs = configRootElement.Element("attributesSequence").Elements("attribute");
-            string[] csvValues = csvRow.Split(',');
-            int index = 0;
-
-            foreach (var attr in attrs)
-            {
-              string attrName = attr.Attribute("name").Value;
-              string attrDataType = attr.Attribute("dataType").Value.ToLower();
-              string csvValue = csvValues[index++].Trim();
-
-              // if data type is not nullable, make sure it has a value
-              if (!(attrDataType.EndsWith("?") && csvValue == String.Empty))
-              {
-                if (attrDataType.Contains("bool"))
-                {
-                  if (csvValue == "true" || csvValue == "yes")
-                  {
-                    csvValue = "1";
-                  }
-                  else
-                  {
-                    csvValue = "0";
-                  }
-                }
-                else if (csvValue == String.Empty && (
-                         attrDataType.Contains("int") ||
-                         attrDataType == "double" ||
-                         attrDataType == "single" ||
-                         attrDataType == "float" ||
-                         attrDataType == "decimal"))
-                {
-                  csvValue = "0";
-                }
-              }
-
-              dataObject.SetPropertyValue(attrName, csvValue);
-            }
-
+          if (dataObject != null)
             dataObjects.Add(dataObject);
-          }
         }
 
         return dataObjects;
@@ -289,9 +279,15 @@ namespace org.iringtools.adapter.datalayer.csv
       }
     }
 
+    public IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType)
+    {
+      throw new NotImplementedException();
+    }
+
     public Response Post(IList<IDataObject> dataObjects)
     {
       Response response = new Response();
+      string objectType = String.Empty;
 
       if (dataObjects == null || dataObjects.Count == 0)
       {
@@ -304,18 +300,29 @@ namespace org.iringtools.adapter.datalayer.csv
 
       try
       {
-        // Load config xml
-        string dataObjectType = dataObjects.FirstOrDefault().GetType().FullName;
-        
-        string objectType = dataObjectType.Substring(0, dataObjectType.Length - "DataObject".Length);
-        objectType = objectType.Substring(objectType.LastIndexOf('.') + 1);
-        
-        string configFile = _settings["XmlPath"] + objectType + "." + _settings["ProjectName"] + "." + _settings["ApplicationName"] + ".xml";
-        XDocument configDoc = XDocument.Load(configFile);
-        XElement configRootElement = configDoc.Element("commodity");
+        // Resolve the objectType
+        string typeName = dataObjects.FirstOrDefault().GetType().FullName;
+        string objectTypeName = typeName.Substring(0, typeName.Length - "DataObject".Length);
+        objectType = objectTypeName.Substring(objectTypeName.LastIndexOf('.') + 1);
 
-        // Get path
-        string dataObjectPath = GetDataObjectPath(objectType);
+        // Load Internal Config xml 
+        string uri = String.Format(
+          "{0}{1}.{2}.{3}.xml",
+          _settings["XmlPath"],
+          objectType,
+          _settings["ProjectName"],
+          _settings["ApplicationName"]
+        );
+
+        XDocument configDocument = XDocument.Load(uri);
+        XElement commodityElement = configDocument.Element("commodity");
+
+        //Get Path from Scope.config ({project}.{app}.config)
+        string dataObjectPath = String.Format(
+          "{0}\\{1}",
+          _settings["CSVFolderPath"],
+          objectType
+        );
 
         // Create data object directory in case it does not exist
         Directory.CreateDirectory(dataObjectPath);
@@ -329,14 +336,23 @@ namespace org.iringtools.adapter.datalayer.csv
             string identifier = (string)dataObject.GetPropertyValue("Tag");
             status.Identifier = identifier;
 
-            TextWriter writer = new StreamWriter(dataObjectPath + identifier + ".csv");
-            IEnumerable<XElement> attrs = configRootElement.Element("attributesSequence").Elements("attribute");
-            List<string> csvValues = new List<string>();
+            string path = String.Format(
+              "{0}\\{1}.csv",
+              dataObjectPath,
+              identifier
+            );
 
-            foreach (var attr in attrs)
+            TextWriter writer = new StreamWriter(path);
+
+            IEnumerable<XElement> attributeElements = commodityElement.Element("attributes").Elements("attribute");
+            
+            List<string> csvValues = new List<string>();
+            
+            foreach (var attributeElement in attributeElements)
             {
-              string attrName = attr.Attribute("name").Value;
-              csvValues.Add(Convert.ToString(dataObject.GetPropertyValue(attrName)));
+              string name = attributeElement.Attribute("name").Value;
+              string value = Convert.ToString(dataObject.GetPropertyValue(name));
+              csvValues.Add(value);
             }
 
             writer.WriteLine(String.Join(", ", csvValues.ToArray()));
@@ -346,19 +362,29 @@ namespace org.iringtools.adapter.datalayer.csv
           catch (Exception ex)
           {
             status.Level = StatusLevel.Error;
-            status.Messages.Add("Error while post data object [" + dataObject.GetPropertyValue("Tag") + ex);
-          }
-        }
+            
+            string message = String.Format(
+              "Error while posting dataObject [{0}]. {1}", 
+              dataObject.GetPropertyValue("Tag"),
+              ex.ToString()
+            );
 
+            status.Messages.Add(message);
+          }
+
+          response.Append(status);
+        }
+        
         return response;
       }
       catch (Exception ex)
       {
-        _logger.Error("Error in PostList: " + ex);
+        _logger.Error("Error in Post: " + ex);
 
-        object sample = dataObjects.FirstOrDefault();
-        string objectType = (sample != null) ? sample.GetType().Name : String.Empty;
-        throw new Exception("Error while posting data objects of type [" + objectType + "].", ex);
+        throw new Exception(
+          "Error while posting dataObjects of type [" + objectType + "].", 
+          ex
+        );
       }
     }
 
@@ -375,7 +401,13 @@ namespace org.iringtools.adapter.datalayer.csv
         return response;
       }
 
-      string dataObjectPath = GetDataObjectPath(objectType);
+      //Get Path from Scope.config ({project}.{app}.config)
+      string dataObjectPath = String.Format(
+        "{0}\\{1}",
+        _settings["CSVFolderPath"],
+        objectType
+      );
+
       foreach (string identifier in identifiers)
       {
         Status status = new Status();
@@ -383,16 +415,34 @@ namespace org.iringtools.adapter.datalayer.csv
 
         try
         {
-            
-          File.Delete(dataObjectPath + identifier + ".csv");
-          status.Messages.Add("Data object [" + identifier + "] deleted successfully.");
-            
+          string path = String.Format(
+            "{0}\\{1}.csv",
+            dataObjectPath,
+            identifier
+          );
+
+          File.Delete(path);
+
+          string message = String.Format(
+            "DataObject [{0}] deleted successfully.",
+            identifier
+          );
+
+          status.Messages.Add(message);
         }
         catch (Exception ex)
         {
           _logger.Error("Error in Delete: " + ex);
+
           status.Level = StatusLevel.Error;
-          status.Messages.Add("Error while deleting data object [" + identifier + "]." + ex);
+
+          string message = String.Format(
+            "Error while deleting dataObject [{0}]. {1}",
+            identifier,
+            ex
+          );
+
+          status.Messages.Add(message);
         }
 
         response.Append(status);
@@ -406,6 +456,8 @@ namespace org.iringtools.adapter.datalayer.csv
       try
       {
         IList<string> identifiers = new List<string>();
+
+        //NOTE: pageSize of 0 indicates that all rows should be returned.
         IList<IDataObject> dataObjects = Get(objectType, filter, 0, 0);
 
         foreach (IDataObject dataObject in dataObjects)
@@ -418,7 +470,11 @@ namespace org.iringtools.adapter.datalayer.csv
       catch (Exception ex)
       {
         _logger.Error("Error in Delete: " + ex);
-        throw new Exception("Error while deleting data objects of type [" + objectType + "].", ex);
+
+        throw new Exception(
+          "Error while deleting data objects of type [" + objectType + "].", 
+          ex
+        );
       }
     }
 
@@ -448,6 +504,7 @@ namespace org.iringtools.adapter.datalayer.csv
                 dataType = DataType.String,
                 propertyName = "PumpType",
                 isNullable = true,
+                showOnIndex = true,
               },
               new DataProperty()
               {
@@ -500,36 +557,74 @@ namespace org.iringtools.adapter.datalayer.csv
       return dataDictionary;
     }
 
+    private IDataObject FormDataObject(XElement commodityElement, Type type, string csvRow)
+    {
+      try
+      {
+        IDataObject dataObject = null;
+
+        if (!String.IsNullOrEmpty(csvRow))
+        {
+          //Again, reflection is not neccessary with hard coded classes.
+          dataObject = (IDataObject)Activator.CreateInstance(type);    
+
+          IEnumerable<XElement> attributeElements = commodityElement.Element("attributes").Elements("attribute");
+
+          string[] csvValues = csvRow.Split(',');
+
+          int index = 0;
+          foreach (var attributeElement in attributeElements)
+          {
+            string name = attributeElement.Attribute("name").Value;
+            string dataType = attributeElement.Attribute("dataType").Value.ToLower();
+            string value = csvValues[index++].Trim();
+
+            // if data type is not nullable, make sure it has a value
+            if (!(dataType.EndsWith("?") && value == String.Empty))
+            {
+              if (dataType.Contains("bool"))
+              {
+                if (value.ToUpper() == "TRUE" || value.ToUpper() == "YES")
+                {
+                  value = "1";
+                }
+                else
+                {
+                  value = "0";
+                }
+              }
+              else if (value == String.Empty && (
+                       dataType.StartsWith("int") ||
+                       dataType == "double" ||
+                       dataType == "single" ||
+                       dataType == "float" ||
+                       dataType == "decimal"))
+              {
+                value = "0";
+              }
+            }
+
+            dataObject.SetPropertyValue(name, value);
+          }
+        }
+
+        return dataObject;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in FormDataObject: " + ex);
+
+        throw new Exception(
+          "Error while forming a dataObject of type [" + type.Name + "] from a CSV row.",
+          ex
+        );
+      }
+    }
+
     private string GetdataObjectType(string objectType)
     {
       string dataLayerNamespace = "org.iringtools.adapter.datalayer";
       return dataLayerNamespace + ".proj_" + _settings["ProjectName"] + "." + _settings["ApplicationName"] + "." + objectType;
     }
-
-    private string GetDataObjectPath(string objectType)
-    {
-      // Load config xml 
-      string configFile = _settings["XmlPath"] + objectType + "." + _settings["ProjectName"] + "." + _settings["ApplicationName"] + ".xml";
-      XDocument configDoc = XDocument.Load(configFile);
-      XElement configRootElement = configDoc.Element("commodity");
-
-      // Get path
-      string dataObjectPath = configRootElement.Element("location").Value;
-      if (!dataObjectPath.EndsWith("\\"))
-      {
-        dataObjectPath += "\\";
-      }
-
-      return dataObjectPath;
-    }
-
-    #region IDataLayer Members
-
-    public IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType)
-    {
-      throw new NotImplementedException();
-    }
-
-    #endregion
   }
 }

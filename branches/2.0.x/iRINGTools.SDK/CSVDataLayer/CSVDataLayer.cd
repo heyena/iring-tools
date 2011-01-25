@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="org.iringtools.adapter.datalayer.csv.Equipment">
+  <Class Name="iRINGTools.SDK.CSVDataLayer.Equipment">
     <Position X="7.25" Y="0.5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAQIAAAAAAUgAAAAAAAAAAACAAAAAAACEAAAAAAAAAA=</HashCode>
       <FileName>DataObjects.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="org.iringtools.adapter.datalayer.csv.EquipmentDataObject">
+  <Class Name="iRINGTools.SDK.CSVDataLayer.EquipmentDataObject">
     <Position X="5" Y="0.5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAABAAAAAAAAAAAAAAAAAAAAEAAAAAAAAgAAA=</HashCode>
@@ -15,17 +15,17 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="org.iringtools.adapter.datalayer.csv.CustomDataLayer">
+  <Class Name="iRINGTools.SDK.CSVDataLayer.CustomDataLayer">
     <Position X="2.75" Y="0.5" Width="1.75" />
     <Members>
       <Field Name="_dataDictionaryPath" Hidden="true" />
       <Field Name="_logger" Hidden="true" />
       <Field Name="_settings" Hidden="true" />
-      <Method Name="GetDataObjectPath" Hidden="true" />
+      <Method Name="FormDataObject" Hidden="true" />
       <Method Name="GetdataObjectType" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>AAAEAAAEAAAAAABAgAAAIAAQKAEACEAAAAAAAAAgAAA=</HashCode>
+      <HashCode>AAQEAAAEAAAAAAFAgAAAIAAAKAEACEAAAAAAAAAgAAA=</HashCode>
       <FileName>CSVDataLayer.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />

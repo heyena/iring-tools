@@ -477,6 +477,53 @@ namespace org.iringtools.library.mssql
       }
     }
 
+    public long GetCount(string objectType, DataFilter filter)
+    {
+      try
+      {
+        List<String> identifiers = new List<String>();
+        SqlObject objectSql = _configration.FirstOrDefault(c => c.ObjectTypeName == objectType);
+
+        StringBuilder sql = new StringBuilder();
+        if (!string.IsNullOrEmpty(objectSql.SelectSqlJoin))
+        {
+          sql.AppendLine("SELECT " + objectSql.IdentifierProperty);
+          sql.AppendLine(" FROM " + objectSql.ObjectName);
+          sql.AppendLine(" " + objectSql.SelectSqlJoin);
+          if (filter != null)
+          {
+            sql.AppendLine(" " + filter.ToSqlWhereClause(GetDictionary(), objectSql.ObjectName, objectSql.ObjectName));
+          }
+          else if (!string.IsNullOrEmpty(objectSql.ListSqlWhere))
+          {
+            sql.AppendLine(" WHERE " + objectSql.ListSqlWhere);
+          }
+        }
+        else if (!string.IsNullOrEmpty(objectSql.IdentifierProperty))
+        {
+          sql.AppendLine("SELECT " + objectSql.IdentifierProperty);
+          sql.AppendLine(" FROM " + objectSql.ObjectName);
+          if (filter != null)
+          {
+            sql.Append(filter.ToSqlWhereClause(GetDictionary(), objectSql.ObjectName, null));
+          }
+          else if (!string.IsNullOrEmpty(objectSql.ListSqlWhere))
+          {
+            sql.AppendLine(" WHERE " + objectSql.ListSqlWhere);
+          }
+
+        }
+        DataCRUD getData = new DataCRUD(objectSql.ConnectionString);
+        DataTable identifiersList = getData.SelectRecords(sql.ToString());
+
+        return identifiersList.Rows.Count;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in GetIdentifiers: " + ex);
+        throw new Exception("Error while getting a list of identifiers of type [" + objectType + "].", ex);
+      }
+    }
     public IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType)
     {
       return new List<IDataObject>();//no related objects expected

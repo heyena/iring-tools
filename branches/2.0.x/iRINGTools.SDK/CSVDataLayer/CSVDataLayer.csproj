@@ -8,7 +8,7 @@
     <ProjectGuid>{4F181541-AFF4-4AE6-9FEE-A7A07E1ACB26}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>org.iringtools.adapter.datalayer</RootNamespace>
+    <RootNamespace>iRINGTools.SDK.CSVDataLayer</RootNamespace>
     <AssemblyName>CSVDataLayer</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -98,9 +98,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="BindingConfiguration.12345_000.API.xml" />
+    <Content Include="BindingConfiguration.12345_000.CSV.xml" />
     <Content Include="DataDictionary.xml" />
-    <Content Include="Equipment.12345_000.API.xml" />
+    <Content Include="Equipment.12345_000.CSV.xml" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -120,11 +120,11 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="12345_000.API.config" />
+    <None Include="12345_000.CSV.config" />
     <None Include="CSVDataLayer.cd" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Equipment.12345_000.API\" />
+    <Folder Include="12345_000.CSV\Equipment\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
