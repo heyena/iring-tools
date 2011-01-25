@@ -8,7 +8,16 @@ namespace iRINGTools.Web.Models
 {
   public class ScopeTreeNode : TreeNode<ApplicationTreeNode>
   {
-    public ScopeProject Scope { get; set; }    
+    public ScopeProject Scope { get; set; }
+
+    public override string type
+    {
+      get
+      {
+        return "Scope";
+      }
+    }
+
     public override string text
     {
       get

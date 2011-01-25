@@ -92,15 +92,18 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     },
 
     onCreate: function (btn, ev) {
-        this.fireEvent('create', this);
+        var node = this.DirectoryPanel.getSelectionModel().getSelectedNode();
+        this.fireEvent('create', this, node);
     },
 
     onOpen: function (btn, ev) {
-        this.fireEvent('open', this);
+        var node = this.DirectoryPanel.getSelectionModel().getSelectedNode();
+        this.fireEvent('open', this, node);
     },
 
     onRemove: function (btn, ev) {
-        this.fireEvent('remove', this);
+        var node = this.DirectoryPanel.getSelectionModel().getSelectedNode();
+        this.fireEvent('remove', this, node);
     }    
 
 });
