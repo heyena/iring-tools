@@ -488,6 +488,24 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
+    public long GetCount(string objectType, DataFilter filter)
+    {
+      try
+      {
+        ExcelWorksheet cfWorkSheet = GetConfigWorkSheet(objectType);
+
+        List<string> identifiers = new List<string>();
+        IList<IDataObject> dataObjects = Get(objectType, filter, 0, 0);
+
+        return dataObjects.Count;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in GetIdentifiers: " + ex);
+        throw new Exception("Error while getting a list of identifiers of type [" + objectType + "].", ex);
+      }
+    }
+
     private Excel.Worksheet GetWorkSheet(string objectType, Excel.Workbook xlWorkBook, ExcelWorksheet cfWorksheet)
     {
       try

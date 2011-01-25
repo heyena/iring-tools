@@ -629,7 +629,7 @@ namespace org.iringtools.adapter
         {
           _dataObjects = _dataLayer.Get(graphName, null);
 
-          _projectionEngine.Count = _dataLayer.GetCount(graphName, null).Count;
+          _projectionEngine.Count = _dataLayer.GetCount(graphName, null);
         }
 
         return _projectionEngine.ToXml(graphName, ref _dataObjects);
@@ -1133,13 +1133,23 @@ namespace org.iringtools.adapter
     private long LoadDataObjectSet(string graphName, DataFilter dataFilter, int start, int limit)
     {
       _graphMap = _mapping.FindGraphMap(graphName);
-      IList<string> index = _dataLayer.GetCount(_graphMap.dataObjectMap, dataFilter);
+      /* GvR please review my changes
+      IList<string> index = _dataLayer.GetCount(_graphMap.dataObjectMap, dataFilter);      
+      _dataObjects.Clear();
+      if (dataFilter != null)
+        _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, dataFilter, limit, start);
+      else
+        _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, null);     
+      return index.Count;
+      */
+
       _dataObjects.Clear();
       if (dataFilter != null)
         _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, dataFilter, limit, start);
       else
         _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, null);
-      return index.Count;
+
+      return _dataObjects.Count;
     }
 
     private void UpdateScopes(string projectName, string projectDescription, string applicationName, string applicationDescription)
