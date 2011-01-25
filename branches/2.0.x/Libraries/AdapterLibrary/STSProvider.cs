@@ -8,6 +8,8 @@ using System.Web;
 using Ninject;
 using System.Collections;
 using System;
+using org.iringtools.utility;
+using log4net;
 
 namespace org.iringtools.adapter.identity
 {
@@ -22,6 +24,7 @@ namespace org.iringtools.adapter.identity
     /// </summary>
     /// 
 
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(STSProvider));
     private AdapterSettings _settings = null;
 
     [Inject]
@@ -32,7 +35,7 @@ namespace org.iringtools.adapter.identity
 
     public IDictionary GetKeyRing()
     {
-      string url = String.Empty;
+      string restTokenAddress = String.Empty;
 
       try
       {
@@ -42,26 +45,45 @@ namespace org.iringtools.adapter.identity
         HttpContext context = System.Web.HttpContext.Current;
 
         string header = context.Request.Headers["Authorization"];
-        string restTokenAddress = _settings["STSAddress"];
+        string proxyHost = _settings["ProxyHost"];
+        string proxyPort = _settings["ProxyPort"];
+        
+        restTokenAddress = _settings["STSAddress"];
+     
+        DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(Dictionary<string, string>));
+        WebHttpClient webHttpClient = null;
 
-        DataContractJsonSerializer dictionarySerializer = new DataContractJsonSerializer(typeof(Dictionary<string, string>));
-        WebClient client = new WebClient();
-        client.UseDefaultCredentials = true;
+        if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
+        {
+          WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort)); 
+          
+          webProxy.Credentials = _settings.GetProxyCredential();
+        
+          webHttpClient = new WebHttpClient(restTokenAddress, null, webProxy);
+        }
+        else
+        {
+          webHttpClient = new WebHttpClient(restTokenAddress);
+        }
 
-        url = restTokenAddress + "/JSON/DecodeOAuthHeader?header=" + header;
-        string xmlToken = client.DownloadString(url);
-        MemoryStream str = new MemoryStream(Encoding.Unicode.GetBytes(xmlToken));
+        string relativeUrl = "/JSON/DecodeOAuthHeader?header=" + header;
+        string json = webHttpClient.GetMessage(relativeUrl);
+        MemoryStream str = new MemoryStream(Encoding.Unicode.GetBytes(json));
         str.Position = 0;
 
-        keyRing = (IDictionary)dictionarySerializer.ReadObject(str);
+        _logger.Debug(json);
 
-        keyRing.Add("Provider", "SecureTokenProvider");
+        if (!String.IsNullOrWhiteSpace(json))
+        {
+          keyRing = (IDictionary)jsonSerializer.ReadObject(str);
+          keyRing.Add("Provider", "SecureTokenProvider");
+        }
 
         return keyRing;
       }
       catch (Exception ex)
       {
-        throw new Exception("Error while trying to get the KeyRing from: " + url, ex);
+        throw new Exception("Error while trying to get the KeyRing from: " + restTokenAddress, ex);
       }
     }
   }

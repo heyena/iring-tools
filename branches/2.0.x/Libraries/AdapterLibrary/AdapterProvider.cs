@@ -476,7 +476,9 @@ namespace org.iringtools.adapter
       return _response;
     }
 
-    public XDocument GetDataProjection(string projectName, string applicationName, string graphName, DataFilter filter, string format, int start, int limit)
+    public XDocument GetDataProjection(
+		string projectName, string applicationName, string graphName, 
+		DataFilter filter, string format, int start, int limit)
     {
       try
       {
@@ -499,7 +501,7 @@ namespace org.iringtools.adapter
 
         _dataObjects = _dataLayer.Get(graphName, filter, limit, start);
 
-        _projectionEngine.Count = _dataLayer.GetIdentifiers(graphName, filter).Count;
+        _projectionEngine.Count = _dataLayer.GetCount(graphName, filter);
 
         return _projectionEngine.ToXml(graphName, ref _dataObjects);
       }
@@ -616,13 +618,13 @@ namespace org.iringtools.adapter
 
           _dataObjects = _dataLayer.Get(graphName, filter, limit, start);
 
-          _projectionEngine.Count = _dataLayer.GetIdentifiers(graphName, filter).Count;
+          _projectionEngine.Count = _dataLayer.GetCount(graphName, filter);
         }
         else
         {
           _dataObjects = _dataLayer.Get(graphName, null);
 
-          _projectionEngine.Count = _dataLayer.GetIdentifiers(graphName, null).Count;
+          _projectionEngine.Count = _dataLayer.GetCount(graphName, null).Count;
         }
 
         return _projectionEngine.ToXml(graphName, ref _dataObjects);
@@ -634,7 +636,9 @@ namespace org.iringtools.adapter
       }
     }
 
-    public XDocument GetProjection(string projectName, string applicationName, string graphName, string identifier, string format)
+    public XDocument GetProjection(
+		string projectName, string applicationName, string graphName, 
+		string identifier, string format)
     {
       try
       {
@@ -663,7 +667,10 @@ namespace org.iringtools.adapter
       }
     }
 
-    public XDocument GetProjection(string projectName, string applicationName, string graphName, DataFilter filter, string format, int start, int limit)
+    public XDocument GetProjection(
+		string projectName, string applicationName, string graphName, 
+		DataFilter filter, 
+		string format, int start, int limit)
     {
       try
       {
@@ -696,25 +703,6 @@ namespace org.iringtools.adapter
         _logger.Error(string.Format("Error in GetProjection: {0}", ex));
         throw ex;
       }
-    }
-
-    public IList<IDataObject> GetDataObjects(string projectName, string applicationName, string graphName, string format, XDocument xDocument)
-    {
-      InitializeScope(projectName, applicationName);
-      InitializeDataLayer();
-
-      if (format != null)
-      {
-        _projectionEngine = _kernel.Get<IProjectionLayer>(format);
-      }
-      else
-      {
-        _projectionEngine = _kernel.Get<IProjectionLayer>(_settings["DefaultProjectionFormat"]);
-      }
-
-      IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xDocument);
-
-      return dataObjects;
     }
 
     public XDocument GetProjection(
@@ -810,6 +798,26 @@ namespace org.iringtools.adapter
       }
     }
 
+    public IList<IDataObject> GetDataObjects(
+		string projectName, string applicationName, string graphName, 
+		string format, XDocument xDocument)
+    {
+      InitializeScope(projectName, applicationName);
+      InitializeDataLayer();
+
+      if (format != null)
+      {
+        _projectionEngine = _kernel.Get<IProjectionLayer>(format);
+      }
+      else
+      {
+        _projectionEngine = _kernel.Get<IProjectionLayer>(_settings["DefaultProjectionFormat"]);
+      }
+
+      IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xDocument);
+
+      return dataObjects;
+    }
     public Response DeleteAll(string projectName, string applicationName)
     {
       Status status = new Status();
@@ -1125,7 +1133,7 @@ namespace org.iringtools.adapter
     {
       _graphMap = _mapping.FindGraphMap(graphName);
 
-      IList<string> index = _dataLayer.GetIdentifiers(_graphMap.dataObjectMap, dataFilter);
+      IList<string> index = _dataLayer.GetCount(_graphMap.dataObjectMap, dataFilter);
 
       _dataObjects.Clear();
 
