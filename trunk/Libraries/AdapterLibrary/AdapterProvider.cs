@@ -1133,23 +1133,15 @@ namespace org.iringtools.adapter
     private long LoadDataObjectSet(string graphName, DataFilter dataFilter, int start, int limit)
     {
       _graphMap = _mapping.FindGraphMap(graphName);
-      /* GvR please review my changes
-      IList<string> index = _dataLayer.GetCount(_graphMap.dataObjectMap, dataFilter);      
-      _dataObjects.Clear();
-      if (dataFilter != null)
-        _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, dataFilter, limit, start);
-      else
-        _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, null);     
-      return index.Count;
-      */
 
+      long count = _dataLayer.GetCount(_graphMap.dataObjectName, dataFilter);      
       _dataObjects.Clear();
       if (dataFilter != null)
         _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, dataFilter, limit, start);
       else
         _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, null);
-
-      return _dataObjects.Count;
+      
+      return count;
     }
 
     private void UpdateScopes(string projectName, string projectDescription, string applicationName, string applicationDescription)
