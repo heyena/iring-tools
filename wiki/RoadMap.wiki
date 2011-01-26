@@ -48,11 +48,11 @@
 	
 ==iRINGTools Future==
 
-	* AdapterManager Application w/ Extensible UI for DataLayers
+  * AdapterManager Application w/ Extensible UI for DataLayers
   * Re-Built RefDataEditor Application
-	* ID Generator and Better Federation in RefData Service
-	* Simple Adapter Security
-	* Secure NHibernate DataLayer
-	* Full Message Encryption
+  * ID Generator and Better Federation in RefData Service
+  * Simple Adapter Security
+  * Secure NHibernate DataLayer
+  * Full Message Encryption
 	
 Other pages: [Components] | [ISO15926] | [Documentation] | [Contributors]
