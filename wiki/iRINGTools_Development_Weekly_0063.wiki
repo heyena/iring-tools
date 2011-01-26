@@ -1,4 +1,5 @@
 #summary Date: 2011/1/25 Time: 08:00 EST
+#labels Meeting
 
 ==Agenda==
  * 2.0.1 Release
