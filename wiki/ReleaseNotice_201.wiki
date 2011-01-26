@@ -2,7 +2,9 @@
 #summary Date: 2010/11/11
 = *iRINGTools* 2.00.01.2552 =
 
-A patch release of [http://code.google.com/p/iring-tools/wiki/ReleaseNotice_200 iRINGTools 2.0] that includes final adjustments to the SDK and fixes many bugs.  The download is available [http://iring-tools.googlecode.com/files/iRINGTools-2.0.1.zip here]
+A patch release of [http://code.google.com/p/iring-tools/wiki/ReleaseNotice_200 iRINGTools 2.0] that includes final adjustments to the SDK and fixes many bugs.  
+The download is available [http://iring-tools.googlecode.com/files/iRINGTools-2.0.1.zip here].  
+The SDK can be downloaded from [http://iring-tools.googlecode.com/files/iRINGTools-SDK-2.0.1.zip here]
 
 [http://iring-tools.googlecode.com/files/iRINGTools_Installation_Guide_v2.0.1.pdf Installation Guide]
 
