@@ -1,8 +1,12 @@
 package org.iringtools.controllers;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.struts2.interceptor.SessionAware;
+import org.iringtools.common.response.Level;
+import org.iringtools.common.response.Status;
+import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.models.ExchangeDataModel;
 import org.iringtools.utility.HttpClientException;
 import org.iringtools.widgets.grid.Grid;
@@ -25,6 +29,8 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   private String classIdentifier;
   private int start;
   private int limit;
+  private boolean reviewed;
+  private String exchangeResult;
   
   public ExchangeDataController() 
   {    
@@ -43,9 +49,7 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   // ------------------------------------
   public String getPageDtos() throws HttpClientException
   {
-    String dtiUrl = esbServiceUri + "/" + scope + "/exchanges/" + xid;
-    String dtoUrl = dtiUrl;    
-    pageDtoGrid = exchangeDataModel.getDtoGrid(dtiUrl, dtoUrl, start, limit);    
+    pageDtoGrid = exchangeDataModel.getDtoGrid(esbServiceUri, scope, xid, start, limit);    
     return SUCCESS;
   }
   
@@ -59,15 +63,59 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   // ----------------------------
   public String getPageRelatedItems() throws HttpClientException 
   {
-    String dtiUrl = esbServiceUri + "/" + scope + "/exchanges/" + xid;
-    String dtoUrl = dtiUrl;    
-    pageRelatedItemGrid = exchangeDataModel.getRelatedItemGrid(dtiUrl, dtoUrl, individual, classId, classIdentifier, start, limit);
+    pageRelatedItemGrid = exchangeDataModel.getRelatedItemGrid(esbServiceUri, scope, xid, 
+        individual, classId, classIdentifier, start, limit);
     return SUCCESS;
   }
 
   public Grid getPageRelatedItemGrid()
   {
     return pageRelatedItemGrid;
+  }
+  
+  //--------------------
+  // submit an exchange
+  // -------------------
+  public String submitExchange() 
+  {
+    ExchangeResponse response = exchangeDataModel.submitExchange(esbServiceUri, scope, xid, reviewed);  
+    List<Status> statusItems = response.getStatusList().getItems();    
+    int duration = response.getEndTimeStamp().compare(response.getStartTimeStamp());    
+    StringBuilder result = new StringBuilder();
+         
+    if (response.getLevel() == Level.SUCCESS)
+    {
+      result.append("Exchange completed successfully.\r");
+    }
+    else
+    {
+      if (response.getLevel() == Level.ERROR)
+      {
+        result.append("Exchange failed.\r\r");
+      }
+      else if (response.getLevel() == Level.WARNING)
+      {
+        result.append("Exchange completed with warning(s).\r\r");
+      }
+      
+      if (statusItems != null && statusItems.size() > 0)
+      {
+        for (String message : statusItems.get(0).getMessages().getItems())
+        {
+          result.append(message + "\r");
+        }
+      }    
+    }
+    
+    result.append("\rExecution time [" + duration + "] second(s).");   
+    exchangeResult = result.toString();
+    
+    return SUCCESS;
+  }
+  
+  public String getExchangeResult()
+  {
+    return exchangeResult;
   }
   
   // --------------------------
@@ -141,5 +189,15 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   public int getLimit()
   {
     return limit;
+  }
+
+  public void setReviewed(boolean reviewed)
+  {
+    this.reviewed = reviewed;
+  }
+
+  public boolean getReviewed()
+  {
+    return reviewed;
   } 
 }

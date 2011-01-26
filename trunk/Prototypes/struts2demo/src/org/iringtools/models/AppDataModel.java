@@ -13,18 +13,22 @@ public class AppDataModel extends DataModel
     this.session = session;
   }
   
-  public Grid getDtoGrid(String dtiUrl, String dtoUrl, int start, int limit)
+  public Grid getDtoGrid(String serviceUri, String scope, String app, String graph, int start, int limit)
   {
+    String dtiUrl = serviceUri + "/" + scope + "/" + app + "/" + graph;
+    String dtoUrl = dtiUrl + "/page";    
     DataTransferObjects pageDtos = getPageDtos(dtiUrl, dtoUrl, start, limit);
     Grid pageDtoGrid = getDtoGrid(DataType.APP, pageDtos);
-    DataTransferIndices dtis = (DataTransferIndices)session.get(dtiUrl);
+    DataTransferIndices dtis = getDtis(dtiUrl);
     pageDtoGrid.setTotal(dtis.getDataTransferIndexList().getItems().size());      
     return pageDtoGrid;
   }
   
-  public Grid getRelatedItemGrid(String dtiUrl, String dtoUrl, String individual, 
-      String classId, String classIdentifier, int start, int limit)
+  public Grid getRelatedItemGrid(String serviceUri, String scope, String app, String graph, 
+      String individual, String classId, String classIdentifier, int start, int limit)
   {
+    String dtiUrl = serviceUri + "/" + scope + "/" + app + "/" + graph;
+    String dtoUrl = dtiUrl + "/page";
     DataTransferObjects pageDtos = getPageDtos(dtiUrl, dtoUrl, start, limit);  
     return getRelatedItemGrid(DataType.APP, pageDtos, individual, classId, classIdentifier, start, limit);
   }

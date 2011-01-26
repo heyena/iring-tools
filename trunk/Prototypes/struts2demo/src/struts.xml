@@ -2,7 +2,16 @@
 <!DOCTYPE struts PUBLIC
     "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
     "http://struts.apache.org/dtds/struts-2.0.dtd">
-<struts>
+<struts>  
+  <package name="default" extends="struts-default">
+    <action name="fedmgr">
+      <result>/federation-manager.html</result>
+    </action>    
+    <action name="xchmgr">
+      <result>/exchange-manager.html</result>
+    </action>
+  </package>
+  
 	<package name="directory" extends="json-default">
     <action name="directory" class="org.iringtools.controllers.DirectoryController" method="getDirectory">
       <result type="json">
@@ -14,12 +23,12 @@
   <package name="app-data" extends="json-default">
     <action name="adata" class="org.iringtools.controllers.AppDataController" method="getPageDtos">
       <result type="json">
-         <param name="root">pageDtoGrid</param>
+        <param name="root">pageDtoGrid</param>
       </result>
     </action>
     <action name="radata" class="org.iringtools.controllers.AppDataController" method="getPageRelatedItems">
       <result type="json">
-         <param name="root">pageRelatedItemGrid</param>
+        <param name="root">pageRelatedItemGrid</param>
       </result>
     </action>
   </package>
@@ -27,12 +36,17 @@
   <package name="exchange-data" extends="json-default">
     <action name="xdata" class="org.iringtools.controllers.ExchangeDataController" method="getPageDtos">
       <result type="json">
-         <param name="root">pageDtoGrid</param>
+        <param name="root">pageDtoGrid</param>
       </result>
     </action>
     <action name="rxdata" class="org.iringtools.controllers.ExchangeDataController" method="getPageRelatedItems">
       <result type="json">
-         <param name="root">pageRelatedItemGrid</param>
+        <param name="root">pageRelatedItemGrid</param>
+      </result>
+    </action>
+    <action name="xsubmit" class="org.iringtools.controllers.ExchangeDataController" method="submitExchange">
+      <result type="json">
+        <param name="root">exchangeResult</param>
       </result>
     </action>
 	</package>

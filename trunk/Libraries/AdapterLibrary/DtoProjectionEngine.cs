@@ -102,13 +102,13 @@ namespace org.iringtools.adapter.projection
 
               foreach (TemplateMap templateMap in templateMaps)
               {
+                bool isTemplateValid = true;
+
                 TemplateObject templateObject = new TemplateObject
                 {
                   templateId = templateMap.id,
                   name = templateMap.name,
                 };
-
-                classObject.templateObjects.Add(templateObject);
 
                 foreach (RoleMap roleMap in templateMap.roleMaps)
                 {
@@ -150,10 +150,21 @@ namespace org.iringtools.adapter.projection
                     roleObject.relatedClassName = roleMap.classMap.name;
 
                     if (!String.IsNullOrEmpty(_classIdentifiers[roleMap.classMap.id][i]))
+                    {
                       value = "#" + _classIdentifiers[roleMap.classMap.id][i];
+                    }
+                    else
+                    {
+                      isTemplateValid = false;
+                    }
                   }
 
                   roleObject.value = value;
+                }
+
+                if (isTemplateValid)
+                {
+                  classObject.templateObjects.Add(templateObject);
                 }
               }
             }
