@@ -3,6 +3,7 @@
 
   <PropertyGroup>
     <AssemblyInfoFile>$(MSBuildProjectDirectory)\AssemblyInfo.cs</AssemblyInfoFile>
+    <AssemblyInfoFile>$(MSBuildProjectDirectory)\iRINGTools.SDK\AssemblyInfo.cs</AssemblyInfoFile>
     <Major>2</Major>
     <Minor>0</Minor>
     <Build>1</Build>
@@ -19,6 +20,7 @@
     <UtilitiesDir>$(MSBuildProjectDirectory)\Utilities</UtilitiesDir>
     <RDFImportExportDir>$(UtilitiesDir)\RDFImportExport\RDFImportExport</RDFImportExportDir>
     <QMXFGeneratorDir>$(UtilitiesDir)\QMXFGenerator</QMXFGeneratorDir>
+    <FacadeExchangeDir>$(UtilitiesDir)\FacadeExchange</FacadeExchangeDir>
     <UnitTestsDir>$(MSBuildProjectDirectory)\UnitTests</UnitTestsDir>
     <AdapterServiceTestsDir>$(UnitTestsDir)\AdapterService.Tests</AdapterServiceTestsDir>
     <RefDataServiceTestsDir>$(UnitTestsDir)\ReferenceDataService.Tests</RefDataServiceTestsDir>
@@ -49,43 +51,46 @@
 
   <ItemGroup>
     <ServicesDeployment
-      Include="$(ServicesDir)\**"
+      Include="$(ServicesDir)\**;"
       Exclude="$(ServicesDir).Tests\**;
-               $(ServicesDir)\App_Code\**;
-               $(ServicesDir)\bin\*.pdb;
-               $(ServicesDir)\obj\**;
-               $(ServicesDir)\Properties\**;
-               $(ServicesDir)\Logs\**;
-               $(ServicesDir)\Templates\**;
-               $(ServicesDir)\Transforms\**;
-               $(ServicesDir)\obj\**;
-               $(ServicesDir)\*.cs;
-               $(ServicesDir)\*.csproj;
-               $(ServicesDir)\*.user;
-               $(ServicesDir)\*.vspscc;
-               $(ServicesDir)\*.log;
-               $(ServicesDir)\web.config;
-               $(ServicesDir)\Service.cs;
-               $(ServicesDir)\IService.cs;
-               $(ServicesDir)\Global.asax.cs;
-               $(ServicesDir)\XML\BindingConfiguration.*.xml;
-               $(ServicesDir)\XML\DataDictionary.*.xml;
-               $(ServicesDir)\XML\DatabaseDictionary.*.xml;
-               $(ServicesDir)\XML\nh-configuration.*.xml;
-               $(ServicesDir)\XML\nh-mapping.*.xml;
-               $(ServicesDir)\XML\Repositories.xml;
-               $(ServicesDir)\XML\Scopes.xml;
-               $(ServicesDir)\.svn\**;
-               $(ServicesDir)\*\.svn\**;
-               $(ServicesDir)\*\*\.svn\**;
-               $(ServicesDir)\*\*\*\.svn\**;">
+             $(ServicesDir)\AdapterSettings.xml;
+             $(ServicesDir)\KeyRing.xml;
+             $(ServicesDir)\App_Code\**;
+             $(ServicesDir)\App_Data\config.Developer.ttl;
+             $(ServicesDir)\bin\*.pdb;
+             $(ServicesDir)\obj\**;
+             $(ServicesDir)\Properties\**;
+             $(ServicesDir)\Logs\**;
+             $(ServicesDir)\Templates\**;
+             $(ServicesDir)\Transforms\**;
+             $(ServicesDir)\obj\**;
+             $(ServicesDir)\*.cs;
+             $(ServicesDir)\*.csproj;
+             $(ServicesDir)\*.user;
+             $(ServicesDir)\*.vspscc;
+             $(ServicesDir)\*.log;
+             $(ServicesDir)\web.config;
+             $(ServicesDir)\Service.cs;
+             $(ServicesDir)\IService.cs;
+             $(ServicesDir)\Global.asax.cs;
+             $(ServicesDir)\XML\DataDictionary.*.xml;
+             $(ServicesDir)\XML\DatabaseDictionary.*.xml;
+             $(ServicesDir)\XML\nh-configuration.*.xml;
+             $(ServicesDir)\XML\nh-mapping.*.xml;
+             $(ServicesDir)\XML\Repositories.xml;
+             $(ServicesDir)\XML\Scopes.xml;
+             $(ServicesDir)\.svn\**;
+             $(ServicesDir)\*\.svn\**;
+             $(ServicesDir)\*\*\.svn\**;
+             $(ServicesDir)\*\*\*\.svn\**;">
     </ServicesDeployment>
 
     <LandingDeployment
       Include="$(LandingPageDir)\**"
-      Exclude="$(LandingPageDir)\.svn\**;
-               $(LandingPageDir)\*\.svn\**;
-               $(LandingPageDir)\nbproject\**;">
+      Exclude="$(LandingPageDir)\.settings\**;
+             $(LandingPageDir)\.project;
+             $(LandingPageDir)\.svn\**;
+             $(LandingPageDir)\*\.svn\**;">
     </LandingDeployment>
 
     <AppsDeployment
@@ -99,7 +104,8 @@
                $(ApplicationsDir)\*.vspscc;
                $(ApplicationsDir)\web.config;
                $(ApplicationsDir)\.svn\**;
-               $(ApplicationsDir)\*\.svn\**">
+               $(ApplicationsDir)\*\.svn\**;
+               $(ApplicationsDir)\*\*\.svn\**;">
     </AppsDeployment>
 
     <UtilitiesDeployment
@@ -124,7 +130,7 @@
                Utilities\QMXFTransforms\*.xsd;
                Utilities\QMXFTransforms\*.xsl;
                Utilities\FacadeExchange\bin\Debug\FacadeExchange.exe;
-               Utilities\FacadeExchange\bin\Debug\FacadeExchange.exe.config;
+               Utilities\FacadeExchange\FacadeExchange.Default.config;
                Utilities\FacadeExchange\bin\Debug\*.dll;
                Utilities\FacadeExchange\bin\Debug\*.xml;">
     </UtilitiesDeployment>
@@ -132,32 +138,42 @@
     <SDKDeployment
       Include="$(SDKDir)\**;"
       Exclude="$(SDKDir)\TestResults\**;
-               $(SDKDir)\.svn\**;
-               $(SDKDir)\*\.svn\**;
-               $(SDKDir)\*\*\.svn\**;
-               $(SDKDir)\*\*\*\.svn\**;">                    
+             $(SDKDir)\CSVDataLayer\bin\**;
+             $(SDKDir)\CSVDataLayer\obj\**;
+             $(SDKDir)\CSVDataLayer\12345_000.CSV.config;
+             $(SDKDir)\lib\*.*;
+             $(SDKDir)\.svn\**;
+             $(SDKDir)\*\.svn\**;
+             $(SDKDir)\*\*\.svn\**;
+             $(SDKDir)\*\*\*\.svn\**;">                    
     </SDKDeployment>
 
     <SDKLibUpdate
-      Include="Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll;
-               Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;
-               Libraries\AdapterLibrary\bin\Debug\AdapterLibrary.dll;
-               ExternalBinaries\Configuration\StaticDust.Configuration.dll;
-               ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.dll;
-               ExternalBinaries\Ninject2\Ninject.dll;
-               ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll">
+      Include="ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.chm;
+             ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.dll;
+             ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.xml;
+             Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll;
+             Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;
+             Libraries\AdapterLibrary\bin\Debug\AdapterLibrary.dll;
+             ExternalBinaries\Configuration\StaticDust.Configuration.dll;
+             ExternalBinaries\Ninject2\Ninject.dll;
+             ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll;
+             ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.license.txt;
+             ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.xml;">
     </SDKLibUpdate>
 
     <SDKLibDeployment
       Include="ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.chm;
-               ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.dll;
-               ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.xml;
-               Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll;
-               Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;                
-               ExternalBinaries\Ninject2\Ninject.dll;
-               ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll;
-               ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.license.txt;
-               ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.xml;">
+             ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.dll;
+             ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.xml;
+             Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll;
+             Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;                
+             Libraries\AdapterLibrary\bin\Debug\AdapterLibrary.dll;
+             ExternalBinaries\Configuration\StaticDust.Configuration.dll;
+             ExternalBinaries\Ninject2\Ninject.dll;
+             ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll;
+             ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.license.txt;
+             ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.xml;">
     </SDKLibDeployment>
   </ItemGroup>
 
@@ -214,8 +230,11 @@
     <Exec Condition="!Exists('$(ApplicationsDir)\Web.config')"
           Command="Copy $(ApplicationsDir)\Web.Default.config $(ApplicationsDir)\Web.config" />
 
+    <Exec Condition="!Exists('$(FacadeExchangeDir)\App.config')"
+      Command="Copy $(FacadeExchangeDir)\FacadeExchange.Default.config $(FacadeExchangeDir)\App.config" />
+
     <Exec Condition="!Exists('$(QMXFGeneratorDir)\App.config')"
-          Command="Copy $(QMXFGeneratorDir)\QMXFGeneratorDir.Default.config $(QMXFGeneratorDir)\App.config" />
+          Command="Copy $(QMXFGeneratorDir)\QMXFGenerator.Default.config $(QMXFGeneratorDir)\App.config" />
     
     <Exec Condition="!Exists('$(RDFImportExportDir)\App.config')"
           Command="Copy $(RDFImportExportDir)\RDFImportExport.Default.config $(RDFImportExportDir)\App.config" />
@@ -268,6 +287,7 @@
     <Message Text="Creating Utilities deployment ..." />
     <Copy SourceFiles="@(UtilitiesDeployment)"
           DestinationFiles="@(UtilitiesDeployment->'$(UtilitiesDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(UtilitiesDeploymentDir)\FacadeExchange.Default.config $(UtilitiesDeploymentDir)\FacadeExchange.exe.config" />
     <Exec Command="Move /Y $(UtilitiesDeploymentDir)\QMXFGenerator.Default.config $(UtilitiesDeploymentDir)\QMXFGenerator.exe.config" />
     <Exec Command="Move /Y $(UtilitiesDeploymentDir)\RDFImportExport.Default.config $(UtilitiesDeploymentDir)\RDFImportExport.exe.config" />
 
@@ -278,6 +298,7 @@
     <Message Text="Creating SDK deployment ..." />
     <Copy SourceFiles="@(SDKDeployment)"
           DestinationFiles="@(SDKDeployment->'$(SDKDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Exec Command="Move /Y $(SDKDeploymentDir)\CSVDataLayer\12345_000.CSV.Default.config $(SDKDeploymentDir)\CSVDataLayer\12345_000.CSV.config" />
 
     <Message Text="Creating SDK library deployment ..." />
     <Copy SourceFiles="@(SDKLibDeployment)"
