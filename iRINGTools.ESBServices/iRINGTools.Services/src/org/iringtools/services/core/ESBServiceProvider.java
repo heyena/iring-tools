@@ -395,103 +395,108 @@ public class ESBServiceProvider
         if (exchangeRequest.isReviewed())
           sourcePoolDtiList.addAll(syncDtiList);
 
-        // request source DTOs
-        DtoPageRequest poolDtosRequest = new DtoPageRequest();
-        poolDtosRequest.setManifest(crossedManifest);
-        DataTransferIndices poolDataTransferIndices = new DataTransferIndices();
-        DataTransferIndexList poolDtiList = new DataTransferIndexList();
-        poolDtiList.setItems(sourcePoolDtiList);
-        poolDataTransferIndices.setDataTransferIndexList(poolDtiList);
-        poolDtosRequest.setDataTransferIndices(poolDataTransferIndices);
-        
-        String sourceDtoUrl = sourceGraphUrl + "/dxo";
-        DataTransferObjects poolDtos = httpClient.post(DataTransferObjects.class, sourceDtoUrl, poolDtosRequest);
-        List<DataTransferObject> poolDtoListItems = poolDtos.getDataTransferObjectList().getItems();
-
-        // set transfer type for each DTO : poolDtoList and remove/report ones that have changed
-        // and deleted during review and acceptance period
-        for (int j = 0; j < poolDtoListItems.size(); j++)
+        if (sourcePoolDtiList.size() > 0)
         {
-          DataTransferObject sourceDto = poolDtoListItems.get(j);
-          String identifier = sourceDto.getIdentifier();          
+          // request source DTOs
+          DtoPageRequest poolDtosRequest = new DtoPageRequest();
+          poolDtosRequest.setManifest(crossedManifest);
+          DataTransferIndices poolDataTransferIndices = new DataTransferIndices();
+          poolDtosRequest.setDataTransferIndices(poolDataTransferIndices);
+          DataTransferIndexList poolDtiList = new DataTransferIndexList();
+          poolDataTransferIndices.setDataTransferIndexList(poolDtiList);
+          poolDtiList.setItems(sourcePoolDtiList);
           
-          if (sourceDto.getClassObjects() != null)
-          {
-            for (DataTransferIndex dti : poolDtiListItems)
-            {
-              if (dti.getIdentifier().equals(identifier))
-              {
-                if (exchangeRequest.isReviewed())
-                {
-                  sourcePoolDtiList.remove(dti);
-                  String hashValue = md5Hash(sourceDto);
+          String sourceDtoUrl = sourceGraphUrl + "/dxo";
+          DataTransferObjects poolDtos = httpClient.post(DataTransferObjects.class, sourceDtoUrl, poolDtosRequest);
+          List<DataTransferObject> poolDtoListItems = poolDtos.getDataTransferObjectList().getItems();
   
-                  if (!hashValue.equalsIgnoreCase(dti.getHashValue()))
+          // set transfer type for each DTO : poolDtoList and remove/report ones that have changed
+          // and deleted during review and acceptance period
+          for (int j = 0; j < poolDtoListItems.size(); j++)
+          {
+            DataTransferObject sourceDto = poolDtoListItems.get(j);
+            String identifier = sourceDto.getIdentifier();          
+            
+            if (sourceDto.getClassObjects() != null)
+            {
+              for (DataTransferIndex dti : poolDtiListItems)
+              {
+                if (dti.getIdentifier().equals(identifier))
+                {
+                  if (exchangeRequest.isReviewed())
                   {
-                    Status status = createStatus(identifier, "DTO has changed.");
-                    exchangeResponse.getStatusList().getItems().add(status);
-                    
-                    if (exchangeResponse.getLevel() != Level.ERROR)
+                    sourcePoolDtiList.remove(dti);
+                    String hashValue = md5Hash(sourceDto);
+    
+                    if (!hashValue.equalsIgnoreCase(dti.getHashValue()))
                     {
-                      exchangeResponse.setLevel(Level.WARNING);
+                      Status status = createStatus(identifier, "DTO has changed.");
+                      exchangeResponse.getStatusList().getItems().add(status);
+                      
+                      if (exchangeResponse.getLevel() != Level.ERROR)
+                      {
+                        exchangeResponse.setLevel(Level.WARNING);
+                      }
+                      
+                      poolDtoListItems.remove(j--); 
                     }
-                    
-                    poolDtoListItems.remove(j--); 
-                  }
-                  else if (dti.getTransferType() == TransferType.SYNC)
-                  {
-                    poolDtoListItems.remove(j--);  // exclude SYNC DTOs
+                    else if (dti.getTransferType() == TransferType.SYNC)
+                    {
+                      poolDtoListItems.remove(j--);  // exclude SYNC DTOs
+                    }
+                    else
+                    {
+                      sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.valueOf(dti.getTransferType().toString()));
+                    }
                   }
                   else
                   {
                     sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.valueOf(dti.getTransferType().toString()));
                   }
+                  
+                  break;
                 }
-                else
-                {
-                  sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.valueOf(dti.getTransferType().toString()));
-                }
-                
-                break;
               }
             }
           }
-        }
 
-        // report DTOs that were deleted during review and acceptance
-        if (exchangeRequest.isReviewed() && sourcePoolDtiList.size() > 0)
-        {
-          for (DataTransferIndex sourceDti : sourcePoolDtiList)
+          // report DTOs that were deleted during review and acceptance
+          if (exchangeRequest.isReviewed() && sourcePoolDtiList.size() > 0)
           {
-            Status status = createStatus(sourceDti.getIdentifier(), "DTO no longer exists.");
-            exchangeResponse.getStatusList().getItems().add(status);
-            
-            if (exchangeResponse.getLevel() != Level.ERROR)
-              exchangeResponse.setLevel(Level.WARNING);
+            for (DataTransferIndex sourceDti : sourcePoolDtiList)
+            {
+              Status status = createStatus(sourceDti.getIdentifier(), "DTO no longer exists.");
+              exchangeResponse.getStatusList().getItems().add(status);
+              
+              if (exchangeResponse.getLevel() != Level.ERROR)
+                exchangeResponse.setLevel(Level.WARNING);
+            }
           }
-        }
-
-        // create identifiers for deleted DTOs
-        for (DataTransferIndex deleteDti : deleteDtiList)
-        {
-          DataTransferObject deleteDto = new DataTransferObject();
-          deleteDto.setIdentifier(deleteDti.getIdentifier());
-          deleteDto.setTransferType(org.iringtools.dxfr.dto.TransferType.DELETE);
-          poolDtoListItems.add(deleteDto);
-        }
-
-        // post add/change/delete DTOs to target endpoint
-        if (poolDtoListItems.size() > 0)
-        {
-          Response poolResponse = httpClient.post(Response.class, targetGraphUrl, poolDtos);
-          exchangeResponse.getStatusList().getItems().addAll(poolResponse.getStatusList().getItems());
-          
-          if (exchangeResponse.getLevel() != Level.ERROR || (exchangeResponse.getLevel() == Level.WARNING && poolResponse.getLevel() == Level.SUCCESS))
-            exchangeResponse.setLevel(poolResponse.getLevel());
+  
+          // create identifiers for deleted DTOs
+          for (DataTransferIndex deleteDti : deleteDtiList)
+          {
+            DataTransferObject deleteDto = new DataTransferObject();
+            deleteDto.setIdentifier(deleteDti.getIdentifier());
+            deleteDto.setTransferType(org.iringtools.dxfr.dto.TransferType.DELETE);
+            poolDtoListItems.add(deleteDto);
+          }
+  
+          // post add/change/delete DTOs to target endpoint
+          if (poolDtoListItems.size() > 0)
+          {
+            Response poolResponse = httpClient.post(Response.class, targetGraphUrl, poolDtos);
+            exchangeResponse.getStatusList().getItems().addAll(poolResponse.getStatusList().getItems());
+            
+            if (exchangeResponse.getLevel() != Level.ERROR || (exchangeResponse.getLevel() == Level.WARNING && poolResponse.getLevel() == Level.SUCCESS))
+              exchangeResponse.setLevel(poolResponse.getLevel());
+          }
         }
       }
       
-      if (exchangeResponse.getStatusList().getItems().size() == 0)
+      List<Status> statusItems = exchangeResponse.getStatusList().getItems();
+      
+      if (statusItems != null && statusItems.size() == 0)
       {
         Status status = createStatus("Overall", "No Add/Change/Delete DTOs are found!");
         exchangeResponse.getStatusList().getItems().add(status);
@@ -500,8 +505,17 @@ public class ESBServiceProvider
     }
     catch (Exception ex)
     {
-      logger.error("Error while posting DTOs: " + ex);
-      exchangeResponse.setLevel(Level.ERROR);
+      String error = "Error while posting DTOs: " + ex;      
+      logger.error(error);
+      
+      exchangeResponse.setLevel(Level.ERROR);      
+      Status status = new Status();      
+      List<String> messages = new ArrayList<String>();
+      messages.add(error);
+      StatusList statuses = new StatusList();
+      List<Status> statusItems = statusList.getItems();
+      statusItems.add(status);
+      exchangeResponse.setStatusList(statuses);
     }
     
     XMLGregorianCalendar timestamp = datatypeFactory.newXMLGregorianCalendar(new GregorianCalendar());

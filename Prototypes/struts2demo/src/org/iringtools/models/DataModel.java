@@ -32,7 +32,18 @@ public class DataModel
   private static final Logger logger = Logger.getLogger(DataModel.class);
   protected Map<String, Object> session;
   
-  private DataTransferIndices getDtis(String dtiUrl)
+  protected void removeSessionData(String dtiUrl)
+  {
+    for (String key : session.keySet())
+    {
+      if (key.contains(dtiUrl))
+      {
+        session.remove(key);
+      }
+    }
+  }
+  
+  protected DataTransferIndices getDtis(String dtiUrl)
   {
     DataTransferIndices dtis = new DataTransferIndices();
 
@@ -57,7 +68,7 @@ public class DataModel
     return dtis;
   }
 
-  private DataTransferObjects getDtos(String dtoUrl, List<DataTransferIndex> dtiList)
+  protected DataTransferObjects getDtos(String dtoUrl, List<DataTransferIndex> dtiList)
   {
     DataTransferObjects dtos = new DataTransferObjects();
 

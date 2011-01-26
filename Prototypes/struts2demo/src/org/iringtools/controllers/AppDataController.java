@@ -44,9 +44,7 @@ public class AppDataController extends ActionSupport implements SessionAware
   // ------------------------------------
   public String getPageDtos() throws HttpClientException
   {
-    String dtiUrl = dxfrServiceUri + "/" + scope + "/" + app + "/" + graph;
-    String dtoUrl = dxfrServiceUri + "/" + scope + "/" + app + "/" + graph + "/page";
-    pageDtoGrid = appDataModel.getDtoGrid(dtiUrl, dtoUrl, start, limit);    
+    pageDtoGrid = appDataModel.getDtoGrid(dxfrServiceUri, scope, app, graph, start, limit);    
     return SUCCESS;
   }
   
@@ -60,9 +58,8 @@ public class AppDataController extends ActionSupport implements SessionAware
   // ----------------------------
   public String getPageRelatedItems() throws HttpClientException 
   {
-    String dtiUrl = dxfrServiceUri + "/" + scope + "/" + app + "/" + graph;
-    String dtoUrl = dxfrServiceUri + "/" + scope + "/" + app + "/" + graph + "/page";
-    pageRelatedItemGrid = appDataModel.getRelatedItemGrid(dtiUrl, dtoUrl, individual, classId, classIdentifier, start, limit);
+    pageRelatedItemGrid = appDataModel.getRelatedItemGrid(dxfrServiceUri, scope, app, graph, 
+        individual, classId, classIdentifier, start, limit);
     return SUCCESS;
   }
 

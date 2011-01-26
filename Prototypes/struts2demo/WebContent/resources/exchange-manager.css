@@ -75,13 +75,6 @@ a:active {color: black}
 	color: #00df00;
 }
 
-.dialog-textbox {
-	width: 400px;
-	height: 180px;
-	border: 0 none;
-	overflow: auto
-}
-
 .breadcrumb {
 	margin: 10px 5px 0 5px;
 	text-decoration: none;

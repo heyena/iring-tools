@@ -1,4 +1,4 @@
-Ext.ns('iringtools.org');
+Ext.ns('iringtools.org.xmgr');
 
 function createGridStore(url){
   var store = new Ext.data.Store({
@@ -6,7 +6,13 @@ function createGridStore(url){
       url: url
     }),
     reader: new Ext.data.DynamicGridReader({}),
-    remoteSort: false
+    remoteSort: false,
+    listeners: {
+      exception: function(ex){
+        Ext.getBody().unmask();
+        showDialog(400, 100, 'Error', 'Error loading data at URL: ' + ex.url, Ext.Msg.OK, null);
+      }
+    }
   });
   return store;
 }
@@ -60,13 +66,26 @@ function loadPageDto(type, action, context, label){
         region: 'north',
         height: 26,
         padding: '5',
-        bodyStyle: 'background-color:#fcfcff',
+        bodyStyle: 'background-color:#fcfcfc',
         items: [{
           xtype: 'box',
-          autoEl: {tag: 'a', href: 'javascript:navigate(0)', html: store.reader.description},
+          autoEl: {tag: 'a', href: '#', html: store.reader.description},
           cls: 'breadcrumb',
-          overCls: 'breadcrumb-hover'
-        }]
+          overCls: 'breadcrumb-hover',
+          plugins: [ new Ext.DomObserver({
+            click: function(e, comp) {
+              navigate(0);
+            }
+          })]
+        }],
+        plugins: [ new Ext.DomObserver({
+          mouseover: function(e, comp) {
+            comp.bodyStyle = 'background-color:#eaeaea';
+          },
+          mouseout: function(e, comp) {
+            comp.bodyStyle = 'background-color:#fcfcfc';
+          }
+        })]
       });
       
       var dtoContentPane = new Ext.Panel({
@@ -117,9 +136,9 @@ function loadPageDto(type, action, context, label){
 }
 
 function loadRelatedItem(type, context, individual, classId, className, classIdentifier){
-  Ext.getBody().mask("Loading...", "x-mask-loading");    
-  
+  Ext.getBody().mask("Loading...", "x-mask-loading");
   var url = context + '&individual=' + individual + '&classId=' + classId + '&classIdentifier=' + classIdentifier;
+  
   if (type == 'app'){
     url = 'radata' + url;
   }
@@ -135,6 +154,7 @@ function loadRelatedItem(type, context, individual, classId, className, classIde
     var label = dtoTab.id.substring(4);
     var dtoNavPane = dtoTab.items.map['nav-' + label];
     var dtoContentPane = dtoTab.items.map['dto-' + label];    
+    var navItemIndex = dtoNavPane.items.length + 1;        
     
     dtoNavPane.add({
       xtype: 'box',
@@ -142,9 +162,14 @@ function loadRelatedItem(type, context, individual, classId, className, classIde
       cls: 'breadcrumb-img'
     },{
       xtype: 'box',
-      autoEl: {tag: 'a', href: 'javascript:navigate(' + (dtoNavPane.items.length + 1) + ')', html: className},
+      autoEl: {tag: 'a', href: '#', html: className},
       cls: 'breadcrumb',
-      overCls: 'breadcrumb-hover'
+      overCls: 'breadcrumb-hover',
+      plugins: [ new Ext.DomObserver({
+        click: function(e, comp) {
+          navigate(navItemIndex);
+        }
+      })]
     });    
     dtoNavPane.doLayout();
     
@@ -209,17 +234,27 @@ function showIndividualInfo(individual, relatedClasses){
   });
   
   for (var i = 0; i < relatedClasses.length; i++) {
+    var dtoTabType = dtoTab.type;
+    var dtoTabContext = dtoTab.context;
+    var dtoIdentifier = individual;
+    var relatedClassId = relatedClasses[i].id;
+    var relatedClassName = relatedClasses[i].name;
+    var relatedClassIdentifier = relatedClasses[i].identifier;
+    
     relatedItemPane.add({
       xtype: 'box',
       autoEl: {
-        tag: 'a', href: 'javascript:loadRelatedItem(\'' + dtoTab.type + '\',\'' + 
-        dtoTab.context + '\',\'' + individual + '\',\'' + relatedClasses[i].id + '\',\'' + 
-        relatedClasses[i].name + '\',\'' + relatedClasses[i].identifier + '\')', 
-        html: relatedClasses[i].name
+        tag: 'a', href: '#', html: relatedClassName
       },
       style: {width: '100%'},
       cls: 'breadcrumb',
-      overCls: 'breadcrumb-hover'
+      overCls: 'breadcrumb-hover',
+      plugins: [ new Ext.DomObserver({
+        click: function(e, comp) {
+          loadRelatedItem(dtoTabType, dtoTabContext, dtoIdentifier, relatedClassId,  
+            relatedClassName, relatedClassIdentifier);
+        }
+      })]
     });
   }
   
@@ -230,15 +265,22 @@ function showIndividualInfo(individual, relatedClasses){
     items: [classItemPane, propertyGrid, relatedItemPane]
   });
   
+  var navItemIndex = dtoNavPane.items.length + 1;
+  
   dtoNavPane.add({
     xtype: 'box',
     autoEl: {tag: 'img', src: 'resources/images/breadcrumb.png'},
     cls: 'breadcrumb-img'
   },{
     xtype: 'box',
-    autoEl: {tag: 'a', href: 'javascript:navigate(' + (dtoNavPane.items.length + 1) + ')', html: individual},
+    autoEl: {tag: 'a', href: '#', html: individual},
     cls: 'breadcrumb',
-    overCls: 'breadcrumb-hover'
+    overCls: 'breadcrumb-hover',
+    plugins: [ new Ext.DomObserver({
+      click: function(e, comp) {
+        navigate(navItemIndex);
+      }
+    })]
   });
   dtoNavPane.doLayout();
 
@@ -265,12 +307,36 @@ function navigate(navItemIndex){
   dtoContentPane.getLayout().setActiveItem(contentItemIndex);
 }
 
-function showDialog(title, message, processResult){
+function submitExchange(userResponse) {
+  var exchange = this[0];
+  var scope = this[1];
+  var xid = this[2];
+  var reviewed = this[3];
+  
+  if (userResponse == 'ok'){
+    Ext.Ajax.request({
+      url: 'xsubmit?scope=' + scope + '&xid=' + xid + '&reviewed=' + reviewed,
+      success: function(response, opts) {
+        var responseText = Ext.util.JSON.decode(response.responseText);
+        showDialog(400, 160, 'Exchange Result', responseText, Ext.Msg.OK, null);
+      },
+      failure: function(response, opts) {
+        var responseText = Ext.util.JSON.decode(response.responseText);
+        showDialog(660, 300, 'Exchange Error (' + response.status + ')', 
+          'Error while exchanging [' + exchange + ']. ' + responseText, Ext.Msg.OK, null);
+      }
+    });
+  }
+}
+
+function showDialog(width, height, title, message, buttons, callback){
+  var style = 'style="width:' + width + 'px;height:' + height + 'px;border:0;overflow:auto"';
+  
   Ext.Msg.show({
     title: title,
-    msg: '<textarea class="dialog-textbox" readonly="yes">' + message + '</textarea>',
-    buttons: Ext.Msg.OKCANCEL,
-    fn: processResult
+    msg: '<textarea ' + style + ' readonly="yes">' + message + '</textarea>',
+    buttons: buttons,
+    fn: callback
   });
 }
 
@@ -285,6 +351,7 @@ Ext.onReady(function(){
   });
   
   var directoryTreePane = new Ext.tree.TreePanel({
+    id: 'directory-tree',
     region: 'center',
     dataUrl: 'directory',
     width: 800,
@@ -296,20 +363,31 @@ Ext.onReady(function(){
     rootVisible: true,
     tbar: new Ext.Toolbar({
       items: [{
-        xtype: "button",
+        id: 'refresh-button',
+        xtype: 'button',
         icon: 'resources/images/refresh.png',
         text: 'Refresh',
         handler: function(){
           alert('Refresh');
         }
       },{
-        xtype: "button",
+        id: 'exchange-button',
+        xtype: 'button',
         icon: 'resources/images/exchange.png',
         text: 'Exchange',
+        disabled: true,
         handler: function(){
-          alert('Exchange');
+          var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode(); 
+          var scope = node.parentNode.parentNode.parentNode.attributes['text'];
+          var exchange = node.attributes["text"];
+          var xid = node.attributes.properties['Id'];
+          var reviewed = (node.reviewed != undefined);   
+          var msg = 'Are you sure you want to exchange [' + exchange + ']?';
+          var processUserResponse = submitExchange.createDelegate([exchange, scope, xid, reviewed]);
+          showDialog(400, 60, 'Submit Exchange?', msg, Ext.Msg.OKCANCEL, processUserResponse); 
         }
       },{
+        id: 'xlogs-button',
         xtype: 'button',
         icon: 'resources/images/exchange-log.png',
         text: 'XLogs',
@@ -325,7 +403,17 @@ Ext.onReady(function(){
     },
     listeners: {
       click: function(node, event){
+        var dataTypeNode = node.parentNode.parentNode;
         Ext.getCmp('property-pane').setSource(node.attributes.properties);
+        
+        if (dataTypeNode != null){          
+          if (dataTypeNode.attributes['text'] == 'Application Data'){
+            Ext.getCmp('exchange-button').disable();
+          }
+          else if (dataTypeNode.attributes['text'] == 'Data Exchanges'){
+            Ext.getCmp('exchange-button').enable();
+          }
+        }
       },
       dblclick: function(node, event){
         var dataTypeNode = node.parentNode.parentNode;
@@ -340,12 +428,15 @@ Ext.onReady(function(){
             var graph = node.attributes['text'];
             var label = scope + '.' + app + '.' + graph;
             var context = '?scope=' + scope + '&app=' + app + '&graph=' + graph;
+            
             loadPageDto('app', 'adata', context, label);
           }
           else if (dataTypeNode.attributes['text'] == 'Data Exchanges'){
             var scope = dataTypeNode.parentNode.attributes['text'];
             var exchangeId = properties['Id'];
             var context = '?scope=' + scope + '&xid=' + exchangeId;
+            
+            node.reviewed = true;
             loadPageDto('exchange', 'xdata', context, node.text);
           }
         }
