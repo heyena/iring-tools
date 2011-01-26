@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sequence xmlns="http://ws.apache.org/ns/synapse" name="exchangeOut">
-  <log level="custom">
-    <property name="EXCHANGE_OUT" expression="*"/>
-  </log>
-  <send/>
-</sequence>
