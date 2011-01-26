@@ -1,9 +1,9 @@
 =iRINGTools Documentation=
 
-===[http://iring-tools.googlecode.com/svn/wiki/iRINGTools_Installation_Guide_v1_2_0.pdf Installation Guide]===
+===[http://iring-tools.googlecode.com/files/iRINGTools_Installation_Guide_v2.0.1.pdf Installation Guide]===
 
-===Users Guilde _(Coming Soon)_===
+===[http://iring-tools.googlecode.com/files/iRINGTools_Users_Guide_v2.0.1.pdf Users Guide]===
 
-===SDK Guide _(Coming Soon)_===
+===[http://iring-tools.googlecode.com/files/iRINGTools_SDK_Guide_v2.0.1.pdf Users Guide]===
 
 Other Pages: [Components] | [RoadMap] | [ISO15926] | [Contributors]

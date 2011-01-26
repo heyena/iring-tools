@@ -1,4 +1,5 @@
 #labels Featured
+#summary Date: 2010/11/11
 = *iRINGTools* 2.00.00.1960 =
 
 A major release of iRINGTools 2.0.0 that includes major stabilty and speed improvements.  The download is available [http://iring-tools.googlecode.com/files/iRINGTools-200.zip here]

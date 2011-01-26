@@ -1,0 +1,18 @@
+#labels Featured
+= *iRINGTools* 2.00.01.2552 =
+
+A patch release of [http://code.google.com/p/iring-tools/wiki/ReleaseNotice_200 iRINGTools 2.0] that includes final adjustments to the SDK and fixes many bugs.  The download is available [http://iring-tools.googlecode.com/files/iRINGTools-2.0.1.zip here]
+
+[http://iring-tools.googlecode.com/files/iRINGTools_Installation_Guide_v2.0.1.pdf Installation Guide]
+
+[http://iring-tools.googlecode.com/files/iRINGTools_Users_Guide_v2.0.1.pdf Users Guide]
+
+[http://iring-tools.googlecode.com/files/iRINGTools_SDK_Guide_v2.0.1.pdf Users Guide]
+
+== New Features ==
+ * FacadeExchange Utility
+ * ProxyConfiguration Tool
+ * SDK has better support for Paging, Filter and Sorting
+ * Many bug fixes, especially related to editing Reference Data.
+
+Other Pages: [Components] | [RoadMap] | [ISO15926] | [Documentation] | [Contributors]
