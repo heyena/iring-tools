@@ -33,18 +33,18 @@
   * Complete Reference Data Editor
   * Hierarchical Object Mapping
   * Generic Object Mapping
-	* ProxyConfig Utility
+  * ProxyConfig Utility
 
-===2.00.01 Path - January 2011===
+===2.00.01 Patch - January 2011===
 	
 	* FacadeExchange Utility
 	* SecureTokenService Support
 
 ==iRINGTools 2.01.00 - February 2011==
 
-	* Sandbox Part 8 Compliance
+  * Sandbox Part 8 Compliance
   * QMXF improvements
-	* ExchangeManager Application
+  * ExchangeManager Application
 	
 ==iRINGTools Future==
 
