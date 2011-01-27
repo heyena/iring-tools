@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.iringtools.org/dxfr/dataFilter"
+  targetNamespace="http://www.iringtools.org/dxfr/dataFilter" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+  jaxb:version="2.0" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc">
+
+  <xs:annotation>
+    <xs:appinfo>
+      <jaxb:globalBindings>
+        <xjc:simple />
+      </jaxb:globalBindings>
+    </xs:appinfo>
+  </xs:annotation>
+
+  <xs:element name="dataFilter" type="DataFilter" />
+
+  <xs:complexType name="DataFilter">
+    <xs:sequence>      
+      <xs:element name="expression" type="ExpressionList" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ExpressionList">
+    <xs:sequence>
+      <xs:element name="expression" type="Expression" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Expression">
+    <xs:sequence>
+      <xs:element name="OpenGroupCount" type="xs:int" />
+      <xs:element name="PropertyName" type="xs:string" />
+      <xs:element name="relationalOperator" type="RelationalOperator" />
+      <xs:element name="Values" type="xs:string" maxOccurs="unbounded"/>
+      <xs:element name="logicalOperator" type="LogicalOperator" />
+      <xs:element name="CloseGroupCount" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="RelationalOperator">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="EqualTo" />
+      <xs:enumeration value="NotEqualTo" />
+      <xs:enumeration value="StartsWith" />
+      <xs:enumeration value="EndsWith" />
+      <xs:enumeration value="Contains" />
+      <xs:enumeration value="In" />
+      <xs:enumeration value="GreaterThan" />
+      <xs:enumeration value="GreaterThanOrEqual" />
+      <xs:enumeration value="LesserThan" />
+      <xs:enumeration value="LesserThanOrEqual" />
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:simpleType name="LogicalOperator">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="And" />
+      <xs:enumeration value="Or" />
+      <xs:enumeration value="Not" />
+      <xs:enumeration value="AndNot" />
+      <xs:enumeration value="OrNot" />    
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>
