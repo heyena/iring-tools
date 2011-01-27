@@ -50,17 +50,17 @@ namespace iRINGTools.Web.Controllers
 
     public JsonResult Index()
     {
-      string format = String.Empty;
-      string adapterServiceURI = _adapterServiceURI;
+          string format = String.Empty;
+          string adapterServiceURI = _adapterServiceURI;
 
-      if (Request.QueryString["format"] != null)
-        format = Request.QueryString["format"].ToUpper();
+          if (Request.QueryString["format"] != null)
+            format = Request.QueryString["format"].ToUpper();
 
-      if (Request.QueryString["remote"] != null)
-        adapterServiceURI = Request.QueryString["remote"] + "/adapter";
+          if (Request.QueryString["remote"] != null)
+            adapterServiceURI = Request.QueryString["remote"] + "/adapter";
 
-      WebHttpClient client = new WebHttpClient(adapterServiceURI);
-      ScopeProjects scopes = client.Get<ScopeProjects>("/scopes");
+          WebHttpClient client = new WebHttpClient(adapterServiceURI);
+          ScopeProjects scopes = client.Get<ScopeProjects>("/scopes");
 
       switch (format)
       {
@@ -93,6 +93,89 @@ namespace iRINGTools.Web.Controllers
 
             return Json(nodes, JsonRequestBehavior.AllowGet);
           }
+        case "POSTSCOPE": // Post updated Scope
+          {
+              string relativeUri = String.Format("/scopes");
+              Uri address = new Uri(adapterServiceURI + relativeUri);
+              ScopeProject _editApplication = new ScopeProject();
+
+              _editApplication.Name = this.Request.Form["appName"];
+              _editApplication.Description = this.Request.Form["description"];
+
+              //             var _scopesIndex = scopes.Where(x => x.Name == this.Request.Form["nodeID"]).FirstOrDefault();
+
+              for (int i = 0; i < scopes.Count(); i++)
+              {
+                  if (scopes[i].Name == this.Request.Form["nodeID"])
+                  {
+                      scopes[i].Name = _editApplication.Name;
+                      scopes[i].Description = _editApplication.Description;
+                  }
+              }
+
+              string data = Utility.SerializeDataContract<ScopeProjects>(scopes);
+              string responseMessage = client.Post<ScopeProjects>(relativeUri, scopes, true);
+              if (responseMessage.Contains("success"))
+              {
+                  return Json(new
+                  {
+                      success = true
+                  }, JsonRequestBehavior.AllowGet);
+              }
+              else
+              {
+                  return Json(new
+                  {
+                      success = false
+                  }, JsonRequestBehavior.AllowGet);
+              }
+          }
+        case "POSTAPPLICATION": // Post updated Applications
+          {
+              string relativeUri = String.Format("/scopes");
+              Uri address = new Uri(adapterServiceURI + relativeUri);
+              ScopeApplication _editApplication = new ScopeApplication();
+
+             _editApplication.Name = this.Request.Form["appName"];
+             _editApplication.Description = this.Request.Form["description"];
+           
+            // var _scopesIndex = scopes.Where(x => x.Name == this.Request.Form["parentNodeID"]).FirstOrDefault().Applications.ToList();
+
+             for (int i = 0; i < scopes.Count(); i++)
+             {
+                 if (scopes[i].Name == this.Request.Form["parentNodeID"])
+                 {
+                     for (int j = 0; j < scopes[i].Applications.Count(); j++)
+                     {
+                         if (scopes[i].Applications[j].Name == this.Request.Form["nodeID"])
+                         {
+                             scopes[i].Applications[j].Name = _editApplication.Name;
+                             scopes[i].Applications[j].Description = _editApplication.Description;
+                         }
+                     }
+                    
+                 }
+             }
+
+            string data = Utility.SerializeDataContract<ScopeProjects>(scopes);
+            string responseMessage= client.Post<ScopeProjects>(relativeUri, scopes, true);
+            if (responseMessage.Contains("success"))
+            {
+                return Json(new
+                {
+                    success = true
+                }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(new
+                {
+                    success = false
+                }, JsonRequestBehavior.AllowGet);
+            }
+
+            
+        }
         default:
           {
             JsonContainer<List<ScopeProject>> container = new JsonContainer<List<ScopeProject>>();

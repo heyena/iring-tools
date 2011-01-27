@@ -40,6 +40,7 @@ namespace iRINGTools.Web.Models
       this.children = new List<GraphTreeNode>();
       this.expanded = true;
       this.leaf = false;
+      this.id = application.Name;
     }
   }
 }
