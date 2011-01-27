@@ -4362,6 +4362,10 @@ namespace org.iringtools.refdata
                         string language = string.Empty;
                         bool qn = false;
                         string qName = string.Empty;
+                        StringBuilder sparqlAdd = new StringBuilder();
+                        sparqlAdd.Append("INSERT DATA {");
+                        bool hasDeletes = false;
+                        int specCount = 0;
                         string clsId = Utility.GetIdFromURI(clsDef.identifier);
                         QMXF existingQmxf = new QMXF();
 
@@ -4375,20 +4379,19 @@ namespace org.iringtools.refdata
                         if (existingQmxf.classDefinitions.Count > 0)
                         {
                             StringBuilder sparqlStmts = new StringBuilder();
-                            //int count = 0;
-
+                        
                             //clsId = "<" + clsId + ">";
 
                             foreach (ClassDefinition existingClsDef in existingQmxf.classDefinitions)
                             {
-                                foreach (QMXFName clsName in existingClsDef.name)
+                                foreach (QMXFName clsName in clsDef.name)
                                 {
                                     //string clsLabel = clsName.value.Split('@')[0];
 
-                                    if (string.IsNullOrEmpty(clsName.lang))
-                                        language = "@" + defaultLanguage;
-                                    else
-                                        language = "@" + clsName.lang;
+                                    //if (string.IsNullOrEmpty(clsName.lang))
+                                    //    language = "@" + defaultLanguage;
+                                    //else
+                                    //    language = "@" + clsName.lang;
 
                                     // delete label, entity type, and description
                                     //sparqlStmts.Append(string.Format("  rdl:{0} rdfs:label \"{1}{2}\"^^xsd:string ; ", clsId, clsLabel, language));
@@ -4400,11 +4403,13 @@ namespace org.iringtools.refdata
                                     {
                                         if (String.Compare(existingName.value, clsName.value, true) != 0)
                                         {
+                                            hasDeletes = true;
                                             sparqlStmts.Append(string.Format("  rdl:{0} rdfs:label \"{1}{2}\"^^xsd:string . ", clsId, existingName.value, clsName.lang));
+                                            sparqlAdd.Append(string.Format("rdl:{0}  rdfs:label \"{1}{2}\"^^xsd:string ;", clsId, clsName, clsName.lang));
                                         }
                                     }
 
-                                    foreach (Description description in existingClsDef.description)
+                                    foreach (Description description in clsDef.description)
                                     {
                                         Description existingDescription = existingClsDef.description.Find(d => d.lang == description.lang);
 
@@ -4412,13 +4417,16 @@ namespace org.iringtools.refdata
                                         {
                                             if (String.Compare(existingDescription.value, description.value, true) != 0)
                                             {
+                                                hasDeletes = true;
                                                 sparqlStmts.Append(string.Format("  rdl:{0} rdfs:comment \"{1}{2}\"^^xsd:string . ", clsId, existingDescription.value, description.lang));
+                                                sparqlAdd.Append(string.Format("  rdfs:comment \"{0}{1}\"^^xsd:string ;", description.value, description.lang));
                                             }
                                         }
                                     }
 
                                     // delete specialization
-                                    foreach (Specialization spec in existingClsDef.specialization)
+                                    specCount = existingClsDef.specialization.Count;
+                                    foreach (Specialization spec in clsDef.specialization)
                                     {
                                         //string specVariable = "?v" + count++;
                                         //sparqlStmts.Append(specVariable + " rdf:type dm:Specialization . ");
@@ -4429,8 +4437,14 @@ namespace org.iringtools.refdata
                                         {
                                             if (String.Compare(existingSpec.reference, spec.reference, true) != 0)
                                             {
+                                                hasDeletes = true;
                                                 qn = nsMap.ReduceToQName(existingSpec.reference, out qName);
                                                 sparqlStmts.Append(string.Format("  ?a dm:hasSubclass rdl:{0} . ", qName));
+                                                qn = nsMap.ReduceToQName(spec.reference, out qName);
+                                                if (--specCount > 0)
+                                                    sparqlAdd.Append(string.Format("  rdfs:subClassOf {0} ;", qName));
+                                                else
+                                                    sparqlAdd.Append(string.Format("  rdfs:subClassOf {0} .", qName));
                                             }
                                         }   
                                     }
@@ -4454,9 +4468,11 @@ namespace org.iringtools.refdata
                         }
 
                         // add class
-                        StringBuilder sparqlAdd = new StringBuilder();
-                        sparqlAdd.Append("INSERT DATA {");
-
+                        if (hasDeletes)
+                        {
+                            sparqlAdd.Append("}");
+                        }
+                        else
                         foreach (QMXFName clsName in clsDef.name)
                         {
                             string clsLabel = clsName.value.Split('@')[0];
@@ -4479,8 +4495,8 @@ namespace org.iringtools.refdata
                             }
 
                             // append label
-                            sparqlAdd.Append(clsId + " rdfs:label \"" + clsLabel + "\"^^xsd:string . ");
-                            sparqlAdd.Append(string.Format("  rdfs:label \"{0}{1}\"^^xsd:string ;", clsLabel, language));
+                            //sparqlAdd.Append(clsId + " rdfs:label \"" + clsLabel + "\"^^xsd:string . ");
+                            sparqlAdd.Append(string.Format("rdl:{0}  rdfs:label \"{1}{2}\"^^xsd:string ;", clsId, clsLabel, language));
 
                             // append entity type
                             if (clsDef.entityType != null && !String.IsNullOrEmpty(clsDef.entityType.reference))
