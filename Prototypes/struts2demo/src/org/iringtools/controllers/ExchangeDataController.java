@@ -105,9 +105,11 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
           result.append(message + "\r");
         }
       }    
+      
+      result.append("\r");
     }
     
-    result.append("\rExecution time [" + duration + "] second(s).");   
+    result.append("Execution time [" + duration + "] second(s).");   
     exchangeResult = result.toString();
     
     return SUCCESS;

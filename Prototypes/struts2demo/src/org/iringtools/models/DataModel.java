@@ -154,7 +154,12 @@ public class DataModel
               {
                 Field field = new Field();
                 field.setName(templateObject.getName() + "." + roleObject.getName());
-                field.setType(roleObject.getDataType().replace("xsd:", ""));
+                
+                if (dataType == DataType.APP)
+                  field.setType(roleObject.getDataType().replace("xsd:", ""));
+                else
+                  field.setType("string");
+                
                 fields.add(field);
               }
 
@@ -270,7 +275,12 @@ public class DataModel
                   {
                     Field field = new Field();
                     field.setName(templateObject.getName() + "." + roleObject.getName());
-                    field.setType(roleObject.getDataType().replace("xsd:", ""));
+                    
+                    if (dataType == DataType.APP)
+                      field.setType(roleObject.getDataType().replace("xsd:", ""));
+                    else
+                      field.setType("string");
+                    
                     fields.add(field);
                   }
 
