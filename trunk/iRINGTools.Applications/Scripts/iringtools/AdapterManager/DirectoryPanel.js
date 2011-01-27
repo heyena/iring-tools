@@ -51,13 +51,13 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 
             root: {
                 nodeType: 'async',
-                text: 'World',
+                text: 'Scopes',
                 expanded: true,
                 draggable: false,
                 icon: 'Content/img/internet-web-browser.png',
                 id: 'src'
             }
-            
+
         });
 
         this.items = [
@@ -66,7 +66,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 
         // super
         AdapterManager.DirectoryPanel.superclass.initComponent.call(this);
-    },   
+    },
 
     buildToolbar: function () {
         return [
@@ -93,17 +93,52 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 
     onCreate: function (btn, ev) {
         var node = this.DirectoryPanel.getSelectionModel().getSelectedNode();
-        this.fireEvent('create', this, node);
+        var formType = "newForm";
+        this.fireEvent('create', this, node, formType);
     },
 
     onOpen: function (btn, ev) {
         var node = this.DirectoryPanel.getSelectionModel().getSelectedNode();
-        this.fireEvent('open', this, node);
+        var formType = "editForm";
+        this.fireEvent('open', this, node, formType);
     },
 
     onRemove: function (btn, ev) {
         var node = this.DirectoryPanel.getSelectionModel().getSelectedNode();
         this.fireEvent('remove', this, node);
-    }    
+    },
+
+    /**
+    * buildform
+    * @private
+    */
+    buildForm: function (node, formType) {
+
+        var name, scopeDescription;
+        name = "";
+        description = "";
+
+        var obj = node.attributes;
+
+        if (node.attributes.type == 'Application') {
+            name = node.attributes.ScopeApplication.Name;
+            scopeDescription = node.attributes.ScopeApplication.Description;
+        }
+        else {
+            name = node.attributes.Scope.Name;
+            scopeDescription = node.attributes.Scope.Description;
+        }
+
+        return [
+        { xtype: 'hidden', name: 'formType', value: formType },
+        { xtype: 'hidden', name: 'nodeID', value: obj['id'] },
+        { xtype: 'hidden', name: 'parentNodeID', value: node.parentNode.id },
+        { fieldLabel: 'Application Name', name: 'appName', allowBlank: true, xtype: 'textfield', width: 250, value: name },
+        { fieldLabel: 'Description', name: 'description', allowBlank: true, xtype: 'textarea', width: 250, value: scopeDescription }
+
+        ];
+    }
+
+
 
 });

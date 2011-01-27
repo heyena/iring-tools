@@ -35,7 +35,7 @@ Ext.onReady(function () {
     });
 
     var contentPanel = new Ext.TabPanel({
-        id: 'content-panel',
+        id: 'contentpanel',
         region: 'center',
 
         collapsible: false,
@@ -70,12 +70,18 @@ Ext.onReady(function () {
 
     });
 
-    directoryPanel.on('open', function (npanel, node) {
+    directoryPanel.on('open', function (npanel, node, formType) {
+
+        var formData = this.buildForm(node, formType);
 
         if (node.attributes.type == "Scope") {
 
             var newTab = new AdapterManager.ScopePanel({
-                title: 'Scope - ' + node.text
+                id: 'tab-' + node.id,
+                title: 'Scope - ' + node.text,
+                configData: formData,
+                url: 'directory?format=postScope', 
+                closable: true
             });
 
             contentPanel.add(newTab);
@@ -84,9 +90,14 @@ Ext.onReady(function () {
         } else if (node.attributes.type == "Application") {
 
             var scope = node.parentNode;
+            var formData = this.buildForm(node, formType);
 
             var newTab = new AdapterManager.ScopePanel({
-                title: 'Application - ' + scope.text + '.' + node.text
+                id: 'tab-' + node.id,
+                title: 'Application - ' + scope.text + '.' + node.text,
+                configData: formData,
+                url: 'directory?format=postApplication', 
+                closable: true
             });
 
             contentPanel.add(newTab);
@@ -112,7 +123,7 @@ Ext.onReady(function () {
 
         App.setAlert(true, scope + '.' + application);
 
-    });    
+    });
 
     // Load Stores
     searchPanel.load();
