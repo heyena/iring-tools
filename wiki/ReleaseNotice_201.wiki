@@ -18,4 +18,4 @@ The SDK can be downloaded from [http://iring-tools.googlecode.com/files/iRINGToo
  * SDK has better support for Paging, Filter and Sorting
  * Many bug fixes, especially related to editing Reference Data.
 
-Other Pages: [Components] | [RoadMap] | [ISO15926] | [Documentation] | [Contributors]
+Other Pages: [RoadMap] | [ISO15926] | [Documentation] | [Contributors]

@@ -55,4 +55,4 @@
   * Secure NHibernate DataLayer
   * Full Message Encryption
 	
-Other pages: [Components] | [ISO15926] | [Documentation] | [Contributors]
+Other Pages: [ISO15926] | [Documentation] | [Contributors]

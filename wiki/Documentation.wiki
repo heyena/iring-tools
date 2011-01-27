@@ -6,4 +6,4 @@
 
 ===[http://iring-tools.googlecode.com/files/iRINGTools_SDK_Guide_v2.0.1.pdf Users Guide]===
 
-Other Pages: [Components] | [RoadMap] | [ISO15926] | [Contributors]
+Other Pages: [RoadMap] | [ISO15926] | [Contributors]

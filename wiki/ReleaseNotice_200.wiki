@@ -17,4 +17,4 @@ A major release of iRINGTools 2.0.0 that includes major stabilty and speed impro
  * SDK Supports Generic Objects
  * [http://www.dotnetrdf.org/ dotNETRDF] - Many thanks to Rob Vesse for his extraordinary support and interest in our project.
 
-Other Pages: [Components] | [RoadMap] | [ISO15926] | [Documentation] | [Contributors]
+Other Pages: [RoadMap] | [ISO15926] | [Documentation] | [Contributors]

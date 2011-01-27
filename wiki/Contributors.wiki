@@ -16,4 +16,4 @@
   * [http://www.tcs.com/homepage/Pages/default.aspx Tata Consultancy Services (TCS)]
   * [http://www.zhi.com/ Zachry]
 
-Other Pages: [Components] | [RoadMap] | [ISO15926] | [Documentation]
+Other Pages: [RoadMap] | [ISO15926] | [Documentation]
