@@ -3333,7 +3333,7 @@ namespace org.iringtools.refdata
 
                         // add class
                         StringBuilder sparqlAdd = new StringBuilder();
-                        sparqlAdd.Append("INSET DATA {");
+                        sparqlAdd.Append("INSERT DATA {");
 
                         foreach (QMXFName clsName in clsDef.name)
                         {
