@@ -13,6 +13,10 @@
     <param-value>http://localhost:8080/services/refdata</param-value>
   </context-param>
   <context-param>
+    <param-name>IDGenServiceUri</param-name>
+    <param-value>http://localhost:8080/services/idgen</param-value>
+  </context-param>
+  <context-param>
     <param-name>DirectoryServiceUri</param-name>
     <param-value>http://localhost:8080/services/dir</param-value>
   </context-param>
