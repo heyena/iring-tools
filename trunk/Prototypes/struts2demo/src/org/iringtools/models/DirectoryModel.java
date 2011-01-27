@@ -20,21 +20,11 @@ import org.iringtools.widgets.tree.TreeNode;
 
 public class DirectoryModel 
 {
-  private HashMap<String, String> settings;
-  
-  public DirectoryModel(HashMap<String, String> settings)
+  public Tree getDirectoryTree(String directoryUrl) throws HttpClientException
   {
-    this.settings = settings;
-  }
-  
-  public Tree createDirectoryTree() throws HttpClientException
-  {
-    String serviceUri = settings.get("ESBServiceUri");
-    HttpClient httpClient = new HttpClient(serviceUri);
-    Directory directory = httpClient.get(Directory.class, "/directory");
-    Tree directoryTree = directoryToTree(directory);
-    
-    return directoryTree;
+    HttpClient httpClient = new HttpClient(directoryUrl);
+    Directory directory = httpClient.get(Directory.class);
+    return directoryToTree(directory);
   }
   
   private Tree directoryToTree(Directory directory)
