@@ -83,6 +83,7 @@ namespace org.iringtools.refdata
         private ReferenceDataSettings _settings = null;
 
         private StringBuilder prefix = new StringBuilder();
+        private StringBuilder sparqlBuilder = new StringBuilder();
         private StringBuilder sparqlStr = null;
         private string defaultLanguage = "en";
 
@@ -145,6 +146,19 @@ namespace org.iringtools.refdata
                 _logger.Error("Error in GetRepositories: " + ex);
                 return null;
             }
+        }
+
+        private Repository GetRepository(string name)
+        {
+            foreach (Repository repository in _repositories)
+            {
+                if (repository.Name.Equals(name))
+                {
+                    return repository;
+                }
+            }
+
+            return null;
         }
 
         #region Prototype Part8
@@ -3247,7 +3261,7 @@ namespace org.iringtools.refdata
         //    }
         //}
 
-        public Response PostClass(QMXF qmxf)
+        public Response oldPostClass(QMXF qmxf)
         {
             Status status = new Status();
 
@@ -3560,6 +3574,208 @@ namespace org.iringtools.refdata
                 _logger.Error("Error in PostClass: " + e);
                 throw e;
             }
+        }
+
+        public Response PostClass(QMXF qmxf)
+        {
+            Response response = new Response();
+            response.Level = StatusLevel.Success;
+
+            try
+            {
+                Repository repository = GetRepository(qmxf.targetRepository);
+
+                if (repository == null || repository.IsReadOnly)
+                {
+                    Status status = new Status();
+                    status.Level = StatusLevel.Error;
+
+                    if (repository == null)
+                        status.Messages.Add("Repository not found!");
+                    else
+                        status.Messages.Add("Repository [" + qmxf.targetRepository + "] is read-only!");
+
+                    _response.Append(status);
+                }
+                else
+                {
+                    string registry = _useExampleRegistryBase ? _settings["ExampleRegistryBase"] : _settings["ClassRegistryBase"];
+                    StringBuilder sparqlDelete = new StringBuilder();
+
+                    foreach (ClassDefinition clsDef in qmxf.classDefinitions)
+                    {
+                        //string clsId = clsDef.identifier;
+                        ///koos
+                        string language = string.Empty;
+                        bool qn = false;
+                        string qName = string.Empty;
+                        string clsId = Utility.GetIdFromURI(clsDef.identifier);
+                        QMXF existingQmxf = new QMXF();
+
+                        if (!String.IsNullOrEmpty(clsId))
+                        {
+                            //existingQmxf = GetClass(clsId.Substring(clsId.LastIndexOf("#") + 1));
+                            existingQmxf = GetClass(clsId);
+                        }
+
+                        // delete class
+                        if (existingQmxf.classDefinitions.Count > 0)
+                        {
+                            StringBuilder sparqlStmts = new StringBuilder();
+                            int count = 0;
+
+                            //clsId = "<" + clsId + ">";
+
+                            foreach (ClassDefinition existingClsDef in existingQmxf.classDefinitions)
+                            {
+                                foreach (QMXFName clsName in existingClsDef.name)
+                                {
+                                    string clsLabel = clsName.value.Split('@')[0];
+
+                                    if (string.IsNullOrEmpty(clsName.lang))
+                                        language = defaultLanguage;
+                                    else
+                                        language = clsName.lang;
+
+                                    // delete label, entity type, and description
+                                    sparqlStmts.Append(string.Format("  rdl:{0} rdfs:label \"{1}{2}\"^^xsd:string ; ", clsId, clsLabel, language));
+                                    sparqlStmts.Append("  ?property ?value . ");
+
+                                    // delete specialization
+                                    foreach (Specialization spec in existingClsDef.specialization)
+                                    {
+                                        //string specVariable = "?v" + count++;
+                                        //sparqlStmts.Append(specVariable + " rdf:type dm:Specialization . ");
+        
+                                        sparqlStr.AppendLine("  ?a rdf:type dm:Specialization .");
+
+                                        if (spec != null && spec.reference != null)
+                                        {
+                                            qn = nsMap.ReduceToQName(spec.reference, out qName);
+                                            sparqlStmts.Append(string.Format("  ?a dm:hasSubclass rdl:{0} . ", qName));
+                                        }   
+                                    }
+
+                                    ///TODO
+                                    // delete classification
+                                    /*foreach (Classification clsif in existingClsDef.classification)
+                                    {
+                                        
+                                    }*/
+                                }
+                            }
+
+                            sparqlDelete.Append(" DELETE { ");
+                            sparqlDelete.Append(sparqlStmts);
+                            sparqlDelete.Append(" } ");
+
+                            sparqlDelete.Append(" WHERE { ");
+                            sparqlDelete.Append(sparqlStmts);
+                            sparqlDelete.Append(" }; ");
+                        }
+
+                        // add class
+                        StringBuilder sparqlAdd = new StringBuilder();
+                        sparqlAdd.Append(" INSERT DATA { ");
+
+                        foreach (QMXFName clsName in clsDef.name)
+                        {
+                            string clsLabel = clsName.value.Split('@')[0];
+                            ///hanh
+                            //string clsLabel = clsName.value;
+
+                            if (string.IsNullOrEmpty(clsName.lang))
+                                language = defaultLanguage;
+                            else
+                                language = clsName.lang;
+
+                            if (String.IsNullOrEmpty(clsId) || !(clsId.StartsWith("<") && clsId.EndsWith(">")))
+                            {
+                                string newClsName = "Class definition " + clsLabel;
+                                ///koos
+                                clsId = CreateIdsAdiId(registry, newClsName);
+                                clsId = Utility.GetIdFromURI(clsId);
+                                ///hanh
+                                //clsId = "<" + CreateIdsAdiId(registry, newClsName) + ">";  
+                            }
+
+                            // append label
+                            sparqlAdd.Append(clsId + " rdfs:label \"" + clsLabel + "\"^^xsd:string . ");
+                            sparqlAdd.Append(string.Format("  rdfs:label \"{0}{1}\"^^xsd:string ;", clsLabel, language));
+
+                            // append entity type
+                            if (clsDef.entityType != null && !String.IsNullOrEmpty(clsDef.entityType.reference))
+                            {
+                                qn = nsMap.ReduceToQName(clsDef.entityType.reference, out qName);
+                                if (qn)
+                                    sparqlAdd.Append(string.Format("  rdf:type {0} ;", qName));
+                                ///hanh
+                                //sparqlAdd.Append(clsId + " rdf:type <" + clsDef.entityType.reference + "> . ");
+                            }
+
+                            // append description
+                            foreach (Description desc in clsDef.description)
+                            {
+                                if (!String.IsNullOrEmpty(desc.value))
+                                {
+                                    if (string.IsNullOrEmpty(desc.lang))
+                                        language = defaultLanguage;
+                                    else
+                                        language = desc.lang;
+
+                                    string description = desc.value.Split('@')[0];
+                                    sparqlAdd.Append(string.Format("  rdfs:comment \"{0}{1}\"^^xsd:string ;", description, language));
+                                    ///hanh
+                                    //sparqlAdd.Append(clsId + " rdfs:comment \"" + desc.value + "\"^^xsd:string . ");
+                                }
+                            }
+
+                            // append specialization
+                            int specCount = clsDef.specialization.Count;
+                            foreach (Specialization spec in clsDef.specialization)
+                            {
+                                if (!String.IsNullOrEmpty(spec.reference))
+                                {
+                                    qn = nsMap.ReduceToQName(spec.reference, out qName);
+                                    if (--specCount > 0)
+                                        sparqlAdd.Append(string.Format("  rdfs:subClassOf {0} ;", qName));
+                                    else
+                                        sparqlAdd.Append(string.Format("  rdfs:subClassOf {0} .", qName));
+                                }
+                            }
+
+                            ///TODO
+                            /* append classification
+                            foreach (Classification clsif in clsDef.classification)
+                            {
+                                
+                            }*/
+
+                            sparqlAdd.Append("}");
+                        }
+
+                        sparqlBuilder.Append(sparqlDelete);
+                        sparqlBuilder.Append(sparqlAdd);
+
+                        string sparql = sparqlBuilder.ToString();
+                        Response postResponse = PostToRepository(repository, sparql);
+                        response.Append(postResponse);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                string errMsg = "Error in PostClass: " + ex;
+                Status status = new Status();
+
+                response.Level = StatusLevel.Error;
+                status.Messages.Add(errMsg);
+                response.Append(status);
+
+                _logger.Error(errMsg);
+            }
+
+            return response;
         }
 
         #endregion Part8
