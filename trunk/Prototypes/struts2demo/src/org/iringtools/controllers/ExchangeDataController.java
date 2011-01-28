@@ -8,7 +8,6 @@ import org.iringtools.common.response.Level;
 import org.iringtools.common.response.Status;
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.models.ExchangeDataModel;
-import org.iringtools.utility.HttpClientException;
 import org.iringtools.widgets.grid.Grid;
 
 import com.opensymphony.xwork2.ActionContext;
@@ -19,8 +18,10 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   private static final long serialVersionUID = 1L;
   private ExchangeDataModel exchangeDataModel;
   private String esbServiceUri;
+  private String xlogsServiceUri;
   private Grid pageDtoGrid;
   private Grid pageRelatedItemGrid;
+  private Grid pageXlogsGrid;
   
   private String scope;
   private String xid;
@@ -34,7 +35,10 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   
   public ExchangeDataController() 
   {    
-    esbServiceUri = ActionContext.getContext().getApplication().get("ESBServiceUri").toString();
+    Map<String, Object> appContext = ActionContext.getContext().getApplication();
+    
+    esbServiceUri = appContext.get("ESBServiceUri").toString();
+    xlogsServiceUri = appContext.get("XlogsServiceUri").toString();
     exchangeDataModel = new ExchangeDataModel();
   }
   
@@ -47,7 +51,7 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   //-------------------------------------
   // get a page of data transfer objects 
   // ------------------------------------
-  public String getPageDtos() throws HttpClientException
+  public String getPageDtos()
   {
     pageDtoGrid = exchangeDataModel.getDtoGrid(esbServiceUri, scope, xid, start, limit);    
     return SUCCESS;
@@ -61,7 +65,7 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   //-----------------------------
   // get a page of related items
   // ----------------------------
-  public String getPageRelatedItems() throws HttpClientException 
+  public String getPageRelatedItems() 
   {
     pageRelatedItemGrid = exchangeDataModel.getRelatedItemGrid(esbServiceUri, scope, xid, 
         individual, classId, classIdentifier, start, limit);
@@ -118,6 +122,20 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   public String getExchangeResult()
   {
     return exchangeResult;
+  }
+  
+  //----------------------------------
+  // get a page of exchange responses 
+  // ---------------------------------
+  public String getPageXlogs()
+  {
+    pageXlogsGrid = exchangeDataModel.getXlogsGrid(xlogsServiceUri, scope, xid, start, limit);    
+    return SUCCESS;
+  }
+  
+  public Grid getPageXlogsGrid()
+  {
+    return pageXlogsGrid;
   }
   
   // --------------------------

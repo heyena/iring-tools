@@ -4,7 +4,6 @@ import java.util.Map;
 
 import org.apache.struts2.interceptor.SessionAware;
 import org.iringtools.models.AppDataModel;
-import org.iringtools.utility.HttpClientException;
 import org.iringtools.widgets.grid.Grid;
 
 import com.opensymphony.xwork2.ActionContext;
@@ -42,7 +41,7 @@ public class AppDataController extends ActionSupport implements SessionAware
   //-------------------------------------
   // get a page of data transfer objects 
   // ------------------------------------
-  public String getPageDtos() throws HttpClientException
+  public String getPageDtos()
   {
     pageDtoGrid = appDataModel.getDtoGrid(dxfrServiceUri, scope, app, graph, start, limit);    
     return SUCCESS;
@@ -56,7 +55,7 @@ public class AppDataController extends ActionSupport implements SessionAware
   //-----------------------------
   // get a page of related items
   // ----------------------------
-  public String getPageRelatedItems() throws HttpClientException 
+  public String getPageRelatedItems() 
   {
     pageRelatedItemGrid = appDataModel.getRelatedItemGrid(dxfrServiceUri, scope, app, graph, 
         individual, classId, classIdentifier, start, limit);

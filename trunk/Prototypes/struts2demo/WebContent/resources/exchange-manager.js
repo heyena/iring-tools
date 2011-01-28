@@ -61,18 +61,77 @@ function loadPageDto(type, action, context, label){
     store.on('load', function(){
       store.recordType = store.reader.recordType;      
       
-      var dtoNavPane = new Ext.Panel({
-        id: 'nav-' + label,
-        region: 'north',
-        height: 26,
+      var dtoToolbar = new Ext.Toolbar({
+        cls: 'nav-toolbar',
+        items: [{
+          xtype: 'tbspacer', 
+          width: 4
+        },{
+          id: 'tb-refresh',
+          xtype: 'button',
+          tooltip: 'Refresh',
+          icon: 'resources/images/refresh.png',
+          handler: function(){
+            alert('refresh');
+          }
+        },{
+          xtype: 'tbspacer', 
+          width: 4
+        }]
+      });
+      
+      if (type == 'exchange'){
+        dtoToolbar.add({
+          id: 'tb-exchange',
+          xtype: 'button',
+          tooltip: 'Exchange',
+          icon: 'resources/images/exchange.png',
+          handler: function(){
+            alert('exchange');
+          }
+        },{
+          xtype: 'tbspacer', 
+          width: 4
+        },{
+          id: 'tb-xlog',
+          xtype: 'button',
+          tooltip: 'Show/hide exchange logs',
+          icon: 'resources/images/exchange-log.png',
+          handler: function(){            
+            var dtoTab = Ext.getCmp('content-pane').getActiveTab();
+            var dtoContentPane = dtoTab.items.map['dto-' + label];
+            var dtoXlogsPane = dtoTab.items.map['xlogs-' + label]; 
+            
+            if (dtoXlogsPane.collapsed)
+              dtoXlogsPane.expand(true);
+            else {         
+              dtoXlogsPane.collapse(true);
+            }
+          }
+        },{
+          xtype: 'tbspacer', 
+          width: 4
+        });
+      }
+      
+      var dtoBcPane = new Ext.Container({
+        id: 'bc-' + label,
+        cls: 'bc-container',
         padding: '5',
         bodyStyle: 'background-color:#fcfcfc',
         items: [{
           xtype: 'box',
-          autoEl: {tag: 'a', href: 'javascript:navigate(0)', html: store.reader.description},
-          cls: 'breadcrumb',
-          overCls: 'breadcrumb-hover'
+          autoEl: {tag: 'span', html: '<a class="breadcrumb" href="#" onclick="navigate(0)">' + 
+            store.reader.description + '</a>'}
         }]
+      });
+      
+      var dtoNavPane = new Ext.Panel({
+        id: 'nav-' + label,
+        region: 'north',
+        layout: 'hbox',
+        height: 26,
+        items: [dtoToolbar, dtoBcPane]
       });
       
       var dtoContentPane = new Ext.Panel({
@@ -100,14 +159,57 @@ function loadPageDto(type, action, context, label){
       });
       
       if (type == 'exchange'){         
-        dtoTab.add(new Ext.Panel({
-          id: 'log-' + label,
+        /*dtoTab.add(new Ext.Panel({
+          id: 'xlogs-' + label,
           title: 'Exchange Logs',
           region: 'south',
-          split: true,
           height: 200,
-          hidden: true
-        }));
+          split: true,
+          collapsed: true
+        }));*/
+        
+        var xlogsUrl = 'xlogs' + context;
+        var xlogStore = createGridStore(xlogsUrl);
+        
+        xlogStore.on('load', function(){
+          xlogStore.recordType = store.reader.recordType;      
+        
+          var xlogsPane = new Ext.grid.GridPanel({
+            id: 'xlogs-' + label,
+            title: 'Exchange Logs',
+            region: 'south',
+            height: 200,
+            split: true,
+            store: xlogStore,
+            stripeRows: true,
+            cm: new Ext.grid.DynamicColumnModel(xlogStore),
+            selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
+            enableColLock: true,
+            viewConfig: {
+              forceFit: true
+            },
+            bbar: new Ext.PagingToolbar({
+              store: xlogStore,
+              pageSize: pageSize,
+              displayInfo: true,
+              autoScroll: true,
+              plugins: [new Ext.ux.plugin.PagingToolbarResizer({
+                displayText: 'Page Size',
+                options: [25, 50, 100, 200, 500], 
+                prependCombo: true})
+              ]
+            })
+          });
+          
+          dtoTab.add(xlogsPane);
+        });
+        
+        /*xlogsStore.load({
+          params: {
+            start: 0,          
+            limit: pageSize
+          }
+        });*/
       }
       
       Ext.getCmp('content-pane').add(dtoTab).show();
@@ -139,21 +241,20 @@ function loadRelatedItem(type, context, individual, classId, className, classIde
   store.on('load', function(){
     var dtoTab = Ext.getCmp('content-pane').getActiveTab();
     var label = dtoTab.id.substring(4);
-    var dtoNavPane = dtoTab.items.map['nav-' + label];
+    var dtoBcPane = dtoTab.items.map['nav-' + label].items.map['bc-' + label];
     var dtoContentPane = dtoTab.items.map['dto-' + label];    
-    var navItemIndex = dtoNavPane.items.length + 1;        
+    var bcItemIndex = dtoBcPane.items.length + 1;        
     
-    dtoNavPane.add({
+    dtoBcPane.add({
       xtype: 'box',
       autoEl: {tag: 'img', src: 'resources/images/breadcrumb.png'},
       cls: 'breadcrumb-img'
     },{
       xtype: 'box',
-      autoEl: {tag: 'a', href: 'javascript:navigate(' + navItemIndex + ')', html: className},
-      cls: 'breadcrumb',
-      overCls: 'breadcrumb-hover'
+      autoEl: {tag: 'span', html: '<a class="breadcrumb" href="#" onclick="navigate(' + 
+        bcItemIndex + ')">' + className + '</a>'}
     });    
-    dtoNavPane.doLayout();
+    dtoBcPane.doLayout();
     
     store.recordType = store.reader.recordType;  
     dtoContentPane.add(createGridPane(store, pageSize));
@@ -171,7 +272,7 @@ function loadRelatedItem(type, context, individual, classId, className, classIde
 function showIndividualInfo(individual, relatedClasses){
   var dtoTab = Ext.getCmp('content-pane').getActiveTab();
   var label = dtoTab.id.substring(4);
-  var dtoNavPane = dtoTab.items.map['nav-' + label];
+  var dtoBcPane = dtoTab.items.map['nav-' + label].items.map['bc-' + label];
   var dtoContentPane = dtoTab.items.map['dto-' + label];
   var dtoGrid = dtoContentPane.getLayout().activeItem;
   
@@ -210,7 +311,8 @@ function showIndividualInfo(individual, relatedClasses){
     title: 'Related Items',
     region: 'center',
     layout: 'vbox',
-    padding: '0 5 5 5',
+    boxMinWidth: 100,
+    padding: '4',
     split: true,
     autoScroll: true
   });
@@ -225,15 +327,9 @@ function showIndividualInfo(individual, relatedClasses){
     
     relatedItemPane.add({
       xtype: 'box',
-      autoEl: {
-        tag: 'a', href: 'javascript:loadRelatedItem(\'' + dtoTabType + '\',\'' + dtoTabContext + '\',\'' + 
-        dtoIdentifier + '\',\'' + relatedClassId + '\',\'' + relatedClassName + '\',\'' + 
-        relatedClassIdentifier + '\')', html: relatedClassName
-      },
-      html: relatedClassName,
-      style: {width: '100%'},
-      cls: 'breadcrumb',
-      overCls: 'breadcrumb-hover'
+      autoEl: {tag: 'div', html: '<a class="breadcrumb" href="#" onclick="loadRelatedItem(\'' + 
+        dtoTabType + '\',\'' + dtoTabContext + '\',\'' + dtoIdentifier + '\',\'' + relatedClassId + 
+        '\',\'' + relatedClassName + '\',\'' + relatedClassIdentifier + '\')">' + relatedClassName + '</a>'}
     });
   }
   
@@ -244,38 +340,36 @@ function showIndividualInfo(individual, relatedClasses){
     items: [classItemPane, propertyGrid, relatedItemPane]
   });
   
-  var navItemIndex = dtoNavPane.items.length + 1;
+  var bcItemIndex = dtoBcPane.items.length + 1;
   
-  dtoNavPane.add({
+  dtoBcPane.add({
     xtype: 'box',
     autoEl: {tag: 'img', src: 'resources/images/breadcrumb.png'},
     cls: 'breadcrumb-img'
   },{
     xtype: 'box',
-    autoEl: {tag: 'a', href: 'javascript:navigate(' + navItemIndex + ')', html: individual},
-    cls: 'breadcrumb',
-    overCls: 'breadcrumb-hover'
+    autoEl: {tag: 'span', html: '<a class="breadcrumb" href="#" onclick="navigate(' + 
+      bcItemIndex + ')">' + individual + '</a>'}
   });
-  
-  dtoNavPane.doLayout();
+  dtoBcPane.doLayout();
 
   dtoContentPane.add(individualInfoPane);
   dtoContentPane.getLayout().setActiveItem(dtoContentPane.items.length-1);
 }
 
-function navigate(navItemIndex){
+function navigate(bcItemIndex){
   var dtoTab = Ext.getCmp('content-pane').getActiveTab();
   var label = dtoTab.id.substring(4);
-  var dtoNavPane = dtoTab.items.map['nav-' + label];
+  var dtoBcPane = dtoTab.items.map['nav-' + label].items.map['bc-' + label];
   var dtoContentPane = dtoTab.items.map['dto-' + label];  
   
   // remove items on the right from nav pane
-  while (navItemIndex < dtoNavPane.items.items.length - 1){
-    dtoNavPane.items.items[navItemIndex + 1].destroy();
+  while (bcItemIndex < dtoBcPane.items.items.length - 1){
+    dtoBcPane.items.items[bcItemIndex + 1].destroy();
   }
   
   // remove items on the right from dto content pane
-  var contentItemIndex = navItemIndex / 2;
+  var contentItemIndex = bcItemIndex / 2;
   while (contentItemIndex < dtoContentPane.items.items.length - 1){
     dtoContentPane.items.items[contentItemIndex + 1].destroy();
   }
@@ -318,6 +412,7 @@ function showDialog(width, height, title, message, buttons, callback){
 
 Ext.onReady(function(){
   Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
+  Ext.QuickTips.init();
   
   Ext.get('about-link').on('click', function(){
     var win = new Ext.Window({    
@@ -390,7 +485,7 @@ Ext.onReady(function(){
           var exchange = node.attributes["text"];
           var xid = node.attributes.properties['Id'];
           var reviewed = (node.reviewed != undefined);   
-          var msg = 'Are you sure you want to exchange [' + exchange + ']?';
+          var msg = 'Are you sure you want to do data exchange [' + exchange + ']?';
           var processUserResponse = submitExchange.createDelegate([exchange, scope, xid, reviewed]);          
           showDialog(400, 60, 'Submit Exchange?', msg, Ext.Msg.OKCANCEL, processUserResponse); 
         }
@@ -400,6 +495,7 @@ Ext.onReady(function(){
         icon: 'resources/images/exchange-log.png',
         text: 'XLogs',
         disabled: true,
+        hidden: true,
         handler: function(){  
           alert('Show exchange log');
         }

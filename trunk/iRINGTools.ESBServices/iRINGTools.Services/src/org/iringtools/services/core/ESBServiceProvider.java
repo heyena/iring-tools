@@ -522,7 +522,7 @@ public class ESBServiceProvider
     exchangeResponse.setEndTimeStamp(timestamp);
     
     //Store the exchange response : history  
-    String path = settings.get("baseDirectory") + "/WEB-INF/logs/" + scope + "/exchanges/" + id;
+    String path = settings.get("baseDirectory") + "/WEB-INF/logs/exchanges/" + scope + "/" + id;
     File dirPath = new File(path);
     
     if (!dirPath.exists())

@@ -9,6 +9,10 @@
     <param-value>http://localhost:8080/services/esb</param-value>
   </context-param>
   <context-param>
+    <param-name>XlogsServiceUri</param-name>
+    <param-value>http://localhost:8080/services/history</param-value>
+  </context-param>
+  <context-param>
     <param-name>DXFRServiceUri</param-name>
     <param-value>http://localhost:54321/dxfr</param-value>
   </context-param>
