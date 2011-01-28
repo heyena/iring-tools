@@ -101,7 +101,7 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
     onCloseTab: function (node) {
         // check number of tabs in panel to make disabled the centerPanel if its the last tab has been closed.
         if ((Ext.getCmp('contentpanel').items.length) == 1) {
-            Ext.getCmp('contentpanel').disable()
+            Ext.getCmp('contentpanel').enable()
         }
 
     },
