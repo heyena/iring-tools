@@ -29,7 +29,7 @@ public class HistoryService extends AbstractService
     }
     catch (Exception ex)
     {
-      logger.error("Error getting exchange definition for [" + exchangeId + "]: " + ex);
+      logger.error("Error getting exchange log for [" + scope + ", " + exchangeId + "]: " + ex);
     }
     
     return history;

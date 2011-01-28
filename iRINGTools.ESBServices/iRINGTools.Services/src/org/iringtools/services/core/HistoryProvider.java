@@ -19,31 +19,22 @@ public class HistoryProvider
   {
     this.settings = settings;
   }
-  
+
   public History getExchangeHistory(String scope, String id) throws JAXBException, IOException
   {
-    //Special Directory: /WEB-INF/logs/{scope}/exchanges/{id}
-    //Go into ESBService and save Responses as {datetimestamp}.xml in special directory 
-    
-    //go to special directory and get a list of all of the xml files
-    //load xml files into Hisotry xml
-    //return History xml
-	String path = settings.get("baseDirectory") + "/WEB-INF/logs/" + scope + "/exchanges/" + id;
-	
-	History history = new History();
-	List<ExchangeResponse> responses = new ArrayList<ExchangeResponse>();
-	ExchangeResponse response = null;
-	
-	List<String> filesInFolder = IOUtil.getFiles(path);
-	
-	for (int i = 0; i < filesInFolder.size(); i++) 
-    {
-    	response = JaxbUtil.read(ExchangeResponse.class, path+ "\\" +filesInFolder.get(i));
-    	responses.add(response);
-    }
-    
+    History history = new History();
+    List<ExchangeResponse> responses = new ArrayList<ExchangeResponse>();
     history.setResponses(responses);
     
-	return history;
+    String path = settings.get("baseDirectory") + "/WEB-INF/logs/exchanges/" + scope + "/" + id;
+    List<String> filesInFolder = IOUtil.getFiles(path);
+
+    for (int i = 0; i < filesInFolder.size(); i++)
+    {
+      ExchangeResponse response = JaxbUtil.read(ExchangeResponse.class, path + "\\" + filesInFolder.get(i));
+      responses.add(response);
+    }
+    
+    return history;
   }
 }
