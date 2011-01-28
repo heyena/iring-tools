@@ -80,7 +80,7 @@ Ext.onReady(function () {
                 id: 'tab-' + node.id,
                 title: 'Scope - ' + node.text,
                 configData: formData,
-                url: 'directory?format=postScope', 
+                url: 'directory/scope', 
                 closable: true
             });
 
@@ -96,7 +96,7 @@ Ext.onReady(function () {
                 id: 'tab-' + node.id,
                 title: 'Application - ' + scope.text + '.' + node.text,
                 configData: formData,
-                url: 'directory?format=postApplication', 
+                url: 'directory/application', 
                 closable: true
             });
 
