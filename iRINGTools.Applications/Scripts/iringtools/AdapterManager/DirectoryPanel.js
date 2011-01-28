@@ -28,7 +28,9 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         this.addEvents({
             create: true,
             open: true,
-            remove: true
+            remove: true,
+            refresh: true,
+            selectionchange: true
         });
 
         this.tbar = this.buildToolbar();
@@ -55,7 +57,8 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
                 expanded: true,
                 draggable: false,
                 icon: 'Content/img/internet-web-browser.png',
-                id: 'src'
+                id: 'src',
+                type: 'Scope'
             }
 
         });
@@ -64,6 +67,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       this.DirectoryPanel
     ];
 
+        //this.DirectoryPanel.getSelectionModel().on('selectionchange', this.onSelectionChange, this, this);
         // super
         AdapterManager.DirectoryPanel.superclass.initComponent.call(this);
     },
@@ -106,35 +110,80 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     onRemove: function (btn, ev) {
         var node = this.DirectoryPanel.getSelectionModel().getSelectedNode();
         this.fireEvent('remove', this, node);
+
     },
 
+    onRefresh: function (node) {
+        Ext.state.Manager.clear('AdapterManager');
+        this.DirectoryPanel.root.reload();
+    },
+
+    getNodeBySelectedTab: function (tab) {
+      // alert("1");
+        var tabid = tab.id;
+        nodeId = tabid.substr(4, tabid.length)  // tabid is "tab-jf23dfj-sd3fas-df33s-s3df"
+        return this.getNodeById(nodeId)        // get the NODE using nodeid
+    },
+
+    getNodeById: function (nodeId) {
+      //  alert("2");
+        if (this.DirectoryPanel.getNodeById(nodeId)) { //if nodeID exists it will find out NODE
+            return this.DirectoryPanel.getNodeById(nodeId)
+        } else {
+            return false;
+        }
+    },
     /**
     * buildform
     * @private
     */
     buildForm: function (node, formType) {
 
-        var name, scopeDescription;
+        var name, scopeDescription, txtLableName, txtLableDescription, valparentNodeID;
+
+        // set valiable to Empty String.
         name = "";
         description = "";
+        txtLableName = "";
+        txtLableDescription = ""
+        valparentNodeID = "";
 
         var obj = node.attributes;
 
+        //Check whether the form need to open in Edit mode or not.
+        if (formType == 'editForm') {
+            if (node.attributes.type == 'Application') {
+                name = node.attributes.ScopeApplication.Name;
+                scopeDescription = node.attributes.ScopeApplication.Description;
+            }
+            else {
+                name = node.attributes.Scope.Name;
+                scopeDescription = node.attributes.Scope.Description;
+            }
+        }
+
+        //Update fieldLabel based on node type.
         if (node.attributes.type == 'Application') {
-            name = node.attributes.ScopeApplication.Name;
-            scopeDescription = node.attributes.ScopeApplication.Description;
+            txtLableName = 'Application Name';
+            txtLableDescription = 'Description';
         }
         else {
-            name = node.attributes.Scope.Name;
-            scopeDescription = node.attributes.Scope.Description;
+            txtLableName = 'Scope Name';
+            txtLableDescription = 'Description';
+        }
+
+        if (node.parentNode != null) {
+            valparentNodeID = node.parentNode.id;
+            txtLableName = 'Application Name';
+            txtLableDescription = 'Description';
         }
 
         return [
         { xtype: 'hidden', name: 'formType', value: formType },
         { xtype: 'hidden', name: 'nodeID', value: obj['id'] },
-        { xtype: 'hidden', name: 'parentNodeID', value: node.parentNode.id },
-        { fieldLabel: 'Application Name', name: 'appName', allowBlank: true, xtype: 'textfield', width: 250, value: name },
-        { fieldLabel: 'Description', name: 'description', allowBlank: true, xtype: 'textarea', width: 250, value: scopeDescription }
+        { xtype: 'hidden', name: 'parentNodeID', value: valparentNodeID },
+        { fieldLabel: txtLableName, name: 'appName', allowBlank: true, xtype: 'textfield', width: 250, value: name },
+        { fieldLabel: txtLableDescription, name: 'description', allowBlank: true, xtype: 'textarea', width: 250, value: scopeDescription }
 
         ];
     }

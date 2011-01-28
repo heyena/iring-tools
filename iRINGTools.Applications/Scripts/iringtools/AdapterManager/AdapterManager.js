@@ -58,21 +58,90 @@ Ext.onReady(function () {
 
     });
 
-    directoryPanel.on('create', function (npanel) {
+    directoryPanel.on('create', function (npanel, node, formType) {
 
-        var window = new Ext.Window({
-            title: 'Scope Details',
-            width: 300,
-            height: 300
-        });
+        if (node != null) {
+            if (node.attributes.type == "Application") {
+                Ext.MessageBox.show({
+                    title: '<font color=red>Error!</font>',
+                    msg: 'Opetation not allowed.',
+                    buttons: Ext.MessageBox.OK,
+                    icon: Ext.MessageBox.INFO
+                });
+                return false;
+            }
+            var formData = this.buildForm(node, formType);
+            var obj = node.attributes;
+        } else {
+            Ext.MessageBox.show({
+                title: '<font color=red>Error!</font>',
+                msg: 'Please select a node.',
+                buttons: Ext.MessageBox.OK,
+                icon: Ext.MessageBox.INFO
+            });
+            return false;
+        }
+        if (node.parentNode == null) {
+            if (node.attributes.type == "Scope") {
 
-        window.show();
+                var newTab = new AdapterManager.ScopePanel({
+                    id: 'tab-' + node.id,
+                    title: 'Scope - (New)',
+                    configData: formData,
+                    url: 'directory/scope',
+                    closable: true
+                });
+
+                contentPanel.add(newTab);
+                contentPanel.activate(newTab);
+            }
+        } else if (node.attributes.type == "Graph") {
+
+            var application = node.parentNode;
+            var scope = application.parentNode;
+
+            var newTab = new AdapterManager.MappingPanel({
+                title: 'Mapping - ' + ':(New)'
+            });
+
+            contentPanel.add(newTab);
+            contentPanel.activate(newTab);
+
+        } else {
+
+            var scope = node.parentNode;
+            var formData = this.buildForm(node, formType);
+
+            var newTab = new AdapterManager.ScopePanel({
+                id: 'tab-' + node.id,
+                title: 'Application -' + node.text + '. (New)',
+                configData: formData,
+                url: 'directory/application',
+                closable: true
+            });
+
+            contentPanel.add(newTab);
+            contentPanel.activate(newTab);
+
+        }
 
     });
 
+
     directoryPanel.on('open', function (npanel, node, formType) {
 
-        var formData = this.buildForm(node, formType);
+        if (node != null) {
+            var formData = this.buildForm(node, formType);
+            var obj = node.attributes;
+        } else {
+            Ext.MessageBox.show({
+                title: '<font color=red>Error!</font>',
+                msg: 'Please select a node.',
+                buttons: Ext.MessageBox.OK,
+                icon: Ext.MessageBox.INFO
+            });
+            return false;
+        }
 
         if (node.attributes.type == "Scope") {
 
@@ -80,7 +149,7 @@ Ext.onReady(function () {
                 id: 'tab-' + node.id,
                 title: 'Scope - ' + node.text,
                 configData: formData,
-                url: 'directory/scope', 
+                url: 'directory/scope',
                 closable: true
             });
 
@@ -96,7 +165,7 @@ Ext.onReady(function () {
                 id: 'tab-' + node.id,
                 title: 'Application - ' + scope.text + '.' + node.text,
                 configData: formData,
-                url: 'directory/application', 
+                url: 'directory/application',
                 closable: true
             });
 
@@ -120,9 +189,49 @@ Ext.onReady(function () {
     });
 
     directoryPanel.on('remove', function (npanel, node) {
-
-        App.setAlert(true, scope + '.' + application);
-
+        that = this;
+        if (node.hasChildNodes()) {
+            Ext.MessageBox.show({
+                title: '<font color=red></font>',
+                msg: 'Please select a child node to delete.',
+                buttons: Ext.MessageBox.OK,
+                icon: Ext.MessageBox.INFO
+            });
+        } else if (node == null) {
+            Ext.Msg.alert('Warning', 'Please select a node.')
+        } else {
+            Ext.Msg.show({
+                msg: 'All the tabs will be closed. Do you want to delete this node?',
+                buttons: Ext.Msg.YESNO,
+                icon: Ext.Msg.QUESTION,
+                fn: function (action) {
+                    if (action == 'yes') {
+                        //send ajax request
+                        Ext.Ajax.request({
+                            url: 'directory/deletenode',
+                            method: 'GET',
+                            params: { 'nodeId': node.id, 'parentNodeID': node.parentNode.id },
+                            success: function (o) {
+                                // remove all tabs form tabpanel
+                                Ext.getCmp('contentpanel').removeAll(true); // it will be removed in future
+                                // remove the node form tree
+                                //that.federationPanel.selModel.selNode.parentNode.removeChild(node);
+                                //Tree Reload
+                                that.onRefresh();
+                                // fire event so that the Details panel will be changed accordingly
+                                that.fireEvent('selectionchange', this)
+                                Ext.Msg.alert('Sucess', 'Node has been deleted')
+                            },
+                            failure: function (f, a) {
+                                Ext.Msg.alert('Warning', 'Error!!!')
+                            }
+                        });
+                    } else if (action == 'no') {
+                        Ext.Msg.alert('Info', 'Not now');
+                    }
+                }
+            });
+        }
     });
 
     // Load Stores
