@@ -33,7 +33,9 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
             save: true,
             reset: true,
             validate: true,
-            tabChange: true
+            tabChange: true,
+            refresh: true,
+            selectionchange: true
         });
 
         this.tbar = this.buildToolbar();
@@ -110,6 +112,7 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
         this.data_form.getForm().reset()
     },
 
+
     onSave: function () {
         var that = this;    // consists the main/previous class object
        // alert(DirectoryPanel);
@@ -117,16 +120,18 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
             waitMsg: 'Saving Data...',
             success: function (f, a) {
                 if (that.getActiveTab()) {
-                   // var node = this.getNodeBySelectedTab(that.getActiveTab())
+                   // alert("3");
+                   // var node = AdapterManager.DirectoryPanel.getNodeBySelectedTab(that.getActiveTab())
                     Ext.Msg.alert('Success', 'Changes saved successfully!')
+                    
                     var formType = that.data_form.getForm().findField('formType').getValue();
                     if (formType == 'newForm') { // in case of newForm close the newTab
                         Ext.getCmp('contentpanel').remove(that.getActiveTab(), true);
                     }
 
-                   // contentpanel.onRefresh(node);
-                    //federationPanel.expandNode(node) // pending
-                    //federationPanel.selectNode(node) // pending
+                    //Tree Reload
+                    //AdapterManager.DirectoryPanel.onRefresh(node);
+                   
                 }
 
             },

@@ -19,197 +19,282 @@ using iRINGTools.Web.Models;
 
 namespace iRINGTools.Web.Controllers
 {
-  public class DirectoryController : Controller
-  {
-
-    NameValueCollection _settings = null;
-    string _adapterServiceURI = String.Empty;
-    string _refDataServiceURI = String.Empty;
-
-    public DirectoryController()
+    public class DirectoryController : Controller
     {
-      _settings = ConfigurationManager.AppSettings;
-      _adapterServiceURI = _settings["AdapterServiceUri"];
-      _refDataServiceURI = _settings["ReferenceDataServiceUri"];
-    }
 
-    private List<string> GetGraphs(string scope, string application)
-    {
-      List<string> graphs = new List<string>();
-      WebHttpClient client = new WebHttpClient(_adapterServiceURI);
-      Mapping mapping = client.Get<Mapping>("/" + scope + "/" + application + "/mapping", true);
-      foreach (GraphMap graph in mapping.graphMaps)
-      {
-        graphs.Add(graph.name);
-      }
-      return graphs;
-    }
+        NameValueCollection _settings = null;
+        string _adapterServiceURI = String.Empty;
+        string _refDataServiceURI = String.Empty;
 
-    //
-    // GET: /Directory/
+        public DirectoryController()
+        {
+            _settings = ConfigurationManager.AppSettings;
+            _adapterServiceURI = _settings["AdapterServiceUri"];
+            _refDataServiceURI = _settings["ReferenceDataServiceUri"];
+        }
 
-    public JsonResult Index()
-    {
-      string format = String.Empty;
-      string adapterServiceURI = _adapterServiceURI;
-
-      if (Request.QueryString["format"] != null)
-        format = Request.QueryString["format"].ToUpper();
-
-      if (Request.QueryString["remote"] != null)
-        adapterServiceURI = Request.QueryString["remote"] + "/adapter";
-
-      WebHttpClient client = new WebHttpClient(adapterServiceURI);
-      ScopeProjects scopes = client.Get<ScopeProjects>("/scopes");
-
-      switch (format)
-      {
-        case "TREE":
-          {
-            List<ScopeTreeNode> nodes = new List<ScopeTreeNode>();
-
-            foreach (ScopeProject scope in scopes)
+        private List<string> GetGraphs(string scope, string application)
+        {
+            List<string> graphs = new List<string>();
+            WebHttpClient client = new WebHttpClient(_adapterServiceURI);
+            Mapping mapping = client.Get<Mapping>("/" + scope + "/" + application + "/mapping", true);
+            foreach (GraphMap graph in mapping.graphMaps)
             {
+                graphs.Add(graph.name);
+            }
+            return graphs;
+        }
 
-              ScopeTreeNode nodeScope = new ScopeTreeNode(scope);
+        //
+        // GET: /Directory/
 
-              nodes.Add(nodeScope);
+        public JsonResult Index()
+        {
+            string format = String.Empty;
+            string adapterServiceURI = _adapterServiceURI;
 
-              foreach (ScopeApplication app in scope.Applications)
-              {
-                ApplicationTreeNode nodeApp = new ApplicationTreeNode(app);
-                nodeScope.children.Add(nodeApp);
-                
-                List<string> graphs = GetGraphs(scope.Name, app.Name);
+            if (Request.QueryString["format"] != null)
+                format = Request.QueryString["format"].ToUpper();
 
-                foreach (string graph in graphs)
+            if (Request.QueryString["remote"] != null)
+                adapterServiceURI = Request.QueryString["remote"] + "/adapter";
+
+            WebHttpClient client = new WebHttpClient(adapterServiceURI);
+            ScopeProjects scopes = client.Get<ScopeProjects>("/scopes");
+
+            switch (format)
+            {
+                case "TREE":
+                    {
+                        List<ScopeTreeNode> nodes = new List<ScopeTreeNode>();
+
+                        foreach (ScopeProject scope in scopes)
+                        {
+
+                            ScopeTreeNode nodeScope = new ScopeTreeNode(scope);
+
+                            nodes.Add(nodeScope);
+
+                            foreach (ScopeApplication app in scope.Applications)
+                            {
+                                if (app.Name != string.Empty)
+                                {
+                                    ApplicationTreeNode nodeApp = new ApplicationTreeNode(app);
+                                    nodeScope.children.Add(nodeApp);
+
+                                    List<string> graphs = GetGraphs(scope.Name, app.Name);
+
+                                    foreach (string graph in graphs)
+                                    {
+                                        GraphTreeNode nodeGraph = new GraphTreeNode(graph);
+                                        nodeApp.children.Add(nodeGraph);
+                                    }
+                                }
+                            }
+                        }
+
+                        return Json(nodes, JsonRequestBehavior.AllowGet);
+                    }
+                default:
+                    {
+                        JsonContainer<List<ScopeProject>> container = new JsonContainer<List<ScopeProject>>();
+                        container.items = scopes;
+                        container.total = scopes.Count;
+                        container.success = true;
+                        return Json(container, JsonRequestBehavior.AllowGet);
+                    }
+            }
+        }
+
+        public JsonResult Scope(FormCollection form)
+        {
+            string format = String.Empty;
+            string adapterServiceURI = _adapterServiceURI;
+            bool isEdit = false;
+
+            if (Request.QueryString["format"] != null)
+                format = Request.QueryString["format"].ToUpper();
+
+            if (Request.QueryString["remote"] != null)
+                adapterServiceURI = Request.QueryString["remote"] + "/adapter";
+
+            WebHttpClient client = new WebHttpClient(adapterServiceURI);
+            ScopeProjects scopes = client.Get<ScopeProjects>("/scopes");
+
+            string relativeUri = String.Format("/scopes");
+            Uri address = new Uri(adapterServiceURI + relativeUri);
+            ScopeProject _editApplication = new ScopeProject();
+
+            _editApplication.Name = form["appName"];
+            _editApplication.Description = form["description"];
+
+            //             var _scopesIndex = scopes.Where(x => x.Name == this.Request.Form["nodeID"]).FirstOrDefault();
+            if (form["formtype"].ToUpper() == "EDITFORM")
+            {
+                for (int i = 0; i < scopes.Count(); i++)
                 {
-                  GraphTreeNode nodeGraph = new GraphTreeNode(graph);
-                  nodeApp.children.Add(nodeGraph);
+                    if (scopes[i].Name == form["nodeID"])
+                    {
+                        scopes[i].Name = _editApplication.Name;
+                        scopes[i].Description = _editApplication.Description;
+                        isEdit = true;
+                    }
                 }
-                
-              }
             }
-
-            return Json(nodes, JsonRequestBehavior.AllowGet);
-          }        
-        default:
-          {
-            JsonContainer<List<ScopeProject>> container = new JsonContainer<List<ScopeProject>>();
-            container.items = scopes;
-            container.total = scopes.Count;
-            container.success = true;
-            return Json(container, JsonRequestBehavior.AllowGet);
-          }
-      }
-    }
-
-    public JsonResult Scope(FormCollection form)
-    {
-      string format = String.Empty;
-      string adapterServiceURI = _adapterServiceURI;
-
-      if (Request.QueryString["format"] != null)
-        format = Request.QueryString["format"].ToUpper();
-
-      if (Request.QueryString["remote"] != null)
-        adapterServiceURI = Request.QueryString["remote"] + "/adapter";
-
-      WebHttpClient client = new WebHttpClient(adapterServiceURI);
-      ScopeProjects scopes = client.Get<ScopeProjects>("/scopes");
-      
-      string relativeUri = String.Format("/scopes");
-      Uri address = new Uri(adapterServiceURI + relativeUri);
-      ScopeProject _editApplication = new ScopeProject();
-
-      _editApplication.Name = form["appName"];
-      _editApplication.Description = form["description"];
-
-      //             var _scopesIndex = scopes.Where(x => x.Name == this.Request.Form["nodeID"]).FirstOrDefault();
-
-      for (int i = 0; i < scopes.Count(); i++)
-      {
-        if (scopes[i].Name == form["nodeID"])
-        {
-          scopes[i].Name = _editApplication.Name;
-          scopes[i].Description = _editApplication.Description;
-        }
-      }
-
-      string data = Utility.SerializeDataContract<ScopeProjects>(scopes);
-      string responseMessage = client.Post<ScopeProjects>(relativeUri, scopes, true);
-      if (responseMessage.Contains("success"))
-      {
-        return Json(new
-        {
-          success = true
-        }, JsonRequestBehavior.AllowGet);
-      }
-      else
-      {
-        return Json(new
-        {
-          success = false
-        }, JsonRequestBehavior.AllowGet);
-      }
-    }
-
-    public JsonResult Application(FormCollection form)
-    {
-      string format = String.Empty;
-      string adapterServiceURI = _adapterServiceURI;
-
-      if (Request.QueryString["format"] != null)
-        format = Request.QueryString["format"].ToUpper();
-
-      if (Request.QueryString["remote"] != null)
-        adapterServiceURI = Request.QueryString["remote"] + "/adapter";
-
-      WebHttpClient client = new WebHttpClient(adapterServiceURI);
-      ScopeProjects scopes = client.Get<ScopeProjects>("/scopes");
-
-      string relativeUri = String.Format("/scopes");
-      Uri address = new Uri(adapterServiceURI + relativeUri);
-      ScopeApplication _editApplication = new ScopeApplication();
-
-      _editApplication.Name = form["appName"];
-      _editApplication.Description = form["description"];
-
-      // var _scopesIndex = scopes.Where(x => x.Name == this.Request.Form["parentNodeID"]).FirstOrDefault().Applications.ToList();
-
-      for (int i = 0; i < scopes.Count(); i++)
-      {
-        if (scopes[i].Name == form["parentNodeID"])
-        {
-          for (int j = 0; j < scopes[i].Applications.Count(); j++)
-          {
-            if (scopes[i].Applications[j].Name == form["nodeID"])
+            else
             {
-              scopes[i].Applications[j].Name = _editApplication.Name;
-              scopes[i].Applications[j].Description = _editApplication.Description;
+                ScopeApplications app = new ScopeApplications();
+                //app.Add(new ScopeApplication { Name = string.Empty, Description = string.Empty });
+                scopes.Add(new ScopeProject { Applications = app, Name = _editApplication.Name.Trim(), Description = _editApplication.Description.Trim() });
+
             }
-          }
 
+            string responseMessage = client.Post<ScopeProjects>(relativeUri, scopes, true);
+            if (responseMessage.Contains("success"))
+            {
+                return Json(new
+                {
+                    success = true
+                }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(new
+                {
+                    success = false
+                }, JsonRequestBehavior.AllowGet);
+            }
         }
-      }
 
-      string data = Utility.SerializeDataContract<ScopeProjects>(scopes);
-      string responseMessage = client.Post<ScopeProjects>(relativeUri, scopes, true);
-      if (responseMessage.Contains("success"))
-      {
-        return Json(new
+        public JsonResult Application(FormCollection form)
         {
-          success = true
-        }, JsonRequestBehavior.AllowGet);
-      }
-      else
-      {
-        return Json(new
+            string format = String.Empty;
+            string adapterServiceURI = _adapterServiceURI;
+
+            if (Request.QueryString["format"] != null)
+                format = Request.QueryString["format"].ToUpper();
+
+            if (Request.QueryString["remote"] != null)
+                adapterServiceURI = Request.QueryString["remote"] + "/adapter";
+
+            WebHttpClient client = new WebHttpClient(adapterServiceURI);
+            ScopeProjects scopes = client.Get<ScopeProjects>("/scopes");
+
+            string relativeUri = String.Format("/scopes");
+            Uri address = new Uri(adapterServiceURI + relativeUri);
+            ScopeApplication _editApplication = new ScopeApplication();
+
+            _editApplication.Name = form["appName"];
+            _editApplication.Description = form["description"];
+
+            // var _scopesIndex = scopes.Where(x => x.Name == this.Request.Form["parentNodeID"]).FirstOrDefault().Applications.ToList();
+            if (form["formtype"].ToUpper() == "EDITFORM")
+            {
+                for (int i = 0; i < scopes.Count(); i++)
+                {
+                    if (scopes[i].Name == form["parentNodeID"])
+                    {
+                        for (int j = 0; j < scopes[i].Applications.Count(); j++)
+                        {
+                            if (scopes[i].Applications[j].Name == form["nodeID"])
+                            {
+                                scopes[i].Applications[j].Name = _editApplication.Name;
+                                scopes[i].Applications[j].Description = _editApplication.Description;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < scopes.Count(); i++)
+                {
+                    if (scopes[i].Name == form["nodeID"])
+                    {
+                        scopes[i].Applications.Add(new ScopeApplication { Name = _editApplication.Name, Description = _editApplication.Description });
+                    }
+                }
+            }
+
+            string data = Utility.SerializeDataContract<ScopeProjects>(scopes);
+            string responseMessage = client.Post<ScopeProjects>(relativeUri, scopes, true);
+            if (responseMessage.Contains("success"))
+            {
+                return Json(new
+                {
+                    success = true
+                }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(new
+                {
+                    success = false
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        public JsonResult DeleteNode()
         {
-          success = false
-        }, JsonRequestBehavior.AllowGet);
-      }
+            string format = String.Empty;
+            string adapterServiceURI = _adapterServiceURI;
+            bool isDelete = false;
+
+            if (Request.QueryString["format"] != null)
+                format = Request.QueryString["format"].ToUpper();
+
+            if (Request.QueryString["remote"] != null)
+                adapterServiceURI = Request.QueryString["remote"] + "/adapter";
+
+            WebHttpClient client = new WebHttpClient(adapterServiceURI);
+            ScopeProjects scopes = client.Get<ScopeProjects>("/scopes");
+
+            string relativeUri = String.Format("/scopes");
+            Uri address = new Uri(adapterServiceURI + relativeUri);
+
+            for (int i = 0; i < scopes.Count(); i++)
+            {
+                if (scopes[i].Name == Request.QueryString["parentNodeID"])
+                {
+                    for (int j = 0; j < scopes[i].Applications.Count(); j++)
+                    {
+                        if (scopes[i].Applications[j].Name == Request.QueryString["nodeID"])
+                        {
+                            //scopes[i].Applications[j].Name = _editApplication.Name;
+                            //scopes[i].Applications[j].Description = _editApplication.Description;
+                            scopes[i].Applications.Remove(scopes[i].Applications[j]);
+                            isDelete = true;
+                        }
+                    }
+                }
+            }
+            if (!isDelete)
+            {
+                for (int i = 0; i < scopes.Count(); i++)
+                {
+                    if (scopes[i].Name == Request.QueryString["nodeID"])
+                    {
+                        scopes.Remove(scopes[i]);
+                    }
+                }
+            }
+
+            string responseMessage = client.Post<ScopeProjects>(relativeUri, scopes, true);
+            if (responseMessage.Contains("success"))
+            {
+                return Json(new
+                {
+                    success = true
+                }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(new
+                {
+                    success = false
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
     }
-
-  }
 }
