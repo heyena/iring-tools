@@ -45,6 +45,51 @@ function createGridPane(store, pageSize){
   return gridPane;
 }
 
+function createXlogsPane(label, context, xwlogsPane){
+  var xlogsUrl = 'xlogs' + context;
+  var xlogsStore = createGridStore(xlogsUrl);
+  var pageSize = 25;
+  
+  xlogsStore.on('load', function(){
+    xlogsStore.recordType = xlogsStore.reader.recordType;      
+  
+    var xlogsPane = new Ext.grid.GridPanel({
+      id: 'xlogs-' + label,
+      title: 'Exchange Logs',
+      layout: 'fit',
+      store: xlogsStore,
+      stripeRows: true,
+      cm: new Ext.grid.DynamicColumnModel(xlogsStore),
+      selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
+      enableColLock: true,
+      viewConfig: {
+        forceFit: true
+      },
+      bbar: new Ext.PagingToolbar({
+        store: xlogsStore,
+        pageSize: pageSize,
+        displayInfo: true,
+        autoScroll: true,
+        plugins: [new Ext.ux.plugin.PagingToolbarResizer({
+          displayText: 'Page Size',
+          options: [25, 50, 100, 200, 500], 
+          prependCombo: true})
+        ]
+      })
+    });
+    
+    xwlogsPane.add(xlogsPane);
+    xwlogsPane.doLayout();
+  });
+  
+  xlogsStore.load({
+    params: {
+      start: 0,          
+      limit: pageSize
+    }
+  });
+}
+
 function loadPageDto(type, action, context, label){
   var tab = Ext.getCmp('content-pane').getItem('tab-' + label);
   
@@ -60,59 +105,6 @@ function loadPageDto(type, action, context, label){
     
     store.on('load', function(){
       store.recordType = store.reader.recordType;      
-      
-      var dtoToolbar = new Ext.Toolbar({
-        cls: 'nav-toolbar',
-        items: [{
-          xtype: 'tbspacer', 
-          width: 4
-        },{
-          id: 'tb-refresh',
-          xtype: 'button',
-          tooltip: 'Refresh',
-          icon: 'resources/images/refresh.png',
-          handler: function(){
-            alert('refresh');
-          }
-        },{
-          xtype: 'tbspacer', 
-          width: 4
-        }]
-      });
-      
-      if (type == 'exchange'){
-        dtoToolbar.add({
-          id: 'tb-exchange',
-          xtype: 'button',
-          tooltip: 'Exchange',
-          icon: 'resources/images/exchange.png',
-          handler: function(){
-            alert('exchange');
-          }
-        },{
-          xtype: 'tbspacer', 
-          width: 4
-        },{
-          id: 'tb-xlog',
-          xtype: 'button',
-          tooltip: 'Show/hide exchange logs',
-          icon: 'resources/images/exchange-log.png',
-          handler: function(){            
-            var dtoTab = Ext.getCmp('content-pane').getActiveTab();
-            var dtoContentPane = dtoTab.items.map['dto-' + label];
-            var dtoXlogsPane = dtoTab.items.map['xlogs-' + label]; 
-            
-            if (dtoXlogsPane.collapsed)
-              dtoXlogsPane.expand(true);
-            else {         
-              dtoXlogsPane.collapse(true);
-            }
-          }
-        },{
-          xtype: 'tbspacer', 
-          width: 4
-        });
-      }
       
       var dtoBcPane = new Ext.Container({
         id: 'bc-' + label,
@@ -131,8 +123,51 @@ function loadPageDto(type, action, context, label){
         region: 'north',
         layout: 'hbox',
         height: 26,
-        items: [dtoToolbar, dtoBcPane]
+        items: [dtoBcPane]
       });
+      
+      if (type == 'exchange'){
+        var dtoToolbar = new Ext.Toolbar({
+          cls: 'nav-toolbar',
+          items: [{
+            id: 'tb-exchange',
+            xtype: 'button',
+            tooltip: 'Exchange',
+            icon: 'resources/images/exchange.png',
+            handler: function(){
+              alert('exchange');
+            }
+          },{
+            xtype: 'tbspacer', 
+            width: 4
+          },{
+            id: 'tb-xlog',
+            xtype: 'button',
+            tooltip: 'Show/hide exchange logs',
+            icon: 'resources/images/exchange-log.png',
+            handler: function(){            
+              var dtoTab = Ext.getCmp('content-pane').getActiveTab();
+              var xwlogsPane = dtoTab.items.map['xlogsw-' + label]; 
+              
+              if (xwlogsPane.items.length == 0){
+                createXlogsPane(label, context, xwlogsPane);
+              }
+              else {
+                if (xwlogsPane.collapsed)
+                  xwlogsPane.expand(true);
+                else {         
+                  xwlogsPane.collapse(true);
+                }
+              }
+            }
+          },{
+            xtype: 'tbspacer', 
+            width: 4
+          }]
+        });
+        
+        dtoNavPane.insert(0, dtoToolbar);
+      }
       
       var dtoContentPane = new Ext.Panel({
         id: 'dto-' + label,
@@ -158,58 +193,18 @@ function loadPageDto(type, action, context, label){
         items: [dtoNavPane, dtoContentPane]
       });
       
-      if (type == 'exchange'){         
-        /*dtoTab.add(new Ext.Panel({
-          id: 'xlogs-' + label,
-          title: 'Exchange Logs',
+      if (type == 'exchange'){
+        var xwlogsPane = new Ext.Panel({
+          id: 'xlogsw-' + label,
           region: 'south',
-          height: 200,
+          layout: 'fit',
+          border: false,
+          height: 250,
           split: true,
           collapsed: true
-        }));*/
-        
-        var xlogsUrl = 'xlogs' + context;
-        var xlogStore = createGridStore(xlogsUrl);
-        
-        xlogStore.on('load', function(){
-          xlogStore.recordType = store.reader.recordType;      
-        
-          var xlogsPane = new Ext.grid.GridPanel({
-            id: 'xlogs-' + label,
-            title: 'Exchange Logs',
-            region: 'south',
-            height: 200,
-            split: true,
-            store: xlogStore,
-            stripeRows: true,
-            cm: new Ext.grid.DynamicColumnModel(xlogStore),
-            selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
-            enableColLock: true,
-            viewConfig: {
-              forceFit: true
-            },
-            bbar: new Ext.PagingToolbar({
-              store: xlogStore,
-              pageSize: pageSize,
-              displayInfo: true,
-              autoScroll: true,
-              plugins: [new Ext.ux.plugin.PagingToolbarResizer({
-                displayText: 'Page Size',
-                options: [25, 50, 100, 200, 500], 
-                prependCombo: true})
-              ]
-            })
-          });
-          
-          dtoTab.add(xlogsPane);
         });
         
-        /*xlogsStore.load({
-          params: {
-            start: 0,          
-            limit: pageSize
-          }
-        });*/
+        dtoTab.add(xwlogsPane);
       }
       
       Ext.getCmp('content-pane').add(dtoTab).show();
@@ -242,6 +237,13 @@ function loadRelatedItem(type, context, individual, classId, className, classIde
     var dtoTab = Ext.getCmp('content-pane').getActiveTab();
     var label = dtoTab.id.substring(4);
     var dtoBcPane = dtoTab.items.map['nav-' + label].items.map['bc-' + label];
+    
+    // remove old bc and content pane on refresh
+    var lastBcItem = dtoBcPane.items.items[dtoBcPane.items.length-1].autoEl.html;
+    if (removeHTMLTag(lastBcItem) == className){
+      navigate(dtoBcPane.items.length - 3);
+    }
+    
     var dtoContentPane = dtoTab.items.map['dto-' + label];    
     var bcItemIndex = dtoBcPane.items.length + 1;        
     
@@ -269,6 +271,10 @@ function loadRelatedItem(type, context, individual, classId, className, classIde
   });
 }
 
+function removeHTMLTag(htmlText){
+  return htmlText.replace(/<\/?[^>]+(>|$)/g, '');
+}
+
 function showIndividualInfo(individual, relatedClasses){
   var dtoTab = Ext.getCmp('content-pane').getActiveTab();
   var label = dtoTab.id.substring(4);
@@ -290,7 +296,7 @@ function showIndividualInfo(individual, relatedClasses){
   
   var parsedRowData = {};
   for (var colData in rowData)
-    parsedRowData[colData] = rowData[colData].replace(/<\/?[^>]+(>|$)/g, '');
+    parsedRowData[colData] = removeHTMLTag(rowData[colData]);
   
   var propertyGrid = new Ext.grid.PropertyGrid({
     region: 'west',

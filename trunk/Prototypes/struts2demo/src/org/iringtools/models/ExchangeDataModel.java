@@ -108,11 +108,24 @@ public class ExchangeDataModel extends DataModel
       }
     }
     
-    List<ExchangeResponse> xrs = xlogs.getResponses();
-    int actualLimit = Math.min(xrs.size(), start + limit);
+    List<ExchangeResponse> xrs = xlogs.getResponses();   
+    List<Status> statuses = new ArrayList<Status>();
+    List<Integer> indices = new ArrayList<Integer>();
+    
+    for (ExchangeResponse xr : xrs)
+    {
+      statuses.addAll(xr.getStatusList().getItems());
+      indices.add(statuses.size());
+    }
     
     Grid xlogsGrid = new Grid();
+    xlogsGrid.setTotal(statuses.size());
+    
     List<Field> fields = new ArrayList<Field>();
+    xlogsGrid.setFields(fields);
+    
+    List<List<String>> data = new ArrayList<List<String>>();
+    xlogsGrid.setData(data);
     
     Field dateField = new Field();
     dateField.setName("Timestamp");
@@ -129,33 +142,54 @@ public class ExchangeDataModel extends DataModel
     resultField.setType("string");
     fields.add(resultField);
     
-    for (int i = start; i < actualLimit; i++)
+    int index = 0;
+    int actualLimit = Math.min(statuses.size(), start + limit);    
+    
+    // find start response index in the response list
+    for (int i = 0; i < indices.size(); i++)
     {
-      List<String> row = new ArrayList<String>();
-      ExchangeResponse xr = xrs.get(i);
-      
-      GregorianCalendar calendar = xr.getStartTimeStamp().toGregorianCalendar();
-      String timestamp = String.format("%1$tY/%1$tm/%1$te", calendar);
-      row.add(timestamp);
-      
-      for (Status status : xr.getStatusList().getItems())
+      if (start > indices.get(i))
       {
-        row.add(status.getIdentifier());
-        StringBuilder messages = new StringBuilder();
-        
-        for (String message : status.getMessages().getItems())
-        {
-          if (messages.length() > 0)
-            messages.append(" ");
-          
-          messages.append(message);
-        }
-        
-        row.add(messages.toString());;
+        index = i - 1;
+        break;
+      }
+      else if (start == indices.get(i))
+      {
+        index = i;
+        break;
       }
     }
+    
+    for (int i = start; i < actualLimit; i++)
+    {      
+      List<String> row = new ArrayList<String>();
+      StringBuilder messages = new StringBuilder();      
       
-    xlogsGrid.setTotal(xlogs.getResponses().size());
+      // check see if the status has moved in the next response in the response list
+      if (index < indices.size() - 1 && indices.get(index+1) > i)
+      {        
+        index++;        
+      }
+      
+      ExchangeResponse xr = xrs.get(index);        
+      GregorianCalendar calendar = xr.getStartTimeStamp().toGregorianCalendar();
+      String timestamp = String.format("%1$tY/%1$tm/%1$te", calendar);
+      row.add(timestamp);        
+      
+      Status status = statuses.get(i);
+      row.add(status.getIdentifier());
+      
+      for (String message : status.getMessages().getItems())
+      {
+        if (messages.length() > 0)
+          messages.append(" ");
+        
+        messages.append(message);
+      }
+      
+      row.add(messages.toString());
+      data.add(row);
+    }
     
     return xlogsGrid;
   }
