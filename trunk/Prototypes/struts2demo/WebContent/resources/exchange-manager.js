@@ -22,6 +22,7 @@ function createGridPane(store, pageSize){
     label: store.reader.label,
     description: store.reader.description,
     layout: 'fit',
+    loadMask: true,
     store: store,
     stripeRows: true,
     cm: new Ext.grid.DynamicColumnModel(store),
@@ -79,9 +80,8 @@ function createXlogsPane(label, context, xwlogsPane){
       })
     });
     
-    xwlogsPane.add(xlogsPane);
+    xwlogsPane.add(xlogsPane);        
     xwlogsPane.expand(false);
-    xwlogsPane.doLayout();
   });
   
   xlogsStore.load({
@@ -483,6 +483,17 @@ Ext.onReady(function(){
         text: 'Refresh',
         handler: function(){
           var directoryTree = Ext.getCmp('directory-tree');
+          var contentPane = Ext.getCmp('content-pane');
+          
+          // clear dto tabs
+          while (contentPane.items.length > 0) {
+            contentPane.items.items[0].destroy();
+          }
+          
+          // clear property grid
+          Ext.getCmp('property-pane').setSource({});
+          
+          // reload tree
           directoryTree.getLoader().load(directoryTree.root);
           directoryTree.getRootNode().expand(false);
         }
@@ -503,6 +514,7 @@ Ext.onReady(function(){
           showDialog(400, 60, 'Submit Exchange?', msg, Ext.Msg.OKCANCEL, processUserResponse); 
         }
       },{
+        //TODO: still deciding whether to enable it or not
         id: 'xlogs-button',
         xtype: 'button',
         icon: 'resources/images/exchange-log.png',

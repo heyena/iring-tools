@@ -46,7 +46,10 @@ a:active {color: black}
 
 .blue-fade {
   background-image: url(images/blue-fade.png);
-  background-repeat: repeat-x
+  background-repeat: repeat-x;
+  -webkit-user-select: none;
+	-moz-user-select: none;
+	cursor: default;
 }
 
 /* change default property grid */
