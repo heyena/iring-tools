@@ -29,4 +29,14 @@
     <servlet-name>CXFServlet</servlet-name>
     <url-pattern>/*</url-pattern>
   </servlet-mapping>
+  <filter>
+	<filter-name>idgenerator</filter-name>
+	<filter-class>org.iringtools.services.IDGeneratorService</filter-class>
+  </filter>
+	
+  <filter-mapping>
+	<filter-name>idgenerator</filter-name>
+	<url-pattern>/acquire</url-pattern>
+  </filter-mapping>
+  
 </web-app>
