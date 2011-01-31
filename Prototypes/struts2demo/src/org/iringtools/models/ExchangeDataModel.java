@@ -60,7 +60,16 @@ public class ExchangeDataModel extends DataModel
     {
       HttpClient httpClient = new HttpClient(serviceUri + relativePath);
       response = httpClient.post(ExchangeResponse.class, "/submit", request);
+      
+      // remove exchange dti cache
       removeSessionData("dti" + relativePath);
+      
+      // remove exchange logs cache
+      removeSessionData("xlogs" + relativePath);
+      
+      // remove app dti cache
+      removeSessionData("dti/" + response.getReceiverScopeName() + "/" + 
+          response.getReceiverAppName() + "/" + response.getReceiverGraphName());
     }
     catch (HttpClientException ex)
     {
@@ -83,21 +92,22 @@ public class ExchangeDataModel extends DataModel
   
   public Grid getXlogsGrid(String serviceUri, String scope, String exchangeId, int start, int limit)
   {
-    String xlogsUrl = serviceUri + "/" + scope + "/exchanges/" + exchangeId;
+    String relativePath = "/" + scope + "/exchanges/" + exchangeId;
+    String xlogsKey = "xlogs" + relativePath;
     History xlogs;
     
-    if (session.containsKey(xlogsUrl))
+    if (session.containsKey(xlogsKey))
     {
-      xlogs = (History)session.get(xlogsUrl);
+      xlogs = (History)session.get(xlogsKey);
     }
     else
     {
-      HttpClient httpClient = new HttpClient(xlogsUrl);
+      HttpClient httpClient = new HttpClient(serviceUri);
       
       try 
       {
-        xlogs = httpClient.get(History.class);
-        session.put(xlogsUrl, xlogs);
+        xlogs = httpClient.get(History.class, relativePath);
+        session.put(xlogsKey, xlogs);
       }
       catch (HttpClientException ex)
       {
@@ -107,12 +117,12 @@ public class ExchangeDataModel extends DataModel
     
     List<ExchangeResponse> xrs = xlogs.getResponses();   
     List<Status> statuses = new ArrayList<Status>();
-    List<Integer> indices = new ArrayList<Integer>();
+    List<Integer> responseIndices = new ArrayList<Integer>();
     
     for (ExchangeResponse xr : xrs)
     {
       statuses.addAll(xr.getStatusList().getItems());
-      indices.add(statuses.size());
+      responseIndices.add(statuses.size());
     }
     
     Grid xlogsGrid = new Grid();
@@ -139,20 +149,15 @@ public class ExchangeDataModel extends DataModel
     resultField.setType("string");
     fields.add(resultField);
     
-    int index = 0;
+    int responseIndex = 0;
     int actualLimit = Math.min(statuses.size(), start + limit);    
     
     // find start response index in the response list
-    for (int i = 0; i < indices.size(); i++)
+    for (int i = 0; i < responseIndices.size(); i++)
     {
-      if (start > indices.get(i))
+      if (start <= responseIndices.get(i))
       {
-        index = i - 1;
-        break;
-      }
-      else if (start == indices.get(i))
-      {
-        index = i;
+        responseIndex = i;
         break;
       }
     }
@@ -163,12 +168,12 @@ public class ExchangeDataModel extends DataModel
       StringBuilder messages = new StringBuilder();      
       
       // check see if the status has moved in the next response in the response list
-      if (index < indices.size() - 1 && indices.get(index+1) > i)
+      if (responseIndex < responseIndices.size() - 1 && i > responseIndices.get(responseIndex+1))
       {        
-        index++;        
+        responseIndex++;        
       }
       
-      ExchangeResponse xr = xrs.get(index);        
+      ExchangeResponse xr = xrs.get(responseIndex);        
       GregorianCalendar calendar = xr.getStartTimeStamp().toGregorianCalendar();
       String timestamp = String.format("%1$tY/%1$tm/%1$te", calendar);
       row.add(timestamp);        
