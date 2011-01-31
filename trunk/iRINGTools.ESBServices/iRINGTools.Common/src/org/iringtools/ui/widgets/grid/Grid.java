@@ -13,7 +13,7 @@ public class Grid
   protected String cacheData;
   protected String sortBy;
   protected String sortOrder;
-  protected double pageSize;
+  protected int pageSize;
 
   public List<Filter> getFilterSets()
   {
@@ -99,7 +99,7 @@ public class Grid
     return pageSize;
   }
 
-  public void setPageSize(double value)
+  public void setPageSize(int value)
   {
     this.pageSize = value;
   }

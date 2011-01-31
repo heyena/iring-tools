@@ -15,13 +15,26 @@
 
   <xs:complexType name="DataFilter">
     <xs:sequence>      
-      <xs:element name="expression" type="ExpressionList" />
+      <xs:element name="expressions" type="ExpressionList" />
+      <xs:element name="orderExpressions" type="OrderExpressionList" />
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="ExpressionList">
     <xs:sequence>
       <xs:element name="expression" type="Expression" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>      
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="OrderExpressionList">
+    <xs:sequence>     
+      <xs:element name="orderExpression" type="OrderExpression" maxOccurs="unbounded">
         <xs:annotation>
           <xs:appinfo>
             <jaxb:property name="items" />
@@ -66,5 +79,20 @@
       <xs:enumeration value="AndNot" />
       <xs:enumeration value="OrNot" />    
     </xs:restriction>
-  </xs:simpleType>
+  </xs:simpleType>  
+  
+  <xs:complexType name="OrderExpression">
+    <xs:sequence>
+      <xs:element name="PropertyName" type="xs:string" />
+      <xs:element name="sortOrder" type="SortOrder" />     
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:simpleType name="SortOrder">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Asc" />
+      <xs:enumeration value="Desc" />     
+    </xs:restriction>
+  </xs:simpleType>  
+  
 </xs:schema>

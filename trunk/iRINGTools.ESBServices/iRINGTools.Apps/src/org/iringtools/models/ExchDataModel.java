@@ -5,6 +5,8 @@ import org.iringtools.ui.widgets.grid.Grid;
 import org.iringtools.ui.widgets.grid.GridDefinition;
 import org.iringtools.ui.widgets.grid.Rows;
 import org.iringtools.utility.HttpClient;
+import org.iringtools.dxfr.datafilter.DataFilter;
+import org.iringtools.dxfr.datafilter.ExpressionList;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dti.DataTransferIndex;
 import org.iringtools.history.History;
@@ -24,6 +26,7 @@ public class ExchDataModel {
 	private ExchResponseContainer exchResponseContainer;
 	private HistoryContainer historyContainer;
 	private int rInd = 0;
+	
 
 	public ExchDataModel() {
 		try {
@@ -57,13 +60,15 @@ public class ExchDataModel {
 		return dti;
 	}
 	
-	public DataTransferIndices populateFilter(String scopeName, String id, String filter, String sortOrder, String sortBy) {
-		DataTransferIndices dti = null;
+	
+	
+	public DataTransferIndices populateFilter(String scopeName, String id, DataFilter dataFilter) {
+		DataTransferIndices dti = null;		
 		try {
 			HttpClient httpClient = new HttpClient(URI);
-			dti = httpClient.get(DataTransferIndices.class, "/" + scopeName
-					+ "/exchanges/" + id + "/" + filter + "/"
-					+ sortOrder + "/" + sortBy);
+			dti = httpClient.post(DataTransferIndices.class, "/" + scopeName
+					+ "/exchanges/" + id, dataFilter);				
+					
 			setDtiList(dti.getDataTransferIndexList().getItems());
 			setDtoUrl("/" + scopeName + "/exchanges/" + id);
 		} catch (Exception e) {

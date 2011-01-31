@@ -8,8 +8,8 @@ import javax.ws.rs.Produces;
 import org.apache.log4j.Logger;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dto.DataTransferObjects;
-import org.iringtools.dxfr.request.DxiRequest;
-import org.iringtools.dxfr.request.DxoRequest;
+import org.iringtools.dxfr.request.DiffDxoRequest;
+import org.iringtools.dxfr.request.DiffDxiRequest;
 import org.iringtools.services.core.DifferencingProvider;
 
 @Path("/")
@@ -21,7 +21,7 @@ public class DifferencingService extends AbstractService
   
   @POST
   @Path("/dxi")
-  public DataTransferIndices diff(DxiRequest dxiRequest)
+  public DataTransferIndices diff(DiffDxiRequest dxiRequest)
   {
     DataTransferIndices dxis = null;
     
@@ -42,7 +42,7 @@ public class DifferencingService extends AbstractService
   
   @POST
   @Path("/dxo")
-  public DataTransferObjects diff(DxoRequest dxoRequest) 
+  public DataTransferObjects diff(DiffDxoRequest dxoRequest) 
   {
     DataTransferObjects dxos = null;
     

@@ -18,7 +18,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="expression" type="{http://www.iringtools.org/dxfr/dataFilter}ExpressionList"/>
+ *         &lt;element name="expressions" type="{http://www.iringtools.org/dxfr/dataFilter}ExpressionList"/>
+ *         &lt;element name="orderExpressions" type="{http://www.iringtools.org/dxfr/dataFilter}OrderExpressionList"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,36 +30,63 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DataFilter", propOrder = {
-    "expression"
+    "expressions",
+    "orderExpressions"
 })
 @XmlRootElement(name = "dataFilter")
 public class DataFilter {
 
     @XmlElement(required = true)
-    protected ExpressionList expression;
+    protected ExpressionList expressions;
+    @XmlElement(required = true)
+    protected OrderExpressionList orderExpressions;
 
     /**
-     * Gets the value of the expression property.
+     * Gets the value of the expressions property.
      * 
      * @return
      *     possible object is
      *     {@link ExpressionList }
      *     
      */
-    public ExpressionList getExpression() {
-        return expression;
+    public ExpressionList getExpressions() {
+        return expressions;
     }
 
     /**
-     * Sets the value of the expression property.
+     * Sets the value of the expressions property.
      * 
      * @param value
      *     allowed object is
      *     {@link ExpressionList }
      *     
      */
-    public void setExpression(ExpressionList value) {
-        this.expression = value;
+    public void setExpressions(ExpressionList value) {
+        this.expressions = value;
+    }
+
+    /**
+     * Gets the value of the orderExpressions property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link OrderExpressionList }
+     *     
+     */
+    public OrderExpressionList getOrderExpressions() {
+        return orderExpressions;
+    }
+
+    /**
+     * Sets the value of the orderExpressions property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link OrderExpressionList }
+     *     
+     */
+    public void setOrderExpressions(OrderExpressionList value) {
+        this.orderExpressions = value;
     }
 
 }

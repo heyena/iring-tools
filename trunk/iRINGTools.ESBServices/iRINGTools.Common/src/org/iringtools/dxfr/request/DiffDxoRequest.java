@@ -8,16 +8,16 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.iringtools.dxfr.dti.DataTransferIndices;
+import org.iringtools.dxfr.dto.DataTransferObjects;
 
 
 /**
- * <p>Java class for DxiRequest complex type.
+ * <p>Java class for DxoRequest complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="DxiRequest">
+ * &lt;complexType name="DxoRequest">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -25,7 +25,7 @@ import org.iringtools.dxfr.dti.DataTransferIndices;
  *         &lt;element name="sourceAppName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="targetScopeName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="targetAppName" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="dataTransferIndicies" type="{http://www.iringtools.org/dxfr/dti}DataTransferIndices" maxOccurs="2"/>
+ *         &lt;element name="dataTransferObjects" type="{http://www.iringtools.org/dxfr/dto}DataTransferObjects" maxOccurs="2"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -35,15 +35,15 @@ import org.iringtools.dxfr.dti.DataTransferIndices;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "DxiRequest", propOrder = {
+@XmlType(name = "DxoRequest", propOrder = {
     "sourceScopeName",
     "sourceAppName",
     "targetScopeName",
     "targetAppName",
-    "dataTransferIndicies"
+    "dataTransferObjects"
 })
-@XmlRootElement(name = "dxiRequest")
-public class DxiRequest {
+@XmlRootElement(name = "dxoRequest")
+public class DiffDxoRequest {
 
     @XmlElement(required = true)
     protected String sourceScopeName;
@@ -54,7 +54,7 @@ public class DxiRequest {
     @XmlElement(required = true)
     protected String targetAppName;
     @XmlElement(required = true)
-    protected List<DataTransferIndices> dataTransferIndicies;
+    protected List<DataTransferObjects> dataTransferObjects;
 
     /**
      * Gets the value of the sourceScopeName property.
@@ -153,44 +153,44 @@ public class DxiRequest {
     }
 
     /**
-     * Gets the value of the dataTransferIndicies property.
+     * Gets the value of the dataTransferObjects property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the dataTransferIndicies property.
+     * This is why there is not a <CODE>set</CODE> method for the dataTransferObjects property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getDataTransferIndicies().add(newItem);
+     *    getDataTransferObjects().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link DataTransferIndices }
+     * {@link DataTransferObjects }
      * 
      * 
      */
-    public List<DataTransferIndices> getDataTransferIndicies() {
-        if (dataTransferIndicies == null) {
-            dataTransferIndicies = new ArrayList<DataTransferIndices>();
+    public List<DataTransferObjects> getDataTransferObjects() {
+        if (dataTransferObjects == null) {
+            dataTransferObjects = new ArrayList<DataTransferObjects>();
         }
-        return this.dataTransferIndicies;
+        return this.dataTransferObjects;
     }
 
     /**
-     * Sets the value of the dataTransferIndicies property.
+     * Sets the value of the dataTransferObjects property.
      * 
-     * @param dataTransferIndicies
+     * @param dataTransferObjects
      *     allowed object is
-     *     {@link DataTransferIndices }
+     *     {@link DataTransferObjects }
      *     
      */
-    public void setDataTransferIndicies(List<DataTransferIndices> dataTransferIndicies) {
-        this.dataTransferIndicies = dataTransferIndicies;
+    public void setDataTransferObjects(List<DataTransferObjects> dataTransferObjects) {
+        this.dataTransferObjects = dataTransferObjects;
     }
 
 }

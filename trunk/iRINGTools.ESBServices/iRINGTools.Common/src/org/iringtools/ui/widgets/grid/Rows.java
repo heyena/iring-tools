@@ -7,7 +7,7 @@ import java.util.List;
 public class Rows
 {
   protected String success;
-  protected double total;
+  protected int total;
   protected List<HashMap<String, String>> data;
 
   public String getSuccess()
@@ -25,7 +25,7 @@ public class Rows
     return total;
   }
 
-  public void setTotal(double value)
+  public void setTotal(int value)
   {
     this.total = value;
   }
