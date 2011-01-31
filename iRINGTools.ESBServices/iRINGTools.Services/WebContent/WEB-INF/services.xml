@@ -36,12 +36,6 @@
     </jaxrs:serviceBeans>
   </jaxrs:server>
   
-  <jaxrs:server id="IDGenServiceUri" address="/idgen" >
-    <jaxrs:serviceBeans>
-      <bean class="org.iringtools.services.IDGeneratorService" />
-    </jaxrs:serviceBeans>
-  </jaxrs:server>
-  
   <jaxrs:server id="HistoryService" address="/history" >
     <jaxrs:serviceBeans>
       <bean class="org.iringtools.services.HistoryService" />

@@ -19,23 +19,22 @@ import org.ids_adi.rdf.registry.IDSADIRDFRegistry;
 import org.ids_adi.servlet.ConnectionRegistryFilterConfigSource;
 
 import org.ids_adi.config.Config;
+import org.iringtools.services.core.IdGenProvider;
 
 @Path("/")
 @Consumes("application/xml")
 @Produces("application/xml")
-public class IDGeneratorService extends AbstractService implements Filter{
+public class IDGeneratorService implements Filter{
 
 	public IDGeneratorService(){
 		System.out.println("Constructor IDGeneratorService");
 	}
 	private Config config;
-    private IDSADIRDFRegistry registry ;
+    private IdGenProvider registry ;
     
 	public void init(FilterConfig filterConfig) throws ServletException {
 		System.out.println("IDGeneratorService:Inside init");
 		this.config = new Config(new ConnectionRegistryFilterConfigSource(filterConfig, "org.ids-adi."));
-		this.registry= config.getConfigObject(IDSADIRDFRegistry.class);
-	    System.out.println("init:registry:"+registry);
 	    System.out.println("init:config:"+config);		
 	}
 	private static final Logger logger = Logger.getLogger(IDGeneratorService.class);
@@ -50,7 +49,7 @@ public class IDGeneratorService extends AbstractService implements Filter{
 	    try
 	    {
 	      System.out.println("Inside acquireIDForURL");	
-	      registry = new IDSADIRDFRegistry(null);
+	      registry = new IdGenProvider();
 	      System.out.println("registry:"+registry);
 	      id = registry.acquireIDIn("http://rdl.rdlfacade.org/data#", "newly", "rashmi");
 	      System.out.println("Id:"+id);
@@ -68,7 +67,7 @@ public class IDGeneratorService extends AbstractService implements Filter{
 	  public void doFilter(ServletRequest request,
 		    ServletResponse response, FilterChain chain)
 		    throws IOException, ServletException {
-	 
+		  System.out.println("Inside DoFilter");
 	  }
 
 }
