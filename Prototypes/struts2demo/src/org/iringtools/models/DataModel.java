@@ -32,32 +32,28 @@ public class DataModel
   private static final Logger logger = Logger.getLogger(DataModel.class);
   protected Map<String, Object> session;
   
-  protected void removeSessionData(String dtiUrl)
+  protected void removeSessionData(String key)
   {
-    for (String key : session.keySet())
-    {
-      if (key.contains(dtiUrl))
-      {
-        session.remove(key);
-      }
-    }
+    if (session != null && session.keySet().contains(key))
+      session.remove(key);
   }
   
-  protected DataTransferIndices getDtis(String dtiUrl)
+  protected DataTransferIndices getDtis(String serviceUri, String relativePath)
   {
     DataTransferIndices dtis = new DataTransferIndices();
+    String dtiKey = "dti" + relativePath;
 
     try
     {
-      if (session.containsKey(dtiUrl))
+      if (session.containsKey(dtiKey))
       {
-        dtis = (DataTransferIndices) session.get(dtiUrl);
+        dtis = (DataTransferIndices) session.get(dtiKey);
       }
       else
       {
-        HttpClient httpClient = new HttpClient(dtiUrl);
-        dtis = httpClient.get(DataTransferIndices.class);
-        session.put(dtiUrl, dtis);
+        HttpClient httpClient = new HttpClient(serviceUri);
+        dtis = httpClient.get(DataTransferIndices.class, relativePath);
+        session.put(dtiKey, dtis);
       }
     }
     catch (HttpClientException ex)
@@ -68,7 +64,7 @@ public class DataModel
     return dtis;
   }
 
-  protected DataTransferObjects getDtos(String dtoUrl, List<DataTransferIndex> dtiList)
+  protected DataTransferObjects getDtos(String serviceUri, String relativePath, List<DataTransferIndex> dtiList)
   {
     DataTransferObjects dtos = new DataTransferObjects();
 
@@ -79,8 +75,8 @@ public class DataModel
       dtiListObj.setItems(dtiList);
       dti.setDataTransferIndexList(dtiListObj);
 
-      HttpClient httpClient = new HttpClient(dtoUrl);
-      dtos = httpClient.post(DataTransferObjects.class, dti);
+      HttpClient httpClient = new HttpClient(serviceUri);
+      dtos = httpClient.post(DataTransferObjects.class, relativePath, dti);
     }
     catch (HttpClientException ex)
     {
@@ -90,28 +86,14 @@ public class DataModel
     return dtos;
   }
 
-  public DataTransferObjects getPageDtos(String dtiUrl, String dtoUrl, int start, int limit) 
+  public DataTransferObjects getPageDtos(String serviceUri, String dtiRelativePath, String dtoRelativePath, 
+      int start, int limit) 
   {
-    String pageDtoKey = dtoUrl + "/" + start + "/" + limit;
-    DataTransferObjects pageDtos = null;
-
-    if (session.containsKey(pageDtoKey))
-    {
-      pageDtos = (DataTransferObjects) session.get(pageDtoKey);
-    }
-    else
-    {
-      DataTransferIndices dtis = getDtis(dtiUrl);
-      
-      List<DataTransferIndex> dtiList = dtis.getDataTransferIndexList().getItems();
-      int actualLimit = Math.min(start + limit, dtiList.size());
-
-      List<DataTransferIndex> pageDtis = dtiList.subList(start, actualLimit);
-      pageDtos = getDtos(dtoUrl, pageDtis);
-      session.put(pageDtoKey, pageDtos);
-    }
-
-    return pageDtos;
+    DataTransferIndices dtis = getDtis(serviceUri, dtiRelativePath);    
+    List<DataTransferIndex> dtiList = dtis.getDataTransferIndexList().getItems();
+    int actualLimit = Math.min(start + limit, dtiList.size());
+    List<DataTransferIndex> pageDtis = dtiList.subList(start, actualLimit);
+    return getDtos(serviceUri, dtoRelativePath, pageDtis);
   }
 
   // paging is based on number of data transfer objects

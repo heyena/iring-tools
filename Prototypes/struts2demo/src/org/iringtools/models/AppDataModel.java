@@ -15,11 +15,11 @@ public class AppDataModel extends DataModel
   
   public Grid getDtoGrid(String serviceUri, String scope, String app, String graph, int start, int limit)
   {
-    String dtiUrl = serviceUri + "/" + scope + "/" + app + "/" + graph;
-    String dtoUrl = dtiUrl + "/page";    
-    DataTransferObjects pageDtos = getPageDtos(dtiUrl, dtoUrl, start, limit);
+    String dtiRelativePath = "/" + scope + "/" + app + "/" + graph;
+    String dtoRelativePath = dtiRelativePath + "/page";    
+    DataTransferObjects pageDtos = getPageDtos(serviceUri, dtiRelativePath, dtoRelativePath, start, limit);
     Grid pageDtoGrid = getDtoGrid(DataType.APP, pageDtos);
-    DataTransferIndices dtis = getDtis(dtiUrl);
+    DataTransferIndices dtis = getDtis(serviceUri, dtiRelativePath);
     pageDtoGrid.setTotal(dtis.getDataTransferIndexList().getItems().size());      
     return pageDtoGrid;
   }
@@ -27,9 +27,9 @@ public class AppDataModel extends DataModel
   public Grid getRelatedItemGrid(String serviceUri, String scope, String app, String graph, 
       String individual, String classId, String classIdentifier, int start, int limit)
   {
-    String dtiUrl = serviceUri + "/" + scope + "/" + app + "/" + graph;
-    String dtoUrl = dtiUrl + "/page";
-    DataTransferObjects pageDtos = getPageDtos(dtiUrl, dtoUrl, start, limit);  
+    String dtiRelativePath = "/" + scope + "/" + app + "/" + graph;
+    String dtoRelativePath = dtiRelativePath + "/page";
+    DataTransferObjects pageDtos = getPageDtos(serviceUri, dtiRelativePath, dtoRelativePath, start, limit);  
     return getRelatedItemGrid(DataType.APP, pageDtos, individual, classId, classIdentifier, start, limit);
   }
 }

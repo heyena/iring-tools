@@ -59,6 +59,7 @@ function createXlogsPane(label, context, xwlogsPane){
       layout: 'fit',
       store: xlogsStore,
       stripeRows: true,
+      loadMask: true,
       cm: new Ext.grid.DynamicColumnModel(xlogsStore),
       selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
       enableColLock: true,
@@ -79,6 +80,7 @@ function createXlogsPane(label, context, xwlogsPane){
     });
     
     xwlogsPane.add(xlogsPane);
+    xwlogsPane.expand(false);
     xwlogsPane.doLayout();
   });
   
@@ -135,7 +137,12 @@ function loadPageDto(type, action, context, label){
             tooltip: 'Exchange',
             icon: 'resources/images/exchange.png',
             handler: function(){
-              alert('exchange');
+              var xidIndex = context.indexOf('&xid=');
+              var scope = context.substring(7, xidIndex);
+              var xid = context.substring(xidIndex + 5);
+              var msg = 'Are you sure you want to do data exchange [' + label + ']?';
+              var processUserResponse = submitExchange.createDelegate([label, scope, xid, true]);          
+              showDialog(400, 60, 'Submit Exchange?', msg, Ext.Msg.OKCANCEL, processUserResponse);
             }
           },{
             xtype: 'tbspacer', 

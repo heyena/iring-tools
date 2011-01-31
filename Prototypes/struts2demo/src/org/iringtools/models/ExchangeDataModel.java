@@ -30,11 +30,10 @@ public class ExchangeDataModel extends DataModel
   
   public Grid getDtoGrid(String serviceUri, String scope, String exchangeId, int start, int limit)
   {
-    String dtiUrl = serviceUri + "/" + scope + "/exchanges/" + exchangeId;
-    String dtoUrl = dtiUrl;
-    DataTransferObjects pageDtos = getPageDtos(dtiUrl, dtoUrl, start, limit);
+    String relativePath = "/" + scope + "/exchanges/" + exchangeId;
+    DataTransferObjects pageDtos = getPageDtos(serviceUri, relativePath, relativePath, start, limit);
     Grid pageDtoGrid = getDtoGrid(DataType.EXCHANGE, pageDtos);
-    DataTransferIndices dtis = getDtis(dtiUrl);
+    DataTransferIndices dtis = getDtis(serviceUri, relativePath);
     pageDtoGrid.setTotal(dtis.getDataTransferIndexList().getItems().size());    
     return pageDtoGrid;
   }
@@ -42,28 +41,26 @@ public class ExchangeDataModel extends DataModel
   public Grid getRelatedItemGrid(String serviceUri, String scope, String exchangeId, String individual, 
       String classId, String classIdentifier, int start, int limit)
   {
-    String dtiUrl = serviceUri + "/" + scope + "/exchanges/" + exchangeId;
-    String dtoUrl = dtiUrl;
-    DataTransferObjects pageDtos = getPageDtos(dtiUrl, dtoUrl, start, limit);  
+    String relativePath = "/" + scope + "/exchanges/" + exchangeId;
+    DataTransferObjects pageDtos = getPageDtos(serviceUri, relativePath, relativePath, start, limit);  
     return getRelatedItemGrid(DataType.EXCHANGE, pageDtos, individual, classId, classIdentifier, start, limit);
   }
   
   public ExchangeResponse submitExchange(String serviceUri, String scope, String exchangeId, boolean reviewed)
   {
-    String dtiUrl = serviceUri + "/" + scope + "/exchanges/" + exchangeId;
-    DataTransferIndices dtis = getDtis(dtiUrl);
+    String relativePath = "/" + scope + "/exchanges/" + exchangeId;
+    DataTransferIndices dtis = getDtis(serviceUri, relativePath);
     
-    ExchangeResponse response;    
-    String dtiSubmitUrl = dtiUrl + "/submit";
+    ExchangeResponse response;
     ExchangeRequest request = new ExchangeRequest();
     request.setDataTransferIndices(dtis);
     request.setReviewed(reviewed);
     
     try
     {
-      HttpClient httpClient = new HttpClient(dtiSubmitUrl);
-      response = httpClient.post(ExchangeResponse.class, request);
-      removeSessionData(dtiUrl);
+      HttpClient httpClient = new HttpClient(serviceUri + relativePath);
+      response = httpClient.post(ExchangeResponse.class, "/submit", request);
+      removeSessionData("dti" + relativePath);
     }
     catch (HttpClientException ex)
     {
