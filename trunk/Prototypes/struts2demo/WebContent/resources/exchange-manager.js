@@ -46,7 +46,7 @@ function createGridPane(store, pageSize){
   return gridPane;
 }
 
-function createXlogsPane(label, context, xwlogsPane){
+function createXlogsPane(label, context, xlogsContainer){
   var xlogsUrl = 'xlogs' + context;
   var xlogsStore = createGridStore(xlogsUrl);
   var pageSize = 25;
@@ -80,8 +80,16 @@ function createXlogsPane(label, context, xwlogsPane){
       })
     });
     
-    xwlogsPane.add(xlogsPane);        
-    xwlogsPane.expand(false);
+    if (xlogsContainer.items.length == 0){
+      xlogsContainer.add(xlogsPane);
+      //xlogsContainer.setVisible(true);
+      xlogsContainer.doLayout();
+    }
+    else {
+      xlogsContainer.add(xlogsPane);
+    }
+    
+    xlogsContainer.expand(false);
   });
   
   xlogsStore.load({
@@ -154,16 +162,16 @@ function loadPageDto(type, action, context, label){
             icon: 'resources/images/exchange-log.png',
             handler: function(){            
               var dtoTab = Ext.getCmp('content-pane').getActiveTab();
-              var xwlogsPane = dtoTab.items.map['xlogsw-' + label]; 
+              var xlogsContainer = dtoTab.items.map['xlogs-container-' + label]; 
               
-              if (xwlogsPane.items.length == 0){
-                createXlogsPane(label, context, xwlogsPane);
+              if (xlogsContainer.items.length == 0){
+                createXlogsPane(label, context, xlogsContainer);                
               }
               else {
-                if (xwlogsPane.collapsed)
-                  xwlogsPane.expand(true);
+                if (xlogsContainer.collapsed)
+                  xlogsContainer.expand(true);
                 else {         
-                  xwlogsPane.collapse(true);
+                  xlogsContainer.collapse(true);
                 }
               }
             }
@@ -201,8 +209,8 @@ function loadPageDto(type, action, context, label){
       });
       
       if (type == 'exchange'){
-        var xwlogsPane = new Ext.Panel({
-          id: 'xlogsw-' + label,
+        var xlogsContainer = new Ext.Panel({
+          id: 'xlogs-container-' + label,
           region: 'south',
           layout: 'fit',
           border: false,
@@ -211,7 +219,7 @@ function loadPageDto(type, action, context, label){
           collapsed: true
         });
         
-        dtoTab.add(xwlogsPane);
+        dtoTab.add(xlogsContainer);
       }
       
       Ext.getCmp('content-pane').add(dtoTab).show();
@@ -295,7 +303,7 @@ function showIndividualInfo(individual, relatedClasses){
     height: 46,
     bodyStyle: 'background-color:#eef',
     html: '<div style="width:60px;float:left"><img style="margin:2px 15px 2px 5px" src="resources/images/class-badge-large.png"/></div>' +
-          '<div style="width:100%;height:100%;padding-top:8px">' + dtoGrid.label + '<br/>' + dtoGrid.description + '</div>'
+          '<div style="width:100%;height:100%;padding-top:8px">' + individual + '<br/>' + dtoGrid.description + '</div>'
   });
   
   var rowData = dtoGrid.selModel.selections.map[dtoGrid.selModel.last].data;
@@ -401,7 +409,7 @@ function submitExchange(userResponse) {
       timeout: 600000,  // in milliseconds default 3000 
       success: function(response, opts) {
         var responseText = Ext.util.JSON.decode(response.responseText);
-        showDialog(400, 160, 'Exchange Result', responseText, Ext.Msg.OK, null);
+        showDialog(400, 100, 'Exchange Result', responseText, Ext.Msg.OK, null);
       },
       failure: function(response, opts) {
         var responseText = Ext.util.JSON.decode(response.responseText);
@@ -413,7 +421,7 @@ function submitExchange(userResponse) {
 }
 
 function showDialog(width, height, title, message, buttons, callback){
-  var style = 'style="width:' + width + 'px;height:' + height + 'px;border:0;overflow:auto"';
+  var style = 'style="width:' + width + 'px;height:' + height + 'px;border:1px solid #8EA4C1;overflow:auto"';
   
   Ext.Msg.show({
     title: title,
@@ -518,9 +526,9 @@ Ext.onReady(function(){
         id: 'xlogs-button',
         xtype: 'button',
         icon: 'resources/images/exchange-log.png',
-        text: 'XLogs',
+        text: 'History',
         disabled: true,
-        hidden: true,
+        //hidden: true,
         handler: function(){  
           alert('Show exchange log');
         }
