@@ -7,7 +7,7 @@ exchangesubgrid_rows.json relatedDataRows_URI
 relatedDataRows?scopeName=12345_000&idName=1&id=66015-O&classId=rdl:R3847624234
 */
 Ext.ns('ExchangeManager');
-var globalHistoryPanel;
+
 
 var hash = function(obj){	
 	return obj.id; 	
@@ -75,7 +75,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 		var filterSet = eval(this.configData.filterSets);
 		//var pageSize = parseInt(this.configData.pageSize);
 		var pageSize = 25;
-		var sortBy = classObjectName + '.' + this.configData.sortBy;
+		var sortBy = this.configData.sortBy;
 		
 		
 		var sortOrder = this.configData.sortOrder;
@@ -127,21 +127,24 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 			autoLoad : {
 				params : {
 					start : 0,
-					limit : pageSize,
+					limit : pageSize/*,
 					identifier : this.identifier,
-					refClassIdentifier : this.refClassIdentifier
+					refClassIdentifier : this.refClassIdentifier*/
 				}
-			},
+			}/*,
 			baseParams : {
 				'identifier' : this.identifier,
 				'refClassIdentifier' : this.refClassIdentifier
-			}
+			}*/
 		});
 
 		this.dataGrid = new Ext.grid.GridPanel({
 			store : store,
 			columns : headerList,
+			
 			stripeRows : true,
+			selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
+
 			//loadMask : true,
 			plugins : [ filters ],
 			layout : 'fit',
@@ -159,10 +162,15 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 				store : store,
 				displayInfo : true,
 				autoScroll : true,
-				plugins : [ filters, new Ext.ux.plugin.PagingToolbarResizer({
-          displayText: 'Page Size',
-          options: [25, 50, 100, 200, 500], 
-          prependCombo: true})]
+				plugins : [
+					filters,
+					new Ext.ux.plugin.PagingToolbarResizer(
+					{
+						displayText : 'Page Size',
+						options : [ 25, 50, 100,
+							200, 500 ],
+						prependCombo : true
+				})]
 			})
 		});
 
@@ -1236,7 +1244,7 @@ function showExchangeResponseWindow(scopeName, idName, np) {
             forceFit : true,
             layout : 'border',
             listeners : {
-              beforerender : {
+             beforerender : {
                 fn : function() {
                   Ext.getBody().mask();
                 }

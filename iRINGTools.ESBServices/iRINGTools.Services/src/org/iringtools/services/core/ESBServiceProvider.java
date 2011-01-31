@@ -22,6 +22,7 @@ import org.iringtools.common.response.Status;
 import org.iringtools.common.response.StatusList;
 import org.iringtools.directory.Directory;
 import org.iringtools.directory.ExchangeDefinition;
+import org.iringtools.dxfr.datafilter.DataFilter;
 import org.iringtools.dxfr.dti.DataTransferIndex;
 import org.iringtools.dxfr.dti.DataTransferIndexList;
 import org.iringtools.dxfr.dti.DataTransferIndices;
@@ -33,6 +34,7 @@ import org.iringtools.dxfr.dto.DataTransferObjects;
 import org.iringtools.dxfr.dto.RoleObject;
 import org.iringtools.dxfr.dto.RoleType;
 import org.iringtools.dxfr.dto.TemplateObject;
+import org.iringtools.dxfr.dxirequest.DxiRequest;
 import org.iringtools.dxfr.manifest.ClassTemplates;
 import org.iringtools.dxfr.manifest.Graph;
 import org.iringtools.dxfr.manifest.Manifest;
@@ -40,8 +42,8 @@ import org.iringtools.dxfr.manifest.Role;
 import org.iringtools.dxfr.manifest.Template;
 import org.iringtools.dxfr.manifest.TransferOption;
 import org.iringtools.dxfr.request.DtoPageRequest;
-import org.iringtools.dxfr.request.DxiRequest;
-import org.iringtools.dxfr.request.DxoRequest;
+import org.iringtools.dxfr.request.DiffDxiRequest;
+import org.iringtools.dxfr.request.DiffDxoRequest;
 import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.utility.HttpClient;
@@ -89,7 +91,7 @@ public class ESBServiceProvider
     return directory;
   }
   
-  public DataTransferIndices getDataTransferIndices(String scope, String id)
+  public DataTransferIndices getDataTransferIndices(String scope, String id, DataFilter dataFilter)
   {
     DataTransferIndices dxiList = null;
 
@@ -101,10 +103,14 @@ public class ESBServiceProvider
       initExchangeDefinition(scope, id);
 
       Manifest crossedManifest = getCrossedManifest();
+      DxiRequest filterDxiRequest = new DxiRequest();
+      
+      filterDxiRequest.setDataFilter(dataFilter);
+      filterDxiRequest.setManifest(crossedManifest);
       
       // get source dti
-      String sourceDtiUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName + "/dxi?hashAlgorithm=" + hashAlgorithm;
-      DataTransferIndices sourceDtis = httpClient.post(DataTransferIndices.class, sourceDtiUrl, crossedManifest);
+      String sourceDtiUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName + "/dxi/filter?hashAlgorithm=" + hashAlgorithm;
+      DataTransferIndices sourceDtis = httpClient.post(DataTransferIndices.class, sourceDtiUrl, filterDxiRequest);
       
       if (sourceDtis != null)
       {
@@ -113,8 +119,8 @@ public class ESBServiceProvider
       }      
 
       // get target dti
-      String targetDtiUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName + "/dxi?hashAlgorithm=" + hashAlgorithm;
-      DataTransferIndices targetDtis = httpClient.post(DataTransferIndices.class, targetDtiUrl, crossedManifest);
+      String targetDtiUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName + "/dxi/filter?hashAlgorithm=" + hashAlgorithm;
+      DataTransferIndices targetDtis = httpClient.post(DataTransferIndices.class, targetDtiUrl, filterDxiRequest);
       
       if (targetDtis != null)
       {
@@ -123,7 +129,7 @@ public class ESBServiceProvider
       }
 
       // create dxi request to diff source and target dti
-      DxiRequest dxiRequest = new DxiRequest();
+      DiffDxiRequest dxiRequest = new DiffDxiRequest();
       dxiRequest.setSourceScopeName(sourceScopeName);
       dxiRequest.setSourceAppName(sourceAppName);
       dxiRequest.setTargetScopeName(targetScopeName);
@@ -289,7 +295,7 @@ public class ESBServiceProvider
       if (sourceDtos != null && targetDtos != null)
       {
         // request exchange service to compare changed DTOs
-        DxoRequest dxoRequest = new DxoRequest();
+        DiffDxoRequest dxoRequest = new DiffDxoRequest();
         dxoRequest.setSourceScopeName(sourceScopeName);
         dxoRequest.setSourceAppName(sourceAppName);
         dxoRequest.setTargetScopeName(targetScopeName);

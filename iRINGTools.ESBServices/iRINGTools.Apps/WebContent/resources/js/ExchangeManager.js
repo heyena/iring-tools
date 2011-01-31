@@ -211,6 +211,7 @@ Ext.onReady(function() {
           	var tabId = label;
           	
           	if (nodeType == 'exchange') {
+          		alert('pageURL = ' + pageURL)
           		exNewTabMap[tabId] = new ExchangeManager.NavigationPanel( {
                     title : label,
                     id : tabId,

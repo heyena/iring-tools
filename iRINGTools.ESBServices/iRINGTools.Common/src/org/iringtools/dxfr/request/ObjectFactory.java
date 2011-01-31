@@ -30,11 +30,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DxiRequest }
+     * Create an instance of {@link DiffDxiRequest }
      * 
      */
-    public DxiRequest createDxiRequest() {
-        return new DxiRequest();
+    public DiffDxiRequest createDxiRequest() {
+        return new DiffDxiRequest();
     }
 
     /**
@@ -46,11 +46,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DxoRequest }
+     * Create an instance of {@link DiffDxoRequest }
      * 
      */
-    public DxoRequest createDxoRequest() {
-        return new DxoRequest();
+    public DiffDxoRequest createDxoRequest() {
+        return new DiffDxoRequest();
     }
 
     /**

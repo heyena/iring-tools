@@ -1,8 +1,11 @@
 package org.iringtools.controllers;
 
 import org.apache.struts2.interceptor.SessionAware;
+import org.codehaus.jettison.json.JSONObject;
+import org.iringtools.dxfr.datafilter.DataFilter;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.history.History;
+import org.iringtools.models.DataFilterContainer;
 import org.iringtools.models.ExchDataModel;
 import org.iringtools.ui.widgets.grid.Grid;
 import org.iringtools.ui.widgets.grid.Rows;
@@ -38,6 +41,7 @@ public class ExchDataController extends ActionSupport implements SessionAware
 	private String filter;
 	private String sortBy;
 	private String sortOrder;
+	private DataFilterContainer dataFilterContainer;
 	
 	public ExchDataController() {
 		exchdata = new ExchDataModel();
@@ -179,39 +183,30 @@ public void setFilter(String filter) {
 		return limit;
 	}
 
+	public void setDtiList() {
+		exchdata.setDtiList(((DataTransferIndices)session.get(key)).getDataTransferIndexList().getItems());
+		exchdata.setDtoUrl("/" + scopeName + "/exchanges/" + idName);
+	}
+	
 	public void getExchDtiList() {
-		key = scopeName + idName;		
-		
+
+		key = scopeName + idName + filter + sortOrder + sortBy;
+		dataFilterContainer = new DataFilterContainer(filter, sortOrder, sortBy);
 		if (session.get(key) == null)
-			session.put(key, exchdata.populate(scopeName, idName));
-		else {
-			exchdata.setDtiList(((DataTransferIndices)session.get(key)).getDataTransferIndexList().getItems());
-			exchdata.setDtoUrl("/" + scopeName + "/exchanges/" + idName);
-		}
+			session.put(key, exchdata.populateFilter(scopeName, idName, dataFilterContainer.getDataFilter()));
+		else
+			setDtiList();
+
 	}
-	
-	public void getExchFilterDtiList() {
-		key = scopeName + idName + filter + sortOrder + sortBy;		
-		
-		if (session.get(key) == null)
-			session.put(key, exchdata.populateFilter(scopeName, idName, filter, sortOrder, sortBy));
-		else {
-			exchdata.setDtiList(((DataTransferIndices)session.get(key)).getDataTransferIndexList().getItems());
-			exchdata.setDtoUrl("/" + scopeName + "/exchanges/" + idName);
-		}
-	}
-	
+
 	public String getExchDataGrid() {
 		getExchDtiList();
 		grid = exchdata.toGrid();
 		return Action.SUCCESS;
 	}
 
-	public String getExchDataRows() {
-		if (filter == null && sortOrder == null && sortBy == null)
-			getExchDtiList();
-		else
-			getExchFilterDtiList();
+	public String getExchDataRows() {		
+		getExchDtiList();		
 		rows = exchdata.toRows(start, limit);		
 		return Action.SUCCESS;
 	}
@@ -249,9 +244,7 @@ public void setFilter(String filter) {
 		getExchDtiList();
 		rows = exchdata.toDetailRelRows(id, classId, relatedId);
 		return Action.SUCCESS;
-	}
-	
-	
+	}	
 	
 	public String setExchangeData() {
 		getExchDtiList();

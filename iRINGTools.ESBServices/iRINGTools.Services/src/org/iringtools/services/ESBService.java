@@ -8,10 +8,12 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Logger;
 import org.iringtools.directory.Directory;
+import org.iringtools.dxfr.datafilter.DataFilter;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dto.DataTransferObjects;
 import org.iringtools.dxfr.request.ExchangeRequest;
@@ -44,9 +46,13 @@ public class ESBService extends AbstractService
     return directory;
   }
 
-  @GET
+  @POST
   @Path("/{scope}/exchanges/{id}")
-  public DataTransferIndices getDataTransferIndices(@PathParam("scope") String scope, @PathParam("id") String id)
+  @Consumes("application/xml")
+  public DataTransferIndices getDataTransferIndices(
+		  @PathParam("scope") String scope, 
+		  @PathParam("id") String id, 
+		  DataFilter dataFilter) 
   {
     DataTransferIndices dataTransferIndices = null;
     
@@ -54,7 +60,7 @@ public class ESBService extends AbstractService
     {
       initService();
       ESBServiceProvider serviceProvider = new ESBServiceProvider(settings);
-      dataTransferIndices = serviceProvider.getDataTransferIndices(scope, id);
+      dataTransferIndices = serviceProvider.getDataTransferIndices(scope, id, dataFilter);
     }
     catch (Exception ex)
     {
