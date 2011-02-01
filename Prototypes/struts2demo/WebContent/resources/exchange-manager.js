@@ -49,7 +49,6 @@ function createGridPane(store, pageSize){
 function createXlogsPane(label, context, xlogsContainer){
   var xlogsUrl = 'xlogs' + context;
   var xlogsStore = createGridStore(xlogsUrl);
-  var pageSize = 25;
   
   xlogsStore.on('load', function(){
     xlogsStore.recordType = xlogsStore.reader.recordType;      
@@ -66,18 +65,7 @@ function createXlogsPane(label, context, xlogsContainer){
       enableColLock: true,
       viewConfig: {
         forceFit: true
-      },
-      bbar: new Ext.PagingToolbar({
-        store: xlogsStore,
-        pageSize: pageSize,
-        displayInfo: true,
-        autoScroll: true,
-        plugins: [new Ext.ux.plugin.PagingToolbarResizer({
-          displayText: 'Page Size',
-          options: [25, 50, 100, 200, 500], 
-          prependCombo: true})
-        ]
-      })
+      }
     });
     
     if (xlogsContainer.items.length == 0){
@@ -91,12 +79,7 @@ function createXlogsPane(label, context, xlogsContainer){
     xlogsContainer.expand(false);
   });
   
-  xlogsStore.load({
-    params: {
-      start: 0,          
-      limit: pageSize
-    }
-  });
+  xlogsStore.load();
 }
 
 function loadPageDto(type, action, context, label){
@@ -408,7 +391,8 @@ function submitExchange(userResponse) {
       timeout: 600000,  // in milliseconds default 3000 
       success: function(response, opts) {
         var responseText = Ext.util.JSON.decode(response.responseText);
-        showDialog(400, 100, 'Exchange Result', responseText, Ext.Msg.OK, null);
+        var message = 'Data exchange [' + exchange + '] result: \r' + responseText;
+        showDialog(400, 100, 'Exchange Result', message, Ext.Msg.OK, null);
       },
       failure: function(response, opts) {
         var responseText = Ext.util.JSON.decode(response.responseText);
@@ -499,6 +483,10 @@ Ext.onReady(function(){
           
           // clear property grid
           Ext.getCmp('property-pane').setSource({});
+          
+          // disable toolbar buttons
+          Ext.getCmp('exchange-button').disable();
+          Ext.getCmp('xlogs-button').disable();
           
           // reload tree
           directoryTree.getLoader().load(directoryTree.root);

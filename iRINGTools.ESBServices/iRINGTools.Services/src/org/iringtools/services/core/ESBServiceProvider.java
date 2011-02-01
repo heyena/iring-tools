@@ -14,6 +14,7 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.iringtools.common.response.Level;
 import org.iringtools.common.response.Messages;
@@ -48,6 +49,7 @@ import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpClientException;
+import org.iringtools.utility.IOUtil;
 import org.iringtools.utility.JaxbUtil;
 
 public class ESBServiceProvider
@@ -494,8 +496,21 @@ public class ESBServiceProvider
             Response poolResponse = httpClient.post(Response.class, targetGraphUrl, poolDtos);
             exchangeResponse.getStatusList().getItems().addAll(poolResponse.getStatusList().getItems());
             
-            if (exchangeResponse.getLevel() != Level.ERROR || (exchangeResponse.getLevel() == Level.WARNING && poolResponse.getLevel() == Level.SUCCESS))
+            if (exchangeResponse.getLevel() != Level.ERROR || 
+               (exchangeResponse.getLevel() == Level.WARNING && poolResponse.getLevel() == Level.SUCCESS))
+            {
               exchangeResponse.setLevel(poolResponse.getLevel());
+              
+              // find the errors and warnings to put in the summary
+              for (Status status : poolResponse.getStatusList().getItems())
+              {
+                String messages = StringUtils.join(status.getMessages().getItems(), " ");                
+                if (!messages.contains("successful"))
+                {
+                  exchangeResponse.getMessages().getItems().addAll(status.getMessages().getItems());
+                }
+              }
+            }
           }
         }
       }
@@ -504,9 +519,26 @@ public class ESBServiceProvider
       
       if (statusItems != null && statusItems.size() == 0)
       {
-        Status status = createStatus("Overall", "No Add/Change/Delete DTOs are found!");
-        exchangeResponse.getStatusList().getItems().add(status);
-        exchangeResponse.setLevel(Level.WARNING);        
+        exchangeResponse.setLevel(Level.WARNING);
+        
+        Messages messages = new Messages();
+        messages.getItems().add("No Add/Change/Delete DTOs are found!");
+        exchangeResponse.setMessages(messages);
+      }
+      else if (exchangeResponse.getMessages() == null)
+      {
+        if (exchangeResponse.getLevel() == Level.WARNING)
+        {
+          Messages messages = new Messages();
+          messages.getItems().add("Exchange completed with some warnings!");
+          exchangeResponse.setMessages(messages);
+        }
+        else
+        {
+          Messages messages = new Messages();
+          messages.getItems().add("Exchange completed succesfully!");
+          exchangeResponse.setMessages(messages);
+        }
       }
     }
     catch (Exception ex)
@@ -527,7 +559,7 @@ public class ESBServiceProvider
     XMLGregorianCalendar timestamp = datatypeFactory.newXMLGregorianCalendar(new GregorianCalendar());
     exchangeResponse.setEndTimeStamp(timestamp);
     
-    //Store the exchange response : history  
+    // save exchange response to file system
     String path = settings.get("baseDirectory") + "/WEB-INF/logs/exchanges/" + scope + "/" + id;
     File dirPath = new File(path);
     
@@ -538,6 +570,20 @@ public class ESBServiceProvider
     
     String file = path + "/" + timestamp.toString().replace(":", ".") + ".xml";
     JaxbUtil.write(exchangeResponse, file, true);
+    
+    List<String> filesInFolder = IOUtil.getFiles(path);
+    Collections.sort(filesInFolder);
+    
+    // if number of log files exceed the limit, remove the oldest ones
+    while (filesInFolder.size() > Integer.valueOf(settings.get("numOfExchangeLogFiles")))
+    {
+      File oldestFile = new File(path + "/" + filesInFolder.get(0));      
+      oldestFile.delete();
+      filesInFolder.remove(0);
+    }
+    
+    // only interest in summary
+    exchangeResponse.setStatusList(null);
 
     return exchangeResponse;
   }

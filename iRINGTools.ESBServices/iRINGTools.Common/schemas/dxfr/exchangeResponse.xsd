@@ -30,6 +30,7 @@
       <xs:element name="receiverScopeName" type="xs:string"/>
       <xs:element name="receiverAppName" type="xs:string"/>
       <xs:element name="receiverGraphName" type="xs:string"/>
+      <xs:element name="messages" type="res:Messages" />
       <xs:element name="statusList" type="res:StatusList" />
     </xs:sequence>
   </xs:complexType>  

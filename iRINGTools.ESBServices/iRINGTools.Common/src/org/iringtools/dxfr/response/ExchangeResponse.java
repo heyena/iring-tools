@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.iringtools.common.response.Level;
+import org.iringtools.common.response.Messages;
 import org.iringtools.common.response.StatusList;
 
 
@@ -33,6 +34,7 @@ import org.iringtools.common.response.StatusList;
  *         &lt;element name="receiverScopeName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="receiverAppName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="receiverGraphName" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="messages" type="{http://www.iringtools.org/common/response}Messages"/>
  *         &lt;element name="statusList" type="{http://www.iringtools.org/common/response}StatusList"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -55,6 +57,7 @@ import org.iringtools.common.response.StatusList;
     "receiverScopeName",
     "receiverAppName",
     "receiverGraphName",
+    "messages",
     "statusList"
 })
 @XmlRootElement(name = "exchangeResponse")
@@ -84,6 +87,8 @@ public class ExchangeResponse {
     protected String receiverAppName;
     @XmlElement(required = true)
     protected String receiverGraphName;
+    @XmlElement(required = true)
+    protected Messages messages;
     @XmlElement(required = true)
     protected StatusList statusList;
 
@@ -349,6 +354,30 @@ public class ExchangeResponse {
      */
     public void setReceiverGraphName(String value) {
         this.receiverGraphName = value;
+    }
+
+    /**
+     * Gets the value of the messages property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Messages }
+     *     
+     */
+    public Messages getMessages() {
+        return messages;
+    }
+
+    /**
+     * Sets the value of the messages property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Messages }
+     *     
+     */
+    public void setMessages(Messages value) {
+        this.messages = value;
     }
 
     /**

@@ -1,11 +1,9 @@
 package org.iringtools.controllers;
 
-import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.xwork.StringUtils;
 import org.apache.struts2.interceptor.SessionAware;
-import org.iringtools.common.response.Level;
-import org.iringtools.common.response.Status;
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.models.ExchangeDataModel;
 import org.iringtools.widgets.grid.Grid;
@@ -83,39 +81,7 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   public String submitExchange() 
   {
     ExchangeResponse response = exchangeDataModel.submitExchange(esbServiceUri, scope, xid, reviewed);  
-    List<Status> statusItems = response.getStatusList().getItems();    
-    int duration = response.getEndTimeStamp().compare(response.getStartTimeStamp());    
-    StringBuilder result = new StringBuilder();
-         
-    if (response.getLevel() == Level.SUCCESS)
-    {
-      result.append("Exchange completed successfully.\r");
-    }
-    else
-    {
-      if (response.getLevel() == Level.ERROR)
-      {
-        result.append("Exchange failed.\r\r");
-      }
-      else if (response.getLevel() == Level.WARNING)
-      {
-        result.append("Exchange completed with warning(s).\r\r");
-      }
-      
-      if (statusItems != null && statusItems.size() > 0)
-      {
-        for (String message : statusItems.get(0).getMessages().getItems())
-        {
-          result.append(message + "\r");
-        }
-      }    
-      
-      result.append("\r");
-    }
-    
-    result.append("Execution time [" + duration + "] second(s).");   
-    exchangeResult = result.toString();
-    
+    exchangeResult = StringUtils.join(response.getMessages().getItems(), "\r");    
     return SUCCESS;
   }
   
@@ -129,7 +95,7 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   // ---------------------------------
   public String getPageXlogs()
   {
-    pageXlogsGrid = exchangeDataModel.getXlogsGrid(xlogsServiceUri, scope, xid, start, limit);    
+    pageXlogsGrid = exchangeDataModel.getXlogsGrid(xlogsServiceUri, scope, xid);    
     return SUCCESS;
   }
   

@@ -49,6 +49,10 @@ namespace org.iringtools.library
     [DataMember(Name = "statusList", Order = 2)]
     public List<Status> StatusList { get; set; }
 
+    [XmlElement]
+    [DataMember(Name = "messages", Order = 3, EmitDefaultValue = false)]
+    public Messages Messages { get; set; }
+
     public Response()
     {
       this.StatusList = new List<Status>();      

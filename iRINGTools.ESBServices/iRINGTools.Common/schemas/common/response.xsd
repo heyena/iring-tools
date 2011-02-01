@@ -19,6 +19,7 @@
       <xs:element name="level" type="Level" />
       <xs:element name="dateTimeStamp" type="xs:dateTime" />
       <xs:element name="statusList" type="StatusList" />
+      <xs:element name="messages" type="Messages" />
     </xs:sequence>
   </xs:complexType>
 

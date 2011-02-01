@@ -35,6 +35,11 @@ public abstract class AbstractService
       poolSize = "50";
     settings.put("poolSize", poolSize);
     
+    String numOfExchangeLogFiles = servletContext.getInitParameter("numOfExchangeLogFiles");
+    if (numOfExchangeLogFiles == null || numOfExchangeLogFiles.equals(""))
+      numOfExchangeLogFiles = "10";
+    settings.put("numOfExchangeLogFiles", numOfExchangeLogFiles);
+    
     String proxyHost = servletContext.getInitParameter("proxyHost");
     if (proxyHost != null && proxyHost.length() > 0)
       settings.put("proxyHost", proxyHost);
