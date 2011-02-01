@@ -82,7 +82,6 @@ function createXlogsPane(label, context, xlogsContainer){
     
     if (xlogsContainer.items.length == 0){
       xlogsContainer.add(xlogsPane);
-      //xlogsContainer.setVisible(true);
       xlogsContainer.doLayout();
     }
     else {

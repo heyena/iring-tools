@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.iringtools.widgets.grid.Grid;
 import org.iringtools.dxfr.dti.DataTransferIndices;
+import org.iringtools.dxfr.dto.DataTransferObject;
 import org.iringtools.dxfr.dto.DataTransferObjects;
 
 public class AppDataModel extends DataModel
@@ -25,11 +26,11 @@ public class AppDataModel extends DataModel
   }
   
   public Grid getRelatedItemGrid(String serviceUri, String scope, String app, String graph, 
-      String individual, String classId, String classIdentifier, int start, int limit)
+      String dtoIdentifier, String classId, String classIdentifier, int start, int limit)
   {
     String dtiRelativePath = "/" + scope + "/" + app + "/" + graph;
     String dtoRelativePath = dtiRelativePath + "/page";
-    DataTransferObjects pageDtos = getPageDtos(serviceUri, dtiRelativePath, dtoRelativePath, start, limit);  
-    return getRelatedItemGrid(DataType.APP, pageDtos, individual, classId, classIdentifier, start, limit);
+    DataTransferObject dto = getDto(serviceUri, dtiRelativePath, dtoRelativePath, dtoIdentifier);  
+    return getRelatedItemGrid(DataType.APP, dto, classId, classIdentifier, start, limit);
   }
 }

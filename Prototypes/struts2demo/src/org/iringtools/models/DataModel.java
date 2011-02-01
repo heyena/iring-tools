@@ -95,6 +95,46 @@ public class DataModel
     List<DataTransferIndex> pageDtis = dtiList.subList(start, actualLimit);
     return getDtos(serviceUri, dtoRelativePath, pageDtis);
   }
+  
+  public DataTransferObject getDto(String serviceUri, String dtiRelativePath, String dtoRelativePath, 
+      String dtoIdentifier) 
+  {
+    DataTransferIndices dtis = getDtis(serviceUri, dtiRelativePath);    
+    List<DataTransferIndex> dtiList = dtis.getDataTransferIndexList().getItems();
+    DataTransferIndex theDti = null;
+    
+    for (DataTransferIndex dti : dtiList)
+    {
+      if (dti.getIdentifier().equals(dtoIdentifier))
+      {
+        theDti = dti;
+        break;
+      }
+    }
+    
+    if (theDti != null)
+    {
+      DataTransferIndices dtiRequest = new DataTransferIndices();
+      DataTransferIndexList dtiRequestList = new DataTransferIndexList();
+      dtiRequest.setDataTransferIndexList(dtiRequestList);
+      dtiRequestList.getItems().add(theDti);
+      
+      try
+      {
+        HttpClient httpClient = new HttpClient(serviceUri);
+        DataTransferObjects dtos = httpClient.post(DataTransferObjects.class, dtoRelativePath, dtiRequest);
+        
+        if (dtos != null && dtos.getDataTransferObjectList().getItems().size() > 0)
+          return dtos.getDataTransferObjectList().getItems().get(0);
+      }
+      catch (HttpClientException ex)
+      {
+        logger.error("Error in getDto: " + ex);
+      }
+    }
+    
+    return null;
+  }
 
   // paging is based on number of data transfer objects
   public Grid getDtoGrid(DataType dataType, DataTransferObjects dtos)
@@ -211,133 +251,126 @@ public class DataModel
   }
 
   // paging is based on number of templates of the related class
-  public Grid getRelatedItemGrid(DataType dataType, DataTransferObjects dtos, String individual, String classId,
+  public Grid getRelatedItemGrid(DataType dataType, DataTransferObject dto, String classId, 
       String classIdentifier, int start, int limit)
   {
     Grid relatedItemGrid = new Grid();
-    List<DataTransferObject> dtoList = dtos.getDataTransferObjectList().getItems();
-
-    for (DataTransferObject dto : dtoList)
+    
+    for (ClassObject classObject : dto.getClassObjects().getItems())
     {
-      if (dto.getIdentifier().equals(individual))
+      if (classObject.getClassId().equals(classId) && classObject.getIdentifier().equals(classIdentifier))
       {
-        for (ClassObject classObject : dto.getClassObjects().getItems())
+        List<Field> fields = new ArrayList<Field>();
+        List<List<String>> gridData = new ArrayList<List<String>>();
+        boolean firstTemplateObject = true;
+
+        for (TemplateObject templateObject : classObject.getTemplateObjects().getItems())
         {
-          if (classObject.getClassId().equals(classId) && classObject.getIdentifier().equals(classIdentifier))
+          List<String> row = new ArrayList<String>();
+          List<RelatedClass> relatedClasses = new ArrayList<RelatedClass>();
+
+          if (dataType == DataType.EXCHANGE)
           {
-            List<Field> fields = new ArrayList<Field>();
-            List<List<String>> gridData = new ArrayList<List<String>>();
-            boolean firstTemplateObject = true;
-
-            for (TemplateObject templateObject : classObject.getTemplateObjects().getItems())
+            if (dto.getTransferType() == TransferType.CHANGE)
             {
-              List<String> row = new ArrayList<String>();
-              List<RelatedClass> relatedClasses = new ArrayList<RelatedClass>();
+              String transferType = templateObject.getTransferType().toString();
+              row.add("<span class=\"" + transferType.toLowerCase() + "\">" + transferType + "</span>");
+            }
+            else
+            {
+              String transferType = dto.getTransferType().toString();
+              row.add("<span class=\"" + transferType.toLowerCase() + "\">" + transferType + "</span>");
+            }
+          }
 
-              if (dataType == DataType.EXCHANGE)
-              {
-                if (dto.getTransferType() == TransferType.CHANGE)
-                {
-                  String transferType = templateObject.getTransferType().toString();
-                  row.add("<span class=\"" + transferType.toLowerCase() + "\">" + transferType + "</span>");
-                }
-                else
-                {
-                  String transferType = dto.getTransferType().toString();
-                  row.add("<span class=\"" + transferType.toLowerCase() + "\">" + transferType + "</span>");
-                }
-              }
-
-              for (RoleObject roleObject : templateObject.getRoleObjects().getItems())
-              {
-                if (roleObject.getType() == RoleType.PROPERTY || roleObject.getType() == RoleType.DATA_PROPERTY
-                    || roleObject.getType() == RoleType.OBJECT_PROPERTY)
-                {
-                  if (firstTemplateObject)
-                  {
-                    Field field = new Field();
-                    field.setName(templateObject.getName() + "." + roleObject.getName());
-                    
-                    if (dataType == DataType.APP)
-                      field.setType(roleObject.getDataType().replace("xsd:", ""));
-                    else
-                      field.setType("string");
-                    
-                    fields.add(field);
-                  }
-
-                  if (dataType == DataType.APP || roleObject.getOldValue() == null
-                      || roleObject.getOldValue().equals(roleObject.getValue()))
-                  {
-                    row.add(roleObject.getValue());
-                  }
-                  else
-                  {
-                    row.add("<span class=\"change\">" + roleObject.getOldValue() + " -> " + roleObject.getValue()
-                        + "</span>");
-                  }
-                }
-                else if (roleObject.getRelatedClassName() != null && roleObject.getRelatedClassName().length() > 0
-                    && roleObject.getValue() != null && roleObject.getValue().length() > 0)
-                {
-                  RelatedClass relatedClass = new RelatedClass();
-                  relatedClass.setId(roleObject.getRelatedClassId());
-                  relatedClass.setName(roleObject.getRelatedClassName());
-                  relatedClass.setIdentifier(roleObject.getValue().substring(1));
-                  relatedClasses.add(relatedClass);
-                }
-              }
-
-              String relatedClassesJson;
-
-              try
-              {
-                relatedClassesJson = JSONUtil.serialize(relatedClasses);
-              }
-              catch (JSONException ex)
-              {
-                relatedClassesJson = "[]";
-              }
-
-              row.add(0, "<input type=\"image\" src=\"resources/images/info-small.png\" "
-                  + "onClick='javascript:showIndividualInfo(\"" + classObject.getIdentifier() + "\","
-                  + relatedClassesJson + ")'>");
-
-              gridData.add(row);
-
+          for (RoleObject roleObject : templateObject.getRoleObjects().getItems())
+          {
+            if (roleObject.getType() == RoleType.PROPERTY || roleObject.getType() == RoleType.DATA_PROPERTY
+                || roleObject.getType() == RoleType.OBJECT_PROPERTY)
+            {
               if (firstTemplateObject)
               {
-                if (dataType == DataType.EXCHANGE)
-                {
-                  Field transferTypeField = new Field();
-                  transferTypeField.setName("Transfer Type");
-                  transferTypeField.setType("string");
-                  fields.add(0, transferTypeField);
-                }
+                Field field = new Field();
+                field.setName(templateObject.getName() + "." + roleObject.getName());
+                
+                if (dataType == DataType.APP)
+                  field.setType(roleObject.getDataType().replace("xsd:", ""));
+                else
+                  field.setType("string");
+                
+                fields.add(field);
+              }
 
-                Field infoField = new Field();
-                infoField.setName("&nbsp;");
-                infoField.setType("string");
-                infoField.setWidth(28);
-                infoField.setFixed(true);
-                fields.add(0, infoField);
-
-                firstTemplateObject = false;
+              if (dataType == DataType.APP || roleObject.getOldValue() == null
+                  || roleObject.getOldValue().equals(roleObject.getValue()))
+              {
+                row.add(roleObject.getValue());
+              }
+              else
+              {
+                row.add("<span class=\"change\">" + roleObject.getOldValue() + " -> " + roleObject.getValue()
+                    + "</span>");
               }
             }
+            else if (roleObject.getRelatedClassName() != null && roleObject.getRelatedClassName().length() > 0
+                && roleObject.getValue() != null && roleObject.getValue().length() > 0)
+            {
+              RelatedClass relatedClass = new RelatedClass();
+              relatedClass.setId(roleObject.getRelatedClassId());
+              relatedClass.setName(roleObject.getRelatedClassName());
+              relatedClass.setIdentifier(roleObject.getValue().substring(1));
+              relatedClasses.add(relatedClass);
+            }
+          }
 
-            int total = classObject.getTemplateObjects().getItems().size();
-            int actualLimit = Math.min(start + limit, total);
+          String relatedClassesJson;
 
-            relatedItemGrid.setLabel(classObject.getClassId());
-            relatedItemGrid.setDescription(classObject.getName());
-            relatedItemGrid.setTotal(total);
-            relatedItemGrid.setFields(fields);
-            relatedItemGrid.setData(gridData.subList(start, actualLimit));
+          try
+          {
+            relatedClassesJson = JSONUtil.serialize(relatedClasses);
+          }
+          catch (JSONException ex)
+          {
+            relatedClassesJson = "[]";
+          }
 
-            return relatedItemGrid;
+          row.add(0, "<input type=\"image\" src=\"resources/images/info-small.png\" "
+              + "onClick='javascript:showIndividualInfo(\"" + classObject.getIdentifier() + "\","
+              + relatedClassesJson + ")'>");
+
+          gridData.add(row);
+
+          if (firstTemplateObject)
+          {
+            if (dataType == DataType.EXCHANGE)
+            {
+              Field transferTypeField = new Field();
+              transferTypeField.setName("Transfer Type");
+              transferTypeField.setType("string");
+              fields.add(0, transferTypeField);
+            }
+
+            Field infoField = new Field();
+            infoField.setName("&nbsp;");
+            infoField.setType("string");
+            infoField.setWidth(28);
+            infoField.setFixed(true);
+            fields.add(0, infoField);
+
+            firstTemplateObject = false;
           }
         }
+
+        int total = classObject.getTemplateObjects().getItems().size();
+        int actualLimit = Math.min(start + limit, total);
+
+        relatedItemGrid.setLabel(classObject.getClassId());
+        relatedItemGrid.setDescription(classObject.getName());
+        relatedItemGrid.setTotal(total);
+        relatedItemGrid.setFields(fields);
+        relatedItemGrid.setData(gridData.subList(start, actualLimit));
+
+        return relatedItemGrid;
       }
     }
 
