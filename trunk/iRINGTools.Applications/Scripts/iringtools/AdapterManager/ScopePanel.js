@@ -48,11 +48,10 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
             border: false, // removing the border of the form
 
             frame: true,
-            layout: 'form',
             closable: true,
             defaults: {
-                width: 230,
-                msgTarget: 'under'
+                width: 330,
+                msgTarget: 'side'
             },
             defaultType: 'textfield',
 
@@ -115,23 +114,21 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
 
     onSave: function () {
         var that = this;    // consists the main/previous class object
-       // alert(DirectoryPanel);
+
         this.data_form.getForm().submit({
             waitMsg: 'Saving Data...',
             success: function (f, a) {
                 if (that.getActiveTab()) {
-                   // alert("3");
-                   // var node = AdapterManager.DirectoryPanel.getNodeBySelectedTab(that.getActiveTab())
                     Ext.Msg.alert('Success', 'Changes saved successfully!')
-                    
+
                     var formType = that.data_form.getForm().findField('formType').getValue();
                     if (formType == 'newForm') { // in case of newForm close the newTab
                         Ext.getCmp('contentpanel').remove(that.getActiveTab(), true);
                     }
 
-                    //Tree Reload
-                    //AdapterManager.DirectoryPanel.onRefresh(node);
-                   
+                    var tempPanel = Ext.getCmp('nav-panel'); // Get Directory Panel
+                    // Ext.state.Manager.clear('AdapterManager'); 
+                    tempPanel.DirectoryPanel.root.reload();
                 }
 
             },
