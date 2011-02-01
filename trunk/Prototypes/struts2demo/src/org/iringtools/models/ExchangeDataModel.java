@@ -5,10 +5,11 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.xwork.StringUtils;
 import org.apache.log4j.Logger;
 import org.iringtools.common.response.Level;
+import org.iringtools.common.response.Messages;
 import org.iringtools.common.response.Status;
-import org.iringtools.common.response.StatusList;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dto.DataTransferObject;
 import org.iringtools.dxfr.dto.DataTransferObjects;
@@ -74,24 +75,96 @@ public class ExchangeDataModel extends DataModel
     }
     catch (HttpClientException ex)
     {
-      String error = "Error submitExchange: " + ex;
+      String error = "Error in submitExchange: " + ex;
       logger.error(error);
       
       response = new ExchangeResponse();
-      response.setLevel(Level.ERROR);      
-      Status status = new Status();      
-      List<String> messages = new ArrayList<String>();
-      messages.add(error);
-      StatusList statusList = new StatusList();
-      List<Status> statusItems = statusList.getItems();
-      statusItems.add(status);
-      response.setStatusList(statusList);
+      response.setLevel(Level.ERROR);
+      
+      Messages messages = new Messages();
+      response.setMessages(messages);
+      List<String> messageList = messages.getItems();
+      messageList.add(error);
     }
     
     return response;
   }
   
-  public Grid getXlogsGrid(String serviceUri, String scope, String exchangeId, int start, int limit)
+  private String format(GregorianCalendar gcal)
+  {
+    return String.format("%1$tY/%1$tm/%1$td-%1$tH:%1$tM:%1$tS.%1$tL", gcal);
+  }
+  
+  public Grid getXlogsGrid(String serviceUri, String scope, String exchangeId)
+  {
+    String relativePath = "/" + scope + "/exchanges/" + exchangeId;
+    History xlogs = null;
+    
+    HttpClient httpClient = new HttpClient(serviceUri);
+      
+    try 
+    {
+      xlogs = httpClient.get(History.class, relativePath);
+    }
+    catch (HttpClientException ex)
+    {
+      logger.error("Error getting exchange logs: " + ex);
+    }
+    
+    Grid xlogsGrid = new Grid();
+    
+    if (xlogs != null && xlogs.getResponses().size() > 0)
+    {
+      List<ExchangeResponse> xrs = xlogs.getResponses(); 
+      List<Field> fields = new ArrayList<Field>();
+      List<List<String>> data = new ArrayList<List<String>>();
+      
+      Field field = new Field();
+      field.setName("Start Time");
+      field.setType("string");
+      fields.add(field);
+      
+      field = new Field();
+      field.setName("End Time");
+      field.setType("string");
+      fields.add(field);
+      
+      field = new Field();
+      field.setName("Sender");
+      field.setType("string");
+      fields.add(field);
+      
+      field = new Field();
+      field.setName("Receiver");
+      field.setType("string");
+      fields.add(field);
+      
+      field = new Field();
+      field.setName("Result");
+      field.setType("string");
+      fields.add(field);
+      
+      for (ExchangeResponse xr : xrs)
+      {      
+        List<String> row = new ArrayList<String>(); 
+        row.add(format(xr.getStartTimeStamp().toGregorianCalendar()));
+        row.add(format(xr.getEndTimeStamp().toGregorianCalendar()));      
+        row.add(xr.getSenderScopeName() + "." + xr.getSenderAppName() + "." + xr.getSenderGraphName());
+        row.add(xr.getReceiverScopeName() + "." + xr.getReceiverAppName() + "." + xr.getReceiverGraphName());      
+        row.add(StringUtils.join(xr.getMessages().getItems(), "<br/>"));      
+        data.add(row);
+      }
+      
+      xlogsGrid.setTotal(xrs.size());
+      xlogsGrid.setFields(fields);
+      xlogsGrid.setData(data);
+    }
+    
+    return xlogsGrid;
+  }
+  
+  //TODO: this code is obsolete and need to be rewritten to just get a page out of an exchange log
+  public Grid getPageXLogGrid(String serviceUri, String scope, String exchangeId, int start, int limit)
   {
     String relativePath = "/" + scope + "/exchanges/" + exchangeId;
     String xlogsKey = "xlogs" + relativePath;

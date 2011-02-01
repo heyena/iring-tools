@@ -23,6 +23,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         &lt;element name="level" type="{http://www.iringtools.org/common/response}Level"/>
  *         &lt;element name="dateTimeStamp" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
  *         &lt;element name="statusList" type="{http://www.iringtools.org/common/response}StatusList"/>
+ *         &lt;element name="messages" type="{http://www.iringtools.org/common/response}Messages"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -35,7 +36,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 @XmlType(name = "Response", propOrder = {
     "level",
     "dateTimeStamp",
-    "statusList"
+    "statusList",
+    "messages"
 })
 @XmlRootElement(name = "response")
 public class Response {
@@ -47,6 +49,8 @@ public class Response {
     protected XMLGregorianCalendar dateTimeStamp;
     @XmlElement(required = true)
     protected StatusList statusList;
+    @XmlElement(required = true)
+    protected Messages messages;
 
     /**
      * Gets the value of the level property.
@@ -118,6 +122,30 @@ public class Response {
      */
     public void setStatusList(StatusList value) {
         this.statusList = value;
+    }
+
+    /**
+     * Gets the value of the messages property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Messages }
+     *     
+     */
+    public Messages getMessages() {
+        return messages;
+    }
+
+    /**
+     * Sets the value of the messages property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Messages }
+     *     
+     */
+    public void setMessages(Messages value) {
+        this.messages = value;
     }
 
 }

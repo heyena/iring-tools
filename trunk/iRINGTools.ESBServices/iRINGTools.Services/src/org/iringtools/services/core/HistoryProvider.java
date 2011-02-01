@@ -2,9 +2,11 @@ package org.iringtools.services.core;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 import javax.xml.bind.JAXBException;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.history.History;
@@ -28,13 +30,27 @@ public class HistoryProvider
     
     String path = settings.get("baseDirectory") + "/WEB-INF/logs/exchanges/" + scope + "/" + id;
     List<String> filesInFolder = IOUtil.getFiles(path);
+    Collections.sort(filesInFolder);
 
-    for (int i = 0; i < filesInFolder.size(); i++)
+    // show most recent first
+    for (int i = filesInFolder.size() - 1; i >= 0 ; i--)
     {
-      ExchangeResponse response = JaxbUtil.read(ExchangeResponse.class, path + "\\" + filesInFolder.get(i));
+      ExchangeResponse response = JaxbUtil.read(ExchangeResponse.class, path + "/" + filesInFolder.get(i));
+      response.setStatusList(null);  // only interest in summary status
       responses.add(response);
     }
     
     return history;
+  }
+  
+  public ExchangeResponse getExchangeResponse(String scope, String id, XMLGregorianCalendar timestamp) throws JAXBException, IOException 
+  {
+    String path = settings.get("baseDirectory") + "/WEB-INF/logs/exchanges/" + scope + "/" + id;
+    
+    // timestamp is the start time with ":" being replaced with "." to be able to save the file to windows file system,
+    // thus reverse the process to get the file name
+    String exchangeFile = path + "/" + timestamp.toString().replace(".", ":") + ".xml";
+    
+    return JaxbUtil.read(ExchangeResponse.class, exchangeFile);
   }
 }

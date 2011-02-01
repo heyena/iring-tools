@@ -14,6 +14,10 @@
     <param-value>3</param-value>
   </context-param>
   <context-param>
+    <param-name>numOfExchangeLogFiles</param-name>
+    <param-value>10</param-value>
+  </context-param>
+  <context-param>
     <param-name>contextConfigLocation</param-name>
     <param-value>WEB-INF/services.xml</param-value>
   </context-param>
