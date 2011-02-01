@@ -10,6 +10,7 @@ import org.iringtools.common.response.Level;
 import org.iringtools.common.response.Status;
 import org.iringtools.common.response.StatusList;
 import org.iringtools.dxfr.dti.DataTransferIndices;
+import org.iringtools.dxfr.dto.DataTransferObject;
 import org.iringtools.dxfr.dto.DataTransferObjects;
 import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
@@ -37,13 +38,13 @@ public class ExchangeDataModel extends DataModel
     pageDtoGrid.setTotal(dtis.getDataTransferIndexList().getItems().size());    
     return pageDtoGrid;
   }
-  
-  public Grid getRelatedItemGrid(String serviceUri, String scope, String exchangeId, String individual, 
-      String classId, String classIdentifier, int start, int limit)
+
+  public Grid getRelatedItemGrid(String serviceUri, String scope, String exchangeId,
+      String dtoIdentifier, String classId, String classIdentifier, int start, int limit)
   {
     String relativePath = "/" + scope + "/exchanges/" + exchangeId;
-    DataTransferObjects pageDtos = getPageDtos(serviceUri, relativePath, relativePath, start, limit);  
-    return getRelatedItemGrid(DataType.EXCHANGE, pageDtos, individual, classId, classIdentifier, start, limit);
+    DataTransferObject dto = getDto(serviceUri, relativePath, relativePath, dtoIdentifier);  
+    return getRelatedItemGrid(DataType.EXCHANGE, dto, classId, classIdentifier, start, limit);
   }
   
   public ExchangeResponse submitExchange(String serviceUri, String scope, String exchangeId, boolean reviewed)
