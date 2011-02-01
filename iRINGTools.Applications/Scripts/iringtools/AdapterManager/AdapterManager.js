@@ -20,6 +20,8 @@ Ext.onReady(function () {
     });
     */
 
+    
+
     var searchPanel = new AdapterManager.SearchPanel({
         id: 'search-panel',
         title: 'Reference Data Search',
@@ -39,7 +41,8 @@ Ext.onReady(function () {
         region: 'center',
 
         collapsible: false,
-
+        closable: true,
+        enableTabScroll: true,
         border: true,
         split: true
     });

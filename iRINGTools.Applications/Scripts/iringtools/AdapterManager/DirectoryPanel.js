@@ -31,6 +31,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
             remove: true,
             refresh: true,
             selectionchange: true
+           
         });
 
         this.tbar = this.buildToolbar();
@@ -38,10 +39,11 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         this.DirectoryPanel = new Ext.tree.TreePanel({
             region: 'center',
             collapseMode: 'mini',
-            height: 200,
+            height: 300,
             layout: 'fit',
             border: false,
-
+            split: true,
+            expandAll: true,
             rootVisible: true,
             lines: true,
             //singleExpand: true,
@@ -67,7 +69,16 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       this.DirectoryPanel
     ];
 
-        //this.DirectoryPanel.getSelectionModel().on('selectionchange', this.onSelectionChange, this, this);
+       
+        var state = Ext.state.Manager.get("AdapterManager");
+
+        if (state) {
+            if (this.DirectoryPanel.expandPath(state) == false) {
+                Ext.state.Manager.clear("AdapterManager");
+                this.DirectoryPanel.root.reload();
+            }
+        }
+
         // super
         AdapterManager.DirectoryPanel.superclass.initComponent.call(this);
     },
@@ -114,25 +125,27 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     },
 
     onRefresh: function (node) {
-        Ext.state.Manager.clear('AdapterManager');
+        //Ext.state.Manager.clear('AdapterManager');
         this.DirectoryPanel.root.reload();
     },
 
     getNodeBySelectedTab: function (tab) {
-      // alert("1");
+        // alert("1");
         var tabid = tab.id;
         nodeId = tabid.substr(4, tabid.length)  // tabid is "tab-jf23dfj-sd3fas-df33s-s3df"
         return this.getNodeById(nodeId)        // get the NODE using nodeid
     },
 
     getNodeById: function (nodeId) {
-      //  alert("2");
+        //  alert("2");
         if (this.DirectoryPanel.getNodeById(nodeId)) { //if nodeID exists it will find out NODE
             return this.DirectoryPanel.getNodeById(nodeId)
         } else {
             return false;
         }
     },
+
+
     /**
     * buildform
     * @private
@@ -182,7 +195,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         { xtype: 'hidden', name: 'formType', value: formType },
         { xtype: 'hidden', name: 'nodeID', value: obj['id'] },
         { xtype: 'hidden', name: 'parentNodeID', value: valparentNodeID },
-        { fieldLabel: txtLableName, name: 'appName', allowBlank: true, xtype: 'textfield', width: 250, value: name },
+        { fieldLabel: txtLableName, name: 'appName', xtype: 'textfield', width: 250, value: name, allowBlank: false },
         { fieldLabel: txtLableDescription, name: 'description', allowBlank: true, xtype: 'textarea', width: 250, value: scopeDescription }
 
         ];
