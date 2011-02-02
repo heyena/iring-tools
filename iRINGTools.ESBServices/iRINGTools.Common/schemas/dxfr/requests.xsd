@@ -2,6 +2,7 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
   xmlns="http://www.iringtools.org/dxfr/request" targetNamespace="http://www.iringtools.org/dxfr/request" 
   xmlns:mnf="http://www.iringtools.org/dxfr/manifest" 
+  xmlns:dtf="http://www.iringtools.org/data/filter" 
   xmlns:dti="http://www.iringtools.org/dxfr/dti"
   xmlns:dto="http://www.iringtools.org/dxfr/dto" 
   elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
@@ -16,13 +17,22 @@
   </xs:annotation>
 
   <xs:import namespace="http://www.iringtools.org/dxfr/manifest" schemaLocation="manifest.xsd" />
+  <xs:import namespace="http://www.iringtools.org/data/filter" schemaLocation="dataFilter.xsd" />
   <xs:import namespace="http://www.iringtools.org/dxfr/dti" schemaLocation="dti.xsd" />
   <xs:import namespace="http://www.iringtools.org/dxfr/dto" schemaLocation="dto.xsd" />
 
+  <xs:element name="dxiRequest" type="DxiRequest" />
   <xs:element name="dtoPageRequest" type="DtoPageRequest" />
   <xs:element name="dfiRequest" type="DfiRequest" />
   <xs:element name="dfoRequest" type="DfoRequest" />
   <xs:element name="exchangeRequest" type="ExchangeRequest" />
+  
+    <xs:complexType name="DxiRequest">
+    <xs:sequence>      
+      <xs:element name="manifest" type="mnf:Manifest" />
+      <xs:element name="dataFilter" type="dtf:DataFilter" />
+    </xs:sequence>
+  </xs:complexType>  
 
   <xs:complexType name="DtoPageRequest">
     <xs:sequence>

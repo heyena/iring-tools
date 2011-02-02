@@ -3,8 +3,6 @@
   targetNamespace="http://www.iringtools.org/data/filter" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
   jaxb:version="2.0" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc">
 
-
-
   <xs:annotation>
     <xs:appinfo>
       <jaxb:globalBindings>
@@ -49,7 +47,7 @@
   <xs:complexType name="Expression">
     <xs:sequence>
       <xs:element name="openGroupCount" type="xs:int" />
-      <xs:element name="PropertyName" type="xs:string" />
+      <xs:element name="propertyName" type="xs:string" />
       <xs:element name="relationalOperator" type="RelationalOperator" />
       <xs:element name="values" type = "Values"/>
       <xs:element name="logicalOperator" type="LogicalOperator" />
@@ -92,7 +90,7 @@
   
   <xs:complexType name="OrderExpression">
     <xs:sequence>
-      <xs:element name="PropertyName" type="xs:string" />
+      <xs:element name="propertyName" type="xs:string" />
       <xs:element name="sortOrder" type="SortOrder" />     
     </xs:sequence>
   </xs:complexType>

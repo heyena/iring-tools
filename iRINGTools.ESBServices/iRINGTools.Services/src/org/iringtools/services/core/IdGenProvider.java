@@ -37,7 +37,7 @@ public class IdGenProvider{
     private final long ceiling;
     private final int maxseq;
     private final int maxcount;
-    private final DateFormat xmlSchemaDateFormatter;
+//    private final DateFormat xmlSchemaDateFormatter;
 //    private final TypeMapper typeMapper;
 //    private final RDFDatatype xmlSchemaDateType;
 //    private final RDFDatatype xmlSchemaStringType;
@@ -78,7 +78,7 @@ public class IdGenProvider{
 	   // getTypeByName("http://www.w3.org/2001/XMLSchema#dateTime");
 	//this.xmlSchemaStringType = typeMapper.
 	   // getTypeByName("http://www.w3.org/2001/XMLSchema#string");
-	this.xmlSchemaDateFormatter = null;
+	//this.xmlSchemaDateFormatter = null;
 	   // IDSADIXMLSupport.newDateTimeFormatInstance();
     }
     

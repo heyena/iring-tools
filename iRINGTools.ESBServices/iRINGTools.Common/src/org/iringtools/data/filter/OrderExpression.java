@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="PropertyName" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="propertyName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="sortOrder" type="{http://www.iringtools.org/data/filter}SortOrder"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class OrderExpression {
 
-    @XmlElement(name = "PropertyName", required = true)
+    @XmlElement(required = true)
     protected String propertyName;
     @XmlElement(required = true)
     protected SortOrder sortOrder;

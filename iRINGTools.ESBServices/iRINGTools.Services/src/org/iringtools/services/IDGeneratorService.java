@@ -15,11 +15,11 @@ import javax.ws.rs.Produces;
 import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Logger;
-import org.ids_adi.rdf.registry.IDSADIRDFRegistry;
-import org.ids_adi.servlet.ConnectionRegistryFilterConfigSource;
+//import org.ids_adi.rdf.registry.IDSADIRDFRegistry;
+//import org.ids_adi.servlet.ConnectionRegistryFilterConfigSource;
 
-import org.ids_adi.config.Config;
-import org.iringtools.services.core.IdGenProvider;
+//import org.ids_adi.config.Config;
+//import org.iringtools.services.core.IdGenProvider;
 
 @Path("/")
 @Consumes("application/xml")
@@ -29,13 +29,14 @@ public class IDGeneratorService implements Filter{
 	public IDGeneratorService(){
 		System.out.println("Constructor IDGeneratorService");
 	}
-	private Config config;
-    private IdGenProvider registry ;
+	
+	//private Config config;
+  //private IdGenProvider registry ;
     
 	public void init(FilterConfig filterConfig) throws ServletException {
 		System.out.println("IDGeneratorService:Inside init");
-		this.config = new Config(new ConnectionRegistryFilterConfigSource(filterConfig, "org.ids-adi."));
-	    System.out.println("init:config:"+config);		
+		/*this.config = new Config(new ConnectionRegistryFilterConfigSource(filterConfig, "org.ids-adi."));
+	    System.out.println("init:config:"+config);		*/
 	}
 	private static final Logger logger = Logger.getLogger(IDGeneratorService.class);
 	
@@ -49,10 +50,10 @@ public class IDGeneratorService implements Filter{
 	    try
 	    {
 	      System.out.println("Inside acquireIDForURL");	
-	      registry = new IdGenProvider();
+	      /*registry = new IdGenProvider();
 	      System.out.println("registry:"+registry);
 	      id = registry.acquireIDIn("http://rdl.rdlfacade.org/data#", "newly", "rashmi");
-	      System.out.println("Id:"+id);
+	      System.out.println("Id:"+id);*/
 	    }
 	    catch (Exception ex)
 	    {

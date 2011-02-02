@@ -8,12 +8,11 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Logger;
-import org.iringtools.directory.Directory;
 import org.iringtools.data.filter.DataFilter;
+import org.iringtools.directory.Directory;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dto.DataTransferObjects;
 import org.iringtools.dxfr.request.ExchangeRequest;
