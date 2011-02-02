@@ -20,8 +20,8 @@
   <xs:import namespace="http://www.iringtools.org/dxfr/dto" schemaLocation="dto.xsd" />
 
   <xs:element name="dtoPageRequest" type="DtoPageRequest" />
-  <xs:element name="dxiRequest" type="DxiRequest" />
-  <xs:element name="dxoRequest" type="DxoRequest" />
+  <xs:element name="dfiRequest" type="DfiRequest" />
+  <xs:element name="dfoRequest" type="DfoRequest" />
   <xs:element name="exchangeRequest" type="ExchangeRequest" />
 
   <xs:complexType name="DtoPageRequest">
@@ -32,7 +32,7 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="DxiRequest">
+  <xs:complexType name="DfiRequest">
     <xs:sequence>
       <xs:element name="sourceScopeName" type="xs:string" />
       <xs:element name="sourceAppName" type="xs:string" />
@@ -42,7 +42,7 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="DxoRequest">
+  <xs:complexType name="DfoRequest">
     <xs:sequence>
       <xs:element name="sourceScopeName" type="xs:string" />
       <xs:element name="sourceAppName" type="xs:string" />

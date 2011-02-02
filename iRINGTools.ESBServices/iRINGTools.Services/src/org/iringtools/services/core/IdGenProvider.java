@@ -13,22 +13,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import org.ids_adi.config.Config;
-import org.ids_adi.rdf.connection.IDSADIRDFConnection;
-import org.ids_adi.rdf.registry.IDSADIRDFRegistry.RegistryInfo;
-import org.ids_adi.rdf.registry.IDSADIRDFRegistry.RegistryState;
-import org.ids_adi.xml.IDSADIXMLSupport;
-
-import com.hp.hpl.jena.datatypes.RDFDatatype;
-import com.hp.hpl.jena.datatypes.TypeMapper;
-import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelMaker;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
+//import org.ids_adi.config.Config;
+//import org.ids_adi.rdf.connection.IDSADIRDFConnection;
+//import org.ids_adi.rdf.registry.IDSADIRDFRegistry.RegistryInfo;
+//import org.ids_adi.rdf.registry.IDSADIRDFRegistry.RegistryState;
+//import org.ids_adi.xml.IDSADIXMLSupport;
+//
+//import com.hp.hpl.jena.datatypes.RDFDatatype;
+//import com.hp.hpl.jena.datatypes.TypeMapper;
+//import com.hp.hpl.jena.rdf.model.Literal;
+//import com.hp.hpl.jena.rdf.model.Model;
+//import com.hp.hpl.jena.rdf.model.ModelMaker;
+//import com.hp.hpl.jena.rdf.model.Property;
+//import com.hp.hpl.jena.rdf.model.RDFNode;
+//import com.hp.hpl.jena.rdf.model.Resource;
+//import com.hp.hpl.jena.rdf.model.Statement;
+//import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 public class IdGenProvider{
 
@@ -38,41 +38,48 @@ public class IdGenProvider{
     private final int maxseq;
     private final int maxcount;
     private final DateFormat xmlSchemaDateFormatter;
-    private final TypeMapper typeMapper;
-    private final RDFDatatype xmlSchemaDateType;
-    private final RDFDatatype xmlSchemaStringType;
+//    private final TypeMapper typeMapper;
+//    private final RDFDatatype xmlSchemaDateType;
+//    private final RDFDatatype xmlSchemaStringType;
     private final String randomAlgorithm;
-    private final ModelMaker modelMaker;
+//    private final ModelMaker modelMaker;
     private String registryExternalName;
     private Random useGetRandom;
 
 
     public IdGenProvider() {
-	this.modelMaker = null;
+	//this.modelMaker = null;
 
-	final Model model = this.modelMaker.getModel("registry");
-	final Resource resource = model.createResource(REGISTRY_NS);
+	//final Model model = this.modelMaker.getModel("registry");
+	//final Resource resource = model.createResource(REGISTRY_NS);
 
-	this.randomAlgorithm = resource.getRequiredProperty(
-	    model.createProperty(REGISTRY_NS + "random")).getString();
-	this.floor = resource.getRequiredProperty(
-	    model.createProperty(REGISTRY_NS + "floor")).getLong();
-	this.ceiling = resource.getRequiredProperty(
-	    model.createProperty(REGISTRY_NS + "ceiling")).getLong();
-	this.maxseq = resource.getRequiredProperty(
-	    model.createProperty(REGISTRY_NS + "max-sequence")).getInt();
-	this.maxcount = resource.getRequiredProperty(
-	    model.createProperty(REGISTRY_NS + "max-count")).getInt();
-	this.registryExternalName = resource.getRequiredProperty(
-	    model.createProperty(REGISTRY_NS + "name")).getString();
+	this.randomAlgorithm = null;
+	//resource.getRequiredProperty(
+	  //  model.createProperty(REGISTRY_NS + "random")).getString();
+	this.floor = 0;
+	//resource.getRequiredProperty(
+	   // model.createProperty(REGISTRY_NS + "floor")).getLong();
+	this.ceiling = 0;
+	//resource.getRequiredProperty(
+	  //  model.createProperty(REGISTRY_NS + "ceiling")).getLong();
+	this.maxseq = 0;
+	//resource.getRequiredProperty(
+	   // model.createProperty(REGISTRY_NS + "max-sequence")).getInt();
+	this.maxcount = 0;//resource.getRequiredProperty(
+			
+	   // model.createProperty(REGISTRY_NS + "max-count")).getInt();
+	this.registryExternalName = null;
+		//resource.getRequiredProperty(
+	   // model.createProperty(REGISTRY_NS + "name")).getString();
 
-	this.typeMapper = TypeMapper.getInstance();
-	this.xmlSchemaDateType = typeMapper.
-	    getTypeByName("http://www.w3.org/2001/XMLSchema#dateTime");
-	this.xmlSchemaStringType = typeMapper.
-	    getTypeByName("http://www.w3.org/2001/XMLSchema#string");
-	this.xmlSchemaDateFormatter =
-	    IDSADIXMLSupport.newDateTimeFormatInstance();
+	//this.typeMapper = null;
+		//TypeMapper.getInstance();
+	//this.xmlSchemaDateType = typeMapper.
+	   // getTypeByName("http://www.w3.org/2001/XMLSchema#dateTime");
+	//this.xmlSchemaStringType = typeMapper.
+	   // getTypeByName("http://www.w3.org/2001/XMLSchema#string");
+	this.xmlSchemaDateFormatter = null;
+	   // IDSADIXMLSupport.newDateTimeFormatInstance();
     }
     
 
@@ -226,7 +233,7 @@ public class IdGenProvider{
 	    final RegistryState state = newRegistryState(userName);
 
 	    try {
-		result = state.acquireIDIn(base);
+		result = null;
 
 		state.setComment(result, comment);
 	    }
@@ -273,7 +280,7 @@ public class IdGenProvider{
 	    final RegistryState state = newRegistryState(userName);
 
 	    try {
-	    	final RegistryInfo info = state.checkAccessTo(uri);
+	    	final RegistryInfo info = null;
 
 		if (info.fixatedOn != null) {
 		    throw new IllegalStateException("uri " + uri +
@@ -294,7 +301,7 @@ public class IdGenProvider{
 	    final RegistryState state = newRegistryState(userName);
 
 	    try {
-	    	final RegistryInfo info = state.checkAccessTo(uri);
+	    	final RegistryInfo info = null;
 
 		if (info.fixatedOn != null) {
 		    throw new IllegalStateException("uri " + uri +
@@ -317,8 +324,7 @@ public class IdGenProvider{
 	    final RegistryState state = newRegistryState(userName);
 
 	    try {
-		list = state.listBaseURIs();
-	    }
+		list = null;	    }
 	    finally {
 		state.close();
 	    }
@@ -367,7 +373,7 @@ public class IdGenProvider{
 	    final RegistryState state = newRegistryState(userName);
 
 	    try {
-		if (!state.fillRegistryInfo(info)) {
+		if (true) {
 		    info = null;
 		}
 	    }
@@ -401,95 +407,85 @@ public class IdGenProvider{
     public final class RegistryState {
 	private final List properties = new ArrayList();
     	private final String ns;
-    	private final Model model;
-	private final Property registeredOnProperty;
-	private final Property registeredByProperty;
-	private final Property grantRightsToProperty;
-	private final Property boundProperty;
-	private final Property rdfsCommentProperty;
-	private final Resource baseURIType;
-	private final Property isAProperty;
-	private final Property fixatedOnProperty;
-	private final Property fixatedByProperty;
+//    	private final Model model;
+//	private final Property registeredOnProperty;
+//	private final Property registeredByProperty;
+//	private final Property grantRightsToProperty;
+//	private final Property boundProperty;
+//	private final Property rdfsCommentProperty;
+//	private final Resource baseURIType;
+//	private final Property isAProperty;
+//	private final Property fixatedOnProperty;
+//	private final Property fixatedByProperty;
 	private final String userName;
 
 	private RegistryState(String userName) {
 	    ns = "http://ns.ids-adi.org/registry/schema";
-	    model = modelMaker.openModel(registryExternalName, false);
-	    registeredOnProperty = createProperty("registeredOn");
-	    registeredByProperty = createProperty("registeredBy");
-	    fixatedOnProperty = createProperty("fixatedOn");
-	    fixatedByProperty = createProperty("fixatedBy");
-	    grantRightsToProperty = createProperty("grantRightsTo");
-	    boundProperty = createProperty("boundTo");
-	    baseURIType = createResource("baseURI");
-	    isAProperty = model.createProperty(
-		"http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
-	    rdfsCommentProperty = model.createProperty(
-		"http://www.w3.org/2000/01/rdf-schema#comment");
+//	    model = modelMaker.openModel(registryExternalName, false);
+//	    registeredOnProperty = createProperty("registeredOn");
+//	    registeredByProperty = createProperty("registeredBy");
+//	    fixatedOnProperty = createProperty("fixatedOn");
+//	    fixatedByProperty = createProperty("fixatedBy");
+//	    grantRightsToProperty = createProperty("grantRightsTo");
+//	    boundProperty = createProperty("boundTo");
+//	    baseURIType = createResource("baseURI");
+//	    isAProperty = model.createProperty(
+		//"http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
+	  //  rdfsCommentProperty = model.createProperty(
+		//"http://www.w3.org/2000/01/rdf-schema#comment");
 
 	    this.userName = userName;
 
-	    properties.add(rdfsCommentProperty);
+	    properties.add(null);
 	}
 
-	protected Property createProperty(String name) {
-	    final Property property = model.createProperty(ns + "#" + name);
+	protected void createProperty(String name) {
+	   // final Property property = model.createProperty(ns + "#" + name);
 
-	    properties.add(property);
+	   // properties.add(property);
 
-	    return (property);
+	   // return (property);
 	}
 
-	protected Resource createResource(String name) {
-	    final Resource resource = model.createResource(ns + "#" + name);
+	protected void createResource(String name) {
+	   // final int resource = model.createResource(ns + "#" + name);
 
-	    return (resource);
+	  //  return (resource);
 	}
 
 	public void close() {
-	    model.close();
+	    //model.close();
 	}
 
-	public boolean existsID(String id) {
-	    return (model.contains(model.createResource(id),
-		registeredOnProperty));
+	public void existsID(String id) {
+	   // return (model.contains(model.createResource(id),
+		//registeredOnProperty));
 	}
 
 	public String getAnyBoundID(String boundID, String prefix) {
-	    final StmtIterator it = model.listStatements((Resource)null,
-		boundProperty, model.createResource(boundID));
-	    String id = null;
+	   // final StmtIterator it = model.listStatements((Resource)null,
+		//boundProperty, model.createResource(boundID));
+	    String id = "abc";
 
 	    try {
-		while ((id == null) && it.hasNext()) {
-		    final String uri = it.nextStatement().getSubject().getURI();
+		while ((id == null) ) {
+		    
 
-		    if (uri == null) {
-			/* ignore */
-		    }
-		    else if (!uri.startsWith(prefix)) {
-			/* ignore */
-		    }
-		    else {
-			id = uri;
-		    }
+		    
 		}
 	    }
 	    finally {
-	    	it.close();
+	    	
 	    }
 
 	    return (id);
 	}
 
-	public Literal createTimeStampLiteral() {
-	    return (model.createTypedLiteral(
-		xmlSchemaDateFormatter.format(new Date()),
-		xmlSchemaDateType));
+	public void createTimeStampLiteral() {
+	   
 	}
 
-	public String acquireIDIn(String base) {
+	public void acquireIDIn(String base) {
 	    final int maxTries = 1024;
 	    String result;
 	    int count = 0;
@@ -503,166 +499,57 @@ public class IdGenProvider{
 			"too many tries to allocate id");
 		}
 	    }
-	    while (existsID(result));
+	    while (true);
 
-	    acquireID(result);
-
-	    return (result);
+	    
+	    
 	}
 
 	public void acquireID(String id) {
-	    final Resource idResource = model.createResource(id);
-
-	    model.add(idResource, registeredOnProperty,
-	    	createTimeStampLiteral());
+	    
 
 	    if (userName != null) {
-		setOwner(idResource);
+		
 	    }
 	}
 
 	public void setComment(String id, String comment) {
-	    final Resource idResource = model.createResource(id);
-
-	    model.add(idResource, rdfsCommentProperty,
-		model.createTypedLiteral(comment,
-		xmlSchemaStringType));
+	  
 	}
 
 	public void bindID(String id, String target) {
-	    model.add(model.createResource(id), boundProperty,
-		model.createResource(target));
+	   
 	}
 
 	public void unbindID(String id, String target) {
-	    model.remove(model.createResource(id), boundProperty,
-		model.createResource(target));
+	  
 	}
 
 	public void releaseID(String id) {
-	    final Resource idResource = model.createResource(id);
-
-	    for (Iterator it = properties.iterator(); it.hasNext(); ) {
-		removeStatements(idResource, (Property)it.next());
-	    }
+	  
 	}
 
 	public void fixateID(String id) {
-	    final Resource idResource = model.createResource(id);
-
-	    model.add(idResource, fixatedOnProperty,
-	    	createTimeStampLiteral());
-	    model.add(idResource, fixatedByProperty,
-	    	model.createResource(userName));
+	   
 	}
 
 	public void addBaseURI(String baseURI) {
-	    final Resource idResource = model.createResource(baseURI);
-
-	    model.add(idResource, isAProperty, baseURIType);
-
-	    if (userName != null) {
-	    	setOwner(idResource);
-	    }
+	  
 	}
 
-	private void setOwner(Resource idResource) {
-	    removeStatements(idResource, registeredByProperty);
-	    removeStatements(idResource, grantRightsToProperty);
+	private void setOwner() {
+	  	}
 
-	    final Resource userResource = model.createResource(userName);
-
-	    model.add(idResource, registeredByProperty, userResource);
-	    model.add(idResource, grantRightsToProperty, userResource);
+	public void fillRegistryInfo(RegistryInfo info) {
+	   
 	}
 
-	public boolean fillRegistryInfo(RegistryInfo info) {
-	    final Resource idResource = model.createResource(info.id);
-	    final boolean exists = model.contains(idResource,
-	    	registeredOnProperty);
-
-	    if (exists) {
-		final StmtIterator it = model.listStatements(idResource,
-		    (Property)null, (RDFNode)null);
-
-		try {
-		    while (it.hasNext()) {
-			final Statement statement = it.nextStatement();
-			final Property property = statement.getPredicate();
-			final RDFNode node = statement.getObject();
-
-			if (property.equals(boundProperty)) {
-			    if (node.isResource()) {
-				info.bindings.add(((Resource)node).getURI());
-			    }
-			}
-			else if (property.equals(registeredOnProperty)) {
-			    if (node.isLiteral()) {
-				info.registeredOn = ((Literal)node).getString();
-			    }
-			}
-			else if (property.equals(registeredByProperty)) {
-			    if (node.isResource()) {
-				info.registeredBy = ((Resource)node).getURI();
-			    }
-			}
-			else if (property.equals(fixatedOnProperty)) {
-			    if (node.isLiteral()) {
-				info.fixatedOn = ((Literal)node).getString();
-			    }
-			}
-			else if (property.equals(fixatedByProperty)) {
-			    if (node.isResource()) {
-				info.fixatedBy = ((Resource)node).getURI();
-			    }
-			}
-			else if (property.equals(grantRightsToProperty)) {
-			    if (node.isResource()) {
-				info.grants.add(((Resource)node).getURI());
-			    }
-			}
-			else if (property.equals(rdfsCommentProperty)) {
-			    if (node.isLiteral()) {
-				info.comments.add(((Literal)node).getString());
-			    }
-			}
-		    }
-		}
-		finally {
-		    it.close();
-		}
-	    }
-
-	    return (exists);
+	public void listBaseURIs() {
+	  
 	}
 
-	public List listBaseURIs() {
-	    final StmtIterator it = model.listStatements((Resource)null,
-		isAProperty, baseURIType);
-	    final List list = new ArrayList();
-
-	    while (it.hasNext()) {
-		final Resource resource = it.nextStatement().getSubject();
-
-		list.add(resource.getURI());
-	    }
-
-	    return (list);
-	}
-
-	protected void removeStatements(Resource resource, Property property) {
-	    final StmtIterator it = model.listStatements(resource, property,
-		    (RDFNode)null);
-
-	    try {
-		while (it.hasNext()) {
-		    it.next();
-		    it.remove();
-		}
-	    }
-	    finally {
-	    	it.close();
-	    }
+	protected void removeStatements() {
+	    
 	}
 
 	public void checkAccessTo(RegistryInfo info) {
@@ -674,40 +561,11 @@ public class IdGenProvider{
 	    }
 	}
 
-	public RegistryInfo checkAccessTo(String uri) {
-	    final RegistryInfo info = new RegistryInfo(uri);
-
-	    if (!fillRegistryInfo(info)) {
-		throw new IllegalArgumentException("uri " + uri +
-		    " is not registered");
-	    }
-
-	    checkAccessTo(info);
-
-	    return (info);
-	}
+	public void checkAccessTo(String uri) {
+	   
     }
 
-    public static boolean indicatesProhibited(Throwable t) {
-    	final boolean intentional;
-
-    	if (t instanceof AccessControlException) { // @todo fix
-	    intentional = true;
-	}
-    	else if (t instanceof IllegalArgumentException) { // @todo fix
-	    intentional = true;
-	}
-    	else if (t instanceof IllegalStateException) { // @todo fix
-	    intentional = true;
-	}
-	else {
-	    intentional = false;
-	}
-
-	return (intentional);
+    public void indicatesProhibited() {
     }
-
-    public static final String REGISTRY_NS =
-	"http://ns.ids-adi.org/registry/schema#";
-
+}
 }

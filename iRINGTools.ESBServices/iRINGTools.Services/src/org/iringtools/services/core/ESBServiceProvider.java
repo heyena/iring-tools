@@ -21,9 +21,10 @@ import org.iringtools.common.response.Messages;
 import org.iringtools.common.response.Response;
 import org.iringtools.common.response.Status;
 import org.iringtools.common.response.StatusList;
+import org.iringtools.data.filter.DataFilter;
 import org.iringtools.directory.Directory;
 import org.iringtools.directory.ExchangeDefinition;
-import org.iringtools.dxfr.datafilter.DataFilter;
+
 import org.iringtools.dxfr.dti.DataTransferIndex;
 import org.iringtools.dxfr.dti.DataTransferIndexList;
 import org.iringtools.dxfr.dti.DataTransferIndices;
@@ -35,16 +36,17 @@ import org.iringtools.dxfr.dto.DataTransferObjects;
 import org.iringtools.dxfr.dto.RoleObject;
 import org.iringtools.dxfr.dto.RoleType;
 import org.iringtools.dxfr.dto.TemplateObject;
-import org.iringtools.dxfr.dxirequest.DxiRequest;
+
 import org.iringtools.dxfr.manifest.ClassTemplates;
 import org.iringtools.dxfr.manifest.Graph;
 import org.iringtools.dxfr.manifest.Manifest;
 import org.iringtools.dxfr.manifest.Role;
 import org.iringtools.dxfr.manifest.Template;
 import org.iringtools.dxfr.manifest.TransferOption;
+import org.iringtools.dxfr.request.DfiRequest;
+import org.iringtools.dxfr.request.DfoRequest;
 import org.iringtools.dxfr.request.DtoPageRequest;
-import org.iringtools.dxfr.request.DiffDxiRequest;
-import org.iringtools.dxfr.request.DiffDxoRequest;
+import org.iringtools.dxfr.request.DxiRequest;
 import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.utility.HttpClient;
@@ -131,7 +133,7 @@ public class ESBServiceProvider
       }
 
       // create dxi request to diff source and target dti
-      DiffDxiRequest dxiRequest = new DiffDxiRequest();
+      DfiRequest dxiRequest = new DfiRequest();
       dxiRequest.setSourceScopeName(sourceScopeName);
       dxiRequest.setSourceAppName(sourceAppName);
       dxiRequest.setTargetScopeName(targetScopeName);
@@ -297,7 +299,7 @@ public class ESBServiceProvider
       if (sourceDtos != null && targetDtos != null)
       {
         // request exchange service to compare changed DTOs
-        DiffDxoRequest dxoRequest = new DiffDxoRequest();
+        DfoRequest dxoRequest = new DfoRequest();
         dxoRequest.setSourceScopeName(sourceScopeName);
         dxoRequest.setSourceAppName(sourceAppName);
         dxoRequest.setTargetScopeName(targetScopeName);

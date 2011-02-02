@@ -13,7 +13,7 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Logger;
 import org.iringtools.directory.Directory;
-import org.iringtools.dxfr.datafilter.DataFilter;
+import org.iringtools.data.filter.DataFilter;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dto.DataTransferObjects;
 import org.iringtools.dxfr.request.ExchangeRequest;

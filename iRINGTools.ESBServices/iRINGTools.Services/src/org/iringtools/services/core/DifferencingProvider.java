@@ -14,8 +14,8 @@ import org.iringtools.dxfr.dto.DataTransferObjects;
 import org.iringtools.dxfr.dto.RoleObject;
 import org.iringtools.dxfr.dto.RoleType;
 import org.iringtools.dxfr.dto.TemplateObject;
-import org.iringtools.dxfr.request.DiffDxiRequest;
-import org.iringtools.dxfr.request.DiffDxoRequest;
+import org.iringtools.dxfr.request.DfiRequest;
+import org.iringtools.dxfr.request.DfoRequest;
 
 public class DifferencingProvider
 {
@@ -26,7 +26,7 @@ public class DifferencingProvider
     //this.settings = settings;
   }
 
-  public DataTransferIndices diff(DiffDxiRequest dxiRequest)
+  public DataTransferIndices diff(DfiRequest dxiRequest)
   {
     DataTransferIndices resultDtis = new DataTransferIndices();
     DataTransferIndexList resultDtiList = new DataTransferIndexList();
@@ -207,7 +207,7 @@ public class DifferencingProvider
   }
 
   // compare 2 DTO lists using in-line differencing - result will be saved in source DTO list
-  public DataTransferObjects diff(DiffDxoRequest dxoRequest) throws Exception
+  public DataTransferObjects diff(DfoRequest dxoRequest) throws Exception
   {
     /* determine source and target DTOs */
     List<DataTransferObjects> dtosList = dxoRequest.getDataTransferObjects();
