@@ -1810,7 +1810,10 @@ namespace org.iringtools.referenceData
 
             ID = template.identifier;
 
-            string sparql = prefixSparql;            
+            string sparql = prefixSparql;
+
+            sparql += "INSERT DATA {";
+
             QMXF existingQmxf = new QMXF();
 
             if (ID != null)
@@ -1862,27 +1865,13 @@ namespace org.iringtools.referenceData
                 {
                   string roleID = Utility.GetQNameFromUri(role.qualifies);
                   string roleLabel = string.Empty;
-                  string roleDescription = string.Empty;
-                  string generatedId = string.Empty;
-                  string genName = string.Empty;
 
-                  //ID generator
-                  genName = "Role definition " + roleLabel;
-                  /// TODO: change to template registry base
-                  if (_useExampleRegistryBase)
-                    generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], genName);
-                  else
-                    generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], genName);
-                  roleID = Utility.GetQNameFromUri(generatedId);
-
-                  //roleID = role.identifier;
                   foreach (QMXFName roleName in role.name)
                   {
                     roleLabel = roleName.value;
                     Utility.WriteString("\n" + roleID + "\t" + roleLabel, "RoleQual IDs.log", true);
 
-                    //roleDescription = role.description.value;
-                    roleDescription = String.Join(" ", role.description);
+                    sparql += roleID + " rdfs:label \"" + roleLabel + "\"^^xsd:string .\n";
                   }
                   //append role to sparql query
                   //value restriction
@@ -1894,7 +1883,7 @@ namespace org.iringtools.referenceData
                       roleValueAs = role.value.As.Replace(@"http://www.w3.org/2001/XMLSchema#", string.Empty);
                     }
 
-                    sparql += "_:role" + i + " rdf:type tpl:R67036823327 ; "
+                    sparql += roleID + " rdf:type tpl:R67036823327 ; "
                           + " tpl:R56456315674 " + ID + " ;\n"
                           + " tpl:R89867215482 " + roleID + " ;\n"
                           + " tpl:R29577887690 '" + role.value.text + "'^^xsd:" + roleValueAs + " .\n";
@@ -1915,11 +1904,11 @@ namespace org.iringtools.referenceData
                     //range restriction
                     sparql += roleID + " rdf:type tpl:R76288246068 ;\n"
                             + " tpl:R99672026745 " + ID + " ;\n"
-                            + " tpl:R91125890543 " + roleID + "> ; "
+                            + " tpl:R91125890543 " + roleID + " ;\n"
                             + " tpl:R98983340497 " + Utility.GetQNameFromUri(role.range) + " .\n";
                   }
-
                 }
+
                 //status
                 sparql += "_:status rdf:type tpl:R20247551573 ;\n"
                           + "tpl:R64574858717 " + ID + " ;\n"
@@ -1927,7 +1916,7 @@ namespace org.iringtools.referenceData
                           + "tpl:R61794465713 rdl:R3732211754 .\n";
                 sparql += "}";
                 //prefixSparql = prefixSparql.Insert(prefixSparql.LastIndexOf("."), "}").Remove(prefixSparql.Length - 1);
-                response = PostToRepository(repository, prefixSparql);
+                response = PostToRepository(repository, sparql);
               }
             }
               #endregion Form Insert SPARQL

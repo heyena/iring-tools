@@ -81,6 +81,7 @@ namespace org.iringtools.adapter.projection
     private RoleType _roleType = RoleType.Property;
     private string _valueListName = null;
 
+    public bool FullIndex { get; set; }
     public long Count { get; set; }
 
     public BasePart7ProjectionEngine()

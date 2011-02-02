@@ -52,7 +52,8 @@ namespace org.iringtools.adapter.projection
                    new XAttribute(XNamespace.Xmlns + "tpl", TPL_NS));
 
         if (_graphMap != null && _graphMap.classTemplateListMaps.Count > 0 &&
-          _dataObjects != null && _dataObjects.Count == 1)
+          _dataObjects != null && (_dataObjects.Count == 1 ||
+          FullIndex))
         {
           _classIdentifiersCache = new Dictionary<string, List<string>>();
           SetClassIdentifiers(DataDirection.Outbound);
@@ -63,7 +64,7 @@ namespace org.iringtools.adapter.projection
             CreateHierarchicalXml(xElement, pair, i);
           }
         }
-        if (_dataObjects != null && _dataObjects.Count > 1)
+        if (_dataObjects != null && _dataObjects.Count > 1 && !FullIndex)
         {
           xElement = new XElement(_appNamespace + Utility.TitleCase(graphName));
 

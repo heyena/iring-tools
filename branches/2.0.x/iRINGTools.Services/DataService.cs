@@ -70,6 +70,24 @@ namespace org.iringtools.services
     }
     #endregion
 
+    #region GetDictionary
+    /// <summary>
+    /// Gets the dictionary of data objects for the specified scope.
+    /// </summary>
+    /// <param name="projectName">Project name</param>
+    /// <param name="applicationName">Application name</param>
+    /// <returns>Returns a DataDictionary object.</returns>
+    [Description("Gets the dictionary of data objects for the specified scope.")]
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/dictionary")]
+    public DataDictionary GetDictionary(string projectName, string applicationName)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _adapterProvider.GetDictionary(projectName, applicationName);
+    }
+    #endregion
+
     #region Get
     /// <summary>
     /// Gets an XML projection of the specified scope, graph and identifier in the format (xml, dto, rdf ...) specified.
@@ -84,7 +102,7 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}?format={format}")]
     public XElement Get(string projectName, string applicationName, string graphName, string identifier, string format)
     {
-      XDocument xDocument = _adapterProvider.GetDataProjection(projectName, applicationName, graphName, identifier, format);
+      XDocument xDocument = _adapterProvider.GetDataProjection(projectName, applicationName, graphName, identifier, format, false);
 
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
@@ -103,10 +121,14 @@ namespace org.iringtools.services
     /// <param name="format">Format to be returned (xml, dto, rdf ...)</param>
     /// <returns>Returns an arbitrary XML</returns>
     [Description("Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/filter?format={format}&start={start}&limit={limit}")]
-    public XElement GetListWithFilter(string projectName, string applicationName, string graphName, DataFilter filter, string format, int start, int limit)
+    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/filter?format={format}&start={start}&limit={limit}&indexStyle={indexStyle}")]
+    public XElement GetListWithFilter(string projectName, string applicationName, string graphName, DataFilter filter, string format, int start, int limit, string indexStyle)
     {
-      XDocument xDocument = _adapterProvider.GetDataProjection(projectName, applicationName, graphName, filter, format, start, limit);
+      bool fullIndex = false;
+      if (indexStyle != null && indexStyle.ToUpper() == "FULL")
+        fullIndex = true;
+
+      XDocument xDocument = _adapterProvider.GetDataProjection(projectName, applicationName, graphName, filter, format, start, limit, fullIndex);
 
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
@@ -125,12 +147,16 @@ namespace org.iringtools.services
     /// <param name="format">Format to be returned (xml, dto, rdf ...)</param>
     /// <returns>Returns an arbitrary XML</returns>
     [Description("Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.")]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}")]
-    public XElement GetList(string projectName, string applicationName, string graphName, string format, int start, int limit, string sortOrder, string sortBy)
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
+    public XElement GetList(string projectName, string applicationName, string graphName, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
     {
       NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
 
-      XDocument xDocument = _adapterProvider.GetDataProjection(projectName, applicationName, graphName, format, start, limit, sortOrder, sortBy, parameters);
+      bool fullIndex = false;
+      if (indexStyle != null && indexStyle.ToUpper() == "FULL")
+        fullIndex = true;
+
+      XDocument xDocument = _adapterProvider.GetDataProjection(projectName, applicationName, graphName, format, start, limit, sortOrder, sortBy, fullIndex, parameters);
 
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";

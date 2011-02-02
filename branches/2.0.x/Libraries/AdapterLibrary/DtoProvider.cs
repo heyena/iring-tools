@@ -185,6 +185,7 @@ namespace org.iringtools.adapter
                     Name = roleMap.name,
                     DataType = roleMap.dataType,
                     Value = roleMap.value,
+                    NumberOfDecimals = roleMap.numberOfDecimals,
                   };
                   manifestTemplate.Roles.Add(manifestRole);
 

@@ -91,10 +91,5 @@ namespace iRINGTools.SDK.CSVDataLayer
           throw new Exception("Property [" + propertyName + "] does not exist.");
       }
     }
-
-    public IList<IDataObject> GetRelatedObjects(string relatedObjectType)
-    {
-      throw new NotImplementedException();
-    }
   }
 }

@@ -53,13 +53,6 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AdapterLibrary">
-      <HintPath>..\lib\iring-tools\AdapterLibrary.dll</HintPath>
-    </Reference>
-    <Reference Include="Ciloci.Flee, Version=0.9.26.0, Culture=neutral, PublicKeyToken=c8526a021ef298ed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\iring-tools\Ciloci.Flee.dll</HintPath>
-    </Reference>
     <Reference Include="iRINGLibrary, Version=2.0.1.2544, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\iring-tools\iRINGLibrary.dll</HintPath>
@@ -73,9 +66,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\iring-tools\Ninject.dll</HintPath>
     </Reference>
-    <Reference Include="StaticDust.Configuration, Version=1.0.0.0, Culture=neutral, PublicKeyToken=21c5f8854d868864">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\iring-tools\StaticDust.Configuration.dll</HintPath>
+    <Reference Include="StaticDust.Configuration">
+      <HintPath>..\lib\StaticDust.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">

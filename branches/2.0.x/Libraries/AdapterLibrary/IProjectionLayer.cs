@@ -12,6 +12,8 @@ namespace org.iringtools.adapter
   {
     long Count { get; set; }
 
+    bool FullIndex { get; set; } 
+
     XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects);
     IList<IDataObject> ToDataObjects(string graphName, ref XDocument xDocument);
   }
