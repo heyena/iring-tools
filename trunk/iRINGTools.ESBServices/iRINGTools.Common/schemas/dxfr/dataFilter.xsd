@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.iringtools.org/dxfr/dataFilter"
-  targetNamespace="http://www.iringtools.org/dxfr/dataFilter" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.iringtools.org/data/filter"
+  targetNamespace="http://www.iringtools.org/data/filter" elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
   jaxb:version="2.0" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc">
+
+
 
   <xs:annotation>
     <xs:appinfo>
@@ -46,15 +48,22 @@
 
   <xs:complexType name="Expression">
     <xs:sequence>
-      <xs:element name="OpenGroupCount" type="xs:int" />
+      <xs:element name="openGroupCount" type="xs:int" />
       <xs:element name="PropertyName" type="xs:string" />
       <xs:element name="relationalOperator" type="RelationalOperator" />
-      <xs:element name="Values" type="xs:string" maxOccurs="unbounded"/>
+      <xs:element name="values" type = "Values"/>
       <xs:element name="logicalOperator" type="LogicalOperator" />
-      <xs:element name="CloseGroupCount" type="xs:int" />
+      <xs:element name="closeGroupCount" type="xs:int" />
+      <xs:element name="isCaseSensitive" type="xs:boolean" />
     </xs:sequence>
   </xs:complexType>
 
+  <xs:complexType name="Values">
+    <xs:sequence>
+      <xs:element name="value" type="xs:string" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  
   <xs:simpleType name="RelationalOperator">
     <xs:restriction base="xs:string">
       <xs:enumeration value="EqualTo" />
