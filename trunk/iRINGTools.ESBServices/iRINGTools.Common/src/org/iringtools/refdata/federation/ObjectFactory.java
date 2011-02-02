@@ -30,19 +30,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Repositories }
+     * Create an instance of {@link IDGenerators }
      * 
      */
-    public Repositories createRepositories() {
-        return new Repositories();
-    }
-
-    /**
-     * Create an instance of {@link IDGenerator }
-     * 
-     */
-    public IDGenerator createIDGenerator() {
-        return new IDGenerator();
+    public IDGenerators createIDGenerators() {
+        return new IDGenerators();
     }
 
     /**
@@ -54,27 +46,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Namespace }
+     * Create an instance of {@link IDGenerator }
      * 
      */
-    public Namespace createNamespace() {
-        return new Namespace();
-    }
-
-    /**
-     * Create an instance of {@link IDGenerators }
-     * 
-     */
-    public IDGenerators createIDGenerators() {
-        return new IDGenerators();
-    }
-
-    /**
-     * Create an instance of {@link Federation }
-     * 
-     */
-    public Federation createFederation() {
-        return new Federation();
+    public IDGenerator createIDGenerator() {
+        return new IDGenerator();
     }
 
     /**
@@ -86,11 +62,35 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Repositories }
+     * 
+     */
+    public Repositories createRepositories() {
+        return new Repositories();
+    }
+
+    /**
+     * Create an instance of {@link Namespace }
+     * 
+     */
+    public Namespace createNamespace() {
+        return new Namespace();
+    }
+
+    /**
      * Create an instance of {@link NamespaceList }
      * 
      */
     public NamespaceList createNamespaceList() {
         return new NamespaceList();
+    }
+
+    /**
+     * Create an instance of {@link Federation }
+     * 
+     */
+    public Federation createFederation() {
+        return new Federation();
     }
 
 }

@@ -11,18 +11,17 @@ import org.iringtools.dxfr.manifest.Manifest;
 
 
 /**
- * <p>Java class for DtoPageRequest complex type.
+ * <p>Java class for DxoRequest complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="DtoPageRequest">
+ * &lt;complexType name="DxoRequest">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="manifest" type="{http://www.iringtools.org/dxfr/manifest}Manifest"/>
  *         &lt;element name="dataTransferIndices" type="{http://www.iringtools.org/dxfr/dti}DataTransferIndices"/>
- *         &lt;element name="hashAlgorithm" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -32,20 +31,17 @@ import org.iringtools.dxfr.manifest.Manifest;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "DtoPageRequest", propOrder = {
+@XmlType(name = "DxoRequest", propOrder = {
     "manifest",
-    "dataTransferIndices",
-    "hashAlgorithm"
+    "dataTransferIndices"
 })
-@XmlRootElement(name = "dtoPageRequest")
-public class DtoPageRequest {
+@XmlRootElement(name = "dxoRequest")
+public class DxoRequest {
 
     @XmlElement(required = true)
     protected Manifest manifest;
     @XmlElement(required = true)
     protected DataTransferIndices dataTransferIndices;
-    @XmlElement(required = true)
-    protected String hashAlgorithm;
 
     /**
      * Gets the value of the manifest property.
@@ -93,30 +89,6 @@ public class DtoPageRequest {
      */
     public void setDataTransferIndices(DataTransferIndices value) {
         this.dataTransferIndices = value;
-    }
-
-    /**
-     * Gets the value of the hashAlgorithm property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getHashAlgorithm() {
-        return hashAlgorithm;
-    }
-
-    /**
-     * Sets the value of the hashAlgorithm property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setHashAlgorithm(String value) {
-        this.hashAlgorithm = value;
     }
 
 }

@@ -70,7 +70,7 @@ public class ESBService extends AbstractService
   }
 
   @POST
-  @Path("/{scope}/exchanges/{id}")
+  @Path("/{scope}/exchanges/{id}/page")
   @Consumes("application/xml")
   public DataTransferObjects getDataTransferObjects(@PathParam("scope") String scope, @PathParam("id") String id,
       DataTransferIndices dataTransferIndices)
