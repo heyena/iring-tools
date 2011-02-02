@@ -30,11 +30,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Role }
+     * Create an instance of {@link Roles }
      * 
      */
-    public Role createRole() {
-        return new Role();
+    public Roles createRoles() {
+        return new Roles();
+    }
+
+    /**
+     * Create an instance of {@link Templates }
+     * 
+     */
+    public Templates createTemplates() {
+        return new Templates();
     }
 
     /**
@@ -46,35 +54,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Template }
+     * Create an instance of {@link Role }
      * 
      */
-    public Template createTemplate() {
-        return new Template();
-    }
-
-    /**
-     * Create an instance of {@link Graph }
-     * 
-     */
-    public Graph createGraph() {
-        return new Graph();
-    }
-
-    /**
-     * Create an instance of {@link ClassTemplatesList }
-     * 
-     */
-    public ClassTemplatesList createClassTemplatesList() {
-        return new ClassTemplatesList();
-    }
-
-    /**
-     * Create an instance of {@link ClassTemplates }
-     * 
-     */
-    public ClassTemplates createClassTemplates() {
-        return new ClassTemplates();
+    public Role createRole() {
+        return new Role();
     }
 
     /**
@@ -86,11 +70,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Roles }
+     * Create an instance of {@link ClassTemplatesList }
      * 
      */
-    public Roles createRoles() {
-        return new Roles();
+    public ClassTemplatesList createClassTemplatesList() {
+        return new ClassTemplatesList();
     }
 
     /**
@@ -102,11 +86,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Templates }
+     * Create an instance of {@link ClassTemplates }
      * 
      */
-    public Templates createTemplates() {
-        return new Templates();
+    public ClassTemplates createClassTemplates() {
+        return new ClassTemplates();
+    }
+
+    /**
+     * Create an instance of {@link Graph }
+     * 
+     */
+    public Graph createGraph() {
+        return new Graph();
+    }
+
+    /**
+     * Create an instance of {@link Template }
+     * 
+     */
+    public Template createTemplate() {
+        return new Template();
     }
 
 }

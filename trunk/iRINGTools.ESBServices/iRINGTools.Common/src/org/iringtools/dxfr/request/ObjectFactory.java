@@ -30,11 +30,43 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link DfoRequest }
+     * 
+     */
+    public DfoRequest createDfoRequest() {
+        return new DfoRequest();
+    }
+
+    /**
      * Create an instance of {@link DxiRequest }
      * 
      */
     public DxiRequest createDxiRequest() {
         return new DxiRequest();
+    }
+
+    /**
+     * Create an instance of {@link DtoPageRequest }
+     * 
+     */
+    public DtoPageRequest createDtoPageRequest() {
+        return new DtoPageRequest();
+    }
+
+    /**
+     * Create an instance of {@link DfiRequest }
+     * 
+     */
+    public DfiRequest createDfiRequest() {
+        return new DfiRequest();
+    }
+
+    /**
+     * Create an instance of {@link ExchangeRequest }
+     * 
+     */
+    public ExchangeRequest createExchangeRequest() {
+        return new ExchangeRequest();
     }
 
 }

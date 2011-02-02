@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="openGroupCount" type="{http://www.w3.org/2001/XMLSchema}int"/>
- *         &lt;element name="PropertyName" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="propertyName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="relationalOperator" type="{http://www.iringtools.org/data/filter}RelationalOperator"/>
  *         &lt;element name="values" type="{http://www.iringtools.org/data/filter}Values"/>
  *         &lt;element name="logicalOperator" type="{http://www.iringtools.org/data/filter}LogicalOperator"/>
@@ -45,7 +45,7 @@ import javax.xml.bind.annotation.XmlType;
 public class Expression {
 
     protected int openGroupCount;
-    @XmlElement(name = "PropertyName", required = true)
+    @XmlElement(required = true)
     protected String propertyName;
     @XmlElement(required = true)
     protected RelationalOperator relationalOperator;
