@@ -1,14 +1,13 @@
 package org.iringtools.controllers;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.struts2.interceptor.SessionAware;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.models.AppdataModel;
+import org.iringtools.models.DataFilterContainer;
 import org.iringtools.ui.widgets.grid.Grid;
 import org.iringtools.ui.widgets.grid.Rows;
-import org.iringtools.utility.JsonUtil;
 
 import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionSupport;
@@ -31,8 +30,9 @@ public class AppdataController extends ActionSupport implements SessionAware
 	private int start=0;
 	private int limit=20;
 	private String filter; 
-	private String sortBy;
-	private String sortOrder;
+	private String sort;
+	private String dir;
+	private DataFilterContainer dataFilterContainer;
 	
 	
 
@@ -83,24 +83,24 @@ public class AppdataController extends ActionSupport implements SessionAware
 		return filter;
 	}	
 	
-	public void setSortOrder(String sortOrder) {
+	public void setDir(String dir) {
 		
-		this.sortOrder = sortOrder;
+		this.dir = dir;
 		
 	}
 
-	public String getSortOrder() {
-		return sortOrder;
+	public String getDir() {
+		return dir;
 	}
 	
-	public void setSortBy(String sortBy) {
+	public void setSort(String sort) {
 		
-		this.sortOrder = sortBy;
+		this.sort = sort;
 		
 	}
 
-	public String getSortBy() {
-		return sortBy;
+	public String getSort() {
+		return sort;
 	}
 	
 	public void setRelatedId(String relatedId) {
@@ -160,10 +160,10 @@ public class AppdataController extends ActionSupport implements SessionAware
 	}
 
 	public void getExchDtiList() {
-		key = scopeName + appName + graphName;		
-		
+		key = scopeName + appName + graphName + filter + sort + dir;		
+		dataFilterContainer = new DataFilterContainer(filter, dir, sort);
 		if (session.get(key) == null)
-			session.put(key, appdata.populate(scopeName, appName, graphName));
+			session.put(key, appdata.populateFilter(scopeName, appName, graphName, dataFilterContainer.getDataFilter()));
 		else {
 			appdata.setDtiList(((DataTransferIndices)session.get(key)).getDataTransferIndexList().getItems());
 			appdata.setDtoUrl("/" + scopeName + "/" + appName + "/" + graphName);
@@ -171,16 +171,7 @@ public class AppdataController extends ActionSupport implements SessionAware
 	}
 	
 	
-	public void getExchFilterDtiList() {
-		key = scopeName + appName + graphName + filter + sortOrder + sortBy;		
-		
-		if (session.get(key) == null)
-			session.put(key, appdata.populateFilter(scopeName, appName, graphName, filter, sortOrder, sortBy));
-		else {
-			appdata.setDtiList(((DataTransferIndices)session.get(key)).getDataTransferIndexList().getItems());
-			appdata.setDtoUrl("/" + scopeName + "/" + appName + "/" + graphName);
-		}
-	}
+	
 	
 	public String getAppDataGrid() {
 		getExchDtiList();
@@ -189,10 +180,7 @@ public class AppdataController extends ActionSupport implements SessionAware
 	}
 
 	public String getAppDataRows() {
-		if (filter == null && sortOrder == null && sortBy == null)
-			getExchDtiList();
-		else
-			getExchFilterDtiList();
+		getExchDtiList();
 		rows = appdata.toRows(start, limit);		
 		return Action.SUCCESS;
 	}

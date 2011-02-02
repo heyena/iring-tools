@@ -616,7 +616,7 @@ TODO: lazy rendering
                 var d = [].concat(f.serialize());
                 for (i = 0, len = d.length; i < len; i++) {
                     filters.push({
-                        field: f.dataIndex,                        
+                        field: f.dataIndex,
                         data: d[i]
                     });
                 }
