@@ -782,7 +782,7 @@ namespace org.iringtools.library
     [DataMember(Name = "openGroupCount", Order = 0, EmitDefaultValue = false)]
     public int OpenGroupCount { get; set; }
 
-    [DataMember(Name = "PropertyName", Order = 1, IsRequired = true)]
+    [DataMember(Name = "propertyName", Order = 1, IsRequired = true)]
     public string PropertyName { get; set; }
 
     [DataMember(Name = "relationalOperator", Order = 2, IsRequired = true)]
@@ -807,7 +807,7 @@ namespace org.iringtools.library
   [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "orderExpression")]
   public class OrderExpression
   {
-    [DataMember(Name = "PropertyName", Order = 0, IsRequired = true)]
+    [DataMember(Name = "propertyName", Order = 0, IsRequired = true)]
     public string PropertyName { get; set; }
 
     [DataMember(Name = "sortOrder", Order = 1, EmitDefaultValue = false)]

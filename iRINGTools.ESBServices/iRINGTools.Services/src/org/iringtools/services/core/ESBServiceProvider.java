@@ -45,7 +45,7 @@ import org.iringtools.dxfr.manifest.Template;
 import org.iringtools.dxfr.manifest.TransferOption;
 import org.iringtools.dxfr.request.DfiRequest;
 import org.iringtools.dxfr.request.DfoRequest;
-import org.iringtools.dxfr.request.DtoPageRequest;
+import org.iringtools.dxfr.request.DxoRequest;
 import org.iringtools.dxfr.request.DxiRequest;
 import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
@@ -107,14 +107,14 @@ public class ESBServiceProvider
       initExchangeDefinition(scope, id);
 
       Manifest crossedManifest = getCrossedManifest();
-      DxiRequest filterDxiRequest = new DxiRequest();
+      DxiRequest dxiRequest = new DxiRequest();
       
-      filterDxiRequest.setDataFilter(dataFilter);
-      filterDxiRequest.setManifest(crossedManifest);
+      dxiRequest.setDataFilter(dataFilter);
+      dxiRequest.setManifest(crossedManifest);
       
       // get source dti
       String sourceDtiUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName + "/dxi/filter?hashAlgorithm=" + hashAlgorithm;
-      DataTransferIndices sourceDtis = httpClient.post(DataTransferIndices.class, sourceDtiUrl, filterDxiRequest);
+      DataTransferIndices sourceDtis = httpClient.post(DataTransferIndices.class, sourceDtiUrl, dxiRequest);
       
       if (sourceDtis != null)
       {
@@ -124,7 +124,7 @@ public class ESBServiceProvider
 
       // get target dti
       String targetDtiUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName + "/dxi/filter?hashAlgorithm=" + hashAlgorithm;
-      DataTransferIndices targetDtis = httpClient.post(DataTransferIndices.class, targetDtiUrl, filterDxiRequest);
+      DataTransferIndices targetDtis = httpClient.post(DataTransferIndices.class, targetDtiUrl, dxiRequest);
       
       if (targetDtis != null)
       {
@@ -133,17 +133,17 @@ public class ESBServiceProvider
       }
 
       // create dxi request to diff source and target dti
-      DfiRequest dxiRequest = new DfiRequest();
-      dxiRequest.setSourceScopeName(sourceScopeName);
-      dxiRequest.setSourceAppName(sourceAppName);
-      dxiRequest.setTargetScopeName(targetScopeName);
-      dxiRequest.setTargetAppName(targetAppName);
-      dxiRequest.getDataTransferIndicies().add(sourceDtis);
-      dxiRequest.getDataTransferIndicies().add(targetDtis);
+      DfiRequest dfiRequest = new DfiRequest();
+      dfiRequest.setSourceScopeName(sourceScopeName);
+      dfiRequest.setSourceAppName(sourceAppName);
+      dfiRequest.setTargetScopeName(targetScopeName);
+      dfiRequest.setTargetAppName(targetAppName);
+      dfiRequest.getDataTransferIndicies().add(sourceDtis);
+      dfiRequest.getDataTransferIndicies().add(targetDtis);
 
       // request exchange service to diff the dti
       String dxiUrl = settings.get("differencingServiceUri") + "/dxi";
-      dxiList = httpClient.post(DataTransferIndices.class, dxiUrl, dxiRequest);
+      dxiList = httpClient.post(DataTransferIndices.class, dxiUrl, dfiRequest);
     }
     catch (Exception ex)
     {
@@ -198,16 +198,16 @@ public class ESBServiceProvider
       // get source DTOs
       if (sourceDtiListItems.size() > 0)
       {
-        DtoPageRequest sourceDtoPageRequest = new DtoPageRequest();
-        sourceDtoPageRequest.setManifest(crossedManifest);
+        DxoRequest sourceDxoRequest = new DxoRequest();
+        sourceDxoRequest.setManifest(crossedManifest);
         DataTransferIndices sourceDataTransferIndices = new DataTransferIndices();
         DataTransferIndexList sourceDtiList = new DataTransferIndexList();        
         sourceDtiList.setItems(sourceDtiListItems);
         sourceDataTransferIndices.setDataTransferIndexList(sourceDtiList);
-        sourceDtoPageRequest.setDataTransferIndices(sourceDataTransferIndices);
+        sourceDxoRequest.setDataTransferIndices(sourceDataTransferIndices);
 
         String sourceDtoUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName + "/dxo";
-        sourceDtos = httpClient.post(DataTransferObjects.class, sourceDtoUrl, sourceDtoPageRequest);
+        sourceDtos = httpClient.post(DataTransferObjects.class, sourceDtoUrl, sourceDxoRequest);
         
         if (sourceDtos != null)
         {
@@ -253,16 +253,16 @@ public class ESBServiceProvider
       // get target DTOs
       if (targetDtiListItems.size() > 0)
       {
-        DtoPageRequest targetDtoPageRequest = new DtoPageRequest();
-        targetDtoPageRequest.setManifest(crossedManifest);
+        DxoRequest targetDxoRequest = new DxoRequest();
+        targetDxoRequest.setManifest(crossedManifest);
         DataTransferIndices targetDataTransferIndices = new DataTransferIndices();
         DataTransferIndexList targetDtiList = new DataTransferIndexList();
         targetDtiList.setItems(targetDtiListItems);
         targetDataTransferIndices.setDataTransferIndexList(targetDtiList);
-        targetDtoPageRequest.setDataTransferIndices(targetDataTransferIndices);
+        targetDxoRequest.setDataTransferIndices(targetDataTransferIndices);
 
         String targetDtoUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName + "/dxo";
-        targetDtos = httpClient.post(DataTransferObjects.class, targetDtoUrl, targetDtoPageRequest);
+        targetDtos = httpClient.post(DataTransferObjects.class, targetDtoUrl, targetDxoRequest);
         
         if (targetDtos != null)
         {
@@ -299,16 +299,16 @@ public class ESBServiceProvider
       if (sourceDtos != null && targetDtos != null)
       {
         // request exchange service to compare changed DTOs
-        DfoRequest dxoRequest = new DfoRequest();
-        dxoRequest.setSourceScopeName(sourceScopeName);
-        dxoRequest.setSourceAppName(sourceAppName);
-        dxoRequest.setTargetScopeName(targetScopeName);
-        dxoRequest.setTargetAppName(targetAppName);
-        dxoRequest.getDataTransferObjects().add(sourceDtos);
-        dxoRequest.getDataTransferObjects().add(targetDtos);
+        DfoRequest dfoRequest = new DfoRequest();
+        dfoRequest.setSourceScopeName(sourceScopeName);
+        dfoRequest.setSourceAppName(sourceAppName);
+        dfoRequest.setTargetScopeName(targetScopeName);
+        dfoRequest.setTargetAppName(targetAppName);
+        dfoRequest.getDataTransferObjects().add(sourceDtos);
+        dfoRequest.getDataTransferObjects().add(targetDtos);
 
         String dxoUrl = settings.get("differencingServiceUri") + "/dxo";
-        DataTransferObjects dxoList = httpClient.post(DataTransferObjects.class, dxoUrl, dxoRequest);
+        DataTransferObjects dxoList = httpClient.post(DataTransferObjects.class, dxoUrl, dfoRequest);
 
         // add diff DTOs to add/change/sync list
         if (dxoList != null)
@@ -408,16 +408,16 @@ public class ESBServiceProvider
         if (sourcePoolDtiList.size() > 0)
         {
           // request source DTOs
-          DtoPageRequest poolDtosRequest = new DtoPageRequest();
-          poolDtosRequest.setManifest(crossedManifest);
+          DxoRequest poolDxoRequest = new DxoRequest();
+          poolDxoRequest.setManifest(crossedManifest);
           DataTransferIndices poolDataTransferIndices = new DataTransferIndices();
-          poolDtosRequest.setDataTransferIndices(poolDataTransferIndices);
+          poolDxoRequest.setDataTransferIndices(poolDataTransferIndices);
           DataTransferIndexList poolDtiList = new DataTransferIndexList();
           poolDataTransferIndices.setDataTransferIndexList(poolDtiList);
           poolDtiList.setItems(sourcePoolDtiList);
           
           String sourceDtoUrl = sourceGraphUrl + "/dxo";
-          DataTransferObjects poolDtos = httpClient.post(DataTransferObjects.class, sourceDtoUrl, poolDtosRequest);
+          DataTransferObjects poolDtos = httpClient.post(DataTransferObjects.class, sourceDtoUrl, poolDxoRequest);
           List<DataTransferObject> poolDtoListItems = poolDtos.getDataTransferObjectList().getItems();
   
           // set transfer type for each DTO : poolDtoList and remove/report ones that have changed

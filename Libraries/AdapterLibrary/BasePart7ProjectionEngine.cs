@@ -414,44 +414,43 @@ namespace org.iringtools.adapter.projection
     {
       try
       {
-        if (filter == null || filter.Expressions == null || filter.OrderExpressions == null)
-          throw new Exception("Invalid DataFilter.");
-
         _graphMap = _mapping.FindGraphMap(graph);
-
         DataObject _dataObject = dictionary.DataObjects.Find(o => o.ObjectName == _graphMap.dataObjectName);
 
-        foreach (Expression expression in filter.Expressions)
+        if (filter != null && filter.Expressions != null && filter.OrderExpressions != null)
         {
-          string[] propertyNameParts = expression.PropertyName.Split('.');
-          string dataPropertyName = ProjectPropertyName(propertyNameParts, 0, null);
-          expression.PropertyName = RemoveDataPropertyAlias(dataPropertyName);
-          if (_roleType == RoleType.ObjectProperty)
+          foreach (Expression expression in filter.Expressions)
           {
-            if (expression.RelationalOperator == RelationalOperator.EqualTo)
+            string[] propertyNameParts = expression.PropertyName.Split('.');
+            string dataPropertyName = ProjectPropertyName(propertyNameParts);
+            expression.PropertyName = RemoveDataPropertyAlias(dataPropertyName);
+            if (_roleType == RoleType.ObjectProperty)
             {
-              expression.Values = ProjectPropertValues(expression.Values);
-              expression.RelationalOperator = RelationalOperator.In;
-            }
-            else if (expression.RelationalOperator == RelationalOperator.In)
-            {
-              expression.Values = ProjectPropertValues(expression.Values);
-            }
-            else
-            {
-              throw new Exception(
-                "Invalid Expression in DataFilter. " +
-                "Object Property Roles can only use EqualTo and In in the expression."
-              );
+              if (expression.RelationalOperator == RelationalOperator.EqualTo)
+              {
+                expression.Values = ProjectPropertValues(expression.Values);
+                expression.RelationalOperator = RelationalOperator.In;
+              }
+              else if (expression.RelationalOperator == RelationalOperator.In)
+              {
+                expression.Values = ProjectPropertValues(expression.Values);
+              }
+              else
+              {
+                throw new Exception(
+                  "Invalid Expression in DataFilter. " +
+                  "Object Property Roles can only use EqualTo and In in the expression."
+                );
+              }
             }
           }
-        }
 
-        foreach (OrderExpression orderExpression in filter.OrderExpressions)
-        {
-          string[] propertyNameParts = orderExpression.PropertyName.Split('.');
-          string dataPropertyName = ProjectPropertyName(propertyNameParts, 0, null);
-          orderExpression.PropertyName = RemoveDataPropertyAlias(dataPropertyName);
+          foreach (OrderExpression orderExpression in filter.OrderExpressions)
+          {
+            string[] propertyNameParts = orderExpression.PropertyName.Split('.');
+            string dataPropertyName = ProjectPropertyName(propertyNameParts);
+            orderExpression.PropertyName = RemoveDataPropertyAlias(dataPropertyName);
+          }
         }
       }
       catch (Exception ex)
@@ -490,44 +489,31 @@ namespace org.iringtools.adapter.projection
       return dataValues;
     }
 
+    //THIS ASSUMES CLASS IS ONLY USED ONCE
     //resolve the propertyName expression into data object propertyName
-    public string ProjectPropertyName(string[] propertyNameParts, int index, string classId)
+    public string ProjectPropertyName(string[] propertyNameParts)
     {
       string dataPropertyName = String.Empty;
 
-      string templateName = propertyNameParts[index];
-      string roleName = propertyNameParts[index + 1];
+      string className = propertyNameParts[0];
+      string templateName = propertyNameParts[1];
+      string roleName = propertyNameParts[2];
 
-      List<TemplateMap> templateMaps = null;
-      if (!String.IsNullOrEmpty(classId))
-      {
-        templateMaps = _graphMap.classTemplateMaps.Find(ctm => ctm.classMap.id == classId).templateMaps;
-      }
-      else
-      {
-        templateMaps = _graphMap.classTemplateMaps.First().templateMaps;
-      }
+      ClassTemplateMap classTemplateMap = _graphMap.classTemplateMaps.Find(
+        cm => Utility.TitleCase(cm.classMap.name).ToUpper() == className.ToUpper());
 
+      ClassMap classMap = classTemplateMap.classMap;
+      List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
       TemplateMap templateMap = templateMaps.Find(tm => tm.name == templateName);
+
       RoleMap roleMap = templateMap.roleMaps.Find(rm => rm.name == roleName);
 
       switch (roleMap.type)
       {
         case RoleType.DataProperty:
-          //if last part...
-          if (propertyNameParts.Count() == index + 2)
-          {
-            dataPropertyName = roleMap.propertyName;
-            _roleType = RoleType.DataProperty;
-            _valueListName = null;
-          }
-          else
-          {
-            throw new Exception(String.Format(
-              "Invalid PropertyName Expression in DataFilter.  Data Property Role ({0}) must be the last role in the expression.",
-              roleName)
-            );
-          }
+          dataPropertyName = roleMap.propertyName;
+          _roleType = RoleType.DataProperty;
+          _valueListName = null;
           break;
 
         case RoleType.FixedValue:
@@ -537,71 +523,40 @@ namespace org.iringtools.adapter.projection
            );
 
         case RoleType.ObjectProperty:
-          //if last part...
-          if (propertyNameParts.Count() == index + 2)
-          {
-            dataPropertyName = roleMap.propertyName;
-            _roleType = RoleType.ObjectProperty;
-            _valueListName = roleMap.valueListName;
-          }
-          else
-          {
-            throw new Exception(String.Format(
-              "Invalid PropertyName Expression in DataFilter.  Data Property Role ({0}) must be the last role in the expression.",
-              roleName)
-            );
-          }
+          dataPropertyName = roleMap.propertyName;
+          _roleType = RoleType.ObjectProperty;
+          _valueListName = roleMap.valueListName;
           break;
 
         case RoleType.Possessor:
           throw new Exception(String.Format(
             "Invalid PropertyName Expression in DataFilter.  Possessor Role ({0}) is not allowed in the expression.",
             roleName)
-            );
+          );
 
         case RoleType.Property:
           //if last part...
-          if (propertyNameParts.Count() == index + 2)
+          dataPropertyName = roleMap.propertyName;
+
+          if (String.IsNullOrEmpty(roleMap.valueListName))
           {
             dataPropertyName = roleMap.propertyName;
-
-            if (String.IsNullOrEmpty(roleMap.valueListName))
-            {
-              dataPropertyName = roleMap.propertyName;
-              _roleType = RoleType.DataProperty;
-              _valueListName = null;
-            }
-            else
-            {
-              dataPropertyName = roleMap.propertyName;
-              _roleType = RoleType.ObjectProperty;
-              _valueListName = roleMap.valueListName;
-            }
+            _roleType = RoleType.DataProperty;
+            _valueListName = null;
           }
           else
           {
-            throw new Exception(String.Format(
-              "Invalid PropertyName Expression in DataFilter.  Data Property Role ({0}) must be the last role in the expression.",
-              roleName)
-            );
+            dataPropertyName = roleMap.propertyName;
+            _roleType = RoleType.ObjectProperty;
+            _valueListName = roleMap.valueListName;
           }
           break;
 
         case RoleType.Reference:
-          //call self recursively
-          if (roleMap.classMap != null)
-          {
-            string relatedClassId = roleMap.classMap.id;
-            dataPropertyName = ProjectPropertyName(propertyNameParts, index + 2, relatedClassId);
-          }
-          else
-          {
-            throw new Exception(String.Format(
-              "Invalid PropertyName Expression in DataFilter.  Reference Role ({0}) must lead to a ClassMap.",
-              roleName)
-            );
-          }
-          break;
+          throw new Exception(String.Format(
+            "Invalid PropertyName Expression in DataFilter.  Reference Role ({0}) is not allowed in the expression.",
+            roleName)
+          );
       }
 
       return dataPropertyName;

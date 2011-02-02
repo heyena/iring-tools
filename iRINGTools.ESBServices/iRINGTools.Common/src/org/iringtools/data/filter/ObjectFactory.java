@@ -30,11 +30,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link OrderExpressionList }
+     * Create an instance of {@link Values }
      * 
      */
-    public OrderExpressionList createOrderExpressionList() {
-        return new OrderExpressionList();
+    public Values createValues() {
+        return new Values();
     }
 
     /**
@@ -46,11 +46,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Values }
+     * Create an instance of {@link OrderExpressionList }
      * 
      */
-    public Values createValues() {
-        return new Values();
+    public OrderExpressionList createOrderExpressionList() {
+        return new OrderExpressionList();
     }
 
     /**

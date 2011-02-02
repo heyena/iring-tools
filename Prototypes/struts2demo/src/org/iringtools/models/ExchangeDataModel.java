@@ -32,10 +32,11 @@ public class ExchangeDataModel extends DataModel
   
   public Grid getDtoGrid(String serviceUri, String scope, String exchangeId, int start, int limit)
   {
-    String relativePath = "/" + scope + "/exchanges/" + exchangeId;
-    DataTransferObjects pageDtos = getPageDtos(serviceUri, relativePath, relativePath, start, limit);
+    String dtiRelativePath = "/" + scope + "/exchanges/" + exchangeId;
+    String dtoRelativePath = dtiRelativePath + "/page";
+    DataTransferObjects pageDtos = getPageDtos(serviceUri, dtiRelativePath, dtoRelativePath, start, limit);
     Grid pageDtoGrid = getDtoGrid(DataType.EXCHANGE, pageDtos);
-    DataTransferIndices dtis = getDtis(serviceUri, relativePath);
+    DataTransferIndices dtis = getDtis(serviceUri, dtiRelativePath);
     pageDtoGrid.setTotal(dtis.getDataTransferIndexList().getItems().size());    
     return pageDtoGrid;
   }
@@ -43,8 +44,9 @@ public class ExchangeDataModel extends DataModel
   public Grid getRelatedItemGrid(String serviceUri, String scope, String exchangeId,
       String dtoIdentifier, String classId, String classIdentifier, int start, int limit)
   {
-    String relativePath = "/" + scope + "/exchanges/" + exchangeId;
-    DataTransferObject dto = getDto(serviceUri, relativePath, relativePath, dtoIdentifier);  
+    String dtiRelativePath = "/" + scope + "/exchanges/" + exchangeId;
+    String dtoRelativePath = dtiRelativePath + "/page";
+    DataTransferObject dto = getDto(serviceUri, dtiRelativePath, dtoRelativePath, dtoIdentifier);  
     return getRelatedItemGrid(DataType.EXCHANGE, dto, classId, classIdentifier, start, limit);
   }
   

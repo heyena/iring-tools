@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.apache.struts2.json.JSONException;
 import org.apache.struts2.json.JSONUtil;
+import org.iringtools.data.filter.DataFilter;
 import org.iringtools.dxfr.dti.DataTransferIndex;
 import org.iringtools.dxfr.dti.DataTransferIndexList;
 import org.iringtools.dxfr.dti.DataTransferIndices;
@@ -52,7 +53,8 @@ public class DataModel
       else
       {
         HttpClient httpClient = new HttpClient(serviceUri);
-        dtis = httpClient.get(DataTransferIndices.class, relativePath);
+        DataFilter dataFilter = new DataFilter();
+        dtis = httpClient.post(DataTransferIndices.class, relativePath, dataFilter);
         session.put(dtiKey, dtis);
       }
     }
