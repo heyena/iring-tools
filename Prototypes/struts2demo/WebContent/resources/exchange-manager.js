@@ -41,7 +41,13 @@ function createGridPane(store, pageSize){
         options: [25, 50, 100, 200, 500], 
         prependCombo: true})
       ]
-    })
+    }),
+    plugins : [new Ext.ux.grid.GridFilters({
+      //remotesort: true,
+      //local: false,
+      encode: true,
+      filters: store.reader.filters 
+    })]
   });
   return gridPane;
 }

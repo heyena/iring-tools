@@ -6,6 +6,8 @@ public class Field
   protected String type;
   protected int width;
   protected boolean fixed = false; // fixed width
+  protected boolean filterable = true;
+  protected boolean sortable = true;
   
   public void setName(String name)
   {
@@ -45,5 +47,25 @@ public class Field
   public boolean getFixed()
   {
     return fixed;
+  }
+
+  public void setFilterable(boolean filterable)
+  {
+    this.filterable = filterable;
+  }
+
+  public boolean getFilterable()
+  {
+    return filterable;
+  }
+
+  public void setSortable(boolean sortable)
+  {
+    this.sortable = sortable;
+  }
+
+  public boolean getSortable()
+  {
+    return sortable;
   } 
 }

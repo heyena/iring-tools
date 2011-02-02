@@ -11,15 +11,28 @@ Ext.data.DynamicGridReader = Ext.extend(Ext.data.JsonReader, {
     this.label = store.label;
     this.description = store.description;
     this.recordType = Ext.data.Record.create(fields);
-    
-    var records = [];    
+     
+    var records = [];
     for (var i = 0; i < data.length; i++) {
       var values = {};
+      
       for (var j = 0; j < fields.length; j++) {
         values[fields[j].name] = data[i][j];    
       }
+      
       records[i] = new Ext.data.Record(values, i);
     }
+    
+    var filters = [];
+    for (var i = 0; i < fields.length; i++) {      
+      if (fields[i].filterable) {
+        filters.push({
+          type: fields[i].type,
+          dataIndex: fields[i].name
+        });
+      }
+    }  
+    this.filters = filters;
 
     return {
       records: records,
@@ -54,13 +67,14 @@ Ext.grid.DynamicColumnModel = Ext.extend(Ext.grid.ColumnModel, {
         else {
           renderer = Ext.util.Format.numberRenderer('0,000');
         }
+        
         align = 'right';
       }
     
       columns[i] = {
         header: field.name,
         dataIndex: field.name,
-        sortable: true,
+        sortable: field.sortable,
         renderer: renderer,
         align: align
       };
@@ -68,6 +82,7 @@ Ext.grid.DynamicColumnModel = Ext.extend(Ext.grid.ColumnModel, {
       if (field.fixed) {
         columns[i].fixed = true;
         columns[i].width = field.width;
+        columns[i].menuDisabled = true;
       }
     }
     
@@ -75,7 +90,7 @@ Ext.grid.DynamicColumnModel = Ext.extend(Ext.grid.ColumnModel, {
   }
 });
 
-// capture DOM events that are not handled by extjs components
+// capture DOM events including the ones that are not handled by extjs components
 Ext.DomObserver = Ext.extend(Object, {
   constructor: function(config) {
     this.listeners = config.listeners ? config.listeners : config;

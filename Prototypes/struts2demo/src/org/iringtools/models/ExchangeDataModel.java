@@ -210,20 +210,20 @@ public class ExchangeDataModel extends DataModel
     List<List<String>> data = new ArrayList<List<String>>();
     xlogsGrid.setData(data);
     
-    Field dateField = new Field();
-    dateField.setName("Timestamp");
-    dateField.setType("string");
-    fields.add(dateField);
+    Field field = new Field();
+    field.setName("Timestamp");
+    field.setType("string");
+    fields.add(field);
     
-    Field identifierField = new Field();
-    identifierField.setName("Identifier");
-    identifierField.setType("string");
-    fields.add(identifierField);
+    field = new Field();
+    field.setName("Identifier");
+    field.setType("string");
+    fields.add(field);
     
-    Field resultField = new Field();
-    resultField.setName("Result");
-    resultField.setType("string");
-    fields.add(resultField);
+    field = new Field();
+    field.setName("Result");
+    field.setType("string");
+    fields.add(field);
     
     int responseIndex = 0;
     int actualLimit = Math.min(statuses.size(), start + limit);    
