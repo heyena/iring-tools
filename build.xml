@@ -134,7 +134,7 @@
                Utilities\FacadeExchange\bin\Debug\*.xml;">
     </UtilitiesDeployment>
 
-    <SDKDeployment
+    <!--<SDKDeployment
       Include="$(SDKDir)\**;"
       Exclude="$(SDKDir)\TestResults\**;
                $(SDKDir)\CSVDataLayer\bin\**;
@@ -149,34 +149,47 @@
                $(SDKDir)\*\.svn\**;
                $(SDKDir)\*\*\.svn\**;
                $(SDKDir)\*\*\*\.svn\**;">                    
-    </SDKDeployment>
+    </SDKDeployment>-->
 
-    <SDKLibUpdate
-      Include="ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.dll;
-             ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.chm;
-             ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.xml;
-             Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll;
-             Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;
-             Libraries\AdapterLibrary\bin\Debug\AdapterLibrary.dll;
-             ExternalBinaries\Configuration\StaticDust.Configuration.dll;
-             ExternalBinaries\Ninject2\Ninject.dll;
-             ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll;
-             ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.license.txt;
-             ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.xml;">
-    </SDKLibUpdate>
+    <SDKLib
+      Include="Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll;
+             Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;">
+    </SDKLib>
+
+    <SDKLibLog4Net
+      Include="ExternalBinaries\log4net\**;"
+      Exclude="ExternalBinaries\*\.svn\**;
+             ExternalBinaries\*\*\.svn\**;
+             ExternalBinaries\*\*\*\.svn\**;">
+    </SDKLibLog4Net>
+
+    <SDKLibNinject2
+      Include="ExternalBinaries\Ninject2\**;"
+      Exclude="ExternalBinaries\*\.svn\**;
+             ExternalBinaries\*\*\.svn\**;
+             ExternalBinaries\*\*\*\.svn\**;">
+    </SDKLibNinject2>
+
+    <SDKLibConfiguration
+      Include="ExternalBinaries\Configuration\**;"
+      Exclude="ExternalBinaries\*\.svn\**;
+             ExternalBinaries\*\*\.svn\**;
+             ExternalBinaries\*\*\*\.svn\**;">
+    </SDKLibConfiguration>
+
+    <SDKLibFlee
+      Include="ExternalBinaries\Flee-0.9.26.0\**;"
+      Exclude="ExternalBinaries\*\.svn\**;
+             ExternalBinaries\*\*\.svn\**;
+             ExternalBinaries\*\*\*\.svn\**;">
+    </SDKLibFlee>
 
     <SDKLibDeployment
-      Include="ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.chm;
-             ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.dll;
-             ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.xml;
-             Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll;
-             Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;                
-             Libraries\AdapterLibrary\bin\Debug\AdapterLibrary.dll;
-             ExternalBinaries\Configuration\StaticDust.Configuration.dll;
-             ExternalBinaries\Ninject2\Ninject.dll;
-             ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll;
-             ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.license.txt;
-             ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.xml;">
+      Include="ExternalBinaries\Flee-0.9.26.0\**;
+             ExternalBinaries\Configuration\**;
+             ExternalBinaries\Ninject2\**;
+             ExternalBinaries\log4net\**;
+             $(SDKLibDir)\**;">
     </SDKLibDeployment>
   </ItemGroup>
 
@@ -304,15 +317,31 @@
     <Exec Command="Move /Y $(SDKDeploymentDir)\CSVDataLayer\12345_000.CSV.Default.config $(SDKDeploymentDir)\CSVDataLayer\12345_000.CSV.config" />
 
     <Message Text="Creating SDK library deployment ..." />
-    <Copy SourceFiles="@(SDKLibDeployment)"
-          DestinationFiles="@(SDKLibDeployment->'$(SDKLibDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(SDKLib)"
+          DestinationFiles="@(SDKLib ->'$(SDKLibDeploymentDir)\iring-tools\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(SDKLibLog4Net)"
+          DestinationFiles="@(SDKLibLog4Net ->'$(SDKLibDeploymentDir)\log4net\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(SDKLibNinject2)"
+          DestinationFiles="@(SDKLibNinject2 ->'$(SDKLibDeploymentDir)\ninject2\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(SDKLibConfiguration)"
+          DestinationFiles="@(SDKLibConfiguration ->'$(SDKLibDeploymentDir)\configuration\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(SDKLibFlee)"
+          DestinationFiles="@(SDKLibFlee ->'$(SDKLibDeploymentDir)\flee-0.9.26.0\%(RecursiveDir)%(Filename)%(Extension)')" />
   </Target>
 
   <Target Name="DeployToSDK">
    
     <Message Text="Deploying to SDK library ..." />
-    <Copy SourceFiles="@(SDKLibUpdate)"
-          DestinationFiles="@(SDKLibUpdate ->'$(SDKLibDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(SDKLib)"
+          DestinationFiles="@(SDKLib ->'$(SDKLibDir)\iring-tools\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(SDKLibLog4Net)"
+          DestinationFiles="@(SDKLibLog4Net ->'$(SDKLibDir)\log4net\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(SDKLibNinject2)"
+          DestinationFiles="@(SDKLibNinject2 ->'$(SDKLibDir)\ninject2\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(SDKLibConfiguration)"
+          DestinationFiles="@(SDKLibConfiguration ->'$(SDKLibDir)\configuration\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(SDKLibFlee)"
+          DestinationFiles="@(SDKLibFlee ->'$(SDKLibDir)\flee-0.9.26.0\%(RecursiveDir)%(Filename)%(Extension)')" />
   </Target>
 
   <Target Name="CreatePackages" DependsOnTargets="CreateDeployment">
