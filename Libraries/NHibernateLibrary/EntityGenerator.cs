@@ -601,7 +601,7 @@ namespace org.iringtools.nhibernate
 
         _dataObjectWriter.WriteLine("default:");
         _dataObjectWriter.Indent++;
-        _dataObjectWriter.WriteLine("throw new Exception(\"Related object [\" + relatedObjectType + \"] does not exist.\");");
+        _dataObjectWriter.WriteLine("throw new NotImplementedException(\"This method has been deprecated.\");");
         _dataObjectWriter.Indent--;
         _dataObjectWriter.WriteLine("}");
         _dataObjectWriter.Indent--;

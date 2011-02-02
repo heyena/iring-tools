@@ -86,10 +86,10 @@
 
     <LandingDeployment
       Include="$(LandingPageDir)\**"
-      Exclude="$(LandingPageDir)\.settings\**;
-             $(LandingPageDir)\.project;
-             $(LandingPageDir)\.svn\**;
-             $(LandingPageDir)\*\.svn\**;">
+      Exclude="$(LandingPageDir)\.svn\**;
+               $(LandingPageDir)\*\.svn\**;
+	       $(LandingPageDir)\.settings\**;
+               $(LandingPageDir)\.project;">
     </LandingDeployment>
 
     <AppsDeployment
@@ -137,19 +137,23 @@
     <SDKDeployment
       Include="$(SDKDir)\**;"
       Exclude="$(SDKDir)\TestResults\**;
-             $(SDKDir)\CSVDataLayer\bin\**;
-             $(SDKDir)\CSVDataLayer\obj\**;
-             $(SDKDir)\CSVDataLayer\12345_000.CSV.config;
-             $(SDKDir)\lib\*.*;
-             $(SDKDir)\.svn\**;
-             $(SDKDir)\*\.svn\**;
-             $(SDKDir)\*\*\.svn\**;
-             $(SDKDir)\*\*\*\.svn\**;">                    
+               $(SDKDir)\CSVDataLayer\bin\**;
+               $(SDKDir)\CSVDataLayer\obj\**;
+               $(SDKDir)\CSVDataLayer\12345_000.CSV.config;
+               $(SDKDir)\CSVDataLayer\12345_000.CSV\Equipment\Equip-001.csv;
+               $(SDKDir)\CSVDataLayer\12345_000.CSV\Equipment\Equip-002.csv;
+               $(SDKDir)\CSVDataLayer\12345_000.CSV\Equipment\Equip-003.csv;
+               $(SDKDir)\CSVDataLayer\12345_000.CSV\Equipment\Equip-004.csv;
+               $(SDKDir)\lib\*.*;
+               $(SDKDir)\.svn\**;
+               $(SDKDir)\*\.svn\**;
+               $(SDKDir)\*\*\.svn\**;
+               $(SDKDir)\*\*\*\.svn\**;">                    
     </SDKDeployment>
 
     <SDKLibUpdate
-      Include="ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.chm;
-             ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.dll;
+      Include="ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.dll;
+             ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.chm;
              ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.xml;
              Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll;
              Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;

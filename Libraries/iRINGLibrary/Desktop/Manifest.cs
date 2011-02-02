@@ -162,6 +162,9 @@ namespace org.iringtools.library.manifest
 
     [DataMember(Name = "class", Order = 5, EmitDefaultValue = false)]
     public Class Class { get; set; }
+
+    [DataMember(Name = "numberOfDecimals", Order = 6, EmitDefaultValue = false)]
+    public int NumberOfDecimals { get; set; }
   }
 
   [DataContract]

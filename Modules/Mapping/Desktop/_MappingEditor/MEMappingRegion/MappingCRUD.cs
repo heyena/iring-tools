@@ -674,7 +674,8 @@ namespace org.iringtools.modules.memappingregion
                             string.Format("{0}.{1}", model.SelectedDataObject.DataObject.objectName, model.SelectedDataObject.DataProperty.propertyName);
                         roleMap.valueList = String.Empty;
                     }
-                    else if (roleMap.dataType != null || roleMap.dataType.StartsWith("xsd:"))
+                    else 
+                    if (roleMap.dataType != null || roleMap.dataType.StartsWith("xsd:"))
                     {
                         DataObjectItem parentObject = (DataObjectItem)model.SelectedDataObject.Parent;
 
@@ -690,6 +691,7 @@ namespace org.iringtools.modules.memappingregion
                         {
                             roleMap.propertyName =
                                 string.Format("{0}.{1}", model.SelectedDataObject.DataObject.objectName, model.SelectedDataObject.DataProperty.propertyName);
+                                roleMap.numberOfDecimals = model.SelectedDataObject.DataProperty.numberOfDecimals;
                         }
                     }
                     else

@@ -326,6 +326,7 @@ namespace org.iringtools.library
       value = roleMap.value;
       valueList = roleMap.valueList;
       classMap = roleMap.classMap;
+      numberOfDecimals = roleMap.numberOfDecimals;
     }
 
     [DataMember(Order = 0)]
@@ -351,6 +352,9 @@ namespace org.iringtools.library
 
     [DataMember(EmitDefaultValue = false, Order = 7)]
     public ClassMap classMap { get; set; }
+
+    [DataMember(EmitDefaultValue = false, Order = 8)]
+    public int numberOfDecimals { get; set; }
 
     public bool isMapped
     {

@@ -143,6 +143,9 @@ namespace org.iringtools.library
 
         [DataMember(EmitDefaultValue = false, Order = 6)]
         public bool showOnIndex { get; set; }
+
+        [DataMember(EmitDefaultValue = false, Order = 7)]
+        public int numberOfDecimals { get; set; }
     }
 
     [DataContract(Namespace = "http://ns.iringtools.org/library")]
