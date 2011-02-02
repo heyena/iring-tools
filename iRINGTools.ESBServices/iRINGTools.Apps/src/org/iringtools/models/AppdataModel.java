@@ -4,6 +4,7 @@ import java.util.List;
 import org.iringtools.ui.widgets.grid.Grid;
 import org.iringtools.ui.widgets.grid.Rows;
 import org.iringtools.utility.HttpClient;
+import org.iringtools.data.filter.DataFilter;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dti.DataTransferIndex;
 import com.opensymphony.xwork2.ActionContext;
@@ -48,12 +49,16 @@ public class AppdataModel {
 
 	
 	public DataTransferIndices populateFilter(String scopeName, String appName, String graphName, 
-			                                  String filter, String sortOrder, String sortBy) {
+			                                  DataFilter dataFilter) {
 		DataTransferIndices dti = null;
 		try {
+			DataFilter theDataFilter = new DataFilter();
+			theDataFilter.setExpressions(dataFilter.getExpressions());
+			theDataFilter.setOrderExpressions(dataFilter.getOrderExpressions());
+			
 			HttpClient httpClient = new HttpClient(URI);
-			dti = httpClient.get(DataTransferIndices.class,
-					"/" + scopeName + "/" + appName + "/" + graphName + "/" + filter + "/" + sortOrder+ "/" + sortBy);
+			dti = httpClient.post(DataTransferIndices.class,
+					"/" + scopeName + "/" + appName + "/" + graphName + "/filter?", theDataFilter);
 			setDtiList(dti.getDataTransferIndexList().getItems());
 			setDtoUrl("/" + scopeName + "/" + appName + "/" + graphName);
 		} catch (Exception e) {

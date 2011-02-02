@@ -1,15 +1,15 @@
 package org.iringtools.models;
 
 import java.util.List;
+
+import org.iringtools.data.filter.DataFilter;
+import org.iringtools.dxfr.dti.DataTransferIndex;
+import org.iringtools.dxfr.dti.DataTransferIndices;
+import org.iringtools.history.History;
 import org.iringtools.ui.widgets.grid.Grid;
 import org.iringtools.ui.widgets.grid.GridDefinition;
 import org.iringtools.ui.widgets.grid.Rows;
 import org.iringtools.utility.HttpClient;
-import org.iringtools.dxfr.datafilter.DataFilter;
-import org.iringtools.dxfr.datafilter.ExpressionList;
-import org.iringtools.dxfr.dti.DataTransferIndices;
-import org.iringtools.dxfr.dti.DataTransferIndex;
-import org.iringtools.history.History;
 
 import com.opensymphony.xwork2.ActionContext;
 
@@ -65,9 +65,12 @@ public class ExchDataModel {
 	public DataTransferIndices populateFilter(String scopeName, String id, DataFilter dataFilter) {
 		DataTransferIndices dti = null;		
 		try {
+			DataFilter theDataFilter = new DataFilter();
+			theDataFilter.setExpressions(dataFilter.getExpressions());
+			theDataFilter.setOrderExpressions(dataFilter.getOrderExpressions());
 			HttpClient httpClient = new HttpClient(URI);
 			dti = httpClient.post(DataTransferIndices.class, "/" + scopeName
-					+ "/exchanges/" + id, dataFilter);				
+					+ "/exchanges/" + id, theDataFilter);				
 					
 			setDtiList(dti.getDataTransferIndexList().getItems());
 			setDtoUrl("/" + scopeName + "/exchanges/" + id);

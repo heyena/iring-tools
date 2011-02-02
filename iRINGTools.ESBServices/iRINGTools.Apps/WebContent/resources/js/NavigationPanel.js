@@ -88,8 +88,7 @@ ExchangeManager.NavigationPanel = Ext.extend(Ext.TabPanel, {
 			remotesort : true, // json encode the filter query
 			local : false, // defaults to false (remote
 			// filtering)
-			filters : filterSet,
-			className : classObjectName
+			filters : filterSet
 		});
 
 		// build the header first

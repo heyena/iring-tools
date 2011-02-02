@@ -1,19 +1,18 @@
 package org.iringtools.controllers;
 
+import java.util.Map;
+
 import org.apache.struts2.interceptor.SessionAware;
-import org.codehaus.jettison.json.JSONObject;
-import org.iringtools.dxfr.datafilter.DataFilter;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.history.History;
 import org.iringtools.models.DataFilterContainer;
 import org.iringtools.models.ExchDataModel;
 import org.iringtools.ui.widgets.grid.Grid;
-import org.iringtools.ui.widgets.grid.Rows;
 import org.iringtools.ui.widgets.grid.GridDefinition;
+import org.iringtools.ui.widgets.grid.Rows;
+
 import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionSupport;
-
-import java.util.Map;
 
 public class ExchDataController extends ActionSupport implements SessionAware 
 {
@@ -39,8 +38,8 @@ public class ExchDataController extends ActionSupport implements SessionAware
 	private String hasReviewed;
 	private String historyId;
 	private String filter;
-	private String sortBy;
-	private String sortOrder;
+	private String sort;
+	private String dir;
 	private DataFilterContainer dataFilterContainer;
 	
 	public ExchDataController() {
@@ -140,24 +139,24 @@ public void setFilter(String filter) {
 		return filter;
 	}	
 	
-	public void setSortOrder(String sortOrder) {
+	public void setDir(String dir) {
 		
-		this.sortOrder = sortOrder;
+		this.dir = dir;
 		
 	}
 
-	public String getSortOrder() {
-		return sortOrder;
+	public String getDir() {
+		return dir;
 	}
 	
-	public void setSortBy(String sortBy) {
+	public void setSort(String sort) {
 		
-		this.sortOrder = sortBy;
+		this.dir = sort;
 		
 	}
 
-	public String getSortBy() {
-		return sortBy;
+	public String getSort() {
+		return sort;
 	}
 	
 	public void setRelatedId(String relatedId) {
@@ -190,8 +189,8 @@ public void setFilter(String filter) {
 	
 	public void getExchDtiList() {
 
-		key = scopeName + idName + filter + sortOrder + sortBy;
-		dataFilterContainer = new DataFilterContainer(filter, sortOrder, sortBy);
+		key = scopeName + idName + filter + dir + sort;
+		dataFilterContainer = new DataFilterContainer(filter, dir, sort);
 		if (session.get(key) == null)
 			session.put(key, exchdata.populateFilter(scopeName, idName, dataFilterContainer.getDataFilter()));
 		else

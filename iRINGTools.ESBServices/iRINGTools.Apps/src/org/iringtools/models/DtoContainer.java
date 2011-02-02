@@ -144,7 +144,7 @@ public class DtoContainer {
 		 this.identifier = "<span onMouseOver=\"javascript:this.style.textDecoration=\'underline\'\" onMouseOut=\"javascript:this.style.textDecoration=\'none\'\">"
 				+ identif + "</span>";
 		 */
-		data.put(clsName + '_' + "Identifier", identifier);
+		data.put(clsName + '.' + "Identifier", identifier);
 	}
 	
 	public void setNoHtmlIdentifier(String value) {
@@ -163,7 +163,7 @@ public class DtoContainer {
 	public void setTempName(String name) {
 		if (rType.equals("OBJECT_PROPERTY") || rType.equals("DATA_PROPERTY") || rType.equals("PROPERTY")) {
 			if (!name.toLowerCase().equals("identificationbytag"))
-				tempName = tName + '_' + name;
+				tempName = tName + '.' + name;
 			else
 				tempName = name;
 		}
@@ -252,7 +252,7 @@ public class DtoContainer {
 	}
 	
 	public void addToRoleNameList(String name, String type) {		
-		tempName = tName + '_' + name;
+		tempName = tName + '.' + name;
 		if (!roleNameListHas()) {			
 			roleNameList.add(new ComplexHeader(tempName, type));
 		}
@@ -432,7 +432,7 @@ public class DtoContainer {
 		setTempName(name);
 		if (roleNameMap.containsKey(tempName))
 			tempName = roleNameMap.get(tempName);
-		data.put(clsName + '_' + tempName, rValue);
+		data.put(clsName + '.' + tempName, rValue);
 	}
 	
 	public void getExchRelatedItemsDetails() {
@@ -608,17 +608,17 @@ public class DtoContainer {
 		Column column;
 		Header header;
 		double width;
-		String tempHeader, headerName;
+		String headerName;
 		
 		for (ComplexHeader head : hList) {
 			headerName = head.getName();
-			tempHeader = headerName.replace('_', '.');
+			
 			column = new Column();
 			header = new Header();
 			if (!headerName.equals("TransferType")) {
-				column.setDataIndex(clsName + '_' + headerName);
-				column.setId(clsName + '_' + headerName);
-				header.setName(clsName + '_' + headerName);
+				column.setDataIndex(clsName + '.' + headerName);
+				column.setId(clsName + '.' + headerName);
+				header.setName(clsName + '.' + headerName);
 			}
 			else {
 				column.setDataIndex(headerName);
@@ -626,7 +626,7 @@ public class DtoContainer {
 				header.setName(headerName);
 			}
 			column.setSortable("true");
-			column.setHeader(tempHeader);
+			column.setHeader(headerName);
 			width = headerName.length();
 			if (width < 20)
 				width = 110;
@@ -639,7 +639,7 @@ public class DtoContainer {
 			ghList.add(header);
 			filter = new Filter();
 			filter.setType(head.getType());
-			filter.setDataIndex(clsName + '_' + headerName);
+			filter.setDataIndex(clsName + '.' + headerName);
 			filterList.add(filter);
 		}
 		grid.setFilterSets(filterList);
@@ -647,9 +647,9 @@ public class DtoContainer {
 		grid.setHeaderLists(ghList);
 		grid.setCacheData("true"); // Add rules in the future
 		if (!hList.get(0).getName().equals("TransferType")) 
-			grid.setSortBy(clsName + '_' + hList.get(0).getName());
+			grid.setSortBy(clsName + '.' + hList.get(0).getName());
 		else 
-			grid.setSortBy(clsName + '_' + hList.get(1).getName());
+			grid.setSortBy(clsName + '.' + hList.get(1).getName());
 		grid.setSortOrder("DESC");
 		if (filterList.size() > 0 && cList.size() > 0 && ghList.size() > 0)
 			grid.setSuccess("true");
