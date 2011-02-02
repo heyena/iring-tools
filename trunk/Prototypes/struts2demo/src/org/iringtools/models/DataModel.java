@@ -53,7 +53,7 @@ public class DataModel
       else
       {
         HttpClient httpClient = new HttpClient(serviceUri);
-        DataFilter dataFilter = null;
+        DataFilter dataFilter = new DataFilter();
         dtis = httpClient.post(DataTransferIndices.class, relativePath, dataFilter);
         session.put(dtiKey, dtis);
       }
@@ -179,7 +179,7 @@ public class DataModel
                 Field field = new Field();
                 field.setName(templateObject.getName() + "." + roleObject.getName());
                 
-                if (dataType == DataType.APP)
+                if (dataType == DataType.APP || dataType == DataType.EXCHANGE)
                   field.setType(roleObject.getDataType().replace("xsd:", ""));
                 else
                   field.setType("string");
