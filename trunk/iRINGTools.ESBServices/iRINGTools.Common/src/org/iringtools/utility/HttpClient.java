@@ -67,7 +67,10 @@ public class HttpClient
   {    
     try 
     {
-      String content = JaxbUtil.toXml(requestEntity, false);
+      String content = "";
+      
+      if (requestEntity != null)
+        content = JaxbUtil.toXml(requestEntity, false);
       
       URLConnection conn = getConnection(POST, relativeUri);    
       conn.setRequestProperty("Content-Type", "application/xml");
@@ -100,13 +103,17 @@ public class HttpClient
       conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
     
       StringBuilder requestEntity = new StringBuilder();
-      for (Entry<String,String> pair : formData.entrySet())
+      
+      if (formData != null)
       {
-        if (requestEntity.length() > 0)
+        for (Entry<String,String> pair : formData.entrySet())
         {
-          requestEntity.append('&');
-        }      
-        requestEntity.append(pair.getKey() + "=" + URLEncoder.encode(pair.getValue(), "UTF-8"));
+          if (requestEntity.length() > 0)
+          {
+            requestEntity.append('&');
+          }      
+          requestEntity.append(pair.getKey() + "=" + URLEncoder.encode(pair.getValue(), "UTF-8"));
+        }
       }
       
       DataOutputStream requestStream = new DataOutputStream(conn.getOutputStream());    

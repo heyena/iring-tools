@@ -53,7 +53,7 @@ public class DataModel
       else
       {
         HttpClient httpClient = new HttpClient(serviceUri);
-        DataFilter dataFilter = new DataFilter();
+        DataFilter dataFilter = null;
         dtis = httpClient.post(DataTransferIndices.class, relativePath, dataFilter);
         session.put(dtiKey, dtis);
       }
@@ -194,8 +194,7 @@ public class DataModel
               }
               else
               {
-                row.add("<span class=\"change\">" + roleObject.getOldValue() + " -> " + roleObject.getValue()
-                    + "</span>");
+                row.add("<span class=\"change\">" + roleObject.getOldValue() + " -> " + roleObject.getValue() + "</span>");
               }
             }
             else if (roleObject.getRelatedClassName() != null && roleObject.getRelatedClassName().length() > 0
@@ -242,6 +241,7 @@ public class DataModel
         infoField.setType("string");
         infoField.setWidth(28);
         infoField.setFixed(true);
+        infoField.setFilterable(false);
         fields.add(0, infoField);
 
         pageDtoGrid.setFields(fields);
@@ -310,8 +310,7 @@ public class DataModel
               }
               else
               {
-                row.add("<span class=\"change\">" + roleObject.getOldValue() + " -> " + roleObject.getValue()
-                    + "</span>");
+                row.add("<span class=\"change\">" + roleObject.getOldValue() + " -> " + roleObject.getValue() + "</span>");
               }
             }
             else if (roleObject.getRelatedClassName() != null && roleObject.getRelatedClassName().length() > 0
@@ -357,6 +356,7 @@ public class DataModel
             infoField.setType("string");
             infoField.setWidth(28);
             infoField.setFixed(true);
+            infoField.setFilterable(false);
             fields.add(0, infoField);
 
             firstTemplateObject = false;
