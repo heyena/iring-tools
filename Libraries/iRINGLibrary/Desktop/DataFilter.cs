@@ -97,7 +97,7 @@ namespace org.iringtools.library
       try
       {
         StringBuilder whereClause = new StringBuilder();
-        if (Expressions.Count > 0)
+        if (Expressions != null && Expressions.Count > 0)
         {
           whereClause.Append(" WHERE ");
 
@@ -108,7 +108,7 @@ namespace org.iringtools.library
           }
         }
 
-        if (OrderExpressions.Count > 0)
+        if (OrderExpressions != null && OrderExpressions.Count > 0)
         {
           whereClause.Append(" ORDER BY ");
 
@@ -408,11 +408,11 @@ namespace org.iringtools.library
       DataType propertyType = DataType.String;
       foreach (DataObject dataObject in dataDictionary.DataObjects)
       {
-        if (dataObject.ObjectName == objectType)
+        if (dataObject.ObjectName.ToUpper() == objectType.ToUpper())
         {
           foreach (DataProperty dataProperty in dataObject.DataProperties)
           {
-            if (dataProperty.PropertyName == PropertyName)
+            if (dataProperty.PropertyName.ToUpper() == PropertyName.ToUpper())
             {
               propertyType = dataProperty.DataType;
               break;

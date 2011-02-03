@@ -30,15 +30,16 @@ import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpClientException;
 import org.iringtools.utility.IOUtil;
 import org.iringtools.widgets.grid.Field;
-import org.iringtools.widgets.grid.Filter;
 import org.iringtools.widgets.grid.Grid;
 import org.iringtools.widgets.grid.RelatedClass;
 
 public class DataModel
 {
   public static enum DataType { APP, EXCHANGE };  
-  public static Map<String, RelationalOperator> relationalOperatorMap = new HashMap<String, RelationalOperator>();  
+  
+  public static Map<String, RelationalOperator> relationalOperatorMap;  
   static {
+    relationalOperatorMap = new HashMap<String, RelationalOperator>();
     relationalOperatorMap.put("eq", RelationalOperator.EQUAL_TO);
     relationalOperatorMap.put("lt", RelationalOperator.LESSER_THAN);
     relationalOperatorMap.put("gt", RelationalOperator.GREATER_THAN);
@@ -53,15 +54,15 @@ public class DataModel
       session.remove(key);
   }
 
-  protected DataTransferIndices getDtis(String serviceUri, String relativePath, String filter, String sortOrder,
-      String sortBy)
+  protected DataTransferIndices getDtis(String serviceUri, String relativePath, String filter, 
+      String sortOrder, String sortBy)
   {
     DataTransferIndices dtis = new DataTransferIndices();
-    String dtiKey = "dti" + relativePath + "/" + filter + "/" + sortOrder + "/" + sortBy;
+    String dtiKey = "dti/" + relativePath;
 
     try
     {
-      if (session.containsKey(dtiKey))
+      if (filter == null && sortOrder == null && sortBy == null && session.containsKey(dtiKey))
       {
         dtis = (DataTransferIndices) session.get(dtiKey);
       }
@@ -73,8 +74,8 @@ public class DataModel
         if (filter != null && filter.length() > 0)
         {
           @SuppressWarnings("unchecked")
-          List<Filter> filters = (List<Filter>) JSONUtil.deserialize(filter);
-          dataFilter = createDataFilter(filters, sortOrder, sortBy);
+          List<Map<String, String>> filterMaps = (List<Map<String, String>>)JSONUtil.deserialize(filter);
+          dataFilter = createDataFilter(filterMaps, sortOrder, sortBy);
         }
         else 
         {
@@ -126,8 +127,8 @@ public class DataModel
   }
 
   // TODO: use filter, sort, and start/limit for related individual
-  public DataTransferObject getDto(String serviceUri, String dtiRelativePath, String dtoRelativePath, String filter,
-      String sortOrder, String sortBy, String dtoIdentifier, int start, int limit)
+  public DataTransferObject getDto(String serviceUri, String dtiRelativePath, String dtoRelativePath, 
+      String dtoIdentifier, String filter, String sortOrder, String sortBy, int start, int limit)
   {
     DataTransferIndices dtis = getDtis(serviceUri, dtiRelativePath, null, null, null);
     List<DataTransferIndex> dtiList = dtis.getDataTransferIndexList().getItems();
@@ -419,7 +420,7 @@ public class DataModel
     return relatedItemGrid;
   }
   
-  private DataFilter createDataFilter(List<Filter> filters, String sortOrder, String sortBy)
+  private DataFilter createDataFilter(List<Map<String, String>> filterMaps, String sortOrder, String sortBy)
   {
     DataFilter dataFilter = new DataFilter();
 
@@ -440,22 +441,19 @@ public class DataModel
     }
     
     // process filtering
-    if (filters != null && filters.size() > 0)
+    if (filterMaps != null && filterMaps.size() > 0)
     {
       Expressions expressions = new Expressions();
       dataFilter.setExpressions(expressions);
       
-      for (Filter filter : filters)
+      for (Map<String, String> filterMap : filterMaps)
       {
         Expression expression = new Expression();
         expressions.getItems().add(expression);
         
-        expression.setOpenGroupCount(filters.size());
-        expression.setCloseGroupCount(filters.size());
-        
-        if (filter.getComparison().equals("comparison"))
+        if (filterMap.containsKey("comparison"))
         {
-          String operator = filter.getComparison();
+          String operator = filterMap.get("comparison");
           expression.setRelationalOperator(relationalOperatorMap.get(operator));
         }
         else
@@ -463,7 +461,7 @@ public class DataModel
           expression.setRelationalOperator(relationalOperatorMap.get("eq"));
         }
         
-        expression.setPropertyName(filter.getField());
+        expression.setPropertyName(filterMap.get("field"));
         
         Values values = new Values();
         expression.setValues(values);
@@ -471,7 +469,7 @@ public class DataModel
         List<String> valueList = new ArrayList<String>();
         values.setValues(valueList);
         
-        valueList.add(filter.getValue());
+        valueList.add(String.valueOf(filterMap.get("value")));
       }
     }
     

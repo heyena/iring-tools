@@ -417,39 +417,45 @@ namespace org.iringtools.adapter.projection
         _graphMap = _mapping.FindGraphMap(graph);
         DataObject _dataObject = dictionary.DataObjects.Find(o => o.ObjectName == _graphMap.dataObjectName);
 
-        if (filter != null && filter.Expressions != null && filter.OrderExpressions != null)
+        if (filter != null)
         {
-          foreach (Expression expression in filter.Expressions)
+          if (filter.Expressions != null)
           {
-            string[] propertyNameParts = expression.PropertyName.Split('.');
-            string dataPropertyName = ProjectPropertyName(propertyNameParts);
-            expression.PropertyName = RemoveDataPropertyAlias(dataPropertyName);
-            if (_roleType == RoleType.ObjectProperty)
+            foreach (Expression expression in filter.Expressions)
             {
-              if (expression.RelationalOperator == RelationalOperator.EqualTo)
+              string[] propertyNameParts = expression.PropertyName.Split('.');
+              string dataPropertyName = ProjectPropertyName(propertyNameParts);
+              expression.PropertyName = RemoveDataPropertyAlias(dataPropertyName);
+              if (_roleType == RoleType.ObjectProperty)
               {
-                expression.Values = ProjectPropertValues(expression.Values);
-                expression.RelationalOperator = RelationalOperator.In;
-              }
-              else if (expression.RelationalOperator == RelationalOperator.In)
-              {
-                expression.Values = ProjectPropertValues(expression.Values);
-              }
-              else
-              {
-                throw new Exception(
-                  "Invalid Expression in DataFilter. " +
-                  "Object Property Roles can only use EqualTo and In in the expression."
-                );
+                if (expression.RelationalOperator == RelationalOperator.EqualTo)
+                {
+                  expression.Values = ProjectPropertValues(expression.Values);
+                  expression.RelationalOperator = RelationalOperator.In;
+                }
+                else if (expression.RelationalOperator == RelationalOperator.In)
+                {
+                  expression.Values = ProjectPropertValues(expression.Values);
+                }
+                else
+                {
+                  throw new Exception(
+                    "Invalid Expression in DataFilter. " +
+                    "Object Property Roles can only use EqualTo and In in the expression."
+                  );
+                }
               }
             }
           }
 
-          foreach (OrderExpression orderExpression in filter.OrderExpressions)
+          if (filter.OrderExpressions != null)
           {
-            string[] propertyNameParts = orderExpression.PropertyName.Split('.');
-            string dataPropertyName = ProjectPropertyName(propertyNameParts);
-            orderExpression.PropertyName = RemoveDataPropertyAlias(dataPropertyName);
+            foreach (OrderExpression orderExpression in filter.OrderExpressions)
+            {
+              string[] propertyNameParts = orderExpression.PropertyName.Split('.');
+              string dataPropertyName = ProjectPropertyName(propertyNameParts);
+              orderExpression.PropertyName = RemoveDataPropertyAlias(dataPropertyName);
+            }
           }
         }
       }
