@@ -5,7 +5,7 @@ import java.util.List;
 public class Grid
 {
   protected String label;
-  protected String description;
+  protected String type;
   protected int total;
   protected List<Field> fields;
   protected List<List<String>> data;
@@ -20,14 +20,14 @@ public class Grid
     this.label= label;
   }
   
-  public String getDescription()
+  public String getType()
   {
-    return description;    
+    return type;    
   }
   
-  public void setDescription(String description)
+  public void setType(String type)
   {
-    this.description= description;
+    this.type= type;
   }
   
   public int getTotal()

@@ -3,6 +3,7 @@ package org.iringtools.widgets.grid;
 public class Field
 {
   protected String name;
+  protected String dataIndex;
   protected String type;
   protected int width;
   protected boolean fixed = false; // fixed width
@@ -19,6 +20,16 @@ public class Field
     return name;
   }
   
+  public void setDataIndex(String dataIndex)
+  {
+    this.dataIndex = dataIndex;
+  }
+
+  public String getDataIndex()
+  {
+    return dataIndex;
+  }
+
   public void setType(String type)
   {
     this.type = type;

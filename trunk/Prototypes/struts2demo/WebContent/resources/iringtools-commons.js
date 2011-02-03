@@ -9,7 +9,7 @@ Ext.data.DynamicGridReader = Ext.extend(Ext.data.JsonReader, {
     var data = store.data;
     
     this.label = store.label;
-    this.description = store.description;
+    this.type = store.type;
     this.recordType = Ext.data.Record.create(fields);
      
     var records = [];
@@ -17,7 +17,7 @@ Ext.data.DynamicGridReader = Ext.extend(Ext.data.JsonReader, {
       var values = {};
       
       for (var j = 0; j < fields.length; j++) {
-        values[fields[j].name] = data[i][j];    
+        values[fields[j].dataIndex] = data[i][j];    
       }
       
       records[i] = new Ext.data.Record(values, i);
@@ -28,7 +28,7 @@ Ext.data.DynamicGridReader = Ext.extend(Ext.data.JsonReader, {
       if (fields[i].filterable) {
         filters.push({
           type: fields[i].type,
-          dataIndex: fields[i].name
+          dataIndex: fields[i].dataIndex
         });
       }
     }  
@@ -48,32 +48,31 @@ Ext.grid.DynamicColumnModel = Ext.extend(Ext.grid.ColumnModel, {
     var columns = [];
     
     for (var i = 0; i < fields.keys.length; i++) {
-      var fieldName = fields.keys[i];
-      var field = recordType.getField(fieldName);
-      var fieldType = field.type.type;
+      var dataIndex = fields.keys[i];
+      var field = recordType.getField(dataIndex);
+      var dataType = field.type.type;
       var renderer = 'auto';    
       var align = 'left';
       
-      if (fieldType != null)
-        fieldType = fieldType.toLowerCase();
+      if (dataType != null)
+        dataType = dataType.toLowerCase();
         
-      if (fieldType == 'date') {
+      if (dataType == 'date') {
         renderer = Ext.util.Format.dateRenderer('mm/dd/YYYY');
       }
-      else if (fieldType != 'string') {
-        if (fieldType == 'double' || fieldType == 'float' || fieldType == 'decimal') {
+      else if (dataType != 'string') {
+        if (dataType == 'double' || dataType == 'float' || dataType == 'decimal') {
           renderer = Ext.util.Format.numberRenderer('0,000.00');
         }
         else {
           renderer = Ext.util.Format.numberRenderer('0,000');
-        }
-        
+        }        
         align = 'right';
       }
     
       columns[i] = {
         header: field.name,
-        dataIndex: field.name,
+        dataIndex: field.dataIndex,
         sortable: field.sortable,
         renderer: renderer,
         align: align

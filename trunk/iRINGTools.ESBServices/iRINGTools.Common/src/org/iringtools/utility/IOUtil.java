@@ -102,4 +102,24 @@ public class IOUtil
 
     return fileNames;
   }
+  
+  // hello world -> HelloWorld
+  public static String toCamelCase(String value)
+  {
+    if (value == null || value.length() == 0)
+      return value;
+    
+    StringBuilder returnValue = new StringBuilder();
+    String[] words = value.split("\\s+");
+
+    for (String word : words)
+    {
+      returnValue.append(word.substring(0, 1).toUpperCase());
+
+      if (word.length() > 1)
+        returnValue.append(word.substring(1).toLowerCase());
+    }
+
+    return returnValue.toString();
+  }
 }
