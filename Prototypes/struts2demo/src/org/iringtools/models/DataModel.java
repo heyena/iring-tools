@@ -20,6 +20,7 @@ import org.iringtools.dxfr.dto.TemplateObject;
 import org.iringtools.dxfr.dto.TransferType;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpClientException;
+import org.iringtools.utility.IOUtil;
 import org.iringtools.widgets.grid.Field;
 import org.iringtools.widgets.grid.Grid;
 import org.iringtools.widgets.grid.RelatedClass;
@@ -165,7 +166,7 @@ public class DataModel
       {
         ClassObject classObject = dto.getClassObjects().getItems().get(0);
         pageDtoGrid.setLabel(classObject.getClassId());
-        pageDtoGrid.setDescription(classObject.getName());
+        pageDtoGrid.setType(classObject.getName());
 
         for (TemplateObject templateObject : classObject.getTemplateObjects().getItems())
         {
@@ -176,10 +177,13 @@ public class DataModel
             {
               if (firstDto)
               {
-                Field field = new Field();
-                field.setName(templateObject.getName() + "." + roleObject.getName());
+                String name = templateObject.getName() + "." + roleObject.getName();
                 
-                if (dataType == DataType.APP || dataType == DataType.EXCHANGE)
+                Field field = new Field();
+                field.setName(name);
+                field.setDataIndex(IOUtil.toCamelCase(classObject.getName()) + '.' + name);
+                
+                if (dataType == DataType.APP)
                   field.setType(roleObject.getDataType().replace("xsd:", ""));
                 else
                   field.setType("string");
@@ -232,12 +236,14 @@ public class DataModel
         {
           Field transferTypeField = new Field();
           transferTypeField.setName("Transfer Type");
+          transferTypeField.setDataIndex("Transfer Type");
           transferTypeField.setType("string");
           fields.add(0, transferTypeField);
         }
 
         Field infoField = new Field();
         infoField.setName("&nbsp;");
+        infoField.setDataIndex("&nbsp;");
         infoField.setType("string");
         infoField.setWidth(28);
         infoField.setFixed(true);
@@ -292,8 +298,11 @@ public class DataModel
             {
               if (firstTemplateObject)
               {
+                String name = templateObject.getName() + "." + roleObject.getName();
+                
                 Field field = new Field();
-                field.setName(templateObject.getName() + "." + roleObject.getName());
+                field.setName(name);
+                field.setDataIndex(IOUtil.toCamelCase(classObject.getName()) + '.' + name);
                 
                 if (dataType == DataType.APP)
                   field.setType(roleObject.getDataType().replace("xsd:", ""));
@@ -347,12 +356,14 @@ public class DataModel
             {
               Field transferTypeField = new Field();
               transferTypeField.setName("Transfer Type");
+              transferTypeField.setDataIndex("Transfer Type");
               transferTypeField.setType("string");
               fields.add(0, transferTypeField);
             }
 
             Field infoField = new Field();
             infoField.setName("&nbsp;");
+            infoField.setDataIndex("&nbsp;");
             infoField.setType("string");
             infoField.setWidth(28);
             infoField.setFixed(true);
@@ -367,7 +378,7 @@ public class DataModel
         int actualLimit = Math.min(start + limit, total);
 
         relatedItemGrid.setLabel(classObject.getClassId());
-        relatedItemGrid.setDescription(classObject.getName());
+        relatedItemGrid.setType(classObject.getName());
         relatedItemGrid.setTotal(total);
         relatedItemGrid.setFields(fields);
         relatedItemGrid.setData(gridData.subList(start, actualLimit));

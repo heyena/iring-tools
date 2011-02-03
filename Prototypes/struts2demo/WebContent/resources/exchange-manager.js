@@ -20,7 +20,7 @@ function createGridStore(url){
 function createGridPane(store, pageSize){
   var gridPane = new Ext.grid.GridPanel({
     label: store.reader.label,
-    description: store.reader.description,
+    type: store.reader.type,
     layout: 'fit',
     loadMask: true,
     store: store,
@@ -43,8 +43,6 @@ function createGridPane(store, pageSize){
       ]
     }),
     plugins : [new Ext.ux.grid.GridFilters({
-      //remotesort: true,
-      //local: false,
       encode: true,
       filters: store.reader.filters 
     })]
@@ -112,7 +110,7 @@ function loadPageDto(type, action, context, label){
         items: [{
           xtype: 'box',
           autoEl: {tag: 'span', html: '<a class="breadcrumb" href="#" onclick="navigate(0)">' + 
-            store.reader.description + '</a>'}
+            store.reader.type + '</a>'}
         }]
       });
       
@@ -291,7 +289,7 @@ function showIndividualInfo(individual, relatedClasses){
     height: 46,
     bodyStyle: 'background-color:#eef',
     html: '<div style="width:60px;float:left"><img style="margin:2px 15px 2px 5px" src="resources/images/class-badge-large.png"/></div>' +
-          '<div style="width:100%;height:100%;padding-top:8px">' + individual + '<br/>' + dtoGrid.description + '</div>'
+          '<div style="width:100%;height:100%;padding-top:8px">' + individual + '<br/>' + dtoGrid.type + '</div>'
   });
   
   var rowData = dtoGrid.selModel.selections.map[dtoGrid.selModel.last].data;

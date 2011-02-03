@@ -123,26 +123,31 @@ public class ExchangeDataModel extends DataModel
       
       Field field = new Field();
       field.setName("Start Time");
+      field.setDataIndex("Start Time");
       field.setType("string");
       fields.add(field);
       
       field = new Field();
       field.setName("End Time");
+      field.setDataIndex("End Time");
       field.setType("string");
       fields.add(field);
       
       field = new Field();
       field.setName("Sender");
+      field.setDataIndex("Sender");
       field.setType("string");
       fields.add(field);
       
       field = new Field();
       field.setName("Receiver");
+      field.setDataIndex("Receiver");
       field.setType("string");
       fields.add(field);
       
       field = new Field();
       field.setName("Result");
+      field.setDataIndex("Result");
       field.setType("string");
       fields.add(field);
       
@@ -212,16 +217,19 @@ public class ExchangeDataModel extends DataModel
     
     Field field = new Field();
     field.setName("Timestamp");
+    field.setDataIndex("Timestamp");
     field.setType("string");
     fields.add(field);
     
     field = new Field();
     field.setName("Identifier");
+    field.setDataIndex("Identifier");
     field.setType("string");
     fields.add(field);
     
     field = new Field();
     field.setName("Result");
+    field.setDataIndex("Result");
     field.setType("string");
     fields.add(field);
     
