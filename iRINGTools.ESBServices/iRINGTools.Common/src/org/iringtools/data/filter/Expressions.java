@@ -10,16 +10,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for OrderExpressionList complex type.
+ * <p>Java class for Expressions complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="OrderExpressionList">
+ * &lt;complexType name="Expressions">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="orderExpression" type="{http://www.iringtools.org/data/filter}OrderExpression" maxOccurs="unbounded"/>
+ *         &lt;element name="expression" type="{http://www.iringtools.org/data/filter}Expression" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,13 +29,13 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "OrderExpressionList", propOrder = {
+@XmlType(name = "Expressions", propOrder = {
     "items"
 })
-public class OrderExpressionList {
+public class Expressions {
 
-    @XmlElement(name = "orderExpression", required = true)
-    protected List<OrderExpression> items;
+    @XmlElement(name = "expression", required = true)
+    protected List<Expression> items;
 
     /**
      * Gets the value of the items property.
@@ -55,13 +55,13 @@ public class OrderExpressionList {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link OrderExpression }
+     * {@link Expression }
      * 
      * 
      */
-    public List<OrderExpression> getItems() {
+    public List<Expression> getItems() {
         if (items == null) {
-            items = new ArrayList<OrderExpression>();
+            items = new ArrayList<Expression>();
         }
         return this.items;
     }
@@ -71,10 +71,10 @@ public class OrderExpressionList {
      * 
      * @param items
      *     allowed object is
-     *     {@link OrderExpression }
+     *     {@link Expression }
      *     
      */
-    public void setItems(List<OrderExpression> items) {
+    public void setItems(List<Expression> items) {
         this.items = items;
     }
 

@@ -43,6 +43,8 @@ function createGridPane(store, pageSize){
       ]
     }),
     plugins : [new Ext.ux.grid.GridFilters({
+      remotesort: true,
+      local: false,
       encode: true,
       filters: store.reader.filters 
     })]

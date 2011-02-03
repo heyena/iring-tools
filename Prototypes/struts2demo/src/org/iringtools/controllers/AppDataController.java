@@ -23,6 +23,9 @@ public class AppDataController extends ActionSupport implements SessionAware
   private String individual;
   private String classId;
   private String classIdentifier;
+  private String filter;
+  private String sort; // sort by
+  private String dir;  // sort direction
   private int start;
   private int limit;
   
@@ -43,7 +46,7 @@ public class AppDataController extends ActionSupport implements SessionAware
   // ------------------------------------
   public String getPageDtos()
   {
-    pageDtoGrid = appDataModel.getDtoGrid(dxfrServiceUri, scope, app, graph, start, limit);    
+    pageDtoGrid = appDataModel.getDtoGrid(dxfrServiceUri, scope, app, graph, filter, dir, sort, start, limit);    
     return SUCCESS;
   }
   
@@ -58,7 +61,7 @@ public class AppDataController extends ActionSupport implements SessionAware
   public String getPageRelatedItems() 
   {
     pageRelatedItemGrid = appDataModel.getRelatedItemGrid(dxfrServiceUri, scope, app, graph, 
-        individual, classId, classIdentifier, start, limit);
+        individual, classId, classIdentifier, filter, dir, sort, start, limit);
     return SUCCESS;
   }
 
@@ -130,6 +133,36 @@ public class AppDataController extends ActionSupport implements SessionAware
     return classIdentifier;
   }
 
+  public void setFilter(String filter)
+  {
+    this.filter = filter;
+  }
+
+  public String getFilter()
+  {
+    return filter;
+  }
+
+  public void setSort(String sort)
+  {
+    this.sort = sort;
+  }
+
+  public String getSort()
+  {
+    return sort;
+  }
+
+  public void setDir(String dir)
+  {
+    this.dir = dir;
+  }
+
+  public String getDir()
+  {
+    return dir;
+  } 
+
   public void setStart(int start)
   {
     this.start = start;
@@ -148,5 +181,5 @@ public class AppDataController extends ActionSupport implements SessionAware
   public int getLimit()
   {
     return limit;
-  } 
+  }
 }

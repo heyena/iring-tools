@@ -15,12 +15,12 @@
 
   <xs:complexType name="DataFilter">
     <xs:sequence>      
-      <xs:element name="expressions" type="ExpressionList" />
-      <xs:element name="orderExpressions" type="OrderExpressionList" />
+      <xs:element name="expressions" type="Expressions" />
+      <xs:element name="orderExpressions" type="OrderExpressions" />
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="ExpressionList">
+  <xs:complexType name="Expressions">
     <xs:sequence>
       <xs:element name="expression" type="Expression" maxOccurs="unbounded">
         <xs:annotation>
@@ -32,7 +32,7 @@
     </xs:sequence>
   </xs:complexType>
   
-  <xs:complexType name="OrderExpressionList">
+  <xs:complexType name="OrderExpressions">
     <xs:sequence>     
       <xs:element name="orderExpression" type="OrderExpression" maxOccurs="unbounded">
         <xs:annotation>

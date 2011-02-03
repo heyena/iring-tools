@@ -30,30 +30,34 @@ public class ExchangeDataModel extends DataModel
     this.session = session;
   }
   
-  public Grid getDtoGrid(String serviceUri, String scope, String exchangeId, int start, int limit)
+  public Grid getDtoGrid(String serviceUri, String scope, String exchangeId, String filter, String sortOrder,
+      String sortBy, int start, int limit)
   {
     String dtiRelativePath = "/" + scope + "/exchanges/" + exchangeId;
     String dtoRelativePath = dtiRelativePath + "/page";
-    DataTransferObjects pageDtos = getPageDtos(serviceUri, dtiRelativePath, dtoRelativePath, start, limit);
+    DataTransferObjects pageDtos = getPageDtos(serviceUri, dtiRelativePath, dtoRelativePath, filter,
+        sortOrder, sortBy, start, limit);
     Grid pageDtoGrid = getDtoGrid(DataType.EXCHANGE, pageDtos);
-    DataTransferIndices dtis = getDtis(serviceUri, dtiRelativePath);
+    DataTransferIndices dtis = getDtis(serviceUri, dtiRelativePath, filter, sortOrder, sortBy);
     pageDtoGrid.setTotal(dtis.getDataTransferIndexList().getItems().size());    
     return pageDtoGrid;
   }
 
-  public Grid getRelatedItemGrid(String serviceUri, String scope, String exchangeId,
-      String dtoIdentifier, String classId, String classIdentifier, int start, int limit)
+  public Grid getRelatedItemGrid(String serviceUri, String scope, String exchangeId, String dtoIdentifier, 
+      String classId, String classIdentifier, String filter, String sortOrder, String sortBy, 
+      int start, int limit)
   {
     String dtiRelativePath = "/" + scope + "/exchanges/" + exchangeId;
     String dtoRelativePath = dtiRelativePath + "/page";
-    DataTransferObject dto = getDto(serviceUri, dtiRelativePath, dtoRelativePath, dtoIdentifier);  
+    DataTransferObject dto = getDto(serviceUri, dtiRelativePath, dtoRelativePath, dtoIdentifier, filter, 
+        sortOrder, sortBy, start, limit);  
     return getRelatedItemGrid(DataType.EXCHANGE, dto, classId, classIdentifier, start, limit);
   }
   
   public ExchangeResponse submitExchange(String serviceUri, String scope, String exchangeId, boolean reviewed)
   {
     String relativePath = "/" + scope + "/exchanges/" + exchangeId;
-    DataTransferIndices dtis = getDtis(serviceUri, relativePath);
+    DataTransferIndices dtis = getDtis(serviceUri, relativePath, null, null, null);
     
     ExchangeResponse response;
     ExchangeRequest request = new ExchangeRequest();
