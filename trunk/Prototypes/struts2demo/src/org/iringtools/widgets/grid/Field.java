@@ -2,11 +2,11 @@ package org.iringtools.widgets.grid;
 
 public class Field
 {
-  protected String name;
+  protected String name;  // header
   protected String dataIndex;
   protected String type;
   protected int width;
-  protected boolean fixed = false; // fixed width
+  protected boolean fixed = false;  // fixed width
   protected boolean filterable = true;
   protected boolean sortable = true;
   

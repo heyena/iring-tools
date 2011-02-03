@@ -18,8 +18,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="expressions" type="{http://www.iringtools.org/data/filter}ExpressionList"/>
- *         &lt;element name="orderExpressions" type="{http://www.iringtools.org/data/filter}OrderExpressionList"/>
+ *         &lt;element name="expressions" type="{http://www.iringtools.org/data/filter}Expressions"/>
+ *         &lt;element name="orderExpressions" type="{http://www.iringtools.org/data/filter}OrderExpressions"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -37,19 +37,19 @@ import javax.xml.bind.annotation.XmlType;
 public class DataFilter {
 
     @XmlElement(required = true)
-    protected ExpressionList expressions;
+    protected Expressions expressions;
     @XmlElement(required = true)
-    protected OrderExpressionList orderExpressions;
+    protected OrderExpressions orderExpressions;
 
     /**
      * Gets the value of the expressions property.
      * 
      * @return
      *     possible object is
-     *     {@link ExpressionList }
+     *     {@link Expressions }
      *     
      */
-    public ExpressionList getExpressions() {
+    public Expressions getExpressions() {
         return expressions;
     }
 
@@ -58,10 +58,10 @@ public class DataFilter {
      * 
      * @param value
      *     allowed object is
-     *     {@link ExpressionList }
+     *     {@link Expressions }
      *     
      */
-    public void setExpressions(ExpressionList value) {
+    public void setExpressions(Expressions value) {
         this.expressions = value;
     }
 
@@ -70,10 +70,10 @@ public class DataFilter {
      * 
      * @return
      *     possible object is
-     *     {@link OrderExpressionList }
+     *     {@link OrderExpressions }
      *     
      */
-    public OrderExpressionList getOrderExpressions() {
+    public OrderExpressions getOrderExpressions() {
         return orderExpressions;
     }
 
@@ -82,10 +82,10 @@ public class DataFilter {
      * 
      * @param value
      *     allowed object is
-     *     {@link OrderExpressionList }
+     *     {@link OrderExpressions }
      *     
      */
-    public void setOrderExpressions(OrderExpressionList value) {
+    public void setOrderExpressions(OrderExpressions value) {
         this.orderExpressions = value;
     }
 

@@ -26,6 +26,9 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   private String individual;
   private String classId;
   private String classIdentifier;
+  private String filter;
+  private String sort; // sort by
+  private String dir;  // sort direction
   private int start;
   private int limit;
   private boolean reviewed;
@@ -51,7 +54,7 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   // ------------------------------------
   public String getPageDtos()
   {
-    pageDtoGrid = exchangeDataModel.getDtoGrid(esbServiceUri, scope, xid, start, limit);    
+    pageDtoGrid = exchangeDataModel.getDtoGrid(esbServiceUri, scope, xid, filter, dir, sort, start, limit);    
     return SUCCESS;
   }
   
@@ -66,7 +69,7 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   public String getPageRelatedItems() 
   {
     pageRelatedItemGrid = exchangeDataModel.getRelatedItemGrid(esbServiceUri, scope, xid, 
-        individual, classId, classIdentifier, start, limit);
+        individual, classId, classIdentifier, filter, dir, sort, start, limit);
     return SUCCESS;
   }
 
@@ -157,6 +160,36 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
     return classIdentifier;
   }
 
+  public void setFilter(String filter)
+  {
+    this.filter = filter;
+  }
+
+  public String getFilter()
+  {
+    return filter;
+  }
+
+  public void setSort(String sort)
+  {
+    this.sort = sort;
+  }
+
+  public String getSort()
+  {
+    return sort;
+  }
+
+  public void setDir(String dir)
+  {
+    this.dir = dir;
+  }
+
+  public String getDir()
+  {
+    return dir;
+  } 
+
   public void setStart(int start)
   {
     this.start = start;
@@ -185,5 +218,5 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   public boolean getReviewed()
   {
     return reviewed;
-  } 
+  }
 }

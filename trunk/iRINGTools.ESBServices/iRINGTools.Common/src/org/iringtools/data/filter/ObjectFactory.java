@@ -30,6 +30,38 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link OrderExpressions }
+     * 
+     */
+    public OrderExpressions createOrderExpressions() {
+        return new OrderExpressions();
+    }
+
+    /**
+     * Create an instance of {@link Expressions }
+     * 
+     */
+    public Expressions createExpressions() {
+        return new Expressions();
+    }
+
+    /**
+     * Create an instance of {@link DataFilter }
+     * 
+     */
+    public DataFilter createDataFilter() {
+        return new DataFilter();
+    }
+
+    /**
+     * Create an instance of {@link Expression }
+     * 
+     */
+    public Expression createExpression() {
+        return new Expression();
+    }
+
+    /**
      * Create an instance of {@link Values }
      * 
      */
@@ -43,38 +75,6 @@ public class ObjectFactory {
      */
     public OrderExpression createOrderExpression() {
         return new OrderExpression();
-    }
-
-    /**
-     * Create an instance of {@link OrderExpressionList }
-     * 
-     */
-    public OrderExpressionList createOrderExpressionList() {
-        return new OrderExpressionList();
-    }
-
-    /**
-     * Create an instance of {@link DataFilter }
-     * 
-     */
-    public DataFilter createDataFilter() {
-        return new DataFilter();
-    }
-
-    /**
-     * Create an instance of {@link ExpressionList }
-     * 
-     */
-    public ExpressionList createExpressionList() {
-        return new ExpressionList();
-    }
-
-    /**
-     * Create an instance of {@link Expression }
-     * 
-     */
-    public Expression createExpression() {
-        return new Expression();
     }
 
 }

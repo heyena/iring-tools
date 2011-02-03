@@ -10,16 +10,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for ExpressionList complex type.
+ * <p>Java class for OrderExpressions complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ExpressionList">
+ * &lt;complexType name="OrderExpressions">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="expression" type="{http://www.iringtools.org/data/filter}Expression" maxOccurs="unbounded"/>
+ *         &lt;element name="orderExpression" type="{http://www.iringtools.org/data/filter}OrderExpression" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,13 +29,13 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ExpressionList", propOrder = {
+@XmlType(name = "OrderExpressions", propOrder = {
     "items"
 })
-public class ExpressionList {
+public class OrderExpressions {
 
-    @XmlElement(name = "expression", required = true)
-    protected List<Expression> items;
+    @XmlElement(name = "orderExpression", required = true)
+    protected List<OrderExpression> items;
 
     /**
      * Gets the value of the items property.
@@ -55,13 +55,13 @@ public class ExpressionList {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Expression }
+     * {@link OrderExpression }
      * 
      * 
      */
-    public List<Expression> getItems() {
+    public List<OrderExpression> getItems() {
         if (items == null) {
-            items = new ArrayList<Expression>();
+            items = new ArrayList<OrderExpression>();
         }
         return this.items;
     }
@@ -71,10 +71,10 @@ public class ExpressionList {
      * 
      * @param items
      *     allowed object is
-     *     {@link Expression }
+     *     {@link OrderExpression }
      *     
      */
-    public void setItems(List<Expression> items) {
+    public void setItems(List<OrderExpression> items) {
         this.items = items;
     }
 

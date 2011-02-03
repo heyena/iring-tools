@@ -1,6 +1,7 @@
 package org.iringtools.models;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -8,6 +9,13 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.json.JSONException;
 import org.apache.struts2.json.JSONUtil;
 import org.iringtools.data.filter.DataFilter;
+import org.iringtools.data.filter.Expression;
+import org.iringtools.data.filter.Expressions;
+import org.iringtools.data.filter.OrderExpression;
+import org.iringtools.data.filter.OrderExpressions;
+import org.iringtools.data.filter.RelationalOperator;
+import org.iringtools.data.filter.SortOrder;
+import org.iringtools.data.filter.Values;
 import org.iringtools.dxfr.dti.DataTransferIndex;
 import org.iringtools.dxfr.dti.DataTransferIndexList;
 import org.iringtools.dxfr.dti.DataTransferIndices;
@@ -22,28 +30,34 @@ import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpClientException;
 import org.iringtools.utility.IOUtil;
 import org.iringtools.widgets.grid.Field;
+import org.iringtools.widgets.grid.Filter;
 import org.iringtools.widgets.grid.Grid;
 import org.iringtools.widgets.grid.RelatedClass;
 
 public class DataModel
 {
-  protected static enum DataType {
-    APP, EXCHANGE
-  };
+  public static enum DataType { APP, EXCHANGE };  
+  public static Map<String, RelationalOperator> relationalOperatorMap = new HashMap<String, RelationalOperator>();  
+  static {
+    relationalOperatorMap.put("eq", RelationalOperator.EQUAL_TO);
+    relationalOperatorMap.put("lt", RelationalOperator.LESSER_THAN);
+    relationalOperatorMap.put("gt", RelationalOperator.GREATER_THAN);
+  }
 
   private static final Logger logger = Logger.getLogger(DataModel.class);
   protected Map<String, Object> session;
-  
+
   protected void removeSessionData(String key)
   {
     if (session != null && session.keySet().contains(key))
       session.remove(key);
   }
-  
-  protected DataTransferIndices getDtis(String serviceUri, String relativePath)
+
+  protected DataTransferIndices getDtis(String serviceUri, String relativePath, String filter, String sortOrder,
+      String sortBy)
   {
     DataTransferIndices dtis = new DataTransferIndices();
-    String dtiKey = "dti" + relativePath;
+    String dtiKey = "dti" + relativePath + "/" + filter + "/" + sortOrder + "/" + sortBy;
 
     try
     {
@@ -53,17 +67,29 @@ public class DataModel
       }
       else
       {
-        HttpClient httpClient = new HttpClient(serviceUri);
-        DataFilter dataFilter = new DataFilter();
+        HttpClient httpClient = new HttpClient(serviceUri);  
+        DataFilter dataFilter = null;
+        
+        if (filter != null && filter.length() > 0)
+        {
+          @SuppressWarnings("unchecked")
+          List<Filter> filters = (List<Filter>) JSONUtil.deserialize(filter);
+          dataFilter = createDataFilter(filters, sortOrder, sortBy);
+        }
+        else 
+        {
+          dataFilter = createDataFilter(null, sortOrder, sortBy);
+        }
+        
         dtis = httpClient.post(DataTransferIndices.class, relativePath, dataFilter);
         session.put(dtiKey, dtis);
       }
     }
-    catch (HttpClientException ex)
+    catch (Exception ex)
     {
       logger.error(ex);
     }
-    
+
     return dtis;
   }
 
@@ -89,23 +115,24 @@ public class DataModel
     return dtos;
   }
 
-  public DataTransferObjects getPageDtos(String serviceUri, String dtiRelativePath, String dtoRelativePath, 
-      int start, int limit) 
+  public DataTransferObjects getPageDtos(String serviceUri, String dtiRelativePath, String dtoRelativePath,
+      String filter, String sortOrder, String sortBy, int start, int limit)
   {
-    DataTransferIndices dtis = getDtis(serviceUri, dtiRelativePath);    
+    DataTransferIndices dtis = getDtis(serviceUri, dtiRelativePath, filter, sortOrder, sortBy);
     List<DataTransferIndex> dtiList = dtis.getDataTransferIndexList().getItems();
     int actualLimit = Math.min(start + limit, dtiList.size());
     List<DataTransferIndex> pageDtis = dtiList.subList(start, actualLimit);
     return getDtos(serviceUri, dtoRelativePath, pageDtis);
   }
-  
-  public DataTransferObject getDto(String serviceUri, String dtiRelativePath, String dtoRelativePath, 
-      String dtoIdentifier) 
+
+  // TODO: use filter, sort, and start/limit for related individual
+  public DataTransferObject getDto(String serviceUri, String dtiRelativePath, String dtoRelativePath, String filter,
+      String sortOrder, String sortBy, String dtoIdentifier, int start, int limit)
   {
-    DataTransferIndices dtis = getDtis(serviceUri, dtiRelativePath);    
+    DataTransferIndices dtis = getDtis(serviceUri, dtiRelativePath, null, null, null);
     List<DataTransferIndex> dtiList = dtis.getDataTransferIndexList().getItems();
     DataTransferIndex theDti = null;
-    
+
     for (DataTransferIndex dti : dtiList)
     {
       if (dti.getIdentifier().equals(dtoIdentifier))
@@ -114,19 +141,19 @@ public class DataModel
         break;
       }
     }
-    
+
     if (theDti != null)
     {
       DataTransferIndices dtiRequest = new DataTransferIndices();
       DataTransferIndexList dtiRequestList = new DataTransferIndexList();
       dtiRequest.setDataTransferIndexList(dtiRequestList);
       dtiRequestList.getItems().add(theDti);
-      
+
       try
       {
         HttpClient httpClient = new HttpClient(serviceUri);
         DataTransferObjects dtos = httpClient.post(DataTransferObjects.class, dtoRelativePath, dtiRequest);
-        
+
         if (dtos != null && dtos.getDataTransferObjectList().getItems().size() > 0)
           return dtos.getDataTransferObjectList().getItems().get(0);
       }
@@ -135,7 +162,7 @@ public class DataModel
         logger.error("Error in getDto: " + ex);
       }
     }
-    
+
     return null;
   }
 
@@ -178,16 +205,16 @@ public class DataModel
               if (firstDto)
               {
                 String name = templateObject.getName() + "." + roleObject.getName();
-                
+
                 Field field = new Field();
                 field.setName(name);
                 field.setDataIndex(IOUtil.toCamelCase(classObject.getName()) + '.' + name);
-                
+
                 if (dataType == DataType.APP)
                   field.setType(roleObject.getDataType().replace("xsd:", ""));
                 else
                   field.setType("string");
-                
+
                 fields.add(field);
               }
 
@@ -198,7 +225,8 @@ public class DataModel
               }
               else
               {
-                row.add("<span class=\"change\">" + roleObject.getOldValue() + " -> " + roleObject.getValue() + "</span>");
+                row.add("<span class=\"change\">" + roleObject.getOldValue() + " -> " + roleObject.getValue()
+                    + "</span>");
               }
             }
             else if (roleObject.getRelatedClassName() != null && roleObject.getRelatedClassName().length() > 0
@@ -259,11 +287,11 @@ public class DataModel
   }
 
   // paging is based on number of templates of the related class
-  public Grid getRelatedItemGrid(DataType dataType, DataTransferObject dto, String classId, 
-      String classIdentifier, int start, int limit)
+  public Grid getRelatedItemGrid(DataType dataType, DataTransferObject dto, String classId, String classIdentifier,
+      int start, int limit)
   {
     Grid relatedItemGrid = new Grid();
-    
+
     for (ClassObject classObject : dto.getClassObjects().getItems())
     {
       if (classObject.getClassId().equals(classId) && classObject.getIdentifier().equals(classIdentifier))
@@ -299,16 +327,16 @@ public class DataModel
               if (firstTemplateObject)
               {
                 String name = templateObject.getName() + "." + roleObject.getName();
-                
+
                 Field field = new Field();
                 field.setName(name);
                 field.setDataIndex(IOUtil.toCamelCase(classObject.getName()) + '.' + name);
-                
+
                 if (dataType == DataType.APP)
                   field.setType(roleObject.getDataType().replace("xsd:", ""));
                 else
                   field.setType("string");
-                
+
                 fields.add(field);
               }
 
@@ -319,7 +347,8 @@ public class DataModel
               }
               else
               {
-                row.add("<span class=\"change\">" + roleObject.getOldValue() + " -> " + roleObject.getValue() + "</span>");
+                row.add("<span class=\"change\">" + roleObject.getOldValue() + " -> " + roleObject.getValue()
+                    + "</span>");
               }
             }
             else if (roleObject.getRelatedClassName() != null && roleObject.getRelatedClassName().length() > 0
@@ -345,8 +374,8 @@ public class DataModel
           }
 
           row.add(0, "<input type=\"image\" src=\"resources/images/info-small.png\" "
-              + "onClick='javascript:showIndividualInfo(\"" + classObject.getIdentifier() + "\","
-              + relatedClassesJson + ")'>");
+              + "onClick='javascript:showIndividualInfo(\"" + classObject.getIdentifier() + "\"," + relatedClassesJson
+              + ")'>");
 
           gridData.add(row);
 
@@ -388,5 +417,64 @@ public class DataModel
     }
 
     return relatedItemGrid;
+  }
+  
+  private DataFilter createDataFilter(List<Filter> filters, String sortOrder, String sortBy)
+  {
+    DataFilter dataFilter = new DataFilter();
+
+    // process sorting
+    if (sortOrder != null || sortBy != null)
+    {
+      OrderExpressions orderExpressions = new OrderExpressions();
+      dataFilter.setOrderExpressions(orderExpressions);
+      
+      OrderExpression orderExpression = new OrderExpression();
+      orderExpressions.getItems().add(orderExpression);
+      
+      if (sortOrder != null)
+        orderExpression.setSortOrder(SortOrder.valueOf(sortOrder));
+  
+      if (sortBy != null)
+        orderExpression.setPropertyName(sortBy);
+    }
+    
+    // process filtering
+    if (filters != null && filters.size() > 0)
+    {
+      Expressions expressions = new Expressions();
+      dataFilter.setExpressions(expressions);
+      
+      for (Filter filter : filters)
+      {
+        Expression expression = new Expression();
+        expressions.getItems().add(expression);
+        
+        expression.setOpenGroupCount(filters.size());
+        expression.setCloseGroupCount(filters.size());
+        
+        if (filter.getComparison().equals("comparison"))
+        {
+          String operator = filter.getComparison();
+          expression.setRelationalOperator(relationalOperatorMap.get(operator));
+        }
+        else
+        {
+          expression.setRelationalOperator(relationalOperatorMap.get("eq"));
+        }
+        
+        expression.setPropertyName(filter.getField());
+        
+        Values values = new Values();
+        expression.setValues(values);
+        
+        List<String> valueList = new ArrayList<String>();
+        values.setValues(valueList);
+        
+        valueList.add(filter.getValue());
+      }
+    }
+    
+    return dataFilter;
   }
 }
