@@ -6,7 +6,11 @@ function createGridStore(url){
       url: url
     }),
     reader: new Ext.data.DynamicGridReader({}),
-    remoteSort: false,
+    remoteSort: true,/*
+    sortInfo: {
+      field: '&nbsp;',
+      direction: 'Asc'
+    },*/
     listeners: {
       exception: function(ex){
         Ext.getBody().unmask();
@@ -14,6 +18,7 @@ function createGridStore(url){
       }
     }
   });
+  
   return store;
 }
 
@@ -22,12 +27,14 @@ function createGridPane(store, pageSize){
     label: store.reader.label,
     type: store.reader.type,
     layout: 'fit',
+    minColumnWidth: 60,
     loadMask: true,
     store: store,
+    autoDestroy: true,
     stripeRows: true,
     cm: new Ext.grid.DynamicColumnModel(store),
     selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
-    enableColLock: true,
+    enableColLock: false,
     viewConfig: {
       forceFit: true
     },
@@ -49,6 +56,7 @@ function createGridPane(store, pageSize){
       filters: store.reader.filters 
     })]
   });
+  
   return gridPane;
 }
 

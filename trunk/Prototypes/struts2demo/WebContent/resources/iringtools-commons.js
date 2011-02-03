@@ -4,6 +4,7 @@ Ext.data.DynamicGridReader = Ext.extend(Ext.data.JsonReader, {
   constructor: function(config) {
     Ext.data.DynamicGridReader.superclass.constructor.call(this, config, []);
   },
+  
   readRecords: function(store) {
     var fields = store.fields;  
     var data = store.data;
