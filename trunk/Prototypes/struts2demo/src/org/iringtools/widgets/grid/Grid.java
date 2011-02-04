@@ -4,30 +4,30 @@ import java.util.List;
 
 public class Grid
 {
-  protected String label;
-  protected String type;
+  protected String identifier;
+  protected String description;
   protected int total;
   protected List<Field> fields;
   protected List<List<String>> data;
   
-  public String getLabel()
+  public String getIdentifier()
   {
-    return label;    
+    return identifier;    
   }
   
-  public void setLabel(String label)
+  public void setIdentifier(String identifier)
   {
-    this.label= label;
+    this.identifier= identifier;
   }
   
-  public String getType()
+  public String getDescription()
   {
-    return type;    
+    return description;    
   }
   
-  public void setType(String type)
+  public void setDescription(String description)
   {
-    this.type= type;
+    this.description= description;
   }
   
   public int getTotal()

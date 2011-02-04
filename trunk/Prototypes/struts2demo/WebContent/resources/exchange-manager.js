@@ -34,8 +34,8 @@ function createGridPane(store, pageSize){
   });  
   
   var gridPane = new Ext.grid.GridPanel({
-    label: store.reader.label,
-    type: store.reader.type,
+    identifier: store.reader.identifier,
+    description: store.reader.description,
     layout: 'fit',
     minColumnWidth: 60,
     loadMask: true,
@@ -45,14 +45,14 @@ function createGridPane(store, pageSize){
     selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
     enableColLock: false,
     viewConfig: { forceFit: true },
+    plugins: [filters],
     bbar: new Ext.PagingToolbar({
       store: store,
       pageSize: pageSize,
       displayInfo: true,
       autoScroll: true,
-      plugins: [pagingResizer]
-    }),
-    plugins: [filters]
+      plugins: [filters, pagingResizer]
+    })
   });
   
   return gridPane;
@@ -108,117 +108,119 @@ function loadPageDto(type, action, context, label){
     var pageSize = 25; 
     
     store.on('load', function(){
-      store.recordType = store.reader.recordType;      
-      
-      var dtoBcPane = new Ext.Container({
-        id: 'bc-' + label,
-        cls: 'bc-container',
-        padding: '5',
-        bodyStyle: 'background-color:#fcfcfc',
-        items: [{
-          xtype: 'box',
-          autoEl: {tag: 'span', html: '<a class="breadcrumb" href="#" onclick="navigate(0)">' + 
-            store.reader.type + '</a>'}
-        }]
-      });
-      
-      var dtoNavPane = new Ext.Panel({
-        id: 'nav-' + label,
-        region: 'north',
-        layout: 'hbox',
-        height: 26,
-        items: [dtoBcPane]
-      });
-      
-      if (type == 'exchange'){
-        var dtoToolbar = new Ext.Toolbar({
-          cls: 'nav-toolbar',
+      if (Ext.getCmp('content-pane').getItem('tab-' + label) == null) {
+        store.recordType = store.reader.recordType;      
+        
+        var dtoBcPane = new Ext.Container({
+          id: 'bc-' + label,
+          cls: 'bc-container',
+          padding: '5',
+          bodyStyle: 'background-color:#fcfcfc',
           items: [{
-            id: 'tb-exchange',
-            xtype: 'button',
-            tooltip: 'Exchange',
-            icon: 'resources/images/exchange.png',
-            handler: function(){
-              var xidIndex = context.indexOf('&xid=');
-              var scope = context.substring(7, xidIndex);
-              var xid = context.substring(xidIndex + 5);
-              var msg = 'Are you sure you want to do data exchange [' + label + ']?';
-              var processUserResponse = submitExchange.createDelegate([label, scope, xid, true]);          
-              showDialog(400, 60, 'Submit Exchange?', msg, Ext.Msg.OKCANCEL, processUserResponse);
-            }
-          },{
-            xtype: 'tbspacer', 
-            width: 4
-          },{
-            id: 'tb-xlog',
-            xtype: 'button',
-            tooltip: 'Show/hide exchange logs',
-            icon: 'resources/images/exchange-log.png',
-            handler: function(){            
-              var dtoTab = Ext.getCmp('content-pane').getActiveTab();
-              var xlogsContainer = dtoTab.items.map['xlogs-container-' + label]; 
-              
-              if (xlogsContainer.items.length == 0){
-                createXlogsPane(label, context, xlogsContainer);                
-              }
-              else {
-                if (xlogsContainer.collapsed)
-                  xlogsContainer.expand(true);
-                else {         
-                  xlogsContainer.collapse(true);
-                }
-              }
-            }
-          },{
-            xtype: 'tbspacer', 
-            width: 4
+            xtype: 'box',
+            autoEl: {tag: 'span', html: '<a class="breadcrumb" href="#" onclick="navigate(0)">' + 
+              store.reader.description + '</a>'}
           }]
         });
         
-        dtoNavPane.insert(0, dtoToolbar);
-      }
-      
-      var dtoContentPane = new Ext.Panel({
-        id: 'dto-' + label,
-        region: 'center',
-        layout: 'card',
-        border: false,
-        activeItem: 0,
-        items: [createGridPane(store, pageSize)],
-        listeners: {
-          afterlayout: function(pane){
-            Ext.getBody().unmask();
-          }
-        }
-      });
-      
-      var dtoTab = new Ext.Panel({
-        id: 'tab-' + label,
-        title: label,
-        type: type,
-        context: context,
-        layout: 'border',
-        closable: true,
-        items: [dtoNavPane, dtoContentPane]
-      });
-      
-      if (type == 'exchange'){
-        var xlogsContainer = new Ext.Panel({
-          id: 'xlogs-container-' + label,
-          region: 'south',
-          layout: 'fit',
-          border: false,
-          height: 250,
-          split: true,
-          collapsed: true
+        var dtoNavPane = new Ext.Panel({
+          id: 'nav-' + label,
+          region: 'north',
+          layout: 'hbox',
+          height: 26,
+          items: [dtoBcPane]
         });
         
-        dtoTab.add(xlogsContainer);
+        if (type == 'exchange'){
+          var dtoToolbar = new Ext.Toolbar({
+            cls: 'nav-toolbar',
+            items: [{
+              id: 'tb-exchange',
+              xtype: 'button',
+              tooltip: 'Exchange',
+              icon: 'resources/images/exchange.png',
+              handler: function(){
+                var xidIndex = context.indexOf('&xid=');
+                var scope = context.substring(7, xidIndex);
+                var xid = context.substring(xidIndex + 5);
+                var msg = 'Are you sure you want to do data exchange [' + label + ']?';
+                var processUserResponse = submitExchange.createDelegate([label, scope, xid, true]);          
+                showDialog(400, 60, 'Submit Exchange?', msg, Ext.Msg.OKCANCEL, processUserResponse);
+              }
+            },{
+              xtype: 'tbspacer', 
+              width: 4
+            },{
+              id: 'tb-xlog',
+              xtype: 'button',
+              tooltip: 'Show/hide exchange logs',
+              icon: 'resources/images/exchange-log.png',
+              handler: function(){            
+                var dtoTab = Ext.getCmp('content-pane').getActiveTab();
+                var xlogsContainer = dtoTab.items.map['xlogs-container-' + label]; 
+                
+                if (xlogsContainer.items.length == 0){
+                  createXlogsPane(label, context, xlogsContainer);                
+                }
+                else {
+                  if (xlogsContainer.collapsed)
+                    xlogsContainer.expand(true);
+                  else {         
+                    xlogsContainer.collapse(true);
+                  }
+                }
+              }
+            },{
+              xtype: 'tbspacer', 
+              width: 4
+            }]
+          });
+          
+          dtoNavPane.insert(0, dtoToolbar);
+        }
+        
+        var dtoContentPane = new Ext.Panel({
+          id: 'dto-' + label,
+          region: 'center',
+          layout: 'card',
+          border: false,
+          activeItem: 0,
+          items: [createGridPane(store, pageSize)],
+          listeners: {
+            afterlayout: function(pane){
+              Ext.getBody().unmask();
+            }
+          }
+        });
+        
+        var dtoTab = new Ext.Panel({
+          id: 'tab-' + label,
+          title: label,
+          type: type,
+          context: context,
+          layout: 'border',
+          closable: true,
+          items: [dtoNavPane, dtoContentPane]
+        });
+        
+        if (type == 'exchange'){
+          var xlogsContainer = new Ext.Panel({
+            id: 'xlogs-container-' + label,
+            region: 'south',
+            layout: 'fit',
+            border: false,
+            height: 250,
+            split: true,
+            collapsed: true
+          });
+          
+          dtoTab.add(xlogsContainer);
+        }
+        
+        Ext.getCmp('content-pane').add(dtoTab).show();
       }
-      
-      Ext.getCmp('content-pane').add(dtoTab).show();
     });
-    
+      
     store.load({
       params: {
         start: 0,          
@@ -297,7 +299,7 @@ function showIndividualInfo(individual, relatedClasses){
     height: 46,
     bodyStyle: 'background-color:#eef',
     html: '<div style="width:60px;float:left"><img style="margin:2px 15px 2px 5px" src="resources/images/class-badge-large.png"/></div>' +
-          '<div style="width:100%;height:100%;padding-top:8px">' + individual + '<br/>' + dtoGrid.type + '</div>'
+          '<div style="width:100%;height:100%;padding-top:8px">' + individual + '<br/>' + dtoGrid.description + '</div>'
   });
   
   var rowData = dtoGrid.selModel.selections.map[dtoGrid.selModel.last].data;
