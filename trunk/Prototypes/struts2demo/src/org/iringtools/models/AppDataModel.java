@@ -22,7 +22,7 @@ public class AppDataModel extends DataModel
     DataTransferObjects pageDtos = getPageDtos(serviceUri, dtiRelativePath, dtoRelativePath, 
         filter, sortOrder, sortBy, start, limit);
     Grid pageDtoGrid = getDtoGrid(DataType.APP, pageDtos);
-    DataTransferIndices dtis = (DataTransferIndices) session.get("dti/" + dtiRelativePath);
+    DataTransferIndices dtis = getCachedDtis(dtiRelativePath);
     pageDtoGrid.setTotal(dtis.getDataTransferIndexList().getItems().size());      
     return pageDtoGrid;
   }
