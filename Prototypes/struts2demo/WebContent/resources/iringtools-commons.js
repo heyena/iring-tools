@@ -9,8 +9,8 @@ Ext.data.DynamicGridReader = Ext.extend(Ext.data.JsonReader, {
     var fields = store.fields;  
     var data = store.data;
     
-    this.label = store.label;
-    this.type = store.type;
+    this.identifier = store.identifier;
+    this.description = store.description;
     this.recordType = Ext.data.Record.create(fields);
      
     var records = [];

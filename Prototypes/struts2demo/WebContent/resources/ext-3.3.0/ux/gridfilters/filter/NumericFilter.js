@@ -86,7 +86,7 @@ menuItemCfgs : {
      * </pre>
      */
     menuItemCfgs : {
-        emptyText: 'Enter Filter Text...',
+        emptyText: '',
         selectOnFocus: true,
         width: 125
     },

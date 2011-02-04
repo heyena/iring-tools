@@ -11,6 +11,7 @@ import org.apache.struts2.json.JSONUtil;
 import org.iringtools.data.filter.DataFilter;
 import org.iringtools.data.filter.Expression;
 import org.iringtools.data.filter.Expressions;
+import org.iringtools.data.filter.LogicalOperator;
 import org.iringtools.data.filter.OrderExpression;
 import org.iringtools.data.filter.OrderExpressions;
 import org.iringtools.data.filter.RelationalOperator;
@@ -35,10 +36,13 @@ import org.iringtools.widgets.grid.RelatedClass;
 
 public class DataModel
 {
-  public static enum DataType { APP, EXCHANGE };  
-  
-  public static Map<String, RelationalOperator> relationalOperatorMap;  
-  static {
+  public static enum DataType {
+    APP, EXCHANGE
+  };
+
+  public static Map<String, RelationalOperator> relationalOperatorMap;
+  static
+  {
     relationalOperatorMap = new HashMap<String, RelationalOperator>();
     relationalOperatorMap.put("eq", RelationalOperator.EQUAL_TO);
     relationalOperatorMap.put("lt", RelationalOperator.LESSER_THAN);
@@ -54,37 +58,37 @@ public class DataModel
       session.remove(key);
   }
 
-  protected DataTransferIndices getDtis(String serviceUri, String relativePath, String filter, 
-      String sortOrder, String sortBy)
+  protected DataTransferIndices getDtis(String serviceUri, String relativePath, String filter, String sortOrder,
+      String sortBy)
   {
     DataTransferIndices dtis = new DataTransferIndices();
     String fullDtiKey = "dti-full" + relativePath;
     String partDtiKey = "dti-part" + relativePath;
-    String dtiKey = partDtiKey;
-     
+
     try
     {
       DataFilter dataFilter = createDataFilter(filter, sortOrder, sortBy);
-      
+
       if (dataFilter == null)
       {
         if (session.containsKey(partDtiKey))
         {
           session.remove(partDtiKey);
         }
-        
-        dtiKey = fullDtiKey;
+
+        HttpClient httpClient = new HttpClient(serviceUri);
+        dtis = httpClient.post(DataTransferIndices.class, relativePath, dataFilter);
+        session.put(fullDtiKey, dtis);
       }
-      
-      if (session.containsKey(dtiKey))
+      else if (session.containsKey(partDtiKey))
       {
-        dtis = (DataTransferIndices) session.get(dtiKey);
+        dtis = (DataTransferIndices) session.get(partDtiKey);
       }
       else
       {
         HttpClient httpClient = new HttpClient(serviceUri);
         dtis = httpClient.post(DataTransferIndices.class, relativePath, dataFilter);
-        session.put(dtiKey, dtis);
+        session.put(partDtiKey, dtis);
       }
     }
     catch (Exception ex)
@@ -94,16 +98,16 @@ public class DataModel
 
     return dtis;
   }
-  
+
   protected DataTransferIndices getCachedDtis(String relativePath)
   {
     String dtiKey = "dti-part" + relativePath;
-    
+
     if (!session.containsKey(dtiKey))
     {
       dtiKey = "dti-full" + relativePath;
     }
-    
+
     return (DataTransferIndices) session.get(dtiKey);
   }
 
@@ -140,12 +144,12 @@ public class DataModel
   }
 
   // TODO: use filter, sort, and start/limit for related individual
-  public DataTransferObject getDto(String serviceUri, String dtiRelativePath, String dtoRelativePath, 
+  public DataTransferObject getDto(String serviceUri, String dtiRelativePath, String dtoRelativePath,
       String dtoIdentifier, String filter, String sortOrder, String sortBy, int start, int limit)
   {
     DataTransferIndices dtis = getCachedDtis(dtiRelativePath);
     List<DataTransferIndex> dtiList = dtis.getDataTransferIndexList().getItems();
-    
+
     for (DataTransferIndex dti : dtiList)
     {
       if (dti.getIdentifier().equals(dtoIdentifier))
@@ -167,7 +171,7 @@ public class DataModel
         {
           logger.error("Error in getDto: " + ex);
         }
-        
+
         break;
       }
     }
@@ -201,8 +205,8 @@ public class DataModel
       if (dto.getClassObjects().getItems().size() > 0)
       {
         ClassObject classObject = dto.getClassObjects().getItems().get(0);
-        pageDtoGrid.setLabel(classObject.getClassId());
-        pageDtoGrid.setType(classObject.getName());
+        pageDtoGrid.setIdentifier(classObject.getClassId());
+        pageDtoGrid.setDescription(classObject.getName());
 
         for (TemplateObject templateObject : classObject.getTemplateObjects().getItems())
         {
@@ -291,7 +295,7 @@ public class DataModel
         firstDto = false;
       }
     }
-    
+
     return pageDtoGrid;
   }
 
@@ -415,8 +419,8 @@ public class DataModel
         int total = classObject.getTemplateObjects().getItems().size();
         int actualLimit = Math.min(start + limit, total);
 
-        relatedItemGrid.setLabel(classObject.getClassId());
-        relatedItemGrid.setType(classObject.getName());
+        relatedItemGrid.setIdentifier(classObject.getClassId());
+        relatedItemGrid.setDescription(classObject.getName());
         relatedItemGrid.setTotal(total);
         relatedItemGrid.setFields(fields);
         relatedItemGrid.setData(gridData.subList(start, actualLimit));
@@ -427,7 +431,7 @@ public class DataModel
 
     return relatedItemGrid;
   }
-  
+
   private DataFilter createDataFilter(String filter, String sortOrder, String sortBy)
   {
     DataFilter dataFilter = null;
@@ -438,39 +442,44 @@ public class DataModel
       try
       {
         @SuppressWarnings("unchecked")
-        List<Map<String, String>> filterMaps = (List<Map<String, String>>)JSONUtil.deserialize(filter);     
-      
-        if (filterMaps != null && filterMaps.size() > 0)
+        List<Map<String, String>> filterExpressions = (List<Map<String, String>>) JSONUtil.deserialize(filter);
+
+        if (filterExpressions != null && filterExpressions.size() > 0)
         {
           dataFilter = new DataFilter();
-          
+
           Expressions expressions = new Expressions();
           dataFilter.setExpressions(expressions);
-          
-          for (Map<String, String> filterMap : filterMaps)
+
+          for (Map<String, String> filterExpression : filterExpressions)
           {
             Expression expression = new Expression();
             expressions.getItems().add(expression);
-            
-            if (filterMap.containsKey("comparison"))
+
+            if (expressions.getItems().size() > 1)
             {
-              String operator = filterMap.get("comparison");
+              expression.setLogicalOperator(LogicalOperator.AND);
+            }
+            
+            if (filterExpression.containsKey("comparison"))
+            {
+              String operator = filterExpression.get("comparison");
               expression.setRelationalOperator(relationalOperatorMap.get(operator));
             }
             else
             {
               expression.setRelationalOperator(relationalOperatorMap.get("eq"));
             }
-            
-            expression.setPropertyName(filterMap.get("field"));
-            
+
+            expression.setPropertyName(filterExpression.get("field"));
+
             Values values = new Values();
             expression.setValues(values);
-            
+
             List<String> valueList = new ArrayList<String>();
             values.setValues(valueList);
-            
-            valueList.add(String.valueOf(filterMap.get("value")));
+
+            valueList.add(String.valueOf(filterExpression.get("value")));
           }
         }
       }
@@ -479,26 +488,26 @@ public class DataModel
         logger.error("Error deserializing filter: " + ex);
       }
     }
-    
+
     // process sorting
     if (sortOrder != null || sortBy != null)
     {
       if (dataFilter == null)
         dataFilter = new DataFilter();
-      
+
       OrderExpressions orderExpressions = new OrderExpressions();
       dataFilter.setOrderExpressions(orderExpressions);
-      
+
       OrderExpression orderExpression = new OrderExpression();
       orderExpressions.getItems().add(orderExpression);
-      
+
       if (sortOrder != null)
         orderExpression.setSortOrder(SortOrder.valueOf(sortOrder));
-  
+
       if (sortBy != null)
         orderExpression.setPropertyName(sortBy);
     }
-    
+
     return dataFilter;
   }
 }

@@ -35,7 +35,7 @@ Ext.ux.grid.filter.StringFilter = Ext.extend(Ext.ux.grid.filter.Filter, {
      */
     iconCls : 'ux-gridfilter-text-icon',
 
-    emptyText: 'Enter Filter Text...',
+    emptyText: '',
     selectOnFocus: true,
     width: 125,
     
