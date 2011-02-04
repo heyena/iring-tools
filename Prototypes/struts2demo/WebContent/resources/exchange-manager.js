@@ -3,14 +3,11 @@ Ext.ns('iringtools.org.xmgr');
 function createGridStore(url){
   var store = new Ext.data.Store({
     proxy: new Ext.data.HttpProxy({
-      url: url
+      url: url,
+      timeout : 120000
     }),
     reader: new Ext.data.DynamicGridReader({}),
-    remoteSort: true,/*
-    sortInfo: {
-      field: '&nbsp;',
-      direction: 'Asc'
-    },*/
+    remoteSort: true,
     listeners: {
       exception: function(ex){
         Ext.getBody().unmask();
@@ -23,6 +20,19 @@ function createGridStore(url){
 }
 
 function createGridPane(store, pageSize){
+  var filters = new Ext.ux.grid.GridFilters({
+    remotesort: true,
+    local: false,
+    encode: true,
+    filters: store.reader.filters 
+  });
+  
+  var pagingResizer = new Ext.ux.plugin.PagingToolbarResizer({
+    displayText: 'Page Size',
+    options: [25, 50, 100, 200, 500], 
+    prependCombo: true
+  });  
+  
   var gridPane = new Ext.grid.GridPanel({
     label: store.reader.label,
     type: store.reader.type,
@@ -30,31 +40,19 @@ function createGridPane(store, pageSize){
     minColumnWidth: 60,
     loadMask: true,
     store: store,
-    autoDestroy: true,
     stripeRows: true,
     cm: new Ext.grid.DynamicColumnModel(store),
     selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
     enableColLock: false,
-    viewConfig: {
-      forceFit: true
-    },
+    viewConfig: { forceFit: true },
     bbar: new Ext.PagingToolbar({
       store: store,
       pageSize: pageSize,
       displayInfo: true,
       autoScroll: true,
-      plugins: [new Ext.ux.plugin.PagingToolbarResizer({
-        displayText: 'Page Size',
-        options: [25, 50, 100, 200, 500], 
-        prependCombo: true})
-      ]
+      plugins: [pagingResizer]
     }),
-    plugins : [new Ext.ux.grid.GridFilters({
-      remotesort: true,
-      local: false,
-      encode: true,
-      filters: store.reader.filters 
-    })]
+    plugins: [filters]
   });
   
   return gridPane;

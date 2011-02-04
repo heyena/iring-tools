@@ -58,30 +58,31 @@ public class DataModel
       String sortOrder, String sortBy)
   {
     DataTransferIndices dtis = new DataTransferIndices();
-    String dtiKey = "dti/" + relativePath;
-
+    String fullDtiKey = "dti-full" + relativePath;
+    String partDtiKey = "dti-part" + relativePath;
+    String dtiKey = partDtiKey;
+     
     try
     {
-      if (filter == null && sortOrder == null && sortBy == null && session.containsKey(dtiKey))
+      DataFilter dataFilter = createDataFilter(filter, sortOrder, sortBy);
+      
+      if (dataFilter == null)
+      {
+        if (session.containsKey(partDtiKey))
+        {
+          session.remove(partDtiKey);
+        }
+        
+        dtiKey = fullDtiKey;
+      }
+      
+      if (session.containsKey(dtiKey))
       {
         dtis = (DataTransferIndices) session.get(dtiKey);
       }
       else
       {
-        HttpClient httpClient = new HttpClient(serviceUri);  
-        DataFilter dataFilter = null;
-        
-        if (filter != null && filter.length() > 0)
-        {
-          @SuppressWarnings("unchecked")
-          List<Map<String, String>> filterMaps = (List<Map<String, String>>)JSONUtil.deserialize(filter);
-          dataFilter = createDataFilter(filterMaps, sortOrder, sortBy);
-        }
-        else 
-        {
-          dataFilter = createDataFilter(null, sortOrder, sortBy);
-        }
-        
+        HttpClient httpClient = new HttpClient(serviceUri);
         dtis = httpClient.post(DataTransferIndices.class, relativePath, dataFilter);
         session.put(dtiKey, dtis);
       }
@@ -92,6 +93,18 @@ public class DataModel
     }
 
     return dtis;
+  }
+  
+  protected DataTransferIndices getCachedDtis(String relativePath)
+  {
+    String dtiKey = "dti-part" + relativePath;
+    
+    if (!session.containsKey(dtiKey))
+    {
+      dtiKey = "dti-full" + relativePath;
+    }
+    
+    return (DataTransferIndices) session.get(dtiKey);
   }
 
   protected DataTransferObjects getDtos(String serviceUri, String relativePath, List<DataTransferIndex> dtiList)
@@ -130,37 +143,32 @@ public class DataModel
   public DataTransferObject getDto(String serviceUri, String dtiRelativePath, String dtoRelativePath, 
       String dtoIdentifier, String filter, String sortOrder, String sortBy, int start, int limit)
   {
-    DataTransferIndices dtis = getDtis(serviceUri, dtiRelativePath, null, null, null);
+    DataTransferIndices dtis = getCachedDtis(dtiRelativePath);
     List<DataTransferIndex> dtiList = dtis.getDataTransferIndexList().getItems();
-    DataTransferIndex theDti = null;
-
+    
     for (DataTransferIndex dti : dtiList)
     {
       if (dti.getIdentifier().equals(dtoIdentifier))
       {
-        theDti = dti;
+        DataTransferIndices dtiRequest = new DataTransferIndices();
+        DataTransferIndexList dtiRequestList = new DataTransferIndexList();
+        dtiRequest.setDataTransferIndexList(dtiRequestList);
+        dtiRequestList.getItems().add(dti);
+
+        try
+        {
+          HttpClient httpClient = new HttpClient(serviceUri);
+          DataTransferObjects dtos = httpClient.post(DataTransferObjects.class, dtoRelativePath, dtiRequest);
+
+          if (dtos != null && dtos.getDataTransferObjectList().getItems().size() > 0)
+            return dtos.getDataTransferObjectList().getItems().get(0);
+        }
+        catch (HttpClientException ex)
+        {
+          logger.error("Error in getDto: " + ex);
+        }
+        
         break;
-      }
-    }
-
-    if (theDti != null)
-    {
-      DataTransferIndices dtiRequest = new DataTransferIndices();
-      DataTransferIndexList dtiRequestList = new DataTransferIndexList();
-      dtiRequest.setDataTransferIndexList(dtiRequestList);
-      dtiRequestList.getItems().add(theDti);
-
-      try
-      {
-        HttpClient httpClient = new HttpClient(serviceUri);
-        DataTransferObjects dtos = httpClient.post(DataTransferObjects.class, dtoRelativePath, dtiRequest);
-
-        if (dtos != null && dtos.getDataTransferObjectList().getItems().size() > 0)
-          return dtos.getDataTransferObjectList().getItems().get(0);
-      }
-      catch (HttpClientException ex)
-      {
-        logger.error("Error in getDto: " + ex);
       }
     }
 
@@ -283,7 +291,7 @@ public class DataModel
         firstDto = false;
       }
     }
-
+    
     return pageDtoGrid;
   }
 
@@ -420,13 +428,64 @@ public class DataModel
     return relatedItemGrid;
   }
   
-  private DataFilter createDataFilter(List<Map<String, String>> filterMaps, String sortOrder, String sortBy)
+  private DataFilter createDataFilter(String filter, String sortOrder, String sortBy)
   {
-    DataFilter dataFilter = new DataFilter();
+    DataFilter dataFilter = null;
 
+    // process filtering
+    if (filter != null && filter.length() > 0)
+    {
+      try
+      {
+        @SuppressWarnings("unchecked")
+        List<Map<String, String>> filterMaps = (List<Map<String, String>>)JSONUtil.deserialize(filter);     
+      
+        if (filterMaps != null && filterMaps.size() > 0)
+        {
+          dataFilter = new DataFilter();
+          
+          Expressions expressions = new Expressions();
+          dataFilter.setExpressions(expressions);
+          
+          for (Map<String, String> filterMap : filterMaps)
+          {
+            Expression expression = new Expression();
+            expressions.getItems().add(expression);
+            
+            if (filterMap.containsKey("comparison"))
+            {
+              String operator = filterMap.get("comparison");
+              expression.setRelationalOperator(relationalOperatorMap.get(operator));
+            }
+            else
+            {
+              expression.setRelationalOperator(relationalOperatorMap.get("eq"));
+            }
+            
+            expression.setPropertyName(filterMap.get("field"));
+            
+            Values values = new Values();
+            expression.setValues(values);
+            
+            List<String> valueList = new ArrayList<String>();
+            values.setValues(valueList);
+            
+            valueList.add(String.valueOf(filterMap.get("value")));
+          }
+        }
+      }
+      catch (JSONException ex)
+      {
+        logger.error("Error deserializing filter: " + ex);
+      }
+    }
+    
     // process sorting
     if (sortOrder != null || sortBy != null)
     {
+      if (dataFilter == null)
+        dataFilter = new DataFilter();
+      
       OrderExpressions orderExpressions = new OrderExpressions();
       dataFilter.setOrderExpressions(orderExpressions);
       
@@ -438,39 +497,6 @@ public class DataModel
   
       if (sortBy != null)
         orderExpression.setPropertyName(sortBy);
-    }
-    
-    // process filtering
-    if (filterMaps != null && filterMaps.size() > 0)
-    {
-      Expressions expressions = new Expressions();
-      dataFilter.setExpressions(expressions);
-      
-      for (Map<String, String> filterMap : filterMaps)
-      {
-        Expression expression = new Expression();
-        expressions.getItems().add(expression);
-        
-        if (filterMap.containsKey("comparison"))
-        {
-          String operator = filterMap.get("comparison");
-          expression.setRelationalOperator(relationalOperatorMap.get(operator));
-        }
-        else
-        {
-          expression.setRelationalOperator(relationalOperatorMap.get("eq"));
-        }
-        
-        expression.setPropertyName(filterMap.get("field"));
-        
-        Values values = new Values();
-        expression.setValues(values);
-        
-        List<String> valueList = new ArrayList<String>();
-        values.setValues(valueList);
-        
-        valueList.add(String.valueOf(filterMap.get("value")));
-      }
     }
     
     return dataFilter;
