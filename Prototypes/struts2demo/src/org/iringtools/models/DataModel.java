@@ -77,7 +77,7 @@ public class DataModel
         }
 
         HttpClient httpClient = new HttpClient(serviceUri);
-        dtis = httpClient.post(DataTransferIndices.class, relativePath, dataFilter);
+        dtis = httpClient.post(DataTransferIndices.class, relativePath, new DataFilter());
         session.put(fullDtiKey, dtis);
       }
       else if (session.containsKey(partDtiKey))
